@@ -246,41 +246,46 @@ extends [mscorlib]System.Object
 .method public static void main@() cil managed
 {
 .entrypoint
-.maxstack 5
+
 ldstr "simpleTail1"
 call int32 Fsharp::get_HugeInt()
 ldc.i4.0
 call int32 Fsharp::simpleTail1(int32, int32)
 call int32 Fsharp::get_HugeInt()
 call void Fsharp::RunTest<int32>(string, !!0, !!0)
+
 ldstr "simpleTail2"
 call int32 Fsharp::get_HugeInt()
 ldc.i4.0
 call int32 Fsharp::simpleTail2(int32, int32)
 call int32 Fsharp::get_HugeInt()
 call void Fsharp::RunTest<int32>(string, !!0, !!0)
+
 ldstr "mutualTail1IsOdd"
 call int32 Fsharp::get_HugeInt()
 call bool Fsharp::mutualTail1IsOdd(int32)
 ldc.i4.0
 call void Fsharp::RunTest<bool>(string, !!0, !!0)
+
 ldstr "mutualTail1IsEven"
 call int32 Fsharp::get_HugeInt()
 call bool Fsharp::mutualTail1IsEven(int32)
 ldc.i4.1
 call void Fsharp::RunTest<bool>(string, !!0, !!0)
+
 ldstr "TailCallLoop<int>"
 newobj instance void class Fsharp/TailCallLoop`1<int32>::.ctor()
 callvirt instance int32 class Fsharp/TailCallLoop`1<int32>::get_Result()
 ldc.i4.2
 call void Fsharp::RunTest<int32>(string, !!0, !!0)
+
 ldstr "TailCallLoop<DateTime>"
 newobj instance void class Fsharp/TailCallLoop`1<valuetype [mscorlib]System.DateTime>::.ctor()
 callvirt instance int32 class Fsharp/TailCallLoop`1<valuetype [mscorlib]System.DateTime>::get_Result()
 ldc.i4.2
 call void Fsharp::RunTest<int32>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethod<byte>.Method1<by"
-+ "te>"
+
+ldstr "TailCallLoopGenericClassAndMethod<byte>.Method1<byte>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<uint8>::.ctor(!0)
 ldc.i4 0x989680
@@ -288,9 +293,9 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<uint8>::Method1<uint8>(int32, !!0)
 ldc.i4.3
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<uint8,uint8>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<uint8,uint8>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<uint8,uint8>>(string, !!0, !!0)
+
 ldstr "TailCallLoopGenericClassAndMethod<byte>.Method1<int>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<uint8>::.ctor(!0)
@@ -299,11 +304,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<uint8>::Method1<int32>(int32, !!0)
 ldc.i4.3
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<uint8,int32>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<uint8,int32>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<uint8,int32>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethod<byte>.Method1<Da"
-+ "teTime>"
+
+ldstr "TailCallLoopGenericClassAndMethod<byte>.Method1<DateTime>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<uint8>::.ctor(!0)
 ldc.i4 0x989680
@@ -311,11 +315,10 @@ ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<uint8>::Method1<valuetype [mscorlib]System.DateTime>(int32, !!0)
 ldc.i4.3
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
-newobj instance void class [mscorlib]System.Tuple`2<uint8,valuetype [mscorlib]System.DateTime>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<uint8,valuetype [mscorlib]System.DateTime>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<uint8,valuetype [mscorlib]System.DateTime>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethod<byte>.Method1<st"
-+ "ring>"
+
+ldstr "TailCallLoopGenericClassAndMethod<byte>.Method1<string>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<uint8>::.ctor(!0)
 ldc.i4 0x989680
@@ -323,9 +326,9 @@ ldstr "abc"
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<uint8>::Method1<string>(int32, !!0)
 ldc.i4.3
 ldstr "abc"
-newobj instance void class [mscorlib]System.Tuple`2<uint8,string>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<uint8,string>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<uint8,string>>(string, !!0, !!0)
+
 ldstr "TailCallLoopGenericClassAndMethod<int>.Method1<byte>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<int32>::.ctor(!0)
@@ -334,9 +337,9 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<int32>::Method1<uint8>(int32, !!0)
 ldc.i4.3
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<int32,uint8>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<int32,uint8>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<int32,uint8>>(string, !!0, !!0)
+
 ldstr "TailCallLoopGenericClassAndMethod<int>.Method1<int>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<int32>::.ctor(!0)
@@ -345,11 +348,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<int32>::Method1<int32>(int32, !!0)
 ldc.i4.3
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<int32,int32>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<int32,int32>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<int32,int32>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethod<int>.Method1<Dat"
-+ "eTime>"
+
+ldstr "TailCallLoopGenericClassAndMethod<int>.Method1<DateTime>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<int32>::.ctor(!0)
 ldc.i4 0x989680
@@ -357,11 +359,10 @@ ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<int32>::Method1<valuetype [mscorlib]System.DateTime>(int32, !!0)
 ldc.i4.3
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
-newobj instance void class [mscorlib]System.Tuple`2<int32,valuetype [mscorlib]System.DateTime>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<int32,valuetype [mscorlib]System.DateTime>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<int32,valuetype [mscorlib]System.DateTime>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethod<int>.Method1<str"
-+ "ing>"
+
+ldstr "TailCallLoopGenericClassAndMethod<int>.Method1<string>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<int32>::.ctor(!0)
 ldc.i4 0x989680
@@ -369,11 +370,10 @@ ldstr "abc"
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<int32>::Method1<string>(int32, !!0)
 ldc.i4.3
 ldstr "abc"
-newobj instance void class [mscorlib]System.Tuple`2<int32,string>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<int32,string>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<int32,string>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethod<DateTime>.Method"
-+ "1<byte>"
+
+ldstr "TailCallLoopGenericClassAndMethod<DateTime>.Method1<byte>"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<valuetype [mscorlib]System.DateTime>::.ctor(!0)
 ldc.i4 0x989680
@@ -381,11 +381,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<valuetype [mscorlib]System.DateTime>::Method1<uint8>(int32, !!0)
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,uint8>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,uint8>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,uint8>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethod<DateTime>.Method"
-+ "1<int>"
+
+ldstr "TailCallLoopGenericClassAndMethod<DateTime>.Method1<int>"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<valuetype [mscorlib]System.DateTime>::.ctor(!0)
 ldc.i4 0x989680
@@ -393,11 +392,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<valuetype [mscorlib]System.DateTime>::Method1<int32>(int32, !!0)
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,int32>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,int32>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,int32>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethod<DateTime>.Method"
-+ "1<DateTime>"
+
+ldstr "TailCallLoopGenericClassAndMethod<DateTime>.Method1<DateTime>"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<valuetype [mscorlib]System.DateTime>::.ctor(!0)
 ldc.i4 0x989680
@@ -405,11 +403,10 @@ ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<valuetype [mscorlib]System.DateTime>::Method1<valuetype [mscorlib]System.DateTime>(int32, !!0)
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
-newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,valuetype [mscorlib]System.DateTime>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,valuetype [mscorlib]System.DateTime>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,valuetype [mscorlib]System.DateTime>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethod<DateTime>.Method"
-+ "1<string>"
+
+ldstr "TailCallLoopGenericClassAndMethod<DateTime>.Method1<string>"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<valuetype [mscorlib]System.DateTime>::.ctor(!0)
 ldc.i4 0x989680
@@ -417,11 +414,10 @@ ldstr "abc"
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<valuetype [mscorlib]System.DateTime>::Method1<string>(int32, !!0)
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 ldstr "abc"
-newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,string>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,string>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,string>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethod<string>.Method1<"
-+ "byte>"
+
+ldstr "TailCallLoopGenericClassAndMethod<string>.Method1<byte>"
 ldstr "qq"
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<string>::.ctor(!0)
 ldc.i4 0x989680
@@ -429,11 +425,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<string>::Method1<uint8>(int32, !!0)
 ldstr "qq"
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<string,uint8>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<string,uint8>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<string,uint8>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethod<string>.Method1<"
-+ "int>"
+
+ldstr "TailCallLoopGenericClassAndMethod<string>.Method1<int>"
 ldstr "qq"
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<string>::.ctor(!0)
 ldc.i4 0x989680
@@ -441,11 +436,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<string>::Method1<int32>(int32, !!0)
 ldstr "qq"
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<string,int32>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<string,int32>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<string,int32>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethod<string>.Method1<"
-+ "DateTime>"
+
+ldstr "TailCallLoopGenericClassAndMethod<string>.Method1<DateTime>"
 ldstr "qq"
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<string>::.ctor(!0)
 ldc.i4 0x989680
@@ -453,11 +447,10 @@ ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<string>::Method1<valuetype [mscorlib]System.DateTime>(int32, !!0)
 ldstr "qq"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
-newobj instance void class [mscorlib]System.Tuple`2<string,valuetype [mscorlib]System.DateTime>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<string,valuetype [mscorlib]System.DateTime>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<string,valuetype [mscorlib]System.DateTime>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethod<string>.Method1<"
-+ "string>"
+
+ldstr "TailCallLoopGenericClassAndMethod<string>.Method1<string>"
 ldstr "qq"
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethod`1<string>::.ctor(!0)
 ldc.i4 0x989680
@@ -465,11 +458,10 @@ ldstr "abc"
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<string>::Method1<string>(int32, !!0)
 ldstr "qq"
 ldstr "abc"
-newobj instance void class [mscorlib]System.Tuple`2<string,string>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<string,string>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<string,string>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byt"
-+ "e>.Method1<byte>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<byte>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<uint8>::.ctor(!0)
 ldc.i4 0x989680
@@ -477,11 +469,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<uint8>::Method1<uint8>(int32, !!0)
 ldc.i4.3
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<uint8,uint8>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<uint8,uint8>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<uint8,uint8>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byt"
-+ "e>.Method1<int>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<int>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<uint8>::.ctor(!0)
 ldc.i4 0x989680
@@ -489,11 +480,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<uint8>::Method1<int32>(int32, !!0)
 ldc.i4.3
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<uint8,int32>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<uint8,int32>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<uint8,int32>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byt"
-+ "e>.Method1<DateTime>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<DateTime>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<uint8>::.ctor(!0)
 ldc.i4 0x989680
@@ -501,11 +491,10 @@ ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<uint8>::Method1<valuetype [mscorlib]System.DateTime>(int32, !!0)
 ldc.i4.3
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
-newobj instance void class [mscorlib]System.Tuple`2<uint8,valuetype [mscorlib]System.DateTime>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<uint8,valuetype [mscorlib]System.DateTime>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<uint8,valuetype [mscorlib]System.DateTime>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byt"
-+ "e>.Method1<string>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<string>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<uint8>::.ctor(!0)
 ldc.i4 0x989680
@@ -513,11 +502,10 @@ ldstr "abc"
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<uint8>::Method1<string>(int32, !!0)
 ldc.i4.3
 ldstr "abc"
-newobj instance void class [mscorlib]System.Tuple`2<uint8,string>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<uint8,string>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<uint8,string>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int"
-+ ">.Method1<byte>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<byte>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<int32>::.ctor(!0)
 ldc.i4 0x989680
@@ -525,11 +513,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<int32>::Method1<uint8>(int32, !!0)
 ldc.i4.3
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<int32,uint8>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<int32,uint8>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<int32,uint8>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int"
-+ ">.Method1<int>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<int>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<int32>::.ctor(!0)
 ldc.i4 0x989680
@@ -537,11 +524,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<int32>::Method1<int32>(int32, !!0)
 ldc.i4.3
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<int32,int32>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<int32,int32>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<int32,int32>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int"
-+ ">.Method1<DateTime>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<DateTime>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<int32>::.ctor(!0)
 ldc.i4 0x989680
@@ -549,11 +535,10 @@ ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<int32>::Method1<valuetype [mscorlib]System.DateTime>(int32, !!0)
 ldc.i4.3
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
-newobj instance void class [mscorlib]System.Tuple`2<int32,valuetype [mscorlib]System.DateTime>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<int32,valuetype [mscorlib]System.DateTime>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<int32,valuetype [mscorlib]System.DateTime>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int"
-+ ">.Method1<string>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<string>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<int32>::.ctor(!0)
 ldc.i4 0x989680
@@ -561,11 +546,10 @@ ldstr "abc"
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<int32>::Method1<string>(int32, !!0)
 ldc.i4.3
 ldstr "abc"
-newobj instance void class [mscorlib]System.Tuple`2<int32,string>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<int32,string>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<int32,string>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<Dat"
-+ "eTime>.Method1<byte>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<byte>"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<valuetype [mscorlib]System.DateTime>::.ctor(!0)
 ldc.i4 0x989680
@@ -573,11 +557,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<valuetype [mscorlib]System.DateTime>::Method1<uint8>(int32, !!0)
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,uint8>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,uint8>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,uint8>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<Dat"
-+ "eTime>.Method1<int>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<int>"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<valuetype [mscorlib]System.DateTime>::.ctor(!0)
 ldc.i4 0x989680
@@ -585,11 +568,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<valuetype [mscorlib]System.DateTime>::Method1<int32>(int32, !!0)
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,int32>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,int32>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,int32>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<Dat"
-+ "eTime>.Method1<DateTime>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<DateTime>"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<valuetype [mscorlib]System.DateTime>::.ctor(!0)
 ldc.i4 0x989680
@@ -597,11 +579,10 @@ ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<valuetype [mscorlib]System.DateTime>::Method1<valuetype [mscorlib]System.DateTime>(int32, !!0)
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
-newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,valuetype [mscorlib]System.DateTime>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,valuetype [mscorlib]System.DateTime>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,valuetype [mscorlib]System.DateTime>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<Dat"
-+ "eTime>.Method1<string>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<string>"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<valuetype [mscorlib]System.DateTime>::.ctor(!0)
 ldc.i4 0x989680
@@ -609,11 +590,10 @@ ldstr "abc"
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<valuetype [mscorlib]System.DateTime>::Method1<string>(int32, !!0)
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 ldstr "abc"
-newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,string>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,string>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,string>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<str"
-+ "ing>.Method1<byte>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<string>.Method1<byte>"
 ldstr "qq"
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<string>::.ctor(!0)
 ldc.i4 0x989680
@@ -621,11 +601,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<string>::Method1<uint8>(int32, !!0)
 ldstr "qq"
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<string,uint8>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<string,uint8>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<string,uint8>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<str"
-+ "ing>.Method1<int>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<string>.Method1<int>"
 ldstr "qq"
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<string>::.ctor(!0)
 ldc.i4 0x989680
@@ -633,11 +612,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<string>::Method1<int32>(int32, !!0)
 ldstr "qq"
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<string,int32>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<string,int32>::.ctor(!0, !1)
+
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<string,int32>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<str"
-+ "ing>.Method1<DateTime>"
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<string>.Method1<DateTime>"
 ldstr "qq"
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<string>::.ctor(!0)
 ldc.i4 0x989680
@@ -645,11 +623,10 @@ ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<string>::Method1<valuetype [mscorlib]System.DateTime>(int32, !!0)
 ldstr "qq"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
-newobj instance void class [mscorlib]System.Tuple`2<string,valuetype [mscorlib]System.DateTime>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<string,valuetype [mscorlib]System.DateTime>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<string,valuetype [mscorlib]System.DateTime>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<Dat"
-+ "stringeTime>.Method1<string>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<DatstringeTime>.Method1<string>"
 ldstr "qq"
 newobj instance void class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<string>::.ctor(!0)
 ldc.i4 0x989680
@@ -657,11 +634,10 @@ ldstr "abc"
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<string>::Method1<string>(int32, !!0)
 ldstr "qq"
 ldstr "abc"
-newobj instance void class [mscorlib]System.Tuple`2<string,string>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<string,string>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<string,string>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byt"
-+ "e>.Method1<byte>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<byte>"
 ldc.i4.3
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<uint8>(!!0)
 ldc.i4 0x989680
@@ -669,11 +645,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<uint8>::Method1<uint8>(int32, !!0)
 ldc.i4.3
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<uint8,uint8>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<uint8,uint8>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<uint8,uint8>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byt"
-+ "e>.Method1<int>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<int>"
 ldc.i4.3
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<uint8>(!!0)
 ldc.i4 0x989680
@@ -681,11 +656,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<uint8>::Method1<int32>(int32, !!0)
 ldc.i4.3
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<uint8,int32>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<uint8,int32>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<uint8,int32>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byt"
-+ "e>.Method1<DateTime>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<DateTime>"
 ldc.i4.3
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<uint8>(!!0)
 ldc.i4 0x989680
@@ -693,11 +667,10 @@ ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<uint8>::Method1<valuetype [mscorlib]System.DateTime>(int32, !!0)
 ldc.i4.3
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
-newobj instance void class [mscorlib]System.Tuple`2<uint8,valuetype [mscorlib]System.DateTime>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<uint8,valuetype [mscorlib]System.DateTime>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<uint8,valuetype [mscorlib]System.DateTime>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byt"
-+ "e>.Method1<string>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<byte>.Method1<string>"
 ldc.i4.3
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<uint8>(!!0)
 ldc.i4 0x989680
@@ -705,11 +678,10 @@ ldstr "abc"
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<uint8>::Method1<string>(int32, !!0)
 ldc.i4.3
 ldstr "abc"
-newobj instance void class [mscorlib]System.Tuple`2<uint8,string>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<uint8,string>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<uint8,string>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int"
-+ ">.Method1<byte>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<byte>"
 ldc.i4.3
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<int32>(!!0)
 ldc.i4 0x989680
@@ -717,11 +689,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<int32>::Method1<uint8>(int32, !!0)
 ldc.i4.3
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<int32,uint8>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<int32,uint8>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<int32,uint8>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int"
-+ ">.Method1<int>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<int>"
 ldc.i4.3
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<int32>(!!0)
 ldc.i4 0x989680
@@ -729,11 +700,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<int32>::Method1<int32>(int32, !!0)
 ldc.i4.3
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<int32,int32>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<int32,int32>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<int32,int32>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int"
-+ ">.Method1<DateTime>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<DateTime>"
 ldc.i4.3
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<int32>(!!0)
 ldc.i4 0x989680
@@ -741,11 +711,10 @@ ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<int32>::Method1<valuetype [mscorlib]System.DateTime>(int32, !!0)
 ldc.i4.3
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
-newobj instance void class [mscorlib]System.Tuple`2<int32,valuetype [mscorlib]System.DateTime>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<int32,valuetype [mscorlib]System.DateTime>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<int32,valuetype [mscorlib]System.DateTime>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int"
-+ ">.Method1<string>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<int>.Method1<string>"
 ldc.i4.3
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<int32>(!!0)
 ldc.i4 0x989680
@@ -753,11 +722,10 @@ ldstr "abc"
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<int32>::Method1<string>(int32, !!0)
 ldc.i4.3
 ldstr "abc"
-newobj instance void class [mscorlib]System.Tuple`2<int32,string>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<int32,string>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<int32,string>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<Dat"
-+ "eTime>.Method1<byte>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<byte>"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<valuetype [mscorlib]System.DateTime>(!!0)
 ldc.i4 0x989680
@@ -765,11 +733,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<valuetype [mscorlib]System.DateTime>::Method1<uint8>(int32, !!0)
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,uint8>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,uint8>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,uint8>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<Dat"
-+ "eTime>.Method1<int>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<int>"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<valuetype [mscorlib]System.DateTime>(!!0)
 ldc.i4 0x989680
@@ -777,11 +744,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<valuetype [mscorlib]System.DateTime>::Method1<int32>(int32, !!0)
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,int32>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,int32>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,int32>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<Dat"
-+ "eTime>.Method1<DateTime>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<DateTime>"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<valuetype [mscorlib]System.DateTime>(!!0)
 ldc.i4 0x989680
@@ -789,11 +755,10 @@ ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<valuetype [mscorlib]System.DateTime>::Method1<valuetype [mscorlib]System.DateTime>(int32, !!0)
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
-newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,valuetype [mscorlib]System.DateTime>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,valuetype [mscorlib]System.DateTime>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,valuetype [mscorlib]System.DateTime>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<Dat"
-+ "eTime>.Method1<string>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<DateTime>.Method1<string>"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<valuetype [mscorlib]System.DateTime>(!!0)
 ldc.i4 0x989680
@@ -801,11 +766,10 @@ ldstr "abc"
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<valuetype [mscorlib]System.DateTime>::Method1<string>(int32, !!0)
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MaxValue
 ldstr "abc"
-newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,string>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,string>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<valuetype [mscorlib]System.DateTime,string>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<str"
-+ "ing>.Method1<byte>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<string>.Method1<byte>"
 ldstr "qq"
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<string>(!!0)
 ldc.i4 0x989680
@@ -813,11 +777,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<string>::Method1<uint8>(int32, !!0)
 ldstr "qq"
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<string,uint8>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<string,uint8>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<string,uint8>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<str"
-+ "ing>.Method1<int>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<string>.Method1<int>"
 ldstr "qq"
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<string>(!!0)
 ldc.i4 0x989680
@@ -825,11 +788,10 @@ ldc.i4.4
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<string>::Method1<int32>(int32, !!0)
 ldstr "qq"
 ldc.i4.4
-newobj instance void class [mscorlib]System.Tuple`2<string,int32>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<string,int32>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<string,int32>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<str"
-+ "ing>.Method1<DateTime>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<string>.Method1<DateTime>"
 ldstr "qq"
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<string>(!!0)
 ldc.i4 0x989680
@@ -837,11 +799,10 @@ ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<string>::Method1<valuetype [mscorlib]System.DateTime>(int32, !!0)
 ldstr "qq"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
-newobj instance void class [mscorlib]System.Tuple`2<string,valuetype [mscorlib]System.DateTime>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<string,valuetype [mscorlib]System.DateTime>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<string,valuetype [mscorlib]System.DateTime>>(string, !!0, !!0)
-ldstr "TailCallLoopGenericClassAndMethodAbstractClass<Dat"
-+ "stringeTime>.Method1<string>"
+
+ldstr "TailCallLoopGenericClassAndMethodAbstractClass<DatstringeTime>.Method1<string>"
 ldstr "qq"
 call class Fsharp/InterfaceTailCallLoopGenericInterface`1<!!0> Fsharp::create<string>(!!0)
 ldc.i4 0x989680
@@ -849,35 +810,40 @@ ldstr "abc"
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<string>::Method1<string>(int32, !!0)
 ldstr "qq"
 ldstr "abc"
-newobj instance void class [mscorlib]System.Tuple`2<string,string>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<string,string>::.ctor(!0, !1)
 call void Fsharp::RunTest<class [mscorlib]System.Tuple`2<string,string>>(string, !!0, !!0)
+
 ldstr "TailCallLoopGenericClass<int>"
 ldc.i4.3
 newobj instance void class Fsharp/TailCallLoopGenericClass`1<int32>::.ctor(!0)
 callvirt instance !0 class Fsharp/TailCallLoopGenericClass`1<int32>::get_Result()
 ldc.i4.3
 call void Fsharp::RunTest<int32>(string, !!0, !!0)
+
 ldstr "TailCallLoopGenericClass<DateTime>"
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 newobj instance void class Fsharp/TailCallLoopGenericClass`1<valuetype [mscorlib]System.DateTime>::.ctor(!0)
 callvirt instance !0 class Fsharp/TailCallLoopGenericClass`1<valuetype [mscorlib]System.DateTime>::get_Result()
 ldsfld valuetype [mscorlib]System.DateTime [mscorlib]System.DateTime::MinValue
 call void Fsharp::RunTest<valuetype [mscorlib]System.DateTime>(string, !!0, !!0)
+
 ldstr "TailCallLoopGenericClass<string>"
 ldstr "abc"
 newobj instance void class Fsharp/TailCallLoopGenericClass`1<string>::.ctor(!0)
 callvirt instance !0 class Fsharp/TailCallLoopGenericClass`1<string>::get_Result()
 ldstr "abc"
 call void Fsharp::RunTest<string>(string, !!0, !!0)
+
 ldstr "StaticTailCallLoop<int>"
 call int32 class Fsharp/StaticTailCallLoop`1<int32>::get_Result()
 ldc.i4.8
 call void Fsharp::RunTest<int32>(string, !!0, !!0)
+
 ldstr "StaticTailCallLoop<DateTime>"
 call int32 class Fsharp/StaticTailCallLoop`1<valuetype [mscorlib]System.DateTime>::get_Result()
 ldc.i4.s 16
 call void Fsharp::RunTest<int32>(string, !!0, !!0)
+
 ldstr "Seq.filter-length1"
 newobj instance void Fsharp/clo@223::.ctor()
 ldc.i4.1
@@ -888,6 +854,7 @@ call class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> Microsoft.FSh
 call int32 Microsoft.FSharp.Collections.SeqModule::Length<int32>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
 ldc.i4 0xf423f
 call void Fsharp::RunTest<int32>(string, !!0, !!0)
+
 ldstr "Seq.filter-length2"
 newobj instance void Fsharp/'clo@224-1'::.ctor()
 ldc.i4.1
@@ -898,6 +865,7 @@ call class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> Microsoft.FSh
 call int32 Microsoft.FSharp.Collections.SeqModule::Length<int32>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
 ldc.i4.1
 call void Fsharp::RunTest<int32>(string, !!0, !!0)
+
 ldstr "Seq.filter-length3"
 newobj instance void Fsharp/'clo@225-2'::.ctor()
 ldc.i4.1
@@ -908,6 +876,7 @@ call class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0> Microsoft.FSh
 call int32 Microsoft.FSharp.Collections.SeqModule::Length<int32>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
 ldc.i4 0x7a120
 call void Fsharp::RunTest<int32>(string, !!0, !!0)
+
 ldc.i4.0
 call !!0 Microsoft.FSharp.Core.Operators::Exit<class Microsoft.FSharp.Core.Unit>(int32)
 pop
@@ -1046,7 +1015,6 @@ int32) = ( 01 00 49 54 68 69 73 20 76 61 6C 75 65 20 69 73
 .custom instance void [mscorlib]System.Diagnostics.DebuggerBrowsableAttribute::.ctor(valuetype [mscorlib]System.Diagnostics.DebuggerBrowsableState) = ( 01 00 00 00 00 00 00 00 )
 .method private specialname rtspecialname static void .cctor() cil managed
 {
-.maxstack 1
 ldstr "addressOpNotFirstClass"
 stsfld string '<StartupCode$FSharp-Core>'.'$Prim-types'::AddressOpNotFirstClassString@656
 ldstr "noNegateMinValue"
@@ -1179,8 +1147,7 @@ IL_0007:
 ldarg.0
 ldfld !0 class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<!T1>::resultA
 ldarg.2
-newobj instance void class [mscorlib]System.Tuple`2<!T1,!!T2>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<!T1,!!T2>::.ctor(!0, !1)
 ret
 IL_0014:
 ldarg.0
@@ -1362,7 +1329,6 @@ ret
 .method assembly hidebysig instance int32 f(int32 x) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 2
 .locals init (class Fsharp/TailCallLoop`1<!T1> V_0, int32 V_1)
 IL_0000:
 ldarg.1
@@ -1487,8 +1453,7 @@ IL_0007:
 ldarg.0
 ldfld !0 class Fsharp/TailCallLoopGenericClassAndMethod`1<!T1>::resultA
 ldarg.2
-newobj instance void class [mscorlib]System.Tuple`2<!T1,!!T2>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<!T1,!!T2>::.ctor(!0, !1)
 ret
 IL_0014:
 ldarg.0
@@ -1511,8 +1476,7 @@ IL_0007:
 ldarg.0
 ldfld !0 class Fsharp/TailCallLoopGenericClassAndMethod`1<!T1>::resultA
 ldarg.2
-newobj instance void class [mscorlib]System.Tuple`2<!T1,!!T2>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<!T1,!!T2>::.ctor(!0, !1)
 ret
 IL_0014:
 ldarg.0
@@ -1553,8 +1517,7 @@ IL_0007:
 ldarg.0
 ldfld !0 class Fsharp/TailCallLoopGenericClassAndMethodAbstractClass`1<!T1>::resultA
 ldarg.2
-newobj instance void class [mscorlib]System.Tuple`2<!T1,!!T2>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<!T1,!!T2>::.ctor(!0, !1)
 ret
 IL_0014:
 ldarg.0
@@ -1586,8 +1549,7 @@ ret
 }
 .method private hidebysig newslot virtual instance class [mscorlib]System.Tuple`2<!T1,!!T2> 'Fsharp-InterfaceTailCallLoopGenericInterface`1-Method1'<T2>(int32 x, !!T2 resultB) cil managed
 {
-.override method instance class [mscorlib]System.Tuple`2<!0,!!T2> class Fsharp/InterfaceTailCallLoopGenericInterface`1<!T1>::Method1<[1]>(int32,
-!!T2)
+.override method instance class [mscorlib]System.Tuple`2<!0,!!T2> class Fsharp/InterfaceTailCallLoopGenericInterface`1<!T1>::Method1<[1]>(int32, !!T2)
 ldarg.1
 brtrue.s IL_0005
 br.s IL_0007
@@ -1597,8 +1559,7 @@ IL_0007:
 ldarg.0
 ldfld !0 class Fsharp/TailCallLoopImplementGenericInterface`1<!T1>::resultA
 ldarg.2
-newobj instance void class [mscorlib]System.Tuple`2<!T1,!!T2>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<!T1,!!T2>::.ctor(!0, !1)
 ret
 IL_0014:
 ldarg.0
@@ -1612,8 +1573,7 @@ ret
 }
 .method private hidebysig newslot virtual instance class [mscorlib]System.Tuple`2<!T1,!!T2> 'Fsharp-InterfaceTailCallLoopGenericInterface`1-Method2'<T2>(int32 x, !!T2 resultB) cil managed
 {
-.override method instance class [mscorlib]System.Tuple`2<!0,!!T2> class Fsharp/InterfaceTailCallLoopGenericInterface`1<!T1>::Method2<[1]>(int32,
-!!T2)
+.override method instance class [mscorlib]System.Tuple`2<!0,!!T2> class Fsharp/InterfaceTailCallLoopGenericInterface`1<!T1>::Method2<[1]>(int32, !!T2)
 ldarg.1
 brtrue.s IL_0005
 br.s IL_0007
@@ -1623,8 +1583,7 @@ IL_0007:
 ldarg.0
 ldfld !0 class Fsharp/TailCallLoopImplementGenericInterface`1<!T1>::resultA
 ldarg.2
-newobj instance void class [mscorlib]System.Tuple`2<!T1,!!T2>::.ctor(!0,
-!1)
+newobj instance void class [mscorlib]System.Tuple`2<!T1,!!T2>::.ctor(!0, !1)
 ret
 IL_0014:
 ldarg.0
@@ -1671,7 +1630,6 @@ br.s IL_0000
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 03 00 00 00 01 00 00 00 01 00 00 00 01 00
 00 00 00 00 )
-.maxstack 2
 .locals init (!!a V_0, !!a V_1)
 ldarg.1
 stloc.0
@@ -1705,7 +1663,6 @@ ret
 .method public static int32 simpleTail2(int32 acc, int32 _arg1) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 01 00 00 00 00 00 )
-.maxstack 3
 .locals init (int32 V_0, int32 V_1)
 IL_0000:
 ldarg.1
@@ -1732,7 +1689,6 @@ br.s IL_0000
 }
 .method public static bool mutualTail1IsOdd(int32 x) cil managed
 {
-.maxstack 2
 .locals init (int32 V_0, int32 V_1)
 ldarg.0
 stloc.0
@@ -1757,7 +1713,6 @@ ret
 }
 .method public static bool mutualTail1IsEven(int32 x) cil managed
 {
-.maxstack 2
 .locals init (int32 V_0, int32 V_1)
 ldarg.0
 stloc.0
@@ -1820,8 +1775,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(bool x, bool y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<bool>::Equals(!0,
-!0)
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<bool>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -1843,8 +1797,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(uint8 x, uint8 y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<uint8>::Compare(!0,
-!0)
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<uint8>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 bge.un.s IL_0007
@@ -1873,15 +1826,12 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(uint8 obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint8>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(uint8 x, uint8 y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint8>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint8>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -1895,7 +1845,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<char>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -1904,9 +1853,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(char x, char y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<char>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<char>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 bge.un.s IL_0007
@@ -1926,7 +1873,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<char>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -1936,7 +1882,6 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(char obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<char>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 ldc.i4.s 16
 shl
@@ -1946,9 +1891,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(char x, char y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<char>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<char>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -1962,7 +1905,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<valuetype [msc
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -1971,9 +1913,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(valuetype [mscorlib]System.Decimal x, valuetype [mscorlib]System.Decimal y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<valuetype [mscorlib]System.Decimal>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<valuetype [mscorlib]System.Decimal>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 call int32 [mscorlib]System.Decimal::Compare(valuetype [mscorlib]System.Decimal, valuetype [mscorlib]System.Decimal)
@@ -1987,7 +1927,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<valuet
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -1997,7 +1936,6 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(valuetype [mscorlib]System.Decimal obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<valuetype [mscorlib]System.Decimal>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 tail.
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericHashIntrinsic<valuetype [mscorlib]System.Decimal>(!!0)
@@ -2005,9 +1943,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(valuetype [mscorlib]System.Decimal x, valuetype [mscorlib]System.Decimal y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<valuetype [mscorlib]System.Decimal>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<valuetype [mscorlib]System.Decimal>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 call bool [mscorlib]System.Decimal::op_Equality(valuetype [mscorlib]System.Decimal, valuetype [mscorlib]System.Decimal)
@@ -2021,7 +1957,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<float32>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -2030,9 +1965,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(float32 x, float32 y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<float32>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<float32>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 clt
@@ -2074,7 +2007,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<float3
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -2084,7 +2016,6 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(float32 obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<float32>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 tail.
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericHashIntrinsic<float32>(!!0)
@@ -2092,9 +2023,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(float32 x, float32 y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<float32>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<float32>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -2108,7 +2037,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<float64>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -2117,9 +2045,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(float64 x, float64 y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<float64>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<float64>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 clt
@@ -2161,7 +2087,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<float6
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -2171,7 +2096,6 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(float64 obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<float64>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 tail.
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericHashIntrinsic<float64>(!!0)
@@ -2179,9 +2103,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(float64 x, float64 y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<float64>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<float64>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -2199,7 +2121,6 @@ implements [mscorlib]System.Collections.IEqualityComparer
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -2209,7 +2130,6 @@ ret
 .method private hidebysig newslot virtual final instance bool 'System-Collections-IEqualityComparer-Equals'(object x, object y) cil managed
 {
 .override [mscorlib]System.Collections.IEqualityComparer::Equals
-.maxstack 8
 ldc.i4.1
 ldarg.0
 ldarg.1
@@ -2221,7 +2141,6 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-IEqualityComparer-GetHashCode'(object obj) cil managed
 {
 .override [mscorlib]System.Collections.IEqualityComparer::GetHashCode
-.maxstack 8
 ldstr "notUsedForHashing"
 newobj instance void [mscorlib]System.InvalidOperationException::.ctor(string)
 throw
@@ -2234,7 +2153,6 @@ implements [mscorlib]System.Collections.IEqualityComparer
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -2244,7 +2162,6 @@ ret
 .method private hidebysig newslot virtual final instance bool 'System-Collections-IEqualityComparer-Equals'(object x, object y) cil managed
 {
 .override [mscorlib]System.Collections.IEqualityComparer::Equals
-.maxstack 8
 ldc.i4.0
 ldarg.0
 ldarg.1
@@ -2256,7 +2173,6 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-IEqualityComparer-GetHashCode'(object obj) cil managed
 {
 .override [mscorlib]System.Collections.IEqualityComparer::GetHashCode
-.maxstack 8
 ldstr "notUsedForHashing"
 newobj instance void [mscorlib]System.InvalidOperationException::.ctor(string)
 throw
@@ -2270,7 +2186,6 @@ implements [mscorlib]System.Collections.IComparer
 .field assembly bool throwsOnPER
 .method public specialname rtspecialname instance void .ctor(bool throwsOnPER) cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -2283,7 +2198,6 @@ ret
 .method private hidebysig newslot virtual instance int32 'System-Collections-IComparer-Compare'(object x, object y) cil managed
 {
 .override [mscorlib]System.Collections.IComparer::Compare
-.maxstack 8
 ldarg.0
 ldarg.1
 ldarg.2
@@ -2299,7 +2213,6 @@ implements [mscorlib]System.Collections.IEqualityComparer
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 03 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -2309,7 +2222,6 @@ ret
 .method private hidebysig newslot virtual instance bool 'System-Collections-IEqualityComparer-Equals'(object x, object y) cil managed
 {
 .override [mscorlib]System.Collections.IEqualityComparer::Equals
-.maxstack 8
 ldc.i4.1
 ldarg.0
 ldarg.1
@@ -2321,7 +2233,6 @@ ret
 .method private hidebysig newslot virtual instance int32 'System-Collections-IEqualityComparer-GetHashCode'(object x) cil managed
 {
 .override [mscorlib]System.Collections.IEqualityComparer::GetHashCode
-.maxstack 8
 ldarg.0
 ldarg.1
 tail.
@@ -2336,7 +2247,6 @@ implements [mscorlib]System.Collections.IEqualityComparer
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 03 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -2346,7 +2256,6 @@ ret
 .method private hidebysig newslot virtual instance bool 'System-Collections-IEqualityComparer-Equals'(object x, object y) cil managed
 {
 .override [mscorlib]System.Collections.IEqualityComparer::Equals
-.maxstack 8
 ldc.i4.0
 ldarg.0
 ldarg.1
@@ -2358,7 +2267,6 @@ ret
 .method private hidebysig newslot virtual instance int32 'System-Collections-IEqualityComparer-GetHashCode'(object x) cil managed
 {
 .override [mscorlib]System.Collections.IEqualityComparer::GetHashCode
-.maxstack 8
 ldarg.0
 ldarg.1
 tail.
@@ -2368,19 +2276,16 @@ ret
 }
 .method assembly specialname static class Microsoft.FSharp.Core.LanguagePrimitives/HashCompare/GenericComparer get_fsComparerER() cil managed
 {
-.maxstack 8
 ldsfld class Microsoft.FSharp.Core.LanguagePrimitives/HashCompare/GenericComparer '<StartupCode$FSharp-Core>'.'$Prim-types'::fsComparerER@1182
 ret
 }
 .method assembly specialname static class Microsoft.FSharp.Core.LanguagePrimitives/HashCompare/UnlimitedHasherPER get_fsEqualityComparerUnlimitedHashingPER() cil managed
 {
-.maxstack 8
 ldsfld class Microsoft.FSharp.Core.LanguagePrimitives/HashCompare/UnlimitedHasherPER '<StartupCode$FSharp-Core>'.'$Prim-types'::fsEqualityComparerUnlimitedHashingPER@1810
 ret
 }
 .method assembly specialname static class Microsoft.FSharp.Core.LanguagePrimitives/HashCompare/UnlimitedHasherER get_fsEqualityComparerUnlimitedHashingER() cil managed
 {
-.maxstack 8
 ldsfld class Microsoft.FSharp.Core.LanguagePrimitives/HashCompare/UnlimitedHasherER '<StartupCode$FSharp-Core>'.'$Prim-types'::fsEqualityComparerUnlimitedHashingER@1807
 ret
 }
@@ -2396,7 +2301,6 @@ int32) = ( 01 00 66 54 68 69 73 20 66 75 6E 63 74 69 6F 6E
 6F 75 6C 64 20 6E 6F 74 20 62 65 20 75 73 65 64
 20 64 69 72 65 63 74 6C 79 B4 04 00 00 01 00 54
 02 08 49 73 48 69 64 64 65 6E 01 )
-.maxstack 8
 ldc.i4.0
 call class [mscorlib]System.Collections.IEqualityComparer Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::get_fsEqualityComparerNoHashingPER()
 ldarg.0
@@ -2418,7 +2322,6 @@ int32) = ( 01 00 66 54 68 69 73 20 66 75 6E 63 74 69 6F 6E
 6F 75 6C 64 20 6E 6F 74 20 62 65 20 75 73 65 64
 20 64 69 72 65 63 74 6C 79 B4 04 00 00 01 00 54
 02 08 49 73 48 69 64 64 65 6E 01 )
-.maxstack 8
 call class Microsoft.FSharp.Core.LanguagePrimitives/HashCompare/UnlimitedHasherPER Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::get_fsEqualityComparerUnlimitedHashingPER()
 ldarg.0
 box !!T
@@ -2428,7 +2331,6 @@ ret
 }
 .method assembly static !!a FailGenericComparison<a>(object obj) cil managed
 {
-.maxstack 2
 .locals init (string V_0)
 ldarg.0
 callvirt instance class [mscorlib]System.Type [mscorlib]System.Object::GetType()
@@ -2442,14 +2344,12 @@ throw
 }
 .method assembly specialname static class [mscorlib]System.Exception get_NaNException() cil managed
 {
-.maxstack 8
 ldsfld class [mscorlib]System.Exception '<StartupCode$FSharp-Core>'.'$Prim-types'::NaNException@951
 ret
 }
 .method assembly static int32 GenericCompare$cont@965(class Microsoft.FSharp.Core.LanguagePrimitives/HashCompare/GenericComparer comp, object yobj, object xobj, class [mscorlib]System.Array arr1, class Microsoft.FSharp.Core.Unit unitVar) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 3
 .locals init (object[] V_0, object[] V_1, object[] V_2, object[] V_3, uint8[] V_4, uint8[] V_5, uint8[] V_6, uint8[] V_7, class [mscorlib]System.Array V_8, class [mscorlib]System.Array V_9)
 ldarg.3
 isinst object[]
@@ -2556,7 +2456,6 @@ br IL_005f
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 03 00 00 00 01 00 00 00 01 00 00 00 01 00
 00 00 00 00 )
-.maxstack 4
 .locals init (int32 V_0, int32 V_1, int32 V_2, int32 V_3, int32 V_4, int32 V_5)
 ldarg.1
 ldlen
@@ -2619,7 +2518,6 @@ ret
 .method assembly static int32 GenericComparisonByteArray(uint8[] x, uint8[] y) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 01 00 00 00 00 00 )
-.maxstack 2
 .locals init (int32 V_0, int32 V_1, int32 V_2, int32 V_3, int32 V_4, int32 V_5, uint8 V_6, uint8 V_7)
 ldarg.0
 ldlen
@@ -2989,7 +2887,6 @@ ret
 .method assembly static int32 GenericCompare(class Microsoft.FSharp.Core.LanguagePrimitives/HashCompare/GenericComparer comp, object xobj, object yobj) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 02 00 00 00 00 00 )
-.maxstack 5
 .locals init (string V_0, string V_1, string V_2, string V_3, class [mscorlib]System.Array V_4, class [mscorlib]System.Array V_5, class [mscorlib]System.Collections.IStructuralComparable V_6, class [mscorlib]System.Collections.IStructuralComparable V_7, class [mscorlib]System.IComparable V_8, class [mscorlib]System.IComparable V_9, float32 V_10, float32 V_11, float64 V_12, float64 V_13, class [mscorlib]System.Collections.IStructuralComparable V_14, int32 V_15, class [mscorlib]System.IComparable V_16, native uint V_17, native uint V_18, native int V_19, native int V_20)
 ldarg.1
 brfalse IL_040f
@@ -3471,7 +3368,6 @@ ret
 }
 .method assembly static int32 check@1081(class Microsoft.FSharp.Core.LanguagePrimitives/HashCompare/GenericComparer comp, class [mscorlib]System.Array x, class [mscorlib]System.Array y, int64 lenx, int64 basex, int64 basey, int64 i) cil managed
 {
-.maxstack 8
 .locals init (int32 V_0)
 IL_0000:
 ldarg.s i
@@ -3647,7 +3543,6 @@ br IL_0000
 }
 .method assembly static int32 precheck@1118(class [mscorlib]System.Array x, class [mscorlib]System.Array y, int32 ndims, int32 k) cil managed
 {
-.maxstack 5
 .locals init (int32 V_0, int64 V_1, int64 V_2, int32 V_3, int32 V_4, int32 V_5)
 IL_0000:
 ldarg.3
@@ -3828,7 +3723,6 @@ int32) = ( 01 00 66 54 68 69 73 20 66 75 6E 63 74 69 6F 6E
 6F 75 6C 64 20 6E 6F 74 20 62 65 20 75 73 65 64
 20 64 69 72 65 63 74 6C 79 B4 04 00 00 01 00 54
 02 08 49 73 48 69 64 64 65 6E 01 )
-.maxstack 8
 ldarg.0
 ldarg.1
 box !!T
@@ -3841,7 +3735,6 @@ ret
 .method assembly static bool GenericEqualityByteArray(uint8[] x, uint8[] y) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 01 00 00 00 00 00 )
-.maxstack 3
 .locals init (int32 V_0, int32 V_1, bool V_2, int32 V_3, bool V_4, bool V_5)
 ldarg.0
 ldlen
@@ -3896,7 +3789,6 @@ ret
 .method assembly static bool GenericEqualityInt32Array(int32[] x, int32[] y) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 01 00 00 00 00 00 )
-.maxstack 3
 .locals init (int32 V_0, int32 V_1, bool V_2, int32 V_3, bool V_4, bool V_5)
 ldarg.0
 ldlen
@@ -3950,7 +3842,6 @@ ret
 }
 .method assembly static bool f32eq@1421(bool er, float32 x, float32 y) cil managed
 {
-.maxstack 8
 ldarg.0
 brfalse.s IL_000e
 ldarg.1
@@ -3985,7 +3876,6 @@ ret
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 03 00 00 00 01 00 00 00 01 00 00 00 01 00
 00 00 00 00 )
-.maxstack 4
 .locals init (int32 V_0, int32 V_1, bool V_2, int32 V_3, bool V_4, bool V_5)
 ldarg.1
 ldlen
@@ -4040,7 +3930,6 @@ ret
 }
 .method assembly static bool feq@1438(bool er, float64 x, float64 y) cil managed
 {
-.maxstack 8
 ldarg.0
 brfalse.s IL_000e
 ldarg.1
@@ -4075,7 +3964,6 @@ ret
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 03 00 00 00 01 00 00 00 01 00 00 00 01 00
 00 00 00 00 )
-.maxstack 4
 .locals init (int32 V_0, int32 V_1, bool V_2, int32 V_3, bool V_4, bool V_5)
 ldarg.1
 ldlen
@@ -4131,7 +4019,6 @@ ret
 .method assembly static bool GenericEqualityCharArray(char[] x, char[] y) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 01 00 00 00 00 00 )
-.maxstack 3
 .locals init (int32 V_0, int32 V_1, bool V_2, int32 V_3, bool V_4, bool V_5)
 ldarg.0
 ldlen
@@ -4186,7 +4073,6 @@ ret
 .method assembly static bool GenericEqualityInt64Array(int64[] x, int64[] y) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 01 00 00 00 00 00 )
-.maxstack 3
 .locals init (int32 V_0, int32 V_1, bool V_2, int32 V_3, bool V_4, bool V_5)
 ldarg.0
 ldlen
@@ -4241,7 +4127,6 @@ ret
 .method assembly static bool GenericEqualityObj$cont@1498(bool er, class [mscorlib]System.Collections.IEqualityComparer iec, object yobj, object xobj, class [mscorlib]System.Array arr1, class Microsoft.FSharp.Core.Unit unitVar) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 4
 .locals init (object[] V_0, object[] V_1, object[] V_2, object[] V_3, uint8[] V_4, uint8[] V_5, uint8[] V_6, uint8[] V_7, int32[] V_8, int32[] V_9, int32[] V_10, int32[] V_11, int64[] V_12, int64[] V_13, int64[] V_14, int64[] V_15, char[] V_16, char[] V_17, char[] V_18, char[] V_19, float32[] V_20, float32[] V_21, float32[] V_22, float32[] V_23, float64[] V_24, float64[] V_25, float64[] V_26, float64[] V_27, class [mscorlib]System.Array V_28, class [mscorlib]System.Array V_29)
 ldarg.s arr1
 isinst object[]
@@ -7474,7 +7359,6 @@ br IL_014a
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 04 00 00 00 01 00 00 00 01 00 00 00 01 00
 00 00 01 00 00 00 00 00 )
-.maxstack 5
 .locals init (int32 V_0, int32 V_1, bool V_2, int32 V_3, bool V_4, bool V_5)
 ldarg.2
 ldlen
@@ -7764,7 +7648,6 @@ ret
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 03 00 00 00 01 00 00 00 01 00 00 00 02 00
 00 00 00 00 )
-.maxstack 6
 .locals init (string V_0, string V_1, string V_2, string V_3, class [mscorlib]System.Array V_4, class [mscorlib]System.Array V_5, class [mscorlib]System.Collections.IStructuralEquatable V_6, class [mscorlib]System.Collections.IStructuralEquatable V_7, float32 V_8, float32 V_9, float64 V_10, float64 V_11)
 ldarg.2
 brfalse IL_01e7
@@ -8195,7 +8078,6 @@ ret
 }
 .method assembly static bool 'precheck@1613-1'(class [mscorlib]System.Array x, class [mscorlib]System.Array y, int32 ndims, int32 k) cil managed
 {
-.maxstack 5
 IL_0001:
 ldarg.3
 ldarg.2
@@ -8340,13 +8222,11 @@ ret
 }
 .method assembly specialname static class [mscorlib]System.Collections.IEqualityComparer get_fsEqualityComparerNoHashingPER() cil managed
 {
-.maxstack 8
 ldsfld class [mscorlib]System.Collections.IEqualityComparer '<StartupCode$FSharp-Core>'.'$Prim-types'::fsEqualityComparerNoHashingPER@1654
 ret
 }
 .method assembly specialname static class [mscorlib]System.Collections.IEqualityComparer get_fsEqualityComparerNoHashingER() cil managed
 {
-.maxstack 8
 ldsfld class [mscorlib]System.Collections.IEqualityComparer '<StartupCode$FSharp-Core>'.'$Prim-types'::fsEqualityComparerNoHashingER@1661
 ret
 }
@@ -8362,7 +8242,6 @@ int32) = ( 01 00 66 54 68 69 73 20 66 75 6E 63 74 69 6F 6E
 6F 75 6C 64 20 6E 6F 74 20 62 65 20 75 73 65 64
 20 64 69 72 65 63 74 6C 79 B4 04 00 00 01 00 54
 02 08 49 73 48 69 64 64 65 6E 01 )
-.maxstack 8
 ldc.i4.1
 call class [mscorlib]System.Collections.IEqualityComparer Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::get_fsEqualityComparerNoHashingER()
 ldarg.0
@@ -8386,7 +8265,6 @@ int32) = ( 01 00 66 54 68 69 73 20 66 75 6E 63 74 69 6F 6E
 02 08 49 73 48 69 64 64 65 6E 01 )
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 03 00 00 00 01 00 00 00 01 00 00 00 01 00
 00 00 00 00 )
-.maxstack 8
 ldarg.0
 ldarg.1
 box !!T
@@ -8399,7 +8277,6 @@ ret
 .method assembly static int32 GenericHashObjArray(class [mscorlib]System.Collections.IEqualityComparer iec, object[] x) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 01 00 00 00 00 00 )
-.maxstack 4
 .locals init (int32 V_0, int32 V_1, int32 V_2, int32 V_3, int32 V_4)
 ldarg.1
 ldlen
@@ -8452,7 +8329,6 @@ ret
 }
 .method assembly static int32 GenericHashByteArray(uint8[] x) cil managed
 {
-.maxstack 3
 .locals init (int32 V_0, int32 V_1, int32 V_2, int32 V_3, int32 V_4)
 ldarg.0
 ldlen
@@ -8503,7 +8379,6 @@ ret
 }
 .method assembly static int32 GenericHashInt32Array(int32[] x) cil managed
 {
-.maxstack 3
 .locals init (int32 V_0, int32 V_1, int32 V_2, int32 V_3, int32 V_4)
 ldarg.0
 ldlen
@@ -8554,7 +8429,6 @@ ret
 }
 .method assembly static int32 GenericHashInt64Array(int64[] x) cil managed
 {
-.maxstack 3
 .locals init (int32 V_0, int32 V_1, int32 V_2, int32 V_3, int32 V_4)
 ldarg.0
 ldlen
@@ -8607,7 +8481,6 @@ ret
 .method assembly static int32 GenericHashArbArray(class [mscorlib]System.Collections.IEqualityComparer iec, class [mscorlib]System.Array x) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 01 00 00 00 00 00 )
-.maxstack 4
 .locals init (int32 V_0, int32 V_1, int32 V_2, int32 V_3, int32 V_4, int32 V_5)
 ldarg.1
 callvirt instance int32 [mscorlib]System.Array::get_Rank()
@@ -8691,7 +8564,6 @@ ret
 .method assembly static int32 GenericHashParamObj(class [mscorlib]System.Collections.IEqualityComparer iec, object x) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 01 00 00 00 00 00 )
-.maxstack 2
 .locals init (class [mscorlib]System.Array V_0, class [mscorlib]System.Array V_1, object[] V_2, object[] V_3, uint8[] V_4, uint8[] V_5, int32[] V_6, int32[] V_7, int64[] V_8, int64[] V_9, class [mscorlib]System.Collections.IStructuralEquatable V_10, class [mscorlib]System.Collections.IStructuralEquatable V_11)
 ldarg.1
 brfalse IL_009b
@@ -8817,7 +8689,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<int16>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -8826,9 +8697,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(int16 x, int16 y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<int16>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<int16>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 bge.s IL_0007
@@ -8848,7 +8717,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int16>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -8858,7 +8726,6 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(int16 obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int16>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 conv.u2
 ldarg.1
@@ -8869,9 +8736,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(int16 x, int16 y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int16>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int16>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -8885,7 +8750,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<int32>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -8894,9 +8758,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(int32 x, int32 y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<int32>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<int32>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 bge.s IL_0007
@@ -8916,7 +8778,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int32>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -8926,15 +8787,12 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(int32 obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int32>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(int32 x, int32 y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int32>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int32>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -8948,7 +8806,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<int64>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -8957,9 +8814,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(int64 x, int64 y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<int64>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<int64>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 bge.s IL_0007
@@ -8979,7 +8834,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int64>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -8989,7 +8843,6 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(int64 obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int64>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 conv.i4
 ldarg.1
@@ -9001,9 +8854,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(int64 x, int64 y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int64>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int64>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -9017,7 +8868,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<native int>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9026,9 +8876,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(native int x, native int y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<native int>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<native int>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 bge.s IL_0007
@@ -9048,7 +8896,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<native
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9058,7 +8905,6 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(native int obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<native int>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 conv.u8
 conv.i4
@@ -9066,9 +8912,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(native int x, native int y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<native int>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<native int>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -9086,7 +8930,6 @@ extends [mscorlib]System.Object
 .field static assembly int32 info
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9095,7 +8938,6 @@ ret
 }
 .method private specialname rtspecialname static void .cctor() cil managed
 {
-.maxstack 8
 ldtoken !T
 call class [mscorlib]System.Type [mscorlib]System.Type::GetTypeFromHandle(valuetype [mscorlib]System.RuntimeTypeHandle)
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/IntrinsicFunctions::getTypeInfo(class [mscorlib]System.Type)
@@ -9113,7 +8955,6 @@ int32) = ( 01 00 4C 54 68 69 73 20 66 75 6E 63 74 69 6F 6E
 65 20 75 73 65 64 20 64 69 72 65 63 74 6C 79 B4
 04 00 00 01 00 54 02 08 49 73 48 69 64 64 65 6E
 01 )
-.maxstack 8
 ldarg.0
 isinst !!T
 ldnull
@@ -9136,7 +8977,6 @@ ret
 }
 .method assembly static int32 getTypeInfo(class [mscorlib]System.Type ty) cil managed
 {
-.maxstack 3
 .locals init (object[] V_0, object[] V_1, object V_2, class Microsoft.FSharp.Core.CompilationRepresentationAttribute V_3)
 ldarg.0
 callvirt instance bool [mscorlib]System.Type::get_IsValueType()
@@ -9226,7 +9066,6 @@ int32) = ( 01 00 4C 54 68 69 73 20 66 75 6E 63 74 69 6F 6E
 65 20 75 73 65 64 20 64 69 72 65 63 74 6C 79 B4
 04 00 00 01 00 54 02 08 49 73 48 69 64 64 65 6E
 01 )
-.maxstack 8
 ldstr "checkStaticInit"
 newobj instance void [mscorlib]System.InvalidOperationException::.ctor(string)
 throw
@@ -9239,7 +9078,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<int8>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9248,9 +9086,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(int8 x, int8 y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<int8>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<int8>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 bge.s IL_0007
@@ -9270,7 +9106,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int8>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9280,7 +9115,6 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(int8 obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int8>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 ldc.i4.8
 shl
@@ -9290,9 +9124,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(int8 x, int8 y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int8>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<int8>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -9306,7 +9138,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<string>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9315,9 +9146,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(string x, string y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<string>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<string>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 call int32 [mscorlib]System.String::CompareOrdinal(string, string)
@@ -9331,7 +9160,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<string
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9341,7 +9169,6 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(string obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<string>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 brfalse.s IL_000b
 ldarg.1
@@ -9353,9 +9180,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(string x, string y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<string>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<string>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 call bool [mscorlib]System.String::Equals(string, string)
@@ -9369,7 +9194,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<uint16>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9378,9 +9202,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(uint16 x, uint16 y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<uint16>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<uint16>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 bge.un.s IL_0007
@@ -9400,7 +9222,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint16
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9410,15 +9231,12 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(uint16 obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint16>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(uint16 x, uint16 y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint16>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint16>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -9432,7 +9250,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<uint32>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9441,9 +9258,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(uint32 x, uint32 y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<uint32>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<uint32>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 bge.un.s IL_0007
@@ -9463,7 +9278,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint32
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9473,15 +9287,12 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(uint32 obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint32>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(uint32 x, uint32 y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint32>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint32>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -9495,7 +9306,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<uint64>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9504,9 +9314,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(uint64 x, uint64 y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<uint64>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<uint64>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 bge.un.s IL_0007
@@ -9526,7 +9334,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint64
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9536,7 +9343,6 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(uint64 obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint64>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 conv.i4
 ldarg.1
@@ -9548,9 +9354,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(uint64 x, uint64 y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint64>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<uint64>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -9564,7 +9368,6 @@ implements class [mscorlib]System.Collections.Generic.IComparer`1<native uint>
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9573,9 +9376,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IComparer`1-Compare'(native uint x, native uint y) cil managed
 {
-.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<native uint>::Compare(!0,
-!0)
-.maxstack 8
+.override method instance int32 class [mscorlib]System.Collections.Generic.IComparer`1<native uint>::Compare(!0, !0)
 ldarg.1
 ldarg.2
 bge.un.s IL_0007
@@ -9595,7 +9396,6 @@ implements class [mscorlib]System.Collections.Generic.IEqualityComparer`1<native
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 06 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9605,7 +9405,6 @@ ret
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEqualityComparer`1-GetHashCode'(native uint obj) cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<native uint>::GetHashCode(!0)
-.maxstack 8
 ldarg.1
 conv.u8
 conv.i4
@@ -9615,9 +9414,7 @@ ret
 }
 .method private hidebysig newslot virtual final instance bool 'System-Collections-Generic-IEqualityComparer`1-Equals'(native uint x, native uint y) cil managed
 {
-.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<native uint>::Equals(!0,
-!0)
-.maxstack 8
+.override method instance bool class [mscorlib]System.Collections.Generic.IEqualityComparer`1<native uint>::Equals(!0, !0)
 ldarg.1
 ldarg.2
 ceq
@@ -9626,7 +9423,6 @@ ret
 }
 .method assembly static string anyToStringShowingNull<T>(!!T x) cil managed
 {
-.maxstack 3
 .locals init (object V_0, class [mscorlib]System.IFormattable V_1, class [mscorlib]System.IFormattable V_2, object V_3)
 ldarg.0
 box !!T
@@ -9659,13 +9455,11 @@ ret
 }
 .method public specialname static class [mscorlib]System.Collections.IComparer get_GenericComparer() cil managed
 {
-.maxstack 8
 ldsfld class [mscorlib]System.Collections.IComparer '<StartupCode$FSharp-Core>'.'$Prim-types'::GenericComparer@2195
 ret
 }
 .method public specialname static class [mscorlib]System.Collections.IEqualityComparer get_GenericEqualityComparer() cil managed
 {
-.maxstack 8
 ldsfld class [mscorlib]System.Collections.IEqualityComparer '<StartupCode$FSharp-Core>'.'$Prim-types'::GenericEqualityComparer@2196
 ret
 }
@@ -9692,7 +9486,6 @@ extends [mscorlib]System.Object
 }
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -9720,7 +9513,6 @@ implements class [mscorlib]System.Collections.Generic.IEnumerator`1<!T>,
 .field public class Microsoft.FSharp.Core.FSharpRef`1<bool> started
 .method public specialname rtspecialname instance void .ctor(class Microsoft.FSharp.Core.FSharpFunc`2<!T,bool> f, class [mscorlib]System.Collections.Generic.IEnumerator`1<!T> e, class Microsoft.FSharp.Core.FSharpRef`1<bool> started) cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 stfld class Microsoft.FSharp.Core.FSharpFunc`2<!0,bool> class Microsoft.FSharp.Collections.Internal/IEnumerator/filter@182<!T>::f
@@ -9739,7 +9531,6 @@ ret
 .method private hidebysig newslot virtual final instance !T 'System-Collections-Generic-IEnumerator`1-get_Current'() cil managed
 {
 .override method instance !0 class [mscorlib]System.Collections.Generic.IEnumerator`1<!T>::get_Current()
-.maxstack 1
 .locals init (bool V_0)
 ldarg.0
 ldfld class Microsoft.FSharp.Core.FSharpRef`1<bool> class Microsoft.FSharp.Collections.Internal/IEnumerator/filter@182<!T>::started
@@ -9761,7 +9552,6 @@ ret
 .method private hidebysig newslot virtual final instance object 'System-Collections-IEnumerator-get_Current'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerator::get_Current
-.maxstack 1
 .locals init (bool V_0)
 ldarg.0
 ldfld class Microsoft.FSharp.Core.FSharpRef`1<bool> class Microsoft.FSharp.Collections.Internal/IEnumerator/filter@182<!T>::started
@@ -9783,7 +9573,6 @@ ret
 .method private hidebysig newslot virtual final instance bool 'System-Collections-IEnumerator-MoveNext'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerator::MoveNext
-.maxstack 4
 .locals init (class Microsoft.FSharp.Core.FSharpFunc`2<!T,bool> V_0, class [mscorlib]System.Collections.Generic.IEnumerator`1<!T> V_1, class Microsoft.FSharp.Core.FSharpRef`1<bool> V_2)
 ldarg.0
 ldfld class Microsoft.FSharp.Core.FSharpFunc`2<!0,bool> class Microsoft.FSharp.Collections.Internal/IEnumerator/filter@182<!T>::f
@@ -9807,7 +9596,6 @@ ret
 .method private hidebysig newslot virtual final instance void 'System-Collections-IEnumerator-Reset'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerator::Reset
-.maxstack 8
 ldstr "resetNotSupported"
 newobj instance void [mscorlib]System.NotSupportedException::.ctor(string)
 throw
@@ -9815,7 +9603,6 @@ throw
 .method private hidebysig newslot virtual final instance void 'System-IDisposable-Dispose'() cil managed
 {
 .override [mscorlib]System.IDisposable::Dispose
-.maxstack 8
 ldarg.0
 ldfld class [mscorlib]System.Collections.Generic.IEnumerator`1<!0> class Microsoft.FSharp.Collections.Internal/IEnumerator/filter@182<!T>::e
 tail.
@@ -9825,7 +9612,6 @@ ret
 }
 .method assembly static bool next@187<T>(class Microsoft.FSharp.Core.FSharpFunc`2<!!T,bool> f, class [mscorlib]System.Collections.Generic.IEnumerator`1<!!T> e, class Microsoft.FSharp.Core.FSharpRef`1<bool> started, class Microsoft.FSharp.Core.Unit unitVar0) cil managed
 {
-.maxstack 8
 IL_0000:
 ldarg.2
 ldfld !0 class Microsoft.FSharp.Core.FSharpRef`1<bool>::contents@
@@ -9863,7 +9649,6 @@ ret
 .method assembly static class [mscorlib]System.Collections.Generic.IEnumerator`1<!!T> 'filter'<T>(class Microsoft.FSharp.Core.FSharpFunc`2<!!T,bool> f, class [mscorlib]System.Collections.Generic.IEnumerator`1<!!T> e) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 01 00 00 00 00 00 )
-.maxstack 3
 .locals init (class Microsoft.FSharp.Core.FSharpRef`1<bool> V_0)
 ldc.i4.0
 newobj instance void class Microsoft.FSharp.Core.FSharpRef`1<bool>::.ctor(!0)
@@ -9892,7 +9677,6 @@ extends class Microsoft.FSharp.Core.FSharpFunc`2<class [mscorlib]System.Collecti
 {
 .custom instance void [mscorlib]System.Diagnostics.DebuggerNonUserCodeAttribute::.ctor() = ( 01 00 00 00 )
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 8
 ldarg.0
 call instance void class Microsoft.FSharp.Core.FSharpFunc`2<class [mscorlib]System.Collections.Generic.IEnumerator`1<!T>,class [mscorlib]System.Collections.Generic.IEnumerator`1<!T>>::.ctor()
 ldarg.0
@@ -9902,7 +9686,6 @@ ret
 }
 .method public strict virtual instance class [mscorlib]System.Collections.Generic.IEnumerator`1<!T> Invoke(class [mscorlib]System.Collections.Generic.IEnumerator`1<!T> e) cil managed
 {
-.maxstack 8
 ldarg.0
 ldfld class Microsoft.FSharp.Core.FSharpFunc`2<!0,bool> class Microsoft.FSharp.Collections.SeqModule/Filter@583<!T>::f
 ldarg.1
@@ -9919,7 +9702,6 @@ extends class Microsoft.FSharp.Core.FSharpFunc`2<class Microsoft.FSharp.Core.Uni
 {
 .custom instance void [mscorlib]System.Diagnostics.DebuggerNonUserCodeAttribute::.ctor() = ( 01 00 00 00 )
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 8
 ldarg.0
 call instance void class Microsoft.FSharp.Core.FSharpFunc`2<class Microsoft.FSharp.Core.Unit,class [mscorlib]System.Collections.Generic.IEnumerator`1<!b>>::.ctor()
 ldarg.0
@@ -9932,7 +9714,6 @@ ret
 }
 .method public strict virtual instance class [mscorlib]System.Collections.Generic.IEnumerator`1<!b> Invoke(class Microsoft.FSharp.Core.Unit unitVar0) cil managed
 {
-.maxstack 8
 ldarg.0
 ldfld class Microsoft.FSharp.Core.FSharpFunc`2<class [mscorlib]System.Collections.Generic.IEnumerator`1<!1>,class [mscorlib]System.Collections.Generic.IEnumerator`1<!0>> class Microsoft.FSharp.Collections.SeqModule/revamp@574<!b,!a>::f
 ldarg.0
@@ -9947,7 +9728,6 @@ ret
 {
 .custom instance void Microsoft.FSharp.Core.CompilationSourceNameAttribute::.ctor(string) = ( 01 00 06 66 69 6C 74 65 72 00 00 )
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 01 00 00 00 00 00 )
-.maxstack 8
 ldarg.1
 box class [mscorlib]System.Collections.Generic.IEnumerable`1<!!T>
 brfalse.s IL_000b
@@ -9966,7 +9746,6 @@ ret
 .method public static int32 Length<T>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!T> source) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationSourceNameAttribute::.ctor(string) = ( 01 00 06 6C 65 6E 67 74 68 00 00 )
-.maxstack 2
 .locals init (!!T[] V_0, !!T[] V_1, class Microsoft.FSharp.Collections.FSharpList`1<!!T> V_2, class Microsoft.FSharp.Collections.FSharpList`1<!!T> V_3, class [mscorlib]System.Collections.Generic.ICollection`1<!!T> V_4, class [mscorlib]System.Collections.Generic.ICollection`1<!!T> V_5, class [mscorlib]System.Collections.Generic.IEnumerator`1<!!T> V_6, int32 V_7, int32 V_8, class [mscorlib]System.IDisposable V_9)
 ldarg.0
 box class [mscorlib]System.Collections.Generic.IEnumerable`1<!!T>
@@ -10055,7 +9834,6 @@ IL_0093: ret
 .method assembly static class [mscorlib]System.Collections.Generic.IEnumerable`1<!!b> revamp<a,b>(class Microsoft.FSharp.Core.FSharpFunc`2<class [mscorlib]System.Collections.Generic.IEnumerator`1<!!a>,class [mscorlib]System.Collections.Generic.IEnumerator`1<!!b>> f, class [mscorlib]System.Collections.Generic.IEnumerable`1<!!a> ie) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 01 00 00 00 00 00 )
-.maxstack 8
 ldarg.0
 ldarg.1
 newobj instance void class Microsoft.FSharp.Collections.SeqModule/revamp@574<!!b,!!a>::.ctor(class Microsoft.FSharp.Core.FSharpFunc`2<class [mscorlib]System.Collections.Generic.IEnumerator`1<!1>,class [mscorlib]System.Collections.Generic.IEnumerator`1<!0>>,
@@ -10080,7 +9858,6 @@ implements class [mscorlib]System.Collections.Generic.IEnumerator`1<!T>,
 .field assembly bool started
 .method public specialname rtspecialname instance void .ctor(class Microsoft.FSharp.Collections.FSharpList`1<!T> s) cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -10099,7 +9876,6 @@ ret
 }
 .method assembly hidebysig instance !T GetCurrent() cil managed
 {
-.maxstack 1
 .locals init (class Microsoft.FSharp.Collections.FSharpList`1<!T> V_0)
 ldarg.0
 ldfld bool class Microsoft.FSharp.Collections.PrivateListHelpers/ListEnumerator`1<!T>::started
@@ -10123,7 +9899,6 @@ ret
 .method private hidebysig newslot specialname virtual instance !T 'System-Collections-Generic-IEnumerator`1-get_Current'() cil managed
 {
 .override method instance !0 class [mscorlib]System.Collections.Generic.IEnumerator`1<!T>::get_Current()
-.maxstack 8
 ldarg.0
 callvirt instance !0 class Microsoft.FSharp.Collections.PrivateListHelpers/ListEnumerator`1<!T>::GetCurrent()
 ret
@@ -10131,7 +9906,6 @@ ret
 .method private hidebysig newslot virtual instance bool 'System-Collections-IEnumerator-MoveNext'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerator::MoveNext
-.maxstack 2
 .locals init (class Microsoft.FSharp.Collections.FSharpList`1<!T> V_0, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_1, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_2)
 ldarg.0
 ldfld bool class Microsoft.FSharp.Collections.PrivateListHelpers/ListEnumerator`1<!T>::started
@@ -10177,7 +9951,6 @@ ret
 .method private hidebysig newslot specialname virtual instance object 'System-Collections-IEnumerator-get_Current'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerator::get_Current
-.maxstack 8
 ldarg.0
 callvirt instance !0 class Microsoft.FSharp.Collections.PrivateListHelpers/ListEnumerator`1<!T>::GetCurrent()
 box !T
@@ -10186,7 +9959,6 @@ ret
 .method private hidebysig newslot virtual instance void 'System-Collections-IEnumerator-Reset'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerator::Reset
-.maxstack 8
 ldarg.0
 ldc.i4.0
 stfld bool class Microsoft.FSharp.Collections.PrivateListHelpers/ListEnumerator`1<!T>::started
@@ -10199,20 +9971,17 @@ ret
 .method private hidebysig newslot virtual instance void 'System-IDisposable-Dispose'() cil managed
 {
 .override [mscorlib]System.IDisposable::Dispose
-.maxstack 8
 ret
 }
 }
 .method assembly static !!a notStarted<a>() cil managed
 {
-.maxstack 8
 ldstr "enumerationNotStarted"
 newobj instance void [mscorlib]System.InvalidOperationException::.ctor(string)
 throw
 }
 .method assembly static !!a alreadyFinished<a>() cil managed
 {
-.maxstack 8
 ldstr "enumerationAlreadyFinished"
 newobj instance void [mscorlib]System.InvalidOperationException::.ctor(string)
 throw
@@ -10220,7 +9989,6 @@ throw
 .method assembly static int32 lengthAcc<a>(int32 acc, class Microsoft.FSharp.Collections.FSharpList`1<!!a> xs) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 02 00 00 00 01 00 00 00 01 00 00 00 00 00 )
-.maxstack 2
 .locals init (class Microsoft.FSharp.Collections.FSharpList`1<!!a> V_0)
 IL_0000:
 ldarg.1
@@ -10279,7 +10047,6 @@ class [mscorlib]System.Collections.Generic.IEnumerable`1<!T>
 .custom instance void [mscorlib]System.Diagnostics.DebuggerNonUserCodeAttribute::.ctor() = ( 01 00 00 00 )
 .method private specialname rtspecialname static void .cctor() cil managed
 {
-.maxstack 8
 newobj instance void class Microsoft.FSharp.Collections.FSharpList`1<!T>::.ctor()
 stsfld class Microsoft.FSharp.Collections.FSharpList`1<!0> class Microsoft.FSharp.Collections.FSharpList`1<!T>::_unique_Empty
 ret
@@ -10288,7 +10055,6 @@ ret
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
 .custom instance void [mscorlib]System.Diagnostics.DebuggerNonUserCodeAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 8
 ldarg.0
 call instance void [mscorlib]System.Object::.ctor()
 ret
@@ -10296,7 +10062,6 @@ ret
 .method public hidebysig virtual final instance int32 CompareTo(class Microsoft.FSharp.Collections.FSharpList`1<!T> obj) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 3
 .locals init (int32 V_0, int32 V_1, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_2, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_3, int32 V_4, class [mscorlib]System.Collections.IComparer V_5, !T V_6, !T V_7, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_8, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_9)
 ldarg.0
 ldnull
@@ -10389,7 +10154,6 @@ ret
 .method public hidebysig virtual final instance int32 CompareTo(object obj) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 8
 ldarg.0
 ldarg.1
 unbox.any class Microsoft.FSharp.Collections.FSharpList`1<!T>
@@ -10399,7 +10163,6 @@ ret
 .method public hidebysig virtual final instance int32 CompareTo(object obj, class [mscorlib]System.Collections.IComparer comp) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 3
 .locals init (class Microsoft.FSharp.Collections.FSharpList`1<!T> V_0, int32 V_1, int32 V_2, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_3, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_4, int32 V_5, !T V_6, !T V_7, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_8, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_9)
 IL_0000:
 ldarg.1
@@ -10496,7 +10259,6 @@ ret
 .method public hidebysig virtual final instance int32 GetHashCode(class [mscorlib]System.Collections.IEqualityComparer comp) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 5
 .locals init (int32 V_0, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_1, !T V_2)
 ldarg.0
 ldnull
@@ -10559,7 +10321,6 @@ ret
 .method public hidebysig virtual final instance int32 GetHashCode() cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 8
 ldarg.0
 call class [mscorlib]System.Collections.IEqualityComparer Microsoft.FSharp.Core.LanguagePrimitives::get_GenericEqualityComparer()
 callvirt instance int32 class Microsoft.FSharp.Collections.FSharpList`1<!T>::GetHashCode(class [mscorlib]System.Collections.IEqualityComparer)
@@ -10568,7 +10329,6 @@ ret
 .method public hidebysig virtual final instance bool Equals(object obj, class [mscorlib]System.Collections.IEqualityComparer comp) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 3
 .locals init (class Microsoft.FSharp.Collections.FSharpList`1<!T> V_0, int32 V_1, int32 V_2, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_3, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_4, !T V_5, !T V_6, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_7, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_8)
 IL_0001:
 ldarg.0
@@ -10647,7 +10407,6 @@ ret
 .method public hidebysig virtual final instance bool Equals(class Microsoft.FSharp.Collections.FSharpList`1<!T> obj) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 2
 .locals init (int32 V_0, int32 V_1, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_2, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_3, !T V_4, !T V_5)
 IL_0001:
 ldarg.0
@@ -10718,7 +10477,6 @@ ret
 .method public hidebysig virtual final instance bool Equals(object obj) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 2
 .locals init (class Microsoft.FSharp.Collections.FSharpList`1<!T> V_0)
 ldarg.1
 isinst class Microsoft.FSharp.Collections.FSharpList`1<!T>
@@ -10735,7 +10493,6 @@ ret
 }
 .method public hidebysig specialname instance int32 get_Length() cil managed
 {
-.maxstack 8
 ldc.i4.0
 ldarg.0
 call int32 Microsoft.FSharp.Collections.PrivateListHelpers::lengthAcc<!T>(int32, class Microsoft.FSharp.Collections.FSharpList`1<!!0>)
@@ -10743,7 +10500,6 @@ ret
 }
 .method public hidebysig virtual instance string ToString() cil managed
 {
-.maxstack 2
 .locals init (class Microsoft.FSharp.Collections.FSharpList`1<!T> V_0, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_1, class Microsoft.FSharp.Collections.FSharpList`1<!T> V_2, !T V_3, !T V_4, !T V_5)
 ldarg.0
 ldfld class Microsoft.FSharp.Collections.FSharpList`1<!0> class Microsoft.FSharp.Collections.FSharpList`1<!T>::tail
@@ -10874,7 +10630,6 @@ ret
 .method private hidebysig newslot virtual instance class [mscorlib]System.Collections.Generic.IEnumerator`1<!T> 'System-Collections-Generic-IEnumerable`1-GetEnumerator'() cil managed
 {
 .override method instance class [mscorlib]System.Collections.Generic.IEnumerator`1<!0> class [mscorlib]System.Collections.Generic.IEnumerable`1<!T>::GetEnumerator()
-.maxstack 8
 ldarg.0
 newobj instance void class Microsoft.FSharp.Collections.PrivateListHelpers/ListEnumerator`1<!T>::.ctor(class Microsoft.FSharp.Collections.FSharpList`1<!0>)
 ret
@@ -10882,7 +10637,6 @@ ret
 .method private hidebysig newslot virtual instance class [mscorlib]System.Collections.IEnumerator 'System-Collections-IEnumerable-GetEnumerator'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerable::GetEnumerator
-.maxstack 8
 ldarg.0
 newobj instance void class Microsoft.FSharp.Collections.PrivateListHelpers/ListEnumerator`1<!T>::.ctor(class Microsoft.FSharp.Collections.FSharpList`1<!0>)
 ret
@@ -10890,7 +10644,6 @@ ret
 .method private hidebysig newslot specialname virtual instance int32 'System-Collections-Generic-IReadOnlyCollection`1-get_Count'() cil managed
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IReadOnlyCollection`1<!T>::get_Count()
-.maxstack 8
 ldc.i4.0
 ldarg.0
 call int32 Microsoft.FSharp.Collections.PrivateListHelpers::lengthAcc<!T>(int32, class Microsoft.FSharp.Collections.FSharpList`1<!!0>)
@@ -10915,7 +10668,6 @@ implements class [mscorlib]System.Collections.Generic.IEnumerable`1<!TResult>,
 .field public class Microsoft.FSharp.Core.FSharpFunc`2<class Microsoft.FSharp.Core.Unit,class [mscorlib]System.Collections.Generic.IEnumerator`1<!TResult>> f
 .method public specialname rtspecialname instance void .ctor(class Microsoft.FSharp.Core.FSharpFunc`2<class Microsoft.FSharp.Core.Unit,class [mscorlib]System.Collections.Generic.IEnumerator`1<!TResult>> f) cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 stfld class Microsoft.FSharp.Core.FSharpFunc`2<class Microsoft.FSharp.Core.Unit,class [mscorlib]System.Collections.Generic.IEnumerator`1<!0>> class Microsoft.FSharp.Collections.IEnumerator/mkSeq@133<!TResult>::f
@@ -10928,7 +10680,6 @@ ret
 .method private hidebysig newslot virtual final instance class [mscorlib]System.Collections.Generic.IEnumerator`1<!TResult> 'System-Collections-Generic-IEnumerable`1-GetEnumerator'() cil managed
 {
 .override method instance class [mscorlib]System.Collections.Generic.IEnumerator`1<!0> class [mscorlib]System.Collections.Generic.IEnumerable`1<!TResult>::GetEnumerator()
-.maxstack 8
 ldarg.0
 ldfld class Microsoft.FSharp.Core.FSharpFunc`2<class Microsoft.FSharp.Core.Unit,class [mscorlib]System.Collections.Generic.IEnumerator`1<!0>> class Microsoft.FSharp.Collections.IEnumerator/mkSeq@133<!TResult>::f
 ldnull
@@ -10939,7 +10690,6 @@ ret
 .method private hidebysig newslot virtual final instance class [mscorlib]System.Collections.IEnumerator 'System-Collections-IEnumerable-GetEnumerator'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerable::GetEnumerator
-.maxstack 8
 ldarg.0
 ldfld class Microsoft.FSharp.Core.FSharpFunc`2<class Microsoft.FSharp.Core.Unit,class [mscorlib]System.Collections.Generic.IEnumerator`1<!0>> class Microsoft.FSharp.Collections.IEnumerator/mkSeq@133<!TResult>::f
 ldnull
@@ -10949,14 +10699,12 @@ ret
 }
 .method assembly static !!a notStarted<a>() cil managed
 {
-.maxstack 8
 ldstr "enumerationNotStarted"
 newobj instance void [mscorlib]System.InvalidOperationException::.ctor(string)
 throw
 }
 .method assembly static class [mscorlib]System.Collections.Generic.IEnumerable`1<!!TResult> mkSeq<TResult>(class Microsoft.FSharp.Core.FSharpFunc`2<class Microsoft.FSharp.Core.Unit,class [mscorlib]System.Collections.Generic.IEnumerator`1<!!TResult>> f) cil managed
 {
-.maxstack 8
 ldarg.0
 newobj instance void class Microsoft.FSharp.Collections.IEnumerator/mkSeq@133<!!TResult>::.ctor(class Microsoft.FSharp.Core.FSharpFunc`2<class Microsoft.FSharp.Core.Unit,class [mscorlib]System.Collections.Generic.IEnumerator`1<!0>>)
 ret
@@ -10976,7 +10724,6 @@ extends [mscorlib]System.Attribute
 4D 75 6C 74 69 70 6C 65 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -10994,7 +10741,6 @@ extends [mscorlib]System.Attribute
 .field assembly bool 'value'
 .method public specialname rtspecialname instance void .ctor(bool 'value') cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -11006,7 +10752,6 @@ ret
 }
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 ldc.i4.1
 callvirt instance void Microsoft.FSharp.Core.AllowNullLiteralAttribute::.ctor(bool)
@@ -11023,7 +10768,6 @@ extends [mscorlib]System.Attribute
 .field assembly string path
 .method public specialname rtspecialname instance void .ctor(string path) cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -11035,7 +10779,6 @@ ret
 }
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 ldstr ""
 callvirt instance void Microsoft.FSharp.Core.AutoOpenAttribute::.ctor(string)
@@ -11052,7 +10795,6 @@ extends [mscorlib]System.Attribute
 .field assembly int32[] counts
 .method public specialname rtspecialname instance void .ctor(int32[] counts) cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -11077,7 +10819,6 @@ extends [mscorlib]System.Attribute
 .field assembly string resourceName
 .method public specialname rtspecialname instance void .ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags sourceConstructFlags) cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 ldc.i4.0
@@ -11087,7 +10828,6 @@ ret
 }
 .method assembly specialname rtspecialname instance void .ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags sourceConstructFlags, int32 variantNumber, int32 sequenceNumber, string resourceName, class [mscorlib]System.Type[] typeDefinitions) cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -11111,7 +10851,6 @@ ret
 }
 .method public specialname rtspecialname instance void .ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags sourceConstructFlags, int32 variantNumber, int32 sequenceNumber) cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 ldarg.2
@@ -11123,7 +10862,6 @@ ret
 }
 .method public specialname rtspecialname instance void .ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags sourceConstructFlags, int32 sequenceNumber) cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 ldc.i4.0
@@ -11142,7 +10880,6 @@ extends [mscorlib]System.Attribute
 .field assembly valuetype Microsoft.FSharp.Core.CompilationRepresentationFlags 'flags'
 .method public specialname rtspecialname instance void .ctor(valuetype Microsoft.FSharp.Core.CompilationRepresentationFlags 'flags') cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -11176,7 +10913,6 @@ extends [mscorlib]System.Attribute
 .field assembly string sourceName
 .method public specialname rtspecialname instance void .ctor(string sourceName) cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -11197,7 +10933,6 @@ extends [mscorlib]System.Attribute
 .field assembly string compiledName
 .method public specialname rtspecialname instance void .ctor(string compiledName) cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -11221,7 +10956,6 @@ extends [mscorlib]System.Attribute
 .field assembly bool isHidden
 .method public specialname rtspecialname instance void .ctor(string message, int32 messageNumber) cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -11242,7 +10976,6 @@ ret
 }
 .method public hidebysig specialname instance void set_IsHidden(bool v) cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 stfld bool Microsoft.FSharp.Core.CompilerMessageAttribute::isHidden
@@ -11263,7 +10996,6 @@ extends [mscorlib]System.Attribute
 .field assembly bool 'value'
 .method public specialname rtspecialname instance void .ctor(bool 'value') cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -11291,7 +11023,6 @@ class [mscorlib]System.IEquatable`1<class Microsoft.FSharp.Core.FSharpRef`1<!T>>
 .custom instance void [mscorlib]System.Diagnostics.DebuggerBrowsableAttribute::.ctor(valuetype [mscorlib]System.Diagnostics.DebuggerBrowsableState) = ( 01 00 00 00 00 00 00 00 )
 .method public hidebysig specialname instance void set_contents(!T 'value') cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 stfld !0 class Microsoft.FSharp.Core.FSharpRef`1<!T>::contents@
@@ -11299,7 +11030,6 @@ ret
 }
 .method public specialname rtspecialname instance void .ctor(!T contents) cil managed
 {
-.maxstack 8
 ldarg.0
 call instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -11310,7 +11040,6 @@ ret
 .method public hidebysig virtual final instance int32 CompareTo(class Microsoft.FSharp.Core.FSharpRef`1<!T> obj) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 3
 .locals init (class [mscorlib]System.Collections.IComparer V_0, !T V_1, !T V_2)
 ldarg.0
 ldnull
@@ -11351,7 +11080,6 @@ ret
 .method public hidebysig virtual final instance int32 CompareTo(object obj) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 8
 ldarg.0
 ldarg.1
 unbox.any class Microsoft.FSharp.Core.FSharpRef`1<!T>
@@ -11362,7 +11090,6 @@ ret
 .method public hidebysig virtual final instance int32 CompareTo(object obj, class [mscorlib]System.Collections.IComparer comp) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 3
 .locals init (class Microsoft.FSharp.Core.FSharpRef`1<!T> V_0, !T V_1, !T V_2)
 ldarg.1
 unbox.any class Microsoft.FSharp.Core.FSharpRef`1<!T>
@@ -11406,7 +11133,6 @@ ret
 .method public hidebysig virtual final instance int32 GetHashCode(class [mscorlib]System.Collections.IEqualityComparer comp) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 5
 .locals init (int32 V_0, !T V_1)
 ldarg.0
 ldnull
@@ -11441,7 +11167,6 @@ ret
 .method public hidebysig virtual final instance int32 GetHashCode() cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 8
 ldarg.0
 call class [mscorlib]System.Collections.IEqualityComparer Microsoft.FSharp.Core.LanguagePrimitives::get_GenericEqualityComparer()
 callvirt instance int32 class Microsoft.FSharp.Core.FSharpRef`1<!T>::GetHashCode(class [mscorlib]System.Collections.IEqualityComparer)
@@ -11450,7 +11175,6 @@ ret
 .method public hidebysig virtual final instance bool Equals(object obj, class [mscorlib]System.Collections.IEqualityComparer comp) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 3
 .locals init (class Microsoft.FSharp.Core.FSharpRef`1<!T> V_0, !T V_1, !T V_2)
 ldarg.0
 ldnull
@@ -11487,7 +11211,6 @@ ret
 .method public hidebysig virtual final instance bool Equals(class Microsoft.FSharp.Core.FSharpRef`1<!T> obj) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 2
 .locals init (!T V_0, !T V_1)
 ldarg.0
 ldnull
@@ -11522,7 +11245,6 @@ ret
 .method public hidebysig virtual final instance bool Equals(object obj) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 2
 .locals init (class Microsoft.FSharp.Core.FSharpRef`1<!T> V_0)
 ldarg.1
 isinst class Microsoft.FSharp.Core.FSharpRef`1<!T>
@@ -11555,7 +11277,6 @@ extends [mscorlib]System.Attribute
 .custom instance void Microsoft.FSharp.Core.SealedAttribute::.ctor() = ( 01 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -11572,7 +11293,6 @@ extends [mscorlib]System.Attribute
 4D 75 6C 74 69 70 6C 65 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -11613,7 +11333,6 @@ implements class [mscorlib]System.Collections.Generic.IEnumerator`1<int32>,
 .custom instance void [mscorlib]System.Diagnostics.DebuggerBrowsableAttribute::.ctor(valuetype [mscorlib]System.Diagnostics.DebuggerBrowsableState) = ( 01 00 00 00 00 00 00 00 )
 .method public specialname rtspecialname instance void .ctor(int32 n, int32 step, int32 m, class Microsoft.FSharp.Core.Operators/OperatorIntrinsics/VariableStepIntegralRangeState`1<int32> state) cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 stfld int32 Microsoft.FSharp.Core.Operators/OperatorIntrinsics/RangeInt32@5421::n
@@ -11635,13 +11354,11 @@ ret
 .method private hidebysig newslot virtual final instance void 'System-IDisposable-Dispose'() cil managed
 {
 .override [mscorlib]System.IDisposable::Dispose
-.maxstack 8
 ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEnumerator`1-get_Current'() cil managed
 {
 .override method instance !0 class [mscorlib]System.Collections.Generic.IEnumerator`1<int32>::get_Current()
-.maxstack 8
 ldarg.0
 ldfld class Microsoft.FSharp.Core.Operators/OperatorIntrinsics/VariableStepIntegralRangeState`1<int32> Microsoft.FSharp.Core.Operators/OperatorIntrinsics/RangeInt32@5421::state
 ldnull
@@ -11651,7 +11368,6 @@ ret
 .method private hidebysig newslot virtual final instance object 'System-Collections-IEnumerator-get_Current'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerator::get_Current
-.maxstack 8
 ldarg.0
 ldfld class Microsoft.FSharp.Core.Operators/OperatorIntrinsics/VariableStepIntegralRangeState`1<int32> Microsoft.FSharp.Core.Operators/OperatorIntrinsics/RangeInt32@5421::state
 ldnull
@@ -11662,7 +11378,6 @@ ret
 .method private hidebysig newslot virtual final instance void 'System-Collections-IEnumerator-Reset'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerator::Reset
-.maxstack 8
 ldarg.0
 ldfld class Microsoft.FSharp.Core.Operators/OperatorIntrinsics/VariableStepIntegralRangeState`1<int32> Microsoft.FSharp.Core.Operators/OperatorIntrinsics/RangeInt32@5421::state
 ldc.i4.0
@@ -11680,7 +11395,6 @@ ret
 .method private hidebysig newslot virtual final instance bool 'System-Collections-IEnumerator-MoveNext'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerator::MoveNext
-.maxstack 3
 .locals init (int32 V_0)
 ldarg.0
 ldfld class Microsoft.FSharp.Core.Operators/OperatorIntrinsics/VariableStepIntegralRangeState`1<int32> Microsoft.FSharp.Core.Operators/OperatorIntrinsics/RangeInt32@5421::state
@@ -11822,7 +11536,6 @@ implements class [mscorlib]System.Collections.Generic.IEnumerable`1<int32>,
 .field public int32 m
 .method public specialname rtspecialname instance void .ctor(int32 n, int32 step, int32 m) cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 stfld int32 Microsoft.FSharp.Core.Operators/OperatorIntrinsics/'RangeInt32@5421-1'::n
@@ -11841,7 +11554,6 @@ ret
 .method private hidebysig newslot virtual final instance class [mscorlib]System.Collections.Generic.IEnumerator`1<int32> 'System-Collections-Generic-IEnumerable`1-GetEnumerator'() cil managed
 {
 .override method instance class [mscorlib]System.Collections.Generic.IEnumerator`1<!0> class [mscorlib]System.Collections.Generic.IEnumerable`1<int32>::GetEnumerator()
-.maxstack 8
 ldarg.0
 ldfld int32 Microsoft.FSharp.Core.Operators/OperatorIntrinsics/'RangeInt32@5421-1'::n
 ldarg.0
@@ -11855,7 +11567,6 @@ ret
 .method private hidebysig newslot virtual final instance class [mscorlib]System.Collections.IEnumerator 'System-Collections-IEnumerable-GetEnumerator'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerable::GetEnumerator
-.maxstack 8
 ldarg.0
 ldfld int32 Microsoft.FSharp.Core.Operators/OperatorIntrinsics/'RangeInt32@5421-1'::n
 ldarg.0
@@ -11887,7 +11598,6 @@ class [mscorlib]System.Collections.Generic.IEnumerator`1<int32>
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
 .method public specialname rtspecialname instance void .ctor(int32 n, int32 m, class Microsoft.FSharp.Core.FSharpRef`1<int32> 'value') cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 stfld int32 Microsoft.FSharp.Core.Operators/OperatorIntrinsics/'RangeInt32@5421-2'::n
@@ -11906,13 +11616,11 @@ ret
 .method private hidebysig newslot virtual final instance void 'System-IDisposable-Dispose'() cil managed
 {
 .override [mscorlib]System.IDisposable::Dispose
-.maxstack 8
 ret
 }
 .method private hidebysig newslot virtual final instance int32 'System-Collections-Generic-IEnumerator`1-get_Current'() cil managed
 {
 .override method instance !0 class [mscorlib]System.Collections.Generic.IEnumerator`1<int32>::get_Current()
-.maxstack 2
 .locals init (int32 V_0)
 ldarg.0
 ldfld class Microsoft.FSharp.Core.FSharpRef`1<int32> Microsoft.FSharp.Core.Operators/OperatorIntrinsics/'RangeInt32@5421-2'::'value'
@@ -11938,7 +11646,6 @@ ret
 .method private hidebysig newslot virtual final instance object 'System-Collections-IEnumerator-get_Current'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerator::get_Current
-.maxstack 2
 .locals init (int32 V_0)
 ldarg.0
 ldfld class Microsoft.FSharp.Core.FSharpRef`1<int32> Microsoft.FSharp.Core.Operators/OperatorIntrinsics/'RangeInt32@5421-2'::'value'
@@ -11966,7 +11673,6 @@ ret
 .method private hidebysig newslot virtual final instance void 'System-Collections-IEnumerator-Reset'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerator::Reset
-.maxstack 8
 ldarg.0
 ldfld class Microsoft.FSharp.Core.FSharpRef`1<int32> Microsoft.FSharp.Core.Operators/OperatorIntrinsics/'RangeInt32@5421-2'::'value'
 ldarg.0
@@ -11979,7 +11685,6 @@ ret
 .method private hidebysig newslot virtual final instance bool 'System-Collections-IEnumerator-MoveNext'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerator::MoveNext
-.maxstack 3
 .locals init (int32 V_0)
 ldarg.0
 ldfld class Microsoft.FSharp.Core.FSharpRef`1<int32> Microsoft.FSharp.Core.Operators/OperatorIntrinsics/'RangeInt32@5421-2'::'value'
@@ -12025,7 +11730,6 @@ implements class [mscorlib]System.Collections.Generic.IEnumerable`1<int32>,
 .field public int32 m
 .method public specialname rtspecialname instance void .ctor(int32 n, int32 m) cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 stfld int32 Microsoft.FSharp.Core.Operators/OperatorIntrinsics/'RangeInt32@5421-3'::n
@@ -12041,7 +11745,6 @@ ret
 .method private hidebysig newslot virtual final instance class [mscorlib]System.Collections.Generic.IEnumerator`1<int32> 'System-Collections-Generic-IEnumerable`1-GetEnumerator'() cil managed
 {
 .override method instance class [mscorlib]System.Collections.Generic.IEnumerator`1<!0> class [mscorlib]System.Collections.Generic.IEnumerable`1<int32>::GetEnumerator()
-.maxstack 8
 ldarg.0
 ldfld int32 Microsoft.FSharp.Core.Operators/OperatorIntrinsics/'RangeInt32@5421-3'::n
 ldarg.0
@@ -12053,7 +11756,6 @@ ret
 .method private hidebysig newslot virtual final instance class [mscorlib]System.Collections.IEnumerator 'System-Collections-IEnumerable-GetEnumerator'() cil managed
 {
 .override [mscorlib]System.Collections.IEnumerable::GetEnumerator
-.maxstack 8
 ldarg.0
 ldfld int32 Microsoft.FSharp.Core.Operators/OperatorIntrinsics/'RangeInt32@5421-3'::n
 ldarg.0
@@ -12077,7 +11779,6 @@ extends [mscorlib]System.Object
 .custom instance void [mscorlib]System.Diagnostics.DebuggerBrowsableAttribute::.ctor(valuetype [mscorlib]System.Diagnostics.DebuggerBrowsableState) = ( 01 00 00 00 00 00 00 00 )
 .method assembly hidebysig specialname instance void set_Started(bool 'value') cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 stfld bool class Microsoft.FSharp.Core.Operators/OperatorIntrinsics/VariableStepIntegralRangeState`1<!T>::Started@
@@ -12085,7 +11786,6 @@ ret
 }
 .method assembly hidebysig specialname instance void set_Complete(bool 'value') cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 stfld bool class Microsoft.FSharp.Core.Operators/OperatorIntrinsics/VariableStepIntegralRangeState`1<!T>::Complete@
@@ -12093,7 +11793,6 @@ ret
 }
 .method assembly hidebysig specialname instance void set_Current(!T 'value') cil managed
 {
-.maxstack 8
 ldarg.0
 ldarg.1
 stfld !0 class Microsoft.FSharp.Core.Operators/OperatorIntrinsics/VariableStepIntegralRangeState`1<!T>::Current@
@@ -12101,7 +11800,6 @@ ret
 }
 .method assembly specialname rtspecialname instance void .ctor(bool started, bool complete, !T current) cil managed
 {
-.maxstack 8
 ldarg.0
 call instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -12146,7 +11844,6 @@ int32) = ( 01 00 4C 54 68 69 73 20 66 75 6E 63 74 69 6F 6E
 01 )
 .custom instance void Microsoft.FSharp.Core.CompilationArgumentCountsAttribute::.ctor(int32[]) = ( 01 00 03 00 00 00 01 00 00 00 01 00 00 00 01 00
 00 00 00 00 )
-.maxstack 3
 .locals init (string V_0)
 ldarg.1
 ldc.i4.1
@@ -12201,14 +11898,12 @@ ret
 }
 .method assembly static !!a notStarted<a>() cil managed
 {
-.maxstack 8
 ldstr "enumerationNotStarted"
 newobj instance void [mscorlib]System.InvalidOperationException::.ctor(string)
 throw
 }
 .method assembly static !!a alreadyFinished<a>() cil managed
 {
-.maxstack 8
 ldstr "enumerationAlreadyFinished"
 newobj instance void [mscorlib]System.InvalidOperationException::.ctor(string)
 throw
@@ -12216,7 +11911,6 @@ throw
 .method assembly static int32 current@5249(class Microsoft.FSharp.Core.Operators/OperatorIntrinsics/VariableStepIntegralRangeState`1<int32> state, class Microsoft.FSharp.Core.Unit unitVar0) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 8
 ldarg.0
 ldfld bool class Microsoft.FSharp.Core.Operators/OperatorIntrinsics/VariableStepIntegralRangeState`1<int32>::Started@
 brtrue.s IL_000f
@@ -12236,14 +11930,11 @@ ret
 .method assembly static class [mscorlib]System.Collections.Generic.IEnumerator`1<int32> variableStepRangeEnumerator@5242(int32 n, int32 step, int32 m, class Microsoft.FSharp.Core.Unit unitVar0) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 4
 .locals init (class Microsoft.FSharp.Core.Operators/OperatorIntrinsics/VariableStepIntegralRangeState`1<int32> V_0)
 ldc.i4.0
 ldc.i4.0
 ldc.i4.0
-newobj instance void class Microsoft.FSharp.Core.Operators/OperatorIntrinsics/VariableStepIntegralRangeState`1<int32>::.ctor(bool,
-bool,
-!0)
+newobj instance void class Microsoft.FSharp.Core.Operators/OperatorIntrinsics/VariableStepIntegralRangeState`1<int32>::.ctor(bool, bool, !0)
 stloc.0
 ldarg.0
 ldarg.1
@@ -12258,7 +11949,6 @@ ret
 .method assembly static class [mscorlib]System.Collections.Generic.IEnumerator`1<int32> singleStepRangeEnumerator@5303(int32 n, int32 m, class Microsoft.FSharp.Core.Unit unitVar0) cil managed
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
-.maxstack 3
 .locals init (class Microsoft.FSharp.Core.FSharpRef`1<int32> V_0)
 ldarg.0
 ldc.i4.1
@@ -12277,7 +11967,6 @@ ret
 .method public static !!T Exit<T>(int32 exitcode) cil managed
 {
 .custom instance void Microsoft.FSharp.Core.CompilationSourceNameAttribute::.ctor(string) = ( 01 00 04 65 78 69 74 00 00 )
-.maxstack 8
 ldarg.0
 call void [mscorlib]System.Environment::Exit(int32)
 ldstr "System.Environment.Exit did not exit!"
@@ -12294,7 +11983,6 @@ extends [mscorlib]System.Attribute
 .custom instance void Microsoft.FSharp.Core.SealedAttribute::.ctor() = ( 01 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -12311,7 +11999,6 @@ extends [mscorlib]System.Attribute
 .field assembly bool 'value'
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 ldc.i4.1
 callvirt instance void Microsoft.FSharp.Core.SealedAttribute::.ctor(bool)
@@ -12319,7 +12006,6 @@ ret
 }
 .method public specialname rtspecialname instance void .ctor(bool 'value') cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -12357,7 +12043,6 @@ extends [mscorlib]System.Attribute
 .custom instance void Microsoft.FSharp.Core.SealedAttribute::.ctor() = ( 01 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -12374,7 +12059,6 @@ extends [mscorlib]System.Attribute
 .custom instance void Microsoft.FSharp.Core.SealedAttribute::.ctor() = ( 01 00 00 00 )
 .method public specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Attribute::.ctor()
 ldarg.0
@@ -12389,7 +12073,6 @@ implements [mscorlib]System.IComparable
 .custom instance void Microsoft.FSharp.Core.CompilationMappingAttribute::.ctor(valuetype Microsoft.FSharp.Core.SourceConstructFlags) = ( 01 00 03 00 00 00 00 00 )
 .method assembly specialname rtspecialname instance void .ctor() cil managed
 {
-.maxstack 8
 ldarg.0
 callvirt instance void [mscorlib]System.Object::.ctor()
 ldarg.0
@@ -12398,13 +12081,11 @@ ret
 }
 .method public hidebysig virtual instance int32 GetHashCode() cil managed
 {
-.maxstack 8
 ldc.i4.0
 ret
 }
 .method public hidebysig virtual instance bool Equals(object obj) cil managed
 {
-.maxstack 8
 ldarg.1
 brfalse.s IL_0010
 ldarg.1
@@ -12422,7 +12103,6 @@ ret
 .method private hidebysig newslot virtual instance int32 'System-IComparable-CompareTo'(object _obj) cil managed
 {
 .override [mscorlib]System.IComparable::CompareTo
-.maxstack 8
 ldc.i4.0
 ret
 }
