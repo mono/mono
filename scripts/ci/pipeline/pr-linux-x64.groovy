@@ -2,7 +2,9 @@
 node('debian-9-amd64') {
     timestamps {
         stage ('Checkout') {
-            git branch: "${sha}", url: 'git://github.com/mono/mono.git'
+            checkout scm
+
+            sha = sh (script: 'git rev-parse HEAD', returnStdout: true).trim()
 
             sh "git reset --hard ${sha}"
             sh "git clean -xffd"
