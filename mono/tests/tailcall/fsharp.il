@@ -236,9 +236,6 @@ exit 0
 */
 
 .assembly extern mscorlib { }
-.assembly extern System.Numerics { }
-.assembly extern System { }
-.assembly extern System.Core { }
 .assembly fsharp { }
 .class private abstract auto ansi sealed '<StartupCode$fsharp>'.$Fsharp
 extends [mscorlib]System.Object
