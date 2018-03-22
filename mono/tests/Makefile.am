@@ -717,7 +717,7 @@ PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 endif
 
 if HOST_WIN32
-PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe
+PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe finalizer-exit.exe finalizer-thread.exe finalizer-abort.exe
 endif
 
 if AMD64
