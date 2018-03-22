@@ -107,8 +107,8 @@ namespace System.IO.MemoryMappedFiles
 
 		internal static unsafe IntPtr OpenFile (string path, FileMode mode, string mapName, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options)
 		{
-			CheckString ("path", path);
-			CheckString ("mapName", mapName);
+			CheckString (nameof (path), path);
+			CheckString (nameof (mapName), mapName);
 			fixed (char* fpath = path, fmapName = mapName) {
 				int error = 0;
 				IntPtr res = OpenFileInternal (fpath, StringLength (path), mode, fmapName, StringLength (mapName), out capacity, access, options, out error);
@@ -120,7 +120,7 @@ namespace System.IO.MemoryMappedFiles
 
 		internal static unsafe IntPtr OpenHandle (IntPtr handle, string mapName, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options)
 		{
-			CheckString ("mapName", mapName);
+			CheckString (nameof (mapName), mapName);
 			fixed (char* fmapName = mapName) {
 				int error = 0;
 				IntPtr res = OpenHandleInternal (handle, fmapName, StringLength (mapName), out capacity, access, options, out error);
