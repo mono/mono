@@ -3684,7 +3684,6 @@ array_constructed:
 			MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_LDRMFLD) {
-			gpointer tmp;
 			MonoClassField *field;
 			char *addr;
 
@@ -3695,6 +3694,7 @@ array_constructed:
 			ip += 2;
 #ifndef DISABLE_REMOTING
 			if (mono_object_is_transparent_proxy (o)) {
+				gpointer tmp;
 				MonoClass *klass = ((MonoTransparentProxy*)o)->remote_class->proxy_class;
 
 				addr = mono_load_remote_field_checked (o, klass, field, &tmp, error);
@@ -3710,7 +3710,6 @@ array_constructed:
 		MINT_IN_CASE(MINT_LDRMFLD_VT) {
 			MonoClassField *field;
 			char *addr;
-			gpointer tmp;
 
 			o = sp [-1].data.p;
 			if (!o)
@@ -3723,6 +3722,7 @@ array_constructed:
 			ip += 2;
 #ifndef DISABLE_REMOTING
 			if (mono_object_is_transparent_proxy (o)) {
+				gpointer tmp;
 				MonoClass *klass = ((MonoTransparentProxy*)o)->remote_class->proxy_class;
 				addr = mono_load_remote_field_checked (o, klass, field, &tmp, error);
 				mono_error_cleanup (error); /* FIXME: don't swallow the error */
