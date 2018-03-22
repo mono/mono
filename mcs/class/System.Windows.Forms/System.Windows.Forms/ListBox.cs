@@ -2681,7 +2681,7 @@ namespace System.Windows.Forms
 			}
 
 			// we receive the index to be removed
-			void UpdateSelection (int removed_index)
+			internal virtual void UpdateSelection (int removed_index)
 			{
 				owner.selected_indices.Remove (removed_index);
 
