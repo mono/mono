@@ -76,7 +76,7 @@ class SlnGenerator {
 		}
 	}
 
-	private void WriteProjectReference (StreamWriter sln, string prefixGuid, string library, string relativePath, string projectGuid, params string[] dependencyGuids)
+	private void WriteProjectReference (StreamWriter sln, string prefixGuid, string library, string relativePath, string projectGuid, string[] dependencyGuids)
 	{
 		// HACK
 		library = library.Replace("-net_4_x", "");
@@ -85,10 +85,10 @@ class SlnGenerator {
 		if (
 			(dependencyGuids != null) && (dependencyGuids.Length > 0)
 		) {
-			sln.WriteLine ("    ProjectSection(ProjectDependencies) = postProject");
+			sln.WriteLine ("\tProjectSection(ProjectDependencies) = postProject");
 			foreach (var guid in dependencyGuids)
-	    		sln.WriteLine ("        {0} = {0}", guid);
-			sln.WriteLine ("    EndProjectSection");
+	    		sln.WriteLine ("\t\t{0} = {0}", guid);
+			sln.WriteLine ("\tEndProjectSection");
 		}
 
 		sln.WriteLine (project_end);
@@ -151,7 +151,7 @@ class SlnGenerator {
 			sln.WriteLine (header);
 
 			// Manually insert jay's vcxproj. We depend on jay.exe to perform build steps later.
-			WriteProjectReference (sln, jay_sln_guid, "jay", "mcs\\jay\\jay.vcxproj", jay_vcxproj_guid);
+			WriteProjectReference (sln, jay_sln_guid, "jay", "mcs\\jay\\jay.vcxproj", jay_vcxproj_guid, null);
 
 			foreach (var proj in libraries) {
 				WriteProjectReference (sln, fullPath, proj);
