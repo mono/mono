@@ -1008,7 +1008,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/sharedstatics.cs
 ../referencesource/mscorlib/system/stackoverflowexception.cs
 ../referencesource/mscorlib/system/single.cs
-../referencesource/mscorlib/system/string.cs
 ../referencesource/mscorlib/system/stringcomparer.cs
 ../referencesource/mscorlib/system/stringfreezingattribute.cs
 ../referencesource/mscorlib/system/systemexception.cs
@@ -1621,6 +1620,9 @@ corert/RuntimeAugments.cs
 
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
 
+../../../external/corert/src/System.Private.CoreLib/shared/System/String.Manipulation.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/StringSpanHelpers.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/Generic/ValueListBuilder.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/DeferredDisposableLifetime.cs
 
@@ -1628,6 +1630,9 @@ corert/RuntimeAugments.cs
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/TaskTraceCallbacks.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Array.cs
+# TODO: Should all come from shared
+../../../external/corert/src/System.Private.CoreLib/src/System/String.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/String.Comparison.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
 
@@ -1656,11 +1661,13 @@ corert/RuntimeAugments.cs
 corefx/SR.cs
 corefx/CompareInfo.cs
 corefx/GlobalizationMode.cs
-
+corefx/MemoryExtensions.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Memory.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MemoryDebugView.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ReadOnlyMemory.cs
+../../../external/corefx/src/Common/src/CoreLib/System/String.Searching.cs
+../../../external/corefx/src/Common/src/CoreLib/System/StringSplitOptions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Tuple.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TupleExtensions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ValueTuple.cs
@@ -1693,6 +1700,12 @@ corefx/GlobalizationMode.cs
 
 ../../../external/corefx/src/Common/src/System/Threading/Tasks/BeginEndAwaitableAdapter.cs
 ../../../external/corefx/src/Common/src/System/Threading/Tasks/RendezvousAwaitable.cs
+
+../../../external/corefx/src/System.Buffers/src/System/Buffers/ArrayPool.cs
+../../../external/corefx/src/System.Buffers/src/System/Buffers/ArrayPoolEventSource.cs
+../../../external/corefx/src/System.Buffers/src/System/Buffers/DefaultArrayPool.cs
+../../../external/corefx/src/System.Buffers/src/System/Buffers/DefaultArrayPoolBucket.cs
+../../../external/corefx/src/System.Buffers/src/System/Buffers/Utilities.cs
 
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/CollectionExtensions.cs
 

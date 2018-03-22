@@ -1133,11 +1133,6 @@ Fall back on the kqueue FileSystemWatcher implementation in Darwin. The default 
 This is a debugging aid used to force limits on the kqueue FileSystemWatcher
 implementation in Darwin.   There is no limit by default.
 .TP
-\fBMONO_DISABLE_AIO\fR
-If set, tells mono NOT to attempt using native asynchronous I/O services. In
-that case, a default select/poll implementation is used. Currently only epoll()
-is supported.
-.TP
 \fBMONO_DISABLE_MANAGED_COLLATION\fR
 If this environment variable is `yes', the runtime uses unmanaged
 collation (which actually means no culture-sensitive collation). It
@@ -1162,6 +1157,11 @@ Note that /etc/nsswitch.conf will be ignored.
 For platforms that do not otherwise have a way of obtaining random bytes
 this can be set to the name of a file system socket on which an egd or
 prngd daemon is listening.
+.TP
+\fBMONO_ENABLE_AIO\fR
+If set, tells mono to attempt using native asynchronous I/O services. If not
+set, a default select/poll implementation is used. Currently epoll and kqueue
+are supported.
 .TP
 \fBMONO_ENABLE_COOP\fR
 This makes the Mono runtime and the SGen garbage collector run in cooperative

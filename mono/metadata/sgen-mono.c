@@ -795,6 +795,16 @@ clear_domain_free_major_pinned_object_callback (GCObject *obj, size_t size, Mono
 		sgen_major_collector.free_pinned_object (obj, size);
 }
 
+static void
+sgen_finish_concurrent_work (const char *reason, gboolean stw)
+{
+	if (sgen_get_concurrent_collection_in_progress ())
+		sgen_perform_collection (0, GENERATION_OLD, reason, TRUE, stw);
+	SGEN_ASSERT (0, !sgen_get_concurrent_collection_in_progress (), "We just ordered a synchronous collection.  Why are we collecting concurrently?");
+
+	sgen_major_collector.finish_sweeping ();
+}
+
 /*
  * When appdomains are unloaded we can easily remove objects that have finalizers,
  * but all the others could still be present in random places on the heap.
@@ -816,11 +826,7 @@ mono_gc_clear_domain (MonoDomain * domain)
 
 	sgen_stop_world (0, FALSE);
 
-	if (sgen_get_concurrent_collection_in_progress ())
-		sgen_perform_collection (0, GENERATION_OLD, "clear domain", TRUE, FALSE);
-	SGEN_ASSERT (0, !sgen_get_concurrent_collection_in_progress (), "We just ordered a synchronous collection.  Why are we collecting concurrently?");
-
-	sgen_major_collector.finish_sweeping ();
+	sgen_finish_concurrent_work ("clear domain", FALSE);
 
 	sgen_process_fin_stage_entries ();
 
@@ -1191,10 +1197,6 @@ sgen_client_cardtable_scan_object (GCObject *obj, guint8 *cards, ScanCopyContext
 		mword desc = (mword)m_class_get_gc_descr (m_class_get_element_class (klass));
 		int elem_size = mono_array_element_size (klass);
 
-#ifdef SGEN_HAVE_OVERLAPPING_CARDS
-		guint8 *overflow_scan_end = NULL;
-#endif
-
 #ifdef SGEN_OBJECT_LAYOUT_STATISTICS
 		if (m_class_is_valuetype (m_class_get_element_class (klass)))
 			sgen_object_layout_scanned_vtype_array ();
@@ -1209,17 +1211,22 @@ sgen_client_cardtable_scan_object (GCObject *obj, guint8 *cards, ScanCopyContext
 
 		card_base = card_data;
 		card_count = sgen_card_table_number_of_cards_in_range ((mword)obj, obj_size);
-		card_data_end = card_data + card_count;
-
 
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
-		/*Check for overflow and if so, setup to scan in two steps*/
+LOOP_HEAD:
+		card_data_end = card_base + card_count;
+
+		/*
+		 * Check for overflow and if so, scan only until the end of the shadow
+		 * card table, leaving the rest for next iterations.
+		 */
 		if (!cards && card_data_end >= SGEN_SHADOW_CARDTABLE_END) {
-			overflow_scan_end = sgen_shadow_cardtable + (card_data_end - SGEN_SHADOW_CARDTABLE_END);
 			card_data_end = SGEN_SHADOW_CARDTABLE_END;
 		}
+		card_count -= (card_data_end - card_base);
 
-LOOP_HEAD:
+#else
+		card_data_end = card_data + card_count;
 #endif
 
 		card_data = sgen_find_next_card (card_data, card_data_end);
@@ -1260,11 +1267,10 @@ LOOP_HEAD:
 		}
 
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
-		if (overflow_scan_end) {
-			extra_idx = card_data - card_base;
+		if (card_count > 0) {
+			SGEN_ASSERT (0, card_data == SGEN_SHADOW_CARDTABLE_END, "Why we didn't stop at shadow cardtable end ?");
+			extra_idx += card_data - card_base;
 			card_base = card_data = sgen_shadow_cardtable;
-			card_data_end = overflow_scan_end;
-			overflow_scan_end = NULL;
 			goto LOOP_HEAD;
 		}
 #endif
@@ -2893,6 +2899,15 @@ mono_gc_base_init (void)
 void
 mono_gc_base_cleanup (void)
 {
+	/*
+	 * Note we don't fully cleanup the GC here, but the threads mainly.
+	 *
+	 * We need to finish any work on the sgen threads before shutting down
+	 * the sgen threadpool. After this point we can still trigger GCs as
+	 * part of domain free, but they should all be forced and not use the
+	 * threadpool.
+	 */
+	sgen_finish_concurrent_work ("cleanup", TRUE);
 	sgen_thread_pool_shutdown ();
 
 	// We should have consumed any outstanding moves.

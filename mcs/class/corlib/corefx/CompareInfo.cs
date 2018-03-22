@@ -35,9 +35,28 @@ namespace System.Globalization
 			_sortName = culture.SortName;
 		}
 
-		unsafe static int CompareStringOrdinalIgnoreCase (char* lpStr1, int cwStr1Len, char* lpStr2, int cwStr2Len)
+		unsafe static int CompareStringOrdinalIgnoreCase (char* pString1, int length1, char* pString2, int length2)
 		{
-			throw new NotImplementedException ();
+			var ti = CultureInfo.InvariantCulture.TextInfo;
+
+			int index = 0;
+			while (index < length1 && index < length2 && ti.ToUpper (*pString1) == ti.ToUpper (*pString2)) {
+				++index;
+				++pString1;
+				++pString2;
+			}
+
+			if (index >= length1) {
+				if (index >= length2)
+					return 0;
+
+				return -1;
+			}
+
+			if (index >= length2)
+				return 1;
+
+			return ti.ToUpper (*pString1) - ti.ToUpper (*pString2);
 		}
 
 		internal static int IndexOfOrdinalCore (string source, string value, int startIndex, int count, bool ignoreCase)
