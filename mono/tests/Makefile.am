@@ -1357,6 +1357,7 @@ INTERP_DISABLED_TESTS += \
 	remoting2.exe \
 	remoting3.exe \
 	safehandle.2.exe \
+	sizeof-empty-structs.exe \
 	stackframes-async.2.exe \
 	static-constructor.exe \
 	threadpool-exceptions2.exe \
@@ -1377,7 +1378,8 @@ INTERP_DISABLED_TESTS += \
 	bug-80307.exe \
 	delegate-with-null-target.exe \
 	dim-diamondshape.exe \
-	pinvoke3.exe
+	pinvoke3.exe \
+	sizeof-empty-structs.exe
 endif
 
 if AMD64
@@ -1389,7 +1391,8 @@ INTERP_DISABLED_TESTS += \
 	delegate-with-null-target.exe \
 	dim-diamondshape.exe \
 	pinvoke.exe \
-	pinvoke3.exe
+	pinvoke3.exe \
+	sizeof-empty-structs.exe
 endif
 
 TESTS_CS=$(filter-out $(DISABLED_TESTS),$(TESTS_CS_SRC:.cs=.exe))
