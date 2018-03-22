@@ -82,10 +82,13 @@ class SlnGenerator {
 		library = library.Replace("-net_4_x", "");
 		sln.WriteLine (project_start, prefixGuid, library, relativePath, projectGuid);
 
-		foreach (var guid in dependencyGuids) {
-    		sln.WriteLine ("    ProjectSection(ProjectDependencies) = postProject");
-    		sln.WriteLine ("        {0} = {0}", guid);
-    		sln.WriteLine ("    EndProjectSection");
+		if (
+			(dependencyGuids != null) && (dependencyGuids.Length > 0)
+		) {
+			sln.WriteLine ("    ProjectSection(ProjectDependencies) = postProject");
+			foreach (var guid in dependencyGuids)
+	    		sln.WriteLine ("        {0} = {0}", guid);
+			sln.WriteLine ("    EndProjectSection");
 		}
 
 		sln.WriteLine (project_end);
@@ -94,8 +97,9 @@ class SlnGenerator {
 	private void WriteProjectReference (StreamWriter sln, string slnFullPath, MsbuildGenerator.VsCsproj proj)
 	{
 		var unixProjFile = proj.csProjFilename.Replace ("\\", "/");
-		var fullProjPath = Path.GetFullPath (unixProjFile);
+		var fullProjPath = Path.GetFullPath (unixProjFile).Replace ("\\", "/");
 		var relativePath = MsbuildGenerator.GetRelativePath (slnFullPath, fullProjPath);
+
 		var dependencyGuids = new string[0];
 		if (proj.preBuildEvent.Contains ("jay"))
 			dependencyGuids = new [] { jay_vcxproj_guid };
@@ -107,7 +111,7 @@ class SlnGenerator {
 		}
 
 		if (dependencyGuids.Length > 0)
-			Console.WriteLine ($"Project {unixProjFile} has {dependencyGuids.Length} dependencies: {string.Join(", ", dependencyGuids)}");
+			Console.WriteLine ($"Project {fullProjPath} has {dependencyGuids.Length} dependencies: {string.Join(", ", dependencyGuids)}");
 
 		WriteProjectReference(sln, "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}", proj.library, relativePath, proj.projectGuid, dependencyGuids);
 	}
