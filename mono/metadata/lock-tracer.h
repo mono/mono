@@ -28,6 +28,7 @@ typedef enum {
 	ThreadsLock,
 } RuntimeLocks;
 
+#define LOCK_TRACER
 #ifdef LOCK_TRACER
 
 void mono_locks_tracer_init (void);
