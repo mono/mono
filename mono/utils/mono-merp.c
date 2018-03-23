@@ -90,7 +90,7 @@ typedef struct {
 	gboolean log;
 } MerpOptions;
 
-MerpOptions config;
+static MerpOptions config;
 
 static void
 append_merp_arch (GString *output, MerpArch arch)
