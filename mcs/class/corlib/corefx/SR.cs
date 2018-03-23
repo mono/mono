@@ -930,4 +930,24 @@ partial class SR
 	public const string ParallelState_Break_InvalidOperationException_BreakAfterStop = "Break was called after Stop was called.";
 	public const string ParallelState_Stop_InvalidOperationException_StopAfterBreak = "Stop was called after Break was called.";
 	public const string ParallelState_NotSupportedException_UnsupportedMethod = "This method is not supported.";
+	public const string NotSupported_SortedListNestedWrite = "This operation is not supported on SortedList nested types because they require modifying the original SortedList";
+	public const string InvalidOperation_EmptyStack = "Stack empty.";
+	public const string Arg_RemoveArgNotFound = "Cannot remove the specified item because it was not found in the specified Collection.";
+	public const string ArgumentNull_Dictionary = "Dictionary cannot be null.";
+	public const string ArgumentOutOfRange_QueueGrowFactor = "Queue grow factor must be between {0} and {1}.";
+	public const string ArgumentNull_Collection = "Collection cannot be null.";
+	public const string ArgumentOutOfRange_ArrayListInsert = "Insertion index was out of range. Must be non-negative and less than or equal to size.";
+	public const string InvalidOperation_UnderlyingArrayListChanged = "This range in the underlying list is invalid. A possible cause is that elements were removed.";
+	public const string NotSupported_RangeCollection = "The specified operation is not supported on Ranges.";
+	public const string Argument_ArrayTooLarge = "The input array length must not exceed Int32.MaxValue / {0}. Otherwise BitArray.Length would exceed Int32.MaxValue.";
+	public const string Arg_ArrayLengthsDiffer = "Array lengths must be the same.";
+	public const string Arg_BitArrayTypeUnsupported = "Only supported array types for CopyTo on BitArrays are Boolean[], Int32[] and Byte[].";
+	public const string ArgumentOutOfRange_InvalidThreshold = "The specified threshold for creating dictionary is out of range.";
+	public const string Argument_ItemNotExist = "The specified item does not exist in this KeyedCollection.";
+	public const string Arg_CannotMixComparisonInfrastructure = "The usage of IKeyComparer and IHashCodeProvider/IComparer interfaces cannot be mixed; use one or the other.";
+	public const string ArgumentOutOfRange_HashtableLoadFactor = "Load factor needs to be between 0.1 and 1.0.";
+	public const string InvalidOperation_HashInsertFailed = "Hashtable insert failed. Load factor too high. The most common cause is multiple threads writing to the Hashtable simultaneously.";
+	public const string Serialization_InvalidOnDeser = "OnDeserialization method was called while the object was not being deserialized.";
+	public const string Serialization_MissingValues = "The Values for this Hashtable are missing.";
+	public const string Serialization_KeyValueDifferentSizes = "The keys and values arrays have different sizes.";
 }
