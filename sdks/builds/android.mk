@@ -1,4 +1,6 @@
 
+include runtime.mk
+
 ##
 # Parameters:
 #  $(1): target
@@ -67,10 +69,6 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	python "$$(NDK_DIR)/build/tools/make_standalone_toolchain.py" --verbose --force --api=$$(ANDROID_PLATFORM_VERSION_$(1)) --arch=$(2) --install-dir=$$(TOP)/sdks/builds/toolchains/android-$(1)
 	touch $$@
 
-.PHONY: package-android-$(1)-$$(CONFIGURATION)
-package-android-$(1)-$$(CONFIGURATION)::
-	$$(MAKE) -C $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION)/support install
-
 $$(eval $$(call RuntimeTemplate,android-$(1)))
 
 endef
@@ -138,10 +136,6 @@ _android-$(1)_CONFIGURE_FLAGS= \
 .stamp-android-$(1)-toolchain:
 	touch $$@
 
-.PHONY: package-android-$(1)-$$(CONFIGURATION)
-package-android-$(1)-$$(CONFIGURATION)::
-	$$(MAKE) -C $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION)/support install
-
 $$(eval $$(call RuntimeTemplate,android-$(1)))
 
 endef
@@ -194,10 +188,6 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	touch $$@
 
 .stamp-android-$(1)-$$(CONFIGURATION)-configure: | package-mxe
-
-.PHONY: package-android-$(1)-$$(CONFIGURATION)
-package-android-$(1)-$$(CONFIGURATION)::
-	$$(MAKE) -C $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION)/support install
 
 $$(eval $$(call RuntimeTemplate,android-$(1)))
 

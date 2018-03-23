@@ -53,7 +53,7 @@ namespace System.Windows.Forms
 		private TableLayoutPanelCellBorderStyle cell_border_style;
 
 		// This is the row/column the Control actually got placed
-		internal Control[,] actual_positions;
+		internal IArrangedElement[,] actual_positions;
 		
 		// Widths and heights of each column/row
 		internal int[] column_widths;

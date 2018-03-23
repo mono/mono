@@ -26,6 +26,8 @@ else
 endif
 endif
 
+ILASM = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/ilasm.exe
+STRING_REPLACER = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/cil-stringreplacer.exe
 MCS = $(BOOTSTRAP_MCS)
 
 DEFAULT_REFERENCES = mscorlib

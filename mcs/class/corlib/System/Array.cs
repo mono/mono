@@ -49,7 +49,6 @@ namespace System
 		private Array ()
 		{
 		}
-
 		/*
 		 * These methods are used to implement the implicit generic interfaces 
 		 * implemented by arrays in NET 2.0.

@@ -193,6 +193,9 @@ static void self_abort_internal (MonoError *error);
 static void async_suspend_internal (MonoInternalThread *thread, gboolean interrupt);
 static void self_suspend_internal (void);
 
+static gboolean
+mono_thread_set_interruption_requested_flags (MonoInternalThread *thread, gboolean sync);
+
 static MonoException* mono_thread_execute_interruption (void);
 static void ref_stack_destroy (gpointer rs);
 
@@ -252,6 +255,14 @@ mono_thread_get_abort_prot_block_count (MonoInternalThread *thread)
 {
 	gsize state = thread->thread_state;
 	return (state & ABORT_PROT_BLOCK_MASK) >> ABORT_PROT_BLOCK_SHIFT;
+}
+
+gboolean
+mono_threads_is_current_thread_in_protected_block (void)
+{
+	MonoInternalThread *thread = mono_thread_internal_current ();
+
+	return mono_thread_get_abort_prot_block_count (thread) > 0;
 }
 
 void
@@ -366,6 +377,30 @@ mono_thread_set_interruption_requested (MonoInternalThread *thread)
 {
 	//always force when the current thread is doing it to itself.
 	gboolean sync = thread == mono_thread_internal_current ();
+	/* Normally synchronous interruptions can bypass abort protection. */
+	return mono_thread_set_interruption_requested_flags (thread, sync);
+}
+
+/* Returns TRUE if there was a state change and the interruption can be
+ * processed.  This variant defers a self abort when inside an abort protected
+ * block.  Normally this should only be done when a thread has received an
+ * outside indication that it should abort.  (For example when the JIT sets a
+ * flag in an finally block.)
+ */
+
+static gboolean
+mono_thread_set_self_interruption_respect_abort_prot (void)
+{
+	MonoInternalThread *thread = mono_thread_internal_current ();
+	/* N.B. Sets the ASYNC_REQUESTED_BIT for current this thread,
+	 * which is unusual. */
+	return mono_thread_set_interruption_requested_flags (thread, FALSE);
+}
+
+/* Returns TRUE if there was a state change and the interruption can be processed. */
+static gboolean
+mono_thread_set_interruption_requested_flags (MonoInternalThread *thread, gboolean sync)
+{
 	gsize old_state, new_state;
 	do {
 		old_state = thread->thread_state;
@@ -2047,6 +2082,8 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 	return map_native_wait_result_to_managed (ret, numhandles);
 }
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 gint32
 ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (gpointer toSignal, gpointer toWait, gint32 ms, MonoError *error)
 {
@@ -2073,6 +2110,8 @@ ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (gpointer toSignal,
 
 	return map_native_wait_result_to_managed (ret, 1);
 }
+
+#endif
 
 gint32 ves_icall_System_Threading_Interlocked_Increment_Int (gint32 *location)
 {
@@ -4081,12 +4120,48 @@ mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 	return TRUE;
 }
 
+/* This is a JIT icall.  This icall is called from a finally block when
+ * mono_install_handler_block_guard called by another thread has flipped the
+ * finally block's exvar (see mono_find_exvar_for_offset).  In that case, if
+ * the finally is in an abort protected block, we must defer the abort
+ * exception until we leave the abort protected block.  Otherwise we proceed
+ * with a synchronous self-abort.
+ */
 void
-mono_thread_self_abort (void)
+ves_icall_thread_finish_async_abort (void)
 {
-	ERROR_DECL (error);
-	self_abort_internal (error);
-	mono_error_set_pending_exception (error);
+	/* We were called from the handler block and are about to
+	 * leave it.  (If we end up postponing the abort because we're
+	 * in an abort protected block, the unwinder won't run and
+	 * won't clear the handler block itself which will confuse the
+	 * unwinder if we're in a try {} catch {} and we throw again.
+	 * ie, this:
+	 * static Constructor () {
+	 *   try {
+	 *     try {
+	 *     } finally {
+	 *       icall (); // Thread.Abort landed here,
+	 *                 // and caused the handler block to be installed
+	 *       if (exvar)
+	 *         ves_icall_thread_finish_async_abort (); // we're here
+	 *     }
+	 *     throw E ();
+	 *   } catch (E) {
+	 *     // unwinder will get confused here and synthesize a self abort
+	 *   }
+	 * }
+	 *
+	 * More interestingly, this doesn't only happen with icalls - a JIT
+	 * trampoline is native code that will cause a handler to be installed.
+	 * So the above situation can happen with any code in a "finally"
+	 * clause.
+	 */
+	mono_get_eh_callbacks ()->mono_uninstall_current_handler_block_guard ();
+	/* Just set the async interruption requested bit.  Rely on the icall
+	 * wrapper of this icall to process the thread interruption, respecting
+	 * any abort protection blocks in our call stack.
+	 */
+	mono_thread_set_self_interruption_respect_abort_prot ();
 }
 
 /*

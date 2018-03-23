@@ -307,6 +307,23 @@ namespace System {
             return argumentName;
         }
 
+        private static ArgumentOutOfRangeException GetArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
+        {
+            return new ArgumentOutOfRangeException(GetArgumentName(argument), resource.ToString());
+        }
+
+        internal static void ThrowStartIndexArgumentOutOfRange_ArgumentOutOfRange_Index()
+        {
+            throw GetArgumentOutOfRangeException(ExceptionArgument.startIndex,
+                                                 ExceptionResource.ArgumentOutOfRange_Index);
+        }
+
+        internal static void ThrowCountArgumentOutOfRange_ArgumentOutOfRange_Count()
+        {
+            throw GetArgumentOutOfRangeException(ExceptionArgument.count,
+                                                 ExceptionResource.ArgumentOutOfRange_Count);
+        }
+
         //
         // This function will convert an ExceptionResource enum value to the resource string.
         //
@@ -547,7 +564,9 @@ namespace System {
         comparer,
         comparable,
         exceptions,
-        exception
+        exception,
+        action,
+        comparison
 #endif
     }
 

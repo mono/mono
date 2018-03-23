@@ -89,11 +89,6 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\WebSockets\WebSocketValidate.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\StringExtensions.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\ArrayPool.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\ArrayPoolEventSource.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\DefaultArrayPool.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\DefaultArrayPoolBucket.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\Utilities.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\Microsoft\CSharp\CSharpCodeGenerator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\Microsoft\CSharp\CSharpCodeProvider.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\Microsoft\CSharp\CSharpMemberAttributeConverter.cs" />

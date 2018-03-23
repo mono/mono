@@ -83,7 +83,7 @@ _ios-$(1)_CPPFLAGS= \
 	$$(ios_CPPFLAGS) \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
-	-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -DDISABLE_PROCESS_HANDLING=1 -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
+	-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
 	$$(ios-$(1)_CPPFLAGS)
 
 _ios-$(1)_LDFLAGS= \
@@ -111,7 +111,7 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--enable-dtrace=no \
 	--enable-icall-export \
 	--enable-maintainer-mode \
-	--enable-minimal=ssa,com,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,remoting,shared_perfcounters \
+	--enable-minimal=ssa,com,interpreter,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,remoting,shared_perfcounters \
 	--with-lazy-gc-thread-creation=yes \
 	--with-monotouch \
 	--with-tls=pthread \
@@ -381,7 +381,7 @@ $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-$$(CONFIG
 			mono --arch=32 --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
 				--gen-ios --abi $$(_ios-$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
 
-build-custom-ios-$(1):: $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
+build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
 
 $$(eval $$(call RuntimeTemplate,ios-$(1)))
 

@@ -1118,8 +1118,12 @@ namespace System.Runtime.InteropServices
 				throw new OutOfMemoryException();
 
 			byte* pbMem = (byte*)pMem;
-			int nbWritten = s.GetBytesFromEncoding(pbMem, nb, Encoding.UTF8);
-			pbMem[nbWritten] = 0;
+
+            fixed (char* pwzChar = s)
+            {
+                int nbWritten = Encoding.UTF8.GetBytes(pwzChar, s.Length, pbMem, nb);
+				pbMem[nbWritten] = 0;
+            }
 			return pMem;
 		}
 		

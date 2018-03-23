@@ -135,6 +135,7 @@ GList* mono_aot_paths;
 static GPtrArray *profile_options;
 
 static GSList *tramp_infos;
+GSList *mono_interp_only_classes;
 
 static void register_icalls (void);
 
@@ -939,6 +940,7 @@ free_jit_tls_data (MonoJitTlsData *jit_tls)
 	mono_free_altstack (jit_tls);
 
 	g_free (jit_tls->first_lmf);
+	g_free (jit_tls->interp_context);
 	g_free (jit_tls);
 }
 
@@ -1427,11 +1429,11 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		break;
 	case MONO_PATCH_INFO_IID:
 		mono_class_init (patch_info->data.klass);
-		target = GUINT_TO_POINTER (patch_info->data.klass->interface_id);
+		target = GUINT_TO_POINTER (m_class_get_interface_id (patch_info->data.klass));
 		break;
 	case MONO_PATCH_INFO_ADJUSTED_IID:
 		mono_class_init (patch_info->data.klass);
-		target = GUINT_TO_POINTER ((guint32)(-((patch_info->data.klass->interface_id + 1) * SIZEOF_VOID_P)));
+		target = GUINT_TO_POINTER ((guint32)(-((m_class_get_interface_id (patch_info->data.klass) + 1) * SIZEOF_VOID_P)));
 		break;
 	case MONO_PATCH_INFO_VTABLE:
 		target = mono_class_vtable_checked (domain, patch_info->data.klass, error);
@@ -1661,10 +1663,13 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 void
 mini_register_jump_site (MonoDomain *domain, MonoMethod *method, gpointer ip)
 {
+	ERROR_DECL (error);
 	MonoJumpList *jlist;
 
-	if (mono_method_is_generic_sharable (method, TRUE))
-		method = mini_get_shared_method (method);
+	if (mono_method_is_generic_sharable (method, TRUE)) {
+		method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
+		mono_error_assert_ok (error);
+	}
 
 	mono_domain_lock (domain);
 	jlist = (MonoJumpList *)g_hash_table_lookup (domain_jit_info (domain)->jump_target_hash, method);
@@ -1684,6 +1689,7 @@ mini_register_jump_site (MonoDomain *domain, MonoMethod *method, gpointer ip)
 void
 mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 {
+	ERROR_DECL (error);
 	GHashTable *hash = domain_jit_info (domain)->jump_target_hash;
 
 	if (!hash)
@@ -1694,8 +1700,10 @@ mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 	GSList *tmp;
 
 	/* The caller/callee might use different instantiations */
-	if (mono_method_is_generic_sharable (method, TRUE))
-		method = mini_get_shared_method (method);
+	if (mono_method_is_generic_sharable (method, TRUE)) {
+		method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
+		mono_error_assert_ok (error);
+	}
 
 	mono_domain_lock (domain);
 	jlist = (MonoJumpList *)g_hash_table_lookup (hash, method);
@@ -1788,6 +1796,7 @@ mini_lookup_method (MonoDomain *domain, MonoMethod *method, MonoMethod *shared)
 static MonoJitInfo*
 lookup_method (MonoDomain *domain, MonoMethod *method)
 {
+	ERROR_DECL (error);
 	MonoJitInfo *ji;
 	MonoMethod *shared;
 
@@ -1796,7 +1805,8 @@ lookup_method (MonoDomain *domain, MonoMethod *method)
 	if (!ji) {
 		if (!mono_method_is_generic_sharable (method, FALSE))
 			return NULL;
-		shared = mini_get_shared_method (method);
+		shared = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
+		mono_error_assert_ok (error);
 		ji = mini_lookup_method (domain, method, shared);
 	}
 
@@ -1816,7 +1826,7 @@ mini_get_class (MonoMethod *method, guint32 token, MonoGenericContext *context)
 			mono_error_cleanup (error); /* FIXME don't swallow the error */
 		}
 	} else {
-		klass = mono_class_get_and_inflate_typespec_checked (method->klass->image, token, context, error);
+		klass = mono_class_get_and_inflate_typespec_checked (m_class_get_image (method->klass), token, context, error);
 		mono_error_cleanup (error); /* FIXME don't swallow the error */
 	}
 	if (klass)
@@ -1900,8 +1910,15 @@ typedef struct {
 	MonoCoopMutex lock;
 } JitCompilationData;
 
+/*
+Timeout, in millisecounds, that we wait other threads to finish JITing.
+This value can't be too small or we won't see enough methods being reused and it can't be too big to cause massive stalls due to unforseable circunstances.
+*/
+#define MAX_JIT_TIMEOUT_MS 1000
+
+
 static JitCompilationData compilation_data;
-static int jit_methods_waited, jit_methods_multiple, jit_methods_overload, jit_spurious_wakeups;
+static int jit_methods_waited, jit_methods_multiple, jit_methods_overload, jit_spurious_wakeups_or_timeouts;
 
 static void
 mini_jit_init_job_control (void)
@@ -1966,7 +1983,7 @@ wait_or_register_method_to_compile (MonoMethod *method, MonoDomain *domain)
 		mono_counters_register ("JIT compile waited others", MONO_COUNTER_INT|MONO_COUNTER_JIT, &jit_methods_waited);
 		mono_counters_register ("JIT compile 1+ jobs", MONO_COUNTER_INT|MONO_COUNTER_JIT, &jit_methods_multiple);
 		mono_counters_register ("JIT compile overload wait", MONO_COUNTER_INT|MONO_COUNTER_JIT, &jit_methods_overload);
-		mono_counters_register ("JIT compile spurious wakeups", MONO_COUNTER_INT|MONO_COUNTER_JIT, &jit_spurious_wakeups);
+		mono_counters_register ("JIT compile spurious wakeups or timeouts", MONO_COUNTER_INT|MONO_COUNTER_JIT, &jit_spurious_wakeups_or_timeouts);
 		inited = TRUE;
 	}
 
@@ -1983,9 +2000,14 @@ wait_or_register_method_to_compile (MonoMethod *method, MonoDomain *domain)
 
 		unlock_compilation_data ();
 		return FALSE;
-	} else if (jit_tls->active_jit_methods > 0) {
+	} else if (jit_tls->active_jit_methods > 0 || mono_threads_is_current_thread_in_protected_block ()) {
 		//We can't suspend the current thread if it's already JITing a method.
 		//Dependency management is too compilated and we want to get rid of this anyways.
+
+		//We can't suspend the current thread if it's running a protected block (such as a cctor)
+		//We can't rely only on JIT nesting as cctor's can be run from outside the JIT.
+
+		//Finally, he hit a timeout or spurious wakeup. We're better off just giving up and keep recompiling
 		++entry->compilation_count;
 		++jit_methods_multiple;
 		++jit_tls->active_jit_methods;
@@ -2005,7 +2027,7 @@ wait_or_register_method_to_compile (MonoMethod *method, MonoDomain *domain)
 			++entry->threads_waiting;
 
 			g_assert (entry->has_cond);
-			mono_coop_cond_wait (&entry->cond, &compilation_data.lock);
+			mono_coop_cond_timedwait (&entry->cond, &compilation_data.lock, MAX_JIT_TIMEOUT_MS);
 			--entry->threads_waiting;
 
 			if (entry->done) {
@@ -2013,7 +2035,17 @@ wait_or_register_method_to_compile (MonoMethod *method, MonoDomain *domain)
 				unlock_compilation_data ();
 				return TRUE;
 			} else {
-				++jit_spurious_wakeups;
+				//We hit the timeout or a spurious wakeup, fallback to JITing
+				g_assert (entry->ref_count > 1);
+				unref_jit_entry (entry);
+				++jit_spurious_wakeups_or_timeouts;
+
+				++entry->compilation_count;
+				++jit_methods_multiple;
+				++jit_tls->active_jit_methods;
+
+				unlock_compilation_data ();
+				return FALSE;
 			}
 		}
 	}
@@ -2056,10 +2088,19 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, gboolean jit_
 	MonoJitInfo *ji;
 	MonoJitICallInfo *callinfo = NULL;
 	WrapperInfo *winfo = NULL;
+	gboolean use_interp = FALSE;
 
 	error_init (error);
 
-	if (mono_use_interpreter && !jit_only) {
+	if (mono_use_interpreter && !mono_aot_only && !jit_only)
+		use_interp = TRUE;
+	if (!use_interp && mono_interp_only_classes) {
+		for (GSList *l = mono_interp_only_classes; l; l = l->next) {
+			if (!strcmp (method->klass->name, (char*)l->data))
+				use_interp = TRUE;
+		}
+	}
+	if (use_interp) {
 		code = mini_get_interp_callbacks ()->create_method_pointer (method, error);
 		if (code)
 			return code;
@@ -2159,7 +2200,7 @@ lookup_start:
 			 * This is not a problem, since it will be initialized when the method is first
 			 * called by init_method ().
 			 */
-			if (!mono_llvm_only && !mono_class_is_open_constructed_type (&method->klass->byval_arg)) {
+			if (!mono_llvm_only && !mono_class_is_open_constructed_type (m_class_get_byval_arg (method->klass))) {
 				vtable = mono_class_vtable_checked (domain, method->klass, error);
 				mono_error_assert_ok (error);
 				if (!mono_runtime_class_init_full (vtable, error))
@@ -2187,7 +2228,7 @@ lookup_start:
 	}
 
 	if (!code) {
-		if (mono_class_is_open_constructed_type (&method->klass->byval_arg)) {
+		if (mono_class_is_open_constructed_type (m_class_get_byval_arg (method->klass))) {
 			mono_error_set_invalid_operation (error, "Could not execute the method because the containing type is not fully instantiated.");
 			return NULL;
 		}
@@ -2336,7 +2377,7 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 		 * Instead of freeing the code, change it to call an error routine
 		 * so people can fix their code.
 		 */
-		char *type = mono_type_full_name (&method->klass->byval_arg);
+		char *type = mono_type_full_name (m_class_get_byval_arg (method->klass));
 		char *type_and_method = g_strdup_printf ("%s.%s", type, method->name);
 
 		g_free (type);
@@ -2697,7 +2738,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	MonoJitInfo *ji = NULL;
 	gboolean callee_gsharedvt = FALSE;
 
-	if (mono_use_interpreter)
+	if (mono_use_interpreter && !mono_aot_only)
 		return mini_get_interp_callbacks ()->runtime_invoke (method, obj, params, exc, error);
 
 	error_init (error);
@@ -2731,7 +2772,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		gpointer compiled_method;
 
 		callee = method;
-		if (method->klass->rank && (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) &&
+		if (m_class_get_rank (method->klass) && (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) &&
 			(method->iflags & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
 			/*
 			 * Array Get/Set/Address methods. The JIT implements them using inline code
@@ -4206,7 +4247,7 @@ register_icalls (void)
 	register_dyn_icall (mono_get_rethrow_exception (), "mono_arch_rethrow_exception", "void object", TRUE);
 	register_dyn_icall (mono_get_throw_corlib_exception (), "mono_arch_throw_corlib_exception", "void ptr", TRUE);
 	register_icall (mono_thread_get_undeniable_exception, "mono_thread_get_undeniable_exception", "object", FALSE);
-	register_icall (mono_thread_self_abort, "mono_thread_self_abort", "void", FALSE);
+	register_icall (ves_icall_thread_finish_async_abort, "ves_icall_thread_finish_async_abort", "void", FALSE);
 	register_icall (mono_thread_interruption_checkpoint, "mono_thread_interruption_checkpoint", "object", FALSE);
 	register_icall (mono_thread_force_interruption_checkpoint_noraise, "mono_thread_force_interruption_checkpoint_noraise", "object", FALSE);
 

@@ -291,7 +291,7 @@ enum {
 #define MONO_IS_REAL_MOVE(ins) (((ins)->opcode == OP_MOVE) || ((ins)->opcode == OP_FMOVE) || ((ins)->opcode == OP_XMOVE) || ((ins)->opcode == OP_RMOVE))
 #define MONO_IS_ZERO(ins) (((ins)->opcode == OP_VZERO) || ((ins)->opcode == OP_XZERO))
 
-#define MONO_CLASS_IS_SIMD(cfg, klass) (((cfg)->opt & MONO_OPT_SIMD) && (klass)->simd_type)
+#define MONO_CLASS_IS_SIMD(cfg, klass) (((cfg)->opt & MONO_OPT_SIMD) && m_class_is_simd_type (klass))
 
 #else
 
@@ -959,6 +959,7 @@ typedef enum {
 	MONO_RGCTX_INFO_NULLABLE_CLASS_BOX,
 	MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX,
 	/* MONO_PATCH_INFO_VCALL_METHOD */
+	/* In llvmonly mode, this is a function descriptor */
 	MONO_RGCTX_INFO_VIRT_METHOD_CODE,
 	/*
 	 * MONO_PATCH_INFO_VCALL_METHOD
@@ -1089,6 +1090,7 @@ typedef struct {
 	guint            have_generalized_imt_trampoline : 1;
 	guint            have_op_tail_call : 1;
 	gboolean         have_op_tail_call_membase : 1;
+	gboolean	 have_volatile_non_param_register : 1;
 	guint            gshared_supported : 1;
 	guint            use_fpstack : 1;
 	guint            ilp32 : 1;
@@ -1490,6 +1492,7 @@ typedef struct {
 	int stat_code_reallocs;
 
 	MonoProfilerCallInstrumentationFlags prof_flags;
+	gboolean prof_coverage;
 
 	/* For deduplication */
 	gboolean skip;
@@ -2488,12 +2491,16 @@ void mono_generic_sharing_cleanup (void);
 MonoClass* mini_class_get_container_class (MonoClass *klass);
 MonoGenericContext* mini_class_get_context (MonoClass *klass);
 
+typedef enum {
+	SHARE_MODE_NONE = 0x0,
+	SHARE_MODE_GSHAREDVT = 0x1,
+} GetSharedMethodFlags;
+
 MonoType* mini_get_underlying_type (MonoType *type) MONO_LLVM_INTERNAL;
 MonoType* mini_type_get_underlying_type (MonoType *type);
 MonoClass* mini_get_class (MonoMethod *method, guint32 token, MonoGenericContext *context);
-MonoMethod* mini_get_shared_method (MonoMethod *method);
 MonoMethod* mini_get_shared_method_to_register (MonoMethod *method);
-MonoMethod* mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gsharedvt);
+MonoMethod* mini_get_shared_method_full (MonoMethod *method, GetSharedMethodFlags flags, MonoError *error);
 MonoType* mini_get_shared_gparam (MonoType *t, MonoType *constraint);
 int mini_get_rgctx_entry_slot (MonoJumpInfoRgctxEntry *entry);
 

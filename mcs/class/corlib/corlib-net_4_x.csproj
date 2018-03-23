@@ -106,6 +106,8 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\TypeForwardedToAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\UnsafeValueTypeAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\InteropServices\MemoryMarshal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\String.Searching.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\StringSplitOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCanceledException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCompletionSource.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskSchedulerException.cs" />
@@ -116,6 +118,11 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\BeginEndAwaitableAdapter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\RendezvousAwaitable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\ArrayPool.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\ArrayPoolEventSource.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\DefaultArrayPool.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\DefaultArrayPoolBucket.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\Utilities.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\CDSCollectionETWBCLProvider.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\ConcurrentDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\ConcurrentQueue.cs" />
@@ -172,8 +179,11 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Interop\Windows\Interop.Errors.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Interop\Windows\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Interop\Windows\Kernel32\Interop.FormatMessage.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Collections\Generic\ValueListBuilder.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Diagnostics\Debug.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\IO\Win32Marshal.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\String.Manipulation.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\StringSpanHelpers.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\DeferredDisposableLifetime.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Internal\Runtime\Augments\AsyncCausalityTracer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Internal\Runtime\Augments\TaskTraceCallbacks.cs" />
@@ -184,6 +194,8 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Globalization\GlobalizationMode.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\ReflectionBlockedAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\TaskAwaiter.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\String.Comparison.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\String.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\LockHolder.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.Dummy.cs" />
@@ -807,7 +819,6 @@
     <Compile Include="..\referencesource\mscorlib\system\sharedstatics.cs" />
     <Compile Include="..\referencesource\mscorlib\system\single.cs" />
     <Compile Include="..\referencesource\mscorlib\system\stackoverflowexception.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\string.cs" />
     <Compile Include="..\referencesource\mscorlib\system\stringcomparer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\stringfreezingattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\systemexception.cs" />
@@ -909,6 +920,7 @@
     <Compile Include="corefx\AwaitTaskContinuation.cs" />
     <Compile Include="corefx\CompareInfo.cs" />
     <Compile Include="corefx\GlobalizationMode.cs" />
+    <Compile Include="corefx\MemoryExtensions.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />

@@ -2963,6 +2963,24 @@ namespace MonoTests.System.Windows.Forms
 			c1.Controls.Remove(c3);
 			Assert.AreEqual (c2, c3.Parent);
 		}
+
+		[Test]
+		public void DrawToBitmap ()
+		{
+			var b = new Bitmap (20, 20);
+			var l = new Label ();
+			l.Location = new Point (100, 100);
+			l.Size = new Size (10, 10);
+			l.BackColor = Color.Blue;
+			using (var g = Graphics.FromImage (b))
+				g.Clear (Color.White);
+			l.DrawToBitmap (b, new Rectangle(10, 10, 5, 5));
+			using (var g = Graphics.FromImage (b)) {
+				Assert.AreEqual (Color.White.ToArgb(), b.GetPixel(0, 0).ToArgb());
+				Assert.AreEqual (Color.Blue.ToArgb(), b.GetPixel(10, 10).ToArgb());
+				Assert.AreEqual (Color.White.ToArgb(), b.GetPixel(15, 15).ToArgb());
+			}
+		}
 	}
 
 	[TestFixture]

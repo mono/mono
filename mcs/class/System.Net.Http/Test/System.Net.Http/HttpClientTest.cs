@@ -1439,11 +1439,8 @@ namespace MonoTests.System.Net.Http
 			ch.AllowAutoRedirect = false;
 		}
 
+#if !FEATURE_NO_BSD_SOCKETS
 		[Test]
-#if FEATURE_NO_BSD_SOCKETS
-		// Using HttpClientHandler, which indirectly requires BSD sockets.
-		[ExpectedException (typeof (PlatformNotSupportedException))]
-#endif
 		// https://github.com/mono/mono/issues/7355
 		public void WildcardConnect ()
 		{
@@ -1459,6 +1456,7 @@ namespace MonoTests.System.Net.Http
 				Assert.That (wex.Status, Is.EqualTo (WebExceptionStatus.ConnectFailure), "#3");
 			}
 		}
+#endif
 
 		HttpListener CreateListener (Action<HttpListenerContext> contextAssert, int port)
 		{

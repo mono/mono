@@ -877,12 +877,12 @@ namespace System.Windows.Forms {
 			
 			SuspendLayout ();
 
-			hscrollbar.SetBoundsInternal (hscroll_bounds.X, hscroll_bounds.Y, hscroll_bounds.Width, hscroll_bounds.Height, BoundsSpecified.None);
+			hscrollbar.SetBounds (hscroll_bounds.X, hscroll_bounds.Y, hscroll_bounds.Width, hscroll_bounds.Height, BoundsSpecified.All);
 			hscrollbar.Visible = hscroll_visible;
 			if (hscrollbar.Visible)
 				XplatUI.SetZOrder (hscrollbar.Handle, IntPtr.Zero, true, false);
 
-			vscrollbar.SetBoundsInternal (vscroll_bounds.X, vscroll_bounds.Y, vscroll_bounds.Width, vscroll_bounds.Height, BoundsSpecified.None);
+			vscrollbar.SetBounds (vscroll_bounds.X, vscroll_bounds.Y, vscroll_bounds.Width, vscroll_bounds.Height, BoundsSpecified.All);
 			vscrollbar.Visible = vscroll_visible;
 			if (vscrollbar.Visible)
 				XplatUI.SetZOrder (vscrollbar.Handle, IntPtr.Zero, true, false);

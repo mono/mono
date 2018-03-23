@@ -164,6 +164,7 @@ typedef struct MonoAotOptions {
 	gboolean metadata_only;
 	gboolean bind_to_runtime_version;
 	MonoAotMode mode;
+	gboolean interp;
 	gboolean no_dlsym;
 	gboolean static_link;
 	gboolean asm_only;
@@ -418,7 +419,7 @@ static char*
 get_plt_entry_debug_sym (MonoAotCompile *acfg, MonoJumpInfo *ji, GHashTable *cache);
 
 static void
-add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean gsharedvt_in, gboolean gsharedvt_out);
+add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean gsharedvt_in, gboolean gsharedvt_out, gboolean interp_in);
 
 static void
 add_profile_instances (MonoAotCompile *acfg, ProfileData *data);
@@ -3754,11 +3755,16 @@ mono_dedup_cache_method (MonoAotCompile *acfg, MonoMethod *method)
 static void
 add_extra_method_with_depth (MonoAotCompile *acfg, MonoMethod *method, int depth)
 {
-	if (mono_method_is_generic_sharable_full (method, TRUE, TRUE, FALSE))
-		method = mini_get_shared_method (method);
-	else if ((acfg->opts & MONO_OPT_GSHAREDVT) && prefer_gsharedvt_method (acfg, method) && mono_method_is_generic_sharable_full (method, FALSE, FALSE, TRUE))
+	ERROR_DECL (error);
+	if (mono_method_is_generic_sharable_full (method, TRUE, TRUE, FALSE)) {
+		method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
+		mono_error_assert_ok (error);
+	}
+	else if ((acfg->opts & MONO_OPT_GSHAREDVT) && prefer_gsharedvt_method (acfg, method) && mono_method_is_generic_sharable_full (method, FALSE, FALSE, TRUE)) {
 		/* Use the gsharedvt version */
-		method = mini_get_shared_method_full (method, TRUE, TRUE);
+		method = mini_get_shared_method_full (method, SHARE_MODE_GSHAREDVT, error);
+		mono_error_assert_ok (error);
+	}
 
 	if ((acfg->aot_opts.dedup || acfg->aot_opts.dedup_include) && mono_aot_can_dedup (method)) {
 		mono_dedup_cache_method (acfg, method);
@@ -4236,7 +4242,9 @@ add_wrappers (MonoAotCompile *acfg)
 			m = mono_marshal_get_delegate_invoke (inst, NULL);
 			g_assert (m->is_inflated);
 
-			gshared = mini_get_shared_method_full (m, FALSE, TRUE);
+			gshared = mini_get_shared_method_full (m, SHARE_MODE_GSHAREDVT, error);
+			mono_error_assert_ok (error);
+
 			add_extra_method (acfg, gshared);
 
 			/* begin-invoke */
@@ -4250,7 +4258,9 @@ add_wrappers (MonoAotCompile *acfg)
 				m = mono_marshal_get_delegate_begin_invoke (inst);
 				g_assert (m->is_inflated);
 
-				gshared = mini_get_shared_method_full (m, FALSE, TRUE);
+				gshared = mini_get_shared_method_full (m, SHARE_MODE_GSHAREDVT, error);
+				mono_error_assert_ok (error);
+
 				add_extra_method (acfg, gshared);
 			}
 
@@ -4265,7 +4275,9 @@ add_wrappers (MonoAotCompile *acfg)
 				m = mono_marshal_get_delegate_end_invoke (inst);
 				g_assert (m->is_inflated);
 
-				gshared = mini_get_shared_method_full (m, FALSE, TRUE);
+				gshared = mini_get_shared_method_full (m, SHARE_MODE_GSHAREDVT, error);
+				mono_error_assert_ok (error);
+
 				add_extra_method (acfg, gshared);
 			}
 		}
@@ -4328,7 +4340,9 @@ add_wrappers (MonoAotCompile *acfg)
 				g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
 				m = mono_marshal_get_synchronized_wrapper (inst);
 				g_assert (m->is_inflated);
-				gshared = mini_get_shared_method_full (m, FALSE, TRUE);
+				gshared = mini_get_shared_method_full (m, SHARE_MODE_GSHAREDVT, error);
+				mono_error_assert_ok (error);
+
 				add_method (acfg, gshared);
 			} else {
 				add_method (acfg, mono_marshal_get_synchronized_wrapper (method));
@@ -4353,7 +4367,7 @@ add_wrappers (MonoAotCompile *acfg)
 		if (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
 			if (acfg->aot_opts.llvm_only) {
 				/* The wrappers have a different signature (hasthis is not set) so need to add this too */
-				add_gsharedvt_wrappers (acfg, mono_method_signature (method), FALSE, TRUE);
+				add_gsharedvt_wrappers (acfg, mono_method_signature (method), FALSE, TRUE, FALSE);
 			}
 		}
 	}
@@ -4556,13 +4570,13 @@ method_has_type_vars (MonoMethod *method)
 static
 gboolean mono_aot_mode_is_full (MonoAotOptions *opts)
 {
-	return opts->mode == MONO_AOT_MODE_FULL || opts->mode == MONO_AOT_MODE_INTERP;
+	return opts->mode == MONO_AOT_MODE_FULL;
 }
 
 static
 gboolean mono_aot_mode_is_interp (MonoAotOptions *opts)
 {
-	return opts->mode == MONO_AOT_MODE_INTERP;
+	return opts->interp;
 }
 
 static
@@ -6243,6 +6257,10 @@ emit_exception_debug_info (MonoAotCompile *acfg, MonoCompile *cfg, gboolean stor
 	seq_points_size = (store_seq_points)? mono_seq_point_info_get_write_size (seq_points) : 0;
 
 	buf_size = header->num_clauses * 256 + debug_info_size + 2048 + seq_points_size + cfg->gc_map_size;
+	if (jinfo->has_try_block_holes) {
+		MonoTryBlockHoleTableJitInfo *table = mono_jit_info_get_try_block_hole_table_info (jinfo);
+		buf_size += table->num_holes * 16;
+	}
 
 	p = buf = (guint8 *)g_malloc (buf_size);
 
@@ -6879,7 +6897,7 @@ emit_trampolines (MonoAotCompile *acfg)
 	int tramp_type;
 #endif
 
-	if (!mono_aot_mode_is_full (&acfg->aot_opts) || acfg->aot_opts.llvm_only)
+	if ((!mono_aot_mode_is_full (&acfg->aot_opts) || acfg->aot_opts.llvm_only) && !acfg->aot_opts.interp)
 		return;
 	
 	g_assert (acfg->image->assembly);
@@ -7344,7 +7362,7 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 		} else if (str_begins_with (arg, "hybrid")) {
 			opts->mode = MONO_AOT_MODE_HYBRID;			
 		} else if (str_begins_with (arg, "interp")) {
-			opts->mode = MONO_AOT_MODE_INTERP;
+			opts->interp = TRUE;
 		} else if (str_begins_with (arg, "threads=")) {
 			opts->nthreads = atoi (arg + strlen ("threads="));
 		} else if (str_begins_with (arg, "static")) {
@@ -7662,7 +7680,7 @@ is_concrete_type (MonoType *t)
 
 /* LOCKING: Assumes the loader lock is held */
 static void
-add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean gsharedvt_in, gboolean gsharedvt_out)
+add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean gsharedvt_in, gboolean gsharedvt_out, gboolean interp_in)
 {
 	MonoMethod *wrapper;
 	gboolean concrete = TRUE;
@@ -7685,19 +7703,8 @@ add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean
 	if (add_out)
 		g_hash_table_insert (acfg->gsharedvt_out_signatures, sig, sig);
 
-	if (!sig->has_type_parameters) {
-		//printf ("%s\n", mono_signature_full_name (sig));
-
-		if (gsharedvt_in) {
-			wrapper = mini_get_gsharedvt_in_sig_wrapper (sig);
-			add_extra_method (acfg, wrapper);
-		}
-		if (gsharedvt_out) {
-			wrapper = mini_get_gsharedvt_out_sig_wrapper (sig);
-			add_extra_method (acfg, wrapper);
-		}
-	} else {
-		/* For signatures creared during generic sharing, convert them to a concrete signature if possible */
+	if (sig->has_type_parameters) {
+		/* For signatures created during generic sharing, convert them to a concrete signature if possible */
 		MonoMethodSignature *copy = mono_metadata_signature_dup (sig);
 		int i;
 
@@ -7711,21 +7718,26 @@ add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean
 			if (!is_concrete_type (copy->params [i]))
 				concrete = FALSE;
 		}
-		if (concrete) {
-			copy->has_type_parameters = 0;
+		copy->has_type_parameters = 0;
+		if (!concrete)
+			return;
+		sig = copy;
+	}
 
-			if (gsharedvt_in) {
-				wrapper = mini_get_gsharedvt_in_sig_wrapper (copy);
-				add_extra_method (acfg, wrapper);
-			}
+	//printf ("%s\n", mono_signature_full_name (sig));
 
-			if (gsharedvt_out) {
-				wrapper = mini_get_gsharedvt_out_sig_wrapper (copy);
-				add_extra_method (acfg, wrapper);
-			}
-
-			//printf ("%s\n", mono_method_full_name (wrapper, 1));
-		}
+	if (gsharedvt_in) {
+		wrapper = mini_get_gsharedvt_in_sig_wrapper (sig);
+		add_extra_method (acfg, wrapper);
+	}
+	if (gsharedvt_out) {
+		wrapper = mini_get_gsharedvt_out_sig_wrapper (sig);
+		add_extra_method (acfg, wrapper);
+	}
+	if (interp_in) {
+		wrapper = mini_get_interp_in_wrapper (sig);
+		add_extra_method (acfg, wrapper);
+		//printf ("X: %s\n", mono_method_full_name (wrapper, 1));
 	}
 }
 
@@ -8009,14 +8021,18 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 
 		if (!cfg->method->wrapper_type || cfg->method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE)
 			/* These only need out wrappers */
-			add_gsharedvt_wrappers (acfg, mono_method_signature (cfg->method), FALSE, TRUE);
+			add_gsharedvt_wrappers (acfg, mono_method_signature (cfg->method), FALSE, TRUE, FALSE);
 
 		for (l = cfg->signatures; l; l = l->next) {
 			MonoMethodSignature *sig = mono_metadata_signature_dup ((MonoMethodSignature*)l->data);
 
 			/* These only need in wrappers */
-			add_gsharedvt_wrappers (acfg, sig, TRUE, FALSE);
+			add_gsharedvt_wrappers (acfg, sig, TRUE, FALSE, FALSE);
 		}
+	} else if (mono_aot_mode_is_full (&acfg->aot_opts) && mono_aot_mode_is_interp (&acfg->aot_opts)) {
+		/* The interpreter uses these wrappers to call aot-ed code */
+		if (!cfg->method->wrapper_type || cfg->method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE)
+			add_gsharedvt_wrappers (acfg, mono_method_signature (cfg->method), FALSE, TRUE, TRUE);
 	}
 
 	/* 
@@ -10954,9 +10970,16 @@ collect_methods (MonoAotCompile *acfg)
 		}
 		*/
 
-		if (method->is_generic || mono_class_is_gtd (method->klass))
+		if (method->is_generic || mono_class_is_gtd (method->klass)) {
 			/* Compile the ref shared version instead */
-			method = mini_get_shared_method (method);
+			method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
+			if (!method) {
+				aot_printerrf (acfg, "Failed to load method 0x%x from '%s' due to %s.\n", token, image->name, mono_error_get_message (error));
+				aot_printerrf (acfg, "Run with MONO_LOG_LEVEL=debug for more information.\n");
+				mono_error_cleanup (error);
+				return FALSE;
+			}
+		}
 
 		/* Since we add the normal methods first, their index will be equal to their zero based token index */
 		add_method_with_index (acfg, method, i, FALSE);
@@ -10978,7 +11001,9 @@ collect_methods (MonoAotCompile *acfg)
 		if (method->is_generic || mono_class_is_gtd (method->klass)) {
 			MonoMethod *gshared;
 
-			gshared = mini_get_shared_method_full (method, TRUE, TRUE);
+			gshared = mini_get_shared_method_full (method, SHARE_MODE_GSHAREDVT, error);
+			mono_error_assert_ok (error);
+
 			add_extra_method (acfg, gshared);
 		}
 	}
@@ -12366,6 +12391,7 @@ static const char* interp_in_static_sigs[] = {
 	"int32 ptr int32 ptr&",
 	"int32 ptr ptr&",
 	"object object ptr ptr ptr",
+	"object",
 	"ptr int32 ptr&",
 	"ptr ptr int32 ptr ptr ptr&",
 	"ptr ptr int32 ptr ptr&",
@@ -12385,6 +12411,7 @@ static const char* interp_in_static_sigs[] = {
 	"void ptr",
 	"void int32 ptr&",
 	"void uint32 ptr&",
+	"void"
 };
 
 int
@@ -12550,12 +12577,9 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		}
 	}
 
-	if (!mono_aot_mode_is_interp (&acfg->aot_opts)) {
-		int method_index;
-
-       for (method_index = 0; method_index < acfg->image->tables [MONO_TABLE_METHOD].rows; ++method_index) {
-		   g_ptr_array_add (acfg->method_order,GUINT_TO_POINTER (method_index));
-       }
+	if (!(acfg->aot_opts.interp && !mono_aot_mode_is_full (&acfg->aot_opts))) {
+		for (int method_index = 0; method_index < acfg->image->tables [MONO_TABLE_METHOD].rows; ++method_index)
+			g_ptr_array_add (acfg->method_order,GUINT_TO_POINTER (method_index));
 	}
 
 	acfg->num_trampolines [MONO_AOT_TRAMP_SPECIFIC] = mono_aot_mode_is_full (&acfg->aot_opts) ? acfg->aot_opts.ntrampolines : 0;
@@ -12573,7 +12597,6 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	arch_init (acfg);
 
 	if (mono_use_llvm || acfg->aot_opts.llvm) {
-
 		/*
 		 * Emit all LLVM code into a separate assembly/object file and link with it
 		 * normally.
@@ -12613,9 +12636,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	if (mono_aot_mode_is_full (&acfg->aot_opts) || mono_aot_mode_is_hybrid (&acfg->aot_opts))
 		mono_set_partial_sharing_supported (TRUE);
 
-	if (!mono_aot_mode_is_interp (&acfg->aot_opts)) {
+	if (!(acfg->aot_opts.interp && !mono_aot_mode_is_full (&acfg->aot_opts))) {
 		res = collect_methods (acfg);
-
 		if (!res)
 			return 1;
 	}
@@ -12652,6 +12674,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	if (mono_aot_mode_is_interp (&acfg->aot_opts)) {
 		for (int i = 0; i < sizeof (interp_in_static_sigs) / sizeof (const char *); i++) {
 			MonoMethodSignature *sig = mono_create_icall_signature (interp_in_static_sigs [i]);
+			sig = mono_metadata_signature_dup_full (mono_get_corlib (), sig);
+			sig->pinvoke = FALSE;
 			MonoMethod *wrapper = mini_get_interp_in_wrapper (sig);
 			add_method (acfg, wrapper);
 		}
@@ -12770,8 +12794,10 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 
 	emit_extra_methods (acfg);
 
-	if (acfg->aot_opts.dedup_include && !is_dedup_dummy)
+	if (acfg->aot_opts.dedup_include && !is_dedup_dummy) {
+		fclose (acfg->fp);
 		return 0;
+	}
 
 	emit_trampolines (acfg);
 

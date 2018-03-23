@@ -130,7 +130,7 @@ public class AppBuilder
 		ninja.WriteLine ($"monoios_dir = {runtimedir}");
 		ninja.WriteLine ($"appdir = {appdir}");
 		ninja.WriteLine ($"sysroot = {sysroot}");
-		ninja.WriteLine ("cross = $mono_sdkdir/ios-cross64/bin/aarch64-darwin-mono-sgen");
+		ninja.WriteLine ("cross = $mono_sdkdir/ios-cross64-release/bin/aarch64-darwin-mono-sgen");
 		ninja.WriteLine ($"builddir = .");
 		if (aotdir != null)
 			ninja.WriteLine ($"aotdir = {aotdir}");
@@ -224,7 +224,7 @@ public class AppBuilder
 		ninja.WriteLine ("build $appdir: mkdir");
 
 		if (isdev) {
-			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/main.o $mono_sdkdir/ios-target64/lib/libmonosgen-2.0.a $monoios_dir/libmonoios.a");
+			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/main.o $mono_sdkdir/ios-target64-release/lib/libmonosgen-2.0.a $monoios_dir/libmonoios.a");
 			ninja.WriteLine ("build $builddir/main.o: compile-objc $builddir/main.m");
 		} else {
 			ninja.WriteLine ($"build $appdir/{bundle_executable}: cp $monoios_dir/runtime");
