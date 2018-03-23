@@ -37,7 +37,7 @@ sub AddDotNetFolderToPath() {
     }
 
 	print("Using .Net framework: $netFrameworkLocation");
-	$ENV{PATH} = "$ENV{PATH};$netFrameworkLocation";
+	$ENV{PATH} = "$netFrameworkLocation;$ENV{PATH}";
 }
 
 AddDotNetFolderToPath();
