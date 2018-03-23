@@ -144,9 +144,12 @@ if [[ ${CI_TAGS} == *'monolite'* ]]; then make get-monolite-latest; fi
 make_parallelism=-j4
 if [[ ${CI_TAGS} == *'linux-ppc64el'* ]]; then make_parallelism=-j1; fi
 
+make_continue=
+if [[ ${CI_TAGS} == *'checked-all'* ]]; then make_continue=-k; fi
+
 if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 	then
-	${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} -w V=1
+	${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} ${make_continue} -w V=1
 fi
 
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then export MONO_CHECK_MODE=gc,thread; fi
