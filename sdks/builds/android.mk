@@ -1,4 +1,6 @@
 
+include runtime.mk
+
 ##
 # Parameters:
 #  $(1): target

@@ -65,6 +65,7 @@
 #include <mono/metadata/mono-basic-block.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/utils/mono-threads-coop.h>
+#include <mono/utils/mono-utils-debug.h>
 
 #include "trace.h"
 
@@ -80,6 +81,11 @@
 
 #define BRANCH_COST 10
 #define INLINE_LENGTH_LIMIT 20
+
+static const gboolean debug_tailcall_break_compile = FALSE; // break in method_to_ir
+static const gboolean debug_tailcall_break_run = FALSE;     // insert breakpoint in generated code
+static const gboolean debug_tailcall_try_all = FALSE;       // consider any call followed by ret
+static const gboolean debug_tailcall = FALSE;               // logging
 
 /* These have 'cfg' as an implicit argument */
 #define INLINE_FAILURE(msg) do {									\
@@ -2172,6 +2178,19 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 
 	if (cfg->llvm_only)
 		tail = FALSE;
+
+	if (tail && (debug_tailcall_break_compile || debug_tailcall_break_run)
+		&& mono_is_usermode_native_debugger_present ()) {
+
+		if (debug_tailcall_break_compile)
+			G_BREAKPOINT ();
+
+		if (tail && debug_tailcall_break_run) { // Can change tail in debugger.
+			MonoInst *brk;
+			MONO_INST_NEW (cfg, brk, OP_BREAK);
+			MONO_ADD_INS (cfg->cbb, brk);
+		}
+	}
 
 	if (tail) {
 		mini_profiler_emit_tail_call (cfg, target);
@@ -7000,7 +7019,24 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 		|| (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
 		|| call_opcode == CEE_CALLI
 		|| (virtual_ && !cfg->backend->have_op_tail_call_membase)
-		|| vtable_arg // FIXME
+
+		// Passing vtable_arg uses (requires?) a volatile non-parameter register,
+		// such as AMD64 rax, r10, r11, or the return register on many architectures.
+		// ARM32 does not always clearly have such a register. ARM32's return register
+		// is a parameter register.
+		// iPhone could use r9 except on ancient systems. iPhone/ARM32 is not particularly
+		// important. Linux/arm32 is less clear.
+		// ARM32's scratch r12 is likely not viable.
+		//
+		// Imagine F1 calls F2, and F2 tailcalls F3.
+		// F2 and F3 are managed. F1 is native.
+		// Without a tailcall, F2 can save and restore everything needed for F1.
+		// However if the extra parameter were in a non-volatile, such as ARM32 V5/R8,
+		// F3 cannot easily restore it for F1, in the current scheme. The current
+		// scheme where the extra parameter is not merely an extra parameter, but
+		// passed "outside of the ABI".
+		|| (vtable_arg && !cfg->backend->have_volatile_non_param_register)
+
 		|| ((vtable_arg || cfg->gshared) && !cfg->backend->have_op_tail_call)
 		|| !mono_arch_tail_call_supported (cfg, mono_method_signature (method), mono_method_signature (cmethod)))
 		return FALSE;
@@ -8299,6 +8335,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			gboolean direct_icall = FALSE;
 			gboolean constrained_partial_call = FALSE;
 			MonoMethod *cil_method;
+			gboolean const inst_tailcall = G_UNLIKELY (debug_tailcall_try_all
+							? (ip [5] == CEE_RET)
+							: ((ins_flag & MONO_INST_TAILCALL) != 0));
+			gboolean common_call = FALSE;
+			gboolean tailcall_remove_ret = FALSE;
 
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
@@ -8708,6 +8749,28 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (check_this)
 				MONO_EMIT_NEW_CHECK_THIS (cfg, sp [0]->dreg);
 
+			/* Tail prefix / tail call optimization */
+
+			/* FIXME: Enabling TAILC breaks some inlining/stack trace/etc tests.
+				  Inlining and stack traces are not guaranteed however. */
+			/* FIXME: runtime generic context pointer for jumps? */
+			/* FIXME: handle this for generic sharing eventually */
+			supported_tail_call = inst_tailcall && is_supported_tail_call (cfg, method, cmethod, fsig, call_opcode, virtual_, vtable_arg);
+
+			// http://www.mono-project.com/docs/advanced/runtime/docs/generic-sharing/
+			// 1. Non-generic non-static methods of reference types have access to the
+			//    RGCTX via the “this” argument (this->vtable->rgctx).
+			// 2. a Non-generic static methods of reference types and b. non-generic methods
+			//    of value types need to be passed a pointer to the caller’s class’s VTable in the MONO_ARCH_RGCTX_REG register.
+			// 3. Generic methods need to be passed a pointer to the MRGCTX in the MONO_ARCH_RGCTX_REG register
+			if (inst_tailcall && (debug_tailcall ? cfg->verbose_level : (cfg->verbose_level >= 2)))
+				g_print ("tail.%s %s -> %s supported_tail_call:%d gshared:%d vtable_arg:%d\n",
+					mono_opcode_name (*ip), method->name, cmethod->name,
+					(int)supported_tail_call, (int)cfg->gshared, !!vtable_arg);
+
+			// Handle tail calls similarly to normal calls.
+			tail_call = supported_tail_call && cfg->backend->have_op_tail_call;
+
 			/* Calling virtual generic methods */
 			if (virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL) &&
 		 	    !(MONO_METHOD_IS_FINAL (cmethod) && 
@@ -8715,8 +8778,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			    fsig->generic_param_count && 
 				!(cfg->gsharedvt && mini_is_gsharedvt_signature (fsig)) &&
 				!cfg->llvm_only) {
-				MonoInst *this_temp, *this_arg_temp, *store;
-				MonoInst *iargs [4];
 
 				g_assert (fsig->is_inflated);
 
@@ -8730,28 +8791,37 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					g_assert (!imt_arg);
 					if (!context_used)
 						g_assert (cmethod->is_inflated);
-					imt_arg = emit_get_rgctx_method (cfg, context_used,
-													 cmethod, MONO_RGCTX_INFO_METHOD);
-					ins = mono_emit_method_call_full (cfg, cmethod, fsig, FALSE, sp, sp [0], imt_arg, NULL);
-				} else {
-					this_temp = mono_compile_create_var (cfg, type_from_stack_type (sp [0]), OP_LOCAL);
-					NEW_TEMPSTORE (cfg, store, this_temp->inst_c0, sp [0]);
-					MONO_ADD_INS (cfg->cbb, store);
+					imt_arg = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_METHOD);
 
-					/* FIXME: This should be a managed pointer */
-					this_arg_temp = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
-
-					EMIT_NEW_TEMPLOAD (cfg, iargs [0], this_temp->inst_c0);
-					iargs [1] = emit_get_rgctx_method (cfg, context_used,
-													   cmethod, MONO_RGCTX_INFO_METHOD);
-					EMIT_NEW_TEMPLOADA (cfg, iargs [2], this_arg_temp->inst_c0);
-					addr = mono_emit_jit_icall (cfg,
-												mono_helper_compile_generic_method, iargs);
-
-					EMIT_NEW_TEMPLOAD (cfg, sp [0], this_arg_temp->inst_c0);
-
-					ins = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
+					if (tail_call) {
+						/* Prevent inlining of methods with tail calls (the call stack would be altered) */
+						INLINE_FAILURE ("tail call");
+					}
+					virtual_ = TRUE;
+					vtable_arg = NULL;
+					common_call = TRUE;
+					goto call_end;
 				}
+
+				MonoInst *this_temp, *this_arg_temp, *store;
+				MonoInst *iargs [4];
+
+				this_temp = mono_compile_create_var (cfg, type_from_stack_type (sp [0]), OP_LOCAL);
+				NEW_TEMPSTORE (cfg, store, this_temp->inst_c0, sp [0]);
+				MONO_ADD_INS (cfg->cbb, store);
+
+				/* FIXME: This should be a managed pointer */
+				this_arg_temp = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+
+				EMIT_NEW_TEMPLOAD (cfg, iargs [0], this_temp->inst_c0);
+				iargs [1] = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_METHOD);
+
+				EMIT_NEW_TEMPLOADA (cfg, iargs [2], this_arg_temp->inst_c0);
+				addr = mono_emit_jit_icall (cfg, mono_helper_compile_generic_method, iargs);
+
+				EMIT_NEW_TEMPLOAD (cfg, sp [0], this_arg_temp->inst_c0);
+
+				ins = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
 
 				goto call_end;
 			}
@@ -8833,10 +8903,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				INLINE_FAILURE ("tail call");
 
 				/* keep it simple */
-				for (i =  fsig->param_count - 1; i >= 0; i--) {
-					if (MONO_TYPE_ISSTRUCT (mono_method_signature (cmethod)->params [i])) 
-						has_vtargs = TRUE;
-				}
+				for (i = fsig->param_count - 1; !has_vtargs && i >= 0; i--)
+					has_vtargs = MONO_TYPE_ISSTRUCT (mono_method_signature (cmethod)->params [i]);
 
 				if (!has_vtargs) {
 					if (need_seq_point) {
@@ -8859,6 +8927,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					if (ip_in_bb (cfg, cfg->cbb, ip + 5))
 						skip_ret = TRUE;
 					push_res = FALSE;
+					need_seq_point = FALSE;
 					goto call_end;
 				}
 			}
@@ -9039,27 +9108,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (ins)
 				goto call_end;
 
-			gboolean inst_tailcall;
-			inst_tailcall = (ins_flag & MONO_INST_TAILCALL) != 0;
-
 			/* Tail prefix / tail call optimization */
-
-			/* FIXME: Enabling TAILC breaks some inlining/stack trace/etc tests.
-				  Inlining and stack traces are not guaranteed however. */
-			/* FIXME: runtime generic context pointer for jumps? */
-			/* FIXME: handle this for generic sharing eventually */
-			supported_tail_call = inst_tailcall && is_supported_tail_call (cfg, method, cmethod, fsig, call_opcode, virtual_, vtable_arg);
-
-			// http://www.mono-project.com/docs/advanced/runtime/docs/generic-sharing/
-			// 1. Non-generic non-static methods of reference types have access to the
-			//    RGCTX via the “this” argument (this->vtable->rgctx).
-			// 2. a Non-generic static methods of reference types and b. non-generic methods
-			//    of value types need to be passed a pointer to the caller’s class’s VTable in the MONO_ARCH_RGCTX_REG register.
-			// 3. Generic methods need to be passed a pointer to the MRGCTX in the MONO_ARCH_RGCTX_REG register
-			if (inst_tailcall && cfg->verbose_level >= 2)
-				g_print ("tail.%s %s -> %s supported_tail_call:%d gshared:%d vtable_arg:%d\n",
-					mono_opcode_name (*ip), method->name, cmethod->name,
-					(int)supported_tail_call, (int)cfg->gshared, !!vtable_arg);
 
 			if (supported_tail_call) {
 				MonoCallInst *call;
@@ -9069,10 +9118,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				//printf ("HIT: %s -> %s\n", mono_method_full_name (cfg->method, TRUE), mono_method_full_name (cmethod, TRUE));
 
-				if (cfg->backend->have_op_tail_call) {
-					/* Handle tail calls similarly to normal calls */
-					tail_call = TRUE;
-				} else {
+				if (!cfg->backend->have_op_tail_call) {
 					mini_profiler_emit_tail_call (cfg, cmethod);
 
 					MONO_INST_NEW_CALL (cfg, call, OP_JMP);
@@ -9093,20 +9139,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ins->inst_p0 = cmethod;
 					ins->inst_p1 = arg_array [0];
 					MONO_ADD_INS (cfg->cbb, ins);
-					link_bblock (cfg, cfg->cbb, end_bblock);
-					start_new_bblock = 1;
 
-					// FIXME: Eliminate unreachable epilogs
-
-					/*
-					 * OP_TAILCALL has no return value, so skip the CEE_RET if it is
-					 * only reachable from this call.
-					 */
-					GET_BBLOCK (cfg, tblock, ip + 5);
-					if (tblock == cfg->cbb || tblock->in_count == 0)
-						skip_ret = TRUE;
-					push_res = FALSE;
-
+					tailcall_remove_ret = TRUE;
 					goto call_end;
 				}
 			}
@@ -9122,10 +9156,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			/* Common call */
 			if (!(method->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING) && !(cmethod->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING))
 				INLINE_FAILURE ("call");
-			ins = mono_emit_method_call_full (cfg, cmethod, fsig, tail_call, sp, virtual_ ? sp [0] : NULL,
-											  imt_arg, vtable_arg);
+			common_call = TRUE;
 
-			if (tail_call && !cfg->llvm_only) {
+			call_end:
+
+			if (common_call) // FIXME goto call_end && !common_call often skips tailcall processing.
+				ins = mono_emit_method_call_full (cfg, cmethod, fsig, tail_call, sp, virtual_ ? sp [0] : NULL,
+												  imt_arg, vtable_arg);
+
+			if (tailcall_remove_ret || (common_call && tail_call && !cfg->llvm_only)) {
 				link_bblock (cfg, cfg->cbb, end_bblock);
 				start_new_bblock = 1;
 
@@ -9139,9 +9178,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (tblock == cfg->cbb || tblock->in_count == 0)
 					skip_ret = TRUE;
 				push_res = FALSE;
+				need_seq_point = FALSE;
 			}
-
-			call_end:
 
 			/* End of call, INS should contain the result of the call, if any */
 
@@ -9174,6 +9212,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			ip += 5;
 			if (skip_ret) {
+				// FIXME When not followed by CEE_RET, correct behavior is to raise an exception.
 				g_assert (*ip == CEE_RET);
 				ip += 1;
 			}
