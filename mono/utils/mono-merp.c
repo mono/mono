@@ -468,11 +468,11 @@ mono_merp_disable (void)
 	if (!config.enable_merp)
 		return;
 
-	g_free (config.appBundleID);
-	g_free (config.appSignature);
-	g_free (config.appVersion);
-	g_free (config.merpGUIPath);
-	memset ((void *)&config, 0, sizeof (MerpOptions));
+	g_free ((char*)config.appBundleID); // cast away const
+	g_free ((char*)config.appSignature);
+	g_free ((char*)config.appVersion);
+	g_free ((char*)config.merpGUIPath);
+	memset (&config, 0, sizeof (config));
 }
 
 void
