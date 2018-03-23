@@ -520,12 +520,6 @@ mono_get_exception_invalid_operation (const char *msg)
 					"InvalidOperationException", msg);
 }
 
-MonoExceptionHandle
-mono_exception_new_invalid_operation (const char *msg, MonoError *error)
-{
-	return mono_exception_new_by_name_msg (mono_get_corlib (), "System", "InvalidOperationException", msg, error);
-}
-
 /**
  * mono_get_exception_index_out_of_range:
  * \returns a new instance of the \c System.IndexOutOfRangeException
