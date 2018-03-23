@@ -4140,6 +4140,38 @@ namespace System.Windows.Forms
 					if (!MWFVFS.MyComputerDevicesPrefix.Contains (contain_string))
 						MWFVFS.MyComputerDevicesPrefix.Add (contain_string, fsEntry);
 				}
+			} else {
+				foreach (var drive in System.IO.DriveInfo.GetDrives()) {
+					if (drive.DriveType == DriveType.Removable || drive.DriveType == DriveType.CDRom ||
+						drive.DriveType == DriveType.Fixed) {
+						FSEntry fsEntry = new FSEntry ();
+						fsEntry.FullName = drive.Name;
+						fsEntry.DeviceShort = drive.Name;
+						fsEntry.Attributes = FileAttributes.Directory;
+						fsEntry.MainTopNode = GetMyComputerFSEntry ();
+						if (String.IsNullOrEmpty(drive.VolumeLabel) || drive.VolumeLabel == drive.Name) {
+							fsEntry.Name = drive.Name;
+						} else {
+							fsEntry.Name = drive.VolumeLabel + " (" + fsEntry.Name + ")";
+						}
+						if (drive.DriveType == DriveType.Removable) {
+							fsEntry.FileType = FSEntry.FSEntryType.RemovableDevice;
+							fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("removable/removable");
+						} else if (drive.DriveType == DriveType.CDRom) {
+							fsEntry.FileType = FSEntry.FSEntryType.RemovableDevice;
+							fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("cdrom/cdrom");
+						} else {
+							fsEntry.FileType = FSEntry.FSEntryType.Device;
+							fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("harddisk/harddisk");
+						}
+
+						my_computer_content_arraylist.Add (fsEntry);
+
+						string contain_string = fsEntry.FullName + "://";
+						if (!MWFVFS.MyComputerDevicesPrefix.Contains (contain_string))
+							MWFVFS.MyComputerDevicesPrefix.Add (contain_string, fsEntry);				
+					}
+				}
 			}
 			
 			my_computer_content_arraylist.Add (GetMyComputerPersonalFSEntry ());
