@@ -476,7 +476,7 @@ mono_merp_disable (void)
 }
 
 void
-mono_merp_enable (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath)
+mono_merp_enable (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath)
 {
 	g_assert (!config.enable_merp);
 
