@@ -829,7 +829,6 @@ System.Security.Principal/WindowsIdentity.cs
 System.Security.Principal/WindowsImpersonationContext.cs
 System.Security.Principal/WindowsPrincipal.cs
 System.Text/EncodingHelper.cs
-System.Text/NormalizationForm.cs
 System.Threading/CompressedStack.cs
 System.Threading/HostExecutionContext.cs
 System.Threading/HostExecutionContextManager.cs
@@ -1459,34 +1458,12 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/security/util/parser.cs
 ../referencesource/mscorlib/system/security/util/tokenizer.cs
 
-../referencesource/mscorlib/system/text/asciiencoding.cs
+../../../external/corefx/src/Common/src/CoreLib/System/ISpanFormattable.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Text/*.cs:ValueStringBuilder.cs
+../../../external/corefx/src/Common/src/System/IO/StringBuilderCache.cs
 ../referencesource/mscorlib/system/text/codepageencoding.cs
-../referencesource/mscorlib/system/text/decoderbestfitfallback.cs
-../referencesource/mscorlib/system/text/decoder.cs
-../referencesource/mscorlib/system/text/decodernls.cs
-../referencesource/mscorlib/system/text/decoderexceptionfallback.cs
-../referencesource/mscorlib/system/text/decoderfallback.cs
-../referencesource/mscorlib/system/text/decoderreplacementfallback.cs
-../referencesource/mscorlib/system/text/encoderbestfitfallback.cs
-../referencesource/mscorlib/system/text/encoder.cs
-../referencesource/mscorlib/system/text/encodernls.cs
-../referencesource/mscorlib/system/text/encoderexceptionfallback.cs
-../referencesource/mscorlib/system/text/encoderfallback.cs
-../referencesource/mscorlib/system/text/encoderreplacementfallback.cs
-../referencesource/mscorlib/system/text/encoding.cs
-../referencesource/mscorlib/system/text/encodinginfo.cs
-../referencesource/mscorlib/system/text/encodingnls.cs
-../referencesource/mscorlib/system/text/encodingprovider.cs
-../referencesource/mscorlib/system/text/latin1encoding.cs
 ../referencesource/mscorlib/system/text/mlangcodepageencoding.cs
 ../referencesource/mscorlib/system/text/surrogateencoder.cs
-../referencesource/mscorlib/system/text/unicodeencoding.cs
-../referencesource/mscorlib/system/text/utf32encoding.cs
-../referencesource/mscorlib/system/text/utf7encoding.cs
-../referencesource/mscorlib/system/text/utf8encoding.cs
-
-../referencesource/mscorlib/system/text/stringbuilder.cs
-../referencesource/mscorlib/system/text/stringbuildercache.cs
 
 ../referencesource/mscorlib/system/runtime/remoting/callcontext.cs
 

@@ -257,7 +257,7 @@ namespace MonoTests.System.IO
 		Assert.IsFalse (r.AutoFlush, "#1");
 		Assert.AreSame (f, r.BaseStream, "#2");
 		Assert.IsNotNull (r.Encoding, "#3");
-		Assert.AreEqual (typeof (ASCIIEncoding), r.Encoding.GetType (), "#4");
+		Assert.AreEqual ("System.Text.ASCIIEncoding+ASCIIEncodingSealed", r.Encoding.GetType ().ToString (), "#4");
 		r.Close ();
 		f.Close ();
 	}
@@ -447,7 +447,7 @@ namespace MonoTests.System.IO
 		Assert.IsFalse (r.AutoFlush, "#A1");
 		Assert.AreSame (m, r.BaseStream, "#A2");
 		Assert.IsNotNull (r.Encoding, "#A3");
-		Assert.AreEqual (typeof (ASCIIEncoding), r.Encoding.GetType (), "#A4");
+		Assert.AreEqual ("System.Text.ASCIIEncoding+ASCIIEncodingSealed", r.Encoding.GetType ().ToString (), "#A4");
 		r.Close ();
 		m.Close ();
 
@@ -456,7 +456,7 @@ namespace MonoTests.System.IO
 		Assert.IsFalse (r.AutoFlush, "#B1");
 		Assert.AreSame (m, r.BaseStream, "#B2");
 		Assert.IsNotNull (r.Encoding, "#B3");
-		Assert.AreEqual (typeof (UTF8Encoding), r.Encoding.GetType (), "#B4");
+		Assert.AreEqual ("System.Text.UTF8Encoding+UTF8EncodingSealed", r.Encoding.GetType ().ToString (), "#B4");
 		r.Close ();
 		m.Close ();
 	}
@@ -545,7 +545,7 @@ namespace MonoTests.System.IO
 			Assert.IsNotNull (r.BaseStream, "#A2");
 			Assert.AreEqual (typeof (FileStream), r.BaseStream.GetType (), "#A3");
 			Assert.IsNotNull (r.Encoding, "#A4");
-			Assert.AreEqual (typeof (ASCIIEncoding), r.Encoding.GetType (), "#A5");
+			Assert.AreEqual ("System.Text.ASCIIEncoding+ASCIIEncodingSealed", r.Encoding.GetType ().ToString (), "#A5");
 			r.Close ();
 		}
 
@@ -554,7 +554,7 @@ namespace MonoTests.System.IO
 			Assert.IsNotNull (r.BaseStream, "#B2");
 			Assert.AreEqual (typeof (FileStream), r.BaseStream.GetType (), "#B3");
 			Assert.IsNotNull (r.Encoding, "#B4");
-			Assert.AreEqual (typeof (UTF8Encoding), r.Encoding.GetType (), "#B5");
+			Assert.AreEqual ("System.Text.UTF8Encoding+UTF8EncodingSealed", r.Encoding.GetType ().ToString (), "#B6");
 			r.Close ();
 		}
 	}
@@ -699,7 +699,7 @@ namespace MonoTests.System.IO
 			Assert.IsNotNull (r.BaseStream, "#A2");
 			Assert.AreEqual (typeof (FileStream), r.BaseStream.GetType (), "#A3");
 			Assert.IsNotNull (r.Encoding, "#A4");
-			Assert.AreEqual (typeof (ASCIIEncoding), r.Encoding.GetType (), "#A5");
+			Assert.AreEqual ("System.Text.ASCIIEncoding+ASCIIEncodingSealed", r.Encoding.GetType ().ToString (), "#A5");
 			r.Close ();
 		}
 
@@ -708,7 +708,7 @@ namespace MonoTests.System.IO
 			Assert.IsNotNull (r.BaseStream, "#B2");
 			Assert.AreEqual (typeof (FileStream), r.BaseStream.GetType (), "#B3");
 			Assert.IsNotNull (r.Encoding, "#B4");
-			Assert.AreEqual (typeof (UTF8Encoding), r.Encoding.GetType (), "#B5");
+			Assert.AreEqual ("System.Text.UTF8Encoding+UTF8EncodingSealed", r.Encoding.GetType ().ToString (), "#B5");
 			r.Close ();
 		}
 	}
