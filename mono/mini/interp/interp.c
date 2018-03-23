@@ -3157,6 +3157,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			++sp [-1].data.i;
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_ADD1_I8)
+			++sp [-1].data.l;
+			++ip;
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_SUB_I4)
 			BINOP(i, -);
 			MINT_IN_BREAK;
@@ -3168,6 +3172,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_SUB1_I4)
 			--sp [-1].data.i;
+			++ip;
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_SUB1_I8)
+			--sp [-1].data.l;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_MUL_I4)
