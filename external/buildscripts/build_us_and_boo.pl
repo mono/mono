@@ -137,7 +137,8 @@ sub BuildUnityScriptFor45
 	
 	print(">>> Copying $monoprefix45/us.exe to $usBuildDir\n");
 	copy("$monoprefix45/us.exe", "$usBuildDir/.");
-
+	print(">>> Copying $monoprefix45/booc.exe to $usBuildDir\n");
+	copy("$monoprefix45/booc.exe", "$usBuildDir/.");
 	# put unityscript and boo into their own directories that we can reference for compilation only in Unity
 	my $usLibDir = "$monoprefix/lib/mono/unityscript";
 	
