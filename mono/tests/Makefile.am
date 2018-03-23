@@ -717,8 +717,8 @@ PLATFORM_DISABLED_TESTS=\
 # Not ARM, not interpreter, etc.
 
 if !AMD64
-PLATFORM_DISABLED_TESTS += tailcall-virt.exe \
-	tailcall/fsharp.exe
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp.exe
 endif
 
 if HOST_WIN32
@@ -961,6 +961,8 @@ PROFILE_DISABLED_TESTS += \
 # https://bugzilla.xamarin.com/show_bug.cgi?id=60973
 PROFILE_DISABLED_TESTS += \
 	weak-fields.exe
+
+PROFILE_DISABLED_TESTS += tailcall/fsharp.exe
 endif
 
 if HYBRID_AOT_TESTS
@@ -968,6 +970,7 @@ PROFILE_DISABLED_TESTS += \
 	bug-80307.exe \
 	namedmutex-destroy-race.exe
 
+PROFILE_DISABLED_TESTS += tailcall/fsharp.exe
 endif
 
 AOT_DISABLED_TESTS= \
