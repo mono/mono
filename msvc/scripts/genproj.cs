@@ -49,6 +49,10 @@ class SlnGenerator {
 		"xammac",
 	};
 
+	public static readonly HashSet<string> observedProfiles = new HashSet<string> {
+		"net_4_x"
+	};
+
 	const string jay_vcxproj_guid = "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}";
 	const string jay_sln_guid = "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}";
 
@@ -121,6 +125,9 @@ class SlnGenerator {
 		var fallbackProfileNames = new List<string> ();
 
 		foreach (var profile in profiles) {
+			if (!observedProfiles.Contains (profile))
+				continue;
+
 			var platformToBuild = profile;
 
 			HashSet<string> projectProfiles;
@@ -161,6 +168,9 @@ class SlnGenerator {
 
 			sln.WriteLine ("\tGlobalSection(SolutionConfigurationPlatforms) = preSolution");
 			foreach (var profile in profiles) {
+				if (!observedProfiles.Contains (profile))
+					continue;
+
 				sln.WriteLine ("\t\tDebug|{0} = Debug|{0}", profile, profile);
 				sln.WriteLine ("\t\tRelease|{0} = Release|{0}", profile, profile);
 			}
@@ -1321,7 +1331,8 @@ public class Driver {
 					if (!SlnGenerator.profilesByGuid.TryGetValue (csproj.projectGuid, out profileNames))
 						SlnGenerator.profilesByGuid[csproj.projectGuid] = profileNames = new HashSet<string>();
 
-					profileNames.Add(profileName);
+					profileNames.Add (profileName);
+					SlnGenerator.observedProfiles.Add (profileName);
 				}
 			} catch (Exception e) {
 				Console.Error.WriteLine ("// Error in {0}\n{1}", project, e);
