@@ -34,7 +34,7 @@ System/RemoteExecutorTests.cs
 #../../../external/corefx/src/System.Net.NameResolution/tests/FunctionalTests/*.cs
 
 # System.Net.WebClient
-../../../external/corefx/src/System.Net.WebClient/tests/*.cs
+../../../external/corefx/src/System.Net.WebClient/tests/*.cs:WebClientTest.cs
 
 # System.Net.Security
 ../../../external/corefx/src/Common/tests/System/Net/SslProtocolSupport.cs
