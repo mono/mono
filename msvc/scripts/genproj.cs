@@ -86,9 +86,7 @@ class SlnGenerator {
 		library = library.Replace("-net_4_x", "");
 		sln.WriteLine (project_start, prefixGuid, library, relativePath, projectGuid);
 
-		if (
-			(dependencyGuids != null) && (dependencyGuids.Length > 0)
-		) {
+		if (dependencyGuids != null && dependencyGuids.Length > 0) {
 			sln.WriteLine ("\tProjectSection(ProjectDependencies) = postProject");
 			foreach (var guid in dependencyGuids)
 	    		sln.WriteLine ("\t\t{0} = {0}", guid);
@@ -158,7 +156,7 @@ class SlnGenerator {
 			sln.WriteLine (header);
 
 			// Manually insert jay's vcxproj. We depend on jay.exe to perform build steps later.
-			WriteProjectReference (sln, jay_sln_guid, "jay", "mcs\\jay\\jay.vcxproj", jay_vcxproj_guid, null);
+			WriteProjectReference (sln, jay_sln_guid, "jay", "mcs/jay/jay.vcxproj", jay_vcxproj_guid, null);
 
 			foreach (var proj in libraries) {
 				WriteProjectReference (sln, fullPath, proj);

@@ -13,6 +13,8 @@
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
     @NOSTDLIB@
     @METADATAVERSION@
     @STARTUPOBJECT@
@@ -23,7 +25,7 @@
     <AssemblyName>@ASSEMBLYNAME@</AssemblyName>
     <TargetFrameworkVersion>v@FX_VERSION@</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    @SIGNATURE@
+@SIGNATURE@
   </PropertyGroup>
 
   <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
@@ -38,19 +40,13 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>@DISABLEDWARNINGS@</NoWarn>
     <Optimize>false</Optimize>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <!-- TRACE is set only for Debug configuration, so inherit from platform-specific value -->
     <DefineConstants>TRACE;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>@DISABLEDWARNINGS@</NoWarn>
     <Optimize>true</Optimize>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
 
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
