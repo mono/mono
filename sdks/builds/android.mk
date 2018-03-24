@@ -1,6 +1,8 @@
 
 include runtime.mk
 
+ANDROID_TOOLCHAIN_PREFIX?=$(TOP)/sdks/builds/toolchains/android
+
 ##
 # Parameters:
 #  $(1): target
@@ -14,17 +16,17 @@ include runtime.mk
 #  android-$(1)_LDFLAGS
 define AndroidTargetTemplate
 
-_android-$(1)_AR=$$(TOP)/sdks/builds/toolchains/android-$(1)/bin/$(3)-ar
-_android-$(1)_AS=$$(TOP)/sdks/builds/toolchains/android-$(1)/bin/$(3)-as
-_android-$(1)_CC=$$(CCACHE) $$(TOP)/sdks/builds/toolchains/android-$(1)/bin/$(3)-clang
-_android-$(1)_CXX=$$(CCACHE) $$(TOP)/sdks/builds/toolchains/android-$(1)/bin/$(3)-clang++
-_android-$(1)_CPP=$$(CCACHE) $$(TOP)/sdks/builds/toolchains/android-$(1)/bin/$(3)-cpp -I$$(TOP)/sdks/builds/toolchains/android-$(1)/usr/include
-_android-$(1)_CXXCPP=$$(CCACHE) $$(TOP)/sdks/builds/toolchains/android-$(1)/bin/$(3)-cpp -I$$(TOP)/sdks/builds/toolchains/android-$(1)/usr/include
+_android-$(1)_AR=$$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/bin/$(3)-ar
+_android-$(1)_AS=$$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/bin/$(3)-as
+_android-$(1)_CC=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/bin/$(3)-clang
+_android-$(1)_CXX=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/bin/$(3)-clang++
+_android-$(1)_CPP=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/bin/$(3)-cpp
+_android-$(1)_CXXCPP=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/bin/$(3)-cpp
 _android-$(1)_DLLTOOL=
-_android-$(1)_LD=$$(TOP)/sdks/builds/toolchains/android-$(1)/bin/$(3)-ld
-_android-$(1)_OBJDUMP="$$(TOP)/sdks/builds/toolchains/android-$(1)/bin/$(3)-objdump"
-_android-$(1)_RANLIB=$$(TOP)/sdks/builds/toolchains/android-$(1)/bin/$(3)-ranlib
-_android-$(1)_STRIP=$$(TOP)/sdks/builds/toolchains/android-$(1)/bin/$(3)-strip
+_android-$(1)_LD=$$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/bin/$(3)-ld
+_android-$(1)_OBJDUMP="$$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/bin/$(3)-objdump"
+_android-$(1)_RANLIB=$$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/bin/$(3)-ranlib
+_android-$(1)_STRIP=$$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/bin/$(3)-strip
 
 _android-$(1)_AC_VARS= \
 	mono_cv_uscore=yes \
@@ -40,6 +42,12 @@ _android-$(1)_CXXFLAGS= \
 	-fstack-protector \
 	-DMONODROID=1 \
 	$$(android-$(1)_CXXFLAGS)
+
+_android-$(1)_CPPFLAGS= \
+	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/usr/include
+
+_android-$(1)_CXXCPPFLAGS= \
+	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/usr/include
 
 _android-$(1)_LDFLAGS= \
 	-z now -z relro -z noexecstack \
@@ -66,7 +74,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--without-ikvm-native
 
 .stamp-android-$(1)-toolchain:
-	python "$$(NDK_DIR)/build/tools/make_standalone_toolchain.py" --verbose --force --api=$$(ANDROID_PLATFORM_VERSION_$(1)) --arch=$(2) --install-dir=$$(TOP)/sdks/builds/toolchains/android-$(1)
+	python "$$(NDK_DIR)/build/tools/make_standalone_toolchain.py" --verbose --force --api=$$(ANDROID_PLATFORM_VERSION_$(1)) --arch=$(2) --install-dir=$$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang
 	touch $$@
 
 $$(eval $$(call RuntimeTemplate,android-$(1)))
