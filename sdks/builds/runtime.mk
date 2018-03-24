@@ -27,6 +27,7 @@ define RuntimeTemplate
 __$(1)_CFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CFLAGS)
 __$(1)_CXXFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CXXFLAGS)
 __$(1)_CPPFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CPPFLAGS)
+__$(1)_CXXCPPFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CXXCPPFLAGS)
 
 __$(1)_CONFIGURE_ENVIRONMENT = \
 	$(if $$(_$(1)_AR),AR="$$(_$(1)_AR)") \
@@ -43,6 +44,7 @@ __$(1)_CONFIGURE_ENVIRONMENT = \
 	CFLAGS="$$(__$(1)_CFLAGS)" \
 	CXXFLAGS="$$(__$(1)_CXXFLAGS)" \
 	CPPFLAGS="$$(__$(1)_CPPFLAGS)" \
+	CXXCPPFLAGS="$$(__$(1)_CXXCPPFLAGS)" \
 	$(if $$(_$(1)_LDFLAGS),LDFLAGS="$$(_$(1)_LDFLAGS)") \
 	$$(_$(1)_CONFIGURE_ENVIRONMENT)
 
