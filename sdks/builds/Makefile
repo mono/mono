@@ -4,7 +4,8 @@ CONFIGURATION?=release
 
 RELEASE=$(if $(filter $(CONFIGURATION),release),1)
 
-ifneq ($(shell uname),"Darwin")
+UNAME=$(shell uname)
+ifneq ($(UNAME),Darwin)
 # iOS requires Xcode to be available, and Xcode is only available on macOS
 DISABLE_IOS=1
 endif
