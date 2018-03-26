@@ -94,6 +94,12 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   exit 0
 fi
 
+if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
+   then
+        ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j4 -C sdks/builds package-android-{armeabi,armeabi-v7a,arme64-v8a,x86,x86_64} package-android-host-{Darwin,Linux,mxe-{Win32,Win64}} package-bcl
+        exit 0
+fi
+
 if [[ ${CI_TAGS} == *'webassembly'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
