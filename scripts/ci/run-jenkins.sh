@@ -80,7 +80,7 @@ then
 	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
 
-if [[ ${CI_TAGS} == *'product-sdks'* ]];
+if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-sim64 package-ios-target64

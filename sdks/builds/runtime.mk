@@ -27,10 +27,7 @@ define RuntimeTemplate
 __$(1)_CFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CFLAGS)
 __$(1)_CXXFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CXXFLAGS)
 __$(1)_CPPFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CPPFLAGS)
-<<<<<<< HEAD
 __$(1)_CXXCPPFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CXXCPPFLAGS)
-=======
->>>>>>> 43ac34b36e2... [sdks] Unify targets to build runtimes (#7394)
 
 __$(1)_CONFIGURE_ENVIRONMENT = \
 	$(if $$(_$(1)_AR),AR="$$(_$(1)_AR)") \
@@ -47,10 +44,7 @@ __$(1)_CONFIGURE_ENVIRONMENT = \
 	CFLAGS="$$(__$(1)_CFLAGS)" \
 	CXXFLAGS="$$(__$(1)_CXXFLAGS)" \
 	CPPFLAGS="$$(__$(1)_CPPFLAGS)" \
-<<<<<<< HEAD
 	CXXCPPFLAGS="$$(__$(1)_CXXCPPFLAGS)" \
-=======
->>>>>>> 43ac34b36e2... [sdks] Unify targets to build runtimes (#7394)
 	$(if $$(_$(1)_LDFLAGS),LDFLAGS="$$(_$(1)_LDFLAGS)") \
 	$$(_$(1)_CONFIGURE_ENVIRONMENT)
 
@@ -63,38 +57,24 @@ __$(1)_CONFIGURE_ENVIRONMENT = \
 .stamp-$(1)-configure: .stamp-$(1)-$$(CONFIGURATION)-configure
 
 .PHONY: build-custom-$(1)
-build-custom-$(1)::
+build-custom-$(1):
 	$$(MAKE) -C $(1)-$$(CONFIGURATION)
 
 .PHONY: setup-custom-$(1)
 setup-custom-$(1):
 	mkdir -p $$(TOP)/sdks/out/$(1)-$$(CONFIGURATION)
 
-<<<<<<< HEAD
 .PHONY: package-$(1)-$$(CONFIGURATION)
 package-$(1)-$$(CONFIGURATION):
 	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)/mono install
 	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)/support install
-=======
-.PHONY: package-android-$(1)-$$(CONFIGURATION)
-package-android-$(1)-$$(CONFIGURATION)::
-	$$(MAKE) -C $$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION)/mono install
->>>>>>> 43ac34b36e2... [sdks] Unify targets to build runtimes (#7394)
-
-.PHONY: package-$(1)-$$(CONFIGURATION)
-package-$(1)-$$(CONFIGURATION)::
-	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)/mono install
 
 .PHONY: package-$(1)
 package-$(1):
 	$$(MAKE) package-$(1)-$$(CONFIGURATION)
 
 .PHONY: clean-$(1)-$$(CONFIGURATION)
-<<<<<<< HEAD
 clean-$(1)-$$(CONFIGURATION):
-=======
-clean-$(1)-$$(CONFIGURATION)::
->>>>>>> 43ac34b36e2... [sdks] Unify targets to build runtimes (#7394)
 	rm -rf .stamp-$(1)-toolchain .stamp-$(1)-$$(CONFIGURATION)-configure $$(TOP)/sdks/builds/toolchains/$(1) $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION) $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION).config.cache $$(TOP)/sdks/out/$(1)-$$(CONFIGURATION)
 
 .PHONY: clean-$(1)
