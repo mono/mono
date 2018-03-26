@@ -577,6 +577,36 @@ mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 	return start;
 }
 
+/* Same as static rgctx trampoline, but clobbering ARMREG_IP, which is scratch */
+gpointer
+mono_arch_get_ftnptr_arg_trampoline (gpointer arg, gpointer addr)
+{
+	guint8 *code, *start;
+	GSList *unwind_ops;
+	int buf_len = 16;
+	MonoDomain *domain = mono_domain_get ();
+
+	start = code = mono_domain_code_reserve (domain, buf_len);
+
+	unwind_ops = mono_arch_get_cie_program ();
+
+	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
+	ARM_LDR_IMM (code, ARMREG_PC, ARMREG_PC, 0);
+	*(guint32*)code = (guint32)arg;
+	code += 4;
+	*(guint32*)code = (guint32)addr;
+	code += 4;
+
+	g_assert ((code - start) <= buf_len);
+
+	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
+
+	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, unwind_ops), domain);
+
+	return start;
+}
+
 gpointer
 mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info, gboolean aot)
 {
@@ -943,6 +973,13 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 
 gpointer
 mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_ftnptr_arg_trampoline (gpointer arg, gpointer addr)
 {
 	g_assert_not_reached ();
 	return NULL;

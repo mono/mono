@@ -2245,10 +2245,7 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 	 * rgctx register using a trampoline.
 	 */
 
-	if (mono_aot_only)
-		addr = mono_aot_get_static_rgctx_trampoline (ftndesc, jit_wrapper);
-	else
-		addr = mono_arch_get_static_rgctx_trampoline (ftndesc, jit_wrapper);
+	addr = mono_create_ftnptr_arg_trampoline (ftndesc, jit_wrapper);
 
 	mono_memory_barrier ();
 	rmethod->jit_entry = addr;
