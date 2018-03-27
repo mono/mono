@@ -10,7 +10,10 @@
 #include "mono/metadata/mono-endian.h"
 #include "mono/metadata/appdomain.h" /* mono_init */
 #include "mono/metadata/debug-helpers.h"
+#include "mono/utils/checked-build.h"
 #include "mono/utils/mono-compiler.h"
+#include "mono/utils/mono-counters.h"
+#include "mono/utils/mono-threads.h"
 
 static FILE *output;
 static int include_namespace = 0;
@@ -1069,6 +1072,11 @@ enum {
 	GRAPH_STATS
 };
 
+static void
+thread_state_init (MonoThreadUnwindState *ctx)
+{
+}
+
 /*
  * TODO:
  * * virtual method calls as explained above
@@ -1093,6 +1101,7 @@ main (int argc, char *argv[]) {
 	int graphtype = GRAPH_TYPES;
 	int callneato = 0;
 	int i;
+	MonoThreadInfoRuntimeCallbacks ticallbacks;
 	
 	output = stdout;
 
@@ -1132,6 +1141,12 @@ main (int argc, char *argv[]) {
 		aname = argv [i];
 	if (argc > i + 1)
 		cname = argv [i + 1];
+	CHECKED_MONO_INIT ();
+	mono_counters_init ();
+	mono_tls_init_runtime_keys ();
+	memset (&ticallbacks, 0, sizeof (ticallbacks));
+	ticallbacks.thread_state_init = thread_state_init;
+	mono_thread_info_runtime_init (&ticallbacks);
 	if (aname) {
 		mono_init_from_assembly (argv [0], aname);
 		assembly = mono_assembly_open (aname, NULL);
