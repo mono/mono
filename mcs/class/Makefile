@@ -422,7 +422,7 @@ all-local-aot:
 
 monolite_dir = monolite-$(HOST_PLATFORM)/$(MONO_CORLIB_VERSION)
 
-# Files needed to bootstrap C# compiler
+# Files needed to bootstrap C# compiler and cil-stringreplacer
 build_files := mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
 	System.Numerics.dll System.Xml.Linq.dll \
 	Facades/System.Collections.Concurrent.dll Facades/System.Linq.dll Facades/System.Runtime.dll Facades/System.Collections.dll	\
@@ -433,7 +433,8 @@ build_files := mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.C
 	Facades/System.IO.dll Facades/System.Runtime.InteropServices.dll Facades/System.Xml.ReaderWriter.dll Facades/System.Linq.Expressions.dll \
 	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll Facades/System.IO.FileSystem.Primitives.dll Facades/System.IO.FileSystem.dll \
 	Facades/System.Diagnostics.FileVersionInfo.dll Facades/System.Security.Cryptography.Primitives.dll Facades/System.Security.Cryptography.Algorithms.dll \
-	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll
+	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll \
+	Mono.Cecil
 
 monolite_files = $(build_files:%=lib/$(monolite_dir)/%)
 
