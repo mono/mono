@@ -4,6 +4,8 @@ CONFIGURATION?=release
 
 RELEASE=$(if $(filter $(CONFIGURATION),release),1)
 
+CCACHE:=$(shell which ccache)
+
 UNAME=$(shell uname)
 ifneq ($(UNAME),Darwin)
 # iOS requires Xcode to be available, and Xcode is only available on macOS
