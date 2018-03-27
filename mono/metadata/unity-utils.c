@@ -354,6 +354,11 @@ mono_class_is_blittable(MonoClass *klass)
 	return klass->blittable;
 }
 
+gboolean mono_unity_class_has_cctor(MonoClass *klass)
+{
+    return klass->has_cctor ? TRUE : FALSE;
+}
+
 //method
 
 MonoMethod* mono_unity_method_get_generic_definition(MonoMethod* method)
