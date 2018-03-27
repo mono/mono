@@ -376,7 +376,7 @@ dump_verify_info (MonoImage *image, int flags, gboolean valid_only)
 			errors = mono_method_verify (method, flags);
 			if (errors) {
 				MonoClass *klass = mono_method_get_class (method);
-				char *name = mono_type_full_name (&klass->byval_arg);
+				char *name = mono_type_full_name (m_class_get_byval_arg (klass));
 				if (mono_method_signature (method) == NULL) {
 					g_print ("In method: %s::%s(ERROR)\n", name, mono_method_get_name (method));
 				} else {
@@ -528,7 +528,7 @@ verify_image_file (const char *fname)
 		if (mono_class_has_failure (klass)) {
 			ERROR_DECL (type_load_error);
 			mono_error_set_for_class_failure (type_load_error, klass);
-			printf ("Could not initialize class(0x%08x) %s.%s due to %s\n", token, klass->name_space, klass->name, mono_error_get_message (type_load_error));
+			printf ("Could not initialize class(0x%08x) %s.%s due to %s\n", token, m_class_get_name_space (klass), m_class_get_name (klass), mono_error_get_message (type_load_error));
 			mono_error_cleanup (type_load_error);
 			++count;
 		}
@@ -537,7 +537,7 @@ verify_image_file (const char *fname)
 		if (mono_class_has_failure (klass)) {
 			ERROR_DECL (type_load_error);
 			mono_error_set_for_class_failure (type_load_error, klass);
-			printf ("Could not initialize vtable of class(0x%08x) %s.%s due to %s\n", token, klass->name_space, klass->name, mono_error_get_message (type_load_error));
+			printf ("Could not initialize vtable of class(0x%08x) %s.%s due to %s\n", token, m_class_get_name_space (klass), m_class_get_name (klass), mono_error_get_message (type_load_error));
 			mono_error_cleanup (type_load_error);
 			++count;
 		}

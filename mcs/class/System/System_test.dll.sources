@@ -217,7 +217,7 @@ System.Net/DnsTest.cs
 System.Net/EndPointTest.cs
 System.Net/FileWebRequestTest.cs
 System.Net/FileWebResponseTest.cs
-System.Net/FtpWebRequestTest.cs
+#System.Net/FtpWebRequestTest.cs
 System.Net/HttpWebRequestTest.cs
 System.Net/HttpWebResponseTest.cs
 System.Net/HttpListenerTest.cs

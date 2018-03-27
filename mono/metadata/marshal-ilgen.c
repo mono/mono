@@ -497,9 +497,11 @@ emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		mono_mb_emit_byte (mb, CEE_STIND_REF);
 		break;
 	}
-	case MONO_MARSHAL_CONV_ARRAY_LPARRAY:
-		g_error ("Structure field of type %s can't be marshalled as LPArray", m_class_get_name (mono_class_from_mono_type (type)));
+	case MONO_MARSHAL_CONV_ARRAY_LPARRAY: {
+		char *msg = g_strdup_printf ("Structure field of type %s can't be marshalled as LPArray", m_class_get_name (mono_class_from_mono_type (type)));
+		mono_mb_emit_exception_marshal_directive (mb, msg);
 		break;
+	}
 
 #ifndef DISABLE_COM
 	case MONO_MARSHAL_CONV_OBJECT_INTERFACE:
@@ -704,6 +706,9 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 
 		if (type->type == MONO_TYPE_SZARRAY) {
 			eklass = type->data.klass;
+		} else if (type->type == MONO_TYPE_ARRAY) {
+			eklass = type->data.array->eklass;
+			g_assert(m_class_is_blittable (eklass));
 		} else {
 			g_assert_not_reached ();
 		}
@@ -5815,9 +5820,7 @@ static void
 emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_sig, MonoMarshalSpec **mspecs, EmitMarshalContext* m, MonoMethod *method, uint32_t target_handle)
 {
 	MonoMethodSignature *sig, *csig;
-	MonoExceptionClause *clauses, *clause_finally, *clause_catch;
 	int i, *tmp_locals, ex_local, e_local, attach_cookie_local, attach_dummy_local;
-	int leave_try_pos, leave_catch_pos, ex_m1_pos;
 	gboolean closed = FALSE;
 
 	sig = m->sig;
@@ -5858,34 +5861,16 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 
 	/*
 	 * guint32 ex = -1;
-	 * try {
-	 *   // does (STARTING|RUNNING|BLOCKING) -> RUNNING + set/switch domain
-	 *   mono_threads_attach_coop ();
+	 * // does (STARTING|RUNNING|BLOCKING) -> RUNNING + set/switch domain
+	 * mono_threads_attach_coop ();
+	 * <interrupt check>
 	 *
-	 *   <interrupt check>
-	 *
-	 *   ret = method (...);
-	 * } catch (Exception e) {
-	 *   ex = mono_gchandle_new (e, false);
-	 * } finally {
-	 *   // does RUNNING -> (RUNNING|BLOCKING) + unset/switch domain
-	 *   mono_threads_detach_coop ();
-	 *
-	 *   if (ex != -1)
-	 *     mono_marshal_ftnptr_eh_callback (ex);
-	 * }
+	 * ret = method (...);
+	 * // does RUNNING -> (RUNNING|BLOCKING) + unset/switch domain
+	 * mono_threads_detach_coop ();
 	 *
 	 * return ret;
 	 */
-
-	clauses = g_new0 (MonoExceptionClause, 2);
-
-	clause_catch = &clauses [0];
-	clause_catch->flags = MONO_EXCEPTION_CLAUSE_NONE;
-	clause_catch->data.catch_class = mono_defaults.exception_class;
-
-	clause_finally = &clauses [1];
-	clause_finally->flags = MONO_EXCEPTION_CLAUSE_FINALLY;
 
 	mono_mb_emit_icon (mb, 0);
 	mono_mb_emit_stloc (mb, 2);
@@ -5893,9 +5878,6 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 	mono_mb_emit_icon (mb, -1);
 	mono_mb_emit_byte (mb, CEE_CONV_U4);
 	mono_mb_emit_stloc (mb, ex_local);
-
-	/* try { */
-	clause_catch->try_offset = clause_finally->try_offset = mono_mb_get_label (mb);
 
 	if (!mono_threads_is_blocking_transition_enabled ()) {
 		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
@@ -6054,31 +6036,6 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 		}
 	}
 
-	leave_try_pos = mono_mb_emit_branch (mb, CEE_LEAVE);
-
-	/* } [endtry] */
-
-	/* catch (Exception e) { */
-	clause_catch->try_len = mono_mb_get_label (mb) - clause_catch->try_offset;
-	clause_catch->handler_offset = mono_mb_get_label (mb);
-
-	mono_mb_emit_stloc (mb, e_local);
-
-	/* ex = mono_gchandle_new (e, false); */
-	mono_mb_emit_ldloc (mb, e_local);
-	mono_mb_emit_icon (mb, 0);
-	mono_mb_emit_icall (mb, mono_gchandle_new);
-	mono_mb_emit_stloc (mb, ex_local);
-
-	leave_catch_pos = mono_mb_emit_branch (mb, CEE_LEAVE);
-
-	/* } [endcatch] */
-	clause_catch->handler_len = mono_mb_get_pos (mb) - clause_catch->handler_offset;
-
-	/* finally { */
-	clause_finally->try_len = mono_mb_get_label (mb) - clause_finally->try_offset;
-	clause_finally->handler_offset = mono_mb_get_label (mb);
-
 	if (!mono_threads_is_blocking_transition_enabled ()) {
 		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 		mono_mb_emit_byte (mb, CEE_MONO_JIT_DETACH);
@@ -6089,27 +6046,6 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 		mono_mb_emit_icall (mb, mono_threads_detach_coop);
 	}
 
-	/* if (ex != -1) */
-	mono_mb_emit_ldloc (mb, ex_local);
-	mono_mb_emit_icon (mb, -1);
-	mono_mb_emit_byte (mb, CEE_CONV_U4);
-	ex_m1_pos = mono_mb_emit_branch (mb, CEE_BEQ);
-
-	/* mono_marshal_ftnptr_eh_callback (ex) */
-	mono_mb_emit_ldloc (mb, ex_local);
-	mono_mb_emit_icall (mb, mono_marshal_ftnptr_eh_callback);
-
-	/* [ex == -1] */
-	mono_mb_patch_branch (mb, ex_m1_pos);
-
-	mono_mb_emit_byte (mb, CEE_ENDFINALLY);
-
-	/* } [endfinally] */
-	clause_finally->handler_len = mono_mb_get_pos (mb) - clause_finally->handler_offset;
-
-	mono_mb_patch_branch (mb, leave_try_pos);
-	mono_mb_patch_branch (mb, leave_catch_pos);
-
 	/* return ret; */
 	if (m->retobj_var) {
 		mono_mb_emit_ldloc (mb, m->retobj_var);
@@ -6117,12 +6053,10 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 		mono_mb_emit_op (mb, CEE_MONO_RETOBJ, m->retobj_class);
 	}
 	else {
-		if (!MONO_TYPE_IS_VOID(sig->ret))
+		if (!MONO_TYPE_IS_VOID (sig->ret))
 			mono_mb_emit_ldloc (mb, 3);
 		mono_mb_emit_byte (mb, CEE_RET);
 	}
-
-	mono_mb_set_clauses (mb, 2, clauses);
 
 	if (closed)
 		g_free (sig);

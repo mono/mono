@@ -555,7 +555,7 @@ namespace System.Net {
             res.Add(new WebRequestPrefixElement("http", http));
             res.Add(new WebRequestPrefixElement("https", http));
             res.Add(new WebRequestPrefixElement("file", new FileWebRequestCreator ()));
-            res.Add(new WebRequestPrefixElement("ftp", new FtpRequestCreator ()));
+            res.Add(new WebRequestPrefixElement("ftp", new FtpWebRequestCreator ()));
 #else
             object cfg = ConfigurationManager.GetSection ("system.net/webRequestModules");
             WebRequestModulesSection s = cfg as WebRequestModulesSection;
