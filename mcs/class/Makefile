@@ -434,7 +434,7 @@ build_files := mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.C
 	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll Facades/System.IO.FileSystem.Primitives.dll Facades/System.IO.FileSystem.dll \
 	Facades/System.Diagnostics.FileVersionInfo.dll Facades/System.Security.Cryptography.Primitives.dll Facades/System.Security.Cryptography.Algorithms.dll \
 	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll \
-	Mono.Cecil
+	Mono.Cecil.dll
 
 monolite_files = $(build_files:%=lib/$(monolite_dir)/%)
 
