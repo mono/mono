@@ -43,6 +43,9 @@ namespace System.Runtime.InteropServices
 
 		public static bool IsOSPlatform (OSPlatform osPlatform)
 		{
+#if WASM
+			return osPlatform == OSPlatform.Create ("WEBASSEMBLY"); 
+#else
 			switch (Environment.Platform) {
 			case PlatformID.Win32NT:
 				return osPlatform == OSPlatform.Windows;
@@ -53,13 +56,18 @@ namespace System.Runtime.InteropServices
 			default:
 				return false;
 			}
+#endif
 		}
 
 		public static string OSDescription
 		{
 			get
 			{
+#if WASM
+				return "web"; //yes, hardcoded as right now we don't really support other environments
+#else
 				return Environment.OSVersion.VersionString;
+#endif
 			}
 		}
 
