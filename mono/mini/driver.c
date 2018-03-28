@@ -2565,10 +2565,13 @@ mono_jit_set_aot_mode (MonoAotMode mode)
 	/* we don't want to set mono_aot_mode twice */
 	g_assert (mono_aot_mode == MONO_AOT_MODE_NONE);
 	mono_aot_mode = mode;
+	memset (&mono_ee_features, 0, sizeof (mono_ee_features));
 
 	if (mono_aot_mode == MONO_AOT_MODE_LLVMONLY) {
 		mono_aot_only = TRUE;
 		mono_llvm_only = TRUE;
+
+		mono_ee_features.use_aot_trampolines = TRUE;
 	}
 	if (mono_aot_mode == MONO_AOT_MODE_FULL) {
 		mono_aot_only = TRUE;
@@ -2580,11 +2583,15 @@ mono_jit_set_aot_mode (MonoAotMode mode)
 	if (mono_aot_mode == MONO_AOT_MODE_INTERP) {
 		mono_aot_only = TRUE;
 		mono_use_interpreter = TRUE;
+
+		mono_ee_features.use_aot_trampolines = TRUE;
 	}
 	if (mono_aot_mode == MONO_AOT_MODE_INTERP_LLVMONLY) {
 		mono_aot_only = TRUE;
 		mono_use_interpreter = TRUE;
 		mono_llvm_only = TRUE;
+
+		mono_ee_features.use_aot_trampolines = TRUE;
 	}
 }
 
