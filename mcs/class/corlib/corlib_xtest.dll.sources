@@ -124,20 +124,20 @@
 ../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderSize.cs
 ../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderToString.cs
 
-../../../external/corefx/src/System.Text.Encoding/tests/ASCIIEncoding/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Decoder/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/DecoderFallbackException/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Encoder/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/EncoderFallbackException/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Encoding/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Fallback/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Latin1Encoding/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/UnicodeEncoding/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/UTF7Encoding/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/UTF8Encoding/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/UTF32Encoding/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/*.cs
-../../../external/corefx/src/System.Text.Encoding.Extensions/tests/*.cs
+#../../../external/corefx/src/System.Text.Encoding/tests/ASCIIEncoding/*.cs
+#../../../external/corefx/src/System.Text.Encoding/tests/Decoder/*.cs
+#../../../external/corefx/src/System.Text.Encoding/tests/DecoderFallbackException/*.cs
+#../../../external/corefx/src/System.Text.Encoding/tests/Encoder/*.cs
+#../../../external/corefx/src/System.Text.Encoding/tests/EncoderFallbackException/*.cs
+#../../../external/corefx/src/System.Text.Encoding/tests/Encoding/*.cs
+#../../../external/corefx/src/System.Text.Encoding/tests/Fallback/*.cs
+#../../../external/corefx/src/System.Text.Encoding/tests/Latin1Encoding/*.cs
+#../../../external/corefx/src/System.Text.Encoding/tests/UnicodeEncoding/*.cs
+#../../../external/corefx/src/System.Text.Encoding/tests/UTF7Encoding/*.cs
+#../../../external/corefx/src/System.Text.Encoding/tests/UTF8Encoding/*.cs
+#../../../external/corefx/src/System.Text.Encoding/tests/UTF32Encoding/*.cs
+#../../../external/corefx/src/System.Text.Encoding/tests/*.cs
+#../../../external/corefx/src/System.Text.Encoding.Extensions/tests/*.cs
 
 ../../../external/corefx/src/System.ValueTuple/tests/*.cs
 
