@@ -10,7 +10,7 @@ static_libs=	\
 	$(top_builddir)/mono/metadata/libmonoruntimesgen.la	\
 	$(top_builddir)/mono/sgen/libmonosgen.la	\
 	$(top_builddir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV)
+	$(GLIB_LIBS)
 
 runtime_lib=$(static_libs)
 endif
@@ -35,7 +35,6 @@ monograph_LDADD = \
 	$(runtime_lib)			\
 	$(GLIB_LIBS)			\
 	$(LLVM_LIBS)			\
-	$(LIBICONV)			\
 	-lm
 
 if HOST_DARWIN

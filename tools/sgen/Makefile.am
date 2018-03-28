@@ -16,4 +16,4 @@ sgen_grep_binprot_SOURCES = \
 	sgen-entry-stream.h
 
 sgen_grep_binprot_LDADD = \
-	$(GLIB_LIBS) $(LIBICONV) libsgen-grep-binprot.a libsgen-grep-binprot32p.a libsgen-grep-binprot64p.a
+	$(GLIB_LIBS) libsgen-grep-binprot.a libsgen-grep-binprot32p.a libsgen-grep-binprot64p.a
