@@ -12,7 +12,6 @@ namespace System.Text {
 					lock (lockobj){
 						if (utf8Encoding == null){
 							utf8Encoding = new UTF8Encoding (true, false);
-							utf8Encoding.setReadOnly ();
 						}
 					}
 				}
