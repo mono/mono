@@ -24,18 +24,12 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("System.Diagnostics.Tools.dll")]
-[assembly: AssemblyDescription ("System.Diagnostics.Tools.dll")]
-[assembly: AssemblyDefaultAlias ("System.Diagnostics.Tools.dll")]
-[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyTitle ("System.Diagnostics.Tools")]
+[assembly: AssemblyDescription ("System.Diagnostics.Tools")]
+[assembly: AssemblyDefaultAlias ("System.Diagnostics.Tools")]
+[assembly: AssemblyCompany ("Mono development team")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
-[assembly: AssemblyCopyright ("Copyright (c) 2013 Xamarin Inc. (http://www.xamarin.com)")]
+[assembly: AssemblyCopyright ("(c) Various Mono authors")]
 [assembly: AssemblyVersion ("4.0.0.0")]
 [assembly: AssemblyInformationalVersion ("4.0.0.0")]
 [assembly: AssemblyFileVersion ("4.0.0.0")]
-[assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../../msfinal.pub")]
-
-[assembly: ReferenceAssembly]
-
-

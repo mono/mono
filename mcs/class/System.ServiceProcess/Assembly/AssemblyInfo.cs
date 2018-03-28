@@ -54,7 +54,6 @@ using System.Runtime.InteropServices;
 
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]

@@ -1,4 +1,4 @@
-//
+﻿//
 // MonoTlsSettings.cs
 //
 // Author:
@@ -65,6 +65,13 @@ namespace Mono.Security.Interface
 		}
 
 		/*
+		 * Use custom time for certificate expiration checks
+		 */
+		public DateTime? CertificateValidationTime {
+			get; set;
+		}
+
+		/*
 		 * This is only supported if CertificateValidationHelper.SupportsTrustAnchors is true.
 		 */
 		public X509CertificateCollection TrustAnchors {
@@ -75,6 +82,17 @@ namespace Mono.Security.Interface
 			get; set;
 		}
 
+		internal string[] CertificateSearchPaths {
+			get; set;
+		}
+
+		/*
+		 * This is only supported if MonoTlsProvider.SupportsCleanShutdown is true.
+		 */
+		internal bool SendCloseNotify {
+			get; set;
+		}
+
 		/*
 		 * If you set this here, then it will override 'ServicePointManager.SecurityProtocol'.
 		 */
@@ -82,6 +100,7 @@ namespace Mono.Security.Interface
 			get; set;
 		}
 
+		[CLSCompliant (false)]
 		public CipherSuiteCode[] EnabledCiphers {
 			get; set;
 		}
@@ -160,7 +179,15 @@ namespace Mono.Security.Interface
 			UserSettings = other.UserSettings;
 			EnabledProtocols = other.EnabledProtocols;
 			EnabledCiphers = other.EnabledCiphers;
-			TrustAnchors = other.TrustAnchors;
+			CertificateValidationTime = other.CertificateValidationTime;
+			SendCloseNotify = other.SendCloseNotify;
+			if (other.TrustAnchors != null)
+				TrustAnchors = new X509CertificateCollection (other.TrustAnchors);
+			if (other.CertificateSearchPaths != null) {
+				CertificateSearchPaths = new string [other.CertificateSearchPaths.Length];
+				other.CertificateSearchPaths.CopyTo (CertificateSearchPaths, 0);
+			}
+
 			cloned = true;
 		}
 

@@ -38,24 +38,21 @@ completionList.Add (""delegate"" + sb, ""md-keyword"", GettextCatalog.GetString 
 
 			var stream = new MemoryStream (Encoding.UTF8.GetBytes (content));
 
-			var ctx = new CompilerContext (new CompilerSettings (), new Report (new AssertReportPrinter ()));
+			var ctx = new CompilerContext (new CompilerSettings (), new AssertReportPrinter ());
 
 			ModuleContainer module = new ModuleContainer (ctx);
+			var file = new SourceFile ("test", "asdfas", 0);
 			CSharpParser parser = new CSharpParser (
 				new SeekableStreamReader (stream, Encoding.UTF8),
-				new CompilationUnit ("name", "path", 0),
-				module);
+				new CompilationSourceFile (module, file),
+				ctx.Report,
+				new ParserSession ());
 
 			RootContext.ToplevelTypes = module;
-			Location.AddFile (ctx.Report, "asdfas");
-			Location.Initialize ();
-			parser.LocationsBag = new LocationsBag ();
+			Location.Initialize (new List<SourceFile> { file });
 			parser.parse ();
 
-			var m = module.Types[0].Methods[0] as Method;
-			var s = m.Block.FirstStatement;
-			var o = s.loc.Column;
-			
+			Assert.AreEqual (0, ctx.Report.Errors);
 
 			module.Accept (new TestVisitor ());
 		}

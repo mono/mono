@@ -38,19 +38,19 @@ namespace System.ServiceModel.Dispatcher
 		Collection<MessageFilter> filters;
 
 		public FilterInvalidBodyAccessException () : base ("Not allowed to navigate to body.") {}
-		public FilterInvalidBodyAccessException (string msg) : base (msg) {}
-		public FilterInvalidBodyAccessException (string msg, Exception inner) : base (msg, inner) {}		
+		public FilterInvalidBodyAccessException (string message) : base (message) {}
+		public FilterInvalidBodyAccessException (string message, Exception innerException) : base (message, innerException) {}		
 		protected FilterInvalidBodyAccessException (SerializationInfo info, StreamingContext context)
 			: base (info, context) {}
 
-		public FilterInvalidBodyAccessException (string msg, Collection<MessageFilter> filters)
-			: base (msg)
+		public FilterInvalidBodyAccessException (string message, Collection<MessageFilter> filters)
+			: base (message)
 		{
 			this.filters = filters;
 		}
 
-		public FilterInvalidBodyAccessException (string msg, Exception inner, Collection<MessageFilter> filters)
-			: base (msg, inner)
+		public FilterInvalidBodyAccessException (string message, Exception innerException, Collection<MessageFilter> filters)
+			: base (message, innerException)
 		{
 			this.filters = filters;
 		}

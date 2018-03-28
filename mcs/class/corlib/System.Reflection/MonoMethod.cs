@@ -305,7 +305,7 @@ namespace System.Reflection {
 				o = InternalInvoke (obj, parameters, out exc);
 			} catch (ThreadAbortException) {
 				throw;
-#if NET_2_1
+#if MOBILE
 			} catch (MethodAccessException) {
 				throw;
 #endif
@@ -438,7 +438,7 @@ namespace System.Reflection {
 			foreach (Type type in methodInstantiation) {
 				if (type == null)
 					throw new ArgumentNullException ();
-				if (!(type is MonoType))
+				if (!(type is RuntimeType))
 					hasUserType = true;
 			}
 
@@ -502,9 +502,16 @@ namespace System.Reflection {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
 
+#if MOBILE
+		static int get_core_clr_security_level ()
+		{
+			return 1;
+		}
+#else
 		//seclevel { transparent = 0, safe-critical = 1, critical = 2}
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern int get_core_clr_security_level ();
+#endif
 
 		public override bool IsSecurityTransparent {
 			get { return get_core_clr_security_level () == 0; }
@@ -652,7 +659,7 @@ namespace System.Reflection {
 
 			try {
 				o = InternalInvoke (obj, parameters, out exc);
-#if NET_2_1
+#if MOBILE
 			} catch (MethodAccessException) {
 				throw;
 #endif
@@ -750,6 +757,28 @@ namespace System.Reflection {
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
+		}
+
+#if MOBILE
+		static int get_core_clr_security_level ()
+		{
+			return 1;
+		}
+#else
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern int get_core_clr_security_level ();
+#endif
+
+		public override bool IsSecurityTransparent {
+			get { return get_core_clr_security_level () == 0; }
+		}
+
+		public override bool IsSecurityCritical {
+			get { return get_core_clr_security_level () > 0; }
+		}
+
+		public override bool IsSecuritySafeCritical {
+			get { return get_core_clr_security_level () == 1; }
 		}
 	}
 }

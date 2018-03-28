@@ -366,6 +366,18 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		}
 
 		[Test]
+		public void X509Certificate2_WhenNullProvidedAsByteArray_DoesNotThrow ()
+		{
+			Assert.DoesNotThrow (() => new X509Certificate2 ((byte[]) null));
+		}
+
+		[Test]
+		public void X509Certificate2_WhenEmptyByteArrayProvided_DoesNotThrow ()
+		{
+			Assert.DoesNotThrow (() => new X509Certificate2 (new byte [0]));
+		}
+
+		[Test]
 		public void Ctor_FileName ()
 		{
 			string tempFile = Path.GetTempFileName ();
@@ -439,6 +451,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		public void Empty_GetRawCertDataString ()
 		{
 			new X509Certificate2 ().GetRawCertDataString ();
+		}
+
+		[Test]
+		public void X509Certificate2_WhenEmptyCertificateProvided_DoesNotThrow ()
+		{
+			Assert.DoesNotThrow (() => new X509Certificate2 (new X509Certificate2 ()));
 		}
 
 		[Test]

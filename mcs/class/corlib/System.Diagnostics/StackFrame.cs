@@ -71,22 +71,25 @@ namespace System.Diagnostics {
 					out nativeOffset, out fileName, out lineNumber,
 					out columnNumber);			
                 }
-                
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]                
 		public StackFrame (bool fNeedFileInfo)
 		{
 			get_frame_info (2, fNeedFileInfo, out methodBase, out ilOffset,
 					out nativeOffset, out fileName, out lineNumber,
 					out columnNumber);			
                 }
-                
-                public StackFrame (int skipFrames)
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]                
+		public StackFrame (int skipFrames)
 		{
 			get_frame_info (skipFrames + 2, false, out methodBase, out ilOffset,
 					out nativeOffset, out fileName, out lineNumber,
 					out columnNumber);			
                 }
                 
-                public StackFrame (int skipFrames, bool fNeedFileInfo) 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public StackFrame (int skipFrames, bool fNeedFileInfo) 
 		{
 			get_frame_info (skipFrames + 2, fNeedFileInfo, out methodBase, out ilOffset,
 					out nativeOffset, out fileName, out lineNumber,
@@ -95,7 +98,8 @@ namespace System.Diagnostics {
                 
 		// LAMESPEC: According to the MSDN docs, this creates a frame with _only_
 		// the filename and lineNumber, but MS fills out the frame info as well.
-                public StackFrame (string fileName, int lineNumber)
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public StackFrame (string fileName, int lineNumber)
 		{
 			get_frame_info (2, false, out methodBase, out ilOffset,
 					out nativeOffset, out fileName, out lineNumber,
@@ -107,7 +111,8 @@ namespace System.Diagnostics {
                 
 		// LAMESPEC: According to the MSDN docs, this creates a frame with _only_
 		// the filename, lineNumber and colNumber, but MS fills out the frame info as well.
-                public StackFrame (string fileName, int lineNumber, int colNumber)
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public StackFrame (string fileName, int lineNumber, int colNumber)
 		{
 			get_frame_info (2, false, out methodBase, out ilOffset,
 					out nativeOffset, out fileName, out lineNumber,
@@ -129,7 +134,7 @@ namespace System.Diagnostics {
                 
                 public virtual string GetFileName()
                 {
-#if !NET_2_1
+#if MONO_FEATURE_CAS
 			if (SecurityManager.SecurityEnabled && (fileName != null) && (fileName.Length > 0)) {
 				string fn = Path.GetFullPath (fileName);
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fn).Demand ();

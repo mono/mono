@@ -40,9 +40,8 @@
 	<p>The output of the SCC analysis is passed to the
 	`cross_references()` callback.  It is expected to set the
 	`is_alive` flag on those strongly connected components that it
-	wishes to be kept alive.  Only bridged objects will be
-	reported to the callback, i.e., non-bridged objects are
-	removed from the callback graph.
+	wishes to be kept alive.  The value of `is_alive` will be
+	ignored on any SCCs which lack bridges.
 	
 	<p>In monodroid each bridged object has a corresponding Java
 	mirror object.  In the bridge callback it reifies the Mono
@@ -63,7 +62,7 @@
 
 <div class="mapi-header">
 enum {
-        SGEN_BRIDGE_VERSION = 4
+        SGEN_BRIDGE_VERSION = 5
 };
         
 typedef enum {

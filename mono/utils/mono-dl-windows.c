@@ -1,5 +1,6 @@
-/*
- * mono-dl.c: Interface to the dynamic linker
+/**
+ * \file
+ * Interface to the dynamic linker
  *
  * Author:
  *    Mono Team (http://www.mono-project.com)
@@ -13,6 +14,7 @@
 #if defined(HOST_WIN32)
 
 #include "mono/utils/mono-dl.h"
+#include "mono/utils/mono-dl-windows-internals.h"
 #include "mono/utils/mono-embed.h"
 #include "mono/utils/mono-path.h"
 
@@ -24,7 +26,6 @@
 
 #include <windows.h>
 #include <psapi.h>
-
 
 const char*
 mono_dl_get_so_prefix (void)
@@ -48,20 +49,34 @@ mono_dl_open_file (const char *file, int flags)
 	gpointer hModule = NULL;
 	if (file) {
 		gunichar2* file_utf16 = g_utf8_to_utf16 (file, strlen (file), NULL, NULL, NULL);
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 		guint last_sem = SetErrorMode (SEM_FAILCRITICALERRORS);
+#endif
 		guint32 last_error = 0;
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 		hModule = LoadLibrary (file_utf16);
+#else
+		hModule = LoadPackagedLibrary (file_utf16, NULL);
+#endif
 		if (!hModule)
 			last_error = GetLastError ();
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 		SetErrorMode (last_sem);
+#endif
+
 		g_free (file_utf16);
 
 		if (!hModule)
 			SetLastError (last_error);
 	} else {
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 		hModule = GetModuleHandle (NULL);
+#else
+		g_error("Not supported");
+#endif
 	}
 	return hModule;
 }
@@ -73,22 +88,14 @@ mono_dl_close_handle (MonoDl *module)
 		FreeLibrary (module->handle);
 }
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 void*
-mono_dl_lookup_symbol (MonoDl *module, const char *symbol_name)
+mono_dl_lookup_symbol_in_process (const char *symbol_name)
 {
 	HMODULE *modules;
 	DWORD buffer_size = sizeof (HMODULE) * 1024;
 	DWORD needed, i;
 	gpointer proc = NULL;
-
-	/* get the symbol directly from the specified module */
-	if (!module->main_module)
-		return GetProcAddress (module->handle, symbol_name);
-
-	/* get the symbol from the main module */
-	proc = GetProcAddress (module->handle, symbol_name);
-	if (proc != NULL)
-		return proc;
 
 	/* get the symbol from the loaded DLLs */
 	modules = (HMODULE *) g_malloc (buffer_size);
@@ -129,6 +136,25 @@ mono_dl_lookup_symbol (MonoDl *module, const char *symbol_name)
 	g_free (modules);
 	return NULL;
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+
+void*
+mono_dl_lookup_symbol (MonoDl *module, const char *symbol_name)
+{
+	gpointer proc = NULL;
+
+	/* get the symbol directly from the specified module */
+	if (!module->main_module)
+		return GetProcAddress (module->handle, symbol_name);
+
+	/* get the symbol from the main module */
+	proc = GetProcAddress (module->handle, symbol_name);
+	if (proc != NULL)
+		return proc;
+
+	/* get the symbol from the loaded DLLs */
+	return mono_dl_lookup_symbol_in_process (symbol_name);
+}
 
 int
 mono_dl_convert_flags (int flags)
@@ -136,6 +162,7 @@ mono_dl_convert_flags (int flags)
 	return 0;
 }
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 char*
 mono_dl_current_error_string (void)
 {
@@ -153,6 +180,7 @@ mono_dl_current_error_string (void)
 	}
 	return ret;
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 int
 mono_dl_get_executable_path (char *buf, int buflen)
@@ -165,5 +193,4 @@ mono_dl_get_system_dir (void)
 {
 	return NULL;
 }
-
 #endif

@@ -40,15 +40,15 @@ namespace System.Web.UI.WebControls
 		object dataItem;
 		int index;
 		
-		public MenuItemTemplateContainer (int itemIndex, MenuItem menuItem)
+		public MenuItemTemplateContainer (int itemIndex, MenuItem dataItem)
 		{
-			index = itemIndex;
-			dataItem = menuItem;
+			this.index = itemIndex;
+			this.dataItem = dataItem;
 		}
 		
-		protected override bool OnBubbleEvent (object source, EventArgs args)
+		protected override bool OnBubbleEvent (object source, EventArgs e)
 		{
-			CommandEventArgs command = args as CommandEventArgs;
+			CommandEventArgs command = e as CommandEventArgs;
 			if (command == null)
 				return false;
 

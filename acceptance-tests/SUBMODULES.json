@@ -1,16 +1,16 @@
 [
   {
     "name": "roslyn", 
-    "url": "git://github.com/dotnet/roslyn.git", 
-    "rev": "322bd5b2bbf07df6a67de35cbcb2365484412f70", 
-    "remote-branch": "origin/master", 
-    "branch": "master", 
+    "url": "git://github.com/mono/roslyn.git",
+    "rev": "1d9895045041925490038c5df0d8f947d8dcbd7f",
+    "remote-branch": "origin/mono-testing",
+    "branch": "mono-testing",
     "directory": "roslyn"
   }, 
   {
     "name": "coreclr", 
     "url": "git://github.com/mono/coreclr.git", 
-    "rev": "3d9a68d3baaa32df28b70a2266a9ef9ee2176b79", 
+    "rev": "83d8279997d8ce4ad344ff9b937b2d13d074dcaa", 
     "remote-branch": "origin/mono", 
     "branch": "mono", 
     "directory": "coreclr"
@@ -18,9 +18,17 @@
   {
     "name": "ms-test-suite", 
     "url": "git@github.com:xamarin/ms-test-suite.git", 
-    "rev": "4a95604fdf2c0523e68eaad64a17d22eebb051b3", 
+    "rev": "67f29dfc0741b5311dd746c75760963a2915e648", 
     "remote-branch": "origin/master", 
     "branch": "master", 
     "directory": "ms-test-suite"
+  }, 
+  {
+    "name": "benchmarker", 
+    "url": "git://github.com/xamarin/benchmarker.git", 
+    "rev": "97f618cd585af549dd861b7c142656c496f6a89b", 
+    "remote-branch": "origin/master", 
+    "branch": "master", 
+    "directory": "benchmarker"
   }
 ]

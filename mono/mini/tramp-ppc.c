@@ -1,5 +1,6 @@
-/*
- * tramp-ppc.c: JIT trampoline code for PowerPC
+/**
+ * \file
+ * JIT trampoline code for PowerPC
  *
  * Authors:
  *   Dietmar Maurer (dietmar@ximian.com)
@@ -22,6 +23,7 @@
 
 #include "mini.h"
 #include "mini-ppc.h"
+#include "mini-runtime.h"
 
 #if 0
 /* Same as mono_create_ftnptr, but doesn't require a domain */
@@ -112,10 +114,10 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 /*
  * mono_arch_get_static_rgctx_trampoline:
  *
- *   Create a trampoline which sets RGCTX_REG to MRGCTX, then jumps to ADDR.
+ *   Create a trampoline which sets RGCTX_REG to ARG, then jumps to ADDR.
  */
 gpointer
-mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericContext *mrgctx, gpointer addr)
+mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 {
 	guint8 *code, *start, *p;
 	guint8 imm_buf [128];
@@ -126,9 +128,9 @@ mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericCo
 
 	addr = mono_get_addr_from_ftnptr (addr);
 
-	/* Compute size of code needed to emit mrgctx */
+	/* Compute size of code needed to emit the arg */
 	p = imm_buf;
-	ppc_load_ptr (p, MONO_ARCH_RGCTX_REG, mrgctx);
+	ppc_load_ptr (p, MONO_ARCH_RGCTX_REG, arg);
 	imm_size = p - imm_buf;
 
 	mono_domain_lock (domain);
@@ -140,12 +142,12 @@ mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericCo
 	mono_domain_unlock (domain);
 
 	if (short_branch) {
-		ppc_load_ptr (code, MONO_ARCH_RGCTX_REG, mrgctx);
+		ppc_load_ptr (code, MONO_ARCH_RGCTX_REG, arg);
 		ppc_emit32 (code, short_branch);
 	} else {
 		ppc_load_ptr (code, ppc_r0, addr);
 		ppc_mtctr (code, ppc_r0);
-		ppc_load_ptr (code, MONO_ARCH_RGCTX_REG, mrgctx);
+		ppc_load_ptr (code, MONO_ARCH_RGCTX_REG, arg);
 		ppc_bcctr (code, 20, 0);
 	}
 	mono_arch_flush_icache (start, code - start);

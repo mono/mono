@@ -1872,7 +1872,7 @@ Since 6.2alpha6:
  - Fixed Makefile.direct for DARWIN.  (Thanks to Manuel Serrano.)
  - There was a race between GC_pthread_detach and thread exit that could
    result in a thread structure being deallocated by GC_pthread_detach
-   eventhough it was still needed by the thread exit code.  (Thanks to
+   even though it was still needed by the thread exit code.  (Thanks to
    Dick Porter for the small test case that allowed this to be debugged.)
  - Fixed version parsing for non-alpha versions in acinclude.m4 and
    version checking in version.h.

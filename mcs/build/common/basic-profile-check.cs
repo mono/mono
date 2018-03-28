@@ -40,7 +40,14 @@ class X {
 		if (!Version.TryParse (field.GetValue (null) as string, out version))
 			return 4;
 
-		if (version < new Version (3, 8))
+		Version min_mono_version;
+#if __MonoCS__
+		min_mono_version = new Version (5, 13);
+#else
+		min_mono_version = new Version (5, 10);
+#endif
+
+		if (version < min_mono_version)
 			return 5;
 
 		return 0;

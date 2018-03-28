@@ -73,7 +73,6 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void CopyData_NullPoints ()
 		{
 			using (GraphicsPath gp = new GraphicsPath ()) {
@@ -81,13 +80,12 @@ namespace MonoTests.System.Drawing.Drawing2D {
 				using (GraphicsPathIterator gpi = new GraphicsPathIterator (gp)) {
 					PointF [] points = null;
 					byte [] types = new byte [1];
-					Assert.AreEqual (0, gpi.CopyData (ref points, ref types, 0, 1));
+					Assert.Throws<NullReferenceException> (() => gpi.CopyData (ref points, ref types, 0, 1));
 				}
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void CopyData_NullTypes ()
 		{
 			using (GraphicsPath gp = new GraphicsPath ()) {
@@ -95,13 +93,12 @@ namespace MonoTests.System.Drawing.Drawing2D {
 				using (GraphicsPathIterator gpi = new GraphicsPathIterator (gp)) {
 					PointF [] points = new PointF [1];
 					byte [] types = null;
-					Assert.AreEqual (0, gpi.CopyData (ref points, ref types, 0, 1));
+					Assert.Throws<NullReferenceException> (() =>gpi.CopyData (ref points, ref types, 0, 1));
 				}
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void CopyData_DifferentSize ()
 		{
 			using (GraphicsPath gp = new GraphicsPath ()) {
@@ -109,13 +106,12 @@ namespace MonoTests.System.Drawing.Drawing2D {
 				using (GraphicsPathIterator gpi = new GraphicsPathIterator (gp)) {
 					PointF [] points = new PointF [1];
 					byte [] types = new byte [2];
-					Assert.AreEqual (0, gpi.CopyData (ref points, ref types, 0, 1));
+					Assert.Throws<ArgumentException> (() => gpi.CopyData (ref points, ref types, 0, 1));
 				}
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void Enumerate_NullPoints ()
 		{
 			using (GraphicsPath gp = new GraphicsPath ()) {
@@ -123,13 +119,12 @@ namespace MonoTests.System.Drawing.Drawing2D {
 				using (GraphicsPathIterator gpi = new GraphicsPathIterator (gp)) {
 					PointF [] points = null;
 					byte [] types = new byte [2];
-					Assert.AreEqual (0, gpi.Enumerate (ref points, ref types));
+					Assert.Throws<NullReferenceException> (() => gpi.Enumerate (ref points, ref types));
 				}
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void Enumerate_NullTypes ()
 		{
 			using (GraphicsPath gp = new GraphicsPath ()) {
@@ -137,13 +132,12 @@ namespace MonoTests.System.Drawing.Drawing2D {
 				using (GraphicsPathIterator gpi = new GraphicsPathIterator (gp)) {
 					PointF [] points = new PointF [1];
 					byte [] types = null;
-					Assert.AreEqual (0, gpi.Enumerate (ref points, ref types));
+					Assert.Throws<NullReferenceException> (() => gpi.Enumerate (ref points, ref types));
 				}
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Enumerate_DifferentSize ()
 		{
 			using (GraphicsPath gp = new GraphicsPath ()) {
@@ -151,7 +145,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 				using (GraphicsPathIterator gpi = new GraphicsPathIterator (gp)) {
 					PointF [] points = new PointF [1];
 					byte [] types = new byte [2];
-					Assert.AreEqual (0, gpi.Enumerate (ref points, ref types));
+					Assert.Throws<ArgumentException> (() => gpi.Enumerate (ref points, ref types));
 				}
 			}
 		}

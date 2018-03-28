@@ -112,34 +112,34 @@ namespace System.Web {
 				buf.Add ((byte)ch);
 		}
 		
-		public static string UrlDecode (string s, Encoding e)
+		public static string UrlDecode (string str, Encoding e)
 		{
-			if (null == s) 
+			if (null == str) 
 				return null;
 
-			if (s.IndexOf ('%') == -1 && s.IndexOf ('+') == -1)
-				return s;
+			if (str.IndexOf ('%') == -1 && str.IndexOf ('+') == -1)
+				return str;
 			
 			if (e == null)
 				e = Encoding.UTF8;
 
-			long len = s.Length;
+			long len = str.Length;
 			var bytes = new List <byte> ();
 			int xchar;
 			char ch;
 			
 			for (int i = 0; i < len; i++) {
-				ch = s [i];
-				if (ch == '%' && i + 2 < len && s [i + 1] != '%') {
-					if (s [i + 1] == 'u' && i + 5 < len) {
+				ch = str [i];
+				if (ch == '%' && i + 2 < len && str [i + 1] != '%') {
+					if (str [i + 1] == 'u' && i + 5 < len) {
 						// unicode hex sequence
-						xchar = GetChar (s, i + 2, 4);
+						xchar = GetChar (str, i + 2, 4);
 						if (xchar != -1) {
 							WriteCharBytes (bytes, (char)xchar, e);
 							i += 5;
 						} else
 							WriteCharBytes (bytes, '%', e);
-					} else if ((xchar = GetChar (s, i + 1, 2)) != -1) {
+					} else if ((xchar = GetChar (str, i + 1, 2)) != -1) {
 						WriteCharBytes (bytes, (char)xchar, e);
 						i += 2;
 					} else {
@@ -338,18 +338,18 @@ namespace System.Web {
 			return UrlEncode(str, Encoding.UTF8);
 		}
 	
-		public static string UrlEncode (string s, Encoding Enc) 
+		public static string UrlEncode (string str, Encoding e) 
 		{
-			if (s == null)
+			if (str == null)
 				return null;
 
-			if (s == String.Empty)
+			if (str == String.Empty)
 				return String.Empty;
 
 			bool needEncode = false;
-			int len = s.Length;
+			int len = str.Length;
 			for (int i = 0; i < len; i++) {
-				char c = s [i];
+				char c = str [i];
 				if ((c < '0') || (c < 'A' && c > '9') || (c > 'Z' && c < 'a') || (c > 'z')) {
 					if (HttpEncoder.NotEncoded (c))
 						continue;
@@ -360,11 +360,11 @@ namespace System.Web {
 			}
 
 			if (!needEncode)
-				return s;
+				return str;
 
 			// avoided GetByteCount call
-			byte [] bytes = new byte[Enc.GetMaxByteCount(s.Length)];
-			int realLen = Enc.GetBytes (s, 0, s.Length, bytes, 0);
+			byte [] bytes = new byte[e.GetMaxByteCount(str.Length)];
+			int realLen = e.GetBytes (str, 0, str.Length, bytes, 0);
 			return Encoding.ASCII.GetString (UrlEncodeToBytes (bytes, 0, realLen));
 		}
 	  
@@ -593,9 +593,9 @@ namespace System.Web {
 
 			return sb.ToString ();
 		}
-		public static string UrlPathEncode (string s)
+		public static string UrlPathEncode (string str)
 		{
-			return HttpEncoder.Current.UrlPathEncode (s);
+			return HttpEncoder.Current.UrlPathEncode (str);
 		}
 
 		public static NameValueCollection ParseQueryString (string query)

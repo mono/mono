@@ -27,7 +27,9 @@
 //
 using System;
 using System.Collections.Generic;
+#if !MOBILE && !XAMMAC_4_5
 using System.IdentityModel.Claims;
+#endif
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
@@ -37,14 +39,21 @@ namespace System.ServiceModel
 {
 	public class UpnEndpointIdentity : EndpointIdentity
 	{
+#if !MOBILE && !XAMMAC_4_5
 		public UpnEndpointIdentity (Claim identity)
 		{
 			Initialize (identity);
 		}
 
-		public UpnEndpointIdentity (string upn)
-			: this (Claim.CreateUpnClaim (upn))
+		public UpnEndpointIdentity (string upnName)
+			: this (Claim.CreateUpnClaim (upnName))
 		{
 		}
+#else
+		public UpnEndpointIdentity (string upnName)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

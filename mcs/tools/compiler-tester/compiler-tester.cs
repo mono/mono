@@ -91,7 +91,7 @@ namespace TestRunner {
 		}
 	}
 
-#if !NET_2_1
+#if !MOBILE
 	class ProcessTester: ITester
 	{
 		ProcessStartInfo pi;
@@ -734,7 +734,7 @@ namespace TestRunner {
 		bool update_verif_file;
 		Hashtable verif_data;
 
-#if !NET_2_1
+#if !MOBILE
 		ProcessStartInfo pi;
 #endif
 		readonly string mono;
@@ -756,7 +756,7 @@ namespace TestRunner {
 			files_folder = Directory.GetCurrentDirectory ();
 			this.verif_file = verif_file;
 
-#if !NET_2_1
+#if !MOBILE
 			pi = new ProcessStartInfo ();
 			pi.CreateNoWindow = true;
 			pi.WindowStyle = ProcessWindowStyle.Hidden;
@@ -965,7 +965,7 @@ namespace TestRunner {
 			string filename = test.FileName;
 
 			AppDomain domain = null;
-#if !NET_2_1
+#if !MOBILE
 			if (safe_execution) {
 				// Create a new AppDomain, with the current directory as the base.
 				AppDomainSetup setupInfo = new AppDomainSetup ();
@@ -977,7 +977,7 @@ namespace TestRunner {
 			try {
 				DomainTester tester;
 				try {
-#if !NET_2_1
+#if !MOBILE
 					if (domain != null)
 						tester = (DomainTester) domain.CreateInstanceAndUnwrap (typeof (PositiveChecker).Assembly.FullName, typeof (DomainTester).FullName);
 					else
@@ -998,7 +998,7 @@ namespace TestRunner {
 				if (doc_output != null) {
 					string ref_file = filename.Replace (".cs", "-ref.xml");
 					try {
-#if !NET_2_1
+#if !MOBILE
 						new XmlComparer ("doc").Compare (ref_file, doc_output);
 #endif
 					} catch (Exception e) {
@@ -1440,17 +1440,15 @@ namespace TestRunner {
 		static bool TryToMatchErrorMessage (string actual, string expected)
 		{
 			actual = actual.Replace ("\\", "/");
-			var path_mask_start = expected.IndexOf ("*PATH*");
+			var path_mask_start = expected.IndexOf ("*PATH*", StringComparison.Ordinal);
 			if (path_mask_start > 0 && actual.Length > path_mask_start) {
-				var path_mask_continue = expected.Substring (path_mask_start + 6);
-				var expected_continue = actual.IndexOf (path_mask_continue, path_mask_start);
-				if (expected_continue > 0) {
-					var path = actual.Substring (path_mask_start, expected_continue - path_mask_start);
-					if (actual == expected.Replace ("*PATH*", path))
-						return true;
-
-					throw new ApplicationException (expected.Replace ("*PATH*", path));
+				var parts = expected.Split (new [] { "*PATH*" }, StringSplitOptions.None);
+				foreach (var part in parts) {
+					if (!actual.Contains (part))
+						return false;
 				}
+
+				return true;
 			}
 
 			return false;

@@ -11,6 +11,7 @@
 /chktrust
 /cilc
 /crlupdate
+/csi
 /csharp
 /csharp2
 /disco
@@ -29,6 +30,7 @@
 /ilasm
 /ilasm1
 /ilasm2
+/illinkanalyzer
 /installvst
 /lc
 /macpack
@@ -85,7 +87,9 @@
 /sgen
 /sgen1
 /signcode
-/smcs
+/csc
+/csc-dim
+/vbc
 /sn
 /soapsuds
 /sqlmetal

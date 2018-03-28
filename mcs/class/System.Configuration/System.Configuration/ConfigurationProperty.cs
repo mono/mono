@@ -49,60 +49,60 @@ namespace System.Configuration
 			: this (name, type, NoDefaultValue, TypeDescriptor.GetConverter (type), new DefaultValidator(), ConfigurationPropertyOptions.None, null)
 		{ }
 
-		public ConfigurationProperty (string name, Type type, object default_value)
-			: this (name, type, default_value, TypeDescriptor.GetConverter (type), new DefaultValidator(), ConfigurationPropertyOptions.None, null)
+		public ConfigurationProperty (string name, Type type, object defaultValue)
+			: this (name, type, defaultValue, TypeDescriptor.GetConverter (type), new DefaultValidator(), ConfigurationPropertyOptions.None, null)
 		{ }
 
 		public ConfigurationProperty (
-					string name, Type type, object default_value,
-					ConfigurationPropertyOptions flags)
-			:this (name, type, default_value, TypeDescriptor.GetConverter (type), new DefaultValidator(), flags, null)
+					string name, Type type, object defaultValue,
+					ConfigurationPropertyOptions options)
+			:this (name, type, defaultValue, TypeDescriptor.GetConverter (type), new DefaultValidator(), options, null)
 		{ }
 		
 		public ConfigurationProperty (
-					string name, Type type, object default_value,
-					TypeConverter converter,
-					ConfigurationValidatorBase validation,
-					ConfigurationPropertyOptions flags)
-			: this (name, type, default_value, converter, validation, flags, null)
+					string name, Type type, object defaultValue,
+					TypeConverter typeConverter,
+					ConfigurationValidatorBase validator,
+					ConfigurationPropertyOptions options)
+			: this (name, type, defaultValue, typeConverter, validator, options, null)
 		{ }
 
 		public ConfigurationProperty (
-					string name, Type type, object default_value,
-					TypeConverter converter,
-					ConfigurationValidatorBase validation,
-					ConfigurationPropertyOptions flags,
+					string name, Type type, object defaultValue,
+					TypeConverter typeConverter,
+					ConfigurationValidatorBase validator,
+					ConfigurationPropertyOptions options,
 					string description)
 		{
 			this.name = name;
-			this.converter = converter != null ? converter : TypeDescriptor.GetConverter (type);
-			if (default_value != null) {
-				if (default_value == NoDefaultValue) {
+			this.converter = typeConverter != null ? typeConverter : TypeDescriptor.GetConverter (type);
+			if (defaultValue != null) {
+				if (defaultValue == NoDefaultValue) {
 					switch (Type.GetTypeCode (type)) {
 					case TypeCode.Object:
-						default_value = null;
+						defaultValue = null;
 						break;
 					case TypeCode.String:
-						default_value = String.Empty;
+						defaultValue = String.Empty;
 						break;
 					default:
-						default_value = Activator.CreateInstance (type);
+						defaultValue = Activator.CreateInstance (type);
 						break;
 					}
 				}
 				else
-					if (!type.IsAssignableFrom (default_value.GetType ())) {
-						if (!this.converter.CanConvertFrom (default_value.GetType ()))
+					if (!type.IsAssignableFrom (defaultValue.GetType ())) {
+						if (!this.converter.CanConvertFrom (defaultValue.GetType ()))
 							throw new ConfigurationErrorsException (String.Format ("The default value for property '{0}' has a different type than the one of the property itself: expected {1} but was {2}",
-													   name, type, default_value.GetType ()));
+													   name, type, defaultValue.GetType ()));
 
-						default_value = this.converter.ConvertFrom (default_value);
+						defaultValue = this.converter.ConvertFrom (defaultValue);
 					}
 			}
-			this.default_value = default_value;
-			this.flags = flags;
+			this.default_value = defaultValue;
+			this.flags = options;
 			this.type = type;
-			this.validation = validation != null ? validation : new DefaultValidator ();
+			this.validation = validator != null ? validator : new DefaultValidator ();
 			this.description = description;
 		}
 

@@ -78,10 +78,20 @@ namespace Xamarin.ApiDiff {
 		public  static  bool    IgnoreVirtualChanges        { get; set; }
 		public  static  bool    IgnoreAddedPropertySetters  { get; set; }
 
+		public static bool IgnoreNonbreaking { get; set; }
+
 		public static bool Lax;
 		public static bool Colorize = true;
-	}
 
+		public static int Verbosity;
+
+		public static void LogDebugMessage (string value)
+		{
+			if (Verbosity == 0)
+				return;
+			Console.WriteLine (value);
+		}
+	}
 	class Program {
 
 		public static int Main (string[] args)
@@ -120,7 +130,11 @@ namespace Xamarin.ApiDiff {
 					v => State.IgnoreVirtualChanges = v != null
 				},
 				{ "c|colorize:", "Colorize HTML output", v => State.Colorize = string.IsNullOrEmpty (v) ? true : bool.Parse (v) },
-				{ "x|lax", "Ignore duplicate XML entries", v => State.Lax = true }
+				{ "x|lax", "Ignore duplicate XML entries", v => State.Lax = true },
+				{ "ignore-nonbreaking", "Ignore all nonbreaking changes", v => State.IgnoreNonbreaking = true },
+				{ "v|verbose:", "Verbosity level; when set, will print debug messages",
+				  (int? v) => State.Verbosity = v ?? (State.Verbosity + 1)},
+				new ResponseFileSource (),
 			};
 
 			try {
@@ -128,6 +142,13 @@ namespace Xamarin.ApiDiff {
 			} catch (OptionException e) {
 				Console.WriteLine ("Option error: {0}", e.Message);
 				showHelp = true;
+			}
+
+			if (State.IgnoreNonbreaking) {
+				State.IgnoreAddedPropertySetters = true;
+				State.IgnoreVirtualChanges = true;
+				State.IgnoreNew.Add (new Regex (".*"));
+				State.IgnoreAdded.Add (new Regex (".*"));
 			}
 
 			if (showHelp || extra == null || extra.Count < 2 || extra.Count > 3) {
@@ -253,9 +274,11 @@ namespace Xamarin.ApiDiff {
 							} else {
 								file.WriteLine ("<h1>{0}.dll vs {1}.dll</h1>", ac.SourceAssembly, ac.TargetAssembly);
 							}
-							file.WriteLine ("<a href='javascript: hideNonBreakingChanges (); ' class='hide-nonbreaking'>Hide non-breaking changes</a>");
-							file.WriteLine ("<a href='javascript: showNonBreakingChanges (); ' class='restore-nonbreaking' style='display: none;'>Show non-breaking changes</a>");
-							file.WriteLine ("<br/>");
+							if (!State.IgnoreNonbreaking) {
+								file.WriteLine ("<a href='javascript: hideNonBreakingChanges (); ' class='hide-nonbreaking'>Hide non-breaking changes</a>");
+								file.WriteLine ("<a href='javascript: showNonBreakingChanges (); ' class='restore-nonbreaking' style='display: none;'>Show non-breaking changes</a>");
+								file.WriteLine ("<br/>");
+							}
 							file.WriteLine ("<div data-is-topmost>");
 							file.Write (diffHtml);
 							file.WriteLine ("</div> <!-- end topmost div -->");

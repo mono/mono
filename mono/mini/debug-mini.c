@@ -1,5 +1,6 @@
-/*
- * debug-mini.c: Mini-specific debugging stuff.
+/**
+ * \file
+ * Mini-specific debugging stuff.
  *
  * Author:
  *   Martin Baulig (martin@ximian.com)
@@ -8,6 +9,7 @@
  */
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "jit.h"
 #include "config.h"
 #include <mono/metadata/verify.h>
@@ -16,7 +18,7 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/threads-types.h>
 
-#include <mono/metadata/mono-debug-debugger.h>
+#include <mono/metadata/debug-internals.h>
 
 #include <mono/utils/valgrind.h>
 
@@ -120,7 +122,7 @@ static void
 mono_debug_add_vg_method (MonoMethod *method, MonoDebugMethodJitInfo *jit)
 {
 #ifdef VALGRIND_ADD_LINE_INFO
-	MonoError error;
+	ERROR_DECL (error);
 	MonoMethodHeader *header;
 	MonoDebugMethodInfo *minfo;
 	int i;
@@ -133,8 +135,8 @@ mono_debug_add_vg_method (MonoMethod *method, MonoDebugMethodJitInfo *jit)
 	if (!RUNNING_ON_VALGRIND)
 		return;
 
-	header = mono_method_get_header_checked (method, &error);
-	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+	header = mono_method_get_header_checked (method, error);
+	mono_error_assert_ok (error); /* FIXME don't swallow the error */
 
 	full_name = mono_method_full_name (method, TRUE);
 
@@ -152,7 +154,7 @@ mono_debug_add_vg_method (MonoMethod *method, MonoDebugMethodJitInfo *jit)
 		for (i = 0; i < header->code_size; ++i) {
 			MonoDebugSourceLocation *location;
 
-			location = mono_debug_symfile_lookup_location (minfo, i);
+			location = mono_debug_method_lookup_location (minfo, i);
 			if (!location)
 				continue;
 
@@ -240,29 +242,32 @@ mono_debug_close_method (MonoCompile *cfg)
 	jit->code_start = cfg->native_code;
 	jit->epilogue_begin = cfg->epilog_begin;
 	jit->code_size = cfg->code_len;
+	jit->has_var_info = mini_debug_options.mdb_optimizations || MONO_CFG_PROFILE_CALL_CONTEXT (cfg);
 
 	if (jit->epilogue_begin)
 		   record_line_number (info, jit->epilogue_begin, header->code_size);
 
-	jit->num_params = sig->param_count;
-	jit->params = g_new0 (MonoDebugVarInfo, jit->num_params);
+	if (jit->has_var_info) {
+		jit->num_params = sig->param_count;
+		jit->params = g_new0 (MonoDebugVarInfo, jit->num_params);
 
-	for (i = 0; i < jit->num_locals; i++)
-		write_variable (cfg->locals [i], &jit->locals [i]);
+		for (i = 0; i < jit->num_locals; i++)
+			write_variable (cfg->locals [i], &jit->locals [i]);
 
-	if (sig->hasthis) {
-		jit->this_var = g_new0 (MonoDebugVarInfo, 1);
-		write_variable (cfg->args [0], jit->this_var);
-	}
+		if (sig->hasthis) {
+			jit->this_var = g_new0 (MonoDebugVarInfo, 1);
+			write_variable (cfg->args [0], jit->this_var);
+		}
 
-	for (i = 0; i < jit->num_params; i++)
-		write_variable (cfg->args [i + sig->hasthis], &jit->params [i]);
+		for (i = 0; i < jit->num_params; i++)
+			write_variable (cfg->args [i + sig->hasthis], &jit->params [i]);
 
-	if (cfg->gsharedvt_info_var) {
-		jit->gsharedvt_info_var = g_new0 (MonoDebugVarInfo, 1);
-		jit->gsharedvt_locals_var = g_new0 (MonoDebugVarInfo, 1);
-		write_variable (cfg->gsharedvt_info_var, jit->gsharedvt_info_var);
-		write_variable (cfg->gsharedvt_locals_var, jit->gsharedvt_locals_var);
+		if (cfg->gsharedvt_info_var) {
+			jit->gsharedvt_info_var = g_new0 (MonoDebugVarInfo, 1);
+			jit->gsharedvt_locals_var = g_new0 (MonoDebugVarInfo, 1);
+			write_variable (cfg->gsharedvt_info_var, jit->gsharedvt_info_var);
+			write_variable (cfg->gsharedvt_locals_var, jit->gsharedvt_locals_var);
+		}
 	}
 
 	jit->num_line_numbers = info->line_numbers->len;
@@ -457,22 +462,25 @@ mono_debug_serialize_debug_info (MonoCompile *cfg, guint8 **out_buf, guint32 *bu
 	encode_value (jit->epilogue_begin, p, &p);
 	encode_value (jit->prologue_end, p, &p);
 	encode_value (jit->code_size, p, &p);
+	encode_value (jit->has_var_info, p, &p);
 
-	for (i = 0; i < jit->num_params; ++i)
-		serialize_variable (&jit->params [i], p, &p);
+	if (jit->has_var_info) {
+		for (i = 0; i < jit->num_params; ++i)
+			serialize_variable (&jit->params [i], p, &p);
 
-	if (mono_method_signature (cfg->method)->hasthis)
-		serialize_variable (jit->this_var, p, &p);
+		if (jit->this_var)
+			serialize_variable (jit->this_var, p, &p);
 
-	for (i = 0; i < jit->num_locals; i++)
-		serialize_variable (&jit->locals [i], p, &p);
+		for (i = 0; i < jit->num_locals; i++)
+			serialize_variable (&jit->locals [i], p, &p);
 
-	if (jit->gsharedvt_info_var) {
-		encode_value (1, p, &p);
-		serialize_variable (jit->gsharedvt_info_var, p, &p);
-		serialize_variable (jit->gsharedvt_locals_var, p, &p);
-	} else {
-		encode_value (0, p, &p);
+		if (jit->gsharedvt_info_var) {
+			encode_value (1, p, &p);
+			serialize_variable (jit->gsharedvt_info_var, p, &p);
+			serialize_variable (jit->gsharedvt_locals_var, p, &p);
+		} else {
+			encode_value (0, p, &p);
+		}
 	}
 
 	encode_value (jit->num_line_numbers, p, &p);
@@ -523,44 +531,48 @@ deserialize_variable (MonoDebugVarInfo *var, guint8 *p, guint8 **endbuf)
 static MonoDebugMethodJitInfo *
 deserialize_debug_info (MonoMethod *method, guint8 *code_start, guint8 *buf, guint32 buf_len)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoMethodHeader *header;
 	gint32 offset, native_offset, prev_offset, prev_native_offset;
 	MonoDebugMethodJitInfo *jit;
 	guint8 *p;
 	int i;
 
-	header = mono_method_get_header_checked (method, &error);
-	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+	header = mono_method_get_header_checked (method, error);
+	mono_error_assert_ok (error); /* FIXME don't swallow the error */
 
 	jit = g_new0 (MonoDebugMethodJitInfo, 1);
 	jit->code_start = code_start;
-	jit->num_locals = header->num_locals;
-	jit->locals = g_new0 (MonoDebugVarInfo, jit->num_locals);
-	jit->num_params = mono_method_signature (method)->param_count;
-	jit->params = g_new0 (MonoDebugVarInfo, jit->num_params);
 
 	p = buf;
 	jit->epilogue_begin = decode_value (p, &p);
 	jit->prologue_end = decode_value (p, &p);
 	jit->code_size = decode_value (p, &p);
+	jit->has_var_info = decode_value (p, &p);
 
-	for (i = 0; i < jit->num_params; ++i)
-		deserialize_variable (&jit->params [i], p, &p);
+	if (jit->has_var_info) {
+		jit->num_locals = header->num_locals;
+		jit->num_params = mono_method_signature (method)->param_count;
+		jit->params = g_new0 (MonoDebugVarInfo, jit->num_params);
+		jit->locals = g_new0 (MonoDebugVarInfo, jit->num_locals);
 
-	if (mono_method_signature (method)->hasthis) {
-		jit->this_var = g_new0 (MonoDebugVarInfo, 1);
-		deserialize_variable (jit->this_var, p, &p);
-	}
+		for (i = 0; i < jit->num_params; ++i)
+			deserialize_variable (&jit->params [i], p, &p);
 
-	for (i = 0; i < jit->num_locals; i++)
-		deserialize_variable (&jit->locals [i], p, &p);
+		if (mono_method_signature (method)->hasthis) {
+			jit->this_var = g_new0 (MonoDebugVarInfo, 1);
+			deserialize_variable (jit->this_var, p, &p);
+		}
 
-	if (decode_value (p, &p)) {
-		jit->gsharedvt_info_var = g_new0 (MonoDebugVarInfo, 1);
-		jit->gsharedvt_locals_var = g_new0 (MonoDebugVarInfo, 1);
-		deserialize_variable (jit->gsharedvt_info_var, p, &p);
-		deserialize_variable (jit->gsharedvt_locals_var, p, &p);
+		for (i = 0; i < jit->num_locals; i++)
+			deserialize_variable (&jit->locals [i], p, &p);
+
+		if (decode_value (p, &p)) {
+			jit->gsharedvt_info_var = g_new0 (MonoDebugVarInfo, 1);
+			jit->gsharedvt_locals_var = g_new0 (MonoDebugVarInfo, 1);
+			deserialize_variable (jit->gsharedvt_info_var, p, &p);
+			deserialize_variable (jit->gsharedvt_locals_var, p, &p);
+		}
 	}
 
 	jit->num_line_numbers = decode_value (p, &p);
@@ -642,18 +654,18 @@ print_var_info (MonoDebugVarInfo *info, int idx, const char *name, const char *t
  * mono_debug_print_locals:
  *
  * Prints to stdout the information about the local variables in
- * a method (if @only_arguments is false) or about the arguments.
+ * a method (if \p only_arguments is false) or about the arguments.
  * The information includes the storage info (where the variable 
  * lives, in a register or in memory).
  * The method is found by looking up what method has been emitted at
- * the instruction address @ip.
+ * the instruction address \p ip.
  * This is for use inside a debugger.
  */
 void
 mono_debug_print_vars (gpointer ip, gboolean only_arguments)
 {
 	MonoDomain *domain = mono_domain_get ();
-	MonoJitInfo *ji = mono_jit_info_table_find (domain, (char *)ip);
+	MonoJitInfo *ji = mono_jit_info_table_find (domain, ip);
 	MonoDebugMethodJitInfo *jit;
 	int i;
 

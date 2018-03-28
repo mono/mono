@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
 using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -146,6 +144,54 @@ namespace System.Net {
 			}
 		}
 
+		static bool MaybeUri (string s)
+		{
+			int p = s.IndexOf (':');
+			if (p == -1)
+				return false;
+
+			if (p >= 10)
+				return false;
+
+			return IsPredefinedScheme (s.Substring (0, p));
+		}
+
+		//
+		// Using a simple block of if's is twice as slow as the compiler generated
+		// switch statement.   But using this tuned code is faster than the
+		// compiler generated code, with a million loops on x86-64:
+		//
+		// With "http": .10 vs .51 (first check)
+		// with "https": .16 vs .51 (second check)
+		// with "foo": .22 vs .31 (never found)
+		// with "mailto": .12 vs .51  (last check)
+		//
+		//
+		static bool IsPredefinedScheme (string scheme)
+		{
+			if (scheme == null || scheme.Length < 3)
+				return false;
+			
+			char c = scheme [0];
+			if (c == 'h')
+				return (scheme == "http" || scheme == "https");
+			if (c == 'f')
+				return (scheme == "file" || scheme == "ftp");
+				
+			if (c == 'n'){
+				c = scheme [1];
+				if (c == 'e')
+					return (scheme == "news" || scheme == "net.pipe" || scheme == "net.tcp");
+				if (scheme == "nntp")
+					return true;
+				return false;
+			}
+			if ((c == 'g' && scheme == "gopher") || (c == 'm' && scheme == "mailto"))
+				return true;
+
+			return false;
+		}
+
 		internal void FinishInitialization ()
 		{
 			string host = UserHostName;
@@ -156,7 +202,7 @@ namespace System.Net {
 
 			string path;
 			Uri raw_uri = null;
-			if (Uri.MaybeUri (raw_url.ToLowerInvariant ()) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))
+			if (MaybeUri (raw_url.ToLowerInvariant ()) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))
 				path = raw_uri.PathAndQuery;
 			else
 				path = raw_url;
@@ -284,16 +330,20 @@ namespace System.Net {
 							if (current != null) {
 								cookies.Add (current);
 							}
-							current = new Cookie ();
-							int idx = str.IndexOf ('=');
-							if (idx > 0) {
-								current.Name = str.Substring (0, idx).Trim ();
-								current.Value =  str.Substring (idx + 1).Trim ();
-							} else {
-								current.Name = str.Trim ();
-								current.Value = String.Empty;
+							try {
+								current = new Cookie ();
+								int idx = str.IndexOf ('=');
+								if (idx > 0) {
+									current.Name = str.Substring (0, idx).Trim ();
+									current.Value =  str.Substring (idx + 1).Trim ();
+								} else {
+									current.Name = str.Trim ();
+									current.Value = String.Empty;
+								}
+								current.Version = version;
+							} catch (CookieException) {
+								current = null;
 							}
-							current.Version = version;
 						}
 					}
 					if (current != null) {
@@ -322,7 +372,7 @@ namespace System.Net {
 						return false;
 					if (InputStream.EndRead (ares) <= 0)
 						return true;
-				} catch (ObjectDisposedException e) {
+				} catch (ObjectDisposedException) {
 					input_stream = null;
 					return true;
 				} catch {
@@ -356,7 +406,7 @@ namespace System.Net {
 		}
 
 		public long ContentLength64 {
-			get { return content_length; }
+			get { return is_chunked ? -1 : content_length; }
 		}
 
 		public string ContentType {
@@ -531,5 +581,4 @@ namespace System.Net {
 		}
 	}
 }
-#endif
 

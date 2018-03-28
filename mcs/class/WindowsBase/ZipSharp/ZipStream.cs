@@ -40,7 +40,11 @@ namespace zipsharp
 			get; set;
 		}
 
-		public ZlibFileFuncDef IOFunctions {
+		public ZlibFileFuncDef32 IOFunctions32 {
+			get; set;
+		}
+
+		public ZlibFileFuncDef64 IOFunctions64 {
 			get; set;
 		}
 
@@ -67,18 +71,27 @@ namespace zipsharp
 			DataStream = dataStream;
 			OwnsStream = ownsStream;
 			
-			ZlibFileFuncDef f = new ZlibFileFuncDef();
-			
-			f.opaque = IntPtr.Zero;
-			f.zclose_file = CloseFile_Native;
-			f.zerror_file = TestError_Native;
-			f.zopen_file = OpenFile_Native;
-			f.zread_file = ReadFile_Native;
-			f.zseek_file = SeekFile_Native;
-			f.ztell_file = TellFile_Native;
-			f.zwrite_file = WriteFile_Native;
+			ZlibFileFuncDef32 f32 = new ZlibFileFuncDef32 ();
+			f32.opaque = IntPtr.Zero;
+			f32.zclose_file = CloseFile_Native;
+			f32.zerror_file = TestError_Native;
+			f32.zopen_file = OpenFile_Native;
+			f32.zread_file = ReadFile_Native32;
+			f32.zseek_file = SeekFile_Native32;
+			f32.ztell_file = TellFile_Native32;
+			f32.zwrite_file = WriteFile_Native32;
+			IOFunctions32 = f32;
 
-			IOFunctions = f;
+			ZlibFileFuncDef64 f64 = new ZlibFileFuncDef64 ();
+			f64.opaque = IntPtr.Zero;
+			f64.zclose_file = CloseFile_Native;
+			f64.zerror_file = TestError_Native;
+			f64.zopen_file = OpenFile_Native;
+			f64.zread_file = ReadFile_Native64;
+			f64.zseek_file = SeekFile_Native64;
+			f64.ztell_file = TellFile_Native64;
+			f64.zwrite_file = WriteFile_Native64;
+			IOFunctions64 = f64;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -130,9 +143,14 @@ namespace zipsharp
 			return new IntPtr (1);
 		}
 
-		unsafe IntPtr ReadFile_Native (IntPtr opaque, IntPtr stream, IntPtr buffer, IntPtr size)
+		unsafe uint ReadFile_Native32 (IntPtr opaque, IntPtr stream, IntPtr buffer, uint size)
 		{
-			int count = size.ToInt32 ();
+			return (uint) ReadFile_Native64 (opaque, stream, buffer, size);
+		}
+
+		unsafe ulong ReadFile_Native64 (IntPtr opaque, IntPtr stream, IntPtr buffer, ulong size)
+		{
+			int count = (int) size;
 			byte[] b = new byte[count];
 			int read;
 			
@@ -145,10 +163,15 @@ namespace zipsharp
 				read = -1;
 			}
 
-			return new IntPtr (read);
+			return (ulong) read;
 		}
 
-		IntPtr SeekFile_Native (IntPtr opaque, IntPtr stream, IntPtr offset, int origin)
+		int SeekFile_Native32 (IntPtr opaque, IntPtr stream, uint offset, int origin)
+		{
+			return (int) SeekFile_Native64 (opaque, stream, offset, origin);
+		}
+
+		long SeekFile_Native64 (IntPtr opaque, IntPtr stream, ulong offset, int origin)
 		{
 			SeekOrigin seek;
 			if (origin == ZipStream.ZLIB_FILEFUNC_SEEK_CUR)
@@ -158,21 +181,21 @@ namespace zipsharp
 			else if (origin == ZLIB_FILEFUNC_SEEK_SET)
 				seek = SeekOrigin.Begin;
 			else
-				return new IntPtr (-1);
+				return -1;
 
-			Seek (offset.ToInt64 (), seek);
+			Seek ((long) offset, seek);
 			
-			return new IntPtr (0);
+			return 0;
 		}
 
-		IntPtr TellFile_Native (IntPtr opaque, IntPtr stream)
+		int TellFile_Native32 (IntPtr opaque, IntPtr stream)
 		{
-			if (IntPtr.Size == 4)
-				return new IntPtr ((int)Position);
-			else if (IntPtr.Size == 8)
-				return new IntPtr (Position);
-			else
-				return new IntPtr (-1);
+			return (int) TellFile_Native64 (opaque, stream);
+		}
+
+		long TellFile_Native64 (IntPtr opaque, IntPtr stream)
+		{
+			return Position;
 		}
 
 		int TestError_Native (IntPtr opaque, IntPtr stream)
@@ -181,9 +204,14 @@ namespace zipsharp
 			return 0;
 		}
 
-		unsafe IntPtr WriteFile_Native (IntPtr opaque, IntPtr stream, IntPtr buffer, /* ulong */ IntPtr size)
+		unsafe uint WriteFile_Native32 (IntPtr opaque, IntPtr stream, IntPtr buffer, /* ulong */ uint size)
 		{
-			int count = size.ToInt32 ();
+			return (uint) WriteFile_Native64 (opaque, stream, buffer, size);
+		}
+
+		unsafe ulong WriteFile_Native64 (IntPtr opaque, IntPtr stream, IntPtr buffer, /* ulong */ ulong size)
+		{
+			int count = (int) size;
 			byte[] b = new byte[count];
 
 			byte* ptrBuffer = (byte*) buffer.ToPointer ();
@@ -196,7 +224,7 @@ namespace zipsharp
 				
 			}
 
-			return new IntPtr (count);
+			return (ulong) count;
 		}
 	}
 }

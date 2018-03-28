@@ -39,20 +39,21 @@ NUNIT_RESOURCE_FILES= \
 CLASSLIB_DIR = $(topdir)/class/lib/$(PROFILE)
 
 STANDALONE_RUNNER_SUPPORT_ASSEMBLY = $(CLASSLIB_DIR)/standalone-runner-support.dll
-STANDALONE_TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(PROFILE_MCS_FLAGS) -r:$(STANDALONE_RUNNER_SUPPORT_ASSEMBLY) -r:$(topdir)/class/lib/$(PROFILE)/System.Web.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Web.Extensions.dll -r:$(topdir)/class/lib/$(PROFILE)/nunit.framework.dll
+STANDALONE_TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(PROFILE_MCS_FLAGS) -r:$(STANDALONE_RUNNER_SUPPORT_ASSEMBLY) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Web.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Web.Extensions.dll -r:$(topdir)/class/lib/$(PROFILE)/nunit.framework.dll
 STANDALONE_TEST_ASSEMBLY = System.Web.Extensions_standalone_test_$(PROFILE).dll
 STANDALONE_TEST_MAKEFRAG = $(depsdir)/$(STANDALONE_TEST_ASSEMBLY).makefrag
 
 STANDALONE_TEST_RUNNER = ../System.Web/Test/tools/standalone-runner.exe
-RUN_STANDALONE = $(TEST_RUNTIME) $(STANDALONE_TEST_RUNNER)
+RUN_STANDALONE = $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(STANDALONE_TEST_RUNNER)
 ifdef TESTNAME
 RUN_STANDALONE += --test=$(TESTNAME)
 endif
 
 LIB_REFS = System System.Core System.Drawing System.Data System.Data.Linq System.Xml System.Web System.Web.Services System.Configuration System.EnterpriseServices System.ServiceModel
+KEYFILE = ../winfx.pub
 LIB_MCS_FLAGS = \
 	-unsafe \
-	-define:NET_3_5			\
+	-define:NET_3_5	-nowarn:436		\
 	-define:SYSTEM_WEB_EXTENSIONS	\
 	$(OTHER_LIB_MCS_FLAGS) 		\
 	$(RESOURCE_FILES:%=/resource:%)
@@ -86,7 +87,11 @@ $(STANDALONE_TEST_ASSEMBLY): $(the_assembly) Test/standalone-tests/Consts.cs
 	$(CSCOMPILE) $(STANDALONE_TEST_MCS_FLAGS) -out:$@ -target:library @System.Web.Extensions_standalone_test.dll.sources
 
 Test/standalone-tests/Consts.cs: Test/standalone-tests/Consts.cs.in
+ifeq ($(BUILD_PLATFORM), win32)
+	@sed 's,@SystemWebExtensionsClassDir@,$(shell cygpath -a -m .),' $< > $@
+else
 	@sed 's,@SystemWebExtensionsClassDir@,$(shell pwd),' $< > $@
+endif
 
 include ../../build/library.make
 

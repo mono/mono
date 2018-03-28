@@ -521,7 +521,7 @@ namespace System.Reflection.Emit {
 			int token = token_gen.GetToken (con, true);
 			make_room (6);
 			ll_emit (opcode);
-			if (con.DeclaringType.Module == module)
+			if (con.DeclaringType.Module == module || (con is ConstructorOnTypeBuilderInst) || (con is ConstructorBuilder))
 				add_token_fixup (con);
 			emit_int (token);
 			
@@ -554,7 +554,7 @@ namespace System.Reflection.Emit {
 			int token = token_gen.GetToken (field, true);
 			make_room (6);
 			ll_emit (opcode);
-			if (field.DeclaringType.Module == module)
+			if (field.DeclaringType.Module == module || (field is FieldOnTypeBuilderInst) || (field is FieldBuilder))
 				add_token_fixup (field);
 			emit_int (token);
 		}
@@ -737,7 +737,7 @@ namespace System.Reflection.Emit {
 			Type declaringType = meth.DeclaringType;
 			// Might be a DynamicMethod with no declaring type
 			if (declaringType != null) {
-				if (declaringType.Module == module)
+				if (declaringType.Module == module || meth is MethodOnTypeBuilderInst || meth is MethodBuilder)
 					add_token_fixup (meth);
 			}
 			emit_int (token);
@@ -755,7 +755,7 @@ namespace System.Reflection.Emit {
 			// Might be a DynamicMethod with no declaring type
 			Type declaringType = method.DeclaringType;
 			if (declaringType != null) {
-				if (declaringType.Module == module)
+				if (declaringType.Module == module || method is MethodBuilder)
 					add_token_fixup (method);
 			}
 			emit_int (token);
@@ -813,7 +813,10 @@ namespace System.Reflection.Emit {
 
 			make_room (6);
 			ll_emit (opcode);
-			emit_int (token_gen.GetToken (cls, opcode != OpCodes.Ldtoken));
+			int token = token_gen.GetToken (cls, opcode != OpCodes.Ldtoken);
+			if (cls is TypeBuilderInstantiation || cls is SymbolType || cls is TypeBuilder || cls is GenericTypeParameterBuilder || cls is EnumBuilder)
+				add_token_fixup (cls);
+			emit_int (token);
 		}
 
 		[MonoLimitation ("vararg methods are not supported")]
@@ -1002,6 +1005,21 @@ namespace System.Reflection.Emit {
 					int old_cl = code_len;
 					code_len = fixups [i].pos;
 					emit_int (diff);
+					code_len = old_cl;
+				}
+			}
+		}
+
+		internal void FixupTokens (Dictionary<int, int> token_map, Dictionary<int, MemberInfo> member_map) {
+			for (int i = 0; i < num_token_fixups; ++i) {
+				int pos = token_fixups [i].code_pos;
+				int old_token = code [pos] | (code [pos + 1] << 8) | (code [pos + 2] << 16) | (code [pos + 3] << 24);
+				int new_token;
+				if (token_map.TryGetValue (old_token, out new_token)) {
+					token_fixups [i].member = member_map [old_token];
+					int old_cl = code_len;
+					code_len = pos;
+					emit_int (new_token);
 					code_len = old_cl;
 				}
 			}

@@ -144,7 +144,7 @@ namespace System.Diagnostics {
 
 		public string FileName {
 			get {
-#if !NET_2_1
+#if MONO_FEATURE_CAS
 				if (SecurityManager.SecurityEnabled) {
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, filename).Demand ();
 				}
@@ -278,7 +278,7 @@ namespace System.Diagnostics {
 		
 		public static FileVersionInfo GetVersionInfo (string fileName)
 		{
-#if !NET_2_1
+#if MONO_FEATURE_CAS
 			if (SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.Read, fileName).Demand ();
 			}
@@ -293,7 +293,7 @@ namespace System.Diagnostics {
 			return fvi;
 		}
 
-		// use our own AppendFormat because NET_2_1 have only this overload
+		// use our own AppendFormat because MOBILE have only this overload
 		static void AppendFormat (StringBuilder sb, string format, params object [] args)
 		{
 			sb.AppendFormat (format, args);

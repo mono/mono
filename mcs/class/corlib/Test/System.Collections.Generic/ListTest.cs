@@ -37,6 +37,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Linq;
 
 using NUnit.Framework;
 
@@ -371,6 +372,22 @@ namespace MonoTests.System.Collections.Generic {
 				Assert.IsTrue (minimum <= i);
 				minimum = i;
 			}
+		}
+
+		[Test]
+		public void SortTestTrickyPivot ()
+		{
+			int[] array = new int[] { 1, 3, 5, 2, 6, 6, 6, 6, 6, 6, 6,7 ,4 };
+
+			var list = array.ToList<int>();
+
+			list.Sort(delegate (int x, int y)
+			{
+				return x < y ? -1 : 1;
+			});
+
+			var res = string.Join (",", list);
+			Assert.AreEqual ("1,2,3,4,5,6,6,6,6,6,6,6,7", res);
 		}
 
 		[Test]
@@ -1267,9 +1284,9 @@ namespace MonoTests.System.Collections.Generic {
 		public void Test_Contains_After_Remove ()
 		{
 			List<int> list = new List<int> ();
-            list.Add (2);
+			list.Add (2);
 
-            list.Remove (2);
+			list.Remove (2);
 
 			Assert.AreEqual (false, list.Contains (2), "#0");
 		}

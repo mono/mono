@@ -32,19 +32,11 @@
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 
 #if MONO_SECURITY_ALIAS
 using MSI = MonoSecurity::Mono.Security.Interface;
 #else
 using MSI = Mono.Security.Interface;
-#endif
-#if MONO_X509_ALIAS
-using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#else
-using X509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
 using System.Security.Cryptography.X509Certificates;
 #endif
@@ -79,6 +71,7 @@ namespace System.Net.Mail {
 		ICredentialsByHost credentials;
 		string pickupDirectoryLocation;
 		SmtpDeliveryMethod deliveryMethod;
+		SmtpDeliveryFormat deliveryFormat;
 		bool enableSsl;
 #if SECURITY_DEP		
 		X509CertificateCollection clientCertificates;
@@ -231,7 +224,15 @@ namespace System.Net.Mail {
 				port = value;
 			}
 		}
-
+		
+		public SmtpDeliveryFormat DeliveryFormat {
+			get { return deliveryFormat; }
+			set {
+				CheckState ();
+				deliveryFormat = value;
+			}
+		}
+		
 		[MonoTODO]
 		public ServicePoint ServicePoint {
 			get { throw new NotImplementedException (); }
@@ -741,9 +742,9 @@ namespace System.Net.Mail {
 			}
 		}
 
-		public void Send (string from, string to, string subject, string body)
+		public void Send (string from, string recipients, string subject, string body)
 		{
-			Send (new MailMessage (from, to, subject, body));
+			Send (new MailMessage (from, recipients, subject, body));
 		}
 
 		public Task SendMailAsync (MailMessage message)
@@ -835,9 +836,9 @@ namespace System.Net.Mail {
 			worker.RunWorkerAsync (userToken);
 		}
 
-		public void SendAsync (string from, string to, string subject, string body, object userToken)
+		public void SendAsync (string from, string recipients, string subject, string body, object userToken)
 		{
-			SendAsync (new MailMessage (from, to, subject, body), userToken);
+			SendAsync (new MailMessage (from, recipients, subject, body), userToken);
 		}
 
 		public void SendAsyncCancel ()

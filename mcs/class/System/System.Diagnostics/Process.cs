@@ -34,6 +34,7 @@
 
 using System.IO;
 using System.Text;
+using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
@@ -59,11 +60,8 @@ namespace System.Diagnostics
 			 * the Start_internal icall in
 			 * mono/metadata/process.c
 			 */
-			public IntPtr thread_handle;
 			public int pid; // Contains -GetLastError () on failure.
-			public int tid;
-			public string [] envKeys;
-			public string [] envValues;
+			public string[] envVariables;
 			public string UserName;
 			public string Domain;
 			public IntPtr Password;
@@ -72,9 +70,11 @@ namespace System.Diagnostics
 
 		string process_name;
 
+		static ProcessModule current_main_module;
+
 		/* Private constructor called from other methods */
 		private Process (SafeProcessHandle handle, int id) {
-			m_processHandle = handle;
+			SetProcessHandle (handle);
 			SetProcessId (id);
 		}
 
@@ -98,7 +98,14 @@ namespace System.Diagnostics
 		[MonitoringDescription ("The main module of the process.")]
 		public ProcessModule MainModule {
 			get {
-				return(this.Modules[0]);
+				/* Optimize Process.GetCurrentProcess ().MainModule */
+				if (processId == NativeMethods.GetCurrentProcessId ()) {
+					if (current_main_module == null)
+						current_main_module = this.Modules [0];
+					return current_main_module;
+				} else {
+					return this.Modules [0];
+				}
 			}
 		}
 
@@ -331,9 +338,9 @@ namespace System.Diagnostics
 
 						process_name = ProcessName_internal (handle);
 
-						/* If process_name is _still_ null, assume the process has exited */
+						/* If process_name is _still_ null, assume the process has exited or is inaccessible */
 						if (process_name == null)
-							throw new InvalidOperationException ("Process has exited, so the requested information is not available.");
+							throw new InvalidOperationException ("Process has exited or is inaccessible, so the requested information is not available.");
 
 						/* Strip the suffix (if it exists) simplistically instead of removing
 						 * any trailing \.???, so we dont get stupid results on sane systems */
@@ -469,16 +476,6 @@ namespace System.Diagnostics
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static IntPtr GetProcess_internal(int pid);
 
-		public static Process GetProcessById(int processId)
-		{
-			IntPtr proc = GetProcess_internal(processId);
-			
-			if (proc == IntPtr.Zero)
-				throw new ArgumentException ("Can't find process with ID " + processId.ToString ());
-
-			return (new Process (new SafeProcessHandle (proc, false), processId));
-		}
-
 		[MonoTODO ("There is no support for retrieving process information from a remote machine")]
 		public static Process GetProcessById(int processId, string machineName) {
 			if (machineName == null)
@@ -487,14 +484,54 @@ namespace System.Diagnostics
 			if (!IsLocalMachine (machineName))
 				throw new NotImplementedException ();
 
-			return GetProcessById (processId);
+			IntPtr proc = GetProcess_internal(processId);
+
+			if (proc == IntPtr.Zero)
+				throw new ArgumentException ("Can't find process with ID " + processId.ToString ());
+
+			/* The handle returned by GetProcess_internal is owned by its caller, so we must pass true to SafeProcessHandle */
+			return (new Process (new SafeProcessHandle (proc, true), processId));
+		}
+
+		public static Process[] GetProcessesByName(string processName, string machineName)
+		{
+			if (machineName == null)
+				throw new ArgumentNullException ("machineName");
+
+			if (!IsLocalMachine (machineName))
+				throw new NotImplementedException ();
+
+			Process[] processes = GetProcesses ();
+			if (processes.Length == 0)
+				return processes;
+
+			int size = 0;
+
+			for (int i = 0; i < processes.Length; i++) {
+				try {
+					if (String.Compare (processName, processes[i].ProcessName, true) == 0)
+						processes [size++] = processes[i];
+				} catch (SystemException) {
+					/* The process might exit between GetProcesses_internal and GetProcessById */
+				}
+			}
+
+			Array.Resize<Process> (ref processes, size);
+
+			return processes;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int[] GetProcesses_internal();
 
-		public static Process[] GetProcesses ()
-		{
+		[MonoTODO ("There is no support for retrieving process information from a remote machine")]
+		public static Process[] GetProcesses(string machineName) {
+			if (machineName == null)
+				throw new ArgumentNullException ("machineName");
+
+			if (!IsLocalMachine (machineName))
+				throw new NotImplementedException ();
+
 			int [] pids = GetProcesses_internal ();
 			if (pids == null)
 				return new Process [0];
@@ -515,46 +552,6 @@ namespace System.Diagnostics
 			return proclist.ToArray ();
 		}
 
-		[MonoTODO ("There is no support for retrieving process information from a remote machine")]
-		public static Process[] GetProcesses(string machineName) {
-			if (machineName == null)
-				throw new ArgumentNullException ("machineName");
-
-			if (!IsLocalMachine (machineName))
-				throw new NotImplementedException ();
-
-			return GetProcesses ();
-		}
-
-		public static Process[] GetProcessesByName(string processName)
-		{
-			int [] pids = GetProcesses_internal ();
-			if (pids == null)
-				return new Process [0];
-			
-			var proclist = new List<Process> (pids.Length);
-			for (int i = 0; i < pids.Length; i++) {
-				try {
-					Process p = GetProcessById (pids [i]);
-					if (String.Compare (processName, p.ProcessName, true) == 0)
-						proclist.Add (p);
-				} catch (SystemException) {
-					/* The process might exit
-					 * between
-					 * GetProcesses_internal and
-					 * GetProcessById
-					 */
-				}
-			}
-
-			return proclist.ToArray ();
-		}
-
-		[MonoTODO]
-		public static Process[] GetProcessesByName(string processName, string machineName) {
-			throw new NotImplementedException();
-		}
-
 		private static bool IsLocalMachine (string machineName)
 		{
 			if (machineName == "." || machineName.Length == 0)
@@ -565,10 +562,10 @@ namespace System.Diagnostics
 
 #if MONO_FEATURE_PROCESS_START
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool ShellExecuteEx_internal(ProcessStartInfo startInfo, ref ProcInfo proc_info);
+		private extern static bool ShellExecuteEx_internal(ProcessStartInfo startInfo, ref ProcInfo procInfo);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool CreateProcess_internal(ProcessStartInfo startInfo, IntPtr stdin, IntPtr stdout, IntPtr stderr, ref ProcInfo proc_info);
+		private extern static bool CreateProcess_internal(ProcessStartInfo startInfo, IntPtr stdin, IntPtr stdout, IntPtr stderr, ref ProcInfo procInfo);
 
 		bool StartWithShellExecuteEx (ProcessStartInfo startInfo)
 		{
@@ -591,27 +588,23 @@ namespace System.Diagnostics
 			if (startInfo.environmentVariables != null)
 				throw new InvalidOperationException(SR.GetString(SR.CantUseEnvVars));
 
-			ProcInfo proc_info = new ProcInfo();
+			ProcInfo procInfo = new ProcInfo();
 			bool ret;
 
-			FillUserInfo (startInfo, ref proc_info);
+			FillUserInfo (startInfo, ref procInfo);
 			try {
-				ret = ShellExecuteEx_internal (startInfo, ref proc_info);
+				ret = ShellExecuteEx_internal (startInfo, ref procInfo);
 			} finally {
-				if (proc_info.Password != IntPtr.Zero)
-					Marshal.ZeroFreeBSTR (proc_info.Password);
-				proc_info.Password = IntPtr.Zero;
+				if (procInfo.Password != IntPtr.Zero)
+					Marshal.ZeroFreeBSTR (procInfo.Password);
+				procInfo.Password = IntPtr.Zero;
 			}
 			if (!ret) {
-				throw new Win32Exception (-proc_info.pid);
+				throw new Win32Exception (-procInfo.pid);
 			}
 
-			m_processHandle = new SafeProcessHandle (proc_info.process_handle, true);
-			haveProcessHandle = true;
-			SetProcessId (proc_info.pid);
-
-			if (watchForExit)
-				EnsureWatchingForExit ();
+			SetProcessHandle (new SafeProcessHandle (procInfo.process_handle, true));
+			SetProcessId (procInfo.pid);
 
 			return ret;
 		}
@@ -691,16 +684,32 @@ namespace System.Diagnostics
 			if (this.disposed)
 				throw new ObjectDisposedException (GetType ().Name);
 
-			var proc_info = new ProcInfo ();
+			var procInfo = new ProcInfo ();
 
 			if (startInfo.HaveEnvVars) {
-				string [] strs = new string [startInfo.EnvironmentVariables.Count];
-				startInfo.EnvironmentVariables.Keys.CopyTo (strs, 0);
-				proc_info.envKeys = strs;
+				List<string> envVariables = null;
+				StringBuilder sb = null;
 
-				strs = new string [startInfo.EnvironmentVariables.Count];
-				startInfo.EnvironmentVariables.Values.CopyTo (strs, 0);
-				proc_info.envValues = strs;
+				foreach (DictionaryEntry de in startInfo.EnvironmentVariables) {
+					if (de.Value == null)
+						continue;
+
+					if (envVariables == null)
+						envVariables = new List<string> ();
+
+					if (sb == null)
+						sb = new StringBuilder ();
+					else
+						sb.Clear ();
+
+					sb.Append ((string) de.Key);
+					sb.Append ('=');
+					sb.Append ((string) de.Value);
+
+					envVariables.Add (sb.ToString ());
+				}
+
+				procInfo.envVariables = envVariables?.ToArray ();
 			}
 
 			MonoIOError error;
@@ -730,16 +739,16 @@ namespace System.Diagnostics
 					stderr_write = MonoIO.ConsoleError;
 				}
 
-				FillUserInfo (startInfo, ref proc_info);
+				FillUserInfo (startInfo, ref procInfo);
 
 				//
 				// FIXME: For redirected pipes we need to send descriptors of
 				// stdin_write, stdout_read, stderr_read to child process and
 				// close them there (fork makes exact copy of parent's descriptors)
 				//
-				if (!CreateProcess_internal (startInfo, stdin_read, stdout_write, stderr_write, ref proc_info)) {
-					throw new Win32Exception (-proc_info.pid, "ApplicationName='" + startInfo.FileName + "', CommandLine='" + startInfo.Arguments +
-						"', CurrentDirectory='" + startInfo.WorkingDirectory + "', Native error= " + Win32Exception.W32ErrorMessage (-proc_info.pid));
+				if (!CreateProcess_internal (startInfo, stdin_read, stdout_write, stderr_write, ref procInfo)) {
+					throw new Win32Exception (-procInfo.pid, "ApplicationName='" + startInfo.FileName + "', CommandLine='" + startInfo.Arguments +
+						"', CurrentDirectory='" + startInfo.WorkingDirectory + "', Native error= " + Win32Exception.GetErrorMessage (-procInfo.pid));
 				}
 			} catch {
 				if (startInfo.RedirectStandardInput) {
@@ -765,22 +774,19 @@ namespace System.Diagnostics
 
 				throw;
 			} finally {
-				if (proc_info.Password != IntPtr.Zero) {
-					Marshal.ZeroFreeBSTR (proc_info.Password);
-					proc_info.Password = IntPtr.Zero;
+				if (procInfo.Password != IntPtr.Zero) {
+					Marshal.ZeroFreeBSTR (procInfo.Password);
+					procInfo.Password = IntPtr.Zero;
 				}
 			}
 
-			m_processHandle = new SafeProcessHandle (proc_info.process_handle, true);
-			haveProcessHandle = true;
-			SetProcessId (proc_info.pid);
+			SetProcessHandle (new SafeProcessHandle (procInfo.process_handle, true));
+			SetProcessId (procInfo.pid);
 			
+#pragma warning disable 618
+
 			if (startInfo.RedirectStandardInput) {
-				//
-				// FIXME: The descriptor needs to be closed but due to wapi io-layer
-				// not coping with duplicated descriptors any StandardInput write fails
-				//
-				// MonoIO.Close (stdin_read, out error);
+				MonoIO.Close (stdin_read, out error);
 
 #if MOBILE
 				var stdinEncoding = Encoding.Default;
@@ -807,24 +813,22 @@ namespace System.Diagnostics
 
 				standardError = new StreamReader (new FileStream (stderr_read, FileAccess.Read, true, 8192), stderrEncoding, true);
 			}
-
-			if (watchForExit)
-				EnsureWatchingForExit ();
+#pragma warning restore
 
 			return true;
 		}
 
 		// Note that ProcInfo.Password must be freed.
-		private static void FillUserInfo (ProcessStartInfo startInfo, ref ProcInfo proc_info)
+		private static void FillUserInfo (ProcessStartInfo startInfo, ref ProcInfo procInfo)
 		{
 			if (startInfo.UserName.Length != 0) {
-				proc_info.UserName = startInfo.UserName;
-				proc_info.Domain = startInfo.Domain;
+				procInfo.UserName = startInfo.UserName;
+				procInfo.Domain = startInfo.Domain;
 				if (startInfo.Password != null)
-					proc_info.Password = Marshal.SecureStringToBSTR (startInfo.Password);
+					procInfo.Password = Marshal.SecureStringToBSTR (startInfo.Password);
 				else
-					proc_info.Password = IntPtr.Zero;
-				proc_info.LoadUserProfile = startInfo.LoadUserProfile;
+					procInfo.Password = IntPtr.Zero;
+				procInfo.LoadUserProfile = startInfo.LoadUserProfile;
 			}
 		}
 #else
@@ -853,13 +857,13 @@ namespace System.Diagnostics
 		}
 
 		[Obsolete ("Process.Start is not supported on the current platform.", true)]
-		public static Process Start(string fileName, string username, SecureString password, string domain)
+		public static Process Start(string fileName, string userName, SecureString password, string domain)
 		{
 			throw new PlatformNotSupportedException ("Process.Start is not supported on the current platform.");
 		}
 
 		[Obsolete ("Process.Start is not supported on the current platform.", true)]
-		public static Process Start(string fileName, string arguments, string username, SecureString password, string domain)
+		public static Process Start(string fileName, string arguments, string userName, SecureString password, string domain)
 		{
 			throw new PlatformNotSupportedException ("Process.Start is not supported on the current platform.");
 		}

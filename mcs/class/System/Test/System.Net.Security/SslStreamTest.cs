@@ -59,6 +59,10 @@ public class SslStreamTest {
 	}
 
 	[Test] //bug https://bugzilla.novell.com/show_bug.cgi?id=457120
+	[Category ("MacNotWorking")] // Works but launches a prompt on 10.12 that will fail if you don't click in a few seconds
+#if FEATURE_NO_BSD_SOCKETS
+	[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 	public void AuthenticateClientAndServer_ClientSendsNoData ()
 	{
 		AuthenticateClientAndServer (true, true);
@@ -92,80 +96,6 @@ public class SslStreamTest {
 			if (state.ServerClient != null)
 				state.ServerClient.Close ();
 			state.Listener.Stop ();
-		}
-	}
-
-	[Test]
-	public void ClientCipherSuitesCallback ()
-	{
-		try {
-			ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
-				string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
-				return new List<string> { prefix + "RSA_WITH_AES_128_CBC_SHA" };
-			};
-			// client will only offers AES 128 - that's fine since the server support it (and many more ciphers)
-			AuthenticateClientAndServer_ClientSendsNoData ();
-		}
-		finally {
-			ServicePointManager.ClientCipherSuitesCallback = null;
-		}
-	}
-
-	[Test]
-	public void ServerCipherSuitesCallback ()
-	{
-		try {
-			ServicePointManager.ServerCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
-				string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
-					return new List<string> { prefix + "RSA_WITH_AES_256_CBC_SHA" };
-			};
-			// server only accept AES 256 - that's fine since the client support it (and many more ciphers)
-			AuthenticateClientAndServer_ClientSendsNoData ();
-		}
-		finally {
-			ServicePointManager.ServerCipherSuitesCallback = null;
-		}
-	}
-
-	[Test]
-	public void CipherSuitesCallbacks ()
-	{
-		try {
-			ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
-				string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
-				return new List<string> { prefix + "RSA_WITH_AES_128_CBC_SHA", prefix + "RSA_WITH_AES_256_CBC_SHA" };
-			};
-			ServicePointManager.ServerCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
-				string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
-				return new List<string> { prefix + "RSA_WITH_AES_128_CBC_SHA", prefix + "RSA_WITH_AES_256_CBC_SHA" };
-			};
-			// both client and server supports AES (128 and 256) - server will select 128 (first choice)
-			AuthenticateClientAndServer_ClientSendsNoData ();
-		}
-		finally {
-			ServicePointManager.ClientCipherSuitesCallback = null;
-			ServicePointManager.ServerCipherSuitesCallback = null;
-		}
-	}
-
-	[Test]
-	public void MismatchedCipherSuites ()
-	{
-		try {
-			ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
-				string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
-				return new List<string> { prefix + "RSA_WITH_AES_128_CBC_SHA" };
-			};
-			ServicePointManager.ServerCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
-				string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
-				return new List<string> { prefix + "RSA_WITH_AES_256_CBC_SHA" };
-			};
-			// mismatch! server will refuse and send back an alert
-			AuthenticateClientAndServer (false, false);
-		}
-		finally {
-			ServicePointManager.ClientCipherSuitesCallback = null;
-			ServicePointManager.ServerCipherSuitesCallback = null;
 		}
 	}
 

@@ -44,7 +44,8 @@ namespace Mono.Tools {
 
 	class MozRoots {
 
-		private const string defaultUrl = "http://mxr.mozilla.org/seamonkey/source/security/nss/lib/ckfw/builtins/certdata.txt?raw=1";
+		// this URL is recommended by https://bugzilla.mozilla.org/show_bug.cgi?id=1279952#c8 and is also used as basis for curl's https://curl.haxx.se/ca/cacert.pem bundle
+		private const string defaultUrl = "https://hg.mozilla.org/releases/mozilla-release/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt";
 
 		static string url;
 		static string inputFile;
@@ -125,6 +126,14 @@ namespace Mono.Tools {
 
 		static int Process ()
 		{
+			ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => {
+				if (sslPolicyErrors != System.Net.Security.SslPolicyErrors.None)
+					Console.WriteLine ("WARNING: Downloading the trusted certificate list couldn't be done securely (error: {0}), continuing anyway. If you're using mozroots to bootstrap Mono's trust store on a clean system this might be OK, otherwise it could indicate a network intrusion. Please ensure you're using a trusted network or move to cert-sync.", sslPolicyErrors);
+
+				// this is very bad, but on a clean system without an existing trust store we don't really have a better option
+				return true;
+			};
+
 			X509CertificateCollection roots = DecodeCollection ();
 			if (roots == null) {
 				return 1;
@@ -280,6 +289,8 @@ namespace Mono.Tools {
 		static void Header ()
 		{
 			Console.WriteLine (new AssemblyInfo ().ToString ());
+			Console.WriteLine ("WARNING: mozroots is deprecated, please move to cert-sync instead.");
+			Console.WriteLine ();
 		}
 
 		static void Help ()

@@ -2,11 +2,8 @@ thisdir = tools/security/certview
 SUBDIRS = 
 include ../../../build/rules.make
 
-RESGEN = resgen
 LIB_REFS = Mono.Security System.Xml
 LOCAL_MCS_FLAGS = /win32icon:mono.ico
-
-# SWF isn't quite good enough to build this yet.
 
 all-local: certview.exe
 

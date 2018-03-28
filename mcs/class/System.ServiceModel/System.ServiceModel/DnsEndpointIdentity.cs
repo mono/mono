@@ -27,7 +27,9 @@
 //
 using System;
 using System.Collections.Generic;
+#if !MOBILE && !XAMMAC_4_5
 using System.IdentityModel.Claims;
+#endif
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
@@ -37,14 +39,21 @@ namespace System.ServiceModel
 {
 	public class DnsEndpointIdentity : EndpointIdentity
 	{
+#if !MOBILE && !XAMMAC_4_5
 		public DnsEndpointIdentity (Claim identity)
 		{
 			Initialize (identity);
 		}
 
-		public DnsEndpointIdentity (string dns)
-			: this (Claim.CreateDnsClaim (dns))
+		public DnsEndpointIdentity (string dnsName)
+			: this (Claim.CreateDnsClaim (dnsName))
 		{
 		}
+#else
+		public DnsEndpointIdentity (string dnsName)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

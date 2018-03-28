@@ -41,7 +41,7 @@ namespace System
 	[ComVisible (true)]
 	public static class Nullable {
 
-#if NET_2_1
+#if MOBILE
 		[ComVisible (false)]
 #endif
 		public static int Compare<T> (T? n1, T? n2) where T: struct
@@ -56,7 +56,7 @@ namespace System
 			return n2.has_value ? -1 : 0;
 		}
 
-#if NET_2_1
+#if MOBILE
 		[ComVisible (false)]
 #endif
 		public static bool Equals<T> (T? n1, T? n2) where T: struct
@@ -186,6 +186,17 @@ namespace System
 				return null;
 			return (T) o;
 		}
+
+		static T? UnboxExact (object o)
+		{
+			if (o == null)
+				return null;
+			if (o.GetType() != typeof (T))
+				throw new InvalidCastException();
+
+			return (T) o;
+		}
+
 #pragma warning restore 169
 	}
 }

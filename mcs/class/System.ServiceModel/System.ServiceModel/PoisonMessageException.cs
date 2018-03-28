@@ -35,8 +35,8 @@ namespace System.ServiceModel
 	public class PoisonMessageException : SystemException
 	{
 		public PoisonMessageException () : base () {}
-		public PoisonMessageException (string msg) : base (msg) {}
-		public PoisonMessageException (string msg, Exception inner) : base (msg, inner) {}
+		public PoisonMessageException (string message) : base (message) {}
+		public PoisonMessageException (string message, Exception innerException) : base (message, innerException) {}
 		protected PoisonMessageException (SerializationInfo info, StreamingContext context) :
 			base (info, context) {}
 	}

@@ -271,6 +271,33 @@ namespace Mono.Tools.LocaleBuilder
 					extra_parent_locales.Add (locale, parent);
 			}
 
+			// CLDR has habits of completely removing cultures data between release but we don't want to break
+			// existing code
+			var knownLCIDs = new HashSet<string> () {
+				"ar", "bg", "ca", "zh_Hans", "zh_CHS", "cs", "da", "de", "el", "en", "es", "fi", "fr", "he", "hu", "is", "it", "ja", "ko", "nl",
+				"no", "pl", "pt", "rm", "ro", "ru", "hr", "sk", "sq", "sv", "th", "tr", "ur", "id", "uk", "be", "sl", "et", "lv", "lt", "tg", "fa",
+				"vi", "hy", "az", "eu", "mk", "st", "ts", "tn", "xh", "zu", "af", "ka", "fo", "hi", "mt", "se", "ga", "ms", "kk", "ky", "sw", "uz",
+				"bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "as", "mr", "mn", "bo", "cy", "km", "lo", "my", "gl", "kok", "si", "chr", "am", "tzm",
+				"ne", "ps", "fil", "ff", "ha", "yo", "nso", "kl", "ig", "om", "ti", "haw", "so", "ii", "br", "gsw", "sah", "rw", "gd", "ar_SA", "bg_BG",
+				"ca_ES", "zh_TW", "cs_CZ", "da_DK", "de_DE", "el_GR", "en_US", "fi_FI", "fr_FR", "he_IL", "hu_HU", "is_IS", "it_IT", "ja_JP", "ko_KR",
+				"nl_NL", "nb_NO", "pl_PL", "pt_BR", "rm_CH", "ro_RO", "ru_RU", "hr_HR", "sk_SK", "sq_AL", "sv_SE", "th_TH", "tr_TR", "ur_PK", "id_ID",
+				"uk_UA", "be_BY", "sl_SI", "et_EE", "lv_LV", "lt_LT", "tg_Cyrl_TJ", "fa_IR", "vi_VN", "hy_AM", "az_Latn_AZ", "eu_ES", "mk_MK", "st_ZA",
+				"ts_ZA", "tn_ZA", "xh_ZA", "zu_ZA", "af_ZA", "ka_GE", "fo_FO", "hi_IN", "mt_MT", "se_NO", "sw_KE", "uz_Latn_UZ", "bn_IN", "gu_IN",
+				"or_IN", "ta_IN", "te_IN", "kn_IN", "ml_IN", "as_IN", "mr_IN", "bo_CN", "cy_GB", "km_KH", "lo_LA", "my_MM", "gl_ES", "kok_IN", "si_LK",
+				"am_ET", "ne_NP", "ps_AF", "fil_PH", "ha_Latn_NG", "yo_NG", "nso_ZA", "kl_GL", "ig_NG", "om_ET", "ti_ET", "haw_US", "so_SO", "ii_CN",
+				"br_FR", "sah_RU", "rw_RW", "gd_GB", "ar_IQ", "zh_CN", "de_CH", "en_GB", "es_MX", "fr_BE", "it_CH", "nl_BE", "nn_NO", "pt_PT", "ro_MD",
+				"ru_MD", "sv_FI", "ur_IN", "az_Cyrl_AZ", "tn_BW", "ga_IE", "uz_Cyrl_UZ", "bn_BD", "pa_Arab_PK", "ta_LK", "ne_IN", "ti_ER", "ar_EG",
+				"zh_HK", "de_AT", "en_AU", "es_ES", "fr_CA", "se_FI", "ar_LY", "zh_SG", "de_LU", "en_CA", "es_GT", "fr_CH", "hr_BA", "ar_DZ", "zh_MO",
+				"de_LI", "en_NZ", "es_CR", "fr_LU", "bs_Latn_BA", "ar_MA", "en_IE", "es_PA", "fr_MC", "sr_Latn_BA", "ar_TN", "en_ZA", "es_DO", "sr_Cyrl_BA",
+				"ar_OM", "en_JM", "es_VE", "fr_RE", "bs_Cyrl_BA", "ar_YE", "es_CO", "fr_CD", "sr_Latn_RS", "ar_SY", "en_BZ", "es_PE", "fr_SN", "sr_Cyrl_RS",
+				"ar_JO", "en_TT", "es_AR", "fr_CM", "sr_Latn_ME", "ar_LB", "en_ZW", "es_EC", "fr_CI", "sr_Cyrl_ME", "ar_KW", "en_PH", "es_CL", "fr_ML",
+				"ar_AE", "es_UY", "fr_MA", "ar_BH", "en_HK", "es_PY", "fr_HT", "ar_QA", "en_IN", "es_BO", "es_SV", "en_SG", "es_HN", "es_NI", "es_PR",
+				"es_US", "es_CU", "bs_Cyrl", "bs_Latn", "sr_Cyrl", "sr_Latn", "az_Cyrl", "zh", "nn", "bs", "az_Latn", "uz_Cyrl", "mn_Cyrl", "zh_Hant",
+				"zh_CHT", "nb", "sr", "tg_Cyrl", "uz_Latn", "pa_Arab", "tzm_Latn", "ha_Latn",
+				"hsb", "tk", "fy", "lb", "ug", "hsb_DE", "ms_MY", "kk_KZ", "ky_KG", "tk_TM", "mn_MN", "fy_NL", "lb_LU", "ug_CN", "gsw_FR", "ca_ES_valencia",
+				"dsb_DE", "se_SE", "ms_BN", "smn_FI", "en_MY", "smn", "dsb"
+			};
+
 			var lcdids = GetXmlDocument ("lcids.xml");
 			foreach (XmlNode lcid in lcdids.SelectNodes ("lcids/lcid")) {
 				var name = lcid.Attributes["name"].Value;
@@ -288,8 +315,20 @@ namespace Mono.Tools.LocaleBuilder
 				ci.TextInfoEntry = new TextInfoEntry ();
 				ci.NumberFormatEntry = new NumberFormatEntry ();
 
-				if (!Import (ci, name))
+				if (!Import (ci, name)) {
+					if (knownLCIDs.Contains (name)) {
+						Console.WriteLine ($"Missing previously available culture `{ name }' data");
+						return;
+					}
+
 					continue;
+				}
+
+
+				if (!knownLCIDs.Contains (name)) {
+					Console.WriteLine ($"New culture `{ name }' data available");
+					return;
+				}
 
 				cultures.Add (ci);
 			}
@@ -379,9 +418,13 @@ namespace Mono.Tools.LocaleBuilder
 					throw new NotImplementedException ();
 				}
 
-				var territories = entry.Attributes["territories"].Value.Split ();
+				var territories = entry.Attributes["territories"].Value.Split (new [] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 				foreach (var t in territories) {
-					territory2dayofweek.Add (t, dow);
+					var tr = t.Trim ();
+					if (tr.Length == 0)
+						continue;
+
+					territory2dayofweek.Add (tr, dow);
 				}
 			}
 
@@ -441,17 +484,20 @@ namespace Mono.Tools.LocaleBuilder
 					};
 
 					var tc = supplemental.SelectSingleNode (string.Format ("supplementalData/codeMappings/territoryCodes[@type='{0}']", ci.Territory));
-					region.ThreeLetterISORegionName = tc.Attributes["alpha3"].Value;
+					region.ThreeLetterISORegionName = tc?.Attributes["alpha3"]?.Value ?? "---";
 					region.ThreeLetterWindowsRegionName = region.ThreeLetterISORegionName;
 
 					var el = doc_english.SelectSingleNode (string.Format ("ldml/localeDisplayNames/territories/territory[@type='{0}']", ci.Territory));
 					region.EnglishName = el.InnerText;
 					region.DisplayName = region.EnglishName;
 
-					region.ISOCurrencySymbol = region_currency[ci.Territory];
+					string curr;
+					if (!region_currency.TryGetValue (ci.Territory, out curr))
+						curr = "---";
+					region.ISOCurrencySymbol = curr;
 
 					el = doc_english.SelectSingleNode (string.Format ("ldml/numbers/currencies/currency[@type='{0}']/displayName", region.ISOCurrencySymbol));
-					region.CurrencyEnglishName = el.InnerText;
+					region.CurrencyEnglishName = el?.InnerText ?? "---";
 
 					if (non_metric.Contains (ci.Territory))
 						region.IsMetric = false;
@@ -489,6 +535,7 @@ namespace Mono.Tools.LocaleBuilder
 					case "bn":
 					case "sr-Cyrl":
 					case "sr-Latn":
+					case "ta":
 						dtf.FirstDayOfWeek = (int) DayOfWeek.Monday;
 						break;
 					default:
@@ -597,7 +644,27 @@ namespace Mono.Tools.LocaleBuilder
 					case "zh-Hant":
 						nfe.CurrencySymbol = "HK$";
 						break;
-
+					case "ru":
+						nfe.CurrencySymbol = "₽";
+						break;
+					case "ur":
+						nfe.CurrencySymbol = "Rs";
+						break;
+					case "tn":
+						nfe.CurrencySymbol = "R";
+						break;
+					case "ta":
+						nfe.CurrencySymbol = "₹";
+						break;
+					case "ne":
+						nfe.CurrencySymbol = "रु";
+						break;
+					case "ti":
+						nfe.CurrencySymbol = "Nfk";
+						break;
+					case "ro":
+						nfe.CurrencySymbol = "RON";
+						break;
 					default:
 						var all_currencies = new List<string> ();
 						GetAllChildrenValues (ci, all_currencies, l => l.NumberFormatEntry.CurrencySymbol);
@@ -617,27 +684,6 @@ namespace Mono.Tools.LocaleBuilder
 						}
 
 						break;
-					}
-				}
-
-				if (nfe.CurrencyDecimalDigits == null) {
-					var all_digits = new List<string> ();
-					GetAllChildrenValues (ci, all_digits, l => l.NumberFormatEntry.CurrencyDecimalDigits);
-					var children = all_digits.Where (l => l != null).Distinct ().ToList ();
-
-					if (children.Count == 1) {
-						nfe.CurrencyDecimalDigits = children[0];
-					} else if (children.Count == 0) {
-						if (!ci.HasMissingLocale)
-							Console.WriteLine ("No currency decimal digits data for `{0}'", ci.Name);
-
-						nfe.CurrencyDecimalDigits = "2";
-					} else if (ci.IsNeutral) {
-						nfe.CurrencyDecimalDigits = "2";
-					} else {
-						// .NET has weird concept of territory data available for neutral cultures (e.g. en, es, pt)
-						// We have to manually disambiguate the correct entry (which is artofficial anyway)
-						throw new ApplicationException (string.Format ("Ambiguous currency decimal digits data for `{0}'", ci.Name));
 					}
 				}
 			}
@@ -768,7 +814,15 @@ namespace Mono.Tools.LocaleBuilder
 				writer.WriteLine ("};\n\n");
 
 				writer.WriteLine ("static const char locale_strings [] = {");
-				writer.Write (Entry.GetStrings ());
+				writer.Write (Entry.General.GetStrings ());
+				writer.WriteLine ("};\n\n");
+
+				writer.WriteLine ("static const char patterns [] = {");
+				writer.Write (Entry.Patterns.GetStrings ());
+				writer.WriteLine ("};\n\n");
+
+				writer.WriteLine ("static const char datetime_strings [] = {");
+				writer.Write (Entry.DateTimeStrings.GetStrings ());
 				writer.WriteLine ("};\n\n");
 
 				writer.WriteLine ("#endif\n");
@@ -1123,14 +1177,19 @@ namespace Mono.Tools.LocaleBuilder
 				if (el != null)
 					ni.PositiveSign = el.InnerText;
 
+				// CLDR uses unicode negative sign for some culture (e.g sv, is, lt, don't kwnow why) but .NET always
+				// uses simple "-" sign and what is worse the parsing code cannot deal with non-ASCII values
+				ni.NegativeSign = "-";
+
+				/*
 				el = node.SelectSingleNode ("minusSign");
 				if (el != null) {
-					// CLDR uses unicode negative sign for some culture (e.g sv, is, lt, don't kwnow why) but .net always
-					// uses simple - sign
 					switch (el.InnerText) {
 					case "\u2212":
 					case "\u200F\u002D": // Remove any right-to-left mark characters
 					case "\u200E\u002D":
+					case "\u061C\u2212":
+					case "\u200F\u2212":
 						ni.NegativeSign = "-";
 						break;
 					default:
@@ -1138,7 +1197,7 @@ namespace Mono.Tools.LocaleBuilder
 						break;
 					}
 				}
-
+				*/
 				el = node.SelectSingleNode ("infinity");
 
 				// We cannot use the value from CLDR because many broken
@@ -1163,30 +1222,6 @@ namespace Mono.Tools.LocaleBuilder
 				if (el != null)
 					ni.PercentSymbol = el.InnerText;
 
-			}
-
-			string value = null;
-
-			// .net has incorrect separators for some countries and we want to be compatible
-			switch (ci.Name) {
-			case "es-ES":
-			case "es":
-				// es-ES does not have group separator but .net has '.'
-				value = ".";
-				break;
-			default:
-				if (node != null) {
-					el = node.SelectSingleNode ("group");
-					if (el != null) {
-						value = el.InnerText;
-					}
-				}
-
-				break;
-			}
-					
-			if (value != null) {
-				ni.NumberGroupSeparator = ni.CurrencyGroupSeparator = value;
 			}
 		}
 

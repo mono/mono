@@ -1,5 +1,6 @@
-/*
- * exceptions-sparc.c: exception support for sparc
+/**
+ * \file
+ * exception support for sparc
  *
  * Authors:
  *   Mark Crichton (crichton@gimp.org)
@@ -166,7 +167,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 static void
 throw_exception (MonoObject *exc, gpointer sp, gpointer ip, gboolean rethrow)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoContext ctx;
 	static void (*restore_context) (MonoContext *);
 	gpointer *window;
@@ -179,14 +180,14 @@ throw_exception (MonoObject *exc, gpointer sp, gpointer ip, gboolean rethrow)
 	ctx.ip = ip;
 	ctx.fp = (gpointer*)(MONO_SPARC_WINDOW_ADDR (sp) [sparc_i6 - 16]);
 
-	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, &error)) {
+	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		}
 	}
-	mono_error_assert_ok (&error);
+	mono_error_assert_ok (error);
 	mono_handle_exception (&ctx, exc);
 	restore_context (&ctx);
 
@@ -220,8 +221,7 @@ get_throw_exception (gboolean rethrow)
 
 /**
  * mono_arch_get_throw_exception:
- *
- * Returns a function pointer which can be used to raise exceptions.
+ * \returns a function pointer which can be used to raise exceptions.
  * The returned function has the following 
  * signature: void (*func) (MonoException *exc); 
  */
@@ -267,8 +267,7 @@ mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 
 /**
  * mono_arch_get_throw_corlib_exception:
- *
- * Returns a function pointer which can be used to raise 
+ * \returns a function pointer which can be used to raise 
  * corlib exceptions. The returned function has the following 
  * signature: void (*func) (guint32 ex_token, guint32 offset); 
  * Here, offset is the offset which needs to be substracted from the caller IP 
@@ -304,7 +303,7 @@ mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 
 	sparc_set (code, MONO_TOKEN_TYPE_DEF, sparc_o7);
 	sparc_add (code, FALSE, sparc_i0, sparc_o7, sparc_o1);
-	sparc_set (code, mono_defaults.exception_class->image, sparc_o0);
+	sparc_set (code, m_class_get_image (mono_defaults.exception_class), sparc_o0);
 	sparc_set (code, mono_exception_from_token, sparc_o7);
 	sparc_jmpl (code, sparc_o7, sparc_g0, sparc_callsite);
 	sparc_nop (code);

@@ -38,6 +38,8 @@ using System.Security.Cryptography;
 using Mono.Security.Cryptography;
 using Mono.Security.X509.Extensions;
 
+using SSCX = System.Security.Cryptography.X509Certificates;
+
 namespace Mono.Security.X509 {
 
 #if INSIDE_CORLIB
@@ -51,12 +53,14 @@ namespace Mono.Security.X509 {
 		private X509CertificateCollection _certificates;
 		private ArrayList _crls;
 		private bool _crl;
+		private bool _newFormat;
 		private string _name;
 
-		internal X509Store (string path, bool crl) 
+		internal X509Store (string path, bool crl, bool newFormat)
 		{
 			_storePath = path;
 			_crl = crl;
+			_newFormat = newFormat;
 		}
 
 		// properties
@@ -126,6 +130,11 @@ namespace Mono.Security.X509 {
 		{
 			CheckStore (_storePath, true);
 
+			if (_newFormat) {
+				ImportNewFormat (certificate);
+				return;
+			}
+
 			string filename = Path.Combine (_storePath, GetUniqueName (certificate));
 			if (!File.Exists (filename)) {
 				filename = Path.Combine (_storePath, GetUniqueNameWithSerial (certificate));
@@ -148,13 +157,13 @@ namespace Mono.Security.X509 {
 					ClearCertificates ();	// We have modified the store on disk.  So forget the old state.
 				}
 			}
-#if !NET_2_1
+#if !MOBILE
 			// Try to save privateKey if available..
 			CspParameters cspParams = new CspParameters ();
 			cspParams.KeyContainerName = CryptoConvert.ToHex (certificate.Hash);
 
 			// Right now this seems to be the best way to know if we should use LM store.. ;)
-			if (_storePath.StartsWith (X509StoreManager.LocalMachinePath))
+			if (_storePath.StartsWith (X509StoreManager.LocalMachinePath) || _storePath.StartsWith(X509StoreManager.NewLocalMachinePath))
 				cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
 
 			ImportPrivateKey (certificate, cspParams);
@@ -164,6 +173,9 @@ namespace Mono.Security.X509 {
 		public void Import (X509Crl crl) 
 		{
 			CheckStore (_storePath, true);
+
+			if (_newFormat)
+				throw new NotSupportedException ();
 
 			string filename = Path.Combine (_storePath, GetUniqueName (crl));
 			if (!File.Exists (filename)) {
@@ -177,6 +189,11 @@ namespace Mono.Security.X509 {
 
 		public void Remove (X509Certificate certificate) 
 		{
+			if (_newFormat) {
+				RemoveNewFormat (certificate);
+				return;
+			}
+
 			string filename = Path.Combine (_storePath, GetUniqueNameWithSerial (certificate));
 			if (File.Exists (filename)) {
 				File.Delete (filename);
@@ -192,11 +209,49 @@ namespace Mono.Security.X509 {
 
 		public void Remove (X509Crl crl) 
 		{
+			if (_newFormat)
+				throw new NotSupportedException ();
+
 			string filename = Path.Combine (_storePath, GetUniqueName (crl));
 			if (File.Exists (filename)) {
 				File.Delete (filename);
 				ClearCrls ();	// We have modified the store on disk.  So forget the old state.
 			}
+		}
+
+		// new format
+
+		void ImportNewFormat (X509Certificate certificate)
+		{
+#if INSIDE_CORLIB
+			throw new NotSupportedException ();
+#else
+			using (var sscxCert = new SSCX.X509Certificate (certificate.RawData)) {
+				var hash = SSCX.X509Helper2.GetSubjectNameHash (sscxCert);
+				var filename = Path.Combine (_storePath, string.Format ("{0:x8}.0", hash));
+				if (!File.Exists (filename)) {
+					using (FileStream fs = File.Create (filename))
+						SSCX.X509Helper2.ExportAsPEM (sscxCert, fs, true);
+					ClearCertificates ();
+				}
+			}
+#endif
+		}
+
+		void RemoveNewFormat (X509Certificate certificate)
+		{
+#if INSIDE_CORLIB
+			throw new NotSupportedException ();
+#else
+			using (var sscxCert = new SSCX.X509Certificate (certificate.RawData)) {
+				var hash = SSCX.X509Helper2.GetSubjectNameHash (sscxCert);
+				var filename = Path.Combine (_storePath, string.Format ("{0:x8}.0", hash));
+				if (File.Exists (filename)) {
+					File.Delete (filename);
+					ClearCertificates ();
+				}
+			}
+#endif
 		}
 
 		// private stuff
@@ -279,11 +334,11 @@ namespace Mono.Security.X509 {
 		{
 			byte[] data = Load (filename);
 			X509Certificate cert = new X509Certificate (data);
-#if !NET_2_1
+#if !MOBILE
 			// If privateKey it's available, load it too..
 			CspParameters cspParams = new CspParameters ();
 			cspParams.KeyContainerName = CryptoConvert.ToHex (cert.Hash);
-			if (_storePath.StartsWith (X509StoreManager.LocalMachinePath))
+			if (_storePath.StartsWith (X509StoreManager.LocalMachinePath) || _storePath.StartsWith(X509StoreManager.NewLocalMachinePath))
 				cspParams.Flags = CspProviderFlags.UseMachineKeyStore;
 			KeyPairPersistence kpp = new KeyPairPersistence (cspParams);
 
@@ -332,7 +387,7 @@ namespace Mono.Security.X509 {
 			if (!CheckStore (path, false))
 				return coll;	// empty collection
 
-			string[] files = Directory.GetFiles (path, "*.cer");
+			string[] files = Directory.GetFiles (path, _newFormat ? "*.0" : "*.cer");
 			if ((files != null) && (files.Length > 0)) {
 				foreach (string file in files) {
 					try {
@@ -371,7 +426,7 @@ namespace Mono.Security.X509 {
 			}
 			return list;
 		}
-#if !NET_2_1
+#if !MOBILE
 		private void ImportPrivateKey (X509Certificate certificate, CspParameters cspParams)
 		{
 			RSACryptoServiceProvider rsaCsp = certificate.RSA as RSACryptoServiceProvider;

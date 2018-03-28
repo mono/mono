@@ -55,10 +55,12 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../ecma.pub")]
 
 [assembly: ComVisible (false)]
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 [assembly: AllowPartiallyTrustedCallers]
 
+#if !MOBILE
 [assembly: SecurityCritical (SecurityCriticalScope.Explicit)]
+[assembly: InternalsVisibleTo ("System.ServiceModel, PublicKey=00000000000000000400000000000000")]
+#endif

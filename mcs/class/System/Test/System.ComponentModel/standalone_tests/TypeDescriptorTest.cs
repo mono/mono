@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.ComponentModel;
 using System.Web.UI.WebControls;
 
@@ -14,9 +15,9 @@ class Test {
 
 	static void Main(string[] args) {
 		Console.WriteLine ("This test should normally take less than a second");
-		DateTime start = DateTime.Now;
+		var sw = Stopwatch.StartNew ();
 		DoTest ();
-		TimeSpan ts = DateTime.Now - start;
+		TimeSpan ts = sw.Elapsed;
 		Console.Write ("Time spent: ");
 		Console.WriteLine (ts.ToString());
 	}

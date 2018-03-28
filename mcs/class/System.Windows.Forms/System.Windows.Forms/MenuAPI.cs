@@ -315,6 +315,8 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			XplatUI.EndLoop(Thread.CurrentThread);
+
 			if (tracker.GrabControl.IsDisposed)
 				return true;
 
@@ -837,6 +839,7 @@ namespace System.Windows.Forms {
 			this.form = form;
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
+			SetTopLevel (true);
 			is_visible = false;
 		}
 

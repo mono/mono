@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
-#if NET_2_1 && !MONOTOUCH
+#if MOBILE && !MONOTOUCH
 	[Obsolete ("CAS support is not available with Silverlight applications.")]
 #endif
 	[ComVisible (true)]
@@ -251,7 +251,7 @@ namespace System.Security.Permissions {
 
 		public override IPermission CreatePermission ()
 		{
-#if NET_2_1
+#if MOBILE
 			return null;
 #else
 			SecurityPermission perm = null;

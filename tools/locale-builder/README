@@ -10,7 +10,7 @@
 
 	CLDR specificatin can be found at http://www.unicode.org/reports/tr35/
 
-	All content has to me extracted into CLDR folder. The latest version used is 21.
+	All content has to me extracted into CLDR folder. The latest version used is 30.0.2.
 
 	There is an extra mono resource included in this directory called lcids.xml for LCIDs. It's
 	extracted from National Language Support (NLS) API Reference.

@@ -122,7 +122,7 @@ namespace System.Runtime.InteropServices
 					old_state = _state;
 
 					if ((old_state & (int) State.Closed) != 0)
-						throw new ObjectDisposedException ("handle");
+						throw new ObjectDisposedException (null, "Safe handle has been closed");
 
 					new_state = old_state + RefCount_One;
 				} while (Interlocked.CompareExchange (ref _state, new_state, old_state) != old_state);
@@ -198,7 +198,7 @@ namespace System.Runtime.InteropServices
 					 * hitting zero though -- that can happen if SetHandleAsInvalid is
 					 * used). */
 					if ((old_state & RefCount_Mask) == 0)
-						throw new ObjectDisposedException ("handle");
+						throw new ObjectDisposedException (null, "Safe handle has been closed");
 
 					if ((old_state & RefCount_Mask) != RefCount_One)
 						perform_release = false;
@@ -227,18 +227,5 @@ namespace System.Runtime.InteropServices
 					ReleaseHandle ();
 			}
 		}
-
-		/*
-		 * Implement this abstract method in your derived class to specify how to
-		 * free the handle. Be careful not write any code that's subject to faults
-		 * in this method (the runtime will prepare the infrastructure for you so
-		 * that no jit allocations etc. will occur, but don't allocate memory unless
-		 * you can deal with the failure and still free the handle).
-		 * The boolean returned should be true for success and false if the runtime
-		 * should fire a SafeHandleCriticalFailure MDA (CustomerDebugProbe) if that
-		 * MDA is enabled.
-		 */
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-		protected abstract bool ReleaseHandle ();
 	}
 }

@@ -14,11 +14,12 @@
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
-    <Member MemberName=".ctor">
+    <Member MemberName=".ctor" apistyle="classic">
       <MemberSignature Language="C#" Value="public MyOtherClass ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <AssemblyInfo>
+      <AssemblyInfo apistyle="classic">
+        <AssemblyName>DocTest-DropNS-classic-secondary</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
@@ -27,11 +28,12 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="Hello">
+    <Member MemberName="Hello" apistyle="classic">
       <MemberSignature Language="C#" Value="public float Hello (int value);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float32 Hello(int32 value) cil managed" />
       <MemberType>Method</MemberType>
-      <AssemblyInfo>
+      <AssemblyInfo apistyle="classic">
+        <AssemblyName>DocTest-DropNS-classic-secondary</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -47,11 +49,12 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="MyProperty">
+    <Member MemberName="MyProperty" apistyle="classic">
       <MemberSignature Language="C#" Value="public string MyProperty { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance string MyProperty" />
       <MemberType>Property</MemberType>
-      <AssemblyInfo>
+      <AssemblyInfo apistyle="classic">
+        <AssemblyName>DocTest-DropNS-classic-secondary</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>

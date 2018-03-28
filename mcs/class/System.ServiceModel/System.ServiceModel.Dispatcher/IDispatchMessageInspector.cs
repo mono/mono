@@ -32,8 +32,8 @@ namespace System.ServiceModel.Dispatcher
 {
 	public interface IDispatchMessageInspector
 	{
-		object AfterReceiveRequest (ref Message message,
-			IClientChannel channel, InstanceContext context);
-		void BeforeSendReply (ref Message message, object instance);
+		object AfterReceiveRequest (ref Message request,
+			IClientChannel channel, InstanceContext instanceContext);
+		void BeforeSendReply (ref Message reply, object correlationState);
 	}
 }

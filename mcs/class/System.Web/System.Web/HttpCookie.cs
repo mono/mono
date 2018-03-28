@@ -3,6 +3,7 @@
 //
 // Author:
 //	Chris Toshok (toshok@novell.com)
+//	Katharina Bogad (bogad@cs.tum.edu)
 //
 
 //
@@ -31,6 +32,7 @@
 using System.Text;
 using System.Collections.Specialized;
 using System.Security.Permissions;
+using System.Web.Configuration;
 
 namespace System.Web
 {
@@ -66,6 +68,17 @@ namespace System.Web
 			this.name = name;
 			values = new CookieNVC();
 			Value = "";
+
+			HttpCookiesSection cookieConfig = (HttpCookiesSection) WebConfigurationManager.GetSection ("system.web/httpCookies");
+
+			if(!string.IsNullOrWhiteSpace(cookieConfig.Domain))
+				domain = cookieConfig.Domain;
+
+			if(cookieConfig.HttpOnlyCookies)
+				flags |= CookieFlags.HttpOnly;
+
+			if(cookieConfig.RequireSSL)
+				flags |= CookieFlags.Secure;
 		}
 
 		public HttpCookie (string name, string value)

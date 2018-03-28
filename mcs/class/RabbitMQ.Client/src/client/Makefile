@@ -4,6 +4,7 @@ include ../../../../build/rules.make
 
 LIBRARY = RabbitMQ.Client.dll
 LIB_REFS = System System.Xml
+KEYFILE = ../../../msfinal.pub
 LIB_MCS_FLAGS = -nowarn:618
 NO_TEST = yes
 

@@ -42,7 +42,7 @@ namespace System.ServiceModel
 {
 	[XmlSchemaProvider ("GetSchema")]
 	[XmlRoot ("EndpointReference", Namespace = "http://www.w3.org/2005/08/addressing")]
-#if NET_2_1
+#if MOBILE
 	internal class EndpointAddress10 : IXmlSerializable
 #else
 	public class EndpointAddress10 : IXmlSerializable

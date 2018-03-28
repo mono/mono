@@ -1,5 +1,6 @@
-/*
- * mono-uri.c: Simple routine used to escape uris.
+/**
+ * \file
+ * Simple routine used to escape uris.
  *
  * Author:
  *   Miguel de Icaza (miguel@novell.com)
@@ -36,7 +37,7 @@ mono_escape_uri_string (const gchar *string)
 #if TEST
 int main ()
 {
-	char *s = malloc (256);
+	char *s = g_malloc (256);
 	int i = 0;
 	
 	s [255] = 0;

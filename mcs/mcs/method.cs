@@ -21,7 +21,7 @@ using System.Linq;
 using Mono.CompilerServices.SymbolWriter;
 using System.Runtime.CompilerServices;
 
-#if NET_2_1
+#if MOBILE
 using XmlElement = System.Object;
 #else
 using System.Xml;
@@ -444,6 +444,10 @@ namespace Mono.CSharp {
 			return ms;
 		}
 
+#if DEBUG
+		int counter = 100000;
+#endif
+
 		public MethodSpec MakeGenericMethod (IMemberContext context, params TypeSpec[] targs)
 		{
 			if (targs == null)
@@ -465,6 +469,10 @@ namespace Mono.CSharp {
 			inflated.constraints = TypeParameterSpec.InflateConstraints (inflator, constraints ?? GenericDefinition.TypeParameters);
 			inflated.state |= StateFlags.PendingMakeMethod;
 
+#if DEBUG
+			inflated.ID += counter;
+			counter += 100000;
+#endif
 			//			if (inflated.parent == null)
 			//				inflated.parent = parent;
 
@@ -550,10 +558,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Target == AttributeTargets.ReturnValue) {
-				if (return_attributes == null)
-					return_attributes = new ReturnParameter (this, MethodBuilder, Location);
-
-				return_attributes.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				CreateReturnBuilder ().ApplyAttributeBuilder (a, ctor, cdata, pa);
 				return;
 			}
 
@@ -616,6 +621,11 @@ namespace Mono.CSharp {
 			return new EmitContext (this, ig, MemberType, sourceMethod);
 		}
 
+		ReturnParameter CreateReturnBuilder ()
+		{
+			return return_attributes ?? (return_attributes = new ReturnParameter (this, MethodBuilder, Location));
+		}
+
 		public override bool Define ()
 		{
 			if (!base.Define ())
@@ -647,7 +657,7 @@ namespace Mono.CSharp {
 
 				explicit_name = null;
 			} else {
-				MethodData = new MethodData (this, ModFlags, flags, this, base_method);
+				MethodData = new MethodData (this, ModFlags, flags, this);
 
 				if (!MethodData.Define (Parent.PartialContainer, GetFullName (MemberName)))
 					return false;
@@ -691,6 +701,10 @@ namespace Mono.CSharp {
 			if (MemberType.IsStatic) {
 				Error_StaticReturnType ();
 			}
+
+			if (MemberType.IsSpecialRuntimeType && Compiler.Settings.StdLib) {
+				Error_ReturnTypeCantBeRefAny (Location, ReturnType, Report);
+			}
 		}
 
 		public override void Emit ()
@@ -703,11 +717,15 @@ namespace Mono.CSharp {
 				Module.PredefinedAttributes.DebuggerStepThrough.EmitAttribute (MethodBuilder);
 
 			if (ReturnType.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
-				Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
+				Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder);
 			} else if (ReturnType.HasDynamicElement) {
-				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
-				Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType, Location);
+				Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder, ReturnType, Location);
+			} else if (ReturnType is ReadOnlyReferenceContainer) {
+				Module.PredefinedAttributes.IsReadOnly.EmitAttribute (CreateReturnBuilder ().Builder);
+			}
+
+			if (ReturnType.HasNamedTupleElement) {
+				Module.PredefinedAttributes.TupleElementNames.EmitAttribute (CreateReturnBuilder ().Builder, ReturnType, Location);
 			}
 
 			if (OptAttributes != null)
@@ -723,7 +741,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (type_expr != null)
+			//
+			// Optimization but it also covers cases where we cannot check
+			// constraints because method is captured into generated class
+			// and type parameters context is now different
+			//
+			if (type_expr != null && !IsCompilerGenerated)
 				ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			base.Emit ();
@@ -745,6 +768,11 @@ namespace Mono.CSharp {
 			Report.Error (577, Location,
 				"Conditional not valid on `{0}' because it is a constructor, destructor, operator or explicit interface implementation",
 				GetSignatureForError ());
+		}
+
+		public static void Error_ReturnTypeCantBeRefAny (Location loc, TypeSpec t, Report Report)
+		{
+			Report.Error (1599, loc, "The return type of `{0}' is not allowed", t.GetSignatureForError ());
 		}
 
 		public bool IsPartialDefinition {
@@ -1214,11 +1242,6 @@ namespace Mono.CSharp {
 					"Introducing `Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
 			}
 
-			if (Compiler.Settings.StdLib && ReturnType.IsSpecialRuntimeType) {
-				Error1599 (Location, ReturnType, Report);
-				return false;
-			}
-
 			if (CurrentTypeParameters == null) {
 				if (base_method != null && !IsExplicitImpl) {
 					if (parameters.Count == 1 && ParameterTypes[0].BuiltinType == BuiltinTypeSpec.Type.Object && MemberName.Name == "Equals")
@@ -1244,8 +1267,9 @@ namespace Mono.CSharp {
 				if ((ModFlags & Modifiers.ASYNC) != 0) {
 					if (ReturnType.Kind != MemberKind.Void &&
 						ReturnType != Module.PredefinedTypes.Task.TypeSpec &&
-						!ReturnType.IsGenericTask) {
-						Report.Error (1983, Location, "The return type of an async method must be void, Task, or Task<T>");
+						!ReturnType.IsGenericTask &&
+					    !ReturnType.IsCustomTaskType ()) {
+						Report.Error (1983, Location, "The return type of an async method must be void or task type");
 					}
 
 					block = (ToplevelBlock) block.ConvertToAsyncTask (this, Parent.PartialContainer, parameters, ReturnType, null, Location);
@@ -1377,11 +1401,6 @@ namespace Mono.CSharp {
 				return false;
 
 			return base.EnableOverloadChecks (overload);
-		}
-
-		public static void Error1599 (Location loc, TypeSpec t, Report Report)
-		{
-			Report.Error (1599, loc, "Method or delegate cannot return type `{0}'", t.GetSignatureForError ());
 		}
 
 		protected override bool ResolveMemberType ()
@@ -1862,6 +1881,7 @@ namespace Mono.CSharp {
 			if (debug_builder == null)
 				return;
 
+#if !FULL_AOT_RUNTIME
 			var token = ConstructorBuilder.GetToken ();
 			int t = token.Token;
 #if STATIC
@@ -1870,6 +1890,7 @@ namespace Mono.CSharp {
 #endif
 
 			debug_builder.DefineMethod (file, t);
+#endif
 		}
 
 		#region IMethodData Members
@@ -1932,7 +1953,6 @@ namespace Mono.CSharp {
 		protected Modifiers modifiers;
 		protected MethodAttributes flags;
 		protected TypeSpec declaring_type;
-		protected MethodSpec parent_method;
 		SourceMethodBuilder debug_builder;
 		string full_name;
 
@@ -1963,15 +1983,6 @@ namespace Mono.CSharp {
 			this.flags = flags;
 
 			this.method = method;
-		}
-
-		public MethodData (InterfaceMemberBase member,
-				   Modifiers modifiers, MethodAttributes flags, 
-				   IMethodData method,
-				   MethodSpec parent_method)
-			: this (member, modifiers, flags, method)
-		{
-			this.parent_method = parent_method;
 		}
 
 		public bool Define (TypeDefinition container, string method_full_name)
@@ -2030,6 +2041,20 @@ namespace Mono.CSharp {
 								}
 							}
 						}
+
+						if (!NamedTupleSpec.CheckOverrideName (member.MemberType, implementing.ReturnType)) {
+							container.Compiler.Report.Error (8141, method.Location,
+								"The tuple element names in the signature type of member `{0}' must match the tuple element names of interface member `{1}''",
+								member.GetSignatureForError (), implementing.GetSignatureForError ());
+						}
+
+						var p_member = method as IParametersMember;
+						var p_implementing = implementing as IParametersMember;
+						if (p_member != null && p_implementing != null && !NamedTupleSpec.CheckOverrideName (p_member, p_implementing)) {
+							container.Compiler.Report.Error (8141, method.Location,
+								"The tuple element names in the signature type of member `{0}' must match the tuple element names of interface member `{1}''",
+								member.GetSignatureForError (), implementing.GetSignatureForError ());
+						}
 					}
 				}
 			} else {
@@ -2058,7 +2083,7 @@ namespace Mono.CSharp {
 					}
 				} else {
 					//
-					// Setting implementin to null inside this block will trigger a more
+					// Setting implementing to null inside this block will trigger a more
 					// verbose error reporting for missing interface implementations
 					//
 					if (implementing.DeclaringType.IsInterface) {
@@ -2192,6 +2217,7 @@ namespace Mono.CSharp {
 			if (debug_builder == null)
 				return;
 
+#if !FULL_AOT_RUNTIME
 			var token = builder.GetToken ();
 			int t = token.Token;
 #if STATIC
@@ -2200,6 +2226,7 @@ namespace Mono.CSharp {
 #endif
 
 			debug_builder.DefineMethod (file, t);
+#endif
 		}
 	}
 
@@ -2405,9 +2432,7 @@ namespace Mono.CSharp {
 			}
 
 			if (a.Target == AttributeTargets.ReturnValue) {
-				if (return_attributes == null)
-					return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
-
+				CreateReturnBuilder ();
 				return_attributes.ApplyAttributeBuilder (a, ctor, cdata, pa);
 				return;
 			}
@@ -2426,6 +2451,11 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
+		ReturnParameter CreateReturnBuilder ()
+		{
+			return return_attributes ?? (return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location));
+		}
+
 		public virtual void Emit (TypeDefinition parent)
 		{
 			method_data.Emit (parent);
@@ -2436,11 +2466,15 @@ namespace Mono.CSharp {
 				Module.PredefinedAttributes.DebuggerHidden.EmitAttribute (method_data.MethodBuilder);
 
 			if (ReturnType.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-				return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
-				Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder);
+				Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder);
 			} else if (ReturnType.HasDynamicElement) {
-				return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
-				Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType, Location);
+				Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder, ReturnType, Location);
+			} else if (ReturnType is ReadOnlyReferenceContainer) {
+				Module.PredefinedAttributes.IsReadOnly.EmitAttribute (CreateReturnBuilder ().Builder);
+			}
+
+			if (ReturnType.HasNamedTupleElement) {
+				Module.PredefinedAttributes.TupleElementNames.EmitAttribute (CreateReturnBuilder ().Builder, ReturnType, Location);
 			}
 
 			if (OptAttributes != null)

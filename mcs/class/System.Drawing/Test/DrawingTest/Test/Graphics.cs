@@ -38,9 +38,6 @@ using System.Drawing.Text;
 using System.Drawing.Imaging;
 using DrawingTestHelper;
 using System.IO;
-#if !MONOTOUCH
-using  NUnit.Framework.SyntaxHelpers;
-#endif
 
 namespace Test.Sys.Drawing.GraphicsFixtures {
 	#region GraphicsFixtureProps

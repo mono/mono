@@ -73,7 +73,10 @@ public partial class CryptoConfig {
 	static Type defaultMAC3DES = typeof (MACTripleDES);
 	// LAMESPEC: undocumented classes (also undocumented in CryptoConfig ;-)
 	static Type defaultDSASigDesc = typeof (DSASignatureDescription);
-	static Type defaultRSASigDesc = typeof (RSAPKCS1SHA1SignatureDescription);
+	static Type defaultRSAPKCS1SHA1SigDesc = typeof (RSAPKCS1SHA1SignatureDescription);
+	static Type defaultRSAPKCS1SHA256SigDesc = typeof (RSAPKCS1SHA256SignatureDescription);
+	static Type defaultRSAPKCS1SHA384SigDesc = typeof (RSAPKCS1SHA384SignatureDescription);
+	static Type defaultRSAPKCS1SHA512SigDesc = typeof (RSAPKCS1SHA512SignatureDescription);
 	static Type defaultRIPEMD160 = typeof (RIPEMD160Managed);
 	static Type defaultHMACMD5 = typeof (HMACMD5);
 	static Type defaultHMACRIPEMD160 = typeof (HMACRIPEMD160);
@@ -185,6 +188,9 @@ public partial class CryptoConfig {
 	// LAMESPEC: undocumented URLs in CryptoConfig
 	private const string urlDSASHA1 = urlXmlDsig + "dsa-sha1";			// no space
 	private const string urlRSASHA1 = urlXmlDsig + "rsa-sha1";			// no space
+	private const string urlRSASHA256 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";			// no space
+	private const string urlRSASHA384 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384";			// no space
+	private const string urlRSASHA512 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";			// no space
 	private const string urlSHA1 = urlXmlDsig + "sha1";				// no space
 	private const string urlC14N = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315"; 
 	private const string urlC14NWithComments = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments";
@@ -196,7 +202,9 @@ public partial class CryptoConfig {
 	private const string urlExcC14NWithComments = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
 	private const string urlExcC14N = "http://www.w3.org/2001/10/xml-exc-c14n#";
 	private const string urlSHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
+	private const string urlSHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
 	private const string urlSHA512 = "http://www.w3.org/2001/04/xmlenc#sha512";
+	private const string urlHMACSHA1 = "http://www.w3.org/2000/09/xmldsig#hmac-sha1";
 	private const string urlHMACSHA256 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256";
 	private const string urlHMACSHA384 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha384";
 	private const string urlHMACSHA512 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha512";
@@ -360,7 +368,10 @@ public partial class CryptoConfig {
 		// add some of the XMLDSIG urls into machine.config (and they make a LOT
 		// of sense for implementing XMLDSIG in System.Security.Cryptography.Xml)
 		algorithms.Add (urlDSASHA1, defaultDSASigDesc); 
-		algorithms.Add (urlRSASHA1, defaultRSASigDesc);
+		algorithms.Add (urlRSASHA1, defaultRSAPKCS1SHA1SigDesc);
+		algorithms.Add (urlRSASHA256, defaultRSAPKCS1SHA256SigDesc);
+		algorithms.Add (urlRSASHA384, defaultRSAPKCS1SHA384SigDesc);
+		algorithms.Add (urlRSASHA512, defaultRSAPKCS1SHA512SigDesc);
 		algorithms.Add (urlSHA1, defaultSHA1);
 		unresolved_algorithms.Add (urlC14N, defaultC14N);
 		unresolved_algorithms.Add (urlC14NWithComments, defaultC14NWithComments);
@@ -372,8 +383,9 @@ public partial class CryptoConfig {
 		unresolved_algorithms.Add (urlExcC14NWithComments, defaultExcC14NWithComments);
 		unresolved_algorithms.Add (urlXmlDecryption, defaultXmlDecryption);
 		algorithms.Add (urlSHA256, defaultSHA256);
-		// xmlenc does not include a definition for SHA384
+		algorithms.Add (urlSHA384, defaultSHA384);
 		algorithms.Add (urlSHA512, defaultSHA512);
+		algorithms.Add (urlHMACSHA1, defaultHMAC);
 		algorithms.Add (urlHMACSHA256, defaultHMACSHA256);
 		algorithms.Add (urlHMACSHA384, defaultHMACSHA384);
 		algorithms.Add (urlHMACSHA512, defaultHMACSHA512);
@@ -406,6 +418,15 @@ public partial class CryptoConfig {
 		unresolved_algorithms.Add (nameECDsa_2, defaultECDsa);
 		unresolved_algorithms.Add (nameECDsa_3, defaultECDsa);
 
+#if MONODROID || XAMARIN_MODERN 
+		algorithms.Add (nameSHA1Cng, defaultSHA1);
+		algorithms.Add (nameSHA256Cng, defaultSHA256);
+		algorithms.Add (nameSHA256Provider, defaultSHA256);
+		algorithms.Add (nameSHA384Cng, defaultSHA384);
+		algorithms.Add (nameSHA384Provider, defaultSHA384);
+		algorithms.Add (nameSHA512Cng, defaultSHA512);
+		algorithms.Add (nameSHA512Provider, defaultSHA512);
+#else
 		unresolved_algorithms.Add (nameSHA1Cng, defaultSHA1Cng);
 		unresolved_algorithms.Add (nameSHA256Cng, defaultSHA256Cng);
 		unresolved_algorithms.Add (nameSHA256Provider, defaultSHA256Provider);
@@ -413,6 +434,7 @@ public partial class CryptoConfig {
 		unresolved_algorithms.Add (nameSHA384Provider, defaultSHA384Provider);
 		unresolved_algorithms.Add (nameSHA512Cng, defaultSHA512Cng);
 		unresolved_algorithms.Add (nameSHA512Provider, defaultSHA512Provider);
+#endif
 		Dictionary<string,string> oid = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
 
 		// comments here are to match with MS implementation (but not with doc)
@@ -421,6 +443,7 @@ public partial class CryptoConfig {
 		oid.Add (managedSHA1, oidSHA1);
 		oid.Add (nameSHA1b, oidSHA1);
 		oid.Add (nameSHA1c, oidSHA1);
+		oid.Add (nameSHA1Cng, oidSHA1);
 
 		oid.Add (nameMD5, oidMD5);
 		oid.Add (nameMD5a, oidMD5);
@@ -429,14 +452,20 @@ public partial class CryptoConfig {
 		oid.Add (nameSHA256, oidSHA256);
 		oid.Add (nameSHA256a, oidSHA256);
 		oid.Add (nameSHA256c, oidSHA256);
+		oid.Add (nameSHA256Cng, oidSHA256);
+		oid.Add (nameSHA256Provider, oidSHA256);
 
 		oid.Add (nameSHA384, oidSHA384);
 		oid.Add (nameSHA384a, oidSHA384);
 		oid.Add (nameSHA384c, oidSHA384);
+		oid.Add (nameSHA384Cng, oidSHA384);
+		oid.Add (nameSHA384Provider, oidSHA384);
 
 		oid.Add (nameSHA512, oidSHA512);
 		oid.Add (nameSHA512a, oidSHA512);
 		oid.Add (nameSHA512c, oidSHA512);
+		oid.Add (nameSHA512Cng, oidSHA512);
+		oid.Add (nameSHA512Provider, oidSHA512);
 
 		oid.Add (nameRIPEMD160, oidRIPEMD160);
 		oid.Add (nameRIPEMD160a, oidRIPEMD160);

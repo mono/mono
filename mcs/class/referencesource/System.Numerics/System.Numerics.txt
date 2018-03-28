@@ -1,0 +1,28 @@
+;==++==
+;
+;   Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;==--==
+
+; NOTE: do not use \", use ' instead
+; NOTE: Use # or ; for comments
+
+Argument_InvalidNumberStyles=An undefined NumberStyles value is being used.
+Argument_InvalidHexStyle=With the AllowHexSpecifier bit set in the enum bit field, the only other valid bits that can be combined into the enum value must be a subset of those in HexNumber.
+Argument_MustBeBigInt=The parameter must be a BigInteger.
+Format_InvalidFormatSpecifier=Format specifier was invalid.
+Format_TooLarge=The value is too large to be represented by this format specifier.
+ArgumentOutOfRange_MustBeNonNeg=The number must be greater than or equal to zero.
+Overflow_BigIntInfinity=BigInteger cannot represent infinity.
+Overflow_NotANumber=The value is not a number.
+Overflow_ParseBigInteger=The value could not be parsed.
+Overflow_Int32=Value was either too large or too small for an Int32.
+Overflow_Int64=Value was either too large or too small for an Int64.
+Overflow_UInt32=Value was either too large or too small for a UInt32.
+Overflow_UInt64=Value was either too large or too small for a UInt64.
+Overflow_Decimal=Value was either too large or too small for a Decimal.
+Arg_ArgumentOutOfRangeException=Index was out of bounds:
+Arg_ElementsInSourceIsGreaterThanDestination=Number of elements in source vector is greater than the destination array
+Arg_MultiDimArrayNotSupported=Only one-dimensional arrays are supported
+Arg_RegisterLengthOfRangeException=length must be less than
+Arg_NullArgumentNullRef=The method was called with a null array argument.

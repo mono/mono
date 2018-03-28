@@ -34,9 +34,9 @@ namespace System.ServiceModel {
 	public class ProtocolException : CommunicationException
 	{
 		public ProtocolException () : base () {}
-		public ProtocolException (string msg) : base (msg) {}
-		public ProtocolException (string msg, Exception inner)
-			: base (msg, inner) {}		
+		public ProtocolException (string message) : base (message) {}
+		public ProtocolException (string message, Exception innerException)
+			: base (message, innerException) {}		
 		protected ProtocolException (SerializationInfo info,
 					  StreamingContext context)
 			: base (info, context) {}

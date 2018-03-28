@@ -37,6 +37,7 @@ using MX = MonoSecurity::Mono.Security.X509;
 using MX = Mono.Security.X509;
 #endif
 
+using Microsoft.Win32.SafeHandles;
 using System.Collections;
 using System.Text;
 
@@ -45,8 +46,6 @@ namespace System.Security.Cryptography.X509Certificates {
 	public class X509Chain : IDisposable {
 
 		X509ChainImpl impl;
-
-		static X509ChainStatus[] Empty = new X509ChainStatus [0];
 
 		internal X509ChainImpl Impl {
 			get {
@@ -111,6 +110,10 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public X509ChainStatus[] ChainStatus {
 			get { return Impl.ChainStatus; }
+		}
+
+		public SafeX509ChainHandle SafeHandle {
+			get { throw new NotImplementedException (); }
 		}
 
 		// methods

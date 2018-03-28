@@ -3,20 +3,20 @@ Assembly/AssemblyInfo.cs
 ../../build/common/MonoTODOAttribute.cs
 ReferenceSources/SR.missing.cs
 
-../../../external/referencesource/System.Web.ApplicationServices/Configuration/MembershipPasswordCompatibilityMode.cs
-../../../external/referencesource/System.Web.ApplicationServices/Security/IMembershipAdapter.cs
+../referencesource/System.Web.ApplicationServices/Configuration/MembershipPasswordCompatibilityMode.cs
+../referencesource/System.Web.ApplicationServices/Security/IMembershipAdapter.cs
 System.Web.Security/IMembershipHelper.cs
 
 System.Web.UI/KeyedList.cs
 System.Web.UI/KeyedListEnumerator.cs
-../../../external/referencesource/System.Web.ApplicationServices/Security/MembershipCreateStatus.cs
-../../../external/referencesource/System.Web.ApplicationServices/Security/MembershipCreateUserException.cs
-../../../external/referencesource/System.Web.ApplicationServices/Security/MembershipPasswordException.cs
-../../../external/referencesource/System.Web.ApplicationServices/Security/MembershipPasswordFormat.cs
-../../../external/referencesource/System.Web.ApplicationServices/Security/MembershipProviderCollection.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipCreateStatus.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipCreateUserException.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipPasswordException.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipPasswordFormat.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipProviderCollection.cs
 System.Web.Security/MembershipProvider.cs
-../../../external/referencesource/System.Web.ApplicationServices/Security/MembershipUserCollection.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipUserCollection.cs
 System.Web.Security/MembershipUser.cs
-../../../external/referencesource/System.Web.ApplicationServices/Security/MembershipValidatePasswordEventHandler.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipValidatePasswordEventHandler.cs
 System.Web.Security/RoleProvider.cs
-../../../external/referencesource/System.Web.ApplicationServices/Security/ValidatePasswordEventArgs.cs
+../referencesource/System.Web.ApplicationServices/Security/ValidatePasswordEventArgs.cs

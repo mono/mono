@@ -33,45 +33,48 @@ using System.Text;
 
 namespace System.Net.NetworkInformation
 {
+
+
+	class Win32NetworkInterface {
+				// Can't have unresolvable pinvokes on ios
+#if WIN_PLATFORM
+		[DllImport ("iphlpapi.dll", SetLastError = true)]
+		static extern int GetNetworkParams (IntPtr ptr, ref int size);
+#endif
+
+		static Win32_FIXED_INFO fixedInfo;
+		static bool initialized = false;
+
+		public static Win32_FIXED_INFO FixedInfo {
+			get {
+				if (!initialized) {
+#if WIN_PLATFORM
+					int len = 0;
+					IntPtr ptr = IntPtr.Zero;
+					GetNetworkParams (ptr, ref len);
+					ptr = Marshal.AllocHGlobal(len);
+					GetNetworkParams (ptr, ref len);
+					fixedInfo = Marshal.PtrToStructure<Win32_FIXED_INFO> (ptr);
+#else
+					throw new NotImplementedException ();
+#endif
+					initialized = true;
+				}
+				return fixedInfo;
+			}
+		}
+	}
+
 	// They are mostly defined in iptypes.h (included by iphlpapi.h).
 	// grep around /usr/include/w32api/* for identifiers you are curious.
 
 	[StructLayout (LayoutKind.Sequential)]
-	class Win32_FIXED_INFO
+	struct Win32_FIXED_INFO
 	{
-		[DllImport ("iphlpapi.dll", SetLastError = true)]
-		static extern int GetNetworkParams (byte [] bytes, ref int size);
-
-		static Win32_FIXED_INFO fixed_info;
-
-		public static Win32_FIXED_INFO Instance {
-			get {
-				if (fixed_info == null)
-					fixed_info = GetInstance ();
-				return fixed_info;
-			}
-		}
-
-		static Win32_FIXED_INFO GetInstance ()
-		{
-			int len = 0;
-			byte [] bytes = null;
-			GetNetworkParams (null, ref len);
-			bytes = new byte [len];
-			GetNetworkParams (bytes, ref len);
-			Win32_FIXED_INFO info = new Win32_FIXED_INFO ();
-			unsafe {
-				fixed (byte* ptr = bytes) {
-					Marshal.PtrToStructure ((IntPtr) ptr, info);
-				}
-			}
-			return info;
-		}
 
 		const int MAX_HOSTNAME_LEN = 128;
 		const int MAX_DOMAIN_NAME_LEN = 128;
 		const int MAX_SCOPE_ID_LEN = 256;
-
 		[MarshalAs (UnmanagedType.ByValTStr, SizeConst = MAX_HOSTNAME_LEN + 4)]
 		public string HostName;
 		[MarshalAs (UnmanagedType.ByValTStr, SizeConst = MAX_DOMAIN_NAME_LEN + 4)]
@@ -98,7 +101,7 @@ namespace System.Net.NetworkInformation
 	}
 
 	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-	class Win32_IP_ADAPTER_ADDRESSES {
+	struct Win32_IP_ADAPTER_ADDRESSES {
 		public AlignmentUnion Alignment;
 		public IntPtr Next; // to Win32_IP_ADAPTER_ADDRESSES
 		[MarshalAs (UnmanagedType.LPStr)]
@@ -144,7 +147,7 @@ namespace System.Net.NetworkInformation
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-	class Win32_IP_ADAPTER_INFO
+	struct Win32_IP_ADAPTER_INFO
 	{
 		const int MAX_ADAPTER_NAME_LENGTH = 256;
 		const int MAX_ADAPTER_DESCRIPTION_LENGTH = 128;

@@ -1,0 +1,5 @@
+.stamp-clone-*
+CppSharp
+*.exe
+*.h
+*.exe.mdb

@@ -14,11 +14,12 @@
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
-    <Member MemberName=".ctor">
+    <Member MemberName=".ctor" apistyle="classic">
       <MemberSignature Language="C#" Value="public TypeOnlyInClassic ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <AssemblyInfo>
+      <AssemblyInfo apistyle="classic">
+        <AssemblyName>DocTest-DropNS-classic-deletetest</AssemblyName>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />

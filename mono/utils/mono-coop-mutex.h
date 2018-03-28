@@ -1,3 +1,6 @@
+/**
+ * \file
+ */
 
 #ifndef __MONO_COOP_MUTEX_H__
 #define __MONO_COOP_MUTEX_H__
@@ -6,7 +9,7 @@
 #include <glib.h>
 
 #include "mono-os-mutex.h"
-#include "mono-threads.h"
+#include "mono-threads-api.h"
 
 G_BEGIN_DECLS
 
@@ -23,40 +26,36 @@ struct _MonoCoopCond {
 	mono_cond_t c;
 };
 
-static inline gint
+static inline void
 mono_coop_mutex_init (MonoCoopMutex *mutex)
 {
-	return mono_os_mutex_init (&mutex->m);
+	mono_os_mutex_init (&mutex->m);
 }
 
-static inline gint
+static inline void
 mono_coop_mutex_init_recursive (MonoCoopMutex *mutex)
 {
-	return mono_os_mutex_init_recursive (&mutex->m);
+	mono_os_mutex_init_recursive (&mutex->m);
 }
 
-static inline gint
+static inline void
 mono_coop_mutex_destroy (MonoCoopMutex *mutex)
 {
-	return mono_os_mutex_destroy (&mutex->m);
+	mono_os_mutex_destroy (&mutex->m);
 }
 
-static inline gint
+static inline void
 mono_coop_mutex_lock (MonoCoopMutex *mutex)
 {
-	gint res;
-
 	/* Avoid thread state switch if lock is not contended */
 	if (mono_os_mutex_trylock (&mutex->m) == 0)
-		return 0;
+		return;
 
-	MONO_PREPARE_BLOCKING;
+	MONO_ENTER_GC_SAFE;
 
-	res = mono_os_mutex_lock (&mutex->m);
+	mono_os_mutex_lock (&mutex->m);
 
-	MONO_FINISH_BLOCKING;
-
-	return res;
+	MONO_EXIT_GC_SAFE;
 }
 
 static inline gint
@@ -65,36 +64,32 @@ mono_coop_mutex_trylock (MonoCoopMutex *mutex)
 	return mono_os_mutex_trylock (&mutex->m);
 }
 
-static inline gint
+static inline void
 mono_coop_mutex_unlock (MonoCoopMutex *mutex)
 {
-	return mono_os_mutex_unlock (&mutex->m);
+	mono_os_mutex_unlock (&mutex->m);
 }
 
-static inline gint
+static inline void
 mono_coop_cond_init (MonoCoopCond *cond)
 {
-	return mono_os_cond_init (&cond->c);
+	mono_os_cond_init (&cond->c);
 }
 
-static inline gint
+static inline void
 mono_coop_cond_destroy (MonoCoopCond *cond)
 {
-	return mono_os_cond_destroy (&cond->c);
+	mono_os_cond_destroy (&cond->c);
 }
 
-static inline gint
+static inline void
 mono_coop_cond_wait (MonoCoopCond *cond, MonoCoopMutex *mutex)
 {
-	gint res;
+	MONO_ENTER_GC_SAFE;
 
-	MONO_PREPARE_BLOCKING;
+	mono_os_cond_wait (&cond->c, &mutex->m);
 
-	res = mono_os_cond_wait (&cond->c, &mutex->m);
-
-	MONO_FINISH_BLOCKING;
-
-	return res;
+	MONO_EXIT_GC_SAFE;
 }
 
 static inline gint
@@ -102,25 +97,25 @@ mono_coop_cond_timedwait (MonoCoopCond *cond, MonoCoopMutex *mutex, guint32 time
 {
 	gint res;
 
-	MONO_PREPARE_BLOCKING;
+	MONO_ENTER_GC_SAFE;
 
 	res = mono_os_cond_timedwait (&cond->c, &mutex->m, timeout_ms);
 
-	MONO_FINISH_BLOCKING;
+	MONO_EXIT_GC_SAFE;
 
 	return res;
 }
 
-static inline gint
+static inline void
 mono_coop_cond_signal (MonoCoopCond *cond)
 {
-	return mono_os_cond_signal (&cond->c);
+	mono_os_cond_signal (&cond->c);
 }
 
-static inline gint
+static inline void
 mono_coop_cond_broadcast (MonoCoopCond *cond)
 {
-	return mono_os_cond_broadcast (&cond->c);
+	mono_os_cond_broadcast (&cond->c);
 }
 
 G_END_DECLS

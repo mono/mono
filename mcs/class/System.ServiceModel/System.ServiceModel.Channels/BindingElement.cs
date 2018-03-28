@@ -40,7 +40,7 @@ namespace System.ServiceModel.Channels
 		}
 
 		[MonoTODO]
-		protected BindingElement (BindingElement other)
+		protected BindingElement (BindingElement elementToBeCloned)
 		{
 		}
 
@@ -52,7 +52,7 @@ namespace System.ServiceModel.Channels
 			return context.BuildInnerChannelFactory<TChannel> ();
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public virtual IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
 			BindingContext context)
@@ -70,7 +70,7 @@ namespace System.ServiceModel.Channels
 			return context.CanBuildInnerChannelFactory<TChannel> ();
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public virtual bool CanBuildChannelListener<TChannel> (
 			BindingContext context)
 			where TChannel : class, IChannel

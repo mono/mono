@@ -28,11 +28,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
 
 namespace System.Diagnostics.Tracing
 {
 	public class EventSource : IDisposable
 	{
+		protected internal struct EventData
+		{
+			public IntPtr DataPointer { get; set; }
+			public int Size { get; set; }
+		}
+
 		protected EventSource ()
 		{
 			this.Name = this.GetType().Name;
@@ -68,6 +75,11 @@ namespace System.Diagnostics.Tracing
 		public EventSource (string eventSourceName, EventSourceSettings config, params string[] traits)
 			: this (eventSourceName, config)
 		{
+		}
+
+		~EventSource ()
+		{
+			Dispose (false);
 		}
 
 		public Exception ConstructionException
@@ -115,6 +127,7 @@ namespace System.Diagnostics.Tracing
 		public void Dispose ()
 		{
 			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		public string GetTrait (string key)
@@ -126,6 +139,10 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
+		public void Write (string eventName, EventSourceOptions options)
+		{
+		}
+
 		public void Write<T> (string eventName, T data)
 		{
 		}
@@ -134,6 +151,7 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
+		[CLSCompliant (false)]
 		public void Write<T> (string eventName, ref EventSourceOptions options, ref T data)
 		{
 		}
@@ -237,6 +255,75 @@ namespace System.Diagnostics.Tracing
 		protected void WriteEvent (int eventId, string arg1, string arg2, string arg3)
 		{
 			WriteEvent (eventId, new object[] { arg1, arg2, arg3 } );
+		}
+
+		[CLSCompliant (false)]
+		protected unsafe void WriteEventCore (int eventId, int eventDataCount, EventData* data)
+		{
+		}
+
+		protected unsafe void WriteEventWithRelatedActivityId (int eventId, Guid relatedActivityId, params object[] args)
+		{
+		}
+
+		[CLSCompliant (false)]
+		protected unsafe void WriteEventWithRelatedActivityIdCore (int eventId, Guid* relatedActivityId, int eventDataCount, EventSource.EventData* data)
+		{
+		}
+
+		[MonoTODO]
+		public event EventHandler<EventCommandEventArgs> EventCommandExecuted
+		{
+			add { throw new NotImplementedException (); }
+			remove { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public static string GenerateManifest (Type eventSourceType, string assemblyPathToIncludeInManifest)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static string GenerateManifest (Type eventSourceType, string assemblyPathToIncludeInManifest, EventManifestOptions flags)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static Guid GetGuid (Type eventSourceType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static string GetName (Type eventSourceType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static IEnumerable<EventSource> GetSources ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void SendCommand (EventSource eventSource, EventCommand command, IDictionary<string, string> commandArguments)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void SetCurrentThreadActivityId (Guid activityId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void SetCurrentThreadActivityId (Guid activityId, out Guid oldActivityThatWillContinue)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

@@ -24,10 +24,8 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 
-using System;
 using System.ComponentModel;
 using System.Globalization;
-using System.Text;
 using System.Windows.Converters;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -41,9 +39,9 @@ namespace System.Windows {
 	{
 		public Rect (Size size)
 		{
-			x = y = 0.0;
-			width = size.Width;
-			height = size.Height;
+			_x = _y = 0.0;
+			_width = size.Width;
+			_height = size.Height;
 		}
 
 		public Rect (Point point, Vector vector) : this (point, Point.Add (point, vector))
@@ -52,21 +50,21 @@ namespace System.Windows {
 		public Rect (Point point1, Point point2)
 		{
 			if (point1.X < point2.X) {
-				x = point1.X;
-				width = point2.X - point1.X;
+				_x = point1.X;
+				_width = point2.X - point1.X;
 			}
 			else {
-				x = point2.X;
-				width = point1.X - point2.X;
+				_x = point2.X;
+				_width = point1.X - point2.X;
 			}
 
 			if (point1.Y < point2.Y) {
-				y = point1.Y;
-				height = point2.Y - point1.Y;
+				_y = point1.Y;
+				_height = point2.Y - point1.Y;
 			}
 			else {
-				y = point2.Y;
-				height = point1.Y - point2.Y;
+				_y = point2.Y;
+				_height = point1.Y - point2.Y;
 			}
 		}
 
@@ -74,26 +72,26 @@ namespace System.Windows {
 		{
 			if (width < 0 || height < 0)
 				throw new ArgumentException ("width and height must be non-negative.");
-			this.x = x;
-			this.y = y;
-			this.width = width;
-			this.height = height;
+			this._x = x;
+			this._y = y;
+			this._width = width;
+			this._height = height;
 		}
 
 		public Rect (Point location, Size size)
 		{
-			x = location.X;
-			y = location.Y;
-			width = size.Width;
-			height = size.Height;
+			_x = location.X;
+			_y = location.Y;
+			_width = size.Width;
+			_height = size.Height;
 		}
 
 		public bool Equals (Rect value)
 		{
-			return (x == value.X &&
-				y == value.Y &&
-				width == value.Width &&
-				height == value.Height);
+			return (_x == value.X &&
+				_y == value.Y &&
+				_width == value.Width &&
+				_height == value.Height);
 		}
 
 		public static bool operator != (Rect rect1, Rect rect2)
@@ -121,7 +119,14 @@ namespace System.Windows {
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			unchecked
+			{
+				var hashCode = _x.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _y.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _width.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _height.GetHashCode ();
+				return hashCode;
+			}
 		}
 
 		public bool Contains (Rect rect)
@@ -172,11 +177,11 @@ namespace System.Windows {
 		public void Inflate (double width, double height)
 		{
 			// XXX any error checking like in the static case?
-			x -= width;
-			y -= height;
+			_x -= width;
+			_y -= height;
 
-			this.width += 2*width;
-			this.height += 2*height;
+			this._width += 2*width;
+			this._height += 2*height;
 		}
 
 		public void Inflate (Size size)
@@ -192,20 +197,20 @@ namespace System.Windows {
 
 		public void Intersect(Rect rect)
 		{
-			double _x = Math.Max (x, rect.x);
-			double _y = Math.Max (y, rect.y);
+			double _x = Math.Max (this._x, rect._x);
+			double _y = Math.Max (this._y, rect._y);
 			double _width = Math.Min (Right, rect.Right) - _x;
 			double _height = Math.Min (Bottom, rect.Bottom) - _y; 
 
 			if (_width < 0 || _height < 0) {
-				x = y = Double.PositiveInfinity;
-				width = height = Double.NegativeInfinity;
+				this._x = this._y = Double.PositiveInfinity;
+				this._width = this._height = Double.NegativeInfinity;
 			}
 			else {
-				x = _x;
-				y = _y;
-				width = _width;
-				height = _height;
+				this._x = _x;
+				this._y = _y;
+				this._width = _width;
+				this._height = _height;
 			}
 		}
 
@@ -218,8 +223,8 @@ namespace System.Windows {
 
 		public void Offset(double offsetX, double offsetY)
 		{
-			x += offsetX;
-			y += offsetY;
+			_x += offsetX;
+			_y += offsetY;
 		}
 
 		public static Rect Offset(Rect rect, double offsetX, double offsetY)
@@ -231,8 +236,8 @@ namespace System.Windows {
 
 		public void Offset (Vector offsetVector)
 		{
-			x += offsetVector.X;
-			y += offsetVector.Y;
+			_x += offsetVector.X;
+			_y += offsetVector.Y;
 		}
 
 		public static Rect Offset (Rect rect, Vector offsetVector)
@@ -244,10 +249,10 @@ namespace System.Windows {
 
 		public void Scale(double scaleX, double scaleY)
 		{
-			x *= scaleX;
-			y *= scaleY;
-			width *= scaleX;
-			height *= scaleY;
+			_x *= scaleX;
+			_y *= scaleY;
+			_width *= scaleX;
+			_height *= scaleY;
 		}
 
 		public void Transform (Matrix matrix)
@@ -283,10 +288,10 @@ namespace System.Windows {
 			var right = Math.Max (Right, rect.Right);
 			var bottom = Math.Max (Bottom, rect.Bottom);
 			
-			x = left;
-			y = top;
-			width = right - left;
-			height = bottom - top;
+			_x = left;
+			_y = top;
+			_width = right - left;
+			_height = bottom - top;
 		}
 
 		public void Union(Point point)
@@ -296,7 +301,37 @@ namespace System.Windows {
 
 		public static Rect Parse (string source)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			Rect value;
+			if (source.Trim () == "Empty")
+			{
+				value = Empty;
+			}
+			else
+			{
+				var tokenizer = new NumericListTokenizer (source, CultureInfo.InvariantCulture);
+				double x;
+				double y;
+				double width;
+				double height;
+				if (double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out x)
+					&& double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out y)
+					&& double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out width)
+					&& double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out height))
+				{
+					if (!tokenizer.HasNoMoreTokens ())
+					{
+						throw new InvalidOperationException ("Invalid Rect format: " + source);
+					}
+					value = new Rect (x, y, width, height);
+				}
+				else
+				{
+					throw new FormatException (string.Format ("Invalid Rect format: {0}", source));
+				}
+			}
+			return value;
 		}
 
 		public override string ToString ()
@@ -325,48 +360,43 @@ namespace System.Windows {
 			if (format == null)
 				format = string.Empty;
 
-			string separator = ",";
-			NumberFormatInfo numberFormat =
-				provider.GetFormat (typeof (NumberFormatInfo)) as NumberFormatInfo;
-			if (numberFormat != null &&
-			    numberFormat.NumberDecimalSeparator == separator)
-				separator = ";";
+			var separator = NumericListTokenizer.GetSeparator (provider);
 
-			string rectFormat = String.Format (
+			var rectFormat = string.Format (
 				"{{0:{0}}}{1}{{1:{0}}}{1}{{2:{0}}}{1}{{3:{0}}}",
 				format, separator);
-			return String.Format (provider, rectFormat,
-				x, y, width, height);
+			return string.Format (provider, rectFormat,
+				_x, _y, _width, _height);
 		}
 
 		public static Rect Empty { 
 			get {
 				Rect r = new Rect ();
-				r.x = r.y = Double.PositiveInfinity;
-				r.width = r.height = Double.NegativeInfinity;
+				r._x = r._y = Double.PositiveInfinity;
+				r._width = r._height = Double.NegativeInfinity;
 				return r;
 			} 
 		}
 		
 		public bool IsEmpty { 
 			get {
-				return (x == Double.PositiveInfinity &&
-					y == Double.PositiveInfinity &&
-					width == Double.NegativeInfinity &&
-					height == Double.NegativeInfinity);
+				return (_x == Double.PositiveInfinity &&
+					_y == Double.PositiveInfinity &&
+					_width == Double.NegativeInfinity &&
+					_height == Double.NegativeInfinity);
 			}
 		}
 		
 		public Point Location { 
 			get {
-				return new Point (x, y);
+				return new Point (_x, _y);
 			}
 			set {
 				if (IsEmpty)
 					throw new InvalidOperationException ("Cannot modify this property on the Empty Rect.");
 
-				x = value.X;
-				y = value.Y;
+				_x = value.X;
+				_y = value.Y;
 			}
 		}
 		
@@ -374,39 +404,39 @@ namespace System.Windows {
 			get { 
 				if (IsEmpty)
 					return Size.Empty; 
-				return new Size (width, height);
+				return new Size (_width, _height);
 			}
 			set {
 				if (IsEmpty)
 					throw new InvalidOperationException ("Cannot modify this property on the Empty Rect.");
 
-				width = value.Width;
-				height = value.Height;
+				_width = value.Width;
+				_height = value.Height;
 			}
 		}
 
 		public double X {
-			get { return x; }
+			get { return _x; }
 			set {
 				if (IsEmpty)
 					throw new InvalidOperationException ("Cannot modify this property on the Empty Rect.");
 
-				x = value;
+				_x = value;
 			}
 		}
 
 		public double Y {
-			get { return y; }
+			get { return _y; }
 			set {
 				if (IsEmpty)
 					throw new InvalidOperationException ("Cannot modify this property on the Empty Rect.");
 
-				y = value;
+				_y = value;
 			}
 		}
 
 		public double Width {
-			get { return width; }
+			get { return _width; }
 			set {
 				if (IsEmpty)
 					throw new InvalidOperationException ("Cannot modify this property on the Empty Rect.");
@@ -414,12 +444,12 @@ namespace System.Windows {
 				if (value < 0)
 					throw new ArgumentException ("width must be non-negative.");
 
-				width = value;
+				_width = value;
 			}
 		}
 
 		public double Height {
-			get { return height; }
+			get { return _height; }
 			set {
 				if (IsEmpty)
 					throw new InvalidOperationException ("Cannot modify this property on the Empty Rect.");
@@ -427,24 +457,24 @@ namespace System.Windows {
 				if (value < 0)
 					throw new ArgumentException ("height must be non-negative.");
 
-				height = value;
+				_height = value;
 			}
 		}
 
 		public double Left { 
-			get { return x; }
+			get { return _x; }
 		}
 
 		public double Top { 
-			get { return y; }
+			get { return _y; }
 		}
 		
 		public double Right { 
-			get { return x + width; }
+			get { return _x + _width; }
 		}
 		
 		public double Bottom { 
-			get { return y + height; }
+			get { return _y + _height; }
 		}
 		
 		public Point TopLeft { 
@@ -463,9 +493,9 @@ namespace System.Windows {
 			get { return new Point (Right, Bottom); }
 		}
 		
-		double x;
-		double y;
-		double width;
-		double height;
+		double _x;
+		double _y;
+		double _width;
+		double _height;
 	}
 }

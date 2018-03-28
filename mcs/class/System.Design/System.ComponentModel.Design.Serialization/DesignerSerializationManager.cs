@@ -220,7 +220,7 @@ namespace System.ComponentModel.Design.Serialization
 			return instance;
 		}
 
-		public object GetSerializer (Type componentType, Type serializerType)
+		public object GetSerializer (Type objectType, Type serializerType)
 		{
 			VerifyInSession ();
 			
@@ -229,17 +229,17 @@ namespace System.ComponentModel.Design.Serialization
 				
 			object serializer = null;
 
-			if (componentType != null) {
+			if (objectType != null) {
 				// try 1: from cache
 				//
-				_serializersCache.TryGetValue (componentType, out serializer);
+				_serializersCache.TryGetValue (objectType, out serializer);
 
 				// check for provider attribute and add it to the list of providers
 				//
 				if (serializer != null && !serializerType.IsAssignableFrom (serializer.GetType ()))
 					serializer = null;
 				
-				AttributeCollection attributes = TypeDescriptor.GetAttributes (componentType);
+				AttributeCollection attributes = TypeDescriptor.GetAttributes (objectType);
 				DefaultSerializationProviderAttribute providerAttribute = attributes[typeof (DefaultSerializationProviderAttribute)] 
 																			   as DefaultSerializationProviderAttribute;
 				if (providerAttribute != null && this.GetType (providerAttribute.ProviderTypeName) == serializerType) {
@@ -252,8 +252,8 @@ namespace System.ComponentModel.Design.Serialization
 
 			// try 2: DesignerSerializerAttribute
 			//
-			if (serializer == null && componentType != null) {
-				AttributeCollection attributes = TypeDescriptor.GetAttributes (componentType);
+			if (serializer == null && objectType != null) {
+				AttributeCollection attributes = TypeDescriptor.GetAttributes (objectType);
 				DesignerSerializerAttribute serializerAttribute = attributes[typeof (DesignerSerializerAttribute)] as DesignerSerializerAttribute;
 				if (serializerAttribute != null && 
 					this.GetType (serializerAttribute.SerializerBaseTypeName) == serializerType) {
@@ -266,14 +266,14 @@ namespace System.ComponentModel.Design.Serialization
 				}
 				
 				if (serializer != null)
-					_serializersCache[componentType] = serializer;
+					_serializersCache[objectType] = serializer;
 			}
 
 			// try 3: from provider
 			//
 			if (serializer == null && _serializationProviders != null) {
 				foreach (IDesignerSerializationProvider provider in _serializationProviders) {
-					serializer = provider.GetSerializer (this, null, componentType, serializerType);
+					serializer = provider.GetSerializer (this, null, objectType, serializerType);
 					if (serializer != null)
 						break;
 				}
@@ -332,19 +332,19 @@ namespace System.ComponentModel.Design.Serialization
 				_serializationCompleteHandler (this, EventArgs.Empty);
 		}
 				
-		protected virtual Type GetType (string name)
+		protected virtual Type GetType (string typeName)
 		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
 			
 			this.VerifyInSession ();
 			
 			Type result = null;
 			ITypeResolutionService typeResSvc = this.GetService (typeof (ITypeResolutionService)) as ITypeResolutionService;
 			if (typeResSvc != null)
-				result = typeResSvc.GetType (name);
+				result = typeResSvc.GetType (typeName);
 			if (result == null)
-				result = Type.GetType (name);
+				result = Type.GetType (typeName);
 			
 			return result;
 		}
@@ -491,16 +491,16 @@ namespace System.ComponentModel.Design.Serialization
 		}	  
 #endregion
 		
-		object IServiceProvider.GetService (Type service)
+		object IServiceProvider.GetService (Type serviceType)
 		{
-			return this.GetService (service);
+			return this.GetService (serviceType);
 		}
 		
-		protected virtual object GetService (Type service)
+		protected virtual object GetService (Type serviceType)
 		{
 			object result = null;
 			if (_serviceProvider != null)
-				result = _serviceProvider.GetService (service);
+				result = _serviceProvider.GetService (serviceType);
 			
 			return result;
 		}

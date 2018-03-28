@@ -169,17 +169,6 @@ public class TlsTest {
 		ServicePointManager.CertificatePolicy = new TestCertificatePolicy ();
 		ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType) (int) protocol;
 
-		ServicePointManager.ClientCipherSuitesCallback += (System.Net.SecurityProtocolType p, IEnumerable<string> allCiphers) => {
-			Console.WriteLine ("Protocol: {0}", p);
-//			var ciphers = allCiphers;
-			var ciphers = from cipher in allCiphers where !cipher.Contains ("EXPORT") select cipher;
-			string prefix = p == System.Net.SecurityProtocolType.Tls ? "TLS_" : "SSL_";
-			//			var ciphers = new List<string> { prefix + "RSA_WITH_AES_128_CBC_SHA", prefix + "RSA_WITH_AES_256_CBC_SHA" };
-			foreach (var cipher in ciphers)
-				Console.WriteLine ("\t{0}", cipher);
-			return ciphers;
-		};
-
 		Uri uri = new Uri (url);
 		HttpWebRequest req = (HttpWebRequest) WebRequest.Create (uri);
 

@@ -27,8 +27,6 @@
 //
 #if CONFIGURATION_DEP
 
-extern alias PrebuiltSystem;
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,8 +39,6 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
-
-using TypeConverter = PrebuiltSystem::System.ComponentModel.TypeConverter;
 
 namespace System.Security.Authentication.ExtendedProtection.Configuration
 {

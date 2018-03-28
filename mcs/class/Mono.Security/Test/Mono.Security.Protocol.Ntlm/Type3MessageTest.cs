@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.Mono.Security.Protocol.Ntlm {
 
 	[TestFixture]
-	public class Type3MessageTest : Assertion {
+	public class Type3MessageTest {
 
 		static byte[] nonce = { 0x53, 0x72, 0x76, 0x4e, 0x6f, 0x6e, 0x63, 0x65 };
 
@@ -40,8 +40,8 @@ namespace MonoTests.Mono.Security.Protocol.Ntlm {
 			msg.Host = "HOST";
 			msg.Password = "WELCOME";
 			msg.Username = "username";
-			AssertEquals ("Type", 3, msg.Type);
-			AssertEquals ("GetBytes", "4E-54-4C-4D-53-53-50-00-03-00-00-00-18-00-18-00-64-00-00-00-18-00-18-00-7C-00-00-00-0C-00-0C-00-40-00-00-00-10-00-10-00-4C-00-00-00-08-00-08-00-5C-00-00-00-00-00-00-00-94-00-00-00-01-B2-00-00-44-00-4F-00-4D-00-41-00-49-00-4E-00-75-00-73-00-65-00-72-00-6E-00-61-00-6D-00-65-00-48-00-4F-00-53-00-54-00-CA-12-00-72-3C-41-D5-77-AB-18-C7-64-C6-DE-F3-4F-A6-1B-FA-06-71-EA-5F-C8-7A-CE-90-85-AB-CC-37-59-38-0B-1C-68-62-E3-98-C3-C0-EF-9C-FC-22-E8-A2-C2", BitConverter.ToString (msg.GetBytes ()));
+			Assert.AreEqual (3, msg.Type, "Type");
+			Assert.AreEqual ("4E-54-4C-4D-53-53-50-00-03-00-00-00-18-00-18-00-64-00-00-00-18-00-18-00-7C-00-00-00-0C-00-0C-00-40-00-00-00-10-00-10-00-4C-00-00-00-08-00-08-00-5C-00-00-00-00-00-00-00-94-00-00-00-01-B2-00-00-44-00-4F-00-4D-00-41-00-49-00-4E-00-75-00-73-00-65-00-72-00-6E-00-61-00-6D-00-65-00-48-00-4F-00-53-00-54-00-CA-12-00-72-3C-41-D5-77-AB-18-C7-64-C6-DE-F3-4F-A6-1B-FA-06-71-EA-5F-C8-7A-CE-90-85-AB-CC-37-59-38-0B-1C-68-62-E3-98-C3-C0-EF-9C-FC-22-E8-A2-C2", BitConverter.ToString (msg.GetBytes ()), "GetBytes");
 		}
 
 		[Test]
@@ -55,8 +55,8 @@ namespace MonoTests.Mono.Security.Protocol.Ntlm {
 			msg.Host = "LIGHTCITY";
 			msg.Password = "Beeblebrox";
 			msg.Username = "Zaphod";
-			AssertEquals ("Type", 3, msg.Type);
-			AssertEquals ("GetBytes", "4E-54-4C-4D-53-53-50-00-03-00-00-00-18-00-18-00-72-00-00-00-18-00-18-00-8A-00-00-00-14-00-14-00-40-00-00-00-0C-00-0C-00-54-00-00-00-12-00-12-00-60-00-00-00-00-00-00-00-A2-00-00-00-01-B2-00-00-55-00-52-00-53-00-41-00-2D-00-4D-00-49-00-4E-00-4F-00-52-00-5A-00-61-00-70-00-68-00-6F-00-64-00-4C-00-49-00-47-00-48-00-54-00-43-00-49-00-54-00-59-00-AD-87-CA-6D-EF-E3-46-85-B9-C4-3C-47-7A-8C-42-D6-00-66-7D-68-92-E7-E8-97-E0-E0-0D-E3-10-4A-1B-F2-05-3F-07-C7-DD-A8-2D-3C-48-9A-E9-89-E1-B0-00-D3", BitConverter.ToString (msg.GetBytes ()));
+			Assert.AreEqual (3, msg.Type, "Type");
+			Assert.AreEqual ("4E-54-4C-4D-53-53-50-00-03-00-00-00-18-00-18-00-72-00-00-00-18-00-18-00-8A-00-00-00-14-00-14-00-40-00-00-00-0C-00-0C-00-54-00-00-00-12-00-12-00-60-00-00-00-00-00-00-00-A2-00-00-00-01-B2-00-00-55-00-52-00-53-00-41-00-2D-00-4D-00-49-00-4E-00-4F-00-52-00-5A-00-61-00-70-00-68-00-6F-00-64-00-4C-00-49-00-47-00-48-00-54-00-43-00-49-00-54-00-59-00-AD-87-CA-6D-EF-E3-46-85-B9-C4-3C-47-7A-8C-42-D6-00-66-7D-68-92-E7-E8-97-E0-E0-0D-E3-10-4A-1B-F2-05-3F-07-C7-DD-A8-2D-3C-48-9A-E9-89-E1-B0-00-D3", BitConverter.ToString (msg.GetBytes ()), "GetBytes");
 		}
 
 		[Test]
@@ -64,14 +64,14 @@ namespace MonoTests.Mono.Security.Protocol.Ntlm {
 		public void Decode1 () 
 		{
 			Type3Message msg = new Type3Message (data1);
-			AssertEquals ("Domain", "URSA-MINOR", msg.Domain);
-			AssertEquals ("Host", "LIGHTCITY", msg.Host);
-			AssertEquals ("Username", "Zaphod", msg.Username);
-			AssertEquals ("Flags", (NtlmFlags)0x8201, msg.Flags);
-			AssertEquals ("Type", 3, msg.Type);
-			AssertNull ("Password", msg.Password);
-			AssertEquals ("LM", "AD-87-CA-6D-EF-E3-46-85-B9-C4-3C-47-7A-8C-42-D6-00-66-7D-68-92-E7-E8-97", BitConverter.ToString (msg.LM));
-			AssertEquals ("NT", "E0-E0-0D-E3-10-4A-1B-F2-05-3F-07-C7-DD-A8-2D-3C-48-9A-E9-89-E1-B0-00-D3", BitConverter.ToString (msg.NT));
+			Assert.AreEqual ("URSA-MINOR", msg.Domain, "Domain");
+			Assert.AreEqual ("LIGHTCITY", msg.Host, "Host");
+			Assert.AreEqual ("Zaphod", msg.Username, "Username");
+			Assert.AreEqual ((NtlmFlags)0x8201, msg.Flags, "Flags");
+			Assert.AreEqual (3, msg.Type, "Type");
+			Assert.IsNull (msg.Password, "Password");
+			Assert.AreEqual ("AD-87-CA-6D-EF-E3-46-85-B9-C4-3C-47-7A-8C-42-D6-00-66-7D-68-92-E7-E8-97", BitConverter.ToString (msg.LM), "LM");
+			Assert.AreEqual ("E0-E0-0D-E3-10-4A-1B-F2-05-3F-07-C7-DD-A8-2D-3C-48-9A-E9-89-E1-B0-00-D3", BitConverter.ToString (msg.NT), "NT");
 		}
 
 		[Test]
@@ -79,28 +79,28 @@ namespace MonoTests.Mono.Security.Protocol.Ntlm {
 		public void Decode2 () 
 		{
 			Type3Message msg = new Type3Message (data2);
-			AssertEquals ("Domain", "DOMAIN", msg.Domain);
-			AssertEquals ("Host", "WORKSTATION", msg.Host);
-			AssertEquals ("Username", "user", msg.Username);
-			AssertEquals ("Flags", (NtlmFlags)0x201, msg.Flags);
-			AssertEquals ("Type", 3, msg.Type);
-			AssertNull ("Password", msg.Password);
-			AssertEquals ("LM", "C3-37-CD-5C-BD-44-FC-97-82-A6-67-AF-6D-42-7C-6D-E6-7C-20-C2-D3-E7-7C-56", BitConverter.ToString (msg.LM));
-			AssertEquals ("NT", "25-A9-8C-1C-31-E8-18-47-46-6B-29-B2-DF-46-80-F3-99-58-FB-8C-21-3A-9C-C6", BitConverter.ToString (msg.NT));
+			Assert.AreEqual ("DOMAIN", msg.Domain, "Domain");
+			Assert.AreEqual ("WORKSTATION", msg.Host, "Host");
+			Assert.AreEqual ("user", msg.Username, "Username");
+			Assert.AreEqual ((NtlmFlags)0x201, msg.Flags, "Flags");
+			Assert.AreEqual (3, msg.Type, "Type");
+			Assert.IsNull (msg.Password, "Password");
+			Assert.AreEqual ("C3-37-CD-5C-BD-44-FC-97-82-A6-67-AF-6D-42-7C-6D-E6-7C-20-C2-D3-E7-7C-56", BitConverter.ToString (msg.LM), "LM");
+			Assert.AreEqual ("25-A9-8C-1C-31-E8-18-47-46-6B-29-B2-DF-46-80-F3-99-58-FB-8C-21-3A-9C-C6", BitConverter.ToString (msg.NT), "NT");
 		}
 
 		[Test]
 		public void Challenge () 
 		{
 			Type3Message msg = new Type3Message ();
-			AssertNull ("Challenge", msg.Challenge);
+			Assert.IsNull (msg.Challenge, "Challenge");
 			
 			byte[] c = new byte [8];
 			msg.Challenge = c;
-			AssertEquals ("Challenge.Length", 8, msg.Challenge.Length);
+			Assert.AreEqual (8, msg.Challenge.Length, "Challenge.Length");
 			
 			c [0] = 1;
-			AssertEquals ("Challenge not directly accessible", 0, msg.Challenge [0]);
+			Assert.AreEqual (0, msg.Challenge [0], "Challenge not directly accessible");
 		}
 		
 		[Test]

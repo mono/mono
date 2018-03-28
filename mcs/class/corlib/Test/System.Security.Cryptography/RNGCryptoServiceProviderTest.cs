@@ -25,7 +25,7 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			_algo = new RNGCryptoServiceProvider ();
 		}
-#if !NET_2_1
+
 		[Test]
 		public void ConstructorByteArray () 
 		{
@@ -62,7 +62,7 @@ namespace MonoTests.System.Security.Cryptography {
 			string s = null;
 			RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider (s);
 		}
-#endif
+
 		[Test]
 		public void GetBytes () 
 		{

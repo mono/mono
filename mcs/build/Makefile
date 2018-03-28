@@ -12,7 +12,8 @@ clean-local:
 
 common/Consts.cs: common/Consts.cs.in $(wildcard config.make)
 	test -n '$(MONO_VERSION)'
-	sed -e 's,@''MONO_VERSION@,$(MONO_VERSION),' $< > $@
+	test -n '$(MONO_CORLIB_VERSION)'
+	sed -e 's,@''MONO_VERSION@,$(MONO_VERSION),' -e 's,@''MONO_CORLIB_VERSION@,$(MONO_CORLIB_VERSION),' $< > $@
 
 PLATFORMS = darwin linux win32
 PROFILES = \
@@ -41,7 +42,6 @@ DISTFILES = \
 	executable.make			\
 	gensources.sh			\
 	library.make			\
-	nunit-summary.xsl		\
 	rules.make			\
 	tests.make			\
 	$(COMMON_SRCS:%=common/%)	\

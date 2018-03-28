@@ -216,7 +216,19 @@ namespace System.Security.AccessControl
 			if (!preserveInheritance && SystemAcl != null)
 				SystemAcl.RemoveInheritedAces ();
 		}
-		
+
+		public void AddDiscretionaryAcl (byte revision, int trusted)
+		{
+			DiscretionaryAcl = new DiscretionaryAcl (IsContainer, IsDS, revision, trusted);
+			flags |= ControlFlags.DiscretionaryAclPresent;
+		}
+
+		public void AddSystemAcl(byte revision, int trusted)
+		{
+			SystemAcl = new SystemAcl (IsContainer, IsDS, revision, trusted);
+			flags |= ControlFlags.SystemAclPresent;
+		}
+
 		void CheckAclConsistency (CommonAcl acl)
 		{
 			if (IsContainer != acl.IsContainer)

@@ -54,12 +54,12 @@ namespace System.Runtime.Remoting.Lifetime
 			_initialLeaseTime = LifetimeServices.LeaseTime;
 			_renewOnCallTime = LifetimeServices.RenewOnCallTime;
 			_sponsorshipTimeout = LifetimeServices.SponsorshipTimeout;
-			_leaseExpireTime = DateTime.Now + _initialLeaseTime;
+			_leaseExpireTime = DateTime.UtcNow + _initialLeaseTime;
 		}
 
 		public TimeSpan CurrentLeaseTime 
 		{ 
-			get { return _leaseExpireTime - DateTime.Now; }
+			get { return _leaseExpireTime - DateTime.UtcNow; }
 		}
 
 		public LeaseState CurrentState 
@@ -82,7 +82,7 @@ namespace System.Runtime.Remoting.Lifetime
 					throw new RemotingException ("InitialLeaseTime property can only be set when the lease is in initial state; state is " + _currentState + ".");
 
 				_initialLeaseTime = value; 
-				_leaseExpireTime = DateTime.Now + _initialLeaseTime;
+				_leaseExpireTime = DateTime.UtcNow + _initialLeaseTime;
 				if (value == TimeSpan.Zero) _currentState = LeaseState.Null;
 			}
 		}
@@ -130,7 +130,7 @@ namespace System.Runtime.Remoting.Lifetime
 
 		public TimeSpan Renew (TimeSpan renewalTime)
 		{
-			DateTime newTime = DateTime.Now + renewalTime;
+			DateTime newTime = DateTime.UtcNow + renewalTime;
 			if (newTime > _leaseExpireTime) _leaseExpireTime = newTime;
 			return CurrentLeaseTime;
 		}

@@ -127,7 +127,7 @@ namespace System.Diagnostics {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern IntPtr GetImpl (string category, string counter,
-				string instance, string machine, out PerformanceCounterType ctype, out bool custom);
+				string instance, out PerformanceCounterType ctype, out bool custom);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern bool GetSample (IntPtr impl, bool only_value, out CounterSample sample);
@@ -138,6 +138,11 @@ namespace System.Diagnostics {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void FreeData (IntPtr impl);
 
+		static bool IsValidMachine (string machine)
+		{ // no support for counters on other machines
+			return machine == ".";
+		}
+
 		/* the perf counter has changed, ensure it's valid and setup it to
 		 * be able to collect/update data
 		 */
@@ -146,7 +151,9 @@ namespace System.Diagnostics {
 			// need to free the previous info
 			if (impl != IntPtr.Zero)
 				Close ();
-			impl = GetImpl (categoryName, counterName, instanceName, machineName, out type, out is_custom);
+
+			if (IsValidMachine (machineName))
+				impl = GetImpl (categoryName, counterName, instanceName, out type, out is_custom);
 			// system counters are always readonly
 			if (!is_custom)
 				readOnly = true;
@@ -159,7 +166,7 @@ namespace System.Diagnostics {
 		}
 
 		// may throw ArgumentNullException
-		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
+		[DefaultValue (""), ReadOnly (true), SettingsBindable (true)]
 		[TypeConverter ("System.Diagnostics.Design.CategoryValueConverter, " + Consts.AssemblySystem_Design)]
 		[SRDescription ("The category name for this performance counter.")]
 		public string CategoryName {
@@ -181,7 +188,7 @@ namespace System.Diagnostics {
 		}
 
 		// may throw ArgumentNullException
-		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
+		[DefaultValue (""), ReadOnly (true), SettingsBindable (true)]
 		[TypeConverter ("System.Diagnostics.Design.CounterNameConverter, " + Consts.AssemblySystem_Design)]
 		[SRDescription ("The name of this performance counter.")]
 		public string CounterName 
@@ -212,7 +219,7 @@ namespace System.Diagnostics {
 			set { lifetime = value; }
 		}
 
-		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
+		[DefaultValue (""), ReadOnly (true), SettingsBindable (true)]
 		[TypeConverter ("System.Diagnostics.Design.InstanceNameConverter, " + Consts.AssemblySystem_Design)]
 		[SRDescription ("The instance name for this performance counter.")]
 		public string InstanceName {
@@ -227,7 +234,7 @@ namespace System.Diagnostics {
 
 		// may throw ArgumentException if machine name format is wrong
 		[MonoTODO("What's the machine name format?")]
-		[DefaultValue ("."), Browsable (false), RecommendedAsConfigurable (true)]
+		[DefaultValue ("."), Browsable (false), SettingsBindable (true)]
 		[SRDescription ("The machine where this performance counter resides.")]
 		public string MachineName {
 			get {return machineName;}

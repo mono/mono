@@ -1,5 +1,6 @@
-/*
- * sgen-splliy-nursery.c: 3-space based nursery collector.
+/**
+ * \file
+ * 3-space based nursery collector.
  *
  * Author:
  *	Rodrigo Kumpera Kumpera <kumpera@gmail.com>
@@ -14,6 +15,8 @@
 
 #include "config.h"
 #ifdef HAVE_SGEN_GC
+
+#ifndef DISABLE_SGEN_SPLIT_NURSERY
 
 #include <string.h>
 #include <stdlib.h>
@@ -254,8 +257,10 @@ alloc_for_promotion (GCVTable vtable, GCObject *obj, size_t objsize, gboolean ha
 	int age;
 
 	age = get_object_age (obj);
-	if (age >= promote_age)
-		return major_collector.alloc_object (vtable, objsize, has_references);
+	if (age >= promote_age) {
+		sgen_total_promoted_size += objsize;
+		return sgen_major_collector.alloc_object (vtable, objsize, has_references);
+	}
 
 	/* Promote! */
 	++age;
@@ -265,8 +270,10 @@ alloc_for_promotion (GCVTable vtable, GCObject *obj, size_t objsize, gboolean ha
         age_alloc_buffers [age].next += objsize;
 	} else {
 		p = alloc_for_promotion_slow_path (age, objsize);
-		if (!p)
-			return major_collector.alloc_object (vtable, objsize, has_references);
+		if (!p) {
+			sgen_total_promoted_size += objsize;
+			return sgen_major_collector.alloc_object (vtable, objsize, has_references);
+		}
 	}
 
 	/* FIXME: assumes object layout */
@@ -282,7 +289,7 @@ minor_alloc_for_promotion (GCVTable vtable, GCObject *obj, size_t objsize, gbool
 	We only need to check for a non-nursery object if we're doing a major collection.
 	*/
 	if (!sgen_ptr_in_nursery (obj))
-		return major_collector.alloc_object (vtable, objsize, has_references);
+		return sgen_major_collector.alloc_object (vtable, objsize, has_references);
 
 	return alloc_for_promotion (vtable, obj, objsize, has_references);
 }
@@ -414,18 +421,40 @@ print_gc_param_usage (void)
 
 /******************************************Copy/Scan functins ************************************************/
 
-#define SGEN_SPLIT_NURSERY
+#define collector_pin_object(obj, queue) sgen_pin_object (obj, queue);
+#define COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION alloc_for_promotion
 
-#define SERIAL_COPY_OBJECT split_nursery_serial_copy_object
-#define SERIAL_COPY_OBJECT_FROM_OBJ split_nursery_serial_copy_object_from_obj
+#include "sgen-copy-object.h"
+
+#define SGEN_SPLIT_NURSERY
 
 #include "sgen-minor-copy-object.h"
 #include "sgen-minor-scan-object.h"
+
+static void
+fill_serial_ops (SgenObjectOperations *ops)
+{
+	ops->copy_or_mark_object = SERIAL_COPY_OBJECT;
+	FILL_MINOR_COLLECTOR_SCAN_OBJECT (ops);
+}
+
+#define SGEN_CONCURRENT_MAJOR
+
+#include "sgen-minor-copy-object.h"
+#include "sgen-minor-scan-object.h"
+
+static void
+fill_serial_with_concurrent_major_ops (SgenObjectOperations *ops)
+{
+	ops->copy_or_mark_object = SERIAL_COPY_OBJECT;
+	FILL_MINOR_COLLECTOR_SCAN_OBJECT (ops);
+}
 
 void
 sgen_split_nursery_init (SgenMinorCollector *collector)
 {
 	collector->is_split = TRUE;
+	collector->is_parallel = FALSE;
 
 	collector->alloc_for_promotion = minor_alloc_for_promotion;
 
@@ -438,9 +467,10 @@ sgen_split_nursery_init (SgenMinorCollector *collector)
 	collector->handle_gc_param = handle_gc_param;
 	collector->print_gc_param_usage = print_gc_param_usage;
 
-	FILL_MINOR_COLLECTOR_COPY_OBJECT (collector);
-	FILL_MINOR_COLLECTOR_SCAN_OBJECT (collector);
+	fill_serial_ops (&collector->serial_ops);
+	fill_serial_with_concurrent_major_ops (&collector->serial_ops_with_concurrent_major);
 }
 
+#endif //#ifndef DISABLE_SGEN_SPLIT_NURSERY
 
 #endif

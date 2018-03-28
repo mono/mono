@@ -1,5 +1,6 @@
-/*
- * exceptions-arm.c: exception support for ARM
+/**
+ * \file
+ * exception support for ARM
  *
  * Authors:
  *   Dietmar Maurer (dietmar@ximian.com)
@@ -14,9 +15,9 @@
 #include <string.h>
 
 #ifndef MONO_CROSS_COMPILE
-#ifdef HAVE_ASM_SIGCONTEXT_H
+#ifdef HOST_ANDROID
 #include <asm/sigcontext.h>
-#endif  /* def HAVE_ASM_SIGCONTEXT_H */
+#endif  /* def HOST_ANDROID */
 #endif
 
 #ifdef HAVE_UCONTEXT_H
@@ -35,6 +36,8 @@
 
 #include "mini.h"
 #include "mini-arm.h"
+#include "mini-runtime.h"
+#include "aot-runtime.h"
 #include "mono/utils/mono-sigcontext.h"
 #include "mono/utils/mono-compiler.h"
 
@@ -111,6 +114,8 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	ARM_MOV_REG_REG (code, ARMREG_IP, ARMREG_SP);
 	ARM_PUSH (code, MONO_ARM_REGSAVE_MASK);
 
+	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 8);
+
 	/* restore all the regs from ctx (in r0), but not sp, the stack pointer */
 	ctx_reg = ARMREG_R0;
 	ARM_LDR_IMM (code, ARMREG_IP, ctx_reg, MONO_STRUCT_OFFSET (MonoContext, pc));
@@ -120,6 +125,8 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	ARM_MOV_REG_REG (code, ARMREG_R0, ARMREG_R2);
 	ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
 	ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_R1);
+
+	ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 8);
 
 	/* epilog */
 	ARM_POP_NWB (code, 0xff0 | ((1 << ARMREG_SP) | (1 << ARMREG_PC)));
@@ -137,7 +144,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 void
 mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_regs, gdouble *fp_regs)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoContext ctx;
 	gboolean rethrow = sp & 1;
 
@@ -153,14 +160,14 @@ mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_
 	memcpy (((guint8*)&ctx.regs) + (ARMREG_R4 * sizeof (mgreg_t)), int_regs, 8 * sizeof (mgreg_t));
 	memcpy (&ctx.fregs, fp_regs, sizeof (double) * 16);
 
-	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, &error)) {
+	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		}
 	}
-	mono_error_assert_ok (&error);
+	mono_error_assert_ok (error);
 	mono_handle_exception (&ctx, exc);
 	mono_restore_context (&ctx);
 	g_assert_not_reached ();
@@ -332,11 +339,10 @@ mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 
 /**
  * mono_arch_get_throw_corlib_exception:
- *
- * Returns a function pointer which can be used to raise 
+ * \returns a function pointer which can be used to raise 
  * corlib exceptions. The returned function has the following 
  * signature: void (*func) (guint32 ex_token, guint32 offset); 
- * Here, offset is the offset which needs to be substracted from the caller IP 
+ * Here, \c offset is the offset which needs to be substracted from the caller IP 
  * to get the IP of the throw. Passing the offset has the advantage that it 
  * needs no relocations in the caller.
  * On ARM, the ip is passed instead of an offset.
@@ -459,24 +465,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		return TRUE;
 	} else if (*lmf) {
-
-		if (((gsize)(*lmf)->previous_lmf) & 2) {
-			/* 
-			 * This LMF entry is created by the soft debug code to mark transitions to
-			 * managed code done during invokes.
-			 */
-			MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
-
-			g_assert (ext->debugger_invoke);
-
-			memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
-
-			*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
-
-			frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
-
-			return TRUE;
-		}
+		g_assert ((((guint64)(*lmf)->previous_lmf) & 2) == 0);
 
 		frame->type = FRAME_TYPE_MANAGED_TO_NATIVE;
 		
@@ -523,7 +512,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 static void
 handle_signal_exception (gpointer obj)
 {
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
@@ -558,7 +547,7 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	 * signal is disabled, and we could run arbitrary code though the debugger. So
 	 * resume into the normal stack and do most work there if possible.
 	 */
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	guint64 sp = UCONTEXT_REG_SP (sigctx);
 
 	/* Pass the ctx parameter in TLS */
@@ -601,8 +590,6 @@ mono_arch_ip_from_context (void *sigctx)
 {
 #ifdef MONO_CROSS_COMPILE
 	g_assert_not_reached ();
-#elif defined(__native_client__)
-	g_assert_not_reached ();
 #else
 	arm_ucontext *my_uc = sigctx;
 	return (void*) UCONTEXT_REG_PC (my_uc);
@@ -639,4 +626,13 @@ mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 	else
 		/* Transition to ARM */
 		ctx->cpsr &= ~(1 << 5);
+}
+
+void
+mono_arch_undo_ip_adjustment (MonoContext *ctx)
+{
+	ctx->pc++;
+
+	if (mono_arm_thumb_supported ())
+		ctx->pc |= 1;
 }

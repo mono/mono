@@ -1,0 +1,6 @@
+mono-MDK-windows crlf=input
+mono-MDK-windows-x64 crlf=input
+defs/gtksharp crlf=input
+defs/managed-components crlf=input
+defs/mono crlf=input
+defs/mono64 crlf=input

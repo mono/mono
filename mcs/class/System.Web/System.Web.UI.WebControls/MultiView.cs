@@ -59,10 +59,10 @@ namespace System.Web.UI.WebControls
 			remove { Events.RemoveHandler (ActiveViewChangedEvent, value); }
 		}
 		
-		protected override void AddParsedSubObject (object ob)
+		protected override void AddParsedSubObject (object obj)
 		{
-			if (ob is View)
-				Controls.Add (ob as View);
+			if (obj is View)
+				Controls.Add (obj as View);
 			// LAMESPEC: msdn talks that only View contorls are allowed, for others controls HttpException should be thrown
 			// but actually, aspx praser adds LiteralControl controls.
 			//else

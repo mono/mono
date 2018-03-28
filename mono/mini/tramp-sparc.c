@@ -1,5 +1,6 @@
-/*
- * tramp-sparc.c: JIT trampoline code for Sparc
+/**
+ * \file
+ * JIT trampoline code for Sparc
  *
  * Authors:
  *   Mark Crichton (crichton@gimp.org)
@@ -35,7 +36,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	guint8 *code, *start;
 	int reg;
 
-	start = code = mono_global_codeman_reserve (36);
+	start = code = mono_domain_code_reserve (mono_domain_get (), 36);
 
 	/* This executes in the context of the caller, hence o0 */
 	sparc_add_imm (code, 0, sparc_o0, sizeof (MonoObject), sparc_o0);
@@ -70,8 +71,6 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
 {
 	g_assert_not_reached ();
 }
-
-#define ALIGN_TO(val,align) (((val) + ((align) - 1)) & ~((align) - 1))
 
 guchar*
 mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInfo **info, gboolean aot)
@@ -171,7 +170,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	sparc_sti_imm (code, sparc_o0, sparc_sp, MONO_SPARC_STACK_BIAS + 304);
 
 	/* Check for thread interruption */
-	sparc_set (code, (guint8*)mono_interruption_checkpoint_from_trampoline, sparc_o7);
+	sparc_set (code, (guint8*)mono_interruption_checkpoint_from_trampoline_deprecated, sparc_o7);
 	sparc_jmpl (code, sparc_o7, sparc_g0, sparc_o7);
 	sparc_nop (code);
 

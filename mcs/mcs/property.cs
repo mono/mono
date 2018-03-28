@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Text;
 using Mono.CompilerServices.SymbolWriter;
 
-#if NET_2_1
+#if MOBILE
 using XmlElement = System.Object;
 #endif
 
@@ -680,6 +680,10 @@ namespace Mono.CSharp
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder, member_type, Location);
 			}
 
+			if (member_type.HasNamedTupleElement) {
+				Module.PredefinedAttributes.TupleElementNames.EmitAttribute (PropertyBuilder, member_type, Location);
+			}
+
 			ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			first.Emit (Parent);
@@ -820,8 +824,10 @@ namespace Mono.CSharp
 			Parent.PartialContainer.Members.Add (BackingField);
 
 			FieldExpr fe = new FieldExpr (BackingField, Location);
-			if ((BackingField.ModFlags & Modifiers.STATIC) == 0)
+			if ((BackingField.ModFlags & Modifiers.STATIC) == 0) {
 				fe.InstanceExpression = new CompilerGeneratedThis (Parent.CurrentType, Location);
+				Parent.PartialContainer.HasInstanceField = true;
+			}
 
 			//
 			// Create get block but we careful with location to
@@ -871,6 +877,17 @@ namespace Mono.CSharp
 					Report.Error (8051, Location, "Auto-implemented property `{0}' must have get accessor",
 						GetSignatureForError ());
 					return false;
+				}
+
+				if (MemberType.Kind == MemberKind.ByRef) {
+					Report.Error (8145, Location, "Auto-implemented property `{0}' cannot return by reference",
+						GetSignatureForError ());
+					return false;
+				}
+
+				if ((Parent.PartialContainer.ModFlags & Modifiers.READONLY) != 0 && Set != null && !IsStatic) {
+					Report.Error (8341, Location, "Auto-implemented instance property `{0}' in readonly structs must be readonly",
+						GetSignatureForError ());
 				}
 
 				if (Compiler.Settings.Version < LanguageVersion.V_3 && Initializer == null)
@@ -1180,6 +1197,16 @@ namespace Mono.CSharp
 			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 		}
 
+		protected override void DoMemberTypeIndependentChecks ()
+		{
+			if ((Parent.PartialContainer.ModFlags & Modifiers.READONLY) != 0 && (ModFlags & Modifiers.STATIC) == 0) {
+				Report.Error (8342, Location, "`{0}': Field-like instance events are not allowed in readonly structs",
+					GetSignatureForError ());
+			}
+
+			base.DoMemberTypeIndependentChecks ();
+		}
+
 		public override bool Define()
 		{
 			var mod_flags_src = ModFlags;
@@ -1210,12 +1237,11 @@ namespace Mono.CSharp
 
 			backing_field = new Field (Parent,
 				new TypeExpression (MemberType, Location),
-				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
+				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.DEBUGGER_HIDDEN | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 				MemberName, null);
 
 			Parent.PartialContainer.Members.Add (backing_field);
 			backing_field.Initializer = Initializer;
-			backing_field.ModFlags &= ~Modifiers.COMPILER_GENERATED;
 
 			// Call define because we passed fields definition
 			backing_field.Define ();
@@ -1791,6 +1817,18 @@ namespace Mono.CSharp
 			}
 		}
 		#endregion
+
+		public static ParametersImported CreateParametersFromSetter (MethodSpec setter, int set_param_count)
+		{
+			//
+			// Creates indexer parameters based on setter method parameters (the last parameter has to be removed)
+			//
+			var data = new IParameterData [set_param_count];
+			var types = new TypeSpec [set_param_count];
+			Array.Copy (setter.Parameters.FixedParameters, data, set_param_count);
+			Array.Copy (setter.Parameters.Types, types, set_param_count);
+			return new ParametersImported (data, types, setter.Parameters.HasParams);
+		}
 
 		public override string GetSignatureForDocumentation ()
 		{

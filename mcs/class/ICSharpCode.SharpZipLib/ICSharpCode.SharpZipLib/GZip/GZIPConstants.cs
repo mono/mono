@@ -41,6 +41,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 	/// <summary>
 	/// This class contains constants used for gzip.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class GZipConstants
 	{
 		/// <summary>

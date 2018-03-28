@@ -35,8 +35,8 @@ namespace System.IdentityModel.Tokens
 	public class X509SubjectKeyIdentifierClause : BinaryKeyIdentifierClause
 	{
 		[MonoTODO]
-		public X509SubjectKeyIdentifierClause (byte [] certificateSubject)
-			: base (null, certificateSubject, true)
+		public X509SubjectKeyIdentifierClause (byte [] ski)
+			: base (null, ski, true)
 		{
 			throw new NotImplementedException ();
 		}
@@ -66,7 +66,7 @@ namespace System.IdentityModel.Tokens
 		}
 
 		[MonoTODO]
-		public static bool TryCreateFrom (X509Certificate2 certificate, out X509SubjectKeyIdentifierClause clause)
+		public static bool TryCreateFrom (X509Certificate2 certificate, out X509SubjectKeyIdentifierClause keyIdentifierClause)
 		{
 			throw new NotImplementedException ();
 		}

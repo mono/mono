@@ -41,10 +41,10 @@ namespace System.Reflection.Emit
 	[StructLayout (LayoutKind.Sequential)]
 	internal class PropertyOnTypeBuilderInst : PropertyInfo
 	{
-		MonoGenericClass instantiation;
+		TypeBuilderInstantiation instantiation;
 		PropertyInfo prop;
 
-		internal PropertyOnTypeBuilderInst (MonoGenericClass instantiation, PropertyInfo prop)
+		internal PropertyOnTypeBuilderInst (TypeBuilderInstantiation instantiation, PropertyInfo prop)
 		{
 			this.instantiation = instantiation;
 			this.prop = prop;

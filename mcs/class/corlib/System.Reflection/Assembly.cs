@@ -53,17 +53,22 @@ namespace System.Reflection {
 	[ClassInterface(ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
-	public partial class Assembly : ICustomAttributeProvider {
+	public partial class Assembly : ICustomAttributeProvider, ISerializable
 #else
-	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
+	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable
 #endif
-		internal class ResolveEventHolder {
+	{
+		internal class ResolveEventHolder {	
+#pragma warning disable 67
 			public event ModuleResolveEventHandler ModuleResolve;
+#pragma warning restore
 		}
 
 		internal class UnmanagedMemoryStreamForModule : UnmanagedMemoryStream
 		{
+#pragma warning disable 414
 			Module module;
+#pragma warning restore
 
 			public unsafe UnmanagedMemoryStreamForModule (byte* pointer, long length, Module module)
 				: base (pointer, length)
@@ -88,7 +93,7 @@ namespace System.Reflection {
 
 		// Note: changes to fields must be reflected in _MonoReflectionAssembly struct (object-internals.h)
 #pragma warning disable 649
-		private IntPtr _mono_assembly;
+		internal IntPtr _mono_assembly;
 #pragma warning restore 649
 
 		private ResolveEventHolder resolve_event_holder;
@@ -115,7 +120,7 @@ namespace System.Reflection {
 		// We can't store the event directly in this class, since the
 		// compiler would silently insert the fields before _mono_assembly
 		//
-		public event ModuleResolveEventHandler ModuleResolve {
+		public virtual event ModuleResolveEventHandler ModuleResolve {
 			[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 			add {
 				resolve_event_holder.ModuleResolve += value;
@@ -138,11 +143,14 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string InternalImageRuntimeVersion ();
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static internal extern string GetAotId ();
+
 		// SECURITY: this should be the only caller to icall get_code_base
 		private string GetCodeBase (bool escaped)
 		{
 			string cb = get_code_base (escaped);
-#if !NET_2_1
+#if !MOBILE
 			if (SecurityManager.SecurityEnabled) {
 				// we cannot divulge local file informations
 				if (String.Compare ("FILE://", 0, cb, 0, 7, true, CultureInfo.InvariantCulture) == 0) {
@@ -212,7 +220,7 @@ namespace System.Reflection {
 					return String.Empty;
 
 				string loc = get_location ();
-#if !NET_2_1
+#if !MOBILE
 				if ((loc != String.Empty) && SecurityManager.SecurityEnabled) {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, loc).Demand ();
@@ -420,34 +428,16 @@ namespace System.Reflection {
 		internal extern Type InternalGetType (Module module, String name, Boolean throwOnError, Boolean ignoreCase);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static void InternalGetAssemblyName (string assemblyFile, AssemblyName aname);
+		internal extern unsafe static void InternalGetAssemblyName (string assemblyFile, out Mono.MonoAssemblyName aname, out string codebase);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern void FillName (Assembly ass, AssemblyName aname);
-
-		[MonoTODO ("copiedName == true is not supported")]
 		public virtual AssemblyName GetName (Boolean copiedName)
 		{
-#if !MOBILE
-			// CodeBase, which is restricted, will be copied into the AssemblyName object so...
-			if (SecurityManager.SecurityEnabled) {
-				GetCodeBase (true); // this will ensure the Demand is made
-			}
-#endif
-			return UnprotectedGetName ();
+			throw new NotImplementedException ();
 		}
 
 		public virtual AssemblyName GetName ()
 		{
 			return GetName (false);
-		}
-
-		// the security runtime requires access to the assemblyname (e.g. to get the strongname)
-		internal virtual AssemblyName UnprotectedGetName ()
-		{
-			AssemblyName aname = new AssemblyName ();
-			FillName (this, aname);
-			return aname;
 		}
 
 		public override string ToString ()
@@ -520,10 +510,14 @@ namespace System.Reflection {
 			// Try the assembly directory
 			string location = Path.GetDirectoryName (Location);
 			string fullName = Path.Combine (location, Path.Combine (culture.Name, an.Name + ".dll"));
-			if (!throwOnFileNotFound && !File.Exists (fullName))
-				return null;
 
-			return (RuntimeAssembly)LoadFrom (fullName);
+			try {
+				return (RuntimeAssembly)LoadFrom (fullName);
+			} catch {
+				if (!throwOnFileNotFound && !File.Exists (fullName))
+					return null;
+				throw;
+			}
 		}
 
 #if !MOBILE
@@ -546,7 +540,7 @@ namespace System.Reflection {
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence)
 		{
 			Assembly a = LoadFrom (assemblyFile, false);
-#if !NET_2_1
+#if !MOBILE
 			if ((a != null) && (securityEvidence != null)) {
 				// merge evidence (i.e. replace defaults with provided evidences)
 				a.Evidence.Merge (securityEvidence);
@@ -653,7 +647,7 @@ namespace System.Reflection {
 			return LoadFrom (assemblyFile, true);
 		}
 
-		[Obsolete]
+        [Obsolete("This method has been deprecated. Please use Assembly.Load() instead. http://go.microsoft.com/fwlink/?linkid=14202")]
 		public static Assembly LoadWithPartialName (string partialName)
 		{
 			return LoadWithPartialName (partialName, null);
@@ -676,7 +670,7 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern Assembly load_with_partial_name (string name, Evidence e);
 
-		[Obsolete]
+        [Obsolete("This method has been deprecated. Please use Assembly.Load() instead. http://go.microsoft.com/fwlink/?linkid=14202")]
 		public static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence)
 		{
 			return LoadWithPartialName (partialName, securityEvidence, true);
@@ -760,7 +754,37 @@ namespace System.Reflection {
 		public extern static Assembly GetCallingAssembly ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern AssemblyName[] GetReferencedAssemblies (Assembly module);
+		internal static extern IntPtr InternalGetReferencedAssemblies (Assembly module);
+
+		internal static AssemblyName[] GetReferencedAssemblies (Assembly module)
+		{
+			using (var nativeNames = new Mono.SafeGPtrArrayHandle (InternalGetReferencedAssemblies (module))) {
+				var numAssemblies = nativeNames.Length;
+				try {
+					AssemblyName [] result = new AssemblyName[numAssemblies];
+					const bool addVersion = true;
+					const bool addPublicKey = false;
+					const bool defaultToken = true;
+					const bool assemblyRef = true;
+					for (int i = 0; i < numAssemblies; i++) {
+						AssemblyName name = new AssemblyName ();
+						unsafe {
+							Mono.MonoAssemblyName *nativeName = (Mono.MonoAssemblyName*) nativeNames[i];
+							name.FillName (nativeName, null, addVersion, addPublicKey, defaultToken, assemblyRef);
+							result[i] = name;
+						}
+					}
+					return result;
+				} finally {
+					for (int i = 0; i < numAssemblies; i++) {
+						unsafe {
+							Mono.MonoAssemblyName* nativeName = (Mono.MonoAssemblyName*) nativeNames[i];
+							Mono.RuntimeMarshal.FreeAssemblyName (ref *nativeName, true);
+						}
+					}
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool GetManifestResourceInfoInternal (String name, ManifestResourceInfo info);
@@ -818,7 +842,7 @@ namespace System.Reflection {
 			return other._mono_assembly == _mono_assembly;
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		// Code Access Security
 
 		internal void Resolve () 
@@ -903,12 +927,11 @@ namespace System.Reflection {
 		public virtual PermissionSet PermissionSet {
 			get { return this.GrantedPermissionSet; }
 		}
-		
+#endif
+
 		public virtual SecurityRuleSet SecurityRuleSet {
 			get { throw CreateNIE (); }
 		}
-
-#endif
 
 		static Exception CreateNIE ()
 		{

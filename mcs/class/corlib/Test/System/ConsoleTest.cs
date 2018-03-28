@@ -332,7 +332,6 @@ public class ConsoleTest
 
 #if !MOBILE
 
-#if NET_4_5
 	[Test]
 	public void RedirectedTest ()
 	{
@@ -343,7 +342,6 @@ public class ConsoleTest
 		Console.SetError (TextWriter.Null);
 		Assert.IsFalse (Console.IsErrorRedirected);
 	}
-#endif
 
 	// Bug 678357
 	[Test]

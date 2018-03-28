@@ -57,7 +57,6 @@ using DbLinq.Factory;
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../ecma.pub")]
 #endif
 
 [assembly: ComVisible (false)]

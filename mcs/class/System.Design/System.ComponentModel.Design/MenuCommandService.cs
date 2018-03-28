@@ -210,12 +210,12 @@ namespace System.ComponentModel.Design
 			return false;
 		}
 
-		public virtual bool GlobalInvoke (CommandID commandID, object arg)
+		public virtual bool GlobalInvoke (CommandID commandId, object arg)
 		{
-			if (commandID == null)
-				throw new ArgumentNullException ("commandID");
+			if (commandId == null)
+				throw new ArgumentNullException ("commandId");
 
-			MenuCommand command = this.FindCommand (commandID);
+			MenuCommand command = this.FindCommand (commandId);
 			if (command != null) {
 				command.Invoke (arg);
 				return true;

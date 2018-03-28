@@ -119,10 +119,17 @@ namespace System.Windows.Forms
 				SmallIcons.ImageSize = new Size (24, 24);
 				LargeIcons.ImageSize = new Size (48, 48);
 				
-				platformMimeHandler = new GnomeHandler ();
-				if (platformMimeHandler.Start () == MimeExtensionHandlerStatus.OK) {
-					platform = EPlatformHandler.GNOME;
-				} else {
+				try {
+					platformMimeHandler = new GnomeHandler ();
+					if (platformMimeHandler.Start () == MimeExtensionHandlerStatus.OK) {
+						platform = EPlatformHandler.GNOME;
+					} else {
+						MimeIconEngine.LargeIcons.Images.Clear ();
+						MimeIconEngine.SmallIcons.Images.Clear ();
+						platformMimeHandler = new PlatformDefaultHandler ();
+						platformMimeHandler.Start ();
+					}
+				} catch {
 					MimeIconEngine.LargeIcons.Images.Clear ();
 					MimeIconEngine.SmallIcons.Images.Clear ();
 					platformMimeHandler = new PlatformDefaultHandler ();
@@ -397,13 +404,13 @@ namespace System.Windows.Forms
 	
 	internal class GnomeUtil
 	{
-		const string libgdk = "libgdk-x11-2.0.so.0";
-		const string libgdk_pixbuf = "libgdk_pixbuf-2.0.so.0";
-		const string libgtk = "libgtk-x11-2.0.so.0";
-		const string libglib = "libglib-2.0.so.0";
-		const string libgobject = "libgobject-2.0.so.0";
-		const string libgnomeui = "libgnomeui-2.so.0";
-		const string librsvg = "librsvg-2.so.2";
+		const string libgdk = "libgdk-x11-2.0";
+		const string libgdk_pixbuf = "libgdk_pixbuf-2.0";
+		const string libgtk = "libgtk-x11-2.0";
+		const string libglib = "libglib-2.0";
+		const string libgobject = "libgobject-2.0";
+		const string libgnomeui = "libgnomeui-2";
+		const string librsvg = "librsvg-2";
 		
 		[DllImport(librsvg)]
 		static extern IntPtr rsvg_pixbuf_from_file_at_size (string file_name, int  width, int  height, out IntPtr error);

@@ -37,6 +37,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Reflection;
 
 namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
@@ -64,7 +65,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		public void FixtureSetUp ()
 		{
 			base_dir = String.Format ("{0}{1}Test{1}System.Security.Cryptography.X509Certificates{1}pkits{1}certs",
-				Directory.GetCurrentDirectory (), Path.DirectorySeparatorChar);
+				Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location), Path.DirectorySeparatorChar);
 			if (!Directory.Exists (base_dir))
 				Assert.Ignore ("PKITS tests data not found under '{0}'.", new object[] { base_dir });
 
@@ -75,7 +76,8 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[TestFixtureTearDown]
 		public void FixtureTearDown ()
 		{
-			cache.Clear ();
+			if (cache != null)
+				cache.Clear ();
 			// clean-up, as best as possible, the stores
 		}
 

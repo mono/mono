@@ -115,12 +115,12 @@ namespace System.ServiceModel.MonoInternal
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 			base.OnClose (timeout);
 			loop = false;
-			if (!loop_handle.WaitOne (timeout - (DateTime.Now - start)))
+			if (!loop_handle.WaitOne (timeout - (DateTime.UtcNow - start)))
 				throw new TimeoutException ();
-			if (!finish_handle.WaitOne (timeout - (DateTime.Now - start)))
+			if (!finish_handle.WaitOne (timeout - (DateTime.UtcNow - start)))
 				throw new TimeoutException ();
 		}
 
@@ -192,10 +192,6 @@ namespace System.ServiceModel.MonoInternal
 			} catch (Exception ex) {
 				// FIXME: log it.
 				Console.WriteLine (ex);
-			} finally {
-				// unless it is closed by session/call manager, move it back to the loop to receive the next message.
-				if (loop && input.State != CommunicationState.Closed)
-					ProcessRequestOrInput (input);
 			}
 		}
 
@@ -208,7 +204,7 @@ namespace System.ServiceModel.MonoInternal
 		
 		internal override Message RequestCorrelated (Message msg, TimeSpan timeout, IOutputChannel channel)
 		{
-			DateTime startTime = DateTime.Now;
+			DateTime startTime = DateTime.UtcNow;
 			Message ret = null;
 			ManualResetEvent wait = new ManualResetEvent (false);
 			Action<Message> handler = delegate (Message reply) {
@@ -217,7 +213,7 @@ namespace System.ServiceModel.MonoInternal
 			};
 			ReplyHandlerQueue.Enqueue (handler);
 			channel.Send (msg, timeout);
-			if (ret == null && !wait.WaitOne (timeout - (DateTime.Now - startTime)))
+			if (ret == null && !wait.WaitOne (timeout - (DateTime.UtcNow - startTime)))
 				throw new TimeoutException ();
 			return ret;
 		}

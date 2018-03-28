@@ -28,14 +28,34 @@ namespace Pdb2Mdb {
 
 		public static void Convert (string filename)
 		{
-			var asm = AssemblyDefinition.ReadAssembly (filename);
+			using (var asm = AssemblyDefinition.ReadAssembly (filename)) {
 
-			var pdb = asm.Name.Name + ".pdb";
-			pdb = Path.Combine (Path.GetDirectoryName (filename), pdb);
+				var pdb = asm.Name.Name + ".pdb";
+				pdb = Path.Combine (Path.GetDirectoryName (filename), pdb);
 
-			using (var stream = File.OpenRead (pdb)) {
-				var funcs = PdbFile.LoadFunctions (stream, true);
-				Converter.Convert (asm, funcs, new MonoSymbolWriter (filename));
+				if (!File.Exists (pdb))
+					throw new FileNotFoundException ("PDB file doesn't exist: " + pdb);
+
+				using (var stream = File.OpenRead (pdb)) {
+					if (IsPortablePdb (stream))
+						throw new PortablePdbNotSupportedException ();
+
+					var funcs = PdbFile.LoadFunctions (stream, true);
+					Converter.Convert (asm, funcs, new MonoSymbolWriter (filename));
+				}
+			}
+		}
+
+		static bool IsPortablePdb (FileStream stream)
+		{
+			const uint ppdb_signature = 0x424a5342;
+
+			var position = stream.Position;
+			try {
+				var reader = new BinaryReader (stream);
+				return reader.ReadUInt32 () == ppdb_signature;
+			} finally {
+				stream.Position = position;
 			}
 		}
 
@@ -158,6 +178,9 @@ namespace Pdb2Mdb {
 		}
 	}
 
+	public class PortablePdbNotSupportedException : Exception {
+	}
+
 	class Driver {
 
 		static void Main (string [] args)
@@ -170,25 +193,16 @@ namespace Pdb2Mdb {
 			if (!File.Exists (asm))
 				Usage ();
 
-			var assembly = AssemblyDefinition.ReadAssembly (asm);
-
-			var pdb = assembly.Name.Name + ".pdb";
-			pdb = Path.Combine (Path.GetDirectoryName (asm), pdb);
-
-			if (!File.Exists (pdb))
-				Usage ();
-
-			using (var stream = File.OpenRead (pdb)) {
-				Convert (assembly, stream, new MonoSymbolWriter (asm));
-			}
-		}
-
-		static void Convert (AssemblyDefinition assembly, Stream pdb, MonoSymbolWriter mdb)
-		{
 			try {
-				Converter.Convert (assembly, PdbFile.LoadFunctions (pdb, true), mdb);
-			} catch (Exception e) {
-				Error (e);
+				Converter.Convert (asm);
+			} catch (FileNotFoundException ex) {
+				Usage ();
+			} catch (PortablePdbNotSupportedException) {
+				Console.WriteLine ("Error: A portable PDB can't be converted to mdb.");
+				Environment.Exit (2);
+			}
+			catch (Exception ex) {
+				Error (ex);
 			}
 		}
 
@@ -204,6 +218,8 @@ namespace Pdb2Mdb {
 		{
 			Console.WriteLine ("Fatal error:");
 			Console.WriteLine (e);
+
+			Environment.Exit (1);
 		}
 	}
 }

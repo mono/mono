@@ -210,7 +210,7 @@ namespace System.Drawing {
 			0xFF316AC5,	/* 174 - MenuHighlight */
 		};
 
-#if !MONOTOUCH && !MONOMAC
+#if !MONOTOUCH && !MONOMAC && SUPPORTS_WINDOWS_COLORS
 		static KnownColors ()
 		{
 			if (GDIPlus.RunningOnWindows ()) {
@@ -269,21 +269,7 @@ namespace System.Drawing {
 
 		public static Color FromKnownColor (KnownColor kc)
 		{
-			Color c;
-			short n = (short)kc;
-			if ((n <= 0) || (n >= ArgbValues.Length)) {
-				// This is what it returns!
-				c = Color.FromArgb (0, 0, 0, 0);
-				c.state |= (short) Color.ColorType.Named;
-			} else {
-				c = new Color ();
-				c.state = (short) (Color.ColorType.ARGB | Color.ColorType.Known | Color.ColorType.Named);
-				if ((n < 27) || (n > 169))
-					c.state |= (short) Color.ColorType.System;
-				c.Value = ArgbValues [n];
-			}
-			c.knownColor = n;
-			return c;
+			return Color.FromKnownColor (kc);
 		}
 
 		public static string GetName (short kc)

@@ -37,8 +37,11 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Diagnostics.Contracts;
+using System.Security;
 using System.Security.Policy;
 using System.Security.Permissions;
+
+using Mono;
 
 namespace System.Reflection {
 
@@ -128,9 +131,11 @@ namespace System.Reflection {
 
                 if (!suppressSecurityChecks)
                 {
+#if MONO_FEATURE_CAS
 #pragma warning disable 618
                     new SecurityPermission(SecurityPermissionFlag.ControlEvidence).Demand();
 #pragma warning restore 618
+#endif
                 }
             }
 
@@ -149,6 +154,18 @@ namespace System.Reflection {
 			return LoadWithPartialNameInternal (an.ToString (), securityEvidence, ref stackMark);
 		}
 
+		// the security runtime requires access to the assemblyname (e.g. to get the strongname)
+		public override AssemblyName GetName (bool copiedName)
+		{
+
+#if !MOBILE
+			// CodeBase, which is restricted, will be copied into the AssemblyName object so...
+			if (SecurityManager.SecurityEnabled) {
+				var _ = CodeBase; // this will ensure the Demand is made
+			}
+#endif
+			return AssemblyName.Create (this, true);
+		}
 	}
 
 	[ComVisible (true)]

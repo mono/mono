@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
   <system.diagnostics>
     <switches>
       <!-- Boolean switches: any non-zero value is true -->
@@ -22,5 +20,4 @@
       <add name="trace-negative" value="-1"/>
     </switches>
   </system.diagnostics>
-</configuration>
 

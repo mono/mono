@@ -1,6 +1,7 @@
-./Assembly/AssemblyInfo.cs
+../../build/common/AssemblyRef.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
+./Assembly/AssemblyInfo.cs
 ./Mono.Math/BigInteger.cs
 ./Mono.Math.Prime/ConfidenceFactor.cs
 ./Mono.Math.Prime/PrimalityTests.cs
@@ -141,9 +142,6 @@
 ./Mono.Security.Interface/CipherSuiteCode.cs
 ./Mono.Security.Interface/ExchangeAlgorithmType.cs
 ./Mono.Security.Interface/HashAlgorithmType.cs
-./Mono.Security.Interface/IBufferOffsetSize.cs
-./Mono.Security.Interface/IMonoTlsEventSink.cs
-./Mono.Security.Interface/IMonoTlsContext.cs
 ./Mono.Security.Interface/IMonoSslStream.cs
 ./Mono.Security.Interface/MonoTlsConnectionInfo.cs
 ./Mono.Security.Interface/MonoTlsProvider.cs
@@ -153,8 +151,3 @@
 ./Mono.Security.Interface/TlsProtocolCode.cs
 ./Mono.Security.Interface/TlsProtocols.cs
 
-./Mono.Security.Interface/BufferOffsetSize.cs
-./Mono.Security.Interface/SecretParameters.cs
-./Mono.Security.Interface/SecureBuffer.cs
-./Mono.Security.Interface/TlsBuffer.cs
-./Mono.Security.Interface/TlsMultiBuffer.cs

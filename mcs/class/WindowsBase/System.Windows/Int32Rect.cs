@@ -26,8 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Converters;
 using System.Windows.Markup;
 
@@ -38,14 +38,14 @@ namespace System.Windows {
 	[ValueSerializer (typeof(Int32RectValueSerializer))]
 	public struct Int32Rect : IFormattable
 	{
-		int x, y, width, height;
+		int _x, _y, _width, _height;
 
 		public Int32Rect (int x, int y, int width, int height)
 		{
-			this.x = x;
-			this.y = y;
-			this.width = width;
-			this.height = height;
+			this._x = x;
+			this._y = y;
+			this._width = width;
+			this._height = height;
 		}
 
 		public static bool operator != (Int32Rect int32Rect1, Int32Rect int32Rect2)
@@ -63,35 +63,35 @@ namespace System.Windows {
 		}
 
 		public int Height {
-			get { return height; }
-			set { height = value; }
+			get { return _height; }
+			set { _height = value; }
 		}
 
 		public bool IsEmpty {
-			get { return width == 0 && height == 0; }
+			get { return _width == 0 && _height == 0; }
 		}
 
 		public int Width {
-			get { return width; }
-			set { width = value; }
+			get { return _width; }
+			set { _width = value; }
 		}
 
 		public int X {
-			get { return x; }
-			set { x = value; }
+			get { return _x; }
+			set { _x = value; }
 		}
 
 		public int Y {
-			get { return y; }
-			set { y = value; }
+			get { return _y; }
+			set { _y = value; }
 		}
 
 		public bool Equals (Int32Rect value)
 		{
-			return (x == value.x &&
-				y == value.y &&
-				width == value.width &&
-				height == value.height);
+			return (_x == value._x &&
+				_y == value._y &&
+				_width == value._width &&
+				_height == value._height);
 		}
 
 		public override bool Equals (object o)
@@ -109,29 +109,84 @@ namespace System.Windows {
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			unchecked
+			{
+				var hashCode = _x;
+				hashCode = (hashCode * 397) ^ _y;
+				hashCode = (hashCode * 397) ^ _width;
+				hashCode = (hashCode * 397) ^ _height;
+				return hashCode;
+			}
 		}
 
 		public static Int32Rect Parse (string source)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			Int32Rect value;
+			if (source.Trim () == "Empty")
+			{
+				value = Empty;
+			}
+			else
+			{
+				var tokenizer = new NumericListTokenizer (source, CultureInfo.InvariantCulture);
+				int x;
+				int y;
+				int width;
+				int height;
+				if (int.TryParse (tokenizer.GetNextToken (), NumberStyles.Integer, CultureInfo.InvariantCulture, out x)
+				    && int.TryParse (tokenizer.GetNextToken (), NumberStyles.Integer, CultureInfo.InvariantCulture, out y)
+				    && int.TryParse (tokenizer.GetNextToken (), NumberStyles.Integer, CultureInfo.InvariantCulture, out width)
+				    && int.TryParse (tokenizer.GetNextToken (), NumberStyles.Integer, CultureInfo.InvariantCulture, out height))
+				{
+					if (!tokenizer.HasNoMoreTokens ())
+					{
+						throw new InvalidOperationException ("Invalid Int32Rect format: " + source);
+					}
+					value = new Int32Rect (x, y, width, height);
+				}
+				else
+				{
+					throw new FormatException (string.Format ("Invalid Int32Rect format: {0}", source));
+				}
+			}
+			return value;
 		}
 
 		public override string ToString ()
 		{
-			if (IsEmpty)
-				return "Empty";
-			return String.Format ("{0},{1},{2},{3}", x, y, width, height);
+			return ToString (null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ToString (null, provider);
 		}
 
 		string IFormattable.ToString (string format, IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ToString (provider);
+		}
+
+		private string ToString (string format, IFormatProvider provider)
+		{
+			if (IsEmpty)
+				return "Empty";
+
+			if (provider == null)
+				provider = CultureInfo.CurrentCulture;
+
+			if (format == null)
+				format = string.Empty;
+
+			var separator = NumericListTokenizer.GetSeparator (provider);
+
+			var rectFormat = string.Format (
+				"{{0:{0}}}{1}{{1:{0}}}{1}{{2:{0}}}{1}{{3:{0}}}",
+				format, separator);
+			return string.Format (provider, rectFormat,
+				_x, _y, _width, _height);
 		}
 	}
 }

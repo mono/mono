@@ -31,6 +31,7 @@ using NUnit.Framework;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Linq;
 
 namespace MonoTests.System.Runtime.ExceptionServices
 {
@@ -38,6 +39,14 @@ namespace MonoTests.System.Runtime.ExceptionServices
 	[Category ("BitcodeNotWorking")]
 	public class ExceptionDispatchInfoTest
 	{
+		static string[] GetLines (string str)
+		{
+			var lines = str.Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+			// Ignore Metadata
+			return lines.Where (l => !l.StartsWith ("[")).ToArray ();
+		}
+
 		[Test]
 		public void Capture_InvalidArguments ()
 		{
@@ -57,6 +66,7 @@ namespace MonoTests.System.Runtime.ExceptionServices
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void Throw ()
 		{
 			Exception orig = null;
@@ -75,14 +85,15 @@ namespace MonoTests.System.Runtime.ExceptionServices
 				ed.Throw ();
 				Assert.Fail ("#0");
 			} catch (Exception e) {
-				var s = e.StackTrace.Split ('\n');
-				Assert.AreEqual (4, s.Length, "#1");
+				var s = GetLines (e.StackTrace);
+				Assert.AreEqual (3, s.Length, "#1");
 				Assert.AreEqual (orig, e, "#2");
 				Assert.AreNotEqual (orig_stack, e.StackTrace, "#3");
 			}
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ThrowWithEmptyFrames ()
 		{
 			var edi = ExceptionDispatchInfo.Capture (new OperationCanceledException ());
@@ -90,12 +101,14 @@ namespace MonoTests.System.Runtime.ExceptionServices
 				edi.Throw ();
 				Assert.Fail ("#0");
 			} catch (OperationCanceledException e) {
-				Assert.IsFalse (e.StackTrace.Contains ("---"));
-				Assert.AreEqual (2, e.StackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length);
+				Assert.IsTrue (!e.StackTrace.Contains("---"));
+				var lines = GetLines (e.StackTrace);
+				Assert.AreEqual (1, lines.Length, "#1");
 			}
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void LastThrowWins ()
 		{
 			Exception e;
@@ -120,13 +133,14 @@ namespace MonoTests.System.Runtime.ExceptionServices
 			try {
 				edi.Throw ();
 			} catch (Exception ex) {
-				var split = ex.StackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-				Assert.AreEqual (4, split.Length, "#1");
-				Assert.IsTrue (split [1].Contains ("---"), "#2");
+				var lines = GetLines (ex.StackTrace);
+				Assert.AreEqual (3, lines.Length, "#1");
+				Assert.IsTrue (lines [1].Contains ("---"), "#2");
 			}
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ThrowMultipleCaptures ()
 		{
 			Exception e;
@@ -147,14 +161,15 @@ namespace MonoTests.System.Runtime.ExceptionServices
 			try {
 				edi.Throw ();
 			} catch (Exception ex) {
-				var split = ex.StackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-				Assert.AreEqual (7, split.Length, "#1");
-				Assert.IsTrue (split [1].Contains ("---"), "#2");
-				Assert.IsTrue (split [4].Contains ("---"), "#3");
+				var lines = GetLines (ex.StackTrace);
+				Assert.AreEqual (5, lines.Length, "#1");
+				Assert.IsTrue (lines [1].Contains ("---"), "#2");
+				Assert.IsTrue (lines [3].Contains ("---"), "#3");
 			}
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void StackTraceUserCopy ()
 		{
 			try {
@@ -166,9 +181,9 @@ namespace MonoTests.System.Runtime.ExceptionServices
 				}
 			} catch (Exception ex) {
 				var st = new StackTrace (ex, true);
-				var split = st.ToString ().Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-				Assert.AreEqual (4, split.Length, "#1");
-				Assert.IsTrue (split [1].Contains ("---"), "#2");
+				var lines = GetLines (st.ToString ());
+				Assert.AreEqual (3, lines.Length, "#1");
+				Assert.IsTrue (lines [1].Contains ("---"), "#2");
 			}
 		}
 	}

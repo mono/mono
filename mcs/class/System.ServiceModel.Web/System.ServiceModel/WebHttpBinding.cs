@@ -31,7 +31,7 @@ using System.Linq;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Xml;
-#if !NET_2_1
+#if !MOBILE
 using System.Configuration;
 using System.ServiceModel.Configuration;
 #endif
@@ -45,14 +45,14 @@ namespace System.ServiceModel
 		{
 		}
 
-		public WebHttpBinding (WebHttpSecurityMode mode)
+		public WebHttpBinding (WebHttpSecurityMode securityMode)
 		{
-			Initialize (mode);
+			Initialize (securityMode);
 		}
 
 		public WebHttpBinding (string configurationName)
 		{
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 			BindingsSection bindingsSection = ConfigUtil.BindingsSection;
 			WebHttpBindingElement el = (WebHttpBindingElement) bindingsSection ["webHttpBinding"].ConfiguredBindings.FirstOrDefault (c => c.Name == configurationName);
 			if (el != null) {
@@ -81,14 +81,13 @@ namespace System.ServiceModel
 		WebHttpSecurity security = new WebHttpSecurity ();
 		HttpTransportBindingElement t;
 		// This can be changed only using <synchronousReceive> configuration element.
-		bool receive_synchronously;
 		WebMessageEncodingBindingElement msgenc = new WebMessageEncodingBindingElement ();
 
 		public EnvelopeVersion EnvelopeVersion {
 			get { return EnvelopeVersion.None; }
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		[DefaultValue (false)]
 		public bool AllowCookies {
 			get { return t.AllowCookies; }
@@ -185,7 +184,7 @@ namespace System.ServiceModel
 		}
 
 		bool IBindingRuntimePreferences.ReceiveSynchronously {
-			get { return receive_synchronously; }
+			get { return false; }
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

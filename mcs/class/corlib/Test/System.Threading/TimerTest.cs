@@ -19,6 +19,7 @@ namespace MonoTests.System.Threading {
 		// this bucket is used to avoid non-theadlocal issues
 		class Bucket {
 			public int count;
+			public ManualResetEventSlim mre = new ManualResetEventSlim (false); 
 		}
 
 		[SetUp]
@@ -36,51 +37,22 @@ namespace MonoTests.System.Threading {
 		{
 		}
 
+		private void Callback2 (object foo)
+		{
+			Bucket b = foo as Bucket;
+			Interlocked.Increment (ref b.count);
+			b.mre.Set ();
+		}
+
+
 		[Test]
 		public void TestDueTime ()
 		{
 			Bucket bucket = new Bucket();
 
-			using (Timer t = new Timer (o => Callback (o), bucket, 200, Timeout.Infinite)) {
-				Thread.Sleep (50);
-				Assert.AreEqual (0, bucket.count, "#1");
-				Thread.Sleep (200);
-				Assert.AreEqual (1, bucket.count, "#2");
-				Thread.Sleep (500);
-				Assert.AreEqual (1, bucket.count, "#3");
-				t.Change (10, 10);
-				Thread.Sleep (1000);
-				Assert.IsTrue(bucket.count > 20, "#4");
-			}
-		}
-
-		[Test]
-		public void TestChange ()
-		{
-			Bucket bucket = new Bucket();
-
-			using (Timer t = new Timer (o => Callback (o), bucket, 10, 10)) {
-				Thread.Sleep (500);
-				int c = bucket.count;
-				Assert.IsTrue (c > 20, "#1 " + c.ToString ());
-				t.Change (100, 100);
-				c = bucket.count;
-				Thread.Sleep (500);
-				Assert.IsTrue (bucket.count <= c + 20, "#2 " + c.ToString ());
-			}
-		}
-
-		[Test]
-		public void TestZeroDueTime ()
-		{
-			Bucket bucket = new Bucket();
-
-			using (Timer t = new Timer (o => Callback (o), bucket, 0, Timeout.Infinite)) {
-				Thread.Sleep (100);
+			using (Timer t = new Timer (o => Callback2 (o), bucket, 200, Timeout.Infinite)) {
+				Assert.IsTrue (bucket.mre.Wait (5000), "#-1");
 				Assert.AreEqual (1, bucket.count, "#1");
-				t.Change (0, Timeout.Infinite);
-				Thread.Sleep (100);
-				Assert.AreEqual (2, bucket.count, "#2");
 			}
 		}
 
@@ -89,15 +61,44 @@ namespace MonoTests.System.Threading {
 		{	
 			Bucket bucket = new Bucket();
 
-			using (Timer t = new Timer (o => Callback (o), bucket, 10, 10)) {
-				Thread.Sleep (200);
+			using (Timer t = new Timer (o => Callback2 (o), bucket, 10, 10)) {
+				Assert.IsTrue (bucket.mre.Wait (5000), "#-1");
 			}
-
-			Thread.Sleep (20);
+			//If the callback is called after dispose, it will NRE and be reported
+			bucket.mre = null;
 			int c = bucket.count;
-			Assert.IsTrue (bucket.count > 5, "#1");
-			Thread.Sleep (200);
-			Assert.AreEqual (c, bucket.count, "#2");
+			Assert.IsTrue (c > 0, "#1");
+		}
+
+		[Test]
+		public void TestChange ()
+		{
+			Bucket bucket = new Bucket();
+
+			using (Timer t = new Timer (o => Callback2 (o), bucket, 10, 10)) {
+				Assert.IsTrue (bucket.mre.Wait (5000), "#-1");
+				int c = bucket.count;
+				Assert.IsTrue (c > 0, "#1 " + c);
+				t.Change (100000, 1000000);
+				c = bucket.count;
+				Thread.Sleep (500);
+				Assert.IsTrue (bucket.count <= c + 1, "#2 " + c);
+			}
+		}
+
+		[Test]
+		public void TestZeroDueTime ()
+		{
+			Bucket bucket = new Bucket();
+
+			using (Timer t = new Timer (o => Callback2 (o), bucket, 0, Timeout.Infinite)) {
+				Assert.IsTrue (bucket.mre.Wait (5000), "#-1");
+				bucket.mre.Reset ();
+				Assert.AreEqual (1, bucket.count, "#1");
+				t.Change (0, Timeout.Infinite);
+				Assert.IsTrue (bucket.mre.Wait (5000), "#1.5");
+				Assert.AreEqual (2, bucket.count, "#2");
+			}
 		}
 
 		[Test] // bug #320950
@@ -323,6 +324,15 @@ namespace MonoTests.System.Threading {
 			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				t.Change (new TimeSpan (UInt32.MaxValue), new TimeSpan (UInt32.MaxValue));
 			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Change_After_Dispose ()
+		{
+			var t = new Timer (o => DoNothing (o), null, 0, 0);
+			t.Dispose ();
+			t.Change (1, 1);
 		}
 	}
 }

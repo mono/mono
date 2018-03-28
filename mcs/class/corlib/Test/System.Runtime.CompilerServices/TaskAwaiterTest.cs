@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_5
 
 using System;
 using System.Threading;
@@ -248,8 +247,8 @@ namespace MonoTests.System.Runtime.CompilerServices
 			return res.Result;
 		}
 
-#if !MOBILE_STATIC
 		[Test]
+		[Ignore ("Incompatible with nunitlite")]
 		public void FinishedTaskOnCompleted ()
 		{
 			var mres = new ManualResetEvent (false);
@@ -269,11 +268,9 @@ namespace MonoTests.System.Runtime.CompilerServices
 
 			mres.Set ();
 			// this will only terminate correctly if the test was not executed from the main thread
-			// e.g. Touch.Unit defaults to run tests on the main thread and this will return false
+			// e.g. nunitlite/Touch.Unit defaults to run tests on the main thread and this will return false
 			Assert.AreEqual (Thread.CurrentThread.IsBackground, mres2.WaitOne (2000), "#2");;
 		}
-
-#endif
 
 		[Test]
 		public void CompletionOnSameCustomSynchronizationContext ()
@@ -396,4 +393,3 @@ namespace MonoTests.System.Runtime.CompilerServices
 	}
 }
 
-#endif

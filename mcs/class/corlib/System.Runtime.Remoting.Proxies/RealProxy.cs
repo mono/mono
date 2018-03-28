@@ -49,8 +49,84 @@ namespace System.Runtime.Remoting.Proxies
 	[StructLayout (LayoutKind.Sequential)]
 	internal class TransparentProxy {
 		public RealProxy _rp;
-		IntPtr _class;
+		Mono.RuntimeRemoteClassHandle _class;
 		bool _custom_type_info;
+
+		unsafe internal RuntimeType GetProxyType () {
+			RuntimeTypeHandle h = _class.ProxyClass.GetTypeHandle ();
+			return (RuntimeType)Type.GetTypeFromHandle (h);
+		}
+
+		bool IsContextBoundObject {
+			get { return GetProxyType ().IsContextful; }
+		}
+
+		Context TargetContext {
+			get { return _rp._targetContext; }
+		}
+
+		bool InCurrentContext () {
+			return IsContextBoundObject && Object.ReferenceEquals (TargetContext, Thread.CurrentContext);
+		}
+
+		internal object LoadRemoteFieldNew (IntPtr classPtr, IntPtr fieldPtr) {
+			Mono.RuntimeClassHandle classHandle = new Mono.RuntimeClassHandle (classPtr);
+			RuntimeFieldHandle fieldHandle = new RuntimeFieldHandle (fieldPtr);
+			RuntimeTypeHandle typeHandle = classHandle.GetTypeHandle ();
+
+			FieldInfo field = FieldInfo.GetFieldFromHandle (fieldHandle);
+
+			if (InCurrentContext ()) {
+				object o = _rp._server;
+				return field.GetValue(o);
+			}
+
+			string typeName = Type.GetTypeFromHandle(typeHandle).FullName;
+			string fieldName = field.Name;
+			object[] inArgs = new object[] { typeName,
+							  fieldName };
+			object[] outArgsMsg = new object[1];
+			MethodInfo minfo = typeof(object).GetMethod("FieldGetter", BindingFlags.NonPublic | BindingFlags.Instance);
+			if (minfo == null)
+				throw new MissingMethodException ("System.Object", "FieldGetter");
+			MonoMethodMessage msg = new MonoMethodMessage (minfo, inArgs, outArgsMsg);
+			object[] outArgs;
+			Exception exc;
+			RealProxy.PrivateInvoke (_rp, msg, out exc, out outArgs);
+			if (exc != null)
+				throw exc;
+			return outArgs[0];
+		}
+
+		internal void StoreRemoteField (IntPtr classPtr, IntPtr fieldPtr, object arg) {
+			Mono.RuntimeClassHandle classHandle = new Mono.RuntimeClassHandle (classPtr);
+			RuntimeFieldHandle fieldHandle = new RuntimeFieldHandle (fieldPtr);
+			RuntimeTypeHandle typeHandle = classHandle.GetTypeHandle ();
+			FieldInfo field = FieldInfo.GetFieldFromHandle (fieldHandle);
+
+			if (InCurrentContext ()) {
+				object o = _rp._server;
+				field.SetValue (o, arg);
+				return;
+			}
+
+			string typeName = Type.GetTypeFromHandle (typeHandle).FullName;
+			string fieldName = field.Name;
+			object [] inArgs = new object[] { typeName,
+							  fieldName,
+							  arg };
+			MethodInfo minfo = typeof(object).GetMethod ("FieldSetter", BindingFlags.NonPublic | BindingFlags.Instance);
+			if (minfo == null)
+				throw new MissingMethodException ("System.Object", "FieldSetter");
+
+			MonoMethodMessage msg = new MonoMethodMessage (minfo, inArgs, null);
+			object [] outArgs;
+			Exception exc;
+			RealProxy.PrivateInvoke (_rp, msg, out exc, out outArgs);
+			if (exc != null)
+				throw exc;
+		}
+
 	}
 #pragma warning restore 169, 649
 	
@@ -66,7 +142,7 @@ namespace System.Runtime.Remoting.Proxies
 		#region Sync with object-internals.h
 		Type class_to_proxy;
 		internal Context _targetContext;
-		MarshalByRefObject _server;
+		internal MarshalByRefObject _server;
 		int _targetDomainId = -1;
 		internal string _targetUri;
 		internal Identity _objectIdentity;

@@ -29,11 +29,10 @@
 
 #if CONFIGURATION_DEP
 
-extern alias PrebuiltSystem;
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
@@ -41,8 +40,6 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
-
-using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
 
 namespace System.Configuration
 {
@@ -822,6 +819,11 @@ namespace System.Configuration
 
 		public void Reset (SettingsContext context)
 		{
+			if (values == null) {
+				SettingsPropertyCollection coll = new SettingsPropertyCollection ();
+				GetPropertyValues (context, coll);
+			}
+
 			if (values != null) {
 				foreach (SettingsPropertyValue propertyValue in values) {
 					// Can't use propertyValue.Property.DefaultValue

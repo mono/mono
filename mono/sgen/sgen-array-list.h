@@ -1,5 +1,6 @@
-/*
- * sgen-array-list.h: A pointer array that doesn't use reallocs.
+/**
+ * \file
+ * A pointer array that doesn't use reallocs.
  *
  * Copyright (C) 2016 Xamarin Inc
  *
@@ -129,8 +130,11 @@ sgen_array_list_get_slot (SgenArrayList *array, guint32 index)
 
 #define SGEN_ARRAY_LIST_END_FOREACH_SLOT_RANGE	} }
 
+guint32 sgen_array_list_alloc_block (SgenArrayList *array, guint32 slots_to_add);
 guint32 sgen_array_list_add (SgenArrayList *array, gpointer ptr, int data, gboolean increase_size_before_set);
 guint32 sgen_array_list_find (SgenArrayList *array, gpointer ptr);
+gboolean sgen_array_list_default_cas_setter (volatile gpointer *slot, gpointer ptr, int data);
+gboolean sgen_array_list_default_is_slot_set (volatile gpointer *slot);
 void sgen_array_list_remove_nulls (SgenArrayList *array);
 
 #endif

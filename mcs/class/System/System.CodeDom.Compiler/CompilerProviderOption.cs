@@ -63,9 +63,7 @@ namespace System.CodeDom.Compiler
 			set { base [valueProp] = value; }
 		}
 
-		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
-		}
+		protected override ConfigurationPropertyCollection Properties => properties;
 	}
 }
 #endif

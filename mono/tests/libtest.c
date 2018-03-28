@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <time.h>
 #include <math.h>
+#include <setjmp.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -34,7 +35,7 @@ typedef int (STDCALL *SimpleDelegate) (int a);
 #if defined(WIN32) && defined (_MSC_VER)
 #define LIBTEST_API __declspec(dllexport)
 #elif defined(__GNUC__)
-#define LIBTEST_API  __attribute__ ((visibility ("default")))
+#define LIBTEST_API  __attribute__ ((__visibility__ ("default")))
 #else
 #define LIBTEST_API
 #endif
@@ -278,6 +279,25 @@ mono_return_nested_float (void)
 	f.fi.f3 = 3.0;
 	f.f4 = 4.0;
 	return f;
+}
+
+struct Scalar4 {
+	double val[4];
+};
+
+struct Rect {
+	int x;
+	int y;
+	int width;
+	int height;
+};
+
+LIBTEST_API char * STDCALL
+mono_return_struct_4_double (void *ptr, struct Rect rect, struct Scalar4 sc4, int a, int b, int c)
+{
+	char *buffer = (char *) malloc (1024 * sizeof (char));
+	sprintf (buffer, "sc4 = {%.1f, %.1f, %.1f, %.1f }, a=%x, b=%x, c=%x\n", (float) sc4.val [0], (float) sc4.val [1], (float) sc4.val [2], (float) sc4.val [3], a, b, c);
+	return buffer;
 }
 
 LIBTEST_API int STDCALL  
@@ -889,12 +909,12 @@ mono_test_marshal_return_delegate (SimpleDelegate delegate)
 	return delegate;
 }
 
-typedef int DelegateByrefDelegate (void *);
+typedef int (STDCALL *DelegateByrefDelegate) (void *);
 
 LIBTEST_API int STDCALL
 mono_test_marshal_delegate_ref_delegate (DelegateByrefDelegate del)
 {
-	int (*ptr) (int i);
+	int (STDCALL *ptr) (int i);
 
 	del (&ptr);
 
@@ -1132,7 +1152,7 @@ mono_test_marshal_stringbuilder (char *s, int n)
 
 	if (strcmp (s, "ABCD") != 0)
 		return 1;
-	strncpy(s, m, n);
+	memcpy(s, m, n);
 	s [n] = '\0';
 	return 0;
 }
@@ -1158,7 +1178,7 @@ mono_test_marshal_stringbuilder_default (char *s, int n)
 {
 	const char m[] = "This is my message.  Isn't it nice?";
 
-	strncpy(s, m, n);
+	memcpy(s, m, n);
 	s [n] = '\0';
 	return 0;
 }
@@ -1228,14 +1248,29 @@ mono_test_marshal_stringbuilder_ref (char **s)
 	return 0;
 }
 
+#ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wc++-compat"
+#endif
+
+/*
+* Standard C and C++ doesn't allow empty structs, empty structs will always have a size of 1 byte.
+* GCC have an extension to allow empty structs, https://gcc.gnu.org/onlinedocs/gcc/Empty-Structures.html.
+* This cause a little dilemma since runtime build using none GCC compiler will not be compatible with
+* GCC build C libraries and the other way around. On platforms where empty structs has size of 1 byte
+* it must be represented in call and cannot be dropped. On Windows x64 structs will always be represented in the call
+* meaning that an empty struct must have a representation in the callee in order to correctly follow the ABI used by the
+* C/C++ standard and the runtime.
+*/
 typedef struct {
-#ifndef __GNUC__
+#if !defined(__GNUC__) || defined(TARGET_WIN32)
     char a;
 #endif
 } EmptyStruct;
+
+#ifdef __GNUC__
 #pragma GCC diagnostic pop
+#endif
 
 LIBTEST_API int STDCALL 
 mono_test_marshal_empty_string_array (char **array)
@@ -1290,10 +1325,10 @@ mono_test_marshal_stringbuilder_array (char **array)
 LIBTEST_API int STDCALL 
 mono_test_marshal_unicode_string_array (gunichar2 **array, char **array2)
 {
-	GError *error = NULL;
+	GError *gerror = NULL;
 	char *s;
 	
-	s = g_utf16_to_utf8 (array [0], -1, NULL, NULL, &error);
+	s = g_utf16_to_utf8 (array [0], -1, NULL, NULL, &gerror);
 	if (strcmp (s, "ABC")) {
 		g_free (s);
 		return 1;
@@ -1301,7 +1336,7 @@ mono_test_marshal_unicode_string_array (gunichar2 **array, char **array2)
 	else
 		g_free (s);
 
-	s = g_utf16_to_utf8 (array [1], -1, NULL, NULL, &error);
+	s = g_utf16_to_utf8 (array [1], -1, NULL, NULL, &gerror);
 	if (strcmp (s, "DEF")) {
 		g_free (s);
 		return 2;
@@ -1339,7 +1374,12 @@ mono_test_return_empty_struct (int a)
 {
 	EmptyStruct s;
 
+	memset (&s, 0, sizeof (s));
+
+#if !(defined(__i386__) && defined(__clang__))
+	/* https://bugzilla.xamarin.com/show_bug.cgi?id=58901 */
 	g_assert (a == 42);
+#endif
 
 	return s;
 }
@@ -1749,10 +1789,10 @@ mono_test_asany (void *ptr, int what)
 			return 1;
 	}
 	case 4: {
-		GError *error = NULL;
+		GError *gerror = NULL;
 		char *s;
 
-		s = g_utf16_to_utf8 ((const gunichar2 *)ptr, -1, NULL, NULL, &error);
+		s = g_utf16_to_utf8 ((const gunichar2 *)ptr, -1, NULL, NULL, &gerror);
 
 		if (!s)
 			return 1;
@@ -3320,6 +3360,7 @@ typedef struct
 	int (STDCALL *DoubleIn)(MonoComObject* pUnk, double a);
 	int (STDCALL *ITestIn)(MonoComObject* pUnk, MonoComObject* pUnk2);
 	int (STDCALL *ITestOut)(MonoComObject* pUnk, MonoComObject* *ppUnk);
+	int (STDCALL *Return22NoICall)(MonoComObject* pUnk);
 } MonoIUnknown;
 
 struct MonoComObject
@@ -3436,6 +3477,13 @@ ITestOut(MonoComObject* pUnk, MonoComObject* *ppUnk)
 	return S_OK;
 }
 
+LIBTEST_API int STDCALL
+Return22NoICall(MonoComObject* pUnk)
+{
+	return 22;
+}
+
+
 static void create_com_object (MonoComObject** pOut);
 
 LIBTEST_API int STDCALL 
@@ -3467,6 +3515,7 @@ static void create_com_object (MonoComObject** pOut)
 	(*pOut)->vtbl->ITestIn = ITestIn;
 	(*pOut)->vtbl->ITestOut = ITestOut;
 	(*pOut)->vtbl->get_ITest = get_ITest;
+	(*pOut)->vtbl->Return22NoICall = Return22NoICall;
 }
 
 static MonoComObject* same_object = NULL;
@@ -3555,12 +3604,34 @@ mono_test_marshal_ccw_itest (MonoComObject *pUnk)
 	return 0;
 }
 
+// Xamarin-47560
+LIBTEST_API int STDCALL
+mono_test_marshal_array_ccw_itest (int count, MonoComObject ** ppUnk)
+{
+	int hr = 0;
+
+	if (!ppUnk)
+		return 1;
+
+	if (count < 1)
+		return 2;
+
+	if (!ppUnk[0])
+		return 3;
+
+	hr = ppUnk[0]->vtbl->SByteIn (ppUnk[0], -100);
+	if (hr != 0)
+		return 4;
+
+	return 0;
+}
+
 /*
  * mono_method_get_unmanaged_thunk tests
  */
 
 #if defined(__GNUC__) && ((defined(__i386__) && (defined(__linux__) || defined (__APPLE__)) || defined (__FreeBSD__) || defined(__OpenBSD__)) || (defined(__ppc__) && defined(__APPLE__)))
-#define ALIGN(size) __attribute__ ((aligned(size)))
+#define ALIGN(size) __attribute__ ((__aligned__(size)))
 #else
 #define ALIGN(size)
 #endif
@@ -5449,6 +5520,38 @@ mono_test_marshal_thread_attach (SimpleDelegate del)
 #endif
 }
 
+typedef struct {
+	char arr [4 * 1024];
+} LargeStruct;
+
+typedef int (STDCALL *LargeStructDelegate) (LargeStruct *s);
+
+static void
+call_managed_large_vt (gpointer arg)
+{
+	LargeStructDelegate del = (LargeStructDelegate)arg;
+	LargeStruct s;
+
+	call_managed_res = del (&s);
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_thread_attach_large_vt (SimpleDelegate del)
+{
+#ifdef WIN32
+	return 43;
+#else
+	int res;
+	pthread_t t;
+
+	res = pthread_create (&t, NULL, (gpointer (*)(gpointer))call_managed_large_vt, del);
+	g_assert (res == 0);
+	pthread_join (t, NULL);
+
+	return call_managed_res;
+#endif
+}
+
 typedef int (STDCALL *Callback) (void);
 
 static Callback callback;
@@ -7201,5 +7304,286 @@ mono_return_double_array4 (double_array4 sa4, int addend) {
 	}
 	sa4.f1[0]+=addend; sa4.f1[1]+=addend; sa4.f1[2]+=addend; sa4.f1[3]+=addend; 
 	return sa4;
+}
+
+typedef struct {
+	int array [3];
+} FixedArrayStruct;
+
+LIBTEST_API int STDCALL
+mono_test_marshal_fixed_array (FixedArrayStruct s)
+{
+	return s.array [0] + s.array [1] + s.array [2];
+}
+
+typedef struct {
+	char array [16];
+	char c;
+} FixedBufferChar;
+
+LIBTEST_API int STDCALL
+mono_test_marshal_fixed_buffer_char (FixedBufferChar *s)
+{
+	if (!(s->array [0] == 'A' && s->array [1] == 'B' && s->array [2] == 'C' && s->c == 'D'))
+		return 1;
+	s->array [0] = 'E';
+	s->array [1] = 'F';
+	s->c = 'G';
+	return 0;
+}
+
+typedef struct {
+	short array [16];
+	short c;
+} FixedBufferUnicode;
+
+LIBTEST_API int STDCALL
+mono_test_marshal_fixed_buffer_unicode (FixedBufferUnicode *s)
+{
+	if (!(s->array [0] == 'A' && s->array [1] == 'B' && s->array [2] == 'C' && s->c == 'D'))
+		return 1;
+	s->array [0] = 'E';
+	s->array [1] = 'F';
+	s->c = 'G';
+	return 0;
+}
+
+const int NSTRINGS = 6;
+//test strings
+const char  *utf8Strings[] = {  
+                                "Managed",
+                                 "Sîne klâwen durh die wolken sint geslagen" ,
+                                 "काचं शक्नोम्यत्तुम् । नोपहिनस्ति माम्",
+                                 "我能吞下玻璃而不伤身体",
+                                 "ღმერთსი შემვედრე,შემვედრე, ნუთუ კვლა დამხსნას შემვედრე,სოფლისა შემვედრე, შემვედრე,შემვედრე,შემვედრე,შრომასა, ცეცხლს, წყალსა და მიწასა, ჰაერთა თანა მრომასა; მომცნეს ფრთენი და აღვფრინდე, მივჰხვდე მას ჩემსა ნდომასა, დღისით და ღამით ვჰხედვიდე მზისა ელვათა კრთომაასაშემვედრე,შემვედრე,",
+                                 "Τη γλώσσα μου έδωσαν ελληνική",
+"\0"
+};
+
+LIBTEST_API char *
+build_return_string(const char* pReturn)
+{
+	char *ret = 0;
+	if (pReturn == 0 || *pReturn == 0)
+		return ret;
+
+	size_t strLength = strlen(pReturn);
+	ret = (char *)(marshal_alloc (sizeof(char)* (strLength + 1)));
+	memcpy(ret, pReturn, strLength);
+	ret [strLength] = '\0';
+	return ret;
+}
+
+LIBTEST_API char *
+StringParameterInOut(/*[In,Out]*/ char *s, int index)
+{
+	// return a copy
+	return build_return_string(s);
+}
+
+LIBTEST_API void
+StringParameterRefOut(/*out*/ char **s, int index)
+{
+	char *pszTextutf8 = (char*)utf8Strings[index];
+	size_t strLength = strlen(pszTextutf8);
+	*s = (char *)(marshal_alloc (sizeof(char)* (strLength + 1)));
+	memcpy(*s, pszTextutf8, strLength);
+	(*s)[strLength] = '\0';
+}
+
+LIBTEST_API void
+StringParameterRef(/*ref*/ char **s, int index)
+{
+    char *pszTextutf8 = (char*)utf8Strings[index];
+    size_t strLength = strlen(pszTextutf8);
+    // do byte by byte validation of in string
+    size_t szLen = strlen(*s);
+    for (size_t i = 0; i < szLen; i++)
+    {
+        if ((*s)[i] != pszTextutf8[i])
+        {
+            printf("[in] managed string do not match native string\n");
+	    abort ();
+        }
+    }
+
+    if (*s)
+    {
+       marshal_free (*s);
+    }
+    // overwrite the orginal 
+    *s = (char *)(marshal_alloc (sizeof(char)* (strLength + 1)));
+    memcpy(*s, pszTextutf8, strLength);
+    (*s)[strLength] = '\0';
+}
+
+LIBTEST_API void
+StringBuilderParameterInOut(/*[In,Out] StringBuilder*/ char *s, int index)
+{
+    // if string.empty 
+    if (s == 0 || *s == 0)
+        return;
+
+    char *pszTextutf8 = (char*)utf8Strings[index];
+
+    // do byte by byte validation of in string
+    size_t szLen = strlen(s);
+    for (size_t i = 0; i < szLen; i++) 
+    {
+        if (s[i] != pszTextutf8[i])
+        {
+            printf("[in] managed string do not match native string\n");
+	    abort ();
+        }
+    }  
+
+    // modify the string inplace 
+    size_t outLen = strlen(pszTextutf8);
+    for (size_t i = 0; i < outLen; i++) {
+        s[i] = pszTextutf8[i];
+    }
+    s[outLen] = '\0';
+}
+
+//out string builder
+LIBTEST_API void
+StringBuilderParameterOut(/*[Out] StringBuilder*/ char *s, int index)
+{
+    char *pszTextutf8 = (char*)utf8Strings[index];
+
+    printf ("SBPO: Receiving %s\n", s);
+    // modify the string inplace 
+    size_t outLen = strlen(pszTextutf8);
+    for (size_t i = 0; i < outLen; i++) {
+        s[i] = pszTextutf8[i];
+    }
+    s[outLen] = '\0';
+}
+
+LIBTEST_API char *
+StringParameterOut(/*[Out]*/ char *s, int index)
+{
+    // return a copy
+    return build_return_string(s);
+}
+
+// Utf8 field
+typedef struct FieldWithUtf8
+{
+    char *pFirst;
+    int index;
+}FieldWithUtf8;
+
+//utf8 struct field
+LIBTEST_API void
+TestStructWithUtf8Field(struct FieldWithUtf8 fieldStruct)
+{
+    char *pszManagedutf8 = fieldStruct.pFirst;
+    int stringIndex = fieldStruct.index;
+    char *pszNative = 0;
+    size_t outLen = 0;
+
+    if (pszManagedutf8 == 0 || *pszManagedutf8 == 0)
+        return;
+
+    pszNative = (char*)utf8Strings[stringIndex];
+
+    outLen = strlen(pszNative);
+    // do byte by byte comparision
+    for (size_t i = 0; i < outLen; i++) 
+    {
+        if (pszNative[i] != pszManagedutf8[i]) 
+        {
+            printf("Native and managed string do not match.\n");
+	    abort ();
+        }
+    }
+}
+
+typedef void (* Callback2)(char *text, int index);
+
+LIBTEST_API void
+Utf8DelegateAsParameter(Callback2 managedCallback)
+{
+    for (int i = 0; i < NSTRINGS; ++i) 
+    {
+        char *pszNative = 0;
+        pszNative = (char*)utf8Strings[i];
+        managedCallback(pszNative, i);
+    }
+}
+
+
+LIBTEST_API char*
+StringBuilderParameterReturn(int index)
+{
+    char *pszTextutf8 = (char*)utf8Strings[index];
+    size_t strLength = strlen(pszTextutf8);
+    char * ret = (char *)(marshal_alloc (sizeof(char)* (strLength + 1)));
+    memcpy(ret, pszTextutf8, strLength);
+    ret[strLength] = '\0';
+
+    return  ret;
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_pointer_array (int *arr[])
+{
+	int i;
+
+	for (i = 0; i < 10; ++i) {
+		if (*arr [i] != -1)
+			return 1;
+	}
+	return 0;
+}
+
+#ifndef WIN32
+
+typedef void (*NativeToManagedExceptionRethrowFunc) (void);
+
+void *mono_test_native_to_managed_exception_rethrow_thread (void *arg)
+{
+	NativeToManagedExceptionRethrowFunc func = (NativeToManagedExceptionRethrowFunc) arg;
+	func ();
+	return NULL;
+}
+
+LIBTEST_API void STDCALL
+mono_test_native_to_managed_exception_rethrow (NativeToManagedExceptionRethrowFunc func)
+{
+	pthread_t t;
+	pthread_create (&t, NULL, mono_test_native_to_managed_exception_rethrow_thread, func);
+	pthread_join (t, NULL);
+}
+#endif
+
+typedef void (*VoidVoidCallback) (void);
+typedef void (*MonoFtnPtrEHCallback) (guint32 gchandle);
+
+static jmp_buf test_jmp_buf;
+static guint32 test_gchandle;
+
+static void
+mono_test_longjmp_callback (guint32 gchandle)
+{
+	test_gchandle = gchandle;
+	longjmp (test_jmp_buf, 1);
+}
+
+LIBTEST_API void STDCALL
+mono_test_setjmp_and_call (VoidVoidCallback managedCallback, intptr_t *out_handle)
+{
+	void (*mono_install_ftnptr_eh_callback) (MonoFtnPtrEHCallback) =
+		(void (*) (MonoFtnPtrEHCallback)) (lookup_mono_symbol ("mono_install_ftnptr_eh_callback"));
+	if (setjmp (test_jmp_buf) == 0) {
+		*out_handle = 0;
+		mono_install_ftnptr_eh_callback (mono_test_longjmp_callback);
+		managedCallback ();
+		*out_handle = 0; /* Do not expect to return here */
+	} else {
+		mono_install_ftnptr_eh_callback (NULL);
+		*out_handle = test_gchandle;
+	}
 }
 

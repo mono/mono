@@ -364,8 +364,11 @@ namespace System.ServiceModel.Dispatcher
 
 			public void Start ()
 			{
-				if (loop_thread == null)
+				if (loop_thread == null) {
 					loop_thread = new Thread (new ThreadStart (Loop));
+					loop_thread.IsBackground = true;
+				}
+
 				loop_thread.Start ();
 			}
 
@@ -411,7 +414,7 @@ namespace System.ServiceModel.Dispatcher
 				if (loop_thread == null)
 					return;
 
-				close_started = DateTime.Now;
+				close_started = DateTime.UtcNow;
 				close_timeout = timeout;
 				loop = false;
 				creator_handle.Set ();
@@ -425,8 +428,10 @@ namespace System.ServiceModel.Dispatcher
 					Logger.Warning (String.Format ("Channel listener '{0}' is not closed. Aborting.", owner.Listener.GetType ()));
 					owner.Listener.Abort ();
 				}
-				if (loop_thread != null && loop_thread.IsAlive)
-					loop_thread.Abort ();
+				if (loop_thread != null && loop_thread.IsAlive) {
+					if (!loop_thread.Join (500))
+						loop_thread.Abort ();
+				}
 				loop_thread = null;
 			}
 
@@ -462,7 +467,7 @@ namespace System.ServiceModel.Dispatcher
 					}
 					else {
 						try {
-							ch.Close (close_timeout - (DateTime.Now - close_started));
+							ch.Close (close_timeout - (DateTime.UtcNow - close_started));
 						} catch (Exception ex) {
 							// FIXME: log it.
 							Logger.Error (String.Format ("Exception on closing channel ({0})", ch.GetType ()), ex);
@@ -610,7 +615,8 @@ namespace System.ServiceModel.Dispatcher
 
 					if ((!(ex is SocketException)) && 
 					    (!(ex is XmlException)) &&
-					    (!(ex is IOException)))
+					    (!(ex is IOException)) &&
+					    rc != null)
 						rc.Reply (res);
 					
 					reply.Close (owner.DefaultCloseTimeout); // close the channel

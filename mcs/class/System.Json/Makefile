@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Json.dll
 LIB_REFS = System System.Xml System.Core
+KEYFILE = ../winfx.pub
 LIB_MCS_FLAGS =
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

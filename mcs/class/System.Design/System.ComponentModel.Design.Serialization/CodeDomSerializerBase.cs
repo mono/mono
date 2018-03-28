@@ -67,18 +67,18 @@ namespace System.ComponentModel.Design.Serialization
 		{
 		}
 
-		protected CodeExpression SerializeToExpression (IDesignerSerializationManager manager, object instance)
+		protected CodeExpression SerializeToExpression (IDesignerSerializationManager manager, object value)
 		{
 			if (manager == null)
 				throw new ArgumentNullException ("manager");
 
 			CodeExpression expression = null;
-			if (instance != null)
-				expression = this.GetExpression (manager, instance); // 1 - IDesignerSerializationManager.GetExpression
+			if (value != null)
+				expression = this.GetExpression (manager, value); // 1 - IDesignerSerializationManager.GetExpression
 			if (expression == null) {
-				CodeDomSerializer serializer = this.GetSerializer (manager, instance); // 2 - manager.GetSerializer().Serialize()
+				CodeDomSerializer serializer = this.GetSerializer (manager, value); // 2 - manager.GetSerializer().Serialize()
 				if (serializer != null) {
-					object serialized = serializer.Serialize (manager, instance);
+					object serialized = serializer.Serialize (manager, value);
 					expression = serialized as CodeExpression; // 3 - CodeStatement or CodeStatementCollection
 					if (expression == null) {
 						CodeStatement statement = serialized as CodeStatement;
@@ -88,8 +88,8 @@ namespace System.ComponentModel.Design.Serialization
 							CodeStatementCollection contextStatements = null;
 
 							StatementContext context = manager.Context[typeof (StatementContext)] as StatementContext;
-							if (context != null && instance != null)
-								contextStatements = context.StatementCollection[instance];
+							if (context != null && value != null)
+								contextStatements = context.StatementCollection[value];
 
 							if (contextStatements == null)
 								contextStatements = manager.Context[typeof (CodeStatementCollection)] as CodeStatementCollection;
@@ -102,25 +102,25 @@ namespace System.ComponentModel.Design.Serialization
 							}
 						}
 					}
-					if (expression == null && instance != null)
-						expression = this.GetExpression (manager, instance); // 4
+					if (expression == null && value != null)
+						expression = this.GetExpression (manager, value); // 4
 				} else {
-					ReportError (manager, "No serializer found for type '" + instance.GetType ().Name + "'");
+					ReportError (manager, "No serializer found for type '" + value.GetType ().Name + "'");
 				}
 			}
 			return expression;
 		}
 
-		protected CodeDomSerializer GetSerializer (IDesignerSerializationManager manager, object instance)
+		protected CodeDomSerializer GetSerializer (IDesignerSerializationManager manager, object value)
 		{
 			DesignerSerializerAttribute attrInstance, attrType;
 			attrType = attrInstance = null;
 
 			CodeDomSerializer serializer = null;
-			if (instance == null)
+			if (value == null)
 				serializer = this.GetSerializer (manager, null);
 			else {		
-				AttributeCollection attributes = TypeDescriptor.GetAttributes (instance);
+				AttributeCollection attributes = TypeDescriptor.GetAttributes (value);
 				foreach (Attribute a in attributes) {
 					DesignerSerializerAttribute designerAttr = a as DesignerSerializerAttribute;
 					if (designerAttr != null && manager.GetType (designerAttr.SerializerBaseTypeName) == typeof (CodeDomSerializer)) {
@@ -129,7 +129,7 @@ namespace System.ComponentModel.Design.Serialization
 					}
 				}
 	
-				attributes = TypeDescriptor.GetAttributes (instance.GetType ());
+				attributes = TypeDescriptor.GetAttributes (value.GetType ());
 				foreach (Attribute a in attributes) {
 					DesignerSerializerAttribute designerAttr = a as DesignerSerializerAttribute;
 					if (designerAttr != null && manager.GetType (designerAttr.SerializerBaseTypeName) == typeof (CodeDomSerializer)) {
@@ -143,47 +143,47 @@ namespace System.ComponentModel.Design.Serialization
 				if (attrType != null && attrInstance != null && attrType.SerializerTypeName != attrInstance.SerializerTypeName)
 					serializer = Activator.CreateInstance (manager.GetType (attrInstance.SerializerTypeName)) as CodeDomSerializer;
 				else
-					serializer = this.GetSerializer (manager, instance.GetType ());
+					serializer = this.GetSerializer (manager, value.GetType ());
 			}
 
 			return serializer;
 		}
 
-		protected CodeDomSerializer GetSerializer (IDesignerSerializationManager manager, Type instanceType)
+		protected CodeDomSerializer GetSerializer (IDesignerSerializationManager manager, Type valueType)
 		{
-			return manager.GetSerializer (instanceType, typeof (CodeDomSerializer)) as CodeDomSerializer;
+			return manager.GetSerializer (valueType, typeof (CodeDomSerializer)) as CodeDomSerializer;
 		}
 
-		protected CodeExpression GetExpression (IDesignerSerializationManager manager, object instance)
+		protected CodeExpression GetExpression (IDesignerSerializationManager manager, object value)
 		{
 			if (manager == null)
 				throw new ArgumentNullException ("manager");
-			if (instance == null)
-				throw new ArgumentNullException ("instance");
+			if (value == null)
+				throw new ArgumentNullException ("value");
 
 			CodeExpression expression = null;
 
 			ExpressionTable expressions = manager.Context[typeof (ExpressionTable)] as ExpressionTable;
 			if (expressions != null) // 1st try: ExpressionTable
-				expression = expressions [instance] as CodeExpression;
+				expression = expressions [value] as CodeExpression;
 
 			if (expression == null) { // 2nd try: RootContext
 				RootContext context = manager.Context[typeof (RootContext)] as RootContext;
-				if (context != null && context.Value == instance)
+				if (context != null && context.Value == value)
 					expression = context.Expression;
 			}
 
 			if (expression == null) { // 3rd try: IReferenceService (instance.property.property.property
-				string name = manager.GetName (instance);
+				string name = manager.GetName (value);
 				if (name == null || name.IndexOf (".") == -1) {
 					IReferenceService service = manager.GetService (typeof (IReferenceService)) as IReferenceService;
 					if (service != null) {
-						name = service.GetName (instance);
+						name = service.GetName (value);
 						if (name != null && name.IndexOf (".") != -1) {
 							string[] parts = name.Split (new char[] { ',' });
-							instance = manager.GetInstance (parts[0]);
-							if (instance != null) {
-								expression = SerializeToExpression (manager, instance);
+							value = manager.GetInstance (parts[0]);
+							if (value != null) {
+								expression = SerializeToExpression (manager, value);
 								if (expression != null) {
 									for (int i=1; i < parts.Length; i++)
 										expression = new CodePropertyReferenceExpression (expression, parts[i]);
@@ -196,19 +196,19 @@ namespace System.ComponentModel.Design.Serialization
 			return expression;
 		}
 
-		protected void SetExpression (IDesignerSerializationManager manager, object instance, CodeExpression expression)
+		protected void SetExpression (IDesignerSerializationManager manager, object value, CodeExpression expression)
 		{
-			SetExpression (manager, instance, expression, false);
+			SetExpression (manager, value, expression, false);
 		}
 
 		// XXX: isPreset - what does this do when set?
 		//
-		protected void SetExpression (IDesignerSerializationManager manager, object instance, CodeExpression expression, bool isPreset)
+		protected void SetExpression (IDesignerSerializationManager manager, object value, CodeExpression expression, bool isPreset)
 		{
 			if (manager == null)
 				throw new ArgumentNullException ("manager");
-			if (instance == null)
-				throw new ArgumentNullException ("instance");
+			if (value == null)
+				throw new ArgumentNullException ("value");
 			if (expression == null)
 				throw new ArgumentNullException ("expression");
 
@@ -218,7 +218,7 @@ namespace System.ComponentModel.Design.Serialization
 				manager.Context.Append (expressions);
 			}
 
-			expressions[instance] = expression;
+			expressions[value] = expression;
 		}
 
 		protected bool IsSerialized (IDesignerSerializationManager manager, object value) 
@@ -227,14 +227,14 @@ namespace System.ComponentModel.Design.Serialization
 		}
 
 		// XXX: What should honorPreset do?
-		protected bool IsSerialized (IDesignerSerializationManager manager, object instance, bool honorPreset) 
+		protected bool IsSerialized (IDesignerSerializationManager manager, object value, bool honorPreset) 
 		{
-			if (instance == null)
-				throw new ArgumentNullException ("instance");
+			if (value == null)
+				throw new ArgumentNullException ("value");
 			if (manager == null)
 				throw new ArgumentNullException ("manager");
 
-			if (this.GetExpression (manager, instance) != null)
+			if (this.GetExpression (manager, value) != null)
 				return true;
 			else
 				return false;
@@ -390,20 +390,20 @@ namespace System.ComponentModel.Design.Serialization
 			return manager.CreateInstance (type, parameters, name, addToContainer);
 		}
 
-		protected string GetUniqueName (IDesignerSerializationManager manager, object instance)
+		protected string GetUniqueName (IDesignerSerializationManager manager, object value)
 		{
-			if (instance == null)
-				throw new ArgumentNullException ("instance");
+			if (value == null)
+				throw new ArgumentNullException ("value");
 			if (manager == null)
 				throw new ArgumentNullException ("manager");
 
-			string name = manager.GetName (instance);
+			string name = manager.GetName (value);
 			if (name == null) {
 				INameCreationService service = manager.GetService (typeof (INameCreationService)) as INameCreationService;
-				name = service.CreateName (null, instance.GetType ());
+				name = service.CreateName (null, value.GetType ());
 				if (name == null)
-					name = instance.GetType ().Name.ToLower ();
-				manager.SetName (instance, name);
+					name = value.GetType ().Name.ToLower ();
+				manager.SetName (value, name);
 			}
 			return name;
 		}

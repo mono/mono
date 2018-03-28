@@ -1,5 +1,6 @@
-/*
- * decompose.c: Functions to decompose complex IR instructions into simpler ones.
+/**
+ * \file
+ * Functions to decompose complex IR instructions into simpler ones.
  *
  * Author:
  *   Zoltan Varga (vargaz@gmail.com)
@@ -10,18 +11,15 @@
  */
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "ir-emit.h"
 #include "jit-icalls.h"
 
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/abi-details.h>
+#include <mono/utils/mono-compiler.h>
 
 #ifndef DISABLE_JIT
-
-/* FIXME: This conflicts with the definition in mini.c, so it cannot be moved to mini.h */
-MONO_API MonoInst* mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature *sig, MonoInst **args);
-void mini_emit_stobj (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *klass, gboolean native);
-void mini_emit_initobj (MonoCompile *cfg, MonoInst *dest, const guchar *ip, MonoClass *klass);
 
 /*
  * Decompose complex long opcodes on 64 bit machines.
@@ -148,7 +146,7 @@ decompose_long_opcode (MonoCompile *cfg, MonoInst *ins, MonoInst **repl_ins)
 	case OP_ICONV_TO_OVF_U_UN:
 		/* an unsigned 32 bit num always fits in an (un)signed 64 bit one */
 		/* Clean out the upper word */
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, ins->dreg, ins->sreg1, 0);
+		MONO_EMIT_NEW_UNALU (cfg, OP_ZEXT_I4, ins->dreg, ins->sreg1);
 		NULLIFY_INS (ins);
 		break;
 	case OP_LCONV_TO_OVF_I1:
@@ -933,6 +931,8 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_XOR_IMM, MONO_LVREG_LS (tree->dreg), MONO_LVREG_LS (tree->sreg1), tree->inst_ls_word);
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_XOR_IMM, MONO_LVREG_MS (tree->dreg), MONO_LVREG_MS (tree->sreg1), tree->inst_ms_word);
 				break;
+#ifdef TARGET_POWERPC
+/* FIXME This is normally handled in cprop. Proper fix or remove if no longer needed. */
 			case OP_LSHR_UN_IMM:
 				if (tree->inst_c1 == 32) {
 
@@ -941,20 +941,12 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					 * later apply the speedup to the left shift as well
 					 * See BUG# 57957.
 					 */
-					/* FIXME: Move this to the strength reduction pass */
 					/* just move the upper half to the lower and zero the high word */
 					MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, MONO_LVREG_LS (tree->dreg), MONO_LVREG_MS (tree->sreg1));
 					MONO_EMIT_NEW_ICONST (cfg, MONO_LVREG_MS (tree->dreg), 0);
 				}
 				break;
-			case OP_LSHL_IMM:
-				if (tree->inst_c1 == 32) {
-					/* just move the lower half to the upper and zero the lower word */
-					MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, MONO_LVREG_MS (tree->dreg), MONO_LVREG_LS (tree->sreg1));
-					MONO_EMIT_NEW_ICONST (cfg, MONO_LVREG_LS (tree->dreg), 0);
-				}
-				break;
-
+#endif
 			case OP_LCOMPARE: {
 				MonoInst *next = mono_inst_next (tree, FILTER_IL_SEQ_POINT);
 
@@ -1225,10 +1217,10 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 					dest_var = get_vreg_to_inst (cfg, ins->dreg);
 
 					if (!src_var)
-						src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
+						src_var = mono_compile_create_var_for_vreg (cfg, m_class_get_byval_arg (ins->klass), OP_LOCAL, ins->dreg);
 
 					if (!dest_var)
-						dest_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
+						dest_var = mono_compile_create_var_for_vreg (cfg, m_class_get_byval_arg (ins->klass), OP_LOCAL, ins->dreg);
 
 					// FIXME:
 					if (src_var->backend.is_pinvoke)
@@ -1236,8 +1228,8 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
 					EMIT_NEW_VARLOADA ((cfg), (dest), dest_var, dest_var->inst_vtype);
+					mini_emit_memory_copy (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke, 0);
 
-					mini_emit_stobj (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke);
 					break;
 				}
 				case OP_VZERO:
@@ -1246,7 +1238,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					g_assert (ins->klass);
 
-					EMIT_NEW_VARLOADA_VREG (cfg, dest, ins->dreg, &ins->klass->byval_arg);
+					EMIT_NEW_VARLOADA_VREG (cfg, dest, ins->dreg, m_class_get_byval_arg (ins->klass));
 					mini_emit_initobj (cfg, dest, NULL, ins->klass);
 					
 					if (cfg->compute_gc_maps) {
@@ -1270,16 +1262,19 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 				case OP_STOREV_MEMBASE: {
 					src_var = get_vreg_to_inst (cfg, ins->sreg1);
 
+					if (COMPILE_LLVM (cfg) && !mini_is_gsharedvt_klass (ins->klass) && !cfg->gen_write_barriers)
+						break;
+
 					if (!src_var) {
 						g_assert (ins->klass);
-						src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->sreg1);
+						src_var = mono_compile_create_var_for_vreg (cfg, m_class_get_byval_arg (ins->klass), OP_LOCAL, ins->sreg1);
 					}
 
-					EMIT_NEW_VARLOADA_VREG ((cfg), (src), ins->sreg1, &ins->klass->byval_arg);
+					EMIT_NEW_VARLOADA_VREG ((cfg), (src), ins->sreg1, m_class_get_byval_arg (ins->klass));
 
 					dreg = alloc_preg (cfg);
 					EMIT_NEW_BIALU_IMM (cfg, dest, OP_ADD_IMM, dreg, ins->inst_destbasereg, ins->inst_offset);
-					mini_emit_stobj (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke);
+					mini_emit_memory_copy (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke, 0);
 					break;
 				}
 				case OP_LOADV_MEMBASE: {
@@ -1291,12 +1286,12 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 					// FIXME-VT:
 					// FIXME:
 					if (!dest_var)
-						dest_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
+						dest_var = mono_compile_create_var_for_vreg (cfg, m_class_get_byval_arg (ins->klass), OP_LOCAL, ins->dreg);
 
 					dreg = alloc_preg (cfg);
 					EMIT_NEW_BIALU_IMM (cfg, src, OP_ADD_IMM, dreg, ins->inst_basereg, ins->inst_offset);
 					EMIT_NEW_VARLOADA (cfg, dest, dest_var, dest_var->inst_vtype);
-					mini_emit_stobj (cfg, dest, src, dest_var->klass, dest_var->backend.is_pinvoke);
+					mini_emit_memory_copy (cfg, dest, src, dest_var->klass, dest_var->backend.is_pinvoke, 0);
 					break;
 				}
 				case OP_OUTARG_VT: {
@@ -1307,7 +1302,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					src_var = get_vreg_to_inst (cfg, ins->sreg1);
 					if (!src_var)
-						src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->sreg1);
+						src_var = mono_compile_create_var_for_vreg (cfg, m_class_get_byval_arg (ins->klass), OP_LOCAL, ins->sreg1);
 					EMIT_NEW_VARLOADA (cfg, src, src_var, src_var->inst_vtype);
 
 					mono_arch_emit_outarg_vt (cfg, ins, src);
@@ -1461,7 +1456,7 @@ inline static MonoInst *
 mono_get_domainvar (MonoCompile *cfg)
 {
 	if (!cfg->domainvar)
-		cfg->domainvar = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+		cfg->domainvar = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
 	return cfg->domainvar;
 }
 
@@ -1514,10 +1509,13 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 					break;
 				case OP_BOUNDS_CHECK:
 					MONO_EMIT_NULL_CHECK (cfg, ins->sreg1);
-					if (COMPILE_LLVM (cfg))
-						MONO_EMIT_DEFAULT_BOUNDS_CHECK (cfg, ins->sreg1, ins->inst_imm, ins->sreg2, ins->flags & MONO_INST_FAULT);
-					else
+					if (COMPILE_LLVM (cfg)) {
+						int index2_reg = alloc_preg (cfg);
+						MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, index2_reg, ins->sreg2);
+						MONO_EMIT_DEFAULT_BOUNDS_CHECK (cfg, ins->sreg1, ins->inst_imm, index2_reg, ins->flags & MONO_INST_FAULT);
+					} else {
 						MONO_ARCH_EMIT_BOUNDS_CHECK (cfg, ins->sreg1, ins->inst_imm, ins->sreg2);
+					}
 					break;
 				case OP_NEWARR:
 					if (cfg->opt & MONO_OPT_SHARED) {
@@ -1526,14 +1524,15 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 						MONO_INST_NEW (cfg, iargs [2], OP_MOVE);
 						iargs [2]->dreg = ins->sreg1;
 
-						dest = mono_emit_jit_icall (cfg, mono_array_new, iargs);
+						dest = mono_emit_jit_icall (cfg, ves_icall_array_new, iargs);
 						dest->dreg = ins->dreg;
 					} else {
-						MonoClass *array_class = mono_array_class_get (ins->inst_newa_class, 1);
-						MonoVTable *vtable = mono_class_vtable (cfg->domain, array_class);
+						MonoClass *array_class = mono_class_create_array (ins->inst_newa_class, 1);
+						ERROR_DECL_VALUE (vt_error);
+						MonoVTable *vtable = mono_class_vtable_checked (cfg->domain, array_class, &vt_error);
 						MonoMethod *managed_alloc = mono_gc_get_managed_array_allocator (array_class);
 
-						g_assert (vtable); /*This shall not fail since we check for this condition on OP_NEWARR creation*/
+						mono_error_assert_ok (&vt_error); /*This shall not fail since we check for this condition on OP_NEWARR creation*/
 						NEW_VTABLECONST (cfg, iargs [0], vtable);
 						MONO_ADD_INS (cfg->cbb, iargs [0]);
 						MONO_INST_NEW (cfg, iargs [1], OP_MOVE);
@@ -1893,6 +1892,13 @@ mono_local_emulate_ops (MonoCompile *cfg)
 			MonoJitICallInfo *info;
 
 			/*
+			 * These opcodes don't have logical equivalence to the emulating native
+			 * function. They are decomposed in specific fashion in mono_decompose_soft_float.
+			 */
+			if (MONO_HAS_CUSTOM_EMULATION (ins))
+				continue;
+
+			/*
 			 * Emulation can't handle _IMM ops. If this is an imm opcode we need
 			 * to check whether its non-imm counterpart is emulated and, if so,
 			 * decompose it back to its non-imm counterpart.
@@ -1928,9 +1934,9 @@ mono_local_emulate_ops (MonoCompile *cfg)
 
 				/* We emit the call on a separate dummy basic block */
 				cfg->cbb = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
-			        first_bb = cfg->cbb;
+				first_bb = cfg->cbb;
 
-				call = mono_emit_jit_icall_by_info (cfg, info, args);
+				call = mono_emit_jit_icall_by_info (cfg, bb->real_offset, info, args);
 				call->dreg = ins->dreg;
 
 				/* Replace ins with the emitted code and do the necessary bb linking */
@@ -1964,4 +1970,8 @@ mono_local_emulate_ops (MonoCompile *cfg)
 	}
 }
 
-#endif /* DISABLE_JIT */
+#else /* !DISABLE_JIT */
+
+MONO_EMPTY_SOURCE_FILE (decompose);
+
+#endif /* !DISABLE_JIT */

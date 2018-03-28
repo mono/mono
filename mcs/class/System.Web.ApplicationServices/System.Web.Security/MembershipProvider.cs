@@ -72,21 +72,21 @@ namespace System.Web.Security
 		{
 		}
 		
-		public abstract bool ChangePassword (string name, string oldPwd, string newPwd);
-		public abstract bool ChangePasswordQuestionAndAnswer (string name, string password, string newPwdQuestion, string newPwdAnswer);
-		public abstract MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, object providerUserKey, out MembershipCreateStatus status);
-		public abstract bool DeleteUser (string name, bool deleteAllRelatedData);
+		public abstract bool ChangePassword (string username, string oldPassword, string newPassword);
+		public abstract bool ChangePasswordQuestionAndAnswer (string username, string password, string newPasswordQuestion, string newPasswordAnswer);
+		public abstract MembershipUser CreateUser (string username, string password, string email, string passwordQuestion, string passwordAnswer, bool isApproved, object providerUserKey, out MembershipCreateStatus status);
+		public abstract bool DeleteUser (string username, bool deleteAllRelatedData);
 		public abstract MembershipUserCollection FindUsersByEmail (string emailToMatch, int pageIndex, int pageSize, out int totalRecords);
-		public abstract MembershipUserCollection FindUsersByName (string nameToMatch, int pageIndex, int pageSize, out int totalRecords);
+		public abstract MembershipUserCollection FindUsersByName (string usernameToMatch, int pageIndex, int pageSize, out int totalRecords);
 		public abstract MembershipUserCollection GetAllUsers (int pageIndex, int pageSize, out int totalRecords);
 		public abstract int GetNumberOfUsersOnline ();
-		public abstract string GetPassword (string name, string answer);
-		public abstract MembershipUser GetUser (string name, bool userIsOnline);
+		public abstract string GetPassword (string username, string answer);
+		public abstract MembershipUser GetUser (string username, bool userIsOnline);
 		public abstract MembershipUser GetUser (object providerUserKey, bool userIsOnline);
 		public abstract string GetUserNameByEmail (string email);
-		public abstract string ResetPassword (string name, string answer);
+		public abstract string ResetPassword (string username, string answer);
 		public abstract void UpdateUser (MembershipUser user);
-		public abstract bool ValidateUser (string name, string password);
+		public abstract bool ValidateUser (string username, string password);
 		public abstract bool UnlockUser (string userName);
 		
 		public abstract string ApplicationName { get; set; }
@@ -101,11 +101,11 @@ namespace System.Web.Security
 		public abstract string PasswordStrengthRegularExpression { get; }
 		public abstract bool RequiresUniqueEmail { get; }
 		
-		protected virtual void OnValidatingPassword (ValidatePasswordEventArgs args)
+		protected virtual void OnValidatingPassword (ValidatePasswordEventArgs e)
 		{
 			MembershipValidatePasswordEventHandler eh = events [validatingPasswordEvent] as MembershipValidatePasswordEventHandler;
 			if (eh != null)
-				eh (this, args);
+				eh (this, e);
 		}
 
 		protected virtual byte [] DecryptPassword (byte [] encodedPassword)

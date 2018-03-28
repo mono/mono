@@ -114,7 +114,7 @@ namespace System.IdentityModel.Tokens
 		[MonoTODO]
 		public virtual void ReadXml (XmlDictionaryReader reader,
 			SamlSerializer samlSerializer,
-			SecurityTokenSerializer keyInfoTokenSerializer,
+			SecurityTokenSerializer keyInfoSerializer,
 			SecurityTokenResolver outOfBandTokenResolver)
 		{
 			throw new NotImplementedException ();
@@ -122,7 +122,7 @@ namespace System.IdentityModel.Tokens
 
 		public virtual void WriteXml (XmlDictionaryWriter writer,
 			SamlSerializer samlSerializer,
-			SecurityTokenSerializer keyInfoTokenSerializer)
+			SecurityTokenSerializer keyInfoSerializer)
 		{
 			writer.WriteStartElement ("saml", "Attribute", SamlConstants.Namespace);
 			writer.WriteAttributeString ("AttributeName", Name);

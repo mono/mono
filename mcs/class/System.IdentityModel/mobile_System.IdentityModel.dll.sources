@@ -1,0 +1,6 @@
+../../build/common/Consts.cs
+../../build/common/MonoTODOAttribute.cs
+Assembly/AssemblyInfo.cs
+
+System.IdentityModel.Selectors/X509CertificateValidator.cs
+System.ServiceModel.Security/X509CertificateValidationMode.cs

@@ -30,15 +30,18 @@ namespace Mono.CSharp
 	public abstract class MetadataImporter
 	{
 		//
-		// Dynamic types reader with additional logic to reconstruct a dynamic
-		// type using DynamicAttribute values
+		// Types reader with additional logic to reconstruct extra
+		// type information encoded in custom attributes values
 		//
-		protected struct DynamicTypeReader
+		protected struct AttributesTypeInfoReader
 		{
 			static readonly bool[] single_attribute = { true };
 
-			public int Position;
-			bool[] flags;
+			public int DynamicPosition;
+			bool[] dynamicFlags;
+
+			public int TuplePosition;
+			string[] tupleNames;
 
 			// There is no common type for CustomAttributeData and we cannot
 			// use ICustomAttributeProvider
@@ -47,10 +50,12 @@ namespace Mono.CSharp
 			//
 			// A member provider which can be used to get CustomAttributeData
 			//
-			public DynamicTypeReader (object provider)
+			public AttributesTypeInfoReader (object provider)
 			{
-				Position = 0;
-				flags = null;
+				DynamicPosition = 0;
+				TuplePosition = 0;
+				dynamicFlags = null;
+				tupleNames = null;
 				this.provider = provider;
 			}
 
@@ -62,7 +67,7 @@ namespace Mono.CSharp
 				if (provider != null)
 					ReadAttribute ();
 
-				return flags != null && Position < flags.Length && flags[Position];
+				return dynamicFlags != null && DynamicPosition < dynamicFlags.Length && dynamicFlags [DynamicPosition];
 			}
 
 			//
@@ -73,7 +78,34 @@ namespace Mono.CSharp
 				if (provider != null)
 					ReadAttribute ();
 
-				return flags != null;
+				return dynamicFlags != null;
+			}
+
+			public bool HasNamedTupleAttribute ()
+			{
+				if (provider != null)
+					ReadAttribute ();
+
+				return tupleNames != null;
+			}
+
+			public IList<string> GetNamedTupleElements (int length)
+			{
+				if (TuplePosition == 0 && length == tupleNames.Length)
+					return tupleNames;
+
+				for (int i = TuplePosition; i < length + TuplePosition; ++i) {
+					if (tupleNames [i] != null) {
+						var res = new string [length];
+						Array.Copy (tupleNames, TuplePosition, res, 0, length);
+						return res;
+					}
+				}
+
+				//
+				// Current range can be just padding
+				//
+				return null;
 			}
 
 			IList<CustomAttributeData> GetCustomAttributes ()
@@ -100,22 +132,40 @@ namespace Mono.CSharp
 				if (cad.Count > 0) {
 					foreach (var ca in cad) {
 						var dt = ca.Constructor.DeclaringType;
-						if (dt.Name != "DynamicAttribute" || dt.Namespace != CompilerServicesNamespace)
+						if (dt.Namespace != CompilerServicesNamespace)
 							continue;
 
-						if (ca.ConstructorArguments.Count == 0) {
-							flags = single_attribute;
+						switch (dt.Name) {
+						case "DynamicAttribute":
+							if (ca.ConstructorArguments.Count == 0) {
+								dynamicFlags = single_attribute;
+								break;
+							}
+
+							var arg_type = ca.ConstructorArguments [0].ArgumentType;
+
+							if (arg_type.IsArray && MetaType.GetTypeCode (arg_type.GetElementType ()) == TypeCode.Boolean) {
+								var carg = (IList<CustomAttributeTypedArgument>)ca.ConstructorArguments [0].Value;
+								dynamicFlags = new bool [carg.Count];
+								for (int i = 0; i < dynamicFlags.Length; ++i) {
+									if (MetaType.GetTypeCode (carg [i].ArgumentType) == TypeCode.Boolean)
+										dynamicFlags [i] = (bool)carg [i].Value;
+								}
+							}
+
 							break;
-						}
+						case "TupleElementNamesAttribute":
+							if (ca.ConstructorArguments.Count != 1)
+								break;
 
-						var arg_type = ca.ConstructorArguments[0].ArgumentType;
-
-						if (arg_type.IsArray && MetaType.GetTypeCode (arg_type.GetElementType ()) == TypeCode.Boolean) {
-							var carg = (IList<CustomAttributeTypedArgument>) ca.ConstructorArguments[0].Value;
-							flags = new bool[carg.Count];
-							for (int i = 0; i < flags.Length; ++i) {
-								if (MetaType.GetTypeCode (carg[i].ArgumentType) == TypeCode.Boolean)
-									flags[i] = (bool) carg[i].Value;
+							var tuple_arg_type = ca.ConstructorArguments [0].ArgumentType;
+							if (tuple_arg_type.IsArray && MetaType.GetTypeCode (tuple_arg_type.GetElementType ()) == TypeCode.String) {
+								var carg = (IList<CustomAttributeTypedArgument>)ca.ConstructorArguments [0].Value;
+								tupleNames = new string [carg.Count];
+								for (int i = 0; i < tupleNames.Length; ++i) {
+									if (MetaType.GetTypeCode (carg [i].ArgumentType) == TypeCode.String)
+										tupleNames [i] = (string)carg [i].Value;
+								}
 							}
 
 							break;
@@ -142,6 +192,7 @@ namespace Mono.CSharp
 			compiled_types = new Dictionary<MetaType, TypeSpec> (40, ReferenceEquality<MetaType>.Default);
 			assembly_2_definition = new Dictionary<Assembly, IAssemblyDefinition> (ReferenceEquality<Assembly>.Default);
 			IgnorePrivateMembers = true;
+			IgnoreCompilerGeneratedField = true;
 		}
 
 		#region Properties
@@ -153,6 +204,8 @@ namespace Mono.CSharp
 		}
 
 		public bool IgnorePrivateMembers { get; set; }
+
+		public bool IgnoreCompilerGeneratedField { get; set; }
 
 		#endregion
 
@@ -179,8 +232,10 @@ namespace Mono.CSharp
 					break;
 				default:
 					// Ignore private fields (even for error reporting) to not require extra dependencies
-					if ((IgnorePrivateMembers && !declaringType.IsStruct) ||
-						HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "CompilerGeneratedAttribute", CompilerServicesNamespace))
+					if (IgnorePrivateMembers && !declaringType.IsStruct)
+						return null;
+
+					if (IgnoreCompilerGeneratedField && HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "CompilerGeneratedAttribute", CompilerServicesNamespace))
 						return null;
 
 					mod = Modifiers.PRIVATE;
@@ -190,7 +245,7 @@ namespace Mono.CSharp
 			TypeSpec field_type;
 
 			try {
-				field_type = ImportType (fi.FieldType, new DynamicTypeReader (fi));
+				field_type = ImportType (fi.FieldType, new AttributesTypeInfoReader (fi), declaringType);
 
 				//
 				// Private field has private type which is not fixed buffer
@@ -270,7 +325,7 @@ namespace Mono.CSharp
 			if (add.Modifiers != remove.Modifiers)
 				throw new NotImplementedException ("Different accessor modifiers " + ei.Name);
 
-			var event_type = ImportType (ei.EventHandlerType, new DynamicTypeReader (ei));
+			var event_type = ImportType (ei.EventHandlerType, new AttributesTypeInfoReader (ei), declaringType);
 			var definition = new ImportedMemberDefinition (ei, event_type,  this);
 			return new EventSpec (declaringType, definition, event_type, add.Modifiers, add, remove);
 		}
@@ -322,15 +377,15 @@ namespace Mono.CSharp
 				var type = tparams[pos];
 				int index = pos - first;
 
-				tspec[index] = (TypeParameterSpec) CreateType (type, new DynamicTypeReader (), false);
+				tspec[index] = (TypeParameterSpec) CreateType (type, new AttributesTypeInfoReader (), false);
 			}
 
 			return tspec;
 		}
 
-		TypeSpec[] CreateGenericArguments (int first, MetaType[] tparams, DynamicTypeReader dtype)
+		TypeSpec[] CreateGenericArguments (int first, MetaType[] tparams, AttributesTypeInfoReader dtype)
 		{
-			++dtype.Position;
+			++dtype.DynamicPosition;
 
 			var tspec = new TypeSpec [tparams.Length - first];
 			for (int pos = first; pos < tparams.Length; ++pos) {
@@ -340,8 +395,8 @@ namespace Mono.CSharp
 				TypeSpec spec;
 				if (type.HasElementType) {
 					var element = type.GetElementType ();
-					++dtype.Position;
-					spec = ImportType (element, dtype);
+					++dtype.DynamicPosition;
+					spec = ImportType (element, dtype, null);
 
 					if (!type.IsArray) {
 						throw new NotImplementedException ("Unknown element type " + type.ToString ());
@@ -360,7 +415,7 @@ namespace Mono.CSharp
 					// }
 					//
 					if (!IsMissingType (type) && type.IsGenericTypeDefinition) {
-						var start_pos = spec.DeclaringType == null ? 0 : spec.DeclaringType.MemberDefinition.TypeParametersCount;
+						var start_pos = GetDeclaringTypesTypeParametersCount (spec);
 						var targs = CreateGenericArguments (start_pos, type.GetGenericArguments (), dtype);
 						spec = spec.MakeGenericType (module, targs);
 					}
@@ -369,11 +424,22 @@ namespace Mono.CSharp
 				if (spec == null)
 					return null;
 
-				++dtype.Position;
+				++dtype.DynamicPosition;
 				tspec[index] = spec;
 			}
 
 			return tspec;
+		}
+
+		static int GetDeclaringTypesTypeParametersCount (TypeSpec spec)
+		{
+			int total = 0;
+			while (spec.DeclaringType != null) {
+				total += spec.DeclaringType.MemberDefinition.TypeParametersCount;
+				spec = spec.DeclaringType;
+			}
+
+			return total;
 		}
 
 		public MethodSpec CreateMethod (MethodBase mb, TypeSpec declaringType)
@@ -398,6 +464,9 @@ namespace Mono.CSharp
 				kind = MemberKind.Constructor;
 				returnType = module.Compiler.BuiltinTypes.Void;
 			} else {
+				var mi = (MethodInfo)mb;
+				returnType = ImportType (mi.ReturnType, new AttributesTypeInfoReader (mi.ReturnParameter), declaringType);
+
 				//
 				// Detect operators and destructors
 				//
@@ -411,7 +480,7 @@ namespace Mono.CSharp
 								kind = MemberKind.Operator;
 							}
 						}
-					} else if (parameters.IsEmpty && name == Destructor.MetadataName) {
+					} else if (parameters.IsEmpty && name == Destructor.MetadataName && returnType.Kind == MemberKind.Void) {
 						kind = MemberKind.Destructor;
 						if (declaringType.BuiltinType == BuiltinTypeSpec.Type.Object) {
 							mod &= ~Modifiers.OVERRIDE;
@@ -419,9 +488,6 @@ namespace Mono.CSharp
 						}
 					}
 				}
-
-				var mi = (MethodInfo) mb;
-				returnType = ImportType (mi.ReturnType, new DynamicTypeReader (mi.ReturnParameter));
 
 				// Cannot set to OVERRIDE without full hierarchy checks
 				// this flag indicates that the method could be override
@@ -529,13 +595,13 @@ namespace Mono.CSharp
 					// Strip reference wrapping
 					//
 					var el = p.ParameterType.GetElementType ();
-					types[i] = ImportType (el, new DynamicTypeReader (p));	// TODO: 1-based positio to be csc compatible
+					types[i] = ImportType (el, new AttributesTypeInfoReader (p), parent);	// TODO: 1-based positio to be csc compatible
 				} else if (i == 0 && method.IsStatic && (parent.Modifiers & Modifiers.METHOD_EXTENSION) != 0 &&
 					HasAttribute (CustomAttributeData.GetCustomAttributes (method), "ExtensionAttribute", CompilerServicesNamespace)) {
 					mod = Parameter.Modifier.This;
-					types[i] = ImportType (p.ParameterType, new DynamicTypeReader (p));
+					types[i] = ImportType (p.ParameterType, new AttributesTypeInfoReader (p), parent);
 				} else {
-					types[i] = ImportType (p.ParameterType, new DynamicTypeReader (p));
+					types[i] = ImportType (p.ParameterType, new AttributesTypeInfoReader (p), parent);
 
 					if (i >= pi.Length - 2 && types[i] is ArrayContainer) {
 						if (HasAttribute (CustomAttributeData.GetCustomAttributes (p), "ParamArrayAttribute", "System")) {
@@ -629,14 +695,7 @@ namespace Mono.CSharp
 					if (set_param_count == 0) {
 						set_based_param = ParametersCompiled.EmptyReadOnlyParameters;
 					} else {
-						//
-						// Create indexer parameters based on setter method parameters (the last parameter has to be removed)
-						//
-						var data = new IParameterData[set_param_count];
-						var types = new TypeSpec[set_param_count];
-						Array.Copy (set.Parameters.FixedParameters, data, set_param_count);
-						Array.Copy (set.Parameters.Types, types, set_param_count);
-						set_based_param = new ParametersImported (data, types, set.Parameters.HasParams);
+						set_based_param = IndexerSpec.CreateParametersFromSetter (set, set_param_count);
 					}
 
 					mod = set.Modifiers;
@@ -676,19 +735,15 @@ namespace Mono.CSharp
 			if (!param.IsEmpty) {
 				if (is_valid_property) {
 					var index_name = declaringType.MemberDefinition.GetAttributeDefaultMember ();
-					if (index_name == null) {
+					if (index_name == null || index_name != pi.Name) {
 						is_valid_property = false;
 					} else {
 						if (get != null) {
 							if (get.IsStatic)
 								is_valid_property = false;
-							if (get.Name.IndexOf (index_name, StringComparison.Ordinal) != 4)
-								is_valid_property = false;
 						}
 						if (set != null) {
 							if (set.IsStatic)
-								is_valid_property = false;
-							if (set.Name.IndexOf (index_name, StringComparison.Ordinal) != 4)
 								is_valid_property = false;
 						}
 					}
@@ -729,26 +784,26 @@ namespace Mono.CSharp
 
 		public TypeSpec CreateType (MetaType type)
 		{
-			return CreateType (type, new DynamicTypeReader (), true);
+			return CreateType (type, new AttributesTypeInfoReader (), true);
 		}
 
 		public TypeSpec CreateNestedType (MetaType type, TypeSpec declaringType)
 		{
-			return CreateType (type, declaringType, new DynamicTypeReader (type), false);
+			return CreateType (type, declaringType, new AttributesTypeInfoReader (type), false);
 		}
 
-		TypeSpec CreateType (MetaType type, DynamicTypeReader dtype, bool canImportBaseType)
+		TypeSpec CreateType (MetaType type, AttributesTypeInfoReader dtype, bool canImportBaseType)
 		{
 			TypeSpec declaring_type;
 			if (type.IsNested && !type.IsGenericParameter)
-				declaring_type = CreateType (type.DeclaringType, new DynamicTypeReader (type.DeclaringType), true);
+				declaring_type = CreateType (type.DeclaringType, new AttributesTypeInfoReader (type.DeclaringType), true);
 			else
 				declaring_type = null;
 
 			return CreateType (type, declaring_type, dtype, canImportBaseType);
 		}
 
-		protected TypeSpec CreateType (MetaType type, TypeSpec declaringType, DynamicTypeReader dtype, bool canImportBaseType)
+		protected TypeSpec CreateType (MetaType type, TypeSpec declaringType, AttributesTypeInfoReader dtype, bool canImportBaseType)
 		{
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec)) {
@@ -791,7 +846,7 @@ namespace Mono.CSharp
 					return null;
 				if (declaringType == null) {
 					// Simple case, no nesting
-					spec = CreateType (type_def, null, new DynamicTypeReader (), canImportBaseType);
+					spec = CreateType (type_def, null, new AttributesTypeInfoReader (), canImportBaseType);
 					spec = spec.MakeGenericType (module, targs);
 				} else {
 					//
@@ -818,7 +873,7 @@ namespace Mono.CSharp
 						if (t.Kind == MemberKind.MissingType)
 							spec = t;
 						else
-							spec = MemberCache.FindNestedType (spec, t.Name, t.Arity);
+							spec = MemberCache.FindNestedType (spec, t.Name, t.Arity, false);
 
 						if (t.Arity > 0) {
 							spec = spec.MakeGenericType (module, targs.Skip (targs_pos).Take (spec.Arity).ToArray ());
@@ -838,12 +893,20 @@ namespace Mono.CSharp
 						if (index > 0)
 							name = name.Substring (0, index);
 
-						spec = MemberCache.FindNestedType (spec, name, targs.Length - targs_pos);
+						spec = MemberCache.FindNestedType (spec, name, targs.Length - targs_pos, false);
 
 						if (spec.Arity > 0) {
 							spec = spec.MakeGenericType (module, targs.Skip (targs_pos).ToArray ());
 						}
 					}
+				}
+
+				if (spec.IsTupleType && dtype.HasNamedTupleAttribute ()) {
+					var names = dtype.GetNamedTupleElements (spec.Arity);
+					if (names != null)
+						return NamedTupleSpec.MakeType (module, (InflatedTypeSpec) spec, names);
+
+					dtype.TuplePosition += spec.Arity;
 				}
 
 				// Don't add generic type with dynamic arguments, they can interfere with same type
@@ -896,7 +959,8 @@ namespace Mono.CSharp
 					}
 				}
 
-				if (kind == MemberKind.Class) {
+				switch (kind) {
+				case MemberKind.Class:
 					if ((ma & TypeAttributes.Sealed) != 0) {
 						if ((ma & TypeAttributes.Abstract) != 0)
 							mod |= Modifiers.STATIC;
@@ -905,6 +969,17 @@ namespace Mono.CSharp
 					} else if ((ma & TypeAttributes.Abstract) != 0) {
 						mod |= Modifiers.ABSTRACT;
 					}
+					break;
+				case MemberKind.Struct:
+					if (HasAttribute (CustomAttributeData.GetCustomAttributes (type), "IsReadOnlyAttribute", CompilerServicesNamespace)) {
+						mod |= Modifiers.READONLY;
+					}
+
+					if (HasAttribute (CustomAttributeData.GetCustomAttributes (type), "IsByRefLikeAttribute", CompilerServicesNamespace)) {
+						mod |= Modifiers.REF;
+					}
+
+					break;
 				}
 			}
 
@@ -1066,7 +1141,7 @@ namespace Mono.CSharp
 			else if (type.BaseType != null) {
 				TypeSpec base_type;
 				if (!IsMissingType (type.BaseType) && type.BaseType.IsGenericType)
-					base_type = CreateType (type.BaseType, new DynamicTypeReader (type), true);
+					base_type = CreateType (type.BaseType, new AttributesTypeInfoReader (type), true);
 				else
 					base_type = CreateType (type.BaseType);
 
@@ -1080,7 +1155,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		protected void ImportTypes (MetaType[] types, Namespace targetNamespace, bool importExtensionTypes)
+		public void ImportTypes (MetaType[] types, Namespace targetNamespace, bool importExtensionTypes)
 		{
 			Namespace ns = targetNamespace;
 			string prev_namespace = null;
@@ -1095,7 +1170,7 @@ namespace Mono.CSharp
 				if (t.Name[0] == '<')
 					continue;
 
-				var it = CreateType (t, null, new DynamicTypeReader (t), true);
+				var it = CreateType (t, null, new AttributesTypeInfoReader (t), true);
 				if (it == null)
 					continue;
 
@@ -1187,15 +1262,15 @@ namespace Mono.CSharp
 
 		public TypeSpec ImportType (MetaType type)
 		{
-			return ImportType (type, new DynamicTypeReader (type));
+			return ImportType (type, new AttributesTypeInfoReader (type), null);
 		}
 
-		TypeSpec ImportType (MetaType type, DynamicTypeReader dtype)
+		TypeSpec ImportType (MetaType type, AttributesTypeInfoReader dtype, TypeSpec currentType)
 		{
 			if (type.HasElementType) {
 				var element = type.GetElementType ();
-				++dtype.Position;
-				var spec = ImportType (element, dtype);
+				++dtype.DynamicPosition;
+				var spec = ImportType (element, dtype, currentType);
 
 				if (type.IsArray)
 					return ArrayContainer.MakeType (module, spec, type.GetArrayRank ());
@@ -1211,11 +1286,19 @@ namespace Mono.CSharp
 			if (compiled_types.TryGetValue (type, out compiled_type)) {
 				if (compiled_type.BuiltinType == BuiltinTypeSpec.Type.Object && dtype.IsDynamicObject ())
 					return module.Compiler.BuiltinTypes.Dynamic;
-
-				return compiled_type;
+			} else {
+				compiled_type = CreateType (type, dtype, true);
 			}
 
-			return CreateType (type, dtype, true);
+			if (currentType == compiled_type && currentType?.IsGeneric == true) {
+				//
+				// Inflates current type to match behaviour of TypeDefinition::CurrentType used by compiled types
+				//
+				var targs = compiled_type.MemberDefinition.TypeParameters;
+				compiled_type = compiled_type.MakeGenericType (module, targs);
+			}
+
+			return compiled_type;
 		}
 
 		static bool IsMissingType (MetaType type)
@@ -1322,6 +1405,7 @@ namespace Mono.CSharp
 			public string DefaultIndexerName;
 			public bool? CLSAttributeValue;
 			public TypeSpec CoClass;
+			public TypeSpec AsyncMethodBuilder;
 
 			static bool HasMissingType (ConstructorInfo ctor)
 			{
@@ -1363,7 +1447,14 @@ namespace Mono.CSharp
 						if (args.Count == 1) {
 							bag.Obsolete = new ObsoleteAttribute ((string) args[0].Value);
 						} else if (args.Count == 2) {
-							bag.Obsolete = new ObsoleteAttribute ((string) args[0].Value, (bool) args[1].Value);
+							const string ByRefLikeMarker = "Types with embedded references are not supported in this version of your compiler.";
+
+							var msg = (string)args[0].Value;
+
+							if (msg == ByRefLikeMarker)
+								continue;
+
+							bag.Obsolete = new ObsoleteAttribute (msg, (bool) args[1].Value);
 						} else {
 							bag.Obsolete = new ObsoleteAttribute ();
 						}
@@ -1441,6 +1532,20 @@ namespace Mono.CSharp
 								bag = new AttributesBag ();
 
 							bag.CoClass = importer.ImportType ((MetaType) a.ConstructorArguments[0].Value);
+							continue;
+						}
+
+						if (name == "AsyncMethodBuilderAttribute") {
+							if (dt.Namespace != "System.Runtime.CompilerServices")
+								continue;
+
+							if (HasMissingType (a.Constructor))
+								continue;
+
+							if (bag == null)
+								bag = new AttributesBag ();
+
+							bag.AsyncMethodBuilder = importer.ImportType ((MetaType)a.ConstructorArguments [0].Value);
 							continue;
 						}
 					}
@@ -1694,7 +1799,7 @@ namespace Mono.CSharp
 				token = null;
 
 			foreach (var internals in internals_visible_to) {
-				if (internals.Name != assembly.Name)
+				if (!String.Equals(internals.Name, assembly.Name, StringComparison.OrdinalIgnoreCase))
 					continue;
 
 				if (token == null && assembly is AssemblyDefinition) {
@@ -2050,6 +2155,14 @@ namespace Mono.CSharp
 			}
 		}
 
+		public TypeSpec GetAsyncMethodBuilder ()
+		{
+			if (cattrs == null)
+				ReadAttributes ();
+
+			return cattrs.AsyncMethodBuilder;
+		}
+
 		public TypeSpec GetAttributeCoClass ()
 		{
 			if (cattrs == null)
@@ -2365,6 +2478,11 @@ namespace Mono.CSharp
 		}
 
 		#endregion
+
+		public TypeSpec GetAsyncMethodBuilder ()
+		{
+			return null;
+		}
 
 		public TypeSpec GetAttributeCoClass ()
 		{

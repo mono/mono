@@ -47,10 +47,10 @@ namespace System.ServiceModel.Security.Tokens
 			this.cancel = requireCancellation;
 		}
 
-		protected SspiSecurityTokenParameters (SspiSecurityTokenParameters source)
-			: base (source)
+		protected SspiSecurityTokenParameters (SspiSecurityTokenParameters other)
+			: base (other)
 		{
-			this.cancel = source.cancel;
+			this.cancel = other.cancel;
 		}
 
 		public bool RequireCancellation {

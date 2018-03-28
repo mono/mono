@@ -126,7 +126,7 @@ namespace System.ServiceModel.Discovery.Configuration
 			// It seems to do nothing.
 		}
 		
-		protected override void OnInitializeAndValidate (ServiceEndpointElement channelEndpointElement)
+		protected override void OnInitializeAndValidate (ServiceEndpointElement serviceEndpointElement)
 		{
 			// It seems to do nothing.
 		}

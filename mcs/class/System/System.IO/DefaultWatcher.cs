@@ -79,8 +79,9 @@ namespace System.IO {
 			return true;
 		}
 		
-		public void StartDispatching (FileSystemWatcher fsw)
+		public void StartDispatching (object handle)
 		{
+			var fsw = handle as FileSystemWatcher;
 			DefaultWatcherData data;
 			lock (this) {
 				if (watches == null)
@@ -116,8 +117,9 @@ namespace System.IO {
 			}
 		}
 
-		public void StopDispatching (FileSystemWatcher fsw)
+		public void StopDispatching (object handle)
 		{
+			var fsw = handle as FileSystemWatcher;
 			DefaultWatcherData data;
 			lock (this) {
 				if (watches == null) return;
@@ -127,9 +129,14 @@ namespace System.IO {
 				data = (DefaultWatcherData) watches [fsw];
 				if (data != null) {
 					data.Enabled = false;
-					data.DisabledTime = DateTime.Now;
+					data.DisabledTime = DateTime.UtcNow;
 				}
 			}
+		}
+
+		public void Dispose (object handle)
+		{
+			// does nothing
 		}
 
 
@@ -171,7 +178,7 @@ namespace System.IO {
 		{
 			if (!data.Enabled) {
 				return (data.DisabledTime != DateTime.MaxValue &&
-					(DateTime.Now - data.DisabledTime).TotalSeconds > 5);
+					(DateTime.UtcNow - data.DisabledTime).TotalSeconds > 5);
 			}
 
 			DoFiles (data, data.Directory, dispatch);

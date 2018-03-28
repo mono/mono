@@ -1,131 +1,152 @@
 System.Exception: Stacktrace with 1 frame
-  at StackTraceDumper.Main () in StackTraceDumper.cs:9 
+  at StackTraceDumper.Main () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:9 
 Stacktrace:
-  at StackTraceDumper.Main () in StackTraceDumper.cs:9 
+  at StackTraceDumper.Main () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:9 
 
 System.Exception: Stacktrace with 2 frames
-  at StackTraceDumper.<Main>m__0 () in StackTraceDumper.cs:16 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+<>c.<Main>b__0_0 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:16 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper.<Main>m__0 () in StackTraceDumper.cs:16 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+<>c.<Main>b__0_0 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:16 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 
 System.Exception: Stacktrace with 3 frames
-  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in StackTraceDumper.cs:78 
-  at StackTraceDumper.<Main>m__1 () in StackTraceDumper.cs:18 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:96 
+  at StackTraceDumper+<>c.<Main>b__0_1 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:18 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in StackTraceDumper.cs:78 
-  at StackTraceDumper.<Main>m__1 () in StackTraceDumper.cs:18 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:96 
+  at StackTraceDumper+<>c.<Main>b__0_1 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:18 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 
 System.Exception: Stacktrace with 4 frames
-  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in StackTraceDumper.cs:78 
-  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in StackTraceDumper.cs:76 
-  at StackTraceDumper.<Main>m__2 () in StackTraceDumper.cs:20 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:96 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:94 
+  at StackTraceDumper+<>c.<Main>b__0_2 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:20 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in StackTraceDumper.cs:78 
-  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in StackTraceDumper.cs:76 
-  at StackTraceDumper.<Main>m__2 () in StackTraceDumper.cs:20 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:96 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32 i) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:94 
+  at StackTraceDumper+<>c.<Main>b__0_2 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:20 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 
 System.Exception: Stack frame with method overload using ref parameter
-  at StackTraceDumper.ThrowException (System.String& message) in StackTraceDumper.cs:70 
-  at StackTraceDumper.<Main>m__3 () in StackTraceDumper.cs:24 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowException (System.String& message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:88 
+  at StackTraceDumper+<>c.<Main>b__0_3 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:24 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper.ThrowException (System.String& message) in StackTraceDumper.cs:70 
-  at StackTraceDumper.<Main>m__3 () in StackTraceDumper.cs:24 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowException (System.String& message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:88 
+  at StackTraceDumper+<>c.<Main>b__0_3 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:24 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 
 System.Exception: Stack frame with method overload using out parameter
-  at StackTraceDumper.ThrowException (System.String message, System.Int32& o) in StackTraceDumper.cs:83 
-  at StackTraceDumper.<Main>m__4 () in StackTraceDumper.cs:29 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32& o) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:101 
+  at StackTraceDumper+<>c.<Main>b__0_4 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:29 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper.ThrowException (System.String message, System.Int32& o) in StackTraceDumper.cs:83 
-  at StackTraceDumper.<Main>m__4 () in StackTraceDumper.cs:29 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowException (System.String message, System.Int32& o) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:101 
+  at StackTraceDumper+<>c.<Main>b__0_4 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:29 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 
 System.Exception: Stack frame with 1 generic parameter
-  at StackTraceDumper.ThrowExceptionGeneric[T] (System.String message) in StackTraceDumper.cs:88 
-  at StackTraceDumper.<Main>m__5 () in StackTraceDumper.cs:32 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowExceptionGeneric[T] (System.String message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:106 
+  at StackTraceDumper+<>c.<Main>b__0_5 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:32 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper.ThrowExceptionGeneric[T] (System.String message) in StackTraceDumper.cs:88 
-  at StackTraceDumper.<Main>m__5 () in StackTraceDumper.cs:32 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowExceptionGeneric[T] (System.String message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:106 
+  at StackTraceDumper+<>c.<Main>b__0_5 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:32 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 
 System.Exception: Stack frame with 2 generic parameters
-  at StackTraceDumper.ThrowExceptionGeneric[T1,T2] (System.String message) in StackTraceDumper.cs:108 
-  at StackTraceDumper.<Main>m__6 () in StackTraceDumper.cs:34 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowExceptionGeneric[T1,T2] (System.String message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:126 
+  at StackTraceDumper+<>c.<Main>b__0_6 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:34 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper.ThrowExceptionGeneric[T1,T2] (System.String message) in StackTraceDumper.cs:108 
-  at StackTraceDumper.<Main>m__6 () in StackTraceDumper.cs:34 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowExceptionGeneric[T1,T2] (System.String message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:126 
+  at StackTraceDumper+<>c.<Main>b__0_6 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:34 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 
 System.Exception: Stack frame with generic method overload
-  at StackTraceDumper.ThrowExceptionGeneric[T] (T a1) in StackTraceDumper.cs:93 
-  at StackTraceDumper.<Main>m__7 () in StackTraceDumper.cs:36 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowExceptionGeneric[T] (T a1) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:111 
+  at StackTraceDumper+<>c.<Main>b__0_7 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:36 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper.ThrowExceptionGeneric[T] (T a1) in StackTraceDumper.cs:93 
-  at StackTraceDumper.<Main>m__7 () in StackTraceDumper.cs:36 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper.ThrowExceptionGeneric[T] (T a1) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:111 
+  at StackTraceDumper+<>c.<Main>b__0_7 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:36 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 
 System.Exception: Stack trace with inner class
-  at StackTraceDumper+InnerClass.ThrowException (System.String message) in StackTraceDumper.cs:114 
-  at StackTraceDumper.<Main>m__8 () in StackTraceDumper.cs:38 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+InnerClass.ThrowException (System.String message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:132 
+  at StackTraceDumper+<>c.<Main>b__0_8 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:38 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper+InnerClass.ThrowException (System.String message) in StackTraceDumper.cs:114 
-  at StackTraceDumper.<Main>m__8 () in StackTraceDumper.cs:38 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+InnerClass.ThrowException (System.String message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:132 
+  at StackTraceDumper+<>c.<Main>b__0_8 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:38 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 
 System.Exception: Stack trace with inner generic class
-  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message) in StackTraceDumper.cs:121 
-  at StackTraceDumper.<Main>m__9 () in StackTraceDumper.cs:40 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:139 
+  at StackTraceDumper+<>c.<Main>b__0_9 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:40 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message) in StackTraceDumper.cs:121 
-  at StackTraceDumper.<Main>m__9 () in StackTraceDumper.cs:40 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:139 
+  at StackTraceDumper+<>c.<Main>b__0_9 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:40 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Generic to string:string
 
 System.Exception: Stack trace with inner generic class and method generic parameter
-  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message, T arg) in StackTraceDumper.cs:127 
-  at StackTraceDumper.<Main>m__A () in StackTraceDumper.cs:42 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message, T arg) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:145 
+  at StackTraceDumper+<>c.<Main>b__0_10 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:42 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message, T arg) in StackTraceDumper.cs:127 
-  at StackTraceDumper.<Main>m__A () in StackTraceDumper.cs:42 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message, T arg) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:145 
+  at StackTraceDumper+<>c.<Main>b__0_10 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:42 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 
 System.Exception: Stack trace with inner generic class and generic overload
-  at StackTraceDumper+InnerGenericClass`1[T].ThrowException[T1] (System.String message, T1 arg) in StackTraceDumper.cs:132 
-  at StackTraceDumper.<Main>m__B () in StackTraceDumper.cs:44 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException[T1] (System.String message, T1 arg) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:150 
+  at StackTraceDumper+<>c.<Main>b__0_11 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:44 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper+InnerGenericClass`1[T].ThrowException[T1] (System.String message, T1 arg) in StackTraceDumper.cs:132 
-  at StackTraceDumper.<Main>m__B () in StackTraceDumper.cs:44 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException[T1] (System.String message, T1 arg) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:150 
+  at StackTraceDumper+<>c.<Main>b__0_11 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:44 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 
 System.Exception: Stack trace with 2 inner generic class and generic overload
-  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T message) in StackTraceDumper.cs:138 
-  at StackTraceDumper.<Main>m__C () in StackTraceDumper.cs:46 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:161 
+  at StackTraceDumper+<>c.<Main>b__0_12 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:46 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T message) in StackTraceDumper.cs:138 
-  at StackTraceDumper.<Main>m__C () in StackTraceDumper.cs:46 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:161 
+  at StackTraceDumper+<>c.<Main>b__0_12 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:46 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 
 System.Exception: Stack trace with 2 inner generic class and generic overload
-  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T2 message) in StackTraceDumper.cs:143 
-  at StackTraceDumper.<Main>m__D () in StackTraceDumper.cs:48 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T2 message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:166 
+  at StackTraceDumper+<>c.<Main>b__0_13 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:48 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T2 message) in StackTraceDumper.cs:143 
-  at StackTraceDumper.<Main>m__D () in StackTraceDumper.cs:48 
-  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T2 message) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:166 
+  at StackTraceDumper+<>c.<Main>b__0_13 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:48 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
+
+System.Exception: Stack trace with nested type argument
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException[T1] (System.String message, T1 arg, StackTraceDumper+InnerGenericClass`1[T] _ignore) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:155 
+  at StackTraceDumper+<>c.<Main>b__0_14 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:50 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
+Stacktrace:
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException[T1] (System.String message, T1 arg, StackTraceDumper+InnerGenericClass`1[T] _ignore) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:155 
+  at StackTraceDumper+<>c.<Main>b__0_14 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:50 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
+
+System.ArgumentNullException: Value cannot be null.
+Parameter name: key
+  at System.Collections.Generic.Dictionary`2[TKey,TValue].FindEntry (TKey key) in external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs:369 
+  at System.Collections.Generic.Dictionary`2[TKey,TValue].ContainsKey (TKey key) in external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs:285 
+  at StackTraceDumper+<>c.<Main>b__0_15 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:54 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
+Stacktrace:
+  at System.Collections.Generic.Dictionary`2[TKey,TValue].FindEntry (TKey key) in external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs:369 
+  at System.Collections.Generic.Dictionary`2[TKey,TValue].ContainsKey (TKey key) in external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs:285 
+  at StackTraceDumper+<>c.<Main>b__0_15 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:54 
+  at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 

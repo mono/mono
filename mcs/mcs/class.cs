@@ -22,7 +22,7 @@ using System.Text;
 using System.Diagnostics;
 using Mono.CompilerServices.SymbolWriter;
 
-#if NET_2_1
+#if MOBILE
 using XmlElement = System.Object;
 #endif
 
@@ -224,6 +224,24 @@ namespace Mono.CSharp
 			}
 		}
 
+		public void CloseContainerEarlyForReflectionEmit ()
+		{
+			if (containers != null) {
+				foreach (TypeContainer tc in containers) {
+					//
+					// SRE requires due to internal checks that any field of enum type is
+					// baked. We close all enum types before closing any other types to
+					// workaround this limitation
+					//
+					if (tc.Kind == MemberKind.Enum) {
+						tc.CloseContainer ();
+					} else {
+						tc.CloseContainerEarlyForReflectionEmit ();
+					}
+				}
+			}
+		}
+
 		public virtual void CreateMetadataName (StringBuilder sb)
 		{
 			if (Parent != null && Parent.MemberName != null)
@@ -296,6 +314,10 @@ namespace Mono.CSharp
 
 						throw new InternalErrorException (tc, e);
 					}
+				}
+
+				if (PartialContainer != null && PartialContainer != this) {
+					containers = null;
 				}
 			}
 
@@ -635,6 +657,15 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool HasInstanceField {
+			get {
+				return (caching_flags & Flags.HasInstanceField) != 0;
+			}
+			set {
+				caching_flags |= Flags.HasInstanceField;
+			}
+		}
+
 		// Indicated whether container has StructLayout attribute set Explicit
 		public bool HasExplicitLayout {
 			get { return (caching_flags & Flags.HasExplicitLayout) != 0; }
@@ -844,18 +875,22 @@ namespace Mono.CSharp
 			if ((field.ModFlags & Modifiers.STATIC) != 0)
 				return true;
 
-			var first_field = PartialContainer.first_nonstatic_field;
-			if (first_field == null) {
+			if (!PartialContainer.HasInstanceField) {
+				PartialContainer.HasInstanceField = true;
 				PartialContainer.first_nonstatic_field = field;
 				return true;
 			}
 
-			if (Kind == MemberKind.Struct && first_field.Parent != field.Parent) {
-				Report.SymbolRelatedToPreviousError (first_field.Parent);
-				Report.Warning (282, 3, field.Location,
-					"struct instance field `{0}' found in different declaration from instance field `{1}'",
-					field.GetSignatureForError (), first_field.GetSignatureForError ());
+			if (Kind == MemberKind.Struct) {
+				var first_field = PartialContainer.first_nonstatic_field;
+				if (first_field.Parent != field.Parent) {
+					Report.SymbolRelatedToPreviousError (first_field.Parent);
+					Report.Warning (282, 3, field.Location,
+						"struct instance field `{0}' found in different declaration from instance field `{1}'",
+						field.GetSignatureForError (), first_field.GetSignatureForError ());
+				}
 			}
+
 			return true;
 		}
 
@@ -940,7 +975,8 @@ namespace Mono.CSharp
 
 		TypeParameterSpec[] ITypeDefinition.TypeParameters {
 			get {
-				return PartialContainer.CurrentTypeParameters.Types;
+				var ctp = PartialContainer.CurrentTypeParameters;
+				return ctp == null ? TypeParameterSpec.EmptyTypes : ctp.Types;
 			}
 		}
 
@@ -1082,6 +1118,18 @@ namespace Mono.CSharp
 
 			foreach (var member in members)
 				member.GenerateDocComment (builder);
+		}
+
+		public TypeSpec GetAsyncMethodBuilder ()
+		{
+			if (OptAttributes == null)
+				return null;
+
+			Attribute a = OptAttributes.Search (Module.PredefinedAttributes.AsyncMethodBuilder);
+			if (a == null)
+				return null;
+
+			return a.GetAsyncMethodBuilderValue ();
 		}
 
 		public TypeSpec GetAttributeCoClass ()
@@ -1294,7 +1342,7 @@ namespace Mono.CSharp
 			//
 			// Sets .size to 1 for structs with no instance fields
 			//
-			int type_size = Kind == MemberKind.Struct && first_nonstatic_field == null && !(this is StateMachine) ? 1 : 0;
+			int type_size = Kind == MemberKind.Struct && !HasInstanceField && !(this is StateMachine) ? 1 : 0;
 
 			var parent_def = Parent as TypeDefinition;
 			if (parent_def == null) {
@@ -1438,7 +1486,11 @@ namespace Mono.CSharp
 					targs.Arguments = new TypeSpec[hoisted_tparams.Length];
 					for (int i = 0; i < hoisted_tparams.Length; ++i) {
 						var tp = hoisted_tparams[i];
-						var local_tp = new TypeParameter (tp, null, new MemberName (tp.Name, Location), null);
+						var tp_name = tp.Name;
+#if DEBUG
+						tp_name += "_Proxy";
+#endif
+						var local_tp = new TypeParameter (tp, null, new MemberName (tp_name, Location), null);
 						tparams.Add (local_tp);
 
 						targs.Add (new SimpleName (tp.Name, Location));
@@ -1454,6 +1506,12 @@ namespace Mono.CSharp
 					var mutator = new TypeParameterMutator (hoisted_tparams, tparams);
 					return_type = mutator.Mutate (return_type);
 					local_param_types = mutator.Mutate (local_param_types);
+
+					var inflator = new TypeParameterInflator (this, null, hoisted_tparams, targs.Arguments);
+					for (int i = 0; i < hoisted_tparams.Length; ++i) {
+						var tp_spec = (TypeParameterSpec) targs.Arguments [i];
+						tp_spec.InflateConstraints (inflator, tp_spec);
+					}
 				} else {
 					member_name = new MemberName (name);
 				}
@@ -1466,7 +1524,7 @@ namespace Mono.CSharp
 					base_parameters[i].Resolve (this, i);
 				}
 
-				var cloned_params = ParametersCompiled.CreateFullyResolved (base_parameters, method.Parameters.Types);
+				var cloned_params = ParametersCompiled.CreateFullyResolved (base_parameters, local_param_types);
 				if (method.Parameters.HasArglist) {
 					cloned_params.FixedParameters[0] = new Parameter (null, "__arglist", Parameter.Modifier.NONE, null, Location);
 					cloned_params.Types[0] = Module.PredefinedTypes.RuntimeArgumentHandle.Resolve ();
@@ -1660,6 +1718,8 @@ namespace Mono.CSharp
 
 		public override void ExpandBaseInterfaces ()
 		{
+			DoResolveTypeParameters ();
+
 			if (!IsPartialPart)
 				DoExpandBaseInterfaces ();
 
@@ -1765,8 +1825,6 @@ namespace Mono.CSharp
 		protected override void DoDefineContainer ()
 		{
 			DefineBaseTypes ();
-
-			DoResolveTypeParameters ();
 		}
 
 		//
@@ -1790,8 +1848,10 @@ namespace Mono.CSharp
 			this.spec = spec;
 			current_type = null;
 			if (class_partial_parts != null) {
-				foreach (var part in class_partial_parts)
+				foreach (var part in class_partial_parts) {
 					part.spec = spec;
+					part.current_type = null;
+				}
 			}
 		}
 
@@ -1852,7 +1912,7 @@ namespace Mono.CSharp
 					return base_type;
 			}
 
-			if (iface_exprs != null) {
+			if (iface_exprs != null && this is Interface) {
 				foreach (var iface in iface_exprs) {
 					// the interface might not have been resolved, prevents a crash, see #442144
 					if (iface == null)
@@ -2141,6 +2201,14 @@ namespace Mono.CSharp
 
 		public override void Emit ()
 		{
+			if (Interfaces != null && (ModFlags & Modifiers.PRIVATE) == 0) {
+				foreach (var iface in Interfaces) {
+					if (iface.HasNamedTupleElement) {
+						throw new NotImplementedException ("named tuples for .interfaceimpl");
+					}
+				}
+			}
+
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
@@ -2197,6 +2265,10 @@ namespace Mono.CSharp
 				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (TypeBuilder);
 
 #if STATIC
+			if (Kind == MemberKind.Struct && !HasStructLayout && HasInstanceField) {
+				TypeBuilder.__SetLayout (0, 0);
+			}
+
 			if ((TypeBuilder.Attributes & TypeAttributes.StringFormatMask) == 0 && Module.HasDefaultCharSet)
 				TypeBuilder.__SetAttributes (TypeBuilder.Attributes | Module.DefaultCharSetType);
 #endif
@@ -2382,7 +2454,7 @@ namespace Mono.CSharp
 			var ifaces = PartialContainer.Interfaces;
 			if (ifaces != null) {
 				foreach (TypeSpec t in ifaces){
-					if (t == mb.InterfaceType)
+					if (t == mb.InterfaceType || t == null)
 						return true;
 
 					var expanded_base = t.Interfaces;
@@ -2499,7 +2571,7 @@ namespace Mono.CSharp
 			//	return null;
 
 			var container = PartialContainer.CurrentType;
-			return MemberCache.FindNestedType (container, name, arity);
+			return MemberCache.FindNestedType (container, name, arity, false);
 		}
 
 		public void Mark_HasEquals ()
@@ -2867,8 +2939,11 @@ namespace Mono.CSharp
 			if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
 				Module.PredefinedAttributes.Extension.EmitAttribute (TypeBuilder);
 
-			if (base_type != null && base_type.HasDynamicElement) {
-				Module.PredefinedAttributes.Dynamic.EmitAttribute (TypeBuilder, base_type, Location);
+			if (base_type != null) {
+				if (base_type.HasDynamicElement)
+					Module.PredefinedAttributes.Dynamic.EmitAttribute (TypeBuilder, base_type, Location);
+				if (base_type.HasNamedTupleElement)
+					Module.PredefinedAttributes.TupleElementNames.EmitAttribute (TypeBuilder, base_type, Location);
 			}
 		}
 
@@ -2977,7 +3052,9 @@ namespace Mono.CSharp
 			Modifiers.PROTECTED |
 			Modifiers.INTERNAL  |
 			Modifiers.UNSAFE    |
-			Modifiers.PRIVATE;
+			Modifiers.PRIVATE   |
+			Modifiers.READONLY  |
+			Modifiers.REF;
 
 		public Struct (TypeContainer parent, MemberName name, Modifiers mod, Attributes attrs)
 			: base (parent, name, attrs, MemberKind.Struct)
@@ -3090,6 +3167,12 @@ namespace Mono.CSharp
 
 		public override void Emit ()
 		{
+			if ((ModFlags & Modifiers.READONLY) != 0)
+				Module.PredefinedAttributes.IsReadOnly.EmitAttribute (TypeBuilder);
+
+			if ((ModFlags & Modifiers.REF) != 0)
+				Module.PredefinedAttributes.IsByRefLike.EmitAttribute (TypeBuilder);
+
 			CheckStructCycles ();
 
 			base.Emit ();
@@ -3129,7 +3212,7 @@ namespace Mono.CSharp
 				return false;
 			}
 
-			if (first_nonstatic_field != null) {
+			if (HasInstanceField) {
 				requires_delayed_unmanagedtype_check = true;
 
 				foreach (var member in Members) {
@@ -3164,6 +3247,10 @@ namespace Mono.CSharp
 		protected override TypeSpec[] ResolveBaseTypes (out FullNamedExpression base_class)
 		{
 			var ifaces = base.ResolveBaseTypes (out base_class);
+			if (ifaces != null && (ModFlags & Modifiers.REF) != 0) {
+				Report.Error (8343, Location, "`{0}': ref structs cannot implement interfaces", GetSignatureForError ());
+			}
+
 			base_type = Compiler.BuiltinTypes.ValueType;
 			return ifaces;
 		}
@@ -3479,10 +3566,13 @@ namespace Mono.CSharp
 				ok = false;
 			}
 
-			var base_member_type = ((IInterfaceMemberSpec) base_member).MemberType;
+			var base_member_type = ((IInterfaceMemberSpec)base_member).MemberType;
 			if (!TypeSpecComparer.Override.IsEqual (MemberType, base_member_type)) {
 				Report.SymbolRelatedToPreviousError (base_member);
-				if (this is PropertyBasedMember) {
+				if (((base_member_type.Kind ^ MemberType.Kind) & MemberKind.ByRef) != 0) {
+					Report.Error (8148, Location, "`{0}': must {2}return by reference to match overridden member `{1}'",
+					              GetSignatureForError (), base_member.GetSignatureForError (), base_member_type.Kind == MemberKind.ByRef ? "" : "not ");
+				} else if (this is PropertyBasedMember) {
 					Report.Error (1715, Location, "`{0}': type must be `{1}' to match overridden member `{2}'",
 						GetSignatureForError (), base_member_type.GetSignatureForError (), base_member.GetSignatureForError ());
 				} else {
@@ -3490,6 +3580,20 @@ namespace Mono.CSharp
 						GetSignatureForError (), base_member_type.GetSignatureForError (), base_member.GetSignatureForError ());
 				}
 				ok = false;
+			} else if (!NamedTupleSpec.CheckOverrideName (MemberType, base_member_type)) {
+				// CSC: Should be different error code
+				Report.Error (8139, Location, "`{0}': cannot change return type tuple element names when overriding inherited member `{1}'",
+							  GetSignatureForError (), base_member.GetSignatureForError ());
+				ok = false;
+			}
+
+			var base_params = base_member as IParametersMember;
+			if (base_params != null) {
+				if (!NamedTupleSpec.CheckOverrideName ((IParametersMember)this, base_params)) {
+					Report.Error (8139, Location, "`{0}': cannot change tuple element names when overriding inherited member `{1}'",
+								  GetSignatureForError (), base_member.GetSignatureForError ());
+					ok = false;
+				}
 			}
 
 			return ok;
@@ -3849,7 +3953,7 @@ namespace Mono.CSharp
 
 		protected void IsTypePermitted ()
 		{
-			if (MemberType.IsSpecialRuntimeType) {
+			if (MemberType.IsSpecialRuntimeType || MemberType.IsByRefLike) {
 				if (Parent is StateMachine) {
 					Report.Error (4012, Location,
 						"Parameters or local variables of type `{0}' cannot be declared in async methods or iterators",
@@ -3857,6 +3961,19 @@ namespace Mono.CSharp
 				} else if (Parent is HoistedStoreyClass) {
 					Report.Error (4013, Location,
 						"Local variables of type `{0}' cannot be used inside anonymous methods, lambda expressions or query expressions",
+						MemberType.GetSignatureForError ());
+				} else if (MemberType.IsByRefLike) {
+					if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
+						return;
+
+					if ((ModFlags & Modifiers.AutoProperty) == 0 && this is Property)
+						return;
+
+					if ((ModFlags & Modifiers.STATIC) == 0 && (Parent.ModFlags & Modifiers.REF) != 0)
+						return;
+
+					Report.Error (8345, Location,
+						"Field or auto-implemented property cannot be of type `{0}' unless it is an instance member of a ref struct",
 						MemberType.GetSignatureForError ());
 				} else {
 					Report.Error (610, Location, 

@@ -1,5 +1,6 @@
-/*
- * tramp-x86.c: JIT trampoline code for x86
+/**
+ * \file
+ * JIT trampoline code for x86
  *
  * Authors:
  *   Dietmar Maurer (dietmar@ximian.com)
@@ -15,8 +16,6 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/tabledefs.h>
-#include <mono/metadata/mono-debug.h>
-#include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/arch/x86/x86-codegen.h>
@@ -25,10 +24,9 @@
 
 #include "mini.h"
 #include "mini-x86.h"
+#include "mini-runtime.h"
 #include "debugger-agent.h"
 #include "jit-icalls.h"
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 /*
  * mono_arch_get_unbox_trampoline:
@@ -43,7 +41,7 @@ gpointer
 mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 {
 	guint8 *code, *start;
-	int this_pos = 4, size = NACL_SIZE(16, 32);
+	int this_pos = 4, size = 16;
 	MonoDomain *domain = mono_domain_get ();
 	GSList *unwind_ops;
 
@@ -55,8 +53,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	x86_jump_code (code, addr);
 	g_assert ((code - start) < size);
 
-	nacl_domain_code_validate (domain, &start, size, &code);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_UNBOX_TRAMPOLINE, m);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_UNBOX_TRAMPOLINE, m));
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, unwind_ops), domain);
 
@@ -64,7 +61,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 }
 
 gpointer
-mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericContext *mrgctx, gpointer addr)
+mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 {
 	guint8 *code, *start;
 	int buf_len;
@@ -72,19 +69,18 @@ mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericCo
 
 	MonoDomain *domain = mono_domain_get ();
 
-	buf_len = NACL_SIZE (10, 32);
+	buf_len = 10;
 
 	start = code = mono_domain_code_reserve (domain, buf_len);
 
 	unwind_ops = mono_arch_get_cie_program ();
 
-	x86_mov_reg_imm (code, MONO_ARCH_RGCTX_REG, mrgctx);
+	x86_mov_reg_imm (code, MONO_ARCH_RGCTX_REG, arg);
 	x86_jump_code (code, addr);
 	g_assert ((code - start) <= buf_len);
 
-	nacl_domain_code_validate (domain, &start, buf_len, &code);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, unwind_ops), domain);
 
@@ -94,7 +90,6 @@ mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericCo
 void
 mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 {
-#if defined(__default_codegen__)
 	guint8 *code;
 	guint8 buf [8];
 	gboolean can_write = mono_breakpoint_clean_code (method_start, orig_code, 8, buf, sizeof (buf));
@@ -112,7 +107,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 	orig_code -= 6;
 	if (code [1] == 0xe8) {
 		if (can_write) {
-			InterlockedExchange ((gint32*)(orig_code + 2), (guint)addr - ((guint)orig_code + 1) - 5);
+			mono_atomic_xchg_i32 ((gint32*)(orig_code + 2), (guint)addr - ((guint)orig_code + 1) - 5);
 
 			/* Tell valgrind to recompile the patched code */
 			VALGRIND_DISCARD_TRANSLATIONS (orig_code + 2, 4);
@@ -120,29 +115,12 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 	} else if (code [1] == 0xe9) {
 		/* A PLT entry: jmp <DISP> */
 		if (can_write)
-			InterlockedExchange ((gint32*)(orig_code + 2), (guint)addr - ((guint)orig_code + 1) - 5);
+			mono_atomic_xchg_i32 ((gint32*)(orig_code + 2), (guint)addr - ((guint)orig_code + 1) - 5);
 	} else {
 		printf ("Invalid trampoline sequence: %x %x %x %x %x %x %x\n", code [0], code [1], code [2], code [3],
 				code [4], code [5], code [6]);
 		g_assert_not_reached ();
 	}
-#elif defined(__native_client__)
-	/* Target must be bundle-aligned */
-	g_assert (((guint32)addr & kNaClAlignmentMask) == 0);
-
-	/* 0xe8 = call <DISP>, 0xe9 = jump <DISP> */
-	if ((orig_code [-5] == 0xe8) || orig_code [-6] == 0xe9) {
-		int ret;
-		gint32 offset = (gint32)addr - (gint32)orig_code;
-		guint8 buf[sizeof(gint32)];
-		*((gint32*)(buf)) = offset;
-		ret = nacl_dyncode_modify (orig_code - sizeof(gint32), buf, sizeof(gint32));
-		g_assert (ret == 0);
-	} else {
-		printf ("Invalid trampoline sequence %p: %02x %02x %02x %02x %02x\n", orig_code, orig_code [-5], orig_code [-4], orig_code [-3], orig_code [-2], orig_code[-1]);
-		g_assert_not_reached ();
-	}
-#endif
 }
 
 void
@@ -152,23 +130,11 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
 
 	/* Patch the jump table entry used by the plt entry */
 
-#if defined(__native_client_codegen__) || defined(__native_client__)
-	/* for both compiler and runtime      */
-	/* A PLT entry:                       */
-	/*        mov <DISP>(%ebx), %ecx      */
-	/*        and 0xffffffe0, %ecx        */
-	/*        jmp *%ecx                   */
-	g_assert (code [0] == 0x8b);
-	g_assert (code [1] == 0x8b);
-
-	offset = *(guint32*)(code + 2);
-#elif defined(__default_codegen__)
 	/* A PLT entry: jmp *<DISP>(%ebx) */
 	g_assert (code [0] == 0xff);
 	g_assert (code [1] == 0xa3);
 
 	offset = *(guint32*)(code + 2);
-#endif  /* __native_client_codegen__ */
 	if (!got)
 		got = (gpointer*)(gsize) regs [MONO_ARCH_GOT_REG];
 	*(guint8**)((guint8*)got + offset) = addr;
@@ -177,7 +143,7 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
 static gpointer
 get_vcall_slot (guint8 *code, mgreg_t *regs, int *displacement)
 {
-	const int kBufSize = NACL_SIZE (8, 16);
+	const int kBufSize = 8;
 	guint8 buf [64];
 	guint8 reg = 0;
 	gint32 disp = 0;
@@ -190,15 +156,6 @@ get_vcall_slot (guint8 *code, mgreg_t *regs, int *displacement)
 	if ((code [0] == 0xff) && ((code [1] & 0x18) == 0x10) && ((code [1] >> 6) == 2)) {
 		reg = code [1] & 0x07;
 		disp = *((gint32*)(code + 2));
-#if defined(__native_client_codegen__) || defined(__native_client__)
-	} else if ((code[1] == 0x83) && (code[2] == 0xe1) && (code[4] == 0xff) &&
-			   (code[5] == 0xd1) && (code[-5] == 0x8b)) {
-		disp = *((gint32*)(code - 3));
-		reg = code[-4] & 0x07;
-	} else if ((code[-2] == 0x8b) && (code[1] == 0x83) && (code[4] == 0xff)) {
-		reg = code[-1] & 0x07;
-		disp = (signed char)code[0];
-#endif
 	} else {
 		g_assert_not_reached ();
 		return NULL;
@@ -436,7 +393,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	for (i = X86_EAX; i <= X86_EDI; ++i) {
 		if (i == X86_ESP || i == X86_EBP)
 			continue;
-		if (i == X86_EAX && !((tramp_type == MONO_TRAMPOLINE_RESTORE_STACK_PROT) || (tramp_type == MONO_TRAMPOLINE_AOT_PLT)))
+		if (i == X86_EAX && tramp_type != MONO_TRAMPOLINE_AOT_PLT)
 			continue;
 		x86_mov_reg_membase (code, i, X86_EBP, regarray_offset + (i * 4), 4);
 	}
@@ -456,21 +413,11 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		mono_add_unwind_op_def_cfa_offset (unwind_ops, code, buf, cfa_offset);
 		x86_ret (code);
 	} else {
-		/* The trampoline argument is at the top of the stack, and it contains the address we need to branch to */
-		if (tramp_type == MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD) {
-			x86_pop_reg (code, X86_EAX);
-			cfa_offset -= sizeof (mgreg_t);
-			mono_add_unwind_op_def_cfa_offset (unwind_ops, code, buf, cfa_offset);
-			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 0x8);
-			x86_jump_reg (code, X86_EAX);
-		} else {
-			x86_ret (code);
-		}
+		x86_ret (code);
 	}
 
-	nacl_global_codeman_validate (&buf, 256, &code);
 	g_assert ((code - buf) <= 256);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
 
 	tramp_name = mono_get_generic_trampoline_name (tramp_type);
 	*info = mono_tramp_info_create (tramp_name, buf, code - buf, ji, unwind_ops);
@@ -488,16 +435,14 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	
 	tramp = mono_get_trampoline_code (tramp_type);
 
-	code = buf = mono_domain_code_reserve_align (domain, TRAMPOLINE_SIZE, NACL_SIZE (4, kNaClAlignment));
+	code = buf = mono_domain_code_reserve_align (domain, TRAMPOLINE_SIZE, 4);
 
 	x86_push_imm (buf, arg1);
 	x86_jump_code (buf, tramp);
 	g_assert ((buf - code) <= TRAMPOLINE_SIZE);
 
-	nacl_domain_code_validate (domain, &code, NACL_SIZE (4, kNaClAlignment), &buf);
-
 	mono_arch_flush_icache (code, buf - code);
-	mono_profiler_code_buffer_new (code, buf - code, MONO_PROFILER_CODE_BUFFER_SPECIFIC_TRAMPOLINE, mono_get_generic_trampoline_simple_name (tramp_type));
+	MONO_PROFILER_RAISE (jit_code_buffer, (code, buf - code, MONO_PROFILER_CODE_BUFFER_SPECIFIC_TRAMPOLINE, mono_get_generic_trampoline_simple_name (tramp_type)));
 
 	if (code_len)
 		*code_len = buf - code;
@@ -532,12 +477,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 		index -= size - 1;
 	}
 
-#if defined(__default_codegen__)
 	tramp_size = (aot ? 64 : 36) + 6 * depth;
-#elif defined(__native_client_codegen__)
-	tramp_size = (aot ? 64 : 36) + 2 * kNaClAlignment +
-	  6 * (depth + kNaClAlignment);
-#endif
 
 	code = buf = mono_global_codeman_reserve (tramp_size);
 
@@ -595,9 +535,8 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 		x86_jump_code (code, tramp);
 	}
 
-	nacl_global_codeman_validate (&buf, tramp_size, &code);
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
 	g_assert (code - buf <= tramp_size);
 
@@ -639,9 +578,8 @@ mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboo
 
 	x86_jump_reg (code, X86_EAX);
 
-	nacl_global_codeman_validate (&buf, tramp_size, &code);
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
 	g_assert (code - buf <= tramp_size);
 
@@ -660,72 +598,6 @@ mono_arch_invalidate_method (MonoJitInfo *ji, void *func, gpointer func_arg)
 	x86_call_code (code, (guint8*)func);
 }
 
-static gpointer
-handler_block_trampoline_helper (void)
-{
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
-	return jit_tls->handler_block_return_address;
-}
-
-gpointer
-mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboolean aot)
-{
-	guint8 *tramp = mono_get_trampoline_code (MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD);
-	guint8 *code, *buf;
-	int tramp_size = 64;
-	MonoJumpInfo *ji = NULL;
-	int cfa_offset;
-	GSList *unwind_ops = NULL;
-
-	g_assert (!aot);
-
-	code = buf = mono_global_codeman_reserve (tramp_size);
-
-	unwind_ops = mono_arch_get_cie_program ();
-	cfa_offset = sizeof (mgreg_t);
-	/*
-	This trampoline restore the call chain of the handler block then jumps into the code that deals with it.
-	*/
-
-	/*
-	 * We are in a method frame after the call emitted by OP_CALL_HANDLER.
-	 */
-
-	if (mono_get_jit_tls_offset () != -1) {
-		code = mono_x86_emit_tls_get (code, X86_EAX, mono_get_jit_tls_offset ());
-		x86_mov_reg_membase (code, X86_EAX, X86_EAX, MONO_STRUCT_OFFSET (MonoJitTlsData, handler_block_return_address), 4);
-	} else {
-		/*Slow path uses a c helper*/
-		x86_call_code (code, handler_block_trampoline_helper);
-	}
-	/* Simulate a call */
-	/*Fix stack alignment*/
-	x86_alu_reg_imm (code, X86_SUB, X86_ESP, 0x4);
-	cfa_offset += sizeof (mgreg_t);
-	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, buf, cfa_offset);
-
-	/* This is the address the trampoline will return to */
-	x86_push_reg (code, X86_EAX);
-	cfa_offset += sizeof (mgreg_t);
-	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, buf, cfa_offset);
-
-	/* Dummy trampoline argument, since we call the generic trampoline directly */
-	x86_push_imm (code, 0);
-	cfa_offset += sizeof (mgreg_t);
-	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, buf, cfa_offset);
-	x86_jump_code (code, tramp);
-
-	nacl_global_codeman_validate (&buf, tramp_size, &code);
-
-	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
-	g_assert (code - buf <= tramp_size);
-
-	*info = mono_tramp_info_create ("handler_block_trampoline", buf, code - buf, ji, unwind_ops);
-
-	return buf;
-}
-
 guint8*
 mono_arch_get_call_target (guint8 *code)
 {
@@ -742,7 +614,7 @@ mono_arch_get_call_target (guint8 *code)
 guint32
 mono_arch_get_plt_info_offset (guint8 *plt_entry, mgreg_t *regs, guint8 *code)
 {
-	return *(guint32*)(plt_entry + NACL_SIZE (6, 12));
+	return *(guint32*)(plt_entry + 6);
 }
 
 /*
@@ -768,9 +640,8 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 	x86_jump_code (code, addr);
 	g_assert ((code - start) <= buf_len);
 
-	nacl_domain_code_validate (domain, &start, buf_len, &code);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, unwind_ops), domain);
 
@@ -781,7 +652,7 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
  * mono_arch_create_sdb_trampoline:
  *
  *   Return a trampoline which captures the current context, passes it to
- * debugger_agent_single_step_from_context ()/debugger_agent_breakpoint_from_context (),
+ * mono_debugger_agent_single_step_from_context ()/mono_debugger_agent_breakpoint_from_context (),
  * then restores the (potentially changed) context.
  */
 guint8*
@@ -845,9 +716,9 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 		x86_breakpoint (code);
 	} else {
 		if (single_step)
-			x86_call_code (code, debugger_agent_single_step_from_context);
+			x86_call_code (code, mono_debugger_agent_single_step_from_context);
 		else
-			x86_call_code (code, debugger_agent_breakpoint_from_context);
+			x86_call_code (code, mono_debugger_agent_breakpoint_from_context);
 	}
 
 	/* Restore registers from ctx */
@@ -877,4 +748,3 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 
 	return buf;
 }
-

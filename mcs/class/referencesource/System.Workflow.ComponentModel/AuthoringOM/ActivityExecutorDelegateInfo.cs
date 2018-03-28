@@ -1,0 +1,360 @@
+namespace System.Workflow.ComponentModel
+{
+    using System;
+    using System.Diagnostics;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Globalization;
+
+    [Obsolete("The System.Workflow.* types are deprecated.  Instead, please use the new types from System.Activities.*")]
+    public interface IActivityEventListener<T> where T : EventArgs
+    {
+        void OnEvent(object sender, T e);
+    }
+
+    [Serializable]
+    internal sealed class ActivityExecutorDelegateInfo<T> where T : EventArgs
+    {
+        private string activityQualifiedName = null;
+        private IActivityEventListener<T> eventListener = null;
+        private EventHandler<T> delegateValue = null;
+        private int contextId = -1;
+        private bool wantInTransact = false;
+        private string subscribedActivityQualifiedName = null;
+
+        public ActivityExecutorDelegateInfo(EventHandler<T> delegateValue, Activity contextActivity)
+            : this(false, delegateValue, contextActivity)
+        {
+        }
+        public ActivityExecutorDelegateInfo(IActivityEventListener<T> eventListener, Activity contextActivity)
+            : this(false, eventListener, contextActivity)
+        {
+        }
+        public ActivityExecutorDelegateInfo(EventHandler<T> delegateValue, Activity contextActivity, bool wantInTransact)
+            : this(delegateValue, contextActivity)
+        {
+            this.wantInTransact = wantInTransact;
+        }
+        public ActivityExecutorDelegateInfo(IActivityEventListener<T> eventListener, Activity contextActivity, bool wantInTransact)
+            : this(eventListener, contextActivity)
+        {
+            this.wantInTransact = wantInTransact;
+        }
+        internal ActivityExecutorDelegateInfo(bool useCurrentContext, EventHandler<T> delegateValue, Activity contextActivity)
+        {
+            this.delegateValue = delegateValue;
+            Activity target = delegateValue.Target as Activity;
+
+            if (contextActivity.WorkflowCoreRuntime != null)
+            {
+                if (useCurrentContext)
+                    this.contextId = contextActivity.WorkflowCoreRuntime.CurrentActivity.ContextActivity.ContextId;
+                else
+                    this.contextId = contextActivity.ContextId;
+
+                this.activityQualifiedName = (target ?? contextActivity.WorkflowCoreRuntime.CurrentActivity).QualifiedName;
+            }
+            else
+            {
+                this.contextId = 1;
+                this.activityQualifiedName = (target ?? contextActivity.RootActivity).QualifiedName;
+            }
+        }
+        internal ActivityExecutorDelegateInfo(bool useCurrentContext, IActivityEventListener<T> eventListener, Activity contextActivity)
+        {
+            this.eventListener = eventListener;
+            Activity target = eventListener as Activity;
+            if (contextActivity.WorkflowCoreRuntime != null)
+            {
+                if (useCurrentContext)
+                    this.contextId = contextActivity.WorkflowCoreRuntime.CurrentActivity.ContextActivity.ContextId;
+                else
+                    this.contextId = contextActivity.ContextId;
+
+                this.activityQualifiedName = (target ?? contextActivity.WorkflowCoreRuntime.CurrentActivity).QualifiedName;
+            }
+            else
+            {
+                this.contextId = 1;
+                this.activityQualifiedName = (target ?? contextActivity.RootActivity).QualifiedName;
+            }
+        }
+        public string ActivityQualifiedName
+        {
+            get
+            {
+                return this.activityQualifiedName;
+            }
+        }
+        public string SubscribedActivityQualifiedName
+        {
+            get
+            {
+                return this.subscribedActivityQualifiedName;
+            }
+            set
+            {
+                this.subscribedActivityQualifiedName = value;
+            }
+
+        }
+        public int ContextId
+        {
+            get
+            {
+                return this.contextId;
+            }
+        }
+        public EventHandler<T> HandlerDelegate
+        {
+            get
+            {
+                return this.delegateValue;
+            }
+        }
+
+        public IActivityEventListener<T> EventListener
+        {
+            get
+            {
+                return this.eventListener;
+            }
+        }
+
+        internal void InvokeDelegate(Activity currentContextActivity, T e, bool sync, bool transacted)
+        {
+            Activity targetContextActivity = currentContextActivity.WorkflowCoreRuntime.GetContextActivityForId(this.contextId);
+            if (targetContextActivity == null)
+            {
+                targetContextActivity = FindExecutorForActivityUp(currentContextActivity, this.activityQualifiedName);
+                if (targetContextActivity == null)
+                    targetContextActivity = FindExecutorForActivityDown(currentContextActivity, this.activityQualifiedName);
+            }
+            if (targetContextActivity != null)
+                InvokeDelegate(currentContextActivity, targetContextActivity, e, sync, transacted);
+        }
+        public void InvokeDelegate(Activity currentContextActivity, T e, bool transacted)
+        {
+            // If in atomic and subscriber in same scope, or not in atomic scope at all
+            Activity targetContextActivity = FindExecutorForActivityUp(currentContextActivity, this.activityQualifiedName);
+            if (targetContextActivity == null)
+                targetContextActivity = FindExecutorForActivityDown(currentContextActivity, this.activityQualifiedName);
+
+            if (targetContextActivity != null)
+                InvokeDelegate(currentContextActivity, targetContextActivity, e, false, transacted);
+        }
+        private void InvokeDelegate(Activity currentContextActivity, Activity targetContextActivity, T e, bool sync, bool transacted)
+        {
+            ActivityExecutorDelegateOperation delegateOperation = null;
+            if (this.delegateValue != null)
+                delegateOperation = new ActivityExecutorDelegateOperation(this.activityQualifiedName, this.delegateValue, e, this.ContextId);
+            else
+                delegateOperation = new ActivityExecutorDelegateOperation(this.activityQualifiedName, this.eventListener, e, this.ContextId);
+
+            bool mayInvokeDelegateNow = MayInvokeDelegateNow(currentContextActivity);
+            if (mayInvokeDelegateNow && sync)
+            {
+                Activity targetActivity = targetContextActivity.GetActivityByName(this.activityQualifiedName);
+                using (currentContextActivity.WorkflowCoreRuntime.SetCurrentActivity(targetActivity))
+                {
+                    delegateOperation.SynchronousInvoke = true;
+                    delegateOperation.Run(currentContextActivity.WorkflowCoreRuntime);
+                }
+            }
+            else
+            {
+                // If in atomic and subscriber not in same scope
+                // Queue it on the subscriber's baseExecutor
+                Activity targetActivity = targetContextActivity.GetActivityByName(this.activityQualifiedName);
+                currentContextActivity.WorkflowCoreRuntime.ScheduleItem(delegateOperation, ActivityExecutionContext.IsInAtomicTransaction(targetActivity), transacted, !mayInvokeDelegateNow);
+            }
+        }
+        private bool MayInvokeDelegateNow(Activity currentContextActivity)
+        {
+            // Ok to invoke right away if 
+            // subscriber wants to participate in the current transaction
+            if ((this.activityQualifiedName == null) || (this.wantInTransact))
+                return true;
+
+            // If not in atomic scope at all,            
+            if (!ActivityExecutionContext.IsInAtomicTransaction(currentContextActivity.WorkflowCoreRuntime.CurrentActivity))
+                return true;
+
+            // Has not started executing yet, queue it up for now
+            // Not letting it leak out for recv case any more
+            Activity targetContextActivity = currentContextActivity.WorkflowCoreRuntime.GetContextActivityForId(this.contextId);
+            if (targetContextActivity == null)
+                return false;
+
+            // or in atomic and subscriber in same scope,
+            // or in an atomic scope that's not in executing state, e.g. need to fire Scope closed status
+            Activity targetActivity = targetContextActivity.GetActivityByName(this.activityQualifiedName, true);
+
+            if (targetActivity == null)
+                return false;
+
+            if (ActivityExecutionContext.IsInAtomicTransaction(targetActivity) &&
+                ActivityExecutionContext.IsInAtomicTransaction(currentContextActivity.WorkflowCoreRuntime.CurrentActivity))
+                return true;
+
+            // If the activity receiving the subscription is the scope itself
+            if (targetActivity.MetaEquals(currentContextActivity))
+                return true;
+
+            return false;
+        }
+        private Activity FindExecutorForActivityUp(Activity contextActivity, string activityQualifiedName)
+        {
+            while (contextActivity != null)
+            {
+                Activity activityToFind = contextActivity.GetActivityByName(activityQualifiedName, true);
+                if (activityToFind != null && activityToFind.ExecutionStatus != ActivityExecutionStatus.Initialized)
+                    return contextActivity;
+                contextActivity = contextActivity.ParentContextActivity;
+            }
+            return contextActivity;
+        }
+        private Activity FindExecutorForActivityDown(Activity contextActivity, string activityQualifiedName)
+        {
+            Queue<Activity> contextActivities = new Queue<Activity>();
+            contextActivities.Enqueue(contextActivity);
+            while (contextActivities.Count > 0)
+            {
+                Activity contextActivity2 = contextActivities.Dequeue();
+                Activity activityToFind = contextActivity2.GetActivityByName(activityQualifiedName, true);
+                if (activityToFind != null && activityToFind.ExecutionStatus != ActivityExecutionStatus.Initialized)
+                    return contextActivity2;
+
+                IList<Activity> nestedContextActivities = (IList<Activity>)contextActivity2.GetValue(Activity.ActiveExecutionContextsProperty);
+                if (nestedContextActivities != null)
+                {
+                    foreach (Activity nestedContextActivity in nestedContextActivities)
+                        contextActivities.Enqueue(nestedContextActivity);
+                }
+            }
+            return null;
+        }
+        public override bool Equals(object obj)
+        {
+            ActivityExecutorDelegateInfo<T> otherObject = obj as ActivityExecutorDelegateInfo<T>;
+            if (otherObject == null)
+                return false;
+
+            return (
+                            (otherObject.delegateValue == null && this.delegateValue == null) ||
+                            (otherObject.delegateValue != null && otherObject.delegateValue.Equals(this.delegateValue))
+                        ) &&
+                        (
+                            (otherObject.eventListener == null && this.eventListener == null) ||
+                            (otherObject.eventListener != null && otherObject.eventListener.Equals(this.eventListener))
+                        ) &&
+                        otherObject.activityQualifiedName == this.activityQualifiedName &&
+                        otherObject.contextId == this.contextId &&
+                        otherObject.wantInTransact == this.wantInTransact;
+        }
+        public override int GetHashCode()
+        {
+            return this.delegateValue != null ? this.delegateValue.GetHashCode() : this.eventListener.GetHashCode() ^
+                    this.activityQualifiedName.GetHashCode();
+        }
+
+        [Serializable]
+        private sealed class ActivityExecutorDelegateOperation : SchedulableItem
+        {
+            private string activityQualifiedName = null;
+            private IActivityEventListener<T> eventListener = null;
+            private EventHandler<T> delegateValue = null;
+            private T args = null;
+
+            [NonSerialized]
+            private bool synchronousInvoke = false;
+
+            public ActivityExecutorDelegateOperation(string activityQualifiedName, EventHandler<T> delegateValue, T e, int contextId)
+                : base(contextId, activityQualifiedName)
+            {
+                this.activityQualifiedName = activityQualifiedName;
+                this.delegateValue = delegateValue;
+                this.args = e;
+            }
+            public ActivityExecutorDelegateOperation(string activityQualifiedName, IActivityEventListener<T> eventListener, T e, int contextId)
+                : base(contextId, activityQualifiedName)
+            {
+                this.activityQualifiedName = activityQualifiedName;
+                this.eventListener = eventListener;
+                this.args = e;
+            }
+            internal bool SynchronousInvoke
+            {
+                get
+                {
+                    return this.synchronousInvoke;
+                }
+                set
+                {
+                    this.synchronousInvoke = value;
+                }
+            }
+            public override bool Run(IWorkflowCoreRuntime workflowCoreRuntime)
+            {
+                // get context activity
+                Activity contextActivity = workflowCoreRuntime.GetContextActivityForId(this.ContextId);
+
+                // Work around for ActivityExecutionStatusChangedEventArgs
+                ActivityExecutionStatusChangedEventArgs activityStatusChangeEventArgs = this.args as ActivityExecutionStatusChangedEventArgs;
+                if (activityStatusChangeEventArgs != null)
+                {
+                    activityStatusChangeEventArgs.BaseExecutor = workflowCoreRuntime;
+                    if (activityStatusChangeEventArgs.Activity == null)
+                    {
+                        // status change for an activity that has been deleted dynamically since.
+                        activityStatusChangeEventArgs.BaseExecutor = null;
+                        return false;
+                    }
+                }
+
+                // get activity, if null, or if activity has already closed or just initialized, or if primary has closed and 
+                // the target of the notification is not ActivityExecutionFilter, then 
+                Activity activity = contextActivity.GetActivityByName(this.activityQualifiedName);
+                if (activity == null ||
+                      ((activity.ExecutionStatus == ActivityExecutionStatus.Closed || activity.ExecutionStatus == ActivityExecutionStatus.Initialized) && !this.synchronousInvoke) ||
+                      (activity.HasPrimaryClosed && !(this.eventListener is ActivityExecutionFilter))
+                    )
+                    return false;
+
+                // call the delegate
+                try
+                {
+                    using (workflowCoreRuntime.SetCurrentActivity(activity))
+                    {
+                        using (ActivityExecutionContext activityExecutionContext = new ActivityExecutionContext(activity))
+                        {
+                            if (this.delegateValue != null)
+                                this.delegateValue(activityExecutionContext, this.args);
+                            else
+                                this.eventListener.OnEvent(activityExecutionContext, this.args);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    if (activity != null)
+                        System.Workflow.Runtime.WorkflowTrace.Runtime.TraceEvent(TraceEventType.Error, 1, "Subscription handler of Activity {0} threw {1}", activity.QualifiedName, e.ToString());
+                    else
+                        System.Workflow.Runtime.WorkflowTrace.Runtime.TraceEvent(TraceEventType.Error, 1, "Subscription handler threw {0}", e.ToString());
+                    throw;
+                }
+                finally
+                {
+                    // Work around for activity status change Event Args
+                    if (activityStatusChangeEventArgs != null)
+                        activityStatusChangeEventArgs.BaseExecutor = null;
+                }
+                return true;
+            }
+            public override string ToString()
+            {
+                return "SubscriptionEvent(" + "(" + this.ContextId.ToString(CultureInfo.CurrentCulture) + ")" + this.activityQualifiedName + ", " + this.args.ToString() + ")";
+            }
+        }
+    }
+}

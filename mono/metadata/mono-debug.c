@@ -1,5 +1,5 @@
-/*
- * mono-debug.c: 
+/**
+ * \file
  *
  * Author:
  *	Mono Project (http://www.mono-project.com)
@@ -17,14 +17,15 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/mono-debug.h>
-#include <mono/metadata/mono-debug-debugger.h>
+#include <mono/metadata/debug-internals.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/mempool.h>
+#include <mono/metadata/debug-mono-symfile.h>
 #include <mono/metadata/debug-mono-ppdb.h>
+#include <mono/metadata/exception-internals.h>
+#include <mono/metadata/runtime.h>
 #include <string.h>
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 #if NO_UNALIGNED_ACCESS
 #define WRITE_UNALIGNED(type, addr, val) \
@@ -175,6 +176,9 @@ mono_debug_cleanup (void)
 	}
 }
 
+/**
+ * mono_debug_domain_create:
+ */
 void
 mono_debug_domain_create (MonoDomain *domain)
 {
@@ -220,6 +224,9 @@ mono_debug_get_image (MonoImage *image)
 	return (MonoDebugHandle *)g_hash_table_lookup (mono_debug_handles, image);
 }
 
+/**
+ * mono_debug_close_image:
+ */
 void
 mono_debug_close_image (MonoImage *image)
 {
@@ -328,9 +335,9 @@ mono_debug_lookup_method_internal (MonoMethod *method)
 /**
  * mono_debug_lookup_method:
  *
- * Lookup symbol file information for the method @method.  The returned
- * `MonoDebugMethodInfo' is a private structure, but it can be passed to
- * mono_debug_symfile_lookup_location().
+ * Lookup symbol file information for the method \p method.  The returned
+ * \c MonoDebugMethodInfo is a private structure, but it can be passed to
+ * \c mono_debug_symfile_lookup_location.
  */
 MonoDebugMethodInfo *
 mono_debug_lookup_method (MonoMethod *method)
@@ -428,6 +435,9 @@ write_variable (MonoDebugVarInfo *var, guint8 *ptr, guint8 **rptr)
 	*rptr = ptr;
 }
 
+/**
+ * mono_debug_add_method:
+ */
 MonoDebugMethodAddress *
 mono_debug_add_method (MonoMethod *method, MonoDebugMethodJitInfo *jit, MonoDomain *domain)
 {
@@ -459,23 +469,25 @@ mono_debug_add_method (MonoMethod *method, MonoDebugMethodJitInfo *jit, MonoDoma
 		write_sleb128 (lne->il_offset, ptr, &ptr);
 		write_sleb128 (lne->native_offset, ptr, &ptr);
 	}
+	write_leb128 (jit->has_var_info, ptr, &ptr);
+	if (jit->has_var_info) {
+		*ptr++ = jit->this_var ? 1 : 0;
+		if (jit->this_var)
+			write_variable (jit->this_var, ptr, &ptr);
 
-	*ptr++ = jit->this_var ? 1 : 0;
-	if (jit->this_var)
-		write_variable (jit->this_var, ptr, &ptr);
+		write_leb128 (jit->num_params, ptr, &ptr);
+		for (i = 0; i < jit->num_params; i++)
+			write_variable (&jit->params [i], ptr, &ptr);
 
-	write_leb128 (jit->num_params, ptr, &ptr);
-	for (i = 0; i < jit->num_params; i++)
-		write_variable (&jit->params [i], ptr, &ptr);
+		write_leb128 (jit->num_locals, ptr, &ptr);
+		for (i = 0; i < jit->num_locals; i++)
+			write_variable (&jit->locals [i], ptr, &ptr);
 
-	write_leb128 (jit->num_locals, ptr, &ptr);
-	for (i = 0; i < jit->num_locals; i++)
-		write_variable (&jit->locals [i], ptr, &ptr);
-
-	*ptr++ = jit->gsharedvt_info_var ? 1 : 0;
-	if (jit->gsharedvt_info_var) {
-		write_variable (jit->gsharedvt_info_var, ptr, &ptr);
-		write_variable (jit->gsharedvt_locals_var, ptr, &ptr);
+		*ptr++ = jit->gsharedvt_info_var ? 1 : 0;
+		if (jit->gsharedvt_info_var) {
+			write_variable (jit->gsharedvt_info_var, ptr, &ptr);
+			write_variable (jit->gsharedvt_locals_var, ptr, &ptr);
+		}
 	}
 
 	size = ptr - oldptr;
@@ -525,6 +537,9 @@ mono_debug_remove_method (MonoMethod *method, MonoDomain *domain)
 	mono_debugger_unlock ();
 }
 
+/**
+ * mono_debug_add_delegate_trampoline:
+ */
 void
 mono_debug_add_delegate_trampoline (gpointer code, int size)
 {
@@ -623,27 +638,29 @@ mono_debug_read_method (MonoDebugMethodAddress *address)
 		lne->il_offset = read_sleb128 (ptr, &ptr);
 		lne->native_offset = read_sleb128 (ptr, &ptr);
 	}
+	jit->has_var_info = read_leb128 (ptr, &ptr);
+	if (jit->has_var_info) {
+		if (*ptr++) {
+			jit->this_var = g_new0 (MonoDebugVarInfo, 1);
+			read_variable (jit->this_var, ptr, &ptr);
+		}
 
-	if (*ptr++) {
-		jit->this_var = g_new0 (MonoDebugVarInfo, 1);
-		read_variable (jit->this_var, ptr, &ptr);
-	}
+		jit->num_params = read_leb128 (ptr, &ptr);
+		jit->params = g_new0 (MonoDebugVarInfo, jit->num_params);
+		for (i = 0; i < jit->num_params; i++)
+			read_variable (&jit->params [i], ptr, &ptr);
 
-	jit->num_params = read_leb128 (ptr, &ptr);
-	jit->params = g_new0 (MonoDebugVarInfo, jit->num_params);
-	for (i = 0; i < jit->num_params; i++)
-		read_variable (&jit->params [i], ptr, &ptr);
+		jit->num_locals = read_leb128 (ptr, &ptr);
+		jit->locals = g_new0 (MonoDebugVarInfo, jit->num_locals);
+		for (i = 0; i < jit->num_locals; i++)
+			read_variable (&jit->locals [i], ptr, &ptr);
 
-	jit->num_locals = read_leb128 (ptr, &ptr);
-	jit->locals = g_new0 (MonoDebugVarInfo, jit->num_locals);
-	for (i = 0; i < jit->num_locals; i++)
-		read_variable (&jit->locals [i], ptr, &ptr);
-
-	if (*ptr++) {
-		jit->gsharedvt_info_var = g_new0 (MonoDebugVarInfo, 1);
-		jit->gsharedvt_locals_var = g_new0 (MonoDebugVarInfo, 1);
-		read_variable (jit->gsharedvt_info_var, ptr, &ptr);
-		read_variable (jit->gsharedvt_locals_var, ptr, &ptr);
+		if (*ptr++) {
+			jit->gsharedvt_info_var = g_new0 (MonoDebugVarInfo, 1);
+			jit->gsharedvt_locals_var = g_new0 (MonoDebugVarInfo, 1);
+			read_variable (jit->gsharedvt_info_var, ptr, &ptr);
+			read_variable (jit->gsharedvt_locals_var, ptr, &ptr);
+		}
 	}
 
 	return jit;
@@ -712,8 +729,8 @@ cleanup_and_fail:
 /**
  * mono_debug_il_offset_from_address:
  *
- *   Compute the IL offset corresponding to NATIVE_OFFSET inside the native
- * code of METHOD in DOMAIN.
+ * Compute the IL offset corresponding to \p native_offset inside the native
+ * code of \p method in \p domain.
  */
 gint32
 mono_debug_il_offset_from_address (MonoMethod *method, MonoDomain *domain, guint32 native_offset)
@@ -731,14 +748,12 @@ mono_debug_il_offset_from_address (MonoMethod *method, MonoDomain *domain, guint
 
 /**
  * mono_debug_lookup_source_location:
- * @address: Native offset within the @method's machine code.
- *
+ * \param address Native offset within the \p method's machine code.
  * Lookup the source code corresponding to the machine instruction located at
- * native offset @address within @method.
- *
- * The returned `MonoDebugSourceLocation' contains both file / line number
+ * native offset \p address within \p method.
+ * The returned \c MonoDebugSourceLocation contains both file / line number
  * information and the corresponding IL offset.  It must be freed by
- * mono_debug_free_source_location().
+ * \c mono_debug_free_source_location.
  */
 MonoDebugSourceLocation *
 mono_debug_lookup_source_location (MonoMethod *method, guint32 address, MonoDomain *domain)
@@ -772,6 +787,40 @@ mono_debug_lookup_source_location (MonoMethod *method, guint32 address, MonoDoma
 		location = mono_ppdb_lookup_location (minfo, offset);
 	else
 		location = mono_debug_symfile_lookup_location (minfo, offset);
+	mono_debugger_unlock ();
+	return location;
+}
+
+/**
+ * mono_debug_lookup_source_location_by_il:
+ *
+ *   Same as mono_debug_lookup_source_location but take an IL_OFFSET argument.
+ */
+MonoDebugSourceLocation *
+mono_debug_lookup_source_location_by_il (MonoMethod *method, guint32 il_offset, MonoDomain *domain)
+{
+	MonoDebugMethodInfo *minfo;
+	MonoDebugSourceLocation *location;
+
+	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
+		return NULL;
+
+	mono_debugger_lock ();
+	minfo = mono_debug_lookup_method_internal (method);
+	if (!minfo || !minfo->handle) {
+		mono_debugger_unlock ();
+		return NULL;
+	}
+
+	if (!minfo->handle->ppdb && (!minfo->handle->symfile || !mono_debug_symfile_is_loaded (minfo->handle->symfile))) {
+		mono_debugger_unlock ();
+		return NULL;
+	}
+
+	if (minfo->handle->ppdb)
+		location = mono_ppdb_lookup_location (minfo, il_offset);
+	else
+		location = mono_debug_symfile_lookup_location (minfo, il_offset);
 	mono_debugger_unlock ();
 	return location;
 }
@@ -842,11 +891,56 @@ mono_debug_free_locals (MonoDebugLocalsInfo *info)
 	g_free (info);
 }
 
+/*
+* mono_debug_lookup_method_async_debug_info:
+*
+*   Return information about the async stepping information of method.
+* The result should be freed using mono_debug_free_async_debug_info ().
+*/
+MonoDebugMethodAsyncInfo*
+mono_debug_lookup_method_async_debug_info (MonoMethod *method)
+{
+	MonoDebugMethodInfo *minfo;
+	MonoDebugMethodAsyncInfo *res = NULL;
+
+	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
+		return NULL;
+
+	mono_debugger_lock ();
+	minfo = mono_debug_lookup_method_internal (method);
+	if (!minfo || !minfo->handle) {
+		mono_debugger_unlock ();
+		return NULL;
+	}
+
+	if (minfo->handle->ppdb)
+		res = mono_ppdb_lookup_method_async_debug_info (minfo);
+
+	mono_debugger_unlock ();
+
+	return res;
+}
+
+/*
+ * mono_debug_free_method_async_debug_info:
+ *
+ *   Free all the data allocated by mono_debug_lookup_method_async_debug_info ().
+ */
+void
+mono_debug_free_method_async_debug_info (MonoDebugMethodAsyncInfo *info)
+{
+	if (info->num_awaits) {
+		g_free (info->yield_offsets);
+		g_free (info->resume_offsets);
+		g_free (info->move_next_method_token);
+	}
+	g_free (info);
+}
+
 /**
  * mono_debug_free_source_location:
- * @location: A `MonoDebugSourceLocation'.
- *
- * Frees the @location.
+ * \param location A \c MonoDebugSourceLocation
+ * Frees the \p location.
  */
 void
 mono_debug_free_source_location (MonoDebugSourceLocation *location)
@@ -857,11 +951,18 @@ mono_debug_free_source_location (MonoDebugSourceLocation *location)
 	}
 }
 
+static int (*get_seq_point) (MonoDomain *domain, MonoMethod *method, gint32 native_offset);
+
+void
+mono_install_get_seq_point (MonoGetSeqPointFunc func)
+{
+	get_seq_point = func;
+}
+
 /**
  * mono_debug_print_stack_frame:
- * @native_offset: Native offset within the @method's machine code.
- *
- * Conventient wrapper around mono_debug_lookup_source_location() which can be
+ * \param native_offset Native offset within the \p method's machine code.
+ * Conventient wrapper around \c mono_debug_lookup_source_location which can be
  * used if you only want to use the location to print a stack frame.
  */
 gchar *
@@ -887,10 +988,22 @@ mono_debug_print_stack_frame (MonoMethod *method, guint32 native_offset, MonoDom
 			offset = -1;
 		}
 
+		if (offset < 0 && get_seq_point)
+			offset = get_seq_point (domain, method, native_offset);
+
 		if (offset < 0)
 			res = g_strdup_printf ("at %s <0x%05x>", fname, native_offset);
-		else
-			res = g_strdup_printf ("at %s <IL 0x%05x, 0x%05x>", fname, offset, native_offset);
+		else {
+			char *mvid = mono_guid_to_string_minimal ((uint8_t*)m_class_get_image (method->klass)->heap_guid.data);
+			char *aotid = mono_runtime_get_aotid ();
+			if (aotid)
+				res = g_strdup_printf ("at %s [0x%05x] in <%s#%s>:0" , fname, offset, mvid, aotid);
+			else
+				res = g_strdup_printf ("at %s [0x%05x] in <%s>:0" , fname, offset, mvid);
+
+			g_free (aotid);
+			g_free (mvid);
+		}
 		g_free (fname);
 		return res;
 	}
@@ -930,6 +1043,9 @@ struct _BundledSymfile {
 
 static BundledSymfile *bundled_symfiles = NULL;
 
+/**
+ * mono_register_symfile_for_assembly:
+ */
 void
 mono_register_symfile_for_assembly (const char *assembly_name, const mono_byte *raw_contents, int size)
 {

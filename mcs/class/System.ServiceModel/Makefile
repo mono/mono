@@ -8,7 +8,7 @@ RESOURCE_FILES = \
 
 LIBRARY = System.ServiceModel.dll
 
-LIB_REFS = System System.Xml System.Core System.Runtime.Serialization
+LIB_REFS = System System.Xml System.Core System.Runtime.Serialization System.IdentityModel
 LIB_MCS_FLAGS = \
 		/nowarn:414,169,67,3005,436,219,618 \
 		/unsafe \
@@ -20,7 +20,7 @@ LIB_REFS += System.ServiceModel.Internals
 endif
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
-LIB_REFS += System.Configuration System.Data System.Security System.IdentityModel System.IdentityModel.Selectors System.Transactions System.Messaging System.Web.Services Mono.Security
+LIB_REFS += System.Configuration System.Data System.Security System.IdentityModel.Selectors System.Transactions System.Messaging System.Web.Services Mono.Security
 LIB_MCS_FLAGS += /d:NET_3_0
 
 ifndef NO_SYSTEM_WEB_DEPENDENCY
@@ -30,14 +30,9 @@ endif
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 
 ifndef NO_SYSTEM_SERVICEMODEL_ACTIVATION_DEPENDENCY
-activation = $(the_libdir_base)System.ServiceModel.Activation.dll
-servicemodel_deps = $(activation)
-
-ifneq (plainservice/,$(intermediate))
-LIB_REFS += System.ServiceModel.Activation
-LIB_MCS_FLAGS += -define:HAS_ACTIVATION
-endif 
-endif # NO_SYSTEM_SERVICEMODEL_ACTIVATION_DEPENDENCY
+API_BIN_REFS := System.ServiceModel.Activation
+LIB_MCS_FLAGS += /d:SERVICEMODEL_ACTIVATION_DEPENDENCY
+endif
 
 ifndef NO_SYSTEM_WEB_APPSERVICES_DEPENDENCY
 LIB_REFS += System.Web.ApplicationServices
@@ -73,22 +68,3 @@ NO_TEST = yes
 endif
 
 include ../../build/library.make
-
-$(the_libdir_base)System.ServiceModel.dll: $(servicemodel_deps)
-
-$(activation):
-	(cd ../System.ServiceModel.Activation; $(MAKE) $@)
-
-ifneq (plainservice/,$(intermediate))
-$(the_libdir_base)plainservice/System.ServiceModel.dll:
-	$(MAKE) intermediate=plainservice/ $(the_libdir_base)plainservice/System.ServiceModel.dll
-endif
-
-.NOTPARALLEL: $(servicemodel_deps)
-
-CLEAN_FILES = $(the_libdir_base)plainservice/System.ServiceModel.dll
-
-ifndef intermediate
-csproj-local:
-	$(MAKE) csproj-local intermediate=plainservice/
-endif

@@ -40,6 +40,7 @@ install-local: $(SECURITY_TARGETS)
 	for p in $(SECURITY_TARGETS) ; do \
 	    $(INSTALL_BIN) $$p $(DESTDIR)$(PROGRAM_INSTALL_DIR) ; \
 	    test ! -f $$p.mdb || $(INSTALL_BIN) $$p.mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR) ; \
+	    test ! -f $${p%.exe}.pdb || $(INSTALL_BIN) $${p%.exe}.pdb $(DESTDIR)$(PROGRAM_INSTALL_DIR) ; \
 	done
 
 uninstall-local:
@@ -59,10 +60,10 @@ clean-local:
 dist-local: dist-default
 
 sn.exe $(topdir)/class/lib/$(PROFILE)/sn.exe: $(SN_SOURCES)
-	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/Mono.Security.dll /out:$@ $(SN_SOURCES)
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/Mono.Security.dll /out:$@ $(SN_SOURCES)
 
 permview.exe: permview.cs
-	$(CSCOMPILE) $^ $(HELPER_SOURCES) -r:$(topdir)/class/lib/$(PROFILE)/Mono.Cecil.dll
+	$(CSCOMPILE) $^ $(HELPER_SOURCES) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/Mono.Cecil.dll
 
 %.exe: %.cs $(HELPER_SOURCES)
-	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/Mono.Security.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll $^
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/Mono.Security.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll $^

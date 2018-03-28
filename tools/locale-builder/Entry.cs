@@ -34,41 +34,48 @@ namespace Mono.Tools.LocaleBuilder
 {
 	public class Entry
 	{
-		// maps strings to indexes
-		static Dictionary<string, int> hash = new Dictionary<string, int> ();
-		static List<string> string_order = new List<string> ();
-		// idx 0 is reserved to indicate null
-		static int curpos = 1;
+		public static readonly Mapping General = new Mapping ();
+		public static readonly Mapping Patterns  = new Mapping ();
+		public static readonly Mapping DateTimeStrings  = new Mapping ();
 
-		// serialize the strings in Hashtable.
-		public static string GetStrings ()
+		public class Mapping
 		{
-			Console.WriteLine ("Total string data size: {0}", curpos);
-			if (curpos > UInt16.MaxValue)
-				throw new Exception ("need to increase idx size in culture-info.h");
-			StringBuilder ret = new StringBuilder ();
-			// the null entry
-			ret.Append ("\"\\0\"\n");
-			foreach (string s in string_order) {
-				ret.Append ("\t\"");
-				ret.Append (s);
-				ret.Append ("\\0\"\n");
-			}
-			return ret.ToString ();
-		}
+			// maps strings to indexes
+			Dictionary<string, int> hash = new Dictionary<string, int> ();
+			List<string> string_order = new List<string> ();
+			// idx 0 is reserved to indicate null
+			int curpos = 1;
 
-		static int AddString (string s, int size)
-		{
-			if (!hash.ContainsKey (s)) {
-				int ret;
-				string_order.Add (s);
-				ret = curpos;
-				hash.Add (s, curpos);
-				curpos += size + 1; // null terminator
-				return ret;
+			// serialize the strings in Hashtable.
+			public string GetStrings ()
+			{
+				Console.WriteLine ("Total string data size: {0}", curpos);
+				if (curpos > UInt16.MaxValue)
+					throw new Exception ("need to increase idx size in culture-info.h");
+				StringBuilder ret = new StringBuilder ();
+				// the null entry
+				ret.Append ("\t\"\\0\"\n");
+				foreach (string s in string_order) {
+					ret.Append ("\t\"");
+					ret.Append (s);
+					ret.Append ("\\0\"\n");
+				}
+				return ret.ToString ();
 			}
 
-			return hash[s];
+			public int AddString (string s, int size)
+			{
+				if (!hash.ContainsKey (s)) {
+					int ret;
+					string_order.Add (s);
+					ret = curpos;
+					hash.Add (s, curpos);
+					curpos += size + 1; // null terminator
+					return ret;
+				}
+
+				return hash[s];
+			}
 		}
 
 		protected static StringBuilder AppendNames (StringBuilder builder, IList<string> names)
@@ -78,14 +85,25 @@ namespace Mono.Tools.LocaleBuilder
 				if (i > 0)
 					builder.Append (", ");
 
-				builder.Append (EncodeStringIdx (names[i]));
+				builder.Append (Encode (DateTimeStrings, names[i]));
 			}
 			builder.Append ("}");
 
 			return builder;
 		}
 
-		internal static String EncodeStringIdx (string str)
+
+		public static string EncodeStringIdx (string str)
+		{
+			return Encode (General, str);
+		}
+
+		protected static string EncodePatternStringIdx (string str)
+		{
+			return Encode (Patterns, str);
+		}
+
+		static string Encode (Mapping mapping, string str)
 		{
 			if (str == null)
 				return "0";
@@ -104,11 +122,11 @@ namespace Mono.Tools.LocaleBuilder
 					in_hex = false;
 				}
 			}
-			int res = AddString (ret.ToString (), ba.Length);
+			int res = mapping.AddString (ret.ToString (), ba.Length);
 			return res.ToString ();
 		}
 
-		private static bool is_hex (int e)
+		static bool is_hex (int e)
 		{
 			return (e >= '0' && e <= '9') || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
 		}

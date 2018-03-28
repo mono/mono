@@ -1,5 +1,6 @@
-/*
- * file-mmap-posix.c: File mmap internal calls
+/**
+ * \file
+ * File mmap internal calls
  *
  * Author:
  *	Rodrigo Kumpera
@@ -32,7 +33,7 @@
 
 
 #include <mono/metadata/object.h>
-#include <mono/metadata/file-io.h>
+#include <mono/metadata/w32file.h>
 #include <mono/metadata/file-mmap.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-memory-model.h>
@@ -63,7 +64,9 @@ enum {
 	COULD_NOT_OPEN,
 	CAPACITY_MUST_BE_POSITIVE,
 	INVALID_FILE_MODE,
-	COULD_NOT_MAP_MEMORY
+	COULD_NOT_MAP_MEMORY,
+	ACCESS_DENIED,
+	CAPACITY_LARGER_THAN_LOGICAL_ADDRESS_SPACE
 };
 
 enum {
@@ -115,7 +118,7 @@ file_mmap_init (void)
 retry:	
 	switch (mmap_init_state) {
 	case  0:
-		if (InterlockedCompareExchange (&mmap_init_state, 1, 0) != 0)
+		if (mono_atomic_cas_i32 (&mmap_init_state, 1, 0) != 0)
 			goto retry;
 		named_regions = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, NULL);
 		mono_coop_mutex_init (&named_regions_mutex);
@@ -227,27 +230,26 @@ is_special_zero_size_file (struct stat *buf)
 XXX implement options
 */
 static void*
-open_file_map (MonoString *path, int input_fd, int mode, gint64 *capacity, int access, int options, int *error)
+open_file_map (const char *c_path, int input_fd, int mode, gint64 *capacity, int access, int options, int *ioerror)
 {
 	struct stat buf;
-	char *c_path = path ? mono_string_to_utf8 (path) : NULL;
 	MmapHandle *handle = NULL;
 	int result, fd;
 
-	if (path)
+	if (c_path)
 		result = stat (c_path, &buf);
 	else
 		result = fstat (input_fd, &buf);
 
 	if (mode == FILE_MODE_TRUNCATE || mode == FILE_MODE_APPEND || mode == FILE_MODE_OPEN) {
 		if (result == -1) { //XXX translate errno?
-			*error = FILE_NOT_FOUND;
+			*ioerror = FILE_NOT_FOUND;
 			goto done;
 		}
 	}
 
 	if (mode == FILE_MODE_CREATE_NEW && result == 0) {
-		*error = FILE_ALREADY_EXISTS;
+		*ioerror = FILE_ALREADY_EXISTS;
 		goto done;
 	}
 
@@ -258,28 +260,28 @@ open_file_map (MonoString *path, int input_fd, int mode, gint64 *capacity, int a
 			 * also makes little sense, so don't do the check if th file is one of these.
 			 */
 			if (buf.st_size == 0 && !is_special_zero_size_file (&buf)) {
-				*error = CAPACITY_SMALLER_THAN_FILE_SIZE;
+				*ioerror = CAPACITY_SMALLER_THAN_FILE_SIZE;
 				goto done;
 			}
 			*capacity = buf.st_size;
 		} else if (*capacity < buf.st_size) {
-			*error = CAPACITY_SMALLER_THAN_FILE_SIZE;
+			*ioerror = CAPACITY_SMALLER_THAN_FILE_SIZE;
 			goto done;
 		}
 	} else {
 		if (mode == FILE_MODE_CREATE_NEW && *capacity == 0) {
-			*error = CAPACITY_SMALLER_THAN_FILE_SIZE;
+			*ioerror = CAPACITY_SMALLER_THAN_FILE_SIZE;
 			goto done;
 		}
 	}
 
-	if (path) //FIXME use io portability?
+	if (c_path) //FIXME use io portability?
 		fd = open (c_path, file_mode_to_unix (mode) | access_mode_to_unix (access), DEFAULT_FILEMODE);
 	else
 		fd = dup (input_fd);
 
 	if (fd == -1) { //XXX translate errno?
-		*error = COULD_NOT_OPEN;
+		*ioerror = COULD_NOT_OPEN;
 		goto done;
 	}
 
@@ -293,33 +295,35 @@ open_file_map (MonoString *path, int input_fd, int mode, gint64 *capacity, int a
 	handle->fd = fd;
 
 done:
-	g_free (c_path);
 	return (void*)handle;
 }
 
 #define MONO_ANON_FILE_TEMPLATE "/mono.anonmap.XXXXXXXXX"
 static void*
-open_memory_map (MonoString *mapName, int mode, gint64 *capacity, int access, int options, int *error)
+open_memory_map (const char *c_mapName, int mode, gint64 *capacity, int access, int options, int *ioerror)
 {
-	char *c_mapName;
 	MmapHandle *handle;
-	if (*capacity <= 1) {
-		*error = CAPACITY_MUST_BE_POSITIVE;
+	if (*capacity <= 0 && mode != FILE_MODE_OPEN) {
+		*ioerror = CAPACITY_MUST_BE_POSITIVE;
 		return NULL;
 	}
+#if SIZEOF_VOID_P == 4
+	if (*capacity > UINT32_MAX) {
+		*ioerror = CAPACITY_LARGER_THAN_LOGICAL_ADDRESS_SPACE;
+		return NULL;
+	}
+#endif
 
 	if (!(mode == FILE_MODE_CREATE_NEW || mode == FILE_MODE_OPEN_OR_CREATE || mode == FILE_MODE_OPEN)) {
-		*error = INVALID_FILE_MODE;
+		*ioerror = INVALID_FILE_MODE;
 		return NULL;
 	}
-
-	c_mapName = mono_string_to_utf8 (mapName);
 
 	named_regions_lock ();
 	handle = (MmapHandle*)g_hash_table_lookup (named_regions, c_mapName);
 	if (handle) {
 		if (mode == FILE_MODE_CREATE_NEW) {
-			*error = FILE_ALREADY_EXISTS;
+			*ioerror = FILE_ALREADY_EXISTS;
 			goto done;
 		}
 
@@ -332,7 +336,7 @@ open_memory_map (MonoString *mapName, int mode, gint64 *capacity, int access, in
 		int unused G_GNUC_UNUSED, alloc_size;
 
 		if (mode == FILE_MODE_OPEN) {
-			*error = FILE_NOT_FOUND;
+			*ioerror = FILE_NOT_FOUND;
 			goto done;
 		}
 		*capacity = align_up_to_page_size (*capacity);
@@ -340,7 +344,7 @@ open_memory_map (MonoString *mapName, int mode, gint64 *capacity, int access, in
 		tmp_dir = g_get_tmp_dir ();
 		alloc_size = strlen (tmp_dir) + strlen (MONO_ANON_FILE_TEMPLATE) + 1;
 		if (alloc_size > 1024) {//rather fail that stack overflow
-			*error = COULD_NOT_MAP_MEMORY;
+			*ioerror = COULD_NOT_MAP_MEMORY;
 			goto done;
 		}
 		file_name = (char *)alloca (alloc_size);
@@ -349,7 +353,7 @@ open_memory_map (MonoString *mapName, int mode, gint64 *capacity, int access, in
 
 		fd = mkstemp (file_name);
 		if (fd == -1) {
-			*error = COULD_NOT_MAP_MEMORY;
+			*ioerror = COULD_NOT_MAP_MEMORY;
 			goto done;
 		}
 
@@ -369,61 +373,74 @@ open_memory_map (MonoString *mapName, int mode, gint64 *capacity, int access, in
 done:
 	named_regions_unlock ();
 
-	g_free (c_mapName);
 	return handle;
 }
 
 
+/* This is an icall */
 void *
-mono_mmap_open_file (MonoString *path, int mode, MonoString *mapName, gint64 *capacity, int access, int options, int *error)
+mono_mmap_open_file (const gunichar2 *path, gint path_length, int mode, const gunichar2 *mapName, gint mapName_length, gint64 *capacity, int access, int options, int *ioerror, MonoError *error)
 {
+	MmapHandle *handle = NULL;
 	g_assert (path || mapName);
 
-	if (!mapName)
-		return open_file_map (path, -1, mode, capacity, access, options, error);
-
-	if (path) {
-		MmapHandle *handle;
-		char *c_mapName = mono_string_to_utf8 (mapName);
-
-		named_regions_lock ();
-		handle = (MmapHandle*)g_hash_table_lookup (named_regions, c_mapName);
-		if (handle) {
-			*error = FILE_ALREADY_EXISTS;
-			handle = NULL;
-		} else {
-			handle = (MmapHandle *)open_file_map (path, -1, mode, capacity, access, options, error);
-			if (handle) {
-				handle->name = g_strdup (c_mapName);
-				g_hash_table_insert (named_regions, handle->name, handle);
-			}
-		}
-		named_regions_unlock ();
-
-		g_free (c_mapName);
+	if (!mapName) {
+		char * c_path = mono_utf16_to_utf8 (path, path_length, error);
+		return_val_if_nok (error, NULL);
+		handle = open_file_map (c_path, -1, mode, capacity, access, options, ioerror);
+		g_free (c_path);
 		return handle;
 	}
 
-	return open_memory_map (mapName, mode, capacity, access, options, error);
+	char *c_mapName = mono_utf16_to_utf8 (mapName, mapName_length, error);
+	return_val_if_nok (error, NULL);
+
+	if (path) {
+		named_regions_lock ();
+		handle = (MmapHandle*)g_hash_table_lookup (named_regions, c_mapName);
+		if (handle) {
+			*ioerror = FILE_ALREADY_EXISTS;
+			handle = NULL;
+		} else {
+			char *c_path = mono_utf16_to_utf8 (path, path_length, error);
+			if (is_ok (error)) {
+				handle = (MmapHandle *)open_file_map (c_path, -1, mode, capacity, access, options, ioerror);
+				if (handle) {
+					handle->name = g_strdup (c_mapName);
+					g_hash_table_insert (named_regions, handle->name, handle);
+				}
+			} else {
+				handle = NULL;
+			}
+			g_free (c_path);
+		}
+		named_regions_unlock ();
+	} else
+		handle = open_memory_map (c_mapName, mode, capacity, access, options, ioerror);
+
+	g_free (c_mapName);
+	return handle;
 }
 
+/* this is an icall */
 void *
-mono_mmap_open_handle (void *input_fd, MonoString *mapName, gint64 *capacity, int access, int options, int *error)
+mono_mmap_open_handle (void *input_fd, const mono_unichar2 *mapName, gint mapName_length, gint64 *capacity, int access, int options, int *ioerror, MonoError *error)
 {
 	MmapHandle *handle;
 	if (!mapName) {
-		handle = (MmapHandle *)open_file_map (NULL, GPOINTER_TO_INT (input_fd), FILE_MODE_OPEN, capacity, access, options, error);
+		handle = (MmapHandle *)open_file_map (NULL, GPOINTER_TO_INT (input_fd), FILE_MODE_OPEN, capacity, access, options, ioerror);
 	} else {
-		char *c_mapName = mono_string_to_utf8 (mapName);
+		char *c_mapName = mono_utf16_to_utf8 (mapName, mapName_length, error);
+		return_val_if_nok (error, NULL);
 
 		named_regions_lock ();
 		handle = (MmapHandle*)g_hash_table_lookup (named_regions, c_mapName);
 		if (handle) {
-			*error = FILE_ALREADY_EXISTS;
+			*ioerror = FILE_ALREADY_EXISTS;
 			handle = NULL;
 		} else {
 			//XXX we're exploiting wapi HANDLE == FD equivalence. THIS IS FRAGILE, create a _wapi_handle_to_fd call
-			handle = (MmapHandle *)open_file_map (NULL, GPOINTER_TO_INT (input_fd), FILE_MODE_OPEN, capacity, access, options, error);
+			handle = (MmapHandle *)open_file_map (NULL, GPOINTER_TO_INT (input_fd), FILE_MODE_OPEN, capacity, access, options, ioerror);
 			handle->name = g_strdup (c_mapName);
 			g_hash_table_insert (named_regions, handle->name, handle);
 		}
@@ -435,7 +452,7 @@ mono_mmap_open_handle (void *input_fd, MonoString *mapName, gint64 *capacity, in
 }
 
 void
-mono_mmap_close (void *mmap_handle)
+mono_mmap_close (void *mmap_handle, MonoError *error)
 {
 	MmapHandle *handle = (MmapHandle *)mmap_handle;
 
@@ -453,7 +470,7 @@ mono_mmap_close (void *mmap_handle)
 }
 
 void
-mono_mmap_configure_inheritability (void *mmap_handle, gboolean inheritability)
+mono_mmap_configure_inheritability (void *mmap_handle, gboolean inheritability, MonoError *error)
 {
 	MmapHandle *h = (MmapHandle *)mmap_handle;
 	int fd, flags;
@@ -468,7 +485,7 @@ mono_mmap_configure_inheritability (void *mmap_handle, gboolean inheritability)
 }
 
 void
-mono_mmap_flush (void *mmap_handle)
+mono_mmap_flush (void *mmap_handle, MonoError *error)
 {
 	MmapInstance *h = (MmapInstance *)mmap_handle;
 
@@ -477,7 +494,7 @@ mono_mmap_flush (void *mmap_handle)
 }
 
 int
-mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mmap_handle, void **base_address)
+mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mmap_handle, void **base_address, MonoError *error)
 {
 	gint64 mmap_offset = 0;
 	MmapHandle *fh = (MmapHandle *)handle;
@@ -486,8 +503,11 @@ mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mma
 	struct stat buf = { 0 };
 	fstat (fh->fd, &buf); //FIXME error handling
 
+	*mmap_handle = NULL;
+	*base_address = NULL;
+
 	if (offset > buf.st_size || ((eff_size + offset) > buf.st_size && !is_special_zero_size_file (&buf)))
-		goto error;
+		return ACCESS_DENIED;
 	/**
 	  * We use the file size if one of the following conditions is true:
 	  *  -input size is zero
@@ -509,14 +529,11 @@ mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mma
 		return 0;
 	}
 
-error:
-	*mmap_handle = NULL;
-	*base_address = NULL;
 	return COULD_NOT_MAP_MEMORY;
 }
 
 gboolean
-mono_mmap_unmap (void *mmap_handle)
+mono_mmap_unmap (void *mmap_handle, MonoError *error)
 {
 	int res = 0;
 	MmapInstance *h = (MmapInstance *)mmap_handle;

@@ -1,10 +1,12 @@
-/*
- * mini-amd64-gsharedvt.c: libcorkscrew-based native unwinder
+/**
+ * \file
+ * libcorkscrew-based native unwinder
  *
  * Authors:
  *   Zoltan Varga <vargaz@gmail.com>
  *   Rodrigo Kumpera <kumpera@gmail.com>
  *   Andi McClure <andi.mcclure@xamarin.com>
+ *   Johan Lorensson <johan.lorensson@xamarin.com>
  *
  * Copyright 2015 Xamarin, Inc (http://www.xamarin.com)
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -16,7 +18,6 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/tabledefs.h>
-#include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/arch/amd64/amd64-codegen.h>
@@ -29,8 +30,6 @@
 #include "debugger-agent.h"
 
 #if defined (MONO_ARCH_GSHAREDVT_SUPPORTED)
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 gboolean
 mono_arch_gsharedvt_sig_supported (MonoMethodSignature *sig)
@@ -48,6 +47,7 @@ storage_name (ArgStorage st)
 	case ArgOnStack: return "ArgOnStack";
 	case ArgValuetypeInReg: return "ArgValuetypeInReg";
 	case ArgValuetypeAddrInIReg: return "ArgValuetypeAddrInIReg";
+	case ArgValuetypeAddrOnStack: return "ArgValuetypeAddrOnStack";
 	case ArgGSharedVtInReg: return "ArgGSharedVtInReg";
 	case ArgGSharedVtOnStack: return "ArgGSharedVtOnStack";
 	case ArgNone: return "ArgNone";
@@ -55,6 +55,7 @@ storage_name (ArgStorage st)
 	}
 }
 
+#ifdef DEBUG_AMD64_GSHAREDVT
 static char *
 arg_info_desc (ArgInfo *info)
 {
@@ -70,6 +71,7 @@ arg_info_desc (ArgInfo *info)
 
 	return g_string_free (str, FALSE);
 }
+#endif
 
 static inline void
 add_to_map (GPtrArray *map, int src, int dst)
@@ -80,9 +82,17 @@ add_to_map (GPtrArray *map, int src, int dst)
 
 /*
  * Slot mapping:
+ *
+ * System V:
  * 0..5  - rdi, rsi, rdx, rcx, r8, r9
  * 6..13 - xmm0..xmm7
  * 14..  - stack slots
+ *
+ * Windows:
+ * 0..3 - rcx, rdx, r8, r9
+ * 4..7 - xmm0..xmm3
+ * 8..  - stack slots
+ *
  */
 static inline int
 map_reg (int reg)
@@ -118,7 +128,7 @@ Format for the destination descriptor:
 	bits 24:32 - slot count
 */
 #define SRC_DESCRIPTOR_MARSHAL_SHIFT 16
-#define SRC_DESCRIPTOR_MARSHAL_MASK 0x0Ff
+#define SRC_DESCRIPTOR_MARSHAL_MASK 0x0ff
 
 #define SLOT_COUNT_SHIFT 24
 #define SLOT_COUNT_MASK 0xff
@@ -158,6 +168,18 @@ get_arg_slots (ArgInfo *ainfo, int **out_slots, gboolean is_source_argument)
 		src = g_malloc (nsrc * sizeof (int));
 		src [0] = map_freg (sreg);
 		break;
+	case ArgValuetypeAddrInIReg:
+		nsrc = 1;
+		src = g_malloc (nsrc * sizeof (int));
+		src [0] = map_reg (ainfo->pair_regs [0]);
+		break;
+	case ArgValuetypeAddrOnStack:
+		nsrc = 1;
+		src = g_malloc (nsrc * sizeof (int));
+		// is_source_argument adds 2 because we're skipping over the old BBP and the return address
+		// XXX this is a very fragile setup as changes in alignment for the caller reg array can cause the magic number be 3
+		src [0] = map_stack_slot (sslot + (is_source_argument ? 2 : 0));
+		break;
 	default:
 		NOT_IMPLEMENTED;
 		break;
@@ -187,6 +209,11 @@ handle_marshal_when_src_gsharedvt (ArgInfo *dst_info, int *arg_marshal, int *arg
 			*arg_marshal = GSHAREDVT_ARG_BYREF_TO_BYVAL;
 			*arg_slots = dst_info->nregs;
 			break;
+		case ArgValuetypeAddrInIReg:
+		case ArgValuetypeAddrOnStack:
+			*arg_marshal = GSHAREDVT_ARG_NONE;
+			*arg_slots = dst_info->nregs;
+			break;
 		default:
 			NOT_IMPLEMENTED; // Inappropriate value: if dst and src are gsharedvt at once, we shouldn't be here
 			break;
@@ -204,6 +231,10 @@ handle_marshal_when_dst_gsharedvt (ArgInfo *src_info, int *arg_marshal)
 		case ArgValuetypeInReg:
 		case ArgOnStack:
 			*arg_marshal = GSHAREDVT_ARG_BYVAL_TO_BYREF;
+			break;
+		case ArgValuetypeAddrInIReg:
+		case ArgValuetypeAddrOnStack:
+			*arg_marshal = GSHAREDVT_ARG_NONE;
 			break;
 		default:
 			NOT_IMPLEMENTED; // See above
@@ -316,6 +347,10 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 			handle_marshal_when_src_gsharedvt (dst_info, &arg_marshal, &arg_slots);
 			handle_map_when_gsharedvt_on_stack (src_info, &nsrc, &src, TRUE);
 			break;
+		case ArgValuetypeAddrInIReg:
+		case ArgValuetypeAddrOnStack:
+			nsrc = get_arg_slots (src_info, &src, TRUE);
+			break;
 		default:
 			g_error ("Gsharedvt can't handle source arg type %d", (int)src_info->storage); // Inappropriate value: ArgValuetypeAddrInIReg is for returns only
 		}
@@ -336,9 +371,30 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 			handle_marshal_when_dst_gsharedvt (src_info, &arg_marshal);
 			handle_map_when_gsharedvt_on_stack (dst_info, &ndst, &dst, FALSE);
 			break;
+		case ArgValuetypeAddrInIReg:
+		case ArgValuetypeAddrOnStack:
+			ndst = get_arg_slots (dst_info, &dst, FALSE);
+			break;
 		default:
 			g_error ("Gsharedvt can't handle dest arg type %d", (int)dst_info->storage); // See above
 		}
+
+		if (arg_marshal == GSHAREDVT_ARG_BYREF_TO_BYVAL && dst_info->byte_arg_size) {
+			/* Have to load less than 4 bytes */
+			// FIXME: Signed types
+			switch (dst_info->byte_arg_size) {
+			case 1:
+				arg_marshal = GSHAREDVT_ARG_BYREF_TO_BYVAL_U1;
+				break;
+			case 2:
+				arg_marshal = GSHAREDVT_ARG_BYREF_TO_BYVAL_U2;
+				break;
+			default:
+				arg_marshal = GSHAREDVT_ARG_BYREF_TO_BYVAL_U4;
+				break;
+			}
+		}
+
 		if (nsrc)
 			src [0] |= (arg_marshal << SRC_DESCRIPTOR_MARSHAL_SHIFT) | (arg_slots << SLOT_COUNT_SHIFT);
 
@@ -356,7 +412,7 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 	DEBUG_AMD64_GSHAREDVT_PRINT ("-- return in (%s) out (%s) var_ret %d\n", arg_info_desc (&caller_cinfo->ret),  arg_info_desc (&callee_cinfo->ret), var_ret);
 
 	if (cinfo->ret.storage == ArgValuetypeAddrInIReg) {
-		/* Both the caller and the callee pass the vtype ret address in r8 */
+		/* Both the caller and the callee pass the vtype ret address in r8 (System V) and RCX or RDX (Windows) */
 		g_assert (gcinfo->ret.storage == ArgValuetypeAddrInIReg || gcinfo->ret.storage == ArgGsharedvtVariableInReg);
 		add_to_map (map, map_reg (cinfo->ret.reg), map_reg (cinfo->ret.reg));
 	}
@@ -403,22 +459,17 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 			} else {
 				MonoType *ret = sig->ret;
 
-				// Unwrap enums
-				if (ret->type == MONO_TYPE_VALUETYPE)
-					ret = mini_type_get_underlying_type (ret);
-
+				ret = mini_type_get_underlying_type (ret);
 				switch (ret->type) {
 				case MONO_TYPE_I1:
 					info->ret_marshal = GSHAREDVT_RET_I1;
 					break;
-				case MONO_TYPE_BOOLEAN:
 				case MONO_TYPE_U1:
 					info->ret_marshal = GSHAREDVT_RET_U1;
 					break;
 				case MONO_TYPE_I2:
 					info->ret_marshal = GSHAREDVT_RET_I2;
 					break;
-				case MONO_TYPE_CHAR:
 				case MONO_TYPE_U2:
 					info->ret_marshal = GSHAREDVT_RET_U2;
 					break;
@@ -432,16 +483,15 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 				case MONO_TYPE_U:
 				case MONO_TYPE_PTR:
 				case MONO_TYPE_FNPTR:
-				case MONO_TYPE_CLASS:
 				case MONO_TYPE_OBJECT:
-				case MONO_TYPE_SZARRAY:
-				case MONO_TYPE_ARRAY:
-				case MONO_TYPE_STRING:
 				case MONO_TYPE_U8:
 				case MONO_TYPE_I8:
 					info->ret_marshal = GSHAREDVT_RET_I8;
 					break;
-
+				case MONO_TYPE_GENERICINST:
+					g_assert (!mono_type_generic_inst_is_valuetype (ret));
+					info->ret_marshal = GSHAREDVT_RET_I8;
+					break;
 				default:
 					g_error ("Gsharedvt can't handle dst type [%d]", (int)sig->ret->type);
 				}
@@ -470,6 +520,9 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 	}
 
 	info->stack_usage = ALIGN_TO (info->stack_usage, MONO_ARCH_FRAME_ALIGNMENT);
+
+	g_free (callee_cinfo);
+	g_free (caller_cinfo);
 
 	DEBUG_AMD64_GSHAREDVT_PRINT ("allocated an info at %p stack usage %d\n", info, info->stack_usage);
 	return info;

@@ -33,9 +33,9 @@ public class SHA1Test {
 		if ((array1 == null) && (array2 == null))
 			return;
 		if (array1 == null)
-			Assertion.Fail (msg + " -> First array is NULL");
+			Assert.Fail (msg + " -> First array is NULL");
 		if (array2 == null)
-			Assertion.Fail (msg + " -> Second array is NULL");
+			Assert.Fail (msg + " -> Second array is NULL");
 
 		bool a = (array1.Length == array2.Length);
 		if (a) {
@@ -48,7 +48,7 @@ public class SHA1Test {
 		}
 		msg += " -> Expected " + BitConverter.ToString (array1, 0);
 		msg += " is different than " + BitConverter.ToString (array2, 0);
-		Assertion.Assert (msg, a);
+		Assert.IsTrue (a, msg);
 	}
 
 	[SetUp]
@@ -63,12 +63,12 @@ public class SHA1Test {
 	{
 		// test all values static for SHA1
 		string className = hash.ToString ();
-		Assertion.AssertEquals (className + ".HashSize", 160, hash.HashSize);
-		Assertion.AssertEquals (className + ".InputBlockSize", 1, hash.InputBlockSize);
-		Assertion.AssertEquals (className + ".OutputBlockSize", 1, hash.OutputBlockSize);
-		Assertion.AssertEquals (className + ".CanReuseTransform", true, hash.CanReuseTransform);
-		Assertion.AssertEquals (className + ".CanTransformMultipleBlocks", true, hash.CanTransformMultipleBlocks);
-		Assertion.AssertEquals (className + ".ToString()", "Mono.Security.Cryptography.SHA1CryptoServiceProvider", className);
+		Assert.AreEqual (className + ".HashSize", 160, hash.HashSize);
+		Assert.AreEqual (className + ".InputBlockSize", 1, hash.InputBlockSize);
+		Assert.AreEqual (className + ".OutputBlockSize", 1, hash.OutputBlockSize);
+		Assert.AreEqual (className + ".CanReuseTransform", true, hash.CanReuseTransform);
+		Assert.AreEqual (className + ".CanTransformMultipleBlocks", true, hash.CanTransformMultipleBlocks);
+		Assert.AreEqual (className + ".ToString()", "Mono.Security.Cryptography.SHA1CryptoServiceProvider", className);
 	}
 
 	// First test, we hash the string "abc"

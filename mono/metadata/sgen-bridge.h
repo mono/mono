@@ -1,4 +1,5 @@
-/*
+/**
+ * \file
  * Copyright 2011 Novell, Inc.
  * 
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -9,20 +10,23 @@
  * unreachable objects.  We use it in monodroid to do garbage collection across
  * the Mono and Java heaps.
  *
- * The client can designate some objects as "bridged", which means that they
- * participate in the bridge processing step once SGen considers them
+ * The client (Monodroid) can designate some objects as "bridged", which means
+ * that they participate in the bridge processing step once SGen considers them
  * unreachable, i.e., dead.  Bridged objects must be registered for
  * finalization.
  *
  * When SGen is done marking, it puts together a list of all dead bridged
- * objects and then does a strongly connected component analysis over their
- * object graph.  That graph will usually contain non-bridged objects, too.
+ * objects.  This is passed to the bridge processor, which does an analysis to
+ * simplify the graph: It replaces strongly-connected components with single
+ * nodes, and may remove nodes corresponding to components which do not contain
+ * bridged objects.
  *
- * The output of the SCC analysis is passed to the `cross_references()`
- * callback.  It is expected to set the `is_alive` flag on those strongly
- * connected components that it wishes to be kept alive.  Only bridged objects
- * will be reported to the callback, i.e., non-bridged objects are removed from
- * the callback graph.
+ * The output of the SCC analysis is passed to the client's `cross_references()`
+ * callback.  This consists of 2 arrays, an array of SCCs (MonoGCBridgeSCC),
+ * and an array of "xrefs" (edges between SCCs, MonoGCBridgeXRef).  Edges are
+ * encoded as pairs of "API indices", ie indexes in the SCC array.  The client
+ * is expected to set the `is_alive` flag on those strongly connected components
+ * that it wishes to be kept alive.
  *
  * In monodroid each bridged object has a corresponding Java mirror object.  In
  * the bridge callback it reifies the Mono object graph in the Java heap so that
@@ -37,6 +41,10 @@
  * point all links to bridged objects that don't have `is_alive` set are nulled.
  * Note that weak links to non-bridged objects reachable from bridged objects
  * are not nulled.  This might be considered a bug.
+ *
+ * There are three different implementations of the bridge processor, each of
+ * which implements 8 callbacks (see SgenBridgeProcessor).  The implementations
+ * differ in the algorithm they use to compute the "simplified" SCC graph.
  */
 
 #ifndef _MONO_SGEN_BRIDGE_H_
@@ -47,7 +55,7 @@
 MONO_BEGIN_DECLS
 
 enum {
-	SGEN_BRIDGE_VERSION = 4
+	SGEN_BRIDGE_VERSION = 5
 };
 	
 typedef enum {
@@ -88,6 +96,11 @@ typedef struct {
 	void (*cross_references) (int num_sccs, MonoGCBridgeSCC **sccs, int num_xrefs, MonoGCBridgeXRef *xrefs);
 } MonoGCBridgeCallbacks;
 
+/*
+ * Note: This may be called at any time, but cannot be called concurrently
+ * with (during and on a separate thread from) sgen init. Callers are
+ * responsible for enforcing this.
+ */
 MONO_API void mono_gc_register_bridge_callbacks (MonoGCBridgeCallbacks *callbacks);
 
 MONO_API void mono_gc_wait_for_bridge_processing (void);

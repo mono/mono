@@ -300,11 +300,14 @@ namespace System.IO {
 			else
 				fullPathNoLastSlash = fsw.FullPath;
 				
-			// GetFilenameFromFd() returns the *realpath* which can be different than fsw.FullPath because symlinks.
+			// realpath() returns the *realpath* which can be different than fsw.FullPath because symlinks.
 			// If so, introduce a fixup step.
-			int fd = open (fullPathNoLastSlash, O_EVTONLY, 0);
-			var resolvedFullPath = GetFilenameFromFd (fd);
-			close (fd);
+			var sb = new StringBuilder (__DARWIN_MAXPATHLEN);
+			if (realpath(fsw.FullPath, sb) == IntPtr.Zero) {
+				var errMsg = String.Format ("realpath({0}) failed, error code = '{1}'", fsw.FullPath, Marshal.GetLastWin32Error ());
+				throw new IOException (errMsg);
+			}
+			var resolvedFullPath = sb.ToString();
 
 			if (resolvedFullPath != fullPathNoLastSlash)
 				fixupPath = resolvedFullPath;
@@ -614,14 +617,14 @@ namespace System.IO {
 				return;
 
 			// e.Name
-			string name = path.Substring (fullPathNoLastSlash.Length + 1); 
+			string name = (path.Length > fullPathNoLastSlash.Length) ? path.Substring (fullPathNoLastSlash.Length + 1) : String.Empty;
 
 			// only post events that match filter pattern. check both old and new paths for renames
 			if (!fsw.Pattern.IsMatch (path) && (newPath == null || !fsw.Pattern.IsMatch (newPath)))
 				return;
 				
 			if (action == FileAction.RenamedNewName) {
-				string newName = newPath.Substring (fullPathNoLastSlash.Length + 1);
+				string newName = (newPath.Length > fullPathNoLastSlash.Length) ? newPath.Substring (fullPathNoLastSlash.Length + 1) : String.Empty;
 				renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, fsw.Path, newName, name);
 			}
 				
@@ -677,6 +680,9 @@ namespace System.IO {
 		[DllImport ("libc", CharSet=CharSet.Auto, SetLastError=true)]
 		static extern int fcntl (int file_names_by_descriptor, int cmd, StringBuilder sb);
 
+		[DllImport ("libc", CharSet=CharSet.Auto, SetLastError=true)]
+		static extern IntPtr realpath (string pathname, StringBuilder sb);
+
 		[DllImport ("libc", SetLastError=true)]
 		extern static int open (string path, int flags, int mode_t);
 
@@ -730,8 +736,9 @@ namespace System.IO {
 			return true;
 		}
 
-		public void StartDispatching (FileSystemWatcher fsw)
+		public void StartDispatching (object handle)
 		{
+			var fsw = handle as FileSystemWatcher;
 			KqueueMonitor monitor;
 
 			if (watches.ContainsKey (fsw)) {
@@ -744,13 +751,19 @@ namespace System.IO {
 			monitor.Start ();
 		}
 
-		public void StopDispatching (FileSystemWatcher fsw)
+		public void StopDispatching (object handle)
 		{
+			var fsw = handle as FileSystemWatcher;
 			KqueueMonitor monitor = (KqueueMonitor)watches [fsw];
 			if (monitor == null)
 				return;
 
 			monitor.Stop ();
+		}
+
+		public void Dispose (object handle)
+		{
+			// does nothing
 		}
 			
 		[DllImport ("libc")]

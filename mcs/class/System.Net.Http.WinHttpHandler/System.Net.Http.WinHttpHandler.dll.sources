@@ -1,0 +1,8 @@
+../../build/common/Consts.cs
+../../build/common/Locale.cs
+../../build/common/MonoTODOAttribute.cs
+Assembly/AssemblyInfo.cs
+
+System.Net.Http/CookieUsePolicy.cs
+System.Net.Http/WindowsProxyUsePolicy.cs
+System.Net.Http/WinHttpHandler.cs

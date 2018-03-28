@@ -14,9 +14,9 @@ namespace System.Transactions
 	{
 		void Initialize ();
 
-		void Rollback (SinglePhaseEnlistment enlistment);
+		void Rollback (SinglePhaseEnlistment singlePhaseEnlistment);
 
-		void SinglePhaseCommit (SinglePhaseEnlistment enlistment);
+		void SinglePhaseCommit (SinglePhaseEnlistment singlePhaseEnlistment);
 	}
 }
 

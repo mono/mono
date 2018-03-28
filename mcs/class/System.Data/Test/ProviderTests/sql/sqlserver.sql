@@ -1,5 +1,3 @@
-use monotest;
-
 -- =================================== OBJECT NUMERIC_FAMILY============================
 -- TABLE : NUMERIC_FAMILY
 -- data with id > 6000 is not gaurenteed to be read-only.
@@ -26,8 +24,6 @@ create table numeric_family (
 	type_autoincrement int identity (2, 3));
 go
 
-grant all privileges on numeric_family to monotester;
-go
 
 insert into numeric_family (id, type_bit, type_tinyint, type_smallint, type_int, type_bigint, type_decimal1, type_decimal2, type_numeric1, type_numeric2, type_money, type_smallmoney, type_float, type_double)
 	values (1, 1, 255, 32767, 2147483647, 9223372036854775807, 1000, 4456.432, 1000, 4456.432, 922337203685477.5807, 214748.3647, 3.40E+38, 1.79E+308);
@@ -57,9 +53,6 @@ create table binary_family (
 	type_mediumblob image NULL,
 	type_longblob_image image NULL,
 	type_timestamp timestamp NULL);
-go
-
-grant all privileges on binary_family to monotester;
 go
 
 insert into binary_family (id, type_binary, type_varbinary, type_blob, type_tinyblob, type_mediumblob, type_longblob_image) values (
@@ -115,9 +108,6 @@ create table string_family (
 	type_ntext ntext NULL);
 go
 
-grant all privileges on string_family to monotester;
-go
-
 insert into string_family values (1, 'd222a130-6383-4d36-ac5e-4e6b2591aabf', 'char', N'nchभाr', 'varchar', N'nvभारतr', 'text', N'ntभाxt');
 insert into string_family values (2, '1c47dd1d-891b-47e8-aac8-f36608b31bc5', '0123456789', '0123456789', 'varchar ', N'nvभारतr ', 'longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext ', N'ntभाxt ');
 insert into string_family values (3, '3c47dd1d-891b-47e8-aac8-f36608b31bc5', '', '', '', '', '', '');
@@ -140,7 +130,6 @@ create table datetime_family (
 	type_smalldatetime smalldatetime NULL,
 	type_datetime datetime NULL);
 
-grant all privileges on datetime_family to monotester;
 go
 insert into datetime_family values (1,'2037-12-31 23:59:00','9999-12-31 23:59:59:997');
 insert into datetime_family values (4,null,null);
@@ -165,10 +154,6 @@ create table employee (
 	email varchar (50) NULL);
 go
 
-grant all privileges on employee to monotester;
-
-go
-
 insert into employee values (1, 'suresh', 'kumar', '1978-08-22', '2001-03-12', 'suresh@gmail.com');
 insert into employee values (2, 'ramesh', 'rajendran', '1977-02-15', '2005-02-11', 'ramesh@yahoo.com');
 insert into employee values (3, 'venkat', 'ramakrishnan', '1977-06-12', '2003-12-11', 'ramesh@yahoo.com');
@@ -191,8 +176,6 @@ begin
 end
 go
 
-grant execute on sp_clean_employee_table to monotester;
-
 -- SP : sp_get_age
 if exists (select name from sysobjects where
 	name = 'sp_get_age' and type = 'P')
@@ -208,8 +191,6 @@ begin
 	return @age;
 end
 go
-
-grant execute on sp_get_age to monotester;
 
 -- =================================== END OBJECT EMPLOYEE ============================
 
@@ -234,8 +215,6 @@ begin
 end
 go
 
-grant execute on sp_326182a to monotester;
-
 -- SP: sp_326182b
 
 if exists (select name from sysobjects where
@@ -252,6 +231,3 @@ begin
 	set @param1 = (@param0 + @param1 + 2)
 	return 666
 end
-go
-
-grant execute on sp_326182b to monotester;

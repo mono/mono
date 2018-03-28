@@ -48,6 +48,9 @@ namespace Mono.Audio {
 		protected uint chunk_size;
 		
 		static AudioDevice TryAlsa (string name) {
+#if XAMMAC_4_5
+			return null;
+#else
 			AudioDevice dev;
 			try {
 				dev = new AlsaDevice (name);
@@ -55,6 +58,7 @@ namespace Mono.Audio {
 			} catch {
 				return null;
 			}
+#endif
 		}
 
 		public static AudioDevice CreateDevice (string name) {
@@ -87,90 +91,91 @@ namespace Mono.Audio {
 		}
 	}
 
+#if !XAMMAC_4_5
 	class AlsaDevice: AudioDevice, IDisposable {
 		IntPtr handle;
 		IntPtr hw_param;
 		IntPtr sw_param;
 		
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_open (ref IntPtr handle, string pcm_name, int stream, int mode);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_close (IntPtr handle);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_drain (IntPtr handle);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_writei (IntPtr handle, byte[] buf, int size);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_set_params (IntPtr handle, int format, int access, int channels, int rate, int soft_resample, int latency);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_state (IntPtr handle);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_prepare (IntPtr handle);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_hw_params (IntPtr handle, IntPtr param);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_hw_params_malloc (ref IntPtr param);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern void snd_pcm_hw_params_free (IntPtr param);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_hw_params_any (IntPtr handle, IntPtr param);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_hw_params_set_access (IntPtr handle, IntPtr param, int access);
 		
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_hw_params_set_format (IntPtr handle, IntPtr param, int format);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_hw_params_set_channels (IntPtr handle, IntPtr param, uint channel);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_hw_params_set_rate_near (IntPtr handle, IntPtr param, ref uint rate, ref int dir);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_hw_params_set_period_time_near (IntPtr handle, IntPtr param, ref uint period, ref int dir);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_hw_params_get_period_size (IntPtr param, ref uint period, ref int dir);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_hw_params_set_buffer_size_near (IntPtr handle, IntPtr param, ref uint buff_size);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_hw_params_get_buffer_time_max(IntPtr param, ref uint buffer_time, ref int dir);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_hw_params_set_buffer_time_near(IntPtr handle, IntPtr param, ref uint BufferTime, ref int dir);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_hw_params_get_buffer_size(IntPtr param, ref uint BufferSize);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_sw_params (IntPtr handle, IntPtr param);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_sw_params_malloc (ref IntPtr param);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern void snd_pcm_sw_params_free (IntPtr param);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_sw_params_current(IntPtr handle, IntPtr param);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_sw_params_set_avail_min(IntPtr handle, IntPtr param, uint frames);
 
-		[DllImport ("libasound.so.2")]
+		[DllImport ("libasound")]
 		static extern int snd_pcm_sw_params_set_start_threshold(IntPtr handle, IntPtr param, uint StartThreshold);
 
 		public AlsaDevice (string name) {
@@ -319,6 +324,7 @@ namespace Mono.Audio {
 			snd_pcm_drain (handle);
 		}
 	}
+#endif
 
 }
 

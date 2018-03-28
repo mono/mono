@@ -207,11 +207,14 @@ class Tester : DynamicObjectMock
 		}
 	}
 
-	static FieldInfo flags = typeof (CSharpArgumentInfo).GetField ("flags", BindingFlags.NonPublic | BindingFlags.Instance);
+	static PropertyInfo flags = typeof (CSharpArgumentInfo).GetProperty ("Flags", BindingFlags.NonPublic | BindingFlags.Instance);
 
 	static void AssertArgument (CallSiteBinder obj, CSharpArgumentInfo[] expected, string name)
 	{
-		var ai = obj.GetType ().GetField ("argumentInfo", BindingFlags.NonPublic | BindingFlags.Instance);
+		var ai = obj.GetType ().GetField ("_argumentInfo", BindingFlags.NonPublic | BindingFlags.Instance);
+		if (ai == null)
+			throw new ApplicationException ("Could not find 'argumentInfo' private field on " + obj.GetType ());
+
 		IList<CSharpArgumentInfo> values = (IList<CSharpArgumentInfo>) ai.GetValue (obj);
 		if (values.Count != expected.Length)
 			throw new ApplicationException (name + ": Array length does not match " + values.Count + " != " + expected.Length);

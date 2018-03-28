@@ -1,10 +1,12 @@
-/*
- * tramp-amd64-gsharedvt.c: libcorkscrew-based native unwinder
+/**
+ * \file
+ * libcorkscrew-based native unwinder
  *
  * Authors:
  *   Zoltan Varga <vargaz@gmail.com>
  *   Rodrigo Kumpera <kumpera@gmail.com>
  *   Andi McClure <andi.mcclure@xamarin.com>
+ *   Johan Lorensson <johan.lorensson@xamarin.com>
  *
  * Copyright 2015 Xamarin, Inc (http://www.xamarin.com)
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -16,7 +18,6 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/tabledefs.h>
-#include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/arch/amd64/amd64-codegen.h>
@@ -29,8 +30,6 @@
 #include "debugger-agent.h"
 
 #if defined (MONO_ARCH_GSHAREDVT_SUPPORTED)
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 #define SRC_REG_SHIFT 0
 #define SRC_REG_MASK 0xFFFF
@@ -89,6 +88,28 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- [%d] (%d words) (%p) <- (%p)\n", dest_reg, source_reg, slot_count, &callee [dest_reg], &caller [source_reg]);
 			break;
 		}
+		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U1: {
+			guint8 *addr = caller [source_reg];
+
+			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
+			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u1) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
+			break;
+		}
+		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U2: {
+			guint16 *addr = caller [source_reg];
+
+			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
+			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u2) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
+			break;
+		}
+		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U4: {
+			guint32 *addr = caller [source_reg];
+
+			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
+			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u4) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
+			break;
+		}
+
 		default:
 			g_error ("cant handle arg marshal %d\n", arg_marshal);
 		}
@@ -138,14 +159,13 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 	amd64_jump_code (code, addr);
 	g_assert ((code - start) < buf_len);
 
-	nacl_domain_code_validate (domain, &start, buf_len, &code);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
-	g_assert (0);
+	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, NULL), domain);
+
 	return start;
 }
-
 
 gpointer
 mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
@@ -162,7 +182,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	int reg_area_size;
 
 	buf_len = 2048;
-	buf = code = mono_global_codeman_reserve (buf_len);
+	buf = code = mono_global_codeman_reserve (buf_len + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	/*
 	 * We are being called by an gsharedvt arg trampoline, the info argument is in AMD64_RAX.
@@ -208,6 +228,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 
 	/* unwind markers 3/3 */
 	mono_add_unwind_op_def_cfa_reg (unwind_ops, code, buf, AMD64_RBP);
+	mono_add_unwind_op_fp_alloc (unwind_ops, code, buf, AMD64_RBP, 0);
 
 	/* setup the frame */
 	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, framesize);
@@ -246,8 +267,8 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	<caller registers area>
 	<rgctx>
 	<gsharedvt info>
-	<calee stack area>
-	<calee reg area>
+	<callee stack area>
+	<callee reg area>
 	 */
 
 	/* Call start_gsharedvt_call () */
@@ -264,9 +285,25 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 
 	if (aot) {
 		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_amd64_start_gsharedvt_call");
-		amd64_call_reg (code, AMD64_R11);
+		#ifdef TARGET_WIN32
+			/* Since we are doing a call as part of setting up stackframe, the reserved shadow stack used by Windows platform is allocated up in
+			the callee stack area but currently the callee reg area is in between. Windows calling convention dictates that room is made on stack where
+			callee can save any parameters passed in registers. Since Windows x64 calling convention
+			uses 4 registers for the first 4 parameters, stack needs to be adjusted before making the call.
+			NOTE, Windows calling convention assumes that space for all registers have been reserved, regardless
+			of the number of function parameters actually used.
+			*/
+			int shadow_reg_size = 0;
+
+			shadow_reg_size = ALIGN_TO (PARAM_REGS * sizeof(gpointer), MONO_ARCH_FRAME_ALIGNMENT);
+			amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, shadow_reg_size);
+			amd64_call_reg (code, AMD64_R11);
+			amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, shadow_reg_size);
+		#else
+			amd64_call_reg (code, AMD64_R11);
+		#endif
 	} else {
-		g_error ("no aot");
+		amd64_call_code (code, mono_amd64_start_gsharedvt_call);
 	}
 
 	/* Method to call is now on RAX. Restore regs and jump */
@@ -303,13 +340,14 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	 */
 
 	/* Load vret_slot */
-	amd64_mov_reg_membase (code, AMD64_RDI, AMD64_R10, MONO_STRUCT_OFFSET (GSharedVtCallInfo, vret_slot), 4);
-	amd64_alu_reg_imm (code, X86_SUB, AMD64_RDI, n_arg_regs + n_arg_fregs);
-	amd64_shift_reg_imm (code, X86_SHL, AMD64_RDI, 3);
+	/* Use first input parameter register as scratch since it is volatile on all platforms */
+	amd64_mov_reg_membase (code, MONO_AMD64_ARG_REG1, AMD64_R10, MONO_STRUCT_OFFSET (GSharedVtCallInfo, vret_slot), 4);
+	amd64_alu_reg_imm (code, X86_SUB, MONO_AMD64_ARG_REG1, n_arg_regs + n_arg_fregs);
+	amd64_shift_reg_imm (code, X86_SHL, MONO_AMD64_ARG_REG1, 3);
 
 	/* vret address is RBP - (framesize - caller_reg_area_offset) */
 	amd64_mov_reg_reg (code, AMD64_R11, AMD64_RSP, sizeof(mgreg_t));
-	amd64_alu_reg_reg (code, X86_ADD, AMD64_R11, AMD64_RDI);
+	amd64_alu_reg_reg (code, X86_ADD, AMD64_R11, MONO_AMD64_ARG_REG1);
 
 	/* Load ret marshal type */
 	/* Load vret address in R11 */
@@ -367,10 +405,10 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 
 	/*
 		Address to write return to is in the original value of the register specified by vret_arg_reg.
-		This will be either RSI or RDI depending on whether this is a static call.
+		This will be either RSI, RDI (System V) or RCX, RDX (Windows) depending on whether this is a static call.
 		Its location:
 		We alloc 'framesize' bytes below RBP to save regs, info and rgctx. RSP = RBP - framesize
-		We store rdi at RSP + caller_reg_area_offset + slot_index_of (register) * 8.
+		We store RDI (System V), RCX (Windows) at RSP + caller_reg_area_offset + slot_index_of (register) * 8.
 
 		address: RBP - framesize + caller_reg_area_offset + 8*slot
 	*/
@@ -427,16 +465,39 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 		mono_amd64_patch (br_ret [i], code);
 
 	/* Exit code path */
+#if TARGET_WIN32
+	amd64_lea_membase (code, AMD64_RSP, AMD64_RBP, 0);
+	amd64_pop_reg (code, AMD64_RBP);
+	mono_add_unwind_op_same_value (unwind_ops, code, buf, AMD64_RBP);
+#else
 	amd64_leave (code);
+#endif
 	amd64_ret (code);
 
 	g_assert ((code - buf) < buf_len);
+	g_assert_checked (mono_arch_unwindinfo_validate_size (unwind_ops, MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE));
 
 	if (info)
 		*info = mono_tramp_info_create ("gsharedvt_trampoline", buf, code - buf, ji, unwind_ops);
 
 	mono_arch_flush_icache (buf, code - buf);
 	return buf;
+}
+
+#else
+
+gpointer
+mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpointer addr)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
+{
+	g_assert_not_reached ();
+	return NULL;
 }
 
 #endif

@@ -1,0 +1,1618 @@
+; NOTE: see AS/URT bug 15116
+; NOTE: don't use \", use ' instead
+; NOTE: don't use #, use ; instead for comments
+; NOTE: leave the [strings] alone
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data Error Messages
+
+EntityKey_DataRecordMustBeEntity=The supplied IExtendedDataRecord must represent an entity object.
+EntityKey_EntitySetDoesNotMatch=The EntitySet '{0}' obtained from the metadata workspace is incompatible with the EntitySet required by this EntityKey.
+EntityKey_EntityTypesDoNotMatch=The object represented by the IExtendedDataRecord '{0}' does not match the EntityType for the EntitySet ('{1}').
+EntityKey_IncorrectNumberOfKeyValuePairs=The provided list of key-value pairs contains an incorrect number of entries. There are {1} key fields defined on type '{0}', but {2} were provided.
+EntityKey_IncorrectValueType=The type of the key field '{0}' is expected to be '{1}', but the value provided is actually of type '{2}'.
+EntityKey_NoCorrespondingOSpaceTypeForEnumKeyMember=No corresponding object layer type found for the key field '{0}' whose type in the conceptual layer is '{1}'.
+EntityKey_MissingKeyValue=The required entry '{0}' was not found in the provided input. This entry is required by the key fields defined on type '{1}'.
+EntityKey_NoNullsAllowedInKeyValuePairs=The key-value pairs that define an EntityKey cannot be null or empty.
+EntityKey_UnexpectedNull=The requested operation could not be completed, because a null EntityKey property value was returned by the object.
+EntityKey_DoesntMatchKeyOnEntity=The requested operation could not be completed, because a mismatched EntityKey was returned from the EntityKey property on an object of type '{0}'.
+EntityKey_EntityKeyMustHaveValues=An EntityKey must have at least one key name and value.
+EntityKey_InvalidQualifiedEntitySetName=The EntitySet name cannot be null or empty, and must be qualified with an EntityContainer name that is not null or empty.
+EntityKey_MissingEntitySetName=The EntityKey does not contain a valid EntitySet name.
+EntityKey_InvalidName=The name '{0}' contains characters that are not valid.
+EntityKey_CannotChangeKey=EntityKey values cannot be changed once they are set.
+EntityTypesDoNotAgree=The EntityType specified for the metadata parameter is not compatible with the specified EntitySet. 
+EntityKey_NullKeyValue=The key field '{0}' cannot have a value of null. A non-null value is required for the key fields defined on type '{1}'.
+EdmMembersDefiningTypeDoNotAgreeWithMetadataType=The type of the TypeUsage object specified for the metadata parameter is not compatible with the type to which an EdmMember belongs.
+InvalidStringArgument=Parameter '{0}' is not valid. String arguments cannot be empty.
+CannotCallNoncomposableFunction=The function or function import '{0}' is not composable. A non-composable function or function import cannot be called in a query expression.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.DataEntity entity client provider Error Messages
+EntityClient_ConnectionStringMissingInfo=Some required information is missing from the connection string. The '{0}' keyword is always required.
+EntityClient_ValueNotString=The specified value is not a string.
+EntityClient_KeywordNotSupported=The '{0}' keyword is not supported.
+EntityClient_NoCommandText=The EntityCommand.CommandText property has not been initialized.
+EntityClient_ConnectionStringNeededBeforeOperation=A connection string must be set on the connection before you attempt this operation.
+EntityClient_CannotReopenConnection=The connection was not closed.
+EntityClient_ConnectionNotOpen=The connection is not open.
+EntityClient_DuplicateParameterNames=Parameters must have a unique ParameterName. A second instance of '{0}' was discovered.
+EntityClient_NoConnectionForCommand=Cannot perform the operation because the command does not have a connection.
+EntityClient_NoConnectionForAdapter=Cannot perform the operation because the adapter does not have a connection.
+EntityClient_ClosedConnectionForUpdate=Cannot perform the update operation because the adapter's connection is not open.
+EntityClient_InvalidNamedConnection=The specified named connection is either not found in the configuration, not intended to be used with the EntityClient provider, or not valid.
+EntityClient_NestedNamedConnection=The connection string of the named connection '{0}' cannot contain a 'Name' keyword in the configuration.
+EntityClient_InvalidStoreProvider=The specified store provider cannot be found in the configuration, or is not valid.
+EntityClient_DataReaderIsStillOpen=The command is still associated with an open data reader. Changes cannot be made on this command and this command cannot be executed until the data reader is closed.
+EntityClient_SettingsCannotBeChangedOnOpenConnection=No modifications to connection are permitted after the metadata has been registered either by opening a connection or constructing the connection with a MetadataWorkspace.
+EntityClient_ExecutingOnClosedConnection=Execution of the command requires an open and available connection. The connection's current state is {0}.
+EntityClient_ConnectionStateClosed=closed
+EntityClient_ConnectionStateBroken=broken
+EntityClient_CannotCloneStoreProvider=This store command cannot be cloned because the underlying store provider does not support cloning.
+EntityClient_UnsupportedCommandType=The only EntityCommand.CommandType values supported by the EntityClient provider are Text and StoredProcedure.
+EntityClient_ErrorInClosingConnection=An error occurred while closing the provider connection. See the inner exception for details.
+EntityClient_ErrorInBeginningTransaction=An error occurred while starting a transaction on the provider connection. See the inner exception for details.
+EntityClient_ExtraParametersWithNamedConnection=Other keywords are not allowed when the 'Name' keyword is specified.
+EntityClient_CommandDefinitionPreparationFailed=An error occurred while preparing the command definition. See the inner exception for details.
+EntityClient_CommandDefinitionExecutionFailed=An error occurred while executing the command definition. See the inner exception for details.
+EntityClient_CommandExecutionFailed=An error occurred while executing the command. See the inner exception for details.
+EntityClient_StoreReaderFailed=An error occurred while reading from the store provider's data reader. See the inner exception for details.
+EntityClient_FailedToGetInformation=The store data provider failed to return information for the {0} request. See the inner exception for details.
+EntityClient_TooFewColumns=The data reader returned by the store data provider does not have enough columns for the query requested.
+EntityClient_InvalidParameterName=The parameter name '{0}' is not valid. A valid parameter name must begin with a letter and contain only letters, numbers, and underscores.
+EntityClient_EmptyParameterName=One of the parameters in the EntityParameterCollection is null or empty. A name must begin with a letter and contain only letters, numbers, and underscores. 
+EntityClient_ReturnedNullOnProviderMethod=A null was returned after calling the '{0}' method on a store provider instance of type '{1}'. The store provider might not be functioning correctly.
+EntityClient_CannotDeduceDbType=The correct DbType cannot be inferred based on the value that has been set for the EntityParameter.DbType property.
+EntityClient_InvalidParameterDirection=The parameter '{0}' is not an input-only parameter. The EntityClient provider only allows input-only parameters when the CommandType property is set to CommandText.
+EntityClient_UnknownParameterType=The EntityParameter '{0}' must have a value from which the DbType can be inferred, or a supported DbType must be set as the value of the EntityParameter.DbType property.
+EntityClient_UnsupportedDbType=The DbType '{0}' is not valid for the EntityParameter.DbType property on the '{1}' object.
+EntityClient_DoesNotImplementIServiceProvider=The store provider factory type '{0}' does not implement the IServiceProvider interface. Use a store provider that implements this interface.
+EntityClient_IncompatibleNavigationPropertyResult=The declared type of navigation property {0}.{1} is not compatible with the result of the specified navigation. 
+EntityClient_TransactionAlreadyStarted=The connection is already in a transaction and cannot participate in another transaction. EntityClient does not support parallel transactions.
+EntityClient_InvalidTransactionForCommand=The transaction is either not associated with the current connection or has been completed.
+EntityClient_NoStoreConnectionForUpdate=The update operation cannot be performed, because the adapter's connection is not associated with a valid store connection.
+EntityClient_CommandTreeMetadataIncompatible=The command could not be executed, because the connection metadata is incompatible with the command metadata.
+EntityClient_ProviderGeneralError=The underlying provider failed.
+EntityClient_ProviderSpecificError=The underlying provider failed on {0}.
+EntityClient_FunctionImportEmptyCommandText=EntityCommand.CommandText was not specified for the StoredProcedure EntityCommand.
+EntityClient_UnableToFindFunctionImportContainer=The container '{0}' specified for the FunctionImport could not be found in the current workspace.
+EntityClient_UnableToFindFunctionImport=The FunctionImport '{1}' could not be found in the container '{0}'.
+EntityClient_FunctionImportMustBeNonComposable=The function import '{0}' is composable. Only non-composable function imports can be executed as stored procedures.
+EntityClient_UnmappedFunctionImport=The function import '{0}' cannot be executed because it is not mapped to a store function.
+EntityClient_InvalidStoredProcedureCommandText=The value of EntityCommand.CommandText is not valid for a StoredProcedure command. The EntityCommand.CommandText value must be of the form 'ContainerName.FunctionImportName'.
+EntityClient_ItemCollectionsNotRegisteredInWorkspace=MetadataWorkspace must have {0} pre-registered.
+EntityClient_ConnectionMustBeClosed=EntityConnection can only be constructed with a closed DbConnection.
+EntityClient_DbConnectionHasNoProvider=The DbConnection parameter '{0}' contains no ProviderFactory.
+EntityClient_RequiresNonStoreCommandTree=EntityClient cannot be used to create a command definition from a store command tree.
+EntityClient_CannotReprepareCommandDefinitionBasedCommand=This EntityCommand is based on a prepared command definition and cannot be re-prepared. To create an equivalent command with different parameters, create a new command definition and call its CreateCommand method.
+EntityClient_EntityParameterEdmTypeNotScalar=The EdmType '{0}' is not a scalar type.
+EntityClient_EntityParameterInconsistentEdmType=The EdmType '{0}' is not consistent with the DbType provided for parameter '{1}'.
+EntityClient_CannotGetCommandText=CommandText property value cannot be retrieved because the CommandTree property is not null.
+EntityClient_CannotSetCommandText=Cannot set the CommandText property value because the CommandTree property is not null.
+EntityClient_CannotGetCommandTree=CommandTree property value cannot be retrieved because the CommandText property is not null.
+EntityClient_CannotSetCommandTree=Cannot set the CommandTree property value because the CommandText property is not null.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.Objects.ELinq error messages
+ELinq_ExpressionMustBeIQueryable=LINQ to Entities query expressions can only be constructed from instances that implement the IQueryable interface.
+ELinq_UnsupportedExpressionType=The LINQ expression node type '{0}' is not supported in LINQ to Entities.
+ELinq_UnsupportedUseOfContextParameter=The ObjectContext parameter ('{0}') in a compiled query can only be used as the source for queries.
+ELinq_UnboundParameterExpression=The parameter '{0}' was not bound in the specified LINQ to Entities query expression.
+ELinq_UnsupportedConstructor=Only parameterless constructors and initializers are supported in LINQ to Entities.
+ELinq_UnsupportedInitializers=Only list initializer items with a single element are supported in LINQ to Entities.
+ELinq_UnsupportedBinding=In constructors and initializers, only property or field parameter bindings are supported in LINQ to Entities.
+ELinq_UnsupportedMethod=LINQ to Entities does not recognize the method '{0}' method, and this method cannot be translated into a store expression.
+ELinq_UnsupportedMethodSuggestedAlternative=The method '{0}' cannot be translated into a LINQ to Entities store expression. Consider using the method '{1}' instead.
+ELinq_ThenByDoesNotFollowOrderBy=The ThenBy method must follow either the OrderBy method or another call to the ThenBy method.
+ELinq_UnrecognizedMember=The specified type member '{0}' is not supported in LINQ to Entities. Only initializers, entity members, and entity navigation properties are supported.
+ELinq_UnresolvableFunctionForMethod=The specified method '{0}' on the type '{1}' cannot be translated into a LINQ to Entities store expression.
+ELinq_UnresolvableFunctionForMethodAmbiguousMatch=The specified method '{0}' on the type '{1}' cannot be translated into a LINQ to Entities store expression because one or more passed arguments match more than one function overload.
+ELinq_UnresolvableFunctionForMethodNotFound=The specified method '{0}' on the type '{1}' cannot be translated into a LINQ to Entities store expression because no overload matches the passed arguments.
+ELinq_UnresolvableFunctionForMember=The specified member '{0}' on the type '{1}' cannot be translated into a LINQ to Entities store expression.
+ELinq_UnresolvableStoreFunctionForMember=The specified member '{0}' on the type '{1}' cannot be translated into a valid provider-specific LINQ to Entities store expression equivalent.
+ELinq_UnresolvableFunctionForExpression=The specified LINQ expression of type '{0}' cannot be translated into a LINQ to Entities store expression.
+ELinq_UnresolvableStoreFunctionForExpression=The specified LINQ expression of type '{0}' cannot be translated into a valid provider-specific LINQ to Entities store expression equivalent.
+ELinq_UnsupportedType=Unable to process the type '{0}', because it has no known mapping to the value layer.
+ELinq_UnsupportedNullConstant=Unable to create a null constant value of type '{0}'. Only entity types, enumeration types or primitive types are supported in this context.
+ELinq_UnsupportedConstant=Unable to create a constant value of type '{0}'. Only primitive types or enumeration types are supported in this context.
+ELinq_UnsupportedCast=Unable to cast the type '{0}' to type '{1}'. LINQ to Entities only supports casting EDM primitive or enumeration types.
+ELinq_UnsupportedIsOrAs=The '{0}' expression with an input of type '{1}' and a check of type '{2}' is not supported. Only entity types and complex types are supported in LINQ to Entities queries.
+ELinq_UnsupportedQueryableMethod=This method is not supported against a materialized query result.
+ELinq_InvalidOfTypeResult='{0}' is not a valid metadata type for type filtering operations. Type filtering is only valid on entity types and complex types.
+ELinq_UnsupportedNominalType=The entity or complex type '{0}' cannot be constructed in a LINQ to Entities query.
+ELinq_UnsupportedEnumerableType=A type that implements IEnumerable '{0}' cannot be initialized in a LINQ to Entities query.
+ELinq_UnsupportedHeterogeneousInitializers=The type '{0}' appears in two structurally incompatible initializations within a single LINQ to Entities query. A type can be initialized in two places in the same query, but only if the same properties are set in both places and those properties are set in the same order.
+ELinq_UnsupportedDifferentContexts=The specified LINQ expression contains references to queries that are associated with different contexts.
+ELinq_UnsupportedCastToDecimal=Casting to Decimal is not supported in LINQ to Entities queries, because the required precision and scale information cannot be inferred.
+ELinq_UnsupportedKeySelector=The key selector type for the call to the '{0}' method is not comparable in the underlying store provider.
+ELinq_CreateOrderedEnumerableNotSupported=Calling the CreateOrderedEnumerable generic method on the result of a LINQ to Entities query is not supported.
+ELinq_UnsupportedPassthrough=The method '{0}' is not supported when called on an instance of type '{1}'.
+ELinq_UnexpectedTypeForNavigationProperty=A navigation property of type '{0}' is not valid. '{1}' or a single implementation of '{2}' was expected, but '{3}' was found.
+ELinq_SkipWithoutOrder=The method 'Skip' is only supported for sorted input in LINQ to Entities. The method 'OrderBy' must be called before the method 'Skip'.
+ELinq_PropertyIndexNotSupported=Property indexers are not supported in LINQ to Entities.
+ELinq_NotPropertyOrField=The member '{0}' is not a property or a field.
+ELinq_UnsupportedStringRemoveCase=The method '{0}' is only supported in LINQ to Entities when the argument '{1}' is a non-negative integer constant.
+ELinq_UnsupportedTrimStartTrimEndCase=The method '{0}' is only supported in LINQ to Entities when there are no trim characters specified as arguments.
+ELinq_UnsupportedVBDatePartNonConstantInterval=The method '{0}' is only supported in LINQ to Entities when the argument '{1}' is a constant.
+ELinq_UnsupportedVBDatePartInvalidInterval=The method '{0}' is not supported in LINQ to Entities when the argument '{1}' has the value '{2}'.
+ELinq_UnsupportedAsUnicodeAndAsNonUnicode=The method '{0}' is only supported in LINQ to Entities when the argument is a string variable or literal.
+ELinq_UnsupportedComparison=Cannot compare elements of type '{0}'. Only primitive types, enumeration types and entity types are supported.
+ELinq_UnsupportedRefComparison=Cannot compare EntityKeys referring to types '{0}' and '{1}' because they do not share a common super-type.
+ELinq_UnsupportedRowComparison=Cannot compare '{0}'. Only primitive types, enumeration types and entity types are supported.
+ELinq_UnsupportedRowMemberComparison=member '{0}' of 
+ELinq_UnsupportedRowTypeComparison=type '{0}'
+ELinq_AnonymousType=Anonymous type
+ELinq_ClosureType=Closure type
+ELinq_UnhandledExpressionType=Unknown LINQ expression of type '{0}'.
+ELinq_UnhandledBindingType=Unknown LINQ binding of type '{0}'.
+ELinq_UnsupportedNestedFirst=The method 'First' can only be used as a final query operation. Consider using the method 'FirstOrDefault' in this instance instead.
+ELinq_UnsupportedNestedSingle=The methods 'Single' and 'SingleOrDefault' can only be used as a final query operation. Consider using the method 'FirstOrDefault' in this instance instead.
+ELinq_UnsupportedInclude=The method 'Include' is only supported by LINQ to Entities when the argument is a string constant.
+ELinq_UnsupportedMergeAs=The method 'MergeAs' is only supported by LINQ to Entities when the argument is a MergeOption constant.
+ELinq_MethodNotDirectlyCallable=This method supports the LINQ to Entities infrastructure and is not intended to be used directly from your code.
+ELinq_CycleDetected=A cycle was detected in a LINQ expression.
+ELinq_EdmFunctionAttributeParameterNameNotValid=The specified method '{0}' on the type '{1}' cannot be translated into a LINQ to Entities store expression because the parameter {2} on its EdmFunction attribute is empty.
+ELinq_EdmFunctionAttributedFunctionWithWrongReturnType=The specified method '{0}' on the type '{1}' cannot be translated into a LINQ to Entities store expression because its return type does not match the return type of the function specified by its EdmFunction attribute.
+ELinq_EdmFunctionDirectCall=This function can only be invoked from LINQ to Entities.
+CompiledELinq_UnsupportedParameterTypes=The specified parameter type '{0}' is not valid. Only scalar parameters (such as Int32, Decimal, and Guid) are supported.
+CompiledELinq_UnsupportedNamedParameterType=The specified parameter '{0}' of type '{1}' is not valid. Only scalar parameters (such as Int32, Decimal, and Guid) are supported.
+CompiledELinq_UnsupportedNamedParameterUseAsType=The specified use of parameter '{0}' to produce a value of type '{1}' is not supported by LINQ to Entities in a compiled query.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.Mapping.Update.Internal Error Messages
+Update_UnsupportedExpressionKind=Internal error. An unsupported expression kind ({0}) encountered in update mapping view by the ({1}) visitor.
+Update_UnsupportedCastArgument=Internal error. An unsupported type ({0}) was used as an argument to cast an expression in the update mapping view. The argument must be a scalar.
+Update_UnsupportedExtentType=Internal error. EntitySet ({0}) has unsupported type ({1}). Only EntitySets and AssociationSets can be processed in the update pipeline.
+Update_ConstraintCycle=Unable to determine a valid ordering for dependent operations. Dependencies may exist due to foreign key constraints, model requirements, or store-generated values.
+Update_UnsupportedJoinType=Internal error. An unsupported join type is in update mapping view ({0}). Only binary inner or left outer joins are supported.
+Update_UnsupportedProjection=Internal error. Unsupported projection expression type ({0}). Only DBNewInstanceExpression projections are supported in update mapping views.
+Update_ConcurrencyError=Store update, insert, or delete statement affected an unexpected number of rows ({0}). Entities may have been modified or deleted since entities were loaded. Refresh ObjectStateManager entries.
+Update_MissingEntity=In order to update the AssociationSet '{0}', the corresponding entity from EntitySet '{1}' must be available in the ObjectStateManager.
+Update_RelationshipCardinalityConstraintViolation=Entities in '{0}' participate in the '{1}' relationship. '{2}' related '{3}' were found. Between {4} and {5} '{3}' are expected.
+Update_GeneralExecutionException=An error occurred while updating the entries. See the inner exception for details.
+Update_MissingRequiredEntity=A relationship from the '{0}' AssociationSet is in the '{1}' state. Given multiplicity constraints, a corresponding '{2}' must also in the '{1}' state.
+Update_RelationshipCardinalityViolation=At most, '{0}' relationships may be in the '{1}' state for the '{2}' relationship from End '{3}' to an instance of End '{4}'. '{5}' instances were found.
+Update_NotSupportedServerGenKey=Store-generated keys are only supported for identity columns. More than one key column is marked as server generated in table '{0}'.
+Update_NotSupportedIdentityType=Store-generated keys are only supported for identity columns. Key column '{0}' has type '{1}', which is not a valid type for an identity column.
+Update_NotSupportedComputedKeyColumn=Modifications to tables where a primary key column has property '{0}' set to '{1}' are not supported. Use '{2}' pattern instead. Key column: '{3}'. Table: '{4}'.
+Update_AmbiguousServerGenIdentifier=A value shared across entities or associations is generated in more than one location. Check that mapping does not split an EntityKey to multiple store-generated columns.
+Update_WorkspaceMismatch=The entity client's MetadataWorkspace differs from the workspace referenced by the state manager.
+Update_MissingRequiredRelationshipValue=A function mapping for EntitySet '{0}' requires that corresponding Associations in AssociationSet '{1}' are loaded. Load the AssociationSet before saving changes to this EntitySet.
+Update_MissingResultColumn=A function mapping specifies a result column '{0}' that the result set does not contain.
+Update_NullReturnValueForNonNullableMember=A null store-generated value was returned for a non-nullable member '{0}' of type '{1}'.
+Update_ReturnValueHasUnexpectedType=A store-generated value of type '{0}' could not be converted to a value of type '{1}' required for member '{2}' of type '{3}'.
+Update_SqlEntitySetWithoutDmlFunctions=Unable to update the EntitySet '{0}' because it has a DefiningQuery and no <{1}> element exists in the <{2}> element to support the current operation.
+Update_UnableToConvertRowsAffectedParameterToInt32=Unable to determine rows affected. The value of parameter '{0}' is not convertible to '{1}'.
+Update_MappingNotFound=Update Mapping not found for EntitySet '{0}'.
+Update_ModifyingIdentityColumn=Modifying a column with the '{0}' pattern is not supported. Column: '{1}'. Table: '{2}'.
+Update_GeneratedDependent=A dependent property in a ReferentialConstraint is mapped to a store-generated column. Column: '{0}'.
+Update_ReferentialConstraintIntegrityViolation=Referential integrity constraint violation. A Dependent Role has multiple principals with different values.
+Update_ErrorLoadingRecord=Error retrieving values from ObjectStateEntry. See inner exception for details.
+Update_NullValue=Null value for non-nullable member. Member: '{0}'.
+Update_CircularRelationships=Circular relationships with referential integrity constraints detected.
+Update_RelationshipCardinalityConstraintViolationSingleValue=Entities in '{0}' participate in the '{1}' relationship. {2} related '{3}' were found. {4} '{3}' is expected.
+Update_MissingFunctionMapping=Cannot find the {0}FunctionMapping for {1} '{2}' in the mapping file.
+Update_InvalidChanges=Invalid data encountered. A required relationship is missing. Examine StateEntries to determine the source of the constraint violation.
+Update_DuplicateKeys=Conflicting changes detected. This may happen when trying to insert multiple entities with the same key.
+Update_AmbiguousForeignKey=Unable to determine the principal end of the '{0}' relationship. Multiple added entities may have the same primary key.
+Update_InsertingOrUpdatingReferenceToDeletedEntity=Unable to insert or update an entity because the principal end of the '{0}' relationship is deleted.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.Mapping.ViewGeneration Error Messages
+ViewGen_Extent=Set
+ViewGen_Null=NULL
+ViewGen_CommaBlank=, 
+ViewGen_Entities=entities
+ViewGen_Tuples=rows
+ViewGen_NotNull=NOT_NULL
+ViewGen_NegatedCellConstant=Values other than [{0}]
+ViewGen_Error=ERROR
+ViewGen_AND=AND 
+;
+Viewgen_CannotGenerateQueryViewUnderNoValidation=Insufficient or contradictory mapping. Cannot generate query views for entities in {0} when:
+ViewGen_Missing_Sets_Mapping=No mapping specified for instances of the EntitySet and AssociationSet in the EntityContainer {0}.
+ViewGen_Missing_Type_Mapping=No mapping specified for the following types - {0}.
+ViewGen_Missing_Set_Mapping=No mapping specified for the following EntitySet/AssociationSet - {0}.
+ViewGen_Concurrency_Derived_Class=Cannot define new concurrency token member {0} in the derived class {1} of EntitySet {2}.
+ViewGen_Concurrency_Invalid_Condition=Concurrency token(s) [{0}] in EntitySet {1} must not have a condition.
+ViewGen_TableKey_Missing=Must specify mapping for all key properties ({0}) of table {1}.
+ViewGen_EntitySetKey_Missing=Must specify mapping for all key properties ({0}) of the EntitySet {1}.
+ViewGen_AssociationSetKey_Missing=Must specify mapping for all key properties ({0}) of End {1} in Relationship {2}.
+ViewGen_Cannot_Recover_Attributes=No mapping specified for properties {0} in {1} {2}.
+ViewGen_Cannot_Recover_Types=Must specify mapping for all types in {0} {1}.
+ViewGen_Cannot_Disambiguate_MultiConstant=Insufficient mapping: It is possible to have {0} within {1} that are not mapped.
+ViewGen_No_Default_Value=Column {1} in table {0} must be mapped: It has no default value and is not nullable.
+ViewGen_No_Default_Value_For_Configuration=Column {0} has no default value and is not nullable. A column value is required to store entity data.
+ViewGen_KeyConstraint_Violation=Potential runtime violation of table {0}'s keys ({2}): Columns ({1}) are mapped to EntitySet {3}'s properties ({4}) on the conceptual side but they do not form the EntitySet's key properties ({5}).
+ViewGen_KeyConstraint_Update_Violation_EntitySet=All the key properties ({0}) of the EntitySet {1} must be mapped to all the key properties ({2}) of table {3}.
+ViewGen_KeyConstraint_Update_Violation_AssociationSet=At least one of the key properties of AssociationSet {0} must be mapped to all the key properties ({1}) of table {2}.
+ViewGen_AssociationEndShouldBeMappedToKey=Given the cardinality of Association End Member {0}, it should be mapped to key columns of the table {1}. Either fix the mapping or change the multiplicity of this end.
+ViewGen_Duplicate_CProperties=Each of the following columns in table {0} is mapped to multiple conceptual side properties:
+ViewGen_Duplicate_CProperties_IsMapped={0} is mapped to <{1}>
+ViewGen_NotNull_No_Projected_Slot=Property {0} with 'IsNull=false' condition must be mapped.
+ViewGen_InvalidCondition=Conditions specified on member {0} in this fragment are not allowed.
+ViewGen_NonKeyProjectedWithOverlappingPartitions=Column(s) [{0}] are being mapped in both fragments to different conceptual side properties.
+ViewGen_CQ_PartitionConstraint=Data loss or key constraint violation is possible in table {0}.
+ViewGen_CQ_DomainConstraint=Data loss is possible in {0}.
+ViewGen_OneOfConst_MustBeNonNullable={0} must be non-nullable
+ViewGen_OneOfConst_MustBeNull={0} must be null
+ViewGen_OneOfConst_MustBeEqualTo={0} must be equal to {1}
+ViewGen_OneOfConst_MustNotBeEqualTo={0} must not be equal to {1}
+ViewGen_OneOfConst_MustBeOneOf={0} must be one of {1}
+ViewGen_OneOfConst_MustNotBeOneOf={0} must not be one of {1}
+ViewGen_OneOfConst_IsNonNullable={0} is non-nullable
+ViewGen_OneOfConst_IsEqualTo={0} ={1}
+ViewGen_OneOfConst_IsNotEqualTo={0} is not equal to {1}
+ViewGen_OneOfConst_IsOneOf={0} is one of {1}
+ViewGen_OneOfConst_IsNotOneOf={0} is not one of {1}
+ViewGen_OneOfConst_IsOneOfTypes=, (for example, is one of the following type(s): {0})
+ViewGen_ErrorLog=Problem in mapping fragments starting at line {0}:
+ViewGen_ErrorLog2=Problem in mapping fragments starting at lines {0}:
+ViewGen_Foreign_Key_Missing_Table_Mapping=Missing table mapping: {0} no mapping specified for the table {1}.
+ViewGen_Foreign_Key_ParentTable_NotMappedToEnd={0} The columns of table {1} are mapped to AssociationSet {2}'s End {3} but the key columns of table {4} are not mapped to the keys of the EntitySet {5} corresponding to this End.
+ViewGen_Foreign_Key=Foreign key constraint '{0}' from table {1} ({2}) to table {3} ({4}):
+ViewGen_Foreign_Key_UpperBound_MustBeOne= {0} is mapped to AssociationSet  {1} - for this mapping to be correct, the upper multiplicity bound of end {2} needs to be 1.
+ViewGen_Foreign_Key_LowerBound_MustBeOne= {0} is mapped to AssociationSet {1} - for this mapping to be correct, the lower multiplicity bound of end {2} needs to be 1.
+ViewGen_Foreign_Key_Missing_Relationship_Mapping= {0}: Insufficient mapping: Foreign key must be mapped to some AssociationSet or EntitySets participating in a foreign key association on the conceptual side.
+ViewGen_Foreign_Key_Not_Guaranteed_InCSpace=The foreign key '{0}' is not being enforced in the model. An Association or inheritance relationship needs to be created to enforce this constraint.
+ViewGen_Foreign_Key_ColumnOrder_Incorrect=Incorrect mapping of composite key columns. {0} Columns ({1}) in table {2} are mapped to properties ({3}) in {4} and columns ({5}) in table {6} are mapped to properties ({7}) in {8}. The order of the columns through the mappings is not preserved.
+ViewGen_AssociationSet_AsUserString= {0} plays Role '{1}' in AssociationSet '{2}'
+ViewGen_AssociationSet_AsUserString_Negated= {0} does NOT play Role '{1}' in AssociationSet '{2}'
+ViewGen_EntitySet_AsUserString= {0} is in '{1}' EntitySet
+ViewGen_EntitySet_AsUserString_Negated= {0} is NOT in '{1}' EntitySet
+ViewGen_EntityInstanceToken=Entity
+Viewgen_ConfigurationErrorMsg=An Entity with Key ({0}) will not round-trip when:
+ViewGen_HashOnMappingClosure_Not_Matching=The mapping and metadata information for EntityContainer '{0}' no longer matches the information used to create the pre-generated views.
+Viewgen_RightSideNotDisjoint=Ensure that mapping fragments for EntitySet {0} do not map entities with the same primary key to different rows of the same table.
+Viewgen_QV_RewritingNotFound=Could not validate mapping for EntitySet {0}. Check that the mapping constraints are possible in the presence of store side constraints. Having an 'IsNull=True' condition in the mapping for a non-nullable column is an example of an impossible constraint.
+Viewgen_NullableMappingForNonNullableColumn=Non-nullable column {1} in table {0} is mapped to a nullable entity property.
+Viewgen_ErrorPattern_ConditionMemberIsMapped=Condition member '{0}' with a condition other than 'IsNull=False' is mapped. Either remove the condition on {0} or remove it from the mapping.
+Viewgen_ErrorPattern_DuplicateConditionValue=Condition members {0} have duplicate condition values.
+Viewgen_ErrorPattern_TableMappedToMultipleES=EntitySets '{1}' and '{2}' are both mapped to table '{0}'. Their primary keys may collide.
+Viewgen_ErrorPattern_Partition_Disj_Eq=An entity is mapped to different rows within the same table. Ensure these two mapping fragments do not map two groups of entities with identical keys to two distinct groups of rows.
+Viewgen_ErrorPattern_NotNullConditionMappedToNullableMember=Column {0} is used in a Not Null condition but it is mapped to a property {1} which is nullable. Consider making this property non-nullable.
+Viewgen_ErrorPattern_Partition_MultipleTypesMappedToSameTable_WithoutCondition=EntityTypes {0} are being mapped to the same rows in table {1}. Mapping conditions can be used to distinguish the rows that these types are mapped to.
+Viewgen_ErrorPattern_Partition_Disj_Subs_Ref=Two entities with identical keys are mapped to different rows within the same table. Ensure these two mapping fragments do not map two groups of entities with overlapping keys to two distinct groups of rows.
+Viewgen_ErrorPattern_Partition_Disj_Subs=An entity is mapped to different rows within the same table. Ensure these two mapping fragments do not map two groups of entities with overlapping keys to two distinct groups of rows.
+Viewgen_ErrorPattern_Partition_Disj_Unk=Two entities with possibly identical keys are mapped to different rows within the same table. Ensure these two mapping fragments do not map two unrelated EntitySets to two distinct groups of rows.
+Viewgen_ErrorPattern_Partition_Eq_Disj=Two entities with different keys are mapped to the same row. Ensure these two mapping fragments do not map two groups of entities with different keys to the same group of rows.
+Viewgen_ErrorPattern_Partition_Eq_Subs_Ref=Two entities with different keys are mapped to the same row. Ensure these two mapping fragments do not map two EntitySets with overlapping keys to the same group of rows.
+Viewgen_ErrorPattern_Partition_Eq_Subs=Two entities with different keys are mapped to the same row. Ensure these two mapping fragments do not map two groups of entities with overlapping keys to the same group of rows.
+Viewgen_ErrorPattern_Partition_Eq_Unk=Two entities with possibly different keys are mapped to the same row. Ensure these two mapping fragments do not map two unrelated EntitySets to the same group of rows.
+Viewgen_ErrorPattern_Partition_Eq_Unk_Association=Two entities with possibly different keys are mapped to the same row. Ensure these two mapping fragments map both ends of the AssociationSet to the corresponding columns.
+Viewgen_ErrorPattern_Partition_Sub_Disj=Two entities with different keys are mapped to the same row. Ensure these two mapping fragments do not map two groups of entities with different keys to two overlapping groups of rows.
+Viewgen_ErrorPattern_Partition_Sub_Eq=Two rows with different primary keys are mapped to the same entity. Ensure these two mapping fragments do not map two groups of entities with identical keys to two overlapping groups of rows.
+Viewgen_ErrorPattern_Partition_Sub_Eq_Ref=Two rows with different primary keys are mapped to two entities that carry identical keys through a referential integrity constraint. Ensure these two mapping fragments do not map two EntitySets with identical keys to two overlapping groups of rows.
+Viewgen_ErrorPattern_Partition_Sub_Unk=An entity from one EntitySet is mapped to a row that is also mapped to an entity from another EntitySet with possibly different key. Ensure these two mapping fragments do not map two unrelated EntitySets to two overlapping groups of rows.
+Viewgen_NoJoinKeyOrFK=Mapping fragments cannot be joined. Ensure every mapping fragment maps a key on which it should be joined with one of the other mapping fragments.
+Viewgen_MultipleFragmentsBetweenCandSExtentWithDistinct=When there is a mapping fragment between EntitySet '{0}' and Table '{1}' with MakeColumnsDistinct attribute marked to 'true', there can be no additional mapping fragments between '{0}' and '{1}'.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.Metadata.Edm.Validator Error Messages
+Validator_EmptyIdentity=Item has an empty identity.
+Validator_CollectionHasNoTypeUsage=CollectionType has a null type usage.
+Validator_NoKeyMembers=The type '{0}' doesn't have any key members. A RelationshipType or EntityType must either have key members or a BaseType with key members.
+Validator_FacetTypeIsNull=The facet object has null for the FacetType. Null is not valid for this property.
+Validator_MemberHasNullDeclaringType=The member has null for the DeclaringType. Null is not valid for this property.
+Validator_MemberHasNullTypeUsage=The member has null for the MemberTypeUsage. Null is not valid for this property.
+Validator_ItemAttributeHasNullTypeUsage=The item property has null for TypeUsage. Null is not valid for this property.
+Validator_RefTypeHasNullEntityType=The RefType has null for EntityType. Null is not valid for this property.
+Validator_TypeUsageHasNullEdmType=The type usage object has null for EdmType. Null is not valid for this property.
+Validator_BaseTypeHasMemberOfSameName=A member of the same name is already defined in a BaseType.
+Validator_CollectionTypesCannotHaveBaseType=CollectionType objects cannot have a base type.
+Validator_RefTypesCannotHaveBaseType=Reference types cannot have a base type.
+Validator_TypeHasNoName=The type does not have a name.
+Validator_TypeHasNoNamespace=The type does not have a namespace.
+Validator_FacetHasNoName=The facet does not have a name.
+Validator_MemberHasNoName=The member does not have a name.
+Validator_MetadataPropertyHasNoName=The metadata property does not have a name.
+Validator_NullableEntityKeyProperty=EntityKeyProperty and IsNullable cannot both be true in the EdmScalarPropertyAttribute for property '{0}' on type '{1}'. Properties that are part of the key cannot be nullable.
+Validator_OSpace_InvalidNavPropReturnType=The property '{0}' on type '{1}' has the return type '{2}', which is not a recognized EntityType or enumeration of instances of EntityType.
+Validator_OSpace_ScalarPropertyNotPrimitive=The property '{0}' on type '{1}' is attributed with EdmScalarPropertyAttribute but returns the type '{2}', which is not a primitive type or a recognized enumeration type.
+Validator_OSpace_ComplexPropertyNotComplex=The property '{0}' on type '{1}' is attributed with EdmComplexPropertyAttribute but returns the type '{2}', which is not a recognized ComplexType.
+Validator_OSpace_Convention_MultipleTypesWithSameName=Multiple types with the name '{0}' exist in the EdmItemCollection in different namespaces.  Convention based mapping requires unique names without regard to namespace in the EdmItemCollection.
+Validator_OSpace_Convention_NonPrimitiveTypeProperty=The property '{0}' on the type '{1}' has a property type of '{2}' which cannot be mapped to a primitive type.
+Validator_OSpace_Convention_MissingRequiredProperty=The required property '{0}' does not exist on the type '{1}'.
+Validator_OSpace_Convention_BaseTypeIncompatible=The base type '{0}' of type '{1}' does not match the model base type '{2}'.
+Validator_OSpace_Convention_MissingOSpaceType=No corresponding object layer type could be found for the conceptual type '{0}'.
+Validator_OSpace_Convention_RelationshipNotLoaded=The relationship '{0}' was not loaded because the type '{1}' is not available.
+Validator_OSpace_Convention_AttributeAssemblyReferenced=The types in the assembly '{0}' cannot be loaded because the assembly contains the EdmSchemaAttribute, and the closure of types is being loaded by name.  Loading by both name and attribute is not allowed.
+Validator_OSpace_Convention_ScalarPropertyMissginGetterOrSetter=The property '{0}' of type '{1}' in the assembly '{2}' cannot be used as a scalar property because it does not have both a getter and setter.
+Validator_OSpace_Convention_AmbiguousClrType=The mapping of CLR type to EDM type is ambiguous because multiple CLR types match the EDM type '{0}'. Previously found CLR type '{1}', newly found CLR type '{2}'.
+Validator_OSpace_Convention_Struct=The EntityType or ComplexType '{0}' cannot be mapped by convention to the value type '{1}'.  Value types are not allowed to be mapped to EntityTypes or ComplexTypes.
+Validator_OSpace_Convention_BaseTypeNotLoaded=The type '{0}' was not loaded because the base type '{1}' is not available.
+Validator_OSpace_Convention_SSpaceOSpaceTypeMismatch=Type '{0}' defined in the object layer is not compatible with type '{1}' defined in the conceptual model. An enumeration type cannot be mapped to a non-enumeration type.
+Validator_OSpace_Convention_NonMatchingUnderlyingTypes=The underlying type of CLR enumeration type does not match the underlying type of EDM enumeration type.
+Validator_UnsupportedEnumUnderlyingType=The type '{0}' is not a supported underlying type for enumeration types.
+ExtraInfo=The following information may be useful in resolving the previous error:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.Metadata.Edm Error Messages
+Metadata_General_Error=Inconsistent metadata error
+InvalidNumberOfParametersForAggregateFunction=Error in Function '{0}'. Aggregate Functions should take exactly one input parameter.
+InvalidParameterTypeForAggregateFunction=Type of parameter '{0}' in function '{1}' is not valid. The aggregate function parameter type must be of CollectionType.
+ItemCollectionAlreadyRegistered=The ItemCollection for the '{0}' space has already been registered.
+InvalidSchemaEncountered=Schema specified is not valid. Errors: {0}
+SystemNamespaceEncountered=The namespace '{0}' is a system namespace and cannot be used by other schemas. Choose another namespace name.
+NoCollectionForSpace=The space '{0}' has no associated collection.
+OperationOnReadOnlyCollection=The operation cannot be performed because the collection is read only.
+OperationOnReadOnlyItem=The operation cannot be performed because the item is read only.
+EntitySetInAnotherContainer=The EntitySet already has an EntityContainer, it cannot be added to this collection.
+InvalidKeyMember=The specified key Member '{0}' does not exist in the Members collection.
+InvalidFileExtension=Specified file '{0}' has extension '{1}' that is not valid. The valid extension is {2}.
+NewTypeConflictsWithExistingType=The type '{0}' that is being loaded conflicts with the type '{1}' that is already loaded because they have the same namespace and name.
+NotValidInputPath=At least one of the input paths is not valid because either it is too long or it has incorrect format.
+UnableToDetermineApplicationContext=Unable to determine application context. The ASP.NET application path could not be resolved.
+WildcardEnumeratorReturnedNull=The wildcard assembly enumerator function returned null.
+InvalidUseOfWebPath='{0}' is only valid in metadata file paths when running inside ASP.NET.
+UnableToFindReflectedType=Unable to find type '{0}' in assembly '{1}'.
+AssemblyMissingFromAssembliesToConsider=The assembly '{0}' specified does not exist in the assemblies enumeration.
+InvalidCollectionSpecified=Item Collection for '{0}' is not valid. Make sure that the StorageMappingItemCollection was constructed with the same instances of item collection that are registered for conceptual model and storage model.
+UnableToLoadResource=Unable to load the specified metadata resource.
+EdmVersionNotSupportedByRuntime=The EDMVersion of the item collection {0} is not an EDMVersion that the runtime supports. The supported versions are {1}.
+AtleastOneSSDLNeeded=At least one SSDL artifact is required for creating StoreItemCollection.
+InvalidMetadataPath=The specified metadata path is not valid. A valid path must be either an existing directory, an existing file with extension '.csdl', '.ssdl', or '.msl', or a URI that identifies an embedded resource.
+UnableToResolveAssembly=Unable to resolve assembly '{0}'.
+UnableToDetermineStoreVersion=Could not determine storage version; a valid storage connection or a version hint is required.
+DuplicatedFunctionoverloads=The parameters of Function '{0}' are converted to conceptual side type '{1}', and the function with the same conceptual side type parameters already exists. Please make sure that function overloads are not ambiguous.
+EntitySetNotInCSPace=The EntitySet '{0}' that was passed in does not belong to the conceptual model.
+TypeNotInEntitySet=The type '{0}' specified is not the declared type '{1}' or a derivation of the type of the EntitySet '{2}'.
+TypeNotInAssociationSet=The type '{0}' specified is not the declared type '{1}' or a derivation of the type of the AssociationSet '{2}'.
+DifferentSchemaVersionInCollection=The {0} could not be registered with the MetadataWorkspace because its version ('{1}') is different from the version ('{2}') already associated with the MetadataWorkspace.
+InvalidCollectionForMapping=ItemCollection is not valid. For '{0}' space, the CollectionType should be MappingItemCollection.
+OnlyStoreConnectionsSupported=Entity connections are not supported; only storage connections are supported.
+StoreItemCollectionMustHaveOneArtifact=Argument '{0}' is not valid. A minimum of one .ssdl artifact must be supplied. 
+CheckArgumentContainsNullFailed=Argument '{0}' is not valid.  The set contains a null value.
+InvalidRelationshipSetName=The RelationshipSet with the specified name '{0}' does not exist in the EntityContainer.
+MemberInvalidIdentity=The member with identity '{0}' does not exist in the member collection.
+InvalidEntitySetName=The EntitySet with the specified name '{0}' does not exist in the EntityContainer.
+ItemInvalidIdentity=The member with identity '{0}' does not exist in the metadata collection.
+ItemDuplicateIdentity=The item with identity '{0}' already exists in the metadata collection.
+NotStringTypeForTypeUsage=The PrimitiveType is not a string type.
+NotBinaryTypeForTypeUsage=The PrimitiveType is not a binary type.
+NotDateTimeTypeForTypeUsage=The PrimitiveType is not a DateTime type.
+NotDateTimeOffsetTypeForTypeUsage=The given primitive type is not a DateTimeOffset type.
+NotTimeTypeForTypeUsage=The given primitive type is not a Time type.
+NotDecimalTypeForTypeUsage=The PrimitiveType is not a Decimal type.
+ArrayTooSmall=Destination array was not long enough. Check arrayIndex and length, and the array's lower bounds.
+MoreThanOneItemMatchesIdentity=More than one item in the metadata collection match the identity '{0}'.
+MissingDefaultValueForConstantFacet=Missing default value for '{0}' in type '{1}'. Default value must be specified because the '{0}' is specified as constant.
+MinAndMaxValueMustBeSameForConstantFacet=Minimum and maximum value must not be specified for '{0}' in type '{1}' since '{0}' is specified as constant.
+BothMinAndMaxValueMustBeSpecifiedForNonConstantFacet=Both minimum and maximum values must be provided for '{0}' in type '{1}' since '{0}' is not specified as a constant.
+MinAndMaxValueMustBeDifferentForNonConstantFacet=Minimum and maximum values cannot be identical for '{0}' in type '{1}' because '{0}' is not specified as constant.
+MinAndMaxMustBePositive=Minimum and maximum values must be greater than or equal to zero for '{0}' in type '{1}'.
+MinMustBeLessThanMax=Minimum value '{0}' specified for '{1}' in type '{2} is not valid. Minimum value must be always less than the maximum value.
+SameRoleNameOnRelationshipAttribute=Both Ends on the EdmRelationshipAttribute for relationship '{0}' have the same Role name '{1}'. The ends of a relationship type must have different Role names.
+RoleTypeInEdmRelationshipAttributeIsInvalidType=The property for the relationship '{0}' contains a Role '{1}' has a type '{2}' that is not valid for a relationship End. Change the End Role to an EntityType.
+TargetRoleNameInNavigationPropertyNotValid=EdmRelationshipNavigationPropertyAttribute for RelationshipType '{3}' on NavigationProperty '{0}' in EntityType '{1}' has a TargetRole name '{2}' that is not valid. Make sure that TargetRole name is a valid name. 
+RelationshipNameInNavigationPropertyNotValid=EdmRelationshipNavigationPropertyAttribute on NavigationProperty '{0}' in EntityType '{1}' has a RelationshipName '{2}' that is not valid. Make sure the RelationshipName is valid.
+NestedClassNotSupported=Type '{0}' in Assembly '{1}' is a nested class. Nested classes are not supported.
+NullParameterForEdmRelationshipAttribute=The EdmRelationshipAttribute for the relationship '{1}' has a null parameter '{0}'.
+NullRelationshipNameforEdmRelationshipAttribute=The RelationshipName parameter of an EdmRelationshipAttribute in the assembly '{0}' is null.
+NavigationPropertyRelationshipEndTypeMismatch=The EntityType '{0}' that the NavigationProperty '{1}' is declared on is not the same type '{4}' referred by the end '{3}' of the RelationshipType '{2}' that this NavigationProperty represents.
+AllArtifactsMustTargetSameProvider_InvariantName=All SSDL artifacts must target the same provider. The Provider '{0}' is different from '{1}' that was encountered earlier.
+AllArtifactsMustTargetSameProvider_ManifestToken=All SSDL artifacts must target the same provider. The ProviderManifestToken '{0}' is different from '{1}' that was encountered earlier.
+ProviderManifestTokenNotFound=The storage provider manifest could not be obtained.
+FailedToRetrieveProviderManifest=Could not retrieve the provider manifest.
+InvalidMaxLengthSize=MaxLength must be greater than zero.
+ArgumentMustBeCSpaceType=The argument to the function must be a conceptual schema type.
+ArgumentMustBeOSpaceType=The argument to the function must be an CLR type.
+FailedToFindOSpaceTypeMapping=Could not find the CLR type for '{0}'.
+FailedToFindCSpaceTypeMapping=Could not find the conceptual model type for '{0}'.
+FailedToFindClrTypeMapping=Could not find the CLR type for '{0}'.
+GenericTypeNotSupported=EdmComplexTypeAttribute and EdmEntityTypeAttribute can not be used on the generic type '{0}'.
+InvalidEDMVersion=The EDM version {0} is not supported by the runtime.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.Mapping Error Messages
+Mapping_General_Error="Mapping not valid error"
+Mapping_InvalidContent_General=Content in MSL is not valid.
+Mapping_InvalidContent_EntityContainer=The EntityContainer '{0}' for the conceptual model specified as part of this MSL does not exist in MetadataWorkspace.
+Mapping_InvalidContent_StorageEntityContainer=The EntityContainer '{0}' for the storage model specified as part of this MSL does not exist in MetadataWorkspace.
+Mapping_AlreadyMapped_StorageEntityContainer=The EntityContainer '{0}' for the storage model has already been mapped.
+Mapping_InvalidContent_Entity_Set=The EntitySet '{0}' specified as part of this MSL does not exist in MetadataWorkspace.
+Mapping_InvalidContent_Entity_Type=The EntityType '{0}' specified as part of this MSL does not exist in MetadataWorkspace.
+Mapping_InvalidContent_AbstractEntity_FunctionMapping=The EntityType '{0}' is Abstract and cannot be mapped using Function Mapping.
+Mapping_InvalidContent_AbstractEntity_Type=The EntityType '{0}' is Abstract and can be mapped only using IsTypeOf.
+Mapping_InvalidContent_AbstractEntity_IsOfType=The EntityType '{0}' used in IsTypeOf does not have any concrete descendants.
+Mapping_InvalidContent_Entity_Type_For_Entity_Set=The EntityType '{0}' specified is not the declared type '{1}' or a derivation of the type of the EntitySet '{2}'.
+Mapping_Invalid_Association_Type_For_Association_Set=The AssociationType '{0}' specified is not the declared type '{1}' of the AssociationSet '{2}'.
+Mapping_InvalidContent_Table=The Table '{0}' specified as part of this MSL does not exist in MetadataWorkspace.
+Mapping_InvalidContent_Complex_Type=The Complex Type '{0}' specified as part of this MSL does not exist in MetadataWorkspace.
+Mapping_InvalidContent_Association_Set=The AssociationSet '{0}' specified as part of this MSL does not exist in MetadataWorkspace.
+Mapping_InvalidContent_AssociationSet_Condition=The AssociationSet '{0}' cannot have a Condition because it does not provide maps for the End elements.
+Mapping_InvalidContent_ForeignKey_Association_Set=AssociationType '{0}' has a referential integrity constraint and cannot be mapped.
+Mapping_InvalidContent_ForeignKey_Association_Set_PKtoPK=AssociationType '{0}' has a primary key to primary key referential integrity constraint. Any mappings for it will be ignored.
+Mapping_InvalidContent_Association_Type=The AssociationType '{0}' specified as part of this MSL does not exist in MetadataWorkspace.
+Mapping_InvalidContent_EndProperty=The property '{0}' is not a key member of the EntityType. Only key members can be mapped as part of the EndProperty mapping.
+Mapping_InvalidContent_Association_Type_Empty=AssociationType Name should be specified when providing a function mapping or End property mapping.
+Mapping_InvalidContent_Table_Expected=A table mapping element is expected but not present.
+Mapping_InvalidContent_Cdm_Member=Content not valid. The conceptual side Member or Property '{0}' specified as part of this MSL does not exist in MetadataWorkspace.
+Mapping_InvalidContent_Column=The Column '{0}' specified as part of this MSL does not exist in MetadataWorkspace.
+Mapping_InvalidContent_End=The End property '{0}' specified as part of this MSL does not exist in MetadataWorkspace.
+Mapping_InvalidContent_Container_SubElement=Expecting only EntitySetMapping, AssociationSetMapping, or FunctionImportMapping elements.
+Mapping_InvalidContent_Duplicate_Cdm_Member=The conceptual side Member or Property '{0}' has multiple mappings specified as part of the same mapping fragment.
+Mapping_InvalidContent_Duplicate_Condition_Member=The Member or Property '{0}' has multiple conditions specified as part of the same mapping fragment.
+Mapping_InvalidContent_ConditionMapping_Both_Members=Both conceptual model and column members cannot be specified for condition mapping.
+Mapping_InvalidContent_ConditionMapping_Either_Members=Either conceptual model or Column Members must  be specified for condition mapping.
+Mapping_InvalidContent_ConditionMapping_Both_Values=Both Value and IsNull attributes cannot be specified for condition mapping.
+Mapping_InvalidContent_ConditionMapping_Either_Values=Either Value or IsNullAttribute has to be specified for condition mapping.
+Mapping_InvalidContent_ConditionMapping_NonScalar=Conditions are not supported on complex-valued members.
+Mapping_InvalidContent_ConditionMapping_InvalidPrimitiveTypeKind=Condition can not be specified on values of member '{0}'. Value conditions are not supported for type '{1}'.
+Mapping_InvalidContent_ConditionMapping_InvalidMember=Member '{0}' specified in Condition does not exist.
+Mapping_InvalidContent_ConditionMapping_Computed=Condition cannot be specified for Column member '{0}' because it is marked with a 'Computed' or 'Identity' StoreGeneratedPattern.
+Mapping_InvalidContent_Emtpty_SetMap=At least one property must be mapped in the set mapping for '{0}'.
+Mapping_InvalidContent_TypeMapping_QueryView=Only EntityTypeMapping and QueryView elements are allowed when the EntityType name is not specified on the EntitySetMapping.
+Mapping_Default_OCMapping_Clr_Member=The Member '{0}' in the conceptual model type '{1}' is not present in the CLR type '{2}'.
+Mapping_Default_OCMapping_Clr_Member2=The Member '{0}' in the CLR type '{1}' is not present in the conceptual model type '{2}'.
+Mapping_Default_OCMapping_Invalid_MemberType=The type '{0}' of the member '{1}' in the conceptual side type '{2}' does not match with the type '{3}' of the member '{4}' on the object side type '{5}'.
+Mapping_Default_OCMapping_MemberKind_Mismatch=The '{0}' property on the conceptual model type '{1}' is of type '{2}'. The property '{3}' on the CLR type '{4}' is of type '{5}'. The property types must match.
+Mapping_Default_OCMapping_MultiplicityMismatch=The multiplicity '{0}' on End '{1}' in the conceptual side Association '{2}' doesn't match with multiplicity '{3}' on end '{4}' on the object side Association '{5}'.
+Mapping_Default_OCMapping_Member_Count_Mismatch=The number of members in the conceptual type '{0}' does not match with the number of members on the object side type '{1}'. Make sure the number of members are the same.
+Mapping_Default_OCMapping_Member_Type_Mismatch=The type '{0}'('{1}') of the member '{2}' in the conceptual  type '{3}' doesn't match with the type '{4}'('{5}') of the member '{6}' on the object side type '{7}'.
+Mapping_Enum_OCMapping_UnderlyingTypesMismatch=The underlying type '{0}' of the enumeration type '{1}' defined in the conceptual model does not match the underlying type '{2}' of the enumeration type '{3}' defined in the object layer.
+Mapping_Enum_OCMapping_MemberMismatch=The enumeration type '{0}' defined in the object layer does not have a member that corresponds to the member '{1}' whose value is '{2}' of the enumeration type '{3}' defined in the conceptual model.
+Mapping_NotFound_EntityContainer=The mapping for EntityContainer '{0}' was not found in Workspace.
+Mapping_Duplicate_CdmAssociationSet_StorageMap=The conceptual AssociationSet '{0}' cannot be mapped multiple times.
+Mapping_Invalid_CSRootElementMissing=Invalid root element found in the mapping file. Make sure that the root element's local name is 'Mapping' and the namespaceURI is '{0}', '{1}' or '{2}'.
+Mapping_ConditionValueTypeMismatch=The value specified for the condition is not compatible with the type of the member.
+Mapping_Storage_InvalidSpace=The Storage Map can be looked up only from the type in conceptual model. It cannot be looked up from type in the following space: {0}.
+Mapping_Invalid_Member_Mapping=Member Mapping specified is not valid. The type '{0}' of member '{1}' in type '{2}' is not compatible with '{3}' of member '{4}' in type '{5}'.
+Mapping_Invalid_CSide_ScalarProperty=The property '{0}' on the conceptual side is not a scalar property.
+Mapping_Duplicate_Type=The type '{0}' has been mapped more than once.
+Mapping_Duplicate_PropertyMap_CaseInsensitive=More than one property map found for property '{0}' when using case-insensitive search.
+Mapping_Enum_EmptyValue=Non-empty enumeration value must be specified for condition mapping for enumeration '{0}'.
+Mapping_Enum_InvalidValue=Enumeration value '{0}' specified in condition mapping is not valid.
+Mapping_InvalidMappingSchema_Parsing=XML parsing failed for mapping schema. Schema Error Information : {0}.
+Mapping_InvalidMappingSchema_validation=XML Schema validation failed for mapping schema. Schema Error Information : {0}.
+Mapping_Object_InvalidType=Object mapping could not be found for Type with identity '{0}'.
+Mapping_Provider_WrongConnectionType=The connection is not of type '{0}'.
+Mapping_Provider_WrongManifestType=The provider manifest given is not of type '{0}'.
+Mapping_Views_For_Extent_Not_Generated=No views were found in assemblies or could be generated for {0} '{1}'.
+Mapping_TableName_QueryView=Store EntitySet name should not be specified on set mapping for Set '{0}' because a query view is being specified.
+Mapping_Empty_QueryView=The query view specified for EntitySet '{0}' is empty.
+Mapping_Empty_QueryView_OfType=The IsTypeOf({0}) query view specified for EntitySet '{1}' is empty.
+Mapping_Empty_QueryView_OfTypeOnly=The query view specified for EntitySet '{0}' for EntityType '{1}' is empty.
+Mapping_QueryView_PropertyMaps=Property maps cannot be specified for EntitySet '{0}' because a query view has been specified.
+Mapping_Invalid_QueryView=The query view generated for the EntitySet '{0}' is not valid. The query parser threw the following error : {1}.
+Mapping_Invalid_QueryView2=The query view specified for the EntitySet '{0}' is not valid. The query parser threw the following error : {1}.
+Mapping_Invalid_QueryView_Type=The ResultType of the query view expression specified for the EntitySet '{0}' is not assignable to the element type of the EntitySet.
+Mapping_TypeName_For_First_QueryView=The first QueryView must not be type-specific. Try removing the TypeName property.
+Mapping_AllQueryViewAtCompileTime=The EntitySetMapping in EntityContainerMapping for EntityContainer '{0}' must contain only mapping fragments and no query view. The EntitySetMapping contains only query views and the view for this EntityContainerMapping will not be generated.
+Mapping_QueryViewMultipleTypeInTypeName=A single QueryView is defined for multiple types within EntitySet {0}.
+Mapping_QueryView_Duplicate_OfType=IsTypeOf( ) QueryView is already defined for EntitySet {0} and TypeName {1}.
+Mapping_QueryView_Duplicate_OfTypeOnly=QueryView is already defined for EntitySet {0} and TypeName {1}.
+Mapping_QueryView_TypeName_Not_Defined=TypeName property must be defined for all but the first QueryViews within mapping for EntitySet {0}.
+Mapping_QueryView_For_Base_Type=IsTypeOf({0}) QueryView should not be specified for {1} EntitySet's element type {0}.
+Mapping_UnsupportedExpressionKind_QueryView=The query view specified for '{0}' EntitySet's type(s) '{1}' contains an unsupported expression of kind '{2}'.
+Mapping_UnsupportedFunctionCall_QueryView=The query view specified for the EntitySet '{0}' includes a call to the Function '{1}'. Only storage Functions may be referenced in a query view.
+Mapping_UnsupportedScanTarget_QueryView=The query view specified for the EntitySet '{0}' includes a scan of the '{1}' EntitySet. Only storage EntitySets may be referenced in a query view.
+Mapping_UnsupportedPropertyKind_QueryView=The query view specified for the EntitySet '{0}' contains a reference to member '{1}' of kind '{2}'. Only columns may be referenced.
+Mapping_UnsupportedInitialization_QueryView=The query view specified for the EntitySet '{0}' initializes an instance of type '{1}'. Only types assignable to the element type of the EntitySet are permitted.
+Mapping_EntitySetMismatchOnAssociationSetEnd_QueryView=The EntitySet '{0}' used for creating the Ref expression does not match the EntitySet '{1}' declared on the AssociationSetEnd '{2}' of the AssociationSet '{3}'.
+Mapping_Invalid_Query_Views_MissingSetClosure=If an EntitySet or AssociationSet includes a query view, all related entity and association sets in the EntityContainer must also define query views. The following sets require query views: {0}.
+Generated_View_Type_Super_Class=The type that contains generated views '{0}' should derive from the System.Data.Mapping.EntityViewContainer type.
+Generated_Views_Changed=The content of the views or the EntitySet base names have changed from the design time.
+Generated_Views_Invalid_Extent=The EntitySet '{0}' for which the view has been specified could not be found in the workspace.
+Mapping_ItemWithSameNameExistsBothInCSpaceAndSSpace=GlobalItem with name '{0}' exists both in conceptual model and storage model. Make sure that every item has a unique name across conceptual model and storage model.
+Mapping_AbstractTypeMappingToNonAbstractType=Type '{0}' in conceptual side  cannot be mapped to type '{1}' on the object side.  Both the types must be abstract or both must be concrete types.
+Mapping_EnumTypeMappingToNonEnumType=Type '{0}' defined in the conceptual model cannot be mapped to type '{1}' from the object layer. An enumeration type cannot be mapped to a non-enumeration type.
+StorageEntityContainerNameMismatchWhileSpecifyingPartialMapping=Storage EntityContainer name '{0}' specified in this mapping schema doesn't match with the storage EntityContainer name '{1}' specified in the previous mapping schema(s) for EntityContainer '{2}' in the conceptual model. Make sure that you specify exactly one mapping per EntityContainer, or if you want to specify partial mapping, make sure that they map to the same storage EntityContainer.
+Mapping_InvalidContent_IsTypeOfNotTerminated=Unclosed parenthesis in IsOfType declaration.
+Mapping_CannotMapCLRTypeMultipleTimes=An EdmType cannot be mapped to CLR classes multiple times. The EdmType '{0}' is mapped more than once.
+Mapping_ModificationFunction_In_Table_Context=An EntityType Mapping containing a function mapping cannot specify the TableName property.
+Mapping_ModificationFunction_Multiple_Types=An EntityType Mapping function binding cannot map multiple types. Function mappings may be specified only for EntityType mappings for single types -- do not use the 'IsTypeOf' modifier or specify multiple types.
+Mapping_ModificationFunction_UnknownFunction=A mapping function binding specifies an unknown function {0}.
+Mapping_ModificationFunction_AmbiguousFunction=A mapping function binding specifies an ambiguous function {0} with more than one overload.
+Mapping_ModificationFunction_NotValidFunction=A mapping function binding specifies a function {0} that is not supported. Only functions that cannot be composed are supported.
+Mapping_ModificationFunction_NotValidFunctionParameter=A mapping function binding specifies a function {0} with an unsupported parameter: {1}. Output parameters may only be mapped through the {2} property. Use result bindings to return values from a function invocation.
+Mapping_ModificationFunction_MissingParameter=A mapping function bindings specifies a function {0} but does not map the following function parameters: {1}.
+Mapping_ModificationFunction_AssociationSetDoesNotExist=An association End mapping specifies an AssociationSet {0} that does not exist in the current container.
+Mapping_ModificationFunction_AssociationSetRoleDoesNotExist=An association End mapping specifies a Role {0} that does not exist in the current AssociationSet.
+Mapping_ModificationFunction_AssociationSetFromRoleIsNotEntitySet=An association End mapping defines a from Role {0} that is not bound to the current EntitySet.
+Mapping_ModificationFunction_AssociationSetCardinality=An association End mapping has a 'to' Role {0} with multiplicity greater than one. A maximum multiplicity of one is supported.
+Mapping_ModificationFunction_ComplexTypeNotFound=Unable to find ComplexType {0} in the current MetadataWorkspace.
+Mapping_ModificationFunction_WrongComplexType=The Complex Type {0} does not match the type of the current property {1}.
+Mapping_ModificationFunction_MissingVersion=Cannot determine the version for the current parameter binding.
+Mapping_ModificationFunction_VersionMustBeOriginal=This function mapping can only contain bindings to 'original' property versions.
+Mapping_ModificationFunction_VersionMustBeCurrent=This function mapping can only contain bindings to 'current' property versions.
+Mapping_ModificationFunction_ParameterNotFound=The function parameter {0} is not defined in the function {1}.
+Mapping_ModificationFunction_PropertyNotFound=The property {0} does not exist in the type {1}.
+Mapping_ModificationFunction_PropertyNotKey=The property {0} is not a key of {1}. Association End mappings may only include key properties.
+Mapping_ModificationFunction_ParameterBoundTwice=The parameter {0} is bound multiple times.
+Mapping_ModificationFunction_RedundantEntityTypeMapping=The EntityType {0} is mapped to functions more than once.
+Mapping_ModificationFunction_MissingSetClosure=If some of the EntitySet or the AssociationSet mapped to the same store EntitySet, and one of the sets includes a function mapping, all related entity and AssociationSets in the EntityContainer must also define function mappings. The following sets require function mappings: {0}.
+Mapping_ModificationFunction_MissingEntityType=If an EntitySet mapping includes a function binding, function bindings must be included for all types. The following types do not have function bindings: {0}.
+Mapping_ModificationFunction_PropertyParameterTypeMismatch=Parameter Mapping specified is not valid. The type '{0}' of member '{1}' in type '{2}' is not compatible with '{3}' of parameter '{4}' in function '{5}'.
+Mapping_ModificationFunction_AssociationSetAmbiguous=AssociationSet instances may only be mapped using functions in one EntitySetMapping or AssociationSetMapping. The following AssociationSet instances are mapped in multiple locations: {0}.
+Mapping_ModificationFunction_MultipleEndsOfAssociationMapped=A function mapping includes parameter bindings for two different Ends of the same AssociationSet. Only one End of a particular AssociationSet may be mapped within a single function mapping. End Roles: {0}, {1}. AssociationSet: {2}.
+Mapping_ModificationFunction_AmbiguousResultBinding=A function mapping includes multiple result bindings for a single property. Property name: {0}. Column names: {1}.
+Mapping_ModificationFunction_AssociationSetNotMappedForOperation=The EntitySet '{0}' includes function mappings for AssociationSet '{1}', but none exists in element '{2}' for type '{3}'. AssociationSets must be consistently mapped for all operations.
+Mapping_ModificationFunction_AssociationEndMappingInvalidForEntityType=The EntityType '{0}' includes function mappings for AssociationSet '{1}' that requires type '{2}'.
+Mapping_ModificationFunction_AssociationEndMappingForeignKeyAssociation=A function mapping for 'to' role {0} is not permitted because it is a foreign key association.
+Mapping_StoreTypeMismatch_ScalarPropertyMapping=The conceptual side property '{0}' has already been mapped to a storage property with type '{1}'. If the conceptual side property is mapped to multiple properties in the storage model, make sure that all the properties in the storage model have the same type.
+Mapping_DistinctFlagInReadWriteContainer=MakeColumnsDistinct flag can only be placed within a container that does not generate update views. Mark GenerateUpdateViews attribute to 'false' within EntityContainerMapping.
+Mapping_ProviderReturnsNullType=The store provider did not return a valid EdmType for '{0}'.
+Mapping_DifferentEdmStoreVersion=The version of EdmItemCollection must match the version of StoreItemCollection.
+Mapping_DifferentMappingEdmStoreVersion=The version of the loaded mapping files must be the same as the version of loaded EdmItemCollection and StoreItemCollection.
+Mapping_FunctionImport_StoreFunctionDoesNotExist=The storage function '{0}' does not exist.
+Mapping_FunctionImport_FunctionImportDoesNotExist=The FunctionImport '{0}' does not exist in container '{1}'.
+Mapping_FunctionImport_FunctionImportMappedMultipleTimes=The FunctionImport '{0}' has already been mapped.
+Mapping_FunctionImport_TargetFunctionMustBeNonComposable=The non-composable function import '{0}' is mapped to the composable store function '{1}'. Non-composable function imports can be mapped only to stored procedures.
+Mapping_FunctionImport_TargetFunctionMustBeComposable=The composable function import '{0}' is mapped to the non-composable store function '{1}'. Composable function imports can be mapped only to composable table-valued store functions.
+Mapping_FunctionImport_TargetParameterHasNoCorrespondingImportParameter=Storage function has a parameter '{0}' but no corresponding parameter was found in the FunctionImport.
+Mapping_FunctionImport_ImportParameterHasNoCorrespondingTargetParameter=Import function has a parameter '{0}' but no corresponding parameter was found in the storage function.
+Mapping_FunctionImport_IncompatibleParameterMode=Parameter '{0}' has mode '{1}' in the storage function but mode '{2}' in the FunctionImport.
+Mapping_FunctionImport_IncompatibleParameterType=Parameter '{0}' has type '{1}' in the storage that is not compatible with type '{2}' declared for the FunctionImport.
+Mapping_FunctionImport_IncompatibleEnumParameterType=The storage function parameter '{0}' of type '{1}' does not match the corresponding FunctionImport parameter of enumeration type '{2}' with underlying type '{3}'. The underlying type of the enumeration parameter for a function defined in the conceptual model must match the corresponding storage function parameter type.
+Mapping_FunctionImport_RowsAffectedParameterDoesNotExist=Rows affected parameter '{0}' does not exist in function '{1}'.
+Mapping_FunctionImport_RowsAffectedParameterHasWrongType=Rows affected parameter '{0}' is of type '{1}'. Must be an integer numeric type.
+Mapping_FunctionImport_RowsAffectedParameterHasWrongMode=Rows affected parameter '{0}' has mode '{1}'. Must have mode '{2}' or '{3}'.
+Mapping_FunctionImport_EntityTypeMappingForFunctionNotReturningEntitySet=An {0} element can only be declared for a FunctionImport declaring an EntitySet. FunctionImport '{1}' does not declare an EntitySet.
+Mapping_FunctionImport_InvalidContentEntityTypeForEntitySet=The EntityType '{0}' specified is not the declared type '{1}' nor a derivation of the type of the EntitySet '{2}' for FunctionImport '{3}'.
+Mapping_FunctionImport_ConditionValueTypeMismatch=The condition value specified for {0} is not compatible with the type returned by the storage provider. Column name: '{1}', ResultType: '{2}'. 
+Mapping_FunctionImport_UnsupportedType=The type returned by the storage provider is not supported for type conditions. Column name: '{0}', ResultType: '{1}'.
+Mapping_FunctionImport_ResultMappingCountDoesNotMatchResultCount=The number of ResultMapping elements for the FunctionImport '{0}' does not match the number of specified ReturnType elements.
+Mapping_FunctionImport_ResultMapping_MappedTypeDoesNotMatchReturnType=Mapping of the function import '{0}' is not valid. Mapped type '{1}' is not compatible with the return type of the function import.
+Mapping_FunctionImport_ResultMapping_InvalidCTypeCTExpected=Mapping of the function import '{0}' is not valid. ComplexTypeMapping is supported only for function imports returning a collection of ComplexType.
+Mapping_FunctionImport_ResultMapping_InvalidCTypeETExpected=Mapping of the function import '{0}' is not valid. EntityTypeMapping is supported only for function imports returning a collection of EntityType.
+Mapping_FunctionImport_ResultMapping_InvalidSType=Mapping of the function import '{0}' is not valid. Storage function return type is expected to be a collection of rows.
+Mapping_FunctionImport_PropertyNotMapped=No mapping specified for the conceptual property '{0}' of type '{1}' in the result mapping of the function import '{2}'.
+Mapping_FunctionImport_ImplicitMappingForAbstractReturnType=The return type '{0}' of the function import '{1}' is abstract and cannot be mapped implicitly.
+Mapping_FunctionImport_ScalarMappingToMulticolumnTVF=The function import '{0}' can be mapped only to a store function that returns rows with one column. The store function '{1}' returns rows with multiple columns.
+Mapping_FunctionImport_ScalarMappingTypeMismatch=The return type '{0}' of the function import '{1}' is not compatible with the return type '{2}' of the store function '{3}'.
+Mapping_FunctionImport_UnreachableType=The function import mapping cannot produce an entity of type '{0}'. Ensure that conditions unambiguously imply the type. See line(s) '{1}'.
+Mapping_FunctionImport_UnreachableIsTypeOf=The function import mapping cannot produce an entity from the '{0}' type hierarchy. Ensure that conditions unambiguously imply some type in the hierarchy. See line(s) '{1}'.
+Mapping_FunctionImport_FunctionAmbiguous=Unable to resolve to a specific overload of the function '{0}'.
+Mapping_FunctionImport_CannotInferTargetFunctionKeys=The key properties of all entity types returned by the function import '{0}' must be mapped to the same non-nullable columns returned by the storage function.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; SqlProvider Error Messages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SqlProvider_DdlGeneration_MissingInitialCatalog=Unable to complete operation. The supplied SqlConnection does not specify an initial catalog or AttachDBFilename.
+SqlProvider_DdlGeneration_CannotDeleteDatabaseNoInitialCatalog=Unable to delete the database. There is no database that corresponds to the given AttachDBFilename.
+SqlProvider_DdlGeneration_CannotTellIfDatabaseExists=A connection to the specified database could not be opened. See InnerException for details. However, there is a database registered with the server that corresponds to the given AttachDbFilename.
+SqlProvider_CredentialsMissingForMasterConnection=This operation requires a connection to the 'master' database. Unable to create a connection to the 'master' database because the original database connection has been opened and credentials have been removed from the connection string. Supply an unopened connection.
+SqlProvider_IncompleteCreateDatabase=The database creation succeeded, but the creation of the database objects failed. The consequent attempt to drop the database also failed. See InnerException for details.
+SqlProvider_IncompleteCreateDatabaseAggregate=See InnerExceptions for details.
+SqlProvider_SqlTypesAssemblyNotFound=Spatial types and functions are not available for this provider because the assembly 'Microsoft.SqlServer.Types' version 10 or higher could not be found. 
+SqlProvider_Sql2008RequiredForSpatial=Spatial types and functions are only supported by SQL Server 2008 or later.
+SqlProvider_GeographyValueNotSqlCompatible=The specified DbGeography value could not be converted to a SQL Server compatible value.
+SqlProvider_GeometryValueNotSqlCompatible=The specified DbGeometry value could not be converted to a SQL Server compatible value.
+SqlProvider_NeedSqlDataReader=Spatial readers can only be produced from readers of type SqlDataReader.   A reader of type {0} was provided.
+SqlProvider_InvalidGeographyColumn=Expected a geography value, found a value of type {0}.
+SqlProvider_InvalidGeometryColumn=Expected a geometry value, found a value of type {0}.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.Objects Error Messages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Entity_EntityCantHaveMultipleChangeTrackers=An entity object cannot be referenced by multiple instances of IEntityChangeTracker.
+
+ComplexObject_NullableComplexTypesNotSupported=Nullable complex types are not supported. The complex property '{0}' must not allow nulls.
+ComplexObject_ComplexObjectAlreadyAttachedToParent=This complex object is already attached to another object.
+ComplexObject_ComplexChangeRequestedOnScalarProperty=The property '{0}' could not be reported as changing. This occurred because EntityComplexMemberChanging was called with a property name that is not a complex property. For more information, see the Entity Framework documentation.
+
+ObjectStateEntry_SetModifiedOnInvalidProperty=Property '{0}' is not a valid property on the object referenced by this ObjectStateEntry.
+ObjectStateEntry_OriginalValuesDoesNotExist=This ObjectStateEntry does not have original values. Objects in an added or detached state cannot have original values. 
+ObjectStateEntry_CurrentValuesDoesNotExist=This ObjectStateEntry does not have current values. Objects in a deleted or detached state cannot have current values.
+ObjectStateEntry_InvalidState=The object is in a detached state. This operation cannot be performed on an ObjectStateEntry when the object is detached.
+ObjectStateEntry_CannotModifyKeyProperty=The property '{0}' is part of the object's key information and cannot be modified. 
+ObjectStateEntry_CantModifyRelationValues=The ObjectStateEntry is a relationship entry. The current and original values of relationship entries cannot be modified.
+ObjectStateEntry_CantModifyRelationState=The ObjectStateEntry is a relationship entry. The state of relationship entries cannot be modified.
+ObjectStateEntry_CantModifyDetachedDeletedEntries=The object is in a detached or deleted state. An ObjectStateEntry in this state cannot be modified.
+ObjectStateEntry_SetModifiedStates={0} cannot be called because the object is not in a modified or unchanged state.
+ObjectStateEntry_CantSetEntityKey=The EntityKey property can only be set when the current value of the property is null.
+ObjectStateEntry_CannotAccessKeyEntryValues=The ObjectStateEntry is a key entry and its current and original values are not accessible.
+ObjectStateEntry_CannotModifyKeyEntryState=The ObjectStateEntry is a key entry and its state cannot be modified.
+ObjectStateEntry_CannotDeleteOnKeyEntry=The ObjectStateEntry is a key entry. Delete cannot be called on key entries.
+ObjectStateEntry_EntityMemberChangedWithoutEntityMemberChanging=EntityMemberChanged or EntityComplexMemberChanged was called without first calling EntityMemberChanging or EntityComplexMemberChanging on the same change tracker with the same property name. For information about properly reporting changes, see the Entity Framework documentation. 
+ObjectStateEntry_ChangeOnUnmappedProperty=The property '{0}' does not have a valid entity mapping on the entity object. For more information, see the Entity Framework documentation.
+ObjectStateEntry_ChangeOnUnmappedComplexProperty=The property '{0}' does not have a valid entity mapping on the complex type. For more information, see the Entity Framework documentation.
+ObjectStateEntry_ChangedInDifferentStateFromChanging=The change cannot be tracked because the state of the object changed from '{0}' to '{1}' since the previous call to EntityMemberChanging or EntityComplexMemberChanging on the same change tracker with the same property name. For information about properly reporting changes, see the Entity Framework documentation. 
+ObjectStateEntry_UnableToEnumerateCollection=The navigation property '{0}' on entity of type '{1}' must implement IEnumerable in order for Entity Framework to be able to track changes in collections.
+ObjectStateEntry_RelationshipAndKeyEntriesDoNotHaveRelationshipManagers=A RelationshipManager object cannot be returned for this ObjectStateEntry instance. Only an ObjectStateEntry that represents an entity has an associated RelationshipManager.
+ObjectStateEntry_InvalidTypeForComplexTypeProperty=The value for the complex property could not be set. Complex properties must be set to an object that implements IExtendedDataRecord.
+ObjectStateEntry_ComplexObjectUsedMultipleTimes=The entity of type '{0}' references the same complex object of type '{1}' more than once. Complex objects cannot be referenced multiple times by the same entity.
+ObjectStateEntry_SetOriginalComplexProperties=The original value for the property '{0}' cannot be set because it is a complex property. Individual scalar properties can be set on a complex type if the type is first obtained as a OriginalValueRecord from the entity's original values.
+ObjectStateEntry_NullOriginalValueForNonNullableProperty=The original value for the property '{0}' cannot be set to null because the '{1}' member on the entity type '{2}' is not nullable.
+ObjectStateEntry_SetOriginalPrimaryKey=The original value for the property '{0}' cannot be set because the property is part of the entity's key.
+
+ObjectStateManager_NoEntryExistForEntityKey=The supplied EntityKey does not have a corresponding entry in the ObjectStateManager.
+ObjectStateManager_NoEntryExistsForObject=The ObjectStateManager does not contain an ObjectStateEntry with a reference to an object of type '{0}'.
+ObjectStateManager_EntityNotTracked=An object with a key that matches the key of the supplied object could not be found in the ObjectStateManager. Verify that the key values of the supplied object match the key values of the object to which changes must be applied.
+ObjectStateManager_DetachedObjectStateEntriesDoesNotExistInObjectStateManager=Objects in a detached state do not exist in the ObjectStateManager.
+ObjectStateManager_ObjectStateManagerContainsThisEntityKey=An object with the same key already exists in the ObjectStateManager. The ObjectStateManager cannot track multiple objects with the same key.
+ObjectStateManager_DoesnotAllowToReAddUnchangedOrModifiedOrDeletedEntity=An object with the same key already exists in the ObjectStateManager. The existing object is in the {0} state. An object can only be added to the ObjectStateManager again if it is in the added state.
+ObjectStateManager_CannotFixUpKeyToExistingValues=AcceptChanges cannot continue because the object's key values conflict with another object in the ObjectStateManager. Make sure that the key values are unique before calling AcceptChanges.
+ObjectStateManager_KeyPropertyDoesntMatchValueInKey=The value of a property that is part of an object's key does not match the corresponding property value stored in the ObjectContext.  This can occur if properties that are part of the key return inconsistent or incorrect values or if DetectChanges is not called after changes are made to a property that is part of the key.
+ObjectStateManager_KeyPropertyDoesntMatchValueInKeyForAttach=The object cannot be attached because the value of a property that is a part of the EntityKey does not match the corresponding value in the EntityKey.
+ObjectStateManager_InvalidKey=The object's EntityKey value is not valid.
+ObjectStateManager_EntityTypeDoesnotMatchtoEntitySetType=EntityType '{0}' does not exist in the EntitySet '{1}'.
+ObjectStateManager_GetEntityKeyRequiresObjectToHaveAKey=An object of type '{0}' must have a corresponding EntityKey value that is not null.
+ObjectStateManager_AcceptChangesEntityKeyIsNotValid=AcceptChanges cannot continue because the object's EntityKey value is null or is not a temporary key. This can happen when the EntityKey property is modified while the object is in an added state.
+ObjectStateManager_EntityConflictsWithKeyEntry=The object cannot be added to the object context. The object's EntityKey has an ObjectStateEntry that indicates that the object is already participating in a different relationship.
+ObjectStateManager_CannotGetRelationshipManagerForDetachedPocoEntity=A RelationshipManager cannot be returned for this object. A RelationshipManager can only be returned for objects that are either tracked by the ObjectStateManager or that implement IEntityWithRelationships.
+ObjectStateManager_CannotChangeRelationshipStateEntityDeleted=Cannot change relationship's state to the state other than deleted or detached if the source or target entity is in the deleted state.
+ObjectStateManager_CannotChangeRelationshipStateEntityAdded=Cannot change relationship's state to the state other than added or detached if the source or target entity is in the added state.
+ObjectStateManager_CannotChangeRelationshipStateKeyEntry=Cannot change state of a relationship if one of the ends of the relationship is a KeyEntry.
+ObjectStateManager_ConflictingChangesOfRelationshipDetected=Conflicting changes to the role '{0}' of the relationship '{1}' have been detected.
+ObjectStateManager_ChangeRelationshipStateNotSupportedForForeignKeyAssociations=The ChangeRelationshipState method is not supported for relationships that are defined by using foreign-key values.
+ObjectStateManager_ChangeStateFromAddedWithNullKeyIsInvalid=The object state cannot be changed. This exception may result from one or more of the primary key properties being set to null. Non-Added objects cannot have null primary key values.  See inner exception for details.
+
+ObjectContext_ClientEntityRemovedFromStore=The following objects have not been refreshed because they were not found in the store: {0}.
+ObjectContext_StoreEntityNotPresentInClient=The refresh attempt has failed because an unexpected entity was returned by the data source.
+ObjectContext_InvalidConnectionString=The supplied connection string is not valid, because it contains insufficient mapping or metadata information.
+ObjectContext_InvalidConnection=The supplied connection is not valid because it contains insufficient mapping or metadata information.
+ObjectContext_InvalidDataAdapter=The DbDataAdapter returned from DbConnection.ProviderFactory.CreateDataAdapter() must implement IEntityDataAdapter.
+ObjectContext_InvalidDefaultContainerName=The specified default EntityContainer name '{0}' could not be found in the mapping and metadata information.
+ObjectContext_NthElementInAddedState=The element at index {0} in the collection of objects to refresh is in the added state. Objects in this state cannot be refreshed.
+ObjectContext_NthElementIsDuplicate=The element at index {0} in the collection of objects to refresh is a duplicate of an object that is already in the collection.
+ObjectContext_NthElementIsNull=The element at index {0} in the collection of objects to refresh is null.
+ObjectContext_NthElementNotInObjectStateManager=The element at index {0} in the collection of objects to refresh has a null EntityKey property value or is not attached to this ObjectStateManager.
+ObjectContext_ObjectNotFound=An object with the specified EntityKey value could not be found.
+ObjectContext_CannotDeleteEntityNotInObjectStateManager=The object cannot be deleted because it was not found in the ObjectStateManager.
+ObjectContext_CannotDetachEntityNotInObjectStateManager=The object cannot be detached because it is not attached to the ObjectStateManager.
+ObjectContext_EntitySetNotFoundForName=The EntitySet name '{0}' could not be found.
+ObjectContext_EntityContainerNotFoundForName=The EntityContainer name '{0}' could not be found.
+ObjectContext_InvalidCommandTimeout=The specified CommandTimeout value is not valid. It must be a positive number.
+ObjectContext_NoMappingForEntityType=Mapping and metadata information could not be found for EntityType '{0}'.
+ObjectContext_EntityAlreadyExistsInObjectStateManager=The object cannot be attached because it is already in the object context. An object can only be reattached when it is in an unchanged state. 
+ObjectContext_InvalidEntitySetInKey=The EntitySet name '{0}.{1}' from the object's EntityKey does not match the expected EntitySet name, '{2}.{3}'.
+ObjectContext_CannotAttachEntityWithoutKey=An object with a null EntityKey value cannot be attached to an object context.
+ObjectContext_CannotAttachEntityWithTemporaryKey=An object with a temporary EntityKey value cannot be attached to an object context.
+ObjectContext_EntitySetNameOrEntityKeyRequired=The EntitySet name could not be determined. To attach an object, supply a valid EntitySet name and make sure that the object has a valid EntityKey.
+ObjectContext_ExecuteFunctionTypeMismatch=The type parameter '{0}' in ExecuteFunction is incompatible with the type '{1}' returned by the function. 
+ObjectContext_ExecuteFunctionCalledWithScalarFunction=The stored procedure or function '{1}' returned the type '{0}'. ExecuteFunction only supports stored procedures and functions that return collections of entity objects or collections of complex objects. 
+ObjectContext_ExecuteFunctionCalledWithNonQueryFunction=The stored procedure or function '{0}' does not have a return type. ExecuteFunction only supports stored procedures and functions that have a return type. 
+ObjectContext_ExecuteFunctionCalledWithNullParameter=The parameter at index {0} in the parameters array is null.
+ObjectContext_ContainerQualifiedEntitySetNameRequired=The EntityContainer name could not be determined. The provided EntitySet name must be qualified by the EntityContainer name, such as 'EntityContainerName.EntitySetName', or the DefaultContainerName property must be set for the ObjectContext.
+ObjectContext_CannotSetDefaultContainerName=The DefaultContainerName property has already been set for this ObjectContext. This property cannot be changed after it has been set. 
+ObjectContext_QualfiedEntitySetName=The provided EntitySet name must be qualified by the EntityContainer name, such as 'EntityContainerName.EntitySetName', or the DefaultContainerName property must be set for the ObjectContext.
+ObjectContext_EntitiesHaveDifferentType=The object in the ObjectContext is of type '{0}', but the modified object provided is of type '{1}'. The two objects must be of the same EntityType for changes to be applied. 
+ObjectContext_EntityMustBeUnchangedOrModified=The existing object in the ObjectContext is in the {0} state. Changes can only be applied when the existing object is in an unchanged or modified state.
+ObjectContext_EntityMustBeUnchangedOrModifiedOrDeleted=The existing object in the ObjectContext is in the {0} state. Original values can be changed when the existing object is in an unchanged, modified or deleted state.
+ObjectContext_AcceptAllChangesFailure=The changes to the database were committed successfully, but an error occurred while updating the object context. The ObjectContext might be in an inconsistent state. Inner exception message: {0}
+ObjectContext_CommitWithConceptualNull=The operation failed: The relationship could not be changed because one or more of the foreign-key properties is non-nullable. When a change is made to a relationship, the related foreign-key property is set to a null value. If the foreign-key does not support null values, a new relationship must be defined, the foreign-key property must be assigned another non-null value, or the unrelated object must be deleted.
+ObjectContext_InvalidEntitySetOnEntity=The EntitySet, '{0}', from the entity's EntityKey does not match the entity's type, '{1}'.
+ObjectContext_InvalidObjectSetTypeForEntitySet=The specified entity type, '{0}', does not match the type '{1}' from the EntitySet '{2}'.
+ObjectContext_RequiredMetadataNotAvailble=The operation could not be completed because the required metadata could not be found. Make sure that the connection used by the ObjectContext is open before attempting this operation.
+ObjectContext_MetadataHasChanged=The metadata stored by the ObjectContext is different than the metadata stored by the ObjectContext's connection. This can happen if the connection string is changed after the ObjectContext is created.
+ObjectContext_InvalidEntitySetInKeyFromName=The EntitySet name '{0}.{1}' from the entity's EntityKey does not match the expected EntitySet name '{2}.{3}' from the '{4}' parameter.
+ObjectContext_ObjectDisposed=The ObjectContext instance has been disposed and can no longer be used for operations that require a connection.
+ObjectContext_CannotExplicitlyLoadDetachedRelationships=Cannot explicitly load {0} for entities that are detached.  Objects loaded using the NoTracking merge option are always detached.
+ObjectContext_CannotLoadReferencesUsingDifferentContext=Cannot load {0} using a context different than that with which the object was loaded.
+ObjectContext_SelectorExpressionMustBeMemberAccess=The selector expression for LoadProperty must be a MemberAccess for the property.
+ObjectContext_MultipleEntitySetsFoundInSingleContainer=The EntitySet could not be determined for the specified entity type '{0}' because there is more than one EntitySet defined for this type in the EntityContainer '{1}'. Use the overload of the CreateObjectSet<TEntity>() method that takes a string parameter if you want to use the TEntity type and a specific EntitySet.
+ObjectContext_MultipleEntitySetsFoundInAllContainers=The EntitySet could not be determined for the specified entity type '{0}' because there is more than one EntitySet defined for this type in multiple EntityContainers in the metadata. Use the overload of the CreateObjectSet<TEntity>() method that takes a string parameter if you want to use the TEntity type and a specific EntitySet.
+ObjectContext_NoEntitySetFoundForType=There are no EntitySets defined for the specified entity type '{0}'. If '{0}' is a derived type, use the base type instead.
+ObjectContext_EntityNotInObjectSet_Delete=The specified entity cannot be deleted from the ObjectSet because the entity is a member of the EntitySet '{0}.{1}' instead of the EntitySet '{2}.{3}' that is referenced by the ObjectSet. Use the DeleteObject method on the ObjectSet that contains the entity, or use the ObjectContext.DeleteObject method if you want to delete the entity without validating its EntitySet.
+ObjectContext_EntityNotInObjectSet_Detach=The specified entity cannot be detached from the ObjectSet because the entity is a member of the EntitySet '{0}.{1}' instead of the EntitySet '{2}.{3}' that is referenced by the ObjectSet. Use the Detach method on the ObjectSet that contains the entity, or use the ObjectContext.Detach method if you want to delete the entity without validating its EntitySet.
+ObjectContext_InvalidEntityState=The EntityState value passed for the entity is not valid. The EntityState value must be one of the following: Added, Deleted, Detached, Modified, or Unchanged.
+ObjectContext_InvalidRelationshipState=The EntityState value passed for the relationship is not valid. The EntityState value must be one of the following: Added, Deleted, Detached, or Unchanged. Relationships cannot be set to the Modified state.
+ObjectContext_EntityNotTrackedOrHasTempKey=An object that has a key that matches the key of the supplied object could not be found in the ObjectStateManager. Verify that the object to which changes must be applied is not in the Added state and that its key values match the key values of the supplied object.
+ObjectContext_ExecuteCommandWithMixOfDbParameterAndValues=When executing a command, parameters must be exclusively database parameters or values.
+ObjectContext_InvalidEntitySetForStoreQuery=The specified EntitySet '{0}.{1}' does not contain results of type '{2}'.
+ObjectContext_InvalidTypeForStoreQuery=The result type '{0}' may not be abstract and must include a default constructor.
+ObjectContext_TwoPropertiesMappedToSameColumn=The '{0}' column is mapped to multiple properties '{1}'. Ensure a separate column exists for each property.
+
+RelatedEnd_InvalidOwnerStateForAttach=Attach is not a valid operation when the source object associated with this related end is in an added, deleted, or detached state. Objects loaded using the NoTracking merge option are always detached.
+RelatedEnd_InvalidNthElementNullForAttach=The object at index {0} in the specified collection of objects is null.
+RelatedEnd_InvalidNthElementContextForAttach=The object at index {0} in the specified collection of objects is not attached to the same ObjectContext as source object of this EntityCollection.
+RelatedEnd_InvalidNthElementStateForAttach=The object at index {0} in the specified collection of objects is in an added or deleted state. Relationships cannot be created for objects in this state.
+RelatedEnd_InvalidEntityContextForAttach=The object being attached to the source object is not attached to the same ObjectContext as the source object.
+RelatedEnd_InvalidEntityStateForAttach=The object being attached is in an added or deleted state. Relationships cannot be created for objects in this state.
+
+RelatedEnd_UnableToAddEntity=The object could not be added to the EntityCollection or EntityReference. An object that is attached to an ObjectContext cannot be added to an EntityCollection or EntityReference that is not associated with a source object. 
+RelatedEnd_UnableToRemoveEntity= The object could not be removed from the EntityCollection or EntityReference. An object that is attached to an ObjectContext cannot be removed from an EntityCollection or EntityReference that is not associated with a source object.
+RelatedEnd_UnableToAddRelationshipWithDeletedEntity=Adding a relationship with an entity which is in the Deleted state is not allowed.
+RelatedEnd_ConflictingChangeOfRelationshipDetected=The relationship being added conflicts with an existing relationship. Consider deleting the previous relationship and calling ObjectContext.DetectChanges.
+RelatedEnd_InvalidRelationshipFixupDetected=Invalid relationship fixup detected in the navigation property '{0}' of the entity of the type '{1}'.
+RelatedEnd_CannotSerialize=The {0} object could not be serialized. This type of object cannot be serialized when the RelationshipManager belongs to an entity object that does not implement IEntityWithRelationships.
+RelatedEnd_CannotAddToFixedSizeArray=An item cannot be added to a fixed size Array of type '{0}'.
+RelatedEnd_CannotRemoveFromFixedSizeArray=An item cannot be removed from a fixed size Array of type '{0}'.
+
+Materializer_PropertyIsNotNullable=This property cannot be set to a null value.
+Materializer_PropertyIsNotNullableWithName=The property '{0}' cannot be set to a null value.
+Materializer_SetInvalidValue=The '{2}' property on '{1}' could not be set to a '{3}' value. You must set this property to a non-null value of type '{0}'. 
+Materializer_InvalidCastReference=The specified cast from a materialized '{0}' type to the '{1}' type is not valid.
+Materializer_InvalidCastNullable=The specified cast from a materialized '{0}' type to a nullable '{1}' type is not valid.
+Materializer_NullReferenceCast=The cast to value type '{0}' failed because the materialized value is null. Either the result type's generic parameter or the query must use a nullable type.
+
+Materializer_RecyclingEntity=All objects in the EntitySet '{0}' must have unique primary keys. However, an instance of type '{1}' and an instance of type '{2}' both have the same primary key value, '{3}'. 
+Materializer_AddedEntityAlreadyExists=An object with a key value '{0}' already exists in an added state. An object in this state cannot be merged.
+
+Materializer_CannotReEnumerateQueryResults=The result of a query cannot be enumerated more than once.
+Materializer_UnsupportedType=Only primitive types, entity types, and complex types can be materialized.
+
+Collections_NoRelationshipSetMatched=The relationship '{0}' does not match any relationship defined in the conceptual model.
+Collections_ExpectedCollectionGotReference=An EntityCollection of {0} objects could not be returned for role name '{1}' in relationship '{2}'. Make sure that the EdmRelationshipAttribute that defines this relationship has the correct RelationshipMultiplicity for this role name. For more information, see the Entity Framework documentation.
+Collections_InvalidEntityStateSource=The source query for this EntityCollection or EntityReference cannot be returned when the related object is in either an added state or a detached state and was not originally retrieved using the NoTracking merge option.
+Collections_InvalidEntityStateLoad=The Load method cannot return the {0} when the related object is in a deleted state.
+Collections_CannotFillTryDifferentMergeOption=The RelatedEnd with role name '{0}' from relationship '{1}' has already been loaded. This can occur when using a NoTracking merge option. Try using a different merge option when querying for the related object.
+Collections_UnableToMergeCollections=A navigation property that returns an EntityCollection cannot be changed if the existing EntityCollection contains items that are not in the new EntityCollection.
+
+EntityReference_ExpectedReferenceGotCollection=An EntityReference of type '{0}' could not be returned for role name '{1}' in relationship '{2}'. Make sure that the EdmRelationshipAttribute that defines this relationship has the correct RelationshipMultiplicity for this role name. For more information, see the Entity Framework documentation.
+EntityReference_CannotAddMoreThanOneEntityToEntityReference=Multiplicity constraint violated. The role '{0}' of the relationship '{1}' has multiplicity 1 or 0..1.
+EntityReference_LessThanExpectedRelatedEntitiesFound=A relationship multiplicity constraint violation occurred: An EntityReference expected at least one related object, but the query returned no related objects from the data store.
+EntityReference_MoreThanExpectedRelatedEntitiesFound=A relationship multiplicity constraint violation occurred: An EntityReference can have no more than one related object, but the query returned more than one related object. This is a non-recoverable error.
+EntityReference_CannotChangeReferentialConstraintProperty=A referential integrity constraint violation occurred: A primary key property that is a part of referential integrity constraint cannot be changed when the dependent object is Unchanged unless it is being set to the association's principal object. The principal object must be tracked and not marked for deletion.
+EntityReference_CannotSetSpecialKeys=The EntityKey property cannot be set to EntityNotValidKey, NoEntitySetKey, or a temporary key.
+EntityReference_EntityKeyValueMismatch=The object could not be added or attached because its EntityReference has an EntityKey property value that does not match the EntityKey for this object.
+RelatedEnd_RelatedEndNotFound=At least one related end in the relationship could not be found.
+RelatedEnd_RelatedEndNotAttachedToContext=The {0} could not be loaded because it is not attached to an ObjectContext.
+RelatedEnd_LoadCalledOnNonEmptyNoTrackedRelatedEnd=When an object is returned with a NoTracking merge option, Load can only be called when the EntityCollection or EntityReference does not contain objects.
+RelatedEnd_LoadCalledOnAlreadyLoadedNoTrackedRelatedEnd=When an object is returned with a NoTracking merge option, Load cannot be called when the IsLoaded property is true.
+RelatedEnd_InvalidContainedType_Collection=An object of type '{0}' cannot be added, attached, or removed from an EntityCollection that contains objects of type '{1}'.
+RelatedEnd_InvalidContainedType_Reference=An object of type '{0}' cannot be set or removed from the Value property of an EntityReference of type '{1}'.
+RelatedEnd_CannotCreateRelationshipBetweenTrackedAndNoTrackedEntities=The object in the '{0}' role cannot be automatically added to the context because it was retrieved using the NoTracking merge option. Explicitly attach the entity to the ObjectContext before defining the relationship.
+RelatedEnd_CannotCreateRelationshipEntitiesInDifferentContexts=The relationship between the two objects cannot be defined because they are attached to different ObjectContext objects.
+RelatedEnd_MismatchedMergeOptionOnLoad=Related objects cannot be loaded using the {0} merge option. Relationships cannot be created when one object was retrieved using a NoTracking merge option and the other object was retrieved using a different merge option.
+RelatedEnd_EntitySetIsNotValidForRelationship=The relationship cannot be defined because the EntitySet name '{0}.{1}' is not valid for the role '{2}' in association set name '{3}.{4}'.
+RelatedEnd_OwnerIsNull=Requested operation is not allowed when the owner of this RelatedEnd is null. RelatedEnd objects that were created with the default constructor should only be used as a container during serialization.
+RelationshipManager_UnableToRetrieveReferentialConstraintProperties=A referential integrity constraints violation occurred: Not all of the property values that define referential integrity constraints could be retrieved from related entities.
+RelationshipManager_InconsistentReferentialConstraintProperties=A referential integrity constraint violation occurred: The property values that define the referential constraints are not consistent between principal and dependent objects in the relationship.
+RelationshipManager_CircularRelationshipsWithReferentialConstraints=A circular relationship path has been detected while enforcing a referential integrity constraints. Referential integrity cannot be enforced on circular relationships.
+RelationshipManager_UnableToFindRelationshipTypeInMetadata=Metadata information for the relationship '{0}' could not be retrieved. If mapping attributes are used, make sure that the EdmRelationshipAttribute for the relationship has been defined in the assembly.  When using convention-based mapping, metadata information for relationships between detached entities cannot be determined.
+RelationshipManager_InvalidTargetRole=The relationship '{0}' does not contain the role '{1}'. Make sure that EdmRelationshipAttribute that defines this relationship has the correct role names. For more information, see the Entity Framework documentation.
+RelationshipManager_UnexpectedNull=The requested operation could not be completed because the object implementing IEntityWithRelationships returned a null value from the RelationshipManager property.
+RelationshipManager_InvalidRelationshipManagerOwner=The relationship manager supplied by the object implementing IEntityWithRelationships is not the expected relationship manager.
+RelationshipManager_OwnerIsNotSourceType=The relationship manager was defined with an owner of type '{0}', which is not compatible with the type '{1}' for the source role '{2}' in the specified relationship, '{3}'.
+RelationshipManager_UnexpectedNullContext=The operation could not be completed because the object to which the relationship manager belongs was attached to the ObjectContext before the relationship manager was instantiated.
+RelationshipManager_ReferenceAlreadyInitialized=The EntityReference has already been initialized. {0}
+RelationshipManager_RelationshipManagerAttached=The EntityReference could not be initialized, because the relationship manager for object to which the entity reference belongs is already attached to an ObjectContext. {0}
+RelationshipManager_InitializeIsForDeserialization=InitializeRelatedReference should only be used to initialize a new EntityReference during deserialization of an entity object.
+RelationshipManager_CollectionAlreadyInitialized=The EntityCollection has already been initialized. {0}
+RelationshipManager_CollectionRelationshipManagerAttached=The EntityCollection could not be initialized because the relationship manager for the object to which the EntityCollection belongs is already attached to an ObjectContext. {0}
+RelationshipManager_CollectionInitializeIsForDeserialization=The InitializeRelatedCollection method should only be called to initialize a new EntityCollection during deserialization of an object graph.
+RelationshipManager_NavigationPropertyNotFound=The specified navigation property {0} could not be found.
+RelationshipManager_CannotGetRelatEndForDetachedPocoEntity=The RelatedEnd cannot be returned by this RelationshipManager. A RelatedEnd can only be returned by a RelationshipManager for objects that are either tracked by the ObjectStateManager or that implement IEntityWithRelationships.
+
+ObjectView_CannotReplacetheEntityorRow=The object or data row on the data binding interface cannot be replaced.
+ObjectView_IndexBasedInsertIsNotSupported=The index-based insert operation is not supported on this data binding interface.
+ObjectView_WriteOperationNotAllowedOnReadOnlyBindingList=Updates cannot be performed on a read-only data binding interface.
+ObjectView_AddNewOperationNotAllowedOnAbstractBindingList=The IBindingList.AddNew method is not supported when binding to a collection of abstract types. You must instead use the IList.Add method.
+ObjectView_IncompatibleArgument=The object being added is of a type that is not compatible with the type of the bound collection.
+ObjectView_CannotResolveTheEntitySet=The object could not be added to the bound collection. The specific EntitySet for the object of type '{0}' could not be determined.
+
+CodeGen_ConstructorNoParameterless=The class '{0}' has no parameterless constructor.
+CodeGen_PropertyDeclaringTypeIsValueType=Properties are not supported on value types.
+CodeGen_PropertyStrongNameIdentity=Properties with StrongNameIdentityPermissionAttribute applied are not supported.
+CodeGen_PropertyUnsupportedForm=The property has an unexpected return type or parameter.
+CodeGen_PropertyUnsupportedType=The property uses an unsupported type.
+CodeGen_PropertyIsIndexed=Indexed properties are not supported.
+CodeGen_PropertyIsStatic=Static properties are not supported.
+CodeGen_PropertyNoGetter=The property getter does not exist.
+CodeGen_PropertyNoSetter=The property setter does not exist.
+
+PocoEntityWrapper_UnableToSetFieldOrProperty=Unable to set field/property {0} on entity type {1}. See InnerException for details.
+PocoEntityWrapper_UnexpectedTypeForNavigationProperty=The navigation property of type '{0}' is not a single implementation of '{1}'.
+PocoEntityWrapper_UnableToMaterializeArbitaryNavPropType=The collection navigation property '{0}' of type '{1}' returned null. For a collection to be initialized automatically, it must be of type ICollection<T>, IList<T>, ISet<T> or of a concrete type that implements ICollection<T> and has a parameterless constructor.
+
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+; BEGIN eSQL Error Messages
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+GeneralQueryError=General query error
+
+;
+; Parser Error Context
+;
+CtxAlias=aliased expression
+CtxAliasedNamespaceImport=aliased namespace import
+CtxAnd=logical AND expression
+CtxAnyElement=ANYELEMENT expression
+CtxApplyClause=APPLY clause
+CtxBetween=BETWEEN expression
+CtxCase=CASE expression
+CtxCaseElse=CASE/ELSE expression
+CtxCaseWhenThen=CASE/WHEN/THEN expression
+CtxCast=CAST expression
+CtxCollatedOrderByClauseItem=collated ORDER BY clause item
+CtxCollectionTypeDefinition=collection type definition
+CtxCommandExpression=command expression
+CtxCreateRef=CREATEREF expression
+CtxDeref=DEREF expression
+CtxDivide=division operation
+CtxElement=ELEMENT expression
+CtxEquals=equals expression
+CtxEscapedIdentifier=escaped identifier
+CtxExcept=EXCEPT expression
+CtxExists=EXISTS expression
+CtxExpressionList=expression list
+CtxFlatten=FLATTEN expression
+CtxFromApplyClause=FROM/APPLY clause
+CtxFromClause=FROM clause
+CtxFromClauseItem=FROM clause item
+CtxFromClauseList=FROM clause list
+CtxFromJoinClause=FROM/JOIN clause
+CtxFunction=function '{0}()'
+CtxFunctionDefinition=function definition
+CtxGreaterThan=greater than expression
+CtxGreaterThanEqual=greater than or equals expression
+CtxGroupByClause=GROUP BY clause
+CtxGroupPartition=GROUPPARTITION expression
+CtxHavingClause=HAVING predicate
+CtxIdentifier=identifier
+CtxIn=IN set expression
+CtxIntersect=INTERSECT expression
+CtxIsNotNull=IS NOT NULL expression
+CtxIsNotOf=IS NOT OF expression
+CtxIsNull=IS NULL expression
+CtxIsOf=IS OF expression
+CtxJoinClause=JOIN clause
+CtxJoinOnClause=JOIN/ON clause
+CtxKey=KEY expression
+CtxLessThan=less than expression
+CtxLessThanEqual=less than or equals expression
+CtxLike=LIKE expression
+CtxLimitSubClause=ORDER BY/LIMIT sub-clause
+CtxLiteral=constant literal
+CtxMemberAccess=member access expression
+CtxMethod=function, method or type constructor
+CtxMinus=subtraction operation
+CtxModulus=modulus operation
+CtxMultiply=multiplication operation
+CtxMultisetCtor=MULTISET constructor
+CtxNamespaceImport=namespace import
+CtxNamespaceImportList=namespace import list
+CtxNavigate=NAVIGATE expression
+CtxNot=logical NOT expression
+CtxNotBetween=NOT BETWEEN expression
+CtxNotEqual=not equals expression
+CtxNotIn=NOT IN set expression
+CtxNotLike=NOT LIKE expression
+CtxNullLiteral=NULL literal
+CtxOfType=OFTYPE expression
+CtxOfTypeOnly=OFTYPE ONLY expression
+CtxOr=logical OR expression
+CtxOrderByClause=ORDER BY clause
+CtxOrderByClauseItem=ORDER BY clause item
+CtxOverlaps=OVERLAPS expression
+CtxParen=parenthesized expression
+CtxPlus=addition operation
+CtxTypeNameWithTypeSpec=type name with type specification arguments
+CtxQueryExpression=query expression
+CtxQueryStatement=query statement
+CtxRef=REF expression
+CtxRefTypeDefinition=reference type definition
+CtxRelationship=RELATIONSHIP expression
+CtxRelationshipList=RELATIONSHIP expression list
+CtxRowCtor=ROW constructor
+CtxRowTypeDefinition=row type definition
+CtxSelectRowClause=SELECT clause
+CtxSelectValueClause=SELECT VALUE clause
+CtxSet=SET expression
+CtxSimpleIdentifier=simple identifier
+CtxSkipSubClause=ORDER BY/SKIP sub-clause
+CtxTopSubClause=TOP sub-clause
+CtxTreat=TREAT expression
+CtxTypeCtor=type '{0}' constructor
+CtxTypeName=type name
+CtxUnaryMinus=unary minus operation
+CtxUnaryPlus=unary plus operation
+CtxUnion=UNION expression
+CtxUnionAll=UNION ALL expression
+CtxWhereClause=WHERE predicate
+
+; Syntactic/Parser Errors
+;
+CannotConvertNumericLiteral=Cannot convert literal '{0}' to '{1}'. Numeric literal specification is not valid.
+GenericSyntaxError=The query syntax is not valid.
+InFromClause=in the current FROM clause
+InGroupClause=in GROUP BY clause
+InRowCtor=as a column name in ROW constructor
+InSelectProjectionList=in the SELECT projection list
+InvalidAliasName='{0}' is a reserved keyword and cannot be used as an alias, unless it is escaped.
+InvalidEmptyIdentifier=Escaped identifiers cannot be empty.
+InvalidEmptyQuery=The query text consists only of comments and/or white space.
+InvalidEmptyQueryTextArgument=The query text is empty or consists only of white space.
+InvalidEscapedIdentifier=The escaped identifier '{0}' is not valid.
+InvalidEscapedIdentifierUnbalanced=The escaped identifier '{0}' has a mismatch of opening ('[') and closing (']') delimiters.
+InvalidOperatorSymbol=The operator symbol is not valid.
+InvalidPunctuatorSymbol=The punctuation symbol is not valid.
+InvalidSimpleIdentifier=The simple identifier '{0}' is not valid.
+InvalidSimpleIdentifierNonASCII=The simple identifier '{0}' must contain basic Latin characters only. To use UNICODE characters, use an escaped identifier.
+LocalizedCollection=collection
+LocalizedColumn=column
+LocalizedComplex=complex
+LocalizedEntity=entity
+LocalizedEntityContainerExpression=entity container
+LocalizedFunction=function
+LocalizedInlineFunction=query inline function
+LocalizedKeyword=keyword
+LocalizedLeft=left
+LocalizedLine=line
+LocalizedMetadataMemberExpression=namespace, type or function
+LocalizedNamespace=namespace
+LocalizedNear=Near
+LocalizedPrimitive=primitive
+LocalizedReference=reference
+LocalizedRight=right
+LocalizedRow=row
+LocalizedTerm=term
+LocalizedType=type
+LocalizedEnumMember=enum member
+LocalizedValueExpression=value expression
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;
+; Semantic Errors
+;
+AliasNameAlreadyUsed=The alias '{0}' was already used.
+AmbiguousFunctionArguments=The function call cannot be resolved, because one or more passed arguments match more than one function overload.
+AmbiguousMetadataMemberName=The name '{0}' is ambiguous. '{0}' is defined in both the '{1}' namespace and the '{2}' namespace. To disambiguate, either use a fully qualified name or define a namespace alias.
+ArgumentTypesAreIncompatible=The argument types '{0}' and '{1}' are incompatible for this operation.
+BetweenLimitsCannotBeUntypedNulls=The upper and lower limits of the BETWEEN expression cannot be untyped nulls.
+BetweenLimitsTypesAreNotCompatible=The BETWEEN lower limit type '{0}' is not compatible with the upper limit type '{1}'.
+BetweenLimitsTypesAreNotOrderComparable=The BETWEEN lower limit type '{0}' is not order-comparable with the upper limit type '{1}'.
+BetweenValueIsNotOrderComparable=The BETWEEN value type '{0}' is not order-comparable with the limits common type '{1}'.
+CannotCreateEmptyMultiset=Cannot create an empty multiset.
+CannotCreateMultisetofNulls=A multiset of untyped NULLs is not valid.
+CannotInstantiateAbstractType='{0}' cannot be instantiated because it is defined as an abstract type.
+CannotResolveNameToTypeOrFunction='{0}' cannot be resolved into a valid type or function.
+ConcatBuiltinNotSupported=There is no underlying support for the '+' operation on strings in the current provider.
+CouldNotResolveIdentifier='{0}' could not be resolved in the current scope or context. Make sure that all referenced variables are in scope, that required schemas are loaded, and that namespaces are referenced correctly.
+CreateRefTypeIdentifierMustBeASubOrSuperType=The CREATEREF type '{0}' is not a sub-type or super-type of the EntitySet EntityType '{1}'.
+CreateRefTypeIdentifierMustSpecifyAnEntityType=The CREATEREF type must specify an EntityType. The type specification '{0}' represents '{1}'.
+DeRefArgIsNotOfRefType=The DEREF argument must be a reference type. The passed argument is a '{0}' type.
+DuplicatedInlineFunctionOverload=The inline function '{0}' with the same parameters already exists. Make sure that function overloads are not ambiguous.
+ElementOperatorIsNotSupported=The ELEMENT operator is not supported in this version of Entity Framework. It is reserved for future use.
+MemberDoesNotBelongToEntityContainer=The entity set or function import '{0}' is not defined in the entity container '{1}'.
+ExpressionCannotBeNull=The specified expression cannot be NULL.
+OfTypeExpressionElementTypeMustBeEntityType=The OFTYPE collection element type must refer to an EntityType. The passed type is {0} '{1}'.
+OfTypeExpressionElementTypeMustBeNominalType=The OFTYPE collection element type must refer to a nominal type. The passed type is {0} '{1}'.
+ExpressionMustBeCollection=The specified expression must be of CollectionType.
+ExpressionMustBeNumericType=The specified expression must be of numeric type.
+ExpressionTypeMustBeBoolean=The specified expression must be of Boolean type.
+ExpressionTypeMustBeEqualComparable=The specified expression type must be equal-comparable.
+ExpressionTypeMustBeEntityType={0} must refer to an EntityType. The passed type is {1} '{2}'.
+ExpressionTypeMustBeNominalType={0} must refer to a nominal type. The passed type is {1} '{2}'.
+ExpressionTypeMustNotBeCollection=The specified expression cannot be of CollectionType.
+ExprIsNotValidEntitySetForCreateRef=The expression in the CREATEREF operator is not a valid EntitySet.
+FailedToResolveAggregateFunction=Could not resolve the aggregate function '{0}' in this context.
+GeneralExceptionAsQueryInnerException=A '{0}' exception occurred while processing the query. See the inner exception.
+GroupingKeysMustBeEqualComparable=The GROUP BY clause key expression type must be equal-comparable.
+GroupPartitionOutOfContext=The GROUPPARTITION operator is allowed only in the context of a query expression.
+HavingRequiresGroupClause=The HAVING clause must be preceded by a GROUP BY clause.
+ImcompatibleCreateRefKeyElementType=The CREATEREF key expression type is not compatible with the EntityKey element type.
+ImcompatibleCreateRefKeyType=The CREATEREF key expression is not compatible with the EntityKey structure.
+InnerJoinMustHaveOnPredicate=The INNER JOIN expression must have an ON predicate.
+InvalidAssociationTypeForUnion=The type '{0}' is not supported in the UNION expression.
+InvalidCaseResultTypes=The THEN/ELSE expression types are not compatible.
+InvalidCaseWhenThenNullType=The CASE/WHEN/THEN expression is not valid, because all resulting expressions are untyped.
+InvalidCast=The CAST expression is not valid. There is no valid conversion from type '{0}' to type '{1}'.
+InvalidCastExpressionType=The CAST argument expression must be of a scalar type.
+InvalidCastType=The CAST type argument must be of a scalar type.
+InvalidComplexType=The complex member '{0}' in type '{1}' and the complex member '{2}' in type '{3}' are incompatible because they have a different number of members.
+InvalidCreateRefKeyType=The CREATEREF key expression must be of row type.
+InvalidCtorArgumentType=The argument type '{0}' is not compatible with the property '{1}' of formal type '{2}'.
+InvalidCtorUseOnType=It is not valid to use the type constructor on type '{0}'. This type must have one of the following constructors: Entity, ComplexType, or RelationType.
+InvalidDateTimeOffsetLiteral=The DateTimeOffset literal '{0}' exceeds the range of DateTimeOffset values.
+InvalidDay=The day '{0}' is not valid in DateTime literal '{1}'.
+InvalidDayInMonth=The day '{0}' is not valid for the month '{1}' in DateTime literal '{2}'.
+InvalidDeRefProperty='{0}' is not a member of type '{1}'. Type '{1}' is the result of dereferencing an expression of type '{2}'.
+InvalidDistinctArgumentInCtor=The DISTINCT/ALL argument is not valid in type constructors.
+InvalidDistinctArgumentInNonAggFunction=The DISTINCT/ALL argument is only valid for group aggregate functions.
+InvalidEntityRootTypeArgument=The EntityType objects '{0}' and '{1}' are incompatible because they do not share a common super-type.
+InvalidEntityTypeArgument=The entity '{0}' in type '{1}' and the entity '{2}' in type '{3}' are incompatible because they do not share a common super-type.
+InvalidExpressionResolutionClass=The expression has been classified as a {0}; a {1} was expected.
+InvalidFlattenArgument=The FLATTEN argument must be a collection of collections.
+InvalidGroupIdentifierReference=The identifier '{0}' is not valid because it is not contained either in an aggregate function or in the GROUP BY clause.
+InvalidHour=Hour '{0}' is not valid in DateTime literal '{1}'.
+InvalidImplicitRelationshipFromEnd=The 'from' end could not be inferred in the relationship '{0}'.
+InvalidImplicitRelationshipToEnd=The 'to' end could not be inferred in the relationship '{0}'.
+InvalidInExprArgs=The element type '{0}' and the CollectionType '{1}' are not compatible. The IN expression only supports entity, scalar and reference types. 
+InvalidJoinLeftCorrelation=Left correlation is not allowed in the JOIN clause.
+InvalidKeyArgument=The KEY argument expression must be of reference type. The passed type is '{0}'.
+InvalidKeyTypeForCollation=COLLATE can only be used with sort keys of string type. The passed type is '{0}'.
+InvalidLiteralFormat=The {0} literal value '{1}' is not valid.
+InvalidMetadataMemberName=A namespace, type, or function name must be a single name or any number of names separated by dots.
+InvalidMinute=Minute '{0}' is not valid in DateTime literal '{1}'.
+InvalidModeForWithRelationshipClause=The WITH RELATIONSHIP clause is only supported when defining read-only view queries.
+InvalidMonth=Month '{0}' is not valid in DateTime literal '{1}'.
+InvalidNamespaceAlias=The namespace alias is not valid.
+InvalidNullArithmetic=Untyped NULL arguments are not valid in arithmetic expressions.
+InvalidNullComparison=Untyped NULL arguments are not valid in comparison expressions.
+InvalidNullLiteralForNonNullableMember=The non-nullable member '{0}' of type '{1}' cannot be initialized with a NULL value.
+InvalidParameterFormat=The command parameter syntax '@{0}' is not valid.
+InvalidPlaceholderRootTypeArgument={0} member '{1}' and {2} member '{3}' are incompatible because they do not have a common type.
+InvalidPlaceholderTypeArgument={0} member '{1}' in type '{2}' and {3} member '{4}' in type '{5}' are incompatible because they do not have a common type.
+InvalidPredicateForCrossJoin=The ON predicate is not allowed in the CROSS JOIN clause.
+InvalidRelationshipMember='{0}' is not a valid member of the '{1}' relationship. 
+InvalidMetadataMemberClassResolution='{0}' has been resolved as a {1}; a {2} was expected.
+InvalidRootComplexType=Complex type '{0}' and complex type '{1}' are incompatible because they have different number of members.
+InvalidRootRowType=Row type '{0}' and row type '{1}' are incompatible because they have a different number of columns.
+InvalidRowType=Row member '{0}' in type '{1}' and row member '{2}' in type '{3}' are incompatible because they have a different number of columns.
+InvalidSecond=Second '{0}' is not valid in DateTime literal '{1}'.
+InvalidSelectValueAliasedExpression=The SELECT VALUE expression cannot be aliased in this context. SELECT VALUE expression can be aliased only when ORDER BY is specified.
+InvalidSelectValueList=SELECT VALUE can have only one expression in the projection list.
+InvalidTypeForWithRelationshipClause=The WITH RELATIONSHIP clause is only supported for entity type constructors.
+InvalidUnarySetOpArgument=The '{0}' argument must be of CollectionType.
+InvalidUnsignedTypeForUnaryMinusOperation=The unsigned type '{0}' cannot be promoted to a signed type.
+InvalidYear=Year '{0}' is not valid in DateTime literal '{1}'.
+InvalidWithRelationshipTargetEndMultiplicity=The multiplicity '{1}' is not valid for the relationship end '{0}'.
+InvalidQueryResultType=The query is not valid because it contains the association type '{0}', which cannot be projected.
+IsNullInvalidType=The IS [NOT] NULL expression must be of entity, reference, enumeration or primitive type.
+KeyMustBeCorrelated=The key expression '{0}' must have at least one reference to the immediate input scope.
+LeftSetExpressionArgsMustBeCollection=The left argument of the set expression must be of CollectionType.
+LikeArgMustBeStringType=LIKE arguments must be of string type.
+LiteralTypeNotFoundInMetadata=There is no EDM type that corresponds to the literal type '{0}'.
+MalformedSingleQuotePayload=The specified literal has a malformed single quote payload.
+MalformedStringLiteralPayload=The specified literal has a malformed string literal payload.
+MethodInvocationNotSupported=Method invocation is not supported.
+MultipleDefinitionsOfParameter=The parameter '{0}' was defined more than once in the parameter collection.
+MultipleDefinitionsOfVariable=The variable '{0}' was defined more than once in the variable collection.
+MultisetElemsAreNotTypeCompatible=Multiset element types are incompatible.
+NamespaceAliasAlreadyUsed=The namespace alias '{0}' was used in a previous USING directive.
+NamespaceAlreadyImported=The namespace '{0}' was already imported.
+NestedAggregateCannotBeUsedInAggregate=The nested aggregate {0} cannot be used inside of the aggregate {1}.
+NoAggrFunctionOverloadMatch=No overload of aggregate function '{0}.{1}' is compatible with argument types in '{2}'.
+NoCanonicalAggrFunctionOverloadMatch=No overload of canonical aggregate function '{0}.{1}' is compatible with the argument types in '{2}'. Consult provider-specific function documentation for store functions with similar functionality.
+NoCanonicalFunctionOverloadMatch=No overload of canonical function '{0}.{1}' is compatible with the argument types in '{2}'. Consult provider-specific function documentation for potential store functions with similar functionality.
+NoFunctionOverloadMatch=No overload of function '{0}.{1}' is compatible with the argument types in '{2}'.
+NotAMemberOfCollection='{0}' is not a member of '{1}'. To extract a property of a collection element, use a subquery to iterate over the collection.
+NotAMemberOfType='{0}' is not a member of type '{1}' in the currently loaded schemas.
+NotASuperOrSubType=Type '{0}' is neither a sub-type nor a super-type of '{1}'.
+NullLiteralCannotBePromotedToCollectionOfNulls=A NULL literal cannot be promoted to a CollectionType.
+NumberOfTypeCtorIsLessThenFormalSpec=The type constructor argument '{0}' is missing.
+NumberOfTypeCtorIsMoreThenFormalSpec=The number of arguments passed to the type '{0}' constructor exceeds its formal specification.
+OrderByKeyIsNotOrderComparable=The ORDER BY sort key(s) type must be order-comparable.
+OfTypeOnlyTypeArgumentCannotBeAbstract=The OFTYPE ONLY type argument is not valid because '{0}' is an abstract type.
+ParameterTypeNotSupported=The command parameter '{0}' of type '{1}' is not supported.
+ParameterWasNotDefined=The command parameter '{0}' was not defined.
+PlaceholderExpressionMustBeCompatibleWithEdm64=The {0} expression type must be promotable to an Edm.Int64 type. The passed type is '{1}'.
+PlaceholderExpressionMustBeConstant=The {0} expression must be a command parameter or an integral numeric literal.
+PlaceholderExpressionMustBeGreaterThanOrEqualToZero=The {0} expression value must be greater than or equal to zero.
+PlaceholderSetArgTypeIsNotEqualComparable=The {0} operand of {1} is not valid because its type '{2}' cannot be compared for equality. Only primitive, enumeration, entity, row, and reference types can be compared for equality.
+PlusLeftExpressionInvalidType=The left expression must be of numeric or string type.
+PlusRightExpressionInvalidType=The right expression must be of numeric or string type.
+PrecisionMustBeGreaterThanScale=The precision '{0}' must be greater than the scale '{1}'.  
+RefArgIsNotOfEntityType=The REF argument must be of EntityType. The passed type is '{0}'.
+RefTypeIdentifierMustSpecifyAnEntityType=The REF argument must specify an EntityType. The type specification '{0}' represents '{1}'.
+RelatedEndExprTypeMustBeReference=The related end expression must be of reference type.
+RelatedEndExprTypeMustBePromotoableToToEnd=The related end expression type '{0}' must be promotable to the 'to' end type '{1}'.
+RelationshipFromEndIsAmbiguos=The 'from' end of the relationship is ambiguous in this context.
+RelationshipTypeExpected=The specified type '{0}' must be a relationship type.
+RelationshipToEndIsAmbiguos=The 'to' end of the relationship is ambiguous in this context.
+RelationshipTargetMustBeUnique=The target end '{0}' must be unique.
+ResultingExpressionTypeCannotBeNull=The resulting expression of the query cannot be untyped NULL.
+RightSetExpressionArgsMustBeCollection=The right argument of the set expression must be of CollectionType.
+RowCtorElementCannotBeNull=The ROW constructor cannot have untyped NULL columns.
+SelectDistinctMustBeEqualComparable=The projection expression type must be equal-comparable when used with DISTINCT.
+SourceTypeMustBePromotoableToFromEndRelationType=The relationship source type '{0}' must be promotable to the 'from' end type '{1}'.
+TopAndLimitCannotCoexist=The TOP and LIMIT sub-clauses cannot be used together in the same query expression.
+TopAndSkipCannotCoexist=The TOP and SKIP sub-clauses cannot be used together in the same query expression. Use LIMIT instead of TOP.
+TypeDoesNotSupportSpec='{0}' does not support type specification.
+TypeDoesNotSupportFacet='{0}' does not support '{1}' specification.
+TypeArgumentCountMismatch=The type specification has an incorrect number of arguments. The '{0}' type has {1} parameters.
+TypeArgumentMustBeLiteral=The type specification argument must be a constant literal.
+TypeArgumentBelowMin='{0}' is less than the minimum supported value.
+TypeArgumentExceedsMax='{0}' is greater than the maximum supported value.
+TypeArgumentIsNotValid=The type argument is not a valid constant literal, or is outside of the expected range.
+TypeKindMismatch={0} member '{1}' and {2} member '{3}' are not compatible for this operation, because they are not the same kind of type.
+TypeMustBeInheritableType=The expression type must be EntityType, ComplexType, or ReferenceType
+TypeMustBeEntityType=The '{0}' type argument must specify an EntityType. The passed type is {1} '{2}'.
+TypeMustBeNominalType=The '{0}' type argument must specify a nominal type, The passed type is {1} '{2}'.
+TypeNameNotFound=Type '{0}' could not be found. Make sure that the required schemas are loaded and that the namespaces are imported correctly.
+
+; Internal Errors
+;
+GroupVarNotFoundInScope=INTERNAL ERROR: The group variable must be present in one of the existing scopes.
+InvalidArgumentTypeForAggregateFunction=INTERNAL ERROR: The argument type for the aggregate function is not valid.
+InvalidSavePoint=INTERNAL ERROR: The save point is not valid.
+InvalidScopeIndex=INTERNAL ERROR: The scope index is not valid.
+LiteralTypeNotSupported=INTERNAL ERROR: The literal type '{0}' is not supported.
+ParserFatalError=INTERNAL ERROR: The parser found an error and cannot continue.
+ParserInputError=INTERNAL ERROR: The input stream is not valid.
+StackOverflowInParser=INTERNAL ERROR: There was a stack overflow in the query parser.
+UnknownAstCommandExpression=INTERNAL ERROR: The Ast expression is not a valid command expression type.
+UnknownAstExpressionType=INTERNAL ERROR: The Ast expression has an unknown type.
+UnknownBuiltInAstExpressionType=INTERNAL ERROR: The specified built-in Ast expression type is unknown. 
+UnknownExpressionResolutionClass=INTERNAL ERROR: The expression resolution has an unknown class '{0}'.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;
+; SqlGen eSQL related Exceptions 
+;
+SqlGen_ApplyNotSupportedOnSql8=The execution of this query requires the APPLY operator, which is not supported in versions of SQL Server earlier than SQL Server 2005.
+SqlGen_InvalidDatePartArgumentExpression=The DATEPART argument to the '{0}.{1}' function must be a literal string.
+SqlGen_InvalidDatePartArgumentValue='{0}' is not a valid value for the DATEPART argument in the '{1}.{2}' function.
+SqlGen_NiladicFunctionsCannotHaveParameters=Functions listed in the provider manifest that are attributed as NiladicFunction='true' cannot have parameter declarations.
+SqlGen_ParameterForLimitNotSupportedOnSql8=Parameters as arguments to a TOP sub-clause and a LIMIT sub-clause in a query, or a LimitExpression in a command tree, are not supported in versions of SQL Server earlier than SQL Server 2005.
+SqlGen_ParameterForSkipNotSupportedOnSql8=Parameters as arguments to a SKIP sub-clause in a query, or a SkipExpression in a command tree, are not supported in versions of SQL Server earlier than SQL Server 2005.
+SqlGen_PrimitiveTypeNotSupportedPriorSql10=There is no store type that maps to the EDM type '{0}' on versions of SQL Server earlier than SQL Server 2008.
+SqlGen_CanonicalFunctionNotSupportedPriorSql10=The EDM function '{0}' is not supported on versions of SQL Server earlier than SQL Server 2008.
+SqlGen_TypedPositiveInfinityNotSupported=Constant expressions of type {0} with a value of {1}.PositiveInfinity are not supported by SQL Server.
+SqlGen_TypedNegativeInfinityNotSupported=Constant expressions of type {0} with a value of {1}.NegativeInfinity are not supported by SQL Server.
+SqlGen_TypedNaNNotSupported=Constant expressions of type {0} with a value of NaN are not supported by SQL Server.
+
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+; END eSQL Error Messages
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+; Canonical Query Tree Error Messages
+
+Cqt_General_PolymorphicTypeRequired=The specified type is not polymorphic: '{0}'. 
+Cqt_General_PolymorphicArgRequired={0} requires an expression argument with a polymorphic result type that is compatible with the type argument.
+Cqt_General_UnsupportedExpression=The expression '{0}' is of an unsupported type. 
+Cqt_General_MetadataNotReadOnly=The specified metadata cannot be used because it is not read-only.
+Cqt_General_NoProviderBooleanType=The current provider does not support any type that is compatible with Edm.Boolean.
+Cqt_General_NoProviderIntegerType=The current provider does not support any type that is compatible with Edm.Int32.
+Cqt_General_NoProviderStringType=The current provider does not support any type that is compatible with Edm.String.
+Cqt_Metadata_EdmMemberIncorrectSpace=The specified member is not associated with the same MetadataWorkspace or data space as the command tree.
+Cqt_Metadata_EntitySetEntityContainerNull=The specified EntitySet is not valid because its EntityContainer property has a value of null.
+Cqt_Metadata_EntitySetIncorrectSpace=The specified EntitySet is not associated with the same MetadataWorkspace or data model  as the command tree.
+Cqt_Metadata_EntityTypeNullKeyMembersInvalid=The specified EntityType is not valid because its KeyMembers property has a value of null.
+Cqt_Metadata_EntityTypeEmptyKeyMembersInvalid=The specified EntityType is not valid because its KeyMembers collection is empty.
+Cqt_Metadata_FunctionReturnParameterNull=The specified function is not valid because its ReturnParameter property has a value of null.
+Cqt_Metadata_FunctionIncorrectSpace=The specified function is not associated with the same MetadataWorkspace or data space as the command tree.
+Cqt_Metadata_FunctionParameterIncorrectSpace=The specified function parameter is not associated with the same MetadataWorkspace or data model as the command tree.
+Cqt_Metadata_TypeUsageIncorrectSpace=The specified type is not associated with the same MetadataWorkspace or data model as the command tree.
+
+Cqt_Exceptions_InvalidCommandTree=The specified command tree is not valid.
+
+Cqt_Util_CheckListEmptyInvalid=An empty list is not a valid value for this argument.
+Cqt_Util_CheckListDuplicateName=The name '{2}' was specified twice, at index {0} and index {1}. Duplicate names are not allowed.
+
+Cqt_ExpressionLink_TypeMismatch=The ResultType of the specified expression is not compatible with the required type. The expression ResultType is '{0}' but the required type is '{1}'. 
+Cqt_ExpressionList_IncorrectElementCount=The expression list has an incorrect number of elements.
+Cqt_Copier_EntityContainerNotFound=The EntityContainer '{0}' was not found in the destination MetadataWorkspace. 
+Cqt_Copier_EntitySetNotFound=The EntitySet '{0}.{1}' was not found in the destination MetadataWorkspace. 
+Cqt_Copier_FunctionNotFound=The function '{0}' was not found in the destination MetadataWorkspace.
+Cqt_Copier_PropertyNotFound=A property named '{0}' is not declared by the type '{1}' from the destination MetadataWorkspace. 
+Cqt_Copier_NavPropertyNotFound=A navigation property named '{0}' is not declared by the type '{1}' from the destination MetadataWorkspace. 
+Cqt_Copier_EndNotFound=A relationship end named '{0}' is not declared by the relationship type '{1}' from the destination MetadataWorkspace.
+
+;#if METHOD_EXPRESSION
+;Cqt_Copier_MethodNotFound=A method with the name '{0}' and the specified parameter types is not declared by the type '{1}' from the destination MetadataWorkspace.
+;Cqt_Factory_InstanceMethodRequired=An instance method is required for CreateInstanceMethodExpression.
+;Cqt_Factory_StaticMethodRequired=A static method is required for CreateStaticMethodExpression.
+;Cqt_Method_InstanceInvalidForStatic=An Instance property of DbExpression type must be set to null for a static method.
+;Cqt_Method_InstanceRequiredForInstance=An Instance property of DbExpression type cannot be null for an instance method.
+;Cqt_Method_VoidResultInvalid=Method metadata used in DbMethodExpression cannot have a void return type.
+;InvalidDistinctArgumentInMethod=The DISTINCT/ALL argument is not valid in method calls.
+;NoMethodOverloadMatch=No overload of method '{0}' with the specified parameter types is declared by type '{1}'.
+;#endif METHOD_EXPRESSSION
+
+Cqt_Copier_TypeNotFound=The destination MetadataWorkspace does not contain the type '{0}'.
+
+Cqt_CommandTree_InvalidDataSpace=The DataSpace is not valid.
+Cqt_CommandTree_InvalidParameterName=The specified parameter name is not valid: '{0}'.
+Cqt_Validator_InvalidIncompatibleParameterReferences=The specified expression contains multiple references to the parameter '{0}' that have different result types.
+Cqt_Validator_InvalidOtherWorkspaceMetadata=The specified expression contains {0} metadata from a workspace other than the target workspace.
+Cqt_Validator_InvalidIncorrectDataSpaceMetadata=The specified expression contains {0} metadata from a data space other than the target, '{1}'.
+
+Cqt_Factory_NewCollectionInvalidCommonType=The specified element expressions cannot be contained by the same collection because no common element type can be inferred from their ResultTypes.
+Cqt_Factory_NoSuchProperty=No property with the name '{0}' is declared by the type '{1}'.
+Cqt_Factory_NoSuchRelationEnd=The specified relationship type does not define an end with the specified name
+Cqt_Factory_IncompatibleRelationEnds=The specified relationship ends are not defined by the same relationship type.
+Cqt_Factory_MethodResultTypeNotSupported=The method result type '{0}' is not supported for this method argument. A method that produces an instance of a DbExpression-derived type or an anonymous type with DbExpression-derived properties is required.
+Cqt_Aggregate_InvalidFunction=The specified aggregate function is not valid.
+
+Cqt_Binding_CollectionRequired=DbExpressionBinding requires an input expression with a collection ResultType.
+Cqt_Binding_VariableNameNotValid=The specified variable name is not valid. Variable names cannot be empty.
+Cqt_GroupBinding_CollectionRequired=DbGroupExpressionBinding requires an input expression with a collection ResultType.
+Cqt_GroupBinding_GroupVariableNameNotValid=The specified group variable name is not valid. Group variable names cannot be empty.
+
+Cqt_Binary_CollectionsRequired={0} requires arguments with compatible collection ResultTypes.
+Cqt_Unary_CollectionRequired={0} requires a collection argument.
+
+Cqt_And_BooleanArgumentsRequired=DbAndExpression requires arguments with a common Boolean type.
+
+Cqt_Apply_DuplicateVariableNames=DbApplyExpression input and apply arguments cannot have the same variable name.
+
+Cqt_Arithmetic_NumericCommonType=DbArithmeticExpression arguments must have a numeric common type.
+Cqt_Arithmetic_InvalidUnsignedTypeForUnaryMinus=The unsigned type '{0}' cannot be promoted to a signed type.
+
+Cqt_Case_WhensMustEqualThens=DbCaseExpression requires an equal number of 'When' and 'Then' expressions.
+Cqt_Case_InvalidResultType=A valid ResultType could not be inferred from the ResultTypes of the specified 'Then' expressions.
+
+Cqt_Cast_InvalidCast=The requested cast is not allowed: from type '{0}' to type '{1}'.
+
+Cqt_Comparison_ComparableRequired=DbComparisonExpression requires arguments with comparable types.
+
+Cqt_Constant_InvalidType=The specified value is not an instance of a valid constant type.
+Cqt_Constant_InvalidValueForType=The specified value is not an instance of type '{0}'.
+Cqt_Constant_InvalidConstantType=Only enumeration or primitive types may be used as constant value types. DbConstantExpression cannot be created using an instance of type '{0}'.
+Cqt_Constant_ClrEnumTypeDoesNotMatchEdmEnumType=The type '{0}' does not match the EDM enumeration type '{1}' or its underlying type '{2}'.
+Cqt_Distinct_InvalidCollection=The 'Distinct' operation cannot be applied to the collection ResultType of the specified argument.
+
+Cqt_DeRef_RefRequired=DbDerefExpression requires an argument of a reference type.
+
+Cqt_Element_InvalidArgumentForUnwrapSingleProperty=When unwrapSingleProperty is specified the argument expression must have the following ResultType: a CollectionType with a structured element type that declares exactly one property. 
+
+Cqt_Function_VoidResultInvalid=Function metadata used in DbFunctionExpression cannot have a void return type.
+Cqt_Function_NonComposableInExpression=Function metadata used in DbFunctionExpression must allow composition. Non-composable functions or functions that include command text are not allowed in expressions. Such functions can only be executed independently.
+Cqt_Function_CommandTextInExpression=Function metadata used in DbFunctionExpression cannot include command text.
+Cqt_Function_CanonicalFunction_NotFound=No function named 'Edm.{0}' having the specified argument types was found.
+Cqt_Function_CanonicalFunction_AmbiguousMatch=The specified argument result types matched more than one overload of the function 'Edm.{0}'.
+
+Cqt_GetEntityRef_EntityRequired=DbEntityRefExpression requires an argument of an EntityType.
+
+Cqt_GetRefKey_RefRequired=DbRefKeyExpression requires an argument of a reference type.
+
+Cqt_GroupBy_AtLeastOneKeyOrAggregate=At least one group key or aggregate is required.
+Cqt_GroupBy_KeyNotEqualityComparable=The specified group key is not valid because equality comparison cannot be performed on its ResultType: '{0}'.
+Cqt_GroupBy_AggregateColumnExistsAsGroupColumn=An aggregate named '{0}' cannot be used because the specified group keys include a key with the same name.
+Cqt_GroupBy_MoreThanOneGroupAggregate=At most one DbGroupAggregate can be specified in the list of aggregates of a DbGroupByExpression.
+
+Cqt_CrossJoin_AtLeastTwoInputs=DbCrossJoinExpression requires at least two inputs.
+Cqt_CrossJoin_DuplicateVariableNames=The specified DbCrossJoinExpression inputs contain expression bindings with a duplicate variable name, '{2}'. The first occurrence is at index {0}, the second is at index {1}. 
+
+Cqt_IsNull_CollectionNotAllowed=The argument to DbIsNullExpression cannot have a CollectionType of a ResultType.
+Cqt_IsNull_InvalidType=The argument to DbIsNullExpression must refer to a primitive, enumeration or reference type.
+Cqt_InvalidTypeForSetOperation=A collection of '{0}' is not a valid argument for {1}.
+
+Cqt_Join_DuplicateVariableNames=The left and right arguments of a DbJoinExpression cannot have the same variable name.
+
+Cqt_Limit_ConstantOrParameterRefRequired=Limit must be a DbConstantExpression or a DbParameterReferenceExpression.
+Cqt_Limit_IntegerRequired=Limit must have an integer ResultType.
+Cqt_Limit_NonNegativeLimitRequired=Limit must have a non-negative value.
+
+Cqt_NewInstance_CollectionTypeRequired=A CollectionType is required.
+Cqt_NewInstance_StructuralTypeRequired=A collection, entity or row type is required.
+Cqt_NewInstance_CannotInstantiateMemberlessType=DbNewInstanceExpression cannot create an instance of the memberless type '{0}'.
+Cqt_NewInstance_CannotInstantiateAbstractType=DbNewInstanceExpression cannot create an instance of the abstract type '{0}'.
+Cqt_NewInstance_IncompatibleRelatedEntity_SourceTypeNotValid=The specified related entity is not compatible with this new instance constructor. The constructed instance is not an instance of the EntityType required by the source end of the related entity.
+Cqt_Not_BooleanArgumentRequired=DbNotExpression requires an argument with a Boolean type.
+
+Cqt_Or_BooleanArgumentsRequired=DbOrExpression requires arguments with a common Boolean type.
+
+Cqt_Property_InstanceRequiredForInstance=An Instance property of type DbExpression is required for an instance property.
+
+Cqt_Ref_PolymorphicArgRequired=DbRefExpression requires an EntityType from the same hierarchy as the EntityType of the referenced EntitySet.
+
+Cqt_RelatedEntityRef_TargetEndFromDifferentRelationship=The specified target relationship End is not declared by the same relationship type as the specified source relationship End.
+Cqt_RelatedEntityRef_TargetEndMustBeAtMostOne=A target relationship End with multiplicity of 'One' or 'ZeroOrOne' is required for this argument.
+Cqt_RelatedEntityRef_TargetEndSameAsSourceEnd=The specified target relationship End is the same as the source relationship End.
+Cqt_RelatedEntityRef_TargetEntityNotRef=The target entity reference expression must have a reference ResultType.
+Cqt_RelatedEntityRef_TargetEntityNotCompatible=The specified target entity reference expression is not valid because it does not produce a reference to an entity of the same type or of a subtype of the EntityType referred to by the specified target End.
+
+Cqt_RelNav_NoCompositions=Navigating composition relationships is not supported.
+Cqt_RelNav_WrongSourceType=The specified navigation requires a navigation source of a type that is compatible with '{0}'.
+
+Cqt_Skip_ConstantOrParameterRefRequired=Count must be a DbConstantExpression or a DbParameterReferenceExpression.
+Cqt_Skip_IntegerRequired=Count must have an integer ResultType.
+Cqt_Skip_NonNegativeCountRequired=Count must have a non-negative value.
+
+Cqt_Sort_EmptyCollationInvalid=Collation specifiers cannot be empty or consist only of white-space characters.
+Cqt_Sort_NonStringCollationInvalid=A collation specifier is only valid for a sort key with a string ResultType.
+Cqt_Sort_OrderComparable=DbSortClause expressions must have a type that is order comparable.
+
+Cqt_UDF_FunctionDefinitionGenerationFailed=An error occurred while preparing definition of the function '{0}'. See the inner exception for details.
+Cqt_UDF_FunctionDefinitionWithCircularReference=Definition of the function '{0}' contains a direct or indirect reference to itself. Recursive function definitions are not supported.
+Cqt_UDF_FunctionDefinitionResultTypeMismatch=The result type '{0}' specified in the declaration of the function '{1}' does not match the result type '{2}' of the function definition.
+Cqt_UDF_FunctionHasNoDefinition=The function '{0}' has no defining expression. A user-defined function needs a defining expression for successful execution.
+
+Cqt_Validator_VarRefInvalid=The referenced variable '{0}' is not defined in the current scope.
+Cqt_Validator_VarRefTypeMismatch=The ResultType of the referenced variable '{0}' does not match the type specified in this variable reference expression.
+
+; End Canonical Query Tree Error Messages
+
+; Internal Query Tree Error Messages
+
+Iqt_General_UnsupportedOp=The specified Op is of an unsupported type: {0}
+
+Iqt_CTGen_UnexpectedAggregate=AggregateOp encountered outside of GroupBy method.
+Iqt_CTGen_UnexpectedVarDefList=Unexpected VarDefListOp
+Iqt_CTGen_UnexpectedVarDef=Unexpected VarDefOp
+
+; End Internal Query Tree Error Messages
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; BridgeCommand
+
+ADP_MustUseSequentialAccess=The CommandBehavior.SequentialAccess property must be specified for this command object.
+ADP_ProviderDoesNotSupportCommandTrees=The ADO.NET Data Provider you are using does not support canonical command trees.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; BridgeDataReader
+
+ADP_ClosedDataReaderError=The attempted operation is not valid. The data reader is closed.
+ADP_DataReaderClosed=Calling '{0}' when the data reader is closed is not a valid operation.
+ADP_ImplicitlyClosedDataReaderError=The attempted operation is not valid. The nested data reader has been implicitly closed because its parent data reader has been read or closed.
+ADP_NoData=There was an attempt to read, but no data was present.
+ADP_GetSchemaTableIsNotSupported=The GetSchemaTable method is not supported.
+ADP_InvalidDataReaderFieldCountForScalarType=The data reader has more than one field. Multiple fields are not valid for EDM primitive or enumeration types.
+ADP_InvalidDataReaderMissingColumnForType=The data reader is incompatible with the specified '{0}'. A member of the type, '{1}', does not have a corresponding column in the data reader with the same name.
+ADP_InvalidDataReaderMissingDiscriminatorColumn=The data reader is incompatible with the function mapping '{1}'. The column with the name '{0}' does not exist.
+ADP_InvalidDataReaderUnableToDetermineType=The data reader is incompatible with the specified function mapping, and the type of a row could not be determined for the type mapping.
+ADP_InvalidDataReaderUnableToMaterializeNonScalarType=Cannot create a value for property '{0}' of type '{1}'. Only properties of primitive or enumeration types are supported.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; PlanCompiler
+
+ADP_KeysRequiredForJoinOverNest=The query attempted to call '{0}' over a nested query, but '{0}' did not have the appropriate keys.
+ADP_KeysRequiredForNesting=The nested query does not have the appropriate keys.
+ADP_NestingNotSupported=The nested query is not supported. Operation1='{0}' Operation2='{1}'
+ADP_NoQueryMappingView=No query mapping view exists for the specified set '{0}.{1}'.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; DefaultCommandPlan
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Strings copied from System.Data.dll
+
+ADP_InternalProviderError=Internal .NET Framework Data Provider error {0}.
+ADP_InvalidEnumerationValue=The {0} enumeration value, {1}, is not valid.
+ADP_InvalidBufferSizeOrIndex=Buffer offset '{1}' plus the bytes available '{0}' is greater than the length of the passed in buffer.
+ADP_InvalidDataLength=Data length '{0}' is less than 0.
+ADP_InvalidDataType=The parameter data type of {0} is not valid.
+ADP_InvalidDestinationBufferIndex=Destination buffer is not valid (size of {0}) offset: {1}
+ADP_InvalidSourceBufferIndex=Source buffer is not valid (size of {0}) offset: {1}
+ADP_NonSequentialChunkAccess=At dataOffset '{0}' {2} attempt is not valid.  With CommandBehavior.SequentialAccess, you may only read from dataOffset '{1}' or greater.
+ADP_NonSequentialColumnAccess=Attempt to read from column ordinal '{0}' is not valid.  With CommandBehavior.SequentialAccess, you may only read from column ordinal '{1}' or greater.
+ADP_UnknownDataTypeCode=Unable to handle an unknown TypeCode {0} returned by Type {1}.
+DataCategory_Data=Data
+DbParameter_Direction=Input, output, or bidirectional parameter.
+DbParameter_Size=Size of variable length data types (string & arrays).
+DataCategory_Update=Update
+DbParameter_SourceColumn=When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a data row.
+DbParameter_SourceVersion=When used by a DataAdapter.Update (UpdateCommand only), the version of the DataRow value that is used to update the data source.
+ADP_CollectionParameterElementIsNull=The element in the collection parameter '{0}' cannot be null.
+ADP_CollectionParameterElementIsNullOrEmpty=The element in the collection parameter '{0}' cannot be null or empty.
+EntityParameterCollectionInvalidParameterName=An EntityParameter with ParameterName '{0}' is not contained by this EntityParameterCollection.
+EntityParameterCollectionInvalidIndex=Invalid index {0} for this EntityParameterCollection with {1} elements.
+InvalidEntityParameterType=The EntityParameterCollection only accepts non-null EntityParameter type objects, not objects of type {0}.
+EntityParameterContainedByAnotherCollection=The EntityParameter is already contained by another EntityParameterCollection.
+EntityParameterNull=The EntityParameterCollection only accepts non-null EntityParameter type objects.
+EntityParameterCollectionRemoveInvalidObject=Attempted to remove an EntityParameter that is not contained by this EntityParameterCollection.
+ADP_ConnectionStringSyntax=Format of the initialization string does not conform to specification starting at index {0}.
+ADP_InvalidConnectionOptionValue=Invalid value for key '{0}'.
+ADP_InvalidDataDirectory=The DataDirectory substitute is not a string.
+ADP_InvalidMultipartNameDelimiterUsage=Invalid usage of escape delimiters '[' or ']'.
+ADP_InvalidSizeValue=Invalid parameter Size value '{0}'. The value must be greater than or equal to 0.
+ADP_KeywordNotSupported=Keyword not supported: '{0}'.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; System.Data.EntityModel
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ConstantFacetSpecifiedInSchema=Facet '{0}' must not be specified for type '{1}'.
+DuplicateAnnotation=Annotation '{0}' is already defined in '{1}'.
+EmptyFile={0} does not contain a schema definition, or the XmlReader provided started at the end of the file.
+EmptySchemaTextReader=The source XmlReader does not contain a schema definition or started at the end of the file.
+EmptyName={0} is not valid.
+InvalidName={1} ({0}) is not valid.
+MissingName=The name is missing or not valid.
+UnexpectedXmlAttribute=Unrecognized schema attribute: {0}.
+UnexpectedXmlElement=Unrecognized schema element: {0}.
+TextNotAllowed=The current schema element does not support text ({0}).
+UnexpectedXmlNodeType=Unexpected XmlNode type: {0}.
+MalformedXml=Malformed XML. Element starting at ({0},{1}) has no closing tag.
+ValueNotUnderstood={1} value ({0}) was not understood.
+EntityContainerAlreadyExists=The EntityContainer name must be unique. An EntityContainer with the name '{0}' is already defined.
+TypeNameAlreadyDefinedDuplicate=Each type name in a schema must be unique. Type name '{0}' was already defined.
+PropertyNameAlreadyDefinedDuplicate=Each property name in a type must be unique. Property name '{0}' was already defined.
+DuplicateMemberNameInExtendedEntityContainer=Each member name in an EntityContainer must be unique. The member '{0}' is already defined in EntityContainer '{1}'. Because EntityContainer '{2}' extends EntityContainer '{1}', you cannot have a member with the same name in EntityContainer '{2}'.
+DuplicateEntityContainerMemberName=Each member name in an EntityContainer must be unique. A member with name '{0}' is already defined.
+PropertyTypeAlreadyDefined={0} property is not valid. A type is already defined for this property.
+InvalidSize=MaxLength '{0}' is not valid. Length must be between '{1}' and '{2}' for '{3}' type.
+InvalidSystemReferenceId=SRID '{0}' is not valid. Its value must be between '{1}' and '{2}' for '{3}' type.
+BadNamespaceOrAlias=Unknown namespace or alias ({0}).
+MissingNamespaceAttribute=Schema must specify a value for the Namespace attribute.
+InvalidBaseTypeForStructuredType=BaseType ({0}) is not valid. The BaseType for {1} must be a structured type.
+InvalidPropertyType=A property cannot be of type {0}. The property type must be an inline type, a scalar type, or an enumeration type.
+InvalidBaseTypeForItemType=BaseType ({0}) is not valid. The BaseType for {1} must be another EntityType.
+InvalidBaseTypeForNestedType=BaseType ({0}) is not valid. The BaseType for {1} must be another ComplexType.
+DefaultNotAllowed=Default values are allowed only for non-spatial primitive types.
+FacetNotAllowed={0} facet isn't allowed for properties of type {1}.
+RequiredFacetMissing=Facet '{0}' must be specified for '{1}' typed properties.
+InvalidDefaultBinaryWithNoMaxLength=Default value ({0}) is not valid for Binary. Value must be of form 0x123 where 123 stands for a non-empty sequence of hex digits.
+InvalidDefaultIntegral=Default value ({0}) is not valid. Expected an integer between {1} and {2}.
+InvalidDefaultDateTime=Default value ({0}) is not valid for DateTime. The value must be in the form '{1}'.
+InvalidDefaultTime=Default value ({0}) is not valid for Time. The value must be in the form '{1}'.
+InvalidDefaultDateTimeOffset=Default value ({0}) is not valid for DateTimeOffset. The value must be in the form '{1}'.
+InvalidDefaultDecimal=Default value ({0}) is not compatible with the facets specified for Decimal. The value must be a decimal number with scale less than or equal to {1} and precision less than or equal to {2}.
+InvalidDefaultFloatingPoint=Default value ({0}) is not valid. The value must be a floating point number between {1} and {2}.
+InvalidDefaultGuid=Default value ({0}) is not valid for GUID. The value must be enclosed in single quotes in the form 'dddddddd-dddd-dddd-dddd-dddddddddddd'.
+InvalidDefaultBoolean=Default value ({0}) is not valid for Boolean. The value must be true or false.
+DuplicateMemberName=A member named {0} cannot be defined in class {1}. It is defined in ancestor class {2}.
+GeneratorErrorSeverityError=error
+GeneratorErrorSeverityWarning=warning
+GeneratorErrorSeverityUnknown=unknown
+SourceUriUnknown=<File Unknown>
+BadPrecisionAndScale=Precision and Scale combination is not valid. Precision ({0}) must be greater than or equal to Scale ({1}).
+InvalidNamespaceInUsing=No schema encountered with '{0}' namespace. Make sure the namespace is correct or the schema defining the namespace is specified.
+BadNavigationPropertyRelationshipNotRelationship=NavigationProperty is not valid. {0} is not a Relationship.
+BadNavigationPropertyRolesCannotBeTheSame=NavigationProperty is not valid. The FromRole and ToRole are the same.
+BadNavigationPropertyUndefinedRole=NavigationProperty is not valid. The role {0} is not defined in Relationship {1}.
+BadNavigationPropertyBadFromRoleType=NavigationProperty '{0}' is not valid. Type '{1}' of FromRole '{2}' in AssociationType '{3}' must exactly match with the type '{4}' on which this NavigationProperty is declared on.
+InvalidMemberNameMatchesTypeName=Name {0} cannot be used in type {1}. Member names cannot be the same as their enclosing type.
+InvalidKeyKeyDefinedInBaseClass=Key usage is not valid. {0} cannot define keys because one of its base classes ({1}) defines keys.
+InvalidKeyNullablePart=Key Part: '{0}' for type {1} is not valid. All parts of the key must be non nullable.
+InvalidKeyNoProperty=Key: {0} is not valid. {1} is not a valid property name.
+KeyMissingOnEntityType=EntityType '{0}' has no key defined. Define the key for this EntityType.
+InvalidDocumentationBothTextAndStructure=Documentation content is not valid. The Documentation element can only contain Summary and LongDescription elements.
+ArgumentOutOfRangeExpectedPostiveNumber=Value {0} is not valid. Expected a non-negative value.
+ArgumentOutOfRange={0} is out of range.
+UnacceptableUri=URI {0} is not acceptable. URIs must be absolute or specify a file.
+UnexpectedTypeInCollection=Element of unexpected type {0} was found at index {1}.
+AllElementsMustBeInSchema=All elements in a schema must be contained in the Schema element.
+AliasNameIsAlreadyDefined=Each alias in a schema must be unique. Alias '{0}' was already used in this schema.
+NeedNotUseSystemNamespaceInUsing=The namespace '{0}' is a system namespace and is implicitly referred by every schema. You cannot specify an explicit reference to this namespace.
+CannotUseSystemNamespaceAsAlias='{0}' is a system namespace and cannot be used as an Alias. Use some other Alias.
+EntitySetTypeHasNoKeys=The EntitySet {0} is based on type {1} that has no keys defined.
+TableAndSchemaAreMutuallyExclusiveWithDefiningQuery=The EntitySet '{0}' has both a Table or Schema attribute and a DefiningQuery element. The Table and Schema attributes on EntitySet are mutually exclusive with the DefiningQuery element. Use only the Table and Schema attributes or the DefiningQuery element.
+UnexpectedRootElement=The element {1} in namespace {0} was unexpected for the root element. The expected Schema in one of the following namespaces: {2}.
+UnexpectedRootElementNoNamespace=The element {1} was unexpected for the root element. The expected Schema in one of the following namespaces: {2}.
+ParameterNameAlreadyDefinedDuplicate=Each parameter name in a function must be unique. The parameter name '{0}' was already defined.
+FunctionWithNonPrimitiveTypeNotSupported=Type '{0}' is not valid in function '{1}'. The function must have return type and parameters expressed in primitive types.
+FunctionWithNonEdmPrimitiveTypeNotSupported=Type '{0}' is not valid in function '{1}'. The function must have return type and parameters expressed in conceptual side primitive types.
+FunctionImportWithUnsupportedReturnTypeV1=Return type is not valid in FunctionImport '{0}'. The FunctionImport must return a collection of scalar values or a collection of entities.
+FunctionImportWithUnsupportedReturnTypeV1_1=Return type is not valid in FunctionImport '{0}'. The FunctionImport must return Scalar, Entity, or ComplexType.
+FunctionImportWithUnsupportedReturnTypeV2=Return type is not valid in FunctionImport '{0}'. The FunctionImport can have no return type or return a collection of scalar values, a collection of complex types or a collection of entities.
+FunctionImportUnknownEntitySet=EntitySet '{0}' is not valid in FunctionImport '{1}'. Unable to find an EntitySet with the name.
+FunctionImportReturnEntitiesButDoesNotSpecifyEntitySet=FunctionImport '{0}' returns entities but does not specify an EntitySet.
+FunctionImportEntityTypeDoesNotMatchEntitySet=The function import '{0}' returns entities of type '{1}' that cannot exist in the declared EntitySet '{2}'.
+FunctionImportSpecifiesEntitySetButNotEntityType=The function import '{0}' specifies an entity set but does not return entities.
+FunctionImportEntitySetAndEntitySetPathDeclared=The function import '{0}' specifies an entity set and an entity set path. A function import may only specify one of these values but not both.
+FunctionImportComposableAndSideEffectingNotAllowed=The function import '{0}' is declared as composable and side-effecting. A function import can be either composable or side-effecting, but not both.
+FunctionImportCollectionAndRefParametersNotAllowed=The function import '{0}' has a parameter of a collection or reference type. Parameters of a collection or reference type are not allowed in function imports.
+FunctionImportNonNullableParametersNotAllowed=The function import '{0}' has a non-nullable parameter. Only nullable parameters are allowed in function imports.
+TVFReturnTypeRowHasNonScalarProperty=All properties of the row type returned by a store-defined function must be scalar.
+DuplicateEntitySetTable=The EntitySet '{0}' with schema '{1}' and table '{2}' was already defined. Each EntitySet must refer to a unique schema and table.
+ConcurrencyRedefinedOnSubTypeOfEntitySetType=Type '{0}' is derived from the type '{1}' that is the type for EntitySet '{2}'. Type '{0}' defines new concurrency requirements that are not allowed for sub types of base EntitySet types.
+SimilarRelationshipEnd=In EntityContainer '{4}', Role '{0}' in '{1}' and '{2}' AssociationSet refers to the same EntitySet '{3}'. Make sure that if two or more AssociationSet refer to the same AssociationType, the ends must not refer to the same EntitySet.
+InvalidRelationshipEndMultiplicity=Relationship {0} is not valid. Multiplicity ({1}) is not valid. Multiplicity must be: '*', '0..1', or '1'.
+EndNameAlreadyDefinedDuplicate=Each Name and PluralName in a relationship must be unique. '{0}' was already defined.
+InvalidRelationshipEndType=Relationship {0} is not valid. End type ({1}) is not valid. The End type must be an EntityType.
+BadParameterDirection=The parameter {0} in function '{1}' in schema '{2}' has an invalid parameter direction {3}. Valid parameter directions are: In, Out, and InOut.
+BadParameterDirectionForComposableFunctions=The parameter {0} in function '{1}' in schema '{2}' has an invalid parameter direction {3}. The only valid value for this parameter is In.
+InvalidOperationMultipleEndsInAssociation=OnDelete, OnLock, and other such elements can be specified on only one End of an Association.
+InvalidAction=The Action {0} on {1} is not recognized. Valid actions are: None, Cascade, and Restrict.
+DuplicationOperation=Only one {0} element is allowed per relationship.
+NotInNamespaceAlias=Type {0} is not defined in namespace {1} (Alias={2}).
+NotNamespaceQualified=The Type {0} is not qualified with a namespace or alias. Only primitive types can be used without qualification.
+NotInNamespaceNoAlias=Type {0} is not defined in namespace {1}.
+InvalidValueForParameterTypeSemanticsAttribute=The value {0} is not valid for ParameterTypeSemantics attribute. Valid values are 'ExactMatchOnly', 'AllowImplicitPromotion' or 'AllowImplicitConversion'.
+DuplicatePropertyNameSpecifiedInEntityKey=Key specified in EntityType '{0}' is not valid. Property '{1}' is referenced more than once in the Key element.
+InvalidEntitySetType=An EntitySet cannot be of type {0}. The property type must be an EntityType, or an AssociationEntityType.
+InvalidRelationshipSetType=A RelationshipSet cannot be of type {0}. The property type must be a Relationship.
+InvalidEntityContainerNameInExtends=No EntityContainer found with name '{0}'.
+InvalidNamespaceOrAliasSpecified='{0}' is not a valid namespace or alias name. You must use the current schema namespace or alias to qualify the type.
+InvalidPrecisionAndScaleSpecified =Maximum value '{0}' for Scale facet must be less than or equal to the maximum value '{1}' for Precision Facet in '{2}' type.
+PrecisionOutOfRange=Precision '{0}' is not valid. Precision must be between '{1}' and '{2}' for '{3}' type.
+ScaleOutOfRange=Scale '{0}' is not valid. Scale must be between '{1}' and '{2}' for '{3}' type.
+InvalidEntitySetNameReference=The referenced EntitySet {0} for End {1} could not be found in the containing EntityContainer.
+InvalidEntityEndName=The End {0} does not match any Ends on the {1} type.
+DuplicateEndName=The End Name {0} is already defined.
+AmbiguousEntityContainerEnd=The EntitySet for the End '{0}' in AssociationSet '{1}'was not specified, and cannot be inferred because the EntitySet is ambiguous. More than one EntitySet could be used; an explicit End element with an EntitySet attribute must be specified.
+MissingEntityContainerEnd=The EntitySet for the End '{0}' in AssociationSet '{1}' was not specified, and cannot be inferred because none of the EntitySet elements are of the correct type.
+InvalidEndEntitySetTypeMismatch=The End {0} has a different Type than the EntitySet it refers to.
+InferRelationshipEndFailedNoEntitySetMatch=In EntityContainer '{4}', the Role for the End with the EntitySet '{0}', in the AssociationSet '{1}' was not supplied, and there were no Ends in the Relationship '{2}' that matched the type '{3}'.
+InferRelationshipEndAmbiguous=In EntityContainer '{4}', the Role for the End with the EntitySet '{0}' in the AssociationSet '{1}' was not supplied, and there is more than one End in the Relationship '{2}' that could match the type '{3}'. Provide the Role attribute to disambiguate the End.
+InferRelationshipEndGivesAlreadyDefinedEnd=The Role for the End with the EntitySet {0} in the AssociationSet {1} was not supplied and the End found matches one that is already defined. Change the EntitySet to one which has a type of a different End of the Relationship.
+TooManyAssociationEnds=The Association {0} is not valid. Associations may only contain two End elements.
+InvalidEndRoleInRelationshipConstraint=There is no Role with name '{0}' defined in relationship '{1}'. Check and try again.
+InvalidFromPropertyInRelationshipConstraint=Properties referred by the Principal Role {0} must be exactly identical to the key of the EntityType {1} referred to by the Principal Role in the relationship constraint for Relationship {2}. Make sure all the key properties are specified in the Principal Role.
+InvalidToPropertyInRelationshipConstraint=Properties referred by the Dependent Role {0} must be a subset of the key of the EntityType {1} referred to by the Dependent Role in the referential constraint for Relationship {2}.
+InvalidPropertyInRelationshipConstraint=There is no property with name '{0}' defined in type referred by Role '{1}'.
+TypeMismatchRelationshipConstaint=The types of all properties in the Dependent Role of a referential constraint must be the same as the corresponding property types in the Principal Role. The type of property '{0}' on entity '{1}' does not match the type of property '{2}' on entity '{3}' in the referential constraint '{4}'.
+InvalidMultiplicityFromRoleUpperBoundMustBeOne=Multiplicity is not valid in role '{0}' in relationship '{1}'. Valid values for multiplicity for Principal Role are '0..1' or '1'.
+InvalidMultiplicityFromRoleToPropertyNonNullableV1=Multiplicity conflicts with the referential constraint in Role '{0}' in relationship '{1}'. Because one/all of the properties in the Dependent Role is non-nullable, multiplicity of the Principal Role must be '1'.
+InvalidMultiplicityFromRoleToPropertyNonNullableV2=Multiplicity conflicts with the referential constraint in Role '{0}' in relationship '{1}'. Because all of the properties in the Dependent Role are non-nullable, multiplicity of the Principal Role must be '1'.
+InvalidMultiplicityFromRoleToPropertyNullableV1=Multiplicity is not valid in Role '{0}' in relationship '{1}'. Because all the properties in the Dependent Role are nullable, multiplicity of the Principal Role must be '0..1'.
+InvalidMultiplicityToRoleLowerBoundMustBeZero=Multiplicity is not valid in Role '{0}' in relationship '{1}'. The Lower Bound of the multiplicity must be 0.
+InvalidMultiplicityToRoleUpperBoundMustBeOne=Multiplicity is not valid in Role '{0}' in relationship '{1}'. Because the Dependent Role refers to the key properties, the upper bound of the multiplicity of the Dependent Role must be 1.
+InvalidMultiplicityToRoleUpperBoundMustBeMany=Multiplicity is not valid in Role '{0}' in relationship '{1}'. Because the Dependent Role properties are not the key properties, the upper bound of the multiplicity of the Dependent Role must be *.
+MismatchNumberOfPropertiesinRelationshipConstraint=Number of Properties in the Dependent and Principal Role in a relationship constraint must be exactly identical.
+MissingConstraintOnRelationshipType=The relationship '{0}' does not contain the required referential constraint.
+SameRoleReferredInReferentialConstraint=In relationship '{0}', the Principal and Dependent Role of the referential constraint refers to the same Role in the relationship type.
+InvalidPrimitiveTypeKind=The value '{0}' is not a valid PrimitiveTypeKind.
+EntityKeyMustBeScalar=The property '{0}' in EntityType '{1}' is not valid. All properties that are part of the EntityKey must be of enumeration or primitive type.
+EntityKeyTypeCurrentlyNotSupportedInSSDL=The property '{0}' in EntityType '{1}' is not valid. Type '{2}' of the property maps to '{3}' and EntityKey properties that are of type '{4}' are currently not supported.
+EntityKeyTypeCurrentlyNotSupported=The property '{0}' in EntityType '{1}' is not valid. EntityKey properties that are of type '{2}' are currently not supported.
+MissingFacetDescription=The type '{0}' is of PrimitiveTypeKind {1} which must have the facet description {2}.
+EndWithManyMultiplicityCannotHaveOperationsSpecified=End '{0}' on relationship '{1}' cannot have operation specified since its multiplicity is '*'. Operations cannot be specified on ends with multiplicity '*'.
+EndWithoutMultiplicity=End '{0}' on relationship '{1}' must specify multiplicity.
+EntityContainerCannotExtendItself=EntityContainer '{0}' cannot extend itself. Specify some other EntityContainer name.
+ComposableFunctionOrFunctionImportMustDeclareReturnType=Functions and function imports that can be composed must declare a return type.
+NonComposableFunctionMustNotDeclareReturnType=Functions that cannot be composed must not declare a return type.
+CommandTextFunctionsNotComposable=Functions declaring command text cannot be composed.
+CommandTextFunctionsCannotDeclareStoreFunctionName=Functions declaring command text cannot also declare a store function name.
+NonComposableFunctionHasDisallowedAttribute=Functions that cannot be composed may not set the aggregate or built-in function attributes.
+EmptyDefiningQuery=The DefiningQuery element is empty. Add the query text to the DefiningQuery element.
+EmptyCommandText=The CommandText element is empty. Add the command text to the CommandText element.
+AmbiguousFunctionOverload=Function '{0}' with the same {1} space type parameters already exists. Make sure that function overloads are not ambiguous.
+AmbiguousFunctionAndType=Function '{0}' and {1} space type '{0}' cannot have the same fully qualified name.
+CycleInTypeHierarchy=A cycle was detected in the type hierarchy of '{0}'.
+IncorrectProviderManifest=The Provider Manifest is incorrect.
+ComplexTypeAsReturnTypeAndDefinedEntitySet=The function import '{0}' cannot have ComplexType ReturnType '{1}' and an EntitySet specified at the same time.
+ComplexTypeAsReturnTypeAndNestedComplexProperty=Nested ComplexType property '{0}' in the ReturnType '{1}' of the function '{2}' is not supported, please consider flattening the nested ComplexType property.
+FacetsOnNonScalarType=Facets cannot be specified for non-scalar type '{0}'.
+FacetDeclarationRequiresTypeAttribute=Facet declaration requires type attribute declaration.
+TypeMustBeDeclared=Type declaration missing for element.
+RowTypeWithoutProperty=RowType element must have at least one property element.
+TypeDeclaredAsAttributeAndElement=Type must be declared through attribute or sub-element, but not both.
+ReferenceToNonEntityType=ReferenceType element can only refer to an EntityType. '{0}' is not declared as an EntityType.
+NoCodeGenNamespaceInStructuralAnnotation=The '{0}' namespace is reserved for the Entity Framework code generation.
+CannotLoadDifferentVersionOfSchemaInTheSameItemCollection=All artifacts loaded into an ItemCollection must have the same version. Multiple versions were encountered.
+InvalidEnumUnderlyingType=The specified type cannot be used as the underlying type of an enumeration type.
+DuplicateEnumMember=Enumeration members have to have unique names.
+CalculatedEnumValueOutOfRange=The value of the calculated enumeration type member is not valid according to its data type 'http://www.w3.org/2001/XMLSchema:long'.
+EnumMemberValueOutOfItsUnderylingTypeRange=The value '{0}' of the enumeration type member '{1}' cannot be converted to '{2}' type.
+SpatialWithUseStrongSpatialTypesFalse=Currently, spatial types are only supported when used in CSDL files that have the UseStrongSpatialTypes annotation with a false value on their root Schema element.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ObjectQuery<T> error messages
+ObjectQuery_QueryBuilder_InvalidProjectionList=You must specify a valid projection list.
+ObjectQuery_QueryBuilder_InvalidSortKeyList=You must specify a valid key list for sorting the results.
+ObjectQuery_QueryBuilder_InvalidGroupKeyList=You must specify a valid key list for grouping the results.
+ObjectQuery_QueryBuilder_InvalidSkipCount=You must specify a valid skip count.
+ObjectQuery_QueryBuilder_InvalidTopCount=You must specify a valid result count.
+ObjectQuery_QueryBuilder_InvalidFilterPredicate=You must specify a valid predicate for filtering the results.
+ObjectQuery_QueryBuilder_InvalidResultType='{0}' is not a valid type for type filtering operations. Type filtering is only valid on entity types and complex types.
+ObjectQuery_QueryBuilder_InvalidQueryArgument=The specified ObjectQuery is not valid for this operation because it is associated with a different ObjectContext.
+ObjectQuery_QueryBuilder_NotSupportedLinqSource=Query builder methods are not supported for LINQ to Entities queries. For more information, see the Entity Framework documentation.
+ObjectQuery_InvalidEmptyQuery=The command text for an ObjectQuery instance cannot be empty.
+ObjectQuery_InvalidConnection=A connection must be specified before the query can be executed.
+ObjectQuery_InvalidQueryName=The specified query name '{0}' is not valid. Query names must begin with a letter and can only contain letters, numbers, and underscores.
+ObjectQuery_UnableToMapResultType=The result type of the query could not be determined because the required metadata is missing.
+ObjectQuery_UnableToMaterializeArray=The array type '{0}' cannot be initialized in a query result. Consider using '{1}' instead.
+ObjectQuery_UnableToMaterializeArbitaryProjectionType=The collection in the projection is of type '{0}'. For a collection to be materialized to a projection, it must be of type ICollection<T>, IList<T>, ISet<T> or of a concrete type that implements ICollection<T> and has a parameterless constructor.
+
+ObjectParameter_InvalidParameterName=The specified parameter name '{0}' is not valid. Parameter names must begin with a letter and can only contain letters, numbers, and underscores.
+ObjectParameter_InvalidParameterType=The specified parameter type '{0}' is not valid. Only scalar types, such as System.Int32, System.Decimal, System.DateTime, and System.Guid, are supported.
+
+ObjectParameterCollection_ParameterNameNotFound=A parameter named '{0}' was not found in the parameter collection.
+ObjectParameterCollection_ParameterAlreadyExists=A parameter '{0}' already exists in the parameter collection. Parameters must be unique in the parameter collection.
+ObjectParameterCollection_DuplicateParameterName=A parameter named '{0}' already exists in the parameter collection. Parameter names must be unique in the parameter collection.
+ObjectParameterCollection_ParametersLocked=Parameters cannot be added or removed from the parameter collection, and the parameter collection cannot be cleared after a query has been evaluated or its trace string has been retrieved.  
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; DbProviderServices/DbProviderManifest
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ProviderReturnedNullForGetDbInformation=The provider returned null for the informationType '{0}'.
+ProviderReturnedNullForCreateCommandDefinition=The provider returned null from CreateCommandDefinition.
+ProviderDidNotReturnAProviderManifest=The provider did not return a ProviderManifest instance.
+ProviderDidNotReturnAProviderManifestToken=The provider did not return a ProviderManifestToken string.
+ProviderDidNotReturnSpatialServices=The provider did not return a DbSpatialServices instance.
+ProviderDoesNotSupportType=The underlying provider does not support the type '{0}'.
+NoStoreTypeForEdmType=There is no store type corresponding to the conceptual side type '{0}' of primitive type '{1}'.
+ProviderRequiresStoreCommandTree=This provider does not support the specified command tree. EntityClient should be used to create a command definition from this command tree.
+ProviderShouldOverrideEscapeLikeArgument=Because the underlying provider had overridden DbProviderManifest.SupportsEscapingLikeArgument to return true, the DbProviderManifest.EscapeLikeArgument method must also be implemented by the provider.
+ProviderEscapeLikeArgumentReturnedNull=The underlying provider returned null when trying to escape the specified string.
+ProviderDidNotCreateACommandDefinition=The provider did not create a CommandDefinition.
+ProviderDoesNotSupportCreateDatabaseScript=CreateDatabaseScript is not supported by the provider.
+ProviderDoesNotSupportCreateDatabase=CreateDatabase is not supported by the provider.
+ProviderDoesNotSupportDatabaseExists=DatabaseExists is not supported by the provider.
+ProviderDoesNotSupportDeleteDatabase=DeleteDatabase is not supported by the provider.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; DbSpatialServices
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Spatial_GeographyValueNotCompatibleWithSpatialServices=The specified DbGeography value is not compatible with this spatial services implementation.
+Spatial_GeometryValueNotCompatibleWithSpatialServices=The specified DbGeometry value is not compatible with this spatial services implementation.
+Spatial_ProviderValueNotCompatibleWithSpatialServices=The specified provider value is not compatible with this spatial services implementation.
+Spatial_WellKnownGeographyValueNotValid=The specified DbWellKnownGeographyValue does not contain either Well-Known Text or Well-Known Binary.
+Spatial_WellKnownGeometryValueNotValid=The specified DbWellKnownGeometryValue does not contain either Well-Known Text or Well-Known Binary.
+Spatial_WellKnownValueSerializationPropertyNotDirectlySettable=The WellKnownValue property is intended to support serialization and deserialization and should not be set directly.
+SqlSpatialservices_CouldNotCreateWellKnownGeographyValueNoSrid=A Spatial Reference System Identifier (SRID) value could not be retrieved from the specified DbGeography value.
+SqlSpatialservices_CouldNotCreateWellKnownGeographyValueNoWkbOrWkt=The specified DbGeography value did not provide either Well-Known Binary or Well-Known Text.
+SqlSpatialservices_CouldNotCreateWellKnownGeometryValueNoSrid=A Spatial Reference System Identifier (SRID) value could not be retrieved from the specified DbGeometry value.
+SqlSpatialservices_CouldNotCreateWellKnownGeometryValueNoWkbOrWkt=The specified DbGeometry value did not provide either Well-Known Binary or Well-Known Text.
+SqlSpatialServices_ProviderValueNotSqlType=The specified provider value is not compatible with this spatial services implementation. A value is required of type '{0}'.
+ 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Display strings for entity connection properties
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+EntityConnectionString_Name=The connection name in the connection string.
+EntityConnectionString_Provider=The underlying provider invariant name in the connection string.
+EntityConnectionString_Metadata=The metadata locations in the connection string.
+EntityConnectionString_ProviderConnectionString=The inner connection string in the connection string.
+
+EntityDataCategory_Context=Context
+EntityDataCategory_NamedConnectionString=Named ConnectionString
+EntityDataCategory_Source=Source
+
+ObjectQuery_Span_IncludeRequiresEntityOrEntityCollection=The result type of the query is neither an EntityType nor a CollectionType with an entity element type. An Include path can only be specified for a query with one of these result types.
+ObjectQuery_Span_NoNavProp=A specified Include path is not valid. The EntityType '{0}' does not declare a navigation property with the name '{1}'.
+ObjectQuery_Span_SpanPathSyntaxError=There was an error parsing the Include path. An empty navigation property was found.
+ObjectQuery_Span_WhiteSpacePath=The path consists only of white space.
+
+EntityProxyTypeInfo_ProxyHasWrongWrapper=The entity wrapper stored in the proxy does not reference the same proxy.
+EntityProxyTypeInfo_CannotSetEntityCollectionProperty=The property '{0}' on type '{1}' cannot be set because the collection is already set to an EntityCollection.
+EntityProxyTypeInfo_ProxyMetadataIsUnavailable=There is no metadata information available for the proxy type for '{0}'. This exception can be caused when a proxy type for an entity is detached from an ObjectContext. See InnerException for details.
+EntityProxyTypeInfo_DuplicateOSpaceType=There is already a generated proxy type for the object layer type '{0}'. This occurs when the same object layer type is mapped by two or more different models in an AppDomain.
+
+;END

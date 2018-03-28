@@ -25,8 +25,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
+#endif
 using System.ServiceModel.Security;
 
 namespace System.ServiceModel.Security.Tokens
@@ -38,8 +40,8 @@ namespace System.ServiceModel.Security.Tokens
 			RequireDerivedKeys = false;
 		}
 
-		protected UserNameSecurityTokenParameters (UserNameSecurityTokenParameters source)
-			: base (source)
+		protected UserNameSecurityTokenParameters (UserNameSecurityTokenParameters other)
+			: base (other)
 		{
 		}
 
@@ -64,6 +66,7 @@ namespace System.ServiceModel.Security.Tokens
 			return new UserNameSecurityTokenParameters (this);
 		}
 
+#if !MOBILE && !XAMMAC_4_5
 		protected override SecurityKeyIdentifierClause CreateKeyIdentifierClause (
 			SecurityToken token, SecurityTokenReferenceStyle referenceStyle)
 		{
@@ -81,5 +84,6 @@ namespace System.ServiceModel.Security.Tokens
 			requirement.TokenType = SecurityTokenTypes.UserName;
 			requirement.RequireCryptographicToken = true;
 		}
+#endif
 	}
 }

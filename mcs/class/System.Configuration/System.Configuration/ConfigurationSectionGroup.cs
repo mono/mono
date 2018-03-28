@@ -70,9 +70,9 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
-		public void ForceDeclaration (bool require)
+		public void ForceDeclaration (bool force)
 		{
-			this.require_declaration = require;
+			this.require_declaration = force;
 		}
 
 		public void ForceDeclaration ()

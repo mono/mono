@@ -1,4 +1,2 @@
 #include common_System.Core.dll.sources
 #include interpreter_System.Core.dll.sources
-../corlib/CommonCrypto/AesManaged.g.cs
-../corlib/CommonCrypto/AesCryptoServiceProvider.g.cs

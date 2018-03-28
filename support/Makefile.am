@@ -3,9 +3,12 @@ SUPPORT=
 else
 SUPPORT=libMonoSupportW.la
 endif
+
+if BUILD_SUPPORT
 lib_LTLIBRARIES = 				\
 	libMonoPosixHelper.la			\
 	$(SUPPORT)
+endif
 
 AM_CPPFLAGS =					\
 	$(GLIB_CFLAGS)				\

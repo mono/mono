@@ -42,6 +42,7 @@ namespace ICSharpCode.SharpZipLib.Core
 	/// <summary>
 	/// Event arguments for scanning.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class ScanEventArgs : EventArgs
 	{
 		/// <summary>
@@ -79,6 +80,7 @@ namespace ICSharpCode.SharpZipLib.Core
 	/// <summary>
 	/// Event arguments for directories.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class DirectoryEventArgs : ScanEventArgs
 	{
 		/// <summary>
@@ -106,6 +108,7 @@ namespace ICSharpCode.SharpZipLib.Core
 	/// <summary>
 	/// Arguments passed when scan failures are detected.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class ScanFailureEventArgs
 	{
 		/// <summary>
@@ -155,26 +158,31 @@ namespace ICSharpCode.SharpZipLib.Core
 	/// <summary>
 	/// Delegate invokked when a directory is processed.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public delegate void ProcessDirectoryDelegate(object Sender, DirectoryEventArgs e);
 	
 	/// <summary>
 	/// Delegate invoked when a file is processed.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public delegate void ProcessFileDelegate(object sender, ScanEventArgs e);
 	
 	/// <summary>
 	/// Delegate invoked when a directory failure is detected.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public delegate void DirectoryFailureDelegate(object sender, ScanFailureEventArgs e);
 	
 	/// <summary>
 	/// Delegate invoked when a file failure is detected.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public delegate void FileFailureDelegate(object sender, ScanFailureEventArgs e);
 
 	/// <summary>
 	/// FileSystemScanner provides facilities scanning of files and directories.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class FileSystemScanner
 	{
 		/// <summary>

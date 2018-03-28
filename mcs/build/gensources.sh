@@ -7,7 +7,7 @@ extfile=$4
 extexcfile=$5
 
 process_includes_1() {
-    sed -e '/^[ \t]*$/d' -e '/^[ \t]*#/d' $1 > $2
+    sed -e '/^[ \t]*$/d' -e '/^[ \t]*#/d' -e '/*/d' $1 > $2
     if cmp -s $1 $2; then
 	false
     else
@@ -16,6 +16,31 @@ process_includes_1() {
 	    cat $inc >> $2
 	    echo $outfile: $inc >> $outfile.makefrag
 	    echo $inc: >> $outfile.makefrag
+	done
+
+    # expand wildcards
+    sed -n '/*/p' $1 | grep -v '#' |
+	while read wildc; do
+        # quick syntax to exclude files:
+        # ../../../MyDir/*.cs:FileToExclude1.cs,FileToExclude2.cs
+        wc=`echo $wildc | cut -d \: -f 1` # ../../../MyDir/*.cs
+        qexc=`echo $wildc | cut -d \: -f 2` # FileToExclude1.cs,FileToExclude2.cs
+
+        if test "$wc" = "$qexc"; then
+            # no quick excludes - just expand the wildcard
+            ls $wildc >> $2
+        else
+            wcdir=`echo $wildc | cut -d \* -f 1` # ../../../MyDir/
+            # Enumerate files from 'FileToExclude1.cs,FileToExclude2.cs'
+            # and save to $outfile.exc
+            oldIFS=$IFS
+            IFS=,
+            for i in $qexc; do
+                echo "$wcdir$i" >> $outfile.exc
+            done
+            IFS=$oldIFS
+            ls $wc >> $2
+        fi
 	done
     fi
 }
@@ -28,6 +53,17 @@ process_includes() {
     done
     rm -f $t
 }
+
+check_newline_eof() {
+	file=$1
+	if ! test -f "$file"; then return; fi
+	if ! test -z "$(tail -c 1 "$file")"; then echo "$file: missing newline at end of file."; exit 1; fi
+}
+
+check_newline_eof $incfile
+check_newline_eof $excfile
+check_newline_eof $extfile
+check_newline_eof $extexcfile
 
 rm -f $outfile.makefrag
 

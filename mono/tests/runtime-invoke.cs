@@ -29,6 +29,11 @@ enum Enum2
 	D
 }
 
+struct AStruct {
+	public int a1, a2, a3, a4, a5, a6, a7, a8, a9, a10;
+	public int a11, a12, a13, a14, a15, a16, a17, a18, a19, a20;
+}
+
 class Tests
 {
 	public static Enum1 return_enum1 () {
@@ -45,6 +50,10 @@ class Tests
 
 	public static ulong return_ulong () {
 		return UInt64.MaxValue - 5;
+	}
+
+	public static object return_t<T> (T t) {
+		return (object)t;
 	}
 
 	static int Main (string[] args)
@@ -265,4 +274,33 @@ class Tests
 		return 0;
 	}
 
+	private static void method_invoke_no_modify_by_value_arg_helper (int dummy)
+    {
+    }
+
+    public static int test_0_method_invoke_no_modify_by_value_arg ()
+    {
+        var args = new object[] { null };
+        var method = typeof (Tests).GetMethod ("method_invoke_no_modify_by_value_arg_helper", BindingFlags.NonPublic | BindingFlags.Static);
+        method.Invoke (null, args);
+        if (args[0] == null)
+            return 0;
+        else
+            return 1;
+    }
+
+	public static int test_0_large_arg ()
+	{
+		var arg = new AStruct ();
+		arg.a1 = 1;
+		arg.a2 = 2;
+		arg.a3 = 3;
+		arg.a20 = 20;
+		var res = typeof (Tests).GetMethod ("return_t").MakeGenericMethod (new Type [] { typeof (AStruct) }).Invoke (null, new object [] { arg });
+		var arg2 = (AStruct)res;
+		if (arg2.a20 == 20)
+			return 0;
+		else
+			return 1;
+	}
 }

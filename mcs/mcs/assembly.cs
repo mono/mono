@@ -20,6 +20,7 @@ using System.Security.Cryptography;
 using System.Security.Permissions;
 using Mono.Security.Cryptography;
 using Mono.CompilerServices.SymbolWriter;
+using System.Linq;
 
 #if STATIC
 using IKVM.Reflection;
@@ -42,6 +43,18 @@ namespace Mono.CSharp
 
 		byte[] GetPublicKeyToken ();
 		bool IsFriendAssemblyTo (IAssemblyDefinition assembly);
+	}
+
+	public class AssemblyReferenceMessageInfo
+	{
+		public AssemblyReferenceMessageInfo (AssemblyName dependencyName, Action<Report> reportMessage)
+		{
+			this.DependencyName = dependencyName;
+			this.ReportMessage = reportMessage;
+		}
+
+		public AssemblyName DependencyName { get; private set; }
+		public Action<Report> ReportMessage { get; private set; }
 	}
                 
 	public abstract class AssemblyDefinition : IAssemblyDefinition
@@ -416,7 +429,8 @@ namespace Mono.CSharp
 		//
 		void CheckReferencesPublicToken ()
 		{
-			foreach (var an in builder_extra.GetReferencedAssemblies ()) {
+			var references = builder_extra.GetReferencedAssemblies ();
+			foreach (var an in references) {
 				if (public_key != null && an.GetPublicKey ().Length == 0) {
 					Report.Error (1577, "Referenced assembly `{0}' does not have a strong name",
 						an.FullName);
@@ -432,11 +446,16 @@ namespace Mono.CSharp
 				if (ia == null)
 					continue;
 
-				var references = GetNotUnifiedReferences (an);
-				if (references != null) {
-					foreach (var r in references) {
-						Report.SymbolRelatedToPreviousError ( r[0]);
-						Report.Error (1705, r [1]);
+				var an_references = GetNotUnifiedReferences (an);
+				if (an_references != null) {
+					foreach (var r in an_references) {
+						//
+						// Secondary check when assembly references is resolved but not used. For example
+						// due to type-forwarding
+						//
+						if (references.Any (l => l.Name == r.DependencyName.Name)) {
+							r.ReportMessage (Report);
+						}
 					}
 				}
 
@@ -570,7 +589,7 @@ namespace Mono.CSharp
 			return public_key_token;
 		}
 
-		protected virtual List<string[]> GetNotUnifiedReferences (AssemblyName assemblyName)
+		protected virtual List<AssemblyReferenceMessageInfo> GetNotUnifiedReferences (AssemblyName assemblyName)
 		{
 			return null;
 		}
@@ -909,7 +928,7 @@ namespace Mono.CSharp
 					Builder.Save (module.Builder.ScopeName, pekind, machine);
 				}
 			} catch (ArgumentOutOfRangeException) {
-				Report.Error (16, "Output file `{0}' exceeds the 4GB limit");
+				Report.Error (16, "Output file `{0}' exceeds the 4GB limit", name);
 			} catch (Exception e) {
 				Report.Error (16, "Could not write to file `{0}'. {1}", name, e.Message);
 			}
@@ -1196,7 +1215,7 @@ namespace Mono.CSharp
 			paths.AddRange (compiler.Settings.ReferencesLookupPaths);
 		}
 
-		public abstract bool HasObjectType (T assembly);
+		public abstract T HasObjectType (T assembly);
 		protected abstract string[] GetDefaultReferences ();
 		public abstract T LoadAssemblyFile (string fileName, bool isImplicitReference);
 		public abstract void LoadReferences (ModuleContainer module);
@@ -1263,9 +1282,16 @@ namespace Mono.CSharp
 					//
 					// corlib assembly is the first referenced assembly which contains System.Object
 					//
-					if (HasObjectType (assembly.Item2)) {
-						corlib_assembly = assembly.Item2;
-						loaded.RemoveAt (i);
+					corlib_assembly = HasObjectType (assembly.Item2);
+					if (corlib_assembly != null) {
+						if (corlib_assembly != assembly.Item2) {
+							var ca = corlib_assembly;
+							i = loaded.FindIndex (l => l.Item2 == ca);
+						}
+
+						if (i >= 0)
+							loaded.RemoveAt (i);
+
 						break;
 					}
 				}

@@ -1,6 +1,10 @@
+/**
+ * \file
+ */
+
 #include <config.h>
 
-#if defined(PLATFORM_ANDROID)
+#if defined(HOST_ANDROID)
 
 #include <pthread.h>
 #include <stdio.h>
@@ -37,7 +41,7 @@ slow_get_thread_bounds (guint8 *current, guint8 **staddr, size_t *stsize)
 }
 
 void
-mono_threads_core_get_stack_bounds (guint8 **staddr, size_t *stsize)
+mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
 	pthread_attr_t attr;
 	guint8 *current = (guint8*)&attr;

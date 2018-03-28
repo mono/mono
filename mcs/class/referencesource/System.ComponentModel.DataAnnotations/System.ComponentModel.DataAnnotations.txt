@@ -1,0 +1,23 @@
+; NOTE: don't use \", use ' instead
+; NOTE: don't use #, use ; instead for comments
+; NOTE: leave the [strings] alone
+  
+MaxLengthAttribute_ValidationError=The field {0} must be a string or array type with a maximum length of '{1}'.
+
+## ExceptionType=InvalidOperationException
+MaxLengthAttribute_InvalidMaxLength=MaxLengthAttribute must have a Length value that is greater than zero. Use MaxLength() without parameters to indicate that the string or array can have the maximum allowable length.
+
+MinLengthAttribute_ValidationError=The field {0} must be a string or array type with a minimum length of '{1}'.
+
+## ExceptionType=InvalidOperationException
+MinLengthAttribute_InvalidMinLength=MinLengthAttribute must have a Length value that is zero or greater.
+
+## ExceptionType=ArgumentException
+ArgumentIsNullOrWhitespace=The argument '{0}' cannot be null, empty or contain only white space.
+
+RequiredAttribute_ValidationError=The {0} field is required.
+
+CompareAttribute_MustMatch='{0}' and '{1}' do not match.
+
+RegexAttribute_ValidationError=The field {0} must match the regular expression '{1}'.
+

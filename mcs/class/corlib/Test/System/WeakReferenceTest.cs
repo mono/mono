@@ -124,7 +124,6 @@ namespace MonoTests.System {
 			Assert.IsFalse (Foo.failed);
 		}
 
-#if NET_4_5
 		[Test]
 		public void WeakReferenceT_TryGetTarget_NullTarget ()
 		{
@@ -132,7 +131,6 @@ namespace MonoTests.System {
 			object obj;
 			Assert.IsFalse (r.TryGetTarget (out obj), "#1");
 		}
-#endif
 	}
 }
 

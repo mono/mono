@@ -44,6 +44,16 @@ namespace System.Security.Cryptography {
 	[ComVisible (true)]
 	public partial class CryptoConfig {
 
+		public static void AddAlgorithm (Type algorithm, params string[] names)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public static void AddOID (string oid, params string[] names)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
 		// try to avoid hitting the CreateFromName overloads to help the linker
 
 		public static object CreateFromName (string name)
@@ -84,6 +94,7 @@ namespace System.Security.Cryptography {
 			case "system.security.cryptography.hmac":
 			case "system.security.cryptography.hmacsha1":
 			case "hmacsha1":
+			case "http://www.w3.org/2000/09/xmldsig#hmac-sha1":
 				return new HMACSHA1 ();
 			case "system.security.cryptography.hmacsha256":
 			case "hmacsha256":
@@ -133,9 +144,19 @@ namespace System.Security.Cryptography {
 			case "system.security.cryptography.rsapkcs1sha1signaturedescription":
 			case "http://www.w3.org/2000/09/xmldsig#rsa-sha1":
 				return new RSAPKCS1SHA1SignatureDescription ();
+			case "system.security.cryptography.rsapkcs1sha256signaturedescription":
+			case "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256":
+				return new RSAPKCS1SHA256SignatureDescription ();
+			case "system.security.cryptography.rsapkcs1sha384signaturedescription":
+			case "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384":
+				return new RSAPKCS1SHA384SignatureDescription ();
+			case "system.security.cryptography.rsapkcs1sha512signaturedescription":
+			case "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512":
+				return new RSAPKCS1SHA512SignatureDescription ();
 			case "system.security.cryptography.hashalgorithm":
 			case "system.security.cryptography.sha1":
 			case "system.security.cryptography.sha1cryptoserviceprovider":
+			case "system.security.cryptography.sha1cng":
 			case "sha1":
 			case "sha":
 			case "http://www.w3.org/2000/09/xmldsig#sha1":
@@ -144,17 +165,24 @@ namespace System.Security.Cryptography {
 				return new SHA1Managed ();
 			case "system.security.cryptography.sha256managed":
 			case "system.security.cryptography.sha256":
+			case "system.security.cryptography.sha256cryptoserviceprovider":
+			case "system.security.cryptography.sha256cng":
 			case "sha256":
 			case "sha-256":
 			case "http://www.w3.org/2001/04/xmlenc#sha256":
 				return new SHA256Managed ();
 			case "system.security.cryptography.sha384managed":
 			case "system.security.cryptography.sha384":
+			case "system.security.cryptography.sha384cryptoserviceprovider":
+			case "system.security.cryptography.sha384cng":
 			case "sha384":
 			case "sha-384":
+			case "http://www.w3.org/2001/04/xmldsig-more#sha384":
 				return new SHA384Managed ();
 			case "system.security.cryptography.sha512managed":
 			case "system.security.cryptography.sha512":
+			case "system.security.cryptography.sha512cryptoserviceprovider":
+			case "system.security.cryptography.sha512cng":
 			case "sha512":
 			case "sha-512":
 			case "http://www.w3.org/2001/04/xmlenc#sha512":
@@ -169,7 +197,7 @@ namespace System.Security.Cryptography {
 				name = "System.Security.Cryptography.X509Certificates.X509Chain, System";
 				break;
 			case "aes":
-#if MOBILE_STATIC
+#if FULL_AOT_DESKTOP  // TODO: why is this special cased? we could use AesManaged like other full AOT profiles
 				name = "System.Security.Cryptography.AesCryptoServiceProvider, System.Core";
 #else
 				name = "System.Security.Cryptography.AesManaged, System.Core";
@@ -201,6 +229,7 @@ namespace System.Security.Cryptography {
 
 			switch (name.ToLowerInvariant ()) {
 			case "system.security.cryptography.sha1cryptoserviceprovider":
+			case "system.security.cryptography.sha1cng":
 			case "system.security.cryptography.sha1managed":
 			case "system.security.cryptography.sha1":
 			case "sha1":
@@ -209,14 +238,20 @@ namespace System.Security.Cryptography {
 			case "system.security.cryptography.md5":
 			case "md5":
 				return "1.2.840.113549.2.5";
+			case "system.security.cryptography.sha256cryptoserviceprovider":
+			case "system.security.cryptography.sha256cng":
 			case "system.security.cryptography.sha256managed":
 			case "system.security.cryptography.sha256":
 			case "sha256":
 				return "2.16.840.1.101.3.4.2.1";
+			case "system.security.cryptography.sha384cryptoserviceprovider":
+			case "system.security.cryptography.sha384cng":
 			case "system.security.cryptography.sha384managed":
 			case "system.security.cryptography.sha384":
 			case "sha384":
 				return "2.16.840.1.101.3.4.2.2";
+			case "system.security.cryptography.sha512cryptoserviceprovider":
+			case "system.security.cryptography.sha512cng":
 			case "system.security.cryptography.sha512managed":
 			case "system.security.cryptography.sha512":
 			case "sha512":

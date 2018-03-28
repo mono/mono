@@ -121,7 +121,7 @@ public class StrongNameKeyPair : ISerializable, IDeserializationCallback
 				_keyPairArray = null;
 			}
 		}
-#if !NET_2_1
+#if !MOBILE
 		else if (_keyPairContainer != null) {
 			CspParameters csp = new CspParameters ();
 			csp.KeyContainerName = _keyPairContainer;

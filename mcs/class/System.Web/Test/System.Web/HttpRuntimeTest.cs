@@ -55,7 +55,6 @@ namespace MonoTests.System.Web
 		[Test]
 		[Category ("NunitWeb")]
 		[Ignore ("Pending fix for bug 351878")]
-		[Explicit]
 		public void UnloadAppDomain100Times () 
 		{
 			for (int i = 0; i < 100; i++)

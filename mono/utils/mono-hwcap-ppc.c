@@ -1,5 +1,6 @@
-/*
- * mono-hwcap-ppc.c: PowerPC hardware feature detection
+/**
+ * \file
+ * PowerPC hardware feature detection
  *
  * Authors:
  *    Alex Rønne Petersen (alexrp@xamarin.com)
@@ -19,18 +20,14 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-#include "mono/utils/mono-hwcap-ppc.h"
+#include "mono/utils/mono-hwcap.h"
 
 #if defined(__linux__) && defined(HAVE_SYS_AUXV_H)
 #include <string.h>
 #include <sys/auxv.h>
+#elif defined(_AIX)
+#include <sys/systemcfg.h>
 #endif
-
-gboolean mono_hwcap_ppc_has_icache_snoop = FALSE;
-gboolean mono_hwcap_ppc_is_isa_2x = FALSE;
-gboolean mono_hwcap_ppc_is_isa_64 = FALSE;
-gboolean mono_hwcap_ppc_has_move_fpr_gpr = FALSE;
-gboolean mono_hwcap_ppc_has_multiple_ls_units = FALSE;
 
 void
 mono_hwcap_arch_init (void)
@@ -64,15 +61,28 @@ mono_hwcap_arch_init (void)
 		if (!strcmp (str, "ppc970") || (!strncmp (str, "power", 5) && str [5] >= '4' && str [5] <= '7'))
 			mono_hwcap_ppc_has_multiple_ls_units = TRUE;
 	}
+#elif defined(_AIX)
+	if (__cpu64())
+		mono_hwcap_ppc_is_isa_64 = TRUE;
+	if (__power_4_andup())
+		mono_hwcap_ppc_is_isa_2x = TRUE;
+	if (__power_5_andup())
+		mono_hwcap_ppc_has_icache_snoop = TRUE;
+	/* not on POWER8 */
+	if (__power_4() || __power_5() || __power_6() || __power_7())
+		mono_hwcap_ppc_has_multiple_ls_units = TRUE;
+	/*
+	 * I dont see a way to get extended POWER6 and the PV_6_1
+	 * def seems to be trigged on the POWER6 here despite not
+	 * having these extended instructions, so POWER7 it is
+	 */
+	/*
+	 * WARNING: reports that this doesn't actually work, try
+	 * to re-enable after more investigation
+	 */
+	/*
+	if (__power_7_andup())
+		mono_hwcap_ppc_has_move_fpr_gpr = TRUE;
+	 */
 #endif
-}
-
-void
-mono_hwcap_print (FILE* f)
-{
-	g_fprintf (f, "mono_hwcap_ppc_has_icache_snoop = %i\n", mono_hwcap_ppc_has_icache_snoop);
-	g_fprintf (f, "mono_hwcap_ppc_is_isa_2x = %i\n", mono_hwcap_ppc_is_isa_2x);
-	g_fprintf (f, "mono_hwcap_ppc_is_isa_64 = %i\n", mono_hwcap_ppc_is_isa_64);
-	g_fprintf (f, "mono_hwcap_ppc_has_move_fpr_gpr = %i\n", mono_hwcap_ppc_has_move_fpr_gpr);
-	g_fprintf (f, "mono_hwcap_ppc_has_multiple_ls_units = %i\n", mono_hwcap_ppc_has_multiple_ls_units);
 }

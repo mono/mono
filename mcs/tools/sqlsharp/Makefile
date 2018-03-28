@@ -1,4 +1,4 @@
-thisdir = tools/SqlSharp
+thisdir = tools/sqlsharp
 SUBDIRS = 
 include ../../build/rules.make
 
@@ -14,7 +14,7 @@ include ../../build/executable.make
 #run-test-local: run-sqlsharp-test
 
 run-sqlsharp-test: $(PROGRAM)
-	$(TEST_RUNTIME) $(PROGRAM) -A $(PROGRAM) $(ARGS)
+	$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(PROGRAM) -A $(PROGRAM) $(ARGS)
 
 run: $(PROGRAM)
 	$(RUNTIME) $(RUNTIME_FLAGS) $(PROGRAM) $(ARGS)

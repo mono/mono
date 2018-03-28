@@ -68,7 +68,7 @@ namespace System.Management
 			throw new NotImplementedException ();
 		}
 
-		public virtual void Add (string methodName, ManagementBaseObject inParams, ManagementBaseObject outParams)
+		public virtual void Add (string methodName, ManagementBaseObject inParameters, ManagementBaseObject outParameters)
 		{
 			throw new NotImplementedException ();
 		}

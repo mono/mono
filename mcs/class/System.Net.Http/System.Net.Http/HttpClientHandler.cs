@@ -26,10 +26,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Specialized;
 using System.Net.Http.Headers;
+using System.Net.Security;
 using System.Linq;
 
 namespace System.Net.Http
@@ -245,8 +249,6 @@ namespace System.Net.Http
 				wr.KeepAlive = request.Headers.ConnectionClose != true;
 			}
 
-			wr.ServicePoint.Expect100Continue = request.Headers.ExpectContinue == true;
-
 			if (allowAutoRedirect) {
 				wr.AllowAutoRedirect = true;
 				wr.MaximumAutomaticRedirections = maxAutomaticRedirections;
@@ -270,7 +272,12 @@ namespace System.Net.Http
 
 			if (useProxy) {
 				wr.Proxy = proxy;
+			} else {
+				// Disables default WebRequest.DefaultWebProxy value
+				wr.Proxy = null;
 			}
+
+			wr.ServicePoint.Expect100Continue = request.Headers.ExpectContinue == true;
 
 			// Add request headers
 			var headers = wr.Headers;
@@ -285,8 +292,9 @@ namespace System.Net.Http
 				}
 
 				if (header.Key == "Transfer-Encoding") {
-					// Chunked Transfer-Encoding is never set for HttpWebRequest. It's detected
-					// from ContentLength by HttpWebRequest
+					//
+					// Chunked Transfer-Encoding is set for HttpWebRequest later when Content length is checked
+					//
 					values = values.Where (l => l != "chunked");
 				}
 
@@ -294,7 +302,7 @@ namespace System.Net.Http
 				if (values_formated == null)
 					continue;
 
-				headers.AddValue (header.Key, values_formated);
+				headers.AddInternal (header.Key, values_formated);
 			}
 			
 			return wr;
@@ -326,6 +334,20 @@ namespace System.Net.Http
 			return response;
 		}
 
+		static bool MethodHasBody (HttpMethod method)
+		{
+			switch (method.Method) {
+			case "HEAD":
+			case "GET":
+			case "MKCOL":
+			case "CONNECT":
+			case "TRACE":
+				return false;
+			default:
+				return true;
+			}
+		}
+
 		protected async internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			if (disposed)
@@ -343,26 +365,34 @@ namespace System.Net.Http
 
 						foreach (var header in content.Headers) {
 							foreach (var value in header.Value) {
-								headers.AddValue (header.Key, value);
+								headers.AddInternal (header.Key, value);
 							}
 						}
 
-						//
-						// Content length has to be set because HttpWebRequest is running without buffering
-						//
-						var contentLength = content.Headers.ContentLength;
-						if (contentLength != null) {
-							wrequest.ContentLength = contentLength.Value;
+						if (request.Headers.TransferEncodingChunked == true) {
+							wrequest.SendChunked = true;
 						} else {
-							await content.LoadIntoBufferAsync (MaxRequestContentBufferSize).ConfigureAwait (false);
-							wrequest.ContentLength = content.Headers.ContentLength.Value;
+							//
+							// Content length has to be set because HttpWebRequest is running without buffering
+							//
+							var contentLength = content.Headers.ContentLength;
+							if (contentLength != null) {
+								wrequest.ContentLength = contentLength.Value;
+							} else {
+								if (MaxRequestContentBufferSize == 0)
+									throw new InvalidOperationException ("The content length of the request content can't be determined. Either set TransferEncodingChunked to true, load content into buffer, or set MaxRequestContentBufferSize.");
+
+								await content.LoadIntoBufferAsync (MaxRequestContentBufferSize).ConfigureAwait (false);
+								wrequest.ContentLength = content.Headers.ContentLength.Value;
+							}
 						}
 
-						wrequest.ResendContentFactory = content.CopyTo;
+						wrequest.ResendContentFactory = content.CopyToAsync;
 
-						var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false);
-						await request.Content.CopyToAsync (stream).ConfigureAwait (false);
-					} else if (HttpMethod.Post.Equals (request.Method) || HttpMethod.Put.Equals (request.Method) || HttpMethod.Delete.Equals (request.Method)) {
+						using (var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false)) {
+							await request.Content.CopyToAsync (stream).ConfigureAwait (false);
+						}
+					} else if (MethodHasBody (request.Method)) {
 						// Explicitly set this to make sure we're sending a "Content-Length: 0" header.
 						// This fixes the issue that's been reported on the forums:
 						// http://forums.xamarin.com/discussion/17770/length-required-error-in-http-post-since-latest-release
@@ -373,7 +403,9 @@ namespace System.Net.Http
 				}
 			} catch (WebException we) {
 				if (we.Status != WebExceptionStatus.RequestCanceled)
-					throw;
+					throw new HttpRequestException ("An error occurred while sending the request", we);
+			} catch (System.IO.IOException ex) {
+				throw new HttpRequestException ("An error occurred while sending the request", ex);
 			}
 
 			if (cancellationToken.IsCancellationRequested) {
@@ -383,6 +415,72 @@ namespace System.Net.Http
 			}
 			
 			return CreateResponseMessage (wresponse, request, cancellationToken);
+		}
+
+		public bool CheckCertificateRevocationList {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public X509CertificateCollection ClientCertificates {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public ICredentials DefaultProxyCredentials {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public int MaxConnectionsPerServer {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public int MaxResponseHeadersLength {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public IDictionary<string,object> Properties {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public Func<HttpRequestMessage,X509Certificate2,X509Chain,SslPolicyErrors,bool> ServerCertificateCustomValidationCallback {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public SslProtocols SslProtocols {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 	}
 }

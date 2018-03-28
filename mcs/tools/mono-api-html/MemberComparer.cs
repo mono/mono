@@ -43,7 +43,7 @@ namespace Xamarin.ApiDiff {
 
 		protected virtual bool IsBreakingRemoval (XElement e)
 		{
-			return true;
+			return !e.Elements ("attributes").SelectMany (a => a.Elements ("attribute")).Any (c => c.Attribute ("name")?.Value == "System.ObsoleteAttribute");
 		}
 
 		public void Compare (XElement source, XElement target)
@@ -122,8 +122,10 @@ namespace Xamarin.ApiDiff {
 		{
 			bool a = false;
 			foreach (var item in elements) {
+				var memberDescription = $"{State.Namespace}.{State.Type}: Added {GroupName}: {GetDescription (item)}";
+				State.LogDebugMessage ($"Possible -a value: {memberDescription}");
 				SetContext (item);
-				if (State.IgnoreAdded.Any (re => re.IsMatch (GetDescription (item))))
+				if (State.IgnoreAdded.Any (re => re.IsMatch (memberDescription)))
 					continue;
 				if (!a) {
 					BeforeAdding (elements);
@@ -138,9 +140,13 @@ namespace Xamarin.ApiDiff {
 		void Modify (ApiChanges modified)
 		{
 			foreach (var changes in modified) {
+				if (State.IgnoreNonbreaking && changes.Value.All (c => !c.Breaking))
+					continue;
 				Output.WriteLine ("<p>{0}:</p>", changes.Key);
 				Output.WriteLine ("<pre>");
 				foreach (var element in changes.Value) {
+					if (State.IgnoreNonbreaking && !element.Breaking)
+						continue;
 					Output.Write ("<div {0}>", element.Breaking ? "data-is-breaking" : "data-is-non-breaking");
 					foreach (var line in element.Member.ToString ().Split ('\n'))
 						Output.WriteLine ("\t{0}", line);
@@ -155,9 +161,13 @@ namespace Xamarin.ApiDiff {
 		{
 			bool r = false;
 			foreach (var item in elements) {
-				if (State.IgnoreRemoved.Any (re => re.IsMatch (GetDescription (item))))
+				var memberDescription = $"{State.Namespace}.{State.Type}: Removed {GroupName}: {GetDescription (item)}";
+				State.LogDebugMessage ($"Possible -r value: {memberDescription}");
+				if (State.IgnoreRemoved.Any (re => re.IsMatch (memberDescription)))
 					continue;
 				SetContext (item);
+				if (State.IgnoreNonbreaking && !IsBreakingRemoval (item))
+					continue;
 				if (!r) {
 					BeforeRemoving (elements);
 					r = true;
@@ -336,10 +346,19 @@ namespace Xamarin.ApiDiff {
 				if (i > 0)
 					change.Append (", ");
 
+				string mods_tgt = tgt [i].GetAttribute ("direction") ?? "";
+				string mods_src = src [i].GetAttribute ("direction") ?? "";
+
+				if (mods_tgt.Length > 0)
+					mods_tgt = mods_tgt + " ";
+
+				if (mods_src.Length > 0)
+					mods_src = mods_src + " ";
+
 				if (i >= srcCount) {
-					change.AppendAdded (tgt [i].GetTypeName ("type") + " " + tgt [i].GetAttribute ("name"), true);
+					change.AppendAdded (mods_tgt + tgt [i].GetTypeName ("type") + " " + tgt [i].GetAttribute ("name"), true);
 				} else if (i >= tgtCount) {
-					change.AppendRemoved (src [i].GetTypeName ("type") + " " + src [i].GetAttribute ("name"), true);
+					change.AppendRemoved (mods_src + src [i].GetTypeName ("type") + " " + src [i].GetAttribute ("name"), true);
 				} else {
 					var paramSourceType = src [i].GetTypeName ("type");
 					var paramTargetType = tgt [i].GetTypeName ("type");
@@ -347,14 +366,20 @@ namespace Xamarin.ApiDiff {
 					var paramSourceName = src [i].GetAttribute ("name");
 					var paramTargetName = tgt [i].GetAttribute ("name");
 
+					if (mods_src != mods_tgt) {
+						change.AppendModified (mods_src, mods_tgt, true);
+					} else {
+						change.Append (mods_src);
+					}
+
 					if (paramSourceType != paramTargetType) {
 						change.AppendModified (paramSourceType, paramTargetType, true);
 					} else {
 						change.Append (paramSourceType);
 					}
 					change.Append (" ");
-					if (paramSourceName != paramTargetName) {
-						change.AppendModified (paramSourceName, paramTargetName, false);
+					if (!State.IgnoreParameterNameChanges && paramSourceName != paramTargetName) {
+						change.AppendModified (paramSourceName, paramTargetName, true);
 					} else {
 						change.Append (paramSourceName);
 					}
@@ -383,12 +408,6 @@ namespace Xamarin.ApiDiff {
 			}
 
 			change.Append (")");
-
-			// Ignore any parameter name changes if requested.
-			if (State.IgnoreParameterNameChanges && !change.Breaking) {
-				change.AnyChange = false;
-				change.HasIgnoredChanges = true;
-			}
 		}
 
 		void RenderVTable (MethodAttributes source, MethodAttributes target, ApiChange change)
@@ -418,8 +437,13 @@ namespace Xamarin.ApiDiff {
 				if (tgtAbstract) {
 					change.AppendAdded ("abstract", true).Append (" ");
 				} else if (srcWord != tgtWord) {
-					if (!tgtFinal)
-						change.AppendModified (srcWord, tgtWord, breaking).Append (" ");
+					if (!tgtFinal) {
+						if (State.IgnoreVirtualChanges) {
+							change.HasIgnoredChanges = true;
+						} else {
+							change.AppendModified (srcWord, tgtWord, breaking).Append (" ");
+						}
+					}
 				} else if (tgtWord.Length > 0) {
 					change.Append (tgtWord).Append (" ");
 				} else if (srcWord.Length > 0) {
@@ -431,7 +455,11 @@ namespace Xamarin.ApiDiff {
 				if (tgtFinal) {
 					change.Append ("final ");
 				} else {
-					change.AppendRemoved ("final", false).Append (" "); // removing 'final' is not a breaking change.
+					if (srcVirtual && !tgtVirtual && State.IgnoreVirtualChanges) {
+						change.HasIgnoredChanges = true;
+					} else {
+						change.AppendRemoved ("final", false).Append (" "); // removing 'final' is not a breaking change.
+					}
 				}
 			} else {
 				if (tgtFinal && srcVirtual) {
@@ -573,7 +601,7 @@ namespace Xamarin.ApiDiff {
 			if (srcObsolete == null) {
 				if (tgtObsolete == null)
 					return; // neither is obsolete
-				var change = new ApiChange ();
+				var change = new ApiChange (GetDescription (source));
 				change.Header = "Obsoleted " + GroupName;
 				change.Append (string.Format ("<span class='obsolete obsolete-{0}' data-is-non-breaking>", ElementName));
 				change.Append ("[Obsolete (");

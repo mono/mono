@@ -115,10 +115,10 @@ namespace System.ServiceModel.Configuration
 
 		// Methods
 
-		public void ApplyConfiguration (ReliableSession s)
+		public void ApplyConfiguration (ReliableSession reliableSession)
 		{
-			s.InactivityTimeout = InactivityTimeout;
-			s.Ordered = Ordered;
+			reliableSession.InactivityTimeout = InactivityTimeout;
+			reliableSession.Ordered = Ordered;
 		}
 	}
 

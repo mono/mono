@@ -7,7 +7,9 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Threading;
+using System.Diagnostics;
 using System.Collections.Generic;
 using Microsoft.Win32.SafeHandles;
 
@@ -16,6 +18,8 @@ namespace System.Net.Sockets {
 	sealed class SafeSocketHandle : SafeHandleZeroOrMinusOneIsInvalid {
 
 		List<Thread> blocking_threads;
+		Dictionary<Thread, StackTrace> threads_stacktraces;
+
 		bool in_cleanup;
 
 		const int SOCKET_CLOSED = 10004;
@@ -26,6 +30,9 @@ namespace System.Net.Sockets {
 		public SafeSocketHandle (IntPtr preexistingHandle, bool ownsHandle) : base (ownsHandle)
 		{
 			SetHandle (preexistingHandle);
+
+			if (THROW_ON_ABORT_RETRIES)
+				threads_stacktraces = new Dictionary<Thread, StackTrace> ();
 		}
 
 		// This is just for marshalling
@@ -38,7 +45,7 @@ namespace System.Net.Sockets {
 			int error = 0;
 
 			Socket.Blocking_internal (handle, false, out error);
-#if MOBILE_STATIC
+#if FULL_AOT_DESKTOP
 			/* It's only for platforms that do not have working syscall abort mechanism, like WatchOS and TvOS */
 			Socket.Shutdown_internal (handle, SocketShutdown.Both, out error);
 #endif
@@ -48,8 +55,17 @@ namespace System.Net.Sockets {
 					int abort_attempts = 0;
 					while (blocking_threads.Count > 0) {
 						if (abort_attempts++ >= ABORT_RETRIES) {
-							if (THROW_ON_ABORT_RETRIES)
-								throw new Exception ("Could not abort registered blocking threads before closing socket.");
+							if (THROW_ON_ABORT_RETRIES) {
+								StringBuilder sb = new StringBuilder ();
+								sb.AppendLine ("Could not abort registered blocking threads before closing socket.");
+								foreach (var thread in blocking_threads) {
+									sb.AppendLine ("Thread StackTrace:");
+									sb.AppendLine (threads_stacktraces[thread].ToString ());
+								}
+								sb.AppendLine ();
+
+								throw new Exception (sb.ToString ());
+							}
 
 							// Attempts to close the socket safely failed.
 							// We give up, and close the socket with pending blocking system calls.
@@ -94,6 +110,8 @@ namespace System.Net.Sockets {
 				/* We must use a finally block here to make this atomic. */
 				lock (blocking_threads) {
 					blocking_threads.Add (Thread.CurrentThread);
+					if (THROW_ON_ABORT_RETRIES)
+						threads_stacktraces.Add (Thread.CurrentThread, new StackTrace (true));
 				}
 				if (release)
 					DangerousRelease ();
@@ -109,7 +127,13 @@ namespace System.Net.Sockets {
 		{
 			//If this NRE, we're in deep problems because Register Must have
 			lock (blocking_threads) {
-				blocking_threads.Remove (Thread.CurrentThread);
+				var current = Thread.CurrentThread;
+				blocking_threads.Remove (current);
+				if (THROW_ON_ABORT_RETRIES) {
+					if (blocking_threads.IndexOf (current) == -1)
+						threads_stacktraces.Remove (current);
+				}
+
 				if (in_cleanup && blocking_threads.Count == 0)
 					Monitor.Pulse (blocking_threads);
 			}

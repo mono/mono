@@ -1,4 +1,4 @@
-﻿//
+//
 // WS2007FederationHttpBinding.cs
 //
 // Author:
@@ -52,8 +52,8 @@ namespace System.ServiceModel
 		}
 
 		[MonoTODO]
-		public WS2007FederationHttpBinding (string configurationName)
-			: base (configurationName)
+		public WS2007FederationHttpBinding (string configName)
+			: base (configName)
 		{
 			throw new NotImplementedException ();
 		}

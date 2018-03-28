@@ -24,18 +24,12 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("System.Reflection.Emit.Lightweight.dll")]
-[assembly: AssemblyDescription ("System.Reflection.Emit.Lightweight.dll")]
-[assembly: AssemblyDefaultAlias ("System.Reflection.Emit.Lightweight.dll")]
-[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyTitle ("System.Reflection.Emit.Lightweight")]
+[assembly: AssemblyDescription ("System.Reflection.Emit.Lightweight")]
+[assembly: AssemblyDefaultAlias ("System.Reflection.Emit.Lightweight")]
+[assembly: AssemblyCompany ("Mono development team")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
-[assembly: AssemblyCopyright ("Copyright (c) 2013 Xamarin Inc. (http://www.xamarin.com)")]
-[assembly: AssemblyVersion ("4.0.0.0")]
+[assembly: AssemblyCopyright ("(c) Various Mono authors")]
+[assembly: AssemblyVersion ("4.0.1.0")]
 [assembly: AssemblyInformationalVersion ("4.0.0.0")]
 [assembly: AssemblyFileVersion ("4.0.0.0")]
-[assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../../msfinal.pub")]
-
-[assembly: ReferenceAssembly]
-
-

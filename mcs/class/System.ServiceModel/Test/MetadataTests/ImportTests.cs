@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Net;
 using System.Xml;
@@ -34,7 +34,6 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-using NUnit.Framework.SyntaxHelpers;
 
 using WS = System.Web.Services.Description;
 
@@ -129,7 +128,6 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				AuthenticationSchemes.Ntlm, label);
 		}
 
-#if NET_4_5
 		[Test]
 		public virtual void BasicHttps ()
 		{
@@ -179,7 +177,6 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				WSMessageEncoding.Text, HttpClientCredentialType.None,
 				AuthenticationSchemes.Anonymous, label);
 		}
-#endif
 		
 		[Test]
 		public virtual void NetTcp ()
@@ -323,4 +320,5 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 	}
 
 }
+#endif
 

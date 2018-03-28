@@ -1813,54 +1813,42 @@ namespace System
 						return;
 					}
 				}
-				if (index == 2) {
-					if (zero) {
-						offset = lens [0] + lens [1] + 2;
-						length = format.Length - offset;
+				if (zero) {
+					if (index == 2) {
+						if (format.Length - lastPos == 0) {
+							offset = 0;
+							length = lens [0];
+						} else {
+							offset = lens [0] + lens [1] + 2;
+							length = format.Length - offset;
+						}
 						return;
 					}
-					if (positive) {
+
+					if (lens [2] == 0) {
 						offset = 0;
 						length = lens [0];
-						return;
-					}
-					if (lens [1] > 0) {
-						positive = true;
-						offset = lens [0] + 1;
-						length = lens [1];
-						return;
-					}
-					else {
-						offset = 0;
-						length = lens [0];
-						return;
-					}
-				}
-				if (index == 3) {
-					if (zero) {
+					} else {
 						offset = lens [0] + lens [1] + 2;
 						length = lens [2];
-						return;
 					}
-					if (positive) {
-						offset = 0;
-						length = lens [0];
-						return;
-					}
-					if (lens [1] > 0) {
-						positive = true;
-						offset = lens [0] + 1;
-						length = lens [1];
-						return;
-					}
-					else {
-						offset = 0;
-						length = lens [0];
-						return;
-					}
-				}
 
-				throw new ArgumentException ();
+					return;
+
+				}
+				if (positive) {
+					offset = 0;
+					length = lens [0];
+					return;
+				}
+				if (lens [1] > 0) {
+					positive = true;
+					offset = lens [0] + 1;
+					length = lens [1];
+					return;
+				}
+				offset = 0;
+				length = lens [0];
 			}
 
 			public static CustomInfo Parse (string format, int offset, int length, NumberFormatInfo nfi)

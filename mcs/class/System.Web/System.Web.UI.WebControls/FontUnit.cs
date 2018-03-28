@@ -204,12 +204,12 @@ namespace System.Web.UI.WebControls
 			return new FontUnit (n);
 		}
 
-		public string ToString (IFormatProvider fmt)
+		public string ToString (IFormatProvider formatProvider)
 		{
 			if (type == FontSize.NotSet)
 				return String.Empty;
 			else if (type == FontSize.AsUnit)
-				return unit.ToString (fmt);
+				return unit.ToString (formatProvider);
 			else
 				return font_size_names [(int) type];
 		}

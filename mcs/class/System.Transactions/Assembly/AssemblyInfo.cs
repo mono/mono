@@ -56,7 +56,6 @@ using System.Security.Permissions;
 
 	[assembly: CLSCompliant (true)]
 	[assembly: AssemblyDelaySign (true)]
-	[assembly: AssemblyKeyFile("../ecma.pub")]
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: BestFitMapping (false)]

@@ -38,20 +38,15 @@ using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
-namespace System.Net 
+namespace System.Net
 {
 	public class ServicePoint
 	{
-		Uri uri;
-		int connectionLimit;
-		int maxIdleTime;
-		int currentConnections;
-		DateTime idleSince;
+		readonly Uri uri;
 		DateTime lastDnsResolve;
 		Version protocolVersion;
 		IPHostEntry host;
 		bool usesProxy;
-		Dictionary<string,WebConnectionGroup> groups;
 		bool sendContinue = true;
 		bool useConnect;
 		object hostE = new object ();
@@ -60,21 +55,22 @@ namespace System.Net
 		bool tcp_keepalive;
 		int tcp_keepalive_time;
 		int tcp_keepalive_interval;
-		Timer idleTimer;
 
 		// Constructors
 
 		internal ServicePoint (Uri uri, int connectionLimit, int maxIdleTime)
 		{
-			this.uri = uri;  
-			this.connectionLimit = connectionLimit;
-			this.maxIdleTime = maxIdleTime;	
-			this.currentConnections = 0;
-			this.idleSince = DateTime.UtcNow;
+			this.uri = uri;
+
+			Scheduler = new ServicePointScheduler (this, connectionLimit, maxIdleTime);
 		}
-		
+
+		internal ServicePointScheduler Scheduler {
+			get;
+		}
+
 		// Properties
-		
+
 		public Uri Address {
 			get { return uri; }
 		}
@@ -84,15 +80,13 @@ namespace System.Net
 			return new NotImplementedException ();
 		}
 
-		public BindIPEndPoint BindIPEndPointDelegate
-		{
+		public BindIPEndPoint BindIPEndPointDelegate {
 			get { return endPointCallback; }
 			set { endPointCallback = value; }
 		}
-		
+
 		[MonoTODO]
-		public int ConnectionLeaseTimeout
-		{
+		public int ConnectionLeaseTimeout {
 			get {
 				throw GetMustImplement ();
 			}
@@ -100,54 +94,39 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
-		
-		public int ConnectionLimit {
-			get { return connectionLimit; }
-			set {
-				if (value <= 0)
-					throw new ArgumentOutOfRangeException ();
 
-				connectionLimit = value;
-			}
+		public int ConnectionLimit {
+			get { return Scheduler.ConnectionLimit; }
+			set { Scheduler.ConnectionLimit = value; }
 		}
-		
+
 		public string ConnectionName {
 			get { return uri.Scheme; }
 		}
 
 		public int CurrentConnections {
 			get {
-				return currentConnections;
+				return Scheduler.CurrentConnections;
 			}
 		}
 
 		public DateTime IdleSince {
 			get {
-				return idleSince.ToLocalTime ();
+				return Scheduler.IdleSince.ToLocalTime ();
 			}
 		}
 
 		public int MaxIdleTime {
-			get { return maxIdleTime; }
-			set { 
-				if (value < Timeout.Infinite || value > Int32.MaxValue)
-					throw new ArgumentOutOfRangeException ();
-
-				lock (this) {
-					maxIdleTime = value;
-					if (idleTimer != null)
-						idleTimer.Change (maxIdleTime, maxIdleTime);
-				}
-			}
+			get { return Scheduler.MaxIdleTime; }
+			set { Scheduler.MaxIdleTime = value; }
 		}
-		
+
 		public virtual Version ProtocolVersion {
 			get { return protocolVersion; }
 		}
 
 		[MonoTODO]
-		public int ReceiveBufferSize
-		{
+		public int ReceiveBufferSize {
 			get {
 				throw GetMustImplement ();
 			}
@@ -155,7 +134,7 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
-		
+
 		public bool SupportsPipelining {
 			get { return HttpVersion.Version11.Equals (protocolVersion); }
 		}
@@ -172,8 +151,10 @@ namespace System.Net
 		}
 
 		internal bool SendContinue {
-			get { return sendContinue &&
-				     (protocolVersion == null || protocolVersion == HttpVersion.Version11); }
+			get {
+				return sendContinue &&
+				       (protocolVersion == null || protocolVersion == HttpVersion.Version11);
+			}
 			set { sendContinue = value; }
 		}
 		// Methods
@@ -197,25 +178,25 @@ namespace System.Net
 			if (!tcp_keepalive)
 				return;
 
-			byte [] bytes = new byte [12];
-			PutBytes (bytes, (uint) (tcp_keepalive ? 1 : 0), 0);
-			PutBytes (bytes, (uint) tcp_keepalive_time, 4);
-			PutBytes (bytes, (uint) tcp_keepalive_interval, 8);
+			byte[] bytes = new byte[12];
+			PutBytes (bytes, (uint)(tcp_keepalive ? 1 : 0), 0);
+			PutBytes (bytes, (uint)tcp_keepalive_time, 4);
+			PutBytes (bytes, (uint)tcp_keepalive_interval, 8);
 			socket.IOControl (IOControlCode.KeepAliveValues, bytes, null);
 		}
 
-		static void PutBytes (byte [] bytes, uint v, int offset)
+		static void PutBytes (byte[] bytes, uint v, int offset)
 		{
 			if (BitConverter.IsLittleEndian) {
-				bytes [offset] = (byte) (v & 0x000000ff);
-				bytes [offset + 1] = (byte) ((v & 0x0000ff00) >> 8);
-				bytes [offset + 2] = (byte) ((v & 0x00ff0000) >> 16);
-				bytes [offset + 3] = (byte) ((v & 0xff000000) >> 24);
+				bytes[offset] = (byte)(v & 0x000000ff);
+				bytes[offset + 1] = (byte)((v & 0x0000ff00) >> 8);
+				bytes[offset + 2] = (byte)((v & 0x00ff0000) >> 16);
+				bytes[offset + 3] = (byte)((v & 0xff000000) >> 24);
 			} else {
-				bytes [offset + 3] = (byte) (v & 0x000000ff);
-				bytes [offset + 2] = (byte) ((v & 0x0000ff00) >> 8);
-				bytes [offset + 1] = (byte) ((v & 0x00ff0000) >> 16);
-				bytes [offset] = (byte) ((v & 0xff000000) >> 24);
+				bytes[offset + 3] = (byte)(v & 0x000000ff);
+				bytes[offset + 2] = (byte)((v & 0x0000ff00) >> 8);
+				bytes[offset + 1] = (byte)((v & 0x00ff0000) >> 16);
+				bytes[offset] = (byte)((v & 0xff000000) >> 24);
 			}
 		}
 
@@ -231,107 +212,7 @@ namespace System.Net
 			set { useConnect = value; }
 		}
 
-		WebConnectionGroup GetConnectionGroup (string name)
-		{
-			if (name == null)
-				name = "";
-
-			/*
-			 * Optimization:
-			 * 
-			 * In the vast majority of cases, we only have one single WebConnectionGroup per ServicePoint, so we
-			 * don't need to allocate a dictionary.
-			 * 
-			 */
-
-			WebConnectionGroup group;
-			if (groups != null && groups.TryGetValue (name, out group))
-				return group;
-
-			group = new WebConnectionGroup (this, name);
-			group.ConnectionClosed += (s, e) => currentConnections--;
-
-			if (groups == null)
-				groups = new Dictionary<string, WebConnectionGroup> ();
-			groups.Add (name, group);
-
-			return group;
-		}
-
-		void RemoveConnectionGroup (WebConnectionGroup group)
-		{
-			if (groups == null || groups.Count == 0)
-				throw new InvalidOperationException ();
-
-			groups.Remove (group.Name);
-		}
-
-		bool CheckAvailableForRecycling (out DateTime outIdleSince)
-		{
-			outIdleSince = DateTime.MinValue;
-
-			TimeSpan idleTimeSpan;
-			List<WebConnectionGroup> groupList = null, removeList = null;
-			lock (this) {
-				if (groups == null || groups.Count == 0) {
-					idleSince = DateTime.MinValue;
-					return true;
-				}
-
-				idleTimeSpan = TimeSpan.FromMilliseconds (maxIdleTime);
-
-				/*
-				 * WebConnectionGroup.TryRecycle() must run outside the lock, so we need to
-				 * copy the group dictionary if it exists.
-				 * 
-				 * In most cases, we only have a single connection group, so we can simply store
-				 * that in a local variable instead of copying a collection.
-				 * 
-				 */
-
-				groupList = new List<WebConnectionGroup> (groups.Values);
-			}
-
-			foreach (var group in groupList) {
-				if (!group.TryRecycle (idleTimeSpan, ref outIdleSince))
-					continue;
-				if (removeList == null)
-					removeList = new List<WebConnectionGroup> ();
-				removeList.Add (group);
-			}
-
-			lock (this) {
-				idleSince = outIdleSince;
-
-				if (removeList != null && groups != null) {
-					foreach (var group in removeList)
-						if (groups.ContainsKey (group.Name))
-							RemoveConnectionGroup (group);
-				}
-
-				if (groups != null && groups.Count == 0)
-					groups = null;
-
-				if (groups == null) {
-					if (idleTimer != null) {
-						idleTimer.Dispose ();
-						idleTimer = null;
-					}
-					return true;
-				}
-
-				return false;
-			}
-		}
-
-		void IdleTimerCallback (object obj)
-		{
-			DateTime dummy;
-			CheckAvailableForRecycling (out dummy);
-		}
-
-		private bool HasTimedOut
-		{
+		private bool HasTimedOut {
 			get {
 				int timeout = ServicePointManager.DnsRefreshTimeout;
 				return timeout != Timeout.Infinite &&
@@ -339,21 +220,36 @@ namespace System.Net
 			}
 		}
 
-		internal IPHostEntry HostEntry
-		{
+		internal IPHostEntry HostEntry {
 			get {
 				lock (hostE) {
 					string uriHost = uri.Host;
 
-					if (host == null || HasTimedOut) {
-						lastDnsResolve = DateTime.UtcNow;
+					// Cannot do DNS resolution on literal IP addresses
+					if (uri.HostNameType == UriHostNameType.IPv6 || uri.HostNameType == UriHostNameType.IPv4) {
+						if (host != null)
+							return host;
 
-						try {
-							host = Dns.GetHostEntry (uriHost);
+						if (uri.HostNameType == UriHostNameType.IPv6) {
+							// Remove square brackets
+							uriHost = uriHost.Substring (1, uriHost.Length - 2);
 						}
-						catch (Exception) {
-							return null;
-						}
+
+						// Creates IPHostEntry
+						host = new IPHostEntry ();
+						host.AddressList = new IPAddress[] { IPAddress.Parse (uriHost) };
+						return host;
+					}
+
+					if (!HasTimedOut && host != null)
+						return host;
+
+					lastDnsResolve = DateTime.UtcNow;
+
+					try {
+						host = Dns.GetHostEntry (uriHost);
+					} catch {
+						return null;
 					}
 				}
 
@@ -366,41 +262,18 @@ namespace System.Net
 			protocolVersion = version;
 		}
 
-		internal EventHandler SendRequest (HttpWebRequest request, string groupName)
+		internal void SendRequest (WebOperation operation, string groupName)
 		{
-			WebConnection cnc;
-			
 			lock (this) {
-				bool created;
-				WebConnectionGroup cncGroup = GetConnectionGroup (groupName);
-				cnc = cncGroup.GetConnection (request, out created);
-				if (created) {
-					++currentConnections;
-					if (idleTimer == null)
-						idleTimer = new Timer (IdleTimerCallback, null, maxIdleTime, maxIdleTime);
-				}
+				Scheduler.SendRequest (operation, groupName);
 			}
-			
-			return cnc.SendRequest (request);
 		}
+
 		public bool CloseConnectionGroup (string connectionGroupName)
 		{
-			WebConnectionGroup cncGroup = null;
-
 			lock (this) {
-				cncGroup = GetConnectionGroup (connectionGroupName);
-				if (cncGroup != null) {
-					RemoveConnectionGroup (cncGroup);
-				}
+				return Scheduler.CloseConnectionGroup (connectionGroupName);
 			}
-
-			// WebConnectionGroup.Close() must *not* be called inside the lock
-			if (cncGroup != null) {
-				cncGroup.Close ();
-				return true;
-			}
-
-			return false;
 		}
 
 		//
@@ -488,6 +361,11 @@ namespace System.Net
 
 				return true;
 			}
+		}
+
+		internal Socket GetConnection(PooledStream PooledStream, object owner, bool async, out IPAddress address, ref Socket abortSocket, ref Socket abortSocket6)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

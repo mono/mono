@@ -1,6 +1,7 @@
-/*
- * sgen-descriptor.h: GC descriptors describe object layout.
-
+/**
+ * \file
+ * GC descriptors describe object layout.
+ *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
@@ -114,12 +115,14 @@ enum {
 	ROOT_DESC_BITMAP,
 	ROOT_DESC_RUN_LEN, 
 	ROOT_DESC_COMPLEX,
+	ROOT_DESC_VECTOR,
 	ROOT_DESC_USER,
 	ROOT_DESC_TYPE_MASK = 0x7,
 	ROOT_DESC_TYPE_SHIFT = 3,
 };
 
 typedef void (*SgenUserMarkFunc)     (GCObject **addr, void *gc_data);
+typedef void (*SgenUserReportRootFunc)     (void *addr, GCObject *obj, void *gc_data);
 typedef void (*SgenUserRootMarkFunc) (void *addr, SgenUserMarkFunc mark_func, void *gc_data);
 
 SgenDescriptor sgen_make_user_root_descriptor (SgenUserRootMarkFunc marker);
@@ -215,7 +218,7 @@ sgen_gc_descr_has_references (SgenDescriptor desc)
 	} while (0)
 #endif
 
-#define OBJ_COMPLEX_FOREACH_PTR(vt,obj)	do {	\
+#define OBJ_COMPLEX_FOREACH_PTR(desc,obj)	do {	\
 		/* there are pointers */	\
 		void **_objptr = (void**)(obj);	\
 		gsize *bitmap_data = sgen_get_complex_descriptor ((desc)); \

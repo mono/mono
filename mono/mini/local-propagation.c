@@ -1,5 +1,6 @@
-/*
- * local-propagation.c: Local constant, copy and tree propagation.
+/**
+ * \file
+ * Local constant, copy and tree propagation.
  *
  * To make some sense of the tree mover, read mono/docs/tree-mover.txt
  *
@@ -14,6 +15,8 @@
  */
 
 #include <config.h>
+#include <mono/utils/mono-compiler.h>
+
 #ifndef DISABLE_JIT
 
 #include <string.h>
@@ -25,6 +28,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/opcodes.h>
+#include <mono/utils/unlocked.h>
 #include "mini.h"
 #include "ir-emit.h"
 
@@ -40,6 +44,261 @@ mono_bitset_mp_new_noinit (MonoMemPool *mp,  guint32 max_size)
 
 	mem = mono_mempool_alloc (mp, size);
 	return mono_bitset_mem_new (mem, max_size, MONO_BITSET_DONT_FREE);
+}
+
+struct magic_unsigned {
+	guint32 magic_number;
+	gboolean addition;
+	int shift;
+};
+
+struct magic_signed {
+	gint32 magic_number;
+	int shift;
+};
+
+/* http://www.hackersdelight.org/hdcodetxt/magicu.c.txt */
+static struct magic_unsigned
+compute_magic_unsigned (guint32 divisor) {
+	guint32 nc, delta, q1, r1, q2, r2;
+	struct magic_unsigned magu;
+	gboolean gt = FALSE;
+	int p;
+
+	magu.addition = 0;
+	nc = -1 - (-divisor) % divisor;
+	p = 31;
+	q1 = 0x80000000 / nc;
+	r1 = 0x80000000 - q1 * nc;
+	q2 = 0x7FFFFFFF / divisor;
+	r2 = 0x7FFFFFFF - q2 * divisor;
+	do {
+		p = p + 1;
+		if (q1 >= 0x80000000)
+			gt = TRUE;
+		if (r1 >= nc - r1) {
+			q1 = 2 * q1 + 1;
+			r1 = 2 * r1 - nc;
+		} else {
+			q1 = 2 * q1;
+			r1 = 2 * r1;
+		}
+		if (r2 + 1 >= divisor - r2) {
+			if (q2 >= 0x7FFFFFFF)
+				magu.addition = 1;
+			q2 = 2 * q2 + 1;
+			r2 = 2 * r2 + 1 - divisor;
+		} else {
+			if (q2 >= 0x80000000)
+				magu.addition = 1;
+			q2 = 2 * q2;
+			r2 = 2 * r2 + 1;
+		}
+		delta = divisor - 1 - r2;
+	} while (!gt && (q1 < delta || (q1 == delta && r1 == 0)));
+
+	magu.magic_number = q2 + 1;
+	magu.shift = p - 32;
+	return magu;
+}
+
+/* http://www.hackersdelight.org/hdcodetxt/magic.c.txt */
+static struct magic_signed
+compute_magic_signed (gint32 divisor) {
+	int p;
+	guint32 ad, anc, delta, q1, r1, q2, r2, t;
+	const guint32 two31 = 0x80000000;
+	struct magic_signed mag;
+
+	ad = abs (divisor);
+	t = two31 + ((unsigned)divisor >> 31);
+	anc = t - 1 - t % ad;
+	p = 31;
+	q1 = two31 / anc;
+	r1 = two31 - q1 * anc;
+	q2 = two31 / ad;
+	r2 = two31 - q2 * ad;
+	do {
+		p++;
+		q1 *= 2;
+		r1 *= 2;
+		if (r1 >= anc) {
+			q1++;
+			r1 -= anc;
+		}
+
+		q2 *= 2;
+		r2 *= 2;
+
+		if (r2 >= ad) {
+			q2++;
+			r2 -= ad;
+		}
+
+		delta = ad - r2;
+	} while (q1 < delta || (q1 == delta && r1 == 0));
+
+	mag.magic_number = q2 + 1;
+	if (divisor < 0)
+		mag.magic_number = -mag.magic_number;
+	mag.shift = p - 32;
+	return mag;
+}
+
+static gboolean
+mono_strength_reduction_division (MonoCompile *cfg, MonoInst *ins)
+{
+	gboolean allocated_vregs = FALSE;
+	/*
+	 * We don't use it on 32bit systems because on those
+	 * platforms we emulate long multiplication, driving the
+	 * performance back down.
+	 */
+	switch (ins->opcode) {
+		case OP_IDIV_UN_IMM: {
+			guint32 tmp_regl;
+#if SIZEOF_REGISTER == 8
+			guint32 dividend_reg;
+#else
+			guint32 tmp_regi;
+#endif
+			struct magic_unsigned mag;
+			int power2 = mono_is_power_of_two (ins->inst_imm);
+
+			/* The decomposition doesn't handle exception throwing */
+			if (ins->inst_imm == 0)
+				break;
+
+			if (power2 >= 0) {
+				ins->opcode = OP_ISHR_UN_IMM;
+				ins->sreg2 = -1;
+				ins->inst_imm = power2;
+				break;
+			}
+			if (cfg->backend->disable_div_with_mul)
+				break;
+			allocated_vregs = TRUE;
+			/*
+			 * Replacement of unsigned division with multiplication,
+			 * shifts and additions Hacker's Delight, chapter 10-10.
+			 */
+			mag = compute_magic_unsigned (ins->inst_imm);
+			tmp_regl = alloc_lreg (cfg);
+#if SIZEOF_REGISTER == 8
+			dividend_reg = alloc_lreg (cfg);
+			MONO_EMIT_NEW_I8CONST (cfg, tmp_regl, mag.magic_number);
+			MONO_EMIT_NEW_UNALU (cfg, OP_ZEXT_I4, dividend_reg, ins->sreg1);
+			MONO_EMIT_NEW_BIALU (cfg, OP_LMUL, tmp_regl, dividend_reg, tmp_regl);
+			if (mag.addition) {
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_UN_IMM, tmp_regl, tmp_regl, 32);
+				MONO_EMIT_NEW_BIALU (cfg, OP_LADD, tmp_regl, tmp_regl, dividend_reg);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_UN_IMM, ins->dreg, tmp_regl, mag.shift);
+			} else {
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_UN_IMM, ins->dreg, tmp_regl, 32 + mag.shift);
+			}
+#else
+			tmp_regi = alloc_ireg (cfg);
+			MONO_EMIT_NEW_ICONST (cfg, tmp_regi, mag.magic_number);
+			MONO_EMIT_NEW_BIALU (cfg, OP_BIGMUL_UN, tmp_regl, ins->sreg1, tmp_regi);
+			/* Long shifts below will be decomposed during cprop */
+			if (mag.addition) {
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_UN_IMM, tmp_regl, tmp_regl, 32);
+				MONO_EMIT_NEW_BIALU (cfg, OP_IADDCC, MONO_LVREG_LS (tmp_regl), MONO_LVREG_LS (tmp_regl), ins->sreg1);
+				/* MONO_LVREG_MS (tmp_reg) is 0, save in it the carry */
+				MONO_EMIT_NEW_BIALU (cfg, OP_IADC, MONO_LVREG_MS (tmp_regl), MONO_LVREG_MS (tmp_regl), MONO_LVREG_MS (tmp_regl));
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_UN_IMM, tmp_regl, tmp_regl, mag.shift);
+			} else {
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_UN_IMM, tmp_regl, tmp_regl, 32 + mag.shift);
+			}
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, MONO_LVREG_LS (tmp_regl));
+#endif
+			UnlockedIncrement (&mono_jit_stats.optimized_divisions);
+			break;
+		}
+		case OP_IDIV_IMM: {
+			guint32 tmp_regl;
+#if SIZEOF_REGISTER == 8
+			guint32 dividend_reg;
+#else
+			guint32 tmp_regi;
+#endif
+			struct magic_signed mag;
+			int power2 = mono_is_power_of_two (ins->inst_imm);
+			/* The decomposition doesn't handle exception throwing */
+			/* Optimization with MUL does not apply for -1, 0 and 1 divisors */
+			if (ins->inst_imm == 0 || ins->inst_imm == -1) {
+				break;
+			} else if (ins->inst_imm == 1) {
+				ins->opcode = OP_MOVE;
+				ins->inst_imm = 0;
+				break;
+			}
+			allocated_vregs = TRUE;
+			if (power2 == 1) {
+				guint32 r1 = alloc_ireg (cfg);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, r1, ins->sreg1, 31);
+				MONO_EMIT_NEW_BIALU (cfg, OP_IADD, r1, r1, ins->sreg1);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, ins->dreg, r1, 1);
+				break;
+			} else if (power2 > 0 && power2 < 31) {
+				guint32 r1 = alloc_ireg (cfg);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, r1, ins->sreg1, 31);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, r1, r1, (32 - power2));
+				MONO_EMIT_NEW_BIALU (cfg, OP_IADD, r1, r1, ins->sreg1);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, ins->dreg, r1, power2);
+				break;
+			}
+
+			if (cfg->backend->disable_div_with_mul)
+				break;
+			/*
+			 * Replacement of signed division with multiplication,
+			 * shifts and additions Hacker's Delight, chapter 10-6.
+			 */
+			mag = compute_magic_signed (ins->inst_imm);
+			tmp_regl = alloc_lreg (cfg);
+#if SIZEOF_REGISTER == 8
+			dividend_reg = alloc_lreg (cfg);
+			MONO_EMIT_NEW_I8CONST (cfg, tmp_regl, mag.magic_number);
+			MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, dividend_reg, ins->sreg1);
+			MONO_EMIT_NEW_BIALU (cfg, OP_LMUL, tmp_regl, dividend_reg, tmp_regl);
+			if ((ins->inst_imm > 0 && mag.magic_number < 0) || (ins->inst_imm < 0 && mag.magic_number > 0)) {
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_IMM, tmp_regl, tmp_regl, 32);
+				if (ins->inst_imm > 0 && mag.magic_number < 0) {
+					MONO_EMIT_NEW_BIALU (cfg, OP_LADD, tmp_regl, tmp_regl, dividend_reg);
+				} else if (ins->inst_imm < 0 && mag.magic_number > 0) {
+					MONO_EMIT_NEW_BIALU (cfg, OP_LSUB, tmp_regl, tmp_regl, dividend_reg);
+				}
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_IMM, tmp_regl, tmp_regl, mag.shift);
+			} else {
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_IMM, tmp_regl, tmp_regl, 32 + mag.shift);
+			}
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_LSHR_UN_IMM, ins->dreg, tmp_regl, SIZEOF_REGISTER * 8 - 1);
+			MONO_EMIT_NEW_BIALU (cfg, OP_LADD, ins->dreg, ins->dreg, tmp_regl);
+#else
+			tmp_regi = alloc_ireg (cfg);
+			MONO_EMIT_NEW_ICONST (cfg, tmp_regi, mag.magic_number);
+			MONO_EMIT_NEW_BIALU (cfg, OP_BIGMUL, tmp_regl, ins->sreg1, tmp_regi);
+			if ((ins->inst_imm > 0 && mag.magic_number < 0) || (ins->inst_imm < 0 && mag.magic_number > 0)) {
+				if (ins->inst_imm > 0 && mag.magic_number < 0) {
+					/* Opposite sign, cannot overflow */
+					MONO_EMIT_NEW_BIALU (cfg, OP_IADD, tmp_regi, MONO_LVREG_MS (tmp_regl), ins->sreg1);
+				} else if (ins->inst_imm < 0 && mag.magic_number > 0) {
+					/* Same sign, cannot overflow */
+					MONO_EMIT_NEW_BIALU (cfg, OP_ISUB, tmp_regi, MONO_LVREG_MS (tmp_regl), ins->sreg1);
+				}
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, tmp_regi, tmp_regi, mag.shift);
+			} else {
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, tmp_regi, MONO_LVREG_MS (tmp_regl), mag.shift);
+			}
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, ins->dreg, tmp_regi, SIZEOF_REGISTER * 8 - 1);
+			MONO_EMIT_NEW_BIALU (cfg, OP_IADD, ins->dreg, ins->dreg, tmp_regi);
+#endif
+			UnlockedIncrement (&mono_jit_stats.optimized_divisions);
+			break;
+		}
+	}
+	return allocated_vregs;
 }
 
 /*
@@ -99,46 +358,20 @@ mono_strength_reduction_ins (MonoCompile *cfg, MonoInst *ins, const char **spec)
 			}
 		}
 		break;
-	case OP_IREM_UN_IMM:
-	case OP_IDIV_UN_IMM: {
-		int c = ins->inst_imm;
-		int power2 = mono_is_power_of_two (c);
+	case OP_IREM_UN_IMM: {
+		int power2 = mono_is_power_of_two (ins->inst_imm);
 
 		if (power2 >= 0) {
-			if (ins->opcode == OP_IREM_UN_IMM) {
-				ins->opcode = OP_IAND_IMM;
-				ins->sreg2 = -1;
-				ins->inst_imm = (1 << power2) - 1;
-			} else if (ins->opcode == OP_IDIV_UN_IMM) {
-				ins->opcode = OP_ISHR_UN_IMM;
-				ins->sreg2 = -1;
-				ins->inst_imm = power2;
-			}
+			ins->opcode = OP_IAND_IMM;
+			ins->sreg2 = -1;
+			ins->inst_imm = (1 << power2) - 1;
 		}
 		break;
 	}
+	case OP_IDIV_UN_IMM:
 	case OP_IDIV_IMM: {
-		int c = ins->inst_imm;
-		int power2 = mono_is_power_of_two (c);
-
-		if (power2 == 1) {
-			int r1 = mono_alloc_ireg (cfg);
-
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, r1, ins->sreg1, 31);
-			MONO_EMIT_NEW_BIALU (cfg, OP_IADD, r1, r1, ins->sreg1);
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, ins->dreg, r1, 1);
-
-			allocated_vregs = TRUE;
-		} else if (power2 > 0 && power2 < 31) {
-			int r1 = mono_alloc_ireg (cfg);
-
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, r1, ins->sreg1, 31);
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, r1, r1, (32 - power2));
-			MONO_EMIT_NEW_BIALU (cfg, OP_IADD, r1, r1, ins->sreg1);
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, ins->dreg, r1, power2);
-
-			allocated_vregs = TRUE;
-		}
+		if (!COMPILE_LLVM (cfg))
+			allocated_vregs = mono_strength_reduction_division (cfg, ins);
 		break;
 	}
 #if SIZEOF_REGISTER == 8
@@ -181,6 +414,75 @@ mono_strength_reduction_ins (MonoCompile *cfg, MonoInst *ins, const char **spec)
 #endif
 		break;
 	}
+#if SIZEOF_REGISTER == 4
+	case OP_LSHR_IMM: {
+		if (COMPILE_LLVM (cfg))
+			break;
+		if (ins->inst_c1 == 32) {
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, MONO_LVREG_LS (ins->dreg), MONO_LVREG_MS (ins->sreg1));
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, MONO_LVREG_MS (ins->dreg), MONO_LVREG_MS (ins->sreg1), 31);
+		} else if (ins->inst_c1 == 0) {
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, MONO_LVREG_LS (ins->dreg), MONO_LVREG_LS (ins->sreg1));
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, MONO_LVREG_MS (ins->dreg), MONO_LVREG_MS (ins->sreg1));
+		} else if (ins->inst_c1 > 32) {
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, MONO_LVREG_LS (ins->dreg), MONO_LVREG_MS (ins->sreg1), ins->inst_c1 - 32);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, MONO_LVREG_MS (ins->dreg), MONO_LVREG_MS (ins->sreg1), 31);
+		} else {
+			guint32 tmpreg = alloc_ireg (cfg);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHL_IMM, tmpreg, MONO_LVREG_MS (ins->sreg1), 32 - ins->inst_c1);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, MONO_LVREG_MS (ins->dreg), MONO_LVREG_MS (ins->sreg1), ins->inst_c1);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, MONO_LVREG_LS (ins->dreg), MONO_LVREG_LS (ins->sreg1), ins->inst_c1);
+			MONO_EMIT_NEW_BIALU (cfg, OP_IOR, MONO_LVREG_LS (ins->dreg), MONO_LVREG_LS (ins->dreg), tmpreg);
+			allocated_vregs = TRUE;
+		}
+		break;
+	}
+	case OP_LSHR_UN_IMM: {
+		if (COMPILE_LLVM (cfg))
+			break;
+		if (ins->inst_c1 == 32) {
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, MONO_LVREG_LS (ins->dreg), MONO_LVREG_MS (ins->sreg1));
+			MONO_EMIT_NEW_ICONST (cfg, MONO_LVREG_MS (ins->dreg), 0);
+		} else if (ins->inst_c1 == 0) {
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, MONO_LVREG_LS (ins->dreg), MONO_LVREG_LS (ins->sreg1));
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, MONO_LVREG_MS (ins->dreg), MONO_LVREG_MS (ins->sreg1));
+		} else if (ins->inst_c1 > 32) {
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, MONO_LVREG_LS (ins->dreg), MONO_LVREG_MS (ins->sreg1), ins->inst_c1 - 32);
+			MONO_EMIT_NEW_ICONST (cfg, MONO_LVREG_MS (ins->dreg), 0);
+		} else {
+			guint32 tmpreg = alloc_ireg (cfg);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHL_IMM, tmpreg, MONO_LVREG_MS (ins->sreg1), 32 - ins->inst_c1);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, MONO_LVREG_MS (ins->dreg), MONO_LVREG_MS (ins->sreg1), ins->inst_c1);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, MONO_LVREG_LS (ins->dreg), MONO_LVREG_LS (ins->sreg1), ins->inst_c1);
+			MONO_EMIT_NEW_BIALU (cfg, OP_IOR, MONO_LVREG_LS (ins->dreg), MONO_LVREG_LS (ins->dreg), tmpreg);
+			allocated_vregs = TRUE;
+		}
+		break;
+	}
+	case OP_LSHL_IMM: {
+		if (COMPILE_LLVM (cfg))
+			break;
+		if (ins->inst_c1 == 32) {
+			/* just move the lower half to the upper and zero the lower word */
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, MONO_LVREG_MS (ins->dreg), MONO_LVREG_LS (ins->sreg1));
+			MONO_EMIT_NEW_ICONST (cfg, MONO_LVREG_LS (ins->dreg), 0);
+		} else if (ins->inst_c1 == 0) {
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, MONO_LVREG_LS (ins->dreg), MONO_LVREG_LS (ins->sreg1));
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, MONO_LVREG_MS (ins->dreg), MONO_LVREG_MS (ins->sreg1));
+		} else if (ins->inst_c1 > 32) {
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHL_IMM, MONO_LVREG_MS (ins->dreg), MONO_LVREG_LS (ins->sreg1), ins->inst_c1 - 32);
+			MONO_EMIT_NEW_ICONST (cfg, MONO_LVREG_LS (ins->dreg), 0);
+		} else {
+			guint32 tmpreg = alloc_ireg (cfg);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, tmpreg, MONO_LVREG_LS (ins->sreg1), 32 - ins->inst_c1);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHL_IMM, MONO_LVREG_MS (ins->dreg), MONO_LVREG_MS (ins->sreg1), ins->inst_c1);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHL_IMM, MONO_LVREG_LS (ins->dreg), MONO_LVREG_LS (ins->sreg1), ins->inst_c1);
+			MONO_EMIT_NEW_BIALU (cfg, OP_IOR, MONO_LVREG_MS (ins->dreg), MONO_LVREG_MS (ins->dreg), tmpreg);
+			allocated_vregs = TRUE;
+		}
+		break;
+	}
+#endif
 
 	default:
 		break;
@@ -338,16 +640,16 @@ mono_local_cprop (MonoCompile *cfg)
 				}
 
 				/* Constant propagation */
-				/* FIXME: Make is_inst_imm a macro */
-				/* FIXME: Make is_inst_imm take an opcode argument */
 				/* is_inst_imm is only needed for binops */
-				if ((((def->opcode == OP_ICONST) || ((sizeof (gpointer) == 8) && (def->opcode == OP_I8CONST))) &&
-					 (((srcindex == 0) && (ins->sreg2 == -1)) || mono_arch_is_inst_imm (def->inst_c0))) || 
+				if ((((def->opcode == OP_ICONST) || ((sizeof (gpointer) == 8) && (def->opcode == OP_I8CONST)) || (def->opcode == OP_PCONST)) &&
+					 (((srcindex == 0) && (ins->sreg2 == -1)))) ||
 					(!MONO_ARCH_USE_FPSTACK && (def->opcode == OP_R8CONST))) {
 					guint32 opcode2;
 
 					/* srcindex == 1 -> binop, ins->sreg2 == -1 -> unop */
-					if ((srcindex == 1) && (ins->sreg1 != -1) && defs [ins->sreg1] && (defs [ins->sreg1]->opcode == OP_ICONST) && defs [ins->sreg2]) {
+					if ((srcindex == 1) && (ins->sreg1 != -1) && defs [ins->sreg1] &&
+						((defs [ins->sreg1]->opcode == OP_ICONST) || defs [ins->sreg1]->opcode == OP_PCONST) &&
+						defs [ins->sreg2]) {
 						/* Both arguments are constants, perform cfold */
 						mono_constant_fold_ins (cfg, ins, defs [ins->sreg1], defs [ins->sreg2], TRUE);
 					} else if ((srcindex == 0) && (ins->sreg2 != -1) && defs [ins->sreg2]) {
@@ -365,7 +667,7 @@ mono_local_cprop (MonoCompile *cfg)
 					}
 
 					opcode2 = mono_op_to_op_imm (ins->opcode);
-					if ((opcode2 != -1) && mono_arch_is_inst_imm (def->inst_c0) && ((srcindex == 1) || (ins->sreg2 == -1))) {
+					if ((opcode2 != -1) && mono_arch_is_inst_imm (ins->opcode, opcode2, def->inst_c0) && ((srcindex == 1) || (ins->sreg2 == -1))) {
 						ins->opcode = opcode2;
 						if ((def->opcode == OP_I8CONST) && (sizeof (gpointer) == 4)) {
 							ins->inst_ls_word = def->inst_ls_word;
@@ -398,7 +700,7 @@ mono_local_cprop (MonoCompile *cfg)
 						}
 #endif
 						opcode2 = mono_load_membase_to_load_mem (ins->opcode);
-						if ((srcindex == 0) && (opcode2 != -1) && mono_arch_is_inst_imm (def->inst_c0)) {
+						if ((srcindex == 0) && (opcode2 != -1) && mono_arch_is_inst_imm (ins->opcode, opcode2, def->inst_c0)) {
 							ins->opcode = opcode2;
 							ins->inst_imm = def->inst_c0 + ins->inst_offset;
 							ins->sreg1 = -1;
@@ -439,6 +741,9 @@ mono_local_cprop (MonoCompile *cfg)
 					dummy_arg1.inst_c0 = 1;
 
 					mono_constant_fold_ins (cfg, ins, &dummy_arg1, NULL, TRUE);
+				} else if (srcindex == 0 && ins->opcode == OP_COMPARE && defs [ins->sreg1]->opcode == OP_PCONST && defs [ins->sreg2] && defs [ins->sreg2]->opcode == OP_PCONST) {
+					/* typeof(T) == typeof(..) */
+					mono_constant_fold_ins (cfg, ins, defs [ins->sreg1], defs [ins->sreg2], TRUE);
 				}
 			}
 
@@ -486,13 +791,13 @@ mono_local_cprop (MonoCompile *cfg)
 					ins->inst_destbasereg = def->sreg1;
 					ins->inst_offset += def->inst_imm;
 				}
+
+				if (!MONO_IS_STORE_MEMBASE (ins) && !vreg_is_volatile (cfg, ins->dreg)) {
+					defs [ins->dreg] = ins;
+					def_index [ins->dreg] = ins_index;
+				}
 			}
 			
-			if ((spec [MONO_INST_DEST] != ' ') && !MONO_IS_STORE_MEMBASE (ins) && !vreg_is_volatile (cfg, ins->dreg)) {
-				defs [ins->dreg] = ins;
-				def_index [ins->dreg] = ins_index;
-			}
-
 			if (MONO_IS_CALL (ins))
 				last_call_index = ins_index;
 
@@ -704,4 +1009,8 @@ mono_local_deadce (MonoCompile *cfg)
 	//mono_print_code (cfg, "AFTER LOCAL-DEADCE");
 }
 
-#endif /* DISABLE_JIT */
+#else /* !DISABLE_JIT */
+
+MONO_EMPTY_SOURCE_FILE (local_propagation);
+
+#endif /* !DISABLE_JIT */

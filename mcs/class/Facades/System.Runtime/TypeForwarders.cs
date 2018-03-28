@@ -293,3 +293,6 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.CompilerServices.IsConst))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.TypeCode))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.UriFormatException))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.CompilerServices.ConditionalWeakTable<,>))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.GCHandle))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.GCHandleType))]

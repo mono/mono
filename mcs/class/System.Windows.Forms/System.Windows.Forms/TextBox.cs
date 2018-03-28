@@ -69,12 +69,11 @@ namespace System.Windows.Forms {
 			this.RightToLeftChanged += new EventHandler (TextBox_RightToLeftChanged);
 			MouseWheel += new MouseEventHandler (TextBox_MouseWheel);
 
-			BackColor = ThemeEngine.Current.ColorControl;
-			ForeColor = ThemeEngine.Current.ColorControlText;
+			BackColor = ThemeEngine.Current.ColorWindow;
+			ForeColor = ThemeEngine.Current.ColorWindowText;
 			backcolor_set = false;
 
 			SetStyle (ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
-			SetStyle (ControlStyles.FixedHeight, true);
 
 			undo = new MenuItem(Locale.GetText("&Undo"));
 			cut = new MenuItem(Locale.GetText("Cu&t"));
@@ -346,7 +345,11 @@ namespace System.Windows.Forms {
 				document.GetLine (i).Alignment = new_alignment;
 			}
 
-			document.RecalculateDocument (CreateGraphicsInternal ());
+			if (!IsHandleCreated)
+				return;
+
+			using (var graphics = CreateGraphics())
+				document.RecalculateDocument (graphics);
 
 			Invalidate ();	// Make sure we refresh
 		}
@@ -450,6 +453,7 @@ namespace System.Windows.Forms {
 						document.PasswordChar = PasswordChar.ToString ();
 					else
 						document.PasswordChar = string.Empty;
+					this.CalculateDocument();
 					Invalidate ();
 				}
 			}
@@ -504,6 +508,7 @@ namespace System.Windows.Forms {
 						document.PasswordChar = string.Empty;
 					}
 					this.CalculateDocument();
+					Invalidate();
 				}
 			}
 		}
@@ -789,6 +794,8 @@ namespace System.Windows.Forms {
 
 				is_visible = false;
 				InternalBorderStyle = BorderStyle.FixedSingle;
+
+				SetTopLevel (true);
 			}
 
 			protected override CreateParams CreateParams {

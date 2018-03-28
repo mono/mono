@@ -33,79 +33,11 @@ using System.Net;
 using System.Runtime.InteropServices;
 
 namespace System.Net.NetworkInformation {
-	public class IPAddressCollection : ICollection<IPAddress>, IEnumerable<IPAddress>, IEnumerable {
-		IList <IPAddress> list = new List<IPAddress> ();
 
-		protected internal IPAddressCollection ()
-		{
-		}
-
-		internal void SetReadOnly ()
-		{
-			if (!IsReadOnly)
-				list = ((List<IPAddress>) list).AsReadOnly ();
-		}
-
-		public virtual void Add (IPAddress address)
-		{
-			if (IsReadOnly)
-				throw new NotSupportedException ("The collection is read-only.");
-			list.Add (address);
-		}
-
-		public virtual void Clear ()
-		{
-			if (IsReadOnly)
-				throw new NotSupportedException ("The collection is read-only.");
-			list.Clear ();
-		}
-
-		public virtual bool Contains (IPAddress address)
-		{
-			return list.Contains (address);
-		}
-
-		public virtual void CopyTo (IPAddress [] array, int offset)
-		{
-			list.CopyTo (array, offset);
-		}
-
-		public virtual IEnumerator<IPAddress> GetEnumerator ()
-		{
-			return ((IEnumerable<IPAddress>)list).GetEnumerator ();
-		}
-
-		public virtual bool Remove (IPAddress address)
-		{
-			if (IsReadOnly)
-				throw new NotSupportedException ("The collection is read-only.");
-			return list.Remove (address);
-		}
-
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return list.GetEnumerator ();
-		}
-
-		public virtual int Count {
-			get { return list.Count; }
-		}
-
-		public virtual bool IsReadOnly {
-			get { return list.IsReadOnly; }
-		}
-
-		public virtual IPAddress this [int index] {
-			get { return list [index]; }
-		}
-	}
-
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32IPAddressCollection : IPAddressCollection
 	{
 		public static readonly Win32IPAddressCollection Empty = new Win32IPAddressCollection (IntPtr.Zero);
-
-		bool is_readonly;
 
 		// for static methods
 		Win32IPAddressCollection ()
@@ -116,7 +48,6 @@ namespace System.Net.NetworkInformation {
 		{
 			foreach (IntPtr head in heads)
 				AddSubsequentlyString (head);
-			is_readonly = true;
 		}
 
 		public Win32IPAddressCollection (params Win32_IP_ADDR_STRING [] al)
@@ -124,10 +55,9 @@ namespace System.Net.NetworkInformation {
 			foreach (Win32_IP_ADDR_STRING a in al) {
 				if (String.IsNullOrEmpty (a.IpAddress))
 					continue;
-				Add (IPAddress.Parse (a.IpAddress));
+				InternalAdd (IPAddress.Parse (a.IpAddress));
 				AddSubsequentlyString (a.Next);
 			}
-			is_readonly = true;
 		}
 
 		public static Win32IPAddressCollection FromAnycast (IntPtr ptr)
@@ -136,9 +66,8 @@ namespace System.Net.NetworkInformation {
 			Win32_IP_ADAPTER_ANYCAST_ADDRESS a;
 			for (IntPtr p = ptr; p != IntPtr.Zero; p = a.Next) {
 				a = (Win32_IP_ADAPTER_ANYCAST_ADDRESS) Marshal.PtrToStructure (p, typeof (Win32_IP_ADAPTER_ANYCAST_ADDRESS));
-				c.Add (a.Address.GetIPAddress ());
+				c.InternalAdd (a.Address.GetIPAddress ());
 			}
-			c.is_readonly = true;
 			return c;
 		}
 
@@ -150,9 +79,8 @@ namespace System.Net.NetworkInformation {
 				a = (Win32_IP_ADAPTER_DNS_SERVER_ADDRESS) Marshal.PtrToStructure (p, typeof (Win32_IP_ADAPTER_DNS_SERVER_ADDRESS));
 // FIXME: It somehow fails here. Looks like there is something wrong.
 //if (a.Address.Sockaddr == IntPtr.Zero) throw new Exception ("pointer " + p + " a.length " + a.Address.SockaddrLength);
-				c.Add (a.Address.GetIPAddress ());
+				c.InternalAdd (a.Address.GetIPAddress ());
 			}
-			c.is_readonly = true;
 			return c;
 		}
 
@@ -161,12 +89,8 @@ namespace System.Net.NetworkInformation {
 			Win32_IP_ADDR_STRING a;
 			for (IntPtr p = head; p != IntPtr.Zero; p = a.Next) {
 				a = (Win32_IP_ADDR_STRING) Marshal.PtrToStructure (p, typeof (Win32_IP_ADDR_STRING));
-				Add (IPAddress.Parse (a.IpAddress));
+				InternalAdd (IPAddress.Parse (a.IpAddress));
 			}
-		}
-
-		public override bool IsReadOnly {
-			get { return is_readonly; }
 		}
 	}
 #endif

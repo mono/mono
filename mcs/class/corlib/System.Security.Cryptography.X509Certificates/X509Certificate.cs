@@ -48,7 +48,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	// and/or Authenticode certs. However this class works with older
 	// X509v1 certificates and non-authenticode (code signing) certs.
 	[Serializable]
-#if NET_2_1
+#if MOBILE
 	public partial class X509Certificate {
 #else
 	public partial class X509Certificate : IDeserializationCallback, ISerializable {
@@ -111,19 +111,15 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		internal X509Certificate (X509CertificateImpl impl)
 		{
-			if (impl == null)
-				throw new ArgumentNullException ("impl");
-
 			this.impl = X509Helper.InitFromCertificate (impl);
 		}
 
-		public X509Certificate (System.Security.Cryptography.X509Certificates.X509Certificate cert) 
+		public X509Certificate (X509Certificate cert) 
 		{
 			if (cert == null)
 				throw new ArgumentNullException ("cert");
 
 			impl = X509Helper.InitFromCertificate (cert);
-			hideDates = false;
 		}
 
 		internal void ImportHandle (X509CertificateImpl impl)
@@ -134,7 +130,6 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		internal X509CertificateImpl Impl {
 			get {
-				X509Helper.ThrowIfContextInvalid (impl);
 				return impl;
 			}
 		}

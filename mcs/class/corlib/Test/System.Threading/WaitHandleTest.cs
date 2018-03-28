@@ -28,6 +28,8 @@
 
 
 using System;
+using System.Diagnostics;
+using System.Collections.Generic;
 using System.Threading;
 
 using NUnit.Framework;
@@ -315,6 +317,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void InterrupedWaitAny ()
 		{
 			using (var m1 = new Mutex (true)) {
@@ -343,6 +346,7 @@ namespace MonoTests.System.Threading {
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void InterrupedWaitAll ()
 		{
 			using (var m1 = new Mutex (true)) {
@@ -371,6 +375,7 @@ namespace MonoTests.System.Threading {
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void InterrupedWaitOne ()
 		{
 			using (var m1 = new Mutex (true)) {
@@ -395,8 +400,155 @@ namespace MonoTests.System.Threading {
 			}
 		}
 
+		[Test]
+		[Category ("MultiThreaded")]
+		public void WaitOneWithAbandonedMutex ()
+		{
+			using (var m = new Mutex (false)) {
+				var thread1 = new Thread (() => {
+					m.WaitOne ();
+				});
+				thread1.Start ();
+				thread1.Join (1000);
+				try {
+					m.WaitOne ();
+					Assert.Fail ("Expected AbandonedMutexException");
+				} catch (AbandonedMutexException) {
+				}
+				// Current thread should own the Mutex now
+				var signalled = false;
+				var thread2 = new Thread (() => {
+					signalled = m.WaitOne (100);
+				});
+				thread2.Start ();
+				thread2.Join (1000);
+				Assert.IsFalse (signalled);
+
+				// Since this thread owns the Mutex releasing it shouldn't fail
+				m.ReleaseMutex ();
+				// The Mutex should now be unowned
+				try {
+					m.ReleaseMutex ();
+					Assert.Fail ("Expected ApplicationException");
+				} catch (ApplicationException) {
+				}
+			}
+		}
+
+		[Test]
+		[Category ("MultiThreaded")]
+		public void WaitOneWithAbandonedMutexAndMultipleThreads ()
+		{
+			using (var m = new Mutex (true)) {
+				var nonAbandoned = 0;
+				var abandoned = 0;
+				var n = 0;
+				var threads = new List<Thread> ();
+				for (int i = 0; i < 50; i++) {
+					var thread = new Thread (() => {
+						try {
+							m.WaitOne ();
+							nonAbandoned++;
+						} catch (AbandonedMutexException) {
+							abandoned++;
+						}
+						if (((n++) % 5) != 0)
+							m.ReleaseMutex ();
+					});
+					thread.Start ();
+					threads.Add (thread);
+				}
+				m.ReleaseMutex ();
+				foreach (var thread in threads) {
+					if (!thread.Join (1000)) {
+						Assert.Fail ("Timed out");
+					}
+				}
+				Assert.AreEqual (40, nonAbandoned);
+				Assert.AreEqual (10, abandoned);
+			}
+		}
+
+		[Test]
+		[Category ("MultiThreaded")]
+		public void WaitAnyWithSecondMutexAbandoned ()
+		{
+			using (var m1 = new Mutex (false)) {
+				using (var m2 = new Mutex (false)) {
+					var mainProceed = false;
+					var thread2Proceed = false;
+					var thread1 = new Thread (() => {
+						m2.WaitOne ();
+					});
+					var thread2 = new Thread (() => {
+						m1.WaitOne ();
+						mainProceed = true;
+						while (!thread2Proceed) {
+							Thread.Sleep (10);
+						}
+						m1.ReleaseMutex ();
+					});
+					thread1.Start ();
+					thread1.Join (1000);
+					thread2.Start ();
+					while (!mainProceed) {
+						Thread.Sleep (10);
+					}
+					try {
+						WaitHandle.WaitAny (new WaitHandle [] { m1, m2 });
+						Assert.Fail ("Expected AbandonedMutexException");
+					} catch (AbandonedMutexException e) {
+						Assert.AreEqual (1, e.MutexIndex);
+						Assert.AreEqual (m2, e.Mutex);
+					} finally {
+						thread2Proceed = true;
+						thread2.Join (1000);
+					}
+
+					// Current thread should own the second Mutex now
+					var signalled = -1;
+					var thread3 = new Thread (() => {
+						signalled = WaitHandle.WaitAny (new WaitHandle [] { m1, m2 }, 0);
+					});
+					thread3.Start ();
+					thread3.Join (1000);
+					Assert.AreEqual (0, signalled);
+
+					// Since this thread owns the second Mutex releasing it shouldn't fail
+					m2.ReleaseMutex ();
+					// Second Mutex should now be unowned
+					try {
+						m2.ReleaseMutex ();
+						Assert.Fail ("Expected ApplicationException");
+					} catch (ApplicationException) {
+					}
+					// .NET allows the first Mutex which is now abandoned to be released multiple times by this thread
+					m1.ReleaseMutex ();
+					m1.ReleaseMutex ();
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (AbandonedMutexException))]
+		[Category ("MultiThreaded")]
+		public void WaitAllWithOneAbandonedMutex ()
+		{
+			using (var m1 = new Mutex (false)) {
+				using (var m2 = new Mutex (false)) {
+					var thread = new Thread (() => {
+						m1.WaitOne ();
+					});
+					thread.Start ();
+					thread.Join (1000);
+					WaitHandle.WaitAll (new WaitHandle [] { m1, m2 });
+				}
+			}
+		}
+
 #if MONO_FEATURE_THREAD_SUSPEND_RESUME
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitOneWithTimeoutAndSpuriousWake ()
 		{
 			/* This is to test that WaitEvent.WaitOne is not going to wait largely
@@ -415,8 +567,8 @@ namespace MonoTests.System.Threading {
 
 				Thread.Sleep (10); // wait a bit so we enter mre.WaitOne
 
-				DateTime end = DateTime.Now.AddMilliseconds (500);
-				while (DateTime.Now < end) {
+				var sw = Stopwatch.StartNew ();
+				while (sw.ElapsedMilliseconds <= 500) {
 					thread.Suspend ();
 					thread.Resume ();
 				}
@@ -426,6 +578,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitAnyWithTimeoutAndSpuriousWake ()
 		{
 			/* This is to test that WaitEvent.WaitAny is not going to wait largely
@@ -445,8 +598,8 @@ namespace MonoTests.System.Threading {
 
 				Thread.Sleep (10); // wait a bit so we enter WaitHandle.WaitAny ({mre1, mre2})
 
-				DateTime end = DateTime.Now.AddMilliseconds (500);
-				while (DateTime.Now < end) {
+				var sw = Stopwatch.StartNew ();
+				while (sw.ElapsedMilliseconds <= 500) {
 					thread.Suspend ();
 					thread.Resume ();
 				}
@@ -456,6 +609,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitAllWithTimeoutAndSpuriousWake ()
 		{
 			/* This is to test that WaitEvent.WaitAll is not going to wait largely
@@ -475,8 +629,8 @@ namespace MonoTests.System.Threading {
 
 				Thread.Sleep (10); // wait a bit so we enter WaitHandle.WaitAll ({mre1, mre2})
 
-				DateTime end = DateTime.Now.AddMilliseconds (500);
-				while (DateTime.Now < end) {
+				var sw = Stopwatch.StartNew ();
+				while (sw.ElapsedMilliseconds <= 500) {
 					thread.Suspend ();
 					thread.Resume ();
 				}
@@ -485,6 +639,19 @@ namespace MonoTests.System.Threading {
 			}
 		}
 #endif // MONO_FEATURE_THREAD_SUSPEND_RESUME
+
+		[Test]
+		public static void SignalAndWait()
+		{
+			using (var eventToSignal = new AutoResetEvent (false))
+			using (var eventToWait = new AutoResetEvent (false))
+			{
+				eventToWait.Set ();
+
+				Assert.IsTrue (WaitHandle.SignalAndWait (eventToSignal, eventToWait), "#1");
+				Assert.IsTrue (eventToSignal.WaitOne (), "#2");
+			}
+		}
 	}
 }
 

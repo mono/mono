@@ -1,6 +1,42 @@
 #!/usr/bin/env python
 
-# Mimics GNU timeout, but does some fancy tracking based on custom features in mono nunit24.
+# Mimics GNU timeout, but has special modes which gather test result data and retry failed tests.
+
+######################################### How this works ##########################################
+#
+# Because we have several different test harnesses and we don't invoke them directly, communication
+# between this script and the harness is done through the simplest means possible (environment
+# variables to communicate babysitter->harness, files in standard locations harness->babysitter).
+#
+# The script supports three different ways of extracting test data from the invoked test suite:
+#
+# 1. "The babysitter protocol": The babysitter sets five environment variables (see below):
+#        "Ran test file": A path to a file where the harness should write a line-delimited list of
+#            tests which ran to completion.
+#        "Failed test file": A path to a file where the harness should write a line-delimited list
+#            of tests that failed.
+#        "Current test file": A path to a file where the harness should write the currently running
+#            test before a test begins, then delete afterward (used to detect early termination).
+#        "Run test": A list of test names, used by:
+#        "Run mode": This is either RUN or EXCLUDE. If RUN, the test list is a whitelist; run only
+#            those tests. If EXCLUDE, the list is a blacklist; run all except those tests.
+#    This is the most featureful mode: It can report where we failed in the case of timeouts or
+#    crashes that take down the harness, and if the feature is enabled it can retry failed tests.
+#    However, it requires modification to the test harness.
+#
+# 2. NUnit XML: The babysitter also sets a sixth environment variable:
+#        "XML list file": A path to a file where the harness should write a line-delimited list of
+#        paths to NUnit-format XML result files it created.
+#    This also requires modification to the test harness, but less of it.
+#
+# 3. NUnit XML (manually specified): If the test harness can't be modified, but the caller of the
+#    babysitter script happens to know where the harness writes its result XML files, the caller
+#    can specify those paths in the "Extra XML" environment variable (see --help)
+#
+# A single babysitter invocation can currently handle either the babysitter protocol or the XML,
+# but never a mix of the two.
+#
+###################################################################################################
 
 import argparse
 import subprocess
@@ -13,21 +49,17 @@ import copy
 import tempfile
 import calendar
 import json
+import platform
+from xml.dom.minidom import parse as xmlparse
 
 ### Constants
-
-# Here is how the communication with nunit works. It has to work with two constraints:
-# - We don't invoke nunit directly. We invoke some Makefile which invokes some other Makefile
-#   and at some point down the line someone calls nunit.
-# - nunit has to be able to report back to us even if (especially if) it terminates improperly.
-# To deal with all this, communication babysitter->nunit is done by environment variables,
-# and communication nunit->babysitter is done by leaving behind files in known locations.
 
 # Filenames
 
 CURRENT_TEST_FILE = "babysitter_report_current_test_file.txt"
 RAN_TEST_FILE     = "babysitter_report_ran_test_file.txt"
 FAILED_TEST_FILE  = "babysitter_report_failed_test_file.txt"
+XML_LIST_FILE     = "babysitter_report_xml_list_file.txt"
 LOGGING_FILE      = "babysitter_report.json_lines"
 
 # Environment keys
@@ -36,11 +68,13 @@ LOGGING_FILE      = "babysitter_report.json_lines"
 CURRENT_TEST_KEY  = 'MONO_BABYSITTER_NUNIT_CURRENT_TEST_FILE' # Tell nunit where to leave files
 RAN_TEST_KEY      = 'MONO_BABYSITTER_NUNIT_RAN_TEST_FILE'
 FAILED_TEST_KEY   = 'MONO_BABYSITTER_NUNIT_FAILED_TEST_FILE'
+XML_LIST_KEY      = 'MONO_BABYSITTER_NUNIT_XML_LIST_FILE'
 RUN_KEY           = 'MONO_BABYSITTER_NUNIT_RUN_TEST' # Semicolon-separated list of test names
-RUN_MODE_KEY      = 'MONO_BABYSITTER_NUNIT_RUN_MODE' # Equal to either RUN or AFTER
+RUN_MODE_KEY      = 'MONO_BABYSITTER_NUNIT_RUN_MODE' # Equal to either RUN or EXCLUDE
 
 # Keys used for script configuration (see --help text)
 LOG_FILE_KEY      = 'MONO_BABYSITTER_LOG_FILE'       # Path
+EXTRA_XML_KEY     = 'MONO_BABYSITTER_EXTRA_XML'      # Semicolon-separated list of paths
 RETRY_KEY         = 'MONO_BABYSITTER_RETRY'          # Equal to an integer
 VERBOSE_KEY       = 'MONO_BABYSITTER_VERBOSE'        # "Undocumented"-- used for debugging babysitter
 
@@ -51,6 +85,7 @@ INVOKE_JSON     = 'invocation'
 COUNT_JSON      = 'iteration'        # How many times was command executed?
 LIMIT_JSON      = 'failure_max'
 SUPPORT_JSON    = 'babysitter_protocol' # Was the test suite running with a babysitter-aware nunit?
+LOADED_XML_JSON = 'loaded_xml'          # True if we loaded result XML from the test suite
 FINAL_CODE_JSON = 'final_code'
 TESTS_JSON      = 'tests'         # Holds dictionary of (test case name)->(dict with TEST_ keys below)
 TEST_FAILURES         = 'normal_failures'
@@ -85,8 +120,9 @@ Durations are floating point numbers followed by an optional unit:\n
 'd' for days\n
 supported environment variables:
   %s: File to write logs to (as line-delimited JSON)
-  %s: If set to a number, failed test cases will be rerun this many times (NUnit test suites only)""" %
-		(LOG_FILE_KEY, RETRY_KEY),
+  %s: If set to a number, failed test cases will be rerun this many times (NUnit test suites only)
+  %s: Semicolon-separated list of additional NUnit XMLs to check for errors""" %
+		(LOG_FILE_KEY, RETRY_KEY, EXTRA_XML_KEY),
 	formatter_class=argparse.RawTextHelpFormatter)
 argparser.add_argument('-s', '--signal', dest='signal', metavar='signal', default='TERM',
 	help="Send this signal to the command on timeout, instead of TERM.")
@@ -131,7 +167,7 @@ def parse_duration(duration): # Accept units
 def parse_signal(sig):        # Accept names
 	if sig.isdigit():
 		return int(sig)
-	for k,v in signal.__dict__.iteritems():
+	for k,v in signal.__dict__.items():
 		if k == ("SIG%s" % sig):
 			return v
 	argparser.error("Could not understand signal name %s" % sig)
@@ -142,20 +178,44 @@ kill_after = parse_duration(args.kill_after) if args.kill_after is not None else
 timeout_signal = parse_signal(args.signal)
 command = args.command + extra_args
 
+# If we are running in Cygwin, Python will believe it is a UNIX application but Mono will be Windows.
+
+cygwin = platform.system().startswith("CYGWIN")
+
+def outgoingPath(path):
+	if cygwin: # Invoke cygpath and strip newline
+		return subprocess.check_output(["cygpath", "-w", path])[:-1]
+	return path
+
+def incomingPath(path):
+	if cygwin:
+		return subprocess.check_output(["cygpath", path])[:-1]
+	return path
+
+# Some of the things we put in global_env are paths. If we're in cygwin, we have to keep separate
+# local-use and env (mono use) copies of these keys.
+env_source = {}
+
 # Process environment
 global_env = copy.deepcopy( os.environ )
 
 verbose = VERBOSE_KEY in global_env
 logging = LOG_FILE_KEY in global_env
 logfile = global_env[LOG_FILE_KEY] if logging else None
+xml_list = global_env[EXTRA_XML_KEY].split(";") if EXTRA_XML_KEY in global_env and global_env[EXTRA_XML_KEY] else []
 crash_resuming = True # TODO: Consider exposing this option, or adding a retry_on_crash option.
 failmax = int(global_env[RETRY_KEY]) if RETRY_KEY in global_env else 0
 babysitting = True # If false, babysitter becomes a timeout clone with no env manipulation or anything.
 if babysitting:
 	babysitter_dir = tempfile.mkdtemp()
-	global_env[CURRENT_TEST_KEY] = os.path.join(babysitter_dir, CURRENT_TEST_FILE)
-	global_env[RAN_TEST_KEY]     = os.path.join(babysitter_dir, RAN_TEST_FILE)
-	global_env[FAILED_TEST_KEY]  = os.path.join(babysitter_dir, FAILED_TEST_FILE)
+	env_source[CURRENT_TEST_KEY] = os.path.join(babysitter_dir, CURRENT_TEST_FILE)
+	env_source[RAN_TEST_KEY]     = os.path.join(babysitter_dir, RAN_TEST_FILE)
+	env_source[FAILED_TEST_KEY]  = os.path.join(babysitter_dir, FAILED_TEST_FILE)
+	env_source[XML_LIST_KEY]     = os.path.join(babysitter_dir, XML_LIST_FILE)
+
+env_source_keys = [CURRENT_TEST_KEY, RAN_TEST_KEY, FAILED_TEST_KEY, XML_LIST_KEY]
+for key in env_source_keys:
+	global_env[key] = outgoingPath(env_source[key])
 
 have_unix_process_groups = 'killpg' in os.__dict__
 have_windows_process_groups = 'CREATE_NEW_PROCESS_GROUP' in subprocess.__dict__
@@ -188,7 +248,10 @@ def send_signal(proc, sig):
 		# For compatibility with GNU timeout, pre-send the signal to just the monitored process
 		os.kill(proc.pid, sig)
 		# Send signal to entire group
-		os.killpg(proc.pid, sig)
+		try:
+			os.killpg(proc.pid, sig)
+		except OSError as e:
+			sys.stderr.write("%s: Warning, could not kill process group %s because %s\n" % (scriptname, proc.pid, e))
 		# For compatibility with GNU Timeout, send a SIGCONT after the signal
 		# (so delivery has a chance to occur even for stopped processes)
 		if sig != signal.SIGKILL and sig != signal.SIGCONT:
@@ -251,7 +314,7 @@ def run(): # Returns exit code
 
 	# Set up logging
 	log = {DATE_JSON: posixtime(), COUNT_JSON:0, LIMIT_JSON:failmax, SUPPORT_JSON:False,
-		INVOKE_JSON: " ".join(command)}
+		LOADED_XML_JSON:False, INVOKE_JSON: " ".join(command)}
 
 	def log_value(key, set=None, add=None, target=log): # Call to add toplevel value to log
 		if add is not None:
@@ -281,8 +344,8 @@ def run(): # Returns exit code
 
 			# Prepare environment/filesystem
 			if babysitting:
-				for key in [CURRENT_TEST_KEY, RAN_TEST_KEY, FAILED_TEST_KEY]:
-					attemptDelete(env[key])
+				for key in env_source_keys: # Clear all paths intended for use by mono
+					attemptDelete(env_source[key])
 				if resume_after:
 					env[RUN_KEY] = ";".join(resume_after)
 					env[RUN_MODE_KEY] = "EXCLUDE"
@@ -319,9 +382,10 @@ def run(): # Returns exit code
 			# 4. The suite crashed partway through a run with a whitelist:
 			#   Rerun, using a whitelist consisting of the previous whitelist minus successful testcases.
 
-			crashed_at = attemptFirstLine(env[CURRENT_TEST_KEY])
-			failed_tests = attemptLines(env[FAILED_TEST_KEY])
-			ran_tests = attemptLines(env[RAN_TEST_KEY])
+			crashed_at = attemptFirstLine(env_source[CURRENT_TEST_KEY])
+			failed_tests = attemptLines(env_source[FAILED_TEST_KEY])
+			ran_tests = attemptLines(env_source[RAN_TEST_KEY])
+			wrote_xml = attemptLines(env_source[XML_LIST_KEY])
 			bailout = False
 
 			if crashed_at or failed_tests or ran_tests: # Test suite follows the babysitter protocol
@@ -374,11 +438,40 @@ def run(): # Returns exit code
 					message += " Test suite terminated with code %d, " % (code)
 					if log[SUPPORT_JSON]:
 						message += "but failure did not occur during a test case. Halting."
+					elif xml_list or wrote_xml:
+						message += "will extract test results from XML. Halting."
 					else:
 						message += "and suite cannot report test case data. Halting."
 				elif bailout:
 					message += " Will halt testing."
 				print(message)
+
+			if not log[SUPPORT_JSON]:
+				for xml in (xml_list + [incomingPath(xml) for xml in wrote_xml]):
+					verbose_print("Will attempt to load XML from %s" % (xml))
+					try:
+						data = xmlparse(xml).documentElement
+						if data.nodeName != 'test-results':
+							raise ValueError("Toplevel element was not <test-results />")
+
+						log_value(LOADED_XML_JSON, True)
+
+						search = [data]
+						while search:
+							nextsearch = []
+							for node in search:
+								for child in node.childNodes:
+									if child.nodeName == 'test-suite' or child.nodeName == 'results':
+										nextsearch.append(child) # Descend
+									elif child.nodeName == 'test-case':
+										name = child.getAttribute("name")
+										if child.getAttribute("executed") == "True" and child.getAttribute("success") != "True":
+											log_test(name, TEST_FAILURES, add=1)
+
+							search = nextsearch
+					except Exception as e:
+						print("Could not load XML file %s. Reason: %s" % (xml, e))
+					data
 
 			if bailout or not (resume_after or retry_next): # If not retrying
 				return code

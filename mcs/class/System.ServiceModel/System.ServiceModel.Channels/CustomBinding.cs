@@ -43,8 +43,8 @@ namespace System.ServiceModel.Channels
 		ISecurityCapabilities security;
 		string scheme = "";
 
-		public CustomBinding (string name)
-			: this (name, default_ns)
+		public CustomBinding (string configurationName)
+			: this (configurationName, default_ns)
 		{
 		}
 
@@ -68,19 +68,19 @@ namespace System.ServiceModel.Channels
 			security = binding as ISecurityCapabilities;
 		}
 
-		public CustomBinding (params BindingElement [] binding)
-			: this ("CustomBinding", default_ns, binding)
+		public CustomBinding (params BindingElement [] bindingElementsInTopDownChannelStackOrder)
+			: this ("CustomBinding", default_ns, bindingElementsInTopDownChannelStackOrder)
 		{
 		}
 
-		public CustomBinding (IEnumerable<BindingElement> bindingElements)
-			: this (bindingElements, "CustomBinding", default_ns)
+		public CustomBinding (IEnumerable<BindingElement> bindingElementsInTopDownChannelStackOrder)
+			: this (bindingElementsInTopDownChannelStackOrder, "CustomBinding", default_ns)
 		{
 		}
 
 		public CustomBinding (string name, string ns,
-			params BindingElement [] binding)
-			: this (binding, name, ns)
+			params BindingElement [] bindingElementsInTopDownChannelStackOrder)
+			: this (bindingElementsInTopDownChannelStackOrder, name, ns)
 		{
 		}
 

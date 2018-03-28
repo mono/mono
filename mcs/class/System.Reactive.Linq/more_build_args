@@ -1,4 +1,0 @@
--d:SIGNED
--delaysign
--keyfile:../reactive.pub
--resource:Strings_Linq.resources,System.Reactive.Strings_Linq.resources

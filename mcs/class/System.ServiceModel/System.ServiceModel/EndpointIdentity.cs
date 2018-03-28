@@ -110,9 +110,9 @@ namespace System.ServiceModel
 			return new X509CertificateEndpointIdentity (primaryCertificate, supportingCertificates);
 		}
 
-		public override bool Equals (object other)
+		public override bool Equals (object obj)
 		{
-			EndpointIdentity e = other as EndpointIdentity;
+			EndpointIdentity e = obj as EndpointIdentity;
 			return e != null && comparer.Equals (claim, e.claim);
 		}
 
@@ -126,19 +126,19 @@ namespace System.ServiceModel
 			return String.Concat ("identity(", claim, ")");
 		}
 
-		protected void Initialize (Claim claim)
+		protected void Initialize (Claim identityClaim)
 		{
-			Initialize (claim, Claim.DefaultComparer);
+			Initialize (identityClaim, Claim.DefaultComparer);
 		}
 
-		protected void Initialize (Claim claim, IEqualityComparer<Claim> comparer)
+		protected void Initialize (Claim identityClaim, IEqualityComparer<Claim> claimComparer)
 		{
-			if (claim == null)
-				throw new ArgumentNullException ("claim");
-			if (comparer == null)
-				throw new ArgumentNullException ("comparer");
-			this.claim = claim;
-			this.comparer = comparer;
+			if (identityClaim == null)
+				throw new ArgumentNullException ("identityClaim");
+			if (claimComparer == null)
+				throw new ArgumentNullException ("claimComparer");
+			this.claim = identityClaim;
+			this.comparer = claimComparer;
 		}
 	}
 }

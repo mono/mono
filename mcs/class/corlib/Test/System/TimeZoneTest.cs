@@ -14,6 +14,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Globalization;
+using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MonoTests.System {
@@ -23,8 +24,8 @@ public class TimeZoneTest {
 
 	private void CET (TimeZone t1) 
 	{
-		Assert.AreEqual("CET", t1.StandardName, "A01");
-		Assert.AreEqual("CEST", t1.DaylightName, "A02");
+		Assert.IsTrue("CET" == t1.StandardName || "W. Europe Standard Time" == t1.StandardName, "A01");
+		Assert.IsTrue("CEST" == t1.DaylightName || "W. Europe Daylight Time" == t1.DaylightName, "A02");
 	
 		DaylightTime d1 = t1.GetDaylightChanges (2002);
 		Assert.AreEqual("03/31/2002 02:00:00", d1.Start.ToString ("G", CultureInfo.InvariantCulture), "A03");
@@ -55,9 +56,8 @@ public class TimeZoneTest {
 
 	private void EST (TimeZone t1) 
 	{
-		// It could be EST though...
-		//Assert.AreEqual("Eastern Standard Time", t1.StandardName, "B01");
-		//Assert.AreEqual("Eastern Daylight Time", t1.DaylightName, "B02");
+		Assert.IsTrue("EST" == t1.StandardName || "Eastern Standard Time" == t1.StandardName, "B01");
+		Assert.IsTrue("EDT" == t1.DaylightName || "Eastern Daylight Time" == t1.DaylightName, "B02");
 
 		DaylightTime d1 = t1.GetDaylightChanges (2002);
 		Assert.AreEqual("04/07/2002 02:00:00", d1.Start.ToString ("G", CultureInfo.InvariantCulture), "B03");
@@ -174,6 +174,7 @@ public class TimeZoneTest {
 	{
 		TimeZone t1 = TimeZone.CurrentTimeZone;
 		switch (t1.StandardName) {
+			case "W. Europe Standard Time":
 			case "CET":
 				CET (t1);
 				break;
@@ -185,6 +186,10 @@ public class TimeZoneTest {
 				TST (t1);
 				break;
 			case "GMT":
+#if MONOTOUCH
+				if (string.IsNullOrEmpty (t1.DaylightName))
+					Assert.Ignore ("This test may fail due to: http://www.openradar.me/38174449");
+#endif
 				GMT (t1);
 				break;
 			case "NZST":
@@ -271,6 +276,48 @@ public class TimeZoneTest {
 	}
 
 		[Test]
+		public void GetUTCNowAtDSTBoundaries ()
+		{
+			TimeZoneInfo.TransitionTime startTransition = TimeZoneInfo.TransitionTime.CreateFloatingDateRule(new DateTime(1, 1, 1, 2, 0, 0), 3, 5, DayOfWeek.Sunday);
+
+			TimeZoneInfo.TransitionTime endTransition = TimeZoneInfo.TransitionTime.CreateFloatingDateRule(new DateTime(1, 1, 1, 3, 0, 0), 10, 5, DayOfWeek.Sunday);
+
+			TimeSpan delta = TimeSpan.FromMinutes(60.0);
+			TimeZoneInfo.AdjustmentRule adjustment = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule(new DateTime(1970, 1, 1), DateTime.MaxValue.Date, delta, startTransition, endTransition);
+			TimeZoneInfo.TransitionTime startTrans = adjustment.DaylightTransitionStart;
+			TimeZoneInfo.TransitionTime endTrans = adjustment.DaylightTransitionEnd;
+			TimeZoneInfo.AdjustmentRule[] adjustments = { adjustment };
+
+			TimeZoneInfo tzInfo = TimeZoneInfo.CreateCustomTimeZone("MY Standard Time", TimeSpan.Zero, "MST", "MST", "MDT", adjustments);
+
+			// There is no .NET API to set timezone. Use reflection to assign time zone to the TimeZoneInfo.local field.
+			FieldInfo localTimeZone = typeof(TimeZoneInfo).GetField("local", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
+			localTimeZone.SetValue(null, tzInfo);
+
+			DateTime st = new DateTime(2016, 3, 27, 1, 0, 0, DateTimeKind.Local);
+			Assert.IsTrue (!tzInfo.IsDaylightSavingTime(st));	
+			Assert.IsTrue (!tzInfo.IsAmbiguousTime(st));
+			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 1));
+			st = new DateTime(2016, 3, 27, 3, 0, 0, DateTimeKind.Local);
+			Assert.IsTrue (tzInfo.IsDaylightSavingTime(st));	
+			Assert.IsTrue (!tzInfo.IsAmbiguousTime(st));
+			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 2));
+			st = new DateTime(2016, 10, 30, 2, 0, 0, DateTimeKind.Local);
+			Assert.IsTrue (tzInfo.IsDaylightSavingTime(st));	
+			Assert.IsTrue (!tzInfo.IsAmbiguousTime(st));
+			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 1));
+			st = new DateTime(2016, 10, 30, 3, 0, 0, DateTimeKind.Local);
+			Assert.IsTrue (!tzInfo.IsDaylightSavingTime(st));	
+			Assert.IsTrue (tzInfo.IsAmbiguousTime(st));
+			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 3));
+			st = new DateTime(2016, 10, 30, 4, 0, 0, DateTimeKind.Local);
+			Assert.IsTrue (!tzInfo.IsDaylightSavingTime(st));	
+			Assert.IsTrue (!tzInfo.IsAmbiguousTime(st));
+			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 4));
+		}
+
+		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void GetUtcOffsetAtDSTBoundary ()
 		{
 			/*
@@ -302,11 +349,12 @@ public class TimeZoneTest {
 				Assert.Ignore (tz.StandardName + " did not observe daylight saving time during " + year + ".");
 
 			var standardOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(-1));
+			var dstOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(61));
 
-			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end));
-			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end.Add (daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(1)))));
-			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ())));
-			Assert.AreNotEqual(standardOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(-1)))));
+//			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end));
+			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add (daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(1)))));
+			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ())));
+			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(-1)))));
 		}
 
 
@@ -320,45 +368,33 @@ public class TimeZoneTest {
 		[Test]
 		public void FindSystemTimeZoneById ()
 		{
-			TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById ("Canada/Eastern");
-			Assert.AreEqual ("EDT", tzi.DaylightName, "DaylightName");
-			Assert.AreEqual ("EST", tzi.StandardName, "StandardName");
+			TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById (TimeZoneInfoTest.MapTimeZoneId ("Canada/Eastern"));
+			Assert.IsTrue ("EDT" == tzi.DaylightName || "Eastern Daylight Time" == tzi.DaylightName, "DaylightName");
+			Assert.IsTrue ("EST" == tzi.StandardName || "Eastern Standard Time" == tzi.StandardName, "StandardName");
 			Assert.IsTrue (tzi.SupportsDaylightSavingTime, "SupportsDaylightSavingTime");
 		}
 
-#if MOBILE
+		[Test]
+		public void OldEraToLocalTime ()
+		{
+			TimeSpan offset = TimeSpan.Zero;
+			var dto = new DateTimeOffset (new DateTime (1900, 1, 1).Ticks, offset);
+
+			// Should never throw
+			dto.ToLocalTime ();
+		}
+
+#if !WIN_PLATFORM
 		// On device we cannot read the OS file system to look for /etc/localtime
 		// and /usr/share/zoneinfo - so we must initialize the BCL TimeZoneInfo
 		// from NSTimeZoneInfo. The tests here check the code paths between the
 		// two types - if they break then TimeZoneInfo work work at all
 		// ref: http://bugzilla.xamarin.com/show_bug.cgi?id=1790
 		
-		bool incomplete_data_on_simulator_only_bug;
-
 		[Test]
 		public void GetSystemTimeZones ()
 		{
-			// if test is executed a second time then it report less than 400 (about 127) items available
-			if (incomplete_data_on_simulator_only_bug)
-				Assert.Ignore ("known to fail on some iOS simulator versions - see source comments");
-			
-			try {
-				Assert.That (TimeZoneInfo.GetSystemTimeZones ().Count, Is.GreaterThan (400), "GetSystemTimeZones");
-			} catch (NullReferenceException) {
-				// that's a weird one. It failed on iOS 5.1 *beta* simulator (on Lion) but it worked on *final*
-				// now it fails on Snow Leopard the same way (incomplete data) with iOS5 simulator (OS update ?)
-				// but it *never*ever* failed on devices
-				incomplete_data_on_simulator_only_bug = true;
-#if XAMCORE_2_0 || MONOTOUCH
-
-#if XAMCORE_2_0
-				if (ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR)
-#elif MONOTOUCH
-				if (MonoTouch.ObjCRuntime.Runtime.Arch == MonoTouch.ObjCRuntime.Arch.SIMULATOR)
-#endif
-					Assert.Ignore ("known to fail on some iOS simulator versions - see source comments");
-#endif // XAMCORE_2_0 || MONOTOUCH
-			}
+			Assert.That (TimeZoneInfo.GetSystemTimeZones ().Count, Is.GreaterThan (400), "GetSystemTimeZones");
 		}
 #endif
 	}

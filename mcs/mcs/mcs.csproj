@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <Commandlineparameters></Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -156,6 +157,7 @@
     <Compile Include="field.cs" />
     <Compile Include="typespec.cs" />
     <Compile Include="visit.cs" />
+    <Compile Include="tuples.cs" />
   </ItemGroup>
   <ItemGroup Label="IKVM.Reflection">
     <Compile Include="..\..\external\ikvm\reflect\*.cs">

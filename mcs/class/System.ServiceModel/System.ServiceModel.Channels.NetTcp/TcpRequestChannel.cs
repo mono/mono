@@ -82,7 +82,7 @@ namespace System.ServiceModel.Channels.NetTcp
 
 		public override Message Request (Message input, TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 
 			// FIXME: use timeouts.
 			frame.ProcessPreambleInitiator ();
@@ -95,13 +95,13 @@ namespace System.ServiceModel.Channels.NetTcp
 
 			Logger.LogMessage (MessageLogSourceKind.TransportSend, ref input, int.MaxValue); // It is not a receive buffer
 
-			frame.WriteUnsizedMessage (input, timeout - (DateTime.Now - start));
+			frame.WriteUnsizedMessage (input, timeout - (DateTime.UtcNow - start));
 
 			// LAMESPEC: it contradicts the protocol described at section 3.1.1.1.1 in [MC-NMF].
 			// Moving this WriteEndRecord() after ReadUnsizedMessage() causes TCP connection blocking.
 			frame.WriteEndRecord ();
 
-			var ret = frame.ReadUnsizedMessage (timeout - (DateTime.Now - start));
+			var ret = frame.ReadUnsizedMessage (timeout - (DateTime.UtcNow - start));
 
 			Logger.LogMessage (MessageLogSourceKind.TransportReceive, ref ret, info.BindingElement.MaxReceivedMessageSize);
 

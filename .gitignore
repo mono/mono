@@ -38,10 +38,14 @@ obj/
 [Rr]elease*/
 Ankh.NoLoad
 *.gpState
+.vscode/
+*.exp
+.vs/
 
 # Tooling
 _ReSharper*/
 *.resharper
+.idea/*
 [Tt]est[Rr]esult*
 *.orig
 *.rej

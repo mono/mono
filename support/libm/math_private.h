@@ -18,7 +18,13 @@
 #define	_MATH_PRIVATE_H_
 
 #include <sys/types.h>
+
+#if HAVE_MACHINE_ENDIAN_H
 #include <machine/endian.h>
+#elif HAVE_SYS_ENDIAN_H && HOST_ANDROID
+/* Android unified headers don't have machine/endian.h */
+#include <sys/endian.h>
+#endif
 
 /*
  * The original fdlibm code used statements like:

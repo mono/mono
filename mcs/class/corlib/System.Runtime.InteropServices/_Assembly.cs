@@ -87,7 +87,7 @@ namespace System.Runtime.InteropServices
 
 		string Location { get; }
 
-#if !NET_2_1
+#if !MOBILE
 		Evidence Evidence { get; }
 #endif
 
@@ -129,7 +129,7 @@ namespace System.Runtime.InteropServices
 
 		AssemblyName[] GetReferencedAssemblies ();
 
-#if !NET_2_1
+#if !MOBILE
 		bool GlobalAssemblyCache { get; }
 #endif
 

@@ -36,7 +36,7 @@ using System.ServiceModel.Security.Tokens;
 namespace System.ServiceModel.Channels
 {
 	public sealed class TransportSecurityBindingElement
-#if NET_2_1
+#if MOBILE
 		: SecurityBindingElement
 #else
 		: SecurityBindingElement, IPolicyExportExtension
@@ -65,7 +65,7 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		[MonoTODO]
 		protected override IChannelListener<TChannel>
 			BuildChannelListenerCore<TChannel> (

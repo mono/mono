@@ -64,7 +64,6 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public DataManipulator DataManipulator { get; private set;}
 		public Object DataSource { get; set; }
 		protected override Size DefaultSize { get { return base.DefaultSize; } }//FIXME
-		public Font Font { get; set; }
 		public override Color ForeColor { get; set; }
 		public NamedImagesCollection Images { get; private set;}
 		public bool IsSoftShadows { get; set; }
@@ -76,7 +75,6 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public double RenderingDpiY { get; set; }
 		public ChartSerializer Serializer { get; private set; }
 		public SeriesCollection Series { get; private set; }
-		public Size Size { get; set; }
 		public bool SuppressExceptions { get; set; }
 		public TextAntiAliasingQuality TextAntiAliasingQuality { get; set; }
 		public TitleCollection Titles { get; private set;}

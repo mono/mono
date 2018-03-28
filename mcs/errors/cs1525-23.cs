@@ -1,4 +1,4 @@
-// CS1525: Unexpected symbol `public', expecting `:', `;', or `{'
+// CS1525: Unexpected symbol `public', expecting `:', `;', `{', or `=>'
 // Line: 5
 
 class TorrentEditor {

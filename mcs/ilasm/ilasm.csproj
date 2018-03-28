@@ -35,7 +35,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="PEAPI">
-      <HintPath>..\class\lib\net_4_5\PEAPI.dll</HintPath>
+      <HintPath>..\class\lib\net_4_x\PEAPI.dll</HintPath>
     </Reference>
     <Reference Include="Mono.CompilerServices.SymbolWriter" />
     <Reference Include="Mono.Security" />

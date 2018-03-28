@@ -1,0 +1,2 @@
+#include Mono.Posix.dll.sources
+./Mono.Unix.Android/AndroidUtils.cs

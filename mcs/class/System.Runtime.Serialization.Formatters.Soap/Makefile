@@ -6,6 +6,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Runtime.Serialization.Formatters.Soap.dll
 LIB_REFS = System.Xml
+KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS =
 
 TEST_LIB_REFS = System

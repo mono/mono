@@ -24,12 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if !MONO_FEATURE_NEW_TLS
 #if SECURITY_DEP
 
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -39,19 +35,12 @@ using MonoSecurity::Mono.Security.Interface;
 #else
 using Mono.Security.Interface;
 #endif
-#if MONO_X509_ALIAS
-using XSslProtocols = PrebuiltSystem::System.Security.Authentication.SslProtocols;
-using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#else
-using XSslProtocols = System.Security.Authentication.SslProtocols;
-using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#endif
 
 using CipherAlgorithmType = System.Security.Authentication.CipherAlgorithmType;
 using HashAlgorithmType = System.Security.Authentication.HashAlgorithmType;
 using ExchangeAlgorithmType = System.Security.Authentication.ExchangeAlgorithmType;
+#endif
 
-using System;
 using System.IO;
 using System.Net;
 using System.Net.Security;
@@ -60,7 +49,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Security.Cryptography;
-
+using System.Threading;
 using System.Threading.Tasks;
 
 using MNS = Mono.Net.Security;
@@ -80,12 +69,13 @@ namespace System.Net.Security
 
 	internal delegate X509Certificate LocalCertSelectionCallback (
 		string targetHost,
-		XX509CertificateCollection localCertificates,
+		X509CertificateCollection localCertificates,
 		X509Certificate remoteCertificate,
 		string[] acceptableIssuers);
 
-	public class SslStream : AuthenticatedStream, MNS.IMonoSslStream
+	public class SslStream : AuthenticatedStream
 	{
+#if SECURITY_DEP
 		MonoTlsProvider provider;
 		IMonoSslStream impl;
 
@@ -105,7 +95,7 @@ namespace System.Net.Security
 
 		static MonoTlsProvider GetProvider ()
 		{
-			return MonoTlsProviderFactory.GetDefaultProvider ();
+			return MonoTlsProviderFactory.GetProvider ();
 		}
 
 		public SslStream (Stream innerStream)
@@ -117,7 +107,7 @@ namespace System.Net.Security
 			: base (innerStream, leaveInnerStreamOpen)
 		{
 			provider = GetProvider ();
-			impl = provider.CreateSslStream (innerStream, leaveInnerStreamOpen);
+			impl = provider.CreateSslStreamInternal (this, innerStream, leaveInnerStreamOpen, null);
 		}
 
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback)
@@ -135,10 +125,23 @@ namespace System.Net.Security
 			impl = provider.CreateSslStream (innerStream, leaveInnerStreamOpen, settings);
 		}
 
-		internal SslStream (Stream innerStream, bool leaveInnerStreamOpen, IMonoSslStream impl)
+		[MonoLimitation ("encryptionPolicy is ignored")]
+		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback, EncryptionPolicy encryptionPolicy)
+		: this (innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, userCertificateSelectionCallback)
+		{
+		}
+
+		internal SslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsProvider provider, MonoTlsSettings settings)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
-			this.impl = impl;
+			this.provider = provider;
+			impl = provider.CreateSslStreamInternal (this, innerStream, leaveInnerStreamOpen, settings);
+		}
+
+		internal static IMonoSslStream CreateMonoSslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsProvider provider, MonoTlsSettings settings)
+		{
+			var sslStream = new SslStream (innerStream, leaveInnerStreamOpen, provider, settings);
+			return sslStream.Impl;
 		}
 
 		public virtual void AuthenticateAsClient (string targetHost)
@@ -146,9 +149,9 @@ namespace System.Net.Security
 			Impl.AuthenticateAsClient (targetHost);
 		}
 
-		public virtual void AuthenticateAsClient (string targetHost, XX509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		public virtual void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			Impl.AuthenticateAsClient (targetHost, (XX509CertificateCollection)(object)clientCertificates, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
+			Impl.AuthenticateAsClient (targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation);
 		}
 
 		// [HostProtection (ExternalThreading=true)]
@@ -158,9 +161,9 @@ namespace System.Net.Security
 		}
 
 		// [HostProtection (ExternalThreading=true)]
-		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, XX509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
 		{
-			return Impl.BeginAuthenticateAsClient (targetHost, (XX509CertificateCollection)(object)clientCertificates, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation, asyncCallback, asyncState);
+			return Impl.BeginAuthenticateAsClient (targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation, asyncCallback, asyncState);
 		}
 
 		public virtual void EndAuthenticateAsClient (IAsyncResult asyncResult)
@@ -175,7 +178,7 @@ namespace System.Net.Security
 
 		public virtual void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			Impl.AuthenticateAsServer (serverCertificate, clientCertificateRequired, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
+			Impl.AuthenticateAsServer (serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation);
 		}
 
 		// [HostProtection (ExternalThreading=true)]
@@ -186,7 +189,7 @@ namespace System.Net.Security
 
 		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
 		{
-			return Impl.BeginAuthenticateAsServer (serverCertificate, clientCertificateRequired, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation, asyncCallback, asyncState);
+			return Impl.BeginAuthenticateAsServer (serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation, asyncCallback, asyncState);
 		}
 
 		public virtual void EndAuthenticateAsServer (IAsyncResult asyncResult)
@@ -206,9 +209,9 @@ namespace System.Net.Security
 			return Impl.AuthenticateAsClientAsync (targetHost);
 		}
 
-		public virtual Task AuthenticateAsClientAsync (string targetHost, XX509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		public virtual Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			return Impl.AuthenticateAsClientAsync (targetHost, clientCertificates, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
+			return Impl.AuthenticateAsClientAsync (targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation);
 		}
 
 		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate)
@@ -218,7 +221,12 @@ namespace System.Net.Security
 
 		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			return Impl.AuthenticateAsServerAsync (serverCertificate, clientCertificateRequired, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
+			return Impl.AuthenticateAsServerAsync (serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation);
+		}
+
+		public virtual Task ShutdownAsync ()
+		{
+			return Impl.ShutdownAsync ();
 		}
 
 		public override bool IsAuthenticated {
@@ -247,10 +255,6 @@ namespace System.Net.Security
 
 		public virtual bool CheckCertRevocationStatus {
 			get { return Impl.CheckCertRevocationStatus; }
-		}
-
-		X509Certificate MNS.IMonoSslStream.InternalLocalCertificate {
-			get { return Impl.InternalLocalCertificate; }
 		}
 
 		public virtual X509Certificate LocalCertificate {
@@ -290,15 +294,15 @@ namespace System.Net.Security
 		}
 
 		public override bool CanRead {
-			get { return Impl.CanRead; }
+			get { return impl != null && impl.CanRead; }
 		}
 
 		public override bool CanTimeout {
-			get { return Impl.CanTimeout; }
+			get { return InnerStream.CanTimeout; }
 		}
 
 		public override bool CanWrite {
-			get { return Impl.CanWrite; }
+			get { return impl != null && impl.CanWrite; }
 		}
 
 		public override int ReadTimeout {
@@ -332,9 +336,14 @@ namespace System.Net.Security
 			throw new NotSupportedException (SR.GetString (SR.net_noseek));
 		}
 
+		public override Task FlushAsync (CancellationToken cancellationToken)
+		{
+			return InnerStream.FlushAsync (cancellationToken);
+		}
+
 		public override void Flush ()
 		{
-			Impl.Flush ();
+			InnerStream.Flush ();
 		}
 
 		void CheckDisposed ()
@@ -391,28 +400,257 @@ namespace System.Net.Security
 		{
 			Impl.EndWrite (asyncResult);
 		}
-
-		AuthenticatedStream MNS.IMonoSslStream.AuthenticatedStream {
-			get { return this; }
-		}
-
-		MonoTlsProvider MNS.IMonoSslStream.Provider {
-			get { return provider; }
-		}
-
-		MonoTlsConnectionInfo MNS.IMonoSslStream.GetConnectionInfo ()
-		{
-			return Impl.GetConnectionInfo ();
-		}
-	}
-}
 #else // !SECURITY_DEP
-namespace System.Net.Security
-{
-	public class SslStream
-	{
+		const string EXCEPTION_MESSAGE = "System.Net.Security.SslStream is not supported on the current platform.";
+
+		public SslStream (Stream innerStream)
+			: this (innerStream, false)
+		{
+		}
+
+		public SslStream (Stream innerStream, bool leaveInnerStreamOpen)
+			: base (innerStream, leaveInnerStreamOpen)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback)
+			: this (innerStream, leaveInnerStreamOpen)
+		{
+		}
+
+		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback)
+			: this (innerStream, leaveInnerStreamOpen)
+		{
+		}
+
+		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback, EncryptionPolicy encryptionPolicy)
+			: this (innerStream, leaveInnerStreamOpen)
+		{
+		}
+
+		public virtual void AuthenticateAsClient (string targetHost)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public virtual void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public virtual void EndAuthenticateAsClient (IAsyncResult asyncResult)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public virtual void AuthenticateAsServer (X509Certificate serverCertificate)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public virtual void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public virtual void EndAuthenticateAsServer (IAsyncResult asyncResult)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public TransportContext TransportContext {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public virtual Task AuthenticateAsClientAsync (string targetHost)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public virtual Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public override bool IsAuthenticated {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public override bool IsMutuallyAuthenticated {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public override bool IsEncrypted {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public override bool IsSigned {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public override bool IsServer {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public virtual SslProtocols SslProtocol {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public virtual bool CheckCertRevocationStatus {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public virtual X509Certificate LocalCertificate {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public virtual X509Certificate RemoteCertificate {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public virtual CipherAlgorithmType CipherAlgorithm {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public virtual int CipherStrength {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public virtual HashAlgorithmType HashAlgorithm {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public virtual int HashStrength {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public virtual ExchangeAlgorithmType KeyExchangeAlgorithm {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public virtual int KeyExchangeStrength {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public override bool CanSeek {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public override bool CanRead {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public override bool CanTimeout {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public override bool CanWrite {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public override int ReadTimeout {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public override int WriteTimeout {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public override long Length {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public override long Position {
+			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
+		}
+
+		public override void SetLength (long value)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public override long Seek (long offset, SeekOrigin origin)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public override void Flush ()
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		protected override void Dispose (bool disposing)
+		{
+		}
+
+		public override int Read (byte[] buffer, int offset, int count)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public void Write (byte[] buffer)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public override void Write (byte[] buffer, int offset, int count)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public override IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public override int EndRead (IAsyncResult asyncResult)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+
+		public override void EndWrite (IAsyncResult asyncResult)
+		{
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+		}
+#endif
 	}
 }
-#endif
-
-#endif

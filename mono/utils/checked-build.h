@@ -1,5 +1,6 @@
-/*
- * checked-build.h: Expensive asserts used when mono is built with --with-checked-build=yes
+/**
+ * \file
+ * Expensive asserts used when mono is built with --with-checked-build=yes
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -12,6 +13,7 @@
 
 #include <config.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-publib.h>
 
 typedef enum {
@@ -105,15 +107,15 @@ Functions that can be called from both coop or preept modes.
 */
 
 #define MONO_REQ_GC_SAFE_MODE do {	\
-	assert_gc_safe_mode ();	\
+	assert_gc_safe_mode (__FILE__, __LINE__);	\
 } while (0);
 
 #define MONO_REQ_GC_UNSAFE_MODE do {	\
-	assert_gc_unsafe_mode ();	\
+	assert_gc_unsafe_mode (__FILE__, __LINE__);	\
 } while (0);
 
 #define MONO_REQ_GC_NEUTRAL_MODE do {	\
-	assert_gc_neutral_mode ();	\
+	assert_gc_neutral_mode (__FILE__, __LINE__);	\
 } while (0);
 
 /* In a GC critical region, the thread is not allowed to switch to GC safe mode.
@@ -139,9 +141,9 @@ Functions that can be called from both coop or preept modes.
 		assert_in_gc_critical_region();	\
 	} while(0)
 
-void assert_gc_safe_mode (void);
-void assert_gc_unsafe_mode (void);
-void assert_gc_neutral_mode (void);
+void assert_gc_safe_mode (const char *file, int lineno);
+void assert_gc_unsafe_mode (const char *file, int lineno);
+void assert_gc_neutral_mode (const char *file, int lineno);
 
 void* critical_gc_region_begin(void);
 void critical_gc_region_end(void* token);
@@ -185,11 +187,17 @@ void assert_in_gc_critical_region (void);
 void check_metadata_store(void *from, void *to);
 void check_metadata_store_local(void *from, void *to);
 
+#define CHECKED_METADATA_STORE(ptr, val) check_metadata_store ((ptr), (val))
+#define CHECKED_METADATA_STORE_LOCAL(ptr, val) check_metadata_store_local ((ptr), (val))
+
 #else
 
 #define CHECKED_METADATA_WRITE_PTR(ptr, val) do { (ptr) = (val); } while (0)
 #define CHECKED_METADATA_WRITE_PTR_LOCAL(ptr, val) do { (ptr) = (val); } while (0)
 #define CHECKED_METADATA_WRITE_PTR_ATOMIC(ptr, val) do { mono_atomic_store_release (&(ptr), (val)); } while (0)
+
+#define CHECKED_METADATA_STORE(ptr, val) do { (ptr); (val); } while (0)
+#define CHECKED_METADATA_STORE_LOCAL(ptr, val) do { (ptr); (val); } while (0)
 
 #endif /* defined(ENABLE_CHECKED_BUILD_METADATA) */
 
@@ -201,7 +209,7 @@ void check_metadata_store_local(void *from, void *to);
 
 void checked_build_thread_transition(const char *transition, void *info, int from_state, int suspend_count, int next_state, int suspend_count_delta);
 
-void mono_fatal_with_history(const char *msg, ...);
+G_GNUC_NORETURN MONO_ATTR_FORMAT_PRINTF(1,2) void mono_fatal_with_history(const char *msg, ...);
 
 #else
 

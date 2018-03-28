@@ -28,15 +28,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NO_ODBC
+
 using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.Odbc;
-using Mono.Data;
-
 using NUnit.Framework;
 
-namespace MonoTests.System.Data
+
+namespace MonoTests.System.Data.Connected.Odbc
 {
 	[TestFixture]
 	[Category ("odbc")]
@@ -48,8 +49,7 @@ namespace MonoTests.System.Data
 		[SetUp]
 		public void SetUp ()
 		{
-			conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			conn = ConnectionManager.Instance.Odbc.Connection;
 			cmd = conn.CreateCommand ();
 		}
 
@@ -58,7 +58,7 @@ namespace MonoTests.System.Data
 		{
 			if (cmd != null)
 				cmd.Dispose ();
-			ConnectionManager.Singleton.CloseConnection ();
+			ConnectionManager.Instance.Close ();
 		}
 
 		[Test]
@@ -150,7 +150,7 @@ namespace MonoTests.System.Data
 			cmd.CommandText = "select count(*) from employee where id <= ?;";
 			cmd.Parameters.Add ("@un", OdbcType.Int).Value = 3;
 			ret = cmd.ExecuteNonQuery ();
-			switch (ConnectionManager.Singleton.Engine.Type) {
+			switch (ConnectionManager.Instance.Odbc.EngineConfig.Type) {
 			case EngineType.SQLServer:
 				Assert.AreEqual (-1, ret, "#1");
 				break;
@@ -167,7 +167,7 @@ namespace MonoTests.System.Data
 			cmd.CommandText = "select * from employee where id <= ?;";
 			cmd.Parameters.Add ("@un", OdbcType.Int).Value = 3;
 			ret = cmd.ExecuteNonQuery ();
-			switch (ConnectionManager.Singleton.Engine.Type) {
+			switch (ConnectionManager.Instance.Odbc.EngineConfig.Type) {
 			case EngineType.SQLServer:
 				Assert.AreEqual (-1, ret, "#2");
 				break;
@@ -183,7 +183,7 @@ namespace MonoTests.System.Data
 			cmd.CommandType = CommandType.Text;
 			cmd.CommandText = "select * from employee where id <= 3;";
 			ret = cmd.ExecuteNonQuery ();
-			switch (ConnectionManager.Singleton.Engine.Type) {
+			switch (ConnectionManager.Instance.Odbc.EngineConfig.Type) {
 			case EngineType.SQLServer:
 				Assert.AreEqual (-1, ret, "#3");
 				break;
@@ -297,3 +297,5 @@ namespace MonoTests.System.Data
 		}
 	}
 }
+
+#endif

@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_5
 
 using System;
 using System.Reflection;
@@ -54,4 +53,3 @@ namespace MonoTests.System.Reflection
 	}
 }
 
-#endif

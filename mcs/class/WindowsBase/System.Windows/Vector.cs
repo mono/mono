@@ -23,8 +23,8 @@
 //	Chris Toshok (toshok@novell.com)
 //
 
-using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Converters;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -38,13 +38,13 @@ namespace System.Windows {
 	{
 		public Vector (double x, double y)
 		{
-			this.x = x;
-			this.y = y;
+			this._x = x;
+			this._y = y;
 		}
 
 		public bool Equals (Vector value)
 		{
-			return x == value.X && y == value.Y;
+			return _x == value.X && _y == value.Y;
 		}
 
 		public override bool Equals (object o)
@@ -57,12 +57,10 @@ namespace System.Windows {
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
-		}
-
-		string IFormattable.ToString (string format, IFormatProvider provider)
-		{
-			return string.Format (provider, "{0:" + format + "},{1:" + format + "}", x, y);
+			unchecked
+			{
+				return (_x.GetHashCode () * 397) ^ _y.GetHashCode ();
+			}
 		}
 
 		public static bool Equals (Vector vector1, Vector vector2)
@@ -128,8 +126,8 @@ namespace System.Windows {
 
 		public void Negate ()
 		{
-			x = -x;
-			y = -y;
+			_x = -_x;
+			_y = -_y;
 		}
 
 		public void Normalize ()
@@ -139,8 +137,8 @@ namespace System.Windows {
 				return;
 
 			double l = Math.Sqrt (ls);
-			x /= l;
-			y /= l;
+			_x /= l;
+			_y /= l;
 		}
 
 		public static Vector Subtract (Vector vector1, Vector vector2)
@@ -150,17 +148,47 @@ namespace System.Windows {
 
 		public static Vector Parse (string source)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			var tokenizer = new NumericListTokenizer (source, CultureInfo.InvariantCulture);
+			double x;
+			double y;
+			if (!double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out x) ||
+			    !double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out y))
+			{
+				throw new FormatException (string.Format ("Invalid Vector format: {0}", source));
+			}
+			if (!tokenizer.HasNoMoreTokens ())
+			{
+				throw new InvalidOperationException("Invalid Vector format: " + source);
+			}
+			return new Vector(x, y);
 		}
 
 		public override string ToString ()
 		{
-			return String.Format ("{0},{1}", x, y);
+			return ToString(null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ToString (null, provider);
+		}
+
+		string IFormattable.ToString (string format, IFormatProvider provider)
+		{
+			return ToString (format, provider);
+		}
+
+		private string ToString(string format,IFormatProvider formatProvider)
+		{
+			if (formatProvider == null)
+				formatProvider = CultureInfo.CurrentCulture;
+			if (format == null)
+				format = string.Empty;
+			var separator = NumericListTokenizer.GetSeparator (formatProvider);
+			var vectorFormat  = string.Format ("{{0:{0}}}{1}{{1:{0}}}", format, separator);
+			return string.Format (formatProvider, vectorFormat, _x, _y);
 		}
 
 		public double Length {
@@ -168,17 +196,17 @@ namespace System.Windows {
 		}
 
 		public double LengthSquared {
-			get { return x * x + y * y; }
+			get { return _x * _x + _y * _y; }
 		}
 
 		public double X {
-			get { return x; }
-			set { x = value; }
+			get { return _x; }
+			set { _x = value; }
 		}
 
 		public double Y {
-			get { return y; }
-			set { y = value; }
+			get { return _y; }
+			set { _y = value; }
 		}
 
 		/* operators */
@@ -249,8 +277,8 @@ namespace System.Windows {
 			return Add (vector1, vector2);
 		}
 
-		double x;
-		double y;
+		double _x;
+		double _y;
 	}
 
 }

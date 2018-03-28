@@ -1,91 +1,311 @@
 #!/usr/bin/perl
 
-if ($ARGV[0] eq "-h"){
-    $sourcedir = $ARGV[1];
-    $dir = $sourcedir;
-    $html = 1;
-    shift @ARGV;
-    shift @ARGV;
-}
-open (FILE, "$dir/api-style.css" || die "Did not find $dir/api-style.css");
-while (<FILE>){
-    $css = $css . $_;
+use warnings;
+use strict;
+
+use Getopt::Long;
+use Pod::Usage;
+
+# Options
+my $HELP = 0;
+my $SOURCE_DIR = '';
+my $TARGET_DIR = '';
+my $WARNINGS = 0;
+
+GetOptions(
+    "help" => \$HELP,
+    "html|h=s" => \$SOURCE_DIR,
+    "target|t=s" => \$TARGET_DIR,
+    "warnings|W" => \$WARNINGS,
+) or pod2usage(1);
+
+pod2usage(0) if $HELP;
+
+exdoc();
+
+#
+# Main entry point.
+#
+sub exdoc {
+    my %templates = ();
+    my %docs = ();
+    my $stylesheet = load_stylesheet($SOURCE_DIR);
+    load_templates($SOURCE_DIR, \%templates);
+    process_source_files(\%docs);
+    merge(\%docs, \%templates, \$stylesheet);
 }
 
-if ($ARGV[0] eq "-t"){
-    $dir = $ARGV[1];
-    shift @ARGV;
+#
+# Load CSS stylesheet.
+#
+sub load_stylesheet {
+    my ($dir_path) = @_;
+    my $file_path = "$dir_path/api-style.css";
+    open (my $file, '<', $file_path) or die "Could not open $file_path";
+    local $/;
+    my $contents = <$file>;
+    close $file;
+    return $contents;
 }
 
-if ($html){
-    opendir (D, "$sourcedir/sources/") || die "Can not open $dir";
-    while ($n = readdir (D)){
-	if ($n =~ /mono-api-.*\.html$/){
-	    open (IN, "$sourcedir/sources/$n") || die "Can not open $n";
-	    $files[$filecount] = $n;
-	    while (<IN>){
-		@files_content[$filecount] .= $_;
-		if (/name="api:(.*?)"/){
-		    $_ =~ s/.*name="api:(\w+?)".*/\1/;
-		    $apis[$filecount] .= "$_";
-		}
-	    }
-	    $filecount++;
-	    close IN;
-	}
+#
+# Load HTML templates.
+#
+sub load_templates {
+    my ($dir_path, $templates) = @_;
+    opendir (my $dir, "$dir_path/sources/") or die "Could not open $dir_path";
+    while (my $file_name = readdir ($dir)) {
+        next if $file_name !~ /mono-api-.*\.html$/;
+        open (my $file, "$dir_path/sources/$file_name") or die "Could not open $file_name";
+        my $contents = '';
+        my @api = ();
+        while (<$file>) {
+            $contents .= $_;
+            if (/name="api:(.*?)"/) {
+                s/.*name="api:(\w+?)".*/$1/;
+                push @api, $_;
+            }
+        }
+        close $file;
+        $templates->{$file_name}->{contents} = $contents;
+        $templates->{$file_name}->{api} = \@api;
+    }
+    closedir $dir;
+}
+
+#
+# Extract documentation from all source files.
+#
+sub process_source_files {
+    my ($docs) = @_;
+    for my $file_path (@ARGV) {
+        process_source_file($file_path, $docs);
     }
 }
 
-while (<ARGV>){
-	if (/\/\*\* *\n/){
-		&process_doc;
-	} else {
-		#print "IGNORING: $_";
-	}
+#
+# Extract documentation from a single source file.
+#
+sub process_source_file {
+    my ($file_path, $docs) = @_;
+    open (my $file, '<', $file_path) or die "Could not open $file_path";
+    while (<$file>) {
+        next if (!/\/\*\* *\n/);
+        process_function($file, $file_path, $docs);
+    }
+    close $file;
 }
 
-if ($html){
-    for ($f = 0; $f < $filecount; $f++){
-	$name = $files[$f];
-	open (OUT, "> $dir/html/$name") || die "Can not create $dir/html/$name";
-	print "Merging: $name\n";
-	print OUT<<EOF;
+#
+# Extract documentation from a single function.
+#
+sub process_function {
+
+    my ($file, $file_path, $docs) = @_;
+
+    my $PARAMETER_SECTION = 0;
+    my $BODY_SECTION = 1;
+    my $RETURN_SECTION = 2;
+    my $section = $PARAMETER_SECTION;
+
+    my $name = do {
+        $_ = <$file>;
+        chomp;
+        s/^ \* //;
+        s/:$//;
+        $_
+    };
+
+    # Ignore irrelevant functions, and those with the wrong doc format.
+    return if $name !~ /^mono_\w+$/;
+
+    my $deprecated;
+    my @parameters = ();
+    my $body = '';
+    my $returns = '';
+    my $prototype = '';
+    my $codeblock = 'false';
+
+    while (<$file>) {
+
+        # We've reached the last line in the documentation block.
+        if (/^ \*\*?\//) {
+
+            # Grab function prototype.
+            while (<$file>) {
+                $prototype .= $_;
+                last if /\{/;
+            }
+
+            # Clean up prototype.
+            $prototype = do {
+                $_ = $prototype;
+                # Strip braces and trailing whitespace.
+                s/{//;
+                s/ +$//;
+                # Turn "Type * xxx" into "Type* xxx"
+                s/^(\w+)\W+\*/$1*/;
+                $_;
+            };
+
+            # Process formatting within sections.
+            for my $parameter (@parameters) {
+                process_formatting(\$parameter->{description}, $file_path, $.);
+            }
+            process_formatting(\$returns, $file_path, $.);
+            process_formatting(\$body, $file_path, $.);
+            if (defined($deprecated)) {
+                process_formatting(\$deprecated, $file_path, $.);
+            }
+
+            if (exists($docs->{body}->{$name})) {
+                my $origin = $docs->{origin}->{$name};
+                if ($WARNINGS) {
+                    warn
+                      "$file_path:$.: Redundant documentation for $name\n",
+                      "$origin->{file}:$origin->{line}: Previously defined here\n";
+                }
+            }
+            $docs->{origin}->{$name} = { file => $file_path, line => $. };
+            $docs->{body}->{$name} = $body;
+            $docs->{parameters}->{$name} = \@parameters;
+            $docs->{deprecated}->{$name} = $deprecated if defined $deprecated;
+            $docs->{return}->{$name} = $returns;
+            $docs->{prototype}->{$name} = $prototype;
+            last;
+
+        }
+
+        # Strip newlines and asterisk prefix.
+        chomp;
+        s/^ +\*//;
+
+        if (/\s*\\code$/) {
+            $codeblock = 'true';
+        } elsif (/\s*\\endcode$/) {
+            $codeblock = 'false';
+        }
+
+        # Replace blank lines with paragraph breaks if we're not in a code block.
+        if (/^\s*$/) {
+            $_ = '<p>' if $codeblock eq 'false';
+        }
+
+        if ($section == $PARAMETER_SECTION) {
+            if (/\s*\\param +(\w+)(.*)/) {
+                # print "$file_path:$.: warning: Got parameter $1\n";
+                push @parameters, { name => $1, description => $2 };
+            } elsif (/\s*\\deprecated(.*)/) {
+                # print "$file_path:$.: warning: Got deprecated annotation\n";
+                $deprecated = $1;
+            } elsif (/\s*(\w+):(.*)/) {
+                if ($1 eq 'deprecated') {
+                    warn "$file_path:$.: Old-style monodoc notation 'deprecated:' used\n"
+                        if $WARNINGS;
+                    $deprecated = $2;
+                } else {
+                    warn "$file_path:$.: Old-style monodoc notation 'param:' used\n"
+                        if $WARNINGS;
+                    push @parameters, { name => $1, description => $2 };
+                }
+            } else {
+                # $body = "\t$_\n";
+                $section = $BODY_SECTION;
+                redo;
+            }
+        } elsif ($section == $BODY_SECTION) {
+            if (s/(Returns?:\s*|\\returns?\s*)//) {
+                $returns = "\t$_\n";
+                $section = $RETURN_SECTION;
+            } else {
+                $body .= "\n$_";
+            }
+        } elsif ($section == $RETURN_SECTION) {
+            $returns .= "\n\t$_";
+        } else {
+            die "Invalid section $section\n";
+        }
+    }
+}
+
+#
+# Substitute formatting within documentation text.
+#
+sub process_formatting {
+    my ($content, $file_path, $current_line) = @_;
+    $_ = $$content;
+
+    # General formatting
+    s{\\b +(\w+)}{<strong>$1</strong>}g;
+    s{\\a +(\w+)}{<i>$1</i>}g;
+    s{\\e +(\w+)}{<i>$1</i>}g;
+    s{\\em +(\w+)}{<i>$1</i>}g;
+
+    # Constants
+    s{NULL}{<code>NULL</code>}g;
+    s{TRUE}{<code>TRUE</code>}g;
+    s{FALSE}{<code>FALSE</code>}g;
+
+    # Parameters
+    warn "$file_path:$current_line: Old-style monodoc notation '\@param' used\n"
+        if s{@(\w+)}{<i>$1</i>}g && $WARNINGS;
+    s{\\p +(\w+)}{<i>$1</i>}g;
+
+    # Code
+    warn "$file_path:$current_line: Old-style monodoc notation '#code' used\n"
+        if s{#(\w+)}{<code>$1</code>}g && $WARNINGS;
+    warn "$file_path:$current_line: Old-style monodoc notation '`code`' used\n"
+        if s{\`((?!api:)[:.\w\*]+)\`}{<code>$1</code>}g && $WARNINGS;
+    s{\\c +(\S+(?<![.,:;]))}{<code>$1</code>}g;
+    s{\\code}{<pre><code class="mapi-codeblock">}g;
+    s{\\endcode}{</code></pre>}g;
+
+    $$content = $_;
+}
+
+#
+# Merge templates with stylesheet and documentation extracted from sources.
+#
+sub merge {
+    my ($docs, $templates, $stylesheet) = @_;
+    my $last = '';
+    for my $name (keys %$templates) {
+        open (my $output_file, '>', "$TARGET_DIR/html/$name")
+          or die "Could not create $TARGET_DIR/html/$name";
+        print "Merging: $name\n";
+        print $output_file <<EOF;
 <?xml version="1.0" encoding="utf-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>$name</title>
     <style type="text/css">
-$css
+$stylesheet
    </style>
 </head>
 <body>
 <div class="mapi-docs">
 EOF
-	@a = split (/\n/, $files_content[$f]);
-	$strikeextra = "";
-	$api_shown = 0;
-	for ($ai = 0; $ai < $#a; $ai++){
-	    $line = $a[$ai];
-	    
-	    ($api,$caption) = $line =~  /<h4><a name=\"api:(\w+)\">(\w+)<\/a><\/h4>/;
-	    if ($api ne ""){
-		if ($api_shown == 1){
-		    print OUT "</div> <!-- class=mapi -->\n\n";
-		    if ($deprecated{$api}){
-			$strike = "mapi-strike";
-			$strikeextra = "</div><br><div class='mapi-deprecated'><b>Deprecated:</b> " . $deprecated{$api};
-		    } else {
-			$strike = "";
-			$strikeextra = "";
-		    }
-		}
-		$api_shown = 1;
-		$proto = $prototype{$api};
-		if ($proto eq ""){
-		    $proto = "$api";
-		}
+        my @a = split (/\n/, $templates->{$name}->{contents});
+        my $strike = '';
+        my $strikeextra = '';
+        my $api_shown = 0;
+        for (my $ai = 0; $ai < $#a; $ai++) {
+            my $line = $a[$ai];
+            if (my ($api, $caption) = ($line =~ /<h4><a name=\"api:(\w+)\">(\w+)<\/a><\/h4>/)) {
+                if ($api_shown == 1) {
+                    print $output_file "</div> <!-- class=mapi -->\n\n";
+                    if ($docs->{deprecated}->{$api}) {
+                        $strike = "mapi-strike";
+                        $strikeextra = "</div><br><div class='mapi-deprecated'><b>Deprecated:</b> " . $docs->{deprecated}->{$api};
+                    } else {
+                        $strike = "";
+                        $strikeextra = "";
+                    }
+                }
+                $api_shown = 1;
+                my $proto = $docs->{prototype}->{$api} // $api;
 
-                print OUT<<EOF;
+                print $output_file <<EOF;
 <a name="api:$api"></a>
 <div class="mapi">
     <div class="mapi-entry $strike"><code>$api$strikeextra</code></div>
@@ -98,228 +318,201 @@ EOF
             <div class="mapi-prototype">$proto</div>
             <p>
 EOF
-                $ppars = $arguments{$api};
-		if ($ppars ne "" && (!($ppars =~ /^[ \t]+$/))){
-		    print OUT "            <div class=\"mapi-section\">Parameters</div>\n";
-		    print OUT "            <table class=\"mapi-parameters\"><tbody>".${arguments{$api}}."</tbody></table>";
-	        }
-	    
-		&opt_print ("Return value", $returns{$api}, 0);
-		&opt_print ("Description", $bodies{$api}, 0);
-		print OUT "        </div><!--mapi-description-->\n    </div><!--height container-->\n";
-	    } else {
-		if ($line =~ /@API_IDX@/){
-		    $apis_toc = &create_toc ($apis[$f]);
-		    $line =~ s/\@API_IDX\@/$apis_toc/;
-		}
-		if ($line =~ /^<h4/){
-		    print OUT "</div>\n";
-		    $api_shown = 0;
-		}
-		if ($line =~ /`/){
-		}
-		print OUT "$line\n";
-	    }
-	}
-	print OUT<<EOF;
-   </div>
-</body>
-</html>
-EOF
-	close OUT;
-	system ("$ENV{runtimedir}/mono-wrapper convert.exe $dir/html/$name $dir/html/x-$name");
+                if (exists ($docs->{parameters}->{$api})) {
+                    my $ppars = $docs->{parameters}->{$api};
+                    if (@$ppars) {
+                        print $output_file
+                          "            <div class=\"mapi-section\">Parameters</div>\n",
+                          "            <table class=\"mapi-parameters\"><tbody>",
+                          render_parameters($ppars),
+                          "</tbody></table>";
+                    }
+                }
 
+                opt_print ($output_file, "Return value", $docs->{return}->{$api});
+                opt_print ($output_file, "Description", $docs->{body}->{$api});
+                print $output_file "        </div><!--mapi-description-->\n    </div><!--height container-->\n";
+            } else {
+                if ($line =~ /\@API_IDX\@/) {
+                    my $apis_toc = create_toc ($docs, $templates->{$name}->{api});
+                    $line =~ s/\@API_IDX\@/$apis_toc/;
+                }
+                if ($line =~ /^<h4/) {
+                    print $output_file "</div>\n";
+                    $api_shown = 0;
+                }
+                if ($line =~ /`/) {
+                }
+                print $output_file "$line\n";
+            }
+        }
+        print $output_file
+          "   </div>",
+          "</body>",
+          "</html>";
+        close $output_file;
+        system ("$ENV{runtimedir}/mono-wrapper convert.exe $TARGET_DIR/html/$name $TARGET_DIR/html/x-$name");
 
-	# clean up the mess that AgilityPack does, it CDATAs our CSS
-	open HACK, "$dir/html/x-$name" || die "Could not open $dir/html/x-$name";
-	open HACKOUT, ">$dir/deploy/$name" || die "Could not open output";
+        # Clean up the mess that AgilityPack makes (it CDATAs our CSS).
+        open (my $hack_input, '<', "$TARGET_DIR/html/x-$name")
+          or die "Could not open $TARGET_DIR/html/x-$name";
+        open (my $hack_output, '>', "$TARGET_DIR/deploy/$name")
+          or die "Could not open output";
 
-	$line = 0;
-	$doprint = 0;
-	while (<HACK>){
-	    print HACKOUT $last if ($doprint);
-	    $line++;
-	    s/^\/\/<!\[CDATA\[//;
-	    s/^\/\/\]\]>\/\///;
+        my $line = 0;
+        my $doprint = 0;
+        while (<$hack_input>) {
+            print $hack_output $last if ($doprint);
+            $line++;
+            s/^\/\/<!\[CDATA\[//;
+            s/^\/\/\]\]>\/\///;
 
-	    # Remove the junk <span> wrapper generated by AgilityPack
-	    if ($line==1){
-		s/<span>//;
-	    }
-	    if (/<style type/){
-		# Replace the CSS in the XHTML output with the original CSS
-		print HACKOUT $_;
-		print HACKOUT $css;
-		while (<HACK>){
-		    last if (/<\/style>/);
-		}
-	    }
-	    $last = $_;
-	    $doprint = 1;
-	}
-	if (!($last =~ /span/)){
-	    print HACKOUT $last;
-	}
-
-	#system ("cp.exe $dir/html/$name $dir/deploy/$name");
+            # Remove the junk <span> wrapper generated by AgilityPack.
+            if ($line==1) {
+                s/<span>//;
+            }
+            if (/<style type/) {
+                # Replace the CSS in the XHTML output with the original CSS.
+                print $hack_output $_;
+                print $hack_output $$stylesheet;
+                while (<$hack_input>) {
+                    last if (/<\/style>/);
+                }
+            }
+            $last = $_;
+            $doprint = 1;
+        }
+        if (!($last =~ /span/)) {
+            print $hack_output $last;
+        }
+        # system ("cp.exe $TARGET_DIR/html/$name $TARGET_DIR/deploy/$name");
     }
 }
 
-sub process_doc {
-	$doc = "";
-	$func = <>;
-	chop $func;
-	$func =~ s/^ \* //;
-	$func =~ s/:$//;
-	print "Function: $func\n" if (!$html);
-	$args = "";
-	$inbody = 0;
-	$returns = "";
-	$body = "";
-	$functions[$fn++] = $func;
-	$deprecated = 0;
-	# Process arguments
-	while (<>){
-	    s/NULL/<code>NULL<\/code>/g;
-	    s/TRUE/<code>TRUE<\/code>/g;
-	    s/FALSE/<code>FALSE<\/code>/g;
-	    if (/^ \*\*?\//){
-		    $body =~ s/@(\w+)/<i>\1<\/i>/g;
-		    $returns =~ s/@(\w+)/<i>\1<\/i>/g;
-		    $args =~ s/@(\w+)/<i>\1<\/i>/g;
-
-		    $body =~ s/#(\w+)/<code>\1<\/code>/g;
-		    $returns =~ s/#(\w+)/<code>\1<\/code>/g;
-		    $args =~ s/#(\w+)/<code>\1<\/code>/g;
-
-		    $returns =~ s/\`([:.\w\*]+)\`/<code>\1<\/code>/g;
-		    $args =~ s/\`([:.\w\*]+)\`/<code>\1<\/code>/g;
-		    $body =~ s/\`([:.\w\*]+)\`/<code>\1<\/code>/g;
-		    
-		    $body =~ s/\n/ /;
-		    $bodies{$func} = $body;
-		    $arguments{$func} = $args;
-		    $deprecated{$func} = $deprecated;
-		    $returns{$func} = $returns;
-		    $proto = "";
-		    while (<>){
-			$proto .= $_;
-			last if (/\{/);
-		    }
-		    $proto =~ s/{//;
-		    # clean it up a little, remove newlines, empty space at end
-		    $proto =~ s/ +$//;
-		    # Turn "Type * xxx" into "Type* xxx"
-		    $proto =~ s/^(\w+)\W+\*/\1\*/;
-		    $prototype{$func} = $proto;
-		    return;
-		}
-		chop;
-		s/^\ \*//;
-		$_ = "<p>" if (/^\s*$/);
-				
-		if ($inbody == 0){
-		    if (/\s*(\w+):(.*)/){
-			if ($1 eq "deprecated"){
-			    $deprecated = $2;
-			} else {
-			    #$args .= "<dt><i>$1:</i></dt><dd>$2</dd>";
-			    $args .= "<tr><td><i>$1</i><td>$2</td></td></tr>";
-			}
-		    } else {
-			
-			$body = "\t$_\n";
-
-			$inbody = 1;
-		    }
-		} elsif ($inbody == 1) {
-		    if (/Returns?:/){
-			s/Returns?://;
-			$returns = "\t$_\n";
-			$inbody = 2;
-		    } else {
-			$body .= "\n\t$_";
-		    }
-		} else {
-		    $returns .= "\n\t$_";
-		}
-		   
-	}
-}
-
 sub create_toc {
-    my ($apis_listed) = @_;
+    my ($docs, $apis_listed) = @_;
     my $type_size = 0;
     my $name_size = 0;
-    my $ret, $xname, $args, $line;
-    $apis_toc = "";
+    my ($ret, $xname, $args);
+    my $apis_toc = "";
 
-
-    # Try to align things, so compute type size, method size, and arguments
-    foreach $line (split /\n/, $apis_listed){
-	$p = $prototype{$line};
-	($ret, $xname, $args) = $p =~ /(.*)\n(\w+)[ \t](.*)/;
-	$tl = length ($ret);
-	$pl = length ($xname);
-
-	$type_size = $tl if ($tl > $type_size);
-	$name_size = $pl if ($pl > $name_size);
+    # Try to align things; compute type size, method size, and arguments.
+    foreach my $line (split /\n/, $apis_listed) {
+        if (exists ($docs->{prototype}->{$line})) {
+            my $p = $docs->{prototype}->{$line};
+            if (my ($ret, $xname, $args) = ($p =~ /(.*)\n(\w+)[ \t](.*)/)) {
+                my $tl = length ($ret);
+                my $pl = length ($xname);
+                $type_size = $tl if ($tl > $type_size);
+                $name_size = $pl if ($pl > $name_size);
+            }
+        }
     }
 
     $type_size++;
     $name_size++;
 
-    foreach $line (split /\n/, $apis_listed){
-	chop;
-	$p = $prototype{$line};
-	($ret, $xname, $args) = $p =~ /(.*)\n(\w+)[ \t](.*)/;
-	if ($xname eq ""){
-	    $xname = $line;
-	}
-	
-	$rspace = " " x ($type_size - length ($ret));
-	$nspace = " " x ($name_size - length ($xname));
-	$args = &format ($args, length ($ret . $rspace . $xname . $nspace), 60);
-	$apis_toc .= "$ret$rspace<a href=\"\#api:$line\">$xname</a>$nspace$args\n";
+    foreach my $line (split /\n/, $apis_listed) {
+        chomp($line);
+        if (exists($docs->{prototype}->{$line})) {
+            my $p = $docs->{prototype}->{$line};
+            if (my ($ret, $xname, $args) = ($p =~ /(.*)\n(\w+)[ \t](.*)/)) {
+                $xname = $line if $xname eq "";
+                my $rspace = " " x ($type_size - length ($ret));
+                my $nspace = " " x ($name_size - length ($xname));
+                $args = wrap ($args, length ($ret . $rspace . $xname . $nspace), 60);
+                $apis_toc .= "$ret$rspace<a href=\"\#api:$line\">$xname</a>$nspace$args\n";
+            }
+        }
     }
     return $apis_toc;
 }
 
-#
-# Formats the rest of the arguments in a way that will fit in N columns
-#
-sub format {
+sub wrap {
     my ($args, $size, $limit) = @_;
     my $sret = "";
 
-#    return $args if ((length (args) + size) < $limit);
+    # return $args if ((length (args) + size) < $limit);
     
-    $remain = $limit - $size;
-    @sa = split /,/, $args;
-    $linelen = $size;
-    foreach $arg (@sa){
-	if ($sret eq ""){
-	    $sret = $arg . ", ";
-	    $linelen += length ($sret);
-	} else {
-	    if ($linelen + length ($arg) < $limit){
-		$sret .= "FITS" . $arg . ", ";
-	    } else {
-		$newline = " " x ($size) . $arg . ", ";
-		$linelen = length ($newline);
-		$sret .= "\n" . $newline;
-	    }
-	}
+    my $remain = $limit - $size;
+    my @sa = split /,/, $args;
+    my $linelen = $size;
+    foreach my $arg (@sa) {
+        if ($sret eq "") {
+            $sret = $arg . ", ";
+            $linelen += length ($sret);
+        } else {
+            if ($linelen + length ($arg) < $limit) {
+                $sret .= "FITS" . $arg . ", ";
+            } else {
+                my $newline = " " x ($size) . $arg . ", ";
+                my $linelen = length ($newline);
+                $sret .= "\n" . $newline;
+            }
+        }
     }
     $sret =~ s/, $/;/;
     return $sret;
 }
 
+#
+# Print a section if non-empty.
+#
 sub opt_print {
-    my ($caption, $opttext, $quote) = @_;
-
-    if ($opttext ne "" && (!($opttext =~ /^[ \t]+$/))){
-	print OUT "             <div class=\"mapi-section\">$caption</div>\n";
-        print OUT "             <div>$opttext</div>\n";
+    my ($output, $caption, $opttext) = @_;
+    if (defined($opttext) && $opttext ne '' && $opttext !~ /^[ \t]+$/) {
+        print $output
+          "             <div class=\"mapi-section\">$caption</div>\n",
+          "             <div>$opttext</div>\n";
     }
 }
+
+#
+# Render parameter information as table.
+#
+sub render_parameters {
+    my ($parameters) = @_;
+    my $result = '';
+    for my $parameter (@$parameters) {
+        $result .= "<tr><td><i>$parameter->{name}</i></td><td>$parameter->{description}</td></tr>";
+    }
+    return $result;
+}
+
+__END__
+
+=head1 NAME
+
+exdoc - Compiles API docs from Mono sources and HTML templates.
+
+=head1 SYNOPSIS
+
+    exdoc [OPTIONS] [FILE...]
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<--help>
+
+Print this help message.
+
+=item B<--html> I<DIR>, B<-h> I<DIR>
+
+Use I<DIR> as the input path for HTML sources.
+
+=item B<--target> I<DIR>, B<-t> I<DIR>
+
+Use I<DIR> as the target path for output.
+
+=item B<--warnings>, B<-W>
+
+Enable warnings about documentation errors.
+
+=back
+
+=head1 DESCRIPTION
+
+Reads HTML templates and C sources, extracting documentation from the sources and splicing it into the templates.
+
+=cut

@@ -168,7 +168,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -237,7 +237,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -340,7 +340,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -361,7 +361,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -453,7 +453,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -546,7 +546,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -641,7 +641,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -733,7 +733,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -777,7 +777,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		// ThrowIfDisposed throws an exception if the state is Closing, Closed or Faulted.
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -843,7 +843,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -910,7 +910,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		// ThrowIfDisposedOrImmutable throws an exception if the state is not Created.
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -979,7 +979,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -1050,7 +1050,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		// ThrowIfDisposedOrNotOpen throws an exception if the state is not Opened. 
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -1119,7 +1119,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -1196,7 +1196,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -1223,7 +1223,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -1239,7 +1239,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -1267,7 +1267,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]
@@ -1303,7 +1303,7 @@ namespace MonoTests.System.ServiceModel.Channels {
 		}
 
 		[TestMethod]
-#if NET_2_1
+#if MOBILE
 		[MoonlightBug]
 #else
 		[NUnit.Framework.Ignore]

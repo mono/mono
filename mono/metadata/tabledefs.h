@@ -1,5 +1,6 @@
-/*
- * tabledefs.h: This file contains the various definitions for constants
+/**
+ * \file
+ * This file contains the various definitions for constants
  * found on the metadata tables
  *
  * Author:
@@ -126,6 +127,8 @@ enum {
 
 #define TYPE_ATTRIBUTE_IMPORT                0x00001000
 #define TYPE_ATTRIBUTE_SERIALIZABLE          0x00002000
+#define TYPE_ATTRIBUTE_WINDOWS_RUNTIME       0x00004000
+
 
 #define TYPE_ATTRIBUTE_STRING_FORMAT_MASK    0x00030000
 #define TYPE_ATTRIBUTE_ANSI_CLASS            0x00000000

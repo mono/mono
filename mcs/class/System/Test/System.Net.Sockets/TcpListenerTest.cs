@@ -23,6 +23,9 @@ namespace MonoTests.System.Net.Sockets
 	public class TcpListenerTest
 	{
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void TcpListener ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -46,7 +49,10 @@ namespace MonoTests.System.Net.Sockets
 				}
 			}
 			
-			// make sure the connection arrives
+			// There is no guarantee that the connecting socket will be in the listener's
+			//  accept queue yet (though it is highly likely on Linux). We wait up to one
+			//  second for the connecting socket to enter the listener's accept queue.
+			Assert.IsTrue (inListener.Server.Poll (1000, SelectMode.SelectRead));
 			Assert.IsTrue (inListener.Pending ());
 			Socket inSock = inListener.AcceptSocket ();
 
@@ -74,6 +80,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CtorInt1 ()
 		{
 			int nex = 0;
@@ -86,21 +95,33 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentNullException))]
+#endif
 		public void CtorIPEndPoint ()
 		{
 			new TcpListener (null);
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentNullException))]
+#endif
 		public void CtorIPAddressInt1 ()
 		{
 			new TcpListener (null, 100000);
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#endif
 		public void CtorIPAddressInt2 ()
 		{
 			new TcpListener (IPAddress.Any, 100000);
@@ -124,6 +145,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void PreStartStatus ()
 		{
 			MyListener listener = new MyListener ();
@@ -151,6 +175,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void PostStartStatus ()
 		{
 			MyListener listener = new MyListener ();
@@ -172,6 +199,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void StartListenMoreThan5 ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -191,6 +221,28 @@ namespace MonoTests.System.Net.Sockets
 			
 			listen.Start (65536);
 			listen.Stop ();
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void EndAcceptTcpClient ()
+		{
+			var port = NetworkHelpers.FindFreePort ();
+
+			var listenerSocket = new TcpListener (IPAddress.Any, port);
+			listenerSocket.Start ();
+			listenerSocket.BeginAcceptTcpClient (new AsyncCallback (l => {
+				listenerSocket.EndAcceptTcpClient (l);
+			}), null);
+
+
+			using (var outClient = new TcpClient ("localhost", port)) {
+				using (var stream = outClient.GetStream ()) {
+					stream.WriteByte (3);
+				}
+			}
 		}
 	}
 }

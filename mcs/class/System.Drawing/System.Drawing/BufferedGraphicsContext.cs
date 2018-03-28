@@ -30,7 +30,6 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace System.Drawing
 {
@@ -54,7 +53,6 @@ namespace System.Drawing
 		}
 
 		[MonoTODO ("The targetDC parameter has no equivalent in libgdiplus.")]
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public BufferedGraphics Allocate (IntPtr targetDC, Rectangle targetRectangle)
 		{
 			throw new NotImplementedException ();

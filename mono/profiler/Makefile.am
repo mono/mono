@@ -1,120 +1,158 @@
-if HAVE_ZLIB
-Z_LIBS= -lz
-else
-Z_LIBS=
-endif
-
 AM_CPPFLAGS = \
-	-fexceptions -DMONO_USE_EXC_TABLES	\
-	-DSUPPRESSION_DIR=\""$(datadir)/mono-$(API_VER)/mono/profiler"\"        \
-	-I$(top_srcdir) 	\
+	-DSUPPRESSION_DIR=\""$(datadir)/mono-$(API_VER)/mono/profiler"\" \
+	-I$(top_srcdir) \
 	$(GLIB_CFLAGS)
 
 if !HOST_WIN32
 if !DISABLE_LIBRARIES
 if !DISABLE_PROFILER
+
 bin_PROGRAMS = mprof-report
 
 if HAVE_VTUNE
-vtune_lib = libmono-profiler-vtune.la
+vtune_libs = \
+	libmono-profiler-vtune.la \
+	libmono-profiler-vtune-static.la
 endif
 
-lib_LTLIBRARIES = libmono-profiler-aot.la libmono-profiler-iomap.la libmono-profiler-log.la libmono-profiler-log-static.la $(vtune_lib)
+lib_LTLIBRARIES = \
+	libmono-profiler-aot.la \
+	libmono-profiler-aot-static.la \
+	libmono-profiler-log.la \
+	libmono-profiler-log-static.la \
+	libmono-profiler-coverage.la \
+	libmono-profiler-coverage-static.la \
+	$(vtune_libs)
 
-if PLATFORM_DARWIN
+suppressiondir = $(datadir)/mono-$(API_VER)/mono/profiler
+suppression_DATA = mono-profiler-coverage.suppression
+
+# FIXME: The profiler tests currently don't work with coop because the
+# sampling infrastructure depends on signals being available.
+#
+# See: https://bugzilla.xamarin.com/show_bug.cgi?id=57011
+if !ENABLE_COOP
+check_targets = testlog
+endif
+
+endif
+endif
+endif
+
+# On Apple hosts, we want to allow undefined symbols when building the
+# profiler modules as, just like on Linux, we don't link them to libmono,
+# but rather let the dynamic linker sort things out.
+#
+# Bitcode, specifically, doesn't allow undefined symbols at all, even for
+# shared libraries, so we want errors if the profiler modules contain any.
+if HOST_DARWIN
 if BITCODE
-libmono_profiler_log_la_LDFLAGS = -no-undefined
+prof_ldflags = -no-undefined
 else
-libmono_profiler_log_la_LDFLAGS = -Wl,-undefined -Wl,suppress -Wl,-flat_namespace
-endif
-endif
-if PLATFORM_ANDROID
-libmono_profiler_log_la_LDFLAGS = -avoid-version
-endif
-endif
+prof_ldflags = -Wl,-undefined -Wl,suppress -Wl,-flat_namespace
 endif
 endif
 
-if HAVE_OPROFILE
-# Do something that uses OPROFILE_CFLAGS and OPROFILE_LIBS
+# Versioned libraries are problematic on Android. In particular, we're not
+# allowed to place versioned libraries inside APKs, so if libmono and the
+# profiler modules contain versioned sonames, things will fail to resolve
+# at runtime.
+if HOST_ANDROID
+prof_ldflags = -avoid-version
 endif
 
-if SUPPORT_BOEHM
-if DISABLE_EXECUTABLES
-LIBMONO=$(top_builddir)/mono/mini/$(LIBMONO_LA)
+# Linking to libmono on desktop can cause problems when loading a profiler
+# module into a statically-linked mono executable, e.g. running library
+# constructors multiple times, which can easily break LLVM libraries. So,
+# we don't want to link to libmono on desktop. On Android, libmono is
+# always loaded dynamically, so we do need to link to libmono there or the
+# dynamic linker will have trouble resolving everything. On iOS, the story
+# is similar to Android when running in the simulator.
+if HOST_ANDROID
+libmono_dep = $(top_builddir)/mono/mini/$(LIBMONO_LA)
 else
-if !SHARED_MONO
-static_libs=	\
-	$(top_builddir)/mono/metadata/libmonoruntime-static.la	\
-	$(top_builddir)/mono/io-layer/libwapi.la	\
-	$(top_builddir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) \
-	$(LIBGC_STATIC_LIBS)
-
-LIBMONO=$(top_builddir)/mono/mini/$(LIBMONO_LA) $(static_libs)
+if HOST_IOS
+# Note that BITCODE implies HOST_IOS, so this case ensures that we link to
+# libmono when building a bitcode runtime.
+libmono_dep = $(top_builddir)/mono/mini/$(LIBMONO_LA)
 else
-LIBMONO=$(top_builddir)/mono/mini/$(LIBMONO_LA)
-endif
-endif
+if HOST_TIZEN
+libmono_dep = $(top_builddir)/mono/mini/$(LIBMONO_LA)
 else
-LIBMONO=$(top_builddir)/mono/mini/libmonosgen-$(API_VER).la
+libmono_dep =
+endif
+endif
 endif
 
-libmono_profiler_aot_la_SOURCES = mono-profiler-aot.c
-libmono_profiler_aot_la_LIBADD = $(LIBMONO) $(GLIB_LIBS)
-if BITCODE
-libmono_profiler_aot_la_LDFLAGS = -no-undefined
-endif
-libmono_profiler_iomap_la_SOURCES = mono-profiler-iomap.c
-libmono_profiler_iomap_la_LIBADD = $(LIBMONO) $(GLIB_LIBS)
-if BITCODE
-libmono_profiler_iomap_la_LDFLAGS = -no-undefined
-endif
-libmono_profiler_log_la_SOURCES = proflog.c
-libmono_profiler_log_la_LIBADD = $(LIBMONO) $(GLIB_LIBS) $(Z_LIBS)
-if HAVE_VTUNE
-libmono_profiler_vtune_la_SOURCES = mono-profiler-vtune.c
-libmono_profiler_vtune_la_CFLAGS = $(VTUNE_CFLAGS)
-libmono_profiler_vtune_la_LIBADD = $(VTUNE_LIBS) $(LIBMONO) $(GLIB_LIBS)
+if HAVE_ZLIB
+# The log profiler uses zlib for output compression when available.
+zlib_dep = -lz
+else
+zlib_dep =
 endif
 
-# The log profile uses eglib functions, so it needs to be linked against
-# libeglib in shared mode, but not in static mode, since that would
-# leads to duplicate symbols when it is linked into an app which
-# also uses eglib (e.g. the runtime). Automake doesn't support this
-# functionality, so create a separate static version of the library.
-libmono_profiler_log_static_la_SOURCES = proflog.c
+# We build a separate, static version of each profiler for use on targets
+# which do not support dynamic linking (e.g. iOS). We still want to build
+# the shared version on those targets since it's useful for e.g. simulator
+# builds.
+
+libmono_profiler_aot_la_SOURCES = aot.c
+libmono_profiler_aot_la_LIBADD =  $(libmono_dep) $(GLIB_LIBS)
+libmono_profiler_aot_la_LDFLAGS = $(prof_ldflags)
+libmono_profiler_aot_static_la_SOURCES = aot.c
+libmono_profiler_aot_static_la_LDFLAGS = -static
+
+libmono_profiler_log_la_SOURCES = log.c log-args.c
+libmono_profiler_log_la_LIBADD = $(libmono_dep) $(GLIB_LIBS) $(zlib_dep)
+libmono_profiler_log_la_LDFLAGS = $(prof_ldflags)
+libmono_profiler_log_static_la_SOURCES = log.c log-args.c
 libmono_profiler_log_static_la_LDFLAGS = -static
 
-mprof_report_SOURCES = decode.c
-mprof_report_LDADD = $(Z_LIBS) $(GLIB_LIBS)
+libmono_profiler_coverage_la_SOURCES = coverage.c
+libmono_profiler_coverage_la_LIBADD = $(libmono_dep) $(GLIB_LIBS)
+libmono_profiler_coverage_la_LDFLAGS = $(prof_ldflags)
+libmono_profiler_coverage_static_la_SOURCES = coverage.c
+libmono_profiler_coverage_static_la_LDFLAGS = -static
 
-PLOG_TESTS_SRC=test-alloc.cs test-busy.cs test-monitor.cs test-excleave.cs \
-	test-heapshot.cs test-traces.cs
-PLOG_TESTS=$(PLOG_TESTS_SRC:.cs=.exe)
+if HAVE_VTUNE
+libmono_profiler_vtune_la_SOURCES = vtune.c
+libmono_profiler_vtune_la_CFLAGS = $(VTUNE_CFLAGS)
+libmono_profiler_vtune_la_LIBADD = $(VTUNE_LIBS) $(libmono_dep) $(GLIB_LIBS)
+libmono_profiler_vtune_la_LDFLAGS = $(prof_ldflags)
+libmono_profiler_vtune_static_la_SOURCES = vtune.c
+libmono_profiler_vtune_static_la_LDFLAGS = -static
+libmono_profiler_vtune_static_la_CFLAGS = $(VTUNE_CFLAGS)
+libmono_profiler_vtune_static_la_LIBADD = $(VTUNE_LIBS)
+endif
 
-CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
+mprof_report_SOURCES = mprof-report.c
+mprof_report_LDADD = $(GLIB_LIBS) $(zlib_dep)
 
-with_mono_path = MONO_PATH=$(CLASS)
+PLOG_TESTS_SRC = \
+	test-alloc.cs \
+	test-busy.cs \
+	test-monitor.cs \
+	test-excleave.cs \
+	test-heapshot.cs \
+	test-traces.cs
 
-RUNTIME = $(with_mono_path) $(top_builddir)/runtime/mono-wrapper
-MCS = $(RUNTIME) $(mcs_topdir)/class/lib/build/mcs.exe -unsafe -nowarn:0162 -nowarn:0168 -nowarn:0219 -debug
+PLOG_TESTS = $(PLOG_TESTS_SRC:.cs=.exe)
+
+CLASS = $(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
+TOOLS_RUNTIME = MONO_PATH=$(mcs_topdir)/class/lib/build $(top_builddir)/runtime/mono-wrapper
+MCS = $(TOOLS_RUNTIME) $(CSC) -lib:$(CLASS) -unsafe -nologo -noconfig -nowarn:0162 -nowarn:0168 -nowarn:0219 -debug:portable
 
 %.exe: %.cs
 	$(MCS) -out:$@ $<
 
 testlog: $(PLOG_TESTS)
-	$(with_mono_path) perl $(srcdir)/ptestrunner.pl $(top_builddir)
+	MONO_PATH=$(CLASS) perl $(srcdir)/ptestrunner.pl $(top_builddir)
 
-if NACL_CODEGEN
-check-local:
-else
-check-local: testlog
-endif
+check-local: $(check_targets)
 
-suppressiondir = $(datadir)/mono-$(API_VER)/mono/profiler
-suppression_DATA = mono-profiler-log.suppression
-
-EXTRA_DIST=utils.c utils.h proflog.h \
-	$(PLOG_TESTS_SRC) ptestrunner.pl \
+EXTRA_DIST = \
+	log.h \
+	aot.h \
+	$(PLOG_TESTS_SRC) \
+	ptestrunner.pl \
 	$(suppression_DATA)

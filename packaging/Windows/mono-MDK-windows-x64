@@ -1,0 +1,15 @@
+#!/bin/bash -xe
+COMPONENTS="mono64 managed-components"
+for i in ${COMPONENTS}
+	do defs/$i prerequisites
+done
+COMPONENTS="managed-components"
+defs/mono64 download
+defs/managed-components download "${mdk}"
+COMPONENTS="mono64 managed-components"
+for i in ${COMPONENTS}
+	do defs/$i clean
+	defs/$i build
+	defs/$i install "x64"
+done
+resources/build64.bat

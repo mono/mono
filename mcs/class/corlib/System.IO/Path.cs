@@ -140,6 +140,7 @@ namespace System.IO {
 		{
 			int l = s.Length;
 			int sub = 0;
+			int alt = 0;
 			int start = 0;
 
 			// Host prefix?
@@ -158,6 +159,8 @@ namespace System.IO {
 				
 				if (c != DirectorySeparatorChar && c != AltDirectorySeparatorChar)
 					continue;
+				if (DirectorySeparatorChar != AltDirectorySeparatorChar && c == AltDirectorySeparatorChar)
+					alt++;
 				if (i+1 == l)
 					sub++;
 				else {
@@ -167,7 +170,7 @@ namespace System.IO {
 				}
 			}
 
-			if (sub == 0)
+			if (sub == 0 && alt == 0)
 				return s;
 
 			char [] copy = new char [l-sub];
@@ -281,7 +284,7 @@ namespace System.IO {
 
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
-#if !NET_2_1
+#if MONO_FEATURE_CAS
 			if (SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fullpath).Demand ();
 			}
@@ -289,7 +292,12 @@ namespace System.IO {
 			return fullpath;
 		}
 
-#if !MOBILE
+		internal static String GetFullPathInternal(String path)
+		{
+			return InsecureGetFullPath (path);
+		}
+
+#if WIN_PLATFORM
 		// http://msdn.microsoft.com/en-us/library/windows/desktop/aa364963%28v=vs.85%29.aspx
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		private static extern int GetFullPathName(string path, int numBufferChars, StringBuilder buffer, ref IntPtr lpFilePartOrNull); 
@@ -310,14 +318,19 @@ namespace System.IO {
 				buffer = new StringBuilder(length);
 				GetFullPathName(path, length, buffer, ref ptr);
 			}
+
 			return buffer.ToString();
 		}
 
 		internal static string WindowsDriveAdjustment (string path)
 		{
-			// two special cases to consider when a drive is specified
-			if (path.Length < 2)
+
+			// three special cases to consider when a drive is specified
+			if (path.Length < 2) {
+				if (path.Length == 1 && (path[0] == '\\' || path[0] == '/'))
+					return Path.GetPathRoot(Directory.GetCurrentDirectory());
 				return path;
+			}
 			if ((path [1] != ':') || !Char.IsLetter (path [0]))
 				return path;
 
@@ -354,7 +367,7 @@ namespace System.IO {
 				string msg = Locale.GetText ("The specified path is not of a legal form (empty).");
 				throw new ArgumentException (msg);
 			}
-#if !MOBILE
+#if WIN_PLATFORM
 			// adjust for drives, i.e. a special case for windows
 			if (Environment.IsRunningOnWindows)
 				path = WindowsDriveAdjustment (path);
@@ -488,7 +501,7 @@ namespace System.IO {
 					f = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read,
 							    8192, false, (FileOptions) 1);
 				} catch (IOException ex){
-					if (ex.hresult != MonoIO.FileAlreadyExistsHResult || count ++ > 65536)
+					if (ex._HResult != MonoIO.FileAlreadyExistsHResult || count ++ > 65536)
 						throw;
 				} catch (UnauthorizedAccessException ex) {
 					if (count ++ > 65536)
@@ -721,6 +734,7 @@ namespace System.IO {
 			else {
 				string ret = String.Join (DirectorySeparatorStr, dirs, 0, target);
 				if (Environment.IsRunningOnWindows) {
+#if WIN_PLATFORM
 					// append leading '\' of the UNC path that was lost in STEP 3.
 					if (isUnc)
 						ret = Path.DirectorySeparatorStr + ret;
@@ -746,6 +760,7 @@ namespace System.IO {
 						else
 							return current + ret;
 					}
+#endif
 				} else {
 					if (root != "" && ret.Length > 0 && ret [0] != '/')
 						ret = root + ret;
@@ -865,11 +880,77 @@ namespace System.IO {
 				throw new ArgumentException (Locale.GetText ("Path is empty"));
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException (Locale.GetText ("Path contains invalid chars"));
+#if WIN_PLATFORM
 			if (Environment.IsRunningOnWindows) {
 				int idx = path.IndexOf (':');
 				if (idx >= 0 && idx != 1)
 					throw new ArgumentException (parameterName);
 			}
+#endif
 		}
+
+		internal static string DirectorySeparatorCharAsString {
+			get {
+				return DirectorySeparatorStr;
+			}
+		}
+
+		internal const int MAX_PATH = 260;  // From WinDef.h
+
+#region Copied from referencesource
+		// this was copied from corefx since it's not available in referencesource
+		internal static readonly char[] trimEndCharsWindows = { (char)0x9, (char)0xA, (char)0xB, (char)0xC, (char)0xD, (char)0x20, (char)0x85, (char)0xA0 };
+		internal static readonly char[] trimEndCharsUnix = { };
+
+		internal static char[] TrimEndChars => Environment.IsRunningOnWindows ? trimEndCharsWindows : trimEndCharsUnix;
+
+        // ".." can only be used if it is specified as a part of a valid File/Directory name. We disallow
+        //  the user being able to use it to move up directories. Here are some examples eg 
+        //    Valid: a..b  abc..d
+        //    Invalid: ..ab   ab..  ..   abc..d\abc..
+        //
+        internal static void CheckSearchPattern(String searchPattern)
+        {
+            int index;
+            while ((index = searchPattern.IndexOf("..", StringComparison.Ordinal)) != -1) {
+                    
+                 if (index + 2 == searchPattern.Length) // Terminal ".." . Files names cannot end in ".."
+                    throw new ArgumentException(Environment.GetResourceString("Arg_InvalidSearchPattern"));
+                
+                 if ((searchPattern[index+2] ==  DirectorySeparatorChar)
+                    || (searchPattern[index+2] == AltDirectorySeparatorChar))
+                    throw new ArgumentException(Environment.GetResourceString("Arg_InvalidSearchPattern"));
+                
+                searchPattern = searchPattern.Substring(index + 2);
+            }
+        }
+
+        internal static void CheckInvalidPathChars(string path, bool checkAdditional = false)
+        {
+            if (path == null)
+                throw new ArgumentNullException("path");
+
+            if (PathInternal.HasIllegalCharacters(path, checkAdditional))
+                throw new ArgumentException(Environment.GetResourceString("Argument_InvalidPathChars"));
+        }
+
+        internal static String InternalCombine(String path1, String path2) {
+            if (path1==null || path2==null)
+                throw new ArgumentNullException((path1==null) ? "path1" : "path2");
+            CheckInvalidPathChars(path1);
+            CheckInvalidPathChars(path2);
+            
+            if (path2.Length == 0)
+                throw new ArgumentException(Environment.GetResourceString("Argument_PathEmpty"), "path2");
+            if (IsPathRooted(path2))
+                throw new ArgumentException(Environment.GetResourceString("Arg_Path2IsRooted"), "path2");
+            int i = path1.Length;
+            if (i == 0) return path2;
+            char ch = path1[i - 1];
+            if (ch != DirectorySeparatorChar && ch != AltDirectorySeparatorChar && ch != VolumeSeparatorChar) 
+                return path1 + DirectorySeparatorCharAsString + path2;
+            return path1 + path2;
+        }
+#endregion
 	}
 }

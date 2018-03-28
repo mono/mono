@@ -54,7 +54,7 @@ namespace System.ServiceModel.Dispatcher
 		{
 			contract_name = name;
 			contract_ns = ns;
-#if !NET_2_1
+#if !MOBILE
 			CallbackDispatchRuntime = (DispatchRuntime) callbackDispatchRuntime ?? new DispatchRuntime (null, this);
 #endif
 		}
@@ -80,7 +80,7 @@ namespace System.ServiceModel.Dispatcher
 		
 		public Type ContractClientType { get; set; }
 
-#if !NET_2_1
+#if !MOBILE
 		public DispatchRuntime CallbackDispatchRuntime { get; internal set; }
 #endif
 
@@ -88,7 +88,7 @@ namespace System.ServiceModel.Dispatcher
 			get { return inspectors; }
 		}
 
-#if NET_2_1
+#if MOBILE
 		public KeyedCollection<string,ClientOperation> Operations {
 			get { return operations; }
 		}

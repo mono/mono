@@ -390,9 +390,22 @@ namespace Mono.CSharp {
 
 			return System.Linq.Expressions.Expression.Assign (target_object, source_object);
 		}
-		protected virtual Expression ResolveConversions (ResolveContext ec)
+
+		protected virtual Expression ResolveConversions (ResolveContext rc)
 		{
-			source = Convert.ImplicitConversionRequired (ec, source, target.Type, source.Location);
+			var ttype = target.Type;
+			var stackAlloc = source as StackAlloc;
+			if (stackAlloc != null && ttype.Arity == 1 && ttype.GetDefinition () == rc.Module.PredefinedTypes.SpanGeneric.TypeSpec &&
+			    rc.Module.Compiler.Settings.Version >= LanguageVersion.V_7_2) {
+
+				var etype = ttype.TypeArguments [0];
+				var stype = ((PointerContainer)source.Type).Element;
+				if (etype == stype && stackAlloc.ResolveSpanConversion (rc, ttype)) {
+					return this;
+				}
+			}
+
+			source = Convert.ImplicitConversionRequired (rc, source, ttype, source.Location);
 			if (source == null)
 				return null;
 
@@ -501,13 +514,17 @@ namespace Mono.CSharp {
 				pe.SetBackingFieldAssigned (fc);
 				return;
 			}
+
+			var td = target as TupleDeconstruct;
+			if (td != null) {
+				td.SetGeneratedFieldAssigned (fc);
+				return;
+			}
 		}
 
-		public override void MarkReachable (Reachability rc)
+		public override Reachability MarkReachable (Reachability rc)
 		{
-			var es = source as ExpressionStatement;
-			if (es != null)
-				es.MarkReachable (rc);
+			return source.MarkReachable (rc);
 		}
 	}
 
@@ -719,9 +736,11 @@ namespace Mono.CSharp {
 				this.loc = child.Location;
 			}
 
+			public bool RequiresEmitWithAwait { get; set; }
+
 			public override bool ContainsEmitWithAwait ()
 			{
-				return child.ContainsEmitWithAwait ();
+				return RequiresEmitWithAwait || child.ContainsEmitWithAwait ();
 			}
 
 			public override Expression CreateExpressionTree (ResolveContext ec)

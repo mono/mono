@@ -37,69 +37,20 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace System.Net.NetworkInformation {
-	public abstract class IPGlobalProperties {
-		protected IPGlobalProperties ()
-		{
-		}
-
-		public static IPGlobalProperties GetIPGlobalProperties ()
-		{
-#if MONODROID
-			return new AndroidIPGlobalProperties ();
-#elif MONOTOUCH || XAMMAC || MOBILE_STATIC
-			return new UnixIPGlobalProperties ();
-#else
-			switch (Environment.OSVersion.Platform) {
-			case PlatformID.Unix:
-				MibIPGlobalProperties impl = null;
-				if (Directory.Exists (MibIPGlobalProperties.ProcDir)) {
-					impl = new MibIPGlobalProperties (MibIPGlobalProperties.ProcDir);
-					if (File.Exists (impl.StatisticsFile))
-						return impl;
-				}
-				if (Directory.Exists (MibIPGlobalProperties.CompatProcDir)) {
-					impl = new MibIPGlobalProperties (MibIPGlobalProperties.CompatProcDir);
-					if (File.Exists (impl.StatisticsFile))
-						return impl;
-				}
-				return new UnixIPGlobalProperties ();
-			default:
-				return new Win32IPGlobalProperties ();
-			}
-#endif
-		}
-
-		internal static IPGlobalProperties InternalGetIPGlobalProperties()
-		{
-			return GetIPGlobalProperties ();
-		}
-
-		public abstract TcpConnectionInformation [] GetActiveTcpConnections ();
-		public abstract IPEndPoint [] GetActiveTcpListeners ();
-		public abstract IPEndPoint [] GetActiveUdpListeners ();
-		public abstract IcmpV4Statistics GetIcmpV4Statistics ();
-		public abstract IcmpV6Statistics GetIcmpV6Statistics ();
-		public abstract IPGlobalStatistics GetIPv4GlobalStatistics ();
-		public abstract IPGlobalStatistics GetIPv6GlobalStatistics ();
-		public abstract TcpStatistics GetTcpIPv4Statistics ();
-		public abstract TcpStatistics GetTcpIPv6Statistics ();
-		public abstract UdpStatistics GetUdpIPv4Statistics ();
-		public abstract UdpStatistics GetUdpIPv6Statistics ();
-
-		public abstract string DhcpScopeName { get; }
-		public abstract string DomainName { get; }
-		public abstract string HostName { get; }
-		public abstract bool IsWinsProxy { get; }
-		public abstract NetBiosNodeType NodeType { get; }
-	}
-
 	abstract class CommonUnixIPGlobalProperties : IPGlobalProperties
 	{
 		[DllImport ("libc")]
 		static extern int gethostname ([MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 1)] byte [] name, int len);
 
+#if !ORBIS
 		[DllImport ("libc")]
 		static extern int getdomainname ([MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 1)] byte [] name, int len);
+#else
+		static int getdomainname ([MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 1)] byte [] name, int len)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+#endif
 
 		public override string DhcpScopeName {
 			get { return String.Empty; }
@@ -343,7 +294,7 @@ namespace System.Net.NetworkInformation {
 				IPEndPoint local = ToEndpoint (list [i] [1]);
 				IPEndPoint remote = ToEndpoint (list [i] [2]);
 				TcpState state = (TcpState) int.Parse (list [i] [3], NumberStyles.HexNumber);
-				ret [i] = new TcpConnectionInformationImpl (local, remote, state);
+				ret [i] = new SystemTcpConnectionInformation (local, remote, state);
 			}
 			return ret;
 		}
@@ -407,7 +358,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32IPGlobalProperties : IPGlobalProperties
 	{
 		public const int AF_INET = 2;
@@ -543,7 +494,7 @@ namespace System.Net.NetworkInformation {
 
 		public override IcmpV4Statistics GetIcmpV4Statistics ()
 		{
-			if (!Socket.SupportsIPv4)
+			if (!Socket.OSSupportsIPv4)
 				throw new NetworkInformationException ();
 			Win32_MIBICMPINFO stats;
 			GetIcmpStatistics (out stats, AF_INET);
@@ -561,7 +512,7 @@ namespace System.Net.NetworkInformation {
 
 		public override IPGlobalStatistics GetIPv4GlobalStatistics ()
 		{
-			if (!Socket.SupportsIPv4)
+			if (!Socket.OSSupportsIPv4)
 				throw new NetworkInformationException ();
 			Win32_MIB_IPSTATS stats;
 			GetIpStatisticsEx (out stats, AF_INET);
@@ -579,7 +530,7 @@ namespace System.Net.NetworkInformation {
 
 		public override TcpStatistics GetTcpIPv4Statistics ()
 		{
-			if (!Socket.SupportsIPv4)
+			if (!Socket.OSSupportsIPv4)
 				throw new NetworkInformationException ();
 			Win32_MIB_TCPSTATS stats;
 			GetTcpStatisticsEx (out stats, AF_INET);
@@ -597,7 +548,7 @@ namespace System.Net.NetworkInformation {
 
 		public override UdpStatistics GetUdpIPv4Statistics ()
 		{
-			if (!Socket.SupportsIPv4)
+			if (!Socket.OSSupportsIPv4)
 				throw new NetworkInformationException ();
 			Win32_MIB_UDPSTATS stats;
 			GetUdpStatisticsEx (out stats, AF_INET);
@@ -614,23 +565,23 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override string DhcpScopeName {
-			get { return Win32_FIXED_INFO.Instance.ScopeId; }
+			get { return Win32NetworkInterface.FixedInfo.ScopeId; }
 		}
 
 		public override string DomainName {
-			get { return Win32_FIXED_INFO.Instance.DomainName; }
+			get { return Win32NetworkInterface.FixedInfo.DomainName; }
 		}
 
 		public override string HostName {
-			get { return Win32_FIXED_INFO.Instance.HostName; }
+			get { return Win32NetworkInterface.FixedInfo.HostName; }
 		}
 
 		public override bool IsWinsProxy {
-			get { return Win32_FIXED_INFO.Instance.EnableProxy != 0; }
+			get { return Win32NetworkInterface.FixedInfo.EnableProxy != 0; }
 		}
 
 		public override NetBiosNodeType NodeType {
-			get { return Win32_FIXED_INFO.Instance.NodeType; }
+			get { return Win32NetworkInterface.FixedInfo.NodeType; }
 		}
 
 		// PInvokes
@@ -662,6 +613,9 @@ namespace System.Net.NetworkInformation {
 		[DllImport ("iphlpapi.dll")]
 		static extern int GetIpStatisticsEx (out Win32_MIB_IPSTATS pStats, int dwFamily);
 
+		[DllImport ("Ws2_32.dll")]
+		static extern ushort ntohs (ushort netshort);
+
 		// Win32 structures
 
 		[StructLayout (LayoutKind.Explicit)]
@@ -690,7 +644,7 @@ namespace System.Net.NetworkInformation {
 			}
 
 			public TcpConnectionInformation TcpInfo {
-				get { return new TcpConnectionInformationImpl (LocalEndPoint, RemoteEndPoint, State); }
+				get { return new SystemTcpConnectionInformation (LocalEndPoint, RemoteEndPoint, State); }
 			}
 		}
 
@@ -714,7 +668,7 @@ namespace System.Net.NetworkInformation {
 			}
 
 			public TcpConnectionInformation TcpInfo {
-				get { return new TcpConnectionInformationImpl (LocalEndPoint, RemoteEndPoint, State); }
+				get { return new SystemTcpConnectionInformation (LocalEndPoint, RemoteEndPoint, State); }
 			}
 		}
 
@@ -722,10 +676,10 @@ namespace System.Net.NetworkInformation {
 		class Win32_MIB_UDPROW
 		{
 			public uint LocalAddr;
-			public int LocalPort;
+			public uint LocalPort;
 
 			public IPEndPoint LocalEndPoint {
-				get { return new IPEndPoint (LocalAddr, LocalPort); }
+				get { return new IPEndPoint (LocalAddr, ntohs((ushort)LocalPort)); }
 			}
 		}
 

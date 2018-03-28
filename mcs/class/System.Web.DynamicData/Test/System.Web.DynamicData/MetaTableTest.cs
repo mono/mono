@@ -49,7 +49,6 @@ using System.Web.Routing;
 using System.Web.UI.WebControls;
 
 using NUnit.Framework;
-using NUnit.Mocks;
 using MonoTests.stand_alone.WebHarness;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.Common;
@@ -171,7 +170,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual ("Column2", mc.Name, "#A2");
 
 			t = m.Tables[TestDataContext.TableFooEmpty];
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => mc = t.DisplayColumn, "#B1");
+			Assert.Throws<ArgumentOutOfRangeException> (() => mc = t.DisplayColumn, "#B1");
 
 			t = m.Tables[TestDataContext.TableFooWithDefaults];
 			mc = t.DisplayColumn;
@@ -194,9 +193,9 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual ("Column1", mc.Name, "#F2");
 
 			t = m.Tables[TestDataContext.TableFooInvalidDisplayColumnAttribute];
-			AssertExtensions.Throws<InvalidOperationException> (() => mc = t.DisplayColumn, "#G1");
+			Assert.Throws<InvalidOperationException> (() => mc = t.DisplayColumn, "#G1");
 			t = m.Tables[TestDataContext.TableFooEmptyDisplayColumnAttribute];
-			AssertExtensions.Throws<InvalidOperationException> (() => mc = t.DisplayColumn, "#G2");
+			Assert.Throws<InvalidOperationException> (() => mc = t.DisplayColumn, "#G2");
 
 			t = m.Tables[TestDataContext.TableFooWithMetadataType];
 			mc = t.DisplayColumn;
@@ -370,7 +369,7 @@ namespace MonoTests.System.Web.DynamicData
 
 			// Yet another lack of parameter checking - the number of items passed in the dataList must be at least equal
 			// to the number of columns in the PrimaryKeyColumns collection
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => t.GetActionPath (PageAction.Details, dataList), "#A2");
+			Assert.Throws<ArgumentOutOfRangeException> (() => t.GetActionPath (PageAction.Details, dataList), "#A2");
 
 			dataList.Add (2);
 			dataList.Add (false);
@@ -402,20 +401,20 @@ namespace MonoTests.System.Web.DynamicData
 			var values = new RouteValueDictionary ();
 
 			// NO null check for the routeValues parameter _again_!
-			AssertExtensions.Throws<NullReferenceException> (() => t.GetActionPath (PageAction.Details, (RouteValueDictionary) null), "#A1");
+			Assert.Throws<NullReferenceException> (() => t.GetActionPath (PageAction.Details, (RouteValueDictionary) null), "#A1");
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details, values), "#A2");
 			Assert.AreEqual (2, values.Count, "#A3");
 
 			// GetActionPath does not check if the Action and Table keys are present in the dictionary...
 			values.Clear ();
 			values.Add ("Action", "something");
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				t.GetActionPath (PageAction.Details, values);
 			}, "#B1");
 
 			values.Clear ();
 			values.Add ("Table", "else");
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				t.GetActionPath (PageAction.Details, values);
 			}, "#B2");
 		}
@@ -430,7 +429,7 @@ namespace MonoTests.System.Web.DynamicData
 
 			var foo = new FooWithDefaults ();
 			Assert.AreEqual (String.Empty, t.GetActionPath (null, (object) null), "#A1");
-			AssertExtensions.Throws<HttpException> (() => t.GetActionPath (PageAction.Details, (object) "test"), "#A2");
+			Assert.Throws<HttpException> (() => t.GetActionPath (PageAction.Details, (object) "test"), "#A2");
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details, "PrimaryKeyColumn1=primary%20key%20value&PrimaryKeyColumn2=456&PrimaryKeyColumn3=True"), t.GetActionPath (PageAction.Details, foo), "#A3");
 
 			t = m.Tables[TestDataContext.TableFooNoDefaultsWithPrimaryKey];
@@ -491,7 +490,7 @@ namespace MonoTests.System.Web.DynamicData
 
 			// Yet another lack of parameter checking - the number of items passed in the dataList must be at least equal
 			// to the number of columns in the PrimaryKeyColumns collection
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => t.GetActionPath (PageAction.Details, dataList), "#A3");
+			Assert.Throws<ArgumentOutOfRangeException> (() => t.GetActionPath (PageAction.Details, dataList), "#A3");
 
 			dataList.Add (2);
 			dataList.Add (false);
@@ -541,9 +540,9 @@ namespace MonoTests.System.Web.DynamicData
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
-			AssertExtensions.Throws<ArgumentNullException> (() => t.GetColumn (null), "#A1");
-			AssertExtensions.Throws<InvalidOperationException> (() => t.GetColumn (String.Empty), "#A2");
-			AssertExtensions.Throws<InvalidOperationException> (() => t.GetColumn ("NoSuchColumn"), "#A3");
+			Assert.Throws<ArgumentNullException> (() => t.GetColumn (null), "#A1");
+			Assert.Throws<InvalidOperationException> (() => t.GetColumn (String.Empty), "#A2");
+			Assert.Throws<InvalidOperationException> (() => t.GetColumn ("NoSuchColumn"), "#A3");
 
 			MetaColumn mc = t.GetColumn ("Column1");
 			Assert.IsNotNull (mc, "#B1");
@@ -560,9 +559,9 @@ namespace MonoTests.System.Web.DynamicData
 			var foo = new FooWithDefaults ();
 
 			Assert.AreEqual (String.Empty, t.GetDisplayString (null), "#A1");
-			AssertExtensions.Throws<HttpException> (() => t.GetDisplayString (String.Empty), "#A2");
+			Assert.Throws<HttpException> (() => t.GetDisplayString (String.Empty), "#A2");
 			Assert.AreEqual ("hello", t.GetDisplayString (foo), "#A3");
-			AssertExtensions.Throws<HttpException> (() => t.GetDisplayString ("TestString"), "#A4");
+			Assert.Throws<HttpException> (() => t.GetDisplayString ("TestString"), "#A4");
 
 			// The method looks at the entity type to see if it has an overriden ToString method, 
 			// it ignores such methods on the passed "row"
@@ -646,7 +645,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual ("primary key value,456,True", t.GetPrimaryKeyString (foo), "#A2");
 
 			var foo2 = new FooNoDefaultsWithPrimaryKey ();
-			AssertExtensions.Throws<HttpException> (() => t.GetPrimaryKeyString (foo2), "#B1");
+			Assert.Throws<HttpException> (() => t.GetPrimaryKeyString (foo2), "#B1");
 
 			t = m.Tables[TestDataContext.TableFooSettableDefaults];
 			var foo3 = new FooSettableDefaults (null, null, null);
@@ -669,7 +668,7 @@ namespace MonoTests.System.Web.DynamicData
 			var foo = new FooWithDefaults ();
 
 			Assert.IsNull (t.GetPrimaryKeyValues (null), "#A1");
-			AssertExtensions.Throws<HttpException> (() => t.GetPrimaryKeyValues ("test"), "#A2");
+			Assert.Throws<HttpException> (() => t.GetPrimaryKeyValues ("test"), "#A2");
 
 			IList<object> ret = t.GetPrimaryKeyValues (foo);
 			Assert.IsNotNull (ret, "#B1");
@@ -781,7 +780,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsTrue (query.GetType () == typeof (Table<Foo>), "#A2");
 
 			var foo = new Foo (true);
-			AssertExtensions.Throws (() => t.GetQuery (foo), "#B1");
+			Assert.Throws<InvalidCastException> (() => t.GetQuery (foo), "#B1");
 		}
 
 		[Test]
@@ -903,7 +902,7 @@ namespace MonoTests.System.Web.DynamicData
 
 			MetaColumn mc;
 			t = m.Tables[TestDataContext.TableFooMisnamedSortColumn];
-			AssertExtensions.Throws <InvalidOperationException> (() => mc = t.SortColumn, "#C1");
+			Assert.Throws <InvalidOperationException> (() => mc = t.SortColumn, "#C1");
 
 			t = m.Tables[TestDataContext.TableFooEmptySortColumn];
 			Assert.IsNull (t.SortColumn, "#D1");
@@ -944,7 +943,7 @@ namespace MonoTests.System.Web.DynamicData
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			MetaColumn mc = null;
 
-			AssertExtensions.Throws<ArgumentNullException> (() => t.TryGetColumn (null, out mc), "#A1");
+			Assert.Throws<ArgumentNullException> (() => t.TryGetColumn (null, out mc), "#A1");
 			Assert.IsFalse (t.TryGetColumn (String.Empty, out mc), "#A2");
 			Assert.IsNull (mc, "#A2-1");
 			Assert.IsTrue (t.TryGetColumn ("Column1", out mc), "#A3");

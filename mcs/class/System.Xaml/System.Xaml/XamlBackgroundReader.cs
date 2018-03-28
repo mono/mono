@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Runtime.ExceptionServices;
 
 namespace System.Xaml
 {
@@ -40,6 +41,7 @@ namespace System.Xaml
 		XamlReader r;
 		XamlNodeQueue q;
 		bool read_all_done, do_work = true;
+		ExceptionDispatchInfo read_exception;
 		ManualResetEvent wait = new ManualResetEvent (true);
 
 		public bool HasLineInfo {
@@ -92,6 +94,10 @@ namespace System.Xaml
 		{
 			if (q.IsEmpty)
 				wait.WaitOne ();
+
+			if (read_exception != null)
+				read_exception.Throw ();
+
 			return q.Reader.Read ();
 		}
 		
@@ -105,11 +111,16 @@ namespace System.Xaml
 			if (thread != null)
 				throw new InvalidOperationException ("Thread has already started");
 			thread = new Thread (new ParameterizedThreadStart (delegate {
-				while (do_work && r.Read ()) {
-					q.Writer.WriteNode (r);
+				try {
+					while (do_work && r.Read ()) {
+						q.Writer.WriteNode (r);
+						wait.Set ();
+					}
+					read_all_done = true;
+				} catch (Exception ex) {
+					read_exception = ExceptionDispatchInfo.Capture (ex);
 					wait.Set ();
 				}
-				read_all_done = true;
 			})) { Name = threadName };
 			thread.Start ();
 		}

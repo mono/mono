@@ -1,5 +1,6 @@
-/*
- * checked-build.c: Expensive asserts used when mono is built with --with-checked-build=yes
+/**
+ * \file
+ * Expensive asserts used when mono is built with --with-checked-build=yes
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -7,11 +8,13 @@
  * (C) 2015 Xamarin
  */
 #include <config.h>
+#include <mono/utils/mono-compiler.h>
 
 #ifdef ENABLE_CHECKED_BUILD
 
 #include <mono/utils/checked-build.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/metadata-internals.h>
@@ -35,7 +38,7 @@ mono_check_mode_enabled (MonoCheckMode query)
 	if (G_UNLIKELY (check_mode == MONO_CHECK_MODE_UNKNOWN))
 	{
 		MonoCheckMode env_check_mode = MONO_CHECK_MODE_NONE;
-		const gchar *env_string = g_getenv ("MONO_CHECK_MODE");
+		gchar *env_string = g_getenv ("MONO_CHECK_MODE");
 
 		if (env_string)
 		{
@@ -57,6 +60,7 @@ mono_check_mode_enabled (MonoCheckMode query)
 #endif
 			}
 			g_strfreev (env_split);
+			g_free (env_string);
 		}
 
 		check_mode = env_check_mode;
@@ -69,11 +73,13 @@ mono_check_transition_limit (void)
 {
 	static int transition_limit = -1;
 	if (transition_limit < 0) {
-		const gchar *env_string = g_getenv ("MONO_CHECK_THREAD_TRANSITION_HISTORY");
-		if (env_string)
+		gchar *env_string = g_getenv ("MONO_CHECK_THREAD_TRANSITION_HISTORY");
+		if (env_string) {
 			transition_limit = atoi (env_string);
-		else
+			g_free (env_string);
+		} else {
 			transition_limit = 3;
+		}
 	}
 	return transition_limit;
 }
@@ -145,7 +151,7 @@ translate_backtrace (gpointer native_trace[], int size)
 			g_string_append_printf (bt, "\tat %s\n", names [i]);
 	}
 
-	free (names);
+	g_free (names);
 	return g_string_free (bt, FALSE);
 }
 
@@ -183,10 +189,9 @@ checked_build_thread_transition (const char *transition, void *info, int from_st
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_THREAD))
 		return;
 
-	MonoThreadInfo *cur = mono_thread_info_current_unchecked ();
 	CheckState *state = get_state ();
 	/* We currently don't record external changes as those are hard to reason about. */
-	if (cur != info)
+	if (!mono_thread_info_is_current (info))
 		return;
 
 	if (state->transitions->len >= MAX_TRANSITIONS)
@@ -245,7 +250,7 @@ mono_fatal_with_history (const char *msg, ...)
 #ifdef ENABLE_CHECKED_BUILD_GC
 
 void
-assert_gc_safe_mode (void)
+assert_gc_safe_mode (const char *file, int lineno)
 {
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_GC))
 		return;
@@ -254,19 +259,19 @@ assert_gc_safe_mode (void)
 	int state;
 
 	if (!cur)
-		mono_fatal_with_history ("Expected GC Safe mode but thread is not attached");
+		mono_fatal_with_history ("%s:%d: Expected GC Safe mode but thread is not attached", file, lineno);
 
 	switch (state = mono_thread_info_current_state (cur)) {
 	case STATE_BLOCKING:
 	case STATE_BLOCKING_AND_SUSPENDED:
 		break;
 	default:
-		mono_fatal_with_history ("Expected GC Safe mode but was in %s state", mono_thread_state_name (state));
+		mono_fatal_with_history ("%s:%d: Expected GC Safe mode but was in %s state", file, lineno, mono_thread_state_name (state));
 	}
 }
 
 void
-assert_gc_unsafe_mode (void)
+assert_gc_unsafe_mode (const char *file, int lineno)
 {
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_GC))
 		return;
@@ -275,7 +280,7 @@ assert_gc_unsafe_mode (void)
 	int state;
 
 	if (!cur)
-		mono_fatal_with_history ("Expected GC Unsafe mode but thread is not attached");
+		mono_fatal_with_history ("%s:%d: Expected GC Unsafe mode but thread is not attached", file, lineno);
 
 	switch (state = mono_thread_info_current_state (cur)) {
 	case STATE_RUNNING:
@@ -283,12 +288,12 @@ assert_gc_unsafe_mode (void)
 	case STATE_SELF_SUSPEND_REQUESTED:
 		break;
 	default:
-		mono_fatal_with_history ("Expected GC Unsafe mode but was in %s state", mono_thread_state_name (state));
+		mono_fatal_with_history ("%s:%d: Expected GC Unsafe mode but was in %s state", file, lineno, mono_thread_state_name (state));
 	}
 }
 
 void
-assert_gc_neutral_mode (void)
+assert_gc_neutral_mode (const char *file, int lineno)
 {
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_GC))
 		return;
@@ -297,7 +302,7 @@ assert_gc_neutral_mode (void)
 	int state;
 
 	if (!cur)
-		mono_fatal_with_history ("Expected GC Neutral mode but thread is not attached");
+		mono_fatal_with_history ("%s:%d: Expected GC Neutral mode but thread is not attached", file, lineno);
 
 	switch (state = mono_thread_info_current_state (cur)) {
 	case STATE_RUNNING:
@@ -307,7 +312,7 @@ assert_gc_neutral_mode (void)
 	case STATE_BLOCKING_AND_SUSPENDED:
 		break;
 	default:
-		mono_fatal_with_history ("Expected GC Neutral mode but was in %s state", mono_thread_state_name (state));
+		mono_fatal_with_history ("%s:%d: Expected GC Neutral mode but was in %s state", file, lineno, mono_thread_state_name (state));
 	}
 }
 
@@ -473,6 +478,12 @@ check_image_may_reference_image(MonoImage *from, MonoImage *to)
 			// For each queued image visit all directly referenced images
 			int inner_idx;
 
+			// 'files' and 'modules' semantically contain the same items but because of lazy loading we must check both
+			for (inner_idx = 0; !success && inner_idx < checking->file_count; inner_idx++)
+			{
+				CHECK_IMAGE_VISIT (checking->files[inner_idx]);
+			}
+
 			for (inner_idx = 0; !success && inner_idx < checking->module_count; inner_idx++)
 			{
 				CHECK_IMAGE_VISIT (checking->modules[inner_idx]);
@@ -480,8 +491,8 @@ check_image_may_reference_image(MonoImage *from, MonoImage *to)
 
 			for (inner_idx = 0; !success && inner_idx < checking->nreferences; inner_idx++)
 			{
-				// References are lazy-loaded and thus allowed to be NULL.
-				// If they are NULL, we don't care about them for this search, because they haven't impacted ref_count yet.
+				// Assembly references are lazy-loaded and thus allowed to be NULL.
+				// If they are NULL, we don't care about them for this search, because their images haven't impacted ref_count yet.
 				if (checking->references[inner_idx])
 				{
 					CHECK_IMAGE_VISIT (checking->references[inner_idx]->image);
@@ -540,10 +551,10 @@ check_image_set_may_reference_image_set (MonoImageSet *from, MonoImageSet *to)
 		if (to->images[to_idx] == mono_defaults.corlib)
 			seen = TRUE;
 
-		// For each item in to->images, scan over from->images looking for it.
+		// For each item in to->images, scan over from->images seeking a path to it.
 		for (from_idx = 0; !seen && from_idx < from->nimages; from_idx++)
 		{
-			if (to->images[to_idx] == from->images[from_idx])
+			if (check_image_may_reference_image (from->images[from_idx], to->images[to_idx]))
 				seen = TRUE;
 		}
 
@@ -698,5 +709,7 @@ check_metadata_store_local (void *from, void *to)
 }
 
 #endif /* defined(ENABLE_CHECKED_BUILD_METADATA) */
+#else /* ENABLE_CHECKED_BUILD */
 
+MONO_EMPTY_SOURCE_FILE (checked_build);
 #endif /* ENABLE_CHECKED_BUILD */

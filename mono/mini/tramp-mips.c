@@ -1,5 +1,6 @@
-/*
- * tramp-mips.c: JIT trampoline code for MIPS
+/**
+ * \file
+ * JIT trampoline code for MIPS
  *
  * Authors:
  *    Mark Mason (mason@broadcom.com)
@@ -24,6 +25,7 @@
 
 #include "mini.h"
 #include "mini-mips.h"
+#include "mini-runtime.h"
 
 /*
  * get_unbox_trampoline:
@@ -109,8 +111,6 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
  * #define STACK (MIPS_MINIMAL_STACK_SIZE + 4 * sizeof (gulong) + sizeof (MonoLMF) + 14 * sizeof (double) + 13 * (sizeof (gulong)))
  * STACK would be 444 for 32 bit darwin
  */
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 #define STACK (int)(ALIGN_TO(4*IREG_SIZE + 8 + sizeof(MonoLMF) + 32, 8))
 
@@ -306,7 +306,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 }
 
 gpointer
-mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericContext *mrgctx, gpointer addr)
+mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 {
 	guint8 *code, *start;
 	int buf_len;
@@ -317,7 +317,7 @@ mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericCo
 
 	start = code = mono_domain_code_reserve (domain, buf_len);
 
-	mips_load (code, MONO_ARCH_RGCTX_REG, mrgctx);
+	mips_load (code, MONO_ARCH_RGCTX_REG, arg);
 	mips_load (code, mips_at, addr);
 	mips_jr (code, mips_at);
 	mips_nop (code);

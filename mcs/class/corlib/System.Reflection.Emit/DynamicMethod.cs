@@ -131,7 +131,7 @@ namespace System.Reflection.Emit {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void create_dynamic_method (DynamicMethod m);
+		private static extern void create_dynamic_method (DynamicMethod m);
 
 		private void CreateDynMethod () {
 			if (mhandle.Value == IntPtr.Zero) {
@@ -210,15 +210,20 @@ namespace System.Reflection.Emit {
 			return this;
 		}
 
-		[MonoTODO("Not implemented")]
 		public override object[] GetCustomAttributes (bool inherit) {
-			throw new NotImplementedException ();
+			// support for MethodImplAttribute PCA
+			return new Object[] { new MethodImplAttribute(GetMethodImplementationFlags()) };
 		}
 
-		[MonoTODO("Not implemented")]
 		public override object[] GetCustomAttributes (Type attributeType,
-													  bool inherit) {
-			throw new NotImplementedException ();
+							      bool inherit) {
+			if (attributeType == null)
+				throw new ArgumentNullException ("attributeType");
+
+			if (attributeType.IsAssignableFrom (typeof (MethodImplAttribute)))
+				return new Object[] { new MethodImplAttribute (GetMethodImplementationFlags()) };
+			else
+				return EmptyArray<Object>.Value;
 		}
 
 		public DynamicILInfo GetDynamicILInfo () {
@@ -244,7 +249,7 @@ namespace System.Reflection.Emit {
 		}		
 
 		public override MethodImplAttributes GetMethodImplementationFlags () {
-			return MethodImplAttributes.IL | MethodImplAttributes.Managed;
+			return MethodImplAttributes.IL | MethodImplAttributes.Managed | MethodImplAttributes.NoInlining;
 		}
 
 		public override ParameterInfo[] GetParameters ()
@@ -298,9 +303,14 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		[MonoTODO("Not implemented")]
 		public override bool IsDefined (Type attributeType, bool inherit) {
-			throw new NotImplementedException ();
+			if (attributeType == null)
+				throw new ArgumentNullException ("attributeType");
+
+			if (attributeType.IsAssignableFrom (typeof (MethodImplAttribute)))
+				return true;
+			else
+				return false;
 		}
 
 		public override string ToString () {

@@ -60,35 +60,43 @@ namespace Mono.Unix {
 
 		public StdioFileStream (string path)
 		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
 			InitStream (Fopen (path, "rb"), true);
 		}
 
 		public StdioFileStream (string path, string mode)
 		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
 			InitStream (Fopen (path, mode), true);
 		}
 
 		public StdioFileStream (string path, FileMode mode)
 		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
 			InitStream (Fopen (path, ToFopenMode (path, mode)), true);
 		}
 
 		public StdioFileStream (string path, FileAccess access)
 		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
 			InitStream (Fopen (path, ToFopenMode (path, access)), true);
 			InitCanReadWrite (access);
 		}
 
 		public StdioFileStream (string path, FileMode mode, FileAccess access)
 		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
 			InitStream (Fopen (path, ToFopenMode (path, mode, access)), true);
 			InitCanReadWrite (access);
 		}
 
 		private static IntPtr Fopen (string path, string mode)
 		{
-			if (path == null)
-				throw new ArgumentNullException ("path");
 			if (path.Length == 0)
 				throw new ArgumentException ("path");
 			if (mode == null)

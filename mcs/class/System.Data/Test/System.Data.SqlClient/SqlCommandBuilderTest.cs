@@ -38,6 +38,9 @@ namespace MonoTests.System.Data.Odbc
 	public class SqlCommandBuilderTest
 	{
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CatalogLocationTest ()
 		{
 			SqlCommandBuilder cb = new SqlCommandBuilder ();
@@ -47,6 +50,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CatalogLocation_Value_Invalid ()
 		{
 			SqlCommandBuilder cb = new SqlCommandBuilder ();
@@ -82,6 +88,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CatalogSeparator ()
 		{
 			SqlCommandBuilder cb = new SqlCommandBuilder ();
@@ -89,6 +98,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CatalogSeparator_Value_Invalid ()
 		{
 			string [] separators = new string [] {
@@ -118,6 +130,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConflictOptionTest ()
 		{
 			SqlCommandBuilder cb = new SqlCommandBuilder ();
@@ -127,6 +142,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConflictOption_Value_Invalid ()
 		{
 			SqlCommandBuilder cb = new SqlCommandBuilder ();
@@ -147,6 +165,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test] // QuoteIdentifier (String)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void QuoteIdentifier ()
 		{
 			SqlCommandBuilder cb;
@@ -173,6 +194,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void QuoteIdentifier_PrefixSuffix_NoMatch ()
 		{
 			SqlCommandBuilder cb;
@@ -211,6 +235,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test] // QuoteIdentifier (String)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void QuoteIdentifier_UnquotedIdentifier_Null ()
 		{
 			SqlCommandBuilder cb = new SqlCommandBuilder ();
@@ -226,6 +253,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void QuotePrefix ()
 		{
 			SqlCommandBuilder cb = new SqlCommandBuilder ();
@@ -240,6 +270,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void QuotePrefix_Value_Invalid ()
 		{
 			string [] prefixes = new string [] {
@@ -268,6 +301,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void QuoteSuffix ()
 		{
 			SqlCommandBuilder cb = new SqlCommandBuilder ();
@@ -282,6 +318,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void QuoteSuffix_Value_Invalid ()
 		{
 			string [] suffixes = new string [] {
@@ -310,6 +349,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SchemaSeparator ()
 		{
 			SqlCommandBuilder cb = new SqlCommandBuilder ();
@@ -319,6 +361,9 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SchemaSeparator_Value_Invalid ()
 		{
 			string [] separators = new string [] {

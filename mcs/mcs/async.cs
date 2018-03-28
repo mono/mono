@@ -127,10 +127,9 @@ namespace Mono.CSharp
 			stmt.EmitStatement (ec);
 		}
 
-		public override void MarkReachable (Reachability rc)
+		public override Reachability MarkReachable (Reachability rc)
 		{
-			base.MarkReachable (rc);
-			stmt.MarkReachable (rc);
+			return stmt.MarkReachable (rc);
 		}
 
 		public override object Accept (StructuralVisitor visitor)
@@ -514,11 +513,12 @@ namespace Mono.CSharp
 			ec.Emit (OpCodes.Ret);
 		}
 
-		public override void MarkReachable (Reachability rc)
+		public override Reachability MarkReachable (Reachability rc)
 		{
 			//
 			// Reachability has been done in AsyncInitializerStatement
 			//
+			return rc;
 		}
 	}
 
@@ -628,58 +628,112 @@ namespace Mono.CSharp
 
 		protected override bool DoDefineMembers ()
 		{
-			PredefinedType builder_type;
-			PredefinedMember<MethodSpec> bf;
-			PredefinedMember<MethodSpec> bs;
-			PredefinedMember<MethodSpec> sr;
-			PredefinedMember<MethodSpec> se;
-			PredefinedMember<MethodSpec> sm;
+			TypeSpec bt;
 			bool has_task_return_type = false;
-			var pred_members = Module.PredefinedMembers;
-
-			if (return_type.Kind == MemberKind.Void) {
-				builder_type = Module.PredefinedTypes.AsyncVoidMethodBuilder;
-				bf = pred_members.AsyncVoidMethodBuilderCreate;
-				bs = pred_members.AsyncVoidMethodBuilderStart;
-				sr = pred_members.AsyncVoidMethodBuilderSetResult;
-				se = pred_members.AsyncVoidMethodBuilderSetException;
-				sm = pred_members.AsyncVoidMethodBuilderSetStateMachine;
-			} else if (return_type == Module.PredefinedTypes.Task.TypeSpec) {
-				builder_type = Module.PredefinedTypes.AsyncTaskMethodBuilder;
-				bf = pred_members.AsyncTaskMethodBuilderCreate;
-				bs = pred_members.AsyncTaskMethodBuilderStart;
-				sr = pred_members.AsyncTaskMethodBuilderSetResult;
-				se = pred_members.AsyncTaskMethodBuilderSetException;
-				sm = pred_members.AsyncTaskMethodBuilderSetStateMachine;
-				task = pred_members.AsyncTaskMethodBuilderTask.Get ();
-			} else {
-				builder_type = Module.PredefinedTypes.AsyncTaskMethodBuilderGeneric;
-				bf = pred_members.AsyncTaskMethodBuilderGenericCreate;
-				bs = pred_members.AsyncTaskMethodBuilderGenericStart;
-				sr = pred_members.AsyncTaskMethodBuilderGenericSetResult;
-				se = pred_members.AsyncTaskMethodBuilderGenericSetException;
-				sm = pred_members.AsyncTaskMethodBuilderGenericSetStateMachine;
-				task = pred_members.AsyncTaskMethodBuilderGenericTask.Get ();
-				has_task_return_type = true;
-			}
-
-			set_result = sr.Get ();
-			set_exception = se.Get ();
-			builder_factory = bf.Get ();
-			builder_start = bs.Get ();
-
 			var istate_machine = Module.PredefinedTypes.IAsyncStateMachine;
-			var set_statemachine = sm.Get ();
+			MethodSpec set_statemachine;
 
-			if (!builder_type.Define () || !istate_machine.Define () || set_result == null || builder_factory == null ||
-				set_exception == null || set_statemachine == null || builder_start == null ||
-				!Module.PredefinedTypes.INotifyCompletion.Define ()) {
-				Report.Error (1993, Location,
-					"Cannot find compiler required types for asynchronous functions support. Are you targeting the wrong framework version?");
-				return base.DoDefineMembers ();
+			if (return_type.IsCustomTaskType ()) {
+				//
+				// TODO: Would be nice to cache all this on per-type basis
+				//
+				var btypes = Compiler.BuiltinTypes;
+				bt = return_type.MemberDefinition.GetAsyncMethodBuilder ();
+				TypeSpec bt_inflated;
+				if (return_type.IsGeneric) {
+					bt_inflated = bt.MakeGenericType (Module, bt.MemberDefinition.TypeParameters);
+				} else {
+					bt_inflated = bt;
+				}
+
+				var set_result_sign = MemberFilter.Method ("SetResult", 0, ParametersCompiled.CreateFullyResolved (bt.MemberDefinition.TypeParameters), btypes.Void);
+				set_result = new PredefinedMember<MethodSpec> (Module, bt, set_result_sign).Resolve (Location);
+
+				var set_exception_sign = MemberFilter.Method ("SetException", 0, ParametersCompiled.CreateFullyResolved (btypes.Exception), btypes.Void);
+				set_exception = new PredefinedMember<MethodSpec> (Module, bt, set_exception_sign).Resolve (Location);
+
+				var builder_factory_sign = MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, bt_inflated);
+				builder_factory = new PredefinedMember<MethodSpec> (Module, bt, builder_factory_sign).Resolve (Location);
+				if (builder_factory?.IsStatic == false)
+					throw new NotImplementedException ("report better error message");
+
+				var builder_start_sign = MemberFilter.Method ("Start", 1, new ParametersImported (
+						new [] {
+								new ParameterData (null, Parameter.Modifier.REF),
+							},
+						new [] {
+								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
+							}, false),
+					btypes.Void);
+				builder_start = new PredefinedMember<MethodSpec> (Module, bt, builder_start_sign).Resolve (Location);
+
+				if (!istate_machine.Define ())
+					return false;
+
+				var set_statemachine_sign = MemberFilter.Method ("SetStateMachine", 0, ParametersCompiled.CreateFullyResolved (istate_machine.TypeSpec), btypes.Void);
+				set_statemachine = new PredefinedMember<MethodSpec> (Module, bt, set_statemachine_sign).Resolve (Location); ;
+
+				var task_sign = MemberFilter.Property ("Task", return_type.MemberDefinition as TypeSpec);
+				task = new PredefinedMember<PropertySpec> (Module, bt, task_sign).Resolve (Location);
+
+				if (set_result == null || set_exception == null || builder_factory == null || builder_start == null || set_statemachine == null || task == null ||
+					!Module.PredefinedTypes.INotifyCompletion.Define ()) {
+					return false;
+				}
+
+				has_task_return_type = return_type.IsGeneric;
+			} else {
+				PredefinedType builder_type;
+				PredefinedMember<MethodSpec> bf;
+				PredefinedMember<MethodSpec> bs;
+				PredefinedMember<MethodSpec> sr;
+				PredefinedMember<MethodSpec> se;
+				PredefinedMember<MethodSpec> sm;
+				var pred_members = Module.PredefinedMembers;
+
+				if (return_type.Kind == MemberKind.Void) {
+					builder_type = Module.PredefinedTypes.AsyncVoidMethodBuilder;
+					bf = pred_members.AsyncVoidMethodBuilderCreate;
+					bs = pred_members.AsyncVoidMethodBuilderStart;
+					sr = pred_members.AsyncVoidMethodBuilderSetResult;
+					se = pred_members.AsyncVoidMethodBuilderSetException;
+					sm = pred_members.AsyncVoidMethodBuilderSetStateMachine;
+				} else if (return_type == Module.PredefinedTypes.Task.TypeSpec) {
+					builder_type = Module.PredefinedTypes.AsyncTaskMethodBuilder;
+					bf = pred_members.AsyncTaskMethodBuilderCreate;
+					bs = pred_members.AsyncTaskMethodBuilderStart;
+					sr = pred_members.AsyncTaskMethodBuilderSetResult;
+					se = pred_members.AsyncTaskMethodBuilderSetException;
+					sm = pred_members.AsyncTaskMethodBuilderSetStateMachine;
+					task = pred_members.AsyncTaskMethodBuilderTask.Get ();
+				} else {
+					builder_type = Module.PredefinedTypes.AsyncTaskMethodBuilderGeneric;
+					bf = pred_members.AsyncTaskMethodBuilderGenericCreate;
+					bs = pred_members.AsyncTaskMethodBuilderGenericStart;
+					sr = pred_members.AsyncTaskMethodBuilderGenericSetResult;
+					se = pred_members.AsyncTaskMethodBuilderGenericSetException;
+					sm = pred_members.AsyncTaskMethodBuilderGenericSetStateMachine;
+					task = pred_members.AsyncTaskMethodBuilderGenericTask.Get ();
+					has_task_return_type = true;
+				}
+
+				set_result = sr.Get ();
+				set_exception = se.Get ();
+				builder_factory = bf.Get ();
+				builder_start = bs.Get ();
+
+				set_statemachine = sm.Get ();
+
+				if (!builder_type.Define () || !istate_machine.Define () || set_result == null || builder_factory == null ||
+					set_exception == null || set_statemachine == null || builder_start == null ||
+					!Module.PredefinedTypes.INotifyCompletion.Define ()) {
+					Report.Error (1993, Location,
+						"Cannot find compiler required types for asynchronous functions support. Are you targeting the wrong framework version?");
+					return base.DoDefineMembers ();
+				}
+
+				bt = builder_type.TypeSpec;
 			}
-
-			var bt = builder_type.TypeSpec;
 
 			//
 			// Inflate generic Task types
@@ -825,9 +879,26 @@ namespace Mono.CSharp
 				predefined = unsafeVersion ? pm.AsyncVoidMethodBuilderOnCompletedUnsafe : pm.AsyncVoidMethodBuilderOnCompleted;
 			} else if (return_type == Module.PredefinedTypes.Task.TypeSpec) {
 				predefined = unsafeVersion ? pm.AsyncTaskMethodBuilderOnCompletedUnsafe : pm.AsyncTaskMethodBuilderOnCompleted;
-			} else {
+			} else if (return_type.IsGenericTask) {
 				predefined = unsafeVersion ? pm.AsyncTaskMethodBuilderGenericOnCompletedUnsafe : pm.AsyncTaskMethodBuilderGenericOnCompleted;
 				has_task_return_type = true;
+			} else {
+				var parameters = new ParametersImported (
+					new [] {
+								new ParameterData (null, Parameter.Modifier.REF),
+								new ParameterData (null, Parameter.Modifier.REF)
+						},
+					new [] {
+								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null),
+								new TypeParameterSpec (1, null, SpecialConstraint.None, Variance.None, null)
+					}, false);
+
+				var on_completed_sign = unsafeVersion ?
+					MemberFilter.Method ("AwaitUnsafeOnCompleted", 2, parameters, Compiler.BuiltinTypes.Void) :
+				    MemberFilter.Method ("AwaitOnCompleted", 2, parameters, Compiler.BuiltinTypes.Void);
+				
+				predefined = new PredefinedMember<MethodSpec> (Module, return_type.MemberDefinition.GetAsyncMethodBuilder (), on_completed_sign);
+				has_task_return_type = return_type.IsGeneric;
 			}
 
 			var on_completed = predefined.Resolve (Location);
@@ -887,11 +958,14 @@ namespace Mono.CSharp
 			// stateMachine.$builder.Start<{storey-type}>(ref stateMachine);
 			//
 			instance.AddressOf (ec, AddressOp.Store);
-			ec.Emit (OpCodes.Ldflda, builder_field);
+
+			bool struct_builder = builder.MemberType.IsStruct;
+
+			ec.Emit (struct_builder ? OpCodes.Ldflda : OpCodes.Ldfld, builder_field);
 			if (Task != null)
 				ec.Emit (OpCodes.Dup);
 			instance.AddressOf (ec, AddressOp.Store);
-			ec.Emit (OpCodes.Call, builder_start.MakeGenericMethod (Module, instance.Type));
+			ec.Emit (struct_builder ? OpCodes.Call : OpCodes.Callvirt, builder_start.MakeGenericMethod (Module, instance.Type));
 
 			//
 			// Emits return stateMachine.$builder.Task;
@@ -973,14 +1047,17 @@ namespace Mono.CSharp
 		public StackFieldExpr (Field field)
 			: base (field, Location.Null)
 		{
+			AutomaticallyReuse = true;
 		}
+
+		public bool AutomaticallyReuse { get; set; }
 
 		public bool IsAvailableForReuse {
 			get {
 				var field = (Field) spec.MemberDefinition;
 				return field.IsAvailableForReuse;
 			}
-			set {
+			private set {
 				var field = (Field) spec.MemberDefinition;
 				field.IsAvailableForReuse = value;
 			}
@@ -990,7 +1067,7 @@ namespace Mono.CSharp
 		{
 			base.AddressOf (ec, mode);
 
-			if (mode == AddressOp.Load) {
+			if (mode == AddressOp.Load && AutomaticallyReuse) {
 				IsAvailableForReuse = true;
 			}
 		}
@@ -999,7 +1076,8 @@ namespace Mono.CSharp
 		{
 			base.Emit (ec);
 
-			PrepareCleanup (ec);
+			if (AutomaticallyReuse)
+				PrepareCleanup (ec);
 		}
 
 		public void EmitLoad (EmitContext ec)
@@ -1023,6 +1101,22 @@ namespace Mono.CSharp
 		void IExpressionCleanup.EmitCleanup (EmitContext ec)
 		{
 			EmitAssign (ec, new NullConstant (type, loc), false, false);
+		}
+	}
+
+	static class TypeSpecAsyncExtensions
+	{
+		public static bool IsCustomTaskType (this TypeSpec type)
+		{
+			// LAMESPEC: Arity is not mentioned
+			if (type.Arity > 1)
+				return false;
+			
+			var amb = type.MemberDefinition.GetAsyncMethodBuilder ();
+			if (amb == null)
+				return false;
+
+			return amb.Arity == type.Arity;
 		}
 	}
 }

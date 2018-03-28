@@ -55,8 +55,8 @@ namespace CorCompare {
 			var ifaces = new Dictionary<string, TypeReference> ();
 
 			foreach (var def in WalkHierarchy (type))
-				foreach (TypeReference iface in def.Interfaces)
-					ifaces [iface.FullName] = iface;
+				foreach (var iface in def.Interfaces)
+					ifaces [iface.InterfaceType.FullName] = iface.InterfaceType;
 
 			return ifaces.Values;
 		}

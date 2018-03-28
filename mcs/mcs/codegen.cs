@@ -1070,7 +1070,10 @@ namespace Mono.CSharp
 					var ie = new InstanceEmitter (instance_copy, IsAddressCall (instance_copy, call_op, method.DeclaringType));
 
 					if (Arguments == null) {
-						ie.EmitLoad (ec, true);
+						if (ConditionalAccess)
+							ie.Emit (ec, true);
+						else
+							ie.EmitLoad (ec, true);
 					}
 				} else if (!InstanceExpressionOnStack) {
 					var ie = new InstanceEmitter (InstanceExpression, IsAddressCall (InstanceExpression, call_op, method.DeclaringType));
@@ -1263,10 +1266,15 @@ namespace Mono.CSharp
 
 			if (conditionalAccess) {
 				if (!ec.ConditionalAccess.Statement) {
-					if (ec.ConditionalAccess.Type.IsNullableType)
-						Nullable.LiftedNull.Create (ec.ConditionalAccess.Type, Location.Null).Emit (ec);
-					else
+					var t = ec.ConditionalAccess.Type;
+					if (t.IsNullableType)
+						Nullable.LiftedNull.Create (t, Location.Null).Emit (ec);
+					else {
 						ec.EmitNull ();
+
+						if (t.IsGenericParameter)
+							ec.Emit (OpCodes.Unbox_Any, t);
+					}
 				}
 
 				ec.Emit (OpCodes.Br, ec.ConditionalAccess.EndLabel);

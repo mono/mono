@@ -1,0 +1,35 @@
+# build artifacts
+.stamp-*
+*.mk.generated
+*.config.cache
+mxe/
+llvm-llvm32/
+llvm-llvm64/
+llvm-llvmwin32/
+llvm-llvmwin64/
+android-armeabi-*/
+android-armeabi-v7a-*/
+android-arm64-v8a-*/
+android-x86-*/
+android-x86_64-*/
+android-host-Darwin-*/
+android-host-Linux-*/
+android-host-mxe-Win32-*/
+android-host-mxe-Win64-*/
+ios-target32-*/
+ios-target32s-*/
+ios-target64-*/
+ios-targettv-*/
+ios-targetwatch-*/
+ios-cross32-*/
+ios-cross64-*/
+ios-crosswatch-*/
+ios-sim32-*/
+ios-sim64-*/
+ios-simtv-*/
+ios-simwatch-*/
+wasm-interp/
+bcl/
+
+# android toolchain
+toolchains/

@@ -1,0 +1,4 @@
+../../class/Mono.Options/Mono.Options/Options.cs
+
+../../../external/linker/analyzer/*.cs
+../../../external/linker/analyzer/LinkerAnalyzerCore/*.cs

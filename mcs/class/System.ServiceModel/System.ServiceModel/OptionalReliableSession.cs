@@ -1,4 +1,4 @@
-﻿//
+//
 // OptionalReliableSession.cs
 //
 // Author:
@@ -42,11 +42,11 @@ namespace System.ServiceModel
 		{
 		}
 
-		public OptionalReliableSession (ReliableSessionBindingElement binding)
-			: base (binding)
+		public OptionalReliableSession (ReliableSessionBindingElement reliableSessionBindingElement)
+			: base (reliableSessionBindingElement)
 		{
-			if (binding == null)
-				throw new ArgumentNullException ("binding");
+			if (reliableSessionBindingElement == null)
+				throw new ArgumentNullException ("reliableSessionBindingElement");
 		}
 
 		public bool Enabled {

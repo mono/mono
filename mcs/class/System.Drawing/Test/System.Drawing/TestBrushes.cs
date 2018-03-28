@@ -48,12 +48,11 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Dispose ()
 		{
 			Brushes.YellowGreen.Dispose ();
 			// a "normal" SolidBrush would throw an ArgumentException here
-			Brushes.YellowGreen.Clone ();
+			Assert.Throws<ArgumentException> (() => Brushes.YellowGreen.Clone ());
 			// and it is! so watch your brushes ;-)
 		}
 

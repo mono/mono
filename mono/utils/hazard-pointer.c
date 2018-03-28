@@ -1,5 +1,6 @@
-/*
- * hazard-pointer.c: Hazard pointer related code.
+/**
+ * \file
+ * Hazard pointer related code.
  *
  * (C) Copyright 2011 Novell, Inc
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -23,13 +24,11 @@
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-counters.h>
-#include <mono/io-layer/io-layer.h>
 #endif
 
 typedef struct {
 	gpointer p;
 	MonoHazardousFreeFunc free_func;
-	HazardFreeLocking locking;
 } DelayedFreeItem;
 
 /* The hazard table */
@@ -53,7 +52,7 @@ static volatile gint32 overflow_busy [HAZARD_TABLE_OVERFLOW];
 
 /* The table where we keep pointers to blocks to be freed but that
    have to wait because they're guarded by a hazard pointer. */
-static MonoLockFreeArrayQueue delayed_free_queue = MONO_LOCK_FREE_ARRAY_QUEUE_INIT (sizeof (DelayedFreeItem));
+static MonoLockFreeArrayQueue delayed_free_queue = MONO_LOCK_FREE_ARRAY_QUEUE_INIT (sizeof (DelayedFreeItem), MONO_MEM_ACCOUNT_HAZARD_POINTERS);
 
 /* The table for small ID assignment */
 static mono_mutex_t small_id_mutex;
@@ -107,13 +106,22 @@ mono_thread_small_id_alloc (void)
 		hazard_table_size = HAZARD_TABLE_MAX_SIZE;
 #else
 		gpointer page_addr;
+#if defined(__PASE__)
+		/*
+		 * HACK: allocating the table with none prot will cause i 7.1
+		 * to segfault when accessing or protecting it
+		 */
+		int table_prot = MONO_MMAP_READ | MONO_MMAP_WRITE;
+#else
+		int table_prot = MONO_MMAP_NONE;
+#endif
 		int pagesize = mono_pagesize ();
 		int num_pages = (hazard_table_size * sizeof (MonoThreadHazardPointers) + pagesize - 1) / pagesize;
 
 		if (hazard_table == NULL) {
 			hazard_table = (MonoThreadHazardPointers *volatile) mono_valloc (NULL,
 				sizeof (MonoThreadHazardPointers) * HAZARD_TABLE_MAX_SIZE,
-				MONO_MMAP_NONE);
+				table_prot, MONO_MEM_ACCOUNT_HAZARD_POINTERS);
 		}
 
 		g_assert (hazard_table != NULL);
@@ -191,7 +199,7 @@ mono_hazard_pointer_get (void)
    mono_jit_info_table_add(), which doesn't have to care about hazards
    because it holds the respective domain lock. */
 gpointer
-get_hazardous_pointer (gpointer volatile *pp, MonoThreadHazardPointers *hp, int hazard_index)
+mono_get_hazardous_pointer (gpointer volatile *pp, MonoThreadHazardPointers *hp, int hazard_index)
 {
 	gpointer p;
 
@@ -242,7 +250,7 @@ mono_hazard_pointer_save_for_signal_handler (void)
 	 */
 	g_assert (small_id < HAZARD_TABLE_OVERFLOW);
 
-	if (InterlockedCompareExchange (&overflow_busy [small_id], 1, 0) != 0)
+	if (mono_atomic_cas_i32 (&overflow_busy [small_id], 1, 0) != 0)
 		goto search;
 
 	hp_overflow = &hazard_table [small_id];
@@ -287,40 +295,20 @@ mono_hazard_pointer_restore_for_signal_handler (int small_id)
 	overflow_busy [small_id] = 0;
 }
 
-static gboolean
-try_free_delayed_free_item (HazardFreeContext context)
-{
-	DelayedFreeItem item;
-	gboolean popped = mono_lock_free_array_queue_pop (&delayed_free_queue, &item);
-
-	if (!popped)
-		return FALSE;
-
-	if ((context == HAZARD_FREE_ASYNC_CTX && item.locking == HAZARD_FREE_MAY_LOCK) ||
-	    (is_pointer_hazardous (item.p))) {
-		mono_lock_free_array_queue_push (&delayed_free_queue, &item);
-		return FALSE;
-	}
-
-	item.free_func (item.p);
-
-	return TRUE;
-}
-
 /**
  * mono_thread_hazardous_try_free:
- * @p: the pointer to free
- * @free_func: the function that can free the pointer
+ * \param p the pointer to free
+ * \param free_func the function that can free the pointer
  *
- * If @p is not a hazardous pointer it will be immediately freed by calling @free_func.
+ * If \p p is not a hazardous pointer it will be immediately freed by calling \p free_func.
  * Otherwise it will be queued for later.
  *
- * Use this function if @free_func can ALWAYS be called in the context where this function is being called.
+ * Use this function if \p free_func can ALWAYS be called in the context where this function is being called.
  *
  * This function doesn't pump the free queue so try to accommodate a call at an appropriate time.
  * See mono_thread_hazardous_try_free_some for when it's appropriate.
  *
- * Return: TRUE if @p was free or FALSE if it was queued.
+ * \returns TRUE if \p p was free or FALSE if it was queued.
  */
 gboolean
 mono_thread_hazardous_try_free (gpointer p, MonoHazardousFreeFunc free_func)
@@ -336,21 +324,19 @@ mono_thread_hazardous_try_free (gpointer p, MonoHazardousFreeFunc free_func)
 
 /**
  * mono_thread_hazardous_queue_free:
- * @p: the pointer to free
- * @free_func: the function that can free the pointer
- *
- * Queue @p to be freed later. @p will be freed once the hazard free queue is pumped.
+ * \param p the pointer to free
+ * \param free_func the function that can free the pointer
+ * Queue \p p to be freed later. \p p will be freed once the hazard free queue is pumped.
  *
  * This function doesn't pump the free queue so try to accommodate a call at an appropriate time.
- * See mono_thread_hazardous_try_free_some for when it's appropriate.
- *
+ * See \c mono_thread_hazardous_try_free_some for when it's appropriate.
  */
 void
 mono_thread_hazardous_queue_free (gpointer p, MonoHazardousFreeFunc free_func)
 {
-	DelayedFreeItem item = { p, free_func, HAZARD_FREE_MAY_LOCK };
+	DelayedFreeItem item = { p, free_func };
 
-	InterlockedIncrement (&hazardous_pointer_count);
+	mono_atomic_inc_i32 (&hazardous_pointer_count);
 
 	mono_lock_free_array_queue_push (&delayed_free_queue, &item);
 
@@ -366,19 +352,48 @@ mono_hazard_pointer_install_free_queue_size_callback (MonoHazardFreeQueueSizeCal
 	queue_size_cb = cb;
 }
 
+static void
+try_free_delayed_free_items (guint32 limit)
+{
+	GArray *hazardous = NULL;
+	DelayedFreeItem item;
+	guint32 freed = 0;
+
+	// Free all the items we can and re-add the ones we can't to the queue.
+	while (mono_lock_free_array_queue_pop (&delayed_free_queue, &item)) {
+		if (is_pointer_hazardous (item.p)) {
+			if (!hazardous)
+				hazardous = g_array_sized_new (FALSE, FALSE, sizeof (DelayedFreeItem), delayed_free_queue.num_used_entries);
+
+			g_array_append_val (hazardous, item);
+			continue;
+		}
+
+		item.free_func (item.p);
+		freed++;
+
+		if (limit && freed == limit)
+			break;
+	}
+
+	if (hazardous) {
+		for (gint i = 0; i < hazardous->len; i++)
+			mono_lock_free_array_queue_push (&delayed_free_queue, &g_array_index (hazardous, DelayedFreeItem, i));
+
+		g_array_free (hazardous, TRUE);
+	}
+}
+
 void
 mono_thread_hazardous_try_free_all (void)
 {
-	while (try_free_delayed_free_item (HAZARD_FREE_SAFE_CTX))
-		;
+	try_free_delayed_free_items (0);
 }
 
 void
 mono_thread_hazardous_try_free_some (void)
 {
-	int i;
-	for (i = 0; i < 10; ++i)
-		try_free_delayed_free_item (HAZARD_FREE_SAFE_CTX);
+	try_free_delayed_free_items (10);
 }
 
 void

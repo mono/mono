@@ -1,5 +1,6 @@
-/*
- * mempool.c: efficient memory allocation
+/**
+ * \file
+ * efficient memory allocation
  *
  * MonoMemPool is for fast allocation of memory. We free
  * all memory when the pool is destroyed.
@@ -19,6 +20,7 @@
 
 #include "mempool.h"
 #include "mempool-internals.h"
+#include "utils/unlocked.h"
 
 /*
  * MonoMemPool is for fast allocation of memory. We free
@@ -76,7 +78,7 @@ struct _MonoMemPool {
 	} d;
 };
 
-static long total_bytes_allocated = 0;
+static gint64 total_bytes_allocated = 0;
 
 /**
  * mono_mempool_new:
@@ -91,9 +93,8 @@ mono_mempool_new (void)
 
 /**
  * mono_mempool_new_size:
- * @initial_size: the amount of memory to initially reserve for the memory pool.
- *
- * Returns: a new memory pool with a specific initial memory reservation.
+ * \param initial_size the amount of memory to initially reserve for the memory pool.
+ * \returns a new memory pool with a specific initial memory reservation.
  */
 MonoMemPool *
 mono_mempool_new_size (int initial_size)
@@ -114,13 +115,13 @@ mono_mempool_new_size (int initial_size)
 	pool->pos = (guint8*)pool + SIZEOF_MEM_POOL; // Start after header
 	pool->end = (guint8*)pool + initial_size;    // End at end of allocated space 
 	pool->d.allocated = pool->size = initial_size;
-	total_bytes_allocated += initial_size;
+	UnlockedAdd64 (&total_bytes_allocated, initial_size);
 	return pool;
 }
 
 /**
  * mono_mempool_destroy:
- * @pool: the memory pool to destroy
+ * \param pool the memory pool to destroy
  *
  * Free all memory associated with this pool.
  */
@@ -129,7 +130,7 @@ mono_mempool_destroy (MonoMemPool *pool)
 {
 	MonoMemPool *p, *n;
 
-	total_bytes_allocated -= pool->d.allocated;
+	UnlockedSubtract64 (&total_bytes_allocated, pool->d.allocated);
 
 	p = pool;
 	while (p) {
@@ -141,7 +142,7 @@ mono_mempool_destroy (MonoMemPool *pool)
 
 /**
  * mono_mempool_invalidate:
- * @pool: the memory pool to invalidate
+ * \param pool the memory pool to invalidate
  *
  * Fill the memory associated with this pool to 0x2a (42). Useful for debugging.
  */
@@ -160,7 +161,7 @@ mono_mempool_invalidate (MonoMemPool *pool)
 
 /**
  * mono_mempool_stats:
- * @pool: the momory pool we need stats for
+ * \param pool the memory pool we need stats for
  *
  * Print a few stats about the mempool:
  * - Total memory allocated (malloced) by mem pool
@@ -172,7 +173,7 @@ mono_mempool_stats (MonoMemPool *pool)
 {
 	MonoMemPool *p;
 	int count = 0;
-	guint32 still_free = pool->end - pool->pos;
+	guint32 still_free;
 
 	p = pool;
 	while (p) {
@@ -180,6 +181,7 @@ mono_mempool_stats (MonoMemPool *pool)
 		count++;
 	}
 	if (pool) {
+		still_free = pool->end - pool->pos;
 		g_print ("Mempool %p stats:\n", pool);
 		g_print ("Total mem allocated: %d\n", pool->d.allocated);
 		g_print ("Num chunks: %d\n", count);
@@ -197,31 +199,33 @@ static mono_mutex_t mempool_tracing_lock;
 static void
 mono_backtrace (int size)
 {
-        void *array[BACKTRACE_DEPTH];
-        char **names;
-        int i, symbols;
-        static gboolean inited;
+	void *array[BACKTRACE_DEPTH];
+	char **names;
+	int i, symbols;
+	static gboolean inited;
 
-        if (!inited) {
-            mono_os_mutex_init_recursive (&mempool_tracing_lock);
-            inited = TRUE;
-        }
+	if (!inited) {
+		mono_os_mutex_init_recursive (&mempool_tracing_lock);
+		inited = TRUE;
+	}
 
-        mono_os_mutex_lock (&mempool_tracing_lock);
-        g_print ("Allocating %d bytes\n", size);
-        symbols = backtrace (array, BACKTRACE_DEPTH);
-        names = backtrace_symbols (array, symbols);
-        for (i = 1; i < symbols; ++i) {
-                g_print ("\t%s\n", names [i]);
-        }
-        free (names);
-        mono_os_mutex_unlock (&mempool_tracing_lock);
+	mono_os_mutex_lock (&mempool_tracing_lock);
+	g_print ("Allocating %d bytes\n", size);
+	MONO_ENTER_GC_SAFE;
+	symbols = backtrace (array, BACKTRACE_DEPTH);
+	names = backtrace_symbols (array, symbols);
+	MONO_EXIT_GC_SAFE;
+	for (i = 1; i < symbols; ++i) {
+		g_print ("\t%s\n", names [i]);
+	}
+	g_free (names);
+	mono_os_mutex_unlock (&mempool_tracing_lock);
 }
 
 #endif
 
 /**
- * mono_mempool_alloc:
+ * get_next_size:
  * @pool: the memory pool to use
  * @size: size of the memory entity we are trying to allocate
  *
@@ -248,12 +252,12 @@ get_next_size (MonoMemPool *pool, int size)
 
 /**
  * mono_mempool_alloc:
- * @pool: the memory pool to use
- * @size: size of the memory block
+ * \param pool the memory pool to use
+ * \param size size of the memory block
  *
- * Allocates a new block of memory in @pool.
+ * Allocates a new block of memory in \p pool .
  *
- * Returns: the address of a newly allocated memory block.
+ * \returns the address of a newly allocated memory block.
  */
 gpointer
 mono_mempool_alloc (MonoMemPool *pool, guint size)
@@ -284,7 +288,7 @@ mono_mempool_alloc (MonoMemPool *pool, guint size)
 			np->size = new_size;
 			pool->next = np;
 			pool->d.allocated += new_size;
-			total_bytes_allocated += new_size;
+			UnlockedAdd64 (&total_bytes_allocated, new_size);
 
 			rval = (guint8*)np + SIZEOF_MEM_POOL;
 		} else {
@@ -298,7 +302,7 @@ mono_mempool_alloc (MonoMemPool *pool, guint size)
 			pool->pos = (guint8*)np + SIZEOF_MEM_POOL;
 			pool->end = (guint8*)np + new_size;
 			pool->d.allocated += new_size;
-			total_bytes_allocated += new_size;
+			UnlockedAdd64 (&total_bytes_allocated, new_size);
 
 			rval = pool->pos;
 			pool->pos += size;
@@ -311,7 +315,7 @@ mono_mempool_alloc (MonoMemPool *pool, guint size)
 /**
  * mono_mempool_alloc0:
  *
- * same as mono_mempool_alloc, but fills memory with zero.
+ * same as \c mono_mempool_alloc, but fills memory with zero.
  */
 gpointer
 mono_mempool_alloc0 (MonoMemPool *pool, guint size)
@@ -340,7 +344,7 @@ mono_mempool_alloc0 (MonoMemPool *pool, guint size)
 /**
  * mono_mempool_contains_addr:
  *
- *  Determines whenever ADDR is inside the memory used by the mempool.
+ * Determines whether \p addr is inside the memory used by the mempool.
  */
 gboolean
 mono_mempool_contains_addr (MonoMemPool *pool,
@@ -380,6 +384,35 @@ mono_mempool_strdup (MonoMemPool *pool,
 	return res;
 }
 
+char*
+mono_mempool_strdup_vprintf (MonoMemPool *pool, const char *format, va_list args)
+{
+	size_t buflen;
+	char *buf;
+	va_list args2;
+	va_copy (args2, args);
+	int len = vsnprintf (NULL, 0, format, args2);
+	va_end (args2);
+
+	if (len >= 0 && (buf = (char*)mono_mempool_alloc (pool, (buflen = (size_t) (len + 1)))) != NULL) {
+		vsnprintf (buf, buflen, format, args);
+	} else {
+		buf = NULL;
+	}
+	return buf;
+}
+
+char*
+mono_mempool_strdup_printf (MonoMemPool *pool, const char *format, ...)
+{
+	char *buf;
+	va_list args;
+	va_start (args, format);
+	buf = mono_mempool_strdup_vprintf (pool, format, args);
+	va_end (args);
+	return buf;
+}
+
 /**
  * mono_mempool_get_allocated:
  *
@@ -399,5 +432,5 @@ mono_mempool_get_allocated (MonoMemPool *pool)
 long
 mono_mempool_get_bytes_allocated (void)
 {
-	return total_bytes_allocated;
+	return UnlockedRead64 (&total_bytes_allocated);
 }

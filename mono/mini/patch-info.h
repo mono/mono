@@ -43,8 +43,6 @@ PATCH_INFO(CASTCLASS_CACHE, "castclass_cache")
 PATCH_INFO(SIGNATURE, "signature")
 PATCH_INFO(GSHAREDVT_CALL, "gsharedvt_call")
 PATCH_INFO(GSHAREDVT_METHOD, "gsharedvt_method")
-PATCH_INFO(JIT_TLS_ID, "jit_tls_id")
-PATCH_INFO(TLS_OFFSET, "tls_offset")
 PATCH_INFO(OBJC_SELECTOR_REF, "objc_selector_ref")
 PATCH_INFO(METHOD_CODE_SLOT, "method_code_slot")
 PATCH_INFO(LDSTR_LIT, "ldstr_lit")
@@ -57,3 +55,12 @@ PATCH_INFO(AOT_JIT_INFO, "aot_jit_info")
 PATCH_INFO(GC_NURSERY_BITS, "gc_nursery_bits")
 PATCH_INFO(GSHAREDVT_IN_WRAPPER, "gsharedvt_in_wrapper")
 PATCH_INFO(ICALL_ADDR_CALL, "icall_addr_call")
+PATCH_INFO(GET_TLS_TRAMP, "get_tls_tramp")
+PATCH_INFO(JIT_THREAD_ATTACH, "jit_thread_attach")
+PATCH_INFO(SET_TLS_TRAMP, "set_tls_tramp")
+/*
+ * The address of a C function implementing a JIT icall.
+ * Same as JIT_ICALL_ADDR, but not treated as a call.
+ */
+PATCH_INFO(JIT_ICALL_ADDR_NOCALL, "jit_icall_addr_nocall")
+PATCH_INFO(PROFILER_ALLOCATION_COUNT, "profiler_allocation_count")

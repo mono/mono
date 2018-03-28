@@ -27,15 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
-#if MONO_SECURITY_ALIAS
-extern alias MonoSecurity;
-using MonoSecurity::Mono.Security.Authenticode;
-#else
-using Mono.Security.Authenticode;
-#endif
-
 using System.IO;
 using System.Net.Sockets;
 using System.Collections;
@@ -73,7 +64,8 @@ namespace System.Net {
 			SocketAsyncEventArgs args = new SocketAsyncEventArgs ();
 			args.UserToken = this;
 			args.Completed += OnAccept;
-			Accept (sock, args);
+			Socket dummy = null;
+			Accept (sock, args, ref dummy);
 			prefixes = new Hashtable ();
 			unregistered = new Dictionary<HttpConnection, HttpConnection> ();
 		}
@@ -82,9 +74,21 @@ namespace System.Net {
 			get { return listener; }
 		}
 
-		static void Accept (Socket socket, SocketAsyncEventArgs e) {
+		static void Accept (Socket socket, SocketAsyncEventArgs e, ref Socket accepted) {
 			e.AcceptSocket = null;
-			var asyn = socket.AcceptAsync(e);
+			bool asyn;
+			try {
+				asyn = socket.AcceptAsync(e);
+			} catch {
+				if (accepted != null) {
+					try {
+						accepted.Close ();
+					} catch {
+					}
+					accepted = null;
+				}
+				return;
+			}
 			if (!asyn) {
 				ProcessAccept(e);
 			}
@@ -100,7 +104,7 @@ namespace System.Net {
 			EndPointListener epl = (EndPointListener) args.UserToken;
 
 
-			Accept (epl.sock, args);
+			Accept (epl.sock, args, ref accepted);
 			if (accepted == null)
 				return;
 
@@ -108,7 +112,13 @@ namespace System.Net {
 				accepted.Close ();
 				return;
 			}
-			HttpConnection conn = new HttpConnection (accepted, epl, epl.secure, epl.cert);
+			HttpConnection conn;
+			try {
+				conn = new HttpConnection (accepted, epl, epl.secure, epl.cert);
+			} catch {
+				accepted.Close ();
+				return;
+			}
 			lock (epl.unregistered) {
 				epl.unregistered [conn] = conn;
 			}
@@ -359,5 +369,4 @@ namespace System.Net {
 		}
 	}
 }
-#endif
 

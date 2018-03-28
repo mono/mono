@@ -408,5 +408,28 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual ("Helo", row2.Tag, "A8");
 			Assert.AreEqual (false, row2.Visible, "A9");
 		}
+
+
+		private class TestDataGridViewRow : DataGridViewRow
+		{
+			protected override DataGridViewCellCollection CreateCellsInstance ()
+			{
+				return new MockDataGridViewCellCollection (this);
+			}
+		}
+
+		private class MockDataGridViewCellCollection : DataGridViewCellCollection
+		{
+			public MockDataGridViewCellCollection(DataGridViewRow dataGridViewRow) : base(dataGridViewRow)
+			{
+			}
+		}
+
+		[Test]
+		public void CreateCellsInstance ()
+		{
+			var row = new TestDataGridViewRow ();
+			Assert.That (row.Cells, Is.TypeOf<MockDataGridViewCellCollection> (), "#A row.CreateCellsInstance");
+		}
 	}
 }

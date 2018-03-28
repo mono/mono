@@ -187,13 +187,54 @@ namespace Mono.CompilerServices.SymbolWriter
 		public void DefineMethod (MonoSymbolFile file, int token)
 		{
 			var blocks = Blocks;
+			if (blocks.Length > 0) {
+				//
+				// When index is provided by user it can be inserted in
+				// any order but mdb format does not store its value. It
+				// uses stored order as the index instead.
+				//
+				var sorted = new List<CodeBlockEntry> (blocks.Length);
+				int max_index = 0;
+				for (int i = 0; i < blocks.Length; ++i) {
+					max_index = System.Math.Max (max_index, blocks [i].Index);
+				}
 
-			//
-			// When index is provided by user it can be inserted in
-			// any order but mdb format does not store its value. It
-			// uses store order instead as the index.
-			//
-			Array.Sort (blocks, (x, y) => x.Index.CompareTo (y.Index));
+				for (int i = 0; i < max_index; ++i) {
+					var scope_index = i + 1;
+
+					//
+					// Common fast path
+					//
+					if (i < blocks.Length && blocks [i].Index == scope_index) {
+						sorted.Add (blocks [i]);
+						continue;
+					}
+
+					bool found = false;
+					for (int ii = 0; ii < blocks.Length; ++ii) {
+						if (blocks [ii].Index == scope_index) {
+							sorted.Add (blocks [ii]);
+							found = true;
+							break;
+						}
+					}
+
+					if (found)
+						continue;
+
+					//
+					// Ideally this should never happen but with current design we can
+					// generate scope index for unreachable code before reachable code
+					//
+					sorted.Add (new CodeBlockEntry (scope_index, -1, CodeBlockEntry.Type.CompilerGenerated, 0));
+				}
+
+				blocks = sorted.ToArray ();
+				//for (int i = 0; i < blocks.Length; ++i) {
+				//	if (blocks [i].Index - 1 != i)
+				//			throw new ArgumentException ("CodeBlocks cannot be converted to mdb format");
+				//}
+			}
 
 			var entry = new MethodEntry (
 				file, _comp_unit.Entry, token, ScopeVariables,

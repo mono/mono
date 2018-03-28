@@ -45,7 +45,7 @@ namespace System.Threading
  	internal static class NativeEventCalls
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern IntPtr CreateEvent_internal(bool manual,bool initial,string name, out bool created);
+		public static extern IntPtr CreateEvent_internal (bool manual, bool initial, string name, out int errorCode);
 
 		public static bool SetEvent (SafeWaitHandle handle)
 		{
@@ -82,7 +82,7 @@ namespace System.Threading
 
 #if !MOBILE
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern IntPtr OpenEvent_internal (string name, EventWaitHandleRights rights, out MonoIOError error);
+		public static extern IntPtr OpenEvent_internal (string name, EventWaitHandleRights rights, out int errorCode);
 #endif
 	}
 }

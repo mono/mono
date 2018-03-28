@@ -24,18 +24,12 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("System.Console.dll")]
-[assembly: AssemblyDescription ("System.Console.dll")]
-[assembly: AssemblyDefaultAlias ("System.Console.dll")]
-[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyTitle ("System.Console")]
+[assembly: AssemblyDescription ("System.Console")]
+[assembly: AssemblyDefaultAlias ("System.Console")]
+[assembly: AssemblyCompany ("Mono development team")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
-[assembly: AssemblyCopyright ("Copyright (c) 2015 Xamarin Inc. (http://www.xamarin.com)")]
+[assembly: AssemblyCopyright ("(c) Various Mono authors")]
 [assembly: AssemblyVersion ("4.0.0.0")]
 [assembly: AssemblyInformationalVersion ("4.0.0.0")]
 [assembly: AssemblyFileVersion ("4.0.0.0")]
-[assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../../msfinal.pub")]
-
-[assembly: ReferenceAssembly]
-
-

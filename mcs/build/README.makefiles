@@ -15,8 +15,6 @@ build system needs to let us do, specifically:
 
 
 
-
-
 ** Makefile structure
 
 A general makefile looks like this:
@@ -121,8 +119,8 @@ Configuration variables are given defaults in `config-default.make';
 `rules.make' optionally includes `$(topdir)/build/config.make', so you
 can customize your build without CVS trying to commit your modified
 `config-default.make' all the time.  Platform-specific variables are
-defined in `$(topdir)/build/platforms/$(PLATFORM).make', where
-$(PLATFORM) is detected in config-default.make. (Currently, the only
+defined in `$(topdir)/build/platforms/$(BUILD_PLATFORM).make', where
+$(BUILD_PLATFORM) is detected in config-default.make. (Currently, the only
 choices are linux.make and win32.make.)
 
 The best way to learn what the configuration variables are is to read
@@ -438,7 +436,15 @@ To give it flags, set $(LOCAL_CFLAGS). As with compiling C#, the
 variable $(CFLAGS) will automatically be included on the command line.
 
 
+* Compiling resources with resgen
 
+If you have a resource that should be compiled with resgen and
+included in your assembly, you can use the RESOURCES_DEFS variable.
+This variable can contain lists of pairs that are separated by comma
+to represent the resource ID as embedded in the assembly followed by
+the file name, like this:
+
+RESOURCE_DEFS = Messages,TextResources.resx Errors,ErrorList.txt
 
 
 * Documentation-related needs? Use $(MDOC)

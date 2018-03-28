@@ -114,6 +114,7 @@ namespace System.Security.Cryptography {
 				persisted = true;
 				this.FromXmlString (store.KeyValue);
 			}
+			privateKeyExportable = (parameters.Flags & CspProviderFlags.UseNonExportableKey) == 0;
 		}
 
 		~DSACryptoServiceProvider ()
@@ -229,6 +230,28 @@ namespace System.Security.Cryptography {
 		public override bool VerifySignature (byte[] rgbHash, byte[] rgbSignature)
 		{
 			return dsa.VerifySignature (rgbHash, rgbSignature);
+		}
+
+		protected override byte[] HashData (byte[] data, int offset, int count, HashAlgorithmName hashAlgorithm)
+		{
+			if (hashAlgorithm != HashAlgorithmName.SHA1)
+			{
+				throw new CryptographicException(Environment.GetResourceString("Cryptography_UnknownHashAlgorithm", hashAlgorithm.Name));
+			}
+
+			var hash = HashAlgorithm.Create (hashAlgorithm.Name);
+			return hash.ComputeHash (data, offset, count);
+		}
+
+		protected override byte[] HashData (System.IO.Stream data, HashAlgorithmName hashAlgorithm)
+		{
+			if (hashAlgorithm != HashAlgorithmName.SHA1)
+			{
+				throw new CryptographicException(Environment.GetResourceString("Cryptography_UnknownHashAlgorithm", hashAlgorithm.Name));
+			}
+
+			var hash = HashAlgorithm.Create (hashAlgorithm.Name);
+			return hash.ComputeHash (data);
 		}
 
 		protected override void Dispose (bool disposing) 

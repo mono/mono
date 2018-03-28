@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME || IOS_REFLECTION
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit
@@ -36,6 +35,7 @@ namespace System.Reflection.Emit
 	[ComVisible (true)]
 	[Serializable]
 	[Flags]
+	#region Sync with sre-internals.h
 	public enum AssemblyBuilderAccess {
 		Run = 1,
 		Save = 2,
@@ -43,5 +43,5 @@ namespace System.Reflection.Emit
 		ReflectionOnly = 6,
 		RunAndCollect = 9
   }
+	#endregion
 }
-#endif

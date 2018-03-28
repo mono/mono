@@ -116,7 +116,7 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern AppDomainSetup getSetup ();
 
-#if NET_2_1
+#if MOBILE
 		internal
 #endif
 		AppDomainSetup SetupInformationNoCopy {
@@ -130,7 +130,7 @@ namespace System {
 			}
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		[MonoTODO]
 		public ApplicationTrust ApplicationTrust {
 			get { throw new NotImplementedException (); }
@@ -139,7 +139,7 @@ namespace System {
 		public string BaseDirectory {
 			get {
 				string path = SetupInformationNoCopy.ApplicationBase;
-#if !NET_2_1
+#if !MOBILE
 				if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
@@ -152,7 +152,7 @@ namespace System {
 		public string RelativeSearchPath {
 			get {
 				string path = SetupInformationNoCopy.PrivateBinPath;
-#if !NET_2_1
+#if !MOBILE
 				if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
@@ -169,7 +169,7 @@ namespace System {
 					return null;
 
 				string path = Path.Combine (setup.DynamicBase, setup.ApplicationName);
-#if !NET_2_1
+#if !MOBILE
 				if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
@@ -311,7 +311,7 @@ namespace System {
 			SetupInformationNoCopy.ShadowCopyDirectories = String.Empty;
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName)
 		{
 			return Activator.CreateComInstanceFrom (assemblyName, typeName);
@@ -1027,7 +1027,7 @@ namespace System {
 			} else if (info.ConfigurationFile == null)
 				info.ConfigurationFile = "[I don't have a config file]";
 
-#if !NET_2_1
+#if !MOBILE
 			if (info.AppDomainInitializer != null) {
 				if (!info.AppDomainInitializer.Method.IsStatic)
 					throw new ArgumentException ("Non-static methods cannot be invoked as an appdomain initializer");
@@ -1047,7 +1047,7 @@ namespace System {
 			else
 				ad._evidence = new Evidence (securityInfo);	// copy
 
-#if !NET_2_1
+#if !MOBILE
 			if (info.AppDomainInitializer != null) {
 				Loader loader = new Loader (
 					info.AppDomainInitializer.Method.DeclaringType.Assembly.Location);
@@ -1082,7 +1082,7 @@ namespace System {
 		}
 #endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 
-#if !NET_2_1
+#if !MOBILE
 		[Serializable]
 		class Loader {
 
@@ -1133,7 +1133,7 @@ namespace System {
 		}
 #endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 		
-#if !NET_2_1
+#if !MOBILE
 #if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info,
 		                                      PermissionSet grantSet, params StrongName [] fullTrustAssemblies)
@@ -1217,14 +1217,16 @@ namespace System {
 			SetData (name, data);
 		}
 
-#if !NET_2_1
 		[Obsolete ("Use AppDomainSetup.DynamicBase")]
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetDynamicBase (string path)
 		{
+#if MOBILE
+			throw new PlatformNotSupportedException ();
+#else
 			SetupInformationNoCopy.DynamicBase = path;
+#endif // MOBILE
 		}
-#endif // !NET_2_1
 
 		[Obsolete ("AppDomain.GetCurrentThreadId has been deprecated"
 			+ " because it does not provide a stable Id when managed"
@@ -1286,14 +1288,11 @@ namespace System {
 		private Assembly DoAssemblyResolve (string name, Assembly requestingAssembly, bool refonly)
 		{
 			ResolveEventHandler del;
-#if !NET_2_1
 			if (refonly)
 				del = ReflectionOnlyAssemblyResolve;
 			else
 				del = AssemblyResolve;
-#else
-			del = AssemblyResolve;
-#endif
+
 			if (del == null)
 				return null;
 			
@@ -1490,9 +1489,7 @@ namespace System {
 		}
 #endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 
-#if !MOBILE
 		public event ResolveEventHandler ReflectionOnlyAssemblyResolve;
-#endif
 
         #pragma warning disable 649
 #if MOBILE

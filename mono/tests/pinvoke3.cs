@@ -746,6 +746,21 @@ public class Tests {
 		return mono_test_marshal_array_delegate1 (null, 0, new ArrayDelegate1 (array_delegate2));
 	}
 
+	public delegate int ArrayDelegateBlittable (int i, string j,
+										[In, MarshalAs(UnmanagedType.LPArray,
+													   ArraySubType=UnmanagedType.LPStr, SizeParamIndex=0)] int[] arr);
+
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_array_delegate")]
+	public static extern int mono_test_marshal_array_delegate1 (string[] arr, int len, ArrayDelegateBlittable d);
+
+	public static int array_delegate_null_blittable (int i, string j, int[] arr) {
+		return (arr == null) ? 0 : 1;
+	}
+
+	public static int test_0_marshal_array_delegate_null_blittable () {
+		return mono_test_marshal_array_delegate1 (null, 0, new ArrayDelegateBlittable (array_delegate_null_blittable));
+	}
+
 	public delegate int ArrayDelegate3 (int i, 
 										string j, 
 										[In, MarshalAs(UnmanagedType.LPArray, 
@@ -1105,6 +1120,87 @@ public class Tests {
 		return res;
 	}
 
+	public struct LargeStruct {
+            public Int16 s;
+            public Int16 v;
+            public UInt32 p;
+            public UInt32 e;
+            public Int32 l;
+            public Int32 ll;
+            public UInt16 h;
+            public Int16 r;
+            public Int16 pp;
+            public Int32 hh;
+            public Int32 bn;
+            public Int32 dn;
+            public Int32 dr;
+            public Int32 sh;
+            public Int32 ra;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public Int32[] angle;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public Int32[] width;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public Int32[] edge;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3 * 1024)]
+            public byte[] echo;
+	}
+
+	public delegate int LargeStructDelegate (ref LargeStruct s);
+
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_thread_attach_large_vt")]
+	public static extern int mono_test_marshal_thread_attach_large_vt (LargeStructDelegate d);
+
+	public static int test_43_thread_attach_large_vt () {
+		int res = mono_test_marshal_thread_attach_large_vt (delegate (ref LargeStruct s) {
+				return 43;
+			});
+		return res;
+	}
+
+	class Worker {
+		volatile bool stop = false;
+		public void Stop () {
+			stop = true;
+		}
+
+		public void Work () {
+			while (!stop) {
+				for (int i = 0; i < 100; i++) {
+					var a = new double[80000];
+					Thread.Sleep (0);
+				}
+				GC.Collect ();
+			}
+		}
+	}
+
+	public static int test_43_thread_attach_detach_contested () {
+		// Test plan: we want to create a race between the GC
+		// and native threads detaching.  When a native thread
+		// calls a managed delegate, it's attached to the
+		// runtime by the wrapper.  It is detached when the
+		// thread is destroyed and the TLS key destructor for
+		// MonoThreadInfo runs.  That destructor wants to take
+		// the GC lock.  So we create a lot of native threads
+		// while at the same time running a worker that
+		// allocates garbage and invokes the collector.
+		var w = new Worker ();
+		Thread t = new Thread(new ThreadStart (w.Work));
+		t.Start ();
+
+		for (int count = 0; count < 500; count++) {
+			int res = mono_test_marshal_thread_attach (delegate (int i) {
+					Thread.Sleep (0);
+					return i + 1;
+				});
+		}
+		Thread.Sleep (1000);
+		w.Stop ();
+		t.Join ();
+		return 43; 
+
+	}
 	/*
 	 * Appdomain save/restore
 	 */

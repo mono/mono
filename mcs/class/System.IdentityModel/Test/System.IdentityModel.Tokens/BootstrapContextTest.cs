@@ -1,8 +1,7 @@
 ﻿//
 // BootstrapContextTest.cs - NUnit Test Cases for System.IdentityModel.Tokens.BootstrapContext
 //
-
-#if NET_4_5
+#if !MOBILE
 using System;
 using System.IO;
 using System.IdentityModel.Tokens;

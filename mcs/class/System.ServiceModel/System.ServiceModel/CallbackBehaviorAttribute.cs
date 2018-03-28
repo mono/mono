@@ -29,7 +29,9 @@ using System;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+#if !MOBILE && !XAMMAC_4_5
 using System.Transactions;
+#endif
 
 namespace System.ServiceModel
 {
@@ -45,7 +47,9 @@ namespace System.ServiceModel
 			MaxItemsInObjectGraph = 0x10000;
 			UseSynchronizationContext = true;
 			ValidateMustUnderstand = true;
+#if !MOBILE && !XAMMAC_4_5
 			TransactionIsolationLevel = IsolationLevel.Unspecified;
+#endif
 		}
 
 		[MonoTODO]
@@ -63,8 +67,10 @@ namespace System.ServiceModel
 		[MonoTODO]
 		public int MaxItemsInObjectGraph { get; set; }
 
+#if !MOBILE && !XAMMAC_4_5
 		[MonoTODO]
 		public IsolationLevel TransactionIsolationLevel { get; set; }
+#endif
 
 		[MonoTODO]
 		public string TransactionTimeout { get; set; }

@@ -392,6 +392,9 @@ namespace Mono.CSharp {
 				if (!TypeSpec.IsValueType (expr_type))
 					return null;
 
+				if (expr_type.IsByRefLike)
+					return null;
+
 				return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
 
 			case BuiltinTypeSpec.Type.Enum:
@@ -679,6 +682,78 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		static Expression ImplicitTupleLiteralConversion (ResolveContext rc, Expression source, TypeSpec targetType, Location loc)
+		{
+			var targetTypeArgument = targetType.TypeArguments;
+			if (source.Type.Arity != targetTypeArgument.Length)
+				return null;
+
+			var namedTarget = targetType as NamedTupleSpec;
+			var tupleLiteral = source as TupleLiteral;
+			Expression instance;
+
+			if (tupleLiteral == null && !ExpressionAnalyzer.IsInexpensiveLoad (source)) {
+				var expr_variable = LocalVariable.CreateCompilerGenerated (source.Type, rc.CurrentBlock, loc);
+				source = new CompilerAssign (expr_variable.CreateReferenceExpression (rc, loc), source, loc);
+				instance = expr_variable.CreateReferenceExpression (rc, loc);
+			} else {
+				instance = null;
+			}
+
+			var converted = new List<Expression> (targetType.Arity);
+			for (int i = 0; i < targetType.Arity; ++i) {
+				Expression elementSrc;
+				if (tupleLiteral != null) {
+					elementSrc = tupleLiteral.Elements [i].Expr;
+
+					if (namedTarget != null) {
+						var elementSrcName = tupleLiteral.Elements [i].Name;
+						if (elementSrcName != null && elementSrcName != namedTarget.Elements [i]) {
+							rc.Report.Warning (8123, 1, loc,
+							                   "The tuple element name `{0}' is ignored because a different name or no name is specified by the target type `{1}'",
+							                   elementSrcName, namedTarget.GetSignatureForErrorWithNames ());
+						}
+					}
+				} else {
+					elementSrc = new MemberAccess (instance, NamedTupleSpec.GetElementPropertyName (i)).Resolve (rc);
+				}
+
+				var res = ImplicitConversionStandard (rc, elementSrc, targetTypeArgument [i], loc);
+				if (res == null)
+					return null;
+
+				converted.Add (res);
+			}
+
+			return new TupleLiteralConversion (source, targetType, converted, loc);
+		}
+
+		static bool ImplicitTupleLiteralConversionExists (Expression source, TypeSpec targetType)
+		{
+			if (source.Type.Arity != targetType.Arity)
+				return false;
+
+			var srcTypeArgument = source.Type.TypeArguments;
+			var targetTypeArgument = targetType.TypeArguments;
+
+			var tupleLiteralElements = (source as TupleLiteral)?.Elements;
+
+			for (int i = 0; i < targetType.Arity; ++i) {
+				if (tupleLiteralElements != null) {
+					if (!ImplicitStandardConversionExists (tupleLiteralElements[i].Expr, targetTypeArgument [i])) {
+						return false;
+					}
+				} else {
+					if (!ImplicitStandardConversionExists (new EmptyExpression (srcTypeArgument [i]), targetTypeArgument [i])) {
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+
 		//
 		// Full version of implicit conversion
 		//
@@ -715,6 +790,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			var interpolated_string = expr as InterpolatedString;
+			if (interpolated_string != null) {
+				if (target_type == rc.Module.PredefinedTypes.IFormattable.TypeSpec || target_type == rc.Module.PredefinedTypes.FormattableString.TypeSpec)
+					return true;
+			}
+
 			return ImplicitStandardConversionExists (expr, target_type);
 		}
 
@@ -738,6 +819,9 @@ namespace Mono.CSharp {
 			if (expr_type == target_type)
 				return true;
 
+			if (expr_type == InternalType.ThrowExpr || expr_type == InternalType.DefaultType)
+				return target_type.Kind != MemberKind.InternalCompilerType;
+
 			if (target_type.IsNullableType)
 				return ImplicitNulableConversion (null, expr, target_type) != null;
 
@@ -749,7 +833,10 @@ namespace Mono.CSharp {
 
 			if (ImplicitBoxingConversion (null, expr_type, target_type) != null)
 				return true;
-			
+
+			if (expr_type.IsTupleType && target_type.IsTupleType)
+				return ImplicitTupleLiteralConversionExists (expr, target_type);
+
 			//
 			// Implicit Constant Expression Conversions
 			//
@@ -1145,6 +1232,13 @@ namespace Mono.CSharp {
 					FindApplicableUserDefinedConversionOperators (rc, operators, source_type_expr, target_type, restr, ref candidates);
 				}
 
+				if (source_type_expr == source && source_type.IsNullableType) {
+					operators = MemberCache.GetUserOperator (source_type.TypeArguments [0], Operator.OpType.Implicit, declared_only);
+					if (operators != null) {
+						FindApplicableUserDefinedConversionOperators (rc, operators, source_type_expr, target_type, restr, ref candidates);
+					}
+				}
+
 				if (!implicitOnly) {
 					operators = MemberCache.GetUserOperator (source_type, Operator.OpType.Explicit, declared_only);
 					if (operators != null) {
@@ -1364,7 +1458,7 @@ namespace Mono.CSharp {
 			Expression e;
 
 			if (expr_type == target_type) {
-				if (expr_type != InternalType.NullLiteral && expr_type != InternalType.AnonymousMethod)
+				if (expr_type != InternalType.NullLiteral && expr_type != InternalType.AnonymousMethod && expr_type != InternalType.ThrowExpr)
 					return expr;
 				return null;
 			}
@@ -1390,6 +1484,14 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (expr_type == InternalType.ThrowExpr) {
+				return target_type.Kind == MemberKind.InternalCompilerType ? null : EmptyCast.Create (expr, target_type);
+			}
+
+			if (expr_type == InternalType.DefaultType) {
+				return new DefaultValueExpression (new TypeExpression (target_type, expr.Location), expr.Location).Resolve (ec);
+			}
+
 			if (target_type.IsNullableType)
 				return ImplicitNulableConversion (ec, expr, target_type);
 
@@ -1405,6 +1507,19 @@ namespace Mono.CSharp {
 				}
 				if (c != null)
 					return c;
+			}
+
+			if (expr_type.IsTupleType) {
+				if (target_type.IsTupleType)
+					return ImplicitTupleLiteralConversion (ec, expr, target_type, loc);
+
+				if (expr is TupleLiteral && TupleLiteral.ContainsNoTypeElement (expr_type))
+					return null;
+			}
+
+			if (expr is ReferenceExpression) {
+				// Only identify conversion is allowed
+				return null;
 			}
 
 			e = ImplicitNumericConversion (expr, expr_type, target_type);
@@ -1486,14 +1601,15 @@ namespace Mono.CSharp {
 		///   ImplicitConversion.  If there is no implicit conversion, then
 		///   an error is signaled
 		/// </summary>
-		static public Expression ImplicitConversionRequired (ResolveContext ec, Expression source,
+		public static Expression ImplicitConversionRequired (ResolveContext ec, Expression source,
 								     TypeSpec target_type, Location loc)
 		{
 			Expression e = ImplicitConversion (ec, source, target_type, loc);
 			if (e != null)
 				return e;
 
-			source.Error_ValueCannotBeConverted (ec, target_type, false);
+			if (target_type != InternalType.ErrorType)
+				source.Error_ValueCannotBeConverted (ec, target_type, false);
 
 			return null;
 		}
@@ -1865,7 +1981,7 @@ namespace Mono.CSharp {
 			// From object or dynamic to any reference type or value type (unboxing)
 			//
 			if (source_type.BuiltinType == BuiltinTypeSpec.Type.Object || source_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-				if (target_type.IsPointer)
+				if (target_type.IsPointer || target_type.IsByRefLike)
 					return null;
 
 				return

@@ -38,7 +38,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlDataDocumentTest2 : Assertion
+	public class XmlDataDocumentTest2 
 	{
 		string xml = "<NewDataSet><table><row><col1>1</col1><col2>2</col2></row></table></NewDataSet>";
 
@@ -53,8 +53,8 @@ namespace MonoTests.System.Xml
 		public void TestDefaultCtor ()
 		{
 			XmlDataDocument doc = new XmlDataDocument ();
-			AssertNotNull (doc.DataSet);
-			AssertEquals ("NewDataSet", doc.DataSet.DataSetName);
+			Assert.IsNotNull (doc.DataSet);
+			Assert.AreEqual ("NewDataSet", doc.DataSet.DataSetName);
 		}
 
 		[Test]
@@ -117,73 +117,73 @@ namespace MonoTests.System.Xml
 			ds.Relations.Add (rel);
 			XmlDataDocument doc = new XmlDataDocument (ds);
 			doc.LoadXml ("<set><tab1><col1>1</col1><col2/><child><ref>1</ref><val>aaa</val></child></tab1></set>");
-			AssertEquals (1, ds.Tables [0].Rows.Count);
-			AssertEquals (1, ds.Tables [1].Rows.Count);
+			Assert.AreEqual (1, ds.Tables [0].Rows.Count);
+			Assert.AreEqual (1, ds.Tables [1].Rows.Count);
 
 			// document element - no mapped row
 			XmlElement el = doc.DocumentElement;
-			AssertNull (doc.GetRowFromElement (el));
+			Assert.IsNull (doc.GetRowFromElement (el));
 
 			// tab1 element - has mapped row
 			el = el.FirstChild as XmlElement;
 			DataRow row = doc.GetRowFromElement (el);
-			AssertNotNull (row);
-			AssertEquals (DataRowState.Added, row.RowState);
+			Assert.IsNotNull (row);
+			Assert.AreEqual (DataRowState.Added, row.RowState);
 
 			// col1 - it is column. no mapped row
 			el = el.FirstChild as XmlElement;
 			row = doc.GetRowFromElement (el);
-			AssertNull (row);
+			Assert.IsNull (row);
 
 			// col2 - it is column. np mapped row
 			el = el.NextSibling as XmlElement;
 			row = doc.GetRowFromElement (el);
-			AssertNull (row);
+			Assert.IsNull (row);
 
 			// child - has mapped row
 			el = el.NextSibling as XmlElement;
 			row = doc.GetRowFromElement (el);
-			AssertNotNull (row);
-			AssertEquals (DataRowState.Added, row.RowState);
+			Assert.IsNotNull (row);
+			Assert.AreEqual (DataRowState.Added, row.RowState);
 
 			// created (detached) table 1 element (used later)
 			el = doc.CreateElement ("tab1");
 			row = doc.GetRowFromElement (el);
-			AssertEquals (DataRowState.Detached, row.RowState);
-			AssertEquals (1, dt.Rows.Count); // not added yet
+			Assert.AreEqual (DataRowState.Detached, row.RowState);
+			Assert.AreEqual (1, dt.Rows.Count); // not added yet
 
 			// adding a node before setting EnforceConstraints
 			// raises an error
 			try {
 				doc.DocumentElement.AppendChild (el);
-				Fail ("Invalid Operation should occur; EnforceConstraints prevents addition.");
+				Assert.Fail ("Invalid Operation should occur; EnforceConstraints prevents addition.");
 			} catch (InvalidOperationException) {
 			}
 
 			// try again...
 			ds.EnforceConstraints = false;
-			AssertEquals (1, dt.Rows.Count); // not added yet
+			Assert.AreEqual (1, dt.Rows.Count); // not added yet
 			doc.DocumentElement.AppendChild (el);
-			AssertEquals (2, dt.Rows.Count); // added
+			Assert.AreEqual (2, dt.Rows.Count); // added
 			row = doc.GetRowFromElement (el);
-			AssertEquals (DataRowState.Added, row.RowState); // changed
+			Assert.AreEqual (DataRowState.Added, row.RowState); // changed
 
 			// Irrelevant element
 			XmlElement el2 = doc.CreateElement ("hoge");
 			row = doc.GetRowFromElement (el2);
-			AssertNull (row);
+			Assert.IsNull (row);
 
 			// created table 2 element (used later)
 			el = doc.CreateElement ("child");
 			row = doc.GetRowFromElement (el);
-			AssertEquals (DataRowState.Detached, row.RowState);
+			Assert.AreEqual (DataRowState.Detached, row.RowState);
 
 			// Adding it to irrelevant element performs no row state change.
-			AssertEquals (1, dt2.Rows.Count); // not added yet
+			Assert.AreEqual (1, dt2.Rows.Count); // not added yet
 			el2.AppendChild (el);
-			AssertEquals (1, dt2.Rows.Count); // still not added
+			Assert.AreEqual (1, dt2.Rows.Count); // still not added
 			row = doc.GetRowFromElement (el);
-			AssertEquals (DataRowState.Detached, row.RowState); // still detached here
+			Assert.AreEqual (DataRowState.Detached, row.RowState); // still detached here
 		}
 
 		// bug #54505
@@ -244,8 +244,8 @@ namespace MonoTests.System.Xml
 			StringReader sr = new StringReader (sw.ToString());
 			doc1.Load (sr);
 
-			AssertEquals ("#1", 1, ds1.Tables [0].Rows.Count);
-			AssertEquals ("#2", 1, ds1.Tables [0].Rows [0][0]);
+			Assert.AreEqual (1, ds1.Tables [0].Rows.Count, "#1");
+			Assert.AreEqual (1, ds1.Tables [0].Rows [0][0], "#2");
 		}
 
 		[Test]
@@ -267,8 +267,8 @@ namespace MonoTests.System.Xml
 			StringReader sr = new StringReader (sw.ToString());
 			doc1.Load (sr);
 
-			AssertEquals ("#1", 1, ds1.Tables [0].Rows [0][0]);
-			AssertEquals ("#2", true, ds1.Tables [0].Rows [0].IsNull (1));
+			Assert.AreEqual (1, ds1.Tables [0].Rows [0][0], "#1");
+			Assert.AreEqual (true, ds1.Tables [0].Rows [0].IsNull (1), "#2");
 		}
 
 		[Test]
@@ -301,9 +301,9 @@ namespace MonoTests.System.Xml
 			StringReader sreader = new StringReader (swriter.ToString ());
 			DataSet ds1 = ds.Clone ();
 			XmlDataDocument doc1 = new XmlDataDocument (ds1);
-			AssertEquals ("#2" , 0, ds1.Tables [0].Rows.Count);
+			Assert.AreEqual (0 , ds1.Tables [0].Rows.Count, "#2");
 			doc1.Load (sreader);
-			AssertEquals ("#3" , 3, ds1.Tables [0].Rows.Count);
+			Assert.AreEqual (3 , ds1.Tables [0].Rows.Count, "#3");
 		}
 	}
 }

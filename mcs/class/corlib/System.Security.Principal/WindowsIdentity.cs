@@ -183,6 +183,18 @@ namespace System.Security.Principal {
 			return new WindowsImpersonationContext (userToken);
 		}
 
+		[SecuritySafeCritical]
+		public static void RunImpersonated (SafeAccessTokenHandle safeAccessTokenHandle, Action action)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[SecuritySafeCritical]
+		public static T RunImpersonated<T> (SafeAccessTokenHandle safeAccessTokenHandle, Func<T> func)
+		{
+			throw new NotImplementedException ();
+		}
+
 		// properties
 		sealed override
 		public string AuthenticationType {

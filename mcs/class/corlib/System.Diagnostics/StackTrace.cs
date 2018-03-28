@@ -37,6 +37,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading;
+using System.IO;
 
 namespace System.Diagnostics {
 
@@ -55,31 +56,39 @@ namespace System.Diagnostics {
         }
 
 		public const int METHODS_TO_SKIP = 0;
+		const string prefix = "  at ";
 
 		private StackFrame[] frames;
 		readonly StackTrace[] captured_traces;
+#pragma warning disable 414		
 		private bool debug_info;
+#pragma warning restore
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace ()
 		{
 			init_frames (METHODS_TO_SKIP, false);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace (bool fNeedFileInfo)
 		{
 			init_frames (METHODS_TO_SKIP, fNeedFileInfo);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace (int skipFrames)
 		{
 			init_frames (skipFrames, false);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace (int skipFrames, bool fNeedFileInfo)
 		{
 			init_frames (skipFrames, fNeedFileInfo);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		void init_frames (int skipFrames, bool fNeedFileInfo)
 		{
 			if (skipFrames < 0)
@@ -174,34 +183,41 @@ namespace System.Diagnostics {
 			return frames;
 		}
 
+		static bool isAotidSet;
+		static string aotid;
+		static string GetAotId ()
+		{
+			if (!isAotidSet) {
+				aotid = Assembly.GetAotId ();
+				if (aotid != null)
+					aotid = new Guid (aotid).ToString ("N");
+				isAotidSet = true;
+			}
+
+			return aotid;
+		}
+
 		bool AddFrames (StringBuilder sb)
 		{
-			bool printOffset;
-			string debugInfo, indentation;
-			string unknown = Locale.GetText ("<unknown method>");
+			bool any_frame = false;
 
-			indentation = "  ";
-			debugInfo = Locale.GetText (" in {0}:{1} ");
-
-			var newline = String.Format ("{0}{1}{2} ", Environment.NewLine, indentation,
-					Locale.GetText ("at"));
-
-			int i;
-			for (i = 0; i < FrameCount; i++) {
+			for (int i = 0; i < FrameCount; i++) {
 				StackFrame frame = GetFrame (i);
-				if (i == 0)
-					sb.AppendFormat ("{0}{1} ", indentation, Locale.GetText ("at"));
-				else
-					sb.Append (newline);
 
 				if (frame.GetMethod () == null) {
+					if (any_frame)
+						sb.Append (Environment.NewLine);
+					sb.Append (prefix);
+
 					string internal_name = frame.GetInternalMethodName ();
 					if (internal_name != null)
 						sb.Append (internal_name);
 					else
-						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> {2}", frame.GetMethodAddress (), frame.GetNativeOffset (), unknown);
+						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> <unknown method>", frame.GetMethodAddress (), frame.GetNativeOffset ());
 				} else {
-					StackTraceHelper.GetFullNameForStackTrace (sb, frame.GetMethod ());
+					GetFullNameForStackTrace (sb, frame.GetMethod (), any_frame, out var skipped);
+					if (skipped)
+						continue;
 
 					if (frame.GetILOffset () == -1) {
 						sb.AppendFormat (" <0x{0:x5} + 0x{1:x5}>", frame.GetMethodAddress (), frame.GetNativeOffset ());
@@ -211,12 +227,88 @@ namespace System.Diagnostics {
 						sb.AppendFormat (" [0x{0:x5}]", frame.GetILOffset ());
 					}
 
-					sb.AppendFormat (debugInfo, frame.GetSecureFileName (),
-					                 frame.GetFileLineNumber ());
+					var filename = frame.GetSecureFileName ();
+					if (filename[0] == '<') {
+						var mvid = frame.GetMethod ().Module.ModuleVersionId.ToString ("N");
+						var aotid = GetAotId ();
+						if (frame.GetILOffset () != -1 || aotid == null) {
+							filename = string.Format ("<{0}>", mvid);
+						} else {
+							filename = string.Format ("<{0}#{1}>", mvid, aotid);
+						}
+					}
+
+					sb.AppendFormat (" in {0}:{1} ", filename, frame.GetFileLineNumber ());
+				}
+
+				any_frame = true;
+			}
+
+			return any_frame;
+		}
+
+		void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi, bool needsNewLine, out bool skipped)
+		{
+			var declaringType = mi.DeclaringType;
+
+			// Get generic definition
+			if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition) {
+				declaringType = declaringType.GetGenericTypeDefinition ();
+
+				const BindingFlags bindingflags = BindingFlags.Instance | BindingFlags.Static |
+					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+				foreach (var m in declaringType.GetMethods (bindingflags)) {
+					if (m.MetadataToken == mi.MetadataToken) {
+						mi = m;
+						break;
+					}
 				}
 			}
 
-			return i != 0;
+			skipped = mi.IsDefined (typeof(StackTraceHiddenAttribute)) || declaringType.IsDefined (typeof(StackTraceHiddenAttribute));
+			if (skipped)
+				return;
+
+			if (needsNewLine)
+				sb.Append (Environment.NewLine);
+			sb.Append (prefix);
+
+			sb.Append (declaringType.ToString ());
+
+			sb.Append (".");
+			sb.Append (mi.Name);
+
+			if (mi.IsGenericMethod) {
+				mi = ((MethodInfo)mi).GetGenericMethodDefinition ();
+				Type[] gen_params = mi.GetGenericArguments ();
+				sb.Append ("[");
+				for (int j = 0; j < gen_params.Length; j++) {
+					if (j > 0)
+						sb.Append (",");
+					sb.Append (gen_params [j].Name);
+				}
+				sb.Append ("]");
+			}
+
+			ParameterInfo[] p = mi.GetParameters ();
+
+			sb.Append (" (");
+			for (int i = 0; i < p.Length; ++i) {
+				if (i > 0)
+					sb.Append (", ");
+
+				Type pt = p[i].ParameterType;
+				if (pt.IsGenericType && ! pt.IsGenericTypeDefinition)
+					pt = pt.GetGenericTypeDefinition ();
+
+				sb.Append (pt.ToString());
+
+				if (p [i].Name != null) {
+					sb.Append (" ");
+					sb.Append (p [i].Name);
+				}
+			}
+			sb.Append (")");
 		}
 
 		public override string ToString ()
@@ -238,6 +330,7 @@ namespace System.Diagnostics {
 			}
 
 			AddFrames (sb);
+
 			return sb.ToString ();
 		}
 

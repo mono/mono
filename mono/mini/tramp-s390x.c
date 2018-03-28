@@ -1,20 +1,19 @@
-/*------------------------------------------------------------------*/
-/* 								    */
-/* Name        - tramp-s390x.c      			  	    */
-/* 								    */
-/* Function    - JIT trampoline code for S/390.                     */
-/* 								    */
-/* Name	       - Neale Ferguson (Neale.Ferguson@SoftwareAG-usa.com) */
-/* 								    */
-/* Date        - January, 2004					    */
-/* 								    */
-/* Derivation  - From exceptions-x86 & exceptions-ppc		    */
-/* 	         Paolo Molaro (lupus@ximian.com) 		    */
-/* 		 Dietmar Maurer (dietmar@ximian.com)		    */
-/* 								    */
-/* Copyright   - 2001 Ximian, Inc.				    */
-/* Licensed under the MIT license. See LICENSE file in the project root for full license information.*/
-/*------------------------------------------------------------------*/
+/**
+ * \file
+ * Function    - JIT trampoline code for S/390.
+ *
+ * Name	       - Neale Ferguson (Neale.Ferguson@SoftwareAG-usa.com)
+ *
+ * Date        - January, 2004
+ *
+ * Derivation  - From exceptions-x86 & exceptions-ppc
+ * 	         Paolo Molaro (lupus@ximian.com)
+ * 		 Dietmar Maurer (dietmar@ximian.com)
+ *
+ * Copyright   - 2001 Ximian, Inc.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ *
+ */
 
 /*------------------------------------------------------------------*/
 /*                 D e f i n e s                                    */
@@ -47,6 +46,7 @@
 
 #include "mini.h"
 #include "mini-s390x.h"
+#include "mini-runtime.h"
 #include "support-s390x.h"
 #include "jit-icalls.h"
 
@@ -109,7 +109,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 	g_assert ((code - start) <= 28);
 
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_UNBOX_TRAMPOLINE, method);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_UNBOX_TRAMPOLINE, method));
 
 	snprintf(trampName, sizeof(trampName), "%s_unbox_trampoline", method->name);
 
@@ -181,6 +181,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	char *tramp_name;
 	guint8 *buf, *tramp, *code;
 	int i, offset, has_caller;
+	short *o[1];
 	GSList *unwind_ops = NULL;
 	MonoJumpInfo *ji = NULL;
 
@@ -191,8 +192,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		
 	code = buf = mono_global_codeman_reserve(512);
 		
-	if ((tramp_type == MONO_TRAMPOLINE_JUMP) ||
-	    (tramp_type == MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD)) 
+	if (tramp_type == MONO_TRAMPOLINE_JUMP) 
 		has_caller = 0;
 	else
 		has_caller = 1;
@@ -314,15 +314,29 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	   can restore r2 and use it later */
 	s390_stg  (buf, s390_r2, 0, STK_BASE, G_STRUCT_OFFSET(trampStack_t, saveFn));
 
-	/* Check for thread interruption */
-	S390_SET  (buf, s390_r1, (guint8 *)mono_interruption_checkpoint_from_trampoline);
-	s390_basr (buf, s390_r14, s390_r1);
-
 	/*----------------------------------------------------------
 	  STEP 3: Restore the LMF
 	  ----------------------------------------------------------*/
 	restoreLMF(buf, STK_BASE, sizeof(trampStack_t));
 	
+	/* Check for thread interruption */
+	S390_SET  (buf, s390_r1, (guint8 *)mono_thread_force_interruption_checkpoint_noraise);
+	s390_basr (buf, s390_r14, s390_r1);
+	s390_ltgr (buf, s390_r2, s390_r2);
+	s390_jz	  (buf, 0); CODEPTR (buf, o[0]);
+
+	/*
+	 * Exception case:
+	 * We have an exception we want to throw in the caller's frame, so pop
+	 * the trampoline frame and throw from the caller.
+	 */
+	S390_SET  (buf, s390_r1, (guint *)mono_get_throw_exception_addr ());
+	s390_aghi (buf, STK_BASE, sizeof(trampStack_t));
+	s390_lg   (buf, s390_r1, 0, s390_r1, 0); 
+	s390_lmg  (buf, s390_r6, s390_r14, STK_BASE, S390_REG_SAVE_OFFSET);
+	s390_br   (buf, s390_r1);
+	PTRSLOT (buf, o[0]);
+
 	/* Reload result */
 	s390_lg   (buf, s390_r1, 0, STK_BASE, G_STRUCT_OFFSET(trampStack_t, saveFn));
 
@@ -355,7 +369,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 
 	/* Flush instruction cache, since we've generated code */
 	mono_arch_flush_icache (code, buf - code);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 	
 	g_assert (info);
 	tramp_name = mono_get_generic_trampoline_name (tramp_type);
@@ -421,8 +435,9 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 
 	/* Flush instruction cache, since we've generated code */
 	mono_arch_flush_icache (code, buf - code);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_SPECIFIC_TRAMPOLINE, 
-				       (void *) mono_get_generic_trampoline_simple_name (tramp_type));
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf,
+	                     MONO_PROFILER_CODE_BUFFER_SPECIFIC_TRAMPOLINE,
+	                     (void *) mono_get_generic_trampoline_simple_name (tramp_type)));
 
 	/* Sanity check */
 	g_assert ((buf - code) <= SPECIFIC_TRAMPOLINE_SIZE);
@@ -527,7 +542,9 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	g_free (rgctx_null_jumps);
 
 	/* move the rgctx pointer to the VTABLE register */
+#if MONO_ARCH_VTABLE_REG != s390_r2
 	s390_lgr (code, MONO_ARCH_VTABLE_REG, s390_r2);
+#endif
 
 	tramp = mono_arch_create_specific_trampoline (GUINT_TO_POINTER (slot),
 		MONO_TRAMPOLINE_RGCTX_LAZY_FETCH, mono_get_root_domain (), NULL);
@@ -537,7 +554,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	s390_jg (code, displace);
 
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
 	g_assert (code - buf <= tramp_size);
 
@@ -554,20 +571,17 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 /*                                                                  */
 /* Name    	- mono_arch_get_static_rgctx_trampoline		    */
 /*                                                                  */
-/* Function	- Create a trampoline which sets RGCTX_REG to MRGCTX*/
+/* Function	- Create a trampoline which sets RGCTX_REG to ARG       */
 /*		  then jumps to ADDR.				    */
 /*                                                                  */
 /*------------------------------------------------------------------*/
 
 gpointer
-mono_arch_get_static_rgctx_trampoline (MonoMethod *m, 
-					MonoMethodRuntimeGenericContext *mrgctx, 
-					gpointer addr)
+mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 {
 	guint8 *code, *start;
 	gint32 displace;
 	int buf_len;
-	char trampName[128];
 
 	MonoDomain *domain = mono_domain_get ();
 
@@ -575,93 +589,17 @@ mono_arch_get_static_rgctx_trampoline (MonoMethod *m,
 
 	start = code = mono_domain_code_reserve (domain, buf_len);
 
-	S390_SET  (code, MONO_ARCH_RGCTX_REG, mrgctx);
+	S390_SET  (code, MONO_ARCH_RGCTX_REG, arg);
 	displace = ((uintptr_t) addr - (uintptr_t) code) / 2;
 	s390_jg   (code, displace);
 	g_assert ((code - start) < buf_len);
 
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
 
-	snprintf(trampName, sizeof(trampName), "%s_rgctx_trampoline", m->name);
-
-	mono_tramp_info_register (mono_tramp_info_create (trampName, start, code - start, NULL, NULL), domain);
+	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, NULL), domain);
 
 	return(start);
 }	
-
-/*========================= End of Function ========================*/
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
-/* Name		- handler_block_trampoline_helper                   */
-/*                                                                  */
-/* Function	- 						    */
-/*                                                                  */
-/*------------------------------------------------------------------*/
-
-static void
-handler_block_trampoline_helper (gpointer *ptr)
-{
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
-	*ptr = jit_tls->handler_block_return_address;
-}
-
-/*========================= End of Function ========================*/
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
-/* Name		- mono_arch_create_handler_block_trampoline         */
-/*                                                                  */
-/* Function	- 						    */
-/*                                                                  */
-/*------------------------------------------------------------------*/
-
-gpointer
-mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboolean aot)
-{
-	guint8 *tramp = mono_get_trampoline_code (MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD);
-	guint8 *code, *buf;
-	int tramp_size = 64;
-	MonoJumpInfo *ji = NULL;
-	GSList *unwind_ops = NULL;
-
-	g_assert (!aot);
-
-	code = buf = mono_global_codeman_reserve (tramp_size);
-
-	/*
-	 * This trampoline restore the call chain of the handler block 
-	 * then jumps into the code that deals with it.
-	 */
-
-	if (mono_get_jit_tls_offset () != -1) {
-		s390_ear  (code, s390_r1, 0);
-		s390_sllg (code, s390_r1, s390_r1, 0, 32);
-		s390_ear  (code, s390_r1, 1);
-		S390_SET  (code, s390_r14, mono_get_jit_tls_offset());
-		s390_lg   (code, s390_r14, s390_r1, 0, G_STRUCT_OFFSET(MonoJitTlsData, handler_block_return_address));
-		/* 
-		 * Simulate a call 
-		 */
-		S390_SET  (code, s390_r1, tramp);
-		s390_br   (code, s390_r1);
-	} else {
-		/*
-		 * Slow path uses a C helper
-		 */
-		S390_SET  (code, s390_r2, tramp);
-		S390_SET  (code, s390_r1, handler_block_trampoline_helper);
-		s390_br	  (code, s390_r1);
-	}
-
-	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
-	g_assert (code - buf <= tramp_size);
-
-	*info = mono_tramp_info_create ("handler_block_trampoline", buf, code - buf, ji, unwind_ops);
-
-	return buf;
-}
 
 /*========================= End of Function ========================*/

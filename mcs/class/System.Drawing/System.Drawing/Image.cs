@@ -10,6 +10,7 @@
 //
 // Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2013 Kristof Ralovich, changes are available under the terms of the MIT X11 license
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,7 +33,6 @@
 //
 
 using System;
-using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
@@ -167,6 +167,12 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			img.stream = stream;
 
 		return img;
+	}
+
+	// For compatiblity with CoreFX sources
+	internal static Image CreateImageObject (IntPtr nativeImage)
+	{
+		return CreateFromHandle (nativeImage);
 	}
 
 	internal static Image CreateFromHandle (IntPtr handle)
@@ -325,7 +331,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 		try {
 			status = GDIPlus.GdipGetEncoderParameterList (nativeObject, ref encoder, sz, rawEPList);
-			eps = EncoderParameters.FromNativePtr (rawEPList);
+			eps = EncoderParameters.ConvertFromMemory (rawEPList);
 			GDIPlus.CheckStatus (status);
 		}
 		finally {
@@ -451,7 +457,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		if (encoderParams == null) {
 			st = GDIPlus.GdipSaveImageToFile (nativeObject, filename, ref guid, IntPtr.Zero);
 		} else {
-			IntPtr nativeEncoderParams = encoderParams.ToNativePtr ();
+			IntPtr nativeEncoderParams = encoderParams.ConvertToMemory ();
 			st = GDIPlus.GdipSaveImageToFile (nativeObject, filename, ref guid, nativeEncoderParams);
 			Marshal.FreeHGlobal (nativeEncoderParams);
 		}
@@ -478,7 +484,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		if (encoderParams == null)
 			nativeEncoderParams = IntPtr.Zero;
 		else
-			nativeEncoderParams = encoderParams.ToNativePtr ();
+			nativeEncoderParams = encoderParams.ConvertToMemory ();
 
 		try {
 			if (GDIPlus.RunningOnUnix ()) {
@@ -502,7 +508,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	{
 		Status st;
 		
-		IntPtr nativeEncoderParams = encoderParams.ToNativePtr ();
+		IntPtr nativeEncoderParams = encoderParams.ConvertToMemory ();
 		st = GDIPlus.GdipSaveAdd (nativeObject, nativeEncoderParams);
 		Marshal.FreeHGlobal (nativeEncoderParams);
 		GDIPlus.CheckStatus (st);
@@ -512,7 +518,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	{
 		Status st;
 		
-		IntPtr nativeEncoderParams = encoderParams.ToNativePtr ();
+		IntPtr nativeEncoderParams = encoderParams.ConvertToMemory ();
 		st = GDIPlus.GdipSaveAddImage (nativeObject, image.NativeObject, nativeEncoderParams);
 		Marshal.FreeHGlobal (nativeEncoderParams);
 		GDIPlus.CheckStatus (st);
@@ -530,16 +536,30 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public void SetPropertyItem(PropertyItem propitem)
 	{
-		throw new NotImplementedException ();
-/*
-		GdipPropertyItem pi = new GdipPropertyItem ();
-		GdipPropertyItem.MarshalTo (pi, propitem);
-		unsafe {
-			Status status = GDIPlus.GdipSetPropertyItem (nativeObject, &pi);
+		if (propitem == null)
+			throw new ArgumentNullException ("propitem");
+
+		int nItemSize =  Marshal.SizeOf (propitem.Value[0]);
+		int size = nItemSize * propitem.Value.Length;
+		IntPtr dest = Marshal.AllocHGlobal (size);
+		try {
+			GdipPropertyItem pi = new GdipPropertyItem ();
+			pi.id    = propitem.Id;
+			pi.len   = propitem.Len;
+			pi.type  = propitem.Type;
+
+			Marshal.Copy (propitem.Value, 0, dest, size);
+			pi.value = dest;
+
+			unsafe {
+				Status status = GDIPlus.GdipSetPropertyItem (nativeObject, &pi);
 			
-			GDIPlus.CheckStatus (status);
+				GDIPlus.CheckStatus (status);
+			}
 		}
-*/
+		finally {
+			Marshal.FreeHGlobal (dest);
+		}
 	}
 
 	// properties	
@@ -612,7 +632,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		try {
 			st = GDIPlus.GdipGetImagePalette (nativeObject, palette_data, bytes);
 			GDIPlus.CheckStatus (st);
-			ret.setFromGDIPalette (palette_data);
+			ret.ConvertFromMemory (palette_data);
 			return ret;
 		}
 
@@ -626,7 +646,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		if (palette == null) {
 			throw new ArgumentNullException("palette");
 		}
-		IntPtr palette_data = palette.getGDIPalette();
+		IntPtr palette_data = palette.ConvertToMemory ();
 		if (palette_data == IntPtr.Zero) {
 			return;
 		}
@@ -777,6 +797,13 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			nativeObject = value;
 		}
 	}
+
+	// For compatiblity with CoreFX sources
+	internal IntPtr nativeImage {
+		get {
+			return nativeObject;
+		}
+	}
 	
 	public void Dispose ()
 	{
@@ -795,7 +822,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			Status status = GDIPlus.GdipDisposeImage (nativeObject);
 			// dispose the stream (set under Win32 only if SD owns the stream) and ...
 			if (stream != null) {
-				stream.Close ();
+				stream.Dispose ();
 				stream = null;
 			}
 			// ... set nativeObject to null before (possibly) throwing an exception

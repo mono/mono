@@ -154,14 +154,11 @@ if test -d $srcdir/libgc; then
   echo Done running libgc/autogen.sh ...
 fi
 
-if test -d $srcdir/eglib; then
-  echo Running eglib/autogen.sh ...
-  (cd $srcdir/eglib ; NOCONFIGURE=1 ./autogen.sh "$@")
-  echo Done running eglib/autogen.sh ...
+if test x$MONO_EXTRA_CONFIGURE_FLAGS != x; then
+	echo "MONO_EXTRA_CONFIGURE_FLAGS is $MONO_EXTRA_CONFIGURE_FLAGS"
 fi
 
-
-conf_flags="--enable-maintainer-mode --enable-compile-warnings" #--enable-iso-c
+conf_flags="$MONO_EXTRA_CONFIGURE_FLAGS --enable-maintainer-mode --enable-compile-warnings" #--enable-iso-c
 
 if test x$NOCONFIGURE = x; then
   echo Running $srcdir/configure $conf_flags "$@" ...

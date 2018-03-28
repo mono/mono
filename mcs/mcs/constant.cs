@@ -478,7 +478,7 @@ namespace Mono.CSharp {
 			catch
 			{
 				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-					GetValue ().ToString (), target.GetSignatureForError ());
+					GetValueAsLiteral (), target.GetSignatureForError ());
 			}
 		}
 
@@ -1697,7 +1697,7 @@ namespace Mono.CSharp {
 
 		public override string GetValueAsLiteral ()
 		{
-			return Value.ToString ();
+			return Value.ToString (CultureInfo.InvariantCulture);
 		}
 
 		public override long GetValueAsLong ()
@@ -1820,7 +1820,7 @@ namespace Mono.CSharp {
 
 		public override string GetValueAsLiteral ()
 		{
-			return Value.ToString ();
+			return Value.ToString (CultureInfo.InvariantCulture);
 		}
 
 		public override long GetValueAsLong ()
@@ -2021,7 +2021,7 @@ namespace Mono.CSharp {
 
 		public override string GetValueAsLiteral ()
 		{
-			return Value.ToString () + "M";
+			return Value.ToString (CultureInfo.InvariantCulture) + "M";
 		}
 
 		public override long GetValueAsLong ()
@@ -2149,11 +2149,6 @@ namespace Mono.CSharp {
 			this.name = name;
 		}
 
-		static void Error_MethodGroupWithTypeArguments (ResolveContext rc, Location loc)
-		{
-			rc.Report.Error (8084, loc, "An argument to nameof operator cannot be method group with type arguments");
-		}
-
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			throw new NotSupportedException ();
@@ -2169,9 +2164,9 @@ namespace Mono.CSharp {
 					rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, Location, "nameof operator");
 
 				var res = sn.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreAmbiguity | MemberLookupRestrictions.NameOfExcluded);
-				if (sn.HasTypeArguments && res is MethodGroupExpr) {
-					Error_MethodGroupWithTypeArguments (rc, expr.Location);
-				}
+				var me = res as MemberExpr;
+				if (me != null)
+					me.ResolveNameOf (rc, sn);
 
 				return true;
 			}
@@ -2197,20 +2192,9 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				var mg = res as MethodGroupExpr;
-				if (mg != null) {
-					var emg = res as ExtensionMethodGroupExpr;
-					if (emg != null && !emg.ResolveNameOf (rc, ma)) {
-						return true;
-					}
-
-					if (!mg.HasAccessibleCandidate (rc)) {
-						ErrorIsInaccesible (rc, ma.GetSignatureForError (), loc);
-					}
-
-					if (ma.HasTypeArguments) {
-						Error_MethodGroupWithTypeArguments (rc, ma.Location);
-					}
+				var me = res as MemberExpr;
+				if (me != null) {
+					me.ResolveNameOf (rc, ma);
 				}
 
 				//

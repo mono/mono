@@ -35,7 +35,7 @@ namespace System.Web.UI.WebControls
 	{
 		TableHeaderScope scope;
 		
-		public DataControlFieldHeaderCell (DataControlField containerField): base (HtmlTextWriterTag.Th, containerField)
+		public DataControlFieldHeaderCell (DataControlField containingField): base (HtmlTextWriterTag.Th, containingField)
 		{
 		}
 		

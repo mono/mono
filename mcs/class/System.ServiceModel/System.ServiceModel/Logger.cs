@@ -50,7 +50,7 @@ namespace System.ServiceModel
 
 	internal static class Logger
 	{
-#if NET_2_1
+#if MOBILE
 		enum TraceEventType // dummy
 		{
 			Critical,
@@ -71,7 +71,7 @@ namespace System.ServiceModel
 		static int event_id;
 		static TextWriter log_writer;
 		static XmlWriter xml_writer;
-#if !NET_2_1
+#if !MOBILE
 		static readonly TraceSource source = new TraceSource ("System.ServiceModel");
 		static readonly TraceSource message_source = new TraceSource ("System.ServiceModel.MessageLogging");
 #endif
@@ -89,7 +89,7 @@ namespace System.ServiceModel
 			case "stderr":
 				log_writer = Console.Error;
 				break;
-#if !NET_2_1
+#if !MOBILE
 			default:
 				try {
 					if (!String.IsNullOrEmpty (env))
@@ -104,7 +104,7 @@ namespace System.ServiceModel
 			if (log_writer != null)
 				xml_writer = XmlWriter.Create (log_writer, new XmlWriterSettings () { OmitXmlDeclaration = true });
 
-#if !NET_2_1
+#if !MOBILE
 			message_source.Switch.Level = SourceLevels.Information;
 #endif
 		}
@@ -143,7 +143,7 @@ namespace System.ServiceModel
 			if (log_writer != null) {
 				lock (log_writer){
 					event_id++;
-#if NET_2_1
+#if MOBILE
 					log_writer.Write ("[{0}] ", event_id);
 #endif
 					TraceCore (TraceEventType.Information, event_id,
@@ -151,7 +151,7 @@ namespace System.ServiceModel
 						message, args);
 					log_writer.WriteLine (message, args);
 					log_writer.Flush ();
-#if !NET_2_1
+#if !MOBILE
 					source.TraceEvent (eventType, event_id, message, args);
 #endif
 				}
@@ -179,7 +179,7 @@ namespace System.ServiceModel
 		{
 			if (log_writer != null) {
 				var sw = new StringWriter ();
-#if NET_2_1
+#if MOBILE
 				var xw = XmlWriter.Create (sw, xws);
 #else
 				var doc = new XmlDocument ();
@@ -199,7 +199,7 @@ namespace System.ServiceModel
 
 				event_id++;
 				lock (log_writer){
-#if NET_2_1
+#if MOBILE
 					log_writer.Write ("[{0}] ", event_id);
 
 					TraceCore (TraceEventType.Information, event_id, /*FIXME*/false, /*FIXME*/Guid.Empty, sw);

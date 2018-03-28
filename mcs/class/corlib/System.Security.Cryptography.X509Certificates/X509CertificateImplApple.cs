@@ -1,3 +1,4 @@
+#if MONO_FEATURE_APPLETLS || MONO_FEATURE_APPLE_X509
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -24,6 +25,12 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public override IntPtr Handle {
 			get { return handle; }
+		}
+
+		public override IntPtr GetNativeAppleCertificate ()
+		{
+			ThrowIfContextInvalid ();
+			return handle;
 		}
 
 		public override X509CertificateImpl Clone ()
@@ -191,3 +198,4 @@ namespace System.Security.Cryptography.X509Certificates
 		}
 	}
 }
+#endif

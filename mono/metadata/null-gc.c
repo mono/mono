@@ -1,5 +1,6 @@
-/*
- * null-gc.c: GC implementation using malloc: will leak everything, just for testing.
+/**
+ * \file
+ * GC implementation using malloc: will leak everything, just for testing.
  *
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2011 Novell, Inc (http://www.novell.com)
@@ -12,29 +13,36 @@
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/runtime.h>
+#include <mono/metadata/w32handle.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/metadata/null-gc-handles.h>
 
 #ifdef HAVE_NULL_GC
+
+static gboolean gc_inited = FALSE;
 
 void
 mono_gc_base_init (void)
 {
-	MonoThreadInfoCallbacks cb;
-	int dummy;
+	if (gc_inited)
+		return;
 
 	mono_counters_init ();
 
-	memset (&cb, 0, sizeof (cb));
-	/* TODO: This casts away an incompatible pointer type warning in the same
-	         manner that boehm-gc does it. This is probably worth investigating
-	         more carefully. */
-	cb.mono_method_is_critical = (gpointer)mono_runtime_is_critical_method;
+#ifndef HOST_WIN32
+	mono_w32handle_init ();
+#endif
 
-	mono_threads_init (&cb, sizeof (MonoThreadInfo));
+	mono_thread_callbacks_init ();
+	mono_thread_info_init (sizeof (MonoThreadInfo));
 
-	mono_thread_info_attach (&dummy);
+	mono_thread_info_attach ();
+
+	null_gc_handles_init ();
+
+	gc_inited = TRUE;
 }
 
 void
@@ -89,12 +97,6 @@ mono_gc_is_gc_thread (void)
 	return TRUE;
 }
 
-gboolean
-mono_gc_register_thread (void *baseptr)
-{
-	return TRUE;
-}
-
 int
 mono_gc_walk_heap (int flags, MonoGCReferences callback, void *data)
 {
@@ -107,43 +109,22 @@ mono_object_is_alive (MonoObject* o)
 	return TRUE;
 }
 
-void
-mono_gc_enable_events (void)
-{
-}
-
-void
-mono_gc_enable_alloc_events (void)
-{
-}
-
 int
-mono_gc_register_root (char *start, size_t size, void *descr, MonoGCRootSource source, const char *msg)
+mono_gc_register_root (char *start, size_t size, void *descr, MonoGCRootSource source, void *key, const char *msg)
 {
 	return TRUE;
 }
 
+int
+mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg)
+{
+	return TRUE;
+}
+
+
 void
 mono_gc_deregister_root (char* addr)
 {
-}
-
-void
-mono_gc_weak_link_add (void **link_addr, MonoObject *obj, gboolean track)
-{
-	*link_addr = obj;
-}
-
-void
-mono_gc_weak_link_remove (void **link_addr, gboolean track)
-{
-	*link_addr = NULL;
-}
-
-MonoObject*
-mono_gc_weak_link_get (void **link_addr)
-{
-	return *link_addr;
 }
 
 void*
@@ -171,13 +152,19 @@ mono_gc_make_descr_from_bitmap (gsize *bitmap, int numbits)
 }
 
 void*
+mono_gc_make_vector_descr (void)
+{
+	return NULL;
+}
+
+void*
 mono_gc_make_root_descr_all_refs (int numbits)
 {
 	return NULL;
 }
 
 void*
-mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, const char *msg)
+mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, void *key, const char *msg)
 {
 	return g_malloc0 (size);
 }
@@ -191,7 +178,7 @@ mono_gc_free_fixed (void* addr)
 void *
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
-	MonoObject *obj = calloc (1, size);
+	MonoObject *obj = g_calloc (1, size);
 
 	obj->vtable = vtable;
 
@@ -201,7 +188,7 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 void *
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
-	MonoArray *obj = calloc (1, size);
+	MonoArray *obj = g_calloc (1, size);
 
 	obj->obj.vtable = vtable;
 	obj->max_length = max_length;
@@ -212,7 +199,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 void *
 mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
 {
-	MonoArray *obj = calloc (1, size);
+	MonoArray *obj = g_calloc (1, size);
 
 	obj->obj.vtable = vtable;
 	obj->max_length = max_length;
@@ -226,7 +213,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 void *
 mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 {
-	MonoString *obj = calloc (1, size);
+	MonoString *obj = g_calloc (1, size);
 
 	obj->object.vtable = vtable;
 	obj->length = len;
@@ -274,7 +261,7 @@ mono_gc_wbarrier_generic_store (gpointer ptr, MonoObject* value)
 void
 mono_gc_wbarrier_generic_store_atomic (gpointer ptr, MonoObject *value)
 {
-	InterlockedWritePointer (ptr, value);
+	mono_atomic_store_ptr (ptr, value);
 }
 
 void
@@ -302,6 +289,25 @@ mono_gc_is_critical_method (MonoMethod *method)
 	return FALSE;
 }
 
+gpointer
+mono_gc_thread_attach (MonoThreadInfo* info)
+{
+	info->handle_stack = mono_handle_stack_alloc ();
+	return info;
+}
+
+void
+mono_gc_thread_detach_with_lock (MonoThreadInfo *p)
+{
+	mono_handle_stack_free (p->handle_stack);
+}
+
+gboolean
+mono_gc_thread_in_critical_region (MonoThreadInfo *info)
+{
+	return FALSE;
+}
+
 int
 mono_gc_get_aligned_size_for_allocator (int size)
 {
@@ -321,7 +327,7 @@ mono_gc_get_managed_array_allocator (MonoClass *klass)
 }
 
 MonoMethod*
-mono_gc_get_managed_allocator_by_type (int atype, gboolean slowpath)
+mono_gc_get_managed_allocator_by_type (int atype, ManagedAllocatorVariant variant)
 {
 	return NULL;
 }
@@ -339,28 +345,12 @@ mono_gc_get_gc_name (void)
 }
 
 void
-mono_gc_add_weak_track_handle (MonoObject *obj, guint32 gchandle)
-{
-}
-
-void
-mono_gc_change_weak_track_handle (MonoObject *old_obj, MonoObject *obj, guint32 gchandle)
-{
-}
-
-void
-mono_gc_remove_weak_track_handle (guint32 gchandle)
-{
-}
-
-GSList*
-mono_gc_remove_weak_track_object (MonoDomain *domain, MonoObject *obj)
-{
-	return NULL;
-}
-
-void
 mono_gc_clear_domain (MonoDomain *domain)
+{
+}
+
+void
+mono_gc_suspend_finalizers (void)
 {
 }
 
@@ -420,9 +410,15 @@ mono_gc_is_disabled (void)
 }
 
 void
-mono_gc_wbarrier_value_copy_bitmap (gpointer _dest, gpointer _src, int size, unsigned bitmap)
+mono_gc_wbarrier_range_copy (gpointer _dest, gpointer _src, int size)
 {
 	g_assert_not_reached ();
+}
+
+void*
+mono_gc_get_range_copy_func (void)
+{
+	return &mono_gc_wbarrier_range_copy;
 }
 
 guint8*
@@ -445,11 +441,6 @@ mono_gc_get_nursery (int *shift_bits, size_t *size)
 	return NULL;
 }
 
-void
-mono_gc_set_current_thread_appdomain (MonoDomain *domain)
-{
-}
-
 gboolean
 mono_gc_precise_stack_mark_enabled (void)
 {
@@ -460,6 +451,16 @@ FILE *
 mono_gc_get_logfile (void)
 {
 	return NULL;
+}
+
+void
+mono_gc_params_set (const char* options)
+{
+}
+
+void
+mono_gc_debug_set (const char* options)
+{
 }
 
 void
@@ -519,7 +520,14 @@ mono_gc_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void 
 }
 #endif
 
-void mono_gc_set_skip_thread (gboolean value)
+void
+mono_gc_skip_thread_changing (gboolean skip)
+{
+	// No STW, nothing needs to be done.
+}
+
+void
+mono_gc_skip_thread_changed (gboolean skip)
 {
 }
 
@@ -529,6 +537,13 @@ BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reser
 	return TRUE;
 }
 #endif
+
+MonoVTable *
+mono_gc_get_vtable (MonoObject *obj)
+{
+	// No pointer tagging.
+	return obj->vtable;
+}
 
 guint
 mono_gc_get_vtable_bits (MonoClass *klass)
@@ -547,4 +562,19 @@ mono_gc_is_null (void)
 	return TRUE;
 }
 
-#endif
+int
+mono_gc_invoke_finalizers (void)
+{
+	return 0;
+}
+
+MonoBoolean
+mono_gc_pending_finalizers (void)
+{
+	return FALSE;
+}
+
+#else
+
+MONO_EMPTY_SOURCE_FILE (null_gc);
+#endif /* HAVE_NULL_GC */

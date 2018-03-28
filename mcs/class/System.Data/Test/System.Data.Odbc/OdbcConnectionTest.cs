@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NO_ODBC
+
 using System;
 using System.Data;
 using System.Data.Odbc;
@@ -129,6 +131,7 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+		[Category("NotWorking")] //GetSchema is not implemented in corefx for ODBC
 		public void GetSchema_Connection_Closed ()
 		{
 			OdbcConnection cn = new OdbcConnection ();
@@ -229,3 +232,5 @@ namespace MonoTests.System.Data.Odbc
 		}
 	}
 }
+
+#endif

@@ -29,9 +29,6 @@
 //
 
 #if CONFIGURATION_DEP
-extern alias PrebuiltSystem;
-using TypeDescriptor = PrebuiltSystem.System.ComponentModel.TypeDescriptor;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -122,13 +119,9 @@ namespace System.CodeDom.Compiler
 			internal set { base [providerOptionsProp] = value; }
 		}
 
-		public Dictionary <string, string> ProviderOptionsDictionary {
-			get { return ProviderOptions.ProviderOptions; }
-		}
-		
-		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
-		}
+		public Dictionary <string, string> ProviderOptionsDictionary => ProviderOptions.ProviderOptions;
+
+		protected override ConfigurationPropertyCollection Properties => properties;
 	}
 }
 #endif

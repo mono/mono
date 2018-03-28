@@ -1,5 +1,6 @@
-/*
- * sgen-major-copy-object.h: Object copying in the major collectors.
+/**
+ * \file
+ * Object copying in the major collectors.
  *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
@@ -18,5 +19,6 @@
 } while (0)
 
 #define COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION sgen_minor_collector.alloc_for_promotion
+#define COLLECTOR_PARALLEL_ALLOC_FOR_PROMOTION sgen_minor_collector.alloc_for_promotion_par
 
 #include "sgen-copy-object.h"

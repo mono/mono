@@ -55,18 +55,13 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-#if NET_2_1
+#if MOBILE
 [assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else
 [assembly: AssemblyKeyFile ("../ecma.pub")]
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 [assembly: SecurityCritical (SecurityCriticalScope.Explicit)]
-// for SyndicationElementExtension
-// FIXME: mcs in 2-10 branch breaks System.ServiceModel build on resolving this. So, disabling it so far.
-// [assembly: InternalsVisibleTo ("System.ServiceModel, PublicKey=00000000000000000400000000000000")]
 #endif
-[assembly: InternalsVisibleTo ("System.ServiceModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
-[assembly: InternalsVisibleTo ("System.ServiceModel.Web, PublicKey=" + AssemblyRef.MicrosoftPublicKey)]
 
 [assembly: ComVisible (false)]

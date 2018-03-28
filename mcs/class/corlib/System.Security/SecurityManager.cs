@@ -29,7 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !NET_2_1
+#if !MOBILE
 
 using System.Collections;
 using System.Diagnostics;

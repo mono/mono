@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #include "config.h"
 
 #include <string.h>
@@ -7,6 +11,7 @@
 #include <errno.h>
 #include <mono/utils/mono-io-portability.h>
 #include <mono/metadata/profiler-private.h>
+#include <mono/utils/mono-compiler.h>
 
 #ifndef DISABLE_PORTABILITY
 
@@ -18,7 +23,7 @@ static inline gchar *mono_portability_find_file_internal (GString **report, cons
 
 void mono_portability_helpers_init (void)
 {
-        const gchar *env;
+        gchar *env;
 
 	if (mono_io_portability_helpers != PORTABILITY_UNKNOWN)
 		return;
@@ -51,6 +56,7 @@ void mono_portability_helpers_init (void)
                                 mono_io_portability_helpers |= (PORTABILITY_DRIVE | PORTABILITY_CASE);
 			}
                 }
+		g_free (env);
 	}
 }
 
@@ -93,7 +99,6 @@ static gchar *find_in_dir (DIR *current, const gchar *name)
 
 static inline void append_report (GString **report, const gchar *format, ...)
 {
-#if defined (_EGLIB_MAJOR) || GLIB_CHECK_VERSION(2,14,0)
 	va_list ap;
 	if (!*report)
 		*report = g_string_new ("");
@@ -101,9 +106,6 @@ static inline void append_report (GString **report, const gchar *format, ...)
 	va_start (ap, format);
 	g_string_append_vprintf (*report, format, ap);
 	va_end (ap);
-#else
-	g_assert_not_reached ();
-#endif
 }
 
 static inline void do_mono_profiler_iomap (GString **report, const char *pathname, const char *new_pathname)
@@ -119,7 +121,7 @@ static inline void do_mono_profiler_iomap (GString **report, const char *pathnam
 		*report = NULL;
 	}
 
-	mono_profiler_iomap (rep, pathname, new_pathname);
+	MONO_PROFILER_RAISE (iomap_report, (rep, pathname, new_pathname));
 	g_free (rep);
 }
 
@@ -146,7 +148,7 @@ static inline gchar *mono_portability_find_file_internal (GString **report, cons
 	DIR *scanning = NULL;
 	size_t len;
 	gboolean drive_stripped = FALSE;
-	gboolean do_report = (mono_profiler_get_events () & MONO_PROFILE_IOMAP_EVENTS) != 0;
+	gboolean do_report = MONO_PROFILER_ENABLED (iomap_report);
 
 	if (IS_PORTABILITY_NONE) {
 		return(NULL);
@@ -391,4 +393,9 @@ static inline gchar *mono_portability_find_file_internal (GString **report, cons
 	g_free (new_pathname);
 	return(NULL);
 }
-#endif
+
+#else /* DISABLE_PORTABILITY */
+
+MONO_EMPTY_SOURCE_FILE (mono_io_portability);
+
+#endif /* DISABLE_PORTABILITY */

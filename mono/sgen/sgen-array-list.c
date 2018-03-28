@@ -1,5 +1,6 @@
-/*
- * sgen-array-list.c: A pointer array list that doesn't require reallocs
+/**
+ * \file
+ * A pointer array list that doesn't require reallocs
  *
  * Copyright (C) 2016 Xamarin Inc
  *
@@ -45,12 +46,12 @@ sgen_array_list_grow (SgenArrayList *array, guint32 old_capacity)
 	 * the new bucket pointer.
 	 */
 	mono_memory_write_barrier ();
-	if (InterlockedCompareExchangePointer ((volatile gpointer *)&array->entries [new_bucket], entries, NULL) == NULL) {
+	if (mono_atomic_cas_ptr ((volatile gpointer *)&array->entries [new_bucket], entries, NULL) == NULL) {
 		/*
 		 * It must not be the case that we succeeded in setting the bucket
 		 * pointer, while someone else succeeded in changing the capacity.
 		 */
-		if (InterlockedCompareExchange ((volatile gint32 *)&array->capacity, new_capacity, old_capacity) != old_capacity)
+		if (mono_atomic_cas_i32 ((volatile gint32 *)&array->capacity, (gint32)new_capacity, (gint32)old_capacity) != (gint32)old_capacity)
 			g_assert_not_reached ();
 		array->slot_hint = old_capacity;
 		return;
@@ -108,8 +109,34 @@ sgen_array_list_update_next_slot (SgenArrayList *array, guint32 new_index)
 			old_next_slot = array->next_slot;
 			if (new_index < old_next_slot)
 				break;
-		} while (InterlockedCompareExchange ((volatile gint32 *)&array->next_slot, new_index + 1, old_next_slot) != old_next_slot);
+		} while (mono_atomic_cas_i32 ((volatile gint32 *)&array->next_slot, (gint32)(new_index + 1), (gint32)old_next_slot) != (gint32)old_next_slot);
 	}
+}
+
+/*
+ * Extension for the array list that allows fast allocation and index based fetching
+ * of long lived memory of various sizes, without the need of realloc. Not thread safe.
+ */
+guint32
+sgen_array_list_alloc_block (SgenArrayList *array, guint32 slots_to_add)
+{
+	guint32 new_index = array->next_slot;
+	guint32 old_capacity = array->capacity;
+
+	/* FIXME Don't allocate arrays that will be skipped */
+	/* There are no empty arrays between next_slot and capacity because we allocate incrementally */
+	while ((old_capacity - new_index) < slots_to_add) {
+		sgen_array_list_grow (array, old_capacity);
+		new_index = old_capacity;
+		old_capacity = array->capacity;
+	}
+
+	SGEN_ASSERT (0, sgen_array_list_index_bucket (new_index) == sgen_array_list_index_bucket (new_index + slots_to_add - 1),
+			"We failed to allocate a continuous block of slots");
+
+	array->next_slot = new_index + slots_to_add;
+	/* The slot address will point to the allocated memory */
+	return new_index;
 }
 
 guint32
@@ -151,24 +178,6 @@ retry:
 }
 
 /*
- * Removes all NULL pointers from the array. Not thread safe
- */
-void
-sgen_array_list_remove_nulls (SgenArrayList *array)
-{
-	guint32 start = 0;
-	volatile gpointer *slot;
-
-	SGEN_ARRAY_LIST_FOREACH_SLOT (array, slot) {
-		if (*slot)
-			*sgen_array_list_get_slot (array, start++) = *slot;
-	} SGEN_ARRAY_LIST_END_FOREACH_SLOT;
-
-	mono_memory_write_barrier ();
-	array->next_slot = start;
-}
-
-/*
  * Does a linear search through the pointer array to find `ptr`.  Returns the index if
  * found, otherwise (guint32)-1.
  */
@@ -182,6 +191,43 @@ sgen_array_list_find (SgenArrayList *array, gpointer ptr)
 			return __index;
 	} SGEN_ARRAY_LIST_END_FOREACH_SLOT;
 	return (guint32)-1;
+}
+
+gboolean
+sgen_array_list_default_cas_setter (volatile gpointer *slot, gpointer ptr, int data)
+{
+	if (mono_atomic_cas_ptr (slot, ptr, NULL) == NULL)
+		return TRUE;
+	return FALSE;
+}
+
+gboolean
+sgen_array_list_default_is_slot_set (volatile gpointer *slot)
+{
+	return *slot != NULL;
+}
+
+/* Removes all NULL pointers from the array. Not thread safe */
+void
+sgen_array_list_remove_nulls (SgenArrayList *array)
+{
+	guint32 start = 0;
+	volatile gpointer *slot;
+	gboolean skipped = FALSE;
+
+	SGEN_ARRAY_LIST_FOREACH_SLOT (array, slot) {
+		if (*slot) {
+			*sgen_array_list_get_slot (array, start++) = *slot;
+			if (skipped)
+				*slot = NULL;
+		} else {
+			skipped = TRUE;
+		}
+	} SGEN_ARRAY_LIST_END_FOREACH_SLOT;
+
+	mono_memory_write_barrier ();
+	array->next_slot = start;
+	array->slot_hint = start;
 }
 
 #endif

@@ -28,10 +28,6 @@
 //
 
 #if CONFIGURATION_DEP
-#if CONFIGURATION_DEP
-extern alias PrebuiltSystem;
-using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
-#endif
 
 using System;
 using System.Collections.Specialized;

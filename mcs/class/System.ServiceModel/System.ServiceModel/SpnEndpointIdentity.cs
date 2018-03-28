@@ -27,7 +27,9 @@
 //
 using System;
 using System.Collections.Generic;
+#if !MOBILE && !XAMMAC_4_5
 using System.IdentityModel.Claims;
+#endif
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
@@ -37,15 +39,22 @@ namespace System.ServiceModel
 {
 	public class SpnEndpointIdentity : EndpointIdentity
 	{
+#if !MOBILE && !XAMMAC_4_5
 		public SpnEndpointIdentity (Claim identity)
 		{
 			Initialize (identity);
 		}
 
-		public SpnEndpointIdentity (string spn)
-			: this (Claim.CreateSpnClaim (spn))
+		public SpnEndpointIdentity (string spnName)
+			: this (Claim.CreateSpnClaim (spnName))
 		{
 		}
+#else
+		public SpnEndpointIdentity (string spnName)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		[MonoTODO]
 		public static TimeSpan SpnLookupTime {

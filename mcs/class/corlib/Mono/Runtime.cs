@@ -28,10 +28,11 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Mono {
 
-#if MOBILE
+#if MOBILE || XAMMAC_4_5
 	public
 #endif
 	static class Runtime
@@ -40,16 +41,31 @@ namespace Mono {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void mono_runtime_install_handlers ();
 
-		static internal void InstallSignalHandlers ()
+#if MOBILE || XAMMAC_4_5
+		public
+#else
+		internal
+#endif
+		static void InstallSignalHandlers ()
 		{
 			mono_runtime_install_handlers ();
 		}
+
+#if MOBILE || XAMMAC_4_5
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void mono_runtime_cleanup_handlers ();
+
+		public static void RemoveSignalHandlers ()
+		{
+			mono_runtime_cleanup_handlers ();
+		}
+#endif
 
 		// Should not be removed intended for external use
 		// Safe to be called using reflection
 		// Format is undefined only for use as a string for reporting
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-#if MOBILE
+#if MOBILE || XAMMAC_4_5
 		public
 #else
 		internal
@@ -64,5 +80,29 @@ namespace Mono {
 			// No longer used
 			return true;
 		}
+
+#if !MOBILE 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void DisableMicrosoftTelemetry (IntPtr appBundleID, IntPtr appSignature, IntPtr appVersion, IntPtr merpGUIPath);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void EnableMicrosoftTelemetry_internal (IntPtr appBundleID, IntPtr appSignature, IntPtr appVersion, IntPtr merpGUIPath);
+
+		static void EnableMicrosoftTelemetry (string appBundleID_str, string appSignature_str, string appVersion_str, string merpGUIPath_str)
+		{
+			if (RuntimeInformation.IsOSPlatform (OSPlatform.OSX)) {
+				using (var appBundleID_chars = RuntimeMarshal.MarshalString (appBundleID_str))
+				using (var appSignature_chars = RuntimeMarshal.MarshalString (appSignature_str))
+				using (var appVersion_chars = RuntimeMarshal.MarshalString (appVersion_str))
+				using (var merpGUIPath_chars = RuntimeMarshal.MarshalString (merpGUIPath_str))
+				{
+					EnableMicrosoftTelemetry_internal (appBundleID_chars.Value, appSignature_chars.Value, appVersion_chars.Value, merpGUIPath_chars.Value);
+				}
+			} else {
+				throw new PlatformNotSupportedException("Merp support is currently only supported on OSX.");
+			}
+		}
+#endif
+
 	}
 }

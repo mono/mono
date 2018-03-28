@@ -17,7 +17,7 @@ using Mono.Unix;
 
 namespace MonoTests.Mono.Unix {
 
-    [TestFixture]
+    [TestFixture, Category ("NotOnWindows")]
     public class UnixEndPointTest {
 
         // Regression test for https://bugzilla.xamarin.com/show_bug.cgi?id=35004

@@ -35,8 +35,8 @@ namespace System.ServiceModel
 	public class ActionNotSupportedException : CommunicationException
 	{
 		public ActionNotSupportedException () : base () {}
-		public ActionNotSupportedException (string msg) : base (msg) {}
-		public ActionNotSupportedException (string msg, Exception inner) : base (msg, inner) {}
+		public ActionNotSupportedException (string message) : base (message) {}
+		public ActionNotSupportedException (string message, Exception innerException) : base (message, innerException) {}
 		protected ActionNotSupportedException (SerializationInfo info, StreamingContext context) :
 			base (info, context) {}
 	}

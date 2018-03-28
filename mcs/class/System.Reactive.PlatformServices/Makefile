@@ -4,8 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = System.Reactive.PlatformServices.dll
 LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq
-LIB_MCS_FLAGS = \
-		@more_build_args
+KEYFILE = ../reactive.pub
+LIB_MCS_FLAGS = -d:SIGNED -delaysign -resource:Strings_PlatformServices.resources,System.Reactive.Strings_PlatformServices.resources
 
 ifeq (true, $(GENERATE_RESOURCES))
 LIB_MCS_FLAGS += /define:GENERATING_RESOURCES
@@ -37,7 +37,7 @@ endif
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 TEST_LIB_REFS = Mono.Reactive.Tests
 
-EXTRA_DISTFILES = more_build_args $(RESX_RESOURCES:.resources=.resx) $(PREBUILT)
+EXTRA_DISTFILES = $(RESX_RESOURCES:.resources=.resx) $(PREBUILT)
 
 INSTALL_PROFILE := $(filter net_4_x, $(PROFILE))
 ifndef INSTALL_PROFILE

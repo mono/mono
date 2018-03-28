@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_JIT_ICALLS_H__
 #define __MONO_JIT_ICALLS_H__
 
@@ -95,11 +99,10 @@ double mono_conv_to_r8_un (guint32 a);
 
 double mono_lconv_to_r8_un (guint64 a);
 
-#if defined(__native_client_codegen__) || defined(__native_client__)
-double mono_fmod(double a, double b);
-#endif
-
 gpointer mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, gpointer *this_arg);
+
+MonoString*
+ves_icall_mono_ldstr (MonoDomain *domain, MonoImage *image, guint32 idx);
 
 MonoString *mono_helper_ldstr (MonoImage *image, guint32 idx);
 
@@ -189,7 +192,8 @@ ves_icall_runtime_class_init (MonoVTable *vtable);
 void
 mono_generic_class_init (MonoVTable *vtable);
 
-void mono_interruption_checkpoint_from_trampoline (void);
+void
+ves_icall_mono_delegate_ctor (MonoObject *this_obj, MonoObject *target, gpointer addr);
 
 MonoObject*
 mono_gsharedvt_constrained_call (gpointer mp, MonoMethod *cmethod, MonoClass *klass, gboolean deref_arg, gpointer *args);
@@ -219,5 +223,9 @@ MonoObject* mono_get_assembly_object (MonoImage *image);
 MonoObject* mono_get_method_object (MonoMethod *method);
 
 double mono_ckfinite (double d);
+
+void mono_throw_method_access (MonoMethod *caller, MonoMethod *callee);
+
+void mono_dummy_jit_icall (void);
 
 #endif /* __MONO_JIT_ICALLS_H__ */

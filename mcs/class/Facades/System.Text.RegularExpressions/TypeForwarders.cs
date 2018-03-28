@@ -30,4 +30,5 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.RegularExpressions.Regex))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.RegularExpressions.RegexMatchTimeoutException))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.RegularExpressions.RegexOptions))]
-
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.RegularExpressions.RegexRunner))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.RegularExpressions.RegexRunnerFactory))]

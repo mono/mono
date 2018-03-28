@@ -45,12 +45,12 @@ namespace System.ServiceModel
 		{
 		}
 
-		public ServiceHost (object serviceInstance,
+		public ServiceHost (object singletonInstance,
 			params Uri [] baseAddresses)
 		{
-			if (serviceInstance == null)
-				throw new ArgumentNullException ("serviceInstance");
-			InitializeDescription (serviceInstance,
+			if (singletonInstance == null)
+				throw new ArgumentNullException ("singletonInstance");
+			InitializeDescription (singletonInstance,
 				new UriSchemeKeyedCollection (baseAddresses));
 		}
 
@@ -165,10 +165,10 @@ namespace System.ServiceModel
 			InitializeDescription (baseAddresses);
 		}
 
-		protected void InitializeDescription (object serviceInstance, UriSchemeKeyedCollection baseAddresses)
+		protected void InitializeDescription (object singletonInstance, UriSchemeKeyedCollection baseAddresses)
 		{
-			instance = serviceInstance;
-			InitializeDescription (serviceInstance.GetType (), baseAddresses);
+			instance = singletonInstance;
+			InitializeDescription (singletonInstance.GetType (), baseAddresses);
 		}
 	}
 }

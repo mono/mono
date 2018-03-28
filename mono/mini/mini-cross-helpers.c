@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #include "config.h"
 
 #include <stdio.h>
@@ -5,6 +9,8 @@
 #include "config.h"
 
 #include "mini.h"
+#include "mini-runtime.h"
+#include "interp/interp.h"
 #include "tasklets.h"
 #include <mono/metadata/abi-details.h>
 
@@ -44,6 +50,12 @@ mono_dump_jit_offsets (void)
 #endif
 }
 
+/*
+ * mono_cross_helpers_run:
+ *
+ *   Check that the offsets given by object-offsets.h match the offsets
+ * on the host.
+ */
 void
 mono_cross_helpers_run (void)
 {
@@ -52,13 +64,14 @@ mono_cross_helpers_run (void)
 #endif
 
 #ifndef USED_CROSS_COMPILER_OFFSETS
-	if (g_getenv ("DUMP_CROSS_OFFSETS"))
+	if (g_hasenv ("DUMP_CROSS_OFFSETS"))
 		mono_dump_jit_offsets ();
 #endif
 	
 #if defined (HAS_CROSS_COMPILER_OFFSETS) && !defined (MONO_CROSS_COMPILE)
 	mono_metadata_cross_helpers_run ();
 
+	/* The metadata offsets are already checked above */
 #define DISABLE_METADATA_OFFSETS
 #define USE_CROSS_COMPILE_OFFSETS
 #define DECL_OFFSET(struct,field) this_should_not_happen_for_cross_fields

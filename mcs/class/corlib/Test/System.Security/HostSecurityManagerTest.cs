@@ -27,8 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// NET_2_1 profile lacks some (of the few) CAS features required to execute those tests
-#if !NET_2_1
+// MOBILE profile lacks some (of the few) CAS features required to execute those tests
+#if !MOBILE && !MONOMAC
 
 using NUnit.Framework;
 using System;

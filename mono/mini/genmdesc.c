@@ -1,5 +1,6 @@
-/*
- * genmdesc: Generates the machine description
+/**
+ * \file
+ * Generates the machine description
  *
  * Authors:
  *   Paolo Molaro (lupus@ximian.com)
@@ -10,11 +11,6 @@
 #include <ctype.h>
 #include <string.h>
 #include <mono/metadata/opcodes.h>
-
-#if defined(__native_client__) || defined(__native_client_codegen__)
-volatile int __nacl_thread_suspension_needed = 0;
-void __nacl_suspend_thread_if_needed() {}
-#endif
 
 #define MINI_OP(a,b,dest,src1,src2) b,
 #define MINI_OP3(a,b,dest,src1,src2,src3) b,
@@ -98,6 +94,9 @@ load_file (const char *name) {
 			g_string_append (comment, str);
 			continue;
 		}
+		p = strchr (str, '#');
+		if (p)
+			*p = 0;
 		p = strchr (str, ':');
 		if (!p)
 			g_error ("Invalid format at line %d in %s\n", line, name);

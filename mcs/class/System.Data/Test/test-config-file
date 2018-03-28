@@ -1,0 +1,85 @@
+	<configSections>
+		<section name="system.data_test" 
+			type="System.Data.Common.DbProviderFactoriesConfigurationHandler, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
+		<section name="connectionStrings_test"
+			type="System.Configuration.ConnectionStringsSection, System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+		<section name="providerTests" type="MonoTests.System.Data.Connected.ProviderTestsConfigurationHandler, net_4_x_System.Data_test" />
+	</configSections>
+	<system.data>
+		<DbProviderFactories>
+			<add name="ProviderTest2.Name"
+				invariant="ProviderTest2.InvariantName"
+				support="FF"
+				description="ProviderTest2.Description"
+				type="ProviderTest2.AssemblyQualifiedName"/>
+		</DbProviderFactories>
+	</system.data>
+	<system.data_test>
+		<DbProviderFactories>
+			<add name="ProviderTest3.Name"
+				invariant="ProviderTest3.InvariantName"
+				support="FF"
+				description="ProviderTest3.Description"
+				type="ProviderTest3.AssemblyQualifiedName"/>
+			<clear />
+			<add name="ProviderTest4.Name"
+				invariant="ProviderTest4.InvariantName"
+				support="FF"
+				description="ProviderTest4.Description"
+				type="ProviderTest4.AssemblyQualifiedName"/>
+			<add name="ProviderTest5.Name"
+				invariant="ProviderTest5.InvariantName"
+				support="FF"
+				description="ProviderTest5.Description"
+				type="ProviderTest5.AssemblyQualifiedName"/>
+			<remove invariant="ProviderTest5.InvariantName" />
+			<add name="ProviderTest.Name"
+				invariant="ProviderTest.InvariantName"
+				support="FF"
+				description="ProviderTest.Description"
+				type="ProviderTest.AssemblyQualifiedName"/>
+		</DbProviderFactories>
+	</system.data_test>
+	<connectionStrings_test>
+		<add name="Publications" providerName="System.Data.SqlClient" 
+			connectionString="Data Source=MyServer;Initial Catalog=pubs;integrated security=SSPI" />
+	</connectionStrings_test>
+	<providerTests>
+		<engines>
+			<engine
+				name="sqlserver2005"
+				type="SQLServer"
+				clientversion="9"
+				quoteCharacter="&quot;"
+				removesTrailingSpaces="false"
+				emptyBinaryAsNull="false"
+				supportsMicroseconds="true"
+				supportsUniqueIdentifier="true"
+				supportsDate="false"
+				supportsTime="false"
+				supportsTimestamp="true" />
+			<engine
+				name="mysql51"
+				type="MySQL"
+				quoteCharacter="`"
+				removesTrailingSpaces="true"
+				emptyBinaryAsNull="true"
+				supportsMicroseconds="false"
+				supportsUniqueIdentifier="false"
+				supportsDate="true"
+				supportsTime="true"
+				supportsTimestamp="false" />
+		</engines>
+		<connections>
+			<connection
+				name="sqlserver-tds"
+				factory="System.Data.SqlClient"
+				connectionString=""
+				engine="sqlserver2005" />
+			<connection
+				name="mysql-odbc"
+				factory="System.Data.Odbc"
+				connectionString=""
+				engine="mysql51" />
+		</connections>
+	</providerTests>

@@ -1,5 +1,6 @@
-/*
- * sgen-minor-copy-object.h: Copy functions for nursery collections.
+/**
+ * \file
+ * Copy functions for nursery collections.
  *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
@@ -8,12 +9,49 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-#define collector_pin_object(obj, queue) sgen_pin_object (obj, queue);
-#define COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION alloc_for_promotion
+#undef SERIAL_COPY_OBJECT
+#undef SERIAL_COPY_OBJECT_FROM_OBJ
+
+#if defined(SGEN_SIMPLE_NURSERY)
+
+#ifdef SGEN_SIMPLE_PAR_NURSERY
+
+#ifdef SGEN_CONCURRENT_MAJOR
+#define SERIAL_COPY_OBJECT simple_par_nursery_with_concurrent_major_copy_object
+#define SERIAL_COPY_OBJECT_FROM_OBJ simple_par_nursery_with_concurrent_major_copy_object_from_obj
+#else
+#define SERIAL_COPY_OBJECT simple_par_nursery_copy_object
+#define SERIAL_COPY_OBJECT_FROM_OBJ simple_par_nursery_copy_object_from_obj
+#endif
+
+#else
+
+#ifdef SGEN_CONCURRENT_MAJOR
+#define SERIAL_COPY_OBJECT simple_nursery_serial_with_concurrent_major_copy_object
+#define SERIAL_COPY_OBJECT_FROM_OBJ simple_nursery_serial_with_concurrent_major_copy_object_from_obj
+#else
+#define SERIAL_COPY_OBJECT simple_nursery_serial_copy_object
+#define SERIAL_COPY_OBJECT_FROM_OBJ simple_nursery_serial_copy_object_from_obj
+#endif
+
+#endif
+
+#elif defined (SGEN_SPLIT_NURSERY)
+
+#ifdef SGEN_CONCURRENT_MAJOR
+#define SERIAL_COPY_OBJECT split_nursery_serial_with_concurrent_major_copy_object
+#define SERIAL_COPY_OBJECT_FROM_OBJ split_nursery_serial_with_concurrent_major_copy_object_from_obj
+#else
+#define SERIAL_COPY_OBJECT split_nursery_serial_copy_object
+#define SERIAL_COPY_OBJECT_FROM_OBJ split_nursery_serial_copy_object_from_obj
+#endif
+
+#else
+#error "No nursery configuration specified"
+#endif
+
 
 extern guint64 stat_nursery_copy_object_failed_to_space; /* from sgen-gc.c */
-
-#include "sgen-copy-object.h"
 
 /*
  * This is how the copying happens from the nursery to the old generation.
@@ -42,7 +80,7 @@ SERIAL_COPY_OBJECT (GCObject **obj_slot, SgenGrayQueue *queue)
 	GCObject *copy;
 	GCObject *obj = *obj_slot;
 
-	SGEN_ASSERT (9, current_collection_generation == GENERATION_NURSERY, "calling minor-serial-copy from a %d generation collection", current_collection_generation);
+	SGEN_ASSERT (9, sgen_current_collection_generation == GENERATION_NURSERY, "calling minor-serial-copy from a %d generation collection", sgen_current_collection_generation);
 
 	HEAVY_STAT (++stat_copy_object_called_nursery);
 
@@ -84,7 +122,11 @@ SERIAL_COPY_OBJECT (GCObject **obj_slot, SgenGrayQueue *queue)
 
 	HEAVY_STAT (++stat_objects_copied_nursery);
 
+#ifdef SGEN_SIMPLE_PAR_NURSERY
+	copy = copy_object_no_checks_par (obj, queue);
+#else
 	copy = copy_object_no_checks (obj, queue);
+#endif
 	SGEN_UPDATE_REFERENCE (obj_slot, copy);
 }
 
@@ -100,7 +142,7 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 	GCObject *obj = *obj_slot;
 	GCObject *copy;
 
-	SGEN_ASSERT (9, current_collection_generation == GENERATION_NURSERY, "calling minor-serial-copy-from-obj from a %d generation collection", current_collection_generation);
+	SGEN_ASSERT (9, sgen_current_collection_generation == GENERATION_NURSERY, "calling minor-serial-copy-from-obj from a %d generation collection", sgen_current_collection_generation);
 
 	HEAVY_STAT (++stat_copy_object_called_nursery);
 
@@ -121,6 +163,10 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 		SGEN_ASSERT (9, sgen_obj_get_descriptor (forwarded),  "forwarded object %p has no gc descriptor", forwarded);
 		SGEN_LOG (9, " (already forwarded to %p)", forwarded);
 		HEAVY_STAT (++stat_nursery_copy_object_failed_forwarded);
+#ifdef SGEN_CONCURRENT_MAJOR
+		/* See comment on STORE_STORE_FENCE below. */
+		STORE_STORE_FENCE;
+#endif
 		SGEN_UPDATE_REFERENCE (obj_slot, forwarded);
 #ifndef SGEN_SIMPLE_NURSERY
 		if (G_UNLIKELY (sgen_ptr_in_nursery (forwarded) && !sgen_ptr_in_nursery (obj_slot) && !SGEN_OBJECT_IS_CEMENTED (forwarded)))
@@ -186,7 +232,21 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 
 	HEAVY_STAT (++stat_objects_copied_nursery);
 
+#ifdef SGEN_SIMPLE_PAR_NURSERY
+	copy = copy_object_no_checks_par (obj, queue);
+#else
 	copy = copy_object_no_checks (obj, queue);
+#endif
+#ifdef SGEN_CONCURRENT_MAJOR
+	/*
+	 * If an object is evacuated to the major heap and a reference to it, from the major
+	 * heap, updated, the concurrent major collector might follow that reference and
+	 * scan the new major object.  To make sure the object contents are seen by the
+	 * major collector we need this write barrier, so that the reference is seen after
+	 * the object.
+	 */
+	STORE_STORE_FENCE;
+#endif
 	SGEN_UPDATE_REFERENCE (obj_slot, copy);
 #ifndef SGEN_SIMPLE_NURSERY
 	if (G_UNLIKELY (sgen_ptr_in_nursery (copy) && !sgen_ptr_in_nursery (obj_slot) && !SGEN_OBJECT_IS_CEMENTED (copy)))
@@ -199,7 +259,3 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 	}
 #endif
 }
-
-#define FILL_MINOR_COLLECTOR_COPY_OBJECT(collector)	do {			\
-		(collector)->serial_ops.copy_or_mark_object = SERIAL_COPY_OBJECT;			\
-	} while (0)

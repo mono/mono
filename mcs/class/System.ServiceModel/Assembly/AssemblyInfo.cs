@@ -54,7 +54,7 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-#if NET_2_1
+#if MOBILE
 [assembly: AssemblyKeyFile ("../winfx.pub")]
 #else
 [assembly: AssemblyKeyFile ("../ecma.pub")]
@@ -65,21 +65,27 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible (false)]
 
-#if NET_2_1
+#if MOBILE
 //[assembly: InternalsVisibleTo ("System.Xml.Serialization, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
 #endif
 
-#if !NET_2_1
+#if !MOBILE
 [assembly: InternalsVisibleTo ("System.ServiceModel.Web, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
 [assembly: InternalsVisibleTo ("System.ServiceModel.Routing, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
 [assembly: InternalsVisibleTo ("System.ServiceModel.Discovery, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")] // AnnouncementChannelEndpointElementCollection requires it.
 #endif
 
-#if HAS_ACTIVATION
-
+#if SERVICEMODEL_ACTIVATION_DEPENDENCY
 [assembly: TypeForwardedTo (typeof (System.ServiceModel.ServiceHostingEnvironment))]
 [assembly: TypeForwardedTo (typeof (System.ServiceModel.Activation.ServiceHostFactory))]
-
 #endif
 
+#if !MOBILE
+[assembly: TypeForwardedTo (typeof (System.ServiceModel.Security.BinarySecretKeyIdentifierClause))]
+[assembly: TypeForwardedTo (typeof (System.ServiceModel.Security.KeyNameIdentifierClause))]
+[assembly: TypeForwardedTo (typeof (System.ServiceModel.Security.SecurityContextKeyIdentifierClause))]
+[assembly: TypeForwardedTo (typeof (System.ServiceModel.Security.X509CertificateValidationMode))]
+[assembly: TypeForwardedTo (typeof (System.ServiceModel.Security.Tokens.BinarySecretSecurityToken))]
+[assembly: TypeForwardedTo (typeof (System.ServiceModel.Security.Tokens.WrappedKeySecurityToken))]
 
+#endif

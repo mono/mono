@@ -1,0 +1,615 @@
+using System;
+using System.IO;
+using System.Drawing;
+using System.Diagnostics;
+using System.Resources;
+using System.Collections;
+using System.Windows.Forms;
+using System.Globalization;
+using System.ComponentModel;
+using System.Drawing.Imaging;
+using System.Drawing.Printing;
+using System.Drawing.Drawing2D;
+using System.Workflow.Interop;
+using Microsoft.Win32;
+
+namespace System.Workflow.ComponentModel.Design
+{
+    #region Class WorkflowPrintDocument
+    // What did I do in this file:
+    /// 1. Eliminated the synching of events OnBeginPrint and OnPrintPage as these can be overridden
+    /// 2. Eliminated member variable firstpage as this can be deduced from the currentpage variable
+    /// 3. Reorganized all the functions and bunched relavant functions togather
+    /// 4. Eliminated the PageSetupDataChanged event.
+    /// 5. Initialized all the member variables appropriately.
+    /// 6. Eliminated unused functions and properties
+
+    [ToolboxItem(false)]
+    internal sealed class WorkflowPrintDocument : PrintDocument
+    {
+        #region Members and Constructor
+        private WorkflowView workflowView = null;
+        private PageSetupData pageSetupData = null;
+        private PrintPreviewLayout previewLayout = null;
+
+        //These are the temporary variables we calculate in PrepareToPrint
+        private Point totalPrintablePages = Point.Empty; //number of pages in x and y
+        private Point currentPrintablePage = Point.Empty; //page number (in the grid x,y)) we are printing right now
+        private Point workflowAlignment = Point.Empty; //amount of alignment translation
+        private float scaling; //1.0f is 100%
+        private DateTime printTime; //when the document started to print
+        private const int MaxHeaderFooterLines = 5; //maximum number of lines in header/footer
+
+        public WorkflowPrintDocument(WorkflowView workflowView)//, IServiceProvider serviceProvider)
+        {
+            //this.serviceProvider = serviceProvider;
+            this.pageSetupData = new PageSetupData();
+            this.workflowView = workflowView;
+            this.previewLayout = new PrintPreviewLayout(this.workflowView, this);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    if (this.previewLayout != null)
+                    {
+                        this.previewLayout.Dispose();
+                        this.previewLayout = null;
+                    }
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
+        }
+        #endregion
+
+        #region Properties and Methods
+        internal PrintPreviewLayout PrintPreviewLayout
+        {
+            get
+            {
+                return this.previewLayout;
+            }
+        }
+
+        internal PageSetupData PageSetupData
+        {
+            get
+            {
+                return this.pageSetupData;
+            }
+        }
+        #endregion
+
+        #region Events and Overrides
+        protected override void OnBeginPrint(PrintEventArgs printArgs)
+        {
+            base.OnBeginPrint(printArgs);
+
+            this.currentPrintablePage = Point.Empty;
+
+            //Validate the printer
+            bool validPrinter = (PrinterSettings.IsValid &&
+                                 PrinterSettings.InstalledPrinters.Count > 0 &&
+                                 new ArrayList(PrinterSettings.InstalledPrinters).Contains(PrinterSettings.PrinterName));
+            if (!validPrinter)
+                DesignerHelpers.ShowError(this.workflowView, DR.GetString(DR.SelectedPrinterIsInvalidErrorMessage));
+
+            printArgs.Cancel = (!validPrinter || this.workflowView.RootDesigner == null);
+        }
+
+        protected override void OnPrintPage(PrintPageEventArgs printPageArg)
+        {
+            base.OnPrintPage(printPageArg);
+
+            AmbientTheme ambientTheme = WorkflowTheme.CurrentTheme.AmbientTheme;
+
+            Graphics graphics = printPageArg.Graphics;
+            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            graphics.SmoothingMode = SmoothingMode.HighQuality;
+
+            //STEP1: We get the printer graphics only in the OnPrintPage function hence for layouting we need to call this function
+            if (this.currentPrintablePage.IsEmpty)
+                PrepareToPrint(printPageArg);
+
+            //STEP2: GET ALL THE VALUES NEEDED FOR CALCULATION
+            Margins hardMargins = GetHardMargins(graphics);
+            Margins margins = new Margins(Math.Max(printPageArg.PageSettings.Margins.Left, hardMargins.Left),
+                                          Math.Max(printPageArg.PageSettings.Margins.Right, hardMargins.Right),
+                                          Math.Max(printPageArg.PageSettings.Margins.Top, hardMargins.Top),
+                                          Math.Max(printPageArg.PageSettings.Margins.Bottom, hardMargins.Bottom));
+            Size printableArea = new Size(printPageArg.PageBounds.Size.Width - (margins.Left + margins.Right), printPageArg.PageBounds.Size.Height - (margins.Top + margins.Bottom));
+            Rectangle boundingRectangle = new Rectangle(margins.Left, margins.Top, printableArea.Width, printableArea.Height);
+            Region clipRegion = new Region(boundingRectangle);
+
+            try
+            {
+                graphics.TranslateTransform(-hardMargins.Left, -hardMargins.Top);
+                graphics.FillRectangle(ambientTheme.BackgroundBrush, boundingRectangle);
+                graphics.DrawRectangle(ambientTheme.ForegroundPen, boundingRectangle);
+
+                //Draw the watermark image
+                if (ambientTheme.WorkflowWatermarkImage != null)
+                    ActivityDesignerPaint.DrawImage(graphics, ambientTheme.WorkflowWatermarkImage, boundingRectangle, new Rectangle(Point.Empty, ambientTheme.WorkflowWatermarkImage.Size), ambientTheme.Watermar----gnment, AmbientTheme.WatermarkTransparency, false);
+
+                Matrix oldTransform = graphics.Transform;
+                Region oldClipRegion = graphics.Clip;
+                graphics.Clip = clipRegion;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                //STEP3: PRINT
+                //Printer bitmap starts at the unprintable top left corner, hence, need to take it into account - move by the unprintable area:
+                //Setup the translation and scaling for the page printing
+                Point pageOffset = new Point(this.currentPrintablePage.X * printableArea.Width - this.workflowAlignment.X, this.currentPrintablePage.Y * printableArea.Height - this.workflowAlignment.Y);
+                graphics.TranslateTransform(boundingRectangle.Left - pageOffset.X, boundingRectangle.Top - pageOffset.Y);
+                graphics.ScaleTransform(this.scaling, this.scaling);
+
+                //Calculate the viewport by reverse scaling the printable area size
+                Size viewPortSize = Size.Empty;
+                viewPortSize.Width = Convert.ToInt32(Math.Ceiling((float)printableArea.Width / this.scaling));
+                viewPortSize.Height = Convert.ToInt32(Math.Ceiling((float)printableArea.Height / this.scaling));
+
+                Point scaledAlignment = Point.Empty;
+                scaledAlignment.X = Convert.ToInt32(Math.Ceiling((float)this.workflowAlignment.X / this.scaling));
+                scaledAlignment.Y = Convert.ToInt32(Math.Ceiling((float)this.workflowAlignment.Y / this.scaling));
+
+                Rectangle viewPort = new Rectangle(this.currentPrintablePage.X * viewPortSize.Width - scaledAlignment.X, this.currentPrintablePage.Y * viewPortSize.Height - scaledAlignment.Y, viewPortSize.Width, viewPortSize.Height);
+
+                using (PaintEventArgs paintEventArgs = new PaintEventArgs(graphics, this.workflowView.RootDesigner.Bounds))
+                {
+                    ((IWorkflowDesignerMessageSink)this.workflowView.RootDesigner).OnPaint(paintEventArgs, viewPort);
+                }
+
+                graphics.Clip = oldClipRegion;
+                graphics.Transform = oldTransform;
+
+                //Now prepare the graphics for header footer printing
+                HeaderFooterData headerFooterData = new HeaderFooterData();
+                headerFooterData.Font = ambientTheme.Font;
+                headerFooterData.PageBounds = printPageArg.PageBounds;
+                headerFooterData.PageBoundsWithoutMargin = boundingRectangle;
+                headerFooterData.HeaderFooterMargins = new Margins(0, 0, this.pageSetupData.HeaderMargin, this.pageSetupData.FooterMargin);
+                headerFooterData.PrintTime = this.printTime;
+                headerFooterData.CurrentPage = this.currentPrintablePage.X + this.currentPrintablePage.Y * this.totalPrintablePages.X + 1;
+                headerFooterData.TotalPages = this.totalPrintablePages.X * this.totalPrintablePages.Y;
+                headerFooterData.Scaling = this.scaling;
+                WorkflowDesignerLoader serviceDesignerLoader = ((IServiceProvider)this.workflowView).GetService(typeof(WorkflowDesignerLoader)) as WorkflowDesignerLoader;
+                headerFooterData.FileName = (serviceDesignerLoader != null) ? serviceDesignerLoader.FileName : String.Empty;
+
+                //Print the header
+                if (this.pageSetupData.HeaderTemplate.Length > 0)
+                    PrintHeaderFooter(graphics, true, headerFooterData);
+
+                //footer
+                if (this.pageSetupData.FooterTemplate.Length > 0)
+                    PrintHeaderFooter(graphics, false, headerFooterData);
+
+                //are there more pages left?
+                printPageArg.HasMorePages = MoveNextPage();
+            }
+            catch (Exception exception)
+            {
+                DesignerHelpers.ShowError(this.workflowView, DR.GetString(DR.SelectedPrinterIsInvalidErrorMessage) + "\n" + exception.Message);
+                printPageArg.Cancel = true;
+                printPageArg.HasMorePages = false;
+            }
+            finally
+            {
+                clipRegion.Dispose();
+            }
+
+            if (!printPageArg.HasMorePages)
+                this.workflowView.PerformLayout(); //no more pages - redo regular layout using screen graphics
+        }
+        #endregion
+
+        #region Helpers
+        //Hard margins is part of the area the printer absolutely can not print onto. 
+        //This area changes from printer to printer; CreateMeasurementGraphics creates appropriate DC 
+        //for the selected printer
+        internal Margins GetHardMargins(Graphics graphics)
+        {
+            IntPtr hDC = graphics.GetHdc();
+
+            //Printer unit is hudredth of an inch hence convert the unprintable area from DPI to DPHI
+            Point dpi = new Point(Math.Max(NativeMethods.GetDeviceCaps(hDC, NativeMethods.LOGPIXELSX), 1), Math.Max(NativeMethods.GetDeviceCaps(hDC, NativeMethods.LOGPIXELSY), 1));
+
+            int printAreaHorz = (int)((float)NativeMethods.GetDeviceCaps(hDC, NativeMethods.HORZRES) * 100.0f / (float)dpi.X);
+            int printAreaVert = (int)((float)NativeMethods.GetDeviceCaps(hDC, NativeMethods.VERTRES) * 100.0f / (float)dpi.Y);
+
+            int physicalWidth = (int)((float)NativeMethods.GetDeviceCaps(hDC, NativeMethods.PHYSICALWIDTH) * 100.0f / (float)dpi.X);
+            int physicalHeight = (int)((float)NativeMethods.GetDeviceCaps(hDC, NativeMethods.PHYSICALHEIGHT) * 100.0f / (float)dpi.Y);
+
+            //margins in 1/100 inches
+            int leftMargin = (int)((float)NativeMethods.GetDeviceCaps(hDC, NativeMethods.PHYSICALOFFSETX) * 100.0f / (float)dpi.X);
+            int topMargin = (int)((float)NativeMethods.GetDeviceCaps(hDC, NativeMethods.PHYSICALOFFSETY) * 100.0f / (float)dpi.Y);
+            int rightMargin = physicalWidth - printAreaHorz - leftMargin;
+            int bottomMargin = physicalHeight - printAreaVert - topMargin;
+
+            graphics.ReleaseHdc(hDC);
+
+            return new Margins(leftMargin, rightMargin, topMargin, bottomMargin);
+        }
+
+        internal void PrintHeaderFooter(Graphics graphics, bool drawHeader, HeaderFooterData headerFooterPrintData)
+        {
+            //Format the header/footer
+            string headerFooter = (drawHeader) ? this.pageSetupData.HeaderTemplate : this.pageSetupData.FooterTemplate;
+
+            //these are the new format strings
+            headerFooter = headerFooter.Replace("{#}", headerFooterPrintData.CurrentPage.ToString(CultureInfo.CurrentCulture));
+            headerFooter = headerFooter.Replace("{##}", headerFooterPrintData.TotalPages.ToString(CultureInfo.CurrentCulture));
+            headerFooter = headerFooter.Replace("{Date}", headerFooterPrintData.PrintTime.ToShortDateString());
+            headerFooter = headerFooter.Replace("{Time}", headerFooterPrintData.PrintTime.ToShortTimeString());
+            headerFooter = headerFooter.Replace("{FullFileName}", headerFooterPrintData.FileName);
+            headerFooter = headerFooter.Replace("{FileName}", Path.GetFileName(headerFooterPrintData.FileName));
+            headerFooter = headerFooter.Replace("{User}", SystemInformation.UserName);
+
+            //limit the string to 5 lines of text max
+            string[] headerFooterLines = headerFooter.Split(new char[] { '\n', '\r' }, MaxHeaderFooterLines + 1, StringSplitOptions.RemoveEmptyEntries);
+            System.Text.StringBuilder text = new System.Text.StringBuilder();
+            for (int i = 0; i < Math.Min(headerFooterLines.Length, MaxHeaderFooterLines); i++)
+            {
+                text.Append(headerFooterLines[i]);
+                text.Append("\r\n");
+            }
+            headerFooter = text.ToString();
+
+            //Measure the header /footer string
+            Rectangle layoutRectangle = Rectangle.Empty;
+            SizeF stringSize = graphics.MeasureString(headerFooter, headerFooterPrintData.Font);
+            layoutRectangle.Size = new Size(Convert.ToInt32(Math.Ceiling((stringSize.Width))), Convert.ToInt32(Math.Ceiling((stringSize.Height))));
+            layoutRectangle.Width = Math.Min(headerFooterPrintData.PageBoundsWithoutMargin.Width, layoutRectangle.Width);
+
+            HorizontalAlignment alignment = (drawHeader) ? this.pageSetupData.HeaderAlignment : this.pageSetupData.FooterAlignment;
+            StringFormat stringFormat = new StringFormat();
+            stringFormat.Trimming = StringTrimming.EllipsisCharacter;
+            switch (alignment)
+            {
+                case HorizontalAlignment.Left:
+                    layoutRectangle.X = headerFooterPrintData.PageBoundsWithoutMargin.Left;
+                    stringFormat.Alignment = StringAlignment.Near;
+                    break;
+
+                case HorizontalAlignment.Center:
+                    layoutRectangle.X = headerFooterPrintData.PageBoundsWithoutMargin.Left + ((headerFooterPrintData.PageBoundsWithoutMargin.Width - layoutRectangle.Width) / 2); //align to the middle
+                    stringFormat.Alignment = StringAlignment.Center;
+                    break;
+
+                case HorizontalAlignment.Right:
+                    layoutRectangle.X = headerFooterPrintData.PageBoundsWithoutMargin.Left + (headerFooterPrintData.PageBoundsWithoutMargin.Width - layoutRectangle.Width); //align to the right corner
+                    stringFormat.Alignment = StringAlignment.Far;
+                    break;
+            }
+
+            //Align header footer vertically
+            if (drawHeader)
+            {
+                layoutRectangle.Y = headerFooterPrintData.PageBounds.Top + headerFooterPrintData.HeaderFooterMargins.Top;
+                stringFormat.LineAlignment = StringAlignment.Near;
+            }
+            else
+            {
+                layoutRectangle.Y = headerFooterPrintData.PageBounds.Bottom - headerFooterPrintData.HeaderFooterMargins.Bottom - layoutRectangle.Size.Height;
+                stringFormat.LineAlignment = StringAlignment.Far;
+            }
+
+            //Draw header/footer string
+            graphics.DrawString(headerFooter, headerFooterPrintData.Font, WorkflowTheme.CurrentTheme.AmbientTheme.ForegroundBrush, layoutRectangle, stringFormat);
+        }
+
+        private void PrepareToPrint(PrintPageEventArgs printPageArg)
+        {
+            Graphics graphics = printPageArg.Graphics;
+
+            Size selectionSize = WorkflowTheme.CurrentTheme.AmbientTheme.SelectionSize;
+            ((IWorkflowDesignerMessageSink)this.workflowView.RootDesigner).OnLayoutSize(graphics);
+            ((IWorkflowDesignerMessageSink)this.workflowView.RootDesigner).OnLayoutPosition(graphics);
+            this.workflowView.RootDesigner.Location = Point.Empty;
+
+            //STEP2: Get the units needed for calculation
+            Size rootDesignerSize = this.workflowView.RootDesigner.Size;
+            rootDesignerSize.Width += 3 * selectionSize.Width;
+            rootDesignerSize.Height += 3 * selectionSize.Height;
+
+            Size paperSize = printPageArg.PageBounds.Size;
+            Margins hardMargins = GetHardMargins(graphics);
+            Margins margins = new Margins(Math.Max(printPageArg.PageSettings.Margins.Left, hardMargins.Left),
+                                          Math.Max(printPageArg.PageSettings.Margins.Right, hardMargins.Right),
+                                          Math.Max(printPageArg.PageSettings.Margins.Top, hardMargins.Top),
+                                          Math.Max(printPageArg.PageSettings.Margins.Bottom, hardMargins.Bottom));
+            Size printableArea = new Size(paperSize.Width - (margins.Left + margins.Right), paperSize.Height - (margins.Top + margins.Bottom));
+            printableArea.Width = Math.Max(printableArea.Width, 1);
+            printableArea.Height = Math.Max(printableArea.Height, 1);
+
+            //STEP3: Calculate the scaling
+            if (this.pageSetupData.AdjustToScaleFactor)
+            {
+                this.scaling = ((float)this.pageSetupData.ScaleFactor) / 100.0f;
+            }
+            else
+            {
+                float xScaling = (float)this.pageSetupData.PagesWide * (float)printableArea.Width / (float)rootDesignerSize.Width;
+                float YScaling = (float)this.pageSetupData.PagesTall * (float)printableArea.Height / (float)rootDesignerSize.Height;
+
+                this.scaling = Math.Min(xScaling, YScaling);
+                //leave just 3 digital points (also, that will remove potential problems with ceiling e.g. when the number of pages would be 3.00000000001 we'll get 4)
+                this.scaling = (float)(Math.Floor((double)this.scaling * 1000.0d) / 1000.0d);
+            }
+
+            //STEP4: Calculate the number of pages
+            this.totalPrintablePages.X = Convert.ToInt32(Math.Ceiling((this.scaling * (float)rootDesignerSize.Width) / (float)printableArea.Width));
+            this.totalPrintablePages.X = Math.Max(this.totalPrintablePages.X, 1);
+            this.totalPrintablePages.Y = Convert.ToInt32(Math.Ceiling((this.scaling * (float)rootDesignerSize.Height) / (float)printableArea.Height));
+            this.totalPrintablePages.Y = Math.Max(this.totalPrintablePages.Y, 1);
+
+            //STEP5: Calculate the workflow alignment
+            this.workflowAlignment = Point.Empty;
+
+            if (this.pageSetupData.CenterHorizontally)
+                this.workflowAlignment.X = (int)(((float)this.totalPrintablePages.X * (float)printableArea.Width / this.scaling - (float)rootDesignerSize.Width) / 2.0f * this.scaling);
+
+            if (this.pageSetupData.CenterVertically)
+                this.workflowAlignment.Y = (int)(((float)this.totalPrintablePages.Y * (float)printableArea.Height / this.scaling - (float)rootDesignerSize.Height) / 2.0f * this.scaling);
+
+            this.workflowAlignment.X = Math.Max(this.workflowAlignment.X, selectionSize.Width + selectionSize.Width / 2);
+            this.workflowAlignment.Y = Math.Max(this.workflowAlignment.Y, selectionSize.Height + selectionSize.Height / 2);
+
+            //STEP6: Store other variables used
+            this.printTime = DateTime.Now;
+        }
+
+        private bool MoveNextPage()
+        {
+            this.currentPrintablePage.X++;
+            if (this.currentPrintablePage.X < this.totalPrintablePages.X)
+                return true;
+
+            //move to the next row
+            this.currentPrintablePage.X = 0;
+            this.currentPrintablePage.Y++;
+            return (this.currentPrintablePage.Y < this.totalPrintablePages.Y);
+        }
+
+        internal sealed class HeaderFooterData
+        {
+            internal Font Font;
+            internal Rectangle PageBounds;
+            internal Rectangle PageBoundsWithoutMargin;
+            internal Margins HeaderFooterMargins;
+            internal DateTime PrintTime;
+            internal int CurrentPage;
+            internal int TotalPages;
+            internal float Scaling;
+            internal string FileName;
+        }
+        #endregion
+    }
+    #endregion
+
+    #region Class PageSetupData
+    internal sealed class PageSetupData
+    {
+        #region Members and Constructors
+        internal static readonly int DefaultScaleFactor = 100;
+        internal static readonly int DefaultMinScaleFactor = 10;
+        internal static readonly int DefaultMaxScaleFactor = 400;
+        internal static readonly int DefaultPages = 1;
+        internal static readonly int DefaultHeaderMargin = 50;
+        internal static readonly int DefaultFooterMargin = 50;
+
+        private Margins margins = null;
+        private bool landscape = false;
+        private int headerMargin = PageSetupData.DefaultHeaderMargin;
+        private int footerMargin = PageSetupData.DefaultFooterMargin;
+        private string headerTemplate = string.Empty;
+        private string footerTemplate = string.Empty;
+        private HorizontalAlignment headerAlignment = HorizontalAlignment.Center;
+        private HorizontalAlignment footerAlignment = HorizontalAlignment.Center;
+        private bool adjustToScaleFactor = true;
+        private int scaleFactor = PageSetupData.DefaultScaleFactor;
+        private int pagesWide = PageSetupData.DefaultPages;
+        private int pagesTall = PageSetupData.DefaultPages;
+        private bool centerHorizontally = false;
+        private bool centerVertically = false;
+        private bool headerCustom = false;
+        private bool footerCustom = false;
+
+        private static readonly string WinOEPrintingSubKey = DesignerHelpers.DesignerPerUserRegistryKey + "\\Printing";
+        private const string RegistryHeaderTemplate = "HeaderTemplate";
+        private const string RegistryHeaderMarging = "HeaderMargin";
+        private const string RegistryHeaderCustom = "HeaderCustom";
+        private const string RegistryHeaderAlignment = "HeaderAlignment";
+        private const string RegistryFooterTemplate = "FooterTemplate";
+        private const string RegistryFooterMarging = "FooterMargin";
+        private const string RegistryFooterCustom = "FooterCustom";
+        private const string RegistryFooterAlignment = "FooterAlignment";
+        private const string RegistryCenterHorizontally = "CenterHorizontally";
+        private const string RegistryCenterVertically = "CenterVertically";
+
+        internal PageSetupData()
+        {
+            RegistryKey key = Registry.CurrentUser.OpenSubKey(WinOEPrintingSubKey);
+            if (null != key)
+            {
+                try
+                {
+                    object registryValue = null;
+
+                    registryValue = key.GetValue(RegistryHeaderAlignment);
+                    if (null != registryValue && registryValue is int) this.headerAlignment = (HorizontalAlignment)registryValue;
+
+                    registryValue = key.GetValue(RegistryFooterAlignment);
+                    if (null != registryValue && registryValue is int) this.footerAlignment = (HorizontalAlignment)registryValue;
+
+                    registryValue = key.GetValue(RegistryHeaderMarging);
+                    if (null != registryValue && registryValue is int) this.headerMargin = (int)registryValue;
+
+                    registryValue = key.GetValue(RegistryFooterMarging);
+                    if (null != registryValue && registryValue is int) this.footerMargin = (int)registryValue;
+
+                    registryValue = key.GetValue(RegistryHeaderTemplate);
+                    if (null != registryValue && registryValue is string) this.headerTemplate = (string)registryValue;
+
+                    registryValue = key.GetValue(RegistryFooterTemplate);
+                    if (null != registryValue && registryValue is string) this.footerTemplate = (string)registryValue;
+
+                    registryValue = key.GetValue(RegistryHeaderCustom);
+                    if (null != registryValue && registryValue is int) this.headerCustom = Convert.ToBoolean((int)registryValue);
+
+                    registryValue = key.GetValue(RegistryFooterCustom);
+                    if (null != registryValue && registryValue is int) this.footerCustom = Convert.ToBoolean((int)registryValue);
+
+                    registryValue = key.GetValue(RegistryCenterHorizontally);
+                    if (null != registryValue && registryValue is int) this.centerHorizontally = Convert.ToBoolean((int)registryValue);
+
+                    registryValue = key.GetValue(RegistryCenterVertically);
+                    if (null != registryValue && registryValue is int) this.centerVertically = Convert.ToBoolean((int)registryValue);
+                }
+                finally
+                {
+                    key.Close();
+                }
+            }
+
+            PrinterSettings printerSettings = new PrinterSettings();
+            this.landscape = printerSettings.DefaultPageSettings.Landscape;
+            this.margins = printerSettings.DefaultPageSettings.Margins;
+        }
+
+        public void StorePropertiesToRegistry()
+        {
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(WinOEPrintingSubKey);
+            if (null != key)
+            {
+                try
+                {
+                    key.SetValue(RegistryHeaderAlignment, (int)this.headerAlignment);
+                    key.SetValue(RegistryFooterAlignment, (int)this.footerAlignment);
+                    key.SetValue(RegistryHeaderMarging, this.headerMargin);
+                    key.SetValue(RegistryFooterMarging, this.footerMargin);
+                    key.SetValue(RegistryHeaderTemplate, this.headerTemplate);
+                    key.SetValue(RegistryFooterTemplate, this.footerTemplate);
+                    key.SetValue(RegistryHeaderCustom, Convert.ToInt32(this.headerCustom));
+                    key.SetValue(RegistryFooterCustom, Convert.ToInt32(this.footerCustom));
+                    key.SetValue(RegistryCenterHorizontally, Convert.ToInt32(this.centerHorizontally));
+                    key.SetValue(RegistryCenterVertically, Convert.ToInt32(this.centerVertically));
+                }
+                finally
+                {
+                    key.Close();
+                }
+            }
+        }
+        #endregion
+
+        #region Properties and Methods
+        public bool Landscape
+        {
+            get { return this.landscape; }
+            set { this.landscape = value; }
+        }
+        public bool AdjustToScaleFactor
+        {
+            get { return this.adjustToScaleFactor; }
+            set { this.adjustToScaleFactor = value; }
+        }
+        public int ScaleFactor
+        {
+            get { return this.scaleFactor; }
+            set
+            {
+                if (value >= PageSetupData.DefaultMinScaleFactor && value <= PageSetupData.DefaultMaxScaleFactor)
+                    this.scaleFactor = value;
+            }
+        }
+        public int PagesWide
+        {
+            get { return this.pagesWide < 1 ? 1 : this.pagesWide; }
+            set
+            {
+                if (value > 0)
+                    this.pagesWide = value;
+            }
+        }
+        public int PagesTall
+        {
+            get { return this.pagesTall < 1 ? 1 : this.pagesTall; }
+            set
+            {
+                if (value > 0)
+                    this.pagesTall = value;
+            }
+        }
+        public Margins Margins
+        {
+            get { return this.margins; }
+            set { this.margins = value; }
+        }
+        public int HeaderMargin
+        {
+            get { return this.headerMargin; }
+            set
+            {
+                if (value >= 0)
+                    this.headerMargin = value;
+            }
+        }
+        public int FooterMargin
+        {
+            get { return this.footerMargin; }
+            set
+            {
+                if (value >= 0)
+                    this.footerMargin = value;
+            }
+        }
+        public string HeaderTemplate
+        {
+            get { return this.headerTemplate; }
+            set { this.headerTemplate = value; }
+        }
+        public string FooterTemplate
+        {
+            get { return this.footerTemplate; }
+            set { this.footerTemplate = value; }
+        }
+        public HorizontalAlignment HeaderAlignment
+        {
+            get { return this.headerAlignment; }
+            set { this.headerAlignment = value; }
+        }
+        public HorizontalAlignment FooterAlignment
+        {
+            get { return this.footerAlignment; }
+            set { this.footerAlignment = value; }
+        }
+        public bool HeaderCustom
+        {
+            get { return this.headerCustom; }
+            set { this.headerCustom = value; }
+        }
+        public bool FooterCustom
+        {
+            get { return this.footerCustom; }
+            set { this.footerCustom = value; }
+        }
+        public bool CenterHorizontally
+        {
+            get { return this.centerHorizontally; }
+            set { this.centerHorizontally = value; }
+        }
+        public bool CenterVertically
+        {
+            get { return this.centerVertically; }
+            set { this.centerVertically = value; }
+        }
+        #endregion
+    }
+    #endregion
+}

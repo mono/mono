@@ -1,0 +1,12 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+gapidir=${prefix}/share/gapi-2.0
+
+
+Name: Glade#
+Description: Glade# - Glade .NET Binding
+Version: 2.12.26
+Requires: gtk-sharp-2.0
+Cflags: -I:${gapidir}/glade-api.xml
+Libs: -r:${libdir}/gtk-sharp-2.0/glade-sharp.dll

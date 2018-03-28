@@ -1,5 +1,5 @@
 Novell.Directory.Ldap/AssemblyInfo.cs
-../../build/common/Consts.cs.in
+../../build/common/Consts.cs
 Novell.Directory.Ldap/SupportClass.cs
 Novell.Directory.Ldap.Utilclass/Base64.cs
 Novell.Directory.Ldap.Utilclass/DN.cs
