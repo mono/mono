@@ -4252,10 +4252,34 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			arm_blrx (code, ARMREG_IP0);
 			code = emit_move_return_value (cfg, code, ins);
 			break;
-		case OP_TAILCALL: {
-			MonoCallInst *call = (MonoCallInst*)ins;
+
+		case OP_TAILCALL:
+		case OP_TAILCALL_MEMBASE: {
+			guint64 free_reg = 0;
+			int branch_reg = -1;
+			gboolean tailcall_membase = FALSE;
+			call = (MonoCallInst*)ins;
 
 			g_assert (!cfg->method->save_lmf);
+
+			switch (ins->opcode) {
+			case OP_TAILCALL:
+				free_reg = (1 << ARMREG_IP0) | (1 << ARMREG_IP1);
+				branch_reg = ARMREG_IP0;
+				tailcall_membase = FALSE;
+				break;
+
+			case OP_TAILCALL_MEMBASE:
+				free_reg = (1 << ARMREG_IP0);
+				branch_reg = ARMREG_IP1;
+				tailcall_membase = TRUE;
+				// Get jmp address before restoring nonvolatiles, in case basereg is nonvolatile.
+				code = emit_ldrx (code, branch_reg, ins->inst_basereg, ins->inst_offset);
+				break;
+
+			default:
+				g_assert_not_reached ();
+			}
 
 			// FIXME: Copy stack arguments
 
@@ -4263,17 +4287,22 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = emit_load_regset (code, MONO_ARCH_CALLEE_SAVED_REGS & cfg->used_int_regs, ARMREG_FP, cfg->arch.saved_gregs_offset);
 
 			/* Destroy frame */
-			code = mono_arm_emit_destroy_frame (code, cfg->stack_offset, ((1 << ARMREG_IP0) | (1 << ARMREG_IP1)));
+			code = mono_arm_emit_destroy_frame (code, cfg->stack_offset, free_reg);
 
-			if (cfg->compile_aot) {
+			if (tailcall_membase) {
+				// nothing
+			} else if (cfg->compile_aot) {
 				/* This is not a PLT patch */
 				code = emit_aotconst (cfg, code, ARMREG_IP0, MONO_PATCH_INFO_METHOD_JUMP, call->method);
-				arm_brx (code, ARMREG_IP0);
 			} else {
 				mono_add_patch_info_rel (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method, MONO_R_ARM64_B);
 				arm_b (code, code);
 				cfg->thunk_area += THUNK_SIZE;
 			}
+
+			if (branch_reg >= 0)
+				arm_brx (code, branch_reg);
+
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
 			break;
@@ -5021,7 +5050,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	}
 
 	/* Destroy frame */
-	code = mono_arm_emit_destroy_frame (code, cfg->stack_offset, ((1 << ARMREG_IP0) | (1 << ARMREG_IP1)));
+	code = mono_arm_emit_destroy_frame (code, cfg->stack_offset, (1 << ARMREG_IP0) | (1 << ARMREG_IP1));
 
 	arm_retx (code, ARMREG_LR);
 

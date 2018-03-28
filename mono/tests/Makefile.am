@@ -952,7 +952,6 @@ endif
 
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
-PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp.exe
 
 PLATFORM_DISABLED_TESTS += \
