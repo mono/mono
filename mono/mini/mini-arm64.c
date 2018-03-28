@@ -796,6 +796,12 @@ emit_tls_set (guint8 *code, int sreg, int tls_offset)
 __attribute__ ((__warn_unused_result__)) guint8*
 mono_arm_emit_destroy_frame (guint8 *code, int stack_offset, guint64 temp_regs)
 {
+	// At least one of these registers must be available, or both.
+	gboolean const temp0 = (temp_regs & (1 << ARMREG_IP0)) != 0;
+	gboolean const temp1 = (temp_regs & (1 << ARMREG_IP1)) != 0;
+	g_assert (temp0 || temp1);
+	int const temp = temp0 ? ARMREG_IP0 : ARMREG_IP1;
+
 	arm_movspx (code, ARMREG_SP, ARMREG_FP);
 
 	if (arm_is_ldpx_imm (stack_offset)) {
@@ -803,19 +809,18 @@ mono_arm_emit_destroy_frame (guint8 *code, int stack_offset, guint64 temp_regs)
 	} else {
 		arm_ldpx (code, ARMREG_FP, ARMREG_LR, ARMREG_SP, 0);
 		/* sp += stack_offset */
-		g_assert (temp_regs & (1 << ARMREG_IP0));
-		if (temp_regs & (1 << ARMREG_IP1)) {
+		if (temp0 && temp1) {
 			code = emit_addx_sp_imm (code, stack_offset);
 		} else {
 			int imm = stack_offset;
 
-			/* Can't use addx_sp_imm () since we can't clobber ip0/ip1 */
-			arm_addx_imm (code, ARMREG_IP0, ARMREG_SP, 0);
+			/* Can't use addx_sp_imm () since we can't clobber both ip0/ip1 */
+			arm_addx_imm (code, temp, ARMREG_SP, 0);
 			while (imm > 256) {
-				arm_addx_imm (code, ARMREG_IP0, ARMREG_IP0, 256);
+				arm_addx_imm (code, temp, temp, 256);
 				imm -= 256;
 			}
-			arm_addx_imm (code, ARMREG_SP, ARMREG_IP0, imm);
+			arm_addx_imm (code, ARMREG_SP, temp, imm);
 		}
 	}
 	return code;
