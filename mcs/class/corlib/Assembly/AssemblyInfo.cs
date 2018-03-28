@@ -75,6 +75,7 @@ using System.Runtime.InteropServices;
 
 [assembly: InternalsVisibleTo ("System, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 [assembly: InternalsVisibleTo ("System.Core, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.Numerics, PublicKey=00000000000000000400000000000000")]
 
 [assembly: InternalsVisibleTo ("System.Runtime.WindowsRuntime, PublicKey=00000000000000000400000000000000")]
 [assembly: InternalsVisibleTo ("System.Runtime.WindowsRuntime.UI.Xaml, PublicKey=00000000000000000400000000000000")]

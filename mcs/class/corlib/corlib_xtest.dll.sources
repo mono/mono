@@ -174,9 +174,9 @@
 # System.Text.RegularExpressions
 ../../../external/corefx/src/System.Text.RegularExpressions/tests/*.cs:CaptureCollectionTests.netcoreapp.cs,GroupCollectionTests.netcoreapp.cs,MatchCollectionTests.netcoreapp.cs,PrecompiledRegexScenarioTest.cs,RegexCompilationInfoTests.cs,RegexGroupNameTests.cs,Regex.Groups.Tests.cs,Regex.Match.Tests.cs,Regex.Serialization.cs,MatchCollectionTests.cs,Regex.Ctor.Tests.cs,GroupCollectionTests2.cs,MatchCollectionTests2.cs,CaptureCollectionTests2.cs
 
-../../../external/corefx/src/System.Memory/tests/*.cs
-../../../external/corefx/src/System.Memory/tests/Binary/*.cs
-../../../external/corefx/src/System.Memory/tests/Memory/*.cs
-../../../external/corefx/src/System.Memory/tests/ReadOnlyMemory/*.cs
-../../../external/corefx/src/System.Memory/tests/ReadOnlySpan/*.cs
-../../../external/corefx/src/System.Memory/tests/Span/*.cs
+#../../../external/corefx/src/System.Memory/tests/*.cs
+#../../../external/corefx/src/System.Memory/tests/Binary/*.cs
+#../../../external/corefx/src/System.Memory/tests/Memory/*.cs
+#../../../external/corefx/src/System.Memory/tests/ReadOnlyMemory/*.cs
+#../../../external/corefx/src/System.Memory/tests/ReadOnlySpan/*.cs
+#../../../external/corefx/src/System.Memory/tests/Span/*.cs
