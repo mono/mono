@@ -3168,6 +3168,33 @@
       </method>
     </type>
   </test>
+  <test name="dtest-066.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="145">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`1[&lt;X&gt;__T]">
+      <method name="&lt;X&gt;__T get_X()" attrs="2182">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)" attrs="198">
+        <size>39</size>
+      </method>
+      <method name="Int32 GetHashCode()" attrs="198">
+        <size>63</size>
+      </method>
+      <method name="System.String ToString()" attrs="198">
+        <size>67</size>
+      </method>
+      <method name="Void .ctor(&lt;X&gt;__T)" attrs="6278">
+        <size>14</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-anontype-01.cs">
     <type name="C">
       <method name="Void Main()" attrs="150">
@@ -51483,10 +51510,10 @@
   <test name="test-88.cs">
     <type name="X">
       <method name="Void f(System.String)" attrs="145">
-        <size>20</size>
+        <size>12</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>70</size>
+        <size>62</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -73600,7 +73627,7 @@
   <test name="test-tuple-02.cs">
     <type name="TupleConversions">
       <method name="Void Main()" attrs="150">
-        <size>314</size>
+        <size>368</size>
       </method>
       <method name="Void Foo[T](T)" attrs="145">
         <size>2</size>
