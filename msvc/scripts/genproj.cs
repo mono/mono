@@ -1161,7 +1161,7 @@ class MsbuildGenerator {
 		target_unix = target.Replace ("@MONO@", "mono").Replace ("@CAT@", "cat");
 		target_windows = target.Replace ("@MONO@", "").Replace ("@CAT@", "type");
 
-		target_unix = target_unix.Replace ("\\jay\\jay.exe", "\\jay\\jay\\jay");
+		target_unix = target_unix.Replace ("\\jay\\jay.exe", "\\jay\\jay");
 
 		target_unix = target_unix.Replace ("@COPY@", "cp");
 		target_windows = target_windows.Replace ("@COPY@", "copy");
