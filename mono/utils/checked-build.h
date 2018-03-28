@@ -46,7 +46,7 @@ The JIT will generate code that will land on this function
 */
 #define MONO_REQ_RUNTIME_ENTRYPOINT
 
-#define CHECKED_MONO_INIT() do { checked_build_init (); } while (0)
+#define CHECKED_MONO_INIT checked_build_init
 
 void checked_build_init (void);
 
@@ -106,24 +106,18 @@ Functions that can be called from both coop or preept modes.
 
 */
 
-#define MONO_REQ_GC_SAFE_MODE do {	\
-	assert_gc_safe_mode (__FILE__, __LINE__);	\
-} while (0);
+#define MONO_REQ_GC_SAFE_MODE assert_gc_safe_mode (__FILE__, __LINE__)
 
-#define MONO_REQ_GC_UNSAFE_MODE do {	\
-	assert_gc_unsafe_mode (__FILE__, __LINE__);	\
-} while (0);
+#define MONO_REQ_GC_UNSAFE_MODE assert_gc_unsafe_mode (__FILE__, __LINE__)
 
-#define MONO_REQ_GC_NEUTRAL_MODE do {	\
-	assert_gc_neutral_mode (__FILE__, __LINE__);	\
-} while (0);
+#define MONO_REQ_GC_NEUTRAL_MODE assert_gc_neutral_mode (__FILE__, __LINE__)
 
 /* In a GC critical region, the thread is not allowed to switch to GC safe mode.
  * For example if the thread is about to call a method that will manipulate managed objects.
  * The GC critical region must only occur in unsafe mode.
  */
 #define MONO_PREPARE_GC_CRITICAL_REGION					\
-	MONO_REQ_GC_UNSAFE_MODE						\
+	MONO_REQ_GC_UNSAFE_MODE;							\
 	do {								\
 		void* __critical_gc_region_cookie = critical_gc_region_begin()
 
@@ -132,14 +126,10 @@ Functions that can be called from both coop or preept modes.
 	} while(0)
 
 /* Verify that the thread is not currently in a GC critical region. */
-#define MONO_REQ_GC_NOT_CRITICAL do {			\
-		assert_not_in_gc_critical_region();	\
-	} while(0)
+#define MONO_REQ_GC_NOT_CRITICAL assert_not_in_gc_critical_region
 
 /* Verify that the thread is currently in a GC critical region. */
-#define MONO_REQ_GC_CRITICAL do {			\
-		assert_in_gc_critical_region();	\
-	} while(0)
+#define MONO_REQ_GC_CRITICAL assert_in_gc_critical_region
 
 void assert_gc_safe_mode (const char *file, int lineno);
 void assert_gc_unsafe_mode (const char *file, int lineno);
@@ -187,14 +177,14 @@ void assert_in_gc_critical_region (void);
 void check_metadata_store(void *from, void *to);
 void check_metadata_store_local(void *from, void *to);
 
-#define CHECKED_METADATA_STORE(ptr, val) check_metadata_store ((ptr), (val))
-#define CHECKED_METADATA_STORE_LOCAL(ptr, val) check_metadata_store_local ((ptr), (val))
+#define CHECKED_METADATA_STORE			check_metadata_store
+#define CHECKED_METADATA_STORE_LOCAL	check_metadata_store_local
 
 #else
 
-#define CHECKED_METADATA_WRITE_PTR(ptr, val) do { (ptr) = (val); } while (0)
-#define CHECKED_METADATA_WRITE_PTR_LOCAL(ptr, val) do { (ptr) = (val); } while (0)
-#define CHECKED_METADATA_WRITE_PTR_ATOMIC(ptr, val) do { mono_atomic_store_release (&(ptr), (val)); } while (0)
+#define CHECKED_METADATA_WRITE_PTR(ptr, val)	   ((ptr) = (val))
+#define CHECKED_METADATA_WRITE_PTR_LOCAL(ptr, val) ((ptr) = (val))
+#define CHECKED_METADATA_WRITE_PTR_ATOMIC(ptr, val) (mono_atomic_store_release (&(ptr), (val)))
 
 #define CHECKED_METADATA_STORE(ptr, val) do { (ptr); (val); } while (0)
 #define CHECKED_METADATA_STORE_LOCAL(ptr, val) do { (ptr); (val); } while (0)
@@ -203,9 +193,7 @@ void check_metadata_store_local(void *from, void *to);
 
 #ifdef ENABLE_CHECKED_BUILD_THREAD
 
-#define CHECKED_BUILD_THREAD_TRANSITION(transition, info, from_state, suspend_count, next_state, suspend_count_delta) do {	\
-	checked_build_thread_transition (transition, info, from_state, suspend_count, next_state, suspend_count_delta);	\
-} while (0)
+#define CHECKED_BUILD_THREAD_TRANSITION checked_build_thread_transition
 
 void checked_build_thread_transition(const char *transition, void *info, int from_state, int suspend_count, int next_state, int suspend_count_delta);
 
