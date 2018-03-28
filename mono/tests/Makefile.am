@@ -853,14 +853,6 @@ PLATFORM_DISABLED_TESTS=\
 	tailcall-interface-conservestack.exe \
 	tailcall-rgctxb.exe
 
-# tailcall-virt only currently implemented on AMD64 (JIT, AOT, LLVM).
-# Not ARM, not interpreter, etc.
-
-if !AMD64
-PLATFORM_DISABLED_TESTS += tailcall-virt.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp.exe
-endif
-
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe
 endif
@@ -909,6 +901,9 @@ PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_b
 	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
 endif
 
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp.exe
+
 endif
 
 if POWERPC
@@ -917,6 +912,8 @@ PLATFORM_DISABLED_TESTS += finalizer-abort.exe finalizer-exception.exe finalizer
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp.exe
 endif
 
 if POWERPC64
@@ -927,6 +924,8 @@ PLATFORM_DISABLED_TESTS += monitor.exe threadpool-exceptions5.exe appdomain-unlo
 	sgen-domain-unload-2.exe sgen-weakref-stress.exe sgen-cementing-stress.exe sgen-new-threads-dont-join-stw.exe \
 	sgen-new-threads-dont-join-stw-2.exe sgen-new-threads-collect.exe sgen-bridge.exe
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp.exe
 endif
 
 if ARM
@@ -934,6 +933,8 @@ PLATFORM_DISABLED_TESTS += filter-stack.exe weak-fields.exe
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp.exe
 
 PLATFORM_DISABLED_TESTS += \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
@@ -949,6 +950,8 @@ endif
 
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp.exe
 
 PLATFORM_DISABLED_TESTS += \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.exe \
@@ -969,6 +972,8 @@ PLATFORM_DISABLED_TESTS += filter-stack.exe monitor.exe
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp.exe
 endif
 
 if S390X
@@ -983,6 +988,8 @@ PLATFORM_DISABLED_TESTS += \
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp.exe
 endif
 
 PROFILE_DISABLED_TESTS= \
