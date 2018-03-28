@@ -19,6 +19,8 @@ using System.Diagnostics;
 using System.Collections;
 using System.Collections.Specialized;
 
+#if !MOBILE
+
 namespace MonoTests.System.Diagnostics
 {
 	// The first part is from external/corefx.
@@ -326,3 +328,5 @@ namespace MonoTests.System.Diagnostics
 		}
 	}
 }
+
+#endif
