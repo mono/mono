@@ -685,7 +685,7 @@ System.Security.AccessControl/SystemAcl.cs
 System.Security.Cryptography/CryptoAPITransform.cs
 System.Security.Cryptography/CryptoConfig.cs
 System.Security.Cryptography/CryptoConfig.common.cs
-System.Security.Cryptography/CryptoConfig.fullaot.cs
+System.Security.Cryptography/CryptoConfig.Mobile.cs
 System.Security.Cryptography/CspKeyContainerInfo.cs
 System.Security.Cryptography/DESCryptoServiceProvider.cs
 System.Security.Cryptography/DSACryptoServiceProvider.cs
