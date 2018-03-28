@@ -267,6 +267,7 @@ System.Reflection.Emit/CustomAttributeBuilder.cs
 System.Reflection.Emit/DerivedTypes.cs
 System.Reflection.Emit/DynamicILInfo.cs
 System.Reflection.Emit/DynamicMethod.cs
+System.Reflection.Emit/DynamicMethod.notsupported.cs
 System.Reflection.Emit/EnumBuilder.cs
 System.Reflection.Emit/EventBuilder.cs
 System.Reflection.Emit/EventOnTypeBuilderInst.cs
