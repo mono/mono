@@ -1033,19 +1033,21 @@ class MsbuildGenerator {
 		// ../class/lib/build/tmp/System.Xml.dll  [No longer possible, we should be removing this from order.xml]
 		//   /class/lib/basic/System.Core.dll
 		// <library_output>mcs.exe</library_output>
-		string build_output_dir;
-		if (LibraryOutput.Contains ("/"))
+		string build_output_dir, intermediate_output_dir;
+		if (LibraryOutput.Contains ("/")) {
 			build_output_dir = Path.GetDirectoryName (LibraryOutput);
-		else
+			intermediate_output_dir = build_output_dir.Substring (0, build_output_dir.IndexOf("/class/lib") + 7) + "obj";
+		}
+		else {
 			build_output_dir = "bin\\Debug\\" + library;
+			intermediate_output_dir =  "obj\\Debug\\" + library;
+		}
 
 		if (build_output_dir.Contains ("-linux") || build_output_dir.Contains ("-darwin") || build_output_dir.Contains ("-win32"))
 			build_output_dir = build_output_dir
 				.Replace ("-linux", "-$(HostPlatform)")
 				.Replace ("-darwin", "-$(HostPlatform)")
 				.Replace ("-win32", "-$(HostPlatform)");
-
-		var intermediate_output_dir = Path.GetDirectoryName (Path.GetDirectoryName (build_output_dir)) + "/obj";
 
 		bool basic_or_build = (library.Contains ("-basic") || library.Contains ("-build"));
 
