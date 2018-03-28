@@ -2163,10 +2163,17 @@ leave:
 		mono_gchandle_free (value_gchandle);
 }
 
+ICALL_EXPORT MonoObject*
+mono_TypedReference_ToObject (MonoTypedRef* tref);
+
 ICALL_EXPORT void
 ves_icall_System_RuntimeFieldHandle_SetValueDirect (MonoReflectionField *field, MonoReflectionType *field_type, MonoTypedRef *obj, MonoObject *value, MonoReflectionType *context_type)
 {
+	ERROR_DECL (error);
+
 	MonoClassField *f;
+	MonoObjectHandle objHandle, valueHandle;
+	MonoReflectionFieldHandle fieldHandle;
 
 	g_assert (field);
 	g_assert (obj);
@@ -2174,7 +2181,11 @@ ves_icall_System_RuntimeFieldHandle_SetValueDirect (MonoReflectionField *field, 
 
 	f = field->field;
 	if (!MONO_TYPE_ISSTRUCT (m_class_get_byval_arg (f->parent))) {
-		mono_set_pending_exception (mono_get_exception_not_implemented (NULL));
+		fieldHandle = MONO_HANDLE_NEW (MonoReflectionField, field);
+		objHandle = MONO_HANDLE_NEW (MonoObject, mono_TypedReference_ToObject (obj));
+		valueHandle = MONO_HANDLE_NEW (MonoObject, value);
+		ves_icall_MonoField_SetValueInternal (fieldHandle, objHandle, valueHandle, error);
+		mono_error_set_pending_exception (error);
 		return;
 	}
 
