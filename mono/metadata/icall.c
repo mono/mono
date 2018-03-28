@@ -2169,6 +2169,8 @@ mono_TypedReference_ToObject (MonoTypedRef* tref);
 ICALL_EXPORT void
 ves_icall_System_RuntimeFieldHandle_SetValueDirect (MonoReflectionField *field, MonoReflectionType *field_type, MonoTypedRef *obj, MonoObject *value, MonoReflectionType *context_type)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	ERROR_DECL (error);
 
 	MonoClassField *f;
@@ -2186,13 +2188,14 @@ ves_icall_System_RuntimeFieldHandle_SetValueDirect (MonoReflectionField *field, 
 		valueHandle = MONO_HANDLE_NEW (MonoObject, value);
 		ves_icall_MonoField_SetValueInternal (fieldHandle, objHandle, valueHandle, error);
 		mono_error_set_pending_exception (error);
-		return;
+	} else {
+		if (MONO_TYPE_IS_REFERENCE (f->type))
+			mono_copy_value (f->type, (guint8*)obj->value + f->offset - sizeof (MonoObject), value, FALSE);
+		else
+			mono_copy_value (f->type, (guint8*)obj->value + f->offset - sizeof (MonoObject), mono_object_unbox (value), FALSE);
 	}
 
-	if (MONO_TYPE_IS_REFERENCE (f->type))
-		mono_copy_value (f->type, (guint8*)obj->value + f->offset - sizeof (MonoObject), value, FALSE);
-	else
-		mono_copy_value (f->type, (guint8*)obj->value + f->offset - sizeof (MonoObject), mono_object_unbox (value), FALSE);
+	HANDLE_FUNCTION_RETURN ();
 }
 
 ICALL_EXPORT MonoObject *
