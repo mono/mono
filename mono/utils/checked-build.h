@@ -110,8 +110,8 @@ Functions that can be called from both coop or preept modes.
 	assert_gc_safe_mode (__FILE__, __LINE__);	\
 } while (0);
 
-#define MONO_REQ_GC_UNSAFE_MODE do {	\
-	assert_gc_unsafe_mode (__FILE__, __LINE__);	\
+#define MONO_REQ_GC_UNSAFE_MODE do {					\
+	assert_gc_unsafe_mode (__FILE__, __LINE__);			\
 } while (0);
 
 #define MONO_REQ_GC_NEUTRAL_MODE do {	\

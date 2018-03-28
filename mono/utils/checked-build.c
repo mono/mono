@@ -359,6 +359,9 @@ assert_gc_safe_mode (const char *file, int lineno)
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_GC))
 		return;
 
+	if (G_UNLIKELY (!mono_thread_is_gc_unsafe_mode ()))
+		g_assertion_message ("* Assertion at %s:%d, condition `mono_thread_is_gc_unsafe_mode ()' not met" , file, lineno);
+
 	MonoThreadInfo *cur = mono_thread_info_current ();
 	int state;
 
