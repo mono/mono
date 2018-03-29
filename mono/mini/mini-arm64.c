@@ -2675,29 +2675,66 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 	}
 }
 
+static const gboolean debug_tailcall = FALSE;
+
+static gboolean
+is_supported_tailcall_helper (gboolean value, const char *svalue)
+{
+	if (!value && debug_tailcall)
+		g_print ("%s %s\n", __func__, svalue);
+	return value;
+}
+
+#define IS_SUPPORTED_TAILCALL(x) (is_supported_tailcall_helper((x), #x))
+
+static gboolean
+tailcall_return_storage_supported (ArgStorage storage)
+{
+	switch (storage) {
+	case ArgInIReg:
+	case ArgInFReg:
+	case ArgNone:
+		return TRUE;
+
+	case ArgHFA:
+	case ArgInFRegR4: // conversion in emit_move_return_value missed
+	case ArgOnStack:
+	case ArgOnStackR8:
+	case ArgOnStackR4:
+	case ArgVtypeByRef:
+	case ArgVtypeByRefOnStack:
+	case ArgVtypeInIRegs:
+	case ArgVtypeOnStack:
+		return FALSE;
+
+	default:
+		g_assert_not_reached ();
+		return FALSE;
+	}
+}
+
 gboolean
 mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
-	CallInfo *c1, *c2;
-	gboolean res;
+	g_assert (caller_sig);
+	g_assert (callee_sig);
 
 	if (cfg->compile_aot && !cfg->full_aot)
 		/* OP_TAILCALL doesn't work with AOT */
 		return FALSE;
 
-	c1 = get_call_info (NULL, caller_sig);
-	c2 = get_call_info (NULL, callee_sig);
-	res = TRUE;
-	// FIXME: Relax these restrictions
-	if (c1->stack_usage != 0)
-		res = FALSE;
-	if (c1->stack_usage != c2->stack_usage)
-		res = FALSE;
-	if ((c1->ret.storage != ArgNone && c1->ret.storage != ArgInIReg) || c1->ret.storage != c2->ret.storage)
-		res = FALSE;
+	CallInfo *caller_info = get_call_info (NULL, caller_sig);
+	CallInfo *callee_info = get_call_info (NULL, callee_sig);
 
-	g_free (c1);
-	g_free (c2);
+	// FIXME: Relax these restrictions
+
+	gboolean res = IS_SUPPORTED_TAILCALL (caller_info->stack_usage == 0)
+		  && IS_SUPPORTED_TAILCALL (caller_info->stack_usage == callee_info->stack_usage)
+		  && IS_SUPPORTED_TAILCALL (caller_info->ret.storage == callee_info->ret.storage)
+		  && IS_SUPPORTED_TAILCALL (tailcall_return_storage_supported (caller_info->ret.storage));
+
+	g_free (caller_info);
+	g_free (callee_info);
 
 	return res;
 }
