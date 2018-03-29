@@ -7036,14 +7036,14 @@ is_jit_optimizer_disabled (MonoMethod *m)
 }
 
 static gboolean
-is_supported_tailcall_helper (gboolean value, const char *svalue, MonoMethod *method, MonoMethod *cmethod)
+is_not_supported_tailcall_helper (gboolean value, const char *svalue, MonoMethod *method, MonoMethod *cmethod)
 {
 	if (value && debug_tailcall)
 		g_print ("%s %s -> %s %s:true\n", __func__, method->name, cmethod->name, svalue);
 	return value;
 }
 
-#define IS_SUPPORTED_TAILCALL(x) (is_supported_tailcall_helper((x), #x, method, cmethod))
+#define IS_NOT_SUPPORTED_TAILCALL(x) (is_not_supported_tailcall_helper((x), #x, method, cmethod))
 
 static gboolean
 is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmethod, MonoMethodSignature *fsig,
@@ -7054,13 +7054,13 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 
 	g_assertf (call_opcode == CEE_CALL || call_opcode == CEE_CALLVIRT || call_opcode == CEE_CALLI, "%s (%d)", mono_opcode_name (call_opcode), (int)call_opcode);
 
-	if (   IS_SUPPORTED_TAILCALL (fsig->hasthis && m_class_is_valuetype (cmethod->klass)) // This might point to the current method's stack. Emit range check?
-		|| IS_SUPPORTED_TAILCALL (cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
-		|| IS_SUPPORTED_TAILCALL (cfg->method->save_lmf)
-		|| IS_SUPPORTED_TAILCALL (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
+	if (   IS_NOT_SUPPORTED_TAILCALL (fsig->hasthis && m_class_is_valuetype (cmethod->klass)) // This might point to the current method's stack. Emit range check?
+		|| IS_NOT_SUPPORTED_TAILCALL (cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
+		|| IS_NOT_SUPPORTED_TAILCALL (cfg->method->save_lmf)
+		|| IS_NOT_SUPPORTED_TAILCALL (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
 		|| (!llvm_only && (
-		   IS_SUPPORTED_TAILCALL (call_opcode == CEE_CALLI)
-		|| IS_SUPPORTED_TAILCALL (virtual_ && !cfg->backend->have_op_tail_call_membase)
+		   IS_NOT_SUPPORTED_TAILCALL (call_opcode == CEE_CALLI)
+		|| IS_NOT_SUPPORTED_TAILCALL (virtual_ && !cfg->backend->have_op_tail_call_membase)
 
 		// Passing vtable_arg uses (requires?) a volatile non-parameter register,
 		// such as AMD64 rax, r10, r11, or the return register on many architectures.
@@ -7080,15 +7080,15 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 		//
 		// Interface method dispatch has the same problem.
 		//
-		|| IS_SUPPORTED_TAILCALL ((vtable_arg || is_interface) && !cfg->backend->have_volatile_non_param_register)
+		|| IS_NOT_SUPPORTED_TAILCALL ((vtable_arg || is_interface) && !cfg->backend->have_volatile_non_param_register)
 
-		|| IS_SUPPORTED_TAILCALL ((vtable_arg || cfg->gshared) && !cfg->backend->have_op_tail_call)
-		|| IS_SUPPORTED_TAILCALL (!mono_arch_tail_call_supported (cfg, mono_method_signature (method), mono_method_signature (cmethod))))
+		|| IS_NOT_SUPPORTED_TAILCALL ((vtable_arg || cfg->gshared) && !cfg->backend->have_op_tail_call)
+		|| IS_NOT_SUPPORTED_TAILCALL (!mono_arch_tail_call_supported (cfg, mono_method_signature (method), mono_method_signature (cmethod))))
 		))
 		return FALSE;
 
 	for (i = 0; i < fsig->param_count; ++i) {
-		if (IS_SUPPORTED_TAILCALL (fsig->params [i]->byref || fsig->params [i]->type == MONO_TYPE_PTR || fsig->params [i]->type == MONO_TYPE_FNPTR))
+		if (IS_NOT_SUPPORTED_TAILCALL (fsig->params [i]->byref || fsig->params [i]->type == MONO_TYPE_PTR || fsig->params [i]->type == MONO_TYPE_FNPTR))
 			return FALSE; // These can point to the current method's stack. Emit range check?
 	}
 
