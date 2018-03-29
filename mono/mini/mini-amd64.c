@@ -4626,9 +4626,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 		case OP_TAILCALL:
 		case OP_TAILCALL_MEMBASE: {
-			MonoCallInst *call = (MonoCallInst*)ins;
+			call = (MonoCallInst*)ins;
 			int i, save_area_offset;
-			gboolean membase = (ins->opcode == OP_TAILCALL_MEMBASE);
+			gboolean tailcall_membase = (ins->opcode == OP_TAILCALL_MEMBASE);
 
 			g_assert (!cfg->method->save_lmf);
 
@@ -4646,7 +4646,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			// FIXME hardcoding RAX here is not ideal.
 
-			if (membase) {
+			if (tailcall_membase) {
 				amd64_mov_reg_membase (code, AMD64_RAX, ins->sreg1, ins->inst_offset, 8);
 			} else {
 				 if (cfg->compile_aot) {
@@ -4699,7 +4699,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			// FIXME This should be jmp rip+32 for AOT direct to same assembly.
 			// FIXME This should be jmp [rip+32] for AOT direct to not-same assembly (through data).
 			// FIXME This should be jmp [rip+32] for JIT direct -- patch data instead of code.
-			// This is only close to ideal for membase, and even then it should
+			// This is only close to ideal for tailcall_membase, and even then it should
 			// have a more dynamic register allocation.
 			x86_imm_emit8 (code, 0x48);
 			amd64_jump_reg (code, AMD64_RAX);
