@@ -1597,7 +1597,7 @@ ret
 {
 .custom instance void [mscorlib]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = ( 01 00 00 00 )
 .custom instance void [mscorlib]System.Diagnostics.DebuggerNonUserCodeAttribute::.ctor() = ( 01 00 00 00 )
-ldc.i4 0x989680
+ldc.i4 0x80
 ret
 }
 .method public static int32 simpleTail1(int32 x, int32 acc) cil managed
