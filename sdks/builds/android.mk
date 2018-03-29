@@ -195,7 +195,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 .stamp-android-$(1)-toolchain:
 	touch $$@
 
-.stamp-android-$(1)-$$(CONFIGURATION)-configure: | package-mxe
+.stamp-android-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PACKAGE_MXE),,package-mxe)
 
 $$(eval $$(call RuntimeTemplate,android-$(1)))
 
