@@ -904,9 +904,6 @@ PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_b
 endif
 
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallowtail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallownotail.exe
-
 endif
 
 if POWERPC
@@ -917,8 +914,6 @@ PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PAR
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallowtail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallownotail.exe
 endif
 
 if POWERPC64
@@ -931,8 +926,6 @@ PLATFORM_DISABLED_TESTS += monitor.exe threadpool-exceptions5.exe appdomain-unlo
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallowtail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallownotail.exe
 endif
 
 if ARM
@@ -942,8 +935,6 @@ PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PAR
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallowtail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallownotail.exe
 
 PLATFORM_DISABLED_TESTS += \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
@@ -960,8 +951,6 @@ endif
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallowtail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallownotail.exe
 
 PLATFORM_DISABLED_TESTS += \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.exe \
@@ -984,8 +973,6 @@ PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PAR
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallowtail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallownotail.exe
 endif
 
 if S390X
@@ -1002,8 +989,6 @@ PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PAR
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallowtail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallownotail.exe
 endif
 
 PROFILE_DISABLED_TESTS= \
@@ -1172,8 +1157,6 @@ PROFILE_DISABLED_TESTS += \
 	weak-fields.exe
 
 PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PROFILE_DISABLED_TESTS += tailcall/fsharp-shallowtail.exe
-PROFILE_DISABLED_TESTS += tailcall/fsharp-shallownotail.exe
 endif
 
 if HYBRID_AOT_TESTS
@@ -1182,8 +1165,6 @@ PROFILE_DISABLED_TESTS += \
 	namedmutex-destroy-race.exe
 
 PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PROFILE_DISABLED_TESTS += tailcall/fsharp-shallowtail.exe
-PROFILE_DISABLED_TESTS += tailcall/fsharp-shallownotail.exe
 endif
 
 AOT_DISABLED_TESTS= \
@@ -1192,8 +1173,6 @@ AOT_DISABLED_TESTS= \
 # tailcall/fsharp AOT hangs
 # tailcall/fsharp FullAOT stack overflow in CI but not locally.
 AOT_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-AOT_DISABLED_TESTS += tailcall/fsharp-shallowtail.exe
-AOT_DISABLED_TESTS += tailcall/fsharp-shallownotail.exe
 
 CI_DISABLED_TESTS = \
 	main-returns-background-resetabort.exe \
@@ -1274,8 +1253,6 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	tailcall-rgctxa.exe \
 	tailcall-generic-cast-conservestack-il.exe \
 	tailcall/fsharp-deeptail.exe \
-	tailcall/fsharp-shallowtail.exe \
-	tailcall/fsharp-shallownotail.exe \
 	bug-60843.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
