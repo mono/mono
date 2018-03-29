@@ -7082,9 +7082,22 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 		//
 		|| IS_NOT_SUPPORTED_TAILCALL ((vtable_arg || is_interface) && !cfg->backend->have_volatile_non_param_register)
 
-		|| IS_NOT_SUPPORTED_TAILCALL ((vtable_arg || cfg->gshared) && !cfg->backend->have_op_tail_call)
-		|| IS_NOT_SUPPORTED_TAILCALL (!mono_arch_tail_call_supported (cfg, mono_method_signature (method), mono_method_signature (cmethod))))
+		|| IS_NOT_SUPPORTED_TAILCALL ((vtable_arg || cfg->gshared) && !cfg->backend->have_op_tail_call))
 		))
+		return FALSE;
+
+	MonoMethodSignature *caller_signature = mono_method_signature (method);
+	MonoMethodSignature *callee_signature = mono_method_signature (cmethod);
+
+	g_assert (caller_signature);
+	g_assert (callee_signature);
+
+	// Require an exact match on return type due to various conversions in emit_move_return_value that would be skipped,
+	// and verify probably requires it anyway.
+	if (IS_NOT_SUPPORTED_TAILCALL (mini_get_underlying_type (caller_signature->ret)->type != mini_get_underlying_type (callee_signature->ret)->type))
+		return FALSE;
+
+	if (!llvm_only && IS_NOT_SUPPORTED_TAILCALL (!mono_arch_tail_call_supported (cfg, caller_signature, callee_signature)))
 		return FALSE;
 
 	for (i = 0; i < fsig->param_count; ++i) {
