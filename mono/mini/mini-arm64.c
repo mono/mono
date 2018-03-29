@@ -2703,7 +2703,7 @@ tailcall_return_storage_supported (ArgStorage storage)
 	case ArgOnStackR4:
 	case ArgVtypeByRef:
 	case ArgVtypeByRefOnStack:
-	case ArgVtypeInIRegs:
+	case ArgVtypeInIRegs: // FIXME: Pass caller's caller's return area to callee.
 	case ArgVtypeOnStack:
 		return FALSE;
 
