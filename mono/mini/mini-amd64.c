@@ -1253,6 +1253,16 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 
 static const gboolean debug_tailcall = FALSE;
 
+static gboolean
+is_supported_tailcall_helper (gboolean value, const char *svalue)
+{
+	if (!value && debug_tailcall)
+		g_print ("%s %s\n", __func__, svalue);
+	return value;
+}
+
+#define IS_SUPPORTED_TAILCALL(x) (is_supported_tailcall_helper((x), #x))
+
 gboolean
 mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
@@ -1262,23 +1272,15 @@ mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig
 	CallInfo *callee_info = get_call_info (NULL, callee_sig);
 	gboolean res = TRUE;
 
-	if (callee_info->stack_usage > caller_info->stack_usage) {
-		res = FALSE;
-		if (!debug_tailcall)
-			goto exit;
-		g_print ("%s callee_info->stack_usage > caller_info->stack_usage %d %d\n", __func__, (int)callee_info->stack_usage, (int)caller_info->stack_usage);
-	}
+	res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
+		 && IS_SUPPORTED_TAILCALL (callee_info->ret.storage == caller_info->ret.storage);
+
+	if (!res && !debug_tailcall)
+		goto exit;
 
 	callee_ret = mini_get_underlying_type (callee_sig->ret);
 
-	if (callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && callee_info->ret.storage != ArgValuetypeInReg) {
-		/* An address on the callee's stack is passed as the first argument */
-		res = FALSE;
-		if (!debug_tailcall)
-			goto exit;
-		// FIXME see storage_name
-		g_print ("%s caller->ret_storage:%d callee->ret_storage:%d\n", __func__, (int)caller_info->ret.storage, (int)callee_info->ret.storage);
-	}
+	res = IS_SUPPORTED_TAILCALL (!(callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && callee_info->ret.storage != ArgValuetypeInReg));
 
 exit:
 	g_free (caller_info);

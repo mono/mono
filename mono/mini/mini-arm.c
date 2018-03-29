@@ -1721,11 +1721,20 @@ done:
 
 static const gboolean debug_tailcall = FALSE;
 
+static gboolean
+is_supported_tailcall_helper (gboolean value, const char *svalue)
+{
+	if (!value && debug_tailcall)
+		g_print ("%s %s\n", __func__, svalue);
+	return value;
+}
+
+#define IS_SUPPORTED_TAILCALL(x) (is_supported_tailcall_helper((x), #x))
+
 gboolean
 mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	MonoType *callee_ret;
-	gboolean res = TRUE;
 
 	g_assert (caller_sig);
 	g_assert (callee_sig);
@@ -1737,28 +1746,16 @@ mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig
 	 * Tail calls with more callee stack usage than the caller cannot be supported, since
 	 * the extra stack space would be left on the stack after the tail call.
 	 */
-	if (caller_info->stack_usage < callee_info->stack_usage) {
-		res = FALSE;
-		if (!debug_tailcall)
-			goto exit;
-		g_print ("%s callee_info->stack_usage > caller_info->stack_usage %d %d\n", __func__, (int)callee_info->stack_usage, (int)caller_info->stack_usage);
-	}
+	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
+				&& IS_SUPPORTED_TAILCALL (caller_info->ret.storage == callee_info->ret.storage)
+				&& (callee_info->stack_usage <= 16 * 4); // FIXME Why?
+	if (!res && !debug_tailcall)
+		goto exit;
 
 	callee_ret = mini_get_underlying_type (callee_sig->ret);
 
-	if (callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && callee_info->ret.storage != RegTypeStructByVal) {
-		/* An address on the callee's stack is passed as the first argument */
-		res = FALSE;
-		if (!debug_tailcall)
-			goto exit;
-		// FIXME see storage_name
-		g_print ("%s caller->ret_storage:%d callee->ret_storage:%d\n", __func__, (int)caller_info->ret.storage, (int)callee_info->ret.storage);
-	}
-
-	if (callee_info->stack_usage > 16 * 4) {
-		// FIXME Why?
-		res = FALSE;
-	}
+	/* An address on the callee's stack is passed as the first argument */
+	res = IS_SUPPORTED_TAILCALL (!(callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && callee_info->ret.storage != RegTypeStructByVal));
 
 exit:
 	g_free (caller_info);
