@@ -1171,7 +1171,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/reflection/assemblynameflags.cs
 ../referencesource/mscorlib/system/reflection/assemblynameproxy.cs
 ../referencesource/mscorlib/system/reflection/binder.cs
-../referencesource/mscorlib/system/reflection/bindingflags.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/BindingFlags.cs
 ../referencesource/mscorlib/system/reflection/callingconventions.cs
 ../referencesource/mscorlib/system/reflection/CustomAttributeExtensions.cs
 ../referencesource/mscorlib/system/reflection/defaultmemberattribute.cs
