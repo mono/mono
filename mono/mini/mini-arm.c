@@ -1755,6 +1755,7 @@ mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig
 	callee_ret = mini_get_underlying_type (callee_sig->ret);
 
 	/* An address on the callee's stack is passed as the first argument */
+	// FIXME: Pass caller's caller's return area to callee.
 	res = IS_SUPPORTED_TAILCALL (!(callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && callee_info->ret.storage != RegTypeStructByVal));
 
 exit:
