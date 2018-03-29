@@ -2675,29 +2675,45 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 	}
 }
 
+static const gboolean debug_tailcall = FALSE;
+
 gboolean
 mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
-	CallInfo *c1, *c2;
-	gboolean res;
-
 	if (cfg->compile_aot && !cfg->full_aot)
 		/* OP_TAILCALL doesn't work with AOT */
 		return FALSE;
 
-	c1 = get_call_info (NULL, caller_sig);
-	c2 = get_call_info (NULL, callee_sig);
-	res = TRUE;
-	// FIXME: Relax these restrictions
-	if (c1->stack_usage != 0)
-		res = FALSE;
-	if (c1->stack_usage != c2->stack_usage)
-		res = FALSE;
-	if ((c1->ret.storage != ArgNone && c1->ret.storage != ArgInIReg) || c1->ret.storage != c2->ret.storage)
-		res = FALSE;
+	CallInfo *caller_info = get_call_info (NULL, caller_sig);
+	CallInfo *callee_info = get_call_info (NULL, callee_sig);
+	gboolean res = TRUE;
 
-	g_free (c1);
-	g_free (c2);
+	// FIXME: Relax these restrictions
+
+	if (caller_info->stack_usage != 0) {
+		res = FALSE;
+		if (!debug_tailcall)
+			goto exit;
+		g_print ("%s caller_info->stack_usage:%d\n", __func__, (int)caller_info->stack_usage);
+	}
+
+	if (caller_info->stack_usage != callee_info->stack_usage) {
+		res = FALSE;
+		if (!debug_tailcall)
+			goto exit;
+		g_print ("%s callee_info->stack_usage:%d\n", __func__, (int)callee_info->stack_usage);
+	}
+
+	if ((caller_info->ret.storage != ArgNone && caller_info->ret.storage != ArgInIReg) || caller_info->ret.storage != callee_info->ret.storage) {
+		res = FALSE;
+		if (!debug_tailcall)
+			goto exit;
+		g_print ("%s caller->ret_storage:%d callee->ret_storage:%d\n", __func__, (int)caller_info->ret.storage, (int)callee_info->ret.storage);
+	}
+
+exit:
+	g_free (caller_info);
+	g_free (callee_info);
 
 	return res;
 }

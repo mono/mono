@@ -1719,35 +1719,50 @@ done:
 	g_free (cinfo);
 }
 
+static const gboolean debug_tailcall = FALSE;
 
 gboolean
 mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	MonoType *callee_ret;
-	CallInfo *c1, *c2;
-	gboolean res;
+	gboolean res = TRUE;
 
 	g_assert (caller_sig);
 	g_assert (callee_sig);
 
-	c1 = get_call_info (NULL, caller_sig);
-	c2 = get_call_info (NULL, callee_sig);
+	CallInfo *caller_info = get_call_info (NULL, caller_sig);
+	CallInfo *callee_info = get_call_info (NULL, callee_sig);
 
 	/*
 	 * Tail calls with more callee stack usage than the caller cannot be supported, since
 	 * the extra stack space would be left on the stack after the tail call.
 	 */
-	res = c1->stack_usage >= c2->stack_usage;
+	if (caller_info->stack_usage < callee_info->stack_usage) {
+		res = FALSE;
+		if (!debug_tailcall)
+			goto exit;
+		g_print ("%s callee_info->stack_usage > caller_info->stack_usage %d %d\n", __func__, (int)callee_info->stack_usage, (int)caller_info->stack_usage);
+	}
+
 	callee_ret = mini_get_underlying_type (callee_sig->ret);
-	if (callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && c2->ret.storage != RegTypeStructByVal)
+
+	if (callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && callee_info->ret.storage != RegTypeStructByVal) {
 		/* An address on the callee's stack is passed as the first argument */
 		res = FALSE;
+		if (!debug_tailcall)
+			goto exit;
+		// FIXME see storage_name
+		g_print ("%s caller->ret_storage:%d callee->ret_storage:%d\n", __func__, (int)caller_info->ret.storage, (int)callee_info->ret.storage);
+	}
 
-	if (c2->stack_usage > 16 * 4)
+	if (callee_info->stack_usage > 16 * 4) {
+		// FIXME Why?
 		res = FALSE;
+	}
 
-	g_free (c1);
-	g_free (c2);
+exit:
+	g_free (caller_info);
+	g_free (callee_info);
 
 	return res;
 }
