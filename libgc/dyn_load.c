@@ -396,7 +396,8 @@ GC_bool GC_register_main_static_data()
 
 # if (defined(LINUX) || defined (__GLIBC__) || defined(NACL)) /* Are others OK here, too? */ \
      && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ > 2) \
-         || (__GLIBC__ == 2 && __GLIBC_MINOR__ == 2 && defined(DT_CONFIG))) 
+         || (__GLIBC__ == 2 && __GLIBC_MINOR__ == 2 && defined(DT_CONFIG))) \
+	 || defined(OPENBSD)
 
 /* We have the header files for a glibc that includes dl_iterate_phdr.	*/
 /* It may still not be available in the library on the target system.   */
