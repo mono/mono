@@ -60,6 +60,8 @@ typedef enum {
 	MONO_AOT_MODE_INTERP,
 	/* Same as INTERP, but use only llvm compiled code */
 	MONO_AOT_MODE_INTERP_LLVMONLY,
+	/* Sentinel value */
+	MONO_AOT_MODE_LAST,
 } MonoAotMode;
 
 MONO_API void
