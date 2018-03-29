@@ -7046,8 +7046,7 @@ is_not_supported_tailcall_helper (gboolean value, const char *svalue, MonoMethod
 #define IS_NOT_SUPPORTED_TAILCALL(x) (is_not_supported_tailcall_helper((x), #x, method, cmethod))
 
 static gboolean
-is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmethod, MonoMethodSignature *fsig,
-						int call_opcode, gboolean virtual_, MonoInst *vtable_arg, gboolean is_interface)
+is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmethod, MonoMethodSignature *fsig, int call_opcode, gboolean virtual_, MonoInst *vtable_arg)
 {
 	int i;
 	gboolean const llvm_only = cfg->llvm_only;
@@ -7077,10 +7076,7 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 		// F3 cannot easily restore it for F1, in the current scheme. The current
 		// scheme where the extra parameter is not merely an extra parameter, but
 		// passed "outside of the ABI".
-		//
-		// Interface method dispatch has the same problem.
-		//
-		|| IS_NOT_SUPPORTED_TAILCALL ((vtable_arg || is_interface) && !cfg->backend->have_volatile_non_param_register)
+		|| IS_NOT_SUPPORTED_TAILCALL (vtable_arg && !cfg->backend->have_volatile_non_param_register)
 
 		|| IS_NOT_SUPPORTED_TAILCALL ((vtable_arg || cfg->gshared) && !cfg->backend->have_op_tail_call))
 		))
@@ -8414,8 +8410,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			cmethod = mini_get_method (cfg, method, token, NULL, generic_context);
 			CHECK_CFG_ERROR;
 
-			gboolean const is_interface = mono_class_is_interface (cmethod->klass);
-
 			cil_method = cmethod;
 				
 			if (constrained_class) {
@@ -8824,7 +8818,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				  Inlining and stack traces are not guaranteed however. */
 			/* FIXME: runtime generic context pointer for jumps? */
 			/* FIXME: handle this for generic sharing eventually */
-			supported_tail_call = inst_tailcall && is_supported_tail_call (cfg, method, cmethod, fsig, call_opcode, virtual_, vtable_arg, is_interface);
+			supported_tail_call = inst_tailcall && is_supported_tail_call (cfg, method, cmethod, fsig, call_opcode, virtual_, vtable_arg);
 
 			// http://www.mono-project.com/docs/advanced/runtime/docs/generic-sharing/
 			// 1. Non-generic non-static methods of reference types have access to the
