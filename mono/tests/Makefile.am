@@ -902,10 +902,6 @@ PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_b
 	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
 endif
 
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallowtail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallownotail.exe
-
 endif
 
 if POWERPC
@@ -961,9 +957,6 @@ endif
 
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallowtail.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-shallownotail.exe
 
 PLATFORM_DISABLED_TESTS += \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.exe \
