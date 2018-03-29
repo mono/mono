@@ -15,8 +15,6 @@ bcl_CONFIGURE_FLAGS = \
        $(if $(DISABLE_WASM),,--with-wasm=yes) \
        --with-mcs-docs=no \
        --disable-nls \
-       --disable-btls \
-       --disable-support-build \
        --disable-boehm
 
 .stamp-bcl-configure: $(TOP)/configure
