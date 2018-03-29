@@ -65,17 +65,17 @@ $(eval $(call LLVMTemplate,llvm64,x86_64))
 #  llvm_$(1)_CONFIGURE_ENVIRONMENT
 define LLVMMxeTemplate
 
-_llvm_$(1)_PATH=$$(TOP)/sdks/out/mxe/bin
+_llvm_$(1)_PATH=$$(MXE_PREFIX)/bin
 
-_llvm_$(1)_AR=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ar
-_llvm_$(1)_AS=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-as
-_llvm_$(1)_CC=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-gcc
-_llvm_$(1)_CXX=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-g++
-_llvm_$(1)_DLLTOOL=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-dlltool
-_llvm_$(1)_LD=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ld
-_llvm_$(1)_OBJDUMP=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-objdump
-_llvm_$(1)_RANLIB=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ranlib
-_llvm_$(1)_STRIP=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-strip
+_llvm_$(1)_AR=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-ar
+_llvm_$(1)_AS=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-as
+_llvm_$(1)_CC=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-gcc
+_llvm_$(1)_CXX=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-g++
+_llvm_$(1)_DLLTOOL=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-dlltool
+_llvm_$(1)_LD=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-ld
+_llvm_$(1)_OBJDUMP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-objdump
+_llvm_$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-ranlib
+_llvm_$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-strip
 
 _llvm_$(1)_CXXFLAGS=
 
@@ -124,5 +124,7 @@ TARGETS += llvm-$(1)
 
 endef
 
+ifneq ($(MXE_PREFIX),)
 $(eval $(call LLVMMxeTemplate,llvmwin32,i686))
 $(eval $(call LLVMMxeTemplate,llvmwin64,x86_64))
+endif
