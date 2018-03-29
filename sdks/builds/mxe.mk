@@ -4,9 +4,9 @@ MXE_PREFIX?=$(TOP)/sdks/out/mxe
 
 $(TOP)/sdks/builds/toolchains/mxe:
 	git clone -b xamarin https://github.com/xamarin/mxe.git $@
+	cd $@ && git checkout $(MXE_HASH)
 
 .stamp-mxe-toolchain: | $(MXE_SRC)
-	cd $(MXE_SRC) && git checkout $(MXE_HASH)
 	touch $@
 
 .stamp-mxe-configure:

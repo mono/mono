@@ -3,6 +3,7 @@ LLVM_SRC?=$(TOP)/sdks/builds/toolchains/llvm
 
 $(TOP)/sdks/builds/toolchains/llvm:
 	git clone -b master https://github.com/mono/llvm.git $@
+	cd $@ && git checkout $(LLVM_HASH)
 
 $(LLVM_SRC)/configure: | $(LLVM_SRC)
 
@@ -104,7 +105,6 @@ _llvm_$(1)_CONFIGURE_FLAGS = \
 	--disable-zlib
 
 .stamp-llvm-$(1)-toolchain: | $$(LLVM_SRC)
-	cd $$(LLVM_SRC) && git checkout $(LLVM_HASH)
 	touch $$@
 
 .stamp-llvm-$(1)-configure: $$(LLVM_SRC)/configure | $(if $(IGNORE_PACKAGE_MXE),,package-mxe)
