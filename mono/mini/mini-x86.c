@@ -5287,13 +5287,8 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 			}
 		}
 
+		g_assert (!pos || need_stack_frame);
 		if (pos) {
-			g_assert (need_stack_frame);
-			x86_lea_membase (code, X86_ESP, X86_EBP, pos);
-		}
-
-		if (pos) {
-			g_assert (need_stack_frame);
 			x86_lea_membase (code, X86_ESP, X86_EBP, pos);
 		}
 
