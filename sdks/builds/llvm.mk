@@ -107,7 +107,7 @@ _llvm_$(1)_CONFIGURE_FLAGS = \
 	cd $$(LLVM_SRC) && git checkout $(LLVM_HASH)
 	touch $$@
 
-.stamp-llvm-$(1)-configure: $$(LLVM_SRC)/configure | package-mxe
+.stamp-llvm-$(1)-configure: $$(LLVM_SRC)/configure | $(if $(IGNORE_PACKAGE_MXE),,package-mxe)
 	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
 	cd $$(TOP)/sdks/builds/llvm-$(1) && PATH="$$$$PATH:$$(_llvm_$(1)_PATH)" $$< $$(_llvm_$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm_$(1)_CONFIGURE_FLAGS)
 	touch $$@
