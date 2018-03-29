@@ -7040,6 +7040,7 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 						int call_opcode, gboolean virtual_, MonoInst *vtable_arg, gboolean is_interface)
 {
 	int i;
+	gboolean const llvm_only = cfg->llvm_only;
 
 	g_assertf (call_opcode == CEE_CALL || call_opcode == CEE_CALLVIRT || call_opcode == CEE_CALLI, "%s (%d)", mono_opcode_name (call_opcode), (int)call_opcode);
 
@@ -7047,7 +7048,8 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 		|| (cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
 		|| cfg->method->save_lmf
 		|| (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
-		|| call_opcode == CEE_CALLI
+		|| (!llvm_only && (
+		   call_opcode == CEE_CALLI
 		|| (virtual_ && !cfg->backend->have_op_tail_call_membase)
 
 		// Passing vtable_arg uses (requires?) a volatile non-parameter register,
@@ -7072,6 +7074,7 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 
 		|| ((vtable_arg || cfg->gshared) && !cfg->backend->have_op_tail_call)
 		|| !mono_arch_tail_call_supported (cfg, mono_method_signature (method), mono_method_signature (cmethod)))
+		))
 		return FALSE;
 
 	for (i = 0; i < fsig->param_count; ++i) {
