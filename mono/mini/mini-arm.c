@@ -1727,6 +1727,9 @@ mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig
 	CallInfo *c1, *c2;
 	gboolean res;
 
+	g_assert (caller_sig);
+	g_assert (callee_sig);
+
 	c1 = get_call_info (NULL, caller_sig);
 	c2 = get_call_info (NULL, callee_sig);
 
@@ -2315,6 +2318,18 @@ mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 }
 #endif
 
+static gboolean
+mono_opcode_is_tailcall (int opcode)
+{
+	return opcode == OP_TAILCALL || opcode == OP_TAILCALL_MEMBASE;
+}
+
+static gboolean
+mono_call_is_tailcall (MonoCallInst *call)
+{
+	return mono_opcode_is_tailcall (call->inst.opcode);
+}
+
 void
 mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 {
@@ -2336,7 +2351,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			call->vret_in_reg = TRUE;
 			break;
 		}
-		if (call->inst.opcode == OP_TAILCALL)
+		if (mono_call_is_tailcall (call))
 			break;
 		/*
 		 * The vtype is returned in registers, save the return area address in a local, and save the vtype into
@@ -5054,8 +5069,21 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 			}
 			break;
-		case OP_TAILCALL: {
+		case OP_TAILCALL:
+		case OP_TAILCALL_MEMBASE: {
 			MonoCallInst *call = (MonoCallInst*)ins;
+			gboolean const tailcall_membase = (ins->opcode == OP_TAILCALL_MEMBASE);
+
+			if (tailcall_membase) {
+				if (!arm_is_imm12 (ins->inst_offset)) {
+					/* sreg1 might be IP */
+					ARM_MOV_REG_REG (code, ARMREG_LR, ins->sreg1);
+					code = mono_arm_emit_load_imm (code, ARMREG_IP, ins->inst_offset);
+					ARM_ADD_REG_REG (code, ARMREG_IP, ARMREG_IP, ARMREG_LR);
+				} else {
+					ARM_LDR_IMM (code, ARMREG_IP, ins->sreg1, ins->inst_offset);
+				}
+			}
 
 			/*
 			 * The stack looks like the following:
@@ -5079,13 +5107,22 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 						prev_sp_offset += 4;
 				}
 
+				int j = 0;
+				if (tailcall_membase) {
+					ARM_PUSH (code, 1 << ARMREG_IP);
+					j = sizeof (mgreg_t);
+				}
+
 				code = emit_big_add (code, ARMREG_IP, cfg->frame_reg, cfg->stack_usage + prev_sp_offset);
 
 				/* Copy arguments on the stack to our argument area */
 				for (i = 0; i < call->stack_usage; i += sizeof (mgreg_t)) {
-					ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, i);
-					ARM_STR_IMM (code, ARMREG_LR, ARMREG_IP, i);
+					ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, i + j);
+					ARM_STR_IMM (code, ARMREG_LR, ARMREG_IP, i + j);
 				}
+
+				if (tailcall_membase)
+					ARM_POP (code, 1 << ARMREG_IP);
 			}
 
 			/*
@@ -5102,16 +5139,20 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ARM_POP (code, cfg->used_int_regs | (1 << ARMREG_LR));
 			}
 
-			mono_add_patch_info (cfg, (guint8*) code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
-			if (cfg->compile_aot) {
-				ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
-				ARM_B (code, 0);
-				*(gpointer*)code = NULL;
-				code += 4;
-				ARM_LDR_REG_REG (code, ARMREG_PC, ARMREG_PC, ARMREG_IP);
+			if (tailcall_membase) {
+				ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_IP);
 			} else {
-				code = mono_arm_patchable_b (code, ARMCOND_AL);
-				cfg->thunk_area += THUNK_SIZE;
+				mono_add_patch_info (cfg, (guint8*) code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
+				if (cfg->compile_aot) {
+					ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
+					ARM_B (code, 0);
+					*(gpointer*)code = NULL;
+					code += 4;
+					ARM_LDR_REG_REG (code, ARMREG_PC, ARMREG_PC, ARMREG_IP);
+				} else {
+					code = mono_arm_patchable_b (code, ARMCOND_AL);
+					cfg->thunk_area += THUNK_SIZE;
+				}
 			}
 			break;
 		}

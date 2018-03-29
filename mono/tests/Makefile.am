@@ -911,7 +911,6 @@ PLATFORM_DISABLED_TESTS += finalizer-abort.exe finalizer-exception.exe finalizer
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
-PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp.exe
 endif
 
