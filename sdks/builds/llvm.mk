@@ -25,7 +25,7 @@ _llvm_$(1)_CONFIGURE_ENVIRONMENT= \
 	LDFLAGS="$$(_llvm_$(1)_LDFLAGS)"
 
 _llvm_$(1)_CONFIGURE_FLAGS= \
-	--host=$(2)-apple-darwin10 \
+	--host=$(2)-$$(if $$(filter $$(UNAME),"Darwin"),apple-darwin10,$$(if $$(filter $$(UNAME),"Linux"),linux-gnu,$$(error "Unknown UNAME=$$(UNAME)))) \
 	--cache-file=$$(TOP)/sdks/builds/llvm-$(1).config.cache \
 	--prefix=$$(TOP)/sdks/out/llvm-$(1) \
 	--enable-assertions=no \
@@ -67,15 +67,15 @@ define LLVMMxeTemplate
 
 _llvm_$(1)_PATH=$$(MXE_PREFIX)/bin
 
-_llvm_$(1)_AR=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-ar
-_llvm_$(1)_AS=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-as
-_llvm_$(1)_CC=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-gcc
-_llvm_$(1)_CXX=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-g++
-_llvm_$(1)_DLLTOOL=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-dlltool
-_llvm_$(1)_LD=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-ld
-_llvm_$(1)_OBJDUMP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-objdump
-_llvm_$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-ranlib
-_llvm_$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32.static-strip
+_llvm_$(1)_AR=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ar
+_llvm_$(1)_AS=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-as
+_llvm_$(1)_CC=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-gcc
+_llvm_$(1)_CXX=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-g++
+_llvm_$(1)_DLLTOOL=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-dlltool
+_llvm_$(1)_LD=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ld
+_llvm_$(1)_OBJDUMP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-objdump
+_llvm_$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ranlib
+_llvm_$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-strip
 
 _llvm_$(1)_CXXFLAGS=
 
@@ -95,7 +95,7 @@ _llvm_$(1)_CONFIGURE_ENVIRONMENT = \
 	LDFLAGS="$$(_llvm_$(1)_LDFLAGS)"
 
 _llvm_$(1)_CONFIGURE_FLAGS = \
-	--host=$(2)-w64-mingw32.static \
+	--host=$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static) \
 	--cache-file=$$(TOP)/sdks/builds/llvm-$(1).config.cache \
 	--prefix=$$(TOP)/sdks/out/llvm-$(1) \
 	--enable-assertions=no \
