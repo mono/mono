@@ -339,7 +339,7 @@ extern GSList *mono_interp_only_classes;
 
 /*
 This struct describes what execution engine feature to use.
-The subsume and will eventually sunset mono_aot_only / mono_llvm_only and friends.
+This subsume, and will eventually sunset, mono_aot_only / mono_llvm_only and friends.
 The goal is to transition us to a place were we can more easily compose/describe what features we need for a given execution mode.
 
 A good feature flag is checked alone, a bad one described many things and keeps breaking some of the modes

@@ -4,25 +4,6 @@ void wasm_interp_to_native_trampoline (void *target_func, InterpMethodArguments 
 void mono_sdb_single_step_trampoline (void);
 void mono_sdb_single_step_trampoline (void);
 
-static gpointer
-create_tramp_info (gpointer code, const char *name, MonoTrampInfo **info)
-{
-	if (info) {
-		MonoTrampInfo *tinfo = g_new0 (MonoTrampInfo, 1);
-		tinfo->code = code;
-		tinfo->code_size = 1;
-		tinfo->name = g_strdup (name);
-		tinfo->ji = NULL;
-		tinfo->unwind_ops = NULL;
-		tinfo->uw_info = NULL;
-		tinfo->uw_info_len = 0;
-		tinfo->owns_uw_info = FALSE;
-
-		*info = tinfo;
-	}
-	return code;
-}
-
 gpointer
 mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len)
 {
@@ -70,15 +51,26 @@ mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 gpointer
 mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
 {
-	return create_tramp_info (wasm_interp_to_native_trampoline, "interp_to_native_trampoline", info);
+	if (info)
+		*info = mono_tramp_info_create ("interp_to_native_trampoline", wasm_interp_to_native_trampoline, 1, NULL, NULL);
+	return wasm_interp_to_native_trampoline;
 }
 
 guint8*
 mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gboolean aot)
 {
 	g_assert (!aot);
-	if (single_step)
-		return create_tramp_info (mono_sdb_single_step_trampoline, "sdb_single_step_trampoline", info);
-	else
-		return create_tramp_info (mono_wasm_breakpoint_hit, "sdb_breakpoint_trampoline", info);
+	const char *name;
+	gpointer code;
+	if (single_step) {
+		name = "sdb_single_step_trampoline";
+		code = mono_sdb_single_step_trampoline;
+	} else {
+		name = "sdb_breakpoint_trampoline";
+		code = mono_wasm_breakpoint_hit;
+	}
+
+	if (info)
+		*info = mono_tramp_info_create (name, code, 1, NULL, NULL);
+	return code;
 }

@@ -1,24 +1,5 @@
 #include "mini.h"
 
-static gpointer
-create_tramp_info (gpointer code, const char *name, MonoTrampInfo **info)
-{
-	if (info) {
-		MonoTrampInfo *tinfo = g_new0 (MonoTrampInfo, 1);
-		tinfo->code = code;
-		tinfo->code_size = 1;
-		tinfo->name = g_strdup (name);
-		tinfo->ji = NULL;
-		tinfo->unwind_ops = NULL;
-		tinfo->uw_info = NULL;
-		tinfo->uw_info_len = 0;
-		tinfo->owns_uw_info = FALSE;
-
-		*info = tinfo;
-	}
-	return code;
-}
-
 static void
 wasm_restore_context (void)
 {
@@ -71,30 +52,40 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 gpointer
 mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 {
-	return create_tramp_info (wasm_call_filter, "call_filter", info);
+	if (info)
+		*info = mono_tramp_info_create ("call_filter", wasm_call_filter, 1, NULL, NULL);
+	return wasm_call_filter;
 }
 
 gpointer
 mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 {
-	return create_tramp_info (wasm_restore_context, "restore_context", info);
+	if (info)
+		*info = mono_tramp_info_create ("restore_context", wasm_restore_context, 1, NULL, NULL);
+	return wasm_restore_context;
 }
 gpointer 
 mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 {
-	return create_tramp_info (wasm_throw_corlib_exception, "throw_corlib_exception", info);
+	if (info)
+		*info = mono_tramp_info_create ("throw_corlib_exception", wasm_throw_corlib_exception, 1, NULL, NULL);
+	return wasm_throw_corlib_exception;
 }
 
 gpointer
 mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 {
-	return create_tramp_info (wasm_rethrow_exception, "rethrow_exception", info);
+	if (info)
+		*info = mono_tramp_info_create ("rethrow_exception", wasm_rethrow_exception, 1, NULL, NULL);
+	return wasm_rethrow_exception;
 }
 
 gpointer
 mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 {
-	return create_tramp_info (wasm_throw_exception, "throw_exception", info);
+	if (info)
+		*info = mono_tramp_info_create ("throw_exception", wasm_throw_exception, 1, NULL, NULL);
+	return wasm_throw_exception;
 }
 
 void
