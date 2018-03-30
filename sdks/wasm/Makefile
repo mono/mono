@@ -1,6 +1,9 @@
 TOP=$(realpath $(CURDIR)/../..)
+-include $(TOP)/sdks/Make.config
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
+
+MAKEFLAGS += --no-builtin-rules
 
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
 D8=$(TOP)/sdks/wasm/v8/out.gn/x64.release/d8
