@@ -95,7 +95,6 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="DynamicMethod.cs" />
     <Compile Include="TypeForwarders.cs" />
   </ItemGroup>
   <!-- @ALL_SOURCES@ -->

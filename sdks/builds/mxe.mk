@@ -1,11 +1,12 @@
 
+MXE_SRC?=$(TOP)/sdks/builds/toolchains/mxe
 MXE_PREFIX?=$(TOP)/sdks/out/mxe
 
 $(TOP)/sdks/builds/toolchains/mxe:
 	git clone -b xamarin https://github.com/xamarin/mxe.git $@
+	cd $@ && git checkout $(MXE_HASH)
 
-.stamp-mxe-toolchain: | $(TOP)/sdks/builds/toolchains/mxe
-	cd $(TOP)/sdks/builds/toolchains/mxe && git checkout $(MXE_HASH)
+.stamp-mxe-toolchain: | $(MXE_SRC)
 	touch $@
 
 .stamp-mxe-configure:
@@ -13,7 +14,7 @@ $(TOP)/sdks/builds/toolchains/mxe:
 
 .PHONY: build-custom-mxe
 build-custom-mxe:
-	$(MAKE) -C $(TOP)/sdks/builds/toolchains/mxe gcc cmake zlib pthreads dlfcn-win32 mman-win32 \
+	$(MAKE) -C $(MXE_SRC) gcc cmake zlib pthreads dlfcn-win32 mman-win32 \
 		MXE_TARGETS="i686-w64-mingw32.static x86_64-w64-mingw32.static" PREFIX="$(MXE_PREFIX)"
 			OS_SHORT_NAME="disable-native-plugins" PATH="$$PATH:$(dir $(shell brew list gettext | grep autopoint$))"
 

@@ -150,6 +150,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Memory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MemoryDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlyMemory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\BindingFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\AccessedThroughPropertyAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\AsyncStateMachineAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CallerFilePathAttribute.cs" />
@@ -564,7 +565,6 @@
     <Compile Include="..\referencesource\mscorlib\system\reflection\assemblynameflags.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\assemblynameproxy.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\binder.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\bindingflags.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\callingconventions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\CustomAttributeExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\defaultmemberattribute.cs" />
@@ -1120,6 +1120,7 @@
     <Compile Include="System.Reflection.Emit\DerivedTypes.cs" />
     <Compile Include="System.Reflection.Emit\DynamicILInfo.cs" />
     <Compile Include="System.Reflection.Emit\DynamicMethod.cs" />
+    <Compile Include="System.Reflection.Emit\DynamicMethod.notsupported.cs" />
     <Compile Include="System.Reflection.Emit\EnumBuilder.cs" />
     <Compile Include="System.Reflection.Emit\EnumBuilder.pns.cs" />
     <Compile Include="System.Reflection.Emit\EventBuilder.cs" />

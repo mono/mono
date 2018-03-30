@@ -1,8 +1,11 @@
 
+LLVM_SRC?=$(TOP)/sdks/builds/toolchains/llvm
+
 $(TOP)/sdks/builds/toolchains/llvm:
 	git clone -b master https://github.com/mono/llvm.git $@
+	cd $@ && git checkout $(LLVM_HASH)
 
-$(TOP)/sdks/builds/toolchains/llvm/configure: | $(TOP)/sdks/builds/toolchains/llvm
+$(LLVM_SRC)/configure: | $(LLVM_SRC)
 
 ##
 # Parameters
@@ -22,7 +25,7 @@ _llvm_$(1)_CONFIGURE_ENVIRONMENT= \
 	LDFLAGS="$$(_llvm_$(1)_LDFLAGS)"
 
 _llvm_$(1)_CONFIGURE_FLAGS= \
-	--host=$(2)-apple-darwin10 \
+	--host=$(2)-$$(if $$(filter $$(UNAME),Darwin),apple-darwin10,$$(if $$(filter $$(UNAME),Linux),linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))) \
 	--cache-file=$$(TOP)/sdks/builds/llvm-$(1).config.cache \
 	--prefix=$$(TOP)/sdks/out/llvm-$(1) \
 	--enable-assertions=no \
@@ -30,10 +33,10 @@ _llvm_$(1)_CONFIGURE_FLAGS= \
 	--enable-targets="arm,aarch64,x86" \
 	--enable-libcpp
 
-.stamp-llvm-$(1)-toolchain: | $$(TOP)/sdks/builds/toolchains/llvm
+.stamp-llvm-$(1)-toolchain: | $$(LLVM_SRC)
 	touch $$@
 
-.stamp-llvm-$(1)-configure: $$(TOP)/sdks/builds/toolchains/llvm/configure
+.stamp-llvm-$(1)-configure: $$(LLVM_SRC)/configure
 	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
 	cd $$(TOP)/sdks/builds/llvm-$(1) && $$< $$(_llvm_$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm_$(1)_CONFIGURE_FLAGS)
 	touch $$@
@@ -62,17 +65,17 @@ $(eval $(call LLVMTemplate,llvm64,x86_64))
 #  llvm_$(1)_CONFIGURE_ENVIRONMENT
 define LLVMMxeTemplate
 
-_llvm_$(1)_PATH=$$(TOP)/sdks/out/mxe/bin
+_llvm_$(1)_PATH=$$(MXE_PREFIX)/bin
 
-_llvm_$(1)_AR=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ar
-_llvm_$(1)_AS=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-as
-_llvm_$(1)_CC=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-gcc
-_llvm_$(1)_CXX=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-g++
-_llvm_$(1)_DLLTOOL=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-dlltool
-_llvm_$(1)_LD=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ld
-_llvm_$(1)_OBJDUMP=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-objdump
-_llvm_$(1)_RANLIB=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ranlib
-_llvm_$(1)_STRIP=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-strip
+_llvm_$(1)_AR=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ar
+_llvm_$(1)_AS=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-as
+_llvm_$(1)_CC=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-gcc
+_llvm_$(1)_CXX=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-g++
+_llvm_$(1)_DLLTOOL=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-dlltool
+_llvm_$(1)_LD=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ld
+_llvm_$(1)_OBJDUMP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-objdump
+_llvm_$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ranlib
+_llvm_$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-strip
 
 _llvm_$(1)_CXXFLAGS=
 
@@ -92,7 +95,7 @@ _llvm_$(1)_CONFIGURE_ENVIRONMENT = \
 	LDFLAGS="$$(_llvm_$(1)_LDFLAGS)"
 
 _llvm_$(1)_CONFIGURE_FLAGS = \
-	--host=$(2)-w64-mingw32.static \
+	--host=$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static) \
 	--cache-file=$$(TOP)/sdks/builds/llvm-$(1).config.cache \
 	--prefix=$$(TOP)/sdks/out/llvm-$(1) \
 	--enable-assertions=no \
@@ -101,11 +104,10 @@ _llvm_$(1)_CONFIGURE_FLAGS = \
 	--disable-pthreads \
 	--disable-zlib
 
-.stamp-llvm-$(1)-toolchain: | $$(TOP)/sdks/builds/toolchains/llvm
-	cd $$(TOP)/sdks/builds/toolchains/llvm && git checkout $(LLVM_HASH)
+.stamp-llvm-$(1)-toolchain: | $$(LLVM_SRC)
 	touch $$@
 
-.stamp-llvm-$(1)-configure: $$(TOP)/sdks/builds/toolchains/llvm/configure | package-mxe
+.stamp-llvm-$(1)-configure: $$(LLVM_SRC)/configure | $(if $(IGNORE_PACKAGE_MXE),,package-mxe)
 	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
 	cd $$(TOP)/sdks/builds/llvm-$(1) && PATH="$$$$PATH:$$(_llvm_$(1)_PATH)" $$< $$(_llvm_$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm_$(1)_CONFIGURE_FLAGS)
 	touch $$@
@@ -122,5 +124,7 @@ TARGETS += llvm-$(1)
 
 endef
 
+ifneq ($(MXE_PREFIX),)
 $(eval $(call LLVMMxeTemplate,llvmwin32,i686))
 $(eval $(call LLVMMxeTemplate,llvmwin64,x86_64))
+endif

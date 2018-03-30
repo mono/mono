@@ -158,17 +158,17 @@ $(eval $(call AndroidHostTemplate,host-Linux))
 #  $(2): arch
 define AndroidHostMxeTemplate
 
-_android-$(1)_PATH=$$(TOP)/sdks/out/mxe/bin
+_android-$(1)_PATH=$$(MXE_PREFIX)/bin
 
-_android-$(1)_AR=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ar
-_android-$(1)_AS=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-as
-_android-$(1)_CC=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-gcc
-_android-$(1)_CXX=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-g++
-_android-$(1)_DLLTOOL=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-dlltool
-_android-$(1)_LD=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ld
-_android-$(1)_OBJDUMP=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-objdump
-_android-$(1)_RANLIB=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-ranlib
-_android-$(1)_STRIP=$$(TOP)/sdks/out/mxe/bin/$(2)-w64-mingw32.static-strip
+_android-$(1)_AR=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ar
+_android-$(1)_AS=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-as
+_android-$(1)_CC=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-gcc
+_android-$(1)_CXX=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-g++
+_android-$(1)_DLLTOOL=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-dlltool
+_android-$(1)_LD=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ld
+_android-$(1)_OBJDUMP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-objdump
+_android-$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ranlib
+_android-$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-strip
 
 _android-$(1)_AC_VARS= \
 	ac_cv_header_zlib_h=no \
@@ -181,8 +181,8 @@ _android-$(1)_CXXFLAGS= \
 	-DXAMARIN_PRODUCT_VERSION=0
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	--host=$(2)-w64-mingw32.static \
-	--target=$(2)-w64-mingw32.static \
+	--host=$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static) \
+	--target=$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static) \
 	--cache-file=$$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION).config.cache \
 	--prefix=$$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
@@ -195,11 +195,13 @@ _android-$(1)_CONFIGURE_FLAGS= \
 .stamp-android-$(1)-toolchain:
 	touch $$@
 
-.stamp-android-$(1)-$$(CONFIGURATION)-configure: | package-mxe
+.stamp-android-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PACKAGE_MXE),,package-mxe)
 
 $$(eval $$(call RuntimeTemplate,android-$(1)))
 
 endef
 
+ifneq ($(MXE_PREFIX),)
 $(eval $(call AndroidHostMxeTemplate,host-mxe-Win32,i686))
 $(eval $(call AndroidHostMxeTemplate,host-mxe-Win64,x86_64))
+endif
