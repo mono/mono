@@ -1687,6 +1687,12 @@ TEST_TAILCALL_CS_SRC=\
 #tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.cs
 #tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.cs
 
+# These are dubious and method-to-ir has specific code to not pass them.
+# In particular returning an r8 as an r4 or vice versa often
+# requires a conversion upon return.
+#	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.il
+#	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.il
+
 TEST_TAILCALL_IL_SRC=\
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.il \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyTransparentLibraryWithPrefix.il \
@@ -1715,9 +1721,7 @@ TEST_TAILCALL_IL_SRC=\
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_i4_u.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_i_u2.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_obj.il \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.il \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4_inl.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_v.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_array.il \

@@ -7088,9 +7088,18 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 	g_assert (caller_signature);
 	g_assert (callee_signature);
 
-	// Require an exact match on return type due to various conversions in emit_move_return_value that would be skipped,
-	// and verify probably requires it anyway.
-	if (IS_NOT_SUPPORTED_TAILCALL (mini_get_underlying_type (caller_signature->ret)->type != mini_get_underlying_type (callee_signature->ret)->type))
+	// Beware skipping code in emit_move_return_value that converts between R4 and R8 and others.
+	// Caller and callee should return the same type, so caller's caller matches callee
+	// as well as it matches caller.
+	// see tests/tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.il
+	// and tests/tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.il
+	MonoTypeEnum const caller_return_type = mini_get_underlying_type (caller_signature->ret)->type;
+	MonoTypeEnum const callee_return_type = mini_get_underlying_type (callee_signature->ret)->type;
+
+#define is_float(x) (((x) == MONO_TYPE_R4) || ((x) == MONO_TYPE_R8))
+
+	if (!llvm_only && IS_NOT_SUPPORTED_TAILCALL (caller_return_type != callee_return_type
+		&& (is_float (caller_return_type) || is_float (callee_return_type))))
 		return FALSE;
 
 	if (!llvm_only && IS_NOT_SUPPORTED_TAILCALL (!mono_arch_tail_call_supported (cfg, caller_signature, callee_signature)))
