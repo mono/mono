@@ -23,7 +23,9 @@ ${TESTCMD} --label=Mono.Security --timeout=5m make -w -C mcs/class/Mono.Security
 ${TESTCMD} --label=System.Security --timeout=5m make -w -C mcs/class/System.Security run-test
 if [[ ${CI_TAGS} == *'win-'* ]]
 then ${TESTCMD} --label=System.Drawing --skip;
-else ${TESTCMD} --label=System.Drawing --timeout=5m make -w -C mcs/class/System.Drawing run-test
+else
+    ${TESTCMD} --label=System.Drawing --timeout=5m make -w -C mcs/class/System.Drawing run-test
+    ${TESTCMD} --label=System.Drawing-xunit --timeout=5m make -w -C mcs/class/System.Drawing run-xunit-test
 fi
 if [[ ${CI_TAGS} == *'osx-'* ]] || [[ ${CI_TAGS} == *'win-'* ]]
 then ${TESTCMD} --label=Windows.Forms --skip;
