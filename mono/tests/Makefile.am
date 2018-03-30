@@ -942,7 +942,6 @@ PLATFORM_DISABLED_TESTS += \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe
 endif
 
