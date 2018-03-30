@@ -7046,6 +7046,12 @@ is_not_supported_tailcall_helper (gboolean value, const char *svalue, MonoMethod
 #define IS_NOT_SUPPORTED_TAILCALL(x) (is_not_supported_tailcall_helper((x), #x, method, cmethod))
 
 static gboolean
+mono_type_is_float (MonoType *type)
+{
+	return !type->byref && (type->type == MONO_TYPE_R8 || type->type == MONO_TYPE_R4);
+}
+
+static gboolean
 is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmethod, MonoMethodSignature *fsig, int call_opcode, gboolean virtual_, MonoInst *vtable_arg)
 {
 	int i;
@@ -7093,13 +7099,15 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 	// as well as it matches caller.
 	// see tests/tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.il
 	// and tests/tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.il
+	// Beware failure to widen an integer.
 	MonoTypeEnum const caller_return_type = mini_get_underlying_type (caller_signature->ret)->type;
 	MonoTypeEnum const callee_return_type = mini_get_underlying_type (callee_signature->ret)->type;
-
-#define is_float(x) (((x) == MONO_TYPE_R4) || ((x) == MONO_TYPE_R8))
+	gint32 align;
 
 	if (!llvm_only && IS_NOT_SUPPORTED_TAILCALL (caller_return_type != callee_return_type
-		&& (is_float (caller_return_type) || is_float (callee_return_type))))
+		&& (mono_type_is_float (caller_signature->ret)
+		 || mono_type_is_float (callee_signature->ret)
+                 || (mono_type_size (caller_signature->ret, &align) > mono_type_size (callee_signature->ret, &align)))))
 		return FALSE;
 
 	if (!llvm_only && IS_NOT_SUPPORTED_TAILCALL (!mono_arch_tail_call_supported (cfg, caller_signature, callee_signature)))
