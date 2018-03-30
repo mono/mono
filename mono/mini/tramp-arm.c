@@ -948,6 +948,72 @@ mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
 #endif /* DISABLE_INTERPRETER */
 }
 
+gpointer
+mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info)
+{
+#ifndef DISABLE_INTERPRETER
+	guint8 *start = NULL, *code;
+	MonoJumpInfo *ji = NULL;
+	GSList *unwind_ops = NULL;
+	int buf_len, i;
+	const int fp_reg = ARMREG_R7;
+	int framesize;
+
+	buf_len = 512;
+	start = code = (guint8 *) mono_global_codeman_reserve (buf_len);
+
+	/* iOS ABI */
+	ARM_PUSH (code, (1 << fp_reg) | (1 << ARMREG_LR));
+	ARM_MOV_REG_REG (code, fp_reg, ARMREG_SP);
+
+	/* allocate the CallContext on the stack */
+	framesize = ALIGN_TO (sizeof (CallContext), MONO_ARCH_FRAME_ALIGNMENT);
+	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, framesize);
+
+	/* save all general purpose registers into the CallContext */
+	for (i = 0; i < PARAM_REGS; i++)
+		ARM_STR_IMM (code, i, ARMREG_SP, MONO_STRUCT_OFFSET (CallContext, gregs) + i * sizeof (mgreg_t));
+
+        /* save all floating registers into the CallContext  */
+	for (i = 0; i < FP_PARAM_REGS; i++)
+		ARM_FSTD (code, i * 2, ARMREG_SP, MONO_STRUCT_OFFSET (CallContext, fregs) + i * sizeof (double));
+
+	/* set the stack pointer to the value at call site */
+	ARM_ADD_REG_IMM8 (code, ARMREG_R0, fp_reg, 2 * sizeof (mgreg_t));
+	ARM_STR_IMM (code, ARMREG_R0, ARMREG_SP, MONO_STRUCT_OFFSET (CallContext, stack));
+
+	/* call interp_entry with the ccontext and rmethod as arguments */
+	ARM_MOV_REG_REG (code, ARMREG_R0, ARMREG_SP);
+	ARM_LDR_IMM (code, ARMREG_R1, ARMREG_IP, MONO_STRUCT_OFFSET (MonoFtnDesc, arg));
+	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_IP, MONO_STRUCT_OFFSET (MonoFtnDesc, addr));
+	ARM_BLX_REG (code, ARMREG_IP);
+
+	/* load the return values from the context */
+	for (i = 0; i < PARAM_REGS; i++)
+		ARM_LDR_IMM (code, i, ARMREG_SP, MONO_STRUCT_OFFSET (CallContext, gregs) + i * sizeof (mgreg_t));
+
+	for (i = 0; i < FP_PARAM_REGS; i++)
+		ARM_FLDD (code, i * 2, ARMREG_SP, MONO_STRUCT_OFFSET (CallContext, fregs) + i * sizeof (double));
+
+	/* reset stack and return */
+	ARM_MOV_REG_REG (code, ARMREG_SP, fp_reg);
+	ARM_POP (code, (1 << fp_reg) | (1 << ARMREG_PC));
+
+	g_assert (code - start < buf_len);
+
+	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
+
+	if (info)
+		*info = mono_tramp_info_create ("native_to_interp_trampoline", start, code - start, ji, unwind_ops);
+
+	return start;
+#else
+	g_assert_not_reached ();
+	return NULL;
+#endif /* DISABLE_INTERPRETER */
+}
+
 #else
 
 guchar*
@@ -1001,6 +1067,13 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 
 gpointer
 mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info)
 {
 	g_assert_not_reached ();
 	return NULL;
