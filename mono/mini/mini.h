@@ -2273,6 +2273,7 @@ guint8* mono_arch_get_call_target               (guint8 *code);
 guint32 mono_arch_get_plt_info_offset           (guint8 *plt_entry, mgreg_t *regs, guint8 *code);
 GSList *mono_arch_get_trampolines               (gboolean aot);
 gpointer mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info);
+gpointer mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info);
 
 #ifdef MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
 void mono_arch_set_native_call_context          (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig);

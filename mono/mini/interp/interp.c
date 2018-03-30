@@ -901,6 +901,10 @@ ves_array_element_address (InterpFrame *frame, MonoClass *required_type, MonoArr
 
 static MonoPIFunc mono_interp_to_native_trampoline = NULL;
 
+#ifdef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
+static MonoFuncV mono_native_to_interp_trampoline = NULL;
+#endif
+
 #ifndef MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
 static InterpMethodArguments* build_args_from_sig (MonoMethodSignature *sig, InterpFrame *frame)
 {
@@ -2190,6 +2194,14 @@ interp_entry_general (gpointer this_arg, gpointer res, gpointer *args, gpointer 
 	interp_entry (&data);
 }
 
+#ifdef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
+static void
+interp_entry_from_trampoline (CallContext *ccontext, InterpMethod *rmethod)
+{
+
+}
+#endif
+
 /*
  * interp_create_method_pointer:
  *
@@ -2199,9 +2211,7 @@ interp_entry_general (gpointer this_arg, gpointer res, gpointer *args, gpointer 
 static gpointer
 interp_create_method_pointer (MonoMethod *method, MonoError *error)
 {
-	gpointer addr;
-	MonoMethodSignature *sig = mono_method_signature (method);
-	MonoMethod *wrapper;
+	gpointer addr, entry_func, entry_wrapper;
 	InterpMethod *rmethod = mono_interp_get_imethod (mono_domain_get (), method, error);
 
 	/* HACK: method_ptr of delegate should point to a runtime method*/
@@ -2211,14 +2221,16 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 
 	if (rmethod->jit_entry)
 		return rmethod->jit_entry;
-	wrapper = mini_get_interp_in_wrapper (sig);
 
-	gpointer jit_wrapper = mono_jit_compile_method_jit_only (wrapper, error);
+#ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
+	MonoMethodSignature *sig = mono_method_signature (method);
+	MonoMethod *wrapper = mini_get_interp_in_wrapper (sig);
+
+	entry_wrapper = mono_jit_compile_method_jit_only (wrapper, error);
 	mono_error_assertf_ok (error, "couldn't compile wrapper \"%s\" for \"%s\"",
 			mono_method_get_name_full (wrapper, TRUE, TRUE, MONO_TYPE_NAME_FORMAT_IL),
 			mono_method_get_name_full (method,  TRUE, TRUE, MONO_TYPE_NAME_FORMAT_IL));
 
-	gpointer entry_func;
 	if (sig->param_count > MAX_INTERP_ENTRY_ARGS) {
 		entry_func = interp_entry_general;
 	} else if (sig->hasthis) {
@@ -2233,7 +2245,19 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 			entry_func = entry_funcs_static_ret [sig->param_count];
 	}
 	g_assert (entry_func);
-
+#else
+	if (!mono_native_to_interp_trampoline) {
+		if (mono_aot_only) {
+			mono_native_to_interp_trampoline = mono_aot_get_trampoline ("native_to_interp_trampoline");
+		} else {
+			MonoTrampInfo *info;
+			mono_native_to_interp_trampoline = mono_arch_get_native_to_interp_trampoline (&info);
+			mono_tramp_info_register (info, NULL);
+		}
+	}
+	entry_wrapper = mono_native_to_interp_trampoline;
+	entry_func = interp_entry_from_trampoline;
+#endif
 	/* This is the argument passed to the interp_in wrapper by the static rgctx trampoline */
 	MonoFtnDesc *ftndesc = g_new0 (MonoFtnDesc, 1);
 	ftndesc->addr = entry_func;
@@ -2245,7 +2269,7 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 	 * rgctx register using a trampoline.
 	 */
 
-	addr = mono_create_ftnptr_arg_trampoline (ftndesc, jit_wrapper);
+	addr = mono_create_ftnptr_arg_trampoline (ftndesc, entry_wrapper);
 
 	mono_memory_barrier ();
 	rmethod->jit_entry = addr;
