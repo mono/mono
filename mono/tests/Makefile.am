@@ -56,6 +56,7 @@ TAILCALL_DISABLED_TESTS_RUN = \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_switch.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_virt.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateTail.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/smallFrame.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/tailcall_AV.exe \
 	tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.exe \
@@ -127,7 +128,6 @@ TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.exe \
 	tailcall/coreclr/JIT/opt/ETW/TailCallCases.exe \
 	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallCandidates.exe \
 	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.exe \
