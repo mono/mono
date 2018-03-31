@@ -15,7 +15,7 @@ $(TOP)/sdks/builds/toolchains/mxe:
 .PHONY: build-custom-mxe
 build-custom-mxe:
 	$(MAKE) -C $(MXE_SRC) gcc cmake zlib pthreads dlfcn-win32 mman-win32 \
-		MXE_TARGETS="i686-w64-mingw32.static x86_64-w64-mingw32.static" PREFIX="$(MXE_PREFIX)"
+		MXE_TARGETS="i686-w64-mingw32.static x86_64-w64-mingw32.static" PREFIX="$(MXE_PREFIX)" \
 			OS_SHORT_NAME="disable-native-plugins" PATH="$$PATH:$(dir $(shell brew list gettext | grep autopoint$))"
 
 .PHONY: setup-custom-mxe
