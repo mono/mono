@@ -54,6 +54,6 @@ void mono_hazard_pointer_restore_for_signal_handler (int small_id);
 typedef void (*MonoHazardFreeQueueSizeCallback)(size_t size);
 void mono_hazard_pointer_install_free_queue_size_callback (MonoHazardFreeQueueSizeCallback cb);
 
-void mono_thread_smr_init (void);
+MONO_PROFILER_API void mono_thread_smr_init (void);
 void mono_thread_smr_cleanup (void);
 #endif /*__MONO_HAZARD_POINTER_H__*/

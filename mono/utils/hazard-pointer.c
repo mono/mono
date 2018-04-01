@@ -399,6 +399,13 @@ mono_thread_hazardous_try_free_some (void)
 void
 mono_thread_smr_init (void)
 {
+	static gboolean inited;
+
+	if (inited)
+		return;
+
+	inited = TRUE;
+
 	int i;
 
 	mono_os_mutex_init_recursive(&small_id_mutex);
