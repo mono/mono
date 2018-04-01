@@ -29,6 +29,7 @@ MONO_BEGIN_DECLS
  *   that the catch portion of the clause is being executed in the case of
  *   try-filter-catch clauses.
  * - Removed the iomap_report event.
+ * - Removed the old gc_event event and renamed gc_event2 to gc_event.
  */
 #define MONO_PROFILER_API_VERSION 3
 
