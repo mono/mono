@@ -2585,6 +2585,7 @@ mono_jit_set_aot_mode (MonoAotMode mode)
 		mono_aot_only = TRUE;
 		mono_use_interpreter = TRUE;
 		mono_llvm_only = TRUE;
+		mono_interpreter_only = TRUE;
 	}
 }
 
