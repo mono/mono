@@ -28,6 +28,7 @@ MONO_BEGIN_DECLS
  * - The type argument to exception_clause events will now correctly indicate
  *   that the catch portion of the clause is being executed in the case of
  *   try-filter-catch clauses.
+ * - Removed the iomap_report event.
  */
 #define MONO_PROFILER_API_VERSION 3
 
