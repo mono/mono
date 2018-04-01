@@ -4105,6 +4105,14 @@ mono_profiler_init_log (const char *desc)
 
 	proflog_parse_args (&log_config, desc [3] == ':' ? desc + 4 : "");
 
+	/*
+	 * We need hazard pointers to be available very early on. The runtime
+	 * doesn't normally initialize them until the GC is initialized. This
+	 * matters, for example, if we get code buffer events during very early
+	 * trampoline creation.
+	 */
+	mono_thread_smr_init ();
+
 	MonoProfilerHandle handle = log_profiler.handle = mono_profiler_create (&log_profiler);
 
 	if (log_config.enter_leave)
