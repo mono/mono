@@ -44,6 +44,7 @@ namespace MonoTests.System.Windows.Forms
 			ni.BalloonTipIcon = ToolTipIcon.None;
 			ni.Visible = true;
 			ni.ShowBalloonTip (1);
+			ni.Dispose ();
 		}
 	}
 }
