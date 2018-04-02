@@ -699,37 +699,17 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/NetworkInformation/nodetype.cs
 ../referencesource/System/net/System/Net/NetworkInformation/pingexception.cs
 
-../referencesource/System/net/System/Net/mail/Base64Stream.cs
-../referencesource/System/net/System/Net/mail/Base64WriteStateInfo.cs
-../referencesource/System/net/System/Net/mail/BaseWriter.cs
-../referencesource/System/net/System/Net/mail/BufferBuilder.cs
-../referencesource/System/net/System/Net/mail/ClosableStream.cs
-../referencesource/System/net/System/Net/mail/ContentDisposition.cs
-../referencesource/System/net/System/Net/mail/ContentType.cs
-../referencesource/System/net/System/Net/mail/DelegatedStream.cs
-../referencesource/System/net/System/Net/mail/DispositionTypeNames.cs
-../referencesource/System/net/System/Net/mail/EightBitStream.cs
-../referencesource/System/net/System/Net/mail/EncodedStreamFactory.cs
-../referencesource/System/net/System/Net/mail/HeaderCollection.cs
-../referencesource/System/net/System/Net/mail/IEncodableStream.cs
-../referencesource/System/net/System/Net/mail/MailBnfHelper.cs
-../referencesource/System/net/System/Net/mail/MailHeaderInfo.cs
-../referencesource/System/net/System/Net/mail/MimeBasePart.cs
-../referencesource/System/net/System/Net/mail/MimeEmbeddedMessagePart.cs
-../referencesource/System/net/System/Net/mail/MimeMultiPart.cs
-../referencesource/System/net/System/Net/mail/MimeMultiPartType.cs
-../referencesource/System/net/System/Net/mail/MimePart.cs
-../referencesource/System/net/System/Net/mail/MimeWriter.cs
-../referencesource/System/net/System/Net/mail/MultiAsyncResult.cs
-../referencesource/System/net/System/Net/mail/QEncodedStream.cs
-../referencesource/System/net/System/Net/mail/QuotedPrintableStream.cs
-../referencesource/System/net/System/Net/mail/SmtpDateTime.cs
-../referencesource/System/net/System/Net/mail/TrackingStringDictionary.cs
-../referencesource/System/net/System/Net/mail/TrackingValidationObjectDictionary.cs
-../referencesource/System/net/System/Net/mail/TransferEncoding.cs
-../referencesource/System/net/System/Net/mail/WriteStateInfoBase.cs
-../referencesource/System/net/System/Net/mail/mediatypenames.cs
+../../../external/corefx/src/System.Net.Mail/src/System/Net/Mime/*.cs
+../../../external/corefx/src/System.Net.Mail/src/System/Net/Base64Stream.cs
+../../../external/corefx/src/System.Net.Mail/src/System/Net/BufferBuilder.cs
+../../../external/corefx/src/System.Net.Mail/src/System/Net/CloseableStream.cs
+../../../external/corefx/src/System.Net.Mail/src/System/Net/DelegatedStream.cs
+../../../external/corefx/src/Common/src/System/Net/Mail/MailBnfHelper.cs
+../../../external/corefx/src/System.Net.Mail/src/System/Net/Mail/MailHeaderInfo.cs
+../../../external/corefx/src/System.Net.Mail/src/System/Net/Mail/MailHeaderID.cs
 
+../../../external/corefx/src/System.Net.Mail/src/System/Net/TrackingStringDictionary.cs
+../../../external/corefx/src/System.Net.Mail/src/System/Net/TrackingValidationObjectDictionary.cs
 ../referencesource/System/sys/system/Diagnostics/CodeAnalysis/ExcludeFromCodeCoverageAttribute.cs
 
 ../referencesource/System/sys/system/IO/ports/InternalResources.cs
