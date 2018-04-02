@@ -1087,6 +1087,28 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.IsTrue (cd.Name == "IS");
 		}
 
+		[Test]
+		public void GetContractWithInterface()
+		{
+			var contractType = typeof(IDisposableService);
+			var serviceType = typeof(DisposableService);
+			var cd = ContractDescription.GetContract (contractType, serviceType);
+			
+			Assert.IsNotNull(cd);
+			Assert.IsTrue (cd.Name == "IDisposableService");
+		}
+
+		[ServiceContract]
+		private interface IDisposableService : IDisposable 
+		{
+		}
+
+		private class DisposableService : IDisposableService 
+		{
+			public void Dispose()
+			{
+			}
+		}
 	}
 }
 #endif
