@@ -26,40 +26,40 @@ typedef struct _MonoStackData {
 	union {
 		int as_int;
 		struct {
-			gboolean has_stack_pointer : 1;
+			gboolean has_stackpointer : 1;
 			gboolean has_function_name : 1;
 		};
 	};
 	int reserved; // padding for alignment on 64bit
-	gpointer stack_pointer;
+	gpointer stackpointer;
 	const char *function_name;
 } MonoStackData;
 
 static inline void
-mono_stack_data_init (MonoStackData *stack_data, gpointer stack_pointer, const char *function_name)
+mono_stackdata_init (MonoStackData *stackdata, gpointer stackpointer, const char *function_name)
 {
-	memset (stack_data, 0, sizeof (*stack_data));
-	stack_data->stack_pointer = stack_pointer;
-	stack_data->function_name = function_name;
-	stack_data->has_stack_pointer = stack_pointer != NULL;
-	stack_data->has_function_name = function_name != NULL;
+	memset (stackdata, 0, sizeof (*stackdata));
+	stackdata->stackpointer = stackpointer;
+	stackdata->function_name = function_name;
+	stackdata->has_stackpointer = stackpointer != NULL;
+	stackdata->has_function_name = function_name != NULL;
 }
 
 // FIXME an ifdef to change __func__ to empty or further minimization.
-#define MONO_STACK_DATA(x) MonoStackData x; mono_stack_data_init (&x, &x, __func__)
+#define MONO_STACKDATA(x) MonoStackData x; mono_stackdata_init (&x, &x, __func__)
 
 static inline const char*
-mono_stack_data_get_function_name (const MonoStackData *stack_data, const char *fallback)
+mono_stackdata_get_function_name (const MonoStackData *stackdata, const char *fallback)
 {
 	// While NULL is a typical fallback, "" turns out often useful also.
 	// Let the caller decide.
-	return stack_data->has_function_name ? stack_data->function_name : fallback;
+	return stackdata->has_function_name ? stackdata->function_name : fallback;
 }
 
 static inline gpointer
-mono_stack_data_get_stack_pointer (const MonoStackData *stack_data)
+mono_stackdata_get_stackpointer (const MonoStackData *stackdata)
 {
-	return stack_data->has_stack_pointer ? stack_data->stack_pointer : NULL;
+	return stackdata->has_stackpointer ? stackdata->stackpointer : NULL;
 }
 
 MONO_API gpointer
@@ -125,7 +125,7 @@ http://www.mono-project.com/docs/advanced/runtime/docs/coop-suspend/#gc-unsafe-m
 */
 #define MONO_ENTER_GC_UNSAFE	\
 	do {	\
-		MONO_STACK_DATA (__gc_unsafe_dummy); \
+		MONO_STACKDATA (__gc_unsafe_dummy); \
 		gpointer __gc_unsafe_cookie = mono_threads_enter_gc_unsafe_region_internal (&__gc_unsafe_dummy)
 
 #define MONO_EXIT_GC_UNSAFE	\
@@ -134,7 +134,7 @@ http://www.mono-project.com/docs/advanced/runtime/docs/coop-suspend/#gc-unsafe-m
 
 #define MONO_ENTER_GC_UNSAFE_UNBALANCED	\
 	do {	\
-		MONO_STACK_DATA (__gc_unsafe_unbalanced_dummy); \
+		MONO_STACKDATA (__gc_unsafe_unbalanced_dummy); \
 		gpointer __gc_unsafe_unbalanced_cookie = mono_threads_enter_gc_unsafe_region_unbalanced_internal (&__gc_unsafe_unbalanced_dummy)
 
 #define MONO_EXIT_GC_UNSAFE_UNBALANCED	\
@@ -143,7 +143,7 @@ http://www.mono-project.com/docs/advanced/runtime/docs/coop-suspend/#gc-unsafe-m
 
 #define MONO_ENTER_GC_SAFE	\
 	do {	\
-		MONO_STACK_DATA (__gc_safe_dummy); \
+		MONO_STACKDATA (__gc_safe_dummy); \
 		gpointer __gc_safe_cookie = mono_threads_enter_gc_safe_region_internal (&__gc_safe_dummy)
 
 #define MONO_EXIT_GC_SAFE	\
@@ -152,7 +152,7 @@ http://www.mono-project.com/docs/advanced/runtime/docs/coop-suspend/#gc-unsafe-m
 
 #define MONO_ENTER_GC_SAFE_UNBALANCED	\
 	do {	\
-		MONO_STACK_DATA (__gc_safe_unbalanced_dummy); \
+		MONO_STACKDATA (__gc_safe_unbalanced_dummy); \
 		gpointer __gc_safe_unbalanced_cookie = mono_threads_enter_gc_safe_region_unbalanced_internal (&__gc_safe_unbalanced_dummy)
 
 #define MONO_EXIT_GC_SAFE_UNBALANCED	\

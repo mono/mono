@@ -58,7 +58,7 @@ mono_threads_enter_gc_safe_region_with_info (THREAD_INFO_TYPE *info, MonoStackDa
 
 #define MONO_ENTER_GC_SAFE_WITH_INFO(info)	\
 	do {	\
-		MONO_STACK_DATA (__gc_safe_dummy); \
+		MONO_STACKDATA (__gc_safe_dummy); \
 		gpointer __gc_safe_cookie = mono_threads_enter_gc_safe_region_with_info ((info), &__gc_safe_dummy)
 
 #define MONO_EXIT_GC_SAFE_WITH_INFO	MONO_EXIT_GC_SAFE
@@ -71,7 +71,7 @@ mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *, MonoStackData
 
 #define MONO_ENTER_GC_UNSAFE_WITH_INFO(info)	\
 	do {	\
-		MONO_STACK_DATA (__gc_unsafe_dummy); \
+		MONO_STACKDATA (__gc_unsafe_dummy); \
 		gpointer __gc_unsafe_cookie = mono_threads_enter_gc_unsafe_region_with_info ((info), &__gc_unsafe_dummy)
 
 #define MONO_EXIT_GC_UNSAFE_WITH_INFO	MONO_EXIT_GC_UNSAFE

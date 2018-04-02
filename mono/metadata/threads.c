@@ -5568,10 +5568,10 @@ mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoSta
 gpointer
 mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
 {
-	MonoStackData *stackdata = (MonoStackData*)dummy;
-	stackdata->function_name = __func__;
+	MonoStackData stackdata;
+	mono_stackdata_init (&stackdata, dummy, NULL);
 	gpointer cookie = NULL;
-	MonoDomain *orig_domain = mono_threads_attach_coop_internal (domain, &cookie, stackdata);
+	MonoDomain *orig_domain = mono_threads_attach_coop_internal (domain, &cookie, &stackdata);
 	*dummy = cookie;
 	return orig_domain;
 }
@@ -5617,10 +5617,9 @@ mono_threads_detach_coop_internal (MonoDomain *orig, gpointer cookie, MonoStackD
 void
 mono_threads_detach_coop (gpointer orig, gpointer *dummy)
 {
-	gpointer cookie = *dummy;
-	MonoStackData *stackdata = (MonoStackData*)dummy;
-	stackdata->function_name = __func__;
-	mono_threads_detach_coop_internal ((MonoDomain*)orig, cookie, stackdata);
+	MonoStackData stackdata;
+	mono_stackdata_init (&stackdata, dummy, NULL);
+	mono_threads_detach_coop_internal ((MonoDomain*)orig, *dummy, &stackdata);
 }
 
 #if 0
