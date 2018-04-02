@@ -2562,7 +2562,7 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 {
 	memset (&mono_ee_features, 0, sizeof (mono_ee_features));
 
-	switch (mono_aot_mode) {
+	switch (mode) {
 	case MONO_AOT_MODE_LLVMONLY:
 		mono_aot_only = TRUE;
 		mono_llvm_only = TRUE;
@@ -2572,6 +2572,8 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 
 	case MONO_AOT_MODE_FULL:
 		mono_aot_only = TRUE;
+
+		mono_ee_features.use_aot_trampolines = TRUE;
 		break;
 
 	case MONO_AOT_MODE_HYBRID:

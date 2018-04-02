@@ -91,7 +91,7 @@ get_long_arg (InterpMethodArguments *margs, int idx)
 #include "wasm_m2n_invoke.g.h"
 
 void
-wasm_interp_to_native_trampoline (void *target_func, InterpMethodArguments *margs)
+mono_wasm_interp_to_native_trampoline (void *target_func, InterpMethodArguments *margs)
 {
 	char cookie [32];
 	int c_count;

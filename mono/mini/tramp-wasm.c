@@ -1,7 +1,6 @@
 #include "mini.h"
 
-void wasm_interp_to_native_trampoline (void *target_func, InterpMethodArguments *margs);
-void mono_sdb_single_step_trampoline (void);
+void mono_wasm_interp_to_native_trampoline (void *target_func, InterpMethodArguments *margs);
 void mono_sdb_single_step_trampoline (void);
 
 gpointer
@@ -52,8 +51,8 @@ gpointer
 mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
 {
 	if (info)
-		*info = mono_tramp_info_create ("interp_to_native_trampoline", wasm_interp_to_native_trampoline, 1, NULL, NULL);
-	return wasm_interp_to_native_trampoline;
+		*info = mono_tramp_info_create ("interp_to_native_trampoline", mono_wasm_interp_to_native_trampoline, 1, NULL, NULL);
+	return mono_wasm_interp_to_native_trampoline;
 }
 
 guint8*
