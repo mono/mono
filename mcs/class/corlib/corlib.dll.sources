@@ -978,6 +978,8 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/invalidtimezoneexception.cs
 ../referencesource/mscorlib/system/Lazy.cs
 ../referencesource/mscorlib/system/math.cs
+../../../external/corert//src/System.Private.CoreLib/shared/System/MathF.cs
+System/MathF.mono.cs
 ../referencesource/mscorlib/system/memberaccessexception.cs
 ../referencesource/mscorlib/system/methodaccessexception.cs
 ../referencesource/mscorlib/system/midpointrounding.cs

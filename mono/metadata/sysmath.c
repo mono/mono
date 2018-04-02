@@ -316,3 +316,142 @@ ves_icall_System_Math_SplitFractionDouble (gdouble *v)
 {
 	return modf (*v, v);
 }
+
+gfloat
+ves_icall_System_MathF_Acos (gfloat x)
+{
+	return acosf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Acosh (gfloat x)
+{
+	return acoshf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Asin (gfloat x)
+{
+	return asinf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Asinh  (gfloat x)
+{
+	return asinhf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Atan  (gfloat x)
+{
+	return atan (x);
+}
+
+gfloat
+ves_icall_System_MathF_Atan2 (gfloat x, gfloat y)
+{
+	return atan2f (x, y);
+}
+
+gfloat
+ves_icall_System_MathF_Atanh (gfloat x)
+{
+	return atanhf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Cbrt (gfloat x)
+{
+	return cbrtf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Ceiling (gfloat x)
+{
+	return ceilf(x);
+}
+
+gfloat
+ves_icall_System_MathF_Cos (gfloat x)
+{
+	return cosf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Cosh (gfloat x)
+{
+	return coshf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Exp (gfloat x)
+{
+	return expf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Floor (gfloat x)
+{
+	return floorf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Log (gfloat x)
+{
+	return logf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Log10 (gfloat x)
+{
+	return log10f (x);
+}
+
+gfloat
+ves_icall_System_MathF_Pow (gfloat x, gfloat y)
+{
+	return powf (x, y);
+}
+
+gfloat
+ves_icall_System_MathF_Sin (gfloat x)
+{
+	return sinf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Sinh (gfloat x)
+{
+	return sinh (x);
+}
+
+gfloat
+ves_icall_System_MathF_Sqrt (gfloat x)
+{
+	return sqrtf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Tan (gfloat x)
+{
+	return tanf (x);
+}
+
+gfloat
+ves_icall_System_MathF_Tanh (gfloat x)
+{
+	return tanh (x);
+}
+
+gfloat
+ves_icall_System_MathF_FMod (gfloat x, gfloat y)
+{
+	return fmodf (x, y);
+}
+
+gfloat
+ves_icall_System_MathF_ModF (gfloat x, gfloat *d)
+{
+	return modff (x, d);
+}
+
