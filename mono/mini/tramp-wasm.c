@@ -1,4 +1,5 @@
 #include "mini.h"
+#include "interp/interp.h"
 
 void mono_wasm_interp_to_native_trampoline (void *target_func, InterpMethodArguments *margs);
 void mono_sdb_single_step_trampoline (void);
