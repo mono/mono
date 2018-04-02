@@ -178,15 +178,17 @@ copy_stack_data (MonoThreadInfo *info, MonoStackData *stackdata_begin)
 
 	state = &info->thread_saved_state [SELF_SUSPEND_STATE_INDEX];
 
-	stackdata_size = (char*)stackdata_begin - (char*)stackdata_end;
+	stackdata_size = (char*)mono_stack_data_get_stack_pointer (stackdata_begin) - (char*)stackdata_end;
+
+	const char *function_name = mono_stack_data_get_function_name (stackdata_begin, "");
 
 	if (((gsize) stackdata_begin & (SIZEOF_VOID_P - 1)) != 0)
-		g_error ("%s stackdata_begin (%p) must be %d-byte aligned", stackdata_begin->function_name, stackdata_begin, SIZEOF_VOID_P);
+		g_error ("%s stackdata_begin (%p) must be %d-byte aligned", function_name, stackdata_begin, SIZEOF_VOID_P);
 	if (((gsize) stackdata_end & (SIZEOF_VOID_P - 1)) != 0)
-		g_error ("%s stackdata_end (%p) must be %d-byte aligned", stackdata_begin->function_name, stackdata_end, SIZEOF_VOID_P);
+		g_error ("%s stackdata_end (%p) must be %d-byte aligned", function_name, stackdata_end, SIZEOF_VOID_P);
 
 	if (stackdata_size <= 0)
-		g_error ("%s stackdata_size = %d, but must be > 0, stackdata_begin = %p, stackdata_end = %p", stackdata_begin->function_name, stackdata_size, stackdata_begin, stackdata_end);
+		g_error ("%s stackdata_size = %d, but must be > 0, stackdata_begin = %p, stackdata_end = %p", function_name, stackdata_size, stackdata_begin, stackdata_end);
 
 	g_byte_array_set_size (info->stackdata, stackdata_size);
 	state->gc_stackdata = info->stackdata->data;
@@ -229,11 +231,11 @@ mono_threads_enter_gc_safe_region_unbalanced_internal (MonoStackData *stackdata)
 }
 
 gpointer
-mono_threads_enter_gc_safe_region_unbalanced (gpointer *stackdata_untyped_uninitialized)
+mono_threads_enter_gc_safe_region_unbalanced (gpointer *stack_pointer)
 {
-	MonoStackData *stackdata = (MonoStackData*)stackdata_untyped_uninitialized;
-	stackdata->function_name = __func__;
-	return mono_threads_enter_gc_safe_region_unbalanced_internal (stackdata);
+	MonoStackData stack_data;
+	mono_stack_data_init (&stack_data, stack_pointer, NULL);
+	return mono_threads_enter_gc_safe_region_unbalanced_internal (&stack_data);
 }
 
 static gpointer
@@ -244,7 +246,9 @@ mono_threads_enter_gc_safe_region_unbalanced_with_info (MonoThreadInfo *info, Mo
 
 	++coop_do_blocking_count;
 
-	check_info (info, "enter", "safe", stackdata->function_name);
+	const char *function_name = mono_stack_data_get_function_name (stackdata, "");
+
+	check_info (info, "enter", "safe", function_name);
 
 	copy_stack_data (info, stackdata);
 
@@ -252,7 +256,7 @@ retry:
 	++coop_save_count;
 	mono_threads_get_runtime_callbacks ()->thread_state_init (&info->thread_saved_state [SELF_SUSPEND_STATE_INDEX]);
 
-	switch (mono_threads_transition_do_blocking (info, stackdata->function_name)) {
+	switch (mono_threads_transition_do_blocking (info, function_name)) {
 	case DoBlockingContinue:
 		break;
 	case DoBlockingPollAndRetry:
@@ -287,9 +291,11 @@ mono_threads_exit_gc_safe_region_unbalanced_internal (gpointer cookie, MonoStack
 
 	info = (MonoThreadInfo *)cookie;
 
-	check_info (info, "exit", "safe", stackdata->function_name);
+	const char *function_name = mono_stack_data_get_function_name (stackdata, "");
 
-	switch (mono_threads_transition_done_blocking (info, stackdata->function_name)) {
+	check_info (info, "exit", "safe", function_name);
+
+	switch (mono_threads_transition_done_blocking (info, function_name)) {
 	case DoneBlockingOk:
 		info->thread_saved_state [SELF_SUSPEND_STATE_INDEX].valid = FALSE;
 		break;
@@ -309,11 +315,11 @@ mono_threads_exit_gc_safe_region_unbalanced_internal (gpointer cookie, MonoStack
 }
 
 void
-mono_threads_exit_gc_safe_region_unbalanced (gpointer cookie, gpointer *stackdata_untyped_uninitialized)
+mono_threads_exit_gc_safe_region_unbalanced (gpointer cookie, gpointer *stack_pointer)
 {
-	MonoStackData *stackdata = (MonoStackData*)stackdata_untyped_uninitialized;
-	stackdata->function_name = __func__;
-	mono_threads_exit_gc_safe_region_unbalanced_internal (cookie, stackdata);
+	MonoStackData stack_data;
+	mono_stack_data_init (&stack_data, stack_pointer, NULL);
+	mono_threads_exit_gc_safe_region_unbalanced_internal (cookie, &stack_data);
 }
 
 void
@@ -353,11 +359,11 @@ mono_threads_enter_gc_unsafe_region_unbalanced_internal (MonoStackData *stackdat
 }
 
 gpointer
-mono_threads_enter_gc_unsafe_region_unbalanced (gpointer *stackdata_untyped_uninitialized)
+mono_threads_enter_gc_unsafe_region_unbalanced (gpointer *stack_pointer)
 {
-	MonoStackData *stackdata = (MonoStackData*)stackdata_untyped_uninitialized;
-	stackdata->function_name = __func__;
-	return mono_threads_enter_gc_unsafe_region_unbalanced_internal (stackdata);
+	MonoStackData stack_data;
+	mono_stack_data_init (&stack_data, stack_pointer, NULL);
+	return mono_threads_enter_gc_unsafe_region_unbalanced_internal (&stack_data);
 }
 
 gpointer
@@ -368,7 +374,9 @@ mono_threads_enter_gc_unsafe_region_unbalanced_with_info (MonoThreadInfo *info, 
 
 	++coop_reset_blocking_count;
 
-	check_info (info, "enter", "unsafe", stackdata->function_name);
+	const char *function_name = mono_stack_data_get_function_name (stackdata, "");
+
+	check_info (info, "enter", "unsafe", function_name);
 
 	copy_stack_data (info, stackdata);
 
@@ -386,7 +394,7 @@ mono_threads_enter_gc_unsafe_region_unbalanced_with_info (MonoThreadInfo *info, 
 		mono_thread_info_wait_for_resume (info);
 		break;
 	default:
-		g_error ("Unknown thread state %s", stackdata->function_name);
+		g_error ("Unknown thread state %s", function_name);
 	}
 
 	if (info->async_target) {
@@ -444,11 +452,11 @@ mono_threads_exit_gc_unsafe_region_unbalanced_internal (gpointer cookie, MonoSta
 }
 
 void
-mono_threads_exit_gc_unsafe_region_unbalanced (gpointer cookie, gpointer *stackdata_untyped_uninitialized)
+mono_threads_exit_gc_unsafe_region_unbalanced (gpointer cookie, gpointer *stack_pointer)
 {
-	MonoStackData *stackdata = (MonoStackData*)stackdata_untyped_uninitialized;
-	stackdata->function_name = __func__;
-	mono_threads_exit_gc_unsafe_region_unbalanced_internal (cookie, stackdata);
+	MonoStackData stack_data;
+	mono_stack_data_init (&stack_data, stack_pointer, NULL);
+	mono_threads_exit_gc_unsafe_region_unbalanced_internal (cookie, &stack_data);
 }
 
 void

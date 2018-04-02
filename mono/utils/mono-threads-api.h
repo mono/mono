@@ -23,10 +23,44 @@ This API is experimental. It will eventually be required to properly use the res
 */
 
 typedef struct _MonoStackData {
+	union {
+		int as_int;
+		struct {
+			gboolean has_stack_pointer : 1;
+			gboolean has_function_name : 1;
+		};
+	};
+	int reserved; // padding for alignment on 64bit
+	gpointer stack_pointer;
 	const char *function_name;
 } MonoStackData;
-// const here triggers a clang bug, auto is changed to static
-#define MONO_STACK_DATA(x) /*const*/ MonoStackData x = { __func__ };
+
+static inline void
+mono_stack_data_init (MonoStackData *stack_data, gpointer stack_pointer, const char *function_name)
+{
+	memset (stack_data, 0, sizeof (*stack_data));
+	stack_data->stack_pointer = stack_pointer;
+	stack_data->function_name = function_name;
+	stack_data->has_stack_pointer = stack_pointer != NULL;
+	stack_data->has_function_name = function_name != NULL;
+}
+
+// FIXME an ifdef to change __func__ to empty or further minimization.
+#define MONO_STACK_DATA(x) MonoStackData x; mono_stack_data_init (&x, &x, __func__)
+
+static inline const char*
+mono_stack_data_get_function_name (const MonoStackData *stack_data, const char *fallback)
+{
+	// While NULL is a typical fallback, "" turns out often useful also.
+	// Let the caller decide.
+	return stack_data->has_function_name ? stack_data->function_name : fallback;
+}
+
+static inline gpointer
+mono_stack_data_get_stack_pointer (const MonoStackData *stack_data)
+{
+	return stack_data->has_stack_pointer ? stack_data->stack_pointer : NULL;
+}
 
 MONO_API gpointer
 mono_threads_enter_gc_unsafe_region (gpointer* stackdata);
