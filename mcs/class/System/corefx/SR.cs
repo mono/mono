@@ -547,4 +547,11 @@ partial class SR
 	public const string PlatformNotSupported_CompileToAssembly = "This platform does not support writing compiled regular expressions to an assembly.";
 	public const string NotSupported_ReadOnlyCollection = "Collection is read-only.";
 	public const string InvalidEmptyArgument = "Argument {0} cannot be zero-length.";
+
+
+	public const string Array = "Array";
+	public const string Null = "Null";
+	public const string none = "none";
+	public const string Collection = "Collection";
+	public const string Text = "Text";
 }
