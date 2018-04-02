@@ -452,6 +452,9 @@ ves_icall_System_MathF_FMod (float x, float y)
 float
 ves_icall_System_MathF_ModF (float x, float *d)
 {
+	float f;
+	if (d == NULL)
+		d = &f;
 	return modff (x, d);
 }
 
