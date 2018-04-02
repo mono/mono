@@ -2270,8 +2270,10 @@ gpointer mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info);
 gpointer mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info);
 
 #ifdef MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
-void mono_arch_set_native_call_context          (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig);
-void mono_arch_get_native_call_context          (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig);
+void mono_arch_set_native_call_context_args     (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig);
+void mono_arch_set_native_call_context_ret      (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig);
+void mono_arch_get_native_call_context_args     (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig);
+void mono_arch_get_native_call_context_ret      (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig);
 #endif
 
 /*New interruption machinery */
