@@ -299,8 +299,8 @@ ves_icall_System_Math_Abs_double (gdouble v)
 	return fabs (v);
 }
 
-gfloat
-ves_icall_System_Math_Abs_single (gfloat v)
+float
+ves_icall_System_Math_Abs_single (float v)
 {
 	return fabsf (v);
 }
@@ -317,140 +317,140 @@ ves_icall_System_Math_SplitFractionDouble (gdouble *v)
 	return modf (*v, v);
 }
 
-gfloat
-ves_icall_System_MathF_Acos (gfloat x)
+float
+ves_icall_System_MathF_Acos (float x)
 {
 	return acosf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Acosh (gfloat x)
+float
+ves_icall_System_MathF_Acosh (float x)
 {
 	return acoshf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Asin (gfloat x)
+float
+ves_icall_System_MathF_Asin (float x)
 {
 	return asinf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Asinh  (gfloat x)
+float
+ves_icall_System_MathF_Asinh  (float x)
 {
 	return asinhf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Atan  (gfloat x)
+float
+ves_icall_System_MathF_Atan  (float x)
 {
 	return atan (x);
 }
 
-gfloat
-ves_icall_System_MathF_Atan2 (gfloat x, gfloat y)
+float
+ves_icall_System_MathF_Atan2 (float x, float y)
 {
 	return atan2f (x, y);
 }
 
-gfloat
-ves_icall_System_MathF_Atanh (gfloat x)
+float
+ves_icall_System_MathF_Atanh (float x)
 {
 	return atanhf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Cbrt (gfloat x)
+float
+ves_icall_System_MathF_Cbrt (float x)
 {
 	return cbrtf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Ceiling (gfloat x)
+float
+ves_icall_System_MathF_Ceiling (float x)
 {
 	return ceilf(x);
 }
 
-gfloat
-ves_icall_System_MathF_Cos (gfloat x)
+float
+ves_icall_System_MathF_Cos (float x)
 {
 	return cosf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Cosh (gfloat x)
+float
+ves_icall_System_MathF_Cosh (float x)
 {
 	return coshf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Exp (gfloat x)
+float
+ves_icall_System_MathF_Exp (float x)
 {
 	return expf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Floor (gfloat x)
+float
+ves_icall_System_MathF_Floor (float x)
 {
 	return floorf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Log (gfloat x)
+float
+ves_icall_System_MathF_Log (float x)
 {
 	return logf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Log10 (gfloat x)
+float
+ves_icall_System_MathF_Log10 (float x)
 {
 	return log10f (x);
 }
 
-gfloat
-ves_icall_System_MathF_Pow (gfloat x, gfloat y)
+float
+ves_icall_System_MathF_Pow (float x, float y)
 {
 	return powf (x, y);
 }
 
-gfloat
-ves_icall_System_MathF_Sin (gfloat x)
+float
+ves_icall_System_MathF_Sin (float x)
 {
 	return sinf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Sinh (gfloat x)
+float
+ves_icall_System_MathF_Sinh (float x)
 {
 	return sinh (x);
 }
 
-gfloat
-ves_icall_System_MathF_Sqrt (gfloat x)
+float
+ves_icall_System_MathF_Sqrt (float x)
 {
 	return sqrtf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Tan (gfloat x)
+float
+ves_icall_System_MathF_Tan (float x)
 {
 	return tanf (x);
 }
 
-gfloat
-ves_icall_System_MathF_Tanh (gfloat x)
+float
+ves_icall_System_MathF_Tanh (float x)
 {
 	return tanh (x);
 }
 
-gfloat
-ves_icall_System_MathF_FMod (gfloat x, gfloat y)
+float
+ves_icall_System_MathF_FMod (float x, float y)
 {
 	return fmodf (x, y);
 }
 
-gfloat
-ves_icall_System_MathF_ModF (gfloat x, gfloat *d)
+float
+ves_icall_System_MathF_ModF (float x, float *d)
 {
 	return modff (x, d);
 }
