@@ -5868,6 +5868,28 @@ mono_metadata_generic_class_foreach(GFunc func, gpointer user_data)
 	}
 }
 
+void
+mono_metadata_image_set_foreach(GFunc func, gpointer user_data)
+{
+	GenericClassForeachData data;
+	guint i;
+
+	data.func = func;
+	data.user_data = user_data;
+
+	for (i = 0; i < HASH_TABLE_SIZE; ++i)
+	{
+		MonoImageSet* imageSet = img_set_cache[i];
+
+		if (imageSet == NULL)
+			continue;
+
+		mono_image_set_lock(imageSet);
+		func(imageSet, user_data);
+		mono_image_set_unlock(imageSet);
+	}
+}
+
 static gboolean
 _mono_metadata_generic_class_equal (const MonoGenericClass *g1, const MonoGenericClass *g2, gboolean signature_only)
 {
