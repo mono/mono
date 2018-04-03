@@ -4728,6 +4728,12 @@ mono_thread_request_interruption (gboolean running_managed)
 	}
 }
 
+static void
+mono_thread_request_interruption_void (gboolean running_managed)
+{
+	mono_thread_request_interruption (running_managed);
+}
+
 /*This function should be called by a thread after it has exited all of
  * its handle blocks at interruption time.*/
 void
@@ -4834,7 +4840,7 @@ mono_set_pending_exception (MonoException *exc)
 
 	MONO_OBJECT_SETREF (thread, pending_exception, exc);
 
-	mono_thread_request_interruption (FALSE);
+	mono_thread_request_interruption_void (FALSE);
 }
 
 /*
@@ -4854,7 +4860,7 @@ mono_set_pending_exception_handle (MonoExceptionHandle exc)
 
 	MONO_OBJECT_SETREF (thread, pending_exception, MONO_HANDLE_RAW (exc));
 
-	mono_thread_request_interruption (FALSE);
+	mono_thread_request_interruption_void (FALSE);
 }
 
 /**
