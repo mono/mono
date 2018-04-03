@@ -268,6 +268,11 @@ XTEST_HARNESS_PATH := $(topdir)/../external/xunit-binaries
 XTEST_HARNESS = $(XTEST_HARNESS_PATH)/xunit.console.exe
 XTEST_HARNESS_FLAGS := -noappdomain -noshadow -parallel none -nunit TestResult-$(PROFILE)-xunit.xml
 XTEST_TRAIT := -notrait category=failing -notrait category=nonmonotests -notrait Benchmark=true -notrait category=outerloop
+# The horrible CoreFX tests logic is double inverted so this actually excludes Windows tests
+# best to search for `property name="category"` in the xml output to see what's going on
+# https://github.com/dotnet/buildtools/blob/master/src/xunit.netcore.extensions/Discoverers/PlatformSpecificDiscoverer.cs
+XTEST_TRAIT_PLATFORM := -notrait category=nonlinuxtests
+
 TEST_MONO_PATH := $(TEST_MONO_PATH)$(PLATFORM_PATH_SEPARATOR)$(XTEST_HARNESS_PATH)
 
 ifdef FIXTURE
@@ -290,7 +295,7 @@ run-xunit-test-local: run-xunit-test-lib
 run-xunit-test-lib: xunit-test-local $(XTEST_REMOTE_EXECUTOR)
 	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll xunit.execution.desktop.dll
 	ok=:; \
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" REMOTE_EXECUTOR=$(XTEST_REMOTE_EXECUTOR) $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) || ok=false; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" REMOTE_EXECUTOR=$(XTEST_REMOTE_EXECUTOR) $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) $(XTEST_TRAIT_PLATFORM) || ok=false; \
 	$$ok
 	@rm -f xunit.execution.desktop.dll
 
