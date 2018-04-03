@@ -180,7 +180,7 @@ copy_stack_data (MonoThreadInfo *info, MonoStackData *stackdata_begin)
 
 	stackdata_size = (char*)mono_stackdata_get_stackpointer (stackdata_begin) - (char*)stackdata_end;
 
-	const char *function_name = mono_stackdata_get_function_name (stackdata_begin, "");
+	const char *function_name = mono_stackdata_get_function_name (stackdata_begin);
 
 	if (((gsize) stackdata_begin & (SIZEOF_VOID_P - 1)) != 0)
 		g_error ("%s stackdata_begin (%p) must be %d-byte aligned", function_name, stackdata_begin, SIZEOF_VOID_P);
@@ -233,8 +233,8 @@ mono_threads_enter_gc_safe_region_unbalanced_internal (MonoStackData *stackdata)
 gpointer
 mono_threads_enter_gc_safe_region_unbalanced (gpointer *stackpointer)
 {
-	MonoStackData stackdata;
-	mono_stackdata_init (&stackdata, stackpointer, NULL);
+	MONO_STACKDATA (stackdata);
+	stackdata.stackpointer = stackpointer;
 	return mono_threads_enter_gc_safe_region_unbalanced_internal (&stackdata);
 }
 
@@ -246,7 +246,7 @@ mono_threads_enter_gc_safe_region_unbalanced_with_info (MonoThreadInfo *info, Mo
 
 	++coop_do_blocking_count;
 
-	const char *function_name = mono_stackdata_get_function_name (stackdata, "");
+	const char *function_name = mono_stackdata_get_function_name (stackdata);
 
 	check_info (info, "enter", "safe", function_name);
 
@@ -291,7 +291,7 @@ mono_threads_exit_gc_safe_region_unbalanced_internal (gpointer cookie, MonoStack
 
 	info = (MonoThreadInfo *)cookie;
 
-	const char *function_name = mono_stackdata_get_function_name (stackdata, "");
+	const char *function_name = mono_stackdata_get_function_name (stackdata);
 
 	check_info (info, "exit", "safe", function_name);
 
@@ -317,8 +317,8 @@ mono_threads_exit_gc_safe_region_unbalanced_internal (gpointer cookie, MonoStack
 void
 mono_threads_exit_gc_safe_region_unbalanced (gpointer cookie, gpointer *stackpointer)
 {
-	MonoStackData stackdata;
-	mono_stackdata_init (&stackdata, stackpointer, NULL);
+	MONO_STACKDATA (stackdata);
+	stackdata.stackpointer = stackpointer;
 	mono_threads_exit_gc_safe_region_unbalanced_internal (cookie, &stackdata);
 }
 
@@ -361,8 +361,8 @@ mono_threads_enter_gc_unsafe_region_unbalanced_internal (MonoStackData *stackdat
 gpointer
 mono_threads_enter_gc_unsafe_region_unbalanced (gpointer *stackpointer)
 {
-	MonoStackData stackdata;
-	mono_stackdata_init (&stackdata, stackpointer, NULL);
+	MONO_STACKDATA (stackdata);
+	stackdata.stackpointer = stackpointer;
 	return mono_threads_enter_gc_unsafe_region_unbalanced_internal (&stackdata);
 }
 
@@ -374,7 +374,7 @@ mono_threads_enter_gc_unsafe_region_unbalanced_with_info (MonoThreadInfo *info, 
 
 	++coop_reset_blocking_count;
 
-	const char *function_name = mono_stackdata_get_function_name (stackdata, "");
+	const char *function_name = mono_stackdata_get_function_name (stackdata);
 
 	check_info (info, "enter", "unsafe", function_name);
 
@@ -454,8 +454,8 @@ mono_threads_exit_gc_unsafe_region_unbalanced_internal (gpointer cookie, MonoSta
 void
 mono_threads_exit_gc_unsafe_region_unbalanced (gpointer cookie, gpointer *stackpointer)
 {
-	MonoStackData stackdata;
-	mono_stackdata_init (&stackdata, stackpointer, NULL);
+	MONO_STACKDATA (stackdata);
+	stackdata.stackpointer = stackpointer;
 	mono_threads_exit_gc_unsafe_region_unbalanced_internal (cookie, &stackdata);
 }
 

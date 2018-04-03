@@ -27,24 +27,13 @@ typedef struct _MonoStackData {
 	const char *function_name;
 } MonoStackData;
 
-static inline void
-mono_stackdata_init (MonoStackData *stackdata, gpointer stackpointer, const char *function_name)
-{
-	memset (stackdata, 0, sizeof (*stackdata));
-	stackdata->stackpointer = stackpointer;
-	stackdata->function_name = function_name;
-}
-
 // FIXME an ifdef to change __func__ to empty or further minimization.
-#define MONO_STACKDATA(x) MonoStackData x; mono_stackdata_init (&x, &x, __func__)
+#define MONO_STACKDATA(x) MonoStackData x = { &x, __func__ }
 
 static inline const char*
-mono_stackdata_get_function_name (const MonoStackData *stackdata, const char *fallback)
+mono_stackdata_get_function_name (const MonoStackData *stackdata)
 {
-	// While NULL is a typical fallback, "" turns out often useful also.
-	// Let the caller decide.
-	const char *function_name = stackdata->function_name;
-	return function_name ? function_name : fallback;
+	return stackdata->function_name;
 }
 
 static inline gpointer

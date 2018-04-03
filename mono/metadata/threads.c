@@ -5508,6 +5508,7 @@ ves_icall_System_Threading_Thread_GetStackTraces (MonoArray **out_threads, MonoA
  *  - @cookie:
  *    - blocking mode: contains gc unsafe transition cookie
  *    - non-blocking mode: contains random data
+ *  - @stackdata: semi-opaque struct: stackpointer and function_name
  *  - @return: the original domain which needs to be restored, or NULL.
  */
 MonoDomain*
@@ -5568,22 +5569,19 @@ mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoSta
 gpointer
 mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
 {
-	MonoStackData stackdata;
-	mono_stackdata_init (&stackdata, dummy, NULL);
-	gpointer cookie = NULL;
-	MonoDomain *orig_domain = mono_threads_attach_coop_internal (domain, &cookie, &stackdata);
-	*dummy = cookie;
-	return orig_domain;
+	MONO_STACKDATA (stackdata);
+	stackdata.stackpointer = dummy;
+	return mono_threads_attach_coop_internal (domain, dummy, &stackdata);
 }
 
 /*
  * mono_threads_detach_coop_internal: called by native->managed wrappers
  *
  *  - @orig: the original domain which needs to be restored, or NULL.
+ *  - @stackdata: semi-opaque struct: stackpointer and function_name
  *  - @cookie:
  *    - blocking mode: contains gc unsafe transition cookie
  *    - non-blocking mode: contains random data
- *    - a pointer to stack, used for some checks
  */
 void
 mono_threads_detach_coop_internal (MonoDomain *orig, gpointer cookie, MonoStackData *stackdata)
@@ -5617,8 +5615,8 @@ mono_threads_detach_coop_internal (MonoDomain *orig, gpointer cookie, MonoStackD
 void
 mono_threads_detach_coop (gpointer orig, gpointer *dummy)
 {
-	MonoStackData stackdata;
-	mono_stackdata_init (&stackdata, dummy, NULL);
+	MONO_STACKDATA (stackdata);
+	stackdata.stackpointer = dummy;
 	mono_threads_detach_coop_internal ((MonoDomain*)orig, *dummy, &stackdata);
 }
 
