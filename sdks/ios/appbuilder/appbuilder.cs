@@ -53,6 +53,7 @@ public class AppBuilder
 		string sysroot = null;
 		string aotdir = null;
 		string exe = null;
+		string signing_identity = null;
 		bool isdev = false;
 		bool isrelease = false;
 		bool isllvm = false;
@@ -68,6 +69,7 @@ public class AppBuilder
 				{ "bundle-identifier=", s => bundle_identifier = s },
 				{ "bundle-name=", s => bundle_name = s },
 				{ "bundle-executable=", s => bundle_executable = s },
+				{ "signing-identity=", s => signing_identity = s },
 				{ "llvm", s => isllvm = true },
 				{ "exe=", s => exe = s },
 				{ "r=", s => assemblies.Add (s) },
@@ -80,6 +82,7 @@ public class AppBuilder
 		check_mandatory (appdir, "--appdir");
 		check_mandatory (mono_sdkdir, "--mono-sdkdir");
 		check_mandatory (sysroot, "--sysroot");
+		check_mandatory (signing_identity, "--signing-identity");
 
 		switch (target) {
 		case "ios-dev64":
@@ -134,6 +137,7 @@ public class AppBuilder
 		ninja.WriteLine ($"builddir = .");
 		if (aotdir != null)
 			ninja.WriteLine ($"aotdir = {aotdir}");
+		ninja.WriteLine ($"signing_identity = {signing_identity}");
 		// Rules
 		ninja.WriteLine ("rule aot");
 		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross -O=gsharedvt,float32 --debug {cross_runtime_args} --aot=mtriple=arm64-ios,full,static,asmonly,direct-icalls,no-direct-calls,dwarfdebug,{aot_args},outfile=$outfile,data-outfile=$data_outfile $src_file");
@@ -159,7 +163,7 @@ public class AppBuilder
 		ninja.WriteLine ("rule plutil");
 		ninja.WriteLine ("  command = cp $in $out; plutil -convert binary1 $out");
 		ninja.WriteLine ("rule codesign");
-		ninja.WriteLine ("  command = codesign -v --force --sign - --entitlements $entitlements --timestamp=none $in");
+		ninja.WriteLine ("  command = codesign -v --force --sign \"$signing_identity\" --entitlements $entitlements --timestamp=none $in");
 		ninja.WriteLine ("rule codesign-sim");
 		ninja.WriteLine ("  command = codesign --force --sign - --timestamp=none $in");
 		ninja.WriteLine ("rule mkdir");

@@ -5,6 +5,19 @@ BCL_DIR = ../../mcs/class/lib/monotouch
 XCODE_ROOT=$(shell xcode-select -p)
 SYSROOT=$(XCODE_ROOT)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
 
+NINJA_PATH:=$(shell which ninja)
+ifeq ($(NINJA_PATH),)
+$(error "ninja not found, install it using 'brew install ninja'.")
+endif
+
+IOS_DEPLOY_PATH:=$(shell which ios-deploy)
+ifeq ($(IOS_DEPLOY_PATH),)
+$(error "ios-deploy not found, install it using 'brew install ios-deploy'.")
+endif
+
+# Default to add-hoc signing
+IOS_SIGNING_IDENTITY ?= -
+
 TEST_SUITES = \
 	Mono.Runtime.Tests \
 	corlib \
@@ -71,7 +84,7 @@ TEST_ASSEMBLIES = $(BCL_DIR)/mscorlib.dll \
 	test-runner.exe
 
 build-ios-sim-%: appbuilder.exe test-runner.exe runtime/runtime $($*_ASSEMBLIES)
-	mono appbuilder.exe --target ios-sim64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-sim/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-sim/test-$*.app --sysroot $(SYSROOT) --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
+	mono appbuilder.exe --target ios-sim64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-sim/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-sim/test-$*.app --sysroot $(SYSROOT) --signing-identity - --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
 	mkdir -p $(PWD)/bin/ios-sim/test-$*.app
 	if test "x$($*_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-sim/test-$*.app/; fi
 	ninja -C obj/ios-sim/test-$*.app -v
@@ -92,7 +105,7 @@ endif
 
 build-ios-dev-%: appbuilder.exe test-runner.exe runtime/libmonoios.a $($*_ASSEMBLIES)
 	mkdir -p $(PWD)/aot-cache
-	mono appbuilder.exe $(APPBUILDER_ARGS) --target ios-dev64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-dev/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-dev/test-$*.app --sysroot $(SYSROOT) --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe test-runner.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
+	mono appbuilder.exe $(APPBUILDER_ARGS) --target ios-dev64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-dev/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-dev/test-$*.app --sysroot $(SYSROOT) --signing-identity "$(IOS_SIGNING_IDENTITY)" --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe test-runner.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
 	mkdir -p $(PWD)/bin/ios-dev/test-$*.app
 	if test "x$($_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-dev/test-$*.app/; fi
 	ninja -C obj/ios-dev/test-$*.app -v
@@ -109,6 +122,9 @@ run-ios-sim-%: harness.exe
 	mono harness.exe --start-sim
 	xcrun simctl install $(SIM_NAME) bin/ios-sim/test-$*.app
 	mono harness.exe --run-sim --logfile ios-sim-$*.log --bundle-id com.xamarin.mono.ios.test-$* --bundle-dir bin/ios-sim/test-$*.app $(ARGS) $($*_ARGS)
+
+run-ios-dev-%: harness.exe test-runner.exe
+	mono harness.exe --run-dev --logfile ios-dev-$*.log --bundle-dir bin/ios-dev/test-$*.app $(ARGS) $($*_ARGS)
 
 clean:
 	$(MAKE) -C runtime clean
@@ -128,6 +144,9 @@ build-ios-dev-all:
 build-ios-dev-llvm-all:
 	rm -rf aot-cache
 	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; make clean-ios-dev-$$suite; make build-ios-dev-$$suite LLVM=1 ENABLE_AOT_CACHE=1 || exit 1; done
+
+run-ios-dev-all:
+	for suite in $(TEST_SUITES); do make run-ios-dev-$$suite || exit 1; done
 
 # Developer targets, ignore
 # 'launch' doesn't propagate the error code
