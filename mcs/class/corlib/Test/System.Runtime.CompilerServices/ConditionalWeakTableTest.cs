@@ -456,6 +456,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	}
 
 	[Test]
+	[Category("WASM")] //This test takes forever under WASM due to over allocating
 	public void OldGenKeysMakeNewGenObjectsReachable ()
 	{
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
