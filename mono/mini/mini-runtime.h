@@ -221,8 +221,8 @@ typedef struct MonoDebugOptions {
 	 */
 	gboolean disable_omit_fp;
 
-	// Internal testing feature.
-	gboolean test_tailcall_require;
+	gboolean test_tailcall_require; // Internal testing feature.
+	gboolean tailcall; // enable g_print
 } MonoDebugOptions;
 
 

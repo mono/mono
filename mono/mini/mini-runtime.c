@@ -3581,6 +3581,8 @@ mini_parse_debug_option (const char *option)
 	// It is asserted.
 	else if (!strcmp (option, "test-tailcall-require"))
 		mini_debug_options.test_tailcall_require = TRUE;
+	else if (!strcmp (option, "tailcall"))
+		mini_debug_options.tailcall = TRUE;
 	else
 		return FALSE;
 
