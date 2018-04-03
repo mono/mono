@@ -4697,7 +4697,7 @@ mono_thread_execute_interruption_void (void)
  * the thread. If the result is an exception that needs to be throw, it is 
  * provided as return value.
  */
-MonoException*
+static MonoException*
 mono_thread_request_interruption (gboolean running_managed)
 {
 	MonoInternalThread *thread = mono_thread_internal_current ();
