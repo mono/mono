@@ -13,6 +13,7 @@
 
 #include <glib.h>
 #include <mono/utils/mono-publib.h>
+#include <mono/utils/mono-compiler.h>
 
 MONO_BEGIN_DECLS
 
@@ -72,13 +73,13 @@ mono_threads_assert_gc_unsafe_region (void);
 MONO_API gpointer
 mono_threads_enter_gc_safe_region (gpointer *stackdata);
 
-gpointer
+MONO_PROFILER_API gpointer
 mono_threads_enter_gc_safe_region_internal (MonoStackData *stackdata);
 
 MONO_API void
 mono_threads_exit_gc_safe_region (gpointer cookie, gpointer *stackdata);
 
-void
+MONO_PROFILER_API void
 mono_threads_exit_gc_safe_region_internal (gpointer cookie, MonoStackData *stackdata);
 
 MONO_API gpointer
