@@ -211,4 +211,8 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">$(ProjectDir)\..\..\jay\jay -c -o $(ProjectDir)\$(Platform)-parser.cs $(ProjectDir)\..\..\mcs\cs-parser.jay &lt; $(ProjectDir)\..\..\jay\skeleton.cs</PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">$(ProjectDir)\..\..\jay\jay.exe -c -o $(ProjectDir)\$(Platform)-parser.cs $(ProjectDir)\..\..\mcs\cs-parser.jay &lt; $(ProjectDir)\..\..\jay\skeleton.cs</PreBuildEvent>
+  </PropertyGroup>
 </Project>
