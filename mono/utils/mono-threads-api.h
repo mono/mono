@@ -23,14 +23,6 @@ This API is experimental. It will eventually be required to properly use the res
 */
 
 typedef struct _MonoStackData {
-	union {
-		int as_int;
-		struct {
-			gboolean has_stackpointer : 1;
-			gboolean has_function_name : 1;
-		};
-	};
-	int reserved; // padding for alignment on 64bit
 	gpointer stackpointer;
 	const char *function_name;
 } MonoStackData;
@@ -41,8 +33,6 @@ mono_stackdata_init (MonoStackData *stackdata, gpointer stackpointer, const char
 	memset (stackdata, 0, sizeof (*stackdata));
 	stackdata->stackpointer = stackpointer;
 	stackdata->function_name = function_name;
-	stackdata->has_stackpointer = stackpointer != NULL;
-	stackdata->has_function_name = function_name != NULL;
 }
 
 // FIXME an ifdef to change __func__ to empty or further minimization.
@@ -53,13 +43,14 @@ mono_stackdata_get_function_name (const MonoStackData *stackdata, const char *fa
 {
 	// While NULL is a typical fallback, "" turns out often useful also.
 	// Let the caller decide.
-	return stackdata->has_function_name ? stackdata->function_name : fallback;
+	const char *function_name = stackdata->function_name;
+	return function_name ? function_name : fallback;
 }
 
 static inline gpointer
 mono_stackdata_get_stackpointer (const MonoStackData *stackdata)
 {
-	return stackdata->has_stackpointer ? stackdata->stackpointer : NULL;
+	return stackdata->stackpointer;
 }
 
 MONO_API gpointer
