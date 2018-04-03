@@ -69,7 +69,8 @@ LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLETLS
 endif
 
 ifndef AOT_FRIENDLY_PROFILE
-LIB_MCS_FLAGS += -d:FEATURE_COMPILED
+# Disabled due to https://github.com/mono/mono/issues/7975
+#LIB_MCS_FLAGS += -d:FEATURE_COMPILED
 endif
 
 ifdef ONLY_APPLETLS
