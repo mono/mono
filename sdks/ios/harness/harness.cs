@@ -38,6 +38,7 @@ public class Harness
 		var p = new OptionSet () {
 		  { "start-sim", s => action = "start-sim" },
 		  { "run-sim", s => action = "run-sim" },
+		  { "run-dev", s => action = "run-dev" },
 		  { "bundle-id=", s => bundle_id = s },
 		  { "bundle-dir=", s => bundle_dir = s },
 		  { "logfile=", s => logfile_name = s },
@@ -52,6 +53,12 @@ public class Harness
 				Environment.Exit (1);
 			}
 			RunSim ();
+		} else if (action == "run-dev") {
+			if (bundle_dir == "") {
+				Console.WriteLine ("The --bundle-dir argument is mandatory.");
+				Environment.Exit (1);
+			}
+			RunDev ();
 		} else {
 			Usage ();
 			Environment.Exit (1);
@@ -175,6 +182,82 @@ public class Harness
 		var client = server.AcceptTcpClient ();
 		var stream = client.GetStream ();
 		var reader = new StreamReader (stream);
+		while (true) {
+			var line = reader.ReadLine ();
+			if (line == null)
+				break;
+			Console.WriteLine (line);
+			w.WriteLine (line);
+			if (line.Contains ("Tests run:"))
+				result_line = line;
+			// Printed by the runtime
+			if (line.Contains ("Exit code:"))
+				break;
+		}
+
+		if (result_line != null && result_line.Contains ("Errors: 0"))
+			Environment.Exit (0);
+		else
+			Environment.Exit (1);
+	}
+
+	void RunDev () {
+		Console.WriteLine ("App: " + bundle_dir);
+
+		//
+		// Test results are returned using an socket connection.
+		//
+		var host = Dns.GetHostEntry (Dns.GetHostName ());
+		var hostip = host.AddressList [0].ToString ();
+		Console.WriteLine ("Host ip: " + hostip);
+		var server = new TcpListener (host.AddressList [0], 0);
+		server.Start ();
+		int port = ((IPEndPoint)server.LocalEndpoint).Port;
+
+		string app_args = "";
+		foreach (var a in new_args)
+			app_args += a + " ";
+		if (!app_args.Contains ("CONNSTR"))
+			throw new Exception ();
+		app_args = app_args.Replace ("CONNSTR", $"tcp:{hostip}:{port}");
+
+		// Launch new app
+		//
+		// -v be verbose
+		// -b bundle dir
+		// -a args
+		// -u unbuffered stdout
+		// -L launch app
+		//
+		string exe = "ios-deploy";
+		string args = "-v -L -u -b " + bundle_dir + " -a '" + app_args + "'";
+		Console.WriteLine ("Running: " + exe + " " + args);
+		var process = Process.Start (exe, args);
+		process.WaitForExit ();
+		if (process.ExitCode != 0)
+			Environment.Exit (1);
+
+		//
+		// Read test results from the tcp connection
+		//
+		TextWriter w = new StreamWriter (logfile_name);
+		string result_line = null;
+
+		Console.WriteLine ("*** test-runner output ***");
+
+		int wait_time = 0;
+		while (!server.Pending ()) {
+			wait_time += 100;
+			if (wait_time == 10 * 1000) {
+				Console.Error.WriteLine ("Timed out waiting for test runner to connect.");
+				Environment.Exit (1);
+			}
+			Thread.Sleep (100);
+		}
+		var client = server.AcceptTcpClient ();
+		var stream = client.GetStream ();
+		var reader = new StreamReader (stream);
+
 		while (true) {
 			var line = reader.ReadLine ();
 			if (line == null)
