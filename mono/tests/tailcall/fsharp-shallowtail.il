@@ -236,7 +236,9 @@ exit 0
 */
 
 .assembly extern mscorlib { }
-.assembly fsharp { }
+
+.assembly 'fsharp-shallowtail' { }
+
 .class private abstract auto ansi sealed '<StartupCode$fsharp>'.$Fsharp
 extends [mscorlib]System.Object
 {
