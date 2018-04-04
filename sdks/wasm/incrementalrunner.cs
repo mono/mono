@@ -95,8 +95,8 @@ class TestAction : AbstractAction {
 
 	public void PerformWork () {
 		SetupContext ();
-        try
-        {
+		try
+		{
 			if (IncrementalTestRunner.testSkipCount > 0) {
 				--IncrementalTestRunner.testSkipCount;
 				testResult = ((Test)test).MakeTestResult ();
@@ -104,11 +104,10 @@ class TestAction : AbstractAction {
 			} else {
 				testResult = test.MakeTestCommand ().Execute(this.context);
 			}
-        }
-        finally
-        {
-            WorkItemComplete ();
-        }
+		} finally
+		{
+			WorkItemComplete ();
+		}
 	}
 }
 
