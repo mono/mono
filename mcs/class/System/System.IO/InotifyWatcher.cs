@@ -135,6 +135,8 @@ namespace System.IO {
 		
 		public void StartDispatching (object handle)
 		{
+			if (handle == null)
+				return;
 			var fsw = handle as FileSystemWatcher;
 			ParentInotifyData parent;
 			lock (this) {
@@ -331,6 +333,8 @@ namespace System.IO {
 
 		public void StopDispatching (object handle)
 		{
+			if (handle == null)
+				return;
 			var fsw = handle as FileSystemWatcher;
 			ParentInotifyData parent;
 			lock (this) {

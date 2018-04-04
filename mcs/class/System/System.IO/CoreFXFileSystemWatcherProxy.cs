@@ -127,6 +127,9 @@ namespace System.IO {
 
 		public void StartDispatching (object handle)
 		{
+			if (handle == null)
+				return;
+
 			Operation (object_op: (internal_fsw, fsw) => {
 					internal_fsw.Path = fsw.Path;
 					internal_fsw.Filter = fsw.Filter;
@@ -140,6 +143,9 @@ namespace System.IO {
 
 		public void StopDispatching (object handle)
 		{
+			if (handle == null)
+				return;
+
 			Operation (handle: handle,
 				cancel_op: (internal_fsw, fsw) =>
 				{

@@ -104,6 +104,7 @@ gboolean mono_aot_only = FALSE;
 /* Same as mono_aot_only, but only LLVM compiled code is used, no trampolines */
 gboolean mono_llvm_only = FALSE;
 MonoAotMode mono_aot_mode = MONO_AOT_MODE_NONE;
+MonoEEFeatures mono_ee_features;
 
 const char *mono_build_date;
 gboolean mono_do_signal_chaining;
@@ -2092,7 +2093,7 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, gboolean jit_
 
 	error_init (error);
 
-	if (mono_use_interpreter && !mono_aot_only && !jit_only)
+	if (mono_ee_features.force_use_interpreter && !jit_only)
 		use_interp = TRUE;
 	if (!use_interp && mono_interp_only_classes) {
 		for (GSList *l = mono_interp_only_classes; l; l = l->next) {
@@ -2738,7 +2739,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	MonoJitInfo *ji = NULL;
 	gboolean callee_gsharedvt = FALSE;
 
-	if (mono_use_interpreter && !mono_aot_only)
+	if (mono_ee_features.force_use_interpreter)
 		return mini_get_interp_callbacks ()->runtime_invoke (method, obj, params, exc, error);
 
 	error_init (error);
@@ -3494,7 +3495,7 @@ mono_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *met
 		return cache [idx];
 
 	/* FIXME Support more cases */
-	if (mono_aot_only) {
+	if (mono_ee_features.use_aot_trampolines) {
 		cache [idx] = (guint8 *)mono_aot_get_trampoline (mono_get_delegate_virtual_invoke_impl_name (load_imt_reg, offset));
 		g_assert (cache [idx]);
 	} else {
@@ -3514,6 +3515,11 @@ mono_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *met
 gboolean
 mini_parse_debug_option (const char *option)
 {
+	// Empty string is ok as consequence of appending ",foo"
+	// without first checking for empty.
+	if (*option == 0)
+		return TRUE;
+
 	if (!strcmp (option, "handle-sigint"))
 		mini_debug_options.handle_sigint = TRUE;
 	else if (!strcmp (option, "keep-delegates"))
@@ -3570,6 +3576,11 @@ mini_parse_debug_option (const char *option)
 		mini_debug_options.native_debugger_break = TRUE;
 	else if (!strcmp (option, "disable_omit_fp"))
 		mini_debug_options.disable_omit_fp = TRUE;
+	// This is an internal testing feature.
+	// Every tail. encountered is required to be optimized.
+	// It is asserted.
+	else if (!strcmp (option, "test-tailcall-require"))
+		mini_debug_options.test_tailcall_require = TRUE;
 	else
 		return FALSE;
 
@@ -3593,6 +3604,9 @@ mini_parse_debug_options (void)
 
 		if (!mini_parse_debug_option (arg)) {
 			fprintf (stderr, "Invalid option for the MONO_DEBUG env variable: %s\n", arg);
+			// test-tailcall-require is also accepted but not documented.
+			// empty string is also accepted and ignored as a consequence
+			// of appending ",foo" without checking for empty.
 			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break'\n");
 			exit (1);
 		}

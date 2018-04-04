@@ -5266,10 +5266,12 @@ namespace System
 
                     // deal with the __COMObject case first. It is very special because from a reflection point of view it has no ctors
                     // so a call to GetMemberCons would fail
+                    bool publicOnly = (bindingAttr & BindingFlags.NonPublic) == 0;
+                    bool wrapExceptions = (bindingAttr & BindingFlags.DoNotWrapExceptions) == 0;
                     if (argCnt == 0 && (bindingAttr & BindingFlags.Public) != 0 && (bindingAttr & BindingFlags.Instance) != 0
                         && (IsGenericCOMObjectImpl() || IsValueType)) 
                     {
-                        server = CreateInstanceDefaultCtor((bindingAttr & BindingFlags.NonPublic) == 0 , false, true, ref stackMark);
+                        server = CreateInstanceDefaultCtor(publicOnly, false, true, wrapExceptions, ref stackMark);
                     }
                     else 
                     {
@@ -5381,7 +5383,7 @@ namespace System
                             } else {
 #endif
                             // fast path??
-                            server = Activator.CreateInstance(this, true);
+                            server = Activator.CreateInstance(this, nonPublic: true, wrapExceptions: wrapExceptions);
 
 #if MONO && FEATURE_REMOTING
                             }
@@ -5593,7 +5595,7 @@ namespace System
         [System.Security.SecuritySafeCritical]  // auto-generated
         [DebuggerStepThroughAttribute]
         [Diagnostics.DebuggerHidden]
-        internal Object CreateInstanceDefaultCtor(bool publicOnly, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)
+        internal Object CreateInstanceDefaultCtor(bool publicOnly, bool skipCheckThis, bool fillCache, bool wrapExceptions, ref StackCrawlMark stackMark)
         {
             if (GetType() == typeof(ReflectionOnlyType))
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_NotAllowedInReflectionOnly"));
@@ -5639,7 +5641,7 @@ namespace System
                 }
             }
 #endif
-            return CreateInstanceSlow(publicOnly, skipCheckThis, fillCache, ref stackMark);
+            return CreateInstanceSlow(publicOnly, wrapExceptions, skipCheckThis, fillCache, ref stackMark);
         }
 #if !MONO
         internal void InvalidateCachedNestedType()

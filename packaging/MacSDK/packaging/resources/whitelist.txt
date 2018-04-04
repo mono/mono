@@ -42,6 +42,7 @@ gmcs
 httpcfg
 ikdasm
 ilasm
+illinkanalyzer
 installvst
 ipy
 ipy64

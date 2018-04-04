@@ -379,5 +379,25 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (4, c.DockPadding.All);
 			}
 		}
+
+		[Test]
+		public void DisplayRectangeTest ()
+		{
+			using (var sc = new ScrollableControl ())
+			{
+				sc.Size = new Size (100, 100);
+				sc.AutoScroll = true;
+
+				Control c;
+				c = new Control ();
+				c.Location = new Point (0, 0);
+				c.Size = new Size (200, 200);
+				sc.Controls.Add (c);
+				Assert.AreEqual (new Rectangle (0, 0, 200, 200), sc.DisplayRectangle);
+
+				c.Visible = false;
+				Assert.AreEqual (new Rectangle (0, 0, 100, 100), sc.DisplayRectangle);
+			}
+		}
 	}
 }

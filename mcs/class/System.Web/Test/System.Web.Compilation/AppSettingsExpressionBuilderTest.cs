@@ -78,7 +78,6 @@ namespace MonoTests.System.Web.Compilation
 	{
 		[Test] // GetAppSetting (String)
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] // https://github.com/mono/mono/issues/7568
 		public void GetAppSetting1 ()
 		{
 			PageDelegates pd = new PageDelegates ();
@@ -121,7 +120,6 @@ namespace MonoTests.System.Web.Compilation
 
 		[Test] // GetAppSetting (String, Type, String)
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] // https://github.com/mono/mono/issues/7568
 		public void GetAppSetting2 ()
 		{
 			PageDelegates pd = new PageDelegates ();

@@ -923,3 +923,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Runtime.InteropServices/src/System/Security/SecureStringMarshal.cs
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/StringNormalizationExtensions.cs
 ../../../external/corefx/src/System.Diagnostics.StackTrace/src/System/Diagnostics/StackFrameExtensions.cs
+
+../../../external/corefx/src/Common/src/System/IO/PathInternal.CaseSensitivity.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/PatternMatcher.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
