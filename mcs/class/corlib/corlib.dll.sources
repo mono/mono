@@ -1487,7 +1487,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/text/mlangcodepageencoding.cs
 ../referencesource/mscorlib/system/text/surrogateencoder.cs
 
-../referencesource/mscorlib/system/text/stringbuilder.cs	
+../referencesource/mscorlib/system/text/stringbuilder.cs
 ../referencesource/mscorlib/system/text/stringbuildercache.cs
 
 ../referencesource/mscorlib/system/runtime/remoting/callcontext.cs
