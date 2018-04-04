@@ -27,6 +27,7 @@ static NameAndMask event_list[] = {
 
 	{ "counters", PROFLOG_COUNTER_EVENTS },
 	{ "alloc", PROFLOG_ALLOC_ALIAS, PROFLOG_ALLOC_ALIAS | PROFLOG_GC_ROOT_EVENTS },
+	{ "fileio", PROFLOG_FILEIO_EVENTS },
 	{ "legacy", PROFLOG_LEGACY_ALIAS },
 };
 

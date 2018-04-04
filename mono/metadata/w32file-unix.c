@@ -40,6 +40,7 @@
 #include "w32file-unix-glob.h"
 #include "w32error.h"
 #include "fdhandle.h"
+#include "mono/metadata/profiler-private.h"
 #include "utils/mono-io-portability.h"
 #include "utils/mono-logger-internals.h"
 #include "utils/mono-os-mutex.h"
@@ -1037,6 +1038,7 @@ file_read(FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *by
 		
 	if (bytesread != NULL) {
 		*bytesread = ret;
+		MONO_PROFILER_RAISE (fileio, (1, *bytesread));
 	}
 		
 	return(TRUE);
@@ -1104,6 +1106,7 @@ file_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint
 	}
 	if (byteswritten != NULL) {
 		*byteswritten = ret;
+		MONO_PROFILER_RAISE (fileio, (0, *byteswritten));
 	}
 	return(TRUE);
 }

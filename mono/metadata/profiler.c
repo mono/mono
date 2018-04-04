@@ -567,6 +567,12 @@ mono_profiler_enable_allocations (void)
 	return mono_profiler_state.allocations = TRUE;
 }
 
+mono_bool
+mono_profiler_enable_fileio (void)
+{
+	return mono_profiler_state.fileio = TRUE;
+}
+
 /**
  * mono_profiler_set_call_instrumentation_filter_callback:
  *
@@ -952,6 +958,7 @@ typedef void (*MonoLegacyProfileAllocFunc) (MonoLegacyProfiler *prof, MonoObject
 typedef void (*MonoLegacyProfileMethodFunc) (MonoLegacyProfiler *prof, MonoMethod *method);
 typedef void (*MonoLegacyProfileExceptionFunc) (MonoLegacyProfiler *prof, MonoObject *object);
 typedef void (*MonoLegacyProfileExceptionClauseFunc) (MonoLegacyProfiler *prof, MonoMethod *method, int clause_type, int clause_num);
+typedef void (*MonoLegacyProfileFileIOFunc) (MonoLegacyProfiler *prof, int kind, int size);
 
 struct _MonoProfiler {
 	MonoProfilerHandle handle;
@@ -962,6 +969,7 @@ struct _MonoProfiler {
 	MonoLegacyProfileGCResizeFunc gc_heap_resize;
 	MonoLegacyProfileJitResult jit_end2;
 	MonoLegacyProfileAllocFunc allocation;
+	MonoLegacyProfileFileIOFunc fileio;
 	MonoLegacyProfileMethodFunc enter;
 	MonoLegacyProfileMethodFunc leave;
 	MonoLegacyProfileExceptionFunc throw_callback;
@@ -978,6 +986,7 @@ MONO_API void mono_profiler_install_jit_end (MonoLegacyProfileJitResult end);
 MONO_API void mono_profiler_set_events (int flags);
 MONO_API void mono_profiler_install_allocation (MonoLegacyProfileAllocFunc callback);
 MONO_API void mono_profiler_install_enter_leave (MonoLegacyProfileMethodFunc enter, MonoLegacyProfileMethodFunc fleave);
+MONO_API void mono_profiler_install_fileio (MonoLegacyProfileFileIOFunc callback);
 MONO_API void mono_profiler_install_exception (MonoLegacyProfileExceptionFunc throw_callback, MonoLegacyProfileMethodFunc exc_method_leave, MonoLegacyProfileExceptionClauseFunc clause_callback);
 
 static void
@@ -1096,7 +1105,8 @@ typedef enum
 	MONO_PROFILE_ENTER_LEAVE = 1 << 12,
 	MONO_PROFILE_COVERAGE = 1 << 13,
 	MONO_PROFILE_INS_COVERAGE = 1 << 14,
-	MONO_PROFILE_STATISTICAL = 1 << 15
+	MONO_PROFILE_STATISTICAL = 1 << 15,
+	MONO_PROFILE_FILEIO = 1 << 16
 } LegacyMonoProfileFlags;
 
 void
@@ -1110,6 +1120,9 @@ mono_profiler_set_events (int flags)
 
 	if (flags & MONO_PROFILE_ALLOCATIONS)
 		mono_profiler_enable_allocations ();
+
+	if (flags & MONO_PROFILE_FILEIO)
+		mono_profiler_enable_fileio ();
 }
 
 static void
@@ -1125,6 +1138,21 @@ mono_profiler_install_allocation (MonoLegacyProfileAllocFunc callback)
 
 	if (callback)
 		mono_profiler_set_gc_allocation_callback (current->handle, allocation_cb);
+}
+
+static void
+fileio_cb (MonoProfiler *prof, uint64_t kind, uint64_t size)
+{
+	prof->fileio (prof->profiler, kind, size);
+}
+
+void
+mono_profiler_install_fileio (MonoLegacyProfileFileIOFunc callback)
+{
+	current->fileio = callback;
+
+	if (callback)
+		mono_profiler_set_fileio_callback (current->handle, fileio_cb);
 }
 
 static void

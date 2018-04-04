@@ -112,7 +112,10 @@ static gint32 sync_points_ctr,
               coverage_methods_ctr,
               coverage_statements_ctr,
               coverage_classes_ctr,
-              coverage_assemblies_ctr;
+              coverage_assemblies_ctr,
+              fileio_reads_ctr,
+              fileio_writes_ctr;
+
 
 // Pending data to be written to the log, for a single thread.
 // Threads periodically flush their own LogBuffers by calling safe_send
@@ -1654,6 +1657,37 @@ finalize_object_end (MonoProfiler *prof, MonoObject *obj)
 	emit_obj (buf, obj);
 
 	EXIT_LOG;
+}
+
+static void
+fileio (MonoProfiler *prof, uint64_t kind, uint64_t size)
+{
+	if (kind == 0)
+	{
+		ENTER_LOG (&fileio_writes_ctr, buf,
+            EVENT_SIZE /* event */ +
+			LEB128_SIZE /* kind */ +
+			LEB128_SIZE /* size */
+        );
+		emit_event (buf, TYPE_FILEIO);
+		emit_value (buf, kind);
+		emit_value (buf, size);
+
+		EXIT_LOG;
+	}
+	else
+	{
+		ENTER_LOG (&fileio_reads_ctr, buf,
+			EVENT_SIZE /* event */ +
+			LEB128_SIZE /* kind */ +
+			LEB128_SIZE /* size */
+        );
+		emit_event (buf, TYPE_FILEIO);
+		emit_value (buf, kind);
+		emit_value (buf, size);
+
+		EXIT_LOG;
+	}
 }
 
 static char*
@@ -4417,6 +4451,28 @@ proflog_icall_SetGCAllocationEvents (MonoBoolean value)
 }
 
 ICALL_EXPORT MonoBoolean
+proflog_icall_GetFileIOEvents (void)
+{
+	return ENABLED (PROFLOG_FILEIO_EVENTS);
+}
+
+ICALL_EXPORT void
+proflog_icall_SetFileIOEvents (MonoBoolean value)
+{
+	mono_coop_mutex_lock (&log_profiler.api_mutex);
+
+	if (value) {
+		ENABLE (PROFLOG_FILEIO_EVENTS);
+		mono_profiler_set_fileio_callback (log_profiler.handle, fileio);
+	} else {
+		DISABLE (PROFLOG_FILEIO_EVENTS);
+		mono_profiler_set_fileio_callback (log_profiler.handle, NULL);
+	}
+
+	mono_coop_mutex_unlock (&log_profiler.api_mutex);
+}
+
+ICALL_EXPORT MonoBoolean
 proflog_icall_GetGCMoveEvents (void)
 {
 	return ENABLED (PROFLOG_GC_MOVE_EVENTS);
@@ -4604,6 +4660,8 @@ runtime_initialized (MonoProfiler *profiler)
 	register_counter ("Event: Coverage statements", &coverage_statements_ctr);
 	register_counter ("Event: Coverage classes", &coverage_classes_ctr);
 	register_counter ("Event: Coverage assemblies", &coverage_assemblies_ctr);
+	register_counter ("Event: File IO reads", &fileio_reads_ctr);
+	register_counter ("Event: File IO writes", &fileio_writes_ctr);
 
 	counters_init ();
 
@@ -4847,6 +4905,9 @@ mono_profiler_init_log (const char *desc)
 		mono_profiler_set_gc_finalized_callback (handle, finalize_end);
 		mono_profiler_set_gc_finalizing_object_callback (handle, finalize_object_begin);
 	}
+
+	if (ENABLED (PROFLOG_FILEIO_EVENTS))
+		mono_profiler_set_fileio_callback (handle, fileio);
 
 	//On Demand heapshot uses the finalizer thread to force a collection and thus a heapshot
 	mono_profiler_set_gc_finalized_callback (handle, finalize_end);
