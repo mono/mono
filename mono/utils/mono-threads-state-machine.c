@@ -500,10 +500,6 @@ retry_state_change:
 		trace_state_change ("ABORT_BLOCKING", info, raw_state, cur_state, 0);
 		return AbortBlockingIgnore;
 
-	case STATE_ASYNC_SUSPEND_REQUESTED: //thread is runnable and have a pending suspend
-		trace_state_change ("ABORT_BLOCKING", info, raw_state, cur_state, 0);
-		return AbortBlockingIgnoreAndPoll;
-
 	case STATE_BLOCKING:
 		if (suspend_count == 0) {
 			if (mono_atomic_cas_i32 (&info->thread_state, build_thread_state (STATE_RUNNING, suspend_count), raw_state) != raw_state)
@@ -522,6 +518,7 @@ retry_state_change:
 STATE_ASYNC_SUSPENDED:
 STATE_SELF_SUSPENDED: Code should not be running while suspended.
 STATE_BLOCKING_AND_SUSPENDED: This is an exit state of done blocking, can't happen here.
+STATE_ASYNC_SUSPEND_REQUESTED: Once we're in STATE_BLOCKING, request_async_suspend just increments the suspend count, so this should never happen.
 */
 	default:
 		mono_fatal_with_history ("Cannot transition thread %p from %s with DONE_BLOCKING", mono_thread_info_get_tid (info), state_name (cur_state));

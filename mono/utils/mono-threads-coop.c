@@ -352,9 +352,6 @@ mono_threads_enter_gc_unsafe_region_unbalanced_with_info (MonoThreadInfo *info, 
 	case AbortBlockingIgnore:
 		info->thread_saved_state [SELF_SUSPEND_STATE_INDEX].valid = FALSE;
 		return NULL;
-	case AbortBlockingIgnoreAndPoll:
-		mono_threads_state_poll_with_info (info);
-		return NULL;
 	case AbortBlockingOk:
 		info->thread_saved_state [SELF_SUSPEND_STATE_INDEX].valid = FALSE;
 		break;
