@@ -3420,7 +3420,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I1_R8)
-			sp [-1].data.i = (gint8)sp [-1].data.f;
+			/* without gint32 cast, C compiler is allowed to use undefined
+			 * behaviour if data.f is bigger than >255. See conv.fpint section
+			 * in C standard:
+			 * > The conversion truncates; that is, the fractional  part
+			 * > is discarded.  The behavior is undefined if the truncated
+			 * > value cannot be represented in the destination type.
+			 * */
+			sp [-1].data.i = (gint8) (gint32) sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U1_I4)
@@ -3432,7 +3439,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U1_R8)
-			sp [-1].data.i = (guint8)sp [-1].data.f;
+			sp [-1].data.i = (guint8) (guint32) sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I2_I4)
@@ -3444,7 +3451,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I2_R8)
-			sp [-1].data.i = (gint16)sp [-1].data.f;
+			sp [-1].data.i = (gint16) (gint32) sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U2_I4)
@@ -3456,7 +3463,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U2_R8)
-			sp [-1].data.i = (guint16)sp [-1].data.f;
+			sp [-1].data.i = (guint16) (guint32) sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I4_R8)
