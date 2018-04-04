@@ -220,7 +220,7 @@ namespace System.Text
         }
 
         // This constructor is needed to allow any sub-classing implementation to provide encoder/decoder fallback objects 
-        // because the encoding object is always created as read-only object and don’t allow setting encoder/decoder fallback 
+        // because the encoding object is always created as read-only object and donâ€™t allow setting encoder/decoder fallback 
         // after the creation is done. 
         protected Encoding(int codePage, EncoderFallback encoderFallback, DecoderFallback decoderFallback)
         {
@@ -727,6 +727,10 @@ namespace System.Text
         {
             return EmptyArray<Byte>.Value;
         }
+
+#if MONO
+        public virtual ReadOnlySpan<byte> Preamble => GetPreamble();
+#endif
 
         private void GetDataItem() {
             if (dataItem==null) {
@@ -1643,7 +1647,7 @@ namespace System.Text
         [System.Security.SecurityCritical]  // auto-generated
         internal void ThrowBytesOverflow(EncoderNLS encoder, bool nothingEncoded)
         {
-            if (encoder == null || encoder.m_throwOnOverflow || nothingEncoded)
+            if (encoder == null || encoder._throwOnOverflow || nothingEncoded)
             {
                 if (encoder != null && encoder.InternalHasFallbackBuffer)
                     encoder.FallbackBuffer.InternalReset();
@@ -1668,7 +1672,7 @@ namespace System.Text
         [System.Security.SecurityCritical]  // auto-generated
         internal void ThrowCharsOverflow(DecoderNLS decoder, bool nothingDecoded)
         {
-            if (decoder == null || decoder.m_throwOnOverflow || nothingDecoded)
+            if (decoder == null || decoder._throwOnOverflow || nothingDecoded)
             {
                 if (decoder != null && decoder.InternalHasFallbackBuffer)
                     decoder.FallbackBuffer.InternalReset();
@@ -1707,7 +1711,7 @@ namespace System.Text
 
                 try 
                 {
-                    this.m_fallback     = (EncoderFallback) info.GetValue("m_fallback",   typeof(EncoderFallback));
+                    this._fallback     = (EncoderFallback) info.GetValue("_fallback",   typeof(EncoderFallback));
                     this.charLeftOver   = (Char)            info.GetValue("charLeftOver", typeof(Char));
                 }
                 catch (SerializationException)
@@ -1730,13 +1734,13 @@ namespace System.Text
                 }
 
                 Encoder encoder = m_encoding.GetEncoder();
-                if (m_fallback != null)
-                    encoder.m_fallback = m_fallback;
+                if (_fallback != null)
+                    encoder._fallback = _fallback;
                 if (charLeftOver != (char) 0)
                 {
                     EncoderNLS encoderNls = encoder as EncoderNLS;
                     if (encoderNls != null)
-                        encoderNls.charLeftOver = charLeftOver;
+                        encoderNls._charLeftOver = charLeftOver;
                 }
                 return encoder;
             }
@@ -1835,11 +1839,11 @@ namespace System.Text
                 
                 try 
                 {
-                    this.m_fallback = (DecoderFallback) info.GetValue("m_fallback", typeof(DecoderFallback));
+                    this._fallback = (DecoderFallback) info.GetValue("_fallback", typeof(DecoderFallback));
                 }
                 catch (SerializationException)
                 {
-                    m_fallback = null;
+                    _fallback = null;
                 }
             }
 
@@ -1858,8 +1862,8 @@ namespace System.Text
                 }
 
                 Decoder decoder = m_encoding.GetDecoder();
-                if (m_fallback != null)
-                    decoder.m_fallback = m_fallback;
+                if (_fallback != null)
+                    decoder._fallback = _fallback;
 
                 return decoder;
             }
@@ -2174,7 +2178,7 @@ namespace System.Text
                 {
                     this.fallbackBuffer = this.encoder.FallbackBuffer;
                     // If we're not converting we must not have data in our fallback buffer
-                    if (encoder.m_throwOnOverflow && encoder.InternalHasFallbackBuffer &&
+                    if (encoder._throwOnOverflow && encoder.InternalHasFallbackBuffer &&
                         this.fallbackBuffer.Remaining > 0)
                         throw new ArgumentException(Environment.GetResourceString("Argument_EncoderFallbackNotEmpty",
                             encoder.Encoding.EncodingName, encoder.Fallback.GetType()));
