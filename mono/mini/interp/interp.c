@@ -2224,7 +2224,7 @@ interp_entry_general (gpointer this_arg, gpointer res, gpointer *args, gpointer 
 	} while (0)
 
 static void
-interp_entry_from_trampoline (CallContext *ccontext, InterpMethod *rmethod)
+interp_entry_from_trampoline (gpointer ccontext_untyped, gpointer rmethod_untyped)
 {
 	InterpFrame frame;
 	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
@@ -2233,6 +2233,8 @@ interp_entry_from_trampoline (CallContext *ccontext, InterpMethod *rmethod)
 	stackval *args;
 	MonoMethod *method;
 	MonoMethodSignature *sig;
+	CallContext *ccontext = (CallContext*) ccontext_untyped;
+	InterpMethod *rmethod = (InterpMethod*) rmethod_untyped;
 	int i;
 
 	method = rmethod->method;
@@ -2292,8 +2294,8 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 	if (rmethod->jit_entry)
 		return rmethod->jit_entry;
 
-#ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
 	MonoMethodSignature *sig = mono_method_signature (method);
+#ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
 	MonoMethod *wrapper = mini_get_interp_in_wrapper (sig);
 
 	entry_wrapper = mono_jit_compile_method_jit_only (wrapper, error);
@@ -2326,7 +2328,11 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 		}
 	}
 	entry_wrapper = mono_native_to_interp_trampoline;
-	entry_func = interp_entry_from_trampoline;
+	/* We need the lmf wrapper only when being called from mixed mode */
+	if (sig->pinvoke)
+		entry_func = interp_entry_from_trampoline;
+	else
+		entry_func = mono_jit_compile_method_jit_only (mini_get_interp_lmf_wrapper (), error);
 #endif
 	/* This is the argument passed to the interp_in wrapper by the static rgctx trampoline */
 	MonoFtnDesc *ftndesc = g_new0 (MonoFtnDesc, 1);
@@ -5577,6 +5583,9 @@ mono_ee_interp_init (const char *opts)
 	mono_interp_transform_init ();
 
 	MonoEECallbacks c;
+#ifdef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
+	c.entry_from_trampoline = interp_entry_from_trampoline;
+#endif
 	c.create_method_pointer = interp_create_method_pointer;
 	c.runtime_invoke = interp_runtime_invoke;
 	c.init_delegate = interp_init_delegate;
