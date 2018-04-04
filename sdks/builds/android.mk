@@ -24,8 +24,7 @@ $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip: | $$(ANDROID_TOOLCHAIN_CACHE_DIR)
 
 $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))/.stamp-$(1): $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip
 	rm -rf $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))
-	mkdir -p $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))
-	tar -xf $$< -C $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2)) --strip-components 1
+	./unzip-android-archive.sh "$$<" "$$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))"
 	touch $$@
 
 .PHONY: provision-android-$(3)-$(1)
@@ -58,7 +57,7 @@ $(eval $(call AndroidSDKProvisioningTemplate,emulator-darwin-4266726,emulator))
 else
 ifeq ($(UNAME),Linux)
 $(eval $(call AndroidSDKProvisioningTemplate,build-tools_r$(ANDROID_BUILD_TOOLS_VERSION)-linux,build-tools/$(ANDROID_BUILD_TOOLS_VERSION)))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r27.0.1-linux,platforms-tools))
+$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r27.0.1-linux,platform-tools))
 $(eval $(call AndroidSDKProvisioningTemplate,sdk-tools-linux-4333796,tools))
 $(eval $(call AndroidSDKProvisioningTemplate,emulator-linux-4266726,emulator))
 else
