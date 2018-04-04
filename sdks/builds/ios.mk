@@ -297,17 +297,28 @@ $(eval $(call iOSSimulatorTemplate,sim64,x86_64))
 $(eval $(call iOSSimulatorTemplate,simtv,x86_64))
 $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 
-LLVM_REV=3b82b3c9041eb997f627f881a67d20be37264e9c
+ifdef USE_PREBUILT_LLVM
 
 # Download a prebuilt llvm
-.stamp-ios-llvm-$(LLVM_REV):
-	./download-llvm.sh $(LLVM_REV)
+.stamp-ios-llvm-$(LLVM_HASH):
+	./download-llvm.sh $(LLVM_HASH)
 	touch $@
 
-build-ios-llvm: .stamp-ios-llvm-$(LLVM_REV)
+build-ios-llvm: .stamp-ios-llvm-$(LLVM_HASH)
 
 clean-ios-llvm:
-	$(RM) -rf ../out/ios-llvm64 ../out/ios-llvm32 .stamp-ios-llvm-$(LLVM_REV)
+	$(RM) -rf ../out/ios-llvm64 ../out/ios-llvm32 .stamp-ios-llvm-$(LLVM_HASH)
+
+else
+
+build-ios-llvm: package-llvm-llvm64 package-llvm-llvm32
+	ln -sf ../out/llvm-llvm32 ../out/ios-llvm32
+	ln -sf ../out/llvm-llvm64 ../out/ios-llvm64
+
+clean-ios-llvm: clean-llvm-llvm64 clean-llvm-llvm32
+	$(RM) -rf ../out/{ios-llvm32,ios-llvm64}
+
+endif
 
 ##
 # Parameters:
