@@ -2539,11 +2539,11 @@ mono_thread_internal_reset_abort (MonoInternalThread *thread)
 	if (thread->abort_exc) {
 		mono_get_eh_callbacks ()->mono_clear_abort_threshold ();
 		thread->abort_exc = NULL;
+		mono_gchandle_free (thread->abort_state_handle);
+		/* This is actually not necessary - the handle
+		   only counts if the exception is set */
+		thread->abort_state_handle = 0;
 	}
-	mono_gchandle_free (thread->abort_state_handle);
-	/* This is actually not necessary - the handle
-	   only counts if the exception is set */
-	thread->abort_state_handle = 0;
 
 	UNLOCK_THREAD (thread);
 }
