@@ -4814,7 +4814,9 @@ mono_set_pending_exception (MonoException *exc)
  *
  *   Set the pending exception of the current thread to \p exc.
  *   The exception will be thrown when execution returns to managed code.
- *   Can optionally \p overwrite any existing pending exceptions.
+ *   Can optionally \p overwrite any existing pending exceptions (it's not supported
+ *   to overwrite any pending exceptions if the runtime is processing a thread abort request,
+ *   in which case the behavior will be undefined).
  *   Return whether the pending exception was set or not.
  *   It will not be set if:
  *   * The thread or runtime is stopping or shutting down
