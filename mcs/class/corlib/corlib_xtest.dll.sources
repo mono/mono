@@ -136,7 +136,7 @@
 ../../../external/corefx/src/System.Text.Encoding/tests/UTF7Encoding/*.cs
 ../../../external/corefx/src/System.Text.Encoding/tests/UTF8Encoding/*.cs
 ../../../external/corefx/src/System.Text.Encoding/tests/UTF32Encoding/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/*.cs
+../../../external/corefx/src/System.Text.Encoding/tests/*.cs:EncodingTestHelpers.netcoreapp.cs,NegativeEncodingTests.netcoreapp.cs
 ../../../external/corefx/src/System.Text.Encoding.Extensions/tests/*.cs
 
 ../../../external/corefx/src/System.ValueTuple/tests/*.cs
