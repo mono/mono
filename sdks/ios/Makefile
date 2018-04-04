@@ -93,6 +93,10 @@ ifdef LLVM
 APPBUILDER_ARGS += --llvm
 endif
 
+ifdef IOS_PROVISIONING_PROFILE
+APPBUILDER_ARGS += --profile $(abspath $(IOS_PROVISIONING_PROFILE))
+endif
+
 #
 # This enables caching of aot outputs between different apps.
 # Changes to the assemblies/runtimes etc. are not detected, so this should only

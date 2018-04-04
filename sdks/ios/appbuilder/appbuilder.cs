@@ -54,6 +54,7 @@ public class AppBuilder
 		string aotdir = null;
 		string exe = null;
 		string signing_identity = null;
+		string profile = null;
 		bool isdev = false;
 		bool isrelease = false;
 		bool isllvm = false;
@@ -70,6 +71,7 @@ public class AppBuilder
 				{ "bundle-name=", s => bundle_name = s },
 				{ "bundle-executable=", s => bundle_executable = s },
 				{ "signing-identity=", s => signing_identity = s },
+				{ "profile=", s => profile = s },
 				{ "llvm", s => isllvm = true },
 				{ "exe=", s => exe = s },
 				{ "r=", s => assemblies.Add (s) },
@@ -237,6 +239,8 @@ public class AppBuilder
 		ninja.WriteLine ("build $appdir/Info.plist: cpifdiff $builddir/Info.plist.binary");
 		ninja.WriteLine ("build $appdir/config.json: cpifdiff $builddir/config.json");
 		ninja.WriteLine ("build $builddir/Entitlements.xcent: cpifdiff $monoios_dir/Entitlements.xcent");
+		if (profile != null)
+			ninja.WriteLine ($"build $builddir/embedded.mobileprovision: cp {profile}");
 		if (isdev)
 			ninja.WriteLine ($"build $appdir/_CodeSignature: codesign $appdir/{bundle_executable} | $builddir/Entitlements.xcent");
 		else
