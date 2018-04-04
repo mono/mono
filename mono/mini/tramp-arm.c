@@ -962,9 +962,16 @@ mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info)
 	buf_len = 512;
 	start = code = (guint8 *) mono_global_codeman_reserve (buf_len);
 
+	unwind_ops = mono_arch_get_cie_program ();
+
 	/* iOS ABI */
 	ARM_PUSH (code, (1 << fp_reg) | (1 << ARMREG_LR));
+	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 2 * sizeof (mgreg_t));
+	mono_add_unwind_op_offset (unwind_ops, code, start, ARMREG_LR, -4);
+	mono_add_unwind_op_offset (unwind_ops, code, start, fp_reg, -8);
+
 	ARM_MOV_REG_REG (code, fp_reg, ARMREG_SP);
+	mono_add_unwind_op_def_cfa_reg (unwind_ops, code, start, fp_reg);
 
 	/* allocate the CallContext on the stack */
 	framesize = ALIGN_TO (sizeof (CallContext), MONO_ARCH_FRAME_ALIGNMENT);
