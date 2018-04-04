@@ -40,7 +40,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This can be reset to 0 when Mono's version number is bumped
 # since it's part of the corlib version (the prefix '1' in the full
 # version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=5
+MONO_CORLIB_COUNTER=6
 MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
@@ -738,9 +738,9 @@ else
 		;;
 	esac
 fi
-CFLAGS="$CFLAGS -g $WARN"
+CFLAGS="$WARN $CFLAGS -g"
 CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -g"
-CPPFLAGS="$CPPFLAGS -g $WARN"
+CPPFLAGS="$WARN $CPPFLAGS -g"
 
 # Where's the 'mcs' source tree?
 if test -d $srcdir/mcs; then
@@ -1000,6 +1000,20 @@ fi
 
 if test "x$with_structured_crashes" = "xno"; then
 AC_DEFINE(DISABLE_STRUCTURED_CRASH,1,[Do not create structured crash files during unmanaged crashes])
+fi
+
+AC_ARG_ENABLE(monodroid, [ --enable-monodroid Enable runtime support for Monodroid (Xamarin.Android)], enable_monodroid=$enableval, enable_monodroid=no)
+AM_CONDITIONAL(ENABLE_MONODROID, test x$enable_monodroid = xyes)
+
+AC_ARG_ENABLE(monotouch, [ --enable-monotouch Enable runtime support for Monotouch (Xamarin.iOS and Xamarin.Mac)], enable_monotouch=$enableval, enable_monotouch=no)
+AM_CONDITIONAL(ENABLE_MONOTOUCH, test x$enable_monotouch = xyes)
+
+if test x$enable_monodroid = xyes; then
+	AC_DEFINE(ENABLE_MONODROID, 1, [Enable runtime support for Monodroid (Xamarin.Android)])
+fi
+
+if test x$enable_monotouch = xyes; then
+	AC_DEFINE(ENABLE_MONOTOUCH, 1, [Enable runtime support for Monotouch (Xamarin.iOS and Xamarin.Mac)])
 fi
 
 #

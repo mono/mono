@@ -154,6 +154,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--enable-dynamic-btls \
 	--enable-maintainer-mode \
 	--enable-minimal=ssa,portability,attach,verifier,full_messages,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,security,shared_handles,interpreter \
+	--enable-monodroid \
 	--with-btls-android-ndk=$$(ANDROID_TOOLCHAIN_DIR)/ndk \
 	--with-sigaltstack=yes \
 	--with-tls=pthread \
@@ -222,6 +223,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-nls \
 	--enable-dynamic-btls \
 	--enable-maintainer-mode \
+	--enable-monodroid \
 	--with-mcs-docs=no \
 	--with-monodroid \
 	--with-profile4_x=no \
@@ -276,6 +278,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-mcs-build \
 	--disable-nls \
 	--enable-maintainer-mode \
+	--enable-monodroid \
 	--with-monodroid
 
 .stamp-android-$(1)-toolchain:
