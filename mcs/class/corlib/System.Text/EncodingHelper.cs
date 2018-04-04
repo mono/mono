@@ -18,6 +18,7 @@ internal static partial class EncodingHelper
 				lock (lockobj){
 					if (utf8EncodingWithoutMarkers == null){
 						utf8EncodingWithoutMarkers = new UTF8Encoding (false, false);
+						utf8EncodingWithoutMarkers.setReadOnly ();
 					}
 				}
 			}
@@ -35,7 +36,9 @@ internal static partial class EncodingHelper
 				lock (lockobj){
 					if (utf8EncodingUnsafe == null){
 						utf8EncodingUnsafe = new UTF8Encoding (false, false);
+						utf8EncodingUnsafe.setReadOnly (false);
 						utf8EncodingUnsafe.DecoderFallback = new DecoderReplacementFallback (String.Empty);
+						utf8EncodingUnsafe.setReadOnly ();
 					}
 				}
 			}
@@ -52,6 +55,7 @@ internal static partial class EncodingHelper
 				lock (lockobj) {
 					if (bigEndianUTF32Encoding == null) {
 						bigEndianUTF32Encoding = new UTF32Encoding (true, true);
+						bigEndianUTF32Encoding.setReadOnly ();
 					}
 				}
 			}
