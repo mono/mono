@@ -1,6 +1,9 @@
 TOP=$(realpath $(CURDIR)/../..)
+-include $(TOP)/sdks/Make.config
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
+
+MAKEFLAGS += --no-builtin-rules
 
 #Use either 'release' or 'debug' dependending on what you need
 DRIVER_CONF=debug
