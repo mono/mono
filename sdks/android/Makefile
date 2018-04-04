@@ -1,4 +1,5 @@
 TOP=$(realpath $(CURDIR)/../..)
+-include $(TOP)/sdks/Make.config
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 ADB       = $(SDK_DIR)/platform-tools/adb
