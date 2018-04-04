@@ -45,9 +45,10 @@ etc.
 # Running tests on device
 
 * The test apps need to be signed using a real signing identity instead
-of the default ad-hoc signing. This can be done using:
+of the default ad-hoc signing. It also needs to include a provisioning
+profile. This can be done using:
 
-make build-ios-dev-<app> IOS_SIGNING_IDENTITY="iPhone Developer: XXX"
+make build-ios-dev-<app> IOS_SIGNING_IDENTITY="iPhone Developer: XXX" IOS_PROVISIONING_PROFILE="$HOME/Library/MobileDevice/Provisioning Profiles/test.mobileprovision"
 
 * The certificates/provisioning profiles need to be installed on the
 host/device.
