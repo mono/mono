@@ -147,6 +147,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.Invariant.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HResults.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MathF.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Memory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MemoryDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlyMemory.cs" />
@@ -1750,6 +1751,7 @@
     <Compile Include="System\IntPtr.cs" />
     <Compile Include="System\KnownTerminals.cs" />
     <Compile Include="System\MarshalByRefObject.cs" />
+    <Compile Include="System\MathF.mono.cs" />
     <Compile Include="System\ModuleHandle.cs" />
     <Compile Include="System\MonoAsyncCall.cs" />
     <Compile Include="System\MonoCQItem.cs" />
