@@ -6427,6 +6427,30 @@ namespace Mono.CSharp
 			return this;
 		}
 
+		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
+		{
+			expr = expr.Resolve (rc);
+			true_expr = true_expr.Resolve (rc);
+			false_expr = false_expr.Resolve (rc);
+
+			if (true_expr == null || false_expr == null || expr == null)
+				return null;
+			
+			if (!(true_expr is ReferenceExpression && false_expr is ReferenceExpression)) {
+				rc.Report.Error (8326, expr.Location, "Both ref conditional operators must be ref values");
+				return null;
+			}
+
+			if (!TypeSpecComparer.IsEqual (true_expr.Type, false_expr.Type)) {
+				rc.Report.Error (8327, true_expr.Location, "The ref conditional expression types `{0}' and `{1}' have to match",
+				                 true_expr.Type.GetSignatureForError (), false_expr.Type.GetSignatureForError ()); 
+			}
+
+			eclass = ExprClass.Value;
+			type = true_expr.Type;
+			return this;
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			Label false_target = ec.DefineLabel ();
@@ -13083,6 +13107,9 @@ namespace Mono.CSharp
 		static bool CanBeByRef (Expression expr)
 		{
 			if (expr is IAssignMethod)
+				return true;
+
+			if (expr is Conditional)
 				return true;
 
 			var invocation = expr as Invocation;

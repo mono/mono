@@ -1411,6 +1411,7 @@ namespace Mono.CSharp
 			case Token.INTERPOLATED_STRING:
 			case Token.THROW:
 			case Token.DEFAULT_COLON:
+			case Token.REF:
 				next_token = Token.INTERR;
 				break;
 				
