@@ -1412,6 +1412,7 @@ namespace Mono.CSharp
 			case Token.THROW:
 			case Token.DEFAULT_COLON:
 			case Token.REF:
+			case Token.STACKALLOC:
 				next_token = Token.INTERR;
 				break;
 				

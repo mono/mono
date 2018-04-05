@@ -5030,17 +5030,23 @@ null_coalescing_expression
 	  }
 	;
 
+
+conditional_oper_expr
+	: expression
+	| stackalloc_expression
+	;
+
 conditional_expression
 	: null_coalescing_expression
-	| null_coalescing_expression INTERR expression COLON expression
+	| null_coalescing_expression INTERR conditional_oper_expr COLON conditional_oper_expr
 	  {
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, (Expression) $5, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
 	  }
-	| null_coalescing_expression INTERR expression COLON THROW prefixed_unary_expression
+	| null_coalescing_expression INTERR conditional_oper_expr COLON THROW prefixed_unary_expression
 	  {
 		if (lang_version < LanguageVersion.V_7)
-			FeatureIsNotAvailable (lexer.Location, "throw expression");
+			FeatureIsNotAvailable (GetLocation ($5), "throw expression");
 
 		var expr = new ThrowExpression ((Expression) $6, GetLocation ($5));
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, expr, GetLocation ($2));
@@ -5051,20 +5057,20 @@ conditional_expression
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, (Expression) $5, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
 	  }
-	| null_coalescing_expression INTERR expression error
+	| null_coalescing_expression INTERR conditional_oper_expr error
 	  {
 		Error_SyntaxError (yyToken);
 
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, null, GetLocation ($2));
 	  }
-	| null_coalescing_expression INTERR expression COLON error
+	| null_coalescing_expression INTERR conditional_oper_expr COLON error
 	  {
 		Error_SyntaxError (yyToken);
 
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, null, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
 	  }
-	| null_coalescing_expression INTERR expression COLON CLOSE_BRACE
+	| null_coalescing_expression INTERR conditional_oper_expr COLON CLOSE_BRACE
 	  {
 		Error_SyntaxError (Token.CLOSE_BRACE);
 
@@ -6244,9 +6250,26 @@ block_variable_initializer
 	| STACKALLOC simple_type
 	  {
 		report.Error (1575, GetLocation ($1), "A stackalloc expression requires [] after type");
-		$$ = new StackAlloc ((Expression) $2, null, GetLocation ($1));		
+		$$ = new StackAlloc ((Expression) $2, null, GetLocation ($1));
 	  }
 	| reference_expression
+	;
+
+stackalloc_expression
+	: STACKALLOC simple_type OPEN_BRACKET_EXPR expression CLOSE_BRACKET
+	  {
+		if (lang_version < LanguageVersion.V_7_2) {
+			FeatureIsNotAvailable (GetLocation ($1), "ref structs");
+		}
+
+		$$ = new SpanStackAlloc ((Expression) $2, (Expression) $4, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($5));
+	  }
+	| STACKALLOC simple_type
+	  {
+		report.Error (1575, GetLocation ($1), "A stackalloc expression requires [] after type");
+		$$ = new StackAlloc ((Expression) $2, null, GetLocation ($1));
+	  }
 	;
 
 reference_expression
