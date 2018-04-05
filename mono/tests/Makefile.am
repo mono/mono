@@ -261,6 +261,9 @@ TESTS_CS_SRC=		\
 	generic-unloading-sub.2.cs	\
 	create-instance.cs	\
 	bug-2907.cs		\
+	array-coop-int.cs 	\
+	array-coop-smallvt.cs 	\
+	array-coop-bigvt.cs 	\
 	array-init.cs		\
 	arraylist.cs		\
 	assembly-load-remap.cs	\
