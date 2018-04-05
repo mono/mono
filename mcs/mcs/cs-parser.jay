@@ -5046,6 +5046,11 @@ conditional_expression
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, expr, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
 	  }
+	| null_coalescing_expression INTERR reference_expression COLON reference_expression
+	  {
+		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, (Expression) $5, GetLocation ($2));
+		lbag.AddLocation ($$, GetLocation ($4));
+	  }
 	| null_coalescing_expression INTERR expression error
 	  {
 		Error_SyntaxError (yyToken);
