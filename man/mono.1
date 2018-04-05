@@ -214,6 +214,13 @@ and
 .I llvm
 options. This feature is experimental.
 .TP
+.I llvmopts=[options]
+Use this option to override the built-in set of flags passed to the
+LLVM optimizer.   The list of possible flags that can be passed can be
+obtained by calling the bundled 
+.I opt
+program that comes with Mono.
+.TP
 .I llvm-outfile=[filename]
 Gives the path for the temporary LLVM bitcode file created during AOT.
 .I dedup
