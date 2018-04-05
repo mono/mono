@@ -1796,124 +1796,124 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
       <LogicalName>wsdl-1.1.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
       <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
-      <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
       <LogicalName>wsdl-1.1.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
       <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
-      <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
       <LogicalName>wsdl-1.1.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
       <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
-      <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
       <LogicalName>wsdl-1.1.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
       <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
-      <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
       <LogicalName>wsdl-1.1.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
       <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
-      <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
       <LogicalName>wsdl-1.1.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
       <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
-      <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
       <LogicalName>wsdl-1.1.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
       <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
-      <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
       <LogicalName>wsdl-1.1.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
       <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
-      <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
       <LogicalName>wsdl-1.1.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
       <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
-      <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
       <LogicalName>wsdl-1.1.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
       <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
-      <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
       <LogicalName>wsdl-1.1.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
       <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
-      <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->
