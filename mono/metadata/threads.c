@@ -1951,6 +1951,53 @@ mono_thread_internal_current_handle (void)
 	return MONO_HANDLE_NEW (MonoInternalThread, mono_thread_internal_current ());
 }
 
+
+static gboolean
+mono_join_uninterrupted_loop (MonoThreadHandle* thread_to_join, gint32 ms, gint64 start, gint32 *wait, MonoThreadInfoWaitRet *ret, MonoError *error)
+// A separate function is needed to avoid creating coop handles in a loop.
+{
+	gboolean done = TRUE;
+	MonoExceptionHandle exc;
+
+	HANDLE_FUNCTION_ENTER ();
+
+	MONO_ENTER_GC_SAFE;
+	*ret = mono_thread_info_wait_one_handle (thread_to_join, *wait, TRUE);
+	MONO_EXIT_GC_SAFE;
+
+	if (*ret != MONO_THREAD_INFO_WAIT_RET_ALERTED) {
+		done = TRUE;
+		goto exit;
+	}
+
+	exc = mono_thread_execute_interruption ();
+	if (!MONO_HANDLE_IS_NULL (exc)) {
+		mono_error_set_exception_handle (error, exc);
+		done = TRUE;
+		goto exit;
+	}
+
+	if (ms == -1) {
+		done = FALSE;
+		goto exit;
+	}
+
+	/* Re-calculate wait according to the time passed. */
+	gint32 diff_ms;
+	diff_ms = (gint32)(mono_msec_ticks () - start);
+	if (diff_ms >= ms) {
+		*ret = MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
+		done = TRUE;
+		goto exit;
+	}
+
+	*wait = ms - diff_ms;
+	done = FALSE;
+
+exit:
+	HANDLE_FUNCTION_RETURN_VAL (done);
+}
+
 static MonoThreadInfoWaitRet
 mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError *error)
 {
@@ -1958,38 +2005,14 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 
 	MonoThreadInfoWaitRet ret;
 	gint64 start;
-	gint32 diff_ms;
 	gint32 wait = ms;
 
 	error_init (error);
 
 	start = (ms == -1) ? 0 : mono_msec_ticks ();
-	for (;;) {
-		MONO_ENTER_GC_SAFE;
-		ret = mono_thread_info_wait_one_handle (thread_to_join, wait, TRUE);
-		MONO_EXIT_GC_SAFE;
 
-		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
-			break;
-
-		// NOTE: Normally handles are not allowed in a loop,
-		// but this terminates when it gets one.
-		MonoExceptionHandle exc = mono_thread_execute_interruption ();
-		if (!MONO_HANDLE_IS_NULL (exc)) {
-			mono_error_set_exception_handle (error, exc);
-			break;
-		}
-
-		if (ms == -1)
-			continue;
-
-		/* Re-calculate ms according to the time passed */
-		diff_ms = (gint32)(mono_msec_ticks () - start);
-		if (diff_ms >= ms) {
-			ret = MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
-			break;
-		}
-		wait = ms - diff_ms;
+	while (!mono_join_uninterrupted_loop (thread_to_join, ms, start, &wait, &ret, error)) {
+		// nothing
 	}
 
 	HANDLE_FUNCTION_RETURN_VAL (ret);
