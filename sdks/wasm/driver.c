@@ -24,12 +24,54 @@ typedef enum {
 } MonoAotMode;
 
 typedef enum {
+	MONO_TYPE_END        = 0x00,       /* End of List */
+	MONO_TYPE_VOID       = 0x01,
+	MONO_TYPE_BOOLEAN    = 0x02,
+	MONO_TYPE_CHAR       = 0x03,
+	MONO_TYPE_I1         = 0x04,
+	MONO_TYPE_U1         = 0x05,
+	MONO_TYPE_I2         = 0x06,
+	MONO_TYPE_U2         = 0x07,
+	MONO_TYPE_I4         = 0x08,
+	MONO_TYPE_U4         = 0x09,
+	MONO_TYPE_I8         = 0x0a,
+	MONO_TYPE_U8         = 0x0b,
+	MONO_TYPE_R4         = 0x0c,
+	MONO_TYPE_R8         = 0x0d,
+	MONO_TYPE_STRING     = 0x0e,
+	MONO_TYPE_PTR        = 0x0f,       /* arg: <type> token */
+	MONO_TYPE_BYREF      = 0x10,       /* arg: <type> token */
+	MONO_TYPE_VALUETYPE  = 0x11,       /* arg: <type> token */
+	MONO_TYPE_CLASS      = 0x12,       /* arg: <type> token */
+	MONO_TYPE_VAR	     = 0x13,	   /* number */
+	MONO_TYPE_ARRAY      = 0x14,       /* type, rank, boundsCount, bound1, loCount, lo1 */
+	MONO_TYPE_GENERICINST= 0x15,	   /* <type> <type-arg-count> <type-1> \x{2026} <type-n> */
+	MONO_TYPE_TYPEDBYREF = 0x16,
+	MONO_TYPE_I          = 0x18,
+	MONO_TYPE_U          = 0x19,
+	MONO_TYPE_FNPTR      = 0x1b,	      /* arg: full method signature */
+	MONO_TYPE_OBJECT     = 0x1c,
+	MONO_TYPE_SZARRAY    = 0x1d,       /* 0-based one-dim-array */
+	MONO_TYPE_MVAR	     = 0x1e,       /* number */
+	MONO_TYPE_CMOD_REQD  = 0x1f,       /* arg: typedef or typeref token */
+	MONO_TYPE_CMOD_OPT   = 0x20,       /* optional arg: typedef or typref token */
+	MONO_TYPE_INTERNAL   = 0x21,       /* CLR internal type */
+
+	MONO_TYPE_MODIFIER   = 0x40,       /* Or with the following types */
+	MONO_TYPE_SENTINEL   = 0x41,       /* Sentinel for varargs method signature */
+	MONO_TYPE_PINNED     = 0x45,       /* Local var that points to pinned object */
+
+	MONO_TYPE_ENUM       = 0x55        /* an enumeration */
+} MonoTypeEnum;
+
+typedef enum {
 	MONO_IMAGE_OK,
 	MONO_IMAGE_ERROR_ERRNO,
 	MONO_IMAGE_MISSING_ASSEMBLYREF,
 	MONO_IMAGE_IMAGE_INVALID
 } MonoImageOpenStatus;
 
+typedef struct MonoType_ MonoType;
 typedef struct MonoDomain_ MonoDomain;
 typedef struct MonoAssembly_ MonoAssembly;
 typedef struct MonoMethod_ MonoMethod;
@@ -53,10 +95,16 @@ MonoString* mono_string_new (MonoDomain *domain, const char *text);
 MonoDomain* mono_domain_get (void);
 MonoClass* mono_class_from_name (MonoImage *image, const char* name_space, const char *name);
 MonoMethod* mono_class_get_method_from_name (MonoClass *klass, const char *name, int param_count);
+MonoType* mono_class_get_type (MonoClass *klass);
+MonoClass* mono_object_get_class (MonoObject *obj);
+int mono_type_get_type (MonoType *type);
+int mono_type_is_reference (MonoType *type);
 
 MonoString* mono_object_to_string (MonoObject *obj, MonoObject **exc);//FIXME Use MonoError variant
 char* mono_string_to_utf8 (MonoString *string_obj);
 MonoObject* mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc);
+void* mono_object_unbox (MonoObject *obj);
+
 MonoImage* mono_assembly_get_image (MonoAssembly *assembly);
 MonoAssembly* mono_assembly_load (MonoAssemblyName *aname, const char *basedir, MonoImageOpenStatus *status);
 
@@ -190,4 +238,87 @@ EMSCRIPTEN_KEEPALIVE MonoString *
 mono_wasm_string_from_js (const char *str)
 {
 	return mono_string_new (root_domain, str);
+}
+
+
+EMSCRIPTEN_KEEPALIVE int
+mono_wasm_get_obj_type (MonoObject *obj)
+{
+	if (!obj)
+		return 0;
+	MonoType *type = mono_class_get_type (mono_object_get_class(obj));
+
+	switch (mono_type_get_type (type)) {
+	// case MONO_TYPE_CHAR: prob should be done not as a number?
+	// case MONO_TYPE_BOOL: prob should be done not as a number?
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+		return 1;
+	case MONO_TYPE_R4:
+	case MONO_TYPE_R8:
+		return 2;
+	case MONO_TYPE_STRING:
+		return 3;
+	default:
+		if (mono_type_is_reference (type))
+			return 4;
+		return 5;
+	}
+}
+
+
+EMSCRIPTEN_KEEPALIVE long long
+mono_unbox_int (MonoObject *obj)
+{
+	if (!obj)
+		return 0;
+	MonoType *type = mono_class_get_type (mono_object_get_class(obj));
+
+	void *ptr = mono_object_unbox (obj);
+	switch (mono_type_get_type (type)) {
+	case MONO_TYPE_I1:
+		return *(signed char*)ptr;
+	case MONO_TYPE_U1:
+		return *(unsigned char*)ptr;
+	case MONO_TYPE_I2:
+		return *(short*)ptr;
+	case MONO_TYPE_U2:
+		return *(unsigned short*)ptr;
+	case MONO_TYPE_I4:
+		return *(int*)ptr;
+	case MONO_TYPE_U4:
+		return *(unsigned int*)ptr;
+	case MONO_TYPE_I8:
+		return *(long long*)ptr;
+	case MONO_TYPE_U8:
+		return *(unsigned long long*)ptr;
+	default:
+		printf ("Invalid type %d to mono_unbox_int\n", mono_type_get_type (type));
+		return 0;
+	}
+}
+
+EMSCRIPTEN_KEEPALIVE double
+mono_wasm_unbox_float (MonoObject *obj)
+{
+	if (!obj)
+		return 0;
+	MonoType *type = mono_class_get_type (mono_object_get_class(obj));
+
+	void *ptr = mono_object_unbox (obj);
+	switch (mono_type_get_type (type)) {
+	case MONO_TYPE_R4:
+		return *(float*)ptr;
+	case MONO_TYPE_R8:
+		return *(double*)ptr;
+	default:
+		printf ("Invalid type %d to mono_wasm_unbox_float\n", mono_type_get_type (type));
+		return 0;
+	}
 }
