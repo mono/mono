@@ -29,8 +29,6 @@ corefx/Vector.cs
 ../../../external/corefx/src/System.Runtime.Numerics/src/System/Numerics/Complex.cs
 ../../../external/corefx/src/System.Runtime.Numerics/src/System/Numerics/NumericsHelpers.cs
 
-../../../external/corefx/src/Common/src/System/MathF.netstandard.cs
-
 ../../../external/corefx/src/System.Numerics.Vectors/src/System/Numerics/JitIntrinsicAttribute.cs
 ../../../external/corefx/src/System.Numerics.Vectors/src/System/Numerics/Matrix3x2.cs
 ../../../external/corefx/src/System.Numerics.Vectors/src/System/Numerics/Matrix4x4.cs
