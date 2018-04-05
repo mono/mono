@@ -41,6 +41,10 @@ namespace Xamarin.ApiDiff {
 			get { return State.Output; }
 		}
 
+		public Formatter Formatter {
+			get { return Formatter.Current; }
+		}
+
 		protected TextWriter Indent ()
 		{
 			for (int i = 0; i < State.Indent; i++)

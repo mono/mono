@@ -143,7 +143,7 @@ namespace Xamarin.ApiDiff {
 			if (pos >= 0) {
 				int end = type.LastIndexOf (']');
 				string subtype = type.Substring (pos + 3, end - pos - 3);
-				return type.Substring (0, pos) + "&lt;" + GetTypeName (subtype) + "&gt;";
+				return type.Substring (0, pos) + Formatter.Current.LesserThan + GetTypeName (subtype) + Formatter.Current.GreaterThan;
 			}
 
 			switch (type) {
