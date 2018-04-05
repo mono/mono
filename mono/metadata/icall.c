@@ -118,6 +118,8 @@ extern MonoStringHandle ves_icall_System_Environment_GetOSVersionString (MonoErr
 
 ICALL_EXPORT MonoReflectionAssemblyHandle ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error);
 
+static gboolean icall_array_verbose;
+
 /* Lazy class loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (system_version, "System", "Version")
 static GENERATE_GET_CLASS_WITH_CACHE (assembly_name, "System.Reflection", "AssemblyName")
@@ -164,6 +166,9 @@ mono_icall_get_file_path_prefix (const gchar *path)
 ICALL_EXPORT MonoObjectHandle
 ves_icall_System_Array_GetValueImpl (MonoArrayHandle arr, guint32 pos, MonoError *error)
 {
+	if (icall_array_verbose)
+		g_print ("%s arr:%p pos:%d\n", __func__, arr, (int)pos);
+
 	MonoClass *ac;
 	gint32 esize;
 	gpointer *ea;
@@ -248,6 +253,9 @@ ves_icall_System_Array_GetValue (MonoArray *arr, MonoArray *idxs)
 ICALL_EXPORT void
 ves_icall_System_Array_SetValueImpl (MonoArrayHandle arr, MonoObjectHandle value, guint32 pos, MonoError *error)
 {
+	if (icall_array_verbose)
+		g_print ("%s arr:%p val:%p pos:%d\n", __func__, arr, value, (int)pos);
+
 	error_init (error);
 	array_set_value_impl (arr, value, pos, error);
 }
@@ -724,7 +732,10 @@ ves_icall_System_Array_CreateInstanceImpl64 (MonoReflectionType *type, MonoArray
 ICALL_EXPORT gint32 
 ves_icall_System_Array_GetRank (MonoObjectHandle arr, MonoError *error)
 {
-	return m_class_get_rank (mono_object_class (arr));
+	gint32 result = m_class_get_rank (mono_handle_class (arr));
+	if (icall_array_verbose)
+		g_print ("%s arr:%p res:%d\n", __func__, arr, result);
+	return result;
 }
 
 ICALL_EXPORT gint32
@@ -787,6 +798,9 @@ ves_icall_System_Array_GetLowerBound (MonoArray *arr, gint32 dimension)
 ICALL_EXPORT void
 ves_icall_System_Array_ClearInternal (MonoArrayHandle arr, gint32 idx, gint32 length, MonoError* error)
 {
+	if (icall_array_verbose)
+		g_print ("%s arr:%p idx:%d len:%d\n", __func__, arr, (int)idx, (int)length);
+
 	guint gchandle = 0;
 	int sz = mono_array_element_size (mono_handle_class (arr));
 	gpointer p = mono_array_handle_pin_with_size (arr, sz, idx, &gchandle);
@@ -862,6 +876,9 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 ICALL_EXPORT void
 ves_icall_System_Array_GetGenericValueImpl (MonoArrayHandle arr, guint32 pos, gpointer value, MonoError* error)
 {
+	if (icall_array_verbose)
+		g_print ("%s arr:%p pos:%d val:%p\n", __func__, arr, (int)pos, value);
+
 	MONO_REQ_GC_UNSAFE_MODE; 	// because of gpointer value
 
 	MonoClass *ac;
@@ -882,6 +899,9 @@ ves_icall_System_Array_GetGenericValueImpl (MonoArrayHandle arr, guint32 pos, gp
 ICALL_EXPORT void
 ves_icall_System_Array_SetGenericValueImpl (MonoArrayHandle arr, guint32 pos, gpointer value, MonoError* error)
 {
+	if (icall_array_verbose)
+		g_print ("%s arr:%p pos:%d val:%p\n", __func__, arr, (int)pos, value);
+
 	MONO_REQ_GC_UNSAFE_MODE; 	// because of gpointer value
 
 	MonoClass *ac, *ec;
