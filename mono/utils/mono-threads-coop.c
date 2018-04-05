@@ -207,6 +207,14 @@ mono_threads_enter_gc_safe_region_internal (MonoStackData *stackdata)
 }
 
 gpointer
+mono_threads_enter_gc_safe_region (gpointer *stackpointer)
+{
+	MONO_STACKDATA (stackdata);
+	stackdata.stackpointer = stackpointer;
+	return mono_threads_enter_gc_safe_region_internal (&stackdata);
+}
+
+gpointer
 mono_threads_enter_gc_safe_region_with_info (MonoThreadInfo *info, MonoStackData *stackdata)
 {
 	gpointer cookie;
@@ -282,6 +290,14 @@ mono_threads_exit_gc_safe_region_internal (gpointer cookie, MonoStackData *stack
 }
 
 void
+mono_threads_exit_gc_safe_region (gpointer cookie, gpointer *stackpointer)
+{
+	MONO_STACKDATA (stackdata);
+	stackdata.stackpointer = stackpointer;
+	mono_threads_exit_gc_safe_region_internal (cookie, &stackdata);
+}
+
+void
 mono_threads_exit_gc_safe_region_unbalanced_internal (gpointer cookie, MonoStackData *stackdata)
 {
 	MonoThreadInfo *info;
@@ -332,6 +348,14 @@ gpointer
 mono_threads_enter_gc_unsafe_region_internal (MonoStackData *stackdata)
 {
 	return mono_threads_enter_gc_unsafe_region_with_info (mono_thread_info_current_unchecked (), stackdata);
+}
+
+gpointer
+mono_threads_enter_gc_unsafe_region (gpointer *stackpointer)
+{
+	MONO_STACKDATA (stackdata);
+	stackdata.stackpointer = stackpointer;
+	return mono_threads_enter_gc_unsafe_region_internal (&stackdata);
 }
 
 gpointer
@@ -437,6 +461,14 @@ mono_threads_exit_gc_unsafe_region_internal (gpointer cookie, MonoStackData *sta
 #endif
 
 	mono_threads_exit_gc_unsafe_region_unbalanced_internal (cookie, stackdata);
+}
+
+void
+mono_threads_exit_gc_unsafe_region (gpointer cookie, gpointer *stackpointer)
+{
+	MONO_STACKDATA (stackdata);
+	stackdata.stackpointer = stackpointer;
+	mono_threads_exit_gc_unsafe_region_internal (cookie, &stackdata);
 }
 
 void
