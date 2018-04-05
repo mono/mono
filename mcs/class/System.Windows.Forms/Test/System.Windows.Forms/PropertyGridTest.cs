@@ -319,7 +319,7 @@ namespace MonoTests.System.Windows.Forms
 
 			// parent
 			Assert.IsNotNull (pg.SelectedGridItem.Parent, "1");
-			Assert.AreEqual ("Misc", pg.SelectedGridItem.Parent.Label, "2");
+			Assert.AreEqual ("Default", pg.SelectedGridItem.Parent.Label, "2");
 			Assert.AreEqual (GridItemType.Category, pg.SelectedGridItem.Parent.GridItemType, "3");
 			Assert.AreEqual (1, pg.SelectedGridItem.Parent.GridItems.Count, "4");
 		}

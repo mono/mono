@@ -326,8 +326,6 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ComponentModel.EventBasedAsync/src/System/ComponentModel/AsyncOperationManager.cs
 ../../../external/corefx/src/System.ComponentModel.EventBasedAsync/src/System/ComponentModel/BackgroundWorker.cs
 ../../../external/corefx/src/System.ComponentModel.Primitives/src/System/ComponentModel/BrowsableAttribute.cs
-../../../external/corefx/src/System.ComponentModel.Primitives/src/System/ComponentModel/CategoryAttribute.cs
-../../../external/corefx/src/System.ComponentModel.Primitives/src/System/ComponentModel/Component.cs
 ../../../external/corefx/src/System.ComponentModel.Primitives/src/System/ComponentModel/ComponentCollection.cs
 ../../../external/corefx/src/System.ComponentModel.Primitives/src/System/ComponentModel/DescriptionAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.Primitives/src/System/ComponentModel/DesignerCategoryAttribute.cs
@@ -336,7 +334,6 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ComponentModel.Primitives/src/System/ComponentModel/DesignOnlyAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.Primitives/src/System/ComponentModel/DisplayNameAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.Primitives/src/System/ComponentModel/EventHandlerList.cs
-../../../external/corefx/src/System.ComponentModel.Primitives/src/System/ComponentModel/IComponent.cs
 ../../../external/corefx/src/System.ComponentModel.Primitives/src/System/ComponentModel/IContainer.cs
 ../../../external/corefx/src/System.ComponentModel.Primitives/src/System/ComponentModel/ImmutableObjectAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.Primitives/src/System/ComponentModel/InitializationEventAttribute.cs
@@ -366,11 +363,8 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/CollectionChangeAction.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/CollectionChangeEventArgs.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/CollectionChangeEventHandler.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/CollectionConverter.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/ComplexBindingPropertiesAttribute.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/ComponentConverter.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/ComponentResourceManager.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Container.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/ContainerFilterService.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/CultureInfoConverter.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/CustomTypeDescriptor.cs
@@ -379,7 +373,6 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DataObjectMethodAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DataObjectMethodType.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DateTimeConverter.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DateTimeOffsetConverter.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DecimalConverter.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DefaultBindingPropertyAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DefaultEventAttribute.cs
@@ -389,7 +382,6 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DesignTimeVisibleAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DoubleConverter.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/EditorAttribute.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/EnumConverter.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/EventDescriptor.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/EventDescriptorCollection.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/ExpandableObjectConverter.cs
@@ -458,7 +450,6 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/TimeSpanConverter.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/ToolboxItemFilterAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/ToolboxItemFilterType.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/TypeConverter.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/TypeConverterAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/TypeDescriptionProvider.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/TypeDescriptionProviderAttribute.cs
@@ -492,7 +483,6 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentEventHandler.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentRenameEvent.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentRenameEventHandler.cs
-../referencesource/System/compmod/system/componentmodel/design/DesignerOptionService.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesignerTransaction.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesignerTransactionCloseEvent.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesignerTransactionCloseEventHandler.cs
@@ -544,10 +534,18 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ToolboxItemAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ViewTechnology.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/Serialization/*.cs
+../referencesource/System/compmod/system/componentmodel/design/DesignerOptionService.cs
+../referencesource/System/compmod/system/componentmodel/IComponent.cs
+../referencesource/System/compmod/system/componentmodel/Container.cs
 ../referencesource/System/compmod/system/componentmodel/ArraySubsetEnumerator.cs
 ../referencesource/System/compmod/system/componentmodel/AsyncCompletedEventArgs.cs
 ../referencesource/System/compmod/system/componentmodel/AsyncCompletedEventHandler.cs
+../referencesource/System/compmod/system/componentmodel/CategoryAttribute.cs
+../referencesource/System/compmod/system/componentmodel/Component.cs
 ../referencesource/System/compmod/system/componentmodel/CompModSwitches.cs
+../referencesource/System/compmod/system/componentmodel/ComponentConverter.cs
+../referencesource/System/compmod/system/componentmodel/EnumConverter.cs
+../referencesource/System/compmod/system/componentmodel/DateTimeOffsetConverter.cs
 ../referencesource/System/compmod/system/componentmodel/DebugExtendedPropertyDescriptor.cs
 ../referencesource/System/compmod/system/componentmodel/DebugReflectEventDescriptor.cs
 ../referencesource/System/compmod/system/componentmodel/DebugReflectPropertyDescriptor.cs
@@ -570,6 +568,8 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/compmod/system/componentmodel/design/ParenthesizePropertyNameAttribute.cs
 ../referencesource/System/compmod/system/componentmodel/design/RefreshProperties.cs
 ../referencesource/System/compmod/system/componentmodel/design/RefreshPropertiesAttribute.cs
+../referencesource/System/compmod/system/componentmodel/CollectionConverter.cs
+../referencesource/System/compmod/system/componentmodel/TypeConverter.cs
 
 ../referencesource/System/compmod/system/diagnostics/AssertSection.cs
 ../referencesource/System/compmod/system/diagnostics/BooleanSwitch.cs
