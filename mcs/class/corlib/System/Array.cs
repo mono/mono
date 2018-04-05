@@ -180,26 +180,9 @@ namespace System
 			return value;
 		}
 
-		internal void InternalArray__set_Item<T> (int index, T item)
-		{
-			if (unchecked ((uint) index) >= unchecked ((uint) Length))
-				throw new ArgumentOutOfRangeException ("index");
-
-			object[] oarray = this as object [];
-			if (oarray != null) {
-				oarray [index] = (object)item;
-				return;
-			}
-			SetGenericValueImpl (index, ref item);
-		}
-
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern void GetGenericValueImpl<T> (int pos, out T value);
-
-		// CAUTION! No bounds checking!
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern void SetGenericValueImpl<T> (int pos, ref T value);
 
 		internal struct InternalEnumerator<T> : IEnumerator<T>
 		{
