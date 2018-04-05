@@ -174,5 +174,15 @@ namespace System.Threading
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern int SignalAndWait_Internal (IntPtr toSignal, IntPtr toWaitOn, int ms);
+
+		internal static int ToTimeoutMilliseconds(TimeSpan timeout)
+		{
+			var timeoutMilliseconds = (long)timeout.TotalMilliseconds;
+			if (timeoutMilliseconds < -1 || timeoutMilliseconds > int.MaxValue)
+			{
+				throw new ArgumentOutOfRangeException(nameof(timeout), SR.ArgumentOutOfRange_NeedNonNegOrNegative1);
+			}
+			return (int)timeoutMilliseconds;
+		}
 	}
 }
