@@ -92,6 +92,19 @@ var mono_get_obj_type = Module.cwrap ('mono_wasm_get_obj_type', 'number', ['numb
 var mono_unbox_int = Module.cwrap ('mono_unbox_int', 'number', ['number'])
 var mono_unbox_float = Module.cwrap ('mono_wasm_unbox_float', 'number', ['number'])
 
+/*
+args_marshal is a string with one character per parameter that tells how to marshal it, here are the valid values:
+
+i: int32
+l: int64
+f: float
+d: double
+s: string
+o: js object will be converted to a C# object
+m: raw mono object. Don't use it unless you know what you're doing
+
+additionally you can append 'm' to args_marshal beyond `args.length` if you don't want the return value marshaled
+*/
 function call_method (method, this_arg, args_marshal, args) {
 	var extra_args_mem = 0;
 	for (var i = 0; i < args.length; ++i) {
@@ -107,6 +120,10 @@ function call_method (method, this_arg, args_marshal, args) {
 	for (var i = 0; i < args.length; ++i) {
 		if (args_marshal[i] == 's') {
 			Module.setValue (args_mem + i * 4, mono_string (args [i]), "i32");
+		} else if (args_marshal[i] == 'm') {
+			Module.setValue (args_mem + i * 4, args [i], "i32");
+		} else if (args_marshal[i] == 'o') {
+			Module.setValue (args_mem + i * 4, extract_mono_obj (args [i]), "i32");
 		} else if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd') {
 			var extra_cell = extra_args_mem + extra_arg_idx;
 			extra_arg_idx += 8;
@@ -139,6 +156,8 @@ function call_method (method, this_arg, args_marshal, args) {
 		throw new Error (msg); //the convention is that invoke_method ToString () any outgoing exception
 	}
 
+	if (args_marshal.length >= args.length && args_marshal[args.length] == 'm')
+		return res;
 	return unbox_mono_obj (res);
 }
 
@@ -154,6 +173,61 @@ function conv_string (mono_obj) {
 	return res;
 }
 
+var js_objects_table = [];
+function wasm_binding_obj_new(js_obj_id)
+{
+	return call_method (bind_js_obj, null, "i", [js_obj_id]);
+}
+
+function wasm_bind_existing(mono_obj, js_id)
+{
+	return call_method (bind_exist_obj, null, "mi", [mono_obj, js_id]);
+}
+
+function wasm_get_js_id(mono_obj)
+{
+	return call_method (get_js_id, null, "m", [mono_obj]);	
+}
+
+function wasm_get_raw_obj(gchandle)
+{
+	return call_method (get_raw_mono_obj, null, "im", [gchandle]);	
+}
+
+function extract_mono_obj(js_obj) {
+	//halp JS ppl, is this enough?
+	if (js_obj == null || js_obj == undefined)
+		return 0;
+
+	if (!js_obj.__mono_gchandle__) {
+		js_obj.__mono_gchandle__ = wasm_binding_obj_new(js_objects_table.length);
+		js_objects_table.push(js_obj);
+	}
+
+	return wasm_get_raw_obj (js_obj.__mono_gchandle__);
+}
+
+function extract_js_obj(mono_obj) {
+	print("extract_js_obj " + mono_obj);
+	if (mono_obj == 0)
+		return null;
+
+	var js_id = wasm_get_js_id(mono_obj);
+	print("js_id " + js_id);
+	if (js_id > 0)
+		return js_objects_table [js_id];
+
+	var js_obj = {
+		__mono_gchandle__: wasm_bind_existing(mono_obj, js_objects_table.length),
+		is_mono_bridged_obj: true
+	};
+
+	js_objects_table.push(js_obj);
+
+	return js_obj;
+}
+
+
 function unbox_mono_obj(mono_obj) {
 	if (mono_obj == 0)
 		return undefined;
@@ -166,9 +240,9 @@ function unbox_mono_obj(mono_obj) {
 	case 3: //string
 		return conv_string (mono_obj);
 	case 4: // ref type
-		throw new Error ("no idea on how to unbox objects yet");
+		return extract_js_obj(mono_obj);
 	case 5: //vts
-		throw new Error ("no idea on how to unbox value types yet");
+		throw new Error ("no idea on how to unbox value types");
 	default:
 		throw new Error ("no idea on how to unbox object kind " + type);
 	}
@@ -198,6 +272,28 @@ if (!driver_class)
 var send_message = find_method (driver_class, "Send", -1)
 if (!send_message)
 	throw 3;
+
+
+//Ok, this is temporary
+var wasm_runtime = find_class (main_module, "WebAssembly", "Runtime")
+if (!wasm_runtime)
+	throw 4;
+
+var bind_js_obj = find_method (wasm_runtime, "BindJSObject", -1)
+if (!send_message)
+	throw 5;
+
+var bind_exist_obj = find_method (wasm_runtime, "BindExistingObject", -1)
+if (!send_message)
+	throw 6;
+
+var get_js_id = find_method (wasm_runtime, "GetJSObjectId", -1)
+if (!send_message)
+	throw 7;
+var get_raw_mono_obj = find_method (wasm_runtime, "GetMonoObject", -1)
+if (!send_message)
+	throw 8;
+
 
 print ("-----LOADED ----");
 
