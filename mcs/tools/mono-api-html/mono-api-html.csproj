@@ -57,6 +57,9 @@
     <Compile Include="MethodComparer.cs" />
     <Compile Include="NamespaceComparer.cs" />
     <Compile Include="PropertyComparer.cs" />
+    <Compile Include="Formatter.cs" />
+    <Compile Include="HtmlFormatter.cs" />
+    <Compile Include="MarkdownFormatter.cs" />
   </ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
