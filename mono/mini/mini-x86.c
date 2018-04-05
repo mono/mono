@@ -5266,7 +5266,6 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	
 	if (method->save_lmf) {
 		gint32 lmf_offset = cfg->lmf_var->inst_offset;
-		guint8 *patch;
 
 		/* restore caller saved regs */
 		if (cfg->used_int_regs & (1 << X86_EBX)) {
@@ -5288,13 +5287,8 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 			}
 		}
 
+		g_assert (!pos || need_stack_frame);
 		if (pos) {
-			g_assert (need_stack_frame);
-			x86_lea_membase (code, X86_ESP, X86_EBP, pos);
-		}
-
-		if (pos) {
-			g_assert (need_stack_frame);
 			x86_lea_membase (code, X86_ESP, X86_EBP, pos);
 		}
 
@@ -6011,7 +6005,7 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 		if (cached)
 			return cached;
 
-		if (mono_aot_only) {
+		if (mono_ee_features.use_aot_trampolines) {
 			start = mono_aot_get_trampoline ("delegate_invoke_impl_has_target");
 		} else {
 			MonoTrampInfo *info;
@@ -6034,7 +6028,7 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 		if (code)
 			return code;
 
-		if (mono_aot_only) {
+		if (mono_ee_features.use_aot_trampolines) {
 			char *name = g_strdup_printf ("delegate_invoke_impl_target_%d", sig->param_count);
 			start = mono_aot_get_trampoline (name);
 			g_free (name);

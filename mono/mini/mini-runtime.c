@@ -104,6 +104,7 @@ gboolean mono_aot_only = FALSE;
 /* Same as mono_aot_only, but only LLVM compiled code is used, no trampolines */
 gboolean mono_llvm_only = FALSE;
 MonoAotMode mono_aot_mode = MONO_AOT_MODE_NONE;
+MonoEEFeatures mono_ee_features;
 
 const char *mono_build_date;
 gboolean mono_do_signal_chaining;
@@ -2092,7 +2093,7 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, gboolean jit_
 
 	error_init (error);
 
-	if (mono_use_interpreter && !mono_aot_only && !jit_only)
+	if (mono_ee_features.force_use_interpreter && !jit_only)
 		use_interp = TRUE;
 	if (!use_interp && mono_interp_only_classes) {
 		for (GSList *l = mono_interp_only_classes; l; l = l->next) {
@@ -2738,7 +2739,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	MonoJitInfo *ji = NULL;
 	gboolean callee_gsharedvt = FALSE;
 
-	if (mono_use_interpreter && !mono_aot_only)
+	if (mono_ee_features.force_use_interpreter)
 		return mini_get_interp_callbacks ()->runtime_invoke (method, obj, params, exc, error);
 
 	error_init (error);
@@ -3494,7 +3495,7 @@ mono_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *met
 		return cache [idx];
 
 	/* FIXME Support more cases */
-	if (mono_aot_only) {
+	if (mono_ee_features.use_aot_trampolines) {
 		cache [idx] = (guint8 *)mono_aot_get_trampoline (mono_get_delegate_virtual_invoke_impl_name (load_imt_reg, offset));
 		g_assert (cache [idx]);
 	} else {

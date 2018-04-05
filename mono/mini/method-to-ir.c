@@ -67,6 +67,7 @@
 #include <mono/metadata/reflection-internals.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-utils-debug.h>
+#include <mono/utils/mono-logger-internals.h>
 
 #include "trace.h"
 
@@ -86,7 +87,6 @@
 static const gboolean debug_tailcall_break_compile = FALSE; // break in method_to_ir
 static const gboolean debug_tailcall_break_run = FALSE;     // insert breakpoint in generated code
 static const gboolean debug_tailcall_try_all = FALSE;       // consider any call followed by ret
-static const gboolean debug_tailcall = FALSE;               // logging
 
 /* These have 'cfg' as an implicit argument */
 #define INLINE_FAILURE(msg) do {									\
@@ -2176,8 +2176,7 @@ test_tailcall (MonoCompile *cfg, MonoBoolean tailcall)
 	// Do not change "tailcalllog" here without changing other places, e.g. tests that search for it.
 	//
 	g_assertf (tailcall || !mini_get_debug_options ()->test_tailcall_require, "tailcalllog fail from %s", cfg->method->name);
-	if (cfg->verbose_level)
-		g_print ("tailcalllog %s from %s\n", tailcall ? "success" : "fail", cfg->method->name);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_TAILCALL, "tailcalllog %s from %s", tailcall ? "success" : "fail", cfg->method->name);
 }
 
 inline static MonoCallInst *
@@ -6516,7 +6515,7 @@ ensure_method_is_allowed_to_call_method (MonoCompile *cfg, MonoMethod *caller, M
  * sequence and return the pointer to the data and the size.
  */
 static const char*
-initialize_array_data (MonoMethod *method, gboolean aot, unsigned char *ip, MonoClass *klass, guint32 len, int *out_size, guint32 *out_field_token)
+initialize_array_data (MonoMethod *method, gboolean aot, unsigned char *ip, unsigned char *end, MonoClass *klass, guint32 len, int *out_size, guint32 *out_field_token)
 {
 	/*
 	 * newarr[System.Int32]
@@ -6524,7 +6523,7 @@ initialize_array_data (MonoMethod *method, gboolean aot, unsigned char *ip, Mono
 	 * ldtoken field valuetype ...
 	 * call void class [mscorlib]System.Runtime.CompilerServices.RuntimeHelpers::InitializeArray(class [mscorlib]System.Array, valuetype [mscorlib]System.RuntimeFieldHandle)
 	 */
-	if (ip [0] == CEE_DUP && ip [1] == CEE_LDTOKEN && ip [5] == 0x4 && ip [6] == CEE_CALL) {
+	if (ip + 10 < end && ip [0] == CEE_DUP && ip [1] == CEE_LDTOKEN && ip [5] == 0x4 && ip [6] == CEE_CALL) {
 		ERROR_DECL (error);
 		guint32 token = read32 (ip + 7);
 		guint32 field_token = read32 (ip + 2);
@@ -7067,7 +7066,23 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 		|| (vtable_arg && !cfg->backend->have_volatile_non_param_register)
 
 		|| ((vtable_arg || cfg->gshared) && !cfg->backend->have_op_tail_call)
-		|| !mono_arch_tail_call_supported (cfg, mono_method_signature (method), mono_method_signature (cmethod)))
+		)
+		return FALSE;
+
+	MonoMethodSignature *caller_signature = mono_method_signature (method);
+	MonoMethodSignature *callee_signature = mono_method_signature (cmethod);
+
+	g_assert (caller_signature);
+	g_assert (callee_signature);
+
+	// Require an exact match on return type due to various conversions in emit_move_return_value that would be skipped.
+	// The main troublesome conversions are double <=> float.
+	// CoreCLR allows some conversions here, such as integer truncation.
+	// As well I <=> I[48] and U <=> U[48] would be ok, for matching size.
+	if (mini_get_underlying_type (caller_signature->ret)->type != mini_get_underlying_type (callee_signature->ret)->type)
+		return FALSE;
+
+	if (!mono_arch_tail_call_supported (cfg, caller_signature, callee_signature))
 		return FALSE;
 
 	for (i = 0; i < fsig->param_count; ++i) {
@@ -7879,7 +7894,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK_OVF (1);
 			n = (*ip)-CEE_LDARG_0;
 			CHECK_ARG (n);
-			if (is_adressable_valuetype_load (cfg, ip + 1, cfg->arg_types[n])) {
+			if (ip + 1 < end && is_adressable_valuetype_load (cfg, ip + 1, cfg->arg_types[n])) {
 				EMIT_NEW_ARGLOADA (cfg, ins, n);
 			} else {
 				EMIT_NEW_ARGLOAD (cfg, ins, n);
@@ -7894,7 +7909,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK_OVF (1);
 			n = (*ip)-CEE_LDLOC_0;
 			CHECK_LOCAL (n);
-			if (is_adressable_valuetype_load (cfg, ip + 1, header->locals[n])) {
+			if (ip + 1 < end && is_adressable_valuetype_load (cfg, ip + 1, header->locals[n])) {
 				EMIT_NEW_LOCLOADA (cfg, ins, n);
 			} else {
 				EMIT_NEW_LOCLOAD (cfg, ins, n);
@@ -7922,7 +7937,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK_OVF (1);
 			n = ip [1];
 			CHECK_ARG (n);
-			if (is_adressable_valuetype_load (cfg, ip + 2, cfg->arg_types[n])) {
+			if (ip + 2 < end && is_adressable_valuetype_load (cfg, ip + 2, cfg->arg_types[n])) {
 				EMIT_NEW_ARGLOADA (cfg, ins, n);
 			} else {
 				EMIT_NEW_ARGLOAD (cfg, ins, n);
@@ -7956,7 +7971,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK_OVF (1);
 			n = ip [1];
 			CHECK_LOCAL (n);
-			if (is_adressable_valuetype_load (cfg, ip + 2, header->locals[n])) {
+			if (ip + 2 < end && is_adressable_valuetype_load (cfg, ip + 2, header->locals[n])) {
 				EMIT_NEW_LOCLOADA (cfg, ins, n);
 			} else {
 				EMIT_NEW_LOCLOAD (cfg, ins, n);
@@ -8370,15 +8385,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			gboolean direct_icall = FALSE;
 			gboolean constrained_partial_call = FALSE;
 			MonoMethod *cil_method;
-			gboolean const inst_tailcall = G_UNLIKELY (debug_tailcall_try_all
-							? (ip [5] == CEE_RET)
-							: ((ins_flag & MONO_INST_TAILCALL) != 0));
 			gboolean common_call = FALSE;
 			gboolean tailcall_remove_ret = FALSE;
 
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 
+			gboolean const inst_tailcall = G_UNLIKELY (debug_tailcall_try_all
+							? (ip + 5 < end && ip [5] == CEE_RET)
+							: ((ins_flag & MONO_INST_TAILCALL) != 0));
 			ins = NULL;
 
 			cmethod = mini_get_method (cfg, method, token, NULL, generic_context);
@@ -8800,10 +8815,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			// 2. a Non-generic static methods of reference types and b. non-generic methods
 			//    of value types need to be passed a pointer to the caller’s class’s VTable in the MONO_ARCH_RGCTX_REG register.
 			// 3. Generic methods need to be passed a pointer to the MRGCTX in the MONO_ARCH_RGCTX_REG register
-			if (inst_tailcall && (debug_tailcall ? cfg->verbose_level : (cfg->verbose_level >= 2)))
-				g_print ("tail.%s %s -> %s supported_tail_call:%d gshared:%d vtable_arg:%d\n",
-					mono_opcode_name (*ip), method->name, cmethod->name,
-					(int)supported_tail_call, (int)cfg->gshared, !!vtable_arg);
+			if (inst_tailcall)
+				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_TAILCALL,
+					    "tail.%s %s -> %s supported_tail_call:%d gshared:%d vtable_arg:%d",
+					    mono_opcode_name (*ip), method->name, cmethod->name, supported_tail_call, cfg->gshared, !!vtable_arg);
 
 			// Handle tail calls similarly to normal calls.
 			tail_call = supported_tail_call && cfg->backend->have_op_tail_call;
@@ -8932,7 +8947,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			/* Tail recursion elimination */
-			if ((cfg->opt & MONO_OPT_TAILC) && call_opcode == CEE_CALL && cmethod == method && ip [5] == CEE_RET && !vtable_arg) {
+			if ((cfg->opt & MONO_OPT_TAILC) && call_opcode == CEE_CALL && cmethod == method && ip + 5 < end && ip [5] == CEE_RET && !vtable_arg) {
 				gboolean has_vtargs = FALSE;
 				int i;
 
@@ -9838,20 +9853,23 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_TYPELOAD (klass);
 
 			/* Optimize the common ldobj+stloc combination */
-			switch (ip [5]) {
-			case CEE_STLOC_S:
-				loc_index = ip [6];
-				stloc_len = 2;
-				break;
-			case CEE_STLOC_0:
-			case CEE_STLOC_1:
-			case CEE_STLOC_2:
-			case CEE_STLOC_3:
-				loc_index = ip [5] - CEE_STLOC_0;
-				stloc_len = 1;
-				break;
-			default:
-				break;
+			if (ip + 5 < end) {
+				switch (ip [5]) {
+				case CEE_STLOC_S:
+					CHECK_OPSIZE (7);
+					loc_index = ip [6];
+					stloc_len = 2;
+					break;
+				case CEE_STLOC_0:
+				case CEE_STLOC_1:
+				case CEE_STLOC_2:
+				case CEE_STLOC_3:
+					loc_index = ip [5] - CEE_STLOC_0;
+					stloc_len = 1;
+					break;
+				default:
+					break;
+				}
 			}
 
 			if ((loc_index != -1) && ip_in_bb (cfg, cfg->cbb, ip + 5)) {
@@ -9871,7 +9889,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			/* Optimize the ldobj+stobj combination */
-			if (((ip [5] == CEE_STOBJ) && ip_in_bb (cfg, cfg->cbb, ip + 5) && read32 (ip + 6) == token)) {
+			if (ip + 9 < end && ip [5] == CEE_STOBJ && ip_in_bb (cfg, cfg->cbb, ip + 5) && read32 (ip + 6) == token) {
 				CHECK_STACK (1);
 
 				sp --;
@@ -11083,7 +11101,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 * for small sizes open code the memcpy
 			 * ensure the rva field is big enough
 			 */
-			if ((cfg->opt & MONO_OPT_INTRINS) && ip + 6 < end && ip_in_bb (cfg, cfg->cbb, ip + 6) && (len_ins->opcode == OP_ICONST) && (data_ptr = initialize_array_data (method, cfg->compile_aot, ip, klass, len_ins->inst_c0, &data_size, &field_token))) {
+			if ((cfg->opt & MONO_OPT_INTRINS) && ip + 6 < end && ip_in_bb (cfg, cfg->cbb, ip + 6) && (len_ins->opcode == OP_ICONST) && (data_ptr = initialize_array_data (method, cfg->compile_aot, ip, end, klass, len_ins->inst_c0, &data_size, &field_token))) {
 				MonoMethod *memcpy_method = mini_get_memcpy_method ();
 				MonoInst *iargs [3];
 				int add_reg = alloc_ireg_mp (cfg);
@@ -11413,7 +11431,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				EMIT_NEW_TEMPLOAD (cfg, ins, vtvar->inst_c0);
 			} else {
-				if ((ip + 5 < end) && ip_in_bb (cfg, cfg->cbb, ip + 5) && 
+				if ((ip + 9 < end) && ip_in_bb (cfg, cfg->cbb, ip + 5) &&
 					((ip [5] == CEE_CALL) || (ip [5] == CEE_CALLVIRT)) && 
 					(cmethod = mini_get_method (cfg, method, read32 (ip + 6), NULL, generic_context)) &&
 					(cmethod->klass == mono_defaults.systemtype_class) &&
@@ -11665,6 +11683,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				gpointer func;
 				MonoJitICallInfo *info;
 
+				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				func = mono_method_get_wrapper_data (method, token);
 				info = mono_find_jit_icall_by_addr (func);
