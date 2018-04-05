@@ -87,6 +87,7 @@
 static const gboolean debug_tailcall_break_compile = FALSE; // break in method_to_ir
 static const gboolean debug_tailcall_break_run = FALSE;     // insert breakpoint in generated code
 static const gboolean debug_tailcall_try_all = FALSE;       // consider any call followed by ret
+static const gboolean debug_tailcall = FALSE;               // logging
 
 /* These have 'cfg' as an implicit argument */
 #define INLINE_FAILURE(msg) do {									\
@@ -7037,8 +7038,8 @@ is_jit_optimizer_disabled (MonoMethod *m)
 static gboolean
 is_not_supported_tailcall_helper (gboolean value, const char *svalue, MonoMethod *method, MonoMethod *cmethod)
 {
-	if (value)
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_TAILCALL, "%s %s -> %s %s:true\n", __func__, method->name, cmethod->name, svalue);
+	if (value && debug_tailcall)
+		g_print ("%s %s -> %s %s:true\n", __func__, method->name, cmethod->name, svalue);
 	return value;
 }
 
