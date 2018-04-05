@@ -57,20 +57,18 @@ namespace Xamarin.ApiDiff {
 
 		public override void Added (XElement target, bool wasParentAdded)
 		{
-			string name = target.Attribute ("name").Value;
-			var namespaceDescription  = $"{name}: Added namespace";
+			var namespaceDescription  = $"{State.Namespace}: Added namespace";
 			State.LogDebugMessage ($"Possible -n value: {namespaceDescription}");
 			if (State.IgnoreNew.Any (re => re.IsMatch (namespaceDescription)))
 				return;
 
-			Output.WriteLine ("<!-- start namespace {0} --> <div> ", name);
-			Output.WriteLine ("<h2>New Namespace {0}</h2>", name);
-			Output.WriteLine ();
+			Formatter.BeginNamespace (Output, "New ");
 			// list all new types
-			foreach (var addedType in target.Element ("classes").Elements ("class"))
+			foreach (var addedType in target.Element ("classes").Elements ("class")) {
+				State.Type = addedType.Attribute ("name").Value;
 				comparer.Added (addedType, true);
-			Output.WriteLine ("</div> <!-- end namespace {0} -->", name);
-			Output.WriteLine ();
+			}
+			Formatter.EndNamespace (Output);
 		}
 
 		public override void Modified (XElement source, XElement target, ApiChanges differences)
@@ -83,10 +81,9 @@ namespace Xamarin.ApiDiff {
 			State.Output = output;
 			if (s.Length > 0) {
 				var name = target.Attribute ("name").Value;
-				Output.WriteLine ("<!-- start namespace {0} --> <div> ", name);
-				Output.WriteLine ("<h2>Namespace {0}</h2>", name);
+				Formatter.BeginNamespace (Output);
 				Output.WriteLine (s);
-				Output.WriteLine ("</div> <!-- end namespace {0} -->", name);
+				Formatter.EndNamespace (Output);
 			}
 		}
 
@@ -99,14 +96,14 @@ namespace Xamarin.ApiDiff {
 			if (State.IgnoreRemoved.Any (re => re.IsMatch (namespaceDescription)))
 				return;
 
-			Output.WriteLine ("<!-- start namespace {0} --> <div>", name);
-			Output.WriteLine ("<h2>Removed Namespace {0}</h2>", name);
+			Formatter.BeginNamespace (Output, "Removed ");
 			Output.WriteLine ();
 			// list all removed types
-			foreach (var removedType in source.Element ("classes").Elements ("class"))
+			foreach (var removedType in source.Element ("classes").Elements ("class")) {
+				State.Type = comparer.GetTypeName (removedType);
 				comparer.Removed (removedType);
-			Output.WriteLine ("</div> <!-- end namespace {0} -->", name);
-			Output.WriteLine ();
+			}
+			Formatter.EndNamespace (Output);
 		}
 	}
 }
