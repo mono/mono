@@ -52829,7 +52829,7 @@
   <test name="test-948.cs">
     <type name="X">
       <method name="Void Main()" attrs="150">
-        <size>16</size>
+        <size>103</size>
       </method>
       <method name="Void Foo()" attrs="129">
         <size>2</size>
