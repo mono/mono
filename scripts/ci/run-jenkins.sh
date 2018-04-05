@@ -173,27 +173,12 @@ if [[ ${CI_TAGS} == *'checked-all'* ]]; then export MONO_CHECK_MODE=all; fi
 
 export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS $MONO_TEST_ENV_OPTIONS"
 
-if [[ ${CI_TAGS} == *'acceptance-tests'* ]];
-    then
-	$(dirname "${BASH_SOURCE[0]}")/run-test-acceptance-tests.sh
-elif [[ ${CI_TAGS} == *'profiler-stress-tests'* ]];
-    then
-    $(dirname "${BASH_SOURCE[0]}")/run-test-profiler-stress-tests.sh
-elif [[ ${CI_TAGS} == *'stress-tests'* ]];
-    then
-    $(dirname "${BASH_SOURCE[0]}")/run-test-stress-tests.sh
-elif [[ ${CI_TAGS} == *'interpreter'* ]];
-    then
-    $(dirname "${BASH_SOURCE[0]}")/run-test-interpreter.sh
-elif [[ ${CI_TAGS} == *'mcs-compiler'* ]];
-    then
-    $(dirname "${BASH_SOURCE[0]}")/run-test-mcs.sh
-elif [[ ${CI_TAGS} == *'mac-sdk'* ]];
-    then
-    $(dirname "${BASH_SOURCE[0]}")/run-test-mac-sdk.sh
-elif [[ ${CI_TAGS} == *'no-tests'* ]];
-    then
-	exit 0
-else
-	make check-ci
+if   [[ ${CI_TAGS} == *'acceptance-tests'* ]];         then ${MONO_REPO_ROOT}/scripts/ci/run-test-acceptance-tests.sh;
+elif [[ ${CI_TAGS} == *'profiler-stress-tests'* ]];    then ${MONO_REPO_ROOT}/scripts/ci/run-test-profiler-stress-tests.sh;
+elif [[ ${CI_TAGS} == *'stress-tests'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-stress-tests.sh;
+elif [[ ${CI_TAGS} == *'interpreter'* ]];              then ${MONO_REPO_ROOT}/scripts/ci/run-test-interpreter.sh;
+elif [[ ${CI_TAGS} == *'mcs-compiler'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-mcs.sh;
+elif [[ ${CI_TAGS} == *'mac-sdk'* ]];                  then ${MONO_REPO_ROOT}/scripts/ci/run-test-mac-sdk.sh;
+elif [[ ${CI_TAGS} == *'no-tests'* ]];                 then exit 0;
+else make check-ci;
 fi
