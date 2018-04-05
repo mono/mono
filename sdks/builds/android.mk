@@ -20,7 +20,7 @@ $(ANDROID_TOOLCHAIN_CACHE_DIR):
 define AndroidProvisioningTemplate
 
 $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip: | $$(ANDROID_TOOLCHAIN_CACHE_DIR)
-	curl --location --fail --silent --show-error --output $$@ $(4)$(1).zip
+	wget --no-verbose -O $$@ $(4)$(1).zip
 
 $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))/.stamp-$(1): $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip
 	rm -rf $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))
