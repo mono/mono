@@ -7045,7 +7045,14 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 		|| (cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
 		|| cfg->method->save_lmf
 		|| (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
-		|| call_opcode == CEE_CALLI
+		)
+		return FALSE;
+
+	// Let LLVM decide if it can tailcall, even if mini cannot.
+	// This is definitely relevant, as LLVM does not have the
+	// problems with the extra generic context or interface method dispatch parameters.
+	if  (!cfg->llvm_only)
+		if (call_opcode == CEE_CALLI
 		|| (virtual_ && !cfg->backend->have_op_tail_call_membase)
 
 		// Passing vtable_arg uses (requires?) a volatile non-parameter register,
