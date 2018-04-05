@@ -1598,41 +1598,46 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 	}
 }
 
+static gboolean
+System_Threading_Thread_Sleep_loop (MonoInternalThread *thread, gint32 ms, MonoError *error)
+// A separate function is needed to avoid creating coop handles in a loop.
+{
+	HANDLE_FUNCTION_ENTER ();
+
+	gboolean done = TRUE;
+	gboolean alerted = FALSE;
+
+	THREAD_DEBUG (g_message ("%s: Sleeping for %d ms", __func__, ms));
+
+	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
+
+	(void)mono_thread_info_sleep (ms, &alerted);
+
+	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
+
+	if (alerted) {
+		MonoExceptionHandle exc = mono_thread_execute_interruption ();
+		if (!MONO_HANDLE_IS_NULL (exc))
+			mono_error_set_exception_handle (error, exc);
+		else if (ms == MONO_INFINITE_WAIT) // FIXME: !MONO_INFINITE_WAIT
+			done = FALSE;
+	}
+
+	HANDLE_FUNCTION_RETURN_VAL (done);
+}
+
 void
 ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 {
-	guint32 res;
-	MonoInternalThread *thread = mono_thread_internal_current ();
-
 	THREAD_DEBUG (g_message ("%s: Sleeping for %d ms", __func__, ms));
 
 	if (mono_thread_current_check_pending_interrupt ())
 		return;
 
-	while (TRUE) {
-		gboolean alerted = FALSE;
+	MonoInternalThread *thread = mono_thread_internal_current ();
 
-		mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
-
-		res = mono_thread_info_sleep (ms, &alerted);
-
-		mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
-
-		if (alerted) {
-			// NOTE: Normally handles are not allowed in a loop,
-			// but this terminates when it gets one.
-			MonoExceptionHandle exc = mono_thread_execute_interruption ();
-			if (!MONO_HANDLE_IS_NULL (exc)) {
-				mono_set_pending_exception_handle (exc);
-				return;
-			} else {
-				// FIXME: !MONO_INFINITE_WAIT
-				if (ms != MONO_INFINITE_WAIT)
-					break;
-			}
-		} else {
-			break;
-		}
+	while (!System_Threading_Thread_Sleep_loop (thread, ms, error)) {
+		// nothing
 	}
 }
 
