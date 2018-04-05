@@ -43,7 +43,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
-	<string>11.1</string>
+	<string>10.1</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
