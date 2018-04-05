@@ -4537,9 +4537,9 @@ mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, uns
 	return addr;
 }
 
-/* optimize the simple GetGenericValueImpl/SetGenericValueImpl generic icalls */
+/* optimize the simple GetGenericValueImpl generic icalls */
 static MonoInst*
-emit_array_generic_access (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **args, int is_set)
+emit_array_generic_access (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **args)
 {
 	MonoInst *addr, *store, *load;
 	MonoClass *eklass = mono_class_from_mono_type (fsig->params [2]);
@@ -4547,15 +4547,9 @@ emit_array_generic_access (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst
 	/* the bounds check is already done by the callers */
 	addr = mini_emit_ldelema_1_ins (cfg, eklass, args [0], args [1], FALSE);
 	MonoType *etype = m_class_get_byval_arg (eklass);
-	if (is_set) {
-		EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, load, etype, args [2]->dreg, 0);
-		EMIT_NEW_STORE_MEMBASE_TYPE (cfg, store, etype, addr->dreg, 0, load->dreg);
-		if (mini_type_is_reference (etype))
-			mini_emit_write_barrier (cfg, addr, load);
-	} else {
-		EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, load, etype, addr->dreg, 0);
-		EMIT_NEW_STORE_MEMBASE_TYPE (cfg, store, etype, args [2]->dreg, 0, load->dreg);
-	}
+	EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, load, etype, addr->dreg, 0);
+	EMIT_NEW_STORE_MEMBASE_TYPE (cfg, store, etype, args [2]->dreg, 0, load->dreg);
+
 	return store;
 }
 
@@ -4950,9 +4944,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			return NULL;
 	} else if (cmethod->klass == mono_defaults.array_class) {
 		if (strcmp (cmethod->name, "GetGenericValueImpl") == 0 && fsig->param_count + fsig->hasthis == 3 && !cfg->gsharedvt)
-			return emit_array_generic_access (cfg, fsig, args, FALSE);
-		else if (strcmp (cmethod->name, "SetGenericValueImpl") == 0 && fsig->param_count + fsig->hasthis == 3 && !cfg->gsharedvt)
-			return emit_array_generic_access (cfg, fsig, args, TRUE);
+			return emit_array_generic_access (cfg, fsig, args);
 
 #ifndef MONO_BIG_ARRAYS
 		/*

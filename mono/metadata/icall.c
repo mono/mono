@@ -859,32 +859,6 @@ ves_icall_System_Array_GetGenericValueImpl (MonoArray *arr, guint32 pos, gpointe
 }
 
 ICALL_EXPORT void
-ves_icall_System_Array_SetGenericValueImpl (MonoArray *arr, guint32 pos, gpointer value)
-{
-	MonoClass *ac, *ec;
-	gint32 esize;
-	gpointer *ea;
-
-	ac = (MonoClass *)arr->obj.vtable->klass;
-	ec = m_class_get_element_class (ac);
-
-	esize = mono_array_element_size (ac);
-	ea = (gpointer*)((char*)arr->vector + (pos * esize));
-
-	if (MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (ec))) {
-		g_assert (esize == sizeof (gpointer));
-		mono_gc_wbarrier_generic_store (ea, *(MonoObject **)value);
-	} else {
-		g_assert (m_class_is_inited (ec));
-		g_assert (esize == mono_class_value_size (ec, NULL));
-		if (m_class_has_references (ec))
-			mono_gc_wbarrier_value_copy (ea, value, 1, ec);
-		else
-			mono_gc_memmove_atomic (ea, value, esize);
-	}
-}
-
-ICALL_EXPORT void
 ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_InitializeArray (MonoArrayHandle array, MonoClassField *field_handle, MonoError *error)
 {
 	error_init (error);
