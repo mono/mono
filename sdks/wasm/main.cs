@@ -238,6 +238,8 @@ public class Driver {
 		testRunner.Add (Assembly.LoadFrom (baseDir + "/" + testsuite_name));
 		// testRunner.RunOnly ("MonoTests.System.Threading.AutoResetEventTest.MultipleSet");
 
+		// This is useful if you need to skip to the middle of a huge test suite like corlib.
+		// testRunner.SkipFirst (4550);
 		testRunner.Start (10);
 	}
 
