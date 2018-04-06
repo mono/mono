@@ -725,103 +725,103 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <EmbeddedResource Include="Assembly/Mono.ico">
-      <LogicalName>Mono.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Error.ico">
+      <LogicalName>Error.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Information.ico">
       <LogicalName>Information.ico</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Error.ico">
-      <LogicalName>Error.ico</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Warning.ico">
-      <LogicalName>Warning.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Mono.ico">
+      <LogicalName>Mono.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Question.ico">
       <LogicalName>Question.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Shield.ico">
       <LogicalName>Shield.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assembly/Warning.ico">
+      <LogicalName>Warning.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
-    <EmbeddedResource Include="Assembly/Mono.ico">
-      <LogicalName>Mono.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Error.ico">
+      <LogicalName>Error.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Information.ico">
       <LogicalName>Information.ico</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Error.ico">
-      <LogicalName>Error.ico</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Warning.ico">
-      <LogicalName>Warning.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Mono.ico">
+      <LogicalName>Mono.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Question.ico">
       <LogicalName>Question.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Shield.ico">
       <LogicalName>Shield.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assembly/Warning.ico">
+      <LogicalName>Warning.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
-    <EmbeddedResource Include="Assembly/Mono.ico">
-      <LogicalName>Mono.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Error.ico">
+      <LogicalName>Error.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Information.ico">
       <LogicalName>Information.ico</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Error.ico">
-      <LogicalName>Error.ico</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Warning.ico">
-      <LogicalName>Warning.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Mono.ico">
+      <LogicalName>Mono.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Question.ico">
       <LogicalName>Question.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Shield.ico">
       <LogicalName>Shield.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assembly/Warning.ico">
+      <LogicalName>Warning.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
-    <EmbeddedResource Include="Assembly/Mono.ico">
-      <LogicalName>Mono.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Error.ico">
+      <LogicalName>Error.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Information.ico">
       <LogicalName>Information.ico</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Error.ico">
-      <LogicalName>Error.ico</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Warning.ico">
-      <LogicalName>Warning.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Mono.ico">
+      <LogicalName>Mono.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Question.ico">
       <LogicalName>Question.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Shield.ico">
       <LogicalName>Shield.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assembly/Warning.ico">
+      <LogicalName>Warning.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
-    <EmbeddedResource Include="Assembly/Mono.ico">
-      <LogicalName>Mono.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Error.ico">
+      <LogicalName>Error.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Information.ico">
       <LogicalName>Information.ico</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Error.ico">
-      <LogicalName>Error.ico</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Warning.ico">
-      <LogicalName>Warning.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Mono.ico">
+      <LogicalName>Mono.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Question.ico">
       <LogicalName>Question.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Shield.ico">
       <LogicalName>Shield.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assembly/Warning.ico">
+      <LogicalName>Warning.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->
