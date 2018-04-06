@@ -297,7 +297,7 @@ $(eval $(call iOSSimulatorTemplate,sim64,x86_64))
 $(eval $(call iOSSimulatorTemplate,simtv,x86_64))
 $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 
-ifdef USE_PREBUILT_LLVM
+ifndef IGNORE_PACKAGE_LLVM
 
 # Download a prebuilt llvm
 .stamp-ios-llvm-$(LLVM_HASH):
