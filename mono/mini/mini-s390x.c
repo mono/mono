@@ -7578,24 +7578,15 @@ mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig
 {
 	CallInfo *c1, *c2;
 	gboolean res;
-	int i;
+	MonoType *callee_ret;
 
 	c1 = get_call_info (NULL, caller_sig);
 	c2 = get_call_info (NULL, callee_sig);
 	res = c1->stack_usage >= c2->stack_usage;
-	if (callee_sig->ret && MONO_TYPE_ISSTRUCT (callee_sig->ret))
+	callee_ret = mini_get_underlying_type (callee_sig->ret);
+	if (callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && c2->struct_ret && c2->ret.size > 8)
 		/* An address on the callee's stack is passed as the first argument */
 		res = FALSE;
-	for (i = 0; i < c2->nargs && res != FALSE; ++i) {
-		if (c2->args [i].regtype == RegTypeStructByAddr)
-			/* An address on the callee's stack is passed as the argument */
-			res = FALSE;
-	}
-
-	/*
-	if (!mono_debug_count ())
-		res = FALSE;
-	*/
 
 	g_free (c1);
 	g_free (c2);
