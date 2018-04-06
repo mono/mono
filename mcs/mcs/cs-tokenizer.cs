@@ -1580,20 +1580,22 @@ namespace Mono.CSharp
 					Error_NumericConstantTooLong ();
 				number_builder [number_pos++] = (char) c;
 			}
-			
+
 			//
 			// We use peek_char2, because decimal_digits needs to do a 
 			// 2-character look-ahead (5.ToString for example).
 			//
 			while ((d = peek_char2 ()) != -1){
-				if (d >= '0' && d <= '9'){
+				if (d >= '0' && d <= '9') {
 					if (number_pos == MaxNumberLength)
 						Error_NumericConstantTooLong ();
-					number_builder [number_pos++] = (char) d;
+					number_builder [number_pos++] = (char)d;
 					get_char ();
 					seen_digits = true;
-				} else
-					break;
+					continue;
+				}
+
+				break;
 			}
 			
 			return seen_digits;
@@ -1723,9 +1725,8 @@ namespace Mono.CSharp
 			} catch (OverflowException) {
 				Error_NumericConstantTooLong ();
 				return new IntLiteral (context.BuiltinTypes, 0, loc);
-			}
-			catch (FormatException) {
-				Report.Error (1013, Location, "Invalid number");
+			} catch (FormatException) {
+				Error_InvalidNumber ();
 				return new IntLiteral (context.BuiltinTypes, 0, loc);
 			}
 		}
@@ -1764,14 +1765,39 @@ namespace Mono.CSharp
 		{
 			int d;
 			ulong ul;
+			bool digit_separator = false;
+			int prev = 0;
 			
 			get_char ();
 			while ((d = peek_char ()) != -1){
 				if (is_hex (d)){
 					number_builder [number_pos++] = (char) d;
 					get_char ();
-				} else
-					break;
+
+					prev = d;
+					continue;
+				}
+
+				if (d == '_') {
+					get_char ();
+
+					if (!digit_separator) {
+						if (context.Settings.Version < LanguageVersion.V_7)
+							Report.FeatureIsNotAvailable (context, Location, "digit separators");
+
+						digit_separator = true;
+					}
+
+					prev = d;
+					continue;
+				}
+
+				break;
+			}
+
+			if (number_pos == 0 || prev == '_') {
+				Error_InvalidNumber ();
+				return new IntLiteral (context.BuiltinTypes, 0, loc);
 			}
 			
 			string s = new String (number_builder, 0, number_pos);
@@ -1786,9 +1812,8 @@ namespace Mono.CSharp
 			} catch (OverflowException){
 				Error_NumericConstantTooLong ();
 				return new IntLiteral (context.BuiltinTypes, 0, loc);
-			}
-			catch (FormatException) {
-				Report.Error (1013, Location, "Invalid number");
+			} catch (FormatException) {
+				Error_InvalidNumber ();
 				return new IntLiteral (context.BuiltinTypes, 0, loc);
 			}
 		}
@@ -1797,27 +1822,50 @@ namespace Mono.CSharp
 		{
 			int d;
 			ulong ul = 0;
-			
-			get_char ();
+			bool digit_separator = false;
+			int prev = -1;
 			int digits = 0;
+
+			get_char ();
 			while ((d = peek_char ()) != -1){
-				if (d == '0' || d == '1'){
+
+				if (d == '0' || d == '1') {
 					ul = (ul << 1);
 					digits++;
 					if (d == '1')
 						ul |= 1;
 					get_char ();
-					if (digits > 64){
+					if (digits > 64) {
 						Error_NumericConstantTooLong ();
 						return new IntLiteral (context.BuiltinTypes, 0, loc);
 					}
-				} else
-					break;
+
+					prev = d;
+					continue;
+				}
+
+				if (d == '_') {
+					get_char ();
+
+					if (!digit_separator) {
+						if (context.Settings.Version < LanguageVersion.V_7)
+							Report.FeatureIsNotAvailable (context, Location, "digit separators");
+						
+						digit_separator = true;
+					}
+
+					prev = d;
+					continue;
+				}
+				 
+				break;
 			}
-			if (digits == 0){
-				Report.Error (1013, Location, "Invalid number");
+
+			if (digits == 0 || prev == '_') {
+				Error_InvalidNumber ();
 				return new IntLiteral (context.BuiltinTypes, 0, loc);
 			}
+
 			return integer_type_suffix (ul, peek_char (), loc);
 		}
 		
@@ -1839,6 +1887,7 @@ namespace Mono.CSharp
 #endif
 			number_pos = 0;
 			var loc = Location;
+			bool digit_separator = false;
 
 			if (!dotLead){
 				if (c == '0'){
@@ -1851,11 +1900,12 @@ namespace Mono.CSharp
 #endif
 
 						return Token.LITERAL;
-					} else if (peek == 'b' || peek == 'B'){
-						if (context.Settings.Version < LanguageVersion.V_7){
+					}
+
+					if (peek == 'b' || peek == 'B'){
+						if (context.Settings.Version < LanguageVersion.V_7)
 							Report.FeatureIsNotAvailable (context, Location, "binary literals");
-							return Token.ERROR;
-						}
+
 						val = res = handle_binary (loc);
 #if FULL_AST
 						res.ParsedValue = reader.ReadChars (read_start, reader.Position - 1);
@@ -1864,9 +1914,31 @@ namespace Mono.CSharp
 						return Token.LITERAL;
 					}
 				}
+
+			digits:
 				decimal_digits (c);
 				c = peek_char ();
+
+				if (c == '_') {
+					if (!digit_separator) {
+						if (context.Settings.Version < LanguageVersion.V_7)
+							Report.FeatureIsNotAvailable (context, Location, "digit separators");
+
+						digit_separator = true;
+					}
+
+					do {
+						get_char ();
+						c = peek_char ();
+					} while (c == '_');
+
+					if (c >= '0' && c <= '9')
+						goto digits;
+				}
 			}
+
+			//TODO: Implement rejection of trailing digit separators
+
 
 			//
 			// We need to handle the case of
@@ -1915,9 +1987,28 @@ namespace Mono.CSharp
 						Error_NumericConstantTooLong ();
 					number_builder [number_pos++] = '+';
 				}
-					
-				decimal_digits (c);
+
+			digits:
+				bool seen_digits = decimal_digits (c);
 				c = peek_char ();
+
+				if (c == '_' && seen_digits) {
+					if (!digit_separator) {
+						if (context.Settings.Version < LanguageVersion.V_7)
+							Report.FeatureIsNotAvailable (context, Location, "digit separators");
+
+						digit_separator = true;
+					}
+
+					do {
+						get_char ();
+						c = peek_char ();
+					} while (c == '_');
+
+					if (c >= '0' && c <= '9')
+						goto digits;
+				}
+
 			}
 
 			var type = real_type_suffix (c);
@@ -2989,6 +3080,11 @@ namespace Mono.CSharp
 		void Error_NumericConstantTooLong ()
 		{
 			Report.Error (1021, Location, "Integral constant is too large");			
+		}
+
+		void Error_InvalidNumber ()
+		{
+			Report.Error (1013, Location, "Invalid number");
 		}
 		
 		void Error_InvalidDirective ()
