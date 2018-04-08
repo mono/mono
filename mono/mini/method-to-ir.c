@@ -4774,7 +4774,7 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	MonoInst *ins = NULL;
 	int opcode = 0;
 
-	if (in_corlib && !strcmp (cmethod->klass->name, "MathF") && fsig->param_count && fsig->params [0]->type == MONO_TYPE_R4 && cfg->r4fp) {
+	if (in_corlib && !strcmp (m_class_get_name (cmethod->klass), "MathF") && fsig->param_count && fsig->params [0]->type == MONO_TYPE_R4 && cfg->r4fp) {
 		if (!strcmp (cmethod->name, "Sin"))
 			opcode = OP_SINF;
 		else if (!strcmp (cmethod->name, "Cos"))
