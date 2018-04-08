@@ -902,6 +902,8 @@ PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_b
 	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
 endif
 
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+
 endif
 
 if POWERPC
@@ -1162,6 +1164,8 @@ PROFILE_DISABLED_TESTS += \
 	weak-fields.exe
 
 PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PROFILE_DISABLED_TESTS += tailcall-interface-conservestack.exe
+
 endif
 
 if HYBRID_AOT_TESTS
