@@ -534,8 +534,12 @@ class MakeBundle {
 		if (!Directory.Exists (path))
 			Error ($"The specified SDK path does not exist: {path}");
 		runtime = Path.Combine (sdk_path, "bin", "mono");
-		if (!File.Exists (runtime))
-			Error ($"The SDK location does not contain a {path}/bin/mono runtime");
+		if (!File.Exists (runtime)){
+			if (File.Exists (runtime + ".exe"))
+				runtime += ".exe";
+			else
+				Error ($"The SDK location does not contain a {path}/bin/mono runtime");
+		}
 		lib_path = Path.Combine (path, "lib", "mono", "4.5");
 		if (!Directory.Exists (lib_path))
 			Error ($"The SDK location does not contain a {path}/lib/mono/4.5 directory");
