@@ -852,7 +852,6 @@ TESTS_GSHARED_SRC = \
 	generic-type-builder.2.cs
 
 PLATFORM_DISABLED_TESTS=\
-	tailcall-interface-conservestack.exe \
 	tailcall-rgctxb.exe
 
 if HOST_WIN32
@@ -913,6 +912,8 @@ PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PAR
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
 if POWERPC64
@@ -925,6 +926,8 @@ PLATFORM_DISABLED_TESTS += monitor.exe threadpool-exceptions5.exe appdomain-unlo
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
 if ARM
@@ -934,6 +937,8 @@ PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PAR
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
 PLATFORM_DISABLED_TESTS += \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
@@ -969,6 +974,8 @@ PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PAR
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
 if S390X
@@ -985,6 +992,8 @@ PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PAR
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
 PROFILE_DISABLED_TESTS= \
@@ -1221,7 +1230,6 @@ KNOWN_FAILING_TESTS = \
 	dim-constrainedcall.exe \
 	gptail1.exe \
 	itaili1.exe \
-	ivtail1.exe \
 	sirtail1.exe \
 	srtail1.exe \
 	stail1.exe \
@@ -1244,6 +1252,8 @@ DISABLED_TESTS = \
 INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	itail1.exe \
 	sitail1.exe \
+	ivtail1.exe \
+	tailcall-interface-conservestack.exe \
 	tailcall-mrgctx.exe \
 	tailcall-virt.exe   \
 	tailcall-rgctxa.exe \
