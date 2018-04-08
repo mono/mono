@@ -52873,6 +52873,34 @@
       </method>
     </type>
   </test>
+  <test name="test-960.cs">
+    <type name="B">
+      <method name="Int32 get_Index()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Index(Int32)" attrs="2178">
+        <size>8</size>
+      </method>
+      <method name="System.String get_S1()" attrs="2179">
+        <size>14</size>
+      </method>
+      <method name="Void set_S1(System.String)" attrs="2178">
+        <size>8</size>
+      </method>
+      <method name="System.String get_S2()" attrs="2180">
+        <size>14</size>
+      </method>
+      <method name="Void set_S2(System.String)" attrs="2178">
+        <size>8</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-97.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
