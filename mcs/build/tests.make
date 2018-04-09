@@ -268,10 +268,10 @@ XTEST_HARNESS_PATH := $(topdir)/../external/xunit-binaries
 XTEST_HARNESS = $(XTEST_HARNESS_PATH)/xunit.console.exe
 XTEST_HARNESS_FLAGS := -noappdomain -noshadow -parallel none -nunit TestResult-$(PROFILE)-xunit.xml
 XTEST_TRAIT := -notrait category=failing -notrait category=nonmonotests -notrait Benchmark=true -notrait category=outerloop
-# The horrible CoreFX tests logic is double inverted so this actually excludes Windows tests
+# The logic is double inverted so this actually excludes tests not intented for current platform
 # best to search for `property name="category"` in the xml output to see what's going on
 # https://github.com/dotnet/buildtools/blob/master/src/xunit.netcore.extensions/Discoverers/PlatformSpecificDiscoverer.cs
-XTEST_TRAIT_PLATFORM := -notrait category=nonlinuxtests
+XTEST_TRAIT_PLATFORM := -notrait category=non$(XTEST_PLATFORM)tests
 
 TEST_MONO_PATH := $(TEST_MONO_PATH)$(PLATFORM_PATH_SEPARATOR)$(XTEST_HARNESS_PATH)
 
