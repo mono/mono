@@ -26,6 +26,8 @@
 
 using System.Runtime.CompilerServices;
 
+#if !DISABLE_COM
+
 namespace System.Runtime.InteropServices.WindowsRuntime
 {
 	internal unsafe static class UnsafeNativeMethods
@@ -49,3 +51,5 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 		public static extern IRestrictedErrorInfo GetRestrictedErrorInfo();
 	}
 }
+
+#endif

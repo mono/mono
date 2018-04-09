@@ -17,6 +17,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Security;
 
+#if !DISABLE_COM
+
 namespace System.Runtime.InteropServices.WindowsRuntime
 {
     // Helper functions to manually marshal data between .NET and WinRT
@@ -1339,3 +1341,5 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         }
     }
 }
+
+#endif
