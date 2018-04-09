@@ -183,7 +183,7 @@ mono-api-diff:
 mono-csproj-diff:
 	@echo "Generating csproj diff..."
 	$(Q) git add -A "*.csproj" $(topdir)../bcl.sln
-	$(Q) git diff --no-renames HEAD "*.csproj" > $(abspath $(topdir))/temp.patch
+	$(Q) git diff --no-renames HEAD "*.csproj" $(topdir)../bcl.sln > $(abspath $(topdir))/temp.patch
 	@mkdir -p csprojdiff
 	$(Q) sed -e "/@diffdata@/r temp.patch" -e "/@diffdata@/d" -e "s/@title@/Project Files Diff/g" -e "s/@description@/Use <code>@monojenkins commit csproj<\/code> to commit them./g" diff.html.in > csprojdiff/index.html
 	$(Q) if [ -s temp.patch ]; then echo "Error: Found csproj differences, see mcs/csprojdiff/index.html. If the changes are intentional, please commit them."; rm -f temp.patch; exit 1; else echo "No differences found."; rm -f temp.patch; fi
