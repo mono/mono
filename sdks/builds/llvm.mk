@@ -14,11 +14,10 @@ $(LLVM_SRC)/configure: | $(LLVM_SRC)
 define LLVMTemplate
 
 _llvm_$(1)_CXXFLAGS= \
-	-stdlib=libc++ \
-	-mmacosx-version-min=10.9
+	$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9 -stdlib=libc++)
 
 _llvm_$(1)_LDFLAGS= \
-	-mmacosx-version-min=10.9
+	$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9)
 
 _llvm_$(1)_CONFIGURE_ENVIRONMENT= \
 	CXXFLAGS="$$(_llvm_$(1)_CXXFLAGS)" \
@@ -31,7 +30,7 @@ _llvm_$(1)_CONFIGURE_FLAGS= \
 	--enable-assertions=no \
 	--enable-optimized \
 	--enable-targets="arm,aarch64,x86" \
-	--enable-libcpp
+	$$(if $$(filter $$(UNAME),Darwin),--enable-libcpp)
 
 .stamp-llvm-$(1)-toolchain: | $$(LLVM_SRC)
 	touch $$@
