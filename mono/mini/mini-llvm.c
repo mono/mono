@@ -5434,8 +5434,15 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_ABSF: {
 			LLVMValueRef args [1];
 
+#ifdef TARGET_AMD64
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrinsic (ctx, "llvm.fabs"), args, 1, dname);
+#else
+			/* llvm.fabs not supported on all platforms */
+			args [0] = convert (ctx, lhs, LLVMDoubleType ());
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrinsic (ctx, "fabs"), args, 1, dname);
+			values [ins->dreg] = convert (ctx, lhs, LLVMFloatType ());
+#endif
 			break;
 		}
 		case OP_RPOW: {
