@@ -5435,7 +5435,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrinsic (ctx, "fabs"), args, 1, dname);
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrinsic (ctx, "llvm.fabs"), args, 1, dname);
 			break;
 		}
 		case OP_RPOW: {
@@ -7908,6 +7908,7 @@ typedef enum {
 	INTRINS_COS,
 	INTRINS_SQRT,
 	INTRINS_FABS,
+	INTRINS_ABSF,
 	INTRINS_SINF,
 	INTRINS_COSF,
 	INTRINS_SQRTF,
@@ -7995,6 +7996,7 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_SQRT, "llvm.sqrt.f64"},
 	/* This isn't an intrinsic, instead llvm seems to special case it by name */
 	{INTRINS_FABS, "fabs"},
+	{INTRINS_ABSF, "llvm.fabs"},
 	{INTRINS_SINF, "llvm.sin.f32"},
 	{INTRINS_COSF, "llvm.cos.f32"},
 	{INTRINS_SQRTF, "llvm.sqrt.f32"},
@@ -8124,7 +8126,8 @@ add_intrinsic (LLVMModuleRef module, int id)
 	}
 	case INTRINS_SINF:
 	case INTRINS_COSF:
-	case INTRINS_SQRTF: {
+	case INTRINS_SQRTF:
+	case INTRINS_ABSF: {
 		LLVMTypeRef params [] = { LLVMFloatType () };
 
 		AddFunc (module, name, LLVMFloatType (), params, 1);
