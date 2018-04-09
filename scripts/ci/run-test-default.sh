@@ -124,4 +124,13 @@ if [[ $CI_TAGS == *'apidiff'* ]]; then
     fi
 else ${TESTCMD} --label=apidiff --skip
 fi
+if [[ $CI_TAGS == *'csprojdiff'* ]]; then
+    source ${MONO_REPO_ROOT}/scripts/ci/util.sh
+    make update-solution-files
+    if ${TESTCMD} --label=csprojdiff --timeout=5m --fatal make -w -C mcs mono-csproj-diff
+    then report_github_status "success" "Project Files Diff" "No csproj file changes found." || true
+    else report_github_status "error" "Project Files Diff" "The csproj files changed." "$BUILD_URL/Project_Files_Diff/" || true
+    fi
+else ${TESTCMD} --label=apidiff --skip
+fi
 rm -fr /tmp/jenkins-temp-aspnet*
