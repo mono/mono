@@ -572,7 +572,52 @@ mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 	mono_arch_flush_icache (start, code - start);
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
-	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, unwind_ops), domain);
+	mono_tramp_info_register (mono_tramp_info_create ("static_rgctx_trampoline", start, code - start, NULL, unwind_ops), domain);
+
+	return start;
+}
+
+gpointer
+mono_arch_get_interp_in_trampoline (gpointer arg, gpointer addr)
+{
+	guint8 *code, *start, *label;
+	GSList *unwind_ops;
+	int buf_len = 40;
+	MonoDomain *domain = mono_domain_get ();
+
+	start = code = mono_domain_code_reserve (domain, buf_len);
+
+	unwind_ops = mono_arch_get_cie_program ();
+
+	g_assert (MONO_ARCH_RGCTX_REG != ARMREG_R7);
+
+	ARM_PUSH (code, 1 << ARMREG_R7);
+
+	ARM_LDR_IMM (code, ARMREG_R7, ARMREG_PC, 0);
+	label = code;
+	ARM_B_COND (code, ARMCOND_AL, 0);
+	*(guint32 *)code = (guint32) arg;
+	code += 4;
+	arm_patch (label, code);
+
+	ARM_STR_IMM (code, MONO_ARCH_RGCTX_REG, ARMREG_R7, 8 /* TODO */);
+	ARM_POP (code, 1 << ARMREG_R7);
+
+
+	ARM_LDR_IMM (code, MONO_ARCH_RGCTX_REG, ARMREG_PC, 0);
+	ARM_LDR_IMM (code, ARMREG_PC, ARMREG_PC, 0);
+	/* never reached */
+	*(guint32 *)code = (guint32) arg;
+	code += 4;
+	*(guint32 *)code = (guint32) addr;
+	code += 4;
+
+	g_assert ((code - start) <= buf_len);
+
+	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
+
+	mono_tramp_info_register (mono_tramp_info_create ("interp_in_trampoline", start, code - start, NULL, unwind_ops), domain);
 
 	return start;
 }
@@ -943,6 +988,13 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 
 gpointer
 mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_interp_in_trampoline (gpointer arg, gpointer addr)
 {
 	g_assert_not_reached ();
 	return NULL;

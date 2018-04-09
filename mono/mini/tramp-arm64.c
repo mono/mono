@@ -379,6 +379,12 @@ mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 }
 
 gpointer
+mono_arch_get_interp_in_trampoline (gpointer arg, gpointer addr)
+{
+	return mono_arch_get_static_rgctx_trampoline (arg, addr);
+}
+
+gpointer
 mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info, gboolean aot)
 {
 	guint8 *code, *buf;
@@ -744,6 +750,13 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 
 gpointer
 mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_interp_in_trampoline (gpointer arg, gpointer addr)
 {
 	g_assert_not_reached ();
 	return NULL;

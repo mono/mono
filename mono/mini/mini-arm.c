@@ -6165,6 +6165,22 @@ mono_arm_unaligned_stack (MonoMethod *method)
 
 #ifndef DISABLE_JIT
 
+static guint8 *
+mono_arch_store_rgctx_var (MonoCompile *cfg, guint8 *code)
+{
+	MonoInst *ins = cfg->rgctx_var;
+
+	g_assert (ins->opcode == OP_REGOFFSET);
+
+	if (arm_is_imm12 (ins->inst_offset)) {
+		ARM_STR_IMM (code, MONO_ARCH_RGCTX_REG, ins->inst_basereg, ins->inst_offset);
+	} else {
+		code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
+		ARM_STR_REG_REG (code, MONO_ARCH_RGCTX_REG, ins->inst_basereg, ARMREG_LR);
+	}
+	return code;
+}
+
 /*
  * Stack frame layout:
  * 
@@ -6332,16 +6348,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	/* store runtime generic context */
 	if (cfg->rgctx_var) {
-		MonoInst *ins = cfg->rgctx_var;
-
-		g_assert (ins->opcode == OP_REGOFFSET);
-
-		if (arm_is_imm12 (ins->inst_offset)) {
-			ARM_STR_IMM (code, MONO_ARCH_RGCTX_REG, ins->inst_basereg, ins->inst_offset);
-		} else {
-			code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
-			ARM_STR_REG_REG (code, MONO_ARCH_RGCTX_REG, ins->inst_basereg, ARMREG_LR);
-		}
+		code = mono_arch_store_rgctx_var (cfg, code);
 	}
 
 	/* load arguments allocated to register from the stack */
@@ -6744,6 +6751,20 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 			regmask &= ~(1 << reg);
 			sp_adj += 4;
 			reg ++;
+		}
+		if (cfg->rgctx_var) {
+			if (regmask & (1 << ARMREG_R8)) {
+				sp_adj += 4;
+				regmask &= ~(1 << ARMREG_R8);
+			}
+			MonoInst *ins = cfg->rgctx_var;
+			if (arm_is_imm12 (ins->inst_offset)) {
+				ARM_LDR_IMM (code, MONO_ARCH_RGCTX_REG, ins->inst_basereg, ins->inst_offset);
+			} else {
+				g_error ("not yet");
+				code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
+				ARM_LDR_REG_REG (code, MONO_ARCH_RGCTX_REG, ins->inst_basereg, ARMREG_LR);
+			}
 		}
 		if (iphone_abi)
 			/* Restored later */

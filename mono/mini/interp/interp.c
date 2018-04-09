@@ -2232,6 +2232,9 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 	MonoFtnDesc *ftndesc = g_new0 (MonoFtnDesc, 1);
 	ftndesc->addr = entry_func;
 	ftndesc->arg = rmethod;
+#ifdef TARGET_ARM
+	ftndesc->callee_save_reg = (gpointer) 0x13376677;
+#endif
 	mono_error_assert_ok (error);
 
 	/*
@@ -2242,7 +2245,7 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 	if (mono_aot_only)
 		addr = mono_aot_get_static_rgctx_trampoline (ftndesc, jit_wrapper);
 	else
-		addr = mono_arch_get_static_rgctx_trampoline (ftndesc, jit_wrapper);
+		addr = mono_arch_get_interp_in_trampoline (ftndesc, jit_wrapper);
 
 	mono_memory_barrier ();
 	rmethod->jit_entry = addr;

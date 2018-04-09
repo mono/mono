@@ -113,9 +113,15 @@ mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 	mono_arch_flush_icache (start, code - start);
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
-	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, unwind_ops), domain);
+	mono_tramp_info_register (mono_tramp_info_create ("static_rgctx_trampoline", start, code - start, NULL, unwind_ops), domain);
 
 	return start;
+}
+
+gpointer
+mono_arch_get_interp_in_trampoline (gpointer arg, gpointer addr)
+{
+	return mono_arch_get_static_rgctx_trampoline (arg, addr);
 }
 #endif /* !DISABLE_JIT */
 
@@ -1033,6 +1039,13 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 
 gpointer
 mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_interp_in_trampoline (gpointer arg, gpointer addr)
 {
 	g_assert_not_reached ();
 	return NULL;

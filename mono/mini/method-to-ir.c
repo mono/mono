@@ -12307,6 +12307,21 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ip += 2;
 				*sp++ = ins;
 				break;
+			case CEE_MONO_SET_RGCTX_ARG:
+				CHECK_OPSIZE (2);
+				CHECK_STACK (1);
+
+				sp--;
+				mono_create_rgctx_var (cfg);
+
+				MONO_INST_NEW (cfg, ins, OP_MOVE);
+				ins->dreg = cfg->rgctx_var->dreg;
+				ins->sreg1= sp [0]->dreg;
+				ins->type = STACK_PTR;
+				MONO_ADD_INS (cfg->cbb, ins);
+
+				ip += 2;
+				break;
 			default:
 				g_error ("opcode 0x%02x 0x%02x not handled", MONO_CUSTOM_PREFIX, ip [1]);
 				break;

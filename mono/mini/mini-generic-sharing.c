@@ -1442,7 +1442,7 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 	MonoMethod *res, *cached;
 	WrapperInfo *info;
 	MonoMethodSignature *csig, *entry_sig;
-	int i, pindex, retval_var = 0;
+	int i, pindex, retval_var = 0, hidden_arg = 0;
 	static GHashTable *cache;
 	const char *name;
 	gboolean generic = FALSE;
@@ -1540,6 +1540,21 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 		retval_var = mono_mb_add_local (mb, sig->ret);
 	}
 
+	hidden_arg = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_GET_RGCTX_ARG);
+	mono_mb_emit_stloc (mb, hidden_arg);
+
+#ifdef TARGET_ARM
+	/* restore r8 value */
+	mono_mb_emit_ldloc (mb, hidden_arg);
+	mono_mb_emit_icon (mb, 2 * sizeof (gpointer));
+	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_byte (mb, CEE_LDIND_I);
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_SET_RGCTX_ARG);
+#endif
+
 	/* Make the call */
 	if (generic) {
 		/* Collect arguments */
@@ -1587,14 +1602,12 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 		}
 	}
 	/* Extra arg */
-	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_byte (mb, CEE_MONO_GET_RGCTX_ARG);
+	mono_mb_emit_ldloc (mb, hidden_arg);
 	mono_mb_emit_icon (mb, sizeof (gpointer));
 	mono_mb_emit_byte (mb, CEE_ADD);
 	mono_mb_emit_byte (mb, CEE_LDIND_I);
 	/* Method to call */
-	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_byte (mb, CEE_MONO_GET_RGCTX_ARG);
+	mono_mb_emit_ldloc (mb, hidden_arg);
 	mono_mb_emit_byte (mb, CEE_LDIND_I);
 	mono_mb_emit_calli (mb, entry_sig);
 
