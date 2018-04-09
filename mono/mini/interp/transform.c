@@ -943,7 +943,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				if (arg_size > SIZEOF_VOID_P) { // 8 -> 4
 					switch (type_index) {
 					case 0: case 1:
-						ADD_CODE (td, MINT_CONV_I8_I4);
+						ADD_CODE (td, MINT_CONV_I4_I8);
 						break;
 					case 2:
 						// ADD_CODE (td, MINT_CONV_R8_R4);
@@ -954,7 +954,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				if (arg_size < SIZEOF_VOID_P) { // 4 -> 8
 					switch (type_index) {
 					case 0: case 1:
-						ADD_CODE (td, MINT_CONV_I4_I8);
+						ADD_CODE (td, MINT_CONV_I8_I4);
 						break;
 					case 2:
 						ADD_CODE (td, MINT_CONV_R4_R8);
@@ -987,7 +987,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				if (arg_size > SIZEOF_VOID_P) { // 8 -> 4
 					switch (type_index) {
 					case 0: case 1:
-						ADD_CODE (td, MINT_CONV_I8_I4);
+						ADD_CODE (td, MINT_CONV_I4_I8);
 						break;
 					case 2:
 						// ADD_CODE (td, MINT_CONV_R4_R8);
@@ -998,7 +998,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				if (arg_size < SIZEOF_VOID_P) { // 4 -> 8
 					switch (type_index) {
 					case 0: case 1:
-						ADD_CODE (td, MINT_CONV_I4_I8);
+						ADD_CODE (td, MINT_CONV_I8_I4);
 						break;
 					case 2:
 						ADD_CODE (td, MINT_CONV_R4_R8);
@@ -1518,7 +1518,7 @@ interp_save_debug_info (InterpMethod *rtm, MonoMethodHeader *header, TransformDa
 
 	for (i = 0; i < dinfo->num_line_numbers; i++)
 		dinfo->line_numbers [i] = g_array_index (line_numbers, MonoDebugLineNumberEntry, i);
-	mono_debug_add_method (rtm->method, dinfo, mono_domain_get ());
+	mono_debug_add_method (rtm->method, dinfo, rtm->domain);
 
 	mono_debug_free_method_jit_info (dinfo);
 }
@@ -2855,19 +2855,20 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			break;
 		}
 		case CEE_LDSTR: {
-			MonoString *s;
 			token = mono_metadata_token_index (read32 (td->ip + 1));
 			td->ip += 5;
-			if (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD) {
-				s = mono_method_get_wrapper_data (method, token);
-			} else if (method->wrapper_type != MONO_WRAPPER_NONE) {
-				s = mono_string_new_wrapper (mono_method_get_wrapper_data (method, token));
-			} else {
-				s = mono_ldstr_checked (domain, image, token, error);
+			if (method->wrapper_type == MONO_WRAPPER_NONE) {
+				MonoString *s = mono_ldstr_checked (domain, image, token, error);
 				goto_if_nok (error, exit);
+				/* GC won't scan code stream, but reference is held by metadata
+				 * machinery so we are good here */
+				ADD_CODE (td, MINT_LDSTR);
+				ADD_CODE (td, get_data_item_index (td, s));
+			} else {
+				/* defer allocation to execution-time */
+				ADD_CODE (td, MINT_LDSTR_TOKEN);
+				ADD_CODE (td, get_data_item_index (td, (gpointer) token));
 			}
-			ADD_CODE(td, MINT_LDSTR);
-			ADD_CODE(td, get_data_item_index (td, s));
 			PUSH_TYPE(td, STACK_TYPE_O, mono_defaults.string_class);
 			break;
 		}
