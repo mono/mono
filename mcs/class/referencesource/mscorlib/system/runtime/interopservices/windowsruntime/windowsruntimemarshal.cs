@@ -22,8 +22,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
     // Helper functions to manually marshal data between .NET and WinRT
     public static class WindowsRuntimeMarshal
     {
-#if !DISABLE_COM
-
         // Add an event handler to a Windows Runtime style event, such that it can be removed via a delegate
         // lookup at a later time.  This method adds the handler to the add method using the supplied
         // delegate.  It then stores the corresponding token in a dictionary for easy access by RemoveEventHandler
@@ -1339,6 +1337,5 @@ namespace System.Runtime.InteropServices.WindowsRuntime
                 UnsafeNativeMethods.WindowsDeleteString(ptr);
             }
         }
-#endif // !DISABLE_COM
     }
 }
