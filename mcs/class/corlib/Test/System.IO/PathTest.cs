@@ -19,6 +19,7 @@
 using NUnit.Framework;
 using System.IO;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace MonoTests.System.IO
@@ -801,9 +802,13 @@ namespace MonoTests.System.IO
 		{
 			string current;
 			string expected;
-			if (!Windows){
+			if (!Windows) {
 				current = Directory.GetCurrentDirectory ();
-				expected = current [0].ToString ();
+				var availableDrives = Environment.GetLogicalDrives ();
+				if (!availableDrives.Contains ("/")) {
+					return;
+				}
+				expected = "/";
 			} else {
 				current = @"J:\Some\Strange Directory\Name";
 				expected = "J:\\";
