@@ -668,10 +668,10 @@ ves_icall_System_Threading_ThreadPool_GetMaxThreadsNative (gint32 *worker_thread
 MonoBoolean
 ves_icall_System_Threading_ThreadPool_SetMinThreadsNative (gint32 worker_threads, gint32 completion_port_threads, MonoError *error)
 {
-	if (completion_port_threads <= 0 || completion_port_threads > threadpool.limit_io_max)
+	if (!mono_lazy_initialize (&status, initialize) || !mono_refcount_tryinc (&threadpool))
 		return FALSE;
 
-	if (!mono_lazy_initialize (&status, initialize) || !mono_refcount_tryinc (&threadpool))
+	if (completion_port_threads <= 0 || completion_port_threads > threadpool.limit_io_max)
 		return FALSE;
 
 	if (!mono_threadpool_worker_set_min (worker_threads)) {
