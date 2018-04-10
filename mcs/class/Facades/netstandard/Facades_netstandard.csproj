@@ -30,35 +30,10 @@
     <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
     <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
-    <OutputPath>./../../../class/lib/monodroid/Facades</OutputPath>
-    <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;MONODROID;ANDROID</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'monotouch' ">
-    <OutputPath>./../../../class/lib/monotouch/Facades</OutputPath>
-    <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <OutputPath>./../../../class/lib/monotouch_watch/Facades</OutputPath>
-    <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
-    <OutputPath>./../../../class/lib/monotouch_tv/Facades</OutputPath>
-    <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV</DefineConstants>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../../class/lib/winaot/Facades</OutputPath>
     <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;WIN_PLATFORM</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
-    <OutputPath>./../../../class/lib/xammac/Facades</OutputPath>
-    <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <OutputPath>./../../../class/lib/xammac_net_4_5-$(HostPlatform)/Facades</OutputPath>
@@ -128,49 +103,9 @@
     <ProjectReference Include="../../System.Web/System.Web.csproj" />
     <ProjectReference Include="../../System.Drawing/System.Drawing.csproj" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
-    <Reference Include="$(EXTERNAL_FACADE_DRAWING_REFERENCE)">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(EXTERNAL_FACADE_DRAWING_REFERENCE)</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
-    <Reference Include="$(EXTERNAL_FACADE_DRAWING_REFERENCE)">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(EXTERNAL_FACADE_DRAWING_REFERENCE)</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <Reference Include="$(EXTERNAL_FACADE_DRAWING_REFERENCE)">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(EXTERNAL_FACADE_DRAWING_REFERENCE)</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
-    <Reference Include="$(EXTERNAL_FACADE_DRAWING_REFERENCE)">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(EXTERNAL_FACADE_DRAWING_REFERENCE)</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />
-  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
     <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />
     <ProjectReference Include="../../System.Drawing/System.Drawing.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Reference Include="$(EXTERNAL_FACADE_DRAWING_REFERENCE)">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(EXTERNAL_FACADE_DRAWING_REFERENCE)</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />
