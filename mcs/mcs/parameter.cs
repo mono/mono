@@ -1474,9 +1474,9 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (!expr.IsNull && TypeSpec.IsReferenceType (parameter_type) && parameter_type.BuiltinType != BuiltinTypeSpec.Type.String) {
+				if (!res.IsNull && TypeSpec.IsReferenceType (parameter_type) && parameter_type.BuiltinType != BuiltinTypeSpec.Type.String) {
 					rc.Report.Error (1763, Location,
-						"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
+						"Optional parameter `{0}' of type `{1}' can only be initialized with default value",
 						p.Name, parameter_type.GetSignatureForError ());
 
 					return;
