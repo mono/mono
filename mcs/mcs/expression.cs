@@ -2761,6 +2761,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override bool IsNull {
+			get {
+				return TypeSpec.IsReferenceType (type);
+			}
+		}
+
 		public override bool ContainsEmitWithAwait ()
 		{
 			return false;
