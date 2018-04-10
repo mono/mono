@@ -465,7 +465,9 @@ ves_icall_System_ConsoleDriver_TtySetup (MonoStringHandle keypad, MonoStringHand
 #endif
 	gint ret;
 	do {
+		MONO_ENTER_GC_SAFE;
 		ret = tcsetattr (STDIN_FILENO, TCSANOW, &mono_attr);
+		MONO_EXIT_GC_SAFE;
 	} while (ret == -1 && errno == EINTR);
 
 	if (ret == -1)
