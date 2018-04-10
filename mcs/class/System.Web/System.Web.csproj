@@ -1502,17 +1502,8 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <EmbeddedResource Include="resources/WebUIValidation.js">
-      <LogicalName>WebUIValidation.js</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/folder.gif">
-      <LogicalName>folder.gif</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/file.gif">
-      <LogicalName>file.gif</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/computer.gif">
-      <LogicalName>computer.gif</LogicalName>
+    <EmbeddedResource Include="resources/arrow_down.gif">
+      <LogicalName>arrow_down.gif</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/arrow_minus.gif">
       <LogicalName>arrow_minus.gif</LogicalName>
@@ -1526,14 +1517,11 @@
     <EmbeddedResource Include="resources/arrow_up.gif">
       <LogicalName>arrow_up.gif</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/arrow_down.gif">
-      <LogicalName>arrow_down.gif</LogicalName>
+    <EmbeddedResource Include="resources/box_empty.gif">
+      <LogicalName>box_empty.gif</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/box_full.gif">
       <LogicalName>box_full.gif</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/box_empty.gif">
-      <LogicalName>box_empty.gif</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/box_minus.gif">
       <LogicalName>box_minus.gif</LogicalName>
@@ -1544,8 +1532,17 @@
     <EmbeddedResource Include="resources/box_plus.gif">
       <LogicalName>box_plus.gif</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="resources/computer.gif">
+      <LogicalName>computer.gif</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/contact.gif">
       <LogicalName>contact.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DefaultErrorTemplate_CustomErrorDefault.html">
+      <LogicalName>DefaultErrorTemplate_CustomErrorDefault.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DefaultErrorTemplate_StandardPage.html">
+      <LogicalName>DefaultErrorTemplate_StandardPage.html</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/dot_empty.gif">
       <LogicalName>dot_empty.gif</LogicalName>
@@ -1556,6 +1553,30 @@
     <EmbeddedResource Include="resources/dots.gif">
       <LogicalName>dots.gif</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="resources/ErrorTemplateCommon_Bottom.html">
+      <LogicalName>ErrorTemplateCommon_Bottom.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/ErrorTemplateCommon_Top.html">
+      <LogicalName>ErrorTemplateCommon_Top.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/file.gif">
+      <LogicalName>file.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/folder.gif">
+      <LogicalName>folder.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/HtmlizedExceptionPage_CompilerOutput.html">
+      <LogicalName>HtmlizedExceptionPage_CompilerOutput.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/HtmlizedExceptionPage_FileLongSource.html">
+      <LogicalName>HtmlizedExceptionPage_FileLongSource.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/HtmlizedExceptionPage_FileShortSource.html">
+      <LogicalName>HtmlizedExceptionPage_FileShortSource.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/HtmlizedExceptionPage_Top.html">
+      <LogicalName>HtmlizedExceptionPage_Top.html</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/inbox.gif">
       <LogicalName>inbox.gif</LogicalName>
     </EmbeddedResource>
@@ -1565,11 +1586,8 @@
     <EmbeddedResource Include="resources/star_full.gif">
       <LogicalName>star_full.gif</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/warning.gif">
-      <LogicalName>warning.gif</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/TreeView_noexpand.gif">
-      <LogicalName>TreeView_noexpand.gif</LogicalName>
+    <EmbeddedResource Include="resources/transparent.gif">
+      <LogicalName>transparent.gif</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/TreeView_dash.gif">
       <LogicalName>TreeView_dash.gif</LogicalName>
@@ -1595,6 +1613,9 @@
     <EmbeddedResource Include="resources/TreeView_minus.gif">
       <LogicalName>TreeView_minus.gif</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="resources/TreeView_noexpand.gif">
+      <LogicalName>TreeView_noexpand.gif</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/TreeView_plus.gif">
       <LogicalName>TreeView_plus.gif</LogicalName>
     </EmbeddedResource>
@@ -1616,53 +1637,32 @@
     <EmbeddedResource Include="resources/TreeView_tplus.gif">
       <LogicalName>TreeView_tplus.gif</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/transparent.gif">
-      <LogicalName>transparent.gif</LogicalName>
+    <EmbeddedResource Include="resources/warning.gif">
+      <LogicalName>warning.gif</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/webform.js">
       <LogicalName>webform.js</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="resources/WebUIValidation.js">
+      <LogicalName>WebUIValidation.js</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/WebUIValidation_2.0.js">
       <LogicalName>WebUIValidation_2.0.js</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/ErrorTemplateCommon_Top.html">
-      <LogicalName>ErrorTemplateCommon_Top.html</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/DefaultErrorTemplate_CustomErrorDefault.html">
-      <LogicalName>DefaultErrorTemplate_CustomErrorDefault.html</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/ErrorTemplateCommon_Bottom.html">
-      <LogicalName>ErrorTemplateCommon_Bottom.html</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/DefaultErrorTemplate_StandardPage.html">
-      <LogicalName>DefaultErrorTemplate_StandardPage.html</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/HtmlizedExceptionPage_Top.html">
-      <LogicalName>HtmlizedExceptionPage_Top.html</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/HtmlizedExceptionPage_FileLongSource.html">
-      <LogicalName>HtmlizedExceptionPage_FileLongSource.html</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/HtmlizedExceptionPage_FileShortSource.html">
-      <LogicalName>HtmlizedExceptionPage_FileShortSource.html</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/HtmlizedExceptionPage_CompilerOutput.html">
-      <LogicalName>HtmlizedExceptionPage_CompilerOutput.html</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.UI.WebControls/GridView.js">
-      <LogicalName>GridView.js</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.UI.WebControls/DetailsView.js">
       <LogicalName>DetailsView.js</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="System.Web.UI.WebControls/TreeView.js">
-      <LogicalName>TreeView.js</LogicalName>
+    <EmbeddedResource Include="System.Web.UI.WebControls/GridView.js">
+      <LogicalName>GridView.js</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.UI.WebControls/Menu.js">
       <LogicalName>Menu.js</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.UI.WebControls/MenuModern.js">
       <LogicalName>MenuModern.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System.Web.UI.WebControls/TreeView.js">
+      <LogicalName>TreeView.js</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/TranslationResources.resx">
       <LogicalName>TranslationResources.resources</LogicalName>

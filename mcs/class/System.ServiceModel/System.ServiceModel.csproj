@@ -1233,91 +1233,91 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <EmbeddedResource Include="resources/WS-Addressing.schema">
-      <LogicalName>WS-Addressing.schema</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/ws-addr.xsd">
       <LogicalName>ws-addr.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WS-Addressing.schema">
+      <LogicalName>WS-Addressing.schema</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
-    <EmbeddedResource Include="resources/WS-Addressing.schema">
-      <LogicalName>WS-Addressing.schema</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/ws-addr.xsd">
       <LogicalName>ws-addr.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WS-Addressing.schema">
+      <LogicalName>WS-Addressing.schema</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
-    <EmbeddedResource Include="resources/WS-Addressing.schema">
-      <LogicalName>WS-Addressing.schema</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/ws-addr.xsd">
       <LogicalName>ws-addr.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WS-Addressing.schema">
+      <LogicalName>WS-Addressing.schema</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <EmbeddedResource Include="resources/WS-Addressing.schema">
-      <LogicalName>WS-Addressing.schema</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/ws-addr.xsd">
       <LogicalName>ws-addr.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WS-Addressing.schema">
+      <LogicalName>WS-Addressing.schema</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
-    <EmbeddedResource Include="resources/WS-Addressing.schema">
-      <LogicalName>WS-Addressing.schema</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/ws-addr.xsd">
       <LogicalName>ws-addr.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WS-Addressing.schema">
+      <LogicalName>WS-Addressing.schema</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
-    <EmbeddedResource Include="resources/WS-Addressing.schema">
-      <LogicalName>WS-Addressing.schema</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/ws-addr.xsd">
       <LogicalName>ws-addr.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WS-Addressing.schema">
+      <LogicalName>WS-Addressing.schema</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <EmbeddedResource Include="resources/WS-Addressing.schema">
-      <LogicalName>WS-Addressing.schema</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/ws-addr.xsd">
       <LogicalName>ws-addr.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WS-Addressing.schema">
+      <LogicalName>WS-Addressing.schema</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
-    <EmbeddedResource Include="resources/WS-Addressing.schema">
-      <LogicalName>WS-Addressing.schema</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/ws-addr.xsd">
       <LogicalName>ws-addr.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WS-Addressing.schema">
+      <LogicalName>WS-Addressing.schema</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
-    <EmbeddedResource Include="resources/WS-Addressing.schema">
-      <LogicalName>WS-Addressing.schema</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/ws-addr.xsd">
       <LogicalName>ws-addr.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WS-Addressing.schema">
+      <LogicalName>WS-Addressing.schema</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
-    <EmbeddedResource Include="resources/WS-Addressing.schema">
-      <LogicalName>WS-Addressing.schema</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/ws-addr.xsd">
       <LogicalName>ws-addr.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WS-Addressing.schema">
+      <LogicalName>WS-Addressing.schema</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
-    <EmbeddedResource Include="resources/WS-Addressing.schema">
-      <LogicalName>WS-Addressing.schema</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/ws-addr.xsd">
       <LogicalName>ws-addr.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WS-Addressing.schema">
+      <LogicalName>WS-Addressing.schema</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->

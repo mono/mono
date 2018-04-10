@@ -2242,7 +2242,7 @@ mono_codegen (MonoCompile *cfg)
 		if (bb->clause_holes) {
 			GList *tmp;
 			for (tmp = bb->clause_holes; tmp; tmp = tmp->prev)
-				mono_cfg_add_try_hole (cfg, (MonoExceptionClause *)tmp->data, cfg->native_code + bb->native_offset, bb);
+				mono_cfg_add_try_hole (cfg, ((MonoLeaveClause *) tmp->data)->clause, cfg->native_code + bb->native_offset, bb);
 		}
 	}
 
@@ -3126,6 +3126,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 #ifdef ENABLE_LLVM
 	try_llvm = mono_use_llvm || llvm;
+#endif
+
+#ifndef MONO_ARCH_FLOAT32_SUPPORTED
+	opts &= ~MONO_OPT_FLOAT32;
 #endif
 
  restart_compile:
@@ -4163,7 +4167,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 	if (mono_aot_only) {
 		char *fullname = mono_method_full_name (method, TRUE);
-		mono_error_set_execution_engine (error, "Attempting to JIT compile method '%s' while running in aot-only mode. See https://developer.xamarin.com/guides/ios/advanced_topics/limitations/ for more information.\n", fullname);
+		mono_error_set_execution_engine (error, "Attempting to JIT compile method '%s' while running in aot-only mode. See https://docs.microsoft.com/xamarin/ios/internals/limitations for more information.\n", fullname);
 		g_free (fullname);
 
 		return NULL;

@@ -854,10 +854,8 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	mono_w32mutex_abandon (thread);
 #endif
 
-	if (thread->abort_state_handle) {
-		mono_gchandle_free (thread->abort_state_handle);
-		thread->abort_state_handle = 0;
-	}
+	mono_gchandle_free (thread->abort_state_handle);
+	thread->abort_state_handle = 0;
 
 	thread->abort_exc = NULL;
 	thread->current_appcontext = NULL;
@@ -1923,7 +1921,7 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 	start = (ms == -1) ? 0 : mono_msec_ticks ();
 	for (;;) {
 		MONO_ENTER_GC_SAFE;
-		ret = mono_thread_info_wait_one_handle (thread_to_join, ms, TRUE);
+		ret = mono_thread_info_wait_one_handle (thread_to_join, wait, TRUE);
 		MONO_EXIT_GC_SAFE;
 
 		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
@@ -2449,14 +2447,14 @@ request_thread_abort (MonoInternalThread *thread, MonoObject *state, gboolean ap
 	else
 		thread->flags &= ~MONO_THREAD_FLAG_APPDOMAIN_ABORT;
 
-	if (thread->abort_state_handle)
-		mono_gchandle_free (thread->abort_state_handle);
+	mono_gchandle_free (thread->abort_state_handle);
+	thread->abort_state_handle = 0;
+
 	if (state) {
 		thread->abort_state_handle = mono_gchandle_new (state, FALSE);
 		g_assert (thread->abort_state_handle);
-	} else {
-		thread->abort_state_handle = 0;
 	}
+
 	thread->abort_exc = NULL;
 
 	THREAD_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT") Abort requested for %p (%"G_GSIZE_FORMAT")", __func__, mono_native_thread_id_get (), thread, (gsize)thread->tid));
@@ -2525,12 +2523,10 @@ ves_icall_System_Threading_Thread_ResetAbort (MonoThread *this_obj)
 
 	mono_get_eh_callbacks ()->mono_clear_abort_threshold ();
 	thread->abort_exc = NULL;
-	if (thread->abort_state_handle) {
-		mono_gchandle_free (thread->abort_state_handle);
-		/* This is actually not necessary - the handle
-		   only counts if the exception is set */
-		thread->abort_state_handle = 0;
-	}
+	mono_gchandle_free (thread->abort_state_handle);
+	/* This is actually not necessary - the handle
+	   only counts if the exception is set */
+	thread->abort_state_handle = 0;
 }
 
 void
@@ -2543,12 +2539,10 @@ mono_thread_internal_reset_abort (MonoInternalThread *thread)
 	if (thread->abort_exc) {
 		mono_get_eh_callbacks ()->mono_clear_abort_threshold ();
 		thread->abort_exc = NULL;
-		if (thread->abort_state_handle) {
-			mono_gchandle_free (thread->abort_state_handle);
-			/* This is actually not necessary - the handle
-			   only counts if the exception is set */
-			thread->abort_state_handle = 0;
-		}
+		mono_gchandle_free (thread->abort_state_handle);
+		/* This is actually not necessary - the handle
+		   only counts if the exception is set */
+		thread->abort_state_handle = 0;
 	}
 
 	UNLOCK_THREAD (thread);
@@ -5532,15 +5526,16 @@ ves_icall_System_Threading_Thread_GetStackTraces (MonoArray **out_threads, MonoA
 }
 
 /*
- * mono_threads_attach_coop: called by native->managed wrappers
+ * mono_threads_attach_coop_internal: called by native->managed wrappers
  *
- *  - @dummy:
+ *  - @cookie:
  *    - blocking mode: contains gc unsafe transition cookie
  *    - non-blocking mode: contains random data
+ *  - @stackdata: semi-opaque struct: stackpointer and function_name
  *  - @return: the original domain which needs to be restored, or NULL.
  */
-gpointer
-mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
+MonoDomain*
+mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoStackData *stackdata)
 {
 	MonoDomain *orig;
 	MonoThreadInfo *info;
@@ -5575,10 +5570,10 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
 		if (external) {
 			/* mono_thread_attach put the thread in RUNNING mode from STARTING, but we need to
 			 * return the right cookie. */
-			*dummy = mono_threads_enter_gc_unsafe_region_cookie ();
+			*cookie = mono_threads_enter_gc_unsafe_region_cookie ();
 		} else {
 			/* thread state (BLOCKING|RUNNING) -> RUNNING */
-			*dummy = mono_threads_enter_gc_unsafe_region (dummy);
+			*cookie = mono_threads_enter_gc_unsafe_region_internal (stackdata);
 		}
 	}
 
@@ -5586,27 +5581,41 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
 }
 
 /*
- * mono_threads_detach_coop: called by native->managed wrappers
+ * mono_threads_attach_coop: called by native->managed wrappers
  *
- *  - @cookie: the original domain which needs to be restored, or NULL.
  *  - @dummy:
+ *    - blocking mode: contains gc unsafe transition cookie
+ *    - non-blocking mode: contains random data
+ *    - a pointer to stack, used for some checks
+ *  - @return: the original domain which needs to be restored, or NULL.
+ */
+gpointer
+mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
+{
+	MONO_STACKDATA (stackdata);
+	stackdata.stackpointer = dummy;
+	return mono_threads_attach_coop_internal (domain, dummy, &stackdata);
+}
+
+/*
+ * mono_threads_detach_coop_internal: called by native->managed wrappers
+ *
+ *  - @orig: the original domain which needs to be restored, or NULL.
+ *  - @stackdata: semi-opaque struct: stackpointer and function_name
+ *  - @cookie:
  *    - blocking mode: contains gc unsafe transition cookie
  *    - non-blocking mode: contains random data
  */
 void
-mono_threads_detach_coop (gpointer cookie, gpointer *dummy)
+mono_threads_detach_coop_internal (MonoDomain *orig, gpointer cookie, MonoStackData *stackdata)
 {
-	MonoDomain *domain, *orig;
-
-	orig = (MonoDomain*) cookie;
-
-	domain = mono_domain_get ();
+	MonoDomain *domain = mono_domain_get ();
 	g_assert (domain);
 
 	if (mono_threads_is_blocking_transition_enabled ()) {
 		/* it won't do anything if cookie is NULL
 		 * thread state RUNNING -> (RUNNING|BLOCKING) */
-		mono_threads_exit_gc_unsafe_region (*dummy, dummy);
+		mono_threads_exit_gc_unsafe_region_internal (cookie, stackdata);
 	}
 
 	if (orig != domain) {
@@ -5615,6 +5624,23 @@ mono_threads_detach_coop (gpointer cookie, gpointer *dummy)
 		else
 			mono_domain_set (orig, TRUE);
 	}
+}
+
+/*
+ * mono_threads_detach_coop: called by native->managed wrappers
+ *
+ *  - @orig: the original domain which needs to be restored, or NULL.
+ *  - @dummy:
+ *    - blocking mode: contains gc unsafe transition cookie
+ *    - non-blocking mode: contains random data
+ *    - a pointer to stack, used for some checks
+ */
+void
+mono_threads_detach_coop (gpointer orig, gpointer *dummy)
+{
+	MONO_STACKDATA (stackdata);
+	stackdata.stackpointer = dummy;
+	mono_threads_detach_coop_internal ((MonoDomain*)orig, *dummy, &stackdata);
 }
 
 #if 0

@@ -147,6 +147,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.Invariant.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HResults.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MathF.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Memory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MemoryDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlyMemory.cs" />
@@ -1750,6 +1751,7 @@
     <Compile Include="System\IntPtr.cs" />
     <Compile Include="System\KnownTerminals.cs" />
     <Compile Include="System\MarshalByRefObject.cs" />
+    <Compile Include="System\MathF.mono.cs" />
     <Compile Include="System\ModuleHandle.cs" />
     <Compile Include="System\MonoAsyncCall.cs" />
     <Compile Include="System\MonoCQItem.cs" />
@@ -2104,14 +2106,11 @@
   <ItemGroup Condition=" '$(Platform)' == 'wasm' "></ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2128,19 +2127,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2157,19 +2156,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2186,19 +2185,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2215,19 +2214,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2244,19 +2243,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2273,19 +2272,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2302,19 +2301,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2331,19 +2330,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2360,19 +2359,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2389,19 +2388,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2418,19 +2417,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2447,19 +2446,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2476,19 +2475,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2505,8 +2504,11 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->

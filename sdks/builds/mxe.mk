@@ -3,7 +3,7 @@ MXE_SRC?=$(TOP)/sdks/builds/toolchains/mxe
 MXE_PREFIX_DIR?=$(TOP)/sdks/out
 
 # This is not overridable
-MXE_PREFIX=$(MXE_PREFIX_DIR)/mxe-$(shell echo $(MXE_HASH) | head -c 6)
+MXE_PREFIX:=$(MXE_PREFIX_DIR)/mxe-$(shell echo $(MXE_HASH) | head -c 7)
 
 $(MXE_SRC)/Makefile:
 	git clone -b xamarin https://github.com/xamarin/mxe.git $(dir $@)

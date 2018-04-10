@@ -227,3 +227,4 @@
 ../../../external/corefx/src/System.Collections.Specialized/tests/HybridDictionary/*.cs
 ../../../external/corefx/src/System.Collections.Specialized/tests/OrderedDictionary/*.cs
 ../../../external/corefx/src/System.Collections.Specialized/tests/*.cs:StringCollectionTests.cs
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathTests.netcoreapp.cs

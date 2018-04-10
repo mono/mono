@@ -51,8 +51,11 @@
     <Compile Include="ConstructorComparer.cs" />
     <Compile Include="EventComparer.cs" />
     <Compile Include="FieldComparer.cs" />
+    <Compile Include="Formatter.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="HtmlFormatter.cs" />
     <Compile Include="InterfaceComparer.cs" />
+    <Compile Include="MarkdownFormatter.cs" />
     <Compile Include="MemberComparer.cs" />
     <Compile Include="MethodComparer.cs" />
     <Compile Include="NamespaceComparer.cs" />

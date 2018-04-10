@@ -6,8 +6,11 @@ etctmp = etc
 symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini etc/mono/2.0/Browsers/Compat.browser
 
 if INSTALL_4_x
-symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config etc/mono/4.5/web.config etc/mono/4.5/machine.config etc/mono/4.0/Browsers/Compat.browser etc/mono/4.5/Browsers/Compat.browser
+symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config etc/mono/4.5/web.config etc/mono/4.0/Browsers/Compat.browser etc/mono/4.5/Browsers/Compat.browser
 endif
+
+# This is needed at least to build configure -with-runtime_preset=fullaot.
+symlinks += etc/mono/4.5/machine.config
 
 etc/mono/2.0/machine.config: $(top_srcdir)/data/net_2_0/machine.config
 etc/mono/2.0/web.config: $(top_srcdir)/data/net_2_0/web.config

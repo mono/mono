@@ -531,6 +531,7 @@ TESTS_CS_SRC=		\
 	nullable_boxing.2.cs	\
 	valuetype-equals.cs	\
 	custom-modifiers.2.cs	\
+	custom-modifiers-inheritance.cs	\
 	bug-382986.cs	\
 	test-inline-call-stack.cs	\
 	bug-324535.cs	\
@@ -565,6 +566,7 @@ TESTS_CS_SRC=		\
 	bug-685908.cs	\
 	sgen-long-vtype.cs	\
 	delegate-invoke.cs	\
+	delegate-prop.cs	\
 	bug-696593.cs	\
 	bug-705140.cs	\
 	bug-1147.cs	\
@@ -697,7 +699,9 @@ endif
 endif
 
 TESTS_IL_SRC=			\
-	tailcall/fsharp.il	\
+	tailcall/fsharp-deeptail.il	     \
+	tailcall/fsharp-shallowtail.il	 \
+	tailcall/fsharp-shallownotail.il \
 	gptail1.il		\
 	itail1.il		\
 	itaili1.il		\
@@ -791,7 +795,8 @@ TESTS_IL_SRC=			\
 	dim-simple.il	\
 	dim-valuetypes.il \
 	tailcall-generic-cast-conservestack-il.il \
-	tailcall-generic-cast-nocrash-il.il
+	tailcall-generic-cast-nocrash-il.il \
+	newobj-abstract.il
 
 TESTS_GSHARED_SRC = \
 	generics-sharing.2.cs	\
@@ -853,14 +858,6 @@ PLATFORM_DISABLED_TESTS=\
 	tailcall-interface-conservestack.exe \
 	tailcall-rgctxb.exe
 
-# tailcall-virt only currently implemented on AMD64 (JIT, AOT, LLVM).
-# Not ARM, not interpreter, etc.
-
-if !AMD64
-PLATFORM_DISABLED_TESTS += tailcall-virt.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp.exe
-endif
-
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe
 endif
@@ -917,6 +914,8 @@ PLATFORM_DISABLED_TESTS += finalizer-abort.exe finalizer-exception.exe finalizer
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 endif
 
 if POWERPC64
@@ -927,6 +926,8 @@ PLATFORM_DISABLED_TESTS += monitor.exe threadpool-exceptions5.exe appdomain-unlo
 	sgen-domain-unload-2.exe sgen-weakref-stress.exe sgen-cementing-stress.exe sgen-new-threads-dont-join-stw.exe \
 	sgen-new-threads-dont-join-stw-2.exe sgen-new-threads-collect.exe sgen-bridge.exe
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 endif
 
 if ARM
@@ -934,7 +935,8 @@ PLATFORM_DISABLED_TESTS += filter-stack.exe weak-fields.exe
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
-
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 PLATFORM_DISABLED_TESTS += \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
@@ -949,7 +951,6 @@ endif
 
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
-
 PLATFORM_DISABLED_TESTS += \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.exe \
@@ -969,6 +970,8 @@ PLATFORM_DISABLED_TESTS += filter-stack.exe monitor.exe
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 endif
 
 if S390X
@@ -983,13 +986,15 @@ PLATFORM_DISABLED_TESTS += \
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 endif
 
 PROFILE_DISABLED_TESTS= \
 	tailcall-rgctxb.exe
 
 if FULL_AOT_TESTS
-# Tests which rely on TypeLoadExceptions
+# Tests which rely on TypeLoadExceptions or MemberAccessExceptions
 # In full-aot mode, these cause the relevant methods to be not AOTed.
 PROFILE_DISABLED_TESTS += \
 	typeload-unaligned.exe \
@@ -1010,7 +1015,8 @@ PROFILE_DISABLED_TESTS += \
 	resolve_field_bug.2.exe \
 	resolve_type_bug.2.exe \
 	bug-81691.exe \
-	bug-327438.2.exe
+	bug-327438.2.exe \
+	newobj-abstract.exe
 
 # Tests which rely on remoting
 PROFILE_DISABLED_TESTS += \
@@ -1098,6 +1104,7 @@ PROFILE_DISABLED_TESTS += \
 	bug-389886-2.exe	\
 	bug-349190.2.exe	\
 	bug-389886-sre-generic-interface-instances.exe	\
+	custom-modifiers-inheritance.exe	\
 	bug-462592.exe	\
 	bug-575941.exe	\
 	bug-389886-3.exe	\
@@ -1150,7 +1157,7 @@ PROFILE_DISABLED_TESTS += \
 PROFILE_DISABLED_TESTS += \
 	weak-fields.exe
 
-PROFILE_DISABLED_TESTS += tailcall/fsharp.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 endif
 
 if HYBRID_AOT_TESTS
@@ -1158,15 +1165,15 @@ PROFILE_DISABLED_TESTS += \
 	bug-80307.exe \
 	namedmutex-destroy-race.exe
 
-PROFILE_DISABLED_TESTS += tailcall/fsharp.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 endif
 
 AOT_DISABLED_TESTS= \
 	constraints-load.exe
 
-# tailcall/fsharp.exe AOT hangs
-# tailcall/fsharp.exe FullAOT stack overflow in CI but not locally.
-AOT_DISABLED_TESTS += tailcall/fsharp.exe
+# tailcall/fsharp AOT hangs
+# tailcall/fsharp FullAOT stack overflow in CI but not locally.
+AOT_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 
 CI_DISABLED_TESTS = \
 	main-returns-background-resetabort.exe \
@@ -1246,7 +1253,7 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	tailcall-virt.exe   \
 	tailcall-rgctxa.exe \
 	tailcall-generic-cast-conservestack-il.exe \
-	tailcall/fsharp.exe \
+	tailcall/fsharp-deeptail.exe \
 	bug-60843.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
