@@ -651,8 +651,8 @@ namespace_or_type_declaration
 			TypeContainer ds = (TypeContainer)$1;
 
 			if ((ds.ModFlags & (Modifiers.PRIVATE | Modifiers.PROTECTED)) != 0){
-				report.Error (1527, ds.Location, 
-				"Namespace elements cannot be explicitly declared as private, protected or protected internal");
+				report.Error (1527, ds.Location,
+				"Namespace elements cannot be explicitly declared as private, protected, protected internal, or private protected");
 			}
 
 			// Here is a trick, for explicit attributes we don't know where they belong to until
@@ -5549,10 +5549,17 @@ modifiers
 		if ((m1 & m2) != 0) {
 			report.Error (1004, lexer.Location - ModifiersExtensions.Name (m2).Length,
 				"Duplicate `{0}' modifier", ModifiersExtensions.Name (m2));
-		} else if ((m2 & Modifiers.AccessibilityMask) != 0 && (m1 & Modifiers.AccessibilityMask) != 0 &&
-			((m2 | m1 & Modifiers.AccessibilityMask) != (Modifiers.PROTECTED | Modifiers.INTERNAL))) {
-			report.Error (107, lexer.Location - ModifiersExtensions.Name (m2).Length,
-				"More than one protection modifier specified");
+		} else if ((m2 & Modifiers.AccessibilityMask) != 0 && (m1 & Modifiers.AccessibilityMask) != 0) {
+			var accessibility = (m2 | m1 & Modifiers.AccessibilityMask);
+
+			if (accessibility == (Modifiers.PRIVATE | Modifiers.PROTECTED)) {
+				if (lang_version < LanguageVersion.V_7_2) {
+					FeatureIsNotAvailable (lexer.Location, "private protected");
+				}
+			} else if (accessibility != (Modifiers.PROTECTED | Modifiers.INTERNAL)) {
+				report.Error (107, lexer.Location - ModifiersExtensions.Name (m2).Length,
+					"More than one protection modifier specified");
+			}
 		}
 		
 		$$ = m1 | m2;
