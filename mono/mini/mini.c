@@ -3128,6 +3128,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	try_llvm = mono_use_llvm || llvm;
 #endif
 
+#ifndef MONO_ARCH_FLOAT32_SUPPORTED
+	opts &= ~MONO_OPT_FLOAT32;
+#endif
+
  restart_compile:
 	if (method_is_gshared) {
 		method_to_compile = method;
@@ -4163,7 +4167,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 	if (mono_aot_only) {
 		char *fullname = mono_method_full_name (method, TRUE);
-		mono_error_set_execution_engine (error, "Attempting to JIT compile method '%s' while running in aot-only mode. See https://developer.xamarin.com/guides/ios/advanced_topics/limitations/ for more information.\n", fullname);
+		mono_error_set_execution_engine (error, "Attempting to JIT compile method '%s' while running in aot-only mode. See https://docs.microsoft.com/xamarin/ios/internals/limitations for more information.\n", fullname);
 		g_free (fullname);
 
 		return NULL;

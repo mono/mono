@@ -38,16 +38,12 @@
 
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Collections.Generic;
 
 namespace System.Security.Cryptography {
 
 	[ComVisible (true)]
 	public partial class CryptoConfig {
-
-		public static void AddAlgorithm (Type algorithm, params string[] names)
-		{
-			throw new PlatformNotSupportedException ();
-		}
 
 		public static void AddOID (string oid, params string[] names)
 		{
@@ -204,6 +200,16 @@ namespace System.Security.Cryptography {
 				break;
 			}
 
+			lock (lockObject) {
+				Type algoClass = null;
+				if (algorithms?.TryGetValue (name, out algoClass) == true) {
+					try {
+						return Activator.CreateInstance (algoClass, args);
+					} catch {
+					}
+				}
+			}
+
 			try {
 				// last resort, the request type might be available (if care is taken for the type not to be linked 
 				// away) and that can allow some 3rd party code to work (e.g. extra algorithms) and make a few more
@@ -270,6 +276,11 @@ namespace System.Security.Cryptography {
 			default:
 				return null;
 			}
+		}
+
+		static void Initialize ()
+		{
+			algorithms = new Dictionary<string, Type> (StringComparer.OrdinalIgnoreCase);
 		}
 	}
 }

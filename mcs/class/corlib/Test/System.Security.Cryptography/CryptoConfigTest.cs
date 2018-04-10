@@ -37,6 +37,10 @@ namespace MonoTests.System.Security.Cryptography {
 [TestFixture]
 public class CryptoConfigTest {
 
+	public class FakeAlgorithm
+	{
+	}
+
 	void CreateFromName (string name, string objectname)
 	{
 		object o = CryptoConfig.CreateFromName (name);
@@ -401,6 +405,14 @@ public class CryptoConfigTest {
 		// because all interesting stuff are in static methods
 		CryptoConfig cc = new CryptoConfig ();
 		Assert.AreEqual ("System.Security.Cryptography.CryptoConfig", cc.ToString ());
+	}
+
+	[Test]
+	public void AddAlgorithm ()
+	{
+		CryptoConfig.AddAlgorithm (typeof (FakeAlgorithm), "test");
+		Assert.IsNotNull (CryptoConfig.CreateFromName ("test"));
+
 	}
 }
 

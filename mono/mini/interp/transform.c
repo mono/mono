@@ -2897,6 +2897,13 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				goto_if_nok (error, exit);
 			}
 
+			if (mono_class_get_flags (klass) & TYPE_ATTRIBUTE_ABSTRACT) {
+				char* full_name = mono_type_get_full_name (klass);
+				mono_error_set_member_access (error, "Cannot create an abstract class: %s", full_name);
+				g_free (full_name);
+				goto_if_nok (error, exit);
+			}
+
 			td->sp -= csignature->param_count;
 			if (mono_class_is_magic_int (klass) || mono_class_is_magic_float (klass)) {
 				ADD_CODE (td, MINT_NEWOBJ_MAGIC);
@@ -4637,7 +4644,10 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 					g_free (wrapper_name);
 				} else if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
 					MonoDelegate *del = frame->stack_args [0].data.p;
-					nm = mono_marshal_get_delegate_invoke (method, del);
+					if (del && del->method && del->method->flags & METHOD_ATTRIBUTE_STATIC)
+						nm = mono_marshal_get_delegate_invoke (method, del);
+					else
+						nm = mono_marshal_get_delegate_invoke (method, NULL);
 				} else if (*name == 'B' && (strcmp (name, "BeginInvoke") == 0)) {
 					nm = mono_marshal_get_delegate_begin_invoke (method);
 				} else if (*name == 'E' && (strcmp (name, "EndInvoke") == 0)) {

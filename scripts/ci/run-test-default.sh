@@ -59,6 +59,10 @@ ${TESTCMD} --label=Microsoft.Build.Tasks --timeout=5m make -w -C mcs/class/Micro
 ${TESTCMD} --label=Microsoft.Build.Utilities --timeout=5m make -w -C mcs/class/Microsoft.Build.Utilities run-test
 ${TESTCMD} --label=Mono.C5 --timeout=5m make -w -C mcs/class/Mono.C5 run-test
 ${TESTCMD} --label=Mono.Options --timeout=5m make -w -C mcs/class/Mono.Options run-test
+if [[ ${CI_TAGS} == *'win-'* ]] || [[ ${CI_TAGS} == *'coop-gc'* ]]
+then ${TESTCMD} --label=Mono.Profiler.Log-xunit --skip;
+else ${TESTCMD} --label=Mono.Profiler.Log-xunit --timeout=30m make -w -C mcs/class/Mono.Profiler.Log run-xunit-test
+fi
 ${TESTCMD} --label=Mono.Tasklets --timeout=5m make -w -C mcs/class/Mono.Tasklets run-test
 ${TESTCMD} --label=System.Configuration --timeout=5m make -w -C mcs/class/System.Configuration run-test
 ${TESTCMD} --label=System.Transactions --timeout=5m make -w -C mcs/class/System.Transactions run-test
@@ -121,6 +125,15 @@ if [[ $CI_TAGS == *'apidiff'* ]]; then
     if ${TESTCMD} --label=apidiff --timeout=15m --fatal make -w -C mcs -j4 mono-api-diff
     then report_github_status "success" "API Diff" "No public API changes found." || true
     else report_github_status "error" "API Diff" "The public API changed." "$BUILD_URL/Public_API_Diff/" || true
+    fi
+else ${TESTCMD} --label=apidiff --skip
+fi
+if [[ $CI_TAGS == *'csprojdiff'* ]]; then
+    source ${MONO_REPO_ROOT}/scripts/ci/util.sh
+    make update-solution-files
+    if ${TESTCMD} --label=csprojdiff --timeout=5m --fatal make -w -C mcs mono-csproj-diff
+    then report_github_status "success" "Project Files Diff" "No csproj file changes found." || true
+    else report_github_status "error" "Project Files Diff" "The csproj files changed." "$BUILD_URL/Project_Files_Diff/" || true
     fi
 else ${TESTCMD} --label=apidiff --skip
 fi

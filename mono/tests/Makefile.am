@@ -531,6 +531,7 @@ TESTS_CS_SRC=		\
 	nullable_boxing.2.cs	\
 	valuetype-equals.cs	\
 	custom-modifiers.2.cs	\
+	custom-modifiers-inheritance.cs	\
 	bug-382986.cs	\
 	test-inline-call-stack.cs	\
 	bug-324535.cs	\
@@ -565,6 +566,7 @@ TESTS_CS_SRC=		\
 	bug-685908.cs	\
 	sgen-long-vtype.cs	\
 	delegate-invoke.cs	\
+	delegate-prop.cs	\
 	bug-696593.cs	\
 	bug-705140.cs	\
 	bug-1147.cs	\
@@ -793,7 +795,8 @@ TESTS_IL_SRC=			\
 	dim-simple.il	\
 	dim-valuetypes.il \
 	tailcall-generic-cast-conservestack-il.il \
-	tailcall-generic-cast-nocrash-il.il
+	tailcall-generic-cast-nocrash-il.il \
+	newobj-abstract.il
 
 TESTS_GSHARED_SRC = \
 	generics-sharing.2.cs	\
@@ -991,7 +994,7 @@ PROFILE_DISABLED_TESTS= \
 	tailcall-rgctxb.exe
 
 if FULL_AOT_TESTS
-# Tests which rely on TypeLoadExceptions
+# Tests which rely on TypeLoadExceptions or MemberAccessExceptions
 # In full-aot mode, these cause the relevant methods to be not AOTed.
 PROFILE_DISABLED_TESTS += \
 	typeload-unaligned.exe \
@@ -1012,7 +1015,8 @@ PROFILE_DISABLED_TESTS += \
 	resolve_field_bug.2.exe \
 	resolve_type_bug.2.exe \
 	bug-81691.exe \
-	bug-327438.2.exe
+	bug-327438.2.exe \
+	newobj-abstract.exe
 
 # Tests which rely on remoting
 PROFILE_DISABLED_TESTS += \
@@ -1100,6 +1104,7 @@ PROFILE_DISABLED_TESTS += \
 	bug-389886-2.exe	\
 	bug-349190.2.exe	\
 	bug-389886-sre-generic-interface-instances.exe	\
+	custom-modifiers-inheritance.exe	\
 	bug-462592.exe	\
 	bug-575941.exe	\
 	bug-389886-3.exe	\
