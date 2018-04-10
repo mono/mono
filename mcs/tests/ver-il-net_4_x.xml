@@ -68733,6 +68733,9 @@
       <method name="Int32 &lt;M4&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
+      <method name="Void Foo(II, II, II)" attrs="145">
+        <size>2</size>
+      </method>
     </type>
   </test>
   <test name="test-default-02.cs">
