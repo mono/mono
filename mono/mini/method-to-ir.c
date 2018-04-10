@@ -10377,7 +10377,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				break;
 			}
 
-			val = convert_value (cfg, &klass->byval_arg, val);
+			val = convert_value (cfg, m_class_get_byval_arg (klass), val);
 
 			if (klass == mono_defaults.void_class)
 				UNVERIFIED;
@@ -11364,7 +11364,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (sp [0]->type != STACK_OBJ)
 				UNVERIFIED;
 
-			sp [2] = convert_value (cfg, &klass->byval_arg, sp [2]);
+			sp [2] = convert_value (cfg, m_class_get_byval_arg (klass), sp [2]);
 			emit_array_store (cfg, klass, sp, TRUE);
 
 			if (*ip == CEE_STELEM)
@@ -11384,7 +11384,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				iargs [0] = sp [0];
 				*sp++ = mono_emit_jit_icall (cfg, mono_ckfinite, iargs);
 			} else  {
-				sp [0] = convert_value (cfg, &mono_defaults.double_class->byval_arg, sp [0]);
+				sp [0] = convert_value (cfg, m_class_get_byval_arg (mono_defaults.double_class), sp [0]);
 				MONO_INST_NEW (cfg, ins, OP_CKFINITE);
 				ins->sreg1 = sp [0]->dreg;
 				ins->dreg = alloc_freg (cfg);
