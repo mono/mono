@@ -27,6 +27,7 @@ cp bcl/mscorlib.dll managed/
 csc /nostdlib /target:library /r:managed/mscorlib.dll /out:managed/sample.dll sample.cs 
 ```
 **Windows**
+
 The **csc** executable is a build tool that is installed with Visual Studio. For the commands below, using a command window opened using a *Developer Command Prompt for Visual Studio* is convenient.
 ```
 md managed
@@ -64,4 +65,5 @@ From within a browser, go to `locahost:8000/sample.html` to see the sample app, 
 
 
 [1] https://github.com/kripken/emscripten
+
 [2] https://docs.microsoft.com/en-us/dotnet/framework/tools/developer-command-prompt-for-vs
