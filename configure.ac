@@ -1738,9 +1738,22 @@ if test x$host_win32 = xno; then
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING(for CLOCK_REALTIME)
+	AC_TRY_COMPILE([#include <time.h>], [
+		const int foo = CLOCK_REALTIME;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_CLOCK_REALTIME, 1, [CLOCK_REALTIME])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
 	AC_CHECK_FUNC(mach_absolute_time, [AC_DEFINE(HAVE_MACH_ABSOLUTE_TIME, 1, [mach_absolute_time])])
 	AC_CHECK_FUNC(gethrtime, [AC_DEFINE(HAVE_GETHRTIME, 1, [gethrtime])])
 	AC_CHECK_FUNC(read_real_time, [AC_DEFINE(HAVE_READ_REAL_TIME, 1, [read_real_time])])
+	AC_CHECK_FUNC(mach_timebase_info, [AC_DEFINE(HAVE_MACH_TIMEBASE_INFO, 1, [mach_timebase_info])])
+	AC_CHECK_FUNC(futimes,            [AC_DEFINE(HAVE_FUTIMES, 1, [futimes])])
+	AC_CHECK_FUNC(futimens,           [AC_DEFINE(HAVE_FUTIMENS, 1, [futimens])])
 
 	dnl hires monotonic clock support
 	AC_SEARCH_LIBS(clock_gettime, rt)
@@ -3090,47 +3103,6 @@ if test x$host_win32 = xno; then
 	else
 		AC_DEFINE(HAVE_SUPPORT_FOR_DUAL_MODE_IPV4_PACKET_INFO, 0, [HAVE_SUPPORT_FOR_DUAL_MODE_IPV4_PACKET_INFO])
 	fi
-
-	AC_MSG_CHECKING(for CLOCK_MONOTONIC)
-	AC_TRY_RUN([
-		#include <stdlib.h>
-		#include <time.h>
-		#include <sys/time.h>
-
-		int main ()
-		{
-			struct timespec ts;
-			return clock_gettime(CLOCK_MONOTONIC, &ts);
-		}
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_CLOCK_MONOTONIC, 1, [CLOCK_MONOTONIC])
-	], [
-		AC_MSG_RESULT(no)
-	])
-
-	AC_MSG_CHECKING(for CLOCK_REALTIME)
-	AC_TRY_RUN([
-		#include <stdlib.h>
-		#include <time.h>
-		#include <sys/time.h>
-
-		int main ()
-		{
-			struct timespec ts;
-			return clock_gettime(CLOCK_REALTIME, &ts);
-		}
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_CLOCK_REALTIME, 1, [CLOCK_REALTIME])
-	], [
-		AC_MSG_RESULT(no)
-	])
-
-	AC_CHECK_FUNC(mach_absolute_time, [AC_DEFINE(HAVE_MACH_ABSOLUTE_TIME, 1, [mach_absolute_time])])
-	AC_CHECK_FUNC(mach_timebase_info, [AC_DEFINE(HAVE_MACH_TIMEBASE_INFO, 1, [mach_timebase_info])])
-	AC_CHECK_FUNC(futimes,            [AC_DEFINE(HAVE_FUTIMES, 1, [futimes])])
-	AC_CHECK_FUNC(futimens,           [AC_DEFINE(HAVE_FUTIMENS, 1, [futimens])])
 
 	ORIG_CFLAGS="$CFLAGS"
 	CFLAGS="-Werror -Wsign-conversion"
