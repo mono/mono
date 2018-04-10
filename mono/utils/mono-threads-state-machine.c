@@ -46,9 +46,8 @@ state_name (int state)
 		"ASYNC_SUSPENDED",
 		"SELF_SUSPENDED",
 		"ASYNC_SUSPEND_REQUESTED",
-		"SELF_SUSPEND_REQUESTED",
 		"STATE_BLOCKING",
-		"STATE_BLOCKING_AND_SUSPENDED",
+		"STATE_BLOCKING_SELF_SUSPENDED",
 	};
 	return state_names [get_thread_state (state)];
 }
@@ -73,8 +72,7 @@ check_thread_state (MonoThreadInfo* info)
 	case STATE_ASYNC_SUSPENDED:
 	case STATE_SELF_SUSPENDED:
 	case STATE_ASYNC_SUSPEND_REQUESTED:
-	case STATE_SELF_SUSPEND_REQUESTED:
-	case STATE_BLOCKING_AND_SUSPENDED:
+	case STATE_BLOCKING_SELF_SUSPENDED:
 		g_assert (suspend_count > 0);
 		break;
 	case STATE_BLOCKING: //this is a special state that can have zero or positive suspend count.
@@ -85,18 +83,26 @@ check_thread_state (MonoThreadInfo* info)
 }
 
 static inline void
-trace_state_change (const char *transition, MonoThreadInfo *info, int cur_raw_state, int next_state, int suspend_count_delta)
+trace_state_change_with_func (const char *transition, MonoThreadInfo *info, int cur_raw_state, int next_state, int suspend_count_delta, const char *func)
 {
 	check_thread_state (info);
-	THREADS_STATE_MACHINE_DEBUG ("[%s][%p] %s -> %s (%d -> %d)\n",
+	THREADS_STATE_MACHINE_DEBUG ("[%s][%p] %s -> %s (%d -> %d) %s\n",
 		transition,
 		mono_thread_info_get_tid (info),
 		state_name (get_thread_state (cur_raw_state)),
 		state_name (next_state),
 		get_thread_suspend_count (cur_raw_state),
-		get_thread_suspend_count (cur_raw_state) + suspend_count_delta);
+		get_thread_suspend_count (cur_raw_state) + suspend_count_delta,
+		func);
 
 	CHECKED_BUILD_THREAD_TRANSITION (transition, info, get_thread_state (cur_raw_state), get_thread_suspend_count (cur_raw_state), next_state, suspend_count_delta);
+}
+
+static inline void
+trace_state_change (const char *transition, MonoThreadInfo *info, int cur_raw_state, int next_state, int suspend_count_delta)
+// FIXME migrate all uses
+{
+	trace_state_change_with_func (transition, info, cur_raw_state, next_state, suspend_count_delta, "");
 }
 
 /*
@@ -152,8 +158,7 @@ retry_state_change:
 /*
 STATE_ASYNC_SUSPENDED: Code should not be running while suspended.
 STATE_SELF_SUSPENDED: Code should not be running while suspended.
-STATE_SELF_SUSPEND_REQUESTED: This is a bug in the self suspend code that didn't execute the second part of it
-STATE_BLOCKING_AND_SUSPENDED: This is a bug in coop x suspend that resulted the thread in an undetachable state.
+STATE_BLOCKING_SELF_SUSPENDED: This is a bug in coop x suspend that resulted the thread in an undetachable state.
 */
 	default:
 		mono_fatal_with_history ("Cannot transition current thread %p from %s with DETACH", info, state_name (cur_state));
@@ -167,7 +172,6 @@ Returns one of the following values:
 
 - AsyncSuspendInitSuspend: Thread suspend requested, async suspend needs to be done.
 - AsyncSuspendAlreadySuspended: Thread already suspended, nothing to do.
-- AsyncSuspendWait: Self suspend in progress, asked it to notify us. Caller must add target to the notification set.
 - AsyncSuspendBlocking: Thread in blocking state
 */
 MonoRequestAsyncSuspendResult
@@ -190,21 +194,13 @@ retry_state_change:
 
 	case STATE_ASYNC_SUSPENDED:
 	case STATE_SELF_SUSPENDED: //Async suspend can suspend the same thread multiple times as it starts from the outside
-	case STATE_BLOCKING_AND_SUSPENDED:
+	case STATE_BLOCKING_SELF_SUSPENDED:
 		if (!(suspend_count > 0 && suspend_count < THREAD_SUSPEND_COUNT_MAX))
 			mono_fatal_with_history ("suspend_count = %d, but should be > 0 and < THREAD_SUSPEND_COUNT_MAX", suspend_count);
 		if (mono_atomic_cas_i32 (&info->thread_state, build_thread_state (cur_state, suspend_count + 1), raw_state) != raw_state)
 			goto retry_state_change;
 		trace_state_change ("ASYNC_SUSPEND_REQUESTED", info, raw_state, cur_state, 1);
 		return AsyncSuspendAlreadySuspended; //Thread is already suspended so we don't need to wait it to suspend
-
-	case STATE_SELF_SUSPEND_REQUESTED: //This suspend needs to notify the initiator, so we need to promote the suspend to async
-		if (!(suspend_count > 0 && suspend_count < THREAD_SUSPEND_COUNT_MAX))
-			mono_fatal_with_history ("suspend_count = %d, but should be > 0 and < THREAD_SUSPEND_COUNT_MAX", suspend_count);
-		if (mono_atomic_cas_i32 (&info->thread_state, build_thread_state (STATE_ASYNC_SUSPEND_REQUESTED, suspend_count + 1), raw_state) != raw_state)
-			goto retry_state_change;
-		trace_state_change ("ASYNC_SUSPEND_REQUESTED", info, raw_state, STATE_ASYNC_SUSPEND_REQUESTED, 1);
-		return AsyncSuspendWait; //This is the first async suspend request, change the thread and let it notify us [1]
 
 	case STATE_BLOCKING:
 		if (!(suspend_count < THREAD_SUSPEND_COUNT_MAX))
@@ -255,22 +251,18 @@ retry_state_change:
 		return SelfSuspendResumed; //We're fine, don't suspend
 
 	case STATE_ASYNC_SUSPEND_REQUESTED: //Async suspend requested, service it with a self suspend
-	case STATE_SELF_SUSPEND_REQUESTED: //Start the self suspend process
 		if (!(suspend_count > 0))
 			mono_fatal_with_history ("suspend_count = %d, but should be > 0", suspend_count);
 		if (mono_atomic_cas_i32 (&info->thread_state, build_thread_state (STATE_SELF_SUSPENDED, suspend_count), raw_state) != raw_state)
 			goto retry_state_change;
 		trace_state_change ("STATE_POLL", info, raw_state, STATE_SELF_SUSPENDED, 0);
-		if (cur_state == STATE_SELF_SUSPEND_REQUESTED)
-			return SelfSuspendWait; //Caller should wait for resume
-		else
-			return SelfSuspendNotifyAndWait; //Caller should notify suspend initiator and wait for resume
+		return SelfSuspendNotifyAndWait; //Caller should notify suspend initiator and wait for resume
 
 /*
 STATE_ASYNC_SUSPENDED: Code should not be running while suspended.
 STATE_SELF_SUSPENDED: Code should not be running while suspended.
 STATE_BLOCKING:
-STATE_BLOCKING_AND_SUSPENDED: Pool is a local state transition. No VM activities are allowed while in blocking mode.
+STATE_BLOCKING_SELF_SUSPENDED: Pool is a local state transition. No VM activities are allowed while in blocking mode.
 */
 	default:
 		mono_fatal_with_history ("Cannot transition thread %p from %s with STATE_POLL", mono_thread_info_get_tid (info), state_name (cur_state));
@@ -327,7 +319,7 @@ retry_state_change:
 		break;
 	case STATE_ASYNC_SUSPENDED:
 	case STATE_SELF_SUSPENDED:
-	case STATE_BLOCKING_AND_SUSPENDED: //Decrease the suspend_count and maybe resume
+	case STATE_BLOCKING_SELF_SUSPENDED: //Decrease the suspend_count and maybe resume
 		if (!(suspend_count > 0))
 			mono_fatal_with_history ("suspend_count = %d, but should be > 0", suspend_count);
 		if (suspend_count > 1) {
@@ -349,19 +341,6 @@ retry_state_change:
 				return ResumeInitBlockingResume; //Resume worked and caller must do blocking resume
 		}
 
-	case STATE_SELF_SUSPEND_REQUESTED: //Self suspend was requested but another thread decided to resume it.
-		if (!(suspend_count > 0))
-			mono_fatal_with_history ("suspend_count = %d, but should be > 0", suspend_count);
-		if (suspend_count > 1) {
-			if (mono_atomic_cas_i32 (&info->thread_state, build_thread_state (cur_state, suspend_count - 1), raw_state) != raw_state)
-					goto retry_state_change;
-			trace_state_change ("RESUME", info, raw_state, cur_state, -1);
-		} else {
-			if (mono_atomic_cas_i32 (&info->thread_state, STATE_RUNNING, raw_state) != raw_state)
-				goto retry_state_change;
-			trace_state_change ("RESUME", info, raw_state, STATE_RUNNING, -1);
-		}
-		return ResumeOk; //Resume worked and there's nothing for the caller to do (the target never actually suspend).
 /*
 
 STATE_ASYNC_SUSPEND_REQUESTED: Only one async suspend/resume operation can be in flight, so a resume cannot witness an internal state of suspend
@@ -395,7 +374,7 @@ retry_state_change:
 	switch (cur_state) {
 
 	case STATE_SELF_SUSPENDED: //async suspend raced with self suspend and lost
-	case STATE_BLOCKING_AND_SUSPENDED: //async suspend raced with blocking and lost
+	case STATE_BLOCKING_SELF_SUSPENDED: //async suspend raced with blocking and lost
 		trace_state_change ("FINISH_ASYNC_SUSPEND", info, raw_state, cur_state, 0);
 		return FALSE; //let self suspend wait
 
@@ -408,7 +387,6 @@ retry_state_change:
 /*
 STATE_RUNNING: A thread cannot escape suspension once requested.
 STATE_ASYNC_SUSPENDED: There can be only one suspend initiator at a given time, meaning this state should have been visible on the first stage of suspend.
-STATE_SELF_SUSPEND_REQUESTED: When self suspend and async suspend happen together, they converge to async suspend so this state should not be visible.
 STATE_BLOCKING: Async suspend only begins if a transition to async suspend requested happened. Blocking would have put us into blocking with positive suspend count if it raced with async finish.
 */
 	default:
@@ -429,7 +407,7 @@ It returns the action the caller must perform:
 
 */
 MonoDoBlockingResult
-mono_threads_transition_do_blocking (MonoThreadInfo* info)
+mono_threads_transition_do_blocking (MonoThreadInfo* info, const char *func)
 {
 	int raw_state, cur_state, suspend_count;
 
@@ -453,12 +431,11 @@ retry_state_change:
 /*
 STATE_ASYNC_SUSPENDED
 STATE_SELF_SUSPENDED: Code should not be running while suspended.
-STATE_SELF_SUSPEND_REQUESTED: A blocking operation must not be done while trying to self suspend
 STATE_BLOCKING:
-STATE_BLOCKING_AND_SUSPENDED: Blocking is not nestabled
+STATE_BLOCKING_SELF_SUSPENDED: Blocking is not nestabled
 */
 	default:
-		mono_fatal_with_history ("Cannot transition thread %p from %s with DO_BLOCKING", mono_thread_info_get_tid (info), state_name (cur_state));
+		mono_fatal_with_history ("%s Cannot transition thread %p from %s with DO_BLOCKING", func, mono_thread_info_get_tid (info), state_name (cur_state));
 	}
 }
 
@@ -473,7 +450,7 @@ It returns one of:
 
 */
 MonoDoneBlockingResult
-mono_threads_transition_done_blocking (MonoThreadInfo* info)
+mono_threads_transition_done_blocking (MonoThreadInfo* info, const char *func)
 {
 	int raw_state, cur_state, suspend_count;
 
@@ -484,14 +461,14 @@ retry_state_change:
 		if (suspend_count == 0) {
 			if (mono_atomic_cas_i32 (&info->thread_state, build_thread_state (STATE_RUNNING, suspend_count), raw_state) != raw_state)
 				goto retry_state_change;
-			trace_state_change ("DONE_BLOCKING", info, raw_state, STATE_RUNNING, 0);
+			trace_state_change_with_func ("DONE_BLOCKING", info, raw_state, STATE_RUNNING, 0, func);
 			return DoneBlockingOk;
 		} else {
 			if (!(suspend_count >= 0))
-				mono_fatal_with_history ("suspend_count = %d, but should be >= 0", suspend_count);
-			if (mono_atomic_cas_i32 (&info->thread_state, build_thread_state (STATE_BLOCKING_AND_SUSPENDED, suspend_count), raw_state) != raw_state)
+				mono_fatal_with_history ("%s suspend_count = %d, but should be >= 0", func, suspend_count);
+			if (mono_atomic_cas_i32 (&info->thread_state, build_thread_state (STATE_BLOCKING_SELF_SUSPENDED, suspend_count), raw_state) != raw_state)
 				goto retry_state_change;
-			trace_state_change ("DONE_BLOCKING", info, raw_state, STATE_BLOCKING_AND_SUSPENDED, 0);
+			trace_state_change_with_func ("DONE_BLOCKING", info, raw_state, STATE_BLOCKING_SELF_SUSPENDED, 0, func);
 			return DoneBlockingWait;
 		}
 
@@ -500,8 +477,7 @@ STATE_RUNNING: //Blocking was aborted and not properly restored
 STATE_ASYNC_SUSPEND_REQUESTED: //Blocking was aborted, not properly restored and now there's a pending suspend
 STATE_ASYNC_SUSPENDED
 STATE_SELF_SUSPENDED: Code should not be running while suspended.
-STATE_SELF_SUSPEND_REQUESTED: A blocking operation must not be done while trying to self suspend
-STATE_BLOCKING_AND_SUSPENDED: This an exit state of done blocking
+STATE_BLOCKING_SELF_SUSPENDED: This an exit state of done blocking
 */
 	default:
 		mono_fatal_with_history ("Cannot transition thread %p from %s with DONE_BLOCKING", mono_thread_info_get_tid (info), state_name (cur_state));
@@ -544,16 +520,15 @@ retry_state_change:
 		} else {
 			if (!(suspend_count > 0))
 				mono_fatal_with_history ("suspend_count = %d, but should be > 0", suspend_count);
-			if (mono_atomic_cas_i32 (&info->thread_state, build_thread_state (STATE_BLOCKING_AND_SUSPENDED, suspend_count), raw_state) != raw_state)
+			if (mono_atomic_cas_i32 (&info->thread_state, build_thread_state (STATE_BLOCKING_SELF_SUSPENDED, suspend_count), raw_state) != raw_state)
 				goto retry_state_change;
-			trace_state_change ("ABORT_BLOCKING", info, raw_state, STATE_BLOCKING_AND_SUSPENDED, 0);
+			trace_state_change ("ABORT_BLOCKING", info, raw_state, STATE_BLOCKING_SELF_SUSPENDED, 0);
 			return AbortBlockingWait;
 		}
 /*
 STATE_ASYNC_SUSPENDED:
 STATE_SELF_SUSPENDED: Code should not be running while suspended.
-STATE_SELF_SUSPEND_REQUESTED: A blocking operation must not be done while trying to self suspend.
-STATE_BLOCKING_AND_SUSPENDED: This is an exit state of done blocking, can't happen here.
+STATE_BLOCKING_SELF_SUSPENDED: This is an exit state of done blocking, can't happen here.
 */
 	default:
 		mono_fatal_with_history ("Cannot transition thread %p from %s with DONE_BLOCKING", mono_thread_info_get_tid (info), state_name (cur_state));
@@ -569,7 +544,7 @@ mono_thread_info_get_suspend_state (MonoThreadInfo *info)
 	case STATE_ASYNC_SUSPENDED:
 		return &info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX];
 	case STATE_SELF_SUSPENDED:
-	case STATE_BLOCKING_AND_SUSPENDED:
+	case STATE_BLOCKING_SELF_SUSPENDED:
 		return &info->thread_saved_state [SELF_SUSPEND_STATE_INDEX];
 	case STATE_BLOCKING:
 		if (suspend_count > 0)
@@ -595,7 +570,6 @@ mono_thread_info_is_running (MonoThreadInfo *info)
 	switch (get_thread_state (info->thread_state)) {
 	case STATE_RUNNING:
 	case STATE_ASYNC_SUSPEND_REQUESTED:
-	case STATE_SELF_SUSPEND_REQUESTED:
 	case STATE_BLOCKING:
 		return TRUE;
 	}
@@ -645,7 +619,6 @@ mono_thread_is_gc_unsafe_mode (void)
 	switch (mono_thread_info_current_state (cur)) {
 	case STATE_RUNNING:
 	case STATE_ASYNC_SUSPEND_REQUESTED:
-	case STATE_SELF_SUSPEND_REQUESTED:
 		return TRUE;
 	default:
 		return FALSE;

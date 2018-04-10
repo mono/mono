@@ -2051,7 +2051,11 @@ namespace Mono.CSharp
 
 						if (d.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 							return this;
-						
+
+						// TODO: Requires custom optimized version with variable store
+						if (Variable != null)
+							return this;
+
 						//
 						// Turn is check into simple null check for implicitly convertible reference types
 						//
@@ -6424,6 +6428,30 @@ namespace Mono.CSharp
 					false_expr is Constant && true_expr is Constant).Resolve (ec);
 			}
 
+			return this;
+		}
+
+		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
+		{
+			expr = expr.Resolve (rc);
+			true_expr = true_expr.Resolve (rc);
+			false_expr = false_expr.Resolve (rc);
+
+			if (true_expr == null || false_expr == null || expr == null)
+				return null;
+			
+			if (!(true_expr is ReferenceExpression && false_expr is ReferenceExpression)) {
+				rc.Report.Error (8326, expr.Location, "Both ref conditional operators must be ref values");
+				return null;
+			}
+
+			if (!TypeSpecComparer.IsEqual (true_expr.Type, false_expr.Type)) {
+				rc.Report.Error (8327, true_expr.Location, "The ref conditional expression types `{0}' and `{1}' have to match",
+				                 true_expr.Type.GetSignatureForError (), false_expr.Type.GetSignatureForError ()); 
+			}
+
+			eclass = ExprClass.Value;
+			type = true_expr.Type;
 			return this;
 		}
 
@@ -11877,10 +11905,15 @@ namespace Mono.CSharp
 			if (!TypeManager.VerifyUnmanaged (ec.Module, otype, loc))
 				return null;
 
-			type = PointerContainer.MakeType (ec.Module, otype);
+			ResolveExpressionType (ec, otype);
 			eclass = ExprClass.Value;
 
 			return this;
+		}
+
+		protected virtual void ResolveExpressionType (ResolveContext rc, TypeSpec elementType)
+		{
+			type = PointerContainer.MakeType (rc.Module, elementType);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -11936,6 +11969,24 @@ namespace Mono.CSharp
 			
 			this.type = spanType;
 			return true;
+		}
+	}
+
+	class SpanStackAlloc : StackAlloc
+	{
+		public SpanStackAlloc (Expression type, Expression count, Location l)
+			: base (type, count, l)
+		{
+		}
+
+		protected override void ResolveExpressionType (ResolveContext rc, TypeSpec elementType)
+		{
+			var span = rc.Module.PredefinedTypes.SpanGeneric;
+			if (!span.Define ())
+				return;
+
+			type = span.TypeSpec.MakeGenericType (rc, new [] { elementType });
+			ResolveSpanConversion (rc, type);
 		}
 	}
 
@@ -13083,6 +13134,9 @@ namespace Mono.CSharp
 		static bool CanBeByRef (Expression expr)
 		{
 			if (expr is IAssignMethod)
+				return true;
+
+			if (expr is Conditional)
 				return true;
 
 			var invocation = expr as Invocation;

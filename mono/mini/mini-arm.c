@@ -625,6 +625,7 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, gboolean pa
 		g_assert ((code - start) <= 12);
 
 		mono_arch_flush_icache (start, 12);
+		MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 	} else {
 		int size, i;
 
@@ -641,6 +642,7 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, gboolean pa
 		g_assert ((code - start) <= size);
 
 		mono_arch_flush_icache (start, size);
+		MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 	}
 
 	if (has_target) {
@@ -699,7 +701,7 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 			return cached;
 		}
 
-		if (mono_aot_only) {
+		if (mono_ee_features.use_aot_trampolines) {
 			start = mono_aot_get_trampoline ("delegate_invoke_impl_has_target");
 		} else {
 			MonoTrampInfo *info;
@@ -726,7 +728,7 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 			return code;
 		}
 
-		if (mono_aot_only) {
+		if (mono_ee_features.use_aot_trampolines) {
 			char *name = g_strdup_printf ("delegate_invoke_impl_target_%d", sig->param_count);
 			start = mono_aot_get_trampoline (name);
 			g_free (name);
@@ -1719,32 +1721,49 @@ done:
 	g_free (cinfo);
 }
 
+static const gboolean debug_tailcall = FALSE;
+
+static gboolean
+is_supported_tailcall_helper (gboolean value, const char *svalue)
+{
+	if (!value && debug_tailcall)
+		g_print ("%s %s\n", __func__, svalue);
+	return value;
+}
+
+#define IS_SUPPORTED_TAILCALL(x) (is_supported_tailcall_helper((x), #x))
 
 gboolean
 mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
-	MonoType *callee_ret;
-	CallInfo *c1, *c2;
-	gboolean res;
+	g_assert (caller_sig);
+	g_assert (callee_sig);
 
-	c1 = get_call_info (NULL, caller_sig);
-	c2 = get_call_info (NULL, callee_sig);
+	MonoType *callee_ret;
+	CallInfo *caller_info = get_call_info (NULL, caller_sig);
+	CallInfo *callee_info = get_call_info (NULL, callee_sig);
 
 	/*
 	 * Tail calls with more callee stack usage than the caller cannot be supported, since
 	 * the extra stack space would be left on the stack after the tail call.
 	 */
-	res = c1->stack_usage >= c2->stack_usage;
+	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
+				&& IS_SUPPORTED_TAILCALL (caller_info->ret.storage == callee_info->ret.storage);
+	if (!res && !debug_tailcall)
+		goto exit;
+
+	// FIXME: Pass caller's caller's return area to callee.
+	/* An address on the callee's stack is passed as the first argument */
 	callee_ret = mini_get_underlying_type (callee_sig->ret);
-	if (callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && c2->ret.storage != RegTypeStructByVal)
-		/* An address on the callee's stack is passed as the first argument */
-		res = FALSE;
+	res &= IS_SUPPORTED_TAILCALL (!(callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && callee_info->ret.storage != RegTypeStructByVal));
+	if (!res && !debug_tailcall)
+		goto exit;
 
-	if (c2->stack_usage > 16 * 4)
-		res = FALSE;
+	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= 16 * 4); // FIXME why?
 
-	g_free (c1);
-	g_free (c2);
+exit:
+	g_free (caller_info);
+	g_free (callee_info);
 
 	return res;
 }
@@ -5405,7 +5424,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = mono_arm_patchable_bl (code, ARMCOND_AL);
 			cfg->thunk_area += THUNK_SIZE;
 			for (GList *tmp = ins->inst_eh_blocks; tmp != bb->clause_holes; tmp = tmp->prev)
-				mono_cfg_add_try_hole (cfg, (MonoExceptionClause *)tmp->data, code, bb);
+				mono_cfg_add_try_hole (cfg, ((MonoLeaveClause *) tmp->data)->clause, code, bb);
 			break;
 		case OP_GET_EX_OBJ:
 			if (ins->dreg != ARMREG_R0)

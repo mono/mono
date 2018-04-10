@@ -2703,14 +2703,18 @@ sgen_client_degraded_allocation (void)
 	static gint32 num_degraded = 0;
 
 	gint32 major_gc_count = mono_atomic_load_i32 (&mono_gc_stats.major_gc_count);
+	//The WASM target aways triggers degrated allocation before collecting. So no point in printing the warning as it will just confuse users
+#if !defined (TARGET_WASM)
 	if (mono_atomic_load_i32 (&last_major_gc_warned) < major_gc_count) {
 		gint32 num = mono_atomic_inc_i32 (&num_degraded);
 		if (num == 1 || num == 3)
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "Warning: Degraded allocation.  Consider increasing nursery-size if the warning persists.");
 		else if (num == 10)
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "Warning: Repeated degraded allocation.  Consider increasing nursery-size.");
+
 		mono_atomic_store_i32 (&last_major_gc_warned, major_gc_count);
 	}
+#endif
 }
 
 /*
@@ -2935,8 +2939,7 @@ sgen_client_binary_protocol_collection_begin (int minor_gc_count, int generation
 
 	MONO_GC_BEGIN (generation);
 
-	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_START, generation));
-	MONO_PROFILER_RAISE (gc_event2, (MONO_GC_EVENT_START, generation, generation == GENERATION_OLD && sgen_concurrent_collection_in_progress));
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_START, generation, generation == GENERATION_OLD && sgen_concurrent_collection_in_progress));
 
 	if (!pseudo_roots_registered) {
 		pseudo_roots_registered = TRUE;
@@ -2958,8 +2961,7 @@ sgen_client_binary_protocol_collection_end (int minor_gc_count, int generation, 
 {
 	MONO_GC_END (generation);
 
-	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_END, generation));
-	MONO_PROFILER_RAISE (gc_event2, (MONO_GC_EVENT_END, generation, generation == GENERATION_OLD && sgen_concurrent_collection_in_progress));
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_END, generation, generation == GENERATION_OLD && sgen_concurrent_collection_in_progress));
 }
 
 #ifdef HOST_WASM

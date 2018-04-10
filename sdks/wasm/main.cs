@@ -43,10 +43,13 @@ public class Driver {
 
 	static void TPStart () {
 		var l = new List<Task> ();
-		for (int i = 0; i < 10; ++i) {
+		for (int i = 0; i < 5; ++i) {
 			l.Add (Task.Run (() => {
 				++step_count;
 			}));
+			l.Add (Task.Factory.StartNew (() => {
+				++step_count;
+			}, TaskCreationOptions.LongRunning));
 		}
 		cur_task = Task.WhenAll (l).ContinueWith (t => {
 		});
@@ -55,9 +58,12 @@ public class Driver {
 	static bool TPPump () {
 		if (tp_pump_count > 10) {
 			Console.WriteLine ("Pumped the TP test 10 times and no progress <o> giving up");
+			latest_test_result = "FAIL";
 			return false;
 		}
+
 		tp_pump_count++;
+		latest_test_result = "PASS";
 		return !cur_task.IsCompleted;
 	}
 
@@ -232,6 +238,8 @@ public class Driver {
 		testRunner.Add (Assembly.LoadFrom (baseDir + "/" + testsuite_name));
 		// testRunner.RunOnly ("MonoTests.System.Threading.AutoResetEventTest.MultipleSet");
 
+		// This is useful if you need to skip to the middle of a huge test suite like corlib.
+		// testRunner.SkipFirst (4550);
 		testRunner.Start (10);
 	}
 

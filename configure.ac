@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [5.13.0],
+AC_INIT(mono, [5.15.0],
         [https://github.com/mono/mono/issues/new])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -1432,9 +1432,11 @@ if test "x$mono_feature_disable_simd" = "xyes"; then
 fi
 
 if test "x$mono_feature_disable_soft_debug" = "xyes"; then
-	AC_DEFINE(DISABLE_SOFT_DEBUG, 1, [Disable Soft Debugger Agent.])
+	AC_DEFINE(DISABLE_DEBUGGER_AGENT, 1, [Disable Soft Debugger Agent.])
 	AC_MSG_NOTICE([Disabled Soft Debugger.])
 fi
+
+AM_CONDITIONAL(DISABLE_DEBUGGER_AGENT, test x$mono_feature_disable_debugger_agent = xyes)
 
 if test "x$mono_feature_disable_perfcounters" = "xyes"; then
 	AC_DEFINE(DISABLE_PERFCOUNTERS, 1, [Disable Performance Counters.])
@@ -3220,6 +3222,9 @@ if test "x$enable_llvm" = "xyes"; then
    arm*)
 		llvm_codegen="armcodegen"
 		;;
+   aarch64*)
+		llvm_codegen="aarch64codegen"
+		;;
    esac
 
    if test "x$host_win32" = "xno"; then
@@ -4554,6 +4559,10 @@ AC_ARG_ENABLE(btls, [  --disable-btls             Disable the BoringTls provider
 AC_ARG_ENABLE(btls-lib, [  --disable-btls-lib             Disable building the BTLS native library], enable_btls_lib=$enableval, enable_btls_lib=$BTLS_SUPPORTED)
 AC_ARG_WITH(btls_android_ndk, [  --with-btls-android-ndk        Android NDK for BoringTls])
 
+if test "x$enable_btls" = "xno"; then
+   enable_btls_lib=no
+fi
+
 AM_CONDITIONAL(BTLS, test x$enable_btls_lib = xyes)
 
 btls_android=no
@@ -5039,18 +5048,16 @@ fi
 
     if test x$host_darwin = xyes; then
       echo "BUILD_PLATFORM = darwin" >> $mcs_topdir/build/config.make
+      echo "HOST_PLATFORM ?= darwin" >> $mcs_topdir/build/config.make
+      echo "XTEST_PLATFORM ?= osx" >> $mcs_topdir/build/config.make
     elif test x$host_win32 = xyes; then
       echo "BUILD_PLATFORM = win32" >> $mcs_topdir/build/config.make
+      echo "HOST_PLATFORM ?= win32" >> $mcs_topdir/build/config.make
+      echo "XTEST_PLATFORM ?= windows" >> $mcs_topdir/build/config.make
     else
       echo "BUILD_PLATFORM = linux" >> $mcs_topdir/build/config.make
-    fi
-
-    if test x$host_darwin = xyes; then
-      echo "HOST_PLATFORM ?= darwin" >> $mcs_topdir/build/config.make
-    elif test x$host_win32 = xyes; then
-      echo "HOST_PLATFORM ?= win32" >> $mcs_topdir/build/config.make
-    else
       echo "HOST_PLATFORM ?= linux" >> $mcs_topdir/build/config.make
+      echo "XTEST_PLATFORM ?= linux" >> $mcs_topdir/build/config.make
     fi
 
     if test "x$PLATFORM_AOT_SUFFIX" != "x"; then

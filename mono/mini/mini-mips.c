@@ -530,6 +530,7 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, gboolean pa
 		g_assert ((code - start) <= 16);
 
 		mono_arch_flush_icache (start, 16);
+		MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 	} else {
 		int size, i;
 
@@ -547,6 +548,7 @@ get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, gboolean pa
 		g_assert ((code - start) <= size);
 
 		mono_arch_flush_icache (start, size);
+		MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 	}
 
 	if (has_target) {
@@ -601,7 +603,7 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 			return cached;
 		}
 
-		if (mono_aot_only) {
+		if (mono_ee_features.use_aot_trampolines) {
 			start = mono_aot_get_trampoline ("delegate_invoke_impl_has_target");
 		} else {
 			MonoTrampInfo *info;
@@ -628,7 +630,7 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 			return code;
 		}
 
-		if (mono_aot_only) {
+		if (mono_ee_features.use_aot_trampolines) {
 			char *name = g_strdup_printf ("delegate_invoke_impl_target_%d", sig->param_count);
 			start = mono_aot_get_trampoline (name);
 			g_free (name);
@@ -3979,7 +3981,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			mips_nop (code);
 			/*FIXME should it be before the NOP or not? Does MIPS has a delay slot like sparc?*/
 			for (GList *tmp = ins->inst_eh_blocks; tmp != bb->clause_holes; tmp = tmp->prev)
-				mono_cfg_add_try_hole (cfg, (MonoExceptionClause *)tmp->data, code, bb);
+				mono_cfg_add_try_hole (cfg, ((MonoLeaveClause *) tmp->data)->clause, code, bb);
 			break;
 		case OP_LABEL:
 			ins->inst_c0 = code - cfg->native_code;
@@ -5729,6 +5731,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 		UnlockedAdd (&mono_stats.imt_trampolines_size, code - start);
 	g_assert (code - start <= size);
 	mono_arch_flush_icache (start, size);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL));
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, NULL), domain);
 

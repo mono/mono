@@ -130,12 +130,11 @@ enum {
 
 	STATE_ASYNC_SUSPENDED			= 0x03,
 	STATE_SELF_SUSPENDED			= 0x04,
-	STATE_ASYNC_SUSPEND_REQUESTED	= 0x05,
-	STATE_SELF_SUSPEND_REQUESTED 	= 0x06,
-	STATE_BLOCKING					= 0x07,
-	STATE_BLOCKING_AND_SUSPENDED	= 0x8,
+	STATE_ASYNC_SUSPEND_REQUESTED		= 0x05,
+	STATE_BLOCKING				= 0x06,
+	STATE_BLOCKING_SELF_SUSPENDED		= 0x07,
 
-	STATE_MAX						= 0x08,
+	STATE_MAX				= 0x07,
 
 	THREAD_STATE_MASK			= 0x00FF,
 	THREAD_SUSPEND_COUNT_MASK	= 0xFF00,
@@ -604,13 +603,11 @@ typedef enum {
 
 typedef enum {
 	SelfSuspendResumed,
-	SelfSuspendWait,
 	SelfSuspendNotifyAndWait,
 } MonoSelfSupendResult;
 
 typedef enum {
 	AsyncSuspendAlreadySuspended,
-	AsyncSuspendWait,
 	AsyncSuspendInitSuspend,
 	AsyncSuspendBlocking,
 } MonoRequestAsyncSuspendResult;
@@ -640,8 +637,8 @@ MonoRequestAsyncSuspendResult mono_threads_transition_request_async_suspension (
 MonoSelfSupendResult mono_threads_transition_state_poll (THREAD_INFO_TYPE *info);
 MonoResumeResult mono_threads_transition_request_resume (THREAD_INFO_TYPE* info);
 gboolean mono_threads_transition_finish_async_suspend (THREAD_INFO_TYPE* info);
-MonoDoBlockingResult mono_threads_transition_do_blocking (THREAD_INFO_TYPE* info);
-MonoDoneBlockingResult mono_threads_transition_done_blocking (THREAD_INFO_TYPE* info);
+MonoDoBlockingResult mono_threads_transition_do_blocking (THREAD_INFO_TYPE* info, const char* func);
+MonoDoneBlockingResult mono_threads_transition_done_blocking (THREAD_INFO_TYPE* info, const char* func);
 MonoAbortBlockingResult mono_threads_transition_abort_blocking (THREAD_INFO_TYPE* info);
 
 MonoThreadUnwindState* mono_thread_info_get_suspend_state (THREAD_INFO_TYPE *info);

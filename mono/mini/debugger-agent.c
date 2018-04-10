@@ -88,16 +88,15 @@
 #define TRY_MANAGED_SYSTEM_ENVIRONMENT_EXIT
 #endif
 
-
 #ifndef MONO_ARCH_SOFT_DEBUG_SUPPORTED
-#define DISABLE_DEBUGGER_AGENT 1
+#define DISABLE_SDB 1
 #endif
 
 #ifdef DISABLE_SOFT_DEBUG
-#define DISABLE_DEBUGGER_AGENT 1
+#define DISABLE_SDB 1
 #endif
 
-#ifndef DISABLE_DEBUGGER_AGENT
+#ifndef DISABLE_SDB
 
 #include <mono/utils/mono-os-mutex.h>
 
@@ -584,6 +583,7 @@ typedef struct {
 	int async_id;
 	/* Used to know if we are in process of async step-out and distishing from exception breakpoints */
 	MonoMethod* async_stepout_method;
+	int refcount;
 } SingleStepReq;
 
 /*
@@ -702,7 +702,7 @@ static MonoCoopCond debugger_thread_exited_cond;
 static MonoCoopMutex debugger_thread_exited_mutex;
 
 /* The single step request instance */
-static SingleStepReq *ss_req;
+static SingleStepReq *the_ss_req;
 
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 /* Number of single stepping operations in progress */
@@ -806,6 +806,8 @@ static void ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint *sp, M
 					  StackFrame **frames, int nframes);
 static ErrorCode ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilter filter, EventRequest *req);
 static void ss_destroy (SingleStepReq *req);
+static SingleStepReq* ss_req_acquire (void);
+static void ss_req_release (SingleStepReq *req);
 
 static void start_debugger_thread (void);
 static void stop_debugger_thread (void);
@@ -882,8 +884,8 @@ parse_flag (const char *option, char *flag)
 	}
 }
 
-void
-mono_debugger_agent_parse_options (char *options)
+static void
+debugger_agent_parse_options (char *options)
 {
 	char **args, **ptr;
 	char *host;
@@ -980,8 +982,8 @@ mono_debugger_agent_parse_options (char *options)
 	}
 }
 
-void
-mono_debugger_agent_init (void)
+static void
+debugger_agent_init (void)
 {
 	mono_coop_mutex_init_recursive (&debug_mutex);
 
@@ -2208,8 +2210,8 @@ ids_cleanup (void)
 	}
 }
 
-void
-mono_debugger_agent_free_domain_info (MonoDomain *domain)
+static void
+debugger_agent_free_domain_info (MonoDomain *domain)
 {
 	AgentDomainInfo *info = (AgentDomainInfo *)domain_jit_info (domain)->agent_info;
 	int i, j;
@@ -2452,7 +2454,10 @@ buffer_add_methodid (Buffer *buf, MonoDomain *domain, MonoMethod *method)
 		char *s;
 
 		s = mono_method_full_name (method, 1);
-		DEBUG_PRINTF (2, "[dbg]   send method [%s]\n", s);
+		if (is_debugger_thread ())
+			DEBUG_PRINTF (2, "[dbg]   send method [%s]\n", s);
+		else
+			DEBUG_PRINTF (2, "[%p]   send method [%s]\n", (gpointer) (gsize) mono_native_thread_id_get (), s);
 		g_free (s);
 	}
 }
@@ -4681,14 +4686,14 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 	MonoDebugSourceLocation *loc = NULL;
 	gboolean hit = TRUE;
 
-	if ((ss_req->filter & STEP_FILTER_STATIC_CTOR)) {
+	if ((req->filter & STEP_FILTER_STATIC_CTOR)) {
 		mono_thread_state_init_from_monoctx (&tls->context, ctx);
 		compute_frame_info (tls->thread, tls);
 
 		gboolean ret = FALSE;
 		gboolean method_in_stack = FALSE;
 
-		for (int i=0; i < tls->frame_count; i++) {
+		for (int i = 0; i < tls->frame_count; i++) {
 			MonoMethod *external_method = tls->frames [i]->method;
 			if (method == external_method)
 				method_in_stack = TRUE;
@@ -4745,9 +4750,9 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 		}
 	}
 
-	if (req->depth == STEP_DEPTH_INTO && req->size == STEP_SIZE_MIN && (sp->flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK) && ss_req->start_method){
+	if (req->depth == STEP_DEPTH_INTO && req->size == STEP_SIZE_MIN && (sp->flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK) && req->start_method) {
 		ss_calculate_framecount (tls, ctx);
-		if (ss_req->start_method == method && req->nframes && tls->frame_count == req->nframes) {//Check also frame count(could be recursion)
+		if (req->start_method == method && req->nframes && tls->frame_count == req->nframes) { //Check also frame count(could be recursion)
 			DEBUG_PRINTF (1, "[%p] Seq point at nonempty stack %x while stepping in, continuing single stepping.\n", (gpointer) (gsize) mono_native_thread_id_get (), sp->il_offset);
 			return FALSE;
 		}
@@ -4775,9 +4780,9 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 
 	if (!loc) {
 		DEBUG_PRINTF (1, "[%p] No line number info for il offset %x, continuing single stepping.\n", (gpointer) (gsize) mono_native_thread_id_get (), sp->il_offset);
-		ss_req->last_method = method;
+		req->last_method = method;
 		hit = FALSE;
-	} else if (loc && method == ss_req->last_method && loc->row == ss_req->last_line) {
+	} else if (loc && method == req->last_method && loc->row == req->last_line) {
 		ss_calculate_framecount (tls, ctx);
 		if (tls->frame_count == req->nframes) { // If the frame has changed we're clearly not on the same source line.
 			DEBUG_PRINTF (1, "[%p] Same source line (%d), continuing single stepping.\n", (gpointer) (gsize) mono_native_thread_id_get (), loc->row);
@@ -4786,8 +4791,8 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 	}
 				
 	if (loc) {
-		ss_req->last_method = method;
-		ss_req->last_line = loc->row;
+		req->last_method = method;
+		req->last_line = loc->row;
 		mono_debug_free_source_location (loc);
 	}
 
@@ -4966,6 +4971,12 @@ process_breakpoint (DebuggerTlsData *tls, gboolean from_signal)
 	MonoSeqPointInfo *info;
 	SeqPoint sp;
 	gboolean found_sp;
+
+	if (suspend_count > 0) {
+		/* Could be hit if we were suspended in native code */
+		process_suspend (tls, ctx);
+		return;
+	}
 
 	// FIXME: Speed this up
 
@@ -5178,8 +5189,8 @@ resume_from_signal_handler (void *sigctx, void *func)
 	mono_monoctx_to_sigctx (&ctx, sigctx);
 }
 
-void
-mono_debugger_agent_breakpoint_hit (void *sigctx)
+static void
+debugger_agent_breakpoint_hit (void *sigctx)
 {
 	/*
 	 * We are called from a signal handler, and running code there causes all kinds of
@@ -5215,8 +5226,8 @@ user_break_cb (StackFrameInfo *frame, MonoContext *ctx, gpointer user_data)
 /*
  * Called by System.Diagnostics.Debugger:Break ().
  */
-void
-mono_debugger_agent_user_break (void)
+static void
+debugger_agent_user_break (void)
 {
 	if (agent_config.enabled) {
 		MonoContext ctx;
@@ -5271,6 +5282,7 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 	MonoMethod *method;
 	SeqPoint sp;
 	MonoSeqPointInfo *info;
+	SingleStepReq *ss_req;
 
 	/* Skip the instruction causing the single step */
 	if (from_signal)
@@ -5284,12 +5296,17 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 		return;
 	}
 
+	/*
+	 * This can run concurrently with a clear_event_request () call, so needs locking/reference counts.
+	 */
+	ss_req = ss_req_acquire ();
+
 	if (!ss_req)
 		// FIXME: A suspend race
 		return;
 
 	if (mono_thread_internal_current () != ss_req->thread)
-		return;
+		goto exit;
 
 	ip = (guint8 *)MONO_CONTEXT_GET_IP (ctx);
 
@@ -5304,7 +5321,7 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 	g_assert (method);
 
 	if (method->wrapper_type && method->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
-		return;
+		goto exit;
 
 	/* 
 	 * FIXME:
@@ -5312,7 +5329,7 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 	 * Stopping in memcpy makes half-copied vtypes visible.
 	 */
 	if (method->klass == mono_defaults.string_class && (!strcmp (method->name, "memset") || strstr (method->name, "memcpy")))
-		return;
+		goto exit;
 
 	/*
 	 * This could be in ss_update method, but mono_find_next_seq_point_for_native_offset is pretty expensive method,
@@ -5326,9 +5343,8 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 				break;
 			}
 		if (!found)
-			return;
+			goto exit;
 	}
-
 
 	/*
 	 * The ip points to the instruction causing the single step event, which is before
@@ -5336,13 +5352,13 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 	 */
 	if (!mono_find_next_seq_point_for_native_offset (domain, method, (guint8*)ip - (guint8*)ji->code_start, &info, &sp)) {
 		g_assert_not_reached ();
-		return;
+		goto exit;
 	}
 
 	il_offset = sp.il_offset;
 
 	if (!ss_update (ss_req, ji, &sp, tls, ctx, method))
-		return;
+		goto exit;
 
 	/* Start single stepping again from the current sequence point */
 	ss_start (ss_req, method, &sp, info, ctx, tls, FALSE, NULL, 0);
@@ -5350,7 +5366,7 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 	if ((ss_req->filter & STEP_FILTER_STATIC_CTOR) &&
 		(method->flags & METHOD_ATTRIBUTE_SPECIAL_NAME) &&
 		!strcmp (method->name, ".cctor"))
-		return;
+		goto exit;
 
 	// FIXME: Has to lock earlier
 
@@ -5367,6 +5383,9 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 	mono_loader_unlock ();
 
 	process_event (EVENT_KIND_STEP, jinfo_get_method (ji), il_offset, ctx, events, suspend_policy);
+
+ exit:
+	ss_req_release (ss_req);
 }
 
 static void
@@ -5376,12 +5395,12 @@ process_single_step (void)
 }
 
 /*
- * mono_debugger_agent_single_step_event:
+ * debugger_agent_single_step_event:
  *
  *   Called from a signal handler to handle a single step event.
  */
-void
-mono_debugger_agent_single_step_event (void *sigctx)
+static void
+debugger_agent_single_step_event (void *sigctx)
 {
 	/* Resume to process_single_step through the signal context */
 
@@ -5406,8 +5425,8 @@ mono_debugger_agent_single_step_event (void *sigctx)
 	resume_from_signal_handler (sigctx, process_single_step);
 }
 
-void
-mono_debugger_agent_single_step_from_context (MonoContext *ctx)
+static void
+debugger_agent_single_step_from_context (MonoContext *ctx)
 {
 	DebuggerTlsData *tls;
 	MonoThreadUnwindState orig_restore_state;
@@ -5433,8 +5452,8 @@ mono_debugger_agent_single_step_from_context (MonoContext *ctx)
 	memcpy (&tls->restore_state, &orig_restore_state, sizeof (MonoThreadUnwindState));
 }
 
-void
-mono_debugger_agent_breakpoint_from_context (MonoContext *ctx)
+static void
+debugger_agent_breakpoint_from_context (MonoContext *ctx)
 {
 	DebuggerTlsData *tls;
 	MonoThreadUnwindState orig_restore_state;
@@ -5865,19 +5884,20 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 	wait_for_suspend ();
 
 	// FIXME: Multiple requests
-	if (ss_req) {
+	if (the_ss_req) {
 		DEBUG_PRINTF (0, "Received a single step request while the previous one was still active.\n");
 		return ERR_NOT_IMPLEMENTED;
 	}
 
 	DEBUG_PRINTF (1, "[dbg] Starting single step of thread %p (depth=%s).\n", thread, ss_depth_to_string (depth));
 
-	ss_req = g_new0 (SingleStepReq, 1);
+	SingleStepReq *ss_req = g_new0 (SingleStepReq, 1);
 	ss_req->req = req;
 	ss_req->thread = thread;
 	ss_req->size = size;
 	ss_req->depth = depth;
 	ss_req->filter = filter;
+	ss_req->refcount = 1;
 	req->info = ss_req;
 
 	for (int i = 0; i < req->nmodifiers; i++) {
@@ -5977,6 +5997,8 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 
 	ss_req->start_method = method;
 
+	the_ss_req = ss_req;
+
 	ss_start (ss_req, method, sp, info, set_ip ? &tls->restore_state.ctx : &tls->context.ctx, tls, step_to_catch, frames, nframes);
 
 	if (frames)
@@ -5988,13 +6010,11 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 static void
 ss_destroy (SingleStepReq *req)
 {
-	// FIXME: Locking
-	g_assert (ss_req == req);
+	DEBUG_PRINTF (1, "[dbg] ss_destroy.\n");
 
-	ss_stop (ss_req);
+	ss_stop (req);
 
-	g_free (ss_req);
-	ss_req = NULL;
+	g_free (req);
 }
 
 static void
@@ -6005,10 +6025,10 @@ ss_clear_for_assembly (SingleStepReq *req, MonoAssembly *assembly)
 
 	while (found) {
 		found = FALSE;
-		for (l = ss_req->bps; l; l = l->next) {
+		for (l = req->bps; l; l = l->next) {
 			if (breakpoint_matches_assembly ((MonoBreakpoint *)l->data, assembly)) {
 				clear_breakpoint ((MonoBreakpoint *)l->data);
-				ss_req->bps = g_slist_delete_link (ss_req->bps, l);
+				req->bps = g_slist_delete_link (req->bps, l);
 				found = TRUE;
 				break;
 			}
@@ -6016,11 +6036,39 @@ ss_clear_for_assembly (SingleStepReq *req, MonoAssembly *assembly)
 	}
 }
 
+static SingleStepReq*
+ss_req_acquire (void)
+{
+	SingleStepReq *req;
+
+	dbg_lock ();
+	req = the_ss_req;
+	if (req)
+		req->refcount ++;
+	dbg_unlock ();
+	return req;
+}
+
+static void
+ss_req_release (SingleStepReq *req)
+{
+	gboolean free = FALSE;
+
+	dbg_lock ();
+	g_assert (req->refcount);
+	req->refcount --;
+	if (req->refcount == 0)
+		free = TRUE;
+	dbg_unlock ();
+	if (free)
+		ss_destroy (req);
+}
+
 /*
  * Called from metadata by the icall for System.Diagnostics.Debugger:Log ().
  */
-void
-mono_debugger_agent_debug_log (int level, MonoString *category, MonoString *message)
+static void
+debugger_agent_debug_log (int level, MonoString *category, MonoString *message)
 {
 	ERROR_DECL (error);
 	int suspend_policy;
@@ -6052,16 +6100,15 @@ mono_debugger_agent_debug_log (int level, MonoString *category, MonoString *mess
 	g_free (ei.message);
 }
 
-gboolean
-mono_debugger_agent_debug_log_is_enabled (void)
+static gboolean
+debugger_agent_debug_log_is_enabled (void)
 {
 	/* Treat this as true even if there is no event request for EVENT_KIND_USER_LOG */
 	return agent_config.enabled;
 }
 
-#if defined(HOST_ANDROID) || defined(TARGET_ANDROID)
-void
-mono_debugger_agent_unhandled_exception (MonoException *exc)
+static void
+debugger_agent_unhandled_exception (MonoException *exc)
 {
 	int suspend_policy;
 	GSList *events;
@@ -6079,10 +6126,9 @@ mono_debugger_agent_unhandled_exception (MonoException *exc)
 
 	process_event (EVENT_KIND_EXCEPTION, &ei, 0, NULL, events, suspend_policy);
 }
-#endif
 
-void
-mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx,
+static void
+debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx,
 									  MonoContext *catch_ctx, StackFrameInfo *catch_frame)
 {
 	int i, j, suspend_policy;
@@ -6203,8 +6249,8 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 		tls->has_catch_frame = FALSE;
 }
 
-void
-mono_debugger_agent_begin_exception_filter (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx)
+static void
+debugger_agent_begin_exception_filter (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx)
 {
 	DebuggerTlsData *tls;
 
@@ -6242,8 +6288,8 @@ mono_debugger_agent_begin_exception_filter (MonoException *exc, MonoContext *ctx
 	g_assert (mono_thread_state_init_from_monoctx (&tls->filter_state, orig_ctx));
 }
 
-void
-mono_debugger_agent_end_exception_filter (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx)
+static void
+debugger_agent_end_exception_filter (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx)
 {
 	DebuggerTlsData *tls;
 
@@ -6960,8 +7006,10 @@ clear_event_request (int req_id, int etype)
 		if (req->id == req_id && req->event_kind == etype) {
 			if (req->event_kind == EVENT_KIND_BREAKPOINT)
 				clear_breakpoint ((MonoBreakpoint *)req->info);
-			if (req->event_kind == EVENT_KIND_STEP)
-				ss_destroy ((SingleStepReq *)req->info);
+			if (req->event_kind == EVENT_KIND_STEP) {
+				ss_req_release ((SingleStepReq *)req->info);
+				the_ss_req = NULL;
+			}
 			if (req->event_kind == EVENT_KIND_METHOD_ENTRY)
 				clear_breakpoint ((MonoBreakpoint *)req->info);
 			if (req->event_kind == EVENT_KIND_METHOD_EXIT)
@@ -10686,83 +10734,29 @@ debugger_thread (void *arg)
 	return 0;
 }
 
-#else /* DISABLE_DEBUGGER_AGENT */
-
-void
-mono_debugger_agent_parse_options (char *options)
-{
-	g_error ("This runtime is configured with the debugger agent disabled.");
-}
-
 void
 mono_debugger_agent_init (void)
 {
+	MonoDebuggerCallbacks cbs;
+
+	memset (&cbs, 0, sizeof (MonoDebuggerCallbacks));
+	cbs.version = MONO_DBG_CALLBACKS_VERSION;
+	cbs.parse_options = debugger_agent_parse_options;
+	cbs.init = debugger_agent_init;
+	cbs.breakpoint_hit = debugger_agent_breakpoint_hit;
+	cbs.single_step_event = debugger_agent_single_step_event;
+	cbs.single_step_from_context = debugger_agent_single_step_from_context;
+	cbs.breakpoint_from_context = debugger_agent_breakpoint_from_context;
+	cbs.free_domain_info = debugger_agent_free_domain_info;
+	cbs.unhandled_exception = debugger_agent_unhandled_exception;
+	cbs.handle_exception = debugger_agent_handle_exception;
+	cbs.begin_exception_filter = debugger_agent_begin_exception_filter;
+	cbs.end_exception_filter = debugger_agent_end_exception_filter;
+	cbs.user_break = debugger_agent_user_break;
+	cbs.debug_log = debugger_agent_debug_log;
+	cbs.debug_log_is_enabled = debugger_agent_debug_log_is_enabled;
+
+	mini_install_dbg_callbacks (&cbs);
 }
 
-void
-mono_debugger_agent_breakpoint_hit (void *sigctx)
-{
-}
-
-void
-mono_debugger_agent_single_step_event (void *sigctx)
-{
-}
-
-void
-mono_debugger_agent_free_domain_info (MonoDomain *domain)
-{
-}
-
-void
-mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx,
-									  MonoContext *catch_ctx, StackFrameInfo *catch_frame)
-{
-}
-
-void
-mono_debugger_agent_begin_exception_filter (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx)
-{
-}
-
-void
-mono_debugger_agent_end_exception_filter (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx)
-{
-}
-
-void
-mono_debugger_agent_user_break (void)
-{
-	G_BREAKPOINT ();
-}
-
-void
-mono_debugger_agent_debug_log (int level, MonoString *category, MonoString *message)
-{
-}
-
-gboolean
-mono_debugger_agent_debug_log_is_enabled (void)
-{
-	return FALSE;
-}
-
-void
-mono_debugger_agent_unhandled_exception (MonoException *exc)
-{
-	g_assert_not_reached ();
-}
-
-void
-debugger_agent_single_step_from_context (MonoContext *ctx)
-{
-	g_assert_not_reached ();
-}
-
-void
-debugger_agent_breakpoint_from_context (MonoContext *ctx)
-{
-	g_assert_not_reached ();
-}
-
-#endif
+#endif /* DISABLE_SDB */

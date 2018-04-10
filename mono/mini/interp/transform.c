@@ -943,7 +943,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				if (arg_size > SIZEOF_VOID_P) { // 8 -> 4
 					switch (type_index) {
 					case 0: case 1:
-						ADD_CODE (td, MINT_CONV_I8_I4);
+						ADD_CODE (td, MINT_CONV_I4_I8);
 						break;
 					case 2:
 						// ADD_CODE (td, MINT_CONV_R8_R4);
@@ -954,7 +954,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				if (arg_size < SIZEOF_VOID_P) { // 4 -> 8
 					switch (type_index) {
 					case 0: case 1:
-						ADD_CODE (td, MINT_CONV_I4_I8);
+						ADD_CODE (td, MINT_CONV_I8_I4);
 						break;
 					case 2:
 						ADD_CODE (td, MINT_CONV_R4_R8);
@@ -987,7 +987,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				if (arg_size > SIZEOF_VOID_P) { // 8 -> 4
 					switch (type_index) {
 					case 0: case 1:
-						ADD_CODE (td, MINT_CONV_I8_I4);
+						ADD_CODE (td, MINT_CONV_I4_I8);
 						break;
 					case 2:
 						// ADD_CODE (td, MINT_CONV_R4_R8);
@@ -998,7 +998,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				if (arg_size < SIZEOF_VOID_P) { // 4 -> 8
 					switch (type_index) {
 					case 0: case 1:
-						ADD_CODE (td, MINT_CONV_I4_I8);
+						ADD_CODE (td, MINT_CONV_I8_I4);
 						break;
 					case 2:
 						ADD_CODE (td, MINT_CONV_R4_R8);
@@ -1518,7 +1518,7 @@ interp_save_debug_info (InterpMethod *rtm, MonoMethodHeader *header, TransformDa
 
 	for (i = 0; i < dinfo->num_line_numbers; i++)
 		dinfo->line_numbers [i] = g_array_index (line_numbers, MonoDebugLineNumberEntry, i);
-	mono_debug_add_method (rtm->method, dinfo, mono_domain_get ());
+	mono_debug_add_method (rtm->method, dinfo, rtm->domain);
 
 	mono_debug_free_method_jit_info (dinfo);
 }
@@ -2855,19 +2855,20 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			break;
 		}
 		case CEE_LDSTR: {
-			MonoString *s;
 			token = mono_metadata_token_index (read32 (td->ip + 1));
 			td->ip += 5;
-			if (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD) {
-				s = mono_method_get_wrapper_data (method, token);
-			} else if (method->wrapper_type != MONO_WRAPPER_NONE) {
-				s = mono_string_new_wrapper (mono_method_get_wrapper_data (method, token));
-			} else {
-				s = mono_ldstr_checked (domain, image, token, error);
+			if (method->wrapper_type == MONO_WRAPPER_NONE) {
+				MonoString *s = mono_ldstr_checked (domain, image, token, error);
 				goto_if_nok (error, exit);
+				/* GC won't scan code stream, but reference is held by metadata
+				 * machinery so we are good here */
+				ADD_CODE (td, MINT_LDSTR);
+				ADD_CODE (td, get_data_item_index (td, s));
+			} else {
+				/* defer allocation to execution-time */
+				ADD_CODE (td, MINT_LDSTR_TOKEN);
+				ADD_CODE (td, get_data_item_index (td, (gpointer) token));
 			}
-			ADD_CODE(td, MINT_LDSTR);
-			ADD_CODE(td, get_data_item_index (td, s));
 			PUSH_TYPE(td, STACK_TYPE_O, mono_defaults.string_class);
 			break;
 		}
@@ -2893,6 +2894,13 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 
 			if (!mono_class_init (klass)) {
 				mono_error_set_for_class_failure (error, klass);
+				goto_if_nok (error, exit);
+			}
+
+			if (mono_class_get_flags (klass) & TYPE_ATTRIBUTE_ABSTRACT) {
+				char* full_name = mono_type_get_full_name (klass);
+				mono_error_set_member_access (error, "Cannot create an abstract class: %s", full_name);
+				g_free (full_name);
 				goto_if_nok (error, exit);
 			}
 
@@ -4636,7 +4644,10 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 					g_free (wrapper_name);
 				} else if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
 					MonoDelegate *del = frame->stack_args [0].data.p;
-					nm = mono_marshal_get_delegate_invoke (method, del);
+					if (del && del->method && del->method->flags & METHOD_ATTRIBUTE_STATIC)
+						nm = mono_marshal_get_delegate_invoke (method, del);
+					else
+						nm = mono_marshal_get_delegate_invoke (method, NULL);
 				} else if (*name == 'B' && (strcmp (name, "BeginInvoke") == 0)) {
 					nm = mono_marshal_get_delegate_begin_invoke (method);
 				} else if (*name == 'E' && (strcmp (name, "EndInvoke") == 0)) {

@@ -2356,9 +2356,10 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 		}
 	}
 
-	mono_arch_flush_icache ((guint8*)start, (code - start) * 4);
+	mono_arch_flush_icache ((guint8*)start, (code - start));
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL));
 
-	UnlockedAdd (&mono_stats.imt_trampolines_size, (code - start) * 4);
+	UnlockedAdd (&mono_stats.imt_trampolines_size, (code - start));
 	g_assert (code - start <= size);
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, NULL), domain);
@@ -3135,7 +3136,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_call_simple (code, 0);
 			sparc_nop (code);
 			for (GList *tmp = ins->inst_eh_blocks; tmp != bb->clause_holes; tmp = tmp->prev)
-				mono_cfg_add_try_hole (cfg, (MonoExceptionClause *)tmp->data, code, bb);
+				mono_cfg_add_try_hole (cfg, ((MonoLeaveClause *) tmp->data)->clause, code, bb);
 			break;
 		case OP_LABEL:
 			ins->inst_c0 = (guint8*)code - cfg->native_code;
