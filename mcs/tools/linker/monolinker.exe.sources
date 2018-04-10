@@ -1,6 +1,7 @@
 ../../../external/linker/linker/Linker/Pipeline.cs
 ../../../external/linker/linker/Linker/AssemblyInfo.cs
 ../../../external/linker/linker/Linker/AssemblyResolver.cs
+../../../external/linker/linker/Linker/AssemblyUtilities.cs
 ../../../external/linker/linker/Linker/TypePreserve.cs
 ../../../external/linker/linker/Linker/TypeReferenceExtensions.cs
 ../../../external/linker/linker/Linker/Annotations.cs
