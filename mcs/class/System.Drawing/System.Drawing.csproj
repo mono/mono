@@ -196,9 +196,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterUnit.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterUnitConvert.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintEventHandler.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermission.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermissionAttribute.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermissionLevel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintPageEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintRange.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\QueryPageSettingsEventArgs.cs" />
@@ -219,6 +216,9 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Text\TextRenderingHint.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\TextureBrush.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\UnsafeNativeMethods.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermission.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermissionAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermissionLevel.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="corefx\SR.cs" />
@@ -410,9 +410,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterUnit.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterUnitConvert.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintEventHandler.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermission.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermissionAttribute.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermissionLevel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintPageEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintRange.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\QueryPageSettingsEventArgs.cs" />
@@ -433,6 +430,9 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Text\TextRenderingHint.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\TextureBrush.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\UnsafeNativeMethods.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermission.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermissionAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermissionLevel.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="corefx\SR.cs" />
@@ -624,9 +624,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterUnit.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterUnitConvert.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintEventHandler.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermission.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermissionAttribute.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermissionLevel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintPageEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintRange.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\QueryPageSettingsEventArgs.cs" />
@@ -647,6 +644,9 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Text\TextRenderingHint.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\TextureBrush.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\UnsafeNativeMethods.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermission.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermissionAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermissionLevel.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="corefx\SR.cs" />

@@ -108,9 +108,10 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\IRetainable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\IMemoryOwner.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\IPinnable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\MemoryHandle.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\OwnedMemory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\MemoryManager.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Comparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\DictionaryEntry.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\Dictionary.cs" />
@@ -129,7 +130,8 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\KeyNotFoundException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\KeyValuePair.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\List.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\ValueListBuilder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\HashHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\ICollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\IComparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\IDictionary.cs" />
@@ -146,19 +148,30 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Diagnostics\StackTraceHiddenAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.Invariant.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\GlobalizationExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HResults.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Marvin.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MathF.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Memory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MemoryDebugView.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MemoryExtensions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Numerics\ConstantHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Numerics\Register.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Numerics\Vector.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Numerics\Vector_Operations.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlyMemory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlySpan.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\BindingFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\AccessedThroughPropertyAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\AsyncMethodBuilderAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\AsyncStateMachineAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\AsyncValueTaskMethodBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CallerFilePathAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CallerLineNumberAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CallerMemberNameAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CompilerGeneratedAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CompilerGlobalScopeAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\ConfiguredValueTaskAwaitable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CustomConstantAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\DateTimeConstantAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\DecimalConstantAttribute.cs" />
@@ -189,16 +202,25 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\TypeForwardedFromAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\TypeForwardedToAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\UnsafeValueTypeAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\ValueTaskAwaiter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\InteropServices\MemoryMarshal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Span.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanDebugView.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanHelpers.BinarySearch.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanHelpers.Byte.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanHelpers.T.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\String.Searching.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\StringSplitOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\Sources\IValueTaskSource.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCanceledException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCompletionSource.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskSchedulerException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\ValueTask.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Tuple.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TupleExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ValueTuple.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\CompatibleComparer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Concurrent\ConcurrentQueue_Segment.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LowLevelDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\BeginEndAwaitableAdapter.cs" />
@@ -231,22 +253,14 @@
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\Reader.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\ReaderBigEndian.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\ReaderLittleEndian.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\Writer.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\WriterBigEndian.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\WriterLittleEndian.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\OperationStatus.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\StandardFormat.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\MemoryExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\MemoryExtensions.Portable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Pinnable.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ReadOnlySpan.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Span.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanDebugView.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.BinarySearch.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.byte.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.Clear.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ReadOnlySpan.Portable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Runtime\InteropServices\MemoryMarshal.Portable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Span.Portable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.T.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ThrowHelper.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ObjectModel\src\System\Collections\Generic\DebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ObjectModel\src\System\Collections\ObjectModel\KeyedCollection.cs" />
@@ -254,16 +268,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\ArrayList.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\Hashtable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\IHashCodeProvider.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Globalization\Extensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\Architecture.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\OSPlatform.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ContentType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509KeyStorageFlags.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Extensions\src\System\Runtime\CompilerServices\AsyncMethodBuilderAttribute.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Extensions\src\System\Runtime\CompilerServices\AsyncValueTaskMethodBuilder.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Extensions\src\System\Runtime\CompilerServices\ConfiguredValueTaskAwaitable.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Extensions\src\System\Runtime\CompilerServices\ValueTaskAwaiter.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Extensions\src\System\Threading\Tasks\ValueTask.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\Box.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\Parallel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\ParallelETWProvider.cs" />
@@ -274,7 +282,6 @@
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Collections\Generic\LowLevelList.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
     <Compile Include="..\..\..\external\corert\src\Runtime.Base\src\System\Runtime\InteropServices\NativeCallableAttribute.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Collections\Generic\ValueListBuilder.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Diagnostics\Debug.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\String.Manipulation.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\StringSpanHelpers.cs" />
@@ -952,7 +959,6 @@
     <Compile Include="corefx\AwaitTaskContinuation.cs" />
     <Compile Include="corefx\CompareInfo.cs" />
     <Compile Include="corefx\GlobalizationMode.cs" />
-    <Compile Include="corefx\MemoryExtensions.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />
@@ -1845,6 +1851,7 @@
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1869,6 +1876,7 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1893,6 +1901,7 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1917,6 +1926,7 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1941,6 +1951,7 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1965,6 +1976,7 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -2005,6 +2017,7 @@
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
