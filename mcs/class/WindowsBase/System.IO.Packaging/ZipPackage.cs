@@ -226,14 +226,15 @@ namespace System.IO.Packaging {
 				var extension = Path.GetExtension (part.Uri.OriginalString);
 				if (extension.Length > 0)
 					extension = extension.Substring (1);
+				
+				if (extension.Length == 0) {
+					// If extension is empty string (no extension), can possible goes here,
+					// So to avoid that, we give a condition, only having extension will go here.
+					continue;
+				}
 
-                if (extension.Length > 0 &&
-                    !mimes.TryGetValue(extension, out existingMimeType))
-                {
-                    // If extension is empty string (no extension), can possible goes here,
-                    // So to avoid that, we give a condition, only having extension will go here.
-
-                    node = doc.CreateNode (XmlNodeType.Element, "Default", ContentNamespace);
+				if (!mimes.TryGetValue (extension, out existingMimeType)) {
+					node = doc.CreateNode (XmlNodeType.Element, "Default", ContentNamespace);
 					
 					XmlAttribute ext = doc.CreateAttribute ("Extension");
 					ext.Value = extension;
