@@ -1926,21 +1926,21 @@ namespace Mono.Options
 				return commands;
 
 			foreach (var nc in CommandSet.NestedCommandSets) {
-				AddNestedCommands ("", nc);
+				AddNestedCommands (commands, "", nc);
 			}
 
 			return commands;
+		}
 
-			void AddNestedCommands (string outer, CommandSet value)
-			{
-				foreach (var v in value) {
-					commands.Add (new KeyValuePair<string, Command>($"{outer}{value.Suite} {v.Name}", v));
-				}
-				if (value.NestedCommandSets == null)
-					return;
-				foreach (var nc in value.NestedCommandSets) {
-					AddNestedCommands ($"{outer}{value.Suite} ", nc);
-				}
+		void AddNestedCommands (List<KeyValuePair<string, Command>> commands, string outer, CommandSet value)
+		{
+			foreach (var v in value) {
+				commands.Add (new KeyValuePair<string, Command>($"{outer}{value.Suite} {v.Name}", v));
+			}
+			if (value.NestedCommandSets == null)
+				return;
+			foreach (var nc in value.NestedCommandSets) {
+				AddNestedCommands (commands, $"{outer}{value.Suite} ", nc);
 			}
 		}
 
