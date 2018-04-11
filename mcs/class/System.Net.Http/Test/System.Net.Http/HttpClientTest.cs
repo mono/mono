@@ -1461,7 +1461,7 @@ namespace MonoTests.System.Net.Http
 		HttpListener CreateListener (Action<HttpListenerContext> contextAssert, int port)
 		{
 			var l = new HttpListener ();
-			l.Prefixes.Add (string.Format ("http://+:{0}/", port));
+			l.Prefixes.Add (string.Format ("http://*:{0}/", port));
 			l.Start ();
 			AddListenerContext(l, contextAssert);
 
