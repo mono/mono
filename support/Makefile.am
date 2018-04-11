@@ -14,7 +14,7 @@ AM_CPPFLAGS =					\
 	$(GLIB_CFLAGS)				\
 	-I$(top_srcdir)
 
-glib_libs = $(top_builddir)/mono/eglib/libeglib.la -lm
+glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 # Source code which helps implement the ANSI C standards, and thus *should* be
 # portable to any platform having a C compiler.

@@ -4,7 +4,7 @@ if HOST_WIN32
 export HOST_CC
 endif
 
-glib_libs = $(top_builddir)/mono/eglib/libeglib.la -lm
+glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 if SUPPORT_SGEN
 metadata_lib=$(top_builddir)/mono/metadata/libmonoruntimesgen.la

@@ -3,7 +3,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	$(GLIB_CFLAGS)
 
-glib_libs = $(top_builddir)/mono/eglib/libeglib.la -lm
+glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 if !HOST_WIN32
 if !DISABLE_LIBRARIES
