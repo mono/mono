@@ -129,10 +129,10 @@ _android-$(1)_CXXFLAGS= \
 	$$(android-$(1)_CXXFLAGS)
 
 _android-$(1)_CPPFLAGS= \
-	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/usr/include
+	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/usr/include
 
 _android-$(1)_CXXCPPFLAGS= \
-	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/usr/include
+	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/usr/include
 
 _android-$(1)_LDFLAGS= \
 	-z now -z relro -z noexecstack \
