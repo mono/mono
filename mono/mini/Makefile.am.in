@@ -18,7 +18,7 @@ libgc_libs=$(monodir)/libgc/libmonogc.la
 libgc_static_libs=$(monodir)/libgc/libmonogc-static.la
 endif
 
-glib_libs = $(monodir)/mono/eglib/libeglib.la -lm
+glib_libs = $(monodir)/mono/eglib/libeglib.la
 
 boehm_libs=	\
 	$(monodir)/mono/metadata/libmonoruntime.la	\

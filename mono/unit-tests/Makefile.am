@@ -19,11 +19,11 @@ else
 LLVMMONOF=$(LLVM_LIBS) $(LLVM_LDFLAGS)
 endif
 
-glib_libs = $(top_builddir)/mono/eglib/libeglib.la -lm
+glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 test_cflags = $(AM_CFLAGS) $(SGEN_DEFINES)
 test_ldadd = libtestlib.la \
-	$(LIBGC_LIBS) $(glib_libs) -lm $(LLVMMONOF)
+	$(LIBGC_LIBS) $(glib_libs) $(LLVMMONOF)
 if HOST_DARWIN
 test_ldflags = -framework CoreFoundation -framework Foundation
 endif

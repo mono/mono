@@ -34,8 +34,7 @@ AM_CPPFLAGS = 				\
 monograph_LDADD = \
 	$(runtime_lib)			\
 	$(GLIB_LIBS)			\
-	$(LLVM_LIBS)			\
-	-lm
+	$(LLVM_LIBS)
 
 if HOST_DARWIN
 monograph_LDFLAGS=-framework CoreFoundation -framework Foundation
