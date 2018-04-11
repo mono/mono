@@ -242,7 +242,7 @@ static gboolean
 init_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *method, MonoClass *init_class, MonoGenericContext *context, MonoError *error);
 
 static MonoJumpInfo*
-decode_patches (MonoAotModule *amodule, MonoMemPool *mp, int n_patches, gboolean llvm, guint32 *got_offsets);
+decode_patches (MonoAotModule *amodule, MonoMemPool *mp, int n_patches, gboolean llvm, gboolean shared_got, guint32 *got_offsets);
 
 static inline void
 amodule_lock (MonoAotModule *amodule)
@@ -1898,7 +1898,7 @@ init_amodule_got (MonoAotModule *amodule)
 	npatches = amodule->info.nshared_got_entries;
 	for (i = 0; i < npatches; ++i)
 		got_offsets [i] = i;
-	patches = decode_patches (amodule, mp, npatches, FALSE, got_offsets);
+	patches = decode_patches (amodule, mp, npatches, FALSE, TRUE, got_offsets);
 	g_assert (patches);
 	for (i = 0; i < npatches; ++i) {
 		ji = &patches [i];
@@ -3859,7 +3859,7 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
  * MonoJumpInfo structures allocated from MP.
  */
 static MonoJumpInfo*
-decode_patches (MonoAotModule *amodule, MonoMemPool *mp, int n_patches, gboolean llvm, guint32 *got_offsets)
+decode_patches (MonoAotModule *amodule, MonoMemPool *mp, int n_patches, gboolean llvm, gboolean shared_got, guint32 *got_offsets)
 {
 	MonoJumpInfo *patches;
 	MonoJumpInfo *ji;
@@ -3872,7 +3872,7 @@ decode_patches (MonoAotModule *amodule, MonoMemPool *mp, int n_patches, gboolean
 		got = amodule->llvm_got;
 		got_info_offsets = (guint32 *)amodule->llvm_got_info_offsets;
 	} else {
-		got = amodule->got;
+		got = shared_got ? amodule->shared_got : amodule->got;
 		got_info_offsets = (guint32 *)amodule->got_info_offsets;
 	}
 
@@ -3912,7 +3912,7 @@ load_patch_info (MonoAotModule *amodule, MonoMemPool *mp, int n_patches,
 		(*got_slots)[pindex] = decode_value (p, &p);
 	}
 
-	patches = decode_patches (amodule, mp, n_patches, llvm, *got_slots);
+	patches = decode_patches (amodule, mp, n_patches, llvm, FALSE, *got_slots);
 	if (!patches) {
 		g_free (*got_slots);
 		*got_slots = NULL;
