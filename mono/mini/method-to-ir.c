@@ -1443,7 +1443,7 @@ mono_compile_get_interface_var (MonoCompile *cfg, int slot, MonoInst *ins)
 	 * merges.
 	 */
 	if (ins->type == STACK_R4)
-		type = &mono_defaults.double_class->byval_arg;
+		type = m_class_get_byval_arg (mono_defaults.double_class);
 	else
 		type = type_from_stack_type (ins);
 
