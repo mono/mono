@@ -2887,9 +2887,9 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 		g_free (name);
 	}
 	else if (thread->threadpool_thread)
-		g_string_append (text, "\n\"<threadpool thread>\"");
+		g_string_append (text, "\n\"<threadpool thread>\"\n");
 	else
-		g_string_append (text, "\n\"<unnamed thread>\"");
+		g_string_append (text, "\n\"<unnamed thread>\"\n");
 
 	g_string_append_printf (text, " tid=%p this=%p ", (gpointer)(gsize)thread->tid, thread);
 	mono_thread_internal_describe (thread, text);
