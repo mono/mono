@@ -135,6 +135,6 @@ if [[ $CI_TAGS == *'csprojdiff'* ]]; then
     then report_github_status "success" "Project Files Diff" "No csproj file changes found." || true
     else report_github_status "error" "Project Files Diff" "The csproj files changed." "$BUILD_URL/Project_Files_Diff/" || true
     fi
-else ${TESTCMD} --label=apidiff --skip
+else ${TESTCMD} --label=csprojdiff --skip
 fi
 rm -fr /tmp/jenkins-temp-aspnet*

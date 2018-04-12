@@ -187,6 +187,21 @@ namespace System {
         {
             throw GetKeyNotFoundException(key);
         }
+
+        internal static void ThrowInvalidTypeWithPointersNotSupported(Type targetType)
+        {
+            throw new ArgumentException(SR.Format(SR.Argument_InvalidTypeWithPointersNotSupported, targetType));
+        }
+
+        internal static void ThrowInvalidOperationException_ConcurrentOperationsNotSupported()
+        {
+            throw GetInvalidOperationException("Operations that change non-concurrent collections must have exclusive access. A concurrent update was performed on this collection and corrupted its state. The collection's state is no longer correct.");
+        }
+
+        internal static InvalidOperationException GetInvalidOperationException(string str)
+        {
+            return new InvalidOperationException(str);
+        }
 #endif
 
         // Allow nulls for reference types and Nullable<U>, but not for value types.
@@ -567,6 +582,17 @@ namespace System {
         exception,
         action,
         comparison,
+        startSegment,
+        endSegment,
+        endIndex,
+        task,
+        source,
+        state,
+        culture,
+        destination,
+        byteOffset,
+        minimumBufferSize,
+        offset,
         values
 #endif
     }

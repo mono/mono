@@ -277,33 +277,6 @@ ReferenceSources/SR2.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/Win32Exception.cs
 
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Regex.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexBoyerMoore.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCapture.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCaptureCollection.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCharClass.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCode.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCompilationInfo.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexFCD.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexGroup.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexGroupCollection.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexInterpreter.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexMatch.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexMatchCollection.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexMatchTimeoutException.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexNode.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexOptions.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexParser.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexReplacement.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexRunner.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexRunnerFactory.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexTree.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexWriter.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CompiledRegexRunner.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/HashtableExtensions.cs
-../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCollectionDebuggerProxy.cs
-../../../external/corefx/src/Common/src/System/NotImplemented.cs
-
 ../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/BitVector32.cs
 ../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/HybridDictionary.cs
 ../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/IOrderedDictionary.cs
@@ -851,6 +824,13 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/compmod/microsoft/win32/safehandles/SafeProcessHandle.cs
 
+corefx/SR.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/ValueListBuilder.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Text/ValueStringBuilder.cs
+
+../../../external/corefx/src/Common/src/System/NotImplemented.cs
 ../../../external/corefx/src/Common/src/System/StringExtensions.cs
 
 ../../../external/corefx/src/Common/src/System/Collections/Generic/ArrayBuilder.cs
@@ -859,6 +839,7 @@ ReferenceSources/Win32Exception.cs
 
 ../../../external/corefx/src/Common/src/System/IO/DelegatingStream.cs
 ../../../external/corefx/src/Common/src/System/IO/ChunkedMemoryStream.cs
+../../../external/corefx/src/Common/src/System/IO/PathInternal.CaseSensitivity.cs
 
 ../../../external/corefx/src/Common/src/System/Net/HttpStatusDescription.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityProtocol.cs
@@ -895,6 +876,8 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionMode.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/GZipStream.cs
 
+#../../../external/corefx/src/System.Net.Http/src/System/Net/Http/SocketsHttpHandler/SocketsHttpHandler.cs
+
 ../../../external/corefx/src/System.Net.ServicePoint/src/System/Net/SecurityProtocolType.cs
 
 ../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/ValueWebSocketReceiveResult.cs
@@ -924,6 +907,40 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/StringNormalizationExtensions.cs
 ../../../external/corefx/src/System.Diagnostics.StackTrace/src/System/Diagnostics/StackFrameExtensions.cs
 
-../../../external/corefx/src/Common/src/System/IO/PathInternal.CaseSensitivity.cs
-../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/PatternMatcher.cs
+../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemName.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
+
+# Everything except compiled
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Capture.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CaptureCollection.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CollectionDebuggerProxy.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Group.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/GroupCollection.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Match.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/MatchCollection.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Reference.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Regex.Cache.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Regex.Match.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Regex.Replace.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Regex.Split.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Regex.Timeout.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Regex.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexBoyerMoore.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCharClass.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCode.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCompilationInfo.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexFCD.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexInterpreter.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexMatchTimeoutException.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexNode.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexOptions.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexParser.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexPrefix.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexReplacement.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexRunner.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexRunnerFactory.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexTree.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexWriter.cs
+
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/Generic/ValueListBuilder.Pop.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/HashtableExtensions.cs

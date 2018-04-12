@@ -1057,7 +1057,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/IStructuralComparable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/IStructuralEquatable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/ListDictionaryInternal.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/*.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/*.cs:NonRandomizedStringEqualityComparer.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/ObjectModel/Collection.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/ObjectModel/ReadOnlyCollection.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/DictionaryEntry.cs
@@ -1626,7 +1626,6 @@ corert/RuntimeAugments.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/String.Manipulation.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/StringSpanHelpers.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/Generic/ValueListBuilder.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/DeferredDisposableLifetime.cs
 
@@ -1665,39 +1664,63 @@ corert/RuntimeAugments.cs
 corefx/SR.cs
 corefx/CompareInfo.cs
 corefx/GlobalizationMode.cs
-corefx/MemoryExtensions.cs
 
+../../../external/corefx/src/Common/src/CoreLib/System/Marvin.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Memory.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MemoryDebugView.cs
+../../../external/corefx/src/Common/src/CoreLib/System/MemoryExtensions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ReadOnlyMemory.cs
+../../../external/corefx/src/Common/src/CoreLib/System/ReadOnlySpan.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Span.cs
+../../../external/corefx/src/Common/src/CoreLib/System/SpanDebugView.cs
+#../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.cs
+../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.BinarySearch.cs
+../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.Byte.cs
+../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.T.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/String.Searching.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/StringSplitOptions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Tuple.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TupleExtensions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ValueTuple.cs
 
-../../../external/corefx/src/Common/src/CoreLib/System/Buffers/IRetainable.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Buffers/IMemoryOwner.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Buffers/IPinnable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Buffers/MemoryHandle.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Buffers/OwnedMemory.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Buffers/MemoryManager.cs
 
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/HashHelpers.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Diagnostics/StackTraceHiddenAttribute.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CompareInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CompareInfo.Invariant.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/GlobalizationExtensions.cs
 
+../../../external/corefx/src/Common/src/CoreLib/System/Numerics/ConstantHelper.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Numerics/Register.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Numerics/Vector.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Numerics/Vector_Operations.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/AsyncMethodBuilderAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/AsyncValueTaskMethodBuilder.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/ConfiguredValueTaskAwaitable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/IntrinsicAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/IsReadOnlyAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/IsByRefLikeAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/ITuple.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/RuntimeFeature.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/TupleElementNamesAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/ValueTaskAwaiter.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/MemoryMarshal.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskCanceledException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskCompletionSource.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskSchedulerException.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/ValueTask.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/Sources/IValueTaskSource.cs
+
+../../../external/corefx/src/Common/src/System/Collections/Concurrent/ConcurrentQueue_Segment.cs
 
 ../../../external/corefx/src/Common/src/System/Collections/Generic/LowLevelDictionary.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/ReferenceEqualityComparer.cs
@@ -1723,19 +1746,17 @@ corefx/MemoryExtensions.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/PartitionerStatic.cs
 
 ../../../external/corefx/src/System.Memory/src/System/Pinnable.cs
-../../../external/corefx/src/System.Memory/src/System/ReadOnlySpan.cs
-../../../external/corefx/src/System.Memory/src/System/Span.cs
-../../../external/corefx/src/System.Memory/src/System/SpanDebugView.cs
-../../../external/corefx/src/System.Memory/src/System/MemoryExtensions.cs
 ../../../external/corefx/src/System.Memory/src/System/MemoryExtensions.Portable.cs
+../../../external/corefx/src/System.Memory/src/System/ReadOnlySpan.Portable.cs
+#../../../external/corefx/src/System.Memory/src/System/SequencePosition.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanHelpers.cs
-../../../external/corefx/src/System.Memory/src/System/SpanHelpers.BinarySearch.cs
-../../../external/corefx/src/System.Memory/src/System/SpanHelpers.Clear.cs
-../../../external/corefx/src/System.Memory/src/System/SpanHelpers.byte.cs
-../../../external/corefx/src/System.Memory/src/System/SpanHelpers.T.cs
+../../../external/corefx/src/System.Memory/src/System/Span.Portable.cs
 ../../../external/corefx/src/System.Memory/src/System/ThrowHelper.cs
-../../../external/corefx/src/System.Memory/src/System/Buffers/*.cs
+#../../../external/corefx/src/System.Memory/src/System/Buffers/*.cs:ArrayMemoryPool.ArrayMemoryPoolBuffer.cs,ArrayMemoryPool.cs
+#../../../external/corefx/src/System.Memory/src/System/Buffers/ReadOnlySequence.cs
+#../../../external/corefx/src/System.Memory/src/System/Buffers/ReadOnlySequenceSegment.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/Binary/*.cs
+../../../external/corefx/src/System.Memory/src/System/Runtime/InteropServices/MemoryMarshal.Portable.cs
 
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/OSPlatform.cs
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/Architecture.cs
@@ -1743,9 +1764,4 @@ corefx/MemoryExtensions.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509ContentType.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509KeyStorageFlags.cs
 
-../../../external/corefx/src/System.Threading.Tasks.Extensions/src/System/Threading/Tasks/ValueTask.cs
-../../../external/corefx/src/System.Threading.Tasks.Extensions/src/System/Runtime/CompilerServices/*.cs
-
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs
-
-../../../external/corefx/src/System.Runtime.Extensions/src/System/Globalization/Extensions.cs

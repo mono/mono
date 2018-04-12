@@ -172,7 +172,7 @@ namespace System.IO.Compression
 			}
 		}
 
-		internal Task WriteAsyncMemory (ReadOnlyMemory<byte> source, CancellationToken cancellationToken)
+		internal ValueTask WriteAsyncMemory (ReadOnlyMemory<byte> source, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException ();
 		}
