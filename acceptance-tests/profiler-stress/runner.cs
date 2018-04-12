@@ -180,7 +180,7 @@ namespace Mono.Profiling.Tests.Stress {
 				info.EnvironmentVariables.Add ("MONO_PATH", classDir);
 
 				if (suspend)
-					info.EnvironmentVariables.Add ("MONO_DEBUG", "suspend-on-native-crash,suspend-on-unhandled");
+					info.EnvironmentVariables.Add ("MONO_DEBUG", "suspend-on-native-crash,suspend-on-unhandled,gdb-on-sigquit");
 
 				var progress = $"({i + 1}/{benchmarks.Length})";
 
@@ -221,7 +221,7 @@ namespace Mono.Profiling.Tests.Stress {
 					if (!proc.WaitForExit (timeout)) {
 						// Force a thread dump.
 						Syscall.kill (proc.Id, Signum.SIGQUIT);
-						Thread.Sleep (1000);
+						Thread.Sleep (5000);
 
 						try {
 							proc.Kill ();
