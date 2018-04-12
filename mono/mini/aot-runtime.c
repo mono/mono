@@ -1966,7 +1966,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		 */
 		return;
 
-	if (image_is_dynamic (assembly->image) || assembly->ref_only || mono_domain_get () != mono_get_root_domain ())
+	if (image_is_dynamic (assembly->image) || mono_asmctx_get_kind (&assembly->context) == MONO_ASMCTX_REFONLY || mono_domain_get () != mono_get_root_domain ())
 		return;
 
 	mono_aot_lock ();

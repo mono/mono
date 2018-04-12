@@ -1362,6 +1362,52 @@ mono_assembly_get_assemblyref (MonoImage *image, int index, MonoAssemblyName *an
 	}
 }
 
+static MonoAssembly*
+load_reference_by_aname_refonly_asmctx (MonoAssemblyName *aname, MonoAssembly *assm, MonoImageOpenStatus *status)
+{
+	MonoAssembly *reference = NULL;
+	g_assert (assm != NULL);
+	*status = MONO_IMAGE_OK;
+	{
+		/* We use the loaded corlib */
+		if (!strcmp (aname->name, "mscorlib"))
+			reference = mono_assembly_load_full_internal (aname, assm, assm->basedir, status, FALSE);
+		else {
+			reference = mono_assembly_loaded_full (aname, TRUE);
+			if (!reference)
+				/* Try a postload search hook */
+				reference = mono_assembly_invoke_search_hook_internal (aname, assm, TRUE, TRUE);
+		}
+
+		/*
+		 * Here we must advice that the error was due to
+		 * a non loaded reference using the ReflectionOnly api
+		*/
+		if (!reference)
+			reference = (MonoAssembly *)REFERENCE_MISSING;
+	}
+	return reference;
+}
+
+static MonoAssembly*
+load_reference_by_aname_default_asmctx (MonoAssemblyName *aname, MonoAssembly *assm, MonoImageOpenStatus *status)
+{
+	MonoAssembly *reference = NULL;
+	*status = MONO_IMAGE_OK;
+	{
+		/* we first try without setting the basedir: this can eventually result in a ResolveAssembly
+		 * event which is the MS .net compatible behaviour (the assemblyresolve_event3.cs test has been fixed
+		 * accordingly, it would fail on the MS runtime before).
+		 * The second load attempt has the basedir set to keep compatibility with the old mono behavior, for
+		 * example bug-349190.2.cs and who knows how much more code in the wild.
+		 */
+		reference = mono_assembly_load_full_internal (aname, assm, NULL, status, FALSE);
+		if (!reference && assm)
+			reference = mono_assembly_load_full_internal (aname, assm, assm->basedir, status, FALSE);
+	}
+	return reference;
+}
+
 /**
  * mono_assembly_load_reference:
  */
@@ -1390,33 +1436,25 @@ mono_assembly_load_reference (MonoImage *image, int index)
 
 	mono_assembly_get_assemblyref (image, index, &aname);
 
-	if (image->assembly && image->assembly->ref_only) {
-		/* We use the loaded corlib */
-		if (!strcmp (aname.name, "mscorlib"))
-			reference = mono_assembly_load_full_internal (&aname, image->assembly, image->assembly->basedir, &status, FALSE);
-		else {
-			reference = mono_assembly_loaded_full (&aname, TRUE);
-			if (!reference)
-				/* Try a postload search hook */
-				reference = mono_assembly_invoke_search_hook_internal (&aname, image->assembly, TRUE, TRUE);
+	if (image->assembly) {
+		switch (mono_asmctx_get_kind (&image->assembly->context)) {
+		case MONO_ASMCTX_DEFAULT:
+			reference = load_reference_by_aname_default_asmctx (&aname, image->assembly, &status);
+			break;
+		case MONO_ASMCTX_REFONLY:
+			reference = load_reference_by_aname_refonly_asmctx (&aname, image->assembly, &status);
+			break;
+		case MONO_ASMCTX_LOADFROM:
+		case MONO_ASMCTX_INDIVIDUAL:
+			g_assert_not_reached ();
+			break;
+		default:
+			g_error ("Unexpected assembly load context kind %d for image %s.", mono_asmctx_get_kind (&image->assembly->context), image->name);
+			break;
 		}
-
-		/*
-		 * Here we must advice that the error was due to
-		 * a non loaded reference using the ReflectionOnly api
-		*/
-		if (!reference)
-			reference = (MonoAssembly *)REFERENCE_MISSING;
 	} else {
-		/* we first try without setting the basedir: this can eventually result in a ResolveAssembly
-		 * event which is the MS .net compatible behaviour (the assemblyresolve_event3.cs test has been fixed
-		 * accordingly, it would fail on the MS runtime before).
-		 * The second load attempt has the basedir set to keep compatibility with the old mono behavior, for
-		 * example bug-349190.2.cs and who knows how much more code in the wild.
-		 */
-		reference = mono_assembly_load_full_internal (&aname, image->assembly, NULL, &status, FALSE);
-		if (!reference && image->assembly)
-			reference = mono_assembly_load_full_internal (&aname, image->assembly, image->assembly->basedir, &status, FALSE);
+		/* FIXME: can we establish that image->assembly is never NULL and this code is dead? */
+		reference = load_reference_by_aname_default_asmctx (&aname, image->assembly, &status);
 	}
 
 	if (reference == NULL){
@@ -2258,7 +2296,7 @@ mono_assembly_load_from_predicate (MonoImage *image, const char *fname,
 	 */
 	ass = g_new0 (MonoAssembly, 1);
 	ass->basedir = base_dir;
-	ass->ref_only = refonly;
+	ass->context.ref_only = refonly;
 	ass->image = image;
 
 	MONO_PROFILER_RAISE (assembly_loading, (ass));
@@ -4191,4 +4229,13 @@ mono_assembly_has_skip_verification (MonoAssembly *assembly)
 
 	MONO_SECMAN_FLAG_SET_VALUE (assembly->skipverification, FALSE);
 	return FALSE;
+}
+
+MonoAssemblyContextKind
+mono_asmctx_get_kind (const MonoAssemblyContext *ctx)
+{
+	if (ctx->ref_only)
+		return MONO_ASMCTX_REFONLY;
+	else
+		return MONO_ASMCTX_DEFAULT;
 }

@@ -1158,7 +1158,9 @@ ves_icall_System_AppDomain_GetAssemblies (MonoAppDomainHandle ad, MonoBoolean re
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
-		if (refonly != ass->ref_only)
+		MonoBoolean ass_refonly = mono_asmctx_get_kind (&ass->context) == MONO_ASMCTX_REFONLY;
+		/* .NET Framework GetAssemblies() includes LoadFrom and Load(byte[]) assemblies, too */
+		if (refonly != ass_refonly)
 			continue;
 		if (ass->corlib_internal)
 			continue;
@@ -1228,7 +1230,7 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 	}
 	ret = !MONO_HANDLE_IS_NULL (result) ? MONO_HANDLE_GETVAL (result, assembly) : NULL;
 
-	if (ret && !refonly && ret->ref_only) {
+	if (ret && !refonly && mono_asmctx_get_kind (&ret->context) == MONO_ASMCTX_REFONLY) {
 		/* .NET Framework throws System.IO.FileNotFoundException in this case */
 		mono_error_set_file_not_found (error, NULL, "AssemblyResolveEvent handlers cannot return Assemblies loaded for reflection only");
 		ret = NULL;
@@ -2170,7 +2172,8 @@ mono_domain_assembly_search (MonoAssemblyName *aname,
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
 		/* Dynamic assemblies can't match here in MS.NET */
-		if (assembly_is_dynamic (ass) || refonly != ass->ref_only || !mono_assembly_names_equal (aname, &ass->aname))
+		gboolean ass_ref_only = mono_asmctx_get_kind (&ass->context) == MONO_ASMCTX_REFONLY;
+		if (assembly_is_dynamic (ass) || refonly != ass_ref_only || !mono_assembly_names_equal (aname, &ass->aname))
 			continue;
 
 		mono_domain_assemblies_unlock (domain);
