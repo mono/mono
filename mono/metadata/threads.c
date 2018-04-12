@@ -3772,6 +3772,10 @@ dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud)
 		g_string_append (text, "\n\"<unnamed thread>\"");
 	}
 
+	g_string_append_printf (text, " tid=%p this=%p ", (gpointer)(gsize)thread->tid, thread);
+	mono_thread_internal_describe (thread, text);
+	g_string_append (text, "\n");
+
 	for (i = 0; i < ud->nframes; ++i) {
 		MonoStackFrameInfo *frame = &ud->frames [i];
 		MonoMethod *method = NULL;
