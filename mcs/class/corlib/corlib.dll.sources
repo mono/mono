@@ -1664,6 +1664,7 @@ corert/RuntimeAugments.cs
 corefx/SR.cs
 corefx/CompareInfo.cs
 corefx/GlobalizationMode.cs
+corefx/MemoryExtensions.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Marvin.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Memory.cs
