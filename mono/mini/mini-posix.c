@@ -269,12 +269,9 @@ MONO_SIG_HANDLER_FUNC (static, profiler_signal_handler)
 
 MONO_SIG_HANDLER_FUNC (static, sigquit_signal_handler)
 {
-	gboolean res;
 
 	/* We use this signal to start the attach agent too */
-	res = mono_attach_start ();
-	if (res)
-		return;
+	mono_attach_start ();
 
 	mono_threads_request_thread_dump ();
 
