@@ -599,12 +599,8 @@ verify_hint_name_table (VerifyContext *ctx, guint32 import_rva, const char *tabl
 	g_assert (hint_table_rva != INVALID_OFFSET);
 	ptr = ctx->data + hint_table_rva + 2;
 
-	if (memcmp ("_CorExeMain", ptr, SIZE_OF_CORMAIN) && memcmp ("_CorDllMain", ptr, SIZE_OF_CORMAIN)) {
-		char name[SIZE_OF_CORMAIN];
-		memcpy (name, ptr, SIZE_OF_CORMAIN);
-		name [SIZE_OF_CORMAIN - 1] = 0;
-		ADD_ERROR (ctx, g_strdup_printf ("Invalid Hint / Name: '%s'", name));
-	}
+	if (memcmp ("_CorExeMain", ptr, SIZE_OF_CORMAIN) && memcmp ("_CorDllMain", ptr, SIZE_OF_CORMAIN))
+		ADD_ERROR (ctx, g_strdup_printf ("Invalid Hint / Name: '%s'", ptr));
 }
 
 static void
@@ -642,12 +638,8 @@ verify_import_table (VerifyContext *ctx)
 		g_assert (name_rva != INVALID_OFFSET);
 		ptr = ctx->data + name_rva;
 	
-		if (memcmp ("mscoree.dll", ptr, SIZE_OF_MSCOREE)) {
-			char name[SIZE_OF_MSCOREE];
-			memcpy (name, ptr, SIZE_OF_MSCOREE);
-			name [SIZE_OF_MSCOREE - 1] = 0;
-			ADD_ERROR (ctx, g_strdup_printf ("Invalid Import Table Name: '%s'", name));
-		}
+		if (memcmp ("mscoree.dll", ptr, SIZE_OF_MSCOREE))
+			ADD_ERROR (ctx, g_strdup_printf ("Invalid Import Table Name: '%s'", ptr));
 	}
 	
 	if (ilt_rva) {
