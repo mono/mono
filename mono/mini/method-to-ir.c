@@ -1441,6 +1441,7 @@ mono_compile_get_interface_var (MonoCompile *cfg, int slot, MonoInst *ins)
 	/*
 	 * Use double for r4 stack vars to avoid narrowing with r4-r8 stack
 	 * merges.
+	 * FIXME: Only do this if there is indeed an r4-r8 merge.
 	 */
 	if (ins->type == STACK_R4)
 		type = m_class_get_byval_arg (mono_defaults.double_class);
