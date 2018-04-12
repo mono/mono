@@ -19,7 +19,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 
-#if !FULL_AOT_DESKTOP && !MOBILE
+#if !MOBILE
 using Mono.Unix.Native;
 #endif
 
@@ -33,6 +33,7 @@ public class TestRunner
 	const string ENV_TIMEOUT = "TEST_DRIVER_TIMEOUT_SEC";
 	const string MONO_PATH = "MONO_PATH";
 	const string MONO_GAC_PREFIX = "MONO_GAC_PREFIX";
+	const string MONO_DEBUG = "MONO_DEBUG";
 
 	class ProcessData {
 		public string test;
@@ -287,6 +288,7 @@ public class TestRunner
 					info.RedirectStandardOutput = true;
 					info.RedirectStandardError = true;
 					info.EnvironmentVariables[ENV_TIMEOUT] = timeout.ToString();
+					info.EnvironmentVariables[MONO_DEBUG] = "gdb-on-sigquit";
 					if (config != null)
 						info.EnvironmentVariables["MONO_CONFIG"] = config;
 					if (mono_path != null)
@@ -579,116 +581,12 @@ public class TestRunner
 
 	static void TryThreadDump (int pid, ProcessData data)
 	{
-		try {
-			TryGDB (pid, data);
-			return;
-		} catch {
-		}
-
-#if !FULL_AOT_DESKTOP && !MOBILE
-		/* LLDB cannot produce managed stacktraces for all the threads */
+#if !MOBILE
 		try {
 			Syscall.kill (pid, Signum.SIGQUIT);
-			Thread.Sleep (1000);
+			Thread.Sleep (5000); // Give GDB/LLDB some time to work.
 		} catch {
 		}
 #endif
-
-		try {
-			TryLLDB (pid, data);
-			return;
-		} catch {
-		}
-	}
-
-	static void TryLLDB (int pid, ProcessData data)
-	{
-		string filename = Path.GetTempFileName ();
-
-		using (StreamWriter sw = new StreamWriter (new FileStream (filename, FileMode.Open, FileAccess.Write)))
-		{
-			sw.WriteLine ("process attach --pid " + pid);
-			sw.WriteLine ("thread list");
-			sw.WriteLine ("thread backtrace all");
-			sw.WriteLine ("detach");
-			sw.WriteLine ("quit");
-			sw.Flush ();
-
-			ProcessStartInfo psi = new ProcessStartInfo {
-				FileName = "lldb",
-				Arguments = "--batch --source \"" + filename + "\" --no-lldbinit",
-				UseShellExecute = false,
-				RedirectStandardError = true,
-				RedirectStandardOutput = true,
-			};
-
-			using (Process process = new Process { StartInfo = psi })
-			{
-				process.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e) {
-					lock (data.stdoutLock) {
-						if (e.Data != null)
-							data.stdout.AppendLine (e.Data);
-					}
-				};
-
-				process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e) {
-					lock (data.stderrLock) {
-						if (e.Data != null)
-							data.stderr.AppendLine (e.Data);
-					}
-				};
-
-				process.Start ();
-				process.BeginOutputReadLine ();
-				process.BeginErrorReadLine ();
-				if (!process.WaitForExit (60 * 1000))
-					process.Kill ();
-			}
-		}
-	}
-
-	static void TryGDB (int pid, ProcessData data)
-	{
-		string filename = Path.GetTempFileName ();
-
-		using (StreamWriter sw = new StreamWriter (new FileStream (filename, FileMode.Open, FileAccess.Write)))
-		{
-			sw.WriteLine ("attach " + pid);
-			sw.WriteLine ("info threads");
-			sw.WriteLine ("thread apply all p mono_print_thread_dump(0)");
-			sw.WriteLine ("thread apply all backtrace");
-			sw.Flush ();
-
-			ProcessStartInfo psi = new ProcessStartInfo {
-				FileName = "gdb",
-				Arguments = "-batch -x \"" + filename + "\" -nx",
-				UseShellExecute = false,
-				RedirectStandardError = true,
-				RedirectStandardOutput = true,
-			};
-
-			using (Process process = new Process { StartInfo = psi })
-			{
-				process.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e) {
-					lock (data.stdoutLock) {
-						if (e.Data != null)
-							data.stdout.AppendLine (e.Data);
-					}
-				};
-
-				process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e) {
-					lock (data.stderrLock) {
-						if (e.Data != null)
-							data.stderr.AppendLine (e.Data);
-					}
-				};
-
-				process.Start ();
-				process.BeginOutputReadLine ();
-				process.BeginErrorReadLine ();
-				if (!process.WaitForExit (60 * 1000))
-					process.Kill ();
-			}
-		}
 	}
 }
