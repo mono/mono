@@ -522,7 +522,7 @@ mono_reflection_methodbuilder_from_ctor_builder (ReflectionMethodBuilder *rmb, M
 	memset (rmb, 0, sizeof (ReflectionMethodBuilder));
 
 	rmb->ilgen = mb->ilgen;
-	rmb->rtype = mono_type_get_object_checked (mono_domain_get (), m_class_get_byval_arg (mono_defaults.void_class), error);
+	rmb->rtype = mono_type_get_object_checked (mono_domain_get (), mono_get_void_type (), error);
 	return_val_if_nok (error, FALSE);
 	rmb->parameters = mb->parameters;
 	rmb->generic_params = NULL;
@@ -943,7 +943,7 @@ mono_image_get_array_token (MonoDynamicImage *assembly, MonoReflectionArrayMetho
 		sig->ret = mono_reflection_type_handle_mono_type (ret, error);
 		goto_if_nok (error, fail);
 	} else
-		sig->ret = m_class_get_byval_arg (mono_defaults.void_class);
+		sig->ret = mono_get_void_type ();
 
 	MonoReflectionTypeHandle parent = MONO_HANDLE_NEW_GET (MonoReflectionType, m, parent);
 	MonoType *mtype = mono_reflection_type_handle_mono_type (parent, error);
@@ -1885,7 +1885,7 @@ ctor_builder_to_signature (MonoImage *image, MonoReflectionCtorBuilderHandle cto
 	sig = parameters_to_signature (image, params, required_modifiers, optional_modifiers, error);
 	return_val_if_nok (error, NULL);
 	sig->hasthis = MONO_HANDLE_GETVAL (ctor, attrs) & METHOD_ATTRIBUTE_STATIC? 0: 1;
-	sig->ret = m_class_get_byval_arg (mono_defaults.void_class);
+	sig->ret = mono_get_void_type ();
 	return sig;
 }
 
@@ -1919,7 +1919,7 @@ method_builder_to_signature (MonoImage *image, MonoReflectionMethodBuilderHandle
 			return NULL;
 		}
 	} else {
-		sig->ret = m_class_get_byval_arg (mono_defaults.void_class);
+		sig->ret = mono_get_void_type ();
 	}
 	MonoArrayHandle generic_params = MONO_HANDLE_NEW_GET (MonoArray, method, generic_params);
 	sig->generic_param_count = MONO_HANDLE_IS_NULL (generic_params) ? 0 : mono_array_handle_length (generic_params);
@@ -1945,7 +1945,7 @@ dynamic_method_to_signature (MonoReflectionDynamicMethodHandle method, MonoError
 			goto leave;
 		}
 	} else {
-		sig->ret = m_class_get_byval_arg (mono_defaults.void_class);
+		sig->ret = mono_get_void_type ();
 	}
 	sig->generic_param_count = 0;
 leave:

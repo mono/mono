@@ -4697,21 +4697,21 @@ mono_class_setup_methods (MonoClass *klass)
 		methods = (MonoMethod **)mono_class_alloc0 (klass, sizeof (MonoMethod*) * count);
 
 		sig = mono_metadata_signature_alloc (klass->image, klass->rank);
-		sig->ret = m_class_get_byval_arg (mono_defaults.void_class);
+		sig->ret = mono_get_void_type ();
 		sig->pinvoke = TRUE;
 		sig->hasthis = TRUE;
 		for (i = 0; i < klass->rank; ++i)
-			sig->params [i] = m_class_get_byval_arg (mono_defaults.int32_class);
+			sig->params [i] = mono_get_int32_type ();
 
 		amethod = create_array_method (klass, ".ctor", sig);
 		methods [method_num++] = amethod;
 		if (klass->rank > 1) {
 			sig = mono_metadata_signature_alloc (klass->image, klass->rank * 2);
-			sig->ret = m_class_get_byval_arg (mono_defaults.void_class);
+			sig->ret = mono_get_void_type ();
 			sig->pinvoke = TRUE;
 			sig->hasthis = TRUE;
 			for (i = 0; i < klass->rank * 2; ++i)
-				sig->params [i] = m_class_get_byval_arg (mono_defaults.int32_class);
+				sig->params [i] = mono_get_int32_type ();
 
 			amethod = create_array_method (klass, ".ctor", sig);
 			methods [method_num++] = amethod;
@@ -4720,11 +4720,11 @@ mono_class_setup_methods (MonoClass *klass)
 		if (jagged_ctor) {
 			/* Jagged arrays have an extra ctor in .net which creates an array of arrays */
 			sig = mono_metadata_signature_alloc (klass->image, klass->rank + 1);
-			sig->ret = m_class_get_byval_arg (mono_defaults.void_class);
+			sig->ret = mono_get_void_type ();
 			sig->pinvoke = TRUE;
 			sig->hasthis = TRUE;
 			for (i = 0; i < klass->rank + 1; ++i)
-				sig->params [i] = m_class_get_byval_arg (mono_defaults.int32_class);
+				sig->params [i] = mono_get_int32_type ();
 			amethod = create_array_method (klass, ".ctor", sig);
 			methods [method_num++] = amethod;
 		}
@@ -4735,7 +4735,7 @@ mono_class_setup_methods (MonoClass *klass)
 		sig->pinvoke = TRUE;
 		sig->hasthis = TRUE;
 		for (i = 0; i < klass->rank; ++i)
-			sig->params [i] = m_class_get_byval_arg (mono_defaults.int32_class);
+			sig->params [i] = mono_get_int32_type ();
 		amethod = create_array_method (klass, "Get", sig);
 		methods [method_num++] = amethod;
 		/* element& Address (idx11, [idx2, ...]) */
@@ -4744,16 +4744,16 @@ mono_class_setup_methods (MonoClass *klass)
 		sig->pinvoke = TRUE;
 		sig->hasthis = TRUE;
 		for (i = 0; i < klass->rank; ++i)
-			sig->params [i] = m_class_get_byval_arg (mono_defaults.int32_class);
+			sig->params [i] = mono_get_int32_type ();
 		amethod = create_array_method (klass, "Address", sig);
 		methods [method_num++] = amethod;
 		/* void Set (idx11, [idx2, ...], element) */
 		sig = mono_metadata_signature_alloc (klass->image, klass->rank + 1);
-		sig->ret = m_class_get_byval_arg (mono_defaults.void_class);
+		sig->ret = mono_get_void_type ();
 		sig->pinvoke = TRUE;
 		sig->hasthis = TRUE;
 		for (i = 0; i < klass->rank; ++i)
-			sig->params [i] = m_class_get_byval_arg (mono_defaults.int32_class);
+			sig->params [i] = mono_get_int32_type ();
 		sig->params [i] = m_class_get_byval_arg (m_class_get_element_class (klass));
 		amethod = create_array_method (klass, "Set", sig);
 		methods [method_num++] = amethod;
