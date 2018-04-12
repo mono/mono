@@ -27,7 +27,8 @@ System.Xml.XPath System.Xml.XmlDocument System.Xml.Xsl.Primitives Microsoft.Win3
 System.IO.FileSystem.AccessControl System.Reflection.TypeExtensions System.Reflection.Emit.Lightweight System.Reflection.Emit.ILGeneration System.Reflection.Emit \
 System.Threading.AccessControl System.ValueTuple \
 System.Security.Cryptography.Primitives System.Text.Encoding.CodePages System.IO.FileSystem.Watcher \
-System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes
+System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.IO.Pipes \
+System.Net.Ping System.Resources.Reader System.Resources.Writer System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp
 
 # common_SUBDIRS dependencies
 common_DEPS_SUBDIRS = System.Security.Cryptography.X509Certificates System.ServiceModel.Primitives System.Runtime.Serialization.Primitives \
@@ -50,7 +51,7 @@ testing_aot_full_SUBDIRS = $(monotouch_SUBDIRS)
 testing_aot_full_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
 net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS)
-net_4_x_PARALLEL_SUBDIRS = $(common_SUBDIRS)
+net_4_x_PARALLEL_SUBDIRS = $(common_SUBDIRS) System.Net.Http.Rtc
 
 basic_PARALLEL_SUBDIRS = System.Runtime System.Reflection System.Collections System.Resources.ResourceManager System.Globalization \
 System.Threading.Tasks System.Collections.Concurrent System.Text.Encoding System.IO System.Threading System.Diagnostics.Debug \
@@ -89,8 +90,8 @@ unreal_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 wasm_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
 wasm_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-mobile_only_SUBDIRS = System.Net.Ping System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp System.Security.Cryptography.Pkcs \
-System.Security.Cryptography.Cng System.Runtime.Loader System.Xml.XPath.XmlDocument System.Reflection.DispatchProxy
+mobile_only_SUBDIRS = System.Security.Cryptography.Pkcs \
+System.Security.Cryptography.Cng System.Runtime.Loader System.Xml.XPath.XmlDocument System.Reflection.DispatchProxy System.Memory System.Drawing.Common
 
 mobile_only_DEPS_SUBDIRS = System.Security.Cryptography.OpenSsl
 

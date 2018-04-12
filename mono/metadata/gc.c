@@ -61,9 +61,9 @@ static gboolean gc_disabled;
 
 static gboolean finalizing_root_domain;
 
-gboolean log_finalizers;
+gboolean mono_log_finalizers;
 gboolean mono_do_not_finalize;
-volatile gboolean suspend_finalizers;
+static volatile gboolean suspend_finalizers;
 gchar **mono_do_not_finalize_class_names ;
 
 #define mono_finalizer_lock() mono_coop_mutex_lock (&finalizer_mutex)
@@ -183,25 +183,28 @@ mono_gc_run_finalize (void *obj, void *data)
 
 	o = (MonoObject*)((char*)obj + GPOINTER_TO_UINT (data));
 
+	const char *o_ns = m_class_get_name_space (mono_object_class (o));
+	const char *o_name = m_class_get_name (mono_object_class (o));
+
 	if (mono_do_not_finalize) {
 		if (!mono_do_not_finalize_class_names)
 			return;
 
-		size_t namespace_len = strlen (o->vtable->klass->name_space);
+		size_t namespace_len = strlen (o_ns);
 		for (int i = 0; mono_do_not_finalize_class_names [i]; ++i) {
 			const char *name = mono_do_not_finalize_class_names [i];
-			if (strncmp (name, o->vtable->klass->name_space, namespace_len))
+			if (strncmp (name, o_ns, namespace_len))
 				break;
 			if (name [namespace_len] != '.')
 				break;
-			if (strcmp (name + namespace_len + 1, o->vtable->klass->name))
+			if (strcmp (name + namespace_len + 1, o_name))
 				break;
 			return;
 		}
 	}
 
-	if (log_finalizers)
-		g_log ("mono-gc-finalizers", G_LOG_LEVEL_DEBUG, "<%s at %p> Starting finalizer checks.", o->vtable->klass->name, o);
+	if (mono_log_finalizers)
+		g_log ("mono-gc-finalizers", G_LOG_LEVEL_DEBUG, "<%s at %p> Starting finalizer checks.", o_name, o);
 
 	if (suspend_finalizers)
 		return;
@@ -223,8 +226,8 @@ mono_gc_run_finalize (void *obj, void *data)
 	/* make sure the finalizer is not called again if the object is resurrected */
 	object_register_finalizer ((MonoObject *)obj, NULL);
 
-	if (log_finalizers)
-		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Registered finalizer as processed.", o->vtable->klass->name, o);
+	if (mono_log_finalizers)
+		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Registered finalizer as processed.", o_name, o);
 
 	if (o->vtable->klass == mono_defaults.internal_thread_class) {
 		MonoInternalThread *t = (MonoInternalThread*)o;
@@ -234,7 +237,7 @@ mono_gc_run_finalize (void *obj, void *data)
 			return;
 	}
 
-	if (o->vtable->klass->image == mono_defaults.corlib && !strcmp (o->vtable->klass->name, "DynamicMethod") && finalizing_root_domain) {
+	if (m_class_get_image (mono_object_class (o)) == mono_defaults.corlib && !strcmp (o_name, "DynamicMethod") && finalizing_root_domain) {
 		/*
 		 * These can't be finalized during unloading/shutdown, since that would
 		 * free the native code which can still be referenced by other
@@ -258,7 +261,7 @@ mono_gc_run_finalize (void *obj, void *data)
 	 * registered for finalization, but they don't have a Finalize
 	 * method, because in most cases it's not needed and it's just a waste.
 	 */
-	if (o->vtable->klass->delegate) {
+	if (m_class_is_delegate (mono_object_class (o))) {
 		MonoDelegate* del = (MonoDelegate*)o;
 		if (del->delegate_trampoline)
 			mono_delegate_free_ftnptr ((MonoDelegate*)o);
@@ -284,8 +287,8 @@ mono_gc_run_finalize (void *obj, void *data)
 	 * create and precompile a wrapper which calls the finalize method using
 	 * a CALLVIRT.
 	 */
-	if (log_finalizers)
-		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Compiling finalizer.", o->vtable->klass->name, o);
+	if (mono_log_finalizers)
+		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Compiling finalizer.", o_name, o);
 
 #ifndef HOST_WASM
 	if (!domain->finalize_runtime_invoke) {
@@ -303,11 +306,11 @@ mono_gc_run_finalize (void *obj, void *data)
 
 	if (G_UNLIKELY (MONO_GC_FINALIZE_INVOKE_ENABLED ())) {
 		MONO_GC_FINALIZE_INVOKE ((unsigned long)o, mono_object_get_size (o),
-				o->vtable->klass->name_space, o->vtable->klass->name);
+				o_ns, o_name);
 	}
 
-	if (log_finalizers)
-		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Calling finalizer.", o->vtable->klass->name, o);
+	if (mono_log_finalizers)
+		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Calling finalizer.", o_name, o);
 
 	MONO_PROFILER_RAISE (gc_finalizing_object, (o));
 
@@ -320,8 +323,8 @@ mono_gc_run_finalize (void *obj, void *data)
 
 	MONO_PROFILER_RAISE (gc_finalized_object, (o));
 
-	if (log_finalizers)
-		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Returned from finalizer.", o->vtable->klass->name, o);
+	if (mono_log_finalizers)
+		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Returned from finalizer.", o_name, o);
 
 unhandled_error:
 	if (!is_ok (error))
@@ -564,7 +567,7 @@ ves_icall_System_GC_SuppressFinalize (MonoObject *obj)
 	 * unmanaged->managed trampoline. We don't let the user suppress it
 	 * otherwise we'd leak it.
 	 */
-	if (obj->vtable->klass->delegate)
+	if (m_class_is_delegate (mono_object_class (obj)))
 		return;
 
 	/* FIXME: Need to handle case where obj has COM Callable Wrapper
@@ -683,7 +686,7 @@ ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle)
 		MonoClass *klass = mono_object_class (obj);
 		if (klass == mono_defaults.string_class) {
 			return mono_string_chars ((MonoString*)obj);
-		} else if (klass->rank) {
+		} else if (m_class_get_rank (klass)) {
 			return mono_array_addr ((MonoArray*)obj, char, 0);
 		} else {
 			/* the C# code will check and throw the exception */
@@ -946,11 +949,11 @@ mono_gc_init (void)
 	mono_coop_mutex_init_recursive (&finalizer_mutex);
 	mono_coop_mutex_init_recursive (&reference_queue_mutex);
 
-	mono_counters_register ("Minor GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.minor_gc_count);
-	mono_counters_register ("Major GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.major_gc_count);
-	mono_counters_register ("Minor GC time", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &gc_stats.minor_gc_time);
-	mono_counters_register ("Major GC time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &gc_stats.major_gc_time);
-	mono_counters_register ("Major GC time concurrent", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &gc_stats.major_gc_time_concurrent);
+	mono_counters_register ("Minor GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &mono_gc_stats.minor_gc_count);
+	mono_counters_register ("Major GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &mono_gc_stats.major_gc_count);
+	mono_counters_register ("Minor GC time", MONO_COUNTER_GC | MONO_COUNTER_ULONG | MONO_COUNTER_TIME, &mono_gc_stats.minor_gc_time);
+	mono_counters_register ("Major GC time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_gc_stats.major_gc_time);
+	mono_counters_register ("Major GC time concurrent", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_gc_stats.major_gc_time_concurrent);
 
 	mono_gc_base_init ();
 

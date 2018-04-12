@@ -1264,6 +1264,28 @@ namespace MonoTests.System.IO
 			}
 		}
 
+		/* regression test for https://github.com/mono/mono/issues/7646 */
+		[Test]
+		public void LastWriteTimeSubMs ()
+		{
+			string path = tmpFolder + Path.DirectorySeparatorChar + "lastWriteTimeSubMs";
+			if (File.Exists (path))
+				File.Delete (path);
+			try {
+				var fmt = "HH:mm:ss:fffffff";
+				for (var i = 0; i < 200; i++) {
+					File.WriteAllText (path, "");
+					var untouched = File.GetLastWriteTimeUtc (path);
+					File.SetLastWriteTimeUtc (path, DateTime.UtcNow);
+					var touched = File.GetLastWriteTimeUtc (path);
+
+					Assert.IsTrue (touched >= untouched, $"Iteration #{i} failed, untouched: {untouched.ToString (fmt)} touched: {touched.ToString (fmt)}");
+				}
+			} finally {
+				DeleteFile (path);
+			}
+		}
+
 		[Test]
 		public void GetCreationTime_Path_Null ()
 		{

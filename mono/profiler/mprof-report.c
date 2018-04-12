@@ -2866,6 +2866,8 @@ decode_buffer (ProfContext *ctx)
 					type = *p++;
 				else
 					type = decode_uleb128 (p, &p);
+				if (ctx->data_version < 14)
+					--type;
 				intptr_t codediff = decode_sleb128 (p, &p);
 				int codelen = decode_uleb128 (p, &p);
 				const char *name;
@@ -3807,6 +3809,10 @@ dump_stats (void)
 	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_HANDLE_DESTROYED);
 	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_HANDLE_CREATED_BT);
 	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_HANDLE_DESTROYED_BT);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_FINALIZE_START);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_FINALIZE_END);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_FINALIZE_OBJECT_START);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_FINALIZE_OBJECT_END);
 
 	DUMP_EVENT_STAT (TYPE_METADATA, TYPE_END_LOAD);
 	DUMP_EVENT_STAT (TYPE_METADATA, TYPE_END_UNLOAD);

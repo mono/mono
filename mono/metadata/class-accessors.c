@@ -5,7 +5,9 @@
  */
 #include <config.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/marshal.h>
 #include <mono/metadata/tabledefs.h>
+#include <mono/metadata/class-abi-details.h>
 #ifdef MONO_CLASS_DEF_PRIVATE
 #include <mono/metadata/abi-details.h>
 #define REALLY_INCLUDE_CLASS_DEF 1
@@ -510,6 +512,36 @@ mono_class_set_nonblittable (MonoClass *klass) {
 	mono_loader_lock ();
 	klass->blittable = FALSE;
 	mono_loader_unlock ();
+}
+
+#ifndef DISABLE_REMOTING
+void
+mono_class_contextbound_bit_offset (int* byte_offset_out, guint8* mask_out) {
+	mono_marshal_find_bitfield_offset (MonoClass, contextbound, byte_offset_out, mask_out);
+}
+#endif
+
+/**
+ * mono_class_publish_gc_descriptor:
+ * \param klass the \c MonoClass whose GC descriptor is to be set
+ * \param gc_descr the GC descriptor for \p klass
+ *
+ * Sets the \c gc_descr_inited and \c gc_descr fields of \p klass.
+ * \returns previous value of \c klass->gc_descr_inited
+ *
+ * LOCKING: Acquires the loader lock.
+ */
+gboolean
+mono_class_publish_gc_descriptor (MonoClass *klass, MonoGCDescriptor gc_descr)
+{
+	gboolean ret;
+	mono_loader_lock ();
+	ret = klass->gc_descr_inited;
+	klass->gc_descr = gc_descr;
+	mono_memory_barrier ();
+	klass->gc_descr_inited = TRUE;
+	mono_loader_unlock ();
+	return ret;
 }
 
 #ifdef MONO_CLASS_DEF_PRIVATE

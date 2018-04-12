@@ -34,3 +34,5 @@ using System.Runtime.CompilerServices;
 [assembly: TypeForwardedTo(typeof(Vector2))]
 [assembly: TypeForwardedTo(typeof(Vector3))]
 [assembly: TypeForwardedTo(typeof(Vector4))]
+[assembly: TypeForwardedTo(typeof(Vector<>))]
+[assembly: TypeForwardedTo(typeof(Vector))]

@@ -399,15 +399,9 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 	return TRUE;
 }
 
-MonoProfilerCoverageInfo *
-mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
+gboolean
+mono_profiler_coverage_instrumentation_enabled (MonoMethod *method)
 {
-	if (!mono_profiler_state.code_coverage)
-		return FALSE;
-
-	if (method->wrapper_type)
-		return FALSE;
-
 	gboolean cover = FALSE;
 
 	for (MonoProfilerHandle handle = mono_profiler_state.profilers; handle; handle = handle->next) {
@@ -417,7 +411,19 @@ mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
 			cover |= cb (handle->prof, method);
 	}
 
-	if (!cover)
+	return cover;
+}
+
+MonoProfilerCoverageInfo *
+mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
+{
+	if (!mono_profiler_state.code_coverage)
+		return FALSE;
+
+	if (method->wrapper_type)
+		return FALSE;
+
+	if (!mono_profiler_coverage_instrumentation_enabled (method))
 		return NULL;
 
 	coverage_lock ();
@@ -556,13 +562,36 @@ mono_profiler_enable_allocations (void)
 }
 
 /**
+ * mono_profiler_enable_clauses:
+ *
+ * Enables instrumentation of exception clauses. This is necessary so that CIL
+ * \c leave instructions can be instrumented with a call into the profiler API.
+ * Exception clauses will not be reported unless this function is called.
+ * Returns \c TRUE if exception clause instrumentation was enabled, or \c FALSE
+ * if the function was called too late for this to be possible.
+ *
+ * This function is \b not async safe.
+ *
+ * This function may \b only be called from a profiler's init function or prior
+ * to running managed code.
+ */
+mono_bool
+mono_profiler_enable_clauses (void)
+{
+	if (mono_profiler_state.startup_done)
+		return FALSE;
+
+	return mono_profiler_state.clauses = TRUE;
+}
+
+/**
  * mono_profiler_set_call_instrumentation_filter_callback:
  *
  * Sets a call instrumentation filter function. The profiler API will invoke
  * filter functions from all installed profilers. If any of them return flags
  * other than \c MONO_PROFILER_CALL_INSTRUMENTATION_NONE, then the given method
  * will be instrumented as requested. All filters are guaranteed to be called
- * exactly once per method, even if earlier filters have already specified all
+ * at least once per method, even if earlier filters have already specified all
  * flags.
  *
  * Note that filter functions must be installed before a method is compiled in

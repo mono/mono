@@ -160,7 +160,7 @@ namespace System.Net
 
 					taskList.Add (schedulerEvent.WaitAsync (maxIdleTime));
 					foreach (var item in operationArray)
-						taskList.Add (item.Item2.WaitForCompletion (true));
+						taskList.Add (item.Item2.Finished.Task);
 					foreach (var item in idleArray)
 						taskList.Add (item.Item3);
 				}
@@ -170,32 +170,42 @@ namespace System.Net
 				var ret = await Task.WhenAny (taskList).ConfigureAwait (false);
 
 				lock (ServicePoint) {
-					if (ret == taskList[0]) {
-						RunSchedulerIteration ();
-						continue;
-					}
+					bool runMaster = false;
+					if (ret == taskList[0])
+						runMaster = true;
 
-					int idx = -1;
+					/*
+					 * We discard the `taskList` at this point as it is only used to wake us up.
+					 *
+					 * The `WebCompletionSource<T>` assigns its `CurrentResult` property prior
+					 * to completing the `Task` instance, so whenever a task is finished we will
+					 * also get a non-null `CurrentResult`.
+					 * 
+					 */
 					for (int i = 0; i < operationArray.Length; i++) {
-						if (ret == taskList[i + 1]) {
-							idx = i;
-							break;
-						}
-					}
+						var item = operationArray[i];
+						var result = item.Item2.Finished.CurrentResult;
+						if (result == null)
+							continue;
 
-					if (idx >= 0) {
-						var item = operationArray[idx];
-						Debug ($"MAIN LOOP #2: {idx} group={item.Item1.ID} Op={item.Item2.ID}");
+						Debug ($"MAIN LOOP #2: {i} group={item.Item1.ID} Op={item.Item2.ID} Status={result.Status}");
 						operations.Remove (item);
 
-						var opTask = (Task<ValueTuple<bool, WebOperation>>)ret;
-						var runLoop = OperationCompleted (item.Item1, item.Item2, opTask);
-						Debug ($"MAIN LOOP #2 DONE: {idx} {runLoop}");
-						if (runLoop)
-							RunSchedulerIteration ();
-						continue;
+						var runLoop = OperationCompleted (item.Item1, item.Item2);
+						Debug ($"MAIN LOOP #2 DONE: {i} {runLoop}");
+						runMaster |= runLoop;
 					}
 
+					/*
+					 * This needs to be called after we deal with pending completions to
+					 * ensure that connections are properly recognized as being idle.
+					 * 
+					 */
+					Debug ($"MAIN LOOP #3: runMaster={runMaster}");
+					if (runMaster)
+						RunSchedulerIteration ();
+
+					int idx = -1;
 					for (int i = 0; i < idleArray.Length; i++) {
 						if (ret == taskList[i + 1 + operationArray.Length]) {
 							idx = i;
@@ -205,7 +215,7 @@ namespace System.Net
 
 					if (idx >= 0) {
 						var item = idleArray[idx];
-						Debug ($"MAIN LOOP #3: {idx} group={item.Item1.ID} Cnc={item.Item2.ID}");
+						Debug ($"MAIN LOOP #4: {idx} group={item.Item1.ID} Cnc={item.Item2.ID}");
 						idleConnections.Remove (item);
 						CloseIdleConnection (item.Item1, item.Item2);
 					}
@@ -255,7 +265,7 @@ namespace System.Net
 			} while (repeat);
 		}
 
-		bool OperationCompleted (ConnectionGroup group, WebOperation operation, Task<(bool, WebOperation)> task)
+		bool OperationCompleted (ConnectionGroup group, WebOperation operation)
 		{
 #if MONO_WEB_DEBUG
 			var me = $"{nameof (OperationCompleted)}(group={group.ID}, Op={operation.ID}, Cnc={operation.Connection.ID})";
@@ -263,8 +273,10 @@ namespace System.Net
 			string me = null;
 #endif
 
-			var (ok, next) = task.Status == TaskStatus.RanToCompletion ? task.Result : (false, null);
-			Debug ($"{me}: {task.Status} {ok} {next?.ID}");
+			var result = operation.Finished.CurrentResult;
+			var (ok, next) = result.Success ? result.Argument : (false, null);
+
+			Debug ($"{me}: {operation.Finished.CurrentStatus} {ok} {next?.ID}");
 
 			if (!ok || !operation.Connection.Continue (next)) {
 				group.RemoveConnection (operation.Connection);
@@ -430,6 +442,19 @@ namespace System.Net
 			Interlocked.Decrement (ref currentConnections);
 		}
 
+		public static async Task<bool> WaitAsync (Task workerTask, int millisecondTimeout)
+		{
+			var cts = new CancellationTokenSource ();
+			try {
+				var timeoutTask = Task.Delay (millisecondTimeout, cts.Token);
+				var ret = await Task.WhenAny (workerTask, timeoutTask).ConfigureAwait (false);
+				return ret != timeoutTask;
+			} finally {
+				cts.Cancel ();
+				cts.Dispose ();
+			}
+		}
+
 		class ConnectionGroup
 		{
 			public ServicePointScheduler Scheduler {
@@ -556,7 +581,9 @@ namespace System.Net
 
 			public (WebConnection connection, bool created) CreateOrReuseConnection (WebOperation operation, bool force)
 			{
+				Scheduler.Debug ($"CREATE OR REUSE: group={ID} OP={operation.ID} force={force}");
 				var connection = FindIdleConnection (operation);
+				Scheduler.Debug ($"CREATE OR REUSE #1: group={ID} OP={operation.ID} force={force} - connection={connection?.ID}");
 				if (connection != null)
 					return (connection, false);
 
@@ -586,11 +613,9 @@ namespace System.Net
 				return m_tcs.Task.Wait (millisecondTimeout);
 			}
 
-			public async Task<bool> WaitAsync (int millisecondTimeout)
+			public Task<bool> WaitAsync (int millisecondTimeout)
 			{
-				var timeoutTask = Task.Delay (millisecondTimeout);
-				var ret = await Task.WhenAny (m_tcs.Task, timeoutTask).ConfigureAwait (false);
-				return ret != timeoutTask;
+				return ServicePointScheduler.WaitAsync (m_tcs.Task, millisecondTimeout);
 			}
 
 			public void Set ()

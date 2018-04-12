@@ -1,4 +1,4 @@
-
+# -*- mode:text; -*-
 # x86-class cpu description file
 # this file is read by genmdesc to pruduce a table with all the relevant information
 # about the cpu instructions that may be used by the regsiter allocator, the scheduler
@@ -58,6 +58,7 @@
 
 break: len:2
 tailcall: len:120 clob:c
+tailcall_membase: src1:b len:120 clob:c # FIXME len?
 br: len:6
 label: len:0
 seq_point: len:46 clob:c
@@ -266,6 +267,7 @@ r4_conv_to_u2: dest:i src1:f len:32
 r4_conv_to_i4: dest:i src1:f len:16
 r4_conv_to_u4: dest:i src1:f len:32
 r4_conv_to_i8: dest:i src1:f len:32
+r4_conv_to_i: dest:i src1:f len:32
 r4_conv_to_r8: dest:f src1:f len:17
 r4_conv_to_r4: dest:f src1:f len:17
 r4_add: dest:f src1:f src2:f clob:1 len:5

@@ -1338,7 +1338,7 @@ ves_icall_System_Net_Sockets_Socket_Poll_internal (gsize sock, gint mode,
 			}
 
 			/* Suspend requested? */
-			mono_thread_interruption_checkpoint ();
+			mono_thread_interruption_checkpoint_void ();
 
 			errno = EINTR;
 		}
@@ -1833,7 +1833,7 @@ ves_icall_System_Net_Sockets_Socket_Select_internal (MonoArrayHandle sockets, gi
 			}
 
 			/* Suspend requested? */
-			mono_thread_interruption_checkpoint ();
+			mono_thread_interruption_checkpoint_void ();
 
 			errno = EINTR;
 		}
@@ -2813,7 +2813,7 @@ mono_network_cleanup (void)
 }
 
 void
-icall_cancel_blocking_socket_operation (MonoThreadObjectHandle thread, MonoError *error)
+ves_icall_cancel_blocking_socket_operation (MonoThreadObjectHandle thread, MonoError *error)
 {
 	error_init (error);
 	MonoInternalThreadHandle internal = MONO_HANDLE_NEW_GET (MonoInternalThread, thread, internal_thread);

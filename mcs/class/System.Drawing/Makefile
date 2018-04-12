@@ -22,6 +22,8 @@ TEST_LIB_REFS = System.Drawing System.Runtime.Serialization.Formatters.Soap Syst
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -define:TEST -resource:Test/resources/indexed.png,indexed.png \
 	-nowarn:0618 -nowarn:219 -nowarn:169
 
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks
+
 include ../../build/library.make
 
 EXTRA_DISTFILES = Test/resources/indexed.png	\

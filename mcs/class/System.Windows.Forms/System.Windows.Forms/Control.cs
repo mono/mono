@@ -33,6 +33,7 @@
 #undef DebugRecreate
 #undef DebugFocus
 #undef DebugMessages
+#undef DebugPreferredSizeCache
 
 using System;
 using System.ComponentModel;
@@ -46,6 +47,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
+using System.Windows.Forms.Layout;
 
 namespace System.Windows.Forms
 {
@@ -57,13 +59,14 @@ namespace System.Windows.Forms
 	[DesignerSerializer("System.Windows.Forms.Design.ControlCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 	[ToolboxItemFilter("System.Windows.Forms")]
 	public class Control : Component, ISynchronizeInvoke, IWin32Window
-		, IBindableComponent, IDropTarget, IBounds
+		, IBindableComponent, IDropTarget, IArrangedElement, IArrangedContainer
 	{
 		#region Local Variables
 
 		// Basic
 		internal Rectangle		bounds;			// bounding rectangle for control (client area + decorations)
 		Rectangle               explicit_bounds; // explicitly set bounds
+		bool					explicit_bounds_valid; // explicit bounds were set at least once
 		internal object			creator_thread;		// thread that created the control
 		internal                ControlNativeWindow	window;			// object for native window handle
 		private                 IWindowTarget window_target;
@@ -107,21 +110,20 @@ namespace System.Windows.Forms
 		internal bool		force_double_buffer;	// Always doublebuffer regardless of ControlStyle
 
 		// Layout
-		internal enum LayoutType {
-			Anchor,
-			Dock
-		}
-		Layout.LayoutEngine layout_engine;
 		internal int layout_suspended;
 		bool layout_pending; // true if our parent needs to re-layout us
+		LayoutEventArgs layout_pending_event_args;
+		bool layout_pending_after_resume;
+		bool layout_dirty;
 		internal AnchorStyles anchor_style; // anchoring requirements for our control
 		internal DockStyle dock_style; // docking requirements for our control
-		LayoutType layout_type;
-		private bool recalculate_distances = true;  // Delay anchor calculations
 
 		// Please leave the next 2 as internal until DefaultLayout (2.0) is rewritten
-		internal int			dist_right; // distance to the right border of the parent
-		internal int			dist_bottom; // distance to the bottom border of the parent
+		int			dist_right; // distance to the right border of the parent
+		int			dist_bottom; // distance to the bottom border of the parent
+
+		internal bool can_cache_preferred_size;
+		internal Size cached_preferred_size;
 
 		// to be categorized...
 		ControlCollection       child_controls; // our children
@@ -151,7 +153,6 @@ namespace System.Windows.Forms
 		Size minimum_size;
 		Padding margin;
 		private ContextMenuStrip context_menu_strip;
-		private bool nested_layout = false;
 		Point auto_scroll_offset;
 		private AutoSizeMode auto_size_mode;
 		private bool suppressing_key_press;
@@ -484,8 +485,6 @@ namespace System.Windows.Forms
 					throw new ArgumentException ("Form cannot be added to the Controls collection that has a valid MDI parent.", "value");
 				}
 				
-				value.recalculate_distances = true;
-				
 				if (Contains (value)) {
 					owner.PerformLayout();
 					return;
@@ -514,9 +513,11 @@ namespace System.Windows.Forms
 				all_controls = null;
 				list.Add (value);
 
-				value.ChangeParent(owner);
-
-				value.InitLayout();
+				// Avoid triggering layout with changes in ChangeParent
+				owner.SuspendLayout ();
+				value.ChangeParent (owner);
+				value.InitLayout ();
+				owner.ResumeLayout (false);
 
 				if (owner.Visible)
 					owner.UpdateChildrenZOrder();
@@ -547,8 +548,11 @@ namespace System.Windows.Forms
 				all_controls = null;
 				impl_list.Add (control);
 
+				// Avoid triggering layout with changes in ChangeParent
+				owner.SuspendLayout ();
 				control.ChangeParent (owner);
 				control.InitLayout ();
+				owner.ResumeLayout (false);
 				if (owner.Visible)
 					owner.UpdateChildrenZOrder ();
 				
@@ -719,6 +723,8 @@ namespace System.Windows.Forms
 				all_controls = null;
 				list.Remove(value);
 
+				value.ChangeParent(null);
+				owner.UpdateChildrenZOrder();
 				owner.PerformLayout(value, "Parent");
 				owner.OnControlRemoved(new ControlEventArgs(value));
 
@@ -728,10 +734,6 @@ namespace System.Windows.Forms
 					// so that they can update their active control
 					container.ChildControlRemoved (value);
 				}
-
-				value.ChangeParent(null);
-
-				owner.UpdateChildrenZOrder();
 			}
 
 			internal virtual void RemoveImplicit (Control control)
@@ -871,7 +873,6 @@ namespace System.Windows.Forms
 				if (!(SynchronizationContext.Current is WindowsFormsSynchronizationContext))
 					SynchronizationContext.SetSynchronizationContext (new WindowsFormsSynchronizationContext ());
 
-			layout_type = LayoutType.Anchor;
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
 			is_created = false;
@@ -926,6 +927,8 @@ namespace System.Windows.Forms
 			client_size = ClientSizeFromSize (bounds.Size);
 			client_rect = new Rectangle (Point.Empty, client_size);
 			explicit_bounds = bounds;
+			explicit_bounds_valid = false;
+			cached_preferred_size = Size.Empty;
 		}
 
 		public Control (Control parent, string text) : this()
@@ -960,6 +963,7 @@ namespace System.Windows.Forms
 				is_disposing = true;
 				Capture = false;
 
+				SuspendLayout ();
 				DisposeBackBuffer ();
 
 				if (this.InvokeRequired) {
@@ -978,6 +982,9 @@ namespace System.Windows.Forms
 					children[i].parent = null;	// Need to set to null or our child will try and remove from ourselves and crash
 					children[i].Dispose();
 				}
+
+				ResumeLayout (false);
+				is_disposing = false;
 			}
 			is_disposed = true;
 			base.Dispose(disposing);
@@ -1045,6 +1052,24 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		bool IArrangedElement.AutoSize {
+			get { return this.auto_size; }
+		}
+
+		bool IArrangedElement.Visible {
+			get { return this.is_visible; }
+		}
+
+		int IArrangedElement.DistanceRight {
+			get { return this.dist_right; }
+			set { this.dist_right = value; }
+		}
+
+		int IArrangedElement.DistanceBottom {
+			get { return this.dist_bottom; }
+			set { this.dist_bottom = value; }
+		}
+
 		// Mouse is currently within the control's bounds
 		internal bool Entered {
 			get { return this.is_entered; }
@@ -1052,10 +1077,6 @@ namespace System.Windows.Forms
 
 		internal bool VisibleInternal {
 			get { return is_visible; }
-		}
-
-		internal LayoutType ControlLayoutType {
-			get { return layout_type; }
 		}
 
 		internal BorderStyle InternalBorderStyle {
@@ -1083,6 +1104,7 @@ namespace System.Windows.Forms
 		internal Size InternalClientSize { set { this.client_size = value; } }
 		internal virtual bool ActivateOnShow { get { return true; } }
 		internal Rectangle ExplicitBounds { get { return this.explicit_bounds; } set { this.explicit_bounds = value; } }
+		Rectangle IArrangedElement.ExplicitBounds { get { return this.explicit_bounds; } }
 
 		internal bool ValidationFailed { 
 			get { 
@@ -1715,11 +1737,18 @@ namespace System.Windows.Forms
 			
 			OnParentChanged(EventArgs.Empty);
 
+			if (Disposing) {
+				return;
+			}
+
 			if (pre_enabled != Enabled) {
 				OnEnabledChanged(EventArgs.Empty);
 			}
 
-			if (pre_visible != Visible) {
+			// Do not raise the VisibleChanged event when a non-toplevel control is being removed from a
+			// parent and VisibleInternal remains set to true.
+			bool new_visible = Visible && (GetTopLevel() || parent != null);
+			if (pre_visible != new_visible) {
 				OnVisibleChanged(EventArgs.Empty);
 			}
 
@@ -1748,6 +1777,10 @@ namespace System.Windows.Forms
 
 			if ((binding_context == null) && Created) {
 				OnBindingContextChanged(EventArgs.Empty);
+			}
+
+			if (new_parent != null) {
+				new_parent.LayoutEngine.InitLayout(this, BoundsSpecified.All);				
 			}
 		}
 
@@ -1787,17 +1820,6 @@ namespace System.Windows.Forms
 		internal virtual Size GetPreferredSizeCore (Size proposedSize)
 		{
 			return this.explicit_bounds.Size;
-		}
-
-		private void UpdateDistances() {
-			if (parent != null) {
-				if (bounds.Width >= 0)
-					dist_right = parent.ClientSize.Width - bounds.X - bounds.Width;
-				if (bounds.Height >= 0)
-					dist_bottom = parent.ClientSize.Height - bounds.Y - bounds.Height;
-
-				recalculate_distances = false;
-			}
 		}
 		
 		private Cursor GetAvailableCursor ()
@@ -2005,18 +2027,16 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				layout_type = LayoutType.Anchor;
-
 				if (anchor_style == value)
 					return;
 					
-				anchor_style=value;
+				anchor_style = value;
 				dock_style = DockStyle.None;
 				
-				UpdateDistances ();
-
-				if (parent != null)
-					parent.PerformLayout(this, "Anchor");
+				if (parent != null) {
+					parent.LayoutEngine.InitLayout (this, BoundsSpecified.All);
+					parent.PerformLayout (this, "Anchor");
+				}
 			}
 		}
 
@@ -2052,8 +2072,10 @@ namespace System.Windows.Forms
 					if (!value) {
 						Size = explicit_bounds.Size;
 					} else {
-						if (Parent != null)
+						if (Parent != null) {
+							Parent.LayoutEngine.InitLayout (this, BoundsSpecified.Size);
 							Parent.PerformLayout (this, "AutoSize");
+						}
 					}
 
 					OnAutoSizeChanged (EventArgs.Empty);
@@ -2070,7 +2092,9 @@ namespace System.Windows.Forms
 			set {
 				if (maximum_size != value) {
 					maximum_size = value;
-					Size = PreferredSize;
+					Size = ApplySizeConstraints(Size);
+					if (parent != null)
+						parent.PerformLayout(this, "MinimumSize");
 				}
 			}
 		}
@@ -2088,7 +2112,9 @@ namespace System.Windows.Forms
 			set {
 				if (minimum_size != value) {
 					minimum_size = value;
-					Size = PreferredSize;
+					Size = ApplySizeConstraints(Size);
+					if (parent != null)
+						parent.PerformLayout(this, "MaximumSize");
 				}
 			}
 		}
@@ -2404,6 +2430,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		ArrangedElementCollection IArrangedContainer.Controls {
+			get {
+				return this.child_controls;
+			}
+		}
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -2489,10 +2521,6 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				// If the user sets this to None, we need to still use Anchor layout
-				if (value != DockStyle.None)
-					layout_type = LayoutType.Dock;
-
 				if (dock_style == value) {
 					return;
 				}
@@ -2504,18 +2532,19 @@ namespace System.Windows.Forms
 
 				dock_style = value;
 				anchor_style = AnchorStyles.Top | AnchorStyles.Left;
-
-				if (dock_style == DockStyle.None) {
-					bounds = explicit_bounds;
-					layout_type = LayoutType.Anchor;
+				if (!explicit_bounds_valid) {
+					explicit_bounds = bounds;
+					explicit_bounds_valid = true;
 				}
+				bounds = explicit_bounds;
 
-				if (parent != null)
-					parent.PerformLayout(this, "Dock");
-				else if (Controls.Count > 0)
+				if (parent != null) {
+					parent.LayoutEngine.InitLayout (this, BoundsSpecified.All);
+					parent.PerformLayout (this, "Dock");
+				} else if (Controls.Count > 0)
 					PerformLayout ();
 
-				OnDockChanged(EventArgs.Empty);
+				OnDockChanged (EventArgs.Empty);
 			}
 		}
 
@@ -2538,26 +2567,22 @@ namespace System.Windows.Forms
 		
 		public void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds)
 		{
-			Graphics g = Graphics.FromImage (bitmap);
+			using (Graphics g = Graphics.FromImage (bitmap)) {			
+				// Only draw within the target bouds, and up to the size of the control
+				g.IntersectClip (targetBounds);
+				g.TranslateTransform (targetBounds.X, targetBounds.Y);
+				g.IntersectClip (new Rectangle (Point.Empty, Size));
 			
-			// Only draw within the target bouds, and up to the size of the control
-			g.IntersectClip (targetBounds);
-			g.IntersectClip (Bounds);
-			
-			// Logic copied from WmPaint
-			PaintEventArgs pea = new PaintEventArgs (g, targetBounds);
-			
-			if (!GetStyle (ControlStyles.Opaque))
-				OnPaintBackground (pea);
-
-			OnPaintBackgroundInternal (pea);
-
-			OnPaintInternal (pea);
-
-			if (!pea.Handled)
-				OnPaint (pea);
-			
-			g.Dispose ();
+				// Logic copied from WmPaint
+				using (PaintEventArgs pea = new PaintEventArgs (g, new Rectangle(Point.Empty, targetBounds.Size))) {
+					if (!GetStyle (ControlStyles.Opaque))
+						OnPaintBackground (pea);
+					OnPaintBackgroundInternal (pea);
+					OnPaintInternal (pea);
+					if (!pea.Handled)
+						OnPaint (pea);
+				}
+			}
 		}
 		
 		[DispId(-514)]
@@ -2636,8 +2661,8 @@ namespace System.Windows.Forms
 
 				font = value;
 				Invalidate();
+				// Layout is performed inside OnFontChanged
 				OnFontChanged (EventArgs.Empty);
-				PerformLayout ();
 			}
 		}
 
@@ -2796,9 +2821,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual Layout.LayoutEngine LayoutEngine {
 			get {
-				if (layout_engine == null)
-					layout_engine = new Layout.DefaultLayout ();
-				return layout_engine;
+				return System.Windows.Forms.Layout.DefaultLayout.Instance;
 			}
 		}
 
@@ -2909,6 +2932,12 @@ namespace System.Windows.Forms
 
 					value.Controls.Add(this);
 				}
+			}
+		}
+
+		IArrangedContainer IArrangedElement.Parent {
+			get {
+				return this.parent;
 			}
 		}
 
@@ -3131,8 +3160,9 @@ namespace System.Windows.Forms
 					OnTextChanged (EventArgs.Empty);
 
 					// Label has its own AutoSize implementation
-					if (AutoSize && Parent != null && (!(this is Label)))
+					if (AutoSize && Parent != null && (!(this is Label))) {
 						Parent.PerformLayout (this, "Text");
+					}
 				}
 			}
 		}
@@ -3164,12 +3194,10 @@ namespace System.Windows.Forms
 		public Control TopLevelControl {
 			get {
 				Control	p = this;
-
-				while (p.parent != null) {
+				while (p != null && !p.GetTopLevel()) {
 					p = p.parent;
 				}
-
-				return p is Form ? p : null;
+				return p;
 			}
 		}
 
@@ -3700,23 +3728,40 @@ namespace System.Windows.Forms
 			return null;
 		}
 
+		private Size ApplySizeConstraints (Size proposedSize) {
+			// If we're bigger than the MaximumSize, fix that
+			if (this.maximum_size.Width != 0 && proposedSize.Width > this.maximum_size.Width)
+				proposedSize.Width = this.maximum_size.Width;
+			if (this.maximum_size.Height != 0 && proposedSize.Height > this.maximum_size.Height)
+				proposedSize.Height = this.maximum_size.Height;
+
+			// If we're smaller than the MinimumSize, fix that
+			if (proposedSize.Width < this.minimum_size.Width)
+				proposedSize.Width = this.minimum_size.Width;
+			if (proposedSize.Height < this.minimum_size.Height)
+				proposedSize.Height = this.minimum_size.Height;
+
+			return proposedSize;
+		}
+
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual Size GetPreferredSize (Size proposedSize) {
-			Size retsize = GetPreferredSizeCore (proposedSize);
-			
-			// If we're bigger than the MaximumSize, fix that
-			if (this.maximum_size.Width != 0 && retsize.Width > this.maximum_size.Width)
-				retsize.Width = this.maximum_size.Width;
-			if (this.maximum_size.Height != 0 && retsize.Height > this.maximum_size.Height)
-				retsize.Height = this.maximum_size.Height;
-				
-			// If we're smaller than the MinimumSize, fix that
-			if (this.minimum_size.Width != 0 && retsize.Width < this.minimum_size.Width)
-				retsize.Width = this.minimum_size.Width;
-			if (this.minimum_size.Height != 0 && retsize.Height < this.minimum_size.Height)
-				retsize.Height = this.minimum_size.Height;
-				
-			return retsize;
+#if !DebugPreferredSizeCache
+			if (can_cache_preferred_size && proposedSize == Size.Empty && !cached_preferred_size.IsEmpty)
+				return cached_preferred_size;
+#endif
+
+			proposedSize = ApplySizeConstraints (proposedSize);
+			Size size = ApplySizeConstraints (GetPreferredSizeCore (proposedSize));
+
+			if (can_cache_preferred_size && proposedSize == Size.Empty) {
+#if DebugPreferredSizeCache				
+				Debug.Assert(cached_preferred_size.IsEmpty || cached_preferred_size == size, "Invalid preferred size cache");
+#endif
+				cached_preferred_size = size;
+			}
+
+			return size;
 		}
 
 		public void Hide() {
@@ -3801,20 +3846,27 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public void PerformLayout() {
-			PerformLayout(null, null);
+		public void PerformLayout () {
+			PerformLayout (null, null);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public void PerformLayout(Control affectedControl, string affectedProperty) {
-			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
+		public void PerformLayout (Control affectedControl, string affectedProperty) {
+			cached_preferred_size = Size.Empty;
+			if (affectedControl != null)
+				affectedControl.cached_preferred_size = Size.Empty;
+			PerformLayout ((IComponent) affectedControl, affectedProperty);
+		}
 
-			foreach (Control c in Controls.GetAllControls ())
-				if (c.recalculate_distances)
-					c.UpdateDistances ();
+		internal void PerformLayout (IComponent affectedComponent, string affectedProperty)
+		{
+			LayoutEventArgs levent = new LayoutEventArgs (affectedComponent, affectedProperty);
 
 			if (layout_suspended > 0) {
+				if (layout_pending_event_args == null || layout_pending_after_resume)
+					layout_pending_event_args = levent;
 				layout_pending = true;
+				layout_pending_after_resume = false;					
 				return;
 			}
 					
@@ -3827,11 +3879,19 @@ namespace System.Windows.Forms
 			try {
 				OnLayout(levent);
 			}
-
-				// Need to make sure we decremend layout_suspended
+			// Need to make sure we decremend layout_suspended
 			finally {
 				layout_suspended--;
+				layout_dirty = false;
+
+				if (parent != null && parent.layout_dirty)
+					parent.PerformLayout(this, "PreferredSize");
 			}
+		}
+
+		void IArrangedContainer.PerformLayout (IArrangedElement affectedElement, string affectedProperty)
+		{
+			PerformLayout (affectedElement, affectedProperty);
 		}
 
 		public Point PointToClient (Point p) {
@@ -3990,16 +4050,25 @@ namespace System.Windows.Forms
 				layout_suspended--;
 			}
 
+			layout_pending_after_resume = true;
 			if (layout_suspended == 0) {
 				if (this is ContainerControl)
 					(this as ContainerControl).PerformDelayedAutoScale();
 
-				if (!performLayout)
-					foreach (Control c in Controls.GetAllControls ())
-						c.UpdateDistances ();
-
-				if (performLayout && layout_pending) {
-					PerformLayout();
+				if (performLayout) {
+					if (layout_pending) {
+						LayoutEventArgs event_args = layout_pending_event_args;
+						layout_pending_event_args = null;
+						if (event_args != null)
+							PerformLayout (event_args.AffectedControl, event_args.AffectedProperty);
+						else
+							PerformLayout ();
+					}
+				} else {
+					layout_pending_event_args = null;
+					// Reproduce the weird behavior, where ResumeLayout(false) resets the anchors
+					foreach (Control c in Controls)
+                        LayoutEngine.InitLayout(c, BoundsSpecified.All);
 				}
 			}
 		}
@@ -4126,33 +4195,17 @@ namespace System.Windows.Forms
 			if ((specified & BoundsSpecified.Height) == 0)
 				height = Height;
 		
-			SetBoundsInternal (x, y, width, height, specified);
+			bool bounds_changed = bounds.X != x || bounds.Y != y || bounds.Width != width || bounds.Height != height;
+			
+			SetBoundsCore (x, y, width, height, specified);
+
+			if (parent != null && bounds_changed)
+				parent.PerformLayout(this, "Bounds");
 		}
 
-		internal void SetBoundsInternal (int x, int y, int width, int height, BoundsSpecified specified)
+		void IArrangedElement.SetBounds (int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			// SetBoundsCore is really expensive to call, so we want to avoid it if we can.
-			// We can avoid it if:
-			// - The requested dimensions are the same as our current dimensions
-			// AND
-			// - Any BoundsSpecified is the same as our current explicit_size
-			if (bounds.X != x || (explicit_bounds.X != x && (specified & BoundsSpecified.X) == BoundsSpecified.X))
-				SetBoundsCore (x, y, width, height, specified);
-			else if (bounds.Y != y || (explicit_bounds.Y != y && (specified & BoundsSpecified.Y) == BoundsSpecified.Y))
-				SetBoundsCore (x, y, width, height, specified);
-			else if (bounds.Width != width || (explicit_bounds.Width != width && (specified & BoundsSpecified.Width) == BoundsSpecified.Width))
-				SetBoundsCore (x, y, width, height, specified);
-			else if (bounds.Height != height || (explicit_bounds.Height != height && (specified & BoundsSpecified.Height) == BoundsSpecified.Height))
-				SetBoundsCore (x, y, width, height, specified);
-			else
-				return;
-			
-			// If the user explicitly moved or resized us, recalculate our anchor distances
-			if (specified != BoundsSpecified.None)
-				UpdateDistances ();
-			
-			if (parent != null)
-				parent.PerformLayout(this, "Bounds");
+			SetBoundsCore (x, y, width, height, specified);
 		}
 
 		public void Show () {
@@ -4273,6 +4326,11 @@ namespace System.Windows.Forms
 			return auto_size_mode;
 		}
 
+		AutoSizeMode IArrangedElement.GetAutoSizeMode () 
+		{
+			return GetAutoSizeMode ();
+		}
+
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
 		{
@@ -4337,6 +4395,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void InitLayout() {
+			LayoutEngine.InitLayout(this, BoundsSpecified.All);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4659,79 +4718,61 @@ namespace System.Windows.Forms
 		{
 			if (auto_size_mode != mode) {
 				auto_size_mode = mode;
-				PerformLayout (this, "AutoSizeMode");
+				cached_preferred_size = Size.Empty;
+				if (parent != null) {
+					parent.LayoutEngine.InitLayout (this, BoundsSpecified.Size);
+					PerformLayout (this, "AutoSizeMode");
+				}
 			}
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
-			SetBoundsCoreInternal (x, y, width, height, specified);
-		}
-		
-		internal virtual void SetBoundsCoreInternal(int x, int y, int width, int height, BoundsSpecified specified) {
 			// Nasty hack for 2.0 DateTimePicker
 			height = OverrideHeight (height);
-			
-			Rectangle old_explicit = explicit_bounds;
+
 			Rectangle new_bounds = new Rectangle (x, y, width, height);
-
-			// SetBoundsCore updates the Win32 control itself. UpdateBounds updates the controls variables and fires events, I'm guessing - pdb
-			if (IsHandleCreated) {
-				XplatUI.SetWindowPos(Handle, x, y, width, height);
-
-				// Win32 automatically changes negative width/height to 0.
-				// The control has already been sent a WM_WINDOWPOSCHANGED message and it has the correct
-				// data, but it'll be overwritten when we call UpdateBounds unless we get the updated
-				// size.
-				int cw, ch, ix, iy;
-				XplatUI.GetWindowPos(Handle, this is Form, out ix, out iy, out width, out height, out cw, out ch);
-			}
-
+				
 			// BoundsSpecified tells us which variables were programatic (user-set).
 			// We need to store those in the explicit bounds
 			if ((specified & BoundsSpecified.X) == BoundsSpecified.X)
 				explicit_bounds.X = new_bounds.X;
-			else
-				explicit_bounds.X = old_explicit.X;
-
 			if ((specified & BoundsSpecified.Y) == BoundsSpecified.Y)
 				explicit_bounds.Y = new_bounds.Y;
-			else
-				explicit_bounds.Y = old_explicit.Y;
-
 			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width)
 				explicit_bounds.Width = new_bounds.Width;
-			else
-				explicit_bounds.Width = old_explicit.Width;
-
 			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height)
 				explicit_bounds.Height = new_bounds.Height;
-			else
-				explicit_bounds.Height = old_explicit.Height;
+			if (specified != BoundsSpecified.None)
+				explicit_bounds_valid = true;
 
-			// We need to store the explicit bounds because UpdateBounds is always going
-			// to change it, and we have to fix it.  However, UpdateBounds also calls
-			// OnLocationChanged, OnSizeChanged, and OnClientSizeChanged.  The user can
-			// override those or use those events to change the size explicitly, and we 
-			// can't undo those changes.  So if the bounds after calling UpdateBounds are
-			// the same as the ones we sent it, we need to fix the explicit bounds.  If
-			// it's not the same as we sent UpdateBounds, then someone else changed it, and
-			// we better not mess it up.  Fun stuff.
-			Rectangle stored_explicit_bounds = explicit_bounds;
-			
-			UpdateBounds(x, y, width, height);
+			if (new_bounds.Equals(bounds))
+				return;
 
-			if (explicit_bounds.X == x)
-				explicit_bounds.X = stored_explicit_bounds.X;
+			// Prevent the parent from doing layout as part of the callbacks from WM_WINDOWPOSCHANGED
+			// window message. Make sure it is postponed at least until the InitLayout call below is
+			// called.
+			if (parent != null)
+				parent.SuspendLayout ();
 
-			if (explicit_bounds.Y == y)
-				explicit_bounds.Y = stored_explicit_bounds.Y;
+			// Impose restrictions based on MinimumSize and MaximumSize
+			new_bounds.Size = ApplySizeConstraints(new_bounds.Size);
 
-			if (explicit_bounds.Width == width)
-				explicit_bounds.Width = stored_explicit_bounds.Width;
+			if (IsHandleCreated) {
+				// We will get WM_WINDOWPOSCHANGED message, which will call UpdateBounds
+				XplatUI.SetWindowPos(Handle, x, y, new_bounds.Width, new_bounds.Height);
+			} else {
+				UpdateBounds(x, y, new_bounds.Width, new_bounds.Height);
+			}
 
-			if (explicit_bounds.Height == height)
-				explicit_bounds.Height = stored_explicit_bounds.Height;
+			if (parent != null) {
+				// DefaultLayout calculates preferred size based on the control boundaries,
+				// so reset its cache.
+				parent.cached_preferred_size = Size.Empty;
+				parent.LayoutEngine.InitLayout (this, specified);
+
+				parent.ResumeLayout ();
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4772,7 +4813,7 @@ namespace System.Windows.Forms
 			if (value != is_visible) {
 				is_visible = value;
 				
-				if (is_visible && ((window.Handle == IntPtr.Zero) || !is_created)) {
+				if (is_visible && (GetTopLevel() || (parent != null && parent.Created)) && ((window.Handle == IntPtr.Zero) || !is_created)) {
 					CreateControl();
 					if (!(this is Form))
 						UpdateZOrder ();
@@ -4803,13 +4844,15 @@ namespace System.Windows.Forms
 						if (parent != null)
 							parent.UpdateZOrderOfChild (this);
 					}
-					
-					if (!(this is Form))
-						OnVisibleChanged (EventArgs.Empty);
 				}
-				else {
-					OnVisibleChanged(EventArgs.Empty);
+
+				this.cached_preferred_size = Size.Empty;
+				if (parent != null) {
+					parent.cached_preferred_size = Size.Empty;
 				}
+
+				if (!(this is Form))
+					OnVisibleChanged (EventArgs.Empty);
 			}
 		}
 
@@ -4870,7 +4913,7 @@ namespace System.Windows.Forms
 
 			// Assume explicit bounds set. SetBoundsCore will restore old bounds
 			// if needed.
-			explicit_bounds = bounds;
+			//explicit_bounds = bounds;
 
 			client_size.Width=clientWidth;
 			client_size.Height=clientHeight;
@@ -4884,8 +4927,9 @@ namespace System.Windows.Forms
 
 			if (resized) {
 				OnSizeInitializedOrChanged ();
-				OnSizeChanged(EventArgs.Empty);
+				OnSizeChanged (EventArgs.Empty);
 				OnClientSizeChanged (EventArgs.Empty);
+				this.cached_preferred_size = Size.Empty;
 			}
 		}
 
@@ -5190,19 +5234,14 @@ namespace System.Windows.Forms
 			}
 
 			if (is_disposing) {
-				is_disposing = false;
 				is_visible = false;
 			}
 		}
 
 		private void WmWindowPosChanged (ref Message m) {
-			if (Visible) {
-				Rectangle save_bounds = explicit_bounds;
-				UpdateBounds();
-				explicit_bounds = save_bounds;
-				if (GetStyle(ControlStyles.ResizeRedraw)) {
-					Invalidate();
-				}
+			UpdateBounds();
+			if (Visible && GetStyle(ControlStyles.ResizeRedraw)) {
+				Invalidate();
 			}
 		}
 
@@ -5842,7 +5881,10 @@ namespace System.Windows.Forms
 			EventHandler eh = (EventHandler)(Events [FontChangedEvent]);
 			if (eh != null)
 				eh (this, e);
+			SuspendLayout ();
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentFontChanged(e);
+			ResumeLayout (false);
+ 			PerformLayout (this, "Font");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -5952,15 +5994,11 @@ namespace System.Windows.Forms
 			Size s = Size;
 			
 			// If our layout changed our PreferredSize, our parent
-			// needs to re-lay us out.  However, it's not always possible to
-			// be our preferred size, so only try once so we don't loop forever.
-			if (Parent != null && AutoSize && !nested_layout && PreferredSize != s) {
-				nested_layout = true;
-				Parent.PerformLayout ();
-				nested_layout = false;
+			// needs to re-lay us out.
+			bool needs_parent_layout = LayoutEngine.Layout(this, levent);
+			if (parent != null && needs_parent_layout) {
+				parent.layout_dirty = true;
 			}
-			
-			LayoutEngine.Layout (this, levent);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -6266,6 +6304,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnTextChanged(EventArgs e) {
+			cached_preferred_size = Size.Empty;			
 			EventHandler eh = (EventHandler)(Events [TextChangedEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -6287,7 +6326,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnVisibleChanged(EventArgs e) {
-			if (Visible)
+			if (parent != null && Visible)
 				CreateControl ();
 				
 			EventHandler eh = (EventHandler)(Events [VisibleChangedEvent]);

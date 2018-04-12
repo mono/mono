@@ -19,9 +19,6 @@ namespace System.Data.SqlClient
 		}
 
 		[System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
-		public IAsyncResult BeginExecuteXmlReader() => BeginExecuteXmlReader(null, null);
-
-		[System.Security.Permissions.HostProtectionAttribute(ExternalThreading=true)]
 		public IAsyncResult BeginExecuteReader() =>
 			BeginExecuteReader(CommandBehavior.Default, null, null);
 

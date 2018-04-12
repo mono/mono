@@ -10,3 +10,5 @@
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.OSX.cs
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeCreateHandle.OSX.cs
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeEventStreamHandle.OSX.cs
+../../../external/corefx/src/Common/src/System/Net/ContextAwareResult.OSX.cs
+

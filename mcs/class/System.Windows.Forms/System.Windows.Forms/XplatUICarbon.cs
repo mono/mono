@@ -1291,10 +1291,14 @@ namespace System.Windows.Forms {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			if (hwnd != null && hwnd.Parent != null) {
-				return hwnd.Parent.Handle;
+			if (hwnd != null) {
+				if (hwnd.parent != null) {
+					return hwnd.parent.Handle;
+				}
+				if (hwnd.owner != null && with_owner) {
+					return hwnd.owner.Handle;
+				}
 			}
-			// FIXME: Handle with_owner
 			return IntPtr.Zero;
 		}
 
@@ -1830,6 +1834,12 @@ namespace System.Windows.Forms {
 		
 		internal override bool SetOwner(IntPtr hWnd, IntPtr hWndOwner) {
 			// TODO: Set window owner. 
+			Hwnd hwnd = Hwnd.ObjectFromHandle(hWnd);			
+			if (hWndOwner != IntPtr.Zero) {
+				hwnd.owner = Hwnd.ObjectFromHandle(hWndOwner);
+			} else {
+				hwnd.owner = null;
+			}
 			return true;
 		}
 		
@@ -1923,13 +1933,13 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (!hwnd.zero_sized) {
-				hwnd.x = x;
-				hwnd.y = y;
-				hwnd.width = width;
-				hwnd.height = height;
-				SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+			hwnd.x = x;
+			hwnd.y = y;
+			hwnd.width = width;
+			hwnd.height = height;
+			SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 
+			if (!hwnd.zero_sized) {
 				Control ctrl = Control.FromHandle (handle);
 				CreateParams cp = ctrl.GetCreateParams ();
 				Size TranslatedSize = TranslateWindowSizeToQuartzWindowSize (cp, new Size (width, height));

@@ -680,9 +680,9 @@ namespace System.Windows.Forms
 			VisualStyleElement element = VisualStyleElement.DatePicker.DateBorder.Normal;
 			if (!VisualStyleRenderer.IsElementDefined (element))
 				return base.DateTimePickerGetDateArea (dateTimePicker);
-			Graphics g = dateTimePicker.CreateGraphics ();
-			Rectangle result = new VisualStyleRenderer (element).GetBackgroundContentRectangle (g, dateTimePicker.ClientRectangle);
-			g.Dispose ();
+			Rectangle result;
+			using (Graphics g = dateTimePicker.CreateGraphics ())
+				result = new VisualStyleRenderer (element).GetBackgroundContentRectangle (g, dateTimePicker.ClientRectangle);
 			result.Width -= DateTimePickerDropDownWidthOnWindowsVista;
 			return result;
 		}
@@ -747,17 +747,15 @@ namespace System.Windows.Forms
 			VisualStyleElement element = VisualStyleElement.Header.Item.Normal;
 			if (!VisualStyleRenderer.IsElementDefined (element))
 				return base.ListViewGetHeaderHeight (listView, font);
-			Control control = null;
-			Graphics g;
+			int result;
 			if (listView == null) {
-				control = new Control ();
-				g = control.CreateGraphics ();
-			} else
-				g = listView.CreateGraphics ();
-			int result = new VisualStyleRenderer (element).GetPartSize (g, ThemeSizeType.True).Height;
-			g.Dispose ();
-			if (listView == null)
-				control.Dispose ();
+				using (Control control = new Control ())
+				using (Graphics g = control.CreateGraphics ())
+					result = new VisualStyleRenderer (element).GetPartSize (g, ThemeSizeType.True).Height;
+			} else {
+				using (Graphics g = listView.CreateGraphics ())
+					result = new VisualStyleRenderer (element).GetPartSize (g, ThemeSizeType.True).Height;
+			}
 			return result;
 		}
 		#endregion
@@ -1753,9 +1751,9 @@ namespace System.Windows.Forms
 			VisualStyleElement element = TrackBarGetThumbVisualStyleElement (trackBar);
 			if (!VisualStyleRenderer.IsElementDefined (element))
 				return base.TrackBarGetThumbSize (trackBar);
-			Graphics g = trackBar.CreateGraphics ();
-			Size result = new VisualStyleRenderer (element).GetPartSize (g, ThemeSizeType.True);
-			g.Dispose ();
+			Size result;
+			using (Graphics g = trackBar.CreateGraphics ())
+				result = new VisualStyleRenderer (element).GetPartSize (g, ThemeSizeType.True);
 			return trackBar.Orientation == Orientation.Horizontal ? result : TrackBarRotateVerticalThumbSize (result);
 		}
 		static VisualStyleElement TrackBarGetThumbVisualStyleElement (TrackBar trackBar)

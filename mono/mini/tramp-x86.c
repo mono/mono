@@ -652,7 +652,7 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
  * mono_arch_create_sdb_trampoline:
  *
  *   Return a trampoline which captures the current context, passes it to
- * debugger_agent_single_step_from_context ()/debugger_agent_breakpoint_from_context (),
+ * mini_get_dbg_callbacks ()->single_step_from_context ()/mini_get_dbg_callbacks ()->breakpoint_from_context (),
  * then restores the (potentially changed) context.
  */
 guint8*
@@ -716,9 +716,9 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 		x86_breakpoint (code);
 	} else {
 		if (single_step)
-			x86_call_code (code, debugger_agent_single_step_from_context);
+			x86_call_code (code, mini_get_dbg_callbacks ()->single_step_from_context);
 		else
-			x86_call_code (code, debugger_agent_breakpoint_from_context);
+			x86_call_code (code, mini_get_dbg_callbacks ()->breakpoint_from_context);
 	}
 
 	/* Restore registers from ctx */
@@ -741,6 +741,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	x86_ret (code);
 
 	mono_arch_flush_icache (code, code - buf);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
 	g_assert (code - buf <= tramp_size);
 
 	const char *tramp_name = single_step ? "sdb_single_step_trampoline" : "sdb_breakpoint_trampoline";

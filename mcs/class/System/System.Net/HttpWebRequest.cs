@@ -939,18 +939,15 @@ namespace System.Net
 			CancellationTokenSource cts)
 		{
 			try {
-				var timeoutTask = Task.Delay (timeout);
-				var ret = await Task.WhenAny (workerTask, timeoutTask).ConfigureAwait (false);
-				if (ret == timeoutTask) {
-					try {
-						cts.Cancel ();
-						abort ();
-					} catch {
-						// Ignore; we report the timeout.
-					}
-					throw new WebException (SR.net_timeout, WebExceptionStatus.Timeout);
+				if (await ServicePointScheduler.WaitAsync (workerTask, timeout).ConfigureAwait (false))
+					return workerTask.Result;
+				try {
+					cts.Cancel ();
+					abort ();
+				} catch {
+					// Ignore; we report the timeout.
 				}
-				return workerTask.Result;
+				throw new WebException (SR.net_timeout, WebExceptionStatus.Timeout);
 			} catch (Exception ex) {
 				throw FlattenException (ex);
 			} finally {
@@ -983,7 +980,7 @@ namespace System.Net
 				WebConnection.Debug ($"HWR GET RESPONSE: Req={ID} {oldCompletion != null}");
 				if (oldCompletion != null) {
 					oldCompletion.ThrowOnError ();
-					if (haveResponse && oldCompletion.IsCompleted)
+					if (haveResponse && oldCompletion.Task.IsCompleted)
 						return webResponse;
 					throw new InvalidOperationException ("Cannot re-call start of asynchronous " +
 								"method while a previous call is still in progress.");
@@ -1052,7 +1049,7 @@ namespace System.Net
 				try {
 					if (mustReadAll)
 						await stream.ReadAllAsync (redirect || ntlm != null, cancellationToken).ConfigureAwait (false);
-					operation.CompleteResponseRead (true);
+					operation.Finish (true);
 					response.Close ();
 				} catch (Exception e) {
 					throwMe = GetWebException (e);

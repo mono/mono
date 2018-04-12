@@ -77,6 +77,8 @@ static gint32 sync_points_ctr,
               heap_starts_ctr,
               heap_ends_ctr,
               heap_roots_ctr,
+              heap_root_registers_ctr,
+              heap_root_unregisters_ctr,
               gc_events_ctr,
               gc_resizes_ctr,
               gc_allocs_ctr,
@@ -390,6 +392,7 @@ typedef struct {
 } MethodInfo;
 
 #define TICKS_PER_SEC 1000000000LL
+#define TICKS_PER_MSEC (TICKS_PER_SEC / 1000)
 
 static uint64_t
 current_time (void)
@@ -852,6 +855,18 @@ emit_method_inner (LogBuffer *logbuffer, void *method)
 	g_assert (logbuffer->cursor <= logbuffer->buf_end && "Why are we writing past the buffer end?");
 }
 
+static void
+inc_method_ref_count (MonoMethod *method)
+{
+	mono_image_addref (mono_class_get_image (mono_method_get_class (method)));
+}
+
+static void
+dec_method_ref_count (MonoMethod *method)
+{
+	mono_image_close (mono_class_get_image (mono_method_get_class (method)));
+}
+
 // The reader lock must be held.
 static void
 register_method_local (MonoMethod *method, MonoJitInfo *ji)
@@ -866,7 +881,9 @@ register_method_local (MonoMethod *method, MonoJitInfo *ji)
 		info->time = current_time ();
 
 		GPtrArray *arr = thread->methods ? thread->methods : (thread->methods = g_ptr_array_new ());
+
 		g_ptr_array_add (arr, info);
+		inc_method_ref_count (method);
 	}
 }
 
@@ -1263,7 +1280,7 @@ gc_root_register (MonoProfiler *prof, const mono_byte *start, size_t size, MonoG
 
 	int name_len = name ? strlen (name) + 1 : 0;
 
-	ENTER_LOG (&heap_roots_ctr, logbuffer,
+	ENTER_LOG (&heap_root_registers_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
 		LEB128_SIZE /* start */ +
 		LEB128_SIZE /* size */ +
@@ -1285,7 +1302,7 @@ gc_root_register (MonoProfiler *prof, const mono_byte *start, size_t size, MonoG
 static void
 gc_root_deregister (MonoProfiler *prof, const mono_byte *start)
 {
-	ENTER_LOG (&heap_roots_ctr, logbuffer,
+	ENTER_LOG (&heap_root_unregisters_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
 		LEB128_SIZE /* start */
 	);
@@ -1348,7 +1365,7 @@ gc_event (MonoProfiler *profiler, MonoProfilerGCEvent ev, uint32_t generation, g
 			log_profiler.do_heap_walk = !(log_profiler.gc_count % log_config.hs_freq_gc);
 			break;
 		case MONO_PROFILER_HEAPSHOT_X_MS:
-			log_profiler.do_heap_walk = (current_time () - log_profiler.last_hs_time) / 1000 * 1000 >= log_config.hs_freq_ms;
+			log_profiler.do_heap_walk = (current_time () - log_profiler.last_hs_time) / TICKS_PER_MSEC >= log_config.hs_freq_ms;
 			break;
 		default:
 			g_assert_not_reached ();
@@ -2272,6 +2289,9 @@ async_walk_stack (MonoMethod *method, MonoDomain *domain, void *base_address, in
 		sample->frames [i].base_address = base_address;
 		sample->frames [i].offset = offset;
 
+		if (method)
+			inc_method_ref_count (method);
+
 		sample->count++;
 	}
 
@@ -3061,7 +3081,7 @@ new_filename (const char* filename)
 }
 
 static MonoProfilerThread *
-profiler_thread_begin (const char *name)
+profiler_thread_begin (const char *name, gboolean send)
 {
 	MonoProfilerThread *thread = init_thread (FALSE);
 
@@ -3084,6 +3104,12 @@ profiler_thread_begin (const char *name)
 	mono_error_assert_ok (error);
 
 	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
+
+	if (!send) {
+		dump_buffer (thread->buffer);
+		init_buffer_state (thread);
+	} else
+		send_log_unsafe (FALSE);
 
 	mono_os_sem_post (&log_profiler.attach_threads_sem);
 
@@ -3139,7 +3165,7 @@ add_to_fd_set (fd_set *set, int fd, int *max_fd)
 static void *
 helper_thread (void *arg)
 {
-	MonoProfilerThread *thread = profiler_thread_begin ("Profiler Helper");
+	MonoProfilerThread *thread = profiler_thread_begin ("Profiler Helper", TRUE);
 
 	GArray *command_sockets = g_array_new (FALSE, FALSE, sizeof (int));
 
@@ -3362,6 +3388,7 @@ handle_writer_queue_entry (void)
 			wrote_methods = TRUE;
 
 		free_info:
+			dec_method_ref_count (info->method);
 			g_free (info);
 		}
 
@@ -3390,7 +3417,7 @@ writer_thread (void *arg)
 {
 	dump_header ();
 
-	MonoProfilerThread *thread = profiler_thread_begin ("Profiler Writer");
+	MonoProfilerThread *thread = profiler_thread_begin ("Profiler Writer", FALSE);
 
 	while (mono_atomic_load_i32 (&log_profiler.run_writer_thread)) {
 		mono_os_sem_wait (&log_profiler.writer_queue_sem, MONO_SEM_FLAGS_NONE);
@@ -3445,7 +3472,12 @@ handle_dumper_queue_entry (void)
 				MonoJitInfo *ji = mono_jit_info_table_find (domain, address);
 
 				if (ji)
-					sample->frames [i].method = mono_jit_info_get_method (ji);
+					method = mono_jit_info_get_method (ji);
+
+				if (method)
+					inc_method_ref_count (method);
+
+				sample->frames [i].method = method;
 			}
 		}
 
@@ -3480,6 +3512,13 @@ handle_dumper_queue_entry (void)
 
 		EXIT_LOG;
 
+		for (int i = 0; i < sample->count; ++i) {
+			MonoMethod *method = sample->frames [i].method;
+
+			if (method)
+				dec_method_ref_count (method);
+		}
+
 		mono_thread_hazardous_try_free (sample, reuse_sample_hit);
 
 		dump_unmanaged_coderefs ();
@@ -3491,7 +3530,7 @@ handle_dumper_queue_entry (void)
 static void *
 dumper_thread (void *arg)
 {
-	MonoProfilerThread *thread = profiler_thread_begin ("Profiler Dumper");
+	MonoProfilerThread *thread = profiler_thread_begin ("Profiler Dumper", TRUE);
 
 	while (mono_atomic_load_i32 (&log_profiler.run_dumper_thread)) {
 		/*
@@ -3879,6 +3918,8 @@ runtime_initialized (MonoProfiler *profiler)
 	register_counter ("Event: Heap starts", &heap_starts_ctr);
 	register_counter ("Event: Heap ends", &heap_ends_ctr);
 	register_counter ("Event: Heap roots", &heap_roots_ctr);
+	register_counter ("Event: Heap root registers", &heap_root_registers_ctr);
+	register_counter ("Event: Heap root unregisters", &heap_root_unregisters_ctr);
 	register_counter ("Event: GC events", &gc_events_ctr);
 	register_counter ("Event: GC resizes", &gc_resizes_ctr);
 	register_counter ("Event: GC allocations", &gc_allocs_ctr);
@@ -4105,7 +4146,7 @@ mono_profiler_init_log (const char *desc)
 	mono_profiler_set_runtime_shutdown_end_callback (handle, log_shutdown);
 	mono_profiler_set_runtime_initialized_callback (handle, runtime_initialized);
 
-	mono_profiler_set_gc_event2_callback (handle, gc_event);
+	mono_profiler_set_gc_event_callback (handle, gc_event);
 
 	mono_profiler_set_thread_started_callback (handle, thread_start);
 	mono_profiler_set_thread_exited_callback (handle, thread_end);
@@ -4162,6 +4203,7 @@ mono_profiler_init_log (const char *desc)
 		mono_profiler_set_gc_finalizing_callback (handle, finalize_begin);
 		mono_profiler_set_gc_finalized_callback (handle, finalize_end);
 		mono_profiler_set_gc_finalizing_object_callback (handle, finalize_object_begin);
+		mono_profiler_set_gc_finalized_object_callback (handle, finalize_object_end);
 	}
 
 	//On Demand heapshot uses the finalizer thread to force a collection and thus a heapshot
@@ -4181,6 +4223,7 @@ mono_profiler_init_log (const char *desc)
 	}
 
 	mono_profiler_enable_allocations ();
+	mono_profiler_enable_clauses ();
 	mono_profiler_enable_sampling (handle);
 
 	/*

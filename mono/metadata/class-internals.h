@@ -729,9 +729,9 @@ typedef struct {
 	gint32 security_depth;
 	gint32 unused;
 	/* Threadpool */
+	gint32 threadpool_threads;
 	gint64 threadpool_workitems;
 	gint64 threadpool_ioworkitems;
-	gint32 threadpool_threads;
 	gint32 threadpool_iothreads;
 } MonoPerfCounters;
 
@@ -944,6 +944,7 @@ typedef struct {
 	MonoClass *customattribute_data_class;
 	MonoClass *critical_finalizer_object; /* MAYBE NULL */
 	MonoClass *generic_ireadonlylist_class;
+	MonoClass *generic_ienumerator_class;
 	MonoClass *threadpool_wait_callback_class;
 	MonoMethod *threadpool_perform_wait_callback_method;
 	MonoClass *console_class;
@@ -1244,10 +1245,10 @@ gpointer
 mono_ldtoken_checked (MonoImage *image, guint32 token, MonoClass **handle_class, MonoGenericContext *context, MonoError *error);
 
 MonoImage *
-get_image_for_generic_param (MonoGenericParam *param);
+mono_get_image_for_generic_param (MonoGenericParam *param);
 
 char *
-make_generic_name_string (MonoImage *image, int num);
+mono_make_generic_name_string (MonoImage *image, int num);
 
 MonoClass *
 mono_class_load_from_name (MonoImage *image, const char* name_space, const char *name) MONO_LLVM_INTERNAL;
@@ -1413,8 +1414,16 @@ mono_type_has_exceptions (MonoType *type);
 void
 mono_class_set_nonblittable (MonoClass *klass);
 
+gboolean
+mono_class_publish_gc_descriptor (MonoClass *klass, MonoGCDescriptor gc_descr);
+
 void
 mono_class_compute_gc_descriptor (MonoClass *klass);
+
+#ifndef DISABLE_REMOTING
+void
+mono_class_contextbound_bit_offset (int* byte_offset_out, guint8* mask_out);
+#endif
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

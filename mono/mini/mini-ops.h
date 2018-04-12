@@ -210,6 +210,7 @@ MINI_OP(OP_BR,         "br", NONE, NONE, NONE)
 MINI_OP(OP_JMP,        "jmp", NONE, NONE, NONE)
 /* Same as OP_JMP, but the passing of arguments is done similarly to calls */
 MINI_OP(OP_TAILCALL,   "tailcall", NONE, NONE, NONE)
+MINI_OP(OP_TAILCALL_MEMBASE, "tailcall_membase", NONE, IREG, NONE)
 MINI_OP(OP_BREAK,      "break", NONE, NONE, NONE)
 
 MINI_OP(OP_CEQ,   "ceq", IREG, NONE, NONE)
@@ -664,6 +665,8 @@ MINI_OP(OP_IMIN, "int_min", IREG, IREG, IREG)
 MINI_OP(OP_IMAX, "int_max", IREG, IREG, IREG)
 MINI_OP(OP_LMIN, "long_min", LREG, LREG, LREG)
 MINI_OP(OP_LMAX, "long_max", LREG, LREG, LREG)
+MINI_OP(OP_RMAX,     "rmax", FREG, FREG, FREG)
+MINI_OP(OP_RPOW,     "rpow", FREG, FREG, FREG)
 
 /* opcodes most architecture have */
 MINI_OP(OP_ADC,     "adc", IREG, IREG, IREG)
@@ -702,6 +705,10 @@ MINI_OP(OP_TAN,     "tan", FREG, FREG, NONE)
 MINI_OP(OP_ATAN,    "atan", FREG, FREG, NONE)
 MINI_OP(OP_SQRT,    "sqrt", FREG, FREG, NONE)
 MINI_OP(OP_ROUND,   "round", FREG, FREG, NONE)
+MINI_OP(OP_SINF,     "sinf", FREG, FREG, NONE)
+MINI_OP(OP_COSF,     "cosf", FREG, FREG, NONE)
+MINI_OP(OP_ABSF,     "absf", FREG, FREG, NONE)
+MINI_OP(OP_SQRTF,    "sqrtf", FREG, FREG, NONE)
 /* to optimize strings */
 MINI_OP(OP_STRLEN, "strlen", IREG, IREG, NONE)
 MINI_OP(OP_NEWARR, "newarr", IREG, IREG, NONE)

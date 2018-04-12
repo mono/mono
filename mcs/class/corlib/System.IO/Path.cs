@@ -952,5 +952,25 @@ namespace System.IO {
             return path1 + path2;
         }
 #endregion
+
+#region Copied from corefx
+
+        public static ReadOnlySpan<char> GetFileName(ReadOnlySpan<char> path)
+        {
+            int root = GetPathRoot(new string (path)).Length;
+
+            // We don't want to cut off "C:\file.txt:stream" (i.e. should be "file.txt:stream")
+            // but we *do* want "C:Foo" => "Foo". This necessitates checking for the root.
+
+            for (int i = path.Length; --i >= 0;)
+            {
+                if (i < root || IsDirectorySeparator(path[i]))
+                    return path.Slice(i + 1, path.Length - i - 1);
+            }
+
+            return path;
+        }
+
+#endregion
 	}
 }

@@ -23,7 +23,7 @@ test-local: Mono.Options-PCL.dll
 clean-local: clean-pcl
 
 Mono.Options-PCL.dll: Mono.Options.dll.sources $(shell cat Mono.Options.dll.sources)
-	$(CSCOMPILE) -target:library -out:$@ -debug+ -d:PCL -r:../lib/$(PROFILE)/System.dll @$<
+	$(CSCOMPILE) -target:library -out:$@ -d:PCL -r:../lib/$(PROFILE)/mscorlib.dll -r:../lib/$(PROFILE)/System.dll @$<
 
 clean-pcl:
 	-rm Mono.Options-PCL.dll

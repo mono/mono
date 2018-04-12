@@ -55,7 +55,7 @@
 MonoStats mono_stats;
 
 /* Statistics */
-extern gint32 inflated_methods_size;
+extern gint32 mono_inflated_methods_size;
 
 /* Function supplied by the runtime to find classes by name using information from the AOT file */
 static MonoGetClassFromName get_class_from_name = NULL;
@@ -994,7 +994,7 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 
 	UnlockedIncrement (&mono_stats.inflated_method_count);
 
-	UnlockedAdd (&inflated_methods_size,  sizeof (MonoMethodInflated));
+	UnlockedAdd (&mono_inflated_methods_size,  sizeof (MonoMethodInflated));
 
 	sig = mono_method_signature (method);
 	if (!sig) {
@@ -1764,7 +1764,7 @@ get_image_for_container (MonoGenericContainer *container)
 }
 
 MonoImage *
-get_image_for_generic_param (MonoGenericParam *param)
+mono_get_image_for_generic_param (MonoGenericParam *param)
 {
 	MonoGenericContainer *container = mono_generic_param_owner (param);
 	g_assert_checked (container);
@@ -1774,7 +1774,7 @@ get_image_for_generic_param (MonoGenericParam *param)
 // Make a string in the designated image consisting of a single integer.
 #define INT_STRING_SIZE 16
 char *
-make_generic_name_string (MonoImage *image, int num)
+mono_make_generic_name_string (MonoImage *image, int num)
 {
 	char *name = (char *)mono_image_alloc0 (image, INT_STRING_SIZE);
 	g_snprintf (name, INT_STRING_SIZE, "%d", num);
@@ -3506,6 +3506,14 @@ mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 				 */
 				return FALSE;
 			}
+			// FIXME: IEnumerator`1 should not be an array special interface.
+			// The correct fix is to make
+			// ((IEnumerable<U>) (new T[] {...})).GetEnumerator()
+			// return an IEnumerator<U> (like .NET does) instead of IEnumerator<T>
+			// and to stop marking IEnumerable`1 as an array_special_interface.
+			if (mono_class_get_generic_type_definition (klass) == mono_defaults.generic_ienumerator_class)
+				return FALSE;
+
 			//XXX we could offset this by having the cast target computed at JIT time
 			//XXX we could go even further and emit a wrapper that would do the extra type check
 			MonoClass *iface_klass = mono_class_from_mono_type (mono_class_get_generic_class (klass)->context.class_inst->type_argv [0]);
@@ -5228,14 +5236,11 @@ can_access_type (MonoClass *access_klass, MonoClass *member_klass)
 	if (is_nesting_type (access_klass, member_klass) || (m_class_get_nested_in (access_klass) && is_nesting_type (m_class_get_nested_in (access_klass), member_klass)))
 		return TRUE;
 
-	MonoClass *member_klass_nested_in = m_class_get_nested_in (member_klass);
-	if (member_klass_nested_in && !can_access_type (access_klass, member_klass_nested_in))
-		return FALSE;
-
 	/*Non nested type with nested visibility. We just fail it.*/
 	if (access_level >= TYPE_ATTRIBUTE_NESTED_PRIVATE && access_level <= TYPE_ATTRIBUTE_NESTED_FAM_OR_ASSEM && m_class_get_nested_in (member_klass) == NULL)
 		return FALSE;
 
+	MonoClass *member_klass_nested_in = m_class_get_nested_in (member_klass);
 	switch (access_level) {
 	case TYPE_ATTRIBUTE_NOT_PUBLIC:
 		return can_access_internals (access_klass_assembly, member_klass_assembly);
@@ -5244,16 +5249,16 @@ can_access_type (MonoClass *access_klass, MonoClass *member_klass)
 		return TRUE;
 
 	case TYPE_ATTRIBUTE_NESTED_PUBLIC:
-		return TRUE;
+		return member_klass_nested_in && can_access_type (access_klass, member_klass_nested_in);
 
 	case TYPE_ATTRIBUTE_NESTED_PRIVATE:
-		return is_nesting_type (member_klass, access_klass);
+		return is_nesting_type (member_klass, access_klass) && member_klass_nested_in && can_access_type (access_klass, member_klass_nested_in);
 
 	case TYPE_ATTRIBUTE_NESTED_FAMILY:
 		return mono_class_has_parent_and_ignore_generics (access_klass, m_class_get_nested_in (member_klass)); 
 
 	case TYPE_ATTRIBUTE_NESTED_ASSEMBLY:
-		return can_access_internals (access_klass_assembly, member_klass_assembly);
+		return can_access_internals (access_klass_assembly, member_klass_assembly) && member_klass_nested_in && can_access_type (access_klass, member_klass_nested_in);
 
 	case TYPE_ATTRIBUTE_NESTED_FAM_AND_ASSEM:
 		return can_access_internals (access_klass_assembly, m_class_get_image (member_klass_nested_in)->assembly) &&

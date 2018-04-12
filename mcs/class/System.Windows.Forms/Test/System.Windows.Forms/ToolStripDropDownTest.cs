@@ -112,8 +112,11 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("System.Windows.Forms.FlowLayoutSettings", ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.Flow).ToString (), "A1");
 			Assert.AreEqual (null, ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.HorizontalStackWithOverflow), "A2");
 			Assert.AreEqual (null, ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.StackWithOverflow), "A3");
-			//Assert.AreEqual ("System.Windows.Forms.TableLayoutSettings", ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.Table).ToString (), "A4");
+			Assert.AreEqual ("System.Windows.Forms.TableLayoutSettings", ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.Table).ToString (), "A4");
 			Assert.AreEqual (null, ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.VerticalStackWithOverflow), "A5");
+
+			FlowLayoutSettings flow_settings = (FlowLayoutSettings) ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.Flow);
+			Assert.AreEqual (FlowDirection.TopDown, flow_settings.FlowDirection, "A6");
 		}
 
 		//[Test]

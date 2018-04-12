@@ -152,9 +152,13 @@ MONO_API_ASSEMBLIES_IGNORED := $(addprefix $(topdir)class/lib/$(PROFILE)/, Mono.
 MONO_API_ASSEMBLIES := $(filter-out $(MONO_API_ASSEMBLIES_IGNORED), $(wildcard $(topdir)class/lib/$(PROFILE)/*.dll)) $(wildcard $(topdir)class/lib/$(PROFILE)/Facades/*.dll)
 MONO_API_ASSEMBLIES_CS := $(MONO_API_ASSEMBLIES:$(topdir)class/lib/$(PROFILE)/%.dll=$(MONO_API_SNAPSHOT_PROFILE_PATH)%.cs)
 
-$(MONO_API_SNAPSHOT_PROFILE_PATH)%.cs: $(topdir)class/lib/$(PROFILE)/%.dll $(GENAPI) $(MONO_API_SNAPSHOT_PATH)profiles/license-header.txt
+apidiff/ignored-attr.txt:
 	@mkdir -p $(dir $@)
-	$(Q) MONO_PATH=$(topdir)class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(GENAPI) -libPath:$(topdir)class/lib/$(PROFILE),$(topdir)class/lib/$(PROFILE)/Facades -out:$(dir $@) -headerFile:$(MONO_API_SNAPSHOT_PATH)profiles/license-header.txt -assemblyAttributes -typeForwardedTo -assemblyVersion -assembly:$< || echo "Couldn't process assembly." > $@
+	@echo "T:System.Runtime.CompilerServices.CompilerGeneratedAttribute" > $@
+
+$(MONO_API_SNAPSHOT_PROFILE_PATH)%.cs: $(topdir)class/lib/$(PROFILE)/%.dll $(GENAPI) $(MONO_API_SNAPSHOT_PATH)profiles/license-header.txt apidiff/ignored-attr.txt
+	@mkdir -p $(dir $@)
+	$(Q) MONO_PATH=$(topdir)class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(GENAPI) -libPath:$(topdir)class/lib/$(PROFILE),$(topdir)class/lib/$(PROFILE)/Facades -out:$(dir $@) -headerFile:$(MONO_API_SNAPSHOT_PATH)profiles/license-header.txt -assemblyAttributes -typeForwardedTo -assemblyVersion -excludeAttributesList:apidiff/ignored-attr.txt -assembly:$< || echo "Couldn't process assembly." > $@
 
 mono-api-current: $(MONO_API_ASSEMBLIES_CS)
 
@@ -175,3 +179,11 @@ mono-api-diff:
 	@mkdir -p apidiff
 	$(Q) sed -e "/@diffdata@/r temp.patch" -e "/@diffdata@/d" -e "s/@title@/Public API Diff/g" -e "s/@description@/If the changes are intentional, run <code>make -C mcs mono-api-diff<\/code> locally and commit changes in external\/api-snapshot./g" diff.html.in > apidiff/index.html
 	$(Q) if [ -s temp.patch ]; then echo "Error: Found public API differences, see mcs/apidiff/index.html. If the changes are intentional, please go to external/api-snapshot and commit them."; rm -f temp.patch; exit 1; else echo "No differences found."; rm -f temp.patch; fi
+
+mono-csproj-diff:
+	@echo "Generating csproj diff..."
+	$(Q) git add -A "*.csproj" $(topdir)../bcl.sln
+	$(Q) git diff --no-renames HEAD "*.csproj" $(topdir)../bcl.sln > $(abspath $(topdir))/temp.patch
+	@mkdir -p csprojdiff
+	$(Q) sed -e "/@diffdata@/r temp.patch" -e "/@diffdata@/d" -e "s/@title@/Project Files Diff/g" -e "s/@description@/Use <code>@monojenkins commit csproj<\/code> to commit them./g" diff.html.in > csprojdiff/index.html
+	$(Q) if [ -s temp.patch ]; then echo "Error: Found csproj differences, see mcs/csprojdiff/index.html. If the changes are intentional, please commit them."; rm -f temp.patch; exit 1; else echo "No differences found."; rm -f temp.patch; fi

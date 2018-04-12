@@ -179,13 +179,19 @@ namespace System.Net
 
 				WebConnection.Debug ($"{ME} WRITE ASYNC EX: {ex.Message}");
 
-				if (ex is SocketException)
+				var oldError = Operation.CheckDisposed (cancellationToken);
+				if (oldError != null)
+					ex = oldError.SourceException;
+				else if (ex is SocketException)
 					ex = new IOException ("Error writing request", ex);
 
 				Operation.CompleteRequestWritten (this, ex);
 
 				pendingWrite = null;
 				completion.TrySetException (ex);
+
+				if (oldError != null)
+					oldError.Throw ();
 				throw;
 			}
 		}
@@ -237,12 +243,7 @@ namespace System.Net
 				}
 			}
 
-			try {
-				await InnerStream.WriteAsync (buffer, offset, size, cancellationToken).ConfigureAwait (false);
-			} catch {
-				if (!IgnoreIOErrors)
-					throw;
-			}
+			await InnerStream.WriteAsync (buffer, offset, size, cancellationToken).ConfigureAwait (false);
 		}
 
 		void CheckWriteOverflow (long contentLength, long totalWritten, long size)
@@ -370,27 +371,28 @@ namespace System.Net
 
 		async Task WriteChunkTrailer ()
 		{
-			using (var cts = new CancellationTokenSource ()) {
+			var cts = new CancellationTokenSource ();
+			try {
 				cts.CancelAfter (WriteTimeout);
-				var timeoutTask = Task.Delay (WriteTimeout);
+				var timeoutTask = Task.Delay (WriteTimeout, cts.Token);
 				while (true) {
 					var completion = new WebCompletionSource ();
 					var oldCompletion = Interlocked.CompareExchange (ref pendingWrite, completion, null);
 					if (oldCompletion == null)
 						break;
-					var oldWriteTask = oldCompletion.WaitForCompletion (true);
+					var oldWriteTask = oldCompletion.WaitForCompletion ();
 					var ret = await Task.WhenAny (timeoutTask, oldWriteTask).ConfigureAwait (false);
 					if (ret == timeoutTask)
 						throw new WebException ("The operation has timed out.", WebExceptionStatus.Timeout);
 				}
 
-				try {
-					await WriteChunkTrailer_inner (cts.Token).ConfigureAwait (false);
-				} catch {
-					// Intentionally eating exceptions.
-				} finally {
-					pendingWrite = null;
-				}
+				await WriteChunkTrailer_inner (cts.Token).ConfigureAwait (false);
+			} catch {
+				// Intentionally eating exceptions.
+			} finally {
+				pendingWrite = null;
+				cts.Cancel ();
+				cts.Dispose ();
 			}
 		}
 

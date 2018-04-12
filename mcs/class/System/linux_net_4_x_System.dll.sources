@@ -14,3 +14,4 @@
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Open.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Read.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Close.cs
+../../../external/corefx/src/Common/src/System/Net/ContextAwareResult.Unix.cs

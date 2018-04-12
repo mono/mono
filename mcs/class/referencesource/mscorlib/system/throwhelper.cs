@@ -187,6 +187,21 @@ namespace System {
         {
             throw GetKeyNotFoundException(key);
         }
+
+        internal static void ThrowInvalidTypeWithPointersNotSupported(Type targetType)
+        {
+            throw new ArgumentException(SR.Format(SR.Argument_InvalidTypeWithPointersNotSupported, targetType));
+        }
+
+        internal static void ThrowInvalidOperationException_ConcurrentOperationsNotSupported()
+        {
+            throw GetInvalidOperationException("Operations that change non-concurrent collections must have exclusive access. A concurrent update was performed on this collection and corrupted its state. The collection's state is no longer correct.");
+        }
+
+        internal static InvalidOperationException GetInvalidOperationException(string str)
+        {
+            return new InvalidOperationException(str);
+        }
 #endif
 
         // Allow nulls for reference types and Nullable<U>, but not for value types.
@@ -305,6 +320,23 @@ namespace System {
             }
 
             return argumentName;
+        }
+
+        private static ArgumentOutOfRangeException GetArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
+        {
+            return new ArgumentOutOfRangeException(GetArgumentName(argument), resource.ToString());
+        }
+
+        internal static void ThrowStartIndexArgumentOutOfRange_ArgumentOutOfRange_Index()
+        {
+            throw GetArgumentOutOfRangeException(ExceptionArgument.startIndex,
+                                                 ExceptionResource.ArgumentOutOfRange_Index);
+        }
+
+        internal static void ThrowCountArgumentOutOfRange_ArgumentOutOfRange_Count()
+        {
+            throw GetArgumentOutOfRangeException(ExceptionArgument.count,
+                                                 ExceptionResource.ArgumentOutOfRange_Count);
         }
 
         //
@@ -547,7 +579,20 @@ namespace System {
         comparer,
         comparable,
         exceptions,
-        exception
+        exception,
+        action,
+        comparison,
+        startSegment,
+        endSegment,
+        endIndex,
+        task,
+        source,
+        state,
+        culture,
+        destination,
+        byteOffset,
+        minimumBufferSize,
+        offset
 #endif
     }
 

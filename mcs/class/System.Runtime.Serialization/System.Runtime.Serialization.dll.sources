@@ -16,3 +16,7 @@ ReferenceSources/XmlDataContract_static.cs
 ReferenceSources/XmlFormatReaderGenerator_static.cs
 ReferenceSources/XmlFormatWriterGenerator_static.cs
 
+ReferenceSources/DataContractSerializerExtensions.cs
+ReferenceSources/NotImplemented.cs
+
+../../../external/corefx/src/System.Runtime.Serialization.Primitives/src/System/Runtime/Serialization/ISerializationSurrogateProvider.cs

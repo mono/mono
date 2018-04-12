@@ -262,6 +262,7 @@ OPDEF(MINT_BLT_UN_R8_S, "blt.un.r8.s", 2, MintOpShortBranch)
 OPDEF(MINT_SWITCH, "switch", 0, MintOpSwitch)
 
 OPDEF(MINT_LDSTR, "ldstr", 2, MintOpMethodToken) /* not really */
+OPDEF(MINT_LDSTR_TOKEN, "ldstr.token", 2, MintOpMethodToken) /* not really */
 
 OPDEF(MINT_CALL, "call", 2, MintOpMethodToken) 
 OPDEF(MINT_VCALL, "vcall", 2, MintOpMethodToken) 
@@ -330,12 +331,14 @@ OPDEF(MINT_ADD_I8, "add.i8", 1, MintOpNoArgs)
 OPDEF(MINT_ADD_R8, "add.r8", 1, MintOpNoArgs)
 
 OPDEF(MINT_ADD1_I4, "add1.i4", 1, MintOpNoArgs)
+OPDEF(MINT_ADD1_I8, "add1.i8", 1, MintOpNoArgs)
 
 OPDEF(MINT_SUB_I4, "sub.i4", 1, MintOpNoArgs)
 OPDEF(MINT_SUB_I8, "sub.i8", 1, MintOpNoArgs)
 OPDEF(MINT_SUB_R8, "sub.r8", 1, MintOpNoArgs)
 
 OPDEF(MINT_SUB1_I4, "sub1.i4", 1, MintOpNoArgs)
+OPDEF(MINT_SUB1_I8, "sub1.i8", 1, MintOpNoArgs)
 
 OPDEF(MINT_MUL_I4, "mul.i4", 1, MintOpNoArgs)
 OPDEF(MINT_MUL_I8, "mul.i8", 1, MintOpNoArgs)

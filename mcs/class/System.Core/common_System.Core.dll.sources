@@ -289,3 +289,5 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.Generated.cs
+
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/IncrementalHash.net46.cs

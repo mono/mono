@@ -83,7 +83,7 @@ _ios-$(1)_CPPFLAGS= \
 	$$(ios_CPPFLAGS) \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
-	-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -DDISABLE_PROCESS_HANDLING=1 -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
+	-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
 	$$(ios-$(1)_CPPFLAGS)
 
 _ios-$(1)_LDFLAGS= \
@@ -111,7 +111,7 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--enable-dtrace=no \
 	--enable-icall-export \
 	--enable-maintainer-mode \
-	--enable-minimal=ssa,com,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,remoting,shared_perfcounters \
+	--enable-minimal=ssa,com,interpreter,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,remoting,shared_perfcounters \
 	--with-lazy-gc-thread-creation=yes \
 	--with-monotouch \
 	--with-tls=pthread \
@@ -297,17 +297,28 @@ $(eval $(call iOSSimulatorTemplate,sim64,x86_64))
 $(eval $(call iOSSimulatorTemplate,simtv,x86_64))
 $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 
-LLVM_REV=3b82b3c9041eb997f627f881a67d20be37264e9c
+ifndef IGNORE_PACKAGE_LLVM
 
 # Download a prebuilt llvm
-.stamp-ios-llvm-$(LLVM_REV):
-	./download-llvm.sh $(LLVM_REV)
+.stamp-ios-llvm-$(LLVM_HASH):
+	./download-llvm.sh $(LLVM_HASH)
 	touch $@
 
-build-ios-llvm: .stamp-ios-llvm-$(LLVM_REV)
+build-ios-llvm: .stamp-ios-llvm-$(LLVM_HASH)
 
 clean-ios-llvm:
-	$(RM) -rf ../out/ios-llvm64 ../out/ios-llvm32 .stamp-ios-llvm-$(LLVM_REV)
+	$(RM) -rf ../out/ios-llvm64 ../out/ios-llvm32 .stamp-ios-llvm-$(LLVM_HASH)
+
+else
+
+build-ios-llvm: package-llvm-llvm64 package-llvm-llvm32
+	ln -sf ../out/llvm-llvm32 ../out/ios-llvm32
+	ln -sf ../out/llvm-llvm64 ../out/ios-llvm64
+
+clean-ios-llvm: clean-llvm-llvm64 clean-llvm-llvm32
+	$(RM) -rf ../out/{ios-llvm32,ios-llvm64}
+
+endif
 
 ##
 # Parameters:
@@ -344,6 +355,10 @@ _ios-$(1)_CXXFLAGS= \
 	-stdlib=libc++ \
 	$$(ios-$(1)_CXXFLAGS)
 
+_ios-$(1)_CPPFLAGS= \
+	-DMONOTOUCH=1 \
+	$$(ios-$(1)_CPPFLAGS)
+
 _ios-$(1)_LDFLAGS= \
 	$$(ios_LDFLAGS) \
 	-stdlib=libc++ \
@@ -369,15 +384,15 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-.stamp-ios-$(1)-configure-$$(CONFIGURATION): | build-ios-llvm
+.stamp-ios-$(1)-$$(CONFIGURATION)-configure: | build-ios-llvm
 
-$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-configure-$$(CONFIGURATION) $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
+$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
 	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \
 		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_32 \
 			mono --arch=32 --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
-				--gen-ios --abi $$(_ios_$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
+				--gen-ios --abi $$(_ios-$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
 
-build-ios-$(1)-$$(CONFIGURATION): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
+build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
 
 $$(eval $$(call RuntimeTemplate,ios-$(1)))
 

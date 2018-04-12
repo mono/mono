@@ -289,7 +289,7 @@ mono_exception_from_name_two_strings_checked (MonoImage *image, const char *name
  *
  * \returns the initialized exception instance.
  */
-MonoExceptionHandle
+static MonoExceptionHandle
 mono_exception_new_by_name_msg (MonoImage *image, const char *name_space,
 			      const char *name, const char *msg, MonoError *error)
 {
@@ -520,12 +520,6 @@ mono_get_exception_invalid_operation (const char *msg)
 					"InvalidOperationException", msg);
 }
 
-MonoExceptionHandle
-mono_exception_new_invalid_operation (const char *msg, MonoError *error)
-{
-	return mono_exception_new_by_name_msg (mono_get_corlib (), "System", "InvalidOperationException", msg, error);
-}
-
 /**
  * mono_get_exception_index_out_of_range:
  * \returns a new instance of the \c System.IndexOutOfRangeException
@@ -683,6 +677,23 @@ mono_get_exception_argument (const char *arg, const char *msg)
 	return ex;
 }
 
+TYPED_HANDLE_DECL (MonoArgumentException);
+
+MonoExceptionHandle
+mono_exception_new_argument (const char *arg, const char *msg, MonoError *error)
+{
+	MonoExceptionHandle ex;
+	ex = mono_exception_new_by_name_msg (mono_get_corlib (), "System", "ArgumentException", msg, error);
+
+	if (arg && !MONO_HANDLE_IS_NULL (ex)) {
+		MonoArgumentExceptionHandle argex = (MonoArgumentExceptionHandle)ex;
+		MonoStringHandle arg_str = mono_string_new_handle (MONO_HANDLE_DOMAIN (ex), arg, error);
+		MONO_HANDLE_SET (argex, param_name, arg_str);
+	}
+
+	return ex;
+}
+
 /**
  * mono_get_exception_argument_out_of_range:
  * \param arg the name of the out of range argument.
@@ -712,12 +723,6 @@ mono_get_exception_argument_out_of_range (const char *arg)
  * \param msg the message to present to the user
  * \returns a new instance of the \c System.Threading.ThreadStateException
  */
-MonoExceptionHandle
-mono_exception_new_thread_state (const char *msg, MonoError *error)
-{
-	return mono_exception_new_by_name_msg (mono_get_corlib (), "System.Threading", "ThreadStateException", msg, error);
-}
-
 MonoException *
 mono_get_exception_thread_state (const char *msg)
 {

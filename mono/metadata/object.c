@@ -1060,6 +1060,106 @@ ves_icall_string_alloc (int length)
 	return str;
 }
 
+#define BITMAP_EL_SIZE (sizeof (gsize) * 8)
+
+/* LOCKING: Acquires the loader lock */
+/*
+ * Sets the following fields in KLASS:
+ * - gc_desc
+ * - gc_descr_inited
+ */
+void
+mono_class_compute_gc_descriptor (MonoClass *klass)
+{
+	MONO_REQ_GC_NEUTRAL_MODE;
+
+	int max_set = 0;
+	gsize *bitmap;
+	gsize default_bitmap [4] = {0};
+	MonoGCDescriptor gc_descr;
+
+	if (!m_class_is_inited (klass))
+		mono_class_init (klass);
+
+	if (m_class_is_gc_descr_inited (klass))
+		return;
+
+	bitmap = default_bitmap;
+	if (klass == mono_defaults.string_class) {
+		gc_descr = mono_gc_make_descr_for_string (bitmap, 2);
+	} else if (m_class_get_rank (klass)) {
+		MonoClass *klass_element_class = m_class_get_element_class (klass);
+		mono_class_compute_gc_descriptor (klass_element_class);
+		if (MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (klass_element_class))) {
+			gsize abm = 1;
+			gc_descr = mono_gc_make_descr_for_array (m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY, &abm, 1, sizeof (gpointer));
+			/*printf ("new array descriptor: 0x%x for %s.%s\n", class->gc_descr,
+				class->name_space, class->name);*/
+		} else {
+			/* remove the object header */
+			bitmap = mono_class_compute_bitmap (klass_element_class, default_bitmap, sizeof (default_bitmap) * 8, - (int)(sizeof (MonoObject) / sizeof (gpointer)), &max_set, FALSE);
+			gc_descr = mono_gc_make_descr_for_array (m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY, bitmap, mono_array_element_size (klass) / sizeof (gpointer), mono_array_element_size (klass));
+			/*printf ("new vt array descriptor: 0x%x for %s.%s\n", class->gc_descr,
+				class->name_space, class->name);*/
+		}
+	} else {
+		/*static int count = 0;
+		if (count++ > 58)
+			return;*/
+		bitmap = mono_class_compute_bitmap (klass, default_bitmap, sizeof (default_bitmap) * 8, 0, &max_set, FALSE);
+		/*
+		if (class->gc_descr == MONO_GC_DESCRIPTOR_NULL)
+			g_print ("disabling typed alloc (%d) for %s.%s\n", max_set, class->name_space, class->name);
+		*/
+		/*printf ("new descriptor: %p 0x%x for %s.%s\n", class->gc_descr, bitmap [0], class->name_space, class->name);*/
+
+		if (m_class_has_weak_fields (klass)) {
+			gsize *weak_bitmap = NULL;
+			int weak_bitmap_nbits = 0;
+
+			weak_bitmap = (gsize *)mono_class_alloc0 (klass, m_class_get_instance_size (klass) / sizeof (gsize));
+			if (mono_class_has_static_metadata (klass)) {
+				for (MonoClass *p = klass; p != NULL; p = m_class_get_parent (p)) {
+					gpointer iter = NULL;
+					guint32 first_field_idx = mono_class_get_first_field_idx (p);
+					MonoClassField *field;
+
+					MonoClassField *p_fields = m_class_get_fields (p);
+					MonoImage *p_image = m_class_get_image (p);
+					while ((field = mono_class_get_fields (p, &iter))) {
+						guint32 field_idx = first_field_idx + (field - p_fields);
+						if (MONO_TYPE_IS_REFERENCE (field->type) && mono_assembly_is_weak_field (p_image, field_idx + 1)) {
+							int pos = field->offset / sizeof (gpointer);
+							if (pos + 1 > weak_bitmap_nbits)
+								weak_bitmap_nbits = pos + 1;
+							weak_bitmap [pos / BITMAP_EL_SIZE] |= ((gsize)1) << (pos % BITMAP_EL_SIZE);
+						}
+					}
+				}
+			}
+
+			for (int pos = 0; pos < weak_bitmap_nbits; ++pos) {
+				if (weak_bitmap [pos / BITMAP_EL_SIZE] & ((gsize)1) << (pos % BITMAP_EL_SIZE)) {
+					/* Clear the normal bitmap so these refs don't keep an object alive */
+					bitmap [pos / BITMAP_EL_SIZE] &= ~(((gsize)1) << (pos % BITMAP_EL_SIZE));
+				}
+			}
+
+			mono_loader_lock ();
+			mono_class_set_weak_bitmap (klass, weak_bitmap_nbits, weak_bitmap);
+			mono_loader_unlock ();
+		}
+
+		gc_descr = mono_gc_make_descr_for_object (bitmap, max_set + 1, m_class_get_instance_size (klass));
+	}
+
+	if (bitmap != default_bitmap)
+		g_free (bitmap);
+
+	/* Publish the data */
+	mono_class_publish_gc_descriptor (klass, gc_descr);
+}
+
 /**
  * field_is_special_static:
  * @fklass: The MonoClass to look up.
@@ -6358,15 +6458,8 @@ mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length,
 	return o;
 }
 
-/**
- * mono_string_new:
- * \param text a pointer to a UTF-8 string
- * \deprecated Use \c mono_string_new_checked in new code.
- * This function asserts if it cannot allocate a new string.
- * \returns A newly created string object which contains \p text.
- */
-MonoString*
-mono_string_new (MonoDomain *domain, const char *text)
+static MonoString*
+mono_string_new_internal (MonoDomain *domain, const char *text)
 {
 	ERROR_DECL (error);
 	MonoString *res = NULL;
@@ -6381,6 +6474,19 @@ mono_string_new (MonoDomain *domain, const char *text)
 			mono_error_cleanup (error);
 	}
 	return res;
+}
+
+/**
+ * mono_string_new:
+ * \param text a pointer to a UTF-8 string
+ * \deprecated Use \c mono_string_new_checked in new code.
+ * This function asserts if it cannot allocate a new string.
+ * \returns A newly created string object which contains \p text.
+ */
+MonoString*
+mono_string_new (MonoDomain *domain, const char *text)
+{
+	return mono_string_new_internal (domain, text);
 }
 
 /**
@@ -6486,16 +6592,7 @@ mono_string_new_wrapper (const char *text)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoDomain *domain = mono_domain_get ();
-
-	if (text) {
-		ERROR_DECL (error);
-		MonoString *result = mono_string_new_checked (domain, text, error);
-		mono_error_assert_ok (error);
-		return result;
-	}
-
-	return NULL;
+	return mono_string_new_internal (mono_domain_get (), text);
 }
 
 /**
@@ -7221,15 +7318,10 @@ mono_string_to_utf8 (MonoString *s)
 }
 
 /**
- * mono_string_to_utf8_checked:
- * \param s a \c System.String
- * \param error a \c MonoError.
- * Converts a \c MonoString to its UTF-8 representation. May fail; check 
- * \p error to determine whether the conversion was successful.
- * The resulting buffer should be freed with \c mono_free().
+ * mono_utf16_to_utf8:
  */
 char *
-mono_string_to_utf8_checked (MonoString *s, MonoError *error)
+mono_utf16_to_utf8 (const gunichar2 *s, gsize slength, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -7242,25 +7334,49 @@ mono_string_to_utf8_checked (MonoString *s, MonoError *error)
 	if (s == NULL)
 		return NULL;
 
-	if (!s->length)
+	if (!slength)
 		return g_strdup ("");
 
-	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &written, &gerror);
+	as = g_utf16_to_utf8 (s, slength, NULL, &written, &gerror);
 	if (gerror) {
 		mono_error_set_argument (error, "string", "%s", gerror->message);
 		g_error_free (gerror);
 		return NULL;
 	}
 	/* g_utf16_to_utf8  may not be able to complete the conversion (e.g. NULL values were found, #335488) */
-	if (s->length > written) {
+	if (slength > written) {
 		/* allocate the total length and copy the part of the string that has been converted */
-		char *as2 = (char *)g_malloc0 (s->length);
+		char *as2 = (char *)g_malloc0 (slength);
 		memcpy (as2, as, written);
 		g_free (as);
 		as = as2;
 	}
 
 	return as;
+}
+
+/**
+ * mono_string_to_utf8_checked:
+ * \param s a \c System.String
+ * \param error a \c MonoError.
+ * Converts a \c MonoString to its UTF-8 representation. May fail; check
+ * \p error to determine whether the conversion was successful.
+ * The resulting buffer should be freed with \c mono_free().
+ */
+char *
+mono_string_to_utf8_checked (MonoString *s, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	error_init (error);
+
+	if (s == NULL)
+		return NULL;
+
+	if (!s->length)
+		return g_strdup ("");
+
+	return mono_utf16_to_utf8 (mono_string_chars (s), s->length, error);
 }
 
 char *

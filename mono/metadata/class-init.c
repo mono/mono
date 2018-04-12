@@ -37,12 +37,13 @@ gboolean mono_print_vtable = FALSE;
 gboolean mono_align_small_structs = FALSE;
 
 /* Statistics */
-gint32 classes_size;
-gint32 inflated_classes_size, inflated_methods_size;
-gint32 class_def_count, class_gtd_count, class_ginst_count, class_gparam_count, class_array_count, class_pointer_count;
+static gint32 classes_size;
+static gint32 inflated_classes_size;
+gint32 mono_inflated_methods_size;
+static gint32 class_def_count, class_gtd_count, class_ginst_count, class_gparam_count, class_array_count, class_pointer_count;
 
 /* Low level lock which protects data structures in this module */
-mono_mutex_t classes_mutex;
+static mono_mutex_t classes_mutex;
 
 static gboolean class_kind_may_contain_generic_instances (MonoTypeKind kind);
 static int setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite);
@@ -52,7 +53,7 @@ static int generic_array_methods (MonoClass *klass);
 static void setup_generic_array_ifaces (MonoClass *klass, MonoClass *iface, MonoMethod **methods, int pos, GHashTable *cache);
 
 /* This TLS variable points to a GSList of classes which have setup_fields () executing */
-MonoNativeTlsKey setup_fields_tls_id;
+static MonoNativeTlsKey setup_fields_tls_id;
 
 static MonoNativeTlsKey init_pending_tls_id;
 
@@ -1098,7 +1099,7 @@ make_generic_param_class (MonoGenericParam *param)
 	MonoGenericContainer *container = mono_generic_param_owner (param);
 	g_assert_checked (container);
 
-	MonoImage *image = get_image_for_generic_param (param);
+	MonoImage *image = mono_get_image_for_generic_param (param);
 	gboolean is_mvar = container->is_method;
 	gboolean is_anonymous = container->is_anonymous;
 
@@ -1111,7 +1112,7 @@ make_generic_param_class (MonoGenericParam *param)
 		CHECKED_METADATA_WRITE_PTR_EXEMPT ( klass->name , pinfo->name );
 	} else {
 		int n = mono_generic_param_num (param);
-		CHECKED_METADATA_WRITE_PTR_LOCAL ( klass->name , make_generic_name_string (image, n) );
+		CHECKED_METADATA_WRITE_PTR_LOCAL ( klass->name , mono_make_generic_name_string (image, n) );
 	}
 
 	if (is_anonymous) {
@@ -1194,7 +1195,7 @@ make_generic_param_class (MonoGenericParam *param)
 MonoClass *
 mono_class_create_generic_parameter (MonoGenericParam *param)
 {
-	MonoImage *image = get_image_for_generic_param (param);
+	MonoImage *image = mono_get_image_for_generic_param (param);
 	MonoGenericParamInfo *pinfo = mono_generic_param_info (param);
 	MonoClass *klass, *klass2;
 
@@ -3979,7 +3980,7 @@ generic_array_methods (MonoClass *klass)
  * Global pool of interface IDs, represented as a bitset.
  * LOCKING: Protected by the classes lock.
  */
-MonoBitSet *global_interface_bitset = NULL;
+static MonoBitSet *global_interface_bitset = NULL;
 
 /*
  * mono_unload_interface_ids:
@@ -5315,7 +5316,7 @@ mono_class_setup_nested_types (MonoClass *klass)
 
 	nested_classes = NULL;
 	for (l = classes; l; l = l->next)
-		nested_classes = g_list_prepend_image (klass->image, nested_classes, l->data);
+		nested_classes = mono_g_list_prepend_image (klass->image, nested_classes, l->data);
 	g_list_free (classes);
 
 	mono_loader_lock ();
@@ -5324,110 +5325,6 @@ mono_class_setup_nested_types (MonoClass *klass)
 		mono_memory_barrier ();
 		klass->nested_classes_inited = TRUE;
 	}
-	mono_loader_unlock ();
-}
-
-#define BITMAP_EL_SIZE (sizeof (gsize) * 8)
-
-/* LOCKING: Acquires the loader lock */
-/*
- * Sets the following fields in KLASS:
- * - gc_desc
- * - gc_descr_inited
- */
-void
-mono_class_compute_gc_descriptor (MonoClass *klass)
-{
-	MONO_REQ_GC_NEUTRAL_MODE;
-
-	int max_set = 0;
-	gsize *bitmap;
-	gsize default_bitmap [4] = {0};
-	MonoGCDescriptor gc_descr;
-
-	if (!m_class_is_inited (klass))
-		mono_class_init (klass);
-
-	if (m_class_is_gc_descr_inited (klass))
-		return;
-
-	bitmap = default_bitmap;
-	if (klass == mono_defaults.string_class) {
-		gc_descr = mono_gc_make_descr_for_string (bitmap, 2);
-	} else if (m_class_get_rank (klass)) {
-		MonoClass *klass_element_class = m_class_get_element_class (klass);
-		mono_class_compute_gc_descriptor (klass_element_class);
-		if (MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (klass_element_class))) {
-			gsize abm = 1;
-			gc_descr = mono_gc_make_descr_for_array (m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY, &abm, 1, sizeof (gpointer));
-			/*printf ("new array descriptor: 0x%x for %s.%s\n", class->gc_descr,
-				class->name_space, class->name);*/
-		} else {
-			/* remove the object header */
-			bitmap = mono_class_compute_bitmap (klass_element_class, default_bitmap, sizeof (default_bitmap) * 8, - (int)(sizeof (MonoObject) / sizeof (gpointer)), &max_set, FALSE);
-			gc_descr = mono_gc_make_descr_for_array (m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY, bitmap, mono_array_element_size (klass) / sizeof (gpointer), mono_array_element_size (klass));
-			/*printf ("new vt array descriptor: 0x%x for %s.%s\n", class->gc_descr,
-				class->name_space, class->name);*/
-		}
-	} else {
-		/*static int count = 0;
-		if (count++ > 58)
-			return;*/
-		bitmap = mono_class_compute_bitmap (klass, default_bitmap, sizeof (default_bitmap) * 8, 0, &max_set, FALSE);
-		/*
-		if (class->gc_descr == MONO_GC_DESCRIPTOR_NULL)
-			g_print ("disabling typed alloc (%d) for %s.%s\n", max_set, class->name_space, class->name);
-		*/
-		/*printf ("new descriptor: %p 0x%x for %s.%s\n", class->gc_descr, bitmap [0], class->name_space, class->name);*/
-
-		if (m_class_has_weak_fields (klass)) {
-			gsize *weak_bitmap = NULL;
-			int weak_bitmap_nbits = 0;
-
-			weak_bitmap = (gsize *)mono_class_alloc0 (klass, m_class_get_instance_size (klass) / sizeof (gsize));
-			if (mono_class_has_static_metadata (klass)) {
-				for (MonoClass *p = klass; p != NULL; p = m_class_get_parent (p)) {
-					gpointer iter = NULL;
-					guint32 first_field_idx = mono_class_get_first_field_idx (p);
-					MonoClassField *field;
-
-					MonoClassField *p_fields = m_class_get_fields (p);
-					MonoImage *p_image = m_class_get_image (p);
-					while ((field = mono_class_get_fields (p, &iter))) {
-						guint32 field_idx = first_field_idx + (field - p_fields);
-						if (MONO_TYPE_IS_REFERENCE (field->type) && mono_assembly_is_weak_field (p_image, field_idx + 1)) {
-							int pos = field->offset / sizeof (gpointer);
-							if (pos + 1 > weak_bitmap_nbits)
-								weak_bitmap_nbits = pos + 1;
-							weak_bitmap [pos / BITMAP_EL_SIZE] |= ((gsize)1) << (pos % BITMAP_EL_SIZE);
-						}
-					}
-				}
-			}
-
-			for (int pos = 0; pos < weak_bitmap_nbits; ++pos) {
-				if (weak_bitmap [pos / BITMAP_EL_SIZE] & ((gsize)1) << (pos % BITMAP_EL_SIZE)) {
-					/* Clear the normal bitmap so these refs don't keep an object alive */
-					bitmap [pos / BITMAP_EL_SIZE] &= ~((gsize)1) << (pos % BITMAP_EL_SIZE);
-				}
-			}
-
-			mono_loader_lock ();
-			mono_class_set_weak_bitmap (klass, weak_bitmap_nbits, weak_bitmap);
-			mono_loader_unlock ();
-		}
-
-		gc_descr = mono_gc_make_descr_for_object (bitmap, max_set + 1, m_class_get_instance_size (klass));
-	}
-
-	if (bitmap != default_bitmap)
-		g_free (bitmap);
-
-	/* Publish the data */
-	mono_loader_lock ();
-	klass->gc_descr = gc_descr;
-	mono_memory_barrier ();
-	klass->gc_descr_inited = TRUE;
 	mono_loader_unlock ();
 }
 
@@ -5478,10 +5375,34 @@ mono_class_setup_runtime_info (MonoClass *klass, MonoDomain *domain, MonoVTable 
 }
 
 /**
+ * mono_class_create_array_fill_type:
+ *
+ * Returns a \c MonoClass that is used by SGen to fill out nursery fragments before a collection.
+ */
+MonoClass *
+mono_class_create_array_fill_type (void)
+{
+	static MonoClass klass;
+	static gboolean inited = FALSE;
+
+	if (!inited) {
+		klass.element_class = mono_defaults.byte_class;
+		klass.rank = 1;
+		klass.instance_size = MONO_SIZEOF_MONO_ARRAY;
+		klass.sizes.element_size = 1;
+		klass.size_inited = 1;
+		klass.name = "array_filler_type";
+
+		inited = TRUE;
+	}
+	return &klass;
+}
+
+/**
  * mono_classes_init:
  *
  * Initialize the resources used by this module.
- * Known racy counters: `class_gparam_count`, `classes_size` and `inflated_methods_size`
+ * Known racy counters: `class_gparam_count`, `classes_size` and `mono_inflated_methods_size`
  */
 MONO_NO_SANITIZE_THREAD
 void
@@ -5505,7 +5426,7 @@ mono_classes_init (void)
 	mono_counters_register ("MonoClassPointer count",
 							MONO_COUNTER_METADATA | MONO_COUNTER_INT, &class_pointer_count);
 	mono_counters_register ("Inflated methods size",
-							MONO_COUNTER_GENERICS | MONO_COUNTER_INT, &inflated_methods_size);
+							MONO_COUNTER_GENERICS | MONO_COUNTER_INT, &mono_inflated_methods_size);
 	mono_counters_register ("Inflated classes size",
 							MONO_COUNTER_GENERICS | MONO_COUNTER_INT, &inflated_classes_size);
 	mono_counters_register ("MonoClass size",

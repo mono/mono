@@ -10,7 +10,6 @@ net_4_5_dirs := \
 	mono-service	\
 	mono-xsd	\
 	resgen		\
-	gacutil		\
 	wsdl		\
 	xbuild		\
 	csharp		\

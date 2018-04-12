@@ -72,7 +72,7 @@ namespace System.IO {
 		{
 			this.notifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
 			this.enableRaisingEvents = false;
-			this.filter = "*.*";
+			this.filter = "*";
 			this.includeSubdirectories = false;
 			this.internalBufferSize = 8192;
 			this.path = "";
@@ -80,7 +80,7 @@ namespace System.IO {
 		}
 
 		public FileSystemWatcher (string path)
-			: this (path, "*.*")
+			: this (path, "*")
 		{
 		}
 
@@ -102,6 +102,9 @@ namespace System.IO {
 			this.start_requested = false;
 			this.enableRaisingEvents = false;
 			this.filter = filter;
+			if (this.filter == "*.*")
+				this.filter = "*";
+
 			this.includeSubdirectories = false;
 			this.internalBufferSize = 8192;
 			this.notifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
@@ -196,7 +199,7 @@ namespace System.IO {
 		internal SearchPattern2 Pattern {
 			get {
 				if (pattern == null) {
-					if (watcher.GetType () == typeof (KeventWatcher))
+					if (watcher?.GetType () == typeof (KeventWatcher))
 						pattern = new SearchPattern2 (MangledFilter, true); //assume we want to ignore case (OS X)
 					else
 						pattern = new SearchPattern2 (MangledFilter);
@@ -250,10 +253,10 @@ namespace System.IO {
 			get { return filter; }
 			set {
 				if (value == null || value == "")
-					value = "*.*";
+					value = "*";
 
 				if (!string.Equals(filter, value, PathInternal.StringComparison)) {
-					filter = value;
+					filter = value == "*.*" ? "*" : value;
 					pattern = null;
 					mangledFilter = null;
 				}
@@ -386,8 +389,8 @@ namespace System.IO {
 				return;
 
 			try {
-				watcher.StopDispatching (watcher_handle);
-				watcher.Dispose (watcher_handle);
+				watcher?.StopDispatching (watcher_handle);
+				watcher?.Dispose (watcher_handle);
 			} catch (Exception) { }
 
 			watcher_handle = null;
@@ -550,7 +553,7 @@ namespace System.IO {
 				return;
 			if (watcher_handle == null)
 				return;
-			watcher.StartDispatching (watcher_handle);
+			watcher?.StartDispatching (watcher_handle);
 		}
 
 		void Stop ()
@@ -559,7 +562,7 @@ namespace System.IO {
 				return;
 			if (watcher_handle == null)
 				return;
-			watcher.StopDispatching (watcher_handle);
+			watcher?.StopDispatching (watcher_handle);
 		}
 		#endregion // Methods
 

@@ -98,7 +98,8 @@ namespace System.Windows.Forms
 			items = new ObjectCollection (this);
 			DropDownStyle = ComboBoxStyle.DropDown;
 			item_height = FontHeight + 2;
-			background_color = ThemeEngine.Current.ColorControl;
+			background_color = ThemeEngine.Current.ColorWindow;
+			foreground_color = ThemeEngine.Current.ColorWindowText;
 			border_style = BorderStyle.None;
 
 			drop_down_height = default_drop_down_height;
@@ -111,7 +112,9 @@ namespace System.Windows.Forms
 			MouseWheel += new MouseEventHandler (OnMouseWheelCB);
 			MouseEnter += new EventHandler (OnMouseEnter);
 			MouseLeave += new EventHandler (OnMouseLeave);
-			KeyDown +=new KeyEventHandler(OnKeyDownCB);
+			KeyDown += new KeyEventHandler (OnKeyDownCB);
+
+			can_cache_preferred_size = true;
 		}
 
 		#region events
@@ -1111,7 +1114,7 @@ namespace System.Windows.Forms
 		{
 			base.OnHandleCreated (e);
 
-			SetBoundsInternal (Left, Top, Width, PreferredHeight, BoundsSpecified.None);
+			SetBoundsCore (Left, Top, Width, PreferredHeight, BoundsSpecified.None);
 
 			if (textbox_ctrl != null)
 				Controls.AddImplicit (textbox_ctrl);
@@ -2419,6 +2422,7 @@ namespace System.Windows.Forms
 
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
+				SetTopLevel (true);
 
 				this.is_visible = false;
 
@@ -2772,6 +2776,7 @@ namespace System.Windows.Forms
 				if (this.Location.Y + this.Height >= scrn_rect.Bottom)
 					this.Location = new Point (this.Location.X, this.Location.Y - (this.Height + owner.TextArea.Height));
 				Show ();
+				XplatUI.SetOwner (Handle, owner.Handle);
 
 				Refresh ();
 				owner.OnDropDown (EventArgs.Empty);

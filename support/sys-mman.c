@@ -17,7 +17,7 @@
 /* For mincore () */
 #define _DARWIN_C_SOURCE
 #endif
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__OpenBSD__)
 /* For mincore () */
 #define __BSD_VISIBLE 1
 #endif

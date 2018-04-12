@@ -489,7 +489,6 @@ namespace MonoTests.System.Windows.Forms
 				listBox.SelectedIndices.Add (0);
 				Assert.Fail ("#B");
 			} catch (InvalidOperationException e) {
-				Console.WriteLine (e.Message);
 			}
 
 			try {

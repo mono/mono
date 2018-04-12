@@ -22,8 +22,7 @@ pedump_LDADD = 			\
 	$(top_builddir)/mono/utils/libmonoutils.la \
 	$(LLVM_LIBS)			\
 	$(LLVM_LDFLAGS)			\
-	$(GLIB_LIBS)			\
-	$(LIBICONV)
+	$(GLIB_LIBS)
 
 if HOST_DARWIN
 pedump_LDFLAGS=-framework CoreFoundation -framework Foundation

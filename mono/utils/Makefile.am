@@ -48,6 +48,8 @@ monoutils_sources = \
 	mono-log-posix.c	\
 	mono-log-android.c \
 	mono-log-darwin.c \
+	mono-merp.c	\
+	mono-merp.h	\
 	mono-internal-hash.c	\
 	mono-internal-hash.h	\
 	mono-io-portability.c 	\
@@ -111,7 +113,6 @@ monoutils_sources = \
 	mono-uri.h	\
 	mono-stdlib.h	\
 	valgrind.h	\
-	mach-support.c	\
 	mach-support.h  \
 	memcheck.h	\
 	mono-context.c	\
@@ -149,6 +150,8 @@ monoutils_sources = \
 	mono-threads-coop.h	\
 	mono-tls.h	\
 	mono-tls.c	\
+	mono-utils-debug.c \
+	mono-utils-debug.h \
 	linux_magic.h	\
 	mono-memory-model.h	\
 	atomic.h	\

@@ -111,7 +111,7 @@ Once you have installed the software, you can run a few programs:
 
 * `mono program.exe` runtime engine
 
-* `mcs program.cs` C# compiler 
+* `mcs program.cs` C# compiler
 
 * `monodis program.exe` CIL Disassembler
 
@@ -128,6 +128,14 @@ Directory Roadmap
 
 * `external/` - Git submodules for external libraries (Newtonsoft.Json, ikvm, etc).
 
+* `ikvm-native/` - Glue code for ikvm.
+
+* `libgc/` - The (deprecated) Boehm GC implementation.
+
+* `llvm/` - Utility Makefiles for integrating the Mono LLVM fork.
+
+* `m4/` - General utility Makefiles.
+
 * `man/` - Manual pages for the various Mono commands and programs.
 
 * `mcs/` - The class libraries, compiler and tools
@@ -142,25 +150,51 @@ Directory Roadmap
 
   * `arch/` - Architecture specific portions.
 
+  * `benchmark/` - A collection of benchmarks.
+
+  * `btls/` - Build files for the BTLS library which incorporates BoringSSL.
+
   * `cil/` - Common Intermediate Representation, XML
 definition of the CIL bytecodes.
 
-  * `dis/` - CIL executable Disassembler
+  * `dis/` - CIL executable Disassembler.
 
-  * `io-layer/` - The I/O layer and system abstraction for 
-emulating the .NET IO model.
+  * `eglib/` - Independent implementation of the glib API.
 
   * `metadata/` - The object system and metadata reader.
 
   * `mini/` - The Just in Time Compiler.
 
+  * `profiler/` - The profiler implementation.
+
+  * `sgen/` - The SGen Garbage Collector implementation.
+
+  * `tests/` - The main runtime tests.
+
+  * `unit-tests/` - Additional runtime unit tests.
+
+  * `utils/` - Utility functions used across the runtime codebase.
+
+* `msvc/` - Logic for the MSVC / Visual Studio based runtime and BCL build system.
+The latter is experimental at the moment.
+
+* `packaging/` - Packaging logic for the OS X and Windows Mono packages.
+
+* `po/` - Translation files.
+
 * `runtime/` - A directory that contains the Makefiles that link the
 mono/ and mcs/ build systems.
 
-* `samples/` -Some simple sample programs on uses of the Mono
-runtime as an embedded library.   
+* `samples/` - Some simple sample programs on uses of the Mono
+runtime as an embedded library.
 
 * `scripts/` - Scripts used to invoke Mono and the corresponding program.
+
+* `sdks/` - A new way of embedding Mono into Xamarin.iOS, Xamarin.Android and other products.
+
+* `support/` - Various support libraries.
+
+* `tools/` - A collection of tools, mostly used during Mono development.
 
 Contributing to Mono
 ====================

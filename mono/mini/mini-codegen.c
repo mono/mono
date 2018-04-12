@@ -502,7 +502,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 			break;
 		case OP_ISINST:
 		case OP_CASTCLASS:
-			g_string_append_printf (sbuf, " %s", ins->klass->name);
+			g_string_append_printf (sbuf, " %s", m_class_get_name (ins->klass));
 			break;
 		default:
 			break;
@@ -596,7 +596,8 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 	case OP_VCALL2_MEMBASE:
 	case OP_VOIDCALL:
 	case OP_VOIDCALL_MEMBASE:
-	case OP_TAILCALL: {
+	case OP_TAILCALL:
+	case OP_TAILCALL_MEMBASE: {
 		MonoCallInst *call = (MonoCallInst*)ins;
 		GSList *list;
 
@@ -1038,6 +1039,9 @@ alloc_general_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoIn
 	if (val < 0)
 		val = get_register_spilling (cfg, bb, last, ins, dest_mask, sym_reg, bank);
 
+#ifdef MONO_ARCH_HAVE_TRACK_FPREGS
+	cfg->arch.used_fp_regs |= 1 << val;
+#endif
 	return val;
 }
 
@@ -2725,9 +2729,9 @@ mini_type_is_hfa (MonoType *t, int *out_nfields, int *out_esize)
 			if (!mini_type_is_hfa (ftype, &nested_nfields, &nested_esize))
 				return FALSE;
 			if (nested_esize == 4)
-				ftype = &mono_defaults.single_class->byval_arg;
+				ftype = m_class_get_byval_arg (mono_defaults.single_class);
 			else
-				ftype = &mono_defaults.double_class->byval_arg;
+				ftype = m_class_get_byval_arg (mono_defaults.double_class);
 			if (prev_ftype && prev_ftype->type != ftype->type)
 				return FALSE;
 			prev_ftype = ftype;

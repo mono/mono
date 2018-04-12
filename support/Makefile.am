@@ -3,9 +3,12 @@ SUPPORT=
 else
 SUPPORT=libMonoSupportW.la
 endif
+
+if BUILD_SUPPORT
 lib_LTLIBRARIES = 				\
 	libMonoPosixHelper.la			\
 	$(SUPPORT)
+endif
 
 AM_CPPFLAGS =					\
 	$(GLIB_CFLAGS)				\
@@ -56,10 +59,10 @@ MPH_UNIX_SOURCE =				\
 
 if HOST_WIN32
 MPH_SOURCE = $(MPH_C_SOURCE)
-MPH_LIBS   = $(GLIB_LIBS) $(LIBICONV)
+MPH_LIBS   = $(GLIB_LIBS)
 else
 MPH_SOURCE = $(MPH_C_SOURCE) $(MPH_UNIX_SOURCE)
-MPH_LIBS   = $(GLIB_LIBS) $(LIBICONV)
+MPH_LIBS   = $(GLIB_LIBS)
 endif
 
 MINIZIP_SOURCE = \
@@ -122,7 +125,7 @@ libMonoSupportW_la_SOURCES =			\
 		supportw.h
 
 libMonoSupportW_la_LIBADD =			\
-		$(GLIB_LIBS) $(LIBICONV)
+		$(GLIB_LIBS)
 
 # 
 # Use this target to refresh the values in map.[ch]

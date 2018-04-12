@@ -8,11 +8,11 @@ runtime_lib=$(top_builddir)/mono/mini/$(LIBMONO_LA) $(static_libs)
 else
 static_libs=	\
 	$(top_builddir)/mono/metadata/libmonoruntimesgen.la	\
+	$(top_builddir)/mono/sgen/libmonosgen.la	\
 	$(top_builddir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV) \
-	$(LIBGC_STATIC_LIBS)
+	$(GLIB_LIBS)
 
-runtime_lib=$(top_builddir)/mono/mini/$(LIBMONO_LA) $(static_libs)
+runtime_lib=$(static_libs)
 endif
 
 if DISABLE_EXECUTABLES
@@ -35,11 +35,10 @@ monograph_LDADD = \
 	$(runtime_lib)			\
 	$(GLIB_LIBS)			\
 	$(LLVM_LIBS)			\
-	$(LIBICONV)			\
 	-lm
 
 if HOST_DARWIN
-monograph_LDFLAGS=-framework CoreFoundation
+monograph_LDFLAGS=-framework CoreFoundation -framework Foundation
 endif
 
 GRAPHS=System.Object System.Enum System.Attribute System.ValueType System.Reflection.MemberInfo

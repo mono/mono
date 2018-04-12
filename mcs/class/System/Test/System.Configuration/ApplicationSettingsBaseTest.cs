@@ -418,6 +418,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[Category ("NotOnWindows")] // https://github.com/mono/mono/issues/7343
 		public void TestBug8592BasicOperations ()
 		{
 			var holder = new Bug8592ConfHolder ();

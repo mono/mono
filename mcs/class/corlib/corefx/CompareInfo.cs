@@ -35,9 +35,28 @@ namespace System.Globalization
 			_sortName = culture.SortName;
 		}
 
-		unsafe static int CompareStringOrdinalIgnoreCase (char* lpStr1, int cwStr1Len, char* lpStr2, int cwStr2Len)
+		unsafe static int CompareStringOrdinalIgnoreCase (char* pString1, int length1, char* pString2, int length2)
 		{
-			throw new NotImplementedException ();
+			var ti = CultureInfo.InvariantCulture.TextInfo;
+
+			int index = 0;
+			while (index < length1 && index < length2 && ti.ToUpper (*pString1) == ti.ToUpper (*pString2)) {
+				++index;
+				++pString1;
+				++pString2;
+			}
+
+			if (index >= length1) {
+				if (index >= length2)
+					return 0;
+
+				return -1;
+			}
+
+			if (index >= length2)
+				return 1;
+
+			return ti.ToUpper (*pString1) - ti.ToUpper (*pString2);
 		}
 
 		internal static int IndexOfOrdinalCore (string source, string value, int startIndex, int count, bool ignoreCase)
@@ -67,6 +86,16 @@ namespace System.Globalization
 				throw new NotImplementedException ();
 
 			return internal_index_switch (source, startIndex, count, target, options, true);
+		}
+
+		unsafe int IndexOfCore (ReadOnlySpan<char> source, ReadOnlySpan<char> target, CompareOptions options, int* matchLengthPtr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		int IndexOfOrdinalCore (ReadOnlySpan<char> source, ReadOnlySpan<char> value, bool ignoreCase)
+		{
+			throw new NotImplementedException ();
 		}
 
 		int CompareString (ReadOnlySpan<char> string1, string string2, CompareOptions options)
@@ -106,6 +135,11 @@ namespace System.Globalization
 			return Compare (source, 0, prefix.Length, prefix, 0, prefix.Length, options) == 0;
 		}
 
+		bool StartsWith (ReadOnlySpan<char> source, ReadOnlySpan<char> prefix, CompareOptions options)
+		{
+			throw new NotImplementedException ();
+		}
+
 		bool EndsWith (string source, string suffix, CompareOptions options)
 		{
 			if (UseManagedCollation)
@@ -115,6 +149,11 @@ namespace System.Globalization
 				return false;
 
 			return Compare (source, source.Length - suffix.Length, suffix.Length, suffix, 0, suffix.Length, options) == 0;
+		}
+
+		bool EndsWith (ReadOnlySpan<char> source, ReadOnlySpan<char> suffix, CompareOptions options)
+		{
+			throw new NotImplementedException ();
 		}
 
 		internal int GetHashCodeOfStringCore (string source, CompareOptions options)
