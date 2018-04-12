@@ -3538,6 +3538,8 @@ mini_parse_debug_option (const char *option)
 		mini_debug_options.break_on_unverified = TRUE;
 	else if (!strcmp (option, "no-gdb-backtrace"))
 		mini_debug_options.no_gdb_backtrace = TRUE;
+	else if (!strcmp (option, "gdb-on-sigquit"))
+		mini_debug_options.gdb_on_sigquit = TRUE;
 	else if (!strcmp (option, "suspend-on-native-crash") || !strcmp (option, "suspend-on-sigsegv"))
 		mini_debug_options.suspend_on_native_crash = TRUE;
 	else if (!strcmp (option, "suspend-on-exception"))

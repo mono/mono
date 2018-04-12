@@ -24,8 +24,14 @@
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
+#endif
 #ifdef HAVE_SYS_SYSCALL_H
 #include <sys/syscall.h>
+#endif
+#ifdef HAVE_SYS_WAIT_H
+#include <sys/wait.h>
 #endif
 #include <errno.h>
 #include <sched.h>
@@ -54,6 +60,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-logger-internals.h>
+#include <mono/utils/mono-merp.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/dtrace.h>
 #include <mono/utils/mono-signal-handler.h>
@@ -269,11 +276,19 @@ MONO_SIG_HANDLER_FUNC (static, profiler_signal_handler)
 
 MONO_SIG_HANDLER_FUNC (static, sigquit_signal_handler)
 {
+	MONO_SIG_HANDLER_GET_CONTEXT;
 
 	/* We use this signal to start the attach agent too */
 	mono_attach_start ();
 
 	mono_threads_request_thread_dump ();
+
+	if (mini_get_debug_options ()->gdb_on_sigquit) {
+		// Wait for the thread dump to finish so the output isn't a mess.
+		mono_thread_info_sleep (1000, NULL);
+
+		mono_gdb_attach_and_render ("SIGQUIT", ctx, FALSE);
+	}
 
 	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 }
@@ -854,8 +869,8 @@ native_stack_with_lldb (pid_t crashed_pid, const char **argv, FILE *commands, ch
 	return TRUE;
 }
 
-void
-mono_gdb_render_native_backtraces (pid_t crashed_pid)
+static void
+gdb_render_native_backtraces (pid_t crashed_pid)
 {
 #ifdef HAVE_EXECV
 	const char *argv [10];
@@ -886,7 +901,7 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 		goto exec;
 #endif
 
-	fprintf (stderr, "mono_gdb_render_native_backtraces not supported on this platform, unable to find gdb or lldb\n");
+	fprintf (stderr, "gdb_render_native_backtraces not supported on this platform, unable to find gdb or lldb\n");
 
 	fclose (commands);
 	unlink (commands_filename);
@@ -898,8 +913,79 @@ exec:
 
 	_exit (-1);
 #else
-	fprintf (stderr, "mono_gdb_render_native_backtraces not supported on this platform\n");
+	fprintf (stderr, "gdb_render_native_backtraces not supported on this platform\n");
 #endif // HAVE_EXECV
+}
+
+void
+mono_gdb_attach_and_render (const char *signal, void *ctx, gboolean crash)
+{
+#if !defined(HOST_WIN32) && defined(HAVE_SYS_SYSCALL_H) && (defined(SYS_fork) || HAVE_FORK)
+	if (!mini_get_debug_options ()->no_gdb_backtrace) {
+		/* From g_spawn_command_line_sync () in eglib */
+		pid_t pid;
+		int status;
+		pid_t crashed_pid = getpid ();
+
+		/*
+		 * glibc fork acquires some locks, so if the crash happened inside malloc/free,
+		 * it will deadlock. Call the syscall directly instead.
+		 */
+#if defined(HOST_ANDROID)
+		/* SYS_fork is defined to be __NR_fork which is not defined in some ndk versions */
+		if (crash)
+			g_assert_not_reached ();
+		else
+			return;
+#elif !defined(HOST_DARWIN) && defined(SYS_fork)
+		pid = (pid_t) syscall (SYS_fork);
+#elif HAVE_FORK
+		pid = (pid_t) fork ();
+#else
+		g_assert_not_reached ();
+#endif
+
+#if defined (HAVE_PRCTL) && defined(PR_SET_PTRACER)
+		if (pid > 0) {
+			// Allow gdb to attach to the process even if ptrace_scope sysctl variable is set to
+			// a value other than 0 (the most permissive ptrace scope). Most modern Linux
+			// distributions set the scope to 1 which allows attaching only to direct children of
+			// the current process
+			prctl (PR_SET_PTRACER, pid, 0, 0, 0);
+		}
+#endif
+
+#if defined(TARGET_OSX)
+		if (crash && mono_merp_enabled ()) {
+			if (pid == 0) {
+				MonoContext mctx;
+				if (!ctx) {
+					mono_runtime_printf_err ("\nMust always pass non-null context when using merp.\n");
+					exit (1);
+				}
+
+				mono_sigctx_to_monoctx (ctx, &mctx);
+
+				intptr_t thread_pointer = (intptr_t) MONO_CONTEXT_GET_SP (&mctx);
+
+				mono_merp_invoke (crashed_pid, thread_pointer, signal);
+
+				exit (1);
+			}
+		}
+#endif
+
+		if (pid == 0) {
+			dup2 (STDERR_FILENO, STDOUT_FILENO);
+
+			gdb_render_native_backtraces (crashed_pid);
+			exit (1);
+		}
+
+		mono_runtime_printf_err ("\nDebug info from gdb:\n");
+		waitpid (pid, &status, 0);
+	}
+#endif
 }
 
 #if !defined (__MACH__)

@@ -64,7 +64,6 @@
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/mono-mlist.h>
-#include <mono/utils/mono-merp.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-error.h>
@@ -2741,70 +2740,7 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 	g_free (names);
 
 	/* Try to get more meaningful information using gdb */
-
-#if !defined(HOST_WIN32) && defined(HAVE_SYS_SYSCALL_H) && (defined(SYS_fork) || HAVE_FORK)
-	if (!mini_get_debug_options ()->no_gdb_backtrace) {
-		/* From g_spawn_command_line_sync () in eglib */
-		pid_t pid;
-		int status;
-		pid_t crashed_pid = getpid ();
-
-		/*
-		 * glibc fork acquires some locks, so if the crash happened inside malloc/free,
-		 * it will deadlock. Call the syscall directly instead.
-		 */
-#if defined(HOST_ANDROID)
-		/* SYS_fork is defined to be __NR_fork which is not defined in some ndk versions */
-		g_assert_not_reached ();
-#elif !defined(HOST_DARWIN) && defined(SYS_fork)
-		pid = (pid_t) syscall (SYS_fork);
-#elif HAVE_FORK
-		pid = (pid_t) fork ();
-#else
-		g_assert_not_reached ();
-#endif
-
-#if defined (HAVE_PRCTL) && defined(PR_SET_PTRACER)
-		if (pid > 0) {
-			// Allow gdb to attach to the process even if ptrace_scope sysctl variable is set to
-			// a value other than 0 (the most permissive ptrace scope). Most modern Linux
-			// distributions set the scope to 1 which allows attaching only to direct children of
-			// the current process
-			prctl (PR_SET_PTRACER, pid, 0, 0, 0);
-		}
-#endif
-
-#if defined(TARGET_OSX)
-		if (mono_merp_enabled ()) {
-			if (pid == 0) {
-				MonoContext mctx;
-				if (!ctx) {
-					mono_runtime_printf_err ("\nMust always pass non-null context when using merp.\n");
-					exit (1);
-				}
-
-				mono_sigctx_to_monoctx (ctx, &mctx);
-
-				intptr_t thread_pointer = (intptr_t) MONO_CONTEXT_GET_SP (&mctx);
-
-				mono_merp_invoke (crashed_pid, thread_pointer, signal);
-
-				exit (1);
-			}
-		}
-#endif
-
-		if (pid == 0) {
-			dup2 (STDERR_FILENO, STDOUT_FILENO);
-
-			mono_gdb_render_native_backtraces (crashed_pid);
-			exit (1);
-		}
-
-		mono_runtime_printf_err ("\nDebug info from gdb:\n");
-		waitpid (pid, &status, 0);
-	}
-#endif
+	mono_gdb_attach_and_render (signal, ctx, TRUE);
  }
 #else
 #ifdef HOST_ANDROID

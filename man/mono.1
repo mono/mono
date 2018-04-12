@@ -1752,6 +1752,9 @@ to track down the source of the problems.
 This option will disable the GDB backtrace emitted by the runtime
 after a SIGSEGV or SIGABRT in unmanaged code.
 .TP
+\fBgdb-on-sigquit\fR
+Attach GDB and render native backtraces on receiving a SIGQUIT signal.
+.TP
 \fBpartial-sharing\fR
 When this option is set, the runtime can share generated code between
 generic types effectively reducing the amount of code generated.

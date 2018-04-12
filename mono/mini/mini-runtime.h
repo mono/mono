@@ -167,6 +167,7 @@ typedef struct MonoDebugOptions {
 	gboolean better_cast_details;
 	gboolean mdb_optimizations;
 	gboolean no_gdb_backtrace;
+	gboolean gdb_on_sigquit;
 	gboolean suspend_on_native_crash;
 	gboolean suspend_on_exception;
 	gboolean suspend_on_unhandled;
@@ -473,7 +474,7 @@ void mono_runtime_cleanup_handlers (void);
 void mono_runtime_setup_stat_profiler (void);
 void mono_runtime_shutdown_stat_profiler (void);
 void mono_runtime_posix_install_handlers (void);
-void mono_gdb_render_native_backtraces (pid_t crashed_pid);
+void mono_gdb_attach_and_render (const char *signal, void *ctx, gboolean crash);
 
 void mono_cross_helpers_run (void);
 
