@@ -2905,10 +2905,10 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 
 	mono_walk_stack_with_ctx (print_stack_frame_to_string, &ctx, MONO_UNWIND_LOOKUP_ALL, text);
 #else
-	mono_runtime_printf ("\t<Stack traces in thread dumps not supported on this platform>");
+	mono_runtime_printf_err ("\t<Stack traces in thread dumps not supported on this platform>");
 #endif
 
-	mono_runtime_printf ("%s", text->str);
+	mono_runtime_printf_err ("%s", text->str);
 
 #if HOST_WIN32 && TARGET_WIN32 && _DEBUG
 	OutputDebugStringA(text->str);
@@ -2921,7 +2921,7 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 /**
  * mono_print_thread_dump:
  *
- * Print information about the current thread to stdout.
+ * Print information about the current thread to stderr.
  * \p sigctx can be NULL, allowing this to be called from gdb.
  */
 void

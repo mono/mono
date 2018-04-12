@@ -3792,7 +3792,7 @@ dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud)
 		}
 	}
 
-	fprintf (stdout, "%s", text->str);
+	fprintf (stderr, "%s", text->str);
 
 #if PLATFORM_WIN32 && TARGET_WIN32 && _DEBUG
 	OutputDebugStringA(text->str);
@@ -3812,7 +3812,7 @@ mono_threads_perform_thread_dump (void)
 	if (!thread_dump_requested)
 		return;
 
-	printf ("Full thread dump:\n");
+	fprintf (stderr, "Full thread dump:\n");
 
 	/* Make a copy of the threads hash to avoid doing work inside threads_lock () */
 	nthreads = collect_threads (thread_array, 128);
@@ -3826,7 +3826,7 @@ mono_threads_perform_thread_dump (void)
 
 	g_free (ud.frames);
 
-	printf ("\n");
+	fprintf (stderr, "\n");
 
 	thread_dump_requested = FALSE;
 }
