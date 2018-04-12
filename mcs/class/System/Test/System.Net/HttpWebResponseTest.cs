@@ -1221,6 +1221,7 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
+		[Category ("MobileNotWorking")] // https://github.com/xamarin/xamarin-macios/issues/3827
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
