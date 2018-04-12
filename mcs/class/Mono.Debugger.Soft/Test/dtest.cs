@@ -39,7 +39,11 @@ public class DebuggerTests
 	}
 
 	// No other way to pass arguments to the tests ?
+#if MONODROID_TEST
+	public static bool listening = true;
+#else
 	public static bool listening = Environment.GetEnvironmentVariable ("DBG_SUSPEND") != null;
+#endif
 	public static string runtime = Environment.GetEnvironmentVariable ("DBG_RUNTIME");
 	public static string agent_args = Environment.GetEnvironmentVariable ("DBG_AGENT_ARGS");
 
@@ -90,7 +94,10 @@ public class DebuggerTests
 			var pi = CreateStartInfo (args);
 			vm = VirtualMachineManager.Launch (pi, new LaunchOptions { AgentArgs = agent_args });
 		} else {
-			var ep = new IPEndPoint (IPAddress.Any, 10000);
+#if MONODROID_TEST
+			System.Diagnostics.Process.Start("/usr/bin/make", "-C ../android dirty-run-debugger-test");
+#endif
+			var ep = new IPEndPoint (IPAddress.Any, 6100);
 			Console.WriteLine ("Listening on " + ep + "...");
 			vm = VirtualMachineManager.Listen (ep);
 		}
@@ -123,6 +130,22 @@ public class DebuggerTests
 		}
 
 		load_req.Disable ();
+
+		if (args.Length == 2) {
+			var this_type = entry_point.DeclaringType;
+			var str = vm.RootDomain.CreateString (args [1]);
+			var slot = this_type.GetField ("arg");
+
+			if (slot == null)
+				throw new Exception ("Missing slot");
+
+			if (str == null)
+				throw new Exception ("Bug in createstring");
+
+			this_type.SetValue (slot, str);
+		} else if (args.Length > 2) {
+			throw new Exception (String.Format ("Fixme {0}", args [2]));
+		}
 	}
 
 	BreakpointEvent run_until (string name) {
@@ -2315,7 +2338,13 @@ public class DebuggerTests
 
 		Assert.AreEqual (5, (e as VMDeathEvent).ExitCode);
 
-		var p = vm.Process;
+		System.Diagnostics.Process p = null;
+
+		try {
+			p = vm.Process;
+		}
+		catch (Exception) {}
+
 		/* Could be a remote vm with no process */
 		if (p != null) {
 			p.WaitForExit ();
@@ -2339,7 +2368,13 @@ public class DebuggerTests
 		var e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (VMDisconnectEvent), e);
 
-		var p = vm.Process;
+		System.Diagnostics.Process p = null;
+
+		try {
+			p = vm.Process;
+		}
+		catch (Exception) {}
+
 		/* Could be a remote vm with no process */
 		if (p != null) {
 			p.WaitForExit ();
@@ -3037,6 +3072,7 @@ public class DebuggerTests
 		vm.GetThreads ();
 	}
 
+#if !MONODROID_TEST
 	[Test]
 	public void Threads () {
 		Event e = run_until ("threads");
@@ -3062,6 +3098,7 @@ public class DebuggerTests
 		Assert.IsInstanceOfType (typeof (ThreadDeathEvent), e);
 		Assert.AreEqual (ThreadState.Stopped, e.Thread.ThreadState);
 	}
+#endif
 
 	[Test]
 	public void Frame_SetValue () {

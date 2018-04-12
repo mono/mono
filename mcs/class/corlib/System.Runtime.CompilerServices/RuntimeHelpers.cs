@@ -141,8 +141,6 @@ namespace System.Runtime.CompilerServices
 		[MonoTODO("Currently a no-op")]
 		public static void PrepareDelegate (Delegate d)
 		{
-			if (d == null)
-				throw new ArgumentNullException ("d");
 		}
 
 		// extracted from ../../../../external/referencesource/mscorlib/system/runtime/compilerservices/runtimehelpers.cs

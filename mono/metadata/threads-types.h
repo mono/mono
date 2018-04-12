@@ -249,9 +249,17 @@ void mono_thread_push_appdomain_ref (MonoDomain *domain);
 void mono_thread_pop_appdomain_ref (void);
 gboolean mono_thread_has_appdomain_ref (MonoThread *thread, MonoDomain *domain);
 
-MonoException* mono_thread_request_interruption (mono_bool running_managed);
 gboolean mono_thread_interruption_requested (void);
-MonoException* mono_thread_interruption_checkpoint (void);
+
+MonoException*
+mono_thread_interruption_checkpoint (void);
+
+gboolean
+mono_thread_interruption_checkpoint_bool (void);
+
+void
+mono_thread_interruption_checkpoint_void (void);
+
 MonoException* mono_thread_force_interruption_checkpoint_noraise (void);
 gint32* mono_thread_interruption_request_flag (void);
 
@@ -280,6 +288,12 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy);
 MONO_API void
 mono_threads_detach_coop (gpointer cookie, gpointer *dummy);
 
+MonoDomain*
+mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoStackData *stackdata);
+
+void
+mono_threads_detach_coop_internal (MonoDomain *orig_domain, gpointer cookie, MonoStackData *stackdata);
+
 void mono_threads_begin_abort_protected_block (void);
 gboolean mono_threads_end_abort_protected_block (void);
 
@@ -294,5 +308,17 @@ mono_thread_internal_is_current (MonoInternalThread *internal);
 
 gboolean
 mono_threads_is_current_thread_in_protected_block (void);
+
+gpointer
+mono_threads_enter_gc_unsafe_region_unbalanced_internal (MonoStackData *stackdata);
+
+void
+mono_threads_exit_gc_unsafe_region_unbalanced_internal (gpointer cookie, MonoStackData *stackdata);
+
+gpointer
+mono_threads_enter_gc_safe_region_unbalanced_internal (MonoStackData *stackdata);
+
+void
+mono_threads_exit_gc_safe_region_unbalanced_internal (gpointer cookie, MonoStackData *stackdata);
 
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

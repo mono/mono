@@ -67,22 +67,22 @@
     <EmbeddedResource Include="template.c">
       <LogicalName>template.c</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="template_z.c">
-      <LogicalName>template_z.c</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="template_main.c">
       <LogicalName>template_main.c</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="template_z.c">
+      <LogicalName>template_z.c</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
     <EmbeddedResource Include="template.c">
       <LogicalName>template.c</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="template_z.c">
-      <LogicalName>template_z.c</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="template_main.c">
       <LogicalName>template_main.c</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="template_z.c">
+      <LogicalName>template_z.c</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->

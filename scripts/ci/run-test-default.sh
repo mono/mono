@@ -10,7 +10,7 @@ ${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j4
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1 CI_PR=${ghprbPullId}
 ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
-${TESTCMD} --label=corlib-xunit --timeout=5m make -w -C mcs/class/corlib run-xunit-test
+${TESTCMD} --label=corlib-xunit --timeout=10m make -w -C mcs/class/corlib run-xunit-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
 ${TESTCMD} --label=compiler --timeout=30m make -w -C mcs/tests run-test
@@ -59,6 +59,10 @@ ${TESTCMD} --label=Microsoft.Build.Tasks --timeout=5m make -w -C mcs/class/Micro
 ${TESTCMD} --label=Microsoft.Build.Utilities --timeout=5m make -w -C mcs/class/Microsoft.Build.Utilities run-test
 ${TESTCMD} --label=Mono.C5 --timeout=5m make -w -C mcs/class/Mono.C5 run-test
 ${TESTCMD} --label=Mono.Options --timeout=5m make -w -C mcs/class/Mono.Options run-test
+if [[ ${CI_TAGS} == *'win-'* ]] || [[ ${CI_TAGS} == *'coop-gc'* ]]
+then ${TESTCMD} --label=Mono.Profiler.Log-xunit --skip;
+else ${TESTCMD} --label=Mono.Profiler.Log-xunit --timeout=30m make -w -C mcs/class/Mono.Profiler.Log run-xunit-test
+fi
 ${TESTCMD} --label=Mono.Tasklets --timeout=5m make -w -C mcs/class/Mono.Tasklets run-test
 ${TESTCMD} --label=System.Configuration --timeout=5m make -w -C mcs/class/System.Configuration run-test
 ${TESTCMD} --label=System.Transactions --timeout=5m make -w -C mcs/class/System.Transactions run-test
@@ -123,5 +127,14 @@ if [[ $CI_TAGS == *'apidiff'* ]]; then
     else report_github_status "error" "API Diff" "The public API changed." "$BUILD_URL/Public_API_Diff/" || true
     fi
 else ${TESTCMD} --label=apidiff --skip
+fi
+if [[ $CI_TAGS == *'csprojdiff'* ]]; then
+    source ${MONO_REPO_ROOT}/scripts/ci/util.sh
+    make update-solution-files
+    if ${TESTCMD} --label=csprojdiff --timeout=5m --fatal make -w -C mcs mono-csproj-diff
+    then report_github_status "success" "Project Files Diff" "No csproj file changes found." || true
+    else report_github_status "error" "Project Files Diff" "The csproj files changed." "$BUILD_URL/Project_Files_Diff/" || true
+    fi
+else ${TESTCMD} --label=csprojdiff --skip
 fi
 rm -fr /tmp/jenkins-temp-aspnet*

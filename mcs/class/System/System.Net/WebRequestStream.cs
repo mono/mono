@@ -371,9 +371,10 @@ namespace System.Net
 
 		async Task WriteChunkTrailer ()
 		{
-			using (var cts = new CancellationTokenSource ()) {
+			var cts = new CancellationTokenSource ();
+			try {
 				cts.CancelAfter (WriteTimeout);
-				var timeoutTask = Task.Delay (WriteTimeout);
+				var timeoutTask = Task.Delay (WriteTimeout, cts.Token);
 				while (true) {
 					var completion = new WebCompletionSource ();
 					var oldCompletion = Interlocked.CompareExchange (ref pendingWrite, completion, null);
@@ -385,13 +386,13 @@ namespace System.Net
 						throw new WebException ("The operation has timed out.", WebExceptionStatus.Timeout);
 				}
 
-				try {
-					await WriteChunkTrailer_inner (cts.Token).ConfigureAwait (false);
-				} catch {
-					// Intentionally eating exceptions.
-				} finally {
-					pendingWrite = null;
-				}
+				await WriteChunkTrailer_inner (cts.Token).ConfigureAwait (false);
+			} catch {
+				// Intentionally eating exceptions.
+			} finally {
+				pendingWrite = null;
+				cts.Cancel ();
+				cts.Dispose ();
 			}
 		}
 

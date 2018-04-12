@@ -115,7 +115,7 @@ endif
 
 $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs
 	$(MAKE) $(MAKE_Q) -C $(topdir)/packages
-	$(BOOTSTRAP_MCS) /warn:0 /noconfig /r:System.dll /r:mscorlib.dll /out:$@ $<
+	$(BOOTSTRAP_MCS) /warn:0 /noconfig /langversion:latest /r:System.dll /r:mscorlib.dll /out:$@ $<
 
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1

@@ -49,14 +49,12 @@ namespace System {
 
         [Pure]
         [System.Security.SecuritySafeCritical]  // auto-generated
-        [System.Runtime.Versioning.NonVersionable]
         public unsafe static bool IsInfinity(float f) {
             return (*(int*)(&f) & 0x7FFFFFFF) == 0x7F800000;
         }
 
         [Pure]
         [System.Security.SecuritySafeCritical]  // auto-generated
-        [System.Runtime.Versioning.NonVersionable]
         public unsafe static bool IsPositiveInfinity(float f) {
             return *(int*)(&f) == 0x7F800000;
         }
@@ -78,11 +76,19 @@ namespace System {
 
 #if MONO
         [Pure]
-        [System.Runtime.Versioning.NonVersionable]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe static bool IsFinite(float f) {
             return (*(int*)(&f) & 0x7FFFFFFF) < 0x7F800000;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe bool IsNegative(float f)
+        {
+            var bits = unchecked((uint)BitConverter.SingleToInt32Bits(f));
+            return (bits & 0x80000000) == 0x80000000;
+        }
+        internal const float NegativeZero = (float)-0.0;
+
 #endif
 
         // Compares this object to another object, returning an integer that

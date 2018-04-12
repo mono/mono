@@ -482,6 +482,19 @@ namespace System {
                 ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.value);
             return Unsafe.ReadUnaligned<int>(ref value.DangerousGetPinnableReference());
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe int SingleToInt32Bits(float value)
+        {
+            return *((int*)&value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe float Int32BitsToSingle(int value)
+        {
+            return *((float*)&value);
+        }
+
 #endif
 
     }

@@ -1,9 +1,11 @@
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
 
+../../../external/corefx/src/Common/tests/System/RandomExtensions.cs
+../../../external/corefx/src/Common/tests/System/RandomDataGenerator.cs
+
 ../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadTestHelpers.cs
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadPoolHelpers.cs
-../../../external/corefx/src/Common/tests/System/RandomDataGenerator.cs
 ../../../external/corefx/src/Common/tests/System/Runtime/Serialization/Formatters/BinaryFormatterHelpers.cs
 
 #../../../external/corefx/src/System.Globalization/tests/CompareInfo/*.cs:
@@ -175,7 +177,7 @@
 ../../../external/corefx/src/System.Threading.Timer/tests/*.cs:TimerFiringTests.cs,TimerChangeTests.cs
 
 # System.Threading.Thread
-../../../external/corefx/src/System.Threading.Thread/tests/*.cs:CompressedStackTests.cs,ThreadTests.cs,ExceptionTests.cs
+../../../external/corefx/src/System.Threading.Thread/tests/*.cs:CompressedStackTests.cs,ThreadTests.cs,ExceptionTests.cs,ThreadTests.netcoreapp.cs
 
 # System.Threading
 ../../../external/corefx/src/System.Threading/tests/*.cs:MutexTests.cs,SemaphoreTests.cs,InterlockedTests.netcoreapp.cs,EventWaitHandleTests.cs,XunitAssemblyAttributes.cs,ReaderWriterLockTests.cs,SynchronizationContextTests.cs,ExecutionContextTests.cs,HostExecutionContextManagerTests.cs,EtwTests.cs
@@ -186,7 +188,7 @@
 ../../../external/corefx/src/System.Memory/tests/Memory/*.cs
 ../../../external/corefx/src/System.Memory/tests/ReadOnlyMemory/*.cs
 ../../../external/corefx/src/System.Memory/tests/ReadOnlySpan/*.cs
-../../../external/corefx/src/System.Memory/tests/Span/*.cs
+../../../external/corefx/src/System.Memory/tests/Span/*.cs:Reflection.cs
 
 # System.Collections
 ../../../external/corefx/src/Common/tests/System/Collections/CollectionAsserts.cs
@@ -240,3 +242,5 @@
 ../../../external/corefx/src/System.Collections.Specialized/tests/HybridDictionary/*.cs
 ../../../external/corefx/src/System.Collections.Specialized/tests/OrderedDictionary/*.cs
 ../../../external/corefx/src/System.Collections.Specialized/tests/*.cs:StringCollectionTests.cs
+
+#../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathTests.netcoreapp.cs

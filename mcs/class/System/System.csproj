@@ -107,6 +107,8 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\ValueListBuilder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\ValueStringBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ArrayBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\EnumerableHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LargeArrayBuilder.cs" />
@@ -151,8 +153,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\CompressionMode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\GZipStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\PatternMatcher.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\WaitForChangedResult.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Enumeration\FileSystemName.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.ServicePoint\src\System\Net\SecurityProtocolType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebClient\src\System\Net\WebClient.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets.Client\src\System\Net\WebSockets\ClientWebSocket.cs" />
@@ -191,26 +193,33 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509RevocationMode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509SubjectKeyIdentifierHashAlgorithm.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509VerificationFlags.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\HashtableExtensions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Collections\Generic\ValueListBuilder.Pop.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Collections\HashtableExtensions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\Capture.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CaptureCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CollectionDebuggerProxy.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\Group.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\GroupCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\Match.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\MatchCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\Reference.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\Regex.Cache.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\Regex.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\Regex.Match.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\Regex.Replace.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\Regex.Split.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\Regex.Timeout.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexBoyerMoore.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCapture.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCaptureCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCharClass.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCode.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCollectionDebuggerProxy.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompilationInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexFCD.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexGroup.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexGroupCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexInterpreter.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexMatch.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexMatchCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexMatchTimeoutException.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexNode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexParser.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexPrefix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexReplacement.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexRunner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexRunnerFactory.cs" />
@@ -1117,6 +1126,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
@@ -1427,6 +1437,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
@@ -1858,6 +1869,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
@@ -2051,6 +2063,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
@@ -2421,6 +2434,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />

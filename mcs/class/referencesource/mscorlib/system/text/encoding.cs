@@ -1360,6 +1360,15 @@ namespace System.Text
         }
 
 #if MONO
+        public virtual unsafe int GetChars(ReadOnlySpan<byte> bytes, Span<char> chars)
+        {
+            fixed (byte* bytesPtr = &System.Runtime.InteropServices.MemoryMarshal.GetReference(bytes))
+            fixed (char* charsPtr = &System.Runtime.InteropServices.MemoryMarshal.GetReference(chars))
+            {
+                return GetChars(bytesPtr, bytes.Length, charsPtr, chars.Length);
+            }
+        }
+
         public unsafe string GetString(ReadOnlySpan<byte> bytes)
         {
             fixed (byte* bytesPtr = &bytes.DangerousGetPinnableReference())

@@ -885,9 +885,9 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 			code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "debugger_agent_breakpoint_from_context");
 	} else {
 		if (single_step)
-			amd64_mov_reg_imm (code, AMD64_R11, mono_debugger_agent_single_step_from_context);
+			amd64_mov_reg_imm (code, AMD64_R11, mini_get_dbg_callbacks ()->single_step_from_context);
 		else
-			amd64_mov_reg_imm (code, AMD64_R11, mono_debugger_agent_breakpoint_from_context);
+			amd64_mov_reg_imm (code, AMD64_R11, mini_get_dbg_callbacks ()->breakpoint_from_context);
 	}	
 	amd64_call_reg (code, AMD64_R11);
 
@@ -1010,7 +1010,7 @@ mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
 	g_assert (code - start < buf_len);
 
 	mono_arch_flush_icache (start, code - start);
-	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create ("interp_to_native_trampoline", start, code - start, ji, unwind_ops);

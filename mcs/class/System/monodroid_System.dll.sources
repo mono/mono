@@ -1,7 +1,8 @@
 #include mobile_System.dll.sources
 System/AndroidPlatform.cs
 Mono.Btls/MonoBtlsX509LookupAndroid.cs
+
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCompiler.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CompiledRegexRunner.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CompiledRegexRunnerFactory.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexLWCGCompiler.cs
-

@@ -95,14 +95,19 @@ class TestAction : AbstractAction {
 
 	public void PerformWork () {
 		SetupContext ();
-        try
-        {
-            testResult = test.MakeTestCommand ().Execute(this.context);
-        }
-        finally
-        {
-            WorkItemComplete ();
-        }
+		try
+		{
+			if (IncrementalTestRunner.testSkipCount > 0) {
+				--IncrementalTestRunner.testSkipCount;
+				testResult = ((Test)test).MakeTestResult ();
+				testResult.SetResult (ResultState.Success);
+			} else {
+				testResult = test.MakeTestCommand ().Execute(this.context);
+			}
+		} finally
+		{
+			WorkItemComplete ();
+		}
 	}
 }
 
@@ -284,6 +289,7 @@ public class IncrementalTestRunner {
 	internal Queue<Action> actions = new Queue<Action> ();
 	int test_step_count;
 	string test_status;
+	internal static int testSkipCount;
 
 	public string Status {
 		get { return test_status; }
@@ -300,6 +306,10 @@ public class IncrementalTestRunner {
 		listener.SetValue (context, new MyListener ());
 		rootAction = new TestSuiteAction (suite, context, this);
 		actions.Enqueue (rootAction.PerformWork);
+	}
+
+	public void SkipFirst (int tsc) {
+		testSkipCount = tsc;
 	}
 
 	public void Start (int step) {
