@@ -2621,8 +2621,8 @@ mono_type_get_checked (MonoImage *image, guint32 type_token, MonoGenericContext 
 		MonoType *tmp = type;
 		type = mono_class_get_type (mono_class_from_mono_type (type));
 		/* FIXME: This is a workaround fo the fact that a typespec token sometimes reference to the generic type definition.
-		 * A MonoClass::byval_arg of a generic type definion has type CLASS.
-		 * Some parts of mono create a GENERICINST to reference a generic type definition and this generates confict with byval_arg.
+		 * A MonoClass::_byval_arg of a generic type definion has type CLASS.
+		 * Some parts of mono create a GENERICINST to reference a generic type definition and this generates confict with _byval_arg.
 		 *
 		 * The long term solution is to chaise this places and make then set MonoType::type correctly.
 		 * */

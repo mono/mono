@@ -1489,10 +1489,10 @@ mono_marshal_get_ldfld_wrapper (MonoType *type)
 
 	/*
 	csig = mono_metadata_signature_alloc (mono_defaults.corlib, 3);
-	csig->params [0] = &mono_defaults.object_class->byval_arg;
-	csig->params [1] = &mono_defaults.int_class->byval_arg;
-	csig->params [2] = &mono_defaults.int_class->byval_arg;
-	csig->ret = &klass->this_arg;
+	csig->params [0] = m_class_get_byval_arg (mono_defaults.object_class);
+	csig->params [1] = m_class_get_byval_arg (mono_defaults.int_class);
+	csig->params [2] = m_class_get_byval_arg (mono_defaults.int_class);
+	csig->ret = m_class_get_this_arg (klass);
 	csig->pinvoke = 1;
 
 	mono_mb_emit_native_call (mb, csig, mono_load_remote_field_new);

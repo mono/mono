@@ -2631,7 +2631,7 @@ mono_class_fill_runtime_generic_context (MonoVTable *class_vtable, guint32 slot,
 
 	info = fill_runtime_generic_context (class_vtable, rgctx, slot, NULL, FALSE, error);
 
-	DEBUG (printf ("get rgctx slot: %s %d -> %p\n", mono_type_full_name (m_class_get_byval_arg (class_vtable)), slot, info));
+	DEBUG (printf ("get rgctx slot: %s %d -> %p\n", mono_type_full_name (m_class_get_byval_arg (class_vtable->klass)), slot, info));
 
 	return info;
 }

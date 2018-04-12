@@ -1225,10 +1225,10 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 #ifdef DISABLE_JIT
 	switch (action) {
 	case MARSHAL_ACTION_CONV_IN:
-		*conv_arg_type = &mono_defaults.int_class->byval_arg;
+		*conv_arg_type = m_class_get_byval_arg (mono_defaults.int_class);
 		break;
 	case MARSHAL_ACTION_MANAGED_CONV_IN:
-		*conv_arg_type = &mono_defaults.int_class->byval_arg;
+		*conv_arg_type = m_class_get_byval_arg (mono_defaults.int_class);
 		break;
 	default:
 		break;
