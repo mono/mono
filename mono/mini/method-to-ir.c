@@ -1438,15 +1438,7 @@ mono_compile_get_interface_var (MonoCompile *cfg, int slot, MonoInst *ins)
 	int pos, vnum;
 	MonoType *type;
 
-	/*
-	 * Use double for r4 stack vars to avoid narrowing with r4-r8 stack
-	 * merges.
-	 * FIXME: Only do this if there is indeed an r4-r8 merge.
-	 */
-	if (ins->type == STACK_R4)
-		type = m_class_get_byval_arg (mono_defaults.double_class);
-	else
-		type = type_from_stack_type (ins);
+	type = type_from_stack_type (ins);
 
 	/* inlining can result in deeper stacks */ 
 	if (cfg->inlined_method || slot >= cfg->header->max_stack)
