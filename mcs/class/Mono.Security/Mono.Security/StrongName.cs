@@ -291,6 +291,16 @@ namespace Mono.Security {
 			return null;
 		}
 
+		private static byte[] ReadMore (Stream stream, byte[] a, int newSize)
+		{
+			int oldSize = a.Length;
+			Array.Resize (ref a, newSize);
+			if (newSize <= oldSize)
+				return a;
+			int diff = newSize - oldSize;
+			return (stream.Read (a, oldSize, diff) == diff) ? a : null;
+		}
+
 		internal StrongNameSignature StrongHash (Stream stream, StrongNameOptions options)
 		{
 			// Bing "msdn pecoff".
@@ -315,14 +325,9 @@ namespace Mono.Security {
 
 				// Read MS-DOS stub.
 
-				if (peHeader > mzSize) {
-					int additionalMzSize = peHeader - mzSize;
-					byte[] mz2 = new byte [peHeader];
-					if (stream.Read (mz2, mzSize, additionalMzSize) != additionalMzSize)
-						return Error ("read_mz2_failed");
-					Buffer.BlockCopy (mz, 0, mz2, 0, mzSize);
-					mz = mz2;
-				}
+				mz = ReadMore (stream, mz, peHeader);
+				if (mz == null)
+					return Error ("read_mz2_failed");
 			} else if (mzRead >= 4 && mz [0] == (byte)'P' && mz [1] == (byte)'E' && mz [2] == 0 && mz [3] == 0) { // 0x4550
 				// MS-DOS header/stub can be omitted and just start with PE, though it is rare.
 				stream.Position = 0;
@@ -358,14 +363,9 @@ namespace Mono.Security {
 
 			// Read the rest of the NT headers (i.e. the rest of the optional header).
 
-			if (headersSize > minimumHeadersSize) {
-				int additionalHeadersSize = headersSize - minimumHeadersSize;
-				var pe2 = new byte [headersSize];
-				if (stream.Read (pe2, minimumHeadersSize, additionalHeadersSize) != additionalHeadersSize)
-					return Error ("read_pe2_failed");
-				Buffer.BlockCopy (pe, 0, pe2, 0, minimumHeadersSize);
-				pe = pe2;
-			}
+			pe = ReadMore (stream, pe, headersSize);
+			if (pe == null)
+				return Error ("read_pe2_failed");
 
 			uint magic = BitConverterLE.ToUInt16 (pe, offsetOfOptionalHeader);
 
