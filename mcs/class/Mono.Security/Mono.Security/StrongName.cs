@@ -495,9 +495,8 @@ namespace Mono.Security {
 						else
 							cs.Write (section, 0, length);
 					}
-
-					info.Hash = hash.Hash;
 				}
+				info.Hash = hash.Hash;
 			}
 			return info;
 		}
