@@ -63639,7 +63639,7 @@
     </type>
     <type name="Tester+&lt;TestException_7&gt;c__async6">
       <method name="Void MoveNext()" attrs="486">
-        <size>272</size>
+        <size>293</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_3&gt;c__async2+&lt;TestException_3&gt;c__async7">
