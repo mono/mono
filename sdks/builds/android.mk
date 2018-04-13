@@ -51,7 +51,7 @@ AndroidSDKProvisioningTemplate=$(call AndroidProvisioningTemplate,$(1),$(2),sdk,
 
 ifeq ($(UNAME),Darwin)
 $(eval $(call AndroidSDKProvisioningTemplate,build-tools_r$(ANDROID_BUILD_TOOLS_VERSION)-macosx,build-tools/$(or $(ANDROID_BUILD_TOOLS_DIR),$(ANDROID_BUILD_TOOLS_VERSION))))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r27.0.1-darwin,platforms-tools))
+$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r27.0.1-darwin,platform-tools))
 $(eval $(call AndroidSDKProvisioningTemplate,sdk-tools-darwin-4333796,tools))
 $(eval $(call AndroidSDKProvisioningTemplate,emulator-darwin-4266726,emulator))
 else
