@@ -370,7 +370,7 @@ namespace Mono.Security {
 			uint magic = BitConverterLE.ToUInt16 (pe, offsetOfOptionalHeader);
 
 			// Refer to PE32+ as PE64 for brevity.
-			// PE64 proosal that widened more fields was rejected.
+			// PE64 proposal that widened more fields was rejected.
 			// Between PE32 and PE32+:
 			//   Some fields are the same size and offset. For example the entire
 			//      MS-DOS header, FileHeader, and section headers, and some of the optional header.
@@ -462,7 +462,7 @@ namespace Mono.Security {
 
 				using (CryptoStream cs = new CryptoStream (Stream.Null, hash, CryptoStreamMode.Write))
 				{
-					cs.Write (mz, 0, mz.Length); // Hash MS-DOS header/stub despite stub it is not run.
+					cs.Write (mz, 0, mz.Length); // Hash MS-DOS header/stub despite that stub is not run.
 					cs.Write (pe, 0, pe.Length);
 					cs.Write (sectionHeaders, 0, sectionHeaders.Length);
 
