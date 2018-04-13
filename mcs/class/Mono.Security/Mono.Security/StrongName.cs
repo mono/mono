@@ -285,7 +285,7 @@ namespace Mono.Security {
 			return 0;
 		}
 
-		private StrongNameSignature Error (string a)
+		private static StrongNameSignature Error (string a)
 		{
 			//Console.WriteLine (a);
 			return null;
