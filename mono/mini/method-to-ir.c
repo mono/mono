@@ -9766,7 +9766,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			if (*ip == CEE_STIND_R4 && sp [1]->type == STACK_R8)
-				sp [1] = convert_value (cfg, &mono_defaults.single_class->byval_arg, sp [1]);
+				sp [1] = convert_value (cfg, m_class_get_byval_arg (mono_defaults.single_class), sp [1]);
 			NEW_STORE_MEMBASE (cfg, ins, stind_to_store_membase (*ip), sp [0]->dreg, 0, sp [1]->dreg);
 			ins->flags |= ins_flag;
 			ins_flag = 0;
