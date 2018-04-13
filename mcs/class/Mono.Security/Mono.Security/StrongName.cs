@@ -496,7 +496,6 @@ namespace Mono.Security {
 							cs.Write (section, 0, length);
 					}
 
-					cs.Close ();
 					info.Hash = hash.Hash;
 				}
 			}
@@ -509,7 +508,6 @@ namespace Mono.Security {
 			using (FileStream fs = File.OpenRead (fileName))
 			{
 				StrongNameSignature sn = StrongHash (fs, StrongNameOptions.Metadata);
-				fs.Close ();
 				return sn.Hash;
 			}
 		}
@@ -520,7 +518,6 @@ namespace Mono.Security {
 			StrongNameSignature sn;
 			using (FileStream fs = File.OpenRead (fileName)) {
 				sn = StrongHash (fs, StrongNameOptions.Signature);
-				fs.Close ();
 			}
 			if (sn.Hash == null)
 				return false;
@@ -539,7 +536,6 @@ namespace Mono.Security {
 			using (FileStream fs = File.OpenWrite (fileName)) {
 				fs.Position = sn.SignaturePosition;
 				fs.Write (signature, 0, signature.Length);
-				fs.Close ();
 				result = true;
 			}
 			return result;
@@ -550,7 +546,6 @@ namespace Mono.Security {
 			bool result = false;
 			using (FileStream fs = File.OpenRead (fileName)) {
 				result = Verify (fs);
-				fs.Close ();
 			}
 			return result;
 		}
