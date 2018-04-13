@@ -285,116 +285,233 @@ namespace Mono.Security {
 			return 0;
 		}
 
+		private StrongNameSignature Error (string a)
+		{
+			//Console.WriteLine (a);
+			return null;
+		}
+
 		internal StrongNameSignature StrongHash (Stream stream, StrongNameOptions options)
 		{
-			StrongNameSignature info = new StrongNameSignature ();
-
-			HashAlgorithm hash = HashAlgorithm.Create (TokenAlgorithm);
-			CryptoStream cs = new CryptoStream (Stream.Null, hash, CryptoStreamMode.Write);
-
-			// MS-DOS Header - always 128 bytes
+			// Bing "msdn pecoff".
+			//   https://msdn.microsoft.com/en-us/library/windows/desktop/ms680547(v=vs.85).aspx
+			//   Very many of the magic constants and names, funny or otherwise, come from this.
 			// ref: Section 24.2.1, Partition II Metadata
-			byte[] mz = new byte [128];
-			stream.Read (mz, 0, 128);
-			if (BitConverterLE.ToUInt16 (mz, 0) != 0x5a4d)
-				return null;
-			UInt32 peHeader = BitConverterLE.ToUInt32 (mz, 60);
-			cs.Write (mz, 0, 128);
-			if (peHeader != 128) {
-				byte[] mzextra = new byte [peHeader - 128];
-				stream.Read (mzextra, 0, mzextra.Length);
-				cs.Write (mzextra, 0, mzextra.Length);
-			}
-
-			// PE File Header - always 248 bytes
 			// ref: Section 24.2.2, Partition II Metadata
-			byte[] pe = new byte [248];
-			stream.Read (pe, 0, 248);
-			if (BitConverterLE.ToUInt32 (pe, 0) != 0x4550)
-				return null;
-			if (BitConverterLE.ToUInt16 (pe, 4) != 0x14c)
-				return null;
-			// MUST zeroize both CheckSum and Security Directory
-			byte[] v = new byte [8];
-			Buffer.BlockCopy (v, 0, pe, 88, 4);
-			Buffer.BlockCopy (v, 0, pe, 152, 8);
-			cs.Write (pe, 0, 248);
-
-			UInt16 numSection = BitConverterLE.ToUInt16 (pe, 6);
-			int sectionLength = (numSection * 40);
-			byte[] sectionHeaders = new byte [sectionLength];
-			stream.Read (sectionHeaders, 0, sectionLength);
-			cs.Write (sectionHeaders, 0, sectionLength);
-
-			UInt32 cliHeaderRVA = BitConverterLE.ToUInt32 (pe, 232);
-			UInt32 cliHeaderPos = RVAtoPosition (cliHeaderRVA, numSection, sectionHeaders);
-			int cliHeaderSiz = (int) BitConverterLE.ToUInt32 (pe, 236);
-
-			// CLI Header
 			// ref: Section 24.3.3, Partition II Metadata
-			byte[] cli = new byte [cliHeaderSiz];
-			stream.Position = cliHeaderPos;
-			stream.Read (cli, 0, cliHeaderSiz);
 
-			UInt32 strongNameSignatureRVA = BitConverterLE.ToUInt32 (cli, 32);
-			info.SignaturePosition = RVAtoPosition (strongNameSignatureRVA, numSection, sectionHeaders);
-			info.SignatureLength = BitConverterLE.ToUInt32 (cli, 36);
+			// Read MS-DOS header.
 
-			UInt32 metadataRVA = BitConverterLE.ToUInt32 (cli, 8);
-			info.MetadataPosition = RVAtoPosition (metadataRVA, numSection, sectionHeaders);
-			info.MetadataLength = BitConverterLE.ToUInt32 (cli, 12);
+			const int mzSize = 64;
+			byte[] mz = new byte [mzSize];
 
-			if (options == StrongNameOptions.Metadata) {
-				cs.Close ();
-				hash.Initialize ();
-				byte[] metadata = new byte [info.MetadataLength];
-				stream.Position = info.MetadataPosition;
-				stream.Read (metadata, 0, metadata.Length);
-				info.Hash = hash.ComputeHash (metadata);
-				return info;
-			}
+			int peHeader = 0;
+			int mzRead = stream.Read (mz, 0, mzSize);
 
-			// now we hash every section EXCEPT the signature block
-			for (int i=0; i < numSection; i++) {
-				UInt32 start = BitConverterLE.ToUInt32 (sectionHeaders, i * 40 + 20);
-				int length = (int) BitConverterLE.ToUInt32 (sectionHeaders, i * 40 + 16);
-				byte[] section = new byte [length];
-				stream.Position = start;
-				stream.Read (section, 0, length);
-				if ((start <= info.SignaturePosition) && (info.SignaturePosition < start + length)) {
-					// hash before the signature
-					int before = (int)(info.SignaturePosition - start);
-					if (before > 0) {
-						cs.Write (section, 0, before);
-					}
-					// copy signature
-					info.Signature = new byte [info.SignatureLength];
-					Buffer.BlockCopy (section, before, info.Signature, 0, (int)info.SignatureLength);
-					Array.Reverse (info.Signature);
-					// hash after the signature
-					int s = (int)(before + info.SignatureLength);
-					int after = (int)(length - s);
-					if (after > 0) {
-						cs.Write (section, s, after);
-					}
+			if (mzRead == mzSize && mz [0] == (byte)'M' && mz [1] == (byte)'Z') { // 0x5a4d
+				peHeader = BitConverterLE.ToInt32 (mz, 60);
+				if (peHeader < mzSize)
+					return Error ("peHeader_lt_64");
+
+				// Read MS-DOS stub.
+
+				if (peHeader > mzSize) {
+					int additionalMzSize = peHeader - mzSize;
+					byte[] mz2 = new byte [peHeader];
+					if (stream.Read (mz2, mzSize, additionalMzSize) != additionalMzSize)
+						return Error ("read_mz2_failed");
+					Buffer.BlockCopy (mz, 0, mz2, 0, mzSize);
+					mz = mz2;
 				}
-				else
-					cs.Write (section, 0, length);
+			} else if (mzRead >= 4 && mz [0] == (byte)'P' && mz [1] == (byte)'E' && mz [2] == 0 && mz [3] == 0) { // 0x4550
+				// MS-DOS header/stub can be omitted and just start with PE, though it is rare.
+				stream.Position = 0;
+				mz = new byte [0];
+			} else
+				return Error ("read_mz_or_mzsig_failed");
+
+			// PE File Header
+			// PE signature 4 bytes
+			// file header 20 bytes (really, at this point)
+			// optional header varies in size and its size is in the file header
+			// "optional" means "not in .obj files", but always in .dll/.exes
+
+			const int sizeOfPeSignature = 4;
+			const int sizeOfFileHeader = 20;
+			const int sizeOfOptionalHeaderMagic = 2;
+			const int offsetOfFileHeader = sizeOfPeSignature;
+			const int offsetOfOptionalHeader = sizeOfPeSignature + sizeOfFileHeader;
+			int sizeOfOptionalHeader = sizeOfOptionalHeaderMagic; // initial minimum
+			int minimumHeadersSize = offsetOfOptionalHeader + sizeOfOptionalHeader;
+			byte[] pe = new byte [minimumHeadersSize];
+			if (stream.Read (pe, 0, minimumHeadersSize) != minimumHeadersSize
+				|| pe [0] != (byte)'P' || pe [1] != (byte)'E' || pe [2] != 0 || pe [3] != 0) // 0x4550
+				return Error ("read_minimumHeadersSize_or_pesig_failed");
+
+			sizeOfOptionalHeader = BitConverterLE.ToUInt16 (pe, offsetOfFileHeader + 16);
+			if (sizeOfOptionalHeader < sizeOfOptionalHeaderMagic)
+				return Error ($"sizeOfOptionalHeader_lt_2 ${sizeOfOptionalHeader}");
+
+			int headersSize = offsetOfOptionalHeader + sizeOfOptionalHeader;
+			if (headersSize < offsetOfOptionalHeader) // check overflow
+				return Error ("headers_overflow");
+
+			// Read the rest of the NT headers (i.e. the rest of the optional header).
+
+			if (headersSize > minimumHeadersSize) {
+				int additionalHeadersSize = headersSize - minimumHeadersSize;
+				var pe2 = new byte [headersSize];
+				if (stream.Read (pe2, minimumHeadersSize, additionalHeadersSize) != additionalHeadersSize)
+					return Error ("read_pe2_failed");
+				Buffer.BlockCopy (pe, 0, pe2, 0, minimumHeadersSize);
+				pe = pe2;
 			}
 
-			cs.Close ();
-			info.Hash = hash.Hash;
+			uint magic = BitConverterLE.ToUInt16 (pe, offsetOfOptionalHeader);
+
+			// Refer to PE32+ as PE64 for brevity.
+			// PE64 proosal that widened more fields was rejected.
+			// Between PE32 and PE32+:
+			//   Some fields are the same size and offset. For example the entire
+			//      MS-DOS header, FileHeader, and section headers, and some of the optional header.
+			//   Some fields are PE32-only (BaseOfData).
+			//   Some fields are constant size, some are pointer size.
+			//   Relative virtual addresses and file offsets are always 4 bytes.
+			//   Some fields offsets are offset by 4, 8, or 12, but mostly 0 or 16,
+			//     and it so happens that the 4/8/12-offset fields are less interesting.
+			int pe64 = 0;
+			bool rom = false;
+			if (magic == 0x10B) {
+				// nothing
+			} else if (magic == 0x20B)
+				pe64 = 16;
+			else if (magic == 0x107)
+				rom = true;
+			else
+				return Error ("bad_magic_value");
+
+			uint numberOfRvaAndSizes = 0;
+
+			if (!rom) { // ROM images have no data directories or checksum.
+				if (sizeOfOptionalHeader >= offsetOfOptionalHeader + 92 + pe64 + 4)
+					numberOfRvaAndSizes = BitConverterLE.ToUInt32 (pe, offsetOfOptionalHeader + 92 + pe64);
+
+				// Clear CheckSum and Security Directory if present.
+				// CheckSum is located the same for PE32+, all data directories are not.
+
+				for (int i = 64; i < sizeOfOptionalHeader && i < 68; ++i)
+					pe [offsetOfOptionalHeader + i] = 0;
+
+				for (int i = 128 + pe64; i < sizeOfOptionalHeader && i < 128 + 8 + pe64; ++i)
+					pe [offsetOfOptionalHeader + i] = 0;
+			}
+
+			// Read the section headers if present (an image can have no sections, just headers).
+
+			const int sizeOfSectionHeader = 40;
+			int numberOfSections = BitConverterLE.ToUInt16 (pe, offsetOfFileHeader + 2);
+			byte[] sectionHeaders = new byte [numberOfSections * sizeOfSectionHeader];
+			if (stream.Read (sectionHeaders, 0, sectionHeaders.Length) != sectionHeaders.Length)
+				return Error ("read_section_headers_failed");
+
+			// Read the CLR header if present.
+
+			uint SignaturePosition = 0;
+			uint SignatureLength = 0;
+			uint MetadataPosition = 0;
+			uint MetadataLength = 0;
+
+			if (15 < numberOfRvaAndSizes && sizeOfOptionalHeader >= 216 + pe64) {
+				uint cliHeaderRVA = BitConverterLE.ToUInt32 (pe, offsetOfOptionalHeader + 208 + pe64);
+				uint cliHeaderPos = RVAtoPosition (cliHeaderRVA, numberOfSections, sectionHeaders);
+				int cliHeaderSiz = BitConverterLE.ToInt32 (pe, offsetOfOptionalHeader + 208 + 4 + pe64);
+
+				// CLI Header
+				// ref: Section 24.3.3, Partition II Metadata
+				var cli = new byte [cliHeaderSiz];
+				stream.Position = cliHeaderPos;
+				if (stream.Read (cli, 0, cliHeaderSiz) != cliHeaderSiz)
+					return Error ("read_cli_header_failed");
+
+				uint strongNameSignatureRVA = BitConverterLE.ToUInt32 (cli, 32);
+				SignaturePosition = RVAtoPosition (strongNameSignatureRVA, numberOfSections, sectionHeaders);
+				SignatureLength = BitConverterLE.ToUInt32 (cli, 36);
+
+				uint metadataRVA = BitConverterLE.ToUInt32 (cli, 8);
+				MetadataPosition = RVAtoPosition (metadataRVA, numberOfSections, sectionHeaders);
+				MetadataLength = BitConverterLE.ToUInt32 (cli, 12);
+			}
+
+			StrongNameSignature info = new StrongNameSignature ();
+			info.SignaturePosition = SignaturePosition;
+			info.SignatureLength = SignatureLength;
+			info.MetadataPosition = MetadataPosition;
+			info.MetadataLength = MetadataLength;
+
+			using (HashAlgorithm hash = HashAlgorithm.Create (TokenAlgorithm))
+			{
+				if (options == StrongNameOptions.Metadata) {
+					hash.Initialize ();
+					byte[] metadata = new byte [MetadataLength];
+					stream.Position = MetadataPosition;
+					if (stream.Read (metadata, 0, (int)MetadataLength) != (int)MetadataLength)
+						return Error ("read_cli_metadata_failed");
+					info.Hash = hash.ComputeHash (metadata);
+					return info;
+				}
+
+				using (CryptoStream cs = new CryptoStream (Stream.Null, hash, CryptoStreamMode.Write))
+				{
+					cs.Write (mz, 0, mz.Length); // Hash MS-DOS header/stub despite stub it is not run.
+					cs.Write (pe, 0, pe.Length);
+					cs.Write (sectionHeaders, 0, sectionHeaders.Length);
+
+					// now we hash every section EXCEPT the signature block
+					for (int i=0; i < numberOfSections; i++) {
+						UInt32 start = BitConverterLE.ToUInt32 (sectionHeaders, i * sizeOfSectionHeader + 20);
+						int length = BitConverterLE.ToInt32 (sectionHeaders, i * sizeOfSectionHeader + 16);
+						byte[] section = new byte [length];
+						stream.Position = start;
+						if (stream.Read (section, 0, length) != length)
+							return Error ("read_section_failed");
+						// The signature is assumed not to straddle sections.
+						if ((start <= SignaturePosition) && (SignaturePosition < start + (uint)length)) {
+							// hash before the signature
+							int before = (int)(SignaturePosition - start);
+							if (before > 0) {
+								cs.Write (section, 0, before);
+							}
+							// copy signature
+							info.Signature = new byte [SignatureLength];
+							Buffer.BlockCopy (section, before, info.Signature, 0, (int)SignatureLength);
+							Array.Reverse (info.Signature);
+							// hash after the signature
+							int s = (int)(before + SignatureLength);
+							int after = (int)(length - s);
+							if (after > 0) {
+								cs.Write (section, s, after);
+							}
+						}
+						else
+							cs.Write (section, 0, length);
+					}
+
+					cs.Close ();
+					info.Hash = hash.Hash;
+				}
+			}
 			return info;
 		}
 
 		// return the same result as the undocumented and unmanaged GetHashFromAssemblyFile
 		public byte[] Hash (string fileName) 
 		{
-			FileStream fs = File.OpenRead (fileName);
-			StrongNameSignature sn = StrongHash (fs, StrongNameOptions.Metadata);
-			fs.Close ();
-
-			return sn.Hash;
+			using (FileStream fs = File.OpenRead (fileName))
+			{
+				StrongNameSignature sn = StrongHash (fs, StrongNameOptions.Metadata);
+				fs.Close ();
+				return sn.Hash;
+			}
 		}
 
 		public bool Sign (string fileName) 
