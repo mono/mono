@@ -249,8 +249,8 @@ rehash (MonoGHashTable *hash)
 guint
 mono_g_hash_table_size (MonoGHashTable *hash)
 {
-	g_return_val_if_fail (hash != NULL, 0);
-
+	if (!hash)
+		return 0;
 	return hash->in_use;
 }
 
@@ -261,6 +261,9 @@ gpointer
 mono_g_hash_table_lookup (MonoGHashTable *hash, gconstpointer key)
 {
 	gpointer orig_key, value;
+
+	if (!hash)
+		return NULL;
 
 	if (mono_g_hash_table_lookup_extended (hash, key, &orig_key, &value))
 		return value;
@@ -276,8 +279,8 @@ mono_g_hash_table_lookup_extended (MonoGHashTable *hash, gconstpointer key, gpoi
 {
 	int slot;
 
-	g_return_val_if_fail (hash != NULL, FALSE);
-
+	if (!hash)
+		return FALSE;
 	slot = mono_g_hash_table_find_slot (hash, key);
 
 	if (hash->keys [slot]) {
@@ -299,7 +302,8 @@ mono_g_hash_table_foreach (MonoGHashTable *hash, GHFunc func, gpointer user_data
 {
 	int i;
 
-	g_return_if_fail (hash != NULL);
+	if (!hash)
+		return;
 	g_return_if_fail (func != NULL);
 
 	for (i = 0; i < hash->table_size; i++) {
@@ -313,7 +317,8 @@ mono_g_hash_table_find (MonoGHashTable *hash, GHRFunc predicate, gpointer user_d
 {
 	int i;
 
-	g_return_val_if_fail (hash != NULL, NULL);
+	if (!hash)
+		return NULL;
 	g_return_val_if_fail (predicate != NULL, NULL);
 
 	for (i = 0; i < hash->table_size; i++) {
@@ -331,7 +336,8 @@ mono_g_hash_table_remove (MonoGHashTable *hash, gconstpointer key)
 {
 	int slot, last_clear_slot;
 
-	g_return_val_if_fail (hash != NULL, FALSE);
+	if (!hash)
+		return FALSE;
 	slot = mono_g_hash_table_find_slot (hash, key);
 
 	if (!hash->keys [slot])
@@ -387,7 +393,8 @@ mono_g_hash_table_foreach_remove (MonoGHashTable *hash, GHRFunc func, gpointer u
 	int i;
 	int count = 0;
 
-	g_return_val_if_fail (hash != NULL, 0);
+	if (!hash)
+		return 0;
 	g_return_val_if_fail (func != NULL, 0);
 
 	for (i = 0; i < hash->table_size; i++) {
@@ -411,7 +418,8 @@ mono_g_hash_table_destroy (MonoGHashTable *hash)
 {
 	int i;
 
-	g_return_if_fail (hash != NULL);
+	if (!hash)
+		return;
 
 	if (hash->gc_type & MONO_HASH_KEY_GC)
 		mono_gc_deregister_root ((char*)hash->keys);

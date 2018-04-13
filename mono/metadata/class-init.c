@@ -3128,8 +3128,7 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 		override_map = NULL;
 	}
 
-	if (override_class_map)
-		g_hash_table_destroy (override_class_map);
+	g_hash_table_destroy (override_class_map);
 
 	if (conflict_map) {
 		handle_dim_conflicts (vtable, klass, conflict_map);
@@ -3241,10 +3240,8 @@ fail:
 	mono_error_cleanup (error);
 	g_free (name);
 	g_free (vtable);
-	if (override_map)
-		g_hash_table_destroy (override_map);
-	if (virt_methods)
-		g_slist_free (virt_methods);
+	g_hash_table_destroy (override_map);
+	g_slist_free (virt_methods);
 	}
 }
 

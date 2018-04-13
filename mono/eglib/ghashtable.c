@@ -145,6 +145,9 @@ dump_hash_table (GHashTable *hash)
 {
 	int i;
 
+	if (!hash)
+		return;
+
 	for (i = 0; i < hash->table_size; i++) {
 		Slot *s;
 
@@ -298,7 +301,8 @@ g_hash_table_get_values (GHashTable *hash)
 guint
 g_hash_table_size (GHashTable *hash)
 {
-	g_return_val_if_fail (hash != NULL, 0);
+	if (!hash)
+		return 0;
 	
 	return hash->in_use;
 }
@@ -307,7 +311,10 @@ gpointer
 g_hash_table_lookup (GHashTable *hash, gconstpointer key)
 {
 	gpointer orig_key, value;
-	
+
+	if (!hash)
+		return NULL;
+
 	if (g_hash_table_lookup_extended (hash, key, &orig_key, &value))
 		return value;
 	else
@@ -320,8 +327,10 @@ g_hash_table_lookup_extended (GHashTable *hash, gconstpointer key, gpointer *ori
 	GEqualFunc equal;
 	Slot *s;
 	guint hashcode;
-	
-	g_return_val_if_fail (hash != NULL, FALSE);
+
+	if (!hash)
+		return FALSE;
+
 	sanity_check (hash);
 	equal = hash->key_equal_func;
 
@@ -343,8 +352,9 @@ void
 g_hash_table_foreach (GHashTable *hash, GHFunc func, gpointer user_data)
 {
 	int i;
-	
-	g_return_if_fail (hash != NULL);
+
+	if (!hash)
+		return;
 	g_return_if_fail (func != NULL);
 
 	for (i = 0; i < hash->table_size; i++){
@@ -359,8 +369,10 @@ gpointer
 g_hash_table_find (GHashTable *hash, GHRFunc predicate, gpointer user_data)
 {
 	int i;
-	
-	g_return_val_if_fail (hash != NULL, NULL);
+
+	if (!hash)
+		return NULL;
+
 	g_return_val_if_fail (predicate != NULL, NULL);
 
 	for (i = 0; i < hash->table_size; i++){
@@ -378,7 +390,8 @@ g_hash_table_remove_all (GHashTable *hash)
 {
 	int i;
 	
-	g_return_if_fail (hash != NULL);
+	if (!hash)
+		return;
 
 	for (i = 0; i < hash->table_size; i++){
 		Slot *s;
@@ -396,8 +409,10 @@ g_hash_table_remove (GHashTable *hash, gconstpointer key)
 	GEqualFunc equal;
 	Slot *s, *last;
 	guint hashcode;
-	
-	g_return_val_if_fail (hash != NULL, FALSE);
+
+	if (!hash)
+		return FALSE;
+
 	sanity_check (hash);
 	equal = hash->key_equal_func;
 
@@ -429,8 +444,10 @@ g_hash_table_foreach_remove (GHashTable *hash, GHRFunc func, gpointer user_data)
 {
 	int i;
 	int count = 0;
-	
-	g_return_val_if_fail (hash != NULL, 0);
+
+	if (!hash)
+		return 0;
+
 	g_return_val_if_fail (func != NULL, 0);
 
 	sanity_check (hash);
@@ -475,8 +492,10 @@ g_hash_table_steal (GHashTable *hash, gconstpointer key)
 	GEqualFunc equal;
 	Slot *s, *last;
 	guint hashcode;
-	
-	g_return_val_if_fail (hash != NULL, FALSE);
+
+	if (!hash)
+		return FALSE;
+
 	sanity_check (hash);
 	equal = hash->key_equal_func;
 	
@@ -505,8 +524,10 @@ g_hash_table_foreach_steal (GHashTable *hash, GHRFunc func, gpointer user_data)
 {
 	int i;
 	int count = 0;
-	
-	g_return_val_if_fail (hash != NULL, 0);
+
+	if (!hash)
+		return 0;
+
 	g_return_val_if_fail (func != NULL, 0);
 
 	sanity_check (hash);
@@ -545,8 +566,9 @@ void
 g_hash_table_destroy (GHashTable *hash)
 {
 	int i;
-	
-	g_return_if_fail (hash != NULL);
+
+	if (!hash)
+		return;
 
 	for (i = 0; i < hash->table_size; i++){
 		Slot *s, *next;

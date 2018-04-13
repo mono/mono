@@ -621,8 +621,7 @@ mono_cominterop_init (void)
 	com_provider_env = g_getenv ("MONO_COM");
 	if (com_provider_env && !strcmp(com_provider_env, "MS"))
 		com_provider = MONO_COM_MS;
-	if (com_provider_env)
-		g_free (com_provider_env);
+	g_free (com_provider_env);
 
 	register_icall (cominterop_get_method_interface, "cominterop_get_method_interface", "ptr ptr", FALSE);
 	register_icall (cominterop_get_function_pointer, "cominterop_get_function_pointer", "ptr ptr int32", FALSE);
@@ -1818,10 +1817,8 @@ cominterop_rcw_finalizer (gpointer key, gpointer value, gpointer user_data)
 		MonoComInteropProxy* proxy = (MonoComInteropProxy*)mono_gchandle_get_target (gchandle);
 		
 		if (proxy) {
-			if (proxy->com_object->itf_hash) {
-				g_hash_table_foreach_remove (proxy->com_object->itf_hash, cominterop_rcw_interface_finalizer, NULL);
-				g_hash_table_destroy (proxy->com_object->itf_hash);
-			}
+			g_hash_table_foreach_remove (proxy->com_object->itf_hash, cominterop_rcw_interface_finalizer, NULL);
+			g_hash_table_destroy (proxy->com_object->itf_hash);
 			if (proxy->com_object->iunknown)
 				ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (proxy->com_object->iunknown);
 			proxy->com_object->iunknown = NULL;

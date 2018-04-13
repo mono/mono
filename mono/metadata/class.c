@@ -1527,8 +1527,7 @@ mono_class_get_implemented_interfaces (MonoClass *klass, MonoError *error)
 	GHashTable *ifaces = NULL;
 
 	collect_implemented_interfaces_aux (klass, &res, &ifaces, error);
-	if (ifaces)
-		g_hash_table_destroy (ifaces);
+	g_hash_table_destroy (ifaces);
 	if (!mono_error_ok (error)) {
 		if (res)
 			g_ptr_array_free (res, TRUE);

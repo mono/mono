@@ -136,6 +136,9 @@ mono_conc_hashtable_new_full (GHashFunc hash_func, GEqualFunc key_equal_func, GD
 void
 mono_conc_hashtable_destroy (MonoConcurrentHashTable *hash_table)
 {
+	if (!hash_table)
+		return;
+
 	if (hash_table->key_destroy_func || hash_table->value_destroy_func) {
 		int i;
 		conc_table *table = (conc_table*)hash_table->table;
