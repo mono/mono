@@ -1467,6 +1467,32 @@ convert_unix_filetime (const FILETIME *file_time, size_t field_size, const char 
 }
 #endif
 
+static void convert_stattime_access_to_timeval (struct timeval *dest, struct stat *statbuf)
+{
+#if HAVE_STRUCT_STAT_ST_ATIMESPEC
+	dest->tv_sec = statbuf->st_atimespec.tv_sec;
+	dest->tv_usec = statbuf->st_atimespec.tv_nsec / 1000;
+#else
+	dest->tv_sec = statbuf->st_atime;
+#if HAVE_STRUCT_STAT_ST_ATIM
+	dest->tv_usec = statbuf->st_atim.tv_nsec / 1000;
+#endif
+#endif
+}
+
+static void convert_stattime_mod_to_timeval (struct timeval *dest, struct stat *statbuf)
+{
+#if HAVE_STRUCT_STAT_ST_ATIMESPEC
+	dest->tv_sec = statbuf->st_mtimespec.tv_sec;
+	dest->tv_usec = statbuf->st_mtimespec.tv_nsec / 1000;
+#else
+	dest->tv_sec = statbuf->st_mtime;
+#if HAVE_STRUCT_STAT_ST_ATIM
+	dest->tv_usec = statbuf->st_mtim.tv_nsec / 1000;
+#endif
+#endif
+}
+
 static gboolean file_setfiletime(FileHandle *filehandle,
 				 const FILETIME *create_time G_GNUC_UNUSED,
 				 const FILETIME *access_time,
@@ -1511,15 +1537,7 @@ static gboolean file_setfiletime(FileHandle *filehandle,
 		times [0].tv_sec = actime / TICKS_PER_SECOND;
 		times [0].tv_usec = (actime % TICKS_PER_SECOND) / TICKS_PER_MICROSECOND;
 	} else {
-#if HAVE_STRUCT_STAT_ST_ATIMESPEC
-		times [0].tv_sec = statbuf.st_atimespec.tv_sec;
-		times [0].tv_usec = statbuf.st_atimespec.tv_nsec / 1000;
-#else
-		times [0].tv_sec = statbuf.st_atime;
-#if HAVE_STRUCT_STAT_ST_ATIM
-		times [0].tv_usec = statbuf.st_atim.tv_nsec / 1000;
-#endif
-#endif
+		convert_stattime_access_to_timeval (&times [0], &statbuf);
 	}
 
 	if (write_time) {
@@ -1527,15 +1545,7 @@ static gboolean file_setfiletime(FileHandle *filehandle,
 		times [1].tv_sec = wtime / TICKS_PER_SECOND;
 		times [1].tv_usec = (wtime % TICKS_PER_SECOND) / TICKS_PER_MICROSECOND;
 	} else {
-#if HAVE_STRUCT_STAT_ST_ATIMESPEC
-		times [1].tv_sec = statbuf.st_mtimespec.tv_sec;
-		times [1].tv_usec = statbuf.st_mtimespec.tv_nsec / 1000;
-#else
-		times [1].tv_sec = statbuf.st_mtime;
-#if HAVE_STRUCT_STAT_ST_ATIM
-		times [1].tv_usec = statbuf.st_mtim.tv_nsec / 1000;
-#endif
-#endif
+		convert_stattime_mod_to_timeval (&times [1], &statbuf);
 	}
 
 	ret = _wapi_utimes (filehandle->filename, times);
@@ -2309,7 +2319,6 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 	gchar *utf8_src, *utf8_dest;
 	gint src_fd, dest_fd;
 	struct stat st, dest_st;
-	struct utimbuf dest_time;
 	gboolean ret = TRUE;
 	gint ret_utime;
 	gint syscall_res;
@@ -2426,11 +2435,21 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 	close (src_fd);
 	close (dest_fd);
 	
+#ifdef HAVE_STRUCT_TIMEVAL
+	struct timeval times [2];
+	memset (times, 0, sizeof (times));
+
+	convert_stattime_access_to_timeval (&times [0], &st);
+	convert_stattime_mod_to_timeval (&times [1], &st);
+
+	ret_utime = _wapi_utimes (utf8_dest, times);
+#else
+	struct utimbuf dest_time;
 	dest_time.modtime = st.st_mtime;
 	dest_time.actime = st.st_atime;
-	MONO_ENTER_GC_SAFE;
-	ret_utime = utime (utf8_dest, &dest_time);
-	MONO_EXIT_GC_SAFE;
+
+	ret_utime = _wapi_utime (utf8_dest, &dest_time);
+#endif
 	if (ret_utime == -1)
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: file [%s] utime failed: %s", __func__, utf8_dest, g_strerror(errno));
 	
