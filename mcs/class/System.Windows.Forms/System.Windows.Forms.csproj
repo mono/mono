@@ -974,110 +974,8 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <EmbeddedResource Include="resources/SplitterNS.cur">
-      <LogicalName>System.Windows.Forms.SplitterNS.cur</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/SplitterWE.cur">
-      <LogicalName>System.Windows.Forms.SplitterWE.cur</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/NESW.cur">
-      <LogicalName>System.Windows.Forms.NESW.cur</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/NWSE.cur">
-      <LogicalName>System.Windows.Forms.NWSE.cur</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/DnDNo.cur">
-      <LogicalName>System.Windows.Forms.DnDNo.cur</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/DnDCopy.cur">
-      <LogicalName>System.Windows.Forms.DnDCopy.cur</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/DnDLink.cur">
-      <LogicalName>System.Windows.Forms.DnDLink.cur</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/DnDMove.cur">
-      <LogicalName>System.Windows.Forms.DnDMove.cur</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/keyboards.resources.prebuilt">
-      <LogicalName>keyboards.resources</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/System.Windows.Forms.resources.prebuilt">
-      <LogicalName>System.Windows.Forms.resources</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources/16_computer.png">
       <LogicalName>16_computer.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/32_computer.png">
-      <LogicalName>32_computer.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/computer.png">
-      <LogicalName>computer.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/16_document-open.png">
-      <LogicalName>16_document-open.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/32_document-open.png">
-      <LogicalName>32_document-open.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/document-open.png">
-      <LogicalName>document-open.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/16_folder.png">
-      <LogicalName>16_folder.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/folder-new.png">
-      <LogicalName>folder-new.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/folder.png">
-      <LogicalName>folder.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/16_folder-remote.png">
-      <LogicalName>16_folder-remote.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/32_folder-remote.png">
-      <LogicalName>32_folder-remote.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/folder-remote.png">
-      <LogicalName>folder-remote.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/go-previous.png">
-      <LogicalName>go-previous.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/go-top.png">
-      <LogicalName>go-top.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/22_page-magnifier.png">
-      <LogicalName>22_page-magnifier.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/preferences-system-windows.png">
-      <LogicalName>preferences-system-windows.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/16_printer.png">
-      <LogicalName>16_printer.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/32_printer.png">
-      <LogicalName>32_printer.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/text-x-generic.png">
-      <LogicalName>text-x-generic.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/16_user-desktop.png">
-      <LogicalName>16_user-desktop.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/32_user-desktop.png">
-      <LogicalName>32_user-desktop.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/user-desktop.png">
-      <LogicalName>user-desktop.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/16_user-home.png">
-      <LogicalName>16_user-home.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/32_user-home.png">
-      <LogicalName>32_user-home.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/user-home.png">
-      <LogicalName>user-home.png</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/16_dialog-error.png">
       <LogicalName>16_dialog-error.png</LogicalName>
@@ -1088,11 +986,50 @@
     <EmbeddedResource Include="resources/16_dialog-warning.png">
       <LogicalName>16_dialog-warning.png</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_document-open.png">
+      <LogicalName>16_document-open.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_folder.png">
+      <LogicalName>16_folder.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_folder-remote.png">
+      <LogicalName>16_folder-remote.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_printer.png">
+      <LogicalName>16_printer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_user-desktop.png">
+      <LogicalName>16_user-desktop.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_user-home.png">
+      <LogicalName>16_user-home.png</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/1-up.png">
       <LogicalName>1-up.png</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="resources/22_page-magnifier.png">
+      <LogicalName>22_page-magnifier.png</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/2-up.png">
       <LogicalName>2-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_computer.png">
+      <LogicalName>32_computer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_document-open.png">
+      <LogicalName>32_document-open.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_folder-remote.png">
+      <LogicalName>32_folder-remote.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_printer.png">
+      <LogicalName>32_printer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_user-desktop.png">
+      <LogicalName>32_user-desktop.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_user-home.png">
+      <LogicalName>32_user-home.png</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/3-up.png">
       <LogicalName>3-up.png</LogicalName>
@@ -1102,6 +1039,57 @@
     </EmbeddedResource>
     <EmbeddedResource Include="resources/6-up.png">
       <LogicalName>6-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/computer.png">
+      <LogicalName>computer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DnDCopy.cur">
+      <LogicalName>System.Windows.Forms.DnDCopy.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DnDLink.cur">
+      <LogicalName>System.Windows.Forms.DnDLink.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DnDMove.cur">
+      <LogicalName>System.Windows.Forms.DnDMove.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DnDNo.cur">
+      <LogicalName>System.Windows.Forms.DnDNo.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/document-open.png">
+      <LogicalName>document-open.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/errorProvider.ico">
+      <LogicalName>errorProvider.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/EventsTab.bmp">
+      <LogicalName>System.Windows.Forms.Design.EventsTab.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/folder.png">
+      <LogicalName>folder.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/folder-new.png">
+      <LogicalName>folder-new.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/folder-remote.png">
+      <LogicalName>folder-remote.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/go-previous.png">
+      <LogicalName>go-previous.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/go-top.png">
+      <LogicalName>go-top.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/image-missing.png">
+      <LogicalName>image-missing.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/image-x-generic.png">
+      <LogicalName>image-x-generic.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/keyboards.resources.prebuilt">
+      <LogicalName>keyboards.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/mono.ico">
+      <LogicalName>mono.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/nav_delete.png">
       <LogicalName>nav_delete.png</LogicalName>
@@ -1121,11 +1109,17 @@
     <EmbeddedResource Include="resources/nav_previous.png">
       <LogicalName>nav_previous.png</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/image-missing.png">
-      <LogicalName>image-missing.png</LogicalName>
+    <EmbeddedResource Include="resources/NESW.cur">
+      <LogicalName>System.Windows.Forms.NESW.cur</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/image-x-generic.png">
-      <LogicalName>image-x-generic.png</LogicalName>
+    <EmbeddedResource Include="resources/NWSE.cur">
+      <LogicalName>System.Windows.Forms.NWSE.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/preferences-system-windows.png">
+      <LogicalName>preferences-system-windows.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/PropertiesTab.bmp">
+      <LogicalName>System.Windows.Forms.PropertyGridInternal.PropertiesTab.bmp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/propertygrid-alphabetical.png">
       <LogicalName>System.Windows.Forms.propertygrid-alphabetical.png</LogicalName>
@@ -1136,17 +1130,23 @@
     <EmbeddedResource Include="resources/propertygrid-propertypages.png">
       <LogicalName>System.Windows.Forms.propertygrid-propertypages.png</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/EventsTab.bmp">
-      <LogicalName>System.Windows.Forms.Design.EventsTab.bmp</LogicalName>
+    <EmbeddedResource Include="resources/SplitterNS.cur">
+      <LogicalName>System.Windows.Forms.SplitterNS.cur</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/PropertiesTab.bmp">
-      <LogicalName>System.Windows.Forms.PropertyGridInternal.PropertiesTab.bmp</LogicalName>
+    <EmbeddedResource Include="resources/SplitterWE.cur">
+      <LogicalName>System.Windows.Forms.SplitterWE.cur</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/mono.ico">
-      <LogicalName>mono.ico</LogicalName>
+    <EmbeddedResource Include="resources/System.Windows.Forms.resources.prebuilt">
+      <LogicalName>System.Windows.Forms.resources</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources/errorProvider.ico">
-      <LogicalName>errorProvider.ico</LogicalName>
+    <EmbeddedResource Include="resources/text-x-generic.png">
+      <LogicalName>text-x-generic.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/user-desktop.png">
+      <LogicalName>user-desktop.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/user-home.png">
+      <LogicalName>user-home.png</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->

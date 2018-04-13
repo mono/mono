@@ -339,6 +339,35 @@ extern GHashTable *mono_single_method_hash;
 extern GList* mono_aot_paths;
 extern MonoDebugOptions mini_debug_options;
 extern GSList *mono_interp_only_classes;
+extern char *sdb_options;
+
+/*
+This struct describes what execution engine feature to use.
+This subsume, and will eventually sunset, mono_aot_only / mono_llvm_only and friends.
+The goal is to transition us to a place were we can more easily compose/describe what features we need for a given execution mode.
+
+A good feature flag is checked alone, a bad one described many things and keeps breaking some of the modes
+*/
+typedef struct {
+	/*
+	 * If true, trampolines are to be fetched from the AOT runtime instead of JIT compiled
+	 */
+	gboolean use_aot_trampolines;
+
+	/*
+	 * If true, the runtime will try to use the interpreter before looking for compiled code.
+	 */
+	gboolean force_use_interpreter;
+} MonoEEFeatures;
+
+extern MonoEEFeatures mono_ee_features;
+
+//XXX this enum *MUST extend MonoAotMode as they are consumed together.
+typedef enum {
+	/* Always execute with interp, will use JIT to produce trampolines */
+	MONO_EE_MODE_INTERP = MONO_AOT_MODE_LAST,
+} MonoEEMode;
+
 
 static inline MonoMethod*
 jinfo_get_method (MonoJitInfo *ji)
@@ -355,6 +384,11 @@ MONO_API char       *mono_parse_options_from        (const char *options, int *r
 void                   mono_interp_stub_init         (void);
 void                   mini_install_interp_callbacks (MonoEECallbacks *cbs);
 MonoEECallbacks*       mini_get_interp_callbacks     (void);
+
+typedef struct _MonoDebuggerCallbacks MonoDebuggerCallbacks;
+
+void                   mini_install_dbg_callbacks (MonoDebuggerCallbacks *cbs);
+MonoDebuggerCallbacks  *mini_get_dbg_callbacks (void);
 
 MonoDomain* mini_init                      (const char *filename, const char *runtime_version);
 void        mini_cleanup                   (MonoDomain *domain);
@@ -487,6 +521,11 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
 
 #error "Missing return address intrinsics implementation"
 
+#endif
+
+//have a global view of sdb disable
+#if !defined(MONO_ARCH_SOFT_DEBUG_SUPPORTED) || defined (DISABLE_DEBUGGER_AGENT)
+#define DISABLE_SDB 1
 #endif
 
 #endif /* __MONO_MINI_RUNTIME_H__ */

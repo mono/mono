@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <ProjectGuid>{2C8FCB39-B0E8-4D90-9252-57E1A37259A3}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,219,414,649,619</NoWarn>
+    <NoWarn>1699,219,414,649,619,436</NoWarn>
     <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
@@ -99,6 +99,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\AdapterUtil.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\AdapterUtil.Drivers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\BasicFieldNameLookup.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\DbConnectionOptions.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\DbConnectionPoolKey.cs" />
@@ -106,6 +107,13 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\MultipartIdentifier.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\NameValuePair.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\Common\SQLResource.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\ProviderBase\DbConnectionClosed.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\ProviderBase\DbConnectionFactory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\ProviderBase\DbConnectionInternal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\ProviderBase\DbConnectionPoolGroup.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\ProviderBase\DbMetaDataFactory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\ProviderBase\DbReferenceCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Data\ProviderBase\TimeoutTimer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsPal.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugCriticalHandleMinusOneIsInvalid.cs" />
@@ -400,15 +408,11 @@
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionInternal.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPool.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPoolGroup.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPoolGroupProviderInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPoolIdentity.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPoolIdentity.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPoolOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbConnectionPoolProviderInfo.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbMetaDataFactory.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\DbReferenceCollection.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\ProviderBase\TimeoutTimer.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Sql\SqlMetaData.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Sql\SqlNorm.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\Sql\SqlNotificationRequest.cs" />

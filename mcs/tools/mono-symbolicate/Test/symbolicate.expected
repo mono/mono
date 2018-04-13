@@ -141,12 +141,12 @@ Stacktrace:
 
 System.ArgumentNullException: Value cannot be null.
 Parameter name: key
-  at System.Collections.Generic.Dictionary`2[TKey,TValue].FindEntry (TKey key) in external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs:369 
-  at System.Collections.Generic.Dictionary`2[TKey,TValue].ContainsKey (TKey key) in external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs:285 
+  at System.Collections.Generic.Dictionary`2[TKey,TValue].FindEntry (TKey key) in external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs:380 
+  at System.Collections.Generic.Dictionary`2[TKey,TValue].ContainsKey (TKey key) in external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs:286 
   at StackTraceDumper+<>c.<Main>b__0_15 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:54 
   at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 
 Stacktrace:
-  at System.Collections.Generic.Dictionary`2[TKey,TValue].FindEntry (TKey key) in external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs:369 
-  at System.Collections.Generic.Dictionary`2[TKey,TValue].ContainsKey (TKey key) in external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs:285 
+  at System.Collections.Generic.Dictionary`2[TKey,TValue].FindEntry (TKey key) in external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs:380 
+  at System.Collections.Generic.Dictionary`2[TKey,TValue].ContainsKey (TKey key) in external/corefx/src/Common/src/CoreLib/System/Collections/Generic/Dictionary.cs:286 
   at StackTraceDumper+<>c.<Main>b__0_15 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:54 
   at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:72 

@@ -196,9 +196,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterUnit.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterUnitConvert.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintEventHandler.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermission.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermissionAttribute.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermissionLevel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintPageEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintRange.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\QueryPageSettingsEventArgs.cs" />
@@ -219,6 +216,9 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Text\TextRenderingHint.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\TextureBrush.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\UnsafeNativeMethods.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermission.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermissionAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermissionLevel.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="corefx\SR.cs" />
@@ -410,9 +410,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterUnit.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterUnitConvert.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintEventHandler.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermission.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermissionAttribute.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermissionLevel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintPageEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintRange.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\QueryPageSettingsEventArgs.cs" />
@@ -433,6 +430,9 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Text\TextRenderingHint.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\TextureBrush.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\UnsafeNativeMethods.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermission.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermissionAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermissionLevel.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="corefx\SR.cs" />
@@ -624,9 +624,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterUnit.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrinterUnitConvert.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintEventHandler.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermission.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermissionAttribute.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintingPermissionLevel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintPageEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\PrintRange.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\QueryPageSettingsEventArgs.cs" />
@@ -647,6 +644,9 @@
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Text\TextRenderingHint.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\TextureBrush.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\UnsafeNativeMethods.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermission.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermissionAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Drawing\Printing\PrintingPermissionLevel.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="corefx\SR.cs" />
@@ -725,103 +725,103 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <EmbeddedResource Include="Assembly/Mono.ico">
-      <LogicalName>Mono.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Error.ico">
+      <LogicalName>Error.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Information.ico">
       <LogicalName>Information.ico</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Error.ico">
-      <LogicalName>Error.ico</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Warning.ico">
-      <LogicalName>Warning.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Mono.ico">
+      <LogicalName>Mono.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Question.ico">
       <LogicalName>Question.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Shield.ico">
       <LogicalName>Shield.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assembly/Warning.ico">
+      <LogicalName>Warning.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
-    <EmbeddedResource Include="Assembly/Mono.ico">
-      <LogicalName>Mono.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Error.ico">
+      <LogicalName>Error.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Information.ico">
       <LogicalName>Information.ico</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Error.ico">
-      <LogicalName>Error.ico</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Warning.ico">
-      <LogicalName>Warning.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Mono.ico">
+      <LogicalName>Mono.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Question.ico">
       <LogicalName>Question.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Shield.ico">
       <LogicalName>Shield.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assembly/Warning.ico">
+      <LogicalName>Warning.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
-    <EmbeddedResource Include="Assembly/Mono.ico">
-      <LogicalName>Mono.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Error.ico">
+      <LogicalName>Error.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Information.ico">
       <LogicalName>Information.ico</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Error.ico">
-      <LogicalName>Error.ico</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Warning.ico">
-      <LogicalName>Warning.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Mono.ico">
+      <LogicalName>Mono.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Question.ico">
       <LogicalName>Question.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Shield.ico">
       <LogicalName>Shield.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assembly/Warning.ico">
+      <LogicalName>Warning.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
-    <EmbeddedResource Include="Assembly/Mono.ico">
-      <LogicalName>Mono.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Error.ico">
+      <LogicalName>Error.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Information.ico">
       <LogicalName>Information.ico</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Error.ico">
-      <LogicalName>Error.ico</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Warning.ico">
-      <LogicalName>Warning.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Mono.ico">
+      <LogicalName>Mono.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Question.ico">
       <LogicalName>Question.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Shield.ico">
       <LogicalName>Shield.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assembly/Warning.ico">
+      <LogicalName>Warning.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
-    <EmbeddedResource Include="Assembly/Mono.ico">
-      <LogicalName>Mono.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Error.ico">
+      <LogicalName>Error.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Information.ico">
       <LogicalName>Information.ico</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Error.ico">
-      <LogicalName>Error.ico</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assembly/Warning.ico">
-      <LogicalName>Warning.ico</LogicalName>
+    <EmbeddedResource Include="Assembly/Mono.ico">
+      <LogicalName>Mono.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Question.ico">
       <LogicalName>Question.ico</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Assembly/Shield.ico">
       <LogicalName>Shield.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assembly/Warning.ico">
+      <LogicalName>Warning.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->

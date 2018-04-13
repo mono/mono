@@ -63,6 +63,7 @@
     <Compile Include="..\..\..\external\linker\linker\Linker\AssemblyAction.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\AssemblyInfo.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\AssemblyResolver.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\AssemblyUtilities.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\ConsoleLogger.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\Driver.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\I18nAssemblies.cs" />

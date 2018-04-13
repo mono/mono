@@ -348,4 +348,21 @@
         ret
   }
 
+  .method public hidebysig static bool IsAddressGreaterThan<T>(!!T& left, !!T& right) cil managed aggressiveinlining
+  {
+        .maxstack 2
+        ldarg.0
+        ldarg.1
+        cgt.un
+        ret
+  }
+
+  .method public hidebysig static bool IsAddressLessThan<T>(!!T& left, !!T& right) cil managed aggressiveinlining
+  {
+        .maxstack 2
+        ldarg.0
+        ldarg.1
+        clt.un
+        ret
+  }
 }

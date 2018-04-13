@@ -17,7 +17,7 @@
     <AssemblyName>Mono.Profiler.Log</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>../mono.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>./../../class/mono.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
   Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This

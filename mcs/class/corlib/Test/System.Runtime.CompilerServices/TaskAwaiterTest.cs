@@ -195,6 +195,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void GetResultWaitOnCompletion ()
 		{
 			TaskAwaiter awaiter;
@@ -273,6 +274,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void CompletionOnSameCustomSynchronizationContext ()
 		{
 			progress = "";
@@ -313,6 +315,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void CompletionOnDifferentCustomSynchronizationContext ()
 		{
 			mre = new ManualResetEvent (false);
@@ -365,6 +368,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void NestedLeakingSynchronizationContext ()
 		{
 			var sc = SynchronizationContext.Current;

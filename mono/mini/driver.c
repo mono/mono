@@ -74,6 +74,7 @@
 static FILE *mini_stats_fd;
 
 static void mini_usage (void);
+static void mono_runtime_set_execution_mode (MonoEEMode mode);
 
 #ifdef HOST_WIN32
 /* Need this to determine whether to detach console */
@@ -1523,7 +1524,7 @@ static const char info[] =
 #ifdef MONO_BIG_ARRAYS
 	"bigarrays "
 #endif
-#if defined(MONO_ARCH_SOFT_DEBUG_SUPPORTED) && !defined(DISABLE_SOFT_DEBUG)
+#if !defined(DISABLE_SDB)
 	"softdebug "
 #endif
 		"\n"
@@ -1577,7 +1578,7 @@ mono_jit_parse_options (int argc, char * argv[])
  		if (strncmp (argv [i], "--debugger-agent=", 17) == 0) {
 			MonoDebugOptions *opt = mini_get_debug_options ();
 
- 			mono_debugger_agent_parse_options (argv [i] + 17);
+			sdb_options = g_strdup (argv [i] + 17);
 			opt->mdb_optimizations = TRUE;
 			enable_debugging = TRUE;
 		} else if (!strcmp (argv [i], "--soft-breakpoints")) {
@@ -1752,7 +1753,7 @@ apply_root_domain_configuration_file_bindings (MonoDomain *domain, char *root_do
 static void
 mono_enable_interp (const char *opts)
 {
-	mono_use_interpreter = TRUE;
+	mono_runtime_set_execution_mode (MONO_EE_MODE_INTERP);
 	if (opts)
 		mono_interp_opts_string = opts;
 
@@ -2061,7 +2062,7 @@ mono_main (int argc, char* argv[])
  		} else if (strncmp (argv [i], "--debugger-agent=", 17) == 0) {
 			MonoDebugOptions *opt = mini_get_debug_options ();
 
- 			mono_debugger_agent_parse_options (argv [i] + 17);
+			sdb_options = g_strdup (argv [i] + 17);
 			opt->mdb_optimizations = TRUE;
 			enable_debugging = TRUE;
 		} else if (strcmp (argv [i], "--security") == 0) {
@@ -2556,6 +2557,59 @@ mono_jit_set_aot_only (gboolean val)
 	mono_aot_only = val;
 }
 
+static void
+mono_runtime_set_execution_mode (MonoEEMode mode)
+{
+	memset (&mono_ee_features, 0, sizeof (mono_ee_features));
+
+	switch (mode) {
+	case MONO_AOT_MODE_LLVMONLY:
+		mono_aot_only = TRUE;
+		mono_llvm_only = TRUE;
+
+		mono_ee_features.use_aot_trampolines = TRUE;
+		break;
+
+	case MONO_AOT_MODE_FULL:
+		mono_aot_only = TRUE;
+
+		mono_ee_features.use_aot_trampolines = TRUE;
+		break;
+
+	case MONO_AOT_MODE_HYBRID:
+		mono_set_generic_sharing_vt_supported (TRUE);
+		mono_set_partial_sharing_supported (TRUE);
+		break;
+
+	case MONO_AOT_MODE_INTERP:
+		mono_aot_only = TRUE;
+		mono_use_interpreter = TRUE;
+
+		mono_ee_features.use_aot_trampolines = TRUE;
+		break;
+
+	case MONO_AOT_MODE_INTERP_LLVMONLY:
+		mono_aot_only = TRUE;
+		mono_use_interpreter = TRUE;
+		mono_llvm_only = TRUE;
+
+		mono_ee_features.force_use_interpreter = TRUE;
+		break;
+
+	case MONO_EE_MODE_INTERP:
+		mono_use_interpreter = TRUE;
+
+		mono_ee_features.force_use_interpreter = TRUE;
+		break;
+
+	case MONO_AOT_MODE_NORMAL:
+		break;
+
+	default:
+		g_error ("Unknown execution-mode %d", mode);
+	}
+}
+
 /**
  * mono_jit_set_aot_mode:
  */
@@ -2565,27 +2619,9 @@ mono_jit_set_aot_mode (MonoAotMode mode)
 	/* we don't want to set mono_aot_mode twice */
 	g_assert (mono_aot_mode == MONO_AOT_MODE_NONE);
 	mono_aot_mode = mode;
+	
+	mono_runtime_set_execution_mode ((MonoEEMode)mode);
 
-	if (mono_aot_mode == MONO_AOT_MODE_LLVMONLY) {
-		mono_aot_only = TRUE;
-		mono_llvm_only = TRUE;
-	}
-	if (mono_aot_mode == MONO_AOT_MODE_FULL) {
-		mono_aot_only = TRUE;
-	}
-	if (mono_aot_mode == MONO_AOT_MODE_HYBRID) {
-		mono_set_generic_sharing_vt_supported (TRUE);
-		mono_set_partial_sharing_supported (TRUE);
-	}
-	if (mono_aot_mode == MONO_AOT_MODE_INTERP) {
-		mono_aot_only = TRUE;
-		mono_use_interpreter = TRUE;
-	}
-	if (mono_aot_mode == MONO_AOT_MODE_INTERP_LLVMONLY) {
-		mono_aot_only = TRUE;
-		mono_use_interpreter = TRUE;
-		mono_llvm_only = TRUE;
-	}
 }
 
 mono_bool

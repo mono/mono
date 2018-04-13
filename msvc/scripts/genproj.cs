@@ -335,7 +335,7 @@ class MsbuildGenerator {
 	bool Optimize = true;
 	bool want_debugging_support = false;
 	string main = null;
-	Dictionary<string, string> embedded_resources = new Dictionary<string, string> ();
+	SortedDictionary<string, string> embedded_resources = new SortedDictionary<string, string> ();
 	List<string> warning_as_error = new List<string> ();
 	List<int> ignore_warning = new List<int> ();
 	bool load_default_config = true;
@@ -1004,9 +1004,10 @@ class MsbuildGenerator {
 						Console.Error.WriteLine ($"{library}: Could not find a matching project reference for {Path.GetFileName (reference)}");
 						Console.Error.WriteLine ("  --> Adding reference with hintpath instead");
 					}
-					refs.Append ("    <Reference Include=\"" + reference + "\">" + NewLine);
+					var externalDrawing = (reference == Environment.GetEnvironmentVariable ("EXTERNAL_FACADE_DRAWING_REFERENCE"));
+					refs.Append ("    <Reference Include=\"" + (externalDrawing ? "$(EXTERNAL_FACADE_DRAWING_REFERENCE)" : reference) + "\">" + NewLine);
 					refs.Append ("      <SpecificVersion>False</SpecificVersion>" + NewLine);
-					refs.Append ("      <HintPath>" + reference + "</HintPath>" + NewLine);
+					refs.Append ("      <HintPath>" + (externalDrawing ? "$(EXTERNAL_FACADE_DRAWING_REFERENCE)" : reference) + "</HintPath>" + NewLine);
 					refs.Append ("      <Private>False</Private>" + NewLine);
 					refs.Append ("    </Reference>" + NewLine);
 				}
@@ -1103,7 +1104,7 @@ class MsbuildGenerator {
 		properties.Append ($"  </PropertyGroup>{NewLine}");
 
 		var prebuild_postbuild = new StringBuilder ();
-		if (!String.IsNullOrWhiteSpace(prebuild) || !String.IsNullOrWhiteSpace(prebuild)) {
+		if (!String.IsNullOrWhiteSpace(prebuild) || !String.IsNullOrWhiteSpace(postbuild)) {
 			prebuild_postbuild.Append ($"  <PropertyGroup>{NewLine}");
 			prebuild_postbuild.Append (prebuild);
 			prebuild_postbuild.Append (postbuild);
@@ -1378,7 +1379,7 @@ public class Driver {
 			Console.Error.WriteLine (sb.ToString ());
 		}
 
-		WriteSolution (four_five_sln_gen, Path.Combine ("..", "..", MakeSolutionName (MsbuildGenerator.profile_4_x)));
+		WriteSolution (four_five_sln_gen, Path.Combine ("..", "..", "bcl.sln"));
 
 		if (makefileDeps){
 			const string classDirPrefix = "./../../";
@@ -1557,11 +1558,6 @@ public class Driver {
 		return path;
 	}
 	
-	static string MakeSolutionName (string profileTag)
-	{
-		return "net" + profileTag + ".sln";
-	}
-
 	static void FillSolution (SlnGenerator solution, string profileString, IEnumerable<MsbuildGenerator> projects, Func<MsbuildGenerator.VsCsproj, bool> additionalFilter = null)
 	{
 		foreach (var generator in projects) {

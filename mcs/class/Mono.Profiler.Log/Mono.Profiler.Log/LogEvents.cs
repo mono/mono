@@ -276,7 +276,7 @@ namespace Mono.Profiler.Log {
 
 		public struct HeapRoot {
 
-			public long AddressPointer { get; internal set; }
+			public long SlotPointer { get; internal set; }
 
 			public long ObjectPointer { get; internal set; }
 

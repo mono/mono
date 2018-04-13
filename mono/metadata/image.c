@@ -840,7 +840,7 @@ do_load_header (MonoImage *image, MonoDotNetHeader *header, int offset)
 
 	memcpy (header, image->raw_data + offset, sizeof (MonoDotNetHeader));
 
-	if (header->pesig [0] != 'P' || header->pesig [1] != 'E')
+	if (header->pesig [0] != 'P' || header->pesig [1] != 'E' || header->pesig [2] || header->pesig [3])
 		return -1;
 
 	/* endian swap the fields common between PE and PE+ */
@@ -2161,17 +2161,14 @@ mono_image_close_except_pools (MonoImage *image)
 	if (image->image_info){
 		MonoCLIImageInfo *ii = (MonoCLIImageInfo *)image->image_info;
 
-		if (ii->cli_section_tables)
-			g_free (ii->cli_section_tables);
-		if (ii->cli_sections)
-			g_free (ii->cli_sections);
+		g_free (ii->cli_section_tables);
+		g_free (ii->cli_sections);
 		g_free (image->image_info);
 	}
 
 	mono_image_close_except_pools_all (image->files, image->file_count);
 	mono_image_close_except_pools_all (image->modules, image->module_count);
-	if (image->modules_loaded)
-		g_free (image->modules_loaded);
+	g_free (image->modules_loaded);
 
 	mono_os_mutex_destroy (&image->szarray_cache_lock);
 	mono_os_mutex_destroy (&image->lock);

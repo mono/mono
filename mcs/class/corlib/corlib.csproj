@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;FEATURE_PORTABLE_SPAN;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_CONSOLE;MONO_FEATURE_APPLETLS</DefineConstants>
+    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;FEATURE_PORTABLE_SPAN;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_CONSOLE;MONO_FEATURE_APPLETLS;FEATURE_CRYPTO_CONFIGURABLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
     <OutputPath>./../../class/lib/monodroid</OutputPath>
@@ -108,9 +108,10 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\IRetainable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\IMemoryOwner.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\IPinnable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\MemoryHandle.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\OwnedMemory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\MemoryManager.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Comparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\DictionaryEntry.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\Dictionary.cs" />
@@ -129,7 +130,8 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\KeyNotFoundException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\KeyValuePair.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\List.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\ValueListBuilder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\HashHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\ICollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\IComparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\IDictionary.cs" />
@@ -146,18 +148,30 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Diagnostics\StackTraceHiddenAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.Invariant.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\GlobalizationExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HResults.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Marvin.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MathF.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Memory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MemoryDebugView.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MemoryExtensions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Numerics\ConstantHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Numerics\Register.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Numerics\Vector.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Numerics\Vector_Operations.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlyMemory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlySpan.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\BindingFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\AccessedThroughPropertyAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\AsyncMethodBuilderAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\AsyncStateMachineAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\AsyncValueTaskMethodBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CallerFilePathAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CallerLineNumberAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CallerMemberNameAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CompilerGeneratedAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CompilerGlobalScopeAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\ConfiguredValueTaskAwaitable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\CustomConstantAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\DateTimeConstantAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\DecimalConstantAttribute.cs" />
@@ -188,16 +202,25 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\TypeForwardedFromAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\TypeForwardedToAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\UnsafeValueTypeAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\CompilerServices\ValueTaskAwaiter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Runtime\InteropServices\MemoryMarshal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Span.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanDebugView.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanHelpers.BinarySearch.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanHelpers.Byte.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanHelpers.T.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\String.Searching.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\StringSplitOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\Sources\IValueTaskSource.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCanceledException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCompletionSource.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskSchedulerException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\ValueTask.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Tuple.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TupleExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ValueTuple.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\CompatibleComparer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Concurrent\ConcurrentQueue_Segment.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LowLevelDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\BeginEndAwaitableAdapter.cs" />
@@ -230,22 +253,14 @@
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\Reader.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\ReaderBigEndian.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\ReaderLittleEndian.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\Writer.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\WriterBigEndian.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\WriterLittleEndian.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\OperationStatus.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\StandardFormat.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\MemoryExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\MemoryExtensions.Portable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Pinnable.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ReadOnlySpan.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Span.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanDebugView.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.BinarySearch.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.byte.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.Clear.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ReadOnlySpan.Portable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Runtime\InteropServices\MemoryMarshal.Portable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Span.Portable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\SpanHelpers.T.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ThrowHelper.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ObjectModel\src\System\Collections\Generic\DebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ObjectModel\src\System\Collections\ObjectModel\KeyedCollection.cs" />
@@ -253,16 +268,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\ArrayList.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\Hashtable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\IHashCodeProvider.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Globalization\Extensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\Architecture.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\OSPlatform.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ContentType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509KeyStorageFlags.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Extensions\src\System\Runtime\CompilerServices\AsyncMethodBuilderAttribute.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Extensions\src\System\Runtime\CompilerServices\AsyncValueTaskMethodBuilder.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Extensions\src\System\Runtime\CompilerServices\ConfiguredValueTaskAwaitable.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Extensions\src\System\Runtime\CompilerServices\ValueTaskAwaiter.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Extensions\src\System\Threading\Tasks\ValueTask.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\Box.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\Parallel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\ParallelETWProvider.cs" />
@@ -273,7 +282,6 @@
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Collections\Generic\LowLevelList.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
     <Compile Include="..\..\..\external\corert\src\Runtime.Base\src\System\Runtime\InteropServices\NativeCallableAttribute.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Collections\Generic\ValueListBuilder.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Diagnostics\Debug.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\String.Manipulation.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\StringSpanHelpers.cs" />
@@ -951,7 +959,6 @@
     <Compile Include="corefx\AwaitTaskContinuation.cs" />
     <Compile Include="corefx\CompareInfo.cs" />
     <Compile Include="corefx\GlobalizationMode.cs" />
-    <Compile Include="corefx\MemoryExtensions.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />
@@ -1543,7 +1550,7 @@
     <Compile Include="System.Security.Cryptography\CryptoAPITransform.cs" />
     <Compile Include="System.Security.Cryptography\CryptoConfig.common.cs" />
     <Compile Include="System.Security.Cryptography\CryptoConfig.cs" />
-    <Compile Include="System.Security.Cryptography\CryptoConfig.fullaot.cs" />
+    <Compile Include="System.Security.Cryptography\CryptoConfig.Mobile.cs" />
     <Compile Include="System.Security.Cryptography\CspKeyContainerInfo.cs" />
     <Compile Include="System.Security.Cryptography\DESCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\DSACryptoServiceProvider.cs" />
@@ -1750,6 +1757,7 @@
     <Compile Include="System\IntPtr.cs" />
     <Compile Include="System\KnownTerminals.cs" />
     <Compile Include="System\MarshalByRefObject.cs" />
+    <Compile Include="System\MathF.mono.cs" />
     <Compile Include="System\ModuleHandle.cs" />
     <Compile Include="System\MonoAsyncCall.cs" />
     <Compile Include="System\MonoCQItem.cs" />
@@ -1843,6 +1851,7 @@
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1867,6 +1876,7 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1891,6 +1901,7 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1915,6 +1926,7 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1939,6 +1951,7 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1963,6 +1976,7 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -2003,6 +2017,7 @@
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -2104,14 +2119,11 @@
   <ItemGroup Condition=" '$(Platform)' == 'wasm' "></ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2128,19 +2140,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2157,19 +2169,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2186,19 +2198,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2215,19 +2227,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2244,19 +2256,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2273,19 +2285,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2302,19 +2314,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2331,19 +2343,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2360,19 +2372,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2389,19 +2401,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2418,19 +2430,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2447,19 +2459,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2476,19 +2488,19 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/collation.cjkCHS.bin">
       <LogicalName>collation.cjkCHS.bin</LogicalName>
@@ -2505,8 +2517,11 @@
     <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
       <LogicalName>collation.cjkKOlv2.bin</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
-      <LogicalName>mscorlib.xml</LogicalName>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->

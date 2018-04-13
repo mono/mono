@@ -442,6 +442,19 @@ namespace System.Net
 			Interlocked.Decrement (ref currentConnections);
 		}
 
+		public static async Task<bool> WaitAsync (Task workerTask, int millisecondTimeout)
+		{
+			var cts = new CancellationTokenSource ();
+			try {
+				var timeoutTask = Task.Delay (millisecondTimeout, cts.Token);
+				var ret = await Task.WhenAny (workerTask, timeoutTask).ConfigureAwait (false);
+				return ret != timeoutTask;
+			} finally {
+				cts.Cancel ();
+				cts.Dispose ();
+			}
+		}
+
 		class ConnectionGroup
 		{
 			public ServicePointScheduler Scheduler {
@@ -600,11 +613,9 @@ namespace System.Net
 				return m_tcs.Task.Wait (millisecondTimeout);
 			}
 
-			public async Task<bool> WaitAsync (int millisecondTimeout)
+			public Task<bool> WaitAsync (int millisecondTimeout)
 			{
-				var timeoutTask = Task.Delay (millisecondTimeout);
-				var ret = await Task.WhenAny (m_tcs.Task, timeoutTask).ConfigureAwait (false);
-				return ret != timeoutTask;
+				return ServicePointScheduler.WaitAsync (m_tcs.Task, millisecondTimeout);
 			}
 
 			public void Set ()

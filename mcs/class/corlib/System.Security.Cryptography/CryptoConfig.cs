@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_CRYPTO_CONFIGURABLE
 
 using System.Collections;
 using System.Collections.Generic;
@@ -50,8 +50,6 @@ namespace System.Security.Cryptography {
 [ComVisible (true)]
 public partial class CryptoConfig {
 
-	static private object lockObject;
-	static private Dictionary<string,Type> algorithms;
 	static private Dictionary<string,string> unresolved_algorithms;
 	static private Dictionary<string,string> oids;
 
@@ -281,12 +279,6 @@ public partial class CryptoConfig {
 	// SHA512 provider
 	const string nameSHA512Provider = "System.Security.Cryptography.SHA512CryptoServiceProvider";
 	const string defaultSHA512Provider = "System.Security.Cryptography.SHA512CryptoServiceProvider" + system_core_assembly;
-	static CryptoConfig () 
-	{
-		// lock(this) is bad
-		// http://msdn.microsoft.com/library/en-us/dnaskdr/html/askgui06032003.asp?frame=true
-		lockObject = new object ();
-	}
 
 	private static void Initialize () 
 	{
@@ -560,20 +552,6 @@ public partial class CryptoConfig {
 		string result = null;
 		oids.TryGetValue (name, out result);
 		return result;
-	}
-
-	public static void AddAlgorithm (Type algorithm, params string[] names)
-	{
-		if (algorithm == null)
-				throw new ArgumentNullException ("algorithm");
-		if (names  == null)
-				throw new ArgumentNullException ("names");
-			
-		foreach (string name in names) {
-				if (String.IsNullOrWhiteSpace (name))
-					throw new ArithmeticException ("names");
-				algorithms [name] = algorithm;
-		}
 	}
 
 	public static void AddOID (string oid, params string[] names)

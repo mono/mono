@@ -939,18 +939,15 @@ namespace System.Net
 			CancellationTokenSource cts)
 		{
 			try {
-				var timeoutTask = Task.Delay (timeout);
-				var ret = await Task.WhenAny (workerTask, timeoutTask).ConfigureAwait (false);
-				if (ret == timeoutTask) {
-					try {
-						cts.Cancel ();
-						abort ();
-					} catch {
-						// Ignore; we report the timeout.
-					}
-					throw new WebException (SR.net_timeout, WebExceptionStatus.Timeout);
+				if (await ServicePointScheduler.WaitAsync (workerTask, timeout).ConfigureAwait (false))
+					return workerTask.Result;
+				try {
+					cts.Cancel ();
+					abort ();
+				} catch {
+					// Ignore; we report the timeout.
 				}
-				return workerTask.Result;
+				throw new WebException (SR.net_timeout, WebExceptionStatus.Timeout);
 			} catch (Exception ex) {
 				throw FlattenException (ex);
 			} finally {

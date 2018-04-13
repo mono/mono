@@ -209,6 +209,7 @@ set_resume_state (ThreadContext *context, InterpFrame *frame)
 	frame->ex = NULL;
 	context->has_resume_state = 0;
 	context->handler_frame = NULL;
+	context->handler_ei = NULL;
 }
 
 /* Set the current execution state to the resume state in context */
@@ -221,6 +222,11 @@ set_resume_state (ThreadContext *context, InterpFrame *frame)
 		sp->data.p = frame->ex;											\
 		++sp;															\
 		} \
+		/* We have thrown an exception from a finally block. Some of the leave targets were unwinded already */ \
+		while (finally_ips && \
+				finally_ips->data >= (context)->handler_ei->try_start && \
+				finally_ips->data < (context)->handler_ei->try_end) \
+			finally_ips = g_slist_remove (finally_ips, finally_ips->data); \
 		set_resume_state ((context), (frame));							\
 		goto main_loop;													\
 	} while (0)
@@ -1136,7 +1142,7 @@ ves_pinvoke_method (InterpFrame *frame, MonoMethodSignature *sig, MonoFuncV addr
 
 	g_assert (!frame->imethod);
 	if (!mono_interp_to_native_trampoline) {
-		if (mono_aot_only) {
+		if (mono_ee_features.use_aot_trampolines) {
 			mono_interp_to_native_trampoline = mono_aot_get_trampoline ("interp_to_native_trampoline");
 		} else {
 			MonoTrampInfo *info;
@@ -2332,6 +2338,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 	0 };
 #endif
 
+
 	frame->ex = NULL;
 	frame->ex_handler = NULL;
 	frame->ip = NULL;
@@ -2407,7 +2414,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BREAK)
 			++ip;
-			do_debugger_tramp (mono_debugger_agent_user_break, frame);
+			do_debugger_tramp (mini_get_dbg_callbacks ()->user_break, frame);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDNULL) 
 			sp->data.p = NULL;
@@ -3332,7 +3339,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I1_R8)
-			sp [-1].data.i = (gint8)sp [-1].data.f;
+			/* without gint32 cast, C compiler is allowed to use undefined
+			 * behaviour if data.f is bigger than >255. See conv.fpint section
+			 * in C standard:
+			 * > The conversion truncates; that is, the fractional  part
+			 * > is discarded.  The behavior is undefined if the truncated
+			 * > value cannot be represented in the destination type.
+			 * */
+			sp [-1].data.i = (gint8) (gint32) sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U1_I4)
@@ -3344,7 +3358,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U1_R8)
-			sp [-1].data.i = (guint8)sp [-1].data.f;
+			sp [-1].data.i = (guint8) (guint32) sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I2_I4)
@@ -3356,7 +3370,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I2_R8)
-			sp [-1].data.i = (gint16)sp [-1].data.f;
+			sp [-1].data.i = (gint16) (gint32) sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U2_I4)
@@ -3368,7 +3382,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U2_R8)
-			sp [-1].data.i = (guint16)sp [-1].data.f;
+			sp [-1].data.i = (guint16) (guint32) sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I4_R8)
@@ -3470,6 +3484,23 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			++sp;
 			ip += 2;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_LDSTR_TOKEN) {
+			MonoString *s = NULL;
+			guint32 strtoken = (guint32) rtm->data_items [* (guint16 *)(ip + 1)];
+
+			MonoMethod *method = frame->imethod->method;
+			if (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD) {
+				s = mono_method_get_wrapper_data (method, strtoken);
+			} else if (method->wrapper_type != MONO_WRAPPER_NONE) {
+				s = mono_string_new_wrapper (mono_method_get_wrapper_data (method, strtoken));
+			} else {
+				g_assert_not_reached ();
+			}
+			sp->data.p = s;
+			++sp;
+			ip += 2;
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_NEWOBJ) {
 			MonoClass *newobj_class;
 			MonoMethodSignature *csig;
@@ -5227,6 +5258,7 @@ interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoJitExce
 
 	context->has_resume_state = TRUE;
 	context->handler_frame = interp_frame;
+	context->handler_ei = ei;
 	/* This is on the stack, so it doesn't need a wbarrier */
 	context->handler_frame->ex = ex;
 	/* Ditto */

@@ -94,17 +94,9 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Numerics.Vectors\src\System\Numerics\ConstantHelper.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Numerics.Vectors\src\System\Numerics\JitIntrinsicAttribute.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Numerics.Vectors\src\System\Numerics\Register.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Numerics.Vectors\src\System\Numerics\Vector.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Numerics.Vectors\src\System\Numerics\Vector_Operations.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Assembly\TypeForwarders.cs" />
-    <Compile Include="corefx\SR.cs" />
   </ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>

@@ -13,7 +13,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+#if !MOBILE
 using MonoTests.Helpers;
+#endif
 
 public class TestsBase
 {
@@ -266,6 +268,8 @@ public class Tests : TestsBase, ITest2
 	public static bool is_attached = Debugger.IsAttached;
 	public NestedStruct nested_struct;
 
+	static string arg;
+
 #pragma warning restore 0414
 
 	public class NestedClass {
@@ -299,6 +303,9 @@ public class Tests : TestsBase, ITest2
 	}
 
 	public static int Main (String[] args) {
+		if (args.Length == 0)
+			args = new String [] { Tests.arg };
+
 		tls_i = 42;
 
 		if (args.Length > 0 && args [0] == "suspend-test")
@@ -321,7 +328,11 @@ public class Tests : TestsBase, ITest2
 			return 0;
 		}
 		if (args.Length >0 && args [0] == "threadpool-io") {
+#if !MOBILE
 			threadpool_io ();
+#else
+			throw new Exception ("Can't run threadpool-io test on mobile");
+#endif
 			return 0;
 		}
 		if (args.Length > 0 && args [0] == "attach") {
@@ -350,7 +361,9 @@ public class Tests : TestsBase, ITest2
 		threads ();
 		dynamic_methods ();
 		user ();
+#if !MOBILE
 		type_load ();
+#endif
 		regress ();
 		gc_suspend ();
 		set_ip ();
@@ -1561,6 +1574,7 @@ public class Tests : TestsBase, ITest2
 		Debugger.Log (5, Debugger.IsLogging () ? "A" : "", "B");
 	}
 
+#if !MOBILE
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void type_load () {
 		type_load_2 ();
@@ -1575,6 +1589,7 @@ public class Tests : TestsBase, ITest2
 		var c2 = new TypeLoadClass2 ();
 		c2.ToString ();
 	}
+#endif
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void regress () {
@@ -1691,6 +1706,7 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void threadpool_bp () { }
 
+#if !MOBILE
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void threadpool_io () {
 		// Start a threadpool task that blocks on I/O.
@@ -1730,6 +1746,7 @@ public class Tests : TestsBase, ITest2
 		streamOut.Close ();
 		var bsIn = t.Result;
 	}
+#endif
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public void attach_break () {

@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if FULL_AOT_RUNTIME
+#if !FEATURE_CRYPTO_CONFIGURABLE
 
 // This is a special version of CryptoConfig that is not configurable and
 // every "choice" is statiscally compiled. As long as CreateFromName is not
@@ -38,16 +38,12 @@
 
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Collections.Generic;
 
 namespace System.Security.Cryptography {
 
 	[ComVisible (true)]
 	public partial class CryptoConfig {
-
-		public static void AddAlgorithm (Type algorithm, params string[] names)
-		{
-			throw new PlatformNotSupportedException ();
-		}
 
 		public static void AddOID (string oid, params string[] names)
 		{
@@ -61,12 +57,12 @@ namespace System.Security.Cryptography {
 			return CreateFromName (name, null);
 		}
 
-		[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 		public static object CreateFromName (string name, params object[] args)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
+			// TODO: These ignore args
 			switch (name.ToLowerInvariant ()) {
 			case "system.security.cryptography.dsacryptoserviceprovider":
 			case "system.security.cryptography.dsa":
@@ -156,8 +152,8 @@ namespace System.Security.Cryptography {
 			case "system.security.cryptography.hashalgorithm":
 			case "system.security.cryptography.sha1":
 			case "system.security.cryptography.sha1cryptoserviceprovider":
-			case "system.security.cryptography.sha1cng":
 			case "sha1":
+			case "system.security.cryptography.sha1cng":
 			case "sha":
 			case "http://www.w3.org/2000/09/xmldsig#sha1":
 				return new SHA1CryptoServiceProvider ();
@@ -193,23 +189,47 @@ namespace System.Security.Cryptography {
 			case "tripledes":
 			case "3des":
 				return new TripleDESCryptoServiceProvider ();
+
+			// These are not yet linker friendly
 			case "x509chain":
 				name = "System.Security.Cryptography.X509Certificates.X509Chain, System";
 				break;
+			case "2.5.29.15":
+				name = "System.Security.Cryptography.X509Certificates.X509KeyUsageExtension, System";
+				break;
+			case "2.5.29.19":
+				name = "System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension, System";
+				break;
+			case "2.5.29.14":
+				name = "System.Security.Cryptography.X509Certificates.X509SubjectKeyIdentifierExtension, System";
+				break;
+			case "2.5.29.37":
+				name = "System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension, System";
+				break;
 			case "aes":
-#if FULL_AOT_DESKTOP  // TODO: why is this special cased? we could use AesManaged like other full AOT profiles
-				name = "System.Security.Cryptography.AesCryptoServiceProvider, System.Core";
-#else
+#if MONOTOUCH || XAMMAC
 				name = "System.Security.Cryptography.AesManaged, System.Core";
+#else
+				name = "System.Security.Cryptography.AesCryptoServiceProvider, System.Core";
 #endif
 				break;
+			}
+
+			lock (lockObject) {
+				Type algoClass = null;
+				if (algorithms?.TryGetValue (name, out algoClass) == true) {
+					try {
+						return Activator.CreateInstance (algoClass, args);
+					} catch {
+					}
+				}
 			}
 
 			try {
 				// last resort, the request type might be available (if care is taken for the type not to be linked 
 				// away) and that can allow some 3rd party code to work (e.g. extra algorithms) and make a few more
 				// unit tests happy
-				return Activator.CreateInstance (Type.GetType (name));
+				return Activator.CreateInstance (Type.GetType (name), args);
 			}
 			catch {
 				// method doesn't throw any exception
@@ -271,6 +291,11 @@ namespace System.Security.Cryptography {
 			default:
 				return null;
 			}
+		}
+
+		static void Initialize ()
+		{
+			algorithms = new Dictionary<string, Type> (StringComparer.OrdinalIgnoreCase);
 		}
 	}
 }

@@ -7,7 +7,7 @@ LIBRARY = System.Data.dll
 LIB_REFS = System System.Xml System.Core System.Numerics System.Transactions
 KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = \
-	-nowarn:219,414,649,619 \
+	-nowarn:219,414,649,619,436 \
 	-d:COREFX	\
 	-d:PLATFORM_UNIX \
 	-d:USEOFFSET \

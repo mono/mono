@@ -132,20 +132,15 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public AsymmetricAlgorithm Key {
 			get {
-				if (_key == null) {
-					switch (_oid.Value) {
-					case rsaOid:
-						_key = DecodeRSA (_keyValue.RawData);
-						break;
-					case dsaOid:
-						_key = DecodeDSA (_keyValue.RawData, _params.RawData);
-						break;
-					default:
-						string msg = Locale.GetText ("Cannot decode public key from unknown OID '{0}'.", _oid.Value);
-						throw new NotSupportedException (msg);
-					}
+				switch (_oid.Value) {
+				case rsaOid:
+					return DecodeRSA (_keyValue.RawData);
+				case dsaOid:
+					return DecodeDSA (_keyValue.RawData, _params.RawData);
+				default:
+					string msg = Locale.GetText ("Cannot decode public key from unknown OID '{0}'.", _oid.Value);
+					throw new NotSupportedException (msg);
 				}
-				return _key;
 			}
 		}
 

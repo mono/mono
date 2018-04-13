@@ -233,7 +233,9 @@ namespace System.ServiceModel.Description
 			 */
 
 			var inherited = new Collection<ContractDescription> ();
-		var interfaces = cd.ContractType.GetInterfaces ();
+			var interfaces = cd.ContractType.GetInterfaces ()
+				.Where (t => t != givenContractType);
+				
 			foreach (var it in interfaces ) {
 				var icd = GetContractInternal (it, givenServiceType, null);
 				if (icd != null)

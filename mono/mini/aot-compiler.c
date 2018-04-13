@@ -205,6 +205,7 @@ typedef struct MonoAotOptions {
 	char *temp_path;
 	char *instances_logfile_path;
 	char *logfile;
+	char *llvm_opts;
 	gboolean dump_json;
 	gboolean profile_only;
 } MonoAotOptions;
@@ -3115,7 +3116,9 @@ encode_type (MonoAotCompile *acfg, MonoType *t, guint8 *buf, guint8 **endbuf)
 {
 	guint8 *p = buf;
 
-	g_assert (t->num_mods == 0);
+	// Change memory allocation in decode_type if you change
+	g_assert (!t->has_cmods);
+
 	/* t->attrs can be ignored */
 	//g_assert (t->attrs == 0);
 
@@ -4416,7 +4419,7 @@ add_wrappers (MonoAotCompile *acfg)
 
 				/* this cannot be enforced by the C# compiler so we must give the user some warning before aborting */
 				if (!(method->flags & METHOD_ATTRIBUTE_STATIC)) {
-					g_warning ("AOT restriction: Method '%s' must be static since it is decorated with [MonoPInvokeCallback]. See http://ios.xamarin.com/Documentation/Limitations#Reverse_Callbacks", 
+					g_warning ("AOT restriction: Method '%s' must be static since it is decorated with [MonoPInvokeCallback]. See https://docs.microsoft.com/xamarin/ios/internals/limitations#reverse-callbacks",
 						mono_method_full_name (method, TRUE));
 					exit (1);
 				}
@@ -6010,6 +6013,7 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG:
 		break;
 	case MONO_PATCH_INFO_PROFILER_ALLOCATION_COUNT:
+	case MONO_PATCH_INFO_PROFILER_CLAUSE_COUNT:
 		break;
 	case MONO_PATCH_INFO_RGCTX_FETCH:
 	case MONO_PATCH_INFO_RGCTX_SLOT_INDEX: {
@@ -7480,6 +7484,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->profile_only = TRUE;
 		} else if (!strcmp (arg, "verbose")) {
 			opts->verbose = TRUE;
+		} else if (str_begins_with (arg, "llvmopts=")){
+			opts->llvm_opts = g_strdup (arg + strlen ("llvmopts="));
 		} else if (str_begins_with (arg, "help") || str_begins_with (arg, "?")) {
 			printf ("Supported options for --aot:\n");
 			printf ("    asmonly\n");
@@ -7632,13 +7638,13 @@ can_encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 	case MONO_PATCH_INFO_IID:
 	case MONO_PATCH_INFO_ADJUSTED_IID:
 		if (!can_encode_class (acfg, patch_info->data.klass)) {
-			//printf ("Skip: %s\n", mono_type_full_name (&patch_info->data.klass->byval_arg));
+			//printf ("Skip: %s\n", mono_type_full_name (m_class_get_byval_arg (patch_info->data.klass)));
 			return FALSE;
 		}
 		break;
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE: {
 		if (!can_encode_class (acfg, patch_info->data.del_tramp->klass)) {
-			//printf ("Skip: %s\n", mono_type_full_name (&patch_info->data.klass->byval_arg));
+			//printf ("Skip: %s\n", mono_type_full_name (m_class_get_byval_arg (patch_info->data.klass)));
 			return FALSE;
 		}
 		break;
@@ -8981,15 +8987,19 @@ emit_llvm_file (MonoAotCompile *acfg)
 	 * return OverwriteComplete;
 	 * Here, if 'Earlier' refers to a memset, and Later has no size info, it mistakenly thinks the memset is redundant.
 	 */
-	if (acfg->aot_opts.llvm_only)
+	if (acfg->aot_opts.llvm_opts) {
+		opts = g_strdup (acfg->aot_opts.llvm_opts);
+	} else if (acfg->aot_opts.llvm_only) {
 		// FIXME: This doesn't work yet
 		opts = g_strdup ("");
-	else
+	} else {
 #if LLVM_API_VERSION > 100
 		opts = g_strdup ("-O2 -disable-tail-calls");
 #else
 		opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -inline-cost -inline -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -domtree -verify");
 #endif
+	}
+
 	command = g_strdup_printf ("\"%sopt\" -f %s -o \"%s\" \"%s\"", acfg->aot_opts.llvm_path, opts, optbc, tempbc);
 	aot_printf (acfg, "Executing opt: %s\n", command);
 	if (execute_system (command) != 0)
@@ -12728,13 +12738,20 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 			else
 				acfg->llvm_sfile = g_strdup (acfg->aot_opts.llvm_outfile);
 		} else {
-			acfg->tmpbasename = (strcmp (acfg->aot_opts.temp_path, "") == 0) ?
-				g_strdup_printf ("%s", "temp") :
-				g_build_filename (acfg->aot_opts.temp_path, "temp", NULL);
+			gchar *temp_path;
+			if (strcmp (acfg->aot_opts.temp_path, "") != 0) {
+				temp_path = g_strdup (acfg->aot_opts.temp_path);
+			} else {
+				temp_path = mkdtemp(g_strdup ("mono_aot_XXXXXX"));
+				g_assertf (temp_path, "mkdtemp failed, error = (%d) %s", errno, g_strerror (errno));
+			}
 				
+			acfg->tmpbasename = g_build_filename (temp_path, "temp", NULL);
 			acfg->tmpfname = g_strdup_printf ("%s.s", acfg->tmpbasename);
 			acfg->llvm_sfile = g_strdup_printf ("%s-llvm.s", acfg->tmpbasename);
 			acfg->llvm_ofile = g_strdup_printf ("%s-llvm.o", acfg->tmpbasename);
+
+			g_free (temp_path);
 		}
 	}
 #endif

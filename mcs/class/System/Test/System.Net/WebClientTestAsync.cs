@@ -88,7 +88,7 @@ namespace MonoTests.System.Net
 			WebClient wc = new WebClient ();
 			string filename = Path.GetTempFileName ();
 
-			var task = wc.DownloadFileTaskAsync ("http://www.mono-project.com/", filename);
+			var task = wc.DownloadFileTaskAsync ("http://www.example.com/", filename);
 			Assert.IsTrue (task.Wait (15000));
 			Assert.IsTrue (task.IsCompleted);
 			
