@@ -688,6 +688,24 @@ namespace Mono.Net
 			if (type == kCFProxyTypeSOCKS)
 				return CFProxyType.SOCKS;
 			
+			//in OSX 10.13 pointer comparison didn't work for kCFProxyTypeAutoConfigurationURL
+			var typeString = CFString.AsString(type);
+			switch (typeString)                 
+			{                                   
+				case "kCFProxyTypeAutoConfigurationURL":
+					return CFProxyType.AutoConfigurationUrl;
+				case "kCFProxyTypeAutoConfigurationJavaScript":
+					return CFProxyType.AutoConfigurationJavaScript;
+				case "kCFProxyTypeFTP":         
+					return CFProxyType.FTP;     
+				case "kCFProxyTypeHTTP":        
+					return CFProxyType.HTTP;    
+				case "kCFProxyTypeHTTPS":       
+					return CFProxyType.HTTPS;   
+				case "kCFProxyTypeSOCKS":       
+					return CFProxyType.SOCKS;   
+			}
+			
 			return CFProxyType.None;
 		}
 		
