@@ -99,7 +99,6 @@ typedef enum MonoAssemblyContextKind {
 	MONO_ASMCTX_DEFAULT = 0,
 	/* Reflection-only only context: ReflectionOnlyLoad and ReeflectionOnlyLoadFrom */
 	MONO_ASMCTX_REFONLY = 1,
-	/* FIXME: LOADFROM and INDIVIDUAL are unimplemented */
 	/* LoadFrom context: LoadFrom() and references */
 	MONO_ASMCTX_LOADFROM = 2,
 	/* Individual assembly context (.NET Framework docs call this "not in
@@ -111,9 +110,7 @@ typedef enum MonoAssemblyContextKind {
 } MonoAssemblyContextKind;
 
 typedef struct _MonoAssemblyContext {
-	/* FIXME: Add more load contexts as described by .NET Framework
-	 * documentation on assembly loading. */
-	gboolean ref_only; /* If TRUE, loaded for reflection only, otherwise default context */
+	MonoAssemblyContextKind kind;
 } MonoAssemblyContext;
 
 struct _MonoAssembly {

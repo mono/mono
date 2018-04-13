@@ -1976,10 +1976,10 @@ if (container_assm_name && !container_amodule) {
 	container_assm_name = NULL;
 	MonoImageOpenStatus status = MONO_IMAGE_OK;
 	gchar *dll = g_strdup_printf (		"%s.dll", local_ref);
-	MonoAssembly *assm = mono_assembly_open_a_lot (dll, &status, FALSE, FALSE);
+	MonoAssembly *assm = mono_assembly_open_a_lot (dll, &status, MONO_ASMCTX_DEFAULT);
 	if (!assm) {
 		gchar *exe = g_strdup_printf ("%s.exe", local_ref);
-		assm = mono_assembly_open_a_lot (exe, &status, FALSE, FALSE);
+		assm = mono_assembly_open_a_lot (exe, &status, MONO_ASMCTX_DEFAULT);
 	}
 	g_assert (assm);
 	load_aot_module (assm, NULL);

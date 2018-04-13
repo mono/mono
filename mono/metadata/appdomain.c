@@ -2035,7 +2035,7 @@ static gboolean
 try_load_from (MonoAssembly **assembly,
 	       const gchar *path1, const gchar *path2,
 	       const gchar *path3, const gchar *path4,
-	       gboolean refonly, gboolean is_private,
+	       MonoAssemblyContextKind asmctx, gboolean is_private,
 	       MonoAssemblyCandidatePredicate predicate, gpointer user_data)
 {
 	gchar *fullpath;
@@ -2055,14 +2055,14 @@ try_load_from (MonoAssembly **assembly,
 		found = g_file_test (fullpath, G_FILE_TEST_IS_REGULAR);
 	
 	if (found)
-		*assembly = mono_assembly_open_predicate (fullpath, refonly, FALSE, predicate, user_data, NULL);
+		*assembly = mono_assembly_open_predicate (fullpath, asmctx, predicate, user_data, NULL);
 
 	g_free (fullpath);
 	return (*assembly != NULL);
 }
 
 static MonoAssembly *
-real_load (gchar **search_path, const gchar *culture, const gchar *name, gboolean refonly, MonoAssemblyCandidatePredicate predicate, gpointer user_data)
+real_load (gchar **search_path, const gchar *culture, const gchar *name, MonoAssemblyContextKind asmctx, MonoAssemblyCandidatePredicate predicate, gpointer user_data)
 {
 	MonoAssembly *result = NULL;
 	gchar **path;
@@ -2089,22 +2089,22 @@ real_load (gchar **search_path, const gchar *culture, const gchar *name, gboolea
 		/* See test cases in bug #58992 and bug #57710 */
 		/* 1st try: [culture]/[name].dll (culture may be empty) */
 		strcpy (filename + len - 4, ".dll");
-		if (try_load_from (&result, *path, local_culture, "", filename, refonly, is_private, predicate, user_data))
+		if (try_load_from (&result, *path, local_culture, "", filename, asmctx, is_private, predicate, user_data))
 			break;
 
 		/* 2nd try: [culture]/[name].exe (culture may be empty) */
 		strcpy (filename + len - 4, ".exe");
-		if (try_load_from (&result, *path, local_culture, "", filename, refonly, is_private, predicate, user_data))
+		if (try_load_from (&result, *path, local_culture, "", filename, asmctx, is_private, predicate, user_data))
 			break;
 
 		/* 3rd try: [culture]/[name]/[name].dll (culture may be empty) */
 		strcpy (filename + len - 4, ".dll");
-		if (try_load_from (&result, *path, local_culture, name, filename, refonly, is_private, predicate, user_data))
+		if (try_load_from (&result, *path, local_culture, name, filename, asmctx, is_private, predicate, user_data))
 			break;
 
 		/* 4th try: [culture]/[name]/[name].exe (culture may be empty) */
 		strcpy (filename + len - 4, ".exe");
-		if (try_load_from (&result, *path, local_culture, name, filename, refonly, is_private, predicate, user_data))
+		if (try_load_from (&result, *path, local_culture, name, filename, asmctx, is_private, predicate, user_data))
 			break;
 	}
 
@@ -2146,11 +2146,11 @@ mono_domain_assembly_preload (MonoAssemblyName *aname,
 			}
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "End of domain %s search path.", domain->friendly_name);			
 		}
-		result = real_load (domain->search_path, aname->culture, aname->name, refonly, predicate, predicate_ud);
+		result = real_load (domain->search_path, aname->culture, aname->name, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, predicate, predicate_ud);
 	}
 
 	if (result == NULL && assemblies_path && assemblies_path [0] != NULL) {
-		result = real_load (assemblies_path, aname->culture, aname->name, refonly, predicate, predicate_ud);
+		result = real_load (assemblies_path, aname->culture, aname->name, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, predicate, predicate_ud);
 	}
 
 	return result;
@@ -2204,7 +2204,7 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoole
 	name = filename = mono_string_handle_to_utf8 (fname, error);
 	goto_if_nok (error, leave);
 	
-	MonoAssembly *ass = mono_assembly_open_predicate (filename, refOnly, TRUE, NULL, NULL, &status);
+	MonoAssembly *ass = mono_assembly_open_predicate (filename, refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_LOADFROM, NULL, NULL, &status);
 	
 	if (!ass) {
 		if (status == MONO_IMAGE_IMAGE_INVALID)
@@ -2262,7 +2262,7 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 		mono_gchandle_free (symbol_gchandle);
 	}
 
-	ass = mono_assembly_load_from_full (image, "", &status, refonly);
+	ass = mono_assembly_load_from_predicate (image, "", refonly? MONO_ASMCTX_REFONLY : MONO_ASMCTX_INDIVIDUAL, NULL, NULL, &status);
 
 
 	if (!ass) {
@@ -2312,7 +2312,7 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandl
 		return refass;
 	}
 
-	ass = mono_assembly_load_full_nosearch (&aname, NULL, &status, refOnly);
+	ass = mono_assembly_load_full_nosearch (&aname, NULL, refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, &status);
 	mono_assembly_name_free (&aname);
 
 	if (!ass) {
