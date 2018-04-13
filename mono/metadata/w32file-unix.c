@@ -48,6 +48,7 @@
 #include "utils/strenc.h"
 #include "utils/refcount.h"
 
+#define NANOSECONDS_PER_MICROSECOND 1000LL
 #define TICKS_PER_MICROSECOND 10L
 #define TICKS_PER_MILLISECOND 10000L
 #define TICKS_PER_SECOND 10000000LL
@@ -1467,11 +1468,11 @@ static void convert_stattime_access_to_timeval (struct timeval *dest, struct sta
 {
 #if HAVE_STRUCT_STAT_ST_ATIMESPEC
 	dest->tv_sec = statbuf->st_atimespec.tv_sec;
-	dest->tv_usec = statbuf->st_atimespec.tv_nsec / 1000;
+	dest->tv_usec = statbuf->st_atimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND;
 #else
 	dest->tv_sec = statbuf->st_atime;
 #if HAVE_STRUCT_STAT_ST_ATIM
-	dest->tv_usec = statbuf->st_atim.tv_nsec / 1000;
+	dest->tv_usec = statbuf->st_atim.tv_nsec / NANOSECONDS_PER_MICROSECOND;
 #endif
 #endif
 }
@@ -1480,11 +1481,11 @@ static void convert_stattime_mod_to_timeval (struct timeval *dest, struct stat *
 {
 #if HAVE_STRUCT_STAT_ST_ATIMESPEC
 	dest->tv_sec = statbuf->st_mtimespec.tv_sec;
-	dest->tv_usec = statbuf->st_mtimespec.tv_nsec / 1000;
+	dest->tv_usec = statbuf->st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND;
 #else
 	dest->tv_sec = statbuf->st_mtime;
 #if HAVE_STRUCT_STAT_ST_ATIM
-	dest->tv_usec = statbuf->st_mtim.tv_nsec / 1000;
+	dest->tv_usec = statbuf->st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND;
 #endif
 #endif
 }
@@ -3489,20 +3490,20 @@ mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 
 #if HAVE_STRUCT_STAT_ST_ATIMESPEC
 	if (buf.st_mtimespec.tv_sec < buf.st_ctimespec.tv_sec || (buf.st_mtimespec.tv_sec == buf.st_ctimespec.tv_sec && buf.st_mtimespec.tv_nsec < buf.st_ctimespec.tv_nsec))
-		stat->creation_time = buf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (buf.st_mtimespec.tv_nsec / 1000) * TICKS_PER_MILLISECOND + CONVERT_BASE;
+		stat->creation_time = buf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (buf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MILLISECOND + CONVERT_BASE;
 	else
-		stat->creation_time = buf.st_ctimespec.tv_sec * TICKS_PER_SECOND + (buf.st_ctimespec.tv_nsec / 1000) * TICKS_PER_MILLISECOND + CONVERT_BASE;
+		stat->creation_time = buf.st_ctimespec.tv_sec * TICKS_PER_SECOND + (buf.st_ctimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MILLISECOND + CONVERT_BASE;
 
-	stat->last_access_time = buf.st_atimespec.tv_sec * TICKS_PER_SECOND + (buf.st_atimespec.tv_nsec / 1000) * TICKS_PER_MILLISECOND + CONVERT_BASE;
-	stat->last_write_time = buf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (buf.st_mtimespec.tv_nsec / 1000) * TICKS_PER_MILLISECOND + CONVERT_BASE;
+	stat->last_access_time = buf.st_atimespec.tv_sec * TICKS_PER_SECOND + (buf.st_atimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MILLISECOND + CONVERT_BASE;
+	stat->last_write_time = buf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (buf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MILLISECOND + CONVERT_BASE;
 #elif HAVE_STRUCT_STAT_ST_ATIM
 	if (buf.st_mtime < buf.st_ctime || (buf.st_mtime == buf.st_ctime && buf.st_mtim.tv_nsec < buf.st_ctim.tv_nsec))
-		stat->creation_time = buf.st_mtime * TICKS_PER_SECOND + (buf.st_mtim.tv_nsec / 1000) * TICKS_PER_MILLISECOND + CONVERT_BASE;
+		stat->creation_time = buf.st_mtime * TICKS_PER_SECOND + (buf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MILLISECOND + CONVERT_BASE;
 	else
-		stat->creation_time = buf.st_ctime * TICKS_PER_SECOND + (buf.st_ctim.tv_nsec / 1000) * TICKS_PER_MILLISECOND + CONVERT_BASE;
+		stat->creation_time = buf.st_ctime * TICKS_PER_SECOND + (buf.st_ctim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MILLISECOND + CONVERT_BASE;
 
-	stat->last_access_time = buf.st_atime * TICKS_PER_SECOND + (buf.st_atim.tv_nsec / 1000) * TICKS_PER_MILLISECOND + CONVERT_BASE;
-	stat->last_write_time = buf.st_mtime * TICKS_PER_SECOND + (buf.st_mtim.tv_nsec / 1000) * TICKS_PER_MILLISECOND + CONVERT_BASE;
+	stat->last_access_time = buf.st_atime * TICKS_PER_SECOND + (buf.st_atim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MILLISECOND + CONVERT_BASE;
+	stat->last_write_time = buf.st_mtime * TICKS_PER_SECOND + (buf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MILLISECOND + CONVERT_BASE;
 #else
 	stat->creation_time = (((guint64) (buf.st_mtime < buf.st_ctime ? buf.st_mtime : buf.st_ctime)) * TICKS_PER_SECOND) + CONVERT_BASE;
 	stat->last_access_time = (((guint64) (buf.st_atime)) * TICKS_PER_SECOND) + CONVERT_BASE;
