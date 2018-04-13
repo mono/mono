@@ -351,7 +351,6 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DefaultEventAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DefaultPropertyAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DelegatingTypeDescriptionProvider.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DesignerAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DesignTimeVisibleAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/DoubleConverter.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/EditorAttribute.cs
@@ -523,6 +522,7 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/compmod/system/componentmodel/DebugReflectEventDescriptor.cs
 ../referencesource/System/compmod/system/componentmodel/DebugReflectPropertyDescriptor.cs
 ../referencesource/System/compmod/system/componentmodel/DebugTypeDescriptor.cs
+../referencesource/System/compmod/system/componentmodel/DesignerAttribute.cs
 ../referencesource/System/compmod/system/componentmodel/DoWorkEventArgs.cs
 ../referencesource/System/compmod/system/componentmodel/DoWorkEventHandler.cs
 ../referencesource/System/compmod/system/componentmodel/FxCopSuppression.cs
