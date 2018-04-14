@@ -4,7 +4,11 @@ include ../../build/rules.make
 
 LIBRARY = System.ServiceModel.Syndication.dll
 LIB_REFS = System System.Xml System.Runtime.Serialization System.ServiceModel System.Core
-LIB_MCS_FLAGS =
+LIB_MCS_FLAGS = \
+	-nowarn:3021,246,436
+
+RESX_RESOURCE_STRING = \
+	../../../external/corefx/src/System.ServiceModel.Syndication/src/Resources/Strings.resx
 
 ifeq (moonlight_raw, $(PROFILE))
 LIB_REFS += System.Xml.Serialization

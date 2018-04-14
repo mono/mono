@@ -8,6 +8,9 @@ LIB_REFS += System.Core System
 KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS += -d:CONCURRENT_COLLECTIONS
 
+RESX_RESOURCE_STRING = \
+	../../../external/corefx/src/System.Threading.Tasks.Dataflow/src/Resources/Strings.resx
+
 TEST_MCS_FLAGS =
 TEST_LIB_REFS = System.Core System
 
