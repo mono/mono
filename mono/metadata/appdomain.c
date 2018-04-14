@@ -2222,6 +2222,37 @@ leave:
 }
 
 MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname, MonoError *error)
+{
+	MonoDomain *domain = mono_domain_get ();
+	MonoReflectionAssemblyHandle result = MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE);
+	char *filename = NULL;
+	if (MONO_HANDLE_IS_NULL (fname)) {
+		mono_error_set_argument_null (error, "assemblyFile", "");
+		goto leave;
+	}
+
+	filename = mono_string_handle_to_utf8 (fname, error);
+	goto_if_nok (error, leave);
+
+	MonoImageOpenStatus status;
+	MonoAssembly *ass = mono_assembly_open_predicate (filename, MONO_ASMCTX_INDIVIDUAL, NULL, NULL, &status);
+	if (!ass) {
+		if (status == MONO_IMAGE_IMAGE_INVALID)
+			mono_error_set_bad_image_by_name (error, filename, "Invalid Image");
+		else
+			mono_error_set_file_not_found (error, filename, "Invalid Image");
+		goto leave;
+	}
+
+	result = mono_assembly_get_object_handle (domain, ass, error);
+leave:
+	g_free (filename);
+	return result;
+
+}
+
+MonoReflectionAssemblyHandle
 ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad, 
 					    MonoArrayHandle raw_assembly,
 					    MonoArrayHandle raw_symbol_store, MonoObjectHandle evidence,

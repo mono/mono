@@ -2355,7 +2355,8 @@ mono_assembly_load_from_predicate (MonoImage *image, const char *fname,
 	 * The load hooks might take locks so we can't call them while holding the
 	 * assemblies lock.
 	 */
-	if (ass->aname.name) {
+	if (ass->aname.name && asmctx != MONO_ASMCTX_INDIVIDUAL) {
+		/* FIXME: I think individual context should probably also look for an existing MonoAssembly here, we just need to pass the asmctx to the search hook so that it does a filename match (I guess?) */
 		ass2 = mono_assembly_invoke_search_hook_internal (&ass->aname, NULL, asmctx == MONO_ASMCTX_REFONLY, FALSE);
 		if (ass2) {
 			g_free (ass);
@@ -2397,7 +2398,11 @@ mono_assembly_load_from_predicate (MonoImage *image, const char *fname,
 
 	mono_assemblies_lock ();
 
-	if (image->assembly) {
+	/* If an assembly is loaded into an individual context, always return a
+	 * new MonoAssembly, even if another assembly with the same name has
+	 * already been loaded.
+	 */
+	if (image->assembly && asmctx != MONO_ASMCTX_INDIVIDUAL) {
 		/*
 		 * This means another thread has already loaded the assembly, but not yet
 		 * called the load hooks so the search hook can't find the assembly.
@@ -2413,7 +2418,10 @@ mono_assembly_load_from_predicate (MonoImage *image, const char *fname,
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Prepared to set up assembly '%s' (%s)", ass->aname.name, image->name);
 
-	image->assembly = ass;
+	/* If asmctx is INDIVIDUAL, image->assembly might not be NULL, so don't
+	 * overwrite it. */
+	if (image->assembly == NULL)
+		image->assembly = ass;
 
 	loaded_assemblies = g_list_prepend (loaded_assemblies, ass);
 	mono_assemblies_unlock ();
