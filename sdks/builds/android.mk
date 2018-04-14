@@ -20,7 +20,7 @@ $(ANDROID_TOOLCHAIN_CACHE_DIR):
 define AndroidProvisioningTemplate
 
 $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip: | $$(ANDROID_TOOLCHAIN_CACHE_DIR)
-	curl --location --fail --silent --show-error --output $$@ $(4)$(1).zip
+	wget --no-verbose -O $$@ $(4)$(1).zip
 
 $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))/.stamp-$(1): $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip
 	rm -rf $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))
@@ -50,13 +50,13 @@ endif
 AndroidSDKProvisioningTemplate=$(call AndroidProvisioningTemplate,$(1),$(2),sdk,$(ANDROID_URI)$(3))
 
 ifeq ($(UNAME),Darwin)
-$(eval $(call AndroidSDKProvisioningTemplate,build-tools_r$(ANDROID_BUILD_TOOLS_VERSION)-macosx,build-tools/$(ANDROID_BUILD_TOOLS_VERSION)))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r27.0.1-darwin,platforms-tools))
+$(eval $(call AndroidSDKProvisioningTemplate,build-tools_r$(ANDROID_BUILD_TOOLS_VERSION)-macosx,build-tools/$(or $(ANDROID_BUILD_TOOLS_DIR),$(ANDROID_BUILD_TOOLS_VERSION))))
+$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r27.0.1-darwin,platform-tools))
 $(eval $(call AndroidSDKProvisioningTemplate,sdk-tools-darwin-4333796,tools))
 $(eval $(call AndroidSDKProvisioningTemplate,emulator-darwin-4266726,emulator))
 else
 ifeq ($(UNAME),Linux)
-$(eval $(call AndroidSDKProvisioningTemplate,build-tools_r$(ANDROID_BUILD_TOOLS_VERSION)-linux,build-tools/$(ANDROID_BUILD_TOOLS_VERSION)))
+$(eval $(call AndroidSDKProvisioningTemplate,build-tools_r$(ANDROID_BUILD_TOOLS_VERSION)-linux,build-tools/$(or $(ANDROID_BUILD_TOOLS_DIR),$(ANDROID_BUILD_TOOLS_VERSION))))
 $(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r27.0.1-linux,platform-tools))
 $(eval $(call AndroidSDKProvisioningTemplate,sdk-tools-linux-4333796,tools))
 $(eval $(call AndroidSDKProvisioningTemplate,emulator-linux-4266726,emulator))
@@ -129,10 +129,10 @@ _android-$(1)_CXXFLAGS= \
 	$$(android-$(1)_CXXFLAGS)
 
 _android-$(1)_CPPFLAGS= \
-	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/usr/include
+	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/usr/include
 
 _android-$(1)_CXXCPPFLAGS= \
-	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(3)-clang/usr/include
+	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/usr/include
 
 _android-$(1)_LDFLAGS= \
 	-z now -z relro -z noexecstack \

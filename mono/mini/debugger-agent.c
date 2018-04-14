@@ -88,16 +88,7 @@
 #define TRY_MANAGED_SYSTEM_ENVIRONMENT_EXIT
 #endif
 
-
-#ifndef MONO_ARCH_SOFT_DEBUG_SUPPORTED
-#define DISABLE_DEBUGGER_AGENT 1
-#endif
-
-#ifdef DISABLE_SOFT_DEBUG
-#define DISABLE_DEBUGGER_AGENT 1
-#endif
-
-#ifndef DISABLE_DEBUGGER_AGENT
+#ifndef DISABLE_SDB
 
 #include <mono/utils/mono-os-mutex.h>
 
@@ -857,18 +848,18 @@ parse_address (char *address, char **host, int *port)
 static void
 print_usage (void)
 {
-	fprintf (stderr, "Usage: mono --debugger-agent=[<option>=<value>,...] ...\n");
-	fprintf (stderr, "Available options:\n");
-	fprintf (stderr, "  transport=<transport>\t\tTransport to use for connecting to the debugger (mandatory, possible values: 'dt_socket')\n");
-	fprintf (stderr, "  address=<hostname>:<port>\tAddress to connect to (mandatory)\n");
-	fprintf (stderr, "  loglevel=<n>\t\t\tLog level (defaults to 0)\n");
-	fprintf (stderr, "  logfile=<file>\t\tFile to log to (defaults to stdout)\n");
-	fprintf (stderr, "  suspend=y/n\t\t\tWhether to suspend after startup.\n");
-	fprintf (stderr, "  timeout=<n>\t\t\tTimeout for connecting in milliseconds.\n");
-	fprintf (stderr, "  server=y/n\t\t\tWhether to listen for a client connection.\n");
-	fprintf (stderr, "  keepalive=<n>\t\t\tSend keepalive events every n milliseconds.\n");
-	fprintf (stderr, "  setpgid=y/n\t\t\tWhether to call setpid(0, 0) after startup.\n");
-	fprintf (stderr, "  help\t\t\t\tPrint this help.\n");
+	g_printerr ("Usage: mono --debugger-agent=[<option>=<value>,...] ...\n");
+	g_printerr ("Available options:\n");
+	g_printerr ("  transport=<transport>\t\tTransport to use for connecting to the debugger (mandatory, possible values: 'dt_socket')\n");
+	g_printerr ("  address=<hostname>:<port>\tAddress to connect to (mandatory)\n");
+	g_printerr ("  loglevel=<n>\t\t\tLog level (defaults to 0)\n");
+	g_printerr ("  logfile=<file>\t\tFile to log to (defaults to stdout)\n");
+	g_printerr ("  suspend=y/n\t\t\tWhether to suspend after startup.\n");
+	g_printerr ("  timeout=<n>\t\t\tTimeout for connecting in milliseconds.\n");
+	g_printerr ("  server=y/n\t\t\tWhether to listen for a client connection.\n");
+	g_printerr ("  keepalive=<n>\t\t\tSend keepalive events every n milliseconds.\n");
+	g_printerr ("  setpgid=y/n\t\t\tWhether to call setpid(0, 0) after startup.\n");
+	g_printerr ("  help\t\t\t\tPrint this help.\n");
 }
 
 static gboolean
@@ -879,14 +870,14 @@ parse_flag (const char *option, char *flag)
 	else if (!strcmp (flag, "n"))
 		return FALSE;
 	else {
-		fprintf (stderr, "debugger-agent: The valid values for the '%s' option are 'y' and 'n'.\n", option);
+		g_printerr ("debugger-agent: The valid values for the '%s' option are 'y' and 'n'.\n", option);
 		exit (1);
 		return FALSE;
 	}
 }
 
-void
-mono_debugger_agent_parse_options (char *options)
+static void
+debugger_agent_parse_options (char *options)
 {
 	char **args, **ptr;
 	char *host;
@@ -894,7 +885,7 @@ mono_debugger_agent_parse_options (char *options)
 	char *extra;
 
 #ifndef MONO_ARCH_SOFT_DEBUG_SUPPORTED
-	fprintf (stderr, "--debugger-agent is not supported on this platform.\n");
+	g_printerr ("--debugger-agent is not supported on this platform.\n");
 	exit (1);
 #endif
 
@@ -965,26 +956,26 @@ mono_debugger_agent_parse_options (char *options)
 	//agent_config.log_level = 0;
 
 	if (agent_config.transport == NULL) {
-		fprintf (stderr, "debugger-agent: The 'transport' option is mandatory.\n");
+		g_printerr ("debugger-agent: The 'transport' option is mandatory.\n");
 		exit (1);
 	}
 
 	if (agent_config.address == NULL && !agent_config.server) {
-		fprintf (stderr, "debugger-agent: The 'address' option is mandatory.\n");
+		g_printerr ("debugger-agent: The 'address' option is mandatory.\n");
 		exit (1);
 	}
 
 	// FIXME:
 	if (!strcmp (agent_config.transport, "dt_socket")) {
 		if (agent_config.address && parse_address (agent_config.address, &host, &port)) {
-			fprintf (stderr, "debugger-agent: The format of the 'address' options is '<host>:<port>'\n");
+			g_printerr ("debugger-agent: The format of the 'address' options is '<host>:<port>'\n");
 			exit (1);
 		}
 	}
 }
 
-void
-mono_debugger_agent_init (void)
+static void
+debugger_agent_init (void)
 {
 	mono_coop_mutex_init_recursive (&debug_mutex);
 
@@ -1036,7 +1027,7 @@ mono_debugger_agent_init (void)
 	if (agent_config.log_file) {
 		log_file = fopen (agent_config.log_file, "w+");
 		if (!log_file) {
-			fprintf (stderr, "Unable to create log file '%s': %s.\n", agent_config.log_file, strerror (errno));
+			g_printerr ("Unable to create log file '%s': %s.\n", agent_config.log_file, strerror (errno));
 			exit (1);
 		}
 	} else {
@@ -1104,7 +1095,7 @@ finish_agent_init (gboolean on_startup)
 
 		res = g_spawn_async_with_pipes (NULL, argv, NULL, (GSpawnFlags)0, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		if (!res) {
-			fprintf (stderr, "Failed to execute '%s'.\n", agent_config.launch);
+			g_printerr ("Failed to execute '%s'.\n", agent_config.launch);
 			exit (1);
 		}
 	}
@@ -1207,7 +1198,7 @@ socket_transport_accept (int socket_fd)
 	MONO_EXIT_GC_SAFE;
 
 	if (conn_fd == -1) {
-		fprintf (stderr, "debugger-agent: Unable to listen on %d\n", socket_fd);
+		g_printerr ("debugger-agent: Unable to listen on %d\n", socket_fd);
 	} else {
 		DEBUG_PRINTF (1, "Accepted connection from client, connection fd=%d.\n", conn_fd);
 	}
@@ -1266,7 +1257,7 @@ socket_transport_connect (const char *address)
 		/* Obtain address(es) matching host/port */
 		s = mono_get_address_info (host, port, MONO_HINT_UNSPECIFIED, &result);
 		if (s != 0) {
-			fprintf (stderr, "debugger-agent: Unable to resolve %s:%d: %d\n", host, port, s); // FIXME add portable error conversion functions
+			g_printerr ("debugger-agent: Unable to resolve %s:%d: %d\n", host, port, s); // FIXME add portable error conversion functions
 			exit (1);
 		}
 	}
@@ -1284,7 +1275,7 @@ socket_transport_connect (const char *address)
 			/* This will bind the socket to a random port */
 			res = listen (sfd, 16);
 			if (res == -1) {
-				fprintf (stderr, "debugger-agent: Unable to setup listening socket: %s\n", strerror (get_last_sock_error ()));
+				g_printerr ("debugger-agent: Unable to setup listening socket: %s\n", strerror (get_last_sock_error ()));
 				exit (1);
 			}
 			listen_fd = sfd;
@@ -1350,7 +1341,7 @@ socket_transport_connect (const char *address)
 			MONO_EXIT_GC_SAFE;
 
 			if (res == 0) {
-				fprintf (stderr, "debugger-agent: Timed out waiting to connect.\n");
+				g_printerr ("debugger-agent: Timed out waiting to connect.\n");
 				exit (1);
 			}
 		}
@@ -1391,7 +1382,7 @@ socket_transport_connect (const char *address)
 		}
 
 		if (rp == 0) {
-			fprintf (stderr, "debugger-agent: Unable to connect to %s:%d\n", host, port);
+			g_printerr ("debugger-agent: Unable to connect to %s:%d\n", host, port);
 			exit (1);
 		}
 
@@ -1460,7 +1451,7 @@ socket_fd_transport_connect (const char *address)
 
 	res = sscanf (address, "%d", &conn_fd);
 	if (res != 1) {
-		fprintf (stderr, "debugger-agent: socket-fd transport address is invalid: '%s'\n", address);
+		g_printerr ("debugger-agent: socket-fd transport address is invalid: '%s'\n", address);
 		exit (1);
 	}
 
@@ -1530,10 +1521,10 @@ transport_init (void)
 			break;
 	}
 	if (i == ntransports) {
-		fprintf (stderr, "debugger-agent: The supported values for the 'transport' option are: ");
+		g_printerr ("debugger-agent: The supported values for the 'transport' option are: ");
 		for (i = 0; i < ntransports; ++i)
-			fprintf (stderr, "%s'%s'", i > 0 ? ", " : "", transports [i].name);
-		fprintf (stderr, "\n");
+			g_printerr ("%s'%s'", i > 0 ? ", " : "", transports [i].name);
+		g_printerr ("\n");
 		exit (1);
 	}
 	transport = &transports [i];
@@ -1596,7 +1587,7 @@ transport_handshake (void)
 	/* Read answer */
 	res = transport_recv (buf, strlen (handshake_msg));
 	if ((res != strlen (handshake_msg)) || (memcmp (buf, handshake_msg, strlen (handshake_msg)) != 0)) {
-		fprintf (stderr, "debugger-agent: DWP handshake failed.\n");
+		g_printerr ("debugger-agent: DWP handshake failed.\n");
 		return FALSE;
 	}
 
@@ -2211,8 +2202,8 @@ ids_cleanup (void)
 	}
 }
 
-void
-mono_debugger_agent_free_domain_info (MonoDomain *domain)
+static void
+debugger_agent_free_domain_info (MonoDomain *domain)
 {
 	AgentDomainInfo *info = (AgentDomainInfo *)domain_jit_info (domain)->agent_info;
 	int i, j;
@@ -5173,7 +5164,7 @@ resume_from_signal_handler (void *sigctx, void *func)
 	// FIXME: This might not work on an altstack ?
 	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
 	if (!tls)
-		fprintf (stderr, "Thread %p is not attached to the JIT.\n", (gpointer) (gsize) mono_native_thread_id_get ());
+		g_printerr ("Thread %p is not attached to the JIT.\n", (gpointer) (gsize) mono_native_thread_id_get ());
 	g_assert (tls);
 
 	// FIXME: MonoContext usually doesn't include the fp registers, so these are 
@@ -5190,8 +5181,8 @@ resume_from_signal_handler (void *sigctx, void *func)
 	mono_monoctx_to_sigctx (&ctx, sigctx);
 }
 
-void
-mono_debugger_agent_breakpoint_hit (void *sigctx)
+static void
+debugger_agent_breakpoint_hit (void *sigctx)
 {
 	/*
 	 * We are called from a signal handler, and running code there causes all kinds of
@@ -5227,8 +5218,8 @@ user_break_cb (StackFrameInfo *frame, MonoContext *ctx, gpointer user_data)
 /*
  * Called by System.Diagnostics.Debugger:Break ().
  */
-void
-mono_debugger_agent_user_break (void)
+static void
+debugger_agent_user_break (void)
 {
 	if (agent_config.enabled) {
 		MonoContext ctx;
@@ -5396,12 +5387,12 @@ process_single_step (void)
 }
 
 /*
- * mono_debugger_agent_single_step_event:
+ * debugger_agent_single_step_event:
  *
  *   Called from a signal handler to handle a single step event.
  */
-void
-mono_debugger_agent_single_step_event (void *sigctx)
+static void
+debugger_agent_single_step_event (void *sigctx)
 {
 	/* Resume to process_single_step through the signal context */
 
@@ -5426,8 +5417,8 @@ mono_debugger_agent_single_step_event (void *sigctx)
 	resume_from_signal_handler (sigctx, process_single_step);
 }
 
-void
-mono_debugger_agent_single_step_from_context (MonoContext *ctx)
+static void
+debugger_agent_single_step_from_context (MonoContext *ctx)
 {
 	DebuggerTlsData *tls;
 	MonoThreadUnwindState orig_restore_state;
@@ -5453,8 +5444,8 @@ mono_debugger_agent_single_step_from_context (MonoContext *ctx)
 	memcpy (&tls->restore_state, &orig_restore_state, sizeof (MonoThreadUnwindState));
 }
 
-void
-mono_debugger_agent_breakpoint_from_context (MonoContext *ctx)
+static void
+debugger_agent_breakpoint_from_context (MonoContext *ctx)
 {
 	DebuggerTlsData *tls;
 	MonoThreadUnwindState orig_restore_state;
@@ -6068,8 +6059,8 @@ ss_req_release (SingleStepReq *req)
 /*
  * Called from metadata by the icall for System.Diagnostics.Debugger:Log ().
  */
-void
-mono_debugger_agent_debug_log (int level, MonoString *category, MonoString *message)
+static void
+debugger_agent_debug_log (int level, MonoString *category, MonoString *message)
 {
 	ERROR_DECL (error);
 	int suspend_policy;
@@ -6101,16 +6092,15 @@ mono_debugger_agent_debug_log (int level, MonoString *category, MonoString *mess
 	g_free (ei.message);
 }
 
-gboolean
-mono_debugger_agent_debug_log_is_enabled (void)
+static gboolean
+debugger_agent_debug_log_is_enabled (void)
 {
 	/* Treat this as true even if there is no event request for EVENT_KIND_USER_LOG */
 	return agent_config.enabled;
 }
 
-#if defined(HOST_ANDROID) || defined(TARGET_ANDROID)
-void
-mono_debugger_agent_unhandled_exception (MonoException *exc)
+static void
+debugger_agent_unhandled_exception (MonoException *exc)
 {
 	int suspend_policy;
 	GSList *events;
@@ -6128,10 +6118,9 @@ mono_debugger_agent_unhandled_exception (MonoException *exc)
 
 	process_event (EVENT_KIND_EXCEPTION, &ei, 0, NULL, events, suspend_policy);
 }
-#endif
 
-void
-mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx,
+static void
+debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx,
 									  MonoContext *catch_ctx, StackFrameInfo *catch_frame)
 {
 	int i, j, suspend_policy;
@@ -6252,8 +6241,8 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 		tls->has_catch_frame = FALSE;
 }
 
-void
-mono_debugger_agent_begin_exception_filter (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx)
+static void
+debugger_agent_begin_exception_filter (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx)
 {
 	DebuggerTlsData *tls;
 
@@ -6291,8 +6280,8 @@ mono_debugger_agent_begin_exception_filter (MonoException *exc, MonoContext *ctx
 	g_assert (mono_thread_state_init_from_monoctx (&tls->filter_state, orig_ctx));
 }
 
-void
-mono_debugger_agent_end_exception_filter (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx)
+static void
+debugger_agent_end_exception_filter (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx)
 {
 	DebuggerTlsData *tls;
 
@@ -10737,83 +10726,29 @@ debugger_thread (void *arg)
 	return 0;
 }
 
-#else /* DISABLE_DEBUGGER_AGENT */
-
-void
-mono_debugger_agent_parse_options (char *options)
-{
-	g_error ("This runtime is configured with the debugger agent disabled.");
-}
-
 void
 mono_debugger_agent_init (void)
 {
+	MonoDebuggerCallbacks cbs;
+
+	memset (&cbs, 0, sizeof (MonoDebuggerCallbacks));
+	cbs.version = MONO_DBG_CALLBACKS_VERSION;
+	cbs.parse_options = debugger_agent_parse_options;
+	cbs.init = debugger_agent_init;
+	cbs.breakpoint_hit = debugger_agent_breakpoint_hit;
+	cbs.single_step_event = debugger_agent_single_step_event;
+	cbs.single_step_from_context = debugger_agent_single_step_from_context;
+	cbs.breakpoint_from_context = debugger_agent_breakpoint_from_context;
+	cbs.free_domain_info = debugger_agent_free_domain_info;
+	cbs.unhandled_exception = debugger_agent_unhandled_exception;
+	cbs.handle_exception = debugger_agent_handle_exception;
+	cbs.begin_exception_filter = debugger_agent_begin_exception_filter;
+	cbs.end_exception_filter = debugger_agent_end_exception_filter;
+	cbs.user_break = debugger_agent_user_break;
+	cbs.debug_log = debugger_agent_debug_log;
+	cbs.debug_log_is_enabled = debugger_agent_debug_log_is_enabled;
+
+	mini_install_dbg_callbacks (&cbs);
 }
 
-void
-mono_debugger_agent_breakpoint_hit (void *sigctx)
-{
-}
-
-void
-mono_debugger_agent_single_step_event (void *sigctx)
-{
-}
-
-void
-mono_debugger_agent_free_domain_info (MonoDomain *domain)
-{
-}
-
-void
-mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx,
-									  MonoContext *catch_ctx, StackFrameInfo *catch_frame)
-{
-}
-
-void
-mono_debugger_agent_begin_exception_filter (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx)
-{
-}
-
-void
-mono_debugger_agent_end_exception_filter (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx)
-{
-}
-
-void
-mono_debugger_agent_user_break (void)
-{
-	G_BREAKPOINT ();
-}
-
-void
-mono_debugger_agent_debug_log (int level, MonoString *category, MonoString *message)
-{
-}
-
-gboolean
-mono_debugger_agent_debug_log_is_enabled (void)
-{
-	return FALSE;
-}
-
-void
-mono_debugger_agent_unhandled_exception (MonoException *exc)
-{
-	g_assert_not_reached ();
-}
-
-void
-mono_debugger_agent_single_step_from_context (MonoContext *ctx)
-{
-	g_assert_not_reached ();
-}
-
-void
-mono_debugger_agent_breakpoint_from_context (MonoContext *ctx)
-{
-	g_assert_not_reached ();
-}
-
-#endif
+#endif /* DISABLE_SDB */

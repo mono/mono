@@ -371,8 +371,7 @@ get_typedef_or_ref (MonoImage *m, guint32 dor_token, MonoGenericContainer *conta
 
 	}
 	
-	if (temp)
-		g_free (temp);
+	g_free (temp);
 
 	return s;
 }
@@ -1150,8 +1149,10 @@ dis_stringify_type (MonoImage *m, MonoType *type, gboolean is_def)
 	char *bare = NULL, *mods = NULL;
 	char *result;
 
-	if (type->num_mods)
-		mods = dis_stringify_modifiers (m, type->num_mods, type->modifiers);
+	if (type->has_cmods) {
+		MonoCustomModContainer *cmods = mono_type_get_cmods (type);
+		mods = dis_stringify_modifiers (cmods->image, cmods->count, cmods->modifiers);
+	}
 
 	switch (type->type){
 	case MONO_TYPE_BOOLEAN:
@@ -1371,10 +1372,8 @@ get_field_signature (MonoImage *m, guint32 blob_signature, MonoGenericContainer 
 		allocated_type_string,
 		allocated_modifier_string ? allocated_modifier_string : "");
 	
-	if (allocated_modifier_string)
-		g_free (allocated_modifier_string);
-	if (allocated_type_string)
-		g_free (allocated_type_string);
+	g_free (allocated_modifier_string);
+	g_free (allocated_type_string);
 	
 	return res;
 }
@@ -1393,8 +1392,7 @@ get_field_literal_type (MonoImage *m, guint32 blob_signature)
 	ptr++; len--;
 	
 	ptr = get_custom_mod (m, ptr, &allocated_modifier_string);
-	if (allocated_modifier_string)
-		g_free (allocated_modifier_string);
+	g_free (allocated_modifier_string);
 
 	return (MonoTypeEnum) *ptr;
 	
@@ -2507,8 +2505,7 @@ get_token_type (MonoImage *m, guint32 token, MonoGenericContainer *container)
 
 	}
 	
-	if (temp)
-		g_free (temp);
+	g_free (temp);
 
 	return s;
 }

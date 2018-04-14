@@ -443,7 +443,7 @@ namespace Mono.Profiler.Log {
 
 					for (var i = 0; i < list.Length; i++) {
 						list [i] = new HeapRootsEvent.HeapRoot {
-							AddressPointer = StreamHeader.FormatVersion >= 15 ? ReadPointer () : 0,
+							SlotPointer = StreamHeader.FormatVersion >= 15 ? ReadPointer () : 0,
 							ObjectPointer = ReadObject (),
 							Attributes = StreamHeader.FormatVersion < 15 ?
 							             (StreamHeader.FormatVersion == 13 ?

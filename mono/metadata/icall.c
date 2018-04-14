@@ -4668,15 +4668,12 @@ replace_shadow_path (MonoDomain *domain, gchar *dirname, gchar **filename)
 		content = NULL;
 		if (!g_file_get_contents (shadow_ini_file, &content, &len, NULL) ||
 			!g_file_test (content, G_FILE_TEST_IS_REGULAR)) {
-			if (content) {
-				g_free (content);
-				content = NULL;
-			}
+			g_free (content);
+			content = NULL;
 		}
 		g_free (shadow_ini_file);
 		if (content != NULL) {
-			if (*filename)
-				g_free (*filename);
+			g_free (*filename);
 			*filename = content;
 			return TRUE;
 		}
@@ -7704,20 +7701,24 @@ type_array_from_modifiers (MonoImage *image, MonoType *type, int optional, MonoE
 	int i, count = 0;
 	MonoDomain *domain = mono_domain_get ();
 
+	MonoCustomModContainer *cmods = mono_type_get_cmods (type);
+	if (!cmods)
+		goto fail;
+
 	error_init (error);
-	for (i = 0; i < type->num_mods; ++i) {
-		if ((optional && !type->modifiers [i].required) || (!optional && type->modifiers [i].required))
+	for (i = 0; i < cmods->count; ++i) {
+		if ((optional && !cmods->modifiers [i].required) || (!optional && cmods->modifiers [i].required))
 			count++;
 	}
 	if (!count)
-		return MONO_HANDLE_NEW (MonoArray, NULL);
+		goto fail;
 
 	MonoArrayHandle res = mono_array_new_handle (domain, mono_defaults.systemtype_class, count, error);
 	goto_if_nok (error, fail);
 	count = 0;
-	for (i = 0; i < type->num_mods; ++i) {
-		if ((optional && !type->modifiers [i].required) || (!optional && type->modifiers [i].required)) {
-			if (!add_modifier_to_array (domain, image, &type->modifiers[i], res, count , error))
+	for (i = 0; i < cmods->count; ++i) {
+		if ((optional && !cmods->modifiers [i].required) || (!optional && cmods->modifiers [i].required)) {
+			if (!add_modifier_to_array (domain, image, &cmods->modifiers [i], res, count , error))
 				goto fail;
 			count++;
 		}

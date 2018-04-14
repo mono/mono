@@ -1889,7 +1889,22 @@ namespace System.Text {
                 }
             }
         }
-#if !MONO
+#if MONO
+        public StringBuilder Append(ReadOnlySpan<char> value)
+        {
+            if (value.Length > 0)
+            {
+                unsafe
+                {
+                    fixed (char* valueChars = &MemoryMarshal.GetReference(value))
+                    {
+                        Append(valueChars, value.Length);
+                    }
+                }
+            }
+            return this;
+        }
+#else
          // Copies the source StringBuilder to the destination IntPtr memory allocated with len bytes.
         [System.Security.SecurityCritical]  // auto-generated
         internal unsafe void InternalCopy(IntPtr dest, int len) {

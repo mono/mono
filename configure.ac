@@ -834,10 +834,8 @@ AC_SUBST([WERROR_CFLAGS])
 AC_SUBST([SHARED_CFLAGS])
 
 GLIB_CFLAGS='-I$(top_srcdir)/mono/eglib -I$(top_builddir)/mono/eglib'
-GLIB_LIBS='$(top_builddir)/mono/eglib/libeglib.la -lm'
   
 AC_SUBST(GLIB_CFLAGS)
-AC_SUBST(GLIB_LIBS)
 
 # Enable support for fast thread-local storage
 # Some systems have broken support, so we allow to disable it.
@@ -997,7 +995,7 @@ AC_ARG_WITH(unreal,              [  --with-unreal=yes,no                If you w
 AC_ARG_WITH(wasm,                [  --with-wasm=yes,no                  If you want to build the WebAssembly (defaults to no)], [], [with_wasm=default])
 
 
-AC_ARG_WITH(runtime_preset, [  --with-runtime_preset=net_4_x,all,aot,hybridaot,fullaot,bitcode,unreal   Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
+AC_ARG_WITH(runtime-preset, [  --with-runtime-preset=net_4_x,all,aot,aot_llvm,hybridaot,hybridaot_llvm,fullaot,fullaot_llvm,bitcode,unreal   Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
 AC_ARG_WITH(spectre-mitigation,             [  --with-spectre-mitigation=yes,no   If you want to build the runtime with compiler flags that enable Spectre mitigation (defaults to no)], [], [with_spectre_mitigation=default])
 AC_ARG_WITH(spectre-indirect-branch-choice,   [  --with-spectre-indirect-branch-choice=keep,thunk,inline,extern   Convert indirect branches to the specified kind of thunk (defaults to inline)], [], [with_spectre_indirect_branch_choice=inline])
 AC_ARG_WITH(spectre-function-return-choice, [  --with-spectre-function-return-choice=keep,thunk,inline,extern   Convert function return instructions to the specified kind of thunk (defaults to inline)], [], [with_spectre_function_return_choice=inline])
@@ -1086,20 +1084,8 @@ elif test x$with_runtime_preset = xall; then
    with_orbis_default=yes
    with_unreal_default=yes
    with_wasm_default=yes
-elif test x$with_runtime_preset = xfullaot; then
-   DISABLE_MCS_DOCS_default=yes
+   with_testing_aot_hybrid_default=yes
    with_testing_aot_full_default=yes
-   TEST_PROFILE=testing_aot_full
-
-   mono_feature_disable_com='yes'
-   mono_feature_disable_remoting='yes'
-   mono_feature_disable_reflection_emit_save='yes'
-   mono_feature_disable_reflection_emit='yes'
-   mono_feature_disable_appdomains='yes'
-
-   AOT_BUILD_FLAGS="--runtime=mobile -O=gsharedvt --aot=full,$INVARIANT_AOT_OPTIONS"
-   AOT_RUN_FLAGS="--runtime=mobile --full-aot"
-   AOT_MODE="full"
 elif test x$with_runtime_preset = xbitcode; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_full_default=yes
@@ -1117,6 +1103,34 @@ elif test x$with_runtime_preset = xbitcode; then
    AOT_BUILD_FLAGS="--runtime=mobile --aot=llvmonly,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --llvmonly"
    AOT_MODE="llvmonly"
+elif test x$with_runtime_preset = xfullaot; then
+   DISABLE_MCS_DOCS_default=yes
+   with_testing_aot_full_default=yes
+   TEST_PROFILE=testing_aot_full
+
+   mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="--runtime=mobile -O=gsharedvt --aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--runtime=mobile --full-aot"
+   AOT_MODE="full"
+elif test x$with_runtime_preset = xfullaot_llvm; then
+   DISABLE_MCS_DOCS_default=yes
+   with_testing_aot_full_default=yes
+   TEST_PROFILE=testing_aot_full
+
+   mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="--runtime=mobile -O=gsharedvt --llvm --aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--runtime=mobile --full-aot"
+   AOT_MODE="full"
 elif test x$with_runtime_preset = xhybridaot; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_hybrid_default=yes
@@ -1124,10 +1138,24 @@ elif test x$with_runtime_preset = xhybridaot; then
 
    AOT_BUILD_FLAGS="--runtime=mobile --aot=hybrid,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --hybrid-aot"
+elif test x$with_runtime_preset = xhybridaot_llvm; then
+   DISABLE_MCS_DOCS_default=yes
+   with_testing_aot_hybrid_default=yes
+   TEST_PROFILE=testing_aot_hybrid
+
+   AOT_BUILD_FLAGS="--runtime=mobile --llvm --aot=hybrid,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--runtime=mobile --hybrid-aot"
 elif test x$with_runtime_preset = xaot; then
    with_profile4_x_default=yes
 
    AOT_BUILD_FLAGS="--aot=$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS=""
+
+   DISABLE_MCS_DOCS_default=yes
+elif test x$with_runtime_preset = xaot_llvm; then
+   with_profile4_x_default=yes
+
+   AOT_BUILD_FLAGS="--llvm --aot=$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS=""
 
    DISABLE_MCS_DOCS_default=yes
@@ -1432,9 +1460,11 @@ if test "x$mono_feature_disable_simd" = "xyes"; then
 fi
 
 if test "x$mono_feature_disable_soft_debug" = "xyes"; then
-	AC_DEFINE(DISABLE_SOFT_DEBUG, 1, [Disable Soft Debugger Agent.])
+	AC_DEFINE(DISABLE_DEBUGGER_AGENT, 1, [Disable Soft Debugger Agent.])
 	AC_MSG_NOTICE([Disabled Soft Debugger.])
 fi
+
+AM_CONDITIONAL(DISABLE_DEBUGGER_AGENT, test x$mono_feature_disable_debugger_agent = xyes)
 
 if test "x$mono_feature_disable_perfcounters" = "xyes"; then
 	AC_DEFINE(DISABLE_PERFCOUNTERS, 1, [Disable Performance Counters.])
@@ -3216,9 +3246,19 @@ if test "x$enable_llvm" = "xyes"; then
    fi
 
    llvm_codegen="x86codegen"
+   LLVM_ARCH_LIBS="-lLLVMX86Disassembler -lLLVMX86CodeGen -lLLVMX86AsmParser -lLLVMX86Desc -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils"
    case "$target" in
    arm*)
 		llvm_codegen="armcodegen"
+		LLVM_ARCH_LIBS="-lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter"
+		;;
+   aarch64*)
+		llvm_codegen="aarch64codegen"
+		LLVM_ARCH_LIBS="-lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter"
+		;;
+   powerpc*)
+		llvm_codegen="powerpccodegen"
+		LLVM_ARCH_LIBS="-lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter"
 		;;
    esac
 
@@ -3284,17 +3324,14 @@ if test "x$enable_llvm" = "xyes"; then
        LLVM_LDFLAGS="-L$with_llvm/lib"
        LLVM_SYSTEM_LIBS="-lshell32 -lpsapi -limagehlp -ldbghelp -lm"
        LLVM_LIBS="-lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter \
-         -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo \
-         -lLLVMARMAsmPrinter -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler \
-         -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc \
-         -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMJIT \
-         -lLLVMAnalysis -lLLVMTarget \
+         -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMSelectionDAG -lLLVMAsmPrinter \
+         -lLLVMMCDisassembler -lLLVMJIT -lLLVMAnalysis -lLLVMTarget \
          -lLLVMIRReader -lLLVMAsmParser -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation \
          -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils \
          -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld \
          -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore \
          -lLLVMSupport -lstdc++"
-       LLVM_LIBS="$LLVM_LIBS $LLVM_SYSTEM_LIBS"
+       LLVM_LIBS="$LLVM_LIBS $LLVM_ARCH_LIBS $LLVM_SYSTEM_LIBS"
 
        llvm_config_path=$with_llvm/include/llvm/Config/llvm-config.h
        llvm_api_version=`awk '/MONO_API_VERSION/ { print $3 }' $llvm_config_path`
@@ -4488,6 +4525,15 @@ fi
 
 AM_CONDITIONAL([ENABLE_COOP], [test x$with_cooperative_gc != xno])
 
+AC_ARG_WITH(hybrid_suspend, [ --with-hybrid-suspend=yes|no     Enable hybrid cooperative stop-the-world garbage collection (sgen only) - cooperative suspend for threads running managed and native code, and preemptive suspend for threads running native and P/Invoke code (defaults to no)], [
+	if test x$with_hybrid_suspend != xno ; then
+		AC_DEFINE(USE_HYBRID_SUSPEND,1,[Enable hybrid cooperative suspend for GC stop-the-world])
+	fi
+	if test x$with_cooperative_gc != xyes ; then
+		AC_MSG_ERROR([Hybrid suspend requires --with-cooperative-gc=yes])
+	fi
+], [with_hybrid_suspend=no])
+
 AC_ARG_ENABLE(checked_build, [  --enable-checked-build=LIST      To enable checked build (expensive asserts), configure with a comma-separated LIST of checked build modules and then include that same list in the environment variable MONO_CHECK_MODE at runtime. Recognized checked build modules: all, gc, metadata, thread, private_types],[
 
 	if test x$enable_checked_build != x ; then
@@ -5043,18 +5089,16 @@ fi
 
     if test x$host_darwin = xyes; then
       echo "BUILD_PLATFORM = darwin" >> $mcs_topdir/build/config.make
+      echo "HOST_PLATFORM ?= darwin" >> $mcs_topdir/build/config.make
+      echo "XTEST_PLATFORM ?= osx" >> $mcs_topdir/build/config.make
     elif test x$host_win32 = xyes; then
       echo "BUILD_PLATFORM = win32" >> $mcs_topdir/build/config.make
+      echo "HOST_PLATFORM ?= win32" >> $mcs_topdir/build/config.make
+      echo "XTEST_PLATFORM ?= windows" >> $mcs_topdir/build/config.make
     else
       echo "BUILD_PLATFORM = linux" >> $mcs_topdir/build/config.make
-    fi
-
-    if test x$host_darwin = xyes; then
-      echo "HOST_PLATFORM ?= darwin" >> $mcs_topdir/build/config.make
-    elif test x$host_win32 = xyes; then
-      echo "HOST_PLATFORM ?= win32" >> $mcs_topdir/build/config.make
-    else
       echo "HOST_PLATFORM ?= linux" >> $mcs_topdir/build/config.make
+      echo "XTEST_PLATFORM ?= linux" >> $mcs_topdir/build/config.make
     fi
 
     if test "x$PLATFORM_AOT_SUFFIX" != "x"; then

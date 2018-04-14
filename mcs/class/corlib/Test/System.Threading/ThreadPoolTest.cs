@@ -281,5 +281,17 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue (threads0 > 0, "#2");
 		}
 #endif
+
+		[Test]
+		public void SetMinThreads ()
+		{
+			int workerThreads, cpThreads;
+			int expectedWt = 64, expectedCpt = 64;
+			bool set = ThreadPool.SetMinThreads (expectedWt, expectedCpt);
+			ThreadPool.GetMinThreads (out workerThreads, out cpThreads);
+			Assert.IsTrue (set, "#1");
+			Assert.AreEqual (expectedWt, workerThreads, "#2");
+			Assert.AreEqual (expectedCpt, cpThreads, "#3");
+		}
 	}
 }

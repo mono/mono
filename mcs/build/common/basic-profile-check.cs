@@ -1,14 +1,13 @@
 using System;
 
-class X {
-	// Check installed compiler
-	static void Generic<T> ()
-	{
-		// we use 'var' all around in the compiler sources
-		var x = new X ();
-	}
-	
-	void DefaultParametersAvailable (int i = 3)
+interface II
+{
+
+}
+
+class X
+{
+	static void Foo (II a = default (II), II b = default, II c = (II) null)
 	{
 	}
 

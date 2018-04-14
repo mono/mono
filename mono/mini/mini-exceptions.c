@@ -1816,13 +1816,20 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 #endif
 					}
 
-					mono_debugger_agent_begin_exception_filter (mono_ex, ctx, &initial_ctx);
+					mini_get_dbg_callbacks ()->begin_exception_filter (mono_ex, ctx, &initial_ctx);
+
+					if (G_UNLIKELY (mono_profiler_clauses_enabled ())) {
+						jit_tls->orig_ex_ctx_set = TRUE;
+						MONO_PROFILER_RAISE (exception_clause, (method, i, ei->flags, ex_obj));
+						jit_tls->orig_ex_ctx_set = FALSE;
+					}
+
 					if (ji->is_interp) {
 						filtered = mini_get_interp_callbacks ()->run_filter (&frame, (MonoException*)ex_obj, i, ei->data.filter);
 					} else {
 						filtered = call_filter (ctx, ei->data.filter);
 					}
-					mono_debugger_agent_end_exception_filter (mono_ex, ctx, &initial_ctx);
+					mini_get_dbg_callbacks ()->end_exception_filter (mono_ex, ctx, &initial_ctx);
 					if (filtered && out_filter_idx)
 						*out_filter_idx = filter_idx;
 					if (out_ji)
@@ -1867,6 +1874,32 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 	}
 
 	g_assert_not_reached ();
+}
+
+/*
+ * We implement delaying of aborts when in finally blocks by reusing the
+ * abort protected block mechanism. The problem is that when throwing an
+ * exception in a finally block we don't get to exit the protected block.
+ * We exit it here when unwinding. Given that the order of the clauses
+ * in the jit info is from inner clauses to the outer clauses, when we
+ * want to exit the finally blocks inner to the clause that handles the
+ * exception, we need to search up to its index.
+ *
+ * FIXME We should do this inside interp, but with mixed mode we can
+ * resume directly, without giving control back to the interp.
+ */
+static void
+interp_exit_finally_abort_blocks (MonoJitInfo *ji, int start_clause, int end_clause, gpointer ip)
+{
+	int i;
+	for (i = start_clause; i < end_clause; i++) {
+		MonoJitExceptionInfo *ei = &ji->clauses [i];
+		if (ei->flags == MONO_EXCEPTION_CLAUSE_FINALLY &&
+				ip >= ei->handler_start &&
+				ip < ei->data.handler_end) {
+			mono_threads_end_abort_protected_block ();
+		}
+	}
 }
 
 /**
@@ -2028,7 +2061,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 		if (res == MONO_FIRST_PASS_UNHANDLED) {
 			if (mini_get_debug_options ()->break_on_exc)
 				G_BREAKPOINT ();
-			mono_debugger_agent_handle_exception ((MonoException *)obj, ctx, NULL, NULL);
+			mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
 
 			if (mini_get_debug_options ()->suspend_on_unhandled) {
 				mono_runtime_printf_err ("Unhandled exception, suspending...");
@@ -2056,9 +2089,9 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 			}
 
 			if (unhandled)
-				mono_debugger_agent_handle_exception ((MonoException *)obj, ctx, NULL, NULL);
+				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
 			else if (res != MONO_FIRST_PASS_CALLBACK_TO_NATIVE)
-				mono_debugger_agent_handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
+				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
 		}
 	}
 
@@ -2130,9 +2163,9 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 
 		if (method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED && ftnptr_eh_callback) {
 			guint32 handle = mono_gchandle_new (obj, FALSE);
-			gpointer stackptr;
+			MONO_STACKDATA (stackptr);
 
-			mono_threads_enter_gc_safe_region_unbalanced (&stackptr);
+			mono_threads_enter_gc_safe_region_unbalanced_internal (&stackptr);
 			ftnptr_eh_callback (handle);
 			g_error ("Did not expect ftnptr_eh_callback to return.");
 		}
@@ -2227,12 +2260,24 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 
 					if (mono_trace_is_enabled () && mono_trace_eval (method))
 						g_print ("EXCEPTION: catch found at clause %d of %s\n", i, mono_method_full_name (method, TRUE));
-					jit_tls->orig_ex_ctx_set = TRUE;
-					MONO_PROFILER_RAISE (exception_clause, (method, i, ei->flags, ex_obj));
-					jit_tls->orig_ex_ctx_set = FALSE;
+
+					/*
+					 * At this point, ei->flags can be either MONO_EXCEPTION_CLAUSE_NONE for a
+					 * a try-catch clause or MONO_EXCEPTION_CLAUSE_FILTER for a try-filter-catch
+					 * clause. Since we specifically want to indicate that we're executing the
+					 * catch portion of this EH clause, pass MONO_EXCEPTION_CLAUSE_NONE explicitly
+					 * instead of ei->flags.
+					 */
+					if (G_UNLIKELY (mono_profiler_clauses_enabled ())) {
+						jit_tls->orig_ex_ctx_set = TRUE;
+						MONO_PROFILER_RAISE (exception_clause, (method, i, MONO_EXCEPTION_CLAUSE_NONE, ex_obj));
+						jit_tls->orig_ex_ctx_set = FALSE;
+					}
+
 					mini_set_abort_threshold (&frame);
 
 					if (in_interp) {
+						interp_exit_finally_abort_blocks (ji, clause_index_start, i, ip);
 						/*
 						 * ctx->pc points into the interpreter, after the call which transitioned to
 						 * JITted code. Store the unwind state into the
@@ -2263,16 +2308,23 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 				if (ei->flags == MONO_EXCEPTION_CLAUSE_FAULT) {
 					if (mono_trace_is_enabled () && mono_trace_eval (method))
 						g_print ("EXCEPTION: fault clause %d of %s\n", i, mono_method_full_name (method, TRUE));
-					jit_tls->orig_ex_ctx_set = TRUE;
-					MONO_PROFILER_RAISE (exception_clause, (method, i, ei->flags, ex_obj));
-					jit_tls->orig_ex_ctx_set = FALSE;
+
+					if (G_UNLIKELY (mono_profiler_clauses_enabled ())) {
+						jit_tls->orig_ex_ctx_set = TRUE;
+						MONO_PROFILER_RAISE (exception_clause, (method, i, ei->flags, ex_obj));
+						jit_tls->orig_ex_ctx_set = FALSE;
+					}
 				}
 				if (ei->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
 					if (mono_trace_is_enabled () && mono_trace_eval (method))
 						g_print ("EXCEPTION: finally clause %d of %s\n", i, mono_method_full_name (method, TRUE));
-					jit_tls->orig_ex_ctx_set = TRUE;
-					MONO_PROFILER_RAISE (exception_clause, (method, i, ei->flags, ex_obj));
-					jit_tls->orig_ex_ctx_set = FALSE;
+
+					if (G_UNLIKELY (mono_profiler_clauses_enabled ())) {
+						jit_tls->orig_ex_ctx_set = TRUE;
+						MONO_PROFILER_RAISE (exception_clause, (method, i, ei->flags, ex_obj));
+						jit_tls->orig_ex_ctx_set = FALSE;
+					}
+
 #ifndef DISABLE_PERFCOUNTERS
 					mono_atomic_inc_i32 (&mono_perfcounters->exceptions_finallys);
 #endif
@@ -2312,6 +2364,9 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 				}
 			}
 		}
+
+		if (in_interp)
+			interp_exit_finally_abort_blocks (ji, clause_index_start, ji->num_clauses, ip);
 
 		if (MONO_PROFILER_ENABLED (method_exception_leave) &&
 		    mono_profiler_get_call_instrumentation_flags (method) & MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE) {

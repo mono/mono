@@ -23,3 +23,7 @@ mono Documentation/en/examples/commands.exe requires-args -n World
 mono Documentation/en/examples/commands.exe invalid-command
 
 mono Documentation/en/examples/commands.exe help invalid-command
+
+mono Documentation/en/examples/commands.exe has spaces
+
+mono Documentation/en/examples/commands.exe set file type whatever

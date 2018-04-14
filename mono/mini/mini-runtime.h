@@ -339,6 +339,7 @@ extern GHashTable *mono_single_method_hash;
 extern GList* mono_aot_paths;
 extern MonoDebugOptions mini_debug_options;
 extern GSList *mono_interp_only_classes;
+extern char *sdb_options;
 
 /*
 This struct describes what execution engine feature to use.
@@ -383,6 +384,11 @@ MONO_API char       *mono_parse_options_from        (const char *options, int *r
 void                   mono_interp_stub_init         (void);
 void                   mini_install_interp_callbacks (MonoEECallbacks *cbs);
 MonoEECallbacks*       mini_get_interp_callbacks     (void);
+
+typedef struct _MonoDebuggerCallbacks MonoDebuggerCallbacks;
+
+void                   mini_install_dbg_callbacks (MonoDebuggerCallbacks *cbs);
+MonoDebuggerCallbacks  *mini_get_dbg_callbacks (void);
 
 MonoDomain* mini_init                      (const char *filename, const char *runtime_version);
 void        mini_cleanup                   (MonoDomain *domain);
@@ -515,6 +521,11 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
 
 #error "Missing return address intrinsics implementation"
 
+#endif
+
+//have a global view of sdb disable
+#if !defined(MONO_ARCH_SOFT_DEBUG_SUPPORTED) || defined (DISABLE_DEBUGGER_AGENT)
+#define DISABLE_SDB 1
 #endif
 
 #endif /* __MONO_MINI_RUNTIME_H__ */

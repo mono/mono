@@ -26,12 +26,11 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.ReadOnlySpan<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Span<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.MemoryHandle))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.OperationStatus))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.StandardFormat))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.Binary.BinaryPrimitives))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.InteropServices.MemoryMarshal))]
 
 // TODO: we don't have these types yet
+// Needs to be update to match RTM
 //[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.SequencePosition))]  
 //[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.BuffersExtensions))]
 //[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.IBufferWriter<>))]

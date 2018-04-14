@@ -45,6 +45,13 @@ typedef enum {
         MONO_IMAGE_IMAGE_INVALID
 } MonoImageOpenStatus;
 
+typedef enum {
+	MONO_DEBUG_FORMAT_NONE,
+	MONO_DEBUG_FORMAT_MONO,
+	/* Deprecated, the mdb debugger is not longer supported. */
+	MONO_DEBUG_FORMAT_DEBUGGER
+} MonoDebugFormat;
+
 enum {
         MONO_DL_EAGER = 0,
         MONO_DL_LAZY  = 1,
@@ -57,6 +64,7 @@ typedef struct MonoAssembly_ MonoAssembly;
 typedef struct MonoMethod_ MonoMethod;
 typedef struct MonoException_ MonoException;
 typedef struct MonoString_ MonoString;
+typedef struct MonoArray_ MonoArray;
 typedef struct MonoClass_ MonoClass;
 typedef struct MonoImage_ MonoImage;
 typedef struct MonoObject_ MonoObject;
@@ -98,6 +106,12 @@ typedef MonoMethod* (*mono_class_get_methods_fn) (MonoClass* klass, void **iter)
 typedef const char* (*mono_method_get_name_fn) (MonoMethod *method);
 typedef void (*mono_trace_init_fn) (void);
 typedef void (*mono_trace_set_log_handler_fn) (MonoLogCallback callback, void *user_data);
+typedef void (*mono_jit_parse_options_fn) (int argc, char * argv[]);
+typedef void (*mono_debug_init_fn) (MonoDebugFormat format);
+
+typedef MonoArray *(*mono_array_new_fn) (MonoDomain *domain, MonoClass *eclass, uintptr_t n);
+typedef MonoClass *(*mono_get_string_class_fn) (void);
+typedef void *(*mono_runtime_quit_fn) (void);
 
 static JavaVM *jvm;
 
@@ -126,6 +140,11 @@ static mono_class_get_methods_fn mono_class_get_methods;
 static mono_method_get_name_fn mono_method_get_name;
 static mono_trace_init_fn mono_trace_init;
 static mono_trace_set_log_handler_fn mono_trace_set_log_handler;
+static mono_jit_parse_options_fn mono_jit_parse_options;
+static mono_debug_init_fn mono_debug_init;
+static mono_array_new_fn mono_array_new;
+static mono_get_string_class_fn mono_get_string_class;
+static mono_runtime_quit_fn mono_runtime_quit;
 
 static MonoAssembly *main_assembly;
 static void *runtime_bootstrap_dso;
@@ -325,7 +344,6 @@ create_and_set (const char *home, const char *relativePath, const char *envvar)
 void
 Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring j_files_dir, jstring j_cache_dir, jstring j_data_dir, jstring j_assembly_dir)
 {
-	MonoClass *driver_class;
 	MonoDomain *root_domain;
 	MonoMethod *run_tests_method;
 	void **params;
@@ -372,6 +390,11 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	mono_dl_fallback_register = dlsym (libmono, "mono_dl_fallback_register"); 
 	mono_thread_attach = dlsym (libmono, "mono_thread_attach"); 
 	mono_domain_set_config = dlsym (libmono, "mono_domain_set_config");
+	mono_debug_init = dlsym (libmono, "mono_debug_init");
+	mono_array_new = dlsym (libmono, "mono_array_new");
+	mono_get_string_class = dlsym (libmono, "mono_get_string_class");
+	mono_runtime_quit = dlsym (libmono, "mono_runtime_quit");
+	mono_jit_parse_options = dlsym (libmono, "mono_jit_parse_options");
 	mono_runtime_set_main_args = dlsym (libmono, "mono_runtime_set_main_args");
 	mono_class_get_methods = dlsym (libmono, "mono_class_get_methods");
 	mono_method_get_name = dlsym (libmono, "mono_method_get_name");
@@ -399,10 +422,6 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	mono_set_crash_chaining (1);
 	mono_set_signal_chaining (1);
 	mono_dl_fallback_register (my_dlopen, my_dlsym, NULL, NULL);
-	root_domain = mono_jit_init_version ("TEST RUNNER", "mobile");
-	mono_domain_set_config (root_domain, assemblies_dir, file_dir);
-
-	mono_thread_attach (root_domain);
 
 	sprintf (buff, "%s/libruntime-bootstrap.so", data_dir);
 	runtime_bootstrap_dso = dlopen (buff, RTLD_LAZY);
@@ -412,6 +431,31 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 
 	wait_for_unmanaged_debugger ();
 
+#ifdef RUN_WITH_MANAGED_DEBUGGER
+	// Using adb reverse
+	char *host = "127.0.0.1";
+	int sdb_port = 6100;
+
+	char *debug_arg = m_strdup_printf ("--debugger-agent=transport=dt_socket,loglevel=0,address=%s:%d,embedding=1", host, sdb_port);
+
+	char *debug_options [2];
+	debug_options[0] = debug_arg;
+	debug_options[1] = "--soft-breakpoints";
+
+	_log ("Trying to initialize the debugger with options: %s", debug_arg);
+
+	mono_jit_parse_options (1, debug_options);
+	mono_debug_init (MONO_DEBUG_FORMAT_MONO);
+#endif
+
+	// Note: sets up domains. If the debugger is configured after this line is run, 
+	// then lookup_data_table will fail.
+	root_domain = mono_jit_init_version ("TEST RUNNER", "mobile");
+	mono_domain_set_config (root_domain, assemblies_dir, file_dir);
+
+	mono_thread_attach (root_domain);
+
+#ifdef MONO_BCL_TESTS
 	main_assembly_name = "main.exe";
 
 	argc = 1;
@@ -426,7 +470,7 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 		_exit (1);
 	}
 
-	driver_class = mono_class_from_name (mono_assembly_get_image (main_assembly), "", "Driver");
+	MonoClass *driver_class = mono_class_from_name (mono_assembly_get_image (main_assembly), "", "Driver");
 	if (!driver_class) {
 		_log ("Unknown \"Driver\" class");
 		_exit (1);
@@ -439,6 +483,44 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	}
 
 	mono_runtime_invoke (run_tests_method, NULL, NULL, NULL);
+#elif MONO_DEBUGGER_TESTS
+	// FIXME: take arbitrary exe
+	main_assembly_name = "dtest-app.exe";
+
+	argc = 1;
+	argv = calloc (sizeof (char*), argc);
+	argv[0] = main_assembly_name;
+	mono_runtime_set_main_args (argc, argv);
+
+	sprintf (buff, "%s/%s", assemblies_dir, main_assembly_name);
+	main_assembly = mono_assembly_open (buff, NULL);
+	if (!main_assembly) {
+		_log ("Unknown \"%s\" assembly", main_assembly_name);
+		_exit (1);
+	}
+
+	MonoClass *tests_class = mono_class_from_name (mono_assembly_get_image (main_assembly), "", "Tests");
+	if (!tests_class) {
+		_log ("Unknown \"Tests\" class");
+		_exit (1);
+	}
+
+	run_tests_method = mono_class_get_method_from_name (tests_class, "Main", 1);
+	if (!run_tests_method) {
+		_log ("Unknown \"Main\" method");
+		_exit (1);
+	}
+
+	// attached debugger sets the options the main class uses
+	// Therefore, we just pass Main no args
+	void *args [1];
+	args [0] = mono_array_new (root_domain, mono_get_string_class (), 0);
+
+	mono_runtime_invoke (run_tests_method, NULL, args, NULL);
+	mono_runtime_quit ();
+#else
+#error No managed assembly provided to run
+#endif
 }
 
 static int

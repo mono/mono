@@ -65,6 +65,12 @@ ifndef DISABLE_IOS
 include ios.mk
 endif
 
+## Desktop targets
+## To run host-side tests
+ifndef DISABLE_DESKTOP
+include desktop.mk
+endif
+
 ## WASM targets
 ifndef DISABLE_WASM
 include wasm.mk

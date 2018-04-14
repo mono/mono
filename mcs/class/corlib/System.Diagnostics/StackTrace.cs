@@ -180,7 +180,15 @@ namespace System.Diagnostics {
 		[ComVisibleAttribute (false)]
 		public virtual StackFrame[] GetFrames ()
 		{
-			return frames;
+			if (captured_traces == null)
+				return frames;
+
+			var accum = new List<StackFrame> ();
+			foreach (var t in captured_traces)
+				accum.AddRange(t.GetFrames ());
+
+			accum.AddRange (frames);
+			return accum.ToArray ();
 		}
 
 		static bool isAotidSet;

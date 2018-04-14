@@ -18,17 +18,19 @@ libgc_libs=$(monodir)/libgc/libmonogc.la
 libgc_static_libs=$(monodir)/libgc/libmonogc-static.la
 endif
 
+glib_libs = $(monodir)/mono/eglib/libeglib.la
+
 boehm_libs=	\
 	$(monodir)/mono/metadata/libmonoruntime.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) \
+	$(glib_libs) \
 	$(libgc_libs)
 
 sgen_libs = \
 	$(monodir)/mono/metadata/libmonoruntimesgen.la	\
 	$(monodir)/mono/sgen/libmonosgen.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS)
+	$(glib_libs)
 
 if FULL_AOT_TESTS
 # if the tests are going to run with framework assemblies compiled with
@@ -83,12 +85,12 @@ endif
 if SUPPORT_SGEN
 sgen_binaries = mono-sgen
 sgen_libraries = libmonosgen-2.0.la
-sgen_static_libraries = libmini.la $(interp_libs_with_mini) $(sgen_libs)
+sgen_static_libraries = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_libs)
 endif
 
 if SUPPORT_BOEHM
 boehm_libraries = libmonoboehm-2.0.la
-boehm_static_libraries = libmini.la $(interp_libs_with_mini) $(boehm_libs)
+boehm_static_libraries = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(boehm_libs)
 boehm_binaries  = mono-boehm
 endif
 
@@ -153,7 +155,7 @@ noinst_LTLIBRARIES = $(mini_common_lib)
 if LOADED_LLVM
 lib_LTLIBRARIES += libmono-llvm.la
 libmono_llvm_la_SOURCES = mini-llvm.c mini-llvm-cpp.cpp llvm-jit.cpp
-libmono_llvm_la_LIBADD = $(GLIB_LIBS) $(LLVM_LIBS) $(LLVM_LDFLAGS)
+libmono_llvm_la_LIBADD = $(glib_libs) $(LLVM_LIBS) $(LLVM_LDFLAGS)
 if HOST_DARWIN
 libmono_llvm_la_LDFLAGS=-Wl,-undefined -Wl,suppress -Wl,-flat_namespace
 else
@@ -221,7 +223,7 @@ endif
 
 mono_boehm_LDADD = \
 	$(MONO_LIB)		\
-	$(GLIB_LIBS)		\
+	$(glib_libs)		\
 	$(LLVMMONOF)		\
 	-lm			\
 	$(MONO_DTRACE_OBJECT)
@@ -231,7 +233,7 @@ mono_boehm_LDFLAGS = \
 
 mono_sgen_LDADD = \
 	$(MONO_SGEN_LIB)	\
-	$(GLIB_LIBS)		\
+	$(glib_libs)		\
 	$(LLVMMONOF)		\
 	-lm			\
 	$(MONO_DTRACE_OBJECT)
@@ -448,7 +450,7 @@ common_sources = \
 	mini-gc.h		\
 	mini-gc.c		\
 	debugger-agent.h 	\
-	debugger-agent.c	\
+	debugger-agent-stubs.c	\
 	xdebug.c			\
 	mini-llvm.h			\
 	mini-llvm-cpp.h	\
@@ -629,6 +631,23 @@ if BITCODE
 libmono_ee_interp_la_LIBADD = libmonosgen-2.0.la
 endif
 
+libmono_dbg_la_SOURCES = debugger-agent.c
+libmono_dbg_la_CFLAGS = $(mono_CFLAGS)
+if BITCODE
+libmono_dbg_la_LIBADD = libmonosgen-2.0.la
+endif
+
+dbg_libs = libmono-dbg.la
+
+if DISABLE_DEBUGGER_AGENT
+lib_LTLIBRARIES += $(dbg_libs)
+endif
+
+if !DISABLE_DEBUGGER_AGENT
+dbg_libs_with_mini = $(dbg_libs)
+noinst_LTLIBRARIES += $(dbg_libs)
+endif
+
 #
 # This library is shared between mono and mono-sgen, since the code in mini/ doesn't contain
 # compile time dependencies on boehm/sgen.
@@ -638,12 +657,12 @@ libmini_la_CFLAGS = $(mono_CFLAGS)
 
 libmonoboehm_2_0_la_SOURCES =
 libmonoboehm_2_0_la_CFLAGS = $(mono_boehm_CFLAGS)
-libmonoboehm_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(boehm_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
+libmonoboehm_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(boehm_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
 libmonoboehm_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
 
 libmonosgen_2_0_la_SOURCES =
 libmonosgen_2_0_la_CFLAGS = $(mono_sgen_CFLAGS)
-libmonosgen_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(sgen_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
+libmonosgen_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
 libmonosgen_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
 
 libmonoincludedir = $(includedir)/mono-$(API_VER)/mono/jit
@@ -689,34 +708,34 @@ GENMDESC_OPTS=
 
 GENMDESC_PRG=python $(srcdir)/genmdesc.py $(target_define) $(srcdir)
 
-cpu-wasm.h: cpu-wasm.md
+cpu-wasm.h: mini-ops.h cpu-wasm.md
 	$(GENMDESC_PRG) cpu-wasm.h wasm_desc $(srcdir)/cpu-wasm.md
 
-cpu-x86.h: cpu-x86.md
+cpu-x86.h: mini-ops.h cpu-x86.md
 	$(GENMDESC_PRG) cpu-x86.h x86_desc $(srcdir)/cpu-x86.md
 
-cpu-amd64.h: cpu-amd64.md
+cpu-amd64.h: mini-ops.h cpu-amd64.md
 	$(GENMDESC_PRG) cpu-amd64.h amd64_desc $(srcdir)/cpu-amd64.md
 
-cpu-ppc.h: cpu-ppc.md
+cpu-ppc.h: mini-ops.h cpu-ppc.md
 	$(GENMDESC_PRG) cpu-ppc.h ppcg4 $(srcdir)/cpu-ppc.md
 
-cpu-ppc64.h: cpu-ppc64.md
+cpu-ppc64.h: mini-ops.h cpu-ppc64.md
 	$(GENMDESC_PRG) cpu-ppc64.h ppc64_cpu_desc $(srcdir)/cpu-ppc64.md
 
-cpu-arm.h: cpu-arm.md
+cpu-arm.h: mini-ops.h cpu-arm.md
 	$(GENMDESC_PRG) cpu-arm.h arm_cpu_desc $(srcdir)/cpu-arm.md
 
-cpu-arm64.h: cpu-arm64.md
+cpu-arm64.h: mini-ops.h cpu-arm64.md
 	$(GENMDESC_PRG) cpu-arm64.h arm64_cpu_desc $(srcdir)/cpu-arm64.md
 
-cpu-sparc.h: cpu-sparc.md
+cpu-sparc.h: mini-ops.h cpu-sparc.md
 	$(GENMDESC_PRG) cpu-sparc.h sparc_desc $(srcdir)/cpu-sparc.md
 
-cpu-s390x.h: cpu-s390x.md
+cpu-s390x.h: mini-ops.h cpu-s390x.md
 	$(GENMDESC_PRG) cpu-s390x.h s390x_cpu_desc $(srcdir)/cpu-s390x.md
 
-cpu-mips.h: cpu-mips.md
+cpu-mips.h: mini-ops.h cpu-mips.md
 	$(GENMDESC_PRG) cpu-mips.h mips_desc $(srcdir)/cpu-mips.md
 
 testi: mono test.exe

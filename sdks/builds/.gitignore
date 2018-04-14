@@ -30,6 +30,8 @@ ios-simtv-*/
 ios-simwatch-*/
 wasm-interp/
 bcl/
+desktop-x86/
+desktop-x86_64/
 
 # android toolchain
 toolchains/

@@ -569,62 +569,26 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <EmbeddedResource Include="../../docs/monodoc.xml">
-      <LogicalName>monodoc.xml</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/base.css">
       <LogicalName>base.css</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/ecmaspec-html-css.xsl">
-      <LogicalName>ecmaspec-html-css.xsl</LogicalName>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/creativecommons.png">
+      <LogicalName>creativecommons.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/ecmaspec.css">
+      <LogicalName>ecmaspec.css</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/ecmaspec-html.xsl">
       <LogicalName>ecmaspec-html.xsl</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/ecmaspec.css">
-      <LogicalName>ecmaspec.css</LogicalName>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/ecmaspec-html-css.xsl">
+      <LogicalName>ecmaspec-html-css.xsl</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/helper.js">
       <LogicalName>helper.js</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/home.html">
       <LogicalName>home.html</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/Lminus.gif">
-      <LogicalName>Lminus.gif</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/Lplus.gif">
-      <LogicalName>Lplus.gif</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/creativecommons.png">
-      <LogicalName>creativecommons.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-html-format.xsl">
-      <LogicalName>mdoc-html-format.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-html-utils.xsl">
-      <LogicalName>mdoc-html-utils.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-sections-css.xsl">
-      <LogicalName>mdoc-sections-css.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-sections.xsl">
-      <LogicalName>mdoc-sections.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma-css.xsl">
-      <LogicalName>mono-ecma-css.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma-impl.xsl">
-      <LogicalName>mono-ecma-impl.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma.css">
-      <LogicalName>mono-ecma.css</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma.xsl">
-      <LogicalName>mono-ecma.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/toc-html.xsl">
-      <LogicalName>toc-html.xsl</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/images/bc_bg.png">
       <LogicalName>bc_bg.png</LogicalName>
@@ -748,65 +712,65 @@
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/images/treebg.png">
       <LogicalName>treebg.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/Lminus.gif">
+      <LogicalName>Lminus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/Lplus.gif">
+      <LogicalName>Lplus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-html-format.xsl">
+      <LogicalName>mdoc-html-format.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-html-utils.xsl">
+      <LogicalName>mdoc-html-utils.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-sections.xsl">
+      <LogicalName>mdoc-sections.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-sections-css.xsl">
+      <LogicalName>mdoc-sections-css.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma.css">
+      <LogicalName>mono-ecma.css</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma.xsl">
+      <LogicalName>mono-ecma.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma-css.xsl">
+      <LogicalName>mono-ecma-css.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma-impl.xsl">
+      <LogicalName>mono-ecma-impl.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/toc-html.xsl">
+      <LogicalName>toc-html.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../docs/monodoc.xml">
+      <LogicalName>monodoc.xml</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
-    <EmbeddedResource Include="../../docs/monodoc.xml">
-      <LogicalName>monodoc.xml</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/base.css">
       <LogicalName>base.css</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/ecmaspec-html-css.xsl">
-      <LogicalName>ecmaspec-html-css.xsl</LogicalName>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/creativecommons.png">
+      <LogicalName>creativecommons.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/ecmaspec.css">
+      <LogicalName>ecmaspec.css</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/ecmaspec-html.xsl">
       <LogicalName>ecmaspec-html.xsl</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/ecmaspec.css">
-      <LogicalName>ecmaspec.css</LogicalName>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/ecmaspec-html-css.xsl">
+      <LogicalName>ecmaspec-html-css.xsl</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/helper.js">
       <LogicalName>helper.js</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/home.html">
       <LogicalName>home.html</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/Lminus.gif">
-      <LogicalName>Lminus.gif</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/Lplus.gif">
-      <LogicalName>Lplus.gif</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/creativecommons.png">
-      <LogicalName>creativecommons.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-html-format.xsl">
-      <LogicalName>mdoc-html-format.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-html-utils.xsl">
-      <LogicalName>mdoc-html-utils.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-sections-css.xsl">
-      <LogicalName>mdoc-sections-css.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-sections.xsl">
-      <LogicalName>mdoc-sections.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma-css.xsl">
-      <LogicalName>mono-ecma-css.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma-impl.xsl">
-      <LogicalName>mono-ecma-impl.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma.css">
-      <LogicalName>mono-ecma.css</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma.xsl">
-      <LogicalName>mono-ecma.xsl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/toc-html.xsl">
-      <LogicalName>toc-html.xsl</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/images/bc_bg.png">
       <LogicalName>bc_bg.png</LogicalName>
@@ -930,6 +894,42 @@
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/images/treebg.png">
       <LogicalName>treebg.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/Lminus.gif">
+      <LogicalName>Lminus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/Lplus.gif">
+      <LogicalName>Lplus.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-html-format.xsl">
+      <LogicalName>mdoc-html-format.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-html-utils.xsl">
+      <LogicalName>mdoc-html-utils.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-sections.xsl">
+      <LogicalName>mdoc-sections.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mdoc-sections-css.xsl">
+      <LogicalName>mdoc-sections-css.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma.css">
+      <LogicalName>mono-ecma.css</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma.xsl">
+      <LogicalName>mono-ecma.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma-css.xsl">
+      <LogicalName>mono-ecma-css.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/mono-ecma-impl.xsl">
+      <LogicalName>mono-ecma-impl.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../../external/api-doc-tools/monodoc/Resources/toc-html.xsl">
+      <LogicalName>toc-html.xsl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="../../docs/monodoc.xml">
+      <LogicalName>monodoc.xml</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->

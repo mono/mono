@@ -119,6 +119,9 @@
     <EmbeddedResource Include="big5.table">
       <LogicalName>big5.table</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="gb18030.table">
+      <LogicalName>gb18030.table</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="gb2312.table">
       <LogicalName>gb2312.table</LogicalName>
     </EmbeddedResource>
@@ -127,15 +130,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ks.table">
       <LogicalName>ks.table</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="gb18030.table">
-      <LogicalName>gb18030.table</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
     <EmbeddedResource Include="big5.table">
       <LogicalName>big5.table</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="gb18030.table">
+      <LogicalName>gb18030.table</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="gb2312.table">
       <LogicalName>gb2312.table</LogicalName>
     </EmbeddedResource>
@@ -144,15 +147,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ks.table">
       <LogicalName>ks.table</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="gb18030.table">
-      <LogicalName>gb18030.table</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
     <EmbeddedResource Include="big5.table">
       <LogicalName>big5.table</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="gb18030.table">
+      <LogicalName>gb18030.table</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="gb2312.table">
       <LogicalName>gb2312.table</LogicalName>
     </EmbeddedResource>
@@ -161,15 +164,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ks.table">
       <LogicalName>ks.table</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="gb18030.table">
-      <LogicalName>gb18030.table</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
     <EmbeddedResource Include="big5.table">
       <LogicalName>big5.table</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="gb18030.table">
+      <LogicalName>gb18030.table</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="gb2312.table">
       <LogicalName>gb2312.table</LogicalName>
     </EmbeddedResource>
@@ -178,15 +181,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ks.table">
       <LogicalName>ks.table</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="gb18030.table">
-      <LogicalName>gb18030.table</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
     <EmbeddedResource Include="big5.table">
       <LogicalName>big5.table</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="gb18030.table">
+      <LogicalName>gb18030.table</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="gb2312.table">
       <LogicalName>gb2312.table</LogicalName>
     </EmbeddedResource>
@@ -195,15 +198,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ks.table">
       <LogicalName>ks.table</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="gb18030.table">
-      <LogicalName>gb18030.table</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
     <EmbeddedResource Include="big5.table">
       <LogicalName>big5.table</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="gb18030.table">
+      <LogicalName>gb18030.table</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="gb2312.table">
       <LogicalName>gb2312.table</LogicalName>
     </EmbeddedResource>
@@ -212,15 +215,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ks.table">
       <LogicalName>ks.table</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="gb18030.table">
-      <LogicalName>gb18030.table</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
     <EmbeddedResource Include="big5.table">
       <LogicalName>big5.table</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="gb18030.table">
+      <LogicalName>gb18030.table</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="gb2312.table">
       <LogicalName>gb2312.table</LogicalName>
     </EmbeddedResource>
@@ -229,15 +232,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ks.table">
       <LogicalName>ks.table</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="gb18030.table">
-      <LogicalName>gb18030.table</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <EmbeddedResource Include="big5.table">
       <LogicalName>big5.table</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="gb18030.table">
+      <LogicalName>gb18030.table</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="gb2312.table">
       <LogicalName>gb2312.table</LogicalName>
     </EmbeddedResource>
@@ -246,15 +249,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ks.table">
       <LogicalName>ks.table</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="gb18030.table">
-      <LogicalName>gb18030.table</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
     <EmbeddedResource Include="big5.table">
       <LogicalName>big5.table</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="gb18030.table">
+      <LogicalName>gb18030.table</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="gb2312.table">
       <LogicalName>gb2312.table</LogicalName>
     </EmbeddedResource>
@@ -263,15 +266,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ks.table">
       <LogicalName>ks.table</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="gb18030.table">
-      <LogicalName>gb18030.table</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
     <EmbeddedResource Include="big5.table">
       <LogicalName>big5.table</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="gb18030.table">
+      <LogicalName>gb18030.table</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="gb2312.table">
       <LogicalName>gb2312.table</LogicalName>
     </EmbeddedResource>
@@ -280,15 +283,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ks.table">
       <LogicalName>ks.table</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="gb18030.table">
-      <LogicalName>gb18030.table</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
     <EmbeddedResource Include="big5.table">
       <LogicalName>big5.table</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="gb18030.table">
+      <LogicalName>gb18030.table</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="gb2312.table">
       <LogicalName>gb2312.table</LogicalName>
     </EmbeddedResource>
@@ -297,9 +300,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ks.table">
       <LogicalName>ks.table</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="gb18030.table">
-      <LogicalName>gb18030.table</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->

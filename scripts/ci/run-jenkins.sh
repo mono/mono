@@ -48,18 +48,18 @@ if [[ ${CI_TAGS} == *'checked-all'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAG
 if [[ ${CI_TAGS} == *'mcs-compiler'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-csc=mcs"; fi
 if [[ ${CI_TAGS} == *'disable-mcs-build'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --disable-mcs-build"; fi
 
-if   [[ ${CI_TAGS} == *'fullaot_llvm'* ]];       then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime_preset=fullaot ";
-elif [[ ${CI_TAGS} == *'hybridaot_llvm'* ]];     then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime_preset=hybridaot";
-elif [[ ${CI_TAGS} == *'aot_llvm'* ]];           then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime_preset=aot ";
-elif [[ ${CI_TAGS} == *'fullaot'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=fullaot";
-elif [[ ${CI_TAGS} == *'hybridaot'* ]];          then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=hybridaot";
-elif [[ ${CI_TAGS} == *'winaot'* ]];             then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=winaot";
-elif [[ ${CI_TAGS} == *'aot'* ]];                then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=aot";
-elif [[ ${CI_TAGS} == *'bitcode'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=bitcode";
+if   [[ ${CI_TAGS} == *'fullaot_llvm'* ]];       then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=fullaot_llvm ";
+elif [[ ${CI_TAGS} == *'hybridaot_llvm'* ]];     then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=hybridaot_llvm";
+elif [[ ${CI_TAGS} == *'aot_llvm'* ]];           then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=aot_llvm ";
+elif [[ ${CI_TAGS} == *'fullaot'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=fullaot";
+elif [[ ${CI_TAGS} == *'hybridaot'* ]];          then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=hybridaot";
+elif [[ ${CI_TAGS} == *'winaot'* ]];             then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=winaot";
+elif [[ ${CI_TAGS} == *'aot'* ]];                then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=aot";
+elif [[ ${CI_TAGS} == *'bitcode'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=bitcode";
 elif [[ ${CI_TAGS} == *'acceptance-tests'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${MONO_REPO_ROOT}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
 elif [[ ${CI_TAGS} == *'all-profiles'* ]]; then
     # only enable build of the additional profiles on one config to save time
-    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime_preset=all"
+    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=all"
     # when building profiles like monotouch/monodroid which don't build System.Drawing.dll in the Mono repo we need
     # to build the facades against _something_ to satisfy the typeforwards. In CI we can cheat a little and pass
     # them System.Drawing.dll from the 'build' profile since we don't test those profiles here (we just ensure they compile).
@@ -173,27 +173,12 @@ if [[ ${CI_TAGS} == *'checked-all'* ]]; then export MONO_CHECK_MODE=all; fi
 
 export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS $MONO_TEST_ENV_OPTIONS"
 
-if [[ ${CI_TAGS} == *'acceptance-tests'* ]];
-    then
-	$(dirname "${BASH_SOURCE[0]}")/run-test-acceptance-tests.sh
-elif [[ ${CI_TAGS} == *'profiler-stress-tests'* ]];
-    then
-    $(dirname "${BASH_SOURCE[0]}")/run-test-profiler-stress-tests.sh
-elif [[ ${CI_TAGS} == *'stress-tests'* ]];
-    then
-    $(dirname "${BASH_SOURCE[0]}")/run-test-stress-tests.sh
-elif [[ ${CI_TAGS} == *'interpreter'* ]];
-    then
-    $(dirname "${BASH_SOURCE[0]}")/run-test-interpreter.sh
-elif [[ ${CI_TAGS} == *'mcs-compiler'* ]];
-    then
-    $(dirname "${BASH_SOURCE[0]}")/run-test-mcs.sh
-elif [[ ${CI_TAGS} == *'mac-sdk'* ]];
-    then
-    $(dirname "${BASH_SOURCE[0]}")/run-test-mac-sdk.sh
-elif [[ ${CI_TAGS} == *'no-tests'* ]];
-    then
-	exit 0
-else
-	make check-ci
+if   [[ ${CI_TAGS} == *'acceptance-tests'* ]];         then ${MONO_REPO_ROOT}/scripts/ci/run-test-acceptance-tests.sh;
+elif [[ ${CI_TAGS} == *'profiler-stress-tests'* ]];    then ${MONO_REPO_ROOT}/scripts/ci/run-test-profiler-stress-tests.sh;
+elif [[ ${CI_TAGS} == *'stress-tests'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-stress-tests.sh;
+elif [[ ${CI_TAGS} == *'interpreter'* ]];              then ${MONO_REPO_ROOT}/scripts/ci/run-test-interpreter.sh;
+elif [[ ${CI_TAGS} == *'mcs-compiler'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-mcs.sh;
+elif [[ ${CI_TAGS} == *'mac-sdk'* ]];                  then ${MONO_REPO_ROOT}/scripts/ci/run-test-mac-sdk.sh;
+elif [[ ${CI_TAGS} == *'no-tests'* ]];                 then exit 0;
+else make check-ci;
 fi
