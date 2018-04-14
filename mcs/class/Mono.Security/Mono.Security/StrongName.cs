@@ -278,9 +278,8 @@ namespace Mono.Security {
 				UInt32 p = BitConverterLE.ToUInt32 (headers, i * 40 + 20);
 				UInt32 s = BitConverterLE.ToUInt32 (headers, i * 40 + 12);
 				int l = (int) BitConverterLE.ToUInt32 (headers, i * 40 + 8);
-				if ((s <= r) && (r < s + l)) {
+				if ((s <= r) && (r < s + l))
 					return p + r - s;
-				}
 			}
 			return 0;
 		}
@@ -448,8 +447,7 @@ namespace Mono.Security {
 			info.MetadataPosition = MetadataPosition;
 			info.MetadataLength = MetadataLength;
 
-			using (HashAlgorithm hash = HashAlgorithm.Create (TokenAlgorithm))
-			{
+			using (HashAlgorithm hash = HashAlgorithm.Create (TokenAlgorithm)) {
 				if (options == StrongNameOptions.Metadata) {
 					hash.Initialize ();
 					byte[] metadata = new byte [MetadataLength];
@@ -460,8 +458,7 @@ namespace Mono.Security {
 					return info;
 				}
 
-				using (CryptoStream cs = new CryptoStream (Stream.Null, hash, CryptoStreamMode.Write))
-				{
+				using (CryptoStream cs = new CryptoStream (Stream.Null, hash, CryptoStreamMode.Write)) {
 					cs.Write (mz, 0, mz.Length); // Hash MS-DOS header/stub despite that stub is not run.
 					cs.Write (pe, 0, pe.Length);
 					cs.Write (sectionHeaders, 0, sectionHeaders.Length);
@@ -478,9 +475,9 @@ namespace Mono.Security {
 						if ((start <= SignaturePosition) && (SignaturePosition < start + (uint)length)) {
 							// hash before the signature
 							int before = (int)(SignaturePosition - start);
-							if (before > 0) {
+							if (before > 0)
 								cs.Write (section, 0, before);
-							}
+
 							// copy signature
 							info.Signature = new byte [SignatureLength];
 							Buffer.BlockCopy (section, before, info.Signature, 0, (int)SignatureLength);
@@ -488,9 +485,8 @@ namespace Mono.Security {
 							// hash after the signature
 							int s = (int)(before + SignatureLength);
 							int after = (int)(length - s);
-							if (after > 0) {
+							if (after > 0)
 								cs.Write (section, s, after);
-							}
 						}
 						else
 							cs.Write (section, 0, length);
@@ -504,16 +500,13 @@ namespace Mono.Security {
 		// return the same result as the undocumented and unmanaged GetHashFromAssemblyFile
 		public byte[] Hash (string fileName) 
 		{
-			using (FileStream fs = File.OpenRead (fileName))
-			{
-				StrongNameSignature sn = StrongHash (fs, StrongNameOptions.Metadata);
-				return sn.Hash;
+			using (FileStream fs = File.OpenRead (fileName)) {
+				return StrongHash (fs, StrongNameOptions.Metadata).Hash;
 			}
 		}
 
 		public bool Sign (string fileName) 
 		{
-			bool result = false;
 			StrongNameSignature sn;
 			using (FileStream fs = File.OpenRead (fileName)) {
 				sn = StrongHash (fs, StrongNameOptions.Signature);
@@ -535,26 +528,22 @@ namespace Mono.Security {
 			using (FileStream fs = File.OpenWrite (fileName)) {
 				fs.Position = sn.SignaturePosition;
 				fs.Write (signature, 0, signature.Length);
-				result = true;
 			}
-			return result;
+			return true;
 		}
 
 		public bool Verify (string fileName) 
 		{
-			bool result = false;
 			using (FileStream fs = File.OpenRead (fileName)) {
-				result = Verify (fs);
+				return Verify (fs);
 			}
-			return result;
 		}
 
 		public bool Verify (Stream stream)
 		{
 			StrongNameSignature sn = StrongHash (stream, StrongNameOptions.Signature);
-			if (sn.Hash == null) {
+			if (sn.Hash == null)
 				return false;
-			}
 
 			try {
 				AssemblyHashAlgorithm algorithm = AssemblyHashAlgorithm.SHA1;
@@ -593,23 +582,20 @@ namespace Mono.Security {
 					return false;
 
 				byte[] publicKey = StrongNameManager.GetMappedPublicKey (an.GetPublicKeyToken ());
-				if ((publicKey == null) || (publicKey.Length < 12)) {
+				if (publicKey == null || publicKey.Length < 12) {
 					// no mapping
 					publicKey = an.GetPublicKey ();
-					if ((publicKey == null) || (publicKey.Length < 12))
+					if (publicKey == null || publicKey.Length < 12)
 						return false;
 				}
 
 				// Note: MustVerify is based on the original token (by design). Public key
 				// remapping won't affect if the assembly is verified or not.
-				if (!StrongNameManager.MustVerify (an)) {
+				if (!StrongNameManager.MustVerify (an))
 					return true;
-				}
 
 				RSA rsa = CryptoConvert.FromCapiPublicKeyBlob (publicKey, 12);
-				StrongName sn = new StrongName (rsa);
-				bool result = sn.Verify (assemblyName);
-				return result;
+				return new StrongName (rsa).Verify (assemblyName);
 			}
 			catch {
 				// no exception allowed
