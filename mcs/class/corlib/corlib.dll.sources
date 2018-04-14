@@ -1539,12 +1539,19 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/runtime/serialization/formatters/soapfault.cs
 ../referencesource/mscorlib/system/runtime/serialization/formatters/soapmessage.cs
 
-../referencesource/mscorlib/system/runtime/versioning/componentguaranteesattribute.cs
-../referencesource/mscorlib/system/runtime/versioning/multitargetinghelpers.cs
-../referencesource/mscorlib/system/runtime/versioning/NonVersionableAttribute.cs
-../referencesource/mscorlib/system/runtime/versioning/resourceattributes.cs
-../referencesource/mscorlib/system/runtime/versioning/targetframeworkattribute.cs
-../referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs
+../../../external/corefx/src/System.Resources.Writer/src/System/Runtime/Versioning/MultitargetingHelpers.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/Versioning/NonVersionableAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/Versioning/TargetFrameworkAttribute.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Runtime/Versioning/ComponentGuaranteesAttribute.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Runtime/Versioning/ComponentGuaranteesOptions.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Runtime/Versioning/ResourceConsumptionAttribute.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Runtime/Versioning/ResourceExposureAttribute.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Runtime/Versioning/ResourceScope.cs
+#../../../external/corefx/src/System.Runtime.Extensions/src/System/Runtime/Versioning/VersioningHelper.cs
+#../../../external/corefx/src/System.Runtime.Extensions/src/System/Runtime/Versioning/FrameworkName.cs
+#../../../external/corefx/src/System.Runtime.Extensions/src/System/Runtime/Versioning/VersioningHelper.Unix.cs
+#../../../external/corefx/src/System.Runtime.Extensions/src/System/Runtime/Versioning/VersioningHelper.Windows.cs
+#../../../external/corefx/src/System.Resources.Writer/src/System/Runtime/Versioning/MultitargetingHelpers.cs
 
 ../referencesource/mscorlib/system/threading/abandonedmutexexception.cs
 ../referencesource/mscorlib/system/threading/apartmentstate.cs
