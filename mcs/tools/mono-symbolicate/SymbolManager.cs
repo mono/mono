@@ -9,6 +9,19 @@ using Mono.Collections.Generic;
 
 namespace Mono
 {
+	// Should be (string File, int Line) but need to bump monodroid_tools to 4.7
+	readonly struct Location
+	{
+		public readonly string File;
+		public readonly int Line;
+
+		public Location (string file, int line)
+		{
+			File = file;
+			Line = line;
+		}
+	}
+
 	public class SymbolManager
 	{
 		string msymDir;
@@ -19,20 +32,25 @@ namespace Mono
 			this.logger = logger;
 		}
 
-		internal bool TryResolveLocation (StackFrameData sfData)
+		internal bool TryResolveLocation (StackFrameData sfData, out Location location)
 		{
-			if (sfData.Mvid == null)
+			if (sfData.Mvid == null) {
+				location = default;
 				return false;
+			}
 
 			var assemblyLocProvider = GetOrCreateAssemblyLocationProvider (sfData.Mvid);
-			if (assemblyLocProvider == null)
+			if (assemblyLocProvider == null) {
+				location = default;
 				return false;
+			}
 
 			SeqPointInfo seqPointInfo = null;
 			if (!sfData.IsILOffset && sfData.Aotid != null)
 				seqPointInfo = GetOrCreateSeqPointInfo (sfData.Aotid);
 
-			return assemblyLocProvider.TryResolveLocation (sfData, seqPointInfo);
+
+			return assemblyLocProvider.TryResolveLocation (sfData, seqPointInfo, out location);
 		}
 
 		Dictionary<string, AssemblyLocationProvider> assemblies = new Dictionary<string, AssemblyLocationProvider> ();
