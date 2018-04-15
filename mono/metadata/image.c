@@ -1926,8 +1926,7 @@ mono_dynamic_stream_reset (MonoDynamicStream* stream)
 static inline void
 free_hash (GHashTable *hash)
 {
-	if (hash)
-		g_hash_table_destroy (hash);
+	g_hash_table_destroy (hash);
 }
 
 void
@@ -2091,24 +2090,16 @@ mono_image_close_except_pools (MonoImage *image)
 		g_free (image->version);
 	}
 
-	if (image->method_cache)
-		g_hash_table_destroy (image->method_cache);
-	if (image->methodref_cache)
-		g_hash_table_destroy (image->methodref_cache);
+	g_hash_table_destroy (image->method_cache);
+	g_hash_table_destroy (image->methodref_cache);
 	mono_internal_hash_table_destroy (&image->class_cache);
 	mono_conc_hashtable_destroy (image->field_cache);
-	if (image->array_cache) {
-		g_hash_table_foreach (image->array_cache, free_array_cache_entry, NULL);
-		g_hash_table_destroy (image->array_cache);
-	}
-	if (image->szarray_cache)
-		g_hash_table_destroy (image->szarray_cache);
-	if (image->ptr_cache)
-		g_hash_table_destroy (image->ptr_cache);
-	if (image->name_cache) {
-		g_hash_table_foreach (image->name_cache, free_hash_table, NULL);
-		g_hash_table_destroy (image->name_cache);
-	}
+	g_hash_table_foreach (image->array_cache, free_array_cache_entry, NULL);
+	g_hash_table_destroy (image->array_cache);
+	g_hash_table_destroy (image->szarray_cache);
+	g_hash_table_destroy (image->ptr_cache);
+	g_hash_table_foreach (image->name_cache, free_hash_table, NULL);
+	g_hash_table_destroy (image->name_cache);
 
 	free_hash (image->delegate_bound_static_invoke_cache);
 	free_hash (image->runtime_invoke_vcall_cache);
@@ -2119,10 +2110,8 @@ mono_image_close_except_pools (MonoImage *image)
 	free_hash (image->castclass_cache);
 	free_hash (image->icall_wrapper_cache);
 	free_hash (image->proxy_isinst_cache);
-	if (image->var_gparam_cache)
-		mono_conc_hashtable_destroy (image->var_gparam_cache);
-	if (image->mvar_gparam_cache)
-		mono_conc_hashtable_destroy (image->mvar_gparam_cache);
+	mono_conc_hashtable_destroy (image->var_gparam_cache);
+	mono_conc_hashtable_destroy (image->mvar_gparam_cache);
 	free_hash (image->wrapper_param_names);
 	free_hash (image->pinvoke_scopes);
 	free_hash (image->pinvoke_scope_filenames);
@@ -2188,17 +2177,18 @@ mono_image_close_except_pools (MonoImage *image)
 static void
 mono_image_close_all (MonoImage**images, int image_count)
 {
-	for (int i = 0; i < image_count; ++i) {
-		if (images [i])
-			mono_image_close_finish (images [i]);
-	}
-	if (images)
-		g_free (images);
+	for (int i = 0; i < image_count; ++i)
+		mono_image_close_finish (images [i]);
+
+	g_free (images);
 }
 
 void
 mono_image_close_finish (MonoImage *image)
 {
+	if (!image)
+		return;
+
 	int i;
 
 	if (image->references && !image_is_dynamic (image)) {

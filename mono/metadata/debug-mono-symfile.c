@@ -200,8 +200,7 @@ mono_debug_close_mono_symbol_file (MonoSymbolFile *symfile)
 		return;
 
 	mono_debugger_lock ();
-	if (symfile->method_hash)
-		g_hash_table_destroy (symfile->method_hash);
+	g_hash_table_destroy (symfile->method_hash);
 
 	if (symfile->raw_contents) {
 		if (symfile->was_loaded_from_memory)

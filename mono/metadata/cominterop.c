@@ -1817,10 +1817,8 @@ cominterop_rcw_finalizer (gpointer key, gpointer value, gpointer user_data)
 		MonoComInteropProxy* proxy = (MonoComInteropProxy*)mono_gchandle_get_target (gchandle);
 		
 		if (proxy) {
-			if (proxy->com_object->itf_hash) {
-				g_hash_table_foreach_remove (proxy->com_object->itf_hash, cominterop_rcw_interface_finalizer, NULL);
-				g_hash_table_destroy (proxy->com_object->itf_hash);
-			}
+			g_hash_table_foreach_remove (proxy->com_object->itf_hash, cominterop_rcw_interface_finalizer, NULL);
+			g_hash_table_destroy (proxy->com_object->itf_hash);
 			if (proxy->com_object->iunknown)
 				ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (proxy->com_object->iunknown);
 			proxy->com_object->iunknown = NULL;

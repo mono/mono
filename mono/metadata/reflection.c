@@ -1265,8 +1265,7 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	mono_metadata_free_mh (header);
 	return ret;
 fail:
-	if (header)
-		mono_metadata_free_mh (header);
+	mono_metadata_free_mh (header);
 	return NULL;
 }
 

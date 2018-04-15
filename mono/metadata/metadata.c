@@ -4230,6 +4230,9 @@ mono_metadata_parse_mh (MonoImage *m, const char *ptr)
 void
 mono_metadata_free_mh (MonoMethodHeader *mh)
 {
+	if (!mh)
+		return;
+
 	int i;
 
 	/* If it is not transient it means it's part of a wrapper method,

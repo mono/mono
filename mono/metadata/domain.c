@@ -1057,11 +1057,9 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	mono_debug_domain_unload (domain);
 
 	/* must do this early as it accesses fields and types */
-	if (domain->special_static_fields) {
-		mono_alloc_special_static_data_free (domain->special_static_fields);
-		g_hash_table_destroy (domain->special_static_fields);
-		domain->special_static_fields = NULL;
-	}
+	mono_alloc_special_static_data_free (domain->special_static_fields);
+	g_hash_table_destroy (domain->special_static_fields);
+	domain->special_static_fields = NULL;
 
 	/*
 	 * We must destroy all these hash tables here because they
@@ -1085,14 +1083,11 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 			unregister_vtable_reflection_type ((MonoVTable *)g_ptr_array_index (domain->class_vtable_array, i));
 	}
 
-	if (domain->type_hash) {
-		mono_g_hash_table_destroy (domain->type_hash);
-		domain->type_hash = NULL;
-	}
-	if (domain->type_init_exception_hash) {
-		mono_g_hash_table_destroy (domain->type_init_exception_hash);
-		domain->type_init_exception_hash = NULL;
-	}
+	mono_g_hash_table_destroy (domain->type_hash);
+	domain->type_hash = NULL;
+
+	mono_g_hash_table_destroy (domain->type_init_exception_hash);
+	domain->type_init_exception_hash = NULL;
 
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		MonoAssembly *ass = (MonoAssembly *)tmp->data;
@@ -1203,18 +1198,14 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 
 	g_hash_table_destroy (domain->finalizable_objects_hash);
 	domain->finalizable_objects_hash = NULL;
-	if (domain->generic_virtual_cases) {
-		g_hash_table_destroy (domain->generic_virtual_cases);
-		domain->generic_virtual_cases = NULL;
-	}
-	if (domain->ftnptrs_hash) {
-		g_hash_table_destroy (domain->ftnptrs_hash);
-		domain->ftnptrs_hash = NULL;
-	}
-	if (domain->method_to_dyn_method) {
-		g_hash_table_destroy (domain->method_to_dyn_method);
-		domain->method_to_dyn_method = NULL;
-	}
+	g_hash_table_destroy (domain->generic_virtual_cases);
+	domain->generic_virtual_cases = NULL;
+
+	g_hash_table_destroy (domain->ftnptrs_hash);
+	domain->ftnptrs_hash = NULL;
+
+	g_hash_table_destroy (domain->method_to_dyn_method);
+	domain->method_to_dyn_method = NULL;
 
 	mono_os_mutex_destroy (&domain->finalizable_objects_hash_lock);
 	mono_os_mutex_destroy (&domain->assemblies_lock);
