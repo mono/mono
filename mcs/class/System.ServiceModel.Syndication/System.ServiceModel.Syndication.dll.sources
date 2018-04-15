@@ -1,9 +1,9 @@
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
+../../build/common/SR.cs
 Assembly/AssemblyInfo.cs
 corefx/SR.cs
-corefx/SR.Format.cs
 
 ../../../external/corefx/src/System.ServiceModel.Syndication/src/System/ServiceModel/Syndication/*.cs
 ../../../external/corefx/src/System.ServiceModel.Syndication/src/System/ServiceModel/Channels/*.cs
