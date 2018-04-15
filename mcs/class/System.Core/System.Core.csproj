@@ -63,6 +63,16 @@
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv_runtime</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;MONOTOUCH_TV;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER;FEATURE_PDB_GENERATOR</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-winaot</IntermediateOutputPath>
@@ -858,6 +868,102 @@
     <Compile Include="..\corlib\CommonCrypto\AesCryptoServiceProvider.g.cs" />
     <Compile Include="..\corlib\CommonCrypto\AesManaged.g.cs" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Dynamic\Utils\Helpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\AnalyzedTree.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\AssemblyGen.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\BoundConstants.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\CompilerScope.Storage.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\ILGen.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\KeyedStack.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LabelInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Address.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Binary.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.ControlFlow.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Expressions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Generated.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Lambda.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Logical.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Statements.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\LambdaCompiler.Unary.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Bindings.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.ChildRewriter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Generated.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.SpilledExpressionBlock.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.Temps.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
+    <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
+    <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellman.cs" />
+    <Compile Include="System.Security.Cryptography\AesCryptoServiceProvider.cs" />
+    <Compile Include="System.Security.Cryptography\AesTransform.cs" />
+    <Compile Include="System.Security.Cryptography\MD5Cng.cs" />
+    <Compile Include="System.Security.Cryptography\SHA1Cng.cs" />
+    <Compile Include="System.Security.Cryptography\SHA256Cng.cs" />
+    <Compile Include="System.Security.Cryptography\SHA384Cng.cs" />
+    <Compile Include="System.Security.Cryptography\SHA512Cng.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AddInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AndInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\ArrayOperations.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\BranchLabel.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\CallInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\CallInstruction.Generated.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\ControlFlowInstructions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\DecrementInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\DefaultValueInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\DivInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\EqualInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\ExclusiveOrInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\FieldOperations.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\GreaterThanInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\GreaterThanOrEqualInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\IncrementInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\Instruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\InstructionList.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\InterpretedFrame.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\Interpreter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\LabelInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\LeftShiftInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\LessThanInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\LessThanOrEqualInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\LightCompiler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\LightDelegateCreator.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\LightLambda.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\LightLambda.Generated.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\LocalAccess.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\LocalVariables.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\ModuloInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\MulInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\NegateInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\NewInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\NotEqualInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\NotInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\NullCheckInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\NumericConvertInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\OrInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\RightShiftInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\RuntimeVariables.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\StackOperations.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\SubInstruction.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\TypeOperations.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\Utilities.cs" />
+    <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
+    <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellman.cs" />
+    <Compile Include="System.Security.Cryptography\AesCryptoServiceProvider.cs" />
+    <Compile Include="System.Security.Cryptography\AesTransform.cs" />
+    <Compile Include="System.Security.Cryptography\MD5Cng.cs" />
+    <Compile Include="System.Security.Cryptography\SHA1Cng.cs" />
+    <Compile Include="System.Security.Cryptography\SHA256Cng.cs" />
+    <Compile Include="System.Security.Cryptography\SHA384Cng.cs" />
+    <Compile Include="System.Security.Cryptography\SHA512Cng.cs" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AddInstruction.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AndInstruction.cs" />
@@ -1149,6 +1255,18 @@
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <ProjectReference Include="../Mono.Posix/Mono.Posix.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_hybrid\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <ProjectReference Include="../Mono.Posix/Mono.Posix.csproj" />

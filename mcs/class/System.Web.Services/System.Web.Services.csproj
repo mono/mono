@@ -49,6 +49,16 @@
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-winaot</IntermediateOutputPath>
@@ -721,6 +731,306 @@
     <Compile Include="System.Web.Services\WsiProfiles.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\System.Web\System.Web.Util\Helpers.cs" />
+    <Compile Include="..\System.Web\System.Web.Util\HttpEncoder.cs" />
+    <Compile Include="..\System.Web\System.Web\HttpUtility.cs" />
+    <Compile Include="System.Web.Services.Configuration\XmlFormatExtensionAttribute.cs" />
+    <Compile Include="System.Web.Services.Configuration\XmlFormatExtensionPointAttribute.cs" />
+    <Compile Include="System.Web.Services.Configuration\XmlFormatExtensionPrefixAttribute.cs" />
+    <Compile Include="System.Web.Services.Description\Binding.cs" />
+    <Compile Include="System.Web.Services.Description\BindingCollection.cs" />
+    <Compile Include="System.Web.Services.Description\DocumentableItem.cs" />
+    <Compile Include="System.Web.Services.Description\ExtensionManager.cs" />
+    <Compile Include="System.Web.Services.Description\FaultBinding.cs" />
+    <Compile Include="System.Web.Services.Description\FaultBindingCollection.cs" />
+    <Compile Include="System.Web.Services.Description\HttpAddressBinding.cs" />
+    <Compile Include="System.Web.Services.Description\HttpBinding.cs" />
+    <Compile Include="System.Web.Services.Description\HttpOperationBinding.cs" />
+    <Compile Include="System.Web.Services.Description\HttpUrlEncodedBinding.cs" />
+    <Compile Include="System.Web.Services.Description\HttpUrlReplacementBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Import.cs" />
+    <Compile Include="System.Web.Services.Description\ImportCollection.cs" />
+    <Compile Include="System.Web.Services.Description\InputBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Message.cs" />
+    <Compile Include="System.Web.Services.Description\MessageBinding.cs" />
+    <Compile Include="System.Web.Services.Description\MessageCollection.cs" />
+    <Compile Include="System.Web.Services.Description\MessagePart.cs" />
+    <Compile Include="System.Web.Services.Description\MessagePartCollection.cs" />
+    <Compile Include="System.Web.Services.Description\MimeContentBinding.cs" />
+    <Compile Include="System.Web.Services.Description\MimeMultipartRelatedBinding.cs" />
+    <Compile Include="System.Web.Services.Description\MimePart.cs" />
+    <Compile Include="System.Web.Services.Description\MimePartCollection.cs" />
+    <Compile Include="System.Web.Services.Description\MimeTextBinding.cs" />
+    <Compile Include="System.Web.Services.Description\MimeTextMatch.cs" />
+    <Compile Include="System.Web.Services.Description\MimeTextMatchCollection.cs" />
+    <Compile Include="System.Web.Services.Description\MimeXmlBinding.cs" />
+    <Compile Include="System.Web.Services.Description\NamedItem.cs" />
+    <Compile Include="System.Web.Services.Description\Operation.cs" />
+    <Compile Include="System.Web.Services.Description\OperationBinding.cs" />
+    <Compile Include="System.Web.Services.Description\OperationBindingCollection.cs" />
+    <Compile Include="System.Web.Services.Description\OperationCollection.cs" />
+    <Compile Include="System.Web.Services.Description\OperationFault.cs" />
+    <Compile Include="System.Web.Services.Description\OperationFaultCollection.cs" />
+    <Compile Include="System.Web.Services.Description\OperationFlow.cs" />
+    <Compile Include="System.Web.Services.Description\OperationInput.cs" />
+    <Compile Include="System.Web.Services.Description\OperationMessage.cs" />
+    <Compile Include="System.Web.Services.Description\OperationMessageCollection.cs" />
+    <Compile Include="System.Web.Services.Description\OperationOutput.cs" />
+    <Compile Include="System.Web.Services.Description\OutputBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Port.cs" />
+    <Compile Include="System.Web.Services.Description\PortCollection.cs" />
+    <Compile Include="System.Web.Services.Description\PortType.cs" />
+    <Compile Include="System.Web.Services.Description\PortTypeCollection.cs" />
+    <Compile Include="System.Web.Services.Description\Service.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceCollection.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescription.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionBaseCollection.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionCollection.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionFormatExtension.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionFormatExtensionCollection.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionImporter.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionImportStyle.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionSerializerBase2.cs" />
+    <Compile Include="System.Web.Services.Description\Soap12AddressBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Soap12Binding.cs" />
+    <Compile Include="System.Web.Services.Description\Soap12BodyBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Soap12FaultBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Soap12HeaderBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Soap12OperationBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapAddressBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapBindingStyle.cs" />
+    <Compile Include="System.Web.Services.Description\SoapBindingUse.cs" />
+    <Compile Include="System.Web.Services.Description\SoapBodyBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapFaultBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapHeaderBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapHeaderFaultBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapOperationBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Types.cs" />
+    <Compile Include="System.Web.Services.Description\WebReference.cs" />
+    <Compile Include="System.Web.Services.Discovery\ContractReference.cs" />
+    <Compile Include="System.Web.Services.Discovery\ContractSearchPattern.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryClientDocumentCollection.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryClientProtocol.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryClientReferenceCollection.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryClientResult.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryClientResultCollection.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryDocument.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryDocumentLinksPattern.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryDocumentReference.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryDocumentSearchPattern.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryDocumentSerializer.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryExceptionDictionary.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryReference.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryReferenceCollection.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoverySearchPattern.cs" />
+    <Compile Include="System.Web.Services.Discovery\DynamicDiscoveryDocument.cs" />
+    <Compile Include="System.Web.Services.Discovery\ExcludePathInfo.cs" />
+    <Compile Include="System.Web.Services.Discovery\SchemaReference.cs" />
+    <Compile Include="System.Web.Services.Discovery\SoapBinding.cs" />
+    <Compile Include="System.Web.Services.Discovery\XmlSchemaSearchPattern.cs" />
+    <Compile Include="System.Web.Services.Protocols\Fault.cs" />
+    <Compile Include="System.Web.Services.Protocols\Fault12.cs" />
+    <Compile Include="System.Web.Services.Protocols\Fault12Serializer.cs" />
+    <Compile Include="System.Web.Services.Protocols\HttpMethodAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\HttpWebClientProtocol.cs" />
+    <Compile Include="System.Web.Services.Protocols\InvokeCompletedEventArgs.cs" />
+    <Compile Include="System.Web.Services.Protocols\InvokeCompletedEventHandler.cs" />
+    <Compile Include="System.Web.Services.Protocols\LogicalMethodInfo.cs" />
+    <Compile Include="System.Web.Services.Protocols\LogicalMethodTypes.cs" />
+    <Compile Include="System.Web.Services.Protocols\Methods.cs" />
+    <Compile Include="System.Web.Services.Protocols\MimeFormatter.cs" />
+    <Compile Include="System.Web.Services.Protocols\MimeParameterWriter.cs" />
+    <Compile Include="System.Web.Services.Protocols\MimeReturnReader.cs" />
+    <Compile Include="System.Web.Services.Protocols\NopReturnReader.cs" />
+    <Compile Include="System.Web.Services.Protocols\ServerType.cs" />
+    <Compile Include="System.Web.Services.Protocols\Soap12FaultCodes.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapClientMessage.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapDocumentMethodAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapDocumentServiceAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapException.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapExtension.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapExtensionAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapFaultSubcode.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapHeader.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapHeaderAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapHeaderCollection.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapHeaderDirection.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapHeaderMapping.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapHttpClientProtocol.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapMessage.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapMessageStage.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapParameterStyle.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapProtocolVersion.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapRpcMethodAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapRpcServiceAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapServiceRoutingStyle.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapUnknownHeader.cs" />
+    <Compile Include="System.Web.Services.Protocols\TypeStubManager.cs" />
+    <Compile Include="System.Web.Services.Protocols\UrlEncodedParameterWriter.cs" />
+    <Compile Include="System.Web.Services.Protocols\UrlParameterWriter.cs" />
+    <Compile Include="System.Web.Services.Protocols\WebClientAsyncResult.cs" />
+    <Compile Include="System.Web.Services.Protocols\WebClientProtocol.cs" />
+    <Compile Include="System.Web.Services.Protocols\WebServiceHelper.cs" />
+    <Compile Include="System.Web.Services.Protocols\XmlReturnReader.cs" />
+    <Compile Include="System.Web.Services\WebMethodAttribute.cs" />
+    <Compile Include="System.Web.Services\WebServiceAttribute.cs" />
+    <Compile Include="System.Web.Services\WebServiceBindingAttribute.cs" />
+    <Compile Include="System.Web.Services\WebServicesDescriptionAttribute.cs" />
+    <Compile Include="System.Web.Services\WsiProfiles.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\System.Web\System.Web.Util\Helpers.cs" />
+    <Compile Include="..\System.Web\System.Web.Util\HttpEncoder.cs" />
+    <Compile Include="..\System.Web\System.Web\HttpUtility.cs" />
+    <Compile Include="System.Web.Services.Configuration\XmlFormatExtensionAttribute.cs" />
+    <Compile Include="System.Web.Services.Configuration\XmlFormatExtensionPointAttribute.cs" />
+    <Compile Include="System.Web.Services.Configuration\XmlFormatExtensionPrefixAttribute.cs" />
+    <Compile Include="System.Web.Services.Description\Binding.cs" />
+    <Compile Include="System.Web.Services.Description\BindingCollection.cs" />
+    <Compile Include="System.Web.Services.Description\DocumentableItem.cs" />
+    <Compile Include="System.Web.Services.Description\ExtensionManager.cs" />
+    <Compile Include="System.Web.Services.Description\FaultBinding.cs" />
+    <Compile Include="System.Web.Services.Description\FaultBindingCollection.cs" />
+    <Compile Include="System.Web.Services.Description\HttpAddressBinding.cs" />
+    <Compile Include="System.Web.Services.Description\HttpBinding.cs" />
+    <Compile Include="System.Web.Services.Description\HttpOperationBinding.cs" />
+    <Compile Include="System.Web.Services.Description\HttpUrlEncodedBinding.cs" />
+    <Compile Include="System.Web.Services.Description\HttpUrlReplacementBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Import.cs" />
+    <Compile Include="System.Web.Services.Description\ImportCollection.cs" />
+    <Compile Include="System.Web.Services.Description\InputBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Message.cs" />
+    <Compile Include="System.Web.Services.Description\MessageBinding.cs" />
+    <Compile Include="System.Web.Services.Description\MessageCollection.cs" />
+    <Compile Include="System.Web.Services.Description\MessagePart.cs" />
+    <Compile Include="System.Web.Services.Description\MessagePartCollection.cs" />
+    <Compile Include="System.Web.Services.Description\MimeContentBinding.cs" />
+    <Compile Include="System.Web.Services.Description\MimeMultipartRelatedBinding.cs" />
+    <Compile Include="System.Web.Services.Description\MimePart.cs" />
+    <Compile Include="System.Web.Services.Description\MimePartCollection.cs" />
+    <Compile Include="System.Web.Services.Description\MimeTextBinding.cs" />
+    <Compile Include="System.Web.Services.Description\MimeTextMatch.cs" />
+    <Compile Include="System.Web.Services.Description\MimeTextMatchCollection.cs" />
+    <Compile Include="System.Web.Services.Description\MimeXmlBinding.cs" />
+    <Compile Include="System.Web.Services.Description\NamedItem.cs" />
+    <Compile Include="System.Web.Services.Description\Operation.cs" />
+    <Compile Include="System.Web.Services.Description\OperationBinding.cs" />
+    <Compile Include="System.Web.Services.Description\OperationBindingCollection.cs" />
+    <Compile Include="System.Web.Services.Description\OperationCollection.cs" />
+    <Compile Include="System.Web.Services.Description\OperationFault.cs" />
+    <Compile Include="System.Web.Services.Description\OperationFaultCollection.cs" />
+    <Compile Include="System.Web.Services.Description\OperationFlow.cs" />
+    <Compile Include="System.Web.Services.Description\OperationInput.cs" />
+    <Compile Include="System.Web.Services.Description\OperationMessage.cs" />
+    <Compile Include="System.Web.Services.Description\OperationMessageCollection.cs" />
+    <Compile Include="System.Web.Services.Description\OperationOutput.cs" />
+    <Compile Include="System.Web.Services.Description\OutputBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Port.cs" />
+    <Compile Include="System.Web.Services.Description\PortCollection.cs" />
+    <Compile Include="System.Web.Services.Description\PortType.cs" />
+    <Compile Include="System.Web.Services.Description\PortTypeCollection.cs" />
+    <Compile Include="System.Web.Services.Description\Service.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceCollection.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescription.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionBaseCollection.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionCollection.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionFormatExtension.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionFormatExtensionCollection.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionImporter.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionImportStyle.cs" />
+    <Compile Include="System.Web.Services.Description\ServiceDescriptionSerializerBase2.cs" />
+    <Compile Include="System.Web.Services.Description\Soap12AddressBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Soap12Binding.cs" />
+    <Compile Include="System.Web.Services.Description\Soap12BodyBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Soap12FaultBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Soap12HeaderBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Soap12OperationBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapAddressBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapBindingStyle.cs" />
+    <Compile Include="System.Web.Services.Description\SoapBindingUse.cs" />
+    <Compile Include="System.Web.Services.Description\SoapBodyBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapFaultBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapHeaderBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapHeaderFaultBinding.cs" />
+    <Compile Include="System.Web.Services.Description\SoapOperationBinding.cs" />
+    <Compile Include="System.Web.Services.Description\Types.cs" />
+    <Compile Include="System.Web.Services.Description\WebReference.cs" />
+    <Compile Include="System.Web.Services.Discovery\ContractReference.cs" />
+    <Compile Include="System.Web.Services.Discovery\ContractSearchPattern.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryClientDocumentCollection.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryClientProtocol.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryClientReferenceCollection.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryClientResult.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryClientResultCollection.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryDocument.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryDocumentLinksPattern.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryDocumentReference.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryDocumentSearchPattern.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryDocumentSerializer.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryExceptionDictionary.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryReference.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoveryReferenceCollection.cs" />
+    <Compile Include="System.Web.Services.Discovery\DiscoverySearchPattern.cs" />
+    <Compile Include="System.Web.Services.Discovery\DynamicDiscoveryDocument.cs" />
+    <Compile Include="System.Web.Services.Discovery\ExcludePathInfo.cs" />
+    <Compile Include="System.Web.Services.Discovery\SchemaReference.cs" />
+    <Compile Include="System.Web.Services.Discovery\SoapBinding.cs" />
+    <Compile Include="System.Web.Services.Discovery\XmlSchemaSearchPattern.cs" />
+    <Compile Include="System.Web.Services.Protocols\Fault.cs" />
+    <Compile Include="System.Web.Services.Protocols\Fault12.cs" />
+    <Compile Include="System.Web.Services.Protocols\Fault12Serializer.cs" />
+    <Compile Include="System.Web.Services.Protocols\HttpMethodAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\HttpWebClientProtocol.cs" />
+    <Compile Include="System.Web.Services.Protocols\InvokeCompletedEventArgs.cs" />
+    <Compile Include="System.Web.Services.Protocols\InvokeCompletedEventHandler.cs" />
+    <Compile Include="System.Web.Services.Protocols\LogicalMethodInfo.cs" />
+    <Compile Include="System.Web.Services.Protocols\LogicalMethodTypes.cs" />
+    <Compile Include="System.Web.Services.Protocols\Methods.cs" />
+    <Compile Include="System.Web.Services.Protocols\MimeFormatter.cs" />
+    <Compile Include="System.Web.Services.Protocols\MimeParameterWriter.cs" />
+    <Compile Include="System.Web.Services.Protocols\MimeReturnReader.cs" />
+    <Compile Include="System.Web.Services.Protocols\NopReturnReader.cs" />
+    <Compile Include="System.Web.Services.Protocols\ServerType.cs" />
+    <Compile Include="System.Web.Services.Protocols\Soap12FaultCodes.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapClientMessage.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapDocumentMethodAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapDocumentServiceAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapException.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapExtension.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapExtensionAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapFaultSubcode.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapHeader.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapHeaderAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapHeaderCollection.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapHeaderDirection.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapHeaderMapping.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapHttpClientProtocol.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapMessage.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapMessageStage.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapParameterStyle.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapProtocolVersion.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapRpcMethodAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapRpcServiceAttribute.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapServiceRoutingStyle.cs" />
+    <Compile Include="System.Web.Services.Protocols\SoapUnknownHeader.cs" />
+    <Compile Include="System.Web.Services.Protocols\TypeStubManager.cs" />
+    <Compile Include="System.Web.Services.Protocols\UrlEncodedParameterWriter.cs" />
+    <Compile Include="System.Web.Services.Protocols\UrlParameterWriter.cs" />
+    <Compile Include="System.Web.Services.Protocols\WebClientAsyncResult.cs" />
+    <Compile Include="System.Web.Services.Protocols\WebClientProtocol.cs" />
+    <Compile Include="System.Web.Services.Protocols\WebServiceHelper.cs" />
+    <Compile Include="System.Web.Services.Protocols\XmlReturnReader.cs" />
+    <Compile Include="System.Web.Services\WebMethodAttribute.cs" />
+    <Compile Include="System.Web.Services\WebServiceAttribute.cs" />
+    <Compile Include="System.Web.Services\WebServiceBindingAttribute.cs" />
+    <Compile Include="System.Web.Services\WebServicesDescriptionAttribute.cs" />
+    <Compile Include="System.Web.Services\WsiProfiles.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\System.Web\System.Web.Util\Helpers.cs" />
     <Compile Include="..\System.Web\System.Web.Util\HttpEncoder.cs" />
@@ -1789,6 +2099,18 @@
     <ProjectReference Include="../System.DirectoryServices/System.DirectoryServices.csproj" />
     <ProjectReference Include="../System.Configuration/System.Configuration.csproj" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_hybrid\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <ProjectReference Include="../System.EnterpriseServices/System.EnterpriseServices.csproj" />
     <ProjectReference Include="../System.Data/System.Data.csproj" />
@@ -1840,6 +2162,28 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
+      <LogicalName>wsdl-1.1.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
+      <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
+      <LogicalName>web-reference.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
+      <LogicalName>wsdl-1.1.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
+      <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
       <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>

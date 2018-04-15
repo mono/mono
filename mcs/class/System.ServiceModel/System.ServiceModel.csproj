@@ -48,6 +48,16 @@
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV;TRACE</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;TRACE</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-winaot</IntermediateOutputPath>
@@ -1118,6 +1128,14 @@
     <Compile Include="Dummy_2_1.cs" />
     <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Compile Include="Dummy_2_1.cs" />
+    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Compile Include="Dummy_2_1.cs" />
+    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
     <Compile Include="Dummy_2_1.cs" />
     <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
@@ -1220,6 +1238,18 @@
     <ProjectReference Include="../System.Web/System.Web.csproj" />
     <ProjectReference Include="../System.Web.ApplicationServices/System.Web.ApplicationServices.csproj" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_hybrid\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <ProjectReference Include="../System.ServiceModel.Internals/System.ServiceModel.Internals.csproj" />
     <ProjectReference Include="../System.Configuration/System.Configuration.csproj" />
@@ -1265,6 +1295,22 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <EmbeddedResource Include="resources/ws-addr.xsd">
+      <LogicalName>ws-addr.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WS-Addressing.schema">
+      <LogicalName>WS-Addressing.schema</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <EmbeddedResource Include="resources/ws-addr.xsd">
+      <LogicalName>ws-addr.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/WS-Addressing.schema">
+      <LogicalName>WS-Addressing.schema</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <EmbeddedResource Include="resources/ws-addr.xsd">
       <LogicalName>ws-addr.xsd</LogicalName>
     </EmbeddedResource>
