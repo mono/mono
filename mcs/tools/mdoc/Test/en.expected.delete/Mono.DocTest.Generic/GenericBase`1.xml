@@ -92,7 +92,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -112,7 +111,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -132,7 +130,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -152,7 +149,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -172,7 +168,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -192,7 +187,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -212,7 +206,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -231,7 +224,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -251,7 +243,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -271,7 +262,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -303,7 +293,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -323,7 +312,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -343,7 +331,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -363,7 +350,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -383,7 +369,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -403,7 +388,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -423,7 +407,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -442,7 +425,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -462,7 +444,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
@@ -482,7 +463,6 @@
           <see cref="M:System.Text.StringBuilder.FormatError" />,
           <see cref="M:System.Text.StringBuilder.set_Length(System.Int32)" />,
           <see cref="M:System.Text.StringBuilder.ThreadSafeCopy(System.Char*,System.Char[],System.Int32,System.Int32)" />,
-          <see cref="M:System.ThrowHelper.CreateArgumentNullException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateArgumentOutOfRangeException(System.ExceptionArgument)" />,
           <see cref="M:System.ThrowHelper.CreateIndexOutOfRangeException" />,
           <see cref="M:System.Type.GetGenericParameterConstraints" /></exception>
