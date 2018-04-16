@@ -295,24 +295,34 @@ endif
 # The library
 
 # If the directory contains the per profile include file, generate list file.
-PROFILE_sources := $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).sources)) $(wildcard $(PROFILE)_$(LIBRARY).sources) $(wildcard $(LIBRARY).sources))
-PROFILE_excludes = $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).exclude.sources)) $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources))
+SOURCES_PLATFORM ?= $(PROFILE_PLATFORM)
+PROFILE_sources := $(firstword $(if $(SOURCES_PLATFORM),$(wildcard $(SOURCES_PLATFORM)_$(PROFILE)_$(LIBRARY).sources)) $(wildcard $(PROFILE)_$(LIBRARY).sources) $(wildcard $(LIBRARY).sources))
+PROFILE_excludes = $(firstword $(if $(SOURCES_PLATFORM),$(wildcard $(SOURCES_PLATFORM)_$(PROFILE)_$(LIBRARY).exclude.sources)) $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources))
 
-# Note, gensources.sh can create a $(sourcefile).makefrag if it sees any '#include's
-# We don't include it in the dependencies since it isn't always created
-sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(topdir)/build/gensources.sh $(depsdir)/.stamp
-	$(SHELL) $(topdir)/build/gensources.sh $@ '$(PROFILE_sources)' '$(PROFILE_excludes)'
+gensources = $(topdir)/build/gensources.exe
+$(gensources): $(topdir)/build/gensources.cs
+	echo $(BOOTSTRAP_MCS) -noconfig -debug -r:mscorlib.dll -r:System.dll -r:System.Core.dll -out:$(gensources) $(topdir)/build/gensources.cs
+	$(BOOTSTRAP_MCS) -noconfig -debug -r:mscorlib.dll -r:System.dll -r:System.Core.dll -out:$(gensources) $(topdir)/build/gensources.cs
+
+ifdef PROFILE_RUNTIME
+GENSOURCES_RUNTIME = $(PROFILE_RUNTIME)
+else
+GENSOURCES_RUNTIME = $(RUNTIME)
+endif
+
+sourcefile = $(depsdir)/$(SOURCES_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
+$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp $(gensources)
+	$(with_mono_path_monolite) $(GENSOURCES_RUNTIME) --debug $(gensources) --trace2 "$@" "$(LIBRARY)" "$(SOURCES_PLATFORM)" "$(PROFILE)"
 
 library_CLEAN_FILES += $(sourcefile)
 
-response = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).response
+response = $(depsdir)/$(SOURCES_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).response
 $(response): $(sourcefile) $(topdir)/build/library.make $(depsdir)/.stamp
 	$(PLATFORM_CHANGE_SEPARATOR_CMD) <$(sourcefile) >$@
 
 library_CLEAN_FILES += $(response)
 
-makefrag = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).makefrag
+makefrag = $(depsdir)/$(SOURCES_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).makefrag
 $(makefrag): $(sourcefile) $(topdir)/build/library.make $(depsdir)/.stamp
 #	@echo Creating $@ ...
 	@sed 's,^,$(build_lib): ,' $< >$@
