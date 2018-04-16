@@ -1,0 +1,175 @@
+#!/bin/bash -xe
+
+REPODIR=$(dirname $(realpath $0))/../repos/managed-components
+
+error()
+{
+    echo "$(date "+%F@%T") :: $1" 1>&2
+    exit 1
+}
+
+report()
+{
+    echo "$(date "+%F@%T") :: $1"
+}
+
+download()
+{
+	mkdir -p ${REPODIR}
+	report "Downloading Xar"
+	wget --quiet -O ${REPODIR}/xar.tar.gz https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/xar/xar-1.5.2.tar.gz || error "*** Could not download Xar ***"
+	report "Downloading x64 hostfxr.dll"
+	wget --quiet -O ${REPODIR}/hostfxr-x64.zip https://www.nuget.org/api/v2/package/runtime.win-x64.Microsoft.NETCore.DotNetHostResolver/2.0.0 || error "*** Could not download 64bit hostfxr.dll ***"
+	report "Downloading x86 hostfxr.dll"
+	wget --quiet -O ${REPODIR}/hostfxr-x86.zip https://www.nuget.org/api/v2/package/runtime.win-x86.Microsoft.NETCore.DotNetHostResolver/2.0.0 || error "*** Could not download 32bit hostfxr.dll ***"
+	report "Copying Mono MDK for Mac"
+	cp $1 ${REPODIR}/mono.xar
+}
+
+clean()
+{
+	pushd ${REPODIR}
+	report "Deleting interstitial output"
+	rm -rf	${REPODIR}/mono-mac \
+		${REPODIR}/xar \
+		${REPODIR}/hostfxr-x64 \
+		${REPODIR}/hostfxr-x86 \
+		${REPODIR}/Distribution \
+		${REPODIR}/mono.pkg \
+		${REPODIR}/Resources \
+		${REPODIR}/Library \
+		${REPODIR}/../../tmp/mono-mac
+	popd
+}
+
+build()
+{
+	pushd ${REPODIR}
+	if [ ! -x "${REPODIR}/xar/src/xar" ]
+		then report "Building Xar"
+		mkdir -p xar
+		tar xf xar.tar.gz -C xar/ --strip-components=1
+		pushd xar/
+		./configure
+		make
+		popd
+	fi
+	report "Unpacking x64 hostfxr.dll"
+	mkdir -p hostfxr-x64
+	unzip -j "${REPODIR}/hostfxr-x64.zip" "runtimes/win-x64/native/hostfxr.dll" -d "hostfxr-x64"
+	report "Unpacking x86 hostfxr.dll"
+	mkdir -p hostfxr-x86
+	unzip -j "${REPODIR}/hostfxr-x86.zip" "runtimes/win-x86/native/hostfxr.dll" -d "hostfxr-x86"
+	report "Unpacking Mono for Mac"
+	xar/src/xar -x -f mono.xar
+	zcat mono.pkg/Payload | bsdcpio -i
+	mv Library/Frameworks/Mono.framework/Versions/5.* mono-mac
+	popd
+}
+
+install()
+{
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/ironpython				${REPODIR}/../../tmp/mono/lib/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/ironruby					${REPODIR}/../../tmp/mono/lib/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/xsp					${REPODIR}/../../tmp/mono/lib/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/Microsoft*				${REPODIR}/../../tmp/mono/lib/mono/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/msbuild				${REPODIR}/../../tmp/mono/lib/mono/
+	rm -f ${REPODIR}/../../tmp/mono/lib/mono/msbuild/15.0/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/libhostfxr.dylib
+	if [ "$1" = "x64" ]; then
+		cp ${REPODIR}/hostfxr-x64/hostfxr.dll ${REPODIR}/../../tmp/mono/lib/mono/msbuild/15.0/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/
+	else
+		cp ${REPODIR}/hostfxr-x86/hostfxr.dll ${REPODIR}/../../tmp/mono/lib/mono/msbuild/15.0/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/
+	fi
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/nuget				${REPODIR}/../../tmp/mono/lib/mono/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild-frameworks			${REPODIR}/../../tmp/mono/lib/mono/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/deniedAssembliesList.txt				${REPODIR}/../../tmp/mono/lib/mono/xbuild/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/15.0					${REPODIR}/../../tmp/mono/lib/mono/xbuild/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/Microsoft.NET.Build.Extensions					${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/NuGet					${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/Portable/VisualStudio					${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/Portable/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v/FSharp					${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v11.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v11.0/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v12.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v12.0/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v14.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v14.0/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v15.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v15.0/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/gac/nunit*/2.4.8.0__96d09a1eb7f44a77/*.dll*					${REPODIR}/../../tmp/mono/lib/mono/4.5/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/Microsoft.VisualBasic.dll	${REPODIR}/../../tmp/mono/lib/mono/4.5/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/Mono.Cecil.VB*			${REPODIR}/../../tmp/mono/lib/mono/4.5/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/Mono.WebServer2.dll		${REPODIR}/../../tmp/mono/lib/mono/4.5/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/vbnc.*				${REPODIR}/../../tmp/mono/lib/mono/4.5/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/xsp4.exe				${REPODIR}/../../tmp/mono/lib/mono/4.5/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/fastcgi-mono-server4.exe				${REPODIR}/../../tmp/mono/lib/mono/4.5/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/mod-mono-server4.exe				${REPODIR}/../../tmp/mono/lib/mono/4.5/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/mono-fpm.exe				${REPODIR}/../../tmp/mono/lib/mono/4.5/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/fsharp				${REPODIR}/../../tmp/mono/lib/mono/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.0-api/Microsoft.VisualBasic.dll	${REPODIR}/../../tmp/mono/lib/mono/4.0-api/
+	rsync -a --copy-links ${REPODIR}/mono-mac/bin/ir*					${REPODIR}/../../tmp/mono/bin/
+	rsync -a --copy-links ${REPODIR}/mono-mac/bin/ipy*					${REPODIR}/../../tmp/mono/bin/
+	rsync -a --copy-links ${REPODIR}/mono-mac/bin/fsharp*					${REPODIR}/../../tmp/mono/bin/
+	rsync -a --copy-links ${REPODIR}/mono-mac/bin/xsp*					${REPODIR}/../../tmp/mono/bin/
+	rsync -a --copy-links ${REPODIR}/mono-mac/bin/nuget					${REPODIR}/../../tmp/mono/bin/
+	rsync -a --copy-links ${REPODIR}/mono-mac/bin/msbuild					${REPODIR}/../../tmp/mono/bin/
+	sed -i 's#/Library.*mono#../..#' ${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ F\#/v4.*/*
+	sed -i 's#/Library.*mono#../../../../..#' ${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ SDKs/F\#/3.*/Framework/v4.*/*
+	sed -i 's#/Library.*mono#../../../../..#' ${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ SDKs/F\#/4.*/Framework/v4.*/*
+	sed -i 's#/Library.*mono#../../../../..#' ${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v*/FSharp/*
+	rsync -a --copy-links ${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ F\#/v4.0/*		${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ F\#/v4.0/
+	rsync -a --copy-links ${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ SDKs/F\#/3.0/Framework/v4.0/*	${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ SDKs/F\#/3.0/Framework/v4.0/
+	rsync -a --copy-links ${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ SDKs/F\#/3.1/Framework/v4.0/*	${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ SDKs/F\#/3.1/Framework/v4.0/
+	rsync -a --copy-links ${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ SDKs/F\#/4.0/Framework/v4.0/*	${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ SDKs/F\#/4.0/Framework/v4.0/
+	rsync -a --copy-links ${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ SDKs/F\#/4.1/Framework/v4.0/*	${REPODIR}/../../tmp/mono/lib/mono/Microsoft\ SDKs/F\#/4.1/Framework/v4.0/
+	pushd ${REPODIR}/../../tmp/mono/bin
+	rm -f xsp
+	for i in ir ir64 irw irw64 xsp2 xsp4 fsharpc fsharpi fsharpiAnyCpu nuget msbuild ipy ipy64 ipyw ipyw64
+		do echo "Processing $i"
+		sed -i 's#/Library.*mono #\"\$\{BASH_SOURCE%/\*\}\"/mono #' $i
+		sed -i 's#/Library.*cli #\"\$\{BASH_SOURCE%/\*\}\"/cli #' $i
+		if [ -n "$(grep -hoE '[\" ]/Library.*\.(exe|dll)' $i)" ]
+			then EXENAME=$(basename `grep -hoE -m 1 '[\" ]/Library.*\.(exe|dll)' $i | sed 's/^\"//'`)
+			RUNTIME=$(dirname `grep -hoE -m 1 '[\" ]/Library.*\.(exe|dll)' $i` | sed 's/^\"//' | sed 's#/Library.*/[0-9]\+\.[0-9]\+\.[0-9]\+/lib/##' | sed '/^mono\//! s#^#..\\\\#' | sed 's#^mono/##')
+			sed "s#@@RUNTIME@@#${RUNTIME}\\\\#g" ${REPODIR}/../../resources/wrapper.bat > $i.bat
+			sed -i "s#@@COMMAND@@#${EXENAME}#g" $i.bat
+			sed -i 's#/#\\#g' $i.bat
+		fi
+		sed -i 's#/Library.*/[0-9]\+\.[0-9]\+\.[0-9]\+/lib/#\"\$\(cygpath -w \"\$\{BASH_SOURCE%/\*\}\"/../lib/\)\"#g#' $i
+		sed -i 's#\"\"#\"#g' $i
+		sed -i 's#)\"#)#g' $i
+		sed -i 's#exe #exe\" #' $i
+		sed -i 's#dll #dll\" #' $i
+		sed -i 's#basename \$0#basename \"\$0\"#' $i
+	done
+	cp xsp4 xsp
+	cp xsp4.bat xsp.bat
+	chmod a+x *
+	cd ..
+	for i in lib/mono/4.5/Mono.Cecil.VB*.dll lib/mono/4.5/Microsoft.VisualBasic.dll lib/mono/*/xsp*.exe lib/mono/4.5/fastcgi-mono-server4.exe lib/mono/4.5/mod-mono-server4.exe lib/mono/4.5/mono-fpm.exe lib/mono/*/Mono.WebServer*.dll
+		do bin/gacutil -i $i
+	done
+
+	# make sure we didn't miss any files with Mac paths
+	if grep -R 'Mono\.framework' . --exclude=xbuild.1 --exclude=MSBuild.dll.config --exclude=macpack.exe; then
+		echo "Found Mac paths in files, please make sure they're fixed."
+		exit 1
+	fi
+
+	# make sure we didn't miss any files with cygwin install paths
+	if grep -R '/tmp/mono'. --exclude=*.pc --exclude=mono-find-provides --exclude=mono-find-requires; then
+		echo "Found cygwin paths in files, please make sure they're fixed."
+		exit 1
+	fi
+
+	popd
+}
+
+prerequisites()
+{
+	which bsdcpio		2>/dev/null || error "*** bsdcpio is not in \$PATH ***"
+	which wget 		2>/dev/null || error "*** wget is not in \$PATH ***"
+	which xml2-config	2>/dev/null || error "*** xml2-config is not in \$PATH ***"
+	which unzip		2>/dev/null || error "*** unzip is not in \$PATH ***"
+	if [ ! -e "/usr/include/openssl/crypto.h" ]
+		then error "*** openssl-devel is not installed ***"
+	fi
+}
+
+$@

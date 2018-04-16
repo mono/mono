@@ -288,6 +288,7 @@ namespace Mono.ILASM {
 /* Keywords */
 %token K_AT
 %token K_AS
+%token K_AGGRESSIVEINLINING
 %token K_IMPLICITCOM
 %token K_IMPLICITRES
 %token K_NOAPPDOMAIN
@@ -2016,6 +2017,7 @@ impl_attr		: /* EMPTY */                   { $$ = new ImplAttr (); }
 			| impl_attr K_SYNCHRONIZED      { $$ = (ImplAttr) $1 | ImplAttr.Synchronised; }
 			| impl_attr K_NOINLINING        { $$ = (ImplAttr) $1 | ImplAttr.NoInLining; }
 			| impl_attr K_NOOPTIMIZATION    { $$ = (ImplAttr) $1 | ImplAttr.NoOptimization; }
+			| impl_attr K_AGGRESSIVEINLINING{ $$ = (ImplAttr) $1 | ImplAttr.AggressiveInlining; }
 			;
 
 sig_args		: /* EMPTY */

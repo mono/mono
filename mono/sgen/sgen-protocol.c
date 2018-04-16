@@ -128,7 +128,7 @@ binary_protocol_open_file (gboolean assert_on_failure)
 }
 
 void
-binary_protocol_init (const char *filename, long long limit)
+sgen_binary_protocol_init (const char *filename, long long limit)
 {
 	file_size_limit = limit;
 
@@ -148,11 +148,11 @@ binary_protocol_init (const char *filename, long long limit)
 	if (file_size_limit == 0)
 		g_free (filename_or_prefix);
 
-	binary_protocol_header (PROTOCOL_HEADER_CHECK, PROTOCOL_HEADER_VERSION, SIZEOF_VOID_P, G_BYTE_ORDER == G_LITTLE_ENDIAN);
+	sgen_binary_protocol_header (PROTOCOL_HEADER_CHECK, PROTOCOL_HEADER_VERSION, SIZEOF_VOID_P, G_BYTE_ORDER == G_LITTLE_ENDIAN);
 }
 
 gboolean
-binary_protocol_is_enabled (void)
+sgen_binary_protocol_is_enabled (void)
 {
 	return binary_protocol_file != invalid_file_value;
 }
@@ -175,7 +175,7 @@ try_lock_exclusive (void)
 	do {
 		if (binary_protocol_use_count)
 			return FALSE;
-	} while (InterlockedCompareExchange (&binary_protocol_use_count, -1, 0) != 0);
+	} while (mono_atomic_cas_i32 (&binary_protocol_use_count, -1, 0) != 0);
 	mono_memory_barrier ();
 	return TRUE;
 }
@@ -185,7 +185,7 @@ unlock_exclusive (void)
 {
 	mono_memory_barrier ();
 	SGEN_ASSERT (0, binary_protocol_use_count == -1, "Exclusively locked count must be -1");
-	if (InterlockedCompareExchange (&binary_protocol_use_count, 0, -1) != -1)
+	if (mono_atomic_cas_i32 (&binary_protocol_use_count, 0, -1) != -1)
 		SGEN_ASSERT (0, FALSE, "Somebody messed with the exclusive lock");
 }
 
@@ -201,7 +201,7 @@ lock_recursive (void)
 			/* FIXME: short back-off */
 			goto retry;
 		}
-	} while (InterlockedCompareExchange (&binary_protocol_use_count, old_count + 1, old_count) != old_count);
+	} while (mono_atomic_cas_i32 (&binary_protocol_use_count, old_count + 1, old_count) != old_count);
 	mono_memory_barrier ();
 }
 
@@ -213,7 +213,7 @@ unlock_recursive (void)
 	do {
 		old_count = binary_protocol_use_count;
 		SGEN_ASSERT (0, old_count > 0, "Locked use count must be at least 1");
-	} while (InterlockedCompareExchange (&binary_protocol_use_count, old_count - 1, old_count) != old_count);
+	} while (mono_atomic_cas_i32 (&binary_protocol_use_count, old_count - 1, old_count) != old_count);
 }
 
 static void
@@ -275,7 +275,7 @@ binary_protocol_check_file_overflow (void)
  * The protocol entries that do flush have `FLUSH()` in their definition.
  */
 gboolean
-binary_protocol_flush_buffers (gboolean force)
+sgen_binary_protocol_flush_buffers (gboolean force)
 {
 	int num_buffers = 0, i;
 	BinaryProtocolBuffer *header;
@@ -328,7 +328,7 @@ binary_protocol_get_buffer (int length)
 	new_buffer->next = buffer;
 	new_buffer->index = 0;
 
-	if (InterlockedCompareExchangePointer ((void**)&binary_protocol_buffers, new_buffer, buffer) != buffer) {
+	if (mono_atomic_cas_ptr ((void**)&binary_protocol_buffers, new_buffer, buffer) != buffer) {
 		sgen_free_os_memory (new_buffer, sizeof (BinaryProtocolBuffer), SGEN_ALLOC_INTERNAL, MONO_MEM_ACCOUNT_SGEN_BINARY_PROTOCOL);
 		goto retry;
 	}
@@ -356,7 +356,7 @@ protocol_entry (unsigned char type, gpointer data, int size)
 	if (index + entry_size > BINARY_PROTOCOL_BUFFER_SIZE)
 		goto retry;
 
-	if (InterlockedCompareExchange (&buffer->index, index + entry_size, index) != index)
+	if (mono_atomic_cas_i32 (&buffer->index, index + entry_size, index) != index)
 		goto retry_same_buffer;
 
 	/* FIXME: if we're interrupted at this point, we have a buffer
@@ -371,9 +371,7 @@ protocol_entry (unsigned char type, gpointer data, int size)
 		 * If the thread is not a worker thread we insert 0, which is interpreted
 		 * as gc thread. Worker indexes are 1 based.
 		 */
-		worker_index = sgen_workers_is_worker_thread (tid);
-		if (!worker_index)
-			worker_index = sgen_thread_pool_is_thread_pool_thread (major_collector.get_sweep_pool (), tid);
+		worker_index = sgen_thread_pool_is_thread_pool_thread (tid);
 		/* FIXME Consider using different index bases for different thread pools */
 		buffer->buffer [index++] = (unsigned char) worker_index;
 	}
@@ -392,48 +390,48 @@ protocol_entry (unsigned char type, gpointer data, int size)
 #define TYPE_BOOL gboolean
 
 #define BEGIN_PROTOCOL_ENTRY0(method) \
-	void method (void) { \
+	void sgen_ ## method (void) { \
 		int __type = PROTOCOL_ID(method); \
 		gpointer __data = NULL; \
 		int __size = 0; \
 		CLIENT_PROTOCOL_NAME (method) ();
 #define BEGIN_PROTOCOL_ENTRY1(method,t1,f1) \
-	void method (t1 f1) { \
+	void sgen_ ## method (t1 f1) { \
 		PROTOCOL_STRUCT(method) __entry = { f1 }; \
 		int __type = PROTOCOL_ID(method); \
 		gpointer __data = &__entry; \
 		int __size = sizeof (PROTOCOL_STRUCT(method)); \
 		CLIENT_PROTOCOL_NAME (method) (f1);
 #define BEGIN_PROTOCOL_ENTRY2(method,t1,f1,t2,f2) \
-	void method (t1 f1, t2 f2) { \
+	void sgen_ ## method (t1 f1, t2 f2) { \
 		PROTOCOL_STRUCT(method) __entry = { f1, f2 }; \
 		int __type = PROTOCOL_ID(method); \
 		gpointer __data = &__entry; \
 		int __size = sizeof (PROTOCOL_STRUCT(method)); \
 		CLIENT_PROTOCOL_NAME (method) (f1, f2);
 #define BEGIN_PROTOCOL_ENTRY3(method,t1,f1,t2,f2,t3,f3) \
-	void method (t1 f1, t2 f2, t3 f3) { \
+	void sgen_ ## method (t1 f1, t2 f2, t3 f3) { \
 		PROTOCOL_STRUCT(method) __entry = { f1, f2, f3 }; \
 		int __type = PROTOCOL_ID(method); \
 		gpointer __data = &__entry; \
 		int __size = sizeof (PROTOCOL_STRUCT(method)); \
 		CLIENT_PROTOCOL_NAME (method) (f1, f2, f3);
 #define BEGIN_PROTOCOL_ENTRY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
-	void method (t1 f1, t2 f2, t3 f3, t4 f4) { \
+	void sgen_ ## method (t1 f1, t2 f2, t3 f3, t4 f4) { \
 		PROTOCOL_STRUCT(method) __entry = { f1, f2, f3, f4 }; \
 		int __type = PROTOCOL_ID(method); \
 		gpointer __data = &__entry; \
 		int __size = sizeof (PROTOCOL_STRUCT(method)); \
 		CLIENT_PROTOCOL_NAME (method) (f1, f2, f3, f4);
 #define BEGIN_PROTOCOL_ENTRY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
-	void method (t1 f1, t2 f2, t3 f3, t4 f4, t5 f5) { \
+	void sgen_ ## method (t1 f1, t2 f2, t3 f3, t4 f4, t5 f5) { \
 		PROTOCOL_STRUCT(method) __entry = { f1, f2, f3, f4, f5 }; \
 		int __type = PROTOCOL_ID(method); \
 		gpointer __data = &__entry; \
 		int __size = sizeof (PROTOCOL_STRUCT(method)); \
 		CLIENT_PROTOCOL_NAME (method) (f1, f2, f3, f4, f5);
 #define BEGIN_PROTOCOL_ENTRY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
-	void method (t1 f1, t2 f2, t3 f3, t4 f4, t5 f5, t6 f6) { \
+	void sgen_ ## method (t1 f1, t2 f2, t3 f3, t4 f4, t5 f5, t6 f6) { \
 		PROTOCOL_STRUCT(method) __entry = { f1, f2, f3, f4, f5, f6 }; \
 		int __type = PROTOCOL_ID(method); \
 		gpointer __data = &__entry; \
@@ -453,7 +451,7 @@ protocol_entry (unsigned char type, gpointer data, int size)
 
 #define END_PROTOCOL_ENTRY_FLUSH \
 		protocol_entry (__type, __data, __size); \
-		binary_protocol_flush_buffers (FALSE); \
+		sgen_binary_protocol_flush_buffers (FALSE); \
 	}
 
 #ifdef SGEN_HEAVY_BINARY_PROTOCOL

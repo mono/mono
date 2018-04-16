@@ -575,6 +575,11 @@ namespace Mono.Net.Security.Private
 
 		#region IMonoSslStream
 
+		Task IMonoSslStream.ShutdownAsync ()
+		{
+			return Task.CompletedTask;
+		}
+
 		AuthenticatedStream IMonoSslStream.AuthenticatedStream {
 			get { return this; }
 		}

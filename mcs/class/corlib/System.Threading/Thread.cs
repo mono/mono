@@ -245,6 +245,10 @@ namespace System.Threading {
 			get {
 				Thread th = CurrentThread;
 
+				var logicalPrincipal = th.GetExecutionContextReader().LogicalCallContext.Principal;
+				if (logicalPrincipal != null)
+					return logicalPrincipal;
+
 				if (th.principal_version != th.Internal._serialized_principal_version)
 					th.principal = null;
 
@@ -265,6 +269,8 @@ namespace System.Threading {
 			[SecurityPermission (SecurityAction.Demand, ControlPrincipal = true)]
 			set {
 				Thread th = CurrentThread;
+
+				th.GetMutableExecutionContext().LogicalCallContext.Principal = value;
 
 				if (value != GetDomain ().DefaultPrincipal) {
 					++th.Internal._serialized_principal_version;
@@ -311,7 +317,7 @@ namespace System.Threading {
 
 		// Returns the system thread handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern IntPtr Thread_internal (MulticastDelegate start);
+		private extern bool Thread_internal (MulticastDelegate start);
 
 		private Thread (InternalThread it) {
 			internal_thread = it;
@@ -326,13 +332,12 @@ namespace System.Threading {
 		[Obsolete ("Deprecated in favor of GetApartmentState, SetApartmentState and TrySetApartmentState.")]
 		public ApartmentState ApartmentState {
 			get {
-				if ((ThreadState & ThreadState.Stopped) != 0)
-					throw new ThreadStateException ("Thread is dead; state can not be accessed.");
-
+				ValidateThreadState ();
 				return (ApartmentState)Internal.apartment_state;
 			}
 
 			set {
+				ValidateThreadState ();
 				TrySetApartmentState (value);
 			}
 		}
@@ -368,14 +373,12 @@ namespace System.Threading {
 
 		public bool IsBackground {
 			get {
-				ThreadState thread_state = GetState (Internal);
-				if ((thread_state & ThreadState.Stopped) != 0)
-					throw new ThreadStateException ("Thread is dead; state can not be accessed.");
-
-				return (thread_state & ThreadState.Background) != 0;
+				var state = ValidateThreadState ();
+				return (state & ThreadState.Background) != 0;
 			}
 			
 			set {
+				ValidateThreadState ();
 				if (value) {
 					SetState (Internal, ThreadState.Background);
 				} else {
@@ -487,7 +490,7 @@ namespace System.Threading {
 #endif
 
 			// Thread_internal creates and starts the new thread, 
-			if (Thread_internal(m_Delegate) == IntPtr.Zero)
+			if (!Thread_internal(m_Delegate))
 				throw new SystemException ("Thread creation failed.");
 
 			m_ThreadStartArg = null;
@@ -649,6 +652,7 @@ namespace System.Threading {
 
 		public ApartmentState GetApartmentState ()
 		{
+			ValidateThreadState ();
 			return (ApartmentState)Internal.apartment_state;
 		}
 
@@ -711,6 +715,14 @@ namespace System.Threading {
 		public void DisableComObjectEagerCleanup ()
 		{
 			throw new PlatformNotSupportedException ();
+		}
+
+		ThreadState ValidateThreadState ()
+		{
+			var state = GetState (Internal);
+			if ((state & ThreadState.Stopped) != 0)
+				throw new ThreadStateException ("Thread is dead; state can not be accessed.");
+			return state;
 		}
 	}
 }

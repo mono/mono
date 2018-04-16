@@ -67,7 +67,7 @@ namespace System.ServiceModel
             }
         }
 
-        [DefaultValue(MsmqDefaults.MsmqSecureHashAlgorithm)]
+        [DefaultValue(MsmqDefaults.DefaultMsmqSecureHashAlgorithm)]
         public MsmqSecureHashAlgorithm MsmqSecureHashAlgorithm
         {
             get { return this.msmqHashAlgorithm; }

@@ -93,7 +93,6 @@
 #endif
 
 #define MONO_ARCH_USE_FPSTACK FALSE
-#define MONO_ARCH_FPSTACK_SIZE 0
 
 #define MONO_ARCH_INST_SREG2_MASK(ins) (0)
 
@@ -223,6 +222,19 @@ typedef struct {
 	ArgInfo args [1];
 } CallInfo;
 
+#define PARAM_REGS 4
+#define FP_PARAM_REGS 8
+
+typedef struct {
+	/* General registers */
+	mgreg_t gregs [PARAM_REGS];
+	/* Floating registers */
+	float fregs [FP_PARAM_REGS * 2];
+	/* Stack usage, used for passing params on stack */
+	guint32 stack_size;
+	guint8 *stack;
+} CallContext;
+
 /* Structure used by the sequence points in AOTed code */
 typedef struct {
 	gpointer ss_trigger_page;
@@ -231,17 +243,14 @@ typedef struct {
 	guint8* bp_addrs [MONO_ZERO_LEN_ARRAY];
 } SeqPointInfo;
 
-
-#define PARAM_REGS 4
-#define FP_PARAM_REGS 8
-#define DYN_CALL_STACK_ARGS 10
-
 typedef struct {
-	mgreg_t regs [PARAM_REGS + FP_PARAM_REGS];
 	double fpregs [FP_PARAM_REGS];
 	mgreg_t res, res2;
 	guint8 *ret;
 	guint32 has_fpregs;
+	guint32 n_stackargs;
+	/* This should come last as the structure is dynamically extended */
+	mgreg_t regs [PARAM_REGS];
 } DynCallArgs;
 
 void arm_patch (guchar *code, const guchar *target);
@@ -322,14 +331,15 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS 1
 
+#define MONO_ARCH_INTERPRETER_SUPPORTED 1
 #define MONO_ARCH_AOT_SUPPORTED 1
 #define MONO_ARCH_LLVM_SUPPORTED 1
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
-#define MONO_ARCH_DYN_CALL_PARAM_AREA (DYN_CALL_STACK_ARGS * sizeof (mgreg_t))
+#define MONO_ARCH_DYN_CALL_PARAM_AREA 0
 
-#ifndef MONO_CROSS_COMPILE
+#if !(defined(TARGET_ANDROID) && defined(MONO_CROSS_COMPILE))
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 #endif
 
@@ -340,20 +350,18 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_GC_MAPS_SUPPORTED 1
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
-#define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
-#ifndef TARGET_IOS
-#define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD_AOT 1
-#endif
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION 1
 #define MONO_ARCH_HAVE_OBJC_GET_SELECTOR 1
 #define MONO_ARCH_HAVE_OP_TAIL_CALL 1
-#define MONO_ARCH_HAVE_DUMMY_INIT 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
+#define MONO_ARCH_FLOAT32_SUPPORTED 1
+
+#define MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP 1
 
 #if defined(TARGET_WATCHOS) || (defined(__linux__) && !defined(TARGET_ANDROID))
 #define MONO_ARCH_DISABLE_HW_TRAPS 1
@@ -365,7 +373,10 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_IMT_REG MONO_ARCH_RGCTX_REG
 /* First argument reg */
 #define MONO_ARCH_VTABLE_REG ARMREG_R0
-#define MONO_ARCH_EXC_REG ARMREG_R0
+
+// Does the ABI have a volatile non-parameter register, so tailcall
+// can pass context to generics or interfaces?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->regs [0] = (gsize)exc; } while (0)
 
@@ -389,6 +400,12 @@ mono_arm_resume_unwind (guint32 dummy1, mgreg_t pc, mgreg_t sp, mgreg_t *int_reg
 gboolean
 mono_arm_thumb_supported (void);
 
+gboolean
+mono_arm_eabi_supported (void);
+
+int
+mono_arm_i8_align (void);
+
 GSList*
 mono_arm_get_exception_trampolines (gboolean aot);
 
@@ -406,9 +423,6 @@ mono_arm_is_hard_float (void);
 
 void
 mono_arm_unaligned_stack (MonoMethod *method);
-
-gpointer
-mono_arm_handler_block_trampoline_helper (gpointer *ptr);
 
 /* MonoJumpInfo **ji */
 guint8*

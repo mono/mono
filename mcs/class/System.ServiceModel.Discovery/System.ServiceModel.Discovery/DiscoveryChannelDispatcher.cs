@@ -86,7 +86,7 @@ namespace System.ServiceModel.Discovery
 			if (!handle_announce_online)
 				return; // Offline announcement is done by another DiscoveryChannelDispatcher
 
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 			Communication.Open (timeout);
 
 			// and call AnnouncementOnline().
@@ -94,7 +94,7 @@ namespace System.ServiceModel.Discovery
 			// Published endpoints are added by DicoveryEndpointPublisherBehavior, which is added to each ServiceEndpoint in the primary (non-announcement) service.
 			if (dx != null) {
 				foreach (var edm in dx.PublishedEndpoints) {
-					client.InnerChannel.OperationTimeout = timeout - (DateTime.Now - start);
+					client.InnerChannel.OperationTimeout = timeout - (DateTime.UtcNow - start);
 					client.AnnounceOnline (edm);
 				}
 			}
@@ -115,19 +115,19 @@ namespace System.ServiceModel.Discovery
 			if (handle_announce_online)
 				return; // Offline announcement is done by another DiscoveryChannelDispatcher
 
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 			// and call AnnouncementOnline().
 			var dx = host.Extensions.Find<DiscoveryServiceExtension> ();
 			// Published endpoints are added by DicoveryEndpointPublisherBehavior, which is added to each ServiceEndpoint in the primary (non-announcement) service.
 			if (dx != null) {
 				foreach (var edm in dx.PublishedEndpoints) {
-					client.InnerChannel.OperationTimeout = timeout - (DateTime.Now - start);
+					client.InnerChannel.OperationTimeout = timeout - (DateTime.UtcNow - start);
 					client.AnnounceOffline (edm);
 				}
 			}
 
 			// Then close the client.
-			Communication.Close (timeout - (DateTime.Now - start));
+			Communication.Close (timeout - (DateTime.UtcNow - start));
 		}
 
 		protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state)

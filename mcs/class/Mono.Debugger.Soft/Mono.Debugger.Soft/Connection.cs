@@ -420,7 +420,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 45;
+		internal const int MINOR_VERSION = 46;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -442,7 +442,8 @@ namespace Mono.Debugger.Soft
 			TYPE = 23,
 			MODULE = 24,
 			FIELD = 25,
-			EVENT = 64
+			EVENT = 64,
+			POINTER = 65
 		}
 
 		enum EventKind {
@@ -574,7 +575,8 @@ namespace Mono.Debugger.Soft
 			GET_INTERFACES = 16,
 			GET_INTERFACE_MAP = 17,
 			IS_INITIALIZED = 18,
-			CREATE_INSTANCE = 19
+			CREATE_INSTANCE = 19,
+			GET_VALUE_SIZE = 20
 		}
 
 		enum CmdField {
@@ -604,6 +606,10 @@ namespace Mono.Debugger.Soft
 			GET_VALUE = 1,
 			GET_LENGTH = 2,
 			GET_CHARS = 3
+		}
+
+		enum CmdPointer {
+			GET_VALUE = 1
 		}
 
 		enum CmdObjectRef {
@@ -730,10 +736,12 @@ namespace Mono.Debugger.Soft
 		}
 
 		class PacketReader {
+			Connection connection;
 			byte[] packet;
 			int offset;
 
-			public PacketReader (byte[] packet) {
+			public PacketReader (Connection connection, byte[] packet) {
+				this.connection = connection;
 				this.packet = packet;
 
 				// For event packets
@@ -845,9 +853,16 @@ namespace Mono.Debugger.Soft
 					return new ValueImpl { Type = etype, Value = ReadDouble () };
 				case ElementType.I:
 				case ElementType.U:
-				case ElementType.Ptr:
 					// FIXME: The client and the debuggee might have different word sizes
 					return new ValueImpl { Type = etype, Value = ReadLong () };
+				case ElementType.Ptr:
+					long value = ReadLong ();
+					if (connection.Version.AtLeast (2, 46)) {
+						long pointerClass = ReadId ();
+						return new ValueImpl { Type = etype, Klass = pointerClass, Value = value };
+					} else {
+						return new ValueImpl { Type = etype, Value = value };
+					}
 				case ElementType.String:
 				case ElementType.SzArray:
 				case ElementType.Class:
@@ -1283,7 +1298,7 @@ namespace Mono.Debugger.Soft
 					if (cb != null)
 						cb.Invoke (id, packet);
 				} else {
-					PacketReader r = new PacketReader (packet);
+					PacketReader r = new PacketReader (this, packet);
 
 					if (r.CommandSet == CommandSet.EVENT && r.Command == (int)CmdEvent.COMPOSITE) {
 						int spolicy = r.ReadByte ();
@@ -1502,7 +1517,7 @@ namespace Mono.Debugger.Soft
 						if (EnableConnectionLogging)
 							LogPacket (packet_id, encoded_packet, p, command_set, command, watch);
 						/* Run the callback on a tp thread to avoid blocking the receive thread */
-						PacketReader r = new PacketReader (p);
+						PacketReader r = new PacketReader (this, p);
 						cb.BeginInvoke (r, null, null);
 					};
 					reply_cb_counts [id] = count;
@@ -1549,7 +1564,7 @@ namespace Mono.Debugger.Soft
 					if (reply_packets.ContainsKey (packetId)) {
 						byte[] reply = reply_packets [packetId];
 						reply_packets.Remove (packetId);
-						PacketReader r = new PacketReader (reply);
+						PacketReader r = new PacketReader (this, reply);
 
 						if (EnableConnectionLogging)
 							LogPacket (packetId, encoded_packet, reply, command_set, command, watch);
@@ -2214,7 +2229,7 @@ namespace Mono.Debugger.Soft
 		internal ValueImpl[] Type_GetValues (long id, long[] fields, long thread_id) {
 			int len = fields.Length;
 			PacketReader r;
-			if (thread_id != 0)
+			if (thread_id != 0 && Version.AtLeast(2, 3))
 				r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_VALUES_2, new PacketWriter ().WriteId (id).WriteId (thread_id).WriteInt (len).WriteIds (fields));
 			else
 				r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_VALUES, new PacketWriter ().WriteId (id).WriteInt (len).WriteIds (fields));
@@ -2295,6 +2310,11 @@ namespace Mono.Debugger.Soft
 		internal long Type_CreateInstance (long id) {
 			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.CREATE_INSTANCE, new PacketWriter ().WriteId (id));
 			return r.ReadId ();
+		}
+
+		internal int Type_GetValueSize (long id) {
+			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_VALUE_SIZE, new PacketWriter ().WriteId (id));
+			return r.ReadInt ();
 		}
 
 		/*
@@ -2475,7 +2495,16 @@ namespace Mono.Debugger.Soft
 			for (int i = 0; i < length; ++i)
 				res [i] = (char)r.ReadShort ();
 			return res;
-		}			
+		}
+
+		/*
+		 * POINTERS
+		 */
+
+		internal ValueImpl Pointer_GetValue (long address, TypeMirror type)
+		{
+			return SendReceive (CommandSet.POINTER, (int)CmdPointer.GET_VALUE, new PacketWriter ().WriteLong (address).WriteId (type.Id)).ReadValue ();
+		}
 
 		/*
 		 * OBJECTS

@@ -28,10 +28,12 @@
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security.Authenticode;
-using MSI = MonoSecurity::Mono.Security.Interface;
+using MonoSecurity::Mono.Security.Interface;
 #else
 using Mono.Security.Authenticode;
-using MSI = Mono.Security.Interface;
+using Mono.Security.Interface;
+#endif
+using MNS = Mono.Net.Security;
 #endif
 
 using System.IO;
@@ -42,24 +44,26 @@ using System.Net.Security;
 using System.Security.Authentication.ExtendedProtection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using MNS = Mono.Net.Security;
 
 namespace System.Net {
 	partial class HttpListener {
-		MSI.MonoTlsProvider tlsProvider;
-		MSI.MonoTlsSettings tlsSettings;
+#if SECURITY_DEP
+		MonoTlsProvider tlsProvider;
+		MonoTlsSettings tlsSettings;
 		X509Certificate certificate;
 
-		internal HttpListener (X509Certificate certificate, MSI.MonoTlsProvider tlsProvider, MSI.MonoTlsSettings tlsSettings)
+		internal HttpListener (X509Certificate certificate, MonoTlsProvider tlsProvider, MonoTlsSettings tlsSettings)
 			: this ()
 		{
 			this.certificate = certificate;
 			this.tlsProvider = tlsProvider;
 			this.tlsSettings = tlsSettings;
 		}
+#endif
 
 		internal X509Certificate LoadCertificateAndKey (IPAddress addr, int port)
 		{
+#if SECURITY_DEP
 			lock (_internalLock) {
 				if (certificate != null)
 					return certificate;
@@ -85,21 +89,24 @@ namespace System.Net {
 					return null;
 				}
 			}
+#else
+			throw new PlatformNotSupportedException ();
+#endif
 		}
 
 		internal SslStream CreateSslStream (Stream innerStream, bool ownsStream, RemoteCertificateValidationCallback callback)
 		{
+#if SECURITY_DEP
 			lock (_internalLock) {
 				if (tlsProvider == null)
-					tlsProvider = MSI.MonoTlsProviderFactory.GetProvider ();
-				if (tlsSettings == null)
-					tlsSettings = MSI.MonoTlsSettings.CopyDefaultSettings ();
-				if (tlsSettings.RemoteCertificateValidationCallback == null)
-					tlsSettings.RemoteCertificateValidationCallback = MNS.Private.CallbackHelpers.PublicToMono (callback);
-				var sslStream = tlsProvider.CreateSslStream (innerStream, ownsStream, tlsSettings);
-				return sslStream.SslStream;
+					tlsProvider = MonoTlsProviderFactory.GetProvider ();
+				var settings = (tlsSettings ?? MonoTlsSettings.DefaultSettings).Clone ();
+				settings.RemoteCertificateValidationCallback = MNS.Private.CallbackHelpers.PublicToMono (callback);
+				return new SslStream (innerStream, ownsStream, tlsProvider, settings);
 			}
+#else
+			throw new PlatformNotSupportedException ();
+#endif
 		}
 	}
 }
-#endif

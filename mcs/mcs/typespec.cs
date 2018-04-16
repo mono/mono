@@ -92,6 +92,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool HasNamedTupleElement {
+			get {
+				return (state & StateFlags.HasNamedTupleElement) != 0;
+			}
+		}
+
 		//
 		// Returns a list of all interfaces including
 		// interfaces from base type or base interfaces
@@ -219,6 +225,8 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool IsByRefLike => (modifiers & Modifiers.REF) != 0;
+
 		//
 		// Returns true for instances of System.Threading.Tasks.Task<T>
 		//
@@ -228,6 +236,20 @@ namespace Mono.CSharp
 			}
 			set {
 				state = value ? state | StateFlags.GenericTask : state & ~StateFlags.GenericTask;
+			}
+		}
+
+		public bool IsReadOnly => (modifiers & Modifiers.READONLY) != 0;
+
+		//
+		// Returns true for instances of any System.ValueTuple<......> type
+		//
+		public virtual bool IsTupleType {
+			get {
+				return (state & StateFlags.Tuple) != 0;
+			}
+			set {
+				state = value ? state | StateFlags.Tuple : state & ~StateFlags.Tuple;
 			}
 		}
 
@@ -533,7 +555,9 @@ namespace Mono.CSharp
 			if (IsNested) {
 				s = DeclaringType.GetSignatureForError ();
 			} else if (MemberDefinition is AnonymousTypeClass) {
-				return ((AnonymousTypeClass) MemberDefinition).GetSignatureForError ();
+				return ((AnonymousTypeClass)MemberDefinition).GetSignatureForError ();
+			} else if (IsTupleType) {
+				return FormatTupleSignature ();
 			} else {
 				s = MemberDefinition.Namespace;
 			}
@@ -542,6 +566,21 @@ namespace Mono.CSharp
 				s += ".";
 
 			return s + Name + GetTypeNameSignature ();
+		}
+
+		string FormatTupleSignature ()
+		{
+			var sb = new StringBuilder ();
+			sb.Append ("(");
+			for (int i = 0; i < TypeArguments.Length; ++i) {
+				if (i != 0)
+					sb.Append (", ");
+
+				sb.Append (TypeArguments[i].GetSignatureForError ());
+			}
+			sb.Append (")");
+
+			return sb.ToString ();
 		}
 
 		public string GetSignatureForErrorIncludingAssemblyName ()
@@ -1415,6 +1454,7 @@ namespace Mono.CSharp
 		int TypeParametersCount { get; }
 		TypeParameterSpec[] TypeParameters { get; }
 
+		TypeSpec GetAsyncMethodBuilder ();
 		TypeSpec GetAttributeCoClass ();
 		string GetAttributeDefaultMember ();
 		AttributeUsageAttribute GetAttributeUsage (PredefinedAttribute pa);
@@ -1424,6 +1464,29 @@ namespace Mono.CSharp
 
 	class InternalType : TypeSpec, ITypeDefinition
 	{
+		sealed class InternalTypeAssembly : IAssemblyDefinition
+		{
+			public static readonly InternalTypeAssembly Instance = new InternalTypeAssembly ();
+
+			public string FullName => throw new NotImplementedException ();
+
+			public bool IsCLSCompliant => false;
+
+			public bool IsMissing => false;
+
+			public string Name => throw new NotImplementedException ();
+
+			public byte [] GetPublicKeyToken ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			public bool IsFriendAssemblyTo (IAssemblyDefinition assembly)
+			{
+				return false;
+			}
+		}
+
 		public static readonly InternalType AnonymousMethod = new InternalType ("anonymous method");
 		public static readonly InternalType Arglist = new InternalType ("__arglist");
 		public static readonly InternalType MethodGroup = new InternalType ("method group");
@@ -1432,6 +1495,9 @@ namespace Mono.CSharp
 		public static readonly InternalType Namespace = new InternalType ("<namespace>");
 		public static readonly InternalType ErrorType = new InternalType ("<error>");
 		public static readonly InternalType VarOutType = new InternalType ("var out");
+		public static readonly InternalType ThrowExpr = new InternalType ("throw expression");
+		public static readonly InternalType DefaultType = new InternalType ("default");
+		public static readonly InternalType Discard = new InternalType ("discard");
 
 		readonly string name;
 
@@ -1456,7 +1522,7 @@ namespace Mono.CSharp
 
 		IAssemblyDefinition ITypeDefinition.DeclaringAssembly {
 			get {
-				throw new NotImplementedException ();
+				return InternalTypeAssembly.Instance;
 			}
 		}
 
@@ -1523,6 +1589,11 @@ namespace Mono.CSharp
 
 		#region ITypeDefinition Members
 
+		TypeSpec ITypeDefinition.GetAsyncMethodBuilder ()
+		{
+			return null;
+		}
+
 		TypeSpec ITypeDefinition.GetAttributeCoClass ()
 		{
 			return null;
@@ -1573,6 +1644,11 @@ namespace Mono.CSharp
 		}
 
 		#endregion
+
+		public static bool HasNoType (TypeSpec type)
+		{
+			return type == AnonymousMethod || type == MethodGroup || type == NullLiteral || type == ThrowExpr || type == DefaultType;
+		}
 	}
 
 	//
@@ -1704,6 +1780,11 @@ namespace Mono.CSharp
 			get {
 				throw new NotSupportedException ();
 			}
+		}
+
+		public TypeSpec GetAsyncMethodBuilder ()
+		{
+			return null;
 		}
 
 		public TypeSpec GetAttributeCoClass ()
@@ -1950,17 +2031,24 @@ namespace Mono.CSharp
 		}
 	}
 
+	[System.Diagnostics.DebuggerDisplay("{DisplayDebugInfo()}")]
 	class ReferenceContainer : ElementTypeSpec
 	{
-		ReferenceContainer (TypeSpec element)
-			: base (MemberKind.Class, element, null)	// TODO: Kind.Class is most likely wrong
+		protected ReferenceContainer (TypeSpec element)
+			: base (MemberKind.ByRef, element, null)
 		{
+			cache = null;
 		}
 
 		public override IList<TypeSpec> Interfaces {
 			get {
 				return null;
 			}
+		}
+
+		string DisplayDebugInfo()
+		{
+			return "ref " + GetSignatureForError();
 		}
 
 		public override MetaType GetMetaInfo ()
@@ -1972,12 +2060,53 @@ namespace Mono.CSharp
 			return info;
 		}
 
+		public override string GetSignatureForError ()
+		{
+			return Element.GetSignatureForError ();
+		}
+
 		public static ReferenceContainer MakeType (ModuleContainer module, TypeSpec element)
 		{
+			if (element.Kind == MemberKind.ByRef)
+				throw new ArgumentException ();
+
 			ReferenceContainer pc;
 			if (!module.ReferenceTypesCache.TryGetValue (element, out pc)) {
 				pc = new ReferenceContainer (element);
 				module.ReferenceTypesCache.Add (element, pc);
+			}
+
+			return pc;
+		}
+
+		protected override void InitializeMemberCache(bool onlyTypes)
+		{
+			cache = Element.MemberCache;
+		}
+	}
+
+	[System.Diagnostics.DebuggerDisplay ("{DisplayDebugInfo()}")]
+	class ReadOnlyReferenceContainer : ReferenceContainer
+	{
+		public ReadOnlyReferenceContainer (TypeSpec element)
+			: base (element)
+		{
+		}
+
+		string DisplayDebugInfo ()
+		{
+			return "ref readonly " + GetSignatureForError ();
+		}
+
+		public new static ReferenceContainer MakeType (ModuleContainer module, TypeSpec element)
+		{
+			if (element.Kind == MemberKind.ByRef)
+				throw new ArgumentException ();
+
+			ReadOnlyReferenceContainer pc;
+			if (!module.ReadonlyReferenceTypesCache.TryGetValue (element, out pc)) {
+				pc = new ReadOnlyReferenceContainer (element);
+				module.ReadonlyReferenceTypesCache.Add (element, pc);
 			}
 
 			return pc;

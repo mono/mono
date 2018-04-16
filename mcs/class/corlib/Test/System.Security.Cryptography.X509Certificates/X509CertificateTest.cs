@@ -37,7 +37,6 @@ public void SetUp () {
 [TearDown]
 public void TearDown () {
 	Thread.CurrentThread.CurrentCulture = oldcult;
-	File.Delete("temp.b64");
 	try {
 		File.Delete (temp_certificate_filename);
 	} catch {
@@ -81,6 +80,12 @@ public void Equality ()
 public void ConstructorX509CertificateNull ()
 {
 	X509Certificate nullcopy = new X509Certificate ((X509Certificate) null);
+}
+
+[Test]
+public void X509Certificate_WhenEmptyCertificateProvided_DoesNotThrow ()
+{
+	Assert.DoesNotThrow (() => new X509Certificate (new X509Certificate ()));
 }
 
 //-->8-- NON GENERATED CODE ENDS HERE   -->8---->8---->8---->8---->8---->8--

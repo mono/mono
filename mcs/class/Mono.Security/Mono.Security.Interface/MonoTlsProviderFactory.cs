@@ -167,6 +167,21 @@ namespace Mono.Security.Interface
 		}
 
 		#endregion
+
+		#region Internal Version
+
+		/*
+		 * Internal version number (not in any way related to the TLS Version).
+		 *
+		 * Used by the web-tests to check whether
+		 * the current Mono contains certain features or bug fixes.
+		 *
+		 * Negative version numbers are reserved for martin work branches.
+		 *
+		 */
+		internal const int InternalVersion = 1;
+
+		#endregion
 	}
 }
 

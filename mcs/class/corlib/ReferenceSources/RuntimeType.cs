@@ -138,7 +138,7 @@ namespace System
 			return m_serializationCtor;
 		}
 
-		internal Object CreateInstanceSlow(bool publicOnly, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)
+		internal Object CreateInstanceSlow(bool publicOnly, bool wrapExceptions, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)
 		{
 			//bool bNeedSecurityCheck = true;
 			//bool bCanBeCached = false;
@@ -150,10 +150,10 @@ namespace System
 			//if (!fillCache)
 			//	bSecurityCheckOff = true;
 
-			return CreateInstanceMono (!publicOnly);
+			return CreateInstanceMono (!publicOnly, wrapExceptions);
 		}
 
-		object CreateInstanceMono (bool nonPublic)
+		object CreateInstanceMono (bool nonPublic, bool wrapExceptions)
 		{
 			var ctor = GetDefaultConstructor ();
 			if (!nonPublic && ctor != null && !ctor.IsPublic) {
@@ -176,7 +176,7 @@ namespace System
 				throw new MissingMethodException (Locale.GetText ("Cannot create an abstract class '{0}'.", FullName));
 			}
 
-			return ctor.InternalInvoke (null, null);
+			return ctor.InternalInvoke (null, null, wrapExceptions);
 		}
 
 		internal Object CheckValue (Object value, Binder binder, CultureInfo culture, BindingFlags invokeAttr)
@@ -465,7 +465,7 @@ namespace System
 		{
 			var gt = (RuntimeType) MakeGenericType (genericType, new Type [] { genericArgument });
 			var ctor = gt.GetDefaultConstructor ();
-			return ctor.InternalInvoke (null, null);
+			return ctor.InternalInvoke (null, null, wrapExceptions: true);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -783,6 +783,10 @@ namespace System
 
 		public override string FullName {
 			get {
+				// https://bugzilla.xamarin.com/show_bug.cgi?id=57938
+				if (IsGenericType && ContainsGenericParameters && !IsGenericTypeDefinition)
+					return null;
+
 				string fullName;
 				// This doesn't need locking
 				if (type_info == null)

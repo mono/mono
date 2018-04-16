@@ -113,7 +113,9 @@ namespace System.Net
 		internal FtpWebRequest (Uri uri) 
 		{
 			this.requestUri = uri;
+#pragma warning disable 618
 			this.proxy = GlobalProxySelection.Select;
+#pragma warning restore 618
 		}
 
 		static Exception GetMustImplement ()

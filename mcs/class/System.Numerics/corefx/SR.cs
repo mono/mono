@@ -22,4 +22,6 @@ partial class SR
 	public const string Arg_ElementsInSourceIsGreaterThanDestination = "Number of elements in source vector is greater than the destination array";
 	public const string Arg_NullArgumentNullRef = "The method was called with a null array argument.";
 	public const string Arg_TypeNotSupported = "Specified type is not supported";
+	public const string ArgumentException_BufferNotFromPool = "The buffer is not associated with this pool and may not be returned to it.";
+	public const string Overflow_Negative_Unsigned = "Negative values do not have an unsigned representation.";
 }

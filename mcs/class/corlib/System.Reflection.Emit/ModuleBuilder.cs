@@ -63,6 +63,7 @@ namespace System.Reflection.Emit {
 		bool is_main;
 		private MonoResource[] resources;
 		private IntPtr unparented_classes;
+		private int[] table_indexes;
 		#endregion
 #pragma warning restore 169, 414
 		
@@ -71,11 +72,12 @@ namespace System.Reflection.Emit {
 		// name_cache keys are display names
 		Dictionary<TypeName, TypeBuilder> name_cache;
 		Dictionary<string, int> us_string_cache;
-		private int[] table_indexes;
 		bool transient;
 		ModuleBuilderTokenGenerator token_gen;
 		Hashtable resource_writers;
 		ISymbolWriter symbolWriter;
+
+		static bool has_warned_about_symbolWriter;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (ModuleBuilder ab);
@@ -91,7 +93,7 @@ namespace System.Reflection.Emit {
 			// to keep mcs fast we do not want CryptoConfig wo be involved to create the RNG
 			guid = Guid.FastNewGuidArray ();
 			// guid = Guid.NewGuid().ToByteArray ();
-			table_idx = get_next_table_index (this, 0x00, true);
+			table_idx = get_next_table_index (this, 0x00, 1);
 			name_cache = new Dictionary<TypeName, TypeBuilder> ();
 			us_string_cache = new Dictionary<string, int> (512);
 
@@ -107,16 +109,36 @@ namespace System.Reflection.Emit {
 
 			if (emitSymbolInfo) {
 				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");
-				if (asm == null)
-					throw new TypeLoadException ("The assembly for default symbol writer cannot be loaded");
 
-				Type t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl", true);
-				symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
+				Type t = null;
+				if (asm != null)
+					t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl");
+
+				if (t == null) {
+					WarnAboutSymbolWriter ("Failed to load the default Mono.CompilerServices.SymbolWriter assembly");
+				} else {
+					try {
+						symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
+					} catch (System.MissingMethodException) {
+						WarnAboutSymbolWriter ("The default Mono.CompilerServices.SymbolWriter is not available on this platform");					
+						return;
+					}
+				}
+				
 				string fileName = fqname;
 				if (assemblyb.AssemblyDir != null)
 					fileName = Path.Combine (assemblyb.AssemblyDir, fileName);
 				symbolWriter.Initialize (IntPtr.Zero, fileName, true);
 			}
+		}
+
+		static void WarnAboutSymbolWriter (string message) 
+		{
+			if (has_warned_about_symbolWriter)
+				return;
+
+			has_warned_about_symbolWriter = true;
+			Console.Error.WriteLine ("WARNING: {0}", message);
 		}
 
 		public override string FullyQualifiedName {get { return fqname;}}
@@ -137,8 +159,8 @@ namespace System.Reflection.Emit {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 
-			FieldBuilder fb = DefineUninitializedData (name, data.Length, 
-													   attributes | FieldAttributes.HasFieldRVA);
+			var maskedAttributes = attributes & ~FieldAttributes.ReservedMask;
+			FieldBuilder fb = DefineDataImpl (name, data.Length, maskedAttributes | FieldAttributes.HasFieldRVA);
 			fb.SetRVAData (data);
 
 			return fb;
@@ -146,12 +168,19 @@ namespace System.Reflection.Emit {
 
 		public FieldBuilder DefineUninitializedData (string name, int size, FieldAttributes attributes)
 		{
+			return DefineDataImpl (name, size, attributes & ~FieldAttributes.ReservedMask);
+		}
+
+		private FieldBuilder DefineDataImpl (string name, int size, FieldAttributes attributes)
+		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
+			if (name == String.Empty)
+				throw new ArgumentException ("name cannot be empty", "name");
 			if (global_type_created != null)
 				throw new InvalidOperationException ("global fields already created");
-			if ((size <= 0) || (size > 0x3f0000))
-				throw new ArgumentException ("size", "Data size must be > 0 and < 0x3f0000");
+			if ((size <= 0) || (size >= 0x3f0000))
+				throw new ArgumentException ("Data size must be > 0 and < 0x3f0000", null as string);
 
 			CreateGlobalType ();
 
@@ -421,7 +450,7 @@ namespace System.Reflection.Emit {
 				return result;
 		}
 
-		internal int get_next_table_index (object obj, int table, bool inc) {
+		internal int get_next_table_index (object obj, int table, int count) {
 			if (table_indexes == null) {
 				table_indexes = new int [64];
 				for (int i=0; i < 64; ++i)
@@ -430,9 +459,9 @@ namespace System.Reflection.Emit {
 				table_indexes [0x02] = 2;
 			}
 			// Console.WriteLine ("getindex for table "+table.ToString()+" got "+table_indexes [table].ToString());
-			if (inc)
-				return table_indexes [table]++;
-			return table_indexes [table];
+			var index = table_indexes [table];
+			table_indexes [table] += count;
+			return index;
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
@@ -687,8 +716,7 @@ namespace System.Reflection.Emit {
 		static int typespec_tokengen =  0x1bffffff;
 		static int memberref_tokengen =  0x0affffff;
 		static int methoddef_tokengen =  0x06ffffff;
-		Dictionary<MemberInfo, int> inst_tokens = new Dictionary<MemberInfo, int> ();
-		Dictionary<MemberInfo, int> inst_tokens_open = new Dictionary<MemberInfo, int> ();
+		Dictionary<MemberInfo, int> inst_tokens, inst_tokens_open;
 
 		//
 		// Assign a pseudo token to the various TypeBuilderInst objects, so the runtime
@@ -698,16 +726,20 @@ namespace System.Reflection.Emit {
 		// still encounter these objects, it will resolve them by calling their
 		// RuntimeResolve () methods.
 		//
-		int GetPseudoToken (MemberInfo member, bool create_open_instance) {
+		int GetPseudoToken (MemberInfo member, bool create_open_instance)
+		{
 			int token;
-
-			if (create_open_instance) {
-				if (inst_tokens_open.TryGetValue (member, out token))
-					return token;
-			} else {
-				if (inst_tokens.TryGetValue (member, out token))
-					return token;
+			var dict = create_open_instance ? inst_tokens_open : inst_tokens;
+			if (dict == null) {
+				dict = new Dictionary<MemberInfo, int> (ReferenceEqualityComparer<MemberInfo>.Instance);
+				if (create_open_instance)
+					inst_tokens_open = dict;
+				else
+					inst_tokens = dict;
+			} else if (dict.TryGetValue (member, out token)) {
+				return token;
 			}
+
 			// Count backwards to avoid collisions with the tokens
 			// allocated by the runtime
 			if (member is TypeBuilderInstantiation || member is SymbolType)
@@ -727,6 +759,11 @@ namespace System.Reflection.Emit {
 					token = typedef_tokengen --;
 				else
 					token = typeref_tokengen --;
+			} else if (member is EnumBuilder) {
+				token = GetPseudoToken ((member as  EnumBuilder).GetTypeBuilder(), create_open_instance);
+				dict[member] = token;
+				// n.b. don't register with the runtime, the TypeBuilder already did it.
+				return token;
 			} else if (member is ConstructorBuilder) {
 				if (member.Module == this && !(member as ConstructorBuilder).TypeBuilder.ContainsGenericParameters)
 					token = methoddef_tokengen --;
@@ -742,22 +779,21 @@ namespace System.Reflection.Emit {
 				token = typespec_tokengen --;
 			} else
 				throw new NotImplementedException ();
-			if (create_open_instance)
-				inst_tokens_open [member] = token;
-			else
-				inst_tokens [member] = token;
+
+			dict [member] = token;
 			RegisterToken (member, token);
 			return token;
 		}
 
 		internal int GetToken (MemberInfo member) {
-			if (member is ConstructorBuilder || member is MethodBuilder)
+			if (member is ConstructorBuilder || member is MethodBuilder || member is FieldBuilder)
 				return GetPseudoToken (member, false);
 			return getToken (this, member, true);
 		}
 
 		internal int GetToken (MemberInfo member, bool create_open_instance) {
-			if (member is TypeBuilderInstantiation || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst || member is SymbolType || member is FieldBuilder || member is TypeBuilder || member is ConstructorBuilder || member is MethodBuilder || member is GenericTypeParameterBuilder)
+			if (member is TypeBuilderInstantiation || member is FieldOnTypeBuilderInst || member is ConstructorOnTypeBuilderInst || member is MethodOnTypeBuilderInst || member is SymbolType || member is FieldBuilder || member is TypeBuilder || member is ConstructorBuilder || member is MethodBuilder || member is GenericTypeParameterBuilder ||
+			    member is EnumBuilder)
 				return GetPseudoToken (member, create_open_instance);
 			return getToken (this, member, create_open_instance);
 		}
@@ -850,6 +886,8 @@ namespace System.Reflection.Emit {
 					finished = (member as FieldBuilder).RuntimeResolve ();
 				} else if (member is TypeBuilder) {
 					finished = (member as TypeBuilder).RuntimeResolve ();
+				} else if (member is EnumBuilder) {
+					finished = (member as EnumBuilder).RuntimeResolve ();
 				} else if (member is ConstructorBuilder) {
 					finished = (member as ConstructorBuilder).RuntimeResolve ();
 				} else if (member is MethodBuilder) {
@@ -871,11 +909,14 @@ namespace System.Reflection.Emit {
 		//
 		// Fixup the pseudo tokens assigned to the various SRE objects
 		//
-		void FixupTokens () {
+		void FixupTokens ()
+		{
 			var token_map = new Dictionary<int, int> ();
 			var member_map = new Dictionary<int, MemberInfo> ();
-			FixupTokens (token_map, member_map, inst_tokens, false);
-			FixupTokens (token_map, member_map, inst_tokens_open, true);
+			if (inst_tokens != null)
+				FixupTokens (token_map, member_map, inst_tokens, false);
+			if (inst_tokens_open != null)
+				FixupTokens (token_map, member_map, inst_tokens_open, true);
 
 			// Replace the tokens in the IL stream
 			if (types != null) {
@@ -1128,32 +1169,55 @@ namespace System.Reflection.Emit {
 
 		public override object[] GetCustomAttributes (bool inherit)
 		{
-			return base.GetCustomAttributes (inherit);
+			return GetCustomAttributes (null, inherit);
 		}
 
 		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			return base.GetCustomAttributes (attributeType, inherit);
+			if (cattrs == null || cattrs.Length == 0)
+				return Array.Empty<object> ();
+
+			if (attributeType is TypeBuilder)
+				throw new InvalidOperationException ("First argument to GetCustomAttributes can't be a TypeBuilder");
+
+			List<object> results = new List<object> ();
+			for (int i=0; i < cattrs.Length; i++) {
+				Type t = cattrs [i].Ctor.GetType ();
+
+				if (t is TypeBuilder)
+					throw new InvalidOperationException ("Can't construct custom attribute for TypeBuilder type");
+
+				if (attributeType == null || attributeType.IsAssignableFrom (t))
+					results.Add (cattrs [i].Invoke ());
+			}
+
+			return results.ToArray ();
 		}
 
 		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
 		{
-			return base.GetField (name, bindingAttr);
+			if (global_type_created == null)
+				throw new InvalidOperationException ("Module-level fields cannot be retrieved until after the CreateGlobalFunctions method has been called for the module.");
+			return global_type_created.GetField (name, bindingAttr);
 		}
 
 		public override FieldInfo[] GetFields (BindingFlags bindingFlags)
 		{
-			return base.GetFields (bindingFlags);
+			if (global_type_created == null)
+				throw new InvalidOperationException ("Module-level fields cannot be retrieved until after the CreateGlobalFunctions method has been called for the module.");
+			return global_type_created.GetFields (bindingFlags);
 		}
 
 		public override MethodInfo[] GetMethods (BindingFlags bindingFlags)
 		{
-			return base.GetMethods (bindingFlags);
+			if (global_type_created == null)
+				throw new InvalidOperationException ("Module-level methods cannot be retrieved until after the CreateGlobalFunctions method has been called for the module.");
+			return global_type_created.GetMethods (bindingFlags);
 		}
 
 		public override int MetadataToken {
 			get {
-				return base.MetadataToken;
+				return get_MetadataToken (this);
 			}
 		}
 	}

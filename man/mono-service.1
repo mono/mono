@@ -26,11 +26,6 @@ and execution can be resumed by sending the SIGUSR2 signal.   The
 service can be cleanly shutdown by sending the SIGTERM signal to the
 process. 
 .PP
-Mono programs started with mono-service run with the 
-.B MONO_DISABLE_SHM
-variable set.    This means that certain Mono features that depend on
-it are not available to services.
-.PP
 The following options can be used to control the service:
 .TP
 .I "-d:DIRECTORY"

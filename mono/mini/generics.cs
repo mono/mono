@@ -129,6 +129,20 @@ class Tests
 		return ldelem_any (arr);
 	}
 
+	public static int test_1_ldelem_stelem_any_single () {
+		float[] arr = new float [3];
+		stelem_any (arr, 1);
+
+		return (int) ldelem_any (arr);
+	}
+
+	public static int test_1_ldelem_stelem_any_double () {
+		double[] arr = new double [3];
+		stelem_any (arr, 1);
+
+		return (int) ldelem_any (arr);
+	}
+
 	public static T return_ref<T> (ref T t) {
 		return t;
 	}
@@ -1314,6 +1328,13 @@ class Tests
 		return RuntimeHelpers.IsReferenceOrContainsReferences<T> ();
 	}
 
+	class IsRefClass<T> {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public bool is_ref () {
+			return RuntimeHelpers.IsReferenceOrContainsReferences<T> ();
+		}
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static bool is_ref_or_contains_refs_gen_ref<T> () {
 		return RuntimeHelpers.IsReferenceOrContainsReferences<GenStruct<T>> ();
@@ -1343,6 +1364,12 @@ class Tests
 		int i;
 	}
 
+	struct AStruct3<T1, T2, T3> {
+		T1 t1;
+		T2 t2;
+		T3 t3;
+	}
+
 	public static int test_0_isreference_intrins () {
 		if (RuntimeHelpers.IsReferenceOrContainsReferences<int> ())
 			return 1;
@@ -1368,7 +1395,58 @@ class Tests
 		if (is_ref_or_contains_refs_gen_noref<string> ())
 			return 10;
 
+		// Complex type from shared class method
+		var c1 = new IsRefClass<AStruct3<int, int, int>> ();
+		if (c1.is_ref ())
+			return 11;
+		var c2 = new IsRefClass<AStruct3<string, int, int>> ();
+		if (!c2.is_ref ())
+			return 12;
+
 		return 0;
+	}
+
+	class LdobjStobj {
+		public int counter;
+		public LdobjStobj buffer1;
+		public LdobjStobj buffer2;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void swap<T>(ref T first, ref T second) {
+		second = first;
+	}
+
+	public static int test_42_ldobj_stobj_ref () {
+		var obj = new LdobjStobj ();
+		obj.counter = 42;
+		swap (ref obj.buffer1, ref obj.buffer2);
+		return obj.counter;
+	}
+
+	public interface ICompletion {
+		Type UnsafeOnCompleted ();
+	}
+
+	public struct TaskAwaiter<T> : ICompletion {
+		public Type UnsafeOnCompleted () {
+			typeof(T).GetHashCode ();
+			return typeof(T);
+		}
+	}
+
+	public struct AStruct {
+        public Type Caller<TAwaiter>(ref TAwaiter awaiter)
+            where TAwaiter : ICompletion {
+			return awaiter.UnsafeOnCompleted();
+		}
+	}
+
+    public static int test_0_partial_constrained_call_llvmonly () {
+		var builder = new AStruct ();
+		var awaiter = new TaskAwaiter<bool> ();
+		var res = builder.Caller (ref awaiter);
+		return res == typeof (bool) ? 0 : 1;
 	}
 }
 

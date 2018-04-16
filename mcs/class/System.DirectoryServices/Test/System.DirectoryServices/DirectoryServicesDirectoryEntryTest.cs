@@ -30,6 +30,9 @@ namespace MonoTests.System.DirectoryServices
 		{
 			de = null;
 			configuration = new TestConfiguration ();
+
+			if (String.IsNullOrEmpty (configuration.ConnectionString))
+				Assert.Ignore ("No configuration");
 		}
 
 

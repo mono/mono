@@ -320,8 +320,8 @@ namespace System.Net {
 				try {
 					IPAddress newAddress = IPAddress.Parse(h_addrlist[i]);
 
-					if( (Socket.SupportsIPv6 && newAddress.AddressFamily == AddressFamily.InterNetworkV6) ||
-					    (Socket.SupportsIPv4 && newAddress.AddressFamily == AddressFamily.InterNetwork) )
+					if( (Socket.OSSupportsIPv6 && newAddress.AddressFamily == AddressFamily.InterNetworkV6) ||
+					    (Socket.OSSupportsIPv4 && newAddress.AddressFamily == AddressFamily.InterNetwork) )
 						addrlist.Add(newAddress);
 				} catch (ArgumentNullException) {
 					/* Ignore this, as the
@@ -393,7 +393,9 @@ namespace System.Net {
 			if (hostNameOrAddress.Length > 0 && IPAddress.TryParse (hostNameOrAddress, out addr))
 				return GetHostEntry (addr);
 
+#pragma warning disable 618
 			return GetHostByName (hostNameOrAddress);
+#pragma warning restore 618
 		}
 
 		public static IPHostEntry GetHostEntry (IPAddress address)

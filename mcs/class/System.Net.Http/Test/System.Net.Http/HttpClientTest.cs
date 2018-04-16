@@ -38,6 +38,8 @@ using System.Net;
 using System.Linq;
 using System.IO;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Net.Http
 {
 	[TestFixture]
@@ -175,22 +177,6 @@ namespace MonoTests.System.Net.Http
 
 		const int WaitTimeout = 5000;
 
-		string TestHost, LocalServer;
-		int port;
-
-		[SetUp]
-		public void SetupFixture ()
-		{
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
-				port = 810;
-			} else {
-				port = 8810;
-			}
-
-			TestHost = "localhost:" + port;
-			LocalServer = string.Format ("http://{0}/", TestHost);
-		}
-
 		[Test]
 		public void Ctor_Default ()
 		{
@@ -290,7 +276,7 @@ namespace MonoTests.System.Net.Http
 				httpClient.PostAsync (restRequest.RequestUri, restRequest.Content).Wait (WaitTimeout);
 				Assert.Fail ("#1");
 			} catch (AggregateException e) {
-				Assert.IsTrue (e.InnerException is TaskCanceledException, "#2");
+				Assert.That (e.InnerException, Is.InstanceOf<TaskCanceledException> (), "#2");
 			}
 		}
 
@@ -320,6 +306,18 @@ namespace MonoTests.System.Net.Http
 			try {
 				client.Timeout = TimeSpan.MinValue;
 				Assert.Fail ("#2");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				client.Timeout = TimeSpan.Zero;
+				Assert.Fail ("#3");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				client.Timeout = TimeSpan.FromMilliseconds (int.MaxValue + 1L);
+				Assert.Fail ("#3");
 			} catch (ArgumentOutOfRangeException) {
 			}
 		}
@@ -410,6 +408,7 @@ namespace MonoTests.System.Net.Http
 		public void Send_Complete_Default ()
 		{
 			bool? failed = null;
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				try {
 					var request = l.Request;
@@ -419,7 +418,7 @@ namespace MonoTests.System.Net.Http
 					Assert.IsNull (request.ContentType, "#3");
 					Assert.AreEqual (0, request.Cookies.Count, "#4");
 					Assert.IsFalse (request.HasEntityBody, "#5");
-					Assert.AreEqual (TestHost, request.Headers["Host"], "#6b");
+					Assert.AreEqual ($"localhost:{port}", request.Headers["Host"], "#6b");
 					Assert.AreEqual ("GET", request.HttpMethod, "#7");
 					Assert.IsFalse (request.IsAuthenticated, "#8");
 					Assert.IsTrue (request.IsLocal, "#9");
@@ -435,11 +434,11 @@ namespace MonoTests.System.Net.Http
 				} catch {
 					failed = true;
 				}
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
-				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var request = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/");
 				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
 				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
@@ -458,6 +457,7 @@ namespace MonoTests.System.Net.Http
 		{
 			bool? failed = null;
 			
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				try {
 					var request = l.Request;
@@ -468,7 +468,7 @@ namespace MonoTests.System.Net.Http
 					Assert.AreEqual (0, request.Cookies.Count, "#4");
 					Assert.IsFalse (request.HasEntityBody, "#5");
 					Assert.AreEqual (1, request.Headers.Count, "#6");
-					Assert.AreEqual (TestHost, request.Headers["Host"], "#6a");
+					Assert.AreEqual ($"localhost:{port}", request.Headers["Host"], "#6a");
 					Assert.AreEqual ("GET", request.HttpMethod, "#7");
 					Assert.IsFalse (request.IsAuthenticated, "#8");
 					Assert.IsTrue (request.IsLocal, "#9");
@@ -484,11 +484,11 @@ namespace MonoTests.System.Net.Http
 				} catch {
 					failed = true;
 				}
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
-				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var request = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/");
 				request.Version = HttpVersion.Version10;
 				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
@@ -508,6 +508,7 @@ namespace MonoTests.System.Net.Http
 		{
 			bool? failed = null;
 			
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 				
@@ -519,7 +520,7 @@ namespace MonoTests.System.Net.Http
 					Assert.AreEqual (new Cookie ("mycookie", "vv"), request.Cookies[0], "#4a");
 					Assert.IsFalse (request.HasEntityBody, "#5");
 					Assert.AreEqual (4, request.Headers.Count, "#6");
-					Assert.AreEqual (TestHost, request.Headers["Host"], "#6a");
+					Assert.AreEqual ($"localhost:{port}", request.Headers["Host"], "#6a");
 					Assert.AreEqual ("gzip", request.Headers["Accept-Encoding"], "#6b");
 					Assert.AreEqual ("mycookie=vv", request.Headers["Cookie"], "#6c");
 					Assert.AreEqual ("GET", request.HttpMethod, "#7");
@@ -537,7 +538,7 @@ namespace MonoTests.System.Net.Http
 				} catch {
 					failed = true;
 				}
-			});
+			}, port);
 
 			try {
 				var chandler = new HttpClientHandler ();
@@ -546,14 +547,14 @@ namespace MonoTests.System.Net.Http
 				chandler.MaxAutomaticRedirections = 33;
 				chandler.MaxRequestContentBufferSize = 5555;
 				chandler.PreAuthenticate = true;
-				chandler.CookieContainer.Add (new Uri (LocalServer), new Cookie ( "mycookie", "vv"));
+				chandler.CookieContainer.Add (new Uri ($"http://localhost:{port}/"), new Cookie ( "mycookie", "vv"));
 				chandler.UseCookies = true;
 				chandler.UseDefaultCredentials = true;
 				chandler.Proxy = new WebProxy ("ee");
 				chandler.UseProxy = true;
 
 				var client = new HttpClient (chandler);
-				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var request = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/");
 				request.Version = HttpVersion.Version10;
 				request.Headers.Add ("Keep-Alive", "false");
 				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
@@ -575,6 +576,7 @@ namespace MonoTests.System.Net.Http
 		{
 			bool? failed = null;
 			
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 				try {
@@ -595,11 +597,11 @@ namespace MonoTests.System.Net.Http
 				} catch {
 					failed = true;
 				}
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
-				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var request = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/");
 				Assert.IsTrue (request.Headers.TryAddWithoutValidation ("aa", "vv"), "#0");
 				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
@@ -642,6 +644,7 @@ namespace MonoTests.System.Net.Http
 		{
 			bool? failed = null;
 
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 
@@ -651,14 +654,14 @@ namespace MonoTests.System.Net.Http
 				} catch {
 					failed = true;
 				}
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
 
 				client.DefaultRequestHeaders.Add("User-Agent", "MLK Android Phone 1.1.9");
 
-				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var request = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/");
 
 				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
@@ -677,30 +680,30 @@ namespace MonoTests.System.Net.Http
 #endif
 		public void Send_Complete_CustomHeaders_Host ()
 		{
-			bool? failed = null;
+			Exception error = null;
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 
 				try {
 					Assert.AreEqual ("customhost", request.Headers["Host"], "#1");
-					failed = false;
-				} catch {
-					failed = true;
+				} catch (Exception ex) {
+					error = ex;
 				}
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
 
 				client.DefaultRequestHeaders.Add("Host", "customhost");
 
-				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var request = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/");
 
 				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
 				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
 				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
-				Assert.AreEqual (false, failed, "#102");
+				Assert.IsNull (error, "#102");
 			} finally {
 				listener.Abort ();
 				listener.Close ();
@@ -715,22 +718,26 @@ namespace MonoTests.System.Net.Http
 		{
 			bool? failed = null;
 
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 
 				try {
-					Assert.AreEqual (1, request.Headers.Count, "#1");
+					Assert.AreEqual (2, request.Headers.Count, "#1");
+					Assert.AreEqual ("keep-alive", request.Headers ["Connection"], "#2");
 					failed = false;
-				} catch {
+				} catch (Exception ex){
+					Console.WriteLine (ex);
+					Console.WriteLine (String.Join ("#", l.Request.Headers.AllKeys));
 					failed = true;
 				}
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
 				client.DefaultRequestHeaders.TransferEncodingChunked = true;
 
-				client.GetAsync (LocalServer).Wait ();
+				client.GetAsync ($"http://localhost:{port}/").Wait ();
 
 				Assert.AreEqual (false, failed, "#102");
 			} finally {
@@ -747,15 +754,16 @@ namespace MonoTests.System.Net.Http
 		{
 			bool? failed = null;
 
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				failed = true;
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
 				client.DefaultRequestHeaders.TransferEncoding.Add (new TransferCodingHeaderValue ("chunked2"));
 
-				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var request = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/");
 
 				try {
 					client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Wait ();
@@ -776,15 +784,16 @@ namespace MonoTests.System.Net.Http
 #endif
 		public void Send_Complete_Content ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 				l.Response.OutputStream.WriteByte (55);
 				l.Response.OutputStream.WriteByte (75);
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
-				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var request = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/");
 				Assert.IsTrue (request.Headers.TryAddWithoutValidation ("aa", "vv"), "#0");
 				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
@@ -806,16 +815,17 @@ namespace MonoTests.System.Net.Http
 #endif
 		public void Send_Complete_Content_MaxResponseContentBufferSize ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 				var b = new byte[4000];
 				l.Response.OutputStream.Write (b, 0, b.Length);
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
 				client.MaxResponseContentBufferSize = 1000;
-				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var request = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/");
 				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
 				Assert.AreEqual (4000, response.Content.ReadAsStringAsync ().Result.Length, "#100");
@@ -831,16 +841,17 @@ namespace MonoTests.System.Net.Http
 #endif
 		public void Send_Complete_Content_MaxResponseContentBufferSize_Error ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 				var b = new byte[4000];
 				l.Response.OutputStream.Write (b, 0, b.Length);
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
 				client.MaxResponseContentBufferSize = 1000;
-				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var request = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/");
 
 				try {
 					client.SendAsync (request, HttpCompletionOption.ResponseContentRead).Wait (WaitTimeout);
@@ -858,34 +869,60 @@ namespace MonoTests.System.Net.Http
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
-		public void Send_Complete_NoContent ()
+		public void Send_Complete_NoContent_Post ()
 		{
-			foreach (var method in new HttpMethod[] { HttpMethod.Post, HttpMethod.Put, HttpMethod.Delete }) {
-				bool? failed = null;
-				var listener = CreateListener (l => {
-					try {
-						var request = l.Request;
+			Send_Complete_NoContent (HttpMethod.Post);
+		}
 
-						Assert.AreEqual (2, request.Headers.Count, "#1");
-						Assert.AreEqual ("0", request.Headers ["Content-Length"], "#1b");
-						Assert.AreEqual (method.Method, request.HttpMethod, "#2");
-						failed = false;
-					} catch {
-						failed = true;
-					}
-				});
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void Send_Complete_NoContent_Put ()
+		{
+			Send_Complete_NoContent (HttpMethod.Put);
+		}
 
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void Send_Complete_NoContent_Delete ()
+		{
+			Send_Complete_NoContent (HttpMethod.Delete);
+		}
+
+		void Send_Complete_NoContent (HttpMethod method)
+		{
+			bool? failed = null;
+			var port = NetworkHelpers.FindFreePort ();
+			var listener = CreateListener (l => {
 				try {
-					var client = new HttpClient ();
-					var request = new HttpRequestMessage (method, LocalServer);
-					var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
+					var request = l.Request;
 
-					Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
-					Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
-					Assert.AreEqual (false, failed, "#102");
-				} finally {
-					listener.Close ();
+					Assert.AreEqual (3, request.Headers.Count, "#1");
+					Assert.AreEqual ("0", request.Headers ["Content-Length"], "#1b");
+					Assert.AreEqual ("keep-alive", request.Headers ["Connection"], "#1c");
+					Assert.AreEqual (method.Method, request.HttpMethod, "#2");
+					failed = false;
+				} catch (Exception ex){
+					Console.WriteLine (ex);
+					Console.WriteLine (String.Join ("#", l.Request.Headers.AllKeys));
+					
+					failed = true;
 				}
+			}, port);
+
+			try {
+				var client = new HttpClient ();
+				var request = new HttpRequestMessage (method, $"http://localhost:{port}/");
+				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
+
+				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
+				Assert.AreEqual (false, failed, "#102");
+			} finally {
+				listener.Close ();
 			}
 		}
 
@@ -895,14 +932,15 @@ namespace MonoTests.System.Net.Http
 #endif
 		public void Send_Complete_Error ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var response = l.Response;
 				response.StatusCode = 500;
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
-				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var request = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/");
 				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
 				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
@@ -918,14 +956,15 @@ namespace MonoTests.System.Net.Http
 #endif
 		public void Send_Content_Get ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 				l.Response.OutputStream.WriteByte (72);
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
-				var r = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var r = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/");
 				var response = client.SendAsync (r).Result;
 
 				Assert.AreEqual ("H", response.Content.ReadAsStringAsync ().Result);
@@ -940,6 +979,7 @@ namespace MonoTests.System.Net.Http
 #endif
 		public void Send_Content_BomEncoding ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 
@@ -948,11 +988,11 @@ namespace MonoTests.System.Net.Http
 				str.WriteByte (0xBB);
 				str.WriteByte (0xBF);
 				str.WriteByte (71);
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
-				var r = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var r = new HttpRequestMessage (HttpMethod.Get, $"http://localhost:{port}/");
 				var response = client.SendAsync (r).Result;
 
 				Assert.AreEqual ("G", response.Content.ReadAsStringAsync ().Result);
@@ -968,16 +1008,17 @@ namespace MonoTests.System.Net.Http
 		public void Send_Content_Put ()
 		{
 			bool passed = false;
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 				passed = 7 == request.ContentLength64;
 				passed &= request.ContentType == "text/plain; charset=utf-8";
 				passed &= request.InputStream.ReadByte () == 'm';
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
-				var r = new HttpRequestMessage (HttpMethod.Put, LocalServer);
+				var r = new HttpRequestMessage (HttpMethod.Put, $"http://localhost:{port}/");
 				r.Content = new StringContent ("my text");
 				var response = client.SendAsync (r).Result;
 
@@ -996,15 +1037,16 @@ namespace MonoTests.System.Net.Http
 		public void Send_Content_Put_CustomStream ()
 		{
 			bool passed = false;
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 				passed = 44 == request.ContentLength64;
 				passed &= request.ContentType == null;
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
-				var r = new HttpRequestMessage (HttpMethod.Put, LocalServer);
+				var r = new HttpRequestMessage (HttpMethod.Put, $"http://localhost:{port}/");
 				r.Content = new StreamContent (new CustomStream ());
 				var response = client.SendAsync (r).Result;
 
@@ -1100,6 +1142,7 @@ namespace MonoTests.System.Net.Http
 		public void Post_TransferEncodingChunked ()
 		{
 			bool? failed = null;
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				try {
 					var request = l.Request;
@@ -1109,7 +1152,7 @@ namespace MonoTests.System.Net.Http
 					Assert.IsNull (request.ContentType, "#3");
 					Assert.AreEqual (0, request.Cookies.Count, "#4");
 					Assert.IsTrue (request.HasEntityBody, "#5");
-					Assert.AreEqual (TestHost, request.Headers ["Host"], "#6b");
+					Assert.AreEqual ($"localhost:{port}", request.Headers ["Host"], "#6b");
 					Assert.AreEqual ("POST", request.HttpMethod, "#7");
 					Assert.IsFalse (request.IsAuthenticated, "#8");
 					Assert.IsTrue (request.IsLocal, "#9");
@@ -1128,7 +1171,7 @@ namespace MonoTests.System.Net.Http
 					failed = true;
 					Console.WriteLine (e);
 				}
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
@@ -1137,7 +1180,7 @@ namespace MonoTests.System.Net.Http
 
 				var imageContent = new StreamContent (new MemoryStream ());
 
-				var response = client.PostAsync (LocalServer, imageContent).Result;
+				var response = client.PostAsync ($"http://localhost:{port}/", imageContent).Result;
 
 				Assert.AreEqual(HttpStatusCode.OK, response.StatusCode, "#101");
 				Assert.AreEqual(false, failed, "#102");
@@ -1153,6 +1196,7 @@ namespace MonoTests.System.Net.Http
 		public void Post_StreamCaching ()
 		{
 			bool? failed = null;
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				try {
 					var request = l.Request;
@@ -1162,7 +1206,7 @@ namespace MonoTests.System.Net.Http
 					Assert.IsNull (request.ContentType, "#3");
 					Assert.AreEqual (0, request.Cookies.Count, "#4");
 					Assert.IsFalse (request.HasEntityBody, "#5");
-					Assert.AreEqual (TestHost, request.Headers ["Host"], "#6b");
+					Assert.AreEqual ($"localhost:{port}", request.Headers ["Host"], "#6b");
 					Assert.AreEqual ("POST", request.HttpMethod, "#7");
 					Assert.IsFalse (request.IsAuthenticated, "#8");
 					Assert.IsTrue (request.IsLocal, "#9");
@@ -1181,14 +1225,14 @@ namespace MonoTests.System.Net.Http
 					failed = true;
 					Console.WriteLine (e);
 				}
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
 
 				var imageContent = new StreamContent (new MemoryStream ());
 
-				var response = client.PostAsync (LocalServer, imageContent).Result;
+				var response = client.PostAsync ($"http://localhost:{port}/", imageContent).Result;
 
 				Assert.AreEqual(HttpStatusCode.OK, response.StatusCode, "#101");
 				Assert.AreEqual(false, failed, "#102");
@@ -1214,13 +1258,14 @@ namespace MonoTests.System.Net.Http
 				response.OutputStream.WriteByte (0x6f);
 			};
 
-			var listener = CreateListener (context); // creates a default request handler
+			var port = NetworkHelpers.FindFreePort ();
+			var listener = CreateListener (context, port); // creates a default request handler
 			AddListenerContext (listener, context);  // add another request handler for the second request
 
 			try {
 				var client = new HttpClient ();
-				var t1 = client.GetStringAsync (LocalServer);
-				var t2 = client.GetStringAsync (LocalServer);
+				var t1 = client.GetStringAsync ($"http://localhost:{port}/");
+				var t2 = client.GetStringAsync ($"http://localhost:{port}/");
 				Assert.IsTrue (Task.WaitAll (new [] { t1, t2 }, WaitTimeout));
 				Assert.AreEqual ("hello", t1.Result, "#1");
 				Assert.AreEqual ("hello", t2.Result, "#2");
@@ -1236,16 +1281,17 @@ namespace MonoTests.System.Net.Http
 #endif
 		public void GetByteArray_ServerError ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var response = l.Response;
 				response.StatusCode = 500;
 				l.Response.OutputStream.WriteByte (72);
-			});
+			}, port);
 
 			try {
 				var client = new HttpClient ();
 				try {
-					client.GetByteArrayAsync (LocalServer).Wait (WaitTimeout);
+					client.GetByteArrayAsync ($"http://localhost:{port}/").Wait (WaitTimeout);
 					Assert.Fail ("#1");
 				} catch (AggregateException e) {
 					Assert.IsTrue (e.InnerException is HttpRequestException , "#2");
@@ -1261,13 +1307,14 @@ namespace MonoTests.System.Net.Http
 #endif
 		public void DisallowAutoRedirect ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 				var response = l.Response;
 				
 				response.StatusCode = (int)HttpStatusCode.Moved;
 				response.RedirectLocation = "http://xamarin.com/";
-			});
+			}, port);
 
 			try {
 				var chandler = new HttpClientHandler ();
@@ -1275,7 +1322,7 @@ namespace MonoTests.System.Net.Http
 				var client = new HttpClient (chandler);
 
 				try {
-					client.GetStringAsync (LocalServer).Wait (WaitTimeout);
+					client.GetStringAsync ($"http://localhost:{port}/").Wait (WaitTimeout);
 					Assert.Fail ("#1");
 				} catch (AggregateException e) {
 					Assert.IsTrue (e.InnerException is HttpRequestException, "#2");
@@ -1292,13 +1339,16 @@ namespace MonoTests.System.Net.Http
 #endif
 		public void RequestUriAfterRedirect ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
+			var redirectPort = NetworkHelpers.FindFreePort ();
+
 			var listener = CreateListener (l => {
 				var request = l.Request;
 				var response = l.Response;
 
 				response.StatusCode = (int)HttpStatusCode.Moved;
-				response.RedirectLocation = "http://localhost:8811/";
-			});
+				response.RedirectLocation = $"http://localhost:{redirectPort}/";
+			}, port);
 
 			var listener2 = CreateListener (l => {
 				var response = l.Response;
@@ -1309,17 +1359,17 @@ namespace MonoTests.System.Net.Http
 				response.OutputStream.WriteByte (0x6c);
 				response.OutputStream.WriteByte (0x6c);
 				response.OutputStream.WriteByte (0x6f);
-			}, 8811);
+			}, redirectPort);
 
 			try {
 				var chandler = new HttpClientHandler ();
 				chandler.AllowAutoRedirect = true;
 				var client = new HttpClient (chandler);
 
-				var r = client.GetAsync (LocalServer);
+				var r = client.GetAsync ($"http://localhost:{port}/");
 				Assert.IsTrue (r.Wait (WaitTimeout), "#1");
 				var resp = r.Result;
-				Assert.AreEqual ("http://localhost:8811/", resp.RequestMessage.RequestUri.AbsoluteUri, "#2");
+				Assert.AreEqual ($"http://localhost:{redirectPort}/", resp.RequestMessage.RequestUri.AbsoluteUri, "#2");
 				Assert.AreEqual ("hello", resp.Content.ReadAsStringAsync ().Result, "#3");
 			} finally {
 				listener.Abort ();
@@ -1342,14 +1392,15 @@ namespace MonoTests.System.Net.Http
 			chandler.AllowAutoRedirect = true;
 			var client = new HttpClient (chandler, true);
 
+			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var response = l.Response;
 				response.StatusCode = 200;
 				response.OutputStream.WriteByte (55);
-			});
+			}, port);
 
 			try {
-				client.GetStringAsync (LocalServer).Wait (WaitTimeout);
+				client.GetStringAsync ($"http://localhost:{port}/").Wait (WaitTimeout);
 				try {
 					chandler.AllowAutoRedirect = false;
 					Assert.Fail ("#1");
@@ -1388,15 +1439,29 @@ namespace MonoTests.System.Net.Http
 			ch.AllowAutoRedirect = false;
 		}
 
-		HttpListener CreateListener (Action<HttpListenerContext> contextAssert)
+#if !FEATURE_NO_BSD_SOCKETS
+		[Test]
+		// https://github.com/mono/mono/issues/7355
+		public void WildcardConnect ()
 		{
-			return CreateListener (contextAssert, port);
+			try {
+				using (var client = new HttpClient ()) {
+					client.GetAsync ("http://255.255.255.255").Wait (WaitTimeout);
+				}
+			} catch (AggregateException e) {
+				Assert.That (e.InnerException, Is.InstanceOf<HttpRequestException> (), "#1");
+				var rex = (HttpRequestException)e.InnerException;
+				Assert.That (rex.InnerException, Is.InstanceOf<WebException> (), "#2");
+				var wex = (WebException)rex.InnerException;
+				Assert.That (wex.Status, Is.EqualTo (WebExceptionStatus.ConnectFailure), "#3");
+			}
 		}
+#endif
 
 		HttpListener CreateListener (Action<HttpListenerContext> contextAssert, int port)
 		{
 			var l = new HttpListener ();
-			l.Prefixes.Add (string.Format ("http://+:{0}/", port));
+			l.Prefixes.Add (string.Format ("http://*:{0}/", port));
 			l.Start ();
 			AddListenerContext(l, contextAssert);
 

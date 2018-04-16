@@ -2,9 +2,7 @@ namespace System.Diagnostics.Private
 {
 	static partial class Debug
 	{
-		static readonly string NewLine = Environment.NewLine;
-
-		static void ShowAssertDialog (string stackTrace, string message, string detailMessage)
+		static void ShowDialog (string stackTrace, string message, string detailMessage, string errorSource)
 		{
 			// FIXME should we g_error in this case?
 		}

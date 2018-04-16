@@ -9,6 +9,8 @@ my @errors = ();
 my $total_errors = 0; # this is reset before each test
 my $global_errors = 0;
 my $report;
+my $nunit_testcase_name;
+my $nunit_testcase_xml;
 
 my $profbuilddir = $builddir . "/mono/profiler";
 my $minibuilddir = $builddir . "/mono/mini";
@@ -20,49 +22,55 @@ append_path ("DYLD_LIBRARY_PATH", $minibuilddir . "/.libs");
 append_path ("PATH", $profbuilddir);
 
 # first a basic test
-$report = run_test ("test-alloc.exe");
+$report = run_test ("test-alloc.exe", "report,legacy,calls,alloc");
 check_report_basics ($report);
 check_report_calls ($report, "T:Main (string[])" => 1);
 check_report_allocation ($report, "System.Object" => 1000000);
 report_errors ();
+add_nunit_testcase_result ();
 # test additional named threads and method calls
-$report = run_test ("test-busy.exe");
+$report = run_test ("test-busy.exe", "report,legacy,calls,alloc");
 check_report_basics ($report);
 check_report_calls ($report, "T:Main (string[])" => 1);
 check_report_threads ($report, "BusyHelper");
 check_report_calls ($report, "T:test ()" => 10, "T:test3 ()" => 10, "T:test2 ()" => 1);
 report_errors ();
+add_nunit_testcase_result ();
 # test with the sampling profiler
-$report = run_test ("test-busy.exe", "report,sample");
+$report = run_test ("test-busy.exe", "report,legacy,sample");
 check_report_basics ($report);
 check_report_threads ($report, "BusyHelper");
 # at least 40% of the samples should hit each of the two busy methods
 # This seems to fail on osx, where the main thread gets the majority of SIGPROF signals
 #check_report_samples ($report, "T:test ()" => 40, "T:test3 ()" => 40);
 report_errors ();
+add_nunit_testcase_result ();
 # test lock events
-$report = run_test ("test-monitor.exe");
+$report = run_test ("test-monitor.exe", "report,legacy,calls,alloc");
 check_report_basics ($report);
 check_report_calls ($report, "T:Main (string[])" => 1);
 # we hope for at least some contention, this is not entirely reliable
 check_report_locks ($report, 1, 1);
 report_errors ();
+add_nunit_testcase_result ();
 # test exceptions
-$report = run_test ("test-excleave.exe");
+$report = run_test ("test-excleave.exe", "report,legacy,calls");
 check_report_basics ($report);
 check_report_calls ($report, "T:Main (string[])" => 1, "T:throw_ex ()" => 1000);
 check_report_exceptions ($report, 1000, 1000, 1000);
 report_errors ();
+add_nunit_testcase_result ();
 # test heapshot
-$report = run_test_sgen ("test-heapshot.exe", "report,heapshot");
+$report = run_test_sgen ("test-heapshot.exe", "report,heapshot,legacy");
 if ($report ne "missing binary") {
 	check_report_basics ($report);
 	check_report_heapshot ($report, 0, {"T" => 5000});
 	check_report_heapshot ($report, 1, {"T" => 5023});
 	report_errors ();
+	add_nunit_testcase_result ();
 }
 # test heapshot traces
-$report = run_test_sgen ("test-heapshot.exe", "heapshot,output=-traces.mlpd", "--traces traces.mlpd");
+$report = run_test_sgen ("test-heapshot.exe", "heapshot,output=traces.mlpd,legacy", "--traces traces.mlpd");
 if ($report ne "missing binary") {
 	check_report_basics ($report);
 	check_report_heapshot ($report, 0, {"T" => 5000});
@@ -74,9 +82,10 @@ if ($report ne "missing binary") {
 		T => [5022, "T"]
 	);
 	report_errors ();
+	add_nunit_testcase_result ();
 }
 # test traces
-$report = run_test ("test-traces.exe", "output=-traces.mlpd", "--traces traces.mlpd");
+$report = run_test ("test-traces.exe", "legacy,calls,alloc,output=traces.mlpd", "--maxframes=7 --traces traces.mlpd");
 check_report_basics ($report);
 check_call_traces ($report,
 	"T:level3 (int)" => [2020, "T:Main (string[])"],
@@ -91,8 +100,9 @@ check_alloc_traces ($report,
 	T => [1010, "T:Main (string[])", "T:level3 (int)", "T:level2 (int)", "T:level1 (int)", "T:level0 (int)"]
 );
 report_errors ();
+add_nunit_testcase_result ();
 # test traces without enter/leave events
-$report = run_test ("test-traces.exe", "nocalls,output=-traces.mlpd", "--traces traces.mlpd");
+$report = run_test ("test-traces.exe", "legacy,alloc,output=traces.mlpd", "--traces traces.mlpd");
 check_report_basics ($report);
 # this has been broken recently
 check_exception_traces ($report,
@@ -102,6 +112,7 @@ check_alloc_traces ($report,
 	T => [1010, "T:Main (string[])", "T:level3 (int)", "T:level2 (int)", "T:level1 (int)", "T:level0 (int)"]
 );
 report_errors ();
+add_nunit_testcase_result ();
 
 emit_nunit_report();
 
@@ -138,6 +149,7 @@ sub run_test_bin
 	@errors = ();
 	$total_errors = 0;
 	print "Checking $test_name with $option ...";
+	$nunit_testcase_name = "$test_name($option)";
 	unless (-x $bin) {
 		print "missing $bin, skipped.\n";
 		return "missing binary";
@@ -159,6 +171,34 @@ sub report_errors
 	}
 	print "Total errors: $total_errors\n" if $total_errors;
 	#print $report;
+}
+
+sub add_nunit_testcase_result
+{
+	my $successbool;
+	if ($total_errors > 0) {
+		$successbool = "False";
+	} else {
+		$successbool = "True";
+	}
+
+	$nunit_testcase_xml .= "              <test-case name=\"MonoTests.profiler.$nunit_testcase_name\" executed=\"True\" success=\"$successbool\" time=\"0\" asserts=\"0\"";
+	if ($total_errors > 0) {
+		$nunit_testcase_xml .=  ">\n";
+		$nunit_testcase_xml .=  "                <failure>\n";
+		$nunit_testcase_xml .=  "                  <message><![CDATA[";
+		foreach my $e (@errors) {
+			$nunit_testcase_xml .= "Error: $e\n";
+		}
+		$nunit_testcase_xml .= "]]></message>\n";
+		$nunit_testcase_xml .=  "                  <stack-trace><![CDATA[";
+		$nunit_testcase_xml .=  $report;
+		$nunit_testcase_xml .=  "]]></stack-trace>\n";
+		$nunit_testcase_xml .=  "                </failure>\n";
+		$nunit_testcase_xml .=  "              </test-case>\n";
+	} else {
+		$nunit_testcase_xml .= " />\n";
+	}
 }
 
 sub emit_nunit_report
@@ -192,20 +232,7 @@ sub emit_nunit_report
 	print $nunitxml "        <results>\n";
 	print $nunitxml "          <test-suite name=\"profiler\" success=\"$successbool\" time=\"0\" asserts=\"0\">\n";
 	print $nunitxml "            <results>\n";
-	print $nunitxml "              <test-case name=\"MonoTests.profiler.100percentsuccess\" executed=\"True\" success=\"$successbool\" time=\"0\" asserts=\"0\"";
-	if ( $failed > 0) {
-	print $nunitxml ">\n";
-	print $nunitxml "                <failure>\n";
-	print $nunitxml "                  <message><![CDATA[";
-	print $nunitxml "The profiler tests returned an error. Check the log for more details.";
-	print $nunitxml "]]></message>\n";
-	print $nunitxml "                  <stack-trace>\n";
-	print $nunitxml "                  </stack-trace>\n";
-	print $nunitxml "                </failure>\n";
-	print $nunitxml "              </test-case>\n";
-	} else {
-	print $nunitxml " />\n";
-	}
+	print $nunitxml $nunit_testcase_xml;
 	print $nunitxml "            </results>\n";
 	print $nunitxml "          </test-suite>\n";
 	print $nunitxml "        </results>\n";
@@ -317,8 +344,10 @@ sub check_alloc_traces
 			while (@desc) {
 				my $dm = pop @desc;
 				my $fm = pop @frames;
-				$fm = pop @frames if $fm =~ /wrapper/;
-				push @errors, "Wrong frame $fm for alloc of $type." unless $dm eq $fm;
+				while ($fm =~ /wrapper/) {
+					$fm = pop @frames;
+				}
+				push @errors, "Wrong frame $fm for alloc of $type (expected $dm)." unless $dm eq $fm;
 			}
 		} else {
 			push @errors, "No alloc frames for $type.";

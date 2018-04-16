@@ -9,7 +9,6 @@ namespace System.Runtime.Caching {
     internal class MemoryCacheKey {
         private String _key;
         private int _hash;
-        protected byte _bits;
 
         internal int Hash { get { return _hash; } }
         internal String Key { get { return _key; } }

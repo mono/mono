@@ -26,8 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Converters;
 using System.Windows.Markup;
 
@@ -109,29 +109,84 @@ namespace System.Windows {
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			unchecked
+			{
+				var hashCode = _x;
+				hashCode = (hashCode * 397) ^ _y;
+				hashCode = (hashCode * 397) ^ _width;
+				hashCode = (hashCode * 397) ^ _height;
+				return hashCode;
+			}
 		}
 
 		public static Int32Rect Parse (string source)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			Int32Rect value;
+			if (source.Trim () == "Empty")
+			{
+				value = Empty;
+			}
+			else
+			{
+				var tokenizer = new NumericListTokenizer (source, CultureInfo.InvariantCulture);
+				int x;
+				int y;
+				int width;
+				int height;
+				if (int.TryParse (tokenizer.GetNextToken (), NumberStyles.Integer, CultureInfo.InvariantCulture, out x)
+				    && int.TryParse (tokenizer.GetNextToken (), NumberStyles.Integer, CultureInfo.InvariantCulture, out y)
+				    && int.TryParse (tokenizer.GetNextToken (), NumberStyles.Integer, CultureInfo.InvariantCulture, out width)
+				    && int.TryParse (tokenizer.GetNextToken (), NumberStyles.Integer, CultureInfo.InvariantCulture, out height))
+				{
+					if (!tokenizer.HasNoMoreTokens ())
+					{
+						throw new InvalidOperationException ("Invalid Int32Rect format: " + source);
+					}
+					value = new Int32Rect (x, y, width, height);
+				}
+				else
+				{
+					throw new FormatException (string.Format ("Invalid Int32Rect format: {0}", source));
+				}
+			}
+			return value;
 		}
 
 		public override string ToString ()
 		{
-			if (IsEmpty)
-				return "Empty";
-			return String.Format ("{0},{1},{2},{3}", _x, _y, _width, _height);
+			return ToString (null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ToString (null, provider);
 		}
 
 		string IFormattable.ToString (string format, IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ToString (provider);
+		}
+
+		private string ToString (string format, IFormatProvider provider)
+		{
+			if (IsEmpty)
+				return "Empty";
+
+			if (provider == null)
+				provider = CultureInfo.CurrentCulture;
+
+			if (format == null)
+				format = string.Empty;
+
+			var separator = NumericListTokenizer.GetSeparator (provider);
+
+			var rectFormat = string.Format (
+				"{{0:{0}}}{1}{{1:{0}}}{1}{{2:{0}}}{1}{{3:{0}}}",
+				format, separator);
+			return string.Format (provider, rectFormat,
+				_x, _y, _width, _height);
 		}
 	}
 }

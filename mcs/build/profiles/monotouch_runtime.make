@@ -8,7 +8,7 @@ MCS = $(BOOTSTRAP_MCS)
 profile-check:
 	@:
 
-DEFAULT_REFERENCES = -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+DEFAULT_REFERENCES = mscorlib
 PROFILE_MCS_FLAGS = \
 	-d:NET_1_1 \
 	-d:NET_2_0 \
@@ -24,10 +24,10 @@ PROFILE_MCS_FLAGS = \
 	-d:FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK \
 	-nowarn:1699 \
 	-nostdlib \
-	$(DEFAULT_REFERENCES) \
 	$(PLATFORM_DEBUG_FLAGS) \
 	$(MONOTOUCH_MCS_FLAGS)
 
+API_BIN_PROFILE = build/monotouch
 FRAMEWORK_VERSION = 2.1
 
 # This is utility build only

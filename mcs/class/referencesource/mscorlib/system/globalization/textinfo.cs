@@ -617,7 +617,7 @@ namespace System.Globalization {
 #endif
         }
 
-        static private Char ToUpperAsciiInvariant(Char c)
+        static internal Char ToUpperAsciiInvariant(Char c)
         {
             if ('a' <= c && c <= 'z')
             {

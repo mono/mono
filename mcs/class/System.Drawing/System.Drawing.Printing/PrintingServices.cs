@@ -54,10 +54,10 @@ namespace System.Drawing.Printing
 		
 		internal void LoadDefaultResolutions (PrinterSettings.PrinterResolutionCollection col)
 		{
-			col.Add (new PrinterResolution ((int) PrinterResolutionKind.High, -1, PrinterResolutionKind.High));
-			col.Add (new PrinterResolution ((int) PrinterResolutionKind.Medium, -1, PrinterResolutionKind.Medium));
-			col.Add (new PrinterResolution ((int) PrinterResolutionKind.Low, -1, PrinterResolutionKind.Low));
-			col.Add (new PrinterResolution ((int) PrinterResolutionKind.Draft, -1, PrinterResolutionKind.Draft));
+			col.Add (new PrinterResolution (PrinterResolutionKind.High, (int) PrinterResolutionKind.High, -1));
+			col.Add (new PrinterResolution (PrinterResolutionKind.Medium, (int) PrinterResolutionKind.Medium, -1));
+			col.Add (new PrinterResolution (PrinterResolutionKind.Low, (int) PrinterResolutionKind.Low, -1));
+			col.Add (new PrinterResolution (PrinterResolutionKind.Draft, (int) PrinterResolutionKind.Draft, -1));
 		}
 		#endregion
 	}

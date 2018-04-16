@@ -839,6 +839,11 @@ namespace Mono.CSharp {
 		{
 			GetFieldExpression (ec).EmitAssign (ec, source, leave_copy, false);
 		}
+
+		public void EmitAssignFromStack (EmitContext ec)
+		{
+			GetFieldExpression (ec).EmitAssignFromStack (ec);
+		}
 	}
 
 	public class HoistedParameter : HoistedVariable
@@ -1652,9 +1657,10 @@ namespace Mono.CSharp {
 			fc.TryFinally = prev_tf;
 		}
 
-		public override void MarkReachable (Reachability rc)
+		public override Reachability MarkReachable (Reachability rc)
 		{
 			block.MarkReachable (rc);
+			return rc;
 		}
 
 		public void SetHasThisAccess ()

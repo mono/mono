@@ -47,6 +47,7 @@ public class ServicePointManagerTest
 	}
 
         [Test, ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		[Category ("InetAccess")]
         public void MaxServicePointManagers ()
         {
@@ -85,7 +86,8 @@ public class ServicePointManagerTest
 		//WriteServicePoint (sp);
 	}
 	
-        [Test]
+	[Test]
+	[Category ("InetAccess")]
 #if FEATURE_NO_BSD_SOCKETS
 	[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif

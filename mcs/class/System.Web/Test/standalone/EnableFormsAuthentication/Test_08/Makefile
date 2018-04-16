@@ -12,7 +12,7 @@ APPLICATION_ASSEMBLY_MCS_FLAGS = \
 	-debug:full \
 	-r:System.Web.dll
 
-VALID_PROFILE := $(filter 4.0, $(FRAMEWORK_VERSION))
+VALID_PROFILE := $(filter 4.5, $(FRAMEWORK_VERSION))
 
 ifndef VALID_PROFILE
 all:

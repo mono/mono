@@ -23,6 +23,7 @@ using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Globalization;
+using System.Security.Authentication;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,8 +37,13 @@ namespace Mono.Net.Security
 {
 	abstract class MobileAuthenticatedStream : AuthenticatedStream, MSI.IMonoSslStream
 	{
+		/*
+		 * This is intentionally called `xobileTlsContext'.  It is a "dangerous" object
+		 * that must not be touched outside the `ioLock' and we need to be very careful
+		 * where we access it.
+		 */
 		MobileTlsContext xobileTlsContext;
-		Exception lastException;
+		ExceptionDispatchInfo lastException;
 
 		AsyncProtocolRequest asyncHandshakeRequest;
 		AsyncProtocolRequest asyncReadRequest;
@@ -47,11 +53,12 @@ namespace Mono.Net.Security
 
 		object ioLock = new object ();
 		int closeRequested;
+		bool shutdown;
 
 		static int uniqueNameInteger = 123;
 
 		public MobileAuthenticatedStream (Stream innerStream, bool leaveInnerStreamOpen, SslStream owner,
-		                                  MSI.MonoTlsSettings settings, MSI.MonoTlsProvider provider)
+						  MSI.MonoTlsSettings settings, MSI.MonoTlsProvider provider)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
 			SslStream = owner;
@@ -78,40 +85,45 @@ namespace Mono.Net.Security
 			get { return xobileTlsContext != null; }
 		}
 
-		internal MobileTlsContext Context {
-			get {
-				CheckThrow (true);
-				return xobileTlsContext;
-			}
-		}
-
-		internal void CheckThrow (bool authSuccessCheck)
+		internal void CheckThrow (bool authSuccessCheck, bool shutdownCheck = false)
 		{
-			if (closeRequested != 0)
-				throw new InvalidOperationException ("Stream is closed.");
 			if (lastException != null)
-				throw lastException;
+				lastException.Throw ();
 			if (authSuccessCheck && !IsAuthenticated)
-				throw new InvalidOperationException ("Must be authenticated.");
+				throw new InvalidOperationException (SR.net_auth_noauth);
+			if (shutdownCheck && shutdown)
+				throw new InvalidOperationException (SR.net_ssl_io_already_shutdown);
 		}
 
-		Exception SetException (Exception e)
+		internal static Exception GetSSPIException (Exception e)
 		{
-			e = SetException_internal (e);
-			if (e != null && xobileTlsContext != null)
-				xobileTlsContext.Dispose ();
-			return e;
+			if (e is OperationCanceledException || e is IOException || e is ObjectDisposedException || e is AuthenticationException)
+				return e;
+			return new AuthenticationException (SR.net_auth_SSPI, e);
 		}
 
-		Exception SetException_internal (Exception e)
+		internal static Exception GetIOException (Exception e, string message)
 		{
-			if (lastException == null)
-				lastException = e;
-			return lastException;
+			if (e is OperationCanceledException || e is IOException || e is ObjectDisposedException || e is AuthenticationException)
+				return e;
+			return new IOException (message, e);
+		}
+
+		internal ExceptionDispatchInfo SetException (Exception e)
+		{
+			var info = ExceptionDispatchInfo.Capture (e);
+			var old = Interlocked.CompareExchange (ref lastException, info, null);
+			return old ?? info;
 		}
 
 		SslProtocols DefaultProtocols {
 			get { return SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls; }
+		}
+
+		enum OperationType {
+			Read,
+			Write,
+			Shutdown
 		}
 
 		public void AuthenticateAsClient (string targetHost)
@@ -121,8 +133,8 @@ namespace Mono.Net.Security
 
 		public void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			ValidateCreateContext (false, targetHost, enabledSslProtocols, null, clientCertificates, false);
-			ProcessAuthentication (null);
+			var task = ProcessAuthentication (true, false, targetHost, enabledSslProtocols, null, clientCertificates, false);
+			task.Wait ();
 		}
 
 		public IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState)
@@ -132,15 +144,13 @@ namespace Mono.Net.Security
 
 		public IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
 		{
-			ValidateCreateContext (false, targetHost, enabledSslProtocols, null, clientCertificates, false);
-			var result = new LazyAsyncResult (this, asyncState, asyncCallback);
-			ProcessAuthentication (result);
-			return result;
+			var task = ProcessAuthentication (false, false, targetHost, enabledSslProtocols, null, clientCertificates, false);
+			return TaskToApm.Begin (task, asyncCallback, asyncState);
 		}
 
 		public void EndAuthenticateAsClient (IAsyncResult asyncResult)
 		{
-			EndProcessAuthentication (asyncResult);
+			TaskToApm.End (asyncResult);
 		}
 
 		public void AuthenticateAsServer (X509Certificate serverCertificate)
@@ -150,8 +160,8 @@ namespace Mono.Net.Security
 
 		public void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			ValidateCreateContext (true, string.Empty, enabledSslProtocols, serverCertificate, null, clientCertificateRequired);
-			ProcessAuthentication (null);
+			var task = ProcessAuthentication (true, true, string.Empty, enabledSslProtocols, serverCertificate, null, clientCertificateRequired);
+			task.Wait ();
 		}
 
 		public IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState)
@@ -161,249 +171,250 @@ namespace Mono.Net.Security
 
 		public IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
 		{
-			ValidateCreateContext (true, string.Empty, enabledSslProtocols, serverCertificate, null, clientCertificateRequired);
-			var result = new LazyAsyncResult (this, asyncState, asyncCallback);
-			ProcessAuthentication (result);
-			return result;
+			var task = ProcessAuthentication (false, true, string.Empty, enabledSslProtocols, serverCertificate, null, clientCertificateRequired);
+			return TaskToApm.Begin (task, asyncCallback, asyncState);
 		}
 
 		public void EndAuthenticateAsServer (IAsyncResult asyncResult)
 		{
-			EndProcessAuthentication (asyncResult);
+			TaskToApm.End (asyncResult);
 		}
 
 		public Task AuthenticateAsClientAsync (string targetHost)
 		{
-			return Task.Factory.FromAsync (BeginAuthenticateAsClient, EndAuthenticateAsClient, targetHost, null);
+			return ProcessAuthentication (false, false, targetHost, DefaultProtocols, null, null, false);
 		}
 
 		public Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			return Task.Factory.FromAsync ((callback, state) => BeginAuthenticateAsClient (targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation, callback, state), EndAuthenticateAsClient, null);
+			return ProcessAuthentication (false, false, targetHost, enabledSslProtocols, null, clientCertificates, false);
 		}
 
 		public Task AuthenticateAsServerAsync (X509Certificate serverCertificate)
 		{
-			return Task.Factory.FromAsync (BeginAuthenticateAsServer, EndAuthenticateAsServer, serverCertificate, null);
+			return AuthenticateAsServerAsync (serverCertificate, false, DefaultProtocols, false);
 		}
 
 		public Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			return Task.Factory.FromAsync ((callback, state) => BeginAuthenticateAsServer (serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation, callback, state), EndAuthenticateAsServer, null);
+			return ProcessAuthentication (false, true, string.Empty, enabledSslProtocols, serverCertificate, null, clientCertificateRequired);
+		}
+
+		public Task ShutdownAsync ()
+		{
+			Debug ("ShutdownAsync");
+
+			/*
+			 * SSLClose() is a little bit tricky as it might attempt to send a close_notify alert
+			 * and thus call our write callback.
+			 *
+			 * It is also not thread-safe with SSLRead() or SSLWrite(), so we need to take the I/O lock here.
+			 */
+			var asyncRequest = new AsyncShutdownRequest (this);
+			var task = StartOperation (OperationType.Shutdown, asyncRequest, CancellationToken.None);
+			return task;
 		}
 
 		public AuthenticatedStream AuthenticatedStream {
 			get { return this; }
 		}
 
-		internal void ProcessAuthentication (LazyAsyncResult lazyResult)
+		async Task ProcessAuthentication (
+			bool runSynchronously, bool serverMode, string targetHost, SslProtocols enabledProtocols,
+			X509Certificate serverCertificate, X509CertificateCollection clientCertificates, bool clientCertRequired)
 		{
-			var asyncRequest = new AsyncProtocolRequest (this, lazyResult);
-			if (Interlocked.CompareExchange (ref asyncHandshakeRequest, asyncRequest, null) != null)
-				throw new InvalidOperationException ("Invalid nested call.");
-
-			try {
-				if (lastException != null)
-					throw lastException;
-				if (xobileTlsContext == null)
-					throw new InvalidOperationException ();
-
-				readBuffer.Reset ();
-				writeBuffer.Reset ();
-
-				try {
-					asyncRequest.StartOperation (ProcessHandshake);
-				} catch (Exception ex) {
-					ExceptionDispatchInfo.Capture (SetException (ex)).Throw ();
-				}
-			} finally {
-				if (lazyResult == null || lastException != null) {
-					readBuffer.Reset ();
-					writeBuffer.Reset ();
-					asyncHandshakeRequest = null;
-				}
-			}
-		}
-
-		internal void EndProcessAuthentication (IAsyncResult result)
-		{
-			if (result == null)
-				throw new ArgumentNullException ("asyncResult");
-
-			var lazyResult = (LazyAsyncResult)result;
-			if (Interlocked.Exchange (ref asyncHandshakeRequest, null) == null)
-				throw new InvalidOperationException ("Invalid end call.");
-
-			lazyResult.InternalWaitForCompletion ();
-
-			readBuffer.Reset ();
-			writeBuffer.Reset ();
-
-			var e = lazyResult.Result as Exception;
-			if (e != null)
-				ExceptionDispatchInfo.Capture (SetException (e)).Throw ();
-		}
-
-		internal void ValidateCreateContext (bool serverMode, string targetHost, SslProtocols enabledProtocols, X509Certificate serverCertificate, X509CertificateCollection clientCertificates, bool clientCertRequired)
-		{
-			if (xobileTlsContext != null)
-				throw new InvalidOperationException ();
-
 			if (serverMode) {
 				if (serverCertificate == null)
-					throw new ArgumentException ("serverCertificate");
-			} else {				
+					throw new ArgumentException (nameof (serverCertificate));
+			} else {
 				if (targetHost == null)
-					throw new ArgumentException ("targetHost");
+					throw new ArgumentException (nameof (targetHost));
 				if (targetHost.Length == 0)
 					targetHost = "?" + Interlocked.Increment (ref uniqueNameInteger).ToString (NumberFormatInfo.InvariantInfo);
 			}
 
-			xobileTlsContext = CreateContext (this, serverMode, targetHost, enabledProtocols, serverCertificate, clientCertificates, clientCertRequired);
+			if (lastException != null)
+				lastException.Throw ();
+
+			var asyncRequest = new AsyncHandshakeRequest (this, runSynchronously);
+			if (Interlocked.CompareExchange (ref asyncHandshakeRequest, asyncRequest, null) != null)
+				throw new InvalidOperationException ("Invalid nested call.");
+			// Make sure no other async requests can be started during the handshake.
+			if (Interlocked.CompareExchange (ref asyncReadRequest, asyncRequest, null) != null)
+				throw new InvalidOperationException ("Invalid nested call.");
+			if (Interlocked.CompareExchange (ref asyncWriteRequest, asyncRequest, null) != null)
+				throw new InvalidOperationException ("Invalid nested call.");
+
+			AsyncProtocolResult result;
+
+			try {
+				lock (ioLock) {
+					if (xobileTlsContext != null)
+						throw new InvalidOperationException ();
+					readBuffer.Reset ();
+					writeBuffer.Reset ();
+
+					xobileTlsContext = CreateContext (
+						serverMode, targetHost, enabledProtocols, serverCertificate,
+						clientCertificates, clientCertRequired);
+				}
+
+				try {
+					result = await asyncRequest.StartOperation (CancellationToken.None).ConfigureAwait (false);
+				} catch (Exception ex) {
+					result = new AsyncProtocolResult (SetException (GetSSPIException (ex)));
+				}
+			} finally {
+				lock (ioLock) {
+					readBuffer.Reset ();
+					writeBuffer.Reset ();
+					asyncWriteRequest = null;
+					asyncReadRequest = null;
+					asyncHandshakeRequest = null;
+				}
+			}
+
+			if (result.Error != null)
+				result.Error.Throw ();
 		}
 
 		protected abstract MobileTlsContext CreateContext (
-			MobileAuthenticatedStream parent, bool serverMode, string targetHost,
-			SSA.SslProtocols enabledProtocols, X509Certificate serverCertificate,
-			X509CertificateCollection clientCertificates, bool askForClientCert);
+			bool serverMode, string targetHost, SSA.SslProtocols enabledProtocols,
+			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
+			bool askForClientCert);
 
 		public override IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
 		{
-			return BeginReadOrWrite (ref asyncReadRequest, ref readBuffer, ProcessRead, new BufferOffsetSize (buffer, offset, count), asyncCallback, asyncState);
+			var asyncRequest = new AsyncReadRequest (this, false, buffer, offset, count);
+			var task = StartOperation (OperationType.Read, asyncRequest, CancellationToken.None);
+			return TaskToApm.Begin (task, asyncCallback, asyncState);
 		}
 
 		public override int EndRead (IAsyncResult asyncResult)
 		{
-			return (int)EndReadOrWrite (asyncResult, ref asyncReadRequest);
+			return TaskToApm.End<int> (asyncResult);
 		}
 
 		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
 		{
-			return BeginReadOrWrite (ref asyncWriteRequest, ref writeBuffer, ProcessWrite, new BufferOffsetSize (buffer, offset, count), asyncCallback, asyncState);
+			var asyncRequest = new AsyncWriteRequest (this, false, buffer, offset, count);
+			var task = StartOperation (OperationType.Write, asyncRequest, CancellationToken.None);
+			return TaskToApm.Begin (task, asyncCallback, asyncState);
 		}
 
 		public override void EndWrite (IAsyncResult asyncResult)
 		{
-			EndReadOrWrite (asyncResult, ref asyncWriteRequest);
+			TaskToApm.End (asyncResult);
 		}
 
 		public override int Read (byte[] buffer, int offset, int count)
 		{
-			return ProcessReadOrWrite (ref asyncReadRequest, ref readBuffer, ProcessRead, new BufferOffsetSize (buffer, offset, count), null);
+			var asyncRequest = new AsyncReadRequest (this, true, buffer, offset, count);
+			var task = StartOperation (OperationType.Read, asyncRequest, CancellationToken.None);
+			return task.Result;
 		}
 
 		public void Write (byte[] buffer)
 		{
 			Write (buffer, 0, buffer.Length);
 		}
+
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-			ProcessReadOrWrite (ref asyncWriteRequest, ref writeBuffer, ProcessWrite, new BufferOffsetSize (buffer, offset, count), null);
+			var asyncRequest = new AsyncWriteRequest (this, true, buffer, offset, count);
+			var task = StartOperation (OperationType.Write, asyncRequest, CancellationToken.None);
+			task.Wait ();
 		}
 
-		IAsyncResult BeginReadOrWrite (ref AsyncProtocolRequest nestedRequest, ref BufferOffsetSize2 internalBuffer, AsyncOperation operation, BufferOffsetSize userBuffer, AsyncCallback asyncCallback, object asyncState)
+		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
-			LazyAsyncResult lazyResult = new LazyAsyncResult (this, asyncState, asyncCallback);
-			ProcessReadOrWrite (ref nestedRequest, ref internalBuffer, operation, userBuffer, lazyResult);
-			return lazyResult;
+			var asyncRequest = new AsyncReadRequest (this, false, buffer, offset, count);
+			return StartOperation (OperationType.Read, asyncRequest, cancellationToken);
 		}
 
-		object EndReadOrWrite (IAsyncResult asyncResult, ref AsyncProtocolRequest nestedRequest)
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
-			if (asyncResult == null)
-				throw new ArgumentNullException("asyncResult");
+			var asyncRequest = new AsyncWriteRequest (this, false, buffer, offset, count);
+			return StartOperation (OperationType.Write, asyncRequest, cancellationToken);
+		}
 
-			var lazyResult = (LazyAsyncResult)asyncResult;
+		async Task<int> StartOperation (OperationType type, AsyncProtocolRequest asyncRequest, CancellationToken cancellationToken)
+		{
+			CheckThrow (true, type != OperationType.Read);
+			Debug ("StartOperationAsync: {0} {1}", asyncRequest, type);
 
-			if (Interlocked.Exchange (ref nestedRequest, null) == null)
-				throw new InvalidOperationException ("Invalid end call.");
-
-			// No "artificial" timeouts implemented so far, InnerStream controls timeout.
-			lazyResult.InternalWaitForCompletion ();
-
-			Debug ("EndReadOrWrite");
-
-			var e = lazyResult.Result as Exception;
-			if (e != null) {
-				var ioEx = e as IOException;
-				if (ioEx != null)
-					throw ioEx;
-				throw new IOException ("read failed", e);
+			if (type == OperationType.Read) {
+				if (Interlocked.CompareExchange (ref asyncReadRequest, asyncRequest, null) != null)
+					throw new InvalidOperationException ("Invalid nested call.");
+			} else {
+				if (Interlocked.CompareExchange (ref asyncWriteRequest, asyncRequest, null) != null)
+					throw new InvalidOperationException ("Invalid nested call.");
 			}
 
-			return lazyResult.Result;
-		}
+			AsyncProtocolResult result;
 
-		int ProcessReadOrWrite (ref AsyncProtocolRequest nestedRequest, ref BufferOffsetSize2 internalBuffer, AsyncOperation operation, BufferOffsetSize userBuffer, LazyAsyncResult lazyResult)
-		{
-			if (userBuffer == null || userBuffer.Buffer == null)
-				throw new ArgumentNullException ("buffer");
-			if (userBuffer.Offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
-			if (userBuffer.Size < 0 || userBuffer.Offset + userBuffer.Size > userBuffer.Buffer.Length)
-				throw new ArgumentOutOfRangeException ("count");
-
-			CheckThrow (true);
-
-			var name = internalBuffer == readBuffer ? "read" : "write";
-			Debug ("ProcessReadOrWrite: {0} {1}", name, userBuffer);
-
-			var asyncRequest = new AsyncProtocolRequest (this, lazyResult, userBuffer);
-			return StartOperation (ref nestedRequest, ref internalBuffer, operation, asyncRequest, name);
-		}
-
-		int StartOperation (ref AsyncProtocolRequest nestedRequest, ref BufferOffsetSize2 internalBuffer, AsyncOperation operation, AsyncProtocolRequest asyncRequest, string name)
-		{
-			if (Interlocked.CompareExchange (ref nestedRequest, asyncRequest, null) != null)
-				throw new InvalidOperationException ("Invalid nested call.");
-
-			bool failed = false;
 			try {
-				internalBuffer.Reset ();
-				asyncRequest.StartOperation (operation);
-				return asyncRequest.UserResult;
+				lock (ioLock) {
+					if (type == OperationType.Read)
+						readBuffer.Reset ();
+					else
+						writeBuffer.Reset ();
+				}
+				result = await asyncRequest.StartOperation (cancellationToken).ConfigureAwait (false);
 			} catch (Exception e) {
-				failed = true;
-				if (e is IOException)
-					throw;
-				throw new IOException (name + " failed", e);
+				var info = SetException (GetIOException (e, asyncRequest.Name + " failed"));
+				result = new AsyncProtocolResult (info);
 			} finally {
-				if (asyncRequest.UserAsyncResult == null || failed) {
-					internalBuffer.Reset ();
-					nestedRequest = null;
+				lock (ioLock) {
+					if (type == OperationType.Read) {
+						readBuffer.Reset ();
+						asyncReadRequest = null;
+					} else {
+						writeBuffer.Reset ();
+						asyncWriteRequest = null;
+					}
 				}
 			}
+
+			if (result.Error != null)
+				result.Error.Throw ();
+			return result.UserResult;
 		}
 
 		static int nextId;
 		internal readonly int ID = ++nextId;
 
-		[SD.Conditional ("MARTIN_DEBUG")]
+		[SD.Conditional ("MONO_TLS_DEBUG")]
 		protected internal void Debug (string message, params object[] args)
 		{
-			Console.Error.WriteLine ("MobileAuthenticatedStream({0}): {1}", ID, string.Format (message, args));
+			MonoTlsProviderFactory.Debug ("MobileAuthenticatedStream({0}): {1}", ID, string.Format (message, args));
 		}
 
-		#region Called back from native code via SslConnection
+#region Called back from native code via SslConnection
 
 		/*
 		 * Called from within SSLRead() and SSLHandshake().  We only access tha managed byte[] here.
 		 */
-		internal int InternalRead (byte[] buffer, int offset, int size, out bool wantMore)
+		internal int InternalRead (byte[] buffer, int offset, int size, out bool outWantMore)
 		{
 			try {
-				Debug ("InternalRead: {0} {1} {2} {3}", offset, size, asyncReadRequest != null, readBuffer != null);
+				Debug ("InternalRead: {0} {1} {2} {3} {4}", offset, size,
+				       asyncHandshakeRequest != null ? "handshake" : "",
+				       asyncReadRequest != null ? "async" : "",
+				       readBuffer != null ? readBuffer.ToString () : "");
 				var asyncRequest = asyncHandshakeRequest ?? asyncReadRequest;
-				return InternalRead (asyncRequest, readBuffer, buffer, offset, size, out wantMore);
+				var (ret, wantMore) = InternalRead (asyncRequest, readBuffer, buffer, offset, size);
+				outWantMore = wantMore;
+				return ret;
 			} catch (Exception ex) {
 				Debug ("InternalRead failed: {0}", ex);
-				SetException_internal (ex);
-				wantMore = false;
+				SetException (GetIOException (ex, "InternalRead() failed"));
+				outWantMore = false;
 				return -1;
 			}
 		}
 
-		int InternalRead (AsyncProtocolRequest asyncRequest, BufferOffsetSize internalBuffer, byte[] buffer, int offset, int size, out bool wantMore)
+		(int, bool) InternalRead (AsyncProtocolRequest asyncRequest, BufferOffsetSize internalBuffer, byte[] buffer, int offset, int size)
 		{
 			if (asyncRequest == null)
 				throw new InvalidOperationException ();
@@ -422,11 +433,10 @@ namespace Mono.Net.Security
 			 * native function again.
 			 */
 			if (internalBuffer.Size == 0 && !internalBuffer.Complete) {
-				Debug ("InternalRead #1: {0} {1}", internalBuffer.Offset, internalBuffer.TotalBytes);
+				Debug ("InternalRead #1: {0} {1} {2}", internalBuffer.Offset, internalBuffer.TotalBytes, size);
 				internalBuffer.Offset = internalBuffer.Size = 0;
 				asyncRequest.RequestRead (size);
-				wantMore = true;
-				return 0;
+				return (0, true);
 			}
 
 			/*
@@ -441,8 +451,7 @@ namespace Mono.Net.Security
 			Buffer.BlockCopy (internalBuffer.Buffer, internalBuffer.Offset, buffer, offset, len);
 			internalBuffer.Offset += len;
 			internalBuffer.Size -= len;
-			wantMore = !internalBuffer.Complete && len < size;
-			return len;
+			return (len, !internalBuffer.Complete && len < size);
 		}
 
 		/*
@@ -456,7 +465,7 @@ namespace Mono.Net.Security
 				return InternalWrite (asyncRequest, writeBuffer, buffer, offset, size);
 			} catch (Exception ex) {
 				Debug ("InternalWrite failed: {0}", ex);
-				SetException_internal (ex);
+				SetException (GetIOException (ex, "InternalWrite() failed"));
 				return false;
 			}
 		}
@@ -511,22 +520,30 @@ namespace Mono.Net.Security
 			return true;
 		}
 
-		#endregion
+#endregion
 
-		#region Inner Stream
+#region Inner Stream
 
 		/*
 		 * Read / write data from the inner stream; we're only called from managed code and only manipulate
 		 * the internal buffers.
 		 */
-		internal int InnerRead (int requestedSize)
+		internal async Task<int> InnerRead (bool sync, int requestedSize, CancellationToken cancellationToken)
 		{
-			Debug ("InnerRead: {0} {1} {2} {3}", readBuffer.Offset, readBuffer.Size, readBuffer.Remaining, requestedSize);
+			cancellationToken.ThrowIfCancellationRequested ();
+			Debug ("InnerRead: {0} {1} {2} {3} {4}", sync, readBuffer.Offset, readBuffer.Size, readBuffer.Remaining, requestedSize);
 
 			var len = System.Math.Min (readBuffer.Remaining, requestedSize);
 			if (len == 0)
 				throw new InvalidOperationException ();
-			var ret = InnerStream.Read (readBuffer.Buffer, readBuffer.EndOffset, len);
+
+			Task<int> task;
+			if (sync)
+				task = Task.Run (() => InnerStream.Read (readBuffer.Buffer, readBuffer.EndOffset, len));
+			else
+				task = InnerStream.ReadAsync (readBuffer.Buffer, readBuffer.EndOffset, len, cancellationToken);
+
+			var ret = await task.ConfigureAwait (false);
 			Debug ("InnerRead done: {0} {1} - {2}", readBuffer.Remaining, len, ret);
 
 			if (ret >= 0) {
@@ -549,165 +566,135 @@ namespace Mono.Net.Security
 			return ret;
 		}
 
-		internal void InnerWrite ()
+		internal async Task InnerWrite (bool sync, CancellationToken cancellationToken)
 		{
+			cancellationToken.ThrowIfCancellationRequested ();
 			Debug ("InnerWrite: {0} {1}", writeBuffer.Offset, writeBuffer.Size);
-			InnerFlush ();
+
+			if (writeBuffer.Size == 0)
+				return;
+
+			Task task;
+			if (sync)
+				task = Task.Run (() => InnerStream.Write (writeBuffer.Buffer, writeBuffer.Offset, writeBuffer.Size));
+			else
+				task = InnerStream.WriteAsync (writeBuffer.Buffer, writeBuffer.Offset, writeBuffer.Size);
+
+			await task.ConfigureAwait (false);
+
+			writeBuffer.TotalBytes += writeBuffer.Size;
+			writeBuffer.Offset = writeBuffer.Size = 0;
 		}
 
-		internal void InnerFlush ()
-		{
-			if (writeBuffer.Size > 0) {
-				InnerStream.Write (writeBuffer.Buffer, writeBuffer.Offset, writeBuffer.Size);
-				writeBuffer.TotalBytes += writeBuffer.Size;
-				writeBuffer.Offset = writeBuffer.Size = 0;
-			}
-		}
+#endregion
 
-		#endregion
+#region Main async I/O loop
 
-		#region Main async I/O loop
-
-		AsyncOperationStatus ProcessHandshake (AsyncProtocolRequest asyncRequest, AsyncOperationStatus status)
+		internal AsyncOperationStatus ProcessHandshake (AsyncOperationStatus status)
 		{
 			Debug ("ProcessHandshake: {0}", status);
 
-			/*
-			 * The first time we're called (AsyncOperationStatus.Initialize), we need to setup the SslContext and
-			 * start the handshake.
-			*/
-			if (status == AsyncOperationStatus.Initialize) {
-				xobileTlsContext.StartHandshake ();
-				return AsyncOperationStatus.Continue;
-			} else if (status == AsyncOperationStatus.ReadDone) {
-				// remote prematurely closed connection.
-				throw new IOException ("Remote prematurely closed connection.");
-			} else if (status != AsyncOperationStatus.Continue) {
-				throw new InvalidOperationException ();
-			}
-
-			/*
-			 * SSLHandshake() will return repeatedly with 'SslStatus.WouldBlock', we then need
-			 * to take care of I/O and call it again.
-			*/
-			if (!xobileTlsContext.ProcessHandshake ()) {
+			lock (ioLock) {
 				/*
-				 * Flush the internal write buffer.
-				 */
-				InnerFlush ();
-				return AsyncOperationStatus.Continue;
-			}
+				 * The first time we're called (AsyncOperationStatus.Initialize), we need to setup the SslContext and
+				 * start the handshake.
+				*/
+				if (status == AsyncOperationStatus.Initialize) {
+					xobileTlsContext.StartHandshake ();
+					return AsyncOperationStatus.Continue;
+				} else if (status == AsyncOperationStatus.ReadDone) {
+					throw new IOException (SR.net_auth_eof);
+				} else if (status != AsyncOperationStatus.Continue) {
+					throw new InvalidOperationException ();
+				}
 
-			xobileTlsContext.FinishHandshake ();
-			return AsyncOperationStatus.Complete;
+				/*
+				 * SSLHandshake() will return repeatedly with 'SslStatus.WouldBlock', we then need
+				 * to take care of I/O and call it again.
+				*/
+				var newStatus = AsyncOperationStatus.Continue;
+				if (xobileTlsContext.ProcessHandshake ()) {
+					xobileTlsContext.FinishHandshake ();
+					newStatus = AsyncOperationStatus.Complete;
+				}
+
+				if (lastException != null)
+					lastException.Throw ();
+
+				return newStatus;
+			}
 		}
 
-		AsyncOperationStatus ProcessRead (AsyncProtocolRequest asyncRequest, AsyncOperationStatus status)
+		internal (int, bool) ProcessRead (BufferOffsetSize userBuffer)
 		{
-			Debug ("ProcessRead - read user: {0} {1}", status, asyncRequest.UserBuffer);
-
-			int ret;
-			bool wantMore;
 			lock (ioLock) {
-				ret = Context.Read (asyncRequest.UserBuffer.Buffer, asyncRequest.UserBuffer.Offset, asyncRequest.UserBuffer.Size, out wantMore);
+				// This operates on the internal buffer and will never block.
+				var ret = xobileTlsContext.Read (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size);
+				if (lastException != null)
+					lastException.Throw ();
+				return ret;
 			}
-			Debug ("ProcessRead - read user done: {0} - {1} {2}", asyncRequest.UserBuffer, ret, wantMore);
-
-			if (ret < 0) {
-				asyncRequest.UserResult = -1;
-				return AsyncOperationStatus.Complete;
-			}
-
-			asyncRequest.CurrentSize += ret;
-			asyncRequest.UserBuffer.Offset += ret;
-			asyncRequest.UserBuffer.Size -= ret;
-
-			Debug ("Process Read - read user done #1: {0} - {1} {2}", asyncRequest.UserBuffer, asyncRequest.CurrentSize, wantMore);
-
-			if (wantMore && asyncRequest.CurrentSize == 0)
-				return AsyncOperationStatus.WantRead;
-
-			asyncRequest.ResetRead ();
-			asyncRequest.UserResult = asyncRequest.CurrentSize;
-			return AsyncOperationStatus.Complete;
 		}
 
-		AsyncOperationStatus ProcessWrite (AsyncProtocolRequest asyncRequest, AsyncOperationStatus status)
+		internal (int, bool) ProcessWrite (BufferOffsetSize userBuffer)
 		{
-			Debug ("ProcessWrite - write user: {0} {1}", status, asyncRequest.UserBuffer);
-
-			if (asyncRequest.UserBuffer.Size == 0) {
-				asyncRequest.UserResult = asyncRequest.CurrentSize;
-				return AsyncOperationStatus.Complete;
-			}
-
-			int ret;
-			bool wantMore;
 			lock (ioLock) {
-				ret = Context.Write (asyncRequest.UserBuffer.Buffer, asyncRequest.UserBuffer.Offset, asyncRequest.UserBuffer.Size, out wantMore);
+				// This operates on the internal buffer and will never block.
+				var ret = xobileTlsContext.Write (userBuffer.Buffer, userBuffer.Offset, userBuffer.Size);
+				if (lastException != null)
+					lastException.Throw ();
+				return ret;
 			}
-			Debug ("ProcessWrite - write user done: {0} - {1} {2}", asyncRequest.UserBuffer, ret, wantMore);
-
-			if (ret < 0) {
-				asyncRequest.UserResult = -1;
-				return AsyncOperationStatus.Complete;
-			}
-
-			asyncRequest.CurrentSize += ret;
-			asyncRequest.UserBuffer.Offset += ret;
-			asyncRequest.UserBuffer.Size -= ret;
-
-			if (wantMore || writeBuffer.Size > 0)
-				return AsyncOperationStatus.WantWrite;
-
-			asyncRequest.ResetWrite ();
-			asyncRequest.UserResult = asyncRequest.CurrentSize;
-			return AsyncOperationStatus.Complete;
 		}
 
-		AsyncOperationStatus ProcessClose (AsyncProtocolRequest asyncRequest, AsyncOperationStatus status)
+		internal AsyncOperationStatus ProcessShutdown (AsyncOperationStatus status)
 		{
-			Debug ("ProcessClose: {0}", status);
+			Debug ("ProcessShutdown: {0}", status);
 
 			lock (ioLock) {
-				if (xobileTlsContext == null)
-					return AsyncOperationStatus.Complete;
-
-				xobileTlsContext.Close ();
-				xobileTlsContext = null;
-				return AsyncOperationStatus.Continue;
+				xobileTlsContext.Shutdown ();
+				shutdown = true;
+				return AsyncOperationStatus.Complete;
 			}
 		}
 
-		AsyncOperationStatus ProcessFlush (AsyncProtocolRequest asyncRequest, AsyncOperationStatus status)
-		{
-			Debug ("ProcessFlush: {0}", status);
-			return AsyncOperationStatus.Complete;
-		}
-
-		#endregion
+#endregion
 
 		public override bool IsServer {
-			get { return xobileTlsContext != null && xobileTlsContext.IsServer; }
+			get {
+				CheckThrow (false);
+				return xobileTlsContext != null && xobileTlsContext.IsServer;
+			}
 		}
 
 		public override bool IsAuthenticated {
-			get { return xobileTlsContext != null && lastException == null && xobileTlsContext.IsAuthenticated; }
+			get {
+				lock (ioLock) {
+					// Don't use CheckThrow(), we want to return false if we're not authenticated.
+					return xobileTlsContext != null && lastException == null && xobileTlsContext.IsAuthenticated;
+				}
+			}
 		}
 
 		public override bool IsMutuallyAuthenticated {
 			get {
-				return IsAuthenticated &&
-					(Context.IsServer? Context.LocalServerCertificate: Context.LocalClientCertificate) != null &&
-					Context.IsRemoteCertificateAvailable;
+				lock (ioLock) {
+					// Don't use CheckThrow() here.
+					if (!IsAuthenticated)
+						return false;
+					if ((xobileTlsContext.IsServer ? xobileTlsContext.LocalServerCertificate : xobileTlsContext.LocalClientCertificate) == null)
+						return false;
+					return xobileTlsContext.IsRemoteCertificateAvailable;
+				}
 			}
 		}
 
 		protected override void Dispose (bool disposing)
 		{
 			try {
-				lastException = new ObjectDisposedException ("MobileAuthenticatedStream");
 				lock (ioLock) {
+					Debug ("Dispose: {0}", xobileTlsContext != null);
+					lastException = ExceptionDispatchInfo.Capture (new ObjectDisposedException ("MobileAuthenticatedStream"));
 					if (xobileTlsContext != null) {
 						xobileTlsContext.Dispose ();
 						xobileTlsContext = null;
@@ -720,26 +707,53 @@ namespace Mono.Net.Security
 
 		public override void Flush ()
 		{
-			CheckThrow (true);
-			var asyncRequest = new AsyncProtocolRequest (this, null);
-			StartOperation (ref asyncWriteRequest, ref writeBuffer, ProcessFlush, asyncRequest, "flush");
+			InnerStream.Flush ();
 		}
 
-		public override void Close ()
-		{
-			/*
-			 * SSLClose() is a little bit tricky as it might attempt to send a close_notify alert
-			 * and thus call our write callback.
-			 *
-			 * It is also not thread-safe with SSLRead() or SSLWrite(), so we need to take the I/O lock here.
-			 */
-			if (Interlocked.Exchange (ref closeRequested, 1) == 1)
-				return;
-			if (xobileTlsContext == null)
-				return;
+		public SslProtocols SslProtocol {
+			get {
+				lock (ioLock) {
+					CheckThrow (true);
+					return (SslProtocols)xobileTlsContext.NegotiatedProtocol;
+				}
+			}
+		}
 
-			var asyncRequest = new AsyncProtocolRequest (this, null);
-			StartOperation (ref asyncWriteRequest, ref writeBuffer, ProcessClose, asyncRequest, "close");
+		public X509Certificate RemoteCertificate {
+			get {
+				lock (ioLock) {
+					CheckThrow (true);
+					return xobileTlsContext.RemoteCertificate;
+				}
+			}
+		}
+
+		public X509Certificate LocalCertificate {
+			get {
+				lock (ioLock) {
+					CheckThrow (true);
+					return InternalLocalCertificate;
+				}
+			}
+		}
+
+		public X509Certificate InternalLocalCertificate {
+			get {
+				lock (ioLock) {
+					CheckThrow (false);
+					if (xobileTlsContext == null)
+						return null;
+					return xobileTlsContext.IsServer ? xobileTlsContext.LocalServerCertificate : xobileTlsContext.LocalClientCertificate;
+				}
+			}
+		}
+
+		public MSI.MonoTlsConnectionInfo GetConnectionInfo ()
+		{
+			lock (ioLock) {
+				CheckThrow (true);
+				return xobileTlsContext.ConnectionInfo;
+			}
 		}
 
 		//
@@ -769,7 +783,7 @@ namespace Mono.Net.Security
 		}
 
 		public override bool CanWrite {
-			get { return IsAuthenticated & InnerStream.CanWrite; }
+			get { return IsAuthenticated & InnerStream.CanWrite && !shutdown; }
 		}
 
 		public override bool CanSeek {
@@ -803,46 +817,10 @@ namespace Mono.Net.Security
 			set { InnerStream.WriteTimeout = value; }
 		}
 
-		public SslProtocols SslProtocol {
-			get {
-				CheckThrow (true);
-				return (SslProtocols)Context.NegotiatedProtocol;
-			}
-		}
-
-		public X509Certificate RemoteCertificate {
-			get {
-				CheckThrow (true);
-				return Context.RemoteCertificate;
-			}
-		}
-
-		public X509Certificate LocalCertificate {
-			get {
-				CheckThrow (true);
-				return InternalLocalCertificate;
-			}
-		}
-
-		public X509Certificate InternalLocalCertificate {
-			get {
-				CheckThrow (false);
-				if (!HasContext)
-					return null;
-				return Context.IsServer ? Context.LocalServerCertificate : Context.LocalClientCertificate;
-			}
-		}
-
-		public MSI.MonoTlsConnectionInfo GetConnectionInfo ()
-		{
-			CheckThrow (true);
-			return Context.ConnectionInfo;
-		}
-
 		public SSA.CipherAlgorithmType CipherAlgorithm {
 			get {
 				CheckThrow (true);
-				var info = Context.ConnectionInfo;
+				var info = GetConnectionInfo ();
 				if (info == null)
 					return SSA.CipherAlgorithmType.None;
 				switch (info.CipherAlgorithmType) {
@@ -861,7 +839,7 @@ namespace Mono.Net.Security
 		public SSA.HashAlgorithmType HashAlgorithm {
 			get {
 				CheckThrow (true);
-				var info = Context.ConnectionInfo;
+				var info = GetConnectionInfo ();
 				if (info == null)
 					return SSA.HashAlgorithmType.None;
 				switch (info.HashAlgorithmType) {
@@ -883,7 +861,7 @@ namespace Mono.Net.Security
 		public SSA.ExchangeAlgorithmType KeyExchangeAlgorithm {
 			get {
 				CheckThrow (true);
-				var info = Context.ConnectionInfo;
+				var info = GetConnectionInfo ();
 				if (info == null)
 					return SSA.ExchangeAlgorithmType.None;
 				switch (info.ExchangeAlgorithmType) {
@@ -898,7 +876,7 @@ namespace Mono.Net.Security
 			}
 		}
 
-		#region Need to Implement
+#region Need to Implement
 		public int CipherStrength {
 			get {
 				throw new NotImplementedException ();
@@ -920,7 +898,7 @@ namespace Mono.Net.Security
 			}
 		}
 
-		#endregion
+#endregion
 	}
 }
 #endif

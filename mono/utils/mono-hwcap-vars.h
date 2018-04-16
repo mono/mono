@@ -19,10 +19,6 @@ MONO_HWCAP_VAR(arm_has_thumb2)
 
 // Nothing here yet.
 
-#elif defined (TARGET_IA64)
-
-// Nothing here yet.
-
 #elif defined (TARGET_MIPS)
 
 // Nothing here yet.
@@ -39,6 +35,11 @@ MONO_HWCAP_VAR(ppc_has_multiple_ls_units)
 
 MONO_HWCAP_VAR(s390x_has_fpe)
 MONO_HWCAP_VAR(s390x_has_vec)
+MONO_HWCAP_VAR(s390x_has_mlt)
+MONO_HWCAP_VAR(s390x_has_ia)
+MONO_HWCAP_VAR(s390x_has_gie)
+MONO_HWCAP_VAR(s390x_has_mie2)
+MONO_HWCAP_VAR(s390x_has_gs)
 
 #elif defined (TARGET_SPARC) || defined (TARGET_SPARC64)
 

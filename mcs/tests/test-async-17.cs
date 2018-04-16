@@ -64,7 +64,7 @@ class Tester
 		try {
 			await Task.Factory.StartNew (() => { throw new ArgumentException (); }).ConfigureAwait (false);
 		} catch (ArgumentException e) {
-			if (e.StackTrace.Contains (".MoveNext"))
+			if (e.StackTrace.Contains (".MoveNext") || e.StackTrace.Contains ("TestException_7 ()"))
 				throw new ApplicationException ();	
 		}
 		

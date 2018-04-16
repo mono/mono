@@ -9,15 +9,33 @@
 #include <config.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
 
-#include <utils/mono-time.h>
+#include <mono/utils/mono-time.h>
+#include <mono/utils/atomic.h>
 
+#if HAVE_MACH_ABSOLUTE_TIME
+#include <mach/mach_time.h>
+static mach_timebase_info_data_t s_TimebaseInfo;
+#endif
 
 #define MTICKS_PER_SEC (10 * 1000 * 1000)
+
+typedef enum _TimeConversionConstants
+{
+	tccSecondsToMillieSeconds       = 1000,         // 10^3
+	tccSecondsToMicroSeconds        = 1000000,      // 10^6
+	tccSecondsToNanoSeconds         = 1000000000,   // 10^9
+	tccMillieSecondsToMicroSeconds  = 1000,         // 10^3
+	tccMillieSecondsToNanoSeconds   = 1000000,      // 10^6
+	tccMicroSecondsToNanoSeconds    = 1000,         // 10^3
+	tccSecondsTo100NanoSeconds      = 10000000,     // 10^7
+	tccMicroSecondsTo100NanoSeconds = 10            // 10^1
+} TimeConversionConstants;
 
 gint64
 mono_msec_ticks (void)
@@ -84,7 +102,7 @@ mono_100ns_datetime (void)
 #include <sys/sysctl.h>
 #endif
 
-#if defined(PLATFORM_MACOSX)
+#if defined(HOST_DARWIN)
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 #endif
@@ -126,16 +144,65 @@ get_boot_time (void)
 }
 
 /* Returns the number of milliseconds from boot time: this should be monotonic */
+/* Adapted from CoreCLR: https://github.com/dotnet/coreclr/blob/66d2738ea96fcce753dec1370e79a0c78f7b6adb/src/pal/src/misc/time.cpp */
 gint64
 mono_msec_boottime (void)
 {
-	static gint64 boot_time = 0;
-	gint64 now;
-	if (!boot_time)
-		boot_time = get_boot_time ();
-	now = mono_100ns_datetime ();
-	/*printf ("now: %llu (boot: %llu) ticks: %llu\n", (gint64)now, (gint64)boot_time, (gint64)(now - boot_time));*/
-	return (now - boot_time)/10000;
+	gint64 retval = 0;
+
+	/* clock_gettime () is found by configure on Apple builds, but its only present from ios 10, macos 10.12, tvos 10 and watchos 3 */
+#if !defined (TARGET_WASM) && ((defined(HAVE_CLOCK_MONOTONIC_COARSE) || defined(HAVE_CLOCK_MONOTONIC)) && !(defined(TARGET_IOS) || defined(TARGET_OSX) || defined(TARGET_WATCHOS) || defined(TARGET_TVOS)))
+	clockid_t clockType =
+#if HAVE_CLOCK_MONOTONIC_COARSE
+	CLOCK_MONOTONIC_COARSE; /* good enough resolution, fastest speed */
+#else
+	CLOCK_MONOTONIC;
+#endif
+	struct timespec ts;
+	if (clock_gettime (clockType, &ts) != 0) {
+		g_error ("clock_gettime(CLOCK_MONOTONIC*) failed; errno is %d", errno, strerror (errno));
+		goto exit;
+	}
+	retval = (ts.tv_sec * tccSecondsToMillieSeconds) + (ts.tv_nsec / tccMillieSecondsToNanoSeconds);
+
+#elif HAVE_MACH_ABSOLUTE_TIME
+	static gboolean timebase_inited;
+
+	if (!timebase_inited) {
+		kern_return_t machRet;
+		mach_timebase_info_data_t tmp;
+		machRet = mach_timebase_info (&tmp);
+		g_assert (machRet == KERN_SUCCESS);
+		/* Assume memcpy works correctly if ran concurrently */
+		memcpy (&s_TimebaseInfo, &tmp, sizeof (mach_timebase_info_data_t));
+		mono_memory_barrier ();
+		timebase_inited = TRUE;
+	}
+	retval = (mach_absolute_time () * s_TimebaseInfo.numer / s_TimebaseInfo.denom) / tccMillieSecondsToNanoSeconds;
+
+#elif HAVE_GETHRTIME
+	retval = (gint64)(gethrtime () / tccMillieSecondsToNanoSeconds);
+
+#elif HAVE_READ_REAL_TIME
+	timebasestruct_t tb;
+	read_real_time (&tb, TIMEBASE_SZ);
+	if (time_base_to_time (&tb, TIMEBASE_SZ) != 0) {
+		g_error ("time_base_to_time() failed; errno is %d (%s)", errno, strerror (errno));
+		goto exit;
+	}
+	retval = (tb.tb_high * tccSecondsToMillieSeconds) + (tb.tb_low / tccMillieSecondsToNanoSeconds);
+
+#else
+	struct timeval tv;
+	if (gettimeofday (&tv, NULL) == -1) {
+		g_error ("gettimeofday() failed; errno is %d (%s)", errno, strerror (errno));
+		goto exit;
+	}
+    retval = (tv.tv_sec * tccSecondsToMillieSeconds) + (tv.tv_usec / tccMillieSecondsToMicroSeconds);
+
+#endif /* HAVE_CLOCK_MONOTONIC */
+exit:
+	return retval;
 }
 
 /* Returns the number of 100ns ticks from unspecified time: this should be monotonic */
@@ -143,7 +210,7 @@ gint64
 mono_100ns_ticks (void)
 {
 	struct timeval tv;
-#if defined(PLATFORM_MACOSX)
+#if defined(HOST_DARWIN)
 	/* http://developer.apple.com/library/mac/#qa/qa1398/_index.html */
 	static mach_timebase_info_data_t timebase;
 	guint64 now = mach_absolute_time ();
@@ -152,7 +219,8 @@ mono_100ns_ticks (void)
 		timebase.denom *= 100; /* we return 100ns ticks */
 	}
 	return now * timebase.numer / timebase.denom;
-#elif defined(CLOCK_MONOTONIC)
+#elif defined(CLOCK_MONOTONIC) && !defined(__PASE__)
+	/* !__PASE__ is defined because i 7.1 doesn't have clock_getres */
 	struct timespec tspec;
 	static struct timespec tspec_freq = {0};
 	static int can_use_clock = 0;

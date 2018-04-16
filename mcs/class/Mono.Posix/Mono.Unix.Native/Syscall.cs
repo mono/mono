@@ -3783,7 +3783,7 @@ namespace Mono.Unix.Native {
 		public static extern int epoll_ctl (int epfd, EpollOp op, int fd, ref EpollEvent ee);
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="epoll_wait")]
-		private static extern int sys_epoll_wait (int epfd, EpollEvent [] ee, int maxevents, int timeout);
+		private static extern int sys_epoll_wait (int epfd, [In,Out] EpollEvent [] ee, int maxevents, int timeout);
 		#endregion
 		
 		#region <sys/mman.h> Declarations
@@ -3866,7 +3866,7 @@ namespace Mono.Unix.Native {
 #pragma warning restore 649
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="poll")]
-		private static extern int sys_poll (_pollfd[] ufds, uint nfds, int timeout);
+		private static extern int sys_poll ([In,Out] _pollfd[] ufds, uint nfds, int timeout);
 
 		public static int poll (Pollfd [] fds, uint nfds, int timeout)
 		{
@@ -4387,6 +4387,7 @@ namespace Mono.Unix.Native {
 			return UnixMarshal.EscapeFormatString (message, new char[]{'m'});
 		}
 
+#if !NETSTANDARD2_0
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
 				"Use syslog(SyslogFacility, SyslogLevel, string) instead.")]
 		public static int syslog (SyslogFacility facility, SyslogLevel level, 
@@ -4415,6 +4416,7 @@ namespace Mono.Unix.Native {
 			Array.Copy (parameters, 0, _parameters, 2, parameters.Length);
 			return (int) XPrintfFunctions.syslog (_parameters);
 		}
+#endif
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_closelog")]

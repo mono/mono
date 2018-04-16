@@ -325,6 +325,42 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
+		public void Constructor_Rectangle_InvalidWidthHeight ()
+		{
+			var emptyWidth = new Rectangle (0, 0, 0, 1);
+			var emptyHeight = new Rectangle (0, 0, 0, 1);
+
+			Assert.Throws<ArgumentException>(() => new LinearGradientBrush (emptyWidth, Color.Empty, Color.Empty, 1));
+			Assert.Throws<ArgumentException>(() => new LinearGradientBrush (emptyHeight, Color.Empty, Color.Empty, 1));
+			Assert.Throws<ArgumentException>(() => new LinearGradientBrush (emptyWidth, Color.Empty, Color.Empty, LinearGradientMode.BackwardDiagonal));
+			Assert.Throws<ArgumentException>(() => new LinearGradientBrush (emptyHeight, Color.Empty, Color.Empty, LinearGradientMode.BackwardDiagonal));
+		}
+
+		[Test]
+		public void Constructor_RectangleF_InvalidWidthHeight ()
+		{
+			var emptyWidth = new RectangleF (0, 0, 0, 1);
+			var emptyHeight = new RectangleF (0, 0, 0, 1);
+
+			Assert.Throws<ArgumentException>(() => new LinearGradientBrush (emptyWidth, Color.Empty, Color.Empty, 1));
+			Assert.Throws<ArgumentException>(() => new LinearGradientBrush (emptyHeight, Color.Empty, Color.Empty, 1));
+			Assert.Throws<ArgumentException>(() => new LinearGradientBrush (emptyWidth, Color.Empty, Color.Empty, LinearGradientMode.BackwardDiagonal));
+			Assert.Throws<ArgumentException>(() => new LinearGradientBrush (emptyHeight, Color.Empty, Color.Empty, LinearGradientMode.BackwardDiagonal));
+		}
+
+		[Test]
+		public void Constructor_LinearGradientMode_InvalidMode ()
+		{
+			var rect = new Rectangle (0, 0, 1, 1);
+			var rectf = new RectangleF (0, 0, 1, 1);
+
+			Assert.Throws<InvalidEnumArgumentException>(() => new LinearGradientBrush (rect, Color.Empty, Color.Empty, LinearGradientMode.Horizontal - 1));
+			Assert.Throws<InvalidEnumArgumentException>(() => new LinearGradientBrush (rectf, Color.Empty, Color.Empty, LinearGradientMode.Horizontal - 1));
+			Assert.Throws<InvalidEnumArgumentException>(() => new LinearGradientBrush (rect, Color.Empty, Color.Empty, LinearGradientMode.BackwardDiagonal + 1));
+			Assert.Throws<InvalidEnumArgumentException>(() => new LinearGradientBrush (rectf, Color.Empty, Color.Empty, LinearGradientMode.BackwardDiagonal + 1));
+		}
+
+		[Test]
 		public void InterpolationColors_Colors_InvalidBlend ()
 		{
 			// default Blend doesn't allow getting this property

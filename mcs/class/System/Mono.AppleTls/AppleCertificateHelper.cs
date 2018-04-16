@@ -36,7 +36,11 @@ namespace Mono.AppleTls
 			 */
 			var certificate2 = certificate as X509Certificate2;
 			if (certificate2 != null)
+#if MONOTOUCH
+				return SecIdentity.Import (certificate2);
+#else
 				return SecImportExport.ItemImport (certificate2);
+#endif
 
 			/*
 			 * Reading Certificates from the Mac Keychain
@@ -129,28 +133,28 @@ namespace Mono.AppleTls
 					targetHost = targetHost.Substring (0, pos);
 			}
 
-			var policy = SecPolicy.CreateSslPolicy (!serverMode, targetHost);
-			var trust = new SecTrust (certificates, policy);
+			using (var policy = SecPolicy.CreateSslPolicy (!serverMode, targetHost))
+			using (var trust = new SecTrust (certificates, policy)) {
+				if (validator.Settings.TrustAnchors != null) {
+					var status = trust.SetAnchorCertificates (validator.Settings.TrustAnchors);
+					if (status != SecStatusCode.Success)
+						throw new InvalidOperationException (status.ToString ());
+					trust.SetAnchorCertificatesOnly (false);
+				}
 
-			if (validator.Settings.TrustAnchors != null) {
-				var status = trust.SetAnchorCertificates (validator.Settings.TrustAnchors);
-				if (status != SecStatusCode.Success)
-					throw new InvalidOperationException (status.ToString ());
-				trust.SetAnchorCertificatesOnly (false);
+				if (validator.Settings.CertificateValidationTime != null) {
+					var status = trust.SetVerifyDate (validator.Settings.CertificateValidationTime.Value);
+					if (status != SecStatusCode.Success)
+						throw new InvalidOperationException (status.ToString ());
+				}
+
+				var result = trust.Evaluate ();
+				if (result == SecTrustResult.Unspecified || result == SecTrustResult.Proceed)
+					return true;
+
+				errors |= MonoSslPolicyErrors.RemoteCertificateChainErrors;
+				return false;
 			}
-
-			if (validator.Settings.CertificateValidationTime != null) {
-				var status = trust.SetVerifyDate (validator.Settings.CertificateValidationTime.Value);
-				if (status != SecStatusCode.Success)
-					throw new InvalidOperationException (status.ToString ());
-			}
-
-			var result = trust.Evaluate ();
-			if (result == SecTrustResult.Unspecified)
-				return true;
-
-			errors |= MonoSslPolicyErrors.RemoteCertificateChainErrors;
-			return false;
 		}
 	}
 }

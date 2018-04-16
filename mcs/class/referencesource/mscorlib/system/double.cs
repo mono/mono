@@ -103,6 +103,16 @@ namespace System {
             return (*(UInt64*)(&d) & 0x7FFFFFFFFFFFFFFFL) > 0x7FF0000000000000L;
         }
 
+#if MONO
+        [Pure]
+        [System.Runtime.Versioning.NonVersionable]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe static bool IsFinite(double d)
+        {
+            var bits = BitConverter.DoubleToInt64Bits(d);
+            return (bits & 0x7FFFFFFFFFFFFFFF) < 0x7FF0000000000000;
+        }
+#endif
 
         // Compares this object to another object, returning an instance of System.Relation.
         // Null is considered less than any instance.

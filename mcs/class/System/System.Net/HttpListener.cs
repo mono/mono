@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
 using System.IO;
 using System.Collections;
 using System.Threading;
@@ -416,11 +415,3 @@ namespace System.Net {
 		}
 	}
 }
-#else // SECURITY_DEP
-namespace System.Net
-{
-	public sealed class HttpListener
-	{
-	}
-}
-#endif

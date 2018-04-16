@@ -403,7 +403,8 @@ namespace MonoTests.System.Linq.Expressions {
 
 		[Test]
 		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=319190
-		[Category ("NotWorkingInterpreter")]
+		[Category ("NotWorkingLinqInterpreter")]
+		[Category ("NotWasm")]
 		public void Connect319190 ()
 		{
 			var lambda = Expression.Lambda<Func<bool>> (

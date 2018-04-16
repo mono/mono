@@ -8,6 +8,7 @@ endif
 
 LIBRARY = System.IdentityModel.dll
 LIB_REFS = System System.Xml System.Security $(MONO_SECURITY) System.Runtime.Serialization
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = \
 		/d:NET_3_0	\
 	        $(OTHER_LIB_MCS_FLAGS)
@@ -28,7 +29,12 @@ LIB_REFS += System.Web.ApplicationServices
 endif
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+TEST_MCS_FLAGS =
+TEST_LIB_REFS = System System.Xml System.Security System.Runtime.Serialization
+
+ifdef MOBILE_PROFILE
+NO_TEST = yes
+endif
 
 EXTRA_DISTFILES = \
 	Test/Resources/test.cer \

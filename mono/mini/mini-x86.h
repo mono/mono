@@ -78,7 +78,6 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
 #else
 #define MONO_ARCH_SIGNAL_STACK_SIZE (16 * 1024)
 #endif
-#define MONO_ARCH_HAVE_RESTORE_STACK_SUPPORT 1
 
 #define MONO_ARCH_CPU_SPEC mono_x86_desc
 
@@ -199,9 +198,7 @@ typedef struct {
 #define MONO_ARCH_IMT_REG X86_EDX
 #define MONO_ARCH_VTABLE_REG X86_EDX
 #define MONO_ARCH_RGCTX_REG MONO_ARCH_IMT_REG
-#define MONO_ARCH_EXC_REG X86_EAX
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_TRAMPOLINE 1
-#define MONO_ARCH_HAVE_LIVERANGE_OPS 1
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
 #define MONO_ARCH_GOT_REG X86_EBX
@@ -224,7 +221,6 @@ typedef struct {
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 
 #define MONO_ARCH_HAVE_EXCEPTIONS_INIT 1
-#define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
 
 #define MONO_ARCH_HAVE_CARD_TABLE_WBARRIER 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
@@ -233,8 +229,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
 #define MONO_ARCH_HAVE_OP_TAIL_CALL 1
-#define MONO_ARCH_HAVE_TRANSLATE_TLS_OFFSET 1
-#define MONO_ARCH_HAVE_DUMMY_INIT 1
+#define MONO_ARCH_HAVE_OP_TAIL_CALL_MEMBASE 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 
@@ -250,6 +245,10 @@ typedef struct {
             MONO_ADD_INS ((cfg)->cbb, inst); \
 			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
 	} while (0)
+
+// Does the ABI have a volatile non-parameter register, so tailcall
+// can pass context to generics or interfaces?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 1
 
 /* Return value marshalling for calls between gsharedvt and normal code */
 typedef enum {

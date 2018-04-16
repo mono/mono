@@ -9,57 +9,13 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-/*
- * The Coverage XML output schema
- * <coverage>
- *   <assembly/>
- *   <class/>
- *   <method>
- *     <statement/>
- *   </method>
- * </coverage>
- *
- * Elements:
- *   <coverage> - The root element of the documentation. It can contain any number of
- *                <assembly>, <class> or <method> elements.
- *                Attributes:
- *                   - version: The version number for the file format - (eg: "0.3")
- *   <assembly> - Contains data about assemblies. Has no child elements
- *                Attributes:
- *                   - name: The name of the assembly - (eg: "System.Xml")
- *                   - guid: The GUID of the assembly
- *                   - filename: The filename of the assembly
- *                   - method-count: The number of methods in the assembly
- *                   - full: The number of fully covered methods
- *                   - partial: The number of partially covered methods
- *   <class> - Contains data about classes. Has no child elements
- *             Attributes:
- *                - name: The name of the class
- *                - method-count: The number of methods in the class
- *                - full: The number of fully covered methods
- *                - partial: The number of partially covered methods
- *   <method> - Contains data about methods. Can contain any number of <statement> elements
- *              Attributes:
- *                 - assembly: The name of the parent assembly
- *                 - class: The name of the parent class
- *                 - name: The name of the method, with all it's parameters
- *                 - filename: The name of the source file containing this method
- *                 - token
- *   <statement> - Contains data about IL statements. Has no child elements
- *                 Attributes:
- *                    - offset: The offset of the statement in the IL code after the previous
- *                              statement's offset
- *                    - counter: 1 if the line was covered, 0 if it was not
- *                    - line: The line number in the parent method's file
- *                    - column: The column on the line
- */
 #include <config.h>
-#include "mono-profiler-log.h"
+#include "log.h"
 #include <string.h>
 #include <assert.h>
 #include <stdio.h>
 #include <time.h>
-#if !defined(__APPLE__) && !defined(__FreeBSD__)
+#if !defined(__APPLE__) && !defined(__FreeBSD__) && !defined(__OpenBSD__)
 #include <malloc.h>
 #endif
 #include <unistd.h>
@@ -76,10 +32,22 @@
 #define HASH_SIZE 9371
 #define SMALL_HASH_SIZE 31
 
-#if defined(__native_client__) || defined(__native_client_codegen__)
-volatile int __nacl_thread_suspension_needed = 0;
-void __nacl_suspend_thread_if_needed() {}
-#endif
+/* Version < 14 root type enum */
+typedef enum {
+	/* Upper 2 bytes. */
+	MONO_PROFILER_GC_ROOT_PINNING = 1 << 8,
+	MONO_PROFILER_GC_ROOT_WEAKREF = 2 << 8,
+	MONO_PROFILER_GC_ROOT_INTERIOR = 4 << 8,
+
+	/* Lower 2 bytes (flags). */
+	MONO_PROFILER_GC_ROOT_STACK = 1 << 0,
+	MONO_PROFILER_GC_ROOT_FINALIZER = 1 << 1,
+	MONO_PROFILER_GC_ROOT_HANDLE = 1 << 2,
+	MONO_PROFILER_GC_ROOT_OTHER = 1 << 3,
+	MONO_PROFILER_GC_ROOT_MISC = 1 << 4,
+
+	MONO_PROFILER_GC_ROOT_TYPEMASK = 0xff,
+} MonoProfilerGCRootType;
 
 static int debug = 0;
 static int collect_traces = 0;
@@ -96,7 +64,6 @@ static uint64_t time_to = 0xffffffffffffffffULL;
 static int use_time_filter = 0;
 static uint64_t startup_time = 0;
 static FILE* outfile = NULL;
-static FILE* coverage_outfile = NULL;
 
 static int32_t
 read_int16 (unsigned char *p)
@@ -666,6 +633,54 @@ lookup_class (intptr_t klass)
 	return cd;
 }
 
+typedef struct _VTableDesc VTableDesc;
+struct _VTableDesc {
+	VTableDesc *next;
+	intptr_t vtable;
+	ClassDesc *klass;
+};
+
+static VTableDesc* vtable_hash [HASH_SIZE] = {0};
+
+static VTableDesc*
+add_vtable (intptr_t vtable, intptr_t klass)
+{
+	int slot = ((vtable >> 2) & 0xffff) % HASH_SIZE;
+
+	VTableDesc *vt = vtable_hash [slot];
+
+	while (vt && vt->vtable != vtable)
+		vt = vt->next;
+
+	if (vt)
+		return vt;
+
+	vt = (VTableDesc *) g_calloc (sizeof (VTableDesc), 1);
+
+	vt->vtable = vtable;
+	vt->klass = lookup_class (klass);
+	vt->next = vtable_hash [slot];
+
+	vtable_hash [slot] = vt;
+
+	return vt;
+}
+
+static VTableDesc *
+lookup_vtable (intptr_t vtable)
+{
+	int slot = ((vtable >> 2) & 0xffff) % HASH_SIZE;
+	VTableDesc *vt = vtable_hash [slot];
+
+	while (vt && vt->vtable != vtable)
+		vt = vt->next;
+
+	if (!vt)
+		return add_vtable (vtable, 0);
+
+	return vt;
+}
+
 typedef struct _MethodDesc MethodDesc;
 struct _MethodDesc {
 	MethodDesc *next;
@@ -900,6 +915,34 @@ lookup_unmanaged_binary (uintptr_t addr)
 	}
 	return NULL;
 }
+
+// For backwards compatibility.
+enum {
+	TYPE_SAMPLE_UBIN = 2 << 4,
+
+	TYPE_COVERAGE = 9,
+
+	TYPE_COVERAGE_ASSEMBLY = 0 << 4,
+	TYPE_COVERAGE_METHOD = 1 << 4,
+	TYPE_COVERAGE_STATEMENT = 2 << 4,
+	TYPE_COVERAGE_CLASS = 3 << 4,
+};
+
+enum {
+	SAMPLE_CYCLES = 1,
+	SAMPLE_INSTRUCTIONS,
+	SAMPLE_CACHE_MISSES,
+	SAMPLE_CACHE_REFS,
+	SAMPLE_BRANCHES,
+	SAMPLE_BRANCH_MISSES,
+};
+
+enum {
+	MONO_GC_EVENT_MARK_START = 1,
+	MONO_GC_EVENT_MARK_END = 2,
+	MONO_GC_EVENT_RECLAIM_START = 3,
+	MONO_GC_EVENT_RECLAIM_END = 4,
+};
 
 static const char*
 sample_type_name (int type)
@@ -1243,6 +1286,8 @@ heap_shot_find_obj_slot (HeapShot *hs, uintptr_t objaddr)
 	uintptr_t i;
 	uintptr_t start_pos;
 	HeapObjectDesc **hash = hs->objects_hash;
+	if (hs->objects_hash_size == 0)
+		return -1;
 	start_pos = ((uintptr_t)objaddr >> 3) % hs->objects_hash_size;
 	i = start_pos;
 	do {
@@ -1360,7 +1405,7 @@ heap_shot_mark_objects (HeapShot *hs)
 		}
 		obj = hs->objects_hash [oi];
 		cd = obj->hklass;
-		if (hs->roots_types [i] & MONO_PROFILE_GC_ROOT_PINNING)
+		if (hs->roots_types [i] & MONO_PROFILER_GC_ROOT_PINNING)
 			cd->pinned_references++;
 		cd->root_references++;
 	}
@@ -1962,12 +2007,12 @@ get_handle_name (int htype)
 static const char*
 get_root_name (int rtype)
 {
-	switch (rtype & MONO_PROFILE_GC_ROOT_TYPEMASK) {
-	case MONO_PROFILE_GC_ROOT_STACK: return "stack";
-	case MONO_PROFILE_GC_ROOT_FINALIZER: return "finalizer";
-	case MONO_PROFILE_GC_ROOT_HANDLE: return "handle";
-	case MONO_PROFILE_GC_ROOT_OTHER: return "other";
-	case MONO_PROFILE_GC_ROOT_MISC: return "misc";
+	switch (rtype & MONO_PROFILER_GC_ROOT_TYPEMASK) {
+	case MONO_PROFILER_GC_ROOT_STACK: return "stack";
+	case MONO_PROFILER_GC_ROOT_FINALIZER: return "finalizer";
+	case MONO_PROFILER_GC_ROOT_HANDLE: return "handle";
+	case MONO_PROFILER_GC_ROOT_OTHER: return "other";
+	case MONO_PROFILER_GC_ROOT_MISC: return "misc";
 	default: return "unknown";
 	}
 }
@@ -2138,117 +2183,6 @@ code_buffer_desc (int type)
 	default:
 		return "unspecified";
 	}
-}
-
-typedef struct _CoverageAssembly CoverageAssembly;
-struct _CoverageAssembly {
-	char *name;
-	char *guid;
-	char *filename;
-	int number_of_methods;
-	int fully_covered;
-	int partially_covered;
-};
-
-typedef struct _CoverageClass CoverageClass;
-struct _CoverageClass {
-	char *assembly_name;
-	char *class_name;
-	int number_of_methods;
-	int fully_covered;
-	int partially_covered;
-};
-
-typedef struct _CoverageCoverage CoverageCoverage;
-struct _CoverageCoverage {
-	int method_id;
-	int offset;
-	int count;
-	int line;
-	int column;
-};
-
-typedef struct _CoverageMethod CoverageMethod;
-struct _CoverageMethod {
-	char *assembly_name;
-	char *class_name;
-	char *method_name;
-	char *method_signature;
-	char *filename;
-	int token;
-	int n_statements;
-	int method_id;
-	GPtrArray *coverage;
-};
-static GPtrArray *coverage_assemblies = NULL;
-static GPtrArray *coverage_methods = NULL;
-static GPtrArray *coverage_statements = NULL;
-static GHashTable *coverage_methods_hash = NULL;
-static GPtrArray *coverage_classes = NULL;
-static GHashTable *coverage_assembly_classes = NULL;
-
-static void
-gather_coverage_statements (void)
-{
-	for (guint i = 0; i < coverage_statements->len; i++) {
-		CoverageCoverage *coverage = (CoverageCoverage *)coverage_statements->pdata[i];
-		CoverageMethod *method = (CoverageMethod *)g_hash_table_lookup (coverage_methods_hash, GINT_TO_POINTER (coverage->method_id));
-		if (method == NULL) {
-			fprintf (outfile, "Cannot find method with ID: %d\n", coverage->method_id);
-			continue;
-		}
-
-		g_ptr_array_add (method->coverage, coverage);
-	}
-}
-
-static void
-coverage_add_assembly (CoverageAssembly *assembly)
-{
-	if (coverage_assemblies == NULL)
-		coverage_assemblies = g_ptr_array_new ();
-
-	g_ptr_array_add (coverage_assemblies, assembly);
-}
-
-static void
-coverage_add_method (CoverageMethod *method)
-{
-	if (coverage_methods == NULL) {
-		coverage_methods = g_ptr_array_new ();
-		coverage_methods_hash = g_hash_table_new (NULL, NULL);
-	}
-
-	g_ptr_array_add (coverage_methods, method);
-	g_hash_table_insert (coverage_methods_hash, GINT_TO_POINTER (method->method_id), method);
-}
-
-static void
-coverage_add_class (CoverageClass *klass)
-{
-	GPtrArray *classes = NULL;
-
-	if (coverage_classes == NULL) {
-		coverage_classes = g_ptr_array_new ();
-		coverage_assembly_classes = g_hash_table_new (g_str_hash, g_str_equal);
-	}
-
-	g_ptr_array_add (coverage_classes, klass);
-	classes = (GPtrArray *)g_hash_table_lookup (coverage_assembly_classes, klass->assembly_name);
-	if (classes == NULL) {
-		classes = g_ptr_array_new ();
-		g_hash_table_insert (coverage_assembly_classes, klass->assembly_name, classes);
-	}
-	g_ptr_array_add (classes, klass);
-}
-
-static void
-coverage_add_coverage (CoverageCoverage *coverage)
-{
-	if (coverage_statements == NULL)
-		coverage_statements = g_ptr_array_new ();
-
-	g_ptr_array_add (coverage_statements, coverage);
 }
 
 #define OBJ_ADDR(diff) ((obj_base + diff) << 3)
@@ -2483,8 +2417,7 @@ decode_buffer (ProfContext *ctx)
 					decode_uleb128 (p, &p); /* flags */
 				if (debug)
 					fprintf (outfile, "%s class %p (%s in %p) at %llu\n", load_str, (void*)(ptr_base + ptrdiff), p, (void*)(ptr_base + imptrdiff), (unsigned long long) time_base);
-				if (subtype == TYPE_END_LOAD)
-					add_class (ptr_base + ptrdiff, (char*)p);
+				add_class (ptr_base + ptrdiff, (char*)p);
 				while (*p) p++;
 				p++;
 			} else if (mtype == TYPE_IMAGE) {
@@ -2496,7 +2429,13 @@ decode_buffer (ProfContext *ctx)
 					add_image (ptr_base + ptrdiff, (char*)p);
 				while (*p) p++;
 				p++;
+				if (ctx->data_version >= 16) {
+					while (*p) p++; // mvid
+					p++;
+				}
 			} else if (mtype == TYPE_ASSEMBLY) {
+				if (ctx->data_version > 13)
+					decode_sleb128 (p, &p); // image
 				if (ctx->data_version < 13)
 					decode_uleb128 (p, &p); /* flags */
 				if (debug)
@@ -2547,6 +2486,12 @@ decode_buffer (ProfContext *ctx)
 					while (*p) p++;
 					p++;
 				}
+			} else if (mtype == TYPE_VTABLE) {
+				intptr_t domaindiff = decode_sleb128 (p, &p);
+				intptr_t classdiff = decode_sleb128 (p, &p);
+				if (debug)
+					fprintf (outfile, "vtable %p for class %p in domain %p at %llu\n", (void *) (ptrdiff + ptr_base), (void *) (classdiff + ptr_base), (void *) (domaindiff + ptr_base), (unsigned long long) time_base);
+				add_vtable (ptr_base + ptrdiff, ptr_base + classdiff);
 			}
 			break;
 		}
@@ -2559,12 +2504,17 @@ decode_buffer (ProfContext *ctx)
 			int num_bt = 0;
 			MethodDesc* sframes [8];
 			MethodDesc** frames = sframes;
-			ClassDesc *cd = lookup_class (ptr_base + ptrdiff);
+			ClassDesc *cd;
+			if (ctx->data_version > 14) {
+				VTableDesc *vt = lookup_vtable (ptr_base + ptrdiff);
+				cd = vt->klass;
+			} else
+				cd = lookup_class (ptr_base + ptrdiff);
 			len = decode_uleb128 (p, &p);
 			LOG_TIME (time_base, tdiff);
 			time_base += tdiff;
 			if (debug)
-				fprintf (outfile, "alloced object %p, size %llu (%s) at %llu\n", (void*)OBJ_ADDR (objdiff), (unsigned long long) len, lookup_class (ptr_base + ptrdiff)->name, (unsigned long long) time_base);
+				fprintf (outfile, "alloced object %p, size %llu (%s) at %llu\n", (void*)OBJ_ADDR (objdiff), (unsigned long long) len, cd->name, (unsigned long long) time_base);
 			if (has_bt) {
 				num_bt = 8;
 				frames = decode_bt (ctx, sframes, &num_bt, p, &p, ptr_base, &method_base);
@@ -2645,10 +2595,17 @@ decode_buffer (ProfContext *ctx)
 					objdiff = decode_sleb128 (p + 1, &p);
 				intptr_t ptrdiff = decode_sleb128 (p, &p);
 				uint64_t size = decode_uleb128 (p, &p);
+				if (ctx->data_version >= 16)
+					p++; // generation
 				uintptr_t num = decode_uleb128 (p, &p);
 				uintptr_t ref_offset = 0;
 				uintptr_t last_obj_offset = 0;
-				ClassDesc *cd = lookup_class (ptr_base + ptrdiff);
+				ClassDesc *cd;
+				if (ctx->data_version > 14) {
+					VTableDesc *vt = lookup_vtable (ptr_base + ptrdiff);
+					cd = vt->klass;
+				} else
+					cd = lookup_class (ptr_base + ptrdiff);
 				if (size) {
 					HeapClassDesc *hcd = add_heap_shot_class (thread->current_heap_shot, cd, size);
 					if (collect_traces) {
@@ -2676,29 +2633,68 @@ decode_buffer (ProfContext *ctx)
 					fprintf (outfile, "traced object %p, size %llu (%s), refs: %zd\n", (void*)OBJ_ADDR (objdiff), (unsigned long long) size, cd->name, num);
 			} else if (subtype == TYPE_HEAP_ROOT) {
 				uintptr_t num;
-				if (ctx->data_version > 12) {
+				if (ctx->data_version > 14) {
+					int i;
 					uint64_t tdiff = decode_uleb128 (p + 1, &p);
 					LOG_TIME (time_base, tdiff);
 					time_base += tdiff;
 					num = decode_uleb128 (p, &p);
-				} else
-					num = decode_uleb128 (p + 1, &p);
-				uintptr_t gc_num G_GNUC_UNUSED = decode_uleb128 (p, &p);
-				int i;
-				for (i = 0; i < num; ++i) {
-					intptr_t objdiff = decode_sleb128 (p, &p);
-					int root_type;
-					if (ctx->data_version > 12)
-						root_type = *p++;
-					else
-						root_type = decode_uleb128 (p, &p);
-					/* we just discard the extra info for now */
-					uintptr_t extra_info = decode_uleb128 (p, &p);
-					if (debug)
-						fprintf (outfile, "object %p is a %s root\n", (void*)OBJ_ADDR (objdiff), get_root_name (root_type));
-					if (collect_traces)
-						thread_add_root (thread, OBJ_ADDR (objdiff), root_type, extra_info);
+					for (i = 0; i < num; ++i) {
+						intptr_t ptrdiff = decode_sleb128 (p, &p);
+						intptr_t objdiff = decode_sleb128 (p, &p);
+
+						if (debug)
+							fprintf (outfile, "root object %p at address %p\n", (void*)OBJ_ADDR (objdiff), (void *) (ptr_base + ptrdiff));
+						if (collect_traces)
+							thread_add_root (thread, OBJ_ADDR (objdiff), MONO_PROFILER_GC_ROOT_MISC, 0);
+					}
+				} else {
+					if (ctx->data_version > 12) {
+						uint64_t tdiff = decode_uleb128 (p + 1, &p);
+						LOG_TIME (time_base, tdiff);
+						time_base += tdiff;
+						num = decode_uleb128 (p, &p);
+					} else
+						num = decode_uleb128 (p + 1, &p);
+					uintptr_t gc_num G_GNUC_UNUSED = decode_uleb128 (p, &p);
+					int i;
+					for (i = 0; i < num; ++i) {
+						intptr_t objdiff = decode_sleb128 (p, &p);
+						int root_type;
+						if (ctx->data_version == 13)
+							root_type = *p++;
+						else
+							root_type = decode_uleb128 (p, &p);
+						/* we just discard the extra info for now */
+						uintptr_t extra_info = decode_uleb128 (p, &p);
+						if (debug)
+							fprintf (outfile, "object %p is a %s root\n", (void*)OBJ_ADDR (objdiff), get_root_name (root_type));
+						if (collect_traces)
+							thread_add_root (thread, OBJ_ADDR (objdiff), root_type, extra_info);
+					}
 				}
+			} else if (subtype == TYPE_HEAP_ROOT_REGISTER) {
+				uint64_t tdiff = decode_uleb128 (p + 1, &p);
+				LOG_TIME (time_base, tdiff);
+				time_base += tdiff;
+
+				int64_t ptrdiff = decode_sleb128 (p, &p);
+				uint64_t size = decode_uleb128 (p, &p);
+				int type = *p++;
+				int64_t keydiff = decode_sleb128 (p, &p);
+				char *desc = (char*) p;
+				while (*p++);
+
+				if (debug)
+					fprintf (outfile, "root register address %p size %lld type %d key %p name %s\n", (void *) (ptr_base + ptrdiff), (unsigned long long) size, type, (void *) (ptr_base + keydiff), desc);
+			} else if (subtype == TYPE_HEAP_ROOT_UNREGISTER) {
+				uint64_t tdiff = decode_uleb128 (p + 1, &p);
+				LOG_TIME (time_base, tdiff);
+				time_base += tdiff;
+				int64_t ptrdiff = decode_sleb128 (p, &p);
+
+				if (debug)
+					fprintf (outfile, "root unregister address %p\n", (void *) (ptr_base + ptrdiff));
 			} else if (subtype == TYPE_HEAP_END) {
 				uint64_t tdiff = decode_uleb128 (p + 1, &p);
 				LOG_TIME (time_base, tdiff);
@@ -2739,9 +2735,13 @@ decode_buffer (ProfContext *ctx)
 			break;
 		}
 		case TYPE_MONITOR: {
-			int event = (*p >> 4) & 0x3;
 			int has_bt = *p & TYPE_MONITOR_BT;
+			int event;
+			if (ctx->data_version < 13)
+				event = (*p >> 4) & 0x3;
 			uint64_t tdiff = decode_uleb128 (p + 1, &p);
+			if (ctx->data_version > 13)
+				event = *p++;
 			intptr_t objdiff = decode_sleb128 (p, &p);
 			MethodDesc* sframes [8];
 			MethodDesc** frames = sframes;
@@ -2752,26 +2752,13 @@ decode_buffer (ProfContext *ctx)
 			record = (!thread_filter || thread_filter == thread->thread_id);
 			if (!(time_base >= time_from && time_base < time_to))
 				record = 0;
+			MonitorDesc *mdesc = lookup_monitor (OBJ_ADDR (objdiff));
 			if (event == MONO_PROFILER_MONITOR_CONTENTION) {
-				MonitorDesc *mdesc = lookup_monitor (OBJ_ADDR (objdiff));
 				if (record) {
 					monitor_contention++;
 					mdesc->contentions++;
 					thread->monitor = mdesc;
 					thread->contention_start = time_base;
-				}
-				if (has_bt) {
-					num_bt = 8;
-					frames = decode_bt (ctx, sframes, &num_bt, p, &p, ptr_base, &method_base);
-					if (!frames) {
-						fprintf (outfile, "Cannot load backtrace\n");
-						return 0;
-					}
-					if (record)
-						add_trace_methods (frames, num_bt, &mdesc->traces, 1);
-				} else {
-					if (record)
-						add_trace_thread (thread, &mdesc->traces, 1);
 				}
 			} else if (event == MONO_PROFILER_MONITOR_FAIL) {
 				if (record) {
@@ -2797,6 +2784,19 @@ decode_buffer (ProfContext *ctx)
 						thread->contention_start = 0;
 					}
 				}
+			}
+			if (has_bt) {
+				num_bt = 8;
+				frames = decode_bt (ctx, sframes, &num_bt, p, &p, ptr_base, &method_base);
+				if (!frames) {
+					fprintf (outfile, "Cannot load backtrace\n");
+					return 0;
+				}
+				if (record && event == MONO_PROFILER_MONITOR_CONTENTION)
+					add_trace_methods (frames, num_bt, &mdesc->traces, 1);
+			} else {
+				if (record)
+					add_trace_thread (thread, &mdesc->traces, 1);
 			}
 			if (debug)
 				fprintf (outfile, "monitor %s for object %p\n", monitor_ev_name (event), (void*)OBJ_ADDR (objdiff));
@@ -2825,6 +2825,8 @@ decode_buffer (ProfContext *ctx)
 				int clause_num = decode_uleb128 (p, &p);
 				int64_t ptrdiff = decode_sleb128 (p, &p);
 				method_base += ptrdiff;
+				if (ctx->data_version > 13)
+					decode_uleb128 (p, &p); // exception object
 				if (record)
 					clause_summary [clause_type]++;
 				if (debug)
@@ -2864,6 +2866,8 @@ decode_buffer (ProfContext *ctx)
 					type = *p++;
 				else
 					type = decode_uleb128 (p, &p);
+				if (ctx->data_version < 14)
+					--type;
 				intptr_t codediff = decode_sleb128 (p, &p);
 				int codelen = decode_uleb128 (p, &p);
 				const char *name;
@@ -2891,7 +2895,10 @@ decode_buffer (ProfContext *ctx)
 					uint64_t tdiff = decode_uleb128 (p + 1, &p);
 					LOG_TIME (time_base, tdiff);
 					time_base += tdiff;
-					sample_type = *p++;
+					if (ctx->data_version < 14)
+						sample_type = *p++;
+					else
+						sample_type = SAMPLE_CYCLES;
 					tstamp = time_base;
 				} else {
 					sample_type = decode_uleb128 (p + 1, &p);
@@ -2945,6 +2952,8 @@ decode_buffer (ProfContext *ctx)
 				/* un unmanaged binary loaded in memory */
 				uint64_t tdiff = decode_uleb128 (p + 1, &p);
 				uintptr_t addr = decode_sleb128 (p, &p);
+				if (ctx->data_version > 13)
+					addr += ptr_base;
 				uint64_t offset G_GNUC_UNUSED = decode_uleb128 (p, &p);
 				uintptr_t size = decode_uleb128 (p, &p);
 				char *name;
@@ -2977,7 +2986,7 @@ decode_buffer (ProfContext *ctx)
 					}
 					name = pstrdup ((char*)p);
 					while (*p++);
-					if (ctx->data_version > 12) {
+					if (ctx->data_version > 12 && ctx->data_version < 15) {
 						type = *p++;
 						unit = *p++;
 						variance = *p++;
@@ -3014,7 +3023,7 @@ decode_buffer (ProfContext *ctx)
 						}
 					}
 
-					if (ctx->data_version > 12)
+					if (ctx->data_version > 12 && ctx->data_version < 15)
 						type = *p++;
 					else
 						type = decode_uleb128 (p, &p);
@@ -3076,10 +3085,6 @@ decode_buffer (ProfContext *ctx)
 			int subtype = *p & 0xf0;
 			switch (subtype) {
 			case TYPE_COVERAGE_METHOD: {
-				CoverageMethod *method = g_new0 (CoverageMethod, 1);
-				const char *assembly, *klass, *name, *sig, *filename;
-				int token, n_offsets, method_id;
-
 				p++;
 
 				if (ctx->data_version > 12) {
@@ -3088,34 +3093,24 @@ decode_buffer (ProfContext *ctx)
 					time_base += tdiff;
 				}
 
-				assembly = (const char *)p; while (*p) p++; p++;
-				klass = (const char *)p; while (*p) p++; p++;
-				name = (const char *)p; while (*p) p++; p++;
-				sig = (const char *)p; while (*p) p++; p++;
-				filename = (const char *)p; while (*p) p++; p++;
+				while (*p) p++;
+				p++;
+				while (*p) p++;
+				p++;
+				while (*p) p++;
+				p++;
+				while (*p) p++;
+				p++;
+				while (*p) p++;
+				p++;
 
-				token = decode_uleb128 (p, &p);
-				method_id = decode_uleb128 (p, &p);
-				n_offsets = decode_uleb128 (p, &p);
-
-				method->assembly_name = g_strdup (assembly);
-				method->class_name = g_strdup (klass);
-				method->method_name = g_strdup (name);
-				method->method_signature = g_strdup (sig);
-				method->filename = g_strdup (filename);
-				method->token = token;
-				method->n_statements = n_offsets;
-				method->coverage = g_ptr_array_new ();
-				method->method_id = method_id;
-
-				coverage_add_method (method);
+				decode_uleb128 (p, &p);
+				decode_uleb128 (p, &p);
+				decode_uleb128 (p, &p);
 
 				break;
 			}
 			case TYPE_COVERAGE_STATEMENT: {
-				CoverageCoverage *coverage = g_new0 (CoverageCoverage, 1);
-				int offset, count, line, column, method_id;
-
 				p++;
 
 				if (ctx->data_version > 12) {
@@ -3124,25 +3119,15 @@ decode_buffer (ProfContext *ctx)
 					time_base += tdiff;
 				}
 
-				method_id = decode_uleb128 (p, &p);
-				offset = decode_uleb128 (p, &p);
-				count = decode_uleb128 (p, &p);
-				line = decode_uleb128 (p, &p);
-				column = decode_uleb128 (p, &p);
+				decode_uleb128 (p, &p);
+				decode_uleb128 (p, &p);
+				decode_uleb128 (p, &p);
+				decode_uleb128 (p, &p);
+				decode_uleb128 (p, &p);
 
-				coverage->method_id = method_id;
-				coverage->offset = offset;
-				coverage->count = count;
-				coverage->line = line;
-				coverage->column = column;
-
-				coverage_add_coverage (coverage);
 				break;
 			}
 			case TYPE_COVERAGE_ASSEMBLY: {
-				CoverageAssembly *assembly = g_new0 (CoverageAssembly, 1);
-				char *name, *guid, *filename;
-				int number_of_methods, fully_covered, partially_covered;
 				p++;
 
 				if (ctx->data_version > 12) {
@@ -3151,27 +3136,20 @@ decode_buffer (ProfContext *ctx)
 					time_base += tdiff;
 				}
 
-				name = (char *)p; while (*p) p++; p++;
-				guid = (char *)p; while (*p) p++; p++;
-				filename = (char *)p; while (*p) p++; p++;
-				number_of_methods = decode_uleb128 (p, &p);
-				fully_covered = decode_uleb128 (p, &p);
-				partially_covered = decode_uleb128 (p, &p);
+				while (*p) p++;
+				p++;
+				while (*p) p++;
+				p++;
+				while (*p) p++;
+				p++;
 
-				assembly->name = g_strdup (name);
-				assembly->guid = g_strdup (guid);
-				assembly->filename = g_strdup (filename);
-				assembly->number_of_methods = number_of_methods;
-				assembly->fully_covered = fully_covered;
-				assembly->partially_covered = partially_covered;
+				decode_uleb128 (p, &p);
+				decode_uleb128 (p, &p);
+				decode_uleb128 (p, &p);
 
-				coverage_add_assembly (assembly);
 				break;
 			}
 			case TYPE_COVERAGE_CLASS: {
-				CoverageClass *klass = g_new0 (CoverageClass, 1);
-				char *assembly_name, *class_name;
-				int number_of_methods, fully_covered, partially_covered;
 				p++;
 
 				if (ctx->data_version > 12) {
@@ -3180,19 +3158,15 @@ decode_buffer (ProfContext *ctx)
 					time_base += tdiff;
 				}
 
-				assembly_name = (char *)p; while (*p) p++; p++;
-				class_name = (char *)p; while (*p) p++; p++;
-				number_of_methods = decode_uleb128 (p, &p);
-				fully_covered = decode_uleb128 (p, &p);
-				partially_covered = decode_uleb128 (p, &p);
+				while (*p) p++;
+				p++;
+				while (*p) p++;
+				p++;
 
-				klass->assembly_name = g_strdup (assembly_name);
-				klass->class_name = g_strdup (class_name);
-				klass->number_of_methods = number_of_methods;
-				klass->fully_covered = fully_covered;
-				klass->partially_covered = partially_covered;
+				decode_uleb128 (p, &p);
+				decode_uleb128 (p, &p);
+				decode_uleb128 (p, &p);
 
-				coverage_add_class (klass);
 				break;
 			}
 
@@ -3210,6 +3184,11 @@ decode_buffer (ProfContext *ctx)
 				int type = *p++;
 				if (debug)
 					fprintf (outfile, "sync point %i (%s)\n", type, sync_point_name (type));
+			} else if (subtype == TYPE_AOT_ID) {
+				if (debug)
+					fprintf (outfile, "aot id %s\n", p);
+				while (*p) p++; // aot id
+				p++;
 			}
 			break;
 		}
@@ -3256,23 +3235,38 @@ load_file (char *name)
 	if (ctx->file != stdin)
 		ctx->gzfile = gzdopen (fileno (ctx->file), "rb");
 #endif
-	if (!load_data (ctx, 30))
+	if (!load_data (ctx, 16))
 		return NULL;
 	p = ctx->buf;
-	if (read_int32 (p) != LOG_HEADER_ID || p [6] > LOG_DATA_VERSION)
+	if (read_int32 (p) != LOG_HEADER_ID)
 		return NULL;
-	ctx->version_major = p [4];
-	ctx->version_minor = p [5];
-	ctx->data_version = p [6];
+	p += 4;
+	ctx->version_major = *p++;
+	ctx->version_minor = *p++;
+	ctx->data_version = *p++;
+	if (ctx->data_version > LOG_DATA_VERSION)
+		return NULL;
 	/* reading 64 bit files on 32 bit systems not supported yet */
-	if (p [7] > sizeof (void*))
+	if (*p++ > sizeof (void*))
 		return NULL;
-	if (read_int32 (p + 20)) /* flags must be 0 */
+	ctx->startup_time = read_int64 (p);
+	p += 8;
+	// nanoseconds startup time
+	if (ctx->version_major >= 3)
+		if (!load_data (ctx, 8))
+			return NULL;
+	if (!load_data (ctx, 14))
 		return NULL;
-	ctx->startup_time = read_int64 (p + 8);
-	ctx->timer_overhead = read_int32 (p + 16);
-	ctx->pid = read_int32 (p + 24);
-	ctx->port = read_int16 (p + 28);
+	p = ctx->buf;
+	ctx->timer_overhead = read_int32 (p);
+	p += 4;
+	if (read_int32 (p)) /* flags must be 0 */
+		return NULL;
+	p += 4;
+	ctx->pid = read_int32 (p);
+	p += 4;
+	ctx->port = read_int16 (p);
+	p += 2;
 	if (ctx->version_major >= 1) {
 		if (!read_header_string (ctx, &ctx->args))
 			return NULL;
@@ -3785,160 +3779,6 @@ dump_heap_shots (void)
 	}
 }
 
-/* This is a very basic escape function that escapes < > and &
-   Ideally we'd use g_markup_escape_string but that function isn't
-	 available in Mono's eglib. This was written without looking at the
-	 source of that function in glib. */
-static char *
-escape_string_for_xml (const char *string)
-{
-	GString *string_builder = g_string_new (NULL);
-	const char *start, *p;
-
-	start = p = string;
-	while (*p) {
-		while (*p && *p != '&' && *p != '<' && *p != '>')
-			p++;
-
-		g_string_append_len (string_builder, start, p - start);
-
-		if (*p == '\0')
-			break;
-
-		switch (*p) {
-		case '<':
-			g_string_append (string_builder, "&lt;");
-			break;
-
-		case '>':
-			g_string_append (string_builder, "&gt;");
-			break;
-
-		case '&':
-			g_string_append (string_builder, "&amp;");
-			break;
-
-		default:
-			break;
-		}
-
-		p++;
-		start = p;
-	}
-
-	return g_string_free (string_builder, FALSE);
-}
-
-static int
-sort_assemblies (gconstpointer a, gconstpointer b)
-{
-	CoverageAssembly *assembly_a = *(CoverageAssembly **)a;
-	CoverageAssembly *assembly_b = *(CoverageAssembly **)b;
-
-	if (assembly_a->name == NULL && assembly_b->name == NULL)
-		return 0;
-	else if (assembly_a->name == NULL)
-		return -1;
-	else if (assembly_b->name == NULL)
-		return 1;
-
-	return strcmp (assembly_a->name, assembly_b->name);
-}
-
-static void
-dump_coverage (void)
-{
-	if (!coverage_methods && !coverage_assemblies)
-		return;
-
-	gather_coverage_statements ();
-	fprintf (outfile, "\nCoverage Summary:\n");
-
-	if (coverage_outfile) {
-		fprintf (coverage_outfile, "<?xml version=\"1.0\"?>\n");
-		fprintf (coverage_outfile, "<coverage version=\"0.3\">\n");
-	}
-
-	g_ptr_array_sort (coverage_assemblies, sort_assemblies);
-
-	for (guint i = 0; i < coverage_assemblies->len; i++) {
-		CoverageAssembly *assembly = (CoverageAssembly *)coverage_assemblies->pdata[i];
-		GPtrArray *classes;
-
-		if (assembly->number_of_methods != 0) {
-			int percentage = ((assembly->fully_covered + assembly->partially_covered) * 100) / assembly->number_of_methods;
-			fprintf (outfile, "\t%s (%s) %d%% covered (%d methods - %d covered)\n", assembly->name, assembly->filename, percentage, assembly->number_of_methods, assembly->fully_covered);
-		} else
-			fprintf (outfile, "\t%s (%s) ?%% covered (%d methods - %d covered)\n", assembly->name, assembly->filename, assembly->number_of_methods, assembly->fully_covered);
-
-		if (coverage_outfile) {
-			char *escaped_name, *escaped_filename;
-			escaped_name = escape_string_for_xml (assembly->name);
-			escaped_filename = escape_string_for_xml (assembly->filename);
-
-			fprintf (coverage_outfile, "\t<assembly name=\"%s\" guid=\"%s\" filename=\"%s\" method-count=\"%d\" full=\"%d\" partial=\"%d\"/>\n", escaped_name, assembly->guid, escaped_filename, assembly->number_of_methods, assembly->fully_covered, assembly->partially_covered);
-
-			g_free (escaped_name);
-			g_free (escaped_filename);
-		}
-
-		classes = (GPtrArray *)g_hash_table_lookup (coverage_assembly_classes, assembly->name);
-		if (classes) {
-			for (guint j = 0; j < classes->len; j++) {
-				CoverageClass *klass = (CoverageClass *)classes->pdata [j];
-
-				if (klass->number_of_methods > 0) {
-					int percentage = ((klass->fully_covered + klass->partially_covered) * 100) / klass->number_of_methods;
-					fprintf (outfile, "\t\t%s %d%% covered (%d methods - %d covered)\n", klass->class_name, percentage, klass->number_of_methods, klass->fully_covered);
-				} else
-					fprintf (outfile, "\t\t%s ?%% covered (%d methods - %d covered)\n", klass->class_name, klass->number_of_methods, klass->fully_covered);
-
-				if (coverage_outfile) {
-					char *escaped_name;
-					escaped_name = escape_string_for_xml (klass->class_name);
-
-					fprintf (coverage_outfile, "\t\t<class name=\"%s\" method-count=\"%d\" full=\"%d\" partial=\"%d\"/>\n", escaped_name, klass->number_of_methods, klass->fully_covered, klass->partially_covered);
-					g_free (escaped_name);
-				}
-			}
-		}
-	}
-
-	for (guint i = 0; i < coverage_methods->len; i++) {
-		CoverageMethod *method = (CoverageMethod *)coverage_methods->pdata [i];
-
-		if (coverage_outfile) {
-			char *escaped_assembly, *escaped_class, *escaped_method, *escaped_sig, *escaped_filename;
-
-			escaped_assembly = escape_string_for_xml (method->assembly_name);
-			escaped_class = escape_string_for_xml (method->class_name);
-			escaped_method = escape_string_for_xml (method->method_name);
-			escaped_sig = escape_string_for_xml (method->method_signature);
-			escaped_filename = escape_string_for_xml (method->filename);
-
-			fprintf (coverage_outfile, "\t<method assembly=\"%s\" class=\"%s\" name=\"%s (%s)\" filename=\"%s\" token=\"%d\">\n", escaped_assembly, escaped_class, escaped_method, escaped_sig, escaped_filename, method->token);
-
-			g_free (escaped_assembly);
-			g_free (escaped_class);
-			g_free (escaped_method);
-			g_free (escaped_sig);
-			g_free (escaped_filename);
-
-			for (guint j = 0; j < method->coverage->len; j++) {
-				CoverageCoverage *coverage = (CoverageCoverage *)method->coverage->pdata [j];
-				fprintf (coverage_outfile, "\t\t<statement offset=\"%d\" counter=\"%d\" line=\"%d\" column=\"%d\"/>\n", coverage->offset, coverage->count, coverage->line, coverage->column);
-			}
-			fprintf (coverage_outfile, "\t</method>\n");
-		}
-	}
-
-	if (coverage_outfile) {
-		fprintf (coverage_outfile, "</coverage>\n");
-		fclose (coverage_outfile);
-		coverage_outfile = NULL;
-	}
-}
-
 #define DUMP_EVENT_STAT(EVENT,SUBTYPE) dump_event (#EVENT, #SUBTYPE, EVENT, SUBTYPE);
 
 static void
@@ -3969,6 +3809,10 @@ dump_stats (void)
 	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_HANDLE_DESTROYED);
 	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_HANDLE_CREATED_BT);
 	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_HANDLE_DESTROYED_BT);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_FINALIZE_START);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_FINALIZE_END);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_FINALIZE_OBJECT_START);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_FINALIZE_OBJECT_END);
 
 	DUMP_EVENT_STAT (TYPE_METADATA, TYPE_END_LOAD);
 	DUMP_EVENT_STAT (TYPE_METADATA, TYPE_END_UNLOAD);
@@ -4004,6 +3848,7 @@ dump_stats (void)
 	DUMP_EVENT_STAT (TYPE_COVERAGE, TYPE_COVERAGE_CLASS);
 
 	DUMP_EVENT_STAT (TYPE_META, TYPE_SYNC_POINT);
+	DUMP_EVENT_STAT (TYPE_META, TYPE_AOT_ID);
 }
 
 
@@ -4022,7 +3867,7 @@ flush_context (ProfContext *ctx)
 	}
 }
 
-static const char *reports = "header,jit,gc,sample,alloc,call,metadata,exception,monitor,thread,heapshot,counters,coverage";
+static const char *reports = "header,jit,gc,sample,alloc,call,metadata,exception,monitor,thread,domain,context,heapshot,counters";
 
 static const char*
 match_option (const char *p, const char *opt)
@@ -4113,8 +3958,7 @@ print_reports (ProfContext *ctx, const char *reps, int parse_only)
 			continue;
 		}
 		if ((opt = match_option (p, "coverage")) != p) {
-			if (!parse_only)
-				dump_coverage ();
+			printf ("The log profiler no longer supports code coverage. Please use the dedicated coverage profiler instead. See mono-profilers(1) for more information.\n");
 			continue;
 		}
 		if ((opt = match_option (p, "stats")) != p) {
@@ -4165,7 +4009,6 @@ usage (void)
 	printf ("\t--time=FROM-TO       consider data FROM seconds from startup up to TO seconds\n");
 	printf ("\t--verbose            increase verbosity level\n");
 	printf ("\t--debug              display decoding debug info for mprof-report devs\n");
-	printf ("\t--coverage-out=FILE  write the coverage info to FILE as XML\n");
 }
 
 int
@@ -4278,12 +4121,7 @@ main (int argc, char *argv[])
 			show_traces = 1;
 			collect_traces = 1;
 		} else if (strncmp ("--coverage-out=", argv [i], 15) == 0) {
-			const char *val = argv [i] + 15;
-			coverage_outfile = fopen (val, "w");
-			if (!coverage_outfile) {
-				printf ("Cannot open output file: %s\n", val);
-				return 1;
-			}
+			// For backwards compatibility.
 		} else {
 			break;
 		}

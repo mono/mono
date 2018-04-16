@@ -3,17 +3,16 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace System {
 
     /// <summary>
     /// Helper so we can call some tuple methods recursively without knowing the underlying types.
     /// </summary>
-    internal interface ITuple {
+    internal interface ITupleInternal : ITuple {
         string ToString(StringBuilder sb);
         int GetHashCode(IEqualityComparer comparer);
-        int Size { get; }
-
     }
 
     public static class Tuple {
@@ -50,7 +49,8 @@ namespace System {
         }
 
         // From System.Web.Util.HashCodeCombiner
-        internal static int CombineHashCodes(int h1, int h2) {
+        internal static int CombineHashCodes(int h1, int h2)
+        {
             return (((h1 << 5) + h1) ^ h2);
         }
 
@@ -80,7 +80,7 @@ namespace System {
     }
 
     [Serializable]
-    public class Tuple<T1> : IStructuralEquatable, IStructuralComparable, IComparable, ITuple {
+    public class Tuple<T1> : IStructuralEquatable, IStructuralComparable, IComparable, ITupleInternal, ITuple {
 
         private readonly T1 m_Item1;
 
@@ -130,30 +130,44 @@ namespace System {
             return comparer.GetHashCode(m_Item1);
         }
 
-        Int32 ITuple.GetHashCode(IEqualityComparer comparer) {
+        Int32 ITupleInternal.GetHashCode(IEqualityComparer comparer) {
             return ((IStructuralEquatable) this).GetHashCode(comparer);
         }
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
-            return ((ITuple)this).ToString(sb);
+            return ((ITupleInternal)this).ToString(sb);
         }
 
-        string ITuple.ToString(StringBuilder sb) {
+        string ITupleInternal.ToString(StringBuilder sb) {
             sb.Append(m_Item1);
             sb.Append(")");
             return sb.ToString();
         }
 
-        int ITuple.Size {
-            get {
-                return 1;
+        /// <summary>
+        /// The number of positions in this data structure.
+        /// </summary>
+        int ITuple.Length => 1;
+
+        /// <summary>
+        /// Get the element at position <param name="index"/>.
+        /// </summary>
+        object ITuple.this[int index]
+        {
+            get
+            {
+                if (index != 0)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+                return Item1;
             }
         }
     }
 
     [Serializable]
-    public class Tuple<T1, T2> : IStructuralEquatable, IStructuralComparable, IComparable, ITuple {
+    public class Tuple<T1, T2> : IStructuralEquatable, IStructuralComparable, IComparable, ITupleInternal, ITuple {
 
         private readonly T1 m_Item1;
         private readonly T2 m_Item2;
@@ -212,16 +226,16 @@ namespace System {
             return Tuple.CombineHashCodes(comparer.GetHashCode(m_Item1), comparer.GetHashCode(m_Item2));
         }
 
-        Int32 ITuple.GetHashCode(IEqualityComparer comparer) {
+        Int32 ITupleInternal.GetHashCode(IEqualityComparer comparer) {
             return ((IStructuralEquatable) this).GetHashCode(comparer);
         }
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
-            return ((ITuple)this).ToString(sb);
+            return ((ITupleInternal)this).ToString(sb);
         }
 
-        string ITuple.ToString(StringBuilder sb) {
+        string ITupleInternal.ToString(StringBuilder sb) {
             sb.Append(m_Item1);
             sb.Append(", ");
             sb.Append(m_Item2);
@@ -229,15 +243,33 @@ namespace System {
             return sb.ToString();
         }
 
-        int ITuple.Size {
-            get {
-                return 2;
+        /// <summary>
+        /// The number of positions in this data structure.
+        /// </summary>
+        int ITuple.Length => 2;
+
+        /// <summary>
+        /// Get the element at position <param name="index"/>.
+        /// </summary>
+        object ITuple.this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0:
+                        return Item1;
+                    case 1:
+                        return Item2;
+                    default:
+                        throw new IndexOutOfRangeException();
+                }
             }
         }
     }
 
     [Serializable]
-    public class Tuple<T1, T2, T3> : IStructuralEquatable, IStructuralComparable, IComparable, ITuple {
+    public class Tuple<T1, T2, T3> : IStructuralEquatable, IStructuralComparable, IComparable, ITupleInternal, ITuple {
 
         private readonly T1 m_Item1;
         private readonly T2 m_Item2;
@@ -303,16 +335,16 @@ namespace System {
             return Tuple.CombineHashCodes(comparer.GetHashCode(m_Item1), comparer.GetHashCode(m_Item2), comparer.GetHashCode(m_Item3));
         }
 
-        Int32 ITuple.GetHashCode(IEqualityComparer comparer) {
+        Int32 ITupleInternal.GetHashCode(IEqualityComparer comparer) {
             return ((IStructuralEquatable) this).GetHashCode(comparer);
         }
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
-            return ((ITuple)this).ToString(sb);
+            return ((ITupleInternal)this).ToString(sb);
         }
 
-        string ITuple.ToString(StringBuilder sb) {
+        string ITupleInternal.ToString(StringBuilder sb) {
             sb.Append(m_Item1);
             sb.Append(", ");
             sb.Append(m_Item2);
@@ -322,15 +354,35 @@ namespace System {
             return sb.ToString();
         }
 
-        int ITuple.Size {
-            get {
-                return 3;
+        /// <summary>
+        /// The number of positions in this data structure.
+        /// </summary>
+        int ITuple.Length => 3;
+
+        /// <summary>
+        /// Get the element at position <param name="index"/>.
+        /// </summary>
+        object ITuple.this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0:
+                        return Item1;
+                    case 1:
+                        return Item2;
+                    case 2:
+                        return Item3;
+                    default:
+                        throw new IndexOutOfRangeException();
+                }
             }
         }
     }
 
     [Serializable]
-    public class Tuple<T1, T2, T3, T4> : IStructuralEquatable, IStructuralComparable, IComparable, ITuple {
+    public class Tuple<T1, T2, T3, T4> : IStructuralEquatable, IStructuralComparable, IComparable, ITupleInternal, ITuple {
 
         private readonly T1 m_Item1;
         private readonly T2 m_Item2;
@@ -403,16 +455,16 @@ namespace System {
             return Tuple.CombineHashCodes(comparer.GetHashCode(m_Item1), comparer.GetHashCode(m_Item2), comparer.GetHashCode(m_Item3), comparer.GetHashCode(m_Item4));
         }
 
-        Int32 ITuple.GetHashCode(IEqualityComparer comparer) {
+        Int32 ITupleInternal.GetHashCode(IEqualityComparer comparer) {
             return ((IStructuralEquatable) this).GetHashCode(comparer);
         }
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
-            return ((ITuple)this).ToString(sb);
+            return ((ITupleInternal)this).ToString(sb);
         }
 
-        string ITuple.ToString(StringBuilder sb) {
+        string ITupleInternal.ToString(StringBuilder sb) {
             sb.Append(m_Item1);
             sb.Append(", ");
             sb.Append(m_Item2);
@@ -424,15 +476,37 @@ namespace System {
             return sb.ToString();
         }
 
-        int ITuple.Size {
-            get {
-                return 4;
+        /// <summary>
+        /// The number of positions in this data structure.
+        /// </summary>
+        int ITuple.Length => 4;
+
+        /// <summary>
+        /// Get the element at position <param name="index"/>.
+        /// </summary>
+        object ITuple.this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0:
+                        return Item1;
+                    case 1:
+                        return Item2;
+                    case 2:
+                        return Item3;
+                    case 3:
+                        return Item4;
+                    default:
+                        throw new IndexOutOfRangeException();
+                }
             }
         }
     }
 
     [Serializable]
-    public class Tuple<T1, T2, T3, T4, T5> : IStructuralEquatable, IStructuralComparable, IComparable, ITuple {
+    public class Tuple<T1, T2, T3, T4, T5> : IStructuralEquatable, IStructuralComparable, IComparable, ITupleInternal, ITuple {
 
         private readonly T1 m_Item1;
         private readonly T2 m_Item2;
@@ -512,16 +586,16 @@ namespace System {
             return Tuple.CombineHashCodes(comparer.GetHashCode(m_Item1), comparer.GetHashCode(m_Item2), comparer.GetHashCode(m_Item3), comparer.GetHashCode(m_Item4), comparer.GetHashCode(m_Item5));
         }
 
-        Int32 ITuple.GetHashCode(IEqualityComparer comparer) {
+        Int32 ITupleInternal.GetHashCode(IEqualityComparer comparer) {
             return ((IStructuralEquatable) this).GetHashCode(comparer);
         }
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
-            return ((ITuple)this).ToString(sb);
+            return ((ITupleInternal)this).ToString(sb);
         }
 
-        string ITuple.ToString(StringBuilder sb) {
+        string ITupleInternal.ToString(StringBuilder sb) {
             sb.Append(m_Item1);
             sb.Append(", ");
             sb.Append(m_Item2);
@@ -535,15 +609,39 @@ namespace System {
             return sb.ToString();
         }
 
-        int ITuple.Size {
-            get {
-                return 5;
+        /// <summary>
+        /// The number of positions in this data structure.
+        /// </summary>
+        int ITuple.Length => 5;
+
+        /// <summary>
+        /// Get the element at position <param name="index"/>.
+        /// </summary>
+        object ITuple.this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0:
+                        return Item1;
+                    case 1:
+                        return Item2;
+                    case 2:
+                        return Item3;
+                    case 3:
+                        return Item4;
+                    case 4:
+                        return Item5;
+                    default:
+                        throw new IndexOutOfRangeException();
+                }
             }
         }
     }
 
     [Serializable]
-    public class Tuple<T1, T2, T3, T4, T5, T6> : IStructuralEquatable, IStructuralComparable, IComparable, ITuple {
+    public class Tuple<T1, T2, T3, T4, T5, T6> : IStructuralEquatable, IStructuralComparable, IComparable, ITupleInternal, ITuple {
 
         private readonly T1 m_Item1;
         private readonly T2 m_Item2;
@@ -630,16 +728,16 @@ namespace System {
             return Tuple.CombineHashCodes(comparer.GetHashCode(m_Item1), comparer.GetHashCode(m_Item2), comparer.GetHashCode(m_Item3), comparer.GetHashCode(m_Item4), comparer.GetHashCode(m_Item5), comparer.GetHashCode(m_Item6));
         }
 
-        Int32 ITuple.GetHashCode(IEqualityComparer comparer) {
+        Int32 ITupleInternal.GetHashCode(IEqualityComparer comparer) {
             return ((IStructuralEquatable) this).GetHashCode(comparer);
         }
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
-            return ((ITuple)this).ToString(sb);
+            return ((ITupleInternal)this).ToString(sb);
         }
 
-        string ITuple.ToString(StringBuilder sb) {
+        string ITupleInternal.ToString(StringBuilder sb) {
             sb.Append(m_Item1);
             sb.Append(", ");
             sb.Append(m_Item2);
@@ -655,15 +753,41 @@ namespace System {
             return sb.ToString();
         }
 
-        int ITuple.Size {
-            get {
-                return 6;
+        /// <summary>
+        /// The number of positions in this data structure.
+        /// </summary>
+        int ITuple.Length => 6;
+
+        /// <summary>
+        /// Get the element at position <param name="index"/>.
+        /// </summary>
+        object ITuple.this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0:
+                        return Item1;
+                    case 1:
+                        return Item2;
+                    case 2:
+                        return Item3;
+                    case 3:
+                        return Item4;
+                    case 4:
+                        return Item5;
+                    case 5:
+                        return Item6;
+                    default:
+                        throw new IndexOutOfRangeException();
+                }
             }
         }
     }
 
     [Serializable]
-    public class Tuple<T1, T2, T3, T4, T5, T6, T7> : IStructuralEquatable, IStructuralComparable, IComparable, ITuple {
+    public class Tuple<T1, T2, T3, T4, T5, T6, T7> : IStructuralEquatable, IStructuralComparable, IComparable, ITupleInternal, ITuple {
 
         private readonly T1 m_Item1;
         private readonly T2 m_Item2;
@@ -757,16 +881,16 @@ namespace System {
             return Tuple.CombineHashCodes(comparer.GetHashCode(m_Item1), comparer.GetHashCode(m_Item2), comparer.GetHashCode(m_Item3), comparer.GetHashCode(m_Item4), comparer.GetHashCode(m_Item5), comparer.GetHashCode(m_Item6), comparer.GetHashCode(m_Item7));
         }
 
-        Int32 ITuple.GetHashCode(IEqualityComparer comparer) {
+        Int32 ITupleInternal.GetHashCode(IEqualityComparer comparer) {
             return ((IStructuralEquatable) this).GetHashCode(comparer);
         }
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
-            return ((ITuple)this).ToString(sb);
+            return ((ITupleInternal)this).ToString(sb);
         }
 
-        string ITuple.ToString(StringBuilder sb) {
+        string ITupleInternal.ToString(StringBuilder sb) {
             sb.Append(m_Item1);
             sb.Append(", ");
             sb.Append(m_Item2);
@@ -784,15 +908,43 @@ namespace System {
             return sb.ToString();
         }
 
-        int ITuple.Size {
-            get {
-                return 7;
+        /// <summary>
+        /// The number of positions in this data structure.
+        /// </summary>
+        int ITuple.Length => 7;
+
+        /// <summary>
+        /// Get the element at position <param name="index"/>.
+        /// </summary>
+        object ITuple.this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0:
+                        return Item1;
+                    case 1:
+                        return Item2;
+                    case 2:
+                        return Item3;
+                    case 3:
+                        return Item4;
+                    case 4:
+                        return Item5;
+                    case 5:
+                        return Item6;
+                    case 6:
+                        return Item7;
+                    default:
+                        throw new IndexOutOfRangeException();
+                }
             }
         }
     }
 
     [Serializable]
-    public class Tuple<T1, T2, T3, T4, T5, T6, T7, TRest> : IStructuralEquatable, IStructuralComparable, IComparable, ITuple {
+    public class Tuple<T1, T2, T3, T4, T5, T6, T7, TRest> : IStructuralEquatable, IStructuralComparable, IComparable, ITupleInternal, ITuple {
 
         private readonly T1 m_Item1;
         private readonly T2 m_Item2;
@@ -813,7 +965,7 @@ namespace System {
         public TRest Rest { get { return m_Rest; } }
 
         public Tuple(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7, TRest rest) {
-            if (!(rest is ITuple)) {
+            if (!(rest is ITupleInternal)) {
                 throw new ArgumentException(Environment.GetResourceString("ArgumentException_TupleLastArgumentNotATuple"));
             }
 
@@ -895,11 +1047,11 @@ namespace System {
 
         Int32 IStructuralEquatable.GetHashCode(IEqualityComparer comparer) {
             // We want to have a limited hash in this case.  We'll use the last 8 elements of the tuple
-            ITuple t = (ITuple) m_Rest;
-            if(t.Size >= 8) { return t.GetHashCode(comparer); }
+            ITupleInternal t = (ITupleInternal) m_Rest;
+            if(t.Length >= 8) { return t.GetHashCode(comparer); }
             
             // In this case, the rest memeber has less than 8 elements so we need to combine some our elements with the elements in rest
-            int k = 8 - t.Size;
+            int k = 8 - t.Length;
             switch(k) {
                 case 1:
                 return Tuple.CombineHashCodes(comparer.GetHashCode(m_Item7), t.GetHashCode(comparer));
@@ -920,16 +1072,16 @@ namespace System {
             return -1;
         }
 
-        Int32 ITuple.GetHashCode(IEqualityComparer comparer) {
+        Int32 ITupleInternal.GetHashCode(IEqualityComparer comparer) {
             return ((IStructuralEquatable) this).GetHashCode(comparer);
         }
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
-            return ((ITuple)this).ToString(sb);
+            return ((ITupleInternal)this).ToString(sb);
         }
 
-        string ITuple.ToString(StringBuilder sb) {
+        string ITupleInternal.ToString(StringBuilder sb) {
             sb.Append(m_Item1);
             sb.Append(", ");
             sb.Append(m_Item2);
@@ -944,12 +1096,46 @@ namespace System {
             sb.Append(", ");
             sb.Append(m_Item7);
             sb.Append(", ");
-            return ((ITuple)m_Rest).ToString(sb);
+            return ((ITupleInternal)m_Rest).ToString(sb);
         }
 
-        int ITuple.Size {
-            get {
-                return 7 + ((ITuple)m_Rest).Size;
+        /// <summary>
+        /// The number of positions in this data structure.
+        /// </summary>
+        int ITuple.Length
+        {
+            get
+            {
+                return 7 + ((ITupleInternal)Rest).Length;
+            }
+        }
+
+        /// <summary>
+        /// Get the element at position <param name="index"/>.
+        /// </summary>
+        object ITuple.this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0:
+                        return Item1;
+                    case 1:
+                        return Item2;
+                    case 2:
+                        return Item3;
+                    case 3:
+                        return Item4;
+                    case 4:
+                        return Item5;
+                    case 5:
+                        return Item6;
+                    case 6:
+                        return Item7;
+                }
+
+                return ((ITupleInternal)Rest)[index - 7];
             }
         }
     }

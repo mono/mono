@@ -134,7 +134,7 @@ namespace Mono.CSharp
 				if (t.Name[0] == '<')
 					continue;
 
-				var it = CreateType (t, null, new DynamicTypeReader (t), true);
+				var it = CreateType (t, null, new AttributesTypeInfoReader (t), true);
 				if (it == null)
 					continue;
 
@@ -255,6 +255,7 @@ namespace Mono.CSharp
 			sdk_directory.Add ("4.6.1", new string[] { "4.6.1-api", "v4.0.30319" });
 			sdk_directory.Add ("4.6.2", new string [] { "4.6.2-api", "v4.0.30319" });
 			sdk_directory.Add ("4.7", new string [] { "4.7-api", "v4.0.30319" });
+			sdk_directory.Add ("4.7.1", new string [] { "4.7.1-api", "v4.0.30319" });
 			sdk_directory.Add ("4.x", new string [] { "4.5", "net_4_x", "v4.0.30319" });
 		}
 
@@ -520,13 +521,23 @@ namespace Mono.CSharp
 									return null;
 								}
 
-								if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey)) {
-									compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
-									compiler.Report.SymbolRelatedToPreviousError (fileName);
-									compiler.Report.Error (1703,
-										"An assembly `{0}' with the same identity has already been imported. Consider removing one of the references",
-										an.Name);
-									return null;
+								AssemblyComparisonResult result;
+								if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey) &&
+								    (domain.CompareAssemblyIdentity (an.FullName, false, loaded_name.FullName, false, out result))) {
+
+									//
+									// Roslyn is much more lenient than native compiler here
+									//
+									switch (result) {
+									case AssemblyComparisonResult.EquivalentFXUnified:
+									case AssemblyComparisonResult.EquivalentUnified:
+										compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
+										compiler.Report.SymbolRelatedToPreviousError (fileName);
+										compiler.Report.Error (1703,
+											"An assembly `{0}' with the same identity has already been imported. Consider removing one of the references",
+											an.Name);
+										return null;
+									}
 								}
 							}
 

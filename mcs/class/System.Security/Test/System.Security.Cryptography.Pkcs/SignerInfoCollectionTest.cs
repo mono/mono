@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !MOBILE
 
 using NUnit.Framework;
 
@@ -134,4 +134,4 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 	}
 }
-
+#endif

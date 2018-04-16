@@ -2006,6 +2006,10 @@ namespace System.Web {
             get { return (_notificationContext.CurrentNotificationFlags & FLAG_CHANGE_IN_USER_OBJECT) == FLAG_CHANGE_IN_USER_OBJECT; }
         }
 
+        internal bool IsRuntimeErrorReported {
+            get { return _runtimeErrorReported; }
+        }
+
         internal bool IsSendResponseHeaders {
             get { return (_notificationContext.CurrentNotificationFlags & FLAG_SEND_RESPONSE_HEADERS) == FLAG_SEND_RESPONSE_HEADERS; }
         }

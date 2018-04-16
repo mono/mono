@@ -576,6 +576,10 @@ namespace System.Threading
             }
         }
 
+#if MONO
+        internal static readonly ExecutionContext Default = new ExecutionContext();
+#endif
+
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal ExecutionContext()
         {            

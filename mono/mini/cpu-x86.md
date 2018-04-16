@@ -65,6 +65,7 @@
 break: len:1
 call: dest:a clob:c len:17
 tailcall: len:120 clob:c
+tailcall_membase: src1:b len:120 clob:c # FIXME len?
 br: len:5
 seq_point: len:26 clob:c
 il_seq_point: len:0
@@ -81,18 +82,18 @@ int_ble_un: len:6
 int_blt_un: len:6
 label: len:0
 
-template: name:ibalu dest:i src1:i src2:i clob:1 len:2
+#template: name:ibalu
 
-int_add: template:ibalu
-int_sub: template:ibalu
-int_mul: template:ibalu len:3
+int_add: dest:i src1:i src2:i clob:1 len:2
+int_sub: dest:i src1:i src2:i clob:1 len:2
+int_mul: dest:i src1:i src2:i clob:1 len:3
 int_div: dest:a src1:a src2:i len:15 clob:d
 int_div_un: dest:a src1:a src2:i len:15 clob:d
 int_rem: dest:d src1:a src2:i len:15 clob:a
 int_rem_un: dest:d src1:a src2:i len:15 clob:a
-int_and: template:ibalu
-int_or: template:ibalu
-int_xor: template:ibalu
+int_and: dest:i src1:i src2:i clob:1 len:2
+int_or: dest:i src1:i src2:i clob:1 len:2
+int_xor: dest:i src1:i src2:i clob:1 len:2
 int_shl: dest:i src1:i src2:s clob:1 len:2
 int_shr: dest:i src1:i src2:s clob:1 len:2
 int_shr_un: dest:i src1:i src2:s clob:1 len:2
@@ -334,9 +335,9 @@ hard_nop: len:1
 # Linear IR opcodes
 nop: len:0
 dummy_use: src1:i len:0
-dummy_store: len:0
 dummy_iconst: dest:i len:0
 dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -651,3 +652,5 @@ gc_spill_slot_liveness_def: len:0
 gc_param_slot_liveness_def: len:0
 get_sp: dest:i len:6
 set_sp: src1:i len:6
+
+fill_prof_call_ctx: src1:i len:128

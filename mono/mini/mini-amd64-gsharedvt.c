@@ -31,8 +31,6 @@
 
 #if defined (MONO_ARCH_GSHAREDVT_SUPPORTED)
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-
 gboolean
 mono_arch_gsharedvt_sig_supported (MonoMethodSignature *sig)
 {
@@ -57,6 +55,7 @@ storage_name (ArgStorage st)
 	}
 }
 
+#ifdef DEBUG_AMD64_GSHAREDVT
 static char *
 arg_info_desc (ArgInfo *info)
 {
@@ -72,6 +71,7 @@ arg_info_desc (ArgInfo *info)
 
 	return g_string_free (str, FALSE);
 }
+#endif
 
 static inline void
 add_to_map (GPtrArray *map, int src, int dst)
@@ -128,7 +128,7 @@ Format for the destination descriptor:
 	bits 24:32 - slot count
 */
 #define SRC_DESCRIPTOR_MARSHAL_SHIFT 16
-#define SRC_DESCRIPTOR_MARSHAL_MASK 0x0Ff
+#define SRC_DESCRIPTOR_MARSHAL_MASK 0x0ff
 
 #define SLOT_COUNT_SHIFT 24
 #define SLOT_COUNT_MASK 0xff
@@ -378,6 +378,23 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 		default:
 			g_error ("Gsharedvt can't handle dest arg type %d", (int)dst_info->storage); // See above
 		}
+
+		if (arg_marshal == GSHAREDVT_ARG_BYREF_TO_BYVAL && dst_info->byte_arg_size) {
+			/* Have to load less than 4 bytes */
+			// FIXME: Signed types
+			switch (dst_info->byte_arg_size) {
+			case 1:
+				arg_marshal = GSHAREDVT_ARG_BYREF_TO_BYVAL_U1;
+				break;
+			case 2:
+				arg_marshal = GSHAREDVT_ARG_BYREF_TO_BYVAL_U2;
+				break;
+			default:
+				arg_marshal = GSHAREDVT_ARG_BYREF_TO_BYVAL_U4;
+				break;
+			}
+		}
+
 		if (nsrc)
 			src [0] |= (arg_marshal << SRC_DESCRIPTOR_MARSHAL_SHIFT) | (arg_slots << SLOT_COUNT_SHIFT);
 

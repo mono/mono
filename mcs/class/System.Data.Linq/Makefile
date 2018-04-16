@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Data.Linq.dll
 LIB_REFS = System System.Core System.Xml System.Data System.Runtime.Serialization
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = \
 	        /resource:./src/DbLinq/Schema/Dbml/DbmlSchema.xsd,DbLinq.Schema.Dbml.DbmlSchema.xsd \
 		/d:MONO_STRICT /d:MONO_DEPLOY -warn:1

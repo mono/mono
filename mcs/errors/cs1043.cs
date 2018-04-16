@@ -1,4 +1,4 @@
-// CS1043: Invalid accessor body `1', expecting `;' or `{'
+// CS1043: Invalid accessor body `1', expecting `;', `{', or `=>'
 // Line: 6
 
 class C

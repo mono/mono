@@ -100,20 +100,40 @@ namespace MonoTests.System.Reflection.Emit
 
 		private ModuleBuilder module;
 
+		string tempDir = Path.Combine (Path.GetTempPath (), typeof (TypeBuilderTest).FullName);
+
 		static string ASSEMBLY_NAME = "MonoTests.System.Reflection.Emit.TypeBuilderTest";
 
 		[SetUp]
 		protected void SetUp ()
 		{
+			Random AutoRand = new Random ();
+			string basePath = tempDir;
+			while (Directory.Exists (tempDir))
+				tempDir = Path.Combine (basePath, AutoRand.Next ().ToString ());
+			Directory.CreateDirectory (tempDir);
+
 			AssemblyName assemblyName = new AssemblyName ();
 			assemblyName.Name = ASSEMBLY_NAME;
 
 			assembly =
 				Thread.GetDomain ().DefineDynamicAssembly (
-					assemblyName, AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
+					assemblyName, AssemblyBuilderAccess.RunAndSave, tempDir);
 
 			module = assembly.DefineDynamicModule (ASSEMBLY_NAME, ASSEMBLY_NAME + ".dll");
 		}
+
+		[TearDown]
+		protected void TearDown ()
+		{
+			try {
+				Directory.Delete (tempDir, true);
+			} catch (DirectoryNotFoundException) {
+			} catch (IOException) {
+				// Can happen on Windows if assemblies from this dir are still used
+			}
+		}
+
 
 		static int typeIndexer = 0;
 
@@ -550,6 +570,40 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		public void TestEnumWithLateUnderlyingField ()
+		{
+			TypeBuilder enumToCreate = module.DefineType (genTypeName (), TypeAttributes.Public, typeof (Enum));
+			enumToCreate.DefineField ("value__", typeof (Int32),
+				FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
+
+			TypeBuilder enumToCreate2 = module.DefineType (genTypeName (), TypeAttributes.Public, typeof (Enum));
+
+			TypeBuilder ivTypeBld = module.DefineType (genTypeName (), TypeAttributes.Public);
+
+			ConstructorBuilder ivCtor = ivTypeBld.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+
+			ILGenerator ctorIL = ivCtor.GetILGenerator ();
+
+			ctorIL.Emit (OpCodes.Ldtoken, typeof (Object));
+			ctorIL.Emit (OpCodes.Pop);
+			ctorIL.Emit (OpCodes.Ldtoken, enumToCreate);
+			ctorIL.Emit (OpCodes.Pop);
+			ctorIL.Emit (OpCodes.Ldtoken, enumToCreate2);
+			ctorIL.Emit (OpCodes.Pop);
+			ctorIL.Emit (OpCodes.Ret);
+
+			var ivType = ivTypeBld.CreateType ();
+
+			enumToCreate2.DefineField ("value__", typeof (Int32), FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
+
+			FieldBuilder fb = enumToCreate2.DefineField ("A", enumToCreate, FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal);
+			fb.SetConstant (0);
+
+			enumToCreate.CreateType ();
+			enumToCreate2.CreateType ();
+		}
+
+		[Test]
 		public void TestIsAbstract ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
@@ -738,30 +792,6 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsTrue (tb2.IsSealed, "#2");
 		}
 
-		static string CreateTempAssembly ()
-		{
-			FileStream f = null;
-			string path;
-			Random rnd;
-			int num = 0;
-
-			rnd = new Random ();
-			do {
-				num = rnd.Next ();
-				num++;
-				path = Path.Combine (Path.GetTempPath (), "tmp" + num.ToString ("x") + ".dll");
-
-				try {
-					f = new FileStream (path, FileMode.CreateNew);
-				} catch { }
-			} while (f == null);
-
-			f.Close ();
-
-
-			return "tmp" + num.ToString ("x") + ".dll";
-		}
-
 		[Test]
 		public void IsSerializable ()
 		{
@@ -774,10 +804,10 @@ namespace MonoTests.System.Reflection.Emit
 			tb.SetCustomAttribute (new CustomAttributeBuilder (ctors [0], new object [0]));
 			Type createdType = tb.CreateType ();
 
-			string an = CreateTempAssembly ();
+			string an = "IsSerializableTestAssembly.dll";
 			assembly.Save (an);
 			Assert.IsTrue (createdType.IsSerializable, "#3");
-			File.Delete (Path.Combine (Path.GetTempPath (), an));
+			File.Delete (Path.Combine (tempDir, an));
 		}
 
 		[Test]
@@ -1182,6 +1212,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void DefineDefaultConstructor_Parent_DefaultCtorInaccessible ()
 		{
 			TypeBuilder tb;
@@ -2054,7 +2085,7 @@ namespace MonoTests.System.Reflection.Emit
 
 			assembly =
 				Thread.GetDomain ().DefineDynamicAssembly (
-					assemblyName, AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800, Path.GetTempPath ());
+					assemblyName, AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800, tempDir);
 
 			module = assembly.DefineDynamicModule ("module1");
 			
@@ -9706,7 +9737,7 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test] //bug #399047
 		public void FieldOnTypeBuilderInstDontInflateWhenEncoded () {
-				assembly = Thread.GetDomain ().DefineDynamicAssembly (new AssemblyName (ASSEMBLY_NAME), AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
+				assembly = Thread.GetDomain ().DefineDynamicAssembly (new AssemblyName (ASSEMBLY_NAME), AssemblyBuilderAccess.RunAndSave, tempDir);
 
 				module = assembly.DefineDynamicModule ("Instance.exe");
   
@@ -9743,10 +9774,11 @@ namespace MonoTests.System.Reflection.Emit
 
 				assembly.SetEntryPoint (main);
                 G.CreateType ();
-                P.CreateType ();
+                var PCreated = P.CreateType ();
 
                 assembly.Save ("Instance.exe");
-				Thread.GetDomain ().ExecuteAssembly(Path.GetTempPath () + Path.DirectorySeparatorChar + "Instance.exe");
+
+		PCreated.InvokeMember ("Main", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, null);
 		}
 
 		[Test]
@@ -9756,7 +9788,7 @@ namespace MonoTests.System.Reflection.Emit
 			FieldBuilder fb = tb.DefineInitializedData ("Foo", new byte [] {1,2,3,4}, FieldAttributes.Static|FieldAttributes.Public);
 			tb.CreateType ();
 
-			assembly = Thread.GetDomain ().DefineDynamicAssembly (new AssemblyName (ASSEMBLY_NAME+"2"), AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
+			assembly = Thread.GetDomain ().DefineDynamicAssembly (new AssemblyName (ASSEMBLY_NAME+"2"), AssemblyBuilderAccess.RunAndSave, tempDir);
 			module = assembly.DefineDynamicModule ("Instance.exe");
 
 			TypeBuilder tb2 = module.DefineType ("Type2", TypeAttributes.Public);
@@ -9783,7 +9815,7 @@ namespace MonoTests.System.Reflection.Emit
 			FieldBuilder fb = tb.DefineInitializedData ("Foo", new byte [] {1,2,3,4}, FieldAttributes.Static|FieldAttributes.Public);
 			tb.CreateType ();
 
-			assembly = Thread.GetDomain ().DefineDynamicAssembly (new AssemblyName (ASSEMBLY_NAME+"2"), AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
+			assembly = Thread.GetDomain ().DefineDynamicAssembly (new AssemblyName (ASSEMBLY_NAME+"2"), AssemblyBuilderAccess.RunAndSave, tempDir);
 			module = assembly.DefineDynamicModule ("Instance.exe");
 
 			TypeBuilder tb2 = module.DefineType ("Type2", TypeAttributes.Public);
@@ -11306,5 +11338,110 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreSame (buildX, defX);
 		}
+
+		[Test]
+		public void FieldsWithSameName () {
+			// Regression test for https://bugzilla.xamarin.com/show_bug.cgi?id=57222
+			var typeBuilder = module.DefineType ("type1", TypeAttributes.Public | TypeAttributes.Class);
+
+			var mainMethod = typeBuilder.DefineMethod ("Main", MethodAttributes.Public | MethodAttributes.Static, typeof (int), new Type[0]);
+			var mainMethodIl = mainMethod.GetILGenerator ();
+
+			var f1 = typeBuilder.DefineField ("x", typeof (byte), FieldAttributes.Private | FieldAttributes.Static);
+			var f2 = typeBuilder.DefineField ("x", typeof (sbyte), FieldAttributes.Private | FieldAttributes.Static);
+
+			mainMethodIl.Emit (OpCodes.Ldsflda, f1);
+			mainMethodIl.Emit (OpCodes.Ldsflda, f2);
+			mainMethodIl.Emit (OpCodes.Pop);
+			mainMethodIl.Emit (OpCodes.Pop);
+			mainMethodIl.Emit (OpCodes.Ldc_I4_0);
+			mainMethodIl.Emit (OpCodes.Ret);
+
+			typeBuilder.CreateType ();
+			assembly.SetEntryPoint (mainMethod);
+
+			assembly.Save (ASSEMBLY_NAME + ".dll");
+		}
+		[Test]
+		public void FieldsWithSameNameAndType () {
+			// https://bugzilla.xamarin.com/show_bug.cgi?id=57222
+			var typeBuilder = module.DefineType ("type1", TypeAttributes.Public | TypeAttributes.Class);
+
+			var mainMethod = typeBuilder.DefineMethod ("Main", MethodAttributes.Public | MethodAttributes.Static, typeof (int), new Type[0]);
+			var mainMethodIl = mainMethod.GetILGenerator ();
+
+			var f1 = typeBuilder.DefineField ("x", typeof (sbyte), FieldAttributes.Private | FieldAttributes.Static);
+			var f2 = typeBuilder.DefineField ("x", typeof (sbyte), FieldAttributes.Private | FieldAttributes.Static);
+
+			mainMethodIl.Emit (OpCodes.Ldsflda, f1);
+			mainMethodIl.Emit (OpCodes.Ldsflda, f2);
+			mainMethodIl.Emit (OpCodes.Pop);
+			mainMethodIl.Emit (OpCodes.Pop);
+			mainMethodIl.Emit (OpCodes.Ldc_I4_0);
+			mainMethodIl.Emit (OpCodes.Ret);
+
+			typeBuilder.CreateType ();
+			assembly.SetEntryPoint (mainMethod);
+
+			assembly.Save (ASSEMBLY_NAME + ".dll");
+		}
+
+		[Test]
+		public void MethodsWithSameNameAndSig () {
+			// https://bugzilla.xamarin.com/show_bug.cgi?id=57222
+			var typeBuilder = module.DefineType ("type1", TypeAttributes.Public | TypeAttributes.Class);
+
+			var mainMethod = typeBuilder.DefineMethod ("Main", MethodAttributes.Public | MethodAttributes.Static, typeof (int), new Type[0]);
+			var mainMethodIl = mainMethod.GetILGenerator ();
+
+			var m1 = typeBuilder.DefineMethod ("X", MethodAttributes.Private | MethodAttributes.Static, typeof (void), new Type [0]);
+			var m2 = typeBuilder.DefineMethod ("X", MethodAttributes.Private | MethodAttributes.Static, typeof (void), new Type [0]);
+			m1.GetILGenerator ().Emit (OpCodes.Ret);
+			m2.GetILGenerator ().Emit (OpCodes.Ret);
+
+			mainMethodIl.Emit (OpCodes.Call, m1);
+			mainMethodIl.Emit (OpCodes.Call, m2);
+			mainMethodIl.Emit (OpCodes.Ldc_I4_0);
+			mainMethodIl.Emit (OpCodes.Ret);
+
+			typeBuilder.CreateType ();
+			assembly.SetEntryPoint (mainMethod);
+
+			assembly.Save (ASSEMBLY_NAME + ".dll");
+		}
+
+		[Test]
+		public void TwoAssembliesMidFlightTest () {
+			// Check that one AssemblyBuilder can refer to a TypeBuilder from another AssemblyBuilder.
+			// Regression test for https://bugzilla.xamarin.com/show_bug.cgi?id=58421
+			var name2 = "MonoTests.System.Reflection.Emit.TypeBuilderTest2";
+			var assemblyName2 = new AssemblyName (name2);
+			var assembly2 =
+				Thread.GetDomain ().DefineDynamicAssembly (
+					assemblyName2, AssemblyBuilderAccess.RunAndSave, tempDir);
+
+			var module2 = assembly2.DefineDynamicModule (name2, name2 + ".dll");
+
+			var tb = module.DefineType ("Foo", TypeAttributes.Public);
+			var tb2 = module2.DefineType ("Foo2", TypeAttributes.Public);
+
+			var cb = tb.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard,
+						       Type.EmptyTypes);
+
+			var ilg = cb.GetILGenerator ();
+
+			ilg.Emit (OpCodes.Ldtoken, tb2); // N.B. type from the other AssemblyBuilder
+			ilg.Emit (OpCodes.Pop);
+			ilg.Emit (OpCodes.Ret);
+
+			var t = tb.CreateType ();
+			tb2.CreateType ();
+
+			var ci = t.GetConstructor (Type.EmptyTypes);
+			var x = ci.Invoke (null);
+			assembly.Save (ASSEMBLY_NAME + ".dll");
+			assembly2.Save (name2 + ".dll");
+		}
+
 	}
 }

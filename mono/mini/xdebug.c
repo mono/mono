@@ -27,8 +27,8 @@
 #include "config.h"
 #include <glib.h>
 #include "mini.h"
+#include "mini-runtime.h"
 
-#if !defined(DISABLE_AOT) && !defined(DISABLE_JIT) && USE_BIN_WRITER
 #include <sys/types.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -50,6 +50,9 @@
 #include <sys/stat.h>
 
 #include "image-writer.h"
+
+#if !defined(DISABLE_AOT) && !defined(DISABLE_JIT) && USE_BIN_WRITER
+
 #include "dwarfwriter.h"
 
 #include "mono/utils/mono-compiler.h"
@@ -339,6 +342,10 @@ mono_save_xdebug_info (MonoCompile *cfg)
 void
 mono_save_trampoline_xdebug_info (MonoTrampInfo *info)
 {
+	const char *info_name = info->name;
+	if (info_name == NULL)
+		info_name = "";
+
 	if (use_gdb_interface) {
 		MonoImageWriter *w;
 		MonoDwarfWriter *dw;
@@ -348,7 +355,7 @@ mono_save_trampoline_xdebug_info (MonoTrampInfo *info)
 
 		xdebug_begin_emit (&w, &dw);
 
-		mono_dwarf_writer_emit_trampoline (dw, info->name, NULL, NULL, info->code, info->code_size, info->unwind_ops);
+		mono_dwarf_writer_emit_trampoline (dw, info_name, NULL, NULL, info->code, info->code_size, info->unwind_ops);
 
 		xdebug_end_emit (w, dw, NULL);
 		
@@ -358,7 +365,7 @@ mono_save_trampoline_xdebug_info (MonoTrampInfo *info)
 			return;
 
 		mono_loader_lock_if_inited ();
-		mono_dwarf_writer_emit_trampoline (xdebug_writer, info->name, NULL, NULL, info->code, info->code_size, info->unwind_ops);
+		mono_dwarf_writer_emit_trampoline (xdebug_writer, info_name, NULL, NULL, info->code, info->code_size, info->unwind_ops);
 		fflush (xdebug_fp);
 		mono_loader_unlock_if_inited ();
 	}

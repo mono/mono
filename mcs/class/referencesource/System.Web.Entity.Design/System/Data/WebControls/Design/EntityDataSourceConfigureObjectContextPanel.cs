@@ -48,6 +48,9 @@ namespace System.Web.UI.Design.WebControls
 
             _databaseConnectionGroupBox.Location = new Point(13, top);
             _databaseConnectionGroupBox.Size = new Size(503, 124);
+            _radioButtonsGroupContainer.Location = new Point(0, 0);
+            _radioButtonsGroupContainer.Size = new Size(503, 124);
+
             top = 0; // rest of controls in this group are positioned relative to the group box, so top resets
 
             _namedConnectionRadioButton.Location = new Point(9, top + 20);
@@ -72,6 +75,7 @@ namespace System.Web.UI.Design.WebControls
 
             _containerNameComboBox.Location = new Point(13, top + 3);
             _containerNameComboBox.Size = new Size(502, 21);
+
             // if any controls are added, top should be reset to _containerNameComboBox.Bottom before adding them here
         }
 
@@ -85,6 +89,7 @@ namespace System.Web.UI.Design.WebControls
             _containerNameComboBox.TabStop = true;
             
             int tabIndex = 0;
+            _radioButtonsGroupContainer.TabIndex = tabIndex;
             _databaseConnectionGroupLabel.TabIndex = tabIndex += 10;
             _databaseConnectionGroupBox.TabIndex = tabIndex += 10;
             _namedConnectionRadioButton.TabIndex = tabIndex += 10;
@@ -127,9 +132,12 @@ namespace System.Web.UI.Design.WebControls
                     // Update the flag to track if we have text in the box
                     _configureObjectContext.SelectConnectionStringHasValue(!String.IsNullOrEmpty(_connectionStringTextBox.Text));
 
-                    // Move the focus to the associated TextBox
-                    _connectionStringTextBox.Select();
-                    _connectionStringTextBox.Select(0, _connectionStringTextBox.TextLength);
+                    if (LocalAppContextSwitches.UseLegacyAccessibilityFeatures)
+                    {
+                        // Move the focus to the associated TextBox
+                        _connectionStringTextBox.Select();
+                        _connectionStringTextBox.Select(0, _connectionStringTextBox.TextLength);
+                    }
                 }
             }
             // else it's being unchecked, so that means another radio button is being checked and that handler will take care of updating the state
@@ -166,8 +174,11 @@ namespace System.Web.UI.Design.WebControls
                     // Update flag to indicate if there is a value selected in this box
                     _configureObjectContext.SelectConnectionStringHasValue(_namedConnectionComboBox.SelectedIndex != -1);
 
-                    // Move the focus to the associated ComboBox
-                    _namedConnectionComboBox.Select();
+                    if (LocalAppContextSwitches.UseLegacyAccessibilityFeatures)
+                    {
+                        // Move the focus to the associated ComboBox
+                        _namedConnectionComboBox.Select();
+                    }
 
                     // If there is a selected NamedConnection, validate the connection string right away
                     // so that we can potentially select the default container name if there is one
@@ -267,8 +278,11 @@ namespace System.Web.UI.Design.WebControls
                             }
                             else
                             {
-                                _connectionStringTextBox.Select();
-                                _connectionStringTextBox.Select(0, _connectionStringTextBox.TextLength);
+                                if (LocalAppContextSwitches.UseLegacyAccessibilityFeatures || _connectionStringTextBox.TextLength != 0)
+                                {
+                                    _connectionStringTextBox.Select();
+                                    _connectionStringTextBox.Select(0, _connectionStringTextBox.TextLength);
+                                }
                             }
                         }
                     }

@@ -3,7 +3,7 @@
  * Runtime functions
  *
  * Authors:
- *  Jonathan Pryor 
+ *  Jonathan Pryor
  *
  * Copyright 2010 Novell, Inc (http://www.novell.com)
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -22,11 +22,12 @@
 #include <mono/metadata/threadpool.h>
 #include <mono/metadata/marshal.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/unlocked.h>
 
 static gboolean shutting_down_inited = FALSE;
 static gboolean shutting_down = FALSE;
 
-/** 
+/**
  * mono_runtime_set_shutting_down:
  * \deprecated This function can break the shutdown sequence.
  *
@@ -36,7 +37,7 @@ static gboolean shutting_down = FALSE;
 void
 mono_runtime_set_shutting_down (void)
 {
-	shutting_down = TRUE;
+	UnlockedWriteBool (&shutting_down, TRUE);
 }
 
 /**
@@ -47,13 +48,13 @@ mono_runtime_set_shutting_down (void)
 gboolean
 mono_runtime_is_shutting_down (void)
 {
-	return shutting_down;
+	return UnlockedReadBool (&shutting_down);
 }
 
 static void
 fire_process_exit_event (MonoDomain *domain, gpointer user_data)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoClassField *field;
 	gpointer pa [2];
 	MonoObject *delegate, *exc;
@@ -61,14 +62,14 @@ fire_process_exit_event (MonoDomain *domain, gpointer user_data)
 	field = mono_class_get_field_from_name (mono_defaults.appdomain_class, "ProcessExit");
 	g_assert (field);
 
-	delegate = *(MonoObject **)(((char *)domain->domain) + field->offset); 
+	delegate = *(MonoObject **)(((char *)domain->domain) + field->offset);
 	if (delegate == NULL)
 		return;
 
 	pa [0] = domain;
 	pa [1] = NULL;
-	mono_runtime_delegate_try_invoke (delegate, pa, &exc, &error);
-	mono_error_cleanup (&error);
+	mono_runtime_delegate_try_invoke (delegate, pa, &exc, error);
+	mono_error_cleanup (error);
 }
 
 static void
@@ -78,7 +79,6 @@ mono_runtime_fire_process_exit_event (void)
 	mono_domain_foreach (fire_process_exit_event, NULL);
 #endif
 }
-
 
 /**
  * mono_runtime_try_shutdown:
@@ -92,18 +92,16 @@ mono_runtime_fire_process_exit_event (void)
 gboolean
 mono_runtime_try_shutdown (void)
 {
-	if (InterlockedCompareExchange (&shutting_down_inited, TRUE, FALSE))
+	if (mono_atomic_cas_i32 (&shutting_down_inited, TRUE, FALSE))
 		return FALSE;
 
 	mono_runtime_fire_process_exit_event ();
 
-	shutting_down = TRUE;
+	mono_runtime_set_shutting_down ();
 
 	mono_threads_set_shutting_down ();
 
 	/* No new threads will be created after this point */
-
-	mono_runtime_set_shutting_down ();
 
 	/*TODO move the follow to here:
 	mono_thread_suspend_all_other_threads (); OR  mono_thread_wait_all_other_threads
@@ -112,13 +110,6 @@ mono_runtime_try_shutdown (void)
 	*/
 
 	return TRUE;
-}
-
-
-gboolean
-mono_runtime_is_critical_method (MonoMethod *method)
-{
-	return FALSE;
 }
 
 /*

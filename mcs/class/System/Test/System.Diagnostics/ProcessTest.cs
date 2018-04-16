@@ -207,12 +207,6 @@ namespace MonoTests.System.Diagnostics
 				Assert.AreEqual (2, ex.NativeErrorCode, "#B6");
 			}
 
-			if (RunningOnUnix)
-				Assert.Ignore ("On Unix and Mac OS X, we try " +
-					"to open any file (using xdg-open, ...)" +
-					" and we do not report an exception " +
-					"if this fails.");
-
 			// absolute path, shell
 			process.StartInfo.FileName = exe;
 			process.StartInfo.UseShellExecute = true;
@@ -714,11 +708,11 @@ namespace MonoTests.System.Diagnostics
 			byte [] buffer = new byte [200];
 
 			// start async Read operation
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew ();
 			IAsyncResult ar = stdout.BeginRead (buffer, 0, buffer.Length,
 							    new AsyncCallback (Read), stdout);
 
-			Assert.IsTrue ((DateTime.Now - start).TotalMilliseconds < 1000, "#01 BeginRead was not async");
+			Assert.IsTrue (sw.ElapsedMilliseconds < 1000, "#01 BeginRead was not async");
 			p.WaitForExit ();
 			Assert.AreEqual (0, p.ExitCode, "#02 script failure");
 
@@ -1116,6 +1110,7 @@ namespace MonoTests.System.Diagnostics
 #endif // MONO_FEATURE_PROCESS_START
 
 		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void GetProcessesByName()
 		{
 			// This should return Process[0] or a Process[] with all the "foo" programs running
@@ -1133,7 +1128,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("AndroidNotWorking")] //SELinux makes probing the parent process impossible
+		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void NonChildProcessWaitForExit ()
 		{
 			if (!RunningOnUnix)
@@ -1157,7 +1152,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("AndroidNotWorking")] //SELinux makes probing the parent process impossible
+		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void NonChildProcessName ()
 		{
 			if (!RunningOnUnix)
@@ -1172,7 +1167,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("AndroidNotWorking")] //SELinux makes probing the parent process impossible
+		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void NonChildProcessId ()
 		{
 			if (!RunningOnUnix)

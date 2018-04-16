@@ -60,6 +60,18 @@ mono_btls_ssl_close (MonoBtlsSsl *ptr)
 	;
 }
 
+MONO_API int
+mono_btls_ssl_shutdown (MonoBtlsSsl *ptr)
+{
+    return SSL_shutdown (ptr->ssl);
+}
+
+MONO_API void
+mono_btls_ssl_set_quiet_shutdown (MonoBtlsSsl *ptr, int mode)
+{
+    SSL_set_quiet_shutdown (ptr->ssl, mode);
+}
+
 MONO_API void
 mono_btls_ssl_set_bio (MonoBtlsSsl *ptr, BIO *bio)
 {
@@ -211,3 +223,16 @@ mono_btls_ssl_get_server_name (MonoBtlsSsl *ptr)
 {
 	return SSL_get_servername (ptr->ssl, TLSEXT_NAMETYPE_host_name);
 }
+
+MONO_API void
+mono_btls_ssl_set_renegotiate_mode (MonoBtlsSsl *ptr, MonoBtlsSslRenegotiateMode mode)
+{
+    SSL_set_renegotiate_mode (ptr->ssl, (enum ssl_renegotiate_mode_t)mode);
+}
+
+MONO_API int
+mono_btls_ssl_renegotiate_pending (MonoBtlsSsl *ptr)
+{
+    return SSL_renegotiate_pending (ptr->ssl);
+}
+

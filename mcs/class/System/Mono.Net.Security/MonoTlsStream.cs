@@ -41,6 +41,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.Security;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
@@ -51,10 +52,12 @@ namespace Mono.Net.Security
 {
 	class MonoTlsStream
 	{
-#if SECURITY_DEP		
+#if SECURITY_DEP
 		readonly MonoTlsProvider provider;
 		readonly NetworkStream networkStream;		
 		readonly HttpWebRequest request;
+
+		readonly MonoTlsSettings settings;
 
 		internal HttpWebRequest Request {
 			get { return request; }
@@ -65,6 +68,8 @@ namespace Mono.Net.Security
 		internal IMonoSslStream SslStream {
 			get { return sslStream; }
 		}
+#else
+		const string EXCEPTION_MESSAGE = "System.Net.Security.SslStream is not supported on the current platform.";
 #endif
 
 		WebExceptionStatus status;
@@ -77,12 +82,9 @@ namespace Mono.Net.Security
 			get; set;
 		}
 
-#if SECURITY_DEP
-//		readonly ChainValidationHelper validationHelper;
-		readonly MonoTlsSettings settings;
-
 		public MonoTlsStream (HttpWebRequest request, NetworkStream networkStream)
 		{
+#if SECURITY_DEP
 			this.request = request;
 			this.networkStream = networkStream;
 
@@ -90,11 +92,18 @@ namespace Mono.Net.Security
 			provider = request.TlsProvider ?? MonoTlsProviderFactory.GetProviderInternal ();
 			status = WebExceptionStatus.SecureChannelFailure;
 
-			/*validationHelper =*/ ChainValidationHelper.Create (provider, ref settings, this);
+			ChainValidationHelper.Create (provider, ref settings, this);
+#else
+			status = WebExceptionStatus.SecureChannelFailure;
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+#endif
 		}
 
-		internal Stream CreateStream (byte[] buffer)
+		internal async Task<Stream> CreateStream (WebConnectionTunnel tunnel, CancellationToken cancellationToken)
 		{
+#if SECURITY_DEP
+			var socket = networkStream.InternalSocket;
+			WebConnection.Debug ($"MONO TLS STREAM CREATE STREAM: {socket.ID}");
 			sslStream = provider.CreateSslStream (networkStream, false, settings);
 
 			try {
@@ -105,16 +114,21 @@ namespace Mono.Net.Security
 						host = host.Substring (0, pos);
 				}
 
-				sslStream.AuthenticateAsClient (
+				await sslStream.AuthenticateAsClientAsync (
 					host, request.ClientCertificates,
 					(SslProtocols)ServicePointManager.SecurityProtocol,
-					ServicePointManager.CheckCertificateRevocationList);
+					ServicePointManager.CheckCertificateRevocationList).ConfigureAwait (false);
 
 				status = WebExceptionStatus.Success;
-			} catch (Exception) {
-				status = WebExceptionStatus.SecureChannelFailure;
+			} catch (Exception ex) {
+				WebConnection.Debug ($"MONO TLS STREAM ERROR: {socket.ID} {socket.CleanedUp} {ex.Message}");
+				if (socket.CleanedUp)
+					status = WebExceptionStatus.RequestCanceled;
+				else
+					status = WebExceptionStatus.SecureChannelFailure;
 				throw;
 			} finally {
+				WebConnection.Debug ($"MONO TLS STREAM CREATE STREAM DONE: {socket.ID} {socket.CleanedUp}");
 				if (CertificateValidationFailed)
 					status = WebExceptionStatus.TrustFailure;
 
@@ -127,8 +141,8 @@ namespace Mono.Net.Security
 			}
 
 			try {
-				if (buffer != null)
-					sslStream.Write (buffer, 0, buffer.Length);
+				if (tunnel?.Data != null)
+					await sslStream.WriteAsync (tunnel.Data, 0, tunnel.Data.Length, cancellationToken).ConfigureAwait (false);
 			} catch {
 				status = WebExceptionStatus.SendFailure;
 				sslStream = null;
@@ -136,7 +150,9 @@ namespace Mono.Net.Security
 			}
 
 			return sslStream.AuthenticatedStream;
-		}
+#else
+			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 #endif
+		}
 	}
 }

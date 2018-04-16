@@ -71,6 +71,7 @@ corefx/SR.missing.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECDiffieHellmanPublicKey.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECDsa.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECDsaCng.cs
+../referencesource/System.Core/System/Security/Cryptography/ECKeyXmlFormat.cs
 ../referencesource/System.Core/System/Security/Cryptography/NCryptNative.cs
 ../referencesource/System.Core/System/Security/Cryptography/RsaCng.cs
 
@@ -288,3 +289,5 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.Generated.cs
+
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/IncrementalHash.net46.cs

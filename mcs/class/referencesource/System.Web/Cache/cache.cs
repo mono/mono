@@ -422,11 +422,10 @@ namespace System.Web.Caching {
             DateTime utcAbsoluteExpiration = DateTimeUtil.ConvertToUniversalTime(absoluteExpiration);
             ObjectCache.Insert(key, value, new CacheInsertOptions() {
                                                 Dependencies = dependencies,
-                                                AbsoluteExpiration = absoluteExpiration,
+                                                AbsoluteExpiration = utcAbsoluteExpiration,
                                                 SlidingExpiration = slidingExpiration
                                             });
         }
-
 
         public void Insert(
                 string key,

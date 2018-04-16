@@ -1,27 +1,11 @@
-// Compiler options: -langversion:experimental
+using System;
 
-using static System.Console;
-
-public class DeclarationExpressions
+public class C
 {
-	public static void Main()
+	public static void Main ()
 	{
-		// TODO:
-		//Test (int value = 5);
-		//WriteLine (value);
 	}
 
-	void M2 ()
-	{
-//		for (int i = 0; int v = 2; ++i) {
-
-//		}
-
-	}
-
-	static int Test (int x)
-	{
-		WriteLine (x);
-		return x;
-	}
+	bool Test1 => int.TryParse ("1", out int x);
+	int Test2 => int.TryParse ("2", out int x) ? x : 0;
 }

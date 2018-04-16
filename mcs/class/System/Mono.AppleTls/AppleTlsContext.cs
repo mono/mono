@@ -33,9 +33,8 @@ using Mono.Security.Interface;
 
 using Mono.Net;
 using Mono.Net.Security;
-using Mono.Util;
 
-using ObjCRuntime;
+using ObjCRuntimeInternal;
 
 namespace Mono.AppleTls
 {
@@ -45,7 +44,7 @@ namespace Mono.AppleTls
 
 		GCHandle handle;
 		IntPtr context;
-		IntPtr connectionId;
+
 		SslReadFunc readFunc;
 		SslWriteFunc writeFunc;
 
@@ -74,8 +73,7 @@ namespace Mono.AppleTls
 			: base (parent, serverMode, targetHost, enabledProtocols,
 				serverCertificate, clientCertificates, askForClientCert)
 		{
-			handle = GCHandle.Alloc (this);
-			connectionId = GCHandle.ToIntPtr (handle);
+			handle = GCHandle.Alloc (this, GCHandleType.Weak);
 			readFunc = NativeReadCallback;
 			writeFunc = NativeWriteCallback;
 
@@ -95,12 +93,6 @@ namespace Mono.AppleTls
 
 		public override bool HasContext {
 			get { return !disposed && context != IntPtr.Zero; }
-		}
-
-		[System.Diagnostics.Conditional ("APPLE_TLS_DEBUG")]
-		protected new void Debug (string message, params object[] args)
-		{
-			Console.Error.WriteLine ("MobileTlsStream({0}): {1}", Parent.ID, string.Format (message, args));
 		}
 
 		void CheckStatusAndThrow (SslStatus status, params SslStatus[] acceptable)
@@ -236,32 +228,41 @@ namespace Mono.AppleTls
 			 * 
 			 */
 
-			var trust = GetPeerTrust (!IsServer);
-			X509CertificateCollection certificates;
-
-			if (trust == null || trust.Count == 0) {
-				remoteCertificate = null;
-				if (!IsServer)
-					throw new TlsException (AlertDescription.CertificateUnknown);
-				certificates = null;
-			} else {
-				if (trust.Count > 1)
-					Debug ("WARNING: Got multiple certificates in SecTrust!");
-
-				certificates = new X509CertificateCollection ();
-				for (int i = 0; i < trust.Count; i++)
-					certificates.Add (trust [(IntPtr)i].ToX509Certificate ());
-
-				remoteCertificate = certificates [0];
-				Debug ("Got peer trust: {0}", remoteCertificate);
-			}
-
 			bool ok;
+			SecTrust trust = null;
+			X509CertificateCollection certificates = null;
+
 			try {
+				trust = GetPeerTrust (!IsServer);
+
+				if (trust == null || trust.Count == 0) {
+					remoteCertificate = null;
+					if (!IsServer)
+						throw new TlsException (AlertDescription.CertificateUnknown);
+					certificates = null;
+				} else {
+					if (trust.Count > 1)
+						Debug ("WARNING: Got multiple certificates in SecTrust!");
+
+					certificates = new X509CertificateCollection ();
+					for (int i = 0; i < trust.Count; i++)
+						certificates.Add (trust.GetCertificate (i));
+
+					remoteCertificate = new X509Certificate (certificates [0]);
+					Debug ("Got peer trust: {0}", remoteCertificate);
+				}
+
 				ok = ValidateCertificate (certificates);
 			} catch (Exception ex) {
 				Debug ("Certificate validation failed: {0}", ex);
 				throw new TlsException (AlertDescription.CertificateUnknown, "Certificate validation threw exception.");
+			} finally {
+				if (trust != null)
+					trust.Dispose ();
+				if (certificates != null) {
+					for (int i = 0; i < certificates.Count; i++)
+						certificates [i].Dispose ();
+				}
 			}
 
 			if (!ok)
@@ -275,7 +276,7 @@ namespace Mono.AppleTls
 			var result = SSLSetIOFuncs (Handle, readFunc, writeFunc);
 			CheckStatusAndThrow (result);
 
-			result = SSLSetConnection (Handle, connectionId);
+			result = SSLSetConnection (Handle, GCHandle.ToIntPtr (handle));
 			CheckStatusAndThrow (result);
 
 			if ((EnabledProtocols & SSA.SslProtocols.Tls) != 0)
@@ -291,11 +292,6 @@ namespace Mono.AppleTls
 				MaxProtocol = SslProtocol.Tls_1_1;
 			else
 				MaxProtocol = SslProtocol.Tls_1_0;
-
-#if APPLE_TLS_DEBUG
-			foreach (var c in GetSupportedCiphers ())
-				Debug ("  {0} SslCipherSuite.{1} {2:x} {3}", IsServer ? "Server" : "Client", c, (int)c, (CipherSuiteCode)c);
-#endif
 
 			if (Settings != null && Settings.EnabledCiphers != null) {
 				SslCipherSuite [] ciphers = new SslCipherSuite [Settings.EnabledCiphers.Length];
@@ -666,7 +662,7 @@ namespace Mono.AppleTls
 				if (value == IntPtr.Zero)
 					throw new TlsException (AlertDescription.CertificateUnknown);
 			}
-			return (value == IntPtr.Zero) ? null : new SecTrust (value);
+			return (value == IntPtr.Zero) ? null : new SecTrust (value, true);
 		}
 
 		#endregion
@@ -682,41 +678,43 @@ namespace Mono.AppleTls
 		[DllImport (SecurityLibrary)]
 		extern static /* OSStatus */ SslStatus SSLSetIOFuncs (/* SSLContextRef */ IntPtr context, /* SSLReadFunc */ SslReadFunc readFunc, /* SSLWriteFunc */ SslWriteFunc writeFunc);
 
-		[MonoPInvokeCallback (typeof (SslReadFunc))]
+		[Mono.Util.MonoPInvokeCallback (typeof (SslReadFunc))]
 		static SslStatus NativeReadCallback (IntPtr ptr, IntPtr data, ref IntPtr dataLength)
 		{
-			var handle = GCHandle.FromIntPtr (ptr);
-			if (!handle.IsAllocated)
-				return SslStatus.Internal;
-
-			var context = (AppleTlsContext) handle.Target;
-			if (context.disposed)
-				return SslStatus.ClosedAbort;
-
+			AppleTlsContext context = null;
 			try {
+				var weakHandle = GCHandle.FromIntPtr (ptr);
+				if (!weakHandle.IsAllocated)
+					return SslStatus.Internal;
+
+				context = (AppleTlsContext) weakHandle.Target;
+				if (context == null || context.disposed)
+					return SslStatus.ClosedAbort;
+
 				return context.NativeReadCallback (data, ref dataLength);
 			} catch (Exception ex) {
-				if (context.lastException == null)
+				if (context != null && context.lastException == null)
 					context.lastException = ex;
 				return SslStatus.Internal;
 			}
 		}
 
-		[MonoPInvokeCallback (typeof (SslWriteFunc))]
+		[Mono.Util.MonoPInvokeCallback (typeof (SslWriteFunc))]
 		static SslStatus NativeWriteCallback (IntPtr ptr, IntPtr data, ref IntPtr dataLength)
 		{
-			var handle = GCHandle.FromIntPtr (ptr);
-			if (!handle.IsAllocated)
-				return SslStatus.Internal;
-
-			var context = (AppleTlsContext) handle.Target;
-			if (context.disposed)
-				return SslStatus.ClosedAbort;
-
+			AppleTlsContext context = null;
 			try {
+				var weakHandle = GCHandle.FromIntPtr (ptr);
+				if (!weakHandle.IsAllocated)
+					return SslStatus.Internal;
+
+				context = (AppleTlsContext) weakHandle.Target;
+				if (context == null || context.disposed)
+					return SslStatus.ClosedAbort;
+
 				return context.NativeWriteCallback (data, ref dataLength);
 			} catch (Exception ex) {
-				if (context.lastException == null)
+				if (context != null && context.lastException == null)
 					context.lastException = ex;
 				return SslStatus.Internal;
 			}
@@ -777,7 +775,7 @@ namespace Mono.AppleTls
 		[DllImport (SecurityLibrary)]
 		extern unsafe static /* OSStatus */ SslStatus SSLRead (/* SSLContextRef */ IntPtr context, /* const void* */ byte* data, /* size_t */ IntPtr dataLength, /* size_t* */ out IntPtr processed);
 
-		public override unsafe int Read (byte[] buffer, int offset, int count, out bool wantMore)
+		public override unsafe (int ret, bool wantMore) Read (byte[] buffer, int offset, int count)
 		{
 			if (Interlocked.Exchange (ref pendingIO, 1) == 1)
 				throw new InvalidOperationException ();
@@ -801,13 +799,12 @@ namespace Mono.AppleTls
 					 * when the first inner Read() returns 0.  MobileAuthenticatedStream.InnerRead() attempts
 					 * to distinguish between a graceful close and abnormal termination of connection.
 					 */
-					wantMore = false;
-					return 0;
+					return (0, false);
 				}
 
 				CheckStatusAndThrow (status, SslStatus.WouldBlock, SslStatus.ClosedGraceful);
-				wantMore = status == SslStatus.WouldBlock;
-				return (int)processed;
+				var wantMore = status == SslStatus.WouldBlock;
+				return ((int)processed, wantMore);
 			} catch (Exception ex) {
 				Debug ("Read error: {0}", ex);
 				throw;
@@ -819,7 +816,7 @@ namespace Mono.AppleTls
 		[DllImport (SecurityLibrary)]
 		extern unsafe static /* OSStatus */ SslStatus SSLWrite (/* SSLContextRef */ IntPtr context, /* const void* */ byte* data, /* size_t */ IntPtr dataLength, /* size_t* */ out IntPtr processed);
 
-		public override unsafe int Write (byte[] buffer, int offset, int count, out bool wantMore)
+		public override unsafe (int ret, bool wantMore) Write (byte[] buffer, int offset, int count)
 		{
 			if (Interlocked.Exchange (ref pendingIO, 1) == 1)
 				throw new InvalidOperationException ();
@@ -839,8 +836,8 @@ namespace Mono.AppleTls
 
 				CheckStatusAndThrow (status, SslStatus.WouldBlock);
 
-				wantMore = status == SslStatus.WouldBlock;
-				return (int)processed;
+				var wantMore = status == SslStatus.WouldBlock;
+				return ((int)processed, wantMore);
 			} finally {
 				pendingIO = 0;
 			}
@@ -849,26 +846,9 @@ namespace Mono.AppleTls
 		[DllImport (SecurityLibrary)]
 		extern static /* OSStatus */ SslStatus SSLClose (/* SSLContextRef */ IntPtr context);
 
-		public override void Close ()
+		public override void Shutdown ()
 		{
-			if (Interlocked.Exchange (ref pendingIO, 1) == 1)
-				throw new InvalidOperationException ();
-
-			Debug ("Close");
-
-			lastException = null;
-
-			try {
-				if (closed || disposed)
-					return;
-
-				var status = SSLClose (Handle);
-				Debug ("Close done: {0}", status);
-				CheckStatusAndThrow (status);
-			} finally {
-				closed = true;
-				pendingIO = 0;
-			}
+			closed = true;
 		}
 
 		#endregion

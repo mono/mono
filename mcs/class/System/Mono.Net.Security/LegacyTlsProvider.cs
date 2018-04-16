@@ -68,6 +68,10 @@ namespace Mono.Net.Security
 			get { return false; }
 		}
 
+		internal override bool SupportsCleanShutdown {
+			get { return false; }
+		}
+
 		public override SslProtocols SupportedProtocols {
 			get { return SslProtocols.Tls; }
 		}

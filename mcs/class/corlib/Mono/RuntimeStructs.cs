@@ -51,7 +51,7 @@ namespace Mono {
 
 		// handle.h HandleStackMark
 		struct HandleStackMark {
-			int size;
+			int size, interior_size;
 			IntPtr chunk;
 		}
 

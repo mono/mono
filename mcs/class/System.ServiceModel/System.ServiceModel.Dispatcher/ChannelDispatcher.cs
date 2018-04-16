@@ -356,9 +356,12 @@ namespace System.ServiceModel.Dispatcher
 				owner.Listener.Open (openTimeout);
 
 				// It is tested at Open(), but strangely it is not instantiated at this point.
-				foreach (var ed in owner.Endpoints)
-					if (ed.DispatchRuntime.InstanceContextProvider == null && (ed.DispatchRuntime.Type == null || ed.DispatchRuntime.Type.GetConstructor (Type.EmptyTypes) == null))
+				foreach (var ed in owner.Endpoints) {
+					if ((ed.DispatchRuntime.InstanceProvider == null && ed.DispatchRuntime.InstanceContextProvider == null)
+						&& (ed.DispatchRuntime.Type == null || ed.DispatchRuntime.Type.GetConstructor (Type.EmptyTypes) == null)) {
 						throw new InvalidOperationException ("There is no default constructor for the service Type in the DispatchRuntime");
+					}
+				}
 				SetupChannelAcceptor ();
 			}
 
@@ -414,7 +417,7 @@ namespace System.ServiceModel.Dispatcher
 				if (loop_thread == null)
 					return;
 
-				close_started = DateTime.Now;
+				close_started = DateTime.UtcNow;
 				close_timeout = timeout;
 				loop = false;
 				creator_handle.Set ();
@@ -467,7 +470,7 @@ namespace System.ServiceModel.Dispatcher
 					}
 					else {
 						try {
-							ch.Close (close_timeout - (DateTime.Now - close_started));
+							ch.Close (close_timeout - (DateTime.UtcNow - close_started));
 						} catch (Exception ex) {
 							// FIXME: log it.
 							Logger.Error (String.Format ("Exception on closing channel ({0})", ch.GetType ()), ex);
@@ -615,7 +618,8 @@ namespace System.ServiceModel.Dispatcher
 
 					if ((!(ex is SocketException)) && 
 					    (!(ex is XmlException)) &&
-					    (!(ex is IOException)))
+					    (!(ex is IOException)) &&
+					    rc != null)
 						rc.Reply (res);
 					
 					reply.Close (owner.DefaultCloseTimeout); // close the channel

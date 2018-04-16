@@ -47,10 +47,11 @@ namespace System.Runtime.ExceptionServices {
             // Copy over the details we need to save.
             m_Exception = exception;
 #if MONO
-			var count = exception.captured_traces == null ? 0 : exception.captured_traces.Length;
+			var traces = exception.captured_traces;
+			var count = traces == null ? 0 : traces.Length;
 			var stack_traces = new System.Diagnostics.StackTrace [count + 1];
 			if (count != 0)
-				Array.Copy (exception.captured_traces, 0, stack_traces, 0, count);
+				Array.Copy (traces, 0, stack_traces, 0, count);
 
 			stack_traces [count] = new System.Diagnostics.StackTrace (exception, 0, true);
 			m_stackTrace = stack_traces;
@@ -144,6 +145,9 @@ namespace System.Runtime.ExceptionServices {
         // This method will restore the original stack trace and bucketing details before throwing
         // the exception so that it is easy, from debugging standpoint, to understand what really went wrong on
         // the original thread.
+#if MONO
+        [System.Diagnostics.StackTraceHidden]
+#endif
         public void Throw()
         {
             // Restore the exception dispatch details before throwing the exception.
@@ -152,6 +156,7 @@ namespace System.Runtime.ExceptionServices {
         }
 
 #if MONO
+        [System.Diagnostics.StackTraceHidden]
         public static void Throw (Exception source) => Capture (source).Throw ();
 #endif
     }

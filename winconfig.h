@@ -1,6 +1,3 @@
-/* config.h.  Generated from config.h.in by configure.  */
-/* config.h.in.  Generated from configure.ac by autoheader.  */
-
 #ifndef _MSC_VER
 #include "cygconfig.h"
 #else
@@ -58,7 +55,7 @@
 #define DISABLE_PORTABILITY 1
 
 /* Windows does not have symlinks */
-#define PLATFORM_NO_SYMLINKS 1
+#define HOST_NO_SYMLINKS 1
 
 /* String of disabled features */
 #define DISABLED_FEATURES "none"
@@ -95,6 +92,12 @@
 
 /* Disable advanced SSA JIT optimizations */
 /* #undef DISABLE_SSA */
+
+/* Disable interpreter */
+/* #undef DISABLE_INTERPRETER */
+
+/* Some VES is available at runtime */
+#define ENABLE_ILGEN 1
 
 /* Enable DTrace probes */
 /* #undef ENABLE_DTRACE */
@@ -588,6 +591,12 @@
 
 /* Define to 1 if you have IPv6 support. */
 #define HAVE_STRUCT_SOCKADDR_IN6 1
+
+/* Defined as strtok_s in eglib-config.hw */
+#define HAVE_STRTOK_R 1
+
+/* Define to 1 if you have the `access' function. */
+#define HAVE_ACCESS 1
 
 /* Have a working sigaltstack */
 /* #undef HAVE_WORKING_SIGALTSTACK */

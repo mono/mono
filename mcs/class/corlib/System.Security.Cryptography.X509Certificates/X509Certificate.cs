@@ -111,19 +111,15 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		internal X509Certificate (X509CertificateImpl impl)
 		{
-			if (impl == null)
-				throw new ArgumentNullException ("impl");
-
 			this.impl = X509Helper.InitFromCertificate (impl);
 		}
 
-		public X509Certificate (System.Security.Cryptography.X509Certificates.X509Certificate cert) 
+		public X509Certificate (X509Certificate cert) 
 		{
 			if (cert == null)
 				throw new ArgumentNullException ("cert");
 
 			impl = X509Helper.InitFromCertificate (cert);
-			hideDates = false;
 		}
 
 		internal void ImportHandle (X509CertificateImpl impl)
@@ -134,7 +130,6 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		internal X509CertificateImpl Impl {
 			get {
-				X509Helper.ThrowIfContextInvalid (impl);
 				return impl;
 			}
 		}

@@ -302,7 +302,7 @@ namespace System.ServiceModel.Channels
             {
                 if (this.hashAlgorithm == null)
                 {
-                    this.hashAlgorithm = CryptoHelper.CreateHashAlgorithm(SecurityAlgorithms.Sha1Digest);
+                    this.hashAlgorithm = CryptoHelper.CreateHashAlgorithm(SecurityAlgorithms.Sha256Digest);
                 }
                 else
                 {

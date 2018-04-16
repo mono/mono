@@ -675,7 +675,9 @@ namespace System.Threading
                     }
                 }
             }
-
+#if MONO
+            ThreadPool.NotifyWorkItemQueued();
+#endif
             EnsureThreadRequested();
         }
 
@@ -1380,7 +1382,7 @@ namespace System.Threading
     }
 
     [HostProtection(Synchronization=true, ExternalThreading=true)]
-    public static class ThreadPool
+    public static partial class ThreadPool
     {
         #if FEATURE_CORECLR
         [System.Security.SecurityCritical] // auto-generated
@@ -1507,7 +1509,10 @@ namespace System.Threading
                 throw new NotSupportedException ("Timeout is too big. Maximum is Int32.MaxValue");
 
             RegisteredWaitHandle waiter = new RegisteredWaitHandle (waitObject, callBack, state, new TimeSpan (0, 0, 0, 0, (int) millisecondsTimeOutInterval), executeOnlyOnce);
-            QueueUserWorkItem (new WaitCallback (waiter.Wait), null);
+            if (compressStack)
+                QueueUserWorkItem (new WaitCallback (waiter.Wait), null);
+            else
+                UnsafeQueueUserWorkItem (new WaitCallback (waiter.Wait), null);
 
             return waiter;
 #endif
@@ -1893,6 +1898,13 @@ namespace System.Threading
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern void NotifyWorkItemProgressNative();
+
+#if MONO
+        [System.Security.SecurityCritical]
+        [ResourceExposure(ResourceScope.None)]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static extern void NotifyWorkItemQueued();
+#endif
 
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]

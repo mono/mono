@@ -630,7 +630,7 @@ namespace System.Drawing.Drawing2D
 
 			IntPtr sformat = (format == null) ? IntPtr.Zero : format.NativeObject;
 			// note: the NullReferenceException on s.Length is the expected (MS) exception
-			Status status = GDIPlus.GdipAddPathStringI (nativePath, s, s.Length, family.NativeObject, style, emSize, ref layoutRect, sformat);
+			Status status = GDIPlus.GdipAddPathStringI (nativePath, s, s.Length, family.NativeFamily, style, emSize, ref layoutRect, sformat);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -642,7 +642,7 @@ namespace System.Drawing.Drawing2D
 
 			IntPtr sformat = (format == null) ? IntPtr.Zero : format.NativeObject;
 			// note: the NullReferenceException on s.Length is the expected (MS) exception
-			Status status = GDIPlus.GdipAddPathString (nativePath, s, s.Length, family.NativeObject, style, emSize, ref layoutRect, sformat);
+			Status status = GDIPlus.GdipAddPathString (nativePath, s, s.Length, family.NativeFamily, style, emSize, ref layoutRect, sformat);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -699,7 +699,7 @@ namespace System.Drawing.Drawing2D
                 {
                         RectangleF retval;
                         IntPtr m = (matrix == null) ? IntPtr.Zero : matrix.nativeMatrix;
-                        IntPtr p = (pen == null) ? IntPtr.Zero : pen.nativeObject;
+                        IntPtr p = (pen == null) ? IntPtr.Zero : pen.NativePen;
                         
                         Status s = GDIPlus.GdipGetPathWorldBounds (nativePath, out retval, m, p);
 
@@ -746,7 +746,7 @@ namespace System.Drawing.Drawing2D
                         bool result;
                         IntPtr g = (graphics == null) ? IntPtr.Zero : graphics.nativeObject;
                         
-                	Status s = GDIPlus.GdipIsOutlineVisiblePathPointI (nativePath, x, y, pen.nativeObject, g, out result);
+                	Status s = GDIPlus.GdipIsOutlineVisiblePathPointI (nativePath, x, y, pen.NativePen, g, out result);
                         GDIPlus.CheckStatus (s);
 
                         return result;
@@ -760,7 +760,7 @@ namespace System.Drawing.Drawing2D
                         bool result;
                         IntPtr g = (graphics == null) ? IntPtr.Zero : graphics.nativeObject;
                         
-                	Status s = GDIPlus.GdipIsOutlineVisiblePathPoint (nativePath, x, y, pen.nativeObject, g, out result);
+                	Status s = GDIPlus.GdipIsOutlineVisiblePathPoint (nativePath, x, y, pen.NativePen, g, out result);
                         GDIPlus.CheckStatus (s);
 
                         return result;
@@ -889,7 +889,7 @@ namespace System.Drawing.Drawing2D
 				return;
                 	IntPtr m = (matrix == null) ? IntPtr.Zero : matrix.nativeMatrix;
 
-			Status s = GDIPlus.GdipWidenPath (nativePath, pen.nativeObject, m, flatness);
+			Status s = GDIPlus.GdipWidenPath (nativePath, pen.NativePen, m, flatness);
 			GDIPlus.CheckStatus (s);
                 } 
         }

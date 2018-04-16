@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !MOBILE && !XAMMAC_4_5
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ServiceModel;
@@ -14,14 +15,17 @@ using MonoTests.stand_alone.WebHarness;
 using System.ServiceModel.Dispatcher;
 using System.Collections.ObjectModel;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Features
 {
 	public class Configuration
 	{
 		static Configuration() {
+			var port = NetworkHelpers.FindFreePort ();
 			onlyServers = Boolean.Parse (ConfigurationManager.AppSettings ["onlyServers"]  ?? "false");
 			onlyClients = Boolean.Parse (ConfigurationManager.AppSettings ["onlyClients"]  ?? "false");
-			endpointBase = ConfigurationManager.AppSettings ["endpointBase"] ?? "http://localhost:9999/";
+			endpointBase = ConfigurationManager.AppSettings ["endpointBase"] ?? $"http://localhost:{port}/";
 			if (!endpointBase.EndsWith ("/"))
 				endpointBase = endpointBase + '/';
 			logMessages = Boolean.Parse (ConfigurationManager.AppSettings ["logMessages"] ?? "false");
@@ -211,3 +215,4 @@ namespace MonoTests.Features
 		}
 	}
 }
+#endif

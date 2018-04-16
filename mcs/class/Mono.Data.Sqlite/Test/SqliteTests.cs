@@ -43,24 +43,16 @@ namespace MonoTests.Mono.Data.Sqlite
 		[SetUp]
 		public void Setup ()
 		{
-			var dataFolder = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), "SqlTest");
 
-			_databasePath = Path.Combine (dataFolder, "database.db");
-
-			if (!Directory.Exists (dataFolder)) {
-				Directory.CreateDirectory (dataFolder);
-			}
-
+			_databasePath =  Path.GetTempFileName ();
 			File.Delete (_databasePath);
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			try {
+			if (File.Exists (_databasePath))
 				File.Delete (_databasePath);
-			} catch {
-			}
 		}
 
 		[Test]

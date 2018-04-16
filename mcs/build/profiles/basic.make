@@ -1,6 +1,6 @@
 # -*- makefile -*-
 
-monolite_path := $(topdir)/class/lib/monolite/$(MONO_CORLIB_VERSION)
+monolite_path := $(topdir)/class/lib/monolite-$(BUILD_PLATFORM)/$(MONO_CORLIB_VERSION)
 
 with_mono_path_monolite = MONO_PATH="$(monolite_path)$(PLATFORM_PATH_SEPARATOR)$(monolite_path)/Facades$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
@@ -26,15 +26,19 @@ else
 endif
 endif
 
+ILASM = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/ilasm.exe
+STRING_REPLACER = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/tmp/cil-stringreplacer.exe
 MCS = $(BOOTSTRAP_MCS)
 
-DEFAULT_REFERENCES = -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+DEFAULT_REFERENCES = mscorlib
 
-PROFILE_MCS_FLAGS = -d:NET_4_0 -d:NET_4_5 -d:MONO -d:WIN_PLATFORM -d:BOOTSTRAP_BASIC -nowarn:1699 -nostdlib $(DEFAULT_REFERENCES)
+PROFILE_MCS_FLAGS = -d:NET_4_0 -d:NET_4_5 -d:MONO -d:WIN_PLATFORM -d:BOOTSTRAP_BASIC -nowarn:1699 -nostdlib
+API_BIN_PROFILE = v4.7.1
+
 NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
 NO_INSTALL = yes
-FRAMEWORK_VERSION = 4.0
+FRAMEWORK_VERSION = 4.5
 
 # Compiler all using same bootstrap compiler
 LIBRARY_COMPILE = $(BOOT_COMPILE)
@@ -45,7 +49,7 @@ LIBRARY_COMPILE = $(BOOT_COMPILE)
 #
 # Copy from rules.make because I don't know how to unset MCS_FLAGS
 #
-USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS)
+USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
 
 .PHONY: profile-check do-profile-check
 profile-check:
@@ -90,7 +94,7 @@ ifdef use_monolite
 do-get-monolite:
 
 do-profile-check-monolite:
-	@echo "*** The contents of your 'monolite/$(MONO_CORLIB_VERSION)' directory may be out-of-date" 1>&2
+	@echo "*** The contents of your 'monolite-$(BUILD_PLATFORM)/$(MONO_CORLIB_VERSION)' directory may be out-of-date" 1>&2
 	@echo "*** You may want to try 'make get-monolite-latest'" 1>&2
 	rm -f $(monolite_flag)
 	exit 1
@@ -98,12 +102,12 @@ do-profile-check-monolite:
 else
 
 do-get-monolite:
-	@echo "*** Downloading bootstrap required 'monolite/$(MONO_CORLIB_VERSION)'" 1>&2
-	$(MAKE) $(MAKE_Q) -C $(mono_build_root) get-monolite-latest
+	@echo "*** Downloading bootstrap required 'monolite-$(BUILD_PLATFORM)/$(MONO_CORLIB_VERSION)'" 1>&2
+	$(MAKE) $(MAKE_Q) -C $(topdir)/class get-monolite-latest
 
 do-profile-check-monolite: $(depsdir)/.stamp
 	@echo "*** The runtime '$(PROFILE_RUNTIME)' doesn't appear to be usable." 1>&2
-	@echo "*** Trying the 'monolite/$(MONO_CORLIB_VERSION)' directory." 1>&2
+	@echo "*** Trying the 'monolite-$(BUILD_PLATFORM)/$(MONO_CORLIB_VERSION)' directory." 1>&2
 	@echo dummy > $(monolite_flag)
 	$(MAKE) do-profile-check
 
@@ -111,7 +115,7 @@ endif
 
 $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs
 	$(MAKE) $(MAKE_Q) -C $(topdir)/packages
-	$(BOOTSTRAP_MCS) /warn:0 /noconfig /r:System.dll /r:mscorlib.dll /out:$@ $<
+	$(BOOTSTRAP_MCS) /warn:0 /noconfig /langversion:latest /r:System.dll /r:mscorlib.dll /out:$@ $<
 
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1

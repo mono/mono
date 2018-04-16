@@ -19,6 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
+	[Category ("InetAccess")]
 	public class DnsTest
 	{
 		private String site1Name = "google-public-dns-a.google.com",
@@ -206,6 +207,13 @@ namespace MonoTests.System.Net
 				Assert.IsNotNull (ex.Message, "#B4");
 				Assert.AreEqual ("hostNameOrAddress", ex.ParamName, "#B5");
 			}
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void GetHostAddresses_IPv6 ()
+		{
+			var address = Dns.GetHostAddresses("ipv6.google.com");
 		}
 
 		[Test]

@@ -38,6 +38,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.Odbc
 {
 	[TestFixture]
+	[Category("NotWorking")] // needs https://github.com/dotnet/corefx/pull/22499
 	public class OdbcCommandBuilderTest
 	{
 		[Test]

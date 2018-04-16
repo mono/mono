@@ -205,6 +205,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestEnsureSufficientExecutionStack ()
 		{
 			var t = new Thread (() => {

@@ -31,8 +31,6 @@
 
 #if defined (MONO_ARCH_GSHAREDVT_SUPPORTED)
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-
 #define SRC_REG_SHIFT 0
 #define SRC_REG_MASK 0xFFFF
 
@@ -90,6 +88,28 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- [%d] (%d words) (%p) <- (%p)\n", dest_reg, source_reg, slot_count, &callee [dest_reg], &caller [source_reg]);
 			break;
 		}
+		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U1: {
+			guint8 *addr = caller [source_reg];
+
+			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
+			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u1) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
+			break;
+		}
+		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U2: {
+			guint16 *addr = caller [source_reg];
+
+			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
+			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u2) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
+			break;
+		}
+		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U4: {
+			guint32 *addr = caller [source_reg];
+
+			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
+			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u4) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
+			break;
+		}
+
 		default:
 			g_error ("cant handle arg marshal %d\n", arg_marshal);
 		}
@@ -140,7 +160,7 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 	g_assert ((code - start) < buf_len);
 
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, NULL), domain);
 

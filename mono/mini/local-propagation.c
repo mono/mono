@@ -28,6 +28,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/opcodes.h>
+#include <mono/utils/unlocked.h>
 #include "mini.h"
 #include "ir-emit.h"
 
@@ -211,7 +212,7 @@ mono_strength_reduction_division (MonoCompile *cfg, MonoInst *ins)
 			}
 			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, MONO_LVREG_LS (tmp_regl));
 #endif
-			mono_jit_stats.optimized_divisions++;
+			UnlockedIncrement (&mono_jit_stats.optimized_divisions);
 			break;
 		}
 		case OP_IDIV_IMM: {
@@ -293,7 +294,7 @@ mono_strength_reduction_division (MonoCompile *cfg, MonoInst *ins)
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, ins->dreg, tmp_regi, SIZEOF_REGISTER * 8 - 1);
 			MONO_EMIT_NEW_BIALU (cfg, OP_IADD, ins->dreg, ins->dreg, tmp_regi);
 #endif
-			mono_jit_stats.optimized_divisions++;
+			UnlockedIncrement (&mono_jit_stats.optimized_divisions);
 			break;
 		}
 	}
@@ -639,11 +640,9 @@ mono_local_cprop (MonoCompile *cfg)
 				}
 
 				/* Constant propagation */
-				/* FIXME: Make is_inst_imm a macro */
-				/* FIXME: Make is_inst_imm take an opcode argument */
 				/* is_inst_imm is only needed for binops */
 				if ((((def->opcode == OP_ICONST) || ((sizeof (gpointer) == 8) && (def->opcode == OP_I8CONST)) || (def->opcode == OP_PCONST)) &&
-					 (((srcindex == 0) && (ins->sreg2 == -1)) || mono_arch_is_inst_imm (def->inst_c0))) || 
+					 (((srcindex == 0) && (ins->sreg2 == -1)))) ||
 					(!MONO_ARCH_USE_FPSTACK && (def->opcode == OP_R8CONST))) {
 					guint32 opcode2;
 
@@ -668,7 +667,7 @@ mono_local_cprop (MonoCompile *cfg)
 					}
 
 					opcode2 = mono_op_to_op_imm (ins->opcode);
-					if ((opcode2 != -1) && mono_arch_is_inst_imm (def->inst_c0) && ((srcindex == 1) || (ins->sreg2 == -1))) {
+					if ((opcode2 != -1) && mono_arch_is_inst_imm (ins->opcode, opcode2, def->inst_c0) && ((srcindex == 1) || (ins->sreg2 == -1))) {
 						ins->opcode = opcode2;
 						if ((def->opcode == OP_I8CONST) && (sizeof (gpointer) == 4)) {
 							ins->inst_ls_word = def->inst_ls_word;
@@ -701,7 +700,7 @@ mono_local_cprop (MonoCompile *cfg)
 						}
 #endif
 						opcode2 = mono_load_membase_to_load_mem (ins->opcode);
-						if ((srcindex == 0) && (opcode2 != -1) && mono_arch_is_inst_imm (def->inst_c0)) {
+						if ((srcindex == 0) && (opcode2 != -1) && mono_arch_is_inst_imm (ins->opcode, opcode2, def->inst_c0)) {
 							ins->opcode = opcode2;
 							ins->inst_imm = def->inst_c0 + ins->inst_offset;
 							ins->sreg1 = -1;

@@ -6,15 +6,9 @@ class MonoExtensionsPackage(Package):
     def __init__(self):
         Package.__init__(self, 'mono-extensions', None,
                          sources=['git@github.com:xamarin/mono-extensions.git'],
-                         git_branch=self.profile.release_packages[
-                             'mono'].git_branch
+                         revision='3cc5e2e1870b35f15b1540f835a370d2b011bacd'
                          )
         self.source_dir_name = 'mono-extensions'
-
-        # Mono pull requests won't have mono-extensions branches
-        if not self.git_branch or 'pull/' in self.git_branch:
-            warn('Using master branch for mono_extensions')
-            self.git_branch = 'master'
 
     def build(self):
         pass

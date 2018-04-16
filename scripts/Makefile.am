@@ -36,7 +36,10 @@ bin_SCRIPTS = \
 	mono-test-install	\
 	peverify		\
 	mcs			\
-	csc					\
+	csc			\
+	csc-dim		\
+	vbc			\
+	csi			\
 	mono-package-runtime	\
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
@@ -71,7 +74,6 @@ scripts_4_0 = \
 	macpack$(SCRIPT_SUFFIX)			\
 	mdoc$(SCRIPT_SUFFIX)                    \
 	mono-cil-strip$(SCRIPT_SUFFIX)		\
-	prj2make$(SCRIPT_SUFFIX)		\
 	soapsuds$(SCRIPT_SUFFIX)		\
 	caspol$(SCRIPT_SUFFIX)			\
 	cert-sync$(SCRIPT_SUFFIX)		\
@@ -81,6 +83,7 @@ scripts_4_0 = \
 	crlupdate$(SCRIPT_SUFFIX)		\
 	csharp$(SCRIPT_SUFFIX)			\
 	httpcfg$(SCRIPT_SUFFIX)			\
+	illinkanalyzer$(SCRIPT_SUFFIX)		\
 	lc$(SCRIPT_SUFFIX)			\
 	mconfig$(SCRIPT_SUFFIX)			\
 	mod$(SCRIPT_SUFFIX)			\
@@ -158,7 +161,10 @@ EXTRA_DIST =			\
 	update_submodules.sh	\
 	mcs.in				\
 	csc.in				\
+	csc-dim.in				\
+	vbc.in				\
 	dmcs.in				\
+	csi.in			\
 	mono-package-runtime	\
 	mono-test-install	\
 	mono-heapviz		\
@@ -207,8 +213,20 @@ csc: csc.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/csc.in > $@.tmp
 	mv -f $@.tmp $@
 
+csc-dim: csc-dim.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/csc-dim.in > $@.tmp
+	mv -f $@.tmp $@
+
+vbc: vbc.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/vbc.in > $@.tmp
+	mv -f $@.tmp $@
+
 dmcs: dmcs.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/dmcs.in > $@.tmp
+	mv -f $@.tmp $@
+
+csi: csi.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/csi.in > $@.tmp
 	mv -f $@.tmp $@
 
 mono-service: mono-service.in Makefile

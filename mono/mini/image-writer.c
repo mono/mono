@@ -55,7 +55,7 @@
  * TARGET_ASM_GAS == GNU assembler
  */
 #if !defined(TARGET_ASM_APPLE) && !defined(TARGET_ASM_GAS)
-#if defined(TARGET_MACH) && !defined(__native_client_codegen__)
+#if defined(TARGET_MACH)
 #define TARGET_ASM_APPLE
 #else
 #define TARGET_ASM_GAS
@@ -116,34 +116,7 @@
 #define AS_TEMP_LABEL_PREFIX ".L"
 #endif
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-#define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
 #define ROUND_DOWN(VALUE,SIZE)	((VALUE) & ~((SIZE) - 1))
-
-#if defined(TARGET_AMD64) && !defined(HOST_WIN32) && !defined(__APPLE__)
-#define USE_ELF_WRITER 1
-#define USE_ELF_RELA 1
-#endif
-
-#if defined(TARGET_X86) && !defined(HOST_WIN32) && !defined(__APPLE__)
-#define USE_ELF_WRITER 1
-#endif
-
-#if defined(TARGET_ARM) && !defined(TARGET_MACH) && !defined(HOST_WIN32)
-//#define USE_ELF_WRITER 1
-#endif
-
-#if defined(__mips__)
-#define USE_ELF_WRITER 1
-#endif
-
-#if defined(TARGET_X86) && defined(__APPLE__)
-//#define USE_MACH_WRITER
-#endif
-
-#if defined(USE_ELF_WRITER) || defined(USE_MACH_WRITER)
-#define USE_BIN_WRITER 1
-#endif
 
 #ifdef USE_BIN_WRITER
 
@@ -329,11 +302,6 @@ bin_writer_emit_ensure_buffer (BinSection *section, int size)
 		while (new_size <= new_offset)
 			new_size *= 2;
 		data = (guint8 *)g_malloc0 (new_size);
-#ifdef __native_client_codegen__
-		/* for Native Client, fill empty space with HLT instruction */
-		/* instead of 00.                                           */
-		memset(data, 0xf4, new_size);
-#endif		
 		memcpy (data, section->data, section->data_len);
 		g_free (section->data);
 		section->data = data;

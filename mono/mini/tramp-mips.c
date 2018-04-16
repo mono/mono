@@ -25,6 +25,7 @@
 
 #include "mini.h"
 #include "mini-mips.h"
+#include "mini-runtime.h"
 
 /*
  * get_unbox_trampoline:
@@ -50,6 +51,8 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	mips_nop (code);
 
 	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_UNBOX_TRAMPOLINE, m));
+
 	g_assert ((code - start) <= 20);
 	/*g_print ("unbox trampoline at %d for %s:%s\n", this_pos, m->klass->name, m->name);
 	g_print ("unbox code is at %p for method at %p\n", start, addr);*/
@@ -110,8 +113,6 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
  * #define STACK (MIPS_MINIMAL_STACK_SIZE + 4 * sizeof (gulong) + sizeof (MonoLMF) + 14 * sizeof (double) + 13 * (sizeof (gulong)))
  * STACK would be 444 for 32 bit darwin
  */
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 #define STACK (int)(ALIGN_TO(4*IREG_SIZE + 8 + sizeof(MonoLMF) + 32, 8))
 
@@ -264,7 +265,8 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 
 	/* Flush instruction cache, since we've generated code */
 	mono_arch_flush_icache (buf, code - buf);
-	
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
+
 	/* Sanity check */
 	g_assert ((code - buf) <= max_code_len);
 
@@ -297,6 +299,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 
 	/* Flush instruction cache, since we've generated code */
 	mono_arch_flush_icache (buf, code - buf);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_SPECIFIC_TRAMPOLINE, mono_get_generic_trampoline_simple_name (tramp_type)));
 
 	g_assert ((code - buf) <= 32);
 
@@ -326,6 +329,7 @@ mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 	g_assert ((code - start) <= buf_len);
 
 	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, NULL), domain);
 
@@ -434,6 +438,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	}
 
 	mono_arch_flush_icache (buf, code - buf);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
 	g_assert (code - buf <= tramp_size);
 

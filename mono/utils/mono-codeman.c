@@ -43,7 +43,7 @@ static MonoCodeManagerCallbacks code_manager_callbacks;
 
 #define MIN_PAGES 16
 
-#if defined(__ia64__) || defined(__x86_64__) || defined (_WIN64)
+#if defined(__x86_64__) || defined (_WIN64)
 /*
  * We require 16 byte alignment on amd64 so the fp literals embedded in the code are 
  * properly aligned for SSE2.
@@ -235,7 +235,7 @@ free_chunklist (CodeChunk *chunk)
 
 	for (; chunk; ) {
 		dead = chunk;
-		mono_profiler_code_chunk_destroy ((gpointer) dead->data);
+		MONO_PROFILER_RAISE (jit_chunk_destroyed, ((mono_byte *) dead->data));
 		if (code_manager_callbacks.chunk_destroy)
 			code_manager_callbacks.chunk_destroy ((gpointer)dead->data);
 		chunk = chunk->next;
@@ -423,7 +423,7 @@ new_codechunk (CodeChunk *last, int dynamic, int size)
 	chunk->bsize = bsize;
 	if (code_manager_callbacks.chunk_new)
 		code_manager_callbacks.chunk_new ((gpointer)chunk->data, chunk->size);
-	mono_profiler_code_chunk_new((gpointer) chunk->data, chunk->size);
+	MONO_PROFILER_RAISE (jit_chunk_created, ((mono_byte *) chunk->data, chunk->size));
 
 	code_memory_used += chunk_size;
 	mono_runtime_resource_check_limit (MONO_RESOURCE_JIT_CODE, code_memory_used);

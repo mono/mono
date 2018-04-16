@@ -5,6 +5,7 @@ include ../../build/rules.make
 LIBRARY = Novell.Directory.Ldap.dll
 
 LIB_REFS = System Mono.Security
+KEYFILE = ../mono.pub
 LIB_MCS_FLAGS = -warn:1 -nowarn:612 
 
 RESOURCE_DEFS = ResultCodeMessages,Novell.Directory.Ldap.Utilclass/ResultCodeMessages.txt

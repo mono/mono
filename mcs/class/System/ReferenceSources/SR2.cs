@@ -9,6 +9,8 @@ partial class SR
 {
 	public const string mono_net_io_shutdown = "mono_net_io_shutdown";
 	public const string mono_net_io_renegotiate = "mono_net_io_renegotiate";
+	
+	public const string net_ssl_io_already_shutdown = "Write operations are not allowed after the channel was shutdown.";
 
 	public const string net_log_set_socketoption_reuseport_default_on = "net_log_set_socketoption_reuseport_default_on";
 	public const string net_log_set_socketoption_reuseport_not_supported = "net_log_set_socketoption_reuseport_not_supported";

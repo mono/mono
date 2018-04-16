@@ -10,6 +10,7 @@ using Diag = System.Diagnostics;
 using System.Linq;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -38,7 +39,11 @@ public class DebuggerTests
 	}
 
 	// No other way to pass arguments to the tests ?
+#if MONODROID_TEST
+	public static bool listening = true;
+#else
 	public static bool listening = Environment.GetEnvironmentVariable ("DBG_SUSPEND") != null;
+#endif
 	public static string runtime = Environment.GetEnvironmentVariable ("DBG_RUNTIME");
 	public static string agent_args = Environment.GetEnvironmentVariable ("DBG_AGENT_ARGS");
 
@@ -89,7 +94,10 @@ public class DebuggerTests
 			var pi = CreateStartInfo (args);
 			vm = VirtualMachineManager.Launch (pi, new LaunchOptions { AgentArgs = agent_args });
 		} else {
-			var ep = new IPEndPoint (IPAddress.Any, 10000);
+#if MONODROID_TEST
+			System.Diagnostics.Process.Start("/usr/bin/make", "-C ../android dirty-run-debugger-test");
+#endif
+			var ep = new IPEndPoint (IPAddress.Any, 6100);
 			Console.WriteLine ("Listening on " + ep + "...");
 			vm = VirtualMachineManager.Listen (ep);
 		}
@@ -122,6 +130,22 @@ public class DebuggerTests
 		}
 
 		load_req.Disable ();
+
+		if (args.Length == 2) {
+			var this_type = entry_point.DeclaringType;
+			var str = vm.RootDomain.CreateString (args [1]);
+			var slot = this_type.GetField ("arg");
+
+			if (slot == null)
+				throw new Exception ("Missing slot");
+
+			if (str == null)
+				throw new Exception ("Bug in createstring");
+
+			this_type.SetValue (slot, str);
+		} else if (args.Length > 2) {
+			throw new Exception (String.Format ("Fixme {0}", args [2]));
+		}
 	}
 
 	BreakpointEvent run_until (string name) {
@@ -324,6 +348,8 @@ public class DebuggerTests
 			Assert.AreEqual (expected, (val as StringMirror).Value);
 		} else if (val is StructMirror && (val as StructMirror).Type.Name == "IntPtr") {
 			AssertValue (expected, (val as StructMirror).Fields [0]);
+		} else if (val is PointerValue) {
+			Assert.AreEqual (expected, (val as PointerValue).Address);
 		} else {
 			Assert.IsTrue (val is PrimitiveValue);
 			Assert.AreEqual (expected, (val as PrimitiveValue).Value);
@@ -560,6 +586,10 @@ public class DebuggerTests
 
 	[Test]
 	public void ClassLocalReflection () {
+		vm.Detach ();
+
+		Start (new string [] { "dtest-app.exe", "local-reflect" });
+
 		MethodMirror m = entry_point.DeclaringType.Assembly.GetType ("LocalReflectClass").GetMethod ("RunMe");
 
 		Assert.IsNotNull (m);
@@ -2308,7 +2338,13 @@ public class DebuggerTests
 
 		Assert.AreEqual (5, (e as VMDeathEvent).ExitCode);
 
-		var p = vm.Process;
+		System.Diagnostics.Process p = null;
+
+		try {
+			p = vm.Process;
+		}
+		catch (Exception) {}
+
 		/* Could be a remote vm with no process */
 		if (p != null) {
 			p.WaitForExit ();
@@ -2332,7 +2368,13 @@ public class DebuggerTests
 		var e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (VMDisconnectEvent), e);
 
-		var p = vm.Process;
+		System.Diagnostics.Process p = null;
+
+		try {
+			p = vm.Process;
+		}
+		catch (Exception) {}
+
 		/* Could be a remote vm with no process */
 		if (p != null) {
 			p.WaitForExit ();
@@ -2384,73 +2426,52 @@ public class DebuggerTests
 	}
 
 	[Test]
-	// Broken by mcs+runtime changes (#5438)
-	[Category("NotWorking")]
 	public void LineNumbers () {
 		Event e = run_until ("line_numbers");
 
-		step_req = create_step (e);
-		step_req.Depth = StepDepth.Into;
-		step_req.Enable ();
+		create_step (e);
+		e = step_into ();
 
 		Location l;
-		
-		vm.Resume ();
 
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
 
 		l = e.Thread.GetFrames ()[0].Location;
 
-		Assert.IsTrue (l.SourceFile.IndexOf ("dtest-app.cs") != -1);
+		Assert.AreEqual ("dtest-app.cs", Path.GetFileName (l.SourceFile));
 		Assert.AreEqual ("ln1", l.Method.Name);
-
-		// Check hash
-		using (FileStream fs = new FileStream (l.SourceFile, FileMode.Open, FileAccess.Read)) {
-			MD5 md5 = MD5.Create ();
-			var hash = md5.ComputeHash (fs);
-
-			for (int i = 0; i < 16; ++i)
-				Assert.AreEqual (hash [i], l.SourceFileHash [i]);
-		}
 		
 		int line_base = l.LineNumber;
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln2", l.Method.Name);
-		Assert.AreEqual (line_base + 6, l.LineNumber);
+		Assert.AreEqual (line_base + 7, l.LineNumber);
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln1", l.Method.Name);
-		Assert.AreEqual (line_base + 1, l.LineNumber);
+		Assert.AreEqual (line_base + 2, l.LineNumber);
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln3", l.Method.Name);
 		Assert.AreEqual (line_base + 11, l.LineNumber);
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln3", l.Method.Name);
 		Assert.IsTrue (l.SourceFile.EndsWith ("FOO"));
 		Assert.AreEqual (55, l.LineNumber);
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln1", l.Method.Name);
-		Assert.AreEqual (line_base + 2, l.LineNumber);
+		Assert.AreEqual (line_base + 3, l.LineNumber);
 
 		// GetSourceFiles ()
 		string[] sources = l.Method.DeclaringType.GetSourceFiles ();
@@ -2617,6 +2638,11 @@ public class DebuggerTests
 		m = s.Type.GetMethod ("ToString");
 		v = s.InvokeMethod (e.Thread, m, null);
 
+		// pass nullable as argument
+		m = t.GetMethod ("invoke_pass_nullable");
+		v = this_obj.InvokeMethod (e.Thread, m, new Value [] { s });
+		AssertValue (42, v);
+
 		// return nullable null
 		m = t.GetMethod ("invoke_return_nullable_null");
 		v = this_obj.InvokeMethod (e.Thread, m, null);
@@ -2629,6 +2655,11 @@ public class DebuggerTests
 		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
 		m = s.Type.GetMethod ("ToString");
 		v = s.InvokeMethod (e.Thread, m, null);
+
+		// pass nullable null as argument
+		m = t.GetMethod ("invoke_pass_nullable_null");
+		v = this_obj.InvokeMethod (e.Thread, m, new Value [] { s });
+		AssertValue (2, v);
 
 		// pass primitive
 		m = t.GetMethod ("invoke_pass_primitive");
@@ -2722,6 +2753,17 @@ public class DebuggerTests
 		m = t.GetMethod ("invoke_static_pass_ref");
 		task = t.InvokeMethodAsync (e.Thread, m, new Value [] { vm.RootDomain.CreateString ("ABC") });
 		AssertValue ("ABC", task.Result);
+
+		// string constructor
+		var stringType = vm.RootDomain.Corlib.GetType ("System.String");
+		var stringConstructor = stringType.GetMethods ().Single (c=>
+			c.Name == ".ctor" &&
+			c.GetParameters ().Length == 2 &&
+			c.GetParameters ()[0].ParameterType.Name == "Char" &&
+			c.GetParameters ()[1].ParameterType.Name == "Int32");
+		var str = stringType.NewInstance (e.Thread, stringConstructor,  new Value [] { vm.CreateValue ('a'), vm.CreateValue (3)});
+
+		AssertValue("aaa", str);
 
 		// Argument checking
 		
@@ -3030,6 +3072,7 @@ public class DebuggerTests
 		vm.GetThreads ();
 	}
 
+#if !MONODROID_TEST
 	[Test]
 	public void Threads () {
 		Event e = run_until ("threads");
@@ -3055,6 +3098,7 @@ public class DebuggerTests
 		Assert.IsInstanceOfType (typeof (ThreadDeathEvent), e);
 		Assert.AreEqual (ThreadState.Stopped, e.Thread.ThreadState);
 	}
+#endif
 
 	[Test]
 	public void Frame_SetValue () {
@@ -3364,8 +3408,8 @@ public class DebuggerTests
 		Assert.AreEqual (0, frames [0].Location.ILOffset);
 
 		Assert.AreEqual (test_method.Name, frames [1].Location.Method.Name);
-		Assert.AreEqual (37, frames [1].Location.LineNumber);
-		Assert.AreEqual (0x0b, frames [1].Location.ILOffset);
+		Assert.AreEqual (38, frames [1].Location.LineNumber);
+		Assert.AreEqual (0x10, frames [1].Location.ILOffset);
 
 		Assert.AreEqual (test_method.Name, frames [2].Location.Method.Name);
 		Assert.AreEqual (33, frames [2].Location.LineNumber);
@@ -3503,6 +3547,10 @@ public class DebuggerTests
 		Assert.AreEqual ("invoke", frames [1].Method.Name);
 		Assert.AreEqual ("domains", frames [2].Method.Name);
 		Assert.AreEqual (vm.RootDomain, frames [2].Domain);
+
+		// Check enum creation in other domains
+		var anenum = vm.CreateEnumMirror (d_method.DeclaringType.Assembly.GetType ("AnEnum"), vm.CreateValue (1));
+		Assert.AreEqual (1, anenum.Value);
 
 		// Test breakpoints on already JITted methods in other domains
 		m = entry_point.DeclaringType.GetMethod ("invoke_in_domain_2");
@@ -4122,7 +4170,7 @@ public class DebuggerTests
 
 		frames = thread.GetFrames ();
 		Assert.AreEqual (8, frames.Length, "#7");
-		Assert.AreEqual ("WaitOne_internal", frames [0].Method.Name, "#8.0");
+		Assert.AreEqual ("Wait_internal", frames [0].Method.Name, "#8.0");
 		Assert.AreEqual ("WaitOneNative", frames [1].Method.Name, "#8.1");
 		Assert.AreEqual ("InternalWaitOne", frames [2].Method.Name, "#8.2");
 		Assert.AreEqual ("WaitOne", frames [3].Method.Name, "#8.3");
@@ -4283,6 +4331,53 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category("NotWorking")] // flaky, see https://github.com/mono/mono/issues/6997
+	public void StepOutAsync () {
+		vm.Detach ();
+		Start (new string [] { "dtest-app.exe", "step-out-void-async" });
+		var e = run_until ("step_out_void_async_2");
+		create_step (e);
+		var e2 = step_out ();
+		assert_location (e2, "MoveNext");//we are in step_out_void_async
+		step_req.Disable ();
+		step_req.Depth = StepDepth.Out;
+		step_req.Enable ();
+		vm.Resume ();
+		var e3 = GetNextEvent ();
+		//after step-out from async void, execution should continue
+		//and runtime should exit
+		Assert.IsTrue (e3 is VMDeathEvent, e3.GetType().FullName);
+		vm = null;
+	}
+
+	[Test]
+	[Category("NotWorking")]
+	public void ShouldCorrectlyStepOverOnExitFromArgsAfterStepInMethodParameter() {
+		Event e = run_until ("ss_nested_with_two_args_wrapper");
+
+		var req = create_step(e);
+		req.Enable();
+
+		e = step_once();
+		assert_location(e, "ss_nested_with_two_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg");
+
+		e = step_over();
+		assert_location(e, "ss_nested_with_two_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg");
+	}
+
+	[Test]
 	// Uses a fixed port
 	[Category("NotWorking")]
 	public void Attach () {
@@ -4344,6 +4439,76 @@ public class DebuggerTests
 		vm = null;
 	}
 
-}
+	[Test]
+	[Category("NotWorking")]
+	public void Hash ()
+	{
+		Event e = run_until ("Main");
 
-}
+		Location l = e.Thread.GetFrames ()[0].Location;
+
+		using (FileStream fs = new FileStream (l.SourceFile, FileMode.Open, FileAccess.Read)) {
+			Assert.AreEqual (MD5.Create ().ComputeHash (fs), l.SourceFileHash);
+		}
+	}
+
+	[Test]
+	public void Bug59649 ()
+	{
+		Event e = run_until ("Bug59649");
+
+		var req = create_step (e);
+		req.Filter = StepFilter.StaticCtor;
+		req.Enable ();
+
+		// Approach call instruction
+		e = step_once ();
+		//StackTraceDump (e);
+
+		// Follow call
+		e = step_into ();
+		//StackTraceDump (e);
+
+		e = step_into ();
+		//StackTraceDump (e);
+
+		// Is cctor in this bug, ends up in the static field constructor
+		// DummyCall
+		assert_location (e, "Call");
+	}
+
+	[Test]
+	public void Pointer_GetValue () {
+		var e = run_until ("pointer_arguments");
+		var frame = e.Thread.GetFrames () [0];
+
+		var param = frame.Method.GetParameters()[0];
+		Assert.AreEqual("Int32*", param.ParameterType.Name);
+
+		var pointerValue = frame.GetValue(param) as PointerValue;
+		Assert.AreEqual("Int32*", pointerValue.Type.Name);
+
+		AssertValue(1, pointerValue.Value);
+
+		var pointerValue2 = new PointerValue (pointerValue.VirtualMachine, pointerValue.Type, pointerValue.Address + pointerValue.Type.GetElementType().GetValueSize());
+
+		AssertValue(2, pointerValue2.Value);
+
+
+		param = frame.Method.GetParameters()[1];
+		Assert.AreEqual("BlittableStruct*", param.ParameterType.Name);
+
+		pointerValue = frame.GetValue(param) as PointerValue;
+		Assert.AreEqual("BlittableStruct*", pointerValue.Type.Name);
+
+		var structValue = pointerValue.Value as StructMirror;
+		Assert.AreEqual("BlittableStruct", structValue.Type.Name);
+
+		object f = structValue.Fields[0];
+		AssertValue (2, f);
+		f = structValue.Fields[1];
+		AssertValue (3.0, f);
+
+	}
+} // class DebuggerTests
+} // namespace

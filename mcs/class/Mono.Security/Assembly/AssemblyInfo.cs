@@ -52,7 +52,6 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../mono.pub")]
 
 [assembly: InternalsVisibleTo ("System, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 

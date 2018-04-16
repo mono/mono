@@ -1234,6 +1234,11 @@ namespace Mono.CSharp.Nullable
 					type = ltype;
 					return this;
 				}
+			} else if (ltype == InternalType.ThrowExpr) {
+				//
+				// LAMESPEC: I am not really sure what's point of allowing throw on left side
+				//
+				return ReducedExpression.Create (right, this, false).Resolve (ec);
 			} else {
 				return null;
 			}

@@ -46,6 +46,7 @@ namespace System.ComponentModel
 			case 32: /* ERROR_SHARING_VIOLATION */ return "Sharing violation";
 			case 33: /* ERROR_LOCK_VIOLATION */ return "Lock violation";
 			case 50: /* ERROR_NOT_SUPPORTED */ return "Operation not supported";
+			case 55: /* ERROR_DEV_NOT_EXIST */ return "Device does not exist";
 			case 87: /* ERROR_INVALID_PARAMETER */ return "Invalid parameter";
 			case 120: /* ERROR_CALL_NOT_IMPLEMENTED */ return "Call not implemented";
 			case 123: /* ERROR_INVALID_NAME */ return "Invalid name";
@@ -56,6 +57,7 @@ namespace System.ComponentModel
 			case 6000: /* ERROR_ENCRYPTION_FAILED */ return "Encryption failed";
 			case 10004: /* WSAEINTR */ return "interrupted";
 			case 10009: /* WSAEBADF */ return "Bad file number";
+			case 10013: /* WSAEACCES */ return "Access denied";
 			case 10014: /* WSAEFAULT */ return "Bad address";
 			case 10022: /* WSAEINVAL */ return "Invalid arguments";
 			case 10024: /* WSAEMFILE */ return "Too many open files";
@@ -142,7 +144,6 @@ namespace System.ComponentModel
 			case 52: /* ERROR_DUP_NAME */ return "Duplicate name";
 			case 53: /* ERROR_BAD_NETPATH */ return "Bad netpath";
 			case 54: /* ERROR_NETWORK_BUSY */ return "Network busy";
-			case 55: /* ERROR_DEV_NOT_EXIST */ return "Device does not exist";
 			case 56: /* ERROR_TOO_MANY_CMDS */ return "Too many commands";
 			case 57: /* ERROR_ADAP_HDW_ERR */ return "ADAP HDW error";
 			case 58: /* ERROR_BAD_NET_RESP */ return "Bad net response";
@@ -1600,7 +1601,6 @@ namespace System.ComponentModel
 			case 9904: /* DNS_ERROR_DP_ALREADY_ENLISTED */ return "DNS error dp already enlisted";
 			case 10110: /* WSA_E_NO_MORE */ return "E_NO_MORE";
 			case 10111: /* WSA_E_CANCELLED */ return "E_CANCELLED";
-			case 10013: /* WSAEACCES */ return "Access denied";
 			case 11005: /* WSA_QOS_RECEIVERS */ return "QOS receivers";
 			case 11006: /* WSA_QOS_SENDERS */ return "QOS senders";
 			case 11007: /* WSA_QOS_NO_SENDERS */ return "QOS no senders";
@@ -1733,6 +1733,7 @@ namespace System.ComponentModel
 			case 13882: /* ERROR_IPSEC_IKE_MM_LIMIT */ return "IPSEC IKE mm limit";
 			case 13883: /* ERROR_IPSEC_IKE_NEGOTIATION_DISABLED */ return "IPSEC IKE negotiation disabled";
 			case 13884: /* ERROR_IPSEC_IKE_NEG_STATUS_END */ return "IPSEC IKE neg status end";
+			case 100001: /* WSAENXIO */ return "Device not configured";
 #endif // MOBILE
 			default:
 				return string.Format ("mono-io-layer-error ({0})", error);

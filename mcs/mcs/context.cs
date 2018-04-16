@@ -22,7 +22,8 @@ namespace Mono.CSharp
 	{
 		Normal = 0,
 		Probing = 1,
-		IgnoreAccessibility = 2
+		IgnoreAccessibility = 2,
+		IgnoreStaticUsing = 1 << 10
 	}
 
 	//
@@ -112,6 +113,9 @@ namespace Mono.CSharp
 
 			if (rc.HasSet (ResolveContext.Options.BaseInitializer))
 				flags |= ResolveContext.Options.BaseInitializer;
+
+			if (rc.HasSet (ResolveContext.Options.QueryClauseScope))
+				flags |= ResolveContext.Options.QueryClauseScope;
 		}
 
 		public ExceptionStatement CurrentTryBlock { get; set; }
@@ -194,6 +198,8 @@ namespace Mono.CSharp
 			DontSetConditionalAccessReceiver = 1 << 16,
 
 			NameOfScope = 1 << 17,
+
+			QueryClauseScope = 1 << 18,
 
 			///
 			/// Indicates the current context is in probing mode, no errors are reported. 
@@ -557,6 +563,11 @@ namespace Mono.CSharp
 		public void SetVariableAssigned (VariableInfo variable, bool generatedAssignment = false)
 		{
 			variable.SetAssigned (DefiniteAssignment, generatedAssignment);
+		}
+
+		public void SetVariableAssigned (VariableInfo variable, DefiniteAssignmentBitSet da)
+		{
+			variable.SetAssigned (da, false);
 		}
 
 		public void SetStructFieldAssigned (VariableInfo variable, string name)

@@ -9,6 +9,7 @@
  * (C) 2005 Novell, Inc.
  *
  */
+#include <config.h>
 #include <glib.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,7 +53,7 @@ get_function (const char *name)
 			compare_names);
 
 	if (ptr == NULL) {
-		g_warning ("Function '%s' not not found.", name);
+		g_warning ("Function '%s' not found.", name);
 		return NULL;
 	}
 

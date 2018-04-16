@@ -27,7 +27,7 @@
   static Read() method of RelaxngPattern class:
 
 	RelaxngPattern pattern = RelaxngPattern.Read (
-		new XmlTextReader ("relaxng.rng");
+		new XmlTextReader ("relaxng.rng"));
 
   You can also use RelaxngPattern class to reuse grammar instance, as
   already described (see Grammar Object Model).

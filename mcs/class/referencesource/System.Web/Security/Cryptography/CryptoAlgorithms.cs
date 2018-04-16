@@ -81,6 +81,14 @@ namespace System.Web.Security.Cryptography {
             return new SHA256Cng();
         }
 
+        internal static SHA384 CreateSHA384() {
+            return new SHA384Cng();
+        }
+
+        internal static SHA512 CreateSHA512() {
+            return new SHA512Cng();
+        }
+
         [SuppressMessage("Microsoft.Cryptographic.Standard", "CA5353:TripleDESCannotBeUsed", Justification = @"This is only used by legacy code; new features do not use this algorithm.")]
         [Obsolete("3DES is deprecated and MUST NOT be used by new features. Consider using AES instead.")]
         internal static TripleDES CreateTripleDES() {

@@ -652,6 +652,7 @@ namespace System {
         }
     }
 
+#if !MONO
 #if !FEATURE_CORECLR
     internal class SizedReference : IDisposable
     {
@@ -750,5 +751,6 @@ namespace System {
             GC.SuppressFinalize(this);
         }
     }
+#endif
 #endif
 }

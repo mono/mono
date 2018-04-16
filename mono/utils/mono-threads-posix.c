@@ -22,7 +22,7 @@
 
 #include <errno.h>
 
-#if defined(PLATFORM_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
+#if defined(HOST_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
 #define USE_TKILL_ON_ANDROID 1
 #endif
 
@@ -30,7 +30,7 @@
 extern int tkill (pid_t tid, int signal);
 #endif
 
-#if defined(_POSIX_VERSION) || defined(__native_client__)
+#if defined(_POSIX_VERSION) && !defined (TARGET_WASM)
 
 #include <pthread.h>
 
@@ -125,7 +125,7 @@ mono_threads_platform_exit (gsize exit_code)
 }
 
 int
-mono_threads_get_max_stack_size (void)
+ves_icall_System_Threading_Thread_SystemMaxStackSize (MonoError *error)
 {
 	struct rlimit lim;
 
@@ -142,22 +142,46 @@ int
 mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
 {
 	THREADS_SUSPEND_DEBUG ("sending signal %d to %p[%p]\n", signum, info, mono_thread_info_get_tid (info));
+
+	int result;
+
 #ifdef USE_TKILL_ON_ANDROID
-	int result, old_errno = errno;
+	int old_errno = errno;
+
 	result = tkill (info->native_handle, signum);
+
 	if (result < 0) {
 		result = errno;
 		errno = old_errno;
 	}
-	return result;
-#elif defined(__native_client__)
-	/* Workaround pthread_kill abort() in NaCl glibc. */
-	return 0;
-#elif !defined(HAVE_PTHREAD_KILL)
-	g_error ("pthread_kill() is not supported by this platform");
+#elif defined (HAVE_PTHREAD_KILL)
+	result = pthread_kill (mono_thread_info_get_tid (info), signum);
 #else
-	return pthread_kill (mono_thread_info_get_tid (info), signum);
+	result = -1;
+	g_error ("pthread_kill () is not supported by this platform");
 #endif
+
+	/*
+	 * ESRCH just means the thread is gone; this is usually not fatal.
+	 *
+	 * ENOTSUP can occur if we try to send signals (e.g. for sampling) to Grand
+	 * Central Dispatch threads on Apple platforms. This is kinda bad, but
+	 * since there's really nothing we can do about it, we just ignore it and
+	 * move on.
+	 *
+	 * All other error codes are ill-documented and usually stem from various
+	 * OS-specific idiosyncracies. We want to know about these, so fail loudly.
+	 * One example is EAGAIN on Linux, which indicates a signal queue overflow.
+	 */
+	if (result &&
+	    result != ESRCH
+#if defined (__MACH__) && defined (ENOTSUP)
+	    && result != ENOTSUP
+#endif
+	    )
+		g_error ("%s: pthread_kill failed with error %d - potential kernel OOM or signal queue overflow", __func__, result);
+
+	return result;
 }
 
 MonoNativeThreadId
@@ -199,7 +223,7 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 	} else {
 		char n [63];
 
-		memcpy (n, name, sizeof (n) - 1);
+		strncpy (n, name, sizeof (n) - 1);
 		n [sizeof (n) - 1] = '\0';
 		pthread_setname_np (n);
 	}
@@ -209,7 +233,7 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 	} else {
 		char n [PTHREAD_MAX_NAMELEN_NP];
 
-		memcpy (n, name, sizeof (n) - 1);
+		strncpy (n, name, sizeof (n) - 1);
 		n [sizeof (n) - 1] = '\0';
 		pthread_setname_np (tid, "%s", (void*)n);
 	}
@@ -219,7 +243,7 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 	} else {
 		char n [16];
 
-		memcpy (n, name, sizeof (n) - 1);
+		strncpy (n, name, sizeof (n) - 1);
 		n [sizeof (n) - 1] = '\0';
 		pthread_setname_np (tid, n);
 	}
@@ -234,7 +258,7 @@ mono_native_thread_join (MonoNativeThreadId tid)
 	return !pthread_join (tid, &res);
 }
 
-#endif /* defined(_POSIX_VERSION) || defined(__native_client__) */
+#endif /* defined(_POSIX_VERSION) */
 
 #if defined(USE_POSIX_BACKEND)
 
@@ -288,7 +312,7 @@ mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 void
 mono_threads_suspend_register (MonoThreadInfo *info)
 {
-#if defined (PLATFORM_ANDROID)
+#if defined (HOST_ANDROID)
 	info->native_handle = gettid ();
 #endif
 }

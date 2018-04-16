@@ -875,7 +875,7 @@ namespace MonoTests.System.Net
 							Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 							Assert.IsNull (ex.InnerException, "#A3");
 							Assert.IsNotNull (ex.Message, "#A4");
-							Assert.AreEqual ("size", ex.ParamName, "#A5");
+							Assert.AreEqual ("count", ex.ParamName, "#A5");
 						}
 
 						// read full response
@@ -890,7 +890,7 @@ namespace MonoTests.System.Net
 							Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 							Assert.IsNull (ex.InnerException, "#B3");
 							Assert.IsNotNull (ex.Message, "#B4");
-							Assert.AreEqual ("size", ex.ParamName, "#B5");
+							Assert.AreEqual ("count", ex.ParamName, "#B5");
 						}
 					} finally {
 						rs.Close ();
@@ -928,7 +928,7 @@ namespace MonoTests.System.Net
 							Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 							Assert.IsNull (ex.InnerException, "#A3");
 							Assert.IsNotNull (ex.Message, "#A4");
-							Assert.AreEqual ("size", ex.ParamName, "#A5");
+							Assert.AreEqual ("count", ex.ParamName, "#A5");
 						}
 
 						// read full response
@@ -943,7 +943,7 @@ namespace MonoTests.System.Net
 							Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 							Assert.IsNull (ex.InnerException, "#B3");
 							Assert.IsNotNull (ex.Message, "#B4");
-							Assert.AreEqual ("size", ex.ParamName, "#B5");
+							Assert.AreEqual ("count", ex.ParamName, "#B5");
 						}
 					} finally {
 						rs.Close ();
@@ -1220,6 +1220,8 @@ namespace MonoTests.System.Net
 
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
+		[Category ("MobileNotWorking")] // https://github.com/xamarin/xamarin-macios/issues/3827
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif

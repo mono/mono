@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 
 namespace System
 {
@@ -595,7 +596,6 @@ namespace System
 			get { return ConsoleDriver.LargestWindowWidth; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static bool NumberLock {
 			get { return ConsoleDriver.NumberLock; }
 		}
@@ -610,25 +610,21 @@ namespace System
 			set { ConsoleDriver.TreatControlCAsInput = value; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static int WindowHeight {
 			get { return ConsoleDriver.WindowHeight; }
 			set { ConsoleDriver.WindowHeight = value; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static int WindowLeft {
 			get { return ConsoleDriver.WindowLeft; }
 			set { ConsoleDriver.WindowLeft = value; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static int WindowTop {
 			get { return ConsoleDriver.WindowTop; }
 			set { ConsoleDriver.WindowTop = value; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static int WindowWidth {
 			get { return ConsoleDriver.WindowWidth; }
 			set { ConsoleDriver.WindowWidth = value; }
@@ -751,16 +747,12 @@ namespace System
 			}
 		}
 
-		delegate void InternalCancelHandler ();
-		
-#pragma warning disable 414
-		//
-		// Used by console-io.c
-		//
-		static readonly InternalCancelHandler cancel_handler = new InternalCancelHandler (DoConsoleCancelEvent);
-#pragma warning restore 414		
+		static void DoConsoleCancelEventInBackground ()
+		{
+			ThreadPool.UnsafeQueueUserWorkItem (_ => DoConsoleCancelEvent(), null);
+		}
 
-		internal static void DoConsoleCancelEvent ()
+		static void DoConsoleCancelEvent ()
 		{
 			bool exit = true;
 			if (cancel_event != null) {

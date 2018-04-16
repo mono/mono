@@ -8,11 +8,12 @@
 
 using NUnit.Framework;
 using System;
-using MonoTests.Common;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Collections.Generic;
+
+#pragma warning disable CS1718
 
 namespace MonoTests.System
 {
@@ -147,7 +148,7 @@ namespace MonoTests.System
 		    Assert.AreEqual(1, Decimal.ToByte(1));
 		    Assert.AreEqual(255, Decimal.ToByte(255));
 		
-		    AssertExtensions.Throws<OverflowException>(() => Decimal.ToByte(256), "Expected an overflow");
+		    Assert.Throws<OverflowException>(() => Decimal.ToByte(256), "Expected an overflow");
 		}
 		
 		private void VerifyAdd<T>(Decimal d1, Decimal d2, Decimal expected = Decimal.Zero) where T : Exception
@@ -696,7 +697,7 @@ namespace MonoTests.System
 		    Assert.IsTrue(d.CompareTo(247m) > 0);
 		    Assert.IsTrue(d.CompareTo(null) > 0);
 		
-		    AssertExtensions.Throws<ArgumentException>(() => d.CompareTo("248"), "Expected an argument exception");
+		    Assert.Throws<ArgumentException>(() => d.CompareTo("248"), "Expected an argument exception");
 		}
 		
 		[Test]
@@ -707,6 +708,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestToSingle()
 		{
 		    // Single Decimal.ToSingle(Decimal)
@@ -724,6 +726,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestToDouble()
 		{
 		    Double d = Decimal.ToDouble(new Decimal(0, 0, 1, false, 0));

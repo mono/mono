@@ -1107,11 +1107,16 @@ public class Tests
 	interface IConstrainedCalls {
 		Pair<int, int> vtype_ret<T, T2>(T t, T2 t2) where T: IReturnVType;
 		AnEnum enum_ret<T, T2>(T t, T2 t2) where T: IReturnVType;
+		int normal_args<T, T2> (T t, T2 t2, int i1, int i2, string s, ref int i3) where T : IConstrained2;
 	}
 
 	public interface IReturnVType {
 		Pair<int, int> return_vtype ();
 		AnEnum return_enum ();
+	}
+
+	public interface IConstrained2 {
+		int normal_args (int i1, int i2, string s, ref int i3);
 	}
 
 	public class CConstrainedCalls : IConstrainedCalls {
@@ -1124,6 +1129,10 @@ public class Tests
 		public AnEnum enum_ret<T, T2>(T t, T2 t2) where T : IReturnVType {
 			return t.return_enum ();
 		}
+
+		public int normal_args<T, T2> (T t, T2 t2, int i1, int i2, string s, ref int i3) where T : IConstrained2 {
+			return t.normal_args (i1, i2, s, ref i3);
+		}
 	}
 
 	class ReturnVType : IReturnVType {
@@ -1132,6 +1141,13 @@ public class Tests
 		}
 		public AnEnum return_enum () {
 			return AnEnum.Two;
+		}
+	}
+
+	class ConstrainedCalls : IConstrained2 {
+		public int normal_args (int i1, int i2, string s, ref int i3) {
+			i3 = i3 + 1;
+			return i1 + i2 + i3 + s.Length;
 		}
 	}
 
@@ -1149,6 +1165,14 @@ public class Tests
 		if (r != AnEnum.Two)
 			return 1;
 		return 0;
+	}
+
+	public static int test_14_constrained_normal_args () {
+		IConstrainedCalls c = new CConstrainedCalls ();
+
+		int val = 3;
+		var r = c.normal_args<ConstrainedCalls, int> (new ConstrainedCalls (), 0, 1, 2, "ABC", ref val);
+		return r + val;
 	}
 
 	public struct Pair<T1, T2> {
@@ -1823,10 +1847,29 @@ public class Tests
 		}
 	}
 
+	struct StructTest : IFaceTest {
+
+		int i;
+
+		public StructTest (int arg) {
+			i = arg;
+		}
+
+		public int iface_method () {
+			return i;
+		}
+	}
+
 	// Test constrained calls on an interface made from gsharedvt methods
 	public static int test_42_gsharedvt_constrained_iface () {
 		IFaceConstrainedIFace obj = new ConstrainedIFace ();
 		IFaceTest t = new ClassTest ();
+		return obj.foo<IFaceTest, int> (ref t);
+	}
+
+	public static int test_42_gsharedvt_constrained_iface_vtype () {
+		IFaceConstrainedIFace obj = new ConstrainedIFace ();
+		IFaceTest t = new StructTest (42);
 		return obj.foo<IFaceTest, int> (ref t);
 	}
 
@@ -1972,6 +2015,49 @@ public class Tests
 		gsharedvt_vphi (0);
 		return 0;
 	}
+
+	struct AStruct3<T1, T2, T3> {
+		T1 t1;
+		T2 t2;
+		T3 t3;
+	}
+
+	interface IFaceIsRef {
+		bool is_ref<T> ();
+	}
+
+	class ClassIsRef : IFaceIsRef {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public bool is_ref<T> () {
+			return RuntimeHelpers.IsReferenceOrContainsReferences<T> ();
+		}
+	}
+
+	public static int test_0_isreference_intrins () {
+		IFaceIsRef iface = new ClassIsRef ();
+		if (iface.is_ref<AStruct3<int, int, int>> ())
+			return 1;
+		if (!iface.is_ref<AStruct3<string, int, int>> ())
+			return 2;
+		return 0;
+	}
+
+	interface IFace59956 {
+		int foo<T> ();
+	}
+
+	class Impl59956 : IFace59956 {
+		public int foo<T> () {
+			var builder = new SparseArrayBuilder<T>(true);
+
+			return builder.Markers._count;
+		}
+	}
+
+	public static int test_1_59956_regress () {
+		IFace59956 iface = new Impl59956 ();
+		return iface.foo<int> ();
+	}
 }
 
 // #13191
@@ -1987,6 +2073,35 @@ public class MobileServiceCollection<TTable, TCol>
 		await Task.Delay (1000);
 		throw new Exception ();
 	}
+}
+
+// #59956
+internal struct Marker
+{
+	public Marker(int count, int index) {
+	}
+}
+
+public struct ArrayBuilder<T>
+{
+	private T[] _array;
+	public int _count;
+
+	public ArrayBuilder(int capacity) {
+		_array = new T[capacity];
+		_count = 1;
+	}
+}
+
+internal struct SparseArrayBuilder<T>
+{
+	private ArrayBuilder<Marker> _markers;
+
+	public SparseArrayBuilder(bool initialize) : this () {
+		_markers = new ArrayBuilder<Marker> (10);
+	}
+
+	public ArrayBuilder<Marker> Markers => _markers;
 }
 
 #if !__MOBILE__

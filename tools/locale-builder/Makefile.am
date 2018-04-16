@@ -41,7 +41,7 @@ minimal: locale-builder.exe locale-data
 	$(RUNTIME) locale-builder.exe --locales '$(MINIMAL_LOCALES)'
 
 locale-data:
-	if ! test -d CLDR/common ; then \
+	if ! test -e CLDR/common/supplemental/supplementalData.xml ; then \
 		curl http://www.unicode.org/Public/cldr/30.0.2/core.zip -o core.zip ; \
 		unzip core.zip -d CLDR ; \
 	fi

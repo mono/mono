@@ -100,7 +100,7 @@ class MonoReleaseProfile(DarwinProfile):
         self.env.set('PANGO_SYSCONFDIR', '%{staged_prefix}/etc')
         self.env.set('PANGO_LIBDIR', '%{staged_prefix}/lib')
         # self.env.set ('MONO_PATH', '%{staged_prefix}/lib/mono/4.0')
-        self.debug_info = ['gtk+', 'cairo',
+        self.debug_info = ['gtk+', 'cairo', 'glib',
                            'pango', 'mono', 'llvm', 'libgdiplus']
         self.cache_host = None
 
@@ -136,14 +136,12 @@ class MonoReleaseProfile(DarwinProfile):
         self.verify_binaries()
 
         working = self.setup_working_dir()
-        uninstall_script = os.path.join(working, "uninstallMono.sh")
 
         # make the MDK
         self.apply_blacklist(working, 'mdk_blacklist.sh')
         self.make_updateinfo(working, self.MDK_GUID)
         mdk_pkg = self.run_pkgbuild(working, "MDK")
         title(mdk_pkg)
-        # self.make_dmg(mdk_dmg, title, mdk_pkg, uninstall_script)
 
         shutil.rmtree(working)
 
@@ -174,7 +172,6 @@ class MonoReleaseProfile(DarwinProfile):
 
     # creates and returns the path to a working directory containing:
     #   PKGROOT/ - this root will be bundled into the .pkg and extracted at /
-    #   uninstallMono.sh - copied onto the DMG
     #   Info{_sdk}.plist - used by packagemaker to make the installer
     #   resources/ - other resources used by packagemaker for the installer
     def setup_working_dir(self):

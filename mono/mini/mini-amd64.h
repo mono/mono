@@ -126,8 +126,6 @@ struct sigcontext {
 #define MONO_ARCH_SIGNAL_STACK_SIZE (16 * 1024)
 #endif
 
-#define MONO_ARCH_HAVE_RESTORE_STACK_SUPPORT 1
-
 #define MONO_ARCH_CPU_SPEC mono_amd64_desc
 
 #define MONO_MAX_IREGS 16
@@ -159,7 +157,6 @@ struct sigcontext {
 #define MONO_ARCH_CALLEE_SAVED_REGS AMD64_CALLEE_SAVED_REGS
 
 #define MONO_ARCH_USE_FPSTACK FALSE
-#define MONO_ARCH_FPSTACK_SIZE 0
 
 #define MONO_ARCH_INST_FIXED_REG(desc) ((desc == '\0') ? -1 : ((desc == 'i' ? -1 : ((desc == 'a') ? AMD64_RAX : ((desc == 's') ? AMD64_RCX : ((desc == 'd') ? AMD64_RDX : ((desc == 'A') ? MONO_AMD64_ARG_REG1 : -1)))))))
 
@@ -175,21 +172,15 @@ struct sigcontext {
  * reproduceable results for benchmarks */
 #define MONO_ARCH_CODE_ALIGNMENT 32
 
-/*This is the max size of the locals area of a given frame. I think 1MB is a safe default for now*/
-#define MONO_ARCH_MAX_FRAME_SIZE 0x100000
-
 struct MonoLMF {
 	/* 
-	 * If the lowest bit is set, then this LMF has the rip field set. Otherwise,
-	 * the rip field is not set, and the rsp field points to the stack location where
-	 * the caller ip is saved.
+	 * The rsp field points to the stack location where the caller ip is saved.
 	 * If the second lowest bit is set, then this is a MonoLMFExt structure, and
 	 * the other fields are not valid.
 	 * If the third lowest bit is set, then this is a MonoLMFTramp structure, and
 	 * the 'rbp' field is not valid.
 	 */
 	gpointer    previous_lmf;
-	guint64     rip;
 	guint64     rbp;
 	guint64     rsp;
 };
@@ -239,10 +230,13 @@ static AMD64_XMM_Reg_No float_return_regs [] = { AMD64_XMM0 };
 #else
 #define PARAM_REGS 6
 #define FLOAT_PARAM_REGS 8
+#define RETURN_REGS 2
+#define FLOAT_RETURN_REGS 2
 
-static AMD64_Reg_No param_regs [] = { AMD64_RDI, AMD64_RSI, AMD64_RDX, AMD64_RCX, AMD64_R8, AMD64_R9 };
+static const AMD64_Reg_No param_regs [] = {AMD64_RDI, AMD64_RSI, AMD64_RDX,
+					   AMD64_RCX, AMD64_R8,  AMD64_R9};
 
-static AMD64_Reg_No return_regs [] = { AMD64_RAX, AMD64_RDX };
+static const AMD64_Reg_No return_regs [] = {AMD64_RAX, AMD64_RDX};
 #endif
 
 typedef struct {
@@ -272,15 +266,15 @@ typedef struct {
 	gpointer bp_addrs [MONO_ZERO_LEN_ARRAY];
 } SeqPointInfo;
 
-#define DYN_CALL_STACK_ARGS 6
-
 typedef struct {
-	mgreg_t regs [PARAM_REGS + DYN_CALL_STACK_ARGS];
 	mgreg_t res;
 	guint8 *ret;
 	double fregs [8];
 	mgreg_t has_fp;
+	mgreg_t nstack_args;
 	guint8 buffer [256];
+	/* This should come last as the structure is dynamically extended */
+	mgreg_t regs [PARAM_REGS];
 } DynCallArgs;
 
 typedef enum {
@@ -312,6 +306,8 @@ typedef struct {
 	int nregs;
 	/* Only if storage == ArgOnStack */
 	int arg_size; // Bytes, will always be rounded up/aligned to 8 byte boundary
+	// Size in bytes for small arguments
+	int byte_arg_size;
 	guint8 pass_empty_struct : 1; // Set in scenarios when empty structs needs to be represented as argument.
 } ArgInfo;
 
@@ -329,6 +325,15 @@ typedef struct {
 	ArgInfo args [1];
 } CallInfo;
 
+typedef struct {
+	/* General registers */
+	mgreg_t gregs [AMD64_NREG];
+	/* Floating registers */
+	double fregs [AMD64_XMM_NREG];
+	/* Stack usage, used for passing params on stack */
+	size_t stack_size;
+	gpointer *stack;
+} CallContext;
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->gregs [AMD64_RAX] = (gsize)exc; } while (0)
 #define MONO_CONTEXT_SET_LLVM_EH_SELECTOR_REG(ctx, sel) do { (ctx)->gregs [AMD64_RDX] = (gsize)(sel); } while (0)
@@ -369,7 +374,7 @@ typedef struct {
  */
 #define MONO_ARCH_VARARG_ICALLS 1
 
-#if !defined( HOST_WIN32 ) && defined (HAVE_SIGACTION)
+#if !defined( HOST_WIN32 ) && !defined(__HAIKU__) && defined (HAVE_SIGACTION)
 
 #define MONO_ARCH_USE_SIGACTION 1
 
@@ -414,14 +419,13 @@ typedef struct {
  * clobbered across method call boundaries.
  */
 #define MONO_ARCH_RGCTX_REG MONO_ARCH_IMT_REG
-#define MONO_ARCH_EXC_REG AMD64_RAX
 #define MONO_ARCH_HAVE_CMOV_OPS 1
 #define MONO_ARCH_HAVE_EXCEPTIONS_INIT 1
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_TRAMPOLINE 1
-#define MONO_ARCH_HAVE_LIVERANGE_OPS 1
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define MONO_ARCH_HAVE_GET_TRAMPOLINES 1
 
+#define MONO_ARCH_INTERPRETER_SUPPORTED 1
 #define MONO_ARCH_AOT_SUPPORTED 1
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 
@@ -429,11 +433,9 @@ typedef struct {
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
-#define MONO_ARCH_DYN_CALL_PARAM_AREA (DYN_CALL_STACK_ARGS * 8)
+#define MONO_ARCH_DYN_CALL_PARAM_AREA 0
 
 #define MONO_ARCH_LLVM_SUPPORTED 1
-#define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
-#define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD_AOT 1
 #define MONO_ARCH_HAVE_CARD_TABLE_WBARRIER 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_GC_MAPS_SUPPORTED 1
@@ -441,13 +443,14 @@ typedef struct {
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_HAVE_CREATE_LLVM_NATIVE_THUNK 1
 #define MONO_ARCH_HAVE_OP_TAIL_CALL 1
-#define MONO_ARCH_HAVE_TRANSLATE_TLS_OFFSET 1
-#define MONO_ARCH_HAVE_DUMMY_INIT 1
+#define MONO_ARCH_HAVE_OP_TAIL_CALL_MEMBASE 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
-#define MONO_ARCH_HAVE_INIT_LMF_EXT 1
+#define MONO_ARCH_FLOAT32_SUPPORTED 1
+
+#define MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
 
 #if defined(TARGET_OSX) || defined(__linux__)
 #define MONO_ARCH_HAVE_UNWIND_BACKTRACE 1
@@ -474,6 +477,10 @@ typedef struct {
             MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
        } while (0)
 
+// Does the ABI have a volatile non-parameter register, so tailcall
+// can pass context to generics or interfaces?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 1
+
 void 
 mono_amd64_patch (unsigned char* code, gpointer target);
 
@@ -495,17 +502,11 @@ mono_amd64_resume_unwind (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint6
 gpointer
 mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg);
 
-guint64
-mono_amd64_get_original_ip (void);
-
 GSList*
 mono_amd64_get_exception_trampolines (gboolean aot);
 
 int
 mono_amd64_get_tls_gs_offset (void) MONO_LLVM_INTERNAL;
-
-gpointer
-mono_amd64_handler_block_trampoline_helper (void);
 
 #if defined(TARGET_WIN32) && !defined(DISABLE_JIT)
 
@@ -556,7 +557,7 @@ typedef struct _UNWIND_INFO {
  *	OPTIONAL ULONG ExceptionData[]; */
 } UNWIND_INFO, *PUNWIND_INFO;
 
-inline guint
+static inline guint
 mono_arch_unwindinfo_get_size (guchar code_count)
 {
 	// Returned size will be used as the allocated size for unwind data trailing the memory used by compiled method.
@@ -572,6 +573,12 @@ mono_arch_unwindinfo_get_size (guchar code_count)
 
 guchar
 mono_arch_unwindinfo_get_code_count (GSList *unwind_ops);
+
+PUNWIND_INFO
+mono_arch_unwindinfo_alloc_unwind_info (GSList *unwind_ops);
+
+void
+mono_arch_unwindinfo_free_unwind_info (PUNWIND_INFO unwind_info);
 
 guint
 mono_arch_unwindinfo_init_method_unwind_info (gpointer cfg);

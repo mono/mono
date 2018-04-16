@@ -35,31 +35,35 @@ CHECK_DIFF = @\
 		exit 1; \
 	fi
 
+ifdef MCS_MODE
+CHECK_DIFF = @echo "WARNING: running in mcs mode, tests are specific to roslyn and would fail. Skipping diff check."
+endif
+
 PREPARE_OUTDIR = @\
 	rm -rf $(OUT_DIR); \
 	mkdir -p $(OUT_DIR); \
 	mkdir -p $(MSYM_DIR);
 
 COMPILE = \
-	$(CSCOMPILE) $(TEST_CS) -out:$(TEST_EXE); \
+	$(CSCOMPILE) $(TEST_CS) -r:$(LIB_PATH)/mscorlib.dll -r:$(LIB_PATH)/System.Core.dll -warn:0 -out:$(TEST_EXE); \
 	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(OUT_DIR); \
 	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(LIB_PATH);
 
-check: test-local
+check: run-test
 
 AOT_SUPPORTED = $(shell $(MONO) --aot 2>&1 | grep -q "AOT compilation is not supported" && echo 0 || echo 1)
 
-test-local: test-without-aot test-with-aot test-with-aot-msym
+run-test-local: run-test-without-aot run-test-with-aot run-test-with-aot-msym
 
-test-without-aot: OUT_DIR = Test/without_aot
-test-without-aot: all
+run-test-without-aot: OUT_DIR = Test/without_aot
+run-test-without-aot: all
 	@echo "Checking $(TEST_EXE) without AOT in $(OUT_DIR)"
 	$(PREPARE_OUTDIR)
 	$(COMPILE)
 	$(CHECK_DIFF)
 
-test-with-aot: OUT_DIR = Test/with_aot
-test-with-aot: all
+run-test-with-aot: OUT_DIR = Test/with_aot
+run-test-with-aot: all
 ifeq ($(AOT_SUPPORTED), 1)
 	@echo "Checking $(TEST_EXE) with AOT in $(OUT_DIR)"
 	$(PREPARE_OUTDIR)
@@ -68,8 +72,8 @@ ifeq ($(AOT_SUPPORTED), 1)
 	$(CHECK_DIFF)
 endif
 
-test-with-aot-msym: OUT_DIR = Test/with_aot_msym
-test-with-aot-msym: all
+run-test-with-aot-msym: OUT_DIR = Test/with_aot_msym
+run-test-with-aot-msym: all
 ifeq ($(AOT_SUPPORTED), 1)
 	@echo "Checking $(TEST_EXE) with AOT (using .msym) in $(OUT_DIR)"
 	$(PREPARE_OUTDIR)

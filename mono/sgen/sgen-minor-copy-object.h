@@ -15,10 +15,17 @@
 #if defined(SGEN_SIMPLE_NURSERY)
 
 #ifdef SGEN_SIMPLE_PAR_NURSERY
-/* Not supported with concurrent major yet */
+
+#ifdef SGEN_CONCURRENT_MAJOR
+#define SERIAL_COPY_OBJECT simple_par_nursery_with_concurrent_major_copy_object
+#define SERIAL_COPY_OBJECT_FROM_OBJ simple_par_nursery_with_concurrent_major_copy_object_from_obj
+#else
 #define SERIAL_COPY_OBJECT simple_par_nursery_copy_object
 #define SERIAL_COPY_OBJECT_FROM_OBJ simple_par_nursery_copy_object_from_obj
+#endif
+
 #else
+
 #ifdef SGEN_CONCURRENT_MAJOR
 #define SERIAL_COPY_OBJECT simple_nursery_serial_with_concurrent_major_copy_object
 #define SERIAL_COPY_OBJECT_FROM_OBJ simple_nursery_serial_with_concurrent_major_copy_object_from_obj
@@ -26,6 +33,7 @@
 #define SERIAL_COPY_OBJECT simple_nursery_serial_copy_object
 #define SERIAL_COPY_OBJECT_FROM_OBJ simple_nursery_serial_copy_object_from_obj
 #endif
+
 #endif
 
 #elif defined (SGEN_SPLIT_NURSERY)
@@ -72,7 +80,7 @@ SERIAL_COPY_OBJECT (GCObject **obj_slot, SgenGrayQueue *queue)
 	GCObject *copy;
 	GCObject *obj = *obj_slot;
 
-	SGEN_ASSERT (9, current_collection_generation == GENERATION_NURSERY, "calling minor-serial-copy from a %d generation collection", current_collection_generation);
+	SGEN_ASSERT (9, sgen_current_collection_generation == GENERATION_NURSERY, "calling minor-serial-copy from a %d generation collection", sgen_current_collection_generation);
 
 	HEAVY_STAT (++stat_copy_object_called_nursery);
 
@@ -134,7 +142,7 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 	GCObject *obj = *obj_slot;
 	GCObject *copy;
 
-	SGEN_ASSERT (9, current_collection_generation == GENERATION_NURSERY, "calling minor-serial-copy-from-obj from a %d generation collection", current_collection_generation);
+	SGEN_ASSERT (9, sgen_current_collection_generation == GENERATION_NURSERY, "calling minor-serial-copy-from-obj from a %d generation collection", sgen_current_collection_generation);
 
 	HEAVY_STAT (++stat_copy_object_called_nursery);
 

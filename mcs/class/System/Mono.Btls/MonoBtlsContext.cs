@@ -300,7 +300,7 @@ namespace Mono.Btls
 			throw new NotImplementedException ();
 		}
 
-		public override int Read (byte[] buffer, int offset, int size, out bool wantMore)
+		public override (int ret, bool wantMore) Read (byte[] buffer, int offset, int size)
 		{
 			Debug ("Read: {0} {1} {2}", buffer.Length, offset, size);
 
@@ -313,24 +313,23 @@ namespace Mono.Btls
 				var status = ssl.Read (data, ref size);
 				Debug ("Read done: {0} {1}", status, size);
 
-				if (status == MonoBtlsSslError.WantRead) {
-					wantMore = true;
-					return 0;
-				} else if (status != MonoBtlsSslError.None) {
+				if (status == MonoBtlsSslError.WantRead)
+					return (0, true);
+				if (status == MonoBtlsSslError.ZeroReturn)
+					return (size, false);
+				if (status != MonoBtlsSslError.None)
 					throw GetException (status);
-				}
 
 				if (size > 0)
 					Marshal.Copy (data, buffer, offset, size);
 
-				wantMore = false;
-				return size;
+				return (size, false);
 			} finally {
 				Marshal.FreeHGlobal (data);
 			}
 		}
 
-		public override int Write (byte[] buffer, int offset, int size, out bool wantMore)
+		public override (int ret, bool wantMore) Write (byte[] buffer, int offset, int size)
 		{
 			Debug ("Write: {0} {1} {2}", buffer.Length, offset, size);
 
@@ -344,40 +343,23 @@ namespace Mono.Btls
 				var status = ssl.Write (data, ref size);
 				Debug ("Write done: {0} {1}", status, size);
 
-				if (status == MonoBtlsSslError.WantWrite) {
-					wantMore = true;
-					return 0;
-				} else if (status != MonoBtlsSslError.None) {
+				if (status == MonoBtlsSslError.WantWrite)
+					return (0, true);
+				if (status != MonoBtlsSslError.None)
 					throw GetException (status);
-				}
 
-				wantMore = false;
-				return size;
+				return (size, false);
 			} finally {
 				Marshal.FreeHGlobal (data);
 			}
 		}
 
-		public override void Close ()
+		public override void Shutdown ()
 		{
-			Debug ("Close!");
-
-			if (ssl != null) {
-				ssl.Dispose ();
-				ssl = null;
-			}
-			if (ctx != null) {
-				ctx.Dispose ();
-				ctx = null;
-			}
-			if (bio != null) {
-				bio.Dispose ();
-				bio = null;
-			}
-			if (errbio != null) {
-				errbio.Dispose ();
-				errbio = null;
-			}
+			Debug ("Shutdown!");
+			if (Settings == null || !Settings.SendCloseNotify)
+				ssl.SetQuietShutdown ();
+			ssl.Shutdown ();
 		}
 
 		void Dispose<T> (ref T disposable)
@@ -397,12 +379,12 @@ namespace Mono.Btls
 		{
 			try {
 				if (disposing) {
+					Dispose (ref ssl);
+					Dispose (ref ctx);
 					Dispose (ref remoteCertificate);
 					Dispose (ref nativeServerCertificate);
 					Dispose (ref nativeClientCertificate);
 					Dispose (ref clientCertificate);
-					Dispose (ref ctx);
-					Dispose (ref ssl);
 					Dispose (ref bio);
 					Dispose (ref errbio);
 				}

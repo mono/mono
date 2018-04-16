@@ -69,7 +69,7 @@ GetSidName (gunichar2 *server, PSID sid, gint32 *size)
 }
 
 gpointer
-ves_icall_System_Security_Principal_WindowsIdentity_GetCurrentToken (void)
+mono_security_principal_windows_identity_get_current_token (void)
 {
 	gpointer token = NULL;
 
@@ -84,6 +84,13 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetCurrentToken (void)
 	}
 
 	return token;
+}
+
+gpointer
+ves_icall_System_Security_Principal_WindowsIdentity_GetCurrentToken (MonoError *error)
+{
+	error_init (error);
+	return mono_security_principal_windows_identity_get_current_token ();
 }
 
 gint32
@@ -104,34 +111,33 @@ mono_security_win_get_token_name (gpointer token, gunichar2 ** uniname)
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-MonoString*
-ves_icall_System_Security_Principal_WindowsIdentity_GetTokenName (gpointer token)
+MonoStringHandle
+ves_icall_System_Security_Principal_WindowsIdentity_GetTokenName (gpointer token, MonoError *error)
 {
-	MonoError error;
-	MonoString *result = NULL;
+	MonoStringHandle result;
 	gunichar2 *uniname = NULL;
 	gint32 size = 0;
 
-	error_init (&error);
+	error_init (error);
 
 	size = mono_security_win_get_token_name (token, &uniname);
 
 	if (size > 0) {
-		result = mono_string_new_utf16_checked (mono_domain_get (), uniname, size, &error);
+		result = mono_string_new_utf16_handle (mono_domain_get (), uniname, size, error);
 	}
 	else
-		result = mono_string_new_checked (mono_domain_get (), "", &error);
+		result = mono_string_new_handle (mono_domain_get (), "", error);
 
 	if (uniname)
 		g_free (uniname);
 
-	mono_error_set_pending_exception (&error);
 	return result;
 }
 
 gpointer
-ves_icall_System_Security_Principal_WindowsIdentity_GetUserToken (MonoString *username)
+ves_icall_System_Security_Principal_WindowsIdentity_GetUserToken (MonoStringHandle username, MonoError *error)
 {
+	error_init (error);
 	gpointer token = NULL;
 
 	/* TODO: MS has something like this working in Windows 2003 (client and
@@ -146,7 +152,7 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetUserToken (MonoString *us
 MonoArray*
 ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoArray *array = NULL;
 	MonoDomain *domain = mono_domain_get ();
 
@@ -159,8 +165,8 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token)
 			int i=0;
 			int num = tg->GroupCount;
 
-			array = mono_array_new_checked (domain, mono_get_string_class (), num, &error);
-			if (mono_error_set_pending_exception (&error)) {
+			array = mono_array_new_checked (domain, mono_get_string_class (), num, error);
+			if (mono_error_set_pending_exception (error)) {
 				g_free (tg);
 				return NULL;
 			}
@@ -170,11 +176,11 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token)
 				gunichar2 *uniname = GetSidName (NULL, tg->Groups [i].Sid, &size);
 
 				if (uniname) {
-					MonoString *str = mono_string_new_utf16_checked (domain, uniname, size, &error);
-					if (!is_ok (&error)) {
+					MonoString *str = mono_string_new_utf16_checked (domain, uniname, size, error);
+					if (!is_ok (error)) {
 						g_free (uniname);
 						g_free (tg);
-						mono_error_set_pending_exception (&error);
+						mono_error_set_pending_exception (error);
 						return NULL;
 					}
 					mono_array_setref (array, i, str);
@@ -187,8 +193,8 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token)
 
 	if (!array) {
 		/* return empty array of string, i.e. string [0] */
-		array = mono_array_new_checked (domain, mono_get_string_class (), 0, &error);
-		mono_error_set_pending_exception (&error);
+		array = mono_array_new_checked (domain, mono_get_string_class (), 0, error);
+		mono_error_set_pending_exception (error);
 	}
 	return array;
 }
@@ -264,7 +270,7 @@ GetCurrentUserSid (void)
 {
 	PSID sid = NULL;
 	guint32 size = 0;
-	gpointer token = ves_icall_System_Security_Principal_WindowsIdentity_GetCurrentToken ();
+	gpointer token = mono_security_principal_windows_identity_get_current_token ();
 
 	GetTokenInformation (token, TokenUser, NULL, size, (PDWORD)&size);
 	if (size > 0) {

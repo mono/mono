@@ -279,11 +279,19 @@ namespace Mono.CSharp
 
 		protected bool DoResolveCore (ResolveContext rc)
 		{
+			int i = 0;
 			foreach (var arg in arguments) {
 				if (arg.Type == InternalType.VarOutType) {
 					// Should be special error message about dynamic dispatch
-					rc.Report.Error (8047, arg.Expr.Location, "Declaration expression cannot be used in this context");
+					rc.Report.Error (8197, arg.Expr.Location, "Cannot infer the type of implicitly-typed out variable `{0}'", ((DeclarationExpression) arg.Expr).Variable.Name);
+				} else if (arg.Type == InternalType.DefaultType) {
+					rc.Report.Error (8311, arg.Expr.Location, "Cannot use a default literal as an argument to a dynamically dispatched operation");
 				}
+
+				// Forced limitation because Microsoft.CSharp needs to catch up
+				if (i > 0 && arguments [i - 1] is NamedArgument && !(arguments [i] is NamedArgument))
+					rc.Report.Error (8324, loc, "Named argument specifications must appear after all fixed arguments have been specified in a dynamic invocation");
+				++i;
 			}
 
 			if (rc.CurrentTypeParameters != null && rc.CurrentTypeParameters[0].IsMethodTypeParameter)

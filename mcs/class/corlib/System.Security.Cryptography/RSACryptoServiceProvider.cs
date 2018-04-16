@@ -111,6 +111,7 @@ namespace System.Security.Cryptography {
 			store = new KeyPairPersistence (p);
 			bool exists = store.Load ();
 			bool required = (p.Flags & CspProviderFlags.UseExistingKey) != 0;
+			privateKeyExportable = (p.Flags & CspProviderFlags.UseNonExportableKey) == 0;
 
 			if (required && !exists)
 				throw new CryptographicException ("Keyset does not exist");

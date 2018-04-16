@@ -60,9 +60,7 @@ namespace System.Diagnostics
 			 * the Start_internal icall in
 			 * mono/metadata/process.c
 			 */
-			public IntPtr thread_handle;
 			public int pid; // Contains -GetLastError () on failure.
-			public int tid;
 			public string[] envVariables;
 			public string UserName;
 			public string Domain;
@@ -71,6 +69,8 @@ namespace System.Diagnostics
 		};
 
 		string process_name;
+
+		static ProcessModule current_main_module;
 
 		/* Private constructor called from other methods */
 		private Process (SafeProcessHandle handle, int id) {
@@ -98,7 +98,14 @@ namespace System.Diagnostics
 		[MonitoringDescription ("The main module of the process.")]
 		public ProcessModule MainModule {
 			get {
-				return(this.Modules[0]);
+				/* Optimize Process.GetCurrentProcess ().MainModule */
+				if (processId == NativeMethods.GetCurrentProcessId ()) {
+					if (current_main_module == null)
+						current_main_module = this.Modules [0];
+					return current_main_module;
+				} else {
+					return this.Modules [0];
+				}
 			}
 		}
 
@@ -482,7 +489,8 @@ namespace System.Diagnostics
 			if (proc == IntPtr.Zero)
 				throw new ArgumentException ("Can't find process with ID " + processId.ToString ());
 
-			return (new Process (new SafeProcessHandle (proc, false), processId));
+			/* The handle returned by GetProcess_internal is owned by its caller, so we must pass true to SafeProcessHandle */
+			return (new Process (new SafeProcessHandle (proc, true), processId));
 		}
 
 		public static Process[] GetProcessesByName(string processName, string machineName)

@@ -42,6 +42,8 @@
 #define CONFIG_OS "hpux"
 #elif defined(__HAIKU__)
 #define CONFIG_OS "haiku"
+#elif defined (TARGET_WASM)
+#define CONFIG_OS "wasm"
 #else
 #warning Unknown operating system
 #define CONFIG_OS "unknownOS"
@@ -57,7 +59,7 @@
 #elif defined(sparc) || defined(__sparc__)
 #define CONFIG_CPU "sparc"
 #define CONFIG_WORDSIZE "32"
-#elif defined(__ppc64__) || defined(__powerpc64__) || defined(TARGET_POWERPC)
+#elif defined(__ppc64__) || defined(__powerpc64__) || defined(_ARCH_64) || defined(TARGET_POWERPC)
 #define CONFIG_WORDSIZE "64"
 #ifdef __mono_ppc_ilp32__ 
 #   define CONFIG_CPU "ppc64ilp32"
@@ -79,11 +81,11 @@
 #elif defined(__aarch64__)
 #define CONFIG_CPU "armv8"
 #define CONFIG_WORDSIZE "64"
-#elif defined(__ia64__)
-#define CONFIG_CPU "ia64"
-#define CONFIG_WORDSIZE "64"
 #elif defined(mips) || defined(__mips) || defined(_mips)
 #define CONFIG_CPU "mips"
+#define CONFIG_WORDSIZE "32"
+#elif defined(TARGET_WASM)
+#define CONFIG_CPU "wasm"
 #define CONFIG_WORDSIZE "32"
 #else
 #error Unknown CPU
@@ -129,27 +131,27 @@ static void start_element (GMarkupParseContext *context,
 			   const gchar        **attribute_names,
 			   const gchar        **attribute_values,
 			   gpointer             user_data,
-			   GError             **error);
+			   GError             **gerror);
 
 static void end_element   (GMarkupParseContext *context,
                            const gchar         *element_name,
 			   gpointer             user_data,
-			   GError             **error);
+			   GError             **gerror);
 
 static void parse_text    (GMarkupParseContext *context,
                            const gchar         *text,
 			   gsize                text_len,
 			   gpointer             user_data,
-			   GError             **error);
+			   GError             **gerror);
 
 static void passthrough   (GMarkupParseContext *context,
                            const gchar         *text,
 			   gsize                text_len,
 			   gpointer             user_data,
-			   GError             **error);
+			   GError             **gerror);
 
 static void parse_error   (GMarkupParseContext *context,
-                           GError              *error,
+                           GError              *gerror,
 			   gpointer             user_data);
 
 static const GMarkupParser 
@@ -197,7 +199,7 @@ static void start_element (GMarkupParseContext *context,
 			   const gchar        **attribute_names,
 			   const gchar        **attribute_values,
 			   gpointer             user_data,
-			   GError             **error)
+			   GError             **gerror)
 {
 	ParseState *state = (ParseState *)user_data;
 	if (!state->current) {
@@ -212,7 +214,7 @@ static void start_element (GMarkupParseContext *context,
 static void end_element   (GMarkupParseContext *context,
                            const gchar         *element_name,
 			   gpointer             user_data,
-			   GError             **error)
+			   GError             **gerror)
 {
 	ParseState *state = (ParseState *)user_data;
 	if (state->current) {
@@ -231,7 +233,7 @@ static void parse_text    (GMarkupParseContext *context,
                            const gchar         *text,
 			   gsize                text_len,
 			   gpointer             user_data,
-			   GError             **error)
+			   GError             **gerror)
 {
 	ParseState *state = (ParseState *)user_data;
 	if (state->current && state->current->text)
@@ -242,13 +244,13 @@ static void passthrough   (GMarkupParseContext *context,
                            const gchar         *text,
 			   gsize                text_len,
 			   gpointer             user_data,
-			   GError             **error)
+			   GError             **gerror)
 {
 	/* do nothing */
 }
 
 static void parse_error   (GMarkupParseContext *context,
-                           GError              *error,
+                           GError              *gerror,
 			   gpointer             user_data)
 {
 	ParseState *state = (ParseState *)user_data;
@@ -256,7 +258,7 @@ static void parse_error   (GMarkupParseContext *context,
 	const gchar *filename;
 
 	filename = state && state->user_data ? (gchar *) state->user_data : "<unknown>";
-	msg = error && error->message ? error->message : "";
+	msg = gerror && gerror->message ? gerror->message : "";
 	g_warning ("Error parsing %s: %s", filename, msg);
 }
 
@@ -671,7 +673,7 @@ mono_config_parse (const char *filename) {
 	mono_config_parse_file (mono_cfg);
 	g_free (mono_cfg);
 
-#if !defined(TARGET_WIN32) && !defined(__native_client__)
+#if !defined(TARGET_WIN32)
 	home = g_get_home_dir ();
 	user_cfg = g_strconcat (home, G_DIR_SEPARATOR_S, ".mono/config", NULL);
 	mono_config_parse_file (user_cfg);
@@ -689,7 +691,7 @@ mono_set_config_dir (const char *dir)
 	/* If this environment variable is set, overrides the directory computed */
 	char *env_mono_cfg_dir = g_getenv ("MONO_CFG_DIR");
 	if (env_mono_cfg_dir == NULL && dir != NULL)
-		env_mono_cfg_dir = strdup (dir);
+		env_mono_cfg_dir = g_strdup (dir);
 
 	mono_cfg_dir = env_mono_cfg_dir;
 }

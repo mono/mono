@@ -44,27 +44,27 @@ namespace System.Diagnostics
 		static extern bool CategoryDelete (string name);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string CategoryHelpInternal (string category, string machine);
+		static extern string CategoryHelpInternal (string category);
 
 		/* this icall allows a null counter and it will just search for the category */
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern bool CounterCategoryExists (string counter, string category, string machine);
+		static extern bool CounterCategoryExists (string counter, string category);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern bool Create (string categoryName, string categoryHelp,
 			PerformanceCounterCategoryType categoryType, CounterCreationData[] items);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern int InstanceExistsInternal (string instance, string category, string machine);
+		static extern bool InstanceExistsInternal (string instance, string category);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string[] GetCategoryNames (string machine);
+		static extern string[] GetCategoryNames ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string[] GetCounterNames (string category, string machine);
+		static extern string[] GetCounterNames (string category);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string[] GetInstanceNames (string category, string machine);
+		static extern string[] GetInstanceNames (string category);
 
 		static void CheckCategory (string categoryName) {
 			if (categoryName == null)
@@ -95,10 +95,17 @@ namespace System.Diagnostics
 			this.machineName = machineName;
 		}
 
+		static bool IsValidMachine (string machine)
+		{ // no support for counters on other machines
+			return machine == ".";
+		}
+
 		// may throw InvalidOperationException, Win32Exception
 		public string CategoryHelp {
 			get {
-				string res = CategoryHelpInternal (categoryName, machineName);
+				string res = null;
+				if (IsValidMachine (machineName))
+					res = CategoryHelpInternal (categoryName);
 				if (res != null)
 					return res;
 				throw new InvalidOperationException ();
@@ -154,7 +161,8 @@ namespace System.Diagnostics
 			CheckCategory (categoryName);
 			if (machineName == null)
 				throw new ArgumentNullException ("machineName");
-			return CounterCategoryExists (counterName, categoryName, machineName);
+			return IsValidMachine (machineName)
+				&& CounterCategoryExists (counterName, categoryName);
 		}
 
 		[Obsolete ("Use another overload that uses PerformanceCounterCategoryType instead")]
@@ -227,7 +235,8 @@ namespace System.Diagnostics
 		public static bool Exists (string categoryName, string machineName)
 		{
 			CheckCategory (categoryName);
-			return CounterCategoryExists (null, categoryName, machineName);
+			return IsValidMachine (machineName) &&
+				CounterCategoryExists (null, categoryName);
 		}
 
 		public static PerformanceCounterCategory[] GetCategories ()
@@ -239,7 +248,11 @@ namespace System.Diagnostics
 		{
 			if (machineName == null)
 				throw new ArgumentNullException ("machineName");
-			string[] catnames = GetCategoryNames (machineName);
+
+			if (!IsValidMachine (machineName))
+				return Array.Empty<PerformanceCounterCategory>();
+
+			string[] catnames = GetCategoryNames ();
 			PerformanceCounterCategory[] cats = new PerformanceCounterCategory [catnames.Length];
 			for (int i = 0; i < catnames.Length; ++i)
 				cats [i] = new PerformanceCounterCategory (catnames [i], machineName);
@@ -253,7 +266,9 @@ namespace System.Diagnostics
 
 		public PerformanceCounter[] GetCounters (string instanceName)
 		{
-			string[] countnames = GetCounterNames (categoryName, machineName);
+			if (!IsValidMachine (machineName))
+				return Array.Empty<PerformanceCounter>();
+			string[] countnames = GetCounterNames (categoryName);
 			PerformanceCounter[] counters = new PerformanceCounter [countnames.Length];
 			for (int i = 0; i < countnames.Length; ++i) {
 				counters [i] = new PerformanceCounter (categoryName, countnames [i], instanceName, machineName);
@@ -263,7 +278,9 @@ namespace System.Diagnostics
 
 		public string[] GetInstanceNames ()
 		{
-			return GetInstanceNames (categoryName, machineName);
+			if (!IsValidMachine (machineName))
+				return Array.Empty<string>();
+			return GetInstanceNames (categoryName);
 		}
 
 		public bool InstanceExists (string instanceName)
@@ -283,12 +300,12 @@ namespace System.Diagnostics
 			CheckCategory (categoryName);
 			if (machineName == null)
 				throw new ArgumentNullException ("machineName");
-			int val = InstanceExistsInternal (instanceName, categoryName, machineName);
-			if (val == 0)
-				return false;
-			if (val == 1)
-				return true;
-			throw new InvalidOperationException ();
+
+			//?FIXME: machine appears to be wrong
+			//if (!IsValidMachine (machineName))
+			//return false;
+
+			return InstanceExistsInternal (instanceName, categoryName);
 		}
 
 		[MonoTODO]

@@ -109,7 +109,9 @@ and reduce the number of casts drastically.
 /* If this is defined, use the signals backed on Mach. Debug only as signals can't be made usable on OSX. */
 // #define USE_SIGNALS_ON_MACH
 
-#if defined (_POSIX_VERSION) || defined (__native_client__)
+#ifdef HOST_WASM
+#define USE_WASM_BACKEND
+#elif defined (_POSIX_VERSION)
 #if defined (__MACH__) && !defined (USE_SIGNALS_ON_MACH)
 #define USE_MACH_BACKEND
 #else
@@ -119,21 +121,26 @@ and reduce the number of casts drastically.
 #define USE_WINDOWS_BACKEND
 #else
 #error "no backend support for current platform"
-#endif /* defined (_POSIX_VERSION) || defined (__native_client__) */
+#endif /* defined (_POSIX_VERSION) */
 
 enum {
 	STATE_STARTING				= 0x00,
-	STATE_RUNNING				= 0x01,
-	STATE_DETACHED				= 0x02,
+	STATE_DETACHED				= 0x01,
 
+	STATE_RUNNING				= 0x02,
 	STATE_ASYNC_SUSPENDED			= 0x03,
 	STATE_SELF_SUSPENDED			= 0x04,
-	STATE_ASYNC_SUSPEND_REQUESTED	= 0x05,
-	STATE_SELF_SUSPEND_REQUESTED 	= 0x06,
-	STATE_BLOCKING					= 0x07,
-	STATE_BLOCKING_AND_SUSPENDED	= 0x8,
+	STATE_ASYNC_SUSPEND_REQUESTED		= 0x05,
 
-	STATE_MAX						= 0x08,
+	STATE_BLOCKING				= 0x06,
+	STATE_BLOCKING_ASYNC_SUSPENDED 		= 0x07,
+	/* FIXME: All the transitions from STATE_SELF_SUSPENDED and
+	 * STATE_BLOCKING_SELF_SUSPENDED are the same - they should be the same
+	 * state. */
+	STATE_BLOCKING_SELF_SUSPENDED		= 0x08,
+	STATE_BLOCKING_SUSPEND_REQUESTED	= 0x09,
+
+	STATE_MAX				= 0x09,
 
 	THREAD_STATE_MASK			= 0x00FF,
 	THREAD_SUSPEND_COUNT_MASK	= 0xFF00,
@@ -146,17 +153,42 @@ enum {
 
 typedef struct _MonoThreadInfoInterruptToken MonoThreadInfoInterruptToken;
 
+/*
+ * These flags control how the rest of the runtime will see and interact with
+ * a thread.
+ */
+typedef enum {
+	/*
+	 * No flags means it's a normal thread that takes part in all runtime
+	 * functionality.
+	 */
+	MONO_THREAD_INFO_FLAGS_NONE = 0,
+	/*
+	 * The thread will not be suspended by the STW machinery. The thread is not
+	 * allowed to allocate or access managed memory at all, nor execute managed
+	 * code.
+	 */
+	MONO_THREAD_INFO_FLAGS_NO_GC = 1,
+	/*
+	 * The thread will not be subject to profiler sampling signals.
+	 */
+	MONO_THREAD_INFO_FLAGS_NO_SAMPLE = 2,
+} MonoThreadInfoFlags;
+
 typedef struct {
 	MonoLinkedListSetNode node;
 	guint32 small_id; /*Used by hazard pointers */
-	MonoNativeThreadHandle native_handle; /* Valid on mach and android */
+	MonoNativeThreadHandle native_handle; /* Valid on mach, android and Windows */
 	int thread_state;
+
+	/*
+	 * Must not be changed directly, and especially not by other threads. Use
+	 * mono_thread_info_get/set_flags () to manipulate this.
+	 */
+	volatile gint32 flags;
 
 	/*Tells if this thread was created by the runtime or not.*/
 	gboolean runtime_thread;
-
-	/* Tells if this thread should be ignored or not by runtime services such as GC and profiling */
-	gboolean tools_thread;
 
 	/* Max stack bounds, all valid addresses must be between [stack_start_limit, stack_end[ */
 	void *stack_start_limit, *stack_end;
@@ -219,34 +251,50 @@ typedef struct {
 
 	/* Stack mark for targets that explicitly require one */
 	gpointer stack_mark;
+
+	/* GCHandle to MonoInternalThread */
+	guint32 internal_thread_gchandle;
+
+	/*
+	 * Used by the sampling code in mini-posix.c to ensure that a thread has
+	 * handled a sampling signal before sending another one.
+	 */
+	gint32 profiler_signal_ack;
+
+#ifdef USE_WINDOWS_BACKEND
+	gint32 thread_wait_info;
+#endif
+
 } MonoThreadInfo;
 
 typedef struct {
-	void* (*thread_register)(THREAD_INFO_TYPE *info, void *baseaddr);
+	void* (*thread_attach)(THREAD_INFO_TYPE *info);
+	/*
+	This callback is called right before thread_detach_with_lock. This is called
+	without any locks held so it's the place for complicated cleanup.
+
+	The thread must remain operational between this call and thread_detach_with_lock.
+	It must be possible to successfully suspend it after thread_detach completes.
+	*/
+	void (*thread_detach)(THREAD_INFO_TYPE *info);
 	/*
 	This callback is called with @info still on the thread list.
 	This call is made while holding the suspend lock, so don't do callbacks.
 	SMR remains functional as its small_id has not been reclaimed.
 	*/
-	void (*thread_unregister)(THREAD_INFO_TYPE *info);
-	/*
-	This callback is called right before thread_unregister. This is called
-	without any locks held so it's the place for complicated cleanup.
-
-	The thread must remain operational between this call and thread_unregister.
-	It must be possible to successfully suspend it after thread_unregister completes.
-	*/
-	void (*thread_detach)(THREAD_INFO_TYPE *info);
-	void (*thread_attach)(THREAD_INFO_TYPE *info);
-	gboolean (*mono_method_is_critical) (void *method);
+	void (*thread_detach_with_lock)(THREAD_INFO_TYPE *info);
 	gboolean (*ip_in_critical_region) (MonoDomain *domain, gpointer ip);
-	gboolean (*mono_thread_in_critical_region) (THREAD_INFO_TYPE *info);
+	gboolean (*thread_in_critical_region) (THREAD_INFO_TYPE *info);
+
+	// Called on the affected thread.
+	void (*thread_flags_changing) (MonoThreadInfoFlags old, MonoThreadInfoFlags new_);
+	void (*thread_flags_changed) (MonoThreadInfoFlags old, MonoThreadInfoFlags new_);
 } MonoThreadInfoCallbacks;
 
 typedef struct {
 	void (*setup_async_callback) (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data);
 	gboolean (*thread_state_init_from_sigctx) (MonoThreadUnwindState *state, void *sigctx);
-	gboolean (*thread_state_init_from_handle) (MonoThreadUnwindState *tctx, MonoThreadInfo *info);
+	gboolean (*thread_state_init_from_handle) (MonoThreadUnwindState *tctx, MonoThreadInfo *info, /*optional*/ void *sigctx);
 	void (*thread_state_init) (MonoThreadUnwindState *tctx);
 } MonoThreadInfoRuntimeCallbacks;
 
@@ -258,26 +306,41 @@ typedef enum {
 
 typedef SuspendThreadResult (*MonoSuspendThreadCallback) (THREAD_INFO_TYPE *info, gpointer user_data);
 
-static inline gboolean
-mono_threads_filter_tools_threads (THREAD_INFO_TYPE *info)
-{
-	return !((MonoThreadInfo*)info)->tools_thread;
-}
+MONO_API MonoThreadInfoFlags
+mono_thread_info_get_flags (THREAD_INFO_TYPE *info);
 
 /*
-Requires the world to be stoped
-*/
-#define FOREACH_THREAD(thread) \
-	MONO_LLS_FOREACH_FILTERED (mono_thread_info_list_head (), THREAD_INFO_TYPE, thread, mono_threads_filter_tools_threads)
+ * Sets the thread info flags for the current thread. This function may invoke
+ * callbacks containing arbitrary code (e.g. locks) so it must be assumed to be
+ * async unsafe.
+ */
+MONO_API void
+mono_thread_info_set_flags (MonoThreadInfoFlags flags);
+
+static inline gboolean
+mono_threads_filter_exclude_flags (THREAD_INFO_TYPE *info, MonoThreadInfoFlags flags)
+{
+	return !(mono_thread_info_get_flags (info) & flags);
+}
+
+/* Normal iteration; requires the world to be stopped. */
+
+#define FOREACH_THREAD_ALL(thread) \
+	MONO_LLS_FOREACH_FILTERED (mono_thread_info_list_head (), THREAD_INFO_TYPE, thread, mono_lls_filter_accept_all, NULL)
+
+#define FOREACH_THREAD_EXCLUDE(thread, not_flags) \
+	MONO_LLS_FOREACH_FILTERED (mono_thread_info_list_head (), THREAD_INFO_TYPE, thread, mono_threads_filter_exclude_flags, not_flags)
 
 #define FOREACH_THREAD_END \
 	MONO_LLS_FOREACH_END
 
-/*
-Snapshot iteration.
-*/
-#define FOREACH_THREAD_SAFE(thread) \
-	MONO_LLS_FOREACH_FILTERED_SAFE (mono_thread_info_list_head (), THREAD_INFO_TYPE, thread, mono_threads_filter_tools_threads)
+/* Snapshot iteration; can be done anytime but is slower. */
+
+#define FOREACH_THREAD_SAFE_ALL(thread) \
+	MONO_LLS_FOREACH_FILTERED_SAFE (mono_thread_info_list_head (), THREAD_INFO_TYPE, thread, mono_lls_filter_accept_all, NULL)
+
+#define FOREACH_THREAD_SAFE_EXCLUDE(thread, not_flags) \
+	MONO_LLS_FOREACH_FILTERED_SAFE (mono_thread_info_list_head (), THREAD_INFO_TYPE, thread, mono_threads_filter_exclude_flags, not_flags)
 
 #define FOREACH_THREAD_SAFE_END \
 	MONO_LLS_FOREACH_SAFE_END
@@ -299,25 +362,37 @@ mono_thread_info_set_tid (THREAD_INFO_TYPE *info, MonoNativeThreadId tid)
  * a single block with info from both camps. 
  */
 void
-mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t thread_info_size);
+mono_thread_info_init (size_t thread_info_size);
 
 void
-mono_threads_signals_init (void);
+mono_thread_info_callbacks_init (MonoThreadInfoCallbacks *callbacks);
 
 void
-mono_threads_runtime_init (MonoThreadInfoRuntimeCallbacks *callbacks);
+mono_thread_info_signals_init (void);
+
+void
+mono_thread_info_runtime_init (MonoThreadInfoRuntimeCallbacks *callbacks);
 
 MonoThreadInfoRuntimeCallbacks *
 mono_threads_get_runtime_callbacks (void);
 
-int
+MONO_API int
 mono_thread_info_register_small_id (void);
 
 THREAD_INFO_TYPE *
-mono_thread_info_attach (void *baseptr);
+mono_thread_info_attach (void);
 
 MONO_API void
 mono_thread_info_detach (void);
+
+gboolean
+mono_thread_info_try_get_internal_thread_gchandle (THREAD_INFO_TYPE *info, guint32 *gchandle);
+
+void
+mono_thread_info_set_internal_thread_gchandle (THREAD_INFO_TYPE *info, guint32 gchandle);
+
+void
+mono_thread_info_unset_internal_thread_gchandle (THREAD_INFO_TYPE *info);
 
 gboolean
 mono_thread_info_is_exiting (void);
@@ -328,7 +403,7 @@ mono_thread_info_current (void);
 THREAD_INFO_TYPE*
 mono_thread_info_current_unchecked (void);
 
-int
+MONO_API int
 mono_thread_info_get_small_id (void);
 
 MonoLinkedListSet*
@@ -410,17 +485,13 @@ gboolean
 mono_thread_info_is_live (THREAD_INFO_TYPE *info);
 
 int
-mono_threads_get_max_stack_size (void);
+ves_icall_System_Threading_Thread_SystemMaxStackSize (MonoError *error);
 
 MonoThreadHandle*
 mono_threads_open_thread_handle (MonoThreadHandle *handle);
 
 void
 mono_threads_close_thread_handle (MonoThreadHandle *handle);
-
-MONO_API void
-mono_threads_attach_tools_thread (void);
-
 
 #if !defined(HOST_WIN32)
 
@@ -538,16 +609,15 @@ typedef enum {
 
 typedef enum {
 	SelfSuspendResumed,
-	SelfSuspendWait,
 	SelfSuspendNotifyAndWait,
 } MonoSelfSupendResult;
 
 typedef enum {
-	AsyncSuspendAlreadySuspended,
-	AsyncSuspendWait,
-	AsyncSuspendInitSuspend,
-	AsyncSuspendBlocking,
-} MonoRequestAsyncSuspendResult;
+	ReqSuspendAlreadySuspended,
+	ReqSuspendAlreadySuspendedBlocking,
+	ReqSuspendInitSuspendRunning,
+	ReqSuspendInitSuspendBlocking,
+} MonoRequestSuspendResult;
 
 typedef enum {
 	DoBlockingContinue, //in blocking mode, continue
@@ -557,6 +627,7 @@ typedef enum {
 typedef enum {
 	DoneBlockingOk, //exited blocking fine
 	DoneBlockingWait, //thread should end suspended
+	DoneBlockingNotifyAndWait, // thread was preemptively suspended while in blocking, notify suspend initiator and wait for resume
 } MonoDoneBlockingResult;
 
 
@@ -565,17 +636,18 @@ typedef enum {
 	AbortBlockingIgnoreAndPoll, //Ignore and poll
 	AbortBlockingOk, //Abort worked
 	AbortBlockingWait, //Abort worked, but should wait for resume
+	AbortBlockingNotifyAndWait, // thread was preemptively suspended while in blocking, notify suspend initiator and wait for resume
 } MonoAbortBlockingResult;
 
 
 void mono_threads_transition_attach (THREAD_INFO_TYPE* info);
 gboolean mono_threads_transition_detach (THREAD_INFO_TYPE *info);
-MonoRequestAsyncSuspendResult mono_threads_transition_request_async_suspension (THREAD_INFO_TYPE *info);
+MonoRequestSuspendResult mono_threads_transition_request_suspension (THREAD_INFO_TYPE *info);
 MonoSelfSupendResult mono_threads_transition_state_poll (THREAD_INFO_TYPE *info);
 MonoResumeResult mono_threads_transition_request_resume (THREAD_INFO_TYPE* info);
 gboolean mono_threads_transition_finish_async_suspend (THREAD_INFO_TYPE* info);
-MonoDoBlockingResult mono_threads_transition_do_blocking (THREAD_INFO_TYPE* info);
-MonoDoneBlockingResult mono_threads_transition_done_blocking (THREAD_INFO_TYPE* info);
+MonoDoBlockingResult mono_threads_transition_do_blocking (THREAD_INFO_TYPE* info, const char* func);
+MonoDoneBlockingResult mono_threads_transition_done_blocking (THREAD_INFO_TYPE* info, const char* func);
 MonoAbortBlockingResult mono_threads_transition_abort_blocking (THREAD_INFO_TYPE* info);
 
 MonoThreadUnwindState* mono_thread_info_get_suspend_state (THREAD_INFO_TYPE *info);
@@ -591,6 +663,7 @@ gboolean mono_thread_info_is_live (THREAD_INFO_TYPE *info);
 int mono_thread_info_suspend_count (THREAD_INFO_TYPE *info);
 int mono_thread_info_current_state (THREAD_INFO_TYPE *info);
 const char* mono_thread_state_name (int state);
+gboolean mono_thread_is_gc_unsafe_mode (void);
 
 gboolean mono_thread_info_in_critical_location (THREAD_INFO_TYPE *info);
 gboolean mono_thread_info_begin_suspend (THREAD_INFO_TYPE *info);
@@ -619,5 +692,11 @@ mono_thread_info_wait_multiple_handle (MonoThreadHandle **thread_handles, gsize 
 
 void mono_threads_join_lock (void);
 void mono_threads_join_unlock (void);
+
+
+#ifdef HOST_WASM
+typedef void (*background_job_cb)(void);
+void mono_threads_schedule_background_job (background_job_cb cb);
+#endif
 
 #endif /* __MONO_THREADS_H__ */

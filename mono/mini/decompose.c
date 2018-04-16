@@ -11,6 +11,7 @@
  */
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "ir-emit.h"
 #include "jit-icalls.h"
 
@@ -145,7 +146,7 @@ decompose_long_opcode (MonoCompile *cfg, MonoInst *ins, MonoInst **repl_ins)
 	case OP_ICONV_TO_OVF_U_UN:
 		/* an unsigned 32 bit num always fits in an (un)signed 64 bit one */
 		/* Clean out the upper word */
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, ins->dreg, ins->sreg1, 0);
+		MONO_EMIT_NEW_UNALU (cfg, OP_ZEXT_I4, ins->dreg, ins->sreg1);
 		NULLIFY_INS (ins);
 		break;
 	case OP_LCONV_TO_OVF_I1:
@@ -530,7 +531,12 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 			emulate = TRUE;
 		}
 		break;
-
+	case OP_ICONV_TO_R_UN:
+#ifdef MONO_ARCH_EMULATE_CONV_R8_UN
+		if (!COMPILE_LLVM (cfg))
+			emulate = TRUE;
+#endif
+		break;
 	default:
 		emulate = TRUE;
 		break;
@@ -1216,10 +1222,10 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 					dest_var = get_vreg_to_inst (cfg, ins->dreg);
 
 					if (!src_var)
-						src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
+						src_var = mono_compile_create_var_for_vreg (cfg, m_class_get_byval_arg (ins->klass), OP_LOCAL, ins->dreg);
 
 					if (!dest_var)
-						dest_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
+						dest_var = mono_compile_create_var_for_vreg (cfg, m_class_get_byval_arg (ins->klass), OP_LOCAL, ins->dreg);
 
 					// FIXME:
 					if (src_var->backend.is_pinvoke)
@@ -1227,8 +1233,8 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
 					EMIT_NEW_VARLOADA ((cfg), (dest), dest_var, dest_var->inst_vtype);
+					mini_emit_memory_copy (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke, 0);
 
-					mini_emit_stobj (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke);
 					break;
 				}
 				case OP_VZERO:
@@ -1237,7 +1243,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					g_assert (ins->klass);
 
-					EMIT_NEW_VARLOADA_VREG (cfg, dest, ins->dreg, &ins->klass->byval_arg);
+					EMIT_NEW_VARLOADA_VREG (cfg, dest, ins->dreg, m_class_get_byval_arg (ins->klass));
 					mini_emit_initobj (cfg, dest, NULL, ins->klass);
 					
 					if (cfg->compute_gc_maps) {
@@ -1266,14 +1272,14 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					if (!src_var) {
 						g_assert (ins->klass);
-						src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->sreg1);
+						src_var = mono_compile_create_var_for_vreg (cfg, m_class_get_byval_arg (ins->klass), OP_LOCAL, ins->sreg1);
 					}
 
-					EMIT_NEW_VARLOADA_VREG ((cfg), (src), ins->sreg1, &ins->klass->byval_arg);
+					EMIT_NEW_VARLOADA_VREG ((cfg), (src), ins->sreg1, m_class_get_byval_arg (ins->klass));
 
 					dreg = alloc_preg (cfg);
 					EMIT_NEW_BIALU_IMM (cfg, dest, OP_ADD_IMM, dreg, ins->inst_destbasereg, ins->inst_offset);
-					mini_emit_stobj (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke);
+					mini_emit_memory_copy (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke, 0);
 					break;
 				}
 				case OP_LOADV_MEMBASE: {
@@ -1285,12 +1291,12 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 					// FIXME-VT:
 					// FIXME:
 					if (!dest_var)
-						dest_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
+						dest_var = mono_compile_create_var_for_vreg (cfg, m_class_get_byval_arg (ins->klass), OP_LOCAL, ins->dreg);
 
 					dreg = alloc_preg (cfg);
 					EMIT_NEW_BIALU_IMM (cfg, src, OP_ADD_IMM, dreg, ins->inst_basereg, ins->inst_offset);
 					EMIT_NEW_VARLOADA (cfg, dest, dest_var, dest_var->inst_vtype);
-					mini_emit_stobj (cfg, dest, src, dest_var->klass, dest_var->backend.is_pinvoke);
+					mini_emit_memory_copy (cfg, dest, src, dest_var->klass, dest_var->backend.is_pinvoke, 0);
 					break;
 				}
 				case OP_OUTARG_VT: {
@@ -1301,7 +1307,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					src_var = get_vreg_to_inst (cfg, ins->sreg1);
 					if (!src_var)
-						src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->sreg1);
+						src_var = mono_compile_create_var_for_vreg (cfg, m_class_get_byval_arg (ins->klass), OP_LOCAL, ins->sreg1);
 					EMIT_NEW_VARLOADA (cfg, src, src_var, src_var->inst_vtype);
 
 					mono_arch_emit_outarg_vt (cfg, ins, src);
@@ -1455,7 +1461,7 @@ inline static MonoInst *
 mono_get_domainvar (MonoCompile *cfg)
 {
 	if (!cfg->domainvar)
-		cfg->domainvar = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+		cfg->domainvar = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 	return cfg->domainvar;
 }
 
@@ -1526,11 +1532,12 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 						dest = mono_emit_jit_icall (cfg, ves_icall_array_new, iargs);
 						dest->dreg = ins->dreg;
 					} else {
-						MonoClass *array_class = mono_array_class_get (ins->inst_newa_class, 1);
-						MonoVTable *vtable = mono_class_vtable (cfg->domain, array_class);
+						MonoClass *array_class = mono_class_create_array (ins->inst_newa_class, 1);
+						ERROR_DECL_VALUE (vt_error);
+						MonoVTable *vtable = mono_class_vtable_checked (cfg->domain, array_class, &vt_error);
 						MonoMethod *managed_alloc = mono_gc_get_managed_array_allocator (array_class);
 
-						g_assert (vtable); /*This shall not fail since we check for this condition on OP_NEWARR creation*/
+						mono_error_assert_ok (&vt_error); /*This shall not fail since we check for this condition on OP_NEWARR creation*/
 						NEW_VTABLECONST (cfg, iargs [0], vtable);
 						MONO_ADD_INS (cfg->cbb, iargs [0]);
 						MONO_INST_NEW (cfg, iargs [1], OP_MOVE);
@@ -1722,7 +1729,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 						/* FIXME: Optimize this */
 
 						/* Emit an r4->r8 conversion */
-						EMIT_NEW_VARLOADA_VREG (cfg, iargs [0], call2->inst.dreg, &mono_defaults.int32_class->byval_arg);
+						EMIT_NEW_VARLOADA_VREG (cfg, iargs [0], call2->inst.dreg, mono_get_int32_type ());
 						conv = mono_emit_jit_icall (cfg, mono_fload_r4, iargs);
 						conv->dreg = ins->dreg;
 

@@ -138,7 +138,7 @@ namespace System.Reflection.Emit
 				this.parent = typeof (object);
 
 			// skip .<Module> ?
-			table_idx = mb.get_next_table_index (this, 0x02, true);
+			table_idx = mb.get_next_table_index (this, 0x02, 1);
 			fullname = GetFullName ();
 		}
 
@@ -1601,8 +1601,8 @@ namespace System.Reflection.Emit
 			this.parent = ResolveUserType (this.parent);
 		}
 
-		internal int get_next_table_index (object obj, int table, bool inc) {
-			return pmodule.get_next_table_index (obj, table, inc);
+		internal int get_next_table_index (object obj, int table, int count) {
+			return pmodule.get_next_table_index (obj, table, count);
 		}
 
 		[ComVisible (true)]

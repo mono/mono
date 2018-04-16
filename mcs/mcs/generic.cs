@@ -693,6 +693,11 @@ namespace Mono.CSharp {
 					GetSignatureForError (), mc.GetSignatureForError (), input_variance, gtype_variance, parameters);
 		}
 
+		public TypeSpec GetAsyncMethodBuilder ()
+		{
+			return null;
+		}
+
 		public TypeSpec GetAttributeCoClass ()
 		{
 			return null;
@@ -1543,6 +1548,9 @@ namespace Mono.CSharp {
 					if (ec is PointerContainer)
 						return PointerContainer.MakeType (context.Module, et);
 
+					if (ec is ReferenceContainer)
+						return ReferenceContainer.MakeType (context.Module, et);
+					
 					throw new NotImplementedException ();
 				}
 
@@ -1772,7 +1780,10 @@ namespace Mono.CSharp {
 			foreach (var arg in targs) {
 				if (arg.HasDynamicElement || arg.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					state |= StateFlags.HasDynamicElement;
-					break;
+				}
+
+				if (arg.HasNamedTupleElement) {
+					state |= StateFlags.HasNamedTupleElement;
 				}
 			}
 
@@ -1849,6 +1860,12 @@ namespace Mono.CSharp {
 		public override bool IsNullableType {
 			get {
 				return (open_type.state & StateFlags.InflatedNullableType) != 0;
+			}
+		}
+
+		public override bool IsTupleType {
+			get {
+				return (open_type.state & StateFlags.Tuple) != 0;
 			}
 		}
 
@@ -2280,7 +2297,7 @@ namespace Mono.CSharp {
 					ok = false;
 				}
 
-				if (te.IsPointer || te.IsSpecialRuntimeType) {
+				if (te.IsPointer || te.IsSpecialRuntimeType || te.IsByRefLike) {
 					ec.Module.Compiler.Report.Error (306, args[i].Location,
 						"The type `{0}' may not be used as a type argument",
 						te.GetSignatureForError ());
@@ -3090,8 +3107,15 @@ namespace Mono.CSharp {
 			//
 			// Some types cannot be used as type arguments
 			//
-			if ((bound.Type.Kind == MemberKind.Void && !voidAllowed) || bound.Type.IsPointer || bound.Type.IsSpecialRuntimeType ||
-				bound.Type == InternalType.MethodGroup || bound.Type == InternalType.AnonymousMethod || bound.Type == InternalType.VarOutType)
+			if ((bound.Type.Kind == MemberKind.Void && !voidAllowed) || bound.Type.IsPointer || bound.Type.IsSpecialRuntimeType || bound.Type.IsByRefLike ||
+			    bound.Type == InternalType.MethodGroup || bound.Type == InternalType.AnonymousMethod || bound.Type == InternalType.VarOutType ||
+			    bound.Type == InternalType.ThrowExpr)
+				return;
+
+			if (bound.Type.IsTupleType && TupleLiteral.ContainsNoTypeElement (bound.Type))
+				return;
+
+			if (bound.Type == InternalType.DefaultType)
 				return;
 
 			var a = bounds [index];
@@ -3357,7 +3381,7 @@ namespace Mono.CSharp {
 					continue;
 
 				var bound = candidates [ci];
-				if (bound.Type == best_candidate)
+				if (TypeSpecComparer.IsEqual (bound.Type, best_candidate))
 					continue;
 
 				int cii = 0;

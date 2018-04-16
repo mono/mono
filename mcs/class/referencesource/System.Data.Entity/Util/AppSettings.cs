@@ -41,6 +41,11 @@ namespace System.Data.Entity.Util
                                 _SimplifyUserSpecifiedViews = true;
                             }
 
+                            if (settings == null || !int.TryParse(settings["EntityFramework_QueryCacheSize"], out _QueryCacheSize) || _QueryCacheSize < 1)
+                            {
+                                _QueryCacheSize = DefaultQueryCacheSize;
+                            }
+
                             _settingsInitialized = true;
                         }
                     }
@@ -65,6 +70,17 @@ namespace System.Data.Entity.Util
             {
                 EnsureSettingsLoaded();
                 return _SimplifyUserSpecifiedViews;
+            }
+        }
+
+        private static int _QueryCacheSize;
+        private const int DefaultQueryCacheSize = 1000;
+        internal static int QueryCacheSize
+        {
+            get
+            {
+                EnsureSettingsLoaded();
+                return _QueryCacheSize;
             }
         }
     }

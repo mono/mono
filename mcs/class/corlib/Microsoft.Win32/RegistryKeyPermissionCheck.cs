@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if WIN_PLATFORM || XAMMAC_4_5
 namespace Microsoft.Win32
 {
 	public enum RegistryKeyPermissionCheck
@@ -37,4 +36,3 @@ namespace Microsoft.Win32
 		ReadWriteSubTree	= 2,
 	}
 }
-#endif

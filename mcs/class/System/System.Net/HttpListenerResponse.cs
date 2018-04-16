@@ -26,11 +26,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
 using System.Globalization;
 using System.IO;
 using System.Text;
+
 namespace System.Net {
 	public sealed class HttpListenerResponse : IDisposable
 	{
@@ -218,7 +217,7 @@ namespace System.Net {
 				if (value < 100 || value > 999)
 					throw new ProtocolViolationException ("StatusCode must be between 100 and 999.");
 				status_code = value;
-				status_description = HttpListenerResponseHelper.GetStatusDescription (value);
+				status_description = HttpStatusDescription.Get (value);
 			}
 		}
 
@@ -518,5 +517,4 @@ namespace System.Net {
 		}
 	}
 }
-#endif
 

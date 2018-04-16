@@ -18,6 +18,7 @@ namespace MonoTests.System.Web.Services.Discovery {
 	public class DiscoveryClientProtocolTest {
 
 		[Test] // Covers #36116
+		[Category ("NotWorking")]
 		[Category ("InetAccess")]
 		public void ReadWriteTest ()
 		{

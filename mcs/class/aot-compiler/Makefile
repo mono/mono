@@ -8,7 +8,7 @@ thisdir = class/aot-compiler
 
 include ../../build/rules.make
 
-the_libdir = $(topdir)/class/lib/$(PROFILE)/
+the_libdir = $(topdir)/class/lib/$(PROFILE_DIRECTORY)/
 CSC_DIR = $(dir $(CSC_LOCATION))
 # The directory where the AOT images are stored
 images_dir = $(the_libdir)
@@ -38,6 +38,8 @@ runtime_dep = $(dir $(RUNTIME))/../mono/mini/mono
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
+LOG_FILE = $(PROFILE_DIRECTORY)_aot.log
+
 ifndef SKIP_AOT
 
 profile_file:=$(wildcard $(topdir)/class/lib/build/csc.*.aotprofile)
@@ -50,32 +52,32 @@ endif
 
 ifdef PLATFORM_AOT_SUFFIX
 $(mcs_aot_image): $(mcs_exe) $(mscorlib_dll) $(runtime_dep)
-	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(mcs_aot_image) --debug $(mcs_exe) || cat $(PROFILE)_aot.log || (cat $(PROFILE)_aot.log; exit 1)
+	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(LOG_FILE) 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(mcs_aot_image) --debug $(mcs_exe) || cat $(LOG_FILE) || (cat $(LOG_FILE); exit 1)
 
 $(csc_aot_image): $(csc_exe) $(mscorlib_dll) $(runtime_dep)
-	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_aot_image) --debug $(csc_exe) || cat $(PROFILE)_aot.log || (cat $(PROFILE)_aot.log; exit 1)
+	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(LOG_FILE) 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_aot_image) --debug $(csc_exe) || cat $(LOG_FILE) || (cat $(LOG_FILE); exit 1)
 
 $(mscorlib_aot_image): $(mscorlib_dll) $(runtime_dep)
-	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg) --debug $(mscorlib_dll) || (cat $(PROFILE)_aot.log; exit 1)
+	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(LOG_FILE) 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg) --debug $(mscorlib_dll) || (cat $(LOG_FILE); exit 1)
 
 $(csc_MC_image): $(csc_MC_dll) $(runtime_dep)
-	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_MC_image) --debug $(csc_MC_dll) || (cat $(PROFILE)_aot.log; exit 1)
+	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(LOG_FILE) 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_MC_image) --debug $(csc_MC_dll) || (cat $(LOG_FILE); exit 1)
 
 $(csc_MCS_image): $(csc_MCS_dll) $(runtime_dep)
-	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_MCS_image) --debug $(csc_MCS_dll) || (cat $(PROFILE)_aot.log; exit 1)
+	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(LOG_FILE) 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_MCS_image) --debug $(csc_MCS_dll) || (cat $(LOG_FILE); exit 1)
 
 $(csc_SRM_image): $(csc_SRM_dll) $(runtime_dep)
-	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_SRM_image) --debug --apply-bindings=$(csc_exe).config $(csc_SRM_dll) || (cat $(PROFILE)_aot.log; exit 1)
+	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(LOG_FILE) 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_SRM_image) --debug --apply-bindings=$(csc_exe).config $(csc_SRM_dll) || (cat $(LOG_FILE); exit 1)
 
 $(csc_SCI_image): $(csc_SCI_dll) $(runtime_dep)
-	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_SCI_image) --debug $(csc_SCI_dll) || (cat $(PROFILE)_aot.log; exit 1)
+	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(LOG_FILE) 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_SCI_image) --debug $(csc_SCI_dll) || (cat $(LOG_FILE); exit 1)
 
 ifdef ENABLE_AOT
 
 CSC_IMAGES = $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image) $(csc_MC_image) $(csc_MCS_image)
 
 clean-local:
-	-rm -f $(mscorlib_aot_image) $(mcs_aot_image) $(CSC_IMAGES) $(PROFILE)_aot.log
+	-rm -f $(mscorlib_aot_image) $(mcs_aot_image) $(CSC_IMAGES) $(LOG_FILE)
 
 # AOT build profile to speed up build
 ifeq ($(PROFILE),build)

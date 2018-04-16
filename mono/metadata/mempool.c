@@ -20,6 +20,7 @@
 
 #include "mempool.h"
 #include "mempool-internals.h"
+#include "utils/unlocked.h"
 
 /*
  * MonoMemPool is for fast allocation of memory. We free
@@ -77,7 +78,7 @@ struct _MonoMemPool {
 	} d;
 };
 
-static long total_bytes_allocated = 0;
+static gint64 total_bytes_allocated = 0;
 
 /**
  * mono_mempool_new:
@@ -114,7 +115,7 @@ mono_mempool_new_size (int initial_size)
 	pool->pos = (guint8*)pool + SIZEOF_MEM_POOL; // Start after header
 	pool->end = (guint8*)pool + initial_size;    // End at end of allocated space 
 	pool->d.allocated = pool->size = initial_size;
-	total_bytes_allocated += initial_size;
+	UnlockedAdd64 (&total_bytes_allocated, initial_size);
 	return pool;
 }
 
@@ -129,7 +130,7 @@ mono_mempool_destroy (MonoMemPool *pool)
 {
 	MonoMemPool *p, *n;
 
-	total_bytes_allocated -= pool->d.allocated;
+	UnlockedSubtract64 (&total_bytes_allocated, pool->d.allocated);
 
 	p = pool;
 	while (p) {
@@ -287,7 +288,7 @@ mono_mempool_alloc (MonoMemPool *pool, guint size)
 			np->size = new_size;
 			pool->next = np;
 			pool->d.allocated += new_size;
-			total_bytes_allocated += new_size;
+			UnlockedAdd64 (&total_bytes_allocated, new_size);
 
 			rval = (guint8*)np + SIZEOF_MEM_POOL;
 		} else {
@@ -301,7 +302,7 @@ mono_mempool_alloc (MonoMemPool *pool, guint size)
 			pool->pos = (guint8*)np + SIZEOF_MEM_POOL;
 			pool->end = (guint8*)np + new_size;
 			pool->d.allocated += new_size;
-			total_bytes_allocated += new_size;
+			UnlockedAdd64 (&total_bytes_allocated, new_size);
 
 			rval = pool->pos;
 			pool->pos += size;
@@ -431,5 +432,5 @@ mono_mempool_get_allocated (MonoMemPool *pool)
 long
 mono_mempool_get_bytes_allocated (void)
 {
-	return total_bytes_allocated;
+	return UnlockedRead64 (&total_bytes_allocated);
 }

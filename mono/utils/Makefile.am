@@ -13,7 +13,8 @@ endif
 
 if HOST_WIN32
 win32_sources = \
-	os-event-win32.c
+	os-event-win32.c \
+	mono-os-wait-win32.c
 
 platform_sources = $(win32_sources)
 else
@@ -39,6 +40,7 @@ monoutils_sources = \
 	mono-dl-windows.c	\
 	mono-dl-darwin.c	\
 	mono-dl-posix.c		\
+	mono-dl-wasm.c	\
 	mono-dl.h		\
 	mono-dl-windows-internals.h	\
 	mono-log-windows.c	\
@@ -46,6 +48,8 @@ monoutils_sources = \
 	mono-log-posix.c	\
 	mono-log-android.c \
 	mono-log-darwin.c \
+	mono-merp.c	\
+	mono-merp.h	\
 	mono-internal-hash.c	\
 	mono-internal-hash.h	\
 	mono-io-portability.c 	\
@@ -59,6 +63,8 @@ monoutils_sources = \
 	mono-mmap-internals.h	\
 	mono-mmap-windows-internals.h	\
 	mono-os-mutex.h		\
+	mono-os-mutex.c		\
+	mono-os-wait.h \
 	mono-coop-mutex.h		\
 	mono-once.h		\
 	mono-lazy-init.h		\
@@ -69,6 +75,7 @@ monoutils_sources = \
 	mono-proclib.h		\
 	mono-proclib-windows-internals.h		\
 	mono-publib.c		\
+	mono-jemalloc.c		\
 	mono-string.h		\
 	mono-time.c  		\
 	mono-time.h  		\
@@ -106,7 +113,6 @@ monoutils_sources = \
 	mono-uri.h	\
 	mono-stdlib.h	\
 	valgrind.h	\
-	mach-support.c	\
 	mach-support.h  \
 	memcheck.h	\
 	mono-context.c	\
@@ -135,6 +141,8 @@ monoutils_sources = \
 	mono-threads-openbsd.c	\
 	mono-threads-android.c	\
 	mono-threads-haiku.c	\
+	mono-threads-aix.c	\
+	mono-threads-wasm.c	\
 	mono-threads.h	\
 	mono-threads-debug.h	\
 	mono-threads-api.h	\
@@ -142,6 +150,8 @@ monoutils_sources = \
 	mono-threads-coop.h	\
 	mono-tls.h	\
 	mono-tls.c	\
+	mono-utils-debug.c \
+	mono-utils-debug.h \
 	linux_magic.h	\
 	mono-memory-model.h	\
 	atomic.h	\
@@ -174,7 +184,9 @@ monoutils_sources = \
 	checked-build.h \
 	os-event.h \
 	refcount.h	\
-	w32api.h
+	w32api.h	\
+	unlocked.h	\
+	ward.h
 
 arch_sources = 
 
@@ -240,12 +252,12 @@ if SPARC64
 arch_sources += mono-hwcap-sparc.c
 endif
 
-if IA64
-arch_sources += mono-hwcap-ia64.c
-endif
-
 if S390X
 arch_sources += mono-hwcap-s390x.c
+endif
+
+if HOST_WASM
+arch_sources += mono-hwcap-wasm.c
 endif
 
 else
@@ -255,13 +267,22 @@ arch_sources += mono-hwcap-cross.c
 endif
 
 libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources)
+libmonoutils_la_CFLAGS = $(JEMALLOC_CFLAGS)
+libmonoutils_la_LDFLAGS = $(JEMALLOC_LDFLAGS)
 libmonoutilsincludedir = $(includedir)/mono-$(API_VER)/mono/utils
 
 libmonoutilsinclude_HEADERS = 	\
 	mono-logger.h		\
 	mono-error.h		\
 	mono-publib.h		\
+	mono-jemalloc.h		\
 	mono-dl-fallback.h	\
 	mono-counters.h
 
 EXTRA_DIST = mono-embed.h mono-embed.c
+
+DIST_SUBDIRS = jemalloc
+
+if MONO_JEMALLOC_ENABLED
+SUBDIRS = jemalloc
+endif

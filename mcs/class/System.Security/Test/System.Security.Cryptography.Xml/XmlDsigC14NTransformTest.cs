@@ -9,6 +9,7 @@
 // (C) 2003 Aleksey Sanin (aleksey@aleksey.com)
 // (C) 2004 Novell (http://www.novell.com)
 //
+#if !MOBILE
 
 using System;
 using System.IO;
@@ -157,7 +158,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
 		// see LoadInputAsXmlNodeList2 description
 		public void LoadInputAsXmlNodeList () 
 		{
@@ -166,11 +166,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			Assert.AreEqual ("<Test></Test>", output, "XmlChildNodes");
+			Assert.AreEqual ("<Test xmlns=\"http://www.go-mono.com/\"></Test>", output, "XmlChildNodes");
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
 		// MS has a bug that those namespace declaration nodes in
 		// the node-set are written to output. Related spec section is:
 		// http://www.w3.org/TR/2001/REC-xml-c14n-20010315#ProcessingModel
@@ -180,7 +179,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.SelectNodes ("//*"));
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			string expected = @"<Test><Toto></Toto></Test>";
+			string expected = "<Test xmlns=\"http://www.go-mono.com/\"><Toto></Toto></Test>";
 			Assert.AreEqual (expected, output, "XmlChildNodes");
 		}
 
@@ -246,16 +245,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	    		Assert.AreEqual (C14NSpecExample4Output, res, "Example 4 from c14n spec - Character Modifications and Character References (without comments)");
 	        }
 	    
-	        [Test]
-	        public void C14NSpecExample5 ()
-	        {
-			using (StreamWriter sw = new StreamWriter ("world.txt", false, Encoding.ASCII)) {
-				sw.Write ("world");
-				sw.Close ();
+			[Test]
+			[Ignore(".NET DOM implementation does not match W3C DOM specification.")]
+			public void C14NSpecExample5 ()
+			{
+				using (StreamWriter sw = new StreamWriter ("world.txt", false, Encoding.ASCII)) {
+					sw.Write ("world");
+					sw.Close ();
+				}
+				string res = ExecuteXmlDSigC14NTransform (C14NSpecExample5Input);
+				Assert.AreEqual (C14NSpecExample5Output, res, "Example 5 from c14n spec - Entity References (without comments)");
 			}
-	    	    	string res = ExecuteXmlDSigC14NTransform (C14NSpecExample5Input);
-	    	    	Assert.AreEqual (C14NSpecExample5Output, res, "Example 5 from c14n spec - Entity References (without comments)");
-	        }
     
 		[Test]
 	        public void C14NSpecExample6 ()
@@ -508,20 +508,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		public void PrefixlessNamespaceOutput ()
-		{
-			XmlDocument doc = new XmlDocument ();
-			doc.AppendChild (doc.CreateElement ("foo", "urn:foo"));
-			doc.DocumentElement.AppendChild (doc.CreateElement ("bar", "urn:bar"));
-			Assert.AreEqual (String.Empty, doc.DocumentElement.GetAttribute ("xmlns"), "#1");
-			XmlDsigC14NTransform t = new XmlDsigC14NTransform ();
-			t.LoadInput (doc);
-			Stream s = t.GetOutput () as Stream;
-			Assert.AreEqual (new StreamReader (s, Encoding.UTF8).ReadToEnd (), "<foo xmlns=\"urn:foo\"><bar xmlns=\"urn:bar\"></bar></foo>");
-			Assert.AreEqual ("urn:foo", doc.DocumentElement.GetAttribute ("xmlns"), "#2");
-		}
-
-		[Test]
 		[Ignore ("find out how PropagatedNamespaces returns non-null instance on .NET")]
 		public void PropagatedNamespaces ()
 		{
@@ -546,3 +532,4 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 	}    
 }
+#endif

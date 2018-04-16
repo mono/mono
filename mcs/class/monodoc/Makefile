@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = monodoc.dll
 LIBRARY_PACKAGE = monodoc
+KEYFILE = ../../class/mono.snk
 # Remove a bunch of "obsolete"-type warning for Lucene.NET
 # also activate legacy mode to compile old monodoc.dll api
 LOCAL_MCS_FLAGS = /nowarn:618,612,672,809,414,649 /define:LEGACY_MODE

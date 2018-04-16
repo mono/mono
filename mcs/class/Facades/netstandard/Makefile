@@ -9,9 +9,9 @@ LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)/Facades
 
 LIBRARY = netstandard.dll
 
-KEY_FILE = ../../Open.snk
-LIBRARY_SNK = $(KEY_FILE)
-SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699 /nowarn:618
+KEYFILE = ../../Open.snk
+LIBRARY_SNK = $(KEYFILE)
+SIGN_FLAGS = /delaysign /nowarn:1616,1699 /nowarn:618
 LIB_REFS = System System.Xml System.Xml.Linq System.Runtime.Serialization System.Core System.Numerics System.Numerics.Vectors System.Net.Http System.Transactions \
 System.IO.Compression System.Data System.ComponentModel.Composition System.IO.Compression.FileSystem Facades/System.Runtime.InteropServices.RuntimeInformation \
 Facades/System.Security.Cryptography.Algorithms Facades/System.Globalization.Extensions Facades/System.Data.Common \
@@ -29,7 +29,7 @@ LIB_REFS += System.Web
 endif
 
 # profiles which build a System.Drawing.dll in the repo
-REPO_DRAWING_DEP := $(filter net_4_x orbis winaot, $(PROFILE))
+REPO_DRAWING_DEP := $(filter net_4_x orbis winaot unreal wasm, $(PROFILE))
 
 ifdef REPO_DRAWING_DEP
 LIB_REFS += System.Drawing

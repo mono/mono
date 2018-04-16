@@ -8,6 +8,7 @@
  * (C) 2015 Xamarin
  */
 #include <config.h>
+#include <mono/utils/mono-compiler.h>
 
 #ifdef ENABLE_CHECKED_BUILD
 
@@ -37,7 +38,7 @@ mono_check_mode_enabled (MonoCheckMode query)
 	if (G_UNLIKELY (check_mode == MONO_CHECK_MODE_UNKNOWN))
 	{
 		MonoCheckMode env_check_mode = MONO_CHECK_MODE_NONE;
-		const gchar *env_string = g_getenv ("MONO_CHECK_MODE");
+		gchar *env_string = g_getenv ("MONO_CHECK_MODE");
 
 		if (env_string)
 		{
@@ -72,7 +73,7 @@ mono_check_transition_limit (void)
 {
 	static int transition_limit = -1;
 	if (transition_limit < 0) {
-		const gchar *env_string = g_getenv ("MONO_CHECK_THREAD_TRANSITION_HISTORY");
+		gchar *env_string = g_getenv ("MONO_CHECK_THREAD_TRANSITION_HISTORY");
 		if (env_string) {
 			transition_limit = atoi (env_string);
 			g_free (env_string);
@@ -262,7 +263,7 @@ assert_gc_safe_mode (const char *file, int lineno)
 
 	switch (state = mono_thread_info_current_state (cur)) {
 	case STATE_BLOCKING:
-	case STATE_BLOCKING_AND_SUSPENDED:
+	case STATE_BLOCKING_SELF_SUSPENDED:
 		break;
 	default:
 		mono_fatal_with_history ("%s:%d: Expected GC Safe mode but was in %s state", file, lineno, mono_thread_state_name (state));
@@ -284,7 +285,6 @@ assert_gc_unsafe_mode (const char *file, int lineno)
 	switch (state = mono_thread_info_current_state (cur)) {
 	case STATE_RUNNING:
 	case STATE_ASYNC_SUSPEND_REQUESTED:
-	case STATE_SELF_SUSPEND_REQUESTED:
 		break;
 	default:
 		mono_fatal_with_history ("%s:%d: Expected GC Unsafe mode but was in %s state", file, lineno, mono_thread_state_name (state));
@@ -306,9 +306,8 @@ assert_gc_neutral_mode (const char *file, int lineno)
 	switch (state = mono_thread_info_current_state (cur)) {
 	case STATE_RUNNING:
 	case STATE_ASYNC_SUSPEND_REQUESTED:
-	case STATE_SELF_SUSPEND_REQUESTED:
 	case STATE_BLOCKING:
-	case STATE_BLOCKING_AND_SUSPENDED:
+	case STATE_BLOCKING_SELF_SUSPENDED:
 		break;
 	default:
 		mono_fatal_with_history ("%s:%d: Expected GC Neutral mode but was in %s state", file, lineno, mono_thread_state_name (state));
@@ -708,5 +707,7 @@ check_metadata_store_local (void *from, void *to)
 }
 
 #endif /* defined(ENABLE_CHECKED_BUILD_METADATA) */
+#else /* ENABLE_CHECKED_BUILD */
 
+MONO_EMPTY_SOURCE_FILE (checked_build);
 #endif /* ENABLE_CHECKED_BUILD */

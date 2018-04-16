@@ -281,13 +281,12 @@ namespace System {
             get { return _innerException; }
         }
 
-
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         static extern private IRuntimeMethodInfo GetMethodFromStackTrace(Object stackTrace);
 
-#if !MONO
         [System.Security.SecuritySafeCritical]  // auto-generated
         private MethodBase GetExceptionMethodFromStackTrace()
         {
@@ -1036,11 +1035,16 @@ namespace System {
             }
         }
 
+#if MONO
+        private static bool nIsTransient(int hr) {
+			throw new NotImplementedException ();
+		}
+#else
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern static bool nIsTransient(int hr);
-
+#endif
 
         // This piece of infrastructure exists to help avoid deadlocks 
         // between parts of mscorlib that might throw an exception while 
@@ -1065,11 +1069,11 @@ namespace System {
 #if MONO
             switch (kind) {
             case ExceptionMessageKind.ThreadAbort:
-                return "";
+                return "Thread was being aborted.";
             case ExceptionMessageKind.ThreadInterrupted:
-                return "";
+                return "Thread was interrupted from a waiting state.";
             case ExceptionMessageKind.OutOfMemory:
-                return "Out of memory";
+                return "Insufficient memory to continue the execution of the program.";
             }
             return "";
 #else

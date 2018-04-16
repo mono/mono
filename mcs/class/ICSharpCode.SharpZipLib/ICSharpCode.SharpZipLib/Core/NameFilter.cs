@@ -50,6 +50,7 @@ namespace ICSharpCode.SharpZipLib.Core
 	/// and not matching an exclude spec are deemed to match the filter.
 	/// An empty filter matches any name.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class NameFilter
 	{
 		/// <summary>

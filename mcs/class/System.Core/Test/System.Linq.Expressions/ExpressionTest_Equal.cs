@@ -472,7 +472,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
+		[Category ("NotWorkingLinqInterpreter")]
 		public void NullableNullEqual ()
 		{
 			var param = Expression.Parameter (typeof (DateTime?), "x");

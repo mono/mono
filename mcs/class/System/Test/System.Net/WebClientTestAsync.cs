@@ -79,13 +79,16 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (AggregateException))] // Something catches the PlatformNotSupportedException and re-throws an AggregateException
+#endif
 		[Category("InetAccess")]
 		public void DownloadFileTaskAsync ()
 		{
 			WebClient wc = new WebClient ();
 			string filename = Path.GetTempFileName ();
 
-			var task = wc.DownloadFileTaskAsync ("http://www.mono-project.com/", filename);
+			var task = wc.DownloadFileTaskAsync ("http://www.example.com/", filename);
 			Assert.IsTrue (task.Wait (15000));
 			Assert.IsTrue (task.IsCompleted);
 			
@@ -93,8 +96,8 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category ("NotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		[Category("InetAccess")]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void Cancellation ()
 		{
 			WebClient wc = new WebClient ();
@@ -121,8 +124,8 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category ("NotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		[Category("InetAccess")]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void DownloadMultiple ()
 		{
 			WebClient wc = new WebClient ();
@@ -140,8 +143,8 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category("InetAccess")]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category ("InetAccess")]
+		[Category ("NotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void DownloadMultiple2 ()
 		{
 			WebClient wc = new WebClient ();
@@ -153,8 +156,8 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category("InetAccess")]
-		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category ("InetAccess")]
+		[Category ("NotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void DownloadMultiple3 ()
 		{
 			WebClient wc = new WebClient ();

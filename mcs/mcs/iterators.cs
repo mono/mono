@@ -161,7 +161,6 @@ namespace Mono.CSharp
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
-			throw new NotSupportedException ();
 		}
 
 		protected override bool DoResolve (BlockContext bc)
@@ -1188,11 +1187,15 @@ namespace Mono.CSharp
 				return;
 
 			if (!CheckType (ret, parent, out iterator_type, out is_enumerable)) {
-				parent.Compiler.Report.Error (1624, method.Location,
-					      "The body of `{0}' cannot be an iterator block " +
-					      "because `{1}' is not an iterator interface type",
-					      method.GetSignatureForError (),
-					      ret.GetSignatureForError ());
+				if (ret.Kind == MemberKind.ByRef) {
+					parent.Compiler.Report.Error (8154, method.Location,
+							  "The body of `{0}' cannot be an iterator block because the method returns by reference",
+							  method.GetSignatureForError ());
+				} else {
+					parent.Compiler.Report.Error (1624, method.Location,
+							  "The body of `{0}' cannot be an iterator block because `{1}' is not an iterator interface type",
+							  method.GetSignatureForError (), ret.GetSignatureForError ());
+				}
 				return;
 			}
 
@@ -1220,7 +1223,7 @@ namespace Mono.CSharp
 			}
 
 			if ((modifiers & Modifiers.UNSAFE) != 0) {
-				parent.Compiler.Report.Error (1629, method.Location, "Unsafe code may not appear in iterators");
+				Expression.UnsafeInsideIteratorError (parent.Compiler.Report, method.Location);
 			}
 
 			method.Block = method.Block.ConvertToIterator (method, parent, iterator_type, is_enumerable);

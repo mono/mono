@@ -28,9 +28,9 @@
 
 namespace System.Net
 {
-	class FtpRequestCreator : IWebRequestCreate
+	class FtpWebRequestCreator : IWebRequestCreate
 	{
-		internal const string EXCEPTION_MESSAGE = "System.Net.FtpRequestCreator is not supported on the current platform.";
+		internal const string EXCEPTION_MESSAGE = "System.Net.FtpWebRequestCreator is not supported on the current platform.";
 		public WebRequest Create (Uri uri)
 		{
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);

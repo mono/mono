@@ -7,6 +7,7 @@ RESOURCE_FILES = \
 
 LIBRARY = Mono.ServiceModel.IdentitySelectors.dll
 LIB_REFS = System System.Xml System.Configuration System.Security System.Transactions System.Web System.Web.Services Mono.Security
+KEYFILE = ../mono.pub
 LIB_MCS_FLAGS = \
 		/nowarn:414,169,67,3005,436 \
 		/unsafe \

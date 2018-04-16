@@ -1,24 +1,14 @@
 class FsharpPackage(GitHubTarballPackage):
-
     def __init__(self):
-        GitHubTarballPackage.__init__(
-            self,
-            'fsharp',
-            'fsharp',
-            '4.1.8',
-            '991186f6c95b30a80f217b9319354b32c86212de',
+        GitHubTarballPackage.__init__(self,
+            'fsharp', 'fsharp',
+            '4.1.33',
+            '561af8ba705fdbd84274702bc8073b9a94ba0a7d',
             configure='./configure --prefix="%{package_prefix}"',
-            override_properties={
-                'make': 'make'})
+            override_properties={ 'make': 'make' })
 
-        self.extra_stage_files = [
-            'lib/mono/xbuild/Microsoft/VisualStudio/v/FSharp/Microsoft.FSharp.Targets']
-        self.sources.extend(
-            [
-                'patches/fsharp-enable-jit-tracking-for-portable-pdb.patch',
-                'patches/fsharp-fix-mdb-support.patch',
-                'patches/fsharp-Fix-mono-gac-location.patch',
-                'patches/fsharp-fix-xbuild-check.patch'])
+        self.extra_stage_files = ['lib/mono/xbuild/Microsoft/VisualStudio/v/FSharp/Microsoft.FSharp.Targets']
+        self.sources.extend(['patches/fsharp-portable-pdb.patch', 'patches/fsharp-string-switchName.patch'])
 
     def prep(self):
         Package.prep(self)
@@ -27,7 +17,7 @@ class FsharpPackage(GitHubTarballPackage):
             self.sh('patch -p1 < "%{local_sources[' + str(p) + ']}"')
 
     def build(self):
-        self.sh('autoreconf')
+        self.sh('autoreconf') 
         Package.configure(self)
         Package.make(self)
 

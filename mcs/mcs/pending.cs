@@ -147,7 +147,6 @@ namespace Mono.CSharp {
 			int i = 0;
 			if (abstract_methods != null) {
 				int count = abstract_methods.Length;
-				pending_implementations [i].methods = new MethodSpec [count];
 				pending_implementations [i].need_proxy = new MethodSpec [count];
 
 				pending_implementations [i].methods = abstract_methods;
@@ -527,7 +526,50 @@ namespace Mono.CSharp {
 		bool BaseImplements (TypeSpec iface_type, MethodSpec mi, out MethodSpec base_method)
 		{
 			base_method = null;
-			var base_type = container.BaseType;
+			bool base_can_implement = true;
+			TypeSpec lookup_type;
+
+			//
+			// Special handling for properties/indexers which cannot have accessors
+			// implementing an interface found in different types (e.g. current and base)
+			//
+			if (mi.IsAccessor && container.Interfaces != null) {
+
+				bool new_implementation = false;
+				foreach (var iface in container.Interfaces) {
+					if (TypeSpecComparer.IsEqual (iface, iface_type)) {
+						new_implementation = true;
+						break;
+					}
+				}
+
+				if (new_implementation) {
+					MemberFilter filter;
+					bool getter = mi.Name [0] == 'g';
+					if (mi.Parameters.Count > (getter ? 0 : 1)) {
+						var indexer_params = getter ? mi.Parameters : IndexerSpec.CreateParametersFromSetter (mi, mi.Parameters.Count - 1);
+						var ptype = getter ? mi.ReturnType : mi.Parameters.Types [mi.Parameters.Count - 1];
+						filter = new MemberFilter (MemberCache.IndexerNameAlias, 0, MemberKind.Indexer, indexer_params, ptype);
+					} else {
+						var pname = mi.Name.Substring (4);
+						var ptype = getter ? mi.ReturnType : mi.Parameters.Types [0];
+						filter = MemberFilter.Property (pname, ptype);
+					}
+
+					var prop = MemberCache.FindMember (container.CurrentType, filter, BindingRestriction.DeclaredOnly | BindingRestriction.InstanceOnly);
+					if (prop != null && (prop.Modifiers & Modifiers.NEW) != 0)
+						base_can_implement = false;
+				}
+			}
+
+			if (base_can_implement) {
+				lookup_type = container.BaseType;
+
+				if (lookup_type.ImplementsInterface (iface_type, false))
+					return true;
+			} else {
+				lookup_type = container.CurrentType;
+			}
 
 			//
 			// Setup filter with no return type to give better error message
@@ -537,7 +579,7 @@ namespace Mono.CSharp {
 			MethodSpec close_match = null;
 
 			while (true) {
-				var candidates = MemberCache.FindMembers (base_type, mi.Name, false);
+				var candidates = MemberCache.FindMembers (lookup_type, mi.Name, !base_can_implement);
 				if (candidates == null) {
 					base_method = close_match;
 					return false;
@@ -630,8 +672,11 @@ namespace Mono.CSharp {
 					break;
 				}
 
-				base_type = candidates[0].DeclaringType.BaseType;
-				if (base_type == null) {
+				if (!base_can_implement)
+					return false;
+
+				lookup_type = candidates[0].DeclaringType.BaseType;
+				if (lookup_type == null) {
 					base_method = close_match;
 					return false;
 				}
@@ -668,10 +713,6 @@ namespace Mono.CSharp {
 			for (i = 0; i < top; i++){
 				TypeSpec type = pending_implementations [i].type;
 
-				bool base_implements_type = type.IsInterface &&
-					container.BaseType != null &&
-					container.BaseType.ImplementsInterface (type, false);
-
 				for (int j = 0; j < pending_implementations [i].methods.Count; ++j) {
 					var mi = pending_implementations[i].methods[j];
 					if (mi == null)
@@ -686,11 +727,8 @@ namespace Mono.CSharp {
 							continue;
 						}
 
-						if (pending_implementations [i].optional)
-							continue;
-
 						MethodSpec candidate;
-						if (base_implements_type || BaseImplements (type, mi, out candidate))
+						if (BaseImplements (type, mi, out candidate))
 							continue;
 
 						if (candidate == null) {
@@ -710,6 +748,11 @@ namespace Mono.CSharp {
 								Report.Error (737, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' is not public",
 									container.GetSignatureForError (), mi.GetSignatureForError (), candidate.GetSignatureForError ());
+							} else if (mi.ReturnType.Kind == MemberKind.ByRef) {
+								Report.Error (8152, container.Location,
+									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' return type `{3}' does not return by reference",
+									container.GetSignatureForError (), mi.GetSignatureForError (), candidate.GetSignatureForError (),
+									candidate.ReturnType.GetSignatureForError ());
 							} else {
 								Report.Error (738, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' return type `{3}' does not match interface member return type `{4}'",

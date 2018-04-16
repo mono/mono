@@ -8,6 +8,7 @@ include $(XBUILD_DIR)/xbuild.make
 LIBRARY = Microsoft.Build.Engine.dll
 
 LIB_REFS = $(PARENT_PROFILE)System $(PARENT_PROFILE)System.Core $(PARENT_PROFILE)System.Xml $(XBUILD_FRAMEWORK) $(XBUILD_UTILITIES)
+KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS =
 
 TEST_MCS_FLAGS =
@@ -22,7 +23,7 @@ EXTRA_DISTFILES = \
 CLEAN_FILES = Test/resources/TestTasks-$(PROFILE).dll Test/resources/TestTasks-$(PROFILE).dll.mdb Test/resources/TestTasks-$(PROFILE).pdb
 
 Test/resources/TestTasks-$(PROFILE).dll: Test/resources/TestTasks.cs
-	$(CSCOMPILE) /out:$@ Test/resources/TestTasks.cs /r:$(topdir)/class/lib/$(PROFILE)/$(XBUILD_FRAMEWORK).dll /r:$(topdir)/class/lib/$(PROFILE)/$(XBUILD_UTILITIES).dll /target:library
+	$(CSCOMPILE) /out:$@ Test/resources/TestTasks.cs /r:$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)/mscorlib.dll /r:$(topdir)/class/lib/$(PROFILE)/$(XBUILD_FRAMEWORK).dll /r:$(topdir)/class/lib/$(PROFILE)/$(XBUILD_UTILITIES).dll /target:library
 
 test-local: compile-resources
 

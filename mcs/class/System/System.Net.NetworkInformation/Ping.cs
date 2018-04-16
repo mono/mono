@@ -76,9 +76,8 @@ namespace System.Net.NetworkInformation {
 		const int default_timeout = 4000; // 4 sec.
 		ushort identifier;
 
-		// This value is correct as of Linux kernel version 2.6.25.9
-		// See /usr/include/linux/capability.h
-		const UInt32 linux_cap_version = 0x20071026;
+		// Request 32-bit capabilities by using version 1
+		const UInt32 _LINUX_CAPABILITY_VERSION_1 = 0x19980330;
 		
 		static readonly byte [] default_buffer = new byte [0];
 		
@@ -132,7 +131,7 @@ namespace System.Net.NetworkInformation {
 				cap_user_header_t header = new cap_user_header_t ();
 				cap_user_data_t data = new cap_user_data_t ();
 
-				header.version = linux_cap_version;
+				header.version = _LINUX_CAPABILITY_VERSION_1;
 
 				int ret = -1;
 
@@ -207,17 +206,6 @@ namespace System.Net.NetworkInformation {
 			return Send (addresses [0], timeout, buffer, options);
 		}
 
-		static IPAddress GetNonLoopbackIPV4 ()
-		{
-#pragma warning disable 618
-			foreach (IPAddress addr in Dns.GetHostByName (Dns.GetHostName ()).AddressList)
-				if (!IPAddress.IsLoopback (addr) && addr.AddressFamily == AddressFamily.InterNetwork)
-					return addr;
-#pragma warning restore 618
-
-			throw new InvalidOperationException ("Could not resolve non-loopback IP address for localhost");
-		}
-
 		public PingReply Send (IPAddress address, int timeout, byte [] buffer, PingOptions options)
 		{
 			if (address == null)
@@ -243,8 +231,7 @@ namespace System.Net.NetworkInformation {
 		private PingReply SendPrivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
 		{
 			IPEndPoint target = new IPEndPoint (address, 0);
-			IPEndPoint client = new IPEndPoint (GetNonLoopbackIPV4 (), 0);
-
+			
 			// FIXME: support IPv6
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp)) {
 				if (options != null) {
@@ -259,12 +246,12 @@ namespace System.Net.NetworkInformation {
 				s.SendBufferSize = bytes.Length;
 				s.SendTo (bytes, bytes.Length, SocketFlags.None, target);
 
-				DateTime sentTime = DateTime.Now;
+				var sw = Stopwatch.StartNew ();
 
 				// receive
 				bytes = new byte [100];
 				do {
-					EndPoint endpoint = client;
+					EndPoint endpoint = target;
 					SocketError error = 0;
 					int rc = s.ReceiveFrom (bytes, 0, 100, SocketFlags.None,
 							ref endpoint, out error);
@@ -275,7 +262,7 @@ namespace System.Net.NetworkInformation {
 						}
 						throw new NotSupportedException (String.Format ("Unexpected socket error during ping request: {0}", error));
 					}
-					long rtt = (long) (DateTime.Now - sentTime).TotalMilliseconds;
+					long rtt = (long) sw.ElapsedMilliseconds;
 					int headerLength = (bytes [0] & 0xF) << 2;
 					int bodyLength = rc - headerLength;
 
@@ -307,7 +294,7 @@ namespace System.Net.NetworkInformation {
 		private PingReply SendUnprivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
 		{
 #if MONO_FEATURE_PROCESS_START
-			DateTime sentTime = DateTime.UtcNow;
+			var sw = Stopwatch.StartNew ();
 
 			Process ping = new Process ();
 			string args = BuildPingArgs (address, timeout, options);
@@ -331,7 +318,7 @@ namespace System.Net.NetworkInformation {
 				string stderr = ping.StandardError.ReadToEnd ();
 #pragma warning restore 219
 				
-				trip_time = (long) (DateTime.UtcNow - sentTime).TotalMilliseconds;
+				trip_time = (long) sw.ElapsedMilliseconds;
 				if (!ping.WaitForExit (timeout) || (ping.HasExited && ping.ExitCode == 2))
 					status = IPStatus.TimedOut;
 				else if (ping.ExitCode == 0)

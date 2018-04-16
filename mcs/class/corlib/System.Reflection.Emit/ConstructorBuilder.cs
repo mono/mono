@@ -81,7 +81,7 @@ namespace System.Reflection.Emit {
 			type = tb;
 			this.paramModReq = paramModReq;
 			this.paramModOpt = paramModOpt;
-			table_idx = get_next_table_index (this, 0x06, true);
+			table_idx = get_next_table_index (this, 0x06, 1);
 
 			((ModuleBuilder) tb.Module).RegisterToken (this, GetToken ().Token);
 		}
@@ -235,7 +235,10 @@ namespace System.Reflection.Emit {
 
 		public ParameterBuilder DefineParameter (int iSequence, ParameterAttributes attributes, string strParamName)
 		{
-			if (iSequence < 1 || iSequence > GetParametersCount ())
+			// The 0th ParameterBuilder does not correspond to an
+			// actual parameter, but .NETFramework lets you define
+			// it anyway. It is not useful.
+			if (iSequence < 0 || iSequence > GetParametersCount ())
 				throw new ArgumentOutOfRangeException ("iSequence");
 			if (type.is_created)
 				throw not_after_created ();
@@ -393,9 +396,9 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		internal override int get_next_table_index (object obj, int table, bool inc)
+		internal override int get_next_table_index (object obj, int table, int count)
 		{
-			return type.get_next_table_index (obj, table, inc);
+			return type.get_next_table_index (obj, table, count);
 		}
 
 		private void RejectIfCreated ()

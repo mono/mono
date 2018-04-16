@@ -63,13 +63,12 @@ class MonoMasterPackage(Package):
             self.sh('patch -p1 < "%{local_sources[' + str(p) + ']}"')
 
     def arch_build(self, arch):
+        Package.profile.arch_build(arch, self)
         if arch == 'darwin-64':  # 64-bit build pass
-            self.local_gcc_flags = ['-m64']
-            self.local_configure_flags = ['--build=x86_64-apple-darwin11.2.0', '--disable-boehm']
+            self.local_configure_flags.extend (['--build=x86_64-apple-darwin11.2.0', '--disable-boehm'])
 
         if arch == 'darwin-32':  # 32-bit build pass
-            self.local_gcc_flags = ['-m32']
-            self.local_configure_flags = ['--build=i386-apple-darwin11.2.0']
+            self.local_configure_flags.extend (['--build=i386-apple-darwin11.2.0'])
 
         self.local_configure_flags.extend(
             ['--cache-file=%s/%s-%s.cache' % (self.profile.bockbuild.build_root, self.name, arch)])
@@ -84,17 +83,6 @@ class MonoMasterPackage(Package):
             "registry",
             "LocalMachine")
         ensure_dir(registry_dir)
-
-        # Add ImportBefore/ImportAfter files from xbuild to the msbuild
-        # directories
-        xbuild_dir = os.path.join(self.staged_prefix, 'lib/mono/xbuild')
-        new_xbuild_tv_dir = os.path.join(xbuild_dir, self.version)
-        os.makedirs(new_xbuild_tv_dir)
-
-        self.sh('cp -R %s/14.0/Imports %s' % (xbuild_dir, new_xbuild_tv_dir))
-        self.sh(
-            'cp -R %s/14.0/Microsoft.Common.targets %s' %
-            (xbuild_dir, new_xbuild_tv_dir))
 
     def deploy(self):
         if bockbuild.cmd_options.arch == 'darwin-universal':

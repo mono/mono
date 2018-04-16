@@ -204,7 +204,7 @@ namespace System.Net
 		public DigestSession () 
 		{
 			_nc = 1;
-			lastUse = DateTime.Now;
+			lastUse = DateTime.UtcNow;
 		}
 
 		public string Algorithm {
@@ -305,7 +305,7 @@ namespace System.Net
 			if (request == null)
 				return null;
 	
-			lastUse = DateTime.Now;
+			lastUse = DateTime.UtcNow;
 			NetworkCredential cred = credentials.GetCredential (request.RequestUri, "digest");
 			if (cred == null)
 				return null;
@@ -378,7 +378,7 @@ namespace System.Net
 				return;
 
 			DateTime t = DateTime.MaxValue;
-			DateTime now = DateTime.Now;
+			DateTime now = DateTime.UtcNow;
 			ArrayList list = null;
 			foreach (int key in cache.Keys) {
 				DigestSession elem = (DigestSession) cache [key];

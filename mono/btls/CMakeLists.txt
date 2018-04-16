@@ -12,6 +12,11 @@ endif()
 enable_language(C)
 enable_language(CXX)
 
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+endif()
+
 # FIXME: cmake's asm detection is broken when using xcrun.
 set (CMAKE_ASM_COMPILER "${CMAKE_C_COMPILER}")
 set (CMAKE_ASM_COMPILER_ARG1 "${CMAKE_C_COMPILER_ARG1}")
@@ -31,7 +36,10 @@ set (CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${BTLS_CFLAGS}")
 set (CMAKE_MACOSX_RPATH 1)
 set (MONO_BTLS 1)
 
+set(BUILD_SHARED_LIBS_SAVED "${BUILD_SHARED_LIBS}")
+set(BUILD_SHARED_LIBS OFF)
 add_subdirectory (${BTLS_ROOT} boringssl)
+set(BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS_SAVED}")
 
 include_directories (
 	${SRC_DIR}

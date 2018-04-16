@@ -24,12 +24,12 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("System.Runtime.Loader.dll")]
-[assembly: AssemblyDescription ("System.Runtime.Loader.dll")]
-[assembly: AssemblyDefaultAlias ("System.Runtime.Loader.dll")]
-[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyTitle ("System.Runtime.Loader")]
+[assembly: AssemblyDescription ("System.Runtime.Loader")]
+[assembly: AssemblyDefaultAlias ("System.Runtime.Loader")]
+[assembly: AssemblyCompany ("Mono development team")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
-[assembly: AssemblyCopyright ("Copyright (c) 2016 Xamarin Inc. (http://www.xamarin.com)")]
+[assembly: AssemblyCopyright ("(c) Various Mono authors")]
 [assembly: AssemblyVersion ("4.0.0.0")]
 [assembly: AssemblyInformationalVersion ("4.0.0.0")]
 [assembly: AssemblyFileVersion ("4.0.0.0")]

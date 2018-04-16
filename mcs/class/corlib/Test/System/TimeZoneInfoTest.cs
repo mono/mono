@@ -124,7 +124,7 @@ namespace MonoTests.System
 				} catch (DllNotFoundException e) {
 					return;
 				}
-#if !MONOTOUCH && !XAMMAC
+#if !MONOTOUCH && !XAMMAC && !XAMMAC_4_5
 				// this assumption is incorrect for iOS, tvO, watchOS and OSX
 				Assert.IsTrue (TimeZoneInfo.Local.Id != "Local", "Local timezone id should not be \"Local\"");
 #endif
@@ -976,6 +976,15 @@ namespace MonoTests.System
 				}		
 			}
 		#endif
+
+			[Test]
+			public void FindIsraelStandardTime ()
+			{
+				if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+					Assert.Ignore ("Only applies to Windows.");
+
+				TimeZoneInfo.FindSystemTimeZoneById ("Israel Standard Time");
+			}
 
 			[Test]
 			public void SubminuteDSTOffsets ()

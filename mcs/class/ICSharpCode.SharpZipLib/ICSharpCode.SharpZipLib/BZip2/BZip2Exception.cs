@@ -41,6 +41,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 	/// <summary>
 	/// BZip2Exception represents exceptions specific to Bzip2 algorithm
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class BZip2Exception : SharpZipBaseException
 	{
 		/// <summary>

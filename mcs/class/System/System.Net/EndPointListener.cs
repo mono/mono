@@ -27,15 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
-#if MONO_SECURITY_ALIAS
-extern alias MonoSecurity;
-using MonoSecurity::Mono.Security.Authenticode;
-#else
-using Mono.Security.Authenticode;
-#endif
-
 using System.IO;
 using System.Net.Sockets;
 using System.Collections;
@@ -121,7 +112,13 @@ namespace System.Net {
 				accepted.Close ();
 				return;
 			}
-			HttpConnection conn = new HttpConnection (accepted, epl, epl.secure, epl.cert);
+			HttpConnection conn;
+			try {
+				conn = new HttpConnection (accepted, epl, epl.secure, epl.cert);
+			} catch {
+				accepted.Close ();
+				return;
+			}
 			lock (epl.unregistered) {
 				epl.unregistered [conn] = conn;
 			}
@@ -372,5 +369,4 @@ namespace System.Net {
 		}
 	}
 }
-#endif
 

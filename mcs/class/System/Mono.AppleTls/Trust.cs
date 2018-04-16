@@ -32,7 +32,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
-using ObjCRuntime;
+using ObjCRuntimeInternal;
 using Mono.Net;
 
 namespace Mono.AppleTls {
@@ -66,6 +66,8 @@ namespace Mono.AppleTls {
 			foreach (var certificate in certificates)
 				array [i++] = new SecCertificate (certificate);
 			Initialize (array, policy);
+			for (i = 0; i < array.Length; i++)
+				array [i].Dispose ();
 		}
 
 		void Initialize (SecCertificate[] array, SecPolicy policy)
@@ -120,6 +122,17 @@ namespace Mono.AppleTls {
 
 				return new SecCertificate (SecTrustGetCertificateAtIndex (handle, index));
 			}
+		}
+
+		internal X509Certificate GetCertificate (int index)
+		{
+			if (handle == IntPtr.Zero)
+				throw new ObjectDisposedException ("SecTrust");
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException ("index");
+
+			var ptr = SecTrustGetCertificateAtIndex (handle, (IntPtr)index);
+			return new X509Certificate (ptr);
 		}
 
 		[DllImport (AppleTlsContext.SecurityLibrary)]

@@ -4380,6 +4380,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestInvariantThreading ()
 		{
 			Thread[] th = new Thread[4];

@@ -9,40 +9,65 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/tabledefs.h>
 
+static inline MonoType*
+mono_get_void_type ()
+{
+	return m_class_get_byval_arg (mono_defaults.void_class);
+}
+
+static inline MonoType*
+mono_get_int32_type ()
+{
+	return m_class_get_byval_arg (mono_defaults.int32_class);
+}
+
+static inline MonoType*
+mono_get_int_type ()
+{
+	return m_class_get_byval_arg (mono_defaults.int_class);
+}
+
+static inline MonoType*
+mono_get_object_type ()
+{
+	return m_class_get_byval_arg (mono_defaults.object_class);
+}
+
+
 static inline gboolean
 mono_class_is_def (MonoClass *klass)
 {
-	return klass->class_kind == MONO_CLASS_DEF;
+	return m_class_get_class_kind (klass) == MONO_CLASS_DEF;
 }
 
 static inline gboolean
 mono_class_is_gtd (MonoClass *klass)
 {
-	return klass->class_kind == MONO_CLASS_GTD;
+	return m_class_get_class_kind (klass) == MONO_CLASS_GTD;
 }
 
 static inline gboolean
 mono_class_is_ginst (MonoClass *klass)
 {
-	return klass->class_kind == MONO_CLASS_GINST;
+	return m_class_get_class_kind (klass) == MONO_CLASS_GINST;
 }
 
 static inline gboolean
 mono_class_is_gparam (MonoClass *klass)
 {
-	return klass->class_kind == MONO_CLASS_GPARAM;
+	return m_class_get_class_kind (klass) == MONO_CLASS_GPARAM;
 }
 
 static inline gboolean
 mono_class_is_array (MonoClass *klass)
 {
-	return klass->class_kind == MONO_CLASS_ARRAY;
+	return m_class_get_class_kind (klass) == MONO_CLASS_ARRAY;
 }
 
 static inline gboolean
 mono_class_is_pointer (MonoClass *klass)
 {
-	return klass->class_kind == MONO_CLASS_POINTER;
+	return m_class_get_class_kind (klass) == MONO_CLASS_POINTER;
 }
 
 static inline gboolean
@@ -90,7 +115,7 @@ mono_class_is_public (MonoClass *klass)
 static inline gboolean
 mono_class_has_static_metadata (MonoClass *klass)
 {
-	return klass->type_token && !klass->image->dynamic && !mono_class_is_ginst (klass);
+	return m_class_get_type_token (klass) && !m_class_get_image (klass)->dynamic && !mono_class_is_ginst (klass);
 }
 
 #endif

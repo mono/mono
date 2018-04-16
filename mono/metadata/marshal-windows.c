@@ -57,11 +57,11 @@ mono_marshal_realloc_co_task_mem (gpointer ptr, size_t size)
 gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (MonoString *string)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	char* tres, *ret;
 	size_t len;
-	tres = mono_string_to_utf8_checked (string, &error);
-	if (mono_error_set_pending_exception (&error))
+	tres = mono_string_to_utf8_checked (string, error);
+	if (mono_error_set_pending_exception (error))
 		return NULL;
 	if (!tres)
 		return tres;
@@ -98,7 +98,7 @@ mono_string_to_utf8str (MonoString *s)
 {
 	char *as, *tmp;
 	glong len;
-	GError *error = NULL;
+	GError *gerror = NULL;
 
 	if (s == NULL)
 		return NULL;
@@ -109,10 +109,10 @@ mono_string_to_utf8str (MonoString *s)
 		return as;
 	}
 
-	tmp = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &len, &error);
-	if (error) {
-		MonoException *exc = mono_get_exception_argument ("string", error->message);
-		g_error_free (error);
+	tmp = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &len, &gerror);
+	if (gerror) {
+		MonoException *exc = mono_get_exception_argument ("string", gerror->message);
+		g_error_free (gerror);
 		mono_set_pending_exception (exc);
 		return NULL;
 	} else {

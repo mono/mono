@@ -31,6 +31,7 @@
 #define ERROR_LOCK_VIOLATION       33
 #define ERROR_HANDLE_DISK_FULL     39
 #define ERROR_NOT_SUPPORTED        50
+#define ERROR_DEV_NOT_EXIST        55
 #define ERROR_FILE_EXISTS          80
 #define ERROR_CANNOT_MAKE          82
 #define ERROR_INVALID_PARAMETER    87
@@ -42,6 +43,7 @@
 #define ERROR_FILENAME_EXCED_RANGE 206
 #define ERROR_DIRECTORY            267
 #define ERROR_IO_PENDING           997
+#define ERROR_CANT_RESOLVE_FILENAME 1921
 #define ERROR_ENCRYPTION_FAILED    6000
 #define WSAEINTR                   10004
 #define WSAEBADF                   10009
@@ -75,6 +77,7 @@
 #define WSAEHOSTDOWN               10064
 #define WSAEHOSTUNREACH            10065
 #define WSASYSCALLFAILURE          10107
+#define WSAENXIO                   100001
 
 #endif
 

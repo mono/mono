@@ -18,6 +18,6 @@ ifdef MOBILE_DYNAMIC
 LIB_MCS_FLAGS += -d:FEATURE_DYNAMIC
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+TEST_LIB_REFS = System.Core
 
 include ../../build/library.make

@@ -14,21 +14,28 @@ basic_SUBDIRS := \
 	Mono.Security \
 	System \
 	System.XML \
+	System.Security \
 	System.Core \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
 	System.Xml.Linq \
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \
-	../tools/cil-stringreplacer
+	Mono.CompilerServices.SymbolWriter	\
+	PEAPI \
+	../tools/cil-stringreplacer \
+	../ilasm \
+	corlib/il
 
 build_SUBDIRS :=  \
 	corlib \
 	Mono.Security \
 	System \
 	System.XML \
+	System.Security \
 	Mono.Posix \
 	System.Core \
+	System.Configuration \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
 	System.Xml.Linq \
@@ -41,8 +48,8 @@ build_SUBDIRS :=  \
 	../tools/cil-stringreplacer
 
 ifdef MCS_MODE
-basic_PARALLEL_SUBDIRS := ../mcs
-build_PARALLEL_SUBDIRS := ../mcs
+basic_PARALLEL_SUBDIRS := ../mcs $(pcl_facade_dirs)
+build_PARALLEL_SUBDIRS := ../mcs $(pcl_facade_dirs)
 else
 basic_PARALLEL_SUBDIRS := $(pcl_facade_dirs)
 build_PARALLEL_SUBDIRS := $(pcl_facade_dirs)
@@ -53,8 +60,8 @@ mobile_common_dirs := \
 	Mono.Security \
 	System	\
 	System.Core	\
-	System.Security	\
 	System.XML	\
+	System.Security	\
 	I18N		\
 	System.ServiceModel.Internals	\
 	System.Runtime.Serialization	\
@@ -82,7 +89,8 @@ mobile_common_dirs := \
 	Mono.CSharp	\
 	Microsoft.CSharp \
 	System.Reflection.Context	\
-	System.Net.Http.WinHttpHandler
+	System.Net.Http.WinHttpHandler \
+	System.Runtime.CompilerServices.Unsafe
 
 testing_aot_full_dirs := \
 	$(mobile_common_dirs)	\
@@ -105,6 +113,11 @@ monodroid_dirs := \
 	Mono.Btls.Interface	\
 	Mono.Posix	\
 	$(pcl_facade_dirs)
+
+monodroid_tools_dirs := \
+	Mono.Cecil	\
+	ICSharpCode.SharpZipLib	\
+	monodoc
 
 monotouch_dirs := \
 	$(mobile_common_dirs)	\
@@ -130,14 +143,25 @@ winaot_dirs := \
 	System.Drawing			\
 	$(pcl_facade_dirs)
 
+unreal_dirs := \
+	$(mobile_common_dirs)	\
+	System.Drawing			\
+	$(pcl_facade_dirs)
+
+wasm_dirs := \
+	$(mobile_common_dirs)	\
+	System.Drawing			\
+	$(pcl_facade_dirs)
+
 xammac_4_5_dirs := \
 	corlib	\
 	Mono.Security \
 	System	\
-	Mono.Posix			\
-	System.Core	\
+	System.XML			\
 	System.Security			\
-	System.XML	\
+	Mono.Posix	\
+	System.Core	\
+	System.Configuration	\
 	I18N		\
 	System.ServiceModel.Internals	\
 	SMDiagnostics	\
@@ -176,6 +200,7 @@ xammac_4_5_dirs := \
 	System.Net.Http.WebRequest \
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler	\
+	System.Runtime.CompilerServices.Unsafe \
 	$(pcl_facade_dirs)
 
 net_4_x_dirs := \
@@ -183,10 +208,10 @@ net_4_x_dirs := \
 	Mono.Security \
 	System				\
 	System.XML			\
+	System.Security			\
 	Mono.CompilerServices.SymbolWriter \
 	Mono.Posix			\
 	System.Core			\
-	System.Security			\
 	System.Configuration	\
 	System.Drawing			\
 	System.IO.Compression 		\
@@ -206,9 +231,9 @@ net_4_x_dirs := \
 	System.Web.ApplicationServices	\
 	Novell.Directory.Ldap		\
 	System.DirectoryServices	\
-	System.Web			\
-	System.Web.Services		\
 	System.Design			\
+	System.Web.Services		\
+	System.Web			\
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
@@ -315,6 +340,9 @@ net_4_x_parallel_dirs := \
 	System.Workflow.ComponentModel \
 	System.Workflow.Runtime \
 	System.Reflection.Context \
+	Mono.Profiler.Log	\
+	Mono.Runtime.Tests	\
+	System.Runtime.CompilerServices.Unsafe \
 	legacy/Mono.Cecil \
 	$(pcl_facade_dirs)
 
@@ -335,6 +363,7 @@ orbis_dirs := \
 	$(pcl_facade_dirs)
 
 monodroid_SUBDIRS := $(monodroid_dirs)
+monodroid_tools_SUBDIRS := $(monodroid_tools_dirs)
 monotouch_SUBDIRS := $(monotouch_dirs)
 monotouch_watch_SUBDIRS := $(monotouch_watch_dirs)
 monotouch_tv_SUBDIRS    := $(monotouch_tv_dirs)
@@ -352,10 +381,12 @@ xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 winaot_SUBDIRS := $(winaot_dirs)
 orbis_SUBDIRS := $(orbis_dirs)
+unreal_SUBDIRS := $(unreal_dirs)
+wasm_SUBDIRS := $(wasm_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(testing_aot_full_dirs) $(testing_aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS)
+SUBDIRS = $(testing_aot_full_dirs) $(testing_aot_hybrid_dirs) $(monotouch_dirs) $(monodroid_dirs) $(monodroid_tools_dirs) $(xammac_dirs) $(net_4_x_dirs) $(net_4_x_parallel_dirs) $(xammac_net_4_5_SUBDIRS) $(unreal_dirs)
 
 DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 
@@ -381,8 +412,7 @@ DISTFILES = \
 	MicrosoftAjaxLibrary/License.htm	\
 	test-helpers/NetworkHelpers.cs	\
 	test-helpers/SocketResponder.cs	\
-	lib/$(monolite_dir)/mcs.exe   \
-	$(monolite_files)
+	$(foreach HOST_PLATFORM,darwin linux win32,lib/$(monolite_dir)/mcs.exe $(monolite_files))
 
 .PHONY: all-local $(STD_TARGETS:=-local)
 all-local $(STD_TARGETS:=-local):
@@ -390,10 +420,10 @@ all-local $(STD_TARGETS:=-local):
 
 all-local-aot:
 
-monolite_dir := monolite/$(MONO_CORLIB_VERSION)
+monolite_dir = monolite-$(HOST_PLATFORM)/$(MONO_CORLIB_VERSION)
 
-# Files needed to bootstrap C# compiler
-build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
+# Files needed to bootstrap C# compiler and cil-stringreplacer
+build_files := mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
 	System.Numerics.dll System.Xml.Linq.dll \
 	Facades/System.Collections.Concurrent.dll Facades/System.Linq.dll Facades/System.Runtime.dll Facades/System.Collections.dll	\
 	Facades/System.Reflection.Extensions.dll Facades/System.Text.Encoding.Extensions.dll Facades/System.Diagnostics.Debug.dll \
@@ -403,7 +433,8 @@ build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Co
 	Facades/System.IO.dll Facades/System.Runtime.InteropServices.dll Facades/System.Xml.ReaderWriter.dll Facades/System.Linq.Expressions.dll \
 	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll Facades/System.IO.FileSystem.Primitives.dll Facades/System.IO.FileSystem.dll \
 	Facades/System.Diagnostics.FileVersionInfo.dll Facades/System.Security.Cryptography.Primitives.dll Facades/System.Security.Cryptography.Algorithms.dll \
-	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll
+	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll \
+	Mono.Cecil.dll
 
 monolite_files = $(build_files:%=lib/$(monolite_dir)/%)
 
@@ -413,24 +444,42 @@ lib/$(monolite_dir)/Facades:
 
 $(monolite_files): | lib/$(monolite_dir)
 $(monolite_files): | lib/$(monolite_dir)/Facades
-$(monolite_files): lib/$(monolite_dir)/%: lib/build/%
+$(monolite_files): lib/$(monolite_dir)/%: lib/build-$(HOST_PLATFORM)/%
 	cp -p $< $@
 
 lib/$(monolite_dir)/mcs.exe:
 	$(MAKE) -C ../mcs PROFILE=build
-	cp -p lib/build/mcs.exe lib/$(monolite_dir)
+	cp -p lib/build-$(HOST_PLATFORM)/mcs.exe lib/$(monolite_dir)
 
-$(build_files:%=lib/build/%):
+$(build_files:%=lib/build-$(HOST_PLATFORM)/%):
 	cd $(topdir) && $(MAKE) profile-do--build--all NO_DIR_CHECK=1 SKIP_AOT=1
 
 dist-monolite: $(monolite_files) lib/$(monolite_dir)/mcs.exe
 
+dist-monolite-all-platforms:
+	$(MAKE) dist-monolite HOST_PLATFORM=darwin
+	$(MAKE) dist-monolite HOST_PLATFORM=linux
+	$(MAKE) dist-monolite HOST_PLATFORM=win32
+
 package-monolite-latest:
-	MONOLITE=monolite-$(MONO_CORLIB_VERSION)-latest; \
+	MONOLITE=monolite-$(HOST_PLATFORM)-$(MONO_CORLIB_VERSION)-latest; \
 	$(MAKE) dist-monolite monolite_dir=$$MONOLITE; \
 	tar zcvpf $$MONOLITE.tar.gz --directory=lib $$MONOLITE/
 
-dist-default: dist-monolite
+package-monolite-latest-all-platforms:
+	$(MAKE) package-monolite-latest HOST_PLATFORM=darwin
+	$(MAKE) package-monolite-latest HOST_PLATFORM=linux
+	$(MAKE) package-monolite-latest HOST_PLATFORM=win32
+
+monolite_url = https://download.mono-project.com/monolite/monolite-$(BUILD_PLATFORM)-$(MONO_CORLIB_VERSION)-latest.tar.gz
+
+get-monolite-latest:
+	-rm -fr lib/monolite-$(BUILD_PLATFORM)/$(MONO_CORLIB_VERSION)
+	-mkdir -p lib/monolite-$(BUILD_PLATFORM)
+	cd lib && { (wget -O- $(monolite_url) || curl -L $(monolite_url)) | gzip -d | tar xf - ; }
+	cd lib && mv -f monolite-$(BUILD_PLATFORM)-$(MONO_CORLIB_VERSION)-latest monolite-$(BUILD_PLATFORM)/$(MONO_CORLIB_VERSION)
+
+dist-default: dist-monolite-all-platforms
 
 dist-local: dist-default
 

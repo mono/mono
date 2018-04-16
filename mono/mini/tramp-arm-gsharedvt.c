@@ -21,8 +21,7 @@
 
 #include "mini.h"
 #include "mini-arm.h"
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
+#include "mini-runtime.h"
 
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
 

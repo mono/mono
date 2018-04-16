@@ -4,9 +4,11 @@ include ../../build/rules.make
 
 LIBRARY = System.IO.Compression.dll
 LIB_REFS = System
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS =
 TEST_MCS_FLAGS =
 TEST_LIB_REFS = System System.Core
+LIBRARY_WARN_AS_ERROR = yes
 
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.IO.Compression/src/Resources/Strings.resx

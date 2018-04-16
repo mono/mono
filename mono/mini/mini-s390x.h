@@ -30,9 +30,9 @@ struct MonoLMF {
 };
 
 typedef struct MonoCompileArch {
-	gpointer    litpool;
-	glong	    litsize;
 	int         bkchain_reg;
+	uint32_t    used_fp_regs;
+	int	    fpSize;
 } MonoCompileArch;
 
 typedef struct
@@ -61,16 +61,19 @@ typedef struct
 #define MONO_ARCH_GC_MAPS_SUPPORTED			1
 #define MONO_ARCH_GSHARED_SUPPORTED			1
 #define MONO_ARCH_MONITOR_ENTER_ADJUSTMENT		1
-#define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD		1
 #define MONO_ARCH_HAVE_INVALIDATE_METHOD		1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT		1
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK		1
+#define MONO_ARCH_HAVE_TRACK_FPREGS			1
+#define MONO_ARCH_HAVE_OP_TAIL_CALL			1
 
 #define S390_STACK_ALIGNMENT		 8
 #define S390_FIRST_ARG_REG 		s390_r2
 #define S390_LAST_ARG_REG 		s390_r6
 #define S390_FIRST_FPARG_REG 		s390_f0
 #define S390_LAST_FPARG_REG 		s390_f6
+
+#define S390_FP_SAVE_MASK		0xf0
 
 /*===============================================*/
 /* Definitions used by mini-codegen.c            */
@@ -79,13 +82,15 @@ typedef struct
 /*------------------------------------------------------*/
 /* use s390_r2-s390_r6 as parm registers                */
 /* s390_r0, s390_r1, s390_r12, s390_r13 used internally */
-/* s390_r8..s390_r11 are used for global regalloc       */
+/* s390_r8..s390_r10 are used for global regalloc       */
+/* -- except for s390_r9 which is used as IMT pointer   */
+/* s390_r11 is sometimes used as the frame pointer      */
 /* s390_r15 is the stack pointer                        */
 /*------------------------------------------------------*/
 
-#define MONO_ARCH_CALLEE_REGS (0xfc)
+#define MONO_ARCH_CALLEE_REGS (0x00fc)
 
-#define MONO_ARCH_CALLEE_SAVED_REGS 0xff80
+#define MONO_ARCH_CALLEE_SAVED_REGS 0xfd00
 
 /*----------------------------------------*/
 /* use s390_f1/s390_f3-s390_f15 as temps  */
@@ -96,7 +101,6 @@ typedef struct
 #define MONO_ARCH_CALLEE_SAVED_FREGS 0
 
 #define MONO_ARCH_USE_FPSTACK FALSE
-#define MONO_ARCH_FPSTACK_SIZE 0
 
 #define MONO_ARCH_INST_FIXED_REG(desc) ((desc == 'o') ? s390_r2 : 		\
 					((desc == 'g') ? s390_f0 : 		\
@@ -121,6 +125,10 @@ typedef struct
 #define MONO_MAX_XREGS			31
 #define MONO_ARCH_CALLEE_XREGS		0x0
 #define MONO_ARCH_CALLEE_SAVED_XREGS	0x0
+
+// Does the ABI have a volatile non-parameter register, so tailcall
+// can pass context to generics or interfaces?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0 // FIXME?
 
 /*-----------------------------------------------*/
 /* Macros used to generate instructions          */

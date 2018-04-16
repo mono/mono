@@ -163,5 +163,14 @@ namespace Mono.Security.Interface
 			X509CertificateCollection certificates, bool wantsChain, ref X509Chain chain,
 			ref MonoSslPolicyErrors errors, ref int status11);
 #endregion
+
+#region Misc
+
+		internal abstract bool SupportsCleanShutdown {
+			get;
+		}
+
+#endregion
+
 	}
 }

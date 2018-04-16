@@ -470,6 +470,7 @@ namespace MonoTests.System.Reflection.Emit
 
 	public delegate object RetObj();
 		[Test] //#640702
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void GetCurrentMethodWorksWithDynamicMethods ()
 		{
 	        DynamicMethod dm = new DynamicMethod("Foo", typeof(object), null);
@@ -526,6 +527,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ExceptionHandling ()
 		{
 			var method = new DynamicMethod ("", typeof(void), new[] { typeof(int) }, typeof (DynamicMethodTest));
@@ -586,12 +588,13 @@ namespace MonoTests.System.Reflection.Emit
 				// Ignore Metadata
 				lines = lines.Where (l => !l.StartsWith ("[")).ToArray ();
 
-				Assert.AreEqual (5, lines.Length, "#1");
+				Assert.AreEqual (4, lines.Length, "#1");
 				Assert.IsTrue (lines [1].Contains ("---"), "#2");
 			}
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ExceptionHandlingWithExceptionDispatchInfo ()
 		{
 			var method = new DynamicMethod ("", typeof(void), new[] { typeof(int) }, typeof (DynamicMethodTest));
@@ -608,6 +611,103 @@ namespace MonoTests.System.Reflection.Emit
 
 			var invoke = (Action<int>) method.CreateDelegate (typeof(Action<int>));
 			invoke (444);
+		}
+
+		static Func<int> EmitDelegate (DynamicMethod dm) {
+			ILGenerator il = dm.GetILGenerator ();
+			var ret_val = il.DeclareLocal (typeof (int));
+			var leave_label = il.DefineLabel ();
+
+			//ret = 1;
+			il.Emit (OpCodes.Ldc_I4, 1);
+			il.Emit (OpCodes.Stloc, ret_val);
+
+			// try {
+			il.BeginExceptionBlock ();
+			//	throw "hello";
+			il.Emit (OpCodes.Ldstr, "hello");
+			il.Emit (OpCodes.Throw, typeof (string));
+			//	ret = 2
+			il.Emit (OpCodes.Ldc_I4, 2);
+			il.Emit (OpCodes.Stloc, ret_val);
+			// }
+			il.Emit (OpCodes.Leave, leave_label);
+			//catch (string)
+			il.BeginCatchBlock (typeof (string));
+			il.Emit (OpCodes.Pop);
+			//	ret = 3
+			il.Emit (OpCodes.Ldc_I4, 3);
+			il.Emit (OpCodes.Stloc, ret_val);
+			//}
+			il.Emit (OpCodes.Leave, leave_label);
+			il.EndExceptionBlock ();
+
+			il.MarkLabel (leave_label);
+			//return ret;
+			il.Emit (OpCodes.Ldloc, ret_val);
+			il.Emit (OpCodes.Ret);
+
+			var dele = (Func<int>)dm.CreateDelegate (typeof (Func<int>));
+			return dele;
+		}
+
+		[Test] //see bxc #59334
+		[Category ("NotWorkingRuntimeInterpreter")]
+		public void ExceptionWrapping ()
+		{
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (new AssemblyName ("ehatevfheiw"), AssemblyBuilderAccess.Run);
+			AssemblyBuilder ab2 = AppDomain.CurrentDomain.DefineDynamicAssembly (new AssemblyName ("ddf4234"), AssemblyBuilderAccess.Run);
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (
+					typeof (RuntimeCompatibilityAttribute).GetConstructor (new Type [0]),
+					new object [0],
+					new PropertyInfo[] { typeof (RuntimeCompatibilityAttribute).GetProperty ("WrapNonExceptionThrows") },
+					new object[] { true });
+			ab2.SetCustomAttribute (cab);
+
+			AssemblyBuilder ab3 = AppDomain.CurrentDomain.DefineDynamicAssembly (new AssemblyName ("frfhfher"), AssemblyBuilderAccess.Run);
+			//1 NamedArg. Property name: WrapNonExceptionThrows value: true (0x01) 
+			byte[] blob = new byte[] { 0x01, 0x00, 0x01, 0x00, 0x54, 0x02, 0x16, 0x57, 0x72, 0x61, 0x70, 0x4E, 0x6F, 0x6E, 0x45, 0x78,
+				0x63, 0x65, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x54, 0x68, 0x72, 0x6F, 0x77, 0x73, 0x01 };
+			ab3.SetCustomAttribute (typeof (RuntimeCompatibilityAttribute).GetConstructor (new Type [0]), blob);
+		
+			DynamicMethod invoke_no_module = new DynamicMethod("throw_1", typeof (int), new Type [0]);
+			DynamicMethod invoke_with_module = new DynamicMethod("throw_2", typeof (int), new Type [0], typeof (DynamicMethodTest).Module);
+			DynamicMethod invoke_with_ab = new DynamicMethod("throw_3", typeof (int), new Type [0], ab.ManifestModule);
+			DynamicMethod invoke_with_ab2 = new DynamicMethod("throw_4", typeof (int), new Type [0], ab2.ManifestModule);
+			DynamicMethod invoke_with_ab3 = new DynamicMethod("throw_5", typeof (int), new Type [0], ab3.ManifestModule);
+
+			int result = 0;
+			try {
+				int res = EmitDelegate (invoke_no_module)();
+				Assert.AreEqual (3, res, "invoke_no_module bad return value");
+			} catch (RuntimeWrappedException e) {
+				Assert.Fail ("invoke_no_module threw RWE");
+			}
+
+			try {
+				int res = EmitDelegate (invoke_with_module)();
+				Assert.Fail ("invoke_with_module did not throw RWE");
+			} catch (RuntimeWrappedException e) {
+			}
+
+			try {
+				int res = EmitDelegate (invoke_with_ab)();
+				Assert.AreEqual (3, res, "invoke_with_ab bad return value");
+			} catch (RuntimeWrappedException e) {
+				Assert.Fail ("invoke_with_ab threw RWE");
+			}
+
+			try {
+				int res = EmitDelegate (invoke_with_ab2)();
+				Assert.Fail ("invoke_with_ab2 did not throw RWE");
+			} catch (RuntimeWrappedException e) {
+			}
+
+			try {
+				int res = EmitDelegate (invoke_with_ab3)();
+				Assert.Fail ("invoke_with_a3 did not throw RWE");
+			} catch (RuntimeWrappedException e) {
+			}			
 		}
 
 #if !MONODROID

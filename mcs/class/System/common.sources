@@ -1,7 +1,6 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/SR.cs
-
-corefx/ZLibNative.cs
+corefx/*.cs
 
 Microsoft.Win32.SafeHandles/SafeX509ChainHandle.cs
 
@@ -39,64 +38,27 @@ System.IO/IODescriptionAttribute.cs
 System.IO/NotifyFilters.cs
 System.IO/RenamedEventArgs.cs
 System.IO/RenamedEventHandler.cs
-System.IO/WaitForChangedResult.cs
 System.IO/WatcherChangeTypes.cs
 
-System.Net/AuthenticationManager.cs
 System.Net/BasicClient.cs
 System.Net/BindIPEndPoint.cs
-System.Net/ChunkedInputStream.cs
 System.Net/MonoChunkStream.cs
 System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
 System.Net/Dns.cs
-System.Net/EndPointListener.cs
-System.Net/EndPointManager.cs
 System.Net/EndpointPermission.cs
-System.Net/FtpAsyncResult.cs
-System.Net/FtpDataStream.cs
-System.Net/FtpRequestCreator.cs
-System.Net/FtpStatus.cs
-System.Net/FtpWebRequest.cs
-System.Net/FtpWebResponse.cs
-System.Net/HttpConnection.cs
-System.Net/HttpListener.cs
-System.Net/HttpListener.Mono.cs
-System.Net/HttpListenerBasicIdentity.cs
-System.Net/HttpListenerContext.cs
-System.Net/HttpListenerPrefixCollection.cs
-System.Net/HttpListenerRequest.cs
-System.Net/HttpListenerResponse.cs
-System.Net/HttpListenerResponseHelper.cs
-System.Net/HttpListenerTimeoutManager.cs
 System.Net/HttpRequestCreator.cs
 System.Net/HttpStreamAsyncResult.cs
-System.Net/HttpWebRequest.cs
-System.Net/HttpWebResponse.cs
 System.Net/ICredentialPolicy.cs
 System.Net/IPv6Address.cs
-System.Net/IWebConnectionState.cs
 System.Net/IWebProxyScript.cs
-System.Net/ListenerAsyncResult.cs
 System.Net/ListenerPrefix.cs
-System.Net/MacProxy.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs
-System.Net/NtlmClient.cs
 System.Net/RequestStream.cs
-System.Net/ResponseStream.cs
-System.Net/ServicePoint.cs
-System.Net/ServicePointManager.cs
-System.Net/ServicePointManager.extra.cs
-System.Net/SimpleAsyncResult.cs
 System.Net/SocketPermissionAttribute.cs
 System.Net/SocketPermission.cs
-System.Net/WebAsyncResult.cs
-System.Net/WebConnection.cs
-System.Net/WebConnectionData.cs
-System.Net/WebConnectionGroup.cs
-System.Net/WebConnectionStream.cs
 
 System.Net.Mail/AlternateView.cs
 System.Net.Mail/AlternateViewCollection.cs
@@ -112,7 +74,6 @@ System.Net.Mail/MailMessage.cs
 System.Net.Mail/MailPriority.cs
 System.Net.Mail/SendCompletedEventHandler.cs
 System.Net.Mail/SmtpAccess.cs
-System.Net.Mail/SmtpClient.cs
 System.Net.Mail/SmtpDeliveryFormat.cs
 System.Net.Mail/SmtpDeliveryMethod.cs
 System.Net.Mail/SmtpException.cs
@@ -145,7 +106,6 @@ System.Net.Security/LocalCertificateSelectionCallback.cs
 System.Net.Security/NegotiateStream.cs
 System.Net.Security/RemoteCertificateValidationCallback.cs
 System.Net.Security/SslPolicyErrors.cs
-System.Net.Security/SslStream.cs
 
 System.Net.Sockets/SafeSocketHandle.cs
 System.Net.Sockets/Socket.cs
@@ -252,6 +212,7 @@ Mono.Btls/MonoBtlsProvider.cs
 Mono.Btls/MonoBtlsSsl.cs
 Mono.Btls/MonoBtlsSslCtx.cs
 Mono.Btls/MonoBtlsSslError.cs
+Mono.Btls/MonoBtlsSslRenegotiateMode.cs
 Mono.Btls/MonoBtlsStream.cs
 Mono.Btls/MonoBtlsUtils.cs
 Mono.Btls/MonoBtlsX509.cs
@@ -279,8 +240,6 @@ Mono.Btls/MonoBtlsX509VerifyParam.cs
 Mono.Btls/X509CertificateImplBtls.cs
 Mono.Btls/X509ChainImplBtls.cs
 
-Mono.Http/NtlmClient.cs
-
 Mono.AppleTls/AppleCertificateHelper.cs
 Mono.AppleTls/AppleTlsContext.cs
 Mono.AppleTls/AppleTlsProvider.cs
@@ -294,18 +253,6 @@ Mono.AppleTls/Policy.cs
 Mono.AppleTls/Trust.cs
 Mono.AppleTls/SslConnection.cs
 Mono.AppleTls/Items.cs
-
-Mono.Net.Security/AsyncProtocolRequest.cs
-Mono.Net.Security/CallbackHelpers.cs
-Mono.Net.Security/ChainValidationHelper.cs
-Mono.Net.Security/LegacySslStream.cs
-Mono.Net.Security/MobileAuthenticatedStream.cs
-Mono.Net.Security/MobileTlsContext.cs
-Mono.Net.Security/LegacyTlsProvider.cs
-Mono.Net.Security/MonoTlsProviderFactory.cs
-Mono.Net.Security/MonoTlsStream.cs
-Mono.Net.Security/NoReflectionHelper.cs
-Mono.Net.Security/SystemCertificateValidator.cs
 
 Mono.Util/MonoPInvokeCallbackAttribute.cs
 
@@ -326,52 +273,25 @@ ReferenceSources/SettingsSectionInternal.cs
 ReferenceSources/SecureStringHelper.cs
 ReferenceSources/Socket.cs
 ReferenceSources/SR.cs
+ReferenceSources/SR2.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/Win32Exception.cs
 
-../referencesource/System/regex/system/text/regularexpressions/Regex.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexBoyerMoore.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexCapture.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexCaptureCollection.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexCharClass.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexCode.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexCompilationInfo.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexCompiler.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexFCD.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexGroup.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexGroupCollection.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexInterpreter.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexMatch.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexMatchCollection.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexMatchTimeoutException.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexNode.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexOptions.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexParser.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexReplacement.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexRunner.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexRunnerFactory.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexTree.cs
-../referencesource/System/regex/system/text/regularexpressions/RegexWriter.cs
-../referencesource/System/regex/system/text/regularexpressions/compiledregexrunner.cs
-../referencesource/System/regex/system/text/regularexpressions/compiledregexrunnerfactory.cs
-
-../referencesource/System/compmod/system/collections/objectmodel/observablecollection.cs
-../referencesource/System/compmod/system/collections/objectmodel/readonlyobservablecollection.cs
-
-../referencesource/System/compmod/system/collections/specialized/bitvector32.cs
-../referencesource/System/compmod/system/collections/specialized/casesensitivestringdictionary.cs
-../referencesource/System/compmod/system/collections/specialized/collectionsutil.cs
-../referencesource/System/compmod/system/collections/specialized/hybriddictionary.cs
-../referencesource/System/compmod/system/collections/specialized/inotifycollectionchanged.cs
-../referencesource/System/compmod/system/collections/specialized/iordereddictionary.cs
-../referencesource/System/compmod/system/collections/specialized/listdictionary.cs
-../referencesource/System/compmod/system/collections/specialized/nameobjectcollectionbase.cs
-../referencesource/System/compmod/system/collections/specialized/namevaluecollection.cs
-../referencesource/System/compmod/system/collections/specialized/notifycollectionchangedeventargs.cs
-../referencesource/System/compmod/system/collections/specialized/ordereddictionary.cs
-../referencesource/System/compmod/system/collections/specialized/stringcollection.cs
+../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/BitVector32.cs
+../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/HybridDictionary.cs
+../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/IOrderedDictionary.cs
+../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/ListDictionary.cs
+../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/OrderedDictionary.cs
+../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/StringCollection.cs
+../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/NameValueCollection.cs
 ../referencesource/System/compmod/system/collections/specialized/stringdictionary.cs
-../referencesource/System/compmod/system/collections/specialized/stringdictionarywithcomparer.cs
+../../../external/corefx/src/System.Collections.Specialized/src/System/Collections/Specialized/StringDictionary.cs
+../referencesource/System/compmod/system/collections/specialized/nameobjectcollectionbase.cs
+../referencesource/System/compmod/system/collections/specialized/casesensitivestringdictionary.cs
+../../../external/corefx/src/System.Collections.NonGeneric/src/System/Collections/Specialized/CollectionsUtil.cs
+../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/ReadOnlyObservableCollection.cs
+../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/ObservableCollection.cs
+../../../external/corefx/src/System.ObjectModel/src/System/Collections/Specialized/*.cs
 
 ../referencesource/System/compmod/system/componentmodel/AddingNewEventArgs.cs
 ../referencesource/System/compmod/system/componentmodel/AddingNewEventHandler.cs
@@ -744,7 +664,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/ServicePointManager.cs
 ../referencesource/System/net/System/Net/SocketAddress.cs
 ../referencesource/System/net/System/Net/SocketException.cs
-../referencesource/System/net/System/Net/webclient.cs
 ../referencesource/System/net/System/Net/WebException.cs
 ../referencesource/System/net/System/Net/WebExceptionStatus.cs
 ../referencesource/System/net/System/Net/WebHeaderCollection.cs
@@ -754,7 +673,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/WebRequest.cs
 ../referencesource/System/net/System/Net/WebResponse.cs
 ../referencesource/System/net/System/Net/WebUtility.cs
-../referencesource/System/net/System/Net/WriteStreamClosedEventArgs.cs
 
 ../referencesource/System/net/System/Net/Cache/RequestCache.cs
 ../referencesource/System/net/System/Net/Cache/RequestCacheEntry.cs
@@ -786,11 +704,8 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/Sockets/SocketOptionName.cs
 ../referencesource/System/net/System/Net/Sockets/SocketShutdown.cs
 ../referencesource/System/net/System/Net/Sockets/SocketType.cs
-../referencesource/System/net/System/Net/Sockets/TCPClient.cs
-../referencesource/System/net/System/Net/Sockets/TCPListener.cs
 ../referencesource/System/net/System/Net/Sockets/TransmitFileFlags.cs
 ../referencesource/System/net/System/Net/Sockets/UdpReceiveResult.cs
-../referencesource/System/net/System/Net/Sockets/UDPClient.cs
 
 ../referencesource/System/net/System/Net/NetworkInformation/DuplicateAddressDetectionState.cs
 ../referencesource/System/net/System/Net/NetworkInformation/GatewayIPAddressInformation.cs
@@ -911,30 +826,36 @@ ReferenceSources/Win32Exception.cs
 
 corefx/SR.cs
 
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/ValueListBuilder.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Text/ValueStringBuilder.cs
+
+../../../external/corefx/src/Common/src/System/NotImplemented.cs
 ../../../external/corefx/src/Common/src/System/StringExtensions.cs
 
 ../../../external/corefx/src/Common/src/System/Collections/Generic/ArrayBuilder.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
 
+../../../external/corefx/src/Common/src/System/IO/DelegatingStream.cs
+../../../external/corefx/src/Common/src/System/IO/ChunkedMemoryStream.cs
+../../../external/corefx/src/Common/src/System/IO/PathInternal.CaseSensitivity.cs
+
+../../../external/corefx/src/Common/src/System/Net/HttpStatusDescription.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityProtocol.cs
 ../../../external/corefx/src/Common/src/System/Net/UriScheme.cs
 
+../../../external/corefx/src/Common/src/System/Net/WebSockets/ManagedWebSocket.cs
+
 ../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
 
-../../../external/corefx/src/Common/src/System/Net/WebSockets/ManagedWebSocket.cs
 ../../../external/corefx/src/Common/src/System/Net/WebSockets/WebSocketValidate.cs
 
 ../../../external/corefx/src/System.Runtime/src/System/Collections/Generic/ISet.cs
 
-../../../external/corefx/src/System.Buffers/src/System/Buffers/ArrayPool.cs
-../../../external/corefx/src/System.Buffers/src/System/Buffers/ArrayPoolEventSource.cs
-../../../external/corefx/src/System.Buffers/src/System/Buffers/DefaultArrayPool.cs
-../../../external/corefx/src/System.Buffers/src/System/Buffers/DefaultArrayPoolBucket.cs
-../../../external/corefx/src/System.Buffers/src/System/Buffers/Utilities.cs
-
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/BitHelper.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/ICollectionDebugView.cs
+../../../external/corefx/src/System.ObjectModel/src/System/Collections/Generic/DebugView.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/IDictionaryDebugView.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/LinkedList.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Queue.cs
@@ -955,8 +876,11 @@ corefx/SR.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionMode.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/GZipStream.cs
 
+#../../../external/corefx/src/System.Net.Http/src/System/Net/Http/SocketsHttpHandler/SocketsHttpHandler.cs
+
 ../../../external/corefx/src/System.Net.ServicePoint/src/System/Net/SecurityProtocolType.cs
 
+../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/ValueWebSocketReceiveResult.cs
 ../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocket.cs
 ../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocketCloseStatus.cs
 ../../../external/corefx/src/System.Net.WebSockets/src/System/Net/WebSockets/WebSocketContext.cs
@@ -970,8 +894,53 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/ClientWebSocketOptions.cs
 ../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/WebSocketHandle.Managed.cs
 
-../../../external/corefx/src/System.Net.HttpListener/src/System/Net/WebSockets/HttpListenerWebSocketContext.cs
+../../../external/corefx/src/System.Net.WebSockets.WebSocketProtocol/src/System/Net/WebSockets/ManagedWebSocket.netstandard.cs
+
+../../../external/corefx/src/System.Net.WebClient/src/System/Net/WebClient.cs
 
 ../../../external/corefx/src/System.Private.Uri/src/System/UriBuilder.cs
 
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/CodeDom/Compiler/IndentedTextWriter.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/WaitForChangedResult.cs
+
+../../../external/corefx/src/System.Runtime.InteropServices/src/System/Security/SecureStringMarshal.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/StringNormalizationExtensions.cs
+../../../external/corefx/src/System.Diagnostics.StackTrace/src/System/Diagnostics/StackFrameExtensions.cs
+
+../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemName.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
+
+# Everything except compiled
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Capture.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CaptureCollection.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CollectionDebuggerProxy.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Group.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/GroupCollection.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Match.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/MatchCollection.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Reference.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Regex.Cache.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Regex.Match.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Regex.Replace.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Regex.Split.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Regex.Timeout.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Regex.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexBoyerMoore.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCharClass.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCode.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCompilationInfo.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexFCD.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexInterpreter.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexMatchTimeoutException.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexNode.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexOptions.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexParser.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexPrefix.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexReplacement.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexRunner.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexRunnerFactory.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexTree.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexWriter.cs
+
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/Generic/ValueListBuilder.Pop.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/HashtableExtensions.cs

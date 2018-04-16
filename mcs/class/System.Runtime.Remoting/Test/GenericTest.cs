@@ -16,6 +16,8 @@ using System.Runtime.Remoting.Channels.Ipc;
 using System.Threading;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Remoting
 {
 	public interface INested
@@ -166,15 +168,16 @@ namespace MonoTests.Remoting
 		[Test]
 		public void TestTcpChannel ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			IDictionary props = new Hashtable ();
 			props ["name"] = Guid.NewGuid ().ToString("N");
-			props ["port"] = 18191;
+			props ["port"] = port;
 			TcpChannel chan = new TcpChannel (props, null, null);
 			ChannelServices.RegisterChannel (chan);
 			
 			try {
 				Register <Server<object>> ("gentcptest.rem");
-				RunTests (Connect <Server<object>> ("tcp://localhost:18191/gentcptest.rem"));
+				RunTests (Connect <Server<object>> ($"tcp://localhost:{port}/gentcptest.rem"));
 			} finally {
 				ChannelServices.UnregisterChannel (chan);
 			}

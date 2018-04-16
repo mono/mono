@@ -132,11 +132,11 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 			// this implicitly premises: TChannel is IChannel
 			foreach (IChannel ch in channels)
-				ch.Close (timeout - (DateTime.Now - start));
-			base.OnClose (timeout - (DateTime.Now - start));
+				ch.Close (timeout - (DateTime.UtcNow - start));
+			base.OnClose (timeout - (DateTime.UtcNow - start));
 		}
 
 		protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state)

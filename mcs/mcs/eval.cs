@@ -788,6 +788,7 @@ namespace Mono.CSharp
 				return null;
 			}
 
+			module.CloseContainerEarlyForReflectionEmit ();
 			module.CloseContainer ();
 			if (host != null)
 				host.CloseContainer ();
@@ -957,6 +958,12 @@ namespace Mono.CSharp
 			lock (evaluator_lock){
 				importer.ImportAssembly (a, module.GlobalRootNamespace);
 			}
+		}
+
+		public void ImportTypes (bool importExtensionTypes, params Type[] types) {
+#if !STATIC
+			importer.ImportTypes (types, module.GlobalRootNamespace, importExtensionTypes);
+#endif
 		}
 	}
 

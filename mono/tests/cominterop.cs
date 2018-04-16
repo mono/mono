@@ -251,6 +251,9 @@ public class Tests
 	[DllImport ("libtest")]
 	public static extern int mono_test_marshal_ccw_itest ([MarshalAs (UnmanagedType.Interface)]ITestPresSig itest);
 
+	[DllImport ("libtest")]
+	public static extern int mono_test_marshal_array_ccw_itest (int count, [MarshalAs (UnmanagedType.LPArray, SizeParamIndex=0)] ITest[] ppUnk);
+
 	[DllImport("libtest")]
 	public static extern int mono_test_marshal_safearray_out_1dim_vt_bstr_empty ([MarshalAs (UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)]out Array array);
 
@@ -533,6 +536,9 @@ public class Tests
 			if (TestITestDelegate (itest) != 0)
 				return 174;
 
+			if (TestIfaceNoIcall (itest as ITestPresSig) != 0)
+				return 201;
+
 			itest = new TestClass ();
 
 			if (TestITest (itest) != 0)
@@ -542,6 +548,7 @@ public class Tests
 
 			if (TestITest (itest) != 0)
 				return 176;
+
 
 #endif
 
@@ -559,6 +566,11 @@ public class Tests
 			ManagedTestPresSig test_pres_sig = new ManagedTestPresSig ();
 
 			mono_test_marshal_ccw_itest (test_pres_sig);
+
+			// test for Xamarin-47560
+			var tests = new[] { test.Test };
+			if (mono_test_marshal_array_ccw_itest (1, tests) != 0)
+				return 201;
 
 			#endregion // COM Callable Wrapper Tests
 
@@ -775,6 +787,7 @@ public class Tests
 		void ITestIn ([MarshalAs (UnmanagedType.Interface)]ITest val);
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		void ITestOut ([MarshalAs (UnmanagedType.Interface)]out ITest val);
+		int Return22NoICall();
 	}
 
 	[ComImport ()]
@@ -826,6 +839,8 @@ public class Tests
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		[PreserveSig ()]
 		int ITestOut ([MarshalAs (UnmanagedType.Interface)]out ITestPresSig val);
+		[PreserveSig ()]
+		int Return22NoICall();
 	}
 
 	[System.Runtime.InteropServices.GuidAttribute ("00000000-0000-0000-0000-000000000002")]
@@ -865,6 +880,9 @@ public class Tests
 		public virtual extern void ITestIn ([MarshalAs (UnmanagedType.Interface)]ITest val);
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		public virtual extern void ITestOut ([MarshalAs (UnmanagedType.Interface)]out ITest val);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		public virtual extern int Return22NoICall();
 	}
 
 	[System.Runtime.InteropServices.GuidAttribute ("00000000-0000-0000-0000-000000000002")]
@@ -1004,6 +1022,11 @@ public class Tests
 			val = new ManagedTestPresSig ();
 			return 0;
 		}
+
+		public int Return22NoICall()
+		{
+			return 88;
+		}
 	}
 
 	public class ManagedTest : ITest
@@ -1092,6 +1115,11 @@ public class Tests
 			{
 				return new ManagedTest ();
 			}
+		}
+
+		public int Return22NoICall()
+		{
+			return 99;
 		}
 	}
 
@@ -1305,6 +1333,10 @@ public class Tests
 			return 1;
 		}
 		return 0;
+	}
+
+	public static int TestIfaceNoIcall (ITestPresSig itest) {
+		return itest.Return22NoICall () == 22 ? 0 : 1;
 	}
 }
 

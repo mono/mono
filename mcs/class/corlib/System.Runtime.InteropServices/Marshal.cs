@@ -741,7 +741,7 @@ namespace System.Runtime.InteropServices
 #else
 		public static bool IsComObject (object o)
 		{
-			throw new PlatformNotSupportedException ();
+			return false;
 		}
 #endif
 
@@ -1118,8 +1118,12 @@ namespace System.Runtime.InteropServices
 				throw new OutOfMemoryException();
 
 			byte* pbMem = (byte*)pMem;
-			int nbWritten = s.GetBytesFromEncoding(pbMem, nb, Encoding.UTF8);
-			pbMem[nbWritten] = 0;
+
+            fixed (char* pwzChar = s)
+            {
+                int nbWritten = Encoding.UTF8.GetBytes(pwzChar, s.Length, pbMem, nb);
+				pbMem[nbWritten] = 0;
+            }
 			return pMem;
 		}
 		
@@ -1239,7 +1243,7 @@ namespace System.Runtime.InteropServices
 
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static IntPtr BufferToBSTR (Array ptr, int slen);
+		extern static IntPtr BufferToBSTR (Array ptr, int slen);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr UnsafeAddrOfPinnedArrayElement (Array arr, int index);

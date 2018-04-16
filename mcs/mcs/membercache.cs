@@ -35,6 +35,7 @@ namespace Mono.CSharp {
 		Enum		= 1 << 14,
 		Interface	= 1 << 15,
 		TypeParameter = 1 << 16,
+		ByRef		= 1 << 17,
 
 		ArrayType = 1 << 19,
 		PointerType = 1 << 20,
@@ -308,7 +309,6 @@ namespace Mono.CSharp {
 				//
 				if (!BuiltinTypeSpec.IsPrimitiveType (dt) || dt.BuiltinType == BuiltinTypeSpec.Type.Char) {
 					switch (dt.BuiltinType) {
-					case BuiltinTypeSpec.Type.String:
 					case BuiltinTypeSpec.Type.Delegate:
 					case BuiltinTypeSpec.Type.MulticastDelegate:
 						break;
@@ -316,6 +316,9 @@ namespace Mono.CSharp {
 						if (name == Operator.GetMetadataName (Operator.OpType.Implicit) || name == Operator.GetMetadataName (Operator.OpType.Explicit)) {
 							state |= StateFlags.HasConversionOperator;
 						} else {
+							if (dt.BuiltinType == BuiltinTypeSpec.Type.String)
+								break;
+
 							state |= StateFlags.HasUserOperator;
 						}
 
@@ -1500,6 +1503,12 @@ namespace Mono.CSharp {
 									member.GetSignatureForError ());
 							}
 							return false;
+						}
+
+						var pm_member = (MethodCore)member;
+						if (!NamedTupleSpec.CheckOverrideName (pm, pm_member) || !NamedTupleSpec.CheckOverrideName (pm.MemberType, pm_member.MemberType)) {
+							Report.Error (8142, member.Location,
+								"A partial method declaration and partial method implementation must both use the same tuple element names");
 						}
 					}
 				}

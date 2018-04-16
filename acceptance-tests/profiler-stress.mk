@@ -9,5 +9,5 @@ SYS_REFS = \
 
 check-profiler-stress:
 	@$(MAKE) validate-benchmarker RESET_VERSIONS=1
-	cd profiler-stress && $(MCS) -target:exe $(addprefix -r:, $(SYS_REFS)) -out:runner.exe @runner.exe.sources
+	cd profiler-stress && $(MCS) -debug -define:ARCH_$(arch_target) -target:exe $(addprefix -r:, $(SYS_REFS)) -out:runner.exe @runner.exe.sources
 	cd profiler-stress && $(RUNTIME) runner.exe

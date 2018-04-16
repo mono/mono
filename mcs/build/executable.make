@@ -19,7 +19,7 @@ executable_CLEAN_FILES += $(response)
 endif
 
 ifndef the_libdir
-the_libdir = $(topdir)/class/lib/$(PROFILE)/
+the_libdir = $(topdir)/class/lib/$(PROFILE_DIRECTORY)/
 ifdef PROGRAM_USE_INTERMEDIATE_FILE
 build_libdir = $(the_libdir)tmp/
 else
@@ -42,8 +42,22 @@ executable_CLEAN_FILES += $(build_lib) $(build_lib).so $(build_lib).mdb $(build_
 
 makefrag = $(depsdir)/$(PROFILE)_$(base_prog).makefrag
 
-MCS_REFERENCES = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(LIB_REFS))
-MCS_REFERENCES += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.exe,$(EXE_REFS))
+LIB_REFS_ALL = $(DEFAULT_REFERENCES) $(LIB_REFS)
+
+ifdef TARGET_NET_REFERENCE
+# System*, mscorlib references come from the TARGET_NET_REFERENCE dir, others from the profile dir
+LIB_REFS_MONO = $(call _FILTER_OUT,System,$(call _FILTER_OUT,mscorlib,$(LIB_REFS_ALL)))
+LIB_REFS_SYSTEM = $(filter-out $(LIB_REFS_MONO),$(LIB_REFS_ALL))
+
+MCS_REFERENCES = $(patsubst %,-r:$(topdir)/../external/binary-reference-assemblies/$(TARGET_NET_REFERENCE)/%.dll,$(LIB_REFS_SYSTEM))
+MCS_REFERENCES += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.dll,$(LIB_REFS_MONO))
+else
+MCS_REFERENCES = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.dll,$(LIB_REFS_ALL))
+endif
+
+ifdef KEYFILE
+LIB_MCS_FLAGS += /keyfile:$(KEYFILE)
+endif
 
 ifndef NO_BUILD
 all-local: $(the_lib) $(PROGRAM_config)
@@ -117,7 +131,12 @@ ifndef PROGRAM_COMPILE
 PROGRAM_COMPILE = $(CSCOMPILE)
 endif
 
-$(the_lib): $(the_libdir)/.stamp
+$(the_lib): $(the_libdir)/.stamp $(if $(PROFILE_PLATFORM),$(if $(filter $(HOST_PLATFORM),$(BUILD_PLATFORM)),$(topdir)/class/lib/$(PROFILE)/.stamp))
+
+ifdef PROFILE_PLATFORM
+$(topdir)/class/lib/$(PROFILE)/.stamp: | $(topdir)/class/lib/$(PROFILE)-$(HOST_PLATFORM)/.stamp
+	$(if $(filter $(HOST_PLATFORM),$(BUILD_PLATFORM)),$(if $(filter $(BUILD_PLATFORM),win32),CYGWIN=winsymlinks:nativestrict) ln -s $(abspath $(topdir)/class/lib/$(PROFILE)-$(BUILD_PLATFORM)) $(abspath $(topdir)/class/lib/$(PROFILE)))
+endif
 
 $(build_lib): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response) $(build_libdir:=/.stamp)
 	$(PROGRAM_COMPILE) $(MCS_REFERENCES) -target:exe -out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)

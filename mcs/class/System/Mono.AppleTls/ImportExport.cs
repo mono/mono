@@ -31,7 +31,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using ObjCRuntime;
+using ObjCRuntimeInternal;
 using Mono.Net;
 
 #if MONO_FEATURE_BTLS
@@ -67,6 +67,7 @@ namespace Mono.AppleTls {
 			return code;
 		}
 
+#if !MONOTOUCH
 		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static SecStatusCode SecItemImport (
 			/* CFDataRef */ IntPtr importedData,
@@ -217,6 +218,7 @@ namespace Mono.AppleTls {
 			IntPtr keyUsage;
 			IntPtr keyAttributes;
 		}
+#endif
 	}
 }
 #endif

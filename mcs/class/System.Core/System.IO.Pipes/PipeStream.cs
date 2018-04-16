@@ -137,7 +137,7 @@ namespace System.IO.Pipes
 #pragma warning disable 618
 					stream = new FileStream (handle.DangerousGetHandle (),
 								 CanRead ? (CanWrite ? FileAccess.ReadWrite : FileAccess.Read)
-								 	 : FileAccess.Write, true, buffer_size, IsAsync);
+								 	 : FileAccess.Write, false, buffer_size, IsAsync);
 #pragma warning restore 618					
 				}
 				return stream;

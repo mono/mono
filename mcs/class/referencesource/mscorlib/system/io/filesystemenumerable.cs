@@ -783,9 +783,10 @@ namespace System.IO
         internal override DirectoryInfo CreateObject(SearchResult result)
         {
             String name = result.FullPath;
-            String permissionName = name + "\\.";
 
 #if MONO_FEATURE_CAS
+            String permissionName = name + "\\.";
+
 #if FEATURE_CORECLR
             FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, permissionName);
             state.EnsureState();
@@ -821,9 +822,10 @@ namespace System.IO
             if (isDir)
             {
                 String name = result.FullPath;
-                String permissionName = name + "\\.";
 
 #if MONO_FEATURE_CAS
+                String permissionName = name + "\\.";
+
 #if FEATURE_CORECLR
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, permissionName);
                 state.EnsureState();

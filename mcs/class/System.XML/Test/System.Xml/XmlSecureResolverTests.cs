@@ -71,7 +71,9 @@ namespace MonoTests.System.Xml
 		{
 			// "normal" path
 			Evidence e = XmlSecureResolver.CreateEvidenceForUrl (Assembly.GetExecutingAssembly ().Location);
+#pragma warning disable 612
 			Assert.AreEqual (2, e.Count, "Assembly.GetExecutingAssembly ().Location");
+#pragma warning restore
 			bool url = false;
 			bool zone = false;
 			IEnumerator en = e.GetHostEnumerator ();
@@ -86,7 +88,9 @@ namespace MonoTests.System.Xml
 
 			// file://
 			e = XmlSecureResolver.CreateEvidenceForUrl (Assembly.GetExecutingAssembly ().CodeBase);
+#pragma warning disable 612
 			Assert.AreEqual (2, e.Count, "Assembly.GetExecutingAssembly ().CodeBase");
+#pragma warning restore
 			url = false;
 			zone = false;
 			en = e.GetHostEnumerator ();
@@ -106,7 +110,9 @@ namespace MonoTests.System.Xml
 		{
 			// http://
 			Evidence e = XmlSecureResolver.CreateEvidenceForUrl ("http://www.go-mono.com");
+#pragma warning disable 612
 			Assert.AreEqual (3, e.Count, "http://www.go-mono.com");
+#pragma warning restore
 			bool url = false;
 			bool zone = false;
 			bool site = false;

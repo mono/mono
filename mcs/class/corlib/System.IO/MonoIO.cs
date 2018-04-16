@@ -169,47 +169,135 @@ namespace System.IO
 		// directory methods
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool CreateDirectory (string path, out MonoIOError error);
+		private unsafe extern static bool CreateDirectory (char* path, out MonoIOError error);
+
+		public static bool CreateDirectory (string path, out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path) {
+					return CreateDirectory (pathChars, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool RemoveDirectory (string path, out MonoIOError error);
+		private unsafe extern static bool RemoveDirectory (char* path, out MonoIOError error);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static string [] GetFileSystemEntries (string path, string path_with_pattern, int attrs, int mask, out MonoIOError error);
+		public static bool RemoveDirectory (string path, out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path) {
+					return RemoveDirectory (pathChars, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static string GetCurrentDirectory (out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool SetCurrentDirectory (string path, out MonoIOError error);
+		private unsafe extern static bool SetCurrentDirectory (char* path, out MonoIOError error);
+
+		public static bool SetCurrentDirectory (string path, out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path) {
+					return SetCurrentDirectory (pathChars, out error);
+				}
+			}
+		}
 
 		// file methods
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool MoveFile (string path, string dest,
-						    out MonoIOError error);
+		private unsafe extern static bool MoveFile (char* path, char* dest,
+							    out MonoIOError error);
+
+		public static bool MoveFile (string path, string dest,
+					     out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path, destChars = dest) {
+					return MoveFile (pathChars, destChars, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool CopyFile (string path, string dest,
-						    bool overwrite,
-						    out MonoIOError error);
+		private unsafe extern static bool CopyFile (char* path, char* dest,
+							    bool overwrite,
+							    out MonoIOError error);
+
+		public static bool CopyFile (string path, string dest,
+					     bool overwrite,
+					     out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path, destChars = dest) {
+					return CopyFile (pathChars, destChars, overwrite, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool DeleteFile (string path,
-						      out MonoIOError error);
+		private unsafe extern static bool DeleteFile (char* path,
+							      out MonoIOError error);
+
+		public static bool DeleteFile (string path,
+					       out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path) {
+					return DeleteFile (pathChars, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool ReplaceFile (string sourceFileName, 
-						       string destinationFileName, 
-						       string destinationBackupFileName, 
-						       bool ignoreMetadataErrors,
-						       out MonoIOError error);
+		private unsafe extern static bool ReplaceFile (char* sourceFileName,
+							       char* destinationFileName,
+							       char* destinationBackupFileName,
+							       bool ignoreMetadataErrors,
+							       out MonoIOError error);
+
+		public static bool ReplaceFile (string sourceFileName,
+						string destinationFileName,
+						string destinationBackupFileName,
+						bool ignoreMetadataErrors,
+						out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* sourceFileNameChars = sourceFileName,
+				       destinationFileNameChars = destinationFileName,
+				       destinationBackupFileNameChars = destinationBackupFileName) {
+					return ReplaceFile (sourceFileNameChars, destinationFileNameChars, destinationBackupFileNameChars, ignoreMetadataErrors, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static FileAttributes GetFileAttributes (string path, out MonoIOError error);
+		private unsafe extern static FileAttributes GetFileAttributes (char* path, out MonoIOError error);
+
+		public static FileAttributes GetFileAttributes (string path, out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path) {
+					return GetFileAttributes (pathChars, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool SetFileAttributes (string path, FileAttributes attrs, out MonoIOError error);
+		private extern static bool SetFileAttributes (char* path, FileAttributes attrs, out MonoIOError error);
+
+		public static bool SetFileAttributes (string path, FileAttributes attrs, out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path) {
+					return SetFileAttributes (pathChars, attrs, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static MonoFileType GetFileType (IntPtr handle, out MonoIOError error);
@@ -229,17 +317,18 @@ namespace System.IO
 		//
 		// Find file methods
 		//
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static string FindFirst (string path, string pattern, out FileAttributes result_attr, out MonoIOError error, out IntPtr handle);
-		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static string FindNext (IntPtr handle, out FileAttributes result_attr, out MonoIOError error);
-		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int FindClose (IntPtr handle);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static IntPtr FindFirstFile (string path_with_pattern, out string fileName, out int fileAttr, out int error);
+		private unsafe extern static IntPtr FindFirstFile (char* pathWithPattern, out string fileName, out int fileAttr, out int error);
+
+		public static IntPtr FindFirstFile (string pathWithPattern, out string fileName, out int fileAttr, out int error)
+		{
+			unsafe {
+				fixed (char* pathWithPatternChars = pathWithPattern) {
+					return FindFirstFile (pathWithPatternChars, out fileName, out fileAttr, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool FindNextFile (IntPtr hnd, out string fileName, out int fileAttr, out int error);
@@ -305,19 +394,44 @@ namespace System.IO
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool GetFileStat (string path,
-						       out MonoIOStat stat,
-						       out MonoIOError error);
+		private unsafe extern static bool GetFileStat (char* path,
+							       out MonoIOStat stat,
+							       out MonoIOError error);
+
+		public static bool GetFileStat (string path,
+						out MonoIOStat stat,
+						out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* pathChars = path) {
+					return GetFileStat (pathChars, out stat, out error);
+				}
+			}
+		}
 
 		// handle methods
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static IntPtr Open (string filename,
-						  FileMode mode,
-						  FileAccess access,
-						  FileShare share,
-						  FileOptions options,
-						  out MonoIOError error);
+		private unsafe extern static IntPtr Open (char* filename,
+							  FileMode mode,
+							  FileAccess access,
+							  FileShare share,
+							  FileOptions options,
+							  out MonoIOError error);
+
+		public static IntPtr Open (string filename,
+					   FileMode mode,
+					   FileAccess access,
+					   FileShare share,
+					   FileOptions options,
+					   out MonoIOError error)
+		{
+			unsafe {
+				fixed (char* filenameChars = filename) {
+					return Open (filenameChars, mode, access, share, options, out error);
+				}
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool Close (IntPtr handle,

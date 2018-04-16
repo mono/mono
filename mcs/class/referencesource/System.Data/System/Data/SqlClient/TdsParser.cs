@@ -856,8 +856,6 @@ namespace System.Data.SqlClient {
 
             bool isYukonOrLater = false;
 
-            // 
-
             Debug.Assert(_physicalStateObj._syncOverAsync, "Should not attempt pends in a synchronous call");
             bool result = _physicalStateObj.TryReadNetworkPacket();
             if (!result) { throw SQL.SynchronousCallMayNotPend(); }
@@ -869,8 +867,12 @@ namespace System.Data.SqlClient {
                 ThrowExceptionAndWarning(_physicalStateObj);
             }
 
-            // SEC 
-            byte[] payload = new byte[_physicalStateObj._inBytesRead - _physicalStateObj._inBytesUsed - _physicalStateObj._inputHeaderLen];
+            if (!_physicalStateObj.TryProcessHeader()) { throw SQL.SynchronousCallMayNotPend(); }
+
+            if (_physicalStateObj._inBytesPacket > TdsEnums.MAX_PACKET_SIZE || _physicalStateObj._inBytesPacket <= 0) {
+                throw SQL.ParsingError(ParsingErrorState.CorruptedTdsStream);
+            }
+            byte[] payload = new byte[_physicalStateObj._inBytesPacket];
 
             Debug.Assert(_physicalStateObj._syncOverAsync, "Should not attempt pends in a synchronous call");
             result = _physicalStateObj.TryReadByteArray(payload, 0, payload.Length);

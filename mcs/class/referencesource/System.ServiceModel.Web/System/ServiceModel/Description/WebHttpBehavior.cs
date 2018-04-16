@@ -405,6 +405,10 @@ namespace System.ServiceModel.Description
             {
                 attributes = od.BeginMethod.GetCustomAttributes(typeof(DescriptionAttribute), true);
             }
+            else if (od.TaskMethod != null)
+            {
+                attributes = od.TaskMethod.GetCustomAttributes(typeof(DescriptionAttribute), true);
+            }
 
             if (attributes != null && attributes.Length > 0)
             {

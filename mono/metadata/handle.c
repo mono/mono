@@ -20,6 +20,10 @@
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-lazy-init.h>
 #include <mono/utils/mono-threads.h>
+#ifdef HAVE_BACKTRACE_SYMBOLS
+#include <execinfo.h>
+#endif
+
 /* TODO (missing pieces)
 
 Add counters for:
@@ -28,17 +32,14 @@ Add counters for:
 	mix/max/avg size of stack marks
 	handle stack wastage
 
-Actually do something in mono_handle_verify
-
 Shrink the handles stack in mono_handle_stack_scan
-Properly report it to the profiler.
 Add a boehm implementation
 
 TODO (things to explore):
 
 There's no convenient way to wrap the object allocation function.
 Right now we do this:
-	MonoCultureInfoHandle culture = MONO_HANDLE_NEW (MonoCultureInfo, mono_object_new_checked (domain, klass, &error));
+	MonoCultureInfoHandle culture = MONO_HANDLE_NEW (MonoCultureInfo, mono_object_new_checked (domain, klass, error));
 
 Maybe what we need is a round of cleanup around all exposed types in the runtime to unify all helpers under the same hoof.
 Combine: MonoDefaults, GENERATE_GET_CLASS_WITH_CACHE, TYPED_HANDLE_DECL and friends.
@@ -65,72 +66,42 @@ Combine: MonoDefaults, GENERATE_GET_CLASS_WITH_CACHE, TYPED_HANDLE_DECL and frie
  * Note that the handle stack is scanned PRECISELY (see
  * sgen_client_scan_thread_data ()).  That means there should not be
  * stale objects scanned.  So when we manipulate the size of a chunk,
- * wemust ensure that the newly scannable slot is either null or
+ * we must ensure that the newly scannable slot is either null or
  * points to a valid value.
  */
+
+static HandleStack*
+new_handle_stack (void)
+{
+	return g_new (HandleStack, 1);
+}
+
+static void
+free_handle_stack (HandleStack *stack)
+{
+	g_free (stack);
+}
+
+static HandleChunk*
+new_handle_chunk (void)
+{
+	return g_new (HandleChunk, 1);
+}
+
+static void
+free_handle_chunk (HandleChunk *chunk)
+{
+	g_free (chunk);
+}
 
 const MonoObjectHandle mono_null_value_handle = NULL;
 
 #define THIS_IS_AN_OK_NUMBER_OF_HANDLES 100
 
-enum {
-	HANDLE_CHUNK_PTR_OBJ = 0x0, /* chunk element points to beginning of a managed object */
-	HANDLE_CHUNK_PTR_INTERIOR = 0x1, /* chunk element points into the middle of a managed object */
-	HANDLE_CHUNK_PTR_MASK = 0x1
-};
-
-/* number of bits in each word of the interior pointer bitmap */
-#define INTERIOR_HANDLE_BITMAP_BITS_PER_WORD (sizeof(guint32) << 3)
-
-static gboolean
-bitset_bits_test (guint32 *bitmaps, int idx)
-{
-	int w = idx / INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
-	int b = idx % INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
-	guint32 bitmap = bitmaps [w];
-	guint32 mask = 1u << b;
-	return ((bitmap & mask) != 0);
-}
-
-static void
-bitset_bits_set (guint32 *bitmaps, int idx)
-{
-	int w = idx / INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
-	int b = idx % INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
-	guint32 *bitmap = &bitmaps [w];
-	guint32 mask = 1u << b;
-	*bitmap |= mask;
-}
-static void
-bitset_bits_clear (guint32 *bitmaps, int idx)
-{
-	int w = idx / INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
-	int b = idx % INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
-	guint32 *bitmap = &bitmaps [w];
-	guint32 mask = ~(1u << b);
-	*bitmap &= mask;
-}
-
-static gpointer*
-chunk_element_objslot_init (HandleChunk *chunk, int idx, gboolean interior)
-{
-	if (interior)
-		bitset_bits_set (chunk->interior_bitmap, idx);
-	else
-		bitset_bits_clear (chunk->interior_bitmap, idx);
-	return &chunk->elems [idx].o;
-}
-
 static HandleChunkElem*
 chunk_element (HandleChunk *chunk, int idx)
 {
 	return &chunk->elems[idx];
-}
-
-static guint
-chunk_element_kind (HandleChunk *chunk, int idx)
-{
-	return bitset_bits_test (chunk->interior_bitmap, idx) ? HANDLE_CHUNK_PTR_INTERIOR : HANDLE_CHUNK_PTR_OBJ;
 }
 
 static HandleChunkElem*
@@ -165,40 +136,74 @@ chunk_element_to_chunk_idx (HandleStack *stack, HandleChunkElem *elem, int *out_
 }
 
 #ifdef MONO_HANDLE_TRACK_OWNER
-#define SET_OWNER(chunk,idx) do { (chunk)->elems[(idx)].owner = owner; } while (0)
+#ifdef HAVE_BACKTRACE_SYMBOLS
+#define SET_BACKTRACE(btaddrs) do {					\
+	backtrace(btaddrs, 7);						\
+	} while (0)
+#else
+#define SET_BACKTRACE(btaddrs) 0
+#endif
+#define SET_OWNER(chunk,idx) do { (chunk)->elems[(idx)].owner = owner; SET_BACKTRACE (&((chunk)->elems[(idx)].backtrace_ips[0])); } while (0)
 #else
 #define SET_OWNER(chunk,idx) do { } while (0)
 #endif
 
-MonoRawHandle
-#ifndef MONO_HANDLE_TRACK_OWNER
-mono_handle_new (MonoObject *object)
+#ifdef MONO_HANDLE_TRACK_SP
+#define SET_SP(handles,chunk,idx) do { (chunk)->elems[(idx)].alloc_sp = handles->stackmark_sp; } while (0)
 #else
-mono_handle_new (MonoObject *object const char *owner)
+#define SET_SP(handles,chunk,idx) do { } while (0)
 #endif
-{
-#ifndef MONO_HANDLE_TRACK_OWNER
-	return mono_handle_new_full (object, FALSE);
+
+#ifdef MONO_HANDLE_TRACK_SP
+void
+mono_handle_chunk_leak_check (HandleStack *handles) {
+	if (handles->stackmark_sp) {
+		/* walk back from the top to the topmost non-empty chunk */
+		HandleChunk *c = handles->top;
+		while (c && c->size <= 0 && c != handles->bottom) {
+			c = c->prev;
+		}
+		if (c == NULL || c->size == 0)
+			return;
+		g_assert (c && c->size > 0);
+		HandleChunkElem *e = chunk_element (c, c->size - 1);
+		if (e->alloc_sp < handles->stackmark_sp) {
+			/* If we get here, the topmost object on the handle stack was
+			 * allocated from a function that is deeper in the call stack than
+			 * the most recent HANDLE_FUNCTION_ENTER.  That means it was
+			 * probably not wrapped in a HANDLE_FUNCTION_ENTER/_RETURN pair
+			 * and will never be reclaimed. */
+			g_warning ("Handle %p (object = %p) (allocated from \"%s\") is leaking.\n", e, e->o,
+#ifdef MONO_HANDLE_TRACK_OWNER
+				   e->owner
 #else
-	return mono_handle_new_full (object, FALSE, owner);
+				   "<unknown owner>"
 #endif
+				);
+		}
+	}
 }
+#endif
+
 /* Actual handles implementation */
 MonoRawHandle
 #ifndef MONO_HANDLE_TRACK_OWNER
-mono_handle_new_full (gpointer rawptr, gboolean interior)
+mono_handle_new (MonoObject *obj)
 #else
-mono_handle_new_full (gpointer rawptr, gboolean interior, const char *owner)
+mono_handle_new (MonoObject *obj, const char *owner)
 #endif
 {
 	MonoThreadInfo *info = mono_thread_info_current ();
 	HandleStack *handles = (HandleStack *)info->handle_stack;
 	HandleChunk *top = handles->top;
+#ifdef MONO_HANDLE_TRACK_SP
+	mono_handle_chunk_leak_check (handles);
+#endif
 
 retry:
 	if (G_LIKELY (top->size < OBJECTS_PER_HANDLES_CHUNK)) {
 		int idx = top->size;
-		gpointer* objslot = chunk_element_objslot_init (top, idx, interior);
+		gpointer* objslot = &top->elems [idx].o;
 		/* can be interrupted anywhere here, so:
 		 * 1. make sure the new slot is null
 		 * 2. make the new slot scannable (increment size)
@@ -208,11 +213,12 @@ retry:
 		 * between 1 and 2, the object is still live)
 		 */
 		*objslot = NULL;
+		SET_OWNER (top,idx);
+		SET_SP (handles, top, idx);
 		mono_memory_write_barrier ();
 		top->size++;
 		mono_memory_write_barrier ();
-		*objslot = rawptr;
-		SET_OWNER (top,idx);
+		*objslot = obj;
 		return objslot;
 	}
 	if (G_LIKELY (top->next)) {
@@ -223,9 +229,8 @@ retry:
 		handles->top = top;
 		goto retry;
 	}
-	HandleChunk *new_chunk = g_new (HandleChunk, 1);
+	HandleChunk *new_chunk = new_handle_chunk ();
 	new_chunk->size = 0;
-	memset (new_chunk->interior_bitmap, 0, INTERIOR_HANDLE_BITMAP_WORDS);
 	new_chunk->prev = top;
 	new_chunk->next = NULL;
 	/* make sure size == 0 before new chunk is visible */
@@ -235,19 +240,57 @@ retry:
 	goto retry;
 }
 
+MonoRawHandle
+#ifndef MONO_HANDLE_TRACK_OWNER
+mono_handle_new_interior (gpointer rawptr)
+#else
+mono_handle_new_interior (gpointer rawptr, const char *owner)
+#endif
+{
+	MonoThreadInfo *info = mono_thread_info_current ();
+	HandleStack *handles = (HandleStack *)info->handle_stack;
+	HandleChunk *top = handles->interior;
+#ifdef MONO_HANDLE_TRACK_SP
+	mono_handle_chunk_leak_check (handles);
+#endif
 
+	g_assert (top);
+
+	/*
+	 * Don't extend the chunk now, interior handles are
+	 * only used for icall arguments, they shouldn't
+	 * overflow.
+	 */
+	g_assert (top->size < OBJECTS_PER_HANDLES_CHUNK);
+	int idx = top->size;
+	gpointer *objslot = &top->elems [idx].o;
+	*objslot = NULL;
+	mono_memory_write_barrier ();
+	top->size++;
+	mono_memory_write_barrier ();
+	*objslot = rawptr;
+	SET_OWNER (top,idx);
+	SET_SP (handles, top, idx);
+	return objslot;
+}
 
 HandleStack*
 mono_handle_stack_alloc (void)
 {
-	HandleStack *stack = g_new (HandleStack, 1);
-	HandleChunk *chunk = g_new (HandleChunk, 1);
+	HandleStack *stack = new_handle_stack ();
+	HandleChunk *chunk = new_handle_chunk ();
+	HandleChunk *interior = new_handle_chunk ();
 
-	chunk->size = 0;
-	memset (chunk->interior_bitmap, 0, INTERIOR_HANDLE_BITMAP_WORDS);
 	chunk->prev = chunk->next = NULL;
+	chunk->size = 0;
+	interior->prev = interior->next = NULL;
+	interior->size = 0;
 	mono_memory_write_barrier ();
 	stack->top = stack->bottom = chunk;
+	stack->interior = interior;
+#ifdef MONO_HANDLE_TRACK_SP
+	stack->stackmark_sp = NULL;
+#endif
 	return stack;
 }
 
@@ -261,16 +304,86 @@ mono_handle_stack_free (HandleStack *stack)
 	mono_memory_write_barrier ();
 	while (c) {
 		HandleChunk *next = c->next;
-		g_free (c);
+		free_handle_chunk (c);
 		c = next;
 	}
-	g_free (c);
-	g_free (stack);
+	free_handle_chunk (c);
+	free_handle_chunk (stack->interior);
+	free_handle_stack (stack);
 }
 
 void
-mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, gboolean precise)
+mono_handle_stack_free_domain (HandleStack *stack, MonoDomain *domain)
 {
+	/* Called by the GC while clearing out objects of the given domain from the heap. */
+	/* If there are no handles-related bugs, there is nothing to do: if a
+	 * thread accessed objects from the domain it was aborted, so any
+	 * threads left alive cannot have any handles that point into the
+	 * unloading domain.  However if there is a handle leak, the handle stack is not */
+	if (!stack)
+		return;
+	/* Root domain only unloaded when mono is shutting down, don't need to check anything */
+	if (domain == mono_get_root_domain () || mono_runtime_is_shutting_down ())
+		return;
+	HandleChunk *cur = stack->bottom;
+	HandleChunk *last = stack->top;
+	if (!cur)
+		return;
+	while (cur) {
+		for (int idx = 0; idx < cur->size; ++idx) {
+			HandleChunkElem *elem = &cur->elems[idx];
+			if (!elem->o)
+				continue;
+			g_assert (mono_object_domain (elem->o) != domain);
+		}
+		if (cur == last)
+			break;
+		cur = cur->next;
+	}
+	/* We don't examine the interior pointers here because the GC treats
+	 * them conservatively and anyway we don't have enough information here to
+	 * find the object's vtable.
+	 */
+}
+
+static void
+check_handle_stack_monotonic (HandleStack *stack)
+{
+	/* check that every allocated handle in the current handle stack is at no higher in the native stack than its predecessors */
+#ifdef MONO_HANDLE_TRACK_SP
+	HandleChunk *cur = stack->bottom;
+	HandleChunk *last = stack->top;
+	if (!cur)
+		return;
+	HandleChunkElem *prev = NULL;
+	gboolean monotonic = TRUE;
+	while (cur) {
+		for (int i = 0;i < cur->size; ++i) {
+			HandleChunkElem *elem = chunk_element (cur, i);
+			if (prev && elem->alloc_sp > prev->alloc_sp) {
+				monotonic = FALSE;
+#ifdef MONO_HANDLE_TRACK_OWNER
+				g_warning ("Handle %p (object %p) (allocated from \"%s\") was allocated deeper in the call stack than its successor Handle %p (object %p) (allocated from \"%s\").", prev, prev->o, prev->owner, elem, elem->o, elem->owner);
+#else
+				g_warning ("Handle %p (object %p) was allocated deeper in the call stack than its successor Handle %p (object %p).", prev, prev->o, elem, elem->o);
+#endif
+			}
+			prev = elem;
+		}
+		if (cur == last)
+			break;
+		cur = cur->next;
+	}
+	g_assert (monotonic);
+#endif
+}
+
+void
+mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, gboolean precise, gboolean check)
+{
+	if (check) /* run just once (per handle stack) per GC */
+		check_handle_stack_monotonic (stack);
+
 	/*
 	  We're called twice - on the imprecise pass we call func to pin the
 	  objects where the handle points to its interior.  On the precise
@@ -279,46 +392,32 @@ mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, g
 
 	  Note that if we're running, we know the world is stopped.
 	*/
-	HandleChunk *cur = stack->bottom;
-	HandleChunk *last = stack->top;
+	if (precise) {
+		HandleChunk *cur = stack->bottom;
+		HandleChunk *last = stack->top;
 
-	if (!cur)
-		return;
-
-	while (cur) {
-		/* assume that object pointers will be much more common than interior pointers.
-		 * scan the object pointers by iterating over the chunk elements.
-		 * scan the interior pointers by iterating over the bitmap bits.
-		 */
-		if (precise) {
+		while (cur) {
 			for (int i = 0; i < cur->size; ++i) {
 				HandleChunkElem* elem = chunk_element (cur, i);
-				int kind = chunk_element_kind (cur, i);
 				gpointer* obj_slot = &elem->o;
-				if (kind == HANDLE_CHUNK_PTR_OBJ && *obj_slot != NULL)
+				if (*obj_slot != NULL)
 					func (obj_slot, gc_data);
 			}
-		} else {
-			int elem_idx = 0;
-			for (int i = 0; i < INTERIOR_HANDLE_BITMAP_WORDS; ++i) {
-				elem_idx = i * INTERIOR_HANDLE_BITMAP_BITS_PER_WORD;
-				if (elem_idx >= cur->size)
-					break;
-				/* no interior pointers in the range */ 
-				if (cur->interior_bitmap [i] == 0)
-					continue;
-				for (int j = 0; j < INTERIOR_HANDLE_BITMAP_BITS_PER_WORD && elem_idx < cur->size; ++j,++elem_idx) {
-					HandleChunkElem *elem = chunk_element (cur, elem_idx);
-					int kind = chunk_element_kind (cur, elem_idx);
-					gpointer *ptr_slot = &elem->o;
-					if (kind == HANDLE_CHUNK_PTR_INTERIOR && *ptr_slot != NULL)
-						func (ptr_slot, gc_data);
-				}
-			}	     
+			if (cur == last)
+				break;
+			cur = cur->next;
 		}
-		if (cur == last)
-			break;
-		cur = cur->next;
+	} else {
+		HandleChunk *cur = stack->interior;
+
+		if (!cur)
+			return;
+		for (int i = 0; i < cur->size; ++i) {
+			HandleChunkElem* elem = chunk_element (cur, i);
+			gpointer* ptr_slot = &elem->o;
+			if (*ptr_slot != NULL)
+				func (ptr_slot, gc_data);
+		}
 	}
 }
 
@@ -376,15 +475,6 @@ mono_array_new_full_handle (MonoDomain *domain, MonoClass *array_class, uintptr_
 	return MONO_HANDLE_NEW (MonoArray, mono_array_new_full_checked (domain, array_class, lengths, lower_bounds, error));
 }
 
-#ifdef ENABLE_CHECKED_BUILD
-/* Checked build helpers */
-void
-mono_handle_verify (MonoRawHandle raw_handle)
-{
-	
-}
-#endif
-
 uintptr_t
 mono_array_handle_length (MonoArrayHandle arr)
 {
@@ -405,7 +495,6 @@ mono_gchandle_from_handle (MonoObjectHandle handle, mono_bool pinned)
 	HandleChunk *chunk = chunk_element_to_chunk_idx (stack, elem, &elem_idx);
 	/* gchandles cannot deal with interior pointers */
 	g_assert (chunk != NULL);
-	g_assert (chunk_element_kind (chunk, elem_idx) != HANDLE_CHUNK_PTR_INTERIOR);
 	return mono_gchandle_new (MONO_HANDLE_RAW (handle), pinned);
 }
 
@@ -422,6 +511,25 @@ mono_array_handle_pin_with_size (MonoArrayHandle handle, int size, uintptr_t idx
 	*gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST(MonoObject,handle), TRUE);
 	MonoArray *raw = MONO_HANDLE_RAW (handle);
 	return mono_array_addr_with_size (raw, size, idx);
+}
+
+gunichar2*
+mono_string_handle_pin_chars (MonoStringHandle handle, uint32_t *gchandle)
+{
+	g_assert (gchandle != NULL);
+	*gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, handle), TRUE);
+	MonoString *raw = MONO_HANDLE_RAW (handle);
+	return mono_string_chars (raw);
+}
+
+gpointer
+mono_object_handle_pin_unbox (MonoObjectHandle obj, uint32_t *gchandle)
+{
+	g_assert (!MONO_HANDLE_IS_NULL (obj));
+	MonoClass *klass = mono_handle_class (obj);
+	g_assert (m_class_is_valuetype (klass));
+	*gchandle = mono_gchandle_from_handle (obj, TRUE);
+	return mono_object_unbox (MONO_HANDLE_RAW (obj));
 }
 
 void

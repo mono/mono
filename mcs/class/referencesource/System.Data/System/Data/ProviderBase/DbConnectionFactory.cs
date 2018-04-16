@@ -304,11 +304,15 @@ namespace System.Data.ProviderBase {
 #endif
                 }
                 else {
+#if !MONO
+                    // DBConnection::ForceNewConnection is never set
                     if (owningConnection.ForceNewConnection) {
                         Debug.Assert(!(oldConnection is DbConnectionClosed), "Force new connection, but there is no old connection");
                         connection = connectionPool.ReplaceConnection(owningConnection, userOptions, oldConnection);
                     }
-                    else {
+                    else
+#endif
+                    {
                         if (!connectionPool.TryGetConnection(owningConnection, retry, userOptions, out connection)) {
                             return false;
                         }

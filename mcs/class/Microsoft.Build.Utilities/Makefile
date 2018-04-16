@@ -9,6 +9,7 @@ LIBRARY = Microsoft.Build.Utilities.dll
 LIBRARY_NAME = Microsoft.Build.Utilities$(NAME_SUFFIX).dll
 
 LIB_REFS = $(PARENT_PROFILE)System $(PARENT_PROFILE)System.Core $(PARENT_PROFILE)System.Xml $(XBUILD_FRAMEWORK)
+KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS =
 
 TEST_RESX_RESOURCES = Test/Microsoft.Build.Utilities/Strings.resources
@@ -29,4 +30,4 @@ CLEAN_FILES += $(TEST_RESX_RESOURCES)
 $(TEST_RESX_RESOURCES): %.resources: %.resx
 	$(RESGEN) $< || cp $@.prebuilt $@
 
-$(test_lib): $(TEST_RESX_RESOURCES)
+$(test_lib_output): $(TEST_RESX_RESOURCES) $(test_lib_dir)

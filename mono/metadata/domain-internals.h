@@ -7,11 +7,13 @@
 #ifndef __MONO_METADATA_DOMAIN_INTERNALS_H__
 #define __MONO_METADATA_DOMAIN_INTERNALS_H__
 
+#include <mono/metadata/object-forward.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/lock-tracer.h>
 #include <mono/utils/mono-codeman.h>
 #include <mono/metadata/mono-hash.h>
+#include <mono/metadata/mono-conc-hash.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-internal-hash.h>
 #include <mono/metadata/mempool-internals.h>
@@ -69,6 +71,7 @@ struct _MonoJitInfoTable
 {
 	MonoDomain	       *domain;
 	int			num_chunks;
+	int			num_valid;
 	MonoJitInfoTableChunk  *chunks [MONO_ZERO_LEN_ARRAY];
 };
 
@@ -241,6 +244,8 @@ struct _MonoJitInfo {
 	 * d.tramp_info contains additional data in this case.
 	 */
 	gboolean    is_trampoline:1;
+	/* Whenever this jit info refers to an interpreter method */
+	gboolean    is_interp:1;
 
 	/* FIXME: Embed this after the structure later*/
 	gpointer    gc_info; /* Currently only used by SGen */
@@ -336,7 +341,7 @@ struct _MonoDomain {
 	MonoGHashTable     *ldstr_table;
 	/* hashtables for Reflection handles */
 	MonoGHashTable     *type_hash;
-	MonoGHashTable     *refobject_hash;
+	MonoConcGHashTable     *refobject_hash;
 	/* maps class -> type initialization exception object */
 	MonoGHashTable    *type_init_exception_hash;
 	/* maps delegate trampoline addr -> delegate object */
@@ -355,7 +360,7 @@ struct _MonoDomain {
 	/* Protected by 'jit_code_hash_lock' */
 	MonoInternalHashTable jit_code_hash;
 	mono_mutex_t    jit_code_hash_lock;
-	int		    num_jit_info_tables;
+	int		    num_jit_info_table_duplicates;
 	MonoJitInfoTable * 
 	  volatile          jit_info_table;
 	/*
@@ -385,8 +390,6 @@ struct _MonoDomain {
 	mono_mutex_t   finalizable_objects_hash_lock;
 	/* Used when accessing 'domain_assemblies' */
 	mono_mutex_t    assemblies_lock;
-
-	GHashTable	   *method_rgctx_hash;
 
 	GHashTable	   *generic_virtual_cases;
 
@@ -599,12 +602,15 @@ void mono_reflection_cleanup_domain (MonoDomain *domain);
 
 void mono_assembly_cleanup_domain_bindings (guint32 domain_id);
 
-MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_aot, gboolean allow_trampolines);
+MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, gpointer addr, gboolean try_aot, gboolean allow_trampolines);
 
 void mono_enable_debug_domain_unload (gboolean enable);
 
 MonoReflectionAssembly *
-mono_domain_try_type_resolve_checked (MonoDomain *domain, char *name, MonoObject *tb, MonoError *error);
+mono_domain_try_type_resolve_name (MonoDomain *domain, const char *name, MonoError *error);
+
+MonoReflectionAssembly *
+mono_domain_try_type_resolve_typebuilder (MonoDomain *domain, MonoReflectionTypeBuilder *typebuilder, MonoError *error);
 
 void
 mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoThreadAttachCB attach_cb, MonoError *error);

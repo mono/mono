@@ -37,7 +37,6 @@
 
 Assembly/AssemblyInfo.cs
 Common/AFieldTemplate.cs
-Common/AssertExtensions.cs
 Common/AssociatedBar.cs
 Common/AssociatedFoo.cs
 Common/BazColumnAttributes.cs

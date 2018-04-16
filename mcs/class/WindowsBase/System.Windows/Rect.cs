@@ -24,10 +24,8 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 
-using System;
 using System.ComponentModel;
 using System.Globalization;
-using System.Text;
 using System.Windows.Converters;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -121,7 +119,14 @@ namespace System.Windows {
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			unchecked
+			{
+				var hashCode = _x.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _y.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _width.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _height.GetHashCode ();
+				return hashCode;
+			}
 		}
 
 		public bool Contains (Rect rect)
@@ -296,7 +301,37 @@ namespace System.Windows {
 
 		public static Rect Parse (string source)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			Rect value;
+			if (source.Trim () == "Empty")
+			{
+				value = Empty;
+			}
+			else
+			{
+				var tokenizer = new NumericListTokenizer (source, CultureInfo.InvariantCulture);
+				double x;
+				double y;
+				double width;
+				double height;
+				if (double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out x)
+					&& double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out y)
+					&& double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out width)
+					&& double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out height))
+				{
+					if (!tokenizer.HasNoMoreTokens ())
+					{
+						throw new InvalidOperationException ("Invalid Rect format: " + source);
+					}
+					value = new Rect (x, y, width, height);
+				}
+				else
+				{
+					throw new FormatException (string.Format ("Invalid Rect format: {0}", source));
+				}
+			}
+			return value;
 		}
 
 		public override string ToString ()
@@ -325,17 +360,12 @@ namespace System.Windows {
 			if (format == null)
 				format = string.Empty;
 
-			string separator = ",";
-			NumberFormatInfo numberFormat =
-				provider.GetFormat (typeof (NumberFormatInfo)) as NumberFormatInfo;
-			if (numberFormat != null &&
-			    numberFormat.NumberDecimalSeparator == separator)
-				separator = ";";
+			var separator = NumericListTokenizer.GetSeparator (provider);
 
-			string rectFormat = String.Format (
+			var rectFormat = string.Format (
 				"{{0:{0}}}{1}{{1:{0}}}{1}{{2:{0}}}{1}{{3:{0}}}",
 				format, separator);
-			return String.Format (provider, rectFormat,
+			return string.Format (provider, rectFormat,
 				_x, _y, _width, _height);
 		}
 

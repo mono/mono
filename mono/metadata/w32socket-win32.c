@@ -23,6 +23,7 @@
 #include "w32socket-internals.h"
 
 #include "utils/w32api.h"
+#include "utils/mono-os-wait.h"
 
 #define LOGDEBUG(...)  
 
@@ -76,10 +77,10 @@ static gboolean alertable_socket_wait (SOCKET sock, int event_bit)
 	WSAEVENT event = WSACreateEvent ();
 	if (event != WSA_INVALID_EVENT) {
 		if (WSAEventSelect (sock, event, (1 << event_bit) | FD_CLOSE) != SOCKET_ERROR) {
-			LOGDEBUG (g_message ("%06d - Calling WSAWaitForMultipleEvents () on socket %d", GetCurrentThreadId (), sock));
-			DWORD ret = WSAWaitForMultipleEvents (1, &event, TRUE, timeout, TRUE);
+			LOGDEBUG (g_message ("%06d - Calling mono_win32_wsa_wait_for_multiple_events () on socket %d", GetCurrentThreadId (), sock));
+			DWORD ret = mono_win32_wsa_wait_for_multiple_events (1, &event, TRUE, timeout, TRUE);
 			if (ret == WSA_WAIT_IO_COMPLETION) {
-				LOGDEBUG (g_message ("%06d - WSAWaitForMultipleEvents () returned WSA_WAIT_IO_COMPLETION for socket %d", GetCurrentThreadId (), sock));
+				LOGDEBUG (g_message ("%06d - mono_win32_wsa_wait_for_multiple_events () returned WSA_WAIT_IO_COMPLETION for socket %d", GetCurrentThreadId (), sock));
 				error = WSAEINTR;
 			} else if (ret == WSA_WAIT_TIMEOUT) {
 				error = WSAETIMEDOUT;
@@ -137,15 +138,19 @@ SOCKET mono_w32socket_accept (SOCKET s, struct sockaddr *addr, socklen_t *addrle
 {
 	MonoInternalThread *curthread = mono_thread_internal_current ();
 	SOCKET newsock = INVALID_SOCKET;
+	MONO_ENTER_GC_SAFE;
 	ALERTABLE_SOCKET_CALL (FD_ACCEPT_BIT, blocking, TRUE, newsock, accept, s, addr, addrlen);
+	MONO_EXIT_GC_SAFE;
 	return newsock;
 }
 
 int mono_w32socket_connect (SOCKET s, const struct sockaddr *name, int namelen, gboolean blocking)
 {
 	int ret = SOCKET_ERROR;
+	MONO_ENTER_GC_SAFE;
 	ALERTABLE_SOCKET_CALL (FD_CONNECT_BIT, blocking, FALSE, ret, connect, s, name, namelen);
 	ret = WSAGetLastError () != 0 ? SOCKET_ERROR : 0;
+	MONO_EXIT_GC_SAFE;
 	return ret;
 }
 
@@ -153,42 +158,54 @@ int mono_w32socket_recv (SOCKET s, char *buf, int len, int flags, gboolean block
 {
 	MonoInternalThread *curthread = mono_thread_internal_current ();
 	int ret = SOCKET_ERROR;
+	MONO_ENTER_GC_SAFE;
 	ALERTABLE_SOCKET_CALL (FD_READ_BIT, blocking, TRUE, ret, recv, s, buf, len, flags);
+	MONO_EXIT_GC_SAFE;
 	return ret;
 }
 
 int mono_w32socket_recvfrom (SOCKET s, char *buf, int len, int flags, struct sockaddr *from, socklen_t *fromlen, gboolean blocking)
 {
 	int ret = SOCKET_ERROR;
+	MONO_ENTER_GC_SAFE;
 	ALERTABLE_SOCKET_CALL (FD_READ_BIT, blocking, TRUE, ret, recvfrom, s, buf, len, flags, from, fromlen);
+	MONO_EXIT_GC_SAFE;
 	return ret;
 }
 
 int mono_w32socket_recvbuffers (SOCKET s, WSABUF *lpBuffers, guint32 dwBufferCount, guint32 *lpNumberOfBytesRecvd, guint32 *lpFlags, gpointer lpOverlapped, gpointer lpCompletionRoutine, gboolean blocking)
 {
 	int ret = SOCKET_ERROR;
+	MONO_ENTER_GC_SAFE;
 	ALERTABLE_SOCKET_CALL (FD_READ_BIT, blocking, TRUE, ret, WSARecv, s, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpOverlapped, lpCompletionRoutine);
+	MONO_EXIT_GC_SAFE;
 	return ret;
 }
 
 int mono_w32socket_send (SOCKET s, char *buf, int len, int flags, gboolean blocking)
 {
 	int ret = SOCKET_ERROR;
-	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, FALSE, ret, send, s, buf, len, flags);
+	MONO_ENTER_GC_SAFE;
+	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, TRUE, ret, send, s, buf, len, flags);
+	MONO_EXIT_GC_SAFE;
 	return ret;
 }
 
 int mono_w32socket_sendto (SOCKET s, const char *buf, int len, int flags, const struct sockaddr *to, int tolen, gboolean blocking)
 {
 	int ret = SOCKET_ERROR;
-	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, FALSE, ret, sendto, s, buf, len, flags, to, tolen);
+	MONO_ENTER_GC_SAFE;
+	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, TRUE, ret, sendto, s, buf, len, flags, to, tolen);
+	MONO_EXIT_GC_SAFE;
 	return ret;
 }
 
 int mono_w32socket_sendbuffers (SOCKET s, WSABUF *lpBuffers, guint32 dwBufferCount, guint32 *lpNumberOfBytesRecvd, guint32 lpFlags, gpointer lpOverlapped, gpointer lpCompletionRoutine, gboolean blocking)
 {
 	int ret = SOCKET_ERROR;
-	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, FALSE, ret, WSASend, s, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpOverlapped, lpCompletionRoutine);
+	MONO_ENTER_GC_SAFE;
+	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, TRUE, ret, WSASend, s, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpOverlapped, lpCompletionRoutine);
+	MONO_EXIT_GC_SAFE;
 	return ret;
 }
 
@@ -197,20 +214,25 @@ BOOL mono_w32socket_transmit_file (SOCKET hSocket, gpointer hFile, TRANSMIT_FILE
 {
 	LOGDEBUG (g_message ("%06d - Performing %s TransmitFile () on socket %d", GetCurrentThreadId (), blocking ? "blocking" : "non-blocking", hSocket));
 
-	int error = 0;
+	int error = 0, ret;
+
+	MONO_ENTER_GC_SAFE;
+
 	if (blocking) {
 		OVERLAPPED overlapped = { 0 };
 		overlapped.hEvent = WSACreateEvent ();
-		if (overlapped.hEvent == WSA_INVALID_EVENT)
-			return FALSE;
+		if (overlapped.hEvent == WSA_INVALID_EVENT) {
+			ret = FALSE;
+			goto done;
+		}
 		if (!TransmitFile (hSocket, hFile, 0, 0, &overlapped, lpTransmitBuffers, dwReserved)) {
 			error = WSAGetLastError ();
 			if (error == WSA_IO_PENDING) {
 				error = 0;
 				// NOTE: .NET's Socket.SendFile() doesn't honor the Socket's SendTimeout so we shouldn't either
-				DWORD ret = WaitForSingleObjectEx (overlapped.hEvent, INFINITE, TRUE);
+				DWORD ret = mono_win32_wait_for_single_object_ex (overlapped.hEvent, INFINITE, TRUE);
 				if (ret == WAIT_IO_COMPLETION) {
-					LOGDEBUG (g_message ("%06d - WaitForSingleObjectEx () returned WSA_WAIT_IO_COMPLETION for socket %d", GetCurrentThreadId (), hSocket));
+					LOGDEBUG (g_message ("%06d - mono_win32_wait_for_single_object_ex () returned WSA_WAIT_IO_COMPLETION for socket %d", GetCurrentThreadId (), hSocket));
 					error = WSAEINTR;
 				} else if (ret == WAIT_TIMEOUT) {
 					error = WSAETIMEDOUT;
@@ -230,7 +252,11 @@ BOOL mono_w32socket_transmit_file (SOCKET hSocket, gpointer hFile, TRANSMIT_FILE
 		blocking ? "blocking" : "non-blocking", hSocket, error == 0, error));
 	WSASetLastError (error);
 
-	return error == 0;
+	ret = error == 0;
+
+done:
+	MONO_EXIT_GC_SAFE;
+	return ret;
 }
 #endif /* #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
 
@@ -242,6 +268,8 @@ mono_w32socket_disconnect (SOCKET sock, gboolean reuse)
 	LPFN_TRANSMITFILE transmit_file;
 	DWORD output_bytes;
 	gint ret;
+
+	MONO_ENTER_GC_SAFE;
 
 	/* Use the SIO_GET_EXTENSION_FUNCTION_POINTER to determine
 	 * the address of the disconnect method without taking
@@ -259,36 +287,56 @@ mono_w32socket_disconnect (SOCKET sock, gboolean reuse)
 	GUID disconnect_guid = WSAID_DISCONNECTEX;
 	ret = WSAIoctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, &disconnect_guid, sizeof (GUID), &disconnect, sizeof (LPFN_DISCONNECTEX), &output_bytes, NULL, NULL);
 	if (ret == 0) {
-		if (!disconnect (sock, NULL, reuse ? TF_REUSE_SOCKET : 0, 0))
-			return WSAGetLastError ();
+		if (!disconnect (sock, NULL, reuse ? TF_REUSE_SOCKET : 0, 0)) {
+			ret = WSAGetLastError ();
+			goto done;
+		}
 
-		return 0;
+		ret = 0;
+		goto done;
 	}
 
 	GUID transmit_file_guid = WSAID_TRANSMITFILE;
 	ret = WSAIoctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER, &transmit_file_guid, sizeof (GUID), &transmit_file, sizeof (LPFN_TRANSMITFILE), &output_bytes, NULL, NULL);
 	if (ret == 0) {
-		if (!transmit_file (sock, NULL, 0, 0, NULL, NULL, TF_DISCONNECT | (reuse ? TF_REUSE_SOCKET : 0)))
-			return WSAGetLastError ();
+		if (!transmit_file (sock, NULL, 0, 0, NULL, NULL, TF_DISCONNECT | (reuse ? TF_REUSE_SOCKET : 0))) {
+			ret = WSAGetLastError ();
+			goto done;
+		}
 
-		return 0;
+		ret = 0;
+		goto done;
 	}
 
-	return ERROR_NOT_SUPPORTED;
+	ret = ERROR_NOT_SUPPORTED;
+
+done:
+	MONO_EXIT_GC_SAFE;
+	return ret;
 }
 #endif /* #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
 
 gint
 mono_w32socket_set_blocking (SOCKET sock, gboolean blocking)
 {
+	gint ret;
 	gulong nonblocking_long = !blocking;
-	return ioctlsocket (sock, FIONBIO, &nonblocking_long);
+	MONO_ENTER_GC_SAFE;
+	ret = ioctlsocket (sock, FIONBIO, &nonblocking_long);
+	MONO_EXIT_GC_SAFE;
+	return ret;
 }
 
 gint
 mono_w32socket_get_available (SOCKET sock, guint64 *amount)
 {
-	return ioctlsocket (sock, FIONREAD, (int*) amount);
+	gint ret;
+	u_long amount_long = 0;
+	MONO_ENTER_GC_SAFE;
+	ret = ioctlsocket (sock, FIONREAD, &amount_long);
+	*amount = amount_long;
+	MONO_EXIT_GC_SAFE;
+	return ret;
 }
 
 void
@@ -310,7 +358,20 @@ mono_w32socket_convert_error (gint error)
 }
 
 gboolean
-ves_icall_System_Net_Sockets_Socket_SupportPortReuse (MonoProtocolType proto)
+ves_icall_System_Net_Sockets_Socket_SupportPortReuse (MonoProtocolType proto, MonoError *error)
 {
+	error_init (error);
 	return TRUE;
+}
+
+gboolean
+mono_w32socket_duplicate (gpointer handle, gint32 targetProcessId, gpointer *duplicate_handle)
+{
+	gboolean ret;
+
+	MONO_ENTER_GC_SAFE;
+	ret = DuplicateHandle (GetCurrentProcess(), handle, GINT_TO_POINTER(targetProcessId), duplicate_handle, 0, 0, 0x00000002 /* DUPLICATE_SAME_ACCESS */);
+	MONO_EXIT_GC_SAFE;
+
+	return ret;
 }

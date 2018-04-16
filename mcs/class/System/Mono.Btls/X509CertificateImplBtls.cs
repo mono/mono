@@ -303,6 +303,8 @@ namespace Mono.Btls
 				return PKCS8.PrivateKeyInfo.DecodeRSA (bytes);
 			}
 			set {
+				if (nativePrivateKey != null)
+					nativePrivateKey.Dispose ();
 				nativePrivateKey = null;
 				FallbackImpl.PrivateKey = value;
 			}
@@ -490,6 +492,7 @@ namespace Mono.Btls
 				x509 = null;
 			}
 			if (nativePrivateKey != null) {
+				nativePrivateKey.Dispose ();
 				nativePrivateKey = null;
 			}
 			subjectName = null;

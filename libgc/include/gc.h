@@ -93,7 +93,6 @@ GC_API GC_PTR (*GC_oom_fn) GC_PROTO((size_t bytes_requested));
 			/* pointer to a previously allocated heap 	*/
 			/* object.					*/
 
-// Keep somewhat in sync with mono/metadata/profiler.h:enum MonoGCEvent
 typedef enum {
 	GC_EVENT_START,
 	GC_EVENT_MARK_START,
@@ -835,6 +834,18 @@ GC_API GC_word GC_set_free_space_divisor GC_PROTO((GC_word value));
 typedef GC_PTR (*GC_fn_type) GC_PROTO((GC_PTR client_data));
 GC_API GC_PTR GC_call_with_alloc_lock
         	GC_PROTO((GC_fn_type fn, GC_PTR client_data));
+
+/*
+ * These are similar to GC_do_blocking () in upstream bdwgc. The design is
+ * simpler in that there is no distinction between active and inactive stack
+ * frames; instead, while a thread is in blocking state, it promises to not
+ * interact with the GC at all, and to not keep any pointers to GC memory
+ * around from before entering blocking state. Additionally, these can be
+ * called unbalanced (they simply set a flag internally).
+ */
+GC_API void GC_start_blocking GC_PROTO((void));
+
+GC_API void GC_end_blocking GC_PROTO((void));
 
 /* The following routines are primarily intended for use with a 	*/
 /* preprocessor which inserts calls to check C pointer arithmetic.	*/

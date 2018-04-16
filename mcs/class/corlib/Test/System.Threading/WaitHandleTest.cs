@@ -28,6 +28,7 @@
 
 
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -316,6 +317,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void InterrupedWaitAny ()
 		{
 			using (var m1 = new Mutex (true)) {
@@ -344,6 +346,7 @@ namespace MonoTests.System.Threading {
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void InterrupedWaitAll ()
 		{
 			using (var m1 = new Mutex (true)) {
@@ -372,6 +375,7 @@ namespace MonoTests.System.Threading {
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void InterrupedWaitOne ()
 		{
 			using (var m1 = new Mutex (true)) {
@@ -397,6 +401,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitOneWithAbandonedMutex ()
 		{
 			using (var m = new Mutex (false)) {
@@ -431,6 +436,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitOneWithAbandonedMutexAndMultipleThreads ()
 		{
 			using (var m = new Mutex (true)) {
@@ -464,6 +470,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitAnyWithSecondMutexAbandoned ()
 		{
 			using (var m1 = new Mutex (false)) {
@@ -524,6 +531,7 @@ namespace MonoTests.System.Threading {
 
 		[Test]
 		[ExpectedException (typeof (AbandonedMutexException))]
+		[Category ("MultiThreaded")]
 		public void WaitAllWithOneAbandonedMutex ()
 		{
 			using (var m1 = new Mutex (false)) {
@@ -540,6 +548,7 @@ namespace MonoTests.System.Threading {
 
 #if MONO_FEATURE_THREAD_SUSPEND_RESUME
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitOneWithTimeoutAndSpuriousWake ()
 		{
 			/* This is to test that WaitEvent.WaitOne is not going to wait largely
@@ -558,8 +567,8 @@ namespace MonoTests.System.Threading {
 
 				Thread.Sleep (10); // wait a bit so we enter mre.WaitOne
 
-				DateTime end = DateTime.Now.AddMilliseconds (500);
-				while (DateTime.Now < end) {
+				var sw = Stopwatch.StartNew ();
+				while (sw.ElapsedMilliseconds <= 500) {
 					thread.Suspend ();
 					thread.Resume ();
 				}
@@ -569,6 +578,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitAnyWithTimeoutAndSpuriousWake ()
 		{
 			/* This is to test that WaitEvent.WaitAny is not going to wait largely
@@ -588,8 +598,8 @@ namespace MonoTests.System.Threading {
 
 				Thread.Sleep (10); // wait a bit so we enter WaitHandle.WaitAny ({mre1, mre2})
 
-				DateTime end = DateTime.Now.AddMilliseconds (500);
-				while (DateTime.Now < end) {
+				var sw = Stopwatch.StartNew ();
+				while (sw.ElapsedMilliseconds <= 500) {
 					thread.Suspend ();
 					thread.Resume ();
 				}
@@ -599,6 +609,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitAllWithTimeoutAndSpuriousWake ()
 		{
 			/* This is to test that WaitEvent.WaitAll is not going to wait largely
@@ -618,8 +629,8 @@ namespace MonoTests.System.Threading {
 
 				Thread.Sleep (10); // wait a bit so we enter WaitHandle.WaitAll ({mre1, mre2})
 
-				DateTime end = DateTime.Now.AddMilliseconds (500);
-				while (DateTime.Now < end) {
+				var sw = Stopwatch.StartNew ();
+				while (sw.ElapsedMilliseconds <= 500) {
 					thread.Suspend ();
 					thread.Resume ();
 				}
@@ -628,6 +639,19 @@ namespace MonoTests.System.Threading {
 			}
 		}
 #endif // MONO_FEATURE_THREAD_SUSPEND_RESUME
+
+		[Test]
+		public static void SignalAndWait()
+		{
+			using (var eventToSignal = new AutoResetEvent (false))
+			using (var eventToWait = new AutoResetEvent (false))
+			{
+				eventToWait.Set ();
+
+				Assert.IsTrue (WaitHandle.SignalAndWait (eventToSignal, eventToWait), "#1");
+				Assert.IsTrue (eventToSignal.WaitOne (), "#2");
+			}
+		}
 	}
 }
 

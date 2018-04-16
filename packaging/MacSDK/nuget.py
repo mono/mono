@@ -1,18 +1,26 @@
+import fileinput
 
-class NuGetPackage(GitHubPackage):
+
+class NuGetBinary (Package):
 
     def __init__(self):
-        GitHubPackage.__init__(self,
-                               'mono', 'nuget',
-                               '2.12.0',
-                               '9e2d2c1cc09d2a40eeb72e8c5db789e3b9bf2586',
-                               configure='')
+        Package.__init__(self, name='NuGet', version='4.3.0', sources=[
+                         'https://dist.nuget.org/win-x86-commandline/v%{version}/nuget.exe'])
 
     def build(self):
-        self.sh('%{make} update_submodules')
-        self.sh('%{make} PREFIX=%{package_prefix}')
+        pass
 
     def install(self):
-        self.sh('%{makeinstall} PREFIX=%{staged_prefix}')
+        source = os.path.join(self.workspace, 'nuget.exe')
+        target = os.path.join(self.staged_prefix, 'lib/mono/nuget/nuget.exe')
+        ensure_dir(os.path.dirname(target))
+        shutil.move(source, target)
 
-NuGetPackage()
+        launcher = os.path.join(self.staged_prefix, "bin/nuget")
+        ensure_dir(os.path.dirname(launcher))
+        with open(launcher, "w") as output:
+            output.write("#!/bin/sh\n")
+            output.write(
+                'exec {0}/bin/mono $MONO_OPTIONS {1} "$@"\n'.format(self.staged_prefix, target))
+        os.chmod(launcher, 0o755)
+NuGetBinary()

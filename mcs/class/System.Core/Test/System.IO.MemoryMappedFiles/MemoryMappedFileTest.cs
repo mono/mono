@@ -37,6 +37,7 @@ using NUnit.Framework;
 namespace MonoTests.System.IO.MemoryMappedFiles {
 
 	[TestFixture]
+	[Category("NotWasm")]
 	public class MemoryMappedFileTest {
 
 		void AssertThrows<ExType> (Action del) where ExType : Exception {
@@ -301,9 +302,12 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			var name = MkNamedMapping ();
 			using (var m0 = MemoryMappedFile.CreateNew(name, 4096, MemoryMappedFileAccess.ReadWrite)) {
 				using (var m1 = MemoryMappedFile.CreateOrOpen (name, 4096, MemoryMappedFileAccess.ReadWrite)) {
-					using (MemoryMappedViewAccessor v0 = m0.CreateViewAccessor (), v1 = m1.CreateViewAccessor ()) {
-						v0.Write (10, 0x12345);
-						Assert.AreEqual (0x12345, v1.ReadInt32 (10));
+					using (var m2 = MemoryMappedFile.OpenExisting (name)) {
+						using (MemoryMappedViewAccessor v0 = m0.CreateViewAccessor (), v1 = m1.CreateViewAccessor (), v2 = m2.CreateViewAccessor ()) {
+							v0.Write (10, 0x12345);
+							Assert.AreEqual (0x12345, v1.ReadInt32 (10));
+							Assert.AreEqual (0x12345, v2.ReadInt32 (10));
+						}
 					}
 				}
 			}
@@ -451,5 +455,28 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			}
 		}
 
+		[Test]
+		public void OpenSameFileMultipleTimes ()
+		{
+			// See bug 56493 - https://bugzilla.xamarin.com/show_bug.cgi?id=56493
+			for (var iteration = 0; iteration < 5; iteration++) {
+				using (var mmf = MemoryMappedFile.CreateFromFile(fname, FileMode.Open)) {
+					using (var accessor = mmf.CreateViewAccessor(0, 5)) {
+						var a = new byte [5];
+						accessor.ReadArray (0, a, 0, a.Length);
+						var s = new string (Array.ConvertAll (a, b => (char) b));
+						Assert.AreEqual ("Hello", s);
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void OpenExistingWithNoExistingThrows()
+		{
+			Assert.Throws<FileNotFoundException>(() => {
+				MemoryMappedFile.OpenExisting (MkNamedMapping ());
+			});
+		}
 	}
 }

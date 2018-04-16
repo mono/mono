@@ -9,6 +9,7 @@
 
 empty :=
 space := $(empty) $(empty)
+_FILTER_OUT = $(foreach x,$(2),$(if $(findstring $(1),$(x)),,$(x)))
 
 # given $(thisdir), we compute the path to the top directory
 #
@@ -22,11 +23,15 @@ VERSION = 0.93
 
 Q=$(if $(V),,@)
 # echo -e "\\t" does not work on some systems, so use 5 spaces
-Q_MCS=$(if $(V),,@echo "$(if $(MCS_MODE),MCS,CSC)     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
-Q_AOT=$(if $(V),,@echo "AOT     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
+Q_MCS=$(if $(V),,@echo "$(if $(MCS_MODE),MCS,CSC)     [$(intermediate)$(PROFILE_DIRECTORY)] $(notdir $(@))";)
+Q_AOT=$(if $(V),,@echo "AOT     [$(intermediate)$(PROFILE_DIRECTORY)] $(notdir $(@))";)
 
 ifndef BUILD_TOOLS_PROFILE
+ifeq ($(PROFILE),basic)
+BUILD_TOOLS_PROFILE = basic
+else
 BUILD_TOOLS_PROFILE = build
+endif
 endif
 
 USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
@@ -43,20 +48,20 @@ INSTALL_BIN = $(INSTALL) -c -m 755
 INSTALL_LIB = $(INSTALL_BIN)
 MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
 INTERNAL_MBAS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/mbas/mbas.exe
-INTERNAL_ILASM = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/ilasm.exe
 INTERNAL_CSC_LOCATION = $(CSC_LOCATION)
 
 # Using CSC_SDK_PATH_DISABLED for sanity check that all references have path specified
 INTERNAL_CSC = CSC_SDK_PATH_DISABLED= $(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $(INTERNAL_CSC_LOCATION)
 
-RESGEN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(RESGEN_EXE) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resgen.exe
+RESGEN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resgen.exe
 STRING_REPLACER = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/cil-stringreplacer.exe
+ILASM = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/ilasm.exe
+
 
 depsdir = $(topdir)/build/deps
 
 # Make sure these propagate if set manually
 
-export PLATFORM
 export PROFILE
 export MCS
 export MCS_FLAGS
@@ -75,31 +80,18 @@ export RESGEN
 default: all
 
 # Get initial configuration. pre-config is so that the builder can
-# override PLATFORM or PROFILE
+# override BUILD_PLATFORM or PROFILE
 
 include $(topdir)/build/config-default.make
 -include $(topdir)/build/pre-config.make
 -include $(topdir)/build/config.make
 
-# Default PLATFORM and PROFILE if they're not already defined.
-
-ifndef PLATFORM
-ifeq ($(OS),Windows_NT)
-ifneq ($(V),)
-$(info *** Assuming PLATFORM is 'win32'.)
-endif
-PLATFORM = win32
-else
-ifneq ($(V),)
-$(info *** Assuming PLATFORM is 'linux'.)
-endif
-PLATFORM = linux
-endif
-endif
-
 # Platform config
 
-include $(topdir)/build/platforms/$(PLATFORM).make
+include $(topdir)/build/platforms/$(BUILD_PLATFORM).make
+
+PROFILE_PLATFORM = $(if $(PLATFORMS),$(if $(filter $(PLATFORMS),$(HOST_PLATFORM)),$(HOST_PLATFORM),$(error Unknown platform "$(HOST_PLATFORM)" for profile "$(PROFILE)")))
+PROFILE_DIRECTORY = $(PROFILE)$(if $(PROFILE_PLATFORM),-$(PROFILE_PLATFORM))
 
 ifdef PLATFORM_CORLIB
 corlib = $(PLATFORM_CORLIB)
@@ -169,7 +161,7 @@ gacutil = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/gacutil.exe
 GACUTIL = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(gacutil)
 endif
 
-STD_TARGETS = test run-test run-test-ondotnet clean install uninstall doc-update
+STD_TARGETS = test run-test run-xunit-test run-test-ondotnet clean install uninstall doc-update
 
 $(STD_TARGETS): %: do-%
 
@@ -185,11 +177,14 @@ do-all-aot:
 ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
 
 AOT_PROFILE_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/*)))))
+AOT_PROFILE_TESTS := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/tests/*)))))
+AOT_PROFILE_ASSEMBLIES_OUT := $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
+AOT_PROFILE_TESTS_OUT := $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_TESTS))
 
 # This can run in parallel
 .PHONY: aot-all-profile
 ifdef AOT_BUILD_FLAGS
-aot-all-profile: $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
+aot-all-profile: $(AOT_PROFILE_ASSEMBLIES_OUT) $(AOT_PROFILE_TESTS_OUT)
 else
 aot-all-profile:
 	echo AOT_BUILD_FLAGS not set, skipping AOT.
@@ -197,12 +192,12 @@ endif
 
 %.dll$(PLATFORM_AOT_SUFFIX): %.dll
 	@ mkdir -p $<_bitcode_tmp
-	$(Q_AOT) MONO_PATH="$(dir $<)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
+	$(Q_AOT) MONO_PATH="$(topdir)/class/lib/$(PROFILE)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
 	@ rm -rf $<_bitcode_tmp
 
 %.exe$(PLATFORM_AOT_SUFFIX): %.exe
 	@ mkdir -p $<_bitcode_tmp
-	$(Q_AOT) MONO_PATH="$(dir $<)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
+	$(Q_AOT) MONO_PATH="$(topdir)/class/lib/$(PROFILE)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
 	@ rm -rf $<_bitcode_tmp
 
 endif #ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
@@ -224,36 +219,33 @@ csproj: do-csproj
 # be listed _before_ including rules.make.  However, the default
 # SUBDIRS list can come after, so don't use the eager := syntax when
 # using the defaults.
-PROFILE_SUBDIRS := $($(PROFILE)_SUBDIRS)
-ifndef PROFILE_SUBDIRS
-PROFILE_SUBDIRS = $(SUBDIRS)
-endif
+PROFILE_SUBDIRS = $(or $($(PROFILE)_SUBDIRS),$(SUBDIRS))
 
 # These subdirs can be built in parallel
-PROFILE_PARALLEL_SUBDIRS := $($(PROFILE)_PARALLEL_SUBDIRS)
-ifndef PROFILE_PARALLEL_SUBDIRS
-PROFILE_PARALLEL_SUBDIRS = $(PARALLEL_SUBDIRS)
-endif
+PROFILE_PARALLEL_SUBDIRS = $(or $($(PROFILE)_PARALLEL_SUBDIRS),$(PARALLEL_SUBDIRS))
 
 ifndef FRAMEWORK_VERSION_MAJOR
 FRAMEWORK_VERSION_MAJOR = $(basename $(FRAMEWORK_VERSION))
 endif
 
 %-recursive:
-	@set . $$MAKEFLAGS; final_exit=:; \
+	@set . $$MAKEFLAGS; \
 	case $$2 in --unix) shift ;; esac; \
 	case $$2 in *=*) dk="exit 1" ;; *k*) dk=: ;; *) dk="exit 1" ;; esac; \
-	list='$(PROFILE_SUBDIRS)'; for d in $$list ; do \
-	    (cd $$d && $(MAKE) $*) || { final_exit="exit 1"; $$dk; } ; \
-	done; \
-	if [ $* = "all" -a -n "$(PROFILE_PARALLEL_SUBDIRS)" ]; then \
-		$(MAKE) do-all-parallel ENABLE_PARALLEL_SUBDIR_BUILD=1 || { final_exit="exit 1"; $$dk; } ; \
-	else \
-		list='$(PROFILE_PARALLEL_SUBDIRS)'; for d in $$list ; do \
-		    (cd $$d && $(MAKE) $*) || { final_exit="exit 1"; $$dk; } ; \
-		done; \
-	fi; \
+	final_exit=:; \
+	$(foreach subdir,$(PROFILE_SUBDIRS),$(MAKE) -C $(subdir) $* || { final_exit="exit 1"; $$dk; };) \
+	$(if $(PROFILE_PARALLEL_SUBDIRS), \
+		$(if $(filter $*,all), \
+			$(MAKE) $(PROFILE_PARALLEL_SUBDIRS) ENABLE_PARALLEL_SUBDIR_BUILD=1 || { final_exit="exit 1"; $$dk; };, \
+			$(foreach subdir,$(PROFILE_PARALLEL_SUBDIRS),$(MAKE) -C $(subdir) $* || { final_exit="exit 1"; $$dk; };))) \
 	$$final_exit
+
+ifdef ENABLE_PARALLEL_SUBDIR_BUILD
+.PHONY: $(PROFILE_PARALLEL_SUBDIRS)
+$(PROFILE_PARALLEL_SUBDIRS):
+	@set . $$MAKEFLAGS; \
+	$(MAKE) -C $@ all
+endif
 
 #
 # Parallel build support
@@ -287,16 +279,6 @@ clean-dep-dir:
 
 clean-local: clean-dep-dir
 
-ifdef ENABLE_PARALLEL_SUBDIR_BUILD
-.PHONY: do-all-parallel $(PROFILE_PARALLEL_SUBDIRS)
-
-do-all-parallel: $(PROFILE_PARALLEL_SUBDIRS)
-
-$(PROFILE_PARALLEL_SUBDIRS):
-	@set . $$MAKEFLAGS; \
-	cd $@ && $(MAKE)
-endif
-
 ifndef DIST_SUBDIRS
 DIST_SUBDIRS = $(SUBDIRS) $(DIST_ONLY_SUBDIRS)
 endif
@@ -306,6 +288,15 @@ dist-recursive: dist-local
 	    (cd $$d && $(MAKE) distdir=$$reldir/$$d $@) || exit 1 ; \
 	done
 
+# function to dist files in groups of 100 entries to make sure we don't exceed shell char limits
+define distfilesingroups
+for f in $(wordlist 1, 100, $(1)) ; do \
+	dest=`dirname "$(distdir)/$$f"` ; \
+	$(MKINSTALLDIRS) $$dest && cp -p "$$f" $$dest || exit 1 ; \
+done
+$(if $(word 101, $(1)), $(call distfilesingroups, $(wordlist 101, $(words $(1)), $(1))))
+endef
+
 # The following target can be used like
 #
 #   dist-local: dist-default
@@ -314,17 +305,11 @@ dist-recursive: dist-local
 # Notes:
 #  1. we invert the test here to not end in an error if ChangeLog doesn't exist.
 #  2. we error out if we try to dist a nonexistant file.
-#  3. we pick up Makefile, makefile, or GNUmakefile.
+#  3. we pick up Makefile
 dist-default:
 	-mkdir -p $(distdir)
 	test '!' -f ChangeLog || cp ChangeLog $(distdir)
-	if test -f Makefile; then m=M; fi; \
-	if test -f makefile; then m=m; fi; \
-	if test -f GNUmakefile; then m=GNUm; fi; \
-	for f in $${m}akefile $(DISTFILES) ; do \
-	    dest=`dirname "$(distdir)/$$f"` ; \
-	    $(MKINSTALLDIRS) $$dest && cp -p "$$f" $$dest || exit 1 ; \
-	done
+	$(call distfilesingroups, Makefile $(DISTFILES))
 	if test -d Documentation ; then \
 		find . -name '*.xml' > .files ; \
 		tar cTf .files - | (cd $(distdir); tar xf -) ; \
@@ -337,6 +322,8 @@ dist-default:
 
 ## Documentation stuff
 
-Q_MDOC =$(if $(V),,@echo "MDOC    [$(PROFILE)] $(notdir $(@))";)
+Q_MDOC =$(if $(V),,@echo "MDOC    [$(PROFILE_DIRECTORY)] $(notdir $(@))";)
 MDOC   =$(Q_MDOC) MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe
 
+Q_MDOC_UP=$(if $(V),,@echo "MDOC-UP [$(PROFILE_DIRECTORY)] $(notdir $(@))";)
+MDOC_UP  =$(Q_MDOC_UP) MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe update --delete -o Documentation/en

@@ -482,6 +482,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
+        [Ignore(".NET DOM implementation does not match W3C DOM specification.")]
         public void core0009A()
         {
             string computedValue = "";//0;
@@ -595,6 +596,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
+        [Ignore(".NET DOM implementation does not match W3C DOM specification.")]
         public void core0011A()
         {
             string computedValue = "";//"";

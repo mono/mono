@@ -29,7 +29,7 @@ using System.Net;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
-using ObjCRuntime;
+using ObjCRuntimeInternal;
 
 namespace Mono.Net
 {

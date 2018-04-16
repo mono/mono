@@ -30,10 +30,6 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-#if MONOTOUCH
-using MonoTouch;
-#endif
-
 namespace Mono.Btls
 {
 	delegate int MonoBtlsVerifyCallback (MonoBtlsX509StoreCtx ctx);
@@ -51,6 +47,7 @@ namespace Mono.Btls
 			protected override bool ReleaseHandle ()
 			{
 				mono_btls_ssl_destroy (handle);
+				handle = IntPtr.Zero;
 				return true;
 			}
 		}
@@ -81,6 +78,12 @@ namespace Mono.Btls
 
 		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_ssl_close (IntPtr handle);
+
+		[DllImport (BTLS_DYLIB)]
+		extern static int mono_btls_ssl_shutdown (IntPtr handle);
+
+		[DllImport (BTLS_DYLIB)]
+		extern static void mono_btls_ssl_set_quiet_shutdown (IntPtr handle, int mode);
 
 		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_ssl_set_bio (IntPtr handle, IntPtr bio);
@@ -127,6 +130,12 @@ namespace Mono.Btls
 		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_ssl_get_server_name (IntPtr handle);
 
+		[DllImport (BTLS_DYLIB)]
+		extern static void mono_btls_ssl_set_renegotiate_mode (IntPtr handle, int mode);
+
+		[DllImport (BTLS_DYLIB)]
+		extern static int mono_btls_ssl_renegotiate_pending (IntPtr handle);
+
 		static BoringSslHandle Create_internal (MonoBtlsSslCtx ctx)
 		{
 			var handle = mono_btls_ssl_new (ctx.Handle.DangerousGetHandle ());
@@ -135,6 +144,7 @@ namespace Mono.Btls
 			return new BoringSslHandle (handle);
 		}
 
+		MonoBtlsBio bio;
 		PrintErrorsCallbackFunc printErrorsFunc;
 		IntPtr printErrorsFuncPtr;
 
@@ -152,6 +162,7 @@ namespace Mono.Btls
 		public void SetBio (MonoBtlsBio bio)
 		{
 			CheckThrow ();
+			this.bio = bio;
 			mono_btls_ssl_set_bio (
 				Handle.DangerousGetHandle (),
 				bio.Handle.DangerousGetHandle ());
@@ -168,18 +179,17 @@ namespace Mono.Btls
 				errors = null;
 			}
 
-			if (errors != null) {
-				Console.Error.WriteLine ("ERROR: {0} failed: {1}", callerName, errors);
+			if (errors != null)
 				throw new MonoBtlsException ("{0} failed: {1}.", callerName, errors);
-			} else {
-				Console.Error.WriteLine ("ERROR: {0} failed.", callerName);
+			else
 				throw new MonoBtlsException ("{0} failed.", callerName);
-			}
 		}
 
 		MonoBtlsSslError GetError (int ret_code)
 		{
 			CheckThrow ();
+			bio.CheckLastError ();
+
 			var error = mono_btls_ssl_get_error (
 				Handle.DangerousGetHandle (), ret_code);
 			return (MonoBtlsSslError)error;
@@ -250,9 +260,7 @@ namespace Mono.Btls
 
 		delegate int PrintErrorsCallbackFunc (IntPtr str, IntPtr len, IntPtr ctx);
 
-#if MONOTOUCH
-		[MonoPInvokeCallback (typeof (PrintErrorsCallbackFunc))]
-#endif
+		[Mono.Util.MonoPInvokeCallback (typeof (PrintErrorsCallbackFunc))]
 		static int PrintErrorsCallback (IntPtr str, IntPtr len, IntPtr ctx)
 		{
 			var sb = (StringBuilder)GCHandle.FromIntPtr (ctx).Target;
@@ -293,15 +301,20 @@ namespace Mono.Btls
 			var ret = mono_btls_ssl_read (
 				Handle.DangerousGetHandle (), data, dataSize);
 
-			if (ret >= 0) {
+			if (ret > 0) {
 				dataSize = ret;
 				return MonoBtlsSslError.None;
 			}
 
-			var error = mono_btls_ssl_get_error (
-				Handle.DangerousGetHandle (), ret);
+			var error = GetError (ret);
+			if (ret == 0 && error == MonoBtlsSslError.Syscall) {
+				// End-of-stream
+				dataSize = 0;
+				return MonoBtlsSslError.None;
+			}
+
 			dataSize = 0;
-			return (MonoBtlsSslError)error;
+			return error;
 		}
 
 		public MonoBtlsSslError Write (IntPtr data, ref int dataSize)
@@ -422,9 +435,35 @@ namespace Mono.Btls
 			return Marshal.PtrToStringAnsi (namePtr);
 		}
 
+		public void Shutdown ()
+		{
+			CheckThrow ();
+			var ret = mono_btls_ssl_shutdown (Handle.DangerousGetHandle ());
+			if (ret < 0)
+				throw ThrowError ();
+		}
+
+		public void SetQuietShutdown ()
+		{
+			CheckThrow ();
+			mono_btls_ssl_set_quiet_shutdown (Handle.DangerousGetHandle (), 1);
+		}
+
 		protected override void Close ()
 		{
-			mono_btls_ssl_close (Handle.DangerousGetHandle ());
+			if (!Handle.IsInvalid)
+				mono_btls_ssl_close (Handle.DangerousGetHandle ());
+		}
+
+		public void SetRenegotiateMode (MonoBtlsSslRenegotiateMode mode)
+		{
+			CheckThrow ();
+			mono_btls_ssl_set_renegotiate_mode (Handle.DangerousGetHandle (), (int)mode);
+		}
+
+		public bool RenegotiatePending ()
+		{
+			return mono_btls_ssl_renegotiate_pending (Handle.DangerousGetHandle ()) != 0;
 		}
 	}
 }

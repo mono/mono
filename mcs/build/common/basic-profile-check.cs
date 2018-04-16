@@ -1,14 +1,13 @@
 using System;
 
-class X {
-	// Check installed compiler
-	static void Generic<T> ()
-	{
-		// we use 'var' all around in the compiler sources
-		var x = new X ();
-	}
-	
-	void DefaultParametersAvailable (int i = 3)
+interface II
+{
+
+}
+
+class X
+{
+	static void Foo (II a = default (II), II b = default, II c = (II) null)
 	{
 	}
 
@@ -40,7 +39,14 @@ class X {
 		if (!Version.TryParse (field.GetValue (null) as string, out version))
 			return 4;
 
-		if (version < new Version (4, 9))
+		Version min_mono_version;
+#if __MonoCS__
+		min_mono_version = new Version (5, 13);
+#else
+		min_mono_version = new Version (5, 10);
+#endif
+
+		if (version < min_mono_version)
 			return 5;
 
 		return 0;
