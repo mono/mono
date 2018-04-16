@@ -1787,10 +1787,8 @@ namespace System.Drawing
 		[MonoTODO]
 		public static IntPtr GetHalftonePalette ()
 		{
-            var bmp = new Bitmap(10, 10, PixelFormat.Format8bppIndexed);
-            var ans = bmp.Palette.getGDIPalette();
-            return ans;
-        }
+			throw new NotImplementedException ();
+		}
 
 		public IntPtr GetHdc ()
 		{
