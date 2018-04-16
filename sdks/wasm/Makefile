@@ -17,7 +17,8 @@ MINI_PATH=$(TOP)/mono/mini
 BCL_ASSEMBLIES= \
         mscorlib.dll    \
         System.dll      \
-        System.Core.dll
+        System.Core.dll	\
+        Mono.Security.dll
 
 DEPS_ASSEMBLIES= \
         nunitlite.dll
