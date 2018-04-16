@@ -3,6 +3,7 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">net_4_x</Platform>
     <ProjectGuid>{8E30FC6B-D06F-495E-A5C9-18B40575FD60}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,436</NoWarn>
@@ -62,6 +63,16 @@
     <OutputPath>./../../class/lib/monotouch_tv_runtime</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv_runtime</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;MONOTOUCH_TV;COREFX;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_APPLETLS;ONLY_APPLETLS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO;COREFX;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;FEATURE_COMPILED;MONO_FEATURE_BTLS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;COREFX;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_BTLS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
@@ -1794,6 +1805,134 @@
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpDataStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+    <Compile Include="Mono.Http\NtlmClient.cs" />
+    <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
+    <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
+    <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
+    <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
+    <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
+    <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
+    <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
+    <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
+    <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
+    <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+    <Compile Include="System.Net.Mail\SmtpClient.cs" />
+    <Compile Include="System.Net.Security\SslStream.cs" />
+    <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\EndPointListener.cs" />
+    <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\HttpConnection.cs" />
+    <Compile Include="System.Net\HttpListener.cs" />
+    <Compile Include="System.Net\HttpListener.Mono.cs" />
+    <Compile Include="System.Net\HttpListenerBasicIdentity.cs" />
+    <Compile Include="System.Net\HttpListenerContext.cs" />
+    <Compile Include="System.Net\HttpListenerPrefixCollection.cs" />
+    <Compile Include="System.Net\HttpListenerRequest.cs" />
+    <Compile Include="System.Net\HttpListenerResponse.cs" />
+    <Compile Include="System.Net\HttpListenerTimeoutManager.cs" />
+    <Compile Include="System.Net\HttpWebRequest.cs" />
+    <Compile Include="System.Net\HttpWebResponse.cs" />
+    <Compile Include="System.Net\ListenerAsyncResult.cs" />
+    <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\NtlmClient.cs" />
+    <Compile Include="System.Net\ResponseStream.cs" />
+    <Compile Include="System.Net\ServicePoint.cs" />
+    <Compile Include="System.Net\ServicePointManager.cs" />
+    <Compile Include="System.Net\ServicePointManager.extra.cs" />
+    <Compile Include="System.Net\ServicePointScheduler.cs" />
+    <Compile Include="System.Net\WebCompletionSource.cs" />
+    <Compile Include="System.Net\WebConnection.cs" />
+    <Compile Include="System.Net\WebConnectionStream.cs" />
+    <Compile Include="System.Net\WebConnectionTunnel.cs" />
+    <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebRequestStream.cs" />
+    <Compile Include="System.Net\WebResponseStream.cs" />
+    <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpDataStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
+    <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+    <Compile Include="Mono.Http\NtlmClient.cs" />
+    <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
+    <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
+    <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
+    <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
+    <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
+    <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
+    <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
+    <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
+    <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
+    <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+    <Compile Include="System.Net.Mail\SmtpClient.cs" />
+    <Compile Include="System.Net.Security\SslStream.cs" />
+    <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\EndPointListener.cs" />
+    <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\HttpConnection.cs" />
+    <Compile Include="System.Net\HttpListener.cs" />
+    <Compile Include="System.Net\HttpListener.Mono.cs" />
+    <Compile Include="System.Net\HttpListenerBasicIdentity.cs" />
+    <Compile Include="System.Net\HttpListenerContext.cs" />
+    <Compile Include="System.Net\HttpListenerPrefixCollection.cs" />
+    <Compile Include="System.Net\HttpListenerRequest.cs" />
+    <Compile Include="System.Net\HttpListenerResponse.cs" />
+    <Compile Include="System.Net\HttpListenerTimeoutManager.cs" />
+    <Compile Include="System.Net\HttpWebRequest.cs" />
+    <Compile Include="System.Net\HttpWebResponse.cs" />
+    <Compile Include="System.Net\ListenerAsyncResult.cs" />
+    <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\NtlmClient.cs" />
+    <Compile Include="System.Net\ResponseStream.cs" />
+    <Compile Include="System.Net\ServicePoint.cs" />
+    <Compile Include="System.Net\ServicePointManager.cs" />
+    <Compile Include="System.Net\ServicePointManager.extra.cs" />
+    <Compile Include="System.Net\ServicePointScheduler.cs" />
+    <Compile Include="System.Net\WebCompletionSource.cs" />
+    <Compile Include="System.Net\WebConnection.cs" />
+    <Compile Include="System.Net\WebConnectionStream.cs" />
+    <Compile Include="System.Net\WebConnectionTunnel.cs" />
+    <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebRequestStream.cs" />
+    <Compile Include="System.Net\WebResponseStream.cs" />
+    <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
@@ -2658,6 +2797,44 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
+      <Aliases>MonoSecurity</Aliases>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_hybrid\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
+      <Aliases>MonoSecurity</Aliases>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll</HintPath>
