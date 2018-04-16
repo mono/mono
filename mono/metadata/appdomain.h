@@ -26,6 +26,7 @@ typedef struct _MonoAppDomain MonoAppDomain;
 typedef struct _MonoJitInfo MonoJitInfo;
 
 typedef void (*MonoDomainFunc) (MonoDomain *domain, void* user_data);
+typedef void(*MonoDomainAssemblyFunc) (MonoAssembly *assembly, void* user_data);
 
 MONO_API MonoDomain*
 mono_init                  (const char *filename);
@@ -107,6 +108,9 @@ mono_domain_from_appdomain (MonoAppDomain *appdomain);
 
 MONO_API void
 mono_domain_foreach        (MonoDomainFunc func, void* user_data);
+
+MONO_API void
+mono_domain_assembly_foreach (MonoDomain* domain, MonoDomainAssemblyFunc func, void* user_data);
 
 MONO_API MonoAssembly *
 mono_domain_assembly_open  (MonoDomain *domain, const char *name);
