@@ -185,6 +185,8 @@ collect_backtrace (gpointer out_data[])
 static char*
 translate_backtrace (gpointer native_trace[], int size)
 {
+	if (size == 0)
+		return g_strdup ("");
 	char **names = backtrace_symbols (native_trace, size);
 	GString* bt = g_string_sized_new (100);
 
@@ -227,15 +229,16 @@ translate_backtrace (gpointer native_trace[], int size)
 #endif
 
 void
-checked_build_thread_transition (const char *transition, void *info, int from_state, int suspend_count, int next_state, int suspend_count_delta)
+checked_build_thread_transition (const char *transition, void *info, int from_state, int suspend_count, int next_state, int suspend_count_delta, gboolean capture_backtrace)
 {
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_THREAD))
 		return;
 
-	CheckState *state = get_state ();
 	/* We currently don't record external changes as those are hard to reason about. */
 	if (!mono_thread_info_is_current (info))
 		return;
+
+	CheckState *state = get_state ();
 
 	guint16 cur = ringbuf_push (&state->ringbuf, MAX_TRANSITIONS);
 
@@ -245,7 +248,10 @@ checked_build_thread_transition (const char *transition, void *info, int from_st
 	t->next_state = next_state;
 	t->suspend_count = suspend_count;
 	t->suspend_count_delta = suspend_count_delta;
-	t->size = collect_backtrace (t->backtrace);
+	if (capture_backtrace)
+		t->size = collect_backtrace (t->backtrace);
+	else
+		t->size = 0;
 }
 
 void
