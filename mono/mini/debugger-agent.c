@@ -119,6 +119,9 @@
 
 #include "debugger-agent.h"
 
+Il2CppMonoDefaults il2cpp_mono_defaults;
+Il2CppMonoDebugOptions il2cpp_mono_debug_options;
+
 #ifdef RUNTIME_IL2CPP
 const Il2CppDebuggerMetadataRegistration *g_il2cpp_metadata;
 #endif

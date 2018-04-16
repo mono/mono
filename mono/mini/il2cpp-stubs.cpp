@@ -42,6 +42,10 @@ extern "C" {
 #include <mono/sgen/sgen-conf.h>
 #include <mono/metadata/seq-points-data.h>
 #include "il2cpp-c-types.h"
+
+Il2CppMonoDefaults il2cpp_mono_defaults;
+Il2CppMonoDebugOptions il2cpp_mono_debug_options;
+
 #include <mono/metadata/il2cpp-compat-metadata.h>
 
 static MonoGHashTable *method_signatures;
