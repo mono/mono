@@ -1170,7 +1170,7 @@ If set, tells mono to attempt using native asynchronous I/O services. If not
 set, a default select/poll implementation is used. Currently epoll and kqueue
 are supported.
 .TP
-\fBMONO_ENABLE_COOP\fR
+\fBMONO_ENABLE_COOP_SUSPEND\fR
 This makes the Mono runtime and the SGen garbage collector run in cooperative
 mode as opposed to run on preemptive mode.   Preemptive mode is the mode
 that Mono has used historically, going back to the Boehm days, where the
@@ -1181,7 +1181,7 @@ safe point.   This makes for an easier to debug garbage collector.   As
 of Mono 4.3.0 it is a work in progress, and while it works, it has not
 been used extensively.   This option enabled the feature and allows us to
 find spots that need to be tuned for this mode of operation.   Alternatively,
-this mode can be enabled at compile time by using the --with-cooperative-gc
+this mode can be enabled at compile time by using the --enable-cooperative-suspend
 flag when calling configure.
 .TP
 \fBMONO_ENV_OPTIONS\fR
