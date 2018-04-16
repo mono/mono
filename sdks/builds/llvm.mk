@@ -23,26 +23,36 @@ _llvm_$(1)_CONFIGURE_ENVIRONMENT= \
 	CXXFLAGS="$$(_llvm_$(1)_CXXFLAGS)" \
 	LDFLAGS="$$(_llvm_$(1)_LDFLAGS)"
 
-_llvm_$(1)_CONFIGURE_FLAGS= \
-	--build=$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),x86_64-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))) \
-	--cache-file=$$(TOP)/sdks/builds/llvm-$(1).config.cache \
-	--prefix=$$(TOP)/sdks/out/llvm-$(1) \
-	--enable-assertions=no \
-	--enable-optimized \
-	--enable-targets="arm,aarch64,x86" \
-	$$(if $$(filter $$(UNAME),Darwin),--enable-libcpp)
+_llvm_$(1)_CMAKE_FLAGS = \
+	-DCMAKE_INSTALL_PREFIX=$$(TOP)/sdks/out/llvm-$(1) \
+	-DCMAKE_BUILD_TYPE=Release \
+	$$(llvm_$(1)_CMAKE_FLAGS) \
+	$(if $(NINJA),-G Ninja,) \
+	$(LLVM_SRC)
 
 .stamp-llvm-$(1)-toolchain: | $$(LLVM_SRC)
 	touch $$@
 
-.stamp-llvm-$(1)-configure: $$(LLVM_SRC)/configure
+.stamp-llvm-$(1)-configure:
 	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
-	cd $$(TOP)/sdks/builds/llvm-$(1) && $$< $$(_llvm_$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm_$(1)_CONFIGURE_FLAGS)
+	cd $$(TOP)/sdks/builds/llvm-$(1) && cmake $$(_llvm_$(1)_CMAKE_FLAGS)
 	touch $$@
 
 .PHONY: package-llvm-$(1)
+
+ifneq ($(NINJA),)
+build-custom-llvm-$(1):
+	ninja -C $$(TOP)/sdks/builds/llvm-$(1)
+
 package-llvm-$(1):
-	$$(MAKE) -C $$(TOP)/sdks/builds/llvm-$(1) install
+	ninja -C $$(TOP)/sdks/builds/llvm-$(1) install
+else
+build-custom-llvm-$(1):
+	$(MAKE) -C $$(TOP)/sdks/builds/llvm-$(1)
+
+package-llvm-$(1):
+	$(MAKE) -C $$(TOP)/sdks/builds/llvm-$(1) install
+endif
 
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1):
@@ -51,6 +61,10 @@ clean-llvm-$(1):
 TARGETS += llvm-$(1)
 
 endef
+
+llvm_llvm64_CMAKE_FLAGS = -DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64"
+# We only use this for the cross compiler so it needs no architectures/tools
+llvm_llvm32_CMAKE_FLAGS = -DLLVM_BUILD_32_BITS=On -DLLVM_TARGETS_TO_BUILD="" -DLLVM_BUILD_TOOLS=Off -DLLVM_BUILD_UTILS=Off
 
 $(eval $(call LLVMTemplate,llvm32,i386))
 $(eval $(call LLVMTemplate,llvm64,x86_64))
