@@ -54,7 +54,7 @@ namespace System.Drawing
 
 		public BufferedGraphics Allocate (IntPtr targetDC, Rectangle targetRectangle)
 		{
-            return Allocate(Graphics.FromHdc(targetDC), targetRectangle);
+			return Allocate (Graphics.FromHdc (targetDC), targetRectangle);
 		}
 
 		public void Dispose ()

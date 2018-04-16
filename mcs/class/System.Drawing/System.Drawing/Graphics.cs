@@ -1201,7 +1201,7 @@ namespace System.Drawing
 
 		private const string MetafileEnumeration = "Metafiles enumeration, for both WMF and EMF formats, isn't supported.";
 
-        [MonoTODO (MetafileEnumeration)]
+		[MonoTODO (MetafileEnumeration)]
 		public void EnumerateMetafile (Metafile metafile, Point [] destPoints, EnumerateMetafileProc callback)
 		{
 			throw new NotImplementedException ();
@@ -2443,30 +2443,27 @@ namespace System.Drawing
 			}
 		}
 
-		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public object GetContextInfo ()
 		{
-            Region clip = this.Clip;
-            Matrix transform = this.Transform;
-            PointF pointF = PointF.Empty;
-            PointF empty = PointF.Empty;
-            if (!transform.IsIdentity)
-            {
-                float[] elements = transform.Elements;
-                pointF.X = elements[4];
-                pointF.Y = elements[5];
-            }
-           
-            if (!empty.IsEmpty)
-            {
-                clip.Translate(-empty.X, -empty.Y);
-            }
-            return new object[]
-            {
-        clip,
-        transform
-            };
-        }
+			Region clip = this.Clip;
+			Matrix transform = this.Transform;
+			PointF pointF = PointF.Empty;
+			PointF empty = PointF.Empty;
+
+			if (!transform.IsIdentity) {
+				float[] elements = transform.Elements;
+				pointF.X = elements[4];
+				pointF.Y = elements[5];
+			}
+
+			if (!empty.IsEmpty)
+				clip.Translate (-empty.X, -empty.Y);
+
+			return new object[] {
+				clip,
+				transform
+			};
+		}
 	}
 }

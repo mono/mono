@@ -15,6 +15,7 @@ RESX_RESOURCE_STRING = ../../../external/corefx/src/System.Drawing.Common/src/Re
 
 ifndef MOBILE_PROFILE
 LIB_MCS_FLAGS += -d:FEATURE_TYPECONVERTER,SUPPORTS_WINDOWS_COLORS
+LIB_REFS += System.Configuration
 endif
 
 TEST_LIB_REFS = System.Drawing System.Runtime.Serialization.Formatters.Soap System.Xml

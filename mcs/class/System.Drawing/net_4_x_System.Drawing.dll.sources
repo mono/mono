@@ -1,0 +1,3 @@
+#include System.Drawing.dll.sources
+
+System.Drawing.Configuration/SystemDrawingSection.cs
