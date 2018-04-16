@@ -1700,7 +1700,8 @@ namespace System.Drawing
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static Graphics FromHdcInternal (IntPtr hdc)
 		{
-            return FromHdc(hdc);
+			GDIPlus.Display = hdc;
+			return null;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		
