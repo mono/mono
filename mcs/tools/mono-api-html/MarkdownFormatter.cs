@@ -188,8 +188,8 @@ namespace Xamarin.ApiDiff {
 		{
 			foreach (var line in apichange.Member.ToString ().Split ('\n')) {
 				if (line.Contains ("+++")) {
-					output.WriteLine ("-{0}", Clean (line, "---", "+++"));
-					output.WriteLine ("+{0}", Clean (line, "+++", "---"));
+					output.WriteLine ("-{0}", Clean (line, "+++", "---"));
+					output.WriteLine ("+{0}", Clean (line, "---", "+++"));
 				} else {
 					output.WriteLine (" {0}", line);
 				}
