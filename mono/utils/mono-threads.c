@@ -143,7 +143,9 @@ begin_preemptive_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
 static BeginSuspendResult
 begin_suspend_for_running_thread (MonoThreadInfo *info, gboolean interrupt_kernel)
 {
-	if (mono_threads_is_cooperative_suspension_enabled ())
+	/* If we're using full cooperative suspend or hybrid suspend,
+	 * cooperatively suspend RUNNING threads */
+	if (mono_threads_are_safepoints_enabled ())
 		return begin_cooperative_suspend (info);
 	else
 		return begin_preemptive_suspend (info, interrupt_kernel);
