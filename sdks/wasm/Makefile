@@ -129,13 +129,13 @@ build-managed: managed/nunitlite.dll managed/mini_tests.dll managed/main.exe man
 
 build: build-native build-managed
 
-CHACKA=~/.jsvu/ch
+CHAKRA=~/.jsvu/ch
 D8=~/.jsvu/v8
 JSC=~/.jsvu/jsc
 SM=~/.jsvu/sm
 
 run-ch-%: toolchain build
-	$(CHACKA) test.js -args $*
+	$(CHAKRA) test.js -args $*
 
 run-v8-%: toolchain build
 	$(D8) --expose_wasm test.js -- $*
