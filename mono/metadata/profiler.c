@@ -407,6 +407,115 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 
 	return TRUE;
 }
+
+static void invoke_coverage_callback_for_hashtable_entry (gpointer key, gpointer value, gpointer user_data)
+{
+	MonoMethod* method = (MonoMethod*)key;
+	MonoProfilerCoverageInfo *info = (MonoProfilerCoverageInfo*)value;
+	MonoProfilerCoverageCallback cb = (MonoProfilerCoverageCallback)user_data;
+
+	MonoError error;
+	MonoMethodHeader *header = mono_method_get_header_checked (method, &error);
+	mono_error_assert_ok (&error);
+
+	guint32 size;
+
+	const unsigned char *start = mono_method_header_get_code (header, &size, NULL);
+	const unsigned char *end = start + size;
+	MonoDebugMethodInfo *minfo = mono_debug_lookup_method (method);
+
+	for (guint32 i = 0; i < info->entries; i++) {
+		guchar *cil_code = info->data [i].cil_code;
+
+		if (cil_code && cil_code >= start && cil_code < end) {
+			guint32 offset = cil_code - start;
+
+			MonoProfilerCoverageData data = {
+				.method = method,
+				.il_offset = offset,
+				.counter = info->data [i].count,
+				.line = 1,
+				.column = 1,
+			};
+
+			if (minfo) {
+				MonoDebugSourceLocation *loc = mono_debug_method_lookup_location (minfo, offset);
+
+				if (loc) {
+					data.file_name = g_strdup (loc->source_file);
+					data.line = loc->row;
+					data.column = loc->column;
+
+					mono_debug_free_source_location (loc);
+				}
+			}
+
+			cb (handle->prof, &data);
+
+			g_free ((char *) data.file_name);
+		}
+	}
+
+	mono_metadata_free_mh (header);
+}
+
+mono_bool
+mono_profiler_get_all_coverage_data(MonoProfilerHandle handle, MonoProfilerCoverageCallback cb)
+{
+	if (!mono_profiler_state.code_coverage)
+		return FALSE;
+
+	coverage_lock ();
+
+	g_hash_table_foreach (mono_profiler_state.coverage_hash, invoke_coverage_callback_for_hashtable_entry, cb);
+
+	coverage_unlock ();
+
+	return TRUE;
+}
+
+void
+mono_profiler_reset_coverage(MonoMethod* method)
+{
+	if (!mono_profiler_state.code_coverage)
+		return;
+
+	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
+		return;
+
+	coverage_lock ();
+
+	MonoProfilerCoverageInfo *info = g_hash_table_lookup (mono_profiler_state.coverage_hash, method);
+
+	coverage_unlock ();
+
+	if (!info)
+		return;
+
+	for (guint32 i = 0; i < info->entries; i++)
+		info->data[i].count = 0;
+}
+
+static void reset_coverage_for_hashtable_entry (gpointer key, gpointer value, gpointer user_data)
+{
+	MonoProfilerCoverageInfo *info = (MonoProfilerCoverageInfo*)value;
+
+	for (guint32 i = 0; i < info->entries; i++)
+		info->data[i].count = 0;
+}
+
+void mono_profiler_reset_all_coverage()
+{
+	if (!mono_profiler_state.code_coverage)
+		return;
+
+	coverage_lock ();
+
+	g_hash_table_foreach (mono_profiler_state.coverage_hash, reset_coverage_for_hashtable_entry, NULL);
+
+	coverage_unlock ();
+}
+
 #endif
 
 MonoProfilerCoverageInfo *
