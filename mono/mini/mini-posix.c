@@ -377,6 +377,15 @@ remove_signal_handler (int signo)
 }
 
 void
+mini_register_sigterm_handler (void)
+{
+#ifdef TARGET_OSX
+	/* always catch SIGTERM, conditionals inside of handler */
+	add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
+#endif
+}
+
+void
 mono_runtime_posix_install_handlers (void)
 {
 
@@ -407,9 +416,6 @@ mono_runtime_posix_install_handlers (void)
 	signal (SIGPIPE, SIG_IGN);
 
 	add_signal_handler (SIGABRT, sigabrt_signal_handler, 0);
-
-	/* always catch SIGTERM, conditionals inside of handler */
-	add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
 
 	/* catch SIGSEGV */
 	add_signal_handler (SIGSEGV, mono_sigsegv_signal_handler, 0);
