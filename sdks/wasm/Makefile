@@ -10,7 +10,6 @@ DRIVER_CONF=debug
 
 
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
-D8=$(TOP)/sdks/wasm/v8/out.gn/x64.release/d8
 WASM_BCL_DIR=$(TOP)/sdks/out/bcl/wasm
 MANAGED_DEPLOY_DIR=$(TOP)/sdks/wasm/managed
 MINI_PATH=$(TOP)/mono/mini
@@ -18,7 +17,8 @@ MINI_PATH=$(TOP)/mono/mini
 BCL_ASSEMBLIES= \
         mscorlib.dll    \
         System.dll      \
-        System.Core.dll
+        System.Core.dll	\
+        Mono.Security.dll
 
 DEPS_ASSEMBLIES= \
         nunitlite.dll
@@ -50,22 +50,13 @@ MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
 TEST_DEPS = $(patsubst %,managed/%,$(BCL_ASSEMBLIES)) managed/nunitlite.dll
 TEST_MCS_DEPS = $(patsubst %,-r:%, $(TEST_DEPS))
 
-
-.stamp-depot-tools:
-	rm -rf $(TOP)/sdks/wasm/depot_tools
-	git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git $(TOP)/sdks/wasm/depot_tools
-	touch $@
-
-.stamp-v8: .stamp-depot-tools
-	rm -rf $(TOP)/sdks/wasm/v8
-	rm -rf $(TOP)/sdks/wasm/.gclient*
-	cd $(TOP)/sdks/wasm/ && PATH=$(TOP)/sdks/wasm/depot_tools:$$PATH fetch v8
-	cd $(TOP)/sdks/wasm/v8 && tools/dev/v8gen.py -vv x64.release
-	cd $(TOP)/sdks/wasm/v8 && $(TOP)/sdks/wasm/depot_tools/ninja -C out.gn/x64.release
+.stamp-jsvu:
+	npm install jsvu -g
+	jsvu --engines=all
 	touch $@
 
 .PHONY: toolchain
-toolchain: .stamp-v8
+toolchain: .stamp-jsvu
 
 driver.o: driver.c
 	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 driver.c -c -o driver.o
@@ -138,8 +129,28 @@ build-managed: managed/nunitlite.dll managed/mini_tests.dll managed/main.exe man
 
 build: build-native build-managed
 
-run-%: toolchain build
+CHAKRA=~/.jsvu/ch
+D8=~/.jsvu/v8
+JSC=~/.jsvu/jsc
+SM=~/.jsvu/sm
+
+run-ch-%: toolchain build
+	$(CHAKRA) test.js -args $*
+
+run-v8-%: toolchain build
 	$(D8) --expose_wasm test.js -- $*
+
+run-jsc-%: toolchain build
+	$(JSC) test.js -- $*
+
+run-sm-%: toolchain build
+	$(SM) test.js $*
+
+# Leaving JSC for now cuz it aborts when it encounters wasm
+run-all-%:
+	make -C . run-ch-$*
+	make -C . run-v8-$*
+	make -C . run-sm-$*
 
 clean:
 	

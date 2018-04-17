@@ -1,3 +1,24 @@
+//glue code to deal with the differences between ch, d8, jsc and sm.
+if (print == undefined)
+	print = console.log;
+
+if (console.warn === undefined)
+	console.warn = console.log;
+
+try {
+	arguments = WScript.Arguments;
+	exit = WScript.Quit;
+	load = WScript.LoadScriptFile;
+	read = WScript.LoadBinaryFile;
+} catch(e) {}
+
+try {
+	if (scriptArgs !== undefined)
+		arguments = scriptArgs;
+} catch(e) {}
+//end of all the nice shell glue code.
+
+
 function inspect_object (o){
     var r="";
     for(var p in o) {
@@ -35,7 +56,7 @@ var Module = {
 	},
 };
 
-var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll", "wasm_System_test.dll", "wasm_System.Core_test.dll" ];
+var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "Mono.Security.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll", "wasm_System_test.dll", "wasm_System.Core_test.dll" ];
 
 load ("mono.js");
 Module.finish_loading ();
