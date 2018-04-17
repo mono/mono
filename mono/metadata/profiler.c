@@ -408,11 +408,17 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 	return TRUE;
 }
 
+struct InvokeCallbackInfo
+{
+	MonoProfilerCoverageCallback cb;
+	MonoProfilerHandle handle;
+};
+
 static void invoke_coverage_callback_for_hashtable_entry (gpointer key, gpointer value, gpointer user_data)
 {
+	InvokeCallbackInfo* invokeInfo = (InvokeCallbackInfo*) user_data;
 	MonoMethod* method = (MonoMethod*)key;
 	MonoProfilerCoverageInfo *info = (MonoProfilerCoverageInfo*)value;
-	MonoProfilerCoverageCallback cb = (MonoProfilerCoverageCallback)user_data;
 
 	MonoError error;
 	MonoMethodHeader *header = mono_method_get_header_checked (method, &error);
@@ -450,7 +456,7 @@ static void invoke_coverage_callback_for_hashtable_entry (gpointer key, gpointer
 				}
 			}
 
-			cb (handle->prof, &data);
+			invokeInfo->cb (invokeInfo->handle->prof, &data);
 
 			g_free ((char *) data.file_name);
 		}
@@ -465,23 +471,27 @@ mono_profiler_get_all_coverage_data(MonoProfilerHandle handle, MonoProfilerCover
 	if (!mono_profiler_state.code_coverage)
 		return FALSE;
 
+	InvokeCallbackInfo info;
+	info.cb = cb;
+	info.handle = handle;
+
 	coverage_lock ();
 
-	g_hash_table_foreach (mono_profiler_state.coverage_hash, invoke_coverage_callback_for_hashtable_entry, cb);
+	g_hash_table_foreach (mono_profiler_state.coverage_hash, invoke_coverage_callback_for_hashtable_entry, &info);
 
 	coverage_unlock ();
 
 	return TRUE;
 }
 
-void
+mono_bool
 mono_profiler_reset_coverage(MonoMethod* method)
 {
 	if (!mono_profiler_state.code_coverage)
-		return;
+		return FALSE;
 
 	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
-		return;
+		return FALSE;
 
 	coverage_lock ();
 
@@ -490,10 +500,12 @@ mono_profiler_reset_coverage(MonoMethod* method)
 	coverage_unlock ();
 
 	if (!info)
-		return;
+		return TRUE;
 
 	for (guint32 i = 0; i < info->entries; i++)
 		info->data[i].count = 0;
+
+	return TRUE;
 }
 
 static void reset_coverage_for_hashtable_entry (gpointer key, gpointer value, gpointer user_data)
