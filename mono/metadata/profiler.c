@@ -408,11 +408,11 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 	return TRUE;
 }
 
-struct InvokeCallbackInfo
+typedef struct
 {
 	MonoProfilerCoverageCallback cb;
 	MonoProfilerHandle handle;
-};
+} InvokeCallbackInfo;
 
 static void invoke_coverage_callback_for_hashtable_entry (gpointer key, gpointer value, gpointer user_data)
 {
