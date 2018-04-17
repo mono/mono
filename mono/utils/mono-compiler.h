@@ -87,15 +87,8 @@ typedef SSIZE_T ssize_t;
 #define MONO_PRAGMA_WARNING_POP()
 #endif
 
-#if !defined(_MSC_VER) && !defined(HOST_SOLARIS) && !defined(_WIN32) && !defined(__CYGWIN__) && !defined(MONOTOUCH) && HAVE_VISIBILITY_HIDDEN
-#if MONO_LLVM_LOADED
+/* Used to mark internal functions used by LLVM */
 #define MONO_LLVM_INTERNAL MONO_API
-#else
-#define MONO_LLVM_INTERNAL
-#endif
-#else
-#define MONO_LLVM_INTERNAL 
-#endif
 
 /* Used to mark internal functions used by the profiler modules */
 #define MONO_PROFILER_API MONO_API
