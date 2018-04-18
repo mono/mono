@@ -147,6 +147,10 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+#if FULL_AOT_RUNTIME
+		// This test doesn't work with FullAOT+LLVM
+		[Ignore ("https://github.com/mono/mono/issues/8319")]
+#endif
 		public void Create_Path_ReadOnly ()
 		{
 			string path = Path.Combine (tmpFolder, "foo");
@@ -617,6 +621,10 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+#if FULL_AOT_RUNTIME
+		// This test doesn't work with FullAOT+LLVM
+		[Ignore ("https://github.com/mono/mono/issues/8319")]
+#endif
 		public void GetAttributes_ReadOnly ()
 		{
 			FileAttributes attrs;
