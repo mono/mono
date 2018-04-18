@@ -121,7 +121,23 @@ namespace MonoTests.System.IO.Packaging {
             Assert.AreEqual (package, part.Package, "Wrong package3");
             Assert.AreEqual ("/third", part.Uri.ToString (), "Wrong package selected3");
         }
-		
+
+		[Test]
+		public void CheckPartExtensions ()
+		{
+			package.CreatePart (new Uri ("/first", UriKind.Relative), "my/a");
+			package.CreatePart (new Uri ("/second", UriKind.Relative), "my/b", CompressionOption.Maximum);
+			package.CreatePart (new Uri ("/third", UriKind.Relative), "test/c", CompressionOption.SuperFast);
+			package.CreatePart (new Uri ("/fourth.txt", UriKind.Relative), "test/d");
+			package.Close ();
+			using (var archive = new global::System.IO.Compression.ZipArchive (stream, global::System.IO.Compression.ZipArchiveMode.Read)) {
+				var contentTypes = archive.GetEntry ("[Content_Types].xml");
+				var reader = new StreamReader (contentTypes.Open ());
+				var expected = "<?xml version=\"1.0\"?><Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\"><Override ContentType=\"my/a\" PartName=\"/first\" /><Override ContentType=\"my/b\" PartName=\"/second\" /><Override ContentType=\"test/c\" PartName=\"/third\" /><Default ContentType=\"test/d\" Extension=\"txt\" /></Types>";
+				Assert.AreEqual (expected, reader.ReadToEnd ());
+			}
+		}
+
 		[Test]
 		public void SameExtensionDifferentContentTypeTest ()
 		{
