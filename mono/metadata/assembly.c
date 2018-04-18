@@ -356,6 +356,8 @@ static MonoAssembly*
 mono_assembly_load_full_internal (MonoAssemblyName *aname, MonoAssembly *requesting, const char *basedir, MonoAssemblyContextKind asmctx, MonoImageOpenStatus *status);
 static MonoBoolean
 mono_assembly_is_in_gac (const gchar *filanem);
+static MonoAssemblyName*
+mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_name);
 
 static MonoAssembly*
 prevent_reference_assembly_from_running (MonoAssembly* candidate, gboolean refonly);
@@ -2052,6 +2054,55 @@ mono_assembly_open_predicate (const char *filename, MonoAssemblyContextKind asmc
 			*status = MONO_IMAGE_ERROR_ERRNO;
 		g_free (fname);
 		return NULL;
+	}
+
+	if (asmctx == MONO_ASMCTX_LOADFROM) {
+		/* This is a "fun" one now.
+		 * For LoadFrom ("/basedir/some.dll"), apparently what we're meant to do is:
+		 *   1. probe the assembly name from some.dll
+		 *   2. apply binding redirects
+		 *   3. If we get some other different name, drop this image and use
+		 *      the binding redirected name to probe.
+		 *   4. Return the new assembly.
+		 */
+		MonoAssemblyName probed_aname, dest_name;
+		if (!mono_assembly_fill_assembly_name_full (image, &probed_aname, TRUE)) {
+			if (*status == MONO_IMAGE_OK)
+				*status = MONO_IMAGE_IMAGE_INVALID;
+			mono_image_close (image);
+			g_free (fname);
+			return NULL;
+		}
+		MonoAssemblyName *result_name = &probed_aname;
+		result_name = mono_assembly_apply_binding (result_name, &dest_name);
+		if (result_name != &probed_aname) {
+			if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY)) {
+				char *probed_fullname = mono_stringify_assembly_name (&probed_aname);
+				char *result_fullname = mono_stringify_assembly_name (result_name);
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Request to load from %s in (%s) remapped to %s", probed_fullname, fname, result_fullname);
+				g_free (probed_fullname);
+				g_free (result_fullname);
+			}
+			const char *new_basedir = NULL; /* FIXME: null? - do a test of this */
+			MonoAssemblyContextKind new_asmctx = MONO_ASMCTX_DEFAULT; /* FIXME: default? or? */
+			MonoAssembly *new_requesting = NULL; /* this seems okay */
+			MonoImageOpenStatus new_status = MONO_IMAGE_OK;
+			MonoAssembly *other_ass = mono_assembly_load_full_internal (result_name, new_requesting, new_basedir, new_asmctx, &new_status);
+			mono_assembly_name_free (&probed_aname);
+			mono_image_close (image);
+			if (other_ass && new_status == MONO_IMAGE_OK) {
+				image = other_ass->image;
+				mono_image_addref (image); /* so that mono_image_close, below has something to do */
+				g_assert (other_ass->image->assembly != NULL);
+				/* fall thru to "if (image->assembly)" below. */
+			} else {
+				g_free (fname);
+				*status = new_status;
+				return NULL;
+			}
+		} else {
+			mono_assembly_name_free (&probed_aname);
+		}
 	}
 
 	if (image->assembly) {
