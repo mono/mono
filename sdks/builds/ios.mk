@@ -306,7 +306,7 @@ ifndef IGNORE_PACKAGE_LLVM
 
 build-ios-llvm: .stamp-ios-llvm-$(LLVM_HASH)
 
-clean-ios-llvm:
+clean-ios-llvm: clean-llvm-llvm32 clean-llvm-llvm64
 	$(RM) -rf ../out/ios-llvm64 ../out/ios-llvm32 .stamp-ios-llvm-$(LLVM_HASH)
 
 else

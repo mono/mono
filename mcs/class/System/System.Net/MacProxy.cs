@@ -335,6 +335,14 @@ namespace Mono.Net
 				return (int) CFStringGetLength (Handle);
 			}
 		}
+		
+		[DllImport (CoreFoundationLibrary)]
+		extern static int CFStringCompare (IntPtr theString1, IntPtr theString2, int compareOptions);
+		
+		public static int Compare (IntPtr string1, IntPtr string2, int compareOptions = 0)
+		{
+			return CFStringCompare (string1, string2, compareOptions);
+		}
 
 		[DllImport (CoreFoundationLibrary)]
 		extern static IntPtr CFStringGetCharactersPtr (IntPtr handle);
@@ -686,6 +694,25 @@ namespace Mono.Net
 				return CFProxyType.HTTPS;
 
 			if (type == kCFProxyTypeSOCKS)
+				return CFProxyType.SOCKS;
+			
+			//in OSX 10.13 pointer comparison didn't work for kCFProxyTypeAutoConfigurationURL
+			if (CFString.Compare (type, kCFProxyTypeAutoConfigurationJavaScript) == 0)
+				return CFProxyType.AutoConfigurationJavaScript;
+
+			if (CFString.Compare (type, kCFProxyTypeAutoConfigurationURL) == 0)
+				return CFProxyType.AutoConfigurationUrl;
+
+			if (CFString.Compare (type, kCFProxyTypeFTP) == 0)
+				return CFProxyType.FTP;
+
+			if (CFString.Compare (type, kCFProxyTypeHTTP) == 0)
+				return CFProxyType.HTTP;
+
+			if (CFString.Compare (type, kCFProxyTypeHTTPS) == 0)
+				return CFProxyType.HTTPS;
+
+			if (CFString.Compare (type, kCFProxyTypeSOCKS) == 0)
 				return CFProxyType.SOCKS;
 			
 			return CFProxyType.None;

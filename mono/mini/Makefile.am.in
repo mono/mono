@@ -158,8 +158,6 @@ libmono_llvm_la_SOURCES = mini-llvm.c mini-llvm-cpp.cpp llvm-jit.cpp
 libmono_llvm_la_LIBADD = $(glib_libs) $(LLVM_LIBS) $(LLVM_LDFLAGS)
 if HOST_DARWIN
 libmono_llvm_la_LDFLAGS=-Wl,-undefined -Wl,suppress -Wl,-flat_namespace
-else
-libmono_llvm_la_LIBADD += $(top_builddir)/mono/mini/libmonoboehm-$(API_VER).la $(boehm_libs)
 endif
 endif
 
@@ -963,5 +961,6 @@ tags:
 if HAS_EXTENSION_MODULE
 else
 Makefile.am: Makefile.am.in
-	cp $< $@
+	echo "##################### Generated from Makefile.am.in, do not modify ##########################" > $@
+	cat $< >> $@
 endif

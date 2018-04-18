@@ -1,3 +1,32 @@
+//glue code to deal with the differences between ch, d8, jsc and sm.
+if (print == undefined)
+	print = console.log;
+
+if (console.warn === undefined)
+	console.warn = console.log;
+
+fail_exec = function(reason) {
+	print (reason);
+	throw "FAIL";
+}
+
+try {
+	arguments = WScript.Arguments;
+	load = WScript.LoadScriptFile;
+	read = WScript.LoadBinaryFile;
+	fail_exec = function(reason) {
+		print (reason);
+		WScript.Quit(1);
+	}
+} catch(e) {}
+
+try {
+	if (scriptArgs !== undefined)
+		arguments = scriptArgs;
+} catch(e) {}
+//end of all the nice shell glue code.
+
+
 function inspect_object (o){
     var r="";
     for(var p in o) {
@@ -35,7 +64,7 @@ var Module = {
 	},
 };
 
-var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll", "wasm_System_test.dll", "wasm_System.Core_test.dll" ];
+var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "Mono.Security.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll", "wasm_System_test.dll", "wasm_System.Core_test.dll" ];
 
 load ("mono.js");
 Module.finish_loading ();
@@ -93,11 +122,13 @@ function conv_string (mono_obj) {
 	return res;
 }
 
+var bad_semd_msg_detected = false;
 function mono_send_msg (key, val) {
 	try {
 		return conv_string (call_method (send_message, null, [mono_string (key), mono_string (val)]));
 	} catch (e) {
 		print ("BAD SEND MSG: " + e);
+		bad_semd_msg_detected = true;
 		return null;
 	}
 }
@@ -134,4 +165,7 @@ for (var i = 0; i < arguments.length; ++i) {
 var status = mono_send_msg ("test-result", "");
 print ("Test status " + status)
 if (status != "PASS")
-	exit (1)
+	fail_exec ("BAD TEST STATUS");
+
+if (bad_semd_msg_detected)
+	fail_exec ("BAD MSG SEND DETECTED");
