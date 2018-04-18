@@ -165,17 +165,6 @@ get_vcall_slot (guint8 *code, mgreg_t *regs, int *displacement)
 	return (gpointer)regs [reg];
 }
 
-static gpointer*
-get_vcall_slot_addr (guint8* code, mgreg_t *regs)
-{
-	gpointer vt;
-	int displacement;
-	vt = get_vcall_slot (code, regs, &displacement);
-	if (!vt)
-		return NULL;
-	return (gpointer*)((char*)vt + displacement);
-}
-
 guchar*
 mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInfo **info, gboolean aot)
 {
