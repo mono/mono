@@ -60,9 +60,7 @@ namespace System.Diagnostics
 			 * the Start_internal icall in
 			 * mono/metadata/process.c
 			 */
-			public IntPtr thread_handle;
 			public int pid; // Contains -GetLastError () on failure.
-			public int tid;
 			public string[] envVariables;
 			public string UserName;
 			public string Domain;
