@@ -34,6 +34,17 @@ System.IO.Compression.dll,8DBD1669-97BC-4190-9BD8-738561193741,4,2,0,0
 System.Net.Http.dll,41ACE450-8F44-455A-97AC-0679E5462071,4,2,0,0
 System.Threading.Overlapped.dll,82D565AC-E41C-4E29-9939-C031C88EDBDD,4,1,0,0
 System.Runtime.InteropServices.RuntimeInformation.dll,FD6C8616-C1D8-43F9-AC17-A1C48A45FDA2,4,0,2,0
+System.Globalization.Extensions.dll,B9BA8638-25D2-4A3B-B91F-16B3D3799861,4,1,0,0
+System.IO.Compression.dll,35DD20B5-8766-476B-B5D2-0EA16EF0A946,4,2,0,0
+System.Net.Http.dll,27BBDD4C-EAF0-4A95-B172-EE502D76A725,4,2,0,0
+System.Runtime.InteropServices.RuntimeInformation.dll,E46BA45E-6A63-47CD-AF70-2C3016AFF75A,4,0,2,0
+System.Threading.Overlapped.dll,A0439CB6-A5E6-4813-A76C-13F92ADDDED5,4,1,0,0
+System.Runtime.InteropServices.RuntimeInformation.dll,488CE209-4E5D-40E7-BE8C-F81F2B99F13A,4,0,2,0
+System.Globalization.Extensions.dll,1A2B9B2A-02F5-4C78-AB0C-7C6D2795CE2B,4,1,0,0
+System.IO.Compression.dll,8DBD1669-97BC-4190-9BD8-738561193741,4,2,0,0
+System.Net.Http.dll,41ACE450-8F44-455A-97AC-0679E5462071,4,2,0,0
+System.Threading.Overlapped.dll,82D565AC-E41C-4E29-9939-C031C88EDBDD,4,1,0,0
+System.Runtime.InteropServices.RuntimeInformation.dll,FD6C8616-C1D8-43F9-AC17-A1C48A45FDA2,4,0,2,0
 System.Globalization.Extensions.dll,475DBF02-9F68-44F1-8FB5-C9F69F1BD2B1,4,0,0,0
 System.Globalization.Extensions.dll,5FCD54F0-4B97-4259-875D-30E481F02EA2,4,0,1,0
 System.Globalization.Extensions.dll,E9FCFF5B-4DE1-4BDC-9CE8-08C640FC78CC,4,0,2,0
