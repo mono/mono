@@ -4,6 +4,8 @@ include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
 MAKEFLAGS += --no-builtin-rules
+#emcc has lots of bash'isms
+SHELL:=/bin/bash
 
 #Use either 'release' or 'debug' dependending on what you need
 DRIVER_CONF=debug
@@ -13,6 +15,7 @@ EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
 WASM_BCL_DIR=$(TOP)/sdks/out/bcl/wasm
 MANAGED_DEPLOY_DIR=$(TOP)/sdks/wasm/managed
 MINI_PATH=$(TOP)/mono/mini
+CSC= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(TOP)/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.7.0/tools/csc.exe
 
 BCL_ASSEMBLIES= \
         mscorlib.dll    \
@@ -50,9 +53,17 @@ MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
 TEST_DEPS = $(patsubst %,managed/%,$(BCL_ASSEMBLIES)) managed/nunitlite.dll
 TEST_MCS_DEPS = $(patsubst %,-r:%, $(TEST_DEPS))
 
+UNAME := $(shell uname -s)
+ifeq ($(UNAME),Linux)
+	JSVU_OS=linux64
+endif
+ifeq ($(UNAME_S),Darwin)
+	JSVU_OS=mac64
+endif
+
 .stamp-jsvu:
 	npm install jsvu -g
-	jsvu --engines=all
+	jsvu --os=$(JSVU_OS) --engines=all
 	touch $@
 
 .PHONY: toolchain
@@ -102,7 +113,7 @@ managed/nunitlite.dll: $(TOP)/mcs/class/lib/wasm/nunitlite.dll | managed/
 	cp $< $@
 
 managed/main.exe: $(TEST_DEPS) $(APP_SOURCES) | managed/
-	csc /debug:portable /noconfig /nostdlib /unsafe -out:$@ $(TEST_MCS_DEPS) $(APP_SOURCES)
+	$(CSC) /debug:portable /noconfig /nostdlib /unsafe -out:$@ $(TEST_MCS_DEPS) $(APP_SOURCES)
 
 $(TOP)/mcs/class/lib/wasm/tests/wasm_corlib_test.dll: FORCE
 	$(MAKE) -C "$(TOP)/mcs/class/corlib" test-local PROFILE=wasm
@@ -123,7 +134,7 @@ managed/wasm_System.Core_test.dll: $(TOP)/mcs/class/lib/wasm/tests/wasm_System.C
 	cp $< $@
 
 managed/mini_tests.dll: $(TEST_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs | managed/
-	csc /debug:portable /nostdlib /noconfig /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(TEST_MCS_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs 
+	$(CSC) /debug:portable /nostdlib /noconfig /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(TEST_MCS_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs 
 
 build-managed: managed/nunitlite.dll managed/mini_tests.dll managed/main.exe managed/wasm_corlib_test.dll managed/wasm_System_test.dll managed/wasm_System.Core_test.dll
 

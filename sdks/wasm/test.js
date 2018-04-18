@@ -5,11 +5,19 @@ if (print == undefined)
 if (console.warn === undefined)
 	console.warn = console.log;
 
+fail_exec = function(reason) {
+	print (reason);
+	throw "FAIL";
+}
+
 try {
 	arguments = WScript.Arguments;
-	exit = WScript.Quit;
 	load = WScript.LoadScriptFile;
 	read = WScript.LoadBinaryFile;
+	fail_exec = function(reason) {
+		print (reason);
+		WScript.Quit(1);
+	}
 } catch(e) {}
 
 try {
@@ -114,11 +122,13 @@ function conv_string (mono_obj) {
 	return res;
 }
 
+var bad_semd_msg_detected = false;
 function mono_send_msg (key, val) {
 	try {
 		return conv_string (call_method (send_message, null, [mono_string (key), mono_string (val)]));
 	} catch (e) {
 		print ("BAD SEND MSG: " + e);
+		bad_semd_msg_detected = true;
 		return null;
 	}
 }
@@ -155,4 +165,7 @@ for (var i = 0; i < arguments.length; ++i) {
 var status = mono_send_msg ("test-result", "");
 print ("Test status " + status)
 if (status != "PASS")
-	exit (1)
+	fail_exec ("BAD TEST STATUS");
+
+if (bad_semd_msg_detected)
+	fail_exec ("BAD MSG SEND DETECTED");

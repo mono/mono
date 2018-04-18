@@ -1,3 +1,5 @@
+#emcc has lots of bash'isms
+SHELL:=/bin/bash
 
 WASM_INTERP_CONFIGURE_FLAGS = \
 	--cache-file=$(TOP)/sdks/builds/wasm-interp.config.cache \
@@ -20,8 +22,8 @@ $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(TOP)/sdks/builds/toolchains/emsdk
 
 .stamp-wasm-toolchain: | $(TOP)/sdks/builds/toolchains/emsdk
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install latest
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded latest
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-1.37.36-64bit
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-1.37.36-64bit
 	touch $@
 
 .stamp-wasm-interp-toolchain: .stamp-wasm-toolchain
