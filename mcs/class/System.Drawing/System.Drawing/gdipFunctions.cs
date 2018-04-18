@@ -253,7 +253,7 @@ namespace System.Drawing
 				throw new NotImplementedException (msg);
 			case Status.WrongState:
 				msg = Locale.GetText ("Object is not in a state that can allow this operation [GDI+ status: {0}]", status);
-				throw new ArgumentException (msg);
+				throw new InvalidOperationException (msg);
 			case Status.FontFamilyNotFound:
 				msg = Locale.GetText ("The requested FontFamily could not be found [GDI+ status: {0}]", status);
 				throw new ArgumentException (msg);
