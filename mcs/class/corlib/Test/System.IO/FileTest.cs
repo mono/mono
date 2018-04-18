@@ -1276,7 +1276,11 @@ namespace MonoTests.System.IO
 				for (var i = 0; i < 200; i++) {
 					File.WriteAllText (path, "");
 					var untouched = File.GetLastWriteTimeUtc (path);
-					File.SetLastWriteTimeUtc (path, DateTime.UtcNow);
+					var now = DateTime.UtcNow;
+					var diff = now - untouched;
+					// sanity check
+					Assert.IsTrue (diff.TotalSeconds >= 0 && diff.TotalSeconds < 1.0, $"Iteration #{i} failed, diff.TotalSeconds: {diff.TotalSeconds}, untouched: {untouched.ToString (fmt)}, now: {now.ToString (fmt)}");
+					File.SetLastWriteTimeUtc (path, now);
 					var touched = File.GetLastWriteTimeUtc (path);
 
 					Assert.IsTrue (touched >= untouched, $"Iteration #{i} failed, untouched: {untouched.ToString (fmt)} touched: {touched.ToString (fmt)}");
