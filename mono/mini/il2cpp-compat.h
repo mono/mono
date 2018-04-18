@@ -248,6 +248,7 @@
 #define mono_class_get_element_class il2cpp_class_get_element_class
 #define mono_class_get_type_token il2cpp_class_get_type_token
 #define mono_type_is_byref il2cpp_type_is_byref
+#define mono_type_get_attrs il2cpp_type_get_attrs
 #define mono_class_is_enum il2cpp_class_is_enum
 #define mono_method_get_flags il2cpp_method_get_flags
 #define mono_method_get_token il2cpp_method_get_token
