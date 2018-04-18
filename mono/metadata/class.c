@@ -2603,11 +2603,8 @@ mono_type_get_checked (MonoImage *image, guint32 type_token, MonoGenericContext 
 	if ((type_token & 0xff000000) != MONO_TOKEN_TYPE_SPEC) {
 		MonoClass *klass = mono_class_get_checked (image, type_token, error);
 
-		if (!klass) {
+		if (!klass || klass->has_failure)
 			return NULL;
-		}
-
-		g_assert (klass);
 		return mono_class_get_type (klass);
 	}
 
