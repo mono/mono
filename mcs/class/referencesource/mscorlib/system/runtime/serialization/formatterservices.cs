@@ -18,6 +18,7 @@ namespace System.Runtime.Serialization {
     using System;
     using System.Reflection;
     using System.Collections;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Security;    
     using System.Security.Permissions;
@@ -34,27 +35,12 @@ namespace System.Runtime.Serialization {
     [System.Runtime.InteropServices.ComVisible(true)]
     public static class FormatterServices {
 #if FEATURE_SERIALIZATION        
-        internal static Dictionary<MemberHolder, MemberInfo[]> m_MemberInfoTable = new Dictionary<MemberHolder, MemberInfo[]>(32);
+        internal static ConcurrentDictionary<MemberHolder, MemberInfo[]> m_MemberInfoTable = new ConcurrentDictionary<MemberHolder, MemberInfo[]>();
         [System.Security.SecurityCritical]
         private static bool unsafeTypeForwardersIsEnabled = false;
 
         [System.Security.SecurityCritical]
         private static volatile bool unsafeTypeForwardersIsEnabledInitialized = false;
-
-        private static Object s_FormatterServicesSyncObject = null;
-
-        private static Object formatterServicesSyncObject
-        {
-            get
-            {
-                if (s_FormatterServicesSyncObject == null)
-                {
-                    Object o = new Object();
-                    Interlocked.CompareExchange<Object>(ref s_FormatterServicesSyncObject, o, null);
-                }
-                return s_FormatterServicesSyncObject;
-            }
-        }
 
         [SecuritySafeCritical]
         static FormatterServices()
@@ -197,9 +183,7 @@ namespace System.Runtime.Serialization {
         // non-transient, non-static fields.  If we are cloning, include the transient fields as well since
         // we know that we're going to live inside of the same context.
         [System.Security.SecurityCritical]  // auto-generated_required
-        public static MemberInfo[] GetSerializableMembers(Type type, StreamingContext context) {
-            MemberInfo[] members;
-    
+        public static MemberInfo[] GetSerializableMembers(Type type, StreamingContext context) {    
             if ((object)type==null) {
                 throw new ArgumentNullException("type");
             }
@@ -210,25 +194,13 @@ namespace System.Runtime.Serialization {
             }
     
             MemberHolder mh = new MemberHolder(type, context);
-    
+            
             //If we've already gathered the members for this type, just return them.
-            if (m_MemberInfoTable.ContainsKey(mh)) {
-                return m_MemberInfoTable[mh];
-            }
-            
-            lock (formatterServicesSyncObject) {
-                //If we've already gathered the members for this type, just return them.
-                if (m_MemberInfoTable.ContainsKey(mh)) {
-                    return m_MemberInfoTable[mh];
-                }
-
-                members = InternalGetSerializableMembers((RuntimeType)type);
-            
-                m_MemberInfoTable[mh] = members;
-            }
-    
+            MemberInfo[] members = m_MemberInfoTable.GetOrAdd(mh, 
+                _ => InternalGetSerializableMembers((RuntimeType)type));
+                
             return members;
-        }
+        }      
       
         static readonly Type[] advancedTypes = new Type[]{
             typeof(System.DelegateSerializationHolder),

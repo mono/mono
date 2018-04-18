@@ -1,2 +1,9 @@
 driver.cs
 ../security/StrongNameManager.cs
+../../../external/ikvm/reflect/*.cs
+../../../external/ikvm/reflect/Metadata/*.cs
+../../../external/ikvm/reflect/Emit/*.cs
+../../../external/ikvm/reflect/Reader/*.cs
+../../../external/ikvm/reflect/Writer/*.cs
+../../../external/ikvm/reflect/Impl/ITypeOwner.cs
+../../../external/ikvm/reflect/Impl/SymbolSupport.cs

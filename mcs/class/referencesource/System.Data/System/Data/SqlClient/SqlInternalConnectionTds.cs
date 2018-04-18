@@ -2,8 +2,8 @@
 // <copyright file="SqlInternalConnectionTds.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient
@@ -1428,16 +1428,21 @@ namespace System.Data.SqlClient
 
         ResolveExtendedServerName(serverInfo, !redirectedUserInstance, connectionOptions);
 
-        long timeoutUnitInterval = 0;
-        Boolean isParallel = connectionOptions.MultiSubnetFailover || connectionOptions.TransparentNetworkIPResolution;
+        Boolean disableTnir = ShouldDisableTnir(connectionOptions);
 
+        long timeoutUnitInterval = 0;
+
+        Boolean isParallel = connectionOptions.MultiSubnetFailover || (connectionOptions.TransparentNetworkIPResolution && !disableTnir);
+
+        
         if(isParallel) {
+            float failoverTimeoutStep = connectionOptions.MultiSubnetFailover ? ADP.FailoverTimeoutStep : ADP.FailoverTimeoutStepForTnir;
             // Determine unit interval
             if (timeout.IsInfinite) {
-                timeoutUnitInterval = checked((long)(ADP.FailoverTimeoutStep * (1000L * ADP.DefaultConnectionTimeout)));
+                timeoutUnitInterval = checked((long)(failoverTimeoutStep * (1000L * ADP.DefaultConnectionTimeout)));
             }
             else {
-                timeoutUnitInterval = checked((long)(ADP.FailoverTimeoutStep * timeout.MillisecondsRemaining));
+                timeoutUnitInterval = checked((long)(failoverTimeoutStep * timeout.MillisecondsRemaining));
             }
         }
         // Only three ways out of this loop:
@@ -1451,15 +1456,31 @@ namespace System.Data.SqlClient
         //  back into the parser for the error cases.
         int attemptNumber = 0;
         TimeoutTimer intervalTimer = null;
-        TimeoutTimer firstTransparentAttemptTimeout = TimeoutTimer.StartMillisecondsTimeout(ADP.FirstTransparentAttemptTimeout);
+        
         TimeoutTimer attemptOneLoginTimeout = timeout;
         while(true) {
 
+            Boolean isFirstTransparentAttempt = connectionOptions.TransparentNetworkIPResolution && !disableTnir && attemptNumber == 1;
+            
             if(isParallel) {
-                attemptNumber++;
+                int multiplier = ++attemptNumber;
+
+                if (connectionOptions.TransparentNetworkIPResolution)
+                {
+                    // While connecting using TNIR the timeout multiplier should be increased to allow steps of 1,2,4 instead of 1,2,3.
+                    // This will allow half the time out for the last connection attempt in case of Tnir.
+                    multiplier = 1 << (attemptNumber - 1);
+                }
                 // Set timeout for this attempt, but don't exceed original timer                
-                long nextTimeoutInterval = checked(timeoutUnitInterval * attemptNumber);
+                long nextTimeoutInterval = checked(timeoutUnitInterval * multiplier);
                 long milliseconds = timeout.MillisecondsRemaining;
+
+                // If it is the first attempt at TNIR connection, then allow at least 500 ms for timeout. With the current failover step of 0.125 
+                // and Connection Time of < 4000 ms, the first attempt can be lower than 500 ms.
+                if (isFirstTransparentAttempt)
+                {
+                    nextTimeoutInterval = Math.Max(ADP.MinimumTimeoutForTnirMs, nextTimeoutInterval);
+                }
                 if (nextTimeoutInterval > milliseconds) {
                     nextTimeoutInterval = milliseconds;
                 }
@@ -1478,15 +1499,9 @@ namespace System.Data.SqlClient
                 // 
 
 
-                Boolean isFirstTransparentAttempt =  connectionOptions.TransparentNetworkIPResolution && attemptNumber == 1;
-
-                if(isFirstTransparentAttempt) {
-                    attemptOneLoginTimeout = firstTransparentAttemptTimeout;
-                }
-                else {
-                    if(isParallel) {
-                        attemptOneLoginTimeout = intervalTimer;
-                    }
+                
+                if(isParallel) {
+                    attemptOneLoginTimeout = intervalTimer;
                 }
                 
                 AttemptOneLogin(    serverInfo, 
@@ -1494,7 +1509,8 @@ namespace System.Data.SqlClient
                                     newSecurePassword,
                                     !isParallel,    // ignore timeout for SniOpen call unless MSF , and TNIR
                                     attemptOneLoginTimeout,
-                                    isFirstTransparentAttempt:isFirstTransparentAttempt);
+                                    isFirstTransparentAttempt:isFirstTransparentAttempt,
+                                    disableTnir: disableTnir);
                 
                 if (connectionOptions.MultiSubnetFailover && null != ServerProvidedFailOverPartner) {
                     // connection succeeded: trigger exception if server sends failover partner and MultiSubnetFailover is used.
@@ -1592,6 +1608,21 @@ namespace System.Data.SqlClient
             PoolGroupProviderInfo.FailoverCheck(this, false, connectionOptions, ServerProvidedFailOverPartner);
         }
         CurrentDataSource = originalServerInfo.UserServerName;
+    }
+
+    private bool ShouldDisableTnir(SqlConnectionString connectionOptions)
+    {
+        Boolean isAzureEndPoint = ADP.IsAzureSqlServerEndpoint(connectionOptions.DataSource);
+
+        Boolean isFedAuthEnabled = this._accessTokenInBytes != null ||
+                                   connectionOptions.Authentication == SqlAuthenticationMethod.ActiveDirectoryPassword ||
+                                   connectionOptions.Authentication == SqlAuthenticationMethod.ActiveDirectoryIntegrated;
+        
+        // Check if the user had explicitly specified the TNIR option in the connection string or the connection string builder. 
+        // If the user has specified the option in the connection string explicitly, then we shouldn't disable TNIR.
+        bool isTnirExplicitlySpecifiedInConnectionOptions = connectionOptions.Parsetable[SqlConnectionString.KEY.TransparentNetworkIPResolution] != null;
+        
+        return isTnirExplicitlySpecifiedInConnectionOptions ? false : (isAzureEndPoint || isFedAuthEnabled);
     }
 
     // Attempt to login to a host that has a failover partner
@@ -1815,7 +1846,8 @@ namespace System.Data.SqlClient
     }
 
     // Common code path for making one attempt to establish a connection and log in to server.
-    private void AttemptOneLogin(ServerInfo serverInfo, string newPassword, SecureString newSecurePassword, bool ignoreSniOpenTimeout, TimeoutTimer timeout, bool withFailover = false, bool isFirstTransparentAttempt = true) {
+    private void AttemptOneLogin(ServerInfo serverInfo, string newPassword, SecureString newSecurePassword, bool ignoreSniOpenTimeout, TimeoutTimer timeout, bool withFailover = false, bool isFirstTransparentAttempt = true, bool disableTnir = false)
+    {
         if (Bid.AdvancedOn) {
             Bid.Trace("<sc.SqlInternalConnectionTds.AttemptOneLogin|ADV> %d#, timout=%I64d{msec}, server=", ObjectID, timeout.MillisecondsRemaining);
             Bid.PutStr(serverInfo.ExtendedServerName);
@@ -1835,7 +1867,8 @@ namespace System.Data.SqlClient
                         ConnectionOptions.IntegratedSecurity,
                         withFailover,
                         isFirstTransparentAttempt,
-                        ConnectionOptions.Authentication);
+                        ConnectionOptions.Authentication,
+                        disableTnir);
 
         timeoutErrorInternal.EndPhase(SqlConnectionTimeoutErrorPhase.ConsumePreLoginHandshake);
         timeoutErrorInternal.SetAndBeginPhase(SqlConnectionTimeoutErrorPhase.LoginBegin);

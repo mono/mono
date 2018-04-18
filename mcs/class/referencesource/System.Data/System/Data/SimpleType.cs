@@ -2,9 +2,9 @@
 // <copyright file="SimpleType.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -38,7 +38,7 @@ namespace System.Data {
         string maxInclusive = "";
         string minExclusive = "";
         string minInclusive = "";
-        //REMOVED: encoding due to [....] 2001 XDS changes
+        //REMOVED: encoding due to Microsoft 2001 XDS changes
 
         // 
         internal string enumeration = "";
@@ -267,7 +267,7 @@ namespace System.Data {
                             type.SetAttribute(Keywords.BASE, baseSimpleType.Name);
                         }
                     }
-                    else { // [....]
+                    else { // Microsoft
                         type.SetAttribute(Keywords.BASE, baseSimpleType.Name);
                     }
                 }

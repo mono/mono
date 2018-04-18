@@ -34,9 +34,9 @@ namespace System.ServiceModel {
 	public class CommunicationObjectAbortedException : CommunicationException
 	{
 		public CommunicationObjectAbortedException () : base () {}
-		public CommunicationObjectAbortedException (string msg) : base (msg) {}
-		public CommunicationObjectAbortedException (string msg, Exception inner)
-			: base (msg, inner) {}		
+		public CommunicationObjectAbortedException (string message) : base (message) {}
+		public CommunicationObjectAbortedException (string message, Exception innerException)
+			: base (message, innerException) {}		
 		protected CommunicationObjectAbortedException (SerializationInfo info,
 					       StreamingContext context)
 			: base (info, context) {}

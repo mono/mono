@@ -109,6 +109,7 @@ namespace System.IO.Ports
 			// Init overlapped structures
 			NativeOverlapped wo = new NativeOverlapped ();
 			write_event = new ManualResetEvent (false);
+#pragma warning disable 618
 			wo.EventHandle = write_event.Handle;
 			write_overlapped = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (NativeOverlapped)));
 			Marshal.StructureToPtr (wo, write_overlapped, true);
@@ -118,6 +119,7 @@ namespace System.IO.Ports
 			ro.EventHandle = read_event.Handle;
 			read_overlapped = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (NativeOverlapped)));
 			Marshal.StructureToPtr (ro, read_overlapped, true);
+#pragma warning restore 618
 		}
 
 		public override bool CanRead {

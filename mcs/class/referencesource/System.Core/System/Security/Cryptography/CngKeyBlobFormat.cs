@@ -20,6 +20,8 @@ namespace System.Security.Cryptography {
     public sealed class CngKeyBlobFormat  : IEquatable<CngKeyBlobFormat> {
         private static volatile CngKeyBlobFormat s_eccPrivate;
         private static volatile CngKeyBlobFormat s_eccPublic;
+        private static volatile CngKeyBlobFormat s_eccFullPrivate;
+        private static volatile CngKeyBlobFormat s_eccFullPublic;
         private static volatile CngKeyBlobFormat s_genericPrivate;
         private static volatile CngKeyBlobFormat s_genericPublic;
         private static volatile CngKeyBlobFormat s_opaqueTransport;
@@ -119,19 +121,29 @@ namespace System.Security.Cryptography {
             }
         }
 
-#if NETSTANDARD
         public static CngKeyBlobFormat EccFullPrivateBlob {
             get {
-                throw new NotImplementedException ();
+                Contract.Ensures(Contract.Result<CngKeyBlobFormat>() != null);
+
+                if (s_eccFullPrivate == null) {
+                    s_eccFullPrivate = new CngKeyBlobFormat("ECCFULLPRIVATEBLOB"); // BCRYPT_ECCFULLPRIVATE_BLOB
+                }
+
+                return s_eccFullPrivate;
             }
         }
 
         public static CngKeyBlobFormat EccFullPublicBlob {
             get {
-                throw new NotImplementedException ();
+                Contract.Ensures(Contract.Result<CngKeyBlobFormat>() != null);
+
+                if (s_eccFullPublic == null) {
+                    s_eccFullPublic = new CngKeyBlobFormat("ECCFULLPUBLICBLOB"); // BCRYPT_ECCFULLPUBLIC_BLOB
+                }
+
+                return s_eccFullPublic;
             }
         }
-#endif
 
         public static CngKeyBlobFormat GenericPrivateBlob {
             get {

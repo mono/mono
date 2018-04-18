@@ -66,7 +66,7 @@ namespace System.Web.Services.Discovery {
         public override string DefaultFilename {
             get {
                 string filename = FilenameFromUrl(Url);
-                return Path.ChangeExtension(filename, ".disco");        // [[....]] change default extension
+                return Path.ChangeExtension(filename, ".disco");        // [Microsoft] change default extension
             }
         }
 

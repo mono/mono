@@ -36,8 +36,9 @@ namespace System.EnterpriseServices {
 	public sealed class RegistrationException : SystemException {
 
 		#region Fields
-
+#pragma warning disable 649
 		RegistrationErrorInfo[] errorInfo;
+#pragma warning restore 649
 
 		#endregion // Fields
 
@@ -54,8 +55,8 @@ namespace System.EnterpriseServices {
 		{
 		}
 
-		public RegistrationException (string msg, Exception innerException)
-			: base (msg, innerException)
+		public RegistrationException (string msg, Exception inner)
+			: base (msg, inner)
 		{
 		}
 

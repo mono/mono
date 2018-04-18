@@ -2691,7 +2691,7 @@ if (zoneElement != null) {{
 
         /// <devdoc>
         /// Never throws except for null arguments. Returns an error message in the out parameter instead.
-        /// [[....]] I investigated whether this could be refactored to share common code with
+        /// [Microsoft] I investigated whether this could be refactored to share common code with
         ///           LoadDynamicWebPart(), but it seems the methods are too different.
         /// </devdoc>
         public virtual WebPart ImportWebPart(XmlReader reader, out string errorMessage) {

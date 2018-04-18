@@ -13,7 +13,7 @@
 **
 ** Created: 11/2/2010
 ** 
-** <owner>[....]</owner>
+** <owner>Microsoft</owner>
 ** 
 =============================================================================*/
 
@@ -32,21 +32,26 @@ namespace System.Runtime.ExceptionServices {
     {
         // Private members that will hold the relevant details.
         private Exception m_Exception;
+#if !MONO
         private string m_remoteStackTrace;
+#endif
         private object m_stackTrace;
+#if !MONO
         private object m_dynamicMethods;
         private UIntPtr m_IPForWatsonBuckets;
         private Object m_WatsonBuckets;
+#endif
         
         private ExceptionDispatchInfo(Exception exception)
         {
             // Copy over the details we need to save.
             m_Exception = exception;
 #if MONO
-			var count = exception.captured_traces == null ? 0 : exception.captured_traces.Length;
+			var traces = exception.captured_traces;
+			var count = traces == null ? 0 : traces.Length;
 			var stack_traces = new System.Diagnostics.StackTrace [count + 1];
 			if (count != 0)
-				Array.Copy (exception.captured_traces, 0, stack_traces, 0, count);
+				Array.Copy (traces, 0, stack_traces, 0, count);
 
 			stack_traces [count] = new System.Diagnostics.StackTrace (exception, 0, true);
 			m_stackTrace = stack_traces;
@@ -66,6 +71,7 @@ namespace System.Runtime.ExceptionServices {
 #endif
         }
 
+#if !MONO
         internal UIntPtr IPForWatsonBuckets
         {
             get
@@ -81,6 +87,7 @@ namespace System.Runtime.ExceptionServices {
                 return m_WatsonBuckets;   
             }
         }
+#endif
         
         internal object BinaryStackTraceArray
         {
@@ -90,6 +97,7 @@ namespace System.Runtime.ExceptionServices {
             }
         }
 
+#if !MONO
         internal object DynamicMethodArray
         {
             get
@@ -105,6 +113,7 @@ namespace System.Runtime.ExceptionServices {
                 return m_remoteStackTrace;
             }
         }
+#endif
 
         // This static method is used to create an instance of ExceptionDispatchInfo for
         // the specified exception object and save all the required details that maybe
@@ -136,12 +145,20 @@ namespace System.Runtime.ExceptionServices {
         // This method will restore the original stack trace and bucketing details before throwing
         // the exception so that it is easy, from debugging standpoint, to understand what really went wrong on
         // the original thread.
+#if MONO
+        [System.Diagnostics.StackTraceHidden]
+#endif
         public void Throw()
         {
             // Restore the exception dispatch details before throwing the exception.
             m_Exception.RestoreExceptionDispatchInfo(this);
             throw m_Exception; 
         }
+
+#if MONO
+        [System.Diagnostics.StackTraceHidden]
+        public static void Throw (Exception source) => Capture (source).Throw ();
+#endif
     }
 }
 #endif // FEATURE_EXCEPTIONDISPATCHINFO

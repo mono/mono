@@ -1743,6 +1743,12 @@ namespace System.ServiceModel.Channels
             bool RemoveWaiter(IWaiter waiter)
             {
                 Queue<IWaiter> waiters = waiter.CanGetChannel ? this.getChannelQueue : this.waitQueue;
+
+                if (waiters == null)
+                {
+                    return false;
+                }
+
                 bool removed = false;
 
                 lock (this.ThisLock)

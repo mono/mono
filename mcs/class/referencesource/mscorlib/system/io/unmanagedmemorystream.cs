@@ -7,7 +7,7 @@
 **
 ** Class:  UnmanagedMemoryStream
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 ** Purpose: Create a stream over unmanaged memory, mostly
 **          useful for memory-mapped files.
@@ -163,7 +163,7 @@ namespace System.IO {
             if (_isOpen) {
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_CalledTwice"));
             }
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             if (!skipSecurityCheck) {
 #pragma warning disable 618
                 new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
@@ -244,7 +244,7 @@ namespace System.IO {
             if (_isOpen)
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_CalledTwice"));
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             if (!skipSecurityCheck)
 #pragma warning disable 618
                 new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
@@ -401,7 +401,7 @@ namespace System.IO {
                 throw new ArgumentOutOfRangeException("count", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
             if (buffer.Length - offset < count)
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidOffLen"));
-            Contract.EndContractBlock();  // Keep this in [....] with contract validation in ReadAsync
+            Contract.EndContractBlock();  // Keep this in sync with contract validation in ReadAsync
 
             if (!_isOpen) __Error.StreamIsClosed();
             if (!CanRead) __Error.ReadNotSupported();
@@ -580,7 +580,7 @@ namespace System.IO {
                 throw new ArgumentOutOfRangeException("count", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
             if (buffer.Length - offset < count)
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidOffLen"));
-            Contract.EndContractBlock();  // Keep contract validation in [....] with WriteAsync(..)
+            Contract.EndContractBlock();  // Keep contract validation in sync with WriteAsync(..)
 
             if (!_isOpen) __Error.StreamIsClosed();
             if (!CanWrite) __Error.WriteNotSupported();

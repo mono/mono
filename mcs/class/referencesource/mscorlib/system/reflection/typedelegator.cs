@@ -5,7 +5,7 @@
 // ==--==
 // TypeDelegator
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // This class wraps a Type object and delegates all methods to that Type.
 
 namespace System.Reflection {
@@ -261,5 +261,9 @@ namespace System.Reflection {
         {
             return typeImpl.GetInterfaceMap(interfaceType);
         }
+
+#if MONO
+        public override bool IsSZArray { get { return typeImpl.IsSZArray; } }
+#endif
     }
 }

@@ -1,5 +1,4 @@
-#include mobile_static_System_test.dll.exclude.sources
-#include monodroid_System_test.dll.new-exclude.sources
+#include testing_aot_full_System_test.dll.exclude.sources
 Microsoft.Win32/IntranetZoneCredentialPolicyCas.cs
 Microsoft.Win32/IntranetZoneCredentialPolicyTest.cs
 Microsoft.Win32/PowerModeChangedEventArgsCas.cs
@@ -11,7 +10,6 @@ Microsoft.Win32/SystemEventsCas.cs
 Microsoft.Win32/TimerElapsedEventArgsCas.cs
 Microsoft.Win32/UserPreferenceChangedEventArgsCas.cs
 Microsoft.Win32/UserPreferenceChangingEventArgsCas.cs
-System.Collections.Concurrent/CollectionStressTestHelper.cs
 System.Collections.Specialized/BitVector32Cas.cs
 System.Collections.Specialized/CollectionsUtilCas.cs
 System.Collections.Specialized/HybridDictionaryCas.cs

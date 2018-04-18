@@ -70,6 +70,18 @@ namespace System {
 		{
 			return Append (new Text.StringBuilder ()).ToString ();
 		}
+
+		public int Rank {
+			get {
+				return dimensions;
+			}
+		}
+
+		public bool IsBound {
+			get {
+				return bound;
+			}
+		}
 	}
 
 	internal class PointerSpec : ModifierSpec
@@ -443,7 +455,9 @@ namespace System {
 			}
 
 			if (name_start < pos)
-				data.AddName (name.Substring (name_start, pos - name_start));		
+				data.AddName (name.Substring (name_start, pos - name_start));
+			else if (name_start == pos)
+				data.AddName (String.Empty);
 
 			if (in_modifiers) {
 				for (; pos < name.Length; ++pos) {

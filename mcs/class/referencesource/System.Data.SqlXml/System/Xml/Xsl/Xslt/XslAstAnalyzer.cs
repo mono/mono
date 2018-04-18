@@ -2,7 +2,7 @@
 // <copyright file="XslAstAnalyzer.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System.Globalization;
@@ -668,7 +668,7 @@ namespace System.Xml.Xsl.Xslt {
             if (node.Select != null) {
                 if (node.Content.Count != 0) {
                     // In case of incorrect stylesheet, variable or parameter may have both a 'select' attribute and non-empty content
-                    // NOTE: This code must be in [....] with recovery logic in QilGenerator
+                    // NOTE: This code must be in sync with recovery logic in QilGenerator
                     result = xpathAnalyzer.Analyze(node.Select) | VisitChildren(node) | XslFlags.AnyType;
                     typeDonor = null;
                 } else {

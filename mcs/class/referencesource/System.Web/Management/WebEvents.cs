@@ -893,15 +893,14 @@ namespace System.Web.Management {
         }
 
         internal static String FormatResourceStringWithCache(String key) {
-            CacheInternal cacheInternal = HttpRuntime.CacheInternal;
-
             // HealthMonitoring, in some scenarios, can call into the cache hundreds of 
             // times during shutdown, after the cache has been disposed.  To improve 
             // shutdown performance, skip the cache when it is disposed.
-            if (cacheInternal.IsDisposed) {
+            if (HealthMonitoringManager.IsCacheDisposed) {
                 return SR.Resources.GetString(key, CultureInfo.InstalledUICulture);
             }
 
+            CacheStoreProvider cacheInternal = HttpRuntime.Cache.InternalCache;
             string s;
 
             string cacheKey = CreateWebEventResourceCacheKey(key);
@@ -913,7 +912,7 @@ namespace System.Web.Management {
 
             s = SR.Resources.GetString(key, CultureInfo.InstalledUICulture);
             if (s != null) {
-                cacheInternal.UtcInsert(cacheKey, s);
+                cacheInternal.Insert(cacheKey, s, null);
             }
 
             return s;
@@ -2330,6 +2329,7 @@ namespace System.Web.Management {
         static bool             s_inited = false;
         static bool             s_initing = false;
         static object           s_lockObject = new object();
+        static bool             s_isCacheDisposed = false;
 
         // If this method returns null, it means we failed during configuration.
         internal static HealthMonitoringManager Manager() {
@@ -2380,6 +2380,8 @@ namespace System.Web.Management {
                 return manager._enabled;
             }
         }
+
+        internal static bool IsCacheDisposed { get { return s_isCacheDisposed; } set { s_isCacheDisposed = value; } }
 
         internal static void StartHealthMonitoringHeartbeat() {
             HealthMonitoringManager manager = Manager();

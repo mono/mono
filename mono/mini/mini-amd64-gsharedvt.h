@@ -1,5 +1,6 @@
-/*
- * mini-exceptions-native-unwinder.c: libcorkscrew-based native unwinder
+/**
+ * \file
+ * libcorkscrew-based native unwinder
  *
  * Authors:
  *   Zoltan Varga <vargaz@gmail.com>
@@ -17,6 +18,9 @@ typedef enum {
 	GSHAREDVT_ARG_NONE = 0,
 	GSHAREDVT_ARG_BYVAL_TO_BYREF,
 	GSHAREDVT_ARG_BYREF_TO_BYVAL,
+	GSHAREDVT_ARG_BYREF_TO_BYVAL_U1,
+	GSHAREDVT_ARG_BYREF_TO_BYVAL_U2,
+	GSHAREDVT_ARG_BYREF_TO_BYVAL_U4
 } GSharedVtArgMarshal;
 
 typedef enum {
@@ -32,20 +36,6 @@ typedef enum {
 	GSHAREDVT_RET_R8,     // Double
 	GSHAREDVT_RET_NUM,
 } GSharedVtRetMarshal;
-
-static const char* ret_marshal_name[] = {
-	"GSHAREDVT_RET_NONE",
-	"GSHAREDVT_RET_I1",
-	"GSHAREDVT_RET_U1",
-	"GSHAREDVT_RET_I2",
-	"GSHAREDVT_RET_U2",
-	"GSHAREDVT_RET_I4",
-	"GSHAREDVT_RET_U4",
-	"GSHAREDVT_RET_I8",
-	"GSHAREDVT_RET_IREGS_1",
-	"GSHAREDVT_RET_R8",
-	"GSHAREDVT_RET_NUM",
-};
 
 #ifdef DEBUG_AMD64_GSHAREDVT
 #define DEBUG_AMD64_GSHAREDVT_PRINT printf

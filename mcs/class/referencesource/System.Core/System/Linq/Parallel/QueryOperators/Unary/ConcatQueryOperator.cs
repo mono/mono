@@ -7,7 +7,7 @@
 //
 // ConcatQueryOperator.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -233,7 +233,9 @@ namespace System.Linq.Parallel
 
         class ConcatQueryOperatorResults : BinaryQueryOperatorResults
         {
+#if !MONO
             ConcatQueryOperator<TSource> m_concatOp; // Operator that generated the results
+#endif
             int m_leftChildCount; // The number of elements in the left child result set
             int m_rightChildCount; // The number of elements in the right child result set
 
@@ -260,7 +262,9 @@ namespace System.Linq.Parallel
                 bool preferStriping)
                 : base(leftChildQueryResults, rightChildQueryResults, concatOp, settings, preferStriping)
             {
+#if !MONO
                 m_concatOp = concatOp;
+#endif
                 Contract.Assert(leftChildQueryResults.IsIndexible && rightChildQueryResults.IsIndexible);
 
                 m_leftChildCount = leftChildQueryResults.ElementsCount;

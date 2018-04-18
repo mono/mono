@@ -62,24 +62,24 @@ namespace System.ServiceModel.Syndication
 		{
 		}
 
-		public SyndicationItem (string title, string content, Uri feedAlternateLink)
-			: this (title, content, feedAlternateLink, null, default (DateTimeOffset))
+		public SyndicationItem (string title, string content, Uri itemAlternateLink)
+			: this (title, content, itemAlternateLink, null, default (DateTimeOffset))
 		{
 		}
 
-		public SyndicationItem (string title, string content, Uri feedAlternateLink, string id,
+		public SyndicationItem (string title, string content, Uri itemAlternateLink, string id,
 					DateTimeOffset lastUpdatedTime)
-			: this (title, content != null ? SyndicationContent.CreatePlaintextContent (content) : null, feedAlternateLink, id, lastUpdatedTime)
+			: this (title, content != null ? SyndicationContent.CreatePlaintextContent (content) : null, itemAlternateLink, id, lastUpdatedTime)
 		{
 		}
 
-		public SyndicationItem (string title, SyndicationContent content, Uri feedAlternateLink, string id,
+		public SyndicationItem (string title, SyndicationContent content, Uri itemAlternateLink, string id,
 					DateTimeOffset lastUpdatedTime)
 		{
 			Title = title != null ? new TextSyndicationContent (title) : null;
 			Content = content;
-			if (feedAlternateLink != null)
-				AddPermalink (feedAlternateLink);
+			if (itemAlternateLink != null)
+				AddPermalink (itemAlternateLink);
 			Id = id;
 			LastUpdatedTime = lastUpdatedTime;
 		}
@@ -210,11 +210,11 @@ namespace System.ServiceModel.Syndication
 			set { title = value; }
 		}
 
-		public void AddPermalink (Uri link)
+		public void AddPermalink (Uri permalink)
 		{
-			if (link == null)
-				throw new ArgumentNullException ("link");
-			Links.Add (SyndicationLink.CreateAlternateLink (link));
+			if (permalink == null)
+				throw new ArgumentNullException ("permalink");
+			Links.Add (SyndicationLink.CreateAlternateLink (permalink));
 		}
 
 		public virtual SyndicationItem Clone ()

@@ -46,21 +46,6 @@ namespace System.Web.SessionState
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class SessionStateModule : IHttpModule
 	{
-		class CallbackState
-		{
-			public readonly HttpContext Context;
-			public readonly AutoResetEvent AutoEvent;
-			public readonly string SessionId;
-			public readonly bool IsReadOnly;
-
-			public CallbackState (HttpContext context, AutoResetEvent e, string sessionId, bool isReadOnly) {
-				this.Context = context;
-				this.AutoEvent = e;
-				this.SessionId = sessionId;
-				this.IsReadOnly = isReadOnly;
-			}
-		}
-
 		internal const string HeaderName = "AspFilterSessionId";
 		internal const string CookielessFlagName = "_SessionIDManager_IsCookieLess";
 
@@ -290,8 +275,8 @@ namespace System.Web.SessionState
 					handler.ResetItemTimeout (context, container.SessionID);
 				}
 				else {
-					handler.ReleaseItemExclusive (context, container.SessionID, storeLockId);
 					handler.RemoveItem (context, container.SessionID, storeLockId, storeData);
+					handler.ReleaseItemExclusive (context, container.SessionID, storeLockId);
 					if (supportsExpiration)
 						// Make sure the expiration handler is not called after we will have raised
 						// the session end event.
@@ -342,33 +327,19 @@ namespace System.Web.SessionState
 			return item;
 		}
 
-		void WaitForStoreUnlock (HttpContext context, string sessionId, bool isReadonly) {
-			AutoResetEvent are = new AutoResetEvent (false);
-			TimerCallback tc = new TimerCallback (StoreUnlockWaitCallback);
-			CallbackState cs = new CallbackState (context, are, sessionId, isReadonly);
-			using (Timer timer = new Timer (tc, cs, 500, 500)) {
-				try {
-					are.WaitOne (executionTimeout, false);
+		void WaitForStoreUnlock (HttpContext context, string sessionId, bool isReadOnly) {
+			DateTime dt = DateTime.Now;
+			while ((DateTime.Now - dt) < executionTimeout) {
+				Thread.Sleep(500);
+				storeData = GetStoreData (context, sessionId, isReadOnly);
+				if (storeData == null && storeLocked && (storeLockAge > executionTimeout)) {
+					handler.ReleaseItemExclusive (context, sessionId, storeLockId);
+					return;
 				}
-				catch {
-					storeData = null;
+				else if (storeData != null && !storeLocked) {
+					//we have the session
+					return;
 				}
-			}
-		}
-
-		void StoreUnlockWaitCallback (object s) {
-			CallbackState state = (CallbackState) s;
-
-			SessionStateStoreData item = GetStoreData (state.Context, state.SessionId, state.IsReadOnly);
-
-			if (item == null && storeLocked && (storeLockAge > executionTimeout)) {
-				handler.ReleaseItemExclusive (state.Context, state.SessionId, storeLockId);
-				storeData = null; // Create new state
-				state.AutoEvent.Set ();
-			}
-			else if (item != null && !storeLocked) {
-				storeData = item;
-				state.AutoEvent.Set ();
 			}
 		}
 

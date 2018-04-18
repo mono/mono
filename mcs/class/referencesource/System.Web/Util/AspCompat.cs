@@ -300,7 +300,7 @@ internal class AspCompatApplicationStep : HttpApplication.IExecutionStep, IManag
             return;
 
         // try cache first
-        CacheInternal cacheInternal = HttpRuntime.CacheInternal;
+        CacheStoreProvider cacheInternal = HttpRuntime.Cache.InternalCache;
         String key = CacheInternal.PrefixAspCompatThreading + progidDisplayName;
         String threadingModel = (String)cacheInternal.Get(key);
         RegistryKey regKey = null;
@@ -321,7 +321,7 @@ internal class AspCompatApplicationStep : HttpApplication.IExecutionStep, IManag
             if (threadingModel == null)
                 threadingModel = String.Empty;
 
-            cacheInternal.UtcInsert(key, threadingModel);
+            cacheInternal.Insert(key, threadingModel, null);
         }
 
         if (StringUtil.EqualsIgnoreCase(threadingModel, "Apartment")) {

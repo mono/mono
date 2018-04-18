@@ -1,5 +1,6 @@
-/*
- * sgen-alloc.c: Object allocation routines + managed allocators
+/**
+ * \file
+ * Object allocation routines + managed allocators
  *
  * Author:
  * 	Paolo Molaro (lupus@ximian.com)
@@ -57,17 +58,10 @@ static guint64 stat_bytes_alloced_los = 0;
  * tlab_real_end points to the end of the TLAB.
  */
 
-#ifdef HAVE_KW_THREAD
-#define TLAB_START	(sgen_thread_info->tlab_start)
-#define TLAB_NEXT	(sgen_thread_info->tlab_next)
-#define TLAB_TEMP_END	(sgen_thread_info->tlab_temp_end)
-#define TLAB_REAL_END	(sgen_thread_info->tlab_real_end)
-#else
 #define TLAB_START	(__thread_info__->tlab_start)
 #define TLAB_NEXT	(__thread_info__->tlab_next)
 #define TLAB_TEMP_END	(__thread_info__->tlab_temp_end)
 #define TLAB_REAL_END	(__thread_info__->tlab_real_end)
-#endif
 
 static GCObject*
 alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
@@ -75,8 +69,8 @@ alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
 	GCObject *p;
 
 	if (!for_mature) {
-		sgen_client_degraded_allocation (size);
-		SGEN_ATOMIC_ADD_P (degraded_mode, size);
+		sgen_client_degraded_allocation ();
+		SGEN_ATOMIC_ADD_P (sgen_degraded_mode, size);
 		sgen_ensure_free_space (size, GENERATION_OLD);
 	} else {
 		if (sgen_need_major_collection (size))
@@ -84,10 +78,10 @@ alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
 	}
 
 
-	p = major_collector.alloc_degraded (vtable, size);
+	p = sgen_major_collector.alloc_degraded (vtable, size);
 
 	if (!for_mature)
-		binary_protocol_alloc_degraded (p, vtable, size, sgen_client_get_provenance ());
+		sgen_binary_protocol_alloc_degraded (p, vtable, size, sgen_client_get_provenance ());
 
 	return p;
 }
@@ -95,7 +89,7 @@ alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
 static void
 zero_tlab_if_necessary (void *p, size_t size)
 {
-	if (nursery_clear_policy == CLEAR_AT_TLAB_CREATION || nursery_clear_policy == CLEAR_AT_TLAB_CREATION_DEBUG) {
+	if (sgen_nursery_clear_policy == CLEAR_AT_TLAB_CREATION || sgen_nursery_clear_policy == CLEAR_AT_TLAB_CREATION_DEBUG) {
 		memset (p, 0, size);
 	} else {
 		/*
@@ -142,20 +136,20 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 	SGEN_ASSERT (6, sgen_vtable_get_descriptor (vtable), "VTable without descriptor");
 
-	if (G_UNLIKELY (has_per_allocation_action)) {
+	if (G_UNLIKELY (sgen_has_per_allocation_action)) {
 		static int alloc_count;
-		int current_alloc = InterlockedIncrement (&alloc_count);
+		int current_alloc = mono_atomic_inc_i32 (&alloc_count);
 
-		if (collect_before_allocs) {
-			if (((current_alloc % collect_before_allocs) == 0) && nursery_section) {
+		if (sgen_collect_before_allocs) {
+			if (((current_alloc % sgen_collect_before_allocs) == 0) && sgen_nursery_section) {
 				sgen_perform_collection (0, GENERATION_NURSERY, "collect-before-alloc-triggered", TRUE, TRUE);
-				if (!degraded_mode && sgen_can_alloc_size (size) && real_size <= SGEN_MAX_SMALL_OBJ_SIZE) {
+				if (!sgen_degraded_mode && sgen_can_alloc_size (size) && real_size <= SGEN_MAX_SMALL_OBJ_SIZE) {
 					// FIXME:
 					g_assert_not_reached ();
 				}
 			}
-		} else if (verify_before_allocs) {
-			if ((current_alloc % verify_before_allocs) == 0)
+		} else if (sgen_verify_before_allocs) {
+			if ((current_alloc % sgen_verify_before_allocs) == 0)
 				sgen_check_whole_heap_stw ();
 		}
 	}
@@ -186,7 +180,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 			CANARIFY_ALLOC(p,real_size);
 			SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %zd", p, vtable, sgen_client_vtable_get_name (vtable), size);
-			binary_protocol_alloc (p , vtable, size, sgen_client_get_provenance ());
+			sgen_binary_protocol_alloc (p , vtable, size, sgen_client_get_provenance ());
 			g_assert (*p == NULL);
 			mono_atomic_store_seq (p, vtable);
 
@@ -217,11 +211,11 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 			/* when running in degraded mode, we continue allocing that way
 			 * for a while, to decrease the number of useless nursery collections.
 			 */
-			if (degraded_mode && degraded_mode < DEFAULT_NURSERY_SIZE)
+			if (sgen_degraded_mode && sgen_degraded_mode < sgen_nursery_size)
 				return alloc_degraded (vtable, size, FALSE);
 
 			available_in_tlab = (int)(TLAB_REAL_END - TLAB_NEXT);//We'll never have tlabs > 2Gb
-			if (size > tlab_size || available_in_tlab > SGEN_MAX_NURSERY_WASTE) {
+			if (size > sgen_tlab_size || available_in_tlab > SGEN_MAX_NURSERY_WASTE) {
 				/* Allocate directly from the nursery */
 				p = (void **)sgen_nursery_alloc (size);
 				if (!p) {
@@ -243,11 +237,11 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 					 * OOM).
 					 */
 					sgen_ensure_free_space (real_size, GENERATION_NURSERY);
-					if (!degraded_mode)
+					if (!sgen_degraded_mode)
 						p = (void **)sgen_nursery_alloc (size);
 				}
 				if (!p)
-					return alloc_degraded (vtable, size, FALSE);
+					return alloc_degraded (vtable, size, TRUE);
 
 				zero_tlab_if_necessary (p, size);
 			} else {
@@ -256,15 +250,15 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 					SGEN_LOG (3, "Retire TLAB: %p-%p [%ld]", TLAB_START, TLAB_REAL_END, (long)(TLAB_REAL_END - TLAB_NEXT - size));
 				sgen_nursery_retire_region (p, available_in_tlab);
 
-				p = (void **)sgen_nursery_alloc_range (tlab_size, size, &alloc_size);
+				p = (void **)sgen_nursery_alloc_range (sgen_tlab_size, size, &alloc_size);
 				if (!p) {
 					/* See comment above in similar case. */
-					sgen_ensure_free_space (tlab_size, GENERATION_NURSERY);
-					if (!degraded_mode)
-						p = (void **)sgen_nursery_alloc_range (tlab_size, size, &alloc_size);
+					sgen_ensure_free_space (sgen_tlab_size, GENERATION_NURSERY);
+					if (!sgen_degraded_mode)
+						p = (void **)sgen_nursery_alloc_range (sgen_tlab_size, size, &alloc_size);
 				}
 				if (!p)
-					return alloc_degraded (vtable, size, FALSE);
+					return alloc_degraded (vtable, size, TRUE);
 
 				/* Allocate a new TLAB from the current nursery fragment */
 				TLAB_START = (char*)p;
@@ -293,7 +287,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 	if (G_LIKELY (p)) {
 		SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %zd", p, vtable, sgen_client_vtable_get_name (vtable), size);
-		binary_protocol_alloc (p, vtable, size, sgen_client_get_provenance ());
+		sgen_binary_protocol_alloc (p, vtable, size, sgen_client_get_provenance ());
 		mono_atomic_store_seq (p, vtable);
 	}
 
@@ -318,7 +312,7 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 	if (real_size > SGEN_MAX_SMALL_OBJ_SIZE)
 		return NULL;
 
-	if (G_UNLIKELY (size > tlab_size)) {
+	if (G_UNLIKELY (size > sgen_tlab_size)) {
 		/* Allocate directly from the nursery */
 		p = (void **)sgen_nursery_alloc (size);
 		if (!p)
@@ -360,7 +354,7 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 			size_t alloc_size = 0;
 
 			sgen_nursery_retire_region (p, available_in_tlab);
-			new_next = (char *)sgen_nursery_alloc_range (tlab_size, size, &alloc_size);
+			new_next = (char *)sgen_nursery_alloc_range (sgen_tlab_size, size, &alloc_size);
 			p = (void**)new_next;
 			if (!p)
 				return NULL;
@@ -380,7 +374,7 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 	CANARIFY_ALLOC(p,real_size);
 	SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %zd", p, vtable, sgen_client_vtable_get_name (vtable), size);
-	binary_protocol_alloc (p, vtable, size, sgen_client_get_provenance ());
+	sgen_binary_protocol_alloc (p, vtable, size, sgen_client_get_provenance ());
 	g_assert (*p == NULL); /* FIXME disable this in non debug builds */
 
 	mono_atomic_store_seq (p, vtable);
@@ -397,16 +391,19 @@ sgen_alloc_obj (GCVTable vtable, size_t size)
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
 
-	if (G_UNLIKELY (has_per_allocation_action)) {
+	if (G_UNLIKELY (sgen_has_per_allocation_action)) {
 		static int alloc_count;
-		int current_alloc = InterlockedIncrement (&alloc_count);
+		int current_alloc = mono_atomic_inc_i32 (&alloc_count);
 
-		if (verify_before_allocs) {
-			if ((current_alloc % verify_before_allocs) == 0)
+		if (sgen_verify_before_allocs) {
+			if ((current_alloc % sgen_verify_before_allocs) == 0) {
+				LOCK_GC;
 				sgen_check_whole_heap_stw ();
+				UNLOCK_GC;
+			}
 		}
-		if (collect_before_allocs) {
-			if (((current_alloc % collect_before_allocs) == 0) && nursery_section) {
+		if (sgen_collect_before_allocs) {
+			if (((current_alloc % sgen_collect_before_allocs) == 0) && sgen_nursery_section) {
 				LOCK_GC;
 				sgen_perform_collection (0, GENERATION_NURSERY, "collect-before-alloc-triggered", TRUE, TRUE);
 				UNLOCK_GC;
@@ -448,11 +445,11 @@ sgen_alloc_obj_pinned (GCVTable vtable, size_t size)
 		p = (GCObject *)sgen_los_alloc_large_inner (vtable, size);
 	} else {
 		SGEN_ASSERT (9, sgen_client_vtable_is_inited (vtable), "class %s:%s is not initialized", sgen_client_vtable_get_namespace (vtable), sgen_client_vtable_get_name (vtable));
-		p = major_collector.alloc_small_pinned_obj (vtable, size, SGEN_VTABLE_HAS_REFERENCES (vtable));
+		p = sgen_major_collector.alloc_small_pinned_obj (vtable, size, SGEN_VTABLE_HAS_REFERENCES (vtable));
 	}
 	if (G_LIKELY (p)) {
 		SGEN_LOG (6, "Allocated pinned object %p, vtable: %p (%s), size: %zd", p, vtable, sgen_client_vtable_get_name (vtable), size);
-		binary_protocol_alloc_pinned (p, vtable, size, sgen_client_get_provenance ());
+		sgen_binary_protocol_alloc_pinned (p, vtable, size, sgen_client_get_provenance ());
 	}
 	UNLOCK_GC;
 	return p;
@@ -480,7 +477,7 @@ sgen_alloc_obj_mature (GCVTable vtable, size_t size)
 void
 sgen_clear_tlabs (void)
 {
-	FOREACH_THREAD (info) {
+	FOREACH_THREAD_ALL (info) {
 		/* A new TLAB will be allocated when the thread does its first allocation */
 		info->tlab_start = NULL;
 		info->tlab_next = NULL;

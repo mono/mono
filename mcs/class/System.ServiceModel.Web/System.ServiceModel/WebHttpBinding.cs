@@ -45,9 +45,9 @@ namespace System.ServiceModel
 		{
 		}
 
-		public WebHttpBinding (WebHttpSecurityMode mode)
+		public WebHttpBinding (WebHttpSecurityMode securityMode)
 		{
-			Initialize (mode);
+			Initialize (securityMode);
 		}
 
 		public WebHttpBinding (string configurationName)
@@ -81,7 +81,6 @@ namespace System.ServiceModel
 		WebHttpSecurity security = new WebHttpSecurity ();
 		HttpTransportBindingElement t;
 		// This can be changed only using <synchronousReceive> configuration element.
-		bool receive_synchronously;
 		WebMessageEncodingBindingElement msgenc = new WebMessageEncodingBindingElement ();
 
 		public EnvelopeVersion EnvelopeVersion {
@@ -185,7 +184,7 @@ namespace System.ServiceModel
 		}
 
 		bool IBindingRuntimePreferences.ReceiveSynchronously {
-			get { return receive_synchronously; }
+			get { return false; }
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

@@ -47,7 +47,6 @@ using System.Windows.Markup;
 [assembly: NeutralResourcesLanguage ("en")]
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../winfx3.pub")]
 
 [assembly: ComVisible (false)]
 [assembly: AllowPartiallyTrustedCallers]

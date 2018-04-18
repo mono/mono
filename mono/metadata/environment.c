@@ -1,5 +1,6 @@
-/*
- * environment.c: System.Environment support internal calls
+/**
+ * \file
+ * System.Environment support internal calls
  *
  * Authors:
  *	Dick Porter (dick@ximian.com)
@@ -16,10 +17,11 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/exception.h>
+#include <mono/metadata/handle.h>
 #include <mono/utils/mono-compiler.h>
-#include <mono/io-layer/io-layer.h>
+#include <mono/utils/w32api.h>
 
-extern MonoString* ves_icall_System_Environment_GetOSVersionString (void);
+extern MonoStringHandle ves_icall_System_Environment_GetOSVersionString (MonoError *error);
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_UTSNAME_H)
 #include <sys/utsname.h>
@@ -27,20 +29,29 @@ extern MonoString* ves_icall_System_Environment_GetOSVersionString (void);
 
 static gint32 exitcode=0;
 
-gint32 mono_environment_exitcode_get (void)
+/**
+ * mono_environment_exitcode_get:
+ */
+gint32
+mono_environment_exitcode_get (void)
 {
 	return(exitcode);
 }
 
-void mono_environment_exitcode_set (gint32 value)
+/**
+ * mono_environment_exitcode_set:
+ */
+void
+mono_environment_exitcode_set (gint32 value)
 {
 	exitcode=value;
 }
 
 /* note: we better manipulate the string in managed code (easier and safer) */
-MonoString*
-ves_icall_System_Environment_GetOSVersionString (void)
+MonoStringHandle
+ves_icall_System_Environment_GetOSVersionString (MonoError *error)
 {
+	error_init (error);
 #ifdef HOST_WIN32
 	OSVERSIONINFOEX verinfo;
 
@@ -54,15 +65,30 @@ ves_icall_System_Environment_GetOSVersionString (void)
 				 verinfo.dwMinorVersion,
 				 verinfo.dwBuildNumber,
 				 verinfo.wServicePackMajor << 16);
-		return mono_string_new (mono_domain_get (), version);
+		return mono_string_new_handle (mono_domain_get (), version, error);
+	}
+#elif defined(HAVE_SYS_UTSNAME_H) && defined(_AIX)
+	/*
+	 * AIX puts the major version number in .version and minor in .release; so make a
+	 * version string based on that; other Unices seem to cram everything in .release
+	 * and .version is for things like kernel variants.
+	 */
+	struct utsname name;
+	char version [sizeof(name)];
+
+	if (uname (&name) >= 0) {
+		sprintf (version, "%s.%s", name.version, name.release);
+		return mono_string_new_handle (mono_domain_get (), version, error);
 	}
 #elif defined(HAVE_SYS_UTSNAME_H)
 	struct utsname name;
 
+	memset (&name, 0, sizeof (name)); // WSL does not always nul terminate.
+
 	if (uname (&name) >= 0) {
-		return mono_string_new (mono_domain_get (), name.release);
+		return mono_string_new_handle (mono_domain_get (), name.release, error);
 	}
 #endif
-	return mono_string_new (mono_domain_get (), "0.0.0.0");
+	return mono_string_new_handle (mono_domain_get (), "0.0.0.0", error);
 }
 

@@ -36,9 +36,9 @@ namespace System.ServiceModel.Dispatcher
 	public class XPathNavigatorException : XPathException
 	{
 		public XPathNavigatorException () : this ("Navigator node quota exceeded") {}
-		public XPathNavigatorException (string msg) : base (msg) {}
-		public XPathNavigatorException (string msg, Exception inner)
-			: base (msg, inner) {}		
+		public XPathNavigatorException (string message) : base (message) {}
+		public XPathNavigatorException (string message, Exception innerException)
+			: base (message, innerException) {}		
 		protected XPathNavigatorException (SerializationInfo info,
 							    StreamingContext context)
 			: base (info, context) {}

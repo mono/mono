@@ -43,7 +43,7 @@ namespace System.Net {
         //
         public override int Count {
             get {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 return m_SyncTable.Count;
@@ -108,7 +108,7 @@ namespace System.Net {
         //
         public override ICollection Keys {
             get {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 return m_SyncTable.Keys;
@@ -118,7 +118,7 @@ namespace System.Net {
         public override object SyncRoot {
             [HostProtection(Synchronization=true)]
             get {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 return m_SyncTable;
@@ -127,7 +127,7 @@ namespace System.Net {
         //
         public override ICollection Values {
             get {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 if (m_ValuesWrapper == null)
@@ -144,7 +144,7 @@ namespace System.Net {
         }
         //
         public override void Clear() {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
             m_SyncTable.Clear();
@@ -156,7 +156,7 @@ namespace System.Net {
         }
         //
         public override bool ContainsValue(string value) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
             foreach (SpnToken spnToken in m_SyncTable.Values)
@@ -169,7 +169,7 @@ namespace System.Net {
 
         // We have to unwrap the SpnKey and just expose the Spn
         public override void CopyTo(Array array, int index) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
             CheckCopyToArguments(array, index, Count);
@@ -183,7 +183,7 @@ namespace System.Net {
         }
         //
         public override IEnumerator GetEnumerator() {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
 
@@ -211,7 +211,7 @@ namespace System.Net {
             try {
                 Uri uri = new Uri(key);
                 key = uri.GetParts(UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path, UriFormat.SafeUnescaped);
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 new WebPermission(NetworkAccess.Connect, new Uri(key)).Demand();
 #endif
             }

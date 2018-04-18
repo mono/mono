@@ -343,7 +343,7 @@ namespace System.Net {
                 catch {
                     // DevDiv: 642025
                     // ASP.NET uses own ConfigurationManager which can throw in more situations than config errors (i.e. BadRequest)
-                    // It's ok to ---- the exception here and continue using the default value
+                    // It's ok to swallow the exception here and continue using the default value
                     // Try to initialize again the next time
                     return defaultDecodeConformance;
                 }
@@ -382,7 +382,7 @@ namespace System.Net {
                 catch {
                     // DevDiv: 642025
                     // ASP.NET uses own ConfigurationManager which can throw in more situations than config errors (i.e. BadRequest)
-                    // It's ok to ---- the exception here and continue using the default value
+                    // It's ok to swallow the exception here and continue using the default value
                     // Try to initialize again the next time
                     return defaultEncodeConformance;
                 }

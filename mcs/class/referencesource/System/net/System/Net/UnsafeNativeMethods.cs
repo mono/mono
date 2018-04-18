@@ -598,6 +598,12 @@ namespace System.Net {
                       [In, Out] SecurityBufferDescriptor inputBuffers
                       );
 
+            [DllImport(SECUR32, ExactSpelling = true, SetLastError = true)]
+            [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+            internal unsafe static extern int ApplyControlToken(
+                      [In] void* inContextPtr,
+                      [In, Out] SecurityBufferDescriptor inputBuffers
+                      );
         }
         
 #endif // !FEATURE_PAL
@@ -2184,8 +2190,18 @@ namespace System.Net {
             internal static extern uint HttpCloseUrlGroup(ulong urlGroupId);
 
             [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "Implementation requires unmanaged code usage")]
-            [DllImport(TOKENBINDING, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+            [DllImport(TOKENBINDING, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall, EntryPoint="TokenBindingVerifyMessage")]
             public static extern int TokenBindingVerifyMessage(
+                [In] byte* tokenBindingMessage,
+                [In] uint tokenBindingMessageSize,
+                [In] TOKENBINDING_KEY_PARAMETERS_TYPE keyType,
+                [In] byte* tlsUnique,
+                [In] uint tlsUniqueSize,
+                [Out] out HeapAllocHandle resultList);
+
+            [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "Implementation requires unmanaged code usage")]
+            [DllImport(TOKENBINDING, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall, EntryPoint="TokenBindingVerifyMessage")]
+            public static extern int TokenBindingVerifyMessage_V1(
                 [In] byte* tokenBindingMessage,
                 [In] uint tokenBindingMessageSize,
                 [In] IntPtr keyType,
@@ -2236,6 +2252,7 @@ namespace System.Net {
                 HttpRequestInfoTypeAuth,
                 HttpRequestInfoTypeChannelBind,
                 HttpRequestInfoTypeSslProtocol,
+                HttpRequestInfoTypeSslTokenBindingDraft,
                 HttpRequestInfoTypeSslTokenBinding
             }
 
@@ -2582,7 +2599,7 @@ namespace System.Net {
             [StructLayout(LayoutKind.Sequential)]
             internal struct HTTP_BINDING_INFO {
                 internal HTTP_FLAGS Flags;
-                internal IntPtr RequestQueueHandle;                
+                internal IntPtr RequestQueueHandle;
             }
 
             [StructLayout(LayoutKind.Sequential)]
@@ -2592,15 +2609,25 @@ namespace System.Net {
                 public uint TokenBindingSize;
                 public byte* TlsUnique;
                 public uint TlsUniqueSize;
+                public TOKENBINDING_KEY_PARAMETERS_TYPE KeyType;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal unsafe struct HTTP_REQUEST_TOKEN_BINDING_INFO_V1
+            {
+                public byte* TokenBinding;
+                public uint TokenBindingSize;
+                public byte* TlsUnique;
+                public uint TlsUniqueSize;
                 public IntPtr KeyType;
             }
 
-            internal enum TOKENBINDING_HASH_ALGORITHM : byte
+            internal enum TOKENBINDING_HASH_ALGORITHM_V1 : byte
             {
                 TOKENBINDING_HASH_ALGORITHM_SHA256 = 4,
             }
 
-            internal enum TOKENBINDING_SIGNATURE_ALGORITHM : byte
+            internal enum TOKENBINDING_SIGNATURE_ALGORITHM_V1 : byte
             {
                 TOKENBINDING_SIGNATURE_ALGORITHM_RSA = 1,
                 TOKENBINDING_SIGNATURE_ALGORITHM_ECDSAP256 = 3,
@@ -2617,19 +2644,43 @@ namespace System.Net {
                 TOKENBINDING_EXTENSION_FORMAT_UNDEFINED = 0,
             }
 
-            [StructLayout(LayoutKind.Sequential)]
-            internal struct TOKENBINDING_IDENTIFIER
+            internal enum TOKENBINDING_KEY_PARAMETERS_TYPE : byte 
             {
-                public TOKENBINDING_TYPE bindingType;
-                public TOKENBINDING_HASH_ALGORITHM hashAlgorithm;
-                public TOKENBINDING_SIGNATURE_ALGORITHM signatureAlgorithm;
+                TOKENBINDING_KEY_PARAMETERS_TYPE_RSA_PKCS_SHA256 = 0,
+                TOKENBINDING_KEY_PARAMETERS_TYPE_RSA_PSS_SHA256 = 1,
+                TOKENBINDING_KEY_PARAMETERS_TYPE_ECDSA_SHA256 = 2,
             }
 
             [StructLayout(LayoutKind.Sequential)]
+            internal struct TOKENBINDING_IDENTIFIER
+            {
+                public TOKENBINDING_KEY_PARAMETERS_TYPE keyType;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal struct TOKENBINDING_IDENTIFIER_V1
+            {
+                public TOKENBINDING_TYPE bindingType;
+                public TOKENBINDING_HASH_ALGORITHM_V1 hashAlgorithm;
+                public TOKENBINDING_SIGNATURE_ALGORITHM_V1 signatureAlgorithm;
+            }
+            
+            [StructLayout(LayoutKind.Sequential)]
             internal unsafe struct TOKENBINDING_RESULT_DATA
             {
+                public TOKENBINDING_TYPE bindingType;
                 public uint identifierSize;
                 public TOKENBINDING_IDENTIFIER* identifierData;
+                public TOKENBINDING_EXTENSION_FORMAT extensionFormat;
+                public uint extensionSize;
+                public IntPtr extensionData;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal unsafe struct TOKENBINDING_RESULT_DATA_V1
+            {
+                public uint identifierSize;
+                public TOKENBINDING_IDENTIFIER_V1* identifierData;
                 public TOKENBINDING_EXTENSION_FORMAT extensionFormat;
                 public uint extensionSize;
                 public IntPtr extensionData;
@@ -2640,6 +2691,13 @@ namespace System.Net {
             {
                 public uint resultCount;
                 public TOKENBINDING_RESULT_DATA* resultData;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal unsafe struct TOKENBINDING_RESULT_LIST_V1
+            {
+                public uint resultCount;
+                public TOKENBINDING_RESULT_DATA_V1* resultData;
             }
             
             // see http.w for definitions
@@ -3148,11 +3206,19 @@ namespace System.Net {
                 return endpoint;
             }
             
-            internal static HTTP_REQUEST_TOKEN_BINDING_INFO* GetTlsTokenBindingRequestInfo(byte[] memoryBlob, IntPtr originalAddress){
-                
+            /// <summary>
+            /// Method to acquire the V2 token binding 
+            /// We tell the difference between a V1 binding and a V2 binding by looking at the HTTP_REQUEST_INFO_TYPE returned from the HTTP request blob
+            /// If we negotiated the new binding type, the value 'HttpRequestInfoTypeSslTokenBinding' will be returned. 
+            /// </summary>
+            /// <param name="memoryBlob"></param>
+            /// <param name="originalAddress"></param>
+            /// <returns></returns>
+            internal static HTTP_REQUEST_TOKEN_BINDING_INFO* GetTlsTokenBindingRequestInfo(byte[] memoryBlob, IntPtr originalAddress)
+            {
                 fixed (byte* pMemoryBlob = memoryBlob)
                 {
-                    HTTP_REQUEST_V2* request = (HTTP_REQUEST_V2*)pMemoryBlob;                    
+                    HTTP_REQUEST_V2* request = (HTTP_REQUEST_V2*)pMemoryBlob;
                     long fixup = pMemoryBlob - (byte*) originalAddress;
 
                     for (int i = 0; i < request->RequestInfoCount; i++)
@@ -3160,7 +3226,35 @@ namespace System.Net {
                         HTTP_REQUEST_INFO* pThisInfo = (HTTP_REQUEST_INFO*)(fixup + (byte*)&request->pRequestInfo[i]);
                         if (pThisInfo != null && pThisInfo->InfoType == HTTP_REQUEST_INFO_TYPE.HttpRequestInfoTypeSslTokenBinding)
                         {
-                            return (HTTP_REQUEST_TOKEN_BINDING_INFO*)pThisInfo->pInfo;
+                            return (HTTP_REQUEST_TOKEN_BINDING_INFO*)((byte*)(pThisInfo->pInfo) + fixup);
+                        }
+                    }
+                }
+                return null;
+            }
+
+            /// <summary>
+            /// Compat method to acquire the old V1 token binding
+            /// We tell the difference between a V1 binding and a V2 binding by looking at the HTTP_REQUEST_INFO_TYPE returned from the HTTP request blob
+            /// If we negotiated the old binding type, the value 'HttpRequestInfoTypeSslTokenBindingDraft' will be returned.  
+            /// </summary>
+            /// <param name="memoryBlob"></param>
+            /// <param name="originalAddress"></param>
+            /// <returns></returns>
+            internal static HTTP_REQUEST_TOKEN_BINDING_INFO_V1* GetTlsTokenBindingRequestInfo_V1(byte[] memoryBlob, IntPtr originalAddress)
+            {
+                fixed (byte* pMemoryBlob = memoryBlob)
+                {
+                    HTTP_REQUEST_V2* request = (HTTP_REQUEST_V2*)pMemoryBlob;
+                    long fixup = pMemoryBlob - (byte*)originalAddress;
+
+                    for (int i = 0; i < request->RequestInfoCount; i++)
+                    {
+                        HTTP_REQUEST_INFO* pThisInfo = (HTTP_REQUEST_INFO*)(fixup + (byte*)&request->pRequestInfo[i]);
+                        if (pThisInfo != null && pThisInfo->InfoType == HTTP_REQUEST_INFO_TYPE.HttpRequestInfoTypeSslTokenBindingDraft)
+                        {
+                            // Old V1 token binding protocol is being used, so we need to handle this data blob using the old behavior
+                            return (HTTP_REQUEST_TOKEN_BINDING_INFO_V1*)((byte*)(pThisInfo->pInfo) + fixup);
                         }
                     }
                 }

@@ -354,8 +354,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
         {
             for (int i=0; i<Count(); i++)
             {
+#if _DEBUG
                 Object obj = objects[i];
-#if _DEBUG                
                 SerTrace.Log(this, "Stack Dump ",stackId," "+((obj is ITrace)?((ITrace)obj).Trace():""));
 #endif
             }

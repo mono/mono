@@ -2,7 +2,7 @@
 // <copyright file="CodeGenerator.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>                                                                
+// <owner current="true" primary="true">Microsoft</owner>                                                                
 //------------------------------------------------------------------------------
 
 using System;
@@ -1113,8 +1113,23 @@ namespace System.Xml.Serialization {
                     case TypeCode.Empty:
                     case TypeCode.DBNull:
                     default:
-                        Debug.Assert(false, "UnknownConstantType");
-                        throw new NotSupportedException("UnknownConstantType"); //.Serialization.DiagnosticUtility.ExceptionUtility.ThrowHelperError(XmlObjectSerializer.CreateSerializationException(SR.GetString(SR.UnknownConstantType, DataContract.GetClrTypeFullName(valueType))));
+                        if (valueType == typeof(TimeSpan) && LocalAppContextSwitches.EnableTimeSpanSerialization)
+                        {
+                            ConstructorInfo TimeSpan_ctor = typeof(TimeSpan).GetConstructor(
+                            CodeGenerator.InstanceBindingFlags,
+                            null,
+                            new Type[] { typeof(Int64) },
+                            null
+                            );
+                            Ldc(((TimeSpan)o).Ticks); // ticks
+                            New(TimeSpan_ctor);
+                            break;
+                        }
+                        else
+                        {
+                            Debug.Assert(false, "UnknownConstantType");
+                            throw new NotSupportedException("UnknownConstantType"); //.Serialization.DiagnosticUtility.ExceptionUtility.ThrowHelperError(XmlObjectSerializer.CreateSerializationException(SR.GetString(SR.UnknownConstantType, DataContract.GetClrTypeFullName(valueType))));
+                        }
                 }
             }
         }

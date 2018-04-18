@@ -279,7 +279,7 @@ namespace System.Data.Linq {
         private void ResolveDelete() {
             Debug.Assert(this.IsDeleted);
             // If the user is attempting to update an entity that no longer exists 
-            // in the database, we first need to [....] the delete into the local cache.
+            // in the database, we first need to sync the delete into the local cache.
             if (!trackedObject.IsDeleted) {
                 trackedObject.ConvertToDeleted();
             }
@@ -287,7 +287,7 @@ namespace System.Data.Linq {
             // As the object have been deleted, it needs to leave the cache
             this.Session.Context.Services.RemoveCachedObjectLike(trackedObject.Type, trackedObject.Original);
 
-            // Now that our cache is in [....], we accept the changes
+            // Now that our cache is in sync, we accept the changes
             this.trackedObject.AcceptChanges();
             this.isResolved = true;
         }

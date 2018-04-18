@@ -58,7 +58,6 @@ using System.Runtime.Versioning;
 
 [assembly: ComVisible (false)]
 
-[assembly: AssemblyKeyFile ("../msfinal.pub")]
 
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityRules (SecurityRuleSet.Level2, SkipVerificationInFullTrust=true)]

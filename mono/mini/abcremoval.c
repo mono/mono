@@ -1,11 +1,13 @@
-/*
- * abcremoval.c: Array bounds check removal
+/**
+ * \file
+ * Array bounds check removal
  *
  * Author:
  *   Massimiliano Mantione (massi@ximian.com)
  *
  * (C) 2004 Ximian, Inc.  http://www.ximian.com
  */
+#include <config.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -13,6 +15,7 @@
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/opcodes.h>
 #include <mono/metadata/mempool-internals.h>
+#include <mono/utils/mono-compiler.h>
 
 #include <config.h>
 
@@ -903,7 +906,7 @@ evaluate_relation_with_target_variable (MonoVariableRelationsEvaluationArea *are
 			
 			current_context = father_context;
 			while (current_context != last_context) {
-				int index = father_context - area->contexts;
+				int index = current_context - area->contexts;
 				MonoRelationsEvaluationStatus *current_status = &(area->statuses [index]);
 				*current_status = (MonoRelationsEvaluationStatus)(*current_status | recursive_status);
 				current_context = current_context->father;
@@ -1241,7 +1244,7 @@ type_to_value_kind (MonoType *type)
 
 /**
  * mono_perform_abc_removal:
- * @cfg: Control Flow Graph
+ * \param cfg Control Flow Graph
  *
  * Performs the ABC removal from a cfg in SSA form.
  * It does the following:
@@ -1298,9 +1301,21 @@ mono_perform_abc_removal (MonoCompile *cfg)
 
 		for (ins = bb->code; ins; ins = ins->next) {
 			const char *spec = INS_INFO (ins->opcode);
+			gint32 idx, *reg;
 			
 			if (spec [MONO_INST_DEST] == ' ' || MONO_IS_STORE_MEMBASE (ins))
 				continue;
+
+			MONO_INS_FOR_EACH_REG (ins, idx, reg) {
+				MonoInst *var = get_vreg_to_inst (cfg, *reg);
+				if (var && (!MONO_VARINFO (cfg, var->inst_c0)->def))
+						break;
+			}
+			if (idx < MONO_INST_LEN) {
+				if (TRACE_ABC_REMOVAL)
+					printf ("Global register %d is not in the SSA form, skipping.\n", *reg);
+				continue;
+			}
 
 			if (spec [MONO_INST_DEST] == 'i') {
 				MonoIntegerValueKind effective_value_kind;
@@ -1380,4 +1395,8 @@ mono_perform_abc_removal (MonoCompile *cfg)
 	process_block (cfg, cfg->bblocks [0], &area);
 }
 
-#endif /* DISABLE_JIT */
+#else /* !DISABLE_JIT */
+
+MONO_EMPTY_SOURCE_FILE (abcremoval);
+
+#endif /* !DISABLE_JIT */

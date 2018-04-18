@@ -1,4 +1,4 @@
-
+# -*- mode:text; -*-
 # x86-class cpu description file
 # this file is read by genmdesc to pruduce a table with all the relevant information
 # about the cpu instructions that may be used by the regsiter allocator, the scheduler
@@ -58,6 +58,7 @@
 
 break: len:2
 tailcall: len:120 clob:c
+tailcall_membase: src1:b len:120 clob:c # FIXME len?
 br: len:6
 label: len:0
 seq_point: len:46 clob:c
@@ -99,8 +100,8 @@ long_min_un: dest:i src1:i src2:i len:16 clob:1
 long_max: dest:i src1:i src2:i len:16 clob:1
 long_max_un: dest:i src1:i src2:i len:16 clob:1
 
-throw: src1:i len:18
-rethrow: src1:i len:18
+throw: src1:i len:24
+rethrow: src1:i len:24
 start_handler: len:16
 endfinally: len:9
 endfilter: src1:a len:9
@@ -266,6 +267,7 @@ r4_conv_to_u2: dest:i src1:f len:32
 r4_conv_to_i4: dest:i src1:f len:16
 r4_conv_to_u4: dest:i src1:f len:32
 r4_conv_to_i8: dest:i src1:f len:32
+r4_conv_to_i: dest:i src1:f len:32
 r4_conv_to_r8: dest:f src1:f len:17
 r4_conv_to_r4: dest:f src1:f len:17
 r4_add: dest:f src1:f src2:f clob:1 len:5
@@ -326,9 +328,7 @@ amd64_set_xmmreg_r4: dest:f src1:f len:14 clob:m
 amd64_set_xmmreg_r8: dest:f src1:f len:14 clob:m
 amd64_save_sp_to_lmf: len:16
 tls_get: dest:i len:32
-tls_get_reg: dest:i src1:i len:64
 tls_set: src1:i len:16
-tls_set_reg: src1:i src2:i len:32
 atomic_add_i4: src1:b src2:i dest:i len:32
 atomic_add_i8: src1:b src2:i dest:i len:32
 atomic_exchange_i4: src1:b src2:i dest:i len:12
@@ -450,9 +450,10 @@ hard_nop: len:1
 # Linear IR opcodes
 nop: len:0
 dummy_use: src1:i len:0
-dummy_store: len:0
 dummy_iconst: dest:i len:0
+dummy_i8const: dest:i len:0
 dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -741,6 +742,7 @@ cvttps2dq: dest:x src1:x len:5 clob:1
 
 xmove: dest:x src1:x len:5
 xzero: dest:x len:5
+xones: dest:x len:5
 
 iconv_to_x: dest:x src1:i len:5
 extract_i4: dest:i src1:x len:5
@@ -793,3 +795,5 @@ gc_param_slot_liveness_def: len:0
 
 generic_class_init: src1:A len:32 clob:c
 get_last_error: dest:i len:32
+
+fill_prof_call_ctx: src1:i len:128

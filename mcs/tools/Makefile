@@ -3,7 +3,6 @@ thisdir = tools
 net_4_5_dirs := \
 	al		\
 	linker		\
-	tuner		\
 	culevel		\
 	genxs		\
 	mkbundle	\
@@ -11,7 +10,6 @@ net_4_5_dirs := \
 	mono-service	\
 	mono-xsd	\
 	resgen		\
-	gacutil		\
 	wsdl		\
 	xbuild		\
 	csharp		\
@@ -45,26 +43,25 @@ net_4_5_dirs := \
 	cccheck		\
 	security	\
 	mdbrebase	\
+	mdb2ppdb	\
 	ikdasm		\
 	mono-symbolicate	\
 	linker-analyzer
 
-build_SUBDIRS = gacutil security culevel cil-stringreplacer commoncryptogenerator
+build_SUBDIRS = resgen gacutil security culevel cil-stringreplacer commoncryptogenerator resx2sr linker cil-strip
+monodroid_tools_SUBDIRS = cil-strip linker-analyzer mkbundle mdoc mono-symbolicate
+monodroid_SUBDIRS = nunit-lite
+monotouch_SUBDIRS = nunit-lite
 net_4_5_SUBDIRS = gacutil
+net_4_x_SUBDIRS = gacutil
 net_4_5_PARALLEL_SUBDIRS = $(net_4_5_dirs)
+net_4_x_PARALLEL_SUBDIRS = $(net_4_5_dirs)
 
 SUBDIRS = $(build_SUBDIRS) $(net_4_5_dirs)
 
 include ../build/rules.make
 
 DISTFILES = \
-	assemblies.xml			\
-	mono-win32-setup-dark.bmp	\
-	mono-win32-setup-light.bmp	\
-	mono-win32-setup.nsi		\
-	scan-tests.pl			\
-	tinderbox/smtp.c		\
-	tinderbox/tinderbox.sh		\
 	removecomments.sh
 
 test-local csproj-local run-test-local run-test-ondotnet-local all-local install-local uninstall-local doc-update-local:

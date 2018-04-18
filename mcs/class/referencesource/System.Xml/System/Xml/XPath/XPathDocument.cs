@@ -2,7 +2,7 @@
 // <copyright file="XPathDocument.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System;
@@ -231,7 +231,7 @@ namespace System.Xml.XPath {
 
                         case XmlNodeType.Whitespace:
                             // We intentionally ignore the reader.XmlSpace property here and blindly trust
-                            //   the reported node type. If the reported information is not in [....]
+                            //   the reported node type. If the reported information is not in sync
                             //   (in this case if the reader.XmlSpace == Preserve) then we make the choice
                             //   to trust the reported node type. Since we have no control over the input reader
                             //   we can't even assert here.

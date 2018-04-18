@@ -23,11 +23,13 @@ namespace CppSharp
 
         static List<string> Abis = new List<string> ();
         static string OutputDir;
+        static string OutputFile;
 
-        static bool XamarinAndroid;
         static string MonodroidDir = @"";
         static string AndroidNdkPath = @"";
         static string MaccoreDir = @"";
+        static string TargetDir = @"";
+        static bool GenIOS;
 
         public enum TargetPlatform
         {
@@ -89,28 +91,24 @@ namespace CppSharp
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "i686-none-linux-android",
-                Build = XamarinAndroid ? "x86" : "mono-x86",
                 Defines = { "TARGET_X86" }
             });
 
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "x86_64-none-linux-android",
-                Build = XamarinAndroid ? "x86_64" : "mono-x86_64",
                 Defines = { "TARGET_AMD64" }
             });            
 
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "armv5-none-linux-androideabi",
-                Build = XamarinAndroid ? "armeabi" : "mono-armv6",
                 Defines = { "TARGET_ARM", "ARM_FPU_VFP", "HAVE_ARMV5" }
             });
 
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "armv7-none-linux-androideabi",
-                Build = XamarinAndroid ? "armeabi-v7a" : "mono-armv7",
                 Defines = { "TARGET_ARM", "ARM_FPU_VFP", "HAVE_ARMV5", "HAVE_ARMV6",
                     "HAVE_ARMV7"
                 }
@@ -119,19 +117,17 @@ namespace CppSharp
             Targets.Add (new Target {
                 Platform = TargetPlatform.Android,
                 Triple = "aarch64-v8a-linux-android",
-                Build = XamarinAndroid ? "arm64-v8a" : "mono-aarch64",
                 Defines = { "TARGET_ARM64" }
             });            
 
             /*Targets.Add(new Target {
                     Platform = TargetPlatform.Android,
                     Triple = "mipsel-none-linux-android",
-                    Build = "mono-mips",
                     Defines = { "TARGET_MIPS", "__mips__" }
                 });*/
 
             foreach (var target in AndroidTargets)
-                target.Defines.AddRange (new string[] { "PLATFORM_ANDROID",
+                target.Defines.AddRange (new string[] { "HOST_ANDROID",
                     "TARGET_ANDROID", "MONO_CROSS_COMPILE", "USE_MONO_CTX"
                 });
         }
@@ -153,7 +149,7 @@ namespace CppSharp
             });
 
             foreach (var target in iOSTargets) {
-                target.Defines.AddRange (new string[] { "PLATFORM_DARWIN",
+                target.Defines.AddRange (new string[] { "HOST_DARWIN",
                     "TARGET_IOS", "TARGET_MACH", "MONO_CROSS_COMPILE", "USE_MONO_CTX",
                     "_XOPEN_SOURCE"
                 });
@@ -167,7 +163,7 @@ namespace CppSharp
             });
 
             foreach (var target in DarwinTargets) {
-                target.Defines.AddRange (new string[] { "PLATFORM_DARWIN",
+                target.Defines.AddRange (new string[] { "HOST_DARWIN",
                     "TARGET_IOS", "TARGET_MACH", "MONO_CROSS_COMPILE", "USE_MONO_CTX",
                     "_XOPEN_SOURCE"
                 });
@@ -212,7 +208,7 @@ namespace CppSharp
                 MaccoreDir = Path.Combine (maccoreDir);
             }
 
-            if (Directory.Exists(MaccoreDir))
+            if (Directory.Exists(MaccoreDir) || GenIOS)
                 SetupiOSTargets();
 
             foreach (var target in Targets)
@@ -225,8 +221,7 @@ namespace CppSharp
 
                 var options = new DriverOptions();
 
-                var log = new TextDiagnosticPrinter();
-                var driver = new Driver(options, log);
+                var driver = new Driver(options);
 
                 Setup(driver, target);
                 driver.Setup();
@@ -235,7 +230,7 @@ namespace CppSharp
                 if (!driver.ParseCode())
                     return;
 
-                Dump(driver.ASTContext, driver.TargetInfo, target);
+                Dump(driver.Context.ASTContext, driver.Context.TargetInfo, target);
             }
         }
 
@@ -244,13 +239,14 @@ namespace CppSharp
             foreach (var header in driver.Options.Headers)
             {
                 var source = driver.Project.AddFile(header);
-                source.Options = driver.BuildParseOptions(source);
+                source.Options = driver.BuildParserOptions(source);
 
                 if (header.Contains ("mini"))
                     continue;
 
-                source.Options.addDefines ("HAVE_SGEN_GC");
-                source.Options.addDefines ("HAVE_MOVING_COLLECTOR");
+                source.Options.AddDefines ("HAVE_SGEN_GC");
+                source.Options.AddDefines ("HAVE_MOVING_COLLECTOR");
+                source.Options.AddDefines("MONO_GENERATING_OFFSETS");
             }
         }
 
@@ -276,11 +272,13 @@ namespace CppSharp
             var options = new Mono.Options.OptionSet () {
                 { "abi=", "ABI triple to generate", v => Abis.Add(v) },
                 { "o|out=", "output directory", v => OutputDir = v },
+                { "outfile=", "output directory", v => OutputFile = v },
                 { "maccore=", "include directory", v => MaccoreDir = v },
                 { "monodroid=", "top monodroid directory", v => MonodroidDir = v },
                 { "android-ndk=", "Path to Android NDK", v => AndroidNdkPath = v },
-                { "xamarin-android", "Generate for Xamarin.Android instead of monodroid", v => XamarinAndroid = true },
+                { "targetdir=", "Path to the directory containing the mono build", v =>TargetDir = v },
                 { "mono=", "include directory", v => MonoDir = v },
+                { "gen-ios", "generate iOS offsets", v => GenIOS = v != null },
                 { "h|help",  "show this message and exit",  v => showHelp = v != null },
             };
 
@@ -295,9 +293,9 @@ namespace CppSharp
             if (showHelp)
             {
                 // Print usage and exit.
-                Console.WriteLine("{0} [--abi=triple] [--out=dir] "
-                    + "[--monodroid/maccore=dir] [--mono=dir]",
+                Console.WriteLine("{0} <options>",
                     AppDomain.CurrentDomain.FriendlyName);
+                options.WriteOptionDescriptions (Console.Out);
                 Environment.Exit(0);
             }
         }
@@ -306,41 +304,58 @@ namespace CppSharp
         {
             var options = driver.Options;
             options.DryRun = true;
-            options.Verbose = false;
             options.LibraryName = "Mono";
-            options.MicrosoftMode = false;
-            options.addArguments("-xc");
-            options.addArguments("-std=gnu99");
-            options.addDefines("CPPSHARP");
+
+            var parserOptions = driver.ParserOptions;
+            parserOptions.Verbose = false;
+            parserOptions.MicrosoftMode = false;
+            parserOptions.AddArguments("-xc");
+            parserOptions.AddArguments("-std=gnu99");
+            parserOptions.AddDefines("CPPSHARP");
+            parserOptions.AddDefines("MONO_GENERATING_OFFSETS");
 
             foreach (var define in target.Defines)
-                options.addDefines(define);
+                parserOptions.AddDefines(define);
 
             SetupToolchainPaths(driver, target);
 
-            SetupMono(options, target);
+            SetupMono(driver, target);
         }
 
-        static void SetupMono(DriverOptions options, Target target)
+        static void SetupMono(Driver driver, Target target)
         {
-            string targetPath;
+            string targetBuild;
             switch (target.Platform) {
             case TargetPlatform.Android:
-                targetPath = Path.Combine (MonodroidDir, XamarinAndroid ? "build-tools/mono-runtimes/obj/Debug" : "builds");
+                if (TargetDir == "") {
+                    Console.Error.WriteLine ("The --targetdir= option is required when targeting android.");
+                    Environment.Exit (1);
+                }
+                if (MonoDir == "") {
+                    Console.Error.WriteLine ("The --mono= option is required when targeting android.");
+                    Environment.Exit (1);
+                }
+                if (Abis.Count != 1) {
+                    Console.Error.WriteLine ("Exactly one --abi= argument is required when targeting android.");
+                    Environment.Exit (1);
+                }
+                targetBuild = TargetDir;
                 break;
             case TargetPlatform.WatchOS:
-            case TargetPlatform.iOS:
-                targetPath = Path.Combine (MaccoreDir, "builds");
+            case TargetPlatform.iOS: {
+                if (!string.IsNullOrEmpty (TargetDir)) {
+                    targetBuild = TargetDir;
+                } else {
+                    string targetPath = Path.Combine (MaccoreDir, "builds");
+                    if (!Directory.Exists (MonoDir))
+                        MonoDir = Path.GetFullPath (Path.Combine (targetPath, "../../mono"));
+                    targetBuild = Path.Combine(targetPath, target.Build);
+                }
                 break;
+            }
             default:
                 throw new ArgumentOutOfRangeException ();
             }
-
-            if (!Directory.Exists (MonoDir)) {
-                MonoDir = Path.GetFullPath (Path.Combine (targetPath, "../../mono"));
-            }
-
-            var targetBuild = Path.Combine(targetPath, target.Build);
 
             if (!Directory.Exists(targetBuild))
                 throw new Exception(string.Format("Could not find the target build directory: {0}", targetBuild));
@@ -348,15 +363,15 @@ namespace CppSharp
             var includeDirs = new[]
             {
                 targetBuild,
-                Path.Combine(targetBuild, "eglib", "src"),
+                Path.Combine(targetBuild, "mono", "eglib"),
                 MonoDir,
                 Path.Combine(MonoDir, "mono"),
                 Path.Combine(MonoDir, "mono", "mini"),
-                Path.Combine(MonoDir, "eglib", "src")
+                Path.Combine(MonoDir, "mono", "eglib")
             };
 
             foreach (var inc in includeDirs)
-                options.addIncludeDirs(inc);
+                driver.ParserOptions.AddIncludeDirs(inc);
 
             var filesToParse = new[]
             {
@@ -365,15 +380,15 @@ namespace CppSharp
             };
 
             foreach (var file in filesToParse)
-                options.Headers.Add(file);
+                driver.Options.Headers.Add(file);
         }
 
         static void SetupMSVC(Driver driver, string triple)
         {
-            var options = driver.Options;
+            var parserOptions = driver.ParserOptions;
 
-            options.Abi = Parser.AST.CppAbi.Microsoft;
-            options.MicrosoftMode = true;
+            parserOptions.Abi = Parser.AST.CppAbi.Microsoft;
+            parserOptions.MicrosoftMode = true;
 
             var systemIncludeDirs = new[]
             {
@@ -382,9 +397,9 @@ namespace CppSharp
             };
 
             foreach (var inc in systemIncludeDirs)
-                options.addSystemIncludeDirs(inc);
+                parserOptions.AddSystemIncludeDirs(inc);
 
-            options.addDefines("HOST_WIN32");
+            parserOptions.AddDefines("HOST_WIN32");
         }
 
         static void SetupToolchainPaths(Driver driver, Target target)
@@ -487,7 +502,7 @@ namespace CppSharp
 
         static void SetupXcode(Driver driver, Target target)
         {
-            var options = driver.Options;
+            var parserOptions = driver.ParserOptions;
 
             var builtinsPath = GetXcodeBuiltinIncludesFolder();
             string includePath;
@@ -503,12 +518,12 @@ namespace CppSharp
                 throw new ArgumentOutOfRangeException ();
             }
 
-            options.addSystemIncludeDirs(builtinsPath);
-            options.addSystemIncludeDirs(includePath);
+            parserOptions.AddSystemIncludeDirs(builtinsPath);
+            parserOptions.AddSystemIncludeDirs(includePath);
 
-            options.NoBuiltinIncludes = true;
-            options.NoStandardIncludes = true;
-            options.TargetTriple = target.Triple;
+            parserOptions.NoBuiltinIncludes = true;
+            parserOptions.NoStandardIncludes = true;
+            parserOptions.TargetTriple = target.Triple;
         }
 
         static string GetAndroidHostToolchainPath()
@@ -555,9 +570,10 @@ namespace CppSharp
         static void SetupAndroidNDK(Driver driver, Target target)
         {
             var options = driver.Options;
+            var parserOptions = driver.ParserOptions;
 
             var builtinsPath = GetAndroidBuiltinIncludesFolder();
-            options.addSystemIncludeDirs(builtinsPath);
+            parserOptions.AddSystemIncludeDirs(builtinsPath);
 
             var androidNdkRoot = GetAndroidNdkPath ();
             const int androidNdkApiLevel = 21;
@@ -565,11 +581,11 @@ namespace CppSharp
             var toolchainPath = Path.Combine(androidNdkRoot, "platforms",
                 "android-" + androidNdkApiLevel, "arch-" + GetArchFromTriple(target.Triple),
                 "usr", "include");
-            options.addSystemIncludeDirs(toolchainPath);
+            parserOptions.AddSystemIncludeDirs(toolchainPath);
 
-            options.NoBuiltinIncludes = true;
-            options.NoStandardIncludes = true;
-            options.TargetTriple = target.Triple;
+            parserOptions.NoBuiltinIncludes = true;
+            parserOptions.NoStandardIncludes = true;
+            parserOptions.TargetTriple = target.Triple;
         }
 
         static uint GetTypeAlign(ParserTargetInfo target, ParserIntType type)
@@ -636,12 +652,18 @@ namespace CppSharp
 
         static void Dump(ASTContext ctx, ParserTargetInfo targetInfo, Target target)
         {
-            var targetFile = target.Triple;
+			string targetFile;
 
-			if (!string.IsNullOrEmpty (OutputDir))
-				targetFile = Path.Combine (OutputDir, targetFile);
+			if (!string.IsNullOrEmpty (OutputFile)) {
+				targetFile = OutputFile;
+			} else {
+				targetFile = target.Triple;
 
-            targetFile += ".h";
+				if (!string.IsNullOrEmpty (OutputDir))
+					targetFile = Path.Combine (OutputDir, targetFile);
+
+				targetFile += ".h";
+			}
 
             using (var writer = new StreamWriter(targetFile))
             //using (var writer = Console.Out)
@@ -754,7 +776,7 @@ namespace CppSharp
             var types = new List<string>
             {
                 "MonoObject",
-		"MonoObjectHandlePayload",
+                "MonoObjectHandlePayload",
                 "MonoClass",
                 "MonoVTable",
                 "MonoDelegate",
@@ -773,7 +795,8 @@ namespace CppSharp
                 "MonoTypedRef",
                 "MonoThreadsSync",
                 "SgenThreadInfo",
-                "SgenClientThreadInfo"
+                "SgenClientThreadInfo",
+                "MonoProfilerCallContext"
             };
 
             DumpClasses(writer, ctx, types);
@@ -803,7 +826,8 @@ namespace CppSharp
                 "SeqPointInfo",
                 "DynCallArgs", 
                 "MonoLMFTramp",
-            };            
+                "CallContext"
+            };
 
             DumpClasses(writer, ctx, optionalTypes, optional: true);
 
@@ -813,8 +837,8 @@ namespace CppSharp
         static void DumpStruct(TextWriter writer, Class @class)
         {
             var name = @class.Name;
-			if (name.StartsWith ("_", StringComparison.Ordinal))
-				name = name.Substring (1);
+            if (name.StartsWith ("_", StringComparison.Ordinal))
+                name = name.Substring (1);
 
             foreach (var field in @class.Fields)
             {
@@ -823,8 +847,10 @@ namespace CppSharp
                 if (name == "SgenThreadInfo" && field.Name == "regs")
                     continue;
 
+                var layout = @class.Layout.Fields.First(f => f.FieldPtr == field.OriginalPtr);
+
                 writer.WriteLine("DECL_OFFSET2({0},{1},{2})", name, field.Name,
-                    field.Offset / 8);
+                    layout.Offset);
             }
         }
     }

@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -414,7 +414,7 @@ namespace System.Security {
         {
             if (FullTrustMap == null)
             {
-                // This mapping must stay in [....] with the SecurityZone enumeration in SecurityZone.cs
+                // This mapping must stay in sync with the SecurityZone enumeration in SecurityZone.cs
                 FullTrustMap = new QuickCacheEntryType[]
                 {
                     QuickCacheEntryType.FullTrustZoneMyComputer,

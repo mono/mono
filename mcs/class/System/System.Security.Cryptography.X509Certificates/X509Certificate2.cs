@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security;
@@ -40,24 +38,16 @@ using Mono.Security.Cryptography;
 using MX = Mono.Security.X509;
 #endif
 
-#endif
-
 using System.IO;
 using System.Text;
 using System.Collections;
+using System.Runtime.Serialization;
 
 namespace System.Security.Cryptography.X509Certificates {
 
 	[Serializable]
 	public class X509Certificate2 : X509Certificate {
 	
-#if !SECURITY_DEP
-		// Used in Mono.Security HttpsClientStream
-		public X509Certificate2 (byte[] rawData)
-		{
-		}
-#endif
-#if SECURITY_DEP
 		new internal X509Certificate2Impl Impl {
 			get {
 				var impl2 = base.Impl as X509Certificate2Impl;
@@ -131,6 +121,10 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public X509Certificate2 (X509Certificate certificate) 
 			: base (X509Helper2.Import (certificate))
+		{
+		}
+
+		protected X509Certificate2 (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}
 
@@ -394,22 +388,11 @@ namespace System.Security.Cryptography.X509Certificates {
 		// internal stuff because X509Certificate2 isn't complete enough
 		// (maybe X509Certificate3 will be better?)
 
-		[Obsolete ("KILL")]
+		[MonoTODO ("See comment in X509Helper2.GetMonoCertificate().")]
 		internal MX.X509Certificate MonoCertificate {
 			get {
-				var monoImpl = Impl as X509Certificate2ImplMono;
-				if (monoImpl == null)
-					throw new NotSupportedException ();
-				return monoImpl.MonoCertificate;
+				return X509Helper2.GetMonoCertificate (this);
 			}
 		}
-
-#else
-		// HACK - this ensure the type X509Certificate2 and PrivateKey property exists in the build before
-		// Mono.Security.dll is built. This is required to get working client certificate in SSL/TLS
-		public AsymmetricAlgorithm PrivateKey {
-			get { return null; }
-		}
-#endif
 	}
 }

@@ -1,7 +1,2 @@
 TypeForwarders.cs
 AssemblyInfo.cs
-
-../../../build/common/MonoTODOAttribute.cs
-SR.cs
-GlobalizationExtensions.cs
-StringNormalizationExtensions.cs

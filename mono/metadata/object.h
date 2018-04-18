@@ -1,6 +1,11 @@
+/**
+ * \file
+ */
+
 #ifndef _MONO_CLI_OBJECT_H_
 #define _MONO_CLI_OBJECT_H_
 
+#include <mono/metadata/object-forward.h>
 #include <mono/metadata/class.h>
 #include <mono/utils/mono-error.h>
 
@@ -8,25 +13,24 @@ MONO_BEGIN_DECLS
 
 typedef mono_byte MonoBoolean;
 
-typedef struct _MonoString MonoString;
-typedef struct _MonoArray MonoArray;
-typedef struct _MonoReflectionMethod MonoReflectionMethod;
-typedef struct _MonoReflectionAssembly MonoReflectionAssembly;
-typedef struct _MonoReflectionModule MonoReflectionModule;
-typedef struct _MonoReflectionField MonoReflectionField;
-typedef struct _MonoReflectionProperty MonoReflectionProperty;
-typedef struct _MonoReflectionEvent MonoReflectionEvent;
-typedef struct _MonoReflectionType MonoReflectionType;
-typedef struct _MonoDelegate MonoDelegate;
-typedef struct _MonoException MonoException;
+typedef struct _MonoString MONO_RT_MANAGED_ATTR MonoString;
+typedef struct _MonoArray MONO_RT_MANAGED_ATTR MonoArray;
+typedef struct _MonoReflectionMethod MONO_RT_MANAGED_ATTR MonoReflectionMethod;
+typedef struct _MonoReflectionAssembly MONO_RT_MANAGED_ATTR MonoReflectionAssembly;
+typedef struct _MonoReflectionModule MONO_RT_MANAGED_ATTR MonoReflectionModule;
+typedef struct _MonoReflectionField MONO_RT_MANAGED_ATTR MonoReflectionField;
+typedef struct _MonoReflectionProperty MONO_RT_MANAGED_ATTR MonoReflectionProperty;
+typedef struct _MonoReflectionEvent MONO_RT_MANAGED_ATTR MonoReflectionEvent;
+typedef struct _MonoReflectionType MONO_RT_MANAGED_ATTR MonoReflectionType;
+typedef struct _MonoDelegate MONO_RT_MANAGED_ATTR MonoDelegate;
 typedef struct _MonoThreadsSync MonoThreadsSync;
-typedef struct _MonoThread MonoThread;
+typedef struct _MonoThread MONO_RT_MANAGED_ATTR MonoThread;
 typedef struct _MonoDynamicAssembly MonoDynamicAssembly;
 typedef struct _MonoDynamicImage MonoDynamicImage;
-typedef struct _MonoReflectionMethodBody MonoReflectionMethodBody;
-typedef struct _MonoAppContext MonoAppContext;
+typedef struct _MonoReflectionMethodBody MONO_RT_MANAGED_ATTR MonoReflectionMethodBody;
+typedef struct _MonoAppContext MONO_RT_MANAGED_ATTR MonoAppContext;
 
-typedef struct _MonoObject {
+typedef struct MONO_RT_MANAGED_ATTR _MonoObject {
 	MonoVTable *vtable;
 	MonoThreadsSync *synchronisation;
 } MonoObject;
@@ -36,7 +40,6 @@ typedef void*    (*MonoCompileFunc)	     (MonoMethod *method);
 typedef void	    (*MonoMainThreadFunc)    (void* user_data);
 
 #define MONO_OBJECT_SETREF(obj,fieldname,value) do {	\
-		g_assert (sizeof((obj)->fieldname) == sizeof (gpointer*));	\
 		mono_gc_wbarrier_set_field ((MonoObject*)(obj), &((obj)->fieldname), (MonoObject*)value);	\
 		/*(obj)->fieldname = (value);*/	\
 	} while (0)
@@ -112,6 +115,13 @@ mono_array_addr_with_size   (MonoArray *array, int size, uintptr_t idx);
 MONO_API uintptr_t
 mono_array_length           (MonoArray *array);
 
+MONO_API MonoString*
+mono_string_empty	      (MonoDomain *domain);
+
+MONO_RT_EXTERNAL_ONLY
+MONO_API MonoString*
+mono_string_empty_wrapper   (void);
+
 MONO_RT_EXTERNAL_ONLY
 MONO_API MonoString*
 mono_string_new_utf16	    (MonoDomain *domain, const mono_unichar2 *text, int32_t len);
@@ -131,6 +141,7 @@ MONO_RT_EXTERNAL_ONLY
 MONO_API MonoString*
 mono_string_intern	    (MonoString *str);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoString*
 mono_string_new		    (MonoDomain *domain, const char *text);
 
@@ -189,6 +200,9 @@ mono_value_copy             (void* dest, void* src, MonoClass *klass);
 MONO_API void
 mono_value_copy_array       (MonoArray *dest, int dest_idx, void* src, int count);
 
+MONO_API MonoVTable *
+mono_object_get_vtable      (MonoObject *obj);
+
 MONO_API MonoDomain*
 mono_object_get_domain      (MonoObject *obj);
 
@@ -229,8 +243,17 @@ mono_object_get_size         (MonoObject *o);
 MONO_API void 
 mono_monitor_exit            (MonoObject *obj);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API void
 mono_raise_exception	    (MonoException *ex);
+
+MONO_RT_EXTERNAL_ONLY
+MONO_API mono_bool
+mono_runtime_set_pending_exception (MonoException *exc, mono_bool overwrite);
+
+MONO_RT_EXTERNAL_ONLY
+MONO_API void
+mono_reraise_exception	    (MonoException *ex);
 
 MONO_RT_EXTERNAL_ONLY
 MONO_API void
@@ -239,6 +262,12 @@ mono_runtime_object_init    (MonoObject *this_obj);
 MONO_RT_EXTERNAL_ONLY
 MONO_API void
 mono_runtime_class_init	    (MonoVTable *vtable);
+
+MONO_API MonoDomain *
+mono_vtable_domain          (MonoVTable *vtable);
+
+MONO_API MonoClass *
+mono_vtable_class           (MonoVTable *vtable);
 
 MONO_API MonoMethod*
 mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method);
@@ -267,6 +296,7 @@ MONO_API MonoObject*
 mono_runtime_invoke_array   (MonoMethod *method, void *obj, MonoArray *params,
 			     MonoObject **exc);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API void*
 mono_method_get_unmanaged_thunk (MonoMethod *method);
 

@@ -17,7 +17,7 @@ namespace System.Security.Cryptography {
     ///     Wrapper for NCrypt's implementation of elliptic curve DSA
     /// </summary>
     [System.Security.Permissions.HostProtection(MayLeakOnAbort = true)]
-    public sealed class ECDsaCng : ECDsa {
+    public sealed partial class ECDsaCng : ECDsa {
 #if MONO
         public ECDsaCng() : this(521) {
         }
@@ -31,11 +31,11 @@ namespace System.Security.Cryptography {
             throw new NotImplementedException ();
         }
 
-#if NETSTANDARD
         public ECDsaCng(ECCurve curve) {
             throw new NotImplementedException ();
         }
-#endif
+
+        public CngAlgorithm HashAlgorithm { get; set; }
 
         public CngKey Key {
             get {
@@ -52,6 +52,38 @@ namespace System.Security.Cryptography {
         }
 
         public override bool VerifyHash(byte[] hash, byte[] signature) {
+            throw new NotImplementedException();
+        }
+
+        public void FromXmlString (string xml, ECKeyXmlFormat format) {
+            throw new NotImplementedException();
+        }
+
+        public byte[] SignData (byte[] data) {
+            throw new NotImplementedException();
+        }
+
+        public byte[] SignData (System.IO.Stream data) {
+            throw new NotImplementedException();
+        }
+
+        public byte[] SignData (byte[] data, int offset, int count) {
+            throw new NotImplementedException();
+        }
+
+        public string ToXmlString (ECKeyXmlFormat format) {
+            throw new NotImplementedException();
+        }
+
+        public bool VerifyData (byte[] data, byte[] signature) {
+            throw new NotImplementedException();
+        }
+
+        public bool VerifyData (System.IO.Stream data, byte[] signature) {
+            throw new NotImplementedException();
+        }
+
+        public bool VerifyData (byte[] data, int offset, int count, byte[] signature) {
             throw new NotImplementedException();
         }
 #else
@@ -77,6 +109,11 @@ namespace System.Security.Cryptography {
 
             LegalKeySizesValue = s_legalKeySizes;
             KeySize = keySize;
+        }
+
+        public ECDsaCng(ECCurve curve) {
+            // GenerateKey will already do all of the validation we need.
+            GenerateKey(curve);
         }
 
         [SecuritySafeCritical]
@@ -268,7 +305,13 @@ namespace System.Security.Cryptography {
                 throw new ArgumentOutOfRangeException("format");
             }
 
-            Key = Rfc4050KeyFormatter.FromXml(xml);
+            bool isEcdh;
+            ECParameters parameters = Rfc4050KeyFormatter.FromXml(xml, out isEcdh);
+
+            // .NET 4.6.2 allowed ECDsaCng to wrap ECDH keys because of interop with non-Windows PFX files.
+            // As a result XML marked as ECDiffieHellman loaded just fine, so no check should be done on the
+            // key type.
+            ImportParameters(parameters);
         }
 
         //
@@ -366,7 +409,8 @@ namespace System.Security.Cryptography {
                 throw new ArgumentOutOfRangeException("format");
             }
 
-            return Rfc4050KeyFormatter.ToXml(Key);
+            ECParameters ecParams = ExportParameters(false);
+            return Rfc4050KeyFormatter.ToXml(ecParams, isEcdh: false);
         }
 
         //
@@ -440,6 +484,19 @@ namespace System.Security.Cryptography {
 
                 return NCryptNative.VerifySignature(keyHandle, hash, signature);
             }
+        }
+
+        public override void GenerateKey(ECCurve curve) {
+            curve.Validate();
+
+            if (m_key != null) {
+                m_key.Dispose();
+                m_key = null;
+            }
+
+            CngKey newKey = CngKey.Create(curve, name => CngKey.EcdsaCurveNameToAlgorithm(name));
+            m_key = newKey;
+            KeySizeValue = newKey.KeySize;
         }
 
         /// <summary>

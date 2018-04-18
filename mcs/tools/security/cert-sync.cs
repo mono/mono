@@ -1,5 +1,5 @@
 //
-// cert-sync.cs: Import the root certificates from Linux SSL store into Mono
+// cert-sync.cs: Import the root certificates from a certificate store into Mono
 //
 // Authors:
 //	Sebastien Pouliot <sebastien@ximian.com>
@@ -38,8 +38,8 @@ using System.Text;
 
 using Mono.Security.X509;
 
-[assembly: AssemblyTitle ("Linux Cert Store Sync")]
-[assembly: AssemblyDescription ("Synchronize local certs with certs from local Linux trust store.")]
+[assembly: AssemblyTitle ("Mono Certificate Store Sync")]
+[assembly: AssemblyDescription ("Populate Mono certificate store from a concatenated list of certificates.")]
 
 namespace Mono.Tools
 {
@@ -115,15 +115,37 @@ namespace Mono.Tools
 				WriteLine ("No certificates were found.");
 				return 0;
 			}
-				
-			X509Stores stores = userStore ? X509StoreManager.CurrentUser : X509StoreManager.LocalMachine;
-			X509CertificateCollection trusted = stores.TrustedRoot.Certificates;
+
+			if (userStore) {
+				WriteLine ("Importing into legacy user store:");
+				ImportToStore (roots, X509StoreManager.CurrentUser.TrustedRoot);
+				if (Mono.Security.Interface.MonoTlsProviderFactory.IsProviderSupported ("btls")) {
+					WriteLine ("");
+					WriteLine ("Importing into BTLS user store:");
+					ImportToStore (roots, X509StoreManager.NewCurrentUser.TrustedRoot);
+				}
+			} else {
+				WriteLine ("Importing into legacy system store:");
+				ImportToStore (roots, X509StoreManager.LocalMachine.TrustedRoot);
+				if (Mono.Security.Interface.MonoTlsProviderFactory.IsProviderSupported ("btls")) {
+					WriteLine ("");
+					WriteLine ("Importing into BTLS system store:");
+					ImportToStore (roots, X509StoreManager.NewLocalMachine.TrustedRoot);
+				}
+			}
+
+			return 0;
+		}
+
+		static void ImportToStore (X509CertificateCollection roots, X509Store store)
+		{
+			X509CertificateCollection trusted = store.Certificates;
 			int additions = 0;
 			WriteLine ("I already trust {0}, your new list has {1}", trusted.Count, roots.Count);
 			foreach (X509Certificate root in roots) {
 				if (!trusted.Contains (root)) {
 					try {
-						stores.TrustedRoot.Import (root);
+						store.Import (root);
 						WriteLine ("Certificate added: {0}", root.SubjectName);
 						additions++;
 					} catch (Exception e) {
@@ -145,12 +167,11 @@ namespace Mono.Tools
 				WriteLine ("{0} previously trusted certificates were removed.", removed.Count);
 
 				foreach (X509Certificate old in removed) {
-					stores.TrustedRoot.Remove (old);
+					store.Remove (old);
 					WriteLine ("Certificate removed: {0}", old.SubjectName);
 				}
 			}
 			WriteLine ("Import process completed.");
-			return 0;
 		}
 
 		static string Thumbprint (string algorithm, X509Certificate certificate)
@@ -172,6 +193,8 @@ namespace Mono.Tools
 					break;
 				case "--user":
 					userStore = true;
+					break;
+				case "--btls": // we always import to the btls store too now, keep for compat
 					break;
 				default:
 					WriteLine ("Unknown option '{0}'.", args[i]);

@@ -41,6 +41,52 @@ namespace System.Security.Cryptography {
             return CryptoConfig.CreateFromName(algorithm) as ECDiffieHellman;
         }
 
+        /// <summary>
+        /// Creates a new instance of the default implementation of the Elliptic Curve Diffie-Hellman Algorithm
+        /// (ECDH) with a newly generated key over the specified curve.
+        /// </summary>
+        /// <param name="curve">The curve to use for key generation.</param>
+        /// <returns>A new instance of the default implementation of this class.</returns>
+        public static ECDiffieHellman Create(ECCurve curve)
+        {
+            ECDiffieHellman ecdh = Create();
+
+            if (ecdh != null) {
+                try {
+                    ecdh.GenerateKey(curve);
+                }
+                catch {
+                    ecdh.Dispose();
+                    throw;
+                }
+            }
+
+            return ecdh;
+        }
+
+        /// <summary>
+        /// Creates a new instance of the default implementation of the Elliptic Curve Diffie-Hellman Algorithm
+        /// (ECDH) using the specified ECParameters as the key.
+        /// </summary>
+        /// <param name="parameters">The parameters representing the key to use.</param>
+        /// <returns>A new instance of the default implementation of this class.</returns>
+        public static ECDiffieHellman Create(ECParameters parameters)
+        {
+            ECDiffieHellman ecdh = Create();
+
+            if (ecdh != null) {
+                try {
+                    ecdh.ImportParameters(parameters);
+                }
+                catch {
+                    ecdh.Dispose();
+                    throw;
+                }
+            }
+
+            return ecdh;
+        }
+
         //
         // Key derivation
         //
@@ -141,6 +187,46 @@ namespace System.Security.Cryptography {
         private static Exception DerivedClassMustOverride()
         {
             return new NotImplementedException(SR.GetString(SR.NotSupported_SubclassOverride));
+        }
+
+        /// <summary>
+        /// When overridden in a derived class, exports the named or explicit ECParameters for an ECCurve.
+        /// If the curve has a name, the Curve property will contain named curve parameters, otherwise it
+        /// will contain explicit parameters.
+        /// </summary>
+        /// <param name="includePrivateParameters">true to include private parameters, otherwise, false.</param>
+        /// <returns>The ECParameters representing the point on the curve for this key.</returns>
+        public virtual ECParameters ExportParameters(bool includePrivateParameters)
+        {
+            throw DerivedClassMustOverride();
+        }
+
+        /// <summary>
+        /// When overridden in a derived class, exports the explicit ECParameters for an ECCurve.
+        /// </summary>
+        /// <param name="includePrivateParameters">true to include private parameters, otherwise, false.</param>
+        /// <returns>The ECParameters representing the point on the curve for this key, using the explicit curve format.</returns>
+        public virtual ECParameters ExportExplicitParameters(bool includePrivateParameters)
+        {
+            throw DerivedClassMustOverride();
+        }
+
+        /// <summary>
+        /// When overridden in a derived class, imports the specified ECParameters.
+        /// </summary>
+        /// <param name="parameters">The curve parameters.</param>
+        public virtual void ImportParameters(ECParameters parameters)
+        {
+            throw DerivedClassMustOverride();
+        }
+
+        /// <summary>
+        /// When overridden in a derived class, generates a new public/private keypair for the specified curve.
+        /// </summary>
+        /// <param name="curve">The curve to use.</param>
+        public virtual void GenerateKey(ECCurve curve)
+        {
+            throw new NotSupportedException(SR.GetString(SR.NotSupported_SubclassOverride));
         }
     }
 }

@@ -43,7 +43,7 @@ using Microsoft.Win32.SafeHandles;
 namespace Microsoft.Win32
 {
 
-#if MOBILE
+#if MOBILE && !WIN_PLATFORM
 	public sealed class RegistryKey : IDisposable
 	{
 		internal RegistryKey (RegistryHive hiveId)
@@ -52,6 +52,10 @@ namespace Microsoft.Win32
 		}
 
 		public void Dispose ()
+		{
+		}
+
+		public void Close ()
 		{
 		}
 
@@ -66,6 +70,26 @@ namespace Microsoft.Win32
 		}
 
 		public RegistryKey CreateSubKey (String subkey, bool writable, RegistryOptions options)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions registryOptions)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck, RegistrySecurity registrySecurity)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions registryOptions, RegistrySecurity registrySecurity)
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -128,6 +152,16 @@ namespace Microsoft.Win32
 			throw new PlatformNotSupportedException ();
 		}
 
+		public RegistrySecurity GetAccessControl ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistrySecurity GetAccessControl (AccessControlSections includeSections)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
 		public RegistryValueKind GetValueKind (string name)
 		{
 			throw new PlatformNotSupportedException ();
@@ -154,6 +188,31 @@ namespace Microsoft.Win32
 		}
 
 		public RegistryKey OpenSubKey (string name, RegistryRights rights)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistryKey OpenSubKey (string name, RegistryKeyPermissionCheck permissionCheck)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public RegistryKey OpenSubKey (string name, RegistryKeyPermissionCheck permissionCheck, RegistryRights rights)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public static RegistryKey OpenRemoteBaseKey (RegistryHive hKey, string machineName)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public static RegistryKey OpenRemoteBaseKey (RegistryHive hKey, string machineName, RegistryView view)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetAccessControl (RegistrySecurity registrySecurity)
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -209,9 +268,11 @@ namespace Microsoft.Win32
 
 		static RegistryKey ()
 		{
+#if !XAMMAC_4_5
 			if (Path.DirectorySeparatorChar == '\\')
 				RegistryApi = new Win32RegistryApi ();
 			else
+#endif
 				RegistryApi = new UnixRegistryApi ();
 		}
 

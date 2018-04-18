@@ -164,10 +164,13 @@ namespace System.Globalization {
         [System.Security.SecuritySafeCritical]  // auto-generated
         private static EraInfo[] GetErasFromRegistry()
         {
+#if MONO
+            return null;
+#else
             // Look in the registry key and see if we can find any ranges
             int iFoundEras = 0;
             EraInfo[] registryEraRanges = null;
-#if !MONO            
+           
             try
             {
                 // Need to access registry
@@ -249,9 +252,10 @@ namespace System.Globalization {
                     registryEraRanges[i].maxEraYear = registryEraRanges[i-1].yearOffset + 1 - registryEraRanges[i].yearOffset;
                 }
             }
-#endif
+
             // Return our ranges
             return registryEraRanges;
+#endif            
         }
 
         //

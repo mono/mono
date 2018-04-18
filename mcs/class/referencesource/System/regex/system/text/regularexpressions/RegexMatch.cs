@@ -77,7 +77,7 @@ namespace System.Text.RegularExpressions {
          */
         internal Match(Regex regex, int capcount, String text, int begpos, int len, int startpos)
 
-        : base(text, new int[2], 0) {
+        : base(text, new int[2], 0, "0") {
 
             _regex      = regex;
             _matchcount = new int[capcount];
@@ -201,7 +201,7 @@ namespace System.Text.RegularExpressions {
         /// </devdoc>
 
 #if !SILVERLIGHT
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
         [HostProtection(Synchronization=true)]
 #endif
         static public Match Synchronized(Match inner) {

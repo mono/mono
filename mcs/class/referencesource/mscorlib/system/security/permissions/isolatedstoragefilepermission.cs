@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 // Purpose : This permission is used to controls/administer access to 
 //  IsolatedStorageFile

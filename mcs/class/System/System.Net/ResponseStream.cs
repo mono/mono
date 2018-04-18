@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -97,7 +95,7 @@ namespace System.Net {
 							InternalWrite (bytes, 0, bytes.Length);
 							trailer_sent = true;
 						}
-					} catch (IOException ex) {
+					} catch (IOException) {
 						// Ignore error due to connection reset by peer
 					}
 				}
@@ -143,6 +141,8 @@ namespace System.Net {
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
+			if (count == 0)
+				return;
 
 			byte [] bytes = null;
 			MemoryStream ms = GetHeaders (false);
@@ -246,5 +246,4 @@ namespace System.Net {
 		}
 	}
 }
-#endif
 

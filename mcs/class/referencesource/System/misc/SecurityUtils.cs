@@ -8,11 +8,11 @@
  */
 
 
-#if WINFORMS_NAMESPACE
+#if Microsoft_NAMESPACE
     namespace System.Windows.Forms
 #elif DRAWING_NAMESPACE
     namespace System.Drawing
-#elif WINFORMS_PUBLIC_GRAPHICS_LIBRARY
+#elif Microsoft_PUBLIC_GRAPHICS_LIBRARY
     namespace System.Internal
 #elif SYSTEM_NAMESPACE
     namespace System
@@ -60,7 +60,7 @@ namespace System.Windows.Forms
         }
 
         private static void DemandReflectionAccess(Type type) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             try {
                 MemberAccessPermission.Demand();
             }
@@ -72,7 +72,7 @@ namespace System.Windows.Forms
 
         [SecuritySafeCritical]
         private static void DemandGrantSet(Assembly assembly) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             PermissionSet targetGrantSet = assembly.PermissionSet;
             targetGrantSet.AddPermission(RestrictedMemberAccessPermission);
             targetGrantSet.Demand();
@@ -131,7 +131,7 @@ namespace System.Windows.Forms
             return Activator.CreateInstance(type, flags, null, args, null);
         }
 
-#if (!WINFORMS_NAMESPACE)
+#if (!Microsoft_NAMESPACE)
 
         /// <devdoc>
         ///     This helper method provides safe access to Activator.CreateInstance.

@@ -2,9 +2,9 @@
 // <copyright file="StrongTypingException.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -13,6 +13,7 @@ namespace System.Data {
     using System.Data;
     using System.Runtime.Serialization;
 
+#if !COREFX
     /// <devdoc>
     ///    <para>DEV: The exception that is throwing from strong typed DataSet when user access to DBNull value.</para>
     /// </devdoc>
@@ -39,7 +40,7 @@ namespace System.Data {
             HResult = HResults.StrongTyping;
         }
     }
-
+#endif
 
     /// <devdoc>
     ///    <para>DEV: The exception that is throwing in generating strong typed DataSet when name conflict happens.</para>

@@ -61,6 +61,31 @@ namespace System
                 return LocalAppContext.GetCachedSwitchValue(DontEnableSchSendAuxRecordName, ref _dontEnableSchSendAuxRecord);
             }
         }
+        
+        private static int _dontEnableSystemSystemDefaultTlsVersions;
+        internal const string DontEnableSystemDefaultTlsVersionsName = @"Switch.System.Net.DontEnableSystemDefaultTlsVersions";
+
+        public static bool DontEnableSystemDefaultTlsVersions
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(DontEnableSystemDefaultTlsVersionsName, ref _dontEnableSystemSystemDefaultTlsVersions);
+            }
+        }
+
+        private static int _dontEnableTlsAlerts;
+        internal const string DontEnableTlsAlertsName = @"Switch.System.Net.DontEnableTlsAlerts";
+
+        public static bool DontEnableTlsAlerts
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(DontEnableTlsAlertsName, ref _dontEnableTlsAlerts);
+            }
+        }
         #endregion
+
     }
 }

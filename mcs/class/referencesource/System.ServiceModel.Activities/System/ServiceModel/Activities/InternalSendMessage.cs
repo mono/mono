@@ -1830,7 +1830,7 @@ namespace System.ServiceModel.Activities
                         {
                             if (asyncSend)
                             {
-                                //If there is a transaction that we could be flowing out then we create this blocking clone to [....] with the commit processing.
+                                //If there is a transaction that we could be flowing out then we create this blocking clone to sync with the commit processing.
                                 if (this.currentTransactionContext != null)
                                 {
                                     this.dependentClone = this.currentTransactionContext.DependentClone(DependentCloneOption.BlockCommitUntilComplete);
@@ -2664,9 +2664,9 @@ namespace System.ServiceModel.Activities
                         property.Instance.CorrelationSynchronizer.NotifyRequestSetByChannel(new Action<Message>(OnWorkflowCorrelationProcessingComplete));
 
                         // We have to do this dance with the lock because
-                        // we aren't sure if we've been running [....] or not.
+                        // we aren't sure if we've been running sync or not.
                         // NOTE: It is possible for us to go async and
-                        // still decide we're completing [....].  This is fine
+                        // still decide we're completing sync.  This is fine
                         // as it does not violate the async pattern since
                         // the work is done by the time Begin completes.
                         completeSelf = false;
@@ -2697,9 +2697,9 @@ namespace System.ServiceModel.Activities
                     this.message = updatedMessage;
 
                     // We have to do this dance with the lock because
-                    // we aren't sure if we've been running [....] or not.
+                    // we aren't sure if we've been running sync or not.
                     // NOTE: It is possible for us to go async and
-                    // still decide we're completing [....].  This is fine
+                    // still decide we're completing sync.  This is fine
                     // as it does not violate the async pattern since
                     // the work is done by the time Begin completes.
                     bool completeSelf = false;

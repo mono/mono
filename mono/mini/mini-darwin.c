@@ -1,5 +1,6 @@
-/*
- * mini-darwin.c: Darwin/MacOS support for Mono.
+/**
+ * \file
+ * Darwin/MacOS support for Mono.
  *
  * Authors:
  *   Mono Team (mono-list@lists.ximian.com)
@@ -33,8 +34,6 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
-#include <mono/io-layer/io-layer.h>
-#include "mono/metadata/profiler.h"
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/environment.h>
@@ -53,6 +52,7 @@
 #include <mono/utils/dtrace.h>
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include <string.h>
 #include <ctype.h>
 #include "trace.h"
@@ -95,81 +95,12 @@ mono_runtime_install_handlers (void)
 #endif
 }
 
-pid_t
-mono_runtime_syscall_fork ()
-{
-#ifdef HAVE_FORK
-	return (pid_t) fork ();
-#else
-	g_assert_not_reached ();
-#endif
-}
-
-void
-mono_gdb_render_native_backtraces (pid_t crashed_pid)
-{
-#ifdef HAVE_EXECV
-	const char *argv [5];
-	char template [] = "/tmp/mono-gdb-commands.XXXXXX";
-	FILE *commands;
-	gboolean using_lldb = FALSE;
-
-	using_lldb = TRUE;
-
-	argv [0] = g_find_program_in_path ("gdb");
-	if (argv [0])
-		using_lldb = FALSE;
-
-	if (using_lldb)
-		argv [0] = g_find_program_in_path ("lldb");
-
-	if (argv [0] == NULL)
-		return;
-
-	if (mkstemp (template) == -1)
-		return;
-
-	commands = fopen (template, "w");
-	if (using_lldb) {
-		fprintf (commands, "process attach --pid %ld\n", (long) crashed_pid);
-		fprintf (commands, "thread list\n");
-		fprintf (commands, "thread backtrace all\n");
-		fprintf (commands, "detach\n");
-		fprintf (commands, "quit\n");
-		argv [1] = "--source";
-		argv [2] = template;
-		argv [3] = 0;
-		
-	} else {
-		fprintf (commands, "attach %ld\n", (long) crashed_pid);
-		fprintf (commands, "info threads\n");
-		fprintf (commands, " t a a info thread\n");
-		fprintf (commands, "thread apply all bt\n");
-		argv [1] = "-batch";
-		argv [2] = "-x";
-		argv [3] = template;
-		argv [4] = 0;
-	}
-	fflush (commands);
-	fclose (commands);
-
-	fclose (stdin);
-
-	execv (argv [0], (char**)argv);
-	unlink (template);
-#else
-	fprintf (stderr, "mono_gdb_render_native_backtraces not supported on this platform\n");
-#endif // HAVE_EXECV
-}
-
 gboolean
-mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info)
+mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info, void *sigctx)
 {
 	kern_return_t ret;
-	mach_msg_type_number_t num_state;
-	thread_state_t state;
-	ucontext_t ctx;
-	mcontext_t mctx;
+	mach_msg_type_number_t num_state, num_fpstate;
+	thread_state_t state, fpstate;
 	MonoJitTlsData *jit_tls;
 	void *domain;
 	MonoLMF *lmf = NULL;
@@ -183,18 +114,15 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo 
 	tctx->unwind_data [MONO_UNWIND_DATA_JIT_TLS] = NULL;
 
 	state = (thread_state_t) alloca (mono_mach_arch_get_thread_state_size ());
-	mctx = (mcontext_t) alloca (mono_mach_arch_get_mcontext_size ());
+	fpstate = (thread_state_t) alloca (mono_mach_arch_get_thread_fpstate_size ());
 
 	do {
-		ret = mono_mach_arch_get_thread_state (info->native_handle, state, &num_state);
+		ret = mono_mach_arch_get_thread_states (info->native_handle, state, &num_state, fpstate, &num_fpstate);
 	} while (ret == KERN_ABORTED);
 	if (ret != KERN_SUCCESS)
 		return FALSE;
 
-	mono_mach_arch_thread_state_to_mcontext (state, mctx);
-	ctx.uc_mcontext = mctx;
-
-	mono_sigctx_to_monoctx (&ctx, &tctx->ctx);
+	mono_mach_arch_thread_states_to_mono_context (state, fpstate, &tctx->ctx);
 
 	/* mono_set_jit_tls () sets this */
 	jit_tls = mono_thread_info_tls_get (info, TLS_KEY_JIT_TLS);

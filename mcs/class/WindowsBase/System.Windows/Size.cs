@@ -25,6 +25,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Converters;
 using System.Windows.Markup;
 
@@ -64,29 +65,63 @@ namespace System.Windows {
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			unchecked
+			{
+				return (_width.GetHashCode () * 397) ^ _height.GetHashCode ();
+			}
 		}
 
 		public static Size Parse (string source)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			Size value;
+			if (source.Trim () == "Empty")
+			{
+				return Empty;
+			}
+			var tokenizer = new NumericListTokenizer (source, CultureInfo.InvariantCulture);
+			double width;
+			double height;
+			if (!double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out width) ||
+			    !double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out height))
+			{
+				throw new FormatException (string.Format ("Invalid Size format: {0}", source));
+			}
+			if (!tokenizer.HasNoMoreTokens ())
+			{
+				throw new InvalidOperationException ("Invalid Size format: " + source);
+			}
+			return new Size(width, height);
 		}
 
 		public override string ToString ()
 		{
-			if (IsEmpty)
-				return "Empty";
-			return String.Format ("{0},{1}", _width, _height);
+			return ConvertToString (null, null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ConvertToString (null, provider);
 		}
 
 		string IFormattable.ToString (string format, IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ConvertToString (format, provider);
+		}
+
+		private string ConvertToString (string format, IFormatProvider provider)
+		{
+			if (IsEmpty)
+				return "Empty";
+
+			if (provider == null)
+				provider = CultureInfo.CurrentCulture;
+			if (format == null)
+				format = string.Empty;
+			var separator = NumericListTokenizer.GetSeparator (provider);
+			var vectorFormat  = string.Format ("{{0:{0}}}{1}{{1:{0}}}", format, separator);
+			return string.Format (provider, vectorFormat, _width, _height);
 		}
 
 		public bool IsEmpty {

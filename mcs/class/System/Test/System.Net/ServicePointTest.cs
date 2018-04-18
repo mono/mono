@@ -23,6 +23,8 @@ namespace MonoTests.System.Net
 public class ServicePointTest
 {
 	static private int max;
+
+#if !FEATURE_NO_BSD_SOCKETS
 	[SetUp]
 	public void SaveMax () {
 		max = ServicePointManager.MaxServicePoints;
@@ -33,9 +35,10 @@ public class ServicePointTest
 	public void RestoreMax () {
 		ServicePointManager.MaxServicePoints = max;
 	}
+#endif
 
         [Test]
-		[Category ("InetAccess")]
+		[Category ("NotWorking")]
         public void All ()
         {
 		ServicePoint p = ServicePointManager.FindServicePoint (new Uri ("mailto:xx@yyy.com"));
@@ -121,7 +124,7 @@ public class ServicePointTest
 	// while ConnectionLimit equals 2
 
 	[Test]
-	[Category ("InetAccess")]
+	[Category ("NotWorking")]
 	public void ConnectionLimit ()
 	{		
 		// the default is already 2, just in case it isn't..
@@ -153,8 +156,7 @@ public class ServicePointTest
 	}
 
 	[Test]
-	[Category ("InetAccess")]
-	[Category ("AndroidNotWorking")] // #A1 fails
+	[Category ("NotWorking")] // #A1 fails
 	public void EndPointBind ()
 	{
 		Uri uri = new Uri ("http://www.go-mono.com/");
@@ -189,6 +191,10 @@ public class ServicePointTest
 	}
 
 	[Test] //Covers #19823
+#if FEATURE_NO_BSD_SOCKETS
+	// This test uses HttpWebRequest
+	[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 	public void CloseConnectionGroupConcurency ()
 	{
 		// Try with multiple service points
@@ -208,6 +214,7 @@ public class ServicePointTest
 
 
 	[Test]
+	[Category ("RequiresBSDSockets")] // Tests internals, so it doesn't make sense to assert that PlatformNotSupportedExceptions are thrown.
 	public void DnsRefreshTimeout ()
 	{
 		const int dnsRefreshTimeout = 2000;

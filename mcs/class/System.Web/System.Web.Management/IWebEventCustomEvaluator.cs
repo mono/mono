@@ -33,6 +33,6 @@ namespace System.Web.Management
 {
         public interface IWebEventCustomEvaluator
         {
-                bool CanFire (WebBaseEvent raised_event, RuleFiringRecord record);
+                bool CanFire (WebBaseEvent raisedEvent, RuleFiringRecord record);
         }
 }

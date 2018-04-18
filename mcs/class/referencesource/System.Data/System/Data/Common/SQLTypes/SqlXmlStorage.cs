@@ -2,9 +2,9 @@
 // <copyright file="SqlXmlStorage.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -45,7 +45,7 @@ namespace System.Data.Common {
             catch (OverflowException) {
                 throw ExprException.Overflow(typeof(SqlXml));
             }
-            throw ExceptionBuilder.AggregateException(kind, DataType);
+            throw ExceptionBuilder.AggregateException(kind, _dataType);
         }
 
         override public int Compare(int recordNo1, int recordNo2) {

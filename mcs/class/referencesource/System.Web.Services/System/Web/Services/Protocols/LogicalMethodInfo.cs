@@ -20,7 +20,7 @@ namespace System.Web.Services.Protocols {
     ///    <para>[To be supplied.]</para>
     /// </devdoc>
     public enum LogicalMethodTypes {
-        /// <include file='doc\LogicalMethodInfo.uex' path='docs/doc[@for="LogicalMethodTypes.[....]"]/*' />
+        /// <include file='doc\LogicalMethodInfo.uex' path='docs/doc[@for="LogicalMethodTypes.Sync"]/*' />
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
@@ -362,7 +362,7 @@ namespace System.Web.Services.Protocols {
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         public ICustomAttributeProvider CustomAttributeProvider {
-            // Custom attributes are always on the XXX ([....]) or BeginXXX (async) method.
+            // Custom attributes are always on the XXX (sync) or BeginXXX (async) method.
             get { return methodInfo; }
         }
 

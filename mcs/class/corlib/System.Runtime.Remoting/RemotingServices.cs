@@ -780,7 +780,9 @@ namespace System.Runtime.Remoting
 			
 			if (obj == null) return null;
 			MemoryStream ms = new MemoryStream ();
-			_serializationFormatter.Serialize (ms, obj);
+			lock (_serializationFormatter) {
+				_serializationFormatter.Serialize (ms, obj);
+			}
 			return ms.ToArray ();
 		}
 
@@ -791,7 +793,10 @@ namespace System.Runtime.Remoting
 			if (array == null) return null;
 			
 			MemoryStream ms = new MemoryStream (array);
-			object obj = _deserializationFormatter.Deserialize (ms);
+			object obj;
+			lock (_deserializationFormatter) {
+				obj = _deserializationFormatter.Deserialize (ms);
+			}
 			
 			if (obj is CACD) {
 				CACD cad = (CACD) obj;
@@ -808,45 +813,17 @@ namespace System.Runtime.Remoting
 		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)] // FIXME: to be reviewed
 		internal static byte[] SerializeExceptionData (Exception ex)
 		{
+			byte[] result = null;
 			try {
-				int retry = 4;
-				
-				do {
-					try {
-						MemoryStream ms = new MemoryStream ();
-						_serializationFormatter.Serialize (ms, ex);
-						return ms.ToArray ();
-					}
-					catch (Exception e) {
-						if (e is ThreadAbortException) {
-#if MONO_FEATURE_THREAD_ABORT
-							Thread.ResetAbort ();
-#endif
-							retry = 5;
-							ex = e;
-						}
-						else if (retry == 2) {
-							ex = new Exception ();
-							ex.SetMessage (e.Message);
-							ex.SetStackTrace (e.StackTrace);
-						}
-						else
-							ex = e;
-					}
-					retry--;
+				/* empty - we're only interested in the protected block */
+			} finally {
+				MemoryStream ms = new MemoryStream ();
+				lock (_serializationFormatter) {
+					_serializationFormatter.Serialize (ms, ex);
 				}
-				while (retry > 0);
-				
-				return null;
+				result = ms.ToArray ();
 			}
-			catch (Exception tex)
-			{
-				byte[] data = SerializeExceptionData (tex);
-#if MONO_FEATURE_THREAD_ABORT
-				Thread.ResetAbort ();
-#endif
-				return data;
-			}
+			return result;
 		}
 		
 		internal static object GetDomainProxy(AppDomain domain) 

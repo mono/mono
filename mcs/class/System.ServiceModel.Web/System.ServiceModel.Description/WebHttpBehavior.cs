@@ -40,7 +40,6 @@ namespace System.ServiceModel.Description
 		public static WebAttributeInfo GetWebAttributeInfo (this OperationDescription od)
 		{
 			foreach (IOperationBehavior ob in od.Behaviors) {
-				WebAttributeInfo info = null;
 				var wg = ob as WebGetAttribute;
 				if (wg != null)
 					return wg.Info;

@@ -40,6 +40,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class TargetTest {
 		
+		static bool isMono = Type.GetType ("Mono.Runtime", false) != null;
 		Engine			engine;
 		Project			project;
 		
@@ -285,6 +286,51 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestRunTargetTwice ()
+		{
+			string documentString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+			<Target Name=""Foo"">
+				<Message Text=""Foo ran""/>
+			</Target>
+			<Target Name=""Main"">
+				<MSBuild Projects=""$(MSBuildProjectFile)"" Targets=""Foo;Foo"" />
+			</Target>
+
+		</Project>";
+
+			var filepath = Path.GetTempFileName ();
+			try {
+				File.WriteAllText (filepath, documentString);
+
+				var engine = new Engine (Consts.BinPath);
+				var project = engine.CreateNewProject ();
+				project.Load (filepath);
+
+				var logger = new TestMessageLogger ();
+				engine.RegisterLogger (logger);
+
+				var result = project.Build ("Main");
+				if (!result) {
+					logger.DumpMessages ();
+					Assert.Fail ("Build failed, see the logs");
+				}
+
+				Assert.AreEqual(1, logger.NormalMessageCount, "Expected number of messages");
+				logger.CheckLoggedMessageHead ("Foo ran", "A1");
+
+				Assert.AreEqual(0, logger.NormalMessageCount, "Extra messages found");
+				Assert.AreEqual(0, logger.WarningMessageCount, "Extra warning messages found");
+
+				Assert.AreEqual(2, logger.TargetStarted, "TargetStarted count");
+				Assert.AreEqual(2, logger.TargetFinished, "TargetFinished count");
+
+				Assert.IsTrue (result);
+			} finally {
+				File.Delete (filepath);
+			}
+		}
+
+		[Test]
 		public void TestTargetOutputs1 ()
 		{
 			Engine engine;
@@ -351,16 +397,16 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 		bool Build (string projectXml, ILogger logger)
 		{
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+			if (!isMono) {
 				var reader = new StringReader (projectXml);
 				var xml = XmlReader.Create (reader);
-				return BuildOnWindows (xml, logger);
+				return BuildOnDotNet (xml, logger);
 			} else {
-				return BuildOnLinux (projectXml, logger);
+				return BuildOnMono (projectXml, logger);
 			}
 		}
 
-		bool BuildOnWindows (XmlReader reader, ILogger logger)
+		bool BuildOnDotNet (XmlReader reader, ILogger logger)
 		{
 			var type = Type.GetType ("Microsoft.Build.Evaluation.ProjectCollection, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
 
@@ -376,7 +422,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			return ret;
 		}
 
-		bool BuildOnLinux (string projectXml, ILogger logger)
+		bool BuildOnMono (string projectXml, ILogger logger)
 		{
 			var engine = new Engine (Consts.BinPath);
 			var project = engine.CreateNewProject ();
@@ -695,6 +741,33 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 						<Message Text='%(Foo.Identity)' Condition=""'%(Foo.Test)' != ''""/>
 					</Target>
 				</Project>", "D");
+		}
+
+		[Test]
+		public void ItemGroupInsideTarget_UpdateMetadata ()
+		{
+			ItemGroupInsideTarget (
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<ProjectReference Include='xyz'/>
+					</ItemGroup>
+
+					<Target Name='Main' DependsOnTargets='CreateBar'>
+						<Message Text='Before: $(Bar)'/>
+						<ItemGroup>
+							<ProjectReference>
+								<AdditionalProperties>A=b</AdditionalProperties>
+							</ProjectReference>
+						</ItemGroup>
+						<Message Text='After: $(Bar)'/>
+					</Target>
+
+					<Target Name='CreateBar'>
+						<PropertyGroup>
+							<Bar>Bar01</Bar>
+						</PropertyGroup>
+					</Target>
+				</Project>", 2, "Before: Bar01", "After: Bar01");
 		}
 
 		[Test]

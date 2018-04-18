@@ -109,12 +109,12 @@ namespace System.ServiceModel.Configuration
 			return sm.StandardEndpoints;
 		}
 
-		public new EndpointCollectionElement this [string name] {
+		public new EndpointCollectionElement this [string endpoint] {
 			get {
-				object element = base [name];
+				object element = base [endpoint];
 				if (element is EndpointCollectionElement)
 					return (EndpointCollectionElement) element;
-				throw new ArgumentException (String.Format ("Could not find {0}", name));
+				throw new ArgumentException (String.Format ("Could not find {0}", endpoint));
 			}
 		}
 

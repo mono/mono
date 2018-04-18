@@ -7,7 +7,7 @@
 **
 ** Class:  ManifestBasedResourceGroveler
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Searches for resources in Assembly manifest, used
@@ -563,8 +563,9 @@ namespace System.Resources {
             // Jun 08: for cases other than ACCESS_DENIED, we'll assert instead of throw to give release builds more opportunity to fallback.
             // 
 
-
+#pragma warning disable 168
             catch (FileLoadException fle)
+#pragma warning restore
             {
 #if !MONO                
                 // Ignore cases where the loader gets an access

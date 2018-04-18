@@ -5237,7 +5237,7 @@ Mono_Posix_ToSockaddrIn (struct sockaddr_in *from, struct Mono_Posix_SockaddrIn 
 #endif /* ndef HAVE_STRUCT_SOCKADDR_IN */
 
 
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) && !defined(HOST_WIN32)
 int
 Mono_Posix_FromSockaddrIn6 (struct Mono_Posix_SockaddrIn6 *from, struct sockaddr_in6 *to)
 {
@@ -5259,7 +5259,7 @@ Mono_Posix_FromSockaddrIn6 (struct Mono_Posix_SockaddrIn6 *from, struct sockaddr
 #endif /* ndef HAVE_STRUCT_SOCKADDR_IN6 */
 
 
-#ifdef HAVE_STRUCT_SOCKADDR_IN6
+#if defined(HAVE_STRUCT_SOCKADDR_IN6) && !defined(HOST_WIN32)
 int
 Mono_Posix_ToSockaddrIn6 (struct sockaddr_in6 *from, struct Mono_Posix_SockaddrIn6 *to)
 {

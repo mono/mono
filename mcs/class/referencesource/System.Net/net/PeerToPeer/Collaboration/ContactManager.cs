@@ -1561,7 +1561,7 @@ namespace System.Net.PeerToPeer.Collaboration
             object userToken = createAsyncState.UserToken;
 
             //
-            // Call the [....] version of createcontact
+            // Call the sync version of createcontact
             //
             try{
                 peerContact = CreateContact(peerNearMe);

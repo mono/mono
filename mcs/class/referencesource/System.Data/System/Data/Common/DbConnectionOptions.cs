@@ -2,8 +2,8 @@
 // <copyright file="DBConnectionOptions.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -107,7 +107,7 @@ namespace System.Data.Common {
 
         private readonly string        _usersConnectionString;
         private readonly Hashtable     _parsetable;
-        internal readonly NameValuePair KeyChain;
+        internal readonly NameValuePair _keyChain;
         internal readonly bool HasPasswordKeyword;
         internal readonly bool HasUserIdKeyword;
 
@@ -143,7 +143,7 @@ namespace System.Data.Common {
 
             // first pass on parsing, initial syntax check
             if (0 < _usersConnectionString.Length) {
-                KeyChain = ParseInternal(_parsetable, _usersConnectionString, true, synonyms, UseOdbcRules);
+                _keyChain = ParseInternal(_parsetable, _usersConnectionString, true, synonyms, UseOdbcRules);
                 HasPasswordKeyword = (_parsetable.ContainsKey(KEY.Password) || _parsetable.ContainsKey(SYNONYM.Pwd));
                 HasUserIdKeyword = (_parsetable.ContainsKey(KEY.User_ID) || _parsetable.ContainsKey(SYNONYM.UID));
             }
@@ -155,7 +155,7 @@ namespace System.Data.Common {
             HasUserIdKeyword = connectionOptions.HasUserIdKeyword;
             UseOdbcRules = connectionOptions.UseOdbcRules;
             _parsetable = connectionOptions._parsetable;
-            KeyChain = connectionOptions.KeyChain;
+            _keyChain = connectionOptions._keyChain;
         }
 
 
@@ -201,7 +201,7 @@ namespace System.Data.Common {
         }
 
         public bool IsEmpty {
-            get { return (null == KeyChain); }
+            get { return (null == _keyChain); }
         }
 
         internal Hashtable Parsetable {
@@ -439,7 +439,7 @@ namespace System.Data.Common {
             int copyPosition = 0;
             bool expanded = false;
 
-            for(NameValuePair current = KeyChain; null != current; current = current.Next) {
+            for(NameValuePair current = _keyChain; null != current; current = current.Next) {
                 value = current.Value;
 
                 // remove duplicate keyswords from connectionstring
@@ -517,7 +517,7 @@ namespace System.Data.Common {
             int copyPosition = 0;
 
             StringBuilder builder = new StringBuilder(_usersConnectionString.Length);
-            for(NameValuePair current = KeyChain; null != current; current = current.Next) {
+            for(NameValuePair current = _keyChain; null != current; current = current.Next) {
                 if ((current.Name == keyword) && (current.Value == this[keyword])) {
                     // only replace the parse end-result value instead of all values
                     // so that when duplicate-keywords occur other original values remain in place
@@ -929,7 +929,7 @@ namespace System.Data.Common {
             int copyPosition = 0;
             NameValuePair head = null, tail = null, next = null;
             StringBuilder builder = new StringBuilder(_usersConnectionString.Length);
-            for(NameValuePair current = KeyChain; null != current; current = current.Next) {
+            for(NameValuePair current = _keyChain; null != current; current = current.Next) {
                 if ((KEY.Password != current.Name) && (SYNONYM.Pwd != current.Name)) {
                     builder.Append(_usersConnectionString, copyPosition, current.Length);
                     if (fakePassword) {

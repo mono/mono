@@ -27,7 +27,7 @@ namespace System.Web.UI.MobileControls
      * arise. The core issue behind most of these is how to handle the user 
      * clicking the Back button. When the user does this, there is no corresponding
      * notification to the server, and the client and server session state are thrown
-     * out of [....]. 
+     * out of sync. 
      *
      * This class attempts to alleviate this by storing a small history of view states
      * in session data. 

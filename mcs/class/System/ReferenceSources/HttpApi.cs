@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace System.Net
 {
-	static class UnsafeNclNativeMethods
+	static partial class UnsafeNclNativeMethods
 	{
 		internal static unsafe class HttpApi 
 		{

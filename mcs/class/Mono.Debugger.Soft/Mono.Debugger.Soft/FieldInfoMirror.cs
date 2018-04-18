@@ -200,6 +200,20 @@ namespace Mono.Debugger.Soft
 					res.Add (attr);
 			return res.ToArray ();
 		}
+
+		public string FullName {
+			get {
+				string type_namespace = DeclaringType.Namespace;
+				string type_name = DeclaringType.Name;
+				StringBuilder sb = new StringBuilder ();
+				if (type_namespace != String.Empty)
+					sb.Append (type_namespace).Append (".");
+				sb.Append (type_name);
+				sb.Append (":");
+				sb.Append (Name);
+				return sb.ToString ();
+			}
+		}
 	}
 }
 

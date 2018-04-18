@@ -35,9 +35,9 @@ namespace System.Web.UI.Design.WebControls {
 	{
 		int initial_page;
 
-		public BaseDataListComponentEditor (int initial_page)
+		public BaseDataListComponentEditor (int initialPage)
 		{
-			this.initial_page = initial_page;
+			this.initial_page = initialPage;
 		}
 
 		public override bool EditComponent (

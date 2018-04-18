@@ -71,6 +71,7 @@ namespace MonoTests.System.ServiceModel.Channels
     <s:Fault>
       <faultcode>a:ActionNotSupported</faultcode>
       <faultstring xml:lang='en-US'>some error</faultstring>
+      <faultactor>Random</faultactor>
     </s:Fault>
   </s:Body>
 </s:Envelope>";

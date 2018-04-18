@@ -32,6 +32,6 @@ namespace System.ServiceModel.Dispatcher
 {
 	public interface IInstanceContextInitializer
 	{
-		void Initialize (InstanceContext context, Message message);
+		void Initialize (InstanceContext instanceContext, Message message);
 	}
 }

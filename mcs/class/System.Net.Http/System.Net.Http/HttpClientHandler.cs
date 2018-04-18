@@ -292,8 +292,9 @@ namespace System.Net.Http
 				}
 
 				if (header.Key == "Transfer-Encoding") {
-					// Chunked Transfer-Encoding is never set for HttpWebRequest. It's detected
-					// from ContentLength by HttpWebRequest
+					//
+					// Chunked Transfer-Encoding is set for HttpWebRequest later when Content length is checked
+					//
 					values = values.Where (l => l != "chunked");
 				}
 
@@ -333,6 +334,20 @@ namespace System.Net.Http
 			return response;
 		}
 
+		static bool MethodHasBody (HttpMethod method)
+		{
+			switch (method.Method) {
+			case "HEAD":
+			case "GET":
+			case "MKCOL":
+			case "CONNECT":
+			case "TRACE":
+				return false;
+			default:
+				return true;
+			}
+		}
+
 		protected async internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			if (disposed)
@@ -354,22 +369,30 @@ namespace System.Net.Http
 							}
 						}
 
-						//
-						// Content length has to be set because HttpWebRequest is running without buffering
-						//
-						var contentLength = content.Headers.ContentLength;
-						if (contentLength != null) {
-							wrequest.ContentLength = contentLength.Value;
+						if (request.Headers.TransferEncodingChunked == true) {
+							wrequest.SendChunked = true;
 						} else {
-							await content.LoadIntoBufferAsync (MaxRequestContentBufferSize).ConfigureAwait (false);
-							wrequest.ContentLength = content.Headers.ContentLength.Value;
+							//
+							// Content length has to be set because HttpWebRequest is running without buffering
+							//
+							var contentLength = content.Headers.ContentLength;
+							if (contentLength != null) {
+								wrequest.ContentLength = contentLength.Value;
+							} else {
+								if (MaxRequestContentBufferSize == 0)
+									throw new InvalidOperationException ("The content length of the request content can't be determined. Either set TransferEncodingChunked to true, load content into buffer, or set MaxRequestContentBufferSize.");
+
+								await content.LoadIntoBufferAsync (MaxRequestContentBufferSize).ConfigureAwait (false);
+								wrequest.ContentLength = content.Headers.ContentLength.Value;
+							}
 						}
 
-						wrequest.ResendContentFactory = content.CopyTo;
+						wrequest.ResendContentFactory = content.CopyToAsync;
 
-						var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false);
-						await request.Content.CopyToAsync (stream).ConfigureAwait (false);
-					} else if (HttpMethod.Post.Equals (request.Method) || HttpMethod.Put.Equals (request.Method) || HttpMethod.Delete.Equals (request.Method)) {
+						using (var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false)) {
+							await request.Content.CopyToAsync (stream).ConfigureAwait (false);
+						}
+					} else if (MethodHasBody (request.Method)) {
 						// Explicitly set this to make sure we're sending a "Content-Length: 0" header.
 						// This fixes the issue that's been reported on the forums:
 						// http://forums.xamarin.com/discussion/17770/length-required-error-in-http-post-since-latest-release
@@ -380,7 +403,9 @@ namespace System.Net.Http
 				}
 			} catch (WebException we) {
 				if (we.Status != WebExceptionStatus.RequestCanceled)
-					throw;
+					throw new HttpRequestException ("An error occurred while sending the request", we);
+			} catch (System.IO.IOException ex) {
+				throw new HttpRequestException ("An error occurred while sending the request", ex);
 			}
 
 			if (cancellationToken.IsCancellationRequested) {
@@ -392,7 +417,6 @@ namespace System.Net.Http
 			return CreateResponseMessage (wresponse, request, cancellationToken);
 		}
 
-#if NETSTANDARD
 		public bool CheckCertificateRevocationList {
 			get {
 				throw new NotImplementedException ();
@@ -458,7 +482,5 @@ namespace System.Net.Http
 				throw new NotImplementedException ();
 			}
 		}
-
-#endif
 	}
 }

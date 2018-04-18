@@ -70,13 +70,20 @@ namespace System.Net.Http.Headers
 					return null;
 
 				var c = (HttpHeaderValueCollection<U>) collection;
-				if (c.Count == 0)
-					return null;
+				if (c.Count == 0) {
+					if (c.InvalidValues == null)
+						return null;
+
+					return new List<string> (c.InvalidValues);
+				}
 
 				var list = new List<string> ();
 				foreach (var item in c) {
 					list.Add (item.ToString ());
 				}
+
+				if (c.InvalidValues != null)
+					list.AddRange (c.InvalidValues);
 
 				return list;
 			}

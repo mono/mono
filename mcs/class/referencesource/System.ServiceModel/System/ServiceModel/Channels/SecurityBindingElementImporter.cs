@@ -349,7 +349,7 @@ namespace System.ServiceModel.Channels
                 // normalize protection level settings at the operation scope if possible to help avoid typed message generation
                 if (hasProtectionLevel && isProtectionLevelUniform)
                 {
-                    // ([....]) remove the foreach message here
+                    // (Microsoft) remove the foreach message here
                     //  foreach (MessageDescription message in operation.Messages)
 
                     this.ResetProtectionLevelForMessages(operation);

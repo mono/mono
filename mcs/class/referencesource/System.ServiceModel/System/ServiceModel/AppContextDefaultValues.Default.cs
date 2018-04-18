@@ -32,6 +32,21 @@ namespace System
                         LocalAppContextSwitches.SetDefaultsLessOrEqual_461();
                     }
 
+                    if (version <= 40602)
+                    {
+                        // Define the switches that should be true for 4.6.2 or less, false for 4.6.3+.
+                        LocalAppContext.DefineSwitchDefault(LocalAppContextSwitches.DisableUsingServicePointManagerSecurityProtocolsString, true);
+                    }
+
+                    if (version <= 40700)
+                    {
+                        // Define the switches that should be true for 4.7.0 or less, false for 4.7.1+.
+                        LocalAppContext.DefineSwitchDefault(LocalAppContextSwitches.UseSha1InPipeConnectionGetHashAlgorithmString, true);
+                        LocalAppContext.DefineSwitchDefault(LocalAppContextSwitches.DisableAddressHeaderCollectionValidationString, true);
+                        LocalAppContext.DefineSwitchDefault(LocalAppContextSwitches.UseSha1InMsmqEncryptionAlgorithmString, true);
+                        LocalAppContext.DefineSwitchDefault(LocalAppContextSwitches.DontEnableSystemDefaultTlsVersionsString, true);
+                     }
+
                     break;
                 }
             }

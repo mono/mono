@@ -80,7 +80,7 @@
             }
             set {
                 // The parser will throw for invalid routes. We don't have to worry
-                // about _parsedRoute getting out of [....] with _url since the latter
+                // about _parsedRoute getting out of sync with _url since the latter
                 // won't get set unless we can parse the route.
                 _parsedRoute = RouteParser.Parse(value);
 

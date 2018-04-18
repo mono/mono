@@ -7,7 +7,7 @@
 **
 ** Class:  TypeToken
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Represents a Class to the ILGenerator class.

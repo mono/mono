@@ -7,7 +7,7 @@
 **
 ** Class: SerialStream
 **
-** Purpose: Class for enabling low-level [....] and async control over a serial
+** Purpose: Class for enabling low-level sync and async control over a serial
 **        : communications resource.
 **
 ** Date: August, 2002
@@ -809,7 +809,8 @@ namespace System.IO.Ports
                         // the SerialPort.  A customer also reported seeing ERROR_BAD_COMMAND here.
                         // Do not throw an exception on the finalizer thread - that's just rude,
                         // since apps can't catch it and we may tear down the app.
-                        if ((hr == NativeMethods.ERROR_ACCESS_DENIED || hr == NativeMethods.ERROR_BAD_COMMAND) && !disposing) {
+                        const int ERROR_DEVICE_REMOVED = 1617;
+                        if ((hr == NativeMethods.ERROR_ACCESS_DENIED || hr == NativeMethods.ERROR_BAD_COMMAND || hr == ERROR_DEVICE_REMOVED) && !disposing) {
                             skipSPAccess = true;
                         }
                         else {
@@ -1736,8 +1737,9 @@ namespace System.IO.Ports
                         {
                             int hr = Marshal.GetLastWin32Error();
                             // When a device is disconnected unexpectedly from a serial port, there appear to be
-                            // at least two error codes Windows or drivers may return.
-                            if (hr == NativeMethods.ERROR_ACCESS_DENIED || hr == NativeMethods.ERROR_BAD_COMMAND) {
+                            // at least three error codes Windows or drivers may return.
+                            const int ERROR_DEVICE_REMOVED = 1617;
+                            if (hr == NativeMethods.ERROR_ACCESS_DENIED || hr == NativeMethods.ERROR_BAD_COMMAND || hr == ERROR_DEVICE_REMOVED) {
                                 doCleanup = true;
                                 break;
                             }

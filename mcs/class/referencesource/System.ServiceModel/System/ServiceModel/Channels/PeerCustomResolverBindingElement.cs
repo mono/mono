@@ -52,7 +52,7 @@ namespace System.ServiceModel.Channels
             if (context == null)
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("context"));
 
-#pragma warning suppress 56506 // [....], context.BindingParameters is never null
+#pragma warning suppress 56506 // Microsoft, context.BindingParameters is never null
             credentials = context.BindingParameters.Find<ClientCredentials>();
         }
         public override T GetProperty<T>(System.ServiceModel.Channels.BindingContext context)
@@ -110,7 +110,7 @@ namespace System.ServiceModel.Channels
             if (context == null)
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("context"));
 
-#pragma warning suppress 56506 // [....], context.BindingParameters is never null
+#pragma warning suppress 56506 // Microsoft, context.BindingParameters is never null
             context.BindingParameters.Add(this);
             credentials = context.BindingParameters.Find<ClientCredentials>();
             return context.BuildInnerChannelFactory<TChannel>();
@@ -120,7 +120,7 @@ namespace System.ServiceModel.Channels
         {
             if (context == null)
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("context"));
-#pragma warning suppress 56506 // [....], context.BindingParameters is never null
+#pragma warning suppress 56506 // Microsoft, context.BindingParameters is never null
             this.credentials = context.BindingParameters.Find<ClientCredentials>();
             context.BindingParameters.Add(this);
             return context.CanBuildInnerChannelFactory<TChannel>();
@@ -131,7 +131,7 @@ namespace System.ServiceModel.Channels
             if (context == null)
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("context"));
 
-#pragma warning suppress 56506 // [....], context.BindingParameters is never null
+#pragma warning suppress 56506 // Microsoft, context.BindingParameters is never null
             context.BindingParameters.Add(this);
             this.credentials = context.BindingParameters.Find<ClientCredentials>();
             return context.BuildInnerChannelListener<TChannel>();
@@ -141,7 +141,7 @@ namespace System.ServiceModel.Channels
         {
             if (context == null)
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("context"));
-#pragma warning suppress 56506 // [....], context.BindingParameters is never null
+#pragma warning suppress 56506 // Microsoft, context.BindingParameters is never null
             this.credentials = context.BindingParameters.Find<ClientCredentials>();
             context.BindingParameters.Add(this);
             return context.CanBuildInnerChannelListener<TChannel>();

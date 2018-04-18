@@ -50,7 +50,7 @@ namespace System.IO
 		//    The above is an internal value used by Path.GetTempFile to
 		//    get a file with 600 permissions, regardless of the umask
 		//    settings.  If a value "1" must be introduced here, update
-		//    both metadata/file-io.c and Path.GetTempFile
+		//    both metadata/w32file.c and Path.GetTempFile
 		//
 	}
 }

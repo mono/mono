@@ -2,8 +2,8 @@
 // <copyright file="DataColumn.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -669,7 +669,7 @@ namespace System.Data {
                 Debug.Assert(defaultValue != null, "It should not have been set to null.");
                 if (defaultValue == DBNull.Value && this.implementsINullable) { // for perf I dont access property
                     if (_storage != null)
-                        defaultValue = _storage.NullValue;
+                        defaultValue = _storage._nullValue;
                     else if (this.isSqlType)
                             defaultValue = SqlConvert.ChangeTypeForDefaultValue(defaultValue, this.dataType, FormatProvider);
                     else if (this.implementsINullable) {
@@ -885,21 +885,21 @@ namespace System.Data {
         internal bool IsCloneable {
             get {
                 Debug.Assert(null != _storage, "no storage");
-                return _storage.IsCloneable;
+                return _storage._isCloneable;
             }
         }
 
         internal bool IsStringType {
             get {
                 Debug.Assert(null != _storage, "no storage");
-                return _storage.IsStringType;
+                return _storage._isStringType;
             }
         }
 
         internal bool IsValueType {
             get {
                 Debug.Assert(null != _storage, "no storage");
-                return _storage.IsValueType;
+                return _storage._isValueType;
             }
         }
 
@@ -1204,7 +1204,7 @@ namespace System.Data {
 
         internal void FreeRecord(int record) {
             Debug.Assert(null != _storage, "no storage");
-            _storage.Set(record, _storage.NullValue);
+            _storage.Set(record, _storage._nullValue);
         }
 
         /// <devdoc>
@@ -1395,7 +1395,7 @@ namespace System.Data {
                 return;
 
             if (sortIndex != null) {
-                if (sortIndex.IsKeyInIndex(_storage.NullValue)) {// here we do use strong typed NULL for Sql types
+                if (sortIndex.IsKeyInIndex(_storage._nullValue)) {// here we do use strong typed NULL for Sql types
                     throw ExceptionBuilder.NullKeyValues(ColumnName);
                 }
             }
@@ -1573,7 +1573,7 @@ namespace System.Data {
         internal bool IsCustomType {
             get {
                 if (null != _storage)
-                    return _storage.IsCustomDefinedType;
+                    return _storage._isCustomDefinedType;
                 return DataStorage.IsTypeCustomType(DataType);
             }
         }

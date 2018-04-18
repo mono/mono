@@ -7,7 +7,7 @@
 **
 ** Class:  Label
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **  
 **

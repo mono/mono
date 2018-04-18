@@ -115,7 +115,8 @@ namespace System.Runtime.Remoting.Channels.Ipc.Win32
 
         public void StartListening(object data)
         {
-            serverChannel.StartListening(data);
+            if (serverChannel != null)
+                serverChannel.StartListening(data);
         }
 
         public object ChannelData
@@ -128,7 +129,8 @@ namespace System.Runtime.Remoting.Channels.Ipc.Win32
 
         public void StopListening(object data)
         {
-            serverChannel.StopListening(data);
+            if (serverChannel != null)
+                serverChannel.StopListening(data);
         }
 
         public string[] GetUrlsForUri(string objectURI)

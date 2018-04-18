@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 using System;
@@ -166,7 +166,7 @@ namespace System.Security.Policy
         {
             Contract.Assert(evidence != null);
             Contract.Assert(m_legacyEvidenceList.Count == 0 || EvidenceType == evidence.GetType() || (evidence is LegacyEvidenceWrapper && (evidence as LegacyEvidenceWrapper).EvidenceType == EvidenceType),
-                            "LegacyEvidenceList must be ----geonous");
+                            "LegacyEvidenceList must be homogeonous");
             Contract.Assert(evidence.GetType() != typeof(LegacyEvidenceList),
                             "Attempt to add a legacy evidence list to another legacy evidence list");
 

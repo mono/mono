@@ -61,7 +61,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32UdpStatistics : UdpStatistics
 	{
 		Win32_MIB_UDPSTATS info;

@@ -1,5 +1,6 @@
-/*
- * string-icalls.c: String internal calls for the corlib
+/**
+ * \file
+ * String internal calls for the corlib
  *
  * Author:
  *   Patrik Torstensson (patrik.torstensson@labs2.com)
@@ -22,8 +23,6 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/debug-helpers.h>
-#include <mono/metadata/profiler.h>
-#include <mono/metadata/profiler-private.h>
 #include <mono/metadata/gc-internals.h>
 
 /* This function is redirected to String.CreateString ()
@@ -37,9 +36,9 @@ ves_icall_System_String_ctor_RedirectToCreateString (void)
 MonoString *
 ves_icall_System_String_InternalAllocateStr (gint32 length)
 {
-	MonoError error;
-	MonoString *str = mono_string_new_size_checked (mono_domain_get (), length, &error);
-	mono_error_set_pending_exception (&error);
+	ERROR_DECL (error);
+	MonoString *str = mono_string_new_size_checked (mono_domain_get (), length, error);
+	mono_error_set_pending_exception (error);
 
 	return str;
 }
@@ -47,12 +46,12 @@ ves_icall_System_String_InternalAllocateStr (gint32 length)
 MonoString  *
 ves_icall_System_String_InternalIntern (MonoString *str)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoString *res;
 
-	res = mono_string_intern_checked (str, &error);
+	res = mono_string_intern_checked (str, error);
 	if (!res) {
-		mono_error_set_pending_exception (&error);
+		mono_error_set_pending_exception (error);
 		return NULL;
 	}
 	return res;

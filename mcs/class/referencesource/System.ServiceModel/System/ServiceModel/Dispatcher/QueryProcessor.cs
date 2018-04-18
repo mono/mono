@@ -457,7 +457,7 @@ namespace System.ServiceModel.Dispatcher
             this.matcher = matcher;
             this.flags = QueryProcessingFlags.Match;
 
-            // PERF, [....], see if we can just let these to their default init
+            // PERF, Microsoft, see if we can just let these to their default init
             this.messageAction = null;
             //this.messageAddress = null;
             //this.messageVia = null;
@@ -510,7 +510,7 @@ namespace System.ServiceModel.Dispatcher
                     }
                     else
                     {
-#pragma warning suppress 56503 // [....], property is more readable for this
+#pragma warning suppress 56503 // Microsoft, property is more readable for this
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperCritical(new QueryProcessingException(QueryProcessingError.Unexpected));
                     }
                     this.counter = this.contextNode as INodeCounter;

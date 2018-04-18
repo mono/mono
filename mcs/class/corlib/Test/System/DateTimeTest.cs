@@ -2646,7 +2646,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Culture ("en-us")]
+		[SetCulture ("en-us")]
 		public void ToUniversalTime_TimeZoneOffsetShouldNotOverflow ()
 		{
 			var m = DateTime.MaxValue;
@@ -2662,7 +2662,7 @@ namespace MonoTests.System
 			res = m.ToUniversalTime ();
 
 			// It does not matter which time zone but we should never overflow or have DateTime.MinValue
-			Assert.AreEqual (0, res.Year, "#10");
+			Assert.AreEqual (1, res.Year, "#10");
 			Assert.AreEqual (1, res.Month, "#11");
 			Assert.AreEqual (1, res.Day, "#12");
 			Assert.AreEqual (DateTimeKind.Utc, res.Kind, "#13");

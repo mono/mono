@@ -1070,7 +1070,10 @@ namespace Mono.CSharp
 					var ie = new InstanceEmitter (instance_copy, IsAddressCall (instance_copy, call_op, method.DeclaringType));
 
 					if (Arguments == null) {
-						ie.EmitLoad (ec, true);
+						if (ConditionalAccess)
+							ie.Emit (ec, true);
+						else
+							ie.EmitLoad (ec, true);
 					}
 				} else if (!InstanceExpressionOnStack) {
 					var ie = new InstanceEmitter (InstanceExpression, IsAddressCall (InstanceExpression, call_op, method.DeclaringType));

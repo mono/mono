@@ -1,5 +1,6 @@
-/*
- * mono-os-semaphore.h:  Definitions for generic semaphore usage
+/**
+ * \file
+ * Definitions for generic semaphore usage
  *
  * Author:
  *	Geoff Norton  <gnorton@novell.com>
@@ -30,8 +31,7 @@
 #elif !defined(HOST_WIN32) && defined(HAVE_SEMAPHORE_H)
 #include <semaphore.h>
 #else
-#include <winsock2.h>
-#include <windows.h>
+#include <mono/utils/mono-os-wait.h>
 #endif
 
 #define MONO_HAS_SEMAPHORES 1
@@ -291,7 +291,12 @@ typedef HANDLE MonoSemType;
 static inline void
 mono_os_sem_init (MonoSemType *sem, int value)
 {
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	*sem = CreateSemaphore (NULL, value, 0x7FFFFFFF, NULL);
+#else
+	*sem = CreateSemaphoreEx (NULL, value, 0x7FFFFFFF, NULL, 0, SEMAPHORE_ALL_ACCESS);
+#endif
+
 	if (G_UNLIKELY (*sem == NULL))
 		g_error ("%s: CreateSemaphore failed with error %d", __func__, GetLastError ());
 }
@@ -312,9 +317,9 @@ mono_os_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, MonoSemFlags flags)
 	BOOL res;
 
 retry:
-	res = WaitForSingleObjectEx (*sem, timeout_ms, flags & MONO_SEM_FLAGS_ALERTABLE);
+	res = mono_win32_wait_for_single_object_ex (*sem, timeout_ms, flags & MONO_SEM_FLAGS_ALERTABLE);
 	if (G_UNLIKELY (res != WAIT_OBJECT_0 && res != WAIT_IO_COMPLETION && res != WAIT_TIMEOUT))
-		g_error ("%s: WaitForSingleObjectEx failed with error %d", __func__, GetLastError ());
+		g_error ("%s: mono_win32_wait_for_single_object_ex failed with error %d", __func__, GetLastError ());
 
 	if (res == WAIT_IO_COMPLETION && !(flags & MONO_SEM_FLAGS_ALERTABLE))
 		goto retry;
@@ -334,7 +339,7 @@ retry:
 static inline int
 mono_os_sem_wait (MonoSemType *sem, MonoSemFlags flags)
 {
-	return mono_os_sem_timedwait (sem, INFINITE, flags) != 0 ? -1 : 0;
+	return mono_os_sem_timedwait (sem, MONO_INFINITE_WAIT, flags) != 0 ? -1 : 0;
 }
 
 static inline void

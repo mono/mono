@@ -399,6 +399,13 @@ namespace System.Web.Security {
                     MembershipSection settings = appConfig.Membership;
                     generalSettingsInitialized = InitializeSettings(initializeGeneralSettings, appConfig, settings);
                     defaultProviderInitialized = InitializeDefaultProvider(initializeDefaultProvider, settings);
+
+                    // VSO #265267 log warning in event log when using clear password and encrypted password in Membership provider
+                    // VSO #433626 In order to minimize the behavior change, we are going to read the password format from the config settings only instead of getting from the provider class
+                    // Also allow user to opt-out this feature.
+                    if (AppSettings.LogMembershipPasswordFormatWarning) {
+                        CheckedPasswordFormat(settings);
+                    }
                 } catch (Exception e) {
                     s_InitializeException = e;
                     throw;
@@ -413,6 +420,26 @@ namespace System.Web.Security {
                     s_InitializedDefaultProvider = true;
                 }
             }
+        }
+
+        // VSO #265267 we want to log a warning in the event log, whenever detect using clear password or encrypted password formats settings in Membership provider
+        // VSO #433626 In order to minimize the behavior change, we are going to read the password format from the config settings only instead of getting from the provider class
+        private static void CheckedPasswordFormat(MembershipSection settings) {
+            //VSO #294931 Since this is an optional feature, we want to prevent any corner cases that were not able to return the password format. In those cases, we will just do nothing and not log any warnings.
+            try {
+                if (settings != null && settings.Providers != null) {
+                    foreach (ProviderSettings ps in settings.Providers) {
+                        if (ps != null && ps.Parameters != null) {
+                            string passwordFormat = ps.Parameters["passwordFormat"];
+                            if (StringUtil.EqualsIgnoreCase(passwordFormat, "Clear") || StringUtil.EqualsIgnoreCase(passwordFormat, "Encrypted")) {
+                                string providerName = ps.Name ?? string.Empty;
+                                WebBaseEvent.RaiseRuntimeError(new ConfigurationErrorsException(SR.GetString(SR.MembershipPasswordFormat_Obsoleted, providerName, passwordFormat)), typeof(MembershipProvider));
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
         }
 
         private static bool InitializeSettings(bool initializeGeneralSettings, RuntimeConfig appConfig, MembershipSection settings) {

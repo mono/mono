@@ -52,7 +52,6 @@ namespace System.Security.Cryptography.X509Certificates
 	{
 		bool _archived;
 		X509ExtensionCollection _extensions;
-		string _serial;
 		PublicKey _publicKey;
 		X500DistinguishedName issuer_name;
 		X500DistinguishedName subject_name;
@@ -245,24 +244,26 @@ namespace System.Security.Cryptography.X509Certificates
 				if (_cert == null)
 					throw new CryptographicException (empty_error);
 				try {
-					if (_cert.RSA != null) {
-						RSACryptoServiceProvider rcsp = _cert.RSA as RSACryptoServiceProvider;
-						if (rcsp != null)
-							return rcsp.PublicOnly ? null : rcsp;
-
-						RSAManaged rsam = _cert.RSA as RSAManaged;
-						if (rsam != null)
-							return rsam.PublicOnly ? null : rsam;
-
-						_cert.RSA.ExportParameters (true);
-						return _cert.RSA;
-					} else if (_cert.DSA != null) {
-						DSACryptoServiceProvider dcsp = _cert.DSA as DSACryptoServiceProvider;
-						if (dcsp != null)
-							return dcsp.PublicOnly ? null : dcsp;
-
-						_cert.DSA.ExportParameters (true);
-						return _cert.DSA;
+					if (_cert.RSA is RSACryptoServiceProvider rcsp) {
+						if (rcsp.PublicOnly)
+							return null;
+						var key = new RSACryptoServiceProvider ();
+						key.ImportParameters (_cert.RSA.ExportParameters(true));
+						return key;
+					}
+					if (_cert.RSA is RSAManaged rsam) {
+						if (rsam.PublicOnly)
+							return null;
+						var key = new RSAManaged ();
+						key.ImportParameters (_cert.RSA.ExportParameters(true));
+						return key;
+					}
+					if (_cert.DSA is DSACryptoServiceProvider dcsp) {
+						if (dcsp.PublicOnly)
+							return null;
+						var key = new DSACryptoServiceProvider();
+						key.ImportParameters(_cert.DSA.ExportParameters(true));
+						return key;
 					}
 				}
 				catch {
@@ -483,6 +484,7 @@ namespace System.Security.Cryptography.X509Certificates
 		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			Reset ();
 			MX.X509Certificate cert = null;
 			if (password == null) {
 				try {
@@ -558,7 +560,6 @@ namespace System.Security.Cryptography.X509Certificates
 			_cert = null;
 			_archived = false;
 			_extensions = null;
-			_serial = null;
 			_publicKey = null;
 			issuer_name = null;
 			subject_name = null;
@@ -717,6 +718,10 @@ namespace System.Security.Cryptography.X509Certificates
 
 		internal MX.X509Certificate MonoCertificate {
 			get { return _cert; }
+		}
+
+		internal override X509Certificate2Impl FallbackImpl {
+			get { return this; }
 		}
 	}
 }

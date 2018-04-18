@@ -7,7 +7,10 @@
 namespace System.Web.Hosting {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
     using System.Configuration;
+    using System.Configuration.Provider;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.IO;
@@ -31,7 +34,6 @@ namespace System.Web.Hosting {
     using System.Web.Util;
     using System.Web.WebSockets;
     using Microsoft.Win32;
-    using System.Collections.Generic;
 
     [Flags]
     internal enum HostingEnvironmentFlags {
@@ -126,6 +128,7 @@ namespace System.Web.Hosting {
         private bool _shutdownInProgress;
         private String _shutDownStack;
 
+        private static NameValueCollection _cacheProviderSettings;
         private int _inTrimCache;
         private ObjectCacheHost _objectCacheHost;
 
@@ -135,6 +138,7 @@ namespace System.Web.Hosting {
         // list of registered IRegisteredObject instances, suspend listeners, and background work items
         private Hashtable _registeredObjects = new Hashtable();
         private SuspendManager _suspendManager = new SuspendManager();
+        private ApplicationMonitors _applicationMonitors;
         private BackgroundWorkScheduler _backgroundWorkScheduler = null; // created on demand
         private static readonly Task<object> _completedTask = Task.FromResult<object>(null);
 
@@ -191,14 +195,29 @@ namespace System.Web.Hosting {
             Thread.GetDomain().UnhandledException += new UnhandledExceptionEventHandler(ApplicationManager.OnUnhandledException);
         }
 
-        internal long TrimCache(int percent) {
+        internal static long TrimCache(int percent)
+        {
+            if (_theHostingEnvironment != null)
+                return _theHostingEnvironment.TrimCacheInternal(percent);
+            return 0;
+        }
+
+        private long TrimCacheInternal(int percent)
+        {
             if (Interlocked.Exchange(ref _inTrimCache, 1) != 0)
                 return 0;
             try {
                 long trimmedOrExpired = 0;
                 // do nothing if we're shutting down
                 if (!_shutdownInitiated) {
-                    trimmedOrExpired = HttpRuntime.CacheInternal.TrimCache(percent);
+                    var iCache = HttpRuntime.Cache.GetInternalCache(createIfDoesNotExist: false);
+                    var oCache = HttpRuntime.Cache.GetObjectCache(createIfDoesNotExist: false);
+                    if (oCache != null) {
+                        trimmedOrExpired = oCache.Trim(percent);
+                    }
+                    if (iCache != null && !iCache.Equals(oCache)) {
+                        trimmedOrExpired += iCache.Trim(percent);
+                    }
                     if (_objectCacheHost != null && !_shutdownInitiated) {
                         trimmedOrExpired += _objectCacheHost.TrimCache(percent);
                     }
@@ -330,7 +349,7 @@ namespace System.Web.Hosting {
 
             // notify app manager
             if (_appManager != null) {
-                _appManager.HostingEnvironmentActivated(CacheMemorySizePressure.EffectiveProcessMemoryLimit);
+                _appManager.HostingEnvironmentActivated();
             }
 
             // make sure there is always app host
@@ -363,6 +382,8 @@ namespace System.Web.Hosting {
 
             // get application identity (for explicit impersonation mode)
             GetApplicationIdentity();
+
+            _applicationMonitors = new ApplicationMonitors();
 
             // call AppInitialize, unless the flag says not to do it (e.g. CBM scenario).
             // Also, don't call it if HostingInit failed (VSWhidbey 210495)
@@ -1260,6 +1281,19 @@ namespace System.Web.Hosting {
             }
         }
 
+        /// <devdoc>
+        ///    <para>A group of repleacable monitor objects used by ASP.Net subsystems to maintain
+        ///       application health.</para>
+        /// </devdoc>
+        public static ApplicationMonitors ApplicationMonitors {
+            get {
+                if (_theHostingEnvironment == null)
+                    return null;
+
+                return _theHostingEnvironment._applicationMonitors;
+            }
+        }
+
         internal static int BusyCount {
             get {
                 if (_theHostingEnvironment == null)
@@ -1412,6 +1446,42 @@ namespace System.Web.Hosting {
         /// </devdoc>
         public static Cache Cache {
             get { return HttpRuntime.Cache; }
+        }
+
+        internal static NameValueCollection CacheStoreProviderSettings {
+            get {
+                if (_cacheProviderSettings == null) {
+                    if (AppDomain.CurrentDomain.IsDefaultAppDomain()) {
+                        Configuration webConfig = WebConfigurationManager.OpenWebConfiguration(null /* root web.config */);
+                        CacheSection cacheConfig = (CacheSection)webConfig.GetSection("system.web/caching/cache");
+                        if (cacheConfig != null && cacheConfig.DefaultProvider != null && !String.IsNullOrWhiteSpace(cacheConfig.DefaultProvider)) {
+                            ProviderSettingsCollection cacheProviders = cacheConfig.Providers;
+                            if (cacheProviders == null || cacheProviders.Count < 1) {
+                                throw new ProviderException(SR.GetString(SR.Def_provider_not_found));
+                            }
+
+                            ProviderSettings cacheProviderSettings = cacheProviders[cacheConfig.DefaultProvider];
+                            if (cacheProviderSettings == null) {
+                                throw new ProviderException(SR.GetString(SR.Def_provider_not_found));
+                            }
+
+                            NameValueCollection settings = cacheProviderSettings.Parameters;
+                            settings["name"] = cacheProviderSettings.Name;
+                            settings["type"] = cacheProviderSettings.Type;
+                            _cacheProviderSettings = settings;
+                        }
+                    }
+                    else {
+                        _cacheProviderSettings = AppDomain.CurrentDomain.GetData(".defaultObjectCacheProvider") as NameValueCollection;
+                    }
+                }
+
+                // Return a copy, so the consumer can't mess with our copy of the settings
+                if (_cacheProviderSettings != null)
+                    return new NameValueCollection(_cacheProviderSettings);
+
+                return null;
+            }
         }
 
         // count of all app domain from app manager

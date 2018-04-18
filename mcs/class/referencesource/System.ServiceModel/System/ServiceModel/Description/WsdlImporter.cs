@@ -1189,7 +1189,7 @@ namespace System.ServiceModel.Description
 
             internal static XmlQualifiedName GetBindingName(WsdlNS.Port wsdlPort)
             {
-                // [....]: composing names have potential problem of generating name that looks like an encoded name, consider avoiding '_'
+                // Microsoft: composing names have potential problem of generating name that looks like an encoded name, consider avoiding '_'
                 XmlName xmlName = new XmlName(string.Format(CultureInfo.InvariantCulture, "{0}_{1}", wsdlPort.Service.Name, wsdlPort.Name), true /*isEncoded*/);
                 return new XmlQualifiedName(xmlName.EncodedName, wsdlPort.Service.ServiceDescription.TargetNamespace);
             }
@@ -1233,7 +1233,7 @@ namespace System.ServiceModel.Description
                 }
                 else
                 {
-                    // [....]: why this is an Assert, and not an exception?
+                    // Microsoft: why this is an Assert, and not an exception?
                     Fx.Assert("Unsupported WSDL OM (More than 2 OperationMessages encountered in an Operation or WsdlOM is invalid)");
                 }
                 // names the come from service description documents have to be valid NCNames; XmlName.ctor will validate.
@@ -1920,7 +1920,7 @@ namespace System.ServiceModel.Description
         static Exception CreateExtensionException(IWsdlImportExtension importer, Exception e)
         {
             string errorMessage = SR.GetString(SR.WsdlExtensionImportError, importer.GetType().FullName, e.Message);
-            //consider [....], allow internal exceptions to throw WsdlImportException and handle it in some special way?
+            //consider Microsoft, allow internal exceptions to throw WsdlImportException and handle it in some special way?
             return new InvalidOperationException(errorMessage, e);
         }
 

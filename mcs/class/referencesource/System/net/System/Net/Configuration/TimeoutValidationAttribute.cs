@@ -3,7 +3,7 @@ namespace System.Net {
     using System.Configuration;
     using System.ComponentModel;
     
-    // NOTE [[....]]: The old validation attribute was removed from System.ll and is     
+    // NOTE [Microsoft]: The old validation attribute was removed from System.ll and is     
     // replaced by more flexible and robust validation/conversion design.
     // The change bellow is a simple fix to make things work with the least possible change ( it is an integration break )
     // However, we already have a built-in support for configuration properties that store     
@@ -32,7 +32,7 @@ namespace System.Net {
                 return;
             
             if (timeout <= 0 && timeout != System.Threading.Timeout.Infinite) {
-                // Note [[....]] : This is a lab integration fix. Old code did not have any error message at this point
+                // Note [Microsoft] : This is a lab integration fix. Old code did not have any error message at this point
                 // This code change accomplishes the same result. However its highly reccomended that a specific error message is givven
                 // to the user so they know what exaclty is the problem ( i.e. the value must be a positive integer or be Infinite )
                 // To accomplish this - an exception with the specific error message could be thrown ( ArgumentException is prefferred )            

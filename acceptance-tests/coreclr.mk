@@ -32,7 +32,7 @@ coreclr-runtest-coremanglib: coreclr-validate test-runner.exe $(CORECLR_COREMANG
 check-coreclr: coreclr-compile-tests coreclr-runtest-basic coreclr-runtest-coremanglib
 
 coreclr-gcstress: coreclr-validate GCStressTests.exe $(CORECLR_STRESSTESTSI_CS)
-	BVT_ROOT=$(realpath $(CORECLR_PATH)/tests/src/GC/Stress/Tests) $(RUNTIME) GCStressTests.exe $(CORECLR_PATH)/tests/src/GC/Stress/testmix_gc.config; if [ $$? -ne 100 ]; then exit 1; fi
+	BVT_ROOT=$(realpath $(CORECLR_PATH)/tests/src/GC/Stress/Tests) $(RUNTIME) GCStressTests.exe $(CORECLR_PATH)/tests/src/GC/Stress/$(if $(CI_PR),testmix_gc_pr.config,testmix_gc.config); if [ $$? -ne 100 ]; then exit 1; fi
 
 # Output a variable in $(2) to the file $(1), separated by newline characters
 # we need to do it in groups of 100 entries to make sure we don't exceed shell char limits
@@ -421,7 +421,6 @@ CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Arrays/lcs/lcsmixed.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Arrays/lcs/lcsval.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Arrays/lcs/lcsvalbox.cs	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/Arrays/misc/arrres.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Arrays/misc/gcarr.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Arrays/misc/selfref.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/AsgOp/i4/i4.cs	\
@@ -868,7 +867,6 @@ CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b19171/jmp2blk.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b30251/b578931.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b102533/DeadBlock.cs	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b268908/vars2.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b320147/1086745236.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b321799/repro.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b338014/vsw338014.cs	\
@@ -939,7 +937,6 @@ CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102729/b102729.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102763/gcparamonstack.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102886/ovf.cs	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/VS-ia64-JIT/V1.2-M02/b10828/redundant.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/VS-ia64-JIT/V1.2-M02/b19394/stringArray114.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/VS-ia64-JIT/V1.2-M02/b21015/test.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/VS-ia64-JIT/V1.2-M02/b26496/_1d6bgof.cs	\
@@ -1048,7 +1045,6 @@ CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/cg/cgstress/CgStress3.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/cse/HugeArray.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/cse/HugeArray1.cs	\
-	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/cse/HugeField1.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/cse/HugeField2.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/cse/arrayexpr1.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/cse/arrayexpr2.cs	\
@@ -1375,7 +1371,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/components/stopwatch/co9600ctor.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/components/stopwatch/co9604get_isrunning.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/action/actionctor.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/action/actioninvoke.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/activator/activatorcreateinstance2.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/argumentexception/argumentexceptionctor1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/argumentexception/argumentexceptionmessage.cs	\
@@ -1827,8 +1822,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/collections/ienumerator/ienumeratorreset.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/collections/ilist/ilistisfixedsize.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/collections/ilist/ilistitem.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/comparison/comparisonbegininvoke.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/comparison/comparisonendinvoke.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/comparison/comparisoninvoke.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/console/consoleseterror.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/console/consolesetout.cs	\
@@ -2060,7 +2053,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/datetime/datetimedate.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/datetime/datetimegethashcode.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/datetime/datetimehour.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/datetime/datetimekind.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/datetime/datetimemaxvalue.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/datetime/datetimemillisecond.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/datetime/datetimeminute.cs	\
@@ -2211,9 +2203,7 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/environment/environmentprocessorcount_cti.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/eventargs/eventargsctor.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/eventhandler/eventhandlerinvoke.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/eventhandler_generic/eventhandlerbegininvoke.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/eventhandler_generic/eventhandlerctor.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/eventhandler_generic/eventhandlerendinvoke.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/eventhandler_generic/eventhandlerinvoke.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/exception/exceptionctor1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/exception/exceptionctor2.cs	\
@@ -2227,8 +2217,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcgettotalmemory.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gckeepalive.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcmaxgeneration.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcreregisterforfinalize.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcsuppressfinalize.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcwaitforpendingfinalizers.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/calendarweekrule/calendarweekrulefirstday.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/calendarweekrule/calendarweekrulefirstfourdayweek.cs	\
@@ -2237,13 +2225,8 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/charunicodeinfo/charunicodeinfogetnumericvalue2.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/charunicodeinfo/charunicodeinfogetunicodecategory1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/charunicodeinfo/charunicodeinfogetunicodecategory2.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareinfo/compareinfocompare.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareinfo/compareinfocompare2.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareinfo/compareinfoindexof.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareinfo/compareinfoindexof2.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareinfo/compareinfoisprefix.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareinfo/compareinfoissuffix.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareinfo/compareinfolastindexof.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareoptions/compareoptionsignorecase.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareoptions/compareoptionsignorekanatype.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareoptions/compareoptionsignorenonspace.cs	\
@@ -2318,7 +2301,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/numberstyles/numberstylesnone.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/numberstyles/numberstylesnumber.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/regioninfo/regioninfocurrencysymbol.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/regioninfo/regioninfocurrentregion.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/regioninfo/regioninfoequals.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/regioninfo/regioninfogethashcode.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/regioninfo/regioninfoismetric.cs	\
@@ -2554,7 +2536,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/io/fileshare/fileshareread.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/io/fileshare/filesharereadwrite.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/io/fileshare/filesharewrite.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/io/filestream/filestreamdispose.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/io/ioexception/ioexceptionctor1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/io/ioexception/ioexceptionctor2.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/io/memorystream/memorystreamctor.cs	\
@@ -2705,8 +2686,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/platformnotsupportedexception/platformnotsupportedexceptionctor1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/platformnotsupportedexception/platformnotsupportedexceptionctor2.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/platformnotsupportedexception/platformnotsupportedexceptionctor3.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/predicate/predicatebegininvoke.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/predicate/predicateendinvoke.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/predicate/predicateinvoke.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/random/randomctor1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/random/randomctor2.cs	\
@@ -3200,7 +3179,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/marshal/marshalgetlastwin32error.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/marshal/marshalreadint641.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/marshal/marshalsizeof1.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/marshal/marshalsizeof2.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/marshalasattribute/marshalasattributearraysubtype.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/marshalasattribute/marshalasattributector1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/marshalasattribute/marshalasattributector2.cs	\
@@ -3298,7 +3276,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringcompare9.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringcompareordinal1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringcompareordinal2.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringcompareto1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringconcat1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringconcat2.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringconcat3.cs	\
@@ -3311,9 +3288,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringctor5.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringctorchar.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringempty.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringequals1.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringequals2.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringequals3.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringequals6.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringformat1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringformat2.cs	\
@@ -3667,7 +3641,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/weakreference/weakreferencector1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/weakreference/weakreferencector2b.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/weakreference/weakreferenceisaliveb.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/weakreference/weakreferencetargetb.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/weakreference/weakreferencetrackresurrection_cti.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/buffer/asurt_99893.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/collections/generic/hashset/regression_dev10_609271.cs	\
@@ -3676,7 +3649,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/delegate/generics/negativegenerics.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/delegate/miscellaneous/co6010delegateequalstwo.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/delegate/miscellaneous/co6031gethashcode.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/system/delegate/regressions/devdivbugs/113347/ddb113347.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/guid/guid_parsing.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/lazyt/lazyttf.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/text/encoding/shift_jis.cs	\
@@ -3743,7 +3715,7 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/readytorun/main.cs	\
 	$(CORECLR_PATH)/tests/src/readytorun/test.cs
-	
+
 # relies on a referenced managed or native assembly, to complicated here:
 CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/Regressions/assemblyref/assem.cs	\
@@ -3883,7 +3855,7 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/datetime/cfdatetimetools.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/datetime/datetimeisdaylightsavingtime.cs
-	
+
 # relies on delegatedefinitions.cs helper
 CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/multicastdelegate/multicastdelegatector.cs	\
@@ -3991,7 +3963,7 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/delegate/threatmodel/public/testclass.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/delegate/threatmodel/tests/bindingtarget.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/delegate/threatmodel/tests/testclass.cs
-	
+
 # samples (should probably be removed upstream)
 CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/hosting/samples/hosting/usercode/usercode.cs	\
@@ -4008,6 +3980,10 @@ CORECLR_DISABLED_TEST_CS_SRC +=        \
 CORECLR_DISABLED_TEST_CS_SRC +=        \
        $(CORECLR_PATH)/tests/src/JIT/Directed/newarr/newarr.cs	\
 	   $(CORECLR_PATH)/tests/src/baseservices/exceptions/sharedexceptions/emptystacktrace/oomexception01.cs
+
+# https://github.com/mono/mono/issues/7432
+CORECLR_DISABLED_TEST_CS_SRC +=	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcsuppressfinalize.cs
 
 CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/BBT/Scenario4/Not-Int32.il	\
@@ -4030,7 +4006,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/1/Box_Unbox.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/1/Desktop/add.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/1/add.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/1/arglist64.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/1/array_tests.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/1/cpblk.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/1/field_tests.il	\
@@ -4041,7 +4016,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/1/ldloca.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/2/Box_Unbox.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/2/add.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/2/arglist64.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/2/array_tests.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/2/cpblk.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/2/field_tests.il	\
@@ -4053,7 +4027,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/4/Box_Unbox.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/4/Desktop/add.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/4/add.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/4/arglist64.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/4/array_tests.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/4/cpblk.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/4/field_tests.il	\
@@ -4065,7 +4038,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/volatile/1/Box_Unbox.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/volatile/1/Desktop/add.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/volatile/1/add.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/volatile/1/arglist64.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/volatile/1/array_tests.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/volatile/1/cpblk.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/volatile/1/field_tests.il	\
@@ -4107,13 +4079,9 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/leave/catch1.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/leave/catch2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/leave/catch3.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/leave/filter1.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/leave/filter2.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/leave/filter3.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/leave/try1.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/leave/try2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/leave/try3.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/refbyref/byrefconvert.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/shift/int8.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/shift/nativeint.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/shift/nativeuint.il	\
@@ -4122,11 +4090,9 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/throwbox/finally.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/throwbox/rethrow.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/zeroinit/Dev10_863995.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/zeroinit/init_byte.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/zeroinit/init_int32.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/zeroinit/init_int64.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/zeroinit/init_struct.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Directed/zeroinit/init_uint32.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/zeroinit/init_uint64.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/zeroinit/tail.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Generics/ConstrainedCall/vt1.il	\
@@ -4155,9 +4121,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_conv_ovf_i4_u4.il	\
 	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_conv_ovf_i8_i4.il	\
 	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_conv_ovf_i8_u8.il	\
-	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_conv_ovf_r8_i.il	\
-	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_conv_ovf_r8_i4.il	\
-	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_conv_ovf_r8_i8.il	\
 	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_conv_ovf_u4_i.il	\
 	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_conv_ovf_u4_i4.il	\
 	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_conv_ovf_u4_u1.il	\
@@ -4189,7 +4152,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_sub_ovf_u2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_sub_ovf_u4.il	\
 	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_sub_ovf_u8.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/Arrays/huge_struct.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Arrays/lcs/lcs_ldlen.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Arrays/misc/lengthm2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Arrays/misc/selfref.il	\
@@ -4231,11 +4193,8 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/ELEMENT_TYPE_IU/u_vfld.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/FPtrunc/convr4d.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/FPtrunc/convr8d.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/25params/25param1b.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/25params/25param1c.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/25params/25param3b.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/25params/25param3c.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/25params/25paramMixed.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/SEH/catchfault.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/SEH/catchfault_jmp.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/SEH/catchfault_tail.il	\
@@ -4264,13 +4223,9 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/fptr/virtftn_t.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/fr4.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/fr8.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/i4u2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/i4u4.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/i8u8.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/ii1.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/ii2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/ii4.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/iu2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/iu4.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/objref.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/thiscall/thisnull.il	\
@@ -4311,7 +4266,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/casts/iface/iface2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/casts/ilseq/typeEqualOp.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/cctor/misc/deadlock.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/cctor/simple/Desktop/prefldinit3.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/cctor/simple/prefldinit1.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/cctor/simple/prefldinit2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/cctor/simple/prefldinit4.il	\
@@ -4351,7 +4305,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/flowgraph/dev10_bug679955/indexMinusOne.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/flowgraph/dev10_bug679955/volatileLocal1.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/flowgraph/dev10_bug679955/volatileLocal2.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/int64/arrays/hugedim.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/int64/arrays/lcs_long.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/int64/arrays/lcs_ulong.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/int64/misc/binop.il	\
@@ -4386,8 +4339,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/nonvirtualcall/tailcall.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/nonvirtualcall/valuetype.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/refany/array1.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/refany/array2.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/refany/array3.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/refany/native.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/refany/seq.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/refany/stress2.il	\
@@ -4400,7 +4351,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/tailcall/compat_obj.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/tailcall/compat_v.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/tailcall/deep_array.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/tailcall/deep_array_nz.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/tailcall/deep_gc.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/tailcall/deep_inst.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/tailcall/deep_value.il	\
@@ -4422,7 +4372,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/varargs/callconv/gc_ctor.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/varargs/callconv/val_ctor.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/varargs/misc/Dev10_615402.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Methodical/xxblk/cpblk3.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/xxblk/initblk3.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/xxobj/ldobj/ldobj_I.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/xxobj/ldobj/ldobj_I8.il	\
@@ -4436,7 +4385,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/xxobj/operand/refanyval.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Methodical/xxobj/operand/unbox.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-EJIT/V1-M09.5-PDC/b16935/b16935.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-EJIT/V1-M11-Beta1/b44018/b44018.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-EJIT/V1-M11-Beta1/b45046/b45046.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-EJIT/V1-M12-Beta2/b26323/b26323.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-EJIT/V1-M12-Beta2/b35455/b35455.il	\
@@ -4499,7 +4447,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b16881/b16881a.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b16881/b16881b.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b16886/b16886.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b16895/b16895.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b16896/b16896.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b16922/b16922.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b16928/b16928.il	\
@@ -4508,7 +4455,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b20217/b20217.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b20249/b20249.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b25458/b25458.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b25459/b25459.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b25463/b25463.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b25468/b25468-ia64.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b25474/b25474.il	\
@@ -4534,19 +4480,15 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b27657/b27657.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b27658/b27658.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b27880/b27880.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b27883/b27883.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b27917/b27917.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b28080/b28080.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b28522/b28522.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b28594/b28594.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b28595/b28595.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b28596/b28596.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b28597/b28597.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b28805/b28805.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b28806/b28806.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b28927/b28927.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b29583/b29583.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b30125/b30125.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b30792/b30792.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b30799/b30799.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b30838/b30838.il	\
@@ -4594,14 +4536,12 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b05933/b05933.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b06435/b06435.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b06436/b06436.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b06595/b06595.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b06730/b06730.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b06754/b06754.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b07082/b07082.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b07411/b07411.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b07458/b07458.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b07704/b07704.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b08107/b08107.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b08109/b08109.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b08672/b08672.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b08797/b08797.il	\
@@ -4680,7 +4620,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b28598/b28598.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b28949/b28949a.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b30868/b30868.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b31283/b31283.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b31289/b31289.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b31292/b31292.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b31423/b31423.il	\
@@ -4826,14 +4765,12 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b70335/b70335.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b70354/b70354.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b70808/b70808.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b70909/b70909.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b70964/b70964.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b70967/b70967.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b70992/b70992.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b70994/b70994.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b71003/b71003.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b71179/b71179.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b71318/b71318.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b71722/b71722.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b71831/b71831.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b71869/b71869.il	\
@@ -4912,14 +4849,9 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M01/b14617/b14617.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M01/b15617/arrayDim.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M01/b18049/loop2.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b102962/t.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b102962/t2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b102962/vc178279.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b115932/t.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b115932/t1.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b118260/b118260.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b138117/ldsfldainitonlyvt.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b091942/nullref.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b309555/x86-test-1084346006.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b323557/1087985874.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b353858/b353858.il	\
@@ -4927,8 +4859,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b409617/b409617.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b415164/b415164.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b423755/Desktop/b423755.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-RTM/b471305/b471305.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-RTM/b475589/b475589.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-RTM/b489329/b489329.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-RTM/b518440/b518440.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-RTM/b598031/test.il	\
@@ -4940,12 +4870,10 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/v2.1/b173313/b173313.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/v2.1/b193264/b193264.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/v2.1/b48850/b48850.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/Dev11/Dev11_468598/Test_HndIndex_10_Reordered.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/Dev11/Dev11_b473131/b473131.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/Dev11/Dev11_b473131/b473131_byte.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/Dev11/Dev11_b473131/b473131_fld.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/Dev11/Dev11_b473131/b473131_intptr.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/Dev11/Dev11_b473131/b473131_struct.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/Dev11/DevDiv2_11321/DevDiv2_11321.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/Dev11/External/Dev11_90434/UseUnalignedDouble.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/VS-ia64-JIT/M00/b102759/b102759.il	\
@@ -5023,7 +4951,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/VS-ia64-JIT/V2.0-Beta2/b450688/b450688.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/VS-ia64-JIT/V2.0-RTM/b460385/b460385.il	\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/clr-x64-JIT/v4.0/b602182/b602182.il	\
-	$(CORECLR_PATH)/tests/src/JIT/Regression/v4/dev10_804810/dev10_804810.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/localloc/zeroinit/zeroinit01_large.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/localloc/zeroinit/zeroinit01_small.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/cg/il/jmp.il	\
@@ -5042,10 +4969,8 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/regress/vswhidbey/223862/rem.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/regress/vswhidbey/228572/conv.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/regress/vswhidbey/481244/foo.il	\
-	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/regress/vswhidbey/481244/foo2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/regress/ddb/118414/118414.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/regress/ddb/127931/127931.il	\
-	$(CORECLR_PATH)/tests/src/JIT/jit64/regress/phoenix/62322/test.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/regress/vsw/102974/test.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/regress/vsw/153682/test.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/regress/vsw/266693/test.il	\
@@ -5135,7 +5060,95 @@ CORECLR_DISABLED_TEST_IL_SRC +=	\
 CORECLR_DISABLED_TEST_IL_SRC +=	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/lcliimpl.il
 
-	
+# We use an r4 for r4-r8 stack merge so it loses precision
+CORECLR_DISABLED_TEST_IL_SRC +=	\
+	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/regress/vswhidbey/481244/foo2.il
+
+# FIXME: these tests are baselined, i.e. we don't have time to investigate
+# them right now but want to make sure we don't introduce new regressions
+# in the rest of the tests
+CORECLR_DISABLED_TEST_CS_SRC +=	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/eventhandler_generic/eventhandlerbegininvoke.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/action/actioninvoke.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/comparison/comparisonendinvoke.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/comparison/comparisonbegininvoke.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/datetime/datetimekind.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/eventhandler_generic/eventhandlerendinvoke.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/gc/gcreregisterforfinalize.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareinfo/compareinfocompare.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareinfo/compareinfoindexof.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareinfo/compareinfoisprefix.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareinfo/compareinfoissuffix.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/compareinfo/compareinfolastindexof.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/globalization/regioninfo/regioninfocurrentregion.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/io/filestream/filestreamdispose.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/predicate/predicateendinvoke.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/predicate/predicatebegininvoke.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/marshal/marshalsizeof2.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringcompareto1.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringequals1.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringequals2.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/string/stringequals3.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/weakreference/weakreferencetargetb.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/system/delegate/regressions/devdivbugs/113347/ddb113347.cs	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/Arrays/misc/arrres.cs	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b268908/vars2.cs	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/VS-ia64-JIT/V1.2-M02/b10828/redundant.cs	\
+	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/cse/HugeField1.cs
+
+CORECLR_DISABLED_TEST_IL_SRC +=	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/1/arglist64.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/2/arglist64.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/unaligned/4/arglist64.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/PREFIX/volatile/1/arglist64.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/leave/filter1.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/leave/filter2.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/leave/filter3.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/refbyref/byrefconvert.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/zeroinit/init_byte.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/zeroinit/init_uint32.il	\
+	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_conv_ovf_r8_i.il	\
+	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_conv_ovf_r8_i4.il	\
+	$(CORECLR_PATH)/tests/src/JIT/IL_Conformance/Old/Conformance_Base/ldc_conv_ovf_r8_i8.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/Arrays/huge_struct.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/25params/25param3b.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/25params/25paramMixed.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/i4u2.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/ii1.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/iu2.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/implicit/ii2.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/cctor/simple/Desktop/prefldinit3.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/int64/arrays/hugedim.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/tailcall/deep_array_nz.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/refany/array3.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/refany/array2.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/xxblk/cpblk3.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-EJIT/V1-M11-Beta1/b44018/b44018.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b16895/b16895.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b25459/b25459.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b27883/b27883.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b27917/b27917.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b28597/b28597.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M09.5-PDC/b30125/b30125.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b08107/b08107.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M10/b06595/b06595.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b31283/b31283.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b70909/b70909.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1-M12-Beta2/b71318/b71318.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b102962/t.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b102962/t2.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b115932/t.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V1.2-M02/b115932/t1.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-Beta2/b091942/nullref.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-RTM/b471305/b471305.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/CLR-x86-JIT/V2.0-RTM/b475589/b475589.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/Dev11/Dev11_468598/Test_HndIndex_10_Reordered.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/Dev11/Dev11_b473131/b473131_struct.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Regression/v4/dev10_804810/dev10_804810.il	\
+	$(CORECLR_PATH)/tests/src/JIT/jit64/regress/phoenix/62322/test.il	\
+	$(CORECLR_PATH)/tests/src/JIT/Methodical/Invoke/25params/25param1b.il
+
+
 # find all CoreCLR *.il test files that aren't mentioned in this file
 CORECLR_DEFINED_IL_SRC = $(CORECLR_TEST_IL_SRC) $(CORECLR_DISABLED_TEST_IL_SRC)
 CORECLR_UPSTREAM_IL_SRC=$(shell find "$(CORECLR_PATH)/tests" -iname "*.il")
@@ -5164,13 +5177,13 @@ $(CORECLR_PATH)%_il.exe: $(CORECLR_PATH)%.il
 	$(ILASM) -out:$@ $<
 
 coreclr-testlibrary.dll: $(CORECLR_TESTLIBRARY_CS_SRC)
-	$(MCS) -unsafe -debug -target:library -d:WINCORESYS -d:MONO -out:$@ $(CORECLR_TESTLIBRARY_CS_SRC)
+	$(MCS) -unsafe -debug:portable -target:library -d:WINCORESYS -d:MONO -out:$@ $(CORECLR_TESTLIBRARY_CS_SRC)
 
 $(CORECLR_PATH)%.exe: $(CORECLR_PATH)%.cs coreclr-testlibrary.dll
-	$(MCS) -unsafe -debug -nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 -nowarn:0169 -nowarn:1690 -nowarn:0649 -nowarn:0612 -nowarn:3021 -nowarn:0197 -r:coreclr-testlibrary.dll -d:MONO -out:$@ $<
+	$(MCS) -unsafe -debug:portable -nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 -nowarn:0169 -nowarn:1690 -nowarn:0649 -nowarn:0612 -nowarn:3021 -nowarn:0197 -r:coreclr-testlibrary.dll -d:MONO -out:$@ $<
 
 test-runner.exe: $(top_srcdir)/mono/tests/test-runner.cs
-	$(MCS) -debug -r:Mono.Posix.dll -out:$@ $<
+	$(MCS) -debug:portable -r:Mono.Posix.dll -out:$@ $<
 
 GCStressTests.exe: $(CORECLR_STRESSTEST_RUNNER_CS_SRC)
-	$(MCS) -out:$@ -debug -d:PROJECTK_BUILD $(CORECLR_STRESSTEST_RUNNER_CS_SRC)
+	$(MCS) -out:$@ -debug:portable -d:PROJECTK_BUILD $(CORECLR_STRESSTEST_RUNNER_CS_SRC)

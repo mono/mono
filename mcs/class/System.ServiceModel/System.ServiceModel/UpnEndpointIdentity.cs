@@ -45,12 +45,12 @@ namespace System.ServiceModel
 			Initialize (identity);
 		}
 
-		public UpnEndpointIdentity (string upn)
-			: this (Claim.CreateUpnClaim (upn))
+		public UpnEndpointIdentity (string upnName)
+			: this (Claim.CreateUpnClaim (upnName))
 		{
 		}
 #else
-		public UpnEndpointIdentity (string upn)
+		public UpnEndpointIdentity (string upnName)
 		{
 			throw new NotImplementedException ();
 		}

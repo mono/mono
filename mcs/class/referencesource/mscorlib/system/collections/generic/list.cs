@@ -7,7 +7,7 @@
 **
 ** Class:  List
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 ** Purpose: Implements a generic, dynamically sized list as an 
 **          array.
@@ -178,7 +178,7 @@ namespace System.Collections.Generic {
             get {
                 // Following trick can reduce the range check by one
                 if ((uint) index >= (uint)_size) {
-                    ThrowHelper.ThrowArgumentOutOfRangeException();
+                    ThrowHelper.ThrowArgumentOutOfRange_IndexException();
                 }
                 Contract.EndContractBlock();
 #if MONO
@@ -190,7 +190,7 @@ namespace System.Collections.Generic {
 
             set {
                 if ((uint) index >= (uint)_size) {
-                    ThrowHelper.ThrowArgumentOutOfRangeException();
+                    ThrowHelper.ThrowArgumentOutOfRange_IndexException();
                 }
                 Contract.EndContractBlock();
                 _items[index] = value;
@@ -883,7 +883,7 @@ namespace System.Collections.Generic {
         // 
         public void RemoveAt(int index) {
             if ((uint)index >= (uint)_size) {
-                ThrowHelper.ThrowArgumentOutOfRangeException();
+                ThrowHelper.ThrowArgumentOutOfRange_IndexException();
             }
             Contract.EndContractBlock();
             _size--;
@@ -910,7 +910,9 @@ namespace System.Collections.Generic {
             Contract.EndContractBlock();
     
             if (count > 0) {
+#if !MONO                
                 int i = _size;
+#endif
                 _size -= count;
                 if (index < _size) {
                     Array.Copy(_items, index + count, _items, index, _size - index);
@@ -995,8 +997,12 @@ namespace System.Collections.Generic {
             Contract.EndContractBlock();
 
             if( _size > 0) {
+#if MONO
+                ArraySortHelper<T>.Sort(_items, 0, _size, comparison);
+#else
                 IComparer<T> comparer = new Array.FunctorComparer<T>(comparison);
                 Array.Sort(_items, 0, _size, comparer);
+#endif
             }
         }
 

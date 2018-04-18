@@ -2,7 +2,7 @@
 // <copyright file="Compiler.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>                                                                
+// <owner current="true" primary="true">Microsoft</owner>                                                                
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Schema {
@@ -591,7 +591,7 @@ namespace System.Xml.Schema {
             }
 
             //Now add the baseTypes that are defined inside the union itself
-            XmlSchemaObjectCollection mainBaseTypes = mainUnion.BaseTypes; //TODO check for null
+            XmlSchemaObjectCollection mainBaseTypes = mainUnion.BaseTypes; //
             if (mainBaseTypes != null) {
                 for (int i = 0; i < mainBaseTypes.Count; ++i) {
                     XmlSchemaSimpleType st = (XmlSchemaSimpleType)mainBaseTypes[i];
@@ -1365,7 +1365,7 @@ namespace System.Xml.Schema {
             return true;
         }
   
-#if PRIYAL      
+#if Microsoft      
         private bool IsElementFromGroupBase(XmlSchemaElement derivedElement, XmlSchemaGroupBase baseGroupBase,  bool skipEmptableOnly) {
             if (!IsRangeSimple(baseGroupBase.MinOccurs, baseGroupBase.MaxOccurs) || !IsRangeSimple(derivedElement.MinOccurs, derivedElement.MaxOccurs)) {
                 return IsElementFromGroupBase(derivedElement, baseGroupBase); //SPEC COMPLIANT

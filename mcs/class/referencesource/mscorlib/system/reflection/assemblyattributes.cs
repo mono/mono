@@ -7,7 +7,7 @@
 **
 ** File: AssemblyAttributes
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: For Assembly-related custom attributes.

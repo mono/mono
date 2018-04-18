@@ -1,9 +1,13 @@
+/**
+ * \file
+ */
 
 #include "config.h"
 #include "tasklets.h"
 #include "mono/metadata/exception.h"
 #include "mono/metadata/gc-internals.h"
 #include "mini.h"
+#include "mini-runtime.h"
 
 #if defined(MONO_SUPPORT_TASKLETS)
 
@@ -47,7 +51,7 @@ continuation_mark_frame (MonoContinuation *cont)
 	if (cont->domain)
 		return mono_get_exception_argument ("cont", "Already marked");
 
-	jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
+	jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 	lmf = mono_get_lmf();
 	cont->domain = mono_domain_get ();
 	cont->thread_id = mono_native_thread_id_get ();
@@ -109,7 +113,7 @@ continuation_store (MonoContinuation *cont, int state, MonoException **e)
 			mono_gc_free_fixed (cont->saved_stack);
 		cont->stack_used_size = num_bytes;
 		cont->stack_alloc_size = num_bytes * 1.1;
-		cont->saved_stack = mono_gc_alloc_fixed (cont->stack_alloc_size, NULL, MONO_ROOT_SOURCE_THREADING, "saved tasklet stack");
+		cont->saved_stack = mono_gc_alloc_fixed (cont->stack_alloc_size, NULL, MONO_ROOT_SOURCE_THREADING, NULL, "Tasklet Saved Stack");
 		tasklets_unlock ();
 	}
 	memcpy (cont->saved_stack, cont->return_sp, num_bytes);

@@ -7,7 +7,7 @@
 **
 ** Class: AppDomain
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Domains represent an application within the runtime. Objects can 
@@ -641,6 +641,16 @@ namespace System {
             }
 
             return targetFrameworkName;
+        }
+
+        [SecuritySafeCritical]
+        private void SetTargetFrameworkName(string targetFrameworkName)
+        {
+            if (!_FusionStore.CheckedForTargetFrameworkName)
+            {
+                _FusionStore.TargetFrameworkName = targetFrameworkName;
+                _FusionStore.CheckedForTargetFrameworkName = true;
+            }
         }
 
         /// <summary>
@@ -3503,6 +3513,10 @@ namespace System {
         {
             Contract.Requires(info != null);
 
+            // Setup the fusion store so that further calls can use the information stored there
+            // Changes to info should persist to _FusionStore as this is a reference assignment
+            _FusionStore = info;
+
 #if FEATURE_FUSION
             if (oldInfo == null) {
                         
@@ -3565,11 +3579,6 @@ namespace System {
             if (info.LoaderOptimization != LoaderOptimization.NotSpecified || (oldInfo != null && info.LoaderOptimization != oldInfo.LoaderOptimization))
                 UpdateLoaderOptimization(info.LoaderOptimization);
 #endif                        
-
-
-
-            // This must be the last action taken
-            _FusionStore = info;
         }
 
         // used to package up evidence, so it can be serialized
@@ -3740,7 +3749,7 @@ namespace System {
                 for (int i=0; i<propertyNames.Length; i++)
                 {
                     
-                    if(propertyNames[i]=="APPBASE") // make sure in [....] with Fusion
+                    if(propertyNames[i]=="APPBASE") // make sure in sync with Fusion
                     {
                         if(propertyValues[i]==null)
                             throw new ArgumentNullException("APPBASE");
@@ -4171,7 +4180,7 @@ namespace System {
                                 // in via the default domain properties.  That restriction could be lifted
                                 // in a future release, at which point this assert should be removed.
                                 // 
-                                // This should be kept in [....] with the real externally facing filter code
+                                // This should be kept in sync with the real externally facing filter code
                                 // in CorHost2::SetPropertiesForDefaultAppDomain
                                 BCLDebug.Assert(false, "Unexpected default domain property");
                             }

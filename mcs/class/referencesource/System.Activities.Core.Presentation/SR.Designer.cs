@@ -839,11 +839,22 @@ namespace System.Activities.Core.Presentation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ActivityDelegate arguments don&apos;t match. Check your activity configuration to make sure it is in [....] with the declared ActivityDelegate..
+        ///   Looks up a localized string similar to ActivityDelegate arguments don&apos;t match. Check your activity configuration to make sure it is in sync with the declared ActivityDelegate..
         /// </summary>
         internal static string WrongNumberOfArgumentsForActivityDelegate {
             get {
                 return ResourceManager.GetString("WrongNumberOfArgumentsForActivityDelegate", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string for the automation name of ParallelSeparator
+        /// </summary>
+        internal static string ParallelSeparatorAutomationName
+        {
+            get
+            {
+                return ResourceManager.GetString("ParallelSeparatorAutomationName", resourceCulture);
             }
         }
     }

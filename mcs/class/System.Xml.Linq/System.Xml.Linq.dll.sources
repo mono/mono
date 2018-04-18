@@ -1,8 +1,7 @@
-../../build/common/Consts.cs
-../../build/common/Locale.cs
-../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 ../referencesource/System.Xml.Linq/System/Xml/Linq/XNodeValidator.cs
 ../referencesource/System.Xml.Linq/System/Xml/Linq/XNodeNavigator.cs
 ../referencesource/System.Xml.Linq/System/Xml/Linq/XLinq.cs
 ../referencesource/System.Xml.Linq/System/Xml/Linq/XComponentModel.cs
+
+../../../external/corefx/src/System.Xml.XPath.XDocument/src/System/Xml/XPath/XDocumentExtensions.cs

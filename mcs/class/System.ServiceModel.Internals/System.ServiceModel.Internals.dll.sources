@@ -4,6 +4,9 @@
 EventLogEntryType.cs
 InternalSR.cs
 Assembly/AssemblyInfo.cs
+
+ReferenceSources/LocalAppContextSwitches.cs
+
 ../referencesource/System.ServiceModel.Internals/AssemblyInfo.cs
 ../referencesource/System.ServiceModel.Internals/System/Runtime/ActionItem.cs
 ../referencesource/System.ServiceModel.Internals/System/Runtime/AssertHelper.cs

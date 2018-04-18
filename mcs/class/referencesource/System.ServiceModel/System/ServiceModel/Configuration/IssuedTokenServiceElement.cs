@@ -114,7 +114,7 @@ namespace System.ServiceModel.Configuration
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("from");
             }
             this.SamlSerializerType = from.SamlSerializerType;
-#pragma warning suppress 56506 // [....]; ElementInformation is never null.
+#pragma warning suppress 56506 // Microsoft; ElementInformation is never null.
             PropertyInformationCollection propertyInfo = from.ElementInformation.Properties;
             if (propertyInfo[ConfigurationStrings.KnownCertificates].ValueOrigin != PropertyValueOrigin.Default)
             {

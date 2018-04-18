@@ -70,7 +70,7 @@ namespace zipsharp
 			Archive = archive;
 			Archive.FileActive = true;
 			CompressionLevel = compressionLevel;
-			length = NativeUnzip.CurrentFileLength (Archive.Handle);
+			length = NativeVersion.Use32Bit ? NativeUnzip.CurrentFileLength32 (Archive.Handle) : NativeUnzip.CurrentFileLength64 (Archive.Handle);
 		}
 
 		public override void Close()

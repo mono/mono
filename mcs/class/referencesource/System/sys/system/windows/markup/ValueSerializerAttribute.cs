@@ -10,7 +10,7 @@
 //             an attached property by setting it on the static accessor
 //             for the attachable property).
 //
-//  Created:   04/28/2005 [....]
+//  Created:   04/28/2005 Microsoft
 //
 //------------------------------------------------------------------------
 
@@ -26,7 +26,9 @@ namespace System.Windows.Markup
     /// attached property.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+#if !MOBILE
     [TypeForwardedFrom("WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35")]
+#endif
     public sealed class ValueSerializerAttribute : Attribute
     {
         /// <summary>

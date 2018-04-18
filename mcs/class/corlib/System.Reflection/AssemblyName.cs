@@ -102,10 +102,10 @@ namespace System.Reflection {
 					throw new FileLoadException ("The assembly name is invalid.");
 				try {
 					unsafe {
-						this.FillName (&nativeName, null, isVersionDefined, false, isTokenDefined);
+						this.FillName (&nativeName, null, isVersionDefined, false, isTokenDefined, false);
 					}
 				} finally {
-					RuntimeMarshal.FreeAssemblyName (ref nativeName);
+					RuntimeMarshal.FreeAssemblyName (ref nativeName, false);
 				}
 			}
 		}
@@ -415,7 +415,16 @@ namespace System.Reflection {
 				throw new ArgumentNullException ("assemblyFile");
 
 			AssemblyName aname = new AssemblyName ();
-			Assembly.InternalGetAssemblyName (Path.GetFullPath (assemblyFile), aname);
+			unsafe {
+				Mono.MonoAssemblyName nativeName;
+				string codebase;
+				Assembly.InternalGetAssemblyName (Path.GetFullPath (assemblyFile), out nativeName, out codebase);
+				try {
+					aname.FillName (&nativeName, codebase, true, false, true, false);
+				} finally {
+					RuntimeMarshal.FreeAssemblyName (ref nativeName, false);
+				}
+			}
 			return aname;
 		}
 
@@ -447,7 +456,10 @@ namespace System.Reflection {
 				return (cultureinfo == null)? null : cultureinfo.Name;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value == null)
+					cultureinfo = null;
+				else
+					cultureinfo = new CultureInfo (value);
 			}
 		}
 
@@ -464,7 +476,7 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern unsafe MonoAssemblyName* GetNativeName (IntPtr assembly_ptr);
 
-		internal unsafe void FillName (MonoAssemblyName *native, string codeBase, bool addVersion, bool addPublickey, bool defaultToken)
+		internal unsafe void FillName (MonoAssemblyName *native, string codeBase, bool addVersion, bool addPublickey, bool defaultToken, bool assemblyRef)
 		{
 			this.name = RuntimeMarshal.PtrToUtf8String (native->name);
 
@@ -486,7 +498,7 @@ namespace System.Reflection {
 			this.codebase = codeBase;
 
 			if (native->culture != IntPtr.Zero)
-				this.cultureinfo = CultureInfo.CreateCulture ( RuntimeMarshal.PtrToUtf8String (native->culture), false);
+				this.cultureinfo = CultureInfo.CreateCulture ( RuntimeMarshal.PtrToUtf8String (native->culture), assemblyRef);
 
 			if (native->public_key != IntPtr.Zero) {
 				this.publicKey = RuntimeMarshal.DecodeBlobArray (native->public_key);
@@ -514,7 +526,7 @@ namespace System.Reflection {
 			AssemblyName aname = new AssemblyName ();
 			unsafe {
 				MonoAssemblyName *native = GetNativeName (assembly._mono_assembly);
-				aname.FillName (native, fillCodebase ? assembly.CodeBase : null, true, true, true);
+				aname.FillName (native, fillCodebase ? assembly.CodeBase : null, true, true, true, false);
 			}
 			return aname;
 		}

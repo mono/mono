@@ -2,8 +2,8 @@
 // <copyright file="DbConnectionInternal.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.ProviderBase {
@@ -58,7 +58,7 @@ namespace System.Data.ProviderBase {
         private SysTx.Transaction _enlistedTransactionOriginal;     
 
 #if DEBUG
-        private int                      _activateCount;            // debug only counter to verify activate/deactivates are in [....].
+        private int                      _activateCount;            // debug only counter to verify activate/deactivates are in sync.
 #endif //DEBUG
 
         protected DbConnectionInternal() : this(ConnectionState.Open, true, false) { // V1.1.3300
@@ -323,7 +323,7 @@ namespace System.Data.ProviderBase {
             get;
         }
 
-        // this should be abstract but untill it is added to all the providers virtual will have to do [....]
+        // this should be abstract but untill it is added to all the providers virtual will have to do Microsoft
         virtual public string ServerVersionNormalized {
             get{
                 throw ADP.NotSupported();

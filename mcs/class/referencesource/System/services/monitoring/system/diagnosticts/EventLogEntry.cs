@@ -426,7 +426,7 @@ namespace System.Diagnostics {
             if ( percentIdx < 0 )
                 return msg;     // no '%' at all
 
-            int startCopyIdx     = 0;        // start idx of last [....] msg chars to copy
+            int startCopyIdx     = 0;        // start idx of last orig msg chars to copy
             int msgLength   = msg.Length;
             StringBuilder buf = new StringBuilder();
             string paramDLLNames = GetMessageLibraryNames("ParameterMessageFile");

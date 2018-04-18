@@ -2,7 +2,7 @@
 **
 **Class: OpCodes
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **Purpose: Exposes all of the il instructions supported by the runtime.
 **

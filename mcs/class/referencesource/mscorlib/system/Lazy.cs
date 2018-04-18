@@ -8,7 +8,7 @@
 //
 // Lazy.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // --------------------------------------------------------------------------------------
 //
@@ -431,7 +431,7 @@ namespace System
                     }
                     else if (factory == ALREADY_INVOKED_SENTINEL)
                     {
-                        // Another thread ----d with us and beat us to successfully invoke the factory.
+                        // Another thread raced with us and beat us to successfully invoke the factory.
                         return null;
                     }
                     boxed = new Boxed(factory());

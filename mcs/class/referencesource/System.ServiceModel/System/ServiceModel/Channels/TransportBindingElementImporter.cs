@@ -36,20 +36,20 @@ namespace System.ServiceModel.Channels
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("context");
             }
 
-#pragma warning suppress 56506 // [....], these properties cannot be null in this context
+#pragma warning suppress 56506 // Microsoft, these properties cannot be null in this context
             if (context.Endpoint.Binding == null)
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("context.Endpoint.Binding");
             }
 
-#pragma warning suppress 56506 // [....], CustomBinding.Elements never be null
+#pragma warning suppress 56506 // Microsoft, CustomBinding.Elements never be null
             TransportBindingElement transportBindingElement = GetBindingElements(context).Find<TransportBindingElement>();
 
             bool transportHandledExternaly = (transportBindingElement != null) && !StateHelper.IsRegisteredTransportBindingElement(importer, context);
             if (transportHandledExternaly)
                 return;
 
-#pragma warning suppress 56506 // [....], these properties cannot be null in this context
+#pragma warning suppress 56506 // Microsoft, these properties cannot be null in this context
             WsdlNS.SoapBinding soapBinding = (WsdlNS.SoapBinding)context.WsdlBinding.Extensions.Find(typeof(WsdlNS.SoapBinding));
             if (soapBinding != null && transportBindingElement == null)
             {

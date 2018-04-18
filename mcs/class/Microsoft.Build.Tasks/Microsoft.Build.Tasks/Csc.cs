@@ -219,7 +219,7 @@ namespace Microsoft.Build.Tasks {
 
 		protected override string ToolName {
 			get {
-				return MSBuildUtils.RunningOnWindows ? "mcs.bat" : "mcs.exe";
+				return MSBuildUtils.RunningOnWindows ? "csc.bat" : "csc.exe";
 			}
 		}
 

@@ -50,8 +50,8 @@ namespace System.Web.Caching {
 #endif
         }
 
-        internal String Key {
-            get {return _key;}
+         internal String Key {
+            get { return _key; }
         }
 
         internal bool IsOutputCache {
@@ -81,9 +81,7 @@ namespace System.Web.Caching {
      * An entry in the cache.
      * Overhead is 68 bytes + object header.
      */
-    internal sealed class CacheEntry : CacheKey, ICacheDependencyChanged {
-        static readonly DateTime    NoAbsoluteExpiration = DateTime.MaxValue;
-        static readonly TimeSpan    NoSlidingExpiration = TimeSpan.Zero;
+    internal sealed class CacheEntry : CacheKey {
         const CacheItemPriority     CacheItemPriorityMin = CacheItemPriority.Low;
         const CacheItemPriority     CacheItemPriorityMax = CacheItemPriority.NotRemovable;
         static readonly TimeSpan    OneYear = new TimeSpan(365, 0, 0, 0);
@@ -116,12 +114,13 @@ namespace System.Web.Caching {
         byte                        _usageBucket;           /* index of the usage list (== priority-1) */
         UsageEntryRef               _usageEntryRef;         /* ref into the usage list */
         DateTime                    _utcLastUpdate;         /* time we last updated usage */
+        CacheInternal               _cache;
 
         // dependencies
         CacheDependency             _dependency;            /* dependencies this item has */
         object                      _onRemovedTargets;      /* targets of OnRemove notification */
 
-        /*
+                /*
          * ctor.
          */
 
@@ -130,10 +129,11 @@ namespace System.Web.Caching {
                    Object                   value, 
                    CacheDependency          dependency,
                    CacheItemRemovedCallback onRemovedHandler,
-                   DateTime                 utcAbsoluteExpiration,              
+                   DateTime                 utcAbsoluteExpiration,           
                    TimeSpan                 slidingExpiration,      
                    CacheItemPriority        priority,
-                   bool                     isPublic) : 
+                   bool                     isPublic,
+                   CacheInternal            cache) : 
 
                 base(key, isPublic) {
 
@@ -176,6 +176,8 @@ namespace System.Web.Caching {
             else {
                 _usageBucket = (byte) (priority - 1);
             }
+
+            _cache = cache;
         }
 
         internal Object Value {
@@ -248,21 +250,23 @@ namespace System.Web.Caching {
             // need to protect against the item being closed
             CacheDependency dependency = _dependency;
             if (dependency != null && State == EntryState.AddedToCache) {
-                if (!dependency.Use()) {
+                if (!dependency.TakeOwnership()) {
                     throw new InvalidOperationException(
                             SR.GetString(SR.Cache_dependency_used_more_that_once));
                 }
 
-                dependency.SetCacheDependencyChanged(this);
+                dependency.SetCacheDependencyChanged((Object sender, EventArgs args) => {
+                    DependencyChanged(sender, args);
+                });
             }
         }
 
         /*
          * The entry has changed, so remove ourselves from the cache.
          */
-        void ICacheDependencyChanged.DependencyChanged(Object sender, EventArgs e) {
+        void DependencyChanged(Object sender, EventArgs e) {
             if (State == EntryState.AddedToCache) {
-                HttpRuntime.CacheInternal.Remove(this, CacheItemRemovedReason.DependencyChanged);
+                _cache.Remove(this, CacheItemRemovedReason.DependencyChanged);
             }
         }
 
@@ -369,7 +373,7 @@ namespace System.Web.Caching {
         }
 #endif
 
-        internal void AddCacheDependencyNotify(CacheDependency dependency) {
+        internal void AddDependent(CacheDependency dependency) {
             lock (this) {
                 if (_onRemovedTargets == null) {
                     _onRemovedTargets = dependency;
@@ -387,16 +391,14 @@ namespace System.Web.Caching {
             }
         }
 
-        internal void RemoveCacheDependencyNotify(CacheDependency dependency) {
+        internal void RemoveDependent(CacheDependency dependency) {
             lock (this) {
                 if (_onRemovedTargets != null) {
                     if (_onRemovedTargets == dependency) {
                         _onRemovedTargets = null;
                     }
-                    else {
-                        // We assume the dependency must exist, so we don't need
-                        // to test for a cast.
-                        Hashtable h = (Hashtable) _onRemovedTargets;
+                    else if (_onRemovedTargets is Hashtable) {
+                        Hashtable h = (Hashtable)_onRemovedTargets;
                         h.Remove(dependency);
                         if (h.Count == 0) {
                             _onRemovedTargets = null;

@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner [....]
-// @backupOwner [....]
+// @owner Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System.Data.Common.CommandTrees;
@@ -492,7 +492,7 @@ namespace System.Data.Mapping.ViewGeneration
         {
 
             // Partition cells by extent -- extent is the top node in
-            // the tree. Even for compositions for now? CHANGE_[....]_FEATURE_COMPOSITION
+            // the tree. Even for compositions for now? CHANGE_Microsoft_FEATURE_COMPOSITION
             KeyToListMap<EntitySetBase, Cell> extentCellMap =
                 new KeyToListMap<EntitySetBase, Cell>(EqualityComparer<EntitySetBase>.Default);
             foreach (Cell cell in cells)

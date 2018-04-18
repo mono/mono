@@ -2,8 +2,8 @@
 // <copyright file="DataSet.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -31,6 +31,7 @@ namespace System.Data {
     using System.Runtime.Versioning;
     using System.Runtime.CompilerServices;
 
+#if !COREFX
     /// <devdoc>
     ///    <para>
     ///       Represents an in-memory cache of data.
@@ -1106,7 +1107,7 @@ namespace System.Data {
             try {
                 DataSet ds = (DataSet)Activator.CreateInstance(this.GetType(), true);
 
-                if (ds.Tables.Count > 0)  // [....] : To clean up all the schema in strong typed dataset.
+                if (ds.Tables.Count > 0)  // Microsoft : To clean up all the schema in strong typed dataset.
                     ds.Reset();
 
                 //copy some original dataset properties
@@ -3088,7 +3089,7 @@ namespace System.Data {
             }
         }
 
-        // [....]: may be better to rewrite this as nonrecursive?
+        // Microsoft: may be better to rewrite this as nonrecursive?
         internal DataTable FindTable(DataTable baseTable, PropertyDescriptor[] props, int propStart) {
             if (props.Length < propStart + 1)
                 return baseTable;
@@ -3485,6 +3486,7 @@ namespace System.Data {
         }
 
     }
+#endif
 
 #if !NO_CODEDOM
  public class DataSetSchemaImporterExtension : SchemaImporterExtension {

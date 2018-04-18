@@ -7,7 +7,7 @@
 //
 // FutureFactory.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // As with TaskFactory, TaskFactory<TResult> encodes common factory patterns into helper methods.
 //
@@ -858,7 +858,7 @@ namespace System.Threading.Tasks
                 else
                 {
                     //This is the original 4.0 behaviour
-                    var asyncResult = beginMethod(iar =>
+                    beginMethod(iar =>
                     {
                         FromAsyncCoreLogic(iar, endFunction, endAction, promise, requiresSynchronization: true);
                     }, state);
@@ -995,7 +995,7 @@ namespace System.Threading.Tasks
                 else
                 {
                     //quirk for previous versions
-                    var asyncResult = beginMethod(arg1, iar =>
+                    beginMethod(arg1, iar =>
                     {
                         FromAsyncCoreLogic(iar, endFunction, endAction, promise, requiresSynchronization: true);
                     }, state);
@@ -1141,7 +1141,7 @@ namespace System.Threading.Tasks
                 else
                 {
                     //quirk for previous versions
-                    var asyncResult = beginMethod(arg1, arg2, iar =>
+                    beginMethod(arg1, arg2, iar =>
                     {
                         FromAsyncCoreLogic(iar, endFunction, endAction, promise, requiresSynchronization: true);
                     }, state);
@@ -1294,7 +1294,7 @@ namespace System.Threading.Tasks
                 else
                 {
                     //quirk for previous versions
-                    var asyncResult = beginMethod(arg1, arg2, arg3, iar =>
+                    beginMethod(arg1, arg2, arg3, iar =>
                     {
                         FromAsyncCoreLogic(iar, endFunction, endAction, promise, requiresSynchronization: true);
                     }, state);

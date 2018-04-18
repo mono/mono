@@ -38,7 +38,7 @@ namespace System.Data.SqlClient
 
         /// <summary>
         /// RSA_OAEP is the only algorithm supported for encrypting/decrypting column encryption keys using this provider.
-        /// For now, we are keeping all the providers in [....].
+        /// For now, we are keeping all the providers in sync.
         /// </summary>
         private const string RSAEncryptionAlgorithmWithOAEP = @"RSA_OAEP";
 

@@ -63,11 +63,11 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
-		public override XmlNode Decrypt (XmlNode encrypted_node)
+		public override XmlNode Decrypt (XmlNode encryptedNode)
 		{
 			XmlDocument doc = new ConfigurationXmlDocument ();
 			
-			doc.Load (new StringReader (encrypted_node.OuterXml));
+			doc.Load (new StringReader (encryptedNode.OuterXml));
 
 			EncryptedXml ex = new EncryptedXml (doc);
 

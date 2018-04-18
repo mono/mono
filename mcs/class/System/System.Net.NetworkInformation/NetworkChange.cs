@@ -101,7 +101,7 @@ namespace System.Net.NetworkInformation {
 
 		static void MaybeCreate ()
 		{
-#if MONOTOUCH_WATCH
+#if MONOTOUCH_WATCH || ORBIS
 			throw new PlatformNotSupportedException ("NetworkInformation.NetworkChange is not supported on the current platform.");
 #else
 			if (networkChange != null)
@@ -126,7 +126,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-#if !MONOTOUCH_WATCH
+#if !MONOTOUCH_WATCH && !ORBIS
 	internal sealed class MacNetworkChange : INetworkChange
 	{
 		const string DL_LIB = "/usr/lib/libSystem.dylib";
@@ -299,9 +299,7 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
-#if MONOTOUCH || MOBILE_STATIC
-		[MonoTouch.MonoPInvokeCallback (typeof (SCNetworkReachabilityCallback))]
-#endif
+		[Mono.Util.MonoPInvokeCallback (typeof (SCNetworkReachabilityCallback))]
 		static void HandleCallback (IntPtr reachability, NetworkReachabilityFlags flags, IntPtr info)
 		{
 			if (info == IntPtr.Zero)
@@ -324,7 +322,7 @@ namespace System.Net.NetworkInformation {
 	}
 #endif // !MONOTOUCH_WATCH
 
-#if !NETWORK_CHANGE_STANDALONE && !MONOTOUCH
+#if !NETWORK_CHANGE_STANDALONE && !MONOTOUCH && !ORBIS
 
 	internal sealed class LinuxNetworkChange : INetworkChange {
 		[Flags]

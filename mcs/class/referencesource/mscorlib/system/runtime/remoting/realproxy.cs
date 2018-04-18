@@ -35,7 +35,7 @@ namespace System.Runtime.Remoting.Proxies {
     using System.Diagnostics.Contracts;
     
 
-    // NOTE: Keep this in [....] with unmanaged enum definition in Remoting.h
+    // NOTE: Keep this in sync with unmanaged enum definition in Remoting.h
     [Serializable]
     internal enum CallType
     {
@@ -52,7 +52,7 @@ namespace System.Runtime.Remoting.Proxies {
         Initialized         = 0x2
     };
 
-    // NOTE: Keep this in [....] with unmanaged struct "messageData" in Remoting.h
+    // NOTE: Keep this in sync with unmanaged struct "messageData" in Remoting.h
     [System.Runtime.InteropServices.StructLayout(LayoutKind.Sequential)]
     internal struct MessageData
     {
@@ -742,7 +742,7 @@ namespace System.Runtime.Remoting.Proxies {
                     // but the constructormessage hasn't been setup.
                     // so let us just bail out.. 
                     // this is currently used by ServicedComponent's for cross appdomain
-                    // pooling: <EMAIL>[....]</EMAIL>
+                    // pooling: <EMAIL>Microsoft</EMAIL>
                     //                    
                     ctorMsg = new ConstructorCallMessage(null, null, null, (RuntimeType)GetProxiedType());                    
                     // Set the constructor frame info in the CCM
@@ -834,7 +834,7 @@ namespace System.Runtime.Remoting.Proxies {
             {
 
                 // This was a begin-async on a non-Remoting Proxy. For V-1 they 
-                // cannot support Async and end up doing a [....] call. We need 
+                // cannot support Async and end up doing a Sync call. We need 
                 // to fill up here to make the call look like async to 
                 // the caller. 
                 // Create the async result to return

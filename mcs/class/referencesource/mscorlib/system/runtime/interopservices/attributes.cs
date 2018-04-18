@@ -444,7 +444,7 @@ namespace System.Runtime.InteropServices{
 
     [Serializable]
     [System.Runtime.InteropServices.ComVisible(true)]
-    // Note that this enum should remain in-[....] with the CorNativeType enum in corhdr.h
+    // Note that this enum should remain in-sync with the CorNativeType enum in corhdr.h
     public enum UnmanagedType
     {
         Bool = 0x2,         // 4 byte boolean value (true != 0, false == 0)
@@ -522,7 +522,10 @@ namespace System.Runtime.InteropServices{
         
         [System.Runtime.InteropServices.ComVisible(false)]
         HString          = 0x2f,        // Windows Runtime HSTRING
-    }
+
+        [System.Runtime.InteropServices.ComVisible(false)]
+        LPUTF8Str        = 0x30,        // UTF8 string
+}
 
 #if !MONO
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Field | AttributeTargets.ReturnValue, Inherited = false)]

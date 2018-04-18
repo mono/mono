@@ -46,9 +46,9 @@ namespace System.Web.UI.WebControls {
 		PropertyDescriptor imageProperty;
 		PropertyDescriptor textProperty;
 		
-		public override bool Initialize (bool sortingEnabled, Control control)
+		public override bool Initialize (bool enableSorting, Control control)
 		{
-			return base.Initialize (sortingEnabled, control);
+			return base.Initialize (enableSorting, control);
 		}
 
 		[DefaultValueAttribute ("")]
@@ -237,14 +237,14 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		protected virtual string FormatImageUrlValue (object value)
+		protected virtual string FormatImageUrlValue (object dataValue)
 		{
-			if (value == null)
+			if (dataValue == null)
 				return null;
 			else if (DataImageUrlFormatString.Length > 0)
-				return string.Format (DataImageUrlFormatString, value);
+				return string.Format (DataImageUrlFormatString, dataValue);
 			else
-				return value.ToString ();
+				return dataValue.ToString ();
 		}
 		
 		protected virtual string GetFormattedAlternateText (Control controlContainer)

@@ -11,14 +11,14 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Security;
+using System.Security.Authentication;
 using SD = System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Runtime.ExceptionServices;
 
 namespace Mono.Net.Security
 {
-	delegate AsyncOperationStatus AsyncOperation (AsyncProtocolRequest asyncRequest, AsyncOperationStatus status);
-
 	class BufferOffsetSize
 	{
 		public byte[] Buffer;
@@ -37,6 +37,13 @@ namespace Mono.Net.Security
 
 		public BufferOffsetSize (byte[] buffer, int offset, int size)
 		{
+			if (buffer == null)
+				throw new ArgumentNullException (nameof (buffer));
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException (nameof (offset));
+			if (size < 0 || offset + size > buffer.Length)
+				throw new ArgumentOutOfRangeException (nameof (size));
+
 			Buffer = buffer;
 			Offset = offset;
 			Size = size;
@@ -54,7 +61,7 @@ namespace Mono.Net.Security
 		public readonly int InitialSize;
 
 		public BufferOffsetSize2 (int size)
-			: base (new byte [size], 0, 0)
+			: base (new byte[size], 0, 0)
 		{
 			InitialSize = size;
 		}
@@ -63,7 +70,7 @@ namespace Mono.Net.Security
 		{
 			Offset = Size = 0;
 			TotalBytes = 0;
-			Buffer = new byte [InitialSize];
+			Buffer = new byte[InitialSize];
 			Complete = false;
 		}
 
@@ -74,11 +81,11 @@ namespace Mono.Net.Security
 
 			int missing = size - Remaining;
 			if (Offset == 0 && Size == 0) {
-				Buffer = new byte [size];
+				Buffer = new byte[size];
 				return;
 			}
 
-			var buffer = new byte [Buffer.Length + missing];
+			var buffer = new byte[Buffer.Length + missing];
 			Buffer.CopyTo (buffer, 0);
 			Buffer = buffer;
 		}
@@ -91,174 +98,297 @@ namespace Mono.Net.Security
 		}
 	}
 
-	enum AsyncOperationStatus {
-		NotStarted,
+	enum AsyncOperationStatus
+	{
 		Initialize,
 		Continue,
-		Running,
-		Complete,
-		WantRead,
-		WantWrite,
-		ReadDone
+		ReadDone,
+		Complete
 	}
 
-	class AsyncProtocolRequest
+	class AsyncProtocolResult
 	{
-		public readonly MobileAuthenticatedStream Parent;
-		public readonly BufferOffsetSize UserBuffer;
+		public int UserResult {
+			get;
+		}
+		public ExceptionDispatchInfo Error {
+			get;
+		}
 
+		public AsyncProtocolResult (int result)
+		{
+			UserResult = result;
+		}
+
+		public AsyncProtocolResult (ExceptionDispatchInfo error)
+		{
+			Error = error;
+		}
+	}
+
+	abstract class AsyncProtocolRequest
+	{
+		public MobileAuthenticatedStream Parent {
+			get;
+		}
+
+		public bool RunSynchronously {
+			get;
+		}
+
+		public int ID => ++next_id;
+
+		public string Name => GetType ().Name;
+
+		public int UserResult {
+			get;
+			protected set;
+		}
+
+		int Started;
 		int RequestedSize;
-		public int CurrentSize;
-		public int UserResult;
+		int WriteRequested;
+		readonly object locker = new object ();
 
-		AsyncOperation Operation;
-		int Status;
-
-		public readonly int ID = ++next_id;
 		static int next_id;
 
-		public readonly LazyAsyncResult UserAsyncResult;
-
-		public AsyncProtocolRequest (MobileAuthenticatedStream parent, LazyAsyncResult lazyResult, BufferOffsetSize userBuffer = null)
+		public AsyncProtocolRequest (MobileAuthenticatedStream parent, bool sync)
 		{
 			Parent = parent;
-			UserAsyncResult = lazyResult;
-			UserBuffer = userBuffer;
+			RunSynchronously = sync;
 		}
 
-		public bool CompleteWithError (Exception ex)
-		{
-			Status = (int)AsyncOperationStatus.Complete;
-			if (UserAsyncResult == null)
-				return true;
-			if (!UserAsyncResult.InternalPeekCompleted)
-				UserAsyncResult.InvokeCallback (ex);
-			return false;
-		}
-
-		[SD.Conditional ("MARTIN_DEBUG")]
+		[SD.Conditional ("MONO_TLS_DEBUG")]
 		protected void Debug (string message, params object[] args)
 		{
-			Parent.Debug ("AsyncProtocolRequest({0}:{1}): {2}", Parent.ID, ID, string.Format (message, args));
+			Parent.Debug ("{0}({1}:{2}): {3}", Name, Parent.ID, ID, string.Format (message, args));
 		}
 
 		internal void RequestRead (int size)
 		{
-			var oldStatus = (AsyncOperationStatus)Interlocked.CompareExchange (ref Status, (int)AsyncOperationStatus.WantRead, (int)AsyncOperationStatus.Running);
-			Debug ("RequestRead: {0} {1}", oldStatus, size);
-			if (oldStatus == AsyncOperationStatus.Running)
-				RequestedSize = size;
-			else if (oldStatus == AsyncOperationStatus.WantRead)
+			lock (locker) {
 				RequestedSize += size;
-			else if (oldStatus != AsyncOperationStatus.WantWrite)
-				throw new InvalidOperationException ();
-		}
-
-		internal void ResetRead ()
-		{
-			var oldStatus = (AsyncOperationStatus)Interlocked.CompareExchange (ref Status, (int)AsyncOperationStatus.Complete, (int)AsyncOperationStatus.WantRead);
-			Debug ("ResetRead: {0} {1}", oldStatus, Status);
+				Debug ("RequestRead: {0}", size);
+			}
 		}
 
 		internal void RequestWrite ()
 		{
-			var oldStatus = (AsyncOperationStatus)Interlocked.CompareExchange (ref Status, (int)AsyncOperationStatus.WantWrite, (int)AsyncOperationStatus.Running);
-			if (oldStatus == AsyncOperationStatus.Running)
-				return;
-			else if (oldStatus != AsyncOperationStatus.WantRead && oldStatus != AsyncOperationStatus.WantWrite)
-				throw new InvalidOperationException ();
+			WriteRequested = 1;
 		}
 
-		internal void StartOperation (AsyncOperation operation)
+		internal async Task<AsyncProtocolResult> StartOperation (CancellationToken cancellationToken)
 		{
-			Debug ("Start Operation: {0} {1}", Status, operation);
-			if (Interlocked.CompareExchange (ref Status, (int)AsyncOperationStatus.Initialize, (int)AsyncOperationStatus.NotStarted) != (int)AsyncOperationStatus.NotStarted)
+			Debug ("Start Operation: {0}", this);
+			if (Interlocked.CompareExchange (ref Started, 1, 0) != 0)
 				throw new InvalidOperationException ();
 
-			Operation = operation;
-
-			if (UserAsyncResult == null) {
-				StartOperation ();
-				return;
-			}
-
-			ThreadPool.QueueUserWorkItem (_ => StartOperation ());
-		}
-
-		void StartOperation ()
-		{
 			try {
-				ProcessOperation ();
-				if (UserAsyncResult != null && !UserAsyncResult.InternalPeekCompleted)
-					UserAsyncResult.InvokeCallback (UserResult);
+				await ProcessOperation (cancellationToken).ConfigureAwait (false);
+				return new AsyncProtocolResult (UserResult);
 			} catch (Exception ex) {
-				if (UserAsyncResult == null)
-					throw;
-				if (!UserAsyncResult.InternalPeekCompleted)
-					UserAsyncResult.InvokeCallback (ex);
+				var info = Parent.SetException (MobileAuthenticatedStream.GetSSPIException (ex));
+				return new AsyncProtocolResult (info);
 			}
 		}
 
-		void ProcessOperation ()
+		async Task ProcessOperation (CancellationToken cancellationToken)
 		{
-			AsyncOperationStatus status;
-			do {
-				status = (AsyncOperationStatus)Interlocked.Exchange (ref Status, (int)AsyncOperationStatus.Running);
-
+			var status = AsyncOperationStatus.Initialize;
+			while (status != AsyncOperationStatus.Complete) {
+				cancellationToken.ThrowIfCancellationRequested ();
 				Debug ("ProcessOperation: {0}", status);
 
-				status = ProcessOperation (status);
-
-				var oldStatus = (AsyncOperationStatus)Interlocked.CompareExchange (ref Status, (int)status, (int)AsyncOperationStatus.Running);
-				Debug ("ProcessOperation done: {0} -> {1}", oldStatus, status);
-
-				if (oldStatus != AsyncOperationStatus.Running) {
-					if (status == oldStatus || status == AsyncOperationStatus.Continue || status == AsyncOperationStatus.Complete)
-						status = oldStatus;
-					else
-						throw new InvalidOperationException ();
+				var ret = await InnerRead (cancellationToken).ConfigureAwait (false);
+				if (ret != null) {
+					if (ret == 0) {
+						// End-of-stream
+						Debug ("END OF STREAM!");
+						status = AsyncOperationStatus.ReadDone;
+					} else if (ret < 0) {
+						// remote prematurely closed connection.
+						throw new IOException ("Remote prematurely closed connection.");
+					}
 				}
-			} while (status != AsyncOperationStatus.Complete);
+
+				Debug ("ProcessOperation run: {0}", status);
+
+				AsyncOperationStatus newStatus;
+				switch (status) {
+				case AsyncOperationStatus.Initialize:
+				case AsyncOperationStatus.Continue:
+				case AsyncOperationStatus.ReadDone:
+					newStatus = Run (status);
+					break;
+				default:
+					throw new InvalidOperationException ();
+				}
+
+				if (Interlocked.Exchange (ref WriteRequested, 0) != 0) {
+					// Flush the write queue.
+					Debug ("ProcessOperation - flushing write queue");
+					await Parent.InnerWrite (RunSynchronously, cancellationToken).ConfigureAwait (false);
+				}
+
+				Debug ("ProcessOperation done: {0} -> {1}", status, newStatus);
+
+				status = newStatus;
+			}
 		}
 
-		AsyncOperationStatus ProcessOperation (AsyncOperationStatus status)
+		async Task<int?> InnerRead (CancellationToken cancellationToken)
 		{
-			if (status == AsyncOperationStatus.WantRead) {
-				if (RequestedSize < 0)
+			int? totalRead = null;
+			var requestedSize = Interlocked.Exchange (ref RequestedSize, 0);
+			while (requestedSize > 0) {
+				Debug ("ProcessOperation - read inner: {0}", requestedSize);
+
+				var ret = await Parent.InnerRead (RunSynchronously, requestedSize, cancellationToken).ConfigureAwait (false);
+				Debug ("ProcessOperation - read inner done: {0} - {1}", requestedSize, ret);
+
+				if (ret <= 0)
+					return ret;
+				if (ret > requestedSize)
 					throw new InvalidOperationException ();
-				else if (RequestedSize == 0)
-					return AsyncOperationStatus.Continue;
 
-				Debug ("ProcessOperation - read inner: {0}", RequestedSize);
-				var ret = Parent.InnerRead (RequestedSize);
-				Debug ("ProcessOperation - read inner done: {0} - {1}", RequestedSize, ret);
-
-				if (ret < 0)
-					return AsyncOperationStatus.ReadDone;
-
-				RequestedSize -= ret;
-
-				if (ret == 0 || RequestedSize == 0)
-					return AsyncOperationStatus.Continue;
-				else
-					return AsyncOperationStatus.WantRead;
-			} else if (status == AsyncOperationStatus.WantWrite) {
-				Parent.InnerWrite ();
-				return AsyncOperationStatus.Continue;
-			} else if (status == AsyncOperationStatus.Initialize || status == AsyncOperationStatus.Continue) {
-				Debug ("ProcessOperation - continue");
-				status = Operation (this, status);
-				Debug ("ProcessOperation - continue done: {0}", status);
-				return status;
-			} else if (status == AsyncOperationStatus.ReadDone) {
-				Debug ("ProcessOperation - read done");
-				status = Operation (this, status);
-				Debug ("ProcessOperation - read done: {0}", status);
-				return status;
+				totalRead += ret;
+				requestedSize -= ret;
+				var newRequestedSize = Interlocked.Exchange (ref RequestedSize, 0);
+				requestedSize += newRequestedSize;
 			}
 
-			throw new InvalidOperationException ();
+			return totalRead;
+		}
+
+		/*
+		 * This will operate on the internal buffers and never block.
+		 */
+		protected abstract AsyncOperationStatus Run (AsyncOperationStatus status);
+
+		public override string ToString ()
+		{
+			return string.Format ("[{0}]", Name);
 		}
 	}
+
+	class AsyncHandshakeRequest : AsyncProtocolRequest
+	{
+		public AsyncHandshakeRequest (MobileAuthenticatedStream parent, bool sync)
+			: base (parent, sync)
+		{
+		}
+
+		protected override AsyncOperationStatus Run (AsyncOperationStatus status)
+		{
+			return Parent.ProcessHandshake (status);
+		}
+	}
+
+	abstract class AsyncReadOrWriteRequest : AsyncProtocolRequest
+	{
+		protected BufferOffsetSize UserBuffer {
+			get;
+		}
+
+		protected int CurrentSize {
+			get; set;
+		}
+
+		public AsyncReadOrWriteRequest (MobileAuthenticatedStream parent, bool sync, byte[] buffer, int offset, int size)
+			: base (parent, sync)
+		{
+			UserBuffer = new BufferOffsetSize (buffer, offset, size);
+		}
+
+		public override string ToString ()
+		{
+			return string.Format ("[{0}: {1}]", Name, UserBuffer);
+		}
+	}
+
+	class AsyncReadRequest : AsyncReadOrWriteRequest
+	{
+		public AsyncReadRequest (MobileAuthenticatedStream parent, bool sync, byte[] buffer, int offset, int size)
+			: base (parent, sync, buffer, offset, size)
+		{
+		}
+
+		protected override AsyncOperationStatus Run (AsyncOperationStatus status)
+		{
+			Debug ("ProcessRead - read user: {0} {1}", this, status);
+
+			var (ret, wantMore) = Parent.ProcessRead (UserBuffer);
+
+			Debug ("ProcessRead - read user done: {0} - {1} {2}", this, ret, wantMore);
+
+			if (ret < 0) {
+				UserResult = -1;
+				return AsyncOperationStatus.Complete;
+			}
+
+			CurrentSize += ret;
+			UserBuffer.Offset += ret;
+			UserBuffer.Size -= ret;
+
+			Debug ("Process Read - read user done #1: {0} - {1} {2}", this, CurrentSize, wantMore);
+
+			if (wantMore && CurrentSize == 0)
+				return AsyncOperationStatus.Continue;
+
+			UserResult = CurrentSize;
+			return AsyncOperationStatus.Complete;
+		}
+	}
+
+	class AsyncWriteRequest : AsyncReadOrWriteRequest
+	{
+		public AsyncWriteRequest (MobileAuthenticatedStream parent, bool sync, byte[] buffer, int offset, int size)
+			: base (parent, sync, buffer, offset, size)
+		{
+		}
+
+		protected override AsyncOperationStatus Run (AsyncOperationStatus status)
+		{
+			Debug ("ProcessWrite - write user: {0} {1}", this, status);
+
+			if (UserBuffer.Size == 0) {
+				UserResult = CurrentSize;
+				return AsyncOperationStatus.Complete;
+			}
+
+			var (ret, wantMore) = Parent.ProcessWrite (UserBuffer);
+
+			Debug ("ProcessWrite - write user done: {0} - {1} {2}", this, ret, wantMore);
+
+			if (ret < 0) {
+				UserResult = -1;
+				return AsyncOperationStatus.Complete;
+			}
+
+			CurrentSize += ret;
+			UserBuffer.Offset += ret;
+			UserBuffer.Size -= ret;
+
+			if (wantMore)
+				return AsyncOperationStatus.Continue;
+
+			UserResult = CurrentSize;
+			return AsyncOperationStatus.Complete;
+		}
+	}
+
+	class AsyncShutdownRequest : AsyncProtocolRequest
+	{
+		public AsyncShutdownRequest (MobileAuthenticatedStream parent)
+			: base (parent, false)
+		{
+		}
+
+		protected override AsyncOperationStatus Run (AsyncOperationStatus status)
+		{
+			return Parent.ProcessShutdown (status);
+		}
+	}
+
 }
 #endif

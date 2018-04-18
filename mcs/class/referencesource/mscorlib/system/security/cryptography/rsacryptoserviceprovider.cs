@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -24,6 +24,7 @@ namespace System.Security.Cryptography {
     using System.Security.Permissions;
     using System.Diagnostics.Contracts;
 
+#if !MONO
     // Object layout of the RSAParameters structure
     internal class RSACspObject {
         internal byte[] Exponent;
@@ -35,6 +36,7 @@ namespace System.Security.Cryptography {
         internal byte[] InverseQ;
         internal byte[] D;
     }
+#endif
 
     [System.Runtime.InteropServices.ComVisible(true)]
     public sealed partial class RSACryptoServiceProvider : RSA
@@ -526,7 +528,8 @@ namespace System.Security.Cryptography {
             Contract.Assert(!String.IsNullOrEmpty(hashAlgorithm.Name));
 
 #if MONO
-            throw new NotImplementedException ();
+            var hash = HashAlgorithm.Create (hashAlgorithm.Name);
+            return hash.ComputeHash (data, offset, count);
 #else
             using (SafeHashHandle hashHandle = Utils.CreateHash(Utils.StaticProvHandle, GetAlgorithmId(hashAlgorithm))) {
                 Utils.HashData(hashHandle, data, offset, count);
@@ -542,7 +545,8 @@ namespace System.Security.Cryptography {
             Contract.Assert(!String.IsNullOrEmpty(hashAlgorithm.Name));
 
 #if MONO
-            throw new NotImplementedException ();
+            var hash = HashAlgorithm.Create (hashAlgorithm.Name);
+            return hash.ComputeHash (data);
 #else
             using (SafeHashHandle hashHandle = Utils.CreateHash(Utils.StaticProvHandle, GetAlgorithmId(hashAlgorithm))) {
                 // Read the data 4KB at a time, providing similar read characteristics to a standard HashAlgorithm

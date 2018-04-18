@@ -11,13 +11,13 @@ namespace System.ComponentModel {
 
     [HostProtection(SharedState = true)]
     internal static class IntSecurity {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
         public static readonly CodeAccessPermission UnmanagedCode = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
         public static readonly CodeAccessPermission FullReflection = new ReflectionPermission(PermissionState.Unrestricted);
 #endif
 
         public static string UnsafeGetFullPath(string fileName) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             string full = fileName;
 
             FileIOPermission fiop = new FileIOPermission(PermissionState.None);

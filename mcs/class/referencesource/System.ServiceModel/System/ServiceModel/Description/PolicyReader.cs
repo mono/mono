@@ -21,7 +21,7 @@ namespace System.ServiceModel.Description
         
         internal delegate void PolicyWarningHandler(XmlElement contextAssertion, string warningMessage);
         
-        // Consider, [....], make this public?
+        // Consider, Microsoft, make this public?
         internal event PolicyWarningHandler PolicyWarningOccured;
 
         internal IEnumerable<IEnumerable<XmlElement>> NormalizePolicy(IEnumerable<XmlElement> policyAssertions)
@@ -92,7 +92,7 @@ namespace System.ServiceModel.Description
                         string warningMsg = SR.GetString(SR.UnrecognizedPolicyElementInNamespace, node.Name, node.NamespaceURI);
                         metadataImporter.PolicyWarningOccured.Invoke(contextAssertion, warningMsg);
                         break;
-                    //consider [....], add more error handling here. default?
+                    //consider Microsoft, add more error handling here. default?
                 }
                 return nodes;
             }
@@ -365,7 +365,7 @@ namespace System.ServiceModel.Description
                 {
                     get
                     {
-#pragma warning suppress 56503 // [....], IEnumerator guidelines, Current throws exception before calling MoveNext
+#pragma warning suppress 56503 // Microsoft, IEnumerator guidelines, Current throws exception before calling MoveNext
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.NoValue0)));
                     }
                 }

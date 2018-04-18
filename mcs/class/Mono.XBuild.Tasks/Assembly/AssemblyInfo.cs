@@ -48,6 +48,5 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible (false)]
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../mono.pub")]
 
 [assembly: AssemblyFileVersion (XBuildConsts.FileVersion)]

@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -31,8 +31,9 @@ namespace System.Security.Cryptography {
         private string          _hashName;
         private byte[]          _password;
         private HashAlgorithm   _hash;
+#if !MONO        
         private CspParameters   _cspParams;
-#if !MONO
+
         [System.Security.SecurityCritical] // auto-generated
         private SafeProvHandle _safeProvHandle = null;
         private SafeProvHandle ProvHandle {
@@ -83,7 +84,9 @@ namespace System.Security.Cryptography {
             this.Salt = salt;
             this.HashName = hashName;
             _password = password;
+#if !MONO
             _cspParams = cspParams;
+#endif
         }
 
         //

@@ -36,12 +36,13 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 
 namespace System
 {
 	public static partial class Console
 	{
-#if !MOBILE
+#if MONO_FEATURE_CONSOLE
 		private class WindowsConsole
 		{
 			public static bool ctrlHandlerAdded = false;
@@ -96,14 +97,11 @@ namespace System
 
 		static Console ()
 		{
+#if MONO_FEATURE_CONSOLE
 			if (Environment.IsRunningOnWindows) {
 				//
 				// On Windows, follow the Windows tradition
 				//
-#if MOBILE
-				// should never happen since Moonlight does not run on windows
-				inputEncoding = outputEncoding = Encoding.Default;
-#else			
 				try {
 					inputEncoding = Encoding.GetEncoding (WindowsConsole.GetInputCodePage ());
 					outputEncoding = Encoding.GetEncoding (WindowsConsole.GetOutputCodePage ());
@@ -113,8 +111,9 @@ namespace System
 					// Use Latin 1 as it is fast and UTF-8 is never used as console code page
 					inputEncoding = outputEncoding = Encoding.Default;
 				}
+			} else 
 #endif
-			} else {
+			{
 				//
 				// On Unix systems (128), do not output the
 				// UTF-8 ZWNBSP (zero-width non-breaking space).
@@ -134,13 +133,13 @@ namespace System
 
 		static void SetupStreams (Encoding inputEncoding, Encoding outputEncoding)
 		{
-#if !MOBILE
+#if MONO_FEATURE_CONSOLE
 			if (!Environment.IsRunningOnWindows && ConsoleDriver.IsConsole) {
 				stdin = new CStreamReader (OpenStandardInput (0), inputEncoding);
 				stdout = TextWriter.Synchronized (new CStreamWriter (OpenStandardOutput (0), outputEncoding, true) { AutoFlush = true });
 				stderr = TextWriter.Synchronized (new CStreamWriter (OpenStandardError (0), outputEncoding, true) { AutoFlush = true });
 			} else
-#endif
+#endif 
 			{
 				stdin = TextReader.Synchronized (new UnexceptionalStreamReader (OpenStandardInput (0), inputEncoding));
 
@@ -487,8 +486,7 @@ namespace System
 
 			stdout.WriteLine (String.Format (format, args));
 		}
-
-#if !MOBILE
+#if MONO_FEATURE_CONSOLE
 		public static int Read ()
 		{
 			if ((stdin is CStreamReader) && ConsoleDriver.IsConsole) {
@@ -516,7 +514,6 @@ namespace System
 		{
 			return stdin.ReadLine ();
 		}
-
 #endif
 
 		// FIXME: Console should use these encodings when changed
@@ -539,7 +536,7 @@ namespace System
 			}
 		}
 
-#if !MOBILE
+#if MONO_FEATURE_CONSOLE
 		public static ConsoleColor BackgroundColor {
 			get { return ConsoleDriver.BackgroundColor; }
 			set { ConsoleDriver.BackgroundColor = value; }
@@ -599,7 +596,6 @@ namespace System
 			get { return ConsoleDriver.LargestWindowWidth; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static bool NumberLock {
 			get { return ConsoleDriver.NumberLock; }
 		}
@@ -614,25 +610,21 @@ namespace System
 			set { ConsoleDriver.TreatControlCAsInput = value; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static int WindowHeight {
 			get { return ConsoleDriver.WindowHeight; }
 			set { ConsoleDriver.WindowHeight = value; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static int WindowLeft {
 			get { return ConsoleDriver.WindowLeft; }
 			set { ConsoleDriver.WindowLeft = value; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static int WindowTop {
 			get { return ConsoleDriver.WindowTop; }
 			set { ConsoleDriver.WindowTop = value; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static int WindowWidth {
 			get { return ConsoleDriver.WindowWidth; }
 			set { ConsoleDriver.WindowWidth = value; }
@@ -755,16 +747,12 @@ namespace System
 			}
 		}
 
-		delegate void InternalCancelHandler ();
-		
-#pragma warning disable 414
-		//
-		// Used by console-io.c
-		//
-		static readonly InternalCancelHandler cancel_handler = new InternalCancelHandler (DoConsoleCancelEvent);
-#pragma warning restore 414		
+		static void DoConsoleCancelEventInBackground ()
+		{
+			ThreadPool.UnsafeQueueUserWorkItem (_ => DoConsoleCancelEvent(), null);
+		}
 
-		internal static void DoConsoleCancelEvent ()
+		static void DoConsoleCancelEvent ()
 		{
 			bool exit = true;
 			if (cancel_event != null) {

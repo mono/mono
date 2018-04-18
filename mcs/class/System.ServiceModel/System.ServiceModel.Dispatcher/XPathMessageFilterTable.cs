@@ -55,9 +55,9 @@ namespace System.ServiceModel.Dispatcher
 		{
 		}
 
-		public XPathMessageFilterTable (int quota)
+		public XPathMessageFilterTable (int capacity)
 		{
-			this.quota = quota;
+			this.quota = capacity;
 		}
 
 		[DataMember]
@@ -66,9 +66,9 @@ namespace System.ServiceModel.Dispatcher
 			set { quota = value; }
 		}
 
-		public TFilterData this [MessageFilter key] {
-			get { return dict [key]; }
-			set { dict [key] = value; }
+		public TFilterData this [MessageFilter filter] {
+			get { return dict [filter]; }
+			set { dict [filter] = value; }
 		}
 
 		public int Count {
@@ -114,17 +114,17 @@ namespace System.ServiceModel.Dispatcher
 				dict [item.Key].Equals (item.Value);
 		}
 
-		public bool ContainsKey (MessageFilter key)
+		public bool ContainsKey (MessageFilter filter)
 		{
-			return dict.ContainsKey (key);
+			return dict.ContainsKey (filter);
 		}
 
-		public void CopyTo (KeyValuePair<MessageFilter,TFilterData> [] array, int index)
+		public void CopyTo (KeyValuePair<MessageFilter,TFilterData> [] array, int arrayIndex)
 		{
-			if (index < 0 || dict.Count >= array.Length - index)
-				throw new ArgumentOutOfRangeException ("index");
+			if (arrayIndex < 0 || dict.Count >= array.Length - arrayIndex)
+				throw new ArgumentOutOfRangeException ("arrayIndex");
 			foreach (KeyValuePair<MessageFilter,TFilterData> item in dict)
-				array [index++] = item;
+				array [arrayIndex++] = item;
 		}
 
 		public IEnumerator<KeyValuePair<MessageFilter,TFilterData>> GetEnumerator ()
@@ -137,12 +137,12 @@ namespace System.ServiceModel.Dispatcher
 			return GetEnumerator ();
 		}
 
-		public bool GetMatchingFilter (Message message, out MessageFilter result)
+		public bool GetMatchingFilter (Message message, out MessageFilter filter)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public bool GetMatchingFilter (MessageBuffer buffer, out MessageFilter result)
+		public bool GetMatchingFilter (MessageBuffer messageBuffer, out MessageFilter filter)
 		{
 			throw new NotImplementedException ();
 		}
@@ -162,7 +162,7 @@ namespace System.ServiceModel.Dispatcher
 			throw new NotImplementedException ();
 		}
 
-		public bool GetMatchingFilters (MessageBuffer buffer, ICollection<MessageFilter> results)
+		public bool GetMatchingFilters (MessageBuffer messageBuffer, ICollection<MessageFilter> results)
 		{
 			throw new NotImplementedException ();
 		}
@@ -182,7 +182,7 @@ namespace System.ServiceModel.Dispatcher
 			throw new NotImplementedException ();
 		}
 
-		public bool GetMatchingValue (MessageBuffer buffer, out TFilterData data)
+		public bool GetMatchingValue (MessageBuffer messageBuffer, out TFilterData data)
 		{
 			throw new NotImplementedException ();
 		}
@@ -202,7 +202,7 @@ namespace System.ServiceModel.Dispatcher
 			throw new NotImplementedException ();
 		}
 
-		public bool GetMatchingValues (MessageBuffer buffer, ICollection<TFilterData> results)
+		public bool GetMatchingValues (MessageBuffer messageBuffer, ICollection<TFilterData> results)
 		{
 			throw new NotImplementedException ();
 		}

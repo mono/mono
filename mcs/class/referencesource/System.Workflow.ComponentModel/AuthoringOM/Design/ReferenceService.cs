@@ -64,7 +64,7 @@ namespace System.Workflow.ComponentModel.Design
         {
             // If the references are null, create them for the first time and connect
             // up our events to listen to changes to the container.  Otherwise, check to
-            // see if the added or removed lists contain anything for us to [....] up.
+            // see if the added or removed lists contain anything for us to sync up.
             //
             if (this.references == null)
             {

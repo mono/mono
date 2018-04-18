@@ -249,19 +249,19 @@ namespace System.Runtime
             {
                 case TraceEventType.Error:
                 case TraceEventType.Warning:
-                    if (TraceCore.ThrowingExceptionIsEnabled(this.diagnosticTrace))
+                    if (TraceCore.ThrowingEtwExceptionIsEnabled(this.diagnosticTrace))
                     {
                         TraceCore.ThrowingEtwException(this.diagnosticTrace, this.eventSourceName, exception != null ? exception.ToString() : string.Empty, exception);
                     }
                     break;
                 case TraceEventType.Critical:
-                    if (TraceCore.UnhandledExceptionIsEnabled(this.diagnosticTrace))
+                    if (TraceCore.EtwUnhandledExceptionIsEnabled(this.diagnosticTrace))
                     {
                         TraceCore.EtwUnhandledException(this.diagnosticTrace, exception != null ? exception.ToString() : string.Empty, exception);
                     }
                     break;
                 default:
-                    if (TraceCore.ThrowingExceptionVerboseIsEnabled(this.diagnosticTrace))
+                    if (TraceCore.ThrowingEtwExceptionVerboseIsEnabled(this.diagnosticTrace))
                     {
                         TraceCore.ThrowingEtwExceptionVerbose(this.diagnosticTrace, this.eventSourceName, exception != null ? exception.ToString() : string.Empty, exception);
                     }

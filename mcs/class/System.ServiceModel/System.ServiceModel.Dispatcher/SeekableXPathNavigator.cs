@@ -36,12 +36,12 @@ namespace System.ServiceModel.Dispatcher
 	{
 		protected SeekableXPathNavigator () {}
 
-		public abstract XmlNodeOrder ComparePosition (long first, long second);
-		public abstract string GetLocalName (long node_position);
-		public abstract string GetName (long node_position);
-		public abstract string GetNamespace (long node_position);
-		public abstract XPathNodeType GetNodeType (long node_position);
-		public abstract string GetValue (long node_position);
+		public abstract XmlNodeOrder ComparePosition (long firstPosition, long secondPosition);
+		public abstract string GetLocalName (long nodePosition);
+		public abstract string GetName (long nodePosition);
+		public abstract string GetNamespace (long nodePosition);
+		public abstract XPathNodeType GetNodeType (long nodePosition);
+		public abstract string GetValue (long nodePosition);
 
 		public abstract long CurrentPosition { get; set; }
 	}

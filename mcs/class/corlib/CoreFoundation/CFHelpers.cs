@@ -1,3 +1,4 @@
+#if MONO_FEATURE_APPLETLS || MONO_FEATURE_APPLE_X509
 using System;
 using System.Runtime.InteropServices;
 
@@ -108,3 +109,4 @@ namespace XamMac.CoreFoundation
 		}
 	}
 }
+#endif

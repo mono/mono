@@ -790,6 +790,61 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsInstanceOfType (typeof (PublicVisibleCustomAttribute), attrs[1]);
 			Assert.IsInstanceOfType (typeof (PublicVisibleCustomAttribute), attrs[2]);
 		}
+
+		[Test]
+		public void CustomAttributeSameAssembly () {
+			// Regression test for 55681
+			//
+			// We build:
+			// class MyAttr : Attr { public MyAttr () { } }
+			// [assembly:MyAttr()]
+			//
+			// the important bit is that we pass the ConstructorBuilder to the CustomAttributeBuilder
+			var assemblyName = new AssemblyName ("Repro55681");
+			var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly (assemblyName, AssemblyBuilderAccess.Save, tempDir);
+			var moduleBuilder = assemblyBuilder.DefineDynamicModule ("Repro55681", "Repro55681.dll");
+			var typeBuilder = moduleBuilder.DefineType ("MyAttr", TypeAttributes.Public, typeof (Attribute));
+			ConstructorBuilder ctor = typeBuilder.DefineDefaultConstructor (MethodAttributes.Public);
+			typeBuilder.CreateType ();
+
+			assemblyBuilder.SetCustomAttribute (new CustomAttributeBuilder (ctor, new object [] { }));
+
+			assemblyBuilder.Save ("Repro55681.dll");
+		}
+
+		[Test]
+		public void CustomAttributeAcrossAssemblies () {
+			// Regression test for 55681
+			//
+			// We build:
+			// assembly1:
+			//   class MyAttr : Attr { public MyAttr () { } }
+			// assembly2:
+			//   class Dummy { }
+			//   [assembly:MyAttr()]
+			//
+ 			// the important bit is that we pass the ConstructorBuilder to the CustomAttributeBuilder
+			var assemblyName1 = new AssemblyName ("Repro55681-2a");
+			var assemblyBuilder1 = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName1, AssemblyBuilderAccess.Save, tempDir);
+			var moduleBuilder1 = assemblyBuilder1.DefineDynamicModule ("Repro55681-2a", "Repro55681-2a.dll");
+			var typeBuilder1 = moduleBuilder1.DefineType ("MyAttr", TypeAttributes.Public, typeof (Attribute));
+			ConstructorBuilder ctor = typeBuilder1.DefineDefaultConstructor (MethodAttributes.Public);
+			typeBuilder1.CreateType ();
+
+			var assemblyName2 = new AssemblyName ("Repro55681-2b");
+			var assemblyBuilder2 = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName2, AssemblyBuilderAccess.Save, tempDir);
+			var moduleBuilder2 = assemblyBuilder2.DefineDynamicModule ("Repro55681-2b", "Repro55681-2b.dll");
+
+			var typeBuilder2 = moduleBuilder2.DefineType ("Dummy", TypeAttributes.Public);
+			typeBuilder2.DefineDefaultConstructor (MethodAttributes.Public);
+			typeBuilder2.CreateType ();
+
+			assemblyBuilder2.SetCustomAttribute (new CustomAttributeBuilder (ctor, new object [] { }));
+
+			assemblyBuilder2.Save ("Repro55681-2b.dll");
+			assemblyBuilder1.Save ("Repro55681-2a.dll");
+		}
+		
 	}
 }
 

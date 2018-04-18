@@ -243,6 +243,33 @@ namespace System.Xml.Serialization {
 			}
 		}
 
+		static string[] allTimeFormats = new string[] {
+			"HH:mm:ss.fffffffzzzzzz",
+			"HH:mm:ss",
+			"HH:mm:ss.f",
+			"HH:mm:ss.ff",
+			"HH:mm:ss.fff",
+			"HH:mm:ss.ffff",
+			"HH:mm:ss.fffff",
+			"HH:mm:ss.ffffff",
+			"HH:mm:ss.fffffff",
+			"HH:mm:ssZ",
+			"HH:mm:ss.fZ",
+			"HH:mm:ss.ffZ",
+			"HH:mm:ss.fffZ",
+			"HH:mm:ss.ffffZ",
+			"HH:mm:ss.fffffZ",
+			"HH:mm:ss.ffffffZ",
+			"HH:mm:ss.fffffffZ",
+			"HH:mm:sszzzzzz",
+			"HH:mm:ss.fzzzzzz",
+			"HH:mm:ss.ffzzzzzz",
+			"HH:mm:ss.fffzzzzzz",
+			"HH:mm:ss.ffffzzzzzz",
+			"HH:mm:ss.fffffzzzzzz",
+			"HH:mm:ss.ffffffzzzzzz",
+		};
+
 		internal static object FromXmlString (TypeData type, string value)
 		{
 			if (value == null) return null;
@@ -254,7 +281,7 @@ namespace System.Xml.Serialization {
 				case "char": return (char)XmlConvert.ToInt32 (value);
 				case "dateTime": return XmlConvert.ToDateTime (value, XmlDateTimeSerializationMode.RoundtripKind);
 				case "date": return XmlConvert.ToDateTime (value).Date;
-				case "time": return DateTime.ParseExact (value, "HH:mm:ss.FFFFFFF", null);
+				case "time": return DateTime.ParseExact(value, allTimeFormats, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AllowLeadingWhite | DateTimeStyles.AllowTrailingWhite | DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.RoundtripKind);
 				case "decimal": return XmlConvert.ToDecimal (value);
 				case "double": return XmlConvert.ToDouble (value);
 				case "short": return XmlConvert.ToInt16 (value);

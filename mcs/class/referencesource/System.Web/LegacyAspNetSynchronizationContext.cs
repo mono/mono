@@ -43,7 +43,7 @@ namespace System.Web {
         private void CallCallback(SendOrPostCallback callback, Object state) {
             CheckForRequestStateIfRequired();
 
-            // don't take app lock for [....] caller to avoid deadlocks in case they poll for result
+            // don't take app lock for sync caller to avoid deadlocks in case they poll for result
             if (_syncCaller) {
                 CallCallbackPossiblyUnderLock(callback, state);
             }
@@ -72,7 +72,7 @@ namespace System.Web {
             }
         }
 
-        // this property no-ops using the legacy [....] context
+        // this property no-ops using the legacy sync context
         internal override bool AllowAsyncDuringSyncStages {
             get;
             set;

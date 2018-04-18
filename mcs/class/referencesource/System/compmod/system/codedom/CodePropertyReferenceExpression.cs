@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // <copyright file="CodePropertyReferenceExpression.cs" company="Microsoft">
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
 //------------------------------------------------------------------------------
@@ -27,7 +27,9 @@ namespace System.CodeDom {
     public class CodePropertyReferenceExpression : CodeExpression {
         private CodeExpression targetObject;
         private string propertyName;
+#if !MONO
         private CodeExpressionCollection parameters = new CodeExpressionCollection();
+#endif
 
         /// <devdoc>
         ///    <para>

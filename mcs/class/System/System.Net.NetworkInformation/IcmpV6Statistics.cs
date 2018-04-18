@@ -162,7 +162,7 @@ namespace System.Net.NetworkInformation {
 		public const int RouterRenumbering = 138;
 	}
 
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32IcmpV6Statistics : IcmpV6Statistics
 	{
 		Win32_MIBICMPSTATS_EX iin, iout;

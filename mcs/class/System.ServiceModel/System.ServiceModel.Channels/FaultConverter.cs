@@ -47,20 +47,20 @@ namespace System.ServiceModel.Channels
 
 		[MonoTODO]
 		protected abstract bool OnTryCreateException (
-			Message message, MessageFault fault, out Exception error);
+			Message message, MessageFault fault, out Exception exception);
 
 		[MonoTODO]
 		protected abstract bool OnTryCreateFaultMessage (
-			Exception error, out Message message);
+			Exception exception, out Message message);
 
-		public bool TryCreateException (Message message, MessageFault fault, out Exception error)
+		public bool TryCreateException (Message message, MessageFault fault, out Exception exception)
 		{
-			return OnTryCreateException (message, fault, out error);
+			return OnTryCreateException (message, fault, out exception);
 		}
 
-		public bool TryCreateFaultMessage (Exception error, out Message message)
+		public bool TryCreateFaultMessage (Exception exception, out Message message)
 		{
-			return OnTryCreateFaultMessage (error, out message);
+			return OnTryCreateFaultMessage (exception, out message);
 		}
 	}
 

@@ -79,10 +79,11 @@ namespace Mono.CSharp.Linq
 			{
 			}
 
-			protected override MethodGroupExpr DoResolveOverload (ResolveContext ec)
+			protected override MethodGroupExpr DoResolveOverload (ResolveContext rc)
 			{
-				MethodGroupExpr rmg = mg.OverloadResolve (ec, ref arguments, this, OverloadResolver.Restrictions.None);
-				return rmg;
+				using (rc.Set (ResolveContext.Options.QueryClauseScope)) {
+					return mg.OverloadResolve (rc, ref arguments, this, OverloadResolver.Restrictions.None);
+				}
 			}
 
 			protected override Expression DoResolveDynamic (ResolveContext ec, Expression memberExpr)

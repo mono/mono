@@ -1,8 +1,12 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_MONO_SIGCONTEXT_H__
 #define __MONO_MONO_SIGCONTEXT_H__
 
 #include <config.h>
-#if defined(PLATFORM_ANDROID)
+#if defined(HOST_ANDROID)
 #include <asm/sigcontext.h>
 #endif
 
@@ -45,6 +49,15 @@
 	#define UCONTEXT_REG_ESI(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__esi)
 	#define UCONTEXT_REG_EDI(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__edi)
 	#define UCONTEXT_REG_EIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__eip)
+	#define UCONTEXT_HAS_XMM(_ctx) (TRUE)
+	#define UCONTEXT_REG_XMM0(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm0)
+	#define UCONTEXT_REG_XMM1(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm1)
+	#define UCONTEXT_REG_XMM2(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm2)
+	#define UCONTEXT_REG_XMM3(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm3)
+	#define UCONTEXT_REG_XMM4(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm4)
+	#define UCONTEXT_REG_XMM5(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm5)
+	#define UCONTEXT_REG_XMM6(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm6)
+	#define UCONTEXT_REG_XMM7(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm7)
 #  else
 	#define UCONTEXT_REG_EAX(ctx) (((ucontext_t*)(ctx))->uc_mcontext->ss.eax)
 	#define UCONTEXT_REG_EBX(ctx) (((ucontext_t*)(ctx))->uc_mcontext->ss.ebx)
@@ -76,7 +89,7 @@
 	#define UCONTEXT_REG_ESI(ctx) (((ucontext_t*)(ctx))->sc_esi)
 	#define UCONTEXT_REG_EDI(ctx) (((ucontext_t*)(ctx))->sc_edi)
 	#define UCONTEXT_REG_EIP(ctx) (((ucontext_t*)(ctx))->sc_eip)
-#elif defined(PLATFORM_SOLARIS)
+#elif defined(HOST_SOLARIS)
 	#define UCONTEXT_REG_EAX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [EAX])
 	#define UCONTEXT_REG_EBX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [EBX])
 	#define UCONTEXT_REG_ECX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [ECX])
@@ -88,7 +101,7 @@
 	#define UCONTEXT_REG_EIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [EIP])
 #else
 
-#if defined(PLATFORM_ANDROID) && !defined(HAVE_UCONTEXT_H)
+#if defined(HOST_ANDROID) && !defined(HAVE_UCONTEXT_H)
 /* No ucontext.h as of NDK v6b */
 typedef int greg_t;
 #define NGREG 19
@@ -173,6 +186,23 @@ typedef struct ucontext {
 	#define UCONTEXT_REG_R13(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__r13)
 	#define UCONTEXT_REG_R14(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__r14)
 	#define UCONTEXT_REG_R15(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__r15)
+	#define UCONTEXT_HAS_XMM(_ctx) (TRUE)
+	#define UCONTEXT_REG_XMM0(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm0)
+	#define UCONTEXT_REG_XMM1(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm1)
+	#define UCONTEXT_REG_XMM2(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm2)
+	#define UCONTEXT_REG_XMM3(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm3)
+	#define UCONTEXT_REG_XMM4(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm4)
+	#define UCONTEXT_REG_XMM5(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm5)
+	#define UCONTEXT_REG_XMM6(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm6)
+	#define UCONTEXT_REG_XMM7(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm7)
+	#define UCONTEXT_REG_XMM8(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm8)
+	#define UCONTEXT_REG_XMM9(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm9)
+	#define UCONTEXT_REG_XMM10(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm10)
+	#define UCONTEXT_REG_XMM11(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm11)
+	#define UCONTEXT_REG_XMM12(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm12)
+	#define UCONTEXT_REG_XMM13(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm13)
+	#define UCONTEXT_REG_XMM14(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm14)
+	#define UCONTEXT_REG_XMM15(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__fs.__fpu_xmm15)
 #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
 	#define UCONTEXT_REG_RAX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_rax)
 	#define UCONTEXT_REG_RBX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_rbx)
@@ -229,7 +259,24 @@ typedef struct ucontext {
 	#define UCONTEXT_REG_R14(ctx) (((ucontext_t*)(ctx))->sc_r14)
 	#define UCONTEXT_REG_R15(ctx) (((ucontext_t*)(ctx))->sc_r15)
 #elif !defined(HOST_WIN32)
-#define UCONTEXT_GREGS(ctx)	((guint64*)&(((ucontext_t*)(ctx))->uc_mcontext.gregs))
+	#define UCONTEXT_GREGS(ctx)	((guint64*)&(((ucontext_t*)(ctx))->uc_mcontext.gregs))
+#if defined(__GLIBC__)
+	/*
+	 * Ordinarily, ctx->uc_mcontext.fpregs is a pointer to somewhere in
+	 * ctx->__fpregs_mem and is the preferred way to access the fpstate.
+	 * However, some versions of Windows Subsystem for Linux have a bug where
+	 * the fpregs field is a NULL pointer instead. Since accessing __fpregs_mem
+	 * directly is quite complicated because its exact layout depends on CPU
+	 * features and/or kernel configuration, we sinply won't make the fpstate
+	 * available if the fpregs pointer is NULL.
+	 *
+	 * This is of course not correct (as we won't scan XMM registers on those
+	 * broken WSL versions), but it'll at least prevent a crash when accessing
+	 * the fpregs pointer.
+	 */
+	#define UCONTEXT_HAS_FREGS(ctx) (!!((ucontext_t *) (ctx))->uc_mcontext.fpregs)
+	#define UCONTEXT_FREGS(ctx)	(((ucontext_t *) (ctx))->uc_mcontext.fpregs->_xmm)
+#endif
 #endif
 
 #ifdef UCONTEXT_GREGS
@@ -252,6 +299,26 @@ typedef struct ucontext {
 #define UCONTEXT_REG_R15(ctx) (UCONTEXT_GREGS ((ctx)) [REG_R15])
 #endif
 
+#ifdef UCONTEXT_FREGS
+#define UCONTEXT_HAS_XMM(ctx)   (UCONTEXT_HAS_FREGS (ctx))
+#define UCONTEXT_REG_XMM0(ctx)  (UCONTEXT_FREGS ((ctx)) [AMD64_XMM0])
+#define UCONTEXT_REG_XMM1(ctx)  (UCONTEXT_FREGS ((ctx)) [AMD64_XMM1])
+#define UCONTEXT_REG_XMM2(ctx)  (UCONTEXT_FREGS ((ctx)) [AMD64_XMM2])
+#define UCONTEXT_REG_XMM3(ctx)  (UCONTEXT_FREGS ((ctx)) [AMD64_XMM3])
+#define UCONTEXT_REG_XMM4(ctx)  (UCONTEXT_FREGS ((ctx)) [AMD64_XMM4])
+#define UCONTEXT_REG_XMM5(ctx)  (UCONTEXT_FREGS ((ctx)) [AMD64_XMM5])
+#define UCONTEXT_REG_XMM6(ctx)  (UCONTEXT_FREGS ((ctx)) [AMD64_XMM6])
+#define UCONTEXT_REG_XMM7(ctx)  (UCONTEXT_FREGS ((ctx)) [AMD64_XMM7])
+#define UCONTEXT_REG_XMM8(ctx)  (UCONTEXT_FREGS ((ctx)) [AMD64_XMM8])
+#define UCONTEXT_REG_XMM9(ctx)  (UCONTEXT_FREGS ((ctx)) [AMD64_XMM9])
+#define UCONTEXT_REG_XMM10(ctx) (UCONTEXT_FREGS ((ctx)) [AMD64_XMM10])
+#define UCONTEXT_REG_XMM11(ctx) (UCONTEXT_FREGS ((ctx)) [AMD64_XMM11])
+#define UCONTEXT_REG_XMM12(ctx) (UCONTEXT_FREGS ((ctx)) [AMD64_XMM12])
+#define UCONTEXT_REG_XMM13(ctx) (UCONTEXT_FREGS ((ctx)) [AMD64_XMM13])
+#define UCONTEXT_REG_XMM14(ctx) (UCONTEXT_FREGS ((ctx)) [AMD64_XMM14])
+#define UCONTEXT_REG_XMM15(ctx) (UCONTEXT_FREGS ((ctx)) [AMD64_XMM15])
+#endif
+
 #elif defined(__mono_ppc__)
 
 #if HAVE_UCONTEXT_H
@@ -259,7 +326,7 @@ typedef struct ucontext {
 #endif
 
 #if defined(__linux__)
-	typedef struct ucontext os_ucontext;
+	typedef ucontext_t os_ucontext;
 
 #ifdef __mono_ppc64__
 	#define UCONTEXT_REG_Rn(ctx, n)   (((os_ucontext*)(ctx))->uc_mcontext.gp_regs [(n)])
@@ -300,6 +367,13 @@ typedef struct ucontext {
 	#define UCONTEXT_REG_FPRn(ctx, n) ((ctx)->uc_mcontext.mc_fpreg [(n)])
 	#define UCONTEXT_REG_NIP(ctx)     ((ctx)->uc_mcontext.mc_srr0)
 	#define UCONTEXT_REG_LNK(ctx)     ((ctx)->uc_mcontext.mc_lr)
+#elif defined(_AIX)
+	typedef ucontext_t os_ucontext;
+
+	#define UCONTEXT_REG_Rn(ctx, n)   (((os_ucontext*)(ctx))->uc_mcontext.jmp_context.gpr[(n)])
+	#define UCONTEXT_REG_FPRn(ctx, n) (((os_ucontext*)(ctx))->uc_mcontext.jmp_context.fpr[(n)])
+	#define UCONTEXT_REG_NIP(ctx)     (((os_ucontext*)(ctx))->uc_mcontext.jmp_context.iar)
+	#define UCONTEXT_REG_LNK(ctx)     (((os_ucontext*)(ctx))->uc_mcontext.jmp_context.lr)
 #endif
 
 #elif defined(TARGET_ARM)

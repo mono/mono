@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
-// @backupOwner [....]
+// @owner  Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 namespace System.Data.SqlClient.SqlGen
@@ -2495,7 +2495,7 @@ namespace System.Data.SqlClient.SqlGen
 
             //Create the resulting statement 
             //See CreateNewSelectStatement, it is very similar
-            //Future Enhancement ([....]): Refactor to avoid duplication with CreateNewSelectStatement if we 
+            //Future Enhancement (Microsoft): Refactor to avoid duplication with CreateNewSelectStatement if we 
             // don't switch to using ExtensionExpression here
             SqlSelectStatement result = new SqlSelectStatement();
             result.From.Append("( ");

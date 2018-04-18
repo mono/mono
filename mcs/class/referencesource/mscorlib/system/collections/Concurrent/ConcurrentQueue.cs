@@ -9,7 +9,7 @@
 //
 // ConcurrentQueue.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A lock-free, concurrent queue primitive, and its associated debugger view type.
 //

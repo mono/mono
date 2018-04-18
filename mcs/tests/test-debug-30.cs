@@ -15,4 +15,12 @@ class PragmaNewLinesParsing
 	{
 		return;
 	}
+
+#pragma warning disable 618
+#pragma warning restore 618
+
+	void OneMore ()
+	{
+		return;
+	}
 }

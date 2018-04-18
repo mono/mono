@@ -1,4 +1,4 @@
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 namespace System.CodeDom {
 
     using System.Diagnostics;

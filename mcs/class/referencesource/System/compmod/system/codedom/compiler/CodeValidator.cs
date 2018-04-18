@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 // <copyright file="CodeGenerator.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.

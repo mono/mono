@@ -451,12 +451,12 @@ namespace System.Web.UI.WebControls
 		}
 		
 		[MonoTODO ("why override?")]
-		protected internal override void Render (HtmlTextWriter w)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
-			base.Render (w);
+			base.Render (writer);
 		}
 
-		protected internal override void RenderContents (HtmlTextWriter w)
+		protected internal override void RenderContents (HtmlTextWriter writer)
 		{
 			string skip_id = ClientID + "_SkipLink";
 			string altText = SkipLinkText;
@@ -464,27 +464,27 @@ namespace System.Web.UI.WebControls
 			
 			if (needAnchor) {
 				// Anchor start
-				w.AddAttribute (HtmlTextWriterAttribute.Href, "#" + skip_id);
-				w.RenderBeginTag (HtmlTextWriterTag.A);
+				writer.AddAttribute (HtmlTextWriterAttribute.Href, "#" + skip_id);
+				writer.RenderBeginTag (HtmlTextWriterTag.A);
 
 				// Image
-				w.AddAttribute (HtmlTextWriterAttribute.Alt, altText);
-				w.AddAttribute (HtmlTextWriterAttribute.Height, "0");
-				w.AddAttribute (HtmlTextWriterAttribute.Width, "0");
-				w.AddAttribute (HtmlTextWriterAttribute.Src, Page.ClientScript.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif"));
-				w.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
-				w.RenderBeginTag (HtmlTextWriterTag.Img);
-				w.RenderEndTag ();
+				writer.AddAttribute (HtmlTextWriterAttribute.Alt, altText);
+				writer.AddAttribute (HtmlTextWriterAttribute.Height, "0");
+				writer.AddAttribute (HtmlTextWriterAttribute.Width, "0");
+				writer.AddAttribute (HtmlTextWriterAttribute.Src, Page.ClientScript.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif"));
+				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
+				writer.RenderBeginTag (HtmlTextWriterTag.Img);
+				writer.RenderEndTag ();
 
-				w.RenderEndTag ();
+				writer.RenderEndTag ();
 			}
 
-			base.RenderContents (w);
+			base.RenderContents (writer);
 
 			if (needAnchor) {
-				 w.AddAttribute(HtmlTextWriterAttribute.Id, skip_id);
-				 w.RenderBeginTag(HtmlTextWriterTag.A);
-				 w.RenderEndTag();
+				 writer.AddAttribute(HtmlTextWriterAttribute.Id, skip_id);
+				 writer.RenderBeginTag(HtmlTextWriterTag.A);
+				 writer.RenderEndTag();
 			}
 		}
 		

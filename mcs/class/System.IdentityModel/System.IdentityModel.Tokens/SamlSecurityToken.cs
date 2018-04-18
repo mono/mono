@@ -87,7 +87,7 @@ namespace System.IdentityModel.Tokens
 
 		[MonoTODO]
 		public override bool MatchesKeyIdentifierClause (
-			SecurityKeyIdentifierClause skiClause)
+			SecurityKeyIdentifierClause keyIdentifierClause)
 		{
 			throw new NotImplementedException ();
 		}

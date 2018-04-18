@@ -492,9 +492,9 @@ namespace System.ServiceModel
 				throw new InvalidOperationException ("The ServiceHost must have at least one application endpoint (that does not include metadata exchange endpoint) defined by either configuration, behaviors or call to AddServiceEndpoint methods.");
 		}
 
-		protected void LoadConfigurationSection (ServiceElement element)
+		protected void LoadConfigurationSection (ServiceElement serviceSection)
 		{
-			ApplyServiceElement (element);
+			ApplyServiceElement (serviceSection);
 		}
 
 		protected override sealed void OnAbort ()
@@ -528,12 +528,12 @@ namespace System.ServiceModel
 		
 		void OnCloseOrAbort (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 			ReleasePerformanceCounters ();
 			List<ChannelDispatcherBase> l = new List<ChannelDispatcherBase> (ChannelDispatchers);
 			foreach (ChannelDispatcherBase e in l) {
 				try {
-					TimeSpan ts = timeout - (DateTime.Now - start);
+					TimeSpan ts = timeout - (DateTime.UtcNow - start);
 					if (ts < TimeSpan.Zero)
 						e.Abort ();
 					else
@@ -547,7 +547,7 @@ namespace System.ServiceModel
 
 		protected override sealed void OnOpen (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 			InitializeRuntime ();
 			for (int i = 0; i < ChannelDispatchers.Count; i++) {
 				// Skip ServiceMetadataExtension-based one. special case.
@@ -567,7 +567,7 @@ namespace System.ServiceModel
 				var wait = new ManualResetEvent (false);
 				cd.Opened += delegate { wait.Set (); };
 				waits.Add (wait);
-				cd.Open (timeout - (DateTime.Now - start));
+				cd.Open (timeout - (DateTime.UtcNow - start));
 			}
 
 			WaitHandle.WaitAll (waits.ToArray ());

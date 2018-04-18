@@ -46,7 +46,7 @@ embeddable runtime:
 
 * mono/utils/bsearch.c: BSD license.
 
-* mono/io-layer/wapi_glob.h, wapi_glob.c: BSD license
+* mono/metadata/w32file-unix-glob.c, w32file-unix-glob.h: BSD license
 
 Class Library code
 ==================

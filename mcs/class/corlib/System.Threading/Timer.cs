@@ -33,8 +33,35 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Runtime.CompilerServices;
 
+
 namespace System.Threading
 {
+#if WASM
+	internal static class WasmRuntime {
+		static Dictionary<int, Action> callbacks;
+		static int next_id;
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern void SetTimeout (int timeout, int id);
+
+		internal static void ScheduleTimeout (int timeout, Action action) {
+			if (callbacks == null)
+				callbacks = new Dictionary<int, Action> ();
+			int id = ++next_id;
+			callbacks [id] = action;
+			SetTimeout (timeout, id);
+		}
+
+		//XXX Keep this in sync with mini-wasm.c:mono_set_timeout_exec
+		static void TimeoutCallback (int id) {
+			var cb = callbacks [id];
+			callbacks.Remove (id);
+			cb ();
+		}
+	}
+#endif
+
+
 	[ComVisible (true)]
 	public sealed class Timer
 		: MarshalByRefObject, IDisposable
@@ -139,7 +166,7 @@ namespace System.Threading
 				throw new ArgumentOutOfRangeException ("period");
 
 			if (disposed)
-				return false;
+				throw new ObjectDisposedException (null, Environment.GetResourceString ("ObjectDisposed_Generic"));
 
 			due_time_ms = dueTime;
 			period_ms = period;
@@ -198,7 +225,61 @@ namespace System.Threading
 		sealed class Scheduler {
 			static Scheduler instance;
 			SortedList list;
+
+#if WASM
+			List<Timer> cached_new_time;
+			bool scheduled_zero;
+
+			void InitScheduler () {
+				cached_new_time = new List<Timer> (512);
+			}
+
+			void WakeupScheduler () {
+				if (!scheduled_zero) {
+					WasmRuntime.ScheduleTimeout (0, this.RunScheduler);
+					scheduled_zero = true;
+				}
+			}
+
+			void RunScheduler() {
+				scheduled_zero = false;
+				int ms_wait = RunSchedulerLoop (cached_new_time);
+				if (ms_wait >= 0) {
+					WasmRuntime.ScheduleTimeout (ms_wait, this.RunScheduler);
+					if (ms_wait == 0)
+						scheduled_zero = true;
+				}
+			}
+#else
 			ManualResetEvent changed;
+
+			void InitScheduler () {
+				changed = new ManualResetEvent (false);
+				Thread thread = new Thread (SchedulerThread);
+				thread.IsBackground = true;
+				thread.Start ();
+			}
+
+			void WakeupScheduler () {
+				changed.Set ();
+			}
+
+			void SchedulerThread ()
+			{
+				Thread.CurrentThread.Name = "Timer-Scheduler";
+				var new_time = new List<Timer> (512);
+				while (true) {
+					int ms_wait = -1;
+					lock (this) {
+						changed.Reset ();
+						ms_wait = RunSchedulerLoop (new_time);
+					}
+					// Wait until due time or a timer is changed and moves from/to the first place in the list.
+					changed.WaitOne (ms_wait);
+				}
+			}
+
+#endif
 
 			static Scheduler ()
 			{
@@ -211,11 +292,8 @@ namespace System.Threading
 
 			private Scheduler ()
 			{
-				changed = new ManualResetEvent (false);
 				list = new SortedList (new TimerComparer (), 1024);
-				Thread thread = new Thread (SchedulerThread);
-				thread.IsBackground = true;
-				thread.Start ();
+				InitScheduler ();
 			}
 
 			public void Remove (Timer timer)
@@ -250,7 +328,7 @@ namespace System.Threading
 					}
 				}
 				if (wake)
-					changed.Set ();
+					WakeupScheduler();
 			}
 
 			// lock held by caller
@@ -327,73 +405,64 @@ namespace System.Threading
 				timer.callback (timer.state);
 			}
 
-			void SchedulerThread ()
-			{
-				Thread.CurrentThread.Name = "Timer-Scheduler";
-				var new_time = new List<Timer> (512);
-				while (true) {
-					int ms_wait = -1;
-					long ticks = GetTimeMonotonic ();
-					lock (this) {
-						changed.Reset ();
-						//PrintList ();
-						int i;
-						int count = list.Count;
-						for (i = 0; i < count; i++) {
-							Timer timer = (Timer) list.GetByIndex (i);
-							if (timer.next_run > ticks)
-								break;
+			int RunSchedulerLoop (List<Timer> new_time) {
+				int ms_wait = -1;
+				int i;
+				int count = list.Count;
+				long ticks = GetTimeMonotonic ();
 
-							list.RemoveAt (i);
-							count--;
-							i--;
-							ThreadPool.UnsafeQueueUserWorkItem (TimerCB, timer);
-							long period = timer.period_ms;
-							long due_time = timer.due_time_ms;
-							bool no_more = (period == -1 || ((period == 0 || period == Timeout.Infinite) && due_time != Timeout.Infinite));
-							if (no_more) {
-								timer.next_run = Int64.MaxValue;
-							} else {
-								timer.next_run = GetTimeMonotonic () + TimeSpan.TicksPerMillisecond * timer.period_ms;
-								new_time.Add (timer);
-							}
-						}
+				for (i = 0; i < count; i++) {
+					Timer timer = (Timer) list.GetByIndex (i);
+					if (timer.next_run > ticks)
+						break;
 
-						// Reschedule timers with a new due time
-						count = new_time.Count;
-						for (i = 0; i < count; i++) {
-							Timer timer = new_time [i];
-							Add (timer);
-						}
-						new_time.Clear ();
-						ShrinkIfNeeded (new_time, 512);
-
-						// Shrink the list
-						int capacity = list.Capacity;
-						count = list.Count;
-						if (capacity > 1024 && count > 0 && (capacity / count) > 3)
-							list.Capacity = count * 2;
-
-						long min_next_run = Int64.MaxValue;
-						if (list.Count > 0)
-							min_next_run = ((Timer) list.GetByIndex (0)).next_run;
-
-						//PrintList ();
-						ms_wait = -1;
-						if (min_next_run != Int64.MaxValue) {
-							long diff = (min_next_run - GetTimeMonotonic ())  / TimeSpan.TicksPerMillisecond;
-							if (diff > Int32.MaxValue)
-								ms_wait = Int32.MaxValue - 1;
-							else {
-								ms_wait = (int)(diff);
-								if (ms_wait < 0)
-									ms_wait = 0;
-							}
-						}
+					list.RemoveAt (i);
+					count--;
+					i--;
+					ThreadPool.UnsafeQueueUserWorkItem (TimerCB, timer);
+					long period = timer.period_ms;
+					long due_time = timer.due_time_ms;
+					bool no_more = (period == -1 || ((period == 0 || period == Timeout.Infinite) && due_time != Timeout.Infinite));
+					if (no_more) {
+						timer.next_run = Int64.MaxValue;
+					} else {
+						timer.next_run = GetTimeMonotonic () + TimeSpan.TicksPerMillisecond * timer.period_ms;
+						new_time.Add (timer);
 					}
-					// Wait until due time or a timer is changed and moves from/to the first place in the list.
-					changed.WaitOne (ms_wait);
 				}
+
+				// Reschedule timers with a new due time
+				count = new_time.Count;
+				for (i = 0; i < count; i++) {
+					Timer timer = new_time [i];
+					Add (timer);
+				}
+				new_time.Clear ();
+				ShrinkIfNeeded (new_time, 512);
+
+				// Shrink the list
+				int capacity = list.Capacity;
+				count = list.Count;
+				if (capacity > 1024 && count > 0 && (capacity / count) > 3)
+					list.Capacity = count * 2;
+
+				long min_next_run = Int64.MaxValue;
+				if (list.Count > 0)
+					min_next_run = ((Timer) list.GetByIndex (0)).next_run;
+
+				//PrintList ();
+				ms_wait = -1;
+				if (min_next_run != Int64.MaxValue) {
+					long diff = (min_next_run - GetTimeMonotonic ())  / TimeSpan.TicksPerMillisecond;
+					if (diff > Int32.MaxValue)
+						ms_wait = Int32.MaxValue - 1;
+					else {
+						ms_wait = (int)(diff);
+						if (ms_wait < 0)
+							ms_wait = 0;
+					}
+				}
+				return ms_wait;
 			}
 
 			void ShrinkIfNeeded (List<Timer> list, int initial)

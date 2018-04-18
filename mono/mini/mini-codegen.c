@@ -1,8 +1,11 @@
-/*
- * mini-codegen.c: Arch independent code generation functionality
+/**
+ * \file
+ * Arch independent code generation functionality
  *
  * (C) 2003 Ximian, Inc.
  */
+
+#include "config.h"
 
 #include <string.h>
 #include <math.h>
@@ -18,8 +21,11 @@
 #include <mono/utils/mono-math.h>
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "trace.h"
 #include "mini-arch.h"
+
+#ifndef DISABLE_JIT
 
 #ifndef MONO_MAX_XREGS
 
@@ -28,7 +34,6 @@
 #define MONO_ARCH_CALLEE_XREGS 0
 
 #endif
- 
 
 #define MONO_ARCH_BANK_MIRRORED -2
 
@@ -411,47 +416,7 @@ typedef struct {
 	regmask_t preferred_mask; /* the hreg where the register should be allocated, or 0 */
 } RegTrack;
 
-#if !defined(DISABLE_LOGGING) && !defined(DISABLE_JIT)
-
-static const char* const patch_info_str[] = {
-#define PATCH_INFO(a,b) "" #a,
-#include "patch-info.h"
-#undef PATCH_INFO
-};
-
-const char*
-mono_ji_type_to_string (MonoJumpInfoType type)
-{
-	return patch_info_str [type];
-}
-
-void
-mono_print_ji (const MonoJumpInfo *ji)
-{
-	switch (ji->type) {
-	case MONO_PATCH_INFO_RGCTX_FETCH: {
-		MonoJumpInfoRgctxEntry *entry = ji->data.rgctx_entry;
-
-		printf ("[RGCTX_FETCH ");
-		mono_print_ji (entry->data);
-		printf (" - %s]", mono_rgctx_info_type_to_str (entry->info_type));
-		break;
-	}
-	case MONO_PATCH_INFO_METHODCONST: {
-		char *s = mono_method_full_name (ji->data.method, TRUE);
-		printf ("[METHODCONST - %s]", s);
-		g_free (s);
-		break;
-	}
-	case MONO_PATCH_INFO_INTERNAL_METHOD: {
-		printf ("[INTERNAL_METHOD - %s]", ji->data.name);
-		break;
-	}
-	default:
-		printf ("[%s]", patch_info_str [ji->type]);
-		break;
-	}
-}
+#if !defined(DISABLE_LOGGING)
 
 void
 mono_print_ins_index (int i, MonoInst *ins)
@@ -537,7 +502,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 			break;
 		case OP_ISINST:
 		case OP_CASTCLASS:
-			g_string_append_printf (sbuf, " %s", ins->klass->name);
+			g_string_append_printf (sbuf, " %s", m_class_get_name (ins->klass));
 			break;
 		default:
 			break;
@@ -631,7 +596,11 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 	case OP_VCALL2_MEMBASE:
 	case OP_VOIDCALL:
 	case OP_VOIDCALL_MEMBASE:
-	case OP_TAILCALL: {
+	case OP_TAILCALL:
+	case OP_TAILCALL_MEMBASE:
+	case OP_RCALL:
+	case OP_RCALL_REG:
+	case OP_RCALL_MEMBASE: {
 		MonoCallInst *call = (MonoCallInst*)ins;
 		GSList *list;
 
@@ -785,22 +754,11 @@ print_regtrack (RegTrack *t, int num)
 }
 #else
 
-const char*
-mono_ji_type_to_string (MonoJumpInfoType type)
-{
-	return "";
-}
-
-void
-mono_print_ji (const MonoJumpInfo *ji)
-{
-}
-
 void
 mono_print_ins_index (int i, MonoInst *ins)
 {
 }
-#endif /* !defined(DISABLE_LOGGING) && !defined(DISABLE_JIT) */
+#endif /* !defined(DISABLE_LOGGING) */
 
 void
 mono_print_ins (MonoInst *ins)
@@ -1084,6 +1042,9 @@ alloc_general_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoIn
 	if (val < 0)
 		val = get_register_spilling (cfg, bb, last, ins, dest_mask, sym_reg, bank);
 
+#ifdef MONO_ARCH_HAVE_TRACK_FPREGS
+	cfg->arch.used_fp_regs |= 1 << val;
+#endif
 	return val;
 }
 
@@ -1150,8 +1111,6 @@ get_callee_mask (const char spec)
 
 static gint8 desc_to_fixed_reg [256];
 static gboolean desc_to_fixed_reg_inited = FALSE;
-
-#ifndef DISABLE_JIT
 
 /*
  * Local register allocation.
@@ -2554,47 +2513,6 @@ mono_opcode_to_type (int opcode, int cmp_opcode)
 	}
 }
 
-#endif /* DISABLE_JIT */
-
-gboolean
-mono_is_regsize_var (MonoType *t)
-{
-	t = mini_get_underlying_type (t);
-	switch (t->type) {
-	case MONO_TYPE_I1:
-	case MONO_TYPE_U1:
-	case MONO_TYPE_I2:
-	case MONO_TYPE_U2:
-	case MONO_TYPE_I4:
-	case MONO_TYPE_U4:
-	case MONO_TYPE_I:
-	case MONO_TYPE_U:
-	case MONO_TYPE_PTR:
-	case MONO_TYPE_FNPTR:
-#if SIZEOF_REGISTER == 8
-	case MONO_TYPE_I8:
-	case MONO_TYPE_U8:
-#endif
-		return TRUE;
-	case MONO_TYPE_OBJECT:
-	case MONO_TYPE_STRING:
-	case MONO_TYPE_CLASS:
-	case MONO_TYPE_SZARRAY:
-	case MONO_TYPE_ARRAY:
-		return TRUE;
-	case MONO_TYPE_GENERICINST:
-		if (!mono_type_generic_inst_is_valuetype (t))
-			return TRUE;
-		return FALSE;
-	case MONO_TYPE_VALUETYPE:
-		return FALSE;
-	default:
-		return FALSE;
-	}
-}
-
-#ifndef DISABLE_JIT
-
 /*
  * mono_peephole_ins:
  *
@@ -2726,6 +2644,19 @@ mono_peephole_ins (MonoBasicBlock *bb, MonoInst *ins)
 			ins->sreg1 = last_ins->sreg1;
 		}
 		break;
+	case OP_LOADX_MEMBASE:
+		if (last_ins && last_ins->opcode == OP_STOREX_MEMBASE &&
+			ins->inst_basereg == last_ins->inst_destbasereg &&
+			ins->inst_offset == last_ins->inst_offset) {
+			if (ins->dreg == last_ins->sreg1) {
+				MONO_DELETE_INS (bb, ins);
+				break;
+			} else {
+				ins->opcode = OP_XMOVE;
+				ins->sreg1 = last_ins->sreg1;
+			}
+		}
+		break;
 	case OP_MOVE:
 	case OP_FMOVE:
 		/*
@@ -2801,9 +2732,9 @@ mini_type_is_hfa (MonoType *t, int *out_nfields, int *out_esize)
 			if (!mini_type_is_hfa (ftype, &nested_nfields, &nested_esize))
 				return FALSE;
 			if (nested_esize == 4)
-				ftype = &mono_defaults.single_class->byval_arg;
+				ftype = m_class_get_byval_arg (mono_defaults.single_class);
 			else
-				ftype = &mono_defaults.double_class->byval_arg;
+				ftype = m_class_get_byval_arg (mono_defaults.double_class);
 			if (prev_ftype && prev_ftype->type != ftype->type)
 				return FALSE;
 			prev_ftype = ftype;
@@ -2844,3 +2775,40 @@ mono_regstate_free (MonoRegState *rs) {
 }
 
 #endif /* DISABLE_JIT */
+
+gboolean
+mono_is_regsize_var (MonoType *t)
+{
+	t = mini_get_underlying_type (t);
+	switch (t->type) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+	case MONO_TYPE_I:
+	case MONO_TYPE_U:
+	case MONO_TYPE_PTR:
+	case MONO_TYPE_FNPTR:
+#if SIZEOF_REGISTER == 8
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+#endif
+		return TRUE;
+	case MONO_TYPE_OBJECT:
+	case MONO_TYPE_STRING:
+	case MONO_TYPE_CLASS:
+	case MONO_TYPE_SZARRAY:
+	case MONO_TYPE_ARRAY:
+		return TRUE;
+	case MONO_TYPE_GENERICINST:
+		if (!mono_type_generic_inst_is_valuetype (t))
+			return TRUE;
+		return FALSE;
+	case MONO_TYPE_VALUETYPE:
+		return FALSE;
+	default:
+		return FALSE;
+	}
+}

@@ -7,7 +7,7 @@
 **
 ** Class:  FileBasedResourceGroveler
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Searches for resources on disk, used for file-
@@ -51,7 +51,7 @@ namespace System.Resources {
             // Don't use Assembly manifest, but grovel on disk for a file.
             try
             {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 new System.Security.Permissions.FileIOPermission(System.Security.Permissions.PermissionState.Unrestricted).Assert();
 #endif
 
@@ -79,7 +79,7 @@ namespace System.Resources {
             }
             finally
             {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 System.Security.CodeAccessPermission.RevertAssert();
 #endif
             }

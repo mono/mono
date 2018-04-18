@@ -30,7 +30,7 @@ namespace System
 {
 	static class CompatibilitySwitches
 	{
-		public const bool IsAppEarlierThanSilverlight4 = false;
-		public const bool IsAppEarlierThanWindowsPhone8 = false;
+		public static readonly bool IsAppEarlierThanSilverlight4 = false;
+		public static readonly bool IsAppEarlierThanWindowsPhone8 = false;
 	}
 }

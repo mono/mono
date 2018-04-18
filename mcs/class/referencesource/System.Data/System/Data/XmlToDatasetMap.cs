@@ -2,9 +2,9 @@
 // <copyright file="XmlToDatasetMap.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -128,10 +128,10 @@ namespace System.Data {
         // Used to infere schema
 
         private TableSchemaInfo AddTableSchema(DataTable table, XmlNameTable nameTable) {
-            // [....]: Because in our case reader already read the document all names that we can meet in the
+            // Microsoft: Because in our case reader already read the document all names that we can meet in the
             //       document already has an entry in NameTable.
             //       If in future we will build identity map before reading XML we can replace Get() to Add()
-            // [....]: GetIdentity is called from two places: BuildIdentityMap() and LoadRows()
+            // Microsoft: GetIdentity is called from two places: BuildIdentityMap() and LoadRows()
             //       First case deals with decoded names; Second one with encoded names.
             //       We decided encoded names in first case (instead of decoding them in second) 
             //       because it save us time in LoadRows(). We have, as usual, more data them schemas
@@ -148,10 +148,10 @@ namespace System.Data {
         }
 
         private TableSchemaInfo AddTableSchema(XmlNameTable nameTable, DataTable table) {
-            // [....]:This is the opposite of the previous function:
+            // Microsoft:This is the opposite of the previous function:
             //       we populate the nametable so that the hash comparison can happen as
             //       object comparison instead of strings.
-            // [....]: GetIdentity is called from two places: BuildIdentityMap() and LoadRows()
+            // Microsoft: GetIdentity is called from two places: BuildIdentityMap() and LoadRows()
             //       First case deals with decoded names; Second one with encoded names.
             //       We decided encoded names in first case (instead of decoding them in second) 
             //       because it save us time in LoadRows(). We have, as usual, more data them schemas

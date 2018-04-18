@@ -47,8 +47,6 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		X509ChainImpl impl;
 
-		static X509ChainStatus[] Empty = new X509ChainStatus [0];
-
 		internal X509ChainImpl Impl {
 			get {
 				X509Helper2.ThrowIfContextInvalid (impl);

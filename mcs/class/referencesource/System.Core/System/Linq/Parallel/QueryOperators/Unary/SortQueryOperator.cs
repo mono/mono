@@ -7,7 +7,7 @@
 //
 // SortQueryOperator.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -150,7 +150,9 @@ namespace System.Linq.Parallel
         protected QueryResults<TInputOutput> m_childQueryResults; // Results of the child query
         private SortQueryOperator<TInputOutput, TSortKey> m_op; // Operator that generated these results
         private QuerySettings m_settings; // Settings collected from the query
+#if !MONO
         private bool m_preferStriping; // If the results are indexible, should we use striping when partitioning them
+#endif
 
         internal SortQueryOperatorResults(
             QueryResults<TInputOutput> childQueryResults, SortQueryOperator<TInputOutput, TSortKey> op,
@@ -159,7 +161,9 @@ namespace System.Linq.Parallel
             m_childQueryResults = childQueryResults;
             m_op = op;
             m_settings = settings;
+#if !MONO
             m_preferStriping = preferStriping;
+#endif
         }
 
         internal override bool IsIndexible

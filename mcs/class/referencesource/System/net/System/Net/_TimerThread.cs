@@ -13,7 +13,7 @@ namespace System.Net {
     using System.Runtime.InteropServices;
 
     /// <summary>
-    /// <para>Acts as countdown timer, used to measure elapsed time over a [....] operation.</para>
+    /// <para>Acts as countdown timer, used to measure elapsed time over a sync operation.</para>
     /// </summary>
     internal static class TimerThread {
         /// <summary>

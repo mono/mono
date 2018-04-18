@@ -1876,9 +1876,9 @@ namespace System.Web.UI.WebControls {
 
             string finishPageUrl = FinishDestinationPageUrl;
             if (!String.IsNullOrEmpty(finishPageUrl)) {
-                // [....] suggested that we should not terminate execution of current page, to give
+                // Microsoft suggested that we should not terminate execution of current page, to give
                 // page a chance to cleanup its resources.  This may be less performant though.
-                // [....] suggested that we need to call ResolveClientUrl before redirecting.
+                // Microsoft suggested that we need to call ResolveClientUrl before redirecting.
                 // Example is this control inside user control, want redirect relative to user control dir.
                 Page.Response.Redirect(ResolveClientUrl(finishPageUrl), false);
             }

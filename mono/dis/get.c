@@ -25,8 +25,11 @@
 
 extern gboolean substitute_with_mscorlib_p;
 
+static char *
+get_token_comment (const char *prefix, guint32 token);
+
 static MonoGenericContainer *
-get_memberref_container (MonoImage *m, guint32 mrp_token, MonoGenericContainer *container);
+get_memberref_container (MonoImage *m, guint32 mrp_token, MonoGenericContainer *container, MonoError *error);
 
 static char *
 get_memberref_parent (MonoImage *m, guint32 mrp_token, MonoGenericContainer *container);
@@ -59,7 +62,7 @@ get_typedef (MonoImage *m, int idx)
         /* Check if this is a nested type */
         token = MONO_TOKEN_TYPE_DEF | (idx);
         token = mono_metadata_nested_in_typedef (m, token);
-	tstring = show_tokens ? g_strdup_printf ("/*%08x*/", token) : NULL;
+	tstring = get_token_comment (NULL, token);
         if (token) {
                 char *outer;
                 
@@ -217,9 +220,9 @@ get_typespec (MonoImage *m, guint32 idx, gboolean is_def, MonoGenericContainer *
 		break;
 
 	case MONO_TYPE_FNPTR: {
-		MonoError error;
-		sig = mono_metadata_parse_method_signature_full (m, container, 0, ptr, &ptr, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME don't swallow the error message*/
+		ERROR_DECL (error);
+		sig = mono_metadata_parse_method_signature_full (m, container, 0, ptr, &ptr, error);
+		g_assert (mono_error_ok (error)); /*FIXME don't swallow the error message*/
 		s = dis_stringify_function_ptr (m, sig);
 		g_string_append (res, "method ");
 		g_string_append (res, s);
@@ -258,11 +261,12 @@ get_typespec (MonoImage *m, guint32 idx, gboolean is_def, MonoGenericContainer *
 
 	if (show_tokens) {
 		int token = mono_metadata_make_token (MONO_TABLE_TYPESPEC, idx);
-		result = g_strdup_printf ("%s/*%08x*/", res->str, token);
-	} else
+		result = get_token_comment (res->str, token);
+		g_string_free (res, TRUE);
+	} else {
 		result = res->str;
-
-	g_string_free (res, FALSE);
+		g_string_free (res, FALSE);
+	}
 
 	return result;
 }
@@ -316,7 +320,7 @@ get_typeref (MonoImage *m, int idx)
 
 	if (show_tokens) {
 		int token = mono_metadata_make_token (MONO_TABLE_TYPEREF, idx);
-		char *temp = g_strdup_printf ("%s/*%08x*/", ret, token);
+		char *temp = get_token_comment (ret, token);
 		g_free (ret);
 		ret = temp;
 	}
@@ -367,8 +371,7 @@ get_typedef_or_ref (MonoImage *m, guint32 dor_token, MonoGenericContainer *conta
 
 	}
 	
-	if (temp)
-		g_free (temp);
+	g_free (temp);
 
 	return s;
 }
@@ -496,7 +499,7 @@ dis_stringify_array (MonoImage *m, MonoArrayType *array, gboolean is_def)
 {
 	char *type, *arr_str, *ret;
 	
-	type = dis_stringify_type (m, &array->eklass->byval_arg, is_def);
+	type = dis_stringify_type (m, m_class_get_byval_arg (array->eklass), is_def);
 	arr_str = stringify_array (array->rank, array->numsizes, array->numlobounds, array->sizes, array->lobounds);
 
 	ret = g_strconcat (type, arr_str, NULL);
@@ -823,7 +826,7 @@ get_generic_param (MonoImage *m, MonoGenericContainer *container)
 				first = 0;
 			} else
 				g_string_append (result, ", ");
-			sig = dis_stringify_type (m, &((*constr)->byval_arg), TRUE);
+			sig = dis_stringify_type (m, m_class_get_byval_arg (*constr), TRUE);
 			g_string_append (result, sig);
 			g_free (sig);
                 }
@@ -892,18 +895,18 @@ dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, 
 		method_name = mono_metadata_string_heap (m, cols [MONO_METHOD_NAME]);
 		param_index = cols [MONO_METHOD_PARAMLIST];
 		if (!method) {
-			MonoError error;
+			ERROR_DECL (error);
 			const char *sig = mono_metadata_blob_heap (m, cols [MONO_METHOD_SIGNATURE]);
 
-			container = mono_metadata_load_generic_params (m, MONO_TOKEN_METHOD_DEF | methoddef_row, container);
+			container = mono_metadata_load_generic_params (m, MONO_TOKEN_METHOD_DEF | methoddef_row, container, NULL);
 			if (container) {
-				mono_metadata_load_generic_param_constraints_checked (m, MONO_TOKEN_METHOD_DEF | methoddef_row, container, &error);
-				g_assert (mono_error_ok (&error)); /*FIXME don't swallow the error message*/
+				mono_metadata_load_generic_param_constraints_checked (m, MONO_TOKEN_METHOD_DEF | methoddef_row, container, error);
+				g_assert (mono_error_ok (error)); /*FIXME don't swallow the error message*/
 			}
 
 			mono_metadata_decode_blob_size (sig, &sig);
-			method = mono_metadata_parse_method_signature_full (m, container, methoddef_row, sig, &sig, &error);
-			g_assert (mono_error_ok (&error)); /*FIXME don't swallow the error message*/
+			method = mono_metadata_parse_method_signature_full (m, container, methoddef_row, sig, &sig, error);
+			g_assert (mono_error_ok (error)); /*FIXME don't swallow the error message*/
 			free_method = 1;
 		}
 
@@ -1050,22 +1053,22 @@ get_escaped_class_name (MonoClass *c)
 {
 	char *result, *esname;
 
-	if (c->type_token == mono_metadata_make_token (MONO_TABLE_TYPEDEF, 1))
+	if (m_class_get_type_token (c) == mono_metadata_make_token (MONO_TABLE_TYPEDEF, 1))
 		/* <Module> */
 		return NULL;
 
-	if (c->rank || c->byval_arg.type == MONO_TYPE_PTR) 
+	if (m_class_get_rank (c) || m_class_get_byval_arg (c)->type == MONO_TYPE_PTR) 
 		g_assert (0);
 
-	esname = get_escaped_name (c->name);
+	esname = get_escaped_name (m_class_get_name (c));
 
-	if (c->nested_in){
-		char *part_a = get_escaped_class_name (c->nested_in);
+	if (m_class_get_nested_in (c)){
+		char *part_a = get_escaped_class_name (m_class_get_nested_in (c));
 
 		result = g_strdup_printf ("%s/%s", part_a, esname);
 		g_free (part_a);
-	} else if (*c->name_space)
-		result = g_strdup_printf ("%s.%s", c->name_space, esname);
+	} else if (*m_class_get_name_space (c))
+		result = g_strdup_printf ("%s.%s", m_class_get_name_space (c), esname);
 	else
 		result = g_strdup (esname);
 
@@ -1077,34 +1080,34 @@ char *
 dis_stringify_object_with_class (MonoImage *m, MonoClass *c, gboolean prefix, gboolean is_def)
 {
 	/* FIXME: handle MONO_TYPE_OBJECT ... */
-	MonoType *type = &c->byval_arg;
+	MonoType *type = m_class_get_byval_arg (c);
 	const char *otype = type->type == MONO_TYPE_VALUETYPE ? "valuetype " : "class " ;
 	char *assemblyref = NULL, *result, *esname, *generic = NULL;
 	
-	if (c->type_token == mono_metadata_make_token (MONO_TABLE_TYPEDEF, 1))
+	if (m_class_get_type_token (c) == mono_metadata_make_token (MONO_TABLE_TYPEDEF, 1))
 		/* <Module> */
 		return NULL;
 
-	if (m != c->image) {
-		if (c->image->assembly_name) {
+	if (m != m_class_get_image (c)) {
+		if (m_class_get_image (c)->assembly_name) {
 			/* we cheat */
-			if (substitute_with_mscorlib_p && !strcmp ("corlib", c->image->assembly_name))
+			if (substitute_with_mscorlib_p && !strcmp ("corlib", m_class_get_image (c)->assembly_name))
 				assemblyref = g_strdup_printf ("[%s]", "mscorlib");
 			else {
-				char *esc = get_escaped_name (c->image->assembly->aname.name);
+				char *esc = get_escaped_name (m_class_get_image (c)->assembly->aname.name);
 				
 				assemblyref = g_strdup_printf ("[%s]", esc);
 				g_free (esc);
 			}
 		} else {
-			assemblyref = g_strdup_printf ("[.module %s]", c->image->module_name);
+			assemblyref = g_strdup_printf ("[.module %s]", m_class_get_image (c)->module_name);
 		}
 	}
 
 	esname = get_escaped_class_name (c);
 
-	if (c->generic_class) {
-		MonoGenericClass *gclass = c->generic_class;
+	if (mono_class_is_ginst (c)) {
+		MonoGenericClass *gclass = mono_class_get_generic_class (c);
 		MonoGenericInst *inst = gclass->context.class_inst;
 		GString *str = g_string_new ("");
 		int i;
@@ -1146,8 +1149,10 @@ dis_stringify_type (MonoImage *m, MonoType *type, gboolean is_def)
 	char *bare = NULL, *mods = NULL;
 	char *result;
 
-	if (type->num_mods)
-		mods = dis_stringify_modifiers (m, type->num_mods, type->modifiers);
+	if (type->has_cmods) {
+		MonoCustomModContainer *cmods = mono_type_get_cmods (type);
+		mods = dis_stringify_modifiers (cmods->image, cmods->count, cmods->modifiers);
+	}
 
 	switch (type->type){
 	case MONO_TYPE_BOOLEAN:
@@ -1191,7 +1196,7 @@ dis_stringify_type (MonoImage *m, MonoType *type, gboolean is_def)
 	}
 	case MONO_TYPE_SZARRAY: {
 		char *child_type;
-		child_type = dis_stringify_type (m, &type->data.klass->byval_arg, is_def);
+		child_type = dis_stringify_type (m, m_class_get_byval_arg (type->data.klass), is_def);
 		
 		bare = g_strdup_printf ("%s[]", child_type);
 		g_free (child_type);
@@ -1220,7 +1225,7 @@ dis_stringify_type (MonoImage *m, MonoType *type, gboolean is_def)
 		MonoGenericInst *inst;
 		int i;
 		char *generic_type = dis_stringify_type (
-			m, &type->data.generic_class->container_class->byval_arg, is_def);
+			m, m_class_get_byval_arg (type->data.generic_class->container_class), is_def);
 		inst = type->data.generic_class->context.class_inst;
 		for (i = 0; i < inst->type_argc; i++){
 			char *t = dis_stringify_type (m, inst->type_argv [i], is_def);
@@ -1270,7 +1275,7 @@ dis_stringify_type (MonoImage *m, MonoType *type, gboolean is_def)
 const char *
 get_type (MonoImage *m, const char *ptr, char **result, gboolean is_def, MonoGenericContainer *container)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	const char *start = ptr;
 	guint32 type;
 	MonoType *t;
@@ -1284,17 +1289,17 @@ get_type (MonoImage *m, const char *ptr, char **result, gboolean is_def, MonoGen
 	case MONO_TYPE_VALUETYPE:
 	case MONO_TYPE_CLASS: {
 		guint32 token = mono_metadata_parse_typedef_or_ref (m, ptr, &ptr);
-		MonoClass *klass = mono_class_get_checked (m, token, &error);
+		MonoClass *klass = mono_class_get_checked (m, token, error);
 		char *temp;
 		if (klass) {
 			temp = dis_stringify_object_with_class (m, klass, TRUE, FALSE);
 		} else  {
-			temp = g_strdup_printf ("<BROKEN CLASS token_%8x due to %s>", token, mono_error_get_message (&error));
-			mono_error_cleanup (&error);
+			temp = g_strdup_printf ("<BROKEN CLASS token_%8x due to %s>", token, mono_error_get_message (error));
+			mono_error_cleanup (error);
 		}
 
 		if (show_tokens) {
-			*result = g_strdup_printf ("%s/*%08x*/", temp, token);
+			*result = get_token_comment (temp, token);
 			g_free (temp);
 		} else
 			*result = temp;
@@ -1327,12 +1332,12 @@ get_type (MonoImage *m, const char *ptr, char **result, gboolean is_def, MonoGen
 	}
 
 	default:
-		t = mono_metadata_parse_type_checked (m, container, 0, FALSE, start, &ptr, &error);
+		t = mono_metadata_parse_type_checked (m, container, 0, FALSE, start, &ptr, error);
 		if (t) {
 			*result = dis_stringify_type (m, t, is_def);
 		} else {
-			*result = g_strdup_printf ("Invalid type due to %s", mono_error_get_message (&error));
-			mono_error_cleanup (&error);
+			*result = g_strdup_printf ("Invalid type due to %s", mono_error_get_message (error));
+			mono_error_cleanup (error);
 		}
 
 		break;
@@ -1367,10 +1372,8 @@ get_field_signature (MonoImage *m, guint32 blob_signature, MonoGenericContainer 
 		allocated_type_string,
 		allocated_modifier_string ? allocated_modifier_string : "");
 	
-	if (allocated_modifier_string)
-		g_free (allocated_modifier_string);
-	if (allocated_type_string)
-		g_free (allocated_type_string);
+	g_free (allocated_modifier_string);
+	g_free (allocated_type_string);
 	
 	return res;
 }
@@ -1389,8 +1392,7 @@ get_field_literal_type (MonoImage *m, guint32 blob_signature)
 	ptr++; len--;
 	
 	ptr = get_custom_mod (m, ptr, &allocated_modifier_string);
-	if (allocated_modifier_string)
-		g_free (allocated_modifier_string);
+	g_free (allocated_modifier_string);
 
 	return (MonoTypeEnum) *ptr;
 	
@@ -1743,6 +1745,7 @@ char *
 get_fieldref_signature (MonoImage *m, int idx, MonoGenericContainer *container)
 {
 	guint32 cols [MONO_MEMBERREF_SIZE];
+	ERROR_DECL (error);
 	MonoGenericContainer *new_container;
 	char *type, *esname;
         char *sig;
@@ -1751,7 +1754,8 @@ get_fieldref_signature (MonoImage *m, int idx, MonoGenericContainer *container)
         mono_metadata_decode_row (&m->tables [MONO_TABLE_MEMBERREF],
 				  idx - 1, cols, MONO_MEMBERREF_SIZE);
 
-	new_container = get_memberref_container (m, cols [MONO_MEMBERREF_CLASS], container);
+	new_container = get_memberref_container (m, cols [MONO_MEMBERREF_CLASS], container, error);
+	mono_error_assert_ok (error);
         sig = get_field_signature (m, cols [MONO_MEMBERREF_SIGNATURE], new_container);
 
 	type = get_memberref_parent (m, cols [MONO_MEMBERREF_CLASS], container);
@@ -1770,6 +1774,25 @@ get_fieldref_signature (MonoImage *m, int idx, MonoGenericContainer *container)
 }
 
 /**
+ * get_token_comment:
+ *
+ * If show_tokens is TRUE, return "prefix""token(table)".
+ * If show_tokens is FALSE, return "prefix" or NULL if prefix is NULL.
+ * Caller is responsible for freeing.
+ */
+char *
+get_token_comment (const char *prefix, guint32 token)
+{
+	if (!show_tokens)
+		return prefix ? g_strdup_printf ("%s", prefix) : NULL;
+	gint32 tableidx = mono_metadata_token_table (token);
+	if ((tableidx < 0) || (tableidx > MONO_TABLE_LAST))
+		return g_strdup_printf ("%s/*%08x*/", prefix ? prefix : "", token);
+	else
+		return g_strdup_printf ("%s/*%08x(%s)*/", prefix ? prefix : "", token, mono_meta_table_name (tableidx));
+}
+
+/**
  * get_field:
  * @m: metadata context
  * @token: a FIELD_DEF token
@@ -1783,7 +1806,7 @@ get_field (MonoImage *m, guint32 token, MonoGenericContainer *container)
 {
 	int idx = mono_metadata_token_index (token);
 	guint32 cols [MONO_FIELD_SIZE];
-	char *sig, *res, *type, *estype, *esname;
+	char *sig, *res, *type, *estype, *esname, *token_comment;
 	guint32 type_idx;
 
 	/*
@@ -1812,22 +1835,38 @@ get_field (MonoImage *m, guint32 token, MonoGenericContainer *container)
 	type = get_typedef (m, type_idx);
 	estype = get_escaped_name (type);
 	esname = get_escaped_name (mono_metadata_string_heap (m, cols [MONO_FIELD_NAME]));
-	res = g_strdup_printf ("%s %s%s%s",
+	token_comment = get_token_comment (NULL, token);
+	res = g_strdup_printf ("%s %s%s%s%s",
 			sig, 
 			estype ? estype : "",
 			estype ? "::" : "",
-			esname);
+			esname,
+			token_comment ? token_comment : ""
+		);
 
 	g_free (type);
 	g_free (sig);
 	g_free (estype);
 	g_free (esname);
+	g_free (token_comment);
 
 	return res;
 }
 
+/**
+ * get_memberref_container:
+ * \param m The \c MonoImage
+ * \param mrp_token a \c MemberRefParent token in \p m
+ * \param container the parent generic container
+ * \param error set on error
+ *
+ * \returns the generic container given a MemberRefParent token, or \c NULL if
+ * the \c MemberRefParent is not a generic type.
+ *
+ * On error returns NULL and sets \p error.
+ */
 static MonoGenericContainer *
-get_memberref_container (MonoImage *m, guint32 mrp_token, MonoGenericContainer *container)
+get_memberref_container (MonoImage *m, guint32 mrp_token, MonoGenericContainer *container, MonoError *error)
 {
 	MonoClass *klass;
 
@@ -1839,15 +1878,16 @@ get_memberref_container (MonoImage *m, guint32 mrp_token, MonoGenericContainer *
 
 	switch (table){
 	case 0: /* TypeDef */
-		return mono_metadata_load_generic_params (m, MONO_TOKEN_TYPE_DEF | idx, NULL);
+		return mono_metadata_load_generic_params (m, MONO_TOKEN_TYPE_DEF | idx, NULL, NULL);
 		
 	case 1: /* TypeRef */
 		return NULL;
 		
 	case 4: /* TypeSpec */
-		klass = mono_class_get_full (m, MONO_TOKEN_TYPE_SPEC | idx, (MonoGenericContext *) container);
+		klass = mono_class_get_and_inflate_typespec_checked (m, MONO_TOKEN_TYPE_SPEC | idx, &container->context, error);
+		return_val_if_nok (error, NULL);
 		g_assert (klass);
-		return klass->generic_class ? klass->generic_class->container_class->generic_container : NULL;
+		return mono_class_is_ginst (klass) ? mono_class_get_generic_container (mono_class_get_generic_class (klass)->container_class) : NULL;
 	}
 	g_assert_not_reached ();
 	return NULL;
@@ -1894,7 +1934,7 @@ get_memberref_parent (MonoImage *m, guint32 mrp_token, MonoGenericContainer *con
 static char *
 get_method_core (MonoImage *m, guint32 token, gboolean fullsig, MonoGenericContainer *container)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	int idx = mono_metadata_token_index (token);
 	guint32 member_cols [MONO_MEMBERREF_SIZE], method_cols [MONO_METHOD_SIZE];
 	char *sig = NULL, *esname;
@@ -1903,21 +1943,20 @@ get_method_core (MonoImage *m, guint32 token, gboolean fullsig, MonoGenericConta
 	MonoMethod *mh;
 	MonoGenericContainer *type_container = container;
 
-	mh = mono_get_method_checked (m, token, NULL, (MonoGenericContext *) container, &error);
+	mh = mono_get_method_checked (m, token, NULL, (MonoGenericContext *) container, error);
 	if (mh) {
 		if (mono_method_signature (mh)->is_inflated)
 			container = mono_method_get_generic_container (((MonoMethodInflated *) mh)->declaring);
 		esname = get_escaped_name (mh->name);
-		sig = dis_stringify_type (m, &mh->klass->byval_arg, TRUE);
-		if (show_tokens)
-			name = g_strdup_printf ("%s/*%08x*/%s%s", sig ? sig : "", token, sig ? "::" : "", esname);
-		else
-			name = g_strdup_printf ("%s%s%s", sig ? sig : "", sig ? "::" : "", esname);
+		sig = dis_stringify_type (m, m_class_get_byval_arg (mh->klass), TRUE);
+		char *token_comment = get_token_comment (NULL, token);
+		name = g_strdup_printf ("%s%s%s%s", sig ? sig : "", token_comment ? token_comment : "", sig ? "::" : "", esname);
 		g_free (sig);
 		g_free (esname);
+		g_free (token_comment);
 	} else {
 		name = NULL;
-		mono_error_cleanup (&error);
+		mono_error_cleanup (error);
 	}
 
 	switch (mono_metadata_token_code (token)){
@@ -1979,7 +2018,7 @@ get_method_core (MonoImage *m, guint32 token, gboolean fullsig, MonoGenericConta
 	}
 	
 	if (show_tokens) {
-		char *retval = g_strdup_printf ("%s /* %08x */", sig, token);
+		char *retval = get_token_comment (sig, token);
 		g_free (sig);
 		return retval;
 	} else
@@ -2002,16 +2041,16 @@ get_method (MonoImage *m, guint32 token, MonoGenericContainer *container)
 char *
 get_methoddef (MonoImage *m, guint32 idx)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	guint32 cols [MONO_METHOD_SIZE];
 	char *sig;
 	const char *name;
 
 	MonoMethod *mh;
 
-	mh = mono_get_method_checked (m, MONO_TOKEN_METHOD_DEF | idx, NULL, NULL, &error);
+	mh = mono_get_method_checked (m, MONO_TOKEN_METHOD_DEF | idx, NULL, NULL, error);
 	if (mh) {
-		sig = dis_stringify_type (m, &mh->klass->byval_arg, FALSE);
+		sig = dis_stringify_type (m, m_class_get_byval_arg (mh->klass), FALSE);
 		name = g_strdup_printf ("%s%s%s", 
 				sig ? sig : "",
 				sig ? "::" : "",
@@ -2019,7 +2058,7 @@ get_methoddef (MonoImage *m, guint32 idx)
 		g_free (sig);
 	} else {
 		name = g_strdup_printf ("!bad-method-name!");
-		mono_error_cleanup (&error);
+		mono_error_cleanup (error);
 	}
     mono_metadata_decode_row (&m->tables [MONO_TABLE_METHOD], 
                     idx - 1, cols, MONO_METHOD_SIZE);
@@ -2068,7 +2107,7 @@ get_method_type_param (MonoImage *m, guint32 blob_signature, MonoGenericContaine
 char *
 get_methodspec (MonoImage *m, int idx, guint32 token, const char *fancy_name, MonoGenericContainer *type_container)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	GString *res = g_string_new ("");
 	guint32 member_cols [MONO_MEMBERREF_SIZE], method_cols [MONO_METHOD_SIZE];
         char *s, *type_param;
@@ -2098,10 +2137,10 @@ get_methodspec (MonoImage *m, int idx, guint32 token, const char *fancy_name, Mo
 	ptr = mono_metadata_blob_heap (m, sig);
 	mono_metadata_decode_value (ptr, &ptr);
 	
-	mh = mono_get_method_checked (m, method_dor_to_token (token), NULL, (MonoGenericContext *) type_container, &error);
+	mh = mono_get_method_checked (m, method_dor_to_token (token), NULL, (MonoGenericContext *) type_container, error);
 	if (!mh) {
-		g_string_append_printf (res, "Could not decode method token 0x%x due to %s", token, mono_error_get_message (&error));
-		mono_error_cleanup (&error);
+		g_string_append_printf (res, "Could not decode method token 0x%x due to %s", token, mono_error_get_message (error));
+		mono_error_cleanup (error);
 		return g_string_free (res, FALSE);
 	}
 
@@ -2466,8 +2505,7 @@ get_token_type (MonoImage *m, guint32 token, MonoGenericContainer *container)
 
 	}
 	
-	if (temp)
-		g_free (temp);
+	g_free (temp);
 
 	return s;
 }
@@ -3104,11 +3142,11 @@ get_method_override (MonoImage *m, guint32 token, MonoGenericContainer *containe
 		decl = method_dor_to_token (cols [MONO_METHODIMPL_DECLARATION]);
 
 		if (token == impl) {
-			MonoError error;
+			ERROR_DECL (error);
 			MonoMethod *mh = NULL;
-			mh = mono_get_method_checked (m, decl, NULL, (MonoGenericContext *) container, &error);
+			mh = mono_get_method_checked (m, decl, NULL, (MonoGenericContext *) container, error);
 
-			if (mh && (mh->klass && (mh->klass->generic_class || mh->klass->generic_container))) {
+			if (mh && (mh->klass && (mono_class_is_ginst (mh->klass) || mono_class_is_gtd (mh->klass)))) {
 				char *meth_str;
 				char *ret;
 				
@@ -3117,12 +3155,16 @@ get_method_override (MonoImage *m, guint32 token, MonoGenericContainer *containe
 				g_free (meth_str);
 				return ret;
 			} else {
-				char *meth_str = get_method_core (m, decl, FALSE, container);
-				char *ret = g_strdup_printf ("Could not decode method override %s due to %s", meth_str, mono_error_get_message (&error));
+				if (!mono_error_ok (error)) {
+					char *meth_str = get_method_core (m, decl, FALSE, container);
+					char *ret = g_strdup_printf ("Could not decode method override %s due to %s", meth_str, mono_error_get_message (error));
 
-				mono_error_cleanup (&error);
-				g_free (meth_str);
-				return ret;
+					mono_error_cleanup (error);
+					g_free (meth_str);
+					return ret;
+				} else {
+					return get_method_core (m, decl, FALSE, container);
+				}
 			}
 		}
 	}

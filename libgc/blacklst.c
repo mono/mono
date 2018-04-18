@@ -21,7 +21,7 @@
  * See the definition of page_hash_table in gc_private.h.
  * False hits from the stack(s) are much more dangerous than false hits
  * from elsewhere, since the former can pin a large object that spans the
- * block, eventhough it does not start on the dangerous block.
+ * block, even though it does not start on the dangerous block.
  */
  
 /*

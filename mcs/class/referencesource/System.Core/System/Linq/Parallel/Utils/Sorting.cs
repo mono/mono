@@ -7,7 +7,7 @@
 //
 // Sorting.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Support for sorting.
 //
@@ -70,11 +70,15 @@ namespace System.Linq.Parallel
             Contract.Assert(sharedkeys != null);
             Contract.Assert(sharedValues != null);
             Contract.Assert(sharedBarriers != null);
+#if !MONO
             Contract.Assert(groupState.CancellationState.MergedCancellationToken != null);
+#endif
             Contract.Assert(sharedIndices.Length <= sharedkeys.Length);
             Contract.Assert(sharedIndices.Length == sharedValues.Length);
             Contract.Assert(sharedIndices.Length == sharedBarriers.GetLength(1));
+#if !MONO            
             Contract.Assert(groupState.CancellationState.MergedCancellationToken != null);
+#endif
 
             m_source = source;
             m_partitionCount = partitionCount;

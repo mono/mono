@@ -7,7 +7,7 @@
 **
 ** Interface:  KeyValuePair
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Generic key-value pair for dictionary enumerators.

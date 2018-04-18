@@ -501,7 +501,7 @@ namespace System.Data.Linq.Mapping {
         /// </summary>
         /// <param name="instance">The instance to set the value into.</param>
         /// <param name="value">The value to set.</param>
-        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification="[....]: Needs to handle classes and structs.")]
+        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification="Microsoft: Needs to handle classes and structs.")]
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", Justification="Unknown reason.")]
         public abstract void SetBoxedValue(ref object instance, object value);
         /// <summary>

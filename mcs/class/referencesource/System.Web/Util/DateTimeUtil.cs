@@ -8,9 +8,17 @@ namespace System.Web.Util {
 
     using System;
 
+    internal enum TimeUnit {
+        Unknown         = 0,
+        Days,
+        Hours,
+        Minutes,
+        Seconds,
+        Milliseconds
+    };
+
     internal sealed class DateTimeUtil {
         private DateTimeUtil() {}
-
         const long FileTimeOffset = 504911232000000000;
         static readonly DateTime    MinValuePlusOneDay = DateTime.MinValue.AddDays(1);
         static readonly DateTime    MaxValueMinusOneDay = DateTime.MaxValue.AddDays(-1);
@@ -45,6 +53,26 @@ namespace System.Web.Util {
             }
 
             return utcTime.ToLocalTime();
+        }
+
+        static internal TimeSpan GetTimeoutFromTimeUnit(int timeoutValue, TimeUnit timeoutUnit) {
+            switch (timeoutUnit) {
+                case TimeUnit.Days:
+                    return new TimeSpan(timeoutValue, 0, 0, 0);
+                case TimeUnit.Hours:
+                    return new TimeSpan(timeoutValue, 0, 0);
+                case TimeUnit.Seconds:
+                    return new TimeSpan(0, 0, timeoutValue);
+                case TimeUnit.Milliseconds:
+                    return new TimeSpan(0, 0, 0, 0, timeoutValue);
+                case TimeUnit.Minutes:
+                    return new TimeSpan(0, timeoutValue, 0);
+                case TimeUnit.Unknown:
+                default:
+                    break;
+            }
+
+            throw new ArgumentException(SR.GetString(SR.InvalidArgumentValue, "timeoutUnit"));
         }
     }
 }

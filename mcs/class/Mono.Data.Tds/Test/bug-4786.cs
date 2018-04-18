@@ -45,19 +45,18 @@ namespace MonoTests.Mono.Data.Tds
     public void CheckNullException() 
     {
 
+    TcpListener Listener = null;
+
 	//set up dummy sql listener, if there is a real sql server on this
 	//machine at that port, in theory this part will fail, but that's ok
 	//becuase something will be listening on the port and that's all we
 	//require at this point: a listener on port 1433...
 
 	try{
-		Socket Listener = new Socket(AddressFamily.InterNetwork, 
-                                         SocketType.Stream,
-                                         ProtocolType.Tcp);
 		IPAddress hostIP =Dns.GetHostEntry("localhost").AddressList[0];
-        	IPEndPoint ep = new IPEndPoint(hostIP, 1433);
-		Listener.Bind(ep); 
-        	Listener.Listen(1);
+        IPEndPoint ep = new IPEndPoint(hostIP, 1433);
+        Listener = new TcpListener (ep);
+        Listener.Start ();
 	} catch (Exception){
 		//ignore
 	}
@@ -103,6 +102,7 @@ namespace MonoTests.Mono.Data.Tds
 
 	pool.ReleaseConnection(tds);
 
+	Listener.Stop ();
 	//exit
     }
   }

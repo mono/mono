@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 //
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -55,11 +55,11 @@ namespace System.Security.Policy {
         private IList<StrongName> m_fullTrustAssemblies;
 
         // Permission special flags for the default grant set in this ApplicationTrust.  This should be
-        // updated in [....] with any updates to the default grant set.
+        // updated in sync with any updates to the default grant set.
         // 
         // In the general case, these values cannot be trusted - we only store a reference to the
         // DefaultGrantSet, and return the reference directly, which means that code can update the
-        // permission set without our knowledge.  That would lead to the flags getting out of [....] with the
+        // permission set without our knowledge.  That would lead to the flags getting out of sync with the
         // grant set.
         // 
         // However, we only care about these flags when we're creating a homogenous AppDomain, and in that

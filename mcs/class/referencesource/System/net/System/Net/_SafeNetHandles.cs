@@ -2121,6 +2121,127 @@ namespace System.Net {
 
             return errorCode;
         }
+
+        internal unsafe static int ApplyControlToken(
+            SecurDll dll,
+            ref SafeDeleteContext refContext,
+            SecurityBuffer[] inSecBuffers)
+        {
+            GlobalLog.Enter("SafeDeleteContext::ApplyControlToken");
+            GlobalLog.Print("    DLL              = " + dll);
+            GlobalLog.Print("    refContext       = " + ValidationHelper.ToString(refContext));
+#if TRAVE
+            GlobalLog.Print("    inSecBuffers[]   = length:" + inSecBuffers.Length);
+//            for (int index=0; index<inSecBuffers.Length; index++) { GlobalLog.Print("    inSecBuffers[" + index + "]   = " + SecurityBuffer.ToString(inSecBuffers[index])); }
+#endif
+            GlobalLog.Assert(inSecBuffers != null, "SafeDeleteContext::ApplyControlToken()|inSecBuffers == null");
+            SecurityBufferDescriptor inSecurityBufferDescriptor = new SecurityBufferDescriptor(inSecBuffers.Length);
+
+            int errorCode = (int)SecurityStatus.InvalidHandle;
+
+            // these are pinned user byte arrays passed along with SecurityBuffers
+            GCHandle[] pinnedInBytes = null;
+
+            SecurityBufferStruct[] inUnmanagedBuffer = new SecurityBufferStruct[inSecurityBufferDescriptor.Count];
+            fixed (void* inUnmanagedBufferPtr = inUnmanagedBuffer)
+            {
+                // Fix Descriptor pointer that points to unmanaged SecurityBuffers
+                inSecurityBufferDescriptor.UnmanagedPointer = inUnmanagedBufferPtr;
+                pinnedInBytes = new GCHandle[inSecurityBufferDescriptor.Count];
+                SecurityBuffer securityBuffer;
+                for (int index = 0; index < inSecurityBufferDescriptor.Count; ++index)
+                {
+                    securityBuffer = inSecBuffers[index];
+                    if (securityBuffer != null)
+                    {
+                        inUnmanagedBuffer[index].count = securityBuffer.size;
+                        inUnmanagedBuffer[index].type = securityBuffer.type;
+
+                        // use the unmanaged token if it's not null; otherwise use the managed buffer
+                        if (securityBuffer.unmanagedToken != null)
+                        {
+                            inUnmanagedBuffer[index].token = securityBuffer.unmanagedToken.DangerousGetHandle();
+                        }
+                        else if (securityBuffer.token == null || securityBuffer.token.Length == 0)
+                        {
+                            inUnmanagedBuffer[index].token = IntPtr.Zero;
+                        }
+                        else
+                        {
+                            pinnedInBytes[index] = GCHandle.Alloc(securityBuffer.token, GCHandleType.Pinned);
+                            inUnmanagedBuffer[index].token = Marshal.UnsafeAddrOfPinnedArrayElement(securityBuffer.token, securityBuffer.offset);
+                        }
+#if TRAVE
+                        GlobalLog.Print("SecBuffer: cbBuffer:" + securityBuffer.size +  " BufferType:" + securityBuffer.type);
+//                        securityBuffer.DebugDump();
+#endif
+                    }
+                }
+
+                SSPIHandle contextHandle = new SSPIHandle();
+                if (refContext != null)
+                {
+                    contextHandle = refContext._handle;
+                }
+                try
+                {
+                    if (dll == SecurDll.SECURITY)
+                    {
+                        if (refContext == null || refContext.IsInvalid)
+                        {
+                            refContext = new SafeDeleteContext_SECURITY();
+                        }
+
+                        bool b = false;
+                        RuntimeHelpers.PrepareConstrainedRegions();
+                        try
+                        {
+                            refContext.DangerousAddRef(ref b);
+                        }
+                        catch (Exception e)
+                        {
+                            if (b)
+                            {
+                                refContext.DangerousRelease();
+                                b = false;
+                            }
+                            if (!(e is ObjectDisposedException))
+                                throw;
+                        }
+                        finally
+                        {
+                            if (b)
+                            {
+                                errorCode = UnsafeNclNativeMethods.SafeNetHandles_SECURITY.ApplyControlToken(contextHandle.IsZero ? null : &contextHandle, inSecurityBufferDescriptor);
+                                refContext.DangerousRelease();
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        throw new ArgumentException(SR.GetString(SR.net_invalid_enum, "SecurDll"), "Dll");
+                    }
+                }
+                finally
+                {
+                    if (pinnedInBytes != null)
+                    {
+                        for (int index = 0; index < pinnedInBytes.Length; index++)
+                        {
+                            if (pinnedInBytes[index].IsAllocated)
+                            {
+                                pinnedInBytes[index].Free();
+                            }
+                        }
+                    }
+                }
+            }
+
+            GlobalLog.Leave("SafeDeleteContext::ApplyControlToken() unmanaged ApplyControlToken()", "errorCode:0x" + errorCode.ToString("x8") + " refContext:" + ValidationHelper.ToString(refContext));
+
+            return errorCode;
+        }
     }
 
 //======================================================================

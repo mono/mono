@@ -2,7 +2,7 @@
 // <copyright file="SchemaImporterExtensionElement.cs" company="Microsoft Corporation">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>                                                                
+// <owner current="true" primary="true">Microsoft</owner>                                                                
 //------------------------------------------------------------------------------
 #if CONFIGURATION_DEP
 namespace System.Xml.Serialization.Configuration

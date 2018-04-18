@@ -1,5 +1,6 @@
-/*
- * debug-mini.c: Mini-specific debugging stuff.
+/**
+ * \file
+ * Mini-specific debugging stuff.
  *
  * Author:
  *   Martin Baulig (martin@ximian.com)
@@ -8,6 +9,7 @@
  */
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "jit.h"
 #include "config.h"
 #include <mono/metadata/verify.h>
@@ -16,7 +18,7 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/threads-types.h>
 
-#include <mono/metadata/mono-debug-debugger.h>
+#include <mono/metadata/debug-internals.h>
 
 #include <mono/utils/valgrind.h>
 
@@ -120,7 +122,7 @@ static void
 mono_debug_add_vg_method (MonoMethod *method, MonoDebugMethodJitInfo *jit)
 {
 #ifdef VALGRIND_ADD_LINE_INFO
-	MonoError error;
+	ERROR_DECL (error);
 	MonoMethodHeader *header;
 	MonoDebugMethodInfo *minfo;
 	int i;
@@ -133,8 +135,8 @@ mono_debug_add_vg_method (MonoMethod *method, MonoDebugMethodJitInfo *jit)
 	if (!RUNNING_ON_VALGRIND)
 		return;
 
-	header = mono_method_get_header_checked (method, &error);
-	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+	header = mono_method_get_header_checked (method, error);
+	mono_error_assert_ok (error); /* FIXME don't swallow the error */
 
 	full_name = mono_method_full_name (method, TRUE);
 
@@ -152,7 +154,7 @@ mono_debug_add_vg_method (MonoMethod *method, MonoDebugMethodJitInfo *jit)
 		for (i = 0; i < header->code_size; ++i) {
 			MonoDebugSourceLocation *location;
 
-			location = mono_debug_symfile_lookup_location (minfo, i);
+			location = mono_debug_method_lookup_location (minfo, i);
 			if (!location)
 				continue;
 
@@ -240,7 +242,7 @@ mono_debug_close_method (MonoCompile *cfg)
 	jit->code_start = cfg->native_code;
 	jit->epilogue_begin = cfg->epilog_begin;
 	jit->code_size = cfg->code_len;
-	jit->has_var_info = debug_options.mdb_optimizations != 0;
+	jit->has_var_info = mini_debug_options.mdb_optimizations || MONO_CFG_PROFILE_CALL_CONTEXT (cfg);
 
 	if (jit->epilogue_begin)
 		   record_line_number (info, jit->epilogue_begin, header->code_size);
@@ -529,15 +531,15 @@ deserialize_variable (MonoDebugVarInfo *var, guint8 *p, guint8 **endbuf)
 static MonoDebugMethodJitInfo *
 deserialize_debug_info (MonoMethod *method, guint8 *code_start, guint8 *buf, guint32 buf_len)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoMethodHeader *header;
 	gint32 offset, native_offset, prev_offset, prev_native_offset;
 	MonoDebugMethodJitInfo *jit;
 	guint8 *p;
 	int i;
 
-	header = mono_method_get_header_checked (method, &error);
-	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+	header = mono_method_get_header_checked (method, error);
+	mono_error_assert_ok (error); /* FIXME don't swallow the error */
 
 	jit = g_new0 (MonoDebugMethodJitInfo, 1);
 	jit->code_start = code_start;
@@ -652,18 +654,18 @@ print_var_info (MonoDebugVarInfo *info, int idx, const char *name, const char *t
  * mono_debug_print_locals:
  *
  * Prints to stdout the information about the local variables in
- * a method (if @only_arguments is false) or about the arguments.
+ * a method (if \p only_arguments is false) or about the arguments.
  * The information includes the storage info (where the variable 
  * lives, in a register or in memory).
  * The method is found by looking up what method has been emitted at
- * the instruction address @ip.
+ * the instruction address \p ip.
  * This is for use inside a debugger.
  */
 void
 mono_debug_print_vars (gpointer ip, gboolean only_arguments)
 {
 	MonoDomain *domain = mono_domain_get ();
-	MonoJitInfo *ji = mono_jit_info_table_find (domain, (char *)ip);
+	MonoJitInfo *ji = mono_jit_info_table_find (domain, ip);
 	MonoDebugMethodJitInfo *jit;
 	int i;
 

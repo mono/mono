@@ -580,7 +580,7 @@ namespace System.Runtime.Serialization
         internal bool RequiresMemberAccessForWrite(SecurityException securityException)
         {
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             EnsureMethodsImported();
 
             if (!IsTypeVisible(UnderlyingType))

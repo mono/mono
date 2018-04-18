@@ -7,7 +7,7 @@
 //
 // ParallelState.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A non-generic and generic parallel state class, used by the Parallel helper class
 // for parallel loop management.
@@ -412,7 +412,9 @@ namespace System.Threading.Tasks
     /// </summary>
     internal class ParallelLoopStateFlags
     {
+#pragma warning disable 649        
         internal static int PLS_NONE;
+#pragma warning restore
         internal static int PLS_EXCEPTIONAL = 1;
         internal static int PLS_BROKEN = 2;
         internal static int PLS_STOPPED = 4;
@@ -439,7 +441,9 @@ namespace System.Threading.Tasks
             {
                 oldState = m_LoopStateFlags;
                 if ((oldState & illegalStates) != 0) return false;
+#pragma warning disable 420
                 if (Interlocked.CompareExchange(ref m_LoopStateFlags, oldState | newState, oldState) == oldState)
+#pragma warning restore
                 {
                     return true;
                 }

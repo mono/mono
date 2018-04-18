@@ -51,14 +51,14 @@ namespace MonoTests.System.Xml
 		public void CreateEvidenceForUrl_Basic ()
 		{
 			Evidence e = XmlSecureResolver.CreateEvidenceForUrl (null);
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 			Assert.AreEqual (0, e.Count, "null");
 #else
 			Assert.IsNull (e);
 #endif
 
 			e = XmlSecureResolver.CreateEvidenceForUrl (String.Empty);
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 			Assert.AreEqual (0, e.Count, "String.Empty");
 #else
 			Assert.IsNull (e);
@@ -71,7 +71,9 @@ namespace MonoTests.System.Xml
 		{
 			// "normal" path
 			Evidence e = XmlSecureResolver.CreateEvidenceForUrl (Assembly.GetExecutingAssembly ().Location);
+#pragma warning disable 612
 			Assert.AreEqual (2, e.Count, "Assembly.GetExecutingAssembly ().Location");
+#pragma warning restore
 			bool url = false;
 			bool zone = false;
 			IEnumerator en = e.GetHostEnumerator ();
@@ -86,7 +88,9 @@ namespace MonoTests.System.Xml
 
 			// file://
 			e = XmlSecureResolver.CreateEvidenceForUrl (Assembly.GetExecutingAssembly ().CodeBase);
+#pragma warning disable 612
 			Assert.AreEqual (2, e.Count, "Assembly.GetExecutingAssembly ().CodeBase");
+#pragma warning restore
 			url = false;
 			zone = false;
 			en = e.GetHostEnumerator ();
@@ -106,7 +110,9 @@ namespace MonoTests.System.Xml
 		{
 			// http://
 			Evidence e = XmlSecureResolver.CreateEvidenceForUrl ("http://www.go-mono.com");
+#pragma warning disable 612
 			Assert.AreEqual (3, e.Count, "http://www.go-mono.com");
+#pragma warning restore
 			bool url = false;
 			bool zone = false;
 			bool site = false;
@@ -124,7 +130,6 @@ namespace MonoTests.System.Xml
 			Assert.IsTrue (site, "Site-2");
 		}
 
-#if NET_4_5
 		[Test]
 		[Category("Async")]
 		public void TestAsync ()
@@ -137,9 +142,8 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("file", resolved.Scheme);
 			var task = sr.GetEntityAsync (resolved, null, typeof (Stream));
 			Assert.That (task.Wait (3000));
-			Assert.IsInstanceOfType (typeof (Stream), task.Result);
+			Assert.IsTrue (task.Result is FileStream, "Unexpected type: " + task.Result.GetType());
 		}
-#endif
 
 	}
 }

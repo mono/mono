@@ -34,25 +34,16 @@ using System.Security;
 
 namespace Microsoft.Win32.SafeHandles
 {
-	public sealed class SafeX509ChainHandle : SafeHandle
+	public sealed class SafeX509ChainHandle : SafeHandleZeroOrMinusOneIsInvalid
 	{
-		[MonoTODO]
-		public override bool IsInvalid
-		{
-			get
-			{
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		internal SafeX509ChainHandle() : base ((IntPtr)0, false)
+		internal SafeX509ChainHandle (IntPtr handle)
+			: base (true)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected override bool ReleaseHandle()
+		protected override bool ReleaseHandle ()
 		{
 			throw new NotImplementedException ();
 		}

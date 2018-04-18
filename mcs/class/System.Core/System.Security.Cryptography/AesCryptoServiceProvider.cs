@@ -51,18 +51,18 @@ namespace System.Security.Cryptography {
 			KeyValue = KeyBuilder.Key (KeySizeValue >> 3);
 		}
 		
-		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) 
+		public override ICryptoTransform CreateDecryptor (byte[] key, byte[] iv) 
 		{
 			if ((Mode == CipherMode.CFB) && (FeedbackSize > 64))
 				throw new CryptographicException ("CFB with Feedbaack > 64 bits");
-			return new AesTransform (this, false, rgbKey, rgbIV);
+			return new AesTransform (this, false, key, iv);
 		}
 		
-		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) 
+		public override ICryptoTransform CreateEncryptor (byte[] key, byte[] iv) 
 		{
 			if ((Mode == CipherMode.CFB) && (FeedbackSize > 64))
 				throw new CryptographicException ("CFB with Feedbaack > 64 bits");
-			return new AesTransform (this, true, rgbKey, rgbIV);
+			return new AesTransform (this, true, key, iv);
 		}
 
 		// I suppose some attributes differs ?!? because this does not look required

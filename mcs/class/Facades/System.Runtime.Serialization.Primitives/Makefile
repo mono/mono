@@ -9,10 +9,12 @@ LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)/Facades
 
 LIBRARY = System.Runtime.Serialization.Primitives.dll
 
-KEY_FILE = ../../msfinal.pub
-SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
+KEYFILE = ../../msfinal.pub
+SIGN_FLAGS = /delaysign /nowarn:1616,1699
 LIB_REFS = System.Runtime.Serialization
 LIB_MCS_FLAGS = $(SIGN_FLAGS) 
+
+PLATFORM_DEBUG_FLAGS =
 
 NO_TEST = yes
 

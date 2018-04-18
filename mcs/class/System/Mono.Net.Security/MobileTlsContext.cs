@@ -35,6 +35,7 @@ namespace Mono.Net.Security
 		MobileAuthenticatedStream parent;
 		bool serverMode;
 		string targetHost;
+		string serverName;
 		SslProtocols enabledProtocols;
 		X509Certificate serverCertificate;
 		X509CertificateCollection clientCertificates;
@@ -54,7 +55,14 @@ namespace Mono.Net.Security
 			this.clientCertificates = clientCertificates;
 			this.askForClientCert = askForClientCert;
 
-			certificateValidator = CertificateValidationHelper.GetDefaultValidator (
+			serverName = targetHost;
+			if (!string.IsNullOrEmpty (serverName)) {
+				var pos = serverName.IndexOf (':');
+				if (pos > 0)
+					serverName = serverName.Substring (0, pos);
+			}
+
+			certificateValidator = CertificateValidationHelper.GetInternalValidator (
 				parent.Settings, parent.Provider);
 		}
 
@@ -70,10 +78,10 @@ namespace Mono.Net.Security
 			get { return parent.Provider; }
 		}
 
-		[SD.Conditional ("MARTIN_DEBUG")]
+		[SD.Conditional ("MONO_TLS_DEBUG")]
 		protected void Debug (string message, params object[] args)
 		{
-			Console.Error.WriteLine ("{0}: {1}", GetType ().Name, string.Format (message, args));
+			parent.Debug ("{0}: {1}", GetType ().Name, string.Format (message, args));
 		}
 
 		public abstract bool HasContext {
@@ -90,6 +98,10 @@ namespace Mono.Net.Security
 
 		protected string TargetHost {
 			get { return targetHost; }
+		}
+
+		protected string ServerName {
+			get { return serverName; }
 		}
 
 		protected bool AskForClientCertificate {
@@ -153,36 +165,41 @@ namespace Mono.Net.Security
 
 		public abstract void Flush ();
 
-		public abstract int Read (byte[] buffer, int offset, int count, out bool wantMore);
+		public abstract (int ret, bool wantMore) Read (byte[] buffer, int offset, int count);
 
-		public abstract int Write (byte[] buffer, int offset, int count, out bool wantMore);
+		public abstract (int ret, bool wantMore) Write (byte[] buffer, int offset, int count);
 
-		public abstract void Close ();
+		public abstract void Shutdown ();
 
-		protected ValidationResult ValidateCertificate (X509Certificate leaf, X509Chain chain)
+		protected bool ValidateCertificate (X509Certificate leaf, X509Chain chain)
 		{
-			return certificateValidator.ValidateCertificate (
-				targetHost, serverMode, leaf, chain);
+			var result = certificateValidator.ValidateCertificate (TargetHost, IsServer, leaf, chain);
+			return result != null && result.Trusted && !result.UserDenied;
 		}
 
-		protected X509Certificate SelectClientCertificate (string[] acceptableIssuers)
-                {
-                        X509Certificate certificate;
-                        var selected = certificateValidator.SelectClientCertificate (
-				targetHost, clientCertificates, serverCertificate,
-				null, out certificate);
-                        if (selected)
-                                return certificate;
+		protected bool ValidateCertificate (X509CertificateCollection certificates)
+		{
+			var result = certificateValidator.ValidateCertificate (TargetHost, IsServer, certificates);
+			return result != null && result.Trusted && !result.UserDenied;
+		}
 
-                        if (clientCertificates == null || clientCertificates.Count == 0)
-                                return null;
+		protected X509Certificate SelectClientCertificate (X509Certificate serverCertificate, string[] acceptableIssuers)
+		{
+			X509Certificate certificate;
+			var selected = certificateValidator.SelectClientCertificate (
+				TargetHost, ClientCertificates, serverCertificate, acceptableIssuers, out certificate);
+			if (selected)
+				return certificate;
 
-                        if (clientCertificates.Count == 1)
-                                return clientCertificates [0];
+			if (clientCertificates == null || clientCertificates.Count == 0)
+				return null;
 
-                        // FIXME: select one.
-                        throw new NotImplementedException ();
-                }
+			if (clientCertificates.Count == 1)
+				return clientCertificates [0];
+
+			// FIXME: select onne.
+			throw new NotImplementedException ();
+		}
 
 		public void Dispose ()
 		{

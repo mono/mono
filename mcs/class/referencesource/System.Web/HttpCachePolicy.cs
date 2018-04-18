@@ -573,7 +573,9 @@ namespace System.Web {
 
             int i, n;
             string[] fields;
-           
+
+            _utcTimestampRequest = utcTimestampRequest;
+
             _varyByContentEncodings.SetContentEncodings(settings.VaryByContentEncodings);
             _varyByHeaders.SetHeaders(settings.VaryByHeaders);                          
             _varyByParams.SetParams(settings.VaryByParams);
@@ -1155,7 +1157,7 @@ namespace System.Web {
 
         internal bool   IsKernelCacheable(HttpRequest request, bool enableKernelCacheForVaryByStar) {
             return  _cacheability == HttpCacheability.Public
-                && !_hasUserProvidedDependencies // Consider ([....]): rework dependency model to support user-provided dependencies
+                && !_hasUserProvidedDependencies // Consider (Microsoft): rework dependency model to support user-provided dependencies
                 && !_hasSetCookieHeader
                 && !_noServerCaching
                 && HasExpirationPolicy()

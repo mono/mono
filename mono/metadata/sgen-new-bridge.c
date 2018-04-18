@@ -1,5 +1,6 @@
-/*
- * sgen-bridge.c: Simple generational GC.
+/**
+ * \file
+ * Simple generational GC.
  *
  * Copyright 2011 Novell, Inc (http://www.novell.com)
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
@@ -11,7 +12,7 @@
 
 #include "config.h"
 
-#ifdef HAVE_SGEN_GC
+#if defined (HAVE_SGEN_GC) && !defined (DISABLE_SGEN_GC_BRIDGE)
 
 #include <stdlib.h>
 #include <errno.h>
@@ -101,6 +102,8 @@ typedef struct _SCC {
 #endif
 } SCC;
 
+static char *dump_prefix = NULL;
+
 // Maps managed objects to corresponding HashEntry stricts
 static SgenHashTable hash_table = SGEN_HASH_TABLE_INIT (INTERNAL_MEM_BRIDGE_HASH_TABLE, INTERNAL_MEM_BRIDGE_HASH_TABLE_ENTRY, sizeof (HashEntry), mono_aligned_addr_hash, NULL);
 
@@ -161,36 +164,41 @@ dyn_array_int_contains (DynIntArray *da, int x)
 #endif
 
 static void
-enable_accounting (void)
+set_config (const SgenBridgeProcessorConfig *config)
 {
-	SgenHashTable table = SGEN_HASH_TABLE_INIT (INTERNAL_MEM_BRIDGE_HASH_TABLE, INTERNAL_MEM_BRIDGE_HASH_TABLE_ENTRY, sizeof (HashEntryWithAccounting), mono_aligned_addr_hash, NULL);
-	bridge_accounting_enabled = TRUE;
-	hash_table = table;
+	if (config->accounting) {
+		SgenHashTable table = SGEN_HASH_TABLE_INIT (INTERNAL_MEM_BRIDGE_HASH_TABLE, INTERNAL_MEM_BRIDGE_HASH_TABLE_ENTRY, sizeof (HashEntryWithAccounting), mono_aligned_addr_hash, NULL);
+		bridge_accounting_enabled = TRUE;
+		hash_table = table;
+	}
+	if (config->dump_prefix) {
+		dump_prefix = strdup (config->dump_prefix);
+	}
 }
 
 static MonoGCBridgeObjectKind
 class_kind (MonoClass *klass)
 {
-	MonoGCBridgeObjectKind res = bridge_callbacks.bridge_class_kind (klass);
+	MonoGCBridgeObjectKind res = mono_bridge_callbacks.bridge_class_kind (klass);
 
 	/* If it's a bridge, nothing we can do about it. */
 	if (res == GC_BRIDGE_TRANSPARENT_BRIDGE_CLASS || res == GC_BRIDGE_OPAQUE_BRIDGE_CLASS)
 		return res;
 
 	/* Non bridge classes with no pointers will never point to a bridge, so we can savely ignore them. */
-	if (!klass->has_references) {
-		SGEN_LOG (6, "class %s is opaque\n", klass->name);
+	if (!m_class_has_references (klass)) {
+		SGEN_LOG (6, "class %s is opaque\n", m_class_get_name (klass));
 		return GC_BRIDGE_OPAQUE_CLASS;
 	}
 
 	/* Some arrays can be ignored */
-	if (klass->rank == 1) {
-		MonoClass *elem_class = klass->element_class;
+	if (m_class_get_rank (klass) == 1) {
+		MonoClass *elem_class = m_class_get_element_class (klass);
 
 		/* FIXME the bridge check can be quite expensive, cache it at the class level. */
 		/* An array of a sealed type that is not a bridge will never get to a bridge */
-		if ((elem_class->flags & TYPE_ATTRIBUTE_SEALED) && !elem_class->has_references && !bridge_callbacks.bridge_class_kind (elem_class)) {
-			SGEN_LOG (6, "class %s is opaque\n", klass->name);
+		if ((mono_class_get_flags (elem_class) & TYPE_ATTRIBUTE_SEALED) && !m_class_has_references (elem_class) && !mono_bridge_callbacks.bridge_class_kind (elem_class)) {
+			SGEN_LOG (6, "class %s is opaque\n", m_class_get_name (klass));
 			return GC_BRIDGE_OPAQUE_CLASS;
 		}
 	}
@@ -273,7 +281,7 @@ static gboolean
 is_opaque_object (MonoObject *obj)
 {
 	if ((obj->vtable->gc_bits & SGEN_GC_BIT_BRIDGE_OPAQUE_OBJECT) == SGEN_GC_BIT_BRIDGE_OPAQUE_OBJECT) {
-		SGEN_LOG (6, "ignoring %s\n", obj->vtable->klass->name);
+		SGEN_LOG (6, "ignoring %s\n", m_class_get_name (mono_object_class (obj)));
 		++ignored_objects;
 		return TRUE;
 	}
@@ -604,8 +612,6 @@ reset_flags (SCC *scc)
 }
 #endif
 
-static char *dump_prefix = NULL;
-
 static void
 dump_graph (void)
 {
@@ -638,7 +644,7 @@ dump_graph (void)
 	SGEN_HASH_TABLE_FOREACH (&hash_table, MonoObject *, obj, HashEntry *, entry) {
 		MonoVTable *vt = SGEN_LOAD_VTABLE (obj);
 		fprintf (file, "<node id=\"%p\"><attvalues><attvalue for=\"0\" value=\"%s.%s\"/><attvalue for=\"1\" value=\"%s\"/></attvalues></node>\n",
-				obj, vt->klass->name_space, vt->klass->name, entry->is_bridge ? "true" : "false");
+			 obj, m_class_get_name_space (vt->klass), m_class_get_name (vt->klass), entry->is_bridge ? "true" : "false");
 	} SGEN_HASH_TABLE_FOREACH_END;
 	fprintf (file, "</nodes>\n");
 
@@ -655,12 +661,6 @@ dump_graph (void)
 	fprintf (file, "</graph></gexf>\n");
 
 	fclose (file);
-}
-
-static void
-set_dump_prefix (const char *prefix)
-{
-	dump_prefix = strdup (prefix);
 }
 
 static int
@@ -764,7 +764,7 @@ processing_build_callback_data (int generation)
 	if (!dyn_array_ptr_size (&registered_bridges))
 		return;
 
-	g_assert (bridge_processing_in_progress);
+	g_assert (mono_bridge_processing_in_progress);
 
 	SGEN_TV_GETTIME (atv);
 
@@ -906,7 +906,7 @@ processing_build_callback_data (int generation)
 			if (entry->entry.is_bridge) {
 				MonoObject *obj = sgen_hash_table_key_for_value_pointer (entry);
 				MonoClass *klass = SGEN_LOAD_VTABLE (obj)->klass;
-				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "OBJECT %s::%s (%p) weight %f", klass->name_space, klass->name, obj, entry->weight);
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "OBJECT %s::%s (%p) weight %f", m_class_get_name_space (klass), m_class_get_name (klass), obj, entry->weight);
 			}
 		}
 	}
@@ -1031,7 +1031,7 @@ processing_after_callback (int generation)
 			for (j = 0; j < api_sccs [i]->num_objs; ++j) {
 				GCVTable vtable = SGEN_LOAD_VTABLE (api_sccs [i]->objs [j]);
 				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC,
-					"OBJECT %s (%p) SCC [%d] %s",
+					"OBJECT %s.%s (%p) SCC [%d] %s",
 						sgen_client_vtable_get_namespace (vtable), sgen_client_vtable_get_name (vtable), api_sccs [i]->objs [j],
 						i,
 						api_sccs [i]->is_alive  ? "ALIVE" : "DEAD");
@@ -1087,8 +1087,7 @@ sgen_new_bridge_init (SgenBridgeProcessor *collector)
 	collector->class_kind = class_kind;
 	collector->register_finalized_object = register_finalized_object;
 	collector->describe_pointer = describe_pointer;
-	collector->enable_accounting = enable_accounting;
-	collector->set_dump_prefix = set_dump_prefix;
+	collector->set_config = set_config;
 
 	bridge_processor = collector;
 }

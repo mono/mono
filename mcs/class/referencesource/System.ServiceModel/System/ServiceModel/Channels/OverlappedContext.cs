@@ -109,7 +109,7 @@ namespace System.ServiceModel.Channels
             }
             if (this.syncOperationPending)
             {
-                throw Fx.AssertAndThrow("OverlappedContext.Free called while [....] operation is pending.");
+                throw Fx.AssertAndThrow("OverlappedContext.Free called while sync operation is pending.");
             }
             if (this.nativeOverlapped == null)
             {
@@ -172,7 +172,7 @@ namespace System.ServiceModel.Channels
             }
             if (this.syncOperationPending)
             {
-                throw Fx.AssertAndThrow("StartAsyncOperation called while a [....] operation was already pending.");
+                throw Fx.AssertAndThrow("StartAsyncOperation called while a sync operation was already pending.");
             }
             if (this.nativeOverlapped == null)
             {
@@ -249,7 +249,7 @@ namespace System.ServiceModel.Channels
 
             this.overlapped.EventHandleIntPtr = EventHandle;
 
-            // [....] operations do NOT root this object.  If it gets finalized, we need to know not to free the buffer.
+            // Sync operations do NOT root this object.  If it gets finalized, we need to know not to free the buffer.
             // We do root the event.
             this.rootedHolder.EventHolder = this.completionEvent;
             this.syncOperationPending = true;
@@ -292,7 +292,7 @@ namespace System.ServiceModel.Channels
             }
 
             Fx.Assert(this.bufferPtr == null || this.bufferPtr == (byte*)Marshal.UnsafeAddrOfPinnedArrayElement((byte[])holder, 0),
-                "The buffer moved during a [....] call!");
+                "The buffer moved during a sync call!");
 
             CancelSyncOperation(ref holder);
             return true;
@@ -333,7 +333,7 @@ namespace System.ServiceModel.Channels
                 byte* ptr = this.bufferPtr;
                 if (ptr == null)
                 {
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw Fx.AssertAndThrow("Pointer requested while no operation pending or no buffer provided.");
                 }
                 return ptr;
@@ -348,7 +348,7 @@ namespace System.ServiceModel.Channels
                 NativeOverlapped* ptr = this.nativeOverlapped;
                 if (ptr == null)
                 {
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw Fx.AssertAndThrow("NativeOverlapped pointer requested after it was freed.");
                 }
                 return ptr;
@@ -446,14 +446,14 @@ namespace System.ServiceModel.Channels
             Fx.Assert(pThis.bufferPtr == null || pThis.bufferPtr == (byte*)Marshal.UnsafeAddrOfPinnedArrayElement((byte[])pThis.bufferHolder[0], 0),
                 "Buffer moved during synchronous deferred cleanup!");
 
-            Fx.Assert(pThis.syncOperationPending, "OverlappedContext.CleanupCallback called with no [....] operation pending.");
+            Fx.Assert(pThis.syncOperationPending, "OverlappedContext.CleanupCallback called with no sync operation pending.");
             pThis.pinnedTarget = null;
             pThis.rootedHolder.EventHolder.Close();
             Overlapped.Free(pThis.nativeOverlapped);
         }
 
         // This class is always held onto (rooted) by the packed Overlapped.  The OverlappedContext instance moves itself in and out of
-        // this object to root itself.  It's also used to root the ManualResetEvent during [....] operations.
+        // this object to root itself.  It's also used to root the ManualResetEvent during sync operations.
         // It needs to be an IAsyncResult since that's what Overlapped takes.
         class RootedHolder : IAsyncResult
         {
@@ -493,7 +493,7 @@ namespace System.ServiceModel.Channels
             {
                 get
                 {
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw Fx.AssertAndThrow("RootedHolder.AsyncState called.");
                 }
             }
@@ -502,7 +502,7 @@ namespace System.ServiceModel.Channels
             {
                 get
                 {
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw Fx.AssertAndThrow("RootedHolder.AsyncWaitHandle called.");
                 }
             }
@@ -511,7 +511,7 @@ namespace System.ServiceModel.Channels
             {
                 get
                 {
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw Fx.AssertAndThrow("RootedHolder.CompletedSynchronously called.");
                 }
             }
@@ -520,7 +520,7 @@ namespace System.ServiceModel.Channels
             {
                 get
                 {
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw Fx.AssertAndThrow("RootedHolder.IsCompleted called.");
                 }
             }

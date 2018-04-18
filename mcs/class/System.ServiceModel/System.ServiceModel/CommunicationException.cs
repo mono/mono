@@ -34,8 +34,8 @@ namespace System.ServiceModel {
 	public class CommunicationException : SystemException
 	{
 		public CommunicationException () : base () {}
-		public CommunicationException (string msg) : base (msg) {}
-		public CommunicationException (string msg, Exception inner) : base (msg, inner) {}
+		public CommunicationException (string message) : base (message) {}
+		public CommunicationException (string message, Exception innerException) : base (message, innerException) {}
 		protected CommunicationException (SerializationInfo info, StreamingContext context)
 			: base (info, context) {}
 	}

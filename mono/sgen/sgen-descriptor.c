@@ -1,5 +1,6 @@
-/*
- * sgen-descriptor.c: GC descriptors describe object layout.
+/**
+ * \file
+ * GC descriptors describe object layout.
  *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
@@ -38,8 +39,6 @@
 #define MAX_USER_DESCRIPTORS 16
 
 #define MAKE_ROOT_DESC(type,val) ((type) | ((val) << ROOT_DESC_TYPE_SHIFT))
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-
 
 static SgenArrayList complex_descriptors = SGEN_ARRAY_LIST_INIT (NULL, NULL, NULL, INTERNAL_MEM_COMPLEX_DESCRIPTORS);
 static SgenUserRootMarkFunc user_descriptors [MAX_USER_DESCRIPTORS];
@@ -262,6 +261,9 @@ mono_gc_get_bitmap_for_descr (SgenDescriptor descr, int *numbits)
 	}
 }
 
+/**
+ * mono_gc_make_descr_from_bitmap:
+ */
 SgenDescriptor
 mono_gc_make_descr_from_bitmap (gsize *bitmap, int numbits)
 {
@@ -273,6 +275,12 @@ mono_gc_make_descr_from_bitmap (gsize *bitmap, int numbits)
 		SgenDescriptor complex = alloc_complex_descriptor (bitmap, numbits);
 		return MAKE_ROOT_DESC (ROOT_DESC_COMPLEX, complex);
 	}
+}
+
+SgenDescriptor
+mono_gc_make_vector_descr (void)
+{
+	return MAKE_ROOT_DESC (ROOT_DESC_VECTOR, 0);
 }
 
 SgenDescriptor

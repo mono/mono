@@ -440,7 +440,7 @@ namespace System.Diagnostics.Eventing.Reader {
             }
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Opcodes", Justification = "[....]: Shipped public in 3.5, breaking change to fix now.")]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Opcodes", Justification = "Microsoft: Shipped public in 3.5, breaking change to fix now.")]
         public IList<EventOpcode> Opcodes {
             get {
                 List<EventOpcode> eo;

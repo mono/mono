@@ -33,7 +33,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-#if !MOBILE_STATIC
+#if !MOBILE
 using System.Data;
 #endif
 using System.IO;

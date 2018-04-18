@@ -24,7 +24,7 @@ namespace System.ServiceModel.Configuration
             binding.WriteEncoding = this.WriteEncoding;
             binding.MaxReadPoolSize = this.MaxReadPoolSize;
             binding.MaxWritePoolSize = this.MaxWritePoolSize;
-#pragma warning suppress 56506 //[....]; base.ApplyConfiguration() checks for 'binding' being null
+#pragma warning suppress 56506 //Microsoft; base.ApplyConfiguration() checks for 'binding' being null
             this.ReaderQuotas.ApplyConfiguration(binding.ReaderQuotas);
         }
 
@@ -38,7 +38,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             TextMessageEncodingElement source = (TextMessageEncodingElement)from;
-#pragma warning suppress 56506 //[....]; base.CopyFrom() checks for 'from' being null
+#pragma warning suppress 56506 //Microsoft; base.CopyFrom() checks for 'from' being null
             this.MessageVersion = source.MessageVersion;
             this.WriteEncoding = source.WriteEncoding;
             this.MaxReadPoolSize = source.MaxReadPoolSize;

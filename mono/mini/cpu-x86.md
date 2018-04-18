@@ -65,8 +65,9 @@
 break: len:1
 call: dest:a clob:c len:17
 tailcall: len:120 clob:c
+tailcall_membase: src1:b len:120 clob:c # FIXME len?
 br: len:5
-seq_point: len:24 clob:c
+seq_point: len:26 clob:c
 il_seq_point: len:0
 
 int_beq: len:6
@@ -81,18 +82,18 @@ int_ble_un: len:6
 int_blt_un: len:6
 label: len:0
 
-template: name:ibalu dest:i src1:i src2:i clob:1 len:2
+#template: name:ibalu
 
-int_add: template:ibalu
-int_sub: template:ibalu
-int_mul: template:ibalu len:3
+int_add: dest:i src1:i src2:i clob:1 len:2
+int_sub: dest:i src1:i src2:i clob:1 len:2
+int_mul: dest:i src1:i src2:i clob:1 len:3
 int_div: dest:a src1:a src2:i len:15 clob:d
 int_div_un: dest:a src1:a src2:i len:15 clob:d
 int_rem: dest:d src1:a src2:i len:15 clob:a
 int_rem_un: dest:d src1:a src2:i len:15 clob:a
-int_and: template:ibalu
-int_or: template:ibalu
-int_xor: template:ibalu
+int_and: dest:i src1:i src2:i clob:1 len:2
+int_or: dest:i src1:i src2:i clob:1 len:2
+int_xor: dest:i src1:i src2:i clob:1 len:2
 int_shl: dest:i src1:i src2:s clob:1 len:2
 int_shr: dest:i src1:i src2:s clob:1 len:2
 int_shr_un: dest:i src1:i src2:s clob:1 len:2
@@ -304,9 +305,7 @@ bigmul_un: len:2 dest:l src1:a src2:i
 sext_i1: dest:i src1:y len:3
 sext_i2: dest:i src1:y len:3
 tls_get: dest:i len:32
-tls_get_reg: dest:i src1:i len:20
 tls_set: src1:i len:20
-tls_set_reg: src1:i src2:i len:20
 atomic_add_i4: src1:b src2:i dest:i len:16
 atomic_exchange_i4: src1:b src2:i dest:a len:24
 atomic_cas_i4: src1:b src2:i src3:a dest:a len:24
@@ -336,9 +335,9 @@ hard_nop: len:1
 # Linear IR opcodes
 nop: len:0
 dummy_use: src1:i len:0
-dummy_store: len:0
 dummy_iconst: dest:i len:0
 dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -607,6 +606,7 @@ cvttps2dq: dest:x src1:x len:4 clob:1
 
 xmove: dest:x src1:x len:4
 xzero: dest:x len:4
+xones: dest:x len:4
 
 iconv_to_x: dest:x src1:i len:4
 extract_i4: dest:i src1:x len:4
@@ -639,11 +639,10 @@ xconv_r8_to_i4: dest:y src1:x len:7
 
 prefetch_membase: src1:b len:4
 
-expand_i1: dest:x src1:y len:17 clob:1
 expand_i2: dest:x src1:i len:15
 expand_i4: dest:x src1:i len:9
-expand_r4: dest:x src1:f len:13
-expand_r8: dest:x src1:f len:13
+expand_r4: dest:x src1:f len:20
+expand_r8: dest:x src1:f len:20
 
 liverange_start: len:0
 liverange_end: len:0
@@ -653,3 +652,5 @@ gc_spill_slot_liveness_def: len:0
 gc_param_slot_liveness_def: len:0
 get_sp: dest:i len:6
 set_sp: src1:i len:6
+
+fill_prof_call_ctx: src1:i len:128

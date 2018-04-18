@@ -664,7 +664,7 @@ namespace System.ServiceModel.Channels
 
                     if (completedSynchronously && this.retransmissionEnabled)
                     {
-                        // initial send completed [....], now we need to start the retransmission process...
+                        // initial send completed sync, now we need to start the retransmission process...
                         completedSynchronously = this.BeginRetransmission();
                     }
 

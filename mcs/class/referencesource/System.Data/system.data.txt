@@ -6,10 +6,13 @@
 
 ; NOTE: do not use \", use ' instead
 ; NOTE: Use # or ; for comments
+; <owner current="true" primary="true">markash</owner>
+; <owner current="true" primary="false">laled</owner>
 
 ; These are the managed resources for System.Data.dll.  See
 ; ResourceManager documentation and the ResGen tool.
 
+;; TODO: Remove Common Code stuff if we ever get Friend Assemblies to work
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; COMMON CODE STUFF
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -52,6 +55,12 @@ ADP_NonPooledOpenTimeout=Timeout attempting to open the connection.  The time pe
 ADP_InvalidMixedUsageOfSecureAndClearCredential=Cannot use Credential with UserID, UID, Password, or PWD connection string keywords.
 ADP_InvalidMixedUsageOfSecureCredentialAndIntegratedSecurity=Cannot use Credential with Integrated Security connection string keyword.
 ADP_InvalidMixedUsageOfSecureCredentialAndContextConnection=Cannot use Credential with Context Connection keyword.
+ADP_InvalidMixedUsageOfAccessTokenAndUserIDPassword=Cannot set the AccessToken property if 'UserID', 'UID', 'Password', or 'PWD' has been specified in connection string.
+ADP_InvalidMixedUsageOfAccessTokenAndIntegratedSecurity=Cannot set the AccessToken property if the 'Integrated Security' connection string keyword has been set to 'true' or 'SSPI'.
+ADP_InvalidMixedUsageOfAccessTokenAndContextConnection=Cannot set the AccessToken property with the 'Context Connection' keyword.
+ADP_InvalidMixedUsageOfAccessTokenAndCredential=Cannot set the AccessToken property if the Credential property is already set.
+ADP_InvalidMixedUsageOfCredentialAndAccessToken=Cannot set the Credential property if the AccessToken property is already set.
+ADP_InvalidMixedUsageOfAccessTokenAndAuthentication=Cannot set the AccessToken property if 'Authentication' has been specified in the connection string.
 ADP_MustBeReadOnly={0} must be marked as read only.
 DataCategory_Data=Data
 DataCategory_StateChange=StateChange
@@ -1082,6 +1091,11 @@ SQL_InvalidPacketSizeValue=Invalid 'Packet Size'.  The value must be an integer 
 SQL_NullEmptyTransactionName=Invalid transaction or invalid name for a point at which to save within the transaction.
 SQL_SnapshotNotSupported=The {0} enumeration value, {1}, is not supported by SQL Server 7.0 or SQL Server 2000.
 SQL_UserInstanceFailoverNotCompatible=User Instance and Failover are not compatible options.  Please choose only one of the two in the connection string.
+SQL_AuthenticationAndIntegratedSecurity=Cannot use 'Authentication' with 'Integrated Security'.
+SQL_IntegratedWithUserIDAndPassword=Cannot use 'Authentication=Active Directory Integrated' with 'User ID', 'UID', 'Password' or 'PWD' connection string keywords.
+SQL_SettingIntegratedWithCredential=Cannot use 'Authentication=Active Directory Integrated', if the Credential property has been set.
+SQL_SettingCredentialWithIntegrated=Cannot set the Credential property if 'Authentication=Active Directory Integrated' has been specified in the connection string.
+
 ; DataProviderException
 SQL_EncryptionNotSupportedByClient=The instance of SQL Server you attempted to connect to requires encryption but this machine does not support it.
 SQL_EncryptionNotSupportedByServer=The instance of SQL Server you attempted to connect to does not support encryption.
@@ -1091,6 +1105,7 @@ SQL_CannotModifyPropertyAsyncOperationInProgress={0} cannot be changed while asy
 SQL_AsyncConnectionRequired=This command requires an asynchronous connection. Set \"Asynchronous Processing=true\" in the connection string.
 SQL_FatalTimeout=Timeout expired.  The connection has been broken as a result.
 SQL_InstanceFailure=Instance failure.
+SQL_CredentialsNotProvided=Either Credential or both 'User ID' and 'Password' (or 'UID' and 'PWD') connection string keywords must be specified, if 'Authentication={0}'.
 
 SQL_ChangePasswordArgumentMissing=The '{0}' argument must not be null or empty.
 SQL_ChangePasswordConflictsWithSSPI=ChangePassword can only be used with SQL authentication, not with integrated security.
@@ -1098,6 +1113,8 @@ SQL_ChangePasswordUseOfUnallowedKey=The keyword '{0}' must not be specified in t
 SQL_UnknownSysTxIsolationLevel=Unrecognized System.Transactions.IsolationLevel enumeration value: {0}.
 SQL_InvalidPartnerConfiguration=Server {0}, database {1} is not configured for database mirroring.
 SQL_MarsUnsupportedOnConnection=The connection does not support MultipleActiveResultSets.
+SQL_ADALFailure=Failed to authenticate the user {0} in Active Directory (Authentication={1}).
+SQL_ADALInnerException=Error code 0x{0}; state {1}
 
 ;NotSupportedException
 SQL_ChangePasswordRequiresYukon=ChangePassword requires SQL Server 9.0 or later.
@@ -1127,10 +1144,19 @@ SQL_ParameterTypeNameRequired=The {0} type parameter '{1}' must have a valid typ
 
 ;;; SQLServer.TDSParser
 ; InvalidOperationException
+SQL_ADALInitializeError=Unable to load adalsql.dll (Authentication={0}). Error code: 0x{1}. For more information, see http://go.microsoft.com/fwlink/?LinkID=513072
 SQL_InvalidInternalPacketSize=Invalid internal packet size:
 SQL_InvalidTDSVersion=The SQL Server instance returned an invalid or unsupported protocol version during login negotiation.
 SQL_InvalidTDSPacketSize=Invalid Packet Size.
 SQL_ParsingError=Internal connection fatal error.
+SQL_ParsingErrorWithState=Internal connection fatal error. Error state: {0}
+SQL_ParsingErrorValue=Internal connection fatal error. Error state: {0}, Value: {1}
+SQL_ParsingErrorOffset=Internal connection fatal error. Error state: {0}, Offset: {1}
+SQL_ParsingErrorFeatureId=Internal connection fatal error. Error state: {0}, Feature Id: {1}
+SQL_ParsingErrorToken=Internal connection fatal error. Error state: {0}, Token : {1}
+SQL_ParsingErrorLength=Internal connection fatal error. Error state: {0}, Length: {1}
+SQL_ParsingErrorStatus=Internal connection fatal error. Error state: {0}, Status: {1}
+SQL_ParsingErrorAuthLibraryType=Internal connection fatal error. Error state: {0}, Authentication Library Type: {1}
 SQL_ConnectionLockedForBcpEvent=The connection cannot be used because there is an ongoing operation that must be finished.
 SQL_SNIPacketAllocationFailure=Memory allocation for internal connection failed.
 ; OverflowException
@@ -1214,6 +1240,10 @@ SQL_ConnectionDoomed=The requested operation cannot be completed because the con
 SQL_OpenResultCountExceeded=Open result count exceeded.
 
 ;;;
+;;; Global Transactions
+GT_Disabled=Global Transactions are not enabled for this Azure SQL Database. Please contact Azure SQL DB support for assistance.
+GT_UnsupportedSysTxVersion=The System.Transactions.dll loaded does not support Global Transactions. Please upgrade to .NET 4.6.1 or later.
+
 ;;; Merged Provider
 SQL_BatchedUpdatesNotAvailableOnContextConnection=Batching updates is not supported on the context connection.
 SQL_ContextAllowsLimitedKeywords=The only additional connection string keyword that may be used when requesting the context connection is the Type System Version keyword.
@@ -1228,7 +1258,7 @@ SQL_UnexpectedSmiEvent=Unexpected server event: {0}.
 SQL_UserInstanceNotAvailableInProc=User instances are not allowed when running in the Sql Server process.
 SQL_ArgumentLengthMismatch=The length of '{0}' must match the length of '{1}'.
 SQL_InvalidSqlDbTypeWithOneAllowedType=The SqlDbType '{0}' is invalid for {1}.  Only {2} is supported.
-SQL_PipeErrorRequiresSendEnd=An error occurred with a prior row sent to the SqlPipe.  SendResultsEnd must be called before anything else con be sent.
+SQL_PipeErrorRequiresSendEnd=An error occurred with a prior row sent to the SqlPipe.  SendResultsEnd must be called before anything else can be sent.
 SQL_TooManyValues=Too many values.
 SQL_StreamWriteNotSupported=The Stream does not support writing.
 SQL_StreamReadNotSupported=The Stream does not support reading.
@@ -1373,6 +1403,7 @@ DbConnectionString_MaxPoolSize=The maximum number of connections allowed in the 
 DbConnectionString_MinPoolSize=The minimum number of connections allowed in the pool.
 DbConnectionString_MultipleActiveResultSets=When true, multiple result sets can be returned and read from one connection.
 DbConnectionString_MultiSubnetFailover=If your application is connecting to a high-availability, disaster recovery (AlwaysOn) availability group (AG) on different subnets, MultiSubnetFailover=Yes configures SqlConnection to provide faster detection of and connection to the (currently) active server.
+DbConnectionString_TransparentNetworkIPResolution=If your application connects to different networks, TransparentNetworkIPResolution=Yes configures SqlConnection to provide transparent connection resolution to the currently active server, independently of the network IP topology.
 DbConnectionString_NetworkLibrary=The network library used to establish a connection to an instance of SQL Server.
 DbConnectionString_PacketSize=Size in bytes of the network packets used to communicate with an instance of SQL Server.
 DbConnectionString_Password=Indicates the password to be used when connecting to the data source.
@@ -1389,6 +1420,7 @@ DbConnectionString_ApplicationIntent=Declares the application workload type when
 ;DbConnectionString_Unicode=If true, the client supports Unicode functionality available in Oracle, or if false, is non-Unicode aware.
 DbConnectionString_ConnectRetryCount=Number of attempts to restore connection.
 DbConnectionString_ConnectRetryInterval=Delay between attempts to restore connection.
+DbConnectionString_Authentication=Specifies the method of authenticating with SQL Server.
 ;;;
 ;;; DbConnection Property Descriptions
 ; COMMON CODE DbConnection_State=The ConnectionState indicating whether the connection is open or closed.
@@ -1407,6 +1439,7 @@ OleDbConnection_DataSource=Current data source, 'Data Source=X' in the connectio
 OleDbConnection_Provider=Current OLE DB provider ProgID, 'Provider=X' in the connection string.
 OleDbConnection_ServerVersion=Version of the product accessed by the OLE DB Provider.
 
+SqlConnection_AccessToken=Access token to use for authentication.
 SqlConnection_Asynchronous=State of connection, synchronous or asynchronous.  'Asynchronous Processing=x' in the connection string.
 SqlConnection_Replication=Information used to connect for replication.
 SqlConnection_ConnectionString=Information used to connect to a DataSource, such as 'Data Source=x;Initial Catalog=x;Integrated Security=SSPI'.
@@ -1417,6 +1450,7 @@ SqlConnection_PacketSize=Network packet size, 'Packet Size=x' in the connection 
 SqlConnection_ServerVersion=Version of the SQL Server accessed by the SqlConnection.
 SqlConnection_WorkstationId=Workstation Id, 'Workstation ID=x' in the connection string.
 SqlConnection_StatisticsEnabled=Collect statistics for this connection.
+SqlConnection_CustomColumnEncryptionKeyStoreProviders=Custom column encryption key store providers.
 SqlConnection_ClientConnectionId=A guid to represent the physical connection.
 SqlConnection_Credential=User Id and secure password to use for authentication.
 ;;;
@@ -1702,6 +1736,123 @@ LocalDB_MethodNotFound=Invalid SQLUserInstance.dll found at the location specifi
 LocalDB_UnobtainableMessage=Cannot obtain Local Database Runtime error message
 LocalDB_InvalidVersion=Local Database Runtime: Invalid instance version specification found in the configuration file.
 
+;;; TCE 
+; CertificateStoreProvider error messages
+TCE_InvalidKeyEncryptionAlgorithm=Invalid key encryption algorithm specified: '{0}'. Expected value: '{1}'.
+TCE_InvalidKeyEncryptionAlgorithmSysErr=Internal error. Invalid key encryption algorithm specified: '{0}'. Expected value: '{1}'.
+TCE_NullKeyEncryptionAlgorithm=Key encryption algorithm cannot be null.
+TCE_NullKeyEncryptionAlgorithmSysErr=Internal error. Key encryption algorithm cannot be null.
+TCE_EmptyColumnEncryptionKey=Empty column encryption key specified.
+TCE_NullColumnEncryptionKey=Column encryption key cannot be null.
+TCE_EmptyEncryptedColumnEncryptionKey=Internal error. Empty encrypted column encryption key specified.
+TCE_NullEncryptedColumnEncryptionKey=Internal error. Encrypted column encryption key cannot be null.
+TCE_LargeCertificatePathLength=Specified certificate path has {0} bytes, which exceeds maximum length of {1} bytes.
+TCE_LargeCertificatePathLengthSysErr=Internal error. Specified certificate path has {0} bytes, which exceeds maximum length of {1} bytes.
+TCE_NullCertificatePath=Certificate path cannot be null. Use the following format: <certificate location>{2}<certificate store>{2}<certificate thumbprint>, where <certificate location> is either '{0}' or '{1}'.
+TCE_NullCertificatePathSysErr=Internal error. Certificate path cannot be null. Use the following format: <certificate location>{2}<certificate store>{2}<certificate thumbprint>, where <certificate location> is either '{0}' or '{1}'.
+TCE_NullCspPath=Column master key path cannot be null. Use the following format for a key stored in a Microsoft cryptographic service provider (CSP): <CSP Provider Name>{0}<Key Identifier>.
+TCE_NullCspPathSysErr=Internal error. Column master key path cannot be null. Use the following format for a key stored in a Microsoft cryptographic service provider (CSP): <CSP Provider Name>{0}<Key Identifier>.
+TCE_NullCngPath=Column master key path cannot be null. Use the following format for a key stored in a Microsoft Cryptography API: Next Generation (CNG) provider: <CNG Provider Name>{0}<Key Identifier>.
+TCE_NullCngPathSysErr=Internal error. Column master key path cannot be null. Use the following format for a key stored in a Microsoft Cryptography API: Next Generation (CNG) provider: <CNG Provider Name>{0}<Key Identifier>.
+TCE_InvalidCertificatePath=Invalid certificate path: '{0}'. Use the following format: <certificate location>{3}<certificate store>{3}<certificate thumbprint>, where <certificate location> is either '{1}' or '{2}'.
+TCE_InvalidCertificatePathSysErr=Internal error. Invalid certificate path: '{0}'. Use the following format: <certificate location>{3}<certificate store>{3}<certificate thumbprint>, where <certificate location> is either '{1}' or '{2}'.
+TCE_InvalidCspPath=Invalid column master key path: '{0}'. Use the following format for a key stored in a Microsoft cryptographic service provider (CSP): <CSP Provider Name>{1}<Key Identifier>.
+TCE_InvalidCspPathSysErr=Internal error. Invalid column master key path: '{0}'. Use the following format for a key stored in a Microsoft cryptographic service provider (CSP): <CSP Provider Name>{1}<Key Identifier>.
+TCE_InvalidCngPath=Invalid column master key path: '{0}'. Use the following format for a key stored in a Microsoft Cryptography API: Next Generation (CNG) provider: <CNG Provider Name>{1}<Key Identifier>.
+TCE_InvalidCngPathSysErr=Internal error. Invalid column master key path: '{0}'. Use the following format for a key stored in a Microsoft Cryptography API: Next Generation (CNG) provider: <CNG Provider Name>{1}<Key Identifier>.
+TCE_InvalidCertificateLocation=Invalid certificate location '{0}' in certificate path '{1}'. Use the following format: <certificate location>{4}<certificate store>{4}<certificate thumbprint>, where <certificate location> is either '{2}' or '{3}'.
+TCE_InvalidCertificateLocationSysErr=Internal error. Invalid certificate location '{0}' in certificate path '{1}'. Use the following format: <certificate location>{4}<certificate store>{4}<certificate thumbprint>, where <certificate location> is either '{2}' or '{3}'.
+TCE_InvalidCertificateStore=Invalid certificate store '{0}' specified in certificate path '{1}'. Expected value: '{2}'.
+TCE_InvalidCertificateStoreSysErr=Internal error. Invalid certificate store '{0}' specified in certificate path '{1}'. Expected value: '{2}'.
+TCE_EmptyCertificateThumbprint=Empty certificate thumbprint specified in certificate path '{0}'.
+TCE_EmptyCertificateThumbprintSysErr=Internal error. Empty certificate thumbprint specified in certificate path '{0}'.
+TCE_EmptyCspName=Empty Microsoft cryptographic service provider (CSP) name specified in column master key path: '{0}'. Use the following format for a key stored in a Microsoft cryptographic service provider (CSP): <CSP Provider Name>{1}<Key Identifier>.
+TCE_EmptyCspNameSysErr=Internal error. Empty Microsoft cryptographic service provider (CSP) name specified in column master key path: '{0}'. Use the following format for a key stored in a Microsoft cryptographic service provider (CSP): <CSP Provider Name>{1}<Key Identifier>.
+TCE_EmptyCngName=Empty Microsoft Cryptography API: Next Generation (CNG) provider name specified in column master key path: '{0}'. Use the following format for a key stored in a Microsoft Cryptography API: Next Generation (CNG) provider: <CNG Provider Name>{1}<Key Identifier>.
+TCE_EmptyCngNameSysErr=Internal error. Empty Microsoft Cryptography API: Next Generation (CNG) provider name specified in column master key path: '{0}'. Use the following format for a key stored in a Microsoft Cryptography API: Next Generation (CNG) provider: <CNG Provider Name>{1}<Key Identifier>.
+TCE_EmptyCspKeyId=Empty key identifier specified in column master key path: '{0}'. Use the following format for a key stored in a Microsoft cryptographic service provider (CSP): <CSP Provider Name>{1}<Key Identifier>.
+TCE_EmptyCspKeyIdSysErr=Internal error. Empty key identifier specified in column master key path: '{0}'. Use the following format for a key stored in a Microsoft cryptographic service provider (CSP): <CSP Provider Name>{1}<Key Identifier>.
+TCE_EmptyCngKeyId=Empty key identifier specified in column master key path: '{0}'. Use the following format for a key stored in a Microsoft Cryptography API: Next Generation (CNG) provider: <CNG Provider Name>{1}<Key Identifier>.
+TCE_EmptyCngKeyIdSysErr=Internal error. Empty key identifier specified in column master key path: '{0}'. Use the following format for a key stored in a Microsoft Cryptography API: Next Generation (CNG) provider: <CNG Provider Name>{1}<Key Identifier>.
+TCE_InvalidCspName=Invalid Microsoft cryptographic service provider (CSP) name: '{0}'. Verify that the CSP provider name in column master key path: '{1}' is valid and installed on the machine.
+TCE_InvalidCspNameSysErr=Internal error. Invalid Microsoft cryptographic service provider (CSP) name: '{0}'. Verify that the CSP provider name in column master key path: '{1}' is valid and installed on the machine.
+TCE_InvalidCspKeyId=Invalid key identifier: '{0}'. Verify that the key identifier in column master key path: '{1}' is valid and exists in the CSP.
+TCE_InvalidCspKeyIdSysErr=Internal error. Invalid key identifier: '{0}'. Verify that the key identifier in column master key path: '{1}' is valid and exists in the CSP.
+TCE_InvalidCngKey=An error occurred while opening the Microsoft Cryptography API: Next Generation (CNG) key: '{0}'. Verify that the CNG provider name '{1}' is valid, installed on the machine, and the key '{2}' exists.
+TCE_InvalidCngKeySysErr=Internal error. An error occurred while opening the Microsoft Cryptography API: Next Generation (CNG) key: '{0}'. Verify that the CNG provider name '{1}' is valid, installed on the machine, and the key '{2}' exists.
+TCE_CertificateNotFound=Certificate with thumbprint '{0}' not found in certificate store '{1}' in certificate location '{2}'.
+TCE_CertificateNotFoundSysErr=Certificate with thumbprint '{0}' not found in certificate store '{1}' in certificate location '{2}'. Verify the certificate path in the column master key definition in the database is correct, and the certificate has been imported correctly into the certificate location/store.
+TCE_InvalidAlgorithmVersionInEncryptedCEK=Specified encrypted column encryption key contains an invalid encryption algorithm version '{0}'. Expected version is '{1}'.
+TCE_InvalidCiphertextLengthInEncryptedCEK=The specified encrypted column encryption key's ciphertext length: {0} does not match the ciphertext length: {1} when using column master key (certificate) in '{2}'. The encrypted column encryption key may be corrupt, or the specified certificate path may be incorrect.
+TCE_InvalidCiphertextLengthInEncryptedCEKCsp=The specified encrypted column encryption key's ciphertext length: {0} does not match the ciphertext length: {1} when using column master key (asymmetric key) in '{2}'. The encrypted column encryption key may be corrupt, or the specified Microsoft Cryptographic Service provider (CSP) path may be incorrect.
+TCE_InvalidCiphertextLengthInEncryptedCEKCng=The specified encrypted column encryption key's ciphertext length: {0} does not match the ciphertext length: {1} when using column master key (asymmetric key) in '{2}'. The encrypted column encryption key may be corrupt, or the specified Microsoft Cryptography API: Next Generation (CNG) provider path may be incorrect.
+TCE_InvalidSignatureInEncryptedCEK=The specified encrypted column encryption key's signature length: {0} does not match the signature length: {1} when using column master key (certificate) in '{2}'. The encrypted column encryption key may be corrupt, or the specified certificate path may be incorrect.
+TCE_InvalidSignatureInEncryptedCEKCsp=The specified encrypted column encryption key's signature length: {0} does not match the signature length: {1} when using column master key (asymmetric key) in '{2}'. The encrypted column encryption key may be corrupt, or the specified Microsoft cryptographic service provider (CSP) path may be incorrect.
+TCE_InvalidSignatureInEncryptedCEKCng=The specified encrypted column encryption key's signature length: {0} does not match the signature length: {1} when using column master key (asymmetric key) in '{2}'. The encrypted column encryption key may be corrupt, or the specified Microsoft Cryptography API: Next Generation (CNG) provider path may be incorrect.
+TCE_InvalidCertificateSignature=The specified encrypted column encryption key signature does not match the signature computed with the column master key (certificate) in '{0}'. The encrypted column encryption key may be corrupt, or the specified path may be incorrect.
+TCE_InvalidSignature=The specified encrypted column encryption key signature does not match the signature computed with the column master key (asymmetric key) in '{0}'. The encrypted column encryption key may be corrupt, or the specified path may be incorrect.
+TCE_CertificateWithNoPrivateKey=Certificate specified in key path '{0}' does not have a private key to encrypt a column encryption key. Verify the certificate is imported correctly.
+TCE_CertificateWithNoPrivateKeySysErr=Certificate specified in key path '{0}' does not have a private key to decrypt a column encryption key. Verify the certificate is imported correctly.
+
+; Cryptographic algorithms error messages
+TCE_NullColumnEncryptionKeySysErr=Internal error. Column encryption key cannot be null.
+TCE_InvalidKeySize=The column encryption key has been successfully decrypted but it's length: {1} does not match the length: {2} for algorithm '{0}'. Verify the encrypted value of the column encryption key in the database.
+TCE_InvalidEncryptionType=Encryption type '{1}' specified for the column in the database is either invalid or corrupted. Valid encryption types for algorithm '{0}' are: {2}.
+TCE_NullPlainText=Internal error. Plaintext value cannot be null.
+TCE_VeryLargeCiphertext=Cannot encrypt. Encrypting resulted in {0} bytes of ciphertext which exceeds the maximum allowed limit of {1} bytes. The specified plaintext value is likely too large (plaintext size is: {2} bytes).
+TCE_NullCipherText=Internal error. Ciphertext value cannot be null.
+TCE_InvalidCipherTextSize=Specified ciphertext has an invalid size of {0} bytes, which is below the minimum {1} bytes required for decryption.
+TCE_InvalidAlgorithmVersion=The specified ciphertext's encryption algorithm version '{0}' does not match the expected encryption algorithm version '{1}'.
+TCE_InvalidAuthenticationTag=Specified ciphertext has an invalid authentication tag.
+TCE_NullColumnEncryptionAlgorithm=Internal error. Encryption algorithm cannot be null. Valid algorithms are: {0}.
+
+; Errors from sp_describe_parameter_encryption
+TCE_UnexpectedDescribeParamFormat=Internal error. The format of the resultset returned by {0} is invalid. One of the resultsets is missing.
+TCE_InvalidEncryptionKeyOrdinal=Internal error. The referenced column encryption key ordinal '{1}' is missing in the encryption metadata returned by {0}. Max ordinal is '{2}'.
+TCE_ParamEncryptionMetaDataMissing=Internal error. Metadata for parameter '{1}' in statement or procedure '{2}' is missing in resultset returned by {0}.
+TCE_ProcEncryptionMetaDataMissing=Internal error. Metadata for parameters for command '{1}' in a batch is missing in the resultset returned by {0}.
+
+; Generic toplevel cryptofailures
+TCE_ParamEncryptionFailed=Failed to encrypt parameter '{0}'.
+TCE_ColumnDecryptionFailed=Failed to decrypt column '{0}'.
+TCE_ParamDecryptionFailed=Failed to decrypt parameter '{0}'.
+
+; Query processing error messages
+TCE_UnknownColumnEncryptionAlgorithm=Encryption algorithm '{0}' for the column in the database is either invalid or corrupted. Valid algorithms are: {1}.
+TCE_UnknownColumnEncryptionAlgorithmId=Encryption algorithm id '{0}' for the column in the database is either invalid or corrupted. Valid encryption algorithm ids are: {1}.
+TCE_UnsupportedNormalizationVersion=Normalization version '{0}' received from {2} is not supported. Valid normalization versions are: {1}.
+TCE_UnrecognizedKeyStoreProviderName=Failed to decrypt a column encryption key. Invalid key store provider name: '{0}'. A key store provider name must denote either a system key store provider or a registered custom key store provider. Valid system key store provider names are: {1}. Valid (currently registered) custom key store provider names are: {2}. Please verify key store provider information in column master key definitions in the database, and verify all custom key store providers used in your application are registered properly.
+TCE_KeyDecryptionFailedCertStore=Failed to decrypt a column encryption key using key store provider: '{0}'. The last 10 bytes of the encrypted column encryption key are: '{1}'.
+TCE_UntrustedKeyPath=Column master key path '{0}' received from server '{1}' is not a trusted key path.
+TCE_KeyDecryptionFailed=Failed to decrypt a column encryption key using key store provider: '{0}'. Verify the properties of the column encryption key and its column master key in your database. The last 10 bytes of the encrypted column encryption key are: '{1}'.
+TCE_UnsupportedDatatype=Encryption and decryption of data type '{0}' is not supported.
+TCE_DecryptionFailed=Decryption failed. The last 10 bytes of the encrypted column encryption key are: '{0}'. The first 10 bytes of ciphertext are: '{1}'.
+
+; TCE Generic errors
+TCE_ParamInvalidForceColumnEncryptionSetting=Cannot set {0} for {3} '{1}' because encryption is not enabled for the statement or procedure '{2}'.
+TCE_ParamUnExpectedEncryptionMetadata=Cannot execute statement or procedure '{1}' because {2} was set for {3} '{0}' and the database expects this parameter to be sent as plaintext. This may be due to a configuration error.
+
+; TCE specific SQL connection related error messages
+TCE_NotSupportedByServer={0} instance in use does not support column encryption.
+
+; TCE specific SQL command/adapter related error messages
+TCE_BatchedUpdateColumnEncryptionSettingMismatch={0} should be identical on all commands ({1}, {2}, {3}, {4}) when doing batch updates.
+TCE_StreamNotSupportOnEncryptedColumn=Retrieving encrypted column '{0}' as a {1} is not supported.
+TCE_SequentialAccessNotSupportedOnEncryptedColumn=Retrieving encrypted column '{0}' with {1} is not supported.
+
+; Provider Extensibility error messages
+TCE_CanOnlyCallOnce=Key store providers cannot be set more than once.
+TCE_NullCustomKeyStoreProviderDictionary=Column encryption key store provider dictionary cannot be null. Expecting a non-null value.
+TCE_InvalidCustomKeyStoreProviderName=Invalid key store provider name '{0}'. '{1}' prefix is reserved for system key store providers.
+TCE_NullProviderValue=Null reference specified for key store provider '{0}'. Expecting a non-null value.
+TCE_EmptyProviderName=Invalid key store provider name specified. Key store provider names cannot be null or empty.
+
+; TCE Generic Property descriptions
+TCE_SqlCommand_ColumnEncryptionSetting=Column encryption setting for the command. Overrides the connection level default.
+TCE_DbConnectionString_ColumnEncryptionSetting=Default column encryption setting for all the commands on the connection.
+TCE_SqlParameter_ForceColumnEncryption=Forces parameter to be encrypted before sending sensitive data to server. 
+TCE_SqlConnection_TrustedColumnMasterKeyPaths=Dictionary object containing SQL Server names and their trusted column master key paths.
+
 ; Read-only routing error message
 SQLROR_RecursiveRoutingNotSupported=Two or more redirections have occurred. Only one redirection per login is allowed.
 SQLROR_FailoverNotSupported=Connecting to a mirrored SQL Server instance using the ApplicationIntent ReadOnly connection option is not supported.
@@ -1719,3 +1870,18 @@ SQLCR_AllAttemptsFailed=The connection is broken and recovery is not possible.  
 SQLCR_UnrecoverableServer=The connection is broken and recovery is not possible.  The connection is marked by the server as unrecoverable.  No attempt was made to restore the connection.
 SQLCR_UnrecoverableClient=The connection is broken and recovery is not possible.  The connection is marked by the client driver as unrecoverable.  No attempt was made to restore the connection.
 SQLCR_NoCRAckAtReconnection=The server did not acknowledge a recovery attempt, connection recovery is not possible.
+
+DbConnectionString_PoolBlockingPeriod=Defines the blocking period behavior for a connection pool.
+
+; Azure endpoints
+AZURESQL_GenericEndpoint=.database.windows.net
+AZURESQL_GermanEndpoint=.database.cloudapi.de
+AZURESQL_UsGovEndpoint=.database.usgovcloudapi.net
+AZURESQL_ChinaEndpoint=.database.chinacloudapi.cn
+
+; TCE Generic Property descriptions .Net 4.6.2
+TCE_SqlConnection_ColumnEncryptionQueryMetadataCacheEnabled=Defines whether query metadata caching is enabled.
+TCE_SqlConnection_ColumnEncryptionKeyCacheTtl=Defines the time-to-live of entries in the column encryption key cache.
+
+;;; SQLServer.TDSParser .Net 4.6.2 
+SQL_Timeout_Execution=Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.

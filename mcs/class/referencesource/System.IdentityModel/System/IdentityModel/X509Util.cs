@@ -32,18 +32,23 @@ namespace System.IdentityModel
             }
 
             // Check for accessibility of private key
-            AsymmetricAlgorithm privateKey;
+            RSA rsa;
             try
             {
-                privateKey = certificate.PrivateKey;
+                if (LocalAppContextSwitches.DisableCngCertificates)
+                {
+                    rsa = certificate.PrivateKey as RSA;
+                }
+                else
+                {
+                    rsa = CngLightup.GetRSAPrivateKey(certificate);
+                }
             }
             catch (CryptographicException e)
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SR.GetString(SR.ID1039, certificate.Thumbprint), e));
             }
 
-            // Reject weird private key
-            RSA rsa = privateKey as RSA;
             if (rsa == null)
             {
 #pragma warning suppress 56526 // no validation necessary for value.Thumbprint
@@ -223,13 +228,29 @@ namespace System.IdentityModel
                 claimsCollection.Add(new Claim(ClaimTypes.Uri, value, ClaimValueTypes.String, issuer));
             }
 
-            RSA rsa = certificate.PublicKey.Key as RSA;
+            RSA rsa;
+            if (LocalAppContextSwitches.DisableCngCertificates)
+            {
+                rsa = certificate.PublicKey.Key as RSA;
+            }
+            else
+            {
+                rsa = CngLightup.GetRSAPublicKey(certificate);
+            }
             if (rsa != null)
             {
                 claimsCollection.Add(new Claim(ClaimTypes.Rsa, rsa.ToXmlString(false), ClaimValueTypes.RsaKeyValue, issuer));
             }
 
-            DSA dsa = certificate.PublicKey.Key as DSA;
+            DSA dsa;
+            if (LocalAppContextSwitches.DisableCngCertificates)
+            {
+                dsa = certificate.PublicKey.Key as DSA;
+            }
+            else
+            {
+                dsa = CngLightup.GetDSAPublicKey(certificate);
+            }
             if (dsa != null)
             {
                 claimsCollection.Add(new Claim(ClaimTypes.Dsa, dsa.ToXmlString(false), ClaimValueTypes.DsaKeyValue, issuer));

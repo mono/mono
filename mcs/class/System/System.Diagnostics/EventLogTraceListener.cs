@@ -95,11 +95,11 @@ namespace System.Diagnostics
 
 		[ComVisible (false)]
 		public override void TraceData (TraceEventCache eventCache,
-						string source, TraceEventType eventType,
+						string source, TraceEventType severity,
 						int id, object data)
 		{
 			EventLogEntryType type;
-			switch (eventType) {
+			switch (severity) {
 			case TraceEventType.Critical:
 			case TraceEventType.Error:
 				type = EventLogEntryType.Error;
@@ -116,7 +116,7 @@ namespace System.Diagnostics
 
 		[ComVisible (false)]
 		public override void TraceData (TraceEventCache eventCache,
-						string source, TraceEventType eventType,
+						string source, TraceEventType severity,
 						int id, params object [] data)
 		{
 			string s = String.Empty;
@@ -126,23 +126,23 @@ namespace System.Diagnostics
 					arr [i] = data [i] != null ? data [i].ToString () : String.Empty;
 				s = String.Join (", ", arr);
 			}
-			TraceData (eventCache, source, eventType, id, s);
+			TraceData (eventCache, source, severity, id, s);
 		}
 
 		[ComVisible (false)]
 		public override void TraceEvent (TraceEventCache eventCache,
-						 string source, TraceEventType eventType,
+						 string source, TraceEventType severity,
 						 int id, string message)
 		{
-			TraceData (eventCache, source, eventType, id, message);
+			TraceData (eventCache, source, severity, id, message);
 		}
 
 		[ComVisible (false)]
 		public override void TraceEvent (TraceEventCache eventCache,
-						 string source, TraceEventType eventType,
+						 string source, TraceEventType severity,
 						 int id, string format, params object [] args)
 		{
-			TraceEvent (eventCache, source, eventType, id, format != null ? String.Format (format, args) : null);
+			TraceEvent (eventCache, source, severity, id, format != null ? String.Format (format, args) : null);
 		}
 	}
 }

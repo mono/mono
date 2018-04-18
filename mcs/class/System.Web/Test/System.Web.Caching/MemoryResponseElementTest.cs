@@ -33,7 +33,7 @@ using System.Web;
 using System.Web.Caching;
 
 using NUnit.Framework;
-using MonoTests.Common;
+
 
 namespace MonoTests.System.Web.Caching
 {
@@ -45,15 +45,15 @@ namespace MonoTests.System.Web.Caching
 		{
 			MemoryResponseElement mre;
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				mre = new MemoryResponseElement (null, 0);
 			}, "#A1");
 
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				mre = new MemoryResponseElement (new byte[1], -1);
 			}, "#A2");
 
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				mre = new MemoryResponseElement (new byte[1], 2);
 			}, "#A2");
 

@@ -40,6 +40,7 @@ Mono.Debugger.Soft/BreakpointEventRequest.cs
 Mono.Debugger.Soft/MethodEntryEventRequest.cs
 Mono.Debugger.Soft/AssemblyLoadEventRequest.cs
 Mono.Debugger.Soft/LocalVariable.cs
+Mono.Debugger.Soft/LocalScope.cs
 Mono.Debugger.Soft/ParameterInfoMirror.cs
 Mono.Debugger.Soft/Event.cs
 Mono.Debugger.Soft/EventSet.cs

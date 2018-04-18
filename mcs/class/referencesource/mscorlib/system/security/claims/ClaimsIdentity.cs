@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -1310,7 +1310,7 @@ namespace System.Security.Claims
                 switch (enumerator.Name)
                 {
                     case VersionKey:
-                        string version = info.GetString(VersionKey);
+                        info.GetString(VersionKey);
                         break;
 
                     case AuthenticationTypeKey:

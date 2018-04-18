@@ -2,8 +2,8 @@
 // <copyright file="DBDataPermissionAttribute.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -89,15 +89,5 @@ namespace System.Data.Common {
         public bool ShouldSerializeKeyRestrictions() { // V1.2.3300
             return (null != _restrictions);
         }
-    }
-}
-
-namespace System.Data { // MDAC 83087
-
-[Serializable] 
-    
-    public enum KeyRestrictionBehavior { // V1.0.5000
-        AllowOnly    = 0,
-        PreventUsage = 1,
     }
 }

@@ -46,7 +46,7 @@ namespace System.ServiceModel.Dispatcher
             OperationFormatter.Validate(description, isRpc, false/*isEncoded*/);
 
             this.operation = description;
-#pragma warning suppress 56506 // [....], OperationDescription.Messages never be null
+#pragma warning suppress 56506 // Microsoft, OperationDescription.Messages never be null
             this.requestMessage = description.Messages[0];
             if (description.Messages.Count == 2)
                 this.responseMessage = description.Messages[1];
@@ -290,7 +290,7 @@ namespace System.ServiceModel.Dispatcher
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("description");
 
             OperationDescription operation = description;
-#pragma warning suppress 56506 // [....], OperationDescription.Messages never be null
+#pragma warning suppress 56506 // Microsoft, OperationDescription.Messages never be null
             MessageDescription requestMessage = description.Messages[0];
             MessageDescription responseMessage = null;
             if (description.Messages.Count == 2)

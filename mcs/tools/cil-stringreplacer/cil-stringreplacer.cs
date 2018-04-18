@@ -40,6 +40,7 @@ public class Program
 		public bool ShowHelp { get; set; }
 		public bool Verbose { get; set; }
 		public List<string> ResourcesStrings { get; }
+		public string ILFile { get; set; }
 
 		public CmdOptions ()
 		{
@@ -54,10 +55,12 @@ public class Program
 		var p = new OptionSet () {
 			{ "r|resourcestrings=", "File with string resource in key=value format",
 				v => options.ResourcesStrings.Add (v) },
-			{ "h|help",  "Display available options", 
+			{ "h|help",  "Display available options",
 				v => options.ShowHelp = v != null },
-			{ "v|verbose",  "Use verbose output", 
-				v => options.Verbose = v != null },			
+			{ "v|verbose",  "Use verbose output",
+				v => options.Verbose = v != null },
+			{ "ilreplace=", "File with IL code to be used instead",
+				v => options.ILFile = v },
 		};
 
 		List<string> extra;
@@ -100,14 +103,64 @@ public class Program
 
 	static void RewriteAssembly (string assemblyLocation, Dictionary<string, string> resourcesStrings, CmdOptions options)
 	{
-		var readerParameters = new ReaderParameters { ReadSymbols = true, ReadWrite = true };
+		var methods = new Dictionary<string, MethodBody> (StringComparer.Ordinal);
+		if (options.ILFile != null) {
+			var rp = new ReaderParameters {
+				InMemory = true
+			};
+
+			using (var module = ModuleDefinition.ReadModule (options.ILFile,rp)) {
+				foreach (var type in module.GetTypes ()) {
+					foreach (var method in type.Methods) {
+						if (!method.HasBody)
+							continue;
+
+						methods.Add (method.FullName, method.Body);
+					}
+				}
+			}
+		}
+
+		var readerParameters = new ReaderParameters {
+			ReadSymbols = true,
+			ReadWrite = true,
+			SymbolReaderProvider = new DefaultSymbolReaderProvider (false)
+		};
+
 		using (var assembly = AssemblyDefinition.ReadAssembly (assemblyLocation, readerParameters)) {
 			foreach (var module in assembly.Modules) {
 				foreach (var type in module.GetTypes ()) {
 					foreach (var method in type.Methods) {
 						if (!method.HasBody)
 							continue;
-						
+
+						MethodBody newBody;
+						if (methods.TryGetValue (method.FullName, out newBody)) {
+							var mbody = method.Body;
+							mbody.Instructions.Clear ();
+							foreach (var instr in newBody.Instructions) {
+								switch (instr.OpCode.OperandType) {
+								case OperandType.InlineType:
+									var tr = (TypeReference)instr.Operand;
+									foreach (var t in method.GenericParameters) {
+										if (tr.FullName == t.FullName) {
+											instr.Operand = t;
+											break;
+										}
+									}
+
+									break;
+								}
+
+								mbody.Instructions.Add (instr);
+							}
+
+							method.Body.Variables.Clear ();
+							foreach (var variable in newBody.Variables) {
+								mbody.Variables.Add (variable);
+							}
+						}
+
 						foreach (var instr in method.Body.Instructions) {
 							if (instr.OpCode != OpCodes.Ldstr)
 								continue;
@@ -125,7 +178,10 @@ public class Program
 				}
 			}
 
-			var writerParameters = new WriterParameters { WriteSymbols = true };
+			var writerParameters = new WriterParameters () {
+				WriteSymbols = assembly.MainModule.HasSymbols
+			};
+
 			assembly.Write (writerParameters);
 		}
 	}

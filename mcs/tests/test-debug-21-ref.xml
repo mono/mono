@@ -83,7 +83,8 @@
       </sequencepoints>
       <locals />
       <scopes>
-        <entry index="0" start="0x0" end="0xb" />
+        <entry index="0" start="0x0" end="0x0" />
+        <entry index="1" start="0x0" end="0xb" />
       </scopes>
     </method>
   </methods>

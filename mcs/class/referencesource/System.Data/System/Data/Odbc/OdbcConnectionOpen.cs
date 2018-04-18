@@ -2,8 +2,8 @@
 // <copyright file="OdbcConnectionOpen.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System;
@@ -54,7 +54,9 @@ namespace System.Data.Odbc {
         }
         
         override protected void Activate(SysTx.Transaction transaction) {
+#if !COREFX
             OdbcConnection.ExecutePermission.Demand();
+#endif
         }
 
         override public DbTransaction BeginTransaction(IsolationLevel isolevel) {
@@ -78,7 +80,9 @@ namespace System.Data.Odbc {
         }
           
         override public void EnlistTransaction(SysTx.Transaction transaction) {
+#if !COREFX
             OuterConnection.Open_EnlistTransaction(transaction);
+#endif
         }
     }
 }

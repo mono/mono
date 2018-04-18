@@ -18,7 +18,7 @@ G_BEGIN_DECLS
 void*
 Mono_Unix_VersionString ()
 {
-	return "MonoProject-2015-12-1";
+	return (void *) "MonoProject-2015-12-1";
 }
 
 gint32
@@ -70,6 +70,12 @@ Mono_Posix_Stdlib_realloc (void* ptr, mph_size_t size)
 		return NULL;
 
 	return realloc (ptr, (size_t) size);
+}
+
+void
+Mono_Posix_Stdlib_free (void* p)
+{
+	free (p);
 }
 
 G_END_DECLS

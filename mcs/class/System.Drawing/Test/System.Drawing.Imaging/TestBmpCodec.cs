@@ -40,7 +40,6 @@ using System.Text;
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class BmpCodecTest {
 		
 		/* Get suffix to add to the filename */

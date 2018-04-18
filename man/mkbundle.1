@@ -8,7 +8,7 @@
 .if t .sp .5v
 .if n .sp
 ..
-.TH mkbundle "mkbundle 1.0"
+.TH Mono "mkbundle"
 .SH NAME
 mkbundle, mkbundle2 \- Creates a bundled executable.
 .SH SYNOPSIS
@@ -24,7 +24,8 @@ dependencies referenced, use the "--deps" command line option.
 There are two modes of operation, one uses an existing Mono binary or
 a server-hosted list of binaries and is enabled when you use either
 the 
-.B --cross
+.B --cross,
+.B --sdk
 or the
 .B --runtime
 command line options.   
@@ -40,6 +41,16 @@ command:
 	$ mkbundle -o hello --simple hello.exe
 
 .fi
+.PP
+You can configure options to be passed to the Mono runtime directly
+into your executable, for this, use the 
+.I --options
+flag.  For example, the following disables inlining, by passing the
+"-O=-inline" command line option to the embedded executable:
+.nf
+
+	$ mkbundle -o hello --options -O=-inline --simple hello.exe
+
 .PP
 The simple version allows for cross-compiling, this requires a Mono
 runtime to be installed in the ~/.mono/targets/TARGET/mono to be
@@ -100,24 +111,40 @@ directory.
 .SH OPTIONS
 .TP 
 .I "--config FILE"
-Specifies that a machine.config file must be bundled as well.
-Typically this is $prefix/etc/mono/1.0/machine.config or
-$prefix/etc/mono/2.0/machine.config depending on the profile that you
-are using (1.0 or 2.0)
+Specifies that a DLLMAP Mono config file must be bundled as well.   In
+the simple and cross compiler modes, if no config file is specified
+the one for the current target is picked (either the system one in the
+case of the simple mode, or the one that came from the cross
+compilation target for the cross compiling mode).
 .TP
 .I "--config-dir DIR"
 When passed, DIR will be set for the MONO_CFG_DIR environment variable
 .TP
 .I "--cross target"
-Creates a bundle for the specified target platform.   The target
-must be a directory in ~/.mono/targets/ that contains a "mono"
-binary.   You can fetch various targets using the --fetch-target
-command line option.
+Use this to request mkbundle generate a cross-compiled binary.  It
+Creates a bundle for the specified target platform.  The target must
+be a directory in ~/.mono/targets/ that contains an SDK installation
+as produced by the mono-package-runtime tool.  You can get a list of
+the precompiled versions of the runtime using --list-targets and you
+can fetch a specific target using the --fetch-target command line
+option.
+.Sp
+This flag is mutually exclusive with 
+.I --sdk
+which is used to specify an absolute path to resolve the Mono runtime
+from and the --runtime option which is used to manually construct the
+cross-platform package.
 .TP
 .I "--deps"
 This option will bundle all of the referenced assemblies for the
 assemblies listed on the command line option.  This is useful to
 distribute a self-contained image.
+.TP
+.I "--env KEY=VALUE"
+Use this to hardcode an environment variable at runtime for KEY to be
+mapped to VALUE.   This is useful in scenarios where you want to
+enable certain Mono runtime configuration options that are controlled
+by environment variables.
 .TP
 .I "--fetch-target target"
 Downloads a precompiled runtime for the specified target from the Mono
@@ -143,10 +170,18 @@ flag to bundle all available encodings.
 Or you can use a comma delimited list of the workds CJK, MidWest,
 Other, Rare and West to specificy which encoding assemblies to distribute.
 .TP
-.TP
 .I "-L path"
 Adds the `path' do the search list for assemblies.  The rules are the
 same as for the compiler -lib: or -L flags.
+.TP
+.I "--library [LIB,]PATH"
+Embeds the dynamic library file pointed to by `PATH' and optionally
+give it the name `LIB' into the bundled executable.   This is used to
+ship native library dependencies that are unpacked at startup and
+loaded from the runtime. Multiple libraries should be specified in
+dependency order, where later ones on the command line depend on
+earlier ones.
+.TP
 .I "--lists-targets"
 Lists all of the available local cross compilation targets available
 as precompiled binaries on the Mono distribution server.
@@ -154,18 +189,83 @@ as precompiled binaries on the Mono distribution server.
 .I "--local-targets"
 Lists all of the available local cross compilation targets.
 .TP
+.I "--cil-strip PATH"
+Provides a CIL stripper that mkbundle will use if able to.
+The intended use is to help reduce file size on AOT.
+.TP
+.I "--in-tree path/to/mono/source/root"
+Provides mkbundle with a mono source repository from which to pull the necessary headers for compilation.
+This allows mkbundle to run out of the project's source tree, useful for working with multiple runtimes and for
+testing without installing.
+.TP
+.I "--managed-linker PATH"
+Provides mkbundle access to a managed linker to preprocess the assemblies.
+.TP
 .I "--machine-config FILE"
 Uses the given FILE as the machine.config file for the generated
-application.   
+application.  The machine config contains an XML file that is used by
+System.Configuration APIs to configure the .NET stack.  Typically this
+is
+.I $prefix/etc/mono/4.5/machine.config.
+.Sp
+If you want to disable this automatic bundling, you can use the
+.I "--no-machine-config"
+flag. In the simple and cross compiler modes, if no machine.config file is specified
+the one for the current target is picked (either the system one in the
+case of the simple mode, or the one that came from the cross
+compilation target for the cross compiling mode).
+.TP
+.I "--no-config"
+In simple or cross compiling mode, this prevents mkbundle from
+automatically bundling a config file.   
 .TP
 .I  "--nodeps"
 This is the default: \fImkbundle\fP will only include the assemblies that
 were specified on the command line to reduce the size of the resulting
 image created.
 .TP
+.I "--no-machine-config"
+In simple or cross compiling mode, this prevents mkbundle from
+automatically bundling a machine.config file.   
+.TP
 .I "-o filename"
 Places the output on `out'.  If the flag -c is specified, this is the
 C host program.  If not, this contains the resulting executable.
+.TP
+.I "--options OPTS"
+Since the resulting executable will be treated as a standalone
+program, you can use this option to pass configuration options to the
+Mono runtime and bake those into the resulting executable.  These
+options are specified as 
+.I OPTS.
+.Sp
+You can use the above to configure options that you would typically
+pass on the command line to Mono, before the main program is
+executed.   
+.Sp
+Additionally, users of your binary can still configure their own
+options by setting the 
+.I MONO_ENV_OPTIONS
+environment variable.
+.TP
+.I "--sdk SDK_PATH"
+Use this flag to specify a path from which mkbundle will resolve the
+Mono SDK from.   The SDK path should be the prefix path that you used
+to configure a Mono installation.   And would typically contain files
+lik
+.I SDK_PATH/bin/mono
+,
+.I SDK_PATH/lib/mono/4.5
+and so on.
+.Sp
+When this flag is specified,
+.I mkbundle
+will resolve the runtime, the framework libraries, unmanaged resources
+and configuration files from the files located in this directory.
+.Sp
+This flag is mutually exlusive with 
+.I --cross
+.
 .TP
 .I "--target-server SERVER"
 By default the mkbundle tool will download from a Mono server the
@@ -239,34 +339,100 @@ causes it to statically link instead.
 Compresses the assemblies before embedding. This results in smaller
 executable files, but increases startup time and requires zlib to be
 installed on the target system.
+
+.SH AOT Options
+These options support an mkbundle using AOT compilation with static linking. A native compiler
+toolchain is required.
+.TP
+.I "--aot-runtime PATH"
+Provide the path to the mono runtime to use for AOTing assemblies.
+.TP
+.I "--aot-dedup"
+(Experimental) Deduplicate AOT'ed methods based on a unique mangling of method names.
+.TP
+.I "--aot-mode MODE"
+MODE can be either "full" or "llvmonly" at this time.
+Currently, mkbundle supports three AOT modes. The default mode (this option unset)
+will AOT methods but will fall back on runtime codegen where it is much faster or offers
+a more full compatibility profile. The "full" setting will generate the necessary stubs to
+not require runtime code generation. The "llvmonly" setting does the same, but forces all codegen
+to go through the llvm backend.
+
 .SH WINDOWS
-If you are using the old embedding on Windows systems, it it necessary
-to have Unix-like toolchain to be installed for \fImkbundle\fP to
-work.  You can use cygwin's and install gcc, gcc-mingw and as
-packages.
+If you are using the old embedding on Windows systems, it possible to use
+a Unix-like toolchain like cygwin's and install gcc, gcc-mingw packages or
+use Visual Studio 2015/2017 VC toolchain together with Clang for Visual Studio as assembler.
+Clang can be installed as an individual component, "Clang/C2", using Visual Studio installer.
+.PP
+Using Visual Studio toolchain, mkbundle will, by default, use latest installed Visual Studio compiler
+and linker as well as Windows SDK. If executed from one of the Visual Studio developer command prompts,
+mkbundle will retrieve information directly from that build environment.
 .SH ENVIRONMENT VARIABLES
 .TP
 .I "AS"
-Assembler command. The default is "as".
+Assembler command. The default is "as". For Visual Studio, default is "clang.exe".
+If "clang.exe" for Visual Studio is not installed, mkbundle will fall back using "as".
 .TP
 .I "CC"
-C compiler command. The default is "cc" under Linux and "gcc"
-under Windows.
+C compiler command. The default is "cc" for Linux, "gcc"
+for cygwin and "cl.exe" for Visual Studio.
 .TP
 .I "MONO_BUNDLED_OPTIONS"
 Options to be passed to the bundled
 Mono runtime, separated by spaces. See the mono(1) manual page or run mono --help.
+.SH WINDOWS VISUAL STUDIO ENVIRONMENT VARIABLES
+.TP
+.I "VisualStudioVersion"
+Visual Studio version used in mkbundle build.
+Default, latest installed Visual Studio version.
+Values, "14.0" for Visual Studio 2015 or "15.0" for Visual Studio 2017.
+.TP
+.I "WindowsSdkVersion"
+Windows SDK version used in mkbundle build.
+Default/unknown, latest installed Windows SDK.
+Values, "8.1", "10.0.10240.0", "10.0.15063.0" etc.
+.TP
+.I "VSCMD_ARG_TGT_ARCH"
+Output target architecture used in mkbundle build.
+Default/unknown, use architecture of .NET runtime executing mkbundle.
+Values, "x86" or "x64".
+NOTE, when running from a Visual Studio command prompt, this variable should already be set
+by the command prompt and match the rest of that build environment.
+.TP
+.I "INCLUDE"
+Override all custom include paths passed to "cl.exe".
+Predefined by Visual Studio developer command prompt or auto detected by mkbundle when undefined.
+.TP
+.I "LIB"
+Override all custom library paths passed to "link.exe".
+Predefined by Visual Studio developer command prompt or auto detected by mkbundle when undefined.
+.TP
+.I "MONOPREFIX"
+Use a custom Mono SDK install root matching the output target architecture (x86/x64).
+Default, mkbundle will look for installed Mono SDK’s matching targeted architecture.
+.TP
+.I "MONOLIB"
+Use a different mono library name or an absolute path to the mono library passed to linker.
+Default, mkbundle will use default mono library name depending on mkbundle dynamic/static use case.
+NOTE, supplied mono library needs to match mkbundle dynamic/static use case and target architecture.
+.TP
+.I "VCCRT"
+Override C-runtime library linker settings.
+Default "MD", mkbundle will use dynamic C-runtime linking on Windows compatible with Mono SDK distribution.
+If a custom built Mono runtime using static C-Runtime linkage is used, setting this variable to "MT"
+will link using static C-runtime libraries.
+.TP
+.I "VCSUBSYSTEM"
+Override Windows subsystem.
+Default, "windows". If console subsystem is preferred, use "console".
+NOTE, if console output is expected from output target process then
+set this variable to "console".
 .SH FILES
 This program will load referenced assemblies from the Mono assembly
 cache. 
 .PP
 Targets are loaded from ~/.mono/targets/TARGETNAME/mono
 .SH BUGS
-The option "--static" is not supported under Windows when using the
-old embedding.
-Moreover, a full cygwin environment containing at least "gcc" and "as"
-is required for the build process. The generated executable does not
-depend on cygwin.
 .SH MAILING LISTS
 Visit http://lists.ximian.com/mailman/listinfo/mono-devel-list for details.
 .SH WEB SITE

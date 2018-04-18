@@ -240,9 +240,11 @@ namespace System.IO
                 // write any buffered data to those streams even during finalization, which 
                 // is generally the right thing to do.
                 if (stream != null) {
+#pragma warning disable 184
                     // Note: flush on the underlying stream can throw (ex., low disk space)
                     if (disposing || (LeaveOpen && stream is __ConsoleStream))
                     {
+#pragma warning restore
 #if FEATURE_ASYNC_IO
                         CheckAsyncTaskInProgress();
 #endif

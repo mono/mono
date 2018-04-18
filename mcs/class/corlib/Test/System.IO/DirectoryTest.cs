@@ -17,7 +17,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MOBILE
 using Mono.Unix;
 #endif
 using NUnit.Framework;
@@ -47,7 +47,7 @@ public class DirectoryTest
 		if (Directory.Exists (TempFolder))
 			Directory.Delete (TempFolder, true);
 	}
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MOBILE
 	[Test] //BXC #12461
 	public void EnumerateFilesListSymlinks ()
 	{
@@ -1527,7 +1527,23 @@ public class DirectoryTest
 		info = Directory.GetParent (Path.GetPathRoot (Path.GetTempPath ()));
 		Assert.IsNull (info);
 	}
-	
+
+	[Test]
+	public void GetDirectoryRoot ()
+	{
+		if (RunningOnUnix)
+		{
+			string path = "/usr/lib";
+			Assert.AreEqual ("/", Directory.GetDirectoryRoot (path));
+		}
+		else
+		{
+			Assert.Ignore ("TODO: no proper implementation on Windows.");
+			string path = "C:\\Windows";
+			Assert.AreEqual ("C:\\", Directory.GetDirectoryRoot (path));
+		}
+	}
+
 	[Test]
 	public void GetFiles ()
 	{
@@ -1673,6 +1689,20 @@ public class DirectoryTest
 		}
 	}
 
+	
+	[Test]
+	public void GetFiles_SubDirInPattern ()
+	{
+		string DirPath = TempFolder + Path.DirectorySeparatorChar + "GetFiles_SubDirInPattern";
+		if (Directory.Exists (DirPath))
+			Directory.Delete (DirPath, true);
+
+		Directory.CreateDirectory ($"{DirPath}{Path.DirectorySeparatorChar}something{Path.DirectorySeparatorChar}else");
+		File.WriteAllText($"{DirPath}{Path.DirectorySeparatorChar}something{Path.DirectorySeparatorChar}else{Path.DirectorySeparatorChar}file", "hello");
+
+		var r = Directory.GetFiles (DirPath, $"something{Path.DirectorySeparatorChar}else{Path.DirectorySeparatorChar}*", SearchOption.AllDirectories);
+		Assert.AreEqual (new string[] { Path.Combine (DirPath, "something", "else", "file") }, r);
+	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
@@ -1717,6 +1747,47 @@ public class DirectoryTest
 			return ((platform == 4) || (platform == 128) || (platform == 6));
 		}
 	}
+
+#if !MOBILE
+	[Test]
+	public void ResolvePathBeforeDirectoryExists ()
+	{
+		if (!RunningOnUnix)
+			Assert.Ignore ("Not running on Unix.");
+
+		string cwd = Directory.GetCurrentDirectory ();
+
+		string root = Path.Combine (TempFolder, "test_ResolvePathBeforeExists");
+		string testPath = Path.Combine (root, "test");
+		string test2Path = Path.Combine (testPath, "test2");
+		string testFile = Path.Combine (test2Path, "test_file");
+		string symlinkPath = Path.Combine (root, "test3");
+		try 
+		{	
+			Directory.CreateDirectory (root);
+			Directory.SetCurrentDirectory (root);
+			Directory.CreateDirectory (testPath);
+			Directory.CreateDirectory (test2Path);
+			File.WriteAllText (testFile, "hello");
+
+			var info = new UnixFileInfo (test2Path);
+			info.CreateSymbolicLink (symlinkPath);
+
+			var partial_path_with_symlink = "test3/../test3"; // test3 is a symlink to test/test2
+
+			Assert.AreEqual (Directory.Exists (partial_path_with_symlink), true);
+		}
+		finally 
+		{
+			DeleteFile (symlinkPath);
+			DeleteFile (testFile);
+			DeleteDirectory (test2Path);
+			DeleteDirectory (testPath);
+			Directory.SetCurrentDirectory (cwd);
+			DeleteDirectory (root);
+		}
+	}
+#endif
 
 	private void DeleteDirectory (string path)
 	{

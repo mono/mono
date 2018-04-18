@@ -8,7 +8,7 @@
 //
 // DefaultMemberAttribute is defines the Member of a Type that is the "default"
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //    member used by Type.InvokeMember.  The default member is simply a name given
 //    to a type.
 //

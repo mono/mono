@@ -67,7 +67,6 @@ namespace System.Runtime.Serialization
                         nodes[i].WriteTo(xmlWriter);
         }
 
-#if !MOBILE
         internal static string AddDefaultSchemaMethodName = "AddDefaultSchema";
         public static void AddDefaultSchema(XmlSchemaSet schemas, XmlQualifiedName typeQName)
         {
@@ -77,6 +76,5 @@ namespace System.Runtime.Serialization
                 throw System.Runtime.Serialization.DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("typeQName");
             SchemaExporter.AddDefaultXmlType(schemas, typeQName.Name, typeQName.Namespace);
         }
-#endif
     }
 }

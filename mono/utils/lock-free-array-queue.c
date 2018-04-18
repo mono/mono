@@ -1,5 +1,6 @@
-/*
- * lock-free-array-queue.c: A lock-free somewhat-queue that doesn't
+/**
+ * \file
+ * A lock-free somewhat-queue that doesn't
  * require hazard pointers.
  *
  * (C) Copyright 2011 Xamarin Inc.
@@ -45,16 +46,16 @@ alloc_chunk (MonoLockFreeArray *arr)
 {
 	int size = mono_pagesize ();
 	int num_entries = (size - (sizeof (Chunk) - arr->entry_size * MONO_ZERO_LEN_ARRAY)) / arr->entry_size;
-	Chunk *chunk = (Chunk *) mono_valloc (NULL, size, MONO_MMAP_READ | MONO_MMAP_WRITE);
+	Chunk *chunk = (Chunk *) mono_valloc (NULL, size, MONO_MMAP_READ | MONO_MMAP_WRITE, arr->account_type);
 	g_assert (chunk);
 	chunk->num_entries = num_entries;
 	return chunk;
 }
 
 static void
-free_chunk (Chunk *chunk)
+free_chunk (Chunk *chunk, MonoMemAccountType type)
 {
-	mono_vfree (chunk, mono_pagesize ());
+	mono_vfree (chunk, mono_pagesize (), type);
 }
 
 gpointer
@@ -67,8 +68,8 @@ mono_lock_free_array_nth (MonoLockFreeArray *arr, int index)
 	if (!arr->chunk_list) {
 		chunk = alloc_chunk (arr);
 		mono_memory_write_barrier ();
-		if (InterlockedCompareExchangePointer ((volatile gpointer *)&arr->chunk_list, chunk, NULL) != NULL)
-			free_chunk (chunk);
+		if (mono_atomic_cas_ptr ((volatile gpointer *)&arr->chunk_list, chunk, NULL) != NULL)
+			free_chunk (chunk, arr->account_type);
 	}
 
 	chunk = arr->chunk_list;
@@ -79,8 +80,8 @@ mono_lock_free_array_nth (MonoLockFreeArray *arr, int index)
 		if (!next) {
 			next = alloc_chunk (arr);
 			mono_memory_write_barrier ();
-			if (InterlockedCompareExchangePointer ((volatile gpointer *) &chunk->next, next, NULL) != NULL) {
-				free_chunk (next);
+			if (mono_atomic_cas_ptr ((volatile gpointer *) &chunk->next, next, NULL) != NULL) {
+				free_chunk (next, arr->account_type);
 				next = chunk->next;
 				g_assert (next);
 			}
@@ -116,7 +117,7 @@ mono_lock_free_array_cleanup (MonoLockFreeArray *arr)
 	arr->chunk_list = NULL;
 	while (chunk) {
 		Chunk *next = chunk->next;
-		free_chunk (chunk);
+		free_chunk (chunk, arr->account_type);
 		chunk = next;
 	}
 }
@@ -144,9 +145,9 @@ mono_lock_free_array_queue_push (MonoLockFreeArrayQueue *q, gpointer entry_data_
 	Entry *entry;
 
 	do {
-		index = InterlockedIncrement (&q->num_used_entries) - 1;
+		index = mono_atomic_inc_i32 (&q->num_used_entries) - 1;
 		entry = (Entry *) mono_lock_free_array_nth (&q->array, index);
-	} while (InterlockedCompareExchange (&entry->state, STATE_BUSY, STATE_FREE) != STATE_FREE);
+	} while (mono_atomic_cas_i32 (&entry->state, STATE_BUSY, STATE_FREE) != STATE_FREE);
 
 	mono_memory_write_barrier ();
 
@@ -162,7 +163,7 @@ mono_lock_free_array_queue_push (MonoLockFreeArrayQueue *q, gpointer entry_data_
 		num_used = q->num_used_entries;
 		if (num_used > index)
 			break;
-	} while (InterlockedCompareExchange (&q->num_used_entries, index + 1, num_used) != num_used);
+	} while (mono_atomic_cas_i32 (&q->num_used_entries, index + 1, num_used) != num_used);
 
 	mono_memory_write_barrier ();
 }
@@ -178,10 +179,10 @@ mono_lock_free_array_queue_pop (MonoLockFreeArrayQueue *q, gpointer entry_data_p
 			index = q->num_used_entries;
 			if (index == 0)
 				return FALSE;
-		} while (InterlockedCompareExchange (&q->num_used_entries, index - 1, index) != index);
+		} while (mono_atomic_cas_i32 (&q->num_used_entries, index - 1, index) != index);
 
 		entry = (Entry *) mono_lock_free_array_nth (&q->array, index - 1);
-	} while (InterlockedCompareExchange (&entry->state, STATE_BUSY, STATE_USED) != STATE_USED);
+	} while (mono_atomic_cas_i32 (&entry->state, STATE_BUSY, STATE_USED) != STATE_USED);
 
 	/* Reading the item must happen before CASing the state. */
 	mono_memory_barrier ();

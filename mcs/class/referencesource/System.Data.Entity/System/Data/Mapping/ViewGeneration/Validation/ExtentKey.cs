@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner [....]
-// @backupOwner [....]
+// @owner Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 
@@ -49,7 +49,7 @@ namespace System.Data.Mapping.ViewGeneration.Structures
         // -- prefix is prepended to the entity's key fields to get the full memberpath
         internal static List<ExtentKey> GetKeysForEntityType(MemberPath prefix, EntityType entityType)
         {
-            // CHANGE_[....]_MULTIPLE_KEYS: currently there is a single key only. Need to support
+            // CHANGE_Microsoft_MULTIPLE_KEYS: currently there is a single key only. Need to support
             // keys inside complex types + unique keys
             ExtentKey key = GetPrimaryKeyForEntityType(prefix, entityType);
 

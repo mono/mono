@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
+	[Category ("InetAccess")]
 	public class DnsTest
 	{
 		private String site1Name = "google-public-dns-a.google.com",
@@ -30,30 +30,48 @@ namespace MonoTests.System.Net
 		private uint site1IP = 134744072, site2IP = 134743044; // Big-Endian
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AsyncGetHostByName ()
 		{
-			IAsyncResult r;
-			r = Dns.BeginGetHostByName (site1Name, new AsyncCallback (GetHostByNameCallback), null);
-
 			IAsyncResult async = Dns.BeginGetHostByName (site1Name, null, null);
 			IPHostEntry entry = Dns.EndGetHostByName (async);
 			SubTestValidIPHostEntry (entry);
-			Assert.IsTrue (entry.HostName == "google-public-dns-a.google.com");
-		}
-
-		void GetHostByNameCallback (IAsyncResult ar)
-		{
-			IPHostEntry h;
-			h = Dns.EndGetHostByName (ar);
-			SubTestValidIPHostEntry (h);
+			Assert.AreEqual ("google-public-dns-a.google.com", entry.HostName, "#1");
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void AsyncGetHostByNameCallback ()
+		{
+			var evt = new ManualResetEvent (false);
+			Exception ex = null;
+			Dns.BeginGetHostByName (site1Name, new AsyncCallback ((IAsyncResult ar) =>
+			{
+				try {
+					IPHostEntry h;
+					h = Dns.EndGetHostByName (ar);
+					SubTestValidIPHostEntry (h);
+				} catch (Exception e) {
+					ex = e;
+				} finally {
+					evt.Set ();
+				}
+			}), null);
+
+			Assert.IsTrue (evt.WaitOne (TimeSpan.FromSeconds (60)), "Wait");
+			Assert.IsNull (ex, "Exception");
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AsyncResolve ()
 		{
-			IAsyncResult r;
-			r = Dns.BeginResolve (site1Name, new AsyncCallback (ResolveCallback), null);
-
 			IAsyncResult async = Dns.BeginResolve (site1Dot, null, null);
 			IPHostEntry entry = Dns.EndResolve (async);
 			SubTestValidIPHostEntry (entry);
@@ -61,10 +79,28 @@ namespace MonoTests.System.Net
 			Assert.AreEqual (site1Dot, ip.ToString ());
 		}
 
-		void ResolveCallback (IAsyncResult ar)
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void AsyncResolveCallback ()
 		{
-			IPHostEntry h = Dns.EndResolve (ar);
-			SubTestValidIPHostEntry (h);
+			var evt = new ManualResetEvent (false);
+			Exception ex = null;
+			Dns.BeginResolve (site1Name, new AsyncCallback ((IAsyncResult ar) =>
+			{
+				try {
+					IPHostEntry h = Dns.EndResolve (ar);
+					SubTestValidIPHostEntry (h);
+				} catch (Exception e) {
+					ex = e;
+				} finally {
+					evt.Set ();
+				}
+			}), null);
+
+			Assert.IsTrue (evt.WaitOne (TimeSpan.FromSeconds (60)), "Wait");
+			Assert.IsNull (ex, "Exception");
 		}
 
 		[Test]
@@ -73,7 +109,7 @@ namespace MonoTests.System.Net
 			try {
 				Dns.BeginGetHostAddresses (
 					(string) null,
-					new AsyncCallback (GetHostAddressesCallback),
+					new AsyncCallback (ShouldntBeCalled),
 					null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -91,7 +127,7 @@ namespace MonoTests.System.Net
 			try {
 				Dns.BeginGetHostAddresses (
 					"0.0.0.0",
-					new AsyncCallback (GetHostAddressesCallback),
+					new AsyncCallback (ShouldntBeCalled),
 					null);
 				Assert.Fail ("#A1");
 			} catch (ArgumentException ex) {
@@ -108,7 +144,7 @@ namespace MonoTests.System.Net
 			try {
 				Dns.BeginGetHostAddresses (
 					"::0",
-					new AsyncCallback (GetHostAddressesCallback),
+					new AsyncCallback (ShouldntBeCalled),
 					null);
 				Assert.Fail ("#B1");
 			} catch (ArgumentException ex) {
@@ -122,10 +158,9 @@ namespace MonoTests.System.Net
 			}
 		}
 
-		void GetHostAddressesCallback (IAsyncResult ar)
+		void ShouldntBeCalled (IAsyncResult ar)
 		{
-			IPAddress [] addresses = Dns.EndGetHostAddresses (ar);
-			Assert.IsNotNull (addresses);
+			Assert.Fail ("Should not be called");
 		}
 
 		[Test]
@@ -175,6 +210,13 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category("NotOnWindows")]
+		public void GetHostAddresses_IPv6 ()
+		{
+			var address = Dns.GetHostAddresses("ipv6.google.com");
+		}
+
+		[Test]
 		public void GetHostName ()
 		{
 			string hostName = Dns.GetHostName ();
@@ -182,26 +224,16 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		[NUnit.Framework.Category ("AndroidNotWorking")] //Some Android devices like to return catch-all IPs for invalid host names.
 		public void GetHostByName ()
 		{
 			SubTestGetHostByName (site1Name, site1Dot);
 			SubTestGetHostByName (site2Name, site2Dot);
 			try {
 				var entry = Dns.GetHostByName (noneExistingSite);
-				/*
-				 * Work around broken t-online.de DNS Server.
-				 * 
-				 * T-Online's DNS Server for DSL Customers resolves
-				 * non-exisitng domain names to
-				 * http://navigationshilfe1.t-online.de/dnserror?url=....
-				 * instead of reporting an error.
-				 */
-				var navigationshilfe1 = IPAddress.Parse ("80.156.86.78");
-				var navigationshilfe2 = IPAddress.Parse ("62.157.140.133");
-				foreach (var addr in entry.AddressList) {
-					if (addr.Equals (navigationshilfe1) || addr.Equals (navigationshilfe2))
-						return;
-				}
 				Assert.Fail ("Should raise a SocketException (assuming that '" + noneExistingSite + "' does not exist)");
 			} catch (SocketException) {
 			}
@@ -313,11 +345,14 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginResolve_HostName_Null ()
 		{
 			try {
 				Dns.BeginResolve ((string) null,
-					new AsyncCallback (ResolveCallback),
+					new AsyncCallback (ShouldntBeCalled),
 					null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -329,6 +364,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Resolve ()
 		{
 			SubTestResolve (site1Name);
@@ -344,6 +382,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Resolve_HostName_Null ()
 		{
 			try {
@@ -358,12 +399,15 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // BeginGetHostEntry (IPAddress, AsyncCallback, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetHostEntry1_Address_Null ()
 		{
 			try {
 				Dns.BeginGetHostEntry (
 					(IPAddress) null,
-					new AsyncCallback (GetHostAddressesCallback),
+					new AsyncCallback (ShouldntBeCalled),
 					null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -375,12 +419,15 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // BeginGetHostEntry (String, AsyncCallback, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetHostEntry2_HostNameOrAddress_Null ()
 		{
 			try {
 				Dns.BeginGetHostEntry (
 					(string) null,
-					new AsyncCallback (GetHostAddressesCallback),
+					new AsyncCallback (ShouldntBeCalled),
 					null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -392,6 +439,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // BeginGetHostEntry (String, AsyncCallback, Object)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetHostEntry2_HostNameOrAddress_UnspecifiedAddress ()
 		{
 			// IPv4
@@ -450,6 +500,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // GetHostEntry (String)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void GetHostEntry2 ()
 		{
 			Dns.GetHostEntry (site1Name); // hostname

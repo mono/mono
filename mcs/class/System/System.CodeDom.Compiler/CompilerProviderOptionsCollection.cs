@@ -112,9 +112,7 @@ namespace System.CodeDom.Compiler
 			}
 		}
 		
-		public CompilerProviderOption this [int index] {
-			get { return (CompilerProviderOption) BaseGet (index); }
-		}
+		public CompilerProviderOption this [int index] => (CompilerProviderOption) BaseGet (index);
 
 		public new CompilerProviderOption this [string name] {
 			get {
@@ -122,7 +120,6 @@ namespace System.CodeDom.Compiler
 					if (c.Name == name)
 						return c;
 				}
-
 				return null;
 			}
 		}

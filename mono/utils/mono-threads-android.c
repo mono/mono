@@ -1,6 +1,10 @@
+/**
+ * \file
+ */
+
 #include <config.h>
 
-#if defined(PLATFORM_ANDROID)
+#if defined(HOST_ANDROID)
 
 #include <pthread.h>
 #include <stdio.h>

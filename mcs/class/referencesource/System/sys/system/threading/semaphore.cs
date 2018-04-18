@@ -251,6 +251,9 @@ namespace System.Threading
 #endif
 
         // This exists in WaitHandle, but is oddly ifdefed for some reason...
+#if MONO
+        new
+#endif
         private enum OpenExistingResult
         {
             Success,
@@ -362,7 +365,7 @@ namespace System.Threading
             //Non-Zero return 
 
 #if MONO
-            if (!ReleaseSemaphore_internal(Handle, releaseCount, out previousCount))
+            if (!ReleaseSemaphore_internal(SafeWaitHandle.DangerousGetHandle(), releaseCount, out previousCount))
 #else
             if (!SafeNativeMethods.ReleaseSemaphore(SafeWaitHandle, releaseCount, out previousCount))
 #endif

@@ -6,4 +6,4 @@ SqliteExceptionUnitTests.cs
 SqliteParameterUnitTests.cs
 SqliteFunctionTests.cs
 Bug27864.cs
-
+SqliteTests.cs

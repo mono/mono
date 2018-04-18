@@ -2,8 +2,8 @@
 // <copyright file="SqlDataReader.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -44,7 +44,7 @@ namespace System.Data.SqlClient {
 
         internal SharedState _sharedState = new SharedState();
 
-        private TdsParser                      _parser;                 // TODO: Probably don't need this, since it's on the stateObj
+        private TdsParser                      _parser;                 // 
         private TdsParserStateObject           _stateObj;
         private SqlCommand                     _command;
         private SqlConnection                  _connection;
@@ -1105,7 +1105,7 @@ namespace System.Data.SqlClient {
                         // CleanWire will do cleanup - so we don't really care about the snapshot
                         CleanupAfterAsyncInvocationInternal(stateObj, resetNetworkPacketTaskSource: false);
                     }
-                    // Switch to [....] to prepare for cleanwire
+                    // Switch to sync to prepare for cleanwire
                     stateObj._syncOverAsync = true;
                     // Remove owner (this will allow the stateObj to be disposed after the connection is closed)
                     stateObj.RemoveOwner();
@@ -4355,7 +4355,7 @@ namespace System.Data.SqlClient {
                     return ADP.CreatedTaskWithCancellation<bool>();
                 }
                 
-                // Shortcut - if we have enough data, then run [....]
+                // Shortcut - if we have enough data, then run sync
                 try {
                     if (WillHaveEnoughData(i, headerOnly: true)) {
 #if DEBUG
@@ -4457,7 +4457,7 @@ namespace System.Data.SqlClient {
                 return ADP.CreatedTaskWithCancellation<T>();
             }
 
-            // Shortcut - if we have enough data, then run [....]
+            // Shortcut - if we have enough data, then run sync
             try {
                 if (WillHaveEnoughData(i)) {
 #if DEBUG
@@ -4628,9 +4628,7 @@ namespace System.Data.SqlClient {
                 }
 
                 if (task.IsCompleted) {
-                    // If we've completed [....], then don't bother handling the TaskCompletionSource - we'll just return the completed task
                     CompleteRetryable(task, source, objectToDispose);
-                    return task;
                 }
                 else {
                     task.ContinueWith((t) => CompleteRetryable(t, source, objectToDispose), TaskScheduler.Default);

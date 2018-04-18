@@ -200,7 +200,7 @@ namespace System.ServiceModel.Routing
         {
             if (this.perMessageChannels != null)
             {
-                //This is for impersonation, thus it's supposed to complete [....]
+                //This is for impersonation, thus it's supposed to complete sync
                 IAsyncResult result = this.perMessageChannels.BeginClose(this.ChannelExtension.OperationTimeout, null, null);
                 this.perMessageChannels.EndClose(result);
                 this.perMessageChannels = null;

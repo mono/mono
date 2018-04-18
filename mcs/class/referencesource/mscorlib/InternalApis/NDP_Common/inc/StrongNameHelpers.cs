@@ -20,7 +20,7 @@ namespace Microsoft.Runtime.Hosting {
         [ThreadStatic]
         private static IClrStrongName s_StrongName;
 
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         private static IClrStrongName StrongName {
             [System.Security.SecurityCritical]
             get {
@@ -33,7 +33,7 @@ namespace Microsoft.Runtime.Hosting {
             }
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         private static IClrStrongNameUsingIntPtr StrongNameUsingIntPtr {
             [System.Security.SecurityCritical]
             get {
@@ -42,20 +42,20 @@ namespace Microsoft.Runtime.Hosting {
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static int StrongNameErrorInfo() {
             return ts_LastStrongNameHR;
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "Microsoft.Runtime.Hosting.IClrStrongNameUsingIntPtr.StrongNameFreeBuffer(System.IntPtr)", Justification = "StrongNameFreeBuffer returns void but the new runtime wrappers return an HRESULT.")]
         public static void StrongNameFreeBuffer(IntPtr pbMemory) {
             StrongNameUsingIntPtr.StrongNameFreeBuffer(pbMemory);
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameGetPublicKey(string pwzKeyContainer, IntPtr pbKeyBlob, int cbKeyBlob, out IntPtr ppbPublicKeyBlob, out int pcbPublicKeyBlob) {
             int hr = StrongNameUsingIntPtr.StrongNameGetPublicKey(pwzKeyContainer, pbKeyBlob, cbKeyBlob, out ppbPublicKeyBlob, out pcbPublicKeyBlob);
             if( hr < 0 )
@@ -70,7 +70,7 @@ namespace Microsoft.Runtime.Hosting {
 
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameKeyDelete(string pwzKeyContainer) {
             int hr = StrongName.StrongNameKeyDelete(pwzKeyContainer);
             if( hr < 0 )
@@ -82,7 +82,7 @@ namespace Microsoft.Runtime.Hosting {
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameKeyGen(string pwzKeyContainer, int dwFlags, out IntPtr ppbKeyBlob, out int pcbKeyBlob) {
             int hr = StrongName.StrongNameKeyGen(pwzKeyContainer, dwFlags, out ppbKeyBlob, out pcbKeyBlob);
             if( hr < 0 )
@@ -96,7 +96,7 @@ namespace Microsoft.Runtime.Hosting {
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameKeyInstall(string pwzKeyContainer, IntPtr pbKeyBlob, int cbKeyBlob) {
             int hr = StrongNameUsingIntPtr.StrongNameKeyInstall(pwzKeyContainer, pbKeyBlob, cbKeyBlob);
             if( hr < 0 )
@@ -108,7 +108,7 @@ namespace Microsoft.Runtime.Hosting {
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameSignatureGeneration(string pwzFilePath, string pwzKeyContainer, IntPtr pbKeyBlob, int cbKeyBlob) {
             IntPtr ppbSignatureBlob = IntPtr.Zero;
             int cbSignatureBlob = 0;
@@ -117,7 +117,7 @@ namespace Microsoft.Runtime.Hosting {
 
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameSignatureGeneration(string pwzFilePath, string pwzKeyContainer, IntPtr pbKeyBlob, int cbKeyBlob, ref IntPtr ppbSignatureBlob, out int pcbSignatureBlob) {
             int hr = StrongNameUsingIntPtr.StrongNameSignatureGeneration(pwzFilePath, pwzKeyContainer, pbKeyBlob, cbKeyBlob, ppbSignatureBlob, out pcbSignatureBlob);
             if( hr < 0 )
@@ -130,7 +130,7 @@ namespace Microsoft.Runtime.Hosting {
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameSignatureSize(IntPtr pbPublicKeyBlob, int cbPublicKeyBlob, out int pcbSize) {
             int hr = StrongNameUsingIntPtr.StrongNameSignatureSize(pbPublicKeyBlob, cbPublicKeyBlob, out pcbSize);
             if( hr < 0 )
@@ -143,7 +143,7 @@ namespace Microsoft.Runtime.Hosting {
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameSignatureVerification(string pwzFilePath, int dwInFlags, out int pdwOutFlags) {
             int hr = StrongName.StrongNameSignatureVerification(pwzFilePath, dwInFlags, out pdwOutFlags);
             if( hr < 0 )
@@ -156,7 +156,7 @@ namespace Microsoft.Runtime.Hosting {
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameSignatureVerificationEx(string pwzFilePath, bool fForceVerification, out bool pfWasVerified) {
             int hr = StrongName.StrongNameSignatureVerificationEx(pwzFilePath, fForceVerification, out pfWasVerified);
             if( hr < 0 )
@@ -169,7 +169,7 @@ namespace Microsoft.Runtime.Hosting {
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameTokenFromPublicKey(IntPtr pbPublicKeyBlob, int cbPublicKeyBlob, out IntPtr ppbStrongNameToken, out int pcbStrongNameToken) {
             int hr = StrongNameUsingIntPtr.StrongNameTokenFromPublicKey(pbPublicKeyBlob, cbPublicKeyBlob, out ppbStrongNameToken, out pcbStrongNameToken);
             if( hr < 0 )
@@ -183,7 +183,7 @@ namespace Microsoft.Runtime.Hosting {
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameSignatureSize(byte[] bPublicKeyBlob, int cbPublicKeyBlob, out int pcbSize) {
             int hr = StrongName.StrongNameSignatureSize(bPublicKeyBlob, cbPublicKeyBlob, out pcbSize);
             if( hr < 0 )
@@ -195,7 +195,7 @@ namespace Microsoft.Runtime.Hosting {
             return true;
         }
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameTokenFromPublicKey(byte[] bPublicKeyBlob, int cbPublicKeyBlob, out IntPtr ppbStrongNameToken, out int pcbStrongNameToken) {
             int hr = StrongName.StrongNameTokenFromPublicKey(bPublicKeyBlob, cbPublicKeyBlob, out ppbStrongNameToken, out pcbStrongNameToken);
             if( hr < 0 )
@@ -209,7 +209,7 @@ namespace Microsoft.Runtime.Hosting {
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameGetPublicKey(string pwzKeyContainer, byte[] bKeyBlob, int cbKeyBlob, out IntPtr ppbPublicKeyBlob, out int pcbPublicKeyBlob) {
             int hr = StrongName.StrongNameGetPublicKey(pwzKeyContainer, bKeyBlob, cbKeyBlob, out ppbPublicKeyBlob, out pcbPublicKeyBlob);
             if( hr < 0 )
@@ -223,7 +223,7 @@ namespace Microsoft.Runtime.Hosting {
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameKeyInstall(string pwzKeyContainer, byte[] bKeyBlob, int cbKeyBlob) {
             int hr = StrongName.StrongNameKeyInstall(pwzKeyContainer, bKeyBlob, cbKeyBlob);
             if( hr < 0 )
@@ -235,7 +235,7 @@ namespace Microsoft.Runtime.Hosting {
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameSignatureGeneration(string pwzFilePath, string pwzKeyContainer, byte[] bKeyBlob, int cbKeyBlob) {
             IntPtr ppbSignatureBlob = IntPtr.Zero;
             int cbSignatureBlob = 0;
@@ -243,7 +243,7 @@ namespace Microsoft.Runtime.Hosting {
         }
 
         [System.Security.SecurityCritical]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "[....]: This file is included in a lot of projects some of which only use a subset of the functions.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Microsoft: This file is included in a lot of projects some of which only use a subset of the functions.")]
         public static bool StrongNameSignatureGeneration(string pwzFilePath, string pwzKeyContainer, byte[] bKeyBlob, int cbKeyBlob, ref IntPtr ppbSignatureBlob, out int pcbSignatureBlob) {
             int hr = StrongName.StrongNameSignatureGeneration(pwzFilePath, pwzKeyContainer, bKeyBlob, cbKeyBlob, ppbSignatureBlob, out pcbSignatureBlob);
             if( hr < 0 )

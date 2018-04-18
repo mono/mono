@@ -2102,7 +2102,7 @@ namespace System.Xml
 
             public override long Length
             {
-#pragma warning suppress 56503 // [....], required by the XmlReader
+#pragma warning suppress 56503 // Microsoft, required by the XmlReader
                 get { throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.SeekNotSupportedOnStream, this.GetType().FullName))); }
             }
 
@@ -2110,7 +2110,7 @@ namespace System.Xml
             {
                 get
                 {
-#pragma warning suppress 56503 // [....], required by the XmlReader
+#pragma warning suppress 56503 // Microsoft, required by the XmlReader
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.SeekNotSupportedOnStream, this.GetType().FullName)));
                 }
                 set { throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.SeekNotSupportedOnStream, this.GetType().FullName))); }
@@ -2831,7 +2831,7 @@ namespace System.Xml
         {
             get
             {
-#pragma warning suppress 56503 // [....], required by the Stream contract
+#pragma warning suppress 56503 // Microsoft, required by the Stream contract
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.SeekNotSupportedOnStream, stream.GetType().FullName)));
             }
         }
@@ -2840,7 +2840,7 @@ namespace System.Xml
         {
             get
             {
-#pragma warning suppress 56503 // [....], required by the Stream contract
+#pragma warning suppress 56503 // Microsoft, required by the Stream contract
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.SeekNotSupportedOnStream, stream.GetType().FullName)));
             }
             set

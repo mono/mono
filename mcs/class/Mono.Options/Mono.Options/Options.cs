@@ -2,13 +2,14 @@
 // Options.cs
 //
 // Authors:
-//  Jonathan Pryor <jpryor@novell.com>
+//  Jonathan Pryor <jpryor@novell.com>, <Jonathan.Pryor@microsoft.com>
 //  Federico Di Gregorio <fog@initd.org>
 //  Rolf Bjarne Kvinge <rolf@xamarin.com>
 //
 // Copyright (C) 2008 Novell (http://www.novell.com)
 // Copyright (C) 2009 Federico Di Gregorio.
 // Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
+// Copyright (C) 2017 Microsoft Corporation (http://www.microsoft.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,8 +32,8 @@
 //
 
 // Compile With:
-//   gmcs -debug+ -r:System.Core Options.cs -o:NDesk.Options.dll
-//   gmcs -debug+ -d:LINQ -r:System.Core Options.cs -o:NDesk.Options.dll
+//   mcs -debug+ -r:System.Core Options.cs -o:Mono.Options.dll -t:library
+//   mcs -debug+ -d:LINQ -r:System.Core Options.cs -o:Mono.Options.dll -t:library
 //
 // The LINQ version just changes the implementation of
 // OptionSet.Parse(IEnumerable<string>), and confers no semantic changes.
@@ -40,7 +41,7 @@
 //
 // A Getopt::Long-inspired option parsing library for C#.
 //
-// NDesk.Options.OptionSet is built upon a key/value table, where the
+// Mono.Options.OptionSet is built upon a key/value table, where the
 // key is a option format string and the value is a delegate that is 
 // invoked when the format string is matched.
 //
@@ -127,6 +128,33 @@
 //      p.Parse (new string[]{"-a-"});  // sets v == null
 //
 
+//
+// Mono.Options.CommandSet allows easily having separate commands and
+// associated command options, allowing creation of a *suite* along the
+// lines of **git**(1), **svn**(1), etc.
+//
+// CommandSet allows intermixing plain text strings for `--help` output,
+// Option values -- as supported by OptionSet -- and Command instances,
+// which have a name, optional help text, and an optional OptionSet.
+//
+//  var suite = new CommandSet ("suite-name") {
+//    // Use strings and option values, as with OptionSet
+//    "usage: suite-name COMMAND [OPTIONS]+",
+//    { "v:", "verbosity", (int? v) => Verbosity = v.HasValue ? v.Value : Verbosity+1 },
+//    // Commands may also be specified
+//    new Command ("command-name", "command help") {
+//      Options = new OptionSet {/*...*/},
+//      Run     = args => { /*...*/},
+//    },
+//    new MyCommandSubclass (),
+//  };
+//  return suite.Run (new string[]{...});
+//
+// CommandSet provides a `help` command, and forwards `help COMMAND`
+// to the registered Command instance by invoking Command.Invoke()
+// with `--help` as an option.
+//
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -134,10 +162,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
-using System.Runtime.Serialization;
 #if PCL
 using System.Reflection;
 #else
+using System.Runtime.Serialization;
 using System.Security.Permissions;
 #endif
 using System.Text;
@@ -414,7 +442,7 @@ namespace Mono.Options
 				? new[]{prototype + this.GetHashCode ()}
 				: prototype.Split ('|');
 
-			if (this is OptionSet.Category)
+			if (this is OptionSet.Category || this is CommandOption)
 				return;
 
 			this.type        = ParsePrototype ();
@@ -585,6 +613,11 @@ namespace Mono.Options
 
 		protected abstract void OnParseComplete (OptionContext c);
 
+		internal void InvokeOnParseComplete (OptionContext c)
+		{
+			OnParseComplete (c);
+		}
+
 		public override string ToString ()
 		{
 			return Prototype;
@@ -601,7 +634,7 @@ namespace Mono.Options
 		public abstract string Description { get; }
 		public abstract bool GetArguments (string value, out IEnumerable<string> replacement);
 
-#if !PCL
+#if !PCL || NETSTANDARD1_3
 		public static IEnumerable<string> GetArgumentsFromFile (string file)
 		{
 			return GetArguments (File.OpenText (file), true);
@@ -657,7 +690,7 @@ namespace Mono.Options
 		}
 	}
 
-#if !PCL
+#if !PCL || NETSTANDARD1_3
 	public class ResponseFileSource : ArgumentSource {
 
 		public override string[] GetNames ()
@@ -732,20 +765,26 @@ namespace Mono.Options
 	public class OptionSet : KeyedCollection<string, Option>
 	{
 		public OptionSet ()
-			: this (delegate (string f) {return f;})
+			: this (null)
 		{
 		}
 
 		public OptionSet (MessageLocalizerConverter localizer)
 		{
+			this.roSources = new ReadOnlyCollection<ArgumentSource> (sources);
 			this.localizer = localizer;
-			this.roSources = new ReadOnlyCollection<ArgumentSource>(sources);
+			if (this.localizer == null) {
+				this.localizer = delegate (string f) {
+					return f;
+				};
+			}
 		}
 
 		MessageLocalizerConverter localizer;
 
 		public MessageLocalizerConverter MessageLocalizer {
 			get {return localizer;}
+			internal set {localizer = value;}
 		}
 
 		List<ArgumentSource> sources = new List<ArgumentSource> ();
@@ -1210,6 +1249,9 @@ namespace Mono.Options
 		private const int Description_FirstWidth  = 80 - OptionWidth;
 		private const int Description_RemWidth    = 80 - OptionWidth - 2;
 
+		static  readonly    string      CommandHelpIndentStart       = new string (' ', OptionWidth);
+		static  readonly    string      CommandHelpIndentRemaining   = new string (' ', OptionWidth + 2);
+
 		public void WriteOptionDescriptions (TextWriter o)
 		{
 			foreach (Option p in this) {
@@ -1221,6 +1263,11 @@ namespace Mono.Options
 				Category c = p as Category;
 				if (c != null) {
 					WriteDescription (o, p.Description, "", 80, 80);
+					continue;
+				}
+				CommandOption co = p as CommandOption;
+				if (co != null) {
+					WriteCommandDescription (o, co.Command, co.CommandName);
 					continue;
 				}
 
@@ -1261,6 +1308,17 @@ namespace Mono.Options
 
 				WriteDescription (o, s.Description, new string (' ', OptionWidth+2),
 						Description_FirstWidth, Description_RemWidth);
+			}
+		}
+
+		internal void WriteCommandDescription (TextWriter o, Command c, string commandName)
+		{
+			var name = new string (' ', 8) + (commandName ?? c.Name);
+			if (name.Length < OptionWidth - 1) {
+				WriteDescription (o, name + new string (' ', OptionWidth - name.Length) + c.Help, CommandHelpIndentRemaining, 80, Description_RemWidth);
+			} else {
+				WriteDescription (o, name, "", 80, 80);
+				WriteDescription (o, CommandHelpIndentStart + c.Help, CommandHelpIndentRemaining, 80, Description_RemWidth);
 			}
 		}
 
@@ -1332,28 +1390,27 @@ namespace Mono.Options
 			o.Write (s);
 		}
 
-		private static string GetArgumentName (int index, int maxIndex, string description)
+		static string GetArgumentName (int index, int maxIndex, string description)
 		{
-			if (description == null)
-				return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
-			string[] nameStart;
-			if (maxIndex == 1)
-				nameStart = new string[]{"{0:", "{"};
-			else
-				nameStart = new string[]{"{" + index + ":"};
-			for (int i = 0; i < nameStart.Length; ++i) {
-				int start, j = 0;
-				do {
-					start = description.IndexOf (nameStart [i], j);
-				} while (start >= 0 && j != 0 ? description [j++ - 1] == '{' : false);
-				if (start == -1)
-					continue;
-				int end = description.IndexOf ("}", start);
-				if (end == -1)
-					continue;
-				return description.Substring (start + nameStart [i].Length, end - start - nameStart [i].Length);
+			var matches = Regex.Matches (description ?? "", @"(?<=(?<!\{)\{)[^{}]*(?=\}(?!\}))"); // ignore double braces 
+			string argName = "";
+			foreach (Match match in matches) {
+				var parts = match.Value.Split (':');
+				// for maxIndex=1 it can be {foo} or {0:foo}
+				if (maxIndex == 1) {
+					argName = parts[parts.Length - 1];
+				}
+				// look for {i:foo} if maxIndex > 1
+				if (maxIndex > 1 && parts.Length == 2 && 
+					parts[0] == index.ToString (CultureInfo.InvariantCulture)) {
+					argName = parts[1];
+				}
 			}
-			return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
+
+			if (string.IsNullOrEmpty (argName)) {
+				argName = maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
+			}
+			return argName;
 		}
 
 		private static string GetDescription (string description)
@@ -1401,6 +1458,496 @@ namespace Mono.Options
 		private static IEnumerable<string> GetLines (string description, int firstWidth, int remWidth)
 		{
 			return StringCoda.WrappedLines (description, firstWidth, remWidth);
+		}
+	}
+
+	public class Command
+	{
+		public      string                              Name            {get;}
+		public      string                              Help            {get;}
+
+		public      OptionSet                           Options         {get; set;}
+		public      Action<IEnumerable<string>>         Run             {get; set;}
+
+		public      CommandSet                          CommandSet      {get; internal set;}
+
+		public Command (string name, string help = null)
+		{
+			if (string.IsNullOrEmpty (name))
+				throw new ArgumentNullException (nameof (name));
+
+			Name    = NormalizeCommandName (name);
+			Help    = help;
+		}
+
+		static string NormalizeCommandName (string name)
+		{
+			var value = new StringBuilder (name.Length);
+			var space = false;
+			for (int i = 0; i < name.Length; ++i) {
+				if (!char.IsWhiteSpace (name, i)) {
+					space   = false;
+					value.Append (name [i]);
+				}
+				else if (!space) {
+					space   = true;
+					value.Append (' ');
+				}
+			}
+			return value.ToString ();
+		}
+
+		public virtual int Invoke (IEnumerable<string> arguments)
+		{
+			var rest    = Options?.Parse (arguments) ?? arguments;
+			Run?.Invoke (rest);
+			return 0;
+		}
+	}
+
+	class CommandOption : Option
+	{
+		public      Command             Command         {get;}
+		public      string              CommandName     {get;}
+
+		// Prototype starts with '=' because this is an invalid prototype
+		// (see Option.ParsePrototype(), and thus it'll prevent Category
+		// instances from being accidentally used as normal options.
+		public CommandOption (Command command, string commandName = null, bool hidden = false)
+			: base ("=:Command:= " + (commandName ?? command?.Name), (commandName ?? command?.Name), maxValueCount: 0, hidden: hidden)
+		{
+			if (command == null)
+				throw new ArgumentNullException (nameof (command));
+			Command = command;
+			CommandName = commandName ?? command.Name;
+		}
+
+		protected override void OnParseComplete (OptionContext c)
+		{
+			throw new NotSupportedException ("CommandOption.OnParseComplete should not be invoked.");
+		}
+	}
+
+	class HelpOption : Option
+	{
+		Option      option;
+		CommandSet  commands;
+
+		public HelpOption (CommandSet commands, Option d)
+			: base (d.Prototype, d.Description, d.MaxValueCount, d.Hidden)
+		{
+			this.commands   = commands;
+			this.option     = d;
+		}
+
+		protected override void OnParseComplete (OptionContext c)
+		{
+			commands.showHelp  = true;
+
+			option?.InvokeOnParseComplete (c);
+		}
+	}
+
+	class CommandOptionSet : OptionSet
+	{
+		CommandSet  commands;
+
+		public CommandOptionSet (CommandSet commands, MessageLocalizerConverter localizer)
+			: base (localizer)
+		{
+			this.commands = commands;
+		}
+
+		protected override void SetItem (int index, Option item)
+		{
+			if (ShouldWrapOption (item)) {
+				base.SetItem (index, new HelpOption (commands, item));
+				return;
+			}
+			base.SetItem (index, item);
+		}
+
+		bool ShouldWrapOption (Option item)
+		{
+			if (item == null)
+				return false;
+			var help = item as HelpOption;
+			if (help != null)
+				return false;
+			foreach (var n in item.Names) {
+				if (n == "help")
+					return true;
+			}
+			return false;
+		}
+
+		protected override void InsertItem (int index, Option item)
+		{
+			if (ShouldWrapOption (item)) {
+				base.InsertItem (index, new HelpOption (commands, item));
+				return;
+			}
+			base.InsertItem (index, item);
+		}
+	}
+
+	public class CommandSet : KeyedCollection<string, Command>
+	{
+		readonly    string          suite;
+
+		OptionSet                   options;
+		TextWriter                  outWriter;
+		TextWriter                  errorWriter;
+
+		internal    List<CommandSet>        NestedCommandSets;
+
+		internal    HelpCommand     help;
+
+		internal    bool            showHelp;
+
+		internal    OptionSet       Options     => options;
+
+#if !PCL || NETSTANDARD1_3
+		public CommandSet(string suite, MessageLocalizerConverter localizer = null)
+			: this(suite, Console.Out, Console.Error, localizer)
+		{
+		}
+#endif
+		
+		public CommandSet (string suite, TextWriter output, TextWriter error, MessageLocalizerConverter localizer = null)
+		{
+			if (suite == null)
+				throw new ArgumentNullException (nameof (suite));
+			if (output == null)
+				throw new ArgumentNullException (nameof (output));
+			if (error == null)
+				throw new ArgumentNullException (nameof (error));
+
+			this.suite  = suite;
+			options     = new CommandOptionSet (this, localizer);
+			outWriter   = output;
+			errorWriter = error;
+		}
+
+		public  string                          Suite               => suite;
+		public  TextWriter                      Out                 => outWriter;
+		public  TextWriter                      Error               => errorWriter;
+		public  MessageLocalizerConverter       MessageLocalizer    => options.MessageLocalizer;
+
+		protected override string GetKeyForItem (Command item)
+		{
+			return item?.Name;
+		}
+
+		public new CommandSet Add (Command value)
+		{
+			if (value == null)
+				throw new ArgumentNullException (nameof (value));
+			AddCommand (value);
+			options.Add (new CommandOption (value));
+			return this;
+		}
+
+		void AddCommand (Command value)
+		{
+			if (value.CommandSet != null && value.CommandSet != this) {
+				throw new ArgumentException ("Command instances can only be added to a single CommandSet.", nameof (value));
+			}
+			value.CommandSet                = this;
+			if (value.Options != null) {
+				value.Options.MessageLocalizer  = options.MessageLocalizer;
+			}
+
+			base.Add (value);
+
+			help    = help ?? value as HelpCommand;
+		}
+
+		public CommandSet Add (string header)
+		{
+			options.Add (header);
+			return this;
+		}
+
+		public CommandSet Add (Option option)
+		{
+			options.Add (option);
+			return this;
+		}
+
+		public CommandSet Add (string prototype, Action<string> action)
+		{
+			options.Add (prototype, action);
+			return this;
+		}
+
+		public CommandSet Add (string prototype, string description, Action<string> action)
+		{
+			options.Add (prototype, description, action);
+			return this;
+		}
+
+		public CommandSet Add (string prototype, string description, Action<string> action, bool hidden)
+		{
+			options.Add (prototype, description, action, hidden);
+			return this;
+		}
+
+		public CommandSet Add (string prototype, OptionAction<string, string> action)
+		{
+			options.Add (prototype, action);
+			return this;
+		}
+
+		public CommandSet Add (string prototype, string description, OptionAction<string, string> action)
+		{
+			options.Add (prototype, description, action);
+			return this;
+		}
+
+		public CommandSet Add (string prototype, string description, OptionAction<string, string> action, bool hidden)
+		{
+			options.Add (prototype, description, action, hidden);
+			return this;
+		}
+
+		public CommandSet Add<T> (string prototype, Action<T> action)
+		{
+			options.Add (prototype, null, action);
+			return this;
+		}
+
+		public CommandSet Add<T> (string prototype, string description, Action<T> action)
+		{
+			options.Add (prototype, description, action);
+			return this;
+		}
+
+		public CommandSet Add<TKey, TValue> (string prototype, OptionAction<TKey, TValue> action)
+		{
+			options.Add (prototype, action);
+			return this;
+		}
+
+		public CommandSet Add<TKey, TValue> (string prototype, string description, OptionAction<TKey, TValue> action)
+		{
+			options.Add (prototype, description, action);
+			return this;
+		}
+
+		public CommandSet Add (ArgumentSource source)
+		{
+			options.Add (source);
+			return this;
+		}
+
+		public CommandSet Add (CommandSet nestedCommands)
+		{
+			if (nestedCommands == null)
+				throw new ArgumentNullException (nameof (nestedCommands));
+
+			if (NestedCommandSets == null) {
+				NestedCommandSets   = new List<CommandSet> ();
+			}
+
+			if (!AlreadyAdded (nestedCommands)) {
+				NestedCommandSets.Add (nestedCommands);
+				foreach (var o in nestedCommands.options) {
+					if (o is CommandOption c) {
+						options.Add (new CommandOption (c.Command, $"{nestedCommands.Suite} {c.CommandName}"));
+					}
+					else {
+						options.Add (o);
+					}
+				}
+			}
+
+			nestedCommands.options      = this.options;
+			nestedCommands.outWriter    = this.outWriter;
+			nestedCommands.errorWriter  = this.errorWriter;
+
+			return this;
+		}
+
+		bool AlreadyAdded (CommandSet value)
+		{
+			if (value == this)
+				return true;
+			if (NestedCommandSets == null)
+				return false;
+			foreach (var nc in NestedCommandSets) {
+				if (nc.AlreadyAdded (value))
+					return true;
+			}
+			return false;
+		}
+
+		public int Run (IEnumerable<string> arguments)
+		{
+			if (arguments == null)
+				throw new ArgumentNullException (nameof (arguments));
+
+			this.showHelp   = false;
+			if (help == null) {
+				help    = new HelpCommand ();
+				AddCommand (help);
+			}
+			Action<string>  setHelp     = v => showHelp = v != null;
+			if (!options.Contains ("help")) {
+				options.Add ("help", "", setHelp, hidden: true);
+			}
+			if (!options.Contains ("?")) {
+				options.Add ("?", "", setHelp, hidden: true);
+			}
+			var extra   = options.Parse (arguments);
+			if (extra.Count == 0) {
+				if (showHelp) {
+					return help.Invoke (extra);
+				}
+				Out.WriteLine (options.MessageLocalizer ($"Use `{Suite} help` for usage."));
+				return 1;
+			}
+			var command = GetCommand (extra);
+			if (command == null) {
+				help.WriteUnknownCommand (extra [0]);
+				return 1;
+			}
+			if (showHelp) {
+				if (command.Options?.Contains ("help") ?? true) {
+					extra.Add ("--help");
+					return command.Invoke (extra);
+				}
+				command.Options.WriteOptionDescriptions (Out);
+				return 0;
+			}
+			return command.Invoke (extra);
+		}
+
+		internal Command GetCommand (List<string> extra)
+		{
+			return TryGetLocalCommand (extra) ?? TryGetNestedCommand (extra);
+		}
+
+		Command TryGetLocalCommand (List<string> extra)
+		{
+			var name    = extra [0];
+			if (Contains (name)) {
+				extra.RemoveAt (0);
+				return this [name];
+			}
+			for (int i = 1; i < extra.Count; ++i) {
+				name = name + " " + extra [i];
+				if (!Contains (name))
+					continue;
+				extra.RemoveRange (0, i+1);
+				return this [name];
+			}
+			return null;
+		}
+
+		Command TryGetNestedCommand (List<string> extra)
+		{
+			if (NestedCommandSets == null)
+				return null;
+
+			var nestedCommands	= NestedCommandSets.Find (c => c.Suite == extra [0]);
+			if (nestedCommands == null)
+				return null;
+
+			var extraCopy = new List<string> (extra);
+			extraCopy.RemoveAt (0);
+			if (extraCopy.Count == 0)
+				return null;
+
+			var command = nestedCommands.GetCommand (extraCopy);
+			if (command != null) {
+				extra.Clear ();
+				extra.AddRange (extraCopy);
+				return command;
+			}
+			return null;
+		}
+	}
+
+	public class HelpCommand : Command
+	{
+		public HelpCommand ()
+			: base ("help", help: "Show this message and exit")
+		{
+		}
+
+		public override int Invoke (IEnumerable<string> arguments)
+		{
+			var extra   = new List<string> (arguments ?? new string [0]);
+			Console.WriteLine ($"# HelpCommand.Invoke: arguments={string.Join (" ", arguments)}");
+			var _       = CommandSet.Options.MessageLocalizer;
+			if (extra.Count == 0) {
+				CommandSet.Options.WriteOptionDescriptions (CommandSet.Out);
+				return 0;
+			}
+			var command = CommandSet.GetCommand (extra);
+			if (command == this || extra.Contains ("--help")) {
+				CommandSet.Out.WriteLine (_ ($"Usage: {CommandSet.Suite} COMMAND [OPTIONS]"));
+				CommandSet.Out.WriteLine (_ ($"Use `{CommandSet.Suite} help COMMAND` for help on a specific command."));
+				CommandSet.Out.WriteLine ();
+				CommandSet.Out.WriteLine (_ ($"Available commands:"));
+				CommandSet.Out.WriteLine ();
+				var commands    = GetCommands ();
+				commands.Sort ((x, y) => string.Compare (x.Key, y.Key, StringComparison.OrdinalIgnoreCase));
+				foreach (var c in commands) {
+					if (c.Key == "help") {
+						continue;
+					}
+					CommandSet.Options.WriteCommandDescription (CommandSet.Out, c.Value, c.Key);
+				}
+				CommandSet.Options.WriteCommandDescription (CommandSet.Out, CommandSet.help, "help");
+				return 0;
+			}
+			if (command == null) {
+				WriteUnknownCommand (extra [0]);
+				return 1;
+			}
+			if (command.Options != null) {
+				command.Options.WriteOptionDescriptions (CommandSet.Out);
+				return 0;
+			}
+			return command.Invoke (new [] { "--help" });
+		}
+
+		List<KeyValuePair<string, Command>> GetCommands ()
+		{
+			var commands    = new List<KeyValuePair<string, Command>> ();
+
+			foreach (var c in CommandSet) {
+				commands.Add (new KeyValuePair<string, Command>(c.Name, c));
+			}
+
+			if (CommandSet.NestedCommandSets == null)
+				return commands;
+
+			foreach (var nc in CommandSet.NestedCommandSets) {
+				AddNestedCommands (commands, "", nc);
+			}
+
+			return commands;
+		}
+
+		void AddNestedCommands (List<KeyValuePair<string, Command>> commands, string outer, CommandSet value)
+		{
+			foreach (var v in value) {
+				commands.Add (new KeyValuePair<string, Command>($"{outer}{value.Suite} {v.Name}", v));
+			}
+			if (value.NestedCommandSets == null)
+				return;
+			foreach (var nc in value.NestedCommandSets) {
+				AddNestedCommands (commands, $"{outer}{value.Suite} ", nc);
+			}
+		}
+
+		internal void WriteUnknownCommand (string unknownCommand)
+		{
+			CommandSet.Error.WriteLine (CommandSet.Options.MessageLocalizer ($"{CommandSet.Suite}: Unknown command: {unknownCommand}"));
+			CommandSet.Error.WriteLine (CommandSet.Options.MessageLocalizer ($"{CommandSet.Suite}: Use `{CommandSet.Suite} help` for usage."));
 		}
 	}
 }

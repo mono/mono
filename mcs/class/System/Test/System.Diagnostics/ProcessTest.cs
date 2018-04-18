@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 using NUnit.Framework;
 
@@ -22,6 +23,13 @@ namespace MonoTests.System.Diagnostics
 	[TestFixture]
 	public class ProcessTest
 	{
+		static bool RunningOnUnix {
+			get {
+				int p = (int)Environment.OSVersion.Platform;
+				return ((p == 128) || (p == 4) || (p == 6));
+			}
+		}
+
 		[Test]
 		public void GetProcessById_MachineName_Null ()
 		{
@@ -199,12 +207,6 @@ namespace MonoTests.System.Diagnostics
 				Assert.AreEqual (2, ex.NativeErrorCode, "#B6");
 			}
 
-			if (RunningOnUnix)
-				Assert.Ignore ("On Unix and Mac OS X, we try " +
-					"to open any file (using xdg-open, ...)" +
-					" and we do not report an exception " +
-					"if this fails.");
-
 			// absolute path, shell
 			process.StartInfo.FileName = exe;
 			process.StartInfo.UseShellExecute = true;
@@ -284,7 +286,9 @@ namespace MonoTests.System.Diagnostics
 				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				Assert.AreEqual (2, ex.NativeErrorCode, "#6");
+				// TODO: On windows we get ACCESS_DENIED (5) instead of FILE_NOT_FOUND (2) and .NET
+				// gives ERROR_INVALID_PARAMETER (87). See https://bugzilla.xamarin.com/show_bug.cgi?id=44514
+				Assert.IsTrue (ex.NativeErrorCode == 2 || ex.NativeErrorCode == 5 || ex.NativeErrorCode == 87, "#6");
 			}
 		}
 
@@ -440,7 +444,9 @@ namespace MonoTests.System.Diagnostics
 				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				Assert.AreEqual (2, ex.NativeErrorCode, "#6");
+				// TODO: On windows we get ACCESS_DENIED (5) instead of FILE_NOT_FOUND (2) and .NET
+				// gives ERROR_INVALID_PARAMETER (87). See https://bugzilla.xamarin.com/show_bug.cgi?id=44514
+				Assert.IsTrue (ex.NativeErrorCode == 2 || ex.NativeErrorCode == 5 || ex.NativeErrorCode == 87, "#6");
 			}
 		}
 
@@ -702,11 +708,11 @@ namespace MonoTests.System.Diagnostics
 			byte [] buffer = new byte [200];
 
 			// start async Read operation
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew ();
 			IAsyncResult ar = stdout.BeginRead (buffer, 0, buffer.Length,
 							    new AsyncCallback (Read), stdout);
 
-			Assert.IsTrue ((DateTime.Now - start).TotalMilliseconds < 1000, "#01 BeginRead was not async");
+			Assert.IsTrue (sw.ElapsedMilliseconds < 1000, "#01 BeginRead was not async");
 			p.WaitForExit ();
 			Assert.AreEqual (0, p.ExitCode, "#02 script failure");
 
@@ -722,13 +728,6 @@ namespace MonoTests.System.Diagnostics
 		{
 			Stream stm = (Stream) ar.AsyncState;
 			bytesRead = stm.EndRead (ar);
-		}
-
-		static bool RunningOnUnix {
-			get {
-				int p = (int)Environment.OSVersion.Platform;
-				return ((p == 128) || (p == 4) || (p == 6));
-			}
 		}
 
 		public int bytesRead = -1;
@@ -892,8 +891,11 @@ namespace MonoTests.System.Diagnostics
 				path = "/bin/cat";
 #endif
 				return new ProcessStartInfo (path);
-			} else
-				return new ProcessStartInfo ("type");
+			} else {
+				var psi = new ProcessStartInfo ("findstr");
+				psi.Arguments = "\"^\"";
+				return psi;
+			}
 		}
 #endif // MONO_FEATURE_PROCESS_START
 
@@ -1018,7 +1020,7 @@ namespace MonoTests.System.Diagnostics
 
 				StringBuilder sb = new StringBuilder ();
 				sb.AppendFormat ("Could not found: {0} {1}\n", name.Name, name.Version);
-				sb.AppendLine ("Looked in assemblies:");
+				sb.AppendLine ("Looked in modules:");
 
 				foreach (var o in modules) {
 					var m = (ProcessModule) o;
@@ -1106,5 +1108,81 @@ namespace MonoTests.System.Diagnostics
 			}
 		}
 #endif // MONO_FEATURE_PROCESS_START
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void GetProcessesByName()
+		{
+			// This should return Process[0] or a Process[] with all the "foo" programs running
+			Process.GetProcessesByName ("foo");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotWorking")] //Getting the name of init works fine on Android and Linux, but fails on OSX, SELinux and iOS
+		public void HigherPrivilegeProcessName ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("accessing pid 1, only available on unix");
+
+			string v = Process.GetProcessById (1).ProcessName;
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void NonChildProcessWaitForExit ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("accessing parent pid, only available on unix");
+
+			using (Process process = Process.GetProcessById (getppid ()))
+			using (ManualResetEvent mre = new ManualResetEvent (false))
+			{
+				Assert.IsFalse (process.WaitForExit (10), "#1");
+				Assert.IsFalse (process.HasExited, "#2");
+				Assert.Throws<InvalidOperationException>(delegate { int exitCode = process.ExitCode; }, "#3");
+
+				process.Exited += (s, e) => mre.Set ();
+				process.EnableRaisingEvents = true;
+				Assert.IsFalse (mre.WaitOne (100), "#4");
+
+				Assert.IsFalse (process.WaitForExit (10), "#5");
+				Assert.IsFalse (process.HasExited, "#6");
+				Assert.Throws<InvalidOperationException>(delegate { int exitCode = process.ExitCode; }, "#7");
+			}
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void NonChildProcessName ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("accessing parent pid, only available on unix");
+
+			using (Process process = Process.GetProcessById (getppid ()))
+			{
+				string pname = process.ProcessName;
+				Assert.IsNotNull (pname, "#1");
+				AssertHelper.IsNotEmpty (pname, "#2");
+			}
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void NonChildProcessId ()
+		{
+			if (!RunningOnUnix)
+				Assert.Ignore ("accessing parent pid, only available on unix");
+
+			int ppid;
+			using (Process process = Process.GetProcessById (ppid = getppid ()))
+			{
+				int pid = process.Id;
+				Assert.AreEqual (ppid, pid, "#1");
+				AssertHelper.Greater (pid, 0, "#2");
+			}
+		}
+
+		[DllImport ("libc")]
+		static extern int getppid();
 	}
 }

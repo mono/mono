@@ -41,37 +41,49 @@ namespace System.Security.Cryptography {
             return CryptoConfig.CreateFromName(algorithm) as ECDsa;
         }
 
-#if NETSTANDARD
-        public static ECDsa Create (ECCurve curve)
-        {
-            throw new NotImplementedException ();
+        /// <summary>
+        /// Creates a new instance of the default implementation of the Elliptic Curve Digital Signature Algorithm
+        /// (ECDSA) with a newly generated key over the specified curve.
+        /// </summary>
+        /// <param name="curve">The curve to use for key generation.</param>
+        /// <returns>A new instance of the default implementation of this class.</returns>
+        public static ECDsa Create(ECCurve curve) {
+            ECDsa ecdsa = Create();
+
+            if (ecdsa != null) {
+                try {
+                    ecdsa.GenerateKey(curve);
+                }
+                catch {
+                    ecdsa.Dispose();
+                    throw;
+                }
+            }
+
+            return ecdsa;
         }
 
-        public static ECDsa Create (ECParameters parameters)
-        {
-            throw new NotImplementedException ();
-        }
+        /// <summary>
+        /// Creates a new instance of the default implementation of the Elliptic Curve Digital Signature Algorithm
+        /// (ECDSA) using the specified ECParameters as the key.
+        /// </summary>
+        /// <param name="parameters">The parameters representing the key to use.</param>
+        /// <returns>A new instance of the default implementation of this class.</returns>
+        public static ECDsa Create(ECParameters parameters) {
+            ECDsa ecdsa = Create();
 
-        public virtual ECParameters ExportExplicitParameters (bool includePrivateParameters)
-        {
-            throw new NotImplementedException ();
-        }
+            if (ecdsa != null) {
+                try {
+                    ecdsa.ImportParameters(parameters);
+                }
+                catch {
+                    ecdsa.Dispose();
+                    throw;
+                }
+            }
 
-        public virtual ECParameters ExportParameters (bool includePrivateParameters)
-        {
-            throw new NotImplementedException ();
+            return ecdsa;
         }
-
-        public virtual void GenerateKey (ECCurve curve)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public virtual void ImportParameters (ECParameters parameters)
-        {
-            throw new NotImplementedException ();
-        }
-#endif
 
         //
         // Signature operations
@@ -160,6 +172,42 @@ namespace System.Security.Cryptography {
 
             byte[] hash = HashData(data, hashAlgorithm);
             return VerifyHash(hash, signature);
+        }
+
+        /// <summary>
+        /// When overridden in a derived class, exports the named or explicit ECParameters for an ECCurve.
+        /// If the curve has a name, the Curve property will contain named curve parameters, otherwise it
+        /// will contain explicit parameters.
+        /// </summary>
+        /// <param name="includePrivateParameters">true to include private parameters, otherwise, false.</param>
+        /// <returns>The ECParameters representing the point on the curve for this key.</returns>
+        public virtual ECParameters ExportParameters(bool includePrivateParameters) {
+            throw new NotSupportedException(SR.GetString(SR.NotSupported_SubclassOverride));
+        }
+
+        /// <summary>
+        /// When overridden in a derived class, exports the explicit ECParameters for an ECCurve.
+        /// </summary>
+        /// <param name="includePrivateParameters">true to include private parameters, otherwise, false.</param>
+        /// <returns>The ECParameters representing the point on the curve for this key, using the explicit curve format.</returns>
+        public virtual ECParameters ExportExplicitParameters(bool includePrivateParameters) {
+            throw new NotSupportedException(SR.GetString(SR.NotSupported_SubclassOverride));
+        }
+
+        /// <summary>
+        /// When overridden in a derived class, imports the specified ECParameters.
+        /// </summary>
+        /// <param name="parameters">The curve parameters.</param>
+        public virtual void ImportParameters(ECParameters parameters) {
+            throw new NotSupportedException(SR.GetString(SR.NotSupported_SubclassOverride));
+        }
+
+        /// <summary>
+        /// When overridden in a derived class, generates a new public/private keypair for the specified curve.
+        /// </summary>
+        /// <param name="curve">The curve to use.</param>
+        public virtual void GenerateKey(ECCurve curve) {
+            throw new NotSupportedException(SR.GetString(SR.NotSupported_SubclassOverride));
         }
 
         private static Exception DerivedClassMustOverride() {

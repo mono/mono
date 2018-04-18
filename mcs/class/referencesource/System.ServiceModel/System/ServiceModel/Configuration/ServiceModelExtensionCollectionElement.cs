@@ -48,7 +48,7 @@ namespace System.ServiceModel.Configuration
 
                 if (!this.CollectionElementBaseType.IsAssignableFrom(extensionType))
                 {
-#pragma warning disable 56506 //[....]; Variable 'extensionType' checked for null previously
+#pragma warning disable 56506 //Microsoft; Variable 'extensionType' checked for null previously
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("extensionType",
                         SR.GetString(SR.ConfigInvalidExtensionType,
                         extensionType.ToString(),

@@ -991,7 +991,7 @@ namespace System.ServiceModel.Description
                     int i = 0;
                     prefix = prefixBase + i.ToString(CultureInfo.InvariantCulture);
 
-                    //[....], consider do we need to check at higher scopes as well?
+                    //Microsoft, consider do we need to check at higher scopes as well?
                     while (PrefixExists(scopes[0].Namespaces.ToArray(), prefix))
                         prefix = prefixBase + (++i).ToString(CultureInfo.InvariantCulture);
                 }

@@ -7,7 +7,7 @@
 //
 // UnionQueryOperator.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -189,7 +189,9 @@ namespace System.Linq.Parallel
 
             private QueryOperatorEnumerator<Pair<TInputOutput, NoKeyMemoizationRequired>, TLeftKey> m_leftSource; // Left data source.
             private QueryOperatorEnumerator<Pair<TInputOutput, NoKeyMemoizationRequired>, TRightKey> m_rightSource; // Right data source.
+#if !MONO
             private readonly int m_partitionIndex; // The current partition.
+#endif
             private Set<TInputOutput> m_hashLookup; // The hash lookup, used to produce the union.
             private CancellationToken m_cancellationToken;
             private Shared<int> m_outputLoopCount;
@@ -210,7 +212,9 @@ namespace System.Linq.Parallel
 
                 m_leftSource = leftSource;
                 m_rightSource = rightSource;
+#if !MONO
                 m_partitionIndex = partitionIndex;
+#endif
                 m_comparer = comparer;
                 m_cancellationToken = cancellationToken;
             }

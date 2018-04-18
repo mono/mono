@@ -12,13 +12,59 @@ namespace System.ServiceModel
     // in 4.6 and above. So we set DisableExplicitConnectionCloseHeader to true if running 4.5.2 or less.
     internal static class LocalAppContextSwitches
     {
-        private const string DisableExplicitConnectionCloseHeaderString = "Switch.System.ServiceModel.DisableExplicitConnectionCloseHeader";
-        private const string AllowUnsignedToHeaderString = "Switch.System.ServiceModel.AllowUnsignedToHeader";
-        private const string DisableCngCertificatesString = "Switch.System.ServiceModel.DisableCngCertificates";
+        internal const string DisableExplicitConnectionCloseHeaderString = "Switch.System.ServiceModel.DisableExplicitConnectionCloseHeader";
+        internal const string AllowUnsignedToHeaderString = "Switch.System.ServiceModel.AllowUnsignedToHeader";
+        internal const string DisableCngCertificatesString = "Switch.System.ServiceModel.DisableCngCertificates";
+        internal const string DisableUsingServicePointManagerSecurityProtocolsString = "Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols";
+        internal const string UseSha1InPipeConnectionGetHashAlgorithmString = "Switch.System.ServiceModel.UseSha1InPipeConnectionGetHashAlgorithm";
+        internal const string DisableAddressHeaderCollectionValidationString = "Switch.System.ServiceModel.DisableAddressHeaderCollectionValidation";
+        internal const string UseSha1InMsmqEncryptionAlgorithmString = "Switch.System.ServiceModel.UseSha1InMsmqEncryptionAlgorithm";
+        internal const string DontEnableSystemDefaultTlsVersionsString = "Switch.System.ServiceModel.DontEnableSystemDefaultTlsVersions";
 
         private static int disableExplicitConnectionCloseHeader;
         private static int allowUnsignedToHeader;
         private static int disableCngCertificates;
+        private static int disableUsingServicePointManagerSecurityProtocols;
+        private static int useSha1InPipeConnectionGetHashAlgorithm;
+        private static int disableAddressHeaderCollectionValidation;
+        private static int useSha1InMsmqEncryptionAlgorithm;
+        private static int dontEnableSystemDefaultTlsVersions;
+
+        public static bool DontEnableSystemDefaultTlsVersions
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(DontEnableSystemDefaultTlsVersionsString, ref dontEnableSystemDefaultTlsVersions);
+            }
+        }
+
+        public static bool UseSha1InMsmqEncryptionAlgorithm
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(UseSha1InMsmqEncryptionAlgorithmString, ref useSha1InMsmqEncryptionAlgorithm);
+            }
+        }
+
+        public static bool DisableAddressHeaderCollectionValidation
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(DisableAddressHeaderCollectionValidationString, ref disableAddressHeaderCollectionValidation);
+            }
+        }
+
+        public static bool UseSha1InPipeConnectionGetHashAlgorithm
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(UseSha1InPipeConnectionGetHashAlgorithmString, ref useSha1InPipeConnectionGetHashAlgorithm);
+            }
+        }
 
         public static bool DisableExplicitConnectionCloseHeader
         {
@@ -44,6 +90,15 @@ namespace System.ServiceModel
             get
             {
                 return LocalAppContext.GetCachedSwitchValue(DisableCngCertificatesString, ref disableCngCertificates);
+            }
+        }
+
+        public static bool DisableUsingServicePointManagerSecurityProtocols
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(DisableUsingServicePointManagerSecurityProtocolsString, ref disableUsingServicePointManagerSecurityProtocols);
             }
         }
 

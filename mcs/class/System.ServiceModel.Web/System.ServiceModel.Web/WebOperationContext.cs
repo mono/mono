@@ -68,15 +68,15 @@ namespace System.ServiceModel.Web
 		OutgoingWebRequestContext outgoing_request;
 		OutgoingWebResponseContext outgoing_response;
 
-		public WebOperationContext (OperationContext operation)
+		public WebOperationContext (OperationContext operationContext)
 		{
-			if (operation == null)
-				throw new ArgumentNullException ("operation");
+			if (operationContext == null)
+				throw new ArgumentNullException ("operationContext");
 
 			outgoing_request = new OutgoingWebRequestContext ();
-			incoming_response = new IncomingWebResponseContext (operation);
+			incoming_response = new IncomingWebResponseContext (operationContext);
 #if !MOBILE
-			incoming_request = new IncomingWebRequestContext (operation);
+			incoming_request = new IncomingWebRequestContext (operationContext);
 			outgoing_response = new OutgoingWebResponseContext ();
 #endif
 		}
@@ -101,12 +101,12 @@ namespace System.ServiceModel.Web
 		}
 #endif
 
-		public void Attach (OperationContext context)
+		public void Attach (OperationContext owner)
 		{
 			// do nothing
 		}
 
-		public void Detach (OperationContext context)
+		public void Detach (OperationContext owner)
 		{
 			// do nothing
 		}

@@ -29,9 +29,6 @@ using System.Threading;
 
 using NUnit;
 using NUnit.Framework;
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
 
 namespace MonoTests.System.Threading
 {
@@ -55,6 +52,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ThreadedTest ()
 		{
 			AssertThreadLocal ();
@@ -137,6 +135,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void PerThreadException ()
 		{
 			int callTime = 0;

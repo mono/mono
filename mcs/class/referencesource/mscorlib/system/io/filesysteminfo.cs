@@ -7,7 +7,7 @@
 **
 ** Class:  FileSystemInfo    
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: 
@@ -18,7 +18,7 @@
 using System;
 using System.Collections;
 using System.Security;
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 using System.Security.Permissions;
 #endif
 using Microsoft.Win32;
@@ -30,14 +30,16 @@ using System.Diagnostics.Contracts;
 
 namespace System.IO {
     [Serializable]
-#if !FEATURE_CORECLR && FEATURE_MONO_CAS
+#if !FEATURE_CORECLR && MONO_FEATURE_CAS
     [FileIOPermissionAttribute(SecurityAction.InheritanceDemand,Unrestricted=true)]
 #endif
     [ComVisible(true)]
-#if FEATURE_REMOTING        
-    public abstract class FileSystemInfo : MarshalByRefObject, ISerializable {
+#if FEATURE_REMOTING || MONO
+    public abstract class FileSystemInfo : MarshalByRefObject, ISerializable
+    {
 #else // FEATURE_REMOTING
-    public abstract class FileSystemInfo : ISerializable {   
+    public abstract class FileSystemInfo : ISerializable
+    {
 #endif  //FEATURE_REMOTING      
 #if MONO
         internal MonoIOStat _data;
@@ -83,50 +85,45 @@ namespace System.IO {
             // Lazily initialize the file attributes.
             _dataInitialised = -1;
         }
-#if !MONO
+
         [System.Security.SecurityCritical]
         internal void InitializeFrom(Win32Native.WIN32_FIND_DATA findData)
         {
+#if MONO
+            throw new NotImplementedException ();
+#else
             _data = new Win32Native.WIN32_FILE_ATTRIBUTE_DATA();
             _data.PopulateFrom(findData);
             _dataInitialised = 0;
-        }
 #endif
+        }
+
         // Full path of the direcory/file
-        public virtual String FullName {
-            [System.Security.SecuritySafeCritical]
-            get 
+        public virtual string FullName
+        {
+            [SecuritySafeCritical]
+            get
             {
-                String demandDir;
-                if (this is DirectoryInfo)
-                    demandDir = Directory.GetDemandDir(FullPath, true);
-                else
-                    demandDir = FullPath;
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if FEATURE_CORECLR
-                FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, demandDir);
+                FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, FullPath);
                 sourceState.EnsureState();
 #else
-                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, demandDir);
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, FullPath);
 #endif
 #endif
                 return FullPath;
             }
         }
 
-        internal virtual String UnsafeGetFullName
+        internal virtual string UnsafeGetFullName
         {
-            [System.Security.SecurityCritical]
+            [SecurityCritical]
             get
             {
-                String demandDir;
-                if (this is DirectoryInfo)
-                    demandDir = Directory.GetDemandDir(FullPath, true);
-                else
-                    demandDir = FullPath;
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if !FEATURE_CORECLR
-                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, demandDir);
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, FullPath);
 #endif
 #endif
                 return FullPath;
@@ -351,7 +348,7 @@ namespace System.IO {
             [System.Security.SecuritySafeCritical]
             #endif
             set {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if !FEATURE_CORECLR
                 FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, FullPath);
 #endif
@@ -384,7 +381,7 @@ namespace System.IO {
         [ComVisible(false)]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #if !FEATURE_CORECLR
             FileIOPermission.QuickDemand(FileIOPermissionAccess.PathDiscovery, FullPath);
 #endif

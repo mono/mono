@@ -429,7 +429,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = thisPtr.HandleReceiveRequestComplete(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -461,7 +461,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = thisPtr.HandleReplyComplete(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -770,7 +770,7 @@ namespace System.ServiceModel.Channels
                             return;
                         }
                     }
-#pragma warning suppress 56500 // [....], transferring exception to input queue to be pulled off by user
+#pragma warning suppress 56500 // Microsoft, transferring exception to input queue to be pulled off by user
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -809,7 +809,7 @@ namespace System.ServiceModel.Channels
             {
                 DiagnosticUtility.TraceHandledException(e, TraceEventType.Information);
             }
-#pragma warning suppress 56500 // [....], transferring exception to input queue to be pulled off by user
+#pragma warning suppress 56500 // Microsoft, transferring exception to input queue to be pulled off by user
             catch (Exception e)
             {
                 if (Fx.IsFatal(e))
@@ -940,7 +940,7 @@ namespace System.ServiceModel.Channels
                 }
                 DiagnosticUtility.TraceHandledException(e, TraceEventType.Information);
             }
-#pragma warning suppress 56500 // [....], transferring exception to input queue to be pulled off by user
+#pragma warning suppress 56500 // Microsoft, transferring exception to input queue to be pulled off by user
             catch (Exception e)
             {
                 if (Fx.IsFatal(e))
@@ -1007,7 +1007,7 @@ namespace System.ServiceModel.Channels
                 }
                 DiagnosticUtility.TraceHandledException(e, TraceEventType.Information);
             }
-#pragma warning suppress 56500 // [....], transferring exception to input queue to be pulled off by user
+#pragma warning suppress 56500 // Microsoft, transferring exception to input queue to be pulled off by user
             catch (Exception e)
             {
                 if (Fx.IsFatal(e))
@@ -1274,7 +1274,7 @@ namespace System.ServiceModel.Channels
                     {
                         DiagnosticUtility.TraceHandledException(e, TraceEventType.Information);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to input queue to be pulled off by user
+#pragma warning suppress 56500 // Microsoft, transferring exception to input queue to be pulled off by user
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -1379,7 +1379,7 @@ namespace System.ServiceModel.Channels
                     DiagnosticUtility.TraceHandledException(e, TraceEventType.Information);
                     startLoop = (this.channel.State == CommunicationState.Opened);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to input queue to be pulled off by user
+#pragma warning suppress 56500 // Microsoft, transferring exception to input queue to be pulled off by user
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1415,7 +1415,7 @@ namespace System.ServiceModel.Channels
                 {
                     DiagnosticUtility.TraceHandledException(e, TraceEventType.Information);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to input queue to be pulled off by user
+#pragma warning suppress 56500 // Microsoft, transferring exception to input queue to be pulled off by user
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))

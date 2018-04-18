@@ -46,7 +46,7 @@ namespace System.ServiceModel.Discovery
 
         void IAnnouncementContractApril2005.HelloOperation(HelloMessageApril2005 message)
         {
-            Fx.Assert("The [....] method IAnnouncementContractApril2005.HelloOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IAnnouncementContractApril2005.HelloOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
         }
 
         IAsyncResult IAnnouncementContractApril2005.BeginHelloOperation(HelloMessageApril2005 message, AsyncCallback callback, object state)
@@ -61,7 +61,7 @@ namespace System.ServiceModel.Discovery
 
         void IAnnouncementContractApril2005.ByeOperation(ByeMessageApril2005 message)
         {
-            Fx.Assert("The [....] method IAnnouncementContractApril2005.ByeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IAnnouncementContractApril2005.ByeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
         }
 
         IAsyncResult IAnnouncementContractApril2005.BeginByeOperation(ByeMessageApril2005 message, AsyncCallback callback, object state)
@@ -76,7 +76,7 @@ namespace System.ServiceModel.Discovery
 
         void IAnnouncementContract11.HelloOperation(HelloMessage11 message)
         {
-            Fx.Assert("The [....] method IAnnouncementContract11.HelloOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IAnnouncementContract11.HelloOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
         }
 
         IAsyncResult IAnnouncementContract11.BeginHelloOperation(HelloMessage11 message, AsyncCallback callback, object state)
@@ -91,7 +91,7 @@ namespace System.ServiceModel.Discovery
 
         void IAnnouncementContract11.ByeOperation(ByeMessage11 message)
         {
-            Fx.Assert("The [....] method IAnnouncementContract11.ByeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IAnnouncementContract11.ByeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
         }
 
         IAsyncResult IAnnouncementContract11.BeginByeOperation(ByeMessage11 message, AsyncCallback callback, object state)
@@ -106,7 +106,7 @@ namespace System.ServiceModel.Discovery
 
         void IAnnouncementContractCD1.HelloOperation(HelloMessageCD1 message)
         {
-            Fx.Assert("The [....] method IAnnouncementContractCD1.HelloOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IAnnouncementContractCD1.HelloOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
         }
 
         IAsyncResult IAnnouncementContractCD1.BeginHelloOperation(HelloMessageCD1 message, AsyncCallback callback, object state)
@@ -121,7 +121,7 @@ namespace System.ServiceModel.Discovery
 
         void IAnnouncementContractCD1.ByeOperation(ByeMessageCD1 message)
         {
-            Fx.Assert("The [....] method IAnnouncementContractCD1.ByeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
+            Fx.Assert("The sync method IAnnouncementContractCD1.ByeOperation must not get invoked. It is marked with PreferAsyncInvocation flag.");
         }
 
         IAsyncResult IAnnouncementContractCD1.BeginByeOperation(ByeMessageCD1 message, AsyncCallback callback, object state)

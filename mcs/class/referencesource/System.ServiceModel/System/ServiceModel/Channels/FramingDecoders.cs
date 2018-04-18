@@ -32,7 +32,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (!isValueDecoded)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return value;
             }
@@ -108,7 +108,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (currentState != State.Done)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return value;
             }
@@ -236,7 +236,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (!IsValueDecoded)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return via;
             }
@@ -544,7 +544,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (currentState != State.Done)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return mode;
             }
@@ -555,7 +555,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (currentState != State.Done)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return majorVersion;
             }
@@ -566,7 +566,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (currentState != State.Done)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return minorVersion;
             }
@@ -624,7 +624,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (currentState < State.PreUpgradeStart)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return contentType;
             }
@@ -635,7 +635,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (currentState < State.ReadingContentTypeRecord)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return viaDecoder.ValueAsUri;
             }
@@ -652,7 +652,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (currentState != State.UpgradeRequest)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return upgrade;
             }
@@ -663,7 +663,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (currentState < State.EnvelopeStart)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return envelopeSize;
             }
@@ -880,7 +880,7 @@ namespace System.ServiceModel.Channels
             {
                 if (currentState < State.ChunkStart)
                 {
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 }
 
@@ -1009,7 +1009,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (currentState < State.ReadingContentTypeRecord)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return viaDecoder.ValueAsUri;
             }
@@ -1020,7 +1020,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (currentState < State.PreUpgradeStart)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return contentType;
             }
@@ -1031,7 +1031,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (currentState != State.UpgradeRequest)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return upgrade;
             }
@@ -1280,7 +1280,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (currentState < State.ReadingContentTypeRecord)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return viaDecoder.ValueAsUri;
             }
@@ -1291,7 +1291,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (currentState < State.Start)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return contentType;
             }
@@ -1386,7 +1386,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (CurrentState < ClientFramingDecoderState.EnvelopeStart)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return envelopeSize;
             }
@@ -1397,7 +1397,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (CurrentState < ClientFramingDecoderState.Fault)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return faultDecoder.Value;
             }
@@ -1543,7 +1543,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (CurrentState < ClientFramingDecoderState.Fault)
-#pragma warning suppress 56503 // [....], not a publicly accessible API
+#pragma warning suppress 56503 // Microsoft, not a publicly accessible API
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.FramingValueNotAvailable)));
                 return faultDecoder.Value;
             }

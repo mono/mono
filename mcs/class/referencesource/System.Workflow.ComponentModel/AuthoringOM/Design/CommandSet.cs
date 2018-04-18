@@ -80,7 +80,7 @@ namespace System.Workflow.ComponentModel.Design
                         // Properties
                         new CommandSetItem(new EventHandler(OnStatusAlways), new EventHandler(OnMenuDesignerProperties), WorkflowMenuCommands.DesignerProperties),
 
-                        // IMPORTANT: [....] does not handle this command, so VS.NET sends it to solution explorer
+                        // IMPORTANT: Microsoft does not handle this command, so VS.NET sends it to solution explorer
                         // window, which enables this meu item on the for the current file node
                         new CommandSetItem(new EventHandler(OnStatusAlways), new EventHandler(OnViewCode), new CommandID(StandardCommands.Cut.Guid, 333)),
 
@@ -563,7 +563,7 @@ namespace System.Workflow.ComponentModel.Design
                     WorkflowView view = rootDesigner.GetView(ViewTechnology.Default) as WorkflowView;
                     if (view != null)
                     {
-                        //because the some key presses are not coming into the [....] OnKeyDown
+                        //because the some key presses are not coming into the Microsoft OnKeyDown
                         //we need to do this work around to manually send the keypress into the designer
 
                         KeyEventArgs eventArgs = new KeyEventArgs(key);

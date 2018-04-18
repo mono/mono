@@ -31,6 +31,11 @@ namespace System
                             LocalAppContextSwitches.SetDefaultsLessOrEqual_46();
                         }
 
+                        if (version <= 40602)
+                        {
+                            LocalAppContextSwitches.SetDefaultsLessOrEqual_462();
+                        }
+
                         break;
                     }
             }

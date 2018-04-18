@@ -173,7 +173,7 @@ namespace System.ServiceModel.Configuration
 
             SecurityBindingElement sbe = (SecurityBindingElement)bindingElement;
 
-#pragma warning disable 56506 //[....]; base.CopyFrom() checks for 'from' being null
+#pragma warning disable 56506 //Microsoft; base.CopyFrom() checks for 'from' being null
             if (PropertyValueOrigin.Default != this.ElementInformation.Properties[ConfigurationStrings.DefaultAlgorithmSuite].ValueOrigin)
                 sbe.DefaultAlgorithmSuite = this.DefaultAlgorithmSuite;
             if (PropertyValueOrigin.Default != this.ElementInformation.Properties[ConfigurationStrings.IncludeTimestamp].ValueOrigin)

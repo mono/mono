@@ -16,7 +16,7 @@ namespace System.Net.NetworkInformation
         {
 #if MONODROID
             return new AndroidIPGlobalProperties ();
-#elif MONOTOUCH || XAMMAC || MOBILE_STATIC
+#elif MONOTOUCH || XAMMAC
             return new UnixIPGlobalProperties ();
 #elif MONO
             switch (Environment.OSVersion.Platform) {
@@ -34,7 +34,11 @@ namespace System.Net.NetworkInformation
                 }
                 return new UnixIPGlobalProperties ();
             default:
+#if WIN_PLATFORM
                 return new Win32IPGlobalProperties ();
+#else
+                return new UnixIPGlobalProperties ();
+#endif
             }
 #else          
             (new NetworkInformationPermission(NetworkInformationAccess.Read)).Demand();

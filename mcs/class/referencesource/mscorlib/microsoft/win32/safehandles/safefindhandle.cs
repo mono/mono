@@ -28,10 +28,21 @@ namespace Microsoft.Win32.SafeHandles {
         [System.Security.SecurityCritical]  // auto-generated_required
         internal SafeFindHandle() : base(true) {}
 
+#if MONO
+        internal SafeFindHandle(IntPtr preexistingHandle) : base(true)
+        {
+            SetHandle (preexistingHandle);
+        }
+#endif
+
         [System.Security.SecurityCritical]
         override protected bool ReleaseHandle()
         {
+#if MONO
+            return System.IO.MonoIO.FindCloseFile (handle);
+#else
             return Win32Native.FindClose(handle);
+#endif
         }
     }
 }

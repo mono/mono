@@ -1,10 +1,12 @@
-/*
- * image-writer.c: Creation of object files or assembly files using the same interface.
+/**
+ * \file
+ * Creation of object files or assembly files using the same interface.
  *
  * Author:
  *   Dietmar Maurer (dietmar@ximian.com)
  *   Zoltan Varga (vargaz@gmail.com)
  *   Paolo Molaro (lupus@ximian.com)
+ *   Johan Lorensson (lateralusx.github@gmail.com)
  *
  * (C) 2002 Ximian, Inc.
  */
@@ -53,7 +55,7 @@
  * TARGET_ASM_GAS == GNU assembler
  */
 #if !defined(TARGET_ASM_APPLE) && !defined(TARGET_ASM_GAS)
-#if defined(TARGET_MACH) && !defined(__native_client_codegen__)
+#if defined(TARGET_MACH)
 #define TARGET_ASM_APPLE
 #else
 #define TARGET_ASM_GAS
@@ -88,6 +90,8 @@
 
 #if defined(TARGET_ASM_APPLE)
 #define AS_INT16_DIRECTIVE ".short"
+#elif defined(TARGET_ASM_GAS) && defined(TARGET_WIN32)
+#define AS_INT16_DIRECTIVE ".word"
 #elif defined(TARGET_ASM_GAS)
 #define AS_INT16_DIRECTIVE ".hword"
 #else
@@ -112,34 +116,7 @@
 #define AS_TEMP_LABEL_PREFIX ".L"
 #endif
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-#define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
 #define ROUND_DOWN(VALUE,SIZE)	((VALUE) & ~((SIZE) - 1))
-
-#if defined(TARGET_AMD64) && !defined(HOST_WIN32) && !defined(__APPLE__)
-#define USE_ELF_WRITER 1
-#define USE_ELF_RELA 1
-#endif
-
-#if defined(TARGET_X86) && !defined(HOST_WIN32) && !defined(__APPLE__)
-#define USE_ELF_WRITER 1
-#endif
-
-#if defined(TARGET_ARM) && !defined(TARGET_MACH) && !defined(HOST_WIN32)
-//#define USE_ELF_WRITER 1
-#endif
-
-#if defined(__mips__)
-#define USE_ELF_WRITER 1
-#endif
-
-#if defined(TARGET_X86) && defined(__APPLE__)
-//#define USE_MACH_WRITER
-#endif
-
-#if defined(USE_ELF_WRITER) || defined(USE_MACH_WRITER)
-#define USE_BIN_WRITER 1
-#endif
 
 #ifdef USE_BIN_WRITER
 
@@ -325,11 +302,6 @@ bin_writer_emit_ensure_buffer (BinSection *section, int size)
 		while (new_size <= new_offset)
 			new_size *= 2;
 		data = (guint8 *)g_malloc0 (new_size);
-#ifdef __native_client_codegen__
-		/* for Native Client, fill empty space with HLT instruction */
-		/* instead of 00.                                           */
-		memset(data, 0xf4, new_size);
-#endif		
 		memcpy (data, section->data, section->data_len);
 		g_free (section->data);
 		section->data = data;
@@ -1735,8 +1707,45 @@ const char *get_label (const char *s)
 	return s;
 }
 
+#ifdef TARGET_WIN32
+#define GLOBAL_SYMBOL_DEF_SCL 2
+#define LOCAL_SYMBOL_DEF_SCL 3
+
+static gboolean
+asm_writer_in_data_section (MonoImageWriter *acfg)
+{
+	gboolean	in_data_section = FALSE;
+	const char	*data_sections [] = {".data", ".bss", ".rdata"};
+
+	for (guchar i = 0; i < G_N_ELEMENTS (data_sections); ++i) {
+		if (strcmp (acfg->current_section, data_sections [i]) == 0) {
+			in_data_section = TRUE;
+			break;
+		}
+	}
+
+	return in_data_section;
+}
+
 static void
-asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean func)
+asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean func, gboolean global)
+{
+	asm_writer_emit_unset_mode (acfg);
+
+	if (func) {
+		fprintf (acfg->fp, "\t.def %s; .scl %d; .type 32; .endef\n", name, (global == TRUE ? GLOBAL_SYMBOL_DEF_SCL : LOCAL_SYMBOL_DEF_SCL));
+	} else {
+		if (!asm_writer_in_data_section (acfg))
+			fprintf (acfg->fp, "\t.data\n");
+	}
+
+	return;
+}
+
+#else
+
+static void
+asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean func, gboolean global)
 {
 	const char *stype;
 
@@ -1749,17 +1758,13 @@ asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean f
 
 #if defined(TARGET_ASM_APPLE)
 
-#elif defined(TARGET_WIN32)
-	if (func)
-		fprintf (acfg->fp, "\t.def %s; .scl 2; .type 32; .endef\n", name);
-	else
-		fprintf (acfg->fp, "\t.data\n");
 #elif defined(TARGET_ARM)
 	fprintf (acfg->fp, "\t.type %s,#%s\n", name, stype);
 #else
 	fprintf (acfg->fp, "\t.type %s,@%s\n", name, stype);
 #endif
 }
+#endif /* TARGET_WIN32 */
 
 static void
 asm_writer_emit_global (MonoImageWriter *acfg, const char *name, gboolean func)
@@ -1768,7 +1773,7 @@ asm_writer_emit_global (MonoImageWriter *acfg, const char *name, gboolean func)
 
 	fprintf (acfg->fp, "\t.globl %s\n", name);
 
-	asm_writer_emit_symbol_type (acfg, name, func);
+	asm_writer_emit_symbol_type (acfg, name, func, TRUE);
 }
 
 static void
@@ -1780,7 +1785,7 @@ asm_writer_emit_local_symbol (MonoImageWriter *acfg, const char *name, const cha
 	fprintf (acfg->fp, "\t.local %s\n", name);
 #endif
 
-	asm_writer_emit_symbol_type (acfg, name, func);
+	asm_writer_emit_symbol_type (acfg, name, func, FALSE);
 }
 
 static void

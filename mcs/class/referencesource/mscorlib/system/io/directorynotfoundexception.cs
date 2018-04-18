@@ -7,7 +7,7 @@
 **
 ** Class:  DirectoryNotFoundException
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Exception for accessing a path that doesn't exist.

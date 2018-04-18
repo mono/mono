@@ -3,7 +3,7 @@
 ///     Copyright (c) Microsoft Corporation.  All rights reserved.
 /// </copyright>                               
 ///
-/// <owner>[....]</owner>
+/// <owner>Microsoft</owner>
 /// <owner>gpaperin</owner>
 ///----------- ----------- ----------- ----------- ----------- -----------
 

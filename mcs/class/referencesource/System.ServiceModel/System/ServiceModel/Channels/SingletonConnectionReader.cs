@@ -595,7 +595,7 @@ namespace System.ServiceModel.Channels
 
                 if (!upgradeAsyncResult.CompletedSynchronously)
                 {
-                    upgradeAsyncResult = null; //caller shouldn't use this out param unless completed [....].
+                    upgradeAsyncResult = null; //caller shouldn't use this out param unless completed sync.
                     return false;
                 }
 
@@ -1295,7 +1295,7 @@ namespace System.ServiceModel.Channels
                 {
                     thisPtr.message = thisPtr.parent.Receive(thisPtr.timeout);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception exception)
                 {
                     if (Fx.IsFatal(exception))
@@ -1892,7 +1892,7 @@ namespace System.ServiceModel.Channels
                     completeSelf = thisPtr.HandleWriteStartBytes();
                     throwing = false;
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1928,7 +1928,7 @@ namespace System.ServiceModel.Channels
                     completeSelf = thisPtr.HandleWriteBufferedMessage();
                     throwing = false;
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1963,7 +1963,7 @@ namespace System.ServiceModel.Channels
                     completeSelf = thisPtr.HandleWriteEndBytes();
                     success = true;
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))

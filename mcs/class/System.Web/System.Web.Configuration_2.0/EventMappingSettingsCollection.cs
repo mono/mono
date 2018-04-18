@@ -99,8 +99,8 @@ namespace System.Web.Configuration {
 			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
-		public new EventMappingSettings this [string name] {
-			get { return (EventMappingSettings) BaseGet (name); }
+		public new EventMappingSettings this [string key] {
+			get { return (EventMappingSettings) BaseGet (key); }
 		}
 
 		protected internal override ConfigurationPropertyCollection Properties {

@@ -13,6 +13,7 @@ using System;
 using System.Globalization;
 using System.Security.Principal;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Reflection;
 using System.Collections.Generic;
 using SD = System.Diagnostics;
@@ -93,25 +94,6 @@ namespace MonoTests.System.Threading
 		TimeSpan Negative = new TimeSpan (-20000);	// really negative
 		//TimeSpan MaxValue = TimeSpan.FromMilliseconds ((long) Int32.MaxValue);
 		TimeSpan TooLarge = TimeSpan.FromMilliseconds ((long) Int32.MaxValue + 1);
-
-		static bool is_win32;
-		static bool is_mono;
-
-		static ThreadTest ()
-		{
-			switch (Environment.OSVersion.Platform) {
-			case PlatformID.Win32NT:
-			case PlatformID.Win32S:
-			case PlatformID.Win32Windows:
-			case PlatformID.WinCE:
-				is_win32 = true;
-				break;
-			}
-
-			// check a class in mscorlib to determine if we're running on Mono
-			if (Type.GetType ("Mono.Runtime", false) != null)
-				is_mono = true;
-		}
 
 		//Some Classes to test as threads
 		private class C1Test
@@ -270,6 +252,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #325566
+		[Category ("MultiThreaded")]
 		public void GetHashCodeTest ()
 		{
 			C1Test test1 = new C1Test ();
@@ -299,6 +282,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #82700
+		[Category ("MultiThreaded")]
 		public void ManagedThreadId ()
 		{
 			C1Test test1 = new C1Test ();
@@ -325,10 +309,9 @@ namespace MonoTests.System.Threading
 
 		[Test]
 		[Category ("NotDotNet")] // it hangs.
+		[Category ("NotWorkingRuntimeInterpreter")] /* crashes on linux/arm64 */
 		public void TestStart()
 		{
-			if (is_win32 && is_mono)
-				Assert.Fail ("This test fails on Win32. The test should be fixed.");
 		{
 			C1Test test1 = new C1Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
@@ -368,11 +351,9 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestApartmentState ()
 		{
-			if (is_win32 && is_mono)
-				Assert.Fail ("This test fails on mono on win32. Our runtime should be fixed.");
-
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 			Assert.AreEqual (ApartmentState.Unknown, TestThread.ApartmentState, "#1");
@@ -390,9 +371,6 @@ namespace MonoTests.System.Threading
 		[Category ("NotWorking")] // setting the priority of a Thread before it is started isn't implemented in Mono yet
 		public void TestPriority1()
 		{
-			if (is_win32 && is_mono)
-				Assert.Fail ("This test fails on mono on Win32. Our runtime should be fixed.");
-
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 			try {
@@ -475,6 +453,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestUndivisibleByPageSizeMaxStackSize ()
 		{
 			const int undivisible_stacksize = 1048573;
@@ -485,11 +464,9 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestIsBackground1 ()
 		{
-			if (is_win32 && is_mono)
-				Assert.Fail ("This test fails on mono on Win32. Our runtime should be fixed.");
-
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 			try {
@@ -507,6 +484,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestIsBackground2 ()
 		{
 			C2Test test1 = new C2Test();
@@ -532,11 +510,9 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestName()
 		{
-			if (is_win32 && is_mono)
-				Assert.Fail ("This test fails on mono on Win32. Our runtime should be fixed.");
-
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 			try {
@@ -575,6 +551,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestNestedThreads1()
 		{
 			C3Test test1 = new C3Test();
@@ -592,6 +569,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestNestedThreads2()
 		{
 			C4Test test1 = new C4Test();
@@ -608,6 +586,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestJoin1()
 		{
 			C1Test test1 = new C1Test();
@@ -694,11 +673,9 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestThreadState ()
 		{
-			if (is_win32 && is_mono)
-				Assert.Fail ("This test fails on mono on Win32. Our runtime should be fixed.");
-
 			//TODO: Test The rest of the possible transitions
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
@@ -801,6 +778,7 @@ namespace MonoTests.System.Threading
 
 #if MONO_FEATURE_THREAD_SUSPEND_RESUME
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestSuspend ()
 		{
 			Thread t = new Thread (new ThreadStart (DoCount));
@@ -828,11 +806,9 @@ namespace MonoTests.System.Threading
 #if MONO_FEATURE_THREAD_SUSPEND_RESUME && MONO_FEATURE_THREAD_ABORT
 		[Test]
 		[Category("NotDotNet")] // On MS, ThreadStateException is thrown on Abort: "Thread is suspended; attempting to abort"
+		[Category ("MultiThreaded")]
 		public void TestSuspendAbort ()
 		{
-			if (is_win32 && is_mono)
-				Assert.Fail ("This test fails on Win32. The test should be fixed.");
-
 			Thread t = new Thread (new ThreadStart (DoCount));
 			t.IsBackground = true;
 			t.Start ();
@@ -898,7 +874,6 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
-		[Category ("NotDotNet")] // it crashes nunit.
 		public void Test_InterruptCurrentThread ()
 		{
 			ManualResetEvent mre = new ManualResetEvent (false);
@@ -937,6 +912,7 @@ namespace MonoTests.System.Threading
 
 #if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		[Test]
+		[Category ("NotDotNet")]
 		public void CurrentThread_Domains ()
 		{
 			AppDomain ad = AppDomain.CreateDomain ("foo");
@@ -946,6 +922,23 @@ namespace MonoTests.System.Threading
 			AppDomain.Unload (ad);
 		}
 #endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
+
+		[Test]
+		public void SetNameInThreadPoolThread ()
+		{
+			Task t = Task.Run (delegate () {
+				Thread.CurrentThread.Name = "ThreadName1";
+				Assert.AreEqual (Thread.CurrentThread.Name, "ThreadName1", "#1");
+
+				try {
+					Thread.CurrentThread.Name = "ThreadName2";
+					Assert.Fail ("#2");
+				} catch (InvalidOperationException) {
+				}
+			});
+
+			t.Wait ();
+		}
 
 		void CheckIsRunning (string s, Thread t)
 		{
@@ -1001,6 +994,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #81720
+		[Category ("MultiThreaded")]
 		public void IsBackGround ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));
@@ -1036,6 +1030,28 @@ namespace MonoTests.System.Threading
 				Assert.IsNull (ex.InnerException, "#B7");
 				Assert.IsNotNull (ex.Message, "#B8");
 			}
+		}
+
+		[Test] // bug #60031
+		[Category ("MultiThreaded")]
+		public void StoppedThreadsThrowThreadStateException ()
+		{
+			var t = new Thread (() => { });
+			t.Start ();
+			t.Join ();
+
+			Assert.Throws<ThreadStateException> (() => { var isb = t.IsBackground; }, "IsBackground getter");
+			Assert.Throws<ThreadStateException> (() => { var isb = t.ApartmentState; }, "ApartmentState getter");
+			Assert.Throws<ThreadStateException> (() => t.ApartmentState = ApartmentState.MTA, "ApartmentState setter");
+			Assert.Throws<ThreadStateException> (() => t.IsBackground = false, "IsBackground setter");
+			Assert.Throws<ThreadStateException> (() => t.Start (), "Start ()");
+#if MONO_FEATURE_THREAD_SUSPEND_RESUME
+			Assert.Throws<ThreadStateException> (() => t.Resume (), "Resume ()");
+			Assert.Throws<ThreadStateException> (() => t.Suspend (), "Suspend ()");
+#endif
+			Assert.Throws<ThreadStateException> (() => t.GetApartmentState (), "GetApartmentState ()");
+			Assert.Throws<ThreadStateException> (() => t.SetApartmentState (ApartmentState.MTA), "SetApartmentState ()");
+			Assert.Throws<ThreadStateException> (() => t.TrySetApartmentState (ApartmentState.MTA), "TrySetApartmentState ()");
 		}
 	}
 
@@ -1148,6 +1164,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #81658
+		[Category ("MultiThreaded")]
 		public void ApartmentState_StoppedThread ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));
@@ -1187,6 +1204,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestApartmentState ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));
@@ -1251,6 +1269,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestTrySetApartmentState ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));
@@ -1265,6 +1284,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestTrySetApartmentStateRunning ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));
@@ -1301,6 +1321,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ThreadStartSimple ()
 		{
 			int i = 0;
@@ -1314,6 +1335,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ParametrizedThreadStart ()
 		{
 			int i = 0;
@@ -1370,9 +1392,9 @@ namespace MonoTests.System.Threading
 		
 		public static void WhileAlive (Thread t, bool alive, string s)
 		{
-			DateTime ti = DateTime.Now;
+			var sw = SD.Stopwatch.StartNew ();
 			while (t.IsAlive == alive) {
-				if ((DateTime.Now - ti).TotalSeconds > 10) {
+				if (sw.Elapsed.TotalSeconds > 10) {
 					if (alive) Assert.Fail ("Timeout while waiting for not alive state. " + s);
 					else Assert.Fail ("Timeout while waiting for alive state. " + s);
 				}
@@ -1381,12 +1403,12 @@ namespace MonoTests.System.Threading
 
 		public static bool WhileAliveOrStop (Thread t, bool alive, string s)
 		{
-			DateTime ti = DateTime.Now;
+			var sw = SD.Stopwatch.StartNew ();
 			while (t.IsAlive == alive) {
 				if (t.ThreadState == ThreadState.Stopped)
 					return false;
 
-				if ((DateTime.Now - ti).TotalSeconds > 10) {
+				if (sw.Elapsed.TotalSeconds > 10) {
 					if (alive) Assert.Fail ("Timeout while waiting for not alive state. " + s);
 					else Assert.Fail ("Timeout while waiting for alive state. " + s);
 				}

@@ -39,7 +39,7 @@ namespace System.CodeDom.Compiler
 	[ConfigurationCollection (typeof (Compiler), AddItemName = "compiler", CollectionType = ConfigurationElementCollectionType.BasicMap)]
 	internal sealed class CompilerCollection : ConfigurationElementCollection
 	{
-		static readonly string defaultCompilerVersion = "3.5";
+		static readonly string defaultCompilerVersion = "4.0";
 		static ConfigurationPropertyCollection properties;
 		static List <CompilerInfo> compiler_infos;
 		static Dictionary <string, CompilerInfo> compiler_languages;
@@ -50,56 +50,24 @@ namespace System.CodeDom.Compiler
 			properties = new ConfigurationPropertyCollection ();
 			compiler_infos = new List <CompilerInfo> ();
 			compiler_languages = new Dictionary <string, CompilerInfo> (16, StringComparer.OrdinalIgnoreCase);
-			compiler_extensions = new Dictionary <string, CompilerInfo> (6, StringComparer.OrdinalIgnoreCase);
+			compiler_extensions = new Dictionary <string, CompilerInfo> (4, StringComparer.OrdinalIgnoreCase);
 				
-			CompilerInfo compiler = new CompilerInfo ();
-                        compiler.Languages = "c#;cs;csharp";
-                        compiler.Extensions = ".cs";
-                        compiler.TypeName = "Microsoft.CSharp.CSharpCodeProvider, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-			compiler.ProviderOptions = new Dictionary <string, string> (1);
+			CompilerInfo compiler = new CompilerInfo (null, "Microsoft.CSharp.CSharpCodeProvider, " + Consts.AssemblySystem,
+				new [] { "c#", "cs", "csharp" }, new [] { ".cs" });
 			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
 			AddCompilerInfo (compiler);
 
-			compiler = new CompilerInfo ();
-			compiler.Languages = "vb;vbs;visualbasic;vbscript";
-                        compiler.Extensions = ".vb";
-                        compiler.TypeName = "Microsoft.VisualBasic.VBCodeProvider, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-			compiler.ProviderOptions = new Dictionary <string, string> (1);
-			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
-			AddCompilerInfo (compiler);
-
-			compiler = new CompilerInfo ();
-                        compiler.Languages = "js;jscript;javascript";
-                        compiler.Extensions = ".js";
-                        compiler.TypeName = "Microsoft.JScript.JScriptCodeProvider, Microsoft.JScript, Version=8.0.1100.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-			compiler.ProviderOptions = new Dictionary <string, string> (1);
-			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
-			AddCompilerInfo (compiler);
-
-			compiler = new CompilerInfo ();
-                        compiler.Languages = "vj#;vjs;vjsharp";
-                        compiler.Extensions = ".jsl;.java";
-                        compiler.TypeName = "Microsoft.VJSharp.VJSharpCodeProvider, VJSharpCodeProvider, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-			compiler.ProviderOptions = new Dictionary <string, string> (1);
-			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
-			AddCompilerInfo (compiler);
-
-			compiler = new CompilerInfo ();
-                        compiler.Languages = "c++;mc;cpp";
-                        compiler.Extensions = ".h";
-                        compiler.TypeName = "Microsoft.VisualC.CppCodeProvider, CppCodeProvider, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-			compiler.ProviderOptions = new Dictionary <string, string> (1);
+			compiler = new CompilerInfo (null, "Microsoft.VisualBasic.VBCodeProvider, " + Consts.AssemblySystem,
+				new [] { "vb", "vbs", "visualbasic", "vbscript" }, new [] { ".vb" });
 			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
 			AddCompilerInfo (compiler);
 		}
 
-		public CompilerCollection ()
-		{
-		}
+		public CompilerCollection () { }
 
 		static void AddCompilerInfo (CompilerInfo ci)
 		{
-			ci.Init ();
+			ci.CreateProvider();
 			compiler_infos.Add (ci);
 
 			string[] languages = ci.GetLanguages ();
@@ -115,13 +83,9 @@ namespace System.CodeDom.Compiler
 
 		static void AddCompilerInfo (Compiler compiler)
 		{
-			CompilerInfo ci = new CompilerInfo ();
-			ci.Languages = compiler.Language;
-			ci.Extensions = compiler.Extension;
-			ci.TypeName = compiler.Type;
-			ci.ProviderOptions = compiler.ProviderOptionsDictionary;
-			ci.CompilerOptions = compiler.CompilerOptions;
-			ci.WarningLevel = compiler.WarningLevel;
+			CompilerInfo ci = new CompilerInfo (null, compiler.Type, new [] { compiler.Extension }, new [] { compiler.Language });
+			ci.CompilerParams.CompilerOptions = compiler.CompilerOptions;
+			ci.CompilerParams.WarningLevel = compiler.WarningLevel;
 			AddCompilerInfo (ci);
 		}
 		
@@ -134,8 +98,8 @@ namespace System.CodeDom.Compiler
 		}
 		
 		protected override bool ThrowOnDuplicate {
-                        get { return false; }
-                }
+			get { return false; }
+		}
 		
 		protected override ConfigurationElement CreateNewElement ()
 		{
@@ -197,11 +161,11 @@ namespace System.CodeDom.Compiler
 			return (string)BaseGetKey (index);
 		}
 
-		public string[ ] AllKeys {
+		public string[] AllKeys {
 			get {
-				string[] keys = new string[compiler_infos.Count];
+				var keys = new string [compiler_infos.Count];
 				for (int i = 0; i < Count; i++)
-					keys[i] = compiler_infos[i].Languages;
+					keys[i] = string.Join(";", compiler_infos[i].GetLanguages ());
 				return keys;
 			}
 		}

@@ -7,7 +7,7 @@
 **
 ** Class: TypeInfo
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Notion of a type definition

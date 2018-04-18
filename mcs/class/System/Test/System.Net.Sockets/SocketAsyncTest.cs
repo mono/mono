@@ -8,7 +8,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class SocketAsyncTest
 	{
 		Socket serverSocket;
@@ -17,14 +16,16 @@ namespace MonoTests.System.Net.Sockets
 		ManualResetEvent mainEvent;
 		Exception error;
 
-		[TestFixtureSetUp]
-		public void SetUp ()
+		void SetUp ()
 		{
 			readyEvent = new ManualResetEvent (false);
 			mainEvent = new ManualResetEvent (false);
 
 			ThreadPool.QueueUserWorkItem (_ => DoWork ());
 			readyEvent.WaitOne ();
+
+			if (error != null)
+				throw error;
 
 			clientSocket = new Socket (
 				AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -43,18 +44,22 @@ namespace MonoTests.System.Net.Sockets
 
 		void DoWork ()
 		{
-			serverSocket = new Socket (
-				AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			serverSocket.Bind (new IPEndPoint (IPAddress.Loopback, 0));
-			serverSocket.Listen (1);
+			try {
+				serverSocket = new Socket (
+					AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+				serverSocket.Bind (new IPEndPoint (IPAddress.Loopback, 0));
+				serverSocket.Listen (1);
 
-			var async = new SocketAsyncEventArgs ();
-			async.Completed += (s,e) => OnAccepted (e);
+				var async = new SocketAsyncEventArgs ();
+				async.Completed += (s,e) => OnAccepted (e);
 
-			readyEvent.Set ();
-
-			if (!serverSocket.AcceptAsync (async))
-				OnAccepted (async);
+				if (!serverSocket.AcceptAsync (async))
+					OnAccepted (async);
+			} catch (Exception e) {
+				error = e;
+			} finally {
+				readyEvent.Set ();
+			}
 		}
 
 		void OnAccepted (SocketAsyncEventArgs e)
@@ -93,8 +98,13 @@ namespace MonoTests.System.Net.Sockets
 
 		[Test]
 		[Category("Test")]
+		[Category("MultiThreaded")]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SendAsync ()
 		{
+			SetUp ();
 			var buffer = new byte [] { 0x12, 0x34, 0x56, 0x78 };
 			var m = new ManualResetEvent (false);
 			var e = new SocketAsyncEventArgs ();

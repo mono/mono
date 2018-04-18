@@ -1,5 +1,6 @@
-/*
- * monitor.h: Monitor locking functions
+/**
+ * \file
+ * Monitor locking functions
  *
  * Author:
  *	Dick Porter (dick@ximian.com)
@@ -12,7 +13,6 @@
 
 #include <glib.h>
 #include <mono/metadata/object.h>
-#include <mono/io-layer/io-layer.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-coop-semaphore.h>
 
@@ -107,8 +107,11 @@ MONO_API void mono_locks_dump (gboolean include_untaken);
 void mono_monitor_init (void);
 void mono_monitor_cleanup (void);
 
-gboolean mono_monitor_enter_fast (MonoObject *obj);
-gboolean mono_monitor_enter_v4_fast (MonoObject *obj, char *lock_taken);
+MonoBoolean mono_monitor_enter_internal (MonoObject *obj);
+void mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken);
+
+guint32 mono_monitor_enter_fast (MonoObject *obj);
+guint32 mono_monitor_enter_v4_fast (MonoObject *obj, MonoBoolean *lock_taken);
 
 guint32 mono_monitor_get_object_monitor_gchandle (MonoObject *object);
 
@@ -116,13 +119,13 @@ void mono_monitor_threads_sync_members_offset (int *status_offset, int *nest_off
 #define MONO_THREADS_SYNC_MEMBER_OFFSET(o)	((o)>>8)
 #define MONO_THREADS_SYNC_MEMBER_SIZE(o)	((o)&0xff)
 
-extern gboolean ves_icall_System_Threading_Monitor_Monitor_test_owner(MonoObject *obj);
-extern gboolean ves_icall_System_Threading_Monitor_Monitor_test_synchronised(MonoObject *obj);
+extern MonoBoolean ves_icall_System_Threading_Monitor_Monitor_test_owner(MonoObject *obj);
+extern MonoBoolean ves_icall_System_Threading_Monitor_Monitor_test_synchronised(MonoObject *obj);
 extern void ves_icall_System_Threading_Monitor_Monitor_pulse(MonoObject *obj);
 extern void ves_icall_System_Threading_Monitor_Monitor_pulse_all(MonoObject *obj);
-extern gboolean ves_icall_System_Threading_Monitor_Monitor_wait(MonoObject *obj, guint32 ms);
-extern void ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, char *lockTaken);
-
+extern MonoBoolean ves_icall_System_Threading_Monitor_Monitor_wait(MonoObject *obj, guint32 ms);
+extern void ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, MonoBoolean *lockTaken);
+extern void ves_icall_System_Threading_Monitor_Monitor_Enter (MonoObject *obj);
 G_END_DECLS
 
 #endif /* _MONO_METADATA_MONITOR_H_ */

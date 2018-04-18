@@ -72,6 +72,7 @@ namespace System {
         public const string Fxassert = "Fxassert.dll";
         public const string Shlwapi  = "shlwapi.dll";
         public const string Crypt32  = "crypt32.dll";
+        public const string ShCore   = "SHCore.dll";
 
         // system.data specific
         internal const string Odbc32    = "odbc32.dll";

@@ -32,7 +32,7 @@ namespace Mono.Security.Protocol.Tls
 {
 	internal static class CipherSuiteFactory
 	{
-#if !INSIDE_SYSTEM && !BOOTSTRAP_BASIC
+#if false && !INSIDE_SYSTEM && !BOOTSTRAP_BASIC
 		static Type spm = typeof (ServicePointManager);
 		static PropertyInfo client_callback;
 		static PropertyInfo server_callback;

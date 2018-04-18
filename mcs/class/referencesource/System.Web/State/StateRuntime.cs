@@ -217,6 +217,7 @@ namespace System.Web.SessionState {
         internal IntPtr             _stateItem; // The pointer to the native memory that points to the psi
         internal bool               _locked;
         internal DateTime           _utcLockDate;
+        internal TimeSpan           _slidingExpiration;
         internal int                _lockCookie;
         internal int                _extraFlags;
         #pragma warning disable 0649
@@ -228,6 +229,7 @@ namespace System.Web.SessionState {
                 IntPtr      stateItem,
                 bool        locked,
                 DateTime    utcLockDate,
+                TimeSpan    slidingExpiration,
                 int         lockCookie,
                 int         extraFlags) {
 
@@ -235,6 +237,7 @@ namespace System.Web.SessionState {
             _stateItem = stateItem;
             _locked = locked;
             _utcLockDate = utcLockDate;
+            _slidingExpiration = slidingExpiration;
             _lockCookie = lockCookie;
             _extraFlags = extraFlags;
         }
@@ -413,19 +416,17 @@ namespace System.Web.SessionState {
             string          exclusiveAccess;
             string          key;
             CachedContent   content;
-            CacheEntry      entry;
             int             lockCookie;
             int             timeout;
 
             key = CreateKey(request);
-            entry = (CacheEntry) HttpRuntime.CacheInternal.Get(key, CacheGetOptions.ReturnCacheEntry);
-            if (entry == null) {
+            content = (CachedContent) HttpRuntime.Cache.InternalCache.Get(key);
+            if (content == null) {
                 ReportNotFound(context);
                 return;
             }
 
             exclusiveAccess = request.Headers[StateHeaders.EXCLUSIVE_NAME];
-            content = (CachedContent) entry.Value;
             content._spinLock.AcquireWriterLock();
             try {
                 if (content._content == null) {
@@ -483,7 +484,7 @@ namespace System.Web.SessionState {
                         response.AppendHeader(StateHeaders.LOCKCOOKIE_NAME_RAW, (content._lockCookie).ToString(CultureInfo.InvariantCulture));
                     }
 
-                    timeout = (int) (entry.SlidingExpiration.Ticks / TimeSpan.TicksPerMinute);
+                    timeout = (int)(content._slidingExpiration.Ticks / TimeSpan.TicksPerMinute);
                     response.AppendHeader(StateHeaders.TIMEOUT_NAME_RAW, (timeout).ToString(CultureInfo.InvariantCulture));
                     responseStream = response.OutputStream;
                     buf = content._content;
@@ -520,7 +521,7 @@ namespace System.Web.SessionState {
             int                 lockCookie;
             int                 lockCookieNew = 1;
             IntPtr              stateItem;
-            CacheInternal       cacheInternal = HttpRuntime.CacheInternal;
+            CacheStoreProvider         cacheInternal = HttpRuntime.Cache.InternalCache;
 
             /* create the content */
             requestStream = request.InputStream;
@@ -561,8 +562,8 @@ namespace System.Web.SessionState {
 
             /* lookup current value */
             key = CreateKey(request);
-            CacheEntry entry = (CacheEntry) cacheInternal.Get(key, CacheGetOptions.ReturnCacheEntry);
-            if (entry != null) {
+            contentCurrent = (CachedContent) cacheInternal.Get(key);
+            if (contentCurrent != null) {
                 // DevDivBugs 146875: Expired Session State race condition
                 // We make sure we do not overwrite an already existing item with an uninitialized item.
                 if (((int)SessionStateItemFlags.Uninitialized & extraFlags) == 1) {
@@ -573,7 +574,6 @@ namespace System.Web.SessionState {
                     return stateItem;
                 }
 
-                contentCurrent = (CachedContent) entry.Value;
                 contentCurrent._spinLock.AcquireWriterLock();
                 try {
                     if (contentCurrent._content == null) {
@@ -587,7 +587,7 @@ namespace System.Web.SessionState {
                         return stateItem;
                     }
 
-                    if (entry.SlidingExpiration == timeout && contentCurrent._content != null) {
+                    if (contentCurrent._slidingExpiration == timeout && contentCurrent._content != null) {
                         /* delete the old state item */
                         IntPtr stateItemOld = contentCurrent._stateItem;
 
@@ -619,12 +619,14 @@ namespace System.Web.SessionState {
                 }
             }
 
-            content = new CachedContent(buf, stateItem, false, DateTime.MinValue, lockCookieNew, extraFlags);
-            cacheInternal.UtcInsert(
-                    key, content, null, Cache.NoAbsoluteExpiration, timeout,
-                    CacheItemPriority.NotRemovable, _removedHandler);
+            content = new CachedContent(buf, stateItem, false, DateTime.MinValue, timeout, lockCookieNew, extraFlags);
+            cacheInternal.Insert(key, content, new CacheInsertOptions() {
+                                                    SlidingExpiration = timeout,
+                                                    Priority = CacheItemPriority.NotRemovable,
+                                                    OnRemovedCallback = _removedHandler
+                                                });
 
-            if (entry == null) {
+            if (contentCurrent == null) {
                 IncrementStateServiceCounter(StateServicePerfCounter.STATE_SERVICE_SESSIONS_TOTAL);
                 IncrementStateServiceCounter(StateServicePerfCounter.STATE_SERVICE_SESSIONS_ACTIVE);
             }
@@ -634,7 +636,7 @@ namespace System.Web.SessionState {
 
         internal /*public*/ void DoDelete(HttpContext context) {
             string          key = CreateKey(context.Request);
-            CacheInternal   cacheInternal = HttpRuntime.CacheInternal;
+            CacheStoreProvider     cacheInternal = HttpRuntime.Cache.InternalCache;
             CachedContent   content = (CachedContent) cacheInternal.Get(key);
 
             /* If the item isn't there, we probably took too long to run. */
@@ -680,7 +682,7 @@ namespace System.Web.SessionState {
             Object  item;
 
             key = CreateKey(context.Request);
-            item = HttpRuntime.CacheInternal.Get(key);
+            item = HttpRuntime.Cache.InternalCache.Get(key);
             if (item == null) {
                 ReportNotFound(context);
             }

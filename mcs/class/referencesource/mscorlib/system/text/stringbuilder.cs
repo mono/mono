@@ -1338,8 +1338,10 @@ namespace System.Text {
             }
 
             while (true) {
+#if !MONO                
                 int p = pos;
                 int i = pos;
+#endif
                 while (pos < len) {
                     ch = format[pos];
 
@@ -1406,8 +1408,10 @@ namespace System.Text {
                 StringBuilder fmt = null;
                 if (ch == ':') {
                     pos++;
+#if !MONO
                     p = pos;
                     i = pos;
+#endif
                     while (true) {
                         if (pos == len) FormatError();
                         ch = format[pos];
@@ -1559,7 +1563,9 @@ namespace System.Text {
             if (newValue == null)
                 newValue = "";
 
+#if !MONO
             int deltaLength = newValue.Length - oldValue.Length;
+#endif
 
             int[] replacements = null;          // A list of replacement positions in a chunk to apply
             int replacementsCount = 0;
@@ -1597,7 +1603,9 @@ namespace System.Text {
                 {
                     // Replacing mutates the blocks, so we need to convert to logical index and back afterward. 
                     int index = indexInChunk + chunk.m_ChunkOffset;
+#if !MONO                    
                     int indexBeforeAdjustment = index;
+#endif
 
                     // See if we accumulated any replacements, if so apply them 
                     ReplaceAllInChunk(replacements, replacementsCount, chunk, oldValue.Length, newValue);
@@ -1881,7 +1889,22 @@ namespace System.Text {
                 }
             }
         }
-#if !MONO
+#if MONO
+        public StringBuilder Append(ReadOnlySpan<char> value)
+        {
+            if (value.Length > 0)
+            {
+                unsafe
+                {
+                    fixed (char* valueChars = &MemoryMarshal.GetReference(value))
+                    {
+                        Append(valueChars, value.Length);
+                    }
+                }
+            }
+            return this;
+        }
+#else
          // Copies the source StringBuilder to the destination IntPtr memory allocated with len bytes.
         [System.Security.SecurityCritical]  // auto-generated
         internal unsafe void InternalCopy(IntPtr dest, int len) {

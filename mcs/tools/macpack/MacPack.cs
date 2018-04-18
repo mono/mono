@@ -112,23 +112,33 @@ namespace Mac {
 					script = script.Replace ("%MWF_MODE%", "0");
 					script = script.Replace ("%COCOASHARP_MODE%", "0");
 					script = script.Replace ("%X11_MODE%", "0");
+					script = script.Replace ("%MONO_ARGS%", "");
 					break;
 				case 1:
 					script = script.Replace ("%MWF_MODE%", "1");
 					script = script.Replace ("%COCOASHARP_MODE%", "0");
 					script = script.Replace ("%X11_MODE%", "0");
+					// no WinForms support in 64-bit Mono - pass --arch=32 to the mono executable
+					// see XplatUICarbon.Initialize(): 
+					//     WARNING: The Carbon driver has not been ported to 64bits, and very few parts 
+					//     of Windows.Forms will work properly, or at all
+					script = script.Replace ("%MONO_ARGS%", "--arch=32");
+
 					break;
 				case 2:
 					script = script.Replace ("%MWF_MODE%", "0");
 					script = script.Replace ("%COCOASHARP_MODE%", "1");
 					script = script.Replace ("%X11_MODE%", "0");
+					script = script.Replace ("%MONO_ARGS%", "");
 					break;
 				case 3:
 					script = script.Replace ("%MWF_MODE%", "0");
 					script = script.Replace ("%COCOASHARP_MODE%", "0");
 					script = script.Replace ("%X11_MODE%", "1");
+					script = script.Replace ("%MONO_ARGS%", "");
 					break;
 			}
+
 			data = Encoding.ASCII.GetBytes (script);
 			writer.Write (data, 0, data.Length);
 			writer.Close ();

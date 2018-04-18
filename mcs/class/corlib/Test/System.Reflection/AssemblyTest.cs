@@ -37,7 +37,7 @@ using System.Configuration.Assemblies;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 #endif
 using System.Threading;
@@ -55,14 +55,27 @@ namespace MonoTests.System.Reflection
 	[TestFixture]
 	public class AssemblyTest
 	{
-		static string TempFolder = Path.Combine (Path.GetTempPath (),
+		static string BaseTempFolder = Path.Combine (Path.GetTempPath (),
 			"MonoTests.System.Reflection.AssemblyTest");
+		static string TempFolder;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			try {
+				// Try to cleanup from any previous NUnit run.
+				Directory.Delete (BaseTempFolder, true);
+			} catch (Exception) {
+			}
+		}
 
 		[SetUp]
 		public void SetUp ()
 		{
-			while (Directory.Exists (TempFolder))
-				TempFolder = Path.Combine (TempFolder, "2");
+			int i = 0;
+			do {
+				TempFolder = Path.Combine (BaseTempFolder, (++i).ToString());
+			} while (Directory.Exists (TempFolder));
 			Directory.CreateDirectory (TempFolder);
 		}
 
@@ -70,8 +83,8 @@ namespace MonoTests.System.Reflection
 		public void TearDown ()
 		{
 			try {
-				// This throws an exception under MS.NET, since the directory contains loaded
-				// assemblies.
+				// This throws an exception under MS.NET and Mono on Windows,
+				// since the directory contains loaded assemblies.
 				Directory.Delete (TempFolder, true);
 			} catch (Exception) {
 			}
@@ -200,9 +213,8 @@ namespace MonoTests.System.Reflection
 #endif
 		}
 
-#if !MONOTOUCH && !MOBILE_STATIC // Reflection.Emit is not supported.
+#if !MONOTOUCH && !FULL_AOT_RUNTIME // Reflection.Emit is not supported.
 		[Test]
-		[Category("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter
 		public void GetModules_MissingFile ()
 		{
 			AssemblyName newName = new AssemblyName ();
@@ -210,7 +222,7 @@ namespace MonoTests.System.Reflection
 
 			AssemblyBuilder ab = Thread.GetDomain().DefineDynamicAssembly (newName, AssemblyBuilderAccess.RunAndSave, TempFolder);
 
-			ModuleBuilder mb = ab.DefineDynamicModule ("myDynamicModule1", "myDynamicModule.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("myDynamicModule1", "myDynamicModule.dll", false);
 
 			ab.Save ("test_assembly.dll");
 
@@ -252,14 +264,9 @@ namespace MonoTests.System.Reflection
 		public void Corlib_test ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
-#if MONODROID || MOBILE_STATIC || __WATCHOS__
-			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
-			Assert.IsNull (corlib_test.Evidence, "Evidence");
-#elif MOBILE
-			Assert.IsNotNull (corlib_test.EntryPoint, "EntryPoint");
+#if MOBILE
 			Assert.IsNull (corlib_test.Evidence, "Evidence");
 #else
-			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
 			Assert.IsNotNull (corlib_test.Evidence, "Evidence");
 #endif
 			Assert.IsFalse (corlib_test.GlobalAssemblyCache, "GlobalAssemblyCache");
@@ -310,6 +317,7 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be accessed as FileStream
+		[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
 		public void GetFiles_False ()
 		{
 			Assembly corlib = typeof (int).Assembly;
@@ -323,6 +331,7 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be accessed as FileStream
+		[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
 		public void GetFiles_True ()
 		{
 			Assembly corlib = typeof (int).Assembly;
@@ -410,22 +419,21 @@ namespace MonoTests.System.Reflection
 		[Test] // bug #78517
 		public void LoadFrom_Empty_Assembly ()
 		{
-			string tempFile = Path.GetTempFileName ();
+			string tempFile = Path.Combine (TempFolder, Path.GetRandomFileName ());
+			File.CreateText (tempFile).Close ();
 
 			try {
 				Assembly.LoadFrom (tempFile);
 				Assert.Fail ("#1");
 			} catch (BadImageFormatException ex) {
 				Assert.IsNull (ex.InnerException, "#2");
-			} finally {
-				File.Delete (tempFile);
 			}
 		}
 
 		[Test] // bug #78517
 		public void LoadFrom_Invalid_Assembly ()
 		{
-			string tempFile = Path.GetTempFileName ();
+			string tempFile = Path.Combine (TempFolder, Path.GetRandomFileName ());
 			using (StreamWriter sw = File.CreateText (tempFile)) {
 				sw.WriteLine ("foo");
 				sw.Close ();
@@ -436,24 +444,19 @@ namespace MonoTests.System.Reflection
 				Assert.Fail ("#1");
 			} catch (BadImageFormatException ex) {
 				Assert.IsNull (ex.InnerException, "#2");
-			} finally {
-				File.Delete (tempFile);
 			}
 		}
 
 		[Test]
 		public void LoadFrom_NonExisting_Assembly ()
 		{
-			string tempFile = Path.GetTempFileName ();
-			File.Delete (tempFile);
+			string tempFile = Path.Combine (TempFolder, Path.GetRandomFileName ());
 
 			try {
 				Assembly.LoadFrom (tempFile);
 				Assert.Fail ("#1");
 			} catch (FileNotFoundException ex) {
 				Assert.IsNull (ex.InnerException, "#2");
-			} finally {
-				File.Delete (tempFile);
 			}
 		}
 
@@ -467,11 +470,7 @@ namespace MonoTests.System.Reflection
 // with the semantics of aot'ed assembly loading, as
 // aot may assert when loading. This assumes that it's
 // safe to greedly load everything.
-#if MOBILE_STATIC
-			string [] names = { "mobile_static_corlib_test" };
-#else
-			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "net_4_x_corlib_test", "corlib_plattest", "mscorlibtests", "BclTests" };
-#endif
+			var names = new string[] { Assembly.GetCallingAssembly ().GetName ().Name };
 
 			foreach (string s in names)
 				if (Assembly.LoadWithPartialName (s) != null)
@@ -500,48 +499,41 @@ namespace MonoTests.System.Reflection
 		public void GetReferencedAssemblies ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
-			AssemblyName[] names = corlib_test.GetReferencedAssemblies ();
-			foreach (AssemblyName an in names) {
-				Assert.IsNull (an.CodeBase, "CodeBase");
-				Assert.IsNotNull (an.CultureInfo, "CultureInfo");
-				Assert.IsNull (an.EscapedCodeBase, "EscapedCodeBase");
-				Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "Flags");
-				Assert.IsNotNull (an.FullName, "FullName");
-				Assert.AreEqual (AssemblyHashAlgorithm.SHA1, an.HashAlgorithm, "HashAlgorithm");
-				Assert.IsNull (an.KeyPair, "KeyPair");
-				Assert.IsNotNull (an.Name, "Name");
-				Assert.IsNotNull (an.Version, "Version");
-				Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, 
-					an.VersionCompatibility, "VersionCompatibility");
-			}
+			AssemblyName an = corlib_test.GetReferencedAssemblies ().First (l => l.Name == "mscorlib");
+			Assert.IsNull (an.CodeBase, "CodeBase");
+			Assert.IsNotNull (an.CultureInfo, "CultureInfo");
+			Assert.IsNull (an.EscapedCodeBase, "EscapedCodeBase");
+			Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "Flags");
+			Assert.IsNotNull (an.FullName, "FullName");
+			Assert.AreEqual (AssemblyHashAlgorithm.SHA1, an.HashAlgorithm, "HashAlgorithm");
+			Assert.IsNull (an.KeyPair, "KeyPair");
+			Assert.IsNotNull (an.Name, "Name");
+			Assert.IsNotNull (an.Version, "Version");
+			Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, an.VersionCompatibility, "VersionCompatibility");
 		}
 
-#if !MONOTOUCH && !MOBILE_STATIC // Reflection.Emit is not supported.
+#if !MONOTOUCH && !FULL_AOT_RUNTIME // Reflection.Emit is not supported.
 		[Test]
 		public void Location_Empty() {
 			string assemblyFileName = Path.Combine (
-				Path.GetTempPath (), "AssemblyLocation.dll");
+				TempFolder, "AssemblyLocation.dll");
 
-			try {
-				AssemblyName assemblyName = new AssemblyName ();
-				assemblyName.Name = "AssemblyLocation";
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = "AssemblyLocation";
 
-				AssemblyBuilder ab = AppDomain.CurrentDomain
-					.DefineDynamicAssembly (assemblyName,
-					AssemblyBuilderAccess.Save,
-					Path.GetTempPath (),
-					AppDomain.CurrentDomain.Evidence);
-				ab.Save (Path.GetFileName (assemblyFileName));
+			AssemblyBuilder ab = AppDomain.CurrentDomain
+				.DefineDynamicAssembly (assemblyName,
+				AssemblyBuilderAccess.Save,
+				TempFolder,
+				AppDomain.CurrentDomain.Evidence);
+			ab.Save (Path.GetFileName (assemblyFileName));
 
-				using (FileStream fs = File.OpenRead (assemblyFileName)) {
-					byte[] buffer = new byte[fs.Length];
-					fs.Read (buffer, 0, buffer.Length);
-					Assembly assembly = Assembly.Load (buffer);
-					Assert.AreEqual (string.Empty, assembly.Location);
-					fs.Close ();
-				}
-			} finally {
-				File.Delete (assemblyFileName);
+			using (FileStream fs = File.OpenRead (assemblyFileName)) {
+				byte[] buffer = new byte[fs.Length];
+				fs.Read (buffer, 0, buffer.Length);
+				Assembly assembly = Assembly.Load (buffer);
+				Assert.AreEqual (string.Empty, assembly.Location);
+				fs.Close ();
 			}
 		}
 
@@ -549,56 +541,52 @@ namespace MonoTests.System.Reflection
 		public void SateliteAssemblyForInMemoryAssembly ()
 		{
 			string assemblyFileName = Path.Combine (
-				Path.GetTempPath (), "AssemblyLocation1.dll");
+				TempFolder, "AssemblyLocation1.dll");
 
-			try {
-				AssemblyName assemblyName = new AssemblyName ();
-				assemblyName.Name = "AssemblyLocation1";
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = "AssemblyLocation1";
 
-				AssemblyBuilder ab = AppDomain.CurrentDomain
-					.DefineDynamicAssembly (assemblyName,
-						AssemblyBuilderAccess.Save,
-						Path.GetTempPath ());
+			AssemblyBuilder ab = AppDomain.CurrentDomain
+				.DefineDynamicAssembly (assemblyName,
+					AssemblyBuilderAccess.Save,
+					TempFolder);
 
-				ModuleBuilder moduleBuilder = ab.DefineDynamicModule (assemblyName.Name, assemblyName.Name + ".dll");
-				TypeBuilder typeBuilder = moduleBuilder.DefineType ("Program", TypeAttributes.Public);
+			ModuleBuilder moduleBuilder = ab.DefineDynamicModule (assemblyName.Name, assemblyName.Name + ".dll");
+			TypeBuilder typeBuilder = moduleBuilder.DefineType ("Program", TypeAttributes.Public);
 
-				MethodBuilder methodBuilder = typeBuilder.DefineMethod ("TestCall", MethodAttributes.Public | MethodAttributes.Static, typeof(void), Type.EmptyTypes);
-				ILGenerator gen = methodBuilder.GetILGenerator ();
+			MethodBuilder methodBuilder = typeBuilder.DefineMethod ("TestCall", MethodAttributes.Public | MethodAttributes.Static, typeof(void), Type.EmptyTypes);
+			ILGenerator gen = methodBuilder.GetILGenerator ();
 
-				//
-				// 	var resourceManager = new ResourceManager (typeof (Program));
-				//	resourceManager.GetString ("test");
-				//
-				gen.Emit (OpCodes.Ldtoken, typeBuilder);
-				gen.Emit (OpCodes.Call, typeof(Type).GetMethod ("GetTypeFromHandle"));
-				gen.Emit (OpCodes.Newobj, typeof(ResourceManager).GetConstructor (new Type[] { typeof(Type) }));
-				gen.Emit (OpCodes.Ldstr, "test");
-				gen.Emit (OpCodes.Callvirt, typeof(ResourceManager).GetMethod ("GetString", new Type[] { typeof(string) }));
-				gen.Emit (OpCodes.Pop);
-				gen.Emit (OpCodes.Ret);
+			//
+			// 	var resourceManager = new ResourceManager (typeof (Program));
+			//	resourceManager.GetString ("test");
+			//
+			gen.Emit (OpCodes.Ldtoken, typeBuilder);
+			gen.Emit (OpCodes.Call, typeof(Type).GetMethod ("GetTypeFromHandle"));
+			gen.Emit (OpCodes.Newobj, typeof(ResourceManager).GetConstructor (new Type[] { typeof(Type) }));
+			gen.Emit (OpCodes.Ldstr, "test");
+			gen.Emit (OpCodes.Callvirt, typeof(ResourceManager).GetMethod ("GetString", new Type[] { typeof(string) }));
+			gen.Emit (OpCodes.Pop);
+			gen.Emit (OpCodes.Ret);
 
-				typeBuilder.CreateType ();
+			typeBuilder.CreateType ();
 
-				ab.Save (Path.GetFileName (assemblyFileName));
+			ab.Save (Path.GetFileName (assemblyFileName));
 
-				using (FileStream fs = File.OpenRead (assemblyFileName)) {
-					byte[] buffer = new byte[fs.Length];
-					fs.Read (buffer, 0, buffer.Length);
-					Assembly assembly = Assembly.Load (buffer);
+			using (FileStream fs = File.OpenRead (assemblyFileName)) {
+				byte[] buffer = new byte[fs.Length];
+				fs.Read (buffer, 0, buffer.Length);
+				Assembly assembly = Assembly.Load (buffer);
 
-					var mm = assembly.GetType ("Program").GetMethod ("TestCall");
-					try {
-						mm.Invoke (null, null);
-						Assert.Fail ();
-					} catch (TargetInvocationException e) {
-						Assert.IsTrue (e.InnerException is MissingManifestResourceException);
-					}
-
-					fs.Close ();
+				var mm = assembly.GetType ("Program").GetMethod ("TestCall");
+				try {
+					mm.Invoke (null, null);
+					Assert.Fail ();
+				} catch (TargetInvocationException e) {
+					Assert.IsTrue (e.InnerException is MissingManifestResourceException);
 				}
-			} finally {
-				File.Delete (assemblyFileName);
+
+				fs.Close ();
 			}
 		}
 
@@ -607,19 +595,15 @@ namespace MonoTests.System.Reflection
 		public void bug78464 ()
 		{
 			string assemblyFileName = Path.Combine (
-				Path.GetTempPath (), "bug78464.dll");
+				TempFolder, "bug78464.dll");
 
+			// execute test in separate appdomain to allow assembly to be unloaded
+			AppDomain testDomain = CreateTestDomain (AppDomain.CurrentDomain.BaseDirectory, false);
+			CrossDomainTester crossDomainTester = CreateCrossDomainTester (testDomain);
 			try {
-				// execute test in separate appdomain to allow assembly to be unloaded
-				AppDomain testDomain = CreateTestDomain (AppDomain.CurrentDomain.BaseDirectory, false);
-				CrossDomainTester crossDomainTester = CreateCrossDomainTester (testDomain);
-				try {
-					crossDomainTester.bug78464 (assemblyFileName);
-				} finally {
-					AppDomain.Unload (testDomain);
-				}
+				crossDomainTester.bug78464 (assemblyFileName);
 			} finally {
-				File.Delete (assemblyFileName);
+				AppDomain.Unload (testDomain);
 			}
 		}
 
@@ -628,36 +612,32 @@ namespace MonoTests.System.Reflection
 		public void bug78465 ()
 		{
 			string assemblyFileName = Path.Combine (
-				Path.GetTempPath (), "bug78465.dll");
+				TempFolder, "bug78465.dll");
 
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = "bug78465";
+
+			AssemblyBuilder ab = AppDomain.CurrentDomain
+				.DefineDynamicAssembly (assemblyName,
+				AssemblyBuilderAccess.Save,
+				Path.GetDirectoryName (assemblyFileName),
+				AppDomain.CurrentDomain.Evidence);
+			ab.Save (Path.GetFileName (assemblyFileName));
+
+			using (FileStream fs = File.OpenRead (assemblyFileName)) {
+				byte[] buffer = new byte[fs.Length];
+				fs.Read (buffer, 0, buffer.Length);
+				Assembly assembly = Assembly.Load (buffer);
+				Assert.AreEqual (string.Empty, assembly.Location, "#1");
+				fs.Close ();
+			}
+
+			AppDomain testDomain = CreateTestDomain (AppDomain.CurrentDomain.BaseDirectory, false);
+			CrossDomainTester crossDomainTester = CreateCrossDomainTester (testDomain);
 			try {
-				AssemblyName assemblyName = new AssemblyName ();
-				assemblyName.Name = "bug78465";
-
-				AssemblyBuilder ab = AppDomain.CurrentDomain
-					.DefineDynamicAssembly (assemblyName,
-					AssemblyBuilderAccess.Save,
-					Path.GetDirectoryName (assemblyFileName),
-					AppDomain.CurrentDomain.Evidence);
-				ab.Save (Path.GetFileName (assemblyFileName));
-
-				using (FileStream fs = File.OpenRead (assemblyFileName)) {
-					byte[] buffer = new byte[fs.Length];
-					fs.Read (buffer, 0, buffer.Length);
-					Assembly assembly = Assembly.Load (buffer);
-					Assert.AreEqual (string.Empty, assembly.Location, "#1");
-					fs.Close ();
-				}
-
-				AppDomain testDomain = CreateTestDomain (AppDomain.CurrentDomain.BaseDirectory, false);
-				CrossDomainTester crossDomainTester = CreateCrossDomainTester (testDomain);
-				try {
-					crossDomainTester.bug78465 (assemblyFileName);
-				} finally {
-					AppDomain.Unload (testDomain);
-				}
+				crossDomainTester.bug78465 (assemblyFileName);
 			} finally {
-				File.Delete (assemblyFileName);
+				AppDomain.Unload (testDomain);
 			}
 		}
 
@@ -665,9 +645,9 @@ namespace MonoTests.System.Reflection
 		[Category("MobileNotWorking")]
 		public void bug78468 ()
 		{
-			string assemblyFileNameA = Path.Combine (Path.GetTempPath (),
+			string assemblyFileNameA = Path.Combine (TempFolder,
 				"bug78468a.dll");
-			string resourceFileName = Path.Combine (Path.GetTempPath (),
+			string resourceFileName = Path.Combine (TempFolder,
 				"readme.txt");
 
 			using (StreamWriter sw = File.CreateText (resourceFileName)) {
@@ -675,62 +655,56 @@ namespace MonoTests.System.Reflection
 				sw.Close ();
 			}
 
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = "bug78468a";
+
+			AssemblyBuilder ab = AppDomain.CurrentDomain
+				.DefineDynamicAssembly (assemblyName,
+				AssemblyBuilderAccess.Save,
+				TempFolder,
+				AppDomain.CurrentDomain.Evidence);
+			ab.AddResourceFile ("read", "readme.txt");
+			ab.Save (Path.GetFileName (assemblyFileNameA));
+
+			Assembly assembly;
+
+			using (FileStream fs = File.OpenRead (assemblyFileNameA)) {
+				byte[] buffer = new byte[fs.Length];
+				fs.Read (buffer, 0, buffer.Length);
+				assembly = Assembly.Load (buffer);
+				fs.Close ();
+			}
+
+			Assert.AreEqual (string.Empty, assembly.Location, "#A1");
+			string[] resNames = assembly.GetManifestResourceNames ();
+			Assert.IsNotNull (resNames, "#A2");
+			Assert.AreEqual (1, resNames.Length, "#A3");
+			Assert.AreEqual ("read", resNames[0], "#A4");
+			ManifestResourceInfo resInfo = assembly.GetManifestResourceInfo ("read");
+			Assert.IsNotNull (resInfo, "#A5");
+			Assert.AreEqual ("readme.txt", resInfo.FileName, "#A6");
+			Assert.IsNull (resInfo.ReferencedAssembly, "#A7");
+			Assert.AreEqual ((ResourceLocation) 0, resInfo.ResourceLocation, "#A8");
 			try {
-				AssemblyName assemblyName = new AssemblyName ();
-				assemblyName.Name = "bug78468a";
+				assembly.GetManifestResourceStream ("read");
+				Assert.Fail ("#A9");
+			} catch (FileNotFoundException) {
+			}
+			try {
+				assembly.GetFile ("readme.txt");
+				Assert.Fail ("#A10");
+			} catch (FileNotFoundException) {
+			}
 
-				AssemblyBuilder ab = AppDomain.CurrentDomain
-					.DefineDynamicAssembly (assemblyName,
-					AssemblyBuilderAccess.Save,
-					Path.GetTempPath (),
-					AppDomain.CurrentDomain.Evidence);
-				ab.AddResourceFile ("read", "readme.txt");
-				ab.Save (Path.GetFileName (assemblyFileNameA));
+			string assemblyFileNameB = Path.Combine (TempFolder,
+				"bug78468b.dll");
 
-				Assembly assembly;
-
-				using (FileStream fs = File.OpenRead (assemblyFileNameA)) {
-					byte[] buffer = new byte[fs.Length];
-					fs.Read (buffer, 0, buffer.Length);
-					assembly = Assembly.Load (buffer);
-					fs.Close ();
-				}
-
-				Assert.AreEqual (string.Empty, assembly.Location, "#A1");
-				string[] resNames = assembly.GetManifestResourceNames ();
-				Assert.IsNotNull (resNames, "#A2");
-				Assert.AreEqual (1, resNames.Length, "#A3");
-				Assert.AreEqual ("read", resNames[0], "#A4");
-				ManifestResourceInfo resInfo = assembly.GetManifestResourceInfo ("read");
-				Assert.IsNotNull (resInfo, "#A5");
-				Assert.AreEqual ("readme.txt", resInfo.FileName, "#A6");
-				Assert.IsNull (resInfo.ReferencedAssembly, "#A7");
-				Assert.AreEqual ((ResourceLocation) 0, resInfo.ResourceLocation, "#A8");
-				try {
-					assembly.GetManifestResourceStream ("read");
-					Assert.Fail ("#A9");
-				} catch (FileNotFoundException) {
-				}
-				try {
-					assembly.GetFile ("readme.txt");
-					Assert.Fail ("#A10");
-				} catch (FileNotFoundException) {
-				}
-
-				string assemblyFileNameB = Path.Combine (Path.GetTempPath (),
-					"bug78468b.dll");
-
-				AppDomain testDomain = CreateTestDomain (AppDomain.CurrentDomain.BaseDirectory, false);
-				CrossDomainTester crossDomainTester = CreateCrossDomainTester (testDomain);
-				try {
-					crossDomainTester.bug78468 (assemblyFileNameB);
-				} finally {
-					AppDomain.Unload (testDomain);
-					File.Delete (assemblyFileNameB);
-				}
+			AppDomain testDomain = CreateTestDomain (AppDomain.CurrentDomain.BaseDirectory, false);
+			CrossDomainTester crossDomainTester = CreateCrossDomainTester (testDomain);
+			try {
+				crossDomainTester.bug78468 (assemblyFileNameB);
 			} finally {
-				File.Delete (assemblyFileNameA);
-				File.Delete (resourceFileName);
+				AppDomain.Unload (testDomain);
 			}
 		}
 
@@ -745,12 +719,12 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be directly as files
+		[Category ("AndroidNotWorking")] // Xamarin.Android assemblies are bundled so they don't exist in the file system.
 		public void ReflectionOnlyLoadFrom ()
 		{
 			string loc = typeof (AssemblyTest).Assembly.Location;
 			string filename = Path.GetFileName (loc);
-			Assembly assembly = Assembly.ReflectionOnlyLoadFrom (filename);
+			Assembly assembly = Assembly.ReflectionOnlyLoadFrom (loc);
 
 			Assert.IsNotNull (assembly);
 			Assert.IsTrue (assembly.ReflectionOnly);
@@ -768,8 +742,7 @@ namespace MonoTests.System.Reflection
 		[Category ("NotWorking")] // patch for bug #79720 must be committed first
 		public void Load_Culture ()
 		{
-			string tempDir = Path.Combine (Path.GetTempPath (),
-				"MonoTests.System.Reflection.AssemblyTest");
+			string tempDir = TempFolder;
 			string cultureTempDir = Path.Combine (tempDir, "nl-BE");
 			if (!Directory.Exists (cultureTempDir))
 				Directory.CreateDirectory (cultureTempDir);
@@ -866,8 +839,6 @@ namespace MonoTests.System.Reflection
 				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#D3");
 			} finally {
 				AppDomain.Unload (ad);
-				if (Directory.Exists (tempDir))
-					Directory.Delete (tempDir, true);
 			}
 		}
 
@@ -875,8 +846,7 @@ namespace MonoTests.System.Reflection
 		[Category ("NotWorking")] // in non-default domain, MS throws FileNotFoundException
 		public void Load_Culture_Mismatch ()
 		{
-			string tempDir = Path.Combine (Path.GetTempPath (),
-				"MonoTests.System.Reflection.AssemblyTest");
+			string tempDir = TempFolder;
 			string cultureTempDir = Path.Combine (tempDir, "en-US");
 			if (!Directory.Exists (cultureTempDir))
 				Directory.CreateDirectory (cultureTempDir);
@@ -910,8 +880,6 @@ namespace MonoTests.System.Reflection
 				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#B1");
 			} finally {
 				AppDomain.Unload (ad);
-				if (Directory.Exists (tempDir))
-					Directory.Delete (tempDir, true);
 			}
 		}
 
@@ -920,10 +888,7 @@ namespace MonoTests.System.Reflection
 		[Category("MobileNotWorking")]
 		public void Load_PartialVersion ()
 		{
-			string tempDir = Path.Combine (Path.GetTempPath (),
-				"MonoTests.System.Reflection.AssemblyTest");
-			if (!Directory.Exists (tempDir))
-				Directory.CreateDirectory (tempDir);
+			string tempDir = TempFolder;
 
 			AppDomain ad = CreateTestDomain (tempDir, true);
 			try {
@@ -953,8 +918,6 @@ namespace MonoTests.System.Reflection
 				Assert.IsTrue (cdt.AssertLoad (aname.FullName), "#C2");
 			} finally {
 				AppDomain.Unload (ad);
-				if (Directory.Exists (tempDir))
-					Directory.Delete (tempDir, true);
 			}
 		}
 
@@ -1128,22 +1091,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void bug79872 ()
 		{
-			Random rnd = new Random ();
-			string outdir;
-			int tries = 0;
-
-		retry:
-			outdir = Path.Combine (Path.GetTempPath (), "bug79872-" + rnd.Next (10000, 99999));
-			if (Directory.Exists (outdir)) {
-				try {
-					Directory.Delete (outdir, true);
-				} catch {
-					if (++tries <= 100)
-						goto retry;
-				}
-			}
-
-			Directory.CreateDirectory (outdir);
+			string outdir = TempFolder;
 
 			AssemblyName an = new AssemblyName ();
 			an.Name = "bug79872";
@@ -1175,8 +1123,6 @@ namespace MonoTests.System.Reflection
 				// swallow the rest
 			}
 			Assert.IsTrue (ok, "Complain on loading a .NET metadata file without an assembly manifest");
-
-			Directory.Delete (outdir, true);
 		}
 #endif
 
@@ -1189,7 +1135,7 @@ namespace MonoTests.System.Reflection
 
 			Assert.AreEqual ("MonoModule", module.GetType ().Name, "#2");
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 			Assert.AreEqual ("mscorlib.dll", module.Name, "#3");
 #endif
 			Assert.IsFalse (module.IsResource (), "#4");
@@ -1320,7 +1266,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (GetType().Assembly, a);
 		}
 
-#if NET_4_5
 		[Test]
 		public void DefinedTypes_Equality ()
 		{
@@ -1329,7 +1274,6 @@ namespace MonoTests.System.Reflection
 
 			Assert.AreSame (x1, x2, "#1");
 		}
-#endif
 
 		class MyAssembly : Assembly { }
 

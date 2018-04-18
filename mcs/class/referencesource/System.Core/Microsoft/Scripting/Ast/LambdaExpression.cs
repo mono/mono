@@ -139,12 +139,20 @@ namespace System.Linq.Expressions {
             return LambdaCompiler.Compile(this, debugInfoGenerator);
         }
 
-#if NETSTANDARD
         public Delegate Compile(bool preferInterpretation) {
             // TODO: add logic for preferInterpretation
             return Compile();
         }
-#endif
+
+        /// <summary>
+        /// Produces a delegate that represents the lambda expression.
+        /// </summary>
+        /// <param name="preferInterpretation">A <see cref="bool"/> that indicates if the expression should be compiled to an interpreted form, if available.</param>
+        /// <returns>A delegate containing the compiled version of the lambda.</returns>
+        public Delegate Compile(bool preferInterpretation)
+        {
+            return Compile();
+        }
 
         /// <summary>
         /// Compiles the lambda into a method definition.
@@ -207,12 +215,15 @@ namespace System.Linq.Expressions {
             return (TDelegate)(object)LambdaCompiler.Compile(this, debugInfoGenerator);
         }
 
-#if NETSTANDARD
         public new TDelegate Compile(bool preferInterpretation) {
             // TODO: add logic for preferInterpretation
             return Compile();
         }
-#endif
+
+        public new TDelegate Compile(bool preferInterpretation)
+        {
+            return Compile();
+        }
 
         /// <summary>
         /// Creates a new expression that is like this one, but using the

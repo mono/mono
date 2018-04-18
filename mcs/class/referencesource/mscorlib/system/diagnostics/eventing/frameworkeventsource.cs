@@ -6,8 +6,8 @@
 //
 // ResourcesEtwProvider.cs
 //
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Managed event source for things that can version with MSCORLIB.  
 //

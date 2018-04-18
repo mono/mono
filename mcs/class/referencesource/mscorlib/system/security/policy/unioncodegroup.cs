@@ -5,7 +5,7 @@
 // ==--==
 //  UnionCodeGroup.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 //  Representation for code groups used for the policy mechanism
 //

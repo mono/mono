@@ -1,5 +1,6 @@
-/*
- * mono-path.c: Routines for handling path names.
+/**
+ * \file
+ * Routines for handling path names.
  * 
  * Authors:
  * 	Gonzalo Paniagua Javier (gonzalo@novell.com)
@@ -107,7 +108,7 @@ mono_path_canonicalize (const char *path)
  * This ensures that the path that we store points to the final file
  * not a path to a symlink.
  */
-#if !defined(PLATFORM_NO_SYMLINKS)
+#if !defined(HOST_NO_SYMLINKS)
 static gchar *
 resolve_symlink (const char *path)
 {
@@ -146,7 +147,7 @@ resolve_symlink (const char *path)
 gchar *
 mono_path_resolve_symlinks (const char *path)
 {
-#if defined(PLATFORM_NO_SYMLINKS)
+#if defined(HOST_NO_SYMLINKS)
 	return mono_path_canonicalize (path);
 #else
 	gchar **split = g_strsplit (path, G_DIR_SEPARATOR_S, -1);

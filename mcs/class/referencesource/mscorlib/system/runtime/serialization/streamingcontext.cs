@@ -56,7 +56,7 @@ namespace System.Runtime.Serialization {
     }
     
     // **********************************************************
-    // Keep these in [....] with the version in vm\runtimehandles.h
+    // Keep these in sync with the version in vm\runtimehandles.h
     // **********************************************************
 [Serializable]
 [Flags]

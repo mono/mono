@@ -64,7 +64,7 @@ namespace System.ServiceModel
         // Based on prior art from WCF:
         // ServiceModel.lst:System.ServiceModel.ServiceHost..ctor(System.Object,System.Uri[])
         // |DoNotCallOverridableMethodsInConstructors
-        // |[....]|By design, don't want to complicate ServiceHost state model
+        // |Microsoft|By design, don't want to complicate ServiceHost state model
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         internal WorkflowServiceHost(WorkflowDefinitionContext workflowDefinitionContext, params Uri[] baseAddress)
             : base()

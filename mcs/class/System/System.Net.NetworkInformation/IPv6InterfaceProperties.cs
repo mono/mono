@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 namespace System.Net.NetworkInformation {
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32IPv6InterfaceProperties : IPv6InterfaceProperties
 	{
 		Win32_MIB_IFROW mib;

@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_JIT_ICALLS_H__
 #define __MONO_JIT_ICALLS_H__
 
@@ -94,10 +98,6 @@ float mono_lconv_to_r4 (gint64 a);
 double mono_conv_to_r8_un (guint32 a);
 
 double mono_lconv_to_r8_un (guint64 a);
-
-#if defined(__native_client_codegen__) || defined(__native_client__)
-double mono_fmod(double a, double b);
-#endif
 
 gpointer mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, gpointer *this_arg);
 
@@ -224,6 +224,8 @@ MonoObject* mono_get_method_object (MonoMethod *method);
 
 double mono_ckfinite (double d);
 
-void mono_throw_method_access (MonoMethod *callee, MonoMethod *caller);
+void mono_throw_method_access (MonoMethod *caller, MonoMethod *callee);
+
+void mono_dummy_jit_icall (void);
 
 #endif /* __MONO_JIT_ICALLS_H__ */

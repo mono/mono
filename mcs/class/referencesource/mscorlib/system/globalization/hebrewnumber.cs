@@ -140,7 +140,7 @@ namespace System.Globalization {
                     cTens = '\x05db';          // Hebrew Letter Kaf
                     break;
                 case ( 3 ) :
-                    cTens = '\x05dc';          // Hebrew Letter ----d
+                    cTens = '\x05dc';          // Hebrew Letter Lamed
                     break;
                 case ( 4 ) :
                     cTens = '\x05de';          // Hebrew Letter Mem
@@ -256,7 +256,7 @@ namespace System.Globalization {
             new HebrewValue(HebrewToken.Digit10, 10) , // '\x05d9;          // Hebrew Letter Yod
             new HebrewValue(HebrewToken.Invalid, -1) , // '\x05da; 
             new HebrewValue(HebrewToken.Digit10, 20) , // '\x05db;          // Hebrew Letter Kaf
-            new HebrewValue(HebrewToken.Digit10, 30) , // '\x05dc;          // Hebrew Letter ----d
+            new HebrewValue(HebrewToken.Digit10, 30) , // '\x05dc;          // Hebrew Letter Lamed
             new HebrewValue(HebrewToken.Invalid, -1) , // '\x05dd;
             new HebrewValue(HebrewToken.Digit10, 40) , // '\x05de;          // Hebrew Letter Mem
             new HebrewValue(HebrewToken.Invalid, -1) , // '\x05df;

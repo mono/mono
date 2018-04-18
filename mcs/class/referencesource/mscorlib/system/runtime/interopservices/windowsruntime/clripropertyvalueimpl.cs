@@ -4,9 +4,9 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
 
 using System;
 using System.Diagnostics.Contracts;
@@ -475,7 +475,7 @@ namespace System.Runtime.InteropServices.WindowsRuntime
                     return (T)(object)ipv.GetDouble();
                 }
                 else {
-                    BCLDebug.Assert(false, "T in coersion function wasn't understood as a type that can be coerced - make sure that CoerceScalarValue and NumericScalarTypes are in [....]");
+                    BCLDebug.Assert(false, "T in coersion function wasn't understood as a type that can be coerced - make sure that CoerceScalarValue and NumericScalarTypes are in sync");
                 }
             }
 

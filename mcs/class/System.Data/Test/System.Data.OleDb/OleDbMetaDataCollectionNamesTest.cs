@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NO_OLEDB
+
 using System.Data.OleDb;
 using NUnit.Framework;
 
@@ -49,3 +51,5 @@ namespace MonoTests.System.Data.OleDb
                 }
         }
 }
+
+#endif

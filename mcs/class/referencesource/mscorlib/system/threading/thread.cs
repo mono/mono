@@ -4,7 +4,7 @@
 //
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*=============================================================================
 **
 ** Class: Thread
@@ -1081,7 +1081,6 @@ namespace System.Threading {
 
             dls.Store.SetData(slot, data);
         }
-#if !MONO
 
         // #threadCultureInfo
         //
@@ -1337,12 +1336,23 @@ namespace System.Threading {
         }
 
 #if! FEATURE_LEAK_CULTURE_INFO
+
+#if MONO
+        static void nativeInitCultureAccessors()
+        {
+            m_CurrentCulture = CultureInfo.ConstructCurrentCulture ();
+            m_CurrentUICulture = CultureInfo.ConstructCurrentUICulture ();
+        }
+#else
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [SuppressUnmanagedCodeSecurity]
         private static extern void nativeInitCultureAccessors();
 #endif
+#endif
+
+#if !MONO
 
         /*=============================================================*/
 

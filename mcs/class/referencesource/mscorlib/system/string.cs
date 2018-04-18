@@ -61,7 +61,7 @@ namespace System {
 
         //private static readonly char FmtMsgMarkerChar='%';
         //private static readonly char FmtMsgFmtCodeChar='!';
-        //These are defined in Com99/src/vm/COMStringCommon.h and must be kept in [....].
+        //These are defined in Com99/src/vm/COMStringCommon.h and must be kept in sync.
         private const int TrimHead = 0;
         private const int TrimTail = 1;
         private const int TrimBoth = 2;
@@ -668,20 +668,11 @@ namespace System {
            return !String.Equals(a, b);
         }
 
+#if !MONO
         // Gets the character at a specified position.
         //
         // Spec#: Apply the precondition here using a contract assembly.  Potential perf issue.
         [System.Runtime.CompilerServices.IndexerName("Chars")]
-#if MONO
-        public unsafe char this[int index] {
-            get {
-                if (index < 0 || index >= m_stringLength)
-                    throw new IndexOutOfRangeException ();
-                fixed (char* c = &m_firstChar)
-                    return c[index];
-            }
-        }
-#else
         public extern char this[int index] {
             [ResourceExposure(ResourceScope.None)]
             [MethodImpl(MethodImplOptions.InternalCall)]
@@ -1392,7 +1383,27 @@ namespace System {
 
             return s;
         }
+
+        unsafe internal int GetBytesFromEncoding(byte* pbNativeBuffer, int cbNativeBuffer,Encoding encoding)
+        {
+            // encoding == Encoding.UTF8
+            fixed (char* pwzChar = &this.m_firstChar)
+            {
+                return encoding.GetBytes(pwzChar, m_stringLength, pbNativeBuffer, cbNativeBuffer);
+            }
+        }
+
 #if !MONO
+        [System.Security.SecuritySafeCritical]  // auto-generated
+         unsafe internal int GetBytesFromEncoding(byte* pbNativeBuffer, int cbNativeBuffer,Encoding encoding)
+         {
+             // encoding == Encoding.UTF8
+             fixed (char* pwzChar = &this.m_firstChar)
+             {
+                 return encoding.GetBytes(pwzChar, m_stringLength, pbNativeBuffer, cbNativeBuffer);
+             }
+         }
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         unsafe internal int ConvertToAnsi(byte *pbNativeBuffer, int cbNativeBuffer, bool fBestFit, bool fThrowOnUnmappableChar)
         {

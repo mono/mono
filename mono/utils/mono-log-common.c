@@ -1,5 +1,6 @@
-/*
- * mono-log-common.c: Platform-independent interface to the logger
+/**
+ * \file
+ * Platform-independent interface to the logger
  *
  * This module contains the POSIX syslog logger interface
  *
@@ -25,7 +26,8 @@
 #else
 #include <process.h>
 #endif
-#include "mono-logger.h"
+#include "mono-logger-internals.h"
+#include "mono-proclib.h"
 
 static FILE *logFile = NULL;
 static void *logUserData = NULL;
@@ -55,13 +57,11 @@ mapLogFileLevel(GLogLevelFlags level)
 }
 
 /**
- * mono_log_open_logfile
- * 	
- *	Open the logfile. If the path is not specified default to stdout. If the
- *	open fails issue a warning and use stdout as the log file destination.
- *
- * 	@path - Path for log file
- * 	@userData - Not used
+ * mono_log_open_logfile:
+ * \param path Path for log file
+ * \param userData Not used
+ * Open the logfile. If the path is not specified default to stdout. If the
+ * open fails issue a warning and use stdout as the log file destination.
  */
 void
 mono_log_open_logfile(const char *path, void *userData)
@@ -88,61 +88,56 @@ mono_log_open_logfile(const char *path, void *userData)
 }
 
 /**
- * mono_log_write_logfile
- * 	
- * 	Write data to the log file.
- *
- * 	@domain - Identifier string
- * 	@level - Logging level flags
- * 	@format - Printf format string
- * 	@vargs - Variable argument list
+ * mono_log_write_logfile:
+ * \param domain Identifier string
+ * \param level Logging level flags
+ * \param format \c printf format string
+ * \param vargs Variable argument list
+ * Write data to the log file.
  */
 void
-mono_log_write_logfile(const char *domain, GLogLevelFlags level, mono_bool hdr, const char *format, va_list args)
+mono_log_write_logfile (const char *log_domain, GLogLevelFlags level, mono_bool hdr, const char *message)
 {
 	time_t t;
-	char logTime[80],	
-	     logMessage[512];
-	pid_t pid;
-	int iLog = 0;
-	size_t nLog;
 
 	if (logFile == NULL)
 		logFile = stdout;
 
 	if (hdr) {
-#ifndef HOST_WIN32
+		pid_t pid;
+		char logTime [80];
+
+#ifdef HAVE_LOCALTIME_R
 		struct tm tod;
 		time(&t);
 		localtime_r(&t, &tod);
-		pid = getpid();
 		strftime(logTime, sizeof(logTime), "%Y-%m-%d %H:%M:%S", &tod);
 #else
 		struct tm *tod;
 		time(&t);
 		tod = localtime(&t);
-		pid = _getpid();
 		strftime(logTime, sizeof(logTime), "%F %T", tod);
 #endif
-		iLog = sprintf(logMessage, "%s level[%c] mono[%d]: ",
-			       logTime,mapLogFileLevel(level),pid);
+
+		pid = mono_process_current_pid ();
+
+		fprintf (logFile, "%s level[%c] mono[%d]: %s\n", logTime, mapLogFileLevel (level), pid, message);
+	} else {
+		fprintf (logFile, "%s%s%s\n",
+			log_domain != NULL ? log_domain : "",
+			log_domain != NULL ? ": " : "",
+			message);
 	}
-	nLog = sizeof(logMessage) - iLog - 2;
-	vsnprintf(logMessage+iLog, nLog, format, args);
-	iLog = strlen(logMessage);
-	logMessage[iLog++] = '\n';
-	logMessage[iLog++] = '\0';
-	fputs(logMessage, logFile);
+
 	fflush(logFile);
 
-	if (level == G_LOG_FLAG_FATAL)
+	if (level & G_LOG_LEVEL_ERROR)
 		abort();
 }
 
 /**
- * mono_log_close_logfile
- *
- * 	Close the log file
+ * mono_log_close_logfile:
+ * Close the log file
  */
 void
 mono_log_close_logfile()

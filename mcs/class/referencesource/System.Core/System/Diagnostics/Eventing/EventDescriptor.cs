@@ -28,7 +28,7 @@ namespace System.Diagnostics.Eventing
         [FieldOffset(8)]
         private long m_keywords;
 
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "opcode", Justification = "[....]: Shipped public in 3.5, breaking change to fix now.")]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "opcode", Justification = "Microsoft: Shipped public in 3.5, breaking change to fix now.")]
         public EventDescriptor(
                 int id,
                 byte version,
@@ -98,7 +98,7 @@ namespace System.Diagnostics.Eventing
             }
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Opcode", Justification = "[....]: Shipped public in 3.5, breaking change to fix now.")]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Opcode", Justification = "Microsoft: Shipped public in 3.5, breaking change to fix now.")]
         public byte Opcode
         {
             get

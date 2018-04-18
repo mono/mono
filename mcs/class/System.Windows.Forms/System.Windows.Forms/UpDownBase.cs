@@ -801,9 +801,9 @@ namespace System.Windows.Forms
 			OnTextChanged(e);
 		}
 
-		internal override void SetBoundsCoreInternal(int x, int y, int width, int height, BoundsSpecified specified)
+		internal override int OverrideHeight (int height)
 		{
-			base.SetBoundsCoreInternal (x, y, width, Math.Min (width, PreferredHeight), specified);
+			return Math.Min (height, PreferredHeight);
 		}
 
 		protected abstract void UpdateEditText ();

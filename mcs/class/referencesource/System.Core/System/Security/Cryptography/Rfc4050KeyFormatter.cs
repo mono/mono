@@ -18,7 +18,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace System.Security.Cryptography {
     /// <summary>
-    ///     Utility class to convert NCrypt keys into XML and back using a format similar to the one described
+    ///     Utility class to convert ECC keys into XML and back using a format similar to the one described
     ///     in RFC 4050 (http://www.ietf.org/rfc/rfc4050.txt).
     /// 
     ///     #RFC4050ECKeyFormat
@@ -41,6 +41,7 @@ namespace System.Security.Cryptography {
         private const string ECDsaRoot = "ECDSAKeyValue";
         private const string NamedCurveElement = "NamedCurve";
         private const string Namespace = "http://www.w3.org/2001/04/xmldsig-more#";
+        private const string OidUrnPrefix = "urn:oid:";
         private const string PublicKeyRoot = "PublicKey";
         private const string UrnAttribute = "URN";
         private const string ValueAttribute = "Value";
@@ -52,16 +53,18 @@ namespace System.Security.Cryptography {
         private const string XsiNamespace = "http://www.w3.org/2001/XMLSchema-instance";
         private const string XsiNamespacePrefix = "xsi";
 
-        private const string Prime256CurveUrn = "urn:oid:1.2.840.10045.3.1.7";
-        private const string Prime384CurveUrn = "urn:oid:1.3.132.0.34";
-        private const string Prime521CurveUrn = "urn:oid:1.3.132.0.35";
+        private const string ECDSA_P256_OID_VALUE = "1.2.840.10045.3.1.7"; // nistP256 or secP256r1
+        private const string ECDSA_P384_OID_VALUE = "1.3.132.0.34"; // nistP384 or secP384r1
+        private const string ECDSA_P521_OID_VALUE = "1.3.132.0.35"; // nistP521 or secP521r1
 
         /// <summary>
         ///     Restore a key from XML
         /// </summary>
-        internal static CngKey FromXml(string xml) {
+        internal static ECParameters FromXml(string xml, out bool isEcdh) {
             Contract.Requires(xml != null);
             Contract.Ensures(Contract.Result<CngKey>() != null);
+
+            ECParameters parameters = new ECParameters();
 
             // Load the XML into an XPathNavigator to access sub elements
             using (TextReader textReader = new StringReader(xml))
@@ -76,70 +79,22 @@ namespace System.Security.Cryptography {
                 }
 
                 // First figure out which algorithm this key belongs to
-                CngAlgorithm algorithm = ReadAlgorithm(navigator);
+                parameters.Curve = ReadCurve(navigator, out isEcdh);
 
                 // Then read out the public key value
                 if (!navigator.MoveToNext(XPathNodeType.Element)) {
                     throw new ArgumentException(SR.GetString(SR.Cryptography_MissingPublicKey));
                 }
 
-                BigInteger x;
-                BigInteger y;
-                ReadPublicKey(navigator, out x, out y);
-
-                // Finally, convert them into a key blob to import into a CngKey
-                byte[] keyBlob = NCryptNative.BuildEccPublicBlob(algorithm.Algorithm, x, y);
-                return CngKey.Import(keyBlob, CngKeyBlobFormat.EccPublicBlob);
+                ReadPublicKey(navigator, ref parameters);
+                return parameters;
             }
         }
 
         /// <summary>
-        ///     Map a curve URN to the size of the key associated with the curve
+        ///     Determine which ECC curve the key refers to
         /// </summary>
-        [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification = "The parameters to the exception are in the correct order")]
-        private static int GetKeySize(string urn) {
-            Contract.Requires(!String.IsNullOrEmpty(urn));
-            Contract.Ensures(Contract.Result<int>() > 0);
-
-            switch (urn) {
-                case Prime256CurveUrn:
-                    return 256;
-
-                case Prime384CurveUrn:
-                    return 384;
-
-                case Prime521CurveUrn:
-                    return 521;
-
-                default:
-                    throw new ArgumentException(SR.GetString(SR.Cryptography_UnknownEllipticCurve), "algorithm");
-            }
-        }
-
-        /// <summary>
-        ///     Get the OID which represents an elliptic curve
-        /// </summary>
-        private static string GetCurveUrn(CngAlgorithm algorithm) {
-            Contract.Requires(algorithm != null);
-
-            if (algorithm == CngAlgorithm.ECDsaP256 || algorithm == CngAlgorithm.ECDiffieHellmanP256) {
-                return Prime256CurveUrn;
-            }
-            else if (algorithm == CngAlgorithm.ECDsaP384 || algorithm == CngAlgorithm.ECDiffieHellmanP384) {
-                return Prime384CurveUrn;
-            }
-            else if (algorithm == CngAlgorithm.ECDsaP521 || algorithm == CngAlgorithm.ECDiffieHellmanP521) {
-                return Prime521CurveUrn;
-            }
-            else {
-                throw new ArgumentException(SR.GetString(SR.Cryptography_UnknownEllipticCurve), "algorithm");
-            }
-        }
-
-        /// <summary>
-        ///     Determine which ECC algorithm the key refers to
-        /// </summary>
-        private static CngAlgorithm ReadAlgorithm(XPathNavigator navigator) {
+        private static ECCurve ReadCurve(XPathNavigator navigator, out bool isEcdh) {
             Contract.Requires(navigator != null);
             Contract.Ensures(Contract.Result<CngAlgorithm>() != null);
 
@@ -176,48 +131,27 @@ namespace System.Security.Cryptography {
                 throw new ArgumentException(SR.GetString(SR.Cryptography_MissingDomainParameters));
             }
 
-            int keySize = GetKeySize(navigator.Value);
+            string oidUrn = navigator.Value;
 
+            if (!oidUrn.StartsWith(OidUrnPrefix, StringComparison.OrdinalIgnoreCase)) {
+                throw new ArgumentException(SR.GetString(SR.Cryptography_UnknownEllipticCurve));
+            }
+            
             // position the navigator at the end of the domain parameters
             navigator.MoveToParent();   // NamedCurve
             navigator.MoveToParent();   // DomainParameters
 
-            //
-            // Given the algorithm type and key size, we can now map back to a CNG algorithm ID
-            //
-
-            if (isDHKey) {
-                if (keySize == 256) {
-                    return CngAlgorithm.ECDiffieHellmanP256;
-                }
-                else if (keySize == 384) {
-                    return CngAlgorithm.ECDiffieHellmanP384;
-                }
-                else {
-                    Debug.Assert(keySize == 521, "keySize == 521");
-                    return CngAlgorithm.ECDiffieHellmanP521;
-                }
-            }
-            else {
-                Debug.Assert(isDsaKey, "isDsaKey");
-
-                if (keySize == 256) {
-                    return CngAlgorithm.ECDsaP256;
-                }
-                else if (keySize == 384) {
-                    return CngAlgorithm.ECDsaP384;
-                }
-                else {
-                    Debug.Assert(keySize == 521, "keySize == 521");
-                    return CngAlgorithm.ECDsaP521;
-                }
-            }
+            // The out-bool only works because we have either/or.  If a third type of data is handled
+            // then a more complex signal is required.
+            Debug.Assert(isDHKey || isDsaKey);
+            isEcdh = isDHKey;
+            return ECCurve.CreateFromValue(oidUrn.Substring(OidUrnPrefix.Length));
         }
 
         /// <summary>
         ///     Read the x and y components of the public key
         /// </summary>
-        private static void ReadPublicKey(XPathNavigator navigator, out BigInteger x, out BigInteger y) {
+        private static void ReadPublicKey(XPathNavigator navigator, ref ECParameters parameters) {
             Contract.Requires(navigator != null);
 
             if (navigator.NamespaceURI != Namespace) {
@@ -238,7 +172,7 @@ namespace System.Security.Cryptography {
                 throw new ArgumentException(SR.GetString(SR.Cryptography_MissingPublicKey));
             }
 
-            x = BigInteger.Parse(navigator.Value, CultureInfo.InvariantCulture);
+            BigInteger x = BigInteger.Parse(navigator.Value, CultureInfo.InvariantCulture);
             navigator.MoveToParent();
 
             // Then the y parameter
@@ -249,36 +183,158 @@ namespace System.Security.Cryptography {
                 throw new ArgumentException(SR.GetString(SR.Cryptography_MissingPublicKey));
             }
 
-            y = BigInteger.Parse(navigator.Value, CultureInfo.InvariantCulture);
+            BigInteger y = BigInteger.Parse(navigator.Value, CultureInfo.InvariantCulture);
+
+            byte[] xBytes = x.ToByteArray();
+            byte[] yBytes = y.ToByteArray();
+
+            int xLen = xBytes.Length;
+            int yLen = yBytes.Length;
+
+            // If the last byte of X is 0x00 that's a padding byte by BigInteger to indicate X is
+            // a positive number with the highest bit in the most significant byte set. We can't count
+            // that in the length of the number.
+            if (xLen > 0 && xBytes[xLen - 1] == 0)
+            {
+                xLen--;
+            }
+
+            // Ditto for Y.
+            if (yLen > 0 && yBytes[yLen - 1] == 0)
+            {
+                yLen--;
+            }
+
+            // Q.X and Q.Y have to be the same length.  They ultimately have to be the right length for the curve,
+            // but that requires more knowledge than we have. So we'll ask the system. If it doesn't know, just make
+            // them match each other.
+            int requiredLength = Math.Max(xLen, yLen);
+
+            try {
+                using (ECDsa ecdsa = ECDsa.Create(parameters.Curve)) {
+                    // Convert the bit value of keysize to a byte value.
+                    // EC curves can have non-mod-8 keysizes (e.g. 521), so the +7 is really necessary.
+                    int curveLength = (ecdsa.KeySize + 7) / 8;
+
+                    // We could just use this answer, but if the user has formatted the input to be
+                    // too long, maybe they know something we don't.
+                    requiredLength = Math.Max(requiredLength, curveLength);
+                }
+            }
+            catch (ArgumentException) { /* Curve had invalid data, like an empty OID */ }
+            catch (CryptographicException) { /* The system failed to generate a key for the curve */ }
+            catch (NotSupportedException) { /* An unknown curve type was requested */ }
+
+            // There is a chance that the curve is known to Windows but not allowed for ECDH
+            // (curve25519 is known to be in this state). Since RFC4050 is officially only
+            // concerned with ECDSA, and the only known example of this problem does not have
+            // an OID, it is not worth trying to generate the curve under ECDH as a fallback.
+
+            // Since BigInteger does Little Endian and Array.Resize maintains indexes when growing,
+            // just Array.Resize, then Array.Reverse. We could optimize this to be 1N instead of 2N,
+            // but this isn't a very hot codepath, so use tried-and-true methods.
+            Array.Resize(ref xBytes, requiredLength);
+            Array.Resize(ref yBytes, requiredLength);
+            Array.Reverse(xBytes);
+            Array.Reverse(yBytes);
+
+            parameters.Q.X = xBytes;
+            parameters.Q.Y = yBytes;
         }
 
         /// <summary>
         ///     Serialize out information about the elliptic curve
         /// </summary>
-        private static void WriteDomainParameters(XmlWriter writer, CngKey key) {
+        private static void WriteDomainParameters(XmlWriter writer, ref ECParameters parameters) {
             Contract.Requires(writer != null);
-            Contract.Requires(key != null && (key.AlgorithmGroup == CngAlgorithmGroup.ECDsa || key.AlgorithmGroup == CngAlgorithmGroup.ECDiffieHellman));
+
+            Oid curveOid = parameters.Curve.Oid;
+
+            if (!parameters.Curve.IsNamed || curveOid == null)
+                throw new ArgumentException(SR.GetString(SR.Cryptography_UnknownEllipticCurve));
+
+            string oidValue = curveOid.Value;
+
+            // If the OID didn't specify a value, use the mutable FriendlyName behavior of
+            // resolving the value without throwing an exception.
+            if (string.IsNullOrEmpty(oidValue))
+            {
+                // The name strings for the 3 NIST curves from Win7 changed in Win10, but the Win10
+                // names are what we use. This fallback supports Win7-Win8.1 resolution
+                switch (curveOid.FriendlyName)
+                {
+                    case BCryptNative.BCRYPT_ECC_CURVE_NISTP256:
+                        oidValue = ECDSA_P256_OID_VALUE;
+                        break;
+
+                    case BCryptNative.BCRYPT_ECC_CURVE_NISTP384:
+                        oidValue = ECDSA_P384_OID_VALUE;
+                        break;
+
+                    case BCryptNative.BCRYPT_ECC_CURVE_NISTP521:
+                        oidValue = ECDSA_P521_OID_VALUE;
+                        break;
+
+                    default:
+                        Oid resolver = new Oid();
+                        resolver.FriendlyName = curveOid.FriendlyName;
+                        oidValue = resolver.Value;
+                        break;
+                }
+            }
+
+            if (string.IsNullOrEmpty(oidValue))
+                throw new ArgumentException(SR.GetString(SR.Cryptography_UnknownEllipticCurve));
 
             writer.WriteStartElement(DomainParametersRoot);
 
             // We always use OIDs for the named prime curves
             writer.WriteStartElement(NamedCurveElement);
-            writer.WriteAttributeString(UrnAttribute, GetCurveUrn(key.Algorithm));
+            writer.WriteAttributeString(UrnAttribute, OidUrnPrefix + oidValue);
             writer.WriteEndElement();   // </NamedCurve>
 
             writer.WriteEndElement();   // </DomainParameters>
         }
 
-        private static void WritePublicKeyValue(XmlWriter writer, CngKey key) {
+        private static void WritePublicKeyValue(XmlWriter writer, ref ECParameters parameters) {
             Contract.Requires(writer != null);
-            Contract.Requires(key != null && (key.AlgorithmGroup == CngAlgorithmGroup.ECDsa || key.AlgorithmGroup == CngAlgorithmGroup.ECDiffieHellman));
-
+            
             writer.WriteStartElement(PublicKeyRoot);
 
-            byte[] exportedKey = key.Export(CngKeyBlobFormat.EccPublicBlob);
-            BigInteger x;
-            BigInteger y;
-            NCryptNative.UnpackEccPublicBlob(exportedKey, out x, out y);
+            byte[] providedX = parameters.Q.X;
+            byte[] providedY = parameters.Q.Y;
+
+            int xSize = providedX.Length;
+            int ySize = providedY.Length;
+            const byte SignBit = 0x80;
+
+            // BigInteger will interpret a byte[] number as negative if the most significant bit is set.
+            // Since we're still in Big Endian at this point that means checking val[0].
+            // If the high bit is set, we need to extract into a byte[] with a padding zero to keep the
+            // sign bit cleared.
+
+            if ((providedX[0] & SignBit) == SignBit) {
+                xSize++;
+            }
+
+            if ((providedY[0] & SignBit) == SignBit) {
+                ySize++;
+            }
+
+            // We can't just use the arrays that are passed in even when the number wasn't negative,
+            // because we need to reverse the bytes to load into BigInteger.
+            byte[] xBytes = new byte[xSize];
+            byte[] yBytes = new byte[ySize];
+
+            // If the size grew then the offset will be 1, otherwise 0.
+            Buffer.BlockCopy(providedX, 0, xBytes, xSize - providedX.Length, providedX.Length);
+            Buffer.BlockCopy(providedY, 0, yBytes, ySize - providedY.Length, providedY.Length);
+
+            Array.Reverse(xBytes);
+            Array.Reverse(yBytes);
+
+            BigInteger x = new BigInteger(xBytes);
+            BigInteger y = new BigInteger(yBytes);
 
             writer.WriteStartElement(XElement);
             writer.WriteAttributeString(ValueAttribute, x.ToString("R", CultureInfo.InvariantCulture));
@@ -296,9 +352,10 @@ namespace System.Security.Cryptography {
         /// <summary>
         ///     Convert a key to XML
         /// </summary>
-        internal static string ToXml(CngKey key) {
-            Contract.Requires(key != null && (key.AlgorithmGroup == CngAlgorithmGroup.ECDsa || key.AlgorithmGroup == CngAlgorithmGroup.ECDiffieHellman));
+        internal static string ToXml(ECParameters parameters, bool isEcdh) {
             Contract.Ensures(Contract.Result<String>() != null);
+
+            parameters.Validate();
 
             StringBuilder keyXml = new StringBuilder();
 
@@ -309,11 +366,11 @@ namespace System.Security.Cryptography {
 
             using (XmlWriter writer = XmlWriter.Create(keyXml, settings)) {
                 // The root element depends upon the type of key
-                string rootElement = key.AlgorithmGroup == CngAlgorithmGroup.ECDsa ? ECDsaRoot : ECDHRoot;
+                string rootElement = isEcdh ? ECDHRoot : ECDsaRoot;
                 writer.WriteStartElement(rootElement, Namespace);
 
-                WriteDomainParameters(writer, key);
-                WritePublicKeyValue(writer, key);
+                WriteDomainParameters(writer, ref parameters);
+                WritePublicKeyValue(writer, ref parameters);
 
                 writer.WriteEndElement();   // root element
             }

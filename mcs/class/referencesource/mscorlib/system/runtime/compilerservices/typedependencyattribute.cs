@@ -13,8 +13,9 @@ namespace System.Runtime.CompilerServices
     [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = false)]
     internal sealed class TypeDependencyAttribute: Attribute    
     {
-
+#pragma warning disable 414
         private string typeName;
+#pragma warning restore
 
         public TypeDependencyAttribute (string typeName)        
         {

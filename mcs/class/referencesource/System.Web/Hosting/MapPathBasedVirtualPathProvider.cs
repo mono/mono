@@ -86,7 +86,7 @@ internal class MapPathBasedVirtualPathProvider: VirtualPathProvider {
             //       * null means it's not cached
             //       * true means it's cached and it exists
             //       * false means it's cached and it doesn't exist
-            bool? cacheValue = HttpRuntime.CacheInternal[cacheKey] as bool?;
+            bool? cacheValue = HttpRuntime.Cache.InternalCache.Get(cacheKey) as bool?;
             if (cacheValue != null) {
                 return cacheValue.Value;
             }
@@ -108,7 +108,7 @@ internal class MapPathBasedVirtualPathProvider: VirtualPathProvider {
         if (existingDir != null) {
             dep = new CacheDependency(existingDir);
             TimeSpan slidingExp = CachedPathData.UrlMetadataSlidingExpiration;
-            HttpRuntime.CacheInternal.UtcInsert(cacheKey, exists, dep, Cache.NoAbsoluteExpiration, slidingExp);
+            HttpRuntime.Cache.InternalCache.Insert(cacheKey, exists, new CacheInsertOptions() { Dependencies = dep, SlidingExpiration = slidingExp });
         }
 
         return exists;

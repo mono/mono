@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -70,6 +70,9 @@ namespace System.Security.Cryptography {
         [System.Security.SecuritySafeCritical]  // auto-generated
         public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) {
 #if MONO
+            if (m_use40bitSalt)
+                throw new NotImplementedException ("UseSalt=true is not implemented on Mono yet");
+
             return new RC2Transform (this, true, rgbKey, rgbIV);
 #else
             return _NewEncryptor(rgbKey, ModeValue, rgbIV, EffectiveKeySizeValue, 
@@ -80,6 +83,9 @@ namespace System.Security.Cryptography {
         [System.Security.SecuritySafeCritical]  // auto-generated
         public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) {
 #if MONO
+            if (m_use40bitSalt)
+                throw new NotImplementedException ("UseSalt=true is not implemented on Mono yet");
+
             return new RC2Transform (this, false, rgbKey, rgbIV);
 #else
             return _NewEncryptor(rgbKey, ModeValue, rgbIV, EffectiveKeySizeValue,

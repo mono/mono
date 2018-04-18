@@ -1,5 +1,6 @@
-/*
- * mini-arm-gsharedvt.c: gsharedvt support code for arm
+/**
+ * \file
+ * gsharedvt support code for arm
  *
  * Authors:
  *   Zoltan Varga <vargaz@gmail.com>
@@ -22,8 +23,6 @@
 #include "mini-arm.h"
 
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 /*
  * GSHAREDVT
@@ -217,8 +216,8 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 			else
 				src_slot = map_stack_slot (ainfo->offset / 4);
 			g_assert (ndst < 256);
-			g_assert (src_slot < 16);
-			src [0] = (ndst << 4) | src_slot;
+			g_assert (src_slot < 256);
+			src [0] = (ndst << 8) | src_slot;
 
 			if (ainfo2->storage == RegTypeGeneral && ainfo2->size != 0 && ainfo2->size != 4) {
 				/* Have to load less than 4 bytes */
@@ -256,7 +255,7 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 			ndst = get_arg_slots (ainfo2, &dst);
 		}
 		if (nsrc)
-			src [0] |= (arg_marshal << 16);
+			src [0] |= (arg_marshal << 24);
 		nslots = MIN (nsrc, ndst);
 
 		for (i = 0; i < nslots; ++i)

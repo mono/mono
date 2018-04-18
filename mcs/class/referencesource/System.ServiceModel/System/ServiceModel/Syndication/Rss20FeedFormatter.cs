@@ -1124,7 +1124,7 @@ namespace System.ServiceModel.Syndication
 
             // if there's a single author with an email address, then serialize as the managingEditor
             // else serialize the authors as Atom extensions
-#pragma warning disable 56506 // [....]: this.Feed.Authors is never null
+#pragma warning disable 56506 // Microsoft: this.Feed.Authors is never null
             if ((this.Feed.Authors.Count == 1) && (this.Feed.Authors[0].Email != null))
 #pragma warning restore 56506
             {
@@ -1149,7 +1149,7 @@ namespace System.ServiceModel.Syndication
                 writer.WriteEndElement();
             }
 
-#pragma warning disable 56506 // [....]: this.Feed.Categories is never null
+#pragma warning disable 56506 // Microsoft: this.Feed.Categories is never null
             for (int i = 0; i < this.Feed.Categories.Count; ++i)
 #pragma warning restore 56506
             {
@@ -1161,7 +1161,7 @@ namespace System.ServiceModel.Syndication
                 writer.WriteElementString(Rss20Constants.GeneratorTag, this.Feed.Generator);
             }
 
-#pragma warning disable 56506 // [....]: this.Feed.Contributors is never null
+#pragma warning disable 56506 // Microsoft: this.Feed.Contributors is never null
             if (this.Feed.Contributors.Count > 0)
 #pragma warning restore 56506
             {
@@ -1263,7 +1263,7 @@ namespace System.ServiceModel.Syndication
                 WriteAlternateLink(writer, firstAlternateLink, (item.BaseUri != null ? item.BaseUri : feedBaseUri));
             }
 
-#pragma warning disable 56506 // [....], item.Authors is never null
+#pragma warning disable 56506 // Microsoft, item.Authors is never null
             if (item.Authors.Count == 1 && !string.IsNullOrEmpty(item.Authors[0].Email))
 #pragma warning restore 56506
             {
@@ -1281,7 +1281,7 @@ namespace System.ServiceModel.Syndication
                 }
             }
 
-#pragma warning disable 56506 // [....], item.Categories is never null
+#pragma warning disable 56506 // Microsoft, item.Categories is never null
             for (int i = 0; i < item.Categories.Count; ++i)
 #pragma warning restore 56506
             {
@@ -1409,7 +1409,7 @@ namespace System.ServiceModel.Syndication
                 }
             }
 
-#pragma warning disable 56506 // [....], item.COntributors is never null
+#pragma warning disable 56506 // Microsoft, item.COntributors is never null
             if (item.Contributors.Count > 0)
 #pragma warning restore 56506
             {

@@ -11,9 +11,10 @@ RESOURCE_DEFS = \
 
 
 LIB_REFS = System System.Core System.Configuration System.Web Microsoft.Web.Infrastructure
+KEYFILE=../winfx.pub
 LIB_MCS_FLAGS = \
-		/warn:1 \
-		/keyfile:../winfx.pub -delaysign \
-	        /d:ASPNETWEBPAGES 
+			/warn:1 \
+			-delaysign \
+			/d:ASPNETWEBPAGES 
 
 include ../../build/library.make

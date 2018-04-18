@@ -57,7 +57,7 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 			sw = new StringWriter();
 			w = new HtmlTextWriter(sw);
 			a.Render (w);
-			Assert.AreEqual ("RenderBeginTag\nRenderContents\nRenderEndTag\n", sw.ToString(), "Render #1");
+			Assert.AreEqual ("RenderBeginTag\nRenderContents\nRenderEndTag\n", sw.ToString().Replace ("\r", ""), "Render #1");
 			
 			
 			sw = new StringWriter();

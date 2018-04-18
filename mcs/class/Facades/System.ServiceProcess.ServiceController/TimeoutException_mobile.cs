@@ -31,6 +31,7 @@
 #if MOBILE || XAMMAC_4_5
 
 using System;
+using System.Runtime.Serialization;
 
 namespace System.ServiceProcess
 {
@@ -47,6 +48,11 @@ namespace System.ServiceProcess
 		}
 
 		public TimeoutException (string message, Exception innerException)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		protected TimeoutException (SerializationInfo info, StreamingContext context)
 		{
 			throw new PlatformNotSupportedException ();
 		}

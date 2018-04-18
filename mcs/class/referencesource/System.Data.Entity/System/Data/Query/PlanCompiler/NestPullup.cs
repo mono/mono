@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
-// @backupOwner [....]
+// @owner  Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System;
@@ -2161,7 +2161,7 @@ namespace System.Data.Query.PlanCompiler
             KeyVec drivingNodeKeys = Command.PullupKeys(drivingNode);
             if (drivingNodeKeys.NoKeys)
             {
-                // [....]: In this case we used to wrap drivingNode into a projection that would also project Edm.NewGuid() thus giving us a synthetic key.
+                // Microsoft: In this case we used to wrap drivingNode into a projection that would also project Edm.NewGuid() thus giving us a synthetic key.
                 // This solution did not work however due to a bug in SQL Server that allowed pulling non-deterministic functions above joins and applies, thus 
                 // producing incorrect results. SQL Server bug was filed in "sqlbuvsts01\Sql Server" database as #725272.
                 // The only known path how we can get a keyless drivingNode is if 

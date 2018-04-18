@@ -4,8 +4,8 @@
 // 
 // ==--==
 ////////////////////////////////////////////////////////////////////////////////
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection 

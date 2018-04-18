@@ -32,7 +32,7 @@ namespace System.Collections.Generic {
         IReadOnlyCollection<T> {
         private T[] _array;     // Storage for stack elements
         private int _size;           // Number of items in the stack.
-        private int _version;        // Used to keep enumerator in [....] w/ collection.
+        private int _version;        // Used to keep enumerator in sync w/ collection.
 #if !SILVERLIGHT
         [NonSerialized]
 #endif
@@ -227,6 +227,22 @@ namespace System.Collections.Generic {
             _array[_size] = default(T);     // Free memory quicker.
             return item;
         }
+
+#if MONO
+        public bool TryPop(out T result)
+        {
+            if (_size == 0)
+            {
+                result = default(T);
+                return false;
+            }
+
+            _version++;
+            result = _array[--_size];
+            _array[_size] = default(T);     // Free memory quicker.
+            return true;
+        }
+#endif
     
         // Pushes an item to the top of the stack.
         // 

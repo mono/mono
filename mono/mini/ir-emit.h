@@ -1,5 +1,6 @@
-/*
- * ir-emit.h: IR Creation/Emission Macros
+/**
+ * \file
+ * IR Creation/Emission Macros
  *
  * Author:
  *   Zoltan Varga (vargaz@gmail.com)
@@ -76,6 +77,12 @@ alloc_ireg_mp (MonoCompile *cfg)
 }
 
 static inline guint32
+alloc_xreg (MonoCompile *cfg)
+{
+	return alloc_ireg (cfg);
+}
+
+static inline guint32
 alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 {
 	switch (stack_type) {
@@ -100,10 +107,47 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	}
 }
 
+/*
+ * Macros used to generate intermediate representation macros
+ *
+ * The macros use a `MonoConfig` object as its context, and among other
+ * things it is used to associate instructions with the memory pool with 
+ * it.
+ * 
+ * The macros come in three variations with slightly different
+ * features, the patter is: NEW_OP, EMIT_NEW_OP, MONO_EMIT_NEW_OP,
+ * the differences are as follows:
+ *
+ * `NEW_OP`: these are the basic macros to setup an instruction that is
+ * passed as an argument.
+ *
+ * `EMIT_NEW_OP`: these macros in addition to creating the instruction
+ * add the instruction to the current basic block in the `MonoConfig`
+ * object passed.   Usually these are used when further customization of
+ * the `inst` parameter is desired before the instruction is added to the
+ * MonoConfig current basic block.
+ *
+ * `MONO_EMIT_NEW_OP`: These variations of the instructions are used when
+ * you are merely interested in emitting the instruction into the `MonoConfig`
+ * parameter. 
+ */
 #undef MONO_INST_NEW
 /* 
  * FIXME: zeroing out some fields is not needed with the new IR, but the old 
  * JIT code still uses the left and right fields, so it has to stay.
+ */
+
+/*
+ * MONO_INST_NEW: create a new MonoInst instance that is allocated on the MonoConfig pool.
+ *
+ * @cfg: the MonoConfig object that will be used as the context for the 
+ * instruction.
+ * @dest: this is the place where the instance of the `MonoInst` is stored.
+ * @op: the value that should be stored in the MonoInst.opcode field
+ *
+ * This initializes an empty MonoInst that has been nulled out, it is allocated
+ * from the memory pool associated with the MonoConfig, but it is not linked anywhere.
+ * the cil_code is set to the cfg->ip address. 
  */
 #define MONO_INST_NEW(cfg,dest,op) do {	\
 		(dest) = (MonoInst *)mono_mempool_alloc ((cfg)->mempool, sizeof (MonoInst));	\
@@ -187,16 +231,13 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
         (dest)->inst_imm = (imm); \
 	} while (0)
 
-#ifdef MONO_ARCH_NEED_GOT_VAR
-
 #define NEW_PATCH_INFO(cfg,dest,el1,el2) do {	\
         MONO_INST_NEW ((cfg), (dest), OP_PATCH_INFO); \
 		(dest)->inst_left = (gpointer)(el1);	\
 		(dest)->inst_right = (gpointer)(el2);	\
 	} while (0)
 
-/* FIXME: Add the PUSH_GOT_ENTRY optimizations */
-#define NEW_AOTCONST(cfg,dest,patch_type,cons) do {			\
+#define NEW_AOTCONST_GOT_VAR(cfg,dest,patch_type,cons) do {			\
         MONO_INST_NEW ((cfg), (dest), cfg->compile_aot ? OP_GOT_ENTRY : OP_PCONST); \
 		if (cfg->compile_aot) {					\
 			MonoInst *group, *got_loc;		\
@@ -212,7 +253,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 		(dest)->dreg = alloc_dreg ((cfg), STACK_PTR);	\
 	} while (0)
 
-#define NEW_AOTCONST_TOKEN(cfg,dest,patch_type,image,token,generic_context,stack_type,stack_class) do { \
+#define NEW_AOTCONST_TOKEN_GOT_VAR(cfg,dest,patch_type,image,token,generic_context,stack_type,stack_class) do { \
 		MonoInst *group, *got_loc;			\
         MONO_INST_NEW ((cfg), (dest), OP_GOT_ENTRY); \
 		got_loc = mono_get_got_var (cfg);			\
@@ -225,26 +266,30 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 		(dest)->dreg = alloc_dreg ((cfg), (stack_type));	\
 	} while (0)
 
-#else
-
 #define NEW_AOTCONST(cfg,dest,patch_type,cons) do {    \
+	if (cfg->backend->need_got_var && !cfg->llvm_only) {	\
+		NEW_AOTCONST_GOT_VAR ((cfg), (dest), (patch_type), (cons)); \
+	} else { \
         MONO_INST_NEW ((cfg), (dest), cfg->compile_aot ? OP_AOTCONST : OP_PCONST); \
 		(dest)->inst_p0 = (cons);	\
 		(dest)->inst_i1 = (MonoInst *)(patch_type); \
 		(dest)->type = STACK_PTR;	\
 		(dest)->dreg = alloc_dreg ((cfg), STACK_PTR);	\
+	}													\
     } while (0)
 
 #define NEW_AOTCONST_TOKEN(cfg,dest,patch_type,image,token,generic_context,stack_type,stack_class) do { \
+	if (cfg->backend->need_got_var && !cfg->llvm_only) {	\
+		NEW_AOTCONST_TOKEN_GOT_VAR ((cfg), (dest), (patch_type), (image), (token), (generic_context), (stack_type), (stack_class)); \
+	} else { \
         MONO_INST_NEW ((cfg), (dest), OP_AOTCONST); \
 		(dest)->inst_p0 = mono_jump_info_token_new2 ((cfg)->mempool, (image), (token), (generic_context)); \
 		(dest)->inst_p1 = (gpointer)(patch_type); \
 		(dest)->type = (stack_type);	\
         (dest)->klass = (stack_class);          \
 		(dest)->dreg = alloc_dreg ((cfg), (stack_type));	\
+	} \
     } while (0)
-
-#endif
 
 #define NEW_CLASSCONST(cfg,dest,val) NEW_AOTCONST ((cfg), (dest), MONO_PATCH_INFO_CLASS, (val))
 
@@ -266,15 +311,6 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 
 #define NEW_LDTOKENCONST(cfg,dest,image,token,generic_context) NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDTOKEN, (image), (token), (generic_context), STACK_PTR, NULL)
 
-#define NEW_TLS_OFFSETCONST(cfg,dest,key) do { \
-	if (cfg->compile_aot) { \
-		NEW_AOTCONST ((cfg), (dest), MONO_PATCH_INFO_TLS_OFFSET, GINT_TO_POINTER (key)); \
-	} else {															\
-		int _offset = mini_get_tls_offset ((key));							\
-		NEW_PCONST ((cfg), (dest), GINT_TO_POINTER (_offset)); \
-		} \
-	} while (0)
-
 #define NEW_DECLSECCONST(cfg,dest,image,entry) do { \
 		if (cfg->compile_aot) { \
 			NEW_AOTCONST_TOKEN (cfg, dest, MONO_PATCH_INFO_DECLSEC, image, (entry).index, NULL, STACK_OBJ, NULL); \
@@ -288,7 +324,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 			NEW_AOTCONST ((cfg), (dest), MONO_PATCH_INFO_METHOD_RGCTX, (method)); \
 		} else {														\
 			MonoMethodRuntimeGenericContext *mrgctx;					\
-			mrgctx = mono_method_lookup_rgctx (mono_class_vtable ((cfg)->domain, (method)->klass), mini_method_get_context ((method))->method_inst); \
+			mrgctx = mini_method_get_rgctx ((method));					\
 			NEW_PCONST ((cfg), (dest), (mrgctx));						\
 		}																\
 	} while (0)
@@ -308,7 +344,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 #define NEW_VARLOAD(cfg,dest,var,vartype) do { \
         MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
 		(dest)->opcode = mono_type_to_regmove ((cfg), (vartype));  \
-		type_to_eval_stack_type ((cfg), (vartype), (dest));	\
+		mini_type_to_eval_stack_type ((cfg), (vartype), (dest));	\
 		(dest)->klass = var->klass;	\
 		(dest)->sreg1 = var->dreg;   \
         (dest)->dreg = alloc_dreg ((cfg), (MonoStackType)(dest)->type); \
@@ -394,7 +430,7 @@ handle_gsharedvt_ldaddr (MonoCompile *cfg)
 /* Variants which take a type argument and handle vtypes as well */
 #define NEW_LOAD_MEMBASE_TYPE(cfg,dest,ltype,base,offset) do { \
 	    NEW_LOAD_MEMBASE ((cfg), (dest), mono_type_to_load_membase ((cfg), (ltype)), 0, (base), (offset)); \
-	    type_to_eval_stack_type ((cfg), (ltype), (dest)); \
+	    mini_type_to_eval_stack_type ((cfg), (ltype), (dest)); \
 	    (dest)->dreg = alloc_dreg ((cfg), (MonoStackType)(dest)->type); \
     } while (0)
 
@@ -403,7 +439,7 @@ handle_gsharedvt_ldaddr (MonoCompile *cfg)
         (dest)->sreg1 = sr; \
         (dest)->inst_destbasereg = base; \
         (dest)->inst_offset = offset; \
-	    type_to_eval_stack_type ((cfg), (ltype), (dest)); \
+	    mini_type_to_eval_stack_type ((cfg), (ltype), (dest)); \
         (dest)->klass = mono_class_from_mono_type (ltype); \
 	} while (0)
 
@@ -778,10 +814,12 @@ static int ccount = 0;
             ins->inst_false_bb = NULL; \
             mono_link_bblock ((cfg), (cfg)->cbb, (truebb)); \
             MONO_ADD_INS ((cfg)->cbb, ins); \
-            if (g_getenv ("COUNT2") && ccount == atoi (g_getenv ("COUNT2")) - 1) { printf ("HIT: %d\n", cfg->cbb->block_num); } \
-            if (g_getenv ("COUNT2") && ccount < atoi (g_getenv ("COUNT2"))) { \
+            char *count2 = g_getenv ("COUNT2"); \
+            if (count2 && ccount == atoi (count2) - 1) { printf ("HIT: %d\n", cfg->cbb->block_num); } \
+            if (count2 && ccount < atoi (count2)) { \
                  cfg->cbb->extended = TRUE; \
             } else { NEW_BBLOCK ((cfg), falsebb); ins->inst_false_bb = (falsebb); mono_link_bblock ((cfg), (cfg)->cbb, (falsebb)); MONO_START_BB ((cfg), falsebb); } \
+            if (count2) g_free (count2); \
         } \
 	} while (0)
 #else

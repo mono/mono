@@ -126,7 +126,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void CompileListOfStringsInit ()
 		{
 			var add = typeof (List<string>).GetMethod ("Add");
@@ -146,7 +145,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		[Category ("NotDotNet")]
 		public void CompileArrayListOfStringsInit ()
 		{

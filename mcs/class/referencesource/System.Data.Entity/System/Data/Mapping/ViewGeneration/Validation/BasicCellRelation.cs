@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.Bharani1729
 // </copyright>
 //
-// @owner [....]
-// @backupOwner [....]
+// @owner Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System.Collections.Generic;
@@ -88,7 +88,7 @@ namespace System.Data.Mapping.ViewGeneration.Validation
         {
             AssociationSet relationshipSet = m_cellQuery.Extent as AssociationSet;
             // Gather all members of all keys
-            // CHANGE_[....]_FEATURE_KEYS: assume that an Entity has exactly one key. Otherwise we
+            // CHANGE_Microsoft_FEATURE_KEYS: assume that an Entity has exactly one key. Otherwise we
             // have to take a cross-product of all keys
 
             // Keep track of all the key members for the association in a set

@@ -7,7 +7,7 @@
 **
 ** Class:  NeutralResourcesLanguageAttribute
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Tells the ResourceManager what language your main

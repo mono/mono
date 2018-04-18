@@ -1596,7 +1596,7 @@ namespace System.Runtime.DurableInstancing
                 }
                 finally
                 {
-                    Fx.AssertAndThrowFatal(this.context.Active, "Out-of-[....] between InstanceExecutionContext and ExecutionAsyncResult.");
+                    Fx.AssertAndThrowFatal(this.context.Active, "Out-of-sync between InstanceExecutionContext and ExecutionAsyncResult.");
 
                     this.context.LastAsyncResult = null;
                     this.context.RootAsyncResult = null;

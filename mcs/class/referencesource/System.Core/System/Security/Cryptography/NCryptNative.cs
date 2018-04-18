@@ -147,6 +147,7 @@ namespace System.Security.Cryptography {
             internal const string Length = "Length";                            // NCRYPT_LENGTH_PROPERTY
             internal const string Name = "Name";                                // NCRYPT_NAME_PROPERTY
             internal const string ParentWindowHandle = "HWND Handle";           // NCRYPT_WINDOW_HANDLE_PROPERTY
+            internal const string PublicKeyLength = "PublicKeyLength";          // NCRYPT_PUBLIC_KEY_LENGTH (Win10+)
             internal const string ProviderHandle = "Provider Handle";           // NCRYPT_PROVIDER_HANDLE_PROPERTY
             internal const string UIPolicy = "UI Policy";                       // NCRYPT_UI_POLICY_PROPERTY
             internal const string UniqueName = "Unique Name";                   // NCRYPT_UNIQUE_NAME_PROPERTY
@@ -272,6 +273,17 @@ namespace System.Security.Cryptography {
             internal static extern ErrorCode NCryptGetProperty(SafeNCryptHandle hObject,
                                                                string pszProperty,
                                                                [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pbOutput,
+                                                               int cbOutput,
+                                                               [Out] out int pcbResult,
+                                                               CngPropertyOptions dwFlags);
+
+            /// <summary>
+            ///     Get the value of a property of an NCrypt object
+            /// </summary>
+            [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
+            internal static extern ErrorCode NCryptGetProperty(SafeNCryptHandle hObject,
+                                                               string pszProperty,
+                                                               ref int pbOutput,
                                                                int cbOutput,
                                                                [Out] out int pcbResult,
                                                                CngPropertyOptions dwFlags);
@@ -435,7 +447,7 @@ namespace System.Security.Cryptography {
             internal static extern ErrorCode NCryptDecrypt(SafeNCryptKeyHandle hKey,
                                                            [In, MarshalAs(UnmanagedType.LPArray)] byte[] pbInput,
                                                            int cbInput,
-                                                           [In] ref BCryptNative.BCRYPT_PKCS1_PADDING_INFO pvPadding,
+                                                           IntPtr pvPaddingZero,
                                                            [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pbOutput,
                                                            int cbOutput,
                                                            [Out] out int pcbResult,
@@ -455,7 +467,7 @@ namespace System.Security.Cryptography {
             internal static extern ErrorCode NCryptEncrypt(SafeNCryptKeyHandle hKey,
                                                            [In, MarshalAs(UnmanagedType.LPArray)] byte[] pbInput,
                                                            int cbInput,
-                                                           [In] ref BCryptNative.BCRYPT_PKCS1_PADDING_INFO pvPadding,
+                                                           IntPtr pvPaddingZero,
                                                            [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pbOutput,
                                                            int cbOutput,
                                                            [Out] out int pcbResult,
@@ -582,7 +594,7 @@ namespace System.Security.Cryptography {
                                data,
                                ref pkcs1Info,
                                AsymmetricPaddingMode.Pkcs1,
-                               UnsafeNativeMethods.NCryptDecrypt);
+                               Pkcs1PaddingDecryptionWrapper);
         }
 
         /// <summary>
@@ -602,6 +614,27 @@ namespace System.Security.Cryptography {
                                ref oaepInfo,
                                AsymmetricPaddingMode.Oaep,
                                UnsafeNativeMethods.NCryptDecrypt);
+        }
+
+        [SecurityCritical]
+        private static ErrorCode Pkcs1PaddingDecryptionWrapper(SafeNCryptKeyHandle hKey,
+                                                       byte[] pbInput,
+                                                       int cbInput,
+                                                       ref BCryptNative.BCRYPT_PKCS1_PADDING_INFO pvPadding,
+                                                       byte[] pbOutput,
+                                                       int cbOutput,
+                                                       out int pcbResult,
+                                                       AsymmetricPaddingMode dwFlags)
+        {
+            Debug.Assert(dwFlags == AsymmetricPaddingMode.Pkcs1, "dwFlags == AsymmetricPaddingMode.Pkcs1");
+
+            // This method exists to match a generic-based delegate (the ref parameter), but in PKCS#1 mode
+            // the value for pvPadding must be NULL with keys in the Smart Card KSP.
+            //
+            // Passing the ref PKCS1 (signature) padding info will work for software keys, which ignore the value;
+            // but hardware keys fail if it's any value other than NULL (and PKCS#1 was specified).
+
+            return UnsafeNativeMethods.NCryptDecrypt(hKey, pbInput, cbInput, IntPtr.Zero, pbOutput, cbOutput, out pcbResult, dwFlags);
         }
 
         /// <summary>
@@ -679,7 +712,27 @@ namespace System.Security.Cryptography {
                                data,
                                ref pkcs1Info,
                                AsymmetricPaddingMode.Pkcs1,
-                               UnsafeNativeMethods.NCryptEncrypt);
+                               Pkcs1PaddingEncryptionWrapper);
+        }
+
+        [SecurityCritical]
+        private static ErrorCode Pkcs1PaddingEncryptionWrapper(SafeNCryptKeyHandle hKey,
+                                                               byte[] pbInput,
+                                                               int cbInput,
+                                                               ref BCryptNative.BCRYPT_PKCS1_PADDING_INFO pvPadding,
+                                                               byte[] pbOutput,
+                                                               int cbOutput,
+                                                               out int pcbResult,
+                                                               AsymmetricPaddingMode dwFlags) {
+            Debug.Assert(dwFlags == AsymmetricPaddingMode.Pkcs1, "dwFlags == AsymmetricPaddingMode.Pkcs1");
+
+            // This method exists to match a generic-based delegate (the ref parameter), but in PKCS#1 mode
+            // the value for pvPadding must be NULL with keys in the Smart Card KSP.
+            //
+            // Passing the ref PKCS1 (signature) padding info will work for software keys, which ignore the value;
+            // but hardware keys fail if it's any value other than NULL (and PKCS#1 was specified).
+
+            return UnsafeNativeMethods.NCryptEncrypt(hKey, pbInput, cbInput, IntPtr.Zero, pbOutput, cbOutput, out pcbResult, dwFlags);
         }
 
         /// <summary>
@@ -1347,6 +1400,32 @@ namespace System.Security.Cryptography {
             }
         }
 
+        [SecurityCritical]
+        internal static ErrorCode GetPropertyAsInt(SafeNCryptHandle ncryptObject,
+                                                   string propertyName,
+                                                   CngPropertyOptions propertyOptions,
+                                                   ref int propertyValue) {
+            Contract.Requires(ncryptObject != null);
+            Contract.Requires(propertyName != null);
+
+            int cbResult;
+
+            ErrorCode errorCode = UnsafeNativeMethods.NCryptGetProperty(
+                ncryptObject,
+                propertyName,
+                ref propertyValue,
+                sizeof(int),
+                out cbResult,
+                propertyOptions);
+
+            if (errorCode == ErrorCode.Success)
+            {
+                System.Diagnostics.Debug.Assert(cbResult == sizeof(int), "Expected cbResult=4, got " + cbResult);
+            }
+
+            return errorCode;
+        }
+
         /// <summary>
         ///     Get the value of a pointer NCrypt property
         /// </summary>
@@ -1460,6 +1539,36 @@ namespace System.Security.Cryptography {
                                                                   0);
 
             if (error != ErrorCode.Success) {
+                throw new CryptographicException((int)error);
+            }
+
+            return keyHandle;
+        }
+
+        [System.Security.SecurityCritical]
+        internal static SafeNCryptKeyHandle ImportKey(SafeNCryptProviderHandle provider,
+                                                      byte[] keyBlob,
+                                                      string format,
+                                                      IntPtr pParametersList) {
+            Contract.Requires(provider != null);
+            Contract.Requires(keyBlob != null);
+            Contract.Requires(!String.IsNullOrEmpty(format));
+            Contract.Ensures(Contract.Result<SafeNCryptKeyHandle>() != null &&
+                 !Contract.Result<SafeNCryptKeyHandle>().IsInvalid &&
+                 !Contract.Result<SafeNCryptKeyHandle>().IsClosed);
+
+            SafeNCryptKeyHandle keyHandle = null;
+            ErrorCode error = UnsafeNativeMethods.NCryptImportKey(provider,
+                                                                  IntPtr.Zero,
+                                                                  format,
+                                                                  pParametersList,
+                                                                  out keyHandle,
+                                                                  keyBlob,
+                                                                  keyBlob.Length,
+                                                                  0);
+
+            if (error != ErrorCode.Success)
+            {
                 throw new CryptographicException((int)error);
             }
 

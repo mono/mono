@@ -81,6 +81,12 @@
             if (!String.IsNullOrEmpty(name)) {
                 _namedMap[name] = item;
             }
+
+            // RouteBase doesn't have handler info, so we only log Route.RouteHandler
+            var route = item as Route;
+            if (route != null && route.RouteHandler != null) {
+                TelemetryLogger.LogHttpHandler(route.RouteHandler.GetType());
+            }            
         }
 
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings",

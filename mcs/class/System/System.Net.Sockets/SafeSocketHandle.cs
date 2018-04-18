@@ -45,7 +45,7 @@ namespace System.Net.Sockets {
 			int error = 0;
 
 			Socket.Blocking_internal (handle, false, out error);
-#if MOBILE_STATIC
+#if FULL_AOT_DESKTOP
 			/* It's only for platforms that do not have working syscall abort mechanism, like WatchOS and TvOS */
 			Socket.Shutdown_internal (handle, SocketShutdown.Both, out error);
 #endif
@@ -127,9 +127,12 @@ namespace System.Net.Sockets {
 		{
 			//If this NRE, we're in deep problems because Register Must have
 			lock (blocking_threads) {
-				blocking_threads.Remove (Thread.CurrentThread);
-				if (THROW_ON_ABORT_RETRIES)
-					threads_stacktraces.Remove (Thread.CurrentThread);
+				var current = Thread.CurrentThread;
+				blocking_threads.Remove (current);
+				if (THROW_ON_ABORT_RETRIES) {
+					if (blocking_threads.IndexOf (current) == -1)
+						threads_stacktraces.Remove (current);
+				}
 
 				if (in_cleanup && blocking_threads.Count == 0)
 					Monitor.Pulse (blocking_threads);

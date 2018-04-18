@@ -37,17 +37,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 using System.Security;
+using System.Security.AccessControl;
 using System.Security.Permissions;
 using System.Threading;
-using Microsoft.Win32.SafeHandles;
-
-#if MOBILE
-using System.IO.IsolatedStorage;
-#else
-using System.Security.AccessControl;
-#endif
-
 using System.Threading.Tasks;
+using Microsoft.Win32.SafeHandles;
 
 namespace System.IO
 {
@@ -129,7 +123,6 @@ namespace System.IO
 			Init (handle, access, false, bufferSize, isAsync, false);
 		}
 
-#if !MOBILE
 		[MonoLimitation ("This ignores the rights parameter")]
 		public FileStream (string path, FileMode mode,
 				   FileSystemRights rights, FileShare share,
@@ -146,7 +139,6 @@ namespace System.IO
 			: this (path, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), share, bufferSize, false, options)
 		{
 		}
-#endif
 
 		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, FileOptions options, string msgPath, bool bFromProxy, bool useLongPath = false, bool checkHost = false)
 			: this (path, mode, access, share, bufferSize, false, options)
@@ -196,6 +188,8 @@ namespace System.IO
 				throw new ArgumentException ("Name has invalid chars");
 			}
 
+			path = Path.InsecureGetFullPath (path);
+
 			if (Directory.Exists (path)) {
 				// don't leak the path information for isolated storage
 				string msg = Locale.GetText ("Access to the path '{0}' is denied.");
@@ -219,11 +213,7 @@ namespace System.IO
 
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
-			string dname;
-			if (Path.DirectorySeparatorChar != '/' && path.IndexOf ('/') >= 0)
-				dname = Path.GetDirectoryName (Path.GetFullPath (path));
-			else
-				dname = Path.GetDirectoryName (path);
+			string dname = Path.GetDirectoryName (path);
 			if (dname.Length > 0) {
 				string fp = Path.GetFullPath (dname);
 				if (!Directory.Exists (fp)) {
@@ -232,14 +222,6 @@ namespace System.IO
 					string fname = (anonymous) ? dname : Path.GetFullPath (path);
 					throw new DirectoryNotFoundException (String.Format (msg, fname));
 				}
-			}
-
-			if (access == FileAccess.Read && mode != FileMode.Create && mode != FileMode.OpenOrCreate &&
-					mode != FileMode.CreateNew && !File.Exists (path)) {
-				// don't leak the path information for isolated storage
-				string msg = Locale.GetText ("Could not find file \"{0}\".");
-				string fname = GetSecureFileName (path);
-				throw new FileNotFoundException (String.Format (msg, fname), fname);
 			}
 
 			// IsolatedStorage needs to keep the Name property to the default "[Unknown]"
@@ -942,7 +924,6 @@ namespace System.IO
 				throw exc;
 		}
 
-#if !MOBILE
 		public FileSecurity GetAccessControl ()
 		{
 			if (safeHandle.IsClosed)
@@ -964,7 +945,6 @@ namespace System.IO
 				
 			fileSecurity.PersistModifications (SafeFileHandle);
 		}
-#endif
 
 		public override Task FlushAsync (CancellationToken cancellationToken)
 		{

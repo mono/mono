@@ -83,7 +83,7 @@ namespace System.ServiceModel.Activities.Dispatcher
                                 // Actual Buffering
                                 lock (this.thisLock)
                                 {
-                                    // Optimistic state check in case we just ----d with the receiveContext
+                                    // Optimistic state check in case we just raced with the receiveContext
                                     // faulting. If the receiveContext still faults after the state check, the above
                                     // cleanup routine will handle things correctly. In both cases, a double-release
                                     // of the throttle is protected.

@@ -67,7 +67,7 @@ using nwind;
             string beforecountry = character.Country;
             character.Country = "Burmuda";
 
-            Assert.Greater(db.GetChangeSet().Updates.Count, 0);
+            AssertHelper.Greater(db.GetChangeSet().Updates.Count, 0);
             db.SubmitChanges();
 
             var character2 = db.Customers.First(c=>c.CustomerID==character.CustomerID);

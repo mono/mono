@@ -18,6 +18,8 @@
 #include "sgen-entry-stream.h"
 #include "sgen-grep-binprot.h"
 
+static int file_version = 0;
+
 #ifdef BINPROT_HAS_HEADER
 #define PACKED_SUFFIX	p
 #else
@@ -57,13 +59,23 @@ typedef int64_t mword;
 #define MAX_ENTRY_SIZE (1 << 10)
 
 static int
-read_entry (EntryStream *stream, void *data)
+read_entry (EntryStream *stream, void *data, unsigned char *windex)
 {
 	unsigned char type;
 	ssize_t size;
 
 	if (read_stream (stream, &type, 1) <= 0)
 		return SGEN_PROTOCOL_EOF;
+
+	if (windex) {
+		if (file_version >= 2) {
+			if (read_stream (stream, windex, 1) <= 0)
+				return SGEN_PROTOCOL_EOF;
+		} else {
+			*windex = !!(WORKER (type));
+		}
+	}
+
 	switch (TYPE (type)) {
 
 #define BEGIN_PROTOCOL_ENTRY0(method) \
@@ -172,8 +184,6 @@ is_always_match (int type)
 	}
 }
 
-#define WORKER_PREFIX(t)	(WORKER ((t)) ? "w" : " ")
-
 enum { NO_COLOR = -1 };
 
 typedef struct {
@@ -238,10 +248,13 @@ index_color (int index, int num_nums, int *match_indices)
 }
 
 static void
-print_entry (int type, void *data, int num_nums, int *match_indices, gboolean color_output)
+print_entry (int type, void *data, int num_nums, int *match_indices, gboolean color_output, unsigned char worker_index)
 {
 	const char *always_prefix = is_always_match (type) ? "  " : "";
-	printf ("%s%s ", WORKER_PREFIX (type), always_prefix);
+	if (worker_index)
+		printf ("w%-2d%s ", worker_index, always_prefix);
+	else
+		printf ("   %s ", always_prefix);
 
 	switch (TYPE (type)) {
 
@@ -566,13 +579,19 @@ sgen_binary_protocol_read_header (EntryStream *stream)
 {
 #ifdef BINPROT_HAS_HEADER
 	char data [MAX_ENTRY_SIZE];
-	int type = read_entry (stream, data);
+	int type = read_entry (stream, data, NULL);
 	if (type == SGEN_PROTOCOL_EOF)
 		return FALSE;
 	if (type == PROTOCOL_ID (binary_protocol_header)) {
 		PROTOCOL_STRUCT (binary_protocol_header) * str = (PROTOCOL_STRUCT (binary_protocol_header) *) data;
-		if (str->check == PROTOCOL_HEADER_CHECK && str->ptr_size == BINPROT_SIZEOF_VOID_P)
+		if (str->check == PROTOCOL_HEADER_CHECK && str->ptr_size == BINPROT_SIZEOF_VOID_P) {
+			if (str->version > PROTOCOL_HEADER_VERSION) {
+				fprintf (stderr, "The file contains a newer version %d. We support up to %d. Please update.\n", str->version, PROTOCOL_HEADER_VERSION);
+				exit (1);
+			}
+			file_version = str->version;
 			return TRUE;
+		}
 	}
 	return FALSE;
 #else
@@ -595,6 +614,7 @@ GREP_ENTRIES_FUNCTION_NAME (EntryStream *stream, int num_nums, long nums [], int
 			gboolean dump_all, gboolean pause_times, gboolean color_output, unsigned long long first_entry_to_consider)
 {
 	int type;
+	unsigned char worker_index;
 	void *data = g_malloc0 (MAX_ENTRY_SIZE);
 	int i;
 	gboolean pause_times_stopped = FALSE;
@@ -607,7 +627,7 @@ GREP_ENTRIES_FUNCTION_NAME (EntryStream *stream, int num_nums, long nums [], int
 		return FALSE;
 
 	entry_index = 0;
-	while ((type = read_entry (stream, data)) != SGEN_PROTOCOL_EOF) {
+	while ((type = read_entry (stream, data, &worker_index)) != SGEN_PROTOCOL_EOF) {
 		if (entry_index < first_entry_to_consider)
 			goto next_entry;
 		if (pause_times) {
@@ -662,7 +682,7 @@ GREP_ENTRIES_FUNCTION_NAME (EntryStream *stream, int num_nums, long nums [], int
 			if (dump_all)
 				printf (match ? "* " : "  ");
 			if (match || dump_all)
-				print_entry (type, data, num_nums, match_indices, color_output);
+				print_entry (type, data, num_nums, match_indices, color_output, worker_index);
 		}
 	next_entry:
 		++entry_index;

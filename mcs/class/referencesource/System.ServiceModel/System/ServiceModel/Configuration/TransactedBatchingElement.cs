@@ -22,7 +22,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             TransactedBatchingElement source = from as TransactedBatchingElement;
-#pragma warning suppress 56506 //[....]; base.CopyFrom() checks for 'from' being null
+#pragma warning suppress 56506 //Microsoft; base.CopyFrom() checks for 'from' being null
             this.MaxBatchSize = source.MaxBatchSize;
         }
 

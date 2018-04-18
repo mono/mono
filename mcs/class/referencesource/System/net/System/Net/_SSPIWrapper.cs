@@ -237,6 +237,15 @@ namespace System.Net {
             return errorCode;
         }
 
+        internal static int ApplyControlToken(SSPIInterface SecModule, ref SafeDeleteContext context, SecurityBuffer[] inputBuffers)
+        {
+            int errorCode = SecModule.ApplyControlToken(ref context, inputBuffers);
+
+            if (Logging.On) Logging.PrintInfo(Logging.Web, SR.GetString(SR.net_log_operation_returned_something, "ApplyControlToken()", (SecurityStatus)errorCode));
+
+            return errorCode;
+        }
+
         public static int QuerySecurityContextToken(SSPIInterface SecModule, SafeDeleteContext context, out SafeCloseHandle token) {
             return SecModule.QuerySecurityContextToken(context, out token);
         }
@@ -247,6 +256,52 @@ namespace System.Net {
 
         public static int DecryptMessage(SSPIInterface secModule, SafeDeleteContext context, SecurityBuffer[] input, uint sequenceNumber) {
             return EncryptDecryptHelper(OP.Decrypt, secModule, context, input, sequenceNumber);
+        }
+
+        public static int ApplyAlertToken(
+            SSPIInterface secModule, 
+            ref SafeFreeCredentials credentialsHandle, 
+            SafeDeleteContext securityContext, 
+            TlsAlertType alertType, 
+            TlsAlertMessage alertMessage)
+        {
+            Interop.SChannel.SCHANNEL_ALERT_TOKEN alertToken;
+            alertToken.dwTokenType = Interop.SChannel.SCHANNEL_ALERT;
+            alertToken.dwAlertType = (uint)alertType;
+            alertToken.dwAlertNumber = (uint)alertMessage;
+
+            var bufferDesc = new SecurityBuffer[1];
+
+            int alertTokenByteSize = Marshal.SizeOf(typeof(Interop.SChannel.SCHANNEL_ALERT_TOKEN));
+            IntPtr p = Marshal.AllocHGlobal(alertTokenByteSize);
+
+            try
+            {
+                var buffer = new byte[alertTokenByteSize];
+                Marshal.StructureToPtr(alertToken, p, false);
+                Marshal.Copy(p, buffer, 0, alertTokenByteSize);
+
+                bufferDesc[0] = new SecurityBuffer(buffer, BufferType.Token);
+                return ApplyControlToken(secModule, ref securityContext, bufferDesc);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(p);
+            }
+        }
+
+        public static int ApplyShutdownToken(
+            SSPIInterface secModule, 
+            ref SafeFreeCredentials credentialsHandle, 
+            SafeDeleteContext securityContext)
+        {
+            int shutdownToken = Interop.SChannel.SCHANNEL_SHUTDOWN;
+
+            var bufferDesc = new SecurityBuffer[1];
+            var buffer = BitConverter.GetBytes(shutdownToken);
+
+            bufferDesc[0] = new SecurityBuffer(buffer, BufferType.Token);
+            return ApplyControlToken(secModule, ref securityContext, bufferDesc);
         }
 
         internal static int MakeSignature(SSPIInterface secModule, SafeDeleteContext context, SecurityBuffer[] input, uint sequenceNumber) {
@@ -711,6 +766,9 @@ namespace System.Net {
 
         NameMD5         = 3,
         NameSHA         = 4,
+        NameSHA256      = 12,
+        NameSHA384      = 13,
+        NameSHA512      = 14,
 
         NameDH_Ephem    = 2,
     }

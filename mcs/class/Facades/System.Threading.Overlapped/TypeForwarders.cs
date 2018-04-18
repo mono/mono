@@ -22,3 +22,6 @@
 
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Threading.IOCompletionCallback))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Threading.NativeOverlapped))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Threading.Overlapped))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Threading.PreAllocatedOverlapped))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Threading.ThreadPoolBoundHandle))]

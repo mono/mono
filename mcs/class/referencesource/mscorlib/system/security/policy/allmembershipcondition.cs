@@ -5,7 +5,7 @@
 // ==--==
 //  AllMembershipCondition.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 //  Simple IMembershipCondition implementation that always passes
 //

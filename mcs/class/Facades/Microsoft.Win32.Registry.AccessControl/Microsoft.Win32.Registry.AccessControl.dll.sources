@@ -1,5 +1,4 @@
 TypeForwarders.cs
 AssemblyInfo.cs
 
-../../../build/common/MonoTODOAttribute.cs
-RegistryAclExtensions.cs
+../../../../external/corefx/src/Microsoft.Win32.Registry.AccessControl/src/Microsoft/Win32/RegistryAclExtensions.cs

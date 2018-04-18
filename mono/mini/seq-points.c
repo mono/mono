@@ -1,5 +1,6 @@
-/*
- * seq-points.c: Sequence Points functions
+/**
+ * \file
+ * Sequence Points functions
  *
  * Authors:
  *   Marcos Henrich (marcos.henrich@xamarin.com)
@@ -9,6 +10,7 @@
  */
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "seq-points.h"
 
 static void
@@ -80,7 +82,7 @@ recursively_make_pred_seq_points (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 	} 
 
-	g_free (predecessors);
+	g_array_free (predecessors, TRUE);
 }
 
 static void
@@ -168,7 +170,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 				if (l) {
 					endfinally_seq_point = (MonoInst *)l->data;
 
-					for (bb2 = cfg->bb_entry; bb2; bb2 = bb2->next_bb) {
+					for (bb2 = bb->next_bb; bb2; bb2 = bb2->next_bb) {
 						GSList *l = g_slist_last (bb2->seq_points);
 
 						if (l) {
@@ -223,20 +225,24 @@ mono_save_seq_point_info (MonoCompile *cfg)
 		}
 	}
 
+	g_free (seq_points);
+
 	if (has_debug_data)
 		g_free (next);
 
 	cfg->seq_point_info = mono_seq_point_info_new (array->len, TRUE, array->data, has_debug_data, &seq_info_size);
-	mono_jit_stats.allocated_seq_points_size += seq_info_size;
+	mono_atomic_fetch_add_i32 (&mono_jit_stats.allocated_seq_points_size, seq_info_size);
 
 	g_byte_array_free (array, TRUE);
 
 	// FIXME: dynamic methods
 	if (!cfg->compile_aot) {
 		mono_domain_lock (domain);
-		// FIXME: How can the lookup succeed ?
+		// FIXME: The lookup can fail if the method is JITted recursively though a type cctor
 		if (!g_hash_table_lookup (domain_jit_info (domain)->seq_points, cfg->method_to_register))
 			g_hash_table_insert (domain_jit_info (domain)->seq_points, cfg->method_to_register, cfg->seq_point_info);
+		else
+			mono_seq_point_info_free (cfg->seq_point_info);
 		mono_domain_unlock (domain);
 	}
 
@@ -247,12 +253,14 @@ mono_save_seq_point_info (MonoCompile *cfg)
 MonoSeqPointInfo*
 mono_get_seq_points (MonoDomain *domain, MonoMethod *method)
 {
+	ERROR_DECL (error);
 	MonoSeqPointInfo *seq_points;
 	MonoMethod *declaring_generic_method = NULL, *shared_method = NULL;
 
 	if (method->is_inflated) {
 		declaring_generic_method = mono_method_get_declaring_generic_method (method);
-		shared_method = mini_get_shared_method (method);
+		shared_method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
+		mono_error_assert_ok (error);
 	}
 
 	mono_loader_lock ();

@@ -35,9 +35,9 @@ namespace System.Security.AccessControl {
 		: AuditRule
 	{
 		public SemaphoreAuditRule (IdentityReference identity,
-					   SemaphoreRights semaphoreRights,
+					   SemaphoreRights eventRights,
 					   AuditFlags flags)
-			: base (identity, (int)semaphoreRights, false, InheritanceFlags.None, PropagationFlags.None, flags)
+			: base (identity, (int)eventRights, false, InheritanceFlags.None, PropagationFlags.None, flags)
 		{
 		}
 		

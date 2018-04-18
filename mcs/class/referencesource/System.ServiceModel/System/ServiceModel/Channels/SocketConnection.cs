@@ -27,9 +27,16 @@ namespace System.ServiceModel.Channels
 
         // common state
         Socket socket;
-        TimeSpan sendTimeout;
+        TimeSpan asyncSendTimeout;
         TimeSpan readFinTimeout;
-        TimeSpan receiveTimeout;
+        TimeSpan asyncReceiveTimeout;
+
+        // Socket.SendTimeout/Socket.ReceiveTimeout only work with the synchronous API calls and therefore they
+        // do not get updated when asynchronous Send/Read operations are performed.  In order to make sure we 
+        // Set the proper timeouts on the Socket itself we need to keep these two additional fields.
+        TimeSpan socketSyncSendTimeout;
+        TimeSpan socketSyncReceiveTimeout;
+
         CloseState closeState;
         bool isShutdown;
         bool noDelay = false;
@@ -83,7 +90,8 @@ namespace System.ServiceModel.Channels
             this.readBuffer = this.connectionBufferPool.Take();
             this.asyncReadBufferSize = this.readBuffer.Length;
             this.socket.SendBufferSize = this.socket.ReceiveBufferSize = this.asyncReadBufferSize;
-            this.sendTimeout = this.receiveTimeout = TimeSpan.MaxValue;
+            this.asyncSendTimeout = this.asyncReceiveTimeout = TimeSpan.MaxValue;
+            this.socketSyncSendTimeout = this.socketSyncReceiveTimeout = TimeSpan.MaxValue;
 
             this.remoteEndpoint = null;
 
@@ -147,7 +155,7 @@ namespace System.ServiceModel.Channels
                         // will never be a timeout error, so TimeSpan.Zero is ok
 #pragma warning suppress 56503 // Called from Receive path, SocketConnection cannot allow a SocketException to escape.
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelper(
-                            ConvertReceiveException(socketException, TimeSpan.Zero), ExceptionEventType);
+                            ConvertReceiveException(socketException, TimeSpan.Zero, TimeSpan.Zero), ExceptionEventType);
                     }
                     catch (ObjectDisposedException objectDisposedException)
                     {
@@ -241,14 +249,14 @@ namespace System.ServiceModel.Channels
         static void OnReceiveTimeout(object state)
         {
             SocketConnection thisPtr = (SocketConnection)state;
-            thisPtr.Abort(SR.GetString(SR.SocketAbortedReceiveTimedOut, thisPtr.receiveTimeout), TransferOperation.Read);
+            thisPtr.Abort(SR.GetString(SR.SocketAbortedReceiveTimedOut, thisPtr.asyncReceiveTimeout), TransferOperation.Read);
         }
 
         static void OnSendTimeout(object state)
         {
             SocketConnection thisPtr = (SocketConnection)state;
             thisPtr.Abort(TraceEventType.Warning,
-                SR.GetString(SR.SocketAbortedSendTimedOut, thisPtr.sendTimeout), TransferOperation.Write);
+                SR.GetString(SR.SocketAbortedSendTimedOut, thisPtr.asyncSendTimeout), TransferOperation.Write);
         }
 
         static void OnReceiveCompleted(IAsyncResult result)
@@ -559,7 +567,7 @@ namespace System.ServiceModel.Channels
             catch (SocketException socketException)
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelper(
-                    ConvertSendException(socketException, TimeSpan.MaxValue), ExceptionEventType);
+                    ConvertSendException(socketException, TimeSpan.MaxValue, this.socketSyncSendTimeout), ExceptionEventType);
             }
             catch (ObjectDisposedException objectDisposedException)
             {
@@ -670,15 +678,15 @@ namespace System.ServiceModel.Channels
             return CompletedAsyncResult<bool>.End(result);
         }
 
-        Exception ConvertSendException(SocketException socketException, TimeSpan remainingTime)
+        Exception ConvertSendException(SocketException socketException, TimeSpan remainingTime, TimeSpan timeout)
         {
-            return ConvertTransferException(socketException, this.sendTimeout, socketException,
+            return ConvertTransferException(socketException, timeout, socketException,
                 TransferOperation.Write, this.aborted, this.timeoutErrorString, this.timeoutErrorTransferOperation, this, remainingTime);
         }
 
-        Exception ConvertReceiveException(SocketException socketException, TimeSpan remainingTime)
+        Exception ConvertReceiveException(SocketException socketException, TimeSpan remainingTime, TimeSpan timeout)
         {
-            return ConvertTransferException(socketException, this.receiveTimeout, socketException,
+            return ConvertTransferException(socketException, timeout, socketException,
                 TransferOperation.Read, this.aborted, this.timeoutErrorString, this.timeoutErrorTransferOperation, this, remainingTime);
         }
 
@@ -879,7 +887,7 @@ namespace System.ServiceModel.Channels
             catch (SocketException socketException)
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelper(
-                    ConvertSendException(socketException, TimeSpan.MaxValue), ExceptionEventType);
+                    ConvertSendException(socketException, TimeSpan.MaxValue, this.asyncSendTimeout), ExceptionEventType);
             }
             catch (ObjectDisposedException objectDisposedException)
             {
@@ -939,9 +947,9 @@ namespace System.ServiceModel.Channels
             }
             catch (SocketException socketException)
             {
-                this.asyncWriteException = ConvertSendException(socketException, TimeSpan.MaxValue);
+                this.asyncWriteException = ConvertSendException(socketException, TimeSpan.MaxValue, this.asyncSendTimeout);
             }
-#pragma warning suppress 56500 // [....], transferring exception to caller
+#pragma warning suppress 56500 // Microsoft, transferring exception to caller
             catch (Exception exception)
             {
                 if (Fx.IsFatal(exception))
@@ -1038,7 +1046,7 @@ namespace System.ServiceModel.Channels
             catch (SocketException socketException)
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelper(
-                    ConvertSendException(socketException, timeoutHelper.RemainingTime()), ExceptionEventType);
+                    ConvertSendException(socketException, timeoutHelper.RemainingTime(), this.socketSyncSendTimeout), ExceptionEventType);
             }
             catch (ObjectDisposedException objectDisposedException)
             {
@@ -1102,7 +1110,7 @@ namespace System.ServiceModel.Channels
             catch (SocketException socketException)
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelper(
-                    ConvertReceiveException(socketException, timeoutHelper.RemainingTime()), ExceptionEventType);
+                    ConvertReceiveException(socketException, timeoutHelper.RemainingTime(), this.socketSyncReceiveTimeout), ExceptionEventType);
             }
             catch (ObjectDisposedException objectDisposedException)
             {
@@ -1199,7 +1207,7 @@ namespace System.ServiceModel.Channels
             }
             catch (SocketException socketException)
             {
-                throw DiagnosticUtility.ExceptionUtility.ThrowHelper(ConvertReceiveException(socketException, TimeSpan.MaxValue), ExceptionEventType);
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelper(ConvertReceiveException(socketException, TimeSpan.MaxValue, this.asyncReceiveTimeout), ExceptionEventType);
             }
             catch (ObjectDisposedException objectDisposedException)
             {
@@ -1268,13 +1276,13 @@ namespace System.ServiceModel.Channels
             }
             catch (SocketException socketException)
             {
-                this.asyncReadException = ConvertReceiveException(socketException, TimeSpan.MaxValue);
+                this.asyncReadException = ConvertReceiveException(socketException, TimeSpan.MaxValue, this.asyncReceiveTimeout);
             }
             catch (ObjectDisposedException objectDisposedException)
             {
                 this.asyncReadException = ConvertObjectDisposedException(objectDisposedException, TransferOperation.Read);
             }
-#pragma warning suppress 56500 // [....], transferring exception to caller
+#pragma warning suppress 56500 // Microsoft, transferring exception to caller
             catch (Exception exception)
             {
                 if (Fx.IsFatal(exception))
@@ -1304,9 +1312,9 @@ namespace System.ServiceModel.Channels
             }
             catch (SocketException socketException)
             {
-                asyncReadException = ConvertReceiveException(socketException, TimeSpan.MaxValue);
+                asyncReadException = ConvertReceiveException(socketException, TimeSpan.MaxValue, this.asyncReceiveTimeout);
             }
-#pragma warning suppress 56500 // [....], transferring exception to caller
+#pragma warning suppress 56500 // Microsoft, transferring exception to caller
             catch (Exception exception)
             {
                 if (Fx.IsFatal(exception))
@@ -1429,7 +1437,7 @@ namespace System.ServiceModel.Channels
                         new TimeoutException(SR.GetString(SR.TcpConnectionTimedOut, timeout)), ExceptionEventType);
                 }
 
-                if (UpdateTimeout(this.receiveTimeout, timeout))
+                if (ShouldUpdateTimeout(this.socketSyncReceiveTimeout, timeout))
                 {
                     lock (ThisLock)
                     {
@@ -1439,12 +1447,12 @@ namespace System.ServiceModel.Channels
                         }
                         this.socket.ReceiveTimeout = TimeoutHelper.ToMilliseconds(timeout);
                     }
-                    this.receiveTimeout = timeout;
+                    this.socketSyncReceiveTimeout = timeout;
                 }
             }
             else
             {
-                this.receiveTimeout = timeout;
+                this.asyncReceiveTimeout = timeout;
                 if (timeout == TimeSpan.MaxValue)
                 {
                     CancelReceiveTimer();
@@ -1469,19 +1477,19 @@ namespace System.ServiceModel.Channels
                         new TimeoutException(SR.GetString(SR.TcpConnectionTimedOut, timeout)), ExceptionEventType);
                 }
 
-                if (UpdateTimeout(this.sendTimeout, timeout))
+                if (ShouldUpdateTimeout(this.socketSyncSendTimeout, timeout))
                 {
                     lock (ThisLock)
                     {
                         ThrowIfNotOpen();
                         this.socket.SendTimeout = TimeoutHelper.ToMilliseconds(timeout);
                     }
-                    this.sendTimeout = timeout;
+                    this.socketSyncSendTimeout = timeout;
                 }
             }
             else
             {
-                this.sendTimeout = timeout;
+                this.asyncSendTimeout = timeout;
                 if (timeout == TimeSpan.MaxValue)
                 {
                     CancelSendTimer();
@@ -1493,7 +1501,7 @@ namespace System.ServiceModel.Channels
             }
         }
 
-        bool UpdateTimeout(TimeSpan oldTimeout, TimeSpan newTimeout)
+        bool ShouldUpdateTimeout(TimeSpan oldTimeout, TimeSpan newTimeout)
         {
             if (oldTimeout == newTimeout)
             {
@@ -1927,7 +1935,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = thisPtr.StartConnect();
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -2234,7 +2242,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = thisPtr.StartAccept();
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))

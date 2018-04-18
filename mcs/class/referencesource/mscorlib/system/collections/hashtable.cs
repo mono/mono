@@ -7,7 +7,7 @@
 **
 ** Class:  Hashtable
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Hash table implementation
@@ -1654,6 +1654,9 @@ namespace System.Collections {
     [FriendAccessAllowed]
     internal static class HashHelpers
     {
+#if MONO
+        public const int HashCollisionThreshold = 100;
+#endif
 
 #if FEATURE_RANDOMIZED_STRING_HASHING
         public const int HashCollisionThreshold = 100;

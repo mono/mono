@@ -35,15 +35,9 @@ namespace System.Data.SqlClient
         }
 
         /// <summary>
-        /// Destructor that cleans up the key material.
-        /// This is a best effort approach since there are no guarantees around GC.
+        /// Empty destructor for binary back compat.
         /// </summary>
         ~SqlClientSymmetricKey() {
-            if (_rootKey != null) {
-                for (int i = 0; i < _rootKey.Length; i++) {
-                    _rootKey[i] = 0;
-                }
-            }
         }
 
         /// <summary>

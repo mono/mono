@@ -13,7 +13,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+#if !MOBILE
 using MonoTests.Helpers;
+#endif
 
 public class TestsBase
 {
@@ -145,6 +147,12 @@ public struct AStruct : ITest2 {
 	}
 }
 
+
+public struct BlittableStruct {
+	public int i;
+	public double d;
+}
+
 public class GClass<T> {
 	public T field;
 	public static T static_field;
@@ -260,6 +268,8 @@ public class Tests : TestsBase, ITest2
 	public static bool is_attached = Debugger.IsAttached;
 	public NestedStruct nested_struct;
 
+	static string arg;
+
 #pragma warning restore 0414
 
 	public class NestedClass {
@@ -293,6 +303,9 @@ public class Tests : TestsBase, ITest2
 	}
 
 	public static int Main (String[] args) {
+		if (args.Length == 0)
+			args = new String [] { Tests.arg };
+
 		tls_i = 42;
 
 		if (args.Length > 0 && args [0] == "suspend-test")
@@ -315,9 +328,24 @@ public class Tests : TestsBase, ITest2
 			return 0;
 		}
 		if (args.Length >0 && args [0] == "threadpool-io") {
+#if !MOBILE
 			threadpool_io ();
+#else
+			throw new Exception ("Can't run threadpool-io test on mobile");
+#endif
 			return 0;
 		}
+		if (args.Length > 0 && args [0] == "attach") {
+			new Tests ().attach ();
+			return 0;
+		}
+		if (args.Length > 0 && args [0] == "step-out-void-async") {
+			var wait = new ManualResetEvent (false);
+			step_out_void_async (wait);
+			wait.WaitOne ();//Don't exist until step_out_void_async is executed...
+			return 0;
+		}
+		assembly_load ();
 		breakpoints ();
 		single_stepping ();
 		arguments ();
@@ -327,19 +355,22 @@ public class Tests : TestsBase, ITest2
 		locals ();
 		line_numbers ();
 		type_info ();
-		assembly_load ();
 		invoke ();
 		exceptions ();
 		exception_filter ();
 		threads ();
 		dynamic_methods ();
 		user ();
+#if !MOBILE
 		type_load ();
+#endif
 		regress ();
 		gc_suspend ();
 		set_ip ();
 		step_filters ();
-		local_reflect ();
+		pointers ();
+		if (args.Length > 0 && args [0] == "local-reflect")
+			local_reflect ();
 		if (args.Length > 0 && args [0] == "domain-test")
 			/* This takes a lot of time, so execute it conditionally */
 			domains ();
@@ -352,6 +383,7 @@ public class Tests : TestsBase, ITest2
 		if (args.Length > 0 && args [0] == "invoke-abort")
 			new Tests ().invoke_abort ();
 		new Tests ().evaluate_method ();
+		Bug59649 ();
 		return 3;
 	}
 
@@ -422,6 +454,7 @@ public class Tests : TestsBase, ITest2
 		}
 		ss7 ();
 		ss_nested ();
+		ss_nested_with_two_args_wrapper ();        
 		ss_regress_654694 ();
 		ss_step_through ();
 		ss_non_user_code ();
@@ -430,6 +463,8 @@ public class Tests : TestsBase, ITest2
 		ss_recursive2 (1);
 		ss_recursive_chaotic ();
 		ss_fp_clobber ();
+		ss_no_frames ();
+		ss_await ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -484,23 +519,49 @@ public class Tests : TestsBase, ITest2
 	public static void ss6_2 () {
 	}
 
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void ss7 () {
-		try {
-			ss7_2 ();
-			ss7_3 ();
-		} catch {
-		}
-		ss7_2 ();
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7 ()
+	{
+		ss7_2();//Used to test stepout inside ss7_2, which may not go to catch
+		ss7_2();//Used to test stepout inside ss7_2_1, which must go to catch
+		ss7_2();//Used to test stepover inside ss7_2, which must go to catch
+		ss7_2();//Used to test stepover inside ss7_2_1, which must go to catch
+		ss7_3();//Used to test stepin inside ss7_3, which must go to catch
+		ss7_2();//Used to test stepin inside ss7_2_1, which must go to catch
 	}
 
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void ss7_2 () {
-	}
-
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void ss7_3 () {
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7_2_1 ()
+	{
 		throw new Exception ();
+	}
+
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7_2_2 ()
+	{
+		ss7_2_1();
+	}
+
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7_2 ()
+	{
+		try {
+			ss7_2_2();
+		}
+		catch
+		{
+		}
+	}
+
+	[MethodImplAttribute(MethodImplOptions.NoInlining)]
+	public static void ss7_3 ()
+	{
+		try {
+			throw new Exception ();
+		}
+		catch
+		{
+		}
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -508,6 +569,21 @@ public class Tests : TestsBase, ITest2
 		ss_nested_1 (ss_nested_2 ());
 		ss_nested_1 (ss_nested_2 ());
 		ss_nested_3 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_nested_with_two_args_wrapper () {
+		ss_nested_with_two_args(ss_nested_arg (), ss_nested_arg ());
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_with_two_args (int a1, int a2) {
+		return a1 + a2;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_arg () {
+		return 0;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -680,6 +756,71 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_no_frames () {
+		Action a = ss_no_frames_2;
+		var ar = a.BeginInvoke (null, null);
+		ar.AsyncWaitHandle.WaitOne ();
+		// Avoid waiting every time this runs
+		if (static_i == 56)
+			Thread.Sleep (200);
+		ss_no_frames_3 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_await ()
+	{
+		ss_await_1 ().Wait ();//in
+		ss_await_1 ().Wait ();//over
+		ss_await_1 ().Wait ();//out before
+		ss_await_1 ().Wait ();//out after
+		ss_await_1_exc (true, true).Wait ();//in
+		ss_await_1_exc (true, true).Wait ();//over
+		ss_await_1_exc (true, true).Wait ();//out
+		try {
+			ss_await_1_exc (true, false).Wait ();//in
+		} catch { }
+		try {
+			ss_await_1_exc (true, false).Wait ();//over
+		} catch { }
+		try {
+			ss_await_1_exc (true, false).Wait ();//out
+		} catch { }
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static async Task<int> ss_await_1 () {
+		var a = 1;
+		await Task.Delay (10);
+		return a + 2;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static async Task<int> ss_await_1_exc (bool exc, bool handled)
+	{
+		var a = 1;
+		await Task.Delay (10);
+		if (exc) {
+			if (handled) {
+				try {
+					throw new Exception ();
+				} catch {
+				}
+			} else {
+				throw new Exception ();
+			}
+		}
+		return a + 2;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_no_frames_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_no_frames_3 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static bool is_even (int i) {
 		return i % 2 == 0;
 	}
@@ -829,9 +970,7 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-#if NET_4_5
 	[StateMachine (typeof (int))]
-#endif
 	public static void locals2<T> (string[] args, int arg, T t, ref string rs, ref AStruct astruct) {
 		long i = 42;
 		string s = "AB";
@@ -1070,8 +1209,16 @@ public class Tests : TestsBase, ITest2
 		return 42;
 	}
 
+	public int invoke_pass_nullable (int? i) {
+		return (int)i;
+	}
+
 	public int? invoke_return_nullable_null () {
 		return null;
+	}
+
+	public int invoke_pass_nullable_null (int? i) {
+		return i.HasValue ? 1 : 2;
 	}
 
 	public void invoke_type_load () {
@@ -1184,12 +1331,10 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void unhandled_exception_user () {
-#if NET_4_5
 		System.Threading.Tasks.Task.Factory.StartNew (() => {
 				Throw ();
 			});
 		Thread.Sleep (10000);
-#endif
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -1306,6 +1451,8 @@ public class Tests : TestsBase, ITest2
 
 		o.invoke_2 ();
 
+		o.assembly_load ();
+
 		AppDomain.Unload (domain);
 
 		domains_3 ();
@@ -1335,6 +1482,11 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void invoke_in_domain_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void assembly_load_in_domain () {
+		Assembly.Load ("System.Transactions");
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -1422,6 +1574,7 @@ public class Tests : TestsBase, ITest2
 		Debugger.Log (5, Debugger.IsLogging () ? "A" : "", "B");
 	}
 
+#if !MOBILE
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void type_load () {
 		type_load_2 ();
@@ -1436,6 +1589,7 @@ public class Tests : TestsBase, ITest2
 		var c2 = new TypeLoadClass2 ();
 		c2.ToString ();
 	}
+#endif
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void regress () {
@@ -1552,6 +1706,7 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void threadpool_bp () { }
 
+#if !MOBILE
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void threadpool_io () {
 		// Start a threadpool task that blocks on I/O.
@@ -1591,12 +1746,57 @@ public class Tests : TestsBase, ITest2
 		streamOut.Close ();
 		var bsIn = t.Result;
 	}
-}
+#endif
 
-class TypeLoadClass {
-}
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void attach_break () {
+	}
 
-class TypeLoadClass2 {
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void attach () {
+		AppDomain domain = AppDomain.CreateDomain ("domain");
+
+		CrossDomain o = (CrossDomain)domain.CreateInstanceAndUnwrap (
+				   typeof (CrossDomain).Assembly.FullName, "CrossDomain");
+		o.assembly_load ();
+		o.type_load ();
+
+		// Wait for the client to attach
+		while (true) {
+			Thread.Sleep (200);
+			attach_break ();
+		}
+	}
+
+	public static void Bug59649 ()
+	{
+		UninitializedClass.Call();//Breakpoint here and step in
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static async void step_out_void_async (ManualResetEvent wait)
+	{
+		await Task.Yield ();
+		step_out_void_async_2 ();
+		wait.Set ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void step_out_void_async_2 ()
+	{
+	}
+
+	public static unsafe void pointer_arguments (int* a, BlittableStruct* s) {
+		*a = 0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static unsafe void pointers () {
+		int[] a = new [] {1,2,3};
+		BlittableStruct s = new BlittableStruct () { i = 2, d = 3.0 };
+		fixed (int* pa = a)
+			pointer_arguments (pa, &s);
+	}
 }
 
 public class SentinelClass : MarshalByRefObject {
@@ -1617,11 +1817,39 @@ public class CrossDomain : MarshalByRefObject
 	public int invoke_3 () {
 		return 42;
 	}
+
+	public void assembly_load () {
+		Tests.assembly_load_in_domain ();
+	}
+
+	public void type_load () {
+		//Activator.CreateInstance (typeof (int).Assembly.GetType ("Microsoft.Win32.RegistryOptions"));
+		var is_server = System.Runtime.GCSettings.IsServerGC;
+	}
 }	
 
 public class Foo
 {
 	public ProcessStartInfo info;
+}
+
+class LocalReflectClass
+{
+	public static void RunMe ()
+	{
+		var reflectMe = new someClass ();
+		var temp = reflectMe; // Breakpoint location
+		reflectMe.someMethod ();
+	}
+
+	class someClass : ContextBoundObject
+	{
+		public object someField;
+
+		public void someMethod ()
+		{
+		}
+	}
 }
 
 // Class used for line number info testing, don't change its layout
@@ -1647,21 +1875,22 @@ public class LineNumbers
 	}
 }
 
-class LocalReflectClass
+class UninitializedClass
 {
-	public static void RunMe ()
+	static string DummyCall()
 	{
-		var reflectMe = new someClass ();
-		reflectMe.someMethod ();
+		//Should NOT step into this method
+		//if StepFilter.StaticCtor is set
+		//because this is part of static class initilization
+		return String.Empty;
 	}
 
-	class someClass : ContextBoundObject
-	{
-		public object someField;
+	static string staticField = DummyCall();
 
-		public void someMethod ()
-		{
-		}
+	public static void Call()
+	{
+		//Should step into this method
+		//Console.WriteLine ("Call called");
 	}
 }
 

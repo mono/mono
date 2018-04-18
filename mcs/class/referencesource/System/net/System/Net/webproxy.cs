@@ -414,7 +414,7 @@ namespace System.Net {
         /// </devdoc>
         [Obsolete("This method has been deprecated. Please use the proxy selected for you by default. http://go.microsoft.com/fwlink/?linkid=14202")]
         public static WebProxy GetDefaultProxy() {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
             return new WebProxy(true);
@@ -437,7 +437,7 @@ namespace System.Net {
             if (useRegistry) {
                 // just make the proxy advanced, don't populate with any settings
                 // note - this will happen in the context of the user performing the deserialization (their proxy settings get read)
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 UnsafeUpdateFromRegistry();
@@ -504,22 +504,28 @@ namespace System.Net {
 #if MONO
         public static IWebProxy CreateDefaultProxy ()
         {
-#if MONOTOUCH
+#if FEATURE_NO_BSD_SOCKETS
+            throw new PlatformNotSupportedException ();
+#elif MONOTOUCH
             return Mono.Net.CFNetwork.GetDefaultProxy ();
 #elif MONODROID
             // Return the system web proxy.  This only works for ICS+.
             var data = AndroidPlatform.GetDefaultProxy ();
             if (data != null)
                 return data;
+
+            return new WebProxy (true);
+#elif ORBIS
+            return new WebProxy (true);
 #else
             if (Platform.IsMacOS) {
                 var data = Mono.Net.CFNetwork.GetDefaultProxy ();
                 if (data != null)
                     return data;
             }
-#endif
 
             return new WebProxy (true);
+#endif
         }
 #endif
 

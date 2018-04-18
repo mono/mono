@@ -67,7 +67,7 @@ bulldog Error: 0 :
  Error: 0 : 
 bulldog Transfer: 0 : hoge, relatedActivityId=00000000-0000-0000-0000-000000000000
 ";
-			Assert.AreEqual (expected, sw.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (expected.Replace ("\r\n", "\n"), sw.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -116,7 +116,7 @@ bulldog Error: 0 :
     Timestamp={1}
 bulldog Transfer: 0 : hoge, relatedActivityId=00000000-0000-0000-0000-000000000000
 ", date.ToString ("o"), time); // date and time are in current culture
-			Assert.AreEqual (expected, sw.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (expected.Replace ("\r\n", "\n"), sw.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		class MyTraceListener : TraceListener

@@ -40,9 +40,9 @@ namespace System.Transactions
 		}
 
 		[MonoTODO]
-		public void ForceRollback (Exception ex)
+		public void ForceRollback (Exception e)
 		{
-			tx.Rollback (ex, enlisted);
+			tx.Rollback (e, enlisted);
 			/* See test RMFail2 */
 			((ManualResetEvent) waitHandle).Set ();
 		}

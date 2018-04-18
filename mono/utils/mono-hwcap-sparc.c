@@ -1,5 +1,6 @@
-/*
- * mono-hwcap-sparc.c: SPARC hardware feature detection
+/**
+ * \file
+ * SPARC hardware feature detection
  *
  * Authors:
  *    Alex Rønne Petersen (alexrp@xamarin.com)
@@ -19,17 +20,14 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-#include "mono/utils/mono-hwcap-sparc.h"
+#include "mono/utils/mono-hwcap.h"
 
 #include <string.h>
-
 #if !defined(__linux__)
 #include <sys/systeminfo.h>
 #else
 #include <unistd.h>
 #endif
-
-gboolean mono_hwcap_sparc_is_v9 = FALSE;
 
 void
 mono_hwcap_arch_init (void)
@@ -37,8 +35,7 @@ mono_hwcap_arch_init (void)
 	char buf [1024];
 
 #if !defined(__linux__)
-	if (!sysinfo (SI_ISALIST, buf, 1024))
-		g_assert_not_reached ();
+	g_assert (sysinfo (SI_ISALIST, buf, 1024));
 #else
 	/* If the page size is 8192, we're on a 64-bit SPARC, which
 	 * in turn means a v9 or better.
@@ -50,10 +47,4 @@ mono_hwcap_arch_init (void)
 #endif
 
 	mono_hwcap_sparc_is_v9 = strstr (buf, "sparcv9");
-}
-
-void
-mono_hwcap_print (FILE *f)
-{
-	g_fprintf (f, "mono_hwcap_sparc_is_v9 = %i\n", mono_hwcap_sparc_is_v9);
 }

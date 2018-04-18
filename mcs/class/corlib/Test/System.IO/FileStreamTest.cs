@@ -1542,6 +1542,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BeginWrite_Recursive ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
@@ -1740,6 +1741,16 @@ namespace MonoTests.System.IO
 				}
 			} finally {
 				DeleteFile (path);
+			}
+		}
+
+		[Test]
+		public void NamePropertyNormalization ()
+		{
+			string fname = TempFolder + DSC + ".." + DSC + "MonoTests.System.IO.Tests" + DSC + "tfile.txt";
+
+			using (var s = new FileStream (fname, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Delete)) {
+				Assert.AreEqual (TempFolder + DSC + "tfile.txt", s.Name);
 			}
 		}
 	}

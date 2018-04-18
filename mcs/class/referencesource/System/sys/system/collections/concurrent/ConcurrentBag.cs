@@ -7,7 +7,7 @@
 //
 // ConcurrentBag.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // 
 //An unordered collection that allows duplicates and that provides add and get operations.

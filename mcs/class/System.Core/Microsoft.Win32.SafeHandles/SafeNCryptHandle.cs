@@ -30,11 +30,17 @@ using System;
 
 namespace Microsoft.Win32.SafeHandles
 {
-	public abstract class SafeNCryptHandle : System.Runtime.InteropServices.SafeHandle
+	public abstract class SafeNCryptHandle : SafeHandleZeroOrMinusOneIsInvalid
 	{
 		protected SafeNCryptHandle ()
-			: base (IntPtr.Zero, true)
+			: base (true)
 		{
+		}
+
+		protected SafeNCryptHandle (IntPtr handle, System.Runtime.InteropServices.SafeHandle parentHandle)
+			: base (false)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public override bool IsInvalid { get { throw new NotImplementedException (); } }

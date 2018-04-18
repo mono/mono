@@ -4,12 +4,12 @@ CommonCrypto/CryptorTransform.cs
 CommonCrypto/FastCryptorTransform.cs
 CommonCrypto/CorlibExtras.cs
 CommonCrypto/RijndaelManaged.cs
-CommonCrypto/SecRandom.cs
+CommonCrypto/RNGCryptoServiceProvider.cryptor.cs
 CommonCrypto/RC4CommonCrypto.cs
-System/Environment.iOS.cs
-System/Guid.MonoTouch.cs
-System/NotSupportedException.iOS.cs
 CoreFoundation/CFHelpers.cs
 System.Security.Cryptography.X509Certificates/X509CertificateImplApple.cs
 System.Security.Cryptography.X509Certificates/X509Helper.Apple.cs
 System.Text/EncodingHelper.MonoTouch.cs
+System/Environment.iOS.cs
+System/Guid.MonoTouch.cs
+System/NotSupportedException.iOS.cs

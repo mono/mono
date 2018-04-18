@@ -44,7 +44,7 @@ namespace System.ServiceModel.Configuration
         public override bool ContainsKey(string name)
         {
             StandardEndpointCollectionElement<TStandardEndpoint, TEndpointConfiguration> me = (StandardEndpointCollectionElement<TStandardEndpoint, TEndpointConfiguration>)this;
-#pragma warning suppress 56506 //[....]; me.Endpoints can never be null (underlying configuration system guarantees)
+#pragma warning suppress 56506 //Microsoft; me.Endpoints can never be null (underlying configuration system guarantees)
             return me.Endpoints.ContainsKey(name);
         }
 

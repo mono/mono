@@ -92,7 +92,7 @@ namespace System.Web.Util
                 } else if ( monthIndex == (sbyte) 'R' ) {
             
                     //
-                    // if s[1] is 'a' then [....], if 'p' then April
+                    // if s[1] is 'a' then Microsoft, if 'p' then April
                     //
             
                     if ( s_monthIndexTable[(s[1 + startIndex]-0x40) & 0x3f] == (sbyte) 'A' ) {

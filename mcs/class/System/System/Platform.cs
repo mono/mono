@@ -30,14 +30,25 @@ namespace System {
 	internal static class Platform {
 		static bool checkedOS;
 		static bool isMacOS;
-		static bool isFreeBSD;
 
 #if MONOTOUCH || XAMMAC
+		const bool isFreeBSD = false;
+
 		private static void CheckOS() {
 			isMacOS = true;
 			checkedOS = true;
 		}
+
+#elif ORBIS
+		const bool isFreeBSD = true;
+
+ 		private static void CheckOS() {
+ 			checkedOS = true;
+ 		}
+
 #else
+		static bool isFreeBSD;
+
 		[DllImport ("libc")]
 		static extern int uname (IntPtr buf);
 

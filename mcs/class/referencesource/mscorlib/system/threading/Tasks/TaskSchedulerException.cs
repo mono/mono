@@ -7,7 +7,7 @@
 //
 // TaskSchedulerException.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // An exception for task schedulers.
 //

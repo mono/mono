@@ -1,4 +1,4 @@
-﻿//
+//
 // ScriptResourceAttribute.cs
 //
 // Author:
@@ -40,10 +40,10 @@ namespace System.Web.UI
 		string _scriptResourceName;
 		string _typeName;
 
-		public ScriptResourceAttribute (string scriptName, string scriptResourceName, string typeName) {
+		public ScriptResourceAttribute (string scriptName, string stringResourceName, string stringResourceClientTypeName) {
 			_scriptName = scriptName;
-			_scriptResourceName = scriptResourceName;
-			_typeName = typeName;
+			_scriptResourceName = stringResourceName;
+			_typeName = stringResourceClientTypeName;
 		}
 
 		public string ScriptName {

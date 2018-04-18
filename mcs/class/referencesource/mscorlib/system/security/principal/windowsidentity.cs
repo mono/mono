@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -46,7 +46,7 @@ namespace System.Security.Principal
         Anonymous   = 3
     }
 
-    // Keep in [....] with vm\comprincipal.h
+    // Keep in sync with vm\comprincipal.h
     internal enum WinSecurityContext {
         Thread = 1, // OpenAsSelf = false
         Process = 2, // OpenAsSelf = true

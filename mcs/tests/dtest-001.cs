@@ -12,7 +12,11 @@ interface I<T>
 {
 }
 
-class C
+class B<T>
+{
+}
+
+class C : B<dynamic>
 {
 	public C (dynamic d)
 	{
@@ -107,6 +111,9 @@ class Test
 
 		if (t.GetConstructors ()[0].GetCustomAttributes (ca, false).Length != 0)
 			return 21;
+
+		if (t.GetCustomAttributes (ca, false).Length != 1)
+			return 22;
 
 		// Transformations
 		DynamicAttribute da;

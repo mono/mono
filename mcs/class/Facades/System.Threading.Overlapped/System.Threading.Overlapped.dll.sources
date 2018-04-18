@@ -1,9 +1,2 @@
 TypeForwarders.cs
 AssemblyInfo.cs
-
-ClrThreadPoolBoundHandle.cs
-ClrThreadPoolBoundHandleOverlapped.cs
-ClrThreadPoolPreAllocatedOverlapped.cs
-DeferredDisposableLifetime.cs
-SR.cs
-HResults.cs

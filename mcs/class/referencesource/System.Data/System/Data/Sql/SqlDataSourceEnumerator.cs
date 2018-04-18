@@ -2,8 +2,8 @@
 // <copyright file="SqlDataSourceEnumerator.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Sql {
@@ -26,7 +26,9 @@ namespace System.Data.Sql {
         internal const string InstanceName   = "InstanceName";
         internal const string IsClustered    = "IsClustered";
         internal const string Version        = "Version";
+#if !MONO
         private  const int    timeoutSeconds = ADP.DefaultCommandTimeout;
+#endif
         private long timeoutTime;                                // variable used for timeout computations, holds the value of the hi-res performance counter at which this request should expire
 
         private SqlDataSourceEnumerator() : base() {
@@ -40,6 +42,7 @@ namespace System.Data.Sql {
 
         override public DataTable GetDataSources() {
 #if MONO
+            timeoutTime = 0;
             throw new NotImplementedException ();
 #else
             (new NamedPermissionSet("FullTrust")).Demand(); // SQLBUDT 244304

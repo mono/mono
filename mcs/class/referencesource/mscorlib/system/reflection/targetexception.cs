@@ -8,7 +8,7 @@
 //
 // TargetException is thrown when the target to an Invoke is invalid.  This may
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //    occur because the caller doesn't have access to the member, or the target doesn't
 //    define the member, etc.
 //

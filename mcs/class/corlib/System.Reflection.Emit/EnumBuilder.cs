@@ -71,6 +71,9 @@ namespace System.Reflection.Emit {
 			return _tb.InternalResolve (); 
 		}
 
+		internal override Type RuntimeResolve () {
+			return _tb.RuntimeResolve ();
+		}
 
 		public override Assembly Assembly {
 			get {
@@ -160,6 +163,11 @@ namespace System.Reflection.Emit {
 		{
 			Type res = _tb.CreateType ();
 			return res;
+		}
+
+		public TypeInfo CreateTypeInfo()
+		{
+			return _tb.CreateTypeInfo ();
 		}
 
 		public override Type GetEnumUnderlyingType ()

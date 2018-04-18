@@ -29,7 +29,7 @@ namespace System.ComponentModel
         }
 
         /// <summary>
-        ///     Destructor. Guarantees that [....] context will always get notified of completion.
+        ///     Destructor. Guarantees that sync context will always get notified of completion.
         /// </summary>
         ~AsyncOperation()
         {

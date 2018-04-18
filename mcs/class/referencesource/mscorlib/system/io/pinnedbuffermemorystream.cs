@@ -7,7 +7,7 @@
 **
 ** Class:  PinnedBufferMemoryStream
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Pins a byte[], exposing it as an unmanaged memory 

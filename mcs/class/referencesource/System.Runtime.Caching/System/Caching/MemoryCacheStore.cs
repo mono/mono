@@ -38,23 +38,36 @@ namespace System.Runtime.Caching {
         // private members        
 
         private void AddToCache(MemoryCacheEntry entry) {
+
             // add outside of lock
-            if (entry != null) {
-                if (entry.HasExpiration()) {
-                    _expires.Add(entry);
+            if (entry == null) {
+                return;
+            }
+
+            if (entry.HasExpiration()) {
+                _expires.Add(entry);
+            }
+
+            if (entry.HasUsage()
+                && (!entry.HasExpiration() || entry.UtcAbsExp - DateTime.UtcNow >= CacheUsage.MIN_LIFETIME_FOR_USAGE)) {
+                _usage.Add(entry);
+            }
+
+            // One last sanity check to be sure we didn't fall victim to an Add ----
+            if (!entry.CompareExchangeState(EntryState.AddedToCache, EntryState.AddingToCache)) {
+                if (entry.InExpires()) {
+                    _expires.Remove(entry);
                 }
 
-                if (entry.HasUsage()
-                    && (!entry.HasExpiration() || entry.UtcAbsExp - DateTime.UtcNow >= CacheUsage.MIN_LIFETIME_FOR_USAGE)) {
-                    _usage.Add(entry);
+                if (entry.InUsage()) {
+                    _usage.Remove(entry);
                 }
+            }
 
-                entry.State = EntryState.AddedToCache;
-                entry.CallNotifyOnChanged();
-                if (_perfCounters != null) {
-                    _perfCounters.Increment(PerfCounterName.Entries);
-                    _perfCounters.Increment(PerfCounterName.Turnover);
-                }
+            entry.CallNotifyOnChanged();
+            if (_perfCounters != null) {
+                _perfCounters.Increment(PerfCounterName.Entries);
+                _perfCounters.Increment(PerfCounterName.Turnover);
             }
         }
 
@@ -291,6 +304,7 @@ namespace System.Runtime.Caching {
             if (added) {
                 AddToCache(entry);
             }
+
             // Dev10 861163: Call Release after the new entry has been completely added so 
             // that the CacheItemRemovedCallback can take a dependency on the newly inserted item.
             if (existingEntry != null) {

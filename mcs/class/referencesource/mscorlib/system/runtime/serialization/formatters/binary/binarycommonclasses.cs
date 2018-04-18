@@ -639,15 +639,23 @@ namespace System.Runtime.Serialization.Formatters.Binary{
 
     internal sealed class BinaryMethodCall
     {
+#if FEATURE_REMOTING
         String uri;
+#endif
         String methodName;
         String typeName;
+#if FEATURE_REMOTING
         Type[] instArgs;
+#endif
         Object[] args;
+#if FEATURE_REMOTING
         Object methodSignature;
+#endif
         Object callContext;
+#if FEATURE_REMOTING
         String scallContext;
         Object properties;
+#endif
         Type[] argTypes;
         bool bArgsPrimitive = true;
         MessageEnum messageEnum;
@@ -657,14 +665,22 @@ namespace System.Runtime.Serialization.Formatters.Binary{
         // if not the args are written out as a separate array
         internal Object[] WriteArray(String uri, String methodName, String typeName, Type[] instArgs, Object[] args, Object methodSignature, Object callContext, Object[] properties)
         {
+#if FEATURE_REMOTING            
             this.uri = uri;
+#endif
             this.methodName = methodName;
             this.typeName = typeName;
+#if FEATURE_REMOTING            
             this.instArgs = instArgs;
+#endif
             this.args = args;
+#if FEATURE_REMOTING            
             this.methodSignature = methodSignature;
+#endif
             this.callContext = callContext;
+#if FEATURE_REMOTING            
             this.properties = properties;
+#endif
 
             int arraySize = 0;
             if (args == null || args.Length == 0)
@@ -878,8 +894,10 @@ namespace System.Runtime.Serialization.Formatters.Binary{
                 {
                     if (callContext is String)
                         BinaryUtil.NVTraceI("callContext", (String)callContext);   
+#if FEATURE_REMOTING                        
                     else
                         BinaryUtil.NVTraceI("callContext", scallContext);   
+#endif
                 }
 
                 if (IOUtil.FlagTest(messageEnum, MessageEnum.ArgsInline))
@@ -900,10 +918,14 @@ namespace System.Runtime.Serialization.Formatters.Binary{
     {
         Object returnValue;
         Object[] args;
+#if FEATURE_REMOTING        
         Exception exception;
+#endif
         Object callContext;
+#if FEATURE_REMOTING
         String scallContext;
         Object properties;
+#endif
         Type[] argTypes;
         bool bArgsPrimitive = true;
         MessageEnum messageEnum;
@@ -928,9 +950,13 @@ namespace System.Runtime.Serialization.Formatters.Binary{
 
             this.returnValue = returnValue;
             this.args = args;
+#if FEATURE_REMOTING            
             this.exception = exception;
+#endif
             this.callContext = callContext;
+#if FEATURE_REMOTING
             this.properties = properties;
+#endif
 
             int arraySize = 0;
             if (args == null || args.Length == 0)
@@ -1159,8 +1185,10 @@ namespace System.Runtime.Serialization.Formatters.Binary{
                 {
                     if (callContext is String)
                         BinaryUtil.NVTraceI("callContext", (String)callContext);   
+#if FEATURE_REMOTING                        
                     else
                         BinaryUtil.NVTraceI("callContext", scallContext);   
+#endif
                 }
 
                 if (IOUtil.FlagTest(messageEnum, MessageEnum.ArgsInline))

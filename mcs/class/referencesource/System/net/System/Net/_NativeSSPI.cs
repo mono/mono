@@ -40,6 +40,7 @@ namespace System.Net {
         int SetContextAttributes(SafeDeleteContext phContext, ContextAttribute attribute, byte[] buffer);
         int QuerySecurityContextToken(SafeDeleteContext phContext, out SafeCloseHandle phToken);
         int CompleteAuthToken(ref SafeDeleteContext refContext, SecurityBuffer[] inputBuffers);
+        int ApplyControlToken(ref SafeDeleteContext refContext, SecurityBuffer[] inputBuffers);
     }
 
     // For SSL connections:
@@ -195,6 +196,11 @@ namespace System.Net {
 
         public int CompleteAuthToken(ref SafeDeleteContext refContext, SecurityBuffer[] inputBuffers) {
             throw new NotSupportedException();
+        }
+
+        public int ApplyControlToken(ref SafeDeleteContext refContext, SecurityBuffer[] inputBuffers)
+        {
+            return SafeDeleteContext.ApplyControlToken(Library, ref refContext, inputBuffers);
         }
     }
 
@@ -414,6 +420,11 @@ namespace System.Net {
 
         public int CompleteAuthToken(ref SafeDeleteContext refContext, SecurityBuffer[] inputBuffers) {
             return SafeDeleteContext.CompleteAuthToken(Library, ref refContext, inputBuffers);
+        }
+
+        public int ApplyControlToken(ref SafeDeleteContext refContext, SecurityBuffer[] inputBuffers)
+        {
+            throw new NotSupportedException();
         }
 
         private static int GetSecurityContextToken(SafeDeleteContext phContext, out SafeCloseHandle safeHandle) {

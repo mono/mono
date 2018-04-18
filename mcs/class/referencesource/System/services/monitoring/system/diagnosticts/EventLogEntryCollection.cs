@@ -9,7 +9,7 @@ namespace System.Diagnostics {
     using System;
     using System.Collections;
    
-    //Consider, V2, [....]: Is there a way to implement Contains
+    //Consider, V2, Microsoft: Is there a way to implement Contains
     //and IndexOf, can we live withouth this part of the ReadOnly
     //collection pattern?
     /// <devdoc>

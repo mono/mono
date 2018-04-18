@@ -51,13 +51,13 @@ namespace System.ServiceModel.Description
 
 		public XmlSerializerOperationBehavior (
 			OperationDescription operation,
-			XmlSerializerFormatAttribute format)
+			XmlSerializerFormatAttribute attribute)
 		{
 			if (operation == null)
 				throw new ArgumentNullException ("operation");
-			if (format == null)
-				format = new XmlSerializerFormatAttribute ();
-			this.format = format;
+			if (attribute == null)
+				attribute = new XmlSerializerFormatAttribute ();
+			this.format = attribute;
 			this.operation = operation;
 		}
 

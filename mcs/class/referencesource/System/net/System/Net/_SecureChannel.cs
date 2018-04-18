@@ -381,7 +381,7 @@ namespace System.Net.Security {
                 // demand the same permissions, then we should remove our
                 // demand here.
                 //
-                #if FEATURE_MONO_CAS
+                #if MONO_FEATURE_CAS
                 ExceptionHelper.KeyContainerPermissionOpen.Demand(); 
                 #endif
                 
@@ -437,7 +437,7 @@ namespace System.Net.Security {
                             // For v 1.1 compat We want to ensure the store is opened under the **process** acount.
                             //
                             try {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                                 using (WindowsIdentity.Impersonate(IntPtr.Zero))
 #endif
                                 {
@@ -583,7 +583,7 @@ namespace System.Net.Security {
         //          Note: We call a user certificate selection delegate under permission
         //          assert but the signature of the delegate is unique so it's safe
         //
-        #if FEATURE_MONO_CAS
+        #if MONO_FEATURE_CAS
         [StorePermission(SecurityAction.Assert, Unrestricted=true)]
         #endif
         private bool AcquireClientCredentials(ref byte[] thumbPrint)
@@ -832,7 +832,7 @@ namespace System.Net.Security {
         //          Note: We call a user certificate selection delegate under permission
         //          assert but the signature of the delegate is unique so it's safe
         //
-        #if FEATURE_MONO_CAS
+        #if MONO_FEATURE_CAS
         [StorePermission(SecurityAction.Assert, Unrestricted=true)]
         #endif
         private bool AcquireServerCredentials(ref byte[] thumbPrint)
@@ -908,7 +908,7 @@ namespace System.Net.Security {
 
 
         //
-        // Security: we temporarily reset thread token to open the handle under process acount
+        // Security: we temporarily reset thread token to open the handle under process account
         //
         [SecurityPermissionAttribute(SecurityAction.Assert, Flags=SecurityPermissionFlag.ControlPrincipal)]
         SafeFreeCredentials AcquireCredentialsHandle(CredentialUse credUsage, ref SecureCredential secureCredential)
@@ -919,7 +919,7 @@ namespace System.Net.Security {
                 //
                 // For v 1.1 compat We want to ensure the credential are accessed under >>process<< acount.
                 //
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 using (WindowsIdentity.Impersonate(IntPtr.Zero))
 #endif
                 {
@@ -948,7 +948,7 @@ namespace System.Net.Security {
         }
 
         /*++
-            GenerateToken - Called after each sucessive state
+            GenerateToken - Called after each successive state
             in the Client - Server handshake.  This function
             generates a set of bytes that will be sent next to
             the server.  The server responds, each response,
@@ -1000,8 +1000,8 @@ namespace System.Net.Security {
             bool cachedCreds = false;
             byte[] thumbPrint = null;
             //
-            // Looping through ASC or ISC with potenially cached credential that could have been
-            // already disposed from a different thread before ISC or ASC dir increemnt a cred ref count.
+            // Looping through ASC or ISC with potentially cached credential that could have been
+            // already disposed from a different thread before ISC or ASC dir increment a cred ref count.
             //
             try
             {
@@ -1271,7 +1271,7 @@ namespace System.Net.Security {
 
             count = 0;
             for (int i = 0; i < decspc.Length; i++) {
-                // Sucessfully decoded data and placed it at the following position in the buffer.
+                // Successfully decoded data and placed it at the following position in the buffer.
                 if ((errorCode == SecurityStatus.OK && decspc[i].type == BufferType.Data)
                     // or we failed to decode the data, here is the encoded data
                     || (errorCode != SecurityStatus.OK && decspc[i].type == BufferType.Extra)) {
@@ -1295,13 +1295,13 @@ namespace System.Net.Security {
         --*/
 
         //This method validates a remote certificate.
-        //SECURITY: The scenario is allowed in semitrust StorePermission is asserted for Chain.Build
-        //          A user callback has unique signature so it is safe to call it under permisison assert.
+        //SECURITY: The scenario is allowed in semi-trust StorePermission is asserted for Chain.Build
+        //          A user callback has unique signature so it is safe to call it under permission assert.
         //
-        #if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
         [StorePermission(SecurityAction.Assert, Unrestricted=true)]
-        #endif
-        internal bool VerifyRemoteCertificate(RemoteCertValidationCallback remoteCertValidationCallback)
+#endif
+        internal bool VerifyRemoteCertificate(RemoteCertValidationCallback remoteCertValidationCallback, ref ProtocolToken alertToken)
         {
             GlobalLog.Enter("SecureChannel#" + ValidationHelper.HashString(this) + "::VerifyRemoteCertificate");
             SslPolicyErrors sslPolicyErrors = SslPolicyErrors.None;
@@ -1378,35 +1378,24 @@ namespace System.Net.Security {
 		success = SSPIWrapper.CheckRemoteCertificate(m_SecurityContext);
 #endif
 
-                if (Logging.On) {
-                    if (sslPolicyErrors != SslPolicyErrors.None)
-                    {
-                        Logging.PrintInfo(Logging.Web, this, SR.GetString(SR.net_log_remote_cert_has_errors));
-                        if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateNotAvailable) != 0)
-                            Logging.PrintInfo(Logging.Web, this, "\t" + SR.GetString(SR.net_log_remote_cert_not_available));
-                        if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateNameMismatch) != 0)
-                            Logging.PrintInfo(Logging.Web, this, "\t" + SR.GetString(SR.net_log_remote_cert_name_mismatch));
-                        if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateChainErrors) != 0)
-                            foreach (X509ChainStatus chainStatus in chain.ChainStatus)
-                                Logging.PrintInfo(Logging.Web, this, "\t" + chainStatus.StatusInformation);
-                    }
-                    if (success)
-                    {
-                        if (remoteCertValidationCallback != null)
-                            Logging.PrintInfo(Logging.Web, this, SR.GetString(SR.net_log_remote_cert_user_declared_valid));
-                        else
-                            Logging.PrintInfo(Logging.Web, this, SR.GetString(SR.net_log_remote_cert_has_no_errors));
-                    }
-                    else
-                    {
-                        if (remoteCertValidationCallback != null)
-                            Logging.PrintInfo(Logging.Web, this, SR.GetString(SR.net_log_remote_cert_user_declared_invalid));
-                    }
+                if (Logging.On)
+                {
+                    LogCertificateValidation(remoteCertValidationCallback, sslPolicyErrors, success, chain);
                 }
+
                 GlobalLog.Print("Cert Validation, remote cert = " + (remoteCertificateEx == null? "<null>": remoteCertificateEx.ToString(true)));
+
+                if (LocalAppContextSwitches.DontEnableTlsAlerts)
+                {
+                    alertToken = null;
+                }
+                else if (!success)
+                {
+                    alertToken = CreateFatalHandshakeAlertToken(sslPolicyErrors, chain);
+                }
             }
             finally {
-                // At least on Win2k server the chain is found to have dependancies on the original cert context.
+                // At least on Win2k server the chain is found to have dependencies on the original cert context.
                 // So it should be closed first.
                 if (chain != null) {
                     chain.Reset();
@@ -1416,6 +1405,140 @@ namespace System.Net.Security {
             }
             GlobalLog.Leave("SecureChannel#" + ValidationHelper.HashString(this) + "::VerifyRemoteCertificate", success.ToString());
             return success;
+        }
+
+        public ProtocolToken CreateFatalHandshakeAlertToken(SslPolicyErrors sslPolicyErrors, X509Chain chain)
+        {
+            GlobalLog.Enter("SecureChannel#" + ValidationHelper.HashString(this) + "::CreateFatalHandshakeAlertToken");
+            TlsAlertMessage alertMessage;
+
+            switch (sslPolicyErrors)
+            {
+                case SslPolicyErrors.RemoteCertificateChainErrors:
+                    alertMessage = GetAlertMessageFromChain(chain);
+                    break;
+                case SslPolicyErrors.RemoteCertificateNameMismatch:
+                    alertMessage = TlsAlertMessage.BadCertificate;
+                    break;
+                case SslPolicyErrors.RemoteCertificateNotAvailable:
+                default:
+                    alertMessage = TlsAlertMessage.CertificateUnknown;
+                    break;
+            }
+
+            GlobalLog.Print("SecureChannel#" + ValidationHelper.HashString(this) + "::CreateFatalHandshakeAlertToken() alertMessage: " + alertMessage.ToString());
+            var status = (SecurityStatus)SSPIWrapper.ApplyAlertToken(GlobalSSPI.SSPISecureChannel, ref m_CredentialsHandle, m_SecurityContext, TlsAlertType.Fatal, alertMessage);
+
+            if (status != SecurityStatus.OK)
+            {
+                GlobalLog.Print("SecureChannel#" + ValidationHelper.HashString(this) + "::ApplyAlertToken() returned " + status);
+                throw new Win32Exception((int)status);
+            }
+
+            ProtocolToken token = GenerateAlertToken();
+            GlobalLog.Leave("SecureChannel#" + ValidationHelper.HashString(this) + "::CreateFatalHandshakeAlertToken", token.ToString());
+            return token;
+        }
+
+        public ProtocolToken CreateShutdownToken()
+        {
+            GlobalLog.Enter("SecureChannel#" + ValidationHelper.HashString(this) + "::CreateShutdownToken");
+            var status = (SecurityStatus)SSPIWrapper.ApplyShutdownToken(GlobalSSPI.SSPISecureChannel, ref m_CredentialsHandle, m_SecurityContext);
+
+            if (status != SecurityStatus.OK)
+            {
+                GlobalLog.Print("SecureChannel#" + ValidationHelper.HashString(this) + "::ApplyAlertToken() returned " + status);
+                throw new Win32Exception((int)status);
+            }
+
+            ProtocolToken token = GenerateAlertToken();
+            GlobalLog.Leave("SecureChannel#" + ValidationHelper.HashString(this) + "::CreateShutdownToken", token.ToString());
+            return token;
+        }
+
+        private ProtocolToken GenerateAlertToken()
+        {
+            byte[] nextmsg = null;
+            SecurityStatus status = GenerateToken(null, 0, 0, ref nextmsg);
+            ProtocolToken token = new ProtocolToken(nextmsg, status);
+            return token;
+        }
+
+        private static TlsAlertMessage GetAlertMessageFromChain(X509Chain chain)
+        {
+            foreach (X509ChainStatus chainStatus in chain.ChainStatus)
+            {
+                if (chainStatus.Status == X509ChainStatusFlags.NoError)
+                {
+                    continue;
+                }
+
+                if ((chainStatus.Status &
+                    (X509ChainStatusFlags.UntrustedRoot | X509ChainStatusFlags.PartialChain |
+                     X509ChainStatusFlags.Cyclic)) != 0)
+                {
+                    return TlsAlertMessage.UnknownCA;
+                }
+
+                if ((chainStatus.Status &
+                    (X509ChainStatusFlags.Revoked | X509ChainStatusFlags.OfflineRevocation)) != 0)
+                {
+                    return TlsAlertMessage.CertificateRevoked;
+                }
+
+                if ((chainStatus.Status &
+                    (X509ChainStatusFlags.CtlNotTimeValid | X509ChainStatusFlags.NotTimeNested |
+                     X509ChainStatusFlags.NotTimeValid)) != 0)
+                {
+                    return TlsAlertMessage.CertificateExpired;
+                }
+
+                if ((chainStatus.Status & X509ChainStatusFlags.CtlNotValidForUsage) != 0)
+                {
+                    return TlsAlertMessage.UnsupportedCert;
+                }
+
+                if ((chainStatus.Status &
+                    (X509ChainStatusFlags.CtlNotSignatureValid | X509ChainStatusFlags.InvalidExtension |
+                     X509ChainStatusFlags.NotSignatureValid | X509ChainStatusFlags.InvalidPolicyConstraints) |
+                     X509ChainStatusFlags.NoIssuanceChainPolicy | X509ChainStatusFlags.NotValidForUsage) != 0)
+                {
+                    return TlsAlertMessage.BadCertificate;
+                }
+
+                // All other errors:
+                return TlsAlertMessage.CertificateUnknown;
+            }
+
+            Debug.Fail("GetAlertMessageFromChain was called but none of the chain elements had errors.");
+            return TlsAlertMessage.BadCertificate;
+        }
+
+        private void LogCertificateValidation(RemoteCertValidationCallback remoteCertValidationCallback, SslPolicyErrors sslPolicyErrors, bool success, X509Chain chain)
+        {
+            if (sslPolicyErrors != SslPolicyErrors.None)
+            {
+                Logging.PrintInfo(Logging.Web, this, SR.GetString(SR.net_log_remote_cert_has_errors));
+                if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateNotAvailable) != 0)
+                    Logging.PrintInfo(Logging.Web, this, "\t" + SR.GetString(SR.net_log_remote_cert_not_available));
+                if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateNameMismatch) != 0)
+                    Logging.PrintInfo(Logging.Web, this, "\t" + SR.GetString(SR.net_log_remote_cert_name_mismatch));
+                if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateChainErrors) != 0)
+                    foreach (X509ChainStatus chainStatus in chain.ChainStatus)
+                        Logging.PrintInfo(Logging.Web, this, "\t" + chainStatus.StatusInformation);
+            }
+            if (success)
+            {
+                if (remoteCertValidationCallback != null)
+                    Logging.PrintInfo(Logging.Web, this, SR.GetString(SR.net_log_remote_cert_user_declared_valid));
+                else
+                    Logging.PrintInfo(Logging.Web, this, SR.GetString(SR.net_log_remote_cert_has_no_errors));
+            }
+            else
+            {
+                if (remoteCertValidationCallback != null)
+                    Logging.PrintInfo(Logging.Web, this, SR.GetString(SR.net_log_remote_cert_user_declared_invalid));
+            }
         }
 
         /*

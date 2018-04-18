@@ -14,7 +14,7 @@ namespace System.ServiceModel.Administration
             Fx.Assert(null != info, "");
             Fx.Assert(null != instance, "");
 //warning 56507 : Prefer 'string.IsNullOrEmpty(action)' over checks for null and/or emptiness.
-#pragma warning suppress 56507 //[....]; Asserting non-null object for marshalling reasons.  Empty string may be valid input.
+#pragma warning suppress 56507 //Microsoft; Asserting non-null object for marshalling reasons.  Empty string may be valid input.
             Fx.Assert(null != propertyName, "");
 
             string[] data = new string[info.Count];
@@ -31,7 +31,7 @@ namespace System.ServiceModel.Administration
             Fx.Assert(null != info, "");
             Fx.Assert(null != instance, "");
 //warning 56507 : Prefer 'string.IsNullOrEmpty(action)' over checks for null and/or emptiness.
-#pragma warning suppress 56507 //[....]; Asserting non-null object for marshalling reasons.  Empty string may be valid input.
+#pragma warning suppress 56507 //Microsoft; Asserting non-null object for marshalling reasons.  Empty string may be valid input.
             Fx.Assert(null != propertyName, "");
 
             int i = 0;

@@ -365,7 +365,7 @@ namespace System.Net {
                 throw new ArgumentNullException("creator");
             }
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
 
@@ -555,7 +555,7 @@ namespace System.Net {
             res.Add(new WebRequestPrefixElement("http", http));
             res.Add(new WebRequestPrefixElement("https", http));
             res.Add(new WebRequestPrefixElement("file", new FileWebRequestCreator ()));
-            res.Add(new WebRequestPrefixElement("ftp", new FtpRequestCreator ()));
+            res.Add(new WebRequestPrefixElement("ftp", new FtpWebRequestCreator ()));
 #else
             object cfg = ConfigurationManager.GetSection ("system.net/webRequestModules");
             WebRequestModulesSection s = cfg as WebRequestModulesSection;
@@ -622,7 +622,7 @@ namespace System.Net {
                 return RequestCacheManager.GetBinding(string.Empty).Policy;
             }
             set {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 // This is a replacement of RequestCachePermission demand since we are not including the latest in the product.
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
@@ -1017,7 +1017,7 @@ namespace System.Net {
         // GetRequestStream() and the reading phase to GetResponse(), but if there's no request body, both phases
         // may happen inside GetResponse().
         //
-        // Return null only on [....] (if we're on the [....] thread).  Otherwise throw if no context is available.
+        // Return null only on Sync (if we're on the Sync thread).  Otherwise throw if no context is available.
         internal virtual ContextAwareResult GetConnectingContext()
         {
             throw ExceptionHelper.MethodNotImplementedException;
@@ -1108,7 +1108,7 @@ namespace System.Net {
         {
             get
             {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 return InternalDefaultWebProxy;
@@ -1116,7 +1116,7 @@ namespace System.Net {
 
             set
             {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
                 InternalDefaultWebProxy = value;
@@ -1128,7 +1128,7 @@ namespace System.Net {
         //
         public static IWebProxy GetSystemWebProxy()
         {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             ExceptionHelper.WebPermissionUnrestricted.Demand();
 #endif
             return InternalGetSystemWebProxy();
@@ -1209,7 +1209,6 @@ namespace System.Net {
             }
         }
 
-#if !MONO
         //
         internal void SetupCacheProtocol(Uri uri)
         {
@@ -1224,6 +1223,7 @@ namespace System.Net {
             }
         }
 
+#if !MONO
         delegate void DelEtwFireBeginWRGet(object id, string uri, bool success, bool synchronous);
         delegate void DelEtwFireEndWRGet(object id, bool success, bool synchronous);
         delegate void DelEtwFireEndWRespGet(object id, bool success, bool synchronous, int statusCode);

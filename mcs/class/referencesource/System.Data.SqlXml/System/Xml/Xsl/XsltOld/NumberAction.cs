@@ -2,7 +2,7 @@
 // <copyright file="NumberAction.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Xsl.XsltOld {
@@ -417,7 +417,7 @@ namespace System.Xml.Xsl.XsltOld {
             }
         }
 
-        // [....]: perf.
+        // Microsoft: perf.
         // for each call to xsl:number Format() will build new NumberingFormat object.
         // in case of no AVTs we can build this object at compile time and reuse it on execution time.
         // even partial step in this d---- will be usefull (when cFormats == 0)

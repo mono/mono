@@ -1,3 +1,2 @@
-../../System.Web.DynamicData/Test/Common/AssertExtensions.cs
 System.Web/HttpApplicationStateBaseTest.cs
 System.Web/HttpFileCollectionWrapperTest.cs

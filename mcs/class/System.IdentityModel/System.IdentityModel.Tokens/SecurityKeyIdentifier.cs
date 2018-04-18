@@ -42,9 +42,9 @@ namespace System.IdentityModel.Tokens
 			this.list = new List<SecurityKeyIdentifierClause> ();
 		}
 
-		public SecurityKeyIdentifier (params SecurityKeyIdentifierClause [] identifiers)
+		public SecurityKeyIdentifier (params SecurityKeyIdentifierClause [] clauses)
 		{
-			this.list = new List<SecurityKeyIdentifierClause> (identifiers);
+			this.list = new List<SecurityKeyIdentifierClause> (clauses);
 		}
 
 		List<SecurityKeyIdentifierClause> list;
@@ -67,15 +67,15 @@ namespace System.IdentityModel.Tokens
 			get { return is_readonly; }
 		}
 
-		public SecurityKeyIdentifierClause this [int i] {
-			get { return list [i]; }
+		public SecurityKeyIdentifierClause this [int index] {
+			get { return list [index]; }
 		}
 
-		public void Add (SecurityKeyIdentifierClause item)
+		public void Add (SecurityKeyIdentifierClause clause)
 		{
 			if (is_readonly)
 				throw new InvalidOperationException ("This SecurityKeyIdentifier is read-only.");
-			list.Add (item);
+			list.Add (clause);
 		}
 
 		public SecurityKey CreateKey ()
@@ -121,13 +121,13 @@ namespace System.IdentityModel.Tokens
 			return sb.ToString ();
 		}
 
-		public bool TryFind<TClause> (out TClause result)
+		public bool TryFind<TClause> (out TClause clause)
 			where TClause : SecurityKeyIdentifierClause
 		{
-			result = default (TClause);
+			clause = default (TClause);
 			foreach (SecurityKeyIdentifierClause kic in this)
 				if (typeof (TClause).IsAssignableFrom (kic.GetType ())) {
-					result = (TClause) kic;
+					clause = (TClause) kic;
 					return true;
 				}
 			return false;

@@ -76,7 +76,13 @@ using System.Net;
 
         Md5         = (Alg.ClassHash | Alg.Any  | Alg.NameMD5),
 
-        Sha1        = (Alg.ClassHash | Alg.Any  | Alg.NameSHA)
+        Sha1        = (Alg.ClassHash | Alg.Any  | Alg.NameSHA),
+
+        Sha256      = (Alg.ClassHash | Alg.Any  | Alg.NameSHA256),
+
+        Sha384      = (Alg.ClassHash | Alg.Any  | Alg.NameSHA384),
+
+        Sha512      = (Alg.ClassHash | Alg.Any  | Alg.NameSHA512)
     }
 
 }

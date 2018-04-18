@@ -75,30 +75,30 @@ namespace System.ServiceModel.Security.Tokens
 		}
 
 		public SecureConversationSecurityTokenParameters (
-			SecurityBindingElement element)
-			: this (element, true)
+			SecurityBindingElement bootstrapSecurityBindingElement)
+			: this (bootstrapSecurityBindingElement, true)
 		{
 		}
 
 		public SecureConversationSecurityTokenParameters (
-			SecurityBindingElement element,
+			SecurityBindingElement bootstrapSecurityBindingElement,
 			bool requireCancellation)
-			: this (element, requireCancellation, null)
+			: this (bootstrapSecurityBindingElement, requireCancellation, null)
 		{
 		}
 
 #if !MOBILE && !XAMMAC_4_5
 		public SecureConversationSecurityTokenParameters (
-			SecurityBindingElement element,
+			SecurityBindingElement bootstrapSecurityBindingElement,
 			bool requireCancellation,
-			ChannelProtectionRequirements requirements)
+			ChannelProtectionRequirements bootstrapProtectionRequirements)
 		{
-			this.element = element;
+			this.element = bootstrapSecurityBindingElement;
 			this.cancellable = requireCancellation;
-			if (requirements == null)
+			if (bootstrapProtectionRequirements == null)
 				this.requirements = new ChannelProtectionRequirements (default_channel_protection_requirements);
 			else
-				this.requirements = new ChannelProtectionRequirements (requirements);
+				this.requirements = new ChannelProtectionRequirements (bootstrapProtectionRequirements);
 		}
 #else
 		internal SecureConversationSecurityTokenParameters (
@@ -111,11 +111,11 @@ namespace System.ServiceModel.Security.Tokens
 		}
 #endif
 
-		protected SecureConversationSecurityTokenParameters (SecureConversationSecurityTokenParameters source)
-			: base (source)
+		protected SecureConversationSecurityTokenParameters (SecureConversationSecurityTokenParameters other)
+			: base (other)
 		{
-			this.element = (SecurityBindingElement) source.element.Clone ();
-			this.cancellable = source.cancellable;
+			this.element = (SecurityBindingElement) other.element.Clone ();
+			this.cancellable = other.cancellable;
 #if !MOBILE && !XAMMAC_4_5
 			this.requirements = new ChannelProtectionRequirements (default_channel_protection_requirements);
 #endif

@@ -48,7 +48,7 @@ namespace MonoTests.System.Runtime.Caching
 
 		static void Host_SetToNull ()
 		{
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				ObjectCache.Host = null;
 			}, "#A2");
 		}
@@ -61,7 +61,7 @@ namespace MonoTests.System.Runtime.Caching
 			Assert.IsNotNull (ObjectCache.Host, "#A3-1");
 			Assert.AreEqual (tns1, ObjectCache.Host, "#A3-2");
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				ObjectCache.Host = tns2;
 			}, "#A4");
 		}

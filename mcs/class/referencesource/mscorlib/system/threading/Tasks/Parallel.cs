@@ -7,7 +7,7 @@
 //
 // Parallel.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A helper class that contains parallel versions of various looping constructs.  This
 // internally uses the task parallel library, but takes care to expose very little 
@@ -122,8 +122,10 @@ namespace System.Threading.Tasks
             get { return m_cancellationToken; }
             set
             {
+#if !MONO                
                 if (value == null)
                     throw new ArgumentNullException("CancellationToken");
+#endif
                 m_cancellationToken = value;
             }
         }
@@ -245,10 +247,11 @@ namespace System.Threading.Tasks
                 }
             }
 
+#if !MONO
             // ETW event for Parallel Invoke Begin
             int forkJoinContextID = 0;
             Task callerTask = null;
-#if !MONO            
+           
             if (TplEtwProvider.Log.IsEnabled())
             {
                 forkJoinContextID = Interlocked.Increment(ref s_forkJoinContextID);
@@ -1095,10 +1098,11 @@ namespace System.Threading.Tasks
                 }, null);
             }
 
+#if !MONO
             // ETW event for Parallel For begin
             int forkJoinContextID = 0;
             Task callingTask = null;
-#if !MONO            
+            
             if (TplEtwProvider.Log.IsEnabled())
             {
                 forkJoinContextID = Interlocked.Increment(ref s_forkJoinContextID);
@@ -1418,10 +1422,11 @@ namespace System.Threading.Tasks
                 }, null);
             }
 
+#if !MONO
             // ETW event for Parallel For begin
             Task callerTask = null;
             int forkJoinContextID = 0;
-#if !MONO
+
             if (TplEtwProvider.Log.IsEnabled())
             {
                 forkJoinContextID = Interlocked.Increment(ref s_forkJoinContextID);

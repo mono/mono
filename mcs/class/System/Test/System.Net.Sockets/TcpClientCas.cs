@@ -50,7 +50,6 @@ namespace MonoCasTests.System.Net.Sockets {
 		}
 
 		// async tests (for stack propagation)
-/* Oops - not yet implemented in Mono
 		private void ConnectCallback (IAsyncResult ar)
 		{
 			TcpClient c = (TcpClient)ar.AsyncState;
@@ -115,6 +114,5 @@ namespace MonoCasTests.System.Net.Sockets {
 				Assert.Ignore ("Timeout");
 			Assert.IsNull (message, message);
 		}
-*/
 	}
 }

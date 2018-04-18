@@ -7,7 +7,7 @@
 **
 ** Class:  Contract
 ** 
-** <OWNER>[....],mbarnett</OWNER>
+** <OWNER>Microsoft,mbarnett</OWNER>
 **
 ** Purpose: The contract class allows for expressing preconditions,
 ** postconditions, and object invariants about methods in source

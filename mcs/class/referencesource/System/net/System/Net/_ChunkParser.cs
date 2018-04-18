@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace System.Net
 {
-    // This class is a helper for parsing chunked HTTP responses. Usage is to either call Read() ([....]) or ReadAsync()
+    // This class is a helper for parsing chunked HTTP responses. Usage is to either call Read() (sync) or ReadAsync()
     // (async) methods to retrieve the response payload (without chunk metadata).
     // The buffer passed to the .ctor is owned by the ChunkParser until the whole response is read (i.e. Read/
     // ReadAsync return 0 bytes) or an error occurs.

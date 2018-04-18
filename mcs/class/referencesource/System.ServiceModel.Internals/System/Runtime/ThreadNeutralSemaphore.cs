@@ -105,7 +105,7 @@ namespace System.Runtime
             {
                 if (!thisPtr.RemoveWaiter(data.Waiter))
                 {
-                    // The timeout ----d with Exit and exit won.
+                    // The timeout raced with Exit and exit won.
                     // We've successfully entered.
                     exceptionToPropagate = null;
                 }
@@ -160,7 +160,7 @@ namespace System.Runtime
 
                 if (timedOut && !RemoveWaiter(waiter))
                 {
-                    // The timeout ----d with Exit and exit won.
+                    // The timeout raced with Exit and exit won.
                     // We've successfully entered.
 
                     timedOut = false;

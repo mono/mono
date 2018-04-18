@@ -14,6 +14,7 @@ namespace System.ServiceModel.Activities.Presentation
     using System.ServiceModel.Dispatcher;
     using System.Text;
     using System.Windows;
+    using System.Windows.Automation;
     using System.Windows.Controls;
     using System.Windows.Input;
     using System.Xml;
@@ -98,6 +99,22 @@ namespace System.ServiceModel.Activities.Presentation
                 }
             }
             base.OnKeyDown(e);
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (!LocalAppContextSwitches.UseLegacyAccessibilityFeatures)
+            {
+                this.SetValue(AutomationProperties.NameProperty, this.Resources["MessageQueryEditorAutomationName"]);
+                if (this.IsEditable && this.Template != null)
+                {
+                    var textBox = this.Template.FindName("PART_EditableTextBox", this) as TextBox;
+                    if (textBox != null)
+                    {
+                        textBox.SetValue(AutomationProperties.NameProperty, this.GetValue(AutomationProperties.NameProperty));
+                    }
+                }
+            }
         }
 
         //user double clicked on the expanded type, create a xpath

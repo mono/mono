@@ -18,12 +18,10 @@ namespace System.Security.Cryptography
             throw new NotImplementedException ();
         }
 
-#if NETSTANDARD
         public RSACng(CngKey key)
         {
             throw new NotImplementedException ();
         }
-#endif
 
         public CngKey Key
         {
@@ -89,6 +87,7 @@ namespace System.Security.Cryptography
         /// <exception cref="ArgumentException">if <paramref name="key" /> is not an RSA key</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="key" /> is null.</exception>
         [SecuritySafeCritical]
+        [SecurityPermission(SecurityAction.Assert, UnmanagedCode = true)]
         public RSACng(CngKey key)
         {
             if (key == null)
@@ -117,6 +116,7 @@ namespace System.Security.Cryptography
         public CngKey Key
         {
             [SecuritySafeCritical]
+            [SecurityPermission(SecurityAction.Assert, UnmanagedCode = true)]
             get
             {
                 // If our key size was changed from the key we're using, we need to generate a new key
@@ -135,15 +135,15 @@ namespace System.Security.Cryptography
                     };
 
                     CngProperty keySizeProperty = new CngProperty(NCryptNative.KeyPropertyName.Length,
-                                                                  BitConverter.GetBytes(KeySize),
-                                                                  CngPropertyOptions.None);
+                                                                    BitConverter.GetBytes(KeySize),
+                                                                    CngPropertyOptions.None);
                     creationParameters.Parameters.Add(keySizeProperty);
                     _key = CngKey.Create(CngAlgorithm.Rsa, null, creationParameters);
                 }
 
                 return _key;
             }
-
+            
             private set
             {
                 Debug.Assert(value != null, "value != null");
@@ -183,6 +183,7 @@ namespace System.Security.Cryptography
         private SafeNCryptKeyHandle KeyHandle
         {
             [SecuritySafeCritical]
+            [SecurityPermission(SecurityAction.Assert, UnmanagedCode = true)]
             get { return Key.Handle; }
         }
 
@@ -444,7 +445,7 @@ namespace System.Security.Cryptography
                 throw new ArgumentNullException("padding");
             }
 
-            SafeNCryptKeyHandle keyHandle = Key.Handle;
+            SafeNCryptKeyHandle keyHandle = KeyHandle;
 
             if (padding == RSAEncryptionPadding.Pkcs1)
             {
@@ -494,6 +495,7 @@ namespace System.Security.Cryptography
         //
 
         [SecuritySafeCritical]
+        [SecurityPermission(SecurityAction.Assert, UnmanagedCode = true)]
         public override byte[] SignHash(byte[] hash, HashAlgorithmName hashAlgorithm, RSASignaturePadding padding)
         {
             if (hash == null)

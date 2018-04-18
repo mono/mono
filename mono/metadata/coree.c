@@ -1,5 +1,6 @@
-/*
- * coree.c: mscoree.dll functions
+/**
+ * \file
+ * mscoree.dll functions
  *
  * Author:
  *   Kornel Pal <http://www.kornelpal.hu/>
@@ -12,14 +13,14 @@
 
 #ifdef HOST_WIN32
 
-#include <string.h>
 #include <glib.h>
-#include <mono/io-layer/io-layer.h>
+#include <string.h>
 #include <mono/utils/mono-path.h>
+#include "utils/w32api.h"
 #include "cil-coff.h"
 #include "metadata-internals.h"
 #include "image.h"
-#include "assembly.h"
+#include "assembly-internals.h"
 #include "domain-internals.h"
 #include "appdomain.h"
 #include "object.h"
@@ -28,8 +29,11 @@
 #include "threads.h"
 #include "environment.h"
 #include "coree.h"
+#include "coree-internals.h"
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 #include <shellapi.h>
+#endif
 
 HMODULE coree_module_handle = NULL;
 
@@ -68,6 +72,7 @@ mono_get_module_file_name (HMODULE module_handle)
 }
 
 /* Entry point called by LdrLoadDll of ntdll.dll after _CorValidateImage. */
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 BOOL STDMETHODCALLTYPE _CorDllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpReserved)
 {
 	MonoAssembly* assembly;
@@ -115,7 +120,7 @@ BOOL STDMETHODCALLTYPE _CorDllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpRes
 		 * probably be delayed until the first call to an exported function.
 		 */
 		if (image->tables [MONO_TABLE_ASSEMBLY].rows && ((MonoCLIImageInfo*) image->image_info)->cli_cli_header.ch_vtable_fixups.rva)
-			assembly = mono_assembly_open (file_name, NULL);
+			assembly = mono_assembly_open_predicate (file_name, FALSE, FALSE, NULL, NULL, NULL);
 
 		g_free (file_name);
 		break;
@@ -134,11 +139,13 @@ BOOL STDMETHODCALLTYPE _CorDllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpRes
 
 	return TRUE;
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 /* Called by ntdll.dll reagardless of entry point after _CorValidateImage. */
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 __int32 STDMETHODCALLTYPE _CorExeMain(void)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoDomain* domain;
 	MonoAssembly* assembly;
 	MonoImage* image;
@@ -164,7 +171,7 @@ __int32 STDMETHODCALLTYPE _CorExeMain(void)
 		ExitProcess (1);
 	}
 
-	assembly = mono_assembly_open (file_name, NULL);
+	assembly = mono_assembly_open_predicate (file_name, FALSE, FALSE, NULL, NULL, NULL);
 	mono_close_exe_image ();
 	if (!assembly) {
 		g_free (file_name);
@@ -182,10 +189,10 @@ __int32 STDMETHODCALLTYPE _CorExeMain(void)
 		ExitProcess (1);
 	}
 
-	method = mono_get_method_checked (image, entry, NULL, NULL, &error);
+	method = mono_get_method_checked (image, entry, NULL, NULL, error);
 	if (method == NULL) {
 		g_free (file_name);
-		mono_error_cleanup (&error); /* FIXME don't swallow the error */
+		mono_error_cleanup (error); /* FIXME don't swallow the error */
 		MessageBox (NULL, L"The entry point method could not be loaded.", NULL, MB_ICONERROR);
 		mono_runtime_quit ();
 		ExitProcess (1);
@@ -198,8 +205,8 @@ __int32 STDMETHODCALLTYPE _CorExeMain(void)
 		argv [i] = g_utf16_to_utf8 (argvw [i], -1, NULL, NULL, NULL);
 	LocalFree (argvw);
 
-	mono_runtime_run_main_checked (method, argc, argv, &error);
-	mono_error_raise_exception (&error); /* OK, triggers unhandled exn handler */
+	mono_runtime_run_main_checked (method, argc, argv, error);
+	mono_error_raise_exception_deprecated (error); /* OK, triggers unhandled exn handler */
 	mono_thread_manage ();
 
 	mono_runtime_quit ();
@@ -207,6 +214,7 @@ __int32 STDMETHODCALLTYPE _CorExeMain(void)
 	/* return does not terminate the process. */
 	ExitProcess (mono_environment_exitcode_get ());
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 /* Called by msvcrt.dll when shutting down. */
 void STDMETHODCALLTYPE CorExitProcess(int exitCode)
@@ -223,6 +231,7 @@ void STDMETHODCALLTYPE CorExitProcess(int exitCode)
 }
 
 /* Called by ntdll.dll before _CorDllMain and _CorExeMain. */
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 STDAPI _CorValidateImage(PVOID *ImageBase, LPCWSTR FileName)
 {
 	IMAGE_DOS_HEADER* DosHeader;
@@ -385,6 +394,7 @@ STDAPI _CorValidateImage(PVOID *ImageBase, LPCWSTR FileName)
 
 	return STATUS_SUCCESS;
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 /* Called by ntdll.dll. */
 STDAPI_(VOID) _CorImageUnloading(PVOID ImageBase)
@@ -406,6 +416,7 @@ STDAPI CorBindToRuntime(LPCWSTR pwszVersion, LPCWSTR pwszBuildFlavor, REFCLSID r
 	return CorBindToRuntimeEx (pwszVersion, pwszBuildFlavor, 0, rclsid, riid, ppv);
 }
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 HMODULE WINAPI MonoLoadImage(LPCWSTR FileName)
 {
 	HANDLE FileHandle;
@@ -482,6 +493,7 @@ CloseFile:
 	CloseHandle(FileHandle);
 	return NULL;
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 typedef struct _EXPORT_FIXUP
 {
@@ -499,14 +511,14 @@ typedef struct _EXPORT_FIXUP
 
 /* Has to be binary ordered. */
 static const EXPORT_FIXUP ExportFixups[] = {
-	{"CorBindToRuntime", &CorBindToRuntime},
-	{"CorBindToRuntimeEx", &CorBindToRuntimeEx},
-	{"CorExitProcess", &CorExitProcess},
-	{"_CorDllMain", &_CorDllMain},
-	{"_CorExeMain", &_CorExeMain},
-	{"_CorImageUnloading", &_CorImageUnloading},
-	{"_CorValidateImage", &_CorValidateImage},
-	{NULL, NULL}
+	{"CorBindToRuntime", {&CorBindToRuntime}},
+	{"CorBindToRuntimeEx", {&CorBindToRuntimeEx}},
+	{"CorExitProcess", {&CorExitProcess}},
+	{"_CorDllMain", {&_CorDllMain}},
+	{"_CorExeMain", {&_CorExeMain}},
+	{"_CorImageUnloading", {&_CorImageUnloading}},
+	{"_CorValidateImage", {&_CorValidateImage}},
+	{NULL, {NULL}}
 };
 
 #define EXPORT_FIXUP_COUNT (sizeof(ExportFixups) / sizeof(EXPORT_FIXUP) - 1)
@@ -795,7 +807,15 @@ STDAPI MonoFixupExe(HMODULE ModuleHandle)
 			ImportDesc = (IMAGE_IMPORT_DESCRIPTOR*)((DWORD_PTR)DosHeader + ImportDir->VirtualAddress);
 			while (ImportDesc->Name && ImportDesc->OriginalFirstThunk)
 			{
-				ImportModuleHandle = LoadLibraryA((PCSTR)((DWORD_PTR)DosHeader + ImportDesc->Name));
+				gchar *file_utf8 = (gchar *)((DWORD_PTR)DosHeader + ImportDesc->Name);
+
+				gunichar2 *file_utf16 = g_utf8_to_utf16 (file_utf8, (glong)strlen (file_utf8), NULL, NULL, NULL);
+				ImportModuleHandle = NULL;
+				if (file_utf16 != NULL) {
+					ImportModuleHandle = LoadLibraryW(file_utf16);
+					g_free (file_utf16);
+				}
+
 				if (ImportModuleHandle == NULL)
 					return E_FAIL;
 
@@ -828,8 +848,9 @@ STDAPI MonoFixupExe(HMODULE ModuleHandle)
 	return S_OK;
 }
 
-static void
-mono_set_act_ctx (const char* file_name)
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+void
+mono_coree_set_act_ctx (const char* file_name)
 {
 	typedef HANDLE (WINAPI* CREATEACTCTXW_PROC) (PCACTCTXW pActCtx);
 	typedef BOOL (WINAPI* ACTIVATEACTCTX_PROC) (HANDLE hActCtx, ULONG_PTR* lpCookie);
@@ -888,6 +909,7 @@ mono_set_act_ctx (const char* file_name)
 	if (handle != INVALID_HANDLE_VALUE)
 		ActivateActCtx_proc (handle, &cookie);
 }
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 void
 mono_load_coree (const char* exe_file_name)
@@ -901,7 +923,7 @@ mono_load_coree (const char* exe_file_name)
 		return;
 
 	if (!init_from_coree && exe_file_name)
-		mono_set_act_ctx (exe_file_name);
+		mono_coree_set_act_ctx (exe_file_name);
 
 	/* ntdll.dll loads mscoree.dll from the system32 directory. */
 	required_size = GetSystemDirectory (NULL, 0);

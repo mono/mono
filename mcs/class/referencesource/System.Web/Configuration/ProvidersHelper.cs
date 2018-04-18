@@ -47,11 +47,48 @@ namespace System.Web.Configuration
         }
 
         [AspNetHostingPermission(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
+        internal static ProviderBase InstantiateProvider(NameValueCollection providerSettings, Type providerType) {
+            ProviderBase provider = null;
+            try {
+                string pnName = GetAndRemoveStringValue(providerSettings, "name");
+                string pnType = GetAndRemoveStringValue(providerSettings, "type");
+                if (string.IsNullOrEmpty(pnType))
+                    throw new ArgumentException(SR.GetString(SR.Provider_no_type_name));
+                Type t = ConfigUtil.GetType(pnType, "type", null, null, true, true);
+
+                if (!providerType.IsAssignableFrom(t))
+                    throw new ArgumentException(SR.GetString(SR.Provider_must_implement_type, providerType.ToString()));
+                provider = (ProviderBase)HttpRuntime.CreatePublicInstance(t);
+
+                // Because providers modify the parameters collection (i.e. delete stuff), pass in a clone of the collection
+                NameValueCollection cloneParams = new NameValueCollection(providerSettings.Count, StringComparer.Ordinal);
+                foreach (string key in providerSettings)
+                    cloneParams[key] = providerSettings[key];
+                provider.Initialize(pnName, cloneParams);
+            }
+            catch (Exception e) {
+                if (e is ConfigurationException)
+                    throw;
+                throw new ConfigurationErrorsException(e.Message, e);
+            }
+
+            return provider;
+        }
+
+        [AspNetHostingPermission(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
         public static void InstantiateProviders(ProviderSettingsCollection configProviders, ProviderCollection providers, Type providerType)
         {
             foreach (ProviderSettings ps in configProviders) {
                 providers.Add(InstantiateProvider(ps, providerType));
             }
+        }
+
+        private static string GetAndRemoveStringValue(NameValueCollection collection, string key) {
+            string strValue = collection[key] as string;
+            if (!string.IsNullOrEmpty(strValue))
+                strValue = strValue.Trim();
+            collection.Remove(key);
+            return strValue;
         }
     }
 }

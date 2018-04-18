@@ -88,13 +88,13 @@ namespace System.Web
 			BaseClear ();
 		}
 
-		public void CopyTo (Array array, int index)
+		public void CopyTo (Array dest, int index)
 		{
 			/* XXX this is kind of gross and inefficient
 			 * since it makes a copy of the superclass's
 			 * list */
 			object[] values = BaseGetAllValues();
-			values.CopyTo (array, index);
+			values.CopyTo (dest, index);
 		}
 
 		public string GetKey (int index)

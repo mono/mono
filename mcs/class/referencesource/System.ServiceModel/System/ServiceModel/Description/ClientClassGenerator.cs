@@ -61,7 +61,7 @@ namespace System.ServiceModel.Description
         static string getDefaultValueForInitializationMethodName = "GetDefaultValueForInitialization";
 
         // IMPORTANT: this table tracks the set of .ctors in ClientBase and DuplexClientBase. 
-        // This table must be kept in [....]
+        // This table must be kept in sync
         // for DuplexClientBase, the initial InstanceContext param is assumed; ctor overloads must match between ClientBase and DuplexClientBase
         static Type[][] ClientCtorParamTypes = new Type[][]
             {
@@ -107,7 +107,7 @@ namespace System.ServiceModel.Description
 
 #if DEBUG
         static BindingFlags ctorBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-        static string DebugCheckTable_errorString = "Client code generation table out of [....] with ClientBase and DuplexClientBase ctors. Please investigate.";
+        static string DebugCheckTable_errorString = "Client code generation table out of sync with ClientBase and DuplexClientBase ctors. Please investigate.";
 
         // check the table against what we would get from reflection
         static void DebugCheckTable()

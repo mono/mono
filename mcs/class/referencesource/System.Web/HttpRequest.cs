@@ -769,11 +769,8 @@ namespace System.Web {
                     storedResponseCookies = Response.GetCookiesNoCreate();
                 }
 
-                if (storedResponseCookies != null && storedResponseCookies.Count > 0) {
-                    HttpCookie[] responseCookieArray = new HttpCookie[storedResponseCookies.Count];
-                    storedResponseCookies.CopyTo(responseCookieArray, 0);
-                    for (int iCookie = 0; iCookie < responseCookieArray.Length; iCookie++)
-                        cookieCollection.AddCookie(responseCookieArray[iCookie], append: true);
+                if (storedResponseCookies != null) {
+                    cookieCollection.Append(storedResponseCookies);
                 }
 
                 // release any stored reference to the response cookie collection

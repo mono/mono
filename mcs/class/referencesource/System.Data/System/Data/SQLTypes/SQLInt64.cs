@@ -3,8 +3,8 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 //  </copyright>
 // <owner current="true" primary="true">junfang</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 //**************************************************************************
@@ -47,8 +47,8 @@ namespace System.Data.SqlTypes {
         private bool m_fNotNull; // false if null
         private long m_value;
 
-        private static readonly long x_lLowIntMask  = 0xffffffff;
-        private static readonly long x_lHighIntMask = unchecked((long)0xffffffff00000000);
+        private const long x_lLowIntMask  = 0xffffffff;
+        private const long x_lHighIntMask = unchecked((long)0xffffffff00000000);
 
 
         // constructor

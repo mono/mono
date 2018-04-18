@@ -663,7 +663,7 @@ namespace System.Web {
         // List of functions supported by PMCallISAPI
         //
         // ATTENTION!!
-        // If you change this list, make sure it is in [....] with the
+        // If you change this list, make sure it is in sync with the
         // CallISAPIFunc enum in ecbdirect.h
         //
         internal enum CallISAPIFunc : int {

@@ -20,7 +20,7 @@ namespace System {
     using System.Security.Permissions;
     [Serializable]
     [System.Runtime.InteropServices.ComVisible(true)]
-#if FEATURE_REMOTING
+#if FEATURE_REMOTING || MONO
     public abstract class ContextBoundObject : MarshalByRefObject {
 #else // FEATURE_REMOTING
     public abstract class ContextBoundObject {

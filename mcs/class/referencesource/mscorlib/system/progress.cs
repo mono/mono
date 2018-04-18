@@ -7,7 +7,7 @@
 **
 ** Class:  Progress<T>
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Event-based implementation of IProgress<T>.
@@ -46,8 +46,8 @@ namespace System
         public Progress()
         {
             // Capture the current synchronization context.  "current" is determined by CurrentNoFlow,
-            // which doesn't consider the [....] ctx flown with an ExecutionContext, avoiding
-            // [....] ctx reference identity issues where the [....] ctx for one thread could be Current on another.
+            // which doesn't consider the sync ctx flown with an ExecutionContext, avoiding
+            // sync ctx reference identity issues where the sync ctx for one thread could be Current on another.
             // If there is no current context, we use a default instance targeting the ThreadPool.
             m_synchronizationContext = SynchronizationContext.CurrentNoFlow ?? ProgressStatics.DefaultContext;
             Contract.Assert(m_synchronizationContext != null);
@@ -80,14 +80,14 @@ namespace System
         /// <param name="value">The value of the updated progress.</param>
         protected virtual void OnReport(T value)
         {
-            // If there's no handler, don't bother going through the [....] context.
+            // If there's no handler, don't bother going through the sync context.
             // Inside the callback, we'll need to check again, in case 
             // an event handler is removed between now and then.
             Action<T> handler = m_handler;
             EventHandler<T> changedEvent = ProgressChanged;
             if (handler != null || changedEvent != null)
             {
-                // Post the processing to the [....] context.
+                // Post the processing to the sync context.
                 // (If T is a value type, it will get boxed here.)
                 m_synchronizationContext.Post(m_invokeHandlers, value);
             }

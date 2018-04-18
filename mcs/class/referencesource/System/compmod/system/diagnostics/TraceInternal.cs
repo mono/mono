@@ -18,8 +18,10 @@ namespace System.Diagnostics {
         [ThreadStatic]
         static int indentLevel;
         static volatile int indentSize;
+#if CONFIGURATION_DEP
         static volatile bool settingsInitialized;
         static volatile bool defaultInitialized;
+#endif
 
 
         // this is internal so TraceSource can use it.  We want to lock on the same object because both TraceInternal and 
@@ -62,7 +64,7 @@ namespace System.Diagnostics {
         internal static string AppName {
             get {
                 if (appName == null) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                     new EnvironmentPermission(EnvironmentPermissionAccess.Read, "Path").Assert();
 #endif
                     appName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
@@ -303,7 +305,9 @@ namespace System.Diagnostics {
         // in the System.Diagnostics.Trace class
         static internal void Refresh() {
             lock (critSec) {
+#if CONFIGURATION_DEP
                 settingsInitialized = false;
+#endif
                 listeners = null;
             }
             InitializeSettings();

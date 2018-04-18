@@ -2,8 +2,8 @@
 // <copyright file="SqlError.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -16,7 +16,7 @@ namespace System.Data.SqlClient {
     public sealed class SqlError {
 
         // bug fix - MDAC 48965 - missing source of exception
-        // fixed by [....]
+        // fixed by Microsoft
         private string source = TdsEnums.SQL_PROVIDER_NAME;
         private int    number;
         private byte   state;
@@ -61,7 +61,7 @@ namespace System.Data.SqlClient {
         }
 
         // bug fix - MDAC #48965 - missing source of exception
-        // fixed by [....]
+        // fixed by Microsoft
         public string Source {
             get { return this.source;}
         }

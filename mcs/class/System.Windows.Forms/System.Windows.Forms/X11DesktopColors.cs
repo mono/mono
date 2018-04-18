@@ -267,8 +267,8 @@ namespace System.Windows.Forms {
 		#endregion	// Methods
 
 		#region	DllImports
-		const string libgdk = "libgdk-x11-2.0.so.0";
-		const string libgtk = "libgtk-x11-2.0.so.0";
+		const string libgdk = "libgdk-x11-2.0";
+		const string libgtk = "libgtk-x11-2.0";
 		
 		[DllImport(libgtk)]
 		static extern bool gtk_init_check (IntPtr argc, IntPtr argv);

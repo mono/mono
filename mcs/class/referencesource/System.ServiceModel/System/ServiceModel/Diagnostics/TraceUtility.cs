@@ -545,8 +545,8 @@ namespace System.ServiceModel.Diagnostics
                 (message.State != MessageState.Closed))
             {
                 object property;
-
-                if (message.Properties.TryGetValue(TraceUtility.ActivityIdKey, out property))
+                
+                if (message.GetProperty(TraceUtility.ActivityIdKey, out property))
                 {
                     retval = property as ServiceModelActivity;
                 }
@@ -603,7 +603,7 @@ namespace System.ServiceModel.Diagnostics
             {
                 // If the property is just removed, the item is disposed and we don't want the thing
                 // to be disposed of.
-                message.Properties[TraceUtility.ActivityIdKey] = false;
+                message.SetProperty(TraceUtility.ActivityIdKey, false);
             }
             return retval;
         }
@@ -659,7 +659,7 @@ namespace System.ServiceModel.Diagnostics
         {
             if (DiagnosticUtility.ShouldUseActivity && message != null && message.State != MessageState.Closed)
             {
-                message.Properties[TraceUtility.ActivityIdKey] = activity;
+                message.SetProperty(TraceUtility.ActivityIdKey, activity);
             }
         }
 

@@ -11,7 +11,7 @@
 // See spec at http://avalon/connecteddata/Specs/Collection%20Interfaces.mht
 //
 // History:
-//  11/22/2004 : [....] - created
+//  11/22/2004 : Microsoft - created
 //
 //---------------------------------------------------------------------------
 

@@ -7,7 +7,7 @@
 **
 ** Class:  ResourceSet
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Culture-specific collection of resources.

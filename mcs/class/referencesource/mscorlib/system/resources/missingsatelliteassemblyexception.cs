@@ -7,7 +7,7 @@
 **
 ** Class:  MissingSatelliteAssemblyException
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Exception for a missing satellite assembly needed

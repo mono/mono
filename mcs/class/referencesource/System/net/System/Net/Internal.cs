@@ -143,7 +143,7 @@ namespace System.Net {
 
         private static void DemandCallback(object state)
         {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             ((CodeAccessPermission) state).Demand();
 #endif
         }
@@ -309,7 +309,9 @@ namespace System.Net {
         private static IPHostEntry GetLocalHost()
         {
 #if MONO
+#pragma warning disable 618
             return Dns.GetHostByName (Dns.GetHostName ());
+#pragma warning restore
 #else
             //
             // IPv6 Changes: If IPv6 is enabled, we can't simply use the
@@ -444,7 +446,7 @@ namespace System.Net {
     }
     
     //
-    // A simple [....] point, useful for deferring work.  Just an int value with helper methods.
+    // A simple sync point, useful for deferring work.  Just an int value with helper methods.
     // This is used by HttpWebRequest to syncronize Reads/Writes while waiting for a 100-Continue response.
     //
     internal struct InterlockedGate
@@ -953,7 +955,7 @@ namespace System.Net {
         // There are threading tricks a malicious app can use to create an ArraySegment with mismatched 
         // array/offset/count.  Copy locally and make sure they're valid before using them.
         internal static void ValidateSegment(ArraySegment<byte> segment) {
-            if (segment == null || segment.Array == null) {
+            if (/*segment == null ||*/ segment.Array == null) {
                 throw new ArgumentNullException("segment");
             }
             // Length zero is explicitly allowed
@@ -966,7 +968,7 @@ namespace System.Net {
 
     internal static class ExceptionHelper
     {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
         internal static readonly KeyContainerPermission KeyContainerPermissionOpen = new KeyContainerPermission(KeyContainerPermissionFlags.Open);
         internal static readonly WebPermission WebPermissionUnrestricted = new WebPermission(NetworkAccess.Connect);
         internal static readonly SecurityPermission UnmanagedPermission = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
@@ -986,6 +988,10 @@ namespace System.Net {
                 return new NotImplementedException(SR.GetString(SR.net_PropertyNotImplementedException));
             }
         }
+
+#if MONO
+        internal static WebException TimeoutException => new WebException(SR.net_timeout);
+#endif
 
         internal static NotSupportedException MethodNotSupportedException {
             get {

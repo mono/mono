@@ -2,8 +2,8 @@
 // <copyright file="System.Data_BID.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //-----------------------------------------------------------------------------------------------
 
 using System;
@@ -262,7 +262,7 @@ internal static partial class Bid
     [BidMethod]
     [BidArgumentType(typeof(string))] // format string should have a string spec (%ls) for an Activity ID argument as last
     internal static void CorrelationTrace(string fmtPrintfW, System.Int32 a1) {
-        if ((modFlags & System.Data.Common.ActivityCorrelator.CorrelationTracePoints) != 0
+        if ((modFlags & Bid.ApiGroup.Correlation) != 0
             && (modFlags & Bid.ApiGroup.Trace) != 0 && modID != NoData) {
             System.Data.Common.ActivityCorrelator.ActivityId actId = System.Data.Common.ActivityCorrelator.Next();
             NativeMethods.Trace(modID, UIntPtr.Zero, UIntPtr.Zero, fmtPrintfW, a1, actId.ToString());
@@ -273,7 +273,7 @@ internal static partial class Bid
     [BidArgumentType(typeof(string))] // format string should have a string spec (%ls) for an Activity ID argument as last
     internal static void CorrelationTrace(string fmtPrintfW)
     {
-        if ((modFlags & System.Data.Common.ActivityCorrelator.CorrelationTracePoints) != 0
+        if ((modFlags & Bid.ApiGroup.Correlation) != 0
             && (modFlags & Bid.ApiGroup.Trace) != 0 && modID != NoData) {
             System.Data.Common.ActivityCorrelator.ActivityId actId = System.Data.Common.ActivityCorrelator.Next();
             NativeMethods.Trace(modID, UIntPtr.Zero, UIntPtr.Zero, fmtPrintfW, actId.ToString());
@@ -283,7 +283,7 @@ internal static partial class Bid
     [BidMethod]
     [BidArgumentType(typeof(string))] // format string should have a string spec (%ls) for an Activity ID argument as last
     internal static void CorrelationTrace(string fmtPrintfW, System.Int32 a1, System.Int32 a2) {
-        if ((modFlags & System.Data.Common.ActivityCorrelator.CorrelationTracePoints) != 0
+        if ((modFlags & Bid.ApiGroup.Correlation) != 0
             && (modFlags & Bid.ApiGroup.Trace) != 0 && modID != NoData) {
             System.Data.Common.ActivityCorrelator.ActivityId actId = System.Data.Common.ActivityCorrelator.Next();
             NativeMethods.Trace(modID, UIntPtr.Zero, UIntPtr.Zero, fmtPrintfW, a1, a2, actId.ToString());

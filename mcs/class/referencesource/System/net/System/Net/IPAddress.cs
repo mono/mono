@@ -183,8 +183,8 @@ namespace System.Net {
                 // call !
                 //
                 SocketException e = null;
-                long   scope = 0;
 #if !MONO
+                long   scope = 0;
                 if(Socket.OSSupportsIPv6)
                 {
                     byte[] bytes = new byte[IPv6AddressBytes];

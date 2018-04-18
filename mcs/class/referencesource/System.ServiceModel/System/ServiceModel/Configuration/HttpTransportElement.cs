@@ -211,7 +211,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             HttpTransportElement source = (HttpTransportElement)from;
-#pragma warning suppress 56506 // [....], base.CopyFrom() validates the argument
+#pragma warning suppress 56506 // Microsoft, base.CopyFrom() validates the argument
             this.AllowCookies = source.AllowCookies;
             this.RequestInitializationTimeout = source.RequestInitializationTimeout;
             this.AuthenticationScheme = source.AuthenticationScheme;

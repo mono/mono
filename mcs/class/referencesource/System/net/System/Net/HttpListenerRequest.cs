@@ -303,6 +303,8 @@ namespace System.Net {
         // Note: RequestBuffer may get moved in memory. If you dereference a pointer from inside the RequestBuffer, 
         // you must use 'OriginalBlobAddress' below to adjust the location of the pointer to match the location of
         // RequestBuffer.
+        // 
+
         internal byte[] RequestBuffer
         {
             get
@@ -1017,7 +1019,7 @@ namespace System.Net {
         }
 
         internal IEnumerable<TokenBinding> GetTlsTokenBindings() {
-
+        
             // Try to get the token binding if not created.
             if (Volatile.Read(ref m_TokenBindings) == null)
             {
@@ -1063,10 +1065,18 @@ namespace System.Net {
             }
 
             m_TokenBindings = new List<TokenBinding>();
-
             UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_TOKEN_BINDING_INFO* pTokenBindingInfo = UnsafeNclNativeMethods.HttpApi.GetTlsTokenBindingRequestInfo(RequestBuffer, OriginalBlobAddress);
+            UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_TOKEN_BINDING_INFO_V1* pTokenBindingInfo_V1 = null;
+            bool useV1TokenBinding = false; 
 
+            // Only try to collect the old binding information if there is no V2 binding information available
             if (pTokenBindingInfo == null)
+            {
+                pTokenBindingInfo_V1 = UnsafeNclNativeMethods.HttpApi.GetTlsTokenBindingRequestInfo_V1(RequestBuffer, OriginalBlobAddress);
+                useV1TokenBinding = true;
+            }
+
+            if (pTokenBindingInfo == null && pTokenBindingInfo_V1 == null)
             {
                 // The current request isn't over TLS or the client or server doesn't support the token binding
                 // protocol. This isn't an error; just return "nothing here".
@@ -1075,13 +1085,35 @@ namespace System.Net {
 
             UnsafeNclNativeMethods.HttpApi.HeapAllocHandle handle = null;
             m_TokenBindingVerifyMessageStatus = -1;
-            m_TokenBindingVerifyMessageStatus = UnsafeNclNativeMethods.HttpApi.TokenBindingVerifyMessage(
-                pTokenBindingInfo->TokenBinding,
-                pTokenBindingInfo->TokenBindingSize,
-                pTokenBindingInfo->KeyType,
-                pTokenBindingInfo->TlsUnique,
-                pTokenBindingInfo->TlsUniqueSize,
-                out handle);
+                        
+            fixed (byte* pMemoryBlob = RequestBuffer){
+                UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_V2* request = (UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_V2*)pMemoryBlob;
+                long fixup = pMemoryBlob - (byte*) OriginalBlobAddress;
+                
+                if (useV1TokenBinding && pTokenBindingInfo_V1 != null)
+                {
+                    // Old V1 Token Binding protocol is still being used, so we need to verify the binding message using the old API
+                    m_TokenBindingVerifyMessageStatus = UnsafeNclNativeMethods.HttpApi.TokenBindingVerifyMessage_V1(
+                        pTokenBindingInfo_V1->TokenBinding + fixup,
+                        pTokenBindingInfo_V1->TokenBindingSize,
+                        (IntPtr)((byte*)(pTokenBindingInfo_V1->KeyType) + fixup),
+                        pTokenBindingInfo_V1->TlsUnique + fixup,
+                        pTokenBindingInfo_V1->TlsUniqueSize,
+                        out handle);
+                }
+                else
+                {
+                    // Use the V2 token binding behavior 
+                    m_TokenBindingVerifyMessageStatus =
+                        UnsafeNclNativeMethods.HttpApi.TokenBindingVerifyMessage(
+                            pTokenBindingInfo->TokenBinding + fixup,
+                            pTokenBindingInfo->TokenBindingSize,
+                            pTokenBindingInfo->KeyType,
+                            pTokenBindingInfo->TlsUnique + fixup,
+                            pTokenBindingInfo->TlsUniqueSize,
+                            out handle);
+                }
+            }
 
             if (m_TokenBindingVerifyMessageStatus != 0)
             {
@@ -1093,27 +1125,74 @@ namespace System.Net {
 
             using (handle)
             {
-                UnsafeNclNativeMethods.HttpApi.TOKENBINDING_RESULT_LIST* pResultList = (UnsafeNclNativeMethods.HttpApi.TOKENBINDING_RESULT_LIST*)handle.DangerousGetHandle();
-                for (int i = 0; i < pResultList->resultCount; i++)
+                // If we have an old binding, use the old binding behavior 
+                if (useV1TokenBinding)
                 {
-                    UnsafeNclNativeMethods.HttpApi.TOKENBINDING_RESULT_DATA* pThisResultData = &pResultList->resultData[i];
+                    GenerateTokenBindings_V1(handle);
+                }
+                else
+                {
+                    GenerateTokenBindings(handle);
+                }
+            }
+        }
 
-                    if (pThisResultData != null)
+        /// <summary>
+        /// Method to allow current bindings to be returned 
+        /// </summary>
+        /// <param name="handle"></param>
+        private void GenerateTokenBindings(UnsafeNclNativeMethods.HttpApi.HeapAllocHandle handle)
+        {
+            UnsafeNclNativeMethods.HttpApi.TOKENBINDING_RESULT_LIST* pResultList = (UnsafeNclNativeMethods.HttpApi.TOKENBINDING_RESULT_LIST*)handle.DangerousGetHandle();
+            for (int i = 0; i < pResultList->resultCount; i++)
+            {
+                UnsafeNclNativeMethods.HttpApi.TOKENBINDING_RESULT_DATA* pThisResultData = &pResultList->resultData[i];
+
+                if (pThisResultData != null)
+                {
+                    byte[] retVal = new byte[pThisResultData->identifierSize];
+                    Marshal.Copy((IntPtr)(pThisResultData->identifierData), retVal, 0, retVal.Length);
+
+                    if (pThisResultData->bindingType == UnsafeNclNativeMethods.HttpApi.TOKENBINDING_TYPE.TOKENBINDING_TYPE_PROVIDED)
                     {
-                        // Per http://tools.ietf.org/html/draft-ietf-tokbind-protocol-00, Sec. 4,
-                        // We'll strip off the token binding type and return the remainder as an opaque blob.
-                        Debug.Assert((long)(&pThisResultData->identifierData->hashAlgorithm) == (long)(pThisResultData->identifierData) + 1);
-                        byte[] retVal = new byte[pThisResultData->identifierSize - 1];
-                        Marshal.Copy((IntPtr)(&pThisResultData->identifierData->hashAlgorithm), retVal, 0, retVal.Length);
+                        m_TokenBindings.Add(new TokenBinding(TokenBindingType.Provided, retVal));
+                    }
+                    else if (pThisResultData->bindingType == UnsafeNclNativeMethods.HttpApi.TOKENBINDING_TYPE.TOKENBINDING_TYPE_REFERRED)
+                    {
+                        m_TokenBindings.Add(new TokenBinding(TokenBindingType.Referred, retVal));
+                    }
+                }
+            }
+        }
 
-                        if (pThisResultData->identifierData->bindingType == UnsafeNclNativeMethods.HttpApi.TOKENBINDING_TYPE.TOKENBINDING_TYPE_PROVIDED)
-                        {
-                            m_TokenBindings.Add(new TokenBinding(TokenBindingType.Provided, retVal));
-                        }
-                        else if (pThisResultData->identifierData->bindingType == UnsafeNclNativeMethods.HttpApi.TOKENBINDING_TYPE.TOKENBINDING_TYPE_REFERRED)
-                        {
-                            m_TokenBindings.Add(new TokenBinding(TokenBindingType.Referred, retVal));
-                        }
+        /// <summary>
+        /// Compat method to allow V1 bindings to be returned
+        /// </summary>
+        /// <param name="handle"></param>
+        private void GenerateTokenBindings_V1(UnsafeNclNativeMethods.HttpApi.HeapAllocHandle handle)
+        {
+            UnsafeNclNativeMethods.HttpApi.TOKENBINDING_RESULT_LIST_V1* pResultList = (UnsafeNclNativeMethods.HttpApi.TOKENBINDING_RESULT_LIST_V1*)handle.DangerousGetHandle();
+            for (int i = 0; i < pResultList->resultCount; i++)
+            {
+                UnsafeNclNativeMethods.HttpApi.TOKENBINDING_RESULT_DATA_V1* pThisResultData = &pResultList->resultData[i];
+
+                if (pThisResultData != null)
+                {
+                    // Old V1 Token Binding protocol is still being used, so we need modify the binding message using the old behavior
+                    
+                    // Per http://tools.ietf.org/html/draft-ietf-tokbind-protocol-00, Sec. 4,
+                    // We'll strip off the token binding type and return the remainder as an opaque blob.
+                    Debug.Assert((long)(&pThisResultData->identifierData->hashAlgorithm) == (long)(pThisResultData->identifierData) + 1 );
+                    byte[] retVal = new byte[pThisResultData->identifierSize - 1];
+                    Marshal.Copy((IntPtr)(&pThisResultData->identifierData->hashAlgorithm), retVal, 0, retVal.Length);
+
+                    if (pThisResultData->identifierData->bindingType == UnsafeNclNativeMethods.HttpApi.TOKENBINDING_TYPE.TOKENBINDING_TYPE_PROVIDED)
+                    {
+                        m_TokenBindings.Add(new TokenBinding(TokenBindingType.Provided, retVal));
+                    }
+                    else if (pThisResultData->identifierData->bindingType == UnsafeNclNativeMethods.HttpApi.TOKENBINDING_TYPE.TOKENBINDING_TYPE_REFERRED)
+                    {
+                        m_TokenBindings.Add(new TokenBinding(TokenBindingType.Referred, retVal));
                     }
                 }
             }

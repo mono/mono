@@ -7,7 +7,7 @@
 //
 // OrderingQueryOperator.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -23,8 +23,10 @@ namespace System.Linq.Parallel
     /// <typeparam name="TSource"></typeparam>
     internal sealed class OrderingQueryOperator<TSource> : QueryOperator<TSource>
     {
+#if !MONO
         // Turns on order (AsOrdered) or turns off order (AsUnordered)
         private bool m_orderOn;
+#endif
         private QueryOperator<TSource> m_child;
         private OrdinalIndexState m_ordinalIndexState;
 
@@ -33,7 +35,9 @@ namespace System.Linq.Parallel
         {
             m_child = child;
             m_ordinalIndexState = m_child.OrdinalIndexState;
+#if !MONO
             m_orderOn = orderOn;
+#endif
         }
 
         internal override QueryResults<TSource> Open(QuerySettings settings, bool preferStriping)

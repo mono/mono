@@ -7,6 +7,7 @@ LIBRARY = System.Data.Services.Client.dll
 RESOURCE_DEFS = System.Data.Services.Client,Client/System.Data.Services.Client.txt
 
 LIB_REFS = System System.Core System.Xml.Linq System.Data System.Xml
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = \
 	-d:NET_3_5	\
 	-warn:2

@@ -2,8 +2,8 @@
 // <copyright file="DataException.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -13,7 +13,7 @@ namespace System.Data {
     using System.Globalization;
     using System.Runtime.Serialization;
 
-    // [....]: This functions are major point of localization.
+    // Microsoft: This functions are major point of localization.
     // We need to have a rules to enforce consistency there.
     // The dangerous point there are the string arguments of the exported (internal) methods.
     // This string can be argument, table or constraint name but never text of exception itself.

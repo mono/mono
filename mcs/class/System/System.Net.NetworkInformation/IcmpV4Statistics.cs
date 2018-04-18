@@ -124,7 +124,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32IcmpV4Statistics : IcmpV4Statistics
 	{
 		Win32_MIBICMPSTATS iin, iout;

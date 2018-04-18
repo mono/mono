@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*=============================================================================
 **
 ** Class: ThreadPool
@@ -131,7 +131,7 @@ namespace System.Threading
                             }
                             else if (i == array.Length - 1)
                             {
-                                // Must resize. If we ----d and lost, we start over again.
+                                // Must resize. If we raced and lost, we start over again.
                                 if (array != m_array)
                                     continue;
 
@@ -579,7 +579,9 @@ namespace System.Threading
         // The head and tail of the queue.  We enqueue to the head, and dequeue from the tail.
         internal volatile QueueSegment queueHead;
         internal volatile QueueSegment queueTail;
+#if !MONO        
         internal bool loggingEnabled;
+#endif
 
         internal static SparseArray<WorkStealingQueue> allThreadQueues = new SparseArray<WorkStealingQueue>(16); //
 
@@ -673,7 +675,9 @@ namespace System.Threading
                     }
                 }
             }
-
+#if MONO
+            ThreadPool.NotifyWorkItemQueued();
+#endif
             EnsureThreadRequested();
         }
 
@@ -1378,7 +1382,7 @@ namespace System.Threading
     }
 
     [HostProtection(Synchronization=true, ExternalThreading=true)]
-    public static class ThreadPool
+    public static partial class ThreadPool
     {
         #if FEATURE_CORECLR
         [System.Security.SecurityCritical] // auto-generated
@@ -1505,7 +1509,10 @@ namespace System.Threading
                 throw new NotSupportedException ("Timeout is too big. Maximum is Int32.MaxValue");
 
             RegisteredWaitHandle waiter = new RegisteredWaitHandle (waitObject, callBack, state, new TimeSpan (0, 0, 0, 0, (int) millisecondsTimeOutInterval), executeOnlyOnce);
-            QueueUserWorkItem (new WaitCallback (waiter.Wait), null);
+            if (compressStack)
+                QueueUserWorkItem (new WaitCallback (waiter.Wait), null);
+            else
+                UnsafeQueueUserWorkItem (new WaitCallback (waiter.Wait), null);
 
             return waiter;
 #endif
@@ -1891,6 +1898,13 @@ namespace System.Threading
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern void NotifyWorkItemProgressNative();
+
+#if MONO
+        [System.Security.SecurityCritical]
+        [ResourceExposure(ResourceScope.None)]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static extern void NotifyWorkItemQueued();
+#endif
 
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]

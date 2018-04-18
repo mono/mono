@@ -111,11 +111,11 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		// FIXME: shouldn't we remove it from XML?
-		public void RemoveTask (BuildTask buildTask)
+		public void RemoveTask (BuildTask taskElement)
 		{
-			if (buildTask == null)
-				throw new ArgumentNullException ("buildTask");
-			buildTasks.Remove (buildTask);
+			if (taskElement == null)
+				throw new ArgumentNullException ("taskElement");
+			buildTasks.Remove (taskElement);
 		}
 
 		bool Build ()

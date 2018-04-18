@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*=============================================================================
 **
 ** Class: EventWaitHandle
@@ -122,8 +122,9 @@ namespace System.Threading
                 throw new ArgumentException(Environment.GetResourceString("Argument_WaitHandleNameTooLong",name));
             }
             Contract.EndContractBlock();
-            Win32Native.SECURITY_ATTRIBUTES secAttrs = null;
 #if !MONO
+            Win32Native.SECURITY_ATTRIBUTES secAttrs = null;
+
 #if FEATURE_MACL
             // For ACL's, get the security descriptor from the EventWaitHandleSecurity.
             if (eventSecurity != null) {

@@ -14,7 +14,8 @@ namespace System.IdentityModel.Tokens
         X509Certificate2 certificate;
         AsymmetricAlgorithm privateKey;
         bool privateKeyAvailabilityDetermined;
-        PublicKey publicKey;
+        AsymmetricAlgorithm publicKey;
+        bool publicKeyAvailabilityDetermined;
 
         object thisLock = new Object();
 
@@ -28,7 +29,7 @@ namespace System.IdentityModel.Tokens
 
         public override int KeySize
         {
-            get { return this.PublicKey.Key.KeySize; }
+            get { return this.PublicKey.KeySize; }
         }
 
         AsymmetricAlgorithm PrivateKey
@@ -39,28 +40,67 @@ namespace System.IdentityModel.Tokens
                 {
                     lock (ThisLock)
                     {
-                        if (!this.privateKeyAvailabilityDetermined)
+                        if (LocalAppContextSwitches.DisableCngCertificates)
                         {
                             this.privateKey = this.certificate.PrivateKey;
-                            this.privateKeyAvailabilityDetermined = true;
                         }
+                        else
+                        {
+                            this.privateKey = CngLightup.GetRSAPrivateKey(this.certificate);
+                            if (this.privateKey != null)
+                            {
+                                RSACryptoServiceProvider rsaCsp = this.privateKey as RSACryptoServiceProvider;
+                                // ProviderType == 1 is PROV_RSA_FULL provider type that only supports SHA1. Change it to PROV_RSA_AES=24 that supports SHA2 also.
+                                if (rsaCsp != null && rsaCsp.CspKeyContainerInfo.ProviderType == 1)
+                                {
+                                    CspParameters csp = new CspParameters();
+                                    csp.ProviderType = 24;
+                                    csp.KeyContainerName = rsaCsp.CspKeyContainerInfo.KeyContainerName;
+                                    csp.KeyNumber = (int)rsaCsp.CspKeyContainerInfo.KeyNumber;
+                                    if (rsaCsp.CspKeyContainerInfo.MachineKeyStore)
+                                        csp.Flags = CspProviderFlags.UseMachineKeyStore;
+
+                                    csp.Flags |= CspProviderFlags.UseExistingKey;
+                                    this.privateKey = new RSACryptoServiceProvider(csp);
+                                }
+                            }
+                            else
+                            {
+                                this.privateKey = CngLightup.GetDSAPrivateKey(this.certificate);
+                            }
+                            if (certificate.HasPrivateKey && this.privateKey == null)
+                                DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.PrivateKeyNotSupported)));
+                        }
+                        this.privateKeyAvailabilityDetermined = true;
                     }
                 }
                 return this.privateKey;
             }
         }
 
-        PublicKey PublicKey
+        AsymmetricAlgorithm PublicKey
         {
             get
             {
-                if (this.publicKey == null)
+                if (!this.publicKeyAvailabilityDetermined)
                 {
                     lock (ThisLock)
                     {
-                        if (this.publicKey == null)
+                        if (!this.publicKeyAvailabilityDetermined)
                         {
-                            this.publicKey = this.certificate.PublicKey;
+                            if (LocalAppContextSwitches.DisableCngCertificates)
+                            {
+                                this.publicKey = this.certificate.PublicKey.Key;
+                            }
+                            else
+                            {
+                                this.publicKey = CngLightup.GetRSAPublicKey(this.certificate);
+                                if (this.publicKey == null)
+                                    this.publicKey = CngLightup.GetDSAPublicKey(this.certificate);
+                                if (this.publicKey == null)
+                                    DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.PublicKeyNotSupported)));
+                            }
+                            this.publicKeyAvailabilityDetermined = true;
                         }
                     }
                 }
@@ -115,7 +155,7 @@ namespace System.IdentityModel.Tokens
         public override byte[] EncryptKey(string algorithm, byte[] keyData)
         {
             // Ensure that we have an RSA algorithm object
-            RSA rsa = this.PublicKey.Key as RSA;
+            RSA rsa = this.PublicKey as RSA;
             if (rsa == null)
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.PublicKeyNotRSA)));
@@ -181,18 +221,18 @@ namespace System.IdentityModel.Tokens
                 switch (algorithm)
                 {
                     case SignedXml.XmlDsigDSAUrl:
-                        if ((this.PublicKey.Key as DSA) != null)
+                        if ((this.PublicKey as DSA) != null)
                         {
-                            return (this.PublicKey.Key as DSA);
+                            return (this.PublicKey as DSA);
                         }
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.AlgorithmAndPublicKeyMisMatch)));
                     case SignedXml.XmlDsigRSASHA1Url:
                     case SecurityAlgorithms.RsaSha256Signature:
                     case EncryptedXml.XmlEncRSA15Url:
                     case EncryptedXml.XmlEncRSAOAEPUrl:
-                        if ((this.PublicKey.Key as RSA) != null)
+                        if ((this.PublicKey as RSA) != null)
                         {
-                            return (this.PublicKey.Key as RSA);
+                            return (this.PublicKey as RSA);
                         }
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.AlgorithmAndPublicKeyMisMatch)));
                     default:
@@ -254,14 +294,14 @@ namespace System.IdentityModel.Tokens
             {
                 SignatureDescription description = algorithmObject as SignatureDescription;
                 if (description != null)
-                    return description.CreateDeformatter(this.PublicKey.Key);
+                    return description.CreateDeformatter(this.PublicKey);
 
                 try
                 {
                     AsymmetricSignatureDeformatter asymmetricSignatureDeformatter = algorithmObject as AsymmetricSignatureDeformatter;
                     if (asymmetricSignatureDeformatter != null)
                     {
-                        asymmetricSignatureDeformatter.SetKey(this.PublicKey.Key);
+                        asymmetricSignatureDeformatter.SetKey(this.PublicKey);
                         return asymmetricSignatureDeformatter;
                     }
                 }
@@ -279,7 +319,7 @@ namespace System.IdentityModel.Tokens
                 case SignedXml.XmlDsigDSAUrl:
 
                     // Ensure that we have a DSA algorithm object.
-                    DSA dsa = (this.PublicKey.Key as DSA);
+                    DSA dsa = (this.PublicKey as DSA);
                     if (dsa == null)
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.PublicKeyNotDSA)));
                     return new DSASignatureDeformatter(dsa);
@@ -287,7 +327,7 @@ namespace System.IdentityModel.Tokens
                 case SignedXml.XmlDsigRSASHA1Url:
                 case SecurityAlgorithms.RsaSha256Signature:
                     // Ensure that we have an RSA algorithm object.
-                    RSA rsa = (this.PublicKey.Key as RSA);
+                    RSA rsa = (this.PublicKey as RSA);
                     if (rsa == null)
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.PublicKeyNotRSA)));
                     return new RSAPKCS1SignatureDeformatter(rsa);
@@ -456,13 +496,13 @@ namespace System.IdentityModel.Tokens
             switch (algorithm)
             {
                 case SignedXml.XmlDsigDSAUrl:
-                    return (this.PublicKey.Key is DSA);
+                    return (this.PublicKey is DSA);
 
                 case SignedXml.XmlDsigRSASHA1Url:
                 case SecurityAlgorithms.RsaSha256Signature:
                 case EncryptedXml.XmlEncRSA15Url:
                 case EncryptedXml.XmlEncRSAOAEPUrl:
-                    return (this.PublicKey.Key is RSA);
+                    return (this.PublicKey is RSA);
                 default:
                     return false;
             }

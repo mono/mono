@@ -1,5 +1,6 @@
-/*
- * locales.h: Culture-sensitive handling
+/**
+ * \file
+ * Culture-sensitive handling
  *
  * Authors:
  *	Dick Porter (dick@ximian.com)
@@ -30,7 +31,7 @@ extern MonoBoolean ves_icall_System_Globalization_CalendarData_fill_calendar_dat
 extern void ves_icall_System_Globalization_CultureData_fill_culture_data (MonoCultureData *this_obj, gint32 datetime_index);
 extern void ves_icall_System_Globalization_CultureData_fill_number_data (MonoNumberFormatInfo* number, gint32 number_index);
 extern void ves_icall_System_Globalization_CultureInfo_construct_internal_locale (MonoCultureInfo *this_obj, MonoString *locale);
-extern MonoString* ves_icall_System_Globalization_CultureInfo_get_current_locale_name (void);
+extern MonoStringHandle ves_icall_System_Globalization_CultureInfo_get_current_locale_name (MonoError *error);
 extern MonoBoolean ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_lcid (MonoCultureInfo *this_obj, gint lcid);
 extern MonoBoolean ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_name (MonoCultureInfo *this_obj, MonoString *name);
 extern MonoArray *ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean neutral, MonoBoolean specific, MonoBoolean installed);
@@ -45,11 +46,12 @@ ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_name (M
 extern void ves_icall_System_Globalization_CompareInfo_assign_sortkey (MonoCompareInfo *this_obj, MonoSortKey *key, MonoString *source, gint32 options);
 extern int ves_icall_System_Globalization_CompareInfo_internal_index (MonoCompareInfo *this_obj, MonoString *source, gint32 sindex, gint32 count, MonoString *value, gint32 options, MonoBoolean first);
 extern int ves_icall_System_Globalization_CompareInfo_internal_index_char (MonoCompareInfo *this_obj, MonoString *source, gint32 sindex, gint32 count, gunichar2 value, gint32 options, MonoBoolean first);
-extern int ves_icall_System_Threading_Thread_current_lcid (void);
+int
+ves_icall_System_Threading_Thread_current_lcid (MonoError *error);
 extern MonoString *ves_icall_System_String_InternalToLower_Comp (MonoString *this_obj, MonoCultureInfo *cult);
 extern MonoString *ves_icall_System_String_InternalToUpper_Comp (MonoString *this_obj, MonoCultureInfo *cult);
 extern gunichar2 ves_icall_System_Char_InternalToUpper_Comp (gunichar2 c, MonoCultureInfo *cult);
 extern gunichar2 ves_icall_System_Char_InternalToLower_Comp (gunichar2 c, MonoCultureInfo *cult);
-extern void ves_icall_System_Text_Normalization_load_normalization_resource (guint8 **argProps, guint8** argMappedChars, guint8** argCharMapIndex, guint8** argHelperIndex, guint8** argMapIdxToComposite, guint8** argCombiningClass);
+extern void ves_icall_System_Text_Normalization_load_normalization_resource (guint8 **argProps, guint8** argMappedChars, guint8** argCharMapIndex, guint8** argHelperIndex, guint8** argMapIdxToComposite, guint8** argCombiningClass, MonoError *error);
 
 #endif /* _MONO_METADATA_FILEIO_H_ */

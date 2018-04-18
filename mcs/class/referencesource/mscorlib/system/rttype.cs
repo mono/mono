@@ -6,7 +6,7 @@
 //
 // File: RtType.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Implements System.RuntimeType
 //
@@ -58,7 +58,7 @@ namespace System
 
     internal delegate void CtorDelegate(Object instance);
 
-    // Keep this in [....] with FormatFlags defined in typestring.h
+    // Keep this in sync with FormatFlags defined in typestring.h
     internal enum TypeNameFormatFlags
     {
         FormatBasic         = 0x00000000, // Not a bitmask, simply the tersest flag settings possible
@@ -3413,9 +3413,12 @@ namespace System
 
 #if MONO
             List<RuntimeType> list = null;
+            var nameComparison = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
             foreach (RuntimeType t in GetInterfaces ()) {
-                if (t.Name != name)
-                    continue;
+
+                if (!String.Equals(t.Name, name, nameComparison)) {
+                       continue;
+                }
 
                 if (list == null)
                     list = new List<RuntimeType> (2);
@@ -4619,15 +4622,14 @@ namespace System
                     #region Non-TransparentProxy case
                     if (name == null)
                         throw new ArgumentNullException("name");
-
+#if MONO
+                    throw new NotImplementedException ();
+#else
                     bool[] isByRef = modifiers == null ? null : modifiers[0].IsByRefArray;
                     
                     // pass LCID_ENGLISH_US if no explicit culture is specified to match the behavior of VB
                     int lcid = (culture == null ? 0x0409 : culture.LCID);
 
-#if MONO
-                    throw new NotImplementedException ();
-#else
                     return InvokeDispMethod(name, bindingFlags, target, providedArgs, isByRef, lcid, namedParams);
 #endif
                     #endregion
@@ -4660,7 +4662,9 @@ namespace System
             if (binder == null)
                 binder = DefaultBinder;
 
+#if !MONO
             bool bDefaultBinder = (binder == DefaultBinder);
+#endif
             #endregion
             
             #region Delegate to Activator.CreateInstance
@@ -5262,10 +5266,12 @@ namespace System
 
                     // deal with the __COMObject case first. It is very special because from a reflection point of view it has no ctors
                     // so a call to GetMemberCons would fail
+                    bool publicOnly = (bindingAttr & BindingFlags.NonPublic) == 0;
+                    bool wrapExceptions = (bindingAttr & BindingFlags.DoNotWrapExceptions) == 0;
                     if (argCnt == 0 && (bindingAttr & BindingFlags.Public) != 0 && (bindingAttr & BindingFlags.Instance) != 0
                         && (IsGenericCOMObjectImpl() || IsValueType)) 
                     {
-                        server = CreateInstanceDefaultCtor((bindingAttr & BindingFlags.NonPublic) == 0 , false, true, ref stackMark);
+                        server = CreateInstanceDefaultCtor(publicOnly, false, true, wrapExceptions, ref stackMark);
                     }
                     else 
                     {
@@ -5328,7 +5334,7 @@ namespace System
                             throw new MissingMethodException(Environment.GetResourceString("MissingConstructor_Name", FullName));
                         }
 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                         // If we're creating a delegate, we're about to call a
                         // constructor taking an integer to represent a target
                         // method. Since this is very difficult (and expensive)
@@ -5359,7 +5365,7 @@ namespace System
                             new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
 #endif // FEATURE_CORECLR
                         }
-#endif // FEATURE_MONO_CAS
+#endif // MONO_FEATURE_CAS
                         if (invokeMethod.GetParametersNoCopy().Length == 0)
                         {
                             if (args.Length != 0)
@@ -5377,7 +5383,7 @@ namespace System
                             } else {
 #endif
                             // fast path??
-                            server = Activator.CreateInstance(this, true);
+                            server = Activator.CreateInstance(this, nonPublic: true, wrapExceptions: wrapExceptions);
 
 #if MONO && FEATURE_REMOTING
                             }
@@ -5589,7 +5595,7 @@ namespace System
         [System.Security.SecuritySafeCritical]  // auto-generated
         [DebuggerStepThroughAttribute]
         [Diagnostics.DebuggerHidden]
-        internal Object CreateInstanceDefaultCtor(bool publicOnly, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)
+        internal Object CreateInstanceDefaultCtor(bool publicOnly, bool skipCheckThis, bool fillCache, bool wrapExceptions, ref StackCrawlMark stackMark)
         {
             if (GetType() == typeof(ReflectionOnlyType))
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_NotAllowedInReflectionOnly"));
@@ -5635,7 +5641,7 @@ namespace System
                 }
             }
 #endif
-            return CreateInstanceSlow(publicOnly, skipCheckThis, fillCache, ref stackMark);
+            return CreateInstanceSlow(publicOnly, wrapExceptions, skipCheckThis, fillCache, ref stackMark);
         }
 #if !MONO
         internal void InvalidateCachedNestedType()
@@ -5891,7 +5897,7 @@ namespace System
         [Flags]
         private enum DispatchWrapperType : int
         {
-            // This enum must stay in [....] with the DispatchWrapperType enum defined in MLInfo.h
+            // This enum must stay in sync with the DispatchWrapperType enum defined in MLInfo.h
             Unknown         = 0x00000001,
             Dispatch        = 0x00000002,
             Record          = 0x00000004,

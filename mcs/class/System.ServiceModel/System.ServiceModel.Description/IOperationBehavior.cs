@@ -34,18 +34,18 @@ namespace System.ServiceModel.Description
 	public interface IOperationBehavior
 	{
 		void AddBindingParameters (
-			OperationDescription description,
-			BindingParameterCollection parameters);
+			OperationDescription operationDescription,
+			BindingParameterCollection bindingParameters);
 
 		void ApplyDispatchBehavior (
-			OperationDescription description,
-			DispatchOperation dispatch);
+			OperationDescription operationDescription,
+			DispatchOperation dispatchOperation);
 
 		void ApplyClientBehavior (
-			OperationDescription description,
-			ClientOperation proxy);
+			OperationDescription operationDescription,
+			ClientOperation clientOperation);
 
 		void Validate (
-			OperationDescription description);
+			OperationDescription operationDescription);
 	}
 }

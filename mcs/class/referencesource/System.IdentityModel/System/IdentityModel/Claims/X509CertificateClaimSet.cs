@@ -192,7 +192,15 @@ namespace System.IdentityModel.Claims
             if (!string.IsNullOrEmpty(value))
                 claims.Add(Claim.CreateUriClaim(new Uri(value)));
 
-            RSA rsa = this.certificate.PublicKey.Key as RSA;
+            RSA rsa;
+            if (LocalAppContextSwitches.DisableCngCertificates)
+            {
+                rsa = this.certificate.PublicKey.Key as RSA;
+            }
+            else
+            {
+                rsa = CngLightup.GetRSAPublicKey(this.certificate);
+            }
             if (rsa != null)
                 claims.Add(Claim.CreateRsaClaim(rsa));
 

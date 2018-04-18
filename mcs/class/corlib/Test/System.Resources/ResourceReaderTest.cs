@@ -28,15 +28,9 @@ namespace MonoTests.System.Resources
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
-			char ds = Path.DirectorySeparatorChar;
-			if (ds == '/') {
-				string base_path = Path.Combine (Directory.GetCurrentDirectory (), Path.Combine ("Test", "resources"));
-				m_ResourceFile = Path.Combine (base_path, "MyResources.resources");
-				m_BadResourceFile = Path.Combine (base_path, "Empty.resources");
-			} else {
-				m_ResourceFile = Path.Combine ("Test", Path.Combine ("resources", "MyResources.resources"));
-				m_BadResourceFile = "resources" + ds + "Empty.resources";
-			}
+			string base_path = Path.Combine (Directory.GetCurrentDirectory (), Path.Combine ("Test", "resources"));
+			m_ResourceFile = Path.Combine (base_path, "MyResources.resources");
+			m_BadResourceFile = Path.Combine (base_path, "Empty.resources");
 		}
 
 		[SetUp]

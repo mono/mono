@@ -50,27 +50,23 @@ bucket **symbol_table;
 bucket *first_symbol;
 bucket *last_symbol;
 
-
-int
-hash(name)
-char *name;
+static int
+hash (const char *name)
 {
-    register char *s;
+    const char *s;
     register int c, k;
 
     assert(name && *name);
     s = name;
     k = *s;
-    while (c = *++s)
+    while ((c = *++s))
 	k = (31*k + c) & (TABLE_SIZE - 1);
 
     return (k);
 }
 
-
 bucket *
-make_bucket(name)
-char *name;
+make_bucket (const char *name)
 {
     register bucket *bp;
 
@@ -79,7 +75,7 @@ char *name;
     if (bp == 0) no_space();
     bp->link = 0;
     bp->next = 0;
-    bp->name = MALLOC(strlen(name) + 1);
+    bp->name = (char*)MALLOC(strlen(name) + 1);
     if (bp->name == 0) no_space();
     bp->tag = 0;
     bp->value = UNDEFINED;
@@ -94,10 +90,8 @@ char *name;
     return (bp);
 }
 
-
 bucket *
-lookup(name)
-char *name;
+lookup (const char *name)
 {
     register bucket *bp, **bpp;
 
@@ -118,8 +112,8 @@ char *name;
     return (bp);
 }
 
-
-create_symbol_table()
+void
+create_symbol_table (void)
 {
     register int i;
     register bucket *bp;
@@ -138,15 +132,15 @@ create_symbol_table()
     symbol_table[hash("error")] = bp;
 }
 
-
-free_symbol_table()
+void 
+free_symbol_table (void)
 {
     FREE(symbol_table);
     symbol_table = 0;
 }
 
-
-free_symbols()
+void
+free_symbols (void)
 {
     register bucket *p, *q;
 

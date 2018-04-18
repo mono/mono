@@ -196,7 +196,7 @@ namespace System.Web {
             // the filesystem.
             //
             string key = CreateKey(configPath);
-            CacheInternal cacheInternal = HttpRuntime.CacheInternal;
+            CacheStoreProvider cacheInternal = HttpRuntime.Cache.InternalCache;
             CachedPathData data = (CachedPathData) cacheInternal.Get(key);
 
             // if found, return the data
@@ -272,9 +272,12 @@ namespace System.Web {
                     try {
                     }
                     finally {
-                        data = (CachedPathData) cacheInternal.UtcAdd(key, dataAdd, dependency, 
-                            Cache.NoAbsoluteExpiration, slidingExpiration, 
-                            priority, s_callback);
+                        data = (CachedPathData)cacheInternal.Add(key, dataAdd, new CacheInsertOptions() {
+                            Dependencies = dependency,
+                            SlidingExpiration = slidingExpiration,
+                            Priority = priority,
+                            OnRemovedCallback = s_callback
+                        });
                         
                         if (data == null) {
                             isDataCreator = true;
@@ -369,9 +372,11 @@ namespace System.Web {
                         }
                     
                         using (dependency) {
-                            cacheInternal.UtcInsert(key, dataAdd, dependency, 
-                                DateTime.UtcNow.AddSeconds(5), Cache.NoSlidingExpiration,
-                                CacheItemPriority.Normal, s_callback);
+                            cacheInternal.Insert(key, dataAdd, new CacheInsertOptions() {
+                                                                    Dependencies = dependency,
+                                                                    AbsoluteExpiration = DateTime.UtcNow.AddSeconds(5),
+                                                                    OnRemovedCallback = s_callback
+                                                                });
                         }
                     }
                     
@@ -416,7 +421,7 @@ namespace System.Web {
         // virtual files.
         // An example of a 400 range error is "path not found". 
         static internal void RemoveBadPathData(CachedPathData pathData) {
-            CacheInternal cacheInternal = HttpRuntime.CacheInternal;
+            CacheStoreProvider cacheInternal = HttpRuntime.Cache.InternalCache;
 
             string configPath = pathData._configPath;
             string key = CreateKey(configPath);
@@ -437,7 +442,7 @@ namespace System.Web {
         // status outside the 400 range. We need to mark all data up the path to account for
         // virtual files.
         static internal void MarkCompleted(CachedPathData pathData) {
-            CacheInternal cacheInternal = HttpRuntime.CacheInternal;
+            CacheStoreProvider cacheInternal = HttpRuntime.Cache.InternalCache;
 
             string configPath = pathData._configPath;
             do {

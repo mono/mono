@@ -2,8 +2,8 @@
 // <copyright file="XPathNodePointer.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 #pragma warning disable 618 // ignore obsolete warning about XmlDataDocument
 namespace System.Xml {
@@ -169,7 +169,7 @@ namespace System.Xml {
             }
         }
 
-        //[....]: From CodeReview: Perf: We should have another array similar w/ 
+        //Microsoft: From CodeReview: Perf: We should have another array similar w/ 
         //  xmlNodeType_To_XpathNodeType_Map that will return String.Empty for everything but the element and
         //  attribute case.
         internal string LocalName { 

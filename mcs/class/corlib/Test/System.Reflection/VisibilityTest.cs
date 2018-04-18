@@ -24,36 +24,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 
 using System;
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
+using System.Collections;
 
 namespace MonoTests.System.Reflection.VisibilityTypes
 {
 	[TestFixture]
 	public class VisibilityTests
 	{
+		static void DoesNotContain (IEnumerable collection, object val)
+		{
+			 Assert.That(collection, Has.No.Member(val));
+		}
+
+		static void Contains (IEnumerable collection, object val)
+		{
+			 Assert.That(collection, Has.Member(val));
+		}
+
 		[Test]
 		public void TestsExportedTypes ()
 		{
 			var types = typeof (VisibilityTests).Assembly.GetExportedTypes ();
 
 			// Test visibility means that the class is public by applying and on the 'public' visibility of the nested items.
-			CollectionAssert.DoesNotContain (types, typeof (InternalClass));
-			CollectionAssert.Contains (types, typeof (PublicClass));
+			DoesNotContain (types, typeof (InternalClass));
+			Contains (types, typeof (PublicClass));
 
-			CollectionAssert.DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+InternalNested", true));
-			CollectionAssert.DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+PrivateNested", true));
-			CollectionAssert.DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+ProtectedNested", true));
-			CollectionAssert.DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+PublicNested", true));
+			DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+InternalNested", true));
+			DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+PrivateNested", true));
+			DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+ProtectedNested", true));
+			DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+PublicNested", true));
 
-			CollectionAssert.DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+InternalNested", true));
-			CollectionAssert.DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+PrivateNested", true));
-			CollectionAssert.DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+ProtectedNested", true));
-			CollectionAssert.Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+PublicNested", true));
+			DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+InternalNested", true));
+			DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+PrivateNested", true));
+			DoesNotContain (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+ProtectedNested", true));
+			Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+PublicNested", true));
 		}
 
 		[Test]
@@ -62,18 +73,18 @@ namespace MonoTests.System.Reflection.VisibilityTypes
 			var types = typeof (VisibilityTests).Module.GetTypes ();
 
 			// Test that all the types defined exist.
-			CollectionAssert.Contains (types, typeof (InternalClass));
-			CollectionAssert.Contains (types, typeof (PublicClass));
+			Contains (types, typeof (InternalClass));
+			Contains (types, typeof (PublicClass));
 
-			CollectionAssert.Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+InternalNested", true));
-			CollectionAssert.Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+PrivateNested", true));
-			CollectionAssert.Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+ProtectedNested", true));
-			CollectionAssert.Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+PublicNested", true));
+			Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+InternalNested", true));
+			Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+PrivateNested", true));
+			Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+ProtectedNested", true));
+			Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+InternalClass+PublicNested", true));
 
-			CollectionAssert.Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+InternalNested", true));
-			CollectionAssert.Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+PrivateNested", true));
-			CollectionAssert.Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+ProtectedNested", true));
-			CollectionAssert.Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+PublicNested", true));
+			Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+InternalNested", true));
+			Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+PrivateNested", true));
+			Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+ProtectedNested", true));
+			Contains (types, Type.GetType ("MonoTests.System.Reflection.VisibilityTypes.VisibilityTests+PublicClass+PublicNested", true));
 		}
 
 		class InternalClass

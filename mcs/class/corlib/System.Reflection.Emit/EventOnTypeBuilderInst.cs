@@ -42,17 +42,17 @@ namespace System.Reflection.Emit
 	[StructLayout (LayoutKind.Sequential)]
 	internal class EventOnTypeBuilderInst : EventInfo
 	{
-		MonoGenericClass instantiation;
+		TypeBuilderInstantiation instantiation;
 		EventBuilder event_builder;
 		EventInfo event_info;
 
-		internal EventOnTypeBuilderInst (MonoGenericClass instantiation, EventBuilder evt)
+		internal EventOnTypeBuilderInst (TypeBuilderInstantiation instantiation, EventBuilder evt)
 		{
 			this.instantiation = instantiation;
 			this.event_builder = evt;
 		}
 
-		internal EventOnTypeBuilderInst (MonoGenericClass instantiation, EventInfo evt)
+		internal EventOnTypeBuilderInst (TypeBuilderInstantiation instantiation, EventInfo evt)
 		{
 			this.instantiation = instantiation;
 			this.event_info = evt;

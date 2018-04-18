@@ -1,5 +1,6 @@
-/*
- * checked-build.c: Expensive asserts used when mono is built with --with-checked-build=yes
+/**
+ * \file
+ * Expensive asserts used when mono is built with --with-checked-build=yes
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -7,6 +8,7 @@
  * (C) 2015 Xamarin
  */
 #include <config.h>
+#include <mono/utils/mono-compiler.h>
 
 #ifdef ENABLE_CHECKED_BUILD
 
@@ -36,7 +38,7 @@ mono_check_mode_enabled (MonoCheckMode query)
 	if (G_UNLIKELY (check_mode == MONO_CHECK_MODE_UNKNOWN))
 	{
 		MonoCheckMode env_check_mode = MONO_CHECK_MODE_NONE;
-		const gchar *env_string = g_getenv ("MONO_CHECK_MODE");
+		gchar *env_string = g_getenv ("MONO_CHECK_MODE");
 
 		if (env_string)
 		{
@@ -58,6 +60,7 @@ mono_check_mode_enabled (MonoCheckMode query)
 #endif
 			}
 			g_strfreev (env_split);
+			g_free (env_string);
 		}
 
 		check_mode = env_check_mode;
@@ -70,18 +73,34 @@ mono_check_transition_limit (void)
 {
 	static int transition_limit = -1;
 	if (transition_limit < 0) {
-		const gchar *env_string = g_getenv ("MONO_CHECK_THREAD_TRANSITION_HISTORY");
-		if (env_string)
+		gchar *env_string = g_getenv ("MONO_CHECK_THREAD_TRANSITION_HISTORY");
+		if (env_string) {
 			transition_limit = atoi (env_string);
-		else
+			g_free (env_string);
+		} else {
 			transition_limit = 3;
+		}
 	}
 	return transition_limit;
 }
 
+#define MAX_NATIVE_BT 6
+#define MAX_NATIVE_BT_PROBE (MAX_NATIVE_BT + 5)
+#define MAX_TRANSITIONS (mono_check_transition_limit ())
+
 typedef struct {
-	GPtrArray *transitions;
+	const char *name;
+	int from_state, next_state, suspend_count, suspend_count_delta, size;
+	gpointer backtrace [MAX_NATIVE_BT_PROBE];
+} ThreadTransition;
+
+typedef struct {
 	guint32 in_gc_critical_region;
+	// ring buffer of transitions, indexed by two guint16 indices:
+	// push at buf_end, iterate from buf_start. valid range is
+	// buf_start ... buf_end - 1 mod MAX_TRANSITIONS
+	gint32 ringbuf;
+	ThreadTransition transitions [MONO_ZERO_LEN_ARRAY];
 } CheckState;
 
 static MonoNativeTlsKey thread_status;
@@ -99,19 +118,60 @@ get_state (void)
 {
 	CheckState *state = mono_native_tls_get_value (thread_status);
 	if (!state) {
-		state = g_new0 (CheckState, 1);
-		state->transitions = g_ptr_array_new ();
+		state = (CheckState*) g_malloc0 (sizeof (CheckState) + sizeof(ThreadTransition) * MAX_TRANSITIONS);
 		mono_native_tls_set_value (thread_status, state);
 	}
 
 	return state;
 }
 
-#ifdef ENABLE_CHECKED_BUILD_THREAD
+static inline void
+ringbuf_unpack (gint32 ringbuf, guint16 *buf_start, guint16 *buf_end)
+{
+	*buf_start = (guint16) (ringbuf >> 16);
+	*buf_end = (guint16) (ringbuf & 0x00FF);
+}
 
-#define MAX_NATIVE_BT 6
-#define MAX_NATIVE_BT_PROBE (MAX_NATIVE_BT + 5)
-#define MAX_TRANSITIONS (mono_check_transition_limit ())
+static inline gint32
+ringbuf_pack (guint16 buf_start, guint16 buf_end)
+{
+	return ((((gint32)buf_start) << 16) | ((gint32)buf_end));
+}
+
+static int
+ringbuf_size (guint32 ringbuf, int n)
+{
+	guint16 buf_start, buf_end;
+	ringbuf_unpack (ringbuf, &buf_start, &buf_end);
+	if (buf_end > buf_start)
+		return buf_end - buf_start;
+	else
+		return n - (buf_start - buf_end);
+}
+
+static guint16
+ringbuf_push (gint32 *ringbuf, int n)
+{
+	gint32 ringbuf_old, ringbuf_new;
+	guint16 buf_start, buf_end;
+	guint16 cur;
+retry:
+	ringbuf_old = *ringbuf;
+	ringbuf_unpack (ringbuf_old, &buf_start, &buf_end);
+	cur = buf_end++;
+	if (buf_end == n)
+		buf_end = 0;
+	if (buf_end == buf_start) {
+		if (++buf_start == n)
+			buf_start = 0;
+	}
+	ringbuf_new = ringbuf_pack (buf_start, buf_end);
+	if (mono_atomic_cas_i32 (ringbuf, ringbuf_new, ringbuf_old) != ringbuf_old)
+		goto retry;
+	return cur;
+}
+
+#ifdef ENABLE_CHECKED_BUILD_THREAD
 
 #ifdef HAVE_BACKTRACE_SYMBOLS
 
@@ -125,6 +185,8 @@ collect_backtrace (gpointer out_data[])
 static char*
 translate_backtrace (gpointer native_trace[], int size)
 {
+	if (size == 0)
+		return g_strdup ("");
 	char **names = backtrace_symbols (native_trace, size);
 	GString* bt = g_string_sized_new (100);
 
@@ -146,7 +208,7 @@ translate_backtrace (gpointer native_trace[], int size)
 			g_string_append_printf (bt, "\tat %s\n", names [i]);
 	}
 
-	free (names);
+	g_free (names);
 	return g_string_free (bt, FALSE);
 }
 
@@ -166,46 +228,35 @@ translate_backtrace (gpointer native_trace[], int size)
 
 #endif
 
-typedef struct {
-	const char *name;
-	int from_state, next_state, suspend_count, suspend_count_delta, size;
-	gpointer backtrace [MAX_NATIVE_BT_PROBE];
-} ThreadTransition;
-
-static void
-free_transition (ThreadTransition *t)
-{
-	g_free (t);
-}
-
 void
-checked_build_thread_transition (const char *transition, void *info, int from_state, int suspend_count, int next_state, int suspend_count_delta)
+checked_build_thread_transition (const char *transition, void *info, int from_state, int suspend_count, int next_state, int suspend_count_delta, gboolean capture_backtrace)
 {
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_THREAD))
 		return;
 
-	CheckState *state = get_state ();
 	/* We currently don't record external changes as those are hard to reason about. */
 	if (!mono_thread_info_is_current (info))
 		return;
 
-	if (state->transitions->len >= MAX_TRANSITIONS)
-		free_transition (g_ptr_array_remove_index (state->transitions, 0));
+	CheckState *state = get_state ();
 
-	ThreadTransition *t = g_new0 (ThreadTransition, 1);
+	guint16 cur = ringbuf_push (&state->ringbuf, MAX_TRANSITIONS);
+
+	ThreadTransition *t = &state->transitions[cur];
 	t->name = transition;
 	t->from_state = from_state;
 	t->next_state = next_state;
 	t->suspend_count = suspend_count;
 	t->suspend_count_delta = suspend_count_delta;
-	t->size = collect_backtrace (t->backtrace);
-	g_ptr_array_add (state->transitions, t);
+	if (capture_backtrace)
+		t->size = collect_backtrace (t->backtrace);
+	else
+		t->size = 0;
 }
 
 void
 mono_fatal_with_history (const char *msg, ...)
 {
-	int i;
 	GString* err = g_string_sized_new (100);
 
 	g_string_append_printf (err, "Assertion failure in thread %p due to: ", mono_native_thread_id_get ());
@@ -218,11 +269,14 @@ mono_fatal_with_history (const char *msg, ...)
 	if (mono_check_mode_enabled (MONO_CHECK_MODE_THREAD))
 	{
 		CheckState *state = get_state ();
+		guint16 cur, end;
+		int len = ringbuf_size (state->ringbuf, MAX_TRANSITIONS);
 
-		g_string_append_printf (err, "\nLast %d state transitions: (most recent first)\n", state->transitions->len);
+		g_string_append_printf (err, "\nLast %d state transitions: (most recent first)\n", len);
 
-		for (i = state->transitions->len - 1; i >= 0; --i) {
-			ThreadTransition *t = state->transitions->pdata [i];
+		ringbuf_unpack (state->ringbuf, &cur, &end);
+		while (cur != end) {
+			ThreadTransition *t = &state->transitions[cur];
 			char *bt = translate_backtrace (t->backtrace, t->size);
 			g_string_append_printf (err, "[%s] %s -> %s (%d) %s%d at:\n%s",
 				t->name,
@@ -233,6 +287,8 @@ mono_fatal_with_history (const char *msg, ...)
 				t->suspend_count_delta,
 				bt);
 			g_free (bt);
+			if (++cur == MAX_TRANSITIONS)
+				cur = 0;
 		}
 	}
 
@@ -245,7 +301,7 @@ mono_fatal_with_history (const char *msg, ...)
 #ifdef ENABLE_CHECKED_BUILD_GC
 
 void
-assert_gc_safe_mode (void)
+assert_gc_safe_mode (const char *file, int lineno)
 {
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_GC))
 		return;
@@ -254,19 +310,19 @@ assert_gc_safe_mode (void)
 	int state;
 
 	if (!cur)
-		mono_fatal_with_history ("Expected GC Safe mode but thread is not attached");
+		mono_fatal_with_history ("%s:%d: Expected GC Safe mode but thread is not attached", file, lineno);
 
 	switch (state = mono_thread_info_current_state (cur)) {
 	case STATE_BLOCKING:
-	case STATE_BLOCKING_AND_SUSPENDED:
+	case STATE_BLOCKING_SELF_SUSPENDED:
 		break;
 	default:
-		mono_fatal_with_history ("Expected GC Safe mode but was in %s state", mono_thread_state_name (state));
+		mono_fatal_with_history ("%s:%d: Expected GC Safe mode but was in %s state", file, lineno, mono_thread_state_name (state));
 	}
 }
 
 void
-assert_gc_unsafe_mode (void)
+assert_gc_unsafe_mode (const char *file, int lineno)
 {
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_GC))
 		return;
@@ -275,20 +331,19 @@ assert_gc_unsafe_mode (void)
 	int state;
 
 	if (!cur)
-		mono_fatal_with_history ("Expected GC Unsafe mode but thread is not attached");
+		mono_fatal_with_history ("%s:%d: Expected GC Unsafe mode but thread is not attached", file, lineno);
 
 	switch (state = mono_thread_info_current_state (cur)) {
 	case STATE_RUNNING:
 	case STATE_ASYNC_SUSPEND_REQUESTED:
-	case STATE_SELF_SUSPEND_REQUESTED:
 		break;
 	default:
-		mono_fatal_with_history ("Expected GC Unsafe mode but was in %s state", mono_thread_state_name (state));
+		mono_fatal_with_history ("%s:%d: Expected GC Unsafe mode but was in %s state", file, lineno, mono_thread_state_name (state));
 	}
 }
 
 void
-assert_gc_neutral_mode (void)
+assert_gc_neutral_mode (const char *file, int lineno)
 {
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_GC))
 		return;
@@ -297,17 +352,16 @@ assert_gc_neutral_mode (void)
 	int state;
 
 	if (!cur)
-		mono_fatal_with_history ("Expected GC Neutral mode but thread is not attached");
+		mono_fatal_with_history ("%s:%d: Expected GC Neutral mode but thread is not attached", file, lineno);
 
 	switch (state = mono_thread_info_current_state (cur)) {
 	case STATE_RUNNING:
 	case STATE_ASYNC_SUSPEND_REQUESTED:
-	case STATE_SELF_SUSPEND_REQUESTED:
 	case STATE_BLOCKING:
-	case STATE_BLOCKING_AND_SUSPENDED:
+	case STATE_BLOCKING_SELF_SUSPENDED:
 		break;
 	default:
-		mono_fatal_with_history ("Expected GC Neutral mode but was in %s state", mono_thread_state_name (state));
+		mono_fatal_with_history ("%s:%d: Expected GC Neutral mode but was in %s state", file, lineno, mono_thread_state_name (state));
 	}
 }
 
@@ -473,6 +527,12 @@ check_image_may_reference_image(MonoImage *from, MonoImage *to)
 			// For each queued image visit all directly referenced images
 			int inner_idx;
 
+			// 'files' and 'modules' semantically contain the same items but because of lazy loading we must check both
+			for (inner_idx = 0; !success && inner_idx < checking->file_count; inner_idx++)
+			{
+				CHECK_IMAGE_VISIT (checking->files[inner_idx]);
+			}
+
 			for (inner_idx = 0; !success && inner_idx < checking->module_count; inner_idx++)
 			{
 				CHECK_IMAGE_VISIT (checking->modules[inner_idx]);
@@ -480,8 +540,8 @@ check_image_may_reference_image(MonoImage *from, MonoImage *to)
 
 			for (inner_idx = 0; !success && inner_idx < checking->nreferences; inner_idx++)
 			{
-				// References are lazy-loaded and thus allowed to be NULL.
-				// If they are NULL, we don't care about them for this search, because they haven't impacted ref_count yet.
+				// Assembly references are lazy-loaded and thus allowed to be NULL.
+				// If they are NULL, we don't care about them for this search, because their images haven't impacted ref_count yet.
 				if (checking->references[inner_idx])
 				{
 					CHECK_IMAGE_VISIT (checking->references[inner_idx]->image);
@@ -540,10 +600,10 @@ check_image_set_may_reference_image_set (MonoImageSet *from, MonoImageSet *to)
 		if (to->images[to_idx] == mono_defaults.corlib)
 			seen = TRUE;
 
-		// For each item in to->images, scan over from->images looking for it.
+		// For each item in to->images, scan over from->images seeking a path to it.
 		for (from_idx = 0; !seen && from_idx < from->nimages; from_idx++)
 		{
-			if (to->images[to_idx] == from->images[from_idx])
+			if (check_image_may_reference_image (from->images[from_idx], to->images[to_idx]))
 				seen = TRUE;
 		}
 
@@ -698,5 +758,7 @@ check_metadata_store_local (void *from, void *to)
 }
 
 #endif /* defined(ENABLE_CHECKED_BUILD_METADATA) */
+#else /* ENABLE_CHECKED_BUILD */
 
+MONO_EMPTY_SOURCE_FILE (checked_build);
 #endif /* ENABLE_CHECKED_BUILD */

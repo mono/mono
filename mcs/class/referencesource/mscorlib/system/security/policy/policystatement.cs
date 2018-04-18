@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 // ==--==
 //  PolicyStatement.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 //  Represents the policy associated with some piece of evidence
 //

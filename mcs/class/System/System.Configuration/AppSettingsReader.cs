@@ -31,6 +31,8 @@
 using System.Reflection;
 using System.Collections.Specialized;
 
+#pragma warning disable 618
+
 namespace System.Configuration
 {
 	public class AppSettingsReader

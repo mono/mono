@@ -14,7 +14,7 @@ using Mono.Unix;
 
 namespace MonoTests.Mono.Unix {
 
-    [TestFixture]
+    [TestFixture, Category ("NotOnWindows")]
     public class UnixListenerTest {
 
         // test that a socket file is created and deleted by the UnixListener

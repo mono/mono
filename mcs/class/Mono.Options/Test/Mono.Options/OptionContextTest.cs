@@ -56,7 +56,7 @@ namespace MonoTests.Mono.Options
 					c, v => { string ignore = v.OptionValues [0]; });
 			c.Option = p [0];
 			Utils.AssertException (typeof(ArgumentOutOfRangeException),
-					"Specified argument was out of the range of valid values.\nParameter name: index",
+					$"Specified argument was out of the range of valid values.{Environment.NewLine}Parameter name: index",
 					c, v => { string ignore = v.OptionValues [2]; });
 			c.OptionName = "-a";
 			Utils.AssertException (typeof(OptionException),

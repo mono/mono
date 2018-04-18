@@ -2,8 +2,8 @@
 // <copyright file="DataView.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -166,7 +166,7 @@ namespace System.Data {
         /// <summary>
         /// Allow construction of DataView with <see cref="System.Predicate&lt;DataRow&gt;"/> and <see cref="System.Comparison&lt;DataRow&gt;"/>
         /// </summary>
-        /// <remarks>This is a copy of the other DataView ctor and needs to be kept in [....]</remarks>
+        /// <remarks>This is a copy of the other DataView ctor and needs to be kept in sync</remarks>
         internal DataView(DataTable table, System.Predicate<DataRow> predicate, System.Comparison<DataRow> comparison, DataViewRowState RowState) {
             GC.SuppressFinalize(this);
             Bid.Trace("<ds.DataView.DataView|API> %d#, table=%d, RowState=%d{ds.DataViewRowState}\n",
@@ -1294,7 +1294,7 @@ namespace System.Data {
             if (ListChangedType.Reset != e.ListChangedType) {
                 OnListChanged(e);
             }
-            if (addNewRow != null && index.RecordCount == 0) { // [....] : 83032 Clear the newly added row as the underlying index is reset.
+            if (addNewRow != null && index.RecordCount == 0) { // Microsoft : 83032 Clear the newly added row as the underlying index is reset.
                 FinishAddNew(false);
             }
             if (ListChangedType.Reset == e.ListChangedType) {
@@ -1511,7 +1511,7 @@ namespace System.Data {
                     dataViewManager.nViews++;
                     DataViewSetting dataViewSetting = dataViewManager.DataViewSettings[table];
                     try {
-                        // [....]: check that we will not do unnesasary operation here if dataViewSetting.Sort == this.Sort ...
+                        // Microsoft: check that we will not do unnesasary operation here if dataViewSetting.Sort == this.Sort ...
                         applyDefaultSort = dataViewSetting.ApplyDefaultSort;
                         DataExpression newFilter = new DataExpression(table, dataViewSetting.RowFilter);
                         SetIndex(dataViewSetting.Sort, dataViewSetting.RowStateFilter, newFilter);

@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -30,7 +30,9 @@ namespace System.Security.Cryptography {
         private byte[] m_salt;
         private HMACSHA1 m_hmacsha1;  // The pseudo-random generator function used in PBKDF2
         private byte[] m_password;
+#if !MONO
         private CspParameters m_cspParams = new CspParameters();
+#endif
 
         private uint m_iterations;
         private uint m_block;
@@ -207,13 +209,15 @@ namespace System.Security.Cryptography {
             m_block++;
             return ret;
         }
-#if !MONO
         [System.Security.SecuritySafeCritical]  // auto-generated
         public byte[] CryptDeriveKey(string algname, string alghashname, int keySize, byte[] rgbIV)
         {
             if (keySize < 0)
                 throw new CryptographicException(Environment.GetResourceString("Cryptography_InvalidKeySize"));
 
+#if MONO
+            throw new NotSupportedException ("CspParameters are not supported by Mono");
+#else
             int algidhash = X509Utils.NameOrOidToAlgId(alghashname, OidGroup.HashAlgorithm);
             if (algidhash == 0)
                 throw new CryptographicException(Environment.GetResourceString("Cryptography_PasswordDerivedBytes_InvalidAlgorithm"));
@@ -231,8 +235,10 @@ namespace System.Security.Cryptography {
                       m_password, m_password.Length, keySize << 16, rgbIV, rgbIV.Length,
                       JitHelpers.GetObjectHandleOnStack(ref key));
             return key;
+#endif
         }
 
+#if !MONO
         [System.Security.SecurityCritical] // auto-generated
         private SafeProvHandle _safeProvHandle = null;
         private SafeProvHandle ProvHandle

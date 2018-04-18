@@ -1120,7 +1120,7 @@ namespace System.Workflow.ComponentModel.Compiler
         // add default constructors for classes unless they
         // exist in the source code. Unfortunately, this cannot be easily
         // fixed in the CodeDomParser because the code dom returned by that
-        // class is expected to kept in [....] with the real source code. 
+        // class is expected to kept in sync with the real source code. 
         // So we cannot "fabricate" a default constructor there without
         // breaking lots of assumptions elsewhere in the code. 
         // Instead, we add a default constructor here, if necessary.

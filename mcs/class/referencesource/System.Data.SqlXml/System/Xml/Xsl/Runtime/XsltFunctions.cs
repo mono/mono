@@ -2,7 +2,7 @@
 // <copyright file="XsltFunctions.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System.IO;
@@ -291,7 +291,7 @@ namespace System.Xml.Xsl.Runtime {
             }
             return d;
         }
-
+#if !MONO
         // CharSet.Auto is needed to work on Windows 98 and Windows Me
         [DllImport("kernel32.dll", CharSet=CharSet.Auto, BestFitMapping=false)]
         // SxS: Time formatting does not expose any system resource hence Resource Exposure scope is None.
@@ -325,7 +325,7 @@ namespace System.Xml.Xsl.Runtime {
                 this.Milliseconds = (ushort)dateTime.Millisecond;
             }
         }
-
+#endif
         // string ms:format-date(string datetime[, string format[, string language]])
         // string ms:format-time(string datetime[, string format[, string language]])
         //
@@ -339,12 +339,24 @@ namespace System.Xml.Xsl.Runtime {
         //   passed, the current culture is used. If language is not recognized, a runtime error happens.
         public static string MSFormatDateTime(string dateTime, string format, string lang, bool isDate) {
             try {
-                int locale = GetCultureInfo(lang).LCID;
-
                 XsdDateTime xdt;
                 if (! XsdDateTime.TryParse(dateTime, XsdDateTimeFlags.AllXsd | XsdDateTimeFlags.XdrDateTime | XsdDateTimeFlags.XdrTimeNoTz, out xdt)) {
                     return string.Empty;
                 }
+#if MONO
+                string locale = GetCultureInfo(lang).Name;
+
+                DateTime dt = xdt.ToZulu();
+
+                // If format is the empty string or not specified, use the default format for the given locale
+                if (format.Length == 0)
+                {
+                    format = null;
+                }
+                return dt.ToString(format, new CultureInfo(locale));
+#else
+                int locale = GetCultureInfo(lang).LCID;
+
                 SystemTime st = new SystemTime(xdt.ToZulu());
 
                 StringBuilder sb = new StringBuilder(format.Length + 16);
@@ -373,6 +385,7 @@ namespace System.Xml.Xsl.Runtime {
                     }
                 }
                 return sb.ToString();
+#endif
             } catch (ArgumentException) { // Operations with DateTime can throw this exception eventualy
                 return string.Empty;
             }

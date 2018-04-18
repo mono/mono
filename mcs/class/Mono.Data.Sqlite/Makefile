@@ -11,6 +11,7 @@ PREBUILT = $(RESX_RESOURCES:=.prebuilt)
 
 LIBRARY = Mono.Data.Sqlite.dll
 LIB_REFS = System System.Data System.Transactions System.Xml
+KEYFILE = ../mono.pub
 LIB_MCS_FLAGS = /unsafe \
 	$(RESOURCES:%=-resource:%) -d:SQLITE_STANDARD
 

@@ -181,7 +181,7 @@ namespace System.ServiceModel.Security
             catch (InvalidOperationException)
             {
                 algorithmObject = null;
-                // We ---- the exception and continue.
+                // We swallow the exception and continue.
             }
             if (algorithmObject != null)
             {
@@ -284,7 +284,7 @@ namespace System.ServiceModel.Security
             catch (InvalidOperationException)
             {
                 algorithmObject = null;
-                // We ---- the exception and continue.
+                // We swallow the exception and continue.
             }
             if (algorithmObject != null)
             {

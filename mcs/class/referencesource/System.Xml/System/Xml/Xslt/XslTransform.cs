@@ -2,7 +2,7 @@
 // <copyright file="XslTransform.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Xsl {
@@ -116,7 +116,7 @@ namespace System.Xml.Xsl {
             if (stylesheet == null) {
                 throw new ArgumentNullException("stylesheet");
             }
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             if (evidence == null) {
                 evidence = new Evidence();
             }

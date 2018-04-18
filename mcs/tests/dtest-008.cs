@@ -66,7 +66,7 @@ public class Test
 
 		if (Disposable.Counter != 1)
 			return false;
-
+/*
 		try {
 			using (dynamic u = new Disposable ()) {
 				u.VV ();
@@ -79,7 +79,7 @@ public class Test
 		using (dynamic u = new Disposable ()) {
 			u.Test ();
 		}
-
+*/
 		return true;
 	}
 

@@ -10,8 +10,7 @@ namespace System.ComponentModel {
     
     using System.Diagnostics;
     using System.Globalization;
-    using System.Security.Permissions;
-                                
+
     /// <devdoc>
     ///    <para>Specifies the editor to use to change a property. This class cannot be inherited.</para>
     /// </devdoc>
@@ -36,7 +35,7 @@ namespace System.ComponentModel {
         ///    name of the editor.</para>
         /// </devdoc>
         public EditorAttribute(string typeName, string baseTypeName) {
-            string temp = typeName.ToUpper(CultureInfo.InvariantCulture);
+            string temp = typeName.ToUpperInvariant ();
             Debug.Assert(temp.IndexOf(".DLL") == -1, "Came across: " + typeName + " . Please remove the .dll extension");
             this.typeName = typeName;
             this.baseTypeName = baseTypeName;
@@ -46,7 +45,7 @@ namespace System.ComponentModel {
         /// <para>Initializes a new instance of the <see cref='System.ComponentModel.EditorAttribute'/> class.</para>
         /// </devdoc>
         public EditorAttribute(string typeName, Type baseType) {
-            string temp = typeName.ToUpper(CultureInfo.InvariantCulture);
+            string temp = typeName.ToUpperInvariant ();
             Debug.Assert(temp.IndexOf(".DLL") == -1, "Came across: " + typeName + " . Please remove the .dll extension");
             this.typeName = typeName;
             this.baseTypeName = baseType.AssemblyQualifiedName;

@@ -2,8 +2,8 @@
 // <copyright file="InvalidUdtException.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System;
@@ -15,7 +15,11 @@ namespace Microsoft.SqlServer.Server {
     
     [Serializable]
     public sealed class InvalidUdtException : SystemException {
-     
+#if MONO
+        class HResults {
+            internal const int InvalidUdt = unchecked((int)0x80131937);
+        }
+#endif
         internal InvalidUdtException() : base() {
             HResult = HResults.InvalidUdt;
         }

@@ -2,9 +2,9 @@
 // <copyright file="SqlFileStream.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 //  </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System;
@@ -428,7 +428,7 @@ namespace System.Data.SqlTypes
         // 2. GetFullPathName API of kernel32 does not accept paths with length (in chars) greater than 32766
         //    (32766 is actually Int16.MaxValue - 1, while (-1) is for NULL termination)
         // We must check for the lowest value between the the two
-        static private readonly int MaxWin32PathLength = Int16.MaxValue - 1;
+        private const int MaxWin32PathLength = Int16.MaxValue - 1;
 
         [ConditionalAttribute("DEBUG")]
         static private void AssertPathFormat(string path)

@@ -38,11 +38,11 @@ namespace System.ServiceModel.Channels
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SR.GetString(SR.MessageHeaderIsNull0)));
                 }
             }
-            else
+            else if (!LocalAppContextSwitches.DisableAddressHeaderCollectionValidation)
             {
                 foreach (AddressHeader addressHeader in addressHeaders)
                 {
-                    if (addressHeaders == null)
+                    if (addressHeader == null)
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SR.GetString(SR.MessageHeaderIsNull0)));
                 }
             }
@@ -70,7 +70,7 @@ namespace System.ServiceModel.Channels
 
             for (int i = 0; i < InternalCount; i++)
             {
-#pragma warning suppress 56506 // [....], Message.Headers can never be null
+#pragma warning suppress 56506 // Microsoft, Message.Headers can never be null
                 message.Headers.Add(this[i].ToMessageHeader());
             }
         }

@@ -4,9 +4,9 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
 
 using System;
 using System.Collections.Generic;
@@ -1278,11 +1278,13 @@ namespace System.Runtime.InteropServices.WindowsRuntime
             if (type == null)
                 throw new ArgumentNullException("type");
 
+#if FEATURE_COMINTEROP || MONO_COM
             if (type.IsWindowsRuntimeObject && type.IsImport)
             {
                 return (IActivationFactory)Marshal.GetNativeActivationFactory(type);
             }
             else
+#endif
             {
 #if FEATURE_COMINTEROP_WINRT_MANAGED_ACTIVATION
                 return GetManagedActivationFactory(type);

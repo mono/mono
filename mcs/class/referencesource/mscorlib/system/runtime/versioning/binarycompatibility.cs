@@ -7,7 +7,7 @@
 **
 ** Class:  BinaryCompatibility
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: This class is used to determine which binary compatibility

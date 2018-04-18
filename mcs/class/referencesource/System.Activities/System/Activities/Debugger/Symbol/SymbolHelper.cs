@@ -14,6 +14,24 @@ namespace System.Activities.Debugger.Symbol
 
     internal static class SymbolHelper
     {
+        static readonly Guid Md5IdentifierGuid = new Guid("406ea660-64cf-4c82-b6f0-42d48172a799");
+        static readonly Guid Sha1IdentifierGuid = new Guid("ff1816ec-aa5e-4d10-87f7-6f4963833460");
+
+        public static Guid ChecksumProviderId
+        {
+            get
+            {
+                if (LocalAppContextSwitches.UseMD5ForWFDebugger)
+                {
+                    return Md5IdentifierGuid;
+                }
+                else
+                {
+                    return Sha1IdentifierGuid;
+                }
+            }
+        }
+
         // This is the same Encode/Decode logic as the WCF FramingEncoder
         public static int ReadEncodedInt32(BinaryReader reader)
         {
@@ -61,8 +79,6 @@ namespace System.Activities.Debugger.Symbol
             return count;
         }
 
-        [SuppressMessage("Microsoft.Cryptographic.Standard", "CA5350:MD5CannotBeUsed", 
-            Justification = "Design has been approved.  We are not using MD5 for any security or cryptography purposes but rather as a hash.")]
         public static byte[] CalculateChecksum(string fileName)
         {
             Fx.Assert(!string.IsNullOrEmpty(fileName), "fileName should not be empty or null");
@@ -71,8 +87,10 @@ namespace System.Activities.Debugger.Symbol
             {
                 using (StreamReader streamReader = new StreamReader(fileName))
                 {
-                    MD5 md5 = new MD5CryptoServiceProvider();
-                    checksum = md5.ComputeHash(streamReader.BaseStream);
+                    using (HashAlgorithm hashAlgorithm = CreateHashProvider())
+                    {
+                        checksum = hashAlgorithm.ComputeHash(streamReader.BaseStream);
+                    }
                 }
             }
             catch (IOException)
@@ -108,7 +126,28 @@ namespace System.Activities.Debugger.Symbol
         internal static bool ValidateChecksum(byte[] checksumToValidate)
         {
             // We are using MD5.ComputeHash, which will return a 16 byte array.
-            return checksumToValidate.Length == 16;
+            if (LocalAppContextSwitches.UseMD5ForWFDebugger)
+            {
+                return checksumToValidate.Length == 16;
+            }
+            else
+            {
+                return checksumToValidate.Length == 20;
+            }
+        }
+
+        [SuppressMessage("Microsoft.Cryptographic.Standard", "CA5350:MD5CannotBeUsed",
+            Justification = "Design has been approved.  We are not using MD5 for any security or cryptography purposes but rather as a hash.")]
+        static HashAlgorithm CreateHashProvider()
+        {
+            if (LocalAppContextSwitches.UseMD5ForWFDebugger)
+            {
+                return new MD5CryptoServiceProvider();
+            }
+            else
+            {
+                return new SHA1CryptoServiceProvider();
+            }
         }
     }
 }

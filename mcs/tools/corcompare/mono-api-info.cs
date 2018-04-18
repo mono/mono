@@ -200,7 +200,7 @@ namespace CorCompare
 				if (File.Exists (assembly))
 					return TypeHelper.Resolver.ResolveFile (assembly);
 
-				return TypeHelper.Resolver.Resolve (assembly);
+				return TypeHelper.Resolver.Resolve (AssemblyNameReference.Parse (assembly), new ReaderParameters ());
 			} catch (Exception e) {
 				Console.WriteLine (e);
 				return null;
@@ -1155,11 +1155,14 @@ namespace CorCompare
 				string direction = first && HasExtensionParameter ? "this" : "in";
 				first = false;
 
-				if (parameter.ParameterType is ByReferenceType)
+				var pt = parameter.ParameterType;
+				var brt = pt as ByReferenceType;
+				if (brt != null) {
 					direction = parameter.IsOut ? "out" : "ref";
+					pt = brt.ElementType;
+				}
 
-				TypeReference t = parameter.ParameterType;
-				AddAttribute ("type", Utils.CleanupTypeName (t));
+				AddAttribute ("type", Utils.CleanupTypeName (pt));
 
 				if (parameter.IsOptional) {
 					AddAttribute ("optional", "true");
@@ -1374,10 +1377,18 @@ namespace CorCompare
 				if (ca.Count != 1)
 					break;
 
+				if (mapping == null)
+					mapping = new Dictionary<string, object> (StringComparer.Ordinal);
+
 				if (constructor.Parameters[0].ParameterType == constructor.Module.TypeSystem.Boolean) {
-					if (mapping == null)
-						mapping = new Dictionary<string, object> (StringComparer.Ordinal);
 					mapping.Add ("Bindable", ca[0].Value);
+				} else if (constructor.Parameters[0].ParameterType.FullName == "System.ComponentModel.BindableSupport") {
+					if ((int)ca[0].Value == 0)
+						mapping.Add ("Bindable", false);
+					else if ((int)ca[0].Value == 1)
+						mapping.Add ("Bindable", true);
+					else
+						throw new NotImplementedException ();
 				} else {
 					throw new NotImplementedException ();
 				}
@@ -1538,13 +1549,15 @@ namespace CorCompare
 
 				ParameterDefinition info = infos [i];
 
+				string modifier = string.Empty;
 				if (info.ParameterType.IsByReference) {
-					string modifier;
-					if ((info.Attributes & (ParameterAttributes.Out | ParameterAttributes.In)) == ParameterAttributes.Out)
+					if ((info.Attributes & ParameterAttributes.In) != 0)
+						modifier = "in";
+					else if ((info.Attributes & ParameterAttributes.Out) != 0)
 						modifier = "out";
-					else
-						modifier = "ref";
+				}
 
+				if (modifier.Length > 0) {
 					signature.Append (modifier);
 					signature.Append (" ");
 				}

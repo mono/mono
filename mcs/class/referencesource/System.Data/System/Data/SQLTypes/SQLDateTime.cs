@@ -3,8 +3,8 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 // <owner current="true" primary="true">junfang</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 //**************************************************************************
@@ -56,26 +56,26 @@ namespace System.Data.SqlTypes {
         // Constants
 
         // Number of (100ns) ticks per time unit
-        private static readonly double  SQLTicksPerMillisecond = 0.3;
-        public static readonly int      SQLTicksPerSecond = 300;
-        public static readonly int      SQLTicksPerMinute = SQLTicksPerSecond * 60;
-        public static readonly int      SQLTicksPerHour = SQLTicksPerMinute * 60;
-        private static readonly int     SQLTicksPerDay = SQLTicksPerHour * 24;
+        private const double        SQLTicksPerMillisecond = 0.3;
+        public static readonly int  SQLTicksPerSecond = 300;
+        public static readonly int  SQLTicksPerMinute = SQLTicksPerSecond * 60;
+        public static readonly int  SQLTicksPerHour = SQLTicksPerMinute * 60;
+        private static readonly int SQLTicksPerDay = SQLTicksPerHour * 24;
 
-        private static readonly long    TicksPerSecond = TimeSpan.TicksPerMillisecond * 1000;
+        private const long          TicksPerSecond = TimeSpan.TicksPerMillisecond * 1000;
 
         private static readonly DateTime SQLBaseDate = new DateTime(1900, 1, 1);
         private static readonly long     SQLBaseDateTicks = SQLBaseDate.Ticks;
 
-        private static readonly int MinYear = 1753;                 // Jan 1 1753
-        private static readonly int MaxYear = 9999;                 // Dec 31 9999
+        private const int           MinYear = 1753;                 // Jan 1 1753
+        private const int           MaxYear = 9999;                 // Dec 31 9999
 
-        private static readonly int MinDay  = -53690;               // Jan 1 1753
-        private static readonly int MaxDay  = 2958463;              // Dec 31 9999 is this many days from Jan 1 1900
-        private static readonly int MinTime = 0;                    // 00:00:0:000PM
+        private const int           MinDay  = -53690;               // Jan 1 1753
+        private const int           MaxDay  = 2958463;              // Dec 31 9999 is this many days from Jan 1 1900
+        private const int           MinTime = 0;                    // 00:00:0:000PM
         private static readonly int MaxTime = SQLTicksPerDay - 1;   // = 25919999,  11:59:59:997PM
 
-        private static readonly int DayBase = 693595;               // Jan 1 1900 is this many days from Jan 1 0001
+        private const int DayBase = 693595;               // Jan 1 1900 is this many days from Jan 1 0001
 
 
         private static readonly int[] DaysToMonth365 = new int[] {
@@ -87,7 +87,7 @@ namespace System.Data.SqlTypes {
         private static readonly DateTime MaxDateTime = DateTime.MaxValue;
         private static readonly TimeSpan MinTimeSpan = MinDateTime.Subtract(SQLBaseDate);
         private static readonly TimeSpan MaxTimeSpan = MaxDateTime.Subtract(SQLBaseDate);
-        private static readonly String x_ISO8601_DateTimeFormat = "yyyy-MM-ddTHH:mm:ss.fff";
+        private const String x_ISO8601_DateTimeFormat = "yyyy-MM-ddTHH:mm:ss.fff";
 
         // These formats are valid styles in SQL Server (style 9, 12, 13, 14)
         // but couldn't be recognized by the default parse. Needs to call

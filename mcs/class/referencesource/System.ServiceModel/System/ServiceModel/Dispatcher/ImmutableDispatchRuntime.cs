@@ -1144,7 +1144,7 @@ namespace System.ServiceModel.Dispatcher
                 {
                     if (!rpc.Operation.IsSynchronous)
                     {
-                        // If async call completes in [....], it tells us through the gate below
+                        // If async call completes in sync, it tells us through the gate below
                         rpc.PrepareInvokeContinueGate();
                     }
 

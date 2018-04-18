@@ -1,5 +1,6 @@
-/*
- * lock-free-alloc.c: Lock free allocator.
+/**
+ * \file
+ * Lock free allocator.
  *
  * (C) Copyright 2011 Novell, Inc
  *
@@ -138,8 +139,8 @@ alloc_sb (Descriptor *desc)
 		pagesize = mono_pagesize ();
 
 	sb_header = desc->block_size == pagesize ?
-		mono_valloc (NULL, desc->block_size, prot_flags_for_activate (TRUE)) :
-		mono_valloc_aligned (desc->block_size, desc->block_size, prot_flags_for_activate (TRUE));
+		mono_valloc (NULL, desc->block_size, prot_flags_for_activate (TRUE), desc->heap->account_type) :
+		mono_valloc_aligned (desc->block_size, desc->block_size, prot_flags_for_activate (TRUE), desc->heap->account_type);
 
 	g_assert (sb_header == sb_header_for_addr (sb_header, desc->block_size));
 
@@ -150,11 +151,11 @@ alloc_sb (Descriptor *desc)
 }
 
 static void
-free_sb (gpointer sb, size_t block_size)
+free_sb (gpointer sb, size_t block_size, MonoMemAccountType type)
 {
 	gpointer sb_header = sb_header_for_addr (sb, block_size);
 	g_assert ((char*)sb_header + LOCK_FREE_ALLOC_SB_HEADER_SIZE == sb);
-	mono_vfree (sb_header, block_size);
+	mono_vfree (sb_header, block_size, type);
 	//g_print ("free sb %p\n", sb_header);
 }
 
@@ -162,7 +163,7 @@ free_sb (gpointer sb, size_t block_size)
 static Descriptor * volatile desc_avail;
 
 static Descriptor*
-desc_alloc (void)
+desc_alloc (MonoMemAccountType type)
 {
 	MonoThreadHazardPointers *hp = mono_hazard_pointer_get ();
 	Descriptor *desc;
@@ -170,16 +171,16 @@ desc_alloc (void)
 	for (;;) {
 		gboolean success;
 
-		desc = (Descriptor *) get_hazardous_pointer ((gpointer * volatile)&desc_avail, hp, 1);
+		desc = (Descriptor *) mono_get_hazardous_pointer ((volatile gpointer *)&desc_avail, hp, 1);
 		if (desc) {
 			Descriptor *next = desc->next;
-			success = (InterlockedCompareExchangePointer ((gpointer * volatile)&desc_avail, next, desc) == desc);
+			success = (mono_atomic_cas_ptr ((volatile gpointer *)&desc_avail, next, desc) == desc);
 		} else {
 			size_t desc_size = sizeof (Descriptor);
 			Descriptor *d;
 			int i;
 
-			desc = (Descriptor *) mono_valloc (NULL, desc_size * NUM_DESC_BATCH, prot_flags_for_activate (TRUE));
+			desc = (Descriptor *) mono_valloc (NULL, desc_size * NUM_DESC_BATCH, prot_flags_for_activate (TRUE), type);
 
 			/* Organize into linked list. */
 			d = desc;
@@ -192,10 +193,10 @@ desc_alloc (void)
 
 			mono_memory_write_barrier ();
 
-			success = (InterlockedCompareExchangePointer ((gpointer * volatile)&desc_avail, desc->next, NULL) == NULL);
+			success = (mono_atomic_cas_ptr ((volatile gpointer *)&desc_avail, desc->next, NULL) == NULL);
 
 			if (!success)
-				mono_vfree (desc, desc_size * NUM_DESC_BATCH);
+				mono_vfree (desc, desc_size * NUM_DESC_BATCH, type);
 		}
 
 		mono_hazard_pointer_clear (hp, 1);
@@ -223,7 +224,7 @@ desc_enqueue_avail (gpointer _desc)
 		old_head = desc_avail;
 		desc->next = old_head;
 		mono_memory_write_barrier ();
-	} while (InterlockedCompareExchangePointer ((gpointer * volatile)&desc_avail, desc, old_head) != old_head);
+	} while (mono_atomic_cas_ptr ((volatile gpointer *)&desc_avail, desc, old_head) != old_head);
 }
 
 static void
@@ -232,27 +233,27 @@ desc_retire (Descriptor *desc)
 	g_assert (desc->anchor.data.state == STATE_EMPTY);
 	g_assert (desc->in_use);
 	desc->in_use = FALSE;
-	free_sb (desc->sb, desc->block_size);
+	free_sb (desc->sb, desc->block_size, desc->heap->account_type);
 	mono_thread_hazardous_try_free (desc, desc_enqueue_avail);
 }
 #else
 MonoLockFreeQueue available_descs;
 
 static Descriptor*
-desc_alloc (void)
+desc_alloc (MonoMemAccountType type)
 {
 	Descriptor *desc = (Descriptor*)mono_lock_free_queue_dequeue (&available_descs);
 
 	if (desc)
 		return desc;
 
-	return calloc (1, sizeof (Descriptor));
+	return g_calloc (1, sizeof (Descriptor));
 }
 
 static void
 desc_retire (Descriptor *desc)
 {
-	free_sb (desc->sb, desc->block_size);
+	free_sb (desc->sb, desc->block_size, desc->heap->account_type);
 	mono_lock_free_queue_enqueue (&available_descs, &desc->node);
 }
 #endif
@@ -329,7 +330,7 @@ set_anchor (Descriptor *desc, Anchor old_anchor, Anchor new_anchor)
 	if (old_anchor.data.state == STATE_EMPTY)
 		g_assert (new_anchor.data.state == STATE_EMPTY);
 
-	return InterlockedCompareExchange (&desc->anchor.value, new_anchor.value, old_anchor.value) == old_anchor.value;
+	return mono_atomic_cas_i32 (&desc->anchor.value, new_anchor.value, old_anchor.value) == old_anchor.value;
 }
 
 static gpointer
@@ -342,7 +343,7 @@ alloc_from_active_or_partial (MonoLockFreeAllocator *heap)
  retry:
 	desc = heap->active;
 	if (desc) {
-		if (InterlockedCompareExchangePointer ((gpointer * volatile)&heap->active, NULL, desc) != desc)
+		if (mono_atomic_cas_ptr ((volatile gpointer *)&heap->active, NULL, desc) != desc)
 			goto retry;
 	} else {
 		desc = heap_get_partial (heap);
@@ -379,7 +380,7 @@ alloc_from_active_or_partial (MonoLockFreeAllocator *heap)
 
 	/* If the desc is partial we have to give it back. */
 	if (new_anchor.data.state == STATE_PARTIAL) {
-		if (InterlockedCompareExchangePointer ((gpointer * volatile)&heap->active, desc, NULL) != NULL)
+		if (mono_atomic_cas_ptr ((volatile gpointer *)&heap->active, desc, NULL) != NULL)
 			heap_put_partial (desc);
 	}
 
@@ -390,7 +391,7 @@ static gpointer
 alloc_from_new_sb (MonoLockFreeAllocator *heap)
 {
 	unsigned int slot_size, block_size, count, i;
-	Descriptor *desc = desc_alloc ();
+	Descriptor *desc = desc_alloc (heap->account_type);
 
 	slot_size = desc->slot_size = heap->sc->slot_size;
 	block_size = desc->block_size = heap->sc->block_size;
@@ -414,10 +415,12 @@ alloc_from_new_sb (MonoLockFreeAllocator *heap)
 	for (i = 1; i < count - 1; ++i)
 		*(unsigned int*)((char*)desc->sb + i * slot_size) = i + 1;
 
+	*(unsigned int*)((char*)desc->sb + (count - 1) * slot_size) = 0;
+
 	mono_memory_write_barrier ();
 
 	/* Make it active or free it again. */
-	if (InterlockedCompareExchangePointer ((gpointer * volatile)&heap->active, desc, NULL) == NULL) {
+	if (mono_atomic_cas_ptr ((volatile gpointer *)&heap->active, desc, NULL) == NULL) {
 		return desc->sb;
 	} else {
 		desc->anchor.data.state = STATE_EMPTY;
@@ -476,7 +479,7 @@ mono_lock_free_free (gpointer ptr, size_t block_size)
 	if (new_anchor.data.state == STATE_EMPTY) {
 		g_assert (old_anchor.data.state != STATE_EMPTY);
 
-		if (InterlockedCompareExchangePointer ((gpointer * volatile)&heap->active, NULL, desc) == desc) {
+		if (mono_atomic_cas_ptr ((volatile gpointer *)&heap->active, NULL, desc) == desc) {
 			/*
 			 * We own desc, check if it's still empty, in which case we retire it.
 			 * If it's partial we need to put it back either on the active slot or
@@ -485,7 +488,7 @@ mono_lock_free_free (gpointer ptr, size_t block_size)
 			if (desc->anchor.data.state == STATE_EMPTY) {
 				desc_retire (desc);
 			} else if (desc->anchor.data.state == STATE_PARTIAL) {
-				if (InterlockedCompareExchangePointer ((gpointer * volatile)&heap->active, desc, NULL) != NULL)
+				if (mono_atomic_cas_ptr ((volatile gpointer *)&heap->active, desc, NULL) != NULL)
 					heap_put_partial (desc);
 
 			}
@@ -504,7 +507,7 @@ mono_lock_free_free (gpointer ptr, size_t block_size)
 
 		g_assert (new_anchor.data.state == STATE_PARTIAL);
 
-		if (InterlockedCompareExchangePointer ((gpointer * volatile)&desc->heap->active, desc, NULL) != NULL)
+		if (mono_atomic_cas_ptr ((volatile gpointer *)&desc->heap->active, desc, NULL) != NULL)
 			heap_put_partial (desc);
 	}
 }
@@ -611,8 +614,9 @@ mono_lock_free_allocator_init_size_class (MonoLockFreeAllocSizeClass *sc, unsign
 }
 
 void
-mono_lock_free_allocator_init_allocator (MonoLockFreeAllocator *heap, MonoLockFreeAllocSizeClass *sc)
+mono_lock_free_allocator_init_allocator (MonoLockFreeAllocator *heap, MonoLockFreeAllocSizeClass *sc, MonoMemAccountType account_type)
 {
 	heap->sc = sc;
 	heap->active = NULL;
+	heap->account_type = account_type;
 }

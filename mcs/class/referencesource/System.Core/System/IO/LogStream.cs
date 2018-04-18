@@ -278,7 +278,7 @@ internal class LogStream : BufferedStream2
         }
 
         if (r == 0) {
-            // We should never silently ---- an error here without some
+            // We should never silently swallow an error here without some
             // extra work.  We must make sure that BeginWriteCore won't return an 
             // IAsyncResult that will cause EndWrite to block, since the OS won't
             // call AsyncFSCallback for us.  

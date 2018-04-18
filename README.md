@@ -15,34 +15,46 @@ The Mono project is part of the [.NET Foundation](http://www.dotnetfoundation.or
 6. [Configuration Options](#configuration-options)
 7. [Working with Submodules](#working-with-submodules)
 
-**Build Status**
+### Build Status
 
-Officially supported architectures:
+| OS           | Architecture       | Status                       |
+|--------------|--------------------|------------------------------|
+| Debian 9     | amd64              | [![debian-9-amd64][1]][2]    |
+| Debian 9     | i386               | [![debian-9-i386][3]][4]     |
+| Debian 9     | armel              | [![debian-9-armel][5]][6]    |
+| Debian 9     | armhf              | [![debian-9-armhf][7]][8]    |
+| Debian 9     | arm64              | [![debian-9-arm64][9]][10]   |
+| OS X         | amd64              | [![osx-amd64][11]][12]       |
+| OS X         | i386               | [![osx-i386][13]][14]        |
+| Windows      | amd64              | [![windows-amd64][15]][16]   |
+| Windows      | i386               | [![windows-i386][17]][18]    |
+| CentOS       | s390x (cs)         | [![centos-s390x][19]][20]    |
+| Debian 9     | ppc64el (cs)       | [![debian-9-ppc64el][21]][22]|
 
-| ubuntu-1404-amd64            | ubuntu-1404-i386            | debian-8-armel            | debian-8-armhf            | debian-8-arm64              | windows-amd64              |
-|------------------------------|-----------------------------|---------------------------|---------------------------|-----------------------------|----------------------------|
-| [![ubuntu-1404-amd64][1]][2] | [![ubuntu-1404-i386][3]][4] | [![debian-8-armel][5]][6] | [![debian-8-armhf][7]][8] | [![debian-8-arm64][9]][10]  | [![windows-amd64][11]][12] |
+_(cs) = community supported architecture_
 
-Community supported architectures:
-
-| centos-s390x              |
-|---------------------------|
-| [![centos-s390x][13]][14] |
-
-[1]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-amd64/badge/icon
-[2]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-amd64
-[3]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-i386/badge/icon
-[4]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=ubuntu-1404-i386/
-[5]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-armel/badge/icon
-[6]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-armel/
-[7]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-armhf/badge/icon
-[8]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-armhf/
-[9]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-arm64/badge/icon
-[10]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-8-arm64/
-[11]: https://ci.appveyor.com/api/projects/status/1e61ebdfpbiei58v/branch/master?svg=true
-[12]: https://ci.appveyor.com/project/ajlennon/mono-817/branch/master
-[13]: https://jenkins.mono-project.com/job/z/label=centos-s390x/badge/icon
-[14]: https://jenkins.mono-project.com/job/z/label=centos-s390x
+[1]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-amd64/badge/icon
+[2]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-amd64
+[3]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-i386/badge/icon
+[4]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-i386/
+[5]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-armel/badge/icon
+[6]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-armel/
+[7]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-armhf/badge/icon
+[8]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-armhf/
+[9]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-arm64/badge/icon
+[10]: https://jenkins.mono-project.com/job/test-mono-mainline-linux/label=debian-9-arm64/
+[11]: https://jenkins.mono-project.com/job/test-mono-mainline/label=osx-amd64/badge/icon
+[12]: https://jenkins.mono-project.com/job/test-mono-mainline/label=osx-amd64/
+[13]: https://jenkins.mono-project.com/job/test-mono-mainline/label=osx-i386/badge/icon
+[14]: https://jenkins.mono-project.com/job/test-mono-mainline/label=osx-i386/
+[15]: https://jenkins.mono-project.com/job/z/label=w64/badge/icon
+[16]: https://jenkins.mono-project.com/job/z/label=w64/
+[17]: https://jenkins.mono-project.com/job/z/label=w32/badge/icon
+[18]: https://jenkins.mono-project.com/job/z/label=w32/
+[19]: https://jenkins.mono-project.com/job/test-mono-mainline-community/label=centos-s390x/badge/icon
+[20]: https://jenkins.mono-project.com/job/test-mono-mainline-community/label=centos-s390x
+[21]: https://jenkins.mono-project.com/job/test-mono-mainline-community-chroot/label=debian-9-ppc64el/badge/icon
+[22]: https://jenkins.mono-project.com/job/test-mono-mainline-community-chroot/label=debian-9-ppc64el
 
 Compilation and Installation
 ============================
@@ -99,7 +111,7 @@ Once you have installed the software, you can run a few programs:
 
 * `mono program.exe` runtime engine
 
-* `mcs program.cs` C# compiler 
+* `mcs program.cs` C# compiler
 
 * `monodis program.exe` CIL Disassembler
 
@@ -116,6 +128,14 @@ Directory Roadmap
 
 * `external/` - Git submodules for external libraries (Newtonsoft.Json, ikvm, etc).
 
+* `ikvm-native/` - Glue code for ikvm.
+
+* `libgc/` - The (deprecated) Boehm GC implementation.
+
+* `llvm/` - Utility Makefiles for integrating the Mono LLVM fork.
+
+* `m4/` - General utility Makefiles.
+
 * `man/` - Manual pages for the various Mono commands and programs.
 
 * `mcs/` - The class libraries, compiler and tools
@@ -130,25 +150,51 @@ Directory Roadmap
 
   * `arch/` - Architecture specific portions.
 
+  * `benchmark/` - A collection of benchmarks.
+
+  * `btls/` - Build files for the BTLS library which incorporates BoringSSL.
+
   * `cil/` - Common Intermediate Representation, XML
 definition of the CIL bytecodes.
 
-  * `dis/` - CIL executable Disassembler
+  * `dis/` - CIL executable Disassembler.
 
-  * `io-layer/` - The I/O layer and system abstraction for 
-emulating the .NET IO model.
+  * `eglib/` - Independent implementation of the glib API.
 
   * `metadata/` - The object system and metadata reader.
 
   * `mini/` - The Just in Time Compiler.
 
+  * `profiler/` - The profiler implementation.
+
+  * `sgen/` - The SGen Garbage Collector implementation.
+
+  * `tests/` - The main runtime tests.
+
+  * `unit-tests/` - Additional runtime unit tests.
+
+  * `utils/` - Utility functions used across the runtime codebase.
+
+* `msvc/` - Logic for the MSVC / Visual Studio based runtime and BCL build system.
+The latter is experimental at the moment.
+
+* `packaging/` - Packaging logic for the OS X and Windows Mono packages.
+
+* `po/` - Translation files.
+
 * `runtime/` - A directory that contains the Makefiles that link the
 mono/ and mcs/ build systems.
 
-* `samples/` -Some simple sample programs on uses of the Mono
-runtime as an embedded library.   
+* `samples/` - Some simple sample programs on uses of the Mono
+runtime as an embedded library.
 
 * `scripts/` - Scripts used to invoke Mono and the corresponding program.
+
+* `sdks/` - A new way of embedding Mono into Xamarin.iOS, Xamarin.Android and other products.
+
+* `support/` - Various support libraries.
+
+* `tools/` - A collection of tools, mostly used during Mono development.
 
 Contributing to Mono
 ====================
@@ -162,8 +208,7 @@ section.
 Reporting bugs
 ==============
 
-To submit bug reports, please use [Xamarin's
-Bugzilla](https://bugzilla.xamarin.com/)
+To submit bug reports, please [open an issue on the mono GitHub repo](https://github.com/mono/mono/issues/new).
 
 Please use the search facility to ensure the same bug hasn't already
 been submitted and follow our
@@ -181,31 +226,27 @@ disable the compilation of a Mono runtime with the SGen garbage
 collector.
 
   * On platforms that support it, after building Mono, you will have
-both a `mono` binary and a `mono-sgen` binary. `mono` uses Boehm,
+both a `mono-boehm` binary and a `mono-sgen` binary. `mono-boehm` uses Boehm,
 while `mono-sgen` uses the Simple Generational GC.
 
-* `--with-gc=[included, boehm, none]` - Selects the default Boehm
+* `--with-libgc=[included, none]` - Selects the default Boehm
 garbage collector engine to use.
 
   * *included*: (*slightly modified Boehm GC*) This is the default
 value for the Boehm GC, and it's the most feature complete, it will
 allow Mono to use typed allocations and support the debugger.
 
-  * *boehm*: This is used to use a system-install Boehm GC, it is
-useful to test new features available in Boehm GC, but we do not
-recommend that people use this, as it disables a few features.
-
   * *none*:
-Disables the inclusion of a garbage collector.
+Disables the inclusion of a Boehm garbage collector.
 
   * This defaults to `included`.
 
-* `--with-cooperative-gc`
+* `--enable-cooperative-suspend`
 
   * If you pass this flag the Mono runtime is configured to only use
   the cooperative mode of the garbage collector.  If you do not pass
   this flag, then you can control at runtime the use of the
-  cooperative GC mode by setting the `MONO_ENABLE_COOP` flag.
+  cooperative GC mode by setting the `MONO_ENABLE_COOP_SUSPEND` flag.
   
 * `--with-tls=__thread,pthread`
 
@@ -299,16 +340,6 @@ that resides as a sibling of this directory (mono)
 should be used.
 
  * Or you can specify a path to a libgdiplus.
-
-* `--disable-shared-memory`
-
-  * Use this option to disable the use of shared memory in
-Mono (this is equivalent to setting the MONO_DISABLE_SHM
-environment variable, although this removes the feature
-completely).
-
-  * Disabling the shared memory support will disable certain
-features like cross-process named mutexes.
 
 * `--enable-minimal=LIST`
 
@@ -453,6 +484,19 @@ disable it.
   * There are a number of runtime options to control this
 also, see the man page.
 
+* `--with-csc=roslyn,mcs,default`
+
+  * Use this option to configure which C# compiler to use.  By default
+    the configure script will pick Roslyn, except on platforms where
+    Roslyn does not work (Big Endian systems) where it will pick mcs.
+
+    If you specify "mcs", then Mono's C# compiler will be used.  This
+    also allows for a complete bootstrap of Mono's core compiler and
+    core libraries from source.
+
+    If you specify "roslyn", then Roslyn's C# compiler will be used.
+    This currently uses Roslyn binaries.
+  
 * `--enable-nacl`
 
   * This configures the Mono compiler to generate code
@@ -461,6 +505,16 @@ http://code.google.com/p/nativeclient/
 
   * Currently this is used with Mono's AOT engine as
 Native Client does not support JIT engines yet.
+
+* `--enable-wasm`
+
+  * Use this option to configure mono to run on WebAssembly. It will
+    set both host and target to the WebAssembly triplet. This overrides
+    the values passed to `--host` or `--target` and ignored what config.sub guesses.
+
+    This is a workaround to enable usage of old automake versions that don't
+    recognize the wasm triplet.
+
 
 Working With Submodules
 =======================
@@ -521,7 +575,7 @@ file for information about Microsoft's patent grant.
 Mono Trademark Use Policy
 =========================
 
-The use of trademarks and logos for Mono can be found [here] (http://www.dotnetfoundation.org/legal/mono-tm). 
+The use of trademarks and logos for Mono can be found [here](http://www.dotnetfoundation.org/legal/mono-tm). 
 
 Maintaining the Class Library Solution Files
 ============================================

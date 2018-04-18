@@ -7,7 +7,7 @@
 **
 ** Class:  EventBuilder
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Eventbuilder is for client to define eevnts for a class

@@ -44,31 +44,45 @@ namespace Mono.CSharp
 
 		void tokenize_file (SourceFile sourceFile, ModuleContainer module, ParserSession session)
 		{
-			Stream input;
+			Stream input = null;
+			SeekableStreamReader reader = null;
 
 			try {
-				input = File.OpenRead (sourceFile.Name);
+				if (sourceFile.GetInputStream != null) {
+					reader = sourceFile.GetInputStream (sourceFile);
+					if (reader == null) {
+						throw new FileNotFoundException ("Delegate returned null", sourceFile.Name);
+					}
+				} else {
+					input = File.OpenRead (sourceFile.Name);
+				}
 			} catch {
 				Report.Error (2001, "Source file `" + sourceFile.Name + "' could not be found");
 				return;
 			}
 
-			using (input){
-				SeekableStreamReader reader = new SeekableStreamReader (input, ctx.Settings.Encoding);
-				var file = new CompilationSourceFile (module, sourceFile);
-
-				Tokenizer lexer = new Tokenizer (reader, file, session, ctx.Report);
-				int token, tokens = 0, errors = 0;
-
-				while ((token = lexer.token ()) != Token.EOF){
-					tokens++;
-					if (token == Token.ERROR)
-						errors++;
+			if (reader == null) {
+				using (input) {
+					reader = new SeekableStreamReader (input, ctx.Settings.Encoding);
+					DoTokenize (sourceFile, module, session, reader);
 				}
-				Console.WriteLine ("Tokenized: " + tokens + " found " + errors + " errors");
+			} else {
+				DoTokenize (sourceFile, module, session, reader);
 			}
-			
-			return;
+		}
+
+		void DoTokenize (SourceFile sourceFile, ModuleContainer module, ParserSession session, SeekableStreamReader reader) {
+			var file = new CompilationSourceFile (module, sourceFile);
+
+			Tokenizer lexer = new Tokenizer (reader, file, session, ctx.Report);
+			int token, tokens = 0, errors = 0;
+
+			while ((token = lexer.token ()) != Token.EOF) {
+				tokens++;
+				if (token == Token.ERROR)
+					errors++;
+			}
+			Console.WriteLine ("Tokenized: " + tokens + " found " + errors + " errors");
 		}
 
 		void Parse (ModuleContainer module)
@@ -129,36 +143,50 @@ namespace Mono.CSharp
 
 		public void Parse (SourceFile file, ModuleContainer module, ParserSession session, Report report)
 		{
-			Stream input;
+			Stream input = null;
+			SeekableStreamReader reader = null;
 
 			try {
-				input = File.OpenRead (file.Name);
+				if (file.GetInputStream != null) {
+					reader = file.GetInputStream (file);
+					if (reader == null) {
+						throw new FileNotFoundException ("Delegate returned null", file.Name);
+					}
+				} else {
+					input = File.OpenRead (file.Name);
+				}
 			} catch {
 				report.Error (2001, "Source file `{0}' could not be found", file.Name);
 				return;
 			}
 
-			// Check 'MZ' header
-			if (input.ReadByte () == 77 && input.ReadByte () == 90) {
+			if (reader == null) {
+				using (input) {
+					// Check 'MZ' header
+					if (input.ReadByte () == 77 && input.ReadByte () == 90) {
 
-				report.Error (2015, "Source file `{0}' is a binary file and not a text file", file.Name);
-				input.Close ();
-				return;
+						report.Error (2015, "Source file `{0}' is a binary file and not a text file", file.Name);
+						return;
+					}
+
+					input.Position = 0;
+					reader = new SeekableStreamReader (input, ctx.Settings.Encoding, session.StreamReaderBuffer);
+
+					DoParse (file, module, session, report, reader);
+				}
+			} else {
+				DoParse (file, module, session, report, reader);
 			}
+		}
 
-			input.Position = 0;
-			SeekableStreamReader reader = new SeekableStreamReader (input, ctx.Settings.Encoding, session.StreamReaderBuffer);
-
+		void DoParse (SourceFile file, ModuleContainer module, ParserSession session, Report report, SeekableStreamReader reader) {
 			Parse (reader, file, module, session, report);
 
 			if (ctx.Settings.GenerateDebugInfo && report.Errors == 0 && !file.HasChecksum) {
-				input.Position = 0;
+				reader.Stream.Position = 0;
 				var checksum = session.GetChecksumAlgorithm ();
-				file.SetChecksum (checksum.ComputeHash (input));
+				file.SetChecksum (checksum.ComputeHash (reader.Stream));
 			}
-
-			reader.Dispose ();
-			input.Close ();
 		}
 
 		public static void Parse (SeekableStreamReader reader, SourceFile sourceFile, ModuleContainer module, ParserSession session, Report report)

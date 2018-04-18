@@ -40,6 +40,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
+using System.Collections.Generic;
 using System.Security;
 using System.Security.Permissions;
 using System.Diagnostics.SymbolStore;
@@ -78,6 +79,7 @@ namespace System.Reflection.Emit
 		private GenericTypeParameterBuilder[] generic_params;
 		private RefEmitPermissionSet[] permissions;
 		private TypeInfo created;
+		private int state;
 		#endregion
 #pragma warning restore 169		
 		
@@ -91,21 +93,6 @@ namespace System.Reflection.Emit
 		{
 			return attrs;
 		}
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void setup_internal_class (TypeBuilder tb);
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void create_internal_class (TypeBuilder tb);
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void setup_generic_class ();
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void create_generic_class ();
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern EventInfo get_event_info (EventBuilder eb);
 
 		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr, int table_idx)
 		{
@@ -117,13 +104,12 @@ namespace System.Reflection.Emit
 			this.nspace = String.Empty;
 			this.fullname = TypeIdentifiers.WithoutEscape(this.tname);
 			pmodule = mb;
-			setup_internal_class (this);
 		}
 
 		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packing_size, int type_size, Type nesting_type)
 		{
 			int sep_index;
-			this.parent = parent;
+			this.parent = ResolveUserType (parent);
 			this.attrs = attr;
 			this.class_size = type_size;
 			this.packing_size = packing_size;
@@ -152,8 +138,7 @@ namespace System.Reflection.Emit
 				this.parent = typeof (object);
 
 			// skip .<Module> ?
-			table_idx = mb.get_next_table_index (this, 0x02, true);
-			setup_internal_class (this);
+			table_idx = mb.get_next_table_index (this, 0x02, 1);
 			fullname = GetFullName ();
 		}
 
@@ -672,7 +657,6 @@ namespace System.Reflection.Emit
 				fields = new FieldBuilder [1];
 				fields [0] = res;
 				num_fields ++;
-				create_internal_class (this);
 			}
 
 			if (IsEnum) {
@@ -728,7 +712,7 @@ namespace System.Reflection.Emit
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern TypeInfo create_runtime_class (TypeBuilder tb);
+		private extern TypeInfo create_runtime_class ();
 
 		private bool is_nested_in (Type t)
 		{
@@ -770,8 +754,6 @@ namespace System.Reflection.Emit
 			if (!IsInterface && (parent == null) && (this != pmodule.assemblyb.corlib_object_type) && (FullName != "<Module>")) {
 				SetParent (pmodule.assemblyb.corlib_object_type);
 			}
-
-			create_generic_class ();
 
 			// Fire TypeResolve events for fields whose type is an unfinished
 			// value type.
@@ -832,10 +814,67 @@ namespace System.Reflection.Emit
 					ctor.fixup ();
 			}
 
-			created = create_runtime_class (this);
+			ResolveUserTypes ();
+
+			created = create_runtime_class ();
 			if (created != null)
 				return created;
 			return this;
+		}
+
+		void ResolveUserTypes () {
+			parent = ResolveUserType (parent);
+			ResolveUserTypes (interfaces);
+			if (fields != null) {
+				foreach (var fb in fields) {
+					if (fb != null)
+						fb.ResolveUserTypes ();
+				}
+			}
+			if (methods != null) {
+				foreach (var mb in methods) {
+					if (mb != null)
+						mb.ResolveUserTypes ();
+				}
+			}
+			if (ctors != null) {
+				foreach (var cb in ctors) {
+					if (cb != null)
+						cb.ResolveUserTypes ();
+				}
+			}
+		}
+
+		static internal void ResolveUserTypes (Type[] types) {
+			if (types != null)
+				for (int i = 0; i < types.Length; ++i)
+					types [i] = ResolveUserType (types [i]);
+		}
+
+		static internal Type ResolveUserType (Type t) {
+			if (t != null && ((t.GetType ().Assembly != typeof (int).Assembly) || (t is TypeDelegator))) {
+				t = t.UnderlyingSystemType;
+				if (t != null && ((t.GetType ().Assembly != typeof (int).Assembly) || (t is TypeDelegator)))
+					throw new NotSupportedException ("User defined subclasses of System.Type are not yet supported.");
+				return t;
+			} else {
+				return t;
+			}
+		}
+
+		internal void FixupTokens (Dictionary<int, int> token_map, Dictionary<int, MemberInfo> member_map) {
+			if (methods != null) {
+				for (int i = 0; i < num_methods; ++i)
+					methods[i].FixupTokens (token_map, member_map);
+			}
+			if (ctors != null) {
+				foreach (var cb in ctors)
+					cb.FixupTokens (token_map, member_map);
+			}
+			if (subtypes != null) {
+				foreach (var tb in subtypes)
+					tb.FixupTokens (token_map, member_map);
+			}
 		}
 
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
@@ -931,53 +970,6 @@ namespace System.Reflection.Emit
 			if (is_created)
 				return created.GetEvents (bindingAttr);
 			throw new NotSupportedException ();
-		}
-
-		// This is only used from MonoGenericInst.initialize().
-		internal EventInfo[] GetEvents_internal (BindingFlags bindingAttr)
-		{
-			if (events == null)
-				return new EventInfo [0];
-			ArrayList l = new ArrayList ();
-			bool match;
-			MethodAttributes mattrs;
-			MethodInfo accessor;
-
-			foreach (EventBuilder eb in events) {
-				if (eb == null)
-					continue;
-				EventInfo c = get_event_info (eb);
-				match = false;
-				accessor = c.GetAddMethod (true);
-				if (accessor == null)
-					accessor = c.GetRemoveMethod (true);
-				if (accessor == null)
-					continue;
-				mattrs = accessor.Attributes;
-				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
-					if ((bindingAttr & BindingFlags.Public) != 0)
-						match = true;
-				} else {
-					if ((bindingAttr & BindingFlags.NonPublic) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				match = false;
-				if ((mattrs & MethodAttributes.Static) != 0) {
-					if ((bindingAttr & BindingFlags.Static) != 0)
-						match = true;
-				} else {
-					if ((bindingAttr & BindingFlags.Instance) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				l.Add (c);
-			}
-			EventInfo[] result = new EventInfo [l.Count];
-			l.CopyTo (result);
-			return result;
 		}
 
 		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
@@ -1606,13 +1598,11 @@ namespace System.Reflection.Emit
 			} else {
 				this.parent = parent;
 			}
-
-			// will just set the parent-related bits if called a second time
-			setup_internal_class (this);
+			this.parent = ResolveUserType (this.parent);
 		}
 
-		internal int get_next_table_index (object obj, int table, bool inc) {
-			return pmodule.get_next_table_index (obj, table, inc);
+		internal int get_next_table_index (object obj, int table, int count) {
+			return pmodule.get_next_table_index (obj, table, count);
 		}
 
 		[ComVisible (true)]
@@ -1625,6 +1615,12 @@ namespace System.Reflection.Emit
 		}
 
 		internal override Type InternalResolve ()
+		{
+			check_created ();
+			return created;
+		}
+
+		internal override Type RuntimeResolve ()
 		{
 			check_created ();
 			return created;
@@ -1728,9 +1724,10 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		public extern override bool IsGenericParameter {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
+		public override bool IsGenericParameter {
+			get {
+				return false;
+			}
 		}
 
 		public override GenericParameterAttributes GenericParameterAttributes {
@@ -1766,8 +1763,6 @@ namespace System.Reflection.Emit
 				throw new ArgumentNullException ("names");
 			if (names.Length == 0)
 				throw new ArgumentException ("names");
-
-			setup_generic_class ();
 
 			generic_params = new GenericTypeParameterBuilder [names.Length];
 			for (int i = 0; i < names.Length; i++) {
@@ -1809,7 +1804,7 @@ namespace System.Reflection.Emit
 
 		static bool IsValidGetMethodType (Type type)
 		{
-			if (type is TypeBuilder || type is MonoGenericClass)
+			if (type is TypeBuilder || type is TypeBuilderInstantiation)
 				return true;
 			/*GetMethod() must work with TypeBuilders after CreateType() was called.*/
 			if (type.Module is ModuleBuilder)

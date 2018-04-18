@@ -1465,7 +1465,7 @@ namespace System.ServiceModel.Channels
                     }
                 }
             }
-#pragma warning suppress 56500 // [....], transferring exception to caller
+#pragma warning suppress 56500 // Microsoft, transferring exception to caller
             catch (Exception e)
             {
                 if (Fx.IsFatal(e))

@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -373,8 +373,20 @@ namespace System.Security.Cryptography
 
 #if FEATURE_X509_SECURESTRINGS
             // If the user wanted to specify a PIN or HWND for a smart card CSP, apply those settings now.
-            if (parameters.ParentWindowHandle != IntPtr.Zero)
-                SetProviderParameter(TempFetchedProvHandle, parameters.KeyNumber, Constants.CLR_PP_CLIENT_HWND, parameters.ParentWindowHandle);
+            if (parameters.ParentWindowHandle != IntPtr.Zero) {
+                // Copy the value onto the stack.
+                // Then, for versions beyond 4.6.2 take the address of that copy, since &hwnd is what the API wants.
+                IntPtr parentWindowHandle = parameters.ParentWindowHandle;
+                IntPtr pHwnd = parentWindowHandle;
+
+                if (!AppContextSwitches.DoNotAddrOfCspParentWindowHandle) {
+                    unsafe {
+                        pHwnd = new IntPtr(&parentWindowHandle);
+                    }
+                }
+
+                SetProviderParameter(TempFetchedProvHandle, parameters.KeyNumber, Constants.CLR_PP_CLIENT_HWND, pHwnd);
+            }
             else if (parameters.KeyPassword != null) {
                 IntPtr szPassword = Marshal.SecureStringToCoTaskMemAnsi(parameters.KeyPassword);
                 try {

@@ -93,7 +93,7 @@ namespace System.ComponentModel.Design {
                     Debug.WriteLineIf(RuntimeLicenseContextSwitch.TraceVerbose,"rawfile: " + rawFile);
                     string codeBase;
                     
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                     // FileIOPermission is required for ApplicationBase in URL-hosted domains
                     FileIOPermission perm = new FileIOPermission(PermissionState.Unrestricted);
                     perm.Assert();
@@ -133,7 +133,7 @@ namespace System.ComponentModel.Design {
                             // file://fullpath/foo.exe
                             //
                             string fileName;
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                             FileIOPermission perm = new FileIOPermission(PermissionState.Unrestricted);
                             perm.Assert();
                             try
@@ -166,7 +166,7 @@ namespace System.ComponentModel.Design {
                     else if(!resourceAssembly.IsDynamic) { // EscapedCodeBase won't be supported by emitted assemblies anyway
                         Debug.WriteLineIf(RuntimeLicenseContextSwitch.TraceVerbose,"resourceAssembly is not null");
                         string fileName;
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                         FileIOPermission perm = new FileIOPermission(PermissionState.Unrestricted);
                         perm.Assert();
 #endif
@@ -176,7 +176,7 @@ namespace System.ComponentModel.Design {
                         }
                         finally
                         {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                             CodeAccessPermission.RevertAssert();
 #endif
                         }
@@ -258,7 +258,7 @@ namespace System.ComponentModel.Design {
 
         static Stream OpenRead(Uri resourceUri) {
             Stream result = null;
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             PermissionSet perms = new PermissionSet(PermissionState.Unrestricted);
 
             perms.Assert();
@@ -271,7 +271,7 @@ namespace System.ComponentModel.Design {
             catch (Exception e) {
                 Debug.Fail(e.ToString());
             }
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             finally {
                 CodeAccessPermission.RevertAssert();
             }

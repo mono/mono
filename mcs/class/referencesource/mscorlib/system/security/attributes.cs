@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 using  System.Runtime.InteropServices;
 
 namespace System.Security
@@ -86,12 +86,12 @@ namespace System.Security
     {
 #pragma warning disable 618    // We still use SecurityCriticalScope for v2 compat
 
-#if !FEATURE_CORECLR && !MOBILE
+#if !FEATURE_CORECLR
          private SecurityCriticalScope  _val;
 #endif // FEATURE_CORECLR
         public SecurityCriticalAttribute () {}
 
-#if !FEATURE_CORECLR && !MOBILE
+#if !FEATURE_CORECLR
         public SecurityCriticalAttribute(SecurityCriticalScope scope)
         {
             _val = scope;

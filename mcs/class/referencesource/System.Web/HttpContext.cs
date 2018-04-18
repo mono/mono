@@ -731,7 +731,7 @@ namespace System.Web {
         // which doesn't fit our expected patterns and where that code likely has negative side effects.
         // 
         // This flag is respected only by AspNetSynchronizationContext; it has no effect when the
-        // legacy [....] context is in use.
+        // legacy sync context is in use.
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public bool AllowAsyncDuringSyncStages {
             get {
@@ -1328,7 +1328,7 @@ namespace System.Web {
                 return _rootedObjects;
             }
             set {
-                // [....] the Principal between the containers
+                // Sync the Principal between the containers
                 SwitchPrincipalContainer(value);
                 _rootedObjects = value;
             }
@@ -2004,6 +2004,10 @@ namespace System.Web {
 
         internal bool IsChangeInUserPrincipal {
             get { return (_notificationContext.CurrentNotificationFlags & FLAG_CHANGE_IN_USER_OBJECT) == FLAG_CHANGE_IN_USER_OBJECT; }
+        }
+
+        internal bool IsRuntimeErrorReported {
+            get { return _runtimeErrorReported; }
         }
 
         internal bool IsSendResponseHeaders {

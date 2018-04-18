@@ -1,5 +1,6 @@
-/*
- * gc-internal-agnostic.h: Mono-agnostic GC interface.
+/**
+ * \file
+ * Mono-agnostic GC interface.
  *
  * Copyright (C) 2015 Xamarin Inc
  *
@@ -13,6 +14,7 @@
 #include <glib.h>
 #include <stdio.h>
 
+#include "mono/utils/ward.h"
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/parse.h"
 #include "mono/utils/memfuncs.h"
@@ -43,12 +45,14 @@
 #define MONO_GC_HANDLE_IS_OBJECT_POINTER(slot) (MONO_GC_HANDLE_TAG (slot) == (MONO_GC_HANDLE_OCCUPIED_MASK | MONO_GC_HANDLE_VALID_MASK))
 #define MONO_GC_HANDLE_IS_METADATA_POINTER(slot) (MONO_GC_HANDLE_TAG (slot) == MONO_GC_HANDLE_OCCUPIED_MASK)
 
+/* These should match System.Runtime.InteropServices.GCHandleType */
 typedef enum {
 	HANDLE_TYPE_MIN = 0,
 	HANDLE_WEAK = HANDLE_TYPE_MIN,
 	HANDLE_WEAK_TRACK,
 	HANDLE_NORMAL,
 	HANDLE_PINNED,
+	HANDLE_WEAK_FIELDS,
 	HANDLE_TYPE_MAX
 } GCHandleType;
 
@@ -62,14 +66,14 @@ typedef enum {
 #define MONO_GC_HANDLE(slot, type) (((slot) << MONO_GC_HANDLE_TYPE_SHIFT) | (((type) & MONO_GC_HANDLE_TYPE_MASK) + 1))
 
 typedef struct {
-	guint minor_gc_count;
-	guint major_gc_count;
-	guint64 minor_gc_time;
-	guint64 major_gc_time;
-	guint64 major_gc_time_concurrent;
+	gint32 minor_gc_count;
+	gint32 major_gc_count;
+	gint64 minor_gc_time;
+	gint64 major_gc_time;
+	gint64 major_gc_time_concurrent;
 } GCStats;
 
-extern GCStats gc_stats;
+extern GCStats mono_gc_stats;
 
 #ifdef HAVE_SGEN_GC
 typedef SgenDescriptor MonoGCDescriptor;
@@ -79,22 +83,23 @@ typedef void* MonoGCDescriptor;
 #define MONO_GC_DESCRIPTOR_NULL NULL
 #endif
 
-/*
- * Try to register a foreign thread with the GC, if we fail or the backend
- * can't cope with this concept - we return FALSE.
- */
-extern gboolean mono_gc_register_thread (void *baseptr);
-
 gboolean mono_gc_parse_environment_string_extract_number (const char *str, size_t *out);
 
-MonoGCDescriptor mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size);
-MonoGCDescriptor mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_t elem_size);
+MonoGCDescriptor mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
+    MONO_PERMIT (need (sgen_lock_gc));
+MonoGCDescriptor mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_t elem_size)
+    MONO_PERMIT (need (sgen_lock_gc));
 
 /* simple interface for data structures needed in the runtime */
-MonoGCDescriptor mono_gc_make_descr_from_bitmap (gsize *bitmap, int numbits);
+MonoGCDescriptor mono_gc_make_descr_from_bitmap (gsize *bitmap, int numbits)
+    MONO_PERMIT (need (sgen_lock_gc));
+
+/* Return a root descriptor for a vector with repeating refs bitmap */
+MonoGCDescriptor mono_gc_make_vector_descr (void);
 
 /* Return a root descriptor for a root with all refs */
-MonoGCDescriptor mono_gc_make_root_descr_all_refs (int numbits);
+MonoGCDescriptor mono_gc_make_root_descr_all_refs (int numbits)
+    MONO_PERMIT (need (sgen_lock_gc));
 
 /* Return the bitmap encoded by a descriptor */
 gsize* mono_gc_get_bitmap_for_descr (MonoGCDescriptor descr, int *numbits);
@@ -109,5 +114,10 @@ void mono_gc_memmove_atomic (void *dest, const void *src, size_t size);
 void mono_gc_memmove_aligned (void *dest, const void *src, size_t size);
 
 FILE *mono_gc_get_logfile (void);
+
+/* equivalent to options set via MONO_GC_PARAMS */
+void mono_gc_params_set (const char* options);
+/* equivalent to options set via MONO_GC_DEBUG */
+void mono_gc_debug_set (const char* options);
 
 #endif

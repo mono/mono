@@ -52,31 +52,28 @@ namespace MonoCasTests.System.Drawing.Text {
 		// TODO - tests for AddFontFile
 
 		[Test]
-		[ExpectedException (typeof (SecurityException))]
 		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 		public void AddMemoryFont_Deny_UnmanagedCode () 
 		{
-			new PrivateFontCollection ().AddMemoryFont (IntPtr.Zero, 1024);
+			Assert.Throws<SecurityException> (() => new PrivateFontCollection ().AddMemoryFont (IntPtr.Zero, 1024));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		[SecurityPermission (SecurityAction.PermitOnly, UnmanagedCode = true)]
 		public void AddMemoryFont_PermitOnly_UnmanagedCode ()
 		{
-			new PrivateFontCollection ().AddMemoryFont (IntPtr.Zero, 1024);
+			Assert.Throws<ArgumentException> (() => new PrivateFontCollection ().AddMemoryFont (IntPtr.Zero, 1024));
 		}
 
 		// yes, that fails with FileNotFoundException ;-)
 
 		[Test]
-		[ExpectedException (typeof (FileNotFoundException))]
 		[SecurityPermission (SecurityAction.PermitOnly, UnmanagedCode = true)]
 		public void AddMemoryFont_NegativeLength ()
 		{
 			IntPtr ptr = Marshal.AllocHGlobal (1024);
 			try {
-				new PrivateFontCollection ().AddMemoryFont (ptr, -1024);
+				Assert.Throws<FileNotFoundException> (() => new PrivateFontCollection ().AddMemoryFont (ptr, -1024));
 			}
 			finally {
 				Marshal.FreeHGlobal (ptr);
@@ -84,13 +81,12 @@ namespace MonoCasTests.System.Drawing.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (FileNotFoundException))]
 		[SecurityPermission (SecurityAction.PermitOnly, UnmanagedCode = true)]
 		public void AddMemoryFont_InvalidData ()
 		{
 			IntPtr ptr = Marshal.AllocHGlobal (1024);
 			try {
-				new PrivateFontCollection ().AddMemoryFont (ptr, 1024);
+				Assert.Throws<FileNotFoundException> (() => new PrivateFontCollection ().AddMemoryFont (ptr, 1024));
 			}
 			finally {
 				Marshal.FreeHGlobal (ptr);

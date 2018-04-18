@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Transactions.dll
+KEYFILE = ../ecma.pub
 ifdef MOBILE_PROFILE
 LIB_REFS = System
 LIB_MCS_FLAGS = /define:MOBILE

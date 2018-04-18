@@ -34,7 +34,6 @@ using System.Security;
 
 namespace System.Drawing {
 
-	[SuppressUnmanagedCodeSecurity]
 	internal static class MacSupport {
 		internal static Hashtable contextReference = new Hashtable ();
 		internal static object lockobj = new object ();
@@ -49,14 +48,16 @@ namespace System.Drawing {
 #endif
 
 		static MacSupport () {
+#if !NETSTANDARD1_6
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies ()) {
 				if (String.Equals (asm.GetName ().Name, "System.Windows.Forms")) {
 					Type driver_type = asm.GetType ("System.Windows.Forms.XplatUICarbon");
 					if (driver_type != null) {
-						hwnd_delegate = (Delegate) driver_type.GetField ("HwndDelegate", BindingFlags.NonPublic | BindingFlags.Static).GetValue (null);
+						hwnd_delegate = (Delegate) driver_type.GetTypeInfo() .GetField ("HwndDelegate", BindingFlags.NonPublic | BindingFlags.Static).GetValue (null);
 					}
 				}
 			}
+#endif
 		}
 
 		internal static CocoaContext GetCGContextForNSView (IntPtr handle) {

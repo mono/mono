@@ -44,6 +44,9 @@ namespace MonoTests.System
 			Assert.AreEqual (JsonType.Array, j.JsonType, "type");
 			var str = j.ToString ();
 			Assert.AreEqual (str, "[1, 2, 3, null]");
+			((JsonArray) j).Add (null);
+			str = j.ToString ();
+			Assert.AreEqual (str, "[1, 2, 3, null, null]");
 		}
 
 		// Test that we correctly serialize JsonObject with null elements.

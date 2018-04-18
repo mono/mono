@@ -64,8 +64,8 @@ namespace System.ServiceModel.Syndication
 		{
 		}
 
-		public Atom10ItemFormatter (SyndicationItem feedToWrite)
-			: base (feedToWrite)
+		public Atom10ItemFormatter (SyndicationItem itemToWrite)
+			: base (itemToWrite)
 		{
 		}
 

@@ -49,6 +49,51 @@ namespace System.Security.Cryptography.X509Certificates
 				Interlocked.CompareExchange (ref nativeHelper, helper, null);
 		}
 
+#if MONO_FEATURE_APPLETLS
+		static bool ShouldUseAppleTls
+		{
+			get
+			{
+				if (!System.Environment.IsMacOS)
+					return false;
+				// MONO_TLS_PROVIDER values default or apple (not legacy or btls) and must be on MacOS
+				var variable = Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER");
+				return string.IsNullOrEmpty (variable) || variable == "default" || variable == "apple"; // On Platform.IsMacOS default is AppleTlsProvider
+			}
+		}
+#endif
+
+		public static X509CertificateImpl InitFromHandle (IntPtr handle)
+		{
+#if (MONO_FEATURE_APPLETLS && ONLY_APPLETLS) || MONO_FEATURE_APPLE_X509 // ONLY_APPLETLS should not support any other option
+			return InitFromHandleApple (handle);
+#else
+
+#if MONO_FEATURE_APPLETLS // If we support AppleTls, which is the default, and not overriding to legacy
+			if (ShouldUseAppleTls)
+				return InitFromHandleApple (handle);
+#endif
+#if !MOBILE
+			return InitFromHandleCore (handle);
+#elif !MONOTOUCH && !XAMMAC
+			throw new NotSupportedException ();
+#endif
+#endif
+		}
+
+		static X509CertificateImpl Import (byte[] rawData)
+		{
+#if (MONO_FEATURE_APPLETLS && ONLY_APPLETLS) || MONO_FEATURE_APPLE_X509 // ONLY_APPLETLS should not support any other option
+			return ImportApple (rawData);
+#else
+#if MONO_FEATURE_APPLETLS
+			if (ShouldUseAppleTls)
+				return ImportApple (rawData);
+#endif
+			return ImportCore (rawData);
+#endif
+		}
+
 #if !MOBILE
 		// typedef struct _CERT_CONTEXT {
 		//	DWORD                   dwCertEncodingType;
@@ -70,7 +115,7 @@ namespace System.Security.Cryptography.X509Certificates
 		// so we don't create any dependencies on Windows DLL in corlib
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
-		public static X509CertificateImpl InitFromHandle (IntPtr handle)
+		public static X509CertificateImpl InitFromHandleCore (IntPtr handle)
 		{
 			// both Marshal.PtrToStructure and Marshal.Copy use LinkDemand (so they will always success from here)
 			CertificateContext cc = (CertificateContext) Marshal.PtrToStructure (handle, typeof (CertificateContext));
@@ -78,11 +123,6 @@ namespace System.Security.Cryptography.X509Certificates
 			Marshal.Copy (cc.pbCertEncoded, data, 0, (int)cc.cbCertEncoded);
 			var x509 = new MX.X509Certificate (data);
 			return new X509CertificateImplMono (x509);
-		}
-#elif !MONOTOUCH && !XAMMAC
-		public static X509CertificateImpl InitFromHandle (IntPtr handle)
-		{
-			throw new NotSupportedException ();
 		}
 #endif
 
@@ -96,7 +136,9 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public static X509CertificateImpl InitFromCertificate (X509CertificateImpl impl)
 		{
-			ThrowIfContextInvalid (impl);
+			if (impl == null)
+				return null;
+
 			var copy = impl.Clone ();
 			if (copy != null)
 				return copy;
@@ -175,8 +217,7 @@ namespace System.Security.Cryptography.X509Certificates
 			return data;
 		}
 
-#if !MONOTOUCH && !XAMMAC
-		static X509CertificateImpl Import (byte[] rawData)
+		static X509CertificateImpl ImportCore (byte[] rawData)
 		{
 			MX.X509Certificate x509;
 			try {
@@ -193,7 +234,6 @@ namespace System.Security.Cryptography.X509Certificates
 
 			return new X509CertificateImplMono (x509);
 		}
-#endif
 
 		public static X509CertificateImpl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{

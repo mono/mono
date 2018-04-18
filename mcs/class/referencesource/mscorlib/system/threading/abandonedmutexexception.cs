@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // AbandonedMutexException
 // Thrown when a wait completes because one or more mutexes was abandoned.

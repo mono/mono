@@ -1,5 +1,6 @@
-/*
- * networking-missing.c: Implements missing standard socket functions.
+/**
+ * \file
+ * Implements missing standard socket functions.
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -8,13 +9,15 @@
  */
 
 #include <mono/utils/networking.h>
+#include <mono/utils/mono-compiler.h>
 #include <glib.h>
 
 #ifdef HAVE_NETDB_H
 #include <netdb.h>
 #endif
 
-#ifndef HAVE_INET_PTON
+//wasm does have inet_pton even though autoconf fails to find
+#if !defined (HAVE_INET_PTON) && !defined (HOST_WASM)
 
 int
 inet_pton (int family, const char *address, void *inaddrp)
@@ -53,4 +56,7 @@ inet_pton (int family, const char *address, void *inaddrp)
 	return -1;
 }
 
+#else /* !HAVE_INET_PTON */
+
+MONO_EMPTY_SOURCE_FILE (networking_missing);
 #endif /* !HAVE_INET_PTON */

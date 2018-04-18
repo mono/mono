@@ -45,7 +45,7 @@ namespace System.ServiceModel.Channels
             {
                 if (this.requestMessageException != null)
                 {
-#pragma warning suppress 56503 // [....], see outcome of DCR 50092
+#pragma warning suppress 56503 // Microsoft, see outcome of DCR 50092
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(this.requestMessageException);
                 }
 

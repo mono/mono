@@ -7,8 +7,8 @@
 **
 ** Class: PermissionListSet.cs
 ** 
-** <OWNER>[....]</OWNER>
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 ** Purpose: Holds state about A/G/R permissionsets in a callstack or appdomain
 **          (Replacement for PermissionListSet)

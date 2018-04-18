@@ -231,10 +231,10 @@ using nwind;
                      select new { g.Key, OrderCount = g.Count() };
 
             var lst = q2.ToList();
-            Assert.Greater(lst.Count, 0, "Expected some grouped order results");
+            AssertHelper.Greater(lst.Count, 0, "Expected some grouped order results");
             var result0 = lst[0];
             Assert.IsTrue(result0.Key != null, "Key must be non-null");
-            Assert.Greater(result0.OrderCount, 0, "Count must be > 0");
+            AssertHelper.Greater(result0.OrderCount, 0, "Count must be > 0");
             //select new { g.Key , SumPerCustomer = g.Sum(o2=>o2.OrderID) };
         }
 
@@ -252,10 +252,10 @@ using nwind;
                      select new { g.Key, OrderCount = g.Count() };
 
             var lst = q2.ToList();
-            Assert.Greater(lst.Count, 0, "Expected some grouped order results");
+            AssertHelper.Greater(lst.Count, 0, "Expected some grouped order results");
             var result0 = lst[0];
             Assert.IsTrue(result0.Key != null, "Key must be non-null");
-            Assert.Greater(result0.OrderCount, 0, "Count must be > 0");
+            AssertHelper.Greater(result0.OrderCount, 0, "Count must be > 0");
             //select new { g.Key , SumPerCustomer = g.Sum(o2=>o2.OrderID) };
         }
 
@@ -272,12 +272,12 @@ using nwind;
                      //where g.Count()>1
                      select new { g.Key, OrderSum = g.Sum(o => o.OrderID) };
             var lst = q2.ToList();
-            Assert.Greater(lst.Count, 0, "Expected some grouped order results");
+            AssertHelper.Greater(lst.Count, 0, "Expected some grouped order results");
             foreach (var result in lst)
             {
                 Console.WriteLine("  Result: custID=" + result.Key + " sum=" + result.OrderSum);
                 Assert.IsTrue(result.Key != null, "Key must be non-null");
-                Assert.Greater(result.OrderSum, 0, "OrderSum must be > 0");
+                AssertHelper.Greater(result.OrderSum, 0, "OrderSum must be > 0");
             }
             //select new { g.Key , SumPerCustomer = g.Sum(o2=>o2.OrderID) };
         }

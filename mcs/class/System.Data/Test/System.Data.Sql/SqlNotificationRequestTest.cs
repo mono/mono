@@ -94,7 +94,7 @@ namespace MonoTests.System.Data.Sql
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.AreEqual ("Service", ex.ParamName, "#5");
+				Assert.AreEqual ("Options", ex.ParamName, "#5");
 			}
 		}
 
@@ -156,7 +156,7 @@ namespace MonoTests.System.Data.Sql
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.AreEqual ("Service", ex.ParamName, "#5");
+				Assert.AreEqual ("Options", ex.ParamName, "#5");
 			}
 		}
 

@@ -2,7 +2,7 @@
 // <copyright file="ReadOnlyTernaryTree.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System;
@@ -17,7 +17,7 @@ namespace System.Xml {
     //
     // XSL HTML output method properties
     //
-    // Keep the first four bits in [....], so that the element and attribute mask operation can be combined.
+    // Keep the first four bits in sync, so that the element and attribute mask operation can be combined.
     internal enum ElementProperties : uint {DEFAULT = 0, URI_PARENT = 1, BOOL_PARENT = 2, NAME_PARENT = 4, EMPTY = 8, NO_ENTITIES = 16, HEAD = 32,  BLOCK_WS = 64, HAS_NS = 128}
     internal enum AttributeProperties : uint {DEFAULT = 0, URI = 1, BOOLEAN = 2, NAME = 4}
 

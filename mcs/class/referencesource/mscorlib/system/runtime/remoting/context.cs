@@ -436,7 +436,7 @@ namespace System.Runtime.Remoting.Contexts {
                     }
                     iSink++;
                 }
-                // now check if we ----d and set appropriately
+                // now check if we raced and set appropriately
                 lock (this)
                 {
                     if (_clientContextChain==null)

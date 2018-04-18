@@ -1,5 +1,6 @@
-/*
- * mini-llvm-cpp.h: LLVM backend
+/**
+ * \file
+ * LLVM backend
  *
  * Authors:
  *   Zoltan Varga (vargaz@gmail.com)
@@ -33,6 +34,17 @@ typedef enum {
 	LLVM_ATOMICRMW_OP_XCHG = 0,
 	LLVM_ATOMICRMW_OP_ADD = 1,
 } AtomicRMWOp;
+
+typedef enum {
+	LLVM_ATTR_NO_UNWIND,
+	LLVM_ATTR_NO_INLINE,
+	LLVM_ATTR_OPTIMIZE_FOR_SIZE,
+	LLVM_ATTR_IN_REG,
+	LLVM_ATTR_STRUCT_RET,
+	LLVM_ATTR_NO_ALIAS,
+	LLVM_ATTR_BY_VAL,
+	LLVM_ATTR_UW_TABLE
+} AttrKind;
 
 void
 mono_llvm_dump_value (LLVMValueRef value);
@@ -75,7 +87,7 @@ LLVMValueRef
 mono_llvm_build_cmpxchg (LLVMBuilderRef builder, LLVMValueRef addr, LLVMValueRef comparand, LLVMValueRef value);
 
 void
-mono_llvm_set_must_tail (LLVMValueRef call_ins);
+mono_llvm_set_must_tailcall (LLVMValueRef call_ins);
 
 LLVMValueRef
 mono_llvm_create_constant_data_array (const uint8_t *data, int len);
@@ -90,7 +102,16 @@ void
 mono_llvm_set_call_preserveall_cc (LLVMValueRef call);
 
 void
-mono_llvm_set_call_notail (LLVMValueRef call);
+mono_llvm_set_call_notailcall (LLVMValueRef call);
+
+void
+mono_llvm_add_func_attr (LLVMValueRef func, AttrKind kind);
+
+void
+mono_llvm_add_param_attr (LLVMValueRef param, AttrKind kind);
+
+void
+mono_llvm_add_instr_attr (LLVMValueRef val, int index, AttrKind kind);
 
 _Unwind_Reason_Code 
 mono_debug_personality (int a, _Unwind_Action b,

@@ -2,9 +2,9 @@
 // <copyright file="datacache.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -351,7 +351,7 @@ namespace System.Data {
             }
             dataTableClass.Members.Add(constructor);
 
-            //\\ internal <TableName>DataTableClass(DataTable table) : base(table.TableName) { // [....] : Assuming incoming table always associated with DataSet
+            //\\ internal <TableName>DataTableClass(DataTable table) : base(table.TableName) { // Microsoft : Assuming incoming table always associated with DataSet
             //\\ if (table.CaseSensitive != table.DataSet.CaseSensitive)
             //\\    this.CaseSensitive = table.CaseSensitive;
             //\\ if (table.Locale.ToString() != table.DataSet.Locale.ToString())
@@ -682,7 +682,7 @@ namespace System.Data {
                     //\\ this.Prefix = "<Prefix>";
                     tableInitClass.Statements.Add(Assign(Property(This(), "Prefix"), Str(table.Prefix)));
                 }
-                if (table.tableNamespace != null) {
+                if (table._tableNamespace != null) {
                     //\\ this.Namespace = <Namespace>;
                     tableInitClass.Statements.Add(Assign(Property(This(), "Namespace"), Str(table.Namespace)));
                 }
@@ -691,7 +691,7 @@ namespace System.Data {
                     //\\ this.MinimumCapacity = <MinimumCapacity>;
                     tableInitClass.Statements.Add(Assign(Property(This(), "MinimumCapacity"), Primitive(table.MinimumCapacity)));
                 }
-                if (table.displayExpression != null) {
+                if (table._displayExpression != null) {
                     //\\ this.DisplayExpression = "<DisplayExpression>";
                     tableInitClass.Statements.Add(Assign(Property(This(), "DisplayExpression"), Str(table.DisplayExpressionInternal)));
                 }

@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // <copyright file="CodeNamespace.cs" company="Microsoft">
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
 //------------------------------------------------------------------------------
@@ -31,7 +31,9 @@ namespace System.CodeDom {
         private CodeNamespaceImportCollection imports = new CodeNamespaceImportCollection();
         private CodeCommentStatementCollection comments = new CodeCommentStatementCollection();
         private CodeTypeDeclarationCollection classes = new CodeTypeDeclarationCollection();
+#if CODEDOM_NESTED_NAMESPACES
         private CodeNamespaceCollection namespaces = new CodeNamespaceCollection();
+#endif
         
         private int  populated = 0x0;
         private const int ImportsCollection = 0x1;

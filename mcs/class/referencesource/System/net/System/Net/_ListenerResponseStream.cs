@@ -463,7 +463,7 @@ namespace System.Net {
         }
 
         // The final Content-Length async write can only be cancelled by CancelIoEx.
-        // [....] can only be cancelled by CancelSynchronousIo, but we don't attempt this right now.
+        // Sync can only be cancelled by CancelSynchronousIo, but we don't attempt this right now.
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification =
             "It is safe to ignore the return value on a cancel operation because the connection is being closed")]
         internal void CancelLastWrite(CriticalHandle requestQueueHandle)

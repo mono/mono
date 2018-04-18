@@ -50,4 +50,3 @@ Assembly/AssemblyInfo.cs
 ../referencesource/System.ComponentModel.DataAnnotations/DataAnnotations/ValidationResult.cs
 ../referencesource/System.ComponentModel.DataAnnotations/DataAnnotations/Validator.cs
 ReferenceSources/SR.cs
-ReferenceSources/SR.missing.cs

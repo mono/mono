@@ -17,6 +17,7 @@ using MSI = Mono.Security.Interface;
 #endif
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -42,6 +43,7 @@ namespace System.Net
 		NetworkCredential credentials;
 		IPHostEntry hostEntry;
 		IPEndPoint localEndPoint;
+		IPEndPoint remoteEndPoint;
 		IWebProxy proxy;
 		int timeout = 100000;
 		int rwTimeout = 300000;
@@ -65,7 +67,9 @@ namespace System.Net
 		const string PasswordCommand = "PASS";
 		const string TypeCommand = "TYPE";
 		const string PassiveCommand = "PASV";
+		const string ExtendedPassiveCommand = "EPSV";
 		const string PortCommand = "PORT";
+		const string ExtendedPortCommand = "EPRT";
 		const string AbortCommand = "ABOR";
 		const string AuthCommand = "AUTH";
 		const string RestCommand = "REST";
@@ -109,7 +113,9 @@ namespace System.Net
 		internal FtpWebRequest (Uri uri) 
 		{
 			this.requestUri = uri;
+#pragma warning disable 618
 			this.proxy = GlobalProxySelection.Select;
+#pragma warning restore 618
 		}
 
 		static Exception GetMustImplement ()
@@ -401,6 +407,7 @@ namespace System.Net
 						State = RequestState.Scheduled;
 
 					Thread thread = new Thread (ProcessRequest);
+					thread.IsBackground = true;
 					thread.Start ();
 				}
 			}
@@ -452,6 +459,7 @@ namespace System.Net
 
 			asyncResult = new FtpAsyncResult (callback, state);
 			Thread thread = new Thread (ProcessRequest);
+			thread.IsBackground = true;
 			thread.Start ();
 
 			return asyncResult;
@@ -775,14 +783,14 @@ namespace System.Net
 			foreach (IPAddress address in hostEntry.AddressList) {
 				sock = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-				IPEndPoint remote = new IPEndPoint (address, requestUri.Port);
+				remoteEndPoint = new IPEndPoint (address, requestUri.Port);
 
-				if (!ServicePoint.CallEndPointDelegate (sock, remote)) {
+				if (!ServicePoint.CallEndPointDelegate (sock, remoteEndPoint)) {
 					sock.Close ();
 					sock = null;
 				} else {
 					try {
-						sock.Connect (remote);
+						sock.Connect (remoteEndPoint);
 						localEndPoint = (IPEndPoint) sock.LocalEndPoint;
 						break;
 					} catch (SocketException exc) {
@@ -837,52 +845,19 @@ namespace System.Net
 		}
 
 		// Probably we could do better having here a regex
-		Socket SetupPassiveConnection (string statusDescription)
+		Socket SetupPassiveConnection (string statusDescription, bool ipv6)
 		{
 			// Current response string
 			string response = statusDescription;
 			if (response.Length < 4)
 				throw new WebException ("Cannot open passive data connection");
-			
-			// Look for first digit after code
-			int i;
-			for (i = 3; i < response.Length && !Char.IsDigit (response [i]); i++)
-				;
-			if (i >= response.Length)
-				throw new WebException ("Cannot open passive data connection");
 
-			// Get six elements
-			string [] digits = response.Substring (i).Split (new char [] {','}, 6);
-			if (digits.Length != 6)
-				throw new WebException ("Cannot open passive data connection");
+			int port = ipv6 ? GetPortV6 (response) : GetPortV4 (response);
 
-			// Clean non-digits at the end of last element
-			int j;
-			for (j = digits [5].Length - 1; j >= 0 && !Char.IsDigit (digits [5][j]); j--)
-				;
-			if (j < 0)
-				throw new WebException ("Cannot open passive data connection");
-			
-			digits [5] = digits [5].Substring (0, j + 1);
-
-			IPAddress ip;
-			try {
-				ip = IPAddress.Parse (String.Join (".", digits, 0, 4));
-			} catch (FormatException) {
-				throw new WebException ("Cannot open passive data connection");
-			}
-
-			// Get the port
-			int p1, p2, port;
-			if (!Int32.TryParse (digits [4], out p1) || !Int32.TryParse (digits [5], out p2))
-				throw new WebException ("Cannot open passive data connection");
-
-			port = (p1 << 8) + p2; // p1 * 256 + p2
-			//port = p1 * 256 + p2;
 			if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
 				throw new WebException ("Cannot open passive data connection");
 
-			IPEndPoint ep = new IPEndPoint (ip, port);
+			IPEndPoint ep = new IPEndPoint (remoteEndPoint.Address, port);
 			Socket sock = new Socket (ep.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			try {
 				sock.Connect (ep);
@@ -893,6 +868,87 @@ namespace System.Net
 
 			return sock;
 		}
+
+		// GetPortV4, GetPortV6, FormatAddress and FormatAddressV6 are copied from referencesource
+		// TODO: replace FtpWebRequest completely.
+		private int GetPortV4(string responseString)
+		{
+			string [] parsedList = responseString.Split(new char [] {' ', '(', ',', ')'});
+
+			// We need at least the status code and the port
+			if (parsedList.Length <= 7) {
+				throw new FormatException(SR.GetString(SR.net_ftp_response_invalid_format, responseString));
+			}
+
+			int index = parsedList.Length-1;
+			// skip the last non-number token (e.g. terminating '.')
+#if MONO
+			// the MS code expects \r\n here in parsedList[index],
+			// but we're stripping the EOL off earlier so the array contains
+			// an empty string here which would make Char.IsNumber throw
+			// TODO: this can be removed once we switch FtpWebRequest to referencesource
+			if (parsedList[index] == "" || !Char.IsNumber(parsedList[index], 0))
+#else
+			if (!Char.IsNumber(parsedList[index], 0))
+#endif
+				index--;
+
+			int port = Convert.ToByte(parsedList[index--], NumberFormatInfo.InvariantInfo);
+			port = port |
+				(Convert.ToByte(parsedList[index--], NumberFormatInfo.InvariantInfo) << 8);
+
+			return port;
+		}
+
+		private int GetPortV6(string responseString)
+		{
+			int pos1 = responseString.LastIndexOf("(");
+			int pos2 = responseString.LastIndexOf(")");
+			if (pos1 == -1 || pos2 <= pos1) 
+				throw new FormatException(SR.GetString(SR.net_ftp_response_invalid_format, responseString));
+
+			// addressInfo will contain a string of format "|||<tcp-port>|"
+			string addressInfo = responseString.Substring(pos1+1, pos2-pos1-1);
+
+			// Although RFC2428 recommends using "|" as the delimiter,
+			// It allows ASCII characters in range 33-126 inclusive.
+			// We should consider allowing the full range.
+
+			string [] parsedList = addressInfo.Split(new char [] {'|'});
+			if (parsedList.Length < 4)
+				throw new FormatException(SR.GetString(SR.net_ftp_response_invalid_format, responseString));
+			
+			return Convert.ToInt32(parsedList[3], NumberFormatInfo.InvariantInfo);
+		}
+
+		private String FormatAddress(IPAddress address, int Port )
+		{
+			byte [] localAddressInBytes = address.GetAddressBytes();
+
+			// produces a string in FTP IPAddress/Port encoding (a1, a2, a3, a4, p1, p2), for sending as a parameter
+			// to the port command.
+			StringBuilder sb = new StringBuilder(32);
+			foreach (byte element in localAddressInBytes) {
+				sb.Append(element);
+				sb.Append(',');
+			}
+			sb.Append(Port / 256 );
+			sb.Append(',');
+			sb.Append(Port % 256 );
+			return sb.ToString();
+		}
+
+		private string FormatAddressV6(IPAddress address, int port) {
+			StringBuilder sb = new StringBuilder(43); // based on max size of IPv6 address + port + seperators
+			String addressString = address.ToString();
+			sb.Append("|2|");
+			sb.Append(addressString);
+			sb.Append('|');
+			sb.Append(port.ToString(NumberFormatInfo.InvariantInfo));
+			sb.Append('|');
+			return sb.ToString();
+		}
+		//
 
 		Exception CreateExceptionFromResponse (FtpStatus status)
 		{
@@ -932,18 +988,19 @@ namespace System.Net
 		Socket InitDataConnection ()
 		{
 			FtpStatus status;
-			
+			bool ipv6 = remoteEndPoint.AddressFamily == AddressFamily.InterNetworkV6;
+
 			if (usePassive) {
-				status = SendCommand (PassiveCommand);
-				if (status.StatusCode != FtpStatusCode.EnteringPassive) {
+				status = SendCommand (ipv6 ? ExtendedPassiveCommand : PassiveCommand);
+				if (status.StatusCode != (ipv6 ? (FtpStatusCode)229 : FtpStatusCode.EnteringPassive)) { // FtpStatusCode doesn't contain code 229 for EPSV so we need to cast...
 					throw CreateExceptionFromResponse (status);
 				}
 				
-				return SetupPassiveConnection (status.StatusDescription);
+				return SetupPassiveConnection (status.StatusDescription, ipv6);
 			}
 
 			// Open a socket to listen the server's connection
-			Socket sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			Socket sock = new Socket (remoteEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			try {
 				sock.Bind (new IPEndPoint (localEndPoint.Address, 0));
 				sock.Listen (1); // We only expect a connection from server
@@ -955,12 +1012,10 @@ namespace System.Net
 			}
 
 			IPEndPoint ep = (IPEndPoint) sock.LocalEndPoint;
-			string ipString = ep.Address.ToString ().Replace ('.', ',');
-			int h1 = ep.Port >> 8; // ep.Port / 256
-			int h2 = ep.Port % 256;
 
-			string portParam = ipString + "," + h1 + "," + h2;
-			status = SendCommand (PortCommand, portParam);
+			var portParam = ipv6 ? FormatAddressV6 (ep.Address, ep.Port) : FormatAddress (ep.Address, ep.Port);
+
+			status = SendCommand (ipv6 ? ExtendedPortCommand : PortCommand, portParam);
 			
 			if (status.StatusCode != FtpStatusCode.CommandOK) {
 				sock.Close ();

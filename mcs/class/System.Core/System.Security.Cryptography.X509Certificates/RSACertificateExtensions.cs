@@ -30,16 +30,18 @@ namespace System.Security.Cryptography.X509Certificates
 {
 	public static class RSACertificateExtensions
 	{
-		[MonoTODO]
 		public static RSA GetRSAPrivateKey(this X509Certificate2 certificate)
 		{
-			throw new NotImplementedException ();
+			if (certificate == null)
+				throw new ArgumentNullException("certificate");
+			return certificate.PrivateKey as RSA;
 		}
 
-		[MonoTODO]
 		public static RSA GetRSAPublicKey(this X509Certificate2 certificate)
 		{
-			throw new NotImplementedException ();
+			if (certificate == null)
+				throw new ArgumentNullException("certificate");
+			return certificate.PublicKey.Key as RSA;
 		}
 	}
 }

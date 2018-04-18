@@ -38,10 +38,7 @@ using System.Diagnostics;
 using System.Security;
 using System.Text;
 using System.Runtime.InteropServices;
-
-#if !MOBILE
 using System.Security.AccessControl;
-#endif
 
 namespace System.IO
 {
@@ -147,7 +144,6 @@ namespace System.IO
 				FileShare.None, bufferSize, options);
 		}
 
-#if !MOBILE
 		[MonoLimitation ("FileOptions and FileSecurity are ignored")]
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options,
@@ -156,7 +152,6 @@ namespace System.IO
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
 				FileShare.None, bufferSize, options);
 		}
-#endif
 
 		public static StreamWriter CreateText (string path)
 		{
@@ -201,7 +196,6 @@ namespace System.IO
 			return MonoIO.ExistsFile (path, out error);
 		}
 
-#if !MOBILE
 		public static FileSecurity GetAccessControl (string path)
 		{
 			// AccessControlSections.Audit requires special permissions.
@@ -215,7 +209,6 @@ namespace System.IO
 		{
 			return new FileSecurity (path, includeSections);
 		}
-#endif
 
 		public static FileAttributes GetAttributes (string path)
 		{
@@ -434,7 +427,6 @@ namespace System.IO
 			}
 		}
 
-#if !MOBILE
 		public static void SetAccessControl (string path,
 						     FileSecurity fileSecurity)
 		{
@@ -443,7 +435,6 @@ namespace System.IO
 
 			fileSecurity.PersistModifications (path);
 		}
-#endif
 
 		public static void SetAttributes (string path,
 						  FileAttributes fileAttributes)

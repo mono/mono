@@ -44,7 +44,7 @@ namespace System.ServiceModel.Security.Tokens
 		bool extract_groups, allow_unauth;
 
 		[MonoTODO]
-		public SspiSecurityToken (NetworkCredential cred,
+		public SspiSecurityToken (NetworkCredential networkCredential,
 			bool extractGroupsForWindowsAccounts,
 			bool allowUnauthenticatedCallers)
 		{
@@ -54,7 +54,7 @@ namespace System.ServiceModel.Security.Tokens
 		[MonoTODO]
 		public SspiSecurityToken (
 			TokenImpersonationLevel impersonationLevel,
-			bool allowNtlm, NetworkCredential cred)
+			bool allowNtlm, NetworkCredential networkCredential)
 		{
 			throw new NotImplementedException ();
 		}

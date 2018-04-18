@@ -5,7 +5,7 @@
 // ==--==
 //  NamedPermissionSet.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 //  Extends PermissionSet to allow an associated name and description
 //

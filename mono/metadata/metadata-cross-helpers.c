@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #include <stdio.h>
 
 #include "config.h"
@@ -5,10 +9,18 @@
 
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/object-internals.h>
+#include <mono/metadata/profiler-private.h>
 #include <mono/metadata/monitor.h>
 #include <mono/metadata/handle.h>
 #ifdef HAVE_SGEN_GC
 #include <mono/sgen/sgen-gc.h>
+#endif
+#ifdef MONO_CLASS_DEF_PRIVATE
+/* Rationale: MonoClass field offsets are computed here.  Need to see the definition.
+ */
+#define REALLY_INCLUDE_CLASS_DEF 1
+#include <mono/metadata/class-private-definition.h>
+#undef REALLY_INCLUDE_CLASS_DEF
 #endif
 
 static int
@@ -31,11 +43,11 @@ dump_arch (void)
 static int
 dump_os (void)
 {
-#if defined (PLATFORM_WIN32)
+#if defined (HOST_WIN32)
 	g_print ("#ifdef TARGET_WIN32\n");
-#elif defined (PLATFORM_ANDROID)
+#elif defined (HOST_ANDROID)
 	g_print ("#ifdef TARGET_ANDROID\n");
-#elif defined (PLATFORM_MACOSX)
+#elif defined (HOST_DARWIN)
 	g_print ("#ifdef TARGET_OSX\n");
 #elif defined (PLATFORM_IOS)
 	g_print ("#ifdef TARGET_IOS\n");
@@ -97,6 +109,12 @@ mono_dump_metadata_offsets (void)
 void
 mono_metadata_cross_helpers_run (void);
 
+/*
+ * mono_metadata_cross_helpers_run:
+ *
+ *   Check that the offsets given by object-offsets.h match the offsets
+ * on the host. This only checks the metadata offsets.
+ */
 void
 mono_metadata_cross_helpers_run (void)
 {

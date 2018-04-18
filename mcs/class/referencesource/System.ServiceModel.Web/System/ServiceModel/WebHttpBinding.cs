@@ -195,7 +195,7 @@ namespace System.ServiceModel
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")] // [....], This is the pattern we use on the standard bindings in Indigo V1
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")] // Microsoft, This is the pattern we use on the standard bindings in Indigo V1
         bool IBindingRuntimePreferences.ReceiveSynchronously
         {
             get { return false; }

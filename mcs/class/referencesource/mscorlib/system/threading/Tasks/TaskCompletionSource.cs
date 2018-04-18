@@ -7,7 +7,7 @@
 //
 // TaskCompletionSource.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // TaskCompletionSource<TResult> is the producer end of an unbound future.  Its
 // Task member may be distributed as the consumer end of the future.

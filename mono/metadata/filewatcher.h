@@ -1,5 +1,6 @@
-/*
- * filewatcher.h: File System Watcher internal calls
+/**
+ * \file
+ * File System Watcher internal calls
  *
  * Authors:
  *	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -11,7 +12,6 @@
 #define _MONO_METADATA_FILEWATCHER_H
 
 #include <mono/metadata/object.h>
-#include <mono/io-layer/io-layer.h>
 #include "mono/utils/mono-compiler.h"
 #include <glib.h>
 
@@ -33,6 +33,12 @@ int ves_icall_System_IO_InotifyWatcher_AddWatch (int fd, MonoString *directory, 
 int ves_icall_System_IO_InotifyWatcher_RemoveWatch (int fd, gint32 watch_descriptor);
 
 int ves_icall_System_IO_KqueueMonitor_kevent_notimeout (int *kq, gpointer changelist, int nchanges, gpointer eventlist, int nevents);
+
+#if defined(__APPLE__)
+void ves_icall_CoreFX_Interop_RunLoop_CFRunLoopRun (void);
+MONO_API char* SystemNative_RealPath(const char* path);
+MONO_API void SystemNative_Sync (void);
+#endif
 
 G_END_DECLS
 

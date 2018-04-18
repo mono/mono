@@ -271,7 +271,7 @@ namespace System.Net {
             ** I don;t see how this code can be still relevant, remove it of no problems observed **
 
             //
-            // This is a general race condition in [....] mode, if the server returns an error
+            // This is a general race condition in Sync mode, if the server returns an error
             // after we open the data connection, we will be off reading the data connection,
             // and not the control connection. The best we can do is try to poll, and in the
             // the worst case, we will timeout on establishing the data connection.
@@ -300,7 +300,7 @@ namespace System.Net {
                 } catch {
                     // If we get an exception on the QUIT command (which is 
                     // always the last command), ignore the final exception
-                    // and continue with the pipeline regardlss of [....]/async
+                    // and continue with the pipeline regardlss of sync/async
                     if (index < 0 || index >= commands.Length ||
                         commands[index].Command != "QUIT\r\n")
                         throw;
@@ -423,7 +423,7 @@ namespace System.Net {
         //
 
         /// <summary>
-        ///    <para>Provides a wrapper for the async operations, so that the code can be shared with [....]</para>
+        ///    <para>Provides a wrapper for the async operations, so that the code can be shared with sync</para>
         /// </summary>
         private static void ReadCallback(IAsyncResult asyncResult) {
             ReceiveState state = (ReceiveState)asyncResult.AsyncState;
@@ -502,7 +502,7 @@ namespace System.Net {
         }
 
         /// <summary>
-        /// Kicks off an asynchronous or [....] request to receive a response from the server.
+        /// Kicks off an asynchronous or sync request to receive a response from the server.
         /// Uses the Encoding <code>encoding</code> to transform the bytes received into a string to be
         /// returned in the GeneralResponseDescription's StatusDescription field.
         /// </summary>

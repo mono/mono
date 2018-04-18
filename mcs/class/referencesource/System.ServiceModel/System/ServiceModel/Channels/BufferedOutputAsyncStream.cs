@@ -27,8 +27,8 @@ namespace System.ServiceModel.Channels
     /// 
     /// Currently BufferedOutputAsyncStream only used to wrap the System.Net.HttpResponseStream, which satisfy both requirements.
     /// 
-    /// BufferedOutputAsyncStream can also be used when doing asynchronous operations. [....] operations are not allowed when an async
-    /// operation is in-flight. If a [....] operation is in progress (i.e., data exists in our CurrentBuffer) and we issue an async operation, 
+    /// BufferedOutputAsyncStream can also be used when doing asynchronous operations. Sync operations are not allowed when an async
+    /// operation is in-flight. If a sync operation is in progress (i.e., data exists in our CurrentBuffer) and we issue an async operation, 
     /// we flush everything in the buffers (and block while doing so) before the async operation is allowed to proceed. 
     ///     
     /// </summary>
@@ -78,7 +78,7 @@ namespace System.ServiceModel.Channels
         {
             get
             {
-#pragma warning suppress 56503 // [....], required by the Stream.Length contract
+#pragma warning suppress 56503 // Microsoft, required by the Stream.Length contract
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.ReadNotSupported)));
             }
         }
@@ -87,7 +87,7 @@ namespace System.ServiceModel.Channels
         {
             get
             {
-#pragma warning suppress 56503 // [....], required by the Stream.Position contract
+#pragma warning suppress 56503 // Microsoft, required by the Stream.Position contract
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.SeekNotSupported)));
             }
             set
@@ -335,7 +335,7 @@ namespace System.ServiceModel.Channels
         void DequeueAndFlush(ByteBuffer currentBuffer, AsyncEventArgsCallback callback)
         {
             // Dequeue does a checkout of the buffer from its slot.
-            // the callback for the [....] path only enqueues the buffer. 
+            // the callback for the sync path only enqueues the buffer. 
             // The WriteAsync callback needs to enqueue and also complete.
             this.currentByteBuffer = null;
             ByteBuffer dequeued = this.buffers.Dequeue();
@@ -756,7 +756,7 @@ namespace System.ServiceModel.Channels
                     buffer.stream.EndWrite(result);
 
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))

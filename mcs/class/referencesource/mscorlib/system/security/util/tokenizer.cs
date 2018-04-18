@@ -7,7 +7,7 @@
 **
 ** CLASS:    Tokenizer.cs
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** PURPOSE:  Tokenize "Elementary XML", that is, XML without 

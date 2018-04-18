@@ -315,7 +315,7 @@ namespace System.Net.PeerToPeer.Collaboration
 
                     if (exception != null){
                         //
-                        // Throw exception for [....] but call callback for async with exception
+                        // Throw exception for sync but call callback for async with exception
                         //
                         if (!isAsync)
                             throw exception;
@@ -328,7 +328,7 @@ namespace System.Net.PeerToPeer.Collaboration
                         Logging.P2PTraceSource.TraceEvent(TraceEventType.Information, 0, "Found endpoint match in Request status changed.");
 
                         //
-                        // For async call the callback and for [....] just return
+                        // For async call the callback and for sync just return
                         //
                         if (isAsync){
                             RefreshDataCompletedEventArgs args = new
@@ -352,7 +352,7 @@ namespace System.Net.PeerToPeer.Collaboration
 
             //
             // Async case with exception fire callback here
-            // [....] would have already thrown this by now
+            // Sync would have already thrown this by now
             //
             if (exception != null){
                 RefreshDataCompletedEventArgs args = new

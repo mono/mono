@@ -25,7 +25,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
-	[Category ("RequiresBSDSockets")]
 	public class FileWebRequestTest
 	{
 		private string _tempDirectory;
@@ -56,6 +55,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 		public void Async ()
 		{
 			WebResponse res = null;
@@ -464,6 +464,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 		public void GetRequestStream_File_Exists ()
 		{
 			Stream s = File.Create (_tempFile);

@@ -131,7 +131,7 @@ namespace System.Reflection {
 
                 if (!suppressSecurityChecks)
                 {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
 #pragma warning disable 618
                     new SecurityPermission(SecurityPermissionFlag.ControlEvidence).Demand();
 #pragma warning restore 618

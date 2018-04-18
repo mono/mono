@@ -224,7 +224,7 @@ namespace System.Web.Configuration {
             else {
                 // Check if it's in the cache
                 String cacheKey = CacheInternal.PrefixMapPath + siteID + path.VirtualPathString;
-                cacheInfo = (MapPathCacheInfo)HttpRuntime.CacheInternal.Get(cacheKey);
+                cacheInfo = (MapPathCacheInfo)HttpRuntime.Cache.InternalCache.Get(cacheKey);
 
                 // If not in cache, add it to the cache
                 if (cacheInfo == null) {
@@ -232,8 +232,7 @@ namespace System.Web.Configuration {
                     // Add to the cache.
                     // No need to have a lock here. UtcAdd will add the entry if it doesn't exist. 
                     // If it does exist, the existing value will be returned (Dev10 Bug 755034).
-                    object existingEntry = HttpRuntime.CacheInternal.UtcAdd(
-                        cacheKey, cacheInfo, null, Cache.NoAbsoluteExpiration, slidingExpiration, CacheItemPriority.Default, null);
+                    object existingEntry = HttpRuntime.Cache.InternalCache.Add(cacheKey, cacheInfo, new CacheInsertOptions() { SlidingExpiration = slidingExpiration });
                     if (existingEntry != null) {
                         cacheInfo = existingEntry as MapPathCacheInfo;
                     }

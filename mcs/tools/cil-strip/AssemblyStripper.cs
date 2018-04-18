@@ -147,6 +147,8 @@ namespace Mono.CilStripper {
 			for (int i = 0; i < methodTable.Rows.Count; i++) {
 				MethodRow methodRow = methodTable[i];
 
+				methodRow.ImplFlags |= MethodImplAttributes.NoInlining;
+
 				MetadataToken methodToken = MetadataToken.FromMetadataRow (TokenType.Method, i);
 
 				MethodDefinition method = (MethodDefinition) assembly.MainModule.LookupByToken (methodToken);

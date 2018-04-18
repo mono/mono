@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __METADATA_REFLECTION_H__
 #define __METADATA_REFLECTION_H__
 
@@ -42,6 +46,7 @@ typedef enum {
 	ResolveTokenError_Other
 } MonoResolveTokenError;
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API int           mono_reflection_parse_type (char *name, MonoTypeNameParse *info);
 MONO_RT_EXTERNAL_ONLY
 MONO_API MonoType*     mono_reflection_get_type   (MonoImage* image, MonoTypeNameParse *info, mono_bool ignorecase, mono_bool *type_resolve);
@@ -102,6 +107,7 @@ MONO_API MonoCustomAttrInfo* mono_custom_attrs_from_field    (MonoClass *klass, 
 MONO_RT_EXTERNAL_ONLY
 MONO_API MonoCustomAttrInfo* mono_custom_attrs_from_param    (MonoMethod *method, uint32_t param);
 MONO_API mono_bool           mono_custom_attrs_has_attr      (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoObject*         mono_custom_attrs_get_attr      (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass);
 MONO_API void                mono_custom_attrs_free          (MonoCustomAttrInfo *ainfo);
 

@@ -96,6 +96,7 @@ IO_IO_SharingViolation_File=The process cannot access the file '{0}' because it 
 IO_IO_SharingViolation_NoFileName=The process cannot access the file because it is being used by another process.
 IO_IO_PipeBroken=Pipe is broken.
 IO_IO_InvalidPipeHandle=Invalid pipe handle.
+IO_OperationAborted=IO operation was aborted unexpectedly.
 ;
 ; DirectoryNotFoundException
 ;
@@ -382,3 +383,37 @@ NotSupported_MMViewStreamsFixedLength=MemoryMappedViewStreams are fixed length.
 ObjectDisposed_ViewAccessorClosed=Cannot access a closed accessor.
 ObjectDisposed_StreamIsClosed=Cannot access a closed Stream.
 
+;
+; 4.6.x string (only add at the end)
+;
+NotSupported_Method=Method not supported.
+NotSupported_SubclassOverride=Method not supported. Derived class must override.
+Cryptography_ArgDSARequiresDSAKey=Keys used with the DSACng algorithm must have an algorithm group of DSA.
+Cryptography_ArgRSAaRequiresRSAKey=Keys used with the RSACng algorithm must have an algorithm group of RSA.
+Cryptography_CngKeyWrongAlgorithm=This key is for algorithm '{0}'. Expected '{1}'.
+Cryptography_DSA_HashTooShort=The supplied hash cannot be shorter in length than the DSA key's Q value.
+Cryptography_HashAlgorithmNameNullOrEmpty=The hash algorithm name cannot be null or empty.
+Cryptography_InvalidDsaParameters_MissingFields=The specified DSA parameters are not valid; P, Q, G and Y are all required.
+Cryptography_InvalidDsaParameters_MismatchedPGY=The specified DSA parameters are not valid; P, G and Y must be the same length (the key size).
+Cryptography_InvalidDsaParameters_MismatchedQX=The specified DSA parameters are not valid; Q and X (if present) must be the same length.
+Cryptography_InvalidDsaParameters_MismatchedPJ=The specified DSA parameters are not valid; J (if present) must be shorter than P.
+Cryptography_InvalidDsaParameters_SeedRestriction_ShortKey=The specified DSA parameters are not valid; Seed, if present, must be 20 bytes long for keys shorter than 1024 bits.
+Cryptography_InvalidDsaParameters_QRestriction_ShortKey=The specified DSA parameters are not valid; Q must be 20 bytes long for keys shorter than 1024 bits.
+Cryptography_InvalidDsaParameters_QRestriction_LargeKey=The specified DSA parameters are not valid; Q's length must be one of 20, 32 or 64 bytes.
+Cryptography_InvalidRsaParameters=The specified RSA parameters are not valid; both Exponent and Modulus are required fields.
+Cryptography_InvalidSignatureAlgorithm=The hash algorithm is not supported for signatures. Only MD5, SHA1, SHA256,SHA384, and SHA512 are supported at this time.
+Cryptography_KeyBlobParsingError=Key Blob not in expected format.
+Cryptography_NotSupportedKeyAlgorithm=Key Algorithm is not supported.
+Cryptography_NotValidPublicOrPrivateKey=Key is not a valid public or private key.
+Cryptography_NotValidPrivateKey=Key is not a valid private key.
+Cryptography_UnexpectedTransformTruncation=CNG provider unexpectedly terminated encryption or decryption prematurely.
+Cryptography_UnsupportedPaddingMode=The specified PaddingMode is not supported.
+Cryptography_WeakKey=Specified key is a known weak key for this algorithm and cannot be used.
+Cryptography_CurveNotSupported=The specified curve '{0}' or its parameters are not valid for this platform.
+Cryptography_InvalidCurve=The specified curve '{0}' is not valid for this platform.
+Cryptography_InvalidCurveOid=The specified Oid is not valid. The Oid.FriendlyName or Oid.Value property must be set.
+Cryptography_InvalidCurveKeyParameters=The specified key parameters are not valid. Q.X and Q.Y are required fields. Q.X, Q.Y must be the same length. If D is specified it must be the same length as Q.X and Q.Y for named curves or the same length as Order for explicit curves.
+Cryptography_InvalidECCharacteristic2Curve=The specified Characteristic2 curve parameters are not valid. Polynomial, A, B, G.X, G.Y, and Order are required. A, B, G.X, G.Y must be the same length, and the same length as Q.X, Q.Y and D if those are specified. Seed, Cofactor and Hash are optional. Other parameters are not allowed.
+Cryptography_InvalidECPrimeCurve=The specified prime curve parameters are not valid. Prime, A, B, G.X, G.Y and Order are required and must be the same length, and the same length as Q.X, Q.Y and D if those are specified. Seed, Cofactor and Hash are optional. Other parameters are not allowed.
+Cryptography_InvalidECNamedCurve=The specified named curve parameters are not valid. Only the Oid parameter must be set.
+Cryptography_UnknownHashAlgorithm='{0}' is not a known hash algorithm.

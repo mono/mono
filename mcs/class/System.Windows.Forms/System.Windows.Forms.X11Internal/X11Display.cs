@@ -34,10 +34,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-// Only do the poll when building with mono for now
-#if __MonoCS__
 using Mono.Unix.Native;
-#endif
 
 namespace System.Windows.Forms.X11Internal {
 
@@ -96,9 +93,7 @@ namespace System.Windows.Forms.X11Internal {
 
 		Thread event_thread; // the background thread that just watches our X socket
 
-#if __MonoCS__
 		Pollfd[] pollfds;
-#endif
 
 		public X11Display (IntPtr display)
 		{
@@ -151,12 +146,10 @@ namespace System.Windows.Forms.X11Internal {
 						   Xlib.XCreateSimpleWindow (display, root_hwnd.WholeWindow,
 									     0, 0, 1, 1, 4, UIntPtr.Zero, UIntPtr.Zero));
 
-#if __MonoCS__
 			pollfds = new Pollfd [1];
 			pollfds [0] = new Pollfd ();
 			pollfds [0].fd = Xlib.XConnectionNumber (display);
 			pollfds [0].events = PollEvents.POLLIN;
-#endif
 
 			Keyboard = new X11Keyboard(display, foster_hwnd.Handle);
 			Dnd = new X11Dnd (display, Keyboard);
@@ -1509,11 +1502,11 @@ namespace System.Windows.Forms.X11Internal {
 			return hwnd.PaintEventStart (ref m, client);
 		}
 
-		public void PaintEventEnd (ref Message m, IntPtr handle, bool client)
+		public void PaintEventEnd (ref Message m, IntPtr handle, bool client, PaintEventArgs pevent)
 		{
 			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
 
-			hwnd.PaintEventEnd (ref m, client);
+			hwnd.PaintEventEnd (ref m, client, pevent);
 
 			if (Caret.Visible == true) {
 				ShowCaret();
@@ -1854,11 +1847,9 @@ namespace System.Windows.Forms.X11Internal {
 		private void XEventThread ()
 		{
 			while (true) {
-#if __MonoCS__
 				Syscall.poll (pollfds, 1U, -1);
 
 				while (Xlib.XPending (display) > 0) {
-#endif
 					XEvent xevent = new XEvent ();
 					Xlib.XNextEvent (display, ref xevent);
 
@@ -1882,9 +1873,7 @@ namespace System.Windows.Forms.X11Internal {
 					X11Hwnd hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 					if (hwnd != null)
 						hwnd.Queue.Enqueue (xevent);
-#if __MonoCS__
 				}
-#endif
 			}
 		}
 

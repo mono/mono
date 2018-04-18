@@ -17,9 +17,11 @@ namespace System.Security.Cryptography {
     [Serializable]
     [System.Security.Permissions.HostProtection(MayLeakOnAbort = true)]
     public sealed class CngAlgorithm : IEquatable<CngAlgorithm> {
+        private static volatile CngAlgorithm s_ecdh;
         private static volatile CngAlgorithm s_ecdhp256;
         private static volatile CngAlgorithm s_ecdhp384;
         private static volatile CngAlgorithm s_ecdhp521;
+        private static volatile CngAlgorithm s_ecdsa;
         private static volatile CngAlgorithm s_ecdsap256;
         private static volatile CngAlgorithm s_ecdsap384;
         private static volatile CngAlgorithm s_ecdsap521;
@@ -110,6 +112,18 @@ namespace System.Security.Cryptography {
             }
         }
 
+        public static CngAlgorithm ECDiffieHellman {
+            get {
+                Contract.Ensures(Contract.Result<CngAlgorithm>() != null);
+
+                if (s_ecdh == null) {
+                    s_ecdh = new CngAlgorithm(BCryptNative.AlgorithmName.ECDH);
+                }
+
+                return s_ecdh;
+            }
+        }
+
         public static CngAlgorithm ECDiffieHellmanP256 {
             get {
                 Contract.Ensures(Contract.Result<CngAlgorithm>() != null);
@@ -143,6 +157,18 @@ namespace System.Security.Cryptography {
                 }
 
                 return s_ecdhp521;
+            }
+        }
+
+        public static CngAlgorithm ECDsa {
+            get {
+                Contract.Ensures(Contract.Result<CngAlgorithm>() != null);
+
+                if (s_ecdsa == null) {
+                    s_ecdsa = new CngAlgorithm(BCryptNative.AlgorithmName.ECDsa);
+                }
+
+                return s_ecdsa;
             }
         }
 
@@ -241,19 +267,5 @@ namespace System.Security.Cryptography {
                 return s_sha512;
             }
         }
-
-#if NETSTANDARD
-        public static CngAlgorithm ECDiffieHellman {
-            get {
-                throw new NotImplementedException ();
-            }
-        }
-
-        public static CngAlgorithm ECDsa {
-            get {
-                throw new NotImplementedException ();
-            }
-        }
-#endif
     }
 }

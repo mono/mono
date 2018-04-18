@@ -453,7 +453,7 @@ namespace System.Runtime.Remoting.Channels {
         
     } // ServerChannelSinkStack    
 
-    // helper class for transforming [....] message parameter lists into its
+    // helper class for transforming sync message parameter lists into its
     //   async counterparts
     internal static class AsyncMessageHelper
     {

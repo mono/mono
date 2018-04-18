@@ -1,5 +1,6 @@
-/*
- * mono-filemap.c: Unix/Windows implementation for filemap.
+/**
+ * \file
+ * Unix/Windows implementation for filemap.
  *
  * Author:
  *   Paolo Molaro (lupus@ximian.com)
@@ -56,7 +57,7 @@ int
 mono_file_map_fd (MonoFileMap *fmap)
 {
 #ifdef WIN32
-	return fileno ((FILE*)fmap);
+	return _fileno ((FILE*)fmap);
 #else
 	return (int)(size_t)fmap;
 #endif

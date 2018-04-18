@@ -94,8 +94,8 @@ namespace System.Web.Configuration {
 			BaseRemoveAt (index);
 		}
 
-		public new ProfileSettings this [string name] {
-			get { return (ProfileSettings)BaseGet (name); }
+		public new ProfileSettings this [string key] {
+			get { return (ProfileSettings)BaseGet (key); }
 		}
 
 		public ProfileSettings this [int index] {

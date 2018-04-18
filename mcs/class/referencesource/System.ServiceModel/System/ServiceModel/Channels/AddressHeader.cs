@@ -293,7 +293,7 @@ namespace System.ServiceModel.Channels
             }
         }
 
-        // [....], This will be kept internal for now.  If the optimization needs to be public, we'll re-evaluate it.
+        // Microsoft, This will be kept internal for now.  If the optimization needs to be public, we'll re-evaluate it.
         class DictionaryAddressHeader : XmlObjectSerializerAddressHeader
         {
             XmlDictionaryString name;

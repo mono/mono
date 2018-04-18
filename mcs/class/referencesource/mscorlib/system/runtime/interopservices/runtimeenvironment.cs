@@ -110,7 +110,7 @@ namespace System.Runtime.InteropServices {
                 return null;
 #endif
             String dir = GetRuntimeDirectoryImpl();
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             new FileIOPermission(FileIOPermissionAccess.PathDiscovery, dir).Demand();
 #endif
             return dir;
@@ -143,7 +143,7 @@ namespace System.Runtime.InteropServices {
                 String path = sb.ToString();
 #endif
                 
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 // Do security check
                 new FileIOPermission(FileIOPermissionAccess.PathDiscovery, path).Demand();
 #endif
@@ -151,7 +151,13 @@ namespace System.Runtime.InteropServices {
             }
         }
 
-#if FEATURE_COMINTEROP && !MONO
+#if FEATURE_COMINTEROP || MONO
+#if MONO
+        private static IntPtr GetRuntimeInterfaceImpl(Guid clsid, Guid riid)
+        {
+            throw new NotSupportedException();
+        }
+#else
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.Process)]
         [ResourceConsumption(ResourceScope.Process)]
@@ -160,6 +166,7 @@ namespace System.Runtime.InteropServices {
         private static extern IntPtr GetRuntimeInterfaceImpl(
             [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsid,
             [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid);
+#endif
 
         //
         // This function does the equivalent of calling GetInterface(clsid, riid) on the

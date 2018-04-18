@@ -185,7 +185,6 @@ namespace System.Web {
         private PolicyLevel _policyLevel;
         private string _hostSecurityPolicyResolverType = null;
         private FileChangesMonitor _fcm;
-        private CacheInternal _cacheInternal;
         private Cache _cachePublic;
         private bool _isOnUNCShare;
         private Profiler _profiler;
@@ -444,7 +443,6 @@ namespace System.Web {
                     // Note that we must do this after we start monitoring directory renames,
                     // as reading config will cause file monitoring on the application directory
                     // to occur.
-                    HttpRuntime.CacheInternal.ReadCacheInternalConfig(cacheSection);
 
                     // Set up the codegen directory for the app.  This needs to be done before we process
                     // the policy file, because it needs to replace the $CodeGen$ token.
@@ -1744,7 +1742,7 @@ namespace System.Web {
         }
 
         /*
-         * Finish processing request, [....] or async
+         * Finish processing request, sync or async
          */
         private void FinishRequest(HttpWorkerRequest wr, HttpContext context, Exception e) {
             HttpResponse response = context.Response;
@@ -2017,8 +2015,16 @@ namespace System.Web {
             SqlCacheDependencyManager.Dispose((drainTimeoutSec * 1000) / 2);
 #endif // !FEATURE_PAL
             // cleanup cache (this ends all sessions)
-            if (_cacheInternal != null) {
-                _cacheInternal.Dispose();
+            HealthMonitoringManager.IsCacheDisposed = true; // HMM is the only place internally where we care if the Cache is disposed or not.
+            if (_cachePublic != null) {
+                var oCache = HttpRuntime.Cache.GetObjectCache(createIfDoesNotExist: false);
+                var iCache = HttpRuntime.Cache.GetInternalCache(createIfDoesNotExist: false);
+                if (oCache != null) {
+                    oCache.Dispose();
+                }
+                if (iCache != null) {
+                    iCache.Dispose();
+                }
             }
 
             // app on end, cleanup app instances
@@ -2792,51 +2798,20 @@ namespace System.Web {
                     throw new HttpException(SR.GetString(SR.Aspnet_not_installed, VersionInfo.SystemWebVersion));
                 }
 
-                // In a web app, ReadCacheInternalConfig() is called from HttpRuntime.HostingInit.
-                // However, if the cache is used by a non-http app, HttpRuntime.HostingInit won't
-                // be called and we need to find a way to call ReadCacheInternalConfig().
-                // The safe and inexpensive place to call it is when the non-http app accesses the
-                // Cache thru HttpRuntime.Cache.
-                //
-                // ReadCacheInternalConfig() protects itself from being read multiple times.
-                //
                 Cache cachePublic = _theRuntime._cachePublic;
                 if (cachePublic == null) {
-                    CacheInternal cacheInternal = CacheInternal;
-                    CacheSection cacheSection = RuntimeConfig.GetAppConfig().Cache;
-                    cacheInternal.ReadCacheInternalConfig(cacheSection);
-                    _theRuntime._cachePublic = cacheInternal.CachePublic;
-                    cachePublic = _theRuntime._cachePublic;
+                    lock (_theRuntime) {
+                        cachePublic = _theRuntime._cachePublic;
+                        if (cachePublic == null) {
+                            // Create the CACHE object
+                            cachePublic = new Caching.Cache(0);
+                            _theRuntime._cachePublic = cachePublic;
+                        }
+                    }
                 }
 
                 return cachePublic;
             }
-        }
-
-        private void CreateCache() {
-            lock (this) {
-                if (_cacheInternal == null) {
-                    _cacheInternal = CacheInternal.Create();
-                }
-            }
-        }
-
-        internal static CacheInternal GetCacheInternal(bool createIfDoesNotExist) {
-            // Note that we only create the cache on first access,
-            // not in HttpRuntime initialization.
-            // This prevents cache timers from running when
-            // the cache is not used.
-            CacheInternal cacheInternal = _theRuntime._cacheInternal;
-            if (cacheInternal == null && createIfDoesNotExist) {
-                _theRuntime.CreateCache();
-                cacheInternal = _theRuntime._cacheInternal;
-            }
-
-            return cacheInternal;
-        }
-
-        internal static CacheInternal CacheInternal {
-            get { return GetCacheInternal(createIfDoesNotExist: true); }
         }
 
         /// <devdoc>

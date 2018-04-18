@@ -47,8 +47,8 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
-		public AddressHeaderCollection (IEnumerable<AddressHeader> headers)
-			: base (GetList (headers))
+		public AddressHeaderCollection (IEnumerable<AddressHeader> addressHeaders)
+			: base (GetList (addressHeaders))
 		{
 		}
 

@@ -7,7 +7,7 @@
 //
 // OrderPreservingPipeliningSpoolingTask.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -25,7 +25,9 @@ namespace System.Linq.Parallel
     class OrderPreservingPipeliningSpoolingTask<TOutput, TKey> : SpoolingTaskBase
     {
         private readonly QueryTaskGroupState m_taskGroupState; // State shared among tasks.
+#if !MONO
         private readonly TaskScheduler m_taskScheduler; // The task manager to execute the query.
+#endif
         private readonly QueryOperatorEnumerator<TOutput, TKey> m_partition; // The source partition.
         private readonly bool[] m_consumerWaiting; // Whether a consumer is waiting on a particular producer
         private readonly bool[] m_producerWaiting; // Whether a particular producer is waiting on the consumer
@@ -83,7 +85,9 @@ namespace System.Linq.Parallel
             m_partitionIndex = partitionIndex;
             m_buffers = buffers;
             m_bufferLock = bufferLock;
+#if !MONO
             m_taskScheduler = taskScheduler;
+#endif
             m_autoBuffered = autoBuffered;
         }
 

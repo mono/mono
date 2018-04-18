@@ -67,9 +67,10 @@ namespace System.ComponentModel {
     /// </devdoc>
     [HostProtection(SharedState = true)]
     internal sealed class ReflectEventDescriptor : EventDescriptor {
-
+#if !MONO
         private static readonly Type[] argsNone = new Type[0];
         private static readonly object  noDefault = new object();
+#endif
 
         private Type type;           // the delegate type for the event
         private readonly Type componentClass; // the class of the component this info is for

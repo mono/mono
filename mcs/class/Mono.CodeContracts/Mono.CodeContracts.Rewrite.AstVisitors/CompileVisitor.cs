@@ -54,7 +54,7 @@ namespace Mono.CodeContracts.Rewrite.AstVisitors {
 
 		private void Emit (Expr originalExpr, Instruction inst)
 		{
-			Instruction originalInst;
+			//Instruction originalInst;
 			if (this.instructionLookup != null) {
 				// TODO: Doesn't handle inherited contracts - need to check what to do in this case.
 				//if (this.instructionLookup.TryGetValue (originalExpr, out originalInst)) {

@@ -123,7 +123,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 	
-#if !MOBILE
+#if WIN_PLATFORM
 	sealed class Win32IPv4InterfaceProperties : IPv4InterfaceProperties
 	{
 		[DllImport ("iphlpapi.dll")]
@@ -165,7 +165,7 @@ namespace System.Net.NetworkInformation {
 
 		public override bool IsForwardingEnabled {
 			// Is it the right answer? In Vista there is MIB_IPINTERFACEROW.ForwardingEnabled, but not in former versions.
-			get { return Win32_FIXED_INFO.Instance.EnableRouting != 0; }
+			get { return Win32NetworkInterface.FixedInfo.EnableRouting != 0; }
 		}
 
 		public override int Mtu {

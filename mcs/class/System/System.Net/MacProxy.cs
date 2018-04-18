@@ -29,10 +29,16 @@ using System.Net;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using ObjCRuntimeInternal;
 
 namespace Mono.Net
 {
-	internal class CFObject : IDisposable
+	internal class CFType {
+		[DllImport (CFObject.CoreFoundationLibrary, EntryPoint="CFGetTypeID")]
+		public static extern IntPtr GetTypeID (IntPtr typeRef);
+	}
+
+	internal class CFObject : IDisposable, INativeObject
 	{
 		public const string CoreFoundationLibrary = "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation";
 		const string SystemLibrary = "/usr/lib/libSystem.dylib";
@@ -41,7 +47,7 @@ namespace Mono.Net
 		public static extern IntPtr dlopen (string path, int mode);
 
 		[DllImport (SystemLibrary)]
-		public static extern IntPtr dlsym (IntPtr handle, string symbol);
+		static extern IntPtr dlsym (IntPtr handle, string symbol);
 
 		[DllImport (SystemLibrary)]
 		public static extern void dlclose (IntPtr handle);
@@ -49,6 +55,25 @@ namespace Mono.Net
 		public static IntPtr GetIndirect (IntPtr handle, string symbol)
 		{
 			return dlsym (handle, symbol);
+		}
+
+		public static CFString GetStringConstant (IntPtr handle, string symbol)
+		{
+			var indirect = dlsym (handle, symbol);
+			if (indirect == IntPtr.Zero)
+				return null;
+			var actual = Marshal.ReadIntPtr (indirect);
+			if (actual == IntPtr.Zero)
+				return null;
+			return new CFString (actual, false);
+		}
+
+		public static IntPtr GetIntPtr (IntPtr handle, string symbol)
+		{
+			var indirect = dlsym (handle, symbol);
+			if (indirect == IntPtr.Zero)
+				return IntPtr.Zero;
+			return Marshal.ReadIntPtr (indirect);
 		}
 
 		public static IntPtr GetCFObjectHandle (IntPtr handle, string symbol)
@@ -76,7 +101,7 @@ namespace Mono.Net
 		public IntPtr Handle { get; private set; }
 
 		[DllImport (CoreFoundationLibrary)]
-		extern static IntPtr CFRetain (IntPtr handle);
+		internal extern static IntPtr CFRetain (IntPtr handle);
 
 		void Retain ()
 		{
@@ -84,7 +109,7 @@ namespace Mono.Net
 		}
 
 		[DllImport (CoreFoundationLibrary)]
-		extern static void CFRelease (IntPtr handle);
+		internal extern static void CFRelease (IntPtr handle);
 
 		void Release ()
 		{
@@ -126,8 +151,22 @@ namespace Mono.Net
 				dlclose (handle);
 			}
 		}
+		
+		public static CFArray FromNativeObjects (params INativeObject[] values)
+		{
+			return new CFArray (Create (values), true);
+		}
 
-		static unsafe CFArray Create (params IntPtr[] values)
+		public static unsafe IntPtr Create (params IntPtr[] values)
+		{
+			if (values == null)
+				throw new ArgumentNullException ("values");
+			fixed (IntPtr* pv = values) {
+				return CFArrayCreate (IntPtr.Zero, (IntPtr) pv, (IntPtr)values.Length, kCFTypeArrayCallbacks);
+			}
+		}
+
+		internal static unsafe CFArray CreateArray (params IntPtr[] values)
 		{
 			if (values == null)
 				throw new ArgumentNullException ("values");
@@ -138,16 +177,19 @@ namespace Mono.Net
 				return new CFArray (handle, false);
 			}
 		}
+		
+		public static CFArray CreateArray (params INativeObject[] values)
+		{
+			return new CFArray (Create (values), true);
+		}
 
-		public static CFArray Create (params CFObject[] values)
+		public static IntPtr Create (params INativeObject[] values)
 		{
 			if (values == null)
 				throw new ArgumentNullException ("values");
-
 			IntPtr[] _values = new IntPtr [values.Length];
-			for (int i = 0; i < _values.Length; i++)
-				_values[i] = values[i].Handle;
-
+			for (int i = 0; i < _values.Length; ++i)
+				_values [i] = values [i].Handle;
 			return Create (_values);
 		}
 
@@ -165,6 +207,20 @@ namespace Mono.Net
 			get {
 				return CFArrayGetValueAtIndex (Handle, (IntPtr) index);
 			}
+		}
+		
+		static public T [] ArrayFromHandle<T> (IntPtr handle, Func<IntPtr, T> creation) where T : class, INativeObject
+		{
+			if (handle == IntPtr.Zero)
+				return null;
+
+			var c = CFArrayGetCount (handle);
+			T [] ret = new T [(int)c];
+
+			for (uint i = 0; i < (uint)c; i++) {
+				ret [i] = creation (CFArrayGetValueAtIndex (handle, (IntPtr)i));
+			}
+			return ret;
 		}
 	}
 
@@ -208,6 +264,15 @@ namespace Mono.Net
 			CFNumberGetValue (handle, (IntPtr) 9, out value);
 
 			return value;
+		}
+		
+		[DllImport (CoreFoundationLibrary)]
+		extern static IntPtr CFNumberCreate (IntPtr allocator, IntPtr theType, IntPtr valuePtr);	
+
+		public static CFNumber FromInt32 (int number)
+		{
+			// 9 == kCFNumberIntType == C int
+			return new CFNumber (CFNumberCreate (IntPtr.Zero, (IntPtr)9, (IntPtr)number), true);
 		}
 
 		public static implicit operator int (CFNumber number)
@@ -270,6 +335,14 @@ namespace Mono.Net
 				return (int) CFStringGetLength (Handle);
 			}
 		}
+		
+		[DllImport (CoreFoundationLibrary)]
+		extern static int CFStringCompare (IntPtr theString1, IntPtr theString2, int compareOptions);
+		
+		public static int Compare (IntPtr string1, IntPtr string2, int compareOptions = 0)
+		{
+			return CFStringCompare (string1, string2, compareOptions);
+		}
 
 		[DllImport (CoreFoundationLibrary)]
 		extern static IntPtr CFStringGetCharactersPtr (IntPtr handle);
@@ -328,12 +401,115 @@ namespace Mono.Net
 		}
 	}
 
+	
+	internal class CFData : CFObject
+	{
+		public CFData (IntPtr handle, bool own) : base (handle, own) { }
+	
+		[DllImport (CoreFoundationLibrary)]
+		extern static /* CFDataRef */ IntPtr CFDataCreate (/* CFAllocatorRef */ IntPtr allocator, /* UInt8* */ IntPtr bytes, /* CFIndex */ IntPtr length);
+		public unsafe static CFData FromData (byte [] buffer)
+		{
+			fixed (byte* p = buffer)
+			{
+				return FromData ((IntPtr)p, (IntPtr)buffer.Length);
+			}
+		}
+
+		public static CFData FromData (IntPtr buffer, IntPtr length)
+		{
+			return new CFData (CFDataCreate (IntPtr.Zero, buffer, length), true);
+		}
+		
+		public IntPtr Length {
+			get { return CFDataGetLength (Handle); }
+		}
+
+		[DllImport (CoreFoundationLibrary)]
+		extern static /* CFIndex */ IntPtr CFDataGetLength (/* CFDataRef */ IntPtr theData);
+
+		[DllImport (CoreFoundationLibrary)]
+		extern static /* UInt8* */ IntPtr CFDataGetBytePtr (/* CFDataRef */ IntPtr theData);
+
+		/*
+		 * Exposes a read-only pointer to the underlying storage.
+		 */
+		public IntPtr Bytes {
+			get { return CFDataGetBytePtr (Handle); }
+		}
+
+		public byte this [long idx] {
+			get {
+				if (idx < 0 || (ulong) idx > (ulong) Length)
+					throw new ArgumentException ("idx");
+				return Marshal.ReadByte (new IntPtr (Bytes.ToInt64 () + idx));
+			}
+
+			set {
+				throw new NotImplementedException ("NSData arrays can not be modified, use an NSMutableData instead");
+			}
+		}
+
+	}
+
 	internal class CFDictionary : CFObject
 	{
+		static readonly IntPtr KeyCallbacks;
+		static readonly IntPtr ValueCallbacks;
+		
+		static CFDictionary ()
+		{
+			var handle = dlopen (CoreFoundationLibrary, 0);
+			if (handle == IntPtr.Zero)
+				return;
+
+			try {		
+				KeyCallbacks = GetIndirect (handle, "kCFTypeDictionaryKeyCallBacks");
+				ValueCallbacks = GetIndirect (handle, "kCFTypeDictionaryValueCallBacks");
+			} finally {
+				dlclose (handle);
+			}
+		}
+
 		public CFDictionary (IntPtr handle, bool own) : base (handle, own) { }
+
+		public static CFDictionary FromObjectAndKey (IntPtr obj, IntPtr key)
+		{
+			return new CFDictionary (CFDictionaryCreate (IntPtr.Zero, new IntPtr[] { key }, new IntPtr [] { obj }, (IntPtr)1, KeyCallbacks, ValueCallbacks), true);
+		}
+
+		public static CFDictionary FromKeysAndObjects (IList<Tuple<IntPtr,IntPtr>> items)
+		{
+			var keys = new IntPtr [items.Count];
+			var values = new IntPtr [items.Count];
+			for (int i = 0; i < items.Count; i++) {
+				keys [i] = items [i].Item1;
+				values [i] = items [i].Item2;
+			}
+			return new CFDictionary (CFDictionaryCreate (IntPtr.Zero, keys, values, (IntPtr)items.Count, KeyCallbacks, ValueCallbacks), true);
+		}
+
+		[DllImport (CoreFoundationLibrary)]
+		extern static IntPtr CFDictionaryCreate (IntPtr allocator, IntPtr[] keys, IntPtr[] vals, IntPtr len, IntPtr keyCallbacks, IntPtr valCallbacks);
 
 		[DllImport (CoreFoundationLibrary)]
 		extern static IntPtr CFDictionaryGetValue (IntPtr handle, IntPtr key);
+
+		[DllImport (CoreFoundationLibrary)]
+		extern static IntPtr CFDictionaryCreateCopy (IntPtr allocator, IntPtr handle);
+
+		public CFDictionary Copy ()
+		{
+			return new CFDictionary (CFDictionaryCreateCopy (IntPtr.Zero, Handle), true);
+		}
+		
+		public CFMutableDictionary MutableCopy ()
+		{
+			return new CFMutableDictionary (CFDictionaryCreateMutableCopy (IntPtr.Zero, IntPtr.Zero, Handle), true);
+		}
+
+		[DllImport (CoreFoundationLibrary)]
+		extern static IntPtr CFDictionaryCreateMutableCopy (IntPtr allocator, IntPtr capacity, IntPtr theDict);
 
 		public IntPtr GetValue (IntPtr key)
 		{
@@ -345,6 +521,31 @@ namespace Mono.Net
 				return GetValue (key);
 			}
 		}
+	}
+	
+	internal class CFMutableDictionary : CFDictionary
+	{
+		public CFMutableDictionary (IntPtr handle, bool own) : base (handle, own) { }
+
+		public void SetValue (IntPtr key, IntPtr val)
+		{
+			CFDictionarySetValue (Handle, key, val);
+		}
+
+		public static CFMutableDictionary Create ()
+		{
+			var handle = CFDictionaryCreateMutable (IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			if (handle == IntPtr.Zero)
+				throw new InvalidOperationException ();
+			return new CFMutableDictionary (handle, true);
+		}
+
+		[DllImport (CoreFoundationLibrary)]
+		extern static void CFDictionarySetValue (IntPtr handle, IntPtr key, IntPtr val);
+
+		[DllImport (CoreFoundationLibrary)]
+		extern static IntPtr CFDictionaryCreateMutable (IntPtr allocator, IntPtr capacity, IntPtr keyCallback, IntPtr valueCallbacks);
+
 	}
 
 	internal class CFUrl : CFObject
@@ -493,6 +694,25 @@ namespace Mono.Net
 				return CFProxyType.HTTPS;
 
 			if (type == kCFProxyTypeSOCKS)
+				return CFProxyType.SOCKS;
+			
+			//in OSX 10.13 pointer comparison didn't work for kCFProxyTypeAutoConfigurationURL
+			if (CFString.Compare (type, kCFProxyTypeAutoConfigurationJavaScript) == 0)
+				return CFProxyType.AutoConfigurationJavaScript;
+
+			if (CFString.Compare (type, kCFProxyTypeAutoConfigurationURL) == 0)
+				return CFProxyType.AutoConfigurationUrl;
+
+			if (CFString.Compare (type, kCFProxyTypeFTP) == 0)
+				return CFProxyType.FTP;
+
+			if (CFString.Compare (type, kCFProxyTypeHTTP) == 0)
+				return CFProxyType.HTTP;
+
+			if (CFString.Compare (type, kCFProxyTypeHTTPS) == 0)
+				return CFProxyType.HTTPS;
+
+			if (CFString.Compare (type, kCFProxyTypeSOCKS) == 0)
 				return CFProxyType.SOCKS;
 			
 			return CFProxyType.None;
@@ -1066,4 +1286,136 @@ namespace Mono.Net
 			return new CFWebProxy ();
 		}
 	}
+
+	class CFBoolean : INativeObject, IDisposable {
+		IntPtr handle;
+
+		public static readonly CFBoolean True;
+		public static readonly CFBoolean False;
+
+		static CFBoolean ()
+		{
+			var handle = CFObject.dlopen (CFObject.CoreFoundationLibrary, 0);
+			if (handle == IntPtr.Zero)
+				return;
+			try {
+				True  = new CFBoolean (CFObject.GetCFObjectHandle (handle, "kCFBooleanTrue"), false);
+				False = new CFBoolean (CFObject.GetCFObjectHandle (handle, "kCFBooleanFalse"), false);
+			}
+			finally {
+				CFObject.dlclose (handle);
+			}
+		}
+
+		internal CFBoolean (IntPtr handle, bool owns)
+		{
+			this.handle = handle;
+			if (!owns)
+				CFObject.CFRetain (handle);
+		}
+
+		~CFBoolean ()
+		{
+			Dispose (false);
+		}
+
+		public IntPtr Handle {
+			get {
+				return handle;
+			}
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (handle != IntPtr.Zero){
+				CFObject.CFRelease (handle);
+				handle = IntPtr.Zero;
+			}
+		}
+
+		public static implicit operator bool (CFBoolean value)
+		{
+			return value.Value;
+		}
+
+		public static explicit operator CFBoolean (bool value)
+		{
+			return FromBoolean (value);
+		}
+
+		public static CFBoolean FromBoolean (bool value)
+		{
+			return value ? True : False;
+		}
+
+		[DllImport (CFObject.CoreFoundationLibrary)]
+		[return: MarshalAs (UnmanagedType.I1)]
+		extern static /* Boolean */ bool CFBooleanGetValue (/* CFBooleanRef */ IntPtr boolean);
+
+		public bool Value {
+			get {return CFBooleanGetValue (handle);}
+		}
+
+		public static bool GetValue (IntPtr boolean)
+		{
+			return CFBooleanGetValue (boolean);
+		}
+	}
+
+	internal class CFDate : INativeObject, IDisposable {
+		IntPtr handle;
+
+		internal CFDate (IntPtr handle, bool owns)
+		{
+			this.handle = handle;
+			if (!owns)
+				CFObject.CFRetain (handle);
+		}
+
+		~CFDate ()
+		{
+			Dispose (false);
+		}
+
+		[DllImport (CFObject.CoreFoundationLibrary)]
+		extern static IntPtr CFDateCreate (IntPtr allocator, /* CFAbsoluteTime */ double at);
+
+		public static CFDate Create (DateTime date)
+		{
+			var referenceTime = new DateTime (2001, 1, 1);
+			var difference = (date - referenceTime).TotalSeconds;
+			var handle = CFDateCreate (IntPtr.Zero, difference);
+			if (handle == IntPtr.Zero)
+				throw new NotSupportedException ();
+			return new CFDate (handle, true);
+		}
+
+		public IntPtr Handle {
+			get {
+				return handle;
+			}
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (handle != IntPtr.Zero) {
+				CFObject.CFRelease (handle);
+				handle = IntPtr.Zero;
+			}
+		}
+
+	}
+
 }

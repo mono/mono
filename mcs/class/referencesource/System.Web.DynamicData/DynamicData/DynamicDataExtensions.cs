@@ -228,7 +228,7 @@ namespace System.Web.DynamicData {
         }
 
         /// <summary>
-        /// Make the SelectedIndex [....] up with the PersistedSelection. Concretely, what it means is that
+        /// Make the SelectedIndex sync up with the PersistedSelection. Concretely, what it means is that
         /// if you select a row and then page away (or sort), the selection remains on that row
         /// even if it's not currently visible.
         /// </summary>

@@ -43,25 +43,25 @@ namespace System.Collections.Generic
 		{
 		}
 
-		public SynchronizedReadOnlyCollection (object sync_root)
-			: this (sync_root, new List<T> ())
+		public SynchronizedReadOnlyCollection (object syncRoot)
+			: this (syncRoot, new List<T> ())
 		{
 		}
 
-		public SynchronizedReadOnlyCollection (object sync_root, IEnumerable<T> list)
+		public SynchronizedReadOnlyCollection (object syncRoot, IEnumerable<T> list)
 		{
-			if (sync_root == null)
-				throw new ArgumentNullException ("sync_root");
+			if (syncRoot == null)
+				throw new ArgumentNullException ("syncRoot");
 
 			if (list == null)
 				throw new ArgumentNullException ("list");
 
-			this.sync_root = sync_root;
+			this.sync_root = syncRoot;
 			this.l = new List<T> (list);
 		}
 
-		public SynchronizedReadOnlyCollection (object sync_root, params T [] list)
-			: this (sync_root, (IEnumerable<T>) list)
+		public SynchronizedReadOnlyCollection (object syncRoot, params T [] list)
+			: this (syncRoot, (IEnumerable<T>) list)
 		{
 		}
 

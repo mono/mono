@@ -1163,7 +1163,7 @@ namespace System.ComponentModel {
             ///      a single object to be re-used for more than one type. 
             /// </devdoc> 
             private object CreateInstance(Type type) {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 if ((!(type.IsPublic || type.IsNestedPublic)) && (type.Assembly == typeof(DebugTypeDescriptor).Assembly)) {
                     IntSecurity.FullReflection.Demand();
                 }

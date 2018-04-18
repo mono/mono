@@ -103,11 +103,13 @@ namespace System.Globalization {
         [NonSerialized] 
         private String m_sortName; // The name that defines our behavior
 
+#if !MONO
         [NonSerialized]
         private IntPtr m_dataHandle;
 
         [NonSerialized]
         private IntPtr m_handleOrigin;
+#endif
 
         ////////////////////////////////////////////////////////////////////////
         //
@@ -258,8 +260,10 @@ namespace System.Globalization {
         // the following fields are defined to keep the compatibility with Whidbey.
         // don't change/remove the names/types of these fields.
 #if FEATURE_USE_LCID || MONO
+#pragma warning disable 169
                 [OptionalField(VersionAdded = 1)]
                 private int win32LCID;             // mapped sort culture id of this instance
+#pragma warning restore
                 private int culture;               // the culture ID used to create this instance.
 #endif
         [OnDeserializing]
@@ -1143,12 +1147,17 @@ namespace System.Globalization {
             {
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidFlag"), "options");
             }
+
+#if !MONO            
             byte[] keyData = null;
+#endif
             // The OS doesn't have quite the same behavior so we have to test for empty inputs
             if (String.IsNullOrEmpty(source))
             {
+#if !MONO                
                 // Empty strings get an empty sort key
                 keyData = EmptyArray<Byte>.Value;
+#endif
                 // Fake value to test though so we can verify our flags
                 source = "\x0000";
             }
@@ -1348,8 +1357,9 @@ namespace System.Globalization {
         {
             return NativeInternalInitSortHandle(localeName, out handleOrigin);
         }
+#endif
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR || MONO
         private const int SORT_VERSION_WHIDBEY = 0x00001000;
         private const int SORT_VERSION_V4 = 0x00060101;
 
@@ -1366,7 +1376,11 @@ namespace System.Globalization {
             [System.Security.SecuritySafeCritical]
             get
             {
+#if MONO
+                return SORT_VERSION_V4;
+#else
                 return InternalGetSortVersion();
+#endif
             }
         }
 
@@ -1380,16 +1394,21 @@ namespace System.Globalization {
             {
                 if(m_SortVersion == null) 
                 {
+#if MONO
+                    m_SortVersion = new SortVersion(SORT_VERSION_V4, new Guid("00000001-57ee-1e5c-00b4-d0000bb1e11e")); // Guid returned by corefx and .NET 4.6
+#else
                     Win32Native.NlsVersionInfoEx v = new Win32Native.NlsVersionInfoEx();
                     v.dwNLSVersionInfoSize = Marshal.SizeOf(typeof(Win32Native.NlsVersionInfoEx));
                     InternalGetNlsVersionEx(m_dataHandle, m_handleOrigin, m_sortName, ref v);
                     m_SortVersion = new SortVersion(v.dwNLSVersion, (v.dwEffectiveId != 0) ? v.dwEffectiveId : LCID, v.guidCustomVersion);
+#endif
                 }
 
                 return m_SortVersion;
             }
         }
-        
+
+#if !MONO
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
@@ -1403,7 +1422,6 @@ namespace System.Globalization {
         [SuppressUnmanagedCodeSecurity]
         private static extern uint InternalGetSortVersion();
 
-#endif
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
@@ -1447,6 +1465,8 @@ namespace System.Globalization {
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [SuppressUnmanagedCodeSecurity]
         private static extern int InternalGetSortKey(IntPtr handle, IntPtr handleOrigin, String localeName, int flags, String source, int sourceCount, byte[] target, int targetCount);
+#endif
+
 #endif
     }
 }

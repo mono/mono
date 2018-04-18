@@ -2,9 +2,9 @@
 // <copyright file="DataViewManager.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -300,7 +300,7 @@ namespace System.Data {
         }
         */
 
-        // [....]: GetListName and GetItemProperties almost the same in DataView and DataViewManager
+        // Microsoft: GetListName and GetItemProperties almost the same in DataView and DataViewManager
         string System.ComponentModel.ITypedList.GetListName(PropertyDescriptor[] listAccessors) {
             DataSet dataSet = DataSet;
             if (dataSet == null)

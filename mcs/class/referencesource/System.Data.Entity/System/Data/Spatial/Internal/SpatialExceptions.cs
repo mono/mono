@@ -4,7 +4,7 @@
 // </copyright>
 //
 // @owner  willa
-// @backupOwner [....]
+// @backupOwner Microsoft
 //------------------------------------------------------------------------------
 
 namespace System.Data.Spatial.Internal

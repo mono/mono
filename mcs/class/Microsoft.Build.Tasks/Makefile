@@ -11,9 +11,12 @@ LIBRARY_NAME = Microsoft.Build.Tasks$(NAME_SUFFIX).dll
 
 LIB_REFS = $(PARENT_PROFILE)System $(PARENT_PROFILE)System.Core $(PARENT_PROFILE)System.Xml $(PARENT_PROFILE)System.Windows.Forms \
 			$(XBUILD_UTILITIES) $(XBUILD_FRAMEWORK) $(XBUILD_ENGINE) $(XBUILD_TASKS)
+KEYFILE = ../msfinal.pub
 
 TEST_MCS_FLAGS =
 TEST_LIB_REFS = $(PARENT_PROFILE)System.Xml $(XBUILD_ENGINE) $(XBUILD_FRAMEWORK) $(XBUILD_TASKS) $(XBUILD_UTILITIES) $(PARENT_PROFILE)System.Core
+
+TEST_NUNITLITE_APP_CONFIG_RUNTIME=Test/test-config-file-$(PROFILE)
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 TEST_LIB_REFS += Microsoft.Build
@@ -23,11 +26,10 @@ EXTRA_DISTFILES = \
 	Test/resources/test.cs \
 	Test/resources/Sample.cs \
 	Test/resources/Sample.vb \
-	Test/resources/junk.txt \
-	Test/test-config-file*
+	Test/resources/junk.txt
 
 Test/resources/test.dll: Test/resources/test.cs
-	$(CSCOMPILE) -target:library /out:$@ $<
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -target:library /out:$@ $<
 
 clean-test-resources:
 	rm -f Test/resources/test.dll

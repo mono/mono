@@ -2,8 +2,8 @@
 // <copyright file="DbConnectionFactory.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.ProviderBase {
@@ -304,11 +304,15 @@ namespace System.Data.ProviderBase {
 #endif
                 }
                 else {
+#if !MONO
+                    // DBConnection::ForceNewConnection is never set
                     if (owningConnection.ForceNewConnection) {
                         Debug.Assert(!(oldConnection is DbConnectionClosed), "Force new connection, but there is no old connection");
                         connection = connectionPool.ReplaceConnection(owningConnection, userOptions, oldConnection);
                     }
-                    else {
+                    else
+#endif
+                    {
                         if (!connectionPool.TryGetConnection(owningConnection, retry, userOptions, out connection)) {
                             return false;
                         }

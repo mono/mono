@@ -7,7 +7,7 @@
 **
 ** Class:  ResourceWriter
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Default way to write strings to a CLR resource 
@@ -350,13 +350,13 @@ namespace System.Resources {
             // write to the temp directory (enforced via a Windows ACL).  Fall back to a MemoryStream.
             Stream dataSection = null;  // Either a FileStream or a MemoryStream
             String tempFile = null;
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             PermissionSet permSet = new PermissionSet(PermissionState.None);
             permSet.AddPermission(new EnvironmentPermission(PermissionState.Unrestricted));
             permSet.AddPermission(new FileIOPermission(PermissionState.Unrestricted));
 #endif
             try {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 permSet.Assert();
 #endif
                 tempFile = Path.GetTempFileName();
@@ -375,7 +375,7 @@ namespace System.Resources {
                 dataSection = new MemoryStream();
             }
             finally {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 PermissionSet.RevertAssert();
 #endif
             }

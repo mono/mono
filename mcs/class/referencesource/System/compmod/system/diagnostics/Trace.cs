@@ -30,7 +30,7 @@ namespace System.Diagnostics {
         public static TraceListenerCollection Listeners {
             [HostProtection(SharedState=true)]
             get {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
                 // Do a full damand
                 new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
 #endif
@@ -113,7 +113,7 @@ namespace System.Diagnostics {
         /// </devdoc>
         [System.Diagnostics.Conditional("TRACE")]
         public static void Close() {
-#if FEATURE_MONO_CAS
+#if MONO_FEATURE_CAS
             // Do a full damand
             new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
  #endif

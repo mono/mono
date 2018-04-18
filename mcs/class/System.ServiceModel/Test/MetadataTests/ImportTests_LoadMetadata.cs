@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Net;
 using System.Xml;
@@ -34,7 +35,6 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace MonoTests.System.ServiceModel.MetadataTests {
 	
@@ -60,3 +60,4 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		}
 	}
 }
+#endif

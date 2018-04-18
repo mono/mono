@@ -1,7 +1,0 @@
-../../build/common/Consts.cs
-../../build/common/Locale.cs
-../../build/common/MonoTODOAttribute.cs
-Assembly/AssemblyInfo.cs
-System.Runtime.InteropServices/Architecture.cs
-System.Runtime.InteropServices/OSPlatform.cs
-System.Runtime.InteropServices/RuntimeInformation.cs

@@ -5,6 +5,7 @@
 // ==--==
 
 using Microsoft.Win32;
+using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -55,7 +56,7 @@ namespace System
                         if (bool.TryParse(value, out switchValue))
                         {
                             // If multiple switches have the same name, the last value that we find will win.
-                            AppContext.SetSwitch(name, switchValue);
+                            AppContext.DefineSwitchOverride(name, switchValue);
                         }
                     }
                     previousSemicolonPos = currentPos;
@@ -96,10 +97,10 @@ namespace System
             overrideFound = false;
 
             // Read the value from the registry if we can (ie. the key exists)
-            if (s_switchesRegKey != null)
+            if (s_errorReadingRegistry != true)
             {
                 // try to read it from the registry key and return null if the switch name is not found
-                valueFromConfig = s_switchesRegKey.GetValue(switchName, (string)null) as string;
+                valueFromConfig = GetSwitchValueFromRegistry(switchName);
             }
 
             // Note: valueFromConfig will be null only if the key is not found.
@@ -118,19 +119,44 @@ namespace System
             }
         }
 
-        // Cached registry key used to read value overrides from the registry
-        private static RegistryKey s_switchesRegKey = OpenRegKeyNoThrow();
-
-        /// <summary>
-        /// Opens the registry key where the switches are stored and returns null if there is an issue opening the key 
-        /// </summary>
-        private static RegistryKey OpenRegKeyNoThrow()
+        private volatile static bool s_errorReadingRegistry;
+        [SecuritySafeCritical]
+        private static string GetSwitchValueFromRegistry(string switchName)
         {
+            //
+            // We are using P/Invokes directly instead of using the RegistryKey class to avoid pulling in the 
+            // globalization stack that is required by RegistryKey.
+            // 
+            const string REG_KEY_APPCONTEXT = @"SOFTWARE\Microsoft\.NETFramework\AppContext";
             try
             {
-                return Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\.NETFramework\AppContext");
+                using (SafeRegistryHandle hklm = new SafeRegistryHandle((IntPtr)RegistryHive.LocalMachine, true))
+                {
+                    SafeRegistryHandle hkey = null;
+
+                    if (Win32Native.RegOpenKeyEx(hklm, REG_KEY_APPCONTEXT, 0, Win32Native.KEY_READ, out hkey) == 0)
+                    {
+                        int size = 6 * sizeof(char); // "false".Length+1 * sizeof (char) as the API expects byte count and not char count.
+                        int type = 0;
+                        System.Text.StringBuilder keyBuffer = new System.Text.StringBuilder((int)size);
+                        if (Win32Native.RegQueryValueEx(hkey, switchName, null, ref type, keyBuffer, ref size) == 0)
+                        {
+                            return keyBuffer.ToString();
+                        }
+                    }
+                    else
+                    {
+                        // If we could not open the AppContext key, don't try it again.
+                        s_errorReadingRegistry = true;
+                    }
+                }
             }
-            catch { return null; }
+            catch 
+            {
+                // If there was an error, flag it so that we don't try this again.
+                s_errorReadingRegistry = true;
+            } 
+            return null;
         }
     }
 }

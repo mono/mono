@@ -12,7 +12,7 @@ namespace System.Web.Security.Cryptography {
     // Utility class to provide the "one true way" of getting instances of
     // cryptographic algorithms, like SymmetricAlgorithm and HashAlgorithm.
 
-    // From discussions with [....] and the crypto board, we should prefer
+    // From discussions with Microsoft and the crypto board, we should prefer
     // the CNG implementations of algorithms, then the CAPI implementations,
     // then finally managed implementations if there are no CNG / CAPI
     // implementations. The CNG / CAPI implementations are preferred for
@@ -79,6 +79,14 @@ namespace System.Web.Security.Cryptography {
 
         internal static SHA256 CreateSHA256() {
             return new SHA256Cng();
+        }
+
+        internal static SHA384 CreateSHA384() {
+            return new SHA384Cng();
+        }
+
+        internal static SHA512 CreateSHA512() {
+            return new SHA512Cng();
         }
 
         [SuppressMessage("Microsoft.Cryptographic.Standard", "CA5353:TripleDESCannotBeUsed", Justification = @"This is only used by legacy code; new features do not use this algorithm.")]

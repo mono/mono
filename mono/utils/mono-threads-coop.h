@@ -1,5 +1,6 @@
-/*
- * mono-threads-coop.h: Cooperative suspend thread helpers
+/**
+ * \file
+ * Cooperative suspend thread helpers
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -22,15 +23,25 @@ G_BEGIN_DECLS
 /* JIT specific interface */
 extern volatile size_t mono_polling_required;
 
-/* Runtime consumable API */
-
-gboolean
-mono_threads_is_coop_enabled (void);
-
 /* Internal API */
 
 void
 mono_threads_state_poll (void);
+
+gboolean
+mono_threads_is_blocking_transition_enabled (void);
+
+gboolean
+mono_threads_is_cooperative_suspension_enabled (void);
+
+gboolean
+mono_threads_is_hybrid_suspension_enabled (void);
+
+static inline gboolean
+mono_threads_are_safepoints_enabled (void)
+{
+	return mono_threads_is_cooperative_suspension_enabled () || mono_threads_is_hybrid_suspension_enabled ();
+}
 
 static inline void
 mono_threads_safepoint (void)
@@ -47,27 +58,33 @@ mono_threads_safepoint (void)
  */
 
 gpointer
-mono_threads_enter_gc_safe_region_with_info (THREAD_INFO_TYPE *info, gpointer *stackdata);
+mono_threads_enter_gc_safe_region_with_info (THREAD_INFO_TYPE *info, MonoStackData *stackdata);
+
+gpointer
+mono_threads_enter_gc_safe_region_with_info (THREAD_INFO_TYPE *info, MonoStackData *stackdata);
 
 #define MONO_ENTER_GC_SAFE_WITH_INFO(info)	\
 	do {	\
-		gpointer __gc_safe_dummy;	\
+		MONO_STACKDATA (__gc_safe_dummy); \
 		gpointer __gc_safe_cookie = mono_threads_enter_gc_safe_region_with_info ((info), &__gc_safe_dummy)
 
 #define MONO_EXIT_GC_SAFE_WITH_INFO	MONO_EXIT_GC_SAFE
 
 gpointer
-mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *info, gpointer *stackdata);
+mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *, MonoStackData *stackdata);
+
+gpointer
+mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *, MonoStackData *stackdata);
 
 #define MONO_ENTER_GC_UNSAFE_WITH_INFO(info)	\
 	do {	\
-		gpointer __gc_unsafe_dummy;	\
+		MONO_STACKDATA (__gc_unsafe_dummy); \
 		gpointer __gc_unsafe_cookie = mono_threads_enter_gc_unsafe_region_with_info ((info), &__gc_unsafe_dummy)
 
 #define MONO_EXIT_GC_UNSAFE_WITH_INFO	MONO_EXIT_GC_UNSAFE
 
 gpointer
-mono_threads_enter_gc_unsafe_region_unbalanced_with_info (THREAD_INFO_TYPE *info, gpointer *stackdata);
+mono_threads_enter_gc_unsafe_region_unbalanced_with_info (THREAD_INFO_TYPE *info, MonoStackData *stackdata);
 
 G_END_DECLS
 

@@ -78,9 +78,13 @@ namespace System.Web.Hosting {
                 HttpWriter.ReleaseAllPooledBuffers();
 
                 // Trim expired entries from the runtime cache
-                var cache = HttpRuntime.GetCacheInternal(createIfDoesNotExist: false);
-                if (cache != null) {
-                    cache.TrimCache(0);
+                var iCache = HttpRuntime.Cache.GetInternalCache(createIfDoesNotExist: false);
+                var oCache = HttpRuntime.Cache.GetObjectCache(createIfDoesNotExist: false);
+                if (iCache != null) {
+                    iCache.Trim(0);
+                }
+                if (oCache != null && !oCache.Equals(iCache)) {
+                    oCache.Trim(0);
                 }
 
                 // Trim all pooled HttpApplication instances

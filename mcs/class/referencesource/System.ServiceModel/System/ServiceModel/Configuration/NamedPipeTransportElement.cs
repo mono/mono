@@ -22,7 +22,7 @@ namespace System.ServiceModel.Configuration
         {
             base.ApplyConfiguration(bindingElement);
             NamedPipeTransportBindingElement binding = (NamedPipeTransportBindingElement)bindingElement;
-#pragma warning suppress 56506 //[....]; base.ApplyConfiguration above checks for bindingElement being null
+#pragma warning suppress 56506 //Microsoft; base.ApplyConfiguration above checks for bindingElement being null
             this.ConnectionPoolSettings.ApplyConfiguration(binding.ConnectionPoolSettings);
             this.PipeSettings.ApplyConfiguration(binding.PipeSettings);
         }
@@ -30,7 +30,7 @@ namespace System.ServiceModel.Configuration
         protected internal override void InitializeFrom(BindingElement bindingElement)
         {
             base.InitializeFrom(bindingElement);
-#pragma warning suppress 56506 // [....], base.CopyFrom() validates the argument
+#pragma warning suppress 56506 // Microsoft, base.CopyFrom() validates the argument
             NamedPipeTransportBindingElement binding = (NamedPipeTransportBindingElement)bindingElement;
             this.ConnectionPoolSettings.InitializeFrom(binding.ConnectionPoolSettings);
             this.PipeSettings.InitializeFrom(binding.PipeSettings);
@@ -40,7 +40,7 @@ namespace System.ServiceModel.Configuration
         {
             base.CopyFrom(from);
             NamedPipeTransportElement source = (NamedPipeTransportElement)from;
-#pragma warning suppress 56506 // [....], base.CopyFrom() validates the argument
+#pragma warning suppress 56506 // Microsoft, base.CopyFrom() validates the argument
             this.ConnectionPoolSettings.CopyFrom(source.ConnectionPoolSettings);
             this.PipeSettings.CopyFrom(source.PipeSettings);
         }

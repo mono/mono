@@ -6,7 +6,7 @@
 //
 // File: Type.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Implements System.Type
 //
@@ -1891,6 +1891,12 @@ namespace System {
         // private convenience data
         private const BindingFlags DefaultLookup = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
         internal const BindingFlags DeclaredOnlyLookup = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+
+#if MONO
+        public virtual bool IsSZArray { get { throw new NotImplementedException (); } }
+
+        public virtual bool IsCollectible => true;
+#endif
 }
 
 #if CONTRACTS_FULL

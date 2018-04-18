@@ -5,7 +5,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
@@ -826,7 +826,7 @@ namespace System.Threading
                                 m_executingCallback = currArrayFragment[i];
                                 if (m_executingCallback != null)
                                 {
-                                    //Transition to the target [....] context (if necessary), and continue our work there.
+                                    //Transition to the target sync context (if necessary), and continue our work there.
                                     CancellationCallbackCoreWorkArguments args = new CancellationCallbackCoreWorkArguments(currArrayFragment, i);
 
                                     // marshal exceptions: either aggregate or perform an immediate rethrow
@@ -892,7 +892,7 @@ namespace System.Threading
             {
                 if (callback.TargetExecutionContext != null)
                 {
-                    // we are running via a custom [....] context, so update the executing threadID
+                    // we are running via a custom sync context, so update the executing threadID
                     callback.CancellationTokenSource.ThreadIDExecutingCallbacks = Thread.CurrentThread.ManagedThreadId;
                 }
                 callback.ExecuteCallback();
@@ -988,7 +988,7 @@ namespace System.Threading
     // ----------------------------------------------------------
     // -- CancellationCallbackCoreWorkArguments --
     // ----------------------------------------------------------
-    // Helper struct for passing data to the target [....] context
+    // Helper struct for passing data to the target sync context
     internal struct CancellationCallbackCoreWorkArguments
     {
         internal SparselyPopulatedArrayFragment<CancellationCallbackInfo> m_currArrayFragment;
@@ -1080,7 +1080,9 @@ namespace System.Threading
     /// <typeparam name="T">The kind of elements contained within.</typeparam>
     internal class SparselyPopulatedArray<T> where T : class
     {
+#if DEBUG        
         private readonly SparselyPopulatedArrayFragment<T> m_head;
+#endif
         private volatile SparselyPopulatedArrayFragment<T> m_tail;
 
         /// <summary>
@@ -1089,7 +1091,10 @@ namespace System.Threading
         /// <param name="initialSize">How many array slots to pre-allocate.</param>
         internal SparselyPopulatedArray(int initialSize)
         {
-            m_head = m_tail = new SparselyPopulatedArrayFragment<T>(initialSize);
+#if DEBUG            
+            m_head = 
+#endif
+            m_tail = new SparselyPopulatedArrayFragment<T>(initialSize);
         }
 
 #if DEBUG

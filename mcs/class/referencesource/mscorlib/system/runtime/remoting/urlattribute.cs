@@ -7,12 +7,12 @@
 **
 ** File:    UrlAttribute.cs
 **
-** <EMAIL>Author:  Tarun Anand ([....])</EMAIL>
+** <EMAIL>Author:  Tarun Anand (Microsoft)</EMAIL>
 **
 ** Purpose: Defines an attribute which can be used at the callsite to
 **          specify the URL at which the activation will happen.
 **
-** Date:    [....] 30, 2000
+** Date:    Microsoft 30, 2000
 **
 ===========================================================*/
 namespace System.Runtime.Remoting.Activation {

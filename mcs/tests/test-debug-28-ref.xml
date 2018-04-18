@@ -28,9 +28,7 @@
       </locals>
       <scopes>
         <entry index="0" start="0x1" end="0x1c" />
-        <entry index="1" start="0xb" end="0xf" />
-        <entry index="2" start="0x1c" end="0x3f" />
-        <entry index="3" start="0x28" end="0x2e" />
+        <entry index="1" start="0x1c" end="0x3f" />
       </scopes>
     </method>
     <method token="0x6000003">

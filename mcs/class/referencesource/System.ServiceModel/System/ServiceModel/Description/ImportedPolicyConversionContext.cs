@@ -13,7 +13,7 @@ namespace System.ServiceModel.Description
 
     public abstract partial class MetadataImporter
     {
-        //Consider, [....]: make this public
+        //Consider, Microsoft: make this public
         internal static IEnumerable<PolicyConversionContext> GetPolicyConversionContextEnumerator(ServiceEndpoint endpoint, PolicyAlternatives policyAlternatives)
         {
             return ImportedPolicyConversionContext.GetPolicyConversionContextEnumerator(endpoint, policyAlternatives, MetadataImporterQuotas.Defaults);

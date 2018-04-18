@@ -10,6 +10,7 @@ using Diag = System.Diagnostics;
 using System.Linq;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -38,7 +39,11 @@ public class DebuggerTests
 	}
 
 	// No other way to pass arguments to the tests ?
+#if MONODROID_TEST
+	public static bool listening = true;
+#else
 	public static bool listening = Environment.GetEnvironmentVariable ("DBG_SUSPEND") != null;
+#endif
 	public static string runtime = Environment.GetEnvironmentVariable ("DBG_RUNTIME");
 	public static string agent_args = Environment.GetEnvironmentVariable ("DBG_AGENT_ARGS");
 
@@ -63,20 +68,36 @@ public class DebuggerTests
 		Start (false, args);
 	}
 
+	Diag.ProcessStartInfo CreateStartInfo (string[] args) {
+		var pi = new Diag.ProcessStartInfo ();
+
+		if (runtime != null) {
+			pi.FileName = runtime;
+		} else if (Path.DirectorySeparatorChar == '\\') {
+			string processExe = Diag.Process.GetCurrentProcess ().MainModule.FileName;
+			if (processExe != null) {
+				string fileName = Path.GetFileName (processExe);
+				if (fileName.StartsWith ("mono") && fileName.EndsWith (".exe"))
+					pi.FileName = processExe;
+			}
+		}
+		if (string.IsNullOrEmpty (pi.FileName))
+			pi.FileName = "mono";
+		pi.Arguments = String.Join (" ", args);
+		return pi;
+	}
+
 	void Start (bool forceExit, params string[] args) {
 		this.forceExit = forceExit;
 
 		if (!listening) {
-			var pi = new Diag.ProcessStartInfo ();
-
-			if (runtime != null)
-				pi.FileName = runtime;
-			else
-				pi.FileName = "mono";
-			pi.Arguments = String.Join (" ", args);
+			var pi = CreateStartInfo (args);
 			vm = VirtualMachineManager.Launch (pi, new LaunchOptions { AgentArgs = agent_args });
 		} else {
-			var ep = new IPEndPoint (IPAddress.Any, 10000);
+#if MONODROID_TEST
+			System.Diagnostics.Process.Start("/usr/bin/make", "-C ../android dirty-run-debugger-test");
+#endif
+			var ep = new IPEndPoint (IPAddress.Any, 6100);
 			Console.WriteLine ("Listening on " + ep + "...");
 			vm = VirtualMachineManager.Listen (ep);
 		}
@@ -109,6 +130,22 @@ public class DebuggerTests
 		}
 
 		load_req.Disable ();
+
+		if (args.Length == 2) {
+			var this_type = entry_point.DeclaringType;
+			var str = vm.RootDomain.CreateString (args [1]);
+			var slot = this_type.GetField ("arg");
+
+			if (slot == null)
+				throw new Exception ("Missing slot");
+
+			if (str == null)
+				throw new Exception ("Bug in createstring");
+
+			this_type.SetValue (slot, str);
+		} else if (args.Length > 2) {
+			throw new Exception (String.Format ("Fixme {0}", args [2]));
+		}
 	}
 
 	BreakpointEvent run_until (string name) {
@@ -311,6 +348,8 @@ public class DebuggerTests
 			Assert.AreEqual (expected, (val as StringMirror).Value);
 		} else if (val is StructMirror && (val as StructMirror).Type.Name == "IntPtr") {
 			AssertValue (expected, (val as StructMirror).Fields [0]);
+		} else if (val is PointerValue) {
+			Assert.AreEqual (expected, (val as PointerValue).Address);
 		} else {
 			Assert.IsTrue (val is PrimitiveValue);
 			Assert.AreEqual (expected, (val as PrimitiveValue).Value);
@@ -547,10 +586,18 @@ public class DebuggerTests
 
 	[Test]
 	public void ClassLocalReflection () {
+		vm.Detach ();
+
+		Start (new string [] { "dtest-app.exe", "local-reflect" });
+
 		MethodMirror m = entry_point.DeclaringType.Assembly.GetType ("LocalReflectClass").GetMethod ("RunMe");
 
 		Assert.IsNotNull (m);
-		//Console.WriteLine ("X: " + name + " " + m.ILOffsets.Count + " " + m.Locations.Count);
+
+//		foreach (var x in m.Locations) {
+//			Console.WriteLine (x);
+//		}
+
 		var offset = -1;
 		int method_base_linum = m.Locations [0].LineNumber;
 		foreach (var location in m.Locations)
@@ -578,7 +625,11 @@ public class DebuggerTests
 		e = single_step (e.Thread);
 
 		var frame = e.Thread.GetFrames ()[0];
-		Value variable = frame.GetValue (frame.Method.GetLocal ("reflectMe"));
+
+		Assert.IsNotNull (frame);
+		var field = frame.Method.GetLocal ("reflectMe");
+		Assert.IsNotNull (field);
+		Value variable = frame.GetValue (field);
 
 		ObjectMirror thisObj = (ObjectMirror)variable;
 		TypeMirror thisType = thisObj.Type;
@@ -707,23 +758,53 @@ public class DebuggerTests
 		assert_location (e, "ss6");
 		req.Disable ();
 
-		// Check that a step over stops at an EH clause
+		// Testing stepping in, over and out with exception handlers in same or caller method
+
+		//stepout in ss7_2, which may not go to catch(instead out to ss7)
 		e = run_until ("ss7_2");
-		req = create_step (e);
-		req.Depth = StepDepth.Out;
-		req.Enable ();
-		e = step_once ();
-		assert_location (e, "ss7");
-		req.Disable ();
-		req = create_step (e);
-		req.Depth = StepDepth.Over;
-		req.Enable ();
-		e = step_once ();
-		assert_location (e, "ss7");
-		req.Disable ();
+		create_step (e);
+		assert_location (step_out(), "ss7");
+
+		//stepout in ss7_2_1, which must go to catch
+		run_until ("ss7_2_1");
+		assert_location (step_out (), "ss7_2");
+
+		//stepover over ss7_2, which must go to catch
+		run_until ("ss7_2");
+		assert_location (step_over (), "ss7_2");//move to "try {" line
+		assert_location (step_over (), "ss7_2");//move to "ss7_2_2();" line
+		assert_location (step_over (), "ss7_2");//step over ss7_2_2();, assume we are at "catch" now
+		assert_location (step_over (), "ss7_2");//move to { of catch
+		assert_location (step_over (), "ss7_2");//move to } of catch
+		assert_location (step_over (), "ss7_2");//move to } of method
+		assert_location (step_over (), "ss7");//finish method
+
+		//stepover over ss7_2_1, which must go to catch
+		run_until ("ss7_2_1");
+		assert_location (step_over (), "ss7_2_1");//move from { of method to "throw new Exception ();"
+		assert_location (step_over (), "ss7_2");//step over exception, being in ss7_2 means we are at catch
+
+		//stepin in ss7_3, which must go to catch
+		run_until ("ss7_3");
+		assert_location (step_into (), "ss7_3");//move to "try {"
+		assert_location (step_into (), "ss7_3");//move to "throw new Exception ();"
+		step_req.Disable ();
+		step_req.AssemblyFilter = new AssemblyMirror [] { (e as BreakpointEvent).Method.DeclaringType.Assembly };
+		assert_location (step_into (), "ss7_3");//call "throw new Exception ();", we assume we end up at "catch"
+		assert_location (step_into (), "ss7_3");//move to { of catch
+		assert_location (step_into (), "ss7_3");//move to } of catch
+		assert_location (step_into (), "ss7_3");//move to } of method
+		assert_location (step_into (), "ss7");//move out to ss7
+
+		//stepover in ss7_2_1, which must go to catch
+		run_until ("ss7_2_1");
+		assert_location (step_into (), "ss7_2_1");//move from { of method to "throw new Exception ();"
+		assert_location (step_into (), "ss7_2");//step in exception, being in ss7_2 means we are at catch
+		step_req.Disable ();
 
 		// Check that stepping stops between nested calls
 		e = run_until ("ss_nested_2");
+		req = create_step (e);
 		e = step_out ();
 		assert_location (e, "ss_nested");
 		e = step_into ();
@@ -732,6 +813,14 @@ public class DebuggerTests
 		assert_location (e, "ss_nested");
 		// Check that step over steps over nested calls
 		e = step_over ();
+		assert_location (e, "ss_nested");
+		e = step_into ();
+		assert_location (e, "ss_nested_2");
+		e = step_into ();
+		assert_location (e, "ss_nested_2");
+		e = step_into ();
+		assert_location (e, "ss_nested_2");
+		e = step_into ();
 		assert_location (e, "ss_nested");
 		e = step_into ();
 		assert_location (e, "ss_nested_1");
@@ -802,6 +891,7 @@ public class DebuggerTests
 				req.Size = StepSize.Line;
 
 				e = step_out ();
+				e = step_over ();//Stepout gets us to ss_recursive2_trap ();, move to ss_recursive2 (next); line
 				assert_location (e, "ss_recursive2");
 
 				// Stack should consist of Main + single_stepping + (1 ss_recursive2 frame per loop iteration)
@@ -888,6 +978,164 @@ public class DebuggerTests
 		f = e.Thread.GetFrames ()[0];
 		AssertValue (7.0, f.GetValue (f.Method.GetParameters ()[0]));
 		req.Disable ();
+
+		e = run_until ("ss_await");
+		e = step_in_await ("ss_await", e);//ss_await_1 ().Wait ();//in
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//var a = 1;
+		e = step_in_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_in_await ("MoveNext", e);//return a + 2;
+		e = step_in_await ("MoveNext", e);//}
+		e = step_in_await ("ss_await", e);//ss_await_1 ().Wait ();//in
+
+		e = step_in_await ("ss_await", e);//ss_await_1 ().Wait ();//over
+		e = step_in_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//var a = 1;
+		e = step_over_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_over_await ("MoveNext", e);//return a + 2;
+		e = step_over_await ("MoveNext", e);//}
+		e = step_over_await ("ss_await", e);//ss_await_1 ().Wait ();//over
+
+		e = step_in_await ("ss_await", e);//ss_await_1 ().Wait ();//out before
+		e = step_in_await ("MoveNext", e);//{
+		e = step_out_await ("ss_await", e);//ss_await_1 ().Wait ();//out before
+
+		e = step_in_await ("ss_await", e);//ss_await_1 ().Wait ();//out after
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//var a = 1;
+		e = step_in_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_in_await ("MoveNext", e);//return a + 2;
+		e = step_out_await ("ss_await", e);//ss_await_1 ().Wait ();//out after
+
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//in
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//var a = 1;
+		e = step_in_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_in_await ("MoveNext", e);//if (exc)
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//if (handled)
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//try {
+		e = step_in_await ("MoveNext", e);//throw new Exception ();
+		e = step_in_await ("MoveNext", e);//catch
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//}
+		e = step_in_await ("MoveNext", e);//}
+		e = step_in_await ("MoveNext", e);//}
+		e = step_in_await ("MoveNext", e);//return a + 2;
+		e = step_in_await ("MoveNext", e);//}
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//in
+
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//over
+		e = step_in_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//var a = 1;
+		e = step_over_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_over_await ("MoveNext", e);//if (exc)
+		e = step_over_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//if (handled)
+		e = step_over_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//try {
+		e = step_over_await ("MoveNext", e);//throw new Exception ();
+		e = step_over_await ("MoveNext", e);//catch
+		e = step_over_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//}
+		e = step_over_await ("MoveNext", e);//}
+		e = step_over_await ("MoveNext", e);//}
+		e = step_over_await ("MoveNext", e);//return a + 2;
+		e = step_over_await ("MoveNext", e);//}
+		e = step_over_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//over
+
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//out
+		e = step_in_await ("MoveNext", e);//{
+		e = step_out_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//out
+
+		e = step_in_await ("ss_await", e);//try {
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, false).Wait ();//in
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//var a = 1;
+		e = step_in_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_in_await ("MoveNext", e);//if (exc)
+		e = step_in_await ("MoveNext", e);//{
+		e = step_in_await ("MoveNext", e);//if (handled)
+		e = step_in_await ("MoveNext", e);//} else {
+		e = step_in_await ("MoveNext", e);//throw new Exception ();
+		e = step_in_await ("ss_await", e);//catch
+		e = step_in_await ("ss_await", e);//{
+		e = step_in_await ("ss_await", e);//}
+		e = step_in_await ("ss_await", e);//try {
+
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, false).Wait ();//over
+		e = step_in_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//var a = 1;
+		e = step_over_await ("MoveNext", e);//await Task.Delay (10);
+		e = step_over_await ("MoveNext", e);//if (exc)
+		e = step_over_await ("MoveNext", e);//{
+		e = step_over_await ("MoveNext", e);//if (handled)
+		e = step_over_await ("MoveNext", e);//} else {
+		e = step_over_await ("MoveNext", e);//throw new Exception ();
+		e = step_over_await ("ss_await", e);//catch
+		e = step_over_await ("ss_await", e);//{
+		e = step_over_await ("ss_await", e);//}
+		e = step_over_await ("ss_await", e);//try {
+
+		e = step_in_await ("ss_await", e);//ss_await_1_exc (true, false).Wait ();//out
+		e = step_in_await ("MoveNext", e);//{
+		e = step_out_await ("ss_await", e);//ss_await_1_exc (true, true).Wait ();//out
+	}
+
+	Event step_in_await (string method, Event e)
+	{
+		if (step_req != null)
+			step_req.Disable ();
+		create_step (e);
+		step_req.AssemblyFilter = new List<AssemblyMirror> () { entry_point.DeclaringType.Assembly };
+		var ef = step_into ();
+		assert_location (ef, method);
+		return ef;
+	}
+
+	Event step_over_await (string method, Event e)
+	{
+		if (step_req != null)
+			step_req.Disable ();
+		create_step (e);
+		step_req.AssemblyFilter = new List<AssemblyMirror> () { entry_point.DeclaringType.Assembly };
+		var ef = step_over ();
+		assert_location (ef, method);
+		return ef;
+	}
+
+	Event step_out_await (string method, Event e)
+	{
+		if (step_req != null)
+			step_req.Disable ();
+		create_step (e);
+		step_req.AssemblyFilter = new List<AssemblyMirror> () { entry_point.DeclaringType.Assembly };
+		var ef = step_out ();
+		assert_location (ef, method);
+		return ef;
+	}
+
+	[Test]
+	public void SingleSteppingNoFrames () {
+		//
+		// Test what happens when starting a single step operation on a thread
+		// with no managed frames
+		//
+		// Run a delegate on a tp thread
+		var e = run_until ("ss_no_frames_2");
+
+		var this_type = e.Thread.GetFrames ()[0].Method.DeclaringType;
+		this_type.SetValue (this_type.GetField ("static_i"), vm.CreateValue (56));
+
+		var thread = e.Thread;
+		var e2 = run_until ("ss_no_frames_3");
+		// The tp thread should be idle now
+		step_req = vm.CreateStepRequest (thread);
+		step_req.Depth = StepDepth.Over;
+		AssertThrows<Exception> (delegate {
+			step_req.Enable ();
+			});
 	}
 
 	[Test]
@@ -1767,6 +2015,16 @@ public class DebuggerTests
 		AssertValue ("T", s ["s"]);
 		AssertValue (45, s ["k"]);
 
+		// Test SetThis ()
+		s ["i"] = vm.CreateValue (55);
+		frame.SetThis (s);
+		obj = frame.GetThis ();
+		Assert.IsTrue (obj is StructMirror);
+		s = obj as StructMirror;
+		AssertValue (55, s ["i"]);
+		AssertValue ("T", s ["s"]);
+		AssertValue (45, s ["k"]);
+
 		// this on static vtype methods
 		e = run_until ("vtypes3");
 		e = step_until (e.Thread, "static_foo");
@@ -1846,6 +2104,9 @@ public class DebuggerTests
 				Assert.Fail ();
 			}
 		}
+
+		var scopes = frame.Method.GetScopes ();
+		Assert.AreEqual (2, scopes.Length);
 	}
 
 	Event step_once () {
@@ -2077,7 +2338,13 @@ public class DebuggerTests
 
 		Assert.AreEqual (5, (e as VMDeathEvent).ExitCode);
 
-		var p = vm.Process;
+		System.Diagnostics.Process p = null;
+
+		try {
+			p = vm.Process;
+		}
+		catch (Exception) {}
+
 		/* Could be a remote vm with no process */
 		if (p != null) {
 			p.WaitForExit ();
@@ -2101,7 +2368,13 @@ public class DebuggerTests
 		var e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (VMDisconnectEvent), e);
 
-		var p = vm.Process;
+		System.Diagnostics.Process p = null;
+
+		try {
+			p = vm.Process;
+		}
+		catch (Exception) {}
+
 		/* Could be a remote vm with no process */
 		if (p != null) {
 			p.WaitForExit ();
@@ -2153,73 +2426,52 @@ public class DebuggerTests
 	}
 
 	[Test]
-	// Broken by mcs+runtime changes (#5438)
-	[Category("NotWorking")]
 	public void LineNumbers () {
 		Event e = run_until ("line_numbers");
 
-		step_req = create_step (e);
-		step_req.Depth = StepDepth.Into;
-		step_req.Enable ();
+		create_step (e);
+		e = step_into ();
 
 		Location l;
-		
-		vm.Resume ();
 
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
 
 		l = e.Thread.GetFrames ()[0].Location;
 
-		Assert.IsTrue (l.SourceFile.IndexOf ("dtest-app.cs") != -1);
+		Assert.AreEqual ("dtest-app.cs", Path.GetFileName (l.SourceFile));
 		Assert.AreEqual ("ln1", l.Method.Name);
-
-		// Check hash
-		using (FileStream fs = new FileStream (l.SourceFile, FileMode.Open, FileAccess.Read)) {
-			MD5 md5 = MD5.Create ();
-			var hash = md5.ComputeHash (fs);
-
-			for (int i = 0; i < 16; ++i)
-				Assert.AreEqual (hash [i], l.SourceFileHash [i]);
-		}
 		
 		int line_base = l.LineNumber;
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln2", l.Method.Name);
-		Assert.AreEqual (line_base + 6, l.LineNumber);
+		Assert.AreEqual (line_base + 7, l.LineNumber);
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln1", l.Method.Name);
-		Assert.AreEqual (line_base + 1, l.LineNumber);
+		Assert.AreEqual (line_base + 2, l.LineNumber);
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln3", l.Method.Name);
 		Assert.AreEqual (line_base + 11, l.LineNumber);
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln3", l.Method.Name);
 		Assert.IsTrue (l.SourceFile.EndsWith ("FOO"));
 		Assert.AreEqual (55, l.LineNumber);
 
-		vm.Resume ();
-		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		e = step_once ();
 		l = e.Thread.GetFrames ()[0].Location;
 		Assert.AreEqual ("ln1", l.Method.Name);
-		Assert.AreEqual (line_base + 2, l.LineNumber);
+		Assert.AreEqual (line_base + 3, l.LineNumber);
 
 		// GetSourceFiles ()
 		string[] sources = l.Method.DeclaringType.GetSourceFiles ();
@@ -2386,6 +2638,11 @@ public class DebuggerTests
 		m = s.Type.GetMethod ("ToString");
 		v = s.InvokeMethod (e.Thread, m, null);
 
+		// pass nullable as argument
+		m = t.GetMethod ("invoke_pass_nullable");
+		v = this_obj.InvokeMethod (e.Thread, m, new Value [] { s });
+		AssertValue (42, v);
+
 		// return nullable null
 		m = t.GetMethod ("invoke_return_nullable_null");
 		v = this_obj.InvokeMethod (e.Thread, m, null);
@@ -2398,6 +2655,11 @@ public class DebuggerTests
 		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
 		m = s.Type.GetMethod ("ToString");
 		v = s.InvokeMethod (e.Thread, m, null);
+
+		// pass nullable null as argument
+		m = t.GetMethod ("invoke_pass_nullable_null");
+		v = this_obj.InvokeMethod (e.Thread, m, new Value [] { s });
+		AssertValue (2, v);
 
 		// pass primitive
 		m = t.GetMethod ("invoke_pass_primitive");
@@ -2447,7 +2709,6 @@ public class DebuggerTests
 			Assert.AreEqual ("Exception", ex.Exception.Type.Name);
 		}
 
-#if NET_4_5
 		// out argument
 		m = t.GetMethod ("invoke_out");
 		var out_task = this_obj.InvokeMethodAsyncWithResult (e.Thread, m, new Value [] { vm.CreateValue (1), vm.CreateValue (null) }, InvokeOptions.ReturnOutArgs);
@@ -2460,7 +2721,6 @@ public class DebuggerTests
 		out_task = this_obj.InvokeMethodAsyncWithResult (e.Thread, m, new Value [] { vm.CreateValue (1), vm.CreateValue (null) });
 		out_args = out_task.Result.OutArgs;
 		Assert.IsNull (out_args);
-#endif
 
 		// newobj
 		m = t.GetMethod (".ctor");
@@ -2484,7 +2744,6 @@ public class DebuggerTests
 		v = t.InvokeMethod (e.Thread, m, new Value [] { vm.RootDomain.CreateString ("ABC") }, InvokeOptions.Virtual);
 		AssertValue ("ABC", v);
 
-#if NET_4_5
 		// instance
 		m = t.GetMethod ("invoke_pass_ref");
 		var task = this_obj.InvokeMethodAsync (e.Thread, m, new Value [] { vm.RootDomain.CreateString ("ABC") });
@@ -2494,7 +2753,17 @@ public class DebuggerTests
 		m = t.GetMethod ("invoke_static_pass_ref");
 		task = t.InvokeMethodAsync (e.Thread, m, new Value [] { vm.RootDomain.CreateString ("ABC") });
 		AssertValue ("ABC", task.Result);
-#endif
+
+		// string constructor
+		var stringType = vm.RootDomain.Corlib.GetType ("System.String");
+		var stringConstructor = stringType.GetMethods ().Single (c=>
+			c.Name == ".ctor" &&
+			c.GetParameters ().Length == 2 &&
+			c.GetParameters ()[0].ParameterType.Name == "Char" &&
+			c.GetParameters ()[1].ParameterType.Name == "Int32");
+		var str = stringType.NewInstance (e.Thread, stringConstructor,  new Value [] { vm.CreateValue ('a'), vm.CreateValue (3)});
+
+		AssertValue("aaa", str);
 
 		// Argument checking
 		
@@ -2588,7 +2857,6 @@ public class DebuggerTests
 		v = t.InvokeMethod (e.Thread, m, new Value [] { vm.CreateValue (1) });
 		AssertValue (1, (v as StructMirror)["i"]);
 
-#if NET_4_5
 		// Invoke a method which changes state
 		s = frame.GetArgument (1) as StructMirror;
 		t = s.Type;
@@ -2615,7 +2883,6 @@ public class DebuggerTests
 		m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
 		v = s.InvokeMethod (e.Thread, m, null, InvokeOptions.Virtual);
 		AssertValue ("42", v);
-#endif
 	}
 
 	[Test]
@@ -2805,6 +3072,7 @@ public class DebuggerTests
 		vm.GetThreads ();
 	}
 
+#if !MONODROID_TEST
 	[Test]
 	public void Threads () {
 		Event e = run_until ("threads");
@@ -2830,6 +3098,7 @@ public class DebuggerTests
 		Assert.IsInstanceOfType (typeof (ThreadDeathEvent), e);
 		Assert.AreEqual (ThreadState.Stopped, e.Thread.ThreadState);
 	}
+#endif
 
 	[Test]
 	public void Frame_SetValue () {
@@ -3139,8 +3408,8 @@ public class DebuggerTests
 		Assert.AreEqual (0, frames [0].Location.ILOffset);
 
 		Assert.AreEqual (test_method.Name, frames [1].Location.Method.Name);
-		Assert.AreEqual (37, frames [1].Location.LineNumber);
-		Assert.AreEqual (0x0b, frames [1].Location.ILOffset);
+		Assert.AreEqual (38, frames [1].Location.LineNumber);
+		Assert.AreEqual (0x10, frames [1].Location.ILOffset);
 
 		Assert.AreEqual (test_method.Name, frames [2].Location.Method.Name);
 		Assert.AreEqual (33, frames [2].Location.LineNumber);
@@ -3270,6 +3539,7 @@ public class DebuggerTests
 		// d_method is from another domain
 		MethodMirror d_method = (e as BreakpointEvent).Method;
 		Assert.IsTrue (m != d_method);
+		Assert.AreEqual (domain, d_method.DeclaringType.Assembly.Domain);
 
 		var frames = e.Thread.GetFrames ();
 		Assert.AreEqual ("invoke_in_domain", frames [0].Method.Name);
@@ -3277,6 +3547,10 @@ public class DebuggerTests
 		Assert.AreEqual ("invoke", frames [1].Method.Name);
 		Assert.AreEqual ("domains", frames [2].Method.Name);
 		Assert.AreEqual (vm.RootDomain, frames [2].Domain);
+
+		// Check enum creation in other domains
+		var anenum = vm.CreateEnumMirror (d_method.DeclaringType.Assembly.GetType ("AnEnum"), vm.CreateValue (1));
+		Assert.AreEqual (1, anenum.Value);
 
 		// Test breakpoints on already JITted methods in other domains
 		m = entry_point.DeclaringType.GetMethod ("invoke_in_domain_2");
@@ -3300,6 +3574,9 @@ public class DebuggerTests
 			vm.Resume ();
 			e = GetNextEvent ();
 			if (e is AssemblyUnloadEvent) {
+				AssertThrows<Exception> (delegate () {
+						var assembly_obj = (e as AssemblyUnloadEvent).Assembly.GetAssemblyObject ();
+					});
 				continue;
 			} else {
 				break;
@@ -3578,6 +3855,8 @@ public class DebuggerTests
 			return;
 
 		string srcfile = (e as BreakpointEvent).Method.DeclaringType.GetSourceFiles (true)[0];
+		srcfile = srcfile.Replace ("dtest-app.cs", "TypeLoadClass.cs");
+		Assert.IsTrue (srcfile.Contains ("TypeLoadClass.cs"));
 
 		var req = vm.CreateTypeLoadRequest ();
 		req.SourceFileFilter = new string [] { srcfile.ToUpper () };
@@ -3790,7 +4069,6 @@ public class DebuggerTests
 		vm = null;
 	}
 
-#if NET_4_5
 	[Test]
 	public void UnhandledExceptionUserCode () {
 		vm.Detach ();
@@ -3811,7 +4089,6 @@ public class DebuggerTests
 		vm.Exit (0);
 		vm = null;
 	}
-#endif
 
 	[Test]
 	public void GCWhileSuspended () {
@@ -3893,7 +4170,7 @@ public class DebuggerTests
 
 		frames = thread.GetFrames ();
 		Assert.AreEqual (8, frames.Length, "#7");
-		Assert.AreEqual ("WaitOne_internal", frames [0].Method.Name, "#8.0");
+		Assert.AreEqual ("Wait_internal", frames [0].Method.Name, "#8.0");
 		Assert.AreEqual ("WaitOneNative", frames [1].Method.Name, "#8.1");
 		Assert.AreEqual ("InternalWaitOne", frames [2].Method.Name, "#8.2");
 		Assert.AreEqual ("WaitOne", frames [3].Method.Name, "#8.3");
@@ -3960,7 +4237,8 @@ public class DebuggerTests
 		req.Disable ();
 		var frames = e.Thread.GetFrames ();
 		var locs = frames [0].Method.Locations;
-		var next_loc = locs.First (l => (l.LineNumber == frames [0].Location.LineNumber + 2));
+
+		var next_loc = locs.First (l => (l.LineNumber == frames [0].Location.LineNumber + 3));
 
 		e.Thread.SetIP (next_loc);
 
@@ -3993,7 +4271,7 @@ public class DebuggerTests
 		req.Disable ();
 		var frames = e.Thread.GetFrames ();
 		var locs = frames [0].Method.Locations;
-		var prev_loc = locs.First (l => (l.LineNumber == frames [0].Location.LineNumber - 3));
+		var prev_loc = locs.First (l => (l.LineNumber == frames [0].Location.LineNumber - 1));
 		AssertValue (2, frames [0].GetValue (frames [0].Method.GetLocal ("i")));
 
 		// Set back the ip to the first i ++; line
@@ -4026,7 +4304,7 @@ public class DebuggerTests
 		vm.SetBreakpoint (cctor, 0);
 
 		vm.Resume ();
-		var e = vm.GetNextEvent ();
+		var e = GetNextEvent ();
 		Assert.IsTrue (e is BreakpointEvent);
 
 		var req = create_step (e);
@@ -4051,6 +4329,186 @@ public class DebuggerTests
 		e = step_out (); // leave threadpool_bp
 		e = step_out (); // leave threadpool_io
 	}
-}
 
-}
+	[Test]
+	[Category("NotWorking")] // flaky, see https://github.com/mono/mono/issues/6997
+	public void StepOutAsync () {
+		vm.Detach ();
+		Start (new string [] { "dtest-app.exe", "step-out-void-async" });
+		var e = run_until ("step_out_void_async_2");
+		create_step (e);
+		var e2 = step_out ();
+		assert_location (e2, "MoveNext");//we are in step_out_void_async
+		step_req.Disable ();
+		step_req.Depth = StepDepth.Out;
+		step_req.Enable ();
+		vm.Resume ();
+		var e3 = GetNextEvent ();
+		//after step-out from async void, execution should continue
+		//and runtime should exit
+		Assert.IsTrue (e3 is VMDeathEvent, e3.GetType().FullName);
+		vm = null;
+	}
+
+	[Test]
+	[Category("NotWorking")]
+	public void ShouldCorrectlyStepOverOnExitFromArgsAfterStepInMethodParameter() {
+		Event e = run_until ("ss_nested_with_two_args_wrapper");
+
+		var req = create_step(e);
+		req.Enable();
+
+		e = step_once();
+		assert_location(e, "ss_nested_with_two_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg");
+
+		e = step_over();
+		assert_location(e, "ss_nested_with_two_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg");
+	}
+
+	[Test]
+	// Uses a fixed port
+	[Category("NotWorking")]
+	public void Attach () {
+		vm.Exit (0);
+
+		// Launch the app using server=y,suspend=n
+		var pi = CreateStartInfo (new string[] { "--debugger-agent=transport=dt_socket,address=127.0.0.1:10000,server=y,suspend=n", "dtest-app.exe", "attach" });
+		var process = Diag.Process.Start (pi);
+
+		// Wait for the app to reach the Sleep () in attach ().
+		Thread.Sleep (1000);
+		var ep = new IPEndPoint (IPAddress.Loopback, 10000);
+		vm = VirtualMachineManager.Connect (ep);
+
+		var load_req = vm.CreateAssemblyLoadRequest ();
+		load_req.Enable ();
+		vm.EnableEvents (EventType.TypeLoad);
+
+		Event vmstart = GetNextEvent ();
+		Assert.AreEqual (EventType.VMStart, vmstart.EventType);
+
+		// Get collected events
+		bool assembly_load_found = false;
+		bool type_load_found = false;
+		while (true) {
+			Event e = GetNextEvent ();
+
+			// AssemblyLoad
+			if (e is AssemblyLoadEvent) {
+				var assemblyload = e as AssemblyLoadEvent;
+
+				var amirror = assemblyload.Assembly;
+
+				if (amirror.GetName ().Name == "System.Transactions") {
+					assembly_load_found = true;
+					Assert.AreEqual ("domain", amirror.Domain.FriendlyName);
+				}
+
+				if (amirror.GetName ().Name == "dtest-app")
+					// Set a bp so we can break the event loop
+					vm.SetBreakpoint (amirror.EntryPoint.DeclaringType.GetMethod ("attach_break"), 0);
+			}
+			if (e is TypeLoadEvent) {
+				var typeload = e as TypeLoadEvent;
+
+				if (typeload.Type.Name == "GCSettings") {
+					type_load_found = true;
+					Assert.AreEqual ("domain", typeload.Type.Assembly.Domain.FriendlyName);
+				}
+			}
+
+			if (e is BreakpointEvent)
+				break;
+		}
+		Assert.IsTrue (assembly_load_found);
+		Assert.IsTrue (type_load_found);
+
+		vm.Exit (0);
+		vm = null;
+	}
+
+	[Test]
+	[Category("NotWorking")]
+	public void Hash ()
+	{
+		Event e = run_until ("Main");
+
+		Location l = e.Thread.GetFrames ()[0].Location;
+
+		using (FileStream fs = new FileStream (l.SourceFile, FileMode.Open, FileAccess.Read)) {
+			Assert.AreEqual (MD5.Create ().ComputeHash (fs), l.SourceFileHash);
+		}
+	}
+
+	[Test]
+	public void Bug59649 ()
+	{
+		Event e = run_until ("Bug59649");
+
+		var req = create_step (e);
+		req.Filter = StepFilter.StaticCtor;
+		req.Enable ();
+
+		// Approach call instruction
+		e = step_once ();
+		//StackTraceDump (e);
+
+		// Follow call
+		e = step_into ();
+		//StackTraceDump (e);
+
+		e = step_into ();
+		//StackTraceDump (e);
+
+		// Is cctor in this bug, ends up in the static field constructor
+		// DummyCall
+		assert_location (e, "Call");
+	}
+
+	[Test]
+	public void Pointer_GetValue () {
+		var e = run_until ("pointer_arguments");
+		var frame = e.Thread.GetFrames () [0];
+
+		var param = frame.Method.GetParameters()[0];
+		Assert.AreEqual("Int32*", param.ParameterType.Name);
+
+		var pointerValue = frame.GetValue(param) as PointerValue;
+		Assert.AreEqual("Int32*", pointerValue.Type.Name);
+
+		AssertValue(1, pointerValue.Value);
+
+		var pointerValue2 = new PointerValue (pointerValue.VirtualMachine, pointerValue.Type, pointerValue.Address + pointerValue.Type.GetElementType().GetValueSize());
+
+		AssertValue(2, pointerValue2.Value);
+
+
+		param = frame.Method.GetParameters()[1];
+		Assert.AreEqual("BlittableStruct*", param.ParameterType.Name);
+
+		pointerValue = frame.GetValue(param) as PointerValue;
+		Assert.AreEqual("BlittableStruct*", pointerValue.Type.Name);
+
+		var structValue = pointerValue.Value as StructMirror;
+		Assert.AreEqual("BlittableStruct", structValue.Type.Name);
+
+		object f = structValue.Fields[0];
+		AssertValue (2, f);
+		f = structValue.Fields[1];
+		AssertValue (3.0, f);
+
+	}
+} // class DebuggerTests
+} // namespace

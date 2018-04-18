@@ -101,6 +101,7 @@ vcall: len:32 clob:c
 vcall_reg: src1:i len:32 clob:c
 vcall_membase: src1:b len:32 clob:c
 tailcall: len:64 clob:c
+tailcall_membase: src1:b len:128 clob:c # FIXME len? Eventually depends on stack_usage.
 iconst: dest:i len:16
 r4const: dest:f len:24
 r8const: dest:f len:20
@@ -247,9 +248,7 @@ br_reg: src1:i len:8
 bigmul: len:8 dest:l src1:i src2:i
 bigmul_un: len:8 dest:l src1:i src2:i
 tls_get: dest:i len:32
-tls_get_reg: dest:i src1:i len:32
 tls_set: src1:i len:32
-tls_set_reg: src1:i src2:i len:32
 
 # 32 bit opcodes
 int_add: dest:i src1:i src2:i len:4
@@ -302,7 +301,10 @@ arm_rsc_imm: dest:i src1:i len:4
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
+dummy_iconst: dest:i len:0
+dummy_i8const: dest:i len:0
+dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -362,7 +364,7 @@ long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:36
 vcall2: len:40 clob:c
 vcall2_reg: src1:i len:40 clob:c
 vcall2_membase: src1:b len:40 clob:c
-dyn_call: src1:i src2:i len:192 clob:c
+dyn_call: src1:i src2:i len:216 clob:c
 
 # This is different from the original JIT opcodes
 float_beq: len:32
@@ -442,7 +444,7 @@ long_conv_to_u2: dest:i src1:i len:4
 long_conv_to_r8: dest:f src1:i len:8
 long_conv_to_r4: dest:f src1:i len:12
 loadi8_membase: dest:i src1:b len:12
-storei8_membase_imm: dest:b  len:20
+storei8_membase_imm: dest:b len:20
 storei8_membase_reg: dest:b src1:i len:12
 long_conv_to_r_un: dest:f src1:i len:8
 arm_setfreg_r4: dest:f src1:f len:8
@@ -482,3 +484,5 @@ atomic_store_r8: dest:b src1:f len:24
 
 generic_class_init: src1:a len:44 clob:c
 gc_safe_point: src1:i len:12 clob:c
+
+fill_prof_call_ctx: src1:i len:128

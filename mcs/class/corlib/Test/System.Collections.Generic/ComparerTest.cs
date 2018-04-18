@@ -53,7 +53,6 @@ namespace MonoTests.System.Collections.Generic
 			}
 		}
 
-#if NET_4_5
 		[Test]
 		public void Create ()
 		{
@@ -70,7 +69,6 @@ namespace MonoTests.System.Collections.Generic
 			} catch (ArgumentNullException) {
 			}
 		}
-#endif
 
 		[Test]
 		public void DefaultComparer_UserComparable ()

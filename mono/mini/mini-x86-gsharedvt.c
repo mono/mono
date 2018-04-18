@@ -1,5 +1,6 @@
-/*
- * mini-x86-gsharedvt.c: gsharedvt support code for x86
+/**
+ * \file
+ * gsharedvt support code for x86
  *
  * Authors:
  *   Zoltan Varga <vargaz@gmail.com>
@@ -10,8 +11,6 @@
 #include "mini.h"
 
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 /*
  * GSHAREDVT

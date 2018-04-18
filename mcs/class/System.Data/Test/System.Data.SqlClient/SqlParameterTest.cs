@@ -45,6 +45,9 @@ namespace MonoTests.System.Data.SqlClient
 	public class SqlParameterTest
 	{
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor1 ()
 		{
 			SqlParameter p = new SqlParameter ();
@@ -68,6 +71,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor2_Value_DateTime ()
 		{
 			DateTime value = new DateTime (2004, 8, 24);
@@ -94,6 +100,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor2_Value_DBNull ()
 		{
 			SqlParameter p = new SqlParameter ("address", DBNull.Value);
@@ -118,6 +127,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor2_Value_Null ()
 		{
 			SqlParameter p = new SqlParameter ("address", (Object) null);
@@ -141,6 +153,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // .ctor (String, SqlDbType, Int32, ParameterDirection, Byte, Byte, String, DataRowVersion, Boolean, Object, String, String, String)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor7 ()
 		{
 			SqlParameter p1 = new SqlParameter ("p1Name", SqlDbType.VarChar, 20,
@@ -167,6 +182,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CompareInfo ()
 		{
 			SqlParameter parameter = new SqlParameter ();
@@ -176,6 +194,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_Byte ()
 		{
 			Byte value = 0x0a;
@@ -187,6 +208,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_ByteArray ()
 		{
 			Byte [] value = new Byte [] { 0x0a, 0x0d };
@@ -289,6 +313,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_DateTime ()
 		{
 			DateTime value;
@@ -314,6 +341,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_Decimal ()
 		{
 			Decimal value;
@@ -339,6 +369,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_Double ()
 		{
 			Double value;
@@ -364,6 +397,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_Enum ()
 		{
 			SqlParameter param;
@@ -380,6 +416,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_Guid ()
 		{
 			Guid value = Guid.NewGuid ();
@@ -391,6 +430,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_Int16 ()
 		{
 			Int16 value;
@@ -416,6 +458,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_Int32 ()
 		{
 			Int32 value;
@@ -441,6 +486,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_Int64 ()
 		{
 			Int64 value;
@@ -506,6 +554,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_Object ()
 		{
 			Object value = new Object ();
@@ -517,6 +568,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_Single ()
 		{
 			Single value = Single.MaxValue;
@@ -528,6 +582,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_String ()
 		{
 			String value = "some text";
@@ -551,6 +608,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void LocaleId ()
 		{
 			SqlParameter parameter = new SqlParameter ();
@@ -560,6 +620,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // bug #320196
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ParameterNullTest ()
 		{
 			SqlParameter param = new SqlParameter ("param", SqlDbType.Decimal);
@@ -574,6 +637,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ParameterType ()
 		{
 			SqlParameter p;
@@ -632,6 +698,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InferType_Boolean ()
 		{
 			Boolean value;
@@ -651,6 +720,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ParameterName ()
 		{
 			SqlParameter p = new SqlParameter ();
@@ -676,6 +748,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ResetDbType ()
 		{
 			SqlParameter p;
@@ -739,6 +814,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ResetSqlDbType ()
 		{
 			//Parameter with an assigned value but no SqlDbType specified
@@ -779,6 +857,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SourceColumn ()
 		{
 			SqlParameter p = new SqlParameter ();
@@ -804,6 +885,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SourceColumnNullMapping ()
 		{
 			SqlParameter p = new SqlParameter ();
@@ -815,6 +899,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlDbTypeTest ()
 		{
 			SqlParameter p = new SqlParameter ("zipcode", 3510);
@@ -829,6 +916,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlDbTypeTest_Value_Invalid ()
 		{
 			SqlParameter p = new SqlParameter ("zipcode", 3510);
@@ -847,6 +937,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlValue ()
 		{
 			SqlParameter parameter = new SqlParameter ();
@@ -970,6 +1063,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlBinary ()
 		{
 			SqlParameter parameter;
@@ -995,6 +1091,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlBoolean ()
 		{
 			SqlParameter parameter;
@@ -1020,6 +1119,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlByte ()
 		{
 			SqlParameter parameter;
@@ -1107,6 +1209,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlDateTime ()
 		{
 			SqlParameter parameter;
@@ -1132,6 +1237,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlDecimal ()
 		{
 			SqlParameter parameter;
@@ -1157,6 +1265,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlDouble ()
 		{
 			SqlParameter parameter;
@@ -1182,6 +1293,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlGuid ()
 		{
 			SqlParameter parameter;
@@ -1207,6 +1321,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlInt16 ()
 		{
 			SqlParameter parameter;
@@ -1232,6 +1349,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlInt32 ()
 		{
 			SqlParameter parameter;
@@ -1257,6 +1377,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlInt64 ()
 		{
 			SqlParameter parameter;
@@ -1282,6 +1405,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlMoney ()
 		{
 			SqlParameter parameter;
@@ -1307,6 +1433,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlSingle ()
 		{
 			SqlParameter parameter;
@@ -1332,6 +1461,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlString ()
 		{
 			SqlParameter parameter;
@@ -1357,6 +1489,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void SqlTypes_SqlXml ()
 		{
 			SqlParameter parameter;
@@ -1386,6 +1521,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Value ()
 		{
 			SqlParameter p;
@@ -1429,6 +1567,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void XmlSchemaTest ()
 		{
 			SqlParameter p1 = new SqlParameter ();

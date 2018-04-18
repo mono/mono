@@ -30,13 +30,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net;
+using System.Runtime.ExceptionServices;
 
 #if XAMCORE_4_0
 using CFNetwork;
+using CoreFoundation;
 #elif XAMCORE_2_0
 using CoreServices;
+using CoreFoundation;
 #else
 using MonoTouch.CoreServices;
+using MonoTouch.CoreFoundation;
 #endif
 
 namespace System.Net.Http
@@ -54,6 +58,7 @@ namespace System.Net.Http
 		Mutex data_mutex;
 		AutoResetEvent data_event;
 		AutoResetEvent data_read_event;
+		ExceptionDispatchInfo http_exception;
 
 		// The requirements are:
 		// * We must read at least one byte from the stream every time
@@ -77,12 +82,24 @@ namespace System.Net.Http
 		public CFContentStream (CFHTTPStream stream)
 		{
 			this.http_stream = stream;
+			this.http_stream.ErrorEvent += HandleErrorEvent;
 			data = new BufferData () {
 				Buffer = new byte [4096],
 			};
 			data_event = new AutoResetEvent (false);
 			data_read_event = new AutoResetEvent (true);
 			data_mutex = new Mutex ();
+		}
+
+		void HandleErrorEvent (object sender, CFStream.StreamEventArgs e)
+		{
+			var gotMutex = data_mutex.WaitOne ();
+			if (gotMutex) {
+				var stream = (CFHTTPStream)sender;
+				if (e.EventType == CFStreamEventType.ErrorOccurred)
+					Volatile.Write (ref http_exception, ExceptionDispatchInfo.Capture (stream.GetError ()));
+				data_mutex.ReleaseMutex ();
+			}
 		}
 
 		public void ReadStreamData ()
@@ -102,6 +119,7 @@ namespace System.Net.Http
 
 			data_mutex.WaitOne ();
 			data = null;
+			this.http_stream.ErrorEvent -= HandleErrorEvent;
 			data_mutex.ReleaseMutex ();
 
 			data_event.Set ();
@@ -111,6 +129,11 @@ namespace System.Net.Http
 		{
 			while (data_event.WaitOne ()) {
 				data_mutex.WaitOne ();
+				if (http_exception != null) {
+					http_exception.Throw ();
+					data_mutex.ReleaseMutex ();
+					break;
+				}
 				if (data == null || data.Length <= 0) {
 					data_mutex.ReleaseMutex ();
 					data_read_event.Set ();

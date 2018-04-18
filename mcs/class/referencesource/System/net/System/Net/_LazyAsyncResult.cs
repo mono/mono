@@ -18,7 +18,7 @@ namespace System.Net
         private const int c_ForceAsyncCount = 50;
 
 #if !NET_PERF
-        // This is to avoid user mistakes when they queue another async op from a callback the completes [....].
+        // This is to avoid user mistakes when they queue another async op from a callback the completes sync.
         [ThreadStatic]
         private static ThreadContext t_ThreadContext;
 

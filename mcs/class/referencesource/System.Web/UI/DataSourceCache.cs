@@ -133,7 +133,7 @@ namespace System.Web.UI {
                 throw new InvalidOperationException(SR.GetString(SR.DataSourceCache_CacheMustBeEnabled));
             }
 
-            HttpRuntime.CacheInternal.Remove(key);
+            HttpRuntime.Cache.InternalCache.Remove(key);
         }
 
 
@@ -151,7 +151,7 @@ namespace System.Web.UI {
                 throw new InvalidOperationException(SR.GetString(SR.DataSourceCache_CacheMustBeEnabled));
             }
 
-            return HttpRuntime.CacheInternal.Get(key);
+            return HttpRuntime.Cache.InternalCache.Get(key);
         }
 
 
@@ -227,7 +227,11 @@ namespace System.Web.UI {
                 aggregateCacheDependency.Add(new CacheDependency[] { dependency });
             }
 
-            HttpRuntime.CacheInternal.UtcInsert(key, data, aggregateCacheDependency, utcAbsoluteExpiryTime, slidingExpiryTimeSpan);
+            HttpRuntime.Cache.InternalCache.Insert(key, data, new CacheInsertOptions() {
+                                                                Dependencies = aggregateCacheDependency,
+                                                                AbsoluteExpiration = utcAbsoluteExpiryTime,
+                                                                SlidingExpiration = slidingExpiryTimeSpan
+                                                            });
         }
 
 

@@ -2,7 +2,7 @@
 // <copyright file="XmlComplianceUtil.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System;
@@ -28,7 +28,7 @@ namespace System.Xml {
             while ( xmlCharType.IsWhiteSpace( value[startPos] ) ) {
                 startPos++;
                 if ( startPos == len ) {
-                    return " ";
+                    return (System.Xml.XmlConfiguration.XmlReaderSection.CollapseWhiteSpaceIntoEmptyString)?"":" ";
                 }
             }
 

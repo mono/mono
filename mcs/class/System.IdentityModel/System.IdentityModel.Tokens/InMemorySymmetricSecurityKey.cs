@@ -42,16 +42,16 @@ namespace System.IdentityModel.Tokens
 	{
 		byte [] key;
 
-		public InMemorySymmetricSecurityKey (byte [] key)
-			: this (key, true)
+		public InMemorySymmetricSecurityKey (byte [] symmetricKey)
+			: this (symmetricKey, true)
 		{
 		}
 
-		public InMemorySymmetricSecurityKey (byte [] key, bool clone)
+		public InMemorySymmetricSecurityKey (byte [] symmetricKey, bool cloneBuffer)
 		{
-			if (key == null)
-				throw new ArgumentNullException ("key");
-			this.key = clone ? (byte []) key.Clone() : key;
+			if (symmetricKey == null)
+				throw new ArgumentNullException ("symmetricKey");
+			this.key = cloneBuffer ? (byte []) symmetricKey.Clone() : symmetricKey;
 		}
 
 		// SymmetricSecurityKey implementation
@@ -123,8 +123,8 @@ namespace System.IdentityModel.Tokens
 		{
 			if (algorithm == SecurityAlgorithms.HmacSha1Signature)
 				return new HMACSHA1 (key);
-			//if (algorithm == SecurityAlgorithms.HmacSha256Signature)
-			//	return new HMACSHA256 (key);
+			if (algorithm == SecurityAlgorithms.HmacSha256Signature)
+				return new HMACSHA256 (key);
 			throw new NotSupportedException ();
 		}
 
@@ -212,6 +212,7 @@ namespace System.IdentityModel.Tokens
 		{
 			switch (algorithm) {
 			case SecurityAlgorithms.HmacSha1Signature:
+			case SecurityAlgorithms.HmacSha256Signature:
 			case SecurityAlgorithms.Psha1KeyDerivation:
 			case SecurityAlgorithms.Aes128Encryption:
 			case SecurityAlgorithms.Aes128KeyWrap:

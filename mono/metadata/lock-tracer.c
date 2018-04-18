@@ -1,5 +1,6 @@
-/*
- * lock-tracer.c: Runtime simple lock tracer
+/**
+ * \file
+ * Runtime simple lock tracer
  *
  * Authors:
  *	Rodrigo Kumpera (rkumpera@novell.com)
@@ -20,7 +21,8 @@
 #include <execinfo.h>
 #endif
 
-#include <mono/io-layer/io-layer.h>
+#include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-threads.h>
 
 #include "lock-tracer.h"
 
@@ -73,8 +75,10 @@ mono_locks_tracer_init (void)
 	int res;
 	char *name;
 	mono_os_mutex_init_recursive (&tracer_lock);
-	if (!g_getenv ("MONO_ENABLE_LOCK_TRACER"))
+
+	if (!g_hasenv ("MONO_ENABLE_LOCK_TRACER"))
 		return;
+
 	name = g_strdup_printf ("locks.%d", getpid ());
 	trace_file = fopen (name, "w+");
 	g_free (name);
@@ -141,8 +145,6 @@ mono_locks_lock_released (RuntimeLocks kind, gpointer lock)
 	add_record (RECORD_LOCK_RELEASED, kind, lock);
 }
 #else
-	#ifdef _MSC_VER
-		// Quiet Visual Studio linker warning, LNK4221, in cases when this source file intentional ends up empty.
-		void __mono_win32_lock_tracer_quiet_lnk4221(void) {}
-	#endif
+
+MONO_EMPTY_SOURCE_FILE (lock_tracer);
 #endif /* LOCK_TRACER */

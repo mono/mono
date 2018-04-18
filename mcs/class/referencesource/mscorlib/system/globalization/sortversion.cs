@@ -30,7 +30,9 @@ namespace System.Globalization {
             m_NlsVersion = nlsVersion;
 
             if(customVersion == Guid.Empty) {
+#if !MONO                
                 byte[] b = BitConverter.GetBytes(effectiveId);
+#endif
                 byte b1 = (byte) ((uint) effectiveId >> 24);
                 byte b2 = (byte) ((effectiveId  & 0x00FF0000) >> 16);
                 byte b3 = (byte) ((effectiveId  & 0x0000FF00) >> 8);

@@ -14,7 +14,7 @@ namespace System.Workflow.ComponentModel.Design
     [Obsolete("The System.Workflow.* types are deprecated.  Instead, please use the new types from System.Activities.*")]
     public sealed class WorkflowPageSetupDialog : System.Windows.Forms.Form
     {
-        #region [....] Desiger Generated Members
+        #region Microsoft Desiger Generated Members
         private System.ComponentModel.Container components = null;
         private System.Windows.Forms.TabControl tabs;
         private System.Windows.Forms.PictureBox landscapePicture;

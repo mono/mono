@@ -1,4 +1,4 @@
-// ==++==
+﻿// ==++==
 // 
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
@@ -15,8 +15,8 @@ namespace System
         internal static readonly string SwitchPreserveEventListnerObjectIdentity = "Switch.System.Diagnostics.EventSource.PreserveEventListnerObjectIdentity";
         internal static readonly string SwitchUseLegacyPathHandling = "Switch.System.IO.UseLegacyPathHandling";
         internal static readonly string SwitchBlockLongPaths = "Switch.System.IO.BlockLongPaths";
+        internal static readonly string SwitchDoNotAddrOfCspParentWindowHandle = "Switch.System.Security.Cryptography.DoNotAddrOfCspParentWindowHandle";
         internal static readonly string SwitchSetActorAsReferenceWhenCopyingClaimsIdentity = "Switch.System.Security.ClaimsIdentity.SetActorAsReferenceWhenCopyingClaimsIdentity";
-
 
         // This is a partial method. Platforms can provide an implementation of it that will set override values
         // from whatever mechanism is available on that platform. If no implementation is provided, the compiler is going to remove the calls
@@ -52,6 +52,11 @@ namespace System
                             AppContext.DefineSwitchDefault(SwitchSetActorAsReferenceWhenCopyingClaimsIdentity, true);
                         }
 
+                        if (version <= 40602)
+                        {
+                            AppContext.DefineSwitchDefault(SwitchDoNotAddrOfCspParentWindowHandle, true);
+                        }
+
                         break;
                     }
                 case "WindowsPhone":
@@ -63,6 +68,7 @@ namespace System
                             AppContext.DefineSwitchDefault(SwitchThrowExceptionIfDisposedCancellationTokenSource, true);
                             AppContext.DefineSwitchDefault(SwitchUseLegacyPathHandling, true);
                             AppContext.DefineSwitchDefault(SwitchBlockLongPaths, true);
+                            AppContext.DefineSwitchDefault(SwitchDoNotAddrOfCspParentWindowHandle, true);
                         }
                         break;
                     }

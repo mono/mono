@@ -60,7 +60,7 @@ namespace System.Workflow.ComponentModel.Design
         private const int cmdidWOEShowAll = 0x3107;
 
         public const int FirstZoomCommand = cmdidWOEZoom400; //the first and last zoom commands
-        public const int LastZoomCommand = cmdidWOEShowAll; //should be in [....] with the \private\Core\Tools\OrchestrationDesignerUI\PkgCmdID.h
+        public const int LastZoomCommand = cmdidWOEShowAll; //should be in sync with the \private\Core\Tools\OrchestrationDesignerUI\PkgCmdID.h
 
         // page layout
         private const int cmdidDefaultPage = 0x3110;

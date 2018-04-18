@@ -55,7 +55,7 @@ namespace System.Activities.Core.Presentation
                     {                        
                         morphed.Expression = morphedExpression;
                     }
-                    //[....] 
+                    //Microsoft 
 
                 }
             }

@@ -2,9 +2,9 @@
 // <copyright file="UInt32Storage.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -15,7 +15,7 @@ namespace System.Data.Common {
 
     internal sealed class UInt32Storage : DataStorage {
 
-        private static readonly UInt32 defaultValue = UInt32.MinValue;
+        private const UInt32 defaultValue = UInt32.MinValue;
 
         private UInt32[] values;
 

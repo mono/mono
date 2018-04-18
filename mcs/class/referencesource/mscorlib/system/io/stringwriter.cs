@@ -7,7 +7,7 @@
 **
 ** Class:  StringWriter
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 ** Purpose: For writing text to a string
 **

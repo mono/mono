@@ -58,7 +58,75 @@ static int lowzero;
 static int high;
 extern int csharp;
 
-output () {
+static void
+free_itemsets (void);
+
+static void
+free_reductions (void);
+
+static void
+free_shifts (void);
+
+static void
+goto_actions (void);
+
+static void
+output_actions (void);
+
+static void
+output_base (void);
+
+static void
+output_check (void);
+
+static void
+output_debug (void);
+
+static void
+output_defines (const char *prefix);
+
+static void
+output_rule_data (void);
+
+static void
+output_semantic_actions (void);
+
+static void
+output_stored_text (FILE *file, const char *name);
+
+static void
+output_table (void);
+
+static void
+output_trailing_text (void);
+
+static void
+save_column (int symbol, int default_state);
+
+static void
+sort_actions (void);
+
+static void 
+output_yydefred (void);
+
+static int
+default_goto (int symbol);
+
+static int
+matching_vector (int vector);
+
+static int
+pack_vector (int vector);
+
+static void
+token_actions (void);
+
+static void
+pack_table (void);
+
+void
+output (void)
+{
   int lno = 0;
   char buf [128];
 
@@ -73,11 +141,11 @@ output () {
       fprintf(stderr, "jay: line %d is too long\n", lno), done(1);
     switch (buf[0]) {
     case '#':	continue;
-    case 't':	if (!tflag) fputs("//t", stdout);
+    case 't':	if (!tflag) fputs("//t", output_file);
     case '.':	break;
     default:
       cp = strtok(buf, " \t\r\n");
-      if (cp)
+      if (cp) {
         if (strcmp(cp, "actions") == 0) output_semantic_actions();
         else if (strcmp(cp, "debug") == 0) output_debug();
         else if (strcmp(cp, "epilog") == 0) output_trailing_text();
@@ -91,31 +159,33 @@ output () {
 		output_defines(strtok(NULL, "\r\n"));
         else
           fprintf(stderr, "jay: unknown call (%s) in line %d\n", cp, lno);
+      }
       continue;
     }
-    fputs(buf+1, stdout), ++ outline;
+    fputs(buf+1, output_file), ++ outline;
   }
   free_parser();
 }
 
-output_rule_data()
+static void
+output_rule_data (void)
 {
     register int i;
     register int j;
 
-	printf("/*\n All more than 3 lines long rules are wrapped into a method\n*/\n");
+	fprintf(output_file, "/*\n All more than 3 lines long rules are wrapped into a method\n*/\n");
 
     for (i = 0; i < nmethods; ++i)
 	{
-		printf("%s", methods[i]);
+		fprintf(output_file, "%s", methods[i]);
 		FREE(methods[i]);
-		printf("\n\n");
+		fprintf(output_file, "\n\n");
 	}
 	FREE(methods);
 
-	printf(default_line_format, ++outline + 1);
+	fprintf(output_file, default_line_format, ++outline + 1);
 
-    printf("  %s static %s short [] yyLhs  = {%16d,",
+    fprintf(output_file, "  %s static %s short [] yyLhs  = {%16d,",
 	   csharp ? "" : " protected",
 	   csharp ? "readonly" : "final",
 	    symbol_value[start_symbol]);
@@ -126,18 +196,18 @@ output_rule_data()
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
         else
 	    ++j;
 
-        printf("%5d,", symbol_value[rlhs[i]]);
+        fprintf(output_file, "%5d,", symbol_value[rlhs[i]]);
     }
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
 
-    printf("  %s static %s short [] yyLen = {%12d,",
+    fprintf(output_file, "  %s static %s short [] yyLen = {%12d,",
 	   csharp ? "" : "protected",
 	   csharp ? "readonly" : "final",
 	   2);
@@ -148,24 +218,24 @@ output_rule_data()
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
 	  j++;
 
-        printf("%5d,", rrhs[i + 1] - rrhs[i] - 1);
+        fprintf(output_file, "%5d,", rrhs[i + 1] - rrhs[i] - 1);
     }
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
 }
 
-
-output_yydefred()
+static void
+output_yydefred (void)
 {
     register int i, j;
 
-    printf("  %s static %s short [] yyDefRed = {%13d,",
+    fprintf(output_file, "  %s static %s short [] yyDefRed = {%13d,",
 	   csharp ? "" : "protected",
 	   csharp ? "readonly" : "final",	   
 	    (defred[0] ? defred[0] - 2 : 0));
@@ -178,19 +248,19 @@ output_yydefred()
 	else
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 
-	printf("%5d,", (defred[i] ? defred[i] - 2 : 0));
+	fprintf(output_file, "%5d,", (defred[i] ? defred[i] - 2 : 0));
     }
 
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
 }
 
-
-output_actions()
+static void
+output_actions (void)
 {
     nvectors = 2*nstates + nvars;
 
@@ -217,8 +287,8 @@ output_actions()
     output_check();
 }
 
-
-token_actions()
+static void
+token_actions (void)
 {
     register int i, j;
     register int shiftcount, reducecount;
@@ -302,14 +372,15 @@ token_actions()
     FREE(actionrow);
 }
 
-goto_actions()
+static void
+goto_actions (void)
 {
     register int i, j, k;
 
     state_count = NEW2(nstates, short);
 
     k = default_goto(start_symbol + 1);
-    printf("  protected static %s short [] yyDgoto  = {%14d,", csharp ? "readonly" : "final", k);
+    fprintf(output_file, "  protected static %s short [] yyDgoto  = {%14d,", csharp ? "readonly" : "final", k);
     save_column(start_symbol + 1, k);
 
     j = 10;
@@ -318,25 +389,24 @@ goto_actions()
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
 	    ++j;
 
 	k = default_goto(i);
-	printf("%5d,", k);
+	fprintf(output_file, "%5d,", k);
 	save_column(i, k);
     }
 
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
     FREE(state_count);
 }
 
-int
-default_goto(symbol)
-int symbol;
+static int
+default_goto (int symbol)
 {
     register int i;
     register int m;
@@ -369,11 +439,8 @@ int symbol;
     return (default_state);
 }
 
-
-
-save_column(symbol, default_state)
-int symbol;
-int default_state;
+static void
+save_column (int symbol, int default_state)
 {
     register int i;
     register int m;
@@ -413,7 +480,8 @@ int default_state;
     width[symno] = sp1[-1] - sp[0] + 1;
 }
 
-sort_actions()
+static void
+sort_actions (void)
 {
   register int i;
   register int j;
@@ -447,8 +515,8 @@ sort_actions()
     }
 }
 
-
-pack_table()
+static void
+pack_table (void)
 {
     register int i;
     register int place;
@@ -510,9 +578,8 @@ pack_table()
 /*  faster.  Also, it depends on the vectors being in a specific	*/
 /*  order.								*/
 
-int
-matching_vector(vector)
-int vector;
+static int
+matching_vector (int vector)
 {
     register int i;
     register int j;
@@ -549,11 +616,8 @@ int vector;
     return (-1);
 }
 
-
-
-int
-pack_vector(vector)
-int vector;
+static int
+pack_vector (int vector)
 {
     register int i, j, k, l;
     register int t;
@@ -627,13 +691,12 @@ int vector;
     }
 }
 
-
-
-output_base()
+static void
+output_base (void)
 {
     register int i, j;
 
-    printf("  protected static %s short [] yySindex = {%13d,", csharp? "readonly":"final", base[0]);
+    fprintf(output_file, "  protected static %s short [] yySindex = {%13d,", csharp? "readonly":"final", base[0]);
 
     j = 10;
     for (i = 1; i < nstates; i++)
@@ -641,17 +704,17 @@ output_base()
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
 	    ++j;
 
-	printf("%5d,", base[i]);
+	fprintf(output_file, "%5d,", base[i]);
     }
 
     outline += 2;
-    printf("\n  };\n  protected static %s short [] yyRindex = {%13d,",
+    fprintf(output_file, "\n  };\n  protected static %s short [] yyRindex = {%13d,",
 	   csharp ? "readonly" : "final",
 	    base[nstates]);
 
@@ -661,17 +724,17 @@ output_base()
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
 	    ++j;
 
-	printf("%5d,", base[i]);
+	fprintf(output_file, "%5d,", base[i]);
     }
 
     outline += 2;
-    printf("\n  };\n  protected static %s short [] yyGindex = {%13d,",
+    fprintf(output_file, "\n  };\n  protected static %s short [] yyGindex = {%13d,",
 	   csharp ? "readonly" : "final",
 	    base[2*nstates]);
 
@@ -681,28 +744,27 @@ output_base()
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
 	    ++j;
 
-	printf("%5d,", base[i]);
+	fprintf(output_file, "%5d,", base[i]);
     }
 
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
     FREE(base);
 }
 
-
-
-output_table()
+static void
+output_table (void)
 {
     register int i;
     register int j;
 
-    printf("  protected static %s short [] yyTable = {%14d,", csharp ? "readonly" : "final", table[0]);
+    fprintf(output_file, "  protected static %s short [] yyTable = {%14d,", csharp ? "readonly" : "final", table[0]);
 
     j = 10;
     for (i = 1; i <= high; i++)
@@ -710,28 +772,27 @@ output_table()
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
 	    ++j;
 
-	printf("%5d,", table[i]);
+	fprintf(output_file, "%5d,", table[i]);
     }
 
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
     FREE(table);
 }
 
-
-
-output_check()
+static void
+output_check (void)
 {
     register int i;
     register int j;
 
-    printf("  protected static %s short [] yyCheck = {%14d,",
+    fprintf(output_file, "  protected static %s short [] yyCheck = {%14d,",
 	   csharp ? "readonly" : "final",
 	    check[0]);
 
@@ -741,26 +802,24 @@ output_check()
 	if (j >= 10)
 	{
 	    ++outline;
-	    putchar('\n');
+	    putc('\n', output_file);
 	    j = 1;
 	}
 	else
 	    ++j;
 
-	printf("%5d,", check[i]);
+	fprintf(output_file, "%5d,", check[i]);
     }
 
     outline += 2;
-    printf("\n  };\n");
+    fprintf(output_file, "\n  };\n");
     FREE(check);
 }
 
-
-int
-is_C_identifier(name)
-char *name;
+static int
+is_C_identifier (const char *name)
 {
-    register char *s;
+    const char *s;
     register int c;
 
     s = name;
@@ -780,7 +839,7 @@ char *name;
 
     if (!isalpha(c) && c != '_' && c != '$')
 	return (0);
-    while (c = *++s)
+    while ((c = *++s))
     {
 	if (!isalnum(c) && c != '_' && c != '$')
 	    return (0);
@@ -788,12 +847,11 @@ char *name;
     return (1);
 }
 
-
-output_defines(prefix)
-char *prefix;
+static void
+output_defines (const char *prefix)
 {
     register int c, i;
-    register char *s;
+    const char *s;
 
     for (i = 2; i < ntokens; ++i)
     {
@@ -801,36 +859,34 @@ char *prefix;
 	if (is_C_identifier(s))
 	{
 	    if (prefix)
-	        printf("  %s ", prefix);
+	        fprintf(output_file, "  %s ", prefix);
 	    c = *s;
 	    if (c == '"')
 	    {
 		while ((c = *++s) != '"')
 		{
-		    putchar(c);
+		    putc(c, output_file);
 		}
 	    }
 	    else
 	    {
 		do
 		{
-		    putchar(c);
+		    putc(c, output_file);
 		}
-		while (c = *++s);
+		while ((c = *++s));
 	    }
 	    ++outline;
-	    printf(" = %d%s\n", symbol_value[i], csharp ? ";" : ";");
+	    fprintf(output_file, " = %d%s\n", symbol_value[i], csharp ? ";" : ";");
 	}
     }
 
     ++outline;
-    printf("  %s yyErrorCode = %d%s\n", prefix ? prefix : "", symbol_value[1], csharp ? ";" : ";");
+    fprintf(output_file, "  %s yyErrorCode = %d%s\n", prefix ? prefix : "", symbol_value[1], csharp ? ";" : ";");
 }
 
-
-output_stored_text(file, name)
-FILE *file;
-char *name;
+static void
+output_stored_text (FILE *file, const char *name)
 {
     register int c;
     register FILE *in;
@@ -842,87 +898,87 @@ char *name;
     if ((c = getc(in)) != EOF) {
       if (c ==  '\n')
 	++outline;
-      putchar(c);
+      putc(c, output_file);
       while ((c = getc(in)) != EOF)
       {
 	if (c == '\n')
 	    ++outline;
-    	putchar(c);
+    	putc(c, output_file);
       }
-      printf(default_line_format, ++outline + 1);
+      fprintf(output_file, default_line_format, ++outline + 1);
     }
     fclose(in);
 }
 
-
-output_debug()
+static void
+output_debug (void)
 {
     register int i, j, k, max;
     char **symnam, *s;
-    char * prefix = tflag ? "" : "//t";
+    const char * prefix = tflag ? "" : "//t";
 
     ++outline;
-    printf("  protected %s int yyFinal = %d;\n", csharp ? "const" : "static final", final_state);
+    fprintf(output_file, "  protected %s int yyFinal = %d;\n", csharp ? "const" : "static final", final_state);
 
       ++outline;
-	  printf ("%s // Put this array into a separate class so it is only initialized if debugging is actually used\n", prefix);
-	  printf ("%s // Use MarshalByRefObject to disable inlining\n", prefix);
-	  printf("%s class YYRules %s {\n", prefix, csharp ? ": MarshalByRefObject" : "");
-      printf("%s  public static %s string [] yyRule = {\n", prefix, csharp ? "readonly" : "final");
+	  fprintf(output_file, "%s // Put this array into a separate class so it is only initialized if debugging is actually used\n", prefix);
+	  fprintf(output_file, "%s // Use MarshalByRefObject to disable inlining\n", prefix);
+	  fprintf(output_file, "%s class YYRules %s {\n", prefix, csharp ? ": MarshalByRefObject" : "");
+      fprintf(output_file, "%s  public static %s string [] yyRule = {\n", prefix, csharp ? "readonly" : "final");
       for (i = 2; i < nrules; ++i)
       {
-	  printf("%s    \"%s :", prefix, symbol_name[rlhs[i]]);
+	  fprintf(output_file, "%s    \"%s :", prefix, symbol_name[rlhs[i]]);
 	  for (j = rrhs[i]; ritem[j] > 0; ++j)
 	  {
 	      s = symbol_name[ritem[j]];
 	      if (s[0] == '"')
 	      {
-		  printf(" \\\"");
+		  fprintf(output_file, " \\\"");
 		  while (*++s != '"')
 		  {
 		      if (*s == '\\')
 		      {
 			  if (s[1] == '\\')
-			      printf("\\\\\\\\");
+			      fprintf(output_file, "\\\\\\\\");
 			  else
-			      printf("\\\\%c", s[1]);
+			      fprintf(output_file, "\\\\%c", s[1]);
 			  ++s;
 		      }
 		      else
-			  putchar(*s);
+			  putc(*s, output_file);
 		  }
-		  printf("\\\"");
+		  fprintf(output_file, "\\\"");
 	      }
 	      else if (s[0] == '\'')
 	      {
 		  if (s[1] == '"')
-		      printf(" '\\\"'");
+		      fprintf(output_file, " '\\\"'");
 		  else if (s[1] == '\\')
 		  {
 		      if (s[2] == '\\')
-			  printf(" '\\\\\\\\");
+			  fprintf(output_file, " '\\\\\\\\");
 		      else
-			  printf(" '\\\\%c", s[2]);
+			  fprintf(output_file, " '\\\\%c", s[2]);
 		      s += 2;
 		      while (*++s != '\'')
-			  putchar(*s);
-		      putchar('\'');
+			  putc(*s, output_file);
+		      putc('\'', output_file);
 		  }
 		  else
-		      printf(" '%c'", s[1]);
+		      fprintf(output_file, " '%c'", s[1]);
 	      }
 	      else
-		  printf(" %s", s);
+		  fprintf(output_file, " %s", s);
 	  }
 	  ++outline;
-	  printf("\",\n");
+	  fprintf(output_file, "\",\n");
       }
       ++ outline;
-      printf("%s  };\n", prefix);
-	  printf ("%s public static string getRule (int index) {\n", prefix);
-	  printf ("%s    return yyRule [index];\n", prefix);
-	  printf ("%s }\n", prefix);
-	  printf ("%s}\n", prefix);
+      fprintf(output_file, "%s  };\n", prefix);
+	  fprintf(output_file, "%s public static string getRule (int index) {\n", prefix);
+	  fprintf(output_file, "%s    return yyRule [index];\n", prefix);
+	  fprintf(output_file, "%s }\n", prefix);
+	  fprintf(output_file, "%s}\n", prefix);
 
     max = 0;
     for (i = 2; i < ntokens; ++i)
@@ -931,7 +987,7 @@ output_debug()
 
 	/* need yyNames for yyExpecting() */
 
-      printf("  protected static %s string [] yyNames = {", csharp ? "readonly" : "final");
+      fprintf(output_file, "  protected static %s string [] yyNames = {", csharp ? "readonly" : "final");
       symnam = (char **) MALLOC((max+1)*sizeof(char *));
       if (symnam == 0) no_space();
   
@@ -941,12 +997,12 @@ output_debug()
 	  symnam[i] = 0;
       for (i = ntokens - 1; i >= 2; --i)
 	  symnam[symbol_value[i]] = symbol_name[i];
-      symnam[0] = "end-of-file";
+      symnam[0] = (char*)"end-of-file";
   
-      j = 70; fputs("    ", stdout);
+      j = 70; fputs("    ", output_file);
       for (i = 0; i <= max; ++i)
       {
-	  if (s = symnam[i])
+	  if ((s = symnam[i]))
 	  {
 	      if (s[0] == '"')
 	      {
@@ -965,25 +1021,25 @@ output_debug()
 		  if (j > 70)
 		  {
 		      ++outline;
-		      printf("\n    ");
+		      fprintf(output_file, "\n    ");
 		      j = k;
 		  }
-		  printf("\"\\\"");
+		  fprintf(output_file, "\"\\\"");
 		  s = symnam[i];
 		  while (*++s != '"')
 		  {
 		      if (*s == '\\')
 		      {
-			  printf("\\\\");
+			  fprintf(output_file, "\\\\");
 			  if (*++s == '\\')
-			      printf("\\\\");
+			      fprintf(output_file, "\\\\");
 			  else
-			      putchar(*s);
+			      putc(*s, output_file);
 		      }
 		      else
-			  putchar(*s);
+			  putc(*s, output_file);
 		  }
-		  printf("\\\"\",");
+		  fprintf(output_file, "\\\"\",");
 	      }
 	      else if (s[0] == '\'')
 	      {
@@ -993,10 +1049,10 @@ output_debug()
 		      if (j > 70)
 		      {
 			  ++outline;
-		      	  printf("\n    ");
+		      	  fprintf(output_file, "\n    ");
 			  j = 7;
 		      }
-		      printf("\"'\\\"'\",");
+		      fprintf(output_file, "\"'\\\"'\",");
 		  }
 		  else
 		  {
@@ -1015,25 +1071,25 @@ output_debug()
 		      if (j > 70)
 		      {
 			  ++outline;
-		      	  printf("\n    ");
+		      	  fprintf(output_file, "\n    ");
 			  j = k;
 		      }
-		      printf("\"'");
+		      fprintf(output_file, "\"'");
 		      s = symnam[i];
 		      while (*++s != '\'')
 		      {
 			  if (*s == '\\')
 			  {
-			      printf("\\\\");
+			      fprintf(output_file, "\\\\");
 			      if (*++s == '\\')
-				  printf("\\\\");
+				  fprintf(output_file, "\\\\");
 			      else
-				  putchar(*s);
+				  putc(*s, output_file);
 			  }
 			  else
-			      putchar(*s);
+			      putc(*s, output_file);
 		      }
-		      printf("'\",");
+		      fprintf(output_file, "'\",");
 		  }
 	      }
 	      else
@@ -1043,12 +1099,12 @@ output_debug()
 		  if (j > 70)
 		  {
 		      ++outline;
-		      printf("\n    ");
+		      fprintf(output_file, "\n    ");
 		      j = k;
 		  }
-		  putchar('"');
-		  do { putchar(*s); } while (*++s);
-		  printf("\",");
+		  putc('"', output_file);
+		  do { putc(*s, output_file); } while (*++s);
+		  fprintf(output_file, "\",");
 	      }
 	  }
 	  else
@@ -1057,18 +1113,19 @@ output_debug()
 	      if (j > 70)
 	      {
 		  ++outline;
-		  printf("\n    ");
+		  fprintf(output_file, "\n    ");
 		  j = 5;
 	      }
-	      printf("null,");
+	      fprintf(output_file, "null,");
 	  }
       }
       outline += 2;
-      printf("\n  };\n");
+      fprintf(output_file, "\n  };\n");
       FREE(symnam);
 }
 
-output_trailing_text()
+static void
+output_trailing_text (void)
 {
     register int c, last;
     register FILE *in;
@@ -1084,19 +1141,19 @@ output_trailing_text()
 	if ((c = getc(in)) == EOF)
 	    return;
         ++outline;
-	printf(line_format, lineno, input_file_name);
+	fprintf(output_file, line_format, lineno, input_file_name);
 	if (c == '\n')
 	    ++outline;
-	putchar(c);
+	putc(c, output_file);
 	last = c;
     }
     else
     {
 	++outline;
-	printf(line_format, lineno, input_file_name);
-	do { putchar(c); } while ((c = *++cptr) != '\n');
+	fprintf(output_file, line_format, lineno, input_file_name);
+	do { putc(c, output_file); } while ((c = *++cptr) != '\n');
 	++outline;
-	putchar('\n');
+	putc('\n', output_file);
 	last = '\n';
     }
 
@@ -1104,20 +1161,20 @@ output_trailing_text()
     {
 	if (c == '\n')
 	    ++outline;
-	putchar(c);
+	putc(c, output_file);
 	last = c;
     }
 
     if (last != '\n')
     {
 	++outline;
-	putchar('\n');
+	putc('\n', output_file);
     }
-    printf(default_line_format, ++outline + 1);
+    fprintf(output_file, default_line_format, ++outline + 1);
 }
 
-
-output_semantic_actions()
+static void
+output_semantic_actions (void)
 {
     register int c, last;
 
@@ -1132,26 +1189,26 @@ output_semantic_actions()
     last = c;
     if (c == '\n')
 	++outline;
-    putchar(c);
+    putc(c, output_file);
     while ((c = getc(action_file)) != EOF)
     {
 	if (c == '\n')
 	    ++outline;
-	putchar(c);
+	putc(c, output_file);
 	last = c;
     }
 
     if (last != '\n')
     {
 	++outline;
-	putchar('\n');
+	putc('\n', output_file);
     }
 
-    printf(default_line_format, ++outline + 1);
+    fprintf(output_file, default_line_format, ++outline + 1);
 }
 
-
-free_itemsets()
+static void
+free_itemsets (void)
 {
     register core *cp, *next;
 
@@ -1163,8 +1220,8 @@ free_itemsets()
     }
 }
 
-
-free_shifts()
+static void
+free_shifts (void)
 {
     register shifts *sp, *next;
 
@@ -1176,9 +1233,8 @@ free_shifts()
     }
 }
 
-
-
-free_reductions()
+static void
+free_reductions (void)
 {
     register reductions *rp, *next;
 

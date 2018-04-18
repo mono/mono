@@ -3,195 +3,18 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-
-namespace System.Net {
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Configuration;
-    using System.IO;
-    using System.Net.Configuration;
-    using System.Net.Sockets;
-    using System.Net.Security;
-    using System.Security;
-    using System.Security.Permissions;
-    using System.Security.Cryptography.X509Certificates;
-    using System.Threading;
-    using System.Globalization;
-    using System.Runtime.CompilerServices;
-    using System.Diagnostics.CodeAnalysis;
-    using Microsoft.Win32;
-    
-    // This turned to be a legacy type name that is simply forwarded to System.Security.Authentication.SslProtocols defined values.
-#if !FEATURE_PAL || MONO
-    [Flags]
-    public enum SecurityProtocolType
-    {
-        Ssl3          = System.Security.Authentication.SslProtocols.Ssl3,
-        Tls           = System.Security.Authentication.SslProtocols.Tls,
-        Tls11         = System.Security.Authentication.SslProtocols.Tls11,
-        Tls12         = System.Security.Authentication.SslProtocols.Tls12,
-    }
-#endif
-#if !MONO && !FEATURE_PAL
-    internal class CertPolicyValidationCallback
-    {
-        readonly ICertificatePolicy  m_CertificatePolicy;
-        readonly ExecutionContext    m_Context;
-
-        internal CertPolicyValidationCallback()
-        {
-            m_CertificatePolicy = new DefaultCertPolicy();
-            m_Context = null;
-        }
-
-        internal CertPolicyValidationCallback(ICertificatePolicy certificatePolicy)
-        {
-            m_CertificatePolicy = certificatePolicy;
-            m_Context = ExecutionContext.Capture();
-        }
-
-        internal ICertificatePolicy CertificatePolicy {
-            get { return m_CertificatePolicy;}
-        }
-
-        internal bool UsesDefault {
-            get { return m_Context == null;}
-        }
-
-        internal void Callback(object state)
-        {
-            CallbackContext context = (CallbackContext) state;
-            context.result = context.policyWrapper.CheckErrors(context.hostName,
-                                                               context.certificate,
-                                                               context.chain,
-                                                               context.sslPolicyErrors);
-        }
-
-        internal bool Invoke(string hostName,
-                             ServicePoint servicePoint,
-                             X509Certificate certificate,
-                             WebRequest request,
-                             X509Chain chain,
-                             SslPolicyErrors sslPolicyErrors)
-        {
-            PolicyWrapper policyWrapper = new PolicyWrapper(m_CertificatePolicy,
-                                                            servicePoint,
-                                                            (WebRequest) request);
-
-            if (m_Context == null)
-            {
-                return policyWrapper.CheckErrors(hostName,
-                                                 certificate,
-                                                 chain,
-                                                 sslPolicyErrors);
-            }
-            else
-            {
-                ExecutionContext execContext = m_Context.CreateCopy();
-                CallbackContext callbackContext = new CallbackContext(policyWrapper,
-                                                                      hostName,
-                                                                      certificate,
-                                                                      chain,
-                                                                      sslPolicyErrors);
-                ExecutionContext.Run(execContext, Callback, callbackContext);
-                return callbackContext.result;
-            }
-        }
-
-        private class CallbackContext
-        {
-            internal CallbackContext(PolicyWrapper policyWrapper,
-                                     string hostName,
-                                     X509Certificate certificate,
-                                     X509Chain chain,
-                                     SslPolicyErrors sslPolicyErrors)
-            {
-                this.policyWrapper = policyWrapper;
-                this.hostName = hostName;
-                this.certificate = certificate;
-                this.chain = chain;
-                this.sslPolicyErrors = sslPolicyErrors;
-            }
-
-            internal readonly PolicyWrapper   policyWrapper;
-            internal readonly string          hostName;
-            internal readonly X509Certificate certificate;
-            internal readonly X509Chain       chain;
-            internal readonly SslPolicyErrors sslPolicyErrors;
-
-            internal bool result;
-        }
-    }
-#elif MONO || !FEATURE_PAL
-    internal class ServerCertValidationCallback
-    {
-        readonly RemoteCertificateValidationCallback m_ValidationCallback;
-        readonly ExecutionContext                    m_Context;
-
-        internal ServerCertValidationCallback(RemoteCertificateValidationCallback validationCallback)
-        {
-            m_ValidationCallback = validationCallback;
-            m_Context = ExecutionContext.Capture();
-        }
-
-        internal RemoteCertificateValidationCallback ValidationCallback {
-            get { return m_ValidationCallback;}
-        }
-
-        internal void Callback(object state)
-        {
-            CallbackContext context = (CallbackContext) state;
-            context.result = m_ValidationCallback(context.request,
-                                                  context.certificate,
-                                                  context.chain,
-                                                  context.sslPolicyErrors);
-        }
-
-        internal bool Invoke(object request,
-                             X509Certificate certificate,
-                             X509Chain chain,
-                             SslPolicyErrors sslPolicyErrors)
-        {
-            if (m_Context == null)
-            {
-                return m_ValidationCallback(request, certificate, chain, sslPolicyErrors);
-            }
-            else
-            {
-                ExecutionContext execContext = m_Context.CreateCopy();
-                CallbackContext callbackContext = new CallbackContext(request,
-                                                                      certificate,
-                                                                      chain,
-                                                                      sslPolicyErrors);
-                ExecutionContext.Run(execContext, Callback, callbackContext);
-                return callbackContext.result;
-            }
-        }
-
-        private class CallbackContext
-        {
-            internal readonly Object request;
-            internal readonly X509Certificate certificate;
-            internal readonly X509Chain chain;
-            internal readonly SslPolicyErrors sslPolicyErrors;
-
-            internal bool result;
-
-            internal CallbackContext(Object request,
-                                     X509Certificate certificate,
-                                     X509Chain chain,
-                                     SslPolicyErrors sslPolicyErrors)
-            {
-                this.request = request;
-                this.certificate = certificate;
-                this.chain = chain;
-                this.sslPolicyErrors = sslPolicyErrors;
-            }
-        }
-    }
-#endif // !FEATURE_PAL
-
 #if MONO_FEATURE_WEB_STACK
+namespace System.Net {
+    using Diagnostics;
+    using System.Collections;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
+    using System.Net.Configuration;
+    using System.Net.Security;
+    using System.Runtime.CompilerServices;
+    using System.Security.Authentication;
+    using System.Threading;
+
     //
     // The ServicePointManager class hands out ServicePoints (may exist or be created
     // as needed) and makes sure they are garbage collected when they expire.
@@ -202,7 +25,7 @@ namespace System.Net {
     /// <para>Manages the collection of <see cref='System.Net.ServicePoint'/> instances.</para>
     /// </devdoc>
     ///
-    public class ServicePointManager {
+    public partial class ServicePointManager {
 
         /// <devdoc>
         ///    <para>
@@ -247,24 +70,18 @@ namespace System.Net {
         private static volatile CertPolicyValidationCallback s_CertPolicyValidationCallback = new CertPolicyValidationCallback();
         private static volatile ServerCertValidationCallback s_ServerCertValidationCallback = null;
 
-        private const string sendAuxRecordValueName = "SchSendAuxRecord";
-        private const string sendAuxRecordAppSetting = "System.Net.ServicePointManager.SchSendAuxRecord";
-        private const string strongCryptoValueName = "SchUseStrongCrypto";
-        private const string secureProtocolAppSetting = "System.Net.ServicePointManager.SecurityProtocol";
+        private static SecurityProtocolType s_SecurityProtocolType;
 
-        private static object configurationLoadedLock = new object();
-        private static volatile bool configurationLoaded = false;
-        private static bool disableStrongCrypto = false;
-        private static bool disableSendAuxRecord = false;
+        private static bool s_reusePort;
+        private static bool? s_reusePortSupported = null;
 
-        private static SecurityProtocolType s_SecurityProtocolType = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+        private static bool s_disableStrongCrypto;
+        private static bool s_disableSendAuxRecord;
+        private static bool s_disableSystemDefaultTlsVersions;
+        private static SslProtocols s_defaultSslProtocols;
 
-        private const string reusePortValueName = "HWRPortReuseOnSocketBind";
-        private static object reusePortLock = new object();
-        private static volatile bool reusePortSettingsInitialized = false;
-        private static bool reusePort = false;
-        private static bool? reusePortSupported = null;
 #endif // !FEATURE_PAL
+
         private static volatile Hashtable s_ConfigTable = null;
         private static volatile int s_ConnectionLimit = PersistentConnectionLimit;
 
@@ -442,9 +259,15 @@ namespace System.Net {
 
         private static void ValidateSecurityProtocol(SecurityProtocolType value)
         {
-            // Do not allow Ssl2 (and others) as explicit SSL version request
+            // Do not allow Ssl2 (and others) as explicit SSL version request.
             SecurityProtocolType allowed = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls
                 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
+            Debug.Assert((int)SecurityProtocolType.SystemDefault == (int)SslProtocols.None);
+            Debug.Assert((int)SecurityProtocolType.Ssl3 == (int)SslProtocols.Ssl3);
+            Debug.Assert((int)SecurityProtocolType.Tls == (int)SslProtocols.Tls);
+            Debug.Assert((int)SecurityProtocolType.Tls11 == (int)SslProtocols.Tls11);
+            Debug.Assert((int)SecurityProtocolType.Tls12 == (int)SslProtocols.Tls12);
 
             if ((value & ~allowed) != 0)
             {
@@ -452,6 +275,42 @@ namespace System.Net {
             }
         }
 #endif // !FEATURE_PAL
+
+        internal static bool DisableStrongCrypto
+        {
+            get
+            {
+                EnsureConfigurationLoaded();
+                return s_disableStrongCrypto;
+            }
+        }
+
+        internal static bool DisableSystemDefaultTlsVersions
+        {
+            get
+            {
+                EnsureConfigurationLoaded();
+                return s_disableSystemDefaultTlsVersions;
+            }
+        }
+
+        internal static bool DisableSendAuxRecord
+        {
+            get
+            {
+                EnsureConfigurationLoaded();
+                return s_disableSendAuxRecord;
+            }
+        }
+
+        internal static SslProtocols DefaultSslProtocols
+        {
+            get
+            {
+                EnsureConfigurationLoaded();
+                return s_defaultSslProtocols;
+            }
+        }
 
         //
         // accessors
@@ -641,171 +500,24 @@ namespace System.Net {
             }
         }
 
-        internal static bool DisableStrongCrypto {
-            get {
-                EnsureConfigurationLoaded();
-                return disableStrongCrypto; 
-            }
-        }
-
-        internal static bool DisableSendAuxRecord {
-            get {
-                EnsureConfigurationLoaded();
-                return disableSendAuxRecord;
-            }
-        }
-
-        private static void EnsureConfigurationLoaded() {
-            if (configurationLoaded) {
-                return;
-            }
-
-            lock (configurationLoadedLock) {
-                if (configurationLoaded) {
-                    return;
-                }
-
-                LoadDisableStrongCryptoConfiguration();
-                LoadDisableSendAuxRecordConfiguration();
-
-                configurationLoaded = true;
-            }
-        }
-
-        private static void LoadDisableStrongCryptoConfiguration() {
-            try {
-                bool disableStrongCryptoInternal = false;
-                int schUseStrongCryptoKeyValue = 0;
-
-                if (LocalAppContextSwitches.DontEnableSchUseStrongCrypto) {
-                    //.Net 4.5.2 and below will default to false unless the registry key is specifically set to 1.
-                    schUseStrongCryptoKeyValue =
-                        RegistryConfiguration.GlobalConfigReadInt(strongCryptoValueName, 0);
-
-                    disableStrongCryptoInternal = schUseStrongCryptoKeyValue != 1;
-                }
-                else {
-                    // .Net 4.6 and above will default to true unless the registry key is specifically set to 0.
-                    schUseStrongCryptoKeyValue =
-                        RegistryConfiguration.GlobalConfigReadInt(strongCryptoValueName, 1);
-
-                    disableStrongCryptoInternal = schUseStrongCryptoKeyValue == 0;
-                }
-
-                if (disableStrongCryptoInternal) {
-                    // Revert the SecurityProtocol selection to the legacy combination.
-                    s_SecurityProtocolType = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
-                }
-                else {
-                    s_SecurityProtocolType =
-                        SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-
-                    string appSetting = RegistryConfiguration.AppConfigReadString(secureProtocolAppSetting, null);
-
-                    SecurityProtocolType value;
-                    try {
-                        value = (SecurityProtocolType)Enum.Parse(typeof(SecurityProtocolType), appSetting);
-                        ValidateSecurityProtocol(value);
-                        s_SecurityProtocolType = value;
-                    }
-                    // Ignore all potential exceptions caused by Enum.Parse.
-                    catch (ArgumentNullException) { }
-                    catch (ArgumentException) { }
-                    catch (NotSupportedException) { }
-                    catch (OverflowException) { }
-                }
-
-                disableStrongCrypto = disableStrongCryptoInternal;
-            }
-            catch (Exception e)
-            {
-                if (e is ThreadAbortException || e is StackOverflowException || e is OutOfMemoryException)
-                {
-                    throw;
-                }
-            }
-        }
-
-        private static void LoadDisableSendAuxRecordConfiguration() {
-            try { 
-                if (LocalAppContextSwitches.DontEnableSchSendAuxRecord) {
-                    disableSendAuxRecord = true;
-                    return;
-                }
-
-                int schSendAuxRecordKeyValue = 1;
-                schSendAuxRecordKeyValue = RegistryConfiguration.AppConfigReadInt(sendAuxRecordAppSetting, 1);
-                if (schSendAuxRecordKeyValue == 0) {
-                    disableSendAuxRecord = true;
-                    return;
-                }
-            
-                schSendAuxRecordKeyValue = RegistryConfiguration.GlobalConfigReadInt(sendAuxRecordValueName, 1);
-                if (schSendAuxRecordKeyValue == 0) {
-                    disableSendAuxRecord = true;
-                    return;
-                }
-            }
-            catch (Exception e)
-            {
-                if (e is ThreadAbortException || e is StackOverflowException || e is OutOfMemoryException)
-                {
-                    throw;
-                }
-            }
-        }
-
         public static bool ReusePort {
             get {
-                EnsureReusePortSettingsInitialized();
-                return reusePort;
+                return s_reusePort;
             }
             set {
-                EnsureReusePortSettingsInitialized();
-                reusePort = value;
-            }
-        }
-        
-        internal static bool? ReusePortSupported {
-            get {
-                return reusePortSupported;
-            }
-            set {
-                reusePortSupported = value;
+                s_reusePort = value;
             }
         }
 
-        private static void EnsureReusePortSettingsInitialized() {
-            
-            if (reusePortSettingsInitialized) {
-                return;
+        internal static bool? ReusePortSupported
+        {
+            get
+            {
+                return s_reusePortSupported;
             }
-
-            lock (reusePortLock) {
-                if (reusePortSettingsInitialized) {
-                    return;
-                }
-
-                int reusePortKeyValue = 0;
-                try {
-                    reusePortKeyValue = RegistryConfiguration.GlobalConfigReadInt(reusePortValueName, 0);
-                }
-                catch (Exception e) {
-                    if (e is ThreadAbortException || e is StackOverflowException || e is OutOfMemoryException) {
-                        throw;
-                    }
-                }
-
-                bool reusePortInternal = false;
-                if (reusePortKeyValue == 1) {
-                    if (Logging.On) { 
-                        Logging.PrintInfo(Logging.Web, typeof(ServicePointManager), SR.GetString(SR.net_log_set_socketoption_reuseport_default_on));
-                    }
-                    reusePortInternal = true;
-                }
-
-                reusePort = reusePortInternal;
-                reusePortSettingsInitialized = true;
+            set
+            {
+                s_reusePortSupported = value;
             }
         }
 #endif // !FEATURE_PAL
@@ -1179,5 +891,6 @@ namespace System.Net {
             GlobalLog.Leave("ServicePointManager::SetTcpKeepAlive()");
         }
     }
-#endif
 }
+#endif
+

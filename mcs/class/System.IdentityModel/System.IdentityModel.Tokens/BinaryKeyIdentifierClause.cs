@@ -54,10 +54,10 @@ namespace System.IdentityModel.Tokens
 			return (byte []) GetRawBuffer ().Clone ();
 		}
 
-		public override bool Matches (SecurityKeyIdentifierClause clause)
+		public override bool Matches (SecurityKeyIdentifierClause keyIdentifierClause)
 		{
 			BinaryKeyIdentifierClause other =
-				clause as BinaryKeyIdentifierClause;
+				keyIdentifierClause as BinaryKeyIdentifierClause;
 			if (other == null)
 				return false;
 			return Matches (other.GetRawBuffer ());

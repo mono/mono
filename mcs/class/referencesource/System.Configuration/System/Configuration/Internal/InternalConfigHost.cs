@@ -18,11 +18,12 @@ namespace System.Configuration.Internal {
     using System.Security.Permissions;
     using System.Security.Policy;
     using System.Threading;
+    using System.Xml;
 
     //
     // An IInternalConfigHost with common implementations of some file functions.
     //
-    internal sealed class InternalConfigHost : IInternalConfigHost {
+    internal sealed class InternalConfigHost : IInternalConfigHost, IInternalConfigurationBuilderHost {
         private IInternalConfigRoot _configRoot;
 
         internal InternalConfigHost() {
@@ -69,7 +70,7 @@ namespace System.Configuration.Internal {
         [SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Justification = "The callers don't leak this information.")]
         static internal string StaticGetStreamNameForConfigSource(string streamName, string configSource) {
             //
-            // Note ([....] 7/08/05):
+            // Note (Microsoft 7/08/05):
             // RemoteWebConfigurationHost also redirects GetStreamNameForConfigSource to this
             // method, and that means streamName is referring to a path that's on the remote
             // machine.  The problem is that Path.GetFullPath will demand FileIOPermission on
@@ -446,6 +447,21 @@ namespace System.Configuration.Internal {
             }
         }
 
+        XmlNode IInternalConfigurationBuilderHost.ProcessRawXml(XmlNode rawXml, ConfigurationBuilder builder) {
+            if (builder != null) {
+                return builder.ProcessRawXml(rawXml);
+            }
+
+            return rawXml;
+        }
+
+        ConfigurationSection IInternalConfigurationBuilderHost.ProcessConfigurationSection(ConfigurationSection configSection, ConfigurationBuilder builder) {
+            if (builder != null) {
+                return builder.ProcessConfigurationSection(configSection);
+            }
+
+            return configSection;
+        }
     }
 }
 

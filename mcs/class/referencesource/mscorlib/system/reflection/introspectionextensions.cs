@@ -7,7 +7,7 @@
 **
 ** Class: TypeInfoExtension
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: go from type to type info

@@ -624,8 +624,8 @@ namespace Mono.CSharp {
 			if (include_files == null)
 				include_files = new Dictionary<string, SourceFile> ();
 
-			if (!include_files.ContainsKey (file.FullPathName))
-				include_files.Add (file.FullPathName, file);
+			if (!include_files.ContainsKey (file.OriginalFullPathName))
+				include_files.Add (file.OriginalFullPathName, file);
 		}
 
 		public void AddDefine (string value)
@@ -648,7 +648,7 @@ namespace Mono.CSharp {
 		{
 			var sw = Module.DeclaringAssembly.SymbolWriter;
 			if (sw != null) {
-				CreateUnitSymbolInfo (sw);
+				CreateUnitSymbolInfo (sw, Compiler.Settings.PathMap);
 			}
 
 			base.PrepareEmit ();
@@ -657,14 +657,14 @@ namespace Mono.CSharp {
 		//
 		// Creates symbol file index in debug symbol file
 		//
-		void CreateUnitSymbolInfo (MonoSymbolFile symwriter)
+		void CreateUnitSymbolInfo (MonoSymbolFile symwriter, List<KeyValuePair<string, string>> pathMap)
 		{
-			var si = file.CreateSymbolInfo (symwriter);
+			var si = file.CreateSymbolInfo (symwriter, pathMap);
 			comp_unit = new CompileUnitEntry (symwriter, si);
 
 			if (include_files != null) {
 				foreach (SourceFile include in include_files.Values) {
-					si = include.CreateSymbolInfo (symwriter);
+					si = include.CreateSymbolInfo (symwriter, pathMap);
 					comp_unit.AddFile (si);
 				}
 			}
@@ -1157,7 +1157,7 @@ namespace Mono.CSharp {
 					match = texpr_fne;
 			}
 
-			if (types_using_table != null) {
+			if (types_using_table != null && (mode & LookupMode.IgnoreStaticUsing) == 0) {
 				foreach (var using_type in types_using_table) {
 					var type = MemberCache.FindNestedType (using_type, name, arity, true);
 					if (type == null)

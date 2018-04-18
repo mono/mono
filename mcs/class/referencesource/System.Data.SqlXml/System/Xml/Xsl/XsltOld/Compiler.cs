@@ -2,7 +2,7 @@
 // <copyright file="Compiler.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Xsl.XsltOld {
@@ -164,7 +164,7 @@ namespace System.Xml.Xsl.XsltOld {
         // The World of Compile
         //
         internal void Compile(NavigatorInput input, XmlResolver xmlResolver, Evidence evidence) {
-#if !FEATURE_MONO_CAS
+#if !MONO_FEATURE_CAS
             evidence = null;
 #endif
             Debug.Assert(input != null);
@@ -800,7 +800,7 @@ namespace System.Xml.Xsl.XsltOld {
                         compilParams.Evidence = evidence;
 #pragma warning restore 618
                         compilParams.ReferencedAssemblies.Add(typeof(XPathNavigator).Module.FullyQualifiedName);
-                        compilParams.ReferencedAssemblies.Add("system.dll");
+                        compilParams.ReferencedAssemblies.Add("System.dll");
 #if !FEATURE_PAL // visualbasic
                         if (lang == ScriptingLanguage.VisualBasic) {
                             compilParams.ReferencedAssemblies.Add("microsoft.visualbasic.dll");

@@ -9,6 +9,7 @@ ReferenceSources/ThisAssembly.cs
 ReferenceSources/TypeScope.cs
 ReferenceSources/Wsdl.cs
 ReferenceSources/CodeDom.cs
+ReferenceSources/BinaryCompatibility.cs
 ../referencesource/System.Data.SqlXml/System/Xml/Xsl/ISourceLineInfo.cs
 ../referencesource/System.Data.SqlXml/System/Xml/Xsl/ListBase.cs
 ../referencesource/System.Data.SqlXml/System/Xml/Xsl/Pair.cs
@@ -138,7 +139,6 @@ ReferenceSources/CodeDom.cs
 ../referencesource/System.Xml/System/Xml/Cache/XPathNodeInfoAtom.cs
 ../referencesource/System.Xml/System/Xml/Cache/XPathNodeView.cs
 ../referencesource/System.Xml/System/Xml/Cache/XPathNodeViewPropertyDescriptor.cs
-../referencesource/System.Xml/System/Xml/Core/BinaryCompatibility.cs
 ../referencesource/System.Xml/System/Xml/Core/CharEntityEncoderFallback.cs
 ../referencesource/System.Xml/System/Xml/Core/ConformanceLevel.cs
 ../referencesource/System.Xml/System/Xml/Core/DtdProcessing.cs

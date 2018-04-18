@@ -204,6 +204,11 @@ namespace System.Xml.Serialization
 		{
 		}
 
+		public XmlSerializer (Type type, XmlAttributeOverrides overrides, Type[] extraTypes, XmlRootAttribute root, string defaultNamespace, string location)
+			: this (type, overrides, extraTypes, root, defaultNamespace, location, null)
+		{
+		}
+
 		public XmlSerializer (Type type, XmlAttributeOverrides overrides)
 			: this (type, overrides, null, null, null)
 		{

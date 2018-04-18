@@ -7,7 +7,7 @@
 //
 // TaskScheduler.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // This file contains the primary interface and management of tasks and queues.  
 //
@@ -281,8 +281,8 @@ namespace System.Threading.Tasks
         // Member variables
         //
 
-        // The global container that keeps track of TaskScheduler instances. s_activeTaskSchedulers must be initialized before s_defaultTaskScheduler.
-        private static readonly ConditionalWeakTable<TaskScheduler, object> s_activeTaskSchedulers = new ConditionalWeakTable<TaskScheduler,object>();
+        // The global container that keeps track of TaskScheduler instances for debugging purposes.
+        private static ConditionalWeakTable<TaskScheduler, object> s_activeTaskSchedulers;
         
         // An AppDomain-wide default manager.
         private static readonly TaskScheduler s_defaultTaskScheduler = new ThreadPoolTaskScheduler();
@@ -299,16 +299,32 @@ namespace System.Threading.Tasks
         //
         // Constructors and public properties
         //
-        
+
         /// <summary>
         /// Initializes the <see cref="System.Threading.Tasks.TaskScheduler"/>.
         /// </summary>
         protected TaskScheduler()
         {
-            // Protected constructor. It's here to ensure all user implemented TaskSchedulers will be 
-            // registered in the active schedulers list.
-            Contract.Assert(s_activeTaskSchedulers != null, "Expected non-null s_activeTaskSchedulers");
-            s_activeTaskSchedulers.Add(this, null);
+            // Register the scheduler in the active scheduler list.  This is only relevant when debugging, 
+            // so we only pay the cost if the debugger is attached when the scheduler is created.  This
+            // means that the internal TaskScheduler.GetTaskSchedulersForDebugger() will only include
+            // schedulers created while the debugger is attached.
+            if (Debugger.IsAttached)
+            {
+                AddToActiveTaskSchedulers();
+            }
+        }
+
+        /// <summary>Adds this scheduler ot the active schedulers tracking collection for debugging purposes.</summary>
+        private void AddToActiveTaskSchedulers()
+        {
+            ConditionalWeakTable<TaskScheduler, object> activeTaskSchedulers = s_activeTaskSchedulers;
+            if (activeTaskSchedulers == null)
+            {
+                Interlocked.CompareExchange(ref s_activeTaskSchedulers, new ConditionalWeakTable<TaskScheduler, object>(), null);
+                activeTaskSchedulers = s_activeTaskSchedulers;
+            }
+            activeTaskSchedulers.Add(this, null);
         }
 
         /// <summary>
@@ -566,9 +582,20 @@ namespace System.Threading.Tasks
         [SecurityCritical]
         internal static TaskScheduler[] GetTaskSchedulersForDebugger()
         {
-            Contract.Assert(s_activeTaskSchedulers != null, "Expected non-null s_activeTaskSchedulers");
+            if (s_activeTaskSchedulers == null)
+            {
+                // No schedulers were tracked.  Just give back the default.
+                return new TaskScheduler[] { s_defaultTaskScheduler };
+            }
 
             ICollection<TaskScheduler> schedulers = s_activeTaskSchedulers.Keys;
+            if (!schedulers.Contains(s_defaultTaskScheduler))
+            {
+                // Make sure the default is included, in case the debugger attached
+                // after it was created.
+                schedulers.Add(s_defaultTaskScheduler);
+            }
+
             var arr = new TaskScheduler[schedulers.Count];
             schedulers.CopyTo(arr, 0);
             foreach (var scheduler in arr)
@@ -590,13 +617,13 @@ namespace System.Threading.Tasks
                 m_taskScheduler = scheduler;
             }
 
-            // returns the scheduler’s Id
+            // returns the schedulerâ€™s Id
             public Int32 Id
             { 
                 get { return m_taskScheduler.Id; } 
             }
 
-            // returns the scheduler’s GetScheduledTasks
+            // returns the schedulerâ€™s GetScheduledTasks
             public IEnumerable<Task> ScheduledTasks 
             {
                 [SecurityCritical]

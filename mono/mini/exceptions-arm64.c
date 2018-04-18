@@ -1,5 +1,6 @@
-/*
- * exceptions-arm64.c: exception support for ARM64
+/**
+ * \file
+ * exception support for ARM64
  *
  * Copyright 2013 Xamarin Inc
  *
@@ -14,11 +15,11 @@
  */
 
 #include "mini.h"
+#include "mini-runtime.h"
+#include "aot-runtime.h"
 
 #include <mono/arch/arm64/arm64-codegen.h>
 #include <mono/metadata/abi-details.h>
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 #ifndef DISABLE_JIT
 
@@ -29,15 +30,21 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
 	int i, ctx_reg, size;
+	guint8 *labels [16];
 
 	size = 256;
 	code = start = mono_global_codeman_reserve (size);
 
 	arm_movx (code, ARMREG_IP0, ARMREG_R0);
 	ctx_reg = ARMREG_IP0;
+
 	/* Restore fregs */
+	arm_ldrx (code, ARMREG_IP1, ctx_reg, MONO_STRUCT_OFFSET (MonoContext, has_fregs));
+	labels [0] = code;
+	arm_cbzx (code, ARMREG_IP1, 0);
 	for (i = 0; i < 32; ++i)
-		arm_ldrfpx (code, i, ctx_reg, MONO_STRUCT_OFFSET (MonoContext, fregs) + (i * 8));
+		arm_ldrfpx (code, i, ctx_reg, MONO_STRUCT_OFFSET (MonoContext, fregs) + (i * sizeof (MonoContextSimdReg)));
+	mono_arm_patch (labels [0], code, MONO_R_ARM64_CBZ);
 	/* Restore gregs */
 	// FIXME: Restore less registers
 	// FIXME: fp should be restored later
@@ -56,7 +63,7 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 
 	g_assert ((code - start) < size);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create ("restore_context", start, code - start, ji, unwind_ops);
@@ -69,9 +76,10 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 {
 	guint8 *code;
 	guint8* start;
-	int size, offset, gregs_offset, fregs_offset, ctx_offset, num_fregs, frame_size;
+	int i, size, offset, gregs_offset, fregs_offset, ctx_offset, num_fregs, frame_size;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
+	guint8 *labels [16];
 
 	size = 512;
 	start = code = mono_global_codeman_reserve (size);
@@ -105,10 +113,19 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	arm_strx (code, ARMREG_R0, ARMREG_FP, ctx_offset);
 	/* Save gregs */
 	code = mono_arm_emit_store_regarray (code, MONO_ARCH_CALLEE_SAVED_REGS | (1 << ARMREG_FP), ARMREG_FP, gregs_offset);
-	/* No need to save/restore fregs, since we don't currently use them */
+	/* Save fregs */
+	for (i = 0; i < num_fregs; ++i)
+		arm_strfpx (code, ARMREG_D8 + i, ARMREG_FP, fregs_offset + (i * 8));
 
 	/* Load regs from ctx */
 	code = mono_arm_emit_load_regarray (code, MONO_ARCH_CALLEE_SAVED_REGS, ARMREG_R0, MONO_STRUCT_OFFSET (MonoContext, regs));
+	/* Load fregs */
+	arm_ldrx (code, ARMREG_IP0, ARMREG_R0, MONO_STRUCT_OFFSET (MonoContext, has_fregs));
+	labels [0] = code;
+	arm_cbzx (code, ARMREG_IP0, 0);
+	for (i = 0; i < num_fregs; ++i)
+		arm_ldrfpx (code, ARMREG_D8 + i, ARMREG_R0, MONO_STRUCT_OFFSET (MonoContext, fregs) + ((i + 8) * sizeof (MonoContextSimdReg)));
+	mono_arm_patch (labels [0], code, MONO_R_ARM64_CBZ);
 	/* Load fp */
 	arm_ldrx (code, ARMREG_FP, ARMREG_R0, MONO_STRUCT_OFFSET (MonoContext, regs) + (ARMREG_FP * 8));
 
@@ -126,13 +143,16 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 
 	/* Restore regs */
 	code = mono_arm_emit_load_regarray (code, MONO_ARCH_CALLEE_SAVED_REGS, ARMREG_FP, gregs_offset);
+	/* Restore fregs */
+	for (i = 0; i < num_fregs; ++i)
+		arm_ldrfpx (code, ARMREG_D8 + i, ARMREG_FP, fregs_offset + (i * 8));
 	/* Destroy frame */
 	code = mono_arm_emit_destroy_frame (code, frame_size, (1 << ARMREG_IP0));
 	arm_retx (code, ARMREG_LR);
 
 	g_assert ((code - start) < size);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create ("call_filter", start, code - start, ji, unwind_ops);
@@ -229,7 +249,7 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 
 	g_assert ((code - start) < size);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create (tramp_name, start, code - start, ji, unwind_ops);
@@ -354,7 +374,7 @@ mono_arch_exceptions_init (void)
 void
 mono_arm_throw_exception (gpointer arg, mgreg_t pc, mgreg_t *int_regs, gdouble *fp_regs, gboolean corlib, gboolean rethrow)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoContext ctx;
 	MonoObject *exc = NULL;
 	guint32 ex_token_index, ex_token;
@@ -373,17 +393,19 @@ mono_arm_throw_exception (gpointer arg, mgreg_t pc, mgreg_t *int_regs, gdouble *
 	/* Initialize a ctx based on the arguments */
 	memset (&ctx, 0, sizeof (MonoContext));
 	memcpy (&(ctx.regs [0]), int_regs, sizeof (mgreg_t) * 32);
-	memcpy (&(ctx.fregs [ARMREG_D8]), fp_regs, sizeof (double) * 8);
+	for (int i = 0; i < 8; i++)
+		*((gdouble*)&ctx.fregs [ARMREG_D8 + i]) = fp_regs [i];
+	ctx.has_fregs = 1;
 	ctx.pc = pc;
 
-	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, &error)) {
+	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		}
 	}
-	mono_error_assert_ok (&error);
+	mono_error_assert_ok (error);
 
 	mono_handle_exception (&ctx, exc);
 
@@ -401,7 +423,9 @@ mono_arm_resume_unwind (gpointer arg, mgreg_t pc, mgreg_t *int_regs, gdouble *fp
 	/* Initialize a ctx based on the arguments */
 	memset (&ctx, 0, sizeof (MonoContext));
 	memcpy (&(ctx.regs [0]), int_regs, sizeof (mgreg_t) * 32);
-	memcpy (&(ctx.fregs [ARMREG_D8]), fp_regs, sizeof (double) * 8);
+	for (int i = 0; i < 8; i++)
+		*((gdouble*)&ctx.fregs [ARMREG_D8 + i]) = fp_regs [i];
+	ctx.has_fregs = 1;
 	ctx.pc = pc;
 
 	mono_resume_unwind (&ctx);
@@ -438,7 +462,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		memcpy (regs, &new_ctx->regs, sizeof (mgreg_t) * 32);
 		/* v8..v15 are callee saved */
-		memcpy (regs + MONO_MAX_IREGS, &(new_ctx->fregs [8]), sizeof (mgreg_t) * 8);
+		for (int i = 0; i < 8; i++)
+			(regs + MONO_MAX_IREGS) [i] = *((mgreg_t*)&new_ctx->fregs [8 + i]);
 
 		mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start, 
 						   (guint8*)ji->code_start + ji->code_size,
@@ -446,7 +471,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 						   save_locations, MONO_MAX_IREGS, &cfa);
 
 		memcpy (&new_ctx->regs, regs, sizeof (mgreg_t) * 32);
-		memcpy (&(new_ctx->fregs [8]), regs + MONO_MAX_IREGS, sizeof (mgreg_t) * 8);
+		for (int i = 0; i < 8; i++)
+			*((mgreg_t*)&new_ctx->fregs [8 + i]) = (regs + MONO_MAX_IREGS) [i];
 
 		new_ctx->pc = regs [ARMREG_LR];
 		new_ctx->regs [ARMREG_SP] = (mgreg_t)cfa;
@@ -461,23 +487,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		return TRUE;
 	} else if (*lmf) {
-		if (((gsize)(*lmf)->previous_lmf) & 2) {
-			/* 
-			 * This LMF entry is created by the soft debug code to mark transitions to
-			 * managed code done during invokes.
-			 */
-			MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
-
-			g_assert (ext->debugger_invoke);
-
-			memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
-
-			*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
-
-			frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
-
-			return TRUE;
-		}
+		g_assert ((((guint64)(*lmf)->previous_lmf) & 2) == 0);
 
 		frame->type = FRAME_TYPE_MANAGED_TO_NATIVE;
 
@@ -510,7 +520,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 static void
 handle_signal_exception (gpointer obj)
 {
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
@@ -535,7 +545,7 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	/*
 	 * Resume into the normal stack and handle the exception there.
 	 */
-	jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	jit_tls = mono_tls_get_jit_tls ();
 
 	/* Pass the ctx parameter in TLS */
 	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
@@ -584,4 +594,10 @@ void
 mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 {
 	MONO_CONTEXT_SET_IP (ctx,func);
+}
+
+void
+mono_arch_undo_ip_adjustment (MonoContext *ctx)
+{
+	ctx->pc++;
 }

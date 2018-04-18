@@ -45,7 +45,7 @@ namespace Xamarin.ApiDiff {
 			if (base.Equals (source, target, changes))
 				return true;
 
-			var change = new ApiChange ();
+			var change = new ApiChange (GetDescription (source));
 			change.Header = "Modified " + GroupName;
 			change.Append ("public event ");
 

@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
 using System.Collections.Specialized;
 using System.IO;
 using System.Security.Principal;
@@ -137,21 +135,28 @@ namespace System.Net {
 			} 
 		}
 
+		[MonoTODO]
 		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol, TimeSpan keepAliveInterval)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol, int receiveBufferSize, TimeSpan keepAliveInterval)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol, int receiveBufferSize, TimeSpan keepAliveInterval, ArraySegment<byte> internalBuffer)
 		{
 			throw new NotImplementedException ();
 		}
 	}
 }
-#endif
-

@@ -244,10 +244,8 @@ sbb_imm: dest:i src1:i len:12
 br_reg: src1:i len:8
 bigmul: len:8 dest:l src1:i src2:i
 bigmul_un: len:8 dest:l src1:i src2:i
-tls_get: len:24 dest:i clob:c
-tls_get_reg: len:28 dest:i src1:i clob:c
-tls_set: len:24 src1:i clob:c
-tls_set_reg: len:28 src1:i src2:i clob:c
+tls_get: len:16 dest:i
+tls_set: len:16 src1:i clob:c
 
 # 32 bit opcodes
 int_add: dest:i src1:i src2:i len:4
@@ -300,9 +298,9 @@ arm_rsc_imm: dest:i src1:i len:4
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
 dummy_iconst: dest:i len:0
 dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -406,3 +404,5 @@ atomic_store_r4: dest:b src1:f len:80
 atomic_store_r8: dest:b src1:f len:32
 
 generic_class_init: src1:a len:44 clob:c
+
+fill_prof_call_ctx: src1:i len:128

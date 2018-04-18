@@ -7,7 +7,7 @@
 **
 ** Class:  File
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Long paths

@@ -92,7 +92,7 @@ namespace System.ServiceModel.Dispatcher
             }
 
             // To
-#pragma warning suppress 56506 // [....], Message.Headers can never be null
+#pragma warning suppress 56506 // Microsoft, Message.Headers can never be null
             Uri to = message.Headers.To;
             Uri actingAs = this.address.Uri;
 
