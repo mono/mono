@@ -64,7 +64,9 @@ endef
 
 llvm_llvm64_CMAKE_FLAGS = -DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64"
 # We only use this for the cross compiler so it needs no architectures/tools
-llvm_llvm32_CMAKE_FLAGS = -DLLVM_BUILD_32_BITS=On -DLLVM_TARGETS_TO_BUILD="" -DLLVM_BUILD_TOOLS=Off -DLLVM_BUILD_UTILS=Off
+# Some products might only build llvm32 so disable this for now
+#llvm_llvm32_CMAKE_FLAGS = -DLLVM_BUILD_32_BITS=On -DLLVM_TARGETS_TO_BUILD="" -DLLVM_BUILD_TOOLS=Off -DLLVM_BUILD_UTILS=Off
+llvm_llvm32_CMAKE_FLAGS = -DLLVM_BUILD_32_BITS=On
 
 $(eval $(call LLVMTemplate,llvm32,i386))
 $(eval $(call LLVMTemplate,llvm64,x86_64))
