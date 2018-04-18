@@ -255,7 +255,7 @@ ves_real_abort (int line, MonoMethod *mh,
 	g_print ("0x%04x %02x\n", ip-(const unsigned short *) header->code, *ip);
 	mono_metadata_free_mh (header);
 	if (sp > stack)
-		printf ("\t[%ld] 0x%08x %0.5f\n", sp-stack, sp[-1].data.i, sp[-1].data.f);
+		printf ("\t[%lld] 0x%08x %0.5f\n", (gint64) (sp - stack), sp[-1].data.i, sp[-1].data.f);
 }
 
 #define ves_abort() \
