@@ -4039,7 +4039,10 @@ mini_init (const char *filename, const char *runtime_version)
 		callbacks.interp_get_remoting_invoke = mini_get_interp_callbacks ()->get_remoting_invoke;
 #endif
 	callbacks.get_weak_field_indexes = mono_aot_get_weak_field_indexes;
+
+#ifdef TARGET_OSX
 	callbacks.runtime_telemetry_callback = mini_register_sigterm_handler;
+#endif
 
 	mono_install_callbacks (&callbacks);
 
