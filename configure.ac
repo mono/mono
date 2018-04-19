@@ -4959,7 +4959,6 @@ AC_OUTPUT([
 Makefile
 mono-uninstalled.pc
 acceptance-tests/Makefile
-llvm/Makefile
 scripts/mono-find-provides
 scripts/mono-find-requires
 mono/Makefile
