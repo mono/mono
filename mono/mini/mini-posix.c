@@ -210,19 +210,19 @@ MONO_SIG_HANDLER_FUNC (static, sigabrt_signal_handler)
 	}
 }
 
+#ifdef TARGET_OSX
 MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 {
 	MONO_SIG_HANDLER_INFO_TYPE *info = MONO_SIG_HANDLER_GET_INFO ();
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
-#ifdef TARGET_OSX
 	if (mono_merp_enabled ())
 		mono_handle_native_crash ("SIGTERM", ctx, info);
-#endif
 
 	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 	exit (1);
 }
+#endif
 
 #if (defined (USE_POSIX_BACKEND) && defined (SIGRTMIN)) || defined (SIGPROF)
 #define HAVE_PROFILER_SIGNAL
@@ -375,14 +375,14 @@ remove_signal_handler (int signo)
 	}
 }
 
+#ifdef TARGET_OSX
 void
 mini_register_sigterm_handler (void)
 {
-#ifdef TARGET_OSX
 	/* always catch SIGTERM, conditionals inside of handler */
 	add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
-#endif
 }
+#endif
 
 void
 mono_runtime_posix_install_handlers (void)
