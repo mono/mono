@@ -1908,11 +1908,6 @@ mono_empty_compile (MonoCompile *cfg)
 	}
 	cfg->headers_to_free = NULL;
 
-	if (cfg->coverage_info) {
-		mono_profiler_coverage_free(cfg->method, cfg->coverage_info);
-		cfg->coverage_info = NULL;
-	}
-
 	if (cfg->mempool) {
 	//mono_mempool_stats (cfg->mempool);
 		mono_mempool_destroy (cfg->mempool);
