@@ -8491,7 +8491,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			gboolean constrained_partial_call = FALSE;
 			MonoMethod *cil_method;
 			gboolean common_call = FALSE;
-			gboolean tailcall_remove_ret = FALSE;
+			const gboolean tailcall_remove_ret = FALSE;
 
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
