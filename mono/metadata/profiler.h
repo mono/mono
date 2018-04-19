@@ -38,6 +38,8 @@ typedef struct {
 	uint32_t column;
 } MonoProfilerCoverageData;
 
+typedef struct _MonoDomainCoverage MonoDomainCoverage;
+
 typedef mono_bool (*MonoProfilerCoverageFilterCallback) (MonoProfiler *prof, MonoMethod *method);
 typedef void (*MonoProfilerCoverageCallback) (MonoProfiler *prof, const MonoProfilerCoverageData *data);
 
