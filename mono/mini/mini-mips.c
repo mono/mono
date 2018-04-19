@@ -5864,3 +5864,9 @@ mono_arch_opcode_supported (int opcode)
 {
 	return FALSE;
 }
+
+gboolean
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+{
+	return FALSE;
+}
