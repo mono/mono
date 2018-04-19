@@ -5,7 +5,7 @@ class MonoLlvmPackage (GitHubPackage):
 
     def __init__(self):
         GitHubPackage.__init__(self, 'mono', 'llvm', '3.0',
-                               revision='8b1520c8aae53e219cf80cdc0f02ad96600887d6',
+                               revision='fbbfbae4fea3902d069d50cf882edf09e19131d2',
                                configure_flags=[
                                    '--enable-optimized',
                                    '--enable-assertions=no',
