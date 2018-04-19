@@ -129,7 +129,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]];
 	   #The following tests are not passing yet, so enabling them would make us perma-red
 	   #${TESTCMD} --label=mini-corlib --timeout=60m make -C sdks/wasm run-all-corlib
 	   #${TESTCMD} --label=mini-system --timeout=60m make -C sdks/wasm run-all-system
-	   ${TESTCMD} --label=mini-system-core --timeout=60m make -C sdks/wasm run-system-all-core
+	   ${TESTCMD} --label=mini-system-core --timeout=60m make -C sdks/wasm run-all-system-core
 	   ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
 	   exit 0
 fi
