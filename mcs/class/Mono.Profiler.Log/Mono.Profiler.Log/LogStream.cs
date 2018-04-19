@@ -4,14 +4,17 @@
 
 using System;
 using System.IO;
+using System.Threading;
 
 namespace Mono.Profiler.Log {
 
 	public class LogStream : Stream {
 
+		protected CancellationToken Token { get; }
+
 		public Stream BaseStream { get; }
 
-		public virtual bool EndOfStream => BaseStream.Position == BaseStream.Length;
+		public virtual bool EndOfStream => BaseStream.Position == BaseStream.Length | Token.IsCancellationRequested;
 
 		public override bool CanRead => true;
 
@@ -28,7 +31,7 @@ namespace Mono.Profiler.Log {
 
 		readonly byte[] _byteBuffer = new byte [1];
 
-		public LogStream (Stream baseStream)
+		public LogStream (Stream baseStream, CancellationToken token)
 		{
 			if (baseStream == null)
 				throw new ArgumentNullException (nameof (baseStream));
@@ -37,6 +40,7 @@ namespace Mono.Profiler.Log {
 				throw new ArgumentException ("Stream does not support reading.", nameof (baseStream));
 
 			BaseStream = baseStream;
+			Token = token;
 		}
 
 		protected override void Dispose (bool disposing)
