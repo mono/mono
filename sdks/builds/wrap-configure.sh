@@ -43,10 +43,20 @@ if ! "$@" > ".stamp-configure-$D.log" 2>&1; then
 	if [[ x"$FAILED" == "x1" ]]; then
 		echo "Configuring $D failed:"
 		sed "s/^/    /" < ".stamp-configure-$D.log"
-		echo
-		echo "    *** config.log *** "
-		echo
-		sed "s/^/    /" < config.log
+
+		# Only show config.log if building on CI (jenkins/wrench)
+		SHOW_CONFIG_LOG=0
+		if test -n "$JENKINS_HOME"; then
+			SHOW_CONFIG_LOG=1
+		elif test -n "$BUILD_REVISION"; then
+			SHOW_CONFIG_LOG=1
+		fi
+		if [[ x$SHOW_CONFIG_LOG == x1 ]]; then
+			echo
+			echo "    *** config.log *** "
+			echo
+			sed "s/^/    /" < config.log
+		fi
 		exit 1
 	fi
 fi
