@@ -62,8 +62,8 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 .stamp-jsvu:
-	npm install jsvu -g
-	jsvu --os=$(JSVU_OS) --engines=all
+	npm install
+	node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=all
 	touch $@
 
 .PHONY: toolchain
