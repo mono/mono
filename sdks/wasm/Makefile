@@ -50,7 +50,7 @@ APP_SOURCES = \
 
 MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
 
-TEST_DEPS = $(patsubst %,managed/%,$(BCL_ASSEMBLIES)) managed/nunitlite.dll
+TEST_DEPS = $(patsubst %,managed/%,$(BCL_ASSEMBLIES))
 TEST_MCS_DEPS = $(patsubst %,-r:%, $(TEST_DEPS))
 
 UNAME := $(shell uname -s)
@@ -105,38 +105,29 @@ managed/:
 $(patsubst %,managed/%,$(BCL_ASSEMBLIES)): managed/%: $(WASM_BCL_DIR)/% | managed/
 	cp $< $@
 
-$(TOP)/mcs/class/lib/wasm/nunitlite.dll: FORCE
-	$(MAKE) -C $(TOP)/mcs/tools/nunit-lite PROFILE=wasm
-
 #FIXME change BCL sdk build to include nunitlite.dll in out/bcl/wasm/
-managed/nunitlite.dll: $(TOP)/mcs/class/lib/wasm/nunitlite.dll | managed/
-	cp $< $@
-
-managed/main.exe: $(TEST_DEPS) $(APP_SOURCES) | managed/
-	$(CSC) /debug:portable /noconfig /nostdlib /unsafe -out:$@ $(TEST_MCS_DEPS) $(APP_SOURCES)
-
-$(TOP)/mcs/class/lib/wasm/tests/wasm_corlib_test.dll: FORCE
+.stamp-bcl-test-deps: | managed/
+	$(MAKE) -C $(TOP)/mcs/tools/nunit-lite PROFILE=wasm
 	$(MAKE) -C "$(TOP)/mcs/class/corlib" test-local PROFILE=wasm
-
-managed/wasm_corlib_test.dll: $(TOP)/mcs/class/lib/wasm/tests/wasm_corlib_test.dll
-	cp $< $@
-
-$(TOP)/mcs/class/lib/wasm/tests/wasm_System_test.dll: FORCE
 	$(MAKE) -C "$(TOP)/mcs/class/System" test-local PROFILE=wasm
-
-managed/wasm_System_test.dll: $(TOP)/mcs/class/lib/wasm/tests/wasm_System_test.dll
-	cp $< $@
-
-$(TOP)/mcs/class/lib/wasm/tests/wasm_System.Core_test.dll: FORCE
 	$(MAKE) -C "$(TOP)/mcs/class/System.Core" test-local PROFILE=wasm
+	cp $(TOP)/mcs/class/lib/wasm/nunitlite.dll managed/
+	cp $(TOP)/mcs/class/lib/wasm/tests/wasm_corlib_test.dll managed/
+	cp $(TOP)/mcs/class/lib/wasm/tests/wasm_System_test.dll managed/
+	cp $(TOP)/mcs/class/lib/wasm/tests/wasm_System.Core_test.dll managed/
+	touch $@
 
-managed/wasm_System.Core_test.dll: $(TOP)/mcs/class/lib/wasm/tests/wasm_System.Core_test.dll
-	cp $< $@
+#TODO recognize F=1 and kill .stamp_bcl_test_deps
+.PHONY: bcl-test-deps
+bcl-test-deps: .stamp-bcl-test-deps
 
-managed/mini_tests.dll: $(TEST_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs | managed/
-	$(CSC) /debug:portable /nostdlib /noconfig /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(TEST_MCS_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs 
+managed/main.exe: .stamp-bcl-test-deps $(TEST_DEPS) $(APP_SOURCES) | managed/
+	$(CSC) /debug:portable /noconfig /nostdlib /unsafe -out:$@ $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(APP_SOURCES)
 
-build-managed: managed/nunitlite.dll managed/mini_tests.dll managed/main.exe managed/wasm_corlib_test.dll managed/wasm_System_test.dll managed/wasm_System.Core_test.dll
+managed/mini_tests.dll: .stamp-bcl-test-deps $(TEST_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs | managed/
+	$(CSC) /debug:portable /nostdlib /noconfig /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(MINI_TEST_SOURCES) mini-test-runner.cs
+
+build-managed: bcl-test-deps managed/mini_tests.dll managed/main.exe
 
 build: build-native build-managed
 
