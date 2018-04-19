@@ -564,6 +564,20 @@ mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
 	return info;
 }
 
+void mono_profiler_coverage_free (MonoMethod* method, MonoProfilerCoverageInfo* info)
+{
+	if (!mono_profiler_state.code_coverage)
+		return;
+
+	coverage_lock ();
+
+	g_hash_table_remove(mono_profiler_state.coverage_hash, method);
+
+	coverage_unlock ();
+
+	g_free (info);
+}
+
 /**
  * mono_profiler_enable_sampling:
  *

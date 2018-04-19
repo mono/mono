@@ -113,6 +113,7 @@ mono_profiler_installed (void)
 }
 
 MonoProfilerCoverageInfo *mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries);
+void mono_profiler_coverage_free (MonoMethod* method, MonoProfilerCoverageInfo* info);
 
 struct _MonoProfilerCallContext {
 	/*
