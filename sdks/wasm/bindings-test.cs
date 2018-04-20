@@ -31,6 +31,12 @@ public class TestClass {
 		string_res = s;
 	}
 
+	public static string mkstr;
+	public static string InvokeMkString() {
+		mkstr = "lalalala";
+		return mkstr;
+	}
+
 	public static object obj1;
 	public static object InvokeObj1(object obj)
 	{
@@ -43,6 +49,14 @@ public class TestClass {
 	{
 		obj2 = obj;
 		return obj;
+	}
+
+
+	public static object mkobj;
+	public static object InvokeMkobj()
+	{
+		mkobj = new object ();
+		return mkobj;
 	}
 }
 
@@ -77,6 +91,20 @@ public class BindingTests {
 	}
 
 	[Test]
+	public static void MarshalStringToJS ()
+	{
+		TestClass.mkstr = TestClass.string_res = null;
+		Runtime.InvokeJS (@"
+			var str = call_test_method (""InvokeMkString"", ""o"", [ ]);
+			call_test_method (""InvokeString"", ""s"", [ str ]);
+		");
+		Assert.IsNotNull(TestClass.mkstr);
+
+		Assert.AreEqual (TestClass.mkstr, TestClass.string_res);
+
+	}
+
+	[Test]
 	public static void JSObjectKeepIdentityAcrossCalls ()
 	{
 		TestClass.obj1 = TestClass.obj2 = null;
@@ -87,6 +115,21 @@ public class BindingTests {
 		");
 
 		Assert.IsNotNull(TestClass.obj1);
+		Assert.AreSame(TestClass.obj1, TestClass.obj2);
+	}
+
+	[Test]
+	public static void CSObjectKeepIdentityAcrossCalls ()
+	{
+		TestClass.mkobj = TestClass.obj1 = TestClass.obj2 = null;
+		Runtime.InvokeJS (@"
+			var obj = call_test_method (""InvokeMkobj"", """", [ ]);
+			var res = call_test_method (""InvokeObj1"", ""o"", [ obj ]);
+			call_test_method (""InvokeObj2"", ""o"", [ res ]);
+		");
+
+		Assert.IsNotNull(TestClass.obj1);
+		Assert.AreSame(TestClass.mkobj, TestClass.obj1);
 		Assert.AreSame(TestClass.obj1, TestClass.obj2);
 	}
 	
