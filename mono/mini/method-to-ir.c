@@ -2381,6 +2381,22 @@ set_rgctx_arg (MonoCompile *cfg, MonoCallInst *call, int rgctx_reg, MonoInst *rg
 #endif
 }	
 
+static gboolean
+should_check_stack_pointer (MonoCompile *cfg)
+{
+	// This logic is shared by mini_emit_calli_full and is_supported_tailcall,
+	// in order to compute tailcall_supported earlier. Alternatively it could be passed
+	// out from mini_emit_calli_full -- if it has not been copied around
+	// or decisions made based on it.
+
+	WrapperInfo *info;
+
+	return cfg->check_pinvoke_callconv &&
+		cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE &&
+		((info = mono_marshal_get_wrapper_info (cfg->method))) &&
+		info->subtype == WRAPPER_SUBTYPE_PINVOKE;
+}
+
 static MonoInst*
 mini_emit_calli_full (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args, MonoInst *addr,
 	MonoInst *imt_arg, MonoInst *rgctx_arg, gboolean tailcall)
@@ -2388,24 +2404,17 @@ mini_emit_calli_full (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **arg
 	MonoCallInst *call;
 	MonoInst *ins;
 	int rgctx_reg = -1;
-	gboolean check_sp = FALSE;
-
-	// This logic is duplicated in mini_emit_calli_full and is_supported_tailcall,
-	// in order to compute tailcall_supported earlier. Alternatively it could be passed
-	// out from here -- assuming it has not been copied around
-	// or decisions made based on it.
-	if (cfg->check_pinvoke_callconv && cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
-		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
-
-		check_sp = info && info->subtype == WRAPPER_SUBTYPE_PINVOKE;
-	}
-
-	g_assert (!check_sp || !tailcall);
 
 	if (rgctx_arg) {
 		rgctx_reg = mono_alloc_preg (cfg);
 		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, rgctx_reg, rgctx_arg->dreg);
 	}
+
+	const gboolean check_sp = should_check_stack_pointer (cfg);
+
+	// Checking stack pointer requires running code after a function call, prevents tailcall.
+	// Caller needs to have decided that earlier.
+	g_assert (!check_sp || !tailcall);
 
 	if (check_sp) {
 		if (!cfg->stack_inbalance_var)
@@ -7214,9 +7223,6 @@ is_supported_tailcall (MonoCompile *cfg, const guint8 *ip, MonoMethod *method, M
 		//
 		// Interface method dispatch has the same problem.
 		|| IS_NOT_SUPPORTED_TAILCALL ((vtable_arg || imt_arg) && !cfg->backend->have_volatile_non_param_register)
-
-		// FIXME?
-		//|| IS_NOT_SUPPORTED_TAILCALL (vtable_arg || cfg->gshared)
 		) {
 		tailcall_calli = FALSE;
 		tailcall = FALSE;
@@ -7258,14 +7264,8 @@ is_supported_tailcall (MonoCompile *cfg, const guint8 *ip, MonoMethod *method, M
 		goto exit;
 	}
 #endif
-	// This logic is duplicated in mini_emit_calli_full and is_supported_tailcall,
-	// in order to compute tailcall_supported earlier. Alternatively it could be passed
-	// out from mini_emit_calli_full -- assuming it has not been copied around
-	// or decisions made based on it.
-	if (tailcall_calli && cfg->check_pinvoke_callconv && cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
-		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
-		tailcall_calli = !IS_NOT_SUPPORTED_TAILCALL (info && info->subtype == WRAPPER_SUBTYPE_PINVOKE); // check_sp = TRUE
-	}
+	// See check_sp in mini_emit_calli_full.
+	tailcall_calli = tailcall_calli && !IS_NOT_SUPPORTED_TAILCALL (should_check_stack_pointer (cfg));
 exit:
 	tailcall_print ("tail.%s %s -> %s tailcall:%d tailcall_calli:%d gshared:%d vtable_arg:%d imt_arg:%d virtual_:%d\n",
 			mono_opcode_name (*ip), method->name, cmethod->name, tailcall, tailcall_calli,
@@ -9006,10 +9006,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					GSHAREDVT_FAILURE (*ip);
 
 				if (cfg->backend->have_generalized_imt_trampoline && cfg->backend->gshared_supported && cmethod->wrapper_type == MONO_WRAPPER_NONE) {
-
 					virtual_generic_imt = TRUE;
 					g_assert (!imt_arg);
-					g_assert (context_used || cmethod->is_inflated);
+					if (!context_used)
+						g_assert (cmethod->is_inflated);
 
 					imt_arg = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_METHOD);
 					g_assert (imt_arg);
@@ -9048,7 +9048,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					if (tailcall) {
 						/* Prevent inlining of methods with tailcalls (the call stack would be altered) */
 						INLINE_FAILURE ("tailcall");
-						// FIXME? leaks imt_arg, vtable_arg?
 					}
 					common_call = TRUE;
 					goto call_end;
