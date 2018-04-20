@@ -7205,13 +7205,23 @@ is_supported_tailcall (MonoCompile *cfg, const guint8 *ip, MonoMethod *method, M
 		|| IS_NOT_SUPPORTED_TAILCALL (cfg->method->save_lmf)
 		|| IS_NOT_SUPPORTED_TAILCALL (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
 
+		// http://www.mono-project.com/docs/advanced/runtime/docs/generic-sharing/
+		//
+		// 1. Non-generic non-static methods of reference types have access to the
+		//    RGCTX via the “this” argument (this->vtable->rgctx).
+		// 2. a Non-generic static methods of reference types and b. non-generic methods
+		//    of value types need to be passed a pointer to the caller’s class’s VTable in the MONO_ARCH_RGCTX_REG register.
+		// 3. Generic methods need to be passed a pointer to the MRGCTX in the MONO_ARCH_RGCTX_REG register
+		//
+		// That is what vtable_arg is here (always?).
+		//
 		// Passing vtable_arg uses (requires?) a volatile non-parameter register,
 		// such as AMD64 rax, r10, r11, or the return register on many architectures.
 		// ARM32 does not always clearly have such a register. ARM32's return register
 		// is a parameter register.
-		// iPhone could use r9 except on ancient systems. iPhone/ARM32 is not particularly
+		// iPhone could use r9 except on old systems. iPhone/ARM32 is not particularly
 		// important. Linux/arm32 is less clear.
-		// ARM32's scratch r12 is likely not viable.
+		// ARM32's scratch r12 might work but only with much collateral change.
 		//
 		// Imagine F1 calls F2, and F2 tailcalls F3.
 		// F2 and F3 are managed. F1 is native.
@@ -7221,7 +7231,12 @@ is_supported_tailcall (MonoCompile *cfg, const guint8 *ip, MonoMethod *method, M
 		// scheme where the extra parameter is not merely an extra parameter, but
 		// passed "outside of the ABI".
 		//
-		// Interface method dispatch has the same problem.
+		// If all native to managed transitions are intercepted and wrapped (w/o tailcall),
+		// then they can preserve this register and the rest of the managed callgraph
+		// treat it as volatile.
+		//
+		// Interface method dispatch has the same problem (imt_arg).
+
 		|| IS_NOT_SUPPORTED_TAILCALL ((vtable_arg || imt_arg) && !cfg->backend->have_volatile_non_param_register)
 		) {
 		tailcall_calli = FALSE;
@@ -9026,17 +9041,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			/* FIXME: runtime generic context pointer for jumps? */
 			/* FIXME: handle this for generic sharing eventually */
 
-			// http://www.mono-project.com/docs/advanced/runtime/docs/generic-sharing/
-			// 1. Non-generic non-static methods of reference types have access to the
-			//    RGCTX via the “this” argument (this->vtable->rgctx).
-			// 2. a Non-generic static methods of reference types and b. non-generic methods
-			//    of value types need to be passed a pointer to the caller’s class’s VTable in the MONO_ARCH_RGCTX_REG register.
-			// 3. Generic methods need to be passed a pointer to the MRGCTX in the MONO_ARCH_RGCTX_REG register
-			//
 			// tailcall means "the backend can and will handle it".
-			//
 			// inst_tailcall means the tail. prefix is present.
-
 			gboolean tailcall_calli_temp = FALSE;
 			const gboolean tailcall = inst_tailcall && is_supported_tailcall (cfg, ip, method, cmethod, fsig,
 						virtual_, vtable_arg, imt_arg, &tailcall_calli_temp);
