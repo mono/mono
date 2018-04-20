@@ -114,7 +114,7 @@ if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
         ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j4 -C sdks/builds provision-android
         ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j4 -C sdks/builds provision-mxe
-        ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j4 --keep-going --output-sync=target -C sdks/builds package-android-{armeabi,armeabi-v7a,arm64-v8a,x86,x86_64} package-android-host-{Darwin,mxe-Win64} package-llvm-{llvm32,llvm64,llvmwin32,llvmwin64}
+        ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j4 --trace --keep-going --output-sync=target -C sdks/builds package-android-{armeabi,armeabi-v7a,arm64-v8a,x86,x86_64} package-android-host-{Darwin,mxe-Win64} package-llvm-{llvm32,llvm64,llvmwin32,llvmwin64}
         exit 0
 fi
 
