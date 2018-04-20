@@ -93,8 +93,6 @@ struct _Il2CppEmptyStruct
 
 TYPED_HANDLE_DECL (MonoObject);
 TYPED_HANDLE_DECL (MonoReflectionAssembly);
-Il2CppMonoDefaults il2cpp_mono_defaults;
-Il2CppMonoDebugOptions il2cpp_mono_debug_options;
 
 typedef void (*Il2CppMonoProfileFunc) (MonoProfiler *prof);
 typedef void (*Il2CppMonoProfileAppDomainFunc) (MonoProfiler *prof, MonoDomain *domain);
