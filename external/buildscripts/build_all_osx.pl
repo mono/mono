@@ -66,11 +66,13 @@ system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", @p
 
 if ($artifact)
 {
-	print(">>> Creating universal binaries\n");
-	# Merge stuff in the embedruntimes directory
-	my $embedDirRoot = "$buildsroot/embedruntimes";
-	my $embedDirDestination = "$embedDirRoot/osx";
+	print(">>> Copying libMonoPosixHelper.dylib to lib directory\n");
 
+	my $libDir = "$buildsroot/monodistribution/lib";
+	if (!(-d $libDir))
+	{
+		system("mkdir -p $libDir");
+	}
 
-
+	system("cp","$buildsroot/embedruntimes/osx/libMonoPosixHelper.dylib", "$libDir/")
 }
