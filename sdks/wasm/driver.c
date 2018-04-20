@@ -66,6 +66,7 @@ const char* mono_image_get_name (MonoImage *image);
 const char* mono_class_get_name (MonoClass *klass);
 MonoString* mono_string_new (MonoDomain *domain, const char *text);
 void mono_add_internal_call (const char *name, const void* method);
+void mono_dl_wasm_add_internal_pinvoke (const char *library_name, const char *name, void *ptr);
 MonoString * mono_string_from_utf16 (char *data);
 MonoString* mono_string_new (MonoDomain *domain, const char *text);
 void mono_wasm_enable_debugging (void);
