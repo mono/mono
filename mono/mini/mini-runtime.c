@@ -4332,7 +4332,7 @@ register_icalls (void)
 	register_opcode_emulation (OP_IMUL_OVF_UN, "__emul_op_imul_ovf_un", "int32 int32 int32", mono_imul_ovf_un, "mono_imul_ovf_un", FALSE);
 #endif
 
-#if defined(MONO_ARCH_EMULATE_MUL_DIV) || defined(MONO_ARCH_SOFT_FLOAT_FALLBACK)
+#if defined(MONO_ARCH_EMULATE_MUL_DIV) || MONO_ARCH_SOFT_FLOAT_FALLBACK
 	register_opcode_emulation (OP_FDIV, "__emul_fdiv", "double double double", mono_fdiv, "mono_fdiv", FALSE);
 #endif
 
@@ -4367,7 +4367,6 @@ register_icalls (void)
 	register_opcode_emulation (OP_RREM, "__emul_rrem", "float float float", fmodf, "fmodf", FALSE);
 #endif
 
-#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
 	if (mono_arch_is_soft_float ()) {
 		register_opcode_emulation (OP_FSUB, "__emul_fsub", "double double double", mono_fsub, "mono_fsub", FALSE);
 		register_opcode_emulation (OP_FADD, "__emul_fadd", "double double double", mono_fadd, "mono_fadd", FALSE);
@@ -4382,9 +4381,8 @@ register_icalls (void)
 		register_opcode_emulation (OP_FCONV_TO_U1, "__emul_fconv_to_u1", "uint8 double", mono_fconv_u1, "mono_fconv_u1", FALSE);
 		register_opcode_emulation (OP_FCONV_TO_U2, "__emul_fconv_to_u2", "uint16 double", mono_fconv_u2, "mono_fconv_u2", FALSE);
 
-#if SIZEOF_VOID_P == 4
-		register_opcode_emulation (OP_FCONV_TO_I, "__emul_fconv_to_i", "int32 double", mono_fconv_i4, "mono_fconv_i4", FALSE);
-#endif
+		if (SIZEOF_VOID_P == 4)
+			register_opcode_emulation (OP_FCONV_TO_I, "__emul_fconv_to_i", "int32 double", mono_fconv_i4, "mono_fconv_i4", FALSE);
 
 		register_opcode_emulation (OP_FBEQ, "__emul_fcmp_eq", "uint32 double double", mono_fcmp_eq, "mono_fcmp_eq", FALSE);
 		register_opcode_emulation (OP_FBLT, "__emul_fcmp_lt", "uint32 double double", mono_fcmp_lt, "mono_fcmp_lt", FALSE);
@@ -4408,7 +4406,7 @@ register_icalls (void)
 		register_icall (mono_fload_r4_arg, "mono_fload_r4_arg", "uint32 double", FALSE);
 		register_icall (mono_isfinite, "mono_isfinite", "uint32 double", FALSE);
 	}
-#endif
+
 	register_icall (mono_ckfinite, "mono_ckfinite", "double double", FALSE);
 
 #ifdef COMPRESSED_INTERFACE_BITMAP

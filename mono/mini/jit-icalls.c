@@ -466,181 +466,209 @@ mono_imul_ovf_un (guint32 a, guint32 b)
 }
 #endif
 
-#if defined(MONO_ARCH_EMULATE_MUL_DIV) || defined(MONO_ARCH_SOFT_FLOAT_FALLBACK)
 double
 mono_fdiv (double a, double b)
 {
+#if defined(MONO_ARCH_EMULATE_MUL_DIV) || MONO_ARCH_SOFT_FLOAT_FALLBACK
 	return a / b;
-}
+#else
+	g_assert_not_reached ();
 #endif
-
-#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
+}
 
 double
 mono_fsub (double a, double b)
 {
+	mono_soft_float_reached ();
 	return a - b;
 }
 
 double
 mono_fadd (double a, double b)
 {
+	mono_soft_float_reached ();
 	return a + b;
 }
 
 double
 mono_fmul (double a, double b)
 {
+	mono_soft_float_reached ();
 	return a * b;
 }
 
 double
 mono_fneg (double a)
 {
+	mono_soft_float_reached ();
 	return -a;
 }
 
 double
 mono_fconv_r4 (double a)
 {
+	mono_soft_float_reached ();
 	return (float)a;
 }
 
 double
 mono_conv_to_r8 (int a)
 {
+	mono_soft_float_reached ();
 	return (double)a;
 }
 
 double
 mono_conv_to_r4 (int a)
 {
+	mono_soft_float_reached ();
 	return (double)(float)a;
 }
 
 gint8
 mono_fconv_i1 (double a)
 {
+	mono_soft_float_reached ();
 	return (gint8)a;
 }
 
 gint16
 mono_fconv_i2 (double a)
 {
+	mono_soft_float_reached ();
 	return (gint16)a;
 }
 
 gint32
 mono_fconv_i4 (double a)
 {
+	mono_soft_float_reached ();
 	return (gint32)a;
 }
 
 guint8
 mono_fconv_u1 (double a)
 {
+	mono_soft_float_reached ();
 	return (guint8)a;
 }
 
 guint16
 mono_fconv_u2 (double a)
 {
+	mono_soft_float_reached ();
 	return (guint16)a;
 }
 
 gboolean
 mono_fcmp_eq (double a, double b)
 {
+	mono_soft_float_reached ();
 	return a == b;
 }
 
 gboolean
 mono_fcmp_ge (double a, double b)
 {
+	mono_soft_float_reached ();
 	return a >= b;
 }
 
 gboolean
 mono_fcmp_gt (double a, double b)
 {
+	mono_soft_float_reached ();
 	return a > b;
 }
 
 gboolean
 mono_fcmp_le (double a, double b)
 {
+	mono_soft_float_reached ();
 	return a <= b;
 }
 
 gboolean
 mono_fcmp_lt (double a, double b)
 {
+	mono_soft_float_reached ();
 	return a < b;
 }
 
 gboolean
 mono_fcmp_ne_un (double a, double b)
 {
+	mono_soft_float_reached ();
 	return isunordered (a, b) || a != b;
 }
 
 gboolean
 mono_fcmp_ge_un (double a, double b)
 {
+	mono_soft_float_reached ();
 	return isunordered (a, b) || a >= b;
 }
 
 gboolean
 mono_fcmp_gt_un (double a, double b)
 {
+	mono_soft_float_reached ();
 	return isunordered (a, b) || a > b;
 }
 
 gboolean
 mono_fcmp_le_un (double a, double b)
 {
+	mono_soft_float_reached ();
 	return isunordered (a, b) || a <= b;
 }
 
 gboolean
 mono_fcmp_lt_un (double a, double b)
 {
+	mono_soft_float_reached ();
 	return isunordered (a, b) || a < b;
 }
 
 gboolean
 mono_fceq (double a, double b)
 {
+	mono_soft_float_reached ();
 	return a == b;
 }
 
 gboolean
 mono_fcgt (double a, double b)
 {
+	mono_soft_float_reached ();
 	return a > b;
 }
 
 gboolean
 mono_fcgt_un (double a, double b)
 {
+	mono_soft_float_reached ();
 	return isunordered (a, b) || a > b;
 }
 
 gboolean
 mono_fclt (double a, double b)
 {
+	mono_soft_float_reached ();
 	return a < b;
 }
 
 gboolean
 mono_fclt_un (double a, double b)
 {
+	mono_soft_float_reached ();
 	return isunordered (a, b) || a < b;
 }
 
 gboolean
 mono_isfinite (double a)
 {
+	mono_soft_float_reached ();
 #ifdef HAVE_ISFINITE
 	return isfinite (a);
 #else
@@ -652,12 +680,14 @@ mono_isfinite (double a)
 double
 mono_fload_r4 (float *ptr)
 {
+	mono_soft_float_reached ();
 	return *ptr;
 }
 
 void
 mono_fstore_r4 (double val, float *ptr)
 {
+	mono_soft_float_reached ();
 	*ptr = (float)val;
 }
 
@@ -665,11 +695,10 @@ mono_fstore_r4 (double val, float *ptr)
 guint32
 mono_fload_r4_arg (double val)
 {
+	mono_soft_float_reached ();
 	float v = (float)val;
 	return *(guint32*)&v;
 }
-
-#endif
 
 MonoArray *
 mono_array_new_va (MonoMethod *cm, ...)
@@ -998,10 +1027,8 @@ mono_fconv_ovf_i8 (double v)
 guint64
 mono_fconv_ovf_u8 (double v)
 {
-	guint64 res;
-
 /*
- * The soft-float implementation of some ARM devices have a buggy guin64 to double
+ * The soft-float implementation of some ARM devices have a buggy guint64 to double
  * conversion that it looses precision even when the integer if fully representable
  * as a double.
  * 
@@ -1009,19 +1036,21 @@ mono_fconv_ovf_u8 (double v)
  * 
  * To work around this issue we test for value boundaries instead. 
  */
-#if defined(__arm__) && defined(MONO_ARCH_SOFT_FLOAT_FALLBACK)
-	if (isnan (v) || !(v >= -0.5 && v <= ULLONG_MAX+0.5)) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
-		return 0;
+#if defined(__arm__)
+	if (MONO_ARCH_SOFT_FLOAT_FALLBACK) {
+		if (isnan (v) || !(v >= -0.5 && v <= ULLONG_MAX+0.5)) {
+			mono_set_pending_exception (mono_get_exception_overflow ());
+			return 0;
+		}
+		return (guint64)v;
 	}
-	res = (guint64)v;
-#else
+#endif
+	guint64 res;
 	res = (guint64)v;
 	if (isnan(v) || trunc (v) != res) {
 		mono_set_pending_exception (mono_get_exception_overflow ());
 		return 0;
 	}
-#endif
 	return res;
 }
 

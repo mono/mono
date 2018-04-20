@@ -95,8 +95,11 @@
 
 #ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
 #define COMPILE_SOFT_FLOAT(cfg) (!COMPILE_LLVM ((cfg)) && mono_arch_is_soft_float ())
+#define mono_soft_float_reached() /* nothing */
 #else
+#define MONO_ARCH_SOFT_FLOAT_FALLBACK (0)
 #define COMPILE_SOFT_FLOAT(cfg) (0)
+#define mono_soft_float_reached() g_assert_not_reached ()
 #endif
 
 #define NOT_IMPLEMENTED do { g_assert_not_reached (); } while (0)
@@ -2192,7 +2195,7 @@ gboolean  mono_arch_have_fast_tls               (void);
 void      mono_arch_register_icall              (void);
 #endif
 
-#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
+#if MONO_ARCH_SOFT_FLOAT_FALLBACK
 gboolean  mono_arch_is_soft_float               (void);
 #else
 static inline MONO_ALWAYS_INLINE gboolean

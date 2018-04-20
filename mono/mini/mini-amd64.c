@@ -49,6 +49,7 @@
 #include "mini-gc.h"
 #include "mini-runtime.h"
 #include "aot-runtime.h"
+#include "jit-icalls.h"
 
 #ifdef MONO_XEN_OPT
 static gboolean optimize_for_xen = TRUE;

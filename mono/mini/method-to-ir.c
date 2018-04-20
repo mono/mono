@@ -2239,9 +2239,6 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 {
 	MonoType *sig_ret;
 	MonoCallInst *call;
-#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
-	int i;
-#endif
 
 	if (cfg->llvm_only) {
 		if (tailcall)
@@ -2307,14 +2304,13 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	} else if (!MONO_TYPE_IS_VOID (sig_ret))
 		call->inst.dreg = alloc_dreg (cfg, (MonoStackType)call->inst.type);
 
-#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
 	if (COMPILE_SOFT_FLOAT (cfg)) {
 		/* 
 		 * If the call has a float argument, we would need to do an r8->r4 conversion using 
 		 * an icall, but that cannot be done during the call sequence since it would clobber
 		 * the call registers + the stack. So we do it before emitting the call.
 		 */
-		for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
+		for (int i = 0; i < sig->param_count + sig->hasthis; ++i) {
 			MonoType *t;
 			MonoInst *in = call->args [i];
 
@@ -2336,7 +2332,6 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 			}
 		}
 	}
-#endif
 
 	call->need_unbox_trampoline = unbox_trampoline;
 
@@ -4259,10 +4254,6 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 	MonoMethodHeaderSummary header;
 	MonoVTable *vtable;
 	int limit;
-#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
-	MonoMethodSignature *sig = mono_method_signature (method);
-	int i;
-#endif
 
 	if (cfg->disable_inline)
 		return FALSE;
@@ -4375,16 +4366,15 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 			return FALSE;
 	}
 
-#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
 	if (mono_arch_is_soft_float ()) {
+		MonoMethodSignature *sig = mono_method_signature (method);
 		/* FIXME: */
 		if (sig->ret && sig->ret->type == MONO_TYPE_R4)
 			return FALSE;
-		for (i = 0; i < sig->param_count; ++i)
+		for (int i = 0; i < sig->param_count; ++i)
 			if (!sig->params [i]->byref && sig->params [i]->type == MONO_TYPE_R4)
 				return FALSE;
 	}
-#endif
 
 	if (g_list_find (cfg->dont_inline, method))
 		return FALSE;
@@ -7335,7 +7325,6 @@ emit_setret (MonoCompile *cfg, MonoInst *val)
 			ins->klass = mono_class_from_mono_type (ret_type);
 		}
 	} else {
-#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
 		if (COMPILE_SOFT_FLOAT (cfg) && !ret_type->byref && ret_type->type == MONO_TYPE_R4) {
 			MonoInst *iargs [1];
 			MonoInst *conv;
@@ -7346,9 +7335,6 @@ emit_setret (MonoCompile *cfg, MonoInst *val)
 		} else {
 			mono_arch_emit_setret (cfg, cfg->method, val);
 		}
-#else
-		mono_arch_emit_setret (cfg, cfg->method, val);
-#endif
 	}
 }
 
