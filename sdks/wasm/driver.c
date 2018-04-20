@@ -143,14 +143,14 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 		var str = UTF8ToString ($0);
 		try {
 			var res = eval (str);
-			if (res === null)
+			if (res === null || res == undefined)
 				return 0;
 			res = res.toString ();
 			setValue ($1, 0, "i32");
 		} catch (e) {
 			res = e.toString ();
 			setValue ($1, 1, "i32");
-			if (res === null)
+			if (res === null || res === undefined)
 				res = "unknown exception";
 		}
 		var buff = Module._malloc((res.length + 1) * 2);
@@ -273,7 +273,7 @@ mono_wasm_get_obj_type (MonoObject *obj)
 }
 
 
-EMSCRIPTEN_KEEPALIVE long long
+EMSCRIPTEN_KEEPALIVE int
 mono_unbox_int (MonoObject *obj)
 {
 	if (!obj)
@@ -294,10 +294,9 @@ mono_unbox_int (MonoObject *obj)
 		return *(int*)ptr;
 	case MONO_TYPE_U4:
 		return *(unsigned int*)ptr;
-	case MONO_TYPE_I8:
-		return *(long long*)ptr;
-	case MONO_TYPE_U8:
-		return *(unsigned long long*)ptr;
+	// WASM doesn't support returning longs to JS
+	// case MONO_TYPE_I8:
+	// case MONO_TYPE_U8:
 	default:
 		printf ("Invalid type %d to mono_unbox_int\n", mono_type_get_type (type));
 		return 0;

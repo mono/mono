@@ -2,8 +2,17 @@
 if (print == undefined)
 	print = console.log;
 
-if (console.warn === undefined)
-	console.warn = console.log;
+
+if (console != undefined) {
+	var has_console_warn = false;
+	try {
+		if (console.warn != undefined)
+			has_console_warn = true;
+	} catch(e) {}
+
+	if (!has_console_warn)
+		console.warn = console.log;
+}
 
 fail_exec = function(reason) {
 	print (reason);
@@ -64,7 +73,7 @@ var Module = {
 	},
 };
 
-var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "Mono.Security.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll", "wasm_System_test.dll", "wasm_System.Core_test.dll" ];
+var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "Mono.Security.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll", "wasm_System_test.dll", "wasm_System.Core_test.dll", "binding_tests.dll" ];
 
 load ("mono.js");
 Module.finish_loading ();
@@ -200,7 +209,7 @@ function extract_mono_obj(js_obj) {
 		return 0;
 
 	if (!js_obj.__mono_gchandle__) {
-		js_obj.__mono_gchandle__ = wasm_binding_obj_new(js_objects_table.length);
+		js_obj.__mono_gchandle__ = wasm_binding_obj_new(js_objects_table.length + 1);
 		js_objects_table.push(js_obj);
 	}
 
@@ -208,17 +217,15 @@ function extract_mono_obj(js_obj) {
 }
 
 function extract_js_obj(mono_obj) {
-	print("extract_js_obj " + mono_obj);
 	if (mono_obj == 0)
 		return null;
 
 	var js_id = wasm_get_js_id(mono_obj);
-	print("js_id " + js_id);
 	if (js_id > 0)
-		return js_objects_table [js_id];
+		return js_objects_table [js_id - 1];
 
 	var js_obj = {
-		__mono_gchandle__: wasm_bind_existing(mono_obj, js_objects_table.length),
+		__mono_gchandle__: wasm_bind_existing(mono_obj, js_objects_table.length + 1),
 		is_mono_bridged_obj: true
 	};
 
@@ -248,6 +255,7 @@ function unbox_mono_obj(mono_obj) {
 	}
 }
 
+//test driver support code
 var bad_semd_msg_detected = false;
 function mono_send_msg (key, val) {
 	try {
@@ -264,7 +272,6 @@ var main_module = assembly_load ("main")
 if (!main_module)
 	throw 1;
 
-
 var driver_class = find_class (main_module, "", "Driver")
 if (!driver_class)
 	throw 2;
@@ -275,7 +282,10 @@ if (!send_message)
 
 
 //Ok, this is temporary
-var wasm_runtime = find_class (main_module, "WebAssembly", "Runtime")
+//this is a super big hack (move it to a decently named assembly, at the very least)
+var binding_test_module = assembly_load ("binding_tests");
+
+var wasm_runtime = find_class (binding_test_module, "WebAssembly", "Runtime")
 if (!wasm_runtime)
 	throw 4;
 
@@ -294,6 +304,19 @@ var get_raw_mono_obj = find_method (wasm_runtime, "GetMonoObject", -1)
 if (!send_message)
 	throw 8;
 
+//binding test suite support code
+var binding_test_class = find_class (binding_test_module, "", "TestClass");
+if (!binding_test_class)
+	throw 9;
+
+function call_test_method(method_name, signature, args)
+{
+	var target_method = find_method (binding_test_class, method_name, -1)
+	if (!target_method)
+		throw "Could not find " + method_name;
+
+	return call_method (target_method, null, signature, args);
+}
 
 print ("-----LOADED ----");
 

@@ -48,6 +48,11 @@ APP_SOURCES = \
 	main.cs	\
 	incrementalrunner.cs
 
+BINDING_TEST_SOURCES = \
+	bindings.cs	\
+	bindings-test.cs
+
+
 MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
 
 TEST_DEPS = $(patsubst %,managed/%,$(BCL_ASSEMBLIES))
@@ -127,7 +132,10 @@ managed/main.exe: .stamp-bcl-test-deps $(TEST_DEPS) $(APP_SOURCES) | managed/
 managed/mini_tests.dll: .stamp-bcl-test-deps $(TEST_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs | managed/
 	$(CSC) /debug:portable /nostdlib /noconfig /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(MINI_TEST_SOURCES) mini-test-runner.cs
 
-build-managed: bcl-test-deps managed/mini_tests.dll managed/main.exe
+managed/binding_tests.dll: .stamp-bcl-test-deps $(TEST_DEPS) $(BINDING_TEST_SOURCES) | managed/
+	$(CSC) /debug:portable /nostdlib /noconfig /unsafe -target:library -out:$@ $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(BINDING_TEST_SOURCES)
+
+build-managed: bcl-test-deps managed/binding_tests.dll managed/mini_tests.dll managed/main.exe
 
 build: build-native build-managed
 
