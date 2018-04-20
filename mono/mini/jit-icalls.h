@@ -110,56 +110,6 @@ MonoString *mono_helper_ldstr_mscorlib (guint32 idx);
 
 MonoObject *mono_helper_newobj_mscorlib (guint32 idx);
 
-double mono_fsub (double a, double b);
-
-double mono_fadd (double a, double b);
-
-double mono_fmul (double a, double b);
-
-double mono_fneg (double a);
-
-double mono_fconv_r4 (double a);
-
-gint8 mono_fconv_i1 (double a);
-
-gint16 mono_fconv_i2 (double a);
-
-gint32 mono_fconv_i4 (double a);
-
-guint8 mono_fconv_u1 (double a);
-
-guint16 mono_fconv_u2 (double a);
-
-gboolean mono_fcmp_eq (double a, double b);
-
-gboolean mono_fcmp_ge (double a, double b);
-
-gboolean mono_fcmp_gt (double a, double b);
-
-gboolean mono_fcmp_le (double a, double b);
-
-gboolean mono_fcmp_lt (double a, double b);
-
-gboolean mono_fcmp_ne_un (double a, double b);
-
-gboolean mono_fcmp_ge_un (double a, double b);
-
-gboolean mono_fcmp_gt_un (double a, double b);
-
-gboolean mono_fcmp_le_un (double a, double b);
-
-gboolean mono_fcmp_lt_un (double a, double b);
-
-gboolean mono_fceq (double a, double b);
-
-gboolean mono_fcgt (double a, double b);
-
-gboolean mono_fcgt_un (double a, double b);
-
-gboolean mono_fclt (double a, double b);
-
-gboolean mono_fclt_un (double a, double b);
-
 gboolean mono_isfinite (double a);
 
 double   mono_fload_r4 (float *ptr);

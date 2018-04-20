@@ -2607,4 +2607,7 @@ gboolean    mono_class_is_magic_float (MonoClass *klass);
 MonoInst*   mono_emit_native_types_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 MonoType*   mini_native_type_replace_type (MonoType *type) MONO_LLVM_INTERNAL;
 
+void
+mono_register_icalls_soft_float (void);
+
 #endif /* __MONO_MINI_H__ */
