@@ -7171,6 +7171,8 @@ is_jit_optimizer_disabled (MonoMethod *m)
 static gboolean
 is_not_supported_tailcall_helper (gboolean value, const char *svalue, MonoMethod *method, MonoMethod *cmethod)
 {
+	// Return value, printing if it inhibits tailcall.
+
 	if (value && tailcall_print_enabled ()) {
 		const char *lparen = strchr (svalue, ' ') ? "(" : "";
 		const char *rparen = *lparen ? ")" : "";
@@ -7280,7 +7282,8 @@ is_supported_tailcall (MonoCompile *cfg, const guint8 *ip, MonoMethod *method, M
 	}
 #endif
 	// See check_sp in mini_emit_calli_full.
-	tailcall_calli = tailcall_calli && !IS_NOT_SUPPORTED_TAILCALL (should_check_stack_pointer (cfg));
+	if (tailcall_calli && IS_NOT_SUPPORTED_TAILCALL (should_check_stack_pointer (cfg)))
+		tailcall_calli = FALSE;
 exit:
 	tailcall_print ("tail.%s %s -> %s tailcall:%d tailcall_calli:%d gshared:%d vtable_arg:%d imt_arg:%d virtual_:%d\n",
 			mono_opcode_name (*ip), method->name, cmethod->name, tailcall, tailcall_calli,
