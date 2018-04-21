@@ -12,9 +12,21 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
 namespace WebAssembly {
+	/*
+	TODO:
+		Expose annotated C# type to JS
+		Add property fetch to JSObject
+		Add typed method invoke support (get a delegate?)
+		Delegate marshaling
+		Task marshalling
+		Add JS helpers to fetch wrapped methods, like to Module.cwrap
+	*/
 	public sealed class Runtime {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern string InvokeJS (string str, out int exceptional_result);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object InvokeJSWithArgs (int js_obj_handle, string method, object[] _params, out int exceptional_result);
 
 		public static string InvokeJS (string str)
 		{
@@ -28,7 +40,7 @@ namespace WebAssembly {
 		static Dictionary<int, JSObject> bound_objects = new Dictionary<int, JSObject>();
 		static Dictionary<object, JSObject> raw_to_js = new Dictionary<object, JSObject>();
 
-		public static int BindJSObject (int js_id) {
+		static int BindJSObject (int js_id) {
 			JSObject obj;
 			if (bound_objects.ContainsKey (js_id))
 				obj = bound_objects [js_id];
@@ -38,7 +50,7 @@ namespace WebAssembly {
 			return (int)(IntPtr)obj.Handle;
 		}
 
-		public static int BindExistingObject (object raw_obj, int js_id) {
+		static int BindExistingObject (object raw_obj, int js_id) {
 			JSObject obj;
 			if (raw_obj is JSObject)
 				obj =(JSObject)raw_obj;
@@ -50,7 +62,7 @@ namespace WebAssembly {
 			return (int)(IntPtr)obj.Handle;
 		}
 
-		public static int GetJSObjectId (object raw_obj) {
+		static int GetJSObjectId (object raw_obj) {
 			JSObject obj = null;
 			if (raw_obj is JSObject)
 				obj =(JSObject)raw_obj;
@@ -62,12 +74,23 @@ namespace WebAssembly {
 			return js_handle;
 		}
 
-		public static object GetMonoObject (int gc_handle) {
+		static object GetMonoObject (int gc_handle) {
 			GCHandle h = (GCHandle)(IntPtr)gc_handle;
 			JSObject o = (JSObject)h.Target;
 			if (o != null && o.RawObject != null)
 				return o.RawObject;
 			return o;
+		}
+
+		static object BoxInt (int i) {
+			return i;
+		}
+		static object BoxDouble (double d) {
+			return d;
+		}
+
+		static object BoxBool (int b) {
+			return b == 0 ? false : true;
 		}
 	}
 
@@ -89,6 +112,14 @@ namespace WebAssembly {
 			this.JSHandle = js_id;
 			this.Handle = GCHandle.Alloc (this);
 			this.RawObject = raw_obj;
+		}
+
+		public object Invoke (string method, params object[] args) {
+			int exception = 0;
+			var res = Runtime.InvokeJSWithArgs (JSHandle, method, args, out exception);
+			if (exception != 0)
+				throw new JSException ((string)res);
+			return res;
 		}
 
 		public override string ToString () {

@@ -80,9 +80,13 @@ typedef struct MonoString_ MonoString;
 typedef struct MonoClass_ MonoClass;
 typedef struct MonoImage_ MonoImage;
 typedef struct MonoObject_ MonoObject;
+typedef struct MonoArray_ MonoArray;
 typedef struct MonoThread_ MonoThread;
 typedef struct _MonoAssemblyName MonoAssemblyName;
 
+
+//JS funcs
+extern MonoObject* mono_wasm_invoke_js_with_args (int js_handle, MonoString *method, MonoArray *args, int *is_exception);
 
 void mono_jit_set_aot_mode (MonoAotMode mode);
 MonoDomain*  mono_jit_init_version (const char *root_domain_name, const char *runtime_version);
@@ -117,6 +121,12 @@ void mono_add_internal_call (const char *name, const void* method);
 MonoString * mono_string_from_utf16 (char *data);
 MonoString* mono_string_new (MonoDomain *domain, const char *text);
 void mono_wasm_enable_debugging (void);
+
+#define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
+#define mono_array_addr(array,type,index) ((type*)(void*) mono_array_addr_with_size (array, sizeof (type), index))
+
+char* mono_array_addr_with_size (MonoArray *array, int size, int idx);
+int mono_array_length (MonoArray *array);
 
 static char*
 m_strdup (const char *str)
@@ -180,6 +190,7 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	root_domain = mono_jit_init_version ("mono", "v4.0.30319");
 
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJS", mono_wasm_invoke_js);
+	mono_add_internal_call ("WebAssembly.Runtime::InvokeJSWithArgs", mono_wasm_invoke_js_with_args);
 }
 
 EMSCRIPTEN_KEEPALIVE MonoAssembly*
@@ -320,4 +331,17 @@ mono_wasm_unbox_float (MonoObject *obj)
 		printf ("Invalid type %d to mono_wasm_unbox_float\n", mono_type_get_type (type));
 		return 0;
 	}
+}
+
+
+EMSCRIPTEN_KEEPALIVE int
+mono_wasm_array_length (MonoArray *array)
+{
+	return mono_array_length (array);
+}
+
+EMSCRIPTEN_KEEPALIVE MonoObject*
+mono_wasm_array_get (MonoArray *array, int idx)
+{
+	return mono_array_get (array, MonoObject*, idx);
 }

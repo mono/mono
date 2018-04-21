@@ -51,12 +51,26 @@ public class TestClass {
 		return obj;
 	}
 
-
 	public static object mkobj;
 	public static object InvokeMkobj()
 	{
 		mkobj = new object ();
 		return mkobj;
+	}
+
+	public static int first_val, second_val;
+	public static void PlayWithObj(JSObject obj) {
+		first_val = (int)obj.Invoke ("inc");;
+		second_val = (int)obj.Invoke("add", 20);
+	}
+
+	public static object[] js_objs;
+	public static void PlayWithObjTypes (JSObject obj) {
+		js_objs = new object[4];
+		js_objs [0] = obj.Invoke ("return_int");
+		js_objs [1] = obj.Invoke ("return_double");
+		js_objs [2] = obj.Invoke ("return_string");
+		js_objs [3] = obj.Invoke ("return_bool");
 	}
 }
 
@@ -132,5 +146,44 @@ public class BindingTests {
 		Assert.AreSame(TestClass.mkobj, TestClass.obj1);
 		Assert.AreSame(TestClass.obj1, TestClass.obj2);
 	}
-	
+
+	[Test]
+	public static void JSInvokeInt() {
+		Runtime.InvokeJS (@"
+			var obj = {
+				foo: 10,
+				inc: function() {
+					var c = this.foo;
+					++this.foo;
+					return c;
+				},
+				add: function(val){
+					return this.foo + val;
+				}
+			};
+			call_test_method (""PlayWithObj"", ""o"", [ obj ]);
+		");
+
+		Assert.AreEqual (TestClass.first_val, 10);
+		Assert.AreEqual (TestClass.second_val, 31);
+	}
+
+	[Test]
+	public static void JSInvokeTypes() {
+		Runtime.InvokeJS (@"
+			var obj = {
+				return_int: function() { return 100; },
+				return_double: function() { return 4.5; },
+				return_string: function() { return 'qwerty'; },
+				return_bool: function() { return true; },
+			};
+			call_test_method (""PlayWithObjTypes"", ""o"", [ obj ]);
+		");
+
+		Assert.AreEqual (TestClass.js_objs [0], 100);
+		Assert.AreEqual (TestClass.js_objs [1], 4.5);
+		Assert.AreEqual (TestClass.js_objs [2], "qwerty");
+		Assert.AreEqual (TestClass.js_objs [3], true);
+	}
+
 }
