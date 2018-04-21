@@ -3,6 +3,7 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">net_4_x</Platform>
     <ProjectGuid>{373D6B6E-485C-405E-BD6A-8AA5A5C3160F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,612</NoWarn>
