@@ -2056,10 +2056,11 @@ mono_assembly_open_predicate (const char *filename, MonoAssemblyContextKind asmc
 		return NULL;
 	}
 
-	if (asmctx == MONO_ASMCTX_LOADFROM) {
+	if (asmctx == MONO_ASMCTX_LOADFROM || asmctx == MONO_ASMCTX_INDIVIDUAL) {
 		/* This is a "fun" one now.
-		 * For LoadFrom ("/basedir/some.dll"), apparently what we're meant to do is:
-		 *   1. probe the assembly name from some.dll
+		 * For LoadFrom ("/basedir/some.dll") or LoadFile("/basedir/some.dll") or Load(byte[])),
+		 * apparently what we're meant to do is:
+		 *   1. probe the assembly name from some.dll (or the byte array)
 		 *   2. apply binding redirects
 		 *   3. If we get some other different name, drop this image and use
 		 *      the binding redirected name to probe.
