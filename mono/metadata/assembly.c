@@ -371,6 +371,9 @@ exact_sn_match (MonoAssemblyName *wanted_name, MonoAssemblyName *candidate_name)
 static gboolean
 framework_assembly_sn_match (MonoAssemblyName *wanted_name, MonoAssemblyName *candidate_name);
 
+static const char *
+mono_asmctx_get_name (const MonoAssemblyContext *asmctx);
+
 static gchar*
 encode_public_tok (const guchar *token, gint32 len)
 {
@@ -1464,6 +1467,13 @@ mono_assembly_load_reference (MonoImage *image, int index)
 	mono_assembly_get_assemblyref (image, index, &aname);
 
 	if (image->assembly) {
+		if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY)) {
+			char *aname_str = mono_stringify_assembly_name (&aname);
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Loading reference %d of %s asmctx %s, looking for %s",
+				    index, image->name, mono_asmctx_get_name (&image->assembly->context),
+				    aname_str);
+			g_free (aname_str);
+		}
 		switch (mono_asmctx_get_kind (&image->assembly->context)) {
 		case MONO_ASMCTX_DEFAULT:
 			reference = load_reference_by_aname_default_asmctx (&aname, image->assembly, &status);
@@ -2401,7 +2411,7 @@ mono_assembly_load_from_predicate (MonoImage *image, const char *fname,
 	/* Add a non-temporary reference because of ass->image */
 	mono_image_addref (image);
 
-	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Image addref %s[%p] -> %s[%p]: %d", ass->aname.name, ass, image->name, image, image->ref_count);
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Image addref %s[%p] (asmctx %s) -> %s[%p]: %d", ass->aname.name, ass, mono_asmctx_get_name (&ass->context), image->name, image, image->ref_count);
 
 	/* 
 	 * The load hooks might take locks so we can't call them while holding the
@@ -2411,6 +2421,7 @@ mono_assembly_load_from_predicate (MonoImage *image, const char *fname,
 		/* FIXME: I think individual context should probably also look for an existing MonoAssembly here, we just need to pass the asmctx to the search hook so that it does a filename match (I guess?) */
 		ass2 = mono_assembly_invoke_search_hook_internal (&ass->aname, NULL, asmctx == MONO_ASMCTX_REFONLY, FALSE);
 		if (ass2) {
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Image %s[%p] reusing existing assembly %s[%p]", ass->aname.name, ass, ass2->aname.name, ass2);
 			g_free (ass);
 			g_free (base_dir);
 			mono_image_close (image);
@@ -4335,4 +4346,17 @@ MonoAssemblyContextKind
 mono_asmctx_get_kind (const MonoAssemblyContext *ctx)
 {
 	return ctx->kind;
+}
+
+static const char *
+mono_asmctx_get_name (const MonoAssemblyContext *asmctx)
+{
+	static const char* names [] = {
+		"DEFAULT",
+		"REFONLY",
+		"LOADFROM",
+		"INDIVIDIUAL",
+	};
+	g_assert (asmctx->kind >= 0 && asmctx->kind <= MONO_ASMCTX_LAST);
+	return names [asmctx->kind];
 }
