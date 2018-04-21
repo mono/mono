@@ -354,6 +354,8 @@ static MonoAssembly*
 mono_assembly_invoke_search_hook_internal (MonoAssemblyName *aname, MonoAssembly *requesting, gboolean refonly, gboolean postload);
 static MonoAssembly*
 mono_assembly_load_full_internal (MonoAssemblyName *aname, MonoAssembly *requesting, const char *basedir, MonoAssemblyContextKind asmctx, MonoImageOpenStatus *status);
+static MonoAssembly*
+mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname, const char *basedir, MonoAssemblyContextKind asmctx, MonoImageOpenStatus *status);
 static MonoBoolean
 mono_assembly_is_in_gac (const gchar *filanem);
 static MonoAssemblyName*
@@ -3787,12 +3789,8 @@ mono_assembly_load_full_nosearch (MonoAssemblyName *aname,
 
 {
 	MonoAssembly *result;
-	char *fullpath, *filename;
 	MonoAssemblyName maped_aname;
 	MonoAssemblyName maped_name_pp;
-	int ext_index;
-	const char *ext;
-	int len;
 
 	aname = mono_assembly_remap_version (aname, &maped_aname);
 
@@ -3812,6 +3810,26 @@ mono_assembly_load_full_nosearch (MonoAssemblyName *aname,
 		return result;
 	}
 
+	return mono_assembly_load_full_gac_base_default (aname, basedir, asmctx, status);
+}
+
+/* Like mono_assembly_load_full_nosearch, but don't ask the preload look (ie,
+ * the appdomain) to run.  Just looks in the gac, the specified base dir or the
+ * default_path.  Does NOT look in the appdomain application base or in the
+ * MONO_PATH.
+ */
+MonoAssembly*
+mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
+					  const char *basedir,
+					  MonoAssemblyContextKind asmctx,
+					  MonoImageOpenStatus *status)
+{
+	MonoAssembly *result;
+	char *fullpath, *filename;
+	int ext_index;
+	const char *ext;
+	int len;
+
 	/* Currently we retrieve the loaded corlib for reflection 
 	 * only requests, like a common reflection only assembly 
 	 */
@@ -3827,6 +3845,8 @@ mono_assembly_load_full_nosearch (MonoAssemblyName *aname,
 		predicate_ud = aname;
 	}
 #endif
+
+	const gboolean refonly = asmctx == MONO_ASMCTX_REFONLY;
 
 	len = strlen (aname->name);
 	for (ext_index = 0; ext_index < 2; ext_index ++) {
