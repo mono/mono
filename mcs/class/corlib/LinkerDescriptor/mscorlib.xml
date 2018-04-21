@@ -4,7 +4,6 @@
 	
 		<!-- domain.c: mono_defaults.appdomain_class -->
 		<type fullname="System.AppDomain" preserve="fields">
-			<method name="DoDomainUnload" />
 			<!-- appdomain.c: mono_domain_try_type_resolve -->
 			<method name="DoTypeResolve" />
 			<!-- appdomain.c: mono_try_assembly_resolve -->
@@ -506,13 +505,6 @@
 			note: there's no fields (static type) but that will mark the type itself -->
 		<type fullname="System.Math" preserve="fields" />
 
-		<type fullname="System.Reflection.MonoAssembly">
-			<method name=".ctor" />
-		</type>
-		<type fullname="System.Reflection.MonoModule">
-			<method name=".ctor" />
-		</type>
-
 		<!-- appdomain.c: ves_icall_System_AppDomain_GetAssemblies -->
 		<type fullname="System.Reflection.Assembly" preserve="fields"/>
 
@@ -554,8 +546,12 @@
 		<type fullname="System.Reflection.MethodInfo" preserve="fields" />
 
 		<type fullname="System.Reflection.Module" preserve="fields" />
-		<type fullname="System.Reflection.MonoAssembly" preserve="fields" />
-		<type fullname="System.Reflection.MonoModule" preserve="fields" />
+		<type fullname="System.Reflection.MonoAssembly" preserve="fields" >
+			<method name=".ctor" />
+		</type>
+		<type fullname="System.Reflection.MonoModule" preserve="fields" >
+			<method name=".ctor" />
+		</type>
 		<type fullname="System.Reflection.MonoCMethod" preserve="fields" />
 		<type fullname="System.Reflection.MonoEvent" preserve="fields" />
 		<type fullname="System.Reflection.MonoEventInfo" preserve="fields" />
@@ -726,13 +722,18 @@
 		<type fullname="System.Runtime.Remoting.Messaging.CallContext" feature="remoting" >
 			<method name="SetCurrentCallContext" />
 		</type>
+
+		<!-- domain.c: mono_defaults.mono_method_message_class -->
 		<type fullname="System.Runtime.Remoting.Messaging.MonoMethodMessage" preserve="fields" feature="remoting" >
+			<!-- object.c: mono_message_init -->
 			<method name="InitMessage" />
 		</type>
+		<!-- domain.c: mono_defaults.real_proxy_class / removed with DISABLE_REMOTING -->
 		<type fullname="System.Runtime.Remoting.Proxies.RealProxy" preserve="fields" feature="remoting" >
 			<method name="PrivateInvoke" />
 			<method name="GetAppDomainTarget" />
 		</type>
+		<!-- domain.c: mono_defaults.transparent_proxy_class / removed with DISABLE_REMOTING -->
 		<type fullname="System.Runtime.Remoting.Proxies.TransparentProxy" preserve="fields" feature="remoting" >
 			<method name="LoadRemoteFieldNew" />
 			<method name="StoreRemoteField" />
@@ -742,18 +743,6 @@
 			<method name="DeserializeCallData" />
 			<method name="SerializeExceptionData" />
 		</type>
-
-		<!-- domain.c: mono_defaults.mono_method_message_class -->
-		<type fullname="System.Runtime.Remoting.Messaging.MonoMethodMessage" preserve="fields">
-			<!-- object.c: mono_message_init -->
-			<method name="InitMessage" />
-		</type>		
-
-		<!-- domain.c: mono_defaults.real_proxy_class / removed with DISABLE_REMOTING -->
-		<type fullname="System.Runtime.Remoting.Proxies.RealProxy" feature="remoting" />
-
-		<!-- domain.c: mono_defaults.transparent_proxy_class / removed with DISABLE_REMOTING -->
-		<type fullname="System.Runtime.Remoting.Proxies.TransparentProxy" feature="remoting" />
 
 		<!-- object.c: mono_object_new_specific_checked -->
 		<type fullname="System.Runtime.Remoting.Activation.ActivationServices" >

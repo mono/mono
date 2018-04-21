@@ -392,6 +392,7 @@ typedef struct {
 } MethodInfo;
 
 #define TICKS_PER_SEC 1000000000LL
+#define TICKS_PER_MSEC (TICKS_PER_SEC / 1000)
 
 static uint64_t
 current_time (void)
@@ -1364,7 +1365,7 @@ gc_event (MonoProfiler *profiler, MonoProfilerGCEvent ev, uint32_t generation, g
 			log_profiler.do_heap_walk = !(log_profiler.gc_count % log_config.hs_freq_gc);
 			break;
 		case MONO_PROFILER_HEAPSHOT_X_MS:
-			log_profiler.do_heap_walk = (current_time () - log_profiler.last_hs_time) / 1000 * 1000 >= log_config.hs_freq_ms;
+			log_profiler.do_heap_walk = (current_time () - log_profiler.last_hs_time) / TICKS_PER_MSEC >= log_config.hs_freq_ms;
 			break;
 		default:
 			g_assert_not_reached ();
@@ -1928,7 +1929,7 @@ method_leave (MonoProfiler *prof, MonoMethod *method, MonoProfilerCallContext *c
 }
 
 static void
-tail_call (MonoProfiler *prof, MonoMethod *method, MonoMethod *target)
+tailcall (MonoProfiler *prof, MonoMethod *method, MonoMethod *target)
 {
 	method_leave (prof, method, NULL);
 }
@@ -4217,7 +4218,7 @@ mono_profiler_init_log (const char *desc)
 	if (log_config.enter_leave) {
 		mono_profiler_set_method_enter_callback (handle, method_enter);
 		mono_profiler_set_method_leave_callback (handle, method_leave);
-		mono_profiler_set_method_tail_call_callback (handle, tail_call);
+		mono_profiler_set_method_tail_call_callback (handle, tailcall);
 		mono_profiler_set_method_exception_leave_callback (handle, method_exc_leave);
 	}
 

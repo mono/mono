@@ -2847,7 +2847,7 @@ static void
 emit_unbox_tramp (EmitContext *ctx, const char *method_name, LLVMTypeRef method_type, LLVMValueRef method, int method_index)
 {
 	/*
-	 * Emit unbox trampoline using a tail call
+	 * Emit unbox trampoline using a tailcall
 	 */
 	LLVMValueRef tramp, call, *args;
 	LLVMBuilderRef builder;
@@ -2896,7 +2896,7 @@ emit_unbox_tramp (EmitContext *ctx, const char *method_name, LLVMTypeRef method_
 		mono_llvm_add_instr_attr (call, 1 + linfo->vret_arg_pindex, LLVM_ATTR_STRUCT_RET);
 
 	// FIXME: This causes assertions in clang
-	//mono_llvm_set_must_tail (call);
+	//mono_llvm_set_must_tailcall (call);
 	if (LLVMGetReturnType (method_type) == LLVMVoidType ())
 		LLVMBuildRetVoid (builder);
 	else
@@ -3202,8 +3202,16 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	if (!ctx_ok (ctx))
 		return;
 
-	is_virtual = (ins->opcode == OP_VOIDCALL_MEMBASE || ins->opcode == OP_CALL_MEMBASE || ins->opcode == OP_VCALL_MEMBASE || ins->opcode == OP_LCALL_MEMBASE || ins->opcode == OP_FCALL_MEMBASE || ins->opcode == OP_RCALL_MEMBASE || ins->opcode == OP_TAILCALL_MEMBASE);
-	calli = !call->fptr_is_patch && (ins->opcode == OP_VOIDCALL_REG || ins->opcode == OP_CALL_REG || ins->opcode == OP_VCALL_REG || ins->opcode == OP_LCALL_REG || ins->opcode == OP_FCALL_REG || ins->opcode == OP_RCALL_REG);
+	int const opcode = ins->opcode;
+
+	is_virtual = opcode == OP_VOIDCALL_MEMBASE || opcode == OP_CALL_MEMBASE
+			|| opcode == OP_VCALL_MEMBASE || opcode == OP_LCALL_MEMBASE
+			|| opcode == OP_FCALL_MEMBASE || opcode == OP_RCALL_MEMBASE
+			|| opcode == OP_TAILCALL_MEMBASE;
+	calli = !call->fptr_is_patch && (opcode == OP_VOIDCALL_REG || opcode == OP_CALL_REG
+		|| opcode == OP_VCALL_REG || opcode == OP_LCALL_REG || opcode == OP_FCALL_REG
+		|| opcode == OP_RCALL_REG || opcode == OP_TAILCALL_REG);
+
 	/* Unused */
 	preserveall = FALSE;
 
@@ -3531,7 +3539,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	lcall = emit_call (ctx, bb, &builder, callee, args, LLVMCountParamTypes (llvm_sig));
 
 	if (ins->opcode != OP_TAILCALL && ins->opcode != OP_TAILCALL_MEMBASE && LLVMGetInstructionOpcode (lcall) == LLVMCall)
-		mono_llvm_set_call_notail (lcall);
+		mono_llvm_set_call_notailcall (lcall);
 
 	/*
 	 * Modify cconv and parameter attributes to pass rgctx/imt correctly.
@@ -5435,7 +5443,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 
 #ifdef TARGET_AMD64
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrinsic (ctx, "llvm.fabs"), args, 1, dname);
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrinsic (ctx, "llvm.fabs.f32"), args, 1, dname);
 #else
 			/* llvm.fabs not supported on all platforms */
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
@@ -6095,8 +6103,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_PADDW_SAT_UN:
 		case OP_PSUBB_SAT_UN:
 		case OP_PSUBW_SAT_UN:
-		case OP_PAVGB_UN:
-		case OP_PAVGW_UN:
 		case OP_PACKW:
 		case OP_PACKD:
 		case OP_PACKW_UN:
@@ -6109,6 +6115,35 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [1] = rhs;
 
 			values [ins->dreg] = LLVMBuildCall (builder, get_intrinsic (ctx, simd_op_to_intrins (ins->opcode)), args, 2, dname);
+			break;
+		}
+		case OP_PAVGB_UN:
+		case OP_PAVGW_UN: {
+			LLVMValueRef val, ones_vec;
+			LLVMValueRef ones [32];
+			int vector_size = LLVMGetVectorSize (LLVMTypeOf (lhs));
+			LLVMTypeRef ext_elem_type = vector_size == 16 ? LLVMInt16Type () : LLVMInt32Type ();
+			LLVMTypeRef ext_type = LLVMVectorType (ext_elem_type, vector_size);
+
+			for (int i = 0; i < 32; ++i)
+				ones [i] = LLVMConstInt (ext_elem_type, 1, FALSE);
+			ones_vec = LLVMConstVector (ones, vector_size);
+
+#if LLVM_API_VERSION >= 500
+			/* Have to increase the vector element size to prevent overflows */
+			/* res = trunc ((zext (lhs) + zext (rhs) + 1) >> 1) */
+			val = LLVMBuildAdd (builder, LLVMBuildZExt (builder, lhs, ext_type, ""), LLVMBuildZExt (builder, rhs, ext_type, ""), "");
+			val = LLVMBuildAdd (builder, val, ones_vec, "");
+			val = LLVMBuildLShr (builder, val, ones_vec, "");
+			values [ins->dreg] = LLVMBuildTrunc (builder, val, LLVMTypeOf (lhs), "");
+#else
+			LLVMValueRef args [2];
+
+			args [0] = lhs;
+			args [1] = rhs;
+
+			values [ins->dreg] = LLVMBuildCall (builder, get_intrinsic (ctx, simd_op_to_intrins (ins->opcode)), args, 2, dname);
+#endif
 			break;
 		}
 		case OP_PCMPEQB:
@@ -7459,7 +7494,7 @@ emit_method_inner (EmitContext *ctx)
 		g_assert (err == 0);
 #endif
 	} else {
-		//LLVMVerifyFunction(method, 0);
+		//LLVMVerifyFunction (method, 0);
 #if LLVM_API_VERSION > 100
 		MonoDomain *domain = mono_domain_get ();
 		MonoJitDomainInfo *domain_info;
@@ -8002,7 +8037,7 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_SQRT, "llvm.sqrt.f64"},
 	/* This isn't an intrinsic, instead llvm seems to special case it by name */
 	{INTRINS_FABS, "fabs"},
-	{INTRINS_ABSF, "llvm.fabs"},
+	{INTRINS_ABSF, "llvm.fabs.f32"},
 	{INTRINS_SINF, "llvm.sin.f32"},
 	{INTRINS_COSF, "llvm.cos.f32"},
 	{INTRINS_SQRTF, "llvm.sqrt.f32"},

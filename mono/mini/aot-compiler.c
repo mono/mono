@@ -205,6 +205,7 @@ typedef struct MonoAotOptions {
 	char *temp_path;
 	char *instances_logfile_path;
 	char *logfile;
+	char *llvm_opts;
 	gboolean dump_json;
 	gboolean profile_only;
 } MonoAotOptions;
@@ -3608,6 +3609,12 @@ get_plt_entry (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 			res->llvm_symbol = g_strdup_printf ("%s_%s_llvm", res->symbol, res->debug_sym);
 		else
 			res->llvm_symbol = g_strdup_printf ("%s_llvm", res->symbol);
+		if (strstr (res->llvm_symbol, acfg->temp_prefix) == res->llvm_symbol) {
+			/* The llvm symbol shouldn't be temporary, since the llvm generated object file references it */
+			char *tmp = res->llvm_symbol;
+			res->llvm_symbol = g_strdup (res->llvm_symbol + strlen (acfg->temp_prefix));
+			g_free (tmp);
+		}
 
 		g_hash_table_insert (acfg->patch_to_plt_entry [new_ji->type], new_ji, res);
 
@@ -3912,7 +3919,7 @@ create_gsharedvt_inst (MonoAotCompile *acfg, MonoMethod *method, MonoGenericCont
 
 		args = g_new0 (MonoType*, inst->type_argc);
 		for (i = 0; i < inst->type_argc; ++i) {
-			args [i] = m_class_get_byval_arg (mono_defaults.int_class);
+			args [i] = mono_get_int_type ();
 		}
 		ctx->class_inst = mono_metadata_get_generic_inst (inst->type_argc, args);
 	}
@@ -3940,9 +3947,9 @@ create_gsharedvt_inst (MonoAotCompile *acfg, MonoMethod *method, MonoGenericCont
 			}
 
 			if (ref_only)
-				args [i] = m_class_get_byval_arg (mono_defaults.object_class);
+				args [i] = mono_get_object_type ();
 			else
-				args [i] = m_class_get_byval_arg (mono_defaults.int_class);
+				args [i] = mono_get_int_type ();
 		}
 		ctx->method_inst = mono_metadata_get_generic_inst (inst->type_argc, args);
 	}
@@ -4026,7 +4033,7 @@ add_wrappers (MonoAotCompile *acfg)
 
 		/* Runtime invoke wrappers */
 
-		MonoType *void_type = m_class_get_byval_arg (mono_defaults.void_class);
+		MonoType *void_type = mono_get_void_type ();
 		MonoType *string_type = m_class_get_byval_arg (mono_defaults.string_class);
 
 		/* void runtime-invoke () [.cctor] */
@@ -5017,7 +5024,7 @@ add_generic_instances (MonoAotCompile *acfg)
 				type_argv = g_new0 (MonoType*, inst->type_argc);
 				for (i = 0; i < inst->type_argc; ++i) {
 					if (MONO_TYPE_IS_REFERENCE (inst->type_argv [i]) || inst->type_argv [i]->type == MONO_TYPE_VAR || inst->type_argv [i]->type == MONO_TYPE_MVAR)
-						type_argv [i] = m_class_get_byval_arg (mono_defaults.object_class);
+						type_argv [i] = mono_get_object_type ();
 					else
 						type_argv [i] = inst->type_argv [i];
 				}
@@ -5031,7 +5038,7 @@ add_generic_instances (MonoAotCompile *acfg)
 				type_argv = g_new0 (MonoType*, inst->type_argc);
 				for (i = 0; i < inst->type_argc; ++i) {
 					if (MONO_TYPE_IS_REFERENCE (inst->type_argv [i]) || inst->type_argv [i]->type == MONO_TYPE_VAR || inst->type_argv [i]->type == MONO_TYPE_MVAR)
-						type_argv [i] = m_class_get_byval_arg (mono_defaults.object_class);
+						type_argv [i] = mono_get_object_type ();
 					else
 						type_argv [i] = inst->type_argv [i];
 				}
@@ -5093,11 +5100,11 @@ add_generic_instances (MonoAotCompile *acfg)
 		MonoType *sbyte_type = m_class_get_byval_arg (mono_defaults.sbyte_class);
 		MonoType *int16_type = m_class_get_byval_arg (mono_defaults.int16_class);
 		MonoType *uint16_type = m_class_get_byval_arg (mono_defaults.uint16_class);
-		MonoType *int32_type = m_class_get_byval_arg (mono_defaults.int32_class);
+		MonoType *int32_type = mono_get_int32_type ();
 		MonoType *uint32_type = m_class_get_byval_arg (mono_defaults.uint32_class);
 		MonoType *int64_type = m_class_get_byval_arg (mono_defaults.int64_class);
 		MonoType *uint64_type = m_class_get_byval_arg (mono_defaults.uint64_class);
-		MonoType *object_type = m_class_get_byval_arg (mono_defaults.object_class);
+		MonoType *object_type = mono_get_object_type ();
 
 		insts [ninsts ++] = byte_type;
 		insts [ninsts ++] = sbyte_type;
@@ -7483,6 +7490,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->profile_only = TRUE;
 		} else if (!strcmp (arg, "verbose")) {
 			opts->verbose = TRUE;
+		} else if (str_begins_with (arg, "llvmopts=")){
+			opts->llvm_opts = g_strdup (arg + strlen ("llvmopts="));
 		} else if (str_begins_with (arg, "help") || str_begins_with (arg, "?")) {
 			printf ("Supported options for --aot:\n");
 			printf ("    asmonly\n");
@@ -7635,13 +7644,13 @@ can_encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 	case MONO_PATCH_INFO_IID:
 	case MONO_PATCH_INFO_ADJUSTED_IID:
 		if (!can_encode_class (acfg, patch_info->data.klass)) {
-			//printf ("Skip: %s\n", mono_type_full_name (&patch_info->data.klass->byval_arg));
+			//printf ("Skip: %s\n", mono_type_full_name (m_class_get_byval_arg (patch_info->data.klass)));
 			return FALSE;
 		}
 		break;
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE: {
 		if (!can_encode_class (acfg, patch_info->data.del_tramp->klass)) {
-			//printf ("Skip: %s\n", mono_type_full_name (&patch_info->data.klass->byval_arg));
+			//printf ("Skip: %s\n", mono_type_full_name (m_class_get_byval_arg (patch_info->data.klass)));
 			return FALSE;
 		}
 		break;
@@ -8984,15 +8993,19 @@ emit_llvm_file (MonoAotCompile *acfg)
 	 * return OverwriteComplete;
 	 * Here, if 'Earlier' refers to a memset, and Later has no size info, it mistakenly thinks the memset is redundant.
 	 */
-	if (acfg->aot_opts.llvm_only)
+	if (acfg->aot_opts.llvm_opts) {
+		opts = g_strdup (acfg->aot_opts.llvm_opts);
+	} else if (acfg->aot_opts.llvm_only) {
 		// FIXME: This doesn't work yet
 		opts = g_strdup ("");
-	else
+	} else {
 #if LLVM_API_VERSION > 100
 		opts = g_strdup ("-O2 -disable-tail-calls");
 #else
 		opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -inline-cost -inline -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -domtree -verify");
 #endif
+	}
+
 	command = g_strdup_printf ("\"%sopt\" -f %s -o \"%s\" \"%s\"", acfg->aot_opts.llvm_path, opts, optbc, tempbc);
 	aot_printf (acfg, "Executing opt: %s\n", command);
 	if (execute_system (command) != 0)
@@ -12731,13 +12744,20 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 			else
 				acfg->llvm_sfile = g_strdup (acfg->aot_opts.llvm_outfile);
 		} else {
-			acfg->tmpbasename = (strcmp (acfg->aot_opts.temp_path, "") == 0) ?
-				g_strdup_printf ("%s", "temp") :
-				g_build_filename (acfg->aot_opts.temp_path, "temp", NULL);
+			gchar *temp_path;
+			if (strcmp (acfg->aot_opts.temp_path, "") != 0) {
+				temp_path = g_strdup (acfg->aot_opts.temp_path);
+			} else {
+				temp_path = mkdtemp(g_strdup ("mono_aot_XXXXXX"));
+				g_assertf (temp_path, "mkdtemp failed, error = (%d) %s", errno, g_strerror (errno));
+			}
 				
+			acfg->tmpbasename = g_build_filename (temp_path, "temp", NULL);
 			acfg->tmpfname = g_strdup_printf ("%s.s", acfg->tmpbasename);
 			acfg->llvm_sfile = g_strdup_printf ("%s-llvm.s", acfg->tmpbasename);
 			acfg->llvm_ofile = g_strdup_printf ("%s-llvm.o", acfg->tmpbasename);
+
+			g_free (temp_path);
 		}
 	}
 #endif

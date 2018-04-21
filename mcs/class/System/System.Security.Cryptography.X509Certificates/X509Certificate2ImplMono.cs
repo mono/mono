@@ -244,24 +244,26 @@ namespace System.Security.Cryptography.X509Certificates
 				if (_cert == null)
 					throw new CryptographicException (empty_error);
 				try {
-					if (_cert.RSA != null) {
-						RSACryptoServiceProvider rcsp = _cert.RSA as RSACryptoServiceProvider;
-						if (rcsp != null)
-							return rcsp.PublicOnly ? null : rcsp;
-
-						RSAManaged rsam = _cert.RSA as RSAManaged;
-						if (rsam != null)
-							return rsam.PublicOnly ? null : rsam;
-
-						_cert.RSA.ExportParameters (true);
-						return _cert.RSA;
-					} else if (_cert.DSA != null) {
-						DSACryptoServiceProvider dcsp = _cert.DSA as DSACryptoServiceProvider;
-						if (dcsp != null)
-							return dcsp.PublicOnly ? null : dcsp;
-
-						_cert.DSA.ExportParameters (true);
-						return _cert.DSA;
+					if (_cert.RSA is RSACryptoServiceProvider rcsp) {
+						if (rcsp.PublicOnly)
+							return null;
+						var key = new RSACryptoServiceProvider ();
+						key.ImportParameters (_cert.RSA.ExportParameters(true));
+						return key;
+					}
+					if (_cert.RSA is RSAManaged rsam) {
+						if (rsam.PublicOnly)
+							return null;
+						var key = new RSAManaged ();
+						key.ImportParameters (_cert.RSA.ExportParameters(true));
+						return key;
+					}
+					if (_cert.DSA is DSACryptoServiceProvider dcsp) {
+						if (dcsp.PublicOnly)
+							return null;
+						var key = new DSACryptoServiceProvider();
+						key.ImportParameters(_cert.DSA.ExportParameters(true));
+						return key;
 					}
 				}
 				catch {

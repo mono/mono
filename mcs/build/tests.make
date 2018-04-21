@@ -31,7 +31,8 @@ $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs \
 $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/IO/FileCleanupTestBase.cs \
 $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs \
 $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.cs \
-$(topdir)/../external/corefx/src/Common/src/System/PasteArguments.cs
+$(topdir)/../external/corefx/src/Common/src/System/PasteArguments.cs \
+$(topdir)/../external/corefx/src/Common/src/System/PasteArguments.Unix.cs
 endif
 
 xunit_class_deps := 

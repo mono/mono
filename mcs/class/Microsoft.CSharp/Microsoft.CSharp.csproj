@@ -3,6 +3,7 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">net_4_x</Platform>
     <ProjectGuid>{E8ADEC9F-2EC7-4D38-9617-E6D0FFDE5E8B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
@@ -48,6 +49,16 @@
     <OutputPath>./../../class/lib/monotouch_tv</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
@@ -123,7 +134,6 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\RuntimeBinderExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\RuntimeBinderInternalCompilerException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Binding\Better.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Binding\ErrorReporting.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\BindingContext.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\BindingFlag.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\BinOpArgInfo.cs" />
@@ -134,7 +144,6 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Conversion.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Conversions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\COperators.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Declarations\AggregateDeclaration.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\ExplicitConversion.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\ExpressionBinder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\ExpressionKind.cs" />
@@ -142,7 +151,6 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\ExprFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\EXPRFLAG.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\FundamentalTypes.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\GlobalSymbolContext.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\GroupToArgsBinder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\GroupToArgsBinderResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\ImplicitConversion.cs" />
@@ -172,9 +180,8 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\Symbol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\SymbolKind.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\SymbolLoader.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\SymbolManagerBase.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\SymbolMask.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\SymbolTable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\SymbolStore.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\SymFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\TypeParameterSymbol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Symbols\VariableSymbol.cs" />
@@ -196,7 +203,6 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\ExprWithType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\Field.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\FieldInfo.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\IExprWithObject.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\List.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\LocalVariable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Tree\MemberGroup.cs" />
@@ -224,14 +230,12 @@
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\PredefinedTypes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\Type.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\TypeArray.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\TypeFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\TypeKind.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\TypeManager.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\TypeParameterType_.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\TypeTable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\Types\VoidType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\UnaOpSig.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\UtilityTypeExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Semantics\WithType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\SpecialNames.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\SymbolTable.cs" />
@@ -253,6 +257,18 @@
     <ProjectReference Include="../System.Core/System.Core.csproj" />
     <ProjectReference Include="../System/System.csproj" />
     <ProjectReference Include="../corlib/corlib.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_hybrid\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->

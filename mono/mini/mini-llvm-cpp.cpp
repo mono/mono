@@ -203,7 +203,7 @@ mono_llvm_build_fence (LLVMBuilderRef builder, BarrierKind kind)
 }
 
 void
-mono_llvm_set_must_tail (LLVMValueRef call_ins)
+mono_llvm_set_must_tailcall (LLVMValueRef call_ins)
 {
 	CallInst *ins = (CallInst*)unwrap (call_ins);
 
@@ -242,7 +242,7 @@ mono_llvm_set_call_preserveall_cc (LLVMValueRef func)
 }
 
 void
-mono_llvm_set_call_notail (LLVMValueRef func)
+mono_llvm_set_call_notailcall (LLVMValueRef func)
 {
 #if LLVM_API_VERSION > 100
 	unwrap<CallInst>(func)->setTailCallKind (CallInst::TailCallKind::TCK_NoTail);
@@ -306,7 +306,7 @@ convert_attr (AttrKind kind)
 void
 mono_llvm_add_func_attr (LLVMValueRef func, AttrKind kind)
 {
-#if LLVM_API_VERSION > 100
+#if LLVM_API_VERSION > 391
 	unwrap<Function> (func)->addAttribute (AttributeList::FunctionIndex, convert_attr (kind));
 #else
 	Function *Func = unwrap<Function>(func);
@@ -323,7 +323,7 @@ mono_llvm_add_func_attr (LLVMValueRef func, AttrKind kind)
 void
 mono_llvm_add_param_attr (LLVMValueRef param, AttrKind kind)
 {
-#if LLVM_API_VERSION > 100
+#if LLVM_API_VERSION > 391
 	Function *func = unwrap<Argument> (param)->getParent ();
 	int n = unwrap<Argument> (param)->getArgNo ();
 	func->addParamAttr (n, convert_attr (kind));
@@ -337,7 +337,7 @@ mono_llvm_add_param_attr (LLVMValueRef param, AttrKind kind)
 void
 mono_llvm_add_instr_attr (LLVMValueRef val, int index, AttrKind kind)
 {
-#if LLVM_API_VERSION > 100
+#if LLVM_API_VERSION > 391
 	CallSite (unwrap<Instruction> (val)).addAttribute (index, convert_attr (kind));
 #else
   CallSite Call = CallSite(unwrap<Instruction>(val));

@@ -88,6 +88,7 @@ System.ServiceModel.Description/WsdlExporterTest.cs
 System.ServiceModel.Description/WsdlImporterTest.cs
 System.ServiceModel.Dispatcher/ActionFilterTest.cs
 System.ServiceModel.Dispatcher/Bug32886Test.cs
+System.ServiceModel.Dispatcher/Bug46971Test.cs
 System.ServiceModel.Dispatcher/Bug652331Test.cs
 System.ServiceModel.Dispatcher/Bug652331_2Test.cs
 System.ServiceModel.Dispatcher/ChannelDispatcherTest.cs

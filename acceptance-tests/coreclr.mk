@@ -3715,7 +3715,7 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/readytorun/main.cs	\
 	$(CORECLR_PATH)/tests/src/readytorun/test.cs
-	
+
 # relies on a referenced managed or native assembly, to complicated here:
 CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/Regressions/assemblyref/assem.cs	\
@@ -3855,7 +3855,7 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/datetime/cfdatetimetools.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/datetime/datetimeisdaylightsavingtime.cs
-	
+
 # relies on delegatedefinitions.cs helper
 CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/multicastdelegate/multicastdelegatector.cs	\
@@ -3963,7 +3963,7 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/delegate/threatmodel/public/testclass.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/delegate/threatmodel/tests/bindingtarget.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/delegate/threatmodel/tests/testclass.cs
-	
+
 # samples (should probably be removed upstream)
 CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/hosting/samples/hosting/usercode/usercode.cs	\
@@ -4969,7 +4969,6 @@ CORECLR_TEST_IL_SRC =			\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/regress/vswhidbey/223862/rem.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/regress/vswhidbey/228572/conv.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/regress/vswhidbey/481244/foo.il	\
-	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/regress/vswhidbey/481244/foo2.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/regress/ddb/118414/118414.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/regress/ddb/127931/127931.il	\
 	$(CORECLR_PATH)/tests/src/JIT/jit64/regress/vsw/102974/test.il	\
@@ -5061,6 +5060,9 @@ CORECLR_DISABLED_TEST_IL_SRC +=	\
 CORECLR_DISABLED_TEST_IL_SRC +=	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/lcliimpl.il
 
+# We use an r4 for r4-r8 stack merge so it loses precision
+CORECLR_DISABLED_TEST_IL_SRC +=	\
+	$(CORECLR_PATH)/tests/src/JIT/jit64/opt/regress/vswhidbey/481244/foo2.il
 
 # FIXME: these tests are baselined, i.e. we don't have time to investigate
 # them right now but want to make sure we don't introduce new regressions

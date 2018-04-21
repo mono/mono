@@ -62,6 +62,7 @@ namespace System.Security.Cryptography {
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
+			// TODO: These ignore args
 			switch (name.ToLowerInvariant ()) {
 			case "system.security.cryptography.dsacryptoserviceprovider":
 			case "system.security.cryptography.dsa":
@@ -188,8 +189,22 @@ namespace System.Security.Cryptography {
 			case "tripledes":
 			case "3des":
 				return new TripleDESCryptoServiceProvider ();
+
+			// These are not yet linker friendly
 			case "x509chain":
 				name = "System.Security.Cryptography.X509Certificates.X509Chain, System";
+				break;
+			case "2.5.29.15":
+				name = "System.Security.Cryptography.X509Certificates.X509KeyUsageExtension, System";
+				break;
+			case "2.5.29.19":
+				name = "System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension, System";
+				break;
+			case "2.5.29.14":
+				name = "System.Security.Cryptography.X509Certificates.X509SubjectKeyIdentifierExtension, System";
+				break;
+			case "2.5.29.37":
+				name = "System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension, System";
 				break;
 			case "aes":
 #if MONOTOUCH || XAMMAC
@@ -214,7 +229,7 @@ namespace System.Security.Cryptography {
 				// last resort, the request type might be available (if care is taken for the type not to be linked 
 				// away) and that can allow some 3rd party code to work (e.g. extra algorithms) and make a few more
 				// unit tests happy
-				return Activator.CreateInstance (Type.GetType (name));
+				return Activator.CreateInstance (Type.GetType (name), args);
 			}
 			catch {
 				// method doesn't throw any exception
