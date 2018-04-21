@@ -2156,6 +2156,37 @@ mono_domain_assembly_preload (MonoAssemblyName *aname,
 	return result;
 }
 
+/**
+ * mono_assembly_load_from_assemblies_path:
+ *
+ * \param assemblies_path directories to search for given assembly name, terminated by NULL
+ * \param aname assembly name to look for
+ * \param asmctx assembly load context for this load operation
+ *
+ * Given a NULL-terminated array of paths, look for \c name.ext, \c name, \c
+ * culture/name.ext, \c culture/name/name.ext where \c ext is \c dll and \c
+ * exe and try to load it in the given assembly load context.
+ *
+ * \returns A \c MonoAssembly if probing was successful, or NULL otherwise.
+ */
+MonoAssembly*
+mono_assembly_load_from_assemblies_path (gchar **assemblies_path, MonoAssemblyName *aname, MonoAssemblyContextKind asmctx)
+{
+	MonoAssemblyCandidatePredicate predicate = NULL;
+	void* predicate_ud = NULL;
+#if !defined(DISABLE_DESKTOP_LOADER)
+	if (G_LIKELY (mono_loader_get_strict_strong_names ())) {
+		predicate = &mono_assembly_candidate_predicate_sn_same_name;
+		predicate_ud = aname;
+	}
+#endif
+	MonoAssembly *result = NULL;
+	if (assemblies_path && assemblies_path[0] != NULL) {
+		result = real_load (assemblies_path, aname->culture, aname->name, asmctx, predicate, predicate_ud);
+	}
+	return result;
+}
+
 /*
  * Check whenever a given assembly was already loaded in the current appdomain.
  */

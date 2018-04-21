@@ -356,6 +356,9 @@ static MonoAssembly*
 mono_assembly_load_full_internal (MonoAssemblyName *aname, MonoAssembly *requesting, const char *basedir, MonoAssemblyContextKind asmctx, MonoImageOpenStatus *status);
 static MonoAssembly*
 mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname, const char *basedir, MonoAssemblyContextKind asmctx, MonoImageOpenStatus *status);
+static MonoAssembly*
+mono_assembly_load_full_nodomain (MonoAssemblyName *aname, MonoAssemblyContextKind asmctx, MonoImageOpenStatus *status);
+
 static MonoBoolean
 mono_assembly_is_in_gac (const gchar *filanem);
 static MonoAssemblyName*
@@ -1442,6 +1445,15 @@ load_reference_by_aname_individual_asmctx (MonoAssemblyName *aname, MonoAssembly
 	aname = mono_assembly_apply_binding (aname, &maped_name_pp);
 
 	reference = mono_assembly_loaded_full (aname, FALSE);
+	/* Still try to load from MONO_PATH or the GAC.  This is consistent
+	 * with what .NET Framework (4.7) actually does, rather than what the
+	 * documentation implies: If `LoadFile` is used to load an assembly
+	 * into "no context"/individual assembly context, the runtime will
+	 * still load assemblies from the GAC (e.g. `System.Runtime` will be
+	 * loaded if it wasn't already).
+	 */
+	if (!reference)
+		reference = mono_assembly_load_full_nodomain (aname, MONO_ASMCTX_DEFAULT, status);
 	if (!reference)
 		reference = mono_assembly_invoke_search_hook_internal (aname, requesting, FALSE, TRUE);
 	if (!reference)
@@ -3916,6 +3928,22 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 			return result;
 	}
 
+	return result;
+}
+
+/*
+ * Try to load the assembly without looking in the domain:
+ *   tries the MONO_PATH, then the gac, and the default_path.
+ */
+MonoAssembly*
+mono_assembly_load_full_nodomain (MonoAssemblyName *aname,
+				  MonoAssemblyContextKind asmctx,
+				  MonoImageOpenStatus *status)
+{
+	MonoAssembly *result = NULL;
+	result = mono_assembly_load_from_assemblies_path (assemblies_path, aname, asmctx);
+	if (!result)
+		result = mono_assembly_load_full_gac_base_default (aname, NULL, asmctx, status);
 	return result;
 }
 
