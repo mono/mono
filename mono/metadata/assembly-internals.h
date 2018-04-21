@@ -45,4 +45,7 @@ MonoAssembly*          mono_assembly_load_from_predicate (MonoImage *image, cons
 gboolean
 mono_assembly_candidate_predicate_sn_same_name (MonoAssembly *candidate, gpointer wanted_name);
 
+MonoAssembly*
+mono_assembly_binding_applies_to_image (MonoImage* image, MonoImageOpenStatus *status);
+
 #endif /* __MONO_METADATA_ASSEMBLY_INTERNALS_H__ */

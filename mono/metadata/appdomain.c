@@ -2293,6 +2293,18 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 		mono_gchandle_free (symbol_gchandle);
 	}
 
+	MonoAssembly* redirected_asm = NULL;
+	MonoImageOpenStatus new_status = MONO_IMAGE_OK;
+	if ((redirected_asm = mono_assembly_binding_applies_to_image (image, &new_status))) {
+		mono_image_close (image);
+		image = redirected_asm->image;
+		mono_image_addref (image); /* so that mono_image close, below, has something to do */
+	} else if (new_status != MONO_IMAGE_OK) {
+		mono_image_close (image);
+		mono_error_set_bad_image_by_name (error, "In Memory assembly", "0x%p was assembly binding redirected to another assembly that failed to load", assembly_data);
+		return refass;
+	}
+
 	ass = mono_assembly_load_from_predicate (image, "", refonly? MONO_ASMCTX_REFONLY : MONO_ASMCTX_INDIVIDUAL, NULL, NULL, &status);
 
 

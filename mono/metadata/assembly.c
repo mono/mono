@@ -1428,10 +1428,19 @@ load_reference_by_aname_loadfrom_asmctx (MonoAssemblyName *aname, MonoAssembly *
 static MonoAssembly*
 load_reference_by_aname_individual_asmctx (MonoAssemblyName *aname, MonoAssembly *requesting, MonoImageOpenStatus *status)
 {
+	/* For an individual assembly, all references must already be loaded or
+	 * else we fire the assembly resolve event - similar to refonly - but
+	 * subject to remaping and binding.
+	 */
+
 	MonoAssembly *reference = NULL;
 	*status = MONO_IMAGE_OK;
-	/* For an individual assembly, all references must already be loaded or
-	 * else we fire the assembly resolve event - similar to refonly */
+	MonoAssemblyName maped_aname;
+	MonoAssemblyName maped_name_pp;
+
+	aname = mono_assembly_remap_version (aname, &maped_aname);
+	aname = mono_assembly_apply_binding (aname, &maped_name_pp);
+
 	reference = mono_assembly_loaded_full (aname, FALSE);
 	if (!reference)
 		reference = mono_assembly_invoke_search_hook_internal (aname, requesting, FALSE, TRUE);
@@ -2069,52 +2078,18 @@ mono_assembly_open_predicate (const char *filename, MonoAssemblyContextKind asmc
 	}
 
 	if (asmctx == MONO_ASMCTX_LOADFROM || asmctx == MONO_ASMCTX_INDIVIDUAL) {
-		/* This is a "fun" one now.
-		 * For LoadFrom ("/basedir/some.dll") or LoadFile("/basedir/some.dll") or Load(byte[])),
-		 * apparently what we're meant to do is:
-		 *   1. probe the assembly name from some.dll (or the byte array)
-		 *   2. apply binding redirects
-		 *   3. If we get some other different name, drop this image and use
-		 *      the binding redirected name to probe.
-		 *   4. Return the new assembly.
-		 */
-		MonoAssemblyName probed_aname, dest_name;
-		if (!mono_assembly_fill_assembly_name_full (image, &probed_aname, TRUE)) {
-			if (*status == MONO_IMAGE_OK)
-				*status = MONO_IMAGE_IMAGE_INVALID;
+		MonoAssembly *redirected_asm = NULL;
+		MonoImageOpenStatus new_status = MONO_IMAGE_OK;
+		if ((redirected_asm = mono_assembly_binding_applies_to_image (image, &new_status))) {
+			mono_image_close (image);
+			image = redirected_asm->image;
+			mono_image_addref (image); /* so that mono_image_close, below, has something to do */
+			/* fall thru to if (image->assembly) below */
+		} else if (new_status != MONO_IMAGE_OK) {
+			*status = new_status;
 			mono_image_close (image);
 			g_free (fname);
 			return NULL;
-		}
-		MonoAssemblyName *result_name = &probed_aname;
-		result_name = mono_assembly_apply_binding (result_name, &dest_name);
-		if (result_name != &probed_aname) {
-			if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY)) {
-				char *probed_fullname = mono_stringify_assembly_name (&probed_aname);
-				char *result_fullname = mono_stringify_assembly_name (result_name);
-				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Request to load from %s in (%s) remapped to %s", probed_fullname, fname, result_fullname);
-				g_free (probed_fullname);
-				g_free (result_fullname);
-			}
-			const char *new_basedir = NULL; /* FIXME: null? - do a test of this */
-			MonoAssemblyContextKind new_asmctx = MONO_ASMCTX_DEFAULT; /* FIXME: default? or? */
-			MonoAssembly *new_requesting = NULL; /* this seems okay */
-			MonoImageOpenStatus new_status = MONO_IMAGE_OK;
-			MonoAssembly *other_ass = mono_assembly_load_full_internal (result_name, new_requesting, new_basedir, new_asmctx, &new_status);
-			mono_assembly_name_free (&probed_aname);
-			mono_image_close (image);
-			if (other_ass && new_status == MONO_IMAGE_OK) {
-				image = other_ass->image;
-				mono_image_addref (image); /* so that mono_image_close, below has something to do */
-				g_assert (other_ass->image->assembly != NULL);
-				/* fall thru to "if (image->assembly)" below. */
-			} else {
-				g_free (fname);
-				*status = new_status;
-				return NULL;
-			}
-		} else {
-			mono_assembly_name_free (&probed_aname);
 		}
 	}
 
@@ -2299,6 +2274,63 @@ mono_assembly_has_reference_assembly_attribute (MonoAssembly *assembly, MonoErro
 	mono_assembly_metadata_foreach_custom_attr (assembly, &has_reference_assembly_attribute_iterator, &iter_data);
 
 	return iter_data.has_attr;
+}
+
+/**
+ * mono_assembly_binding_applies_to_image:
+ * \param image The image whose assembly name we should check
+ * \param status sets on error;
+ *
+ * Get the \c MonoAssemblyName from the given \p image metadata and apply binding redirects to it.
+ * If the resulting name is different from the name in the image, load that \c MonoAssembly instead
+ *
+ * \returns the loaded \c MonoAssembly, or NULL if no binding redirection applied.
+ *
+ */
+MonoAssembly*
+mono_assembly_binding_applies_to_image (MonoImage* image, MonoImageOpenStatus *status)
+{
+	/* This is a "fun" one now.
+	 * For LoadFrom ("/basedir/some.dll") or LoadFile("/basedir/some.dll") or Load(byte[])),
+	 * apparently what we're meant to do is:
+	 *   1. probe the assembly name from some.dll (or the byte array)
+	 *   2. apply binding redirects
+	 *   3. If we get some other different name, drop this image and use
+	 *      the binding redirected name to probe.
+	 *   4. Return the new assembly.
+	 */
+	MonoAssemblyName probed_aname, dest_name;
+	if (!mono_assembly_fill_assembly_name_full (image, &probed_aname, TRUE)) {
+		if (*status == MONO_IMAGE_OK)
+			*status = MONO_IMAGE_IMAGE_INVALID;
+		return NULL;
+	}
+	MonoAssembly *result_ass = NULL;
+	MonoAssemblyName *result_name = &probed_aname;
+	result_name = mono_assembly_apply_binding (result_name, &dest_name);
+	if (result_name != &probed_aname) {
+		if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY)) {
+			char *probed_fullname = mono_stringify_assembly_name (&probed_aname);
+			char *result_fullname = mono_stringify_assembly_name (result_name);
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Request to load from %s in (%s) remapped to %s", probed_fullname, image->name, result_fullname);
+			g_free (probed_fullname);
+			g_free (result_fullname);
+		}
+		const char *new_basedir = NULL; /* FIXME: null? - do a test of this */
+		MonoAssemblyContextKind new_asmctx = MONO_ASMCTX_DEFAULT; /* FIXME: default? or? */
+		MonoAssembly *new_requesting = NULL; /* this seems okay */
+		MonoImageOpenStatus new_status = MONO_IMAGE_OK;
+
+		result_ass = mono_assembly_load_full_internal (result_name, new_requesting, new_basedir, new_asmctx, &new_status);
+
+		if (result_ass && new_status == MONO_IMAGE_OK) {
+			g_assert (result_ass->image->assembly != NULL);
+		} else {
+			*status = new_status;
+		}
+	}
+	mono_assembly_name_free (&probed_aname);
+	return result_ass;
 }
 
 /**
