@@ -38,6 +38,7 @@ namespace System.Diagnostics.Tracing
 		{
 			public IntPtr DataPointer { get; set; }
 			public int Size { get; set; }
+			internal int Reserved { get; set; }
 		}
 
 		protected EventSource ()
@@ -74,6 +75,11 @@ namespace System.Diagnostics.Tracing
 
 		public EventSource (string eventSourceName, EventSourceSettings config, params string[] traits)
 			: this (eventSourceName, config)
+		{
+		}
+
+		internal EventSource (Guid eventSourceGuid, string eventSourceName)
+			: this (eventSourceName)
 		{
 		}
 
