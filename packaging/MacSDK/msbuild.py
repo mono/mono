@@ -9,6 +9,7 @@ class MSBuild (GitHubPackage):
 		self.sh ('./build.sh -host mono -configuration Release -skipTests')
 
 	def install (self):
-                self.sh ('./install-mono-prefix.sh %s' % self.staged_prefix)
+		# use the bootstrap msbuild as the system might not have one available!
+                self.sh ('./artifacts/msbuild/msbuild mono/build/install.proj /p:MonoInstallPrefix=%s /p:Configuration=Release-MONO' % self.staged_prefix)
 
 MSBuild ()
