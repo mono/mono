@@ -10,6 +10,6 @@ class MSBuild (GitHubPackage):
 
 	def install (self):
 		# use the bootstrap msbuild as the system might not have one available!
-                self.sh ('./artifacts/msbuild/msbuild mono/build/install.proj /p:MonoInstallPrefix=%s /p:Configuration=Release-MONO /p:IgnoreDiffFailure=false' % self.staged_prefix)
+                self.sh ('./artifacts/msbuild/msbuild mono/build/install.proj /p:MonoInstallPrefix=%s /p:Configuration=Release-MONO /p:IgnoreDiffFailure=true' % self.staged_prefix)
 
 MSBuild ()
