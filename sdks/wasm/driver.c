@@ -121,12 +121,27 @@ void mono_add_internal_call (const char *name, const void* method);
 MonoString * mono_string_from_utf16 (char *data);
 MonoString* mono_string_new (MonoDomain *domain, const char *text);
 void mono_wasm_enable_debugging (void);
+MonoArray* mono_array_new (MonoDomain *domain, MonoClass *eclass, int n);
+MonoClass* mono_get_object_class (void);
+int mono_class_is_delegate (MonoClass* klass);
+const char* mono_class_get_name (MonoClass *klass);
+const char* mono_class_get_namespace (MonoClass *klass);
+
+
 
 #define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
 #define mono_array_addr(array,type,index) ((type*)(void*) mono_array_addr_with_size (array, sizeof (type), index))
+#define mono_array_setref(array,index,value)	\
+	do {	\
+		void **__p = (void **) mono_array_addr ((array), void*, (index));	\
+		mono_gc_wbarrier_set_arrayref ((array), __p, (MonoObject*)(value));	\
+		/* *__p = (value);*/	\
+	} while (0)
+
 
 char* mono_array_addr_with_size (MonoArray *array, int size, int idx);
 int mono_array_length (MonoArray *array);
+void mono_gc_wbarrier_set_arrayref  (MonoArray *arr, void* slot_ptr, MonoObject* value);
 
 static char*
 m_strdup (const char *str)
@@ -252,12 +267,21 @@ mono_wasm_string_from_js (const char *str)
 }
 
 
+#define MARSHAL_TYPE_INT 1
+#define MARSHAL_TYPE_FP 2
+#define MARSHAL_TYPE_STRING 3
+#define MARSHAL_TYPE_VT 4
+#define MARSHAL_TYPE_DELEGATE 5
+#define MARSHAL_TYPE_TASK 6
+#define MARSHAL_TYPE_OBJECT 7
+
 EMSCRIPTEN_KEEPALIVE int
 mono_wasm_get_obj_type (MonoObject *obj)
 {
 	if (!obj)
 		return 0;
-	MonoType *type = mono_class_get_type (mono_object_get_class(obj));
+	MonoClass *klass = mono_object_get_class (obj);
+	MonoType *type = mono_class_get_type (klass);
 
 	switch (mono_type_get_type (type)) {
 	// case MONO_TYPE_CHAR: prob should be done not as a number?
@@ -270,16 +294,20 @@ mono_wasm_get_obj_type (MonoObject *obj)
 	case MONO_TYPE_U4:
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
-		return 1;
+		return MARSHAL_TYPE_INT;
 	case MONO_TYPE_R4:
 	case MONO_TYPE_R8:
-		return 2;
+		return MARSHAL_TYPE_FP;
 	case MONO_TYPE_STRING:
-		return 3;
+		return MARSHAL_TYPE_STRING;
 	default:
-		if (mono_type_is_reference (type))
-			return 4;
-		return 5;
+		if (!mono_type_is_reference (type)) //vt
+			return MARSHAL_TYPE_VT;
+		if (mono_class_is_delegate (klass))
+			return MARSHAL_TYPE_DELEGATE;
+		if (!strcmp ("System.Threading.Tasks", mono_class_get_namespace (klass)) && (!strcmp ("Task", mono_class_get_name (klass)) || !strcmp ("Task`1", mono_class_get_name (klass))))
+			return MARSHAL_TYPE_TASK;
+		return MARSHAL_TYPE_OBJECT;
 	}
 }
 
@@ -333,7 +361,6 @@ mono_wasm_unbox_float (MonoObject *obj)
 	}
 }
 
-
 EMSCRIPTEN_KEEPALIVE int
 mono_wasm_array_length (MonoArray *array)
 {
@@ -344,4 +371,16 @@ EMSCRIPTEN_KEEPALIVE MonoObject*
 mono_wasm_array_get (MonoArray *array, int idx)
 {
 	return mono_array_get (array, MonoObject*, idx);
+}
+
+EMSCRIPTEN_KEEPALIVE MonoArray*
+mono_wasm_obj_array_new (int size)
+{
+	return mono_array_new (root_domain, mono_get_object_class (), size);
+}
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_obj_array_set (MonoArray *array, int idx, MonoObject *obj)
+{
+	mono_array_setref (array, idx, obj);
 }

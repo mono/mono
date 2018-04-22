@@ -1,6 +1,6 @@
 
 var BindingSupportLib = {
-	$BINDING__postset: 'Module["call_mono_method"] = BINDING.call_method',
+	$BINDING__postset: 'Module["call_mono_method"] = BINDING.call_method.bind(BINDING)',
 	$BINDING: {
 		BINDING_ASM: "binding_tests",
 		js_objects_table: [],		
@@ -19,6 +19,8 @@ var BindingSupportLib = {
 			this.mono_unbox_float = Module.cwrap ('mono_wasm_unbox_float', 'number', ['number']);
 			this.mono_array_length = Module.cwrap ('mono_wasm_array_length', 'number', ['number']);
 			this.mono_array_get = Module.cwrap ('mono_wasm_array_get', 'number', ['number', 'number']);
+			this.mono_obj_array_new = Module.cwrap ('mono_wasm_obj_array_new', 'number', ['number']);
+			this.mono_obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
 
 			this.binding_module = this.assembly_load (this.BINDING_ASM);
 			var wasm_runtime_class = this.find_class (this.binding_module, "WebAssembly", "Runtime")
@@ -61,7 +63,7 @@ var BindingSupportLib = {
 			return res;
 		},
 		
-		conv_array: function (mono_array) {
+		mono_array_to_js_array: function (mono_array) {
 			if (mono_array == 0)
 				return null;
 
@@ -72,11 +74,20 @@ var BindingSupportLib = {
 
 			return res;
 		},
-		
+
+		js_array_to_mono_array: function (js_array) {
+			var mono_array = this.mono_obj_array_new (js_array.length);
+			for (var i = 0; i < js_array.length; ++i) {
+				this.mono_obj_array_set (mono_array, i, this.js_to_mono_obj (js_array [i]));
+			}
+			return mono_array;
+		},
+
 		unbox_mono_obj: function (mono_obj) {
 			if (mono_obj == 0)
 				return undefined;
 			var type = this.mono_get_obj_type (mono_obj);
+			//See MARSHAL_TYPE_ defines in driver.c
 			switch (type) {
 			case 1: // int
 				return this.mono_unbox_int (mono_obj);
@@ -84,10 +95,17 @@ var BindingSupportLib = {
 				return this.mono_unbox_float (mono_obj);
 			case 3: //string
 				return this.conv_string (mono_obj);
-			case 4: // ref type
-				return this.extract_js_obj (mono_obj);
-			case 5: //vts
+			case 4: //vts
 				throw new Error ("no idea on how to unbox value types");
+			case 5: { // delegate
+				var obj = this.extract_js_obj (mono_obj);
+				return function () {
+					return BINDING.invoke_delegate (obj, arguments);
+				};
+			}
+			case 6: // Task
+			case 7: // ref type
+				return this.extract_js_obj (mono_obj);
 			default:
 				throw new Error ("no idea on how to unbox object kind " + type);
 			}
@@ -177,7 +195,7 @@ var BindingSupportLib = {
 		additionally you can append 'm' to args_marshal beyond `args.length` if you don't want the return value marshaled
 		*/
 		call_method: function (method, this_arg, args_marshal, args) {
-			BINDING.bindings_lazy_init ();
+			this.bindings_lazy_init ();
 
 			var extra_args_mem = 0;
 			for (var i = 0; i < args.length; ++i) {
@@ -192,11 +210,11 @@ var BindingSupportLib = {
 			var eh_throw = Module._malloc (4);
 			for (var i = 0; i < args.length; ++i) {
 				if (args_marshal[i] == 's') {
-					Module.setValue (args_mem + i * 4, BINDING.js_string_to_mono_string (args [i]), "i32");
+					Module.setValue (args_mem + i * 4, this.js_string_to_mono_string (args [i]), "i32");
 				} else if (args_marshal[i] == 'm') {
 					Module.setValue (args_mem + i * 4, args [i], "i32");
 				} else if (args_marshal[i] == 'o') {
-					Module.setValue (args_mem + i * 4, BINDING.extract_mono_obj (args [i]), "i32");
+					Module.setValue (args_mem + i * 4, this.extract_mono_obj (args [i]), "i32");
 				} else if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd') {
 					var extra_cell = extra_args_mem + extra_arg_idx;
 					extra_arg_idx += 8;
@@ -215,7 +233,7 @@ var BindingSupportLib = {
 			}
 			Module.setValue (eh_throw, 0, "i32");
 
-			var res = BINDING.invoke_method (method, this_arg, args_mem, eh_throw);
+			var res = this.invoke_method (method, this_arg, args_mem, eh_throw);
 
 			var eh_res = Module.getValue (eh_throw, "i32");
 
@@ -225,14 +243,28 @@ var BindingSupportLib = {
 			Module._free (eh_throw);
 
 			if (eh_res != 0) {
-				var msg = BINDING.conv_string (res);
+				var msg = this.conv_string (res);
 				throw new Error (msg); //the convention is that invoke_method ToString () any outgoing exception
 			}
 
 			if (args_marshal.length >= args.length && args_marshal [args.length] == 'm')
 				return res;
-			return BINDING.unbox_mono_obj (res);
-		}
+			return this.unbox_mono_obj (res);
+		},
+
+		invoke_delegate: function (delegate_obj, js_args) {
+			this.bindings_lazy_init ();
+
+			if (!this.delegate_dynamic_invoke) {
+				if (!this.corlib)
+					this.corlib = this.assembly_load ("mscorlib");
+				if (!this.delegate_class)
+					this.delegate_class = this.find_class (this.corlib, "System", "Delegate");
+				this.delegate_dynamic_invoke = this.find_method (this.delegate_class, "DynamicInvoke", -1);
+			}
+			var mono_args = this.js_array_to_mono_array (js_args);
+			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "m", [ mono_args ]);
+		},
 	},
 
 	mono_wasm_invoke_js_with_args: function(js_handle, method_name, args, is_exception) {
@@ -250,7 +282,7 @@ var BindingSupportLib = {
 			return BINDING.js_string_to_mono_string ("Invalid method name object '" + method_name + "'");
 		}
 
-		var js_args = BINDING.conv_array(args);
+		var js_args = BINDING.mono_array_to_js_array(args);
 
 		var res;
 		try {

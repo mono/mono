@@ -17,7 +17,6 @@ namespace WebAssembly {
 		Expose annotated C# type to JS
 		Add property fetch to JSObject
 		Add typed method invoke support (get a delegate?)
-		Delegate marshaling
 		Task marshalling
 		Add JS helpers to fetch wrapped methods, like to Module.cwrap
 	*/

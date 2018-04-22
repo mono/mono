@@ -72,6 +72,19 @@ public class TestClass {
 		js_objs [2] = obj.Invoke ("return_string");
 		js_objs [3] = obj.Invoke ("return_bool");
 	}
+
+	public static int do_add;
+	public static void UseFunction (JSObject obj) {
+		do_add = (int)obj.Invoke("call", null, 10, 20);
+	}
+
+	public static int dele_res;
+	public static Func<int, int, int> MkDelegate () {
+		return (a, b) => {
+			dele_res = a + b;
+			return dele_res;
+		};
+	}
 }
 
 [TestFixture]
@@ -186,4 +199,25 @@ public class BindingTests {
 		Assert.AreEqual (TestClass.js_objs [3], true);
 	}
 
+	[Test]
+	public static void JSObjectApply() {
+		Runtime.InvokeJS (@"
+			var do_add = function(a, b) { return a + b};
+			call_test_method (""UseFunction"", ""o"", [ do_add ]);
+		");
+		Assert.AreEqual (TestClass.do_add, 30);
+	}
+
+	[Test]
+	public static void MarshalDelegate() {
+		TestClass.obj1 = null;
+		Runtime.InvokeJS (@"
+			var dele = call_test_method (""MkDelegate"", """", [ ]);
+			var res = dele (10, 20);
+			call_test_method (""InvokeI32"", ""ii"", [ res, res ]);
+		");
+
+		Assert.AreEqual (TestClass.dele_res, 30);
+		Assert.AreEqual (TestClass.i32_res, 60);
+	}
 }
