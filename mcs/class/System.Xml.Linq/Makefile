@@ -19,7 +19,7 @@ endif
 TEST_LIB_REFS = System.Core System.Xml System
 TEST_MCS_FLAGS =
 
-XTEST_LIB_REFS = System.Core System.Xml System
+XTEST_LIB_REFS = System.Core System.Xml System Facades/System.Reflection Facades/System.Threading.Tasks
 XTEST_LIB_FLAGS = -unsafe
 
 EXTRA_DISTFILES =
