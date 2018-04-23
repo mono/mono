@@ -268,6 +268,9 @@ TESTS_CS_SRC=		\
 	array-init.cs		\
 	arraylist.cs		\
 	assembly-load-remap.cs	\
+	assembly-load-bytes.cs	\
+	assembly-loadfile.cs	\
+	assembly-loadfrom.cs	\
 	assemblyresolve_event.cs	\
 	assemblyresolve_event3.cs	\
 	assemblyresolve_event4.cs	\
@@ -2278,6 +2281,22 @@ MidAssembly.dll: appdomain-marshalbyref-assemblyload-MidAssembly.cs LeafAssembly
 
 appdomain-marshalbyref-assemblyload.exe: appdomain-marshalbyref-assemblyload.cs MidAssembly.dll LeafAssembly.dll appdomain-marshalbyref-assemblyload2/LeafAssembly.dll
 	$(MCS) -out:$@ $< -r:MidAssembly.dll -r:LeafAssembly.dll
+
+assembly-load-dir1/Lib.dll: assembly-load-dir1/Lib.cs
+	$(MCS) -target:library -out:$@ $<
+assembly-load-dir2/Lib.dll: assembly-load-dir2/Lib.cs
+	$(MCS) -target:library -out:$@ $<
+
+EXTRA_DIST += assembly-load-dir1/Lib.cs assmebly-load-dir2/Lib.cs
+
+assembly-load-bytes.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/Lib.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/Lib.dll$(PLATFORM_AOT_SUFFIX)
+assembly-load-bytes.exe: assembly-load-dir1/Lib.dll assembly-load-dir2/Lib.dll
+
+assembly-loadfrom.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/Lib.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/Lib.dll$(PLATFORM_AOT_SUFFIX)
+assembly-loadfrom.exe: assembly-load-dir1/Lib.dll assembly-load-dir2/Lib.dll
+
+assembly-loadfile.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/Lib.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/Lib.dll$(PLATFORM_AOT_SUFFIX)
+assembly-loadfile.exe: assembly-load-dir1/Lib.dll assembly-load-dir2/Lib.dll
 
 gshared:
 	$(MAKE) test-generic-sharing
