@@ -138,7 +138,7 @@ namespace MonoTests.System.ComponentModel
 				converter.ConvertFromString (null, CultureInfo.InvariantCulture, "*1");
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -152,7 +152,7 @@ namespace MonoTests.System.ComponentModel
 					double.MaxValue.ToString(CultureInfo.InvariantCulture));
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -165,7 +165,7 @@ namespace MonoTests.System.ComponentModel
 				converter.ConvertFromString ("*1");
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -178,7 +178,7 @@ namespace MonoTests.System.ComponentModel
 				converter.ConvertFromString (double.MaxValue.ToString (CultureInfo.CurrentCulture));
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -191,7 +191,7 @@ namespace MonoTests.System.ComponentModel
 				converter.ConvertFrom (null, CultureInfo.InvariantCulture, "*1");
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -205,7 +205,7 @@ namespace MonoTests.System.ComponentModel
 					double.MaxValue.ToString (CultureInfo.InvariantCulture));
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -218,7 +218,7 @@ namespace MonoTests.System.ComponentModel
 				converter.ConvertFrom ("*1");
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -231,7 +231,7 @@ namespace MonoTests.System.ComponentModel
 				converter.ConvertFrom (double.MaxValue.ToString (CultureInfo.CurrentCulture));
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
