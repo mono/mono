@@ -1663,7 +1663,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 /*
  * mini_register_jump_site:
  *
- *   Register IP as a jump/tail call site which calls METHOD.
+ *   Register IP as a jump/tailcall site which calls METHOD.
  * This is needed because common_call_trampoline () cannot patch
  * the call site because the caller ip is not available for jumps.
  */
@@ -1691,7 +1691,7 @@ mini_register_jump_site (MonoDomain *domain, MonoMethod *method, gpointer ip)
 /*
  * mini_patch_jump_sites:
  *
- *   Patch jump/tail call sites calling METHOD so the jump to ADDR.
+ *   Patch jump/tailcall sites calling METHOD so the jump to ADDR.
  */
 void
 mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
@@ -3976,7 +3976,7 @@ mini_init (const char *filename, const char *runtime_version)
 #endif
 
 	mono_debugger_agent_stub_init ();
-#ifndef DISABLE_DEBUGGER_AGENT
+#ifndef DISABLE_SDB
 	mono_debugger_agent_init ();
 #endif
 
@@ -4041,6 +4041,10 @@ mini_init (const char *filename, const char *runtime_version)
 		callbacks.interp_get_remoting_invoke = mini_get_interp_callbacks ()->get_remoting_invoke;
 #endif
 	callbacks.get_weak_field_indexes = mono_aot_get_weak_field_indexes;
+
+#ifdef TARGET_OSX
+	callbacks.runtime_telemetry_callback = mini_register_sigterm_handler;
+#endif
 
 	mono_install_callbacks (&callbacks);
 

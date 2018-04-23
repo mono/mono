@@ -2311,7 +2311,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	cinfo = get_call_info (cfg->mempool, sig);
 
 	if (cinfo->struct_ret) {
-		cfg->vret_addr = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_ARG);
+		cfg->vret_addr = mono_compile_create_var (cfg, mono_get_int_type (), OP_ARG);
 		if (G_UNLIKELY (cfg->verbose_level > 1)) {
 			printf ("vret_addr = ");
 			mono_print_ins (cfg->vret_addr);
@@ -2453,7 +2453,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		if (i >= sig->hasthis)
 			t = sig->params [i - sig->hasthis];
 		else
-			t = m_class_get_byval_arg (mono_defaults.int_class);
+			t = mono_get_int_type ();
 		t = mini_get_underlying_type (t);
 
 		in = call->args [i];
@@ -7573,14 +7573,14 @@ mono_arch_opcode_supported (int opcode)
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
-/* Name	    - mono_arch_tail_call_supported.                        */
+/* Name	    - mono_arch_tailcall_supported.                        */
 /*                                                                  */
-/* Function - Check if a tail call is supported.                    */
+/* Function - Check if a tailcall is supported.                    */
 /*                                                                  */
 /*------------------------------------------------------------------*/
 
 gboolean
-mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	CallInfo *c1, *c2;
 	gboolean res;

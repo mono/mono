@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -xe
 
 function cleanup()
 {
@@ -27,7 +27,7 @@ ZIP_ROOT_DIR=$(unzip -qql "$1" | head -n1 | tr -s ' ' | cut -d' ' -f5- | tr '/' 
 # We need a temporary directory because some archives (emulator) have their root directory named the
 # same as a file/directory inside it (emulator has emulator/emulator executable for instance) and
 # moving such a file/directory to .. wouldn't work
-ARCHIVE_TEMP_DIR=$(mktemp -d)
+ARCHIVE_TEMP_DIR=$(mktemp -d unzip_android_archive_XXXXXXXX)
 
 unzip "$1" -d "$ARCHIVE_TEMP_DIR"
 mkdir -p "$2"

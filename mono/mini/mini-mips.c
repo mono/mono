@@ -1562,7 +1562,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			MonoType *arg_type;
 		 
 			if (sig->hasthis && (i == 0))
-				arg_type = m_class_get_byval_arg (mono_defaults.object_class);
+				arg_type = mono_get_object_type ();
 			else
 				arg_type = sig->params [i - sig->hasthis];
 
@@ -1613,7 +1613,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	sig = mono_method_signature (cfg->method);
 
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
-		cfg->vret_addr = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_ARG);
+		cfg->vret_addr = mono_compile_create_var (cfg, mono_get_int_type (), OP_ARG);
 		if (G_UNLIKELY (cfg->verbose_level > 1)) {
 			printf ("vret_addr = ");
 			mono_print_ins (cfg->vret_addr);
@@ -1638,7 +1638,7 @@ emit_sig_cookie (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 	MonoMethodSignature *tmp_sig;
 	MonoInst *sig_arg;
 
-	if (call->tail_call)
+	if (call->tailcall)
 		NOT_IMPLEMENTED;
 
 	/* FIXME: Add support for signature tokens to AOT */
@@ -1686,7 +1686,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		if (i >= sig->hasthis)
 			t = sig->params [i - sig->hasthis];
 		else
-			t = m_class_get_byval_arg (mono_defaults.int_class);
+			t = mono_get_int_type ();
 		t = mini_get_underlying_type (t);
 
 		if ((sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
@@ -3062,7 +3062,7 @@ emit_float_to_int (MonoCompile *cfg, guchar *code, int dreg, int sreg, int size,
  * emit_load_volatile_arguments:
  *
  * Load volatile arguments from the stack to the original input registers.
- * Required before a tail call.
+ * Required before a tailcall.
  */
 static guint8 *
 emit_load_volatile_arguments(MonoCompile *cfg, guint8 *code)
@@ -3782,21 +3782,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				mips_fmovd (code, ins->dreg, ins->sreg1);
 			}
 #endif
-			break;
-		case OP_JMP:
-			code = emit_load_volatile_arguments(cfg, code);
-
-			/*
-			 * Pop our stack, then jump to specified method (tail-call)
-			 * Keep in sync with mono_arch_emit_epilog
-			 */
-			code = mono_arch_emit_epilog_sub (cfg, code);
-
-			mono_add_patch_info (cfg, (guint8*) code - cfg->native_code,
-					     MONO_PATCH_INFO_METHOD_JUMP, ins->inst_p0);
-			mips_load (code, mips_t9, 0);
-			mips_jr (code, mips_t9);
-			mips_nop (code);
 			break;
 		case OP_CHECK_THIS:
 			/* ensure ins->sreg1 is not NULL */
@@ -5318,9 +5303,6 @@ mono_arch_emit_epilog_sub (MonoCompile *cfg, guint8 *code)
 		cfg->stat_code_reallocs++;
 	}
 
-	/*
-	 * Keep in sync with OP_JMP
-	 */
 	if (code)
 		code = cfg->native_code + pos;
 	else
@@ -5879,6 +5861,12 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 
 gboolean
 mono_arch_opcode_supported (int opcode)
+{
+	return FALSE;
+}
+
+gboolean
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	return FALSE;
 }

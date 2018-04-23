@@ -1604,9 +1604,8 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 		add_general (&gr, &stack_size, &cinfo->sig_cookie, TRUE);
 	}
 
-	/* align stack size to 8 */
 	DEBUG (g_print ("      stack size: %d (%d)\n", (stack_size + 15) & ~15, stack_size));
-	stack_size = (stack_size + 7) & ~7;
+	stack_size = (stack_size + MONO_ARCH_FRAME_ALIGNMENT) & ~MONO_ARCH_FRAME_ALIGNMENT;
 
 	cinfo->stack_usage = stack_size;
 	return cinfo;
@@ -1734,7 +1733,7 @@ is_supported_tailcall_helper (gboolean value, const char *svalue)
 #define IS_SUPPORTED_TAILCALL(x) (is_supported_tailcall_helper((x), #x))
 
 gboolean
-mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	g_assert (caller_sig);
 	g_assert (callee_sig);
@@ -1744,8 +1743,8 @@ mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig
 	CallInfo *callee_info = get_call_info (NULL, callee_sig);
 
 	/*
-	 * Tail calls with more callee stack usage than the caller cannot be supported, since
-	 * the extra stack space would be left on the stack after the tail call.
+	 * Tailcalls with more callee stack usage than the caller cannot be supported, since
+	 * the extra stack space would be left on the stack after the tailcall.
 	 */
 	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
 				&& IS_SUPPORTED_TAILCALL (caller_info->ret.storage == callee_info->ret.storage);
@@ -2172,7 +2171,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 		cfg->ret_var_is_local = TRUE;
 
 	if (cinfo->ret.storage == RegTypeStructByAddr) {
-		cfg->vret_addr = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_ARG);
+		cfg->vret_addr = mono_compile_create_var (cfg, mono_get_int_type (), OP_ARG);
 		if (G_UNLIKELY (cfg->verbose_level > 1)) {
 			g_print ("vret_addr = ");
 			mono_print_ins (cfg->vret_addr);
@@ -2181,13 +2180,13 @@ mono_arch_create_vars (MonoCompile *cfg)
 
 	if (cfg->gen_sdb_seq_points) {
 		if (cfg->compile_aot) {
-			MonoInst *ins = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+			MonoInst *ins = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 			ins->flags |= MONO_INST_VOLATILE;
 			cfg->arch.seq_point_info_var = ins;
 
 			if (!cfg->soft_breakpoints) {
 				/* Allocate a separate variable for this to save 1 load per seq point */
-				ins = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+				ins = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 				ins->flags |= MONO_INST_VOLATILE;
 				cfg->arch.ss_trigger_page_var = ins;
 			}
@@ -2195,11 +2194,11 @@ mono_arch_create_vars (MonoCompile *cfg)
 		if (cfg->soft_breakpoints) {
 			MonoInst *ins;
 
-			ins = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+			ins = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 			ins->flags |= MONO_INST_VOLATILE;
 			cfg->arch.seq_point_ss_method_var = ins;
 
-			ins = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+			ins = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 			ins->flags |= MONO_INST_VOLATILE;
 			cfg->arch.seq_point_bp_method_var = ins;
 		}
@@ -2212,7 +2211,7 @@ emit_sig_cookie (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 	MonoMethodSignature *tmp_sig;
 	int sig_reg;
 
-	if (call->tail_call)
+	if (call->tailcall)
 		NOT_IMPLEMENTED;
 
 	g_assert (cinfo->sig_cookie.storage == RegTypeBase);
@@ -2362,7 +2361,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		 * the location pointed to by it after call in emit_move_return_value ().
 		 */
 		if (!cfg->arch.vret_addr_loc) {
-			cfg->arch.vret_addr_loc = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+			cfg->arch.vret_addr_loc = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 			/* Prevent it from being register allocated or optimized away */
 			((MonoInst*)cfg->arch.vret_addr_loc)->flags |= MONO_INST_VOLATILE;
 		}
@@ -2390,7 +2389,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		if (i >= sig->hasthis)
 			t = sig->params [i - sig->hasthis];
 		else
-			t = m_class_get_byval_arg (mono_defaults.int_class);
+			t = mono_get_int_type ();
 		t = mini_get_underlying_type (t);
 
 		if ((sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
@@ -6675,9 +6674,6 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		cfg->stat_code_reallocs++;
 	}
 
-	/*
-	 * Keep in sync with OP_JMP
-	 */
 	code = cfg->native_code + cfg->code_len;
 
 	/* Save the uwind state which is needed by the out-of-line code */
