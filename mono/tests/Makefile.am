@@ -271,6 +271,9 @@ TESTS_CS_SRC=		\
 	assembly-load-bytes.cs	\
 	assembly-loadfile.cs	\
 	assembly-loadfrom.cs	\
+	assembly-load-bytes-bindingredirect.cs	\
+	assembly-loadfile-bindingredirect.cs	\
+	assembly-loadfrom-bindingredirect.cs	\
 	assemblyresolve_event.cs	\
 	assemblyresolve_event3.cs	\
 	assemblyresolve_event4.cs	\
@@ -2287,7 +2290,14 @@ assembly-load-dir1/Lib.dll: assembly-load-dir1/Lib.cs
 assembly-load-dir2/Lib.dll: assembly-load-dir2/Lib.cs
 	$(MCS) -target:library -out:$@ $<
 
-EXTRA_DIST += assembly-load-dir1/Lib.cs assmebly-load-dir2/Lib.cs
+assembly-load-dir1/LibStrongName.dll: assembly-load-dir1/LibStrongName.cs testing_gac/testkey.snk
+	$(MCS) -target:library -out:$@ $<
+
+assembly-load-dir2/LibStrongName.dll: assembly-load-dir2/LibStrongName.cs testing_gac/testkey.snk
+	$(MCS) -target:library -out:$@ $<
+
+EXTRA_DIST += assembly-load-dir1/Lib.cs assmebly-load-dir2/Lib.cs \
+	assembly-load-dir1/LibStrongName.cs assembly-load-dir2/LibStrongName.cs
 
 assembly-load-bytes.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/Lib.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/Lib.dll$(PLATFORM_AOT_SUFFIX)
 assembly-load-bytes.exe: assembly-load-dir1/Lib.dll assembly-load-dir2/Lib.dll
@@ -2297,6 +2307,17 @@ assembly-loadfrom.exe: assembly-load-dir1/Lib.dll assembly-load-dir2/Lib.dll
 
 assembly-loadfile.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/Lib.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/Lib.dll$(PLATFORM_AOT_SUFFIX)
 assembly-loadfile.exe: assembly-load-dir1/Lib.dll assembly-load-dir2/Lib.dll
+
+assembly-loadfrom-bindingredirect.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-loadfrom-bindingredirect.exe.config
+assembly-loadfrom-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-loadfrom-bindingredirect.exe.config
+
+assembly-loadfile-bindingredirect.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-loadfile-bindingredirect.exe.config
+assembly-loadfile-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-loadfile-bindingredirect.exe.config
+
+assembly-load-bytes-bindingredirect.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-load-bytes-bindingredirect.exe.config
+assembly-load-bytes-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-load-bytes-bindingredirect.exe.config
+
+EXTRA_DIST += assembly-loadfrom-bindingredirect.exe.config assembly-loadfile-bindingredirect.exe.config assembly-load-bytes-bindingredirect.exe.config
 
 gshared:
 	$(MAKE) test-generic-sharing
