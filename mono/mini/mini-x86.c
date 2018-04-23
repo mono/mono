@@ -74,9 +74,6 @@ static mono_mutex_t mini_arch_mutex;
 
 #define OP_SEQ_POINT_BP_OFFSET 7
 
-static guint8*
-emit_load_aotconst (guint8 *start, guint8 *code, MonoCompile *cfg, MonoJumpInfo **ji, int dreg, int tramp_type, gconstpointer target);
-
 const char*
 mono_arch_regname (int reg)
 {
@@ -3134,6 +3131,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			/* Copy arguments on the stack to our argument area */
+			// FIXME use rep mov for constant code size, before nonvolatiles
+			// restored, first saving esi, edi into volatiles
 			for (i = 0; i < call->stack_usage - call->stack_align_amount; i += 4) {
 				x86_mov_reg_membase (code, X86_EAX, X86_ESP, i, 4);
 				x86_mov_membase_reg (code, X86_EBP, 8 + i, X86_EAX, 4);
@@ -3147,6 +3146,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			} else if (tailcall_membase_not_ecx) {
 				x86_jump_reg (code, X86_ECX);
 			} else {
+				// FIXME alignment
 				offset = code - cfg->native_code;
 				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_METHOD_JUMP, call->method);
 				x86_jump32 (code, 0);
@@ -6341,17 +6341,6 @@ mono_arch_emit_load_got_addr (guint8 *start, guint8 *code, MonoCompile *cfg, Mon
 	x86_pop_reg (code, MONO_ARCH_GOT_REG);
 	x86_alu_reg_imm (code, X86_ADD, MONO_ARCH_GOT_REG, 0xf0f0f0f0);
 
-	return code;
-}
-
-static guint8*
-emit_load_aotconst (guint8 *start, guint8 *code, MonoCompile *cfg, MonoJumpInfo **ji, int dreg, int tramp_type, gconstpointer target)
-{
-	if (cfg)
-		mono_add_patch_info (cfg, code - cfg->native_code, tramp_type, target);
-	else
-		g_assert_not_reached ();
-	x86_mov_reg_membase (code, dreg, MONO_ARCH_GOT_REG, 0xf0f0f0f0, 4);
 	return code;
 }
 

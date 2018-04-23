@@ -1608,7 +1608,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		if (i >= sig->hasthis)
 			t = sig->params [i - sig->hasthis];
 		else
-			t = mono_get_int_type ()
+			t = mono_get_int_type ();
 		t = mini_get_underlying_type (t);
 
 		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos))
@@ -5227,15 +5227,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					ppc_ldptr (code, ppc_r12, ainfo->offset, ppc_r12);
 				} else {
 					ppc_mr (code, ppc_r12, ainfo->reg);
-				}
-
-				if (cfg->tailcall_valuetype_addrs) {
-					MonoInst *addr = cfg->tailcall_valuetype_addrs [tailcall_struct_index];
-
-					g_assert (ppc_is_imm16 (addr->inst_offset));
-					ppc_stptr (code, ppc_r12, addr->inst_offset, addr->inst_basereg);
-
-					tailcall_struct_index++;
 				}
 
 				g_assert (ppc_is_imm16 (inst->inst_offset));

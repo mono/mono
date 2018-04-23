@@ -21,7 +21,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <glib.h>
-#include <signal.h>
 #include <math.h>
 #include <locale.h>
 
@@ -252,10 +251,8 @@ ves_real_abort (int line, MonoMethod *mh,
 	mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	g_printerr ("Execution aborted in method: %s::%s\n", m_class_get_name (mh->klass), mh->name);
 	g_printerr ("Line=%d IP=0x%04lx, Aborted execution\n", line, ip-(const unsigned short *) header->code);
-	g_print ("0x%04x %02x\n", ip-(const unsigned short *) header->code, *ip);
+	g_printerr ("0x%04x %02x\n", ip-(const unsigned short *) header->code, *ip);
 	mono_metadata_free_mh (header);
-	if (sp > stack)
-		printf ("\t[%ld] 0x%08x %0.5f\n", sp-stack, sp[-1].data.i, sp[-1].data.f);
 }
 
 #define ves_abort() \
@@ -3574,8 +3571,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 					child_frame.retval = &retval;
 				}
 			}
-
-			g_assert (csig->call_convention == MONO_CALL_DEFAULT);
 
 			interp_exec_method (&child_frame, context);
 
