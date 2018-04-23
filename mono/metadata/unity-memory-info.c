@@ -63,13 +63,15 @@ static void CollectImageMetaData(MonoImage* image, gpointer value, CollectMetada
 
 	if (image->dynamic)
 	{
+		GHashTableIter iter;
+		gpointer key;
 		MonoDynamicImage* dynamicImage = (MonoDynamicImage*)image;
-		GList* types = g_hash_table_get_keys(dynamicImage->typeref);
-		GList* type;
 
-		for (type = types; type != NULL; type = type->next)
+		g_hash_table_iter_init(&iter, dynamicImage->typeref);
+
+		while (g_hash_table_iter_next(&iter, &key, NULL))
 		{
-			MonoType* monoType = (MonoType*)type->data;
+			MonoType* monoType = (MonoType*)key;
 			MonoClass* klass = mono_type_get_class(monoType);
 
 			if (klass)
