@@ -1,3 +1,5 @@
+../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
+
 ../../../external/corefx/src/Common/tests/System/Xml/ModuleCore/*.cs
 ../../../external/corefx/src/Common/tests/System/Xml/XmlCoreTest/*.cs
 ../../../external/corefx/src/Common/tests/System/Xml/XmlDiff/*.cs
