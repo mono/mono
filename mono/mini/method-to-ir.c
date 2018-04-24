@@ -401,11 +401,14 @@ mono_create_helper_signatures (void)
 	helper_sig_set_tls_tramp = mono_create_icall_signature ("void ptr");
 }
 
-static MONO_NEVER_INLINE void
+static MONO_NEVER_INLINE gboolean
 break_on_unverified (void)
 {
-	if (mini_get_debug_options ()->break_on_unverified)
+	if (mini_get_debug_options ()->break_on_unverified) {
 		G_BREAKPOINT ();
+		return TRUE;
+	}
+	return FALSE;
 }
 
 static void
@@ -8469,8 +8472,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			sp -= n;
 
-			if (!(cfg->method->wrapper_type && cfg->method->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD) && check_call_signature (cfg, fsig, sp))
+			if (!(cfg->method->wrapper_type && cfg->method->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD) && check_call_signature (cfg, fsig, sp)) {
+				if (break_on_unverified ())
+					check_call_signature (cfg, fsig, sp); // Again, step through it.
 				UNVERIFIED;
+			}
 
 			inline_costs += 10 * num_calls++;
 
@@ -8895,8 +8901,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			for (int i = 0; i < fsig->param_count; ++i)
 				sp [i + fsig->hasthis] = convert_value (cfg, fsig->params [i], sp [i + fsig->hasthis]);
 
-			if (check_call_signature (cfg, fsig, sp))
+			if (check_call_signature (cfg, fsig, sp)) {
+				if (break_on_unverified ())
+					check_call_signature (cfg, fsig, sp); // Again, step through it.
 				UNVERIFIED;
+			}
 
 			if ((m_class_get_parent (cmethod->klass) == mono_defaults.multicastdelegate_class) && !strcmp (cmethod->name, "Invoke"))
 				delegate_invoke = TRUE;
