@@ -3221,14 +3221,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	MONO_BB_FOR_EACH_INS (bb, ins) {
 		offset = code - cfg->native_code;
+		set_code_cursor (cfg, code);
+		max_len = ins_get_size (ins->opcode);
+		code = realloc_code (cfg, max_len);
 
-		max_len = ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
-
-		if (offset > (cfg->code_size - max_len - 16)) {
-			cfg->code_size *= 2;
-			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-			code = cfg->native_code + offset;
-		}
 		mono_debug_record_line_number (cfg, ins, offset);
 		if (cfg->verbose_level > 2) {
 			g_print ("    @ 0x%x\t", offset);
@@ -3992,12 +3988,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			int i;
 
 			max_len += 4 * GPOINTER_TO_INT (ins->klass);
-			if (offset > (cfg->code_size - max_len - 16)) {
-				cfg->code_size += max_len;
-				cfg->code_size *= 2;
-				cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-				code = cfg->native_code + offset;
-			}
+			code = realloc_code (cfg, max_len);
+
 			g_assert (ins->sreg1 != -1);
 			mips_sll (code, mips_at, ins->sreg1, 2);
 			if (1 || !(cfg->flags & MONO_CFG_HAS_CALLS))
@@ -4500,9 +4492,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		last_ins = ins;
 		last_offset = offset;
+		g_assert (code < (cfg->native_code + cfg->code_size));
 	}
 
-	cfg->code_len = code - cfg->native_code;
+	set_code_cursor (cfg, code);
 }
 
 void
@@ -4821,7 +4814,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		bb->max_offset = max_offset;
 
 		MONO_BB_FOR_EACH_INS (bb, ins)
-			max_offset += ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
+			max_offset += ins_get_size (ins->opcode);
 	}
 	if (max_offset > 0xffff)
 		cfg->arch.long_branch = TRUE;
@@ -5158,8 +5151,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		code = mono_arch_instrument_prolog (cfg, mono_trace_enter_method, code, TRUE);
 	}
 
-	cfg->code_len = code - cfg->native_code;
-	g_assert (cfg->code_len < cfg->code_size);
+	set_code_cursor (cfg, code);
 
 	return code;
 }
@@ -5185,12 +5177,9 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	g_assert ((save_offset & (MIPS_STACK_ALIGNMENT-1)) == 0);
 	
 	offset = code - cfg->native_code;
+	set_code_cursor (cfg, code);
 	/* we need about 16 instructions */
-	if (offset > (cfg->code_size - 16 * 4)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		code = cfg->native_code + offset;
-	}
+	code = realloc_code (cfg, 16 * 4);
 	mips_nop (code);
 	mips_nop (code);
 	switch (rtype) {
@@ -5297,11 +5286,8 @@ mono_arch_emit_epilog_sub (MonoCompile *cfg, guint8 *code)
 
 	if (code)
 		pos = code - cfg->native_code;
-	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		cfg->stat_code_reallocs++;
-	}
+
+	realloc_code (cfg, max_epilog_size);
 
 	if (code)
 		code = cfg->native_code + pos;
@@ -5381,9 +5367,8 @@ mono_arch_emit_epilog_sub (MonoCompile *cfg, guint8 *code)
 
 	/* Caller will emit either return or tail-call sequence */
 
-	cfg->code_len = code - cfg->native_code;
+	set_code_cursor (cfg, code);
 
-	g_assert (cfg->code_len < cfg->code_size);
 	return (code);
 }
 
@@ -5397,9 +5382,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	mips_jr (code, mips_ra);
 	mips_nop (code);
 
-	cfg->code_len = code - cfg->native_code;
-
-	g_assert (cfg->code_len < cfg->code_size);
+	set_code_cursor (cfg, code);
 }
 
 /* remove once throw_exception_by_name is eliminated */
@@ -5458,13 +5441,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 #endif
 	}
 
-	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		cfg->stat_code_reallocs++;
-	}
-
-	code = cfg->native_code + cfg->code_len;
+	code = realloc_code (cfg, max_epilog_size);
 
 	/* add code to raise exceptions */
 	for (patch_info = cfg->patch_info; patch_info; patch_info = patch_info->next) {
@@ -5502,9 +5479,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 		}
 	}
 
-	cfg->code_len = code - cfg->native_code;
-
-	g_assert (cfg->code_len < cfg->code_size);
+	set_code_cursor (cfg, code);
 #endif
 }
 
