@@ -7,8 +7,6 @@
 #include "mini.h"
 #include "mini-llvm.h"
 
-#ifdef MONO_LLVM_LOADED
-
 typedef struct {
 	void (*init)(void);
 	void (*cleanup)(void);
@@ -133,14 +131,3 @@ symbol_error:
 	g_free (err);
 	return FALSE;
 }
-
-#else
-
-int
-mono_llvm_load (const char* bpath)
-{
-	return TRUE;
-}
-
-#endif /* MONO_LLVM_LOADED */
-

@@ -152,13 +152,14 @@ endif
 
 noinst_LTLIBRARIES = $(mini_common_lib)
 
-if LOADED_LLVM
-lib_LTLIBRARIES += libmono-llvm.la
 libmono_llvm_la_SOURCES = mini-llvm.c mini-llvm-cpp.cpp llvm-jit.cpp
 libmono_llvm_la_LIBADD = $(glib_libs) $(LLVM_LIBS) $(LLVM_LDFLAGS)
 if HOST_DARWIN
 libmono_llvm_la_LDFLAGS=-Wl,-undefined -Wl,suppress -Wl,-flat_namespace
 endif
+
+if ENABLE_LLVM
+lib_LTLIBRARIES += libmono-llvm.la
 endif
 
 mono_boehm_SOURCES = \
@@ -213,16 +214,9 @@ MONO_LIB=libmonoboehm-2.0.la
 MONO_SGEN_LIB=libmonosgen-2.0.la
 endif
 
-if LOADED_LLVM
-LLVMMONOF=
-else
-LLVMMONOF=$(LLVM_LIBS) $(LLVM_LDFLAGS)
-endif
-
 mono_boehm_LDADD = \
 	$(MONO_LIB)		\
 	$(glib_libs)		\
-	$(LLVMMONOF)		\
 	-lm			\
 	$(MONO_DTRACE_OBJECT)
 
@@ -232,7 +226,6 @@ mono_boehm_LDFLAGS = \
 mono_sgen_LDADD = \
 	$(MONO_SGEN_LIB)	\
 	$(glib_libs)		\
-	$(LLVMMONOF)		\
 	-lm			\
 	$(MONO_DTRACE_OBJECT)
 
@@ -353,16 +346,8 @@ posix_sources = \
 	mini-posix.c
 
 if ENABLE_LLVM
-if LOADED_LLVM
 llvm_sources = \
 	mini-llvm-loaded.c
-else
-llvm_sources = \
-	mini-llvm.c		\
-	mini-llvm-loaded.c \
-	mini-llvm-cpp.cpp \
-	llvm-jit.cpp
-endif
 endif
 
 interp_sources =	\
@@ -381,14 +366,9 @@ if !DISABLE_INTERPRETER
 interp_libs_with_mini = $(interp_libs)
 endif
 
-if ENABLE_LLVM
-llvm_runtime_sources = \
-	llvm-runtime.cpp
-else
 if ENABLE_LLVM_RUNTIME
 llvm_runtime_sources = \
 	llvm-runtime.cpp
-endif
 endif
 
 common_sources = \
@@ -655,12 +635,12 @@ libmini_la_CFLAGS = $(mono_CFLAGS)
 
 libmonoboehm_2_0_la_SOURCES =
 libmonoboehm_2_0_la_CFLAGS = $(mono_boehm_CFLAGS)
-libmonoboehm_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(boehm_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
+libmonoboehm_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(boehm_libs) $(LIBMONO_DTRACE_OBJECT)
 libmonoboehm_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
 
 libmonosgen_2_0_la_SOURCES =
 libmonosgen_2_0_la_CFLAGS = $(mono_sgen_CFLAGS)
-libmonosgen_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
+libmonosgen_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_libs) $(LIBMONO_DTRACE_OBJECT)
 libmonosgen_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
 
 libmonoincludedir = $(includedir)/mono-$(API_VER)/mono/jit

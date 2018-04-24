@@ -13,17 +13,11 @@ MCS_NO_LIB = $(MCS_NO_UNSAFE) -unsafe
 
 MCS = $(MCS_NO_LIB)
 
-if LOADED_LLVM
-LLVMMONOF=
-else
-LLVMMONOF=$(LLVM_LIBS) $(LLVM_LDFLAGS)
-endif
-
 glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 test_cflags = $(AM_CFLAGS) $(SGEN_DEFINES)
 test_ldadd = libtestlib.la \
-	$(LIBGC_LIBS) $(glib_libs) $(LLVMMONOF)
+	$(LIBGC_LIBS) $(glib_libs)
 if HOST_DARWIN
 test_ldflags = -framework CoreFoundation -framework Foundation
 endif

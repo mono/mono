@@ -104,14 +104,6 @@ struct jit_descriptor
 /* GDB puts a breakpoint in this function.  */
 void MONO_NEVER_INLINE __jit_debug_register_code(void);
 
-#if !defined(MONO_LLVM_LOADED) && defined(ENABLE_LLVM) && !defined(MONO_CROSS_COMPILE)
-
-/* LLVM already defines these */
-
-extern struct jit_descriptor __jit_debug_descriptor;
-
-#else
-
 /* gcc seems to inline/eliminate calls to noinline functions, thus the asm () */
 void MONO_NEVER_INLINE __jit_debug_register_code(void) {
 #if defined(__GNUC__)
@@ -122,8 +114,6 @@ void MONO_NEVER_INLINE __jit_debug_register_code(void) {
 /* Make sure to specify the version statically, because the
    debugger may check the version before we can set it.  */
 struct jit_descriptor __jit_debug_descriptor = { 1, 0, 0, 0 };
-
-#endif
 
 static MonoImageWriter *xdebug_w;
 static MonoDwarfWriter *xdebug_writer;

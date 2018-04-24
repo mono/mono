@@ -4371,7 +4371,7 @@ void mono_llvm_emit_aot_data (const char *symbol, guint8 *data, int data_len)
 
 #endif
 
-#if !defined(ENABLE_LLVM_RUNTIME) && !defined(ENABLE_LLVM)
+#if !defined(ENABLE_LLVM_RUNTIME)
 
 void
 mono_llvm_cpp_throw_exception (void)
