@@ -2018,7 +2018,7 @@ convert_value (MonoCompile *cfg, MonoType *type, MonoInst *ins)
  *
  * FIXME: implement this using target_type_is_incompatible ()
  */
-static int
+static gboolean
 check_call_signature (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args)
 {
 	MonoType *simple_type;
@@ -2026,21 +2026,20 @@ check_call_signature (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **arg
 
 	if (sig->hasthis) {
 		if (args [0]->type != STACK_OBJ && args [0]->type != STACK_MP && args [0]->type != STACK_PTR)
-			return 1;
+			return TRUE;
 		args++;
 	}
 	for (i = 0; i < sig->param_count; ++i) {
 		if (sig->params [i]->byref) {
 			if (args [i]->type != STACK_MP && args [i]->type != STACK_PTR)
-				return 1;
+				return TRUE;
 			continue;
 		}
 		simple_type = mini_get_underlying_type (sig->params [i]);
 handle_enum:
 		switch (simple_type->type) {
 		case MONO_TYPE_VOID:
-			return 1;
-			continue;
+			return TRUE;
 		case MONO_TYPE_I1:
 		case MONO_TYPE_U1:
 		case MONO_TYPE_I2:
@@ -2048,14 +2047,14 @@ handle_enum:
 		case MONO_TYPE_I4:
 		case MONO_TYPE_U4:
 			if (args [i]->type != STACK_I4 && args [i]->type != STACK_PTR)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
 		case MONO_TYPE_PTR:
 		case MONO_TYPE_FNPTR:
 			if (args [i]->type != STACK_I4 && args [i]->type != STACK_PTR && args [i]->type != STACK_MP && args [i]->type != STACK_OBJ)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_CLASS:
 		case MONO_TYPE_STRING:
@@ -2063,20 +2062,20 @@ handle_enum:
 		case MONO_TYPE_SZARRAY:
 		case MONO_TYPE_ARRAY:    
 			if (args [i]->type != STACK_OBJ)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_I8:
 		case MONO_TYPE_U8:
 			if (args [i]->type != STACK_I8)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_R4:
 			if (args [i]->type != cfg->r4_stack_type)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_R8:
 			if (args [i]->type != STACK_R8)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_VALUETYPE:
 			if (m_class_is_enumtype (simple_type->data.klass)) {
@@ -2084,11 +2083,11 @@ handle_enum:
 				goto handle_enum;
 			}
 			if (args [i]->type != STACK_VTYPE)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_TYPEDBYREF:
 			if (args [i]->type != STACK_VTYPE)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_GENERICINST:
 			simple_type = m_class_get_byval_arg (simple_type->data.generic_class->container_class);
@@ -2097,14 +2096,14 @@ handle_enum:
 		case MONO_TYPE_MVAR:
 			/* gsharedvt */
 			if (args [i]->type != STACK_VTYPE)
-				return 1;
+				return TRUE;
 			continue;
 		default:
 			g_error ("unknown type 0x%02x in check_call_signature",
 				 simple_type->type);
 		}
 	}
-	return 0;
+	return FALSE;
 }
 
 static int
