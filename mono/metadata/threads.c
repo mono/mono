@@ -199,9 +199,6 @@ mono_thread_set_interruption_requested_flags (MonoInternalThread *thread, gboole
 MONO_COLD static void
 mono_set_pending_exception_handle (MonoExceptionHandle exc);
 
-static MonoException*
-mono_thread_execute_interruption_ptr (void);
-
 static void
 mono_thread_execute_interruption_void (void);
 
@@ -1601,36 +1598,31 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 void
 ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 {
-	guint32 res;
-	MonoInternalThread *thread = mono_thread_internal_current ();
-
 	THREAD_DEBUG (g_message ("%s: Sleeping for %d ms", __func__, ms));
 
 	if (mono_thread_current_check_pending_interrupt ())
 		return;
+
+	MonoInternalThread * const thread = mono_thread_internal_current ();
 
 	while (TRUE) {
 		gboolean alerted = FALSE;
 
 		mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 
-		res = mono_thread_info_sleep (ms, &alerted);
+		(void)mono_thread_info_sleep (ms, &alerted);
 
 		mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
-		if (alerted) {
-			MonoExceptionHandle exc;
-			if (mono_thread_execute_interruption (&exc)) {
-				mono_set_pending_exception_handle (exc);
-				return;
-			} else {
-				// FIXME: !MONO_INFINITE_WAIT
-				if (ms != MONO_INFINITE_WAIT)
-					break;
-			}
-		} else {
-			break;
-		}
+		if (!alerted)
+			return;
+
+		MonoExceptionHandle exc;
+		if (mono_thread_execute_interruption (&exc))
+			mono_set_pending_exception_handle (exc);
+		else if (ms == MONO_INFINITE_WAIT) // FIXME: !MONO_INFINITE_WAIT
+			continue;
+		return;
 	}
 }
 
