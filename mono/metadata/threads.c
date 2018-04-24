@@ -205,8 +205,8 @@ mono_thread_execute_interruption_ptr (void);
 static void
 mono_thread_execute_interruption_void (void);
 
-static MonoExceptionHandle
-mono_thread_execute_interruption (void);
+static gboolean
+mono_thread_execute_interruption (MonoExceptionHandle *pexc);
 
 static void ref_stack_destroy (gpointer rs);
 
@@ -1598,46 +1598,39 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 	}
 }
 
-static gboolean
-System_Threading_Thread_Sleep_loop (MonoInternalThread *thread, gint32 ms, MonoError *error)
-// A separate function is needed to avoid creating coop handles in a loop.
-{
-	HANDLE_FUNCTION_ENTER ();
-
-	gboolean done = TRUE;
-	gboolean alerted = FALSE;
-
-	THREAD_DEBUG (g_message ("%s: Sleeping for %d ms", __func__, ms));
-
-	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
-
-	(void)mono_thread_info_sleep (ms, &alerted);
-
-	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
-
-	if (alerted) {
-		MonoExceptionHandle exc = mono_thread_execute_interruption ();
-		if (!MONO_HANDLE_IS_NULL (exc))
-			mono_error_set_exception_handle (error, exc);
-		else if (ms == MONO_INFINITE_WAIT) // FIXME: !MONO_INFINITE_WAIT
-			done = FALSE;
-	}
-
-	HANDLE_FUNCTION_RETURN_VAL (done);
-}
-
 void
 ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 {
+	guint32 res;
+	MonoInternalThread *thread = mono_thread_internal_current ();
+
 	THREAD_DEBUG (g_message ("%s: Sleeping for %d ms", __func__, ms));
 
 	if (mono_thread_current_check_pending_interrupt ())
 		return;
 
-	MonoInternalThread *thread = mono_thread_internal_current ();
+	while (TRUE) {
+		gboolean alerted = FALSE;
 
-	while (!System_Threading_Thread_Sleep_loop (thread, ms, error)) {
-		// nothing
+		mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
+
+		res = mono_thread_info_sleep (ms, &alerted);
+
+		mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
+
+		if (alerted) {
+			MonoExceptionHandle exc;
+			if (mono_thread_execute_interruption (&exc)) {
+				mono_set_pending_exception_handle (exc);
+				return;
+			} else {
+				// FIXME: !MONO_INFINITE_WAIT
+				if (ms != MONO_INFINITE_WAIT)
+					break;
+			}
+		} else {
+			break;
+		}
 	}
 }
 
@@ -1951,71 +1944,37 @@ mono_thread_internal_current_handle (void)
 	return MONO_HANDLE_NEW (MonoInternalThread, mono_thread_internal_current ());
 }
 
-
-static gboolean
-mono_join_uninterrupted_loop (MonoThreadHandle* thread_to_join, gint32 ms, gint64 start, gint32 *wait, MonoThreadInfoWaitRet *ret, MonoError *error)
-// A separate function is needed to avoid creating coop handles in a loop.
-{
-	gboolean done = TRUE;
-	MonoExceptionHandle exc;
-
-	HANDLE_FUNCTION_ENTER ();
-
-	MONO_ENTER_GC_SAFE;
-	*ret = mono_thread_info_wait_one_handle (thread_to_join, *wait, TRUE);
-	MONO_EXIT_GC_SAFE;
-
-	if (*ret != MONO_THREAD_INFO_WAIT_RET_ALERTED) {
-		done = TRUE;
-		goto exit;
-	}
-
-	exc = mono_thread_execute_interruption ();
-	if (!MONO_HANDLE_IS_NULL (exc)) {
-		mono_error_set_exception_handle (error, exc);
-		done = TRUE;
-		goto exit;
-	}
-
-	if (ms == -1) {
-		done = FALSE;
-		goto exit;
-	}
-
-	/* Re-calculate wait according to the time passed. */
-	gint32 diff_ms;
-	diff_ms = (gint32)(mono_msec_ticks () - start);
-	if (diff_ms >= ms) {
-		*ret = MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
-		done = TRUE;
-		goto exit;
-	}
-
-	*wait = ms - diff_ms;
-	done = FALSE;
-
-exit:
-	HANDLE_FUNCTION_RETURN_VAL (done);
-}
-
 static MonoThreadInfoWaitRet
 mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER ();
-
-	MonoThreadInfoWaitRet ret;
-	gint64 start;
 	gint32 wait = ms;
+	gint64 const start = (ms == -1) ? 0 : mono_msec_ticks ();
 
-	error_init (error);
+	while (TRUE) {
+		MonoThreadInfoWaitRet ret;
 
-	start = (ms == -1) ? 0 : mono_msec_ticks ();
+		MONO_ENTER_GC_SAFE;
+		ret = mono_thread_info_wait_one_handle (thread_to_join, wait, TRUE);
+		MONO_EXIT_GC_SAFE;
 
-	while (!mono_join_uninterrupted_loop (thread_to_join, ms, start, &wait, &ret, error)) {
-		// nothing
+		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
+			return ret;
+
+		MonoExceptionHandle exc;
+		if (mono_thread_execute_interruption (&exc)) {
+			mono_error_set_exception_handle (error, exc);
+			return ret;
+		}
+
+		if (ms == -1)
+			continue;
+
+		/* Re-calculate wait according to the time passed. */
+		gint32 diff_ms = (gint32)(mono_msec_ticks () - start);
+		if (diff_ms >= ms)
+			return MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
+		wait = ms - diff_ms;
 	}
-
-	HANDLE_FUNCTION_RETURN_VAL (ret);
 }
 
 gboolean
@@ -2089,83 +2048,58 @@ map_native_wait_result_to_managed (MonoW32HandleWaitRet val, gsize numobjects)
 	}
 }
 
-
-static gboolean
-System_Threading_WaitHandle_Wait_loop (gpointer *handles, gint32 numhandles, MonoBoolean waitall, gint32 timeout, MonoError *error,
-                                       MonoW32HandleWaitRet *ret, MonoInternalThread *thread, gint64 start, guint32 *timeoutLeft)
-// A separate function is needed to avoid creating coop handles in a loop.
-{
-	HANDLE_FUNCTION_ENTER ();
-
-	gboolean done = FALSE;
-
-#ifdef HOST_WIN32
-	MONO_ENTER_GC_SAFE;
-	if (numhandles != 1)
-		*ret = mono_w32handle_convert_wait_ret (mono_win32_wait_for_multiple_objects_ex(numhandles, handles, waitall, timeoutLeft, TRUE), numhandles);
-	else
-		*ret = mono_w32handle_convert_wait_ret (mono_win32_wait_for_single_object_ex (handles [0], timeoutLeft, TRUE), 1);
-	MONO_EXIT_GC_SAFE;
-#else
-	/* mono_w32handle_wait_multiple optimizes the case for numhandles == 1 */
-	*ret = mono_w32handle_wait_multiple (handles, numhandles, waitall, *timeoutLeft, TRUE);
-#endif /* HOST_WIN32 */
-
-	if (*ret != MONO_W32HANDLE_WAIT_RET_ALERTED) {
-		done = TRUE;
-		goto exit;
-	}
-
-	MonoExceptionHandle exc;
-	exc = mono_thread_execute_interruption ();
-	if (!MONO_HANDLE_IS_NULL (exc)) {
-		mono_error_set_exception_handle (error, exc);
-		done = TRUE;
-		goto exit;
-	}
-
-	if (timeout != MONO_INFINITE_WAIT) {
-		gint64 const elapsed = mono_msec_ticks () - start;
-		if (elapsed >= timeout) {
-			*ret = MONO_W32HANDLE_WAIT_RET_TIMEOUT;
-			done = TRUE;
-			goto exit;
-		}
-
-		*timeoutLeft = timeout - elapsed;
-	}
-
-	done = FALSE;
-
-exit:
-	HANDLE_FUNCTION_RETURN_VAL (done);
-}
-
 gint32
 ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 numhandles, MonoBoolean waitall, gint32 timeout, MonoError *error)
 {
-	MonoW32HandleWaitRet ret;
-	MonoInternalThread *thread;
-	gint64 start = 0;
-	guint32 timeoutLeft;
-
 	/* Do this WaitSleepJoin check before creating objects */
 	if (mono_thread_current_check_pending_interrupt ())
 		return map_native_wait_result_to_managed (MONO_W32HANDLE_WAIT_RET_FAILED, 0);
 
-	thread = mono_thread_internal_current ();
+	MonoInternalThread * const thread = mono_thread_internal_current ();
 
 	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
+
+	gint64 start = 0;
 
 	if (timeout == -1)
 		timeout = MONO_INFINITE_WAIT;
 	if (timeout != MONO_INFINITE_WAIT)
 		start = mono_msec_ticks ();
 
-	timeoutLeft = timeout;
+	guint32 timeoutLeft = timeout;
 
-	while (!System_Threading_WaitHandle_Wait_loop (handles, numhandles, waitall, timeout, error, &ret, thread, start, &timeoutLeft)) {
-		// nothing
+	MonoW32HandleWaitRet ret;
+
+	for (;;) {
+#ifdef HOST_WIN32
+		MONO_ENTER_GC_SAFE;
+		ret =	(numhandles != 1)
+			? mono_w32handle_convert_wait_ret (mono_win32_wait_for_multiple_objects_ex(numhandles, handles, waitall, timeoutLeft, TRUE), numhandles)
+			: mono_w32handle_convert_wait_ret (mono_win32_wait_for_single_object_ex (handles [0], timeoutLeft, TRUE), 1);
+		MONO_EXIT_GC_SAFE;
+#else
+		/* mono_w32handle_wait_multiple optimizes the case for numhandles == 1 */
+		ret = mono_w32handle_wait_multiple (handles, numhandles, waitall, timeoutLeft, TRUE);
+#endif /* HOST_WIN32 */
+
+		if (ret != MONO_W32HANDLE_WAIT_RET_ALERTED)
+			break;
+
+		MonoExceptionHandle exc;
+		if (mono_thread_execute_interruption (&exc)) {
+			mono_error_set_exception_handle (error, exc);
+			break;
+		}
+
+		if (timeout != MONO_INFINITE_WAIT) {
+			gint64 const elapsed = mono_msec_ticks () - start;
+			if (elapsed >= timeout) {
+				ret = MONO_W32HANDLE_WAIT_RET_TIMEOUT;
+				break;
+			}
+
+			timeoutLeft = timeout - elapsed;
+		}
 	}
 
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
@@ -4731,8 +4665,8 @@ static void CALLBACK dummy_apc (ULONG_PTR param)
  * Performs the operation that the requested thread state requires (abort,
  * suspend or stop)
  */
-static MonoExceptionHandle
-mono_thread_execute_interruption (void)
+static gboolean
+mono_thread_execute_interruption (MonoExceptionHandle *pexc)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -4740,6 +4674,7 @@ mono_thread_execute_interruption (void)
 
 	MonoInternalThreadHandle thread = mono_thread_internal_current_handle ();
 	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+	gboolean fexc = FALSE;
 
 	lock_thread_handle (thread);
 	gboolean unlock = TRUE;
@@ -4766,6 +4701,7 @@ mono_thread_execute_interruption (void)
 	if (!MONO_HANDLE_IS_NULL (exc)) {
 		// sys_thread->pending_exception = NULL;
 		MONO_HANDLE_SETRAW (sys_thread, pending_exception, NULL);
+		fexc = TRUE;
 		goto exit;
 	} else if (MONO_HANDLE_GETVAL (thread, state) & ThreadState_AbortRequested) {
 		// Does the thread already have an abort exception?
@@ -4779,6 +4715,7 @@ mono_thread_execute_interruption (void)
 			// thread->abort_exc = exc;
 			MONO_HANDLE_SET (thread, abort_exc, exc);
 		}
+		fexc = TRUE;
 	} else if (MONO_HANDLE_GETVAL (thread, state) & ThreadState_SuspendRequested) {
 		/* calls UNLOCK_THREAD (thread) */
 		self_suspend_internal ();
@@ -4791,28 +4728,32 @@ mono_thread_execute_interruption (void)
 		ERROR_DECL (error);
 		exc = mono_exception_new_thread_interrupted (error);
 		mono_error_assert_ok (error); // FIXME
+		fexc = TRUE;
 	}
 exit:
 	if (unlock)
 		unlock_thread_handle (thread);
 
-	HANDLE_FUNCTION_RETURN_REF (MonoException, exc);
+	if (fexc && pexc)
+		*pexc = MONO_HANDLE_NEW (MonoException, MONO_HANDLE_RAW (exc));
+
+	HANDLE_FUNCTION_RETURN_VAL (fexc);
 }
 
 static void
 mono_thread_execute_interruption_void (void)
 {
-	(void)mono_thread_execute_interruption ();
+	HANDLE_FUNCTION_ENTER ();
+	(void)mono_thread_execute_interruption (NULL);
+	HANDLE_FUNCTION_RETURN ();
 }
 
 static MonoException*
 mono_thread_execute_interruption_ptr (void)
 {
 	HANDLE_FUNCTION_ENTER ();
-
-	MonoExceptionHandle exc = mono_thread_execute_interruption ();
-
-	HANDLE_FUNCTION_RETURN_OBJ (exc);
+	MonoExceptionHandle exc;
+	HANDLE_FUNCTION_RETURN_VAL (mono_thread_execute_interruption (&exc) ? MONO_HANDLE_RAW (exc) : NULL);
 }
 
 /*
@@ -4823,17 +4764,17 @@ mono_thread_execute_interruption_ptr (void)
  * the thread. If the result is an exception that needs to be thrown, it is
  * provided as return value.
  */
-static MonoExceptionHandle
-mono_thread_request_interruption_internal (gboolean running_managed)
+static gboolean
+mono_thread_request_interruption_internal (gboolean running_managed, MonoExceptionHandle *pexc)
 {
 	MonoInternalThread *thread = mono_thread_internal_current ();
 
 	/* The thread may already be stopping */
 	if (thread == NULL)
-		goto return_null;
+		return FALSE;
 
 	if (!mono_thread_set_interruption_requested (thread))
-		goto return_null;
+		return FALSE;
 
 	if (!running_managed || is_running_protected_wrapper ()) {
 		/* Can't stop while in unmanaged code. Increase the global interruption
@@ -4847,33 +4788,24 @@ mono_thread_request_interruption_internal (gboolean running_managed)
 #else
 		mono_thread_info_self_interrupt ();
 #endif
-		goto return_null;
+		return FALSE;
 	}
-	else {
-		return mono_thread_execute_interruption ();
-	}
-return_null:
-	return MONO_HANDLE_NEW (MonoException, NULL);
+	return mono_thread_execute_interruption (pexc);
 }
 
 static void
 mono_thread_request_interruption_native (void)
 {
 	HANDLE_FUNCTION_ENTER ();
-
-	(void)mono_thread_request_interruption_internal (FALSE);
-
+	(void)mono_thread_request_interruption_internal (FALSE, NULL);
 	HANDLE_FUNCTION_RETURN ();
 }
 
-static MonoExceptionHandle
-mono_thread_request_interruption_managed (void)
+static gboolean
+mono_thread_request_interruption_managed (MonoExceptionHandle *exc)
 {
 	HANDLE_FUNCTION_ENTER ();
-
-	MonoExceptionHandle exc = mono_thread_request_interruption_internal (TRUE);
-
-	HANDLE_FUNCTION_RETURN_REF (MonoException, exc);
+	HANDLE_FUNCTION_RETURN_VAL (mono_thread_request_interruption_internal (TRUE, exc));
 }
 
 /*This function should be called by a thread after it has exited all of
@@ -4930,10 +4862,8 @@ mono_thread_interruption_checkpoint_request (gboolean bypass_abort_protection)
 		return NULL;
 
 	HANDLE_FUNCTION_ENTER ();
-
-	MonoExceptionHandle exc = mono_thread_execute_interruption ();
-
-	HANDLE_FUNCTION_RETURN_OBJ (exc);
+	MonoExceptionHandle exc;
+	HANDLE_FUNCTION_RETURN_VAL (mono_thread_execute_interruption (&exc) ? MONO_HANDLE_RAW (exc) : NULL);
 }
 
 /*
@@ -5310,8 +5240,8 @@ self_abort_internal (MonoError *error)
 	/*
 	Self aborts ignore the protected block logic and raise the TAE regardless. This is verified by one of the tests in mono/tests/abort-cctor.cs.
 	*/
-	MonoExceptionHandle exc = mono_thread_request_interruption_managed ();
-	if (!MONO_HANDLE_IS_NULL (exc))
+	MonoExceptionHandle exc;
+	if (mono_thread_request_interruption_managed (&exc))
 		mono_error_set_exception_handle (error, exc);
 	else
 		mono_thread_info_self_interrupt ();
