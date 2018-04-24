@@ -2025,7 +2025,7 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThread *this_obj, int ms)
 
 		/* Wait for the thread to really exit */
 		MonoNativeThreadId tid = thread_get_tid (thread);
-		mono_thread_join (tid);
+		mono_thread_join ((gpointer)tid);
 
 		return TRUE;
 	}
@@ -4818,7 +4818,7 @@ mono_thread_request_interruption_managed (void)
 {
 	HANDLE_FUNCTION_ENTER ();
 
-	MonoException exc = mono_thread_request_interruption_internal (TRUE);
+	MonoExceptionHandle exc = mono_thread_request_interruption_internal (TRUE);
 
 	HANDLE_FUNCTION_RETURN_REF (MonoException, exc);
 }
@@ -4964,7 +4964,7 @@ mono_runtime_set_pending_exception (MonoException *exc, mono_bool overwrite)
 
 	MONO_OBJECT_SETREF (thread, pending_exception, exc);
 
-	mono_thread_request_interruption (FALSE);
+	mono_thread_request_interruption_native ();
 
 	return TRUE;
 }
