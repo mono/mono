@@ -22,9 +22,9 @@ Please describe the behavior you are expecting
 
 ## On which platforms did you notice this
 
- - [ ] macOS
- - [ ] Linux
- - [ ] Windows
+[ ] macOS
+[ ] Linux
+[ ] Windows
 
 **Version Used**:
 
