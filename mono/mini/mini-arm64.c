@@ -2728,12 +2728,13 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	CallInfo *caller_info = get_call_info (NULL, caller_sig);
 	CallInfo *callee_info = get_call_info (NULL, callee_sig);
 
-	// FIXME: Relax these restrictions
-
-	gboolean res = IS_SUPPORTED_TAILCALL (caller_info->stack_usage == 0)
-		  && IS_SUPPORTED_TAILCALL (caller_info->stack_usage == callee_info->stack_usage)
+	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
 		  && IS_SUPPORTED_TAILCALL (caller_info->ret.storage == callee_info->ret.storage)
 		  && IS_SUPPORTED_TAILCALL (tailcall_return_storage_supported (caller_info->ret.storage));
+
+	// FIXME Limit stack_usage to 1G. emit_ldrx / strx has 32bit limits.
+	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage < (1 << 30));
+	res &= IS_SUPPORTED_TAILCALL (caller_info->stack_usage < (1 << 30));
 
 	g_free (caller_info);
 	g_free (callee_info);
@@ -4303,6 +4304,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = emit_move_return_value (cfg, code, ins);
 			break;
 
+		case OP_TAILCALL_PARAMETER:
+			// This opcode helps compute sizes, i.e.
+			// of the subsequent OP_TAILCALL, but contributes no code.
+			g_assert (ins->next);
+			break;
+
 		case OP_TAILCALL:
 		case OP_TAILCALL_MEMBASE:
 		case OP_TAILCALL_REG: {
@@ -4311,6 +4318,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			call = (MonoCallInst*)ins;
 
 			g_assert (!cfg->method->save_lmf);
+
+			max_len += call->stack_usage / sizeof (mgreg_t) * ins_get_size (OP_TAILCALL_PARAMETER);
+			while (G_UNLIKELY (offset + max_len > cfg->code_size)) {
+				cfg->code_size *= 2;
+				cfg->native_code = (unsigned char *)mono_realloc_native_code (cfg);
+				code = cfg->native_code + offset;
+				cfg->stat_code_reallocs++;
+			}
 
 			switch (ins->opcode) {
 			case OP_TAILCALL:
@@ -4321,6 +4336,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				g_assert (sreg1 != -1);
 				g_assert (sreg1 != ARMREG_IP0);
 				g_assert (sreg1 != ARMREG_IP1);
+				g_assert (sreg1 != ARMREG_LR);
+				g_assert (sreg1 != ARMREG_SP);
+				g_assert (sreg1 != ARMREG_R28);
 				if ((sreg1 << 1) & MONO_ARCH_CALLEE_SAVED_REGS) {
 					arm_movx (code, branch_reg, sreg1);
 				} else {
@@ -4333,6 +4351,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				g_assert (ins->inst_basereg != -1);
 				g_assert (ins->inst_basereg != ARMREG_IP0);
 				g_assert (ins->inst_basereg != ARMREG_IP1);
+				g_assert (ins->inst_basereg != ARMREG_LR);
+				g_assert (ins->inst_basereg != ARMREG_SP);
+				g_assert (ins->inst_basereg != ARMREG_R28);
 				code = emit_ldrx (code, branch_reg, ins->inst_basereg, ins->inst_offset);
 				break;
 
@@ -4343,7 +4364,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			// Copy stack arguments.
 			// FIXME a fixed size memcpy is desirable here,
 			// at least for larger values of stack_usage.
-			for (i = 0; i < call->stack_usage; i += sizeof (mgreg_t)) {
+			for (int i = 0; i < call->stack_usage; i += sizeof (mgreg_t)) {
 				code = emit_ldrx (code, ARMREG_LR, ARMREG_SP, i);
 				code = emit_strx (code, ARMREG_LR, ARMREG_R28, i);
 			}
