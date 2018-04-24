@@ -17,8 +17,9 @@ namespace WebAssembly {
 		Expose annotated C# type to JS
 		Add property fetch to JSObject
 		Add typed method invoke support (get a delegate?)
-		Task marshalling
 		Add JS helpers to fetch wrapped methods, like to Module.cwrap
+		Better Wrap C# exception when passing them as object (IE, on task failure)
+		Make JSObject disposable (same for js objects)
 	*/
 	public sealed class Runtime {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -47,6 +48,22 @@ namespace WebAssembly {
 				bound_objects [js_id] = obj = new JSObject (js_id);
 
 			return (int)(IntPtr)obj.Handle;
+		}
+
+		static object CreateTaskSource (int js_id) {
+			return new TaskCompletionSource<object> ();
+		}
+
+		static void SetTaskSourceResult (TaskCompletionSource<object> tcs, object result) {
+			tcs.SetResult (result);
+		}
+
+		static void SetTaskSourceFailure (TaskCompletionSource<object> tcs, string reason) {
+			tcs.SetException (new JSException (reason));
+		}
+
+		static int GetTaskAndBind (TaskCompletionSource<object> tcs, int js_id) {
+			return BindExistingObject (tcs.Task, js_id);
 		}
 
 		static int BindExistingObject (object raw_obj, int js_id) {
@@ -90,6 +107,35 @@ namespace WebAssembly {
 
 		static object BoxBool (int b) {
 			return b == 0 ? false : true;
+		}
+
+		static MethodInfo gsjsc;
+		static void GenericSetupJSContinuation<T> (Task<T> task, JSObject cont_obj) {
+			task.GetAwaiter().OnCompleted (() => {
+				//FIXME we should dispose cont_obj after completing the Promise
+				if (task.Exception != null)
+					cont_obj.Invoke ("reject", task.Exception.ToString ());
+				else {
+					cont_obj.Invoke ("resolve", task.Result);
+				}
+			});
+		}
+
+		static void SetupJSContinuation (Task task, JSObject cont_obj) {
+			if (task.GetType () == typeof (Task)) {
+				task.GetAwaiter().OnCompleted (() => {
+					//FIXME we should dispose cont_obj after completing the Promise
+					if (task.Exception != null)
+						cont_obj.Invoke ("reject", task.Exception.ToString ());
+					else
+						cont_obj.Invoke ("resolve", null);
+				});
+			} else {
+				//FIXME this is horrible codegen, we can do better with per-method glue
+				if (gsjsc == null)
+					gsjsc = typeof (Runtime).GetMethod ("GenericSetupJSContinuation", BindingFlags.NonPublic | BindingFlags.Static);
+				gsjsc.MakeGenericMethod (task.GetType ().GetGenericArguments()).Invoke (null, new object[] { task, cont_obj });
+			}
 		}
 	}
 

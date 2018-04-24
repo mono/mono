@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 using WebAssembly;
@@ -35,6 +36,11 @@ public class TestClass {
 	public static string InvokeMkString() {
 		mkstr = "lalalala";
 		return mkstr;
+	}
+
+	public static int int_val;
+	public static void InvokeInt (int i) {
+		int_val = i;
 	}
 
 	public static object obj1;
@@ -84,6 +90,22 @@ public class TestClass {
 			dele_res = a + b;
 			return dele_res;
 		};
+	}
+
+	public static TaskCompletionSource<int> tcs;
+	public static Task<int> task;
+	public static object MkTask () {
+		tcs = new TaskCompletionSource<int> ();
+		task = tcs.Task;
+		return task;
+	}
+
+	public static Task<object> the_promise;
+	public static void InvokePromise (object obj) {
+		the_promise = (Task<object>)obj;
+		the_promise.ContinueWith((t,o) => {
+			Console.WriteLine ("Promise result is {0}", t.Result);
+		}, null, TaskContinuationOptions.ExecuteSynchronously); //must be sync cuz the mainloop pump is gone
 	}
 }
 
@@ -220,4 +242,56 @@ public class BindingTests {
 		Assert.AreEqual (TestClass.dele_res, 30);
 		Assert.AreEqual (TestClass.i32_res, 60);
 	}
+
+	[Test]
+	public static void PassTaskToJS () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var tsk = call_test_method (""MkTask"", """", [ ]);
+			tsk.then (function (value) {
+				print ('PassTaskToJS cont with value ' + value);
+			});
+		");
+		Assert.AreEqual (0, TestClass.int_val);
+		TestClass.tcs.SetResult (99);
+		//FIXME our test harness doesn't suppport async tests.
+		// So manually verify it for now by checking stdout for `PassTaskToJS cont with value 99`
+		// Assert.AreEqual (99, TestClass.int_val);
+	}
+
+
+	[Test]
+	public static void PassTaskToJS2 () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var tsk = call_test_method (""MkTask"", """", [ ]);
+			tsk.then (function (value) {},
+			function (reason) {
+				print ('PassTaskToJS2 cont failed due to ' + reason);
+			});
+		");
+		Assert.AreEqual (0, TestClass.int_val);
+		TestClass.tcs.SetException (new Exception ("it failed"));
+		//FIXME our test harness doesn't suppport async tests.
+		// So manually verify it for now by checking stdout for `PassTaskToJS2 cont failed due to System.AggregateException...
+		// Assert.AreEqual (99, TestClass.int_val);
+	}
+
+
+	[Test]
+	public static void PassPromiseToCS () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var resolve_func = null;
+			var promise = new Promise(function (resolve, reject) {
+				resolve_func = resolve;
+			});
+			call_test_method (""InvokePromise"", ""o"", [ promise ]);
+			resolve_func (111);
+		");
+		//FIXME our test harness doesn't suppport async tests.
+		// So manually verify it for now by checking stdout for `Promise result is 111`
+		// Assert.AreEqual (99, TestClass.int_val);
+	}
+
 }

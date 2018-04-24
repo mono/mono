@@ -34,13 +34,19 @@ var BindingSupportLib = {
 				return res;
 			}
 			this.bind_js_obj = get_method ("BindJSObject");
-			this.bind_exist_obj = get_method ("BindExistingObject");
+			this.bind_existing_obj = get_method ("BindExistingObject");
 			this.get_js_id = get_method ("GetJSObjectId");
 			this.get_raw_mono_obj = get_method ("GetMonoObject");
 
 			this.box_js_int = get_method ("BoxInt");
 			this.box_js_double = get_method ("BoxDouble");
 			this.box_js_bool = get_method ("BoxBool");
+			this.setup_js_cont = get_method ("SetupJSContinuation");
+
+			this.create_tcs = get_method ("CreateTaskSource");
+			this.set_tcs_result = get_method ("SetTaskSourceResult");
+			this.set_tcs_failure = get_method ("SetTaskSourceFailure");
+			this.tcs_get_task_and_bind = get_method ("GetTaskAndBind");
 
 			this.init = true;
 		},		
@@ -103,12 +109,37 @@ var BindingSupportLib = {
 					return BINDING.invoke_delegate (obj, arguments);
 				};
 			}
-			case 6: // Task
+			case 6: {// Task
+				var obj = this.extract_js_obj (mono_obj);
+				var cont_obj = null;
+				var promise = new Promise (function (resolve, reject) {
+					cont_obj = {
+						resolve: resolve,
+						reject: reject
+					};
+				});
+
+				this.call_method (this.setup_js_cont, null, "mo", [ mono_obj, cont_obj ]);
+				return promise;
+			}
+
 			case 7: // ref type
 				return this.extract_js_obj (mono_obj);
 			default:
 				throw new Error ("no idea on how to unbox object kind " + type);
 			}
+		},
+
+		create_task_completion_source: function () {
+			return this.call_method (this.create_tcs, null, "", []);
+		},
+
+		set_task_result: function (tcs, result) {
+			this.call_method (this.set_tcs_result, null, "oo", [ tcs, result ]);
+		},
+
+		set_task_failure: function (tcs, reason) {
+			this.call_method (this.set_tcs_failure, null, "os", [ tcs, reason.toString () ]);
 		},
 
 		js_to_mono_obj: function (js_obj) {
@@ -127,6 +158,21 @@ var BindingSupportLib = {
 			if (typeof js_obj == 'boolean')
 				return this.call_method (this.box_js_bool, null, "im", [ js_obj ]);
 
+			if (Promise.resolve(js_obj) === js_obj) {
+				var the_task = this.try_extract_mono_obj (js_obj);
+				if (the_task)
+					return the_task;
+				var tcs = this.create_task_completion_source ();
+				//FIXME dispose the TCS once the promise completes
+				js_obj.then (function (result) {
+					BINDING.set_task_result (tcs, result);
+				}, function (reason) {
+					BINDING.set_task_failure (tcs, reason);
+				})
+
+				return this.get_task_and_bind (tcs, js_obj);
+			}
+
 			return this.extract_mono_obj (js_obj);
 		},
 
@@ -137,7 +183,7 @@ var BindingSupportLib = {
 
 		wasm_bind_existing: function (mono_obj, js_id)
 		{
-			return this.call_method (this.bind_exist_obj, null, "mi", [mono_obj, js_id]);
+			return this.call_method (this.bind_existing_obj, null, "mi", [mono_obj, js_id]);
 		},
 
 		wasm_get_js_id: function (mono_obj)
@@ -148,6 +194,19 @@ var BindingSupportLib = {
 		wasm_get_raw_obj: function (gchandle)
 		{
 			return this.call_method (this.get_raw_mono_obj, null, "im", [gchandle]);
+		},
+
+		try_extract_mono_obj:function (js_obj) {
+			if (js_obj == null || js_obj == undefined || !js_obj.__mono_gchandle__)
+				return 0;
+			return this.wasm_get_raw_obj (js_obj.__mono_gchandle__);
+		},
+
+		get_task_and_bind: function (tcs, js_obj) {
+			var task_gchandle = this.call_method (this.tcs_get_task_and_bind, null, "oi", [ tcs, this.js_objects_table.length + 1 ]);
+			js_obj.__mono_gchandle__ = task_gchandle;
+			this.js_objects_table.push (js_obj);
+			return this.wasm_get_raw_obj (js_obj.__mono_gchandle__);
 		},
 
 		extract_mono_obj: function (js_obj) {
@@ -189,7 +248,7 @@ var BindingSupportLib = {
 		f: float
 		d: double
 		s: string
-		o: js object will be converted to a C# object
+		o: js object will be converted to a C# object (this will box numbers/bool/promises)
 		m: raw mono object. Don't use it unless you know what you're doing
 
 		additionally you can append 'm' to args_marshal beyond `args.length` if you don't want the return value marshaled
@@ -214,7 +273,7 @@ var BindingSupportLib = {
 				} else if (args_marshal[i] == 'm') {
 					Module.setValue (args_mem + i * 4, args [i], "i32");
 				} else if (args_marshal[i] == 'o') {
-					Module.setValue (args_mem + i * 4, this.extract_mono_obj (args [i]), "i32");
+					Module.setValue (args_mem + i * 4, this.js_to_mono_obj (args [i]), "i32");
 				} else if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd') {
 					var extra_cell = extra_args_mem + extra_arg_idx;
 					extra_arg_idx += 8;
