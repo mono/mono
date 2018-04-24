@@ -1617,6 +1617,7 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 		if (!alerted)
 			return;
 
+		// Only ever create one handle in the loop.
 		MonoExceptionHandle exc;
 		if (mono_thread_execute_interruption (&exc))
 			mono_set_pending_exception_handle (exc);
@@ -1952,6 +1953,7 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
 			return ret;
 
+		// Only ever create one handle in the loop.
 		MonoExceptionHandle exc;
 		if (mono_thread_execute_interruption (&exc)) {
 			mono_error_set_exception_handle (error, exc);
@@ -2077,6 +2079,7 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 		if (ret != MONO_W32HANDLE_WAIT_RET_ALERTED)
 			break;
 
+		// Only ever create one handle in the loop.
 		MonoExceptionHandle exc;
 		if (mono_thread_execute_interruption (&exc)) {
 			mono_error_set_exception_handle (error, exc);
