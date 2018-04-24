@@ -4782,7 +4782,10 @@ static MonoException*
 mono_thread_execute_interruption_ptr (void)
 {
 	HANDLE_FUNCTION_ENTER ();
-	HANDLE_FUNCTION_RETURN_OBJ (mono_thread_execute_interruption ());
+
+	MonoExceptionHandle exc = mono_thread_execute_interruption ();
+
+	HANDLE_FUNCTION_RETURN_OBJ (exc);
 }
 
 /*
@@ -4840,7 +4843,10 @@ static MonoExceptionHandle
 mono_thread_request_interruption_managed (void)
 {
 	HANDLE_FUNCTION_ENTER ();
-	HANDLE_FUNCTION_RETURN_REF (MonoException, mono_thread_request_interruption_internal (TRUE));
+
+	MonoException exc = mono_thread_request_interruption_internal (TRUE);
+
+	HANDLE_FUNCTION_RETURN_REF (MonoException, exc);
 }
 
 /*This function should be called by a thread after it has exited all of
@@ -4897,7 +4903,10 @@ mono_thread_interruption_checkpoint_request (gboolean bypass_abort_protection)
 		return NULL;
 
 	HANDLE_FUNCTION_ENTER ();
-	HANDLE_FUNCTION_RETURN_OBJ (mono_thread_execute_interruption ());
+
+	MonoExceptionHandle exc = mono_thread_execute_interruption ();
+
+	HANDLE_FUNCTION_RETURN_OBJ (exc);
 }
 
 /*
