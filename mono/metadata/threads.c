@@ -5020,8 +5020,6 @@ mono_runtime_set_pending_exception (MonoException *exc, mono_bool overwrite)
 	mono_thread_request_interruption_native ();
 
 	return TRUE;
-=======
->>>>>>> [Coop] Convert thread abort and sleep and interruption to coop/handle.
 }
 
 
