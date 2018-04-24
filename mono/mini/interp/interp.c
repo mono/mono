@@ -21,7 +21,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <glib.h>
-#include <signal.h>
 #include <math.h>
 #include <locale.h>
 
@@ -103,6 +102,8 @@ init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod
 	init_frame ((frame), (parent_frame), _rmethod, (method_args), (method_retval)); \
 	} while (0)
 
+#define interp_exec_method(frame, context) interp_exec_method_full ((frame), (context), NULL, NULL, -1, NULL)
+
 /*
  * List of classes whose methods will be executed by transitioning to JITted code.
  * Used for testing.
@@ -116,7 +117,6 @@ static gboolean interp_init_done = FALSE;
 static char* dump_frame (InterpFrame *inv);
 static MonoArray *get_trace_ips (MonoDomain *domain, InterpFrame *top);
 static void interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *start_with_ip, MonoException *filter_exception, int exit_at_finally, InterpFrame *base_frame);
-static void interp_exec_method (InterpFrame *frame, ThreadContext *context);
 
 typedef void (*ICallMethod) (InterpFrame *frame);
 
@@ -252,10 +252,8 @@ ves_real_abort (int line, MonoMethod *mh,
 	mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	g_printerr ("Execution aborted in method: %s::%s\n", m_class_get_name (mh->klass), mh->name);
 	g_printerr ("Line=%d IP=0x%04lx, Aborted execution\n", line, ip-(const unsigned short *) header->code);
-	g_print ("0x%04x %02x\n", ip-(const unsigned short *) header->code, *ip);
+	g_printerr ("0x%04x %02x\n", ip-(const unsigned short *) header->code, *ip);
 	mono_metadata_free_mh (header);
-	if (sp > stack)
-		printf ("\t[%ld] 0x%08x %0.5f\n", sp-stack, sp[-1].data.i, sp[-1].data.f);
 }
 
 #define ves_abort() \
@@ -3575,8 +3573,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				}
 			}
 
-			g_assert (csig->call_convention == MONO_CALL_DEFAULT);
-
 			interp_exec_method (&child_frame, context);
 
 			context->current_frame = frame;
@@ -5212,12 +5208,6 @@ exit_frame:
 		MONO_PROFILER_RAISE (method_exception_leave, (frame->imethod->method, &frame->ex->object));
 
 	DEBUG_LEAVE ();
-}
-
-static void
-interp_exec_method (InterpFrame *frame, ThreadContext *context)
-{
-	interp_exec_method_full (frame, context, NULL, NULL, -1, NULL);
 }
 
 static void

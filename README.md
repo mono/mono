@@ -241,12 +241,12 @@ Disables the inclusion of a Boehm garbage collector.
 
   * This defaults to `included`.
 
-* `--with-cooperative-gc`
+* `--enable-cooperative-suspend`
 
   * If you pass this flag the Mono runtime is configured to only use
   the cooperative mode of the garbage collector.  If you do not pass
   this flag, then you can control at runtime the use of the
-  cooperative GC mode by setting the `MONO_ENABLE_COOP` flag.
+  cooperative GC mode by setting the `MONO_ENABLE_COOP_SUSPEND` flag.
   
 * `--with-tls=__thread,pthread`
 

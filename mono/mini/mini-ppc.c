@@ -1342,7 +1342,7 @@ get_call_info (MonoMethodSignature *sig)
 }
 
 gboolean
-mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	CallInfo *c1, *c2;
 	gboolean res;
@@ -1567,7 +1567,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	MonoMethodSignature *sig = mono_method_signature (cfg->method);
 
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
-		cfg->vret_addr = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_ARG);
+		cfg->vret_addr = mono_compile_create_var (cfg, mono_get_int_type (), OP_ARG);
 	}
 }
 
@@ -1608,7 +1608,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		if (i >= sig->hasthis)
 			t = sig->params [i - sig->hasthis];
 		else
-			t = m_class_get_byval_arg (mono_defaults.int_class);
+			t = mono_get_int_type ();
 		t = mini_get_underlying_type (t);
 
 		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos))
@@ -5229,15 +5229,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					ppc_mr (code, ppc_r12, ainfo->reg);
 				}
 
-				if (cfg->tailcall_valuetype_addrs) {
-					MonoInst *addr = cfg->tailcall_valuetype_addrs [tailcall_struct_index];
-
-					g_assert (ppc_is_imm16 (addr->inst_offset));
-					ppc_stptr (code, ppc_r12, addr->inst_offset, addr->inst_basereg);
-
-					tailcall_struct_index++;
-				}
-
 				g_assert (ppc_is_imm16 (inst->inst_offset));
 				code = emit_memcpy (code, ainfo->vtsize, inst->inst_basereg, inst->inst_offset, ppc_r12, 0);
 				/*g_print ("copy in %s: %d bytes from %d to offset: %d\n", method->name, ainfo->vtsize, ainfo->reg, inst->inst_offset);*/
@@ -5329,9 +5320,6 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		cfg->stat_code_reallocs++;
 	}
 
-	/*
-	 * Keep in sync with OP_JMP
-	 */
 	code = cfg->native_code + cfg->code_len;
 
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method)) {

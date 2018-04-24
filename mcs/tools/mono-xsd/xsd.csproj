@@ -3,6 +3,7 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">net_4_x</Platform>
     <ProjectGuid>{FF0C0BBC-3311-4B8C-BD99-9C50C3CB6DD6}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <NoWarn>1699</NoWarn>

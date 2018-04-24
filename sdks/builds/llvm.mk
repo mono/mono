@@ -24,7 +24,7 @@ _llvm_$(1)_CONFIGURE_ENVIRONMENT= \
 	LDFLAGS="$$(_llvm_$(1)_LDFLAGS)"
 
 _llvm_$(1)_CONFIGURE_FLAGS= \
-	--host=$(2)-$$(if $$(filter $$(UNAME),Darwin),apple-darwin10,$$(if $$(filter $$(UNAME),Linux),linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))) \
+	--build=$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),x86_64-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))) \
 	--cache-file=$$(TOP)/sdks/builds/llvm-$(1).config.cache \
 	--prefix=$$(TOP)/sdks/out/llvm-$(1) \
 	--enable-assertions=no \

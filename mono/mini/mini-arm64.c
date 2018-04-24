@@ -1344,7 +1344,7 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 			cinfo->gr = PARAM_REGS;
 			cinfo->fr = FP_PARAM_REGS;
 			/* Emit the signature cookie just before the implicit arguments */
-			add_param (cinfo, &cinfo->sig_cookie, m_class_get_byval_arg (mono_defaults.int_class));
+			add_param (cinfo, &cinfo->sig_cookie, mono_get_int_type ());
 		}
 
 		add_param (cinfo, ainfo, sig->params [pindex]);
@@ -1369,7 +1369,7 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 		cinfo->gr = PARAM_REGS;
 		cinfo->fr = FP_PARAM_REGS;
 		/* Emit the signature cookie just before the implicit arguments */
-		add_param (cinfo, &cinfo->sig_cookie, m_class_get_byval_arg (mono_defaults.int_class));
+		add_param (cinfo, &cinfo->sig_cookie, mono_get_int_type ());
 	}
 
 	cinfo->stack_usage = ALIGN_TO (cinfo->stack_usage, MONO_ARCH_FRAME_ALIGNMENT);
@@ -1998,7 +1998,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	cinfo = cfg->arch.cinfo;
 
 	if (cinfo->ret.storage == ArgVtypeByRef) {
-		cfg->vret_addr = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+		cfg->vret_addr = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 		cfg->vret_addr->flags |= MONO_INST_VOLATILE;
 	}
 
@@ -2006,16 +2006,16 @@ mono_arch_create_vars (MonoCompile *cfg)
 		MonoInst *ins;
 
 		if (cfg->compile_aot) {
-			ins = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+			ins = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 			ins->flags |= MONO_INST_VOLATILE;
 			cfg->arch.seq_point_info_var = ins;
 		}
 
-		ins = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+		ins = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 		ins->flags |= MONO_INST_VOLATILE;
 		cfg->arch.ss_tramp_var = ins;
 
-		ins = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+		ins = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 		ins->flags |= MONO_INST_VOLATILE;
 		cfg->arch.bp_tramp_var = ins;
 	}
@@ -2421,7 +2421,7 @@ emit_sig_cookie (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 	MonoMethodSignature *tmp_sig;
 	int sig_reg;
 
-	if (call->tail_call)
+	if (call->tailcall)
 		NOT_IMPLEMENTED;
 
 	g_assert (cinfo->sig_cookie.storage == ArgOnStack);
@@ -2464,7 +2464,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		 * the location pointed to by it after call in emit_move_return_value ().
 		 */
 		if (!cfg->arch.vret_addr_loc) {
-			cfg->arch.vret_addr_loc = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+			cfg->arch.vret_addr_loc = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 			/* Prevent it from being register allocated or optimized away */
 			((MonoInst*)cfg->arch.vret_addr_loc)->flags |= MONO_INST_VOLATILE;
 		}
@@ -2716,7 +2716,7 @@ tailcall_return_storage_supported (ArgStorage storage)
 }
 
 gboolean
-mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	g_assert (caller_sig);
 	g_assert (callee_sig);
@@ -2832,7 +2832,8 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 				NULLIFY_INS (ins);
 			}
 			break;
-		case OP_FCOMPARE: {
+		case OP_FCOMPARE:
+		case OP_RCOMPARE: {
 			gboolean swap = FALSE;
 			int reg;
 
@@ -2854,6 +2855,14 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 				break;
 			case OP_FBLE:
 				ins->next->opcode = OP_FBGE;
+				swap = TRUE;
+				break;
+			case OP_RBLT:
+				ins->next->opcode = OP_RBGT;
+				swap = TRUE;
+				break;
+			case OP_RBLE:
+				ins->next->opcode = OP_RBGE;
 				swap = TRUE;
 				break;
 			default:
@@ -4293,10 +4302,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 
 		case OP_TAILCALL:
-		case OP_TAILCALL_MEMBASE: {
-			guint64 free_reg = 0;
-			int branch_reg = -1;
-			gboolean tailcall_membase = FALSE;
+		case OP_TAILCALL_MEMBASE:
+		case OP_TAILCALL_REG: {
+			int branch_reg = ARMREG_IP0;
+			guint64 free_reg = 1 << ARMREG_IP1;
 			call = (MonoCallInst*)ins;
 
 			g_assert (!cfg->method->save_lmf);
@@ -4304,15 +4313,24 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			switch (ins->opcode) {
 			case OP_TAILCALL:
 				free_reg = (1 << ARMREG_IP0) | (1 << ARMREG_IP1);
-				branch_reg = ARMREG_IP0;
-				tailcall_membase = FALSE;
+				break;
+
+			case OP_TAILCALL_REG:
+				g_assert (sreg1 != -1);
+				g_assert (sreg1 != ARMREG_IP0);
+				g_assert (sreg1 != ARMREG_IP1);
+				if ((sreg1 << 1) & MONO_ARCH_CALLEE_SAVED_REGS) {
+					arm_movx (code, branch_reg, sreg1);
+				} else {
+					free_reg = (1 << ARMREG_IP0) | (1 << ARMREG_IP1);
+					branch_reg = sreg1;
+				}
 				break;
 
 			case OP_TAILCALL_MEMBASE:
-				free_reg = (1 << ARMREG_IP0);
-				branch_reg = ARMREG_IP1;
-				tailcall_membase = TRUE;
-				// Get jmp address before restoring nonvolatiles, in case basereg is nonvolatile.
+				g_assert (ins->inst_basereg != -1);
+				g_assert (ins->inst_basereg != ARMREG_IP0);
+				g_assert (ins->inst_basereg != ARMREG_IP1);
 				code = emit_ldrx (code, branch_reg, ins->inst_basereg, ins->inst_offset);
 				break;
 
@@ -4328,19 +4346,26 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* Destroy frame */
 			code = mono_arm_emit_destroy_frame (code, cfg->stack_offset, free_reg);
 
-			if (tailcall_membase) {
-				// nothing
-			} else if (cfg->compile_aot) {
-				/* This is not a PLT patch */
-				code = emit_aotconst (cfg, code, ARMREG_IP0, MONO_PATCH_INFO_METHOD_JUMP, call->method);
-			} else {
-				mono_add_patch_info_rel (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method, MONO_R_ARM64_B);
-				arm_b (code, code);
-				cfg->thunk_area += THUNK_SIZE;
-			}
-
-			if (branch_reg >= 0)
+			switch (ins->opcode) {
+			case OP_TAILCALL:
+				if (cfg->compile_aot) {
+					/* This is not a PLT patch */
+					code = emit_aotconst (cfg, code, branch_reg, MONO_PATCH_INFO_METHOD_JUMP, call->method);
+				} else {
+					mono_add_patch_info_rel (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method, MONO_R_ARM64_B);
+					arm_b (code, code);
+					cfg->thunk_area += THUNK_SIZE;
+					break;
+				}
+				// fallthrough
+			case OP_TAILCALL_MEMBASE:
+			case OP_TAILCALL_REG:
 				arm_brx (code, branch_reg);
+				break;
+
+			default:
+				g_assert_not_reached ();
+			}
 
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
@@ -4558,8 +4583,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_GC_SAFE_POINT: {
-#if defined (USE_COOP_GC)
 			guint8 *buf [1];
+
+			g_assert (mono_threads_are_safepoints_enabled ());
 
 			arm_ldrx (code, ARMREG_IP1, ins->sreg1, 0);
 			/* Call it if it is non-null */
@@ -4567,7 +4593,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			arm_cbzx (code, ARMREG_IP1, 0);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, "mono_threads_state_poll");
 			mono_arm_patch (buf [0], code, MONO_R_ARM64_CBZ);
-#endif
 			break;
 		}
 		case OP_FILL_PROF_CALL_CTX:

@@ -3,6 +3,7 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">net_4_x</Platform>
     <ProjectGuid>{1D638902-5EFD-49BA-98E5-E80239CA6EF6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,168,169,219,414,618,1634</NoWarn>
@@ -47,6 +48,16 @@
     <OutputPath>./../../class/lib/monotouch_tv</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV;NO_DYNAMIC_CODEGEN;NO_CONFIGURATION;NO_SECURITY_ATTRIBUTES;NO_CODEDOM;NO_DESKTOP_SECURITY</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO;NO_DYNAMIC_CODEGEN;NO_CONFIGURATION;NO_SECURITY_ATTRIBUTES;NO_CODEDOM;NO_DESKTOP_SECURITY</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;NO_DYNAMIC_CODEGEN;NO_CONFIGURATION;NO_SECURITY_ATTRIBUTES;NO_CODEDOM;NO_DESKTOP_SECURITY</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
@@ -282,6 +293,16 @@
     <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
     <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
+    <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
+    <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
+    <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
+    <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
     <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
     <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
@@ -342,6 +363,18 @@
     <ProjectReference Include="../System.Data/System.Data.csproj" />
     <ProjectReference Include="../System.Configuration/System.Configuration.csproj" />
     <ProjectReference Include="../SMDiagnostics/SMDiagnostics.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_hybrid\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <ProjectReference Include="../System.Data/System.Data.csproj" />
