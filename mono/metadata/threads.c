@@ -4754,7 +4754,8 @@ mono_thread_execute_interruption_ptr (void)
 {
 	HANDLE_FUNCTION_ENTER ();
 	MonoExceptionHandle exc;
-	HANDLE_FUNCTION_RETURN_VAL (mono_thread_execute_interruption (&exc) ? MONO_HANDLE_RAW (exc) : NULL);
+	MonoException *exc_raw = mono_thread_execute_interruption (&exc) ? MONO_HANDLE_RAW (exc) : NULL;
+	HANDLE_FUNCTION_RETURN_VAL (exc_raw);
 }
 
 /*
@@ -4859,9 +4860,7 @@ mono_thread_interruption_checkpoint_request (gboolean bypass_abort_protection)
 	if (!bypass_abort_protection && !mono_thread_current ()->pending_exception && is_running_protected_wrapper ())
 		return NULL;
 
-	HANDLE_FUNCTION_ENTER ();
-	MonoExceptionHandle exc;
-	HANDLE_FUNCTION_RETURN_VAL (mono_thread_execute_interruption (&exc) ? MONO_HANDLE_RAW (exc) : NULL);
+	return mono_thread_execute_interruption_ptr ();
 }
 
 /*
