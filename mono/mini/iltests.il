@@ -2264,6 +2264,7 @@ HAS_VALUE:	ldc.i4.1
 		ret
 	}
 
+/*	   Disabled until they can be fixed to run on amd64
 	.method public static float32 GetFloat32() cil managed noinlining
 	{
 		.maxstack  8
@@ -2271,7 +2272,6 @@ HAS_VALUE:	ldc.i4.1
 		ret
 	}
 
-/*	   Disabled until they can be fixed to run on amd64
 	.method public static default int32 test_0_implicit_float_to_double_conversion () cil managed
 	{
 		.maxstack 16
@@ -3176,6 +3176,20 @@ L_3:
 		L1:
 			ldc.i4.0
 			ret
+	}
+
+  .method public hidebysig static int32 test_1_box_r8_r4_autoconv () cil managed
+  {
+		ldc.r8 1.234
+		box float64
+		unbox float64
+		ldind.r8
+		box float32
+		unbox float32
+		ldind.r4
+		conv.r8
+		conv.i4
+		ret
 	}
 
 	.method public hidebysig static int32 test_1_dont_verify_ptr_byrefs () cil managed
