@@ -1609,7 +1609,7 @@ if ($artifact)
 		}
 		elsif ($android)
 		{
-			for my $file ('libmonosgen-2.0.so','libmonosgen-2.0.a','libmonobdwgc-2.0.so','libmonobdwgc-2.0.a')
+			for my $file ('libmonosgen-2.0.so','libmonobdwgc-2.0.so')
 			{
 				print ">>> Copying $file\n";
 				system("cp", "$monoroot/mono/mini/.libs/$file","$embedDirArchDestination/$file") eq 0 or die ("failed copying $file\n");
