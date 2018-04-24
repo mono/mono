@@ -2695,11 +2695,11 @@ tailcall_return_storage_supported (ArgStorage storage)
 	switch (storage) {
 	case ArgInIReg:
 	case ArgInFReg:
+	case ArgInFRegR4:
 	case ArgNone:
 		return TRUE;
 
 	case ArgHFA:
-	case ArgInFRegR4: // conversion in emit_move_return_value missed
 	case ArgOnStack:
 	case ArgOnStackR8:
 	case ArgOnStackR4:
