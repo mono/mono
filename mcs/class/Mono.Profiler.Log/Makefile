@@ -14,7 +14,7 @@ XTEST_LIB_REFS = System System.Core
 xunit-test-local: log-profiler-test.exe
 
 log-profiler-test.exe: Test/log-profiler-test.cs
-	$(CSCOMPILE) $(PLATFORM_DEBUG_FLAGS) /unsafe /warnaserror /r:$(build_libdir)/mscorlib.dll /r:$(build_lib) /out:$@ $<
+	$(CSCOMPILE) $(PLATFORM_DEBUG_FLAGS) /unsafe $(if $(MCS_MODE),,/warnaserror) /r:$(build_libdir)/mscorlib.dll /r:$(build_lib) /out:$@ $<
 
 EXTRA_DISTFILES = \
 	Test/log-profiler-test.cs
