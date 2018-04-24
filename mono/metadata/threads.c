@@ -2082,64 +2082,13 @@ map_native_wait_result_to_managed (MonoW32HandleWaitRet val, gsize numobjects)
 	}
 }
 
-
-static gboolean
-System_Threading_WaitHandle_Wait_loop (gpointer *handles, gint32 numhandles, MonoBoolean waitall, gint32 timeout, MonoError *error,
-                                       MonoW32HandleWaitRet *ret, MonoInternalThread *thread, gint64 start, guint32 *timeoutLeft)
-// A separate function is needed to avoid creating coop handles in a loop.
-{
-	HANDLE_FUNCTION_ENTER ();
-
-	gboolean done = FALSE;
-
-#ifdef HOST_WIN32
-	MONO_ENTER_GC_SAFE;
-	if (numhandles != 1)
-		*ret = mono_w32handle_convert_wait_ret (mono_win32_wait_for_multiple_objects_ex(numhandles, handles, waitall, timeoutLeft, TRUE), numhandles);
-	else
-		*ret = mono_w32handle_convert_wait_ret (mono_win32_wait_for_single_object_ex (handles [0], timeoutLeft, TRUE), 1);
-	MONO_EXIT_GC_SAFE;
-#else
-	/* mono_w32handle_wait_multiple optimizes the case for numhandles == 1 */
-	*ret = mono_w32handle_wait_multiple (handles, numhandles, waitall, *timeoutLeft, TRUE);
-#endif /* HOST_WIN32 */
-
-	if (*ret != MONO_W32HANDLE_WAIT_RET_ALERTED) {
-		done = TRUE;
-		goto exit;
-	}
-
-	MonoExceptionHandle exc;
-	exc = mono_thread_execute_interruption ();
-	if (!MONO_HANDLE_IS_NULL (exc)) {
-		mono_error_set_exception_handle (error, exc);
-		done = TRUE;
-		goto exit;
-	}
-
-	if (timeout != MONO_INFINITE_WAIT) {
-		gint64 const elapsed = mono_msec_ticks () - start;
-		if (elapsed >= timeout) {
-			*ret = MONO_W32HANDLE_WAIT_RET_TIMEOUT;
-			done = TRUE;
-			goto exit;
-		}
-
-		*timeoutLeft = timeout - elapsed;
-	}
-
-	done = FALSE;
-
-exit:
-	HANDLE_FUNCTION_RETURN_VAL (done);
-}
-
 gint32
 ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 numhandles, MonoBoolean waitall, gint32 timeout, MonoError *error)
 {
 	MonoW32HandleWaitRet ret;
 	MonoInternalThread *thread;
-	gint64 start = 0;
+	MonoException *exc;
+	gint64 start;
 	guint32 timeoutLeft;
 
 	/* Do this WaitSleepJoin check before creating objects */
@@ -2157,8 +2106,39 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 
 	timeoutLeft = timeout;
 
-	while (!System_Threading_WaitHandle_Wait_loop (handles, numhandles, waitall, timeout, error, &ret, thread, start, &timeoutLeft)) {
-		// nothing
+	for (;;) {
+#ifdef HOST_WIN32
+		MONO_ENTER_GC_SAFE;
+		if (numhandles != 1)
+			ret = mono_w32handle_convert_wait_ret (mono_win32_wait_for_multiple_objects_ex(numhandles, handles, waitall, timeoutLeft, TRUE), numhandles);
+		else
+			ret = mono_w32handle_convert_wait_ret (mono_win32_wait_for_single_object_ex (handles [0], timeoutLeft, TRUE), 1);
+		MONO_EXIT_GC_SAFE;
+#else
+		/* mono_w32handle_wait_multiple optimizes the case for numhandles == 1 */
+		ret = mono_w32handle_wait_multiple (handles, numhandles, waitall, timeoutLeft, TRUE);
+#endif /* HOST_WIN32 */
+
+		if (ret != MONO_W32HANDLE_WAIT_RET_ALERTED)
+			break;
+
+		exc = mono_thread_execute_interruption_ptr ();
+		if (exc) {
+			mono_error_set_exception_instance (error, exc);
+			break;
+		}
+
+		if (timeout != MONO_INFINITE_WAIT) {
+			gint64 elapsed;
+
+			elapsed = mono_msec_ticks () - start;
+			if (elapsed >= timeout) {
+				ret = MONO_W32HANDLE_WAIT_RET_TIMEOUT;
+				break;
+			}
+
+			timeoutLeft = timeout - elapsed;
+		}
 	}
 
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
