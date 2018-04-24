@@ -3117,12 +3117,7 @@ emit_branch_island (MonoCompile *cfg, guint8 *code, int start_offset)
 	}
 
 	if (island_size) {
-		offset = code - cfg->native_code;
-		if (offset > (cfg->code_size - island_size - 16)) {
-			cfg->code_size *= 2;
-			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-			code = cfg->native_code + offset;
-		}
+		code = mini_code_realloc (cfg, island_size);
 
 		/* Branch over the island */
 		arm_b (code, code + 4 + island_size);
@@ -3157,22 +3152,19 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		g_print ("Basic block %d starting at offset 0x%x\n", bb->block_num, bb->native_offset);
 
 	start_offset = code - cfg->native_code;
+	g_assert (start_offset <= cfg->code_size);
 
 	MONO_BB_FOR_EACH_INS (bb, ins) {
 		offset = code - cfg->native_code;
-
-		max_len = ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
-
-		if (offset > (cfg->code_size - max_len - 16)) {
-			cfg->code_size *= 2;
-			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-			code = cfg->native_code + offset;
-		}
+		set_code_cursor (cfg, code);
+		max_len = ins_get_size (ins->opcode);
+		code = mini_code_realloc (cfg, max_len);
 
 		if (G_UNLIKELY (cfg->arch.cond_branch_islands && offset - start_offset > 4 * 0x1ffff)) {
 			/* Emit a branch island for large basic blocks */
 			code = emit_branch_island (cfg, code, start_offset);
 			offset = code - cfg->native_code;
+			set_code_cursor (cfg, code);
 			start_offset = offset;
 		}
 
@@ -3299,6 +3291,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			if (cfg->compile_aot) {
 				guint32 offset = code - cfg->native_code;
+				set_code_cursor (cfg, code);
 				guint32 val;
 
 				arm_ldrx (code, ARMREG_IP1, info_var->inst_basereg, info_var->inst_offset);
@@ -3378,6 +3371,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			mono_add_patch_info_rel (cfg, offset, MONO_PATCH_INFO_BB, ins->inst_true_bb, MONO_R_ARM64_BCC);
 			arm_bcc (code, ARMCOND_EQ, 0);
 			offset = code - cfg->native_code;
+			set_code_cursor (cfg, code);
 			mono_add_patch_info_rel (cfg, offset, MONO_PATCH_INFO_BB, ins->inst_true_bb, MONO_R_ARM64_BCC);
 			/* For fp compares, ARMCOND_LT is lt or unordered */
 			arm_bcc (code, ARMCOND_LT, 0);
@@ -4619,7 +4613,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	if (cfg->arch.cond_branch_islands)
 		code = emit_branch_island (cfg, code, start_offset);
 
-	cfg->code_len = code - cfg->native_code;
+	set_code_cursor (cfg, code);
 }
 
 static guint8*
@@ -5049,7 +5043,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			bb->max_offset = max_offset;
 
 			MONO_BB_FOR_EACH_INS (bb, ins) {
-				max_offset += ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
+				max_offset += ins_get_size (ins->opcode);
 			}
 		}
 	}
@@ -5057,17 +5051,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		cfg->arch.cond_branch_islands = TRUE;
 
 	return code;
-}
-
-static guint8*
-realloc_code (MonoCompile *cfg, int size)
-{
-	while (cfg->code_len + size > (cfg->code_size - 16)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		cfg->stat_code_reallocs++;
-	}
-	return cfg->native_code + cfg->code_len;
 }
 
 void
@@ -5120,7 +5103,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 
 	g_assert (code - (cfg->native_code + cfg->code_len) < max_epilog_size);
 
-	cfg->code_len = code - cfg->native_code;
+	set_code_cursor (cfg, code);
 }
 
 void
@@ -5183,11 +5166,10 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 		ji->relocation = MONO_R_ARM64_BL;
 		arm_bl (code, 0);
 		cfg->thunk_area += THUNK_SIZE;
+		g_assert (code < (cfg->native_code + cfg->code_size));
 	}
 
-	cfg->code_len = code - cfg->native_code;
-
-	g_assert (cfg->code_len < cfg->code_size);
+	set_code_cursor (cfg, code);
 }
 
 MonoInst*

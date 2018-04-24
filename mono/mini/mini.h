@@ -1698,6 +1698,43 @@ extern const char MONO_ARCH_CPU_SPEC [];
 extern const guint16 MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC) [];
 #define ins_get_spec(op) ((const char*)&MONO_ARCH_CPU_SPEC + MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC)[(op) - OP_LOAD])
 
+#ifndef DISABLE_JIT
+
+static inline unsigned
+ins_get_size (int opcode)
+{
+	return ((guint8 *)ins_get_spec (opcode))[MONO_INST_LEN];
+}
+
+guint8*
+mini_realloc_code_slow (MonoCompile *cfg, int size);
+
+static inline guint8*
+realloc_code (MonoCompile *cfg, int size)
+{
+	const int EXTRA_CODE_SPACE = 16;
+	const int code_len = cfg->code_len;
+
+	if (G_UNLIKELY (code_len + size > (cfg->code_size - EXTRA_CODE_SPACE)))
+		return mini_realloc_code_slow (cfg, size);
+	return cfg->native_code + code_len;
+}
+
+static inline void
+set_code_len (MonoCompile *cfg, int len)
+{
+	g_assert (len <= cfg->code_size);
+	cfg->code_len = len;
+}
+
+static inline void
+set_code_cursor (MonoCompile *cfg, void* code)
+{
+	set_code_len (cfg, (guint8*)code - cfg->native_code);
+}
+
+#endif
+
 enum {
 	MONO_COMP_DOM = 1,
 	MONO_COMP_IDOM = 2,
