@@ -3194,7 +3194,7 @@ L_3:
 
 	.method public hidebysig static int32 test_1_dont_verify_ptr_byrefs () cil managed
 	 {
-		.locals init (int32 v_0, int32 *& v_2, int32 *v_1)
+		.locals init (int32 v_0, int32 *& v_1, int32 *v_2)
 
 		//v_0 = 1
 		ldc.i4.1
