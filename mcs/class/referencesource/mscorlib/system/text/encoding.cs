@@ -220,7 +220,7 @@ namespace System.Text
         }
 
         // This constructor is needed to allow any sub-classing implementation to provide encoder/decoder fallback objects 
-        // because the encoding object is always created as read-only object and don’t allow setting encoder/decoder fallback 
+        // because the encoding object is always created as read-only object and donâ€™t allow setting encoder/decoder fallback 
         // after the creation is done. 
         protected Encoding(int codePage, EncoderFallback encoderFallback, DecoderFallback decoderFallback)
         {
@@ -994,6 +994,10 @@ namespace System.Text
         //
         [Pure]
         public abstract int GetByteCount(char[] chars, int index, int count);
+
+#if MONO
+        public int GetByteCount(string str, int index, int count) => GetByteCount(str.ToCharArray(), index, count);
+#endif
 
         // We expect this to be the workhorse for NLS encodings
         // unfortunately for existing overrides, it has to call the [] version,

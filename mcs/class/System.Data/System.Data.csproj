@@ -3,6 +3,7 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">net_4_x</Platform>
     <ProjectGuid>{2C8FCB39-B0E8-4D90-9252-57E1A37259A3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,219,414,649,619,436</NoWarn>
@@ -49,6 +50,16 @@
     <OutputPath>./../../class/lib/monotouch_tv</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_APPLETLS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_BTLS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_BTLS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
@@ -668,6 +679,38 @@
     <Compile Include="corefx\SqlCommand.cs" />
     <Compile Include="corefx\SqlException.cs" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlBulkCopy.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlCommand.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlCommandBuilder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlConnection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlConnectionHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlDataAdapter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterCollectionHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlTransaction.cs" />
+    <Compile Include="corefx\SqlCommand.cs" />
+    <Compile Include="corefx\SqlException.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlBulkCopy.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlCommand.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlCommandBuilder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlConnection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlConnectionHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlDataAdapter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterCollectionHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlTransaction.cs" />
+    <Compile Include="corefx\SqlCommand.cs" />
+    <Compile Include="corefx\SqlException.cs" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlBulkCopy.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlCommand.cs" />
@@ -829,6 +872,18 @@
     <ProjectReference Include="../System.EnterpriseServices/System.EnterpriseServices.csproj" />
     <ProjectReference Include="../System.Configuration/System.Configuration.csproj" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_hybrid\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <ProjectReference Include="../System.EnterpriseServices/System.EnterpriseServices.csproj" />
     <ProjectReference Include="../System.Configuration/System.Configuration.csproj" />
@@ -855,6 +910,16 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <EmbeddedResource Include="../../../external/corefx/src/System.Data.SqlClient/src/Resources/System.Data.SqlClient.SqlMetaData.xml">
+      <LogicalName>System.Data.SqlClient.SqlMetaData.xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <EmbeddedResource Include="../../../external/corefx/src/System.Data.SqlClient/src/Resources/System.Data.SqlClient.SqlMetaData.xml">
+      <LogicalName>System.Data.SqlClient.SqlMetaData.xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <EmbeddedResource Include="../../../external/corefx/src/System.Data.SqlClient/src/Resources/System.Data.SqlClient.SqlMetaData.xml">
       <LogicalName>System.Data.SqlClient.SqlMetaData.xml</LogicalName>
     </EmbeddedResource>

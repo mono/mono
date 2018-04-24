@@ -187,7 +187,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void ConvertFrom_x4 ()
 		{
-			Assert.Throws<Exception> (() => colconv.ConvertFrom (null, CultureInfo.InvariantCulture,
+			Assert.Throws<ArgumentException> (() => colconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 				"*1, 1"));
 		}
 

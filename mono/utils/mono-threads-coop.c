@@ -312,14 +312,14 @@ mono_threads_exit_gc_safe_region_unbalanced_internal (gpointer cookie, MonoStack
 	case DoneBlockingOk:
 		info->thread_saved_state [SELF_SUSPEND_STATE_INDEX].valid = FALSE;
 		break;
-	case DoneBlockingNotifyAndWait:
-		// in full coop NotifyAndWait doesn't notify
-		if (mono_threads_is_hybrid_suspension_enabled ()) {
-			mono_threads_notify_initiator_of_suspend (info);
-		}
-		mono_thread_info_wait_for_resume (info);
-		break;
 	case DoneBlockingWait:
+		/* If full coop suspend, we're just waiting for the initiator
+		 * to resume us.  If hybrid suspend, we were either self
+		 * suspended cooperatively from async_suspend_requested (same
+		 * as full coop), or we were suspended preemptively while in
+		 * blocking and we're waiting for two things: the suspend
+		 * signal handler to run and notify the initiator and
+		 * immediately return, and then for the resume. */
 		THREADS_SUSPEND_DEBUG ("state polling done, notifying of resume\n");
 		mono_thread_info_wait_for_resume (info);
 		break;
@@ -418,14 +418,14 @@ mono_threads_enter_gc_unsafe_region_unbalanced_with_info (MonoThreadInfo *info, 
 	case AbortBlockingOk:
 		info->thread_saved_state [SELF_SUSPEND_STATE_INDEX].valid = FALSE;
 		break;
-	case AbortBlockingNotifyAndWait:
-		// in full coop, notify and wait doesn't need to notify
-		if (mono_threads_is_hybrid_suspension_enabled ()) {
-			mono_threads_notify_initiator_of_suspend (info);
-		}
-		mono_thread_info_wait_for_resume (info);
-		break;
 	case AbortBlockingWait:
+		/* If full coop suspend, we're just waiting for the initiator
+		 * to resume us.  If hybrid suspend, we were either self
+		 * suspended cooperatively from async_suspend_requested (same
+		 * as full coop), or we were suspended preemptively while in
+		 * blocking and we're waiting for two things: the suspend
+		 * signal handler to run and notify the initiator and
+		 * immediately return, and then for the resume. */
 		mono_thread_info_wait_for_resume (info);
 		break;
 	default:
@@ -509,14 +509,14 @@ mono_threads_assert_gc_unsafe_region (void)
 }
 
 gboolean
-mono_threads_are_safepoints_enabled (void)
+mono_threads_is_cooperative_suspension_enabled (void)
 {
-#if defined(USE_COOP_GC)
+#if defined(ENABLE_COOP_SUSPEND)
 	return TRUE;
 #else
 	static int is_coop_enabled = -1;
 	if (G_UNLIKELY (is_coop_enabled == -1))
-		is_coop_enabled = g_hasenv ("MONO_ENABLE_COOP") ? 1 : 0;
+		is_coop_enabled = (g_hasenv ("MONO_ENABLE_COOP") || g_hasenv ("MONO_ENABLE_COOP_SUSPEND")) ? 1 : 0;
 	return is_coop_enabled == 1;
 #endif
 }
@@ -524,12 +524,12 @@ mono_threads_are_safepoints_enabled (void)
 gboolean
 mono_threads_is_blocking_transition_enabled (void)
 {
-#if defined(USE_COOP_GC)
+#if defined(ENABLE_COOP_SUSPEND) || defined(ENABLE_HYBRID_SUSPEND)
 	return TRUE;
 #else
 	static int is_blocking_transition_enabled = -1;
 	if (G_UNLIKELY (is_blocking_transition_enabled == -1))
-		is_blocking_transition_enabled = (g_hasenv ("MONO_ENABLE_COOP") || g_hasenv ("MONO_ENABLE_BLOCKING_TRANSITION")) ? 1 : 0;
+		is_blocking_transition_enabled = (g_hasenv ("MONO_ENABLE_COOP") || g_hasenv ("MONO_ENABLE_COOP_SUSPEND") || g_hasenv ("MONO_ENABLE_HYBRID_SUSPEND") || g_hasenv ("MONO_ENABLE_BLOCKING_TRANSITION")) ? 1 : 0;
 	return is_blocking_transition_enabled == 1;
 #endif
 }
@@ -537,12 +537,12 @@ mono_threads_is_blocking_transition_enabled (void)
 gboolean
 mono_threads_is_hybrid_suspension_enabled (void)
 {
-#if defined(USE_HYBRID_SUSPEND)
+#if defined(ENABLE_HYBRID_SUSPEND)
 	return TRUE;
 #else
 	static int is_hybrid_suspension_enabled = -1;
 	if (G_UNLIKELY (is_hybrid_suspension_enabled == -1))
-		is_hybrid_suspension_enabled = g_hasenv ("MONO_ENABLE_COOP") && g_hasenv ("MONO_ENABLE_HYBRID_SUSPEND");
+		is_hybrid_suspension_enabled = (g_hasenv ("MONO_ENABLE_HYBRID_SUSPEND")) ? 1 : 0;
 	return is_hybrid_suspension_enabled == 1;
 #endif
 }

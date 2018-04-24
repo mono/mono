@@ -48,7 +48,7 @@ enum {
 // Cache the SgenThreadInfo pointer in a local 'var'.
 #define EMIT_TLS_ACCESS_VAR(mb, var) \
 	do { \
-		var = mono_mb_add_local ((mb), m_class_get_byval_arg (mono_defaults.int_class)); \
+		var = mono_mb_add_local ((mb), mono_get_int_type ());	\
 		mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX); \
 		mono_mb_emit_byte ((mb), CEE_MONO_TLS); \
 		mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_THREAD_INFO); \
@@ -79,7 +79,7 @@ enum {
 static void
 emit_nursery_check (MonoMethodBuilder *mb, int *nursery_check_return_labels, gboolean is_concurrent)
 {
-	int shifted_nursery_start = mono_mb_add_local (mb, m_class_get_byval_arg (mono_defaults.int_class));
+	int shifted_nursery_start = mono_mb_add_local (mb, mono_get_int_type ());
 
 	memset (nursery_check_return_labels, 0, sizeof (int) * 2);
 	// if (ptr_in_nursery (ptr)) return;
@@ -173,6 +173,7 @@ emit_nursery_check_ilgen (MonoMethodBuilder *mb, gboolean is_concurrent)
 static void
 emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean profiler, int atype)
 {
+#ifdef MANAGED_ALLOCATION
 	int p_var, size_var, real_size_var, thread_var G_GNUC_UNUSED;
 	int tlab_next_addr_var, new_next_var;
 	guint32 fastpath_branch, max_size_branch, no_oom_branch;
@@ -200,7 +201,7 @@ emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 		goto done;
 	}
 
-	MonoType *int_type = m_class_get_byval_arg (mono_defaults.int_class);
+	MonoType *int_type = mono_get_int_type ();
 	/*
 	 * Tls access might call foreign code or code without jinfo. This can
 	 * only happen if we are outside of the critical region.
@@ -533,6 +534,9 @@ emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 
 	mono_mb_emit_byte (mb, CEE_RET);
 	mb->init_locals = FALSE;
+#else
+	g_assert_not_reached ();
+#endif /* MANAGED_ALLOCATION */
 }
 
 void

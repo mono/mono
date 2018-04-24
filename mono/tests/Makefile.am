@@ -305,6 +305,8 @@ TESTS_CS_SRC=		\
 	exception16.cs		\
 	exception17.cs		\
 	exception18.cs		\
+	exception19.cs		\
+	exception20.cs		\
 	typeload-unaligned.cs	\
 	struct.cs		\
 	valuetype-gettype.cs	\
@@ -681,10 +683,13 @@ TESTS_CS_SRC=		\
 	bug-59400.cs \
 	tailcall-generic-cast-cs.cs \
 	tailcall-interface.cs \
-	sizeof-empty-structs.cs \
 	bug-60843.cs	\
-	roslyn-bug-19038.cs	\
 	nested_type_visibility.cs
+
+# some tests fail to compile on mcs
+if CSC_IS_ROSLYN
+TESTS_CS_SRC += roslyn-bug-19038.cs sizeof-empty-structs.cs
+endif
 
 if AMD64
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
@@ -703,6 +708,9 @@ endif
 endif
 
 TESTS_IL_SRC=			\
+	tailcall/2.il	     \
+	tailcall/3.il	     \
+	tailcall/4.il	     \
 	tailcall/fsharp-deeptail.il	     \
 	tailcall/fsharp-shallowtail.il	 \
 	tailcall/fsharp-shallownotail.il \
@@ -859,7 +867,6 @@ TESTS_GSHARED_SRC = \
 	generic-type-builder.2.cs
 
 PLATFORM_DISABLED_TESTS=\
-	tailcall-interface-conservestack.exe \
 	tailcall-rgctxb.exe
 
 if HOST_WIN32
@@ -910,6 +917,11 @@ PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_b
 	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
 endif
 
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/4.exe
+
 endif
 
 if POWERPC
@@ -919,7 +931,12 @@ PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
 if POWERPC64
@@ -930,8 +947,22 @@ PLATFORM_DISABLED_TESTS += monitor.exe threadpool-exceptions5.exe appdomain-unlo
 	sgen-domain-unload-2.exe sgen-weakref-stress.exe sgen-cementing-stress.exe sgen-new-threads-dont-join-stw.exe \
 	sgen-new-threads-dont-join-stw-2.exe sgen-new-threads-collect.exe sgen-bridge.exe
 PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
+PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
+PLATFORM_DISABLED_TESTS += appdomain-threadpool-unload.exe
+PLATFORM_DISABLED_TESTS += bug-60848.exe
+
+PLATFORM_DISABLED_TESTS += \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe
 endif
 
 if ARM
@@ -940,7 +971,12 @@ PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
 PLATFORM_DISABLED_TESTS += \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
@@ -975,7 +1011,12 @@ PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
 if S390X
@@ -991,7 +1032,12 @@ PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
 PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
 PROFILE_DISABLED_TESTS= \
@@ -1162,6 +1208,8 @@ PROFILE_DISABLED_TESTS += \
 	weak-fields.exe
 
 PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PROFILE_DISABLED_TESTS += tailcall-interface-conservestack.exe
+
 endif
 
 if HYBRID_AOT_TESTS
@@ -1230,7 +1278,6 @@ KNOWN_FAILING_TESTS = \
 	dim-constrainedcall.exe \
 	gptail1.exe \
 	itaili1.exe \
-	ivtail1.exe \
 	sirtail1.exe \
 	srtail1.exe \
 	stail1.exe \
@@ -1249,15 +1296,29 @@ DISABLED_TESTS = \
 	$(if $(LLVM),$(LLVM_DISABLED_TESTS))
 
 # Interpreter does not currently implement tailcall.
-# Disable all tailcall tests that are not otherwise disabled.
+# Disable all tailcall tests.
 INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
+	gptail1.exe \
 	itail1.exe \
+	itaili1.exe \
+	ivtail1.exe \
 	sitail1.exe \
-	tailcall-mrgctx.exe \
-	tailcall-virt.exe   \
-	tailcall-rgctxa.exe \
+	sirtail1.exe \
+	srtail1.exe \
+	stail1.exe \
+	tail1.exe \
+	taili1.exe \
+	vtail1.exe \
 	tailcall-generic-cast-conservestack-il.exe \
+	tailcall-interface-conservestack.exe \
+	tailcall-mrgctx.exe \
+	tailcall-rgctxa.exe \
+	tailcall-rgctxb.exe \
+	tailcall-virt.exe \
 	tailcall/fsharp-deeptail.exe \
+	tailcall/2.exe \
+	tailcall/3.exe \
+	tailcall/4.exe \
 	bug-60843.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
@@ -2421,7 +2482,7 @@ else
 libtest_la_LDFLAGS = -rpath `pwd`
 endif
 libtest_la_SOURCES = libtest.c
-libtest_la_LIBADD = $(GLIB_LIBS)
+libtest_la_LIBADD = $(top_builddir)/mono/eglib/libeglib.la
 
 INTERNALSVISIBLETO_TEST_SRC = \
 	internalsvisibleto-runtimetest.cs \

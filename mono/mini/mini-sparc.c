@@ -912,7 +912,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			ArgStorage storage;
 
 			if (sig->hasthis && (i == 0))
-				arg_type = m_class_get_byval_arg (mono_defaults.object_class);
+				arg_type = mono_get_object_type ();
 			else
 				arg_type = sig->params [i - sig->hasthis];
 
@@ -1030,7 +1030,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	sig = mono_method_signature (cfg->method);
 
 	if (MONO_TYPE_ISSTRUCT ((sig->ret))) {
-		cfg->vret_addr = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_ARG);
+		cfg->vret_addr = mono_compile_create_var (cfg, mono_get_int_type (), OP_ARG);
 		if (G_UNLIKELY (cfg->verbose_level > 1)) {
 			printf ("vret_addr = ");
 			mono_print_ins (cfg->vret_addr);
@@ -1303,7 +1303,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		in = call->args [i];
 
 		if (sig->hasthis && (i == 0))
-			arg_type = m_class_get_byval_arg (mono_defaults.object_class);
+			arg_type = mono_get_object_type ();
 		else
 			arg_type = sig->params [i - sig->hasthis];
 
@@ -2103,7 +2103,7 @@ emit_move_return_value (MonoInst *ins, guint32 *code)
  * emit_load_volatile_arguments:
  *
  *  Load volatile arguments from the stack to the original input registers.
- * Required before a tail call.
+ * Required before a tailcall.
  */
 static guint32*
 emit_load_volatile_arguments (MonoCompile *cfg, guint32 *code)
@@ -2130,7 +2130,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint32 *code)
 		inst = cfg->args [i];
 
 		if (sig->hasthis && (i == 0))
-			arg_type = m_class_get_byval_arg (mono_defaults.object_class);
+			arg_type = mono_get_object_type ();
 		else
 			arg_type = sig->params [i - sig->hasthis];
 
@@ -2862,17 +2862,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_fmovs (code, ins->sreg1, ins->dreg);
 			sparc_fmovs (code, ins->sreg1 + 1, ins->dreg + 1);
 #endif
-			break;
-		case OP_JMP:
-			if (cfg->method->save_lmf)
-				NOT_IMPLEMENTED;
-
-			code = emit_load_volatile_arguments (cfg, code);
-			mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, ins->inst_p0);
-			sparc_set_template (code, sparc_o7);
-			sparc_jmpl (code, sparc_o7, sparc_g0, sparc_g0);
-			/* Restore parent frame in delay slot */
-			sparc_restore_imm (code, sparc_g0, 0, sparc_g0);
 			break;
 		case OP_CHECK_THIS:
 			/* ensure ins->sreg1 is not NULL */
@@ -3960,7 +3949,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		inst = cfg->args [i];
 
 		if (sig->hasthis && (i == 0))
-			arg_type = m_class_get_byval_arg (mono_defaults.object_class);
+			arg_type = mono_get_object_type ();
 		else
 			arg_type = sig->params [i - sig->hasthis];
 
@@ -4438,6 +4427,12 @@ mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 
 gboolean
 mono_arch_opcode_supported (int opcode)
+{
+	return FALSE;
+}
+
+gboolean
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	return FALSE;
 }
