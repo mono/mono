@@ -4663,9 +4663,17 @@ static void CALLBACK dummy_apc (ULONG_PTR param)
 static gboolean
 mono_thread_execute_interruption (MonoExceptionHandle *pexc)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	// Use caller's frame if provided, else create one.
+	// This is not just an optimization -- it is needed to return
+	// a handle to the caller through an out-parameter.
 
-	HANDLE_FUNCTION_ENTER ();
+	if (!pexc) {
+		HANDLE_FUNCTION_ENTER ();
+		MonoExceptionHandle exc;
+		HANDLE_FUNCTION_RETURN_VAL (mono_thread_execute_interruption (&exc));
+	}
+
+	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoInternalThreadHandle thread = mono_thread_internal_current_handle ();
 	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
@@ -4729,18 +4737,16 @@ exit:
 	if (unlock)
 		unlock_thread_handle (thread);
 
-	if (fexc && pexc)
+	if (fexc)
 		*pexc = MONO_HANDLE_NEW (MonoException, MONO_HANDLE_RAW (exc));
 
-	HANDLE_FUNCTION_RETURN_VAL (fexc);
+	return fexc;
 }
 
 static void
 mono_thread_execute_interruption_void (void)
 {
-	HANDLE_FUNCTION_ENTER ();
 	(void)mono_thread_execute_interruption (NULL);
-	HANDLE_FUNCTION_RETURN ();
 }
 
 static MonoException*
@@ -4791,16 +4797,13 @@ mono_thread_request_interruption_internal (gboolean running_managed, MonoExcepti
 static void
 mono_thread_request_interruption_native (void)
 {
-	HANDLE_FUNCTION_ENTER ();
 	(void)mono_thread_request_interruption_internal (FALSE, NULL);
-	HANDLE_FUNCTION_RETURN ();
 }
 
 static gboolean
 mono_thread_request_interruption_managed (MonoExceptionHandle *exc)
 {
-	HANDLE_FUNCTION_ENTER ();
-	HANDLE_FUNCTION_RETURN_VAL (mono_thread_request_interruption_internal (TRUE, exc));
+	return mono_thread_request_interruption_internal (TRUE, exc);
 }
 
 /*This function should be called by a thread after it has exited all of
