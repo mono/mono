@@ -3,6 +3,12 @@
 # The build configs are looking for this file rather than the perl script.
 # easier to add this 
 
-BASEDIR=$(dirname $0)
+# Note : Tizen support is removed.  Script is here to make the katana build pass so that the mono build artifact is created
+if [ -d builds ]; then
+	echo "Skip making builds directory.  Already exists"
+else
+	mkdir builds
+fi
 
-perl "$BASEDIR/build_runtime_tizen.pl" "$@"
+touch builds/dummy_tizen.txt
+
