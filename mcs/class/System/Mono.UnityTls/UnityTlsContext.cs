@@ -172,7 +172,7 @@ namespace Mono.Unity
 
 		public override (int ret, bool wantMore) Read (byte[] buffer, int offset, int count)
 		{
-			bool wouldBlock = false;
+			bool wantMore = false;
 			int numBytesRead = 0;
 
 			lastException = null;
@@ -183,19 +183,19 @@ namespace Mono.Unity
 			if (lastException != null)
 				throw lastException;
 
-			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
-				wouldBlock = true;
+			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK || numBytesRead < count) // In contrast to some other APIs (like Apple security) WOULD_BLOCK is not set if we did a partial read
+				wantMore = true;
 			else if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_STREAM_CLOSED)
 				return (0, false);	// According to Apple and Btls implementation this is how we should handle gracefully closed connections.
 			else
 				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to read data from TLS context");
 
-			return (numBytesRead, wouldBlock);
+			return (numBytesRead, wantMore);
 		}
 
 		public override (int ret, bool wantMore) Write (byte[] buffer, int offset, int count)
 		{
-			bool wouldBlock = false;
+			bool wantMore = false;
 			int numBytesWritten = 0;
 
 			lastException = null;
@@ -206,14 +206,14 @@ namespace Mono.Unity
 			if (lastException != null)
 				throw lastException;
 
-			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK)
-				wouldBlock = true;
+			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK || numBytesWritten < count) // In contrast to some other APIs (like Apple security) WOULD_BLOCK is not set if we did a partial write
+				wantMore = true;
 			else if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_STREAM_CLOSED)
 				return (0, false);	// According to Apple and Btls implementation this is how we should handle gracefully closed connections.
 			else
 				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to write data to TLS context");
 
-			return (numBytesWritten, wouldBlock);
+			return (numBytesWritten, wantMore);
 		}
 
 		public override void Shutdown ()
