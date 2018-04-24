@@ -3,6 +3,7 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">net_4_x</Platform>
     <ProjectGuid>{1F165EE1-C483-4ACE-BD45-31074A9F735F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,219,414,649,1717</NoWarn>
@@ -62,6 +63,16 @@
     <OutputPath>./../../class/lib/monotouch_tv_runtime</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv_runtime</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;MONOTOUCH_TV;ASYNC;AGCLR;DISABLE_XSLT_COMPILER;DISABLE_XSLT_SCRIPT;MONO_HYBRID_SYSTEM_XML;DISABLE_CAS_USE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO;ASYNC;AGCLR;DISABLE_XSLT_COMPILER;DISABLE_XSLT_SCRIPT;MONO_HYBRID_SYSTEM_XML;DISABLE_CAS_USE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;ASYNC;AGCLR;DISABLE_XSLT_COMPILER;DISABLE_XSLT_SCRIPT;MONO_HYBRID_SYSTEM_XML;DISABLE_CAS_USE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
@@ -1331,6 +1342,164 @@
     <Compile Include="System.Xml.Serialization\XmlTypeMapping.cs" />
     <Compile Include="System.Xml.Xsl\XslCompiledTransform_Mobile.cs" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="ReferenceSources\CodeDom.cs" />
+    <Compile Include="ReferenceSources\TypeScope.cs" />
+    <Compile Include="ReferenceSources\Wsdl.cs" />
+    <Compile Include="System.Xml.Serialization\ImportContext.cs" />
+    <Compile Include="System.Xml.Serialization\IXmlSerializable.cs" />
+    <Compile Include="System.Xml.Serialization\IXmlTextParser.cs" />
+    <Compile Include="System.Xml.Serialization\KeyHelper.cs" />
+    <Compile Include="System.Xml.Serialization\ReflectionHelper.cs" />
+    <Compile Include="System.Xml.Serialization\SchemaTypes.cs" />
+    <Compile Include="System.Xml.Serialization\SerializationCodeGenerator.cs" />
+    <Compile Include="System.Xml.Serialization\SerializationCodeGeneratorConfiguration.cs" />
+    <Compile Include="System.Xml.Serialization\SerializationSource.cs" />
+    <Compile Include="System.Xml.Serialization\SoapAttributeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\SoapAttributeOverrides.cs" />
+    <Compile Include="System.Xml.Serialization\SoapAttributes.cs" />
+    <Compile Include="System.Xml.Serialization\SoapElementAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\SoapEnumAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\SoapIgnoreAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\SoapIncludeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\SoapReflectionImporter.cs" />
+    <Compile Include="System.Xml.Serialization\SoapSchemaMember.cs" />
+    <Compile Include="System.Xml.Serialization\SoapTypeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\TypeData.cs" />
+    <Compile Include="System.Xml.Serialization\TypeMember.cs" />
+    <Compile Include="System.Xml.Serialization\TypeTranslator.cs" />
+    <Compile Include="System.Xml.Serialization\XmlAnyAttributeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlAnyElementAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlAnyElementAttributes.cs" />
+    <Compile Include="System.Xml.Serialization\XmlArrayAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlArrayItemAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlArrayItemAttributes.cs" />
+    <Compile Include="System.Xml.Serialization\XmlAttributeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlAttributeOverrides.cs" />
+    <Compile Include="System.Xml.Serialization\XmlAttributes.cs" />
+    <Compile Include="System.Xml.Serialization\XmlChoiceIdentifierAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlCustomFormatter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlDeserializationEvents.cs" />
+    <Compile Include="System.Xml.Serialization\XmlElementAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlElementAttributes.cs" />
+    <Compile Include="System.Xml.Serialization\XmlEnumAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlIgnoreAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlIncludeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlMapping.cs" />
+    <Compile Include="System.Xml.Serialization\XmlMappingAccess.cs" />
+    <Compile Include="System.Xml.Serialization\XmlMemberMapping.cs" />
+    <Compile Include="System.Xml.Serialization\XmlMembersMapping.cs" />
+    <Compile Include="System.Xml.Serialization\XmlNamespaceDeclarationsAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlReflectionImporter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlReflectionMember.cs" />
+    <Compile Include="System.Xml.Serialization\XmlRootAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSchemaExporter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSchemaImporter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSchemaProviderAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationCollectionFixupCallback.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationFixupCallback.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationGeneratedCode.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationReadCallback.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationReader.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationReaderInterpreter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationWriteCallback.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationWriter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationWriterInterpreter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializer.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializerAssemblyAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializerFactory.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializerImplementation.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializerVersionAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTextAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeMapElementInfo.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeMapMember.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeMapMemberAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeMapMemberElement.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeMapMemberNamespaces.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeMapping.cs" />
+    <Compile Include="System.Xml.Xsl\XslCompiledTransform_Mobile.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="ReferenceSources\CodeDom.cs" />
+    <Compile Include="ReferenceSources\TypeScope.cs" />
+    <Compile Include="ReferenceSources\Wsdl.cs" />
+    <Compile Include="System.Xml.Serialization\ImportContext.cs" />
+    <Compile Include="System.Xml.Serialization\IXmlSerializable.cs" />
+    <Compile Include="System.Xml.Serialization\IXmlTextParser.cs" />
+    <Compile Include="System.Xml.Serialization\KeyHelper.cs" />
+    <Compile Include="System.Xml.Serialization\ReflectionHelper.cs" />
+    <Compile Include="System.Xml.Serialization\SchemaTypes.cs" />
+    <Compile Include="System.Xml.Serialization\SerializationCodeGenerator.cs" />
+    <Compile Include="System.Xml.Serialization\SerializationCodeGeneratorConfiguration.cs" />
+    <Compile Include="System.Xml.Serialization\SerializationSource.cs" />
+    <Compile Include="System.Xml.Serialization\SoapAttributeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\SoapAttributeOverrides.cs" />
+    <Compile Include="System.Xml.Serialization\SoapAttributes.cs" />
+    <Compile Include="System.Xml.Serialization\SoapElementAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\SoapEnumAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\SoapIgnoreAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\SoapIncludeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\SoapReflectionImporter.cs" />
+    <Compile Include="System.Xml.Serialization\SoapSchemaMember.cs" />
+    <Compile Include="System.Xml.Serialization\SoapTypeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\TypeData.cs" />
+    <Compile Include="System.Xml.Serialization\TypeMember.cs" />
+    <Compile Include="System.Xml.Serialization\TypeTranslator.cs" />
+    <Compile Include="System.Xml.Serialization\XmlAnyAttributeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlAnyElementAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlAnyElementAttributes.cs" />
+    <Compile Include="System.Xml.Serialization\XmlArrayAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlArrayItemAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlArrayItemAttributes.cs" />
+    <Compile Include="System.Xml.Serialization\XmlAttributeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlAttributeOverrides.cs" />
+    <Compile Include="System.Xml.Serialization\XmlAttributes.cs" />
+    <Compile Include="System.Xml.Serialization\XmlChoiceIdentifierAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlCustomFormatter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlDeserializationEvents.cs" />
+    <Compile Include="System.Xml.Serialization\XmlElementAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlElementAttributes.cs" />
+    <Compile Include="System.Xml.Serialization\XmlEnumAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlIgnoreAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlIncludeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlMapping.cs" />
+    <Compile Include="System.Xml.Serialization\XmlMappingAccess.cs" />
+    <Compile Include="System.Xml.Serialization\XmlMemberMapping.cs" />
+    <Compile Include="System.Xml.Serialization\XmlMembersMapping.cs" />
+    <Compile Include="System.Xml.Serialization\XmlNamespaceDeclarationsAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlReflectionImporter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlReflectionMember.cs" />
+    <Compile Include="System.Xml.Serialization\XmlRootAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSchemaExporter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSchemaImporter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSchemaProviderAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationCollectionFixupCallback.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationFixupCallback.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationGeneratedCode.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationReadCallback.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationReader.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationReaderInterpreter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationWriteCallback.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationWriter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializationWriterInterpreter.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializer.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializerAssemblyAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializerFactory.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializerImplementation.cs" />
+    <Compile Include="System.Xml.Serialization\XmlSerializerVersionAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTextAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeMapElementInfo.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeMapMember.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeMapMemberAttribute.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeMapMemberElement.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeMapMemberNamespaces.cs" />
+    <Compile Include="System.Xml.Serialization\XmlTypeMapping.cs" />
+    <Compile Include="System.Xml.Xsl\XslCompiledTransform_Mobile.cs" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="ReferenceSources\CodeDom.cs" />
@@ -1919,6 +2088,18 @@
     <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_hybrid\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

@@ -999,6 +999,10 @@ namespace System.Text
         [Pure]
         public abstract int GetByteCount(char[] chars, int index, int count);
 
+#if MONO
+        public int GetByteCount(string str, int index, int count) => GetByteCount(str.ToCharArray(), index, count);
+#endif
+
         // We expect this to be the workhorse for NLS encodings
         // unfortunately for existing overrides, it has to call the [] version,
         // which is really slow, so this method should be avoided if you're calling

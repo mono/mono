@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 ${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check check-seq-points EMIT_NUNIT=1
-if [[ ${CI_TAGS} == *'win-'* ]]
+if [[ ${CI_TAGS} == *'win-'* ]] || [[ ${CI_TAGS} == *'ppc64'* ]]
 then ${TESTCMD} --label=aot-test --skip;
 else ${TESTCMD} --label=aot-test --timeout=30m make -w -C mono/tests -j4 -k test-aot
 fi

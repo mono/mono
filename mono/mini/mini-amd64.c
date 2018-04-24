@@ -578,7 +578,7 @@ get_valuetype_size_win64 (MonoClass *klass, gboolean pinvoke, ArgInfo *arg_info,
 
 	if (*arg_class == ARG_CLASS_MEMORY) {
 		/* Value type has a size that doesn't seem to fit register according to ABI. Try to used full stack size of type. */
-		*arg_size = mini_type_stack_size_full (&klass->byval_arg, NULL, pinvoke);
+		*arg_size = mini_type_stack_size_full (m_class_get_byval_arg (klass), NULL, pinvoke);
 	}
 
 	/*
@@ -1264,7 +1264,7 @@ is_supported_tailcall_helper (gboolean value, const char *svalue)
 #define IS_SUPPORTED_TAILCALL(x) (is_supported_tailcall_helper((x), #x))
 
 gboolean
-mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	MonoType *callee_ret;
 
@@ -1869,7 +1869,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 
 	sig_ret = mini_get_underlying_type (sig->ret);
 	if (cinfo->ret.storage == ArgValuetypeAddrInIReg || cinfo->ret.storage == ArgGsharedvtVariableInReg) {
-		cfg->vret_addr = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_ARG);
+		cfg->vret_addr = mono_compile_create_var (cfg, mono_get_int_type (), OP_ARG);
 		if (G_UNLIKELY (cfg->verbose_level > 1)) {
 			printf ("vret_addr = ");
 			mono_print_ins (cfg->vret_addr);
@@ -1880,15 +1880,15 @@ mono_arch_create_vars (MonoCompile *cfg)
 		MonoInst *ins;
 
 		if (cfg->compile_aot) {
-			MonoInst *ins = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+			MonoInst *ins = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 			ins->flags |= MONO_INST_VOLATILE;
 			cfg->arch.seq_point_info_var = ins;
 		}
-		ins = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+		ins = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 		ins->flags |= MONO_INST_VOLATILE;
 		cfg->arch.ss_tramp_var = ins;
 
-		ins = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+		ins = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 		ins->flags |= MONO_INST_VOLATILE;
 		cfg->arch.bp_tramp_var = ins;
 	}
@@ -1963,7 +1963,7 @@ emit_sig_cookie (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 	MonoMethodSignature *tmp_sig;
 	int sig_reg;
 
-	if (call->tail_call)
+	if (call->tailcall)
 		NOT_IMPLEMENTED;
 
 	g_assert (cinfo->sig_cookie.storage == ArgOnStack);
@@ -2068,7 +2068,7 @@ mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 		if (i >= sig->hasthis)
 			t = sig->params [i - sig->hasthis];
 		else
-			t = m_class_get_byval_arg (mono_defaults.int_class);
+			t = mono_get_int_type ();
 		t = mini_type_get_underlying_type (t);
 
 		linfo->args [i].storage = LLVMArgNone;
@@ -2149,13 +2149,13 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		in = call->args [i];
 
 		if (sig->hasthis && i == 0)
-			t = m_class_get_byval_arg (mono_defaults.object_class);
+			t = mono_get_object_type ();
 		else
 			t = sig->params [i - sig->hasthis];
 
 		t = mini_get_underlying_type (t);
 		//XXX what about ArgGSharedVtOnStack here?
-		if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !call->tail_call) {
+		if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !call->tailcall) {
 			if (!t->byref) {
 				if (t->type == MONO_TYPE_R4)
 					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER4_MEMBASE_REG, AMD64_RSP, ainfo->offset, in->dreg);
@@ -2195,7 +2195,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		in = call->args [i];
 
 		if (sig->hasthis && i == 0)
-			t = m_class_get_byval_arg (mono_defaults.object_class);
+			t = mono_get_object_type ();
 		else
 			t = sig->params [i - sig->hasthis];
 		t = mini_get_underlying_type (t);
@@ -2214,11 +2214,11 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		case ArgValuetypeAddrOnStack:
 		case ArgGSharedVtInReg:
 		case ArgGSharedVtOnStack: {
-			if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !call->tail_call)
+			if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !call->tailcall)
 				/* Already emitted above */
 				break;
 			//FIXME what about ArgGSharedVtOnStack ?
-			if (ainfo->storage == ArgOnStack && call->tail_call) {
+			if (ainfo->storage == ArgOnStack && call->tailcall) {
 				MonoInst *call_inst = (MonoInst*)call;
 				cfg->args [i]->flags |= MONO_INST_VOLATILE;
 				EMIT_NEW_ARGSTORE (cfg, call_inst, i, in);
@@ -2288,7 +2288,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			if (call->vret_var)
 				NULLIFY_INS (call->vret_var);
 		} else {
-			if (call->tail_call)
+			if (call->tailcall)
 				NOT_IMPLEMENTED;
 			/*
 			 * The valuetype is in RAX:RDX after the call, need to be copied to
@@ -2296,7 +2296,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			 * access it.
 			 */
 			if (!cfg->arch.vret_addr_loc) {
-				cfg->arch.vret_addr_loc = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.int_class), OP_LOCAL);
+				cfg->arch.vret_addr_loc = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 				/* Prevent it from being register allocated or optimized away */
 				((MonoInst*)cfg->arch.vret_addr_loc)->flags |= MONO_INST_VOLATILE;
 			}
@@ -4641,10 +4641,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_TAILCALL:
+		case OP_TAILCALL_REG:
 		case OP_TAILCALL_MEMBASE: {
 			call = (MonoCallInst*)ins;
 			int i, save_area_offset;
 			gboolean tailcall_membase = (ins->opcode == OP_TAILCALL_MEMBASE);
+			gboolean tailcall_reg = (ins->opcode == OP_TAILCALL_REG);
 
 			g_assert (!cfg->method->save_lmf);
 
@@ -4662,8 +4664,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			// FIXME hardcoding RAX here is not ideal.
 
-			if (tailcall_membase) {
-				amd64_mov_reg_membase (code, AMD64_RAX, ins->sreg1, ins->inst_offset, 8);
+			if (tailcall_reg) {
+				int const reg = ins->sreg1;
+				g_assert (reg > -1);
+				if (reg != AMD64_RAX)
+					amd64_mov_reg_reg (code, AMD64_RAX, reg, 8);
+			} else if (tailcall_membase) {
+				int const reg = ins->sreg1;
+				g_assert (reg > -1);
+				amd64_mov_reg_membase (code, AMD64_RAX, reg, ins->inst_offset, 8);
 			} else {
 				 if (cfg->compile_aot) {
 					mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
@@ -4695,6 +4704,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			} else {
 				amd64_push_reg (code, AMD64_RAX);
 				/* Copy arguments on the stack to our argument area */
+				// FIXME use rep mov for constant code size, before nonvolatiles
+				// restored, first saving rsi, rdi into volatiles
 				for (i = 0; i < call->stack_usage; i += sizeof(mgreg_t)) {
 					amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RSP, i + 8, sizeof(mgreg_t));
 					amd64_mov_membase_reg (code, AMD64_RBP, ARGS_OFFSET + i, AMD64_RAX, sizeof(mgreg_t));
@@ -5241,9 +5252,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_sse_cvtss2si_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
 			break;
 		case OP_RCONV_TO_I8:
+		case OP_RCONV_TO_I:
 			amd64_sse_cvtss2si_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
 			break;
-		case OP_RCONV_TO_I:
 		case OP_RCONV_TO_R8:
 			amd64_sse_cvtss2sd_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
@@ -7704,10 +7715,11 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	return code;
 }
 
+MONO_NEVER_INLINE
 void
 mono_arch_flush_icache (guint8 *code, gint size)
 {
-	/* Not needed */
+	/* call/ret required (or likely other control transfer) */
 }
 
 void

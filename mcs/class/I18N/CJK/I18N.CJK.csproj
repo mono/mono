@@ -3,6 +3,7 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">net_4_x</Platform>
     <ProjectGuid>{4BA8A755-BB84-4023-BCDD-07A935B4632E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
@@ -49,6 +50,16 @@
     <OutputPath>./../../../class/lib/monotouch_tv</OutputPath>
     <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-monotouch_tv</IntermediateOutputPath>
     <DefineConstants>DISABLE_UNSAFE;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <OutputPath>./../../../class/lib/testing_aot_hybrid</OutputPath>
+    <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
+    <DefineConstants>DISABLE_UNSAFE;NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <OutputPath>./../../../class/lib/testing_aot_full</OutputPath>
+    <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
+    <DefineConstants>DISABLE_UNSAFE;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../../class/lib/winaot</OutputPath>
@@ -113,6 +124,18 @@
   <ItemGroup>
     <ProjectReference Include="../Common/I18N.csproj" />
     <ProjectReference Include="../../corlib/corlib.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_hybrid\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -184,6 +207,40 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <EmbeddedResource Include="big5.table">
+      <LogicalName>big5.table</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="gb18030.table">
+      <LogicalName>gb18030.table</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="gb2312.table">
+      <LogicalName>gb2312.table</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="jis.table">
+      <LogicalName>jis.table</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ks.table">
+      <LogicalName>ks.table</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <EmbeddedResource Include="big5.table">
+      <LogicalName>big5.table</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="gb18030.table">
+      <LogicalName>gb18030.table</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="gb2312.table">
+      <LogicalName>gb2312.table</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="jis.table">
+      <LogicalName>jis.table</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ks.table">
+      <LogicalName>ks.table</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <EmbeddedResource Include="big5.table">
       <LogicalName>big5.table</LogicalName>
     </EmbeddedResource>

@@ -1122,7 +1122,7 @@ no_intrinsic:
 			}
 			ADD_CODE (td, MINT_BOX);
 			ADD_CODE (td, get_data_item_index (td, constrained_class));
-			ADD_CODE (td, csignature->param_count | ((td->sp - 1)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
+			ADD_CODE (td, csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
 		} else if (!m_class_is_valuetype (constrained_class)) {
 			/* managed pointer on the stack, we need to deref that puppy */
 			ADD_CODE (td, MINT_LDIND_I);
@@ -1151,7 +1151,7 @@ no_intrinsic:
 					}
 					ADD_CODE (td, MINT_BOX);
 					ADD_CODE (td, get_data_item_index (td, constrained_class));
-					ADD_CODE (td, csignature->param_count | ((td->sp - 1)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
+					ADD_CODE (td, csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
 				}
 			}
 			is_virtual = FALSE;
@@ -2867,7 +2867,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			} else {
 				/* defer allocation to execution-time */
 				ADD_CODE (td, MINT_LDSTR_TOKEN);
-				ADD_CODE (td, get_data_item_index (td, (gpointer) token));
+				ADD_CODE (td, get_data_item_index (td, GUINT_TO_POINTER (token)));
 			}
 			PUSH_TYPE(td, STACK_TYPE_O, mono_defaults.string_class);
 			break;
@@ -4539,6 +4539,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 		if (ei->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
 			ei->data.filter = (guint8*)(rtm->code + c->data.filter_offset);
 		} else if (ei->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
+			ei->data.handler_end = (guint8*)(rtm->code + c->handler_offset + c->handler_len);
 		} else {
 			ei->data.catch_class = c->data.catch_class;
 		}

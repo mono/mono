@@ -384,7 +384,7 @@ arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 				   StackFrameInfo *frame)
 {
 	if (!ji && *lmf) {
-		if (((guint64)(*lmf)->previous_lmf) & 2) {
+		if (((gsize)(*lmf)->previous_lmf) & 2) {
 			MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
 
 			memset (frame, 0, sizeof (StackFrameInfo));
@@ -406,7 +406,7 @@ arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 				g_assert_not_reached ();
 			}
 
-			*lmf = (MonoLMF *)(((guint64)(*lmf)->previous_lmf) & ~3);
+			*lmf = (MonoLMF *)(((gsize)(*lmf)->previous_lmf) & ~3);
 
 			return TRUE;
 		}
@@ -700,10 +700,10 @@ unwinder_unwind_frame (Unwinder *unwinder,
 		/* Process debugger invokes */
 		/* The DEBUGGER_INVOKE should be returned before the first interpreter frame for the invoke */
 		if (unwinder->last_frame_addr > (gpointer)(*lmf)) {
-			if (((guint64)(*lmf)->previous_lmf) & 2) {
+			if (((gsize)(*lmf)->previous_lmf) & 2) {
 				MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
 				if (ext->debugger_invoke) {
-					*lmf = (MonoLMF *)(((guint64)(*lmf)->previous_lmf) & ~7);
+					*lmf = (MonoLMF *)(((gsize)(*lmf)->previous_lmf) & ~7);
 					frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
 					return TRUE;
 				}
@@ -1563,23 +1563,25 @@ build_native_trace (MonoError *error)
 #endif
 }
 
+/* This can be called more than once on a MonoException. */
 static void
-setup_stack_trace (MonoException *mono_ex, GSList *dynamic_methods, GList **trace_ips)
+setup_stack_trace (MonoException *mono_ex, GSList **dynamic_methods, GList *trace_ips)
 {
 	if (mono_ex) {
-		*trace_ips = g_list_reverse (*trace_ips);
+		GList *trace_ips_copy = g_list_copy (trace_ips);
+		trace_ips_copy = g_list_reverse (trace_ips_copy);
 		ERROR_DECL (error);
-		MonoArray *ips_arr = mono_glist_to_array (*trace_ips, mono_defaults.int_class, error);
+		MonoArray *ips_arr = mono_glist_to_array (trace_ips_copy, mono_defaults.int_class, error);
 		mono_error_assert_ok (error);
 		MONO_OBJECT_SETREF (mono_ex, trace_ips, ips_arr);
 		MONO_OBJECT_SETREF (mono_ex, native_trace_ips, build_native_trace (error));
 		mono_error_assert_ok (error);
-		if (dynamic_methods) {
+		if (*dynamic_methods) {
 			/* These methods could go away anytime, so save a reference to them in the exception object */
 			GSList *l;
-			MonoMList *list = NULL;
+			MonoMList *list = (MonoMList*)mono_ex->dynamic_methods;
 
-			for (l = dynamic_methods; l; l = l->next) {
+			for (l = *dynamic_methods; l; l = l->next) {
 				guint32 dis_link;
 				MonoDomain *domain = mono_domain_get ();
 
@@ -1598,10 +1600,13 @@ setup_stack_trace (MonoException *mono_ex, GSList *dynamic_methods, GList **trac
 			}
 
 			MONO_OBJECT_SETREF (mono_ex, dynamic_methods, list);
+
+			g_slist_free (*dynamic_methods);
+			*dynamic_methods = NULL;
 		}
+
+		g_list_free (trace_ips_copy);
 	}
-	g_list_free (*trace_ips);
-	*trace_ips = NULL;
 }
 
 typedef enum {
@@ -1698,8 +1703,8 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 
 		unwind_res = unwinder_unwind_frame (&unwinder, domain, jit_tls, NULL, ctx, &new_ctx, NULL, &lmf, NULL, &frame);
 		if (!unwind_res) {
-			setup_stack_trace (mono_ex, dynamic_methods, &trace_ips);
-			g_slist_free (dynamic_methods);
+			setup_stack_trace (mono_ex, &dynamic_methods, trace_ips);
+			g_list_free (trace_ips);
 			return result;
 		}
 
@@ -1785,6 +1790,8 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 					ex_obj = obj;
 
 				if (ei->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
+					setup_stack_trace (mono_ex, &dynamic_methods, trace_ips);
+
 #ifndef DISABLE_PERFCOUNTERS
 					mono_atomic_inc_i32 (&mono_perfcounters->exceptions_filters);
 #endif
@@ -1837,8 +1844,7 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 					filter_idx ++;
 
 					if (filtered) {
-						setup_stack_trace (mono_ex, dynamic_methods, &trace_ips);
-						g_slist_free (dynamic_methods);
+						g_list_free (trace_ips);
 						/* mono_debugger_agent_handle_exception () needs this */
 						mini_set_abort_threshold (&frame);
 						MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
@@ -1852,8 +1858,8 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 				ERROR_DECL_VALUE (isinst_error);
 				error_init (&isinst_error);
 				if (ei->flags == MONO_EXCEPTION_CLAUSE_NONE && mono_object_isinst_checked (ex_obj, catch_class, error)) {
-					setup_stack_trace (mono_ex, dynamic_methods, &trace_ips);
-					g_slist_free (dynamic_methods);
+					setup_stack_trace (mono_ex, &dynamic_methods, trace_ips);
+					g_list_free (trace_ips);
 
 					if (out_ji)
 						*out_ji = ji;
@@ -1874,6 +1880,32 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 	}
 
 	g_assert_not_reached ();
+}
+
+/*
+ * We implement delaying of aborts when in finally blocks by reusing the
+ * abort protected block mechanism. The problem is that when throwing an
+ * exception in a finally block we don't get to exit the protected block.
+ * We exit it here when unwinding. Given that the order of the clauses
+ * in the jit info is from inner clauses to the outer clauses, when we
+ * want to exit the finally blocks inner to the clause that handles the
+ * exception, we need to search up to its index.
+ *
+ * FIXME We should do this inside interp, but with mixed mode we can
+ * resume directly, without giving control back to the interp.
+ */
+static void
+interp_exit_finally_abort_blocks (MonoJitInfo *ji, int start_clause, int end_clause, gpointer ip)
+{
+	int i;
+	for (i = start_clause; i < end_clause; i++) {
+		MonoJitExceptionInfo *ei = &ji->clauses [i];
+		if (ei->flags == MONO_EXCEPTION_CLAUSE_FINALLY &&
+				ip >= ei->handler_start &&
+				ip < ei->data.handler_end) {
+			mono_threads_end_abort_protected_block ();
+		}
+	}
 }
 
 /**
@@ -2251,6 +2283,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					mini_set_abort_threshold (&frame);
 
 					if (in_interp) {
+						interp_exit_finally_abort_blocks (ji, clause_index_start, i, ip);
 						/*
 						 * ctx->pc points into the interpreter, after the call which transitioned to
 						 * JITted code. Store the unwind state into the
@@ -2337,6 +2370,9 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 				}
 			}
 		}
+
+		if (in_interp)
+			interp_exit_finally_abort_blocks (ji, clause_index_start, ji->num_clauses, ip);
 
 		if (MONO_PROFILER_ENABLED (method_exception_leave) &&
 		    mono_profiler_get_call_instrumentation_flags (method) & MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE) {

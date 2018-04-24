@@ -17,13 +17,8 @@ namespace Mono
 		public readonly string Mvid;
 		public readonly string Aotid;
 
-		public string File { get; private set; }
-		public int LineNumber { get; private set; }
-
 		private StackFrameData (string line, string typeFullName, string methodSig, int offset, bool isILOffset, uint methodIndex, string mvid, string aotid)
 		{
-			LineNumber = -1;
-
 			Line = line;
 			TypeFullName = typeFullName;
 			MethodSignature = methodSig;
@@ -32,6 +27,11 @@ namespace Mono
 			MethodIndex = methodIndex;
 			Mvid = mvid;
 			Aotid = aotid;
+		}
+
+		public StackFrameData Relocate (string typeName, string methodName)
+		{
+			return new StackFrameData (Line, typeName, methodName, Offset, IsILOffset, MethodIndex, Mvid, Aotid);
 		}
 
 		public static bool TryParse (string line, out StackFrameData stackFrame)
@@ -90,17 +90,6 @@ namespace Mono
 			methodSignature = str.Substring (typeNameEnd + 1);
 
 			return true;
-		}
-
-		internal void SetLocation (string file, int lineNumber)
-		{
-			File = file;
-			LineNumber = lineNumber;
-		}
-
-		public override string ToString ()
-		{
-			return string.Format ("{0} in {1}:{2} ", Line.Substring (0, Line.IndexOf(" in <", StringComparison.Ordinal)), File, LineNumber);
 		}
 	}
 }

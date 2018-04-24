@@ -3457,6 +3457,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MobileNotWorking")] // https://github.com/xamarin/xamarin-macios/issues/3827
 		// Bug6737
 		// This test is supposed to fail prior to .NET 4.0
 		public void Post_EmptyRequestStream ()

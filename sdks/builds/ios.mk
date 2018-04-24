@@ -132,7 +132,7 @@ watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SD
 
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
 ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no $(BITCODE_CONFIGURE_FLAGS)
-ios-targetwatch_CONFIGURE_FLAGS = --with-cooperative-gc=yes $(BITCODE_CONFIGURE_FLAGS)
+ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend $(BITCODE_CONFIGURE_FLAGS)
 
 ios-target32_SYSROOT = $(ios_sysroot)
 ios-target32s_SYSROOT = $(ios_sysroot)
@@ -265,7 +265,7 @@ ios-sim64_SYSROOT = $(ios_sim_sysroot)
 ios-simtv_SYSROOT = $(tvos_sim_sysroot)
 ios-simwatch_SYSROOT = $(watchos_sim_sysroot)
 
-ios-simwatch_CONFIGURE_FLAGS = --with-cooperative-gc=yes
+ios-simwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend
 
 ios-sim32_CPPFLAGS = -DHOST_IOS
 ios-sim64_CPPFLAGS = -DHOST_IOS
@@ -306,7 +306,7 @@ ifndef IGNORE_PACKAGE_LLVM
 
 build-ios-llvm: .stamp-ios-llvm-$(LLVM_HASH)
 
-clean-ios-llvm:
+clean-ios-llvm: clean-llvm-llvm32 clean-llvm-llvm64
 	$(RM) -rf ../out/ios-llvm64 ../out/ios-llvm32 .stamp-ios-llvm-$(LLVM_HASH)
 
 else
@@ -399,7 +399,7 @@ $$(eval $$(call RuntimeTemplate,ios-$(1)))
 endef
 
 ios-cross32_CONFIGURE_FLAGS=--build=i386-apple-darwin10
-ios-crosswatch_CONFIGURE_FLAGS=--build=i386-apple-darwin10 	--with-cooperative-gc=yes
+ios-crosswatch_CONFIGURE_FLAGS=--build=i386-apple-darwin10 	--enable-cooperative-suspend
 $(eval $(call iOSCrossTemplate,cross32,arm,llvm32,arm-darwin,arm-apple-darwin10))
 $(eval $(call iOSCrossTemplate,cross64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10))
 $(eval $(call iOSCrossTemplate,crosswatch,armv7k,llvm32,armv7k-unknown-darwin,armv7k-apple-darwin))
