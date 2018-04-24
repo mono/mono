@@ -831,7 +831,6 @@ System.Security.Principal/WindowsIdentity.cs
 System.Security.Principal/WindowsImpersonationContext.cs
 System.Security.Principal/WindowsPrincipal.cs
 System.Text/EncodingHelper.cs
-System.Text/NormalizationForm.cs
 System.Threading/CompressedStack.cs
 System.Threading/HostExecutionContext.cs
 System.Threading/HostExecutionContextManager.cs
