@@ -1523,7 +1523,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/threading/Tasks/AsyncCausalityTracer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskExceptionHolder.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
-../../../external/corefx/src/System.Threading.Tasks.Dataflow/src/Internal/ProducerConsumerQueues.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/ProducerConsumerQueues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskToApm.cs
 
 ../referencesource/mscorlib/microsoft/win32/safehandles/safefilehandle.cs
