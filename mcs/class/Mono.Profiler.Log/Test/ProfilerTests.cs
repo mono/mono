@@ -78,8 +78,8 @@ namespace MonoTests.Mono.Profiler.Log {
 				Assert.NotNull (vtableLoad);
 				Assert.Equal (1, events.OfType<HeapBeginEvent> ().Count ());
 				Assert.Equal (1, events.OfType<HeapEndEvent> ().Count ());
-				Assert.True (events.OfType<HeapObjectEvent> ().Count (ev =>
-					ev.VTablePointer == vtableLoad.VTablePointer) >= 1000);
+				AssertExtensions.GreaterThanOrEqualTo (events.OfType<HeapObjectEvent> ().Count (ev =>
+					ev.VTablePointer == vtableLoad.VTablePointer), 1000);
 			});
 		}
 
@@ -129,12 +129,12 @@ namespace MonoTests.Mono.Profiler.Log {
 				Assert.NotNull (intArrVTableLoad);
 				Assert.NotNull (excVTableLoad);
 
-				Assert.True (events.OfType<AllocationEvent> ().Count (ev =>
-					ev.VTablePointer == objVTableLoad.VTablePointer) >= 10000);
-				Assert.True (events.OfType<AllocationEvent> ().Count (ev =>
-					ev.VTablePointer == intArrVTableLoad.VTablePointer) >= 10000);
-				Assert.True (events.OfType<AllocationEvent> ().Count (ev =>
-					ev.VTablePointer == excVTableLoad.VTablePointer) >= 10000);
+				AssertExtensions.GreaterThanOrEqualTo (events.OfType<AllocationEvent> ().Count (ev =>
+					ev.VTablePointer == objVTableLoad.VTablePointer), 10000);
+				AssertExtensions.GreaterThanOrEqualTo (events.OfType<AllocationEvent> ().Count (ev =>
+					ev.VTablePointer == intArrVTableLoad.VTablePointer), 10000);
+				AssertExtensions.GreaterThanOrEqualTo (events.OfType<AllocationEvent> ().Count (ev =>
+					ev.VTablePointer == excVTableLoad.VTablePointer), 10000);
 			});
 		}
 
@@ -212,7 +212,7 @@ namespace MonoTests.Mono.Profiler.Log {
 					ev.VTablePointer == vtableLoad.VTablePointer);
 
 				Assert.NotNull (alloc);
-				Assert.True (alloc.Backtrace.Count >= 6);
+				AssertExtensions.GreaterThanOrEqualTo (alloc.Backtrace.Count, 6);
 				Assert.Equal (jitOne.MethodPointer, alloc.Backtrace [alloc.Backtrace.Count - 6]);
 				Assert.Equal (jitTwo.MethodPointer, alloc.Backtrace [alloc.Backtrace.Count - 5]);
 				Assert.Equal (jitThree.MethodPointer, alloc.Backtrace [alloc.Backtrace.Count - 4]);
@@ -222,7 +222,7 @@ namespace MonoTests.Mono.Profiler.Log {
 					ev.ObjectPointer == alloc.ObjectPointer);
 
 				Assert.NotNull (raise);
-				Assert.True (raise.Backtrace.Count >= 4);
+				AssertExtensions.GreaterThanOrEqualTo (raise.Backtrace.Count, 4);
 				Assert.Equal (jitOne.MethodPointer, raise.Backtrace [raise.Backtrace.Count - 4]);
 				Assert.Equal (jitTwo.MethodPointer, raise.Backtrace [raise.Backtrace.Count - 3]);
 				Assert.Equal (jitThree.MethodPointer, raise.Backtrace [raise.Backtrace.Count - 2]);
@@ -238,8 +238,8 @@ namespace MonoTests.Mono.Profiler.Log {
 					ev.Name == "Mono.Profiling.Tests.BusyWorkTest:Work ()");
 
 				Assert.NotNull (jit);
-				Assert.True (events.OfType<SampleHitEvent> ().Count (ev =>
-					ev.ManagedBacktrace.LastOrDefault () == jit.MethodPointer) >= 500);
+				AssertExtensions.GreaterThanOrEqualTo (events.OfType<SampleHitEvent> ().Count (ev =>
+					ev.ManagedBacktrace.LastOrDefault () == jit.MethodPointer), 500);
 			});
 		}
 
@@ -247,7 +247,7 @@ namespace MonoTests.Mono.Profiler.Log {
 		public void RealTimeSamplingWorks ()
 		{
 			new ProfilerTestRun ("idle-sleep", "sample-real").Run (events => {
-				Assert.True (events.OfType<SampleHitEvent> ().Count () >= 2000);
+				AssertExtensions.GreaterThanOrEqualTo (events.OfType<SampleHitEvent> ().Count (), 2000);
 			});
 		}
 
@@ -258,11 +258,11 @@ namespace MonoTests.Mono.Profiler.Log {
 				return;
 
 			new ProfilerTestRun ("idle-sleep", "sample").Run (events => {
-				Assert.True (events.OfType<SampleHitEvent> ().Count () < 100);
+				AssertExtensions.LessThan (events.OfType<SampleHitEvent> ().Count (), 100);
 			});
 
 			new ProfilerTestRun ("busy-work", "sample").Run (events => {
-				Assert.True (events.OfType<SampleHitEvent> ().Count () >= 2500);
+				AssertExtensions.GreaterThanOrEqualTo (events.OfType<SampleHitEvent> ().Count (), 2500);
 			});
 		}
 
@@ -279,9 +279,9 @@ namespace MonoTests.Mono.Profiler.Log {
 				var countFail = events.OfType<MonitorEvent> ().Count (ev =>
 					ev.Event == LogMonitorEvent.Fail);
 
-				Assert.True (countFail >= 1000);
-				Assert.True (countCont >= 5000);
-				Assert.True (countCont > countFail);
+				AssertExtensions.GreaterThanOrEqualTo (countFail, 1000);
+				AssertExtensions.GreaterThanOrEqualTo (countCont, 5000);
+				AssertExtensions.GreaterThan (countCont, countFail);
 			});
 		}
 
@@ -306,13 +306,13 @@ namespace MonoTests.Mono.Profiler.Log {
 				var countBegin = events.OfType<GCFinalizeBeginEvent> ().Count ();
 				var countEnd = events.OfType<GCFinalizeEndEvent> ().Count ();
 
-				Assert.True (countBegin >= 10);
+				AssertExtensions.GreaterThanOrEqualTo (countBegin, 10);
 				Assert.Equal (countBegin, countEnd);
 
 				var countObjBegin = events.OfType<GCFinalizeObjectBeginEvent> ().Count ();
 				var countObjEnd = events.OfType<GCFinalizeObjectEndEvent> ().Count ();
 
-				Assert.True (countObjBegin >= 5000);
+				AssertExtensions.GreaterThanOrEqualTo (countObjBegin, 5000);
 				Assert.Equal (countObjBegin, countObjEnd);
 			});
 		}
@@ -417,8 +417,8 @@ namespace MonoTests.Mono.Profiler.Log {
 		public void GCEventsAreRecorded ()
 		{
 			new ProfilerTestRun ("wasteful-allocation", "gc").Run (events => {
-				Assert.True (events.OfType<GCResizeEvent> ().Count () >= 500);
-				Assert.True (events.OfType<GCEvent> ().Count () >= 10000);
+				AssertExtensions.GreaterThanOrEqualTo (events.OfType<GCResizeEvent> ().Count (), 500);
+				AssertExtensions.GreaterThanOrEqualTo (events.OfType<GCEvent> ().Count (), 10000);
 				Assert.Contains (events, ev =>
 					ev is GCEvent e &&
 					e.Type == LogGCEvent.PreStopWorld);
@@ -459,12 +459,12 @@ namespace MonoTests.Mono.Profiler.Log {
 				var descs = events.OfType<CounterDescriptionsEvent> ().SelectMany (ev =>
 					ev.Descriptions);
 
-				Assert.True (descs.Count () >= 50);
+				AssertExtensions.GreaterThanOrEqualTo (descs.Count (), 50);
 
 				var samples = events.OfType<CounterSamplesEvent> ().SelectMany (ev =>
 					ev.Samples);
 
-				Assert.True (samples.Count () >= 5);
+				AssertExtensions.GreaterThanOrEqualTo (samples.Count (), 5);
 
 				var indexes = new HashSet<long> (descs.Select (x => x.Index));
 

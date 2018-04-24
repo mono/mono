@@ -9,7 +9,7 @@ KEYFILE = $(LIBRARY_SNK)
 LIB_REFS = System System.Core
 LIB_MCS_FLAGS = /unsafe /publicsign /nowarn:0618
 
-XTEST_LIB_REFS = System System.Core
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks
 
 xunit-test-local: log-profiler-test.exe
 
