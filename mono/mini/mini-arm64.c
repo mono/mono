@@ -4340,7 +4340,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				g_assert_not_reached ();
 			}
 
-			// FIXME: Copy stack arguments
+			// Copy stack arguments.
+			// FIXME a fixed size memcpy is desirable here,
+			// at least for larger values of stack_usage.
+			for (i = 0; i < call->stack_usage; i += sizeof (mgreg_t)) {
+				code = emit_ldrx (code, ARMREG_LR, ARMREG_SP, i);
+				code = emit_strx (code, ARMREG_LR, ARMREG_R28, i);
+			}
 
 			/* Restore registers */
 			code = emit_load_regset (code, MONO_ARCH_CALLEE_SAVED_REGS & cfg->used_int_regs, ARMREG_FP, cfg->arch.saved_gregs_offset);
