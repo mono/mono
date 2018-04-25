@@ -199,6 +199,9 @@ mono_thread_set_interruption_requested_flags (MonoInternalThread *thread, gboole
 MONO_COLD static void
 mono_set_pending_exception_handle (MonoExceptionHandle exc);
 
+static MonoException*
+mono_thread_execute_interruption_ptr (void);
+
 static void
 mono_thread_execute_interruption_void (void);
 
@@ -1967,13 +1970,10 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThread *this_obj, int ms)
 
 	mono_thread_set_state (cur_thread, ThreadState_WaitSleepJoin);
 
-	{ // mono_join_uninterrupted
-	MonoInternalThread *thread_to_join = handle;
+	// mono_join_uninterrupted {
+	MonoThreadHandle *thread_to_join = handle;
 	gint32 wait = ms;
 	gint64 const start = (ms == -1) ? 0 : mono_msec_ticks ();
-
-	// Allocate handle outside of the loop.
-	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
 
 	while (TRUE) {
 		MonoThreadInfoWaitRet ret;
@@ -1985,8 +1985,9 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThread *this_obj, int ms)
 		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
 			break;
 
-		if (mono_thread_execute_interruption (&exc)) {
-			mono_error_set_exception_handle (error, exc);
+		MonoException *exc = mono_thread_execute_interruption_ptr ();
+		if (exc) {
+			mono_error_set_exception_instance (error, exc);
 			break;
 		}
 
@@ -2000,8 +2001,7 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThread *this_obj, int ms)
 			break;
 		}
 		wait = ms - diff_ms;
-	}
-	}
+	} // mono_join_uninterrupted }
 
 	mono_thread_clr_state (cur_thread, ThreadState_WaitSleepJoin);
 
