@@ -370,7 +370,7 @@ System.Runtime.InteropServices/ExporterEventKind.cs
 System.Runtime.InteropServices/ExtensibleClassFactory.cs
 System.Runtime.InteropServices/FILETIME.cs
 System.Runtime.InteropServices/GCHandle.cs
-System.Runtime.InteropServices/GCHandleType.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/InteropServices/GCHandleType.cs
 System.Runtime.InteropServices/IErrorInfo.cs
 System.Runtime.InteropServices/ITypeLibConverter.cs
 System.Runtime.InteropServices/ITypeLibExporterNameProvider.cs
@@ -405,8 +405,8 @@ System.Runtime.InteropServices/UCOMIRunningObjectTable.cs
 System.Runtime.InteropServices/UCOMIStream.cs
 System.Runtime.InteropServices/UCOMITypeComp.cs
 System.Runtime.InteropServices/UCOMITypeLib.cs
-System.Runtime.InteropServices/CustomQueryInterfaceMode.cs
-System.Runtime.InteropServices/ComEventsHelper.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/CustomQueryInterfaceMode.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComEventsHelper.cs
 
 System.Runtime.InteropServices.WindowsRuntime/DesignerNamespaceResolveEventArgs.cs
 System.Runtime.InteropServices.WindowsRuntime/NamespaceResolveEventArgs.cs
@@ -1211,42 +1211,43 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/runtime/NgenServicingAttributes.cs
 ../referencesource/mscorlib/system/runtime/ProfileOptimization.cs
 
-../referencesource/mscorlib/system/runtime/exceptionservices/corruptingexceptioncommon.cs
-../referencesource/mscorlib/system/runtime/exceptionservices/exceptionnotification.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/ExceptionServices/HandleProcessCorruptedStateExceptionsAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/ExceptionServices/ExceptionNotification.cs
 ../referencesource/mscorlib/system/runtime/exceptionservices/exceptionservicescommon.cs
 
 ../referencesource/mscorlib/system/runtime/interopservices/arraywithoffset.cs
 ../referencesource/mscorlib/system/runtime/interopservices/attributes.cs
-../referencesource/mscorlib/system/runtime/interopservices/bstrwrapper.cs
-../referencesource/mscorlib/system/runtime/interopservices/callingconvention.cs
-../referencesource/mscorlib/system/runtime/interopservices/charset.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/BStrWrapper.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/CallingConvention.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/CharSet.cs
 ../referencesource/mscorlib/system/runtime/interopservices/comexception.cs
-../referencesource/mscorlib/system/runtime/interopservices/commembertype.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComMemberType.cs
 ../referencesource/mscorlib/system/runtime/interopservices/criticalhandle.cs
-../referencesource/mscorlib/system/runtime/interopservices/currencywrapper.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/CurrencyWrapper.cs
 ../referencesource/mscorlib/system/runtime/interopservices/dispatchwrapper.cs
-../referencesource/mscorlib/system/runtime/interopservices/errorwrapper.cs
-../referencesource/mscorlib/system/runtime/interopservices/externalexception.cs
-../referencesource/mscorlib/system/runtime/interopservices/handleref.cs
-../referencesource/mscorlib/system/runtime/interopservices/icustomadapter.cs
-../referencesource/mscorlib/system/runtime/interopservices/icustomfactory.cs
-../referencesource/mscorlib/system/runtime/interopservices/icustommarshaler.cs
-../referencesource/mscorlib/system/runtime/interopservices/icustomqueryinterface.cs
-../referencesource/mscorlib/system/runtime/interopservices/invalidcomobjectexception.cs
-../referencesource/mscorlib/system/runtime/interopservices/invalidolevarianttypeexception.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ErrorWrapper.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/ExternalException.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/HandleRef.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ICustomAdapter.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ICustomFactory.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ICustomMarshaler.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/CustomQueryInterfaceResult.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ICustomQueryInterface.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/InvalidComObjectException.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/InvalidOleVariantTypeException.cs
 ../referencesource/mscorlib/system/runtime/interopservices/iregistrationservices.cs
-../referencesource/mscorlib/system/runtime/interopservices/layoutkind.cs
-../referencesource/mscorlib/system/runtime/interopservices/marshaldirectiveexception.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/LayoutKind.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/MarshalDirectiveException.cs
 ../referencesource/mscorlib/system/runtime/interopservices/objectcreationdelegate.cs
 ../referencesource/mscorlib/system/runtime/interopservices/runtimeenvironment.cs
-../referencesource/mscorlib/system/runtime/interopservices/safearrayrankmismatchexception.cs
-../referencesource/mscorlib/system/runtime/interopservices/safearraytypemismatchexception.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/SafeArrayRankMismatchException.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/SafeArrayTypeMismatchException.cs
 ../referencesource/mscorlib/system/runtime/interopservices/safehandle.cs
-../referencesource/mscorlib/system/runtime/interopservices/sehexception.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/SEHException.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ucomitypeinfo.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ucomienumconnections.cs
-../referencesource/mscorlib/system/runtime/interopservices/unknownwrapper.cs
-../referencesource/mscorlib/system/runtime/interopservices/variantWrapper.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/UnknownWrapper.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/VariantWrapper.cs
 
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ibindctx.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/iconnectionpoint.cs
@@ -1537,6 +1538,7 @@ coreclr/SorterArray.cs
 corefx/AwaitTaskContinuation.cs
 corefx/SynchronizationContext.cs
 corefx/SR.cs
+corefx/SR.missing.cs
 corefx/CompareInfo.cs
 corefx/GlobalizationMode.cs
 
