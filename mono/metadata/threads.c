@@ -4666,6 +4666,8 @@ mono_thread_execute_interruption (MonoExceptionHandle *pexc)
 	// Use caller's frame if provided, else create one.
 	// This is not just an optimization -- it is needed to return
 	// a handle to the caller through an out-parameter.
+	//
+	// Caller cannot do the handle allocation because it has loops.
 
 	gboolean fexc = FALSE;
 
@@ -4771,6 +4773,9 @@ mono_thread_execute_interruption_ptr (void)
 static gboolean
 mono_thread_request_interruption_internal (gboolean running_managed, MonoExceptionHandle *pexc)
 {
+	// Skip frame allocation and do handle allocation in caller's frame, because
+	// caller has a loop.
+
 	MonoInternalThread *thread = mono_thread_internal_current ();
 
 	/* The thread may already be stopping */
