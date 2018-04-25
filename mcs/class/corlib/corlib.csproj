@@ -226,6 +226,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCanceledException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCompletionSource.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskSchedulerException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskToApm.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\ValueTask.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Tuple.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TupleExtensions.cs" />
@@ -305,12 +306,15 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\String.Comparison.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\String.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\LockHolder.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\ConcurrentExclusiveSchedulerPair.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.Dummy.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\Future.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\FutureFactory.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\ProducerConsumerQueues.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\Task.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\TaskContinuation.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\TaskExceptionHolder.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\TaskFactory.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\TaskScheduler.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\ThreadPoolTaskScheduler.cs" />
@@ -921,10 +925,6 @@
     <Compile Include="..\referencesource\mscorlib\system\threading\synchronizationcontext.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\synchronizationlockexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\AsyncCausalityTracer.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\ConcurrentExclusiveSchedulerPair.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\ProducerConsumerQueues.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\TaskExceptionHolder.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\TaskToApm.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\thread.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\threadabortexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\threadinterruptedexception.cs" />
