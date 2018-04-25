@@ -8430,13 +8430,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				/* Handle tailcalls similarly to calls */
 				DISABLE_AOT (cfg);
 
-				MonoMethodSignature *sig = mono_method_signature (cmethod);
-
-				emit_tailcall_parameters (cfg, sig);
+				emit_tailcall_parameters (cfg, fsig);
 				MONO_INST_NEW_CALL (cfg, call, OP_TAILCALL);
 				call->method = cmethod;
 				call->tailcall = TRUE;
-				call->signature = sig;
+				call->signature = fsig;
 				call->args = (MonoInst **)mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * n);
 				call->inst.inst_p0 = cmethod;
 				for (i = 0; i < n; ++i)
