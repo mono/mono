@@ -1672,8 +1672,7 @@ mini_register_jump_site (MonoDomain *domain, MonoMethod *method, gpointer ip)
 {
 	MonoJumpList *jlist;
 
-	MonoMethod *shared_method = mini_method_to_shared (method);
-	method = shared_method ? shared_method : method;
+	method = mono_method_to_shared (method);
 
 	mono_domain_lock (domain);
 	jlist = (MonoJumpList *)g_hash_table_lookup (domain_jit_info (domain)->jump_target_hash, method);
@@ -1703,8 +1702,7 @@ mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 	GSList *tmp;
 
 	/* The caller/callee might use different instantiations */
-	MonoMethod *shared_method = mini_method_to_shared (method);
-	method = shared_method ? shared_method : method;
+	method = mono_method_to_shared (method);
 
 	mono_domain_lock (domain);
 	jlist = (MonoJumpList *)g_hash_table_lookup (hash, method);
