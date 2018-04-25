@@ -1521,11 +1521,10 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/threading/waithandleExtensions.cs
 
 ../referencesource/mscorlib/system/threading/Tasks/AsyncCausalityTracer.cs
-
-../referencesource/mscorlib/system/threading/Tasks/TaskExceptionHolder.cs
-../referencesource/mscorlib/system/threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
-../referencesource/mscorlib/system/threading/Tasks/ProducerConsumerQueues.cs
-../referencesource/mscorlib/system/threading/Tasks/TaskToApm.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskExceptionHolder.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/ProducerConsumerQueues.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskToApm.cs
 
 ../referencesource/mscorlib/microsoft/win32/safehandles/safefilehandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/safefindhandle.cs
