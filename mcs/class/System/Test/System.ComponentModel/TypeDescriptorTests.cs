@@ -1096,6 +1096,9 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
+#if FULL_AOT_RUNTIME
+		[Ignore ("https://github.com/mono/mono/issues/8407")]
+#endif
 		public void TestCreateDesigner ()
 		{
 			IDesigner des = TypeDescriptor.CreateDesigner (com, typeof(int));
@@ -1129,6 +1132,9 @@ namespace MonoTests.System.ComponentModel
 		}
 		
 		[Test]
+#if FULL_AOT_RUNTIME
+		[Ignore ("https://github.com/mono/mono/issues/8407")]
+#endif
 		public void TestGetAttributes ()
 		{
 			AttributeCollection col = TypeDescriptor.GetAttributes (typeof(MyComponent));
