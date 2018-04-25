@@ -13,7 +13,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-#if !MONOTOUCH
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 #endif
 using System.Runtime.InteropServices;
@@ -311,7 +311,7 @@ namespace MonoTests.System {
 			Assert.AreEqual (7, objCOMTest.Id, "#A05");
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
 		[ExpectedException (typeof (MissingMethodException))]
 		public void CreateInstance_TypeBuilder ()
@@ -412,6 +412,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetObject_UrlNull ()
 		{
@@ -513,7 +514,7 @@ namespace MonoTests.System {
 						  null, null);
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !FULL_AOT_RUNTIME && !MONOMAC
 		[Test]
 		public void CreateInstanceCustomDomain ()
 		{

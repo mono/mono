@@ -1,5 +1,6 @@
-/*
- * mini-posix.c: POSIX signal handling support for Mono.
+/**
+ * \file
+ * POSIX signal handling support for Mono.
  *
  * Authors:
  *   Mono Team (mono-list@lists.ximian.com)
@@ -8,10 +9,13 @@
  * Copyright 2003-2008 Ximian, Inc.
  *
  * See LICENSE for licensing information.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include <config.h>
 #include <signal.h>
 #include <math.h>
+#include <conio.h>
+#include <assert.h>
 
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/loader.h>
@@ -23,8 +27,6 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
-#include <mono/io-layer/io-layer.h>
-#include "mono/metadata/profiler.h"
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/environment.h>
@@ -43,6 +45,8 @@
 #include <mono/utils/dtrace.h>
 
 #include "mini.h"
+#include "mini-runtime.h"
+#include "mini-windows.h"
 #include <string.h>
 #include <ctype.h>
 #include "trace.h"
@@ -50,9 +54,137 @@
 
 #include "jit-icalls.h"
 
-#ifdef _WIN32
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 #include <mmsystem.h>
 #endif
+
+#define MONO_HANDLER_DELIMITER ','
+#define MONO_HANDLER_DELIMITER_LEN G_N_ELEMENTS(MONO_HANDLER_DELIMITER)-1
+
+#define MONO_HANDLER_ATEXIT_WAIT_KEYPRESS "atexit-waitkeypress"
+#define MONO_HANDLER_ATEXIT_WAIT_KEYPRESS_LEN G_N_ELEMENTS(MONO_HANDLER_ATEXIT_WAIT_KEYPRESS)-1
+
+// Typedefs used to setup handler table.
+typedef void (*handler)(void);
+
+typedef struct {
+	const char * cmd;
+	const int cmd_len;
+	handler handler;
+} HandlerItem;
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+/**
+* atexit_wait_keypress:
+*
+* This function is installed as an atexit function making sure that the console is not terminated before the end user has a chance to read the result.
+* This can be handy in debug scenarios (running from within the debugger) since an exit of the process will close the console window
+* without giving the end user a chance to look at the output before closed.
+*/
+static void
+atexit_wait_keypress (void)
+{
+
+	fflush (stdin);
+
+	printf ("Press any key to continue . . . ");
+	fflush (stdout);
+
+	_getch ();
+
+	return;
+}
+
+/**
+* install_atexit_wait_keypress:
+*
+* This function installs the wait keypress exit handler.
+*/
+static void
+install_atexit_wait_keypress (void)
+{
+	atexit (atexit_wait_keypress);
+	return;
+}
+
+#else
+
+/**
+* install_atexit_wait_keypress:
+*
+* Not supported on WINAPI family.
+*/
+static void
+install_atexit_wait_keypress (void)
+{
+	return;
+}
+
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+
+// Table describing handlers that can be installed at process startup. Adding a new handler can be done by adding a new item to the table together with an install handler function.
+const HandlerItem g_handler_items[] = { { MONO_HANDLER_ATEXIT_WAIT_KEYPRESS, MONO_HANDLER_ATEXIT_WAIT_KEYPRESS_LEN, install_atexit_wait_keypress },
+					{ NULL, 0, NULL } };
+
+/**
+ * get_handler_arg_len:
+ * @handlers: Get length of next handler.
+ *
+ * This function calculates the length of next handler included in argument.
+ *
+ * Returns: The length of next handler, if available.
+ */
+static size_t
+get_next_handler_arg_len (const char *handlers)
+{
+	assert (handlers != NULL);
+
+	size_t current_len = 0;
+	const char *handler = strchr (handlers, MONO_HANDLER_DELIMITER);
+	if (handler != NULL) {
+		// Get length of next handler arg.
+		current_len = (handler - handlers);
+	} else {
+		// Consume rest as length of next handler arg.
+		current_len = strlen (handlers);
+	}
+
+	return current_len;
+}
+
+/**
+ * install_custom_handler:
+ * @handlers: Handlers included in --handler argument, example "atexit-waitkeypress,someothercmd,yetanothercmd".
+ * @handler_arg_len: Output, length of consumed handler.
+ *
+ * This function installs the next handler included in @handlers parameter.
+ *
+ * Returns: TRUE on successful install, FALSE on failure or unrecognized handler.
+ */
+static gboolean
+install_custom_handler (const char *handlers, size_t *handler_arg_len)
+{
+	gboolean result = FALSE;
+
+	assert (handlers != NULL);
+	assert (handler_arg_len);
+
+	*handler_arg_len = get_next_handler_arg_len (handlers);
+	for (int current_item = 0; current_item < G_N_ELEMENTS (g_handler_items); ++current_item) {
+		const HandlerItem * handler_item = &g_handler_items [current_item];
+
+		if (handler_item->cmd == NULL)
+			continue;
+
+		if (*handler_arg_len == handler_item->cmd_len && strncmp (handlers, handler_item->cmd, *handler_arg_len) == 0) {
+			assert (handler_item->handler != NULL);
+			handler_item->handler ();
+			result = TRUE;
+			break;
+		}
+	}
+	return result;
+}
 
 void
 mono_runtime_install_handlers (void)
@@ -65,6 +197,44 @@ mono_runtime_install_handlers (void)
 	if (mini_get_debug_options ()->handle_sigint)
 		win32_seh_set_handler(SIGINT, mono_sigint_signal_handler);
 #endif
+}
+
+gboolean
+mono_runtime_install_custom_handlers (const char *handlers)
+{
+	gboolean result = FALSE;
+
+	assert (handlers != NULL);
+	while (*handlers != '\0') {
+		size_t handler_arg_len = 0;
+
+		result = install_custom_handler (handlers, &handler_arg_len);
+		handlers += handler_arg_len;
+
+		if (*handlers == MONO_HANDLER_DELIMITER)
+			handlers++;
+		if (!result)
+			break;
+	}
+
+	return result;
+}
+
+void
+mono_runtime_install_custom_handlers_usage (void)
+{
+	fprintf (stdout,
+		 "Custom Handlers:\n"
+		 "   --handlers=HANDLERS            Enable handler support, HANDLERS is a comma\n"
+		 "                                  separated list of available handlers to install.\n"
+		 "\n"
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+		 "HANDLERS is composed of:\n"
+		 "    atexit-waitkeypress           Install an atexit handler waiting for a keypress\n"
+		 "                                  before exiting process.\n");
+#else
+		 "No handlers supported on current platform.\n");
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 }
 
 void
@@ -85,80 +255,103 @@ mono_runtime_cleanup_handlers (void)
 gboolean
 MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal)
 {
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	jit_tls->mono_win_chained_exception_needs_run = TRUE;
 	return TRUE;
 }
 
-static HANDLE win32_main_thread;
-static MMRESULT win32_timer;
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+static MMRESULT	g_timer_event = 0;
+static HANDLE g_timer_main_thread = INVALID_HANDLE_VALUE;
 
-static void CALLBACK
-win32_time_proc (UINT uID, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2)
+static VOID
+thread_timer_expired (HANDLE thread)
 {
 	CONTEXT context;
 
 	context.ContextFlags = CONTEXT_CONTROL;
-	if (GetThreadContext (win32_main_thread, &context)) {
+	if (GetThreadContext (thread, &context)) {
+		guchar *ip;
+
 #ifdef _WIN64
-		mono_profiler_stat_hit ((guchar *) context.Rip, &context);
+		ip = (guchar *) context.Rip;
 #else
-		mono_profiler_stat_hit ((guchar *) context.Eip, &context);
+		ip = (guchar *) context.Eip;
 #endif
+
+		MONO_PROFILER_RAISE (sample_hit, (ip, &context));
 	}
 }
 
-void
-mono_runtime_setup_stat_profiler (void)
+static VOID CALLBACK
+timer_event_proc (UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
 {
-	static int inited = 0;
+	thread_timer_expired ((HANDLE)dwUser);
+}
+
+static VOID
+stop_profiler_timer_event (void)
+{
+	if (g_timer_event != 0) {
+
+		timeKillEvent (g_timer_event);
+		g_timer_event = 0;
+	}
+
+	if (g_timer_main_thread != INVALID_HANDLE_VALUE) {
+
+		CloseHandle (g_timer_main_thread);
+		g_timer_main_thread = INVALID_HANDLE_VALUE;
+	}
+}
+
+static VOID
+start_profiler_timer_event (void)
+{
+	g_return_if_fail (g_timer_main_thread == INVALID_HANDLE_VALUE && g_timer_event == 0);
+
 	TIMECAPS timecaps;
 
-	if (inited)
-		return;
-
-	inited = 1;
 	if (timeGetDevCaps (&timecaps, sizeof (timecaps)) != TIMERR_NOERROR)
 		return;
 
-	if ((win32_main_thread = OpenThread (READ_CONTROL | THREAD_GET_CONTEXT, FALSE, GetCurrentThreadId ())) == NULL)
+	g_timer_main_thread = OpenThread (READ_CONTROL | THREAD_GET_CONTEXT, FALSE, GetCurrentThreadId ());
+	if (g_timer_main_thread == NULL)
 		return;
 
 	if (timeBeginPeriod (1) != TIMERR_NOERROR)
 		return;
 
-	if ((win32_timer = timeSetEvent (1, 0, (LPTIMECALLBACK)win32_time_proc, (DWORD_PTR)NULL, TIME_PERIODIC)) == 0) {
+	g_timer_event = timeSetEvent (1, 0, (LPTIMECALLBACK)timer_event_proc, (DWORD_PTR)g_timer_main_thread, TIME_PERIODIC | TIME_KILL_SYNCHRONOUS);
+	if (g_timer_event == 0) {
 		timeEndPeriod (1);
 		return;
 	}
 }
 
 void
+mono_runtime_setup_stat_profiler (void)
+{
+	start_profiler_timer_event ();
+	return;
+}
+
+void
 mono_runtime_shutdown_stat_profiler (void)
 {
+	stop_profiler_timer_event ();
+	return;
 }
 
 gboolean
-mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info)
+mono_setup_thread_context(DWORD thread_id, MonoContext *mono_context)
 {
-	DWORD id = mono_thread_info_get_tid (info);
 	HANDLE handle;
 	CONTEXT context;
-	DWORD result;
-	MonoContext *ctx;
-	MonoJitTlsData *jit_tls;
-	void *domain;
-	MonoLMF *lmf = NULL;
-	gpointer *addr;
 
-	tctx->valid = FALSE;
-	tctx->unwind_data [MONO_UNWIND_DATA_DOMAIN] = NULL;
-	tctx->unwind_data [MONO_UNWIND_DATA_LMF] = NULL;
-	tctx->unwind_data [MONO_UNWIND_DATA_JIT_TLS] = NULL;
+	g_assert (thread_id != GetCurrentThreadId ());
 
-	g_assert (id != GetCurrentThreadId ());
-
-	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, thread_id);
 	g_assert (handle);
 
 	context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
@@ -171,10 +364,35 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo 
 	g_assert (context.ContextFlags & CONTEXT_INTEGER);
 	g_assert (context.ContextFlags & CONTEXT_CONTROL);
 
-	ctx = &tctx->ctx;
+	memset (mono_context, 0, sizeof (MonoContext));
+	mono_sigctx_to_monoctx (&context, mono_context);
 
-	memset (ctx, 0, sizeof (MonoContext));
-	mono_sigctx_to_monoctx (&context, ctx);
+	CloseHandle (handle);
+	return TRUE;
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+
+gboolean
+mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info, void *sigctx)
+{
+	MonoJitTlsData *jit_tls;
+	void *domain;
+	MonoLMF *lmf = NULL;
+	gpointer *addr;
+
+	tctx->valid = FALSE;
+	tctx->unwind_data [MONO_UNWIND_DATA_DOMAIN] = NULL;
+	tctx->unwind_data [MONO_UNWIND_DATA_LMF] = NULL;
+	tctx->unwind_data [MONO_UNWIND_DATA_JIT_TLS] = NULL;
+
+	if (sigctx == NULL) {
+		DWORD id = mono_thread_info_get_tid (info);
+		mono_setup_thread_context (id, &tctx->ctx);
+	} else {
+		g_assert (((CONTEXT *)sigctx)->ContextFlags & CONTEXT_INTEGER);
+		g_assert (((CONTEXT *)sigctx)->ContextFlags & CONTEXT_CONTROL);
+		mono_sigctx_to_monoctx (sigctx, &tctx->ctx);
+	}
 
 	/* mono_set_jit_tls () sets this */
 	jit_tls = mono_thread_info_tls_get (info, TLS_KEY_JIT_TLS);
@@ -202,4 +420,3 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo 
 
 	return TRUE;
 }
-

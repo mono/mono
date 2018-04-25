@@ -101,12 +101,12 @@ namespace System.Web.UI.WebControls {
 		}
 
 		protected internal
-		override void Render (HtmlTextWriter output)
+		override void Render (HtmlTextWriter writer)
 		{
 			if (Mode == LiteralMode.Encode)
-				output.Write (HttpUtility.HtmlEncode (Text));
+				writer.Write (HttpUtility.HtmlEncode (Text));
 			else
-			output.Write (Text);
+			writer.Write (Text);
 		}
 	}
 }

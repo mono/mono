@@ -150,9 +150,9 @@ namespace System.ServiceModel.Configuration
 			return new ReliableSessionBindingElement ();
 		}
 
-		public override void ApplyConfiguration (BindingElement element)
+		public override void ApplyConfiguration (BindingElement bindingElement)
 		{
-			var b = (ReliableSessionBindingElement) element;
+			var b = (ReliableSessionBindingElement) bindingElement;
 			b.AcknowledgementInterval = AcknowledgementInterval;
 			b.FlowControlEnabled = FlowControlEnabled;
 			b.InactivityTimeout = InactivityTimeout;
@@ -163,9 +163,9 @@ namespace System.ServiceModel.Configuration
 			b.ReliableMessagingVersion = ReliableMessagingVersion;
 		}
 
-		public override void CopyFrom (ServiceModelExtensionElement element)
+		public override void CopyFrom (ServiceModelExtensionElement from)
 		{
-			var b = (ReliableSessionElement) element;
+			var b = (ReliableSessionElement) from;
 			AcknowledgementInterval = b.AcknowledgementInterval;
 			FlowControlEnabled = b.FlowControlEnabled;
 			InactivityTimeout = b.InactivityTimeout;
@@ -176,9 +176,9 @@ namespace System.ServiceModel.Configuration
 			ReliableMessagingVersion = b.ReliableMessagingVersion;
 		}
 
-		protected internal override void InitializeFrom (BindingElement element)
+		protected internal override void InitializeFrom (BindingElement bindingElement)
 		{
-			var b = (ReliableSessionBindingElement) element;
+			var b = (ReliableSessionBindingElement) bindingElement;
 			AcknowledgementInterval = b.AcknowledgementInterval;
 			FlowControlEnabled = b.FlowControlEnabled;
 			InactivityTimeout = b.InactivityTimeout;

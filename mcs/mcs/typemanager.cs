@@ -198,6 +198,8 @@ namespace Mono.CSharp
 		public readonly PredefinedType SecurityAction;
 		public readonly PredefinedType Dictionary;
 		public readonly PredefinedType Hashtable;
+		public readonly PredefinedType Array;
+
 		public readonly TypeSpec[] SwitchUserTypes;
 
 		//
@@ -238,6 +240,10 @@ namespace Mono.CSharp
 		public readonly PredefinedType FormattableString;
 		public readonly PredefinedType FormattableStringFactory;
 
+		// C# 7.0
+		public readonly PredefinedType[] Tuples;
+		public readonly PredefinedType SpanGeneric;
+
 		public PredefinedTypes (ModuleContainer module)
 		{
 			TypedReference = new PredefinedType (module, MemberKind.Struct, "System", "TypedReference");
@@ -266,6 +272,7 @@ namespace Mono.CSharp
 			SecurityAction = new PredefinedType (module, MemberKind.Enum, "System.Security.Permissions", "SecurityAction");
 			Dictionary = new PredefinedType (module, MemberKind.Class, "System.Collections.Generic", "Dictionary", 2);
 			Hashtable = new PredefinedType (module, MemberKind.Class, "System.Collections", "Hashtable");
+			Array = new PredefinedType (module, MemberKind.Class, "System", "Array");
 
 			Expression = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression");
 			ExpressionGeneric = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression", 1);
@@ -294,6 +301,8 @@ namespace Mono.CSharp
 			IFormattable = new PredefinedType (module, MemberKind.Interface, "System", "IFormattable");
 			FormattableString = new PredefinedType (module, MemberKind.Class, "System", "FormattableString");
 			FormattableStringFactory = new PredefinedType (module, MemberKind.Class, "System.Runtime.CompilerServices", "FormattableStringFactory");
+
+			SpanGeneric = new PredefinedType (module, MemberKind.Struct, "System", "Span", 1);
 
 			//
 			// Define types which are used for comparison. It does not matter
@@ -334,12 +343,23 @@ namespace Mono.CSharp
 
 			IFormattable.Define ();
 			FormattableString.Define ();
+
+			Tuples = new PredefinedType [8];
+			for (int i = 0; i < Tuples.Length; i++) {
+				var pt = new PredefinedType (module, MemberKind.Struct, "System", "ValueTuple", i + 1);
+				Tuples [i] = pt;
+				if (pt.Define ())
+					pt.TypeSpec.IsTupleType = true;
+			}
+
+			SpanGeneric.Define ();
 		}
 	}
 
 	class PredefinedMembers
 	{
 		public readonly PredefinedMember<MethodSpec> ActivatorCreateInstance;
+		public readonly PredefinedMember<MethodSpec> ArrayEmpty;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderCreate;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderStart;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderSetResult;
@@ -384,6 +404,7 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> FixedBufferAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle;
 		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle2;
+		public readonly PredefinedMember<MethodSpec> MethodInfoCreateDelegate;
 		public readonly PredefinedMember<MethodSpec> MonitorEnter;
 		public readonly PredefinedMember<MethodSpec> MonitorEnter_v4;
 		public readonly PredefinedMember<MethodSpec> MonitorExit;
@@ -398,6 +419,7 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<FieldSpec> StructLayoutCharSet;
 		public readonly PredefinedMember<FieldSpec> StructLayoutSize;
 		public readonly PredefinedMember<MethodSpec> TypeGetTypeFromHandle;
+		public readonly PredefinedMember<MethodSpec> TupleElementNamesAttributeCtor;
 
 		public PredefinedMembers (ModuleContainer module)
 		{
@@ -410,6 +432,10 @@ namespace Mono.CSharp
 			ActivatorCreateInstance = new PredefinedMember<MethodSpec> (module, types.Activator,
 				MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null));
 
+			ArrayEmpty = new PredefinedMember<MethodSpec> (module, types.Array,
+				MemberFilter.Method ("Empty", 1, ParametersCompiled.EmptyReadOnlyParameters, null));
+
+			// TODO: Must me static
 			AsyncTaskMethodBuilderCreate = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
 				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncTaskMethodBuilder.TypeSpec));
 
@@ -465,6 +491,7 @@ namespace Mono.CSharp
 			AsyncTaskMethodBuilderTask = new PredefinedMember<PropertySpec> (module, types.AsyncTaskMethodBuilder,
 				MemberFilter.Property ("Task", null));
 
+			// TODO: Must me static
 			AsyncTaskMethodBuilderGenericCreate = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilderGeneric,
 				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncVoidMethodBuilder.TypeSpec));
 
@@ -522,6 +549,7 @@ namespace Mono.CSharp
 			AsyncTaskMethodBuilderGenericTask = new PredefinedMember<PropertySpec> (module, types.AsyncTaskMethodBuilderGeneric,
 				MemberFilter.Property ("Task", null));
 
+			// TODO: Must me static
 			AsyncVoidMethodBuilderCreate = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
 				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncVoidMethodBuilder.TypeSpec));
 
@@ -659,6 +687,10 @@ namespace Mono.CSharp
 			MethodInfoGetMethodFromHandle2 = new PredefinedMember<MethodSpec> (module, types.MethodBase,
 				"GetMethodFromHandle", MemberKind.Method, types.RuntimeMethodHandle, new PredefinedType (btypes.RuntimeTypeHandle));
 
+			MethodInfoCreateDelegate = new PredefinedMember<MethodSpec> (module, types.MethodInfo,
+			                                                             "CreateDelegate", MemberKind.Method,
+			                                                             new PredefinedType (btypes.Type), new PredefinedType (btypes.Object));
+
 			MonitorEnter = new PredefinedMember<MethodSpec> (module, types.Monitor, "Enter", btypes.Object);
 
 			MonitorEnter_v4 = new PredefinedMember<MethodSpec> (module, types.Monitor,
@@ -703,6 +735,10 @@ namespace Mono.CSharp
 				MemberFilter.Field ("Size", btypes.Int));
 
 			TypeGetTypeFromHandle = new PredefinedMember<MethodSpec> (module, btypes.Type, "GetTypeFromHandle", btypes.RuntimeTypeHandle);
+
+			TupleElementNamesAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.TupleElementNames,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
+					ArrayContainer.MakeType (module, btypes.String))));
 		}
 	}
 
@@ -978,9 +1014,6 @@ namespace Mono.CSharp
 
 		public T Resolve (Location loc)
 		{
-			if (member != null)
-				return member;
-
 			if (Get () != null)
 				return member;
 

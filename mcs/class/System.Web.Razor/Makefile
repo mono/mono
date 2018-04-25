@@ -5,21 +5,15 @@ include ../../build/rules.make
 LIBRARY = System.Web.Razor.dll
 LIBRARY_NAME = System.Web.Razor.dll
 
-System.Web.Razor.Common.CommonResources.resources: ../../../external/aspnetwebstack/src/CommonResources.resx
-	$(RESGEN) "$<" "$@"
-	
-System.Web.Razor.Resources.RazorResources.resources: ../../../external/aspnetwebstack/src/System.Web.Razor/Resources/RazorResources.resx
-	$(RESGEN) "$<" "$@"
+RESOURCE_DEFS = \
+	System.Web.Razor.Common.CommonResources,../../../external/aspnetwebstack/src/CommonResources.resx \
+	System.Web.Razor.Resources.RazorResources,../../../external/aspnetwebstack/src/System.Web.Razor/Resources/RazorResources.resx
 
 LIB_REFS = System System.Core
+KEYFILE = ../winfx.pub
 LIB_MCS_FLAGS = \
 		/warn:1 \
-		/keyfile:../winfx.pub -delaysign \
-	        /d:ASPNETWEBPAGES \
-		/resource:System.Web.Razor.Resources.RazorResources.resources \
-		/resource:System.Web.Razor.Common.CommonResources.resources
+		-delaysign \
+	    /d:ASPNETWEBPAGES 
 
 include ../../build/library.make
-
-$(build_lib): System.Web.Razor.Resources.RazorResources.resources \
-		System.Web.Razor.Common.CommonResources.resources

@@ -52,7 +52,11 @@ namespace System.Security {
 		{
 		}
 
+#if MOBILE
+		[Conditional ("MONO_FEATURE_CAS")]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public void Assert ()
 		{
 			new PermissionSet (this).Assert ();
@@ -60,6 +64,9 @@ namespace System.Security {
 
 		public abstract IPermission Copy ();
 
+#if MOBILE
+		[Conditional ("MONO_FEATURE_CAS")]
+#endif
 		public void Demand ()
 		{
 			// note: here we're sure it's a CAS demand
@@ -70,7 +77,11 @@ namespace System.Security {
 			new PermissionSet (this).CasOnlyDemand (3);
 		}
 
+#if MOBILE
+		[Conditional ("MONO_FEATURE_CAS")]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public void Deny ()
 		{
 			new PermissionSet (this).Deny ();
@@ -114,13 +125,21 @@ namespace System.Security {
 			return null;
 		}
 
+#if MOBILE
+		[Conditional ("MONO_FEATURE_CAS")]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public void PermitOnly ()
 		{
 			new PermissionSet (this).PermitOnly ();
 		}
 
+#if MOBILE
+		[Conditional ("MONO_FEATURE_CAS")]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public static void RevertAll ()
 		{
 			if (!SecurityManager.SecurityEnabled)
@@ -128,7 +147,11 @@ namespace System.Security {
 			throw new NotImplementedException ();
 		}
 
+#if MOBILE
+		[Conditional ("MONO_FEATURE_CAS")]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public static void RevertAssert ()
 		{
 			if (!SecurityManager.SecurityEnabled)
@@ -136,7 +159,11 @@ namespace System.Security {
 			throw new NotImplementedException ();
 		}
 
+#if MOBILE
+		[Conditional ("MONO_FEATURE_CAS")]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public static void RevertDeny ()
 		{
 			if (!SecurityManager.SecurityEnabled)
@@ -144,7 +171,11 @@ namespace System.Security {
 			throw new NotImplementedException ();
 		}
 
+#if MOBILE
+		[Conditional ("MONO_FEATURE_CAS")]
+#else
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
+#endif
 		public static void RevertPermitOnly ()
 		{
 			if (!SecurityManager.SecurityEnabled)
@@ -233,5 +264,28 @@ namespace System.Security {
 			msg = String.Format (msg, target.GetType (), expected);
 			throw new ArgumentException (msg, "target");
 		}
+
+#if MOBILE
+		// Workaround for CS0629
+		void IStackWalk.Assert ()
+		{
+		}
+
+		void IStackWalk.Deny ()
+		{
+		}
+
+		void IStackWalk.PermitOnly ()
+		{
+		}
+
+		void IStackWalk.Demand ()
+		{
+		}
+
+		void IPermission.Demand ()
+		{
+		}
+#endif
 	}
 }

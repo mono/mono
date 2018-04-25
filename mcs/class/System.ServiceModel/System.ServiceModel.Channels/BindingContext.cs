@@ -44,17 +44,17 @@ namespace System.ServiceModel.Channels
 		BindingElementCollection elements; // for internal use
 
 		public BindingContext (CustomBinding binding,
-			BindingParameterCollection parms)
+			BindingParameterCollection parameters)
 		{
 			if (binding == null)
 				throw new ArgumentNullException ("binding");
-			if (parms == null)
-				throw new ArgumentNullException ("parms");
+			if (parameters == null)
+				throw new ArgumentNullException ("parameters");
 
 			this.binding = binding;
-			parameters = new BindingParameterCollection ();
-			foreach (var item in parms)
-				parameters.Add (item);
+			this.parameters = new BindingParameterCollection ();
+			foreach (var item in parameters)
+				this.parameters.Add (item);
 			this.elements = new BindingElementCollection ();
 			foreach (var item in binding.Elements)
 				this.elements.Add (item);
@@ -149,7 +149,7 @@ namespace System.ServiceModel.Channels
 			return ctx.DequeueBindingElement ().BuildChannelFactory<TChannel> (ctx);
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public IChannelListener<TChannel>
 			BuildInnerChannelListener<TChannel> ()
 			where TChannel : class, IChannel
@@ -168,7 +168,7 @@ namespace System.ServiceModel.Channels
 			return ctx.DequeueBindingElement ().CanBuildChannelFactory<TChannel> (ctx);
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public bool CanBuildInnerChannelListener<TChannel> ()
 			where TChannel : class, IChannel
 		{

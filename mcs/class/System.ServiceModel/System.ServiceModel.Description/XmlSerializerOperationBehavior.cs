@@ -36,7 +36,7 @@ namespace System.ServiceModel.Description
 {
 	public class XmlSerializerOperationBehavior
 		: IOperationBehavior
-#if !NET_2_1
+#if !MOBILE
 			, IWsdlExportExtension
 #endif
 	{
@@ -51,13 +51,13 @@ namespace System.ServiceModel.Description
 
 		public XmlSerializerOperationBehavior (
 			OperationDescription operation,
-			XmlSerializerFormatAttribute format)
+			XmlSerializerFormatAttribute attribute)
 		{
 			if (operation == null)
 				throw new ArgumentNullException ("operation");
-			if (format == null)
-				format = new XmlSerializerFormatAttribute ();
-			this.format = format;
+			if (attribute == null)
+				attribute = new XmlSerializerFormatAttribute ();
+			this.format = attribute;
 			this.operation = operation;
 		}
 
@@ -104,7 +104,7 @@ namespace System.ServiceModel.Description
 		{
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		void IWsdlExportExtension.ExportContract (
 			WsdlExporter exporter,
 			WsdlContractConversionContext context)

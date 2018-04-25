@@ -1,5 +1,4 @@
-﻿//
-// ZipTests.cs
+﻿// ZipTests.cs
 //
 // Author:
 //	   Joao Matos <joao.matos@xamarin.com>
@@ -48,8 +47,9 @@ namespace MonoTests.System.IO.Compression
 		[Test]
 		public void ZipGetEntryReadMode()
 		{
-			File.Copy("archive.zip", "test.zip", overwrite: true);
-			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+			var tmpFile = Path.GetTempFileName ();
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
 				var entry = archive.GetEntry("foo.txt");
@@ -59,14 +59,15 @@ namespace MonoTests.System.IO.Compression
 				Assert.IsNull(nullEntry);
 			}
 
-			File.Delete ("test.zip");
+			File.Delete (tmpFile);
 		}
 
 		[Test]
 		public void ZipGetEntryCreateMode()
 		{
-			File.Copy("archive.zip", "test.zip", overwrite: true);
-			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+			var tmpFile = Path.GetTempFileName ();
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Create))
 			{
 				try {
@@ -78,14 +79,15 @@ namespace MonoTests.System.IO.Compression
 				Assert.Fail();
 			}
 
-			File.Delete ("test.zip");
+			File.Delete (tmpFile);
 		}
 
 		[Test]
 		public void ZipGetEntryUpdateMode()
 		{
-			File.Copy("archive.zip", "test.zip", overwrite: true);
-			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+			var tmpFile = Path.GetTempFileName ();
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
 				var entry = archive.GetEntry("foo.txt");
@@ -95,14 +97,15 @@ namespace MonoTests.System.IO.Compression
 				Assert.IsNull(nullEntry);
 			}
 
-			File.Delete ("test.zip");
+			File.Delete (tmpFile);
 		}
 
 		[Test]
 		public void ZipGetEntryOpen()
 		{
-			File.Copy("archive.zip", "test.zip", overwrite: true);
-			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+			var tmpFile = Path.GetTempFileName ();
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
 				var entry = archive.GetEntry("foo.txt");
@@ -111,14 +114,62 @@ namespace MonoTests.System.IO.Compression
 				var foo = entry.Open();
 			}
 
-			File.Delete ("test.zip");
+			File.Delete (tmpFile);
+		}
+
+		[Test]
+		public void ZipOpenAndReopenEntry()
+		{
+			var tmpFile = Path.GetTempFileName ();	
+			try {
+				File.Copy("archive.zip", tmpFile, overwrite: true);
+				using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
+					ZipArchiveMode.Update))
+				{
+					var entry = archive.GetEntry("foo.txt");
+					Assert.IsNotNull(entry);
+
+					var stream = entry.Open();
+
+					try {
+						stream = entry.Open();
+					} catch (global::System.IO.IOException ex) {
+						return;
+					}
+
+					Assert.Fail();
+				}
+			} finally {
+				File.Delete (tmpFile);
+			}
+		}
+
+
+		[Test]
+		public void ZipOpenCloseAndReopenEntry()
+		{
+			var tmpFile = Path.GetTempFileName ();	
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
+				ZipArchiveMode.Update))
+			{
+				var entry = archive.GetEntry("foo.txt");
+				Assert.IsNotNull(entry);
+
+				var stream = entry.Open();
+				stream.Dispose();
+				stream = entry.Open();
+			}
+
+			File.Delete (tmpFile);
 		}
 
 		[Test]
 		public void ZipGetEntryDeleteReadMode()
 		{
-			File.Copy("archive.zip", "delete.zip", overwrite: true);
-			using (var archive = new ZipArchive(File.Open("delete.zip", FileMode.Open),
+			var tmpFile = Path.GetTempFileName ();	
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Update))
 			{
 				var entry = archive.GetEntry("foo.txt");
@@ -127,21 +178,41 @@ namespace MonoTests.System.IO.Compression
 				entry.Delete();
 			}
 
-			using (var archive = new ZipArchive(File.Open("delete.zip", FileMode.Open),
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
 				var entry = archive.GetEntry("foo.txt");
 				Assert.IsNull(entry);
 			}
 
-			File.Delete ("delete.zip");
+			File.Delete (tmpFile);
 		}
+
+		[Test]
+		public void ZipDeleteEntryCheckEntries()
+		{
+			var tmpFile = Path.GetTempFileName ();
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
+				ZipArchiveMode.Update))
+			{
+				var entry = archive.GetEntry("foo.txt");
+				Assert.IsNotNull(entry);
+
+				entry.Delete();
+
+				Assert.IsNull(archive.Entries.FirstOrDefault(e => e == entry));
+			}
+
+			File.Delete (tmpFile);
+		}		
 
 		[Test]
 		public void ZipGetEntryDeleteUpdateMode()
 		{
-			File.Copy("archive.zip", "delete.zip", overwrite: true);
-			using (var archive = new ZipArchive(File.Open("delete.zip", FileMode.Open),
+			var tmpFile = Path.GetTempFileName ();	
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Update))
 			{
 				var entry = archive.GetEntry("foo.txt");
@@ -150,20 +221,21 @@ namespace MonoTests.System.IO.Compression
 				entry.Delete();
 			}
 
-			using (var archive = new ZipArchive(File.Open("delete.zip", FileMode.Open),
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
 				var entry = archive.GetEntry("foo.txt");
 				Assert.IsNull(entry);
 			}
 
-			File.Delete ("delete.zip");
+			File.Delete (tmpFile);
 		}
 
 		[Test]
 		public void ZipCreateArchive()
 		{
-			using (var archive = new ZipArchive(File.Open("create.zip", FileMode.Create),
+			var tmpFile = Path.GetTempFileName ();	
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Create),
 				ZipArchiveMode.Create))
 			{
 				var dir = archive.CreateEntry("foobar/");
@@ -176,7 +248,7 @@ namespace MonoTests.System.IO.Compression
 				}
 			}
 
-			using (var archive = new ZipArchive(File.Open("create.zip", FileMode.Open),
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
 				Assert.IsNotNull(archive.GetEntry("foobar/"));
@@ -190,14 +262,95 @@ namespace MonoTests.System.IO.Compression
 				Assert.AreEqual("foo", text);
 			}
 
-			File.Delete ("create.zip");
+			File.Delete (tmpFile);
 		}
+
+		[Test]
+		public void ZipEnumerateEntriesModifiedTime()
+		{
+			var tmpFile = Path.GetTempFileName ();	
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			var date = DateTimeOffset.Now;
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
+				ZipArchiveMode.Update))
+			{
+				var entry = archive.GetEntry("foo.txt");
+				entry.LastWriteTime = date;
+			}
+
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
+				ZipArchiveMode.Read))
+			{
+				var entry = archive.GetEntry("foo.txt");
+				Assert.AreEqual(entry.LastWriteTime.Year, date.Year);
+				Assert.AreEqual(entry.LastWriteTime.Month, date.Month);
+				Assert.AreEqual(entry.LastWriteTime.Day, date.Day);
+
+			}
+
+			File.Delete (tmpFile);
+		}		
+
+		[Test]
+		public void ZipEnumerateArchiveDefaultLastWriteTime()
+		{
+			var tmpFile = Path.GetTempFileName ();	
+			File.Copy("test.nupkg", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
+				ZipArchiveMode.Read))
+			{
+				var entry = archive.GetEntry("_rels/.rels");
+				Assert.AreEqual(new DateTime(624511296000000000).Ticks, entry.LastWriteTime.Ticks);
+				Assert.IsNotNull(entry);
+			}
+			File.Delete (tmpFile);
+		}
+
+		public void ZipGetArchiveEntryStreamLengthPosition(ZipArchiveMode mode)
+		{
+			var tmpFile = Path.GetTempFileName ();	
+			File.Copy("test.nupkg", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite), mode))
+			{
+				var entry = archive.GetEntry("_rels/.rels");
+				using (var stream = entry.Open())
+				{
+					Assert.AreEqual(0, stream.Position);
+					Assert.AreEqual(425, stream.Length);
+				}
+
+				var entry2 = archive.GetEntry("modernhttpclient.nuspec");
+				using (var stream = entry2.Open())
+				{
+					// .NET does not support these in Read mode
+					if (mode == ZipArchiveMode.Update)
+					{
+						Assert.AreEqual(857, stream.Length);
+						Assert.AreEqual(0, stream.Position);
+					}
+				}
+			}
+			File.Delete (tmpFile);	
+		}
+
+		[Test]
+		public void ZipGetArchiveEntryStreamLengthPositionReadMode()
+		{
+			ZipGetArchiveEntryStreamLengthPosition(ZipArchiveMode.Read);
+		}
+
+		[Test]
+		public void ZipGetArchiveEntryStreamLengthPositionUpdateMode()
+		{
+			ZipGetArchiveEntryStreamLengthPosition(ZipArchiveMode.Update);
+		}		
 
 		[Test]
 		public void ZipEnumerateEntriesReadMode()
 		{
-			File.Copy("archive.zip", "test.zip", overwrite: true);
-			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+			var tmpFile = Path.GetTempFileName ();
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
 				var entries = archive.Entries;
@@ -210,14 +363,115 @@ namespace MonoTests.System.IO.Compression
 				Assert.AreEqual("foobar/foo.txt", entries[4].FullName);
 			}
 
-			File.Delete ("test.zip");
+			File.Delete (tmpFile);
+		}
+
+		[Test]
+		public void ZipWriteEntriesUpdateMode()
+		{
+			var tmpFile = Path.GetTempFileName ();
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
+				ZipArchiveMode.Update))
+			{
+				var foo = archive.GetEntry("foo.txt");
+				using (var stream = foo.Open())
+				using (var sw = new StreamWriter(stream))
+				{
+					sw.Write("TEST");
+				}
+			}
+
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
+				ZipArchiveMode.Read))
+			{
+				var foo = archive.GetEntry("foo.txt");
+				using (var stream = foo.Open())
+				using (var sr = new StreamReader(stream))
+				{
+					var line = sr.ReadLine();
+					Assert.AreEqual("TEST", line);
+				}
+			}
+
+			File.Delete (tmpFile);
+		}
+
+		[Test]
+		public void ZipWriteEntriesUpdateModeNewEntry()
+		{
+			var stream = new MemoryStream();
+			var zipArchive = new ZipArchive(stream, ZipArchiveMode.Update);
+
+			var newEntry = zipArchive.CreateEntry("testEntry");
+
+			using (var newStream = newEntry.Open())
+			{
+				using (var sw = new StreamWriter(newStream))
+				{
+					sw.Write("TEST");
+				}
+			}
+		}
+
+		[Test]
+		public void ZipCreateDuplicateEntriesUpdateMode()
+		{
+			var stream = new MemoryStream();
+			using (var zipArchive = new ZipArchive(stream, ZipArchiveMode.Update, true))
+			{
+				var e2 = zipArchive.CreateEntry("BBB");
+				var e3 = zipArchive.CreateEntry("BBB");
+			}
+
+			stream.Position = 0;
+			using (var zipArchive = new ZipArchive(stream, ZipArchiveMode.Read))
+			{
+				Assert.AreEqual(2, zipArchive.Entries.Count);
+			}
+		}
+
+		[Test]
+		public void ZipWriteEntriesUpdateModeNonZeroPosition()
+		{
+			var tmpFile = Path.GetTempFileName ();
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
+				ZipArchiveMode.Update))
+			{
+				var foo = archive.GetEntry("foo.txt");
+				using (var stream = foo.Open())
+				{
+					var line = stream.ReadByte();
+					using (var sw = new StreamWriter(stream))
+					{
+						sw.Write("TEST");
+					}
+				}
+			}
+
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
+				ZipArchiveMode.Read))
+			{
+				var entries = archive.Entries;
+				var foo = archive.GetEntry("foo.txt");
+				using (var stream = foo.Open())
+				using (var sr = new StreamReader(stream))
+				{
+					var line = sr.ReadLine();
+					Assert.AreEqual("fTEST", line);
+				}
+			}
+
+			File.Delete (tmpFile);
 		}
 
 		[Test]
 		public void ZipEnumerateEntriesUpdateMode()
 		{
-			File.Copy("archive.zip", "test.zip", overwrite: true);
-			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+			var tmpFile = Path.GetTempFileName ();
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
 				var entries = archive.Entries;
@@ -230,14 +484,15 @@ namespace MonoTests.System.IO.Compression
 				Assert.AreEqual("foobar/foo.txt", entries[4].FullName);
 			}
 
-			File.Delete ("test.zip");
+			File.Delete (tmpFile);
 		}
 
 		[Test]
 		public void ZipEnumerateEntriesCreateMode()
 		{
-			File.Copy("archive.zip", "test.zip", overwrite: true);
-			using (var archive = new ZipArchive(File.Open("test.zip", FileMode.Open),
+			var tmpFile = Path.GetTempFileName ();
+			File.Copy("archive.zip", tmpFile, overwrite: true);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open),
 				ZipArchiveMode.Create))
 			{
 				try {
@@ -249,18 +504,61 @@ namespace MonoTests.System.IO.Compression
 				Assert.Fail();				
 			}
 
-			File.Delete ("test.zip");
+			File.Delete (tmpFile);
 		}
 
 		[Test]
 		public void ZipUpdateEmptyArchive()
 		{
-			File.WriteAllText("empty.zip", string.Empty);
-			using (var archive = new ZipArchive(File.Open("empty.zip", FileMode.Open),
+			var tmpFile = Path.GetTempFileName ();
+			File.WriteAllText(tmpFile, string.Empty);
+			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open),
 				ZipArchiveMode.Update))
 			{
 			}
-			File.Delete ("empty.zip");
+			File.Delete (tmpFile);
+		}
+
+		class MyFakeStream : FileStream 
+		{
+			public MyFakeStream (string path, FileMode mode) : base(path, mode) {}
+
+			/// <summary>
+			/// Simulate "CanSeek" is false, which is the case when you are retreiving data from web.
+			/// </summary>
+			public override bool CanSeek => false;
+
+			public override long Position {
+				get {throw new NotSupportedException();}
+				set {throw new NotSupportedException();}
+			}
+		}
+
+		[Test]
+		public void ZipReadNonSeekableStream()
+		{
+			var tmpFile = Path.GetTempFileName ();
+			File.Copy("test.nupkg", tmpFile, overwrite: true);
+			var stream = new MyFakeStream(tmpFile, FileMode.Open);
+			using (var archive = new ZipArchive (stream, ZipArchiveMode.Read))
+			{
+			}
+			File.Delete (tmpFile);
+		}
+
+		[Test]
+		public void ZipWriteNonSeekableStream()
+		{
+			var tmpFile = Path.GetTempFileName ();
+			File.Copy("test.nupkg", tmpFile, overwrite: true);
+			var stream = new MyFakeStream(tmpFile, FileMode.Open );
+			using ( var archive = new ZipArchive( stream, ZipArchiveMode.Create ) ) {
+				var entry = archive.CreateEntry( "foo" );
+				using ( var es = entry.Open() ) {
+					es.Write( new byte[] { 4, 2 }, 0, 2 );
+				}
+			}
+			File.Delete (tmpFile);
 		}
 	}
 }

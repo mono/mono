@@ -3,9 +3,6 @@
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
@@ -15,13 +12,6 @@ using MonoSecurity::Mono.Security.X509.Extensions;
 using Mono.Security.Interface;
 using MSX = Mono.Security.X509;
 using Mono.Security.X509.Extensions;
-#endif
-#if MONO_X509_ALIAS
-using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-using XX509Chain = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509Chain;
-#else
-using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-using XX509Chain = System.Security.Cryptography.X509Certificates.X509Chain;
 #endif
 
 using System;
@@ -44,7 +34,6 @@ namespace Mono.Net.Security
 	internal static class SystemCertificateValidator
 	{
 		static bool is_macosx;
-		static bool is_mobile;
 #if !MOBILE
 		static X509RevocationMode revocation_mode;
 #endif
@@ -53,13 +42,10 @@ namespace Mono.Net.Security
 		{
 #if MONOTOUCH
 			is_macosx = true;
-			is_mobile = true;
-#elif MONODROID
+#elif MONODROID || ORBIS
 			is_macosx = false;
-			is_mobile = true;
 #else
-			is_macosx = System.IO.File.Exists (OSX509Certificates.SecurityLibrary);
-			is_mobile = false;
+			is_macosx = Environment.OSVersion.Platform != PlatformID.Win32NT && System.IO.File.Exists (OSX509Certificates.SecurityLibrary);
 #endif
 
 #if !MOBILE
@@ -74,29 +60,25 @@ namespace Mono.Net.Security
 #endif
 		}
 
-		public static X509Chain CreateX509Chain (XX509CertificateCollection certs)
+		public static X509Chain CreateX509Chain (X509CertificateCollection certs)
 		{
 			var chain = new X509Chain ();
-			chain.ChainPolicy = new X509ChainPolicy ();
+			chain.ChainPolicy = new X509ChainPolicy ((X509CertificateCollection)(object)certs);
 
 #if !MOBILE
 			chain.ChainPolicy.RevocationMode = revocation_mode;
 #endif
 
-			for (int i = 1; i < certs.Count; i++) {
-				chain.ChainPolicy.ExtraStore.Add (certs [i]);
-			}
-
 			return chain;
 		}
 
-		public static bool BuildX509Chain (XX509CertificateCollection certs, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
+		static bool BuildX509Chain (X509CertificateCollection certs, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
 		{
 #if MOBILE
-			return true;
+			return false;
 #else
 			if (is_macosx)
-				return true;
+				return false;
 
 			var leaf = (X509Certificate2)certs [0];
 
@@ -122,10 +104,12 @@ namespace Mono.Net.Security
 #endif
 		}
 
-		static bool CheckUsage (XX509CertificateCollection certs, string host, ref SslPolicyErrors errors, ref int status11)
+		static bool CheckUsage (X509CertificateCollection certs, string host, ref SslPolicyErrors errors, ref int status11)
 		{
 #if !MONOTOUCH
-			var leaf = (X509Certificate2)certs[0];
+			var leaf = certs[0] as X509Certificate2;
+			if (leaf == null)
+				leaf = new X509Certificate2 (certs[0]);
 			// for OSX and iOS we're using the native API to check for the SSL server policy and host names
 			if (!is_macosx) {
 				if (!CheckCertificateUsage (leaf)) {
@@ -134,7 +118,7 @@ namespace Mono.Net.Security
 					return false;
 				}
 
-				if (host != null && !CheckServerIdentity (leaf, host)) {
+				if (!string.IsNullOrEmpty (host) && !CheckServerIdentity (leaf, host)) {
 					errors |= SslPolicyErrors.RemoteCertificateNameMismatch;
 					status11 = -2146762481; // CERT_E_CN_NO_MATCH 0x800B010F
 					return false;
@@ -144,22 +128,35 @@ namespace Mono.Net.Security
 			return true;
 		}
 
-		static bool EvaluateSystem (XX509CertificateCollection certs, XX509CertificateCollection anchors, string host, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
+		static bool EvaluateSystem (X509CertificateCollection certs, X509CertificateCollection anchors, string host, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
 		{
 			var leaf = certs [0];
-			var result = false;
+			bool result;
 
 #if MONODROID
-			result = AndroidPlatform.TrustEvaluateSsl (certs);
-			if (result) {
-				// chain.Build() + GetErrorsFromChain() (above) will ALWAYS fail on
-				// Android (there are no mozroots or preinstalled root certificates),
-				// thus `errors` will ALWAYS have RemoteCertificateChainErrors.
-				// Android just verified the chain; clear RemoteCertificateChainErrors.
-				errors  &= ~SslPolicyErrors.RemoteCertificateChainErrors;
+			try {
+				result = AndroidPlatform.TrustEvaluateSsl (certs);
+				if (result) {
+					// FIXME: check whether this is still correct.
+					//
+					// chain.Build() + GetErrorsFromChain() (above) will ALWAYS fail on
+					// Android (there are no mozroots or preinstalled root certificates),
+					// thus `errors` will ALWAYS have RemoteCertificateChainErrors.
+					// Android just verified the chain; clear RemoteCertificateChainErrors.
+					errors  &= ~SslPolicyErrors.RemoteCertificateChainErrors;
+				} else {
+					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
+					status11 = unchecked((int)0x800B010B);
+				}
+			} catch {
+				result = false;
+				errors |= SslPolicyErrors.RemoteCertificateChainErrors;
+				status11 = unchecked((int)0x800B010B);
+				// Ignore
 			}
 #else
 			if (is_macosx) {
+#if !ORBIS
 				// Attempt to use OSX certificates
 				// Ideally we should return the SecTrustResult
 				OSX509Certificates.SecTrustResult trustResult = OSX509Certificates.SecTrustResult.Deny;
@@ -170,6 +167,8 @@ namespace Mono.Net.Security
 					result = (trustResult == OSX509Certificates.SecTrustResult.Proceed ||
 						trustResult == OSX509Certificates.SecTrustResult.Unspecified);
 				} catch {
+					result = false;
+					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
 					// Ignore
 				}
 
@@ -182,6 +181,11 @@ namespace Mono.Net.Security
 					status11 = (int)trustResult;
 					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
 				}
+#else
+				throw new PlatformNotSupportedException ();
+#endif
+			} else {
+				result = BuildX509Chain (certs, chain, ref errors, ref status11);
 			}
 #endif
 
@@ -189,7 +193,7 @@ namespace Mono.Net.Security
 		}
 
 		public static bool Evaluate (
-			MonoTlsSettings settings, string host, XX509CertificateCollection certs,
+			MonoTlsSettings settings, string host, X509CertificateCollection certs,
 			X509Chain chain, ref SslPolicyErrors errors, ref int status11)
 		{
 			if (!CheckUsage (certs, host, ref errors, ref status11))
@@ -207,6 +211,8 @@ namespace Mono.Net.Security
 #if MOBILE
 			return false;
 #else
+			if (!is_macosx)
+				return true;
 			if (!CertificateValidationHelper.SupportsX509Chain)
 				return false;
 			if (settings != null)

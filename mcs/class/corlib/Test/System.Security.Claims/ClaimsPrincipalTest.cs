@@ -3,7 +3,6 @@
 // ClaimsPrincipalTest.cs - NUnit Test Cases for System.Security.Claims.ClaimsPrincipal
 //
 
-#if NET_4_5
 
 using NUnit.Framework;
 using System;
@@ -253,4 +252,3 @@ namespace MonoTests.System.Security.Claims
 	}
 }
 
-#endif

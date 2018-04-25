@@ -1,5 +1,6 @@
-/*
- * genmdesc: Generates the machine description
+/**
+ * \file
+ * Generates the machine description
  *
  * Authors:
  *   Paolo Molaro (lupus@ximian.com)
@@ -10,11 +11,6 @@
 #include <ctype.h>
 #include <string.h>
 #include <mono/metadata/opcodes.h>
-
-#if defined(__native_client__) || defined(__native_client_codegen__)
-volatile int __nacl_thread_suspension_needed = 0;
-void __nacl_suspend_thread_if_needed() {}
-#endif
 
 #define MINI_OP(a,b,dest,src1,src2) b,
 #define MINI_OP3(a,b,dest,src1,src2,src3) b,
@@ -54,6 +50,14 @@ static GHashTable *template_table;
 
 #define eat_whitespace(s) while (*(s) && isspace (*(s))) s++;
 
+// Per spec isalnum() expects input in the range 0-255
+// and can misbehave if you pass in a signed char.
+static int
+isalnum_char(char c)
+{
+	return isalnum ((unsigned char)c);
+}
+
 static int
 load_file (const char *name) {
 	FILE *f;
@@ -90,6 +94,9 @@ load_file (const char *name) {
 			g_string_append (comment, str);
 			continue;
 		}
+		p = strchr (str, '#');
+		if (p)
+			*p = 0;
 		p = strchr (str, ':');
 		if (!p)
 			g_error ("Invalid format at line %d in %s\n", line, name);
@@ -99,7 +106,7 @@ load_file (const char *name) {
 			is_template = TRUE;
 			desc = g_new0 (OpDesc, 1);
 		} else {
-			desc = g_hash_table_lookup (table, str);
+			desc = (OpDesc *)g_hash_table_lookup (table, str);
 			if (!desc)
 				g_error ("Invalid opcode '%s' at line %d in %s\n", str, line, name);
 			if (desc->desc)
@@ -163,9 +170,9 @@ load_file (const char *name) {
 				OpDesc *tdesc;
 				p += 9;
 				tname = p;
-				while (*p && isalnum (*p)) ++p;
+				while (*p && isalnum_char (*p)) ++p;
 				*p++ = 0;
-				tdesc = g_hash_table_lookup (template_table, tname);
+				tdesc = (OpDesc *)g_hash_table_lookup (template_table, tname);
 				if (!tdesc)
 					g_error ("Invalid template name %s at '%s' at line %d in %s\n", tname, p, line, name);
 				for (i = 0; i < MONO_INST_MAX; ++i) {
@@ -181,7 +188,7 @@ load_file (const char *name) {
 					g_error ("Duplicated name tag in template %s at '%s' at line %d in %s\n", desc->name, p, line, name);
 				p += 5;
 				tname = p;
-				while (*p && isalnum (*p)) ++p;
+				while (*p && isalnum_char (*p)) ++p;
 				*p++ = 0;
 				if (g_hash_table_lookup (template_table, tname))
 					g_error ("Duplicated template %s at line %d in %s\n", tname, line, name);
@@ -195,6 +202,7 @@ load_file (const char *name) {
 		if (is_template && !desc->name)
 			g_error ("Template without name at line %d in %s\n", line, name);
 	}
+	g_string_free (comment,TRUE);
 	fclose (f);
 	return 0;
 }
@@ -220,7 +228,7 @@ init_table (void) {
 
 static void
 output_char (FILE *f, char c) {
-	if (isalnum (c))
+	if (isalnum_char (c))
 		fprintf (f, "%c", c);
 	else
 		fprintf (f, "\\x%x\" \"", (guint8)c);

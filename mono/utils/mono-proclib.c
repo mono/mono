@@ -1,6 +1,8 @@
-/*
+/**
+ * \file
  * Copyright 2008-2011 Novell Inc
  * Copyright 2011 Xamarin Inc
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -14,22 +16,28 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-
-#ifdef HOST_WIN32
-#include <windows.h>
-#include <process.h>
+#ifdef HAVE_SCHED_GETAFFINITY
+#include <sched.h>
 #endif
 
 #if defined(_POSIX_VERSION)
+#ifdef HAVE_SYS_ERRNO_H
 #include <sys/errno.h>
+#endif
 #include <sys/param.h>
+#include <errno.h>
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 #ifdef HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
 #endif
+#ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
+#endif
+#endif
+#if defined(__HAIKU__)
+#include <os/kernel/OS.h>
 #endif
 #if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
 #include <sys/proc.h>
@@ -43,6 +51,10 @@
 #    define kinfo_starttime_member kp_proc.p_starttime
 #    define kinfo_pid_member kp_proc.p_pid
 #    define kinfo_name_member kp_proc.p_comm
+#elif defined(__NetBSD__)
+#    define kinfo_starttime_member p_ustart_sec
+#    define kinfo_pid_member p_pid
+#    define kinfo_name_member p_comm
 #elif defined(__OpenBSD__)
 // Can not figure out how to get the proc's start time on OpenBSD
 #    undef kinfo_starttime_member 
@@ -56,12 +68,26 @@
 #define USE_SYSCTL 1
 #endif
 
+#ifdef HAVE_SCHED_GETAFFINITY
+#  ifndef GLIBC_HAS_CPU_COUNT
+static int
+CPU_COUNT(cpu_set_t *set)
+{
+	int i, count = 0;
+
+	for (int i = 0; i < CPU_SETSIZE; i++)
+		if (CPU_ISSET(i, set))
+			count++;
+	return count;
+}
+#  endif
+#endif
+
 /**
  * mono_process_list:
- * @size: a pointer to a location where the size of the returned array is stored
- *
- * Return an array of pid values for the processes currently running on the system.
- * The size of the array is stored in @size.
+ * \param size a pointer to a location where the size of the returned array is stored
+ * \returns an array of pid values for the processes currently running on the system.
+ * The size of the array is stored in \p size.
  */
 gpointer*
 mono_process_list (int *size)
@@ -71,7 +97,7 @@ mono_process_list (int *size)
 #ifdef KERN_PROC2
 	int mib [6];
 	size_t data_len = sizeof (struct kinfo_proc2) * 400;
-	struct kinfo_proc2 *processes = malloc (data_len);
+	struct kinfo_proc2 *processes = g_malloc (data_len);
 #else
 	int mib [4];
 	size_t data_len = sizeof (struct kinfo_proc) * 16;
@@ -96,7 +122,7 @@ mono_process_list (int *size)
 
 	res = sysctl (mib, 6, processes, &data_len, NULL, 0);
 	if (res < 0) {
-		free (processes);
+		g_free (processes);
 		return NULL;
 	}
 #else
@@ -107,13 +133,13 @@ mono_process_list (int *size)
 		mib [2] = KERN_PROC_ALL;
 		mib [3] = 0;
 
-		res = sysctl (mib, 4, NULL, &data_len, NULL, 0);
+		res = sysctl (mib, 3, NULL, &data_len, NULL, 0);
 		if (res)
 			return NULL;
-		processes = (struct kinfo_proc *) malloc (data_len);
-		res = sysctl (mib, 4, processes, &data_len, NULL, 0);
+		processes = (struct kinfo_proc *) g_malloc (data_len);
+		res = sysctl (mib, 3, processes, &data_len, NULL, 0);
 		if (res < 0) {
-			free (processes);
+			g_free (processes);
 			if (errno != ENOMEM)
 				return NULL;
 			limit --;
@@ -131,14 +157,25 @@ mono_process_list (int *size)
 	buf = (void **) g_realloc (buf, res * sizeof (void*));
 	for (i = 0; i < res; ++i)
 		buf [i] = GINT_TO_POINTER (processes [i].kinfo_pid_member);
-	free (processes);
+	g_free (processes);
 	if (size)
 		*size = res;
 	return buf;
 #elif defined(__HAIKU__)
-	/* FIXME: Add back the code from 9185fcc305e43428d0f40f3ee37c8a405d41c9ae */
-	g_assert_not_reached ();
-	return NULL;
+	int32 cookie = 0;
+	int32 i = 0;
+	team_info ti;
+	system_info si;
+
+	get_system_info(&si);
+	void **buf = g_calloc(si.used_teams, sizeof(void*));
+
+	while (get_next_team_info(&cookie, &ti) == B_OK && i < si.used_teams) {
+		buf[i++] = GINT_TO_POINTER (ti.team);
+	}
+	*size = i;
+
+	return buf;
 #else
 	const char *name;
 	void **buf = NULL;
@@ -161,7 +198,7 @@ mono_process_list (int *size)
 				count = 16;
 			else
 				count *= 2;
-			buf = g_realloc (buf, count * sizeof (void*));
+			buf = (void **)g_realloc (buf, count * sizeof (void*));
 		}
 		buf [i++] = GINT_TO_POINTER (pid);
 	}
@@ -178,7 +215,7 @@ get_pid_status_item_buf (int pid, const char *item, char *rbuf, int blen, MonoPr
 	char buf [256];
 	char *s;
 	FILE *f;
-	int len = strlen (item);
+	size_t len = strlen (item);
 
 	g_snprintf (buf, sizeof (buf), "/proc/%d/status", pid);
 	f = fopen (buf, "r");
@@ -187,7 +224,7 @@ get_pid_status_item_buf (int pid, const char *item, char *rbuf, int blen, MonoPr
 			*error = MONO_PROCESS_ERROR_NOT_FOUND;
 		return NULL;
 	}
-	while ((s = fgets (buf, blen, f))) {
+	while ((s = fgets (buf, sizeof (buf), f))) {
 		if (*item != *buf)
 			continue;
 		if (strncmp (buf, item, len))
@@ -199,7 +236,7 @@ get_pid_status_item_buf (int pid, const char *item, char *rbuf, int blen, MonoPr
 		while (g_ascii_isspace (*s)) s++;
 		fclose (f);
 		len = strlen (s);
-		strncpy (rbuf, s, MIN (len, blen));
+		memcpy (rbuf, s, MIN (len, blen));
 		rbuf [MIN (len, blen) - 1] = 0;
 		if (error)
 			*error = MONO_PROCESS_ERROR_NONE;
@@ -254,12 +291,11 @@ sysctl_kinfo_proc (gpointer pid, KINFO_PROC* processi)
 
 /**
  * mono_process_get_name:
- * @pid: pid of the process
- * @buf: byte buffer where to store the name of the prcoess
- * @len: size of the buffer @buf
- *
- * Return the name of the process identified by @pid, storing it
- * inside @buf for a maximum of len bytes (including the terminating 0).
+ * \param pid pid of the process
+ * \param buf byte buffer where to store the name of the prcoess
+ * \param len size of the buffer \p buf
+ * \returns the name of the process identified by \p pid, storing it
+ * inside \p buf for a maximum of len bytes (including the terminating 0).
  */
 char*
 mono_process_get_name (gpointer pid, char *buf, int len)
@@ -270,14 +306,14 @@ mono_process_get_name (gpointer pid, char *buf, int len)
 	memset (buf, 0, len);
 
 	if (sysctl_kinfo_proc (pid, &processi))
-		strncpy (buf, processi.kinfo_name_member, len - 1);
+		memcpy (buf, processi.kinfo_name_member, len - 1);
 
 	return buf;
 #else
 	char fname [128];
 	FILE *file;
 	char *p;
-	int r;
+	size_t r;
 	sprintf (fname, "/proc/%d/cmdline", GPOINTER_TO_INT (pid));
 	buf [0] = 0;
 	file = fopen (fname, "r");
@@ -312,15 +348,23 @@ mono_process_get_times (gpointer pid, gint64 *start_time, gint64 *user_time, gin
 		{
 			KINFO_PROC processi;
 
-			if (sysctl_kinfo_proc (pid, &processi))
+			if (sysctl_kinfo_proc (pid, &processi)) {
+#if defined(__NetBSD__)
+				struct timeval tv;
+				tv.tv_sec = processi.kinfo_starttime_member;
+				tv.tv_usec = processi.p_ustart_usec;
+				*start_time = mono_100ns_datetime_from_timeval(tv);
+#else
 				*start_time = mono_100ns_datetime_from_timeval (processi.kinfo_starttime_member);
+#endif
+			}
 		}
 #endif
 
 		if (*start_time == 0) {
 			static guint64 boot_time = 0;
 			if (!boot_time)
-				boot_time = mono_100ns_datetime () - ((guint64)mono_msec_ticks ()) * 10000;
+				boot_time = mono_100ns_datetime () - mono_msec_boottime () * 10000;
 
 			*start_time = boot_time + mono_process_get_data (pid, MONO_PROCESS_ELAPSED);
 		}
@@ -351,22 +395,35 @@ get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 	mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT, th_count;
 	thread_array_t th_array;
 	size_t i;
+	kern_return_t ret;
 
 	if (pid == getpid ()) {
 		/* task_for_pid () doesn't work on ios, even for the current process */
 		task = mach_task_self ();
 	} else {
-		if (task_for_pid (mach_task_self (), pid, &task) != KERN_SUCCESS)
+		do {
+			ret = task_for_pid (mach_task_self (), pid, &task);
+		} while (ret == KERN_ABORTED);
+
+		if (ret != KERN_SUCCESS)
 			RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
 	}
 
-	if (task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count) != KERN_SUCCESS) {
+	do {
+		ret = task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count);
+	} while (ret == KERN_ABORTED);
+
+	if (ret != KERN_SUCCESS) {
 		if (pid != getpid ())
 			mach_port_deallocate (mach_task_self (), task);
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
 	}
+
+	do {
+		ret = task_threads (task, &th_array, &th_count);
+	} while (ret == KERN_ABORTED);
 	
-	if (task_threads(task, &th_array, &th_count) != KERN_SUCCESS) {
+	if (ret  != KERN_SUCCESS) {
 		if (pid != getpid ())
 			mach_port_deallocate (mach_task_self (), task);
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
@@ -377,7 +434,11 @@ get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 		
 		struct thread_basic_info th_info;
 		mach_msg_type_number_t th_info_count = THREAD_BASIC_INFO_COUNT;
-		if (thread_info(th_array[i], THREAD_BASIC_INFO, (thread_info_t)&th_info, &th_info_count) == KERN_SUCCESS) {
+		do {
+			ret = thread_info(th_array[i], THREAD_BASIC_INFO, (thread_info_t)&th_info, &th_info_count);
+		} while (ret == KERN_ABORTED);
+
+		if (ret == KERN_SUCCESS) {
 			thread_user_time = th_info.user_time.seconds + th_info.user_time.microseconds / 1e6;
 			thread_system_time = th_info.system_time.seconds + th_info.system_time.microseconds / 1e6;
 			//thread_percent = (double)th_info.cpu_usage / TH_USAGE_SCALE;
@@ -409,7 +470,8 @@ get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 	char buf [512];
 	char *s, *end;
 	FILE *f;
-	int len, i;
+	size_t len;
+	int i;
 	gint64 value;
 
 	g_snprintf (buf, sizeof (buf), "/proc/%d/stat", pid);
@@ -459,7 +521,7 @@ get_user_hz (void)
 {
 	static int user_hz = 0;
 	if (user_hz == 0) {
-#ifdef _SC_CLK_TCK
+#if defined (_SC_CLK_TCK) && defined (HAVE_SYSCONF)
 		user_hz = sysconf (_SC_CLK_TCK);
 #endif
 		if (user_hz == 0)
@@ -488,29 +550,55 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 	
 	gint64 ret;
 	task_t task;
-	struct task_basic_info t_info;
-	mach_msg_type_number_t th_count = TASK_BASIC_INFO_COUNT;
+	task_vm_info_data_t t_info;
+	mach_msg_type_number_t info_count = TASK_VM_INFO_COUNT;
+	kern_return_t mach_ret;
 
 	if (pid == getpid ()) {
 		/* task_for_pid () doesn't work on ios, even for the current process */
 		task = mach_task_self ();
 	} else {
-		if (task_for_pid (mach_task_self (), pid, &task) != KERN_SUCCESS)
+		do {
+			mach_ret = task_for_pid (mach_task_self (), pid, &task);
+		} while (mach_ret == KERN_ABORTED);
+
+		if (mach_ret != KERN_SUCCESS)
 			RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
 	}
-	
-	if (task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &th_count) != KERN_SUCCESS) {
+
+	do {
+		mach_ret = task_info (task, TASK_VM_INFO, (task_info_t)&t_info, &info_count);
+	} while (mach_ret == KERN_ABORTED);
+
+	if (mach_ret != KERN_SUCCESS) {
 		if (pid != getpid ())
 			mach_port_deallocate (mach_task_self (), task);
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
 	}
 
-	if (strcmp (item, "VmRSS") == 0 || strcmp (item, "VmHWM") == 0 || strcmp (item, "VmData") == 0)
+	if(strcmp (item, "VmData") == 0)
+		ret = t_info.internal + t_info.compressed;
+	else if (strcmp (item, "VmRSS") == 0)
 		ret = t_info.resident_size;
+	else if(strcmp (item, "VmHWM") == 0)
+		ret = t_info.resident_size_peak;
 	else if (strcmp (item, "VmSize") == 0 || strcmp (item, "VmPeak") == 0)
 		ret = t_info.virtual_size;
-	else if (strcmp (item, "Threads") == 0)
+	else if (strcmp (item, "Threads") == 0) {
+		struct task_basic_info t_info;
+		mach_msg_type_number_t th_count = TASK_BASIC_INFO_COUNT;
+		do {
+			mach_ret = task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &th_count);
+		} while (mach_ret == KERN_ABORTED);
+
+		if (mach_ret != KERN_SUCCESS) {
+			if (pid != getpid ())
+				mach_port_deallocate (mach_task_self (), task);
+			RET_ERROR (MONO_PROCESS_ERROR_OTHER);
+		}
 		ret = th_count;
+	} else if (strcmp (item, "VmSwap") == 0)
+		ret = t_info.compressed;
 	else
 		ret = 0;
 
@@ -531,11 +619,10 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 
 /**
  * mono_process_get_data:
- * @pid: pid of the process
- * @data: description of data to return
- *
- * Return a data item of a process like user time, memory use etc,
- * according to the @data argumet.
+ * \param pid pid of the process
+ * \param data description of data to return
+ * \returns a data item of a process like user time, memory use etc,
+ * according to the \p data argumet.
  */
 gint64
 mono_process_get_data_with_error (gpointer pid, MonoProcessData data, MonoProcessError *error)
@@ -594,37 +681,32 @@ mono_process_get_data (gpointer pid, MonoProcessData data)
 	return mono_process_get_data_with_error (pid, data, &error);
 }
 
+#ifndef HOST_WIN32
 int
 mono_process_current_pid ()
 {
 #if defined(HAVE_UNISTD_H)
 	return (int) getpid ();
-#elif defined(HOST_WIN32)
-	return (int) GetCurrentProcessId ();
 #else
 #error getpid
 #endif
 }
+#endif /* !HOST_WIN32 */
 
 /**
  * mono_cpu_count:
- *
- * Return the number of processors on the system.
+ * \returns the number of processors on the system.
  */
+#ifndef HOST_WIN32
 int
 mono_cpu_count (void)
 {
-#ifdef HOST_WIN32
-	SYSTEM_INFO info;
-	GetSystemInfo (&info);
-	return info.dwNumberOfProcessors;
-#else
-	int count = 0;
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
 	/* Android tries really hard to save power by powering off CPUs on SMP phones which
 	 * means the normal way to query cpu count returns a wrong value with userspace API.
 	 * Instead we use /sys entries to query the actual hardware CPU count.
 	 */
+	int count = 0;
 	char buffer[8] = {'\0'};
 	int present = open ("/sys/devices/system/cpu/present", O_RDONLY);
 	/* Format of the /sys entry is a cpulist of indexes which in the case
@@ -639,13 +721,95 @@ mono_cpu_count (void)
 	if (count > 0)
 		return count + 1;
 #endif
-#ifdef _SC_NPROCESSORS_CONF
-	count = sysconf (_SC_NPROCESSORS_CONF);
-	if (count > 0)
-		return count;
+
+#if defined(HOST_ARM) || defined (HOST_ARM64)
+
+/*
+ * Recap from Alexander Köplinger <alex.koeplinger@outlook.com>:
+ *
+ * When we merged the change from PR #2722, we started seeing random failures on ARM in
+ * the MonoTests.System.Threading.ThreadPoolTests.SetAndGetMaxThreads and
+ * MonoTests.System.Threading.ManualResetEventSlimTests.Constructor_Defaults tests. Both
+ * of those tests are dealing with Environment.ProcessorCount to verify some implementation
+ * details.
+ *
+ * It turns out that on the Jetson TK1 board we use on public Jenkins and on ARM kernels
+ * in general, the value returned by sched_getaffinity (or _SC_NPROCESSORS_ONLN) doesn't
+ * contain CPUs/cores that are powered off for power saving reasons. This is contrary to
+ * what happens on x86, where even cores in deep-sleep state are returned [1], [2]. This
+ * means that we would get a processor count of 1 at one point in time and a higher value
+ * when load increases later on as the system wakes CPUs.
+ *
+ * Various runtime pieces like the threadpool and also user code however relies on the
+ * value returned by Environment.ProcessorCount e.g. for deciding how many parallel tasks
+ * to start, thereby limiting the performance when that code thinks we only have one CPU.
+ *
+ * Talking to a few people, this was the reason why we changed to _SC_NPROCESSORS_CONF in
+ * mono#1688 and why we added a special case for Android in mono@de3addc to get the "real"
+ * number of processors in the system.
+ *
+ * Because of those issues Android/Dalvik also switched from _ONLN to _SC_NPROCESSORS_CONF
+ * for the Java API Runtime.availableProcessors() too [3], citing:
+ * > Traditionally this returned the number currently online, but many mobile devices are
+ * able to take unused cores offline to save power, so releases newer than Android 4.2 (Jelly
+ * Bean) return the maximum number of cores that could be made available if there were no
+ * power or heat constraints.
+ *
+ * The problem with sticking to _SC_NPROCESSORS_CONF however is that it breaks down in
+ * constrained environments like Docker or with an explicit CPU affinity set by the Linux
+ * `taskset` command, They'd get a higher CPU count than can be used, start more threads etc.
+ * which results in unnecessary context switches and overloaded systems. That's why we need
+ * to respect sched_getaffinity.
+ *
+ * So while in an ideal world we would be able to rely on sched_getaffinity/_SC_NPROCESSORS_ONLN
+ * to return the number of theoretically available CPUs regardless of power saving measures
+ * everywhere, we can't do this on ARM.
+ *
+ * I think the pragmatic solution is the following:
+ * * use sched_getaffinity (+ fallback to _SC_NPROCESSORS_ONLN in case of error) on x86. This
+ * ensures we're inline with what OpenJDK [4] and CoreCLR [5] do
+ * * use _SC_NPROCESSORS_CONF exclusively on ARM (I think we could eventually even get rid of
+ * the HOST_ANDROID special case)
+ *
+ * Helpful links:
+ *
+ * [1] https://sourceware.org/ml/libc-alpha/2013-07/msg00383.html
+ * [2] https://lists.01.org/pipermail/powertop/2012-September/000433.html
+ * [3] https://android.googlesource.com/platform/libcore/+/750dc634e56c58d1d04f6a138734ac2b772900b5%5E1..750dc634e56c58d1d04f6a138734ac2b772900b5/
+ * [4] https://bugs.openjdk.java.net/browse/JDK-6515172
+ * [5] https://github.com/dotnet/coreclr/blob/7058273693db2555f127ce16e6b0c5b40fb04867/src/pal/src/misc/sysinfo.cpp#L148
+ */
+
+#if defined (_SC_NPROCESSORS_CONF) && defined (HAVE_SYSCONF)
+	{
+		int count = sysconf (_SC_NPROCESSORS_CONF);
+		if (count > 0)
+			return count;
+	}
 #endif
+
+#else
+
+#ifdef HAVE_SCHED_GETAFFINITY
+	{
+		cpu_set_t set;
+		if (sched_getaffinity (mono_process_current_pid (), sizeof (set), &set) == 0)
+			return CPU_COUNT (&set);
+	}
+#endif
+#if defined (_SC_NPROCESSORS_ONLN) && defined (HAVE_SYSCONF)
+	{
+		int count = sysconf (_SC_NPROCESSORS_ONLN);
+		if (count > 0)
+			return count;
+	}
+#endif
+
+#endif /* defined(HOST_ARM) || defined (HOST_ARM64) */
+
 #ifdef USE_SYSCTL
 	{
+		int count;
 		int mib [2];
 		size_t len = sizeof (int);
 		mib [0] = CTL_HW;
@@ -654,23 +818,23 @@ mono_cpu_count (void)
 			return count;
 	}
 #endif
-#endif
 	/* FIXME: warn */
 	return 1;
 }
+#endif /* !HOST_WIN32 */
 
 static void
 get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *sirq, gint64 *idle)
 {
 	char buf [256];
 	char *s;
-	int hz = get_user_hz ();
+	int uhz = get_user_hz ();
 	guint64	user_ticks = 0, nice_ticks = 0, system_ticks = 0, idle_ticks = 0, irq_ticks = 0, sirq_ticks = 0;
 	FILE *f = fopen ("/proc/stat", "r");
 	if (!f)
 		return;
 	if (cpu_id < 0)
-		hz *= mono_cpu_count ();
+		uhz *= mono_cpu_count ();
 	while ((s = fgets (buf, sizeof (buf), f))) {
 		char *data = NULL;
 		if (cpu_id < 0 && strncmp (s, "cpu", 3) == 0 && g_ascii_isspace (s [3])) {
@@ -695,22 +859,21 @@ get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *s
 	fclose (f);
 
 	if (user)
-		*user = (user_ticks + nice_ticks) * 10000000 / hz;
+		*user = (user_ticks + nice_ticks) * 10000000 / uhz;
 	if (systemt)
-		*systemt = (system_ticks) * 10000000 / hz;
+		*systemt = (system_ticks) * 10000000 / uhz;
 	if (irq)
-		*irq = (irq_ticks) * 10000000 / hz;
+		*irq = (irq_ticks) * 10000000 / uhz;
 	if (sirq)
-		*sirq = (sirq_ticks) * 10000000 / hz;
+		*sirq = (sirq_ticks) * 10000000 / uhz;
 	if (idle)
-		*idle = (idle_ticks) * 10000000 / hz;
+		*idle = (idle_ticks) * 10000000 / uhz;
 }
 
 /**
  * mono_cpu_get_data:
- * @cpu_id: processor number or -1 to get a summary of all the processors
- * @data: type of data to retrieve
- *
+ * \param cpu_id processor number or -1 to get a summary of all the processors
+ * \param data type of data to retrieve
  * Get data about a processor on the system, like time spent in user space or idle time.
  */
 gint64
@@ -747,7 +910,7 @@ mono_cpu_get_data (int cpu_id, MonoCpuData data, MonoProcessError *error)
 int
 mono_atexit (void (*func)(void))
 {
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
 	/* Some versions of android libc doesn't define atexit () */
 	return 0;
 #else
@@ -764,14 +927,14 @@ mono_atexit (void (*func)(void))
  * battery and performance reasons, shut down cores and
  * lie about the number of active cores.
  */
+#ifndef HOST_WIN32
 gint32
 mono_cpu_usage (MonoCpuUsageState *prev)
 {
 	gint32 cpu_usage = 0;
+#ifdef HAVE_GETRUSAGE
 	gint64 cpu_total_time;
 	gint64 cpu_busy_time;
-
-#ifndef HOST_WIN32
 	struct rusage resource_usage;
 	gint64 current_time;
 	gint64 kernel_time;
@@ -794,28 +957,10 @@ mono_cpu_usage (MonoCpuUsageState *prev)
 		prev->user_time = user_time;
 		prev->current_time = current_time;
 	}
-#else
-	guint64 idle_time;
-	guint64 kernel_time;
-	guint64 user_time;
-
-	if (!GetSystemTimes ((FILETIME*) &idle_time, (FILETIME*) &kernel_time, (FILETIME*) &user_time)) {
-		g_error ("GetSystemTimes() failed, error code is %d\n", GetLastError ());
-		return -1;
-	}
-
-	cpu_total_time = (gint64)((user_time - (prev ? prev->user_time : 0)) + (kernel_time - (prev ? prev->kernel_time : 0)));
-	cpu_busy_time = (gint64)(cpu_total_time - (idle_time - (prev ? prev->idle_time : 0)));
-
-	if (prev) {
-		prev->idle_time = idle_time;
-		prev->kernel_time = kernel_time;
-		prev->user_time = user_time;
-	}
-#endif
 
 	if (cpu_total_time > 0 && cpu_busy_time > 0)
 		cpu_usage = (gint32)(cpu_busy_time * 100 / cpu_total_time);
-
+#endif
 	return cpu_usage;
 }
+#endif /* !HOST_WIN32 */

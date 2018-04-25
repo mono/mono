@@ -9,10 +9,10 @@ LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)/Facades
 
 LIBRARY = System.IO.Compression.ZipFile.dll
 
-KEY_FILE = ../../msfinal.pub
-SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
-LIB_REFS = System
-LIB_MCS_FLAGS = $(SIGN_FLAGS) /r:mscorlib /r:System.IO.Compression.FileSystem.dll
+KEYFILE = ../../ecma.pub
+SIGN_FLAGS = /delaysign /nowarn:1616,1699
+LIB_REFS = System System.IO.Compression.FileSystem
+LIB_MCS_FLAGS = $(SIGN_FLAGS)
 
 PLATFORM_DEBUG_FLAGS =
 

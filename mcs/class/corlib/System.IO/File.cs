@@ -38,10 +38,7 @@ using System.Diagnostics;
 using System.Security;
 using System.Text;
 using System.Runtime.InteropServices;
-
-#if !NET_2_1
 using System.Security.AccessControl;
-#endif
 
 namespace System.IO
 {
@@ -113,6 +110,21 @@ namespace System.IO
 			}
 		}
 
+		internal static String InternalCopy (String sourceFileName, String destFileName, bool overwrite, bool checkHost)
+		{
+			String fullSourceFileName = Path.GetFullPathInternal(sourceFileName);
+			String fullDestFileName = Path.GetFullPathInternal(destFileName);
+
+			MonoIOError error;
+
+			if (!MonoIO.CopyFile (fullSourceFileName, fullDestFileName, overwrite, out error)) {
+				string p = Locale.GetText ("{0}\" or \"{1}", sourceFileName, destFileName);
+				throw MonoIO.GetException (p, error);
+			}
+
+			return fullDestFileName;
+		}
+
 		public static FileStream Create (string path)
 		{
 			return Create (path, 8192);
@@ -124,14 +136,14 @@ namespace System.IO
 				FileShare.None, bufferSize);
 		}
 
-#if !NET_2_1
 		[MonoLimitation ("FileOptions are ignored")]
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options)
 		{
-			return Create (path, bufferSize, options, null);
+			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
+				FileShare.None, bufferSize, options);
 		}
-		
+
 		[MonoLimitation ("FileOptions and FileSecurity are ignored")]
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options,
@@ -140,7 +152,6 @@ namespace System.IO
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
 				FileShare.None, bufferSize, options);
 		}
-#endif
 
 		public static StreamWriter CreateText (string path)
 		{
@@ -185,7 +196,6 @@ namespace System.IO
 			return MonoIO.ExistsFile (path, out error);
 		}
 
-#if !NET_2_1
 		public static FileSecurity GetAccessControl (string path)
 		{
 			// AccessControlSections.Audit requires special permissions.
@@ -199,7 +209,6 @@ namespace System.IO
 		{
 			return new FileSecurity (path, includeSections);
 		}
-#endif
 
 		public static FileAttributes GetAttributes (string path)
 		{
@@ -406,13 +415,18 @@ namespace System.IO
 							       "Destination and backup arguments are the same file."));
 			}
 
+			var attrs = GetAttributes (fullDest);
+
+			// TODO: Should be done in wapi, win32 api handles this already
+			if ((attrs & FileAttributes.ReadOnly) != 0)
+				throw MonoIO.GetException (MonoIOError.ERROR_ACCESS_DENIED);
+
 			if (!MonoIO.ReplaceFile (fullSource, fullDest, fullBackup, 
 						 ignoreMetadataErrors, out error)) {
 				throw MonoIO.GetException (error);
 			}
 		}
 
-#if !NET_2_1
 		public static void SetAccessControl (string path,
 						     FileSecurity fileSecurity)
 		{
@@ -421,7 +435,6 @@ namespace System.IO
 
 			fileSecurity.PersistModifications (path);
 		}
-#endif
 
 		public static void SetAttributes (string path,
 						  FileAttributes fileAttributes)
@@ -687,6 +700,23 @@ namespace System.IO
 				foreach (var line in contents)
 					w.WriteLine (line);
 			}
+		}
+
+		internal static int FillAttributeInfo (String path, ref MonoIOStat data, bool tryagain, bool returnErrorOnNotFound)
+		{
+			if (tryagain)
+				throw new NotImplementedException ();
+
+			MonoIOError error;
+			MonoIO.GetFileStat (path, out data, out error);
+
+			if (!returnErrorOnNotFound && (error == MonoIOError.ERROR_FILE_NOT_FOUND || error == MonoIOError.ERROR_PATH_NOT_FOUND || error == MonoIOError.ERROR_NOT_READY)) {
+				data = default (MonoIOStat);
+				data.fileAttributes = (FileAttributes) (-1);
+				return 0;
+			}
+
+			return (int) error;
 		}
 	}
 }

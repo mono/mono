@@ -68,8 +68,8 @@
 				<add tagPrefix="asp" namespace="System.Web.UI" assembly="System.Web.Extensions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35"/>
 				<add tagPrefix="asp" namespace="System.Web.UI.WebControls" assembly="System.Web.Extensions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35"/>
 				<add tagPrefix="asp" namespace="System.Web.DynamicData" assembly="System.Web.DynamicData, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35"/>
-				<add tagPrefix="test" namespace="MonoTests.DataSource" assembly="System.Web.DynamicData_test_net_4_x"/>
-				<add tagPrefix="test" namespace="MonoTests.Common" assembly="System.Web.DynamicData_test_net_4_x"/>
+				<add tagPrefix="test" namespace="MonoTests.DataSource" assembly="net_4_x_System.Web.DynamicData_test"/>
+				<add tagPrefix="test" namespace="MonoTests.Common" assembly="net_4_x_System.Web.DynamicData_test"/>
 			</controls>
 		</pages>
 		<httpHandlers>

@@ -1,9 +1,0 @@
-2005-09-20  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* AssemblyInfo.cs: Mark [CLSCompliant(true)], [ComVisible(false)].
-
-2004-04-30  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* AssemblyInfo.cs: Added
-	* ChangeLog: Added
-	* Locale.cs: Added

@@ -104,18 +104,21 @@ namespace System.ServiceModel.Channels.Http
 		}
 
 		bool close_started;
+		object close_lock = new object ();
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			if (close_started)
-				return;
-			close_started = true;
-			DateTime start = DateTime.Now;
+			lock (close_lock) {
+				if (close_started)
+					return;
+				close_started = true;
+			}
+			DateTime start = DateTime.UtcNow;
 
 			// FIXME: consider timeout
-			AbortConnections (timeout - (DateTime.Now - start));
+			AbortConnections (timeout - (DateTime.UtcNow - start));
 
-			base.OnClose (timeout - (DateTime.Now - start));
+			base.OnClose (timeout - (DateTime.UtcNow - start));
 		}
 
 		protected string GetHeaderItem (string raw)

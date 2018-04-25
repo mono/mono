@@ -17,7 +17,7 @@ using Mono.Unix.Native;
 
 namespace MonoTests.Mono.Unix.Native {
 
-	[TestFixture]
+	[TestFixture, Category ("NotOnWindows")]
 	public class StdlibTest
 	{
 		private class SignalTest {
@@ -56,7 +56,7 @@ namespace MonoTests.Mono.Unix.Native {
 			Assert.IsFalse (NativeConvert.ToSignum (st.signalReceived) == Signum.SIGURG,
 					"#IH: Signal Handler invoked when it should have been removed!");
 		}
-
+#if !NETCOREAPP2_0
 		[Test]
 		// MSVCRT.DLL doesn't export snprintf(3).
 		[Category ("NotDotNet")]
@@ -92,6 +92,7 @@ namespace MonoTests.Mono.Unix.Native {
 			Assert.AreEqual (s.ToString(), expected,
 					"#SNPF: printf of many builtin types failed");
 		}
+#endif
 	}
 }
 

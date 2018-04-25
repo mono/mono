@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
 
 namespace Mono.CompilerServices.SymbolWriter
@@ -90,6 +91,11 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public void StartBlock (CodeBlockEntry.Type type, int start_offset)
 		{
+			StartBlock (type, start_offset, _blocks == null ? 1 : _blocks.Count + 1);
+		}
+
+		public void StartBlock (CodeBlockEntry.Type type, int start_offset, int scopeIndex)
+		{
 			if (_block_stack == null) {
 				_block_stack = new Stack<CodeBlockEntry> ();
 			}
@@ -100,7 +106,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			int parent = CurrentBlock != null ? CurrentBlock.Index : -1;
 
 			CodeBlockEntry block = new CodeBlockEntry (
-				_blocks.Count + 1, parent, type, start_offset);
+				scopeIndex, parent, type, start_offset);
 
 			_block_stack.Push (block);
 			_blocks.Add (block);
@@ -180,9 +186,59 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public void DefineMethod (MonoSymbolFile file, int token)
 		{
-			MethodEntry entry = new MethodEntry (
+			var blocks = Blocks;
+			if (blocks.Length > 0) {
+				//
+				// When index is provided by user it can be inserted in
+				// any order but mdb format does not store its value. It
+				// uses stored order as the index instead.
+				//
+				var sorted = new List<CodeBlockEntry> (blocks.Length);
+				int max_index = 0;
+				for (int i = 0; i < blocks.Length; ++i) {
+					max_index = System.Math.Max (max_index, blocks [i].Index);
+				}
+
+				for (int i = 0; i < max_index; ++i) {
+					var scope_index = i + 1;
+
+					//
+					// Common fast path
+					//
+					if (i < blocks.Length && blocks [i].Index == scope_index) {
+						sorted.Add (blocks [i]);
+						continue;
+					}
+
+					bool found = false;
+					for (int ii = 0; ii < blocks.Length; ++ii) {
+						if (blocks [ii].Index == scope_index) {
+							sorted.Add (blocks [ii]);
+							found = true;
+							break;
+						}
+					}
+
+					if (found)
+						continue;
+
+					//
+					// Ideally this should never happen but with current design we can
+					// generate scope index for unreachable code before reachable code
+					//
+					sorted.Add (new CodeBlockEntry (scope_index, -1, CodeBlockEntry.Type.CompilerGenerated, 0));
+				}
+
+				blocks = sorted.ToArray ();
+				//for (int i = 0; i < blocks.Length; ++i) {
+				//	if (blocks [i].Index - 1 != i)
+				//			throw new ArgumentException ("CodeBlocks cannot be converted to mdb format");
+				//}
+			}
+
+			var entry = new MethodEntry (
 				file, _comp_unit.Entry, token, ScopeVariables,
-				Locals, method_lines.ToArray (), Blocks, null, MethodEntry.Flags.ColumnsInfoIncluded, ns_id);
+				Locals, method_lines.ToArray (), blocks, null, MethodEntry.Flags.ColumnsInfoIncluded, ns_id);
 
 			file.AddMethod (entry);
 		}

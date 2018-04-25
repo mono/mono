@@ -39,6 +39,8 @@ using System.Xml.Serialization;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Web.Services.Protocols
 {
 	[TestFixture]
@@ -49,9 +51,7 @@ namespace MonoTests.System.Web.Services.Protocols
 		public void OutParametersTest ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 5000);
-			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (OutParametersResponse))) {
-				sr.Start ();
-
+			using (SocketResponder sr = new SocketResponder (localEP, s => OutParametersResponse (s))) {
 				FooService service = new FooService ();
 				service.Url = "http://" + IPAddress.Loopback.ToString () + ":5000/";
 
@@ -62,8 +62,6 @@ namespace MonoTests.System.Web.Services.Protocols
 				Assert.AreEqual (0, a, "#A2");
 				Assert.IsFalse (b, "#A3");
 				service.Dispose ();
-
-				sr.Stop ();
 			}
 		}
 
@@ -72,9 +70,7 @@ namespace MonoTests.System.Web.Services.Protocols
 		public void FaultTest ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 5000);
-			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (FaultResponse_Qualified))) {
-				sr.Start ();
-
+			using (SocketResponder sr = new SocketResponder (localEP, s => FaultResponse_Qualified (s))) {
 				FooService service = new FooService ();
 				service.Url = "http://" + IPAddress.Loopback.ToString () + ":5000/";
 				try {
@@ -97,13 +93,9 @@ namespace MonoTests.System.Web.Services.Protocols
 					Assert.AreEqual ("Failure processing request.", ex.Message, "#A9");
 				}
 				service.Dispose ();
-
-				sr.Stop ();
 			}
 
-			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (FaultResponse_Unqualified))) {
-				sr.Start ();
-
+			using (SocketResponder sr = new SocketResponder (localEP, s => FaultResponse_Unqualified (s))) {
 				FooService service = new FooService ();
 				service.Url = "http://" + IPAddress.Loopback.ToString () + ":5000/";
 				try {
@@ -126,8 +118,6 @@ namespace MonoTests.System.Web.Services.Protocols
 					Assert.AreEqual ("Failure processing request.", ex.Message, "#B9");
 				}
 				service.Dispose ();
-
-				sr.Stop ();
 			}
 		}
 
@@ -252,6 +242,45 @@ namespace MonoTests.System.Web.Services.Protocols
 					this.attrField = value;
 				}
 			}
+		}
+
+		public class RequestHeader : SoapHeader
+		{
+		}
+
+		public class ResponseHeader : SoapHeader
+		{
+		}
+
+		[WebServiceBindingAttribute(Name = "ServiceWithHeaders", Namespace = "https://example.com")]
+		public class ServiceWithHeaders : SoapHttpClientProtocol
+		{
+			public RequestHeader RequestHeader { get; set; }
+			public ResponseHeader ResponseHeader { get; set; }
+
+			[SoapHeaderAttribute("ResponseHeader", Direction = SoapHeaderDirection.Out)]
+			[SoapHeaderAttribute("RequestHeader")]
+			[SoapDocumentMethodAttribute("", RequestNamespace = "https://example.com", ResponseNamespace = "https://example.com", Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
+			public int method1()
+			{
+				return 0;
+			}
+
+			[SoapHeaderAttribute("ResponseHeader", Direction = SoapHeaderDirection.Out)]
+			[SoapHeaderAttribute("RequestHeader")]
+			[SoapDocumentMethodAttribute("", RequestNamespace = "https://example.com", ResponseNamespace = "https://example.com", Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
+			public int method2()
+			{
+				return 0;
+			}
+		}
+
+		[Test] // Covers #41564
+		public void ServiceWithHeader () {
+			var service = new ServiceWithHeaders ();
+			Assert.IsNotNull (service);
+			// Should not throw an exception
+			// XAMMAC specific bug
 		}
 	}
 }

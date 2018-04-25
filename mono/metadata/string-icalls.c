@@ -1,5 +1,6 @@
-/*
- * string-icalls.c: String internal calls for the corlib
+/**
+ * \file
+ * String internal calls for the corlib
  *
  * Author:
  *   Patrik Torstensson (patrik.torstensson@labs2.com)
@@ -7,6 +8,7 @@
  *
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include <config.h>
 #include <stdlib.h>
@@ -21,8 +23,6 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/debug-helpers.h>
-#include <mono/metadata/profiler.h>
-#include <mono/metadata/profiler-private.h>
 #include <mono/metadata/gc-internals.h>
 
 /* This function is redirected to String.CreateString ()
@@ -36,17 +36,22 @@ ves_icall_System_String_ctor_RedirectToCreateString (void)
 MonoString *
 ves_icall_System_String_InternalAllocateStr (gint32 length)
 {
-	return mono_string_new_size(mono_domain_get (), length);
+	ERROR_DECL (error);
+	MonoString *str = mono_string_new_size_checked (mono_domain_get (), length, error);
+	mono_error_set_pending_exception (error);
+
+	return str;
 }
 
 MonoString  *
 ves_icall_System_String_InternalIntern (MonoString *str)
 {
+	ERROR_DECL (error);
 	MonoString *res;
 
-	res = mono_string_intern(str);
+	res = mono_string_intern_checked (str, error);
 	if (!res) {
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
+		mono_error_set_pending_exception (error);
 		return NULL;
 	}
 	return res;
@@ -55,7 +60,7 @@ ves_icall_System_String_InternalIntern (MonoString *str)
 MonoString * 
 ves_icall_System_String_InternalIsInterned (MonoString *str)
 {
-	return mono_string_is_interned(str);
+	return mono_string_is_interned (str);
 }
 
 int

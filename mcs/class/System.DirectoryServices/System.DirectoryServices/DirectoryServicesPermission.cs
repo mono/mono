@@ -45,11 +45,11 @@ namespace System.DirectoryServices {
 			SetUp ();
 		}
 
-		public DirectoryServicesPermission (DirectoryServicesPermissionEntry[] entries)
+		public DirectoryServicesPermission (DirectoryServicesPermissionEntry[] permissionAccessEntries)
 		{
 			SetUp ();
 			innerCollection = new DirectoryServicesPermissionEntryCollection (this);
-			innerCollection.AddRange (entries);
+			innerCollection.AddRange (permissionAccessEntries);
 		}
 
  		public DirectoryServicesPermission (PermissionState state)
@@ -58,11 +58,11 @@ namespace System.DirectoryServices {
 			SetUp ();
 		}
 
-		public DirectoryServicesPermission (DirectoryServicesPermissionAccess access, string path)
+		public DirectoryServicesPermission (DirectoryServicesPermissionAccess permissionAccess, string path)
 		{
 			SetUp ();
 			innerCollection = new DirectoryServicesPermissionEntryCollection (this);
-			innerCollection.Add (new DirectoryServicesPermissionEntry (access, path));
+			innerCollection.Add (new DirectoryServicesPermissionEntry (permissionAccess, path));
 		}
 
 		public DirectoryServicesPermissionEntryCollection PermissionEntries {

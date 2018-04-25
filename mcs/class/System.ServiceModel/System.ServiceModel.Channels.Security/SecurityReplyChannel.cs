@@ -77,7 +77,7 @@ namespace System.ServiceModel.Channels.Security
 
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 
 			if (!inner.TryReceiveRequest (timeout, out context))
 				return false;
@@ -95,14 +95,14 @@ namespace System.ServiceModel.Channels.Security
 				var support = Source.SecuritySupport;
 				var commAuth = support.TokenAuthenticator as CommunicationSecurityTokenAuthenticator;
 				if (commAuth != null)
-					res = commAuth.Communication.ProcessNegotiation (req, timeout - (DateTime.Now - start));
+					res = commAuth.Communication.ProcessNegotiation (req, timeout - (DateTime.UtcNow - start));
 				else
 					throw new MessageSecurityException ("This reply channel does not expect incoming WS-Trust requests");
 
-				context.Reply (res, timeout - (DateTime.Now - start));
-				context.Close (timeout - (DateTime.Now - start));
+				context.Reply (res, timeout - (DateTime.UtcNow - start));
+				context.Close (timeout - (DateTime.UtcNow - start));
 				// wait for another incoming message
-				return TryReceiveRequest (timeout - (DateTime.Now - start), out context);
+				return TryReceiveRequest (timeout - (DateTime.UtcNow - start), out context);
 
 				break;
 			}

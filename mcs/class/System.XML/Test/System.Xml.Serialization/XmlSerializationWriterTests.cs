@@ -1575,30 +1575,16 @@ namespace MonoTests.System.XmlSerialization
 			ser.Serialize (sw, d);
 			string str = sw.ToString ();
 
-			str = RemoveTZ (str, "MyTime");
-			str = RemoveTZ (str, "MyTimeNullable");
-
 			var expected =
 "<?xml version=\"1.0\" encoding=\"utf-16\"?>" + Environment.NewLine +
 "<root xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + Environment.NewLine +
-"  <MyTime>10:00:00.0000000$TZ$</MyTime>" + Environment.NewLine +
-"  <MyTimeNullable>10:00:00.0000000$TZ$</MyTimeNullable>" + Environment.NewLine +
+"  <MyTime>10:00:00.0000000Z</MyTime>" + Environment.NewLine +
+"  <MyTimeNullable>10:00:00.0000000Z</MyTimeNullable>" + Environment.NewLine +
 "  <MyDate>2012-01-03</MyDate>" + Environment.NewLine +
 "  <MyDateNullable>2012-01-03</MyDateNullable>" + Environment.NewLine +
 "</root>";
 
 			Assert.AreEqual (expected, str);
-		}
-		
-		static string RemoveTZ (string str, string tag)
-		{
-			var st = str.IndexOf ("<" + tag + ">");
-			var et = str.IndexOf ("</" + tag + ">");
-			if (st < 0 || et < 0)
-				return str;
-
-			var	start = str.IndexOfAny (new [] { '+', '-' }, st, et - st);
-			return str.Substring (0, start) + "$TZ$" + str.Substring (et, str.Length - et);	
 		}
 	}
 }

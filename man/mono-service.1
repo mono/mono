@@ -8,7 +8,7 @@
 .if t .sp .5v
 .if n .sp
 ..
-.TH Mono "Mono 1.0"
+.TH Mono "mono-service"
 .SH NAME
 mono-service, mono-service2 \- Mono ServiceProcess host
 .SH SYNOPSIS
@@ -25,11 +25,6 @@ Services can be paused by sending the SIGUSR1 signal to the process,
 and execution can be resumed by sending the SIGUSR2 signal.   The
 service can be cleanly shutdown by sending the SIGTERM signal to the
 process. 
-.PP
-Mono programs started with mono-service run with the 
-.B MONO_DISABLE_SHM
-variable set.    This means that certain Mono features that depend on
-it are not available to services.
 .PP
 The following options can be used to control the service:
 .TP

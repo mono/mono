@@ -13,8 +13,10 @@ public class Tests
 	public static int test_0_time_drift () {
 		// Test the Thread.Sleep () is able to deal with time drifting due to interrupts
 		Thread t = new Thread (delegate () {
-				while (!finished)
+				while (!finished) {
 					GC.Collect ();
+					Thread.Yield ();
+				}
 			});
 		t.Start ();
 
@@ -22,7 +24,7 @@ public class Tests
 		Thread.Sleep (1000);
 		finished = true;
 		sw.Stop ();
-		if (sw.ElapsedMilliseconds > 1500) {
+		if (sw.ElapsedMilliseconds > 2000) {
 			Console.WriteLine (sw.ElapsedMilliseconds);
 			return 1;
 		} else {

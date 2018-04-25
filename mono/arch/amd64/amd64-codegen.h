@@ -11,10 +11,26 @@
  * 
  * Copyright (C)  2000 Intel Corporation.  All rights reserved.
  * Copyright (C)  2001, 2002 Ximian, Inc.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #ifndef AMD64_H
 #define AMD64_H
+
+// Conventions in this file:
+
+// body: implementation. other macros call this one
+// disp: displacement
+// inst: instruction
+// is_half: short if true, byte if false (then why is it named is_half...?)
+// imm: immediate
+// mem: read from (immediate-supplied address?)
+// membase: read from address in a base register plus a displacement
+// memindex: SIP addressing: (address in base register) + (displacement in index register)<<(shift)
+// reg: register, encode modR/M bits 00
+// regp: register, encode modR/M bits 11
+// size: Expected 1,2,4 or 8
+// widen: extends from 1 or 2 bytes
 
 #include <glib.h>
 
@@ -67,31 +83,8 @@ typedef enum
   AMD64_REX_W = 8  /* Opeartion is 64-bits instead of 32 (default) or 16 (with 0x66 prefix) */
 } AMD64_REX_Bits;
 
-#if defined(__default_codegen__)
-
 #define amd64_codegen_pre(inst)
 #define amd64_codegen_post(inst)
-
-#elif defined(__native_client_codegen__)
-
-#define amd64_codegen_pre(inst) guint8* _codegen_start = (inst); amd64_nacl_instruction_pre();
-#define amd64_codegen_post(inst) (amd64_nacl_instruction_post(&_codegen_start, &(inst)), _codegen_start);
-
-/* Because of rex prefixes, etc, call sequences are not constant size.  */
-/* These pre- and post-sequence hooks remedy this by aligning the call  */
-/* sequence after we emit it, since we will know the exact size then.   */
-#define amd64_call_sequence_pre(inst) guint8* _code_start = (inst);
-#define amd64_call_sequence_post(inst) \
-  (mono_nacl_align_call(&_code_start, &(inst)), _code_start);
-
-/* Native client can load/store using one of the following registers     */
-/* as a base: rip, r15, rbp, rsp.  Any other base register needs to have */
-/* its upper 32 bits cleared and reference memory using r15 as the base. */
-#define amd64_is_valid_nacl_base(reg) \
-  ((reg) == AMD64_RIP || (reg) == AMD64_R15 || \
-   (reg) == AMD64_RBP || (reg) == AMD64_RSP)
-
-#endif /*__native_client_codegen__*/
 
 #ifdef TARGET_WIN32
 #define AMD64_ARG_REG1 AMD64_RCX
@@ -112,17 +105,11 @@ typedef enum
 #define AMD64_ARGUMENT_REGS ((1<<AMD64_RDX) | (1<<AMD64_RCX) | (1<<AMD64_R8) | (1<<AMD64_R9))
 #define AMD64_IS_ARGUMENT_REG(reg) (AMD64_ARGUMENT_REGS & (1 << (reg)))
 
+/* xmm0-xmm3 for standard calling convention, additionally xmm4-xmm5 for __vectorcall (not currently used) */
+#define AMD64_ARGUMENT_XREGS ((1<<AMD64_XMM0) | (1<<AMD64_XMM1) | (1<<AMD64_XMM2) | (1<<AMD64_XMM3) | (1<<AMD64_XMM4) | (1<<AMD64_XMM5))
+#define AMD64_IS_ARGUMENT_XREG(reg) (AMD64_ARGUMENT_XREGS & (1 << (reg)))
+
 #define AMD64_CALLEE_SAVED_REGS ((1<<AMD64_RDI) | (1<<AMD64_RSI) | (1<<AMD64_RBX) | (1<<AMD64_R12) | (1<<AMD64_R13) | (1<<AMD64_R14) | (1<<AMD64_R15) | (1<<AMD64_RBP))
-#define AMD64_IS_CALLEE_SAVED_REG(reg) (AMD64_CALLEE_SAVED_REGS & (1 << (reg)))
-#elif defined(__native_client_codegen__)
-/* AMD64 Native Client code may not write R15 */
-#define AMD64_CALLEE_REGS ((1<<AMD64_RAX) | (1<<AMD64_RCX) | (1<<AMD64_RDX) | (1<<AMD64_RSI) | (1<<AMD64_RDI) | (1<<AMD64_R8) | (1<<AMD64_R9) | (1<<AMD64_R10))
-#define AMD64_IS_CALLEE_REG(reg)  (AMD64_CALLEE_REGS & (1 << (reg)))
-
-#define AMD64_ARGUMENT_REGS ((1<<AMD64_RDI) | (1<<AMD64_RSI) | (1<<AMD64_RDX) | (1<<AMD64_RCX) | (1<<AMD64_R8) | (1<<AMD64_R9))
-#define AMD64_IS_ARGUMENT_REG(reg) (AMD64_ARGUMENT_REGS & (1 << (reg)))
-
-#define AMD64_CALLEE_SAVED_REGS ((1<<AMD64_RBX) | (1<<AMD64_R12) | (1<<AMD64_R13) | (1<<AMD64_R14) | (1<<AMD64_RBP))
 #define AMD64_IS_CALLEE_SAVED_REG(reg) (AMD64_CALLEE_SAVED_REGS & (1 << (reg)))
 #else
 #define AMD64_CALLEE_REGS ((1<<AMD64_RAX) | (1<<AMD64_RCX) | (1<<AMD64_RDX) | (1<<AMD64_RSI) | (1<<AMD64_RDI) | (1<<AMD64_R8) | (1<<AMD64_R9) | (1<<AMD64_R10))
@@ -131,12 +118,14 @@ typedef enum
 #define AMD64_ARGUMENT_REGS ((1<<AMD64_RDI) | (1<<AMD64_RSI) | (1<<AMD64_RDX) | (1<<AMD64_RCX) | (1<<AMD64_R8) | (1<<AMD64_R9))
 #define AMD64_IS_ARGUMENT_REG(reg) (AMD64_ARGUMENT_REGS & (1 << (reg)))
 
+#define AMD64_ARGUMENT_XREGS ((1<<AMD64_XMM0) | (1<<AMD64_XMM1) | (1<<AMD64_XMM2) | (1<<AMD64_XMM3) | (1<<AMD64_XMM4) | (1<<AMD64_XMM5) | (1<<AMD64_XMM6) | (1<<AMD64_XMM7))
+#define AMD64_IS_ARGUMENT_XREG(reg) (AMD64_ARGUMENT_XREGS & (1 << (reg)))
+
 #define AMD64_CALLEE_SAVED_REGS ((1<<AMD64_RBX) | (1<<AMD64_R12) | (1<<AMD64_R13) | (1<<AMD64_R14) | (1<<AMD64_R15) | (1<<AMD64_RBP))
 #define AMD64_IS_CALLEE_SAVED_REG(reg) (AMD64_CALLEE_SAVED_REGS & (1 << (reg)))
 #endif
 
 #define AMD64_REX(bits) ((unsigned char)(0x40 | (bits)))
-#if defined(__default_codegen__)
 #define amd64_emit_rex(inst, width, reg_modrm, reg_index, reg_rm_base_opcode) do \
 	{ \
 		unsigned char _amd64_rex_bits = \
@@ -146,18 +135,6 @@ typedef enum
 			(((reg_rm_base_opcode) > 7) ? AMD64_REX_B : 0); \
 		if ((_amd64_rex_bits != 0) || (((width) == 1))) *(inst)++ = AMD64_REX(_amd64_rex_bits); \
 	} while (0)
-#elif defined(__native_client_codegen__)
-#define amd64_emit_rex(inst, width, reg_modrm, reg_index, reg_rm_base_opcode) do \
-	{ \
-		unsigned char _amd64_rex_bits = \
-			(((width) > 4) ? AMD64_REX_W : 0) | \
-			(((reg_modrm) > 7) ? AMD64_REX_R : 0) | \
-			(((reg_index) > 7) ? AMD64_REX_X : 0) | \
-			(((reg_rm_base_opcode) > 7) ? AMD64_REX_B : 0); \
-		amd64_nacl_tag_rex((inst)); \
-		if ((_amd64_rex_bits != 0) || (((width) == 1))) *(inst)++ = AMD64_REX(_amd64_rex_bits); \
-	} while (0)
-#endif
 
 typedef union {
 	guint64 val;
@@ -233,7 +210,20 @@ typedef union {
 		x86_reg_emit ((inst), (dreg), (reg));	\
 	} while (0)
 
-#if defined(__default_codegen__)
+#define amd64_test_reg_imm_size_body(inst,reg,imm,size) \
+	do { \
+		amd64_codegen_pre(inst); \
+		amd64_emit_rex ((inst),(size),0,0,(reg)); \
+		if ((reg) == AMD64_RAX) { \
+			*(inst)++ = (unsigned char)0xa9; \
+		} \
+		else { \
+			*(inst)++ = (unsigned char)0xf7;	\
+			x86_reg_emit((inst), 0, (reg));	\
+		} \
+		x86_imm_emit32((inst), (imm));	\
+		amd64_codegen_post(inst); \
+	} while (0)
 
 #define amd64_alu_reg_imm_size(inst,opc,reg,imm,size) \
 	amd64_alu_reg_imm_size_body((inst), (opc), (reg), (imm), (size))
@@ -241,46 +231,14 @@ typedef union {
 #define amd64_alu_reg_reg_size(inst,opc,dreg,reg,size) \
 		amd64_alu_reg_reg_size_body((inst), (opc), (dreg), (reg), (size))
 
-#elif defined(__native_client_codegen__)
-/* NaCl modules may not directly update RSP or RBP other than direct copies */
-/* between them. Instead the lower 4 bytes are updated and then added to R15 */
-#define amd64_is_nacl_stack_reg(reg) (((reg) == AMD64_RSP) || ((reg) == AMD64_RBP))
-
-#define amd64_alu_reg_imm_size(inst,opc,reg,imm,size) 	\
-	do{ \
-		amd64_codegen_pre(inst);		\
-		if (amd64_is_nacl_stack_reg(reg)) { \
-			if (((opc) != X86_ADD) && ((opc) != X86_SUB)) \
-				g_assert_not_reached(); \
-			amd64_alu_reg_imm_size_body((inst), (opc), (reg), (imm), 4); \
-			/* Use LEA instead of ADD to preserve flags */ \
-			amd64_lea_memindex_size((inst), (reg), (reg), 0, AMD64_R15, 0, 8); \
-		} else { \
-			amd64_alu_reg_imm_size_body((inst), (opc), (reg), (imm), (size)); \
-		} \
-		amd64_codegen_post(inst);		\
-	} while(0)
-
-#define amd64_alu_reg_reg_size(inst,opc,dreg,reg,size) \
-	do { \
-		amd64_codegen_pre(inst);		\
-		if (amd64_is_nacl_stack_reg((dreg)) && ((reg) != AMD64_R15)) { \
-			if (((opc) != X86_ADD && (opc) != X86_SUB)) \
-				g_assert_not_reached(); \
-			amd64_alu_reg_reg_size_body((inst), (opc), (dreg), (reg), 4); \
-			/* Use LEA instead of ADD to preserve flags */ \
-			amd64_lea_memindex_size((inst), (dreg), (dreg), 0, AMD64_R15, 0, 8); \
-		} else { \
-			amd64_alu_reg_reg_size_body((inst), (opc), (dreg), (reg), (size)); \
-		} \
-		amd64_codegen_post(inst);		\
-	} while (0)
-
-#endif /*__native_client_codegen__*/
+#define amd64_test_reg_imm_size(inst, reg, imm, size) \
+		amd64_test_reg_imm_size_body(inst, reg, imm, size)
 
 #define amd64_alu_reg_imm(inst,opc,reg,imm) amd64_alu_reg_imm_size((inst),(opc),(reg),(imm),8)
 
 #define amd64_alu_reg_reg(inst,opc,dreg,reg) amd64_alu_reg_reg_size ((inst),(opc),(dreg),(reg),8)
+
+#define amd64_test_reg_imm(inst,reg,imm) amd64_test_reg_imm_size(inst,reg,imm,8)
 
 #define amd64_alu_reg_membase_size(inst,opc,reg,basereg,disp,size) \
 	do { \
@@ -370,18 +328,10 @@ typedef union {
 		amd64_codegen_post(inst); \
 	} while (0)
 
-#if defined(__default_codegen__)
 #define amd64_mov_reg_mem(inst,reg,mem,size)	\
 	do {    \
 		amd64_mov_reg_mem_body((inst),(reg),(mem),(size)); \
 	} while (0)
-#elif defined(__native_client_codegen__)
-/* We have to re-base memory reads because memory isn't zero based. */
-#define amd64_mov_reg_mem(inst,reg,mem,size)	\
-	do {    \
-		amd64_mov_reg_membase((inst),(reg),AMD64_R15,(mem),(size)); \
-	} while (0)
-#endif /* __native_client_codegen__ */
 
 #define amd64_mov_reg_membase_body(inst,reg,basereg,disp,size)	\
 	do {	\
@@ -402,46 +352,12 @@ typedef union {
 		x86_mov_reg_memindex((inst),((reg)&0x7),((basereg)&0x7),(disp),((indexreg)&0x7),(shift),(size) == 8 ? 4 : (size)); \
 	} while (0)
 
-#if defined(__default_codegen__)
-
 #define amd64_mov_reg_memindex_size(inst,reg,basereg,disp,indexreg,shift,size) \
 	amd64_mov_reg_memindex_size_body((inst),(reg),(basereg),(disp),(indexreg),(shift),(size))
 #define amd64_mov_reg_membase(inst,reg,basereg,disp,size)	\
 	do {	\
 		amd64_mov_reg_membase_body((inst), (reg), (basereg), (disp), (size)); \
 	} while (0)
-
-#elif defined(__native_client_codegen__)
-
-#define amd64_mov_reg_memindex_size(inst,reg,basereg,disp,indexreg,shift,size) \
-	do { \
-		amd64_codegen_pre(inst); \
-		if (amd64_is_nacl_stack_reg((reg))) { \
-			/* Clear upper 32 bits with mov of size 4 */ \
-			amd64_mov_reg_memindex_size_body((inst), (reg), (basereg), (disp), (indexreg), (shift), 4); \
-			/* Add %r15 using LEA to preserve flags */ \
-			amd64_lea_memindex_size((inst), (reg), (reg), 0, AMD64_R15, 0, 8); \
-		} else { \
-			amd64_mov_reg_memindex_size_body((inst), (reg), (basereg), (disp), (indexreg), (shift), (size)); \
-		} \
-		amd64_codegen_post(inst); \
-	} while(0)
-
-#define amd64_mov_reg_membase(inst,reg,basereg,disp,size)	\
-	do {	\
-		amd64_codegen_pre(inst); \
-		if (amd64_is_nacl_stack_reg((reg))) { \
-			/* Clear upper 32 bits with mov of size 4 */ \
-			amd64_mov_reg_membase_body((inst), (reg), (basereg), (disp), 4); \
-			/* Add %r15 */ \
-			amd64_lea_memindex_size((inst), (reg), (reg), 0, AMD64_R15, 0, 8); \
-		} else { \
-			amd64_mov_reg_membase_body((inst), (reg), (basereg), (disp), (size)); \
-		} \
-		amd64_codegen_post(inst); \
-	} while (0)
-
-#endif /*__native_client_codegen__*/
 
 #define amd64_movzx_reg_membase(inst,reg,basereg,disp,size)	\
 	do {	\
@@ -541,28 +457,8 @@ typedef union {
 		amd64_membase_emit ((inst), (reg), (basereg), (disp));	\
 	} while (0)
 
-#if defined(__default_codegen__)
 #define amd64_lea_membase(inst,reg,basereg,disp) \
 	amd64_lea_membase_body((inst), (reg), (basereg), (disp))
-#elif defined(__native_client_codegen__)
-/* NaCl modules may not write directly into RSP/RBP. Instead, use a */
-/*  32-bit LEA and add R15 to the effective address */
-#define amd64_lea_membase(inst,reg,basereg,disp) \
-	do { \
-		amd64_codegen_pre(inst); \
-		if (amd64_is_nacl_stack_reg(reg)) { \
-			/* 32-bit LEA */ \
-			amd64_emit_rex((inst), 4, (reg), 0, (basereg)); \
-			*(inst)++ = (unsigned char)0x8d; \
-			amd64_membase_emit((inst), (reg), (basereg), (disp)); \
-			/* Use a 64-bit LEA instead of an ADD to preserve flags */ \
-			amd64_lea_memindex_size((inst), (reg), (reg), 0, AMD64_R15, 0, 8); \
-		} else { \
-			amd64_lea_membase_body((inst), (reg), (basereg), (disp)); \
-		} \
-		amd64_codegen_post(inst); \
-	} while (0)
-#endif /*__native_client_codegen__*/
 
 /* Instruction are implicitly 64-bits so don't generate REX for just the size. */
 #define amd64_push_reg(inst,reg)	\
@@ -591,8 +487,6 @@ typedef union {
 		amd64_codegen_post(inst);  \
 	} while (0)
 
-#if defined(__default_codegen__)
-
 #define amd64_call_reg(inst,reg)	\
 	do {	\
 		amd64_emit_rex(inst, 0, 0, 0, (reg)); \
@@ -605,81 +499,6 @@ typedef union {
 #define amd64_leave(inst) do { *(inst)++ = (unsigned char)0xc9; } while (0)
 
 #define amd64_pop_reg(inst,reg) amd64_pop_reg_body((inst), (reg))
-
-#elif defined(__native_client_codegen__)
-
-/* Size is ignored for Native Client jumps, we restrict jumping to 32-bits */
-#define amd64_jump_reg_size(inst,reg,size)                                \
-  do {                                                                    \
-    amd64_codegen_pre((inst));                                            \
-    amd64_alu_reg_imm_size((inst), X86_AND, (reg), (nacl_align_byte), 4); \
-    amd64_alu_reg_reg_size((inst), X86_ADD, (reg), AMD64_R15, 8);         \
-    amd64_emit_rex ((inst),0,0,0,(reg));                                  \
-    x86_jump_reg((inst),((reg)&0x7));                                     \
-    amd64_codegen_post((inst));                                           \
-  } while (0)
-
-/* Size is ignored for Native Client jumps, we restrict jumping to 32-bits */
-#define amd64_jump_mem_size(inst,mem,size)                                \
-  do {                                                                    \
-    amd64_codegen_pre((inst));                                            \
-    amd64_mov_reg_mem((inst), (mem), AMD64_R11, 4);                       \
-    amd64_jump_reg_size((inst), AMD64_R11, 4);                            \
-    amd64_codegen_post((inst));                                           \
-  } while (0)
-
-#define amd64_call_reg_internal(inst,reg)                                 \
-  do {                                                                    \
-    amd64_codegen_pre((inst));                                            \
-    amd64_alu_reg_imm_size((inst), X86_AND, (reg), (nacl_align_byte), 4); \
-    amd64_alu_reg_reg_size((inst), X86_ADD, (reg), AMD64_R15, 8);         \
-    amd64_emit_rex((inst), 0, 0, 0, (reg));                               \
-    x86_call_reg((inst), ((reg) & 0x7));                                  \
-    amd64_codegen_post((inst));                                           \
-  } while (0)
-
-#define amd64_call_reg(inst,reg)                                          \
-  do {                                                                    \
-    amd64_codegen_pre((inst));                                            \
-    amd64_call_sequence_pre(inst);                                        \
-    amd64_call_reg_internal((inst), (reg));                               \
-    amd64_call_sequence_post(inst);                                       \
-    amd64_codegen_post((inst));                                           \
-  } while (0)
-
-
-#define amd64_ret(inst)                                                   \
-  do {                                                                    \
-    amd64_codegen_pre(inst);						  \
-    amd64_pop_reg_body((inst), AMD64_R11);                                \
-    amd64_jump_reg_size((inst), AMD64_R11, 8);                            \
-    amd64_codegen_post(inst);						  \
-  } while (0)
-
-#define amd64_leave(inst)                                                 \
-  do {                                                                    \
-    amd64_codegen_pre(inst);						  \
-    amd64_mov_reg_reg((inst), AMD64_RSP, AMD64_RBP, 8);                   \
-    amd64_pop_reg_body((inst), AMD64_R11);                                \
-    amd64_mov_reg_reg_size((inst), AMD64_RBP, AMD64_R11, 4);              \
-    amd64_alu_reg_reg_size((inst), X86_ADD, AMD64_RBP, AMD64_R15, 8);     \
-    amd64_codegen_post(inst);						  \
-  } while (0)
-
-#define amd64_pop_reg(inst,reg) \
-	do { \
-		amd64_codegen_pre(inst); \
-		if (amd64_is_nacl_stack_reg((reg))) { \
-			amd64_pop_reg_body((inst), AMD64_R11); \
-			amd64_mov_reg_reg_size((inst), (reg), AMD64_R11, 4); \
-			amd64_alu_reg_reg_size((inst), X86_ADD, (reg), AMD64_R15, 8); \
-		} else { \
-			amd64_pop_reg_body((inst), (reg)); \
-		} \
-		amd64_codegen_post(inst); \
-	} while (0)
-
-#endif /*__native_client_codegen__*/
 
 #define amd64_movsd_reg_regp(inst,reg,regp)	\
 	do {	\
@@ -725,6 +544,17 @@ typedef union {
 		amd64_codegen_post(inst); \
 	} while (0)
 
+#define amd64_movdqu_reg_membase(inst,reg,basereg,disp)	\
+	do {	\
+		amd64_codegen_pre(inst); \
+		x86_prefix((inst), 0xf3); \
+		amd64_emit_rex(inst, 0, (reg), 0, (basereg)); \
+		*(inst)++ = (unsigned char)0x0f;	\
+		*(inst)++ = (unsigned char)0x6f;	\
+		x86_membase_emit ((inst), (reg) & 0x7, (basereg) & 0x7, (disp));	\
+		amd64_codegen_post(inst); \
+	} while (0)
+
 #define amd64_movsd_reg_membase(inst,reg,basereg,disp)	\
 	do {	\
 		amd64_codegen_pre(inst); \
@@ -743,6 +573,17 @@ typedef union {
 		amd64_emit_rex(inst, 0, (reg), 0, (basereg)); \
 		*(inst)++ = (unsigned char)0x0f;	\
 		*(inst)++ = (unsigned char)0x10;	\
+		x86_membase_emit ((inst), (reg) & 0x7, (basereg) & 0x7, (disp));	\
+		amd64_codegen_post(inst); \
+	} while (0)
+
+#define amd64_movdqu_membase_reg(inst,basereg,disp,reg)	\
+	do {	\
+		amd64_codegen_pre(inst); \
+		x86_prefix((inst), 0xf3); \
+		amd64_emit_rex(inst, 0, (reg), 0, (basereg)); \
+		*(inst)++ = (unsigned char)0x0f;	\
+		*(inst)++ = (unsigned char)0x7f;	\
 		x86_membase_emit ((inst), (reg) & 0x7, (basereg) & 0x7, (disp));	\
 		amd64_codegen_post(inst); \
 	} while (0)
@@ -796,8 +637,6 @@ typedef union {
 	amd64_codegen_post(inst); \
 } while (0)
 
-#if defined (__default_codegen__)
-
 /* From the AMD64 Software Optimization Manual */
 #define amd64_padding_size(inst,size) \
     do { \
@@ -821,98 +660,6 @@ typedef union {
 		(inst) += 8; \
 	} \
 } while (0)
-
-#elif defined(__native_client_codegen__)
-
-/* The 3-7 byte NOP sequences in amd64_padding_size below are all illegal in */
-/* 64-bit Native Client because they load into rSP/rBP or use duplicate */
-/* prefixes. Instead we use the NOPs recommended in Section 3.5.1.8 of the */
-/* Intel64 and IA-32 Architectures Optimization Reference Manual and */
-/* Section 4.13 of AMD Software Optimization Guide for Family 10h Processors. */
-
-#define amd64_padding_size(inst,size) \
-	do { \
-		unsigned char *code_start = (inst); \
-		switch ((size)) { \
-			/* xchg %eax,%eax, recognized by hardware as a NOP */ \
-			case 1: *(inst)++ = 0x90; break; \
-			/* xchg %ax,%ax */ \
-			case 2: *(inst)++ = 0x66; *(inst)++ = 0x90; \
-				break; \
-			/* nop (%rax) */ \
-			case 3: *(inst)++ = 0x0f; *(inst)++ = 0x1f; \
-				*(inst)++ = 0x00; \
-				break; \
-			/* nop 0x0(%rax) */ \
-			case 4: *(inst)++ = 0x0f; *(inst)++ = 0x1f; \
-				x86_address_byte ((inst), 1, 0, AMD64_RAX);	\
-				x86_imm_emit8 ((inst), 0);	\
-				break; \
-			/* nop 0x0(%rax,%rax) */ \
-			case 5: *(inst)++ = 0x0f; *(inst)++ = 0x1f; \
-				x86_address_byte ((inst), 1, 0, 4);	\
-				x86_address_byte ((inst), 0, AMD64_RAX, AMD64_RAX);	\
-				x86_imm_emit8 ((inst), 0);	\
-				break; \
-			/* nopw 0x0(%rax,%rax) */ \
-			case 6: *(inst)++ = 0x66; *(inst)++ = 0x0f; \
-				*(inst)++ = 0x1f; \
-				x86_address_byte ((inst), 1, 0, 4);	\
-				x86_address_byte ((inst), 0, AMD64_RAX, AMD64_RAX);	\
-				x86_imm_emit8 ((inst), 0);	\
-				break; \
-			/* nop 0x0(%rax) (32-bit displacement) */ \
-			case 7: *(inst)++ = 0x0f; *(inst)++ = 0x1f; \
-				x86_address_byte ((inst), 2, 0, AMD64_RAX);	\
-				x86_imm_emit32((inst), 0); \
-				break; \
-			/* nop 0x0(%rax,%rax) (32-bit displacement) */ \
-			case 8: *(inst)++ = 0x0f; *(inst)++ = 0x1f; \
-				x86_address_byte ((inst), 2, 0, 4);	\
-				x86_address_byte ((inst), 0, AMD64_RAX, AMD64_RAX);	\
-				x86_imm_emit32 ((inst), 0);	\
-				break; \
-			default: \
-				g_assert_not_reached(); \
-		} \
-		g_assert(code_start + (size) == (unsigned char *)(inst)); \
-	} while (0)
-
-
-/* Size is ignored for Native Client calls, we restrict jumping to 32-bits */
-#define amd64_call_membase_size(inst,basereg,disp,size)                   \
-  do {                                                                    \
-    amd64_codegen_pre((inst));                                            \
-    amd64_call_sequence_pre(inst);                                        \
-    amd64_mov_reg_membase((inst), AMD64_R11, (basereg), (disp), 4);       \
-    amd64_call_reg_internal((inst), AMD64_R11);                           \
-    amd64_call_sequence_post(inst);                                       \
-    amd64_codegen_post((inst));                                           \
-  } while (0)
-
-/* Size is ignored for Native Client jumps, we restrict jumping to 32-bits */
-#define amd64_jump_membase_size(inst,basereg,disp,size)                   \
-  do {                                                                    \
-    amd64_mov_reg_membase((inst), AMD64_R11, (basereg), (disp), 4);       \
-    amd64_jump_reg_size((inst), AMD64_R11, 4);                            \
-  } while (0)
-    
-/* On Native Client we can't jump more than INT_MAX in either direction */
-#define amd64_jump_code_size(inst,target,size)                            \
-  do {                                                                    \
-    /* x86_jump_code used twice in case of */                             \
-    /* relocation by amd64_codegen_post    */                             \
-    guint8* jump_start;                                                   \
-    amd64_codegen_pre(inst);                                              \
-    assert(amd64_is_imm32 ((gint64)(target) - (gint64)(inst)));           \
-    x86_jump_code((inst),(target));                                       \
-    inst = amd64_codegen_post(inst);                                      \
-    jump_start = (inst);                                                  \
-    x86_jump_code((inst),(target));                                       \
-    mono_amd64_patch(jump_start, (target));                               \
-} while (0)
-
-#endif /*__native_client_codegen__*/
 
 /*
  * SSE
@@ -1449,7 +1196,7 @@ typedef union {
 #define amd64_alu_reg8_reg8_size(inst,opc,dreg,reg,is_dreg_h,is_reg_h,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),(dreg),0,(reg)); x86_alu_reg8_reg8((inst),(opc),((dreg)&0x7),((reg)&0x7),(is_dreg_h),(is_reg_h)); amd64_codegen_post(inst); } while (0)
 #define amd64_alu_reg_mem_size(inst,opc,reg,mem,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,(reg)); x86_alu_reg_mem((inst),(opc),((reg)&0x7),(mem)); amd64_codegen_post(inst); } while (0)
 //#define amd64_alu_reg_membase_size(inst,opc,reg,basereg,disp,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),(reg),0,(basereg)); x86_alu_reg_membase((inst),(opc),((reg)&0x7),((basereg)&0x7),(disp)); amd64_codegen_post(inst); } while (0)
-#define amd64_test_reg_imm_size(inst,reg,imm,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,(reg)); x86_test_reg_imm((inst),((reg)&0x7),(imm)); amd64_codegen_post(inst); } while (0)
+//#define amd64_test_reg_imm_size(inst,reg,imm,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,(reg)); x86_test_reg_imm((inst),((reg)&0x7),(imm)); amd64_codegen_post(inst); } while (0)
 #define amd64_test_mem_imm_size(inst,mem,imm,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,0); x86_test_mem_imm((inst),(mem),(imm)); amd64_codegen_post(inst); } while (0)
 #define amd64_test_membase_imm_size(inst,basereg,disp,imm,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,(basereg)); x86_test_membase_imm((inst),((basereg)&0x7),(disp),(imm)); amd64_codegen_post(inst); } while (0)
 #define amd64_test_reg_reg_size(inst,dreg,reg,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),(dreg),0,(reg)); x86_test_reg_reg((inst),((dreg)&0x7),((reg)&0x7)); amd64_codegen_post(inst); } while (0)
@@ -1555,31 +1302,14 @@ typedef union {
 #define amd64_loopne_size(inst,imm,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,0); x86_loopne((inst),(imm)); amd64_codegen_post(inst); } while (0)
 #define amd64_jump32_size(inst,imm,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,0); x86_jump32((inst),(imm)); amd64_codegen_post(inst); } while (0)
 #define amd64_jump8_size(inst,imm,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,0); x86_jump8((inst),(imm)); amd64_codegen_post(inst); } while (0)
-#if !defined( __native_client_codegen__ )
 /* Defined above for Native Client, so they can be used in other macros */
 #define amd64_jump_reg_size(inst,reg,size) do { amd64_emit_rex ((inst),0,0,0,(reg)); x86_jump_reg((inst),((reg)&0x7)); } while (0)
 #define amd64_jump_mem_size(inst,mem,size) do { amd64_emit_rex ((inst),(size),0,0,0); x86_jump_mem((inst),(mem)); } while (0)
-#endif
 #define amd64_jump_disp_size(inst,disp,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),0,0,0,0); x86_jump_disp((inst),(disp)); amd64_codegen_post(inst); } while (0)
 #define amd64_branch8_size(inst,cond,imm,is_signed,size) do { x86_branch8((inst),(cond),(imm),(is_signed)); } while (0)
 #define amd64_branch32_size(inst,cond,imm,is_signed,size) do { x86_branch32((inst),(cond),(imm),(is_signed)); } while (0)
 #define amd64_branch_size_body(inst,cond,target,is_signed,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,0); x86_branch((inst),(cond),(target),(is_signed)); amd64_codegen_post(inst); } while (0)
-#if defined(__default_codegen__)
 #define amd64_branch_size(inst,cond,target,is_signed,size) do { amd64_branch_size_body((inst),(cond),(target),(is_signed),(size)); } while (0)
-#elif defined(__native_client_codegen__)
-#define amd64_branch_size(inst,cond,target,is_signed,size) \
-	do { \
-		/* amd64_branch_size_body used twice in     */ \
-		/* case of relocation by amd64_codegen_post */ \
-		guint8* branch_start; \
-		amd64_codegen_pre(inst); \
-		amd64_branch_size_body((inst),(cond),(target),(is_signed),(size)); \
-		inst = amd64_codegen_post(inst); \
-		branch_start = inst; \
-		amd64_branch_size_body((inst),(cond),(target),(is_signed),(size)); \
-		mono_amd64_patch(branch_start, (target)); \
-	} while (0)
-#endif
 
 #define amd64_branch_disp_size(inst,cond,disp,is_signed,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,0); x86_branch_disp((inst),(cond),(disp),(is_signed)); amd64_codegen_post(inst); } while (0)
 #define amd64_set_reg_size(inst,cond,reg,is_signed,size) do { amd64_codegen_pre(inst); amd64_emit_rex((inst),1,0,0,(reg)); x86_set_reg((inst),(cond),((reg)&0x7),(is_signed)); amd64_codegen_post(inst); } while (0)
@@ -1588,41 +1318,8 @@ typedef union {
 //#define amd64_call_reg_size(inst,reg,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,(reg)); x86_call_reg((inst),((reg)&0x7)); amd64_codegen_post(inst); } while (0)
 #define amd64_call_mem_size(inst,mem,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,0); x86_call_mem((inst),(mem)); amd64_codegen_post(inst); } while (0)
 
-#if defined(__default_codegen__)
-
 #define amd64_call_imm_size(inst,disp,size) do { x86_call_imm((inst),(disp)); } while (0)
 #define amd64_call_code_size(inst,target,size) do { x86_call_code((inst),(target)); } while (0)
-
-#elif defined(__native_client_codegen__)
-/* Size is ignored for Native Client calls, we restrict jumping to 32-bits */
-#define amd64_call_imm_size(inst,disp,size)             \
-  do {                                                  \
-    amd64_codegen_pre((inst));                          \
-    amd64_call_sequence_pre((inst));                    \
-    x86_call_imm((inst),(disp));                        \
-    amd64_call_sequence_post((inst));                   \
-    amd64_codegen_post((inst));                         \
-  } while (0)
-
-/* x86_call_code is called twice below, first so we can get the size of the */
-/* call sequence, and again so the exact offset from "inst" is used, since  */
-/* the sequence could have moved from amd64_call_sequence_post.             */
-/* Size is ignored for Native Client jumps, we restrict jumping to 32-bits  */
-#define amd64_call_code_size(inst,target,size)          \
-  do {                                                  \
-    amd64_codegen_pre((inst));                          \
-    guint8* adjusted_start;                             \
-    guint8* call_start;                                 \
-    amd64_call_sequence_pre((inst));                    \
-    x86_call_code((inst),(target));                     \
-    adjusted_start = amd64_call_sequence_post((inst));  \
-    call_start = adjusted_start;                        \
-    x86_call_code(adjusted_start, (target));            \
-    amd64_codegen_post((inst));                         \
-    mono_amd64_patch(call_start, (target));             \
-  } while (0)
-
-#endif /*__native_client_codegen__*/
 
 //#define amd64_ret_size(inst,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,0); x86_ret(inst); amd64_codegen_post(inst); } while (0)
 #define amd64_ret_imm_size(inst,imm,size) do { amd64_codegen_pre(inst); amd64_emit_rex ((inst),(size),0,0,0); x86_ret_imm((inst),(imm)); amd64_codegen_post(inst); } while (0)
@@ -1694,7 +1391,7 @@ typedef union {
 #define amd64_alu_reg8_reg8(inst,opc,dreg,reg,is_dreg_h,is_reg_h) amd64_alu_reg8_reg8_size(inst,opc,dreg,reg,is_dreg_h,is_reg_h,8)
 #define amd64_alu_reg_mem(inst,opc,reg,mem) amd64_alu_reg_mem_size(inst,opc,reg,mem,8)
 #define amd64_alu_reg_membase(inst,opc,reg,basereg,disp) amd64_alu_reg_membase_size(inst,opc,reg,basereg,disp,8)
-#define amd64_test_reg_imm(inst,reg,imm) amd64_test_reg_imm_size(inst,reg,imm,8)
+//#define amd64_test_reg_imm(inst,reg,imm) amd64_test_reg_imm_size(inst,reg,imm,8)
 #define amd64_test_mem_imm(inst,mem,imm) amd64_test_mem_imm_size(inst,mem,imm,8)
 #define amd64_test_membase_imm(inst,basereg,disp,imm) amd64_test_membase_imm_size(inst,basereg,disp,imm,8)
 #define amd64_test_reg_reg(inst,dreg,reg) amd64_test_reg_reg_size(inst,dreg,reg,8)

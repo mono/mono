@@ -1427,6 +1427,7 @@ class Tests
 		return 0;
 	}
 
+	[Category ("!WASM")] // reported as https://github.com/kripken/emscripten/issues/5603
 	public static int test_0_simple_double_casts () {
 
 		double d = 0xffffffff;
@@ -1462,7 +1463,6 @@ class Tests
 		return 0;
 	}
 	
-	[Category ("NaClDisable")]
 	public static int test_0_div_zero () {
 		int d = 1;
 		int q = 0;
@@ -1633,7 +1633,6 @@ class Tests
 		return 0;
 	}
 
-	[Category ("NaClDisable")]
 	public static int test_0_long_div_zero () {
 		long d = 1;
 		long q = 0;
@@ -1665,7 +1664,7 @@ class Tests
 			val = d / q;
 		} catch (DivideByZeroException) {
 			/* wrong exception */
-		} catch (ArithmeticException) {
+		} catch (OverflowException) {
 			failed = false;
 		}
 		if (failed)
@@ -1678,7 +1677,7 @@ class Tests
 			val = d % q;
 		} catch (DivideByZeroException) {
 			/* wrong exception */
-		} catch (ArithmeticException) {
+		} catch (OverflowException) {
 			failed = false;
 		}
 		if (failed)
@@ -2318,6 +2317,7 @@ class Tests
 		Console.WriteLine ();
 	}
 
+	[Category ("!BITCODE")]
 	public static int test_0_rethrow_stacktrace () {
 		// Check that rethrowing an exception preserves the original stack trace
 		try {
@@ -2815,6 +2815,123 @@ class Tests
 		} catch (Exception ex) {
 		}
 		return finally_called ? 0 : 1;
+	}
+
+	static int array_len_1 = 1;
+
+	public static int test_0_bounds_check_negative_constant () {
+		try {
+			byte[] arr = new byte [array_len_1];
+			byte b = arr [-1];
+			return 1;
+		} catch {
+		}
+		try {
+			byte[] arr = new byte [array_len_1];
+			arr [-1] = 1;
+			return 2;
+		} catch {
+		}
+		return 0;
+	}
+
+	public static int test_0_string_bounds_check_negative_constant () {
+		try {
+			string s = "A";
+			char c = s [-1];
+			return 1;
+		} catch {
+		}
+		return 0;
+	}
+
+	public class MyException : Exception {
+		public int marker = 0;
+		public string res = "";
+
+		public MyException (String res) {
+			this.res = res;
+		}
+
+		public bool FilterWithoutState () {
+			return this.marker == 0x666;
+		}
+
+		public bool FilterWithState () {
+			bool ret = this.marker == 0x566;
+			this.marker += 0x100;
+			return ret;
+		}
+
+		public bool FilterWithStringState () {
+			bool ret = this.marker == 0x777;
+			this.res = "fromFilter_" + this.res;
+			return ret;
+		}
+	}
+
+	[Category ("!BITCODE")]
+	public static int test_1_basic_filter_catch () {
+		try {
+			MyException e = new MyException ("");
+			e.marker = 0x1337;
+			throw e;
+		} catch (MyException ex) when (ex.marker == 0x1337) {
+			return 1;
+		}
+		return 0;
+	}
+
+	[Category ("!BITCODE")]
+	public static int test_1234_complicated_filter_catch () {
+		string res = "init";
+		try {
+			MyException e = new MyException (res);
+			e.marker = 0x566;
+			try {
+				try {
+					throw e;
+				} catch (MyException ex) when (ex.FilterWithoutState ()) {
+					res = "WRONG_" + res;
+				} finally {
+					e.marker = 0x777;
+					res = "innerFinally_" + res;
+				}
+			} catch (MyException ex) when (ex.FilterWithState ()) {
+				res = "2ndcatch_" + res;
+			}
+			// "2ndcatch_innerFinally_init"
+			// Console.WriteLine ("res1: " + res);
+			e.res = res;
+			throw e;
+		} catch (MyException ex) when (ex.FilterWithStringState ()) {
+			res = "fwos_" + ex.res;
+		} finally {
+			res = "outerFinally_" + res;
+		}
+		// Console.WriteLine ("res2: " + res);
+		return "outerFinally_fwos_fromFilter_2ndcatch_innerFinally_init" == res ? 1234 : 0;
+	}
+
+    public struct FooStruct
+    {
+        public long Part1 { get; }
+        public long Part2 { get; }
+
+        public byte Part3 { get; }
+    }
+
+    [MethodImpl( MethodImplOptions.NoInlining )]
+    private static bool ExceptionFilter( byte x, FooStruct item ) => true;
+
+	[Category ("!BITCODE")]
+	public static int test_0_filter_caller_area () {
+        try {
+            throw new Exception();
+        }
+        catch (Exception) when (ExceptionFilter (default(byte), default (FooStruct))) {
+        }
+		return 0;
 	}
 }
 

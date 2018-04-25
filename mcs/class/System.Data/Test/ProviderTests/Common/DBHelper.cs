@@ -29,14 +29,9 @@
 
 using System;
 using System.Data;
-using System.Data.Common;
 using System.Text;
 
-using Mono.Data;
-
-using NUnit.Framework;
-
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	public sealed class DBHelper
 	{
@@ -47,6 +42,7 @@ namespace MonoTests.System.Data
 			IDbCommand command = connection.CreateCommand ();
 			command.CommandType = CommandType.Text;
 			command.CommandText = query;
+			command.CommandTimeout = 120;
 			int result = -1;
 			try {
 				result = command.ExecuteNonQuery ();

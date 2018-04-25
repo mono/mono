@@ -11,6 +11,8 @@
 #define _GNU_SOURCE
 #endif /* ndef _GNU_SOURCE */
 
+#include "sys-uio.h"
+
 #include <sys/uio.h>
 
 #include "map.h"
@@ -18,8 +20,8 @@
 
 G_BEGIN_DECLS
 
-static struct iovec*
-from_iovec (struct Mono_Posix_Iovec *iov, gint32 iovcnt)
+struct iovec*
+_mph_from_iovec_array (struct Mono_Posix_Iovec *iov, gint32 iovcnt)
 {
 	struct iovec* v;
 	gint32 i;
@@ -51,7 +53,7 @@ Mono_Posix_Syscall_readv (int dirfd, struct Mono_Posix_Iovec *iov, gint32 iovcnt
 	struct iovec* v;
 	gint64 res;
 
-	v = from_iovec (iov, iovcnt);
+	v = _mph_from_iovec_array (iov, iovcnt);
 	if (!v) {
 		return -1;
 	}
@@ -69,7 +71,7 @@ Mono_Posix_Syscall_writev (int dirfd, struct Mono_Posix_Iovec *iov, gint32 iovcn
 	struct iovec* v;
 	gint64 res;
 
-	v = from_iovec (iov, iovcnt);
+	v = _mph_from_iovec_array (iov, iovcnt);
 	if (!v) {
 		return -1;
 	}
@@ -89,7 +91,7 @@ Mono_Posix_Syscall_preadv (int dirfd, struct Mono_Posix_Iovec *iov, gint32 iovcn
 
 	mph_return_if_off_t_overflow (off);
 
-	v = from_iovec (iov, iovcnt);
+	v = _mph_from_iovec_array (iov, iovcnt);
 	if (!v) {
 		return -1;
 	}
@@ -109,7 +111,7 @@ Mono_Posix_Syscall_pwritev (int dirfd, struct Mono_Posix_Iovec *iov, gint32 iovc
 
 	mph_return_if_off_t_overflow (off);
 
-	v = from_iovec (iov, iovcnt);
+	v = _mph_from_iovec_array (iov, iovcnt);
 	if (!v) {
 		return -1;
 	}

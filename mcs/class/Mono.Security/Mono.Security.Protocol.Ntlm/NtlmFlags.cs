@@ -40,12 +40,7 @@ using System;
 namespace Mono.Security.Protocol.Ntlm {
 
 	[Flags]
-#if INSIDE_SYSTEM
-	internal
-#else
-	public
-#endif
-	enum NtlmFlags : int {
+	public enum NtlmFlags : int {
 		// The client sets this flag to indicate that it supports Unicode strings.
 		NegotiateUnicode = 0x00000001,
 		// This is set to indicate that the client supports OEM strings.

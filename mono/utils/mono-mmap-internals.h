@@ -1,20 +1,10 @@
-/*
- * mono-mmap-internals.h: Internal virtual memory stuff.
+/**
+ * \file
+ * Internal virtual memory stuff.
  *
  * Copyright (C) 2014 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #ifndef __MONO_UTILS_MMAP_INTERNAL_H__
@@ -22,7 +12,23 @@
 
 #include "mono-compiler.h"
 
-int mono_pages_not_faulted (void *addr, size_t length);
+void *
+mono_malloc_shared_area (int pid);
+
+char*
+mono_aligned_address (char *mem, size_t size, size_t alignment);
+
+void
+mono_account_mem (MonoMemAccountType type, ssize_t size);
+
+gboolean
+mono_valloc_can_alloc (size_t size);
+
+void
+mono_valloc_set_limit (size_t size);
+
+int
+mono_pages_not_faulted (void *addr, size_t length);
 
 #endif /* __MONO_UTILS_MMAP_INTERNAL_H__ */
 

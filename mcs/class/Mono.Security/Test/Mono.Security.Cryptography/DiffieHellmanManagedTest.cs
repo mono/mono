@@ -24,7 +24,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 	//	http://www.ietf.org/rfc/rfc2631.txt
 
 	[TestFixture]
-	public class DiffieHellmanManagedTest : Assertion {
+	public class DiffieHellmanManagedTest {
 
 		// because most crypto stuff works with byte[] buffers
 		static public void AssertEquals (string msg, byte[] array1, byte[] array2) 
@@ -32,9 +32,9 @@ namespace MonoTests.Mono.Security.Cryptography {
 			if ((array1 == null) && (array2 == null))
 				return;
 			if (array1 == null)
-				Assertion.Fail (msg + " -> First array is NULL");
+				Assert.Fail (msg + " -> First array is NULL");
 			if (array2 == null)
-				Assertion.Fail (msg + " -> Second array is NULL");
+				Assert.Fail (msg + " -> Second array is NULL");
 
 			bool a = (array1.Length == array2.Length);
 			if (a) {
@@ -49,7 +49,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 				msg += " -> Expected " + BitConverter.ToString (array1, 0);
 				msg += " is different than " + BitConverter.ToString (array2, 0);
 			}
-			Assertion.Assert (msg, a);
+			Assert.IsTrue (a, msg);
 		}
 
 		[Test]
@@ -70,7 +70,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 			// let the second DH instance compute the shared secret using the first DH public key
 			byte[] dh2k = dh2.DecryptKeyExchange (ke1);
 			// both shared secrets are the same
-			AssertEquals ("Shared Secret", dh1k, dh2k);
+			Assert.AreEqual (dh1k, dh2k, "Shared Secret");
 		}
 
 		// TODO: More is needed !

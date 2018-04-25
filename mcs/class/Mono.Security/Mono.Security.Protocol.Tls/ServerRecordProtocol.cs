@@ -132,7 +132,6 @@ namespace Mono.Security.Protocol.Tls
 					throw new TlsException(AlertDescription.UnexpectedMessage, String.Format(CultureInfo.CurrentUICulture,
 														 "Unknown server handshake message received ({0})", 
 														 type.ToString()));
-					break;
 			}
 			throw new TlsException (AlertDescription.HandshakeFailiure, String.Format ("Protocol error, unexpected protocol transition from {0} to {1}", last, type));
 		}

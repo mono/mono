@@ -130,7 +130,6 @@ System.Collections.Generic/SynchronizedKeyedCollection.cs
 System.Collections.Generic/SynchronizedReadOnlyCollection.cs
 System.IO/PipeException.cs
 System.ServiceModel.Activation/AspNetIntegrationRequirementsAttribute.cs
-System.ServiceModel.Activation/ServiceHostFactory.cs
 System.ServiceModel.Activation/ServiceHostFactoryBase.cs
 System.ServiceModel.Activation/VirtualPathExtension.cs
 System.ServiceModel.Channels/AddressHeader.cs
@@ -620,6 +619,7 @@ System.ServiceModel.Description/ServiceTimeoutsBehavior.cs
 System.ServiceModel.Description/SynchronousReceiveBehavior.cs
 System.ServiceModel.Description/TransactedBatchingBehavior.cs
 System.ServiceModel.Description/TypedMessageConverter.cs
+../referencesource/System.ServiceModel/System/ServiceModel/Description/UseRequestHeadersForMetadataAddressBehavior.cs
 System.ServiceModel.Description/WSTrustMessageConverters.cs
 System.ServiceModel.Description/WSTrustSTSContract.cs
 System.ServiceModel.Description/WsdlContractConversionContext.cs
@@ -726,7 +726,6 @@ System.ServiceModel.PeerResolvers/ServiceSettingsResponseInfo.cs
 System.ServiceModel.PeerResolvers/UnregisterInfo.cs
 System.ServiceModel.PeerResolvers/UpdateInfo.cs
 System.ServiceModel.Security.Tokens/AuthenticatorCommunicationObject.cs
-System.ServiceModel.Security.Tokens/BinarySecretSecurityToken.cs
 System.ServiceModel.Security.Tokens/ClaimTypeRequirement.cs
 System.ServiceModel.Security.Tokens/CommunicationSecurityTokenAuthenticator.cs
 System.ServiceModel.Security.Tokens/CommunicationSecurityTokenProvider.cs
@@ -734,7 +733,6 @@ System.ServiceModel.Security.Tokens/DerivedKeySecurityToken.cs
 System.ServiceModel.Security.Tokens/IIssuanceSecurityTokenAuthenticator.cs
 System.ServiceModel.Security.Tokens/ISecurityContextSecurityTokenCache.cs
 System.ServiceModel.Security.Tokens/InitiatorServiceModelSecurityTokenRequirement.cs
-System.ServiceModel.Security.Tokens/InternalEncryptedKeyIdentifierClause.cs
 System.ServiceModel.Security.Tokens/IssuedSecurityTokenHandler.cs
 System.ServiceModel.Security.Tokens/IssuedSecurityTokenParameters.cs
 System.ServiceModel.Security.Tokens/IssuedSecurityTokenProvider.cs
@@ -767,10 +765,8 @@ System.ServiceModel.Security.Tokens/SupportingTokenParameters.cs
 System.ServiceModel.Security.Tokens/TlsClientSession.cs
 System.ServiceModel.Security.Tokens/TlsServerSession.cs
 System.ServiceModel.Security.Tokens/UserNameSecurityTokenParameters.cs
-System.ServiceModel.Security.Tokens/WrappedKeySecurityToken.cs
 System.ServiceModel.Security.Tokens/X509SecurityTokenParameters.cs
 System.ServiceModel.Security/BasicSecurityProfileVersion.cs
-System.ServiceModel.Security/BinarySecretKeyIdentifierClause.cs
 System.ServiceModel.Security/ChannelProtectionRequirements.cs
 System.ServiceModel.Security/DataProtectionSecurityStateEncoder.cs
 System.ServiceModel.Security/ExpiredSecurityTokenException.cs
@@ -783,7 +779,6 @@ System.ServiceModel.Security/InfocardInteractiveChannelInitializer.cs
 System.ServiceModel.Security/IssuedTokenClientCredential.cs
 System.ServiceModel.Security/IssuedTokenServiceCredential.cs
 System.ServiceModel.Security/KeyEntropyMode.cs
-System.ServiceModel.Security/KeyNameIdentifierClause.cs
 System.ServiceModel.Security/MessagePartSpecification.cs
 System.ServiceModel.Security/MessageProtectionOrder.cs
 System.ServiceModel.Security/MessageSecurityException.cs
@@ -793,7 +788,6 @@ System.ServiceModel.Security/SecureConversationServiceCredential.cs
 System.ServiceModel.Security/SecureConversationVersion.cs
 System.ServiceModel.Security/SecurityAccessDeniedException.cs
 System.ServiceModel.Security/SecurityAlgorithmSuite.cs
-System.ServiceModel.Security/SecurityContextKeyIdentifierClause.cs
 System.ServiceModel.Security/SecurityCredentialsManager.cs
 System.ServiceModel.Security/SecurityMessageProperty.cs
 System.ServiceModel.Security/SecurityNegotiationException.cs
@@ -1004,6 +998,7 @@ System.ServiceModel/BasicHttpBinding_4_5.cs
 System.ServiceModel/BasicHttpsBinding.cs
 System.ServiceModel/BasicHttpsSecurity.cs
 System.ServiceModel/NetHttpBinding.cs
+System.ServiceModel/NetHttpsBinding.cs
 System.ServiceModel/NetHttpMessageEncoding.cs
 System.ServiceModel.Channels/CompressionFormat.cs
 System.ServiceModel.Channels/WebSocketTransportSettings.cs

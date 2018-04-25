@@ -41,7 +41,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing
 {
 	[TestFixture]	
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class PointConverterTest
 	{
 		Point pt;
@@ -126,7 +125,7 @@ namespace MonoTests.System.Drawing
 				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture, "*1, 1");
 				Assert.Fail ("CF#5-1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "CF#5-2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "CF#5-2");
 				Assert.IsNotNull (ex.InnerException, "CF#5-3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "CF#5-4");
 			}
@@ -222,7 +221,7 @@ namespace MonoTests.System.Drawing
 			try {
 				// culture == null
 				ptconv.ConvertTo (null, null, pt, typeof (string));
-			} catch (NullReferenceException e) {
+			} catch (NullReferenceException) {
 				Assert.Fail ("CT#8: must not throw NullReferenceException");
 			}
 		}
@@ -253,13 +252,12 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void TestCreateInstance_CaseSensitive ()
 		{
 			Hashtable ht = new Hashtable ();
 			ht.Add ("x", 2);
 			ht.Add ("Y", 3);
-			ptconv.CreateInstance (null, ht);
+			Assert.Throws<ArgumentException> (() => ptconv.CreateInstance (null, ht));
 		}
 
 		[Test]
@@ -305,10 +303,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFromInvariantString_string_exc_1 ()
 		{
-			ptconv.ConvertFromInvariantString ("1");
+			Assert.Throws<ArgumentException> (() => ptconv.ConvertFromInvariantString ("1"));
 		}
 
 		[Test]
@@ -318,7 +315,7 @@ namespace MonoTests.System.Drawing
 				ptconv.ConvertFromInvariantString ("hello");
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -341,10 +338,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFromString_string_exc_1 ()
 		{
-			ptconv.ConvertFromString ("1");
+			Assert.Throws<ArgumentException> (() => ptconv.ConvertFromString ("1"));
 		}
 
 		[Test]
@@ -354,7 +350,7 @@ namespace MonoTests.System.Drawing
 				ptconv.ConvertFromString ("hello");
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}

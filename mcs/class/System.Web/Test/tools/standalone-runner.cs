@@ -73,13 +73,16 @@ namespace StandAloneRunner
 		static void Main (string[] args)
 		{
 			try {
-				Run (args);
+				var success = Run (args);
+
+				if (!success)
+					Environment.Exit (1);
 			} catch (Exception ex) {
 				Die ("Exception caught:{0}{1}", Environment.NewLine, ex.ToString ());
 			}
 		}
 
-		static void Run (string[] args)
+		static bool Run (string[] args)
 		{
 			bool showHelp = false;
 			string testName = null;
@@ -177,6 +180,8 @@ namespace StandAloneRunner
 					writer.Dispose ();
 				}
 			}
+
+			return failedCounter == 0;
 		}
 
 		static string FormatReport (StandaloneTest test)

@@ -1,14 +1,12 @@
-TOP=../..
-include $(TOP)/mk/common.inc
+include $(top_srcdir)/mk/common.mk
 
-DIST_SUBDIRS = x86 ppc sparc arm arm64 s390x amd64 ia64 mips
+DIST_SUBDIRS = x86 ppc sparc arm arm64 s390x amd64 mips
 
 AM_CPPFLAGS = $(GLIB_CFLAGS) -I$(top_srcdir)
 
 if ARM
 # arm needs to build some stuff even in JIT mode
-SUBDIRS = $(arch_target)
+SUBDIRS = arm
 endif
 
-EXTRA_DIST = ChangeLog
 

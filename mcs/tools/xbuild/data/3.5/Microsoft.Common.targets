@@ -18,7 +18,6 @@
 		<AssemblyName Condition="'$(AssemblyName)' == ''">$(MSBuildProjectName)</AssemblyName>
 		<OutputPath Condition="'$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)')">$(OutputPath)\</OutputPath>
 		<OutputPath Condition=" '$(Platform)'=='' and '$(Configuration)'=='' and '$(OutputPath)'=='' ">bin\Debug\</OutputPath>
-		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
 		<TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v2.0</TargetFrameworkVersion>
 	</PropertyGroup>
 
@@ -159,6 +158,7 @@
 		<AllowedReferenceRelatedFileExtensions Condition=" '$(AllowedReferenceRelatedFileExtensions)' == '' ">
 			.exe.mdb;
 			.dll.mdb;
+			.pdb;
 			.xml
 		</AllowedReferenceRelatedFileExtensions>
 
@@ -224,13 +224,13 @@
 		<AssignProjectConfiguration
 			ProjectReferences = "@(ProjectReference)"
 			SolutionConfigurationContents = "$(CurrentSolutionConfigurationContents)"
-			Condition="'$(BuildingSolutionFile)' == 'true' or '$(BuildingInsideVisualStudio)' == 'true'">
+			Condition="$(CurrentSolutionConfigurationContents) != '' and ('$(BuildingSolutionFile)' == 'true' or '$(BuildingInsideVisualStudio)' == 'true')">
 
 			<Output TaskParameter = "AssignedProjects" ItemName = "ProjectReferenceWithConfiguration"/>
 		</AssignProjectConfiguration>
 
 		<!-- Else, just -->
-		<CreateItem Include="@(ProjectReference)" Condition="'$(BuildingSolutionFile)' != 'true' and '$(BuildingInsideVisualStudio)' != 'true'">
+		<CreateItem Include="@(ProjectReference)" Condition="$(CurrentSolutionConfigurationContents) == '' or ('$(BuildingSolutionFile)' != 'true' and '$(BuildingInsideVisualStudio)' != 'true')">
 			<Output TaskParameter="Include" ItemName="ProjectReferenceWithConfiguration"/>
 		</CreateItem>
 
@@ -518,6 +518,14 @@
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
 
+		<Copy
+			SourceFiles="$(IntermediateOutputPath)$(AssemblyName).pdb"
+			Condition="'$(OutDir)' != '' and Exists('$(IntermediateOutputPath)$(AssemblyName).pdb')"
+			DestinationFolder="$(OutDir)"
+			SkipUnchangedFiles="$(SkipCopyUnchangedFiles)" >
+			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+		</Copy>
+
 		<Copy SourceFiles="@(IntermediateAssembly)" Condition="'$(OutDir)' != '' and Exists ('@(IntermediateAssembly)')" DestinationFolder="$(OutDir)" SkipUnchangedFiles="$(SkipCopyUnchangedFiles)">
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
@@ -752,6 +760,11 @@
 
 		<CreateItem Include="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb"
 			Condition="Exists('$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb')">
+			<Output TaskParameter="Include" ItemName="FileWrites"/>
+		</CreateItem>
+
+		<CreateItem Include="$(IntermediateOutputPath)$(AssemblyName).pdb"
+			Condition="Exists('$(IntermediateOutputPath)$(AssemblyName).pdb')">
 			<Output TaskParameter="Include" ItemName="FileWrites"/>
 		</CreateItem>
 	</Target>

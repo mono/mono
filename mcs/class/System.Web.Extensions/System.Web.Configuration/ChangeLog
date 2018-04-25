@@ -1,5 +1,0 @@
-2009-08-17  Marek Habersack  <mhabersack@novell.com>
-
-	* ScriptingJsonSerializationSection.cs: MaxJsonLength default
-	value is 2097152 for .NET 3.5+
-

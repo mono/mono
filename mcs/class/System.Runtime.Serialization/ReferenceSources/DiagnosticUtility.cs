@@ -4,8 +4,8 @@ namespace System.Runtime.Serialization {
 
 	internal static class DiagnosticUtility {
 		internal static bool ShouldTraceError = true;
-		internal static bool ShouldTraceWarning;
-		internal static bool ShouldTraceInformation;
+		internal static readonly bool ShouldTraceWarning = false;
+		internal static readonly bool ShouldTraceInformation = false;
 		internal static bool ShouldTraceVerbose = true;
 
 		internal static class DiagnosticTrace {

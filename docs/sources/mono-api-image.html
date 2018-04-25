@@ -6,7 +6,7 @@
 
 <h3>Synopsis</h3>
 
-	<div class="header">
+	<div class="mapi-header">
 #include &lt;metadata/image.h&gt;
 
 typedef struct _MonoImage MonoImage;
@@ -25,7 +25,6 @@ typedef enum {
 	<p>Images are the actual elements in the runtime that contain
 	the actual code being executed. 
 
-<a name="cil_image_open"/>
 <h3>Opening and closing MonoImages</h3>
 
 <h4><a name="api:mono_image_open">mono_image_open</a></h4>
@@ -35,6 +34,8 @@ typedef enum {
 <h4><a name="api:mono_image_close">mono_image_close</a></h4>
 <h4><a name="api:mono_image_addref">mono_image_addref</a></h4>
 <h4><a name="api:mono_image_load_file_for_image">mono_image_load_file_for_image</a></h4>
+<h4><a name="api:mono_image_open_from_data_with_name">mono_image_open_from_data_with_name</a></h4>
+<h4><a name="api:mono_image_load_module">mono_image_load_module</a></h4>
 
 <h3>Image Information</h3>
 
@@ -51,6 +52,7 @@ typedef enum {
 <h4><a name="api:mono_image_loaded">mono_image_loaded</a></h4>
 <h4><a name="api:mono_image_lookup_resource">mono_image_lookup_resource</a></h4>
 <h4><a name="api:mono_image_strerror">mono_image_strerror</a></h4>
+<h4><a name="api:mono_get_method_constrained">mono_get_method_constrained</a></h4>
 
 <h3>Public Keys, Strong Names and Certificates</h3>
 
@@ -64,3 +66,11 @@ typedef enum {
 <h4><a name="api:mono_image_rva_map">mono_image_rva_map</a></h4>
 <h4><a name="api:mono_image_ensure_section_idx">mono_image_ensure_section_idx</a></h4>
 <h4><a name="api:mono_image_ensure_section">mono_image_ensure_section</a></h4>
+<h4><a name="api:mono_image_init">mono_image_init</a></h4>
+<h4><a name="api:mono_images_init">mono_images_init</a></h4>
+<h4><a name="api:mono_images_cleanup">mono_images_cleanup</a></h4>
+<h4><a name="api:mono_image_add_to_name_cache">mono_image_add_to_name_cache</a></h4>
+<h4><a name="api:mono_image_fixup_vtable">mono_image_fixup_vtable</a></h4>
+<h4><a name="api:mono_image_loaded_by_guid_full">mono_image_loaded_by_guid_full</a></h4>
+<h4><a name="api:mono_image_loaded_full">mono_image_loaded_full</a></h4>
+<h4><a name="api:mono_lookup_icall_symbol">mono_lookup_icall_symbol</a></h4>

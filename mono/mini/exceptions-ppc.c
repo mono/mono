@@ -1,5 +1,6 @@
-/*
- * exceptions-ppc.c: exception support for PowerPC
+/**
+ * \file
+ * exception support for PowerPC
  *
  * Authors:
  *   Dietmar Maurer (dietmar@ximian.com)
@@ -29,6 +30,8 @@
 
 #include "mini.h"
 #include "mini-ppc.h"
+#include "mini-runtime.h"
+#include "aot-runtime.h"
 
 /*
 
@@ -164,9 +167,10 @@ typedef elf_fpreg_t elf_fpregset_t[ELF_NFPREG];
 #define restore_regs_from_context(ctx_reg,ip_reg,tmp_reg) do {	\
 		int reg;	\
 		ppc_ldptr (code, ip_reg, G_STRUCT_OFFSET (MonoContext, sc_ir), ctx_reg);	\
-		ppc_load_multiple_regs (code, ppc_r13, G_STRUCT_OFFSET (MonoContext, regs), ctx_reg);	\
-		for (reg = 0; reg < MONO_SAVED_FREGS; ++reg) {	\
-			ppc_lfd (code, (14 + reg),	\
+		ppc_load_multiple_regs (code, MONO_PPC_FIRST_SAVED_GREG,	\
+			G_STRUCT_OFFSET (MonoContext, regs) + MONO_PPC_FIRST_SAVED_GREG * sizeof (gpointer), ctx_reg);	\
+		for (reg = MONO_PPC_FIRST_SAVED_FREG; reg < MONO_MAX_FREGS; ++reg) {	\
+			ppc_lfd (code, reg,	\
 				G_STRUCT_OFFSET(MonoContext, fregs) + reg * sizeof (gdouble), ctx_reg);	\
 		}	\
 	} while (0)
@@ -218,7 +222,7 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 
 	g_assert ((code - start) <= size);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create ("restore_context", start, code - start, ji, unwind_ops);
@@ -226,7 +230,7 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 	return start;
 }
 
-#define SAVED_REGS_LENGTH		(sizeof (gdouble) * MONO_SAVED_FREGS + sizeof (gpointer) * MONO_SAVED_GREGS)
+#define SAVED_REGS_LENGTH		(sizeof (gdouble) * MONO_MAX_FREGS + sizeof (gpointer) * MONO_MAX_IREGS)
 #define ALIGN_STACK_FRAME_SIZE(s)	(((s) + MONO_ARCH_FRAME_ALIGNMENT - 1) & ~(MONO_ARCH_FRAME_ALIGNMENT - 1))
 /* The 64 bytes here are for outgoing arguments and a bit of spare.
    We don't use it all, but it doesn't hurt. */
@@ -237,12 +241,13 @@ emit_save_saved_regs (guint8 *code, int pos)
 {
 	int i;
 
-	for (i = 31; i >= 14; --i) {
+	for (i = MONO_MAX_FREGS - 1; i >= MONO_PPC_FIRST_SAVED_FREG; --i) {
 		pos -= sizeof (gdouble);
 		ppc_stfd (code, i, pos, ppc_sp);
 	}
+	pos -= (MONO_MAX_FREGS - MONO_SAVED_FREGS) * sizeof (gdouble);
 	pos -= sizeof (gpointer) * MONO_SAVED_GREGS;
-	ppc_store_multiple_regs (code, ppc_r13, pos, ppc_sp);
+	ppc_store_multiple_regs (code, MONO_PPC_FIRST_SAVED_GREG, pos, ppc_sp);
 
 	return code;
 }
@@ -295,19 +300,20 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 
 	/* restore all the regs from the stack */
 	pos = alloc_size;
-	for (i = 31; i >= 14; --i) {
+	for (i = MONO_MAX_FREGS - 1; i >= MONO_PPC_FIRST_SAVED_FREG; --i) {
 		pos -= sizeof (gdouble);
 		ppc_lfd (code, i, pos, ppc_sp);
 	}
+	pos -= (MONO_MAX_FREGS - MONO_SAVED_FREGS) * sizeof (gdouble);
 	pos -= sizeof (gpointer) * MONO_SAVED_GREGS;
-	ppc_load_multiple_regs (code, ppc_r13, pos, ppc_sp);
+	ppc_load_multiple_regs (code, MONO_PPC_FIRST_SAVED_GREG, pos, ppc_sp);
 
 	ppc_addic (code, ppc_sp, ppc_sp, alloc_size);
 	ppc_blr (code);
 
 	g_assert ((code - start) < size);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create ("call_filter", start, code - start, ji, unwind_ops);
@@ -318,6 +324,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 void
 mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, mgreg_t *int_regs, gdouble *fp_regs, gboolean rethrow)
 {
+	ERROR_DECL (error);
 	MonoContext ctx;
 
 	/* adjust eip so that it point into the call instruction */
@@ -328,16 +335,17 @@ mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp,
 	/*printf ("stack in throw: %p\n", esp);*/
 	MONO_CONTEXT_SET_BP (&ctx, esp);
 	MONO_CONTEXT_SET_IP (&ctx, eip);
-	memcpy (&ctx.regs, int_regs, sizeof (mgreg_t) * MONO_SAVED_GREGS);
-	memcpy (&ctx.fregs, fp_regs, sizeof (double) * MONO_SAVED_FREGS);
+	memcpy (&ctx.regs, int_regs, sizeof (mgreg_t) * MONO_MAX_IREGS);
+	memcpy (&ctx.fregs, fp_regs, sizeof (double) * MONO_MAX_FREGS);
 
-	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
+	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		}
 	}
+	mono_error_assert_ok (error);
 	mono_handle_exception (&ctx, exc);
 	mono_restore_context (&ctx);
 
@@ -410,10 +418,10 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corli
 	else
 		ppc_mr (code, ppc_r4, ppc_r0); /* caller ip */
 	/* pointer to the saved fp regs */
-	pos = alloc_size - sizeof (gdouble) * MONO_SAVED_FREGS;
+	pos = alloc_size - sizeof (gdouble) * MONO_MAX_FREGS;
 	ppc_addi (code, ppc_r7, ppc_sp, pos);
 	/* pointer to the saved int regs */
-	pos -= sizeof (gpointer) * MONO_SAVED_GREGS;
+	pos -= sizeof (gpointer) * MONO_MAX_IREGS;
 	ppc_addi (code, ppc_r6, ppc_sp, pos);
 	ppc_li (code, ppc_r8, rethrow);
 
@@ -438,7 +446,7 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corli
 	ppc_break (code);
 	g_assert ((code - start) <= size);
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create (corlib ? "throw_corlib_exception" : (rethrow ? "rethrow_exception" : "throw_exception"), start, code - start, ji, unwind_ops);
@@ -448,11 +456,9 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corli
 
 /**
  * mono_arch_get_rethrow_exception:
- *
- * Returns a function pointer which can be used to rethrow 
+ * \returns a function pointer which can be used to rethrow 
  * exceptions. The returned function has the following 
  * signature: void (*func) (MonoException *exc); 
- *
  */
 gpointer
 mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
@@ -488,8 +494,7 @@ mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 
 /**
  * mono_arch_get_throw_corlib_exception:
- *
- * Returns a function pointer which can be used to raise 
+ * \returns a function pointer which can be used to raise 
  * corlib exceptions. The returned function has the following 
  * signature: void (*func) (guint32 ex_token, guint32 offset); 
  * On PPC, we pass the ip instead of the offset
@@ -544,8 +549,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		if (!ji->is_trampoline && jinfo_get_method (ji)->save_lmf) {
 			/* sframe->sp points just past the end of the LMF */
 			guint8 *lmf_addr = (guint8*)sframe->sp - sizeof (MonoLMF);
-			memcpy (&new_ctx->fregs, lmf_addr + G_STRUCT_OFFSET (MonoLMF, fregs), sizeof (double) * MONO_SAVED_FREGS);
-			memcpy (&new_ctx->regs, lmf_addr + G_STRUCT_OFFSET (MonoLMF, iregs), sizeof (mgreg_t) * MONO_SAVED_GREGS);
+			memcpy (&new_ctx->fregs [MONO_PPC_FIRST_SAVED_FREG], lmf_addr + G_STRUCT_OFFSET (MonoLMF, fregs), sizeof (double) * MONO_SAVED_FREGS);
+			memcpy (&new_ctx->regs [MONO_PPC_FIRST_SAVED_GREG], lmf_addr + G_STRUCT_OFFSET (MonoLMF, iregs), sizeof (mgreg_t) * MONO_SAVED_GREGS);
 			/* the calling IP is in the parent frame */
 			sframe = (MonoPPCStackFrame*)sframe->sp;
 			/* we substract 4, so that the IP points into the call instruction */
@@ -553,8 +558,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		} else {
 			regs [ppc_lr] = ctx->sc_ir;
 			regs [ppc_sp] = ctx->sc_sp;
-			for (i = 0; i < MONO_SAVED_GREGS; ++i)
-				regs [ppc_r13 + i] = ctx->regs [i];
+			for (i = MONO_PPC_FIRST_SAVED_GREG; i < MONO_MAX_IREGS; ++i)
+				regs [i] = ctx->regs [i];
 
 			mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start, 
 							   (guint8*)ji->code_start + ji->code_size,
@@ -565,8 +570,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			MONO_CONTEXT_SET_IP (new_ctx, regs [ppc_lr] - 4);
 			MONO_CONTEXT_SET_BP (new_ctx, cfa);
 
-			for (i = 0; i < MONO_SAVED_GREGS; ++i)
-				new_ctx->regs [i] = regs [ppc_r13 + i];
+			for (i = MONO_PPC_FIRST_SAVED_GREG; i < MONO_MAX_IREGS; ++i)
+				new_ctx->regs [i] = regs [i];
 		}
 
 		return TRUE;
@@ -586,8 +591,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		MONO_CONTEXT_SET_IP (new_ctx, sframe->lr);*/
 		MONO_CONTEXT_SET_BP (new_ctx, (*lmf)->ebp);
 		MONO_CONTEXT_SET_IP (new_ctx, (*lmf)->eip);
-		memcpy (&new_ctx->regs, (*lmf)->iregs, sizeof (mgreg_t) * MONO_SAVED_GREGS);
-		memcpy (&new_ctx->fregs, (*lmf)->fregs, sizeof (double) * MONO_SAVED_FREGS);
+		memcpy (&new_ctx->regs [MONO_PPC_FIRST_SAVED_GREG], (*lmf)->iregs, sizeof (mgreg_t) * MONO_SAVED_GREGS);
+		memcpy (&new_ctx->fregs [MONO_PPC_FIRST_SAVED_FREG], (*lmf)->fregs, sizeof (double) * MONO_SAVED_FREGS);
 
 		frame->ji = ji;
 		frame->type = FRAME_TYPE_MANAGED_TO_NATIVE;
@@ -610,22 +615,6 @@ mono_arch_ip_from_context (void *sigctx)
 #else
 	os_ucontext *uc = sigctx;
 	return (gpointer)UCONTEXT_REG_NIP(uc);
-#endif
-}
-
-void
-mono_ppc_set_func_into_sigctx (void *sigctx, void *func)
-{
-#ifdef MONO_CROSS_COMPILE
-	g_assert_not_reached ();
-#elif defined(PPC_USES_FUNCTION_DESCRIPTOR)
-	/* Have to set both the ip and the TOC reg */
-	os_ucontext *uc = sigctx;
-
-	UCONTEXT_REG_NIP(uc) = ((gsize*)func) [0];
-	UCONTEXT_REG_Rn (uc, 2) = ((gsize*)func)[1];
-#else
-	g_assert_not_reached ();
 #endif
 }
 
@@ -664,7 +653,7 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 		abort ();
 	}
 	if (!ji)
-		mono_handle_native_sigsegv (SIGSEGV, sigctx, siginfo);
+		mono_handle_native_crash ("SIGSEGV", sigctx, siginfo);
 	/* setup a call frame on the real stack so that control is returned there
 	 * and exception handling can continue.
 	 * The frame looks like:
@@ -695,6 +684,11 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	}
 #else
 	UCONTEXT_REG_NIP(uc) = (unsigned long)altstack_handle_and_restore;
+#if _CALL_ELF == 2
+	/* ELF v2 ABI calling convention requires to put the target address into
+	* r12 if we use the global entry point of a function. */
+	UCONTEXT_REG_Rn(uc, 12) = (unsigned long) altstack_handle_and_restore;
+#endif
 #endif
 	UCONTEXT_REG_Rn(uc, 1) = (unsigned long)sp;
 	UCONTEXT_REG_Rn(uc, PPC_FIRST_ARG_REG) = (unsigned long)(sp + 16);
@@ -713,7 +707,7 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 static void
 handle_signal_exception (gpointer obj)
 {
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
@@ -737,6 +731,11 @@ setup_ucontext_return (void *uc, gpointer func)
 	}
 #else
 	UCONTEXT_REG_NIP(uc) = (unsigned long)func;
+#if _CALL_ELF == 2
+	/* ELF v2 ABI calling convention requires to put the target address into
+	* r12 if we use the global entry point of a function. */
+	UCONTEXT_REG_Rn(uc, 12) = (unsigned long) func;
+#endif
 #endif
 #endif
 }
@@ -750,7 +749,7 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	 * signal is disabled, and we could run arbitrary code though the debugger. So
 	 * resume into the normal stack and do most work there if possible.
 	 */
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	mgreg_t sp;
 	void *sigctx = ctx;
 	int frame_size;
@@ -793,9 +792,21 @@ void
 mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)
 {
 	uintptr_t sp = (uintptr_t) MONO_CONTEXT_GET_SP(ctx);
+	ctx->regs [PPC_FIRST_ARG_REG] = user_data;
 	sp -= PPC_MINIMAL_STACK_SIZE;
 	*(unsigned long *)sp = MONO_CONTEXT_GET_SP(ctx);
 	MONO_CONTEXT_SET_BP(ctx, sp);
-	MONO_CONTEXT_SET_IP(ctx, (unsigned long) async_cb);
+	mono_arch_setup_resume_sighandler_ctx(ctx, (unsigned long) async_cb);
 }
 
+void
+mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
+{
+#ifdef PPC_USES_FUNCTION_DESCRIPTOR
+	MonoPPCFunctionDescriptor *handler_ftnptr = (MonoPPCFunctionDescriptor*)func;
+	MONO_CONTEXT_SET_IP(ctx, (gulong)handler_ftnptr->code);
+	ctx->regs[2] = (gulong)handler_ftnptr->toc;
+#else
+	MONO_CONTEXT_SET_IP(ctx, (unsigned long) func);
+#endif
+}

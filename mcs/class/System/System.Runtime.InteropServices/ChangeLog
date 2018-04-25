@@ -1,9 +1,0 @@
-2007-09-05  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* HandleCollector.cs : new file.
-
-2007-03-12  Raja R Harinath  <rharinath@novell.com>
-
-	* StandardOleMarshalObject.cs: New .net2.0 class.
-	* DefaultParameterValueAttribute.cs: Move here from corlib.
-

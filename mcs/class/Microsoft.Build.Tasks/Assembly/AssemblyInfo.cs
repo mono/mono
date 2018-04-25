@@ -54,6 +54,5 @@ using System.Runtime.InteropServices;
 [assembly: Guid ("E3D4D3B9-944C-407b-A82E-B19719EA7FB3")]
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
 
 [assembly: AssemblyFileVersion (XBuildConsts.FileVersion)]

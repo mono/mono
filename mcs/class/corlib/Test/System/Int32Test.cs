@@ -467,10 +467,14 @@ public class Int32Test
 		int hundred = 100;
 		int neghund = -100;
 		
-		Assert.IsTrue ( hundred.ToString ("#;#") == "100", "#TS1");
-		Assert.IsTrue ( hundred.ToString ("-#;#") == "-100", "#TS2");
-		Assert.IsTrue ( neghund.ToString ("#;#") == "100", "#TS3");
-		Assert.IsTrue ( neghund.ToString ("#;-#") == "-100", "#TS3");
+		Assert.AreEqual ("100", hundred.ToString ("#;#"), "#TS1");
+		Assert.AreEqual ("-100", hundred.ToString ("-#;#"), "#TS2");
+		Assert.AreEqual ("100", neghund.ToString ("#;#"), "#TS3");
+		Assert.AreEqual ("-100", neghund.ToString ("#;-#"), "#TS4");
+		Assert.AreEqual ("3", 0.ToString ("3;;"), "#TS5");
+		Assert.AreEqual ("3", 0.ToString ("3;2;"), "#TS6");
+		Assert.AreEqual ("3", 0.ToString ("3;"), "#TS7");
+		Assert.AreEqual ("3", 0.ToString ("3;;;;;;;"), "#TS8");
 	}
 	
 	[Test]

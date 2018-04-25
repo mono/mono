@@ -33,23 +33,37 @@ namespace Mono.Data.Sqlite
     /// An array of ISO8601 datetime formats we support conversion from
     /// </summary>
     private static string[] _datetimeFormats = new string[] {
+      "THHmmssK",
+      "THHmmK",
+      "HH:mm:ss.FFFFFFFK",
+      "HH:mm:ssK",
+      "HH:mmK",
+      "yyyy-MM-dd HH:mm:ss.FFFFFFFK", /* NOTE: UTC default (5). */
+      "yyyy-MM-dd HH:mm:ssK",
+      "yyyy-MM-dd HH:mmK",
+      "yyyy-MM-ddTHH:mm:ss.FFFFFFFK",
+      "yyyy-MM-ddTHH:mmK",
+      "yyyy-MM-ddTHH:mm:ssK",
+      "yyyyMMddHHmmssK",
+      "yyyyMMddHHmmK",
+      "yyyyMMddTHHmmssFFFFFFFK",
       "THHmmss",
       "THHmm",
+      "HH:mm:ss.FFFFFFF",
       "HH:mm:ss",
       "HH:mm",
-      "HH:mm:ss.FFFFFFF",
-      "yy-MM-dd",
-      "yyyy-MM-dd",
-      "yyyy-MM-dd HH:mm:ss.FFFFFFF",
+      "yyyy-MM-dd HH:mm:ss.FFFFFFF", /* NOTE: Non-UTC default (19). */
       "yyyy-MM-dd HH:mm:ss",
-      "yyyy-MM-dd HH:mm",                               
+      "yyyy-MM-dd HH:mm",
       "yyyy-MM-ddTHH:mm:ss.FFFFFFF",
       "yyyy-MM-ddTHH:mm",
       "yyyy-MM-ddTHH:mm:ss",
       "yyyyMMddHHmmss",
       "yyyyMMddHHmm",
       "yyyyMMddTHHmmssFFFFFFF",
-      "yyyyMMdd"
+      "yyyy-MM-dd",
+      "yyyyMMdd",
+      "yy-MM-dd"
     };
 
     /// <summary>
@@ -207,7 +221,7 @@ namespace Mono.Data.Sqlite
         case SQLiteDateFormats.UnixEpoch:
           return ((long)(dateValue.Subtract(UnixEpoch).Ticks / TimeSpan.TicksPerSecond)).ToString();
         default:
-          return dateValue.ToString(_datetimeFormats[7], CultureInfo.InvariantCulture);
+          return dateValue.ToString(_datetimeFormats[19], CultureInfo.InvariantCulture);
       }
     }
 

@@ -60,7 +60,7 @@ namespace Mono.CodeContracts.Static.AST {
 			{
 				if (TypeDefinition == null)
 					return null;
-				return TypeDefinition.Interfaces.Select (i => new TypeNode (i));
+				return TypeDefinition.Interfaces.Select (i => new TypeNode (i.InterfaceType));
 			}
 		}
 

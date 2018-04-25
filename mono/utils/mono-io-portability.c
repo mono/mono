@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #include "config.h"
 
 #include <string.h>
@@ -7,6 +11,7 @@
 #include <errno.h>
 #include <mono/utils/mono-io-portability.h>
 #include <mono/metadata/profiler-private.h>
+#include <mono/utils/mono-compiler.h>
 
 #ifndef DISABLE_PORTABILITY
 
@@ -14,11 +19,11 @@
 
 int mono_io_portability_helpers = PORTABILITY_UNKNOWN;
 
-static inline gchar *mono_portability_find_file_internal (GString **report, const gchar *pathname, gboolean last_exists);
+static inline gchar *mono_portability_find_file_internal (const gchar *pathname, gboolean last_exists);
 
 void mono_portability_helpers_init (void)
 {
-        const gchar *env;
+        gchar *env;
 
 	if (mono_io_portability_helpers != PORTABILITY_UNKNOWN)
 		return;
@@ -51,6 +56,7 @@ void mono_portability_helpers_init (void)
                                 mono_io_portability_helpers |= (PORTABILITY_DRIVE | PORTABILITY_CASE);
 			}
                 }
+		g_free (env);
 	}
 }
 
@@ -91,69 +97,28 @@ static gchar *find_in_dir (DIR *current, const gchar *name)
 	return(NULL);
 }
 
-static inline void append_report (GString **report, const gchar *format, ...)
-{
-#if defined (_EGLIB_MAJOR) || GLIB_CHECK_VERSION(2,14,0)
-	va_list ap;
-	if (!*report)
-		*report = g_string_new ("");
-
-	va_start (ap, format);
-	g_string_append_vprintf (*report, format, ap);
-	va_end (ap);
-#else
-	g_assert_not_reached ();
-#endif
-}
-
-static inline void do_mono_profiler_iomap (GString **report, const char *pathname, const char *new_pathname)
-{
-	char *rep = NULL;
-	GString *tmp = report ? *report : NULL;
-
-	if (tmp) {
-		if (tmp->len > 0)
-			rep = g_string_free (tmp, FALSE);
-		else
-			g_string_free (tmp, TRUE);
-		*report = NULL;
-	}
-
-	mono_profiler_iomap (rep, pathname, new_pathname);
-	g_free (rep);
-}
-
 gchar *mono_portability_find_file (const gchar *pathname, gboolean last_exists)
 {
-	GString *report = NULL;
 	gchar *ret;
 	
 	if (!pathname || !pathname [0])
 		return NULL;
-	ret = mono_portability_find_file_internal (&report, pathname, last_exists);
-
-	if (report)
-		g_string_free (report, TRUE);
+	ret = mono_portability_find_file_internal (pathname, last_exists);
 
 	return ret;
 }
 
 /* Returns newly-allocated string or NULL on failure */
-static inline gchar *mono_portability_find_file_internal (GString **report, const gchar *pathname, gboolean last_exists)
+static inline gchar *mono_portability_find_file_internal (const gchar *pathname, gboolean last_exists)
 {
 	gchar *new_pathname, **components, **new_components;
 	int num_components = 0, component = 0;
 	DIR *scanning = NULL;
 	size_t len;
-	gboolean drive_stripped = FALSE;
-	gboolean do_report = (mono_profiler_get_events () & MONO_PROFILE_IOMAP_EVENTS) != 0;
 
 	if (IS_PORTABILITY_NONE) {
 		return(NULL);
 	}
-
-	if (do_report)
-		append_report (report, " - Requested file path: '%s'\n", pathname);
 
 	new_pathname = g_strdup (pathname);
 	
@@ -185,11 +150,6 @@ static inline gchar *mono_portability_find_file_internal (GString **report, cons
 		
 		g_memmove (new_pathname, new_pathname+2, len - 2);
 		new_pathname[len - 2] = '\0';
-
-		if (do_report) {
-			append_report (report, " - Stripped drive letter.\n");
-			drive_stripped = TRUE;
-		}
 #ifdef DEBUG
 		g_message ("%s: Stripped drive letter, now looking for [%s]\n",
 			   __func__, new_pathname);
@@ -210,8 +170,6 @@ static inline gchar *mono_portability_find_file_internal (GString **report, cons
 #ifdef DEBUG
 		g_message ("%s: Found it\n", __func__);
 #endif
-		if (do_report && drive_stripped)
-			do_mono_profiler_iomap (report, pathname, new_pathname);
 
 		return(new_pathname);
 	}
@@ -382,13 +340,15 @@ static inline gchar *mono_portability_find_file_internal (GString **report, cons
 	if ((last_exists &&
 	     access (new_pathname, F_OK) == 0) ||
 	    (!last_exists)) {
-		if (do_report && strcmp (pathname, new_pathname) != 0)
-			do_mono_profiler_iomap (report, pathname, new_pathname);
-
 		return(new_pathname);
 	}
 
 	g_free (new_pathname);
 	return(NULL);
 }
-#endif
+
+#else /* DISABLE_PORTABILITY */
+
+MONO_EMPTY_SOURCE_FILE (mono_io_portability);
+
+#endif /* DISABLE_PORTABILITY */

@@ -3014,7 +3014,7 @@ namespace MonoTests.System.Windows.Forms {
 				 * Without this everytime a "y" or "yy" comes first in the format, it will always show as 
 				 * a 4-digit string if this is not done.
 				 */
-				if (typeof (int).GetType ().GetType ().Name != "MonoType") {
+				if (Type.GetType ("Mono.Runtime") == null) {
 					// Only do this for MS, not implemented in Mono.
 					dt.CustomFormat = "y";
 					Assert.AreEqual ("2007", dt.Text, "#msbug1?");

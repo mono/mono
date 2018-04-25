@@ -1,31 +1,23 @@
-/* 
+/**
+ * \file
  * Copyright 2015 Xamarin Inc
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #ifndef __MONO_METADATA_IMAGE_INTERNALS_H__
 #define __MONO_METADATA_IMAGE_INTERNALS_H__
 
-#ifdef CHECKED_BUILD
-
 #include <mono/metadata/image.h>
-#include <mono/metadata/metadata-internals.h>
 
-typedef struct
-{
-	MonoImage *image;
-	MonoImageSet *image_set;
-} MonoMemPoolOwner;
+MonoImage *
+mono_find_image_owner (void *ptr);
 
-static MonoMemPoolOwner mono_mempool_no_owner = {NULL,NULL};
+MonoImage*
+mono_image_load_file_for_image_checked (MonoImage *image, int fileidx, MonoError *error);
 
-static gboolean
-check_mempool_owner_eq (MonoMemPoolOwner a, MonoMemPoolOwner b)
-{
-	return a.image == b.image && a.image_set == b.image_set;
-}
+MonoImage*
+mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error);
 
-MonoMemPoolOwner
-mono_find_mempool_owner (void *ptr);
-
-#endif /* CHECKED_BUILD */
+MonoImage *
+mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context);
 
 #endif /* __MONO_METADATA_IMAGE_INTERNALS_H__ */

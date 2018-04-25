@@ -153,7 +153,7 @@ namespace Microsoft.Build.Tasks
 					throw;
 				}
 
-				Log.LogErrorWithCodeFromResources ("XmlPeek.ArgumentError", e.Message);
+				Log.LogError ("MSB3741: Unable to load arguments for the XmlPeek task. {0}", e.Message);
 				return false;
 			}
 
@@ -169,7 +169,7 @@ namespace Microsoft.Build.Tasks
 					throw;
 				}
 
-				Log.LogErrorWithCodeFromResources ("XmlPeekPoke.InputFileError", _xmlInputPath.ItemSpec, e.Message);
+				Log.LogError ("MSB3733: Input file \"{0}\" cannot be opened. {1}", _xmlInputPath.ItemSpec, e.Message);
 				return false;
 			} finally {
 				xmlinput.CloseReader ();
@@ -185,7 +185,7 @@ namespace Microsoft.Build.Tasks
 					throw;
 				}
 
-				Log.LogErrorWithCodeFromResources ("XmlPeekPoke.XPathError", _query, e.Message);
+				Log.LogError ("MSB3734: XPath Query \"{0}\" cannot be loaded. {1}", _query, e.Message);
 				return false;
 			}
 
@@ -199,14 +199,14 @@ namespace Microsoft.Build.Tasks
 					throw;
 				}
 
-				Log.LogErrorWithCodeFromResources ("XmlPeek.NamespacesError", e.Message);
+				Log.LogError ("MSB3742: Unable to process the Namespaces argument for the XmlPeek task. {0}", e.Message);
 				return false;
 			}
 
 			try {
 				expr.SetContext (xmlNamespaceManager);
 			} catch (XPathException e) {
-				Log.LogErrorWithCodeFromResources ("XmlPeek.XPathContextError", e.Message);
+				Log.LogError ("MSB3743: Unable to set XPath expression's Context. {0}", e.Message);
 				return false;
 			}
 
@@ -228,12 +228,12 @@ namespace Microsoft.Build.Tasks
 				_result [i++] = new TaskItem (item);
 
 				// This can be logged a lot, so low importance
-				Log.LogMessageFromResources (MessageImportance.Low, "XmlPeek.Found", item);
+				Log.LogMessage (MessageImportance.Low, "Found \"{0}\".", item);
 			}
 
 			if (_result.Length == 0) {
 				// Logged no more than once per execute of this task
-				Log.LogMessageFromResources ("XmlPeek.NotFound");
+				Log.LogMessage ("The specified XPath query did not capture any nodes.");
 			}
 
 			return true;

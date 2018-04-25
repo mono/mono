@@ -1,9 +1,0 @@
-2005-11-28  Jonathan Pryor  <jonpryor@vt.edu>
-
-	* Mono.Unix.Native: Directory Added.
-
-2005-01-05  Jonathan Pryor  <jonpryor@vt.edu>
-
-	* ChangeLog: Started.
-	* Mono.Unix: Directory added.
-

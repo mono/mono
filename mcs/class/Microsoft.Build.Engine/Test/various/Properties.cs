@@ -101,11 +101,17 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 							<Config>debug</Config>
 							<NullValue>null</NullValue>
 							<TargetValue>  </TargetValue>
+							<StringWithQuotes>abc""def</StringWithQuotes>
 							<Prop1>$(Config.Substring(0,3)) </Prop1>
 							<Prop2>$(Config.Length )</Prop2>
 							<Prop3>$(Config.StartsWith ('DE', System.StringComparison.OrdinalIgnoreCase))</Prop3>
 							<Prop4>$(NullValue.StartsWith ('Te', StringComparison.OrdinalIgnoreCase))</Prop4>
 							<Prop5>$(TargetValue.Trim('\\'))</Prop5>
+							<Prop6>$(StringWithQuotes.Replace('""', ""'""))</Prop6>
+							<Prop7>$(StringWithQuotes.Replace('""', ''))</Prop7>
+							<Prop8>$(StringWithQuotes.Replace('""', """"))</Prop8>
+							<Prop9>$(StringWithQuotes.Replace('""', ``))</Prop9>
+							<Prop9>$(StringWithQuotes.Replace(`c""d`, `2""'3`))</Prop9>
 						</PropertyGroup>
 					</Project>
 				";
@@ -116,9 +122,14 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.AreEqual ("True", proj.GetEvaluatedProperty ("Prop3"), "#3");
 			Assert.AreEqual ("False", proj.GetEvaluatedProperty ("Prop4"), "#4");
 			Assert.AreEqual ("", proj.GetEvaluatedProperty ("Prop5"), "#5");
+			Assert.AreEqual ("abc'def", proj.GetEvaluatedProperty ("Prop6"), "#6");
+			Assert.AreEqual ("abcdef", proj.GetEvaluatedProperty ("Prop7"), "#7");
+			Assert.AreEqual ("abcdef", proj.GetEvaluatedProperty ("Prop8"), "#8");
+			Assert.AreEqual ("ab2\"'3ef", proj.GetEvaluatedProperty ("Prop9"), "#9");
 		}
 
 		[Test]
+		[SetCulture ("en-us")]
 		public void AllowedFrameworkMembers ()
 		{
 			string documentString = @"
@@ -192,6 +203,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[SetCulture ("en-us")]
 		public void MSBuildPropertyFunctions ()
 		{
 			string documentString = @"

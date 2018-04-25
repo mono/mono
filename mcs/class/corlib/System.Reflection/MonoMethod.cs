@@ -149,6 +149,16 @@ namespace System.Reflection {
             return sbName.ToString();
         }
 
+		public override Delegate CreateDelegate (Type delegateType)
+		{
+			return Delegate.CreateDelegate (delegateType, this);
+		}
+
+		public override Delegate CreateDelegate (Type delegateType, object target)
+		{
+			return Delegate.CreateDelegate (delegateType, target, this);
+		}
+
         public override String ToString() 
         {
             return ReturnType.FormatTypeName() + " " + FormatNameAndSig(false);
@@ -267,6 +277,8 @@ namespace System.Reflection {
 		/*
 		 * InternalInvoke() receives the parameters correctly converted by the 
 		 * binder to match the types of the method signature.
+		 * The exc argument is used to capture exceptions thrown by the icall.
+		 * Exceptions thrown by the called method propagate normally.
 		 */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern Object InternalInvoke (Object obj, Object[] parameters, out Exception exc);
@@ -288,19 +300,22 @@ namespace System.Reflection {
 			Exception exc;
 			object o = null;
 
-			try {
-				// The ex argument is used to distinguish exceptions thrown by the icall
-				// from the exceptions thrown by the called method (which need to be
-				// wrapped in TargetInvocationException).
-				o = InternalInvoke (obj, parameters, out exc);
-			} catch (ThreadAbortException) {
-				throw;
-#if NET_2_1
-			} catch (MethodAccessException) {
-				throw;
+			if ((invokeAttr & BindingFlags.DoNotWrapExceptions) == 0) {
+				try {
+					o = InternalInvoke (obj, parameters, out exc);
+				} catch (ThreadAbortException) {
+					throw;
+#if MOBILE
+				} catch (MethodAccessException) {
+					throw;
 #endif
-			} catch (Exception e) {
-				throw new TargetInvocationException (e);
+				} catch (Exception e) {
+					throw new TargetInvocationException (e);
+				}
+			}
+			else
+			{
+				o = InternalInvoke (obj, parameters, out exc);
 			}
 
 			if (exc != null)
@@ -428,7 +443,7 @@ namespace System.Reflection {
 			foreach (Type type in methodInstantiation) {
 				if (type == null)
 					throw new ArgumentNullException ();
-				if (!(type is MonoType))
+				if (!(type is RuntimeType))
 					hasUserType = true;
 			}
 
@@ -492,9 +507,16 @@ namespace System.Reflection {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
 
+#if MOBILE
+		static int get_core_clr_security_level ()
+		{
+			return 1;
+		}
+#else
 		//seclevel { transparent = 0, safe-critical = 1, critical = 2}
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern int get_core_clr_security_level ();
+#endif
 
 		public override bool IsSecurityTransparent {
 			get { return get_core_clr_security_level () == 0; }
@@ -632,22 +654,26 @@ namespace System.Reflection {
 				throw new MemberAccessException (String.Format ("Cannot create an instance of {0} because it is an abstract class", DeclaringType));
 			}
 
-			return InternalInvoke (obj, parameters);
+			return InternalInvoke (obj, parameters, (invokeAttr & BindingFlags.DoNotWrapExceptions) == 0);
 		}
 
-		public object InternalInvoke (object obj, object[] parameters)
+		public object InternalInvoke (object obj, object[] parameters, bool wrapExceptions)
 		{
 			Exception exc;
 			object o = null;
 
-			try {
-				o = InternalInvoke (obj, parameters, out exc);
-#if NET_2_1
-			} catch (MethodAccessException) {
-				throw;
+			if (wrapExceptions) {
+				try {
+					o = InternalInvoke (obj, parameters, out exc);
+#if MOBILE
+				} catch (MethodAccessException) {
+					throw;
 #endif
-			} catch (Exception e) {
-				throw new TargetInvocationException (e);
+				} catch (Exception e) {
+					throw new TargetInvocationException (e);
+				}
+			} else {
+				o = InternalInvoke (obj, parameters, out exc);
 			}
 
 			if (exc != null)
@@ -740,6 +766,28 @@ namespace System.Reflection {
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
+		}
+
+#if MOBILE
+		static int get_core_clr_security_level ()
+		{
+			return 1;
+		}
+#else
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern int get_core_clr_security_level ();
+#endif
+
+		public override bool IsSecurityTransparent {
+			get { return get_core_clr_security_level () == 0; }
+		}
+
+		public override bool IsSecurityCritical {
+			get { return get_core_clr_security_level () > 0; }
+		}
+
+		public override bool IsSecuritySafeCritical {
+			get { return get_core_clr_security_level () == 1; }
 		}
 	}
 }

@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using NUnit.Framework;
@@ -56,7 +57,7 @@ namespace MonoTests.System.Windows {
 		public void ToStringTest ()
 		{
 			Vector v = new Vector (4, 5);
-			Assert.AreEqual ("4,5", v.ToString());
+			Assert.AreEqual ("4,5", v.ToString(CultureInfo.InvariantCulture));
 		}
 
 		[Test]

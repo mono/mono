@@ -30,13 +30,13 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH || MONODROID
-using Mono.Security;
-using Mono.Security.Cryptography;
-#else
+#if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security;
 using MonoSecurity::Mono.Security.Cryptography;
+#else
+using Mono.Security;
+using Mono.Security.Cryptography;
 #endif
 
 using System.Text;
@@ -159,14 +159,14 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// methods
 
-		public override void CopyFrom (AsnEncodedData encodedData)
+		public override void CopyFrom (AsnEncodedData asnEncodedData)
 		{
-			if (encodedData == null)
-				throw new ArgumentNullException ("encodedData");
+			if (asnEncodedData == null)
+				throw new ArgumentNullException ("asnEncodedData");
 
-			X509Extension ex = (encodedData as X509Extension);
+			X509Extension ex = (asnEncodedData as X509Extension);
 			if (ex == null)
-				throw new ArgumentException (Locale.GetText ("Wrong type."), "encodedData");
+				throw new ArgumentException (Locale.GetText ("Wrong type."), "asnEncodedData");
 
 			if (ex._oid == null)
 				_oid = new Oid (oid, friendlyName);

@@ -1,5 +1,7 @@
-/*
+/**
+ * \file
  * Copyright 2011 Xamarin Inc
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #ifndef __MONO_MINI_ARM_H__
@@ -8,12 +10,6 @@
 #include <mono/arch/arm/arm-codegen.h>
 #include <mono/utils/mono-context.h>
 #include <glib.h>
-
-#ifdef __native_client_codegen__
-#define kNaClAlignmentARM 16
-#define kNaClAlignmentMaskARM (kNaClAlignmentARM - 1)
-#define kNaClLengthOfCallImm 4
-#endif
 
 #if defined(ARM_FPU_NONE)
 #define MONO_ARCH_SOFT_FLOAT_FALLBACK 1
@@ -97,7 +93,6 @@
 #endif
 
 #define MONO_ARCH_USE_FPSTACK FALSE
-#define MONO_ARCH_FPSTACK_SIZE 0
 
 #define MONO_ARCH_INST_SREG2_MASK(ins) (0)
 
@@ -150,7 +145,9 @@ typedef enum {
 	GSHAREDVT_RET_I1 = 3,
 	GSHAREDVT_RET_U1 = 4,
 	GSHAREDVT_RET_I2 = 5,
-	GSHAREDVT_RET_U2 = 6
+	GSHAREDVT_RET_U2 = 6,
+	GSHAREDVT_RET_VFP_R4 = 7,
+	GSHAREDVT_RET_VFP_R8 = 8
 } GSharedVtRetMarshal;
 
 typedef struct {
@@ -169,26 +166,91 @@ typedef struct {
 	int calli;
 	/* Whenever this is a in or an out call */
 	int gsharedvt_in;
+	/* Whenever this call uses fp registers */
+	int have_fregs;
+	gpointer caller_cinfo, callee_cinfo;
 	/* Maps stack slots/registers in the caller to the stack slots/registers in the callee */
 	/* A negative value means a register, i.e. -1=r0, -2=r1 etc. */
 	int map [MONO_ZERO_LEN_ARRAY];
 } GSharedVtCallInfo;
 
+
+typedef enum {
+	RegTypeNone,
+	/* Passed/returned in an ireg */
+	RegTypeGeneral,
+	/* Passed/returned in a pair of iregs */
+	RegTypeIRegPair,
+	/* Passed on the stack */
+	RegTypeBase,
+	/* First word in r3, second word on the stack */
+	RegTypeBaseGen,
+	/* FP value passed in either an ireg or a vfp reg */
+	RegTypeFP,
+	/* Struct passed/returned in gregs */
+	RegTypeStructByVal,
+	RegTypeStructByAddr,
+	RegTypeStructByAddrOnStack,
+	/* gsharedvt argument passed by addr in greg */
+	RegTypeGSharedVtInReg,
+	/* gsharedvt argument passed by addr on stack */
+	RegTypeGSharedVtOnStack,
+	RegTypeHFA
+} ArgStorage;
+
+typedef struct {
+	gint32  offset;
+	guint16 vtsize; /* in param area */
+	/* RegTypeHFA */
+	int esize;
+	/* RegTypeHFA/RegTypeStructByVal */
+	int nregs;
+	guint8  reg;
+	ArgStorage  storage;
+	/* RegTypeStructByVal */
+	gint32  struct_size, align;
+	guint8  size    : 4; /* 1, 2, 4, 8, or regs used by RegTypeStructByVal */
+} ArgInfo;
+
+typedef struct {
+	int nargs;
+	guint32 stack_usage;
+	/* The index of the vret arg in the argument list for RegTypeStructByAddr */
+	int vret_arg_index;
+	ArgInfo ret;
+	ArgInfo sig_cookie;
+	ArgInfo args [1];
+} CallInfo;
+
+#define PARAM_REGS 4
+#define FP_PARAM_REGS 8
+
+typedef struct {
+	/* General registers */
+	mgreg_t gregs [PARAM_REGS];
+	/* Floating registers */
+	float fregs [FP_PARAM_REGS * 2];
+	/* Stack usage, used for passing params on stack */
+	guint32 stack_size;
+	guint8 *stack;
+} CallContext;
+
 /* Structure used by the sequence points in AOTed code */
 typedef struct {
 	gpointer ss_trigger_page;
 	gpointer bp_trigger_page;
+	gpointer ss_tramp_addr;
 	guint8* bp_addrs [MONO_ZERO_LEN_ARRAY];
 } SeqPointInfo;
 
-
-#define PARAM_REGS 4
-#define DYN_CALL_STACK_ARGS 10
-
 typedef struct {
-	mgreg_t regs [PARAM_REGS + DYN_CALL_STACK_ARGS];
+	double fpregs [FP_PARAM_REGS];
 	mgreg_t res, res2;
 	guint8 *ret;
+	guint32 has_fpregs;
+	guint32 n_stackargs;
+	/* This should come last as the structure is dynamically extended */
+	mgreg_t regs [PARAM_REGS];
 } DynCallArgs;
 
 void arm_patch (guchar *code, const guchar *target);
@@ -199,7 +261,7 @@ void
 mono_arm_throw_exception_by_token (guint32 type_token, mgreg_t pc, mgreg_t sp, mgreg_t *int_regs, gdouble *fp_regs);
 
 gpointer
-mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg);
+mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg, double *caller_fregs, double *callee_fregs);
 
 typedef enum {
 	MONO_ARM_FPU_NONE = 0,
@@ -258,25 +320,26 @@ typedef struct MonoCompileArch {
 
 #define MONO_ARCH_USE_SIGACTION 1
 
-#if defined(__native_client__) || defined(HOST_WATCHOS)
+#if defined(HOST_WATCHOS)
 #undef MONO_ARCH_USE_SIGACTION
 #endif
 
 #define MONO_ARCH_NEED_DIV_CHECK 1
 
-#define MONO_ARCH_HAVE_GENERALIZED_IMT_THUNK 1
+#define MONO_ARCH_HAVE_GENERALIZED_IMT_TRAMPOLINE 1
 
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS 1
 
+#define MONO_ARCH_INTERPRETER_SUPPORTED 1
 #define MONO_ARCH_AOT_SUPPORTED 1
 #define MONO_ARCH_LLVM_SUPPORTED 1
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
-#define MONO_ARCH_DYN_CALL_PARAM_AREA (DYN_CALL_STACK_ARGS * sizeof (mgreg_t))
+#define MONO_ARCH_DYN_CALL_PARAM_AREA 0
 
-#ifndef MONO_CROSS_COMPILE
+#if !(defined(TARGET_ANDROID) && defined(MONO_CROSS_COMPILE))
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 #endif
 
@@ -287,33 +350,34 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_GC_MAPS_SUPPORTED 1
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
-#define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION 1
 #define MONO_ARCH_HAVE_OBJC_GET_SELECTOR 1
-#define MONO_ARCH_HAVE_OP_TAIL_CALL 1
-#define MONO_ARCH_HAVE_DUMMY_INIT 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
+#define MONO_ARCH_FLOAT32_SUPPORTED 1
 
-#if defined(__native_client__)
-#undef MONO_ARCH_SOFT_DEBUG_SUPPORTED
-#undef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
-#undef MONO_ARCH_HAVE_CONTEXT_SET_INT_REG
+#define MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE 1
+#define MONO_ARCH_HAVE_FTNPTR_ARG_TRAMPOLINE 1
+#define MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP 1
+
+#if defined(TARGET_WATCHOS) || (defined(__linux__) && !defined(TARGET_ANDROID))
+#define MONO_ARCH_DISABLE_HW_TRAPS 1
+#define MONO_ARCH_HAVE_UNWIND_BACKTRACE 1
 #endif
-
-#define MONO_ARCH_HAVE_TLS_GET (mono_arm_have_tls_get ())
-// #define MONO_ARCH_HAVE_TLS_GET_REG 1
 
 /* ARM doesn't have too many registers, so we have to use a callee saved one */
 #define MONO_ARCH_RGCTX_REG ARMREG_V5
 #define MONO_ARCH_IMT_REG MONO_ARCH_RGCTX_REG
 /* First argument reg */
 #define MONO_ARCH_VTABLE_REG ARMREG_R0
-#define MONO_ARCH_EXC_REG ARMREG_R0
+
+// Does the ABI have a volatile non-parameter register, so tailcall
+// can pass context to generics or interfaces?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->regs [0] = (gsize)exc; } while (0)
 
@@ -337,6 +401,12 @@ mono_arm_resume_unwind (guint32 dummy1, mgreg_t pc, mgreg_t sp, mgreg_t *int_reg
 gboolean
 mono_arm_thumb_supported (void);
 
+gboolean
+mono_arm_eabi_supported (void);
+
+int
+mono_arm_i8_align (void);
+
 GSList*
 mono_arm_get_exception_trampolines (gboolean aot);
 
@@ -349,21 +419,17 @@ mono_arm_patchable_b (guint8 *code, int cond);
 guint8*
 mono_arm_patchable_bl (guint8 *code, int cond);
 
-#ifdef USE_JUMP_TABLES
-guint8*
-mono_arm_load_jumptable_entry_addr (guint8 *code, gpointer *jte, ARMReg reg);
-
-guint8*
-mono_arm_load_jumptable_entry (guint8 *code, gpointer *jte, ARMReg reg);
-#endif
-
 gboolean
 mono_arm_is_hard_float (void);
 
-gboolean
-mono_arm_have_tls_get (void);
-
 void
 mono_arm_unaligned_stack (MonoMethod *method);
+
+/* MonoJumpInfo **ji */
+guint8*
+mono_arm_emit_aotconst (gpointer ji, guint8 *code, guint8 *buf, int dreg, int patch_type, gconstpointer data);
+
+CallInfo*
+mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig);
 
 #endif /* __MONO_MINI_ARM_H__ */

@@ -9,11 +9,11 @@ namespace Microsoft.Build.Utilities
 
 	internal class ProcessWrapper : Process, IProcessAsyncOperation
 	{
-		private Thread captureOutputThread;
-		private Thread captureErrorThread;
 		ManualResetEvent endEventOut = new ManualResetEvent (false);
 		ManualResetEvent endEventErr = new ManualResetEvent (false);
+		ManualResetEvent endEventExit = new ManualResetEvent (false);
 		bool done;
+		bool disposed;
 		object lockObj = new object ();
 
 		public ProcessWrapper ()
@@ -23,26 +23,59 @@ namespace Microsoft.Build.Utilities
 		public new void Start ()
 		{
 			CheckDisposed ();
+
+			base.EnableRaisingEvents = true;
+
+			base.Exited += (s, args) => {
+				try {
+					endEventExit.Set ();
+					WaitHandle.WaitAll (new WaitHandle[] { endEventOut, endEventErr });
+				} catch (ObjectDisposedException) {
+					return; // we already called Dispose
+				}
+
+				OnExited (this, EventArgs.Empty);
+			};
+
+			base.OutputDataReceived += (s, args) => {
+				if (args.Data == null) {
+					try {
+						endEventOut.Set ();
+					} catch (ObjectDisposedException) {
+						return; // we already called Dispose
+					}
+				} else {
+					ProcessEventHandler handler = OutputStreamChanged;
+					if (handler != null)
+						handler (this, args.Data + Environment.NewLine);
+				}
+			};
+
+			base.ErrorDataReceived += (s, args) => {
+				if (args.Data == null) {
+					try {
+						endEventErr.Set ();
+					} catch (ObjectDisposedException) {
+						return; // we already called Dispose
+					}
+				} else {
+					ProcessEventHandler handler = ErrorStreamChanged;
+					if (handler != null)
+						handler (this, args.Data + Environment.NewLine);
+				}
+			};
+
 			base.Start ();
 
-			captureOutputThread = new Thread (new ThreadStart(CaptureOutput));
-			captureOutputThread.IsBackground = true;
-			captureOutputThread.Start ();
-
-			if (ErrorStreamChanged != null) {
-				captureErrorThread = new Thread (new ThreadStart(CaptureError));
-				captureErrorThread.IsBackground = true;
-				captureErrorThread.Start ();
-			} else {
-				endEventErr.Set ();
-			}
+			base.BeginOutputReadLine ();
+			base.BeginErrorReadLine ();
 		}
 
 		public void WaitForOutput (int milliseconds)
 		{
 			CheckDisposed ();
 			WaitForExit (milliseconds);
-			WaitHandle.WaitAll (new WaitHandle[] {endEventOut});
+			WaitHandle.WaitAll (new WaitHandle[] { endEventOut, endEventErr, endEventExit }, milliseconds);
 		}
 
 		public void WaitForOutput ()
@@ -50,68 +83,30 @@ namespace Microsoft.Build.Utilities
 			WaitForOutput (-1);
 		}
 
-		private void CaptureOutput ()
-		{
-			try {
-				if (OutputStreamChanged != null) {
-					char[] buffer = new char [1024];
-					int nr;
-					while ((nr = StandardOutput.Read (buffer, 0, buffer.Length)) > 0) {
-						if (OutputStreamChanged != null)
-							OutputStreamChanged (this, new string (buffer, 0, nr));
-					}
-				}
-			} catch (ThreadAbortException) {
-				// There is no need to keep propagating the abort exception
-				Thread.ResetAbort ();
-			} finally {
-				// WORKAROUND for "Bug 410743 - wapi leak in System.Diagnostic.Process"
-				// Process leaks when an exit event is registered
-				WaitHandle.WaitAll (new WaitHandle[] {endEventErr});
-
-				OnExited (this, EventArgs.Empty);
-
-				//call this AFTER the exit event, or the ProcessWrapper may get disposed and abort this thread
-				if (endEventOut != null)
-					endEventOut.Set ();
-			}
-		}
-
-		private void CaptureError ()
-		{
-			try {
-				char[] buffer = new char [1024];
-				int nr;
-				while ((nr = StandardError.Read (buffer, 0, buffer.Length)) > 0) {
-					if (ErrorStreamChanged != null)
-						ErrorStreamChanged (this, new string (buffer, 0, nr));
-				}
-			} finally {
-				endEventErr.Set ();
-			}
-		}
-
 		protected override void Dispose (bool disposing)
 		{
-			lock (lockObj) {
-				if (endEventOut == null)
-					return;
-			}
+			if (disposed)
+				return;
 
 			if (!done)
 				((IAsyncOperation)this).Cancel ();
 
-			captureOutputThread = captureErrorThread = null;
+			// if we race with base.Exited, we don't want to hang on WaitAll (endEventOut, endEventErr)
+			endEventOut.Set ();
+			endEventErr.Set ();
+
 			endEventOut.Close ();
 			endEventErr.Close ();
-			endEventOut = endEventErr = null;
+			endEventExit.Close ();
+
+			disposed = true;
 
 			base.Dispose (disposing);
 		}
 
 		void CheckDisposed ()
 		{
-			if (endEventOut == null)
+			if (disposed)
 				throw new ObjectDisposedException ("ProcessWrapper");
 		}
 
@@ -132,10 +127,16 @@ namespace Microsoft.Build.Utilities
 					} catch {
 						// Ignore
 					}
-					if (captureOutputThread != null)
-						captureOutputThread.Abort ();
-					if (captureErrorThread != null)
-						captureErrorThread.Abort ();
+					try {
+						base.CancelOutputRead ();
+					} catch (InvalidOperationException) {
+						// Ignore: might happen if Start wasn't called
+					}
+					try {
+						base.CancelErrorRead ();
+					} catch (InvalidOperationException) {
+						// Ignore: might happen if Start wasn't called
+					}
 				}
 			} catch (Exception ex) {
 				//FIXME: Log
@@ -151,20 +152,14 @@ namespace Microsoft.Build.Utilities
 
 		void OnExited (object sender, EventArgs args)
 		{
-			try {
-				if (!HasExited)
-					WaitForExit ();
-			} catch {
-				// Ignore
-			} finally {
-				lock (lockObj) {
-					done = true;
-					try {
-						if (completedEvent != null)
-							completedEvent (this);
-					} catch {
-						// Ignore
-					}
+			lock (lockObj) {
+				done = true;
+				try {
+					OperationHandler handler = completedEvent;
+					if (handler != null)
+						handler (this);
+				} catch {
+					// Ignore
 				}
 			}
 		}

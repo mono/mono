@@ -1,5 +1,6 @@
-/*
- * mono-threads-windows.c: Low-level threading, windows version
+/**
+ * \file
+ * Low-level threading, windows version
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -12,34 +13,40 @@
 #if defined(USE_WINDOWS_BACKEND)
 
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-threads-debug.h>
+#include <mono/utils/mono-os-wait.h>
 #include <limits.h>
 
-
 void
-mono_threads_init_platform (void)
-{
-}
-
-static void CALLBACK
-interrupt_apc (ULONG_PTR param)
+mono_threads_suspend_init (void)
 {
 }
 
 gboolean
-mono_threads_core_begin_async_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
+mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
 {
 	DWORD id = mono_thread_info_get_tid (info);
 	HANDLE handle;
 	DWORD result;
-	gboolean res;
 
-	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	handle = info->native_handle;
 	g_assert (handle);
 
 	result = SuspendThread (handle);
 	THREADS_SUSPEND_DEBUG ("SUSPEND %p -> %d\n", (void*)id, ret);
 	if (result == (DWORD)-1) {
-		CloseHandle (handle);
+		return FALSE;
+	}
+
+	/* Suspend logic assumes thread is really suspended before continuing below. Surprisingly SuspendThread */
+	/* is just an async request to the scheduler, meaning that the suspended thread can continue to run */
+	/* user mode code until scheduler gets around and process the request. This will cause a thread state race */
+	/* in mono's thread state machine implementation on Windows. By requesting a threads context after issuing a */
+	/* suspended request, this will wait until thread is suspended and thread context has been collected */
+	/* and returned. */
+	CONTEXT context;
+	context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
+	if (!GetThreadContext (handle, &context)) {
 		return FALSE;
 	}
 
@@ -48,44 +55,49 @@ mono_threads_core_begin_async_suspend (MonoThreadInfo *info, gboolean interrupt_
 		mono_threads_add_to_pending_operation_set (info);
 		result = ResumeThread (handle);
 		g_assert (result == 1);
-		CloseHandle (handle);
 		THREADS_SUSPEND_DEBUG ("FAILSAFE RESUME/1 %p -> %d\n", (void*)id, 0);
 		//XXX interrupt_kernel doesn't make sense in this case as the target is not in a syscall
 		return TRUE;
 	}
-	res = mono_threads_get_runtime_callbacks ()->thread_state_init_from_handle (&info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], info);
+	info->suspend_can_continue = mono_threads_get_runtime_callbacks ()->thread_state_init_from_handle (&info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], info, &context);
 	THREADS_SUSPEND_DEBUG ("thread state %p -> %d\n", (void*)id, res);
-	if (res) {
-		//FIXME do we need to QueueUserAPC on this case?
+	if (info->suspend_can_continue) {
 		if (interrupt_kernel)
-			QueueUserAPC ((PAPCFUNC)interrupt_apc, handle, (ULONG_PTR)NULL);
+			mono_win32_interrupt_wait (info, handle, id);
 	} else {
-		mono_threads_transition_async_suspend_compensation (info);
-		result = ResumeThread (handle);
-		g_assert (result == 1);
 		THREADS_SUSPEND_DEBUG ("FAILSAFE RESUME/2 %p -> %d\n", (void*)info->native_handle, 0);
 	}
 
-	CloseHandle (handle);
-	return res;
-}
-
-gboolean
-mono_threads_core_check_suspend_result (MonoThreadInfo *info)
-{
 	return TRUE;
 }
 
 gboolean
-mono_threads_core_begin_async_resume (MonoThreadInfo *info)
+mono_threads_suspend_check_suspend_result (MonoThreadInfo *info)
+{
+	return info->suspend_can_continue;
+}
+
+
+
+void
+mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
+{
+	DWORD id = mono_thread_info_get_tid(info);
+	g_assert (info->native_handle);
+	mono_win32_abort_wait (info, info->native_handle, id);
+}
+
+gboolean
+mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 {
 	DWORD id = mono_thread_info_get_tid (info);
 	HANDLE handle;
 	DWORD result;
 
-	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	handle = info->native_handle;
 	g_assert (handle);
-
+	
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	if (info->async_target) {
 		MonoContext ctx;
 		CONTEXT context;
@@ -98,7 +110,6 @@ mono_threads_core_begin_async_resume (MonoThreadInfo *info)
 		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
 
 		if (!GetThreadContext (handle, &context)) {
-			CloseHandle (handle);
 			return FALSE;
 		}
 
@@ -110,109 +121,95 @@ mono_threads_core_begin_async_resume (MonoThreadInfo *info)
 		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
 		res = SetThreadContext (handle, &context);
 		if (!res) {
-			CloseHandle (handle);
 			return FALSE;
 		}
 	}
+#else
+	g_error ("Not implemented due to lack of SetThreadContext");	
+#endif
 
 	result = ResumeThread (handle);
-	CloseHandle (handle);
 
 	return result != (DWORD)-1;
 }
 
 
 void
-mono_threads_platform_register (MonoThreadInfo *info)
+mono_threads_suspend_register (MonoThreadInfo *info)
 {
+	BOOL success;
+	HANDLE currentThreadHandle = NULL;
+
+	success = DuplicateHandle (GetCurrentProcess (), GetCurrentThread (), GetCurrentProcess (), &currentThreadHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+	g_assertf (success, "Failed to duplicate current thread handle");
+
+	info->native_handle = currentThreadHandle;
 }
 
 void
-mono_threads_platform_free (MonoThreadInfo *info)
+mono_threads_suspend_free (MonoThreadInfo *info)
 {
+	CloseHandle (info->native_handle);
+	info->native_handle = NULL;
+}
+
+void
+mono_threads_suspend_init_signals (void)
+{
+}
+
+gint
+mono_threads_suspend_search_alternative_signal (void)
+{
+	g_assert_not_reached ();
+}
+
+gint
+mono_threads_suspend_get_suspend_signal (void)
+{
+	return -1;
+}
+
+gint
+mono_threads_suspend_get_restart_signal (void)
+{
+	return -1;
+}
+
+gint
+mono_threads_suspend_get_abort_signal (void)
+{
+	return -1;
 }
 
 #endif
 
 #if defined (HOST_WIN32)
 
-typedef struct {
-	LPTHREAD_START_ROUTINE start_routine;
-	void *arg;
-	MonoSemType registered;
-	gboolean suspend;
-	HANDLE suspend_event;
-} ThreadStartInfo;
-
-static DWORD WINAPI
-inner_start_thread (LPVOID arg)
+gboolean
+mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *tid)
 {
-	ThreadStartInfo *start_info = arg;
-	void *t_arg = start_info->arg;
-	int post_result;
-	LPTHREAD_START_ROUTINE start_func = start_info->start_routine;
-	DWORD result;
-	gboolean suspend = start_info->suspend;
-	HANDLE suspend_event = start_info->suspend_event;
-	MonoThreadInfo *info;
-
-	info = mono_thread_info_attach (&result);
-	info->runtime_thread = TRUE;
-	info->create_suspended = suspend;
-
-	post_result = MONO_SEM_POST (&(start_info->registered));
-	g_assert (!post_result);
-
-	if (suspend) {
-		WaitForSingleObject (suspend_event, INFINITE); /* caller will suspend the thread before setting the event. */
-		CloseHandle (suspend_event);
-	}
-
-	result = start_func (t_arg);
-
-	mono_thread_info_detach ();
-
-	return result;
-}
-
-HANDLE
-mono_threads_core_create_thread (LPTHREAD_START_ROUTINE start_routine, gpointer arg, guint32 stack_size, guint32 creation_flags, MonoNativeThreadId *out_tid)
-{
-	ThreadStartInfo *start_info;
 	HANDLE result;
 	DWORD thread_id;
 
-	start_info = g_malloc0 (sizeof (ThreadStartInfo));
-	if (!start_info)
-		return NULL;
-	MONO_SEM_INIT (&(start_info->registered), 0);
-	start_info->arg = arg;
-	start_info->start_routine = start_routine;
-	start_info->suspend = creation_flags & CREATE_SUSPENDED;
-	creation_flags &= ~CREATE_SUSPENDED;
-	if (start_info->suspend) {
-		start_info->suspend_event = CreateEvent (NULL, TRUE, FALSE, NULL);
-		if (!start_info->suspend_event)
-			return NULL;
+	result = CreateThread (NULL, stack_size ? *stack_size : 0, (LPTHREAD_START_ROUTINE) thread_fn, thread_data, 0, &thread_id);
+	if (!result)
+		return FALSE;
+
+	/* A new handle is open when attaching
+	 * the thread, so we don't need this one */
+	CloseHandle (result);
+
+	if (tid)
+		*tid = thread_id;
+
+	if (stack_size) {
+		// TOOD: Use VirtualQuery to get correct value 
+		// http://stackoverflow.com/questions/2480095/thread-stack-size-on-windows-visual-c
+		*stack_size = 2 * 1024 * 1024;
 	}
 
-	result = CreateThread (NULL, stack_size, inner_start_thread, start_info, creation_flags, &thread_id);
-	if (result) {
-		while (MONO_SEM_WAIT (&(start_info->registered)) != 0) {
-			/*if (EINTR != errno) ABORT("sem_wait failed"); */
-		}
-		if (start_info->suspend) {
-			g_assert (SuspendThread (result) != (DWORD)-1);
-			SetEvent (start_info->suspend_event);
-		}
-	} else if (start_info->suspend) {
-		CloseHandle (start_info->suspend_event);
-	}
-	if (out_tid)
-		*out_tid = thread_id;
-	MONO_SEM_DESTROY (&(start_info->registered));
-	g_free (start_info);
-	return result;
+	return TRUE;
 }
 
 
@@ -234,16 +231,35 @@ mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 	return CreateThread (NULL, 0, (func), (arg), 0, (tid)) != NULL;
 }
 
-void
-mono_threads_core_resume_created (MonoThreadInfo *info, MonoNativeThreadId tid)
+gboolean
+mono_native_thread_join_handle (HANDLE thread_handle, gboolean close_handle)
+{
+	DWORD res = WaitForSingleObject (thread_handle, INFINITE);
+
+	if (close_handle)
+		CloseHandle (thread_handle);
+
+	return res != WAIT_FAILED;
+}
+
+/*
+ * Can't OpenThread on UWP until SDK 15063 (our minspec today is 10240),
+ * but this function doesn't seem to be used on Windows anyway
+ */
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
+gboolean
+mono_native_thread_join (MonoNativeThreadId tid)
 {
 	HANDLE handle;
 
-	handle = OpenThread (THREAD_ALL_ACCESS, TRUE, tid);
-	g_assert (handle);
-	ResumeThread (handle);
-	CloseHandle (handle);
+	if (!(handle = OpenThread (SYNCHRONIZE, TRUE, tid)))
+		return FALSE;
+
+	return mono_native_thread_join_handle (handle, TRUE);
 }
+
+#endif
 
 #if HAVE_DECL___READFSDWORD==0
 static MONO_ALWAYS_INLINE unsigned long long
@@ -258,10 +274,10 @@ __readfsdword (unsigned long offset)
 #endif
 
 void
-mono_threads_core_get_stack_bounds (guint8 **staddr, size_t *stsize)
+mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
 	MEMORY_BASIC_INFORMATION meminfo;
-#ifdef _WIN64
+#if defined(_WIN64) || defined(_M_ARM)
 	/* win7 apis */
 	NT_TIB* tib = (NT_TIB*)NtCurrentTeb();
 	guint8 *stackTop = (guint8*)tib->StackBase;
@@ -285,52 +301,73 @@ mono_threads_core_get_stack_bounds (guint8 **staddr, size_t *stsize)
 
 }
 
+#if SIZEOF_VOID_P == 4 && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+static gboolean is_wow64 = FALSE;
+#endif
+
+/* We do this at init time to avoid potential races with module opening */
+void
+mono_threads_platform_init (void)
+{
+#if SIZEOF_VOID_P == 4 && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+	LPFN_ISWOW64PROCESS is_wow64_func = (LPFN_ISWOW64PROCESS) GetProcAddress (GetModuleHandle (TEXT ("kernel32")), "IsWow64Process");
+	if (is_wow64_func)
+		is_wow64_func (GetCurrentProcess (), &is_wow64);
+#endif
+}
+
+/*
+ * When running x86 process under x64 system syscalls are done through WoW64. This
+ * needs to do a transition from x86 mode to x64 so it can syscall into the x64 system.
+ * Apparently this transition invalidates the ESP that we would get from calling
+ * GetThreadContext, so we would fail to scan parts of the thread stack. We attempt
+ * to query whether the thread is in such a transition so we try to restart it later.
+ * We check CONTEXT_EXCEPTION_ACTIVE for this, which is highly undocumented.
+ */
 gboolean
-mono_threads_core_yield (void)
+mono_threads_platform_in_critical_region (MonoNativeThreadId tid)
+{
+	gboolean ret = FALSE;
+#if SIZEOF_VOID_P == 4 && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+/* FIXME On cygwin these are not defined */
+#if defined(CONTEXT_EXCEPTION_REQUEST) && defined(CONTEXT_EXCEPTION_REPORTING) && defined(CONTEXT_EXCEPTION_ACTIVE)
+	if (is_wow64) {
+		HANDLE handle = OpenThread (THREAD_ALL_ACCESS, FALSE, tid);
+		if (handle) {
+			CONTEXT context;
+			ZeroMemory (&context, sizeof (CONTEXT));
+			context.ContextFlags = CONTEXT_EXCEPTION_REQUEST;
+			if (GetThreadContext (handle, &context)) {
+				if ((context.ContextFlags & CONTEXT_EXCEPTION_REPORTING) &&
+						(context.ContextFlags & CONTEXT_EXCEPTION_ACTIVE))
+					ret = TRUE;
+			}
+			CloseHandle (handle);
+		}
+	}
+#endif
+#endif
+	return ret;
+}
+
+gboolean
+mono_threads_platform_yield (void)
 {
 	return SwitchToThread ();
 }
 
 void
-mono_threads_core_exit (int exit_code)
+mono_threads_platform_exit (gsize exit_code)
 {
 	ExitThread (exit_code);
 }
 
-void
-mono_threads_core_unregister (MonoThreadInfo *info)
-{
-}
-
-HANDLE
-mono_threads_core_open_handle (void)
-{
-	HANDLE thread_handle;
-
-	thread_handle = GetCurrentThread ();
-	g_assert (thread_handle);
-
-	/*
-	 * The handle returned by GetCurrentThread () is a pseudo handle, so it can't be used to
-	 * refer to the thread from other threads for things like aborting.
-	 */
-	DuplicateHandle (GetCurrentProcess (), thread_handle, GetCurrentProcess (), &thread_handle,
-					 THREAD_ALL_ACCESS, TRUE, 0);
-
-	return thread_handle;
-}
-
 int
-mono_threads_get_max_stack_size (void)
+ves_icall_System_Threading_Thread_SystemMaxStackSize (MonoError *error)
 {
 	//FIXME
 	return INT_MAX;
-}
-
-HANDLE
-mono_threads_core_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
-{
-	return OpenThread (THREAD_ALL_ACCESS, TRUE, tid);
 }
 
 #if defined(_MSC_VER)
@@ -347,7 +384,7 @@ typedef struct tagTHREADNAME_INFO
 #endif
 
 void
-mono_threads_core_set_name (MonoNativeThreadId tid, const char *name)
+mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 {
 #if defined(_MSC_VER)
 	/* http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx */

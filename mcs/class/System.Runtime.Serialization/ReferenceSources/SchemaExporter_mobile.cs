@@ -10,7 +10,6 @@ namespace System.Runtime.Serialization
 	using System.IO;
 	using System.Reflection;
 	using System.Runtime.Diagnostics;
-	using System.ServiceModel.Diagnostics;
 	using System.Security;
 	using System.Xml;
 	using System.Xml.Schema;
@@ -54,6 +53,11 @@ namespace System.Runtime.Serialization
             }
             typeName = null;
             return false;
+        }
+
+        internal static void AddDefaultXmlType(XmlSchemaSet schemas, string localName, string ns)
+        {
+            throw new NotImplementedException();
         }
 
         static bool InvokeSchemaProviderMethod(Type clrType, XmlSchemaSet schemas, out XmlQualifiedName stableName, out XmlSchemaType xsdType, out bool hasRoot)

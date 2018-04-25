@@ -32,6 +32,7 @@ using System.CodeDom.Compiler;
 using System.Collections;
 using System.IO;
 using System.Text;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Policy;
@@ -121,7 +122,9 @@ namespace System.Xml.Xsl
 
 		public void Transform (IXPathNavigable input, XsltArgumentList arguments, Stream results)
 		{
-			Transform (input.CreateNavigator (), arguments, results);
+			using (var sw = new StreamWriter (results)) {
+				Transform (input.CreateNavigator (), arguments, sw);
+			}
 		}
 
 		public void Transform (IXPathNavigable input, XmlWriter results)
@@ -132,6 +135,11 @@ namespace System.Xml.Xsl
 		public void Transform (IXPathNavigable input, XsltArgumentList arguments, XmlWriter results)
 		{
 			Transform (input.CreateNavigator (), arguments, results, null);
+		}
+
+		public void Transform (IXPathNavigable input, XsltArgumentList arguments, XmlWriter results, XmlResolver documentResolver)
+		{
+			Transform (input.CreateNavigator (), arguments, results, documentResolver);
 		}
 
 		public void Transform (XmlReader input, XsltArgumentList arguments, XmlWriter results, XmlResolver documentResolver)
@@ -201,6 +209,15 @@ namespace System.Xml.Xsl
 			Load (new XPathDocument (stylesheetUri, XmlSpace.Preserve).CreateNavigator (), settings, stylesheetResolver);
 		}
 
+		public void Load (MethodInfo executeMethod, byte[] queryData, Type[] earlyBoundTypes)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void Load (Type compiledStylesheet)
+		{
+			throw new NotImplementedException ();
+		}
 		#endregion
 	}
 

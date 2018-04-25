@@ -41,10 +41,10 @@ namespace System.ServiceModel.Channels
 		}
 
 		protected NamedPipeTransportBindingElement (
-			NamedPipeTransportBindingElement other)
-			: base (other)
+			NamedPipeTransportBindingElement elementToBeCloned)
+			: base (elementToBeCloned)
 		{
-			pool.CopyPropertiesFrom (other.pool);
+			pool.CopyPropertiesFrom (elementToBeCloned.pool);
 		}
 
 		NamedPipeConnectionPoolSettings pool = new NamedPipeConnectionPoolSettings ();

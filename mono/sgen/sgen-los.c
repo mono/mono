@@ -1,5 +1,6 @@
-/*
- * sgen-los.c: Large objects space.
+/**
+ * \file
+ * Large objects space.
  *
  * Author:
  * 	Paolo Molaro (lupus@ximian.com)
@@ -15,18 +16,7 @@
  * Copyright 2003-2010 Novell, Inc.
  * Copyright (C) 2012 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -73,8 +63,12 @@ struct _LOSSection {
 	unsigned char *free_chunk_map;
 };
 
-LOSObject *los_object_list = NULL;
-mword los_memory_usage = 0;
+/* We allow read only access on the list while sweep is not running */
+LOSObject *sgen_los_object_list = NULL;
+/* Memory used by LOS objects */
+mword sgen_los_memory_usage = 0;
+/* Total memory used by the LOS allocator */
+mword sgen_los_memory_usage_total = 0;
 
 static LOSSection *los_sections = NULL;
 static LOSFreeChunks *los_fast_free_lists [LOS_NUM_FAST_SIZES]; /* 0 is for larger sizes */
@@ -107,7 +101,7 @@ los_consistency_check (void)
 	int i;
 	mword memory_usage = 0;
 
-	for (obj = los_object_list; obj; obj = obj->next) {
+	for (obj = sgen_los_object_list; obj; obj = obj->next) {
 		mword obj_size = sgen_los_object_size (obj);
 		char *end = obj->data + obj_size;
 		int start_index, num_chunks;
@@ -145,7 +139,7 @@ los_consistency_check (void)
 		}
 	}
 
-	g_assert (los_memory_usage == memory_usage);
+	g_assert (sgen_los_memory_usage == memory_usage);
 }
 #endif
 
@@ -204,14 +198,33 @@ get_from_size_list (LOSFreeChunks **list, size_t size)
 }
 
 static LOSObject*
+randomize_los_object_start (gpointer addr, size_t obj_size, size_t alloced_size, size_t addr_alignment)
+{
+	size_t offset = 0;
+	if (alloced_size != obj_size) {
+		/*
+		 * We want to get a random offset between 0 and (alloced_size - obj_size)
+		 * We do a prime multiplication to avoid usage of functions which might not
+		 * be thread/signal safe (like rand ()). We subtract 1 to avoid common
+		 * power by 2 factors.
+		 */
+		offset = SGEN_ALIGN_DOWN ((((size_t)addr - 1) * 2654435761u) % (alloced_size - obj_size));
+	}
+	SGEN_ASSERT (0, (alloced_size - obj_size) < addr_alignment, "Why are we wasting one entire chunk for a los object ?");
+	/* Randomize the location within the reserved chunks to improve cache performance */
+	return (LOSObject*)((guint8*)addr + offset);
+
+}
+
+static LOSObject*
 get_los_section_memory (size_t size)
 {
 	LOSSection *section;
 	LOSFreeChunks *free_chunks;
 	size_t num_chunks;
+	size_t obj_size = size;
 
-	size += LOS_CHUNK_SIZE - 1;
-	size &= ~(LOS_CHUNK_SIZE - 1);
+	size = SGEN_ALIGN_UP_TO (size, LOS_CHUNK_SIZE);
 
 	num_chunks = size >> LOS_CHUNK_BITS;
 
@@ -232,13 +245,14 @@ get_los_section_memory (size_t size)
 			free_chunks = get_from_size_list (&los_fast_free_lists [0], size);
 	}
 
-	if (free_chunks)
-		return (LOSObject*)free_chunks;
+	if (free_chunks) {
+		return randomize_los_object_start (free_chunks, obj_size, size, LOS_CHUNK_SIZE);
+	}
 
 	if (!sgen_memgov_try_alloc_space (LOS_SECTION_SIZE, SPACE_LOS))
 		return NULL;
 
-	section = sgen_alloc_os_memory_aligned (LOS_SECTION_SIZE, LOS_SECTION_SIZE, SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE, NULL);
+	section = (LOSSection *)sgen_alloc_os_memory_aligned (LOS_SECTION_SIZE, LOS_SECTION_SIZE, (SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE), NULL, MONO_MEM_ACCOUNT_SGEN_LOS);
 
 	if (!section)
 		return NULL;
@@ -258,6 +272,7 @@ get_los_section_memory (size_t size)
 	section->next = los_sections;
 	los_sections = section;
 
+	sgen_los_memory_usage_total += LOS_SECTION_SIZE;
 	++los_num_sections;
 
 	goto retry;
@@ -269,8 +284,7 @@ free_los_section_memory (LOSObject *obj, size_t size)
 	LOSSection *section = LOS_SECTION_FOR_OBJ (obj);
 	size_t num_chunks, i, start_index;
 
-	size += LOS_CHUNK_SIZE - 1;
-	size &= ~(LOS_CHUNK_SIZE - 1);
+	size = SGEN_ALIGN_UP_TO (size, LOS_CHUNK_SIZE);
 
 	num_chunks = size >> LOS_CHUNK_BITS;
 
@@ -292,34 +306,32 @@ free_los_section_memory (LOSObject *obj, size_t size)
 		section->free_chunk_map [i] = 1;
 	}
 
-	add_free_chunk ((LOSFreeChunks*)obj, size);
+	add_free_chunk ((LOSFreeChunks*)SGEN_ALIGN_DOWN_TO ((mword)obj, LOS_CHUNK_SIZE), size);
 }
-
-static int pagesize;
 
 void
 sgen_los_free_object (LOSObject *obj)
 {
-	SGEN_ASSERT (0, !obj->cardtable_mod_union, "We should never free a LOS object with a mod-union table.");
+	if (obj->cardtable_mod_union)
+		sgen_card_table_free_mod_union (obj->cardtable_mod_union, (char*)obj->data, sgen_los_object_size (obj));
 
 #ifndef LOS_DUMMY
 	mword size = sgen_los_object_size (obj);
 	SGEN_LOG (4, "Freed large object %p, size %lu", obj->data, (unsigned long)size);
-	binary_protocol_empty (obj->data, size);
+	sgen_binary_protocol_empty (obj->data, size);
 
-	los_memory_usage -= size;
+	sgen_los_memory_usage -= size;
 	los_num_objects--;
 
 #ifdef USE_MALLOC
-	free (obj);
+	g_free (obj);
 #else
 	if (size > LOS_SECTION_OBJECT_LIMIT) {
-		if (!pagesize)
-			pagesize = mono_pagesize ();
+		int pagesize = mono_pagesize ();
 		size += sizeof (LOSObject);
-		size += pagesize - 1;
-		size &= ~(pagesize - 1);
-		sgen_free_os_memory (obj, size, SGEN_ALLOC_HEAP);
+		size = SGEN_ALIGN_UP_TO (size, pagesize);
+		sgen_free_os_memory ((gpointer)SGEN_ALIGN_DOWN_TO ((mword)obj, pagesize), size, SGEN_ALLOC_HEAP, MONO_MEM_ACCOUNT_SGEN_LOS);
+		sgen_los_memory_usage_total -= size;
 		sgen_memgov_release_space (size, SPACE_LOS);
 	} else {
 		free_los_section_memory (obj, size + sizeof (LOSObject));
@@ -365,21 +377,22 @@ sgen_los_alloc_large_inner (GCVTable vtable, size_t size)
 	los_segment_index += size + sizeof (LOSObject);
 	g_assert (los_segment_index <= LOS_SEGMENT_SIZE);
 #else
-	sgen_ensure_free_space (size);
+	sgen_ensure_free_space (size, GENERATION_OLD);
 
 #ifdef USE_MALLOC
-	obj = malloc (size + sizeof (LOSObject));
+	obj = g_malloc (size + sizeof (LOSObject));
 	memset (obj, 0, size + sizeof (LOSObject));
 #else
 	if (size > LOS_SECTION_OBJECT_LIMIT) {
-		size_t alloc_size = size;
-		if (!pagesize)
-			pagesize = mono_pagesize ();
-		alloc_size += sizeof (LOSObject);
-		alloc_size += pagesize - 1;
-		alloc_size &= ~(pagesize - 1);
+		size_t obj_size = size + sizeof (LOSObject);
+		int pagesize = mono_pagesize ();
+		size_t alloc_size = SGEN_ALIGN_UP_TO (obj_size, pagesize);
 		if (sgen_memgov_try_alloc_space (alloc_size, SPACE_LOS)) {
-			obj = sgen_alloc_os_memory (alloc_size, SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE, NULL);
+			obj = (LOSObject *)sgen_alloc_os_memory (alloc_size, (SgenAllocFlags)(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE), NULL, MONO_MEM_ACCOUNT_SGEN_LOS);
+			if (obj) {
+				sgen_los_memory_usage_total += alloc_size;
+				obj = randomize_los_object_start (obj, obj_size, alloc_size, pagesize);
+			}
 		}
 	} else {
 		obj = get_los_section_memory (size + sizeof (LOSObject));
@@ -395,12 +408,17 @@ sgen_los_alloc_large_inner (GCVTable vtable, size_t size)
 	vtslot = (void**)obj->data;
 	*vtslot = vtable;
 	sgen_update_heap_boundaries ((mword)obj->data, (mword)obj->data + size);
-	obj->next = los_object_list;
-	los_object_list = obj;
-	los_memory_usage += size;
+	obj->next = sgen_los_object_list;
+	/*
+	 * We need a memory barrier so we don't expose as head of the los object list
+	 * a LOSObject that doesn't have its fields initialized.
+	 */
+	mono_memory_write_barrier ();
+	sgen_los_object_list = obj;
+	sgen_los_memory_usage += size;
 	los_num_objects++;
 	SGEN_LOG (4, "Allocated large object %p, vtable: %p (%s), size: %zd", obj->data, vtable, sgen_client_vtable_get_name (vtable), size);
-	binary_protocol_alloc (obj->data, vtable, size, sgen_client_get_provenance ());
+	sgen_binary_protocol_alloc (obj->data, vtable, size, sgen_client_get_provenance ());
 
 #ifdef LOS_CONSISTENCY_CHECK
 	los_consistency_check ();
@@ -421,15 +439,16 @@ sgen_los_sweep (void)
 
 	/* sweep the big objects list */
 	prevbo = NULL;
-	for (bigobj = los_object_list; bigobj;) {
+	for (bigobj = sgen_los_object_list; bigobj;) {
 		SGEN_ASSERT (0, !SGEN_OBJECT_IS_PINNED (bigobj->data), "Who pinned a LOS object?");
 
-		if (bigobj->cardtable_mod_union) {
-			sgen_card_table_free_mod_union (bigobj->cardtable_mod_union, (char*)bigobj->data, sgen_los_object_size (bigobj));
-			bigobj->cardtable_mod_union = NULL;
-		}
-
 		if (sgen_los_object_is_pinned (bigobj->data)) {
+			if (bigobj->cardtable_mod_union) {
+				mword obj_size = sgen_los_object_size (bigobj);
+				mword num_cards = sgen_card_table_number_of_cards_in_range ((mword) bigobj->data, obj_size);
+				memset (bigobj->cardtable_mod_union, 0, num_cards);
+			}
+
 			sgen_los_unpin_object (bigobj->data);
 			sgen_update_heap_boundaries ((mword)bigobj->data, (mword)bigobj->data + sgen_los_object_size (bigobj));
 		} else {
@@ -438,7 +457,7 @@ sgen_los_sweep (void)
 			if (prevbo)
 				prevbo->next = bigobj->next;
 			else
-				los_object_list = bigobj->next;
+				sgen_los_object_list = bigobj->next;
 			to_free = bigobj;
 			bigobj = bigobj->next;
 			sgen_los_free_object (to_free);
@@ -461,10 +480,11 @@ sgen_los_sweep (void)
 				prev->next = next;
 			else
 				los_sections = next;
-			sgen_free_os_memory (section, LOS_SECTION_SIZE, SGEN_ALLOC_HEAP);
+			sgen_free_os_memory (section, LOS_SECTION_SIZE, SGEN_ALLOC_HEAP, MONO_MEM_ACCOUNT_SGEN_LOS);
 			sgen_memgov_release_space (LOS_SECTION_SIZE, SPACE_LOS);
 			section = next;
 			--los_num_sections;
+			sgen_los_memory_usage_total -= LOS_SECTION_SIZE;
 			continue;
 		}
 
@@ -489,7 +509,7 @@ sgen_los_sweep (void)
 #endif
 
 	/*
-	g_print ("LOS sections: %d  objects: %d  usage: %d\n", num_sections, los_num_objects, los_memory_usage);
+	g_print ("LOS sections: %d  objects: %d  usage: %d\n", num_sections, los_num_objects, sgen_los_memory_usage);
 	for (i = 0; i < LOS_NUM_FAST_SIZES; ++i) {
 		int num_chunks = 0;
 		LOSFreeChunks *free_chunks;
@@ -507,12 +527,14 @@ sgen_ptr_is_in_los (char *ptr, char **start)
 {
 	LOSObject *obj;
 
-	*start = NULL;
-	for (obj = los_object_list; obj; obj = obj->next) {
+	if (start)
+		*start = NULL;
+	for (obj = sgen_los_object_list; obj; obj = obj->next) {
 		char *end = (char*)obj->data + sgen_los_object_size (obj);
 
 		if (ptr >= (char*)obj->data && ptr < end) {
-			*start = (char*)obj->data;
+			if (start)
+				*start = (char*)obj->data;
 			return TRUE;
 		}
 	}
@@ -524,7 +546,7 @@ sgen_los_iterate_objects (IterateObjectCallbackFunc cb, void *user_data)
 {
 	LOSObject *obj;
 
-	for (obj = los_object_list; obj; obj = obj->next)
+	for (obj = sgen_los_object_list; obj; obj = obj->next)
 		cb (obj->data, sgen_los_object_size (obj), user_data);
 }
 
@@ -533,7 +555,7 @@ sgen_los_is_valid_object (char *object)
 {
 	LOSObject *obj;
 
-	for (obj = los_object_list; obj; obj = obj->next) {
+	for (obj = sgen_los_object_list; obj; obj = obj->next) {
 		if ((char*)obj->data == object)
 			return TRUE;
 	}
@@ -545,7 +567,7 @@ mono_sgen_los_describe_pointer (char *ptr)
 {
 	LOSObject *obj;
 
-	for (obj = los_object_list; obj; obj = obj->next) {
+	for (obj = sgen_los_object_list; obj; obj = obj->next) {
 		const char *los_kind;
 		mword size;
 		gboolean pinned;
@@ -577,7 +599,7 @@ void
 sgen_los_iterate_live_block_ranges (sgen_cardtable_block_callback callback)
 {
 	LOSObject *obj;
-	for (obj = los_object_list; obj; obj = obj->next) {
+	for (obj = sgen_los_object_list; obj; obj = obj->next) {
 		GCVTable vt = SGEN_LOAD_VTABLE (obj->data);
 		if (SGEN_VTABLE_HAS_REFERENCES (vt))
 			callback ((mword)obj->data, sgen_los_object_size (obj));
@@ -593,7 +615,7 @@ get_cardtable_mod_union_for_object (LOSObject *obj)
 	if (mod_union)
 		return mod_union;
 	mod_union = sgen_card_table_alloc_mod_union ((char*)obj->data, size);
-	other = SGEN_CAS_PTR ((gpointer*)&obj->cardtable_mod_union, mod_union, NULL);
+	other = (guint8 *)SGEN_CAS_PTR ((gpointer*)&obj->cardtable_mod_union, mod_union, NULL);
 	if (!other) {
 		SGEN_ASSERT (0, obj->cardtable_mod_union == mod_union, "Why did CAS not replace?");
 		return mod_union;
@@ -603,28 +625,51 @@ get_cardtable_mod_union_for_object (LOSObject *obj)
 }
 
 void
-sgen_los_scan_card_table (gboolean mod_union, ScanCopyContext ctx)
+sgen_los_scan_card_table (CardTableScanType scan_type, ScanCopyContext ctx, int job_index, int job_split_count)
 {
 	LOSObject *obj;
+	int i = 0;
 
-	for (obj = los_object_list; obj; obj = obj->next) {
+	sgen_binary_protocol_los_card_table_scan_start (sgen_timestamp (), scan_type & CARDTABLE_SCAN_MOD_UNION);
+	for (obj = sgen_los_object_list; obj; obj = obj->next, i++) {
+		mword num_cards = 0;
 		guint8 *cards;
+
+		if (i % job_split_count != job_index)
+			continue;
 
 		if (!SGEN_OBJECT_HAS_REFERENCES (obj->data))
 			continue;
 
-		if (mod_union) {
+		if (scan_type & CARDTABLE_SCAN_MOD_UNION) {
 			if (!sgen_los_object_is_pinned (obj->data))
+				continue;
+
+			if (!obj->cardtable_mod_union)
 				continue;
 
 			cards = get_cardtable_mod_union_for_object (obj);
 			g_assert (cards);
+			if (scan_type == CARDTABLE_SCAN_MOD_UNION_PRECLEAN) {
+				guint8 *cards_preclean;
+				mword obj_size = sgen_los_object_size (obj);
+				num_cards = sgen_card_table_number_of_cards_in_range ((mword) obj->data, obj_size);
+				cards_preclean = (guint8 *)sgen_alloc_internal_dynamic (num_cards, INTERNAL_MEM_CARDTABLE_MOD_UNION, TRUE);
+
+				sgen_card_table_preclean_mod_union (cards, cards_preclean, num_cards);
+
+				cards = cards_preclean;
+			}
 		} else {
 			cards = NULL;
 		}
 
-		sgen_cardtable_scan_object (obj->data, sgen_los_object_size (obj), cards, mod_union, ctx);
+		sgen_cardtable_scan_object (obj->data, sgen_los_object_size (obj), cards, ctx);
+
+		if (scan_type == CARDTABLE_SCAN_MOD_UNION_PRECLEAN)
+			sgen_free_internal_dynamic (cards, num_cards, INTERNAL_MEM_CARDTABLE_MOD_UNION);
 	}
+	sgen_binary_protocol_los_card_table_scan_end (sgen_timestamp (), scan_type & CARDTABLE_SCAN_MOD_UNION);
 }
 
 void
@@ -634,7 +679,7 @@ sgen_los_count_cards (long long *num_total_cards, long long *num_marked_cards)
 	long long total_cards = 0;
 	long long marked_cards = 0;
 
-	for (obj = los_object_list; obj; obj = obj->next) {
+	for (obj = sgen_los_object_list; obj; obj = obj->next) {
 		int i;
 		guint8 *cards = sgen_card_table_get_card_scan_address ((mword) obj->data);
 		guint8 *cards_end = sgen_card_table_get_card_scan_address ((mword) obj->data + sgen_los_object_size (obj) - 1);
@@ -659,7 +704,7 @@ sgen_los_update_cardtable_mod_union (void)
 {
 	LOSObject *obj;
 
-	for (obj = los_object_list; obj; obj = obj->next) {
+	for (obj = sgen_los_object_list; obj; obj = obj->next) {
 		if (!SGEN_OBJECT_HAS_REFERENCES (obj->data))
 			continue;
 		sgen_card_table_update_mod_union (get_cardtable_mod_union_for_object (obj),
@@ -682,7 +727,25 @@ sgen_los_pin_object (GCObject *data)
 {
 	LOSObject *obj = sgen_los_header_for_object (data);
 	obj->size = obj->size | 1;
-	binary_protocol_pin (data, (gpointer)SGEN_LOAD_VTABLE (data), sgen_safe_object_get_size (data));
+	sgen_binary_protocol_pin (data, (gpointer)SGEN_LOAD_VTABLE (data), sgen_safe_object_get_size (data));
+}
+
+gboolean
+sgen_los_pin_object_par (GCObject *data)
+{
+	LOSObject *obj = sgen_los_header_for_object (data);
+	mword old_size = obj->size;
+	if (old_size & 1)
+		return FALSE;
+#if SIZEOF_VOID_P == 4
+	old_size = mono_atomic_cas_i32 ((volatile gint32*)&obj->size, old_size | 1, old_size);
+#else
+	old_size = mono_atomic_cas_i64 ((volatile gint64*)&obj->size, old_size | 1, old_size);
+#endif
+	if (old_size & 1)
+		return FALSE;
+	sgen_binary_protocol_pin (data, (gpointer)SGEN_LOAD_VTABLE (data), sgen_safe_object_get_size (data));
+	return TRUE;
 }
 
 static void
@@ -704,9 +767,9 @@ sgen_los_mark_mod_union_card (GCObject *mono_obj, void **ptr)
 {
 	LOSObject *obj = sgen_los_header_for_object (mono_obj);
 	guint8 *mod_union = get_cardtable_mod_union_for_object (obj);
-	size_t offset = sgen_card_table_get_card_offset ((char*)ptr, (char*)sgen_card_table_align_pointer ((char*)obj));
+	/* The LOSObject structure is not represented within the card space */
+	size_t offset = sgen_card_table_get_card_offset ((char*)ptr, (char*)sgen_card_table_align_pointer((char*)mono_obj));
 	SGEN_ASSERT (0, mod_union, "FIXME: optionally allocate the mod union if it's not here and CAS it in.");
-	SGEN_ASSERT (0, (char*)obj == (char*)sgen_card_table_align_pointer ((char*)obj), "Why are LOS objects not card aligned?");
 	mod_union [offset] = 1;
 }
 

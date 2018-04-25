@@ -23,7 +23,7 @@
 	<Target
 		Name="CoreCompile"
 		Inputs="$(MSBuildAllProjects);@(Compile);@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile);
-			$(KeyOriginatorFile);@(ReferencePath);$(Win32Icon);$(Win32Resource)"
+			$(KeyOriginatorFile);@(ReferencePath);$(ApplicationIcon);$(Win32Resource)"
 		Outputs="@(DocFileItem);@(IntermediateAssembly)"
 		DependsOnTargets="$(CoreCompileDependsOn)"
 	>

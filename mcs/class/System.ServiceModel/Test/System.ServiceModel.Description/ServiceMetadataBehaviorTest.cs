@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -34,6 +34,8 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Channels;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.ServiceModel.Description
 {
@@ -56,7 +58,8 @@ namespace MonoTests.System.ServiceModel.Description
 
 		[Test]
 		public void InitializeRuntime1 () {
-			using (ServiceHost host = new ServiceHost (typeof (MyService), new Uri ("http://localhost:30158"))) {
+			var port = NetworkHelpers.FindFreePort ();
+			using (ServiceHost host = new ServiceHost (typeof (MyService), new Uri ("http://localhost:" + port))) {
 				host.AddServiceEndpoint (typeof (IMyContract), new BasicHttpBinding (), "e1");
 				host.Description.Behaviors.Add (new ServiceMetadataBehavior () { HttpGetEnabled = true });
 
@@ -93,10 +96,11 @@ namespace MonoTests.System.ServiceModel.Description
 
 		[Test]
 		public void InitializeRuntime2 () {
-			using (ServiceHost host = new ServiceHost (typeof (MyService), new Uri ("http://localhost:30158"))) {
+			var port = NetworkHelpers.FindFreePort ();
+			using (ServiceHost host = new ServiceHost (typeof (MyService), new Uri ("http://localhost:" + port))) {
 				host.AddServiceEndpoint (typeof (IMyContract), new BasicHttpBinding (), "");
-				host.Description.Behaviors.Add (new ServiceMetadataBehavior () { HttpGetEnabled = true, HttpGetUrl = new Uri ("http://localhost:30158/mex_and_help") });
-				host.Description.Behaviors.Find<ServiceDebugBehavior> ().HttpHelpPageUrl = new Uri ("http://localhost:30158/mex_and_help");
+				host.Description.Behaviors.Add (new ServiceMetadataBehavior () { HttpGetEnabled = true, HttpGetUrl = new Uri ("http://localhost:" + port + "/mex_and_help") });
+				host.Description.Behaviors.Find<ServiceDebugBehavior> ().HttpHelpPageUrl = new Uri ("http://localhost:" + port + "/mex_and_help");
 
 				Assert.AreEqual (0, host.ChannelDispatchers.Count, "ChannelDispatchers.Count #1");
 
@@ -125,10 +129,11 @@ namespace MonoTests.System.ServiceModel.Description
 
 		[Test]
 		public void InitializeRuntime3 () {
-			using (ServiceHost host = new ServiceHost (typeof (MyService), new Uri ("http://localhost:30158"))) {
+			var port = NetworkHelpers.FindFreePort ();
+			using (ServiceHost host = new ServiceHost (typeof (MyService), new Uri ("http://localhost:" + port))) {
 				host.AddServiceEndpoint (typeof (IMyContract), new BasicHttpBinding (), "");
-				host.Description.Behaviors.Add (new ServiceMetadataBehavior () { HttpGetEnabled = true, HttpGetUrl = new Uri ("http://localhost:30158/mex") });
-				host.Description.Behaviors.Find<ServiceDebugBehavior> ().HttpHelpPageUrl = new Uri ("http://localhost:30158/help");
+				host.Description.Behaviors.Add (new ServiceMetadataBehavior () { HttpGetEnabled = true, HttpGetUrl = new Uri ("http://localhost:" + port + "/mex") });
+				host.Description.Behaviors.Find<ServiceDebugBehavior> ().HttpHelpPageUrl = new Uri ("http://localhost:" + port + "/help");
 
 				Assert.AreEqual (0, host.ChannelDispatchers.Count, "ChannelDispatchers.Count #1");
 
@@ -176,9 +181,10 @@ namespace MonoTests.System.ServiceModel.Description
 
 		[Test]
 		public void InitializeRuntime4 () {
-			using (ServiceHost host = new ServiceHost (typeof (MyService), new Uri ("http://localhost:30158"))) {
+			var port = NetworkHelpers.FindFreePort ();
+			using (ServiceHost host = new ServiceHost (typeof (MyService), new Uri ("http://localhost:" + port))) {
 				host.AddServiceEndpoint (typeof (IMyContract), new BasicHttpBinding (), "");
-				host.Description.Behaviors.Add (new ServiceMetadataBehavior () { HttpGetEnabled = true, HttpGetUrl = new Uri ("http://localhost:30158/mex") });
+				host.Description.Behaviors.Add (new ServiceMetadataBehavior () { HttpGetEnabled = true, HttpGetUrl = new Uri ("http://localhost:" + port + "/mex") });
 				host.Description.Behaviors.Remove<ServiceDebugBehavior> ();
 
 				Assert.AreEqual (0, host.ChannelDispatchers.Count, "ChannelDispatchers.Count #1");
@@ -204,7 +210,7 @@ namespace MonoTests.System.ServiceModel.Description
 				Assert.AreEqual (0, ed.FilterPriority, "FilterPriority");
 
 				EndpointAddress ea = ed.EndpointAddress;
-				Assert.AreEqual (new Uri ("http://localhost:30158/mex"), ea.Uri, "Uri");
+				Assert.AreEqual (new Uri ("http://localhost:" + port + "/mex"), ea.Uri, "Uri");
 
 				DispatchRuntime dr = ed.DispatchRuntime;
 				Assert.AreEqual (1, dr.Operations.Count, "Operations.Count");
@@ -221,9 +227,10 @@ namespace MonoTests.System.ServiceModel.Description
 
 		[Test]
 		public void ServiceMetadataExtension1 () {
-			using (ServiceHost host = new ServiceHost (typeof (MyService), new Uri ("http://localhost:30158"))) {
+			var port = NetworkHelpers.FindFreePort ();
+			using (ServiceHost host = new ServiceHost (typeof (MyService), new Uri ("http://localhost:" + port))) {
 				host.AddServiceEndpoint (typeof (IMyContract), new BasicHttpBinding (), "");
-				host.Description.Behaviors.Add (new ServiceMetadataBehavior () { HttpGetEnabled = true, HttpGetUrl = new Uri ("http://localhost:30158/mex") });
+				host.Description.Behaviors.Add (new ServiceMetadataBehavior () { HttpGetEnabled = true, HttpGetUrl = new Uri ("http://localhost:" + port + "/mex") });
 				host.Description.Behaviors.Remove<ServiceDebugBehavior> ();
 
 				host.Open ();
@@ -237,9 +244,10 @@ namespace MonoTests.System.ServiceModel.Description
 
 		[Test]
 		public void ServiceMetadataExtension2 () {
-			using (ServiceHost host = new ServiceHost (typeof (MyService), new Uri ("http://localhost:30158"))) {
+			var port = NetworkHelpers.FindFreePort ();
+			using (ServiceHost host = new ServiceHost (typeof (MyService), new Uri ("http://localhost:" + port))) {
 				host.AddServiceEndpoint (typeof (IMyContract), new BasicHttpBinding (), "");
-				host.Description.Behaviors.Add (new ServiceMetadataBehavior () { HttpGetEnabled = true, HttpGetUrl = new Uri ("http://localhost:30158/mex") });
+				host.Description.Behaviors.Add (new ServiceMetadataBehavior () { HttpGetEnabled = true, HttpGetUrl = new Uri ("http://localhost:" + port + "/mex") });
 				host.Description.Behaviors.Remove<ServiceDebugBehavior> ();
 
 				ServiceMetadataExtension extension = new ServiceMetadataExtension ();
@@ -270,3 +278,4 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 	}
 }
+#endif

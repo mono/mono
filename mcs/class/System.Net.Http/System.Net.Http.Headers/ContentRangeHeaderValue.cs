@@ -147,7 +147,7 @@ namespace System.Net.Http.Headers
 			if (t != Token.Type.Token)
 				return false;
 
-			int nvalue;
+			long nvalue;
 			if (!lexer.IsStarStringValue (t)) {
 				if (!lexer.TryGetNumericValue (t, out nvalue)) {
 					var s = lexer.GetStringValue (t);
@@ -158,12 +158,12 @@ namespace System.Net.Http.Headers
 					if (sep.Length != 2)
 						return false;
 
-					if (!int.TryParse (sep[0], NumberStyles.None, CultureInfo.InvariantCulture, out nvalue))
+					if (!long.TryParse (sep[0], NumberStyles.None, CultureInfo.InvariantCulture, out nvalue))
 						return false;
 
 					value.From = nvalue;
 
-					if (!int.TryParse (sep[1], NumberStyles.None, CultureInfo.InvariantCulture, out nvalue))
+					if (!long.TryParse (sep[1], NumberStyles.None, CultureInfo.InvariantCulture, out nvalue))
 						return false;
 
 					value.To = nvalue;

@@ -1,8 +1,0 @@
-2009-03-12  Jb Evain  <jbevain@novell.com>
-
-	* cilstrip.cs: unwrap TargetInvocationException.
-
-2008-10-01  Jb Evain  <jbevain@novell.com>
-
-	* cilstrip.cs: mono-cecil-cil is a tool to empty method bodies for
-	assemblies that have been AOTed.

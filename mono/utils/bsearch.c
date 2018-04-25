@@ -1,4 +1,5 @@
-/*
+/**
+ * \file
  * bsearch () implementation. Needed because some broken platforms
  * have implementations that have unreasonable, non-standard
  * requirements (e.g. "key must not be null"). Taken from NetBSD
@@ -42,7 +43,7 @@ mono_binary_search (
 	size_t member_size,
 	BinarySearchComparer comparer)
 {
-	const char *base = array;
+	const char *base = (const char *)array;
 	size_t lim;
 	int cmp;
 	const void *p;

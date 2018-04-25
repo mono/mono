@@ -464,6 +464,21 @@ public class Tests
 		return 0;
 	}
 
+	class DelClass {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static T return_t<T> (T t) {
+			return t;
+		}
+	}
+
+	public static int test_0_gsharedvt_in_delegates_reflection () {
+		var m = typeof(DelClass).GetMethod ("return_t").MakeGenericMethod (new Type [] { typeof (int) });
+		Func<int, int> f = (Func<int, int>)Delegate.CreateDelegate (typeof (Func<int,int>), null, m, false);
+		if (f (42) != 42)
+			return 1;
+		return 0;
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	static T return2_t<T> (T t) {
 		return return_t (t);
@@ -717,8 +732,29 @@ public class Tests
 	}
 
 	public static int test_0_gsharedvt_ginstvt_constructed_arg () {
+		{
+			// AOT: Force a instantiation of use_kvp<long>
+			long a = 1;
+			var t = make_kvp (a, a);
+			var z = use_kvp (t);
+		}
+
 		IFaceKVP c = new ClassKVP ();
 		if (c.do_kvp<long> (1) != 1)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_gsharedvt_ginstvt_constructed_arg_float () {
+		{
+			// AOT: Force a instantiation of use_kvp<double>
+			double a = 1;
+			var t = make_kvp (a, a);
+			var z = use_kvp (t);
+		}
+
+		IFaceKVP c = new ClassKVP ();
+		if (c.do_kvp<double> (1) != 1)
 			return 1;
 		return 0;
 	}
@@ -990,7 +1026,7 @@ public class Tests
 		return t.ToString ();
 	}
 
-	enum AnEnum {
+	public enum AnEnum {
 		One,
 		Two
 	};
@@ -1070,10 +1106,17 @@ public class Tests
 
 	interface IConstrainedCalls {
 		Pair<int, int> vtype_ret<T, T2>(T t, T2 t2) where T: IReturnVType;
+		AnEnum enum_ret<T, T2>(T t, T2 t2) where T: IReturnVType;
+		int normal_args<T, T2> (T t, T2 t2, int i1, int i2, string s, ref int i3) where T : IConstrained2;
 	}
 
 	public interface IReturnVType {
 		Pair<int, int> return_vtype ();
+		AnEnum return_enum ();
+	}
+
+	public interface IConstrained2 {
+		int normal_args (int i1, int i2, string s, ref int i3);
 	}
 
 	public class CConstrainedCalls : IConstrainedCalls {
@@ -1081,11 +1124,30 @@ public class Tests
 		public Pair<int, int> vtype_ret<T, T2>(T t, T2 t2) where T : IReturnVType {
 			return t.return_vtype ();
 		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public AnEnum enum_ret<T, T2>(T t, T2 t2) where T : IReturnVType {
+			return t.return_enum ();
+		}
+
+		public int normal_args<T, T2> (T t, T2 t2, int i1, int i2, string s, ref int i3) where T : IConstrained2 {
+			return t.normal_args (i1, i2, s, ref i3);
+		}
 	}
 
 	class ReturnVType : IReturnVType {
 		public Pair<int, int> return_vtype () {
 			return new Pair<int, int> () { First = 1, Second = 2 };
+		}
+		public AnEnum return_enum () {
+			return AnEnum.Two;
+		}
+	}
+
+	class ConstrainedCalls : IConstrained2 {
+		public int normal_args (int i1, int i2, string s, ref int i3) {
+			i3 = i3 + 1;
+			return i1 + i2 + i3 + s.Length;
 		}
 	}
 
@@ -1095,6 +1157,22 @@ public class Tests
 		if (r.First != 1 || r.Second != 2)
 			return 1;
 		return 0;
+	}
+
+	public static int test_0_constrained_enum_ret () {
+		IConstrainedCalls c = new CConstrainedCalls ();
+		var r = c.enum_ret<ReturnVType, int> (new ReturnVType (), 1);
+		if (r != AnEnum.Two)
+			return 1;
+		return 0;
+	}
+
+	public static int test_14_constrained_normal_args () {
+		IConstrainedCalls c = new CConstrainedCalls ();
+
+		int val = 3;
+		var r = c.normal_args<ConstrainedCalls, int> (new ConstrainedCalls (), 0, 1, 2, "ABC", ref val);
+		return r + val;
 	}
 
 	public struct Pair<T1, T2> {
@@ -1623,6 +1701,8 @@ public class Tests
 				   uint i1, uint i2, uint i3, uint i4);
 		int Structs (T t, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
 					 BStruct s);
+		void Generic<T2> (T t, T2[] arr, int dummy1, int a2, int a3, int a4, int a5, int a6, int a7, int dummy8,
+						  T2 i1, T2 i2, T2 i3, T2 i4);
 	}
 
 	class Foo3<T> : IFoo3<T> {
@@ -1654,6 +1734,13 @@ public class Tests
 							BStruct s) {
 			return s.a + s.b + s.c + s.d;
 		}
+
+		public void Generic<T2> (T t, T2[] arr, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, T2 i1, T2 i2, T2 i3, T2 i4) {
+			arr [0] = i1;
+			arr [1] = i2;
+			arr [2] = i3;
+			arr [3] = i4;
+		}
 	}
 
 	// Passing small normal arguments on the stack
@@ -1677,7 +1764,28 @@ public class Tests
 		int res6 = o.UInts (new EmptyStruct (), 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4);
 		if (res6 != 10)
 			return 6;
+		int[] arr = new int [4];
+		o.Generic<int> (new EmptyStruct (), arr, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4);
+		if (arr [0] != 1 || arr [1] != 2 || arr [2] != 3 || arr [3] != 4)
+			return 7;
 		return 0;
+	}
+
+	interface ISmallArg {
+		T foo<T> (string s1, string s2, string s3, string s4, string s5, string s6, string s7, string s8,
+				  string s9, string s10, string s11, string s12, string s13, T t);
+	}
+
+	class SmallArgClass : ISmallArg {
+			public T foo<T> (string s1, string s2, string s3, string s4, string s5, string s6, string s7, string s8,
+							 string s9, string s10, string s11, string s12, string s13, T t) {
+				return t;
+			}
+		}
+
+	public static int test_1_small_gsharedvt_stack_arg_ios () {
+		ISmallArg o = new SmallArgClass ();
+		return o.foo<int> ("", "", "", "", "", "", "", "", "", "", "", "", "", 1);
 	}
 
 	// Passing vtype normal arguments on the stack
@@ -1739,11 +1847,216 @@ public class Tests
 		}
 	}
 
+	struct StructTest : IFaceTest {
+
+		int i;
+
+		public StructTest (int arg) {
+			i = arg;
+		}
+
+		public int iface_method () {
+			return i;
+		}
+	}
+
 	// Test constrained calls on an interface made from gsharedvt methods
 	public static int test_42_gsharedvt_constrained_iface () {
 		IFaceConstrainedIFace obj = new ConstrainedIFace ();
 		IFaceTest t = new ClassTest ();
 		return obj.foo<IFaceTest, int> (ref t);
+	}
+
+	public static int test_42_gsharedvt_constrained_iface_vtype () {
+		IFaceConstrainedIFace obj = new ConstrainedIFace ();
+		IFaceTest t = new StructTest (42);
+		return obj.foo<IFaceTest, int> (ref t);
+	}
+
+	// Sign extension tests
+	// 0x55   == 85    == 01010101
+	// 0xAA   == 170   == 10101010
+	// 0x5555 == 21845 == 0101010101010101
+	// 0xAAAA == 43690 == 1010101010101010
+	// 0x55555555 == 1431655765
+	// 0xAAAAAAAA == 2863311530
+	// 0x5555555555555555 == 6148914691236517205
+	// 0xAAAAAAAAAAAAAAAA == 12297829382473034410
+
+	public interface SEFace<T> {
+		T Copy (int a, int b, int c, int d, T t);
+	}
+
+	class SEClass<T> : SEFace<T> {
+		public T Copy (int a, int b, int c, int d, T t) {
+			return t;
+		}
+	}
+
+	// Test extension
+	static int test_20_signextension_sbyte () {
+		Type t = typeof (sbyte);
+		object o = Activator.CreateInstance (typeof (SEClass<>).MakeGenericType (new Type[] { t }));
+		var i = (SEFace<sbyte>)o;
+
+		long zz = i.Copy (1,2,3,4,(sbyte)(-0x55));
+
+		bool success = zz == -0x55;
+		return success ? 20 : 1;
+	}
+
+	static int test_20_signextension_byte () {
+		Type t = typeof (byte);
+		object o = Activator.CreateInstance (typeof (SEClass<>).MakeGenericType (new Type[] { t }));
+		var i = (SEFace<byte>)o;
+
+		ulong zz = i.Copy (1,2,3,4,(byte)(0xAA));
+
+		bool success = zz == 0xAA;
+		return success ? 20 : 1;
+	}
+
+	static int test_20_signextension_short () {
+		Type t = typeof (short);
+		object o = Activator.CreateInstance (typeof (SEClass<>).MakeGenericType (new Type[] { t }));
+		var i = (SEFace<short>)o;
+
+		long zz = i.Copy (1,2,3,4,(short)(-0x5555));
+
+		bool success = zz == -0x5555;
+		return success ? 20 : 1;
+	}
+
+	static int test_20_signextension_ushort () {
+		Type t = typeof (ushort);
+		object o = Activator.CreateInstance (typeof (SEClass<>).MakeGenericType (new Type[] { t }));
+		var i = (SEFace<ushort>)o;
+
+		ulong zz = i.Copy (1,2,3,4,(ushort)(0xAAAA));
+
+		bool success = zz == 0xAAAA;
+		return success ? 20 : 1;
+	}
+
+	static int test_20_signextension_int () {
+		Type t = typeof (int);
+		object o = Activator.CreateInstance (typeof (SEClass<>).MakeGenericType (new Type[] { t }));
+		var i = (SEFace<int>)o;
+
+		long zz = i.Copy (1,2,3,4,(int)(-0x55555555));
+
+		bool success = zz == -0x55555555;
+		return success ? 20 : 1;
+	}
+
+	static int test_20_signextension_uint () {
+		Type t = typeof (uint);
+		object o = Activator.CreateInstance (typeof (SEClass<>).MakeGenericType (new Type[] { t }));
+		var i = (SEFace<uint>)o;
+
+		ulong zz = i.Copy (1,2,3,4,(uint)(0xAAAAAAAA));
+
+		bool success = zz == 0xAAAAAAAA;
+		return success ? 20 : 1;
+	}
+
+	static int test_20_signextension_long () {
+		Type t = typeof (long);
+		object o = Activator.CreateInstance (typeof (SEClass<>).MakeGenericType (new Type[] { t }));
+		var i = (SEFace<long>)o;
+
+		long zz = i.Copy (1,2,3,4,(long)(-0x5555555555555555));
+
+		bool success = zz == -0x5555555555555555;
+		return success ? 20 : 1;
+	}
+
+	static int test_20_signextension_ulong () {
+		Type t = typeof (ulong);
+		object o = Activator.CreateInstance (typeof (SEClass<>).MakeGenericType (new Type[] { t }));
+		var i = (SEFace<ulong>)o;
+
+		ulong zz = i.Copy (1,2,3,4,(ulong)(0xAAAAAAAAAAAAAAAA));
+
+		bool success = zz == 0xAAAAAAAAAAAAAAAA;
+		return success ? 20 : 1;
+	}
+
+	void gsharedvt_try_at_offset_0<T> (ref T disposable)
+		where T : class, IDisposable {
+			try {
+				disposable.Dispose ();
+			} finally {
+				disposable = null;
+			}
+		}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static DateTimeOffset gsharedvt_vphi_inner<T> (T t) {
+		return DateTimeOffset.MinValue;
+	}
+
+	static DateTimeOffset gsharedvt_vphi<T> (T t) {
+		int[] arr = new int [10];
+
+		try {
+			DateTimeOffset v;
+			if (arr [0] == 0)
+				v = gsharedvt_vphi_inner (t);
+			else
+				v = gsharedvt_vphi_inner (t);
+			return v;
+		} catch {
+			return DateTimeOffset.MinValue;
+		}
+	}
+
+	static int test_0_gsharedvt_vphi_volatile () {
+		gsharedvt_vphi (0);
+		return 0;
+	}
+
+	struct AStruct3<T1, T2, T3> {
+		T1 t1;
+		T2 t2;
+		T3 t3;
+	}
+
+	interface IFaceIsRef {
+		bool is_ref<T> ();
+	}
+
+	class ClassIsRef : IFaceIsRef {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public bool is_ref<T> () {
+			return RuntimeHelpers.IsReferenceOrContainsReferences<T> ();
+		}
+	}
+
+	public static int test_0_isreference_intrins () {
+		IFaceIsRef iface = new ClassIsRef ();
+		if (iface.is_ref<AStruct3<int, int, int>> ())
+			return 1;
+		if (!iface.is_ref<AStruct3<string, int, int>> ())
+			return 2;
+		return 0;
+	}
+
+	interface IFace59956 {
+		int foo<T> ();
+	}
+
+	class Impl59956 : IFace59956 {
+		public int foo<T> () {
+			var builder = new SparseArrayBuilder<T>(true);
+
+			return builder.Markers._count;
+		}
+	}
+
+	public static int test_1_59956_regress () {
+		IFace59956 iface = new Impl59956 ();
+		return iface.foo<int> ();
 	}
 }
 
@@ -1760,6 +2073,35 @@ public class MobileServiceCollection<TTable, TCol>
 		await Task.Delay (1000);
 		throw new Exception ();
 	}
+}
+
+// #59956
+internal struct Marker
+{
+	public Marker(int count, int index) {
+	}
+}
+
+public struct ArrayBuilder<T>
+{
+	private T[] _array;
+	public int _count;
+
+	public ArrayBuilder(int capacity) {
+		_array = new T[capacity];
+		_count = 1;
+	}
+}
+
+internal struct SparseArrayBuilder<T>
+{
+	private ArrayBuilder<Marker> _markers;
+
+	public SparseArrayBuilder(bool initialize) : this () {
+		_markers = new ArrayBuilder<Marker> (10);
+	}
+
+	public ArrayBuilder<Marker> Markers => _markers;
 }
 
 #if !__MOBILE__

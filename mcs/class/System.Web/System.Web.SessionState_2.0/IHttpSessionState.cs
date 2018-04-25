@@ -37,11 +37,11 @@ namespace System.Web.SessionState {
 	{
 		///methods
 		void Abandon ();
-		void Add (string itemName, object itemValue);
+		void Add (string name, object value);
 		void Clear ();
-		void CopyTo (Array sessionValues, int index);
+		void CopyTo (Array array, int index);
 		IEnumerator GetEnumerator ();
-		void Remove (string itemName);
+		void Remove (string name);
 		void RemoveAll ();
 		void RemoveAt (int index);
 	

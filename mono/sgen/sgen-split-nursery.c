@@ -1,5 +1,6 @@
-/*
- * sgen-splliy-nursery.c: 3-space based nursery collector.
+/**
+ * \file
+ * 3-space based nursery collector.
  *
  * Author:
  *	Rodrigo Kumpera Kumpera <kumpera@gmail.com>
@@ -9,22 +10,13 @@
  * Copyright 2011-2012 Xamarin Inc (http://www.xamarin.com)
  * Copyright (C) 2012 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
 #ifdef HAVE_SGEN_GC
+
+#ifndef DISABLE_SGEN_SPLIT_NURSERY
 
 #include <string.h>
 #include <stdlib.h>
@@ -179,8 +171,8 @@ mark_bit (char *space_bitmap, char *pos)
 static void
 mark_bits_in_range (char *space_bitmap, char *start, char *end)
 {
-	start = align_down (start, SGEN_TO_SPACE_GRANULE_BITS);
-	end = align_up (end, SGEN_TO_SPACE_GRANULE_BITS);
+	start = (char *)align_down (start, SGEN_TO_SPACE_GRANULE_BITS);
+	end = (char *)align_up (end, SGEN_TO_SPACE_GRANULE_BITS);
 
 	for (;start < end; start += SGEN_TO_SPACE_GRANULE_IN_BYTES)
 		mark_bit (space_bitmap, start);
@@ -244,7 +236,7 @@ alloc_for_promotion_slow_path (int age, size_t objsize)
 	size_t allocated_size;
 	size_t aligned_objsize = (size_t)align_up (objsize, SGEN_TO_SPACE_GRANULE_BITS);
 
-	p = sgen_fragment_allocator_serial_range_alloc (
+	p = (char *)sgen_fragment_allocator_serial_range_alloc (
 		&collector_allocator,
 		MAX (aligned_objsize, AGE_ALLOC_BUFFER_DESIRED_SIZE),
 		MAX (aligned_objsize, AGE_ALLOC_BUFFER_MIN_SIZE),
@@ -265,8 +257,10 @@ alloc_for_promotion (GCVTable vtable, GCObject *obj, size_t objsize, gboolean ha
 	int age;
 
 	age = get_object_age (obj);
-	if (age >= promote_age)
-		return major_collector.alloc_object (vtable, objsize, has_references);
+	if (age >= promote_age) {
+		sgen_total_promoted_size += objsize;
+		return sgen_major_collector.alloc_object (vtable, objsize, has_references);
+	}
 
 	/* Promote! */
 	++age;
@@ -276,8 +270,10 @@ alloc_for_promotion (GCVTable vtable, GCObject *obj, size_t objsize, gboolean ha
         age_alloc_buffers [age].next += objsize;
 	} else {
 		p = alloc_for_promotion_slow_path (age, objsize);
-		if (!p)
-			return major_collector.alloc_object (vtable, objsize, has_references);
+		if (!p) {
+			sgen_total_promoted_size += objsize;
+			return sgen_major_collector.alloc_object (vtable, objsize, has_references);
+		}
 	}
 
 	/* FIXME: assumes object layout */
@@ -293,7 +289,7 @@ minor_alloc_for_promotion (GCVTable vtable, GCObject *obj, size_t objsize, gbool
 	We only need to check for a non-nursery object if we're doing a major collection.
 	*/
 	if (!sgen_ptr_in_nursery (obj))
-		return major_collector.alloc_object (vtable, objsize, has_references);
+		return sgen_major_collector.alloc_object (vtable, objsize, has_references);
 
 	return alloc_for_promotion (vtable, obj, objsize, has_references);
 }
@@ -336,8 +332,8 @@ prepare_to_space (char *to_space_bitmap, size_t space_bitmap_size)
 	previous = &collector_allocator.alloc_head;
 
 	for (frag = *previous; frag; frag = *previous) {
-		char *start = align_up (frag->fragment_next, SGEN_TO_SPACE_GRANULE_BITS);
-		char *end = align_down (frag->fragment_end, SGEN_TO_SPACE_GRANULE_BITS);
+		char *start = (char *)align_up (frag->fragment_next, SGEN_TO_SPACE_GRANULE_BITS);
+		char *end = (char *)align_down (frag->fragment_end, SGEN_TO_SPACE_GRANULE_BITS);
 
 		/* Fragment is too small to be usable. */
 		if ((end - start) < SGEN_MAX_NURSERY_WASTE) {
@@ -378,12 +374,12 @@ static void
 init_nursery (SgenFragmentAllocator *allocator, char *start, char *end)
 {
 	int alloc_quote = (int)((end - start) * alloc_ratio);
-	promotion_barrier = align_down (start + alloc_quote, 3);
+	promotion_barrier = (char *)align_down (start + alloc_quote, 3);
 	sgen_fragment_allocator_add (allocator, start, promotion_barrier);
 	sgen_fragment_allocator_add (&collector_allocator, promotion_barrier, end);
 
 	region_age_size = (end - start) >> SGEN_TO_SPACE_GRANULE_BITS;
-	region_age = g_malloc0 (region_age_size);
+	region_age = (char *)g_malloc0 (region_age_size);
 }
 
 static gboolean
@@ -425,18 +421,40 @@ print_gc_param_usage (void)
 
 /******************************************Copy/Scan functins ************************************************/
 
-#define SGEN_SPLIT_NURSERY
+#define collector_pin_object(obj, queue) sgen_pin_object (obj, queue);
+#define COLLECTOR_SERIAL_ALLOC_FOR_PROMOTION alloc_for_promotion
 
-#define SERIAL_COPY_OBJECT split_nursery_serial_copy_object
-#define SERIAL_COPY_OBJECT_FROM_OBJ split_nursery_serial_copy_object_from_obj
+#include "sgen-copy-object.h"
+
+#define SGEN_SPLIT_NURSERY
 
 #include "sgen-minor-copy-object.h"
 #include "sgen-minor-scan-object.h"
+
+static void
+fill_serial_ops (SgenObjectOperations *ops)
+{
+	ops->copy_or_mark_object = SERIAL_COPY_OBJECT;
+	FILL_MINOR_COLLECTOR_SCAN_OBJECT (ops);
+}
+
+#define SGEN_CONCURRENT_MAJOR
+
+#include "sgen-minor-copy-object.h"
+#include "sgen-minor-scan-object.h"
+
+static void
+fill_serial_with_concurrent_major_ops (SgenObjectOperations *ops)
+{
+	ops->copy_or_mark_object = SERIAL_COPY_OBJECT;
+	FILL_MINOR_COLLECTOR_SCAN_OBJECT (ops);
+}
 
 void
 sgen_split_nursery_init (SgenMinorCollector *collector)
 {
 	collector->is_split = TRUE;
+	collector->is_parallel = FALSE;
 
 	collector->alloc_for_promotion = minor_alloc_for_promotion;
 
@@ -449,9 +467,10 @@ sgen_split_nursery_init (SgenMinorCollector *collector)
 	collector->handle_gc_param = handle_gc_param;
 	collector->print_gc_param_usage = print_gc_param_usage;
 
-	FILL_MINOR_COLLECTOR_COPY_OBJECT (collector);
-	FILL_MINOR_COLLECTOR_SCAN_OBJECT (collector);
+	fill_serial_ops (&collector->serial_ops);
+	fill_serial_with_concurrent_major_ops (&collector->serial_ops_with_concurrent_major);
 }
 
+#endif //#ifndef DISABLE_SGEN_SPLIT_NURSERY
 
 #endif

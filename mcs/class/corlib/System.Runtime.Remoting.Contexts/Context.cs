@@ -55,6 +55,7 @@ namespace System.Runtime.Remoting.Contexts {
 		int domain_id;
 		int context_id;
 		UIntPtr static_data; /* GC-tracked */
+		UIntPtr data;
 		#endregion
 #pragma warning restore 169, 414
 

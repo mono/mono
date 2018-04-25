@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
@@ -480,15 +480,16 @@ namespace MonoTests.System.ServiceModel
 		[Test]
 		public void OneWayOperationWithRequestReplyChannel ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			var host = new ServiceHost (typeof (OneWayService));
 			host.AddServiceEndpoint (typeof (IOneWayService),
 				new BasicHttpBinding (),
-				new Uri ("http://localhost:30158"));
+				new Uri ("http://localhost:" + port));
 			host.Open ();
 			try {
 				var cf = new ChannelFactory<IOneWayService> (
 					new BasicHttpBinding (),
-					new EndpointAddress ("http://localhost:30158"));
+					new EndpointAddress ("http://localhost:" + port));
 				var ch = cf.CreateChannel ();
 				ch.GiveMessage ("test");
 				
@@ -661,3 +662,4 @@ namespace MonoTests.System.ServiceModel
 		}
 	}
 }
+#endif

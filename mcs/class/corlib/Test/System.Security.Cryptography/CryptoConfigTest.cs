@@ -37,6 +37,10 @@ namespace MonoTests.System.Security.Cryptography {
 [TestFixture]
 public class CryptoConfigTest {
 
+	public class FakeAlgorithm
+	{
+	}
+
 	void CreateFromName (string name, string objectname)
 	{
 		object o = CryptoConfig.CreateFromName (name);
@@ -137,17 +141,9 @@ public class CryptoConfigTest {
 	// additional names (URL) used for XMLDSIG (System.Security.Cryptography.Xml)
 	// URL taken from http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/
 	[Test]
-#if NET_2_1
-	[Ignore ("System.Security.dll is not part of Moonlight, MonoTouch and Mono for Android")]
-#endif
 	public void CreateFromURL () 
 	{
-		// URL used in SignatureMethod element
-		CreateFromName ("http://www.w3.org/2000/09/xmldsig#dsa-sha1", "System.Security.Cryptography.DSASignatureDescription");
-		CreateFromName ("http://www.w3.org/2000/09/xmldsig#rsa-sha1", "System.Security.Cryptography.RSAPKCS1SHA1SignatureDescription");
-		CreateFromName ("http://www.w3.org/2000/09/xmldsig#hmac-sha1", null);
-		// URL used in DigestMethod element 
-		CreateFromName ("http://www.w3.org/2000/09/xmldsig#sha1", "System.Security.Cryptography.SHA1CryptoServiceProvider");
+#if FEATURE_CRYPTO_CONFIGURABLE
 		// URL used in Canonicalization or Transform elements 
 		CreateFromName ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315", "System.Security.Cryptography.Xml.XmlDsigC14NTransform");
 		CreateFromName ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments", "System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform");
@@ -168,6 +164,17 @@ public class CryptoConfigTest {
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig# KeyValue/DSAKeyValue", "System.Security.Cryptography.Xml.DSAKeyValue");
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig# KeyValue/RSAKeyValue", "System.Security.Cryptography.Xml.RSAKeyValue");
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig# RetrievalMethod", "System.Security.Cryptography.Xml.KeyInfoRetrievalMethod");
+#endif
+		// URL used in SignatureMethod element
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#dsa-sha1", "System.Security.Cryptography.DSASignatureDescription");
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#rsa-sha1", "System.Security.Cryptography.RSAPKCS1SHA1SignatureDescription");
+		CreateFromName ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", "System.Security.Cryptography.RSAPKCS1SHA256SignatureDescription");
+		CreateFromName ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha384", "System.Security.Cryptography.RSAPKCS1SHA384SignatureDescription");
+		CreateFromName ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha512", "System.Security.Cryptography.RSAPKCS1SHA512SignatureDescription");
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#hmac-sha1", "System.Security.Cryptography.HMACSHA1");
+		// URL used in DigestMethod element
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#sha1", "System.Security.Cryptography.SHA1CryptoServiceProvider");
+
 		CreateFromName ("http://www.w3.org/2001/04/xmlenc#sha256", "System.Security.Cryptography.SHA256Managed");
 		CreateFromName ("http://www.w3.org/2001/04/xmlenc#sha384", null);
 		CreateFromName ("http://www.w3.org/2001/04/xmlenc#sha512", "System.Security.Cryptography.SHA512Managed");
@@ -303,17 +310,24 @@ public class CryptoConfigTest {
 		MapNameToOID ("System.Security.Cryptography.SHA1", "1.3.14.3.2.26");
 //		MapNameToOID ("System.Security.Cryptography.HashAlgorithm", "1.3.14.3.2.26");
 		MapNameToOID ("System.Security.Cryptography.SHA1CryptoServiceProvider", "1.3.14.3.2.26");
+		MapNameToOID ("System.Security.Cryptography.SHA1Cng", "1.3.14.3.2.26");
 		MapNameToOID ("System.Security.Cryptography.SHA1Managed", "1.3.14.3.2.26");
 		MapNameToOID ("MD5", "1.2.840.113549.2.5");
 		MapNameToOID ("System.Security.Cryptography.MD5", "1.2.840.113549.2.5");
 		MapNameToOID ("System.Security.Cryptography.MD5CryptoServiceProvider", "1.2.840.113549.2.5");
 		MapNameToOID ("SHA256", "2.16.840.1.101.3.4.2.1");
+		MapNameToOID ("System.Security.Cryptography.SHA256CryptoServiceProvider", "2.16.840.1.101.3.4.2.1");
+		MapNameToOID ("System.Security.Cryptography.SHA256Cng", "2.16.840.1.101.3.4.2.1");
 		MapNameToOID ("System.Security.Cryptography.SHA256", "2.16.840.1.101.3.4.2.1");
 		MapNameToOID ("System.Security.Cryptography.SHA256Managed", "2.16.840.1.101.3.4.2.1");
 		MapNameToOID ("SHA384", "2.16.840.1.101.3.4.2.2");
+		MapNameToOID ("System.Security.Cryptography.SHA384CryptoServiceProvider", "2.16.840.1.101.3.4.2.2");
+		MapNameToOID ("System.Security.Cryptography.SHA384Cng", "2.16.840.1.101.3.4.2.2");
 		MapNameToOID ("System.Security.Cryptography.SHA384", "2.16.840.1.101.3.4.2.2");
 		MapNameToOID ("System.Security.Cryptography.SHA384Managed", "2.16.840.1.101.3.4.2.2");
 		MapNameToOID ("SHA512", "2.16.840.1.101.3.4.2.3");
+		MapNameToOID ("System.Security.Cryptography.SHA512CryptoServiceProvider", "2.16.840.1.101.3.4.2.3");
+		MapNameToOID ("System.Security.Cryptography.SHA512Cng", "2.16.840.1.101.3.4.2.3");
 		MapNameToOID ("System.Security.Cryptography.SHA512", "2.16.840.1.101.3.4.2.3");
 		MapNameToOID ("System.Security.Cryptography.SHA512Managed", "2.16.840.1.101.3.4.2.3");
 		MapNameToOID ("RIPEMD160", "1.3.36.3.2.1");
@@ -391,6 +405,14 @@ public class CryptoConfigTest {
 		// because all interesting stuff are in static methods
 		CryptoConfig cc = new CryptoConfig ();
 		Assert.AreEqual ("System.Security.Cryptography.CryptoConfig", cc.ToString ());
+	}
+
+	[Test]
+	public void AddAlgorithm ()
+	{
+		CryptoConfig.AddAlgorithm (typeof (FakeAlgorithm), "test");
+		Assert.IsNotNull (CryptoConfig.CreateFromName ("test"));
+
 	}
 }
 

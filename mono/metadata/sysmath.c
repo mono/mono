@@ -1,5 +1,6 @@
-/*
- * sysmath.c: these are based on bob smith's csharp routines 
+/**
+ * \file
+ * these are based on bob smith's csharp routines 
  *
  * Author:
  *	Mono Project (http://www.mono-project.com)
@@ -8,6 +9,7 @@
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
  * Copyright 2015 Xamarin, Inc (https://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 //
@@ -297,8 +299,8 @@ ves_icall_System_Math_Abs_double (gdouble v)
 	return fabs (v);
 }
 
-gfloat
-ves_icall_System_Math_Abs_single (gfloat v)
+float
+ves_icall_System_Math_Abs_single (float v)
 {
 	return fabsf (v);
 }
@@ -314,3 +316,145 @@ ves_icall_System_Math_SplitFractionDouble (gdouble *v)
 {
 	return modf (*v, v);
 }
+
+float
+ves_icall_System_MathF_Acos (float x)
+{
+	return acosf (x);
+}
+
+float
+ves_icall_System_MathF_Acosh (float x)
+{
+	return acoshf (x);
+}
+
+float
+ves_icall_System_MathF_Asin (float x)
+{
+	return asinf (x);
+}
+
+float
+ves_icall_System_MathF_Asinh  (float x)
+{
+	return asinhf (x);
+}
+
+float
+ves_icall_System_MathF_Atan  (float x)
+{
+	return atan (x);
+}
+
+float
+ves_icall_System_MathF_Atan2 (float x, float y)
+{
+	return atan2f (x, y);
+}
+
+float
+ves_icall_System_MathF_Atanh (float x)
+{
+	return atanhf (x);
+}
+
+float
+ves_icall_System_MathF_Cbrt (float x)
+{
+	return cbrtf (x);
+}
+
+float
+ves_icall_System_MathF_Ceiling (float x)
+{
+	return ceilf(x);
+}
+
+float
+ves_icall_System_MathF_Cos (float x)
+{
+	return cosf (x);
+}
+
+float
+ves_icall_System_MathF_Cosh (float x)
+{
+	return coshf (x);
+}
+
+float
+ves_icall_System_MathF_Exp (float x)
+{
+	return expf (x);
+}
+
+float
+ves_icall_System_MathF_Floor (float x)
+{
+	return floorf (x);
+}
+
+float
+ves_icall_System_MathF_Log (float x)
+{
+	return logf (x);
+}
+
+float
+ves_icall_System_MathF_Log10 (float x)
+{
+	return log10f (x);
+}
+
+float
+ves_icall_System_MathF_Pow (float x, float y)
+{
+	return powf (x, y);
+}
+
+float
+ves_icall_System_MathF_Sin (float x)
+{
+	return sinf (x);
+}
+
+float
+ves_icall_System_MathF_Sinh (float x)
+{
+	return sinh (x);
+}
+
+float
+ves_icall_System_MathF_Sqrt (float x)
+{
+	return sqrtf (x);
+}
+
+float
+ves_icall_System_MathF_Tan (float x)
+{
+	return tanf (x);
+}
+
+float
+ves_icall_System_MathF_Tanh (float x)
+{
+	return tanh (x);
+}
+
+float
+ves_icall_System_MathF_FMod (float x, float y)
+{
+	return fmodf (x, y);
+}
+
+float
+ves_icall_System_MathF_ModF (float x, float *d)
+{
+	float f;
+	if (d == NULL)
+		d = &f;
+	return modff (x, d);
+}
+

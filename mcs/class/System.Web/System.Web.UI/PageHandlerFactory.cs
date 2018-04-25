@@ -39,9 +39,9 @@ namespace System.Web.UI
 		{
 		}
 		
-		public virtual IHttpHandler GetHandler (HttpContext context, string requestType, string url, string path)
+		public virtual IHttpHandler GetHandler (HttpContext context, string requestType, string virtualPath, string path)
 		{
-			return PageParser.GetCompiledPageInstance (url, path, context);
+			return PageParser.GetCompiledPageInstance (virtualPath, path, context);
 		}
 
 		public virtual void ReleaseHandler (IHttpHandler handler)

@@ -216,13 +216,16 @@ namespace MonoTests.System.Windows.Forms
 			p.Controls.Add (CreateButton (100, 100, false, DockStyle.None, new Padding (), AnchorStyles.Left | AnchorStyles.Top));
 			p.Controls.Add (CreateButton (100, 100, false, DockStyle.None, new Padding (), AnchorStyles.Left | AnchorStyles.Top));
 
+			Assert.AreEqual (new Size (400, 100), p.PreferredSize, "O1");
+
 			p.SetFlowBreak (p.Controls[0], true);
 			p.SetFlowBreak (p.Controls[2], true);
-			
-			Assert.AreEqual (new Rectangle (0, 0, 100, 100), p.Controls[0].Bounds, "O1");
-			Assert.AreEqual (new Rectangle (0, 100, 100, 100), p.Controls[1].Bounds, "O2");
-			Assert.AreEqual (new Rectangle (100, 100, 100, 100), p.Controls[2].Bounds, "O3");
-			Assert.AreEqual (new Rectangle (0, 200, 100, 100), p.Controls[3].Bounds, "O4");
+
+			Assert.AreEqual (new Size (200, 300), p.PreferredSize, "O2");
+			Assert.AreEqual (new Rectangle (0, 0, 100, 100), p.Controls[0].Bounds, "O3");
+			Assert.AreEqual (new Rectangle (0, 100, 100, 100), p.Controls[1].Bounds, "O4");
+			Assert.AreEqual (new Rectangle (100, 100, 100, 100), p.Controls[2].Bounds, "O5");
+			Assert.AreEqual (new Rectangle (0, 200, 100, 100), p.Controls[3].Bounds, "O6");
 		}
 
 		[Test]
@@ -236,10 +239,11 @@ namespace MonoTests.System.Windows.Forms
 			p.Controls.Add (CreateButton (50, 50, false, DockStyle.None, new Padding (14,7,1,3), AnchorStyles.Left | AnchorStyles.Top));
 			p.Controls.Add (CreateButton (50, 50, false, DockStyle.None, new Padding (4), AnchorStyles.Left | AnchorStyles.Top));
 
-			Assert.AreEqual (new Rectangle (1, 3, 50, 50), p.Controls[0].Bounds, "P1");
-			Assert.AreEqual (new Rectangle (63, 3, 50, 50), p.Controls[1].Bounds, "P2");
-			Assert.AreEqual (new Rectangle (139, 7, 50, 50), p.Controls[2].Bounds, "P3");
-			Assert.AreEqual (new Rectangle (4, 64, 50, 50), p.Controls[3].Bounds, "P4");
+			Assert.AreEqual (new Size (248, 60), p.PreferredSize, "P1");
+			Assert.AreEqual (new Rectangle (1, 3, 50, 50), p.Controls[0].Bounds, "P2");
+			Assert.AreEqual (new Rectangle (63, 3, 50, 50), p.Controls[1].Bounds, "P3");
+			Assert.AreEqual (new Rectangle (139, 7, 50, 50), p.Controls[2].Bounds, "P4");
+			Assert.AreEqual (new Rectangle (4, 64, 50, 50), p.Controls[3].Bounds, "P5");
 		}
 
 		[Test]
@@ -253,10 +257,11 @@ namespace MonoTests.System.Windows.Forms
 			p.Controls.Add (CreateButton (15, 85, false, DockStyle.None, new Padding (2), AnchorStyles.Left | AnchorStyles.Top));
 			p.Controls.Add (CreateButton (50, 20, false, DockStyle.None, new Padding (4), AnchorStyles.Left | AnchorStyles.Top));
 
-			Assert.AreEqual (new Rectangle (6, 6, 25, 45), p.Controls[0].Bounds, "Q1");
-			Assert.AreEqual (new Rectangle (46, 9, 60, 20), p.Controls[1].Bounds, "Q2");
-			Assert.AreEqual (new Rectangle (117, 2, 15, 85), p.Controls[2].Bounds, "Q3");
-			Assert.AreEqual (new Rectangle (138, 4, 50, 20), p.Controls[3].Bounds, "Q4");
+			Assert.AreEqual (new Size (192, 89), p.PreferredSize, "Q1");
+			Assert.AreEqual (new Rectangle (6, 6, 25, 45), p.Controls[0].Bounds, "Q2");
+			Assert.AreEqual (new Rectangle (46, 9, 60, 20), p.Controls[1].Bounds, "Q3");
+			Assert.AreEqual (new Rectangle (117, 2, 15, 85), p.Controls[2].Bounds, "Q4");
+			Assert.AreEqual (new Rectangle (138, 4, 50, 20), p.Controls[3].Bounds, "Q5");
 		}
 
 		[Test]
@@ -272,12 +277,13 @@ namespace MonoTests.System.Windows.Forms
 			p.Controls.Add (CreateButton (13, 22, false, DockStyle.None, new Padding (12), AnchorStyles.Left | AnchorStyles.Right));
 			p.Controls.Add (CreateButton (73, 28, false, DockStyle.Top, new Padding (6), AnchorStyles.None));
 
-			Assert.AreEqual (new Rectangle (6, 6, 25, 45), p.Controls[0].Bounds, "R1");
-			Assert.AreEqual (new Rectangle (46, 9, 60, 39), p.Controls[1].Bounds, "R2");
-			Assert.AreEqual (new Rectangle (117, 2, 15, 53), p.Controls[2].Bounds, "R3");
-			Assert.AreEqual (new Rectangle (138, 33, 50, 20), p.Controls[3].Bounds, "R4");
-			Assert.AreEqual (new Rectangle (12, 69, 13, 22), p.Controls[4].Bounds, "R5");
-			Assert.AreEqual (new Rectangle (43, 63, 73, 28), p.Controls[5].Bounds, "R6");
+			Assert.AreEqual (new Size (314, 57), p.PreferredSize, "R1");
+			Assert.AreEqual (new Rectangle (6, 6, 25, 45), p.Controls[0].Bounds, "R2");
+			Assert.AreEqual (new Rectangle (46, 9, 60, 39), p.Controls[1].Bounds, "R3");
+			Assert.AreEqual (new Rectangle (117, 2, 15, 53), p.Controls[2].Bounds, "R4");
+			Assert.AreEqual (new Rectangle (138, 33, 50, 20), p.Controls[3].Bounds, "R5");
+			Assert.AreEqual (new Rectangle (12, 69, 13, 22), p.Controls[4].Bounds, "R6");
+			Assert.AreEqual (new Rectangle (43, 63, 73, 28), p.Controls[5].Bounds, "R7");
 		}
 
 		[Test]

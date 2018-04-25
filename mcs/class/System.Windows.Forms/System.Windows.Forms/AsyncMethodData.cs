@@ -35,6 +35,7 @@ namespace System.Windows.Forms {
 		public object [] Args;
 		public AsyncMethodResult Result;
 		public ExecutionContext Context;
+		public SynchronizationContext SyncContext;
 	}
 
 }

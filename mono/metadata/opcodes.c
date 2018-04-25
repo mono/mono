@@ -1,11 +1,13 @@
-/*
- * opcodes.c: CIL instruction information
+/**
+ * \file
+ * CIL instruction information
  *
  * Author:
  *   Paolo Molaro (lupus@ximian.com)
  *
  * Copyright 2002-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include <mono/metadata/opcodes.h>
 #include <stddef.h> /* for NULL */
@@ -43,6 +45,9 @@ static const int16_t opidx [] = {
 #undef OPDEF
 };
 
+/**
+ * mono_opcode_name:
+ */
 const char*
 mono_opcode_name (int opcode)
 {
@@ -72,19 +77,19 @@ mono_opcode_value (const mono_byte **ip, const mono_byte *end)
 	const mono_byte *p = *ip;
 
 	if (p >= end)
-		return -1;
+		return (MonoOpcodeEnum)-1;
 	if (*p == 0xfe) {
 		++p;
 		if (p >= end)
-			return -1;
-		res = *p + MONO_PREFIX1_OFFSET;
+			return (MonoOpcodeEnum)-1;
+		res = (MonoOpcodeEnum)(*p + MONO_PREFIX1_OFFSET);
 	} else if (*p == MONO_CUSTOM_PREFIX) {
 		++p;
 		if (p >= end)
-			return -1;
-		res = *p + MONO_CUSTOM_PREFIX_OFFSET;
+			return (MonoOpcodeEnum)-1;
+		res = (MonoOpcodeEnum)(*p + MONO_CUSTOM_PREFIX_OFFSET);
 	} else {
-		res = *p;
+		res = (MonoOpcodeEnum)*p;
 	}
 	*ip = p;
 	return res;

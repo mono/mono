@@ -302,14 +302,14 @@ namespace MonoTests.System.Net.Mail {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.AreEqual ("info", ex.ParamName, "#5");
+				Assert.AreEqual ("serializationInfo", ex.ParamName, "#5");
 			}
 		}
 	}
 
 	class MySmtpException : SmtpException {
-		public MySmtpException (SerializationInfo info, StreamingContext context)
-			: base (info, context)
+		public MySmtpException (SerializationInfo serializationInfo, StreamingContext streamingContext)
+			: base (serializationInfo, streamingContext)
 		{
 		}
 	}

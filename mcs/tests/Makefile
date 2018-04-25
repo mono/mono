@@ -50,12 +50,12 @@ TEST_PATTERN = 'v2'
 
 ifeq (net_4_x, $(PROFILE))
 TEST_PATTERN = 'v4'
-DEFINES = -compiler-options:"-d:NET_4_0;NET_4_5"
+DEFINES = -compiler-options:"-d:NET_4_0;NET_4_5 -debug"
 endif
 
 LOCAL_RUNTIME_FLAGS = --verify-all
-COMPILER = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mcs.exe
-TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
+COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe
+TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
 TEST_ILS := $(wildcard *-lib.il)
 
@@ -64,16 +64,27 @@ build-compiler-lib:
 
 qcheck: build-compiler-lib qcheck2
 
+ifdef TEST_WITH_INTERPRETER
+KNOWN_ISSUES = known-issues-interp-$(PROFILE)
+else
+KNOWN_ISSUES = known-issues-$(PROFILE)
+endif
+
 qcheck2:
-	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(PROFILE) -log:$(PROFILE).log -il:ver-il-$(PROFILE).xml $(DEFINES) $(TOPTIONS)
+	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:$(KNOWN_ISSUES) -log:$(PROFILE).log -il:ver-il-$(PROFILE).xml $(DEFINES) $(TOPTIONS)
 
 gen-mt-tests:
 	$(TESTER) -mode:nunit -files:'v2' -compiler:$(COMPILER) -issues:known-issues-mt -compiler-options:"-lib:$(topdir)/class/lib/monotouch projects/MonoTouch/ivt.cs"
 
+
+TESTERVERBOSE=$(if $(V),-verbose,)
+
 test-local:
 	@:
 
-run-test-local: $(TEST_ILS:.il=.dll) setup qcheck
+compile-all: $(TEST_ILS:.il=.dll)
+
+run-test-local: compile-all setup qcheck
 
 check: run-test-local
 
@@ -95,7 +106,13 @@ csproj-local:
 %-lib.dll: %-lib.il
 	$(ILASM) /dll /out:$@ $<
 
+CSCOMPILE_UTIL = $(CSCOMPILE) -noconfig -nologo -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+
 setup:
-	$(CSCOMPILE) -t:library dlls/test-679-2/test-679-lib-2.cs
-	$(CSCOMPILE) -t:library dlls/test-679-1/test-679-lib.cs -r:dlls/test-679-2/test-679-lib-2.dll
+	$(CSCOMPILE_UTIL) -t:library dlls/test-679-2/test-679-lib-2.cs -out:dlls/test-679-2/test-679-lib-2.dll
+	$(CSCOMPILE_UTIL) -t:library dlls/test-679-1/test-679-lib.cs -r:dlls/test-679-2/test-679-lib-2.dll -out:dlls/test-679-1/test-679-lib.dll
+	$(CSCOMPILE_UTIL) -t:library dlls/test-939-common.cs -keyfile:key.snk -publicsign -out:dlls/test-939-common.dll
+	$(CSCOMPILE_UTIL) -t:library dlls/test-939-1/test-939-lib.cs -keyfile:key.snk -publicsign -out:dlls/test-939-1/test-939-lib.dll
+	$(CSCOMPILE_UTIL) -t:library dlls/test-939-1/test-939-ref.cs -r:dlls/test-939-1/test-939-lib.dll -keyfile:key.snk -publicsign -out:dlls/test-939-1/test-939-ref.dll
+	$(CSCOMPILE_UTIL) -t:library dlls/test-939-2/test-939-lib.cs -r:dlls/test-939-common.dll -keyfile:key.snk -publicsign -out:dlls/test-939-2/test-939-lib.dll
 	$(ILASM) -dll dlls/test-883.il

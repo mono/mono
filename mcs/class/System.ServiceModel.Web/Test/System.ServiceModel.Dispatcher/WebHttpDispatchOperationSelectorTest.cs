@@ -26,7 +26,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
@@ -38,6 +38,8 @@ using System.ServiceModel.Web;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.ServiceModel.Dispatcher
 {
@@ -257,12 +259,13 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		public void WebMessageFormats ()
 		{
 			var host = new WebServiceHost (typeof (Hello));
-			host.AddServiceEndpoint (typeof (IHello), new WebHttpBinding (), "http://localhost:37564/");
+			var port = NetworkHelpers.FindFreePort ();
+			host.AddServiceEndpoint (typeof (IHello), new WebHttpBinding (), "http://localhost:" + port + "/");
 			host.Description.Behaviors.Find<ServiceDebugBehavior> ().IncludeExceptionDetailInFaults = true;
 			host.Open ();
 			try {
 				// run client
-				using (ChannelFactory<IHello> factory = new ChannelFactory<IHello> (new WebHttpBinding (), "http://localhost:37564/"))
+				using (ChannelFactory<IHello> factory = new ChannelFactory<IHello> (new WebHttpBinding (), "http://localhost:" + port + "/"))
 				{
 					factory.Endpoint.Behaviors.Add (new WebHttpBehavior ());
 					IHello h = factory.CreateChannel ();

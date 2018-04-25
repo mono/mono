@@ -29,18 +29,18 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH || MONODROID
-using MX = Mono.Security.X509;
-#else
+#if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MX = MonoSecurity::Mono.Security.X509;
+#else
+using MX = Mono.Security.X509;
 #endif
 
 using System.Security.Permissions;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	public sealed class X509Store {
+	public sealed class X509Store : IDisposable {
 
 		private string _name;
 		private StoreLocation _location;
@@ -206,6 +206,11 @@ namespace System.Security.Cryptography.X509Certificates {
 			store = null;
 			if (list != null)
 				list.Clear ();
+		}
+
+		public void Dispose ()
+		{
+			Close ();
 		}
 
 		public void Open (OpenFlags flags)

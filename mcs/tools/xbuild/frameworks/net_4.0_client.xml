@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FileList Name=".NET Framework 4 Client Profile" TargetFrameworkDirectory="..\..\..\..\..\..\4.0">
+<FileList Name=".NET Framework 4 Client Profile" TargetFrameworkDirectory="..\..\..\..\..\..\4.0-api">
   <File AssemblyName="System" Version="4.0.0.0" PublicKeyToken="b77a5c561934e089" />
   <File AssemblyName="System.Activities" Version="4.0.0.0" PublicKeyToken="31bf3856ad364e35" />
   <File AssemblyName="System.Dynamic" Version="4.0.0.0" PublicKeyToken="b03f5f7f11d50a3a" />

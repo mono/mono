@@ -37,16 +37,16 @@ namespace System.IdentityModel.Tokens
 	public class X509WindowsSecurityToken : X509SecurityToken
 	{
 		[MonoTODO]
-		public X509WindowsSecurityToken (X509Certificate2 cert, WindowsIdentity identity)
-			: base (cert)
+		public X509WindowsSecurityToken (X509Certificate2 certificate, WindowsIdentity windowsIdentity)
+			: base (certificate)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public X509WindowsSecurityToken (X509Certificate2 cert, WindowsIdentity identity, string id)
-			: base (cert, id)
+		public X509WindowsSecurityToken (X509Certificate2 certificate, WindowsIdentity windowsIdentity, string id)
+			: base (certificate, id)
 		{
-			this.identity = identity;
+			this.identity = windowsIdentity;
 		}
 
 		WindowsIdentity identity;

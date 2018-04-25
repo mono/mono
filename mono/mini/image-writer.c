@@ -1,10 +1,12 @@
-/*
- * image-writer.c: Creation of object files or assembly files using the same interface.
+/**
+ * \file
+ * Creation of object files or assembly files using the same interface.
  *
  * Author:
  *   Dietmar Maurer (dietmar@ximian.com)
  *   Zoltan Varga (vargaz@gmail.com)
  *   Paolo Molaro (lupus@ximian.com)
+ *   Johan Lorensson (lateralusx.github@gmail.com)
  *
  * (C) 2002 Ximian, Inc.
  */
@@ -53,7 +55,7 @@
  * TARGET_ASM_GAS == GNU assembler
  */
 #if !defined(TARGET_ASM_APPLE) && !defined(TARGET_ASM_GAS)
-#if defined(TARGET_MACH) && !defined(__native_client_codegen__)
+#if defined(TARGET_MACH)
 #define TARGET_ASM_APPLE
 #else
 #define TARGET_ASM_GAS
@@ -88,6 +90,8 @@
 
 #if defined(TARGET_ASM_APPLE)
 #define AS_INT16_DIRECTIVE ".short"
+#elif defined(TARGET_ASM_GAS) && defined(TARGET_WIN32)
+#define AS_INT16_DIRECTIVE ".word"
 #elif defined(TARGET_ASM_GAS)
 #define AS_INT16_DIRECTIVE ".hword"
 #else
@@ -112,34 +116,7 @@
 #define AS_TEMP_LABEL_PREFIX ".L"
 #endif
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-#define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
 #define ROUND_DOWN(VALUE,SIZE)	((VALUE) & ~((SIZE) - 1))
-
-#if defined(TARGET_AMD64) && !defined(HOST_WIN32) && !defined(__APPLE__)
-#define USE_ELF_WRITER 1
-#define USE_ELF_RELA 1
-#endif
-
-#if defined(TARGET_X86) && !defined(HOST_WIN32) && !defined(__APPLE__)
-#define USE_ELF_WRITER 1
-#endif
-
-#if defined(TARGET_ARM) && !defined(TARGET_MACH) && !defined(HOST_WIN32)
-//#define USE_ELF_WRITER 1
-#endif
-
-#if defined(__mips__)
-#define USE_ELF_WRITER 1
-#endif
-
-#if defined(TARGET_X86) && defined(__APPLE__)
-//#define USE_MACH_WRITER
-#endif
-
-#if defined(USE_ELF_WRITER) || defined(USE_MACH_WRITER)
-#define USE_BIN_WRITER 1
-#endif
 
 #ifdef USE_BIN_WRITER
 
@@ -324,12 +301,7 @@ bin_writer_emit_ensure_buffer (BinSection *section, int size)
 		guint8 *data;
 		while (new_size <= new_offset)
 			new_size *= 2;
-		data = g_malloc0 (new_size);
-#ifdef __native_client_codegen__
-		/* for Native Client, fill empty space with HLT instruction */
-		/* instead of 00.                                           */
-		memset(data, 0xf4, new_size);
-#endif		
+		data = (guint8 *)g_malloc0 (new_size);
 		memcpy (data, section->data, section->data_len);
 		g_free (section->data);
 		section->data = data;
@@ -371,22 +343,6 @@ bin_writer_emit_alignment (MonoImageWriter *acfg, int size)
 		acfg->cur_section->cur_offset += add;
 	}
 }
-
-#ifdef __native_client_codegen__
-static void
-bin_writer_emit_nacl_call_alignment (MonoImageWriter *acfg) {
-  int offset = acfg->cur_section->cur_offset;
-  int padding = kNaClAlignment - (offset & kNaClAlignmentMask) - kNaClLengthOfCallImm;
-  guint8 padc = '\x90';
-
-  if (padding < 0) padding += kNaClAlignment;
-
-  while (padding > 0) {
-    bin_writer_emit_bytes(acfg, &padc, 1);
-    padding -= 1;
-  }
-}
-#endif  /* __native_client_codegen__ */
 
 static void
 bin_writer_emit_pointer_unaligned (MonoImageWriter *acfg, const char *target)
@@ -448,7 +404,7 @@ static BinReloc*
 create_reloc (MonoImageWriter *acfg, const char *end, const char* start, int offset)
 {
 	BinReloc *reloc;
-	reloc = mono_mempool_alloc0 (acfg->mempool, sizeof (BinReloc));
+	reloc = (BinReloc *)mono_mempool_alloc0 (acfg->mempool, sizeof (BinReloc));
 	reloc->val1 = mono_mempool_strdup (acfg->mempool, end);
 	if (strcmp (start, ".") == 0) {
 		reloc->val2_section = acfg->cur_section;
@@ -899,7 +855,7 @@ get_label_addr (MonoImageWriter *acfg, const char *name)
 	BinSection *section;
 	gsize value;
 
-	lab = g_hash_table_lookup (acfg->labels, name);
+	lab = (BinLabel *)g_hash_table_lookup (acfg->labels, name);
 	if (!lab)
 		g_error ("Undefined label: '%s'.\n", name);
 	section = lab->section;
@@ -982,7 +938,7 @@ collect_syms (MonoImageWriter *acfg, int *hash, ElfStrTable *strtab, ElfSectHead
 		/*g_print ("sym name %s tabled to %d\n", symbol->name, symbols [i].st_name);*/
 		section = symbol->section;
 		symbols [i].st_shndx = section->parent? section->parent->shidx: section->shidx;
-		lab = g_hash_table_lookup (acfg->labels, symbol->name);
+		lab = (BinLabel *)g_hash_table_lookup (acfg->labels, symbol->name);
 		offset = lab->offset;
 		if (section->parent) {
 			symbols [i].st_value = section->parent->virt_offset + section->cur_offset + offset;
@@ -991,7 +947,7 @@ collect_syms (MonoImageWriter *acfg, int *hash, ElfStrTable *strtab, ElfSectHead
 		}
 
 		if (symbol->end_label) {
-			BinLabel *elab = g_hash_table_lookup (acfg->labels, symbol->end_label);
+			BinLabel *elab = (BinLabel *)g_hash_table_lookup (acfg->labels, symbol->end_label);
 			g_assert (elab);
 			symbols [i].st_size = elab->offset - lab->offset;
 		}
@@ -1063,7 +1019,7 @@ reloc_symbols (MonoImageWriter *acfg, ElfSymbol *symbols, ElfSectHeader *sheader
 		if (dynamic && !symbol->is_global)
 			continue;
 		section = symbol->section;
-		lab = g_hash_table_lookup (acfg->labels, symbol->name);
+		lab = (BinLabel *)g_hash_table_lookup (acfg->labels, symbol->name);
 		offset = lab->offset;
 		if (section->parent) {
 			symbols [i].st_value = sheaders [section->parent->shidx].sh_addr + section->cur_offset + offset;
@@ -1615,7 +1571,7 @@ bin_writer_emit_writeout (MonoImageWriter *acfg)
 
 	if (!acfg->fp) {
 		acfg->out_buf_size = file_offset + sizeof (secth);
-		acfg->out_buf = g_malloc (acfg->out_buf_size);
+		acfg->out_buf = (guint8 *)g_malloc (acfg->out_buf_size);
 	}
 
 	bin_writer_fwrite (acfg, &header, sizeof (header), 1);
@@ -1686,6 +1642,9 @@ bin_writer_emit_writeout (MonoImageWriter *acfg)
 static void
 asm_writer_emit_start (MonoImageWriter *acfg)
 {
+#if defined(TARGET_ASM_APPLE)
+	fprintf (acfg->fp, ".subsections_via_symbols\n");
+#endif
 }
 
 static int
@@ -1748,8 +1707,45 @@ const char *get_label (const char *s)
 	return s;
 }
 
+#ifdef TARGET_WIN32
+#define GLOBAL_SYMBOL_DEF_SCL 2
+#define LOCAL_SYMBOL_DEF_SCL 3
+
+static gboolean
+asm_writer_in_data_section (MonoImageWriter *acfg)
+{
+	gboolean	in_data_section = FALSE;
+	const char	*data_sections [] = {".data", ".bss", ".rdata"};
+
+	for (guchar i = 0; i < G_N_ELEMENTS (data_sections); ++i) {
+		if (strcmp (acfg->current_section, data_sections [i]) == 0) {
+			in_data_section = TRUE;
+			break;
+		}
+	}
+
+	return in_data_section;
+}
+
 static void
-asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean func)
+asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean func, gboolean global)
+{
+	asm_writer_emit_unset_mode (acfg);
+
+	if (func) {
+		fprintf (acfg->fp, "\t.def %s; .scl %d; .type 32; .endef\n", name, (global == TRUE ? GLOBAL_SYMBOL_DEF_SCL : LOCAL_SYMBOL_DEF_SCL));
+	} else {
+		if (!asm_writer_in_data_section (acfg))
+			fprintf (acfg->fp, "\t.data\n");
+	}
+
+	return;
+}
+
+#else
+
+static void
+asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean func, gboolean global)
 {
 	const char *stype;
 
@@ -1759,6 +1755,7 @@ asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean f
 		stype = "object";
 
 	asm_writer_emit_unset_mode (acfg);
+
 #if defined(TARGET_ASM_APPLE)
 
 #elif defined(TARGET_ARM)
@@ -1767,6 +1764,7 @@ asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean f
 	fprintf (acfg->fp, "\t.type %s,@%s\n", name, stype);
 #endif
 }
+#endif /* TARGET_WIN32 */
 
 static void
 asm_writer_emit_global (MonoImageWriter *acfg, const char *name, gboolean func)
@@ -1775,7 +1773,7 @@ asm_writer_emit_global (MonoImageWriter *acfg, const char *name, gboolean func)
 
 	fprintf (acfg->fp, "\t.globl %s\n", name);
 
-	asm_writer_emit_symbol_type (acfg, name, func);
+	asm_writer_emit_symbol_type (acfg, name, func, TRUE);
 }
 
 static void
@@ -1783,11 +1781,11 @@ asm_writer_emit_local_symbol (MonoImageWriter *acfg, const char *name, const cha
 {
 	asm_writer_emit_unset_mode (acfg);
 
-#ifndef TARGET_ASM_APPLE
+#if !defined(TARGET_ASM_APPLE) && !defined(TARGET_WIN32)
 	fprintf (acfg->fp, "\t.local %s\n", name);
 #endif
 
-	asm_writer_emit_symbol_type (acfg, name, func);
+	asm_writer_emit_symbol_type (acfg, name, func, FALSE);
 }
 
 static void
@@ -1795,7 +1793,8 @@ asm_writer_emit_symbol_size (MonoImageWriter *acfg, const char *name, const char
 {
 	asm_writer_emit_unset_mode (acfg);
 
-#ifndef TARGET_ASM_APPLE
+
+#if !defined(TARGET_ASM_APPLE) && !defined(TARGET_WIN32)
 	fprintf (acfg->fp, "\t.size %s,%s-%s\n", name, end_label, name);
 #endif
 }
@@ -1851,20 +1850,6 @@ asm_writer_emit_alignment_fill (MonoImageWriter *acfg, int size, int fill)
 #endif
 }
 #endif
-
-#ifdef __native_client_codegen__
-static void
-asm_writer_emit_nacl_call_alignment (MonoImageWriter *acfg) {
-  int padding = kNaClAlignment - kNaClLengthOfCallImm;
-  guint8 padc = '\x90';
-
-  fprintf (acfg->fp, "\n\t.align %d", kNaClAlignment);
-  while (padding > 0) {
-    fprintf (acfg->fp, "\n\t.byte %d", padc);
-    padding -= 1;
-  }
-}
-#endif  /* __native_client_codegen__ */
 
 static void
 asm_writer_emit_pointer_unaligned (MonoImageWriter *acfg, const char *target)
@@ -2171,20 +2156,6 @@ mono_img_writer_emit_alignment_fill (MonoImageWriter *acfg, int size, int fill)
 	asm_writer_emit_alignment_fill (acfg, size, fill);
 #endif
 }
-
-#ifdef __native_client_codegen__
-void
-mono_img_writer_emit_nacl_call_alignment (MonoImageWriter *acfg) {
-#ifdef USE_BIN_WRITER
-	if (acfg->use_bin_writer)
-		bin_writer_emit_nacl_call_alignment (acfg);
-	else
-		asm_writer_emit_nacl_call_alignment (acfg);
-#else
-	g_assert_not_reached();
-#endif
-}
-#endif  /* __native_client_codegen__ */
 
 void
 mono_img_writer_emit_pointer_unaligned (MonoImageWriter *acfg, const char *target)

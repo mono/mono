@@ -92,7 +92,7 @@ namespace System.IO.MemoryMappedFiles
 
 		public void Flush (IntPtr capacity)
 		{
-			MemoryMapImpl.Flush (m_viewHandle.DangerousGetHandle ());
+			m_viewHandle.Flush ();
 		}
 		
 		protected virtual void Dispose (bool disposing)

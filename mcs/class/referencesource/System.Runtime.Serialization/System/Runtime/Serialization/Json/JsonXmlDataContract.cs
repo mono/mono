@@ -1,0 +1,89 @@
+//----------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+//----------------------------------------------------------------
+
+namespace System.Runtime.Serialization.Json
+{
+    using System.Xml;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
+
+    class JsonXmlDataContract : JsonDataContract
+    {
+        public JsonXmlDataContract(XmlDataContract traditionalXmlDataContract)
+            : base(traditionalXmlDataContract)
+        {
+        }
+
+        public override object ReadJsonValueCore(XmlReaderDelegator jsonReader, XmlObjectSerializerReadContextComplexJson context)
+        {
+            string xmlContent = jsonReader.ReadElementContentAsString();
+
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(TraditionalDataContract.UnderlyingType,
+                GetKnownTypesFromContext(context, (context == null) ? null : context.SerializerKnownTypeList), 1, false, false, null); //  maxItemsInObjectGraph //  ignoreExtensionDataObject //  preserveObjectReferences //  dataContractSurrogate 
+
+            MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(xmlContent));
+            object xmlValue;
+            XmlDictionaryReaderQuotas quotas = ((JsonReaderDelegator)jsonReader).ReaderQuotas;
+            if (quotas == null)
+            {
+                xmlValue = dataContractSerializer.ReadObject(memoryStream);
+            }
+            else
+            {
+                xmlValue = dataContractSerializer.ReadObject(XmlDictionaryReader.CreateTextReader(memoryStream, quotas));
+            }
+            if (context != null)
+            {
+                context.AddNewObject(xmlValue);
+            }
+            return xmlValue;
+        }
+
+        public override void WriteJsonValueCore(XmlWriterDelegator jsonWriter, object obj, XmlObjectSerializerWriteContextComplexJson context, RuntimeTypeHandle declaredTypeHandle)
+        {
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(Type.GetTypeFromHandle(declaredTypeHandle),
+                GetKnownTypesFromContext(context, (context == null) ? null : context.SerializerKnownTypeList), 1, false, false, null); //  maxItemsInObjectGraph //  ignoreExtensionDataObject //  preserveObjectReferences //  dataContractSurrogate 
+
+            MemoryStream memoryStream = new MemoryStream();
+            dataContractSerializer.WriteObject(memoryStream, obj);
+            memoryStream.Position = 0;
+            string serialized = new StreamReader(memoryStream).ReadToEnd();
+            jsonWriter.WriteString(serialized);
+        }
+
+        List<Type> GetKnownTypesFromContext(XmlObjectSerializerContext context, IList<Type> serializerKnownTypeList)
+        {
+            List<Type> knownTypesList = new List<Type>();
+            if (context != null)
+            {
+                List<XmlQualifiedName> stableNames = new List<XmlQualifiedName>();
+                Dictionary<XmlQualifiedName, DataContract>[] entries = context.scopedKnownTypes.dataContractDictionaries;
+                if (entries != null)
+                {
+                    for (int i = 0; i < entries.Length; i++)
+                    {
+                        Dictionary<XmlQualifiedName, DataContract> entry = entries[i];
+                        if (entry != null)
+                        {
+                            foreach (KeyValuePair<XmlQualifiedName, DataContract> pair in entry)
+                            {
+                                if (!stableNames.Contains(pair.Key))
+                                {
+                                    stableNames.Add(pair.Key);
+                                    knownTypesList.Add(pair.Value.UnderlyingType);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (serializerKnownTypeList != null)
+                {
+                    knownTypesList.AddRange(serializerKnownTypeList);
+                }
+            }
+            return knownTypesList;
+        }
+    }
+}

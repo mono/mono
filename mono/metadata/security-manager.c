@@ -1,13 +1,20 @@
-/*
- * security-manager.c:  Security Manager (Unmanaged side)
+/**
+ * \file
+ * Security Manager (Unmanaged side)
  *
  * Author:
  *	Sebastien Pouliot  <sebastien@ximian.com>
  *
  * Copyright 2005-2009 Novell, Inc (http://www.novell.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
+#include <config.h>
 #include "security-manager.h"
+
+/* Class lazy loading functions */
+static GENERATE_GET_CLASS_WITH_CACHE (security_manager, "System.Security", "SecurityManager")
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (execution_context, "System.Threading", "ExecutionContext")
 
 static MonoSecurityMode mono_security_mode = MONO_SECURITY_MODE_NONE;
 
@@ -35,10 +42,8 @@ mono_security_manager_get_methods (void)
 		return &secman;
 
 	/* Initialize */
-	secman.securitymanager = mono_class_from_name (mono_defaults.corlib, 
-		"System.Security", "SecurityManager");
-	g_assert (secman.securitymanager);
-	if (!secman.securitymanager->inited)
+	secman.securitymanager = mono_class_get_security_manager_class ();
+	if (!m_class_is_inited (secman.securitymanager))
 		mono_class_init (secman.securitymanager);
 
 	return &secman;
@@ -95,9 +100,10 @@ mono_get_context_capture_method (void)
 		return NULL;
 
 	/* older corlib revisions won't have the class (nor the method) */
-	if (mono_defaults.executioncontext_class && !method) {
-		mono_class_init (mono_defaults.executioncontext_class);
-		method = mono_class_get_method_from_name (mono_defaults.executioncontext_class, "Capture", 0);
+	MonoClass *execution_context = mono_class_try_get_execution_context_class ();
+	if (execution_context && !method) {
+		mono_class_init (execution_context);
+		method = mono_class_get_method_from_name (execution_context, "Capture", 0);
 	}
 
 	return method;

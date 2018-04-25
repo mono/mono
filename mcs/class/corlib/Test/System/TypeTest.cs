@@ -16,7 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-#if !MONOTOUCH
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 #endif
 using System.Runtime.InteropServices;
@@ -212,6 +212,16 @@ namespace MonoTests.System
 		}
 	}
 
+	public class GenericIndexers<T, U>
+	{
+		// This class has two indexers that take different
+		// arguments.  GetProperties on all instances of this
+		// generic type should still have 2 properties, even
+		// if T and U are instantiated with the same types.
+		public T this[T t] { get { return t; } }
+		public U this[U u] { get { return u; } }
+	}
+
 	public class FirstMethodBinder : Binder
 	{
 		public override MethodBase BindToMethod (BindingFlags bindingAttr, MethodBase [] match, ref object [] args,
@@ -251,18 +261,19 @@ namespace MonoTests.System
 	[TestFixture]
 	public class TypeTest
 	{
-#if !MONOTOUCH
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		private ModuleBuilder module;
 #endif
 		const string ASSEMBLY_NAME = "MonoTests.System.TypeTest";
 		static int typeIndexer = 0;
+		static bool isMono = Type.GetType ("Mono.Runtime", false) != null;
 
 		[SetUp]
 		public void SetUp ()
 		{
 			AssemblyName assemblyName = new AssemblyName ();
 			assemblyName.Name = ASSEMBLY_NAME;
-#if !MONOTOUCH
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 			var assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
 					assemblyName, AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
 			module = assembly.DefineDynamicModule ("module1");
@@ -282,6 +293,14 @@ namespace MonoTests.System
 		}
 
 		private void GenericMethod<Q, T1> (Q q, T1 t) where T1 : IFace
+		{
+		}
+
+		private void GenericMethod2<A, B, C, D> ()
+			where C : Duper
+			where A : B, IFace
+			where B : C
+			where D : Baz<object>
 		{
 		}
 
@@ -358,6 +377,54 @@ namespace MonoTests.System
 			// Tests for parameters with generic constraints
 			mi = typeof (TypeTest).GetMethod ("GenericMethod", BindingFlags.Instance|BindingFlags.NonPublic);
 			Assert.IsTrue (typeof (IFace).IsAssignableFrom (mi.GetParameters ()[1].ParameterType));
+
+			// Transitivity of IsAssignableFrom for type parameters
+			mi = typeof (TypeTest).GetMethod ("GenericMethod2", BindingFlags.Instance|BindingFlags.NonPublic);
+			var gparams = mi.GetGenericArguments ();
+			// B : Duper since B : C and C : Duper
+			Assert.IsTrue (typeof (Duper).IsAssignableFrom (gparams[1]), "#36");
+			// A : Duper since A : B and B : Duper
+			Assert.IsTrue (typeof (Duper).IsAssignableFrom (gparams[0]), "#37a");
+			// A : IFace since A : IFace
+			Assert.IsTrue (typeof (IFace).IsAssignableFrom (gparams[0]), "#37b");
+			// B : Super since B : Duper and Duper : Super
+			Assert.IsTrue (typeof (Super).IsAssignableFrom (gparams[1]), "#38");
+			// A : Super since A : B and B : Super
+			Assert.IsTrue (typeof (Super).IsAssignableFrom (gparams[0]), "#39");
+			// D : IBar<object> since D : Baz<object> and Baz<object> : IBar<object>
+			Assert.IsTrue (typeof (IBar<object>).IsAssignableFrom (gparams [3]), "#40");
+			// A not assignable from B since A : B
+			Assert.IsFalse (gparams[0].IsAssignableFrom (gparams [1]), "#41");
+			Assert.IsFalse (gparams[0].IsAssignableFrom (gparams [2]), "#42");
+
+			// A is not assignable from Array and Delegate and vice versa
+			Assert.IsFalse (gparams[0].IsAssignableFrom (typeof (Array)), "#43");
+			Assert.IsFalse (gparams[0].IsAssignableFrom (typeof (Delegate)), "#44");
+			Assert.IsFalse (typeof (Array).IsAssignableFrom (gparams[0]), "#45");
+			Assert.IsFalse (typeof (Delegate).IsAssignableFrom (gparams[0]), "#46");
+
+		}
+
+		[Test]
+		public void GenericParameterBaseType ()
+		{
+			var mi = typeof (TypeTest).GetMethod ("GenericMethod2", BindingFlags.Instance|BindingFlags.NonPublic);
+			var gparams = mi.GetGenericArguments ();
+
+			// From the .NET documentation: BaseType property of a
+			// gparam is "object" if its only constraints are other
+			// gparams or interfaces, otherwise if it has a class
+			// constraint that class is the BaseType.
+
+			// A : B where B is a gparam, and A : IFace which is an
+			// interface, so A.BaseType is object
+			Assert.AreEqual (typeof (object), gparams[0].BaseType, "#1");
+			// B : C where C is a gparam, so B.BaseType is object
+			Assert.AreEqual (typeof (object), gparams[1].BaseType, "#2");
+			// C : Duper where Duper is a class, so A.BaseType is Duper
+			Assert.AreEqual (typeof (Duper), gparams[2].BaseType, "#3");
+			// D : Baz<object>
+			Assert.AreEqual (typeof (Baz<object>), gparams[3].BaseType, "#4");
 		}
 
 		[Test]
@@ -425,9 +492,85 @@ namespace MonoTests.System
 		public void GetProperties ()
 		{
 			// Test hide-by-name-and-signature
-			Assert.AreEqual (1, typeof (Derived2).GetProperties ().Length);
-			Assert.AreEqual (typeof (Derived2), typeof (Derived2).GetProperties ()[0].DeclaringType);
+			Assert.AreEqual (1, typeof (Derived2).GetProperties ().Length, "#1");
+			Assert.AreEqual (typeof (Derived2), typeof (Derived2).GetProperties ()[0].DeclaringType, "#2");
+
+			// For generics, hide-by-name-and-signature works on the unexpanded types. The
+			// GenericIndexers<T,U> class has two indexers that take different arguments.
+			// GetProperties on all instances of this generic type should still have 2 properties,
+			// even if T and U are instantiated with the same types.
+
+			var ps = typeof (GenericIndexers<int,int>).GetProperties ();
+			Assert.AreEqual (2, ps.Length, "#3");
+			for (int i = 0; i < ps.Length; i++) {
+				var p = ps[i];
+
+				var getterResultType = p.GetGetMethod ().ReturnType;
+
+				var msg = String.Format ("#4-{0}", i);
+				Assert.AreEqual (typeof (int), getterResultType, msg);
+			}
+
 		}
+
+		class GetProperties_Overrides_Input
+		{
+			public class TestClass : BaseClass<object>
+			{
+				public override object TestProperty { get; set; }
+			}
+
+			public abstract class BaseClass<T>
+			{
+				public virtual T TestProperty { get; set; }
+			}
+
+			public class TestClass_Indexer : BaseClass_Indexer<object>
+			{
+				public override object this[int arg] { set { } }
+			}
+
+			public abstract class BaseClass_Indexer<T>
+			{
+				public virtual T this[int arg] { set { } }
+			}
+
+			public interface IB : IA<object>
+			{
+				new object TestProperty { get; set; }
+			}
+
+			public interface IA<T>
+			{
+				T TestProperty { get; set; }
+			}
+
+			public class TestClass_HiddenProperty : BaseClass_HiddenProperty
+			{
+				public new virtual string Prop { set { } }
+			}
+
+			public class BaseClass_HiddenProperty
+			{
+				public virtual string Prop { set  { } }
+			}
+		}
+
+		[Test]
+		public void GetProperties_Overrides ()
+		{
+			Assert.AreEqual (1, typeof (GetProperties_Overrides_Input.IB).GetProperties().Length);
+
+			var prop = typeof (GetProperties_Overrides_Input.TestClass).GetProperty ("TestProperty");
+			Assert.AreEqual (typeof (GetProperties_Overrides_Input.TestClass), prop.DeclaringType);
+
+			var prop_2 = typeof (GetProperties_Overrides_Input.TestClass_HiddenProperty).GetProperty ("Prop");
+			Assert.AreEqual (typeof (GetProperties_Overrides_Input.TestClass_HiddenProperty), prop_2.DeclaringType);
+
+			Assert.AreEqual (1, typeof (GetProperties_Overrides_Input.TestClass).GetProperties().Length);
+			Assert.AreEqual (1, typeof (GetProperties_Overrides_Input.TestClass_Indexer).GetProperties().Length);
+			Assert.AreEqual (1, typeof (GetProperties_Overrides_Input.TestClass_HiddenProperty).GetProperties().Length);
+	    }
 
 		[Test] // GetProperties (BindingFlags)
 		public void GetProperties_Flags ()
@@ -1527,6 +1670,27 @@ namespace MonoTests.System
 							    typeof (long), new Type[0], null), "#2");
 		}
 
+		[Test]
+		public void GetProperty9_Indexers ()
+		{
+
+			var bindingFlags = BindingFlags.Public | BindingFlags.Instance;
+
+			Type type1 = typeof (List<byte>);
+			var p1 = type1.GetProperty ("Item", bindingFlags, null, typeof (byte), new Type[] { typeof (int) }, null);
+			Assert.IsNotNull (p1, "#1");
+
+			Type type2 = typeof (List<string>);
+			var p2 = type2.GetProperty ("Item", bindingFlags, null, typeof (string), new Type[] { typeof (int) }, null);
+			Assert.IsNotNull (p2, "#2");
+
+			Type type3 = typeof (List<Type>);
+			// result type not convertible, make sure we fail.
+			var p3 = type3.GetProperty ("Item", bindingFlags, null, typeof (string) /*!*/,
+						    new Type[] { typeof (int) }, null);
+			Assert.IsNull (p3, "#3");
+		}
+
 		[StructLayout(LayoutKind.Explicit, Pack = 4, Size = 64)]
 		public class Class1
 		{
@@ -1727,8 +1891,8 @@ namespace MonoTests.System
 
 			Assert.AreEqual (t1.FullName, "System.__ComObject");
 
-			if (Environment.OSVersion.Platform == PlatformID.Win32Windows ||
-				Environment.OSVersion.Platform == PlatformID.Win32NT)
+			if (!isMono && (Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+				Environment.OSVersion.Platform == PlatformID.Win32NT))
 				Activator.CreateInstance(t1);
 
 			Assert.AreEqual (t2.FullName, "System.__ComObject");
@@ -2153,11 +2317,14 @@ namespace MonoTests.System
 
 		[Test]
 		public void GetGenericMethodDefinitionOverInflatedMethodOnGTD () {
+			var s = new List<int> () { 1, 2, 3 }.ConvertAll ( i => i.ToString () );
+			Assert.AreEqual (3, s.Count);
 			var l = typeof (List<>);
 			var m = l.GetMethod ("ConvertAll");
 			var infl = m.MakeGenericMethod (typeof (int));
 			var res = m.GetGenericMethodDefinition ();
 			Assert.AreEqual (m, res, "#1");
+			Assert.AreEqual (1, infl.GetGenericArguments().Length, "#2");
 		}
 
 		[Test]
@@ -2621,6 +2788,41 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void GetType1_TypeName_Empty_nothrow ()
+		{
+			var t = Type.GetType ("");
+			Assert.IsNull (t);
+		}
+
+		[Test]
+		[ExpectedException (typeof (TypeLoadException))]
+		public void GetType2_TypeName_Empty ()
+		{
+			Type.GetType ("", true);
+		}
+
+		[Test]
+		public void GetType2_TypeName_Empty_nothrow ()
+		{
+			var t = Type.GetType ("", false);
+			Assert.IsNull (t);
+		}
+
+		[Test]
+		[ExpectedException (typeof (TypeLoadException))]
+		public void GetType3_TypeName_Empty ()
+		{
+			Type.GetType ("", true, false);
+		}
+
+		[Test]
+		public void GetType3_TypeName_Empty_nothrow ()
+		{
+			var t = Type.GetType ("", false, false);
+			Assert.IsNull (t);
+		}
+
+		[Test]
 		public void GetTypeArray_Args_Null ()
 		{
 			try {
@@ -2950,9 +3152,23 @@ namespace MonoTests.System
 		public void MakeArrayTypeTest ()
 		{
 			// This should not crash:
-			typeof (void).MakeArrayType ();
+			Type t = typeof (void).MakeArrayType ();
 		}
 		
+		[Test]
+		[ExpectedException (typeof (InvalidProgramException))]
+		public void MakeArrayTypedReferenceInstanceTest ()
+		{
+			object o = Array.CreateInstance (typeof (global::System.TypedReference), 1);
+		}
+
+		[Test]
+		public void MakeArrayTypeLargeRank ()
+		{
+			Assert.Throws<TypeLoadException> (delegate () {
+					typeof (int).MakeArrayType (33);
+				});
+		}
 
 		[ComVisible (true)]
 		public class ComFoo<T> {
@@ -3043,7 +3259,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if MONOTOUCH
+#if MONOTOUCH || FULL_AOT_RUNTIME
 		[ExpectedException (typeof (NotSupportedException))]
 #endif
 		public void MakeGenericType_UserDefinedType ()
@@ -3060,7 +3276,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if MONOTOUCH
+#if MONOTOUCH || FULL_AOT_RUNTIME
 		[ExpectedException (typeof (NotSupportedException))]
 #endif
 		public void MakeGenericType_NestedUserDefinedType ()
@@ -3077,7 +3293,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-#if MONOTOUCH
+#if MONOTOUCH || FULL_AOT_RUNTIME
 		[ExpectedException (typeof (NotSupportedException))]
 #endif
 		public void TestMakeGenericType_UserDefinedType_DotNet20SP1 () 
@@ -3090,7 +3306,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-#if MONOTOUCH
+#if MONOTOUCH || FULL_AOT_RUNTIME
 		[ExpectedException (typeof (NotSupportedException))]
 #endif
 		public void MakeGenericType_BadUserType ()
@@ -3147,6 +3363,38 @@ namespace MonoTests.System
 			MethodInfo m = typeof (Type).GetMethod ("GetType",  BindingFlags.Public | BindingFlags.Static, null, new Type [] { typeof (string) },  null);
 			object r = m.Invoke (null, BindingFlags.Default, null, new object [] { "NoNamespaceClass" }, CultureInfo.InvariantCulture);
 			Assert.AreSame (expectedType, r, "#2");
+		}
+
+		public class BConstrained<Y> where Y : BConstrained<Y> {
+		}
+
+		public class AConstrained<X> : BConstrained<AConstrained<X>> {
+		}
+
+		[Test] // Bug https://bugzilla.xamarin.com/show_bug.cgi?id=54485
+		public void MakeGenericType_GTD_Constraint ()
+		{
+			// This is pretty weird, but match .NET behavior (note
+			// that typeof(BConstrained<AConstrained<>>) is a
+			// compile-time error with roslyn, but it's apparently
+			// an ok thing to make with reflection.
+			var tb = typeof (BConstrained<>);
+			var ta = typeof (AConstrained<>);
+			var result = tb.MakeGenericType (ta);
+			Assert.IsNotNull (result, "#1");
+			// lock down the answer to match what .NET makes
+			Assert.IsTrue (result.IsGenericType, "#2");
+			Assert.AreEqual (tb, result.GetGenericTypeDefinition (), "#3");
+			var bargs = result.GetGenericArguments ();
+			Assert.AreEqual (1, bargs.Length, "#4");
+			var arg = bargs [0];
+			Assert.IsTrue (arg.IsGenericType, "#5");
+			// N.B. evidently AConstrained`1 and AConstrained`1<!0> are the same type
+			Assert.IsTrue (arg.IsGenericTypeDefinition, "#6");
+			Assert.AreEqual (ta, arg.GetGenericTypeDefinition (), "#7");
+			var aargs = arg.GetGenericArguments ();
+			Assert.AreEqual (1, aargs.Length, "#8");
+			Assert.AreEqual (ta.GetGenericArguments () [0], aargs [0], "#9");
 		}
 
 	[Test]
@@ -3226,7 +3474,7 @@ namespace MonoTests.System
 			Assert.AreEqual (t1, t2);
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
 		public void SpaceAfterComma () {
 			string strType = "System.Collections.Generic.Dictionary`2[[System.Int32,mscorlib], [System.String,mscorlib]],mscorlib";
@@ -3234,7 +3482,7 @@ namespace MonoTests.System
 		}
 #endif
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
 		public void Bug506757 ()
 		{
@@ -3460,6 +3708,80 @@ namespace MonoTests.System
 
 		public struct Size4b {
 			public int field;
+		}
+
+		[Test]
+		public void IsAssignableFromGenericArgumentsWithConstraints ()
+		{
+			// Regression test for #58809
+
+			// Generic Parameters of a gtd should have their
+			// constraints respected even when those constraints
+			// are other generic parameters themselves.
+
+			var ps = typeof (GenericWithParamConstraints<,,>).GetGenericArguments ();
+
+			var a = ps[0];
+			var b = ps[1];
+			var c = ps[2];
+
+			// Foo<C>
+			var fooOfC = typeof (Foo<>).MakeGenericType (c);
+
+			// constraint B : Foo <C>
+			Assert.IsTrue (fooOfC.IsAssignableFrom (b), "#1");
+
+			// constraint A : B
+			Assert.IsTrue (b.IsAssignableFrom (a), "#2");
+
+			// A : Foo<C> since A : B and B : Foo<C>
+			Assert.IsTrue (fooOfC.IsAssignableFrom (a), "#3");
+		}
+
+		class GenericWithParamConstraints<A, B, C> where B : Foo<C> where A : B
+		{
+		}
+
+		[Test]
+		public void IsAssignableFromArraySpecialInterfaceGtd ()
+		{
+			// Regression test for https://github.com/mono/mono/issues/7095
+			// An "array special interface" is a Mono name for some
+			// interfaces that are implemented by arrays.
+			// Check that an array special interface GTD (ie, IList<> not IList<Foo>) work
+			// correctly with IsAssignableFrom.
+			var il = typeof (IList<>);
+			var ie = typeof (IEnumerable<>);
+			var ilparam = il.GetTypeInfo ().GenericTypeParameters [0];
+			var ilparr = ilparam.MakeArrayType ();
+
+			Assert.IsTrue (ie.IsAssignableFrom (ie), "IList<> ---> IEnumerable<>");
+			Assert.IsTrue (il.IsAssignableFrom (ilparr), "!0[] ---> IList<>");
+
+			var ilparrarr = ilparr.MakeArrayType ();
+
+			Assert.IsFalse (il.IsAssignableFrom (ilparrarr), "!0[][] -!-> IList<>");
+
+			Assert.IsFalse (il.IsAssignableFrom (typeof (Array)), "System.Array -!-> IList<>");
+		}
+
+		[Test]
+		public void IsAssignableFromArrayEnumerator ()
+		{
+			// Regression test for https://github.com/mono/mono/issues/7093
+			// An array does not implement IEnumerator`1
+
+			var arrStr = typeof (string[]);
+			var ieStr = typeof (IEnumerator<string>);
+			var ieEqStr = typeof (IEnumerator<IEquatable<string>>);
+			Assert.IsFalse (ieStr.IsAssignableFrom (arrStr), "string[] -!-> IEnumerator<string>");
+			Assert.IsFalse (ieEqStr.IsAssignableFrom (arrStr), "string[] -!-> IEnumerator<IEquatable<string>>");
+
+			var arrInt = typeof (int[]);
+			var ieInt = typeof (IEnumerator<int>);
+			var ieEqInt = typeof (IEnumerator<IEquatable<int>>);
+			Assert.IsFalse (ieInt.IsAssignableFrom (arrInt), "int[] -!-> IEnumerator<int>");
+			Assert.IsFalse (ieEqInt.IsAssignableFrom (arrInt), "int[] -!-> IEnumerator<IEquatable<int>>");
 		}
 
 		[Test] // Bug #612780
@@ -4011,15 +4333,25 @@ namespace MonoTests.System
 			} catch (ArgumentNullException) {}
 		}
 
-		void MustAE (string tname) {
+		void MustAE_general (string tname, Func<string,Type> getType) {
 			try {
-				var res = Type.GetType (tname, name => {
-					return Assembly.Load (name);
-				},(asm,name,ignore) => {
-					return (object)asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
-				}, true, false);
+				var res = getType (tname);
 				Assert.Fail (tname);
 			} catch (ArgumentException) {}
+		}
+
+		void MustAE (string typename) {
+			MustAE_general (typename, tname => {
+					return Type.GetType (tname, name => {
+							return Assembly.Load (name);
+						},(asm,name,ignore) => {
+							return (object)asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+						}, true, false);
+				});
+		}
+
+		void MustAEnn (string typename) {
+			MustAE_general (typename, tname => Type.GetType (tname, null, null));
 		}
 
 		void MustFNFE (string tname) {
@@ -4036,6 +4368,7 @@ namespace MonoTests.System
 		[Test]
 		public void NewGetTypeErrors () {
 			MustANE (null);
+			MustTLE ("");
 			MustAE ("!@#$%^&*");
 			MustAE (string.Format ("{0}[{1}&]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
 			MustAE (string.Format ("{0}[{1}*]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
@@ -4073,6 +4406,17 @@ namespace MonoTests.System
 			MustTLE (string.Format ("{0}ZZZZ,{1}", typeof (MyRealEnum).FullName, aqn));
 		}
 
+		[Test]
+		public void GetTypeExceptionMsg () {
+			string typeName = "system.int32, foo";
+			try {
+				Type.GetType(typeName, true, false);
+			} catch (TypeLoadException ex) {
+				Assert.IsTrue (ex.Message.Contains ("system.int32"));
+				Assert.IsTrue (ex.Message.Contains ("foo"));
+			}
+		}
+
 	   	delegate void MyAction<in T>(T ag);
 
 		[Test] //bug #668506
@@ -4104,7 +4448,57 @@ namespace MonoTests.System
 			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32"), null, "#15");
 		}
 
-#if !MONOTOUCH
+		[Test]
+		public void GetTypeNullDelegatesParseGenericCorrectly () {
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1", null, null), typeof (Foo<>), "#1");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32]", null, null), typeof (Foo<int>), "#2");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[[System.Int32]]", null, null), typeof (Foo<int>), "#3");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32][]", null, null), typeof (Foo<int>[]), "#4");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32][,]", null, null), typeof (Foo<int>[,]), "#5");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[]", null, null), typeof (Foo<>).MakeArrayType(), "#6");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[,]", null, null), typeof (Foo<>).MakeArrayType (2), "#7");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[][]", null, null), typeof (Foo<>).MakeArrayType ().MakeArrayType (), "#8");
+
+			MustAEnn ("MonoTests.System.Foo`1[][System.Int32]");
+			MustAEnn ("MonoTests.System.Foo`1[");
+			MustAEnn ("MonoTests.System.Foo`1[[");
+			MustAEnn ("MonoTests.System.Foo`1[[]");
+			MustAEnn ("MonoTests.System.Foo`1[,");
+			MustAEnn ("MonoTests.System.Foo`1[*");
+			MustAEnn ("MonoTests.System.Foo`1[System.Int32");
+		}
+
+		Dictionary<int, T> MakeDictHelper<T> (T[] arr) {
+			return new Dictionary<int, T>();
+		}
+
+		[Test]
+		public void GetTypeAnonymousParseCorrectly () {
+			var x = new { X = 1 };
+			var a = new [] { x };
+			var d = MakeDictHelper (a);
+
+			var x_type = x.GetType ();
+			var a_type = a.GetType ();
+			var d_type = d.GetType ();
+
+			Assert.AreEqual (Type.GetType (x_type.ToString ()), x_type, "#1");
+			Assert.AreEqual (Type.GetType (x_type.ToString (), null, null), x_type, "#2");
+			Assert.AreEqual (Type.GetType (a_type.ToString ()), a_type, "#3");
+			Assert.AreEqual (Type.GetType (a_type.ToString (), null, null), a_type, "#4");
+			Assert.AreEqual (Type.GetType (d_type.ToString ()), d_type, "#5");
+			Assert.AreEqual (Type.GetType (d_type.ToString (), null, null), d_type, "#6");
+
+			Assert.AreEqual (Type.GetType (x_type.FullName), x_type, "#7");
+			Assert.AreEqual (Type.GetType (x_type.FullName, null, null), x_type, "#8");
+			Assert.AreEqual (Type.GetType (a_type.FullName), a_type, "#9");
+			Assert.AreEqual (Type.GetType (a_type.FullName, null, null), a_type, "#10");
+			Assert.AreEqual (Type.GetType (d_type.FullName), d_type, "#11");
+			Assert.AreEqual (Type.GetType (d_type.FullName, null, null), d_type, "#12");
+
+		}
+
+#if !MONOTOUCH && !FULL_AOT_RUNTIME && !MONOMAC
 		[Test]
 		[Category ("AndroidNotWorking")] // requires symbol writer
 		public void FullNameGetTypeParseEscapeRoundtrip () // bug #26384
@@ -4112,7 +4506,7 @@ namespace MonoTests.System
 			var nm = new AssemblyName ("asm");
 			var ab = AssemblyBuilder.DefineDynamicAssembly (nm,
 									AssemblyBuilderAccess.Run);
-			var mb = ab.DefineDynamicModule("m", true);
+			var mb = ab.DefineDynamicModule("m", false);
 			var tb = mb.DefineType ("NameSpace,+*&[]\\.Type,+*&[]\\",
 						TypeAttributes.Class | TypeAttributes.Public);
 
@@ -4149,6 +4543,24 @@ namespace MonoTests.System
 
 		}
 #endif
+
+
+		[Test]
+		public void GetTypeBadArity()
+		{
+			// Regression test for #46250
+			try {
+				Type.GetType ("System.Collections.Generic.Dictionary`2[System.String]", true);
+				Assert.Fail ("Did not throw an exception (#1)");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				Type.GetType ("System.Collections.Generic.Dictionary`2[System.String,System.Int32,System.Int64]", true);
+				Assert.Fail ("Did not throw an exception (#2)");
+			} catch (ArgumentException) {
+			}
+		}
 
 		public abstract class Stream : IDisposable
 		{
@@ -4483,6 +4895,71 @@ namespace MonoTests.System
 			public CtorsC (int x)
 			{
 			}
+		}
+
+		// https://bugzilla.xamarin.com/show_bug.cgi?id=57938
+		[Test]
+		public void NullFullNameForSpecificGenericTypes()
+		{
+			var expected = new [] {
+				(
+					typeof(Bug59738Class<>).GetFields()[0].FieldType,
+					"Bug59738Interface`1", (string)null, 
+					"MonoTests.System.TypeTest+Bug59738Interface`1[U]"
+				),
+				(
+					typeof(Bug59738Derived<>).BaseType,
+					"Bug59738Class`1", (string)null, 
+					"MonoTests.System.TypeTest+Bug59738Class`1[U]"
+				),
+				(
+					typeof(Bug59738Class<int>),
+					"Bug59738Class`1", 
+					$"MonoTests.System.TypeTest+Bug59738Class`1[[System.Int32, {typeof (int).Assembly.FullName}]]",
+					"MonoTests.System.TypeTest+Bug59738Class`1[System.Int32]"
+				)
+			};
+
+			for (var i = 0; i < expected.Length; i++) {
+				var (t, name, fullname, tostring) = expected[i];
+				Assert.AreEqual(name, t.Name, $"{i}.Name");
+				Assert.AreEqual(fullname, t.FullName, $"{i}.FullName");
+				Assert.AreEqual(tostring, t.ToString(), $"{i}.ToString()");
+			}
+		}
+
+		// https://github.com/mono/mono/issues/6579
+		[Test]
+		public void GetInterfaceCaseInsensitiveTest()
+		{
+			var type = typeof(Dictionary<string, object>);
+
+			Assert.NotNull (
+				type.GetInterface ("System.Collections.IDictionary", false),
+				"strict named interface must be found (ignoreCase = false)"
+			);
+			Assert.NotNull (
+				type.GetInterface ("System.Collections.IDictionary", true),
+				"strict named interface must be found (ignoreCase = true)"
+			);
+			Assert.Null (
+				type.GetInterface ("System.Collections.Idictionary", false),
+				"interface, named in mixed case, must not be found (ignoreCase = false)"
+			);
+			Assert.NotNull (
+				type.GetInterface ("System.Collections.Idictionary", true),
+				"interface, named in mixed case, must be found (ignoreCase = true)"
+			);
+		}
+
+		interface Bug59738Interface<T> {
+		}
+
+		class Bug59738Class<U> {
+			public Bug59738Interface<U> Iface;
+		}
+
+		class Bug59738Derived<U> : Bug59738Class<U> {
 		}
 	}
 

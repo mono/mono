@@ -1,9 +1,0 @@
-2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* web.config: add WCF assemblies as references at compilation.
-	* machine.config: add some missing WCF sections (new in 3.5).
-
-2009-07-24  Jb Evain  <jbevain@novell.com>
-
-	* Initial import of the net_4_0 specific files.
-

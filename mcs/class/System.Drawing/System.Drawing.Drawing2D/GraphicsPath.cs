@@ -221,27 +221,27 @@ namespace System.Drawing.Drawing2D
                 //
                 // AddArc
                 //
-                public void AddArc (Rectangle rect, float start_angle, float sweep_angle)
+                public void AddArc (Rectangle rect, float startAngle, float sweepAngle)
                 {
-                        Status status = GDIPlus.GdipAddPathArcI (nativePath, rect.X, rect.Y, rect.Width, rect.Height, start_angle, sweep_angle);
+                        Status status = GDIPlus.GdipAddPathArcI (nativePath, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
-                public void AddArc (RectangleF rect, float start_angle, float sweep_angle)
+                public void AddArc (RectangleF rect, float startAngle, float sweepAngle)
                 {
-                        Status status = GDIPlus.GdipAddPathArc (nativePath, rect.X, rect.Y, rect.Width, rect.Height, start_angle, sweep_angle);
+                        Status status = GDIPlus.GdipAddPathArc (nativePath, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
-                public void AddArc (int x, int y, int width, int height, float start_angle, float sweep_angle)
+                public void AddArc (int x, int y, int width, int height, float startAngle, float sweepAngle)
                 {
-                        Status status = GDIPlus.GdipAddPathArcI (nativePath, x, y, width, height, start_angle, sweep_angle);
+                        Status status = GDIPlus.GdipAddPathArcI (nativePath, x, y, width, height, startAngle, sweepAngle);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
-                public void AddArc (float x, float y, float width, float height, float start_angle, float sweep_angle)
+                public void AddArc (float x, float y, float width, float height, float startAngle, float sweepAngle)
                 {
-                        Status status = GDIPlus.GdipAddPathArc (nativePath, x, y, width, height, start_angle, sweep_angle);
+                        Status status = GDIPlus.GdipAddPathArc (nativePath, x, y, width, height, startAngle, sweepAngle);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
@@ -279,28 +279,28 @@ namespace System.Drawing.Drawing2D
                 //
                 // AddBeziers
                 //
-                public void AddBeziers (params Point [] pts)
+                public void AddBeziers (params Point [] points)
                 {
-			if (pts == null)
-				throw new ArgumentNullException ("pts");
-                        Status status = GDIPlus.GdipAddPathBeziersI (nativePath, pts, pts.Length);
+			if (points == null)
+				throw new ArgumentNullException ("points");
+                        Status status = GDIPlus.GdipAddPathBeziersI (nativePath, points, points.Length);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
-                public void AddBeziers (PointF [] pts)
+                public void AddBeziers (PointF [] points)
                 {
-			if (pts == null)
-				throw new ArgumentNullException ("pts");
-                        Status status = GDIPlus.GdipAddPathBeziers (nativePath, pts, pts.Length);
+			if (points == null)
+				throw new ArgumentNullException ("points");
+                        Status status = GDIPlus.GdipAddPathBeziers (nativePath, points, points.Length);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
                 //
                 // AddEllipse
                 //
-                public void AddEllipse (RectangleF r)
+                public void AddEllipse (RectangleF rect)
                 {
-                        Status status = GDIPlus.GdipAddPathEllipse (nativePath, r.X, r.Y, r.Width, r.Height);
+                        Status status = GDIPlus.GdipAddPathEllipse (nativePath, rect.X, rect.Y, rect.Width, rect.Height);
                         GDIPlus.CheckStatus (status);                      	
                 }
                 
@@ -310,9 +310,9 @@ namespace System.Drawing.Drawing2D
                         GDIPlus.CheckStatus (status);                      	
                 }
 
-                public void AddEllipse (Rectangle r)
+                public void AddEllipse (Rectangle rect)
                 {
-                        Status status = GDIPlus.GdipAddPathEllipseI (nativePath, r.X, r.Y, r.Width, r.Height);
+                        Status status = GDIPlus.GdipAddPathEllipseI (nativePath, rect.X, rect.Y, rect.Width, rect.Height);
                         GDIPlus.CheckStatus (status);                      	
                 }
                 
@@ -326,16 +326,16 @@ namespace System.Drawing.Drawing2D
                 //
                 // AddLine
                 //
-                public void AddLine (Point a, Point b)
+                public void AddLine (Point pt1, Point pt2)
                 {
-                        Status status = GDIPlus.GdipAddPathLineI (nativePath, a.X, a.Y, b.X, b.Y);
+                        Status status = GDIPlus.GdipAddPathLineI (nativePath, pt1.X, pt1.Y, pt2.X, pt2.Y);
                         GDIPlus.CheckStatus (status);                      	
                 }
 
-                public void AddLine (PointF a, PointF b)
+                public void AddLine (PointF pt1, PointF pt2)
                 {
-                        Status status = GDIPlus.GdipAddPathLine (nativePath, a.X, a.Y, b.X,
-                                        b.Y);
+                        Status status = GDIPlus.GdipAddPathLine (nativePath, pt1.X, pt1.Y, pt2.X,
+                                        pt2.Y);
                                         
 			GDIPlus.CheckStatus (status);                      	                                       
                 }
@@ -630,7 +630,7 @@ namespace System.Drawing.Drawing2D
 
 			IntPtr sformat = (format == null) ? IntPtr.Zero : format.NativeObject;
 			// note: the NullReferenceException on s.Length is the expected (MS) exception
-			Status status = GDIPlus.GdipAddPathStringI (nativePath, s, s.Length, family.NativeObject, style, emSize, ref layoutRect, sformat);
+			Status status = GDIPlus.GdipAddPathStringI (nativePath, s, s.Length, family.NativeFamily, style, emSize, ref layoutRect, sformat);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -642,7 +642,7 @@ namespace System.Drawing.Drawing2D
 
 			IntPtr sformat = (format == null) ? IntPtr.Zero : format.NativeObject;
 			// note: the NullReferenceException on s.Length is the expected (MS) exception
-			Status status = GDIPlus.GdipAddPathString (nativePath, s, s.Length, family.NativeObject, style, emSize, ref layoutRect, sformat);
+			Status status = GDIPlus.GdipAddPathString (nativePath, s, s.Length, family.NativeFamily, style, emSize, ref layoutRect, sformat);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -699,7 +699,7 @@ namespace System.Drawing.Drawing2D
                 {
                         RectangleF retval;
                         IntPtr m = (matrix == null) ? IntPtr.Zero : matrix.nativeMatrix;
-                        IntPtr p = (pen == null) ? IntPtr.Zero : pen.nativeObject;
+                        IntPtr p = (pen == null) ? IntPtr.Zero : pen.NativePen;
                         
                         Status s = GDIPlus.GdipGetPathWorldBounds (nativePath, out retval, m, p);
 
@@ -746,7 +746,7 @@ namespace System.Drawing.Drawing2D
                         bool result;
                         IntPtr g = (graphics == null) ? IntPtr.Zero : graphics.nativeObject;
                         
-                	Status s = GDIPlus.GdipIsOutlineVisiblePathPointI (nativePath, x, y, pen.nativeObject, g, out result);
+                	Status s = GDIPlus.GdipIsOutlineVisiblePathPointI (nativePath, x, y, pen.NativePen, g, out result);
                         GDIPlus.CheckStatus (s);
 
                         return result;
@@ -760,7 +760,7 @@ namespace System.Drawing.Drawing2D
                         bool result;
                         IntPtr g = (graphics == null) ? IntPtr.Zero : graphics.nativeObject;
                         
-                	Status s = GDIPlus.GdipIsOutlineVisiblePathPoint (nativePath, x, y, pen.nativeObject, g, out result);
+                	Status s = GDIPlus.GdipIsOutlineVisiblePathPoint (nativePath, x, y, pen.NativePen, g, out result);
                         GDIPlus.CheckStatus (s);
 
                         return result;
@@ -889,7 +889,7 @@ namespace System.Drawing.Drawing2D
 				return;
                 	IntPtr m = (matrix == null) ? IntPtr.Zero : matrix.nativeMatrix;
 
-			Status s = GDIPlus.GdipWidenPath (nativePath, pen.nativeObject, m, flatness);
+			Status s = GDIPlus.GdipWidenPath (nativePath, pen.NativePen, m, flatness);
 			GDIPlus.CheckStatus (s);
                 } 
         }

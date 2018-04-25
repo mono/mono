@@ -1,21 +1,11 @@
-/*
- * sgen-gray.h: Gray queue management.
+/**
+ * \file
+ * Gray queue management.
  *
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
  * Copyright (C) 2012 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #ifndef __MONO_SGEN_GRAY_H__
 #define __MONO_SGEN_GRAY_H__
@@ -52,12 +42,12 @@
 
 /* SGEN_GRAY_QUEUE_HEADER_SIZE is number of machine words */
 #ifdef SGEN_CHECK_GRAY_OBJECT_SECTIONS
-#define SGEN_GRAY_QUEUE_HEADER_SIZE	4
+#define SGEN_GRAY_QUEUE_HEADER_SIZE	5
 #else
-#define SGEN_GRAY_QUEUE_HEADER_SIZE	2
+#define SGEN_GRAY_QUEUE_HEADER_SIZE	3
 #endif
 
-#define SGEN_GRAY_QUEUE_SECTION_SIZE	(128 - SGEN_GRAY_QUEUE_HEADER_SIZE)
+#define SGEN_GRAY_QUEUE_SECTION_SIZE	(512 - SGEN_GRAY_QUEUE_HEADER_SIZE)
 
 #ifdef SGEN_CHECK_GRAY_OBJECT_SECTIONS
 typedef enum {
@@ -76,6 +66,11 @@ struct _GrayQueueEntry {
 
 #define SGEN_GRAY_QUEUE_ENTRY(obj,desc)	{ (obj), (desc) }
 
+#define GRAY_OBJECT_ENQUEUE_SERIAL(queue, obj, desc) (GRAY_OBJECT_ENQUEUE (queue, obj, desc, FALSE))
+#define GRAY_OBJECT_ENQUEUE_PARALLEL(queue, obj, desc) (GRAY_OBJECT_ENQUEUE (queue, obj, desc, TRUE))
+#define GRAY_OBJECT_DEQUEUE_SERIAL(queue, obj, desc) (GRAY_OBJECT_DEQUEUE (queue, obj, desc, FALSE))
+#define GRAY_OBJECT_DEQUEUE_PARALLEL(queue, obj, desc) (GRAY_OBJECT_DEQUEUE (queue, obj, desc, TRUE))
+
 /*
  * This is a stack now instead of a queue, so the most recently added items are removed
  * first, improving cache locality, and keeping the stack size manageable.
@@ -91,7 +86,7 @@ struct _GrayQueueSection {
 	GrayQueueSectionState state;
 #endif
 	int size;
-	GrayQueueSection *next;
+	GrayQueueSection *next, *prev;
 	GrayQueueEntry entries [SGEN_GRAY_QUEUE_SECTION_SIZE];
 };
 
@@ -102,13 +97,13 @@ typedef void (*GrayQueueEnqueueCheckFunc) (GCObject*);
 
 struct _SgenGrayQueue {
 	GrayQueueEntry *cursor;
-	GrayQueueSection *first;
+	GrayQueueSection *first, *last;
 	GrayQueueSection *free_list;
-	GrayQueueAllocPrepareFunc alloc_prepare_func;
+	mono_mutex_t steal_mutex;
+	gint32 num_sections;
 #ifdef SGEN_CHECK_GRAY_OBJECT_ENQUEUE
 	GrayQueueEnqueueCheckFunc enqueue_check_func;
 #endif
-	void *alloc_prepare_data;
 };
 
 typedef struct _SgenSectionGrayQueue SgenSectionGrayQueue;
@@ -136,19 +131,17 @@ extern guint64 stat_gray_queue_dequeue_slow_path;
 
 void sgen_init_gray_queues (void);
 
-void sgen_gray_object_enqueue (SgenGrayQueue *queue, GCObject *obj, SgenDescriptor desc);
-GrayQueueEntry sgen_gray_object_dequeue (SgenGrayQueue *queue);
+void sgen_gray_object_enqueue (SgenGrayQueue *queue, GCObject *obj, SgenDescriptor desc, gboolean is_parallel);
+GrayQueueEntry sgen_gray_object_dequeue (SgenGrayQueue *queue, gboolean is_parallel);
 GrayQueueSection* sgen_gray_object_dequeue_section (SgenGrayQueue *queue);
-void sgen_gray_object_enqueue_section (SgenGrayQueue *queue, GrayQueueSection *section);
+GrayQueueSection* sgen_gray_object_steal_section (SgenGrayQueue *queue);
+void sgen_gray_object_spread (SgenGrayQueue *queue, int num_sections);
+void sgen_gray_object_enqueue_section (SgenGrayQueue *queue, GrayQueueSection *section, gboolean is_parallel);
 void sgen_gray_object_queue_trim_free_list (SgenGrayQueue *queue);
-void sgen_gray_object_queue_init (SgenGrayQueue *queue, GrayQueueEnqueueCheckFunc enqueue_check_func);
-void sgen_gray_object_queue_init_invalid (SgenGrayQueue *queue);
-void sgen_gray_queue_set_alloc_prepare (SgenGrayQueue *queue, GrayQueueAllocPrepareFunc alloc_prepare_func, void *data);
-void sgen_gray_object_queue_init_with_alloc_prepare (SgenGrayQueue *queue, GrayQueueEnqueueCheckFunc enqueue_check_func,
-		GrayQueueAllocPrepareFunc func, void *data);
+void sgen_gray_object_queue_init (SgenGrayQueue *queue, GrayQueueEnqueueCheckFunc enqueue_check_func, gboolean reuse_free_list);
+void sgen_gray_object_queue_dispose (SgenGrayQueue *queue);
 void sgen_gray_object_queue_deinit (SgenGrayQueue *queue);
-void sgen_gray_object_queue_disable_alloc_prepare (SgenGrayQueue *queue);
-void sgen_gray_object_alloc_queue_section (SgenGrayQueue *queue);
+void sgen_gray_object_alloc_queue_section (SgenGrayQueue *queue, gboolean is_parallel);
 void sgen_gray_object_free_queue_section (GrayQueueSection *section);
 
 void sgen_section_gray_queue_init (SgenSectionGrayQueue *queue, gboolean locked,
@@ -166,13 +159,13 @@ sgen_gray_object_queue_is_empty (SgenGrayQueue *queue)
 }
 
 static inline MONO_ALWAYS_INLINE void
-GRAY_OBJECT_ENQUEUE (SgenGrayQueue *queue, GCObject *obj, SgenDescriptor desc)
+GRAY_OBJECT_ENQUEUE (SgenGrayQueue *queue, GCObject *obj, SgenDescriptor desc, gboolean is_parallel)
 {
 #if SGEN_MAX_DEBUG_LEVEL >= 9
-	sgen_gray_object_enqueue (queue, obj, desc);
+	sgen_gray_object_enqueue (queue, obj, desc, is_parallel);
 #else
 	if (G_UNLIKELY (!queue->first || queue->cursor == GRAY_LAST_CURSOR_POSITION (queue->first))) {
-		sgen_gray_object_enqueue (queue, obj, desc);
+		sgen_gray_object_enqueue (queue, obj, desc, is_parallel);
 	} else {
 		GrayQueueEntry entry = SGEN_GRAY_QUEUE_ENTRY (obj, desc);
 
@@ -180,18 +173,18 @@ GRAY_OBJECT_ENQUEUE (SgenGrayQueue *queue, GCObject *obj, SgenDescriptor desc)
 
 		*++queue->cursor = entry;
 #ifdef SGEN_HEAVY_BINARY_PROTOCOL
-		binary_protocol_gray_enqueue (queue, queue->cursor, obj);
+		sgen_binary_protocol_gray_enqueue (queue, queue->cursor, obj);
 #endif
 	}
 #endif
 }
 
 static inline MONO_ALWAYS_INLINE void
-GRAY_OBJECT_DEQUEUE (SgenGrayQueue *queue, GCObject** obj, SgenDescriptor *desc)
+GRAY_OBJECT_DEQUEUE (SgenGrayQueue *queue, GCObject** obj, SgenDescriptor *desc, gboolean is_parallel)
 {
 	GrayQueueEntry entry;
 #if SGEN_MAX_DEBUG_LEVEL >= 9
-	entry = sgen_gray_object_dequeue (queue);
+	entry = sgen_gray_object_dequeue (queue, is_parallel);
 	*obj = entry.obj;
 	*desc = entry.desc;
 #else
@@ -200,7 +193,7 @@ GRAY_OBJECT_DEQUEUE (SgenGrayQueue *queue, GCObject** obj, SgenDescriptor *desc)
 
 		*obj = NULL;
 	} else if (G_UNLIKELY (queue->cursor == GRAY_FIRST_CURSOR_POSITION (queue->first))) {
-		entry = sgen_gray_object_dequeue (queue);
+		entry = sgen_gray_object_dequeue (queue, is_parallel);
 		*obj = entry.obj;
 		*desc = entry.desc;
 	} else {
@@ -210,7 +203,7 @@ GRAY_OBJECT_DEQUEUE (SgenGrayQueue *queue, GCObject** obj, SgenDescriptor *desc)
 		*obj = entry.obj;
 		*desc = entry.desc;
 #ifdef SGEN_HEAVY_BINARY_PROTOCOL
-		binary_protocol_gray_dequeue (queue, queue->cursor + 1, *obj);
+		sgen_binary_protocol_gray_dequeue (queue, queue->cursor + 1, *obj);
 #endif
 	}
 #endif

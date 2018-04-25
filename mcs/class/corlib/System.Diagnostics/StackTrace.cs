@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
@@ -37,6 +38,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading;
+using System.IO;
 
 namespace System.Diagnostics {
 
@@ -55,31 +57,39 @@ namespace System.Diagnostics {
         }
 
 		public const int METHODS_TO_SKIP = 0;
+		const string prefix = "  at ";
 
 		private StackFrame[] frames;
 		readonly StackTrace[] captured_traces;
+#pragma warning disable 414		
 		private bool debug_info;
+#pragma warning restore
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace ()
 		{
 			init_frames (METHODS_TO_SKIP, false);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace (bool fNeedFileInfo)
 		{
 			init_frames (METHODS_TO_SKIP, fNeedFileInfo);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace (int skipFrames)
 		{
 			init_frames (skipFrames, false);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public StackTrace (int skipFrames, bool fNeedFileInfo)
 		{
 			init_frames (skipFrames, fNeedFileInfo);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		void init_frames (int skipFrames, bool fNeedFileInfo)
 		{
 			if (skipFrames < 0)
@@ -171,37 +181,53 @@ namespace System.Diagnostics {
 		[ComVisibleAttribute (false)]
 		public virtual StackFrame[] GetFrames ()
 		{
-			return frames;
+			if (captured_traces == null)
+				return frames;
+
+			var accum = new List<StackFrame> ();
+			foreach (var t in captured_traces)
+				accum.AddRange(t.GetFrames ());
+
+			accum.AddRange (frames);
+			return accum.ToArray ();
 		}
 
-		bool AddFrames (StringBuilder sb)
+		static bool isAotidSet;
+		static string aotid;
+		static string GetAotId ()
 		{
-			bool printOffset;
-			string debugInfo, indentation;
-			string unknown = Locale.GetText ("<unknown method>");
+			if (!isAotidSet) {
+				aotid = Assembly.GetAotId ();
+				if (aotid != null)
+					aotid = new Guid (aotid).ToString ("N");
+				isAotidSet = true;
+			}
 
-			indentation = "  ";
-			debugInfo = Locale.GetText (" in {0}:{1} ");
+			return aotid;
+		}
 
-			var newline = String.Format ("{0}{1}{2} ", Environment.NewLine, indentation,
-					Locale.GetText ("at"));
+		bool AddFrames (StringBuilder sb, bool separator, out bool isAsync)
+		{
+			isAsync = false;
+			bool any_frame = false;
 
-			int i;
-			for (i = 0; i < FrameCount; i++) {
+			for (int i = 0; i < FrameCount; i++) {
 				StackFrame frame = GetFrame (i);
-				if (i == 0)
-					sb.AppendFormat ("{0}{1} ", indentation, Locale.GetText ("at"));
-				else
-					sb.Append (newline);
 
 				if (frame.GetMethod () == null) {
+					if (any_frame || separator)
+						sb.Append (Environment.NewLine);
+					sb.Append (prefix);
+
 					string internal_name = frame.GetInternalMethodName ();
 					if (internal_name != null)
 						sb.Append (internal_name);
 					else
-						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> {2}", frame.GetMethodAddress (), frame.GetNativeOffset (), unknown);
+						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> <unknown method>", frame.GetMethodAddress (), frame.GetNativeOffset ());
 				} else {
-					GetFullNameForStackTrace (sb, frame.GetMethod ());
+					GetFullNameForStackTrace (sb, frame.GetMethod (), any_frame || separator, out var skipped, out isAsync);
+					if (skipped)
+						continue;
 
 					if (frame.GetILOffset () == -1) {
 						sb.AppendFormat (" <0x{0:x5} + 0x{1:x5}>", frame.GetMethodAddress (), frame.GetNativeOffset ());
@@ -211,31 +237,56 @@ namespace System.Diagnostics {
 						sb.AppendFormat (" [0x{0:x5}]", frame.GetILOffset ());
 					}
 
-					sb.AppendFormat (debugInfo, frame.GetSecureFileName (),
-					                 frame.GetFileLineNumber ());
+					var filename = frame.GetSecureFileName ();
+					if (filename[0] == '<') {
+						var mvid = frame.GetMethod ().Module.ModuleVersionId.ToString ("N");
+						var aotid = GetAotId ();
+						if (frame.GetILOffset () != -1 || aotid == null) {
+							filename = string.Format ("<{0}>", mvid);
+						} else {
+							filename = string.Format ("<{0}#{1}>", mvid, aotid);
+						}
+					}
+
+					sb.AppendFormat (" in {0}:{1} ", filename, frame.GetFileLineNumber ());
 				}
+
+				any_frame = true;
 			}
 
-			return i != 0;
+			return any_frame;
 		}
 
-		// This method is also used with reflection by mono-symbolicate tool.
-		// mono-symbolicate tool uses this method to check which method matches
-		// the stack frame method signature.
-		static void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi)
+		void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi, bool needsNewLine, out bool skipped, out bool isAsync)
 		{
-			var declaringType = mi.DeclaringType;
-			if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition)
-				declaringType = declaringType.GetGenericTypeDefinition ();
+			Type declaringType = mi.DeclaringType;
 
 			// Get generic definition
-			var bindingflags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-			foreach (var m in declaringType.GetMethods (bindingflags)) {
-				if (m.MetadataToken == mi.MetadataToken) {
-					mi = m;
-					break;
+			if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition) {
+				declaringType = declaringType.GetGenericTypeDefinition ();
+
+				const BindingFlags bindingflags = BindingFlags.Instance | BindingFlags.Static |
+					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+				foreach (var m in declaringType.GetMethods (bindingflags)) {
+					if (m.MetadataToken == mi.MetadataToken) {
+						mi = m;
+						break;
+					}
 				}
 			}
+
+			isAsync = typeof (IAsyncStateMachine).IsAssignableFrom (declaringType);
+			skipped = mi.IsDefined (typeof (StackTraceHiddenAttribute)) || declaringType.IsDefined (typeof (StackTraceHiddenAttribute));
+			if (skipped)
+				return;
+
+			if (isAsync) {
+				ConvertAsyncStateMachineMethod (ref mi, ref declaringType);
+			}
+
+			if (needsNewLine)
+				sb.Append (Environment.NewLine);
+			sb.Append (prefix);
 
 			sb.Append (declaringType.ToString ());
 
@@ -243,6 +294,7 @@ namespace System.Diagnostics {
 			sb.Append (mi.Name);
 
 			if (mi.IsGenericMethod) {
+				mi = ((MethodInfo)mi).GetGenericMethodDefinition ();
 				Type[] gen_params = mi.GetGenericArguments ();
 				sb.Append ("[");
 				for (int j = 0; j < gen_params.Length; j++) {
@@ -253,7 +305,7 @@ namespace System.Diagnostics {
 				sb.Append ("]");
 			}
 
-			ParameterInfo[] p = mi.GetParametersInternal ();
+			ParameterInfo[] p = mi.GetParameters ();
 
 			sb.Append (" (");
 			for (int i = 0; i < p.Length; ++i) {
@@ -264,17 +316,39 @@ namespace System.Diagnostics {
 				if (pt.IsGenericType && ! pt.IsGenericTypeDefinition)
 					pt = pt.GetGenericTypeDefinition ();
 
-				if (pt.IsClass && !String.IsNullOrEmpty (pt.Namespace)) {
-					sb.Append (pt.Namespace);
-					sb.Append (".");
-				}
-				sb.Append (pt.Name);
+				sb.Append (pt.ToString());
+
 				if (p [i].Name != null) {
 					sb.Append (" ");
 					sb.Append (p [i].Name);
 				}
 			}
 			sb.Append (")");
+		}
+        
+		static void ConvertAsyncStateMachineMethod (ref MethodBase method, ref Type declaringType)
+		{
+			Type parentType = declaringType.DeclaringType;
+			if (parentType == null)
+				return;
+
+			MethodInfo[] methods = parentType.GetMethods (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+			if (methods == null)
+				return;
+
+			foreach (MethodInfo candidateMethod in methods) {
+				var attributes = candidateMethod.GetCustomAttributes<AsyncStateMachineAttribute> ();
+				if (attributes == null)
+					continue;
+
+				foreach (var attr in attributes) {
+					if (attr.StateMachineType == declaringType) {
+						method = candidateMethod;
+						declaringType = candidateMethod.DeclaringType;
+						return;
+					}
+				}
+			}
 		}
 
 		public override string ToString ()
@@ -284,18 +358,23 @@ namespace System.Diagnostics {
 			//
 			// Add traces captured using ExceptionDispatchInfo
 			//
+			bool has_frames = false;
 			if (captured_traces != null) {
 				foreach (var t in captured_traces) {
-					if (!t.AddFrames (sb))
+					has_frames = t.AddFrames (sb, has_frames, out var isAsync);
+					if (!has_frames)
 						continue;
 
-					sb.Append (Environment.NewLine);
-					sb.Append ("--- End of stack trace from previous location where exception was thrown ---");
-					sb.Append (Environment.NewLine);
+					if (!isAsync) {
+						sb.Append (Environment.NewLine);
+						sb.Append ("--- End of stack trace from previous location where exception was thrown ---");
+						sb.Append (Environment.NewLine);
+					}
 				}
 			}
 
-			AddFrames (sb);
+			AddFrames (sb, has_frames, out _);
+
 			return sb.ToString ();
 		}
 

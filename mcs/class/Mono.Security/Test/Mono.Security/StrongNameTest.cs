@@ -22,7 +22,7 @@ namespace MonoTests.Mono.Security {
 	// sn -k test.snk
 
 	[TestFixture]
-	public class StrongNameTest : Assertion {
+	public class StrongNameTest {
 
 		// because most crypto stuff works with byte[] buffers
 		static public void AssertEquals (string msg, byte[] array1, byte[] array2) 
@@ -30,9 +30,9 @@ namespace MonoTests.Mono.Security {
 			if ((array1 == null) && (array2 == null))
 				return;
 			if (array1 == null)
-				Fail (msg + " -> First array is NULL");
+				Assert.Fail (msg + " -> First array is NULL");
 			if (array2 == null)
-				Fail (msg + " -> Second array is NULL");
+				Assert.Fail (msg + " -> Second array is NULL");
 
 			bool a = (array1.Length == array2.Length);
 			if (a) {
@@ -47,7 +47,7 @@ namespace MonoTests.Mono.Security {
 				msg += " -> Expected " + BitConverter.ToString (array1, 0);
 				msg += " is different than " + BitConverter.ToString (array2, 0);
 			}
-			Assert (msg, a);
+			Assert.IsTrue (a, msg);
 		}
 
 		static byte[] test = { 
@@ -112,9 +112,9 @@ namespace MonoTests.Mono.Security {
 		public void FromBuffer ()
 		{
 			StrongName sn = new StrongName (test);
-			AssertEquals ("buffer.RSA", "<RSAKeyValue><Modulus>y6T/+EoARJMHW0ilpCdn+VbTffWxb1xu187/9Q+S2DwPyZ9LTNKrZgwaYmG4FPWEEH1HJxrxwh8AlD6oTz8CCcnPGKxKVFkubpIbEyvQCSTr22gUjVXXKHc2pfcCeOuNXS9kAOjv2tqpsiDbIsu9mnxfYysHWMDBqA4rxghyvT0=</Modulus><Exponent>AQAB</Exponent><P>6qYUEleRY+Wzyk7xN05UwWRna37U2aQnq2Y2VVyJeceDZPU1u1GYdQmFQw5XgvxKwWx9DAfNh1iSyLe0YmrAcw==</P><Q>3iy1IDIkPrRWBFrCAUhpUNn4/ICiVXTT7KjuEXkGr0+1Cx/V+o3eoVIo/9x2Q3IaxMbQDSa8hisIFunz/iuPjw==</Q><DP>2BouIBpfvzX8mBSOGNZePmG+0YRUeUCyfCs9XO5Fek9h1mfynVpvY1JqVbBuria2nl7Q53SEN+M+A/cT/RO9uw==</DP><DQ>pjma1ljNh2CTTrS8nAsaSJSc1gZD7l33RQRrAgWju7yN/qG2DbzhSZ9X7355uSKA5qK8/Gnz+QnvBn3JwGvE/w==</DQ><InverseQ>3U67bp3lPExfGoiTRvRyHhNtyJs6hAq/Uj7wSHKLHNoLG20kwZux8BwZKpPBBA0bQjkLUiRv9PYs18El/45/wA==</InverseQ><D>bPVOg5FMjWRBhmTbQ3ZWGkGLjRR9KEFDiTJXHs6DWjDgnZceWe9KB6KoJ0Vzkbs/Ovdcr56qBZxC2g6gTS5ALvogBYH2PrUftr4flh/z4qgOrAYCQkTecfHAGIGEldEeF1FItMbqmQa6WzVPVp4tn/+q3PAVmZqrs6/X9EARH10=</D></RSAKeyValue>", sn.RSA.ToXmlString (true));
-			AssertEquals ("buffer.PublicKey", testPublicKey, sn.PublicKey);
-			AssertEquals ("buffer.PublicKeyToken", testPublicKeyToken, sn.PublicKeyToken);
+			Assert.AreEqual ("<RSAKeyValue><Modulus>y6T/+EoARJMHW0ilpCdn+VbTffWxb1xu187/9Q+S2DwPyZ9LTNKrZgwaYmG4FPWEEH1HJxrxwh8AlD6oTz8CCcnPGKxKVFkubpIbEyvQCSTr22gUjVXXKHc2pfcCeOuNXS9kAOjv2tqpsiDbIsu9mnxfYysHWMDBqA4rxghyvT0=</Modulus><Exponent>AQAB</Exponent><P>6qYUEleRY+Wzyk7xN05UwWRna37U2aQnq2Y2VVyJeceDZPU1u1GYdQmFQw5XgvxKwWx9DAfNh1iSyLe0YmrAcw==</P><Q>3iy1IDIkPrRWBFrCAUhpUNn4/ICiVXTT7KjuEXkGr0+1Cx/V+o3eoVIo/9x2Q3IaxMbQDSa8hisIFunz/iuPjw==</Q><DP>2BouIBpfvzX8mBSOGNZePmG+0YRUeUCyfCs9XO5Fek9h1mfynVpvY1JqVbBuria2nl7Q53SEN+M+A/cT/RO9uw==</DP><DQ>pjma1ljNh2CTTrS8nAsaSJSc1gZD7l33RQRrAgWju7yN/qG2DbzhSZ9X7355uSKA5qK8/Gnz+QnvBn3JwGvE/w==</DQ><InverseQ>3U67bp3lPExfGoiTRvRyHhNtyJs6hAq/Uj7wSHKLHNoLG20kwZux8BwZKpPBBA0bQjkLUiRv9PYs18El/45/wA==</InverseQ><D>bPVOg5FMjWRBhmTbQ3ZWGkGLjRR9KEFDiTJXHs6DWjDgnZceWe9KB6KoJ0Vzkbs/Ovdcr56qBZxC2g6gTS5ALvogBYH2PrUftr4flh/z4qgOrAYCQkTecfHAGIGEldEeF1FItMbqmQa6WzVPVp4tn/+q3PAVmZqrs6/X9EARH10=</D></RSAKeyValue>", sn.RSA.ToXmlString (true), "buffer.RSA");
+			Assert.AreEqual (testPublicKey, sn.PublicKey, "buffer.PublicKey");
+			Assert.AreEqual (testPublicKeyToken, sn.PublicKeyToken, "buffer.PublicKeyToken");
 		}
 
 		[Test]
@@ -122,9 +122,9 @@ namespace MonoTests.Mono.Security {
 		{
 			StrongName sn1 = new StrongName (test);
 			StrongName sn2 = new StrongName (sn1.RSA);
-			AssertEquals ("key.RSA", sn1.RSA.ToXmlString (true), sn2.RSA.ToXmlString (true));
-			AssertEquals ("key.PublicKey", sn1.PublicKey, sn2.PublicKey);
-			AssertEquals ("key.PublicKeyToken", sn1.PublicKeyToken, sn2.PublicKeyToken);
+			Assert.AreEqual (sn1.RSA.ToXmlString (true), sn2.RSA.ToXmlString (true), "key.RSA");
+			Assert.AreEqual (sn1.PublicKey, sn2.PublicKey, "key.PublicKey");
+			Assert.AreEqual (sn1.PublicKeyToken, sn2.PublicKeyToken, "key.PublicKeyToken");
 		}
 
 		string Signed;
@@ -820,28 +820,28 @@ namespace MonoTests.Mono.Security {
 		{
 			// compare that both hellosigned and hellodelay are the same file expect for signature
 			byte[] s = sn.Hash (Signed);
-			AssertNotNull ("Hash/Signed", s);
+			Assert.IsNotNull (s, "Hash/Signed");
 			byte[] d = sn.Hash (Delay);
-			AssertNotNull ("Hash/Delay", d);
+			Assert.IsNotNull (d, "Hash/Delay");
 			// are they the same
-			AssertEquals ("Hash/Compare", s, d);
+			Assert.AreEqual (s, d, "Hash/Compare");
 			// are they the same as GetHashFromAssemblyFile
 			byte[] knownHash = { 0x7D, 0xF7, 0x1D, 0xD4, 0x24, 0x22, 0xEA, 0xAB, 0xD2, 0x91, 0xCD, 0xAB, 0x1A, 0x55, 0x6A, 0x42, 0x05, 0xBA, 0x6E, 0x7B };
-			AssertEquals ("Hash/GetHashFromAssemblyFile", knownHash, s);
+			Assert.AreEqual (knownHash, s, "Hash/GetHashFromAssemblyFile");
 		}
 
 		[Test]
 		public void VerifyValid () 
 		{
 			// verify that hellosigned.exe is valid
-			Assert ("Verify/Valid", sn.Verify (Signed));
+			Assert.IsTrue (sn.Verify (Signed), "Verify/Valid");
 		}
 
 		[Test]
 		public void VerifyInvalid () 
 		{
 			// verify that hellodelay.exe isn't valid
-			Assert ("Verify/Invalid", !sn.Verify (Delay));
+			Assert.IsTrue (!sn.Verify (Delay), "Verify/Invalid");
 		}
 
 		[Test]
@@ -849,7 +849,7 @@ namespace MonoTests.Mono.Security {
 		{
 			Stream signed = new MemoryStream (signedData);
 			// verify that hellosigned.exe is valid
-			Assert ("Verify/Valid", sn.Verify (signed));
+			Assert.IsTrue (sn.Verify (signed), "Verify/Valid");
 		}
 
 		[Test]
@@ -857,25 +857,25 @@ namespace MonoTests.Mono.Security {
 		{
 			Stream delay = new MemoryStream (delayData);
 			// verify that hellodelay.exe isn't valid
-			Assert ("Verify/Invalid", !sn.Verify (delay));
+			Assert.IsTrue (!sn.Verify (delay), "Verify/Invalid");
 		}
 
 		[Test]
 		public void Sign () 
 		{
 			// sign the (invalid) hellodelay.exe
-			Assert ("Sign", sn.Sign (Delay));
+			Assert.IsTrue (sn.Sign (Delay), "Sign");
 			// and verify it's now valid
-			Assert ("Sign/Verify", sn.Verify (Delay));
+			Assert.IsTrue (sn.Verify (Delay), "Sign/Verify");
 		}
 
 		[Test]
 		public void ReSign () 
 		{
 			// resign the (already valid) hellosigned.exe
-			Assert ("ReSign", sn.Sign (Signed));
+			Assert.IsTrue (sn.Sign (Signed), "ReSign");
 			// and verify it's still valid
-			Assert ("ReSign/Verify", sn.Verify (Signed));
+			Assert.IsTrue (sn.Verify (Signed), "ReSign/Verify");
 		}
 		
 		[Test]
@@ -907,7 +907,7 @@ namespace MonoTests.Mono.Security {
 		{
 			byte[] ecma = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; 
 			sn = new StrongName (ecma);
-			Assert ("CanSign", !sn.CanSign);
+			Assert.IsTrue (!sn.CanSign, "CanSign");
 		}
 
 		[Test]

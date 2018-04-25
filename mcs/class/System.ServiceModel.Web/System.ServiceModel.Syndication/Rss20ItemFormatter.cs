@@ -649,6 +649,7 @@ namespace System.ServiceModel.Syndication
 
 		string [] rfc822formats = new string [] {
 			"ddd, dd MMM yyyy HH:mm:ss 'Z'",
+			"ddd, dd MMM yyyy HH:mm:ss 'GMT'",
 			"ddd, dd MMM yyyy HH:mm:ss zzz",
 			"ddd, dd MMM yyyy HH:mm:ss"};
 

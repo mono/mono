@@ -442,7 +442,7 @@ namespace System.Json
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
-			return Convert.ToUInt16 (((JsonPrimitive) value).Value, NumberFormatInfo.InvariantInfo);
+			return Convert.ToUInt32 (((JsonPrimitive) value).Value, NumberFormatInfo.InvariantInfo);
 		}
 
 		public static implicit operator ulong (JsonValue value)

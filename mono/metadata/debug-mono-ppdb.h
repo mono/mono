@@ -1,12 +1,13 @@
-/*
- * debug-mono-ppdb.c: Support for the portable PDB symbol
- * file format
+/**
+ * \file
+ * Support for the portable PDB symbol file format
  *
  *
  * Author:
  *	Mono Project (http://www.mono-project.com)
  *
  * Copyright 2015 Xamarin Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #ifndef __MONO_METADATA_DEBUG_MONO_PPDB_H__
@@ -33,5 +34,8 @@ mono_ppdb_get_seq_points (MonoDebugMethodInfo *minfo, char **source_file, GPtrAr
 
 MonoDebugLocalsInfo*
 mono_ppdb_lookup_locals (MonoDebugMethodInfo *minfo);
+
+MonoDebugMethodAsyncInfo*
+mono_ppdb_lookup_method_async_debug_info (MonoDebugMethodInfo *minfo);
 
 #endif

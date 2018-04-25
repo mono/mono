@@ -1,37 +1,22 @@
-/*
+/**
+ * \file
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #ifndef __MONO_SGEN_CARD_TABLE_INLINES_H__
 #define __MONO_SGEN_CARD_TABLE_INLINES_H__
 
 /*WARNING: This function returns the number of cards regardless of overflow in case of overlapping cards.*/
 mword sgen_card_table_number_of_cards_in_range (mword address, mword size);
+guint8* sgen_find_next_card (guint8 *card_data, guint8 *end);
 
 void sgen_card_table_reset_region (mword start, mword end);
 void* sgen_card_table_align_pointer (void *ptr);
 void sgen_card_table_mark_range (mword address, mword size);
 void sgen_cardtable_scan_object (GCObject *obj, mword obj_size, guint8 *cards,
-		gboolean mod_union, ScanCopyContext ctx);
+		ScanCopyContext ctx);
 
 gboolean sgen_card_table_get_card_data (guint8 *dest, mword address, mword cards);
 
@@ -40,6 +25,7 @@ void sgen_card_table_free_mod_union (guint8 *mod_union, char *obj, mword obj_siz
 
 void sgen_card_table_update_mod_union_from_cards (guint8 *dest, guint8 *start_card, size_t num_cards);
 void sgen_card_table_update_mod_union (guint8 *dest, char *obj, mword obj_size, size_t *out_num_cards);
+void sgen_card_table_preclean_mod_union (guint8 *cards, guint8 *cards_preclean, size_t num_cards);
 
 guint8* sgen_get_card_table_configuration (int *shift_bits, gpointer *mask);
 

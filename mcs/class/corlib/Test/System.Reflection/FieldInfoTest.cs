@@ -31,7 +31,7 @@
 using System;
 using System.Threading;
 using System.Reflection;
-#if !MONOTOUCH
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 #endif
 using System.Runtime.InteropServices;
@@ -1361,6 +1361,63 @@ namespace MonoTests.System.Reflection
 			info.SetValueDirect (reference, "B");
 			Assert.AreEqual ("B", fields.str);
 		}
+
+		[Test]
+		public void GetValueContextBoundObject ()
+		{
+			var instance = new CBOTest ();
+
+			var field1 = typeof (CBOTest).GetField ("d1");
+			var d1 = field1.GetValue (instance);
+			Assert.AreEqual ((double)d1, 14.0, "d1");
+
+			var field2 = typeof (CBOTest).GetField ("d2");
+			var d2 = field2.GetValue (instance);
+			Assert.AreEqual ((double)d2, -20, "d2");
+
+			var field3 = typeof (CBOTest).GetField ("s1");
+			var s1 = field3.GetValue (instance);
+			Assert.AreEqual (s1, "abcd", "s1");
+
+			var field4 = typeof (CBOTest).GetField ("s2");
+			var s2 = field4.GetValue (instance);
+			Assert.AreEqual (s2, "hijkl", "s2");
+		}
+
+		[Test]
+		public void SetValueContextBoundObject ()
+		{
+			var instance = new CBOTest ();
+
+			var field1 = typeof (CBOTest).GetField ("d1");
+			field1.SetValue (instance, 90.3);
+			var d1 = field1.GetValue (instance);
+			Assert.AreEqual ((double)d1, 90.3, "d1");
+
+			var field2 = typeof (CBOTest).GetField ("d2");
+			field2.SetValue (instance, 1);
+			var d2 = field2.GetValue (instance);
+			Assert.AreEqual ((double)d2, 1, "d2");
+
+			var field3 = typeof (CBOTest).GetField ("s1");
+			field3.SetValue (instance, "//////");
+			var s1 = field3.GetValue (instance);
+			Assert.AreEqual (s1, "//////", "s1");
+
+			var field4 = typeof (CBOTest).GetField ("s2");
+			field4.SetValue (instance, "This is a string");
+			var s2 = field4.GetValue (instance);
+			Assert.AreEqual (s2, "This is a string", "s2");
+
+		}
+
+		class CBOTest : ContextBoundObject {
+			public double d1 = 14.0;
+			public double d2 = -20.0;
+			public string s1 = "abcd";
+			public string s2 = "hijkl";
+		}
+
 
 		public IntEnum PPP;
 

@@ -208,9 +208,12 @@ namespace System.Web.Services.Protocols
 			WebRequest request = GetWebRequest (uri);
 			request.Method = "POST";
 			WebHeaderCollection headers = request.Headers;
-			if (!message.IsSoap12)
-				headers.Add ("SOAPAction", "\"" + message.Action + "\"");
 			request.ContentType = message.ContentType + "; charset=utf-8";
+			if (!message.IsSoap12) {
+				headers.Add ("SOAPAction", "\"" + message.Action + "\"");
+			} else {
+				request.ContentType += "; action=\"" + message.Action + "\"";
+			}
 			return request;
 		}
 

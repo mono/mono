@@ -34,11 +34,11 @@ namespace System.ServiceModel.Description
 	public interface IEndpointBehavior
 	{
 		void AddBindingParameters (ServiceEndpoint endpoint,
-			BindingParameterCollection parameters);
-		void ApplyDispatchBehavior (ServiceEndpoint serviceEndpoint,
-			EndpointDispatcher dispatcher);
-		void ApplyClientBehavior (ServiceEndpoint serviceEndpoint,
-			ClientRuntime behavior);
-		void Validate (ServiceEndpoint serviceEndpoint);
+			BindingParameterCollection bindingParameters);
+		void ApplyDispatchBehavior (ServiceEndpoint endpoint,
+			EndpointDispatcher endpointDispatcher);
+		void ApplyClientBehavior (ServiceEndpoint endpoint,
+			ClientRuntime clientRuntime);
+		void Validate (ServiceEndpoint endpoint);
 	}
 }

@@ -1,5 +1,6 @@
-/*
- * util.c: Assorted utilities for the disassembler
+/**
+ * \file
+ * Assorted utilities for the disassembler
  *
  * Author:
  *   Miguel de Icaza (miguel@ximian.com)
@@ -19,9 +20,8 @@
 #endif
 
 /**
- * map:
- * @code: code to lookup in table
- * @table: table to decode code
+ * \param code code to lookup in table
+ * \param table table to decode code
  *
  * Warning: returns static buffer.
  */
@@ -37,9 +37,8 @@ map (guint32 code, dis_map_t *table)
 }
 
 /**
- * flags:
- * @code: bitfield
- * @table: table to decode bitfield
+ * \param code bitfield
+ * \param table table to decode bitfield
  *
  * Warning: returns static buffer.
  */

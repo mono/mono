@@ -1,8 +1,0 @@
-2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* Microsoft.VisualC.dll.sources: Added Assembly/AssemblyInfo.cs, 
-	Locale.cs and TODO to the build.
-
-2002-02-19  Carsten Hess
-	* Created
-

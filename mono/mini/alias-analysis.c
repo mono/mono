@@ -1,5 +1,6 @@
-/*
- * alias-analysis.c: Implement simple alias analysis for local variables.
+/**
+ * \file
+ * Implement simple alias analysis for local variables.
  *
  * Author:
  *   Rodrigo Kumpera (kumpera@gmail.com)
@@ -13,6 +14,7 @@
 #include "mini.h"
 #include "ir-emit.h"
 #include "glib.h"
+#include <mono/utils/mono-compiler.h>
 
 #ifndef DISABLE_JIT
 
@@ -40,13 +42,13 @@ is_long_stack_size (int type)
 static gboolean
 lower_load (MonoCompile *cfg, MonoInst *load, MonoInst *ldaddr)
 {
-	MonoInst *var = ldaddr->inst_p0;
-	MonoType *type = &var->klass->byval_arg;
+	MonoInst *var = (MonoInst *)ldaddr->inst_p0;
+	MonoType *type = m_class_get_byval_arg (var->klass);
 	int replaced_op = mono_type_to_load_membase (cfg, type);
 
 	if (load->opcode == OP_LOADV_MEMBASE && load->klass != var->klass) {
 		if (cfg->verbose_level > 2)
-			printf ("Incompatible load_vtype classes %s x %s\n", load->klass->name, var->klass->name);
+			printf ("Incompatible load_vtype classes %s x %s\n", m_class_get_name (load->klass), m_class_get_name (var->klass));
 		return FALSE;
 	}
 
@@ -61,22 +63,22 @@ lower_load (MonoCompile *cfg, MonoInst *load, MonoInst *ldaddr)
 	}
 
 	load->opcode = mono_type_to_regmove (cfg, type);
-	type_to_eval_stack_type (cfg, type, load);
+	mini_type_to_eval_stack_type (cfg, type, load);
 	load->sreg1 = var->dreg;
-	mono_jit_stats.loads_eliminated++;
+	mono_atomic_inc_i32 (&mono_jit_stats.loads_eliminated);
 	return TRUE;
 }
 
 static gboolean
 lower_store (MonoCompile *cfg, MonoInst *store, MonoInst *ldaddr)
 {
-	MonoInst *var = ldaddr->inst_p0;
-	MonoType *type = &var->klass->byval_arg;
+	MonoInst *var = (MonoInst *)ldaddr->inst_p0;
+	MonoType *type = m_class_get_byval_arg (var->klass);
 	int replaced_op = mono_type_to_store_membase (cfg, type);
 
 	if (store->opcode == OP_STOREV_MEMBASE && store->klass != var->klass) {
 		if (cfg->verbose_level > 2)
-			printf ("Incompatible store_vtype classes %s x %s\n", store->klass->name, store->klass->name);
+			printf ("Incompatible store_vtype classes %s x %s\n", m_class_get_name (store->klass), m_class_get_name (store->klass));
 		return FALSE;
 	}
 
@@ -91,18 +93,22 @@ lower_store (MonoCompile *cfg, MonoInst *store, MonoInst *ldaddr)
 		if (cfg->verbose_level > 2) { printf ("mem2reg replacing: "); mono_print_ins (store); }
 	}
 
-	store->opcode = mono_type_to_regmove (cfg, type);
-	type_to_eval_stack_type (cfg, type, store);
+	int coerce_op = mono_type_to_stloc_coerce (type);
+	if (coerce_op)
+		store->opcode = coerce_op;
+	else
+		store->opcode = mono_type_to_regmove (cfg, type);
+	mini_type_to_eval_stack_type (cfg, type, store);
 	store->dreg = var->dreg;
-	mono_jit_stats.stores_eliminated++;
+	mono_atomic_inc_i32 (&mono_jit_stats.stores_eliminated);
 	return TRUE;
 }
 
 static gboolean
 lower_store_imm (MonoCompile *cfg, MonoInst *store, MonoInst *ldaddr)
 {
-	MonoInst *var = ldaddr->inst_p0;
-	MonoType *type = &var->klass->byval_arg;
+	MonoInst *var = (MonoInst *)ldaddr->inst_p0;
+	MonoType *type = m_class_get_byval_arg (var->klass);
 	int store_op = mono_type_to_store_membase (cfg, type);
 	if (store_op == OP_STOREV_MEMBASE || store_op == OP_STOREX_MEMBASE)
 		return FALSE;
@@ -140,7 +146,7 @@ lower_store_imm (MonoCompile *cfg, MonoInst *store, MonoInst *ldaddr)
 	default:
 		return FALSE;
 	}
-	mono_jit_stats.stores_eliminated++;	
+	mono_atomic_inc_i32 (&mono_jit_stats.stores_eliminated);
 	return TRUE;
 }
 
@@ -158,10 +164,17 @@ lower_memory_access (MonoCompile *cfg)
 		for (ins = bb->code; ins; ins = ins->next) {
 handle_instruction:
 			switch (ins->opcode) {
-			case OP_LDADDR:
-				g_hash_table_insert (addr_loads, GINT_TO_POINTER (ins->dreg), ins);
-				if (cfg->verbose_level > 2) { printf ("New address: "); mono_print_ins (ins); }
+			case OP_LDADDR: {
+				MonoInst *var = (MonoInst*)ins->inst_p0;
+				if (var->flags & MONO_INST_VOLATILE) {
+					if (cfg->verbose_level > 2) { printf ("Found address to volatile var, can't take it: "); mono_print_ins (ins); }
+				} else {
+					g_hash_table_insert (addr_loads, GINT_TO_POINTER (ins->dreg), ins);
+					if (cfg->verbose_level > 2) { printf ("New address: "); mono_print_ins (ins); }
+				}
 				break;
+			}
+
 			case OP_MOVE:
 				tmp = (MonoInst*)g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->sreg1));
 				/*
@@ -191,11 +204,13 @@ handle_instruction:
 			case OP_LOADU4_MEMBASE:
 			case OP_LOADI1_MEMBASE:
 			case OP_LOADI8_MEMBASE:
+#ifndef MONO_ARCH_SOFT_FLOAT_FALLBACK
 			case OP_LOADR4_MEMBASE:
+#endif
 			case OP_LOADR8_MEMBASE:
 				if (ins->inst_offset != 0)
 					continue;
-				tmp = g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->sreg1));
+				tmp = (MonoInst *)g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->sreg1));
 				if (tmp) {
 					if (cfg->verbose_level > 2) { printf ("Found candidate load:"); mono_print_ins (ins); }
 					if (lower_load (cfg, ins, tmp)) {
@@ -211,12 +226,14 @@ handle_instruction:
 			case OP_STOREI2_MEMBASE_REG:
 			case OP_STOREI4_MEMBASE_REG:
 			case OP_STOREI8_MEMBASE_REG:
+#ifndef MONO_ARCH_SOFT_FLOAT_FALLBACK
 			case OP_STORER4_MEMBASE_REG:
+#endif
 			case OP_STORER8_MEMBASE_REG:
 			case OP_STOREV_MEMBASE:
 				if (ins->inst_offset != 0)
 					continue;
-				tmp = g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->dreg));
+				tmp = (MonoInst *)g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->dreg));
 				if (tmp) {
 					if (cfg->verbose_level > 2) { printf ("Found candidate store:"); mono_print_ins (ins); }
 					if (lower_store (cfg, ins, tmp)) {
@@ -226,13 +243,13 @@ handle_instruction:
 					}
 				}
 				break;
-
+			//FIXME missing storei1_membase_imm and storei2_membase_imm
 			case OP_STORE_MEMBASE_IMM:
 			case OP_STOREI4_MEMBASE_IMM:
 			case OP_STOREI8_MEMBASE_IMM:
 				if (ins->inst_offset != 0)
 					continue;
-				tmp = g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->dreg));
+				tmp = (MonoInst *)g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->dreg));
 				if (tmp) {
 					if (cfg->verbose_level > 2) { printf ("Found candidate store-imm:"); mono_print_ins (ins); }
 					needs_dce |= lower_store_imm (cfg, ins, tmp);
@@ -240,7 +257,7 @@ handle_instruction:
 				break;
 			case OP_CHECK_THIS:
 			case OP_NOT_NULL:
-				tmp = g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->sreg1));
+				tmp = (MonoInst *)g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->sreg1));
 				if (tmp) {
 					if (cfg->verbose_level > 2) { printf ("Found null check over local: "); mono_print_ins (ins); }
 					NULLIFY_INS (ins);
@@ -296,8 +313,8 @@ recompute_aliased_variables (MonoCompile *cfg, int *restored_vars)
 	}
 	*restored_vars = adds;
 
-	mono_jit_stats.alias_found += kills;
-	mono_jit_stats.alias_removed += kills - adds;
+	mono_atomic_fetch_add_i32 (&mono_jit_stats.alias_found, kills);
+	mono_atomic_fetch_add_i32 (&mono_jit_stats.alias_removed, kills - adds);
 	if (kills > adds) {
 		if (cfg->verbose_level > 2) {
 			printf ("Method: %s\n", mono_method_full_name (cfg->method, 1));
@@ -357,5 +374,9 @@ done:
 	if (cfg->verbose_level > 2)
 		mono_print_code (cfg, "AFTER ALIAS_ANALYSIS");
 }
+
+#else /* !DISABLE_JIT */
+
+MONO_EMPTY_SOURCE_FILE (alias_analysis);
 
 #endif /* !DISABLE_JIT */

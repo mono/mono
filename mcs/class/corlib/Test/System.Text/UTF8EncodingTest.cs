@@ -11,6 +11,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Reflection;
 using System.IO;
 using System.Text;
 
@@ -175,7 +176,14 @@ namespace MonoTests.System.Text
 			Assert.AreEqual (0x32, (int) s [5], "#B7");
 		}
 
-		// UTF8 decoding tests from http://www.cl.cam.ac.uk/~mgk25/
+		//
+		// UTF8 decoding tests are based on the test file from http://www.cl.cam.ac.uk/~mgk25/
+		// The test file is: https://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt
+		// which is licensed under CC-by-4.0: https://creativecommons.org/licenses/by/4.0/
+		//
+		// The file is not copied verbatim, instead individual
+		// tests are based on individual portions of that file
+		//
 
 		[Test]
 		public void T1_Correct_GreekWord_kosme () 
@@ -1035,7 +1043,9 @@ namespace MonoTests.System.Text
 		[Category ("MobileNotWorking")]
 		public void Bug415628 ()
 		{
-			using (var f = File.Open ("Test/resources/415628.bin", FileMode.Open)) {
+			DirectoryInfo bcl_output_dir = Directory.GetParent (Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location)).Parent;
+			string namespace_dir = Path.Combine (bcl_output_dir.Parent.FullName, "corlib");
+			using (var f = File.Open (Path.Combine (namespace_dir, "Test/resources/415628.bin"), FileMode.Open)) {
 				BinaryReader br = new BinaryReader (f);
 				byte [] buf = br.ReadBytes (8000);
 				Encoding.UTF8.GetString(buf);

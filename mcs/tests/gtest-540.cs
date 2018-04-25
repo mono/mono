@@ -98,6 +98,35 @@ class C
 
 		if ((null | b4) != true)
 			return 103;
+
+		bool? x_n = null;
+		bool? x_f = false;
+		bool? x_t = true;
+
+		bool? res;
+		res = null & x_n;
+		if (res.HasValue)
+			return 201;
+
+		res = null & x_t;
+		if (res.HasValue)
+			return 202;
+
+		res = null & x_f;
+		if (res.Value != false)
+			return 203;
+
+		res = null | x_n;
+		if (res.HasValue)
+			return 204;
+
+		res = null | x_t;
+		if (res.Value != true)
+			return 205;
+
+		res = null | x_f;
+		if (res.HasValue)
+			return 206;
 		
 		return 0;
 	}

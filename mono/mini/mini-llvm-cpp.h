@@ -1,5 +1,6 @@
-/*
- * mini-llvm-cpp.h: LLVM backend
+/**
+ * \file
+ * LLVM backend
  *
  * Authors:
  *   Zoltan Varga (vargaz@gmail.com)
@@ -34,21 +35,16 @@ typedef enum {
 	LLVM_ATOMICRMW_OP_ADD = 1,
 } AtomicRMWOp;
 
-typedef unsigned char * (AllocCodeMemoryCb) (LLVMValueRef function, int size);
-typedef void (FunctionEmittedCb) (LLVMValueRef function, void *start, void *end);
-typedef void (ExceptionTableCb) (void *data);
-typedef char* (DlSymCb) (const char *name, void **symbol);
-
-typedef void* MonoEERef;
-
-MonoEERef
-mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb, ExceptionTableCb *exception_cb, DlSymCb *dlsym_cb, LLVMExecutionEngineRef *ee);
-
-void
-mono_llvm_dispose_ee (MonoEERef *mono_ee);
-
-void
-mono_llvm_optimize_method (MonoEERef mono_ee, LLVMValueRef method);
+typedef enum {
+	LLVM_ATTR_NO_UNWIND,
+	LLVM_ATTR_NO_INLINE,
+	LLVM_ATTR_OPTIMIZE_FOR_SIZE,
+	LLVM_ATTR_IN_REG,
+	LLVM_ATTR_STRUCT_RET,
+	LLVM_ATTR_NO_ALIAS,
+	LLVM_ATTR_BY_VAL,
+	LLVM_ATTR_UW_TABLE
+} AttrKind;
 
 void
 mono_llvm_dump_value (LLVMValueRef value);
@@ -60,9 +56,13 @@ mono_llvm_build_alloca (LLVMBuilderRef builder, LLVMTypeRef Ty,
 
 LLVMValueRef 
 mono_llvm_build_load (LLVMBuilderRef builder, LLVMValueRef PointerVal,
-					  const char *Name, gboolean is_volatile, BarrierKind barrier);
+					  const char *Name, gboolean is_volatile);
 
 LLVMValueRef 
+mono_llvm_build_atomic_load (LLVMBuilderRef builder, LLVMValueRef PointerVal,
+							 const char *Name, gboolean is_volatile, int alignment, BarrierKind barrier);
+
+LLVMValueRef
 mono_llvm_build_aligned_load (LLVMBuilderRef builder, LLVMValueRef PointerVal,
 							  const char *Name, gboolean is_volatile, int alignment);
 
@@ -87,7 +87,7 @@ LLVMValueRef
 mono_llvm_build_cmpxchg (LLVMBuilderRef builder, LLVMValueRef addr, LLVMValueRef comparand, LLVMValueRef value);
 
 void
-mono_llvm_set_must_tail (LLVMValueRef call_ins);
+mono_llvm_set_must_tailcall (LLVMValueRef call_ins);
 
 LLVMValueRef
 mono_llvm_create_constant_data_array (const uint8_t *data, int len);
@@ -101,15 +101,45 @@ mono_llvm_set_preserveall_cc (LLVMValueRef func);
 void
 mono_llvm_set_call_preserveall_cc (LLVMValueRef call);
 
+void
+mono_llvm_set_call_notailcall (LLVMValueRef call);
+
+void
+mono_llvm_add_func_attr (LLVMValueRef func, AttrKind kind);
+
+void
+mono_llvm_add_param_attr (LLVMValueRef param, AttrKind kind);
+
+void
+mono_llvm_add_instr_attr (LLVMValueRef val, int index, AttrKind kind);
+
 _Unwind_Reason_Code 
 mono_debug_personality (int a, _Unwind_Action b,
 	uint64_t c, struct _Unwind_Exception *d, struct _Unwind_Context *e);
 
 void
-mono_llvm_set_unhandled_exception_handler (void);
+default_mono_llvm_unhandled_exception (void);
+
+void*
+mono_llvm_create_di_builder (LLVMModuleRef module);
+
+void*
+mono_llvm_di_create_function (void *di_builder, void *cu, LLVMValueRef func, const char *name, const char *mangled_name, const char *dir, const char *file, int line);
+
+void*
+mono_llvm_di_create_compile_unit (void *di_builder, const char *cu_name, const char *dir, const char *producer);
+
+void*
+mono_llvm_di_create_file (void *di_builder, const char *dir, const char *file);
+
+void*
+mono_llvm_di_create_location (void *di_builder, void *scope, int row, int column);
 
 void
-default_mono_llvm_unhandled_exception (void);
+mono_llvm_di_builder_finalize (void *di_builder);
+
+void
+mono_llvm_di_set_location (LLVMBuilderRef builder, void *loc_md);
 
 G_END_DECLS
 

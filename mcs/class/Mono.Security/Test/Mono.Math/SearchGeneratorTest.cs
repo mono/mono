@@ -34,7 +34,7 @@ namespace MonoTests.Mono.Math {
 			ContextData ctx = (ContextData)Context;
 
 			
-			Assertion.AssertEquals (ctx.bits, bits);
+			Assert.AreEqual (ctx.bits, bits);
 			uint d = ctx.testData;
 
 			for (uint i = (uint)bits - 2; d > 0; i--, d >>= 1)
@@ -65,7 +65,7 @@ namespace MonoTests.Mono.Math {
 				Assert.IsTrue (p.TestBit (1));
 				uint d = ctx.testData;
 				for (uint j = 128 - 2; d > 0; j--, d >>= 1)
-					Assertion.AssertEquals ((d&1) == 1, p.TestBit (j));
+					Assert.AreEqual ((d&1) == 1, p.TestBit (j));
 			}
 		}
 	}

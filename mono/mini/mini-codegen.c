@@ -1,8 +1,11 @@
-/*
- * mini-codegen.c: Arch independent code generation functionality
+/**
+ * \file
+ * Arch independent code generation functionality
  *
  * (C) 2003 Ximian, Inc.
  */
+
+#include "config.h"
 
 #include <string.h>
 #include <math.h>
@@ -18,8 +21,11 @@
 #include <mono/utils/mono-math.h>
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "trace.h"
 #include "mini-arch.h"
+
+#ifndef DISABLE_JIT
 
 #ifndef MONO_MAX_XREGS
 
@@ -28,7 +34,6 @@
 #define MONO_ARCH_CALLEE_XREGS 0
 
 #endif
- 
 
 #define MONO_ARCH_BANK_MIRRORED -2
 
@@ -144,7 +149,7 @@ mono_regstate_assign (MonoRegState *rs)
 	if (rs->next_vreg > rs->vassign_size) {
 		g_free (rs->vassign);
 		rs->vassign_size = MAX (rs->next_vreg, 256);
-		rs->vassign = g_malloc (rs->vassign_size * sizeof (gint32));
+		rs->vassign = (gint32 *)g_malloc (rs->vassign_size * sizeof (gint32));
 	}
 
 	memset (rs->isymbolic, 0, MONO_MAX_IREGS * sizeof (rs->isymbolic [0]));
@@ -295,7 +300,7 @@ resize_spill_info (MonoCompile *cfg, int bank)
 
 	g_assert (bank < MONO_NUM_REGBANKS);
 
-	new_info = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoSpillInfo) * new_len);
+	new_info = (MonoSpillInfo *)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoSpillInfo) * new_len);
 	if (orig_info)
 		memcpy (new_info, orig_info, sizeof (MonoSpillInfo) * orig_len);
 	for (i = orig_len; i < new_len; ++i)
@@ -411,59 +416,28 @@ typedef struct {
 	regmask_t preferred_mask; /* the hreg where the register should be allocated, or 0 */
 } RegTrack;
 
-#if !defined(DISABLE_LOGGING) && !defined(DISABLE_JIT)
-
-static const char* const patch_info_str[] = {
-#define PATCH_INFO(a,b) "" #a,
-#include "patch-info.h"
-#undef PATCH_INFO
-};
-
-const char*
-mono_ji_type_to_string (MonoJumpInfoType type)
-{
-	return patch_info_str [type];
-}
-
-void
-mono_print_ji (const MonoJumpInfo *ji)
-{
-	switch (ji->type) {
-	case MONO_PATCH_INFO_RGCTX_FETCH: {
-		MonoJumpInfoRgctxEntry *entry = ji->data.rgctx_entry;
-
-		printf ("[RGCTX_FETCH ");
-		mono_print_ji (entry->data);
-		printf (" - %s]", mono_rgctx_info_type_to_str (entry->info_type));
-		break;
-	}
-	case MONO_PATCH_INFO_METHODCONST: {
-		char *s = mono_method_full_name (ji->data.method, TRUE);
-		printf ("[METHODCONST - %s]", s);
-		g_free (s);
-		break;
-	}
-	case MONO_PATCH_INFO_INTERNAL_METHOD: {
-		printf ("[INTERNAL_METHOD - %s]", ji->data.name);
-		break;
-	}
-	default:
-		printf ("[%s]", patch_info_str [ji->type]);
-		break;
-	}
-}
+#if !defined(DISABLE_LOGGING)
 
 void
 mono_print_ins_index (int i, MonoInst *ins)
 {
+	GString *buf = mono_print_ins_index_strbuf (i, ins);
+	printf ("%s\n", buf->str);
+	g_string_free (buf, TRUE);
+}
+
+GString *
+mono_print_ins_index_strbuf (int i, MonoInst *ins)
+{
 	const char *spec = ins_get_spec (ins->opcode);
+	GString *sbuf = g_string_new (NULL);
 	int num_sregs, j;
 	int sregs [MONO_MAX_SRC_REGS];
 
 	if (i != -1)
-		printf ("\t%-2d %s", i, mono_inst_name (ins->opcode));
+		g_string_append_printf (sbuf, "\t%-2d %s", i, mono_inst_name (ins->opcode));
 	else
-		printf (" %s", mono_inst_name (ins->opcode));
+		g_string_append_printf (sbuf, " %s", mono_inst_name (ins->opcode));
 	if (spec == MONO_ARCH_CPU_SPEC) {
 		gboolean dest_base = FALSE;
 		switch (ins->opcode) {
@@ -477,16 +451,16 @@ mono_print_ins_index (int i, MonoInst *ins)
 		/* This is a lowered opcode */
 		if (ins->dreg != -1) {
 			if (dest_base)
-				printf (" [R%d + 0x%lx] <-", ins->dreg, (long)ins->inst_offset);
+				g_string_append_printf (sbuf, " [R%d + 0x%lx] <-", ins->dreg, (long)ins->inst_offset);
 			else
-				printf (" R%d <-", ins->dreg);
+				g_string_append_printf (sbuf, " R%d <-", ins->dreg);
 		}
 		if (ins->sreg1 != -1)
-			printf (" R%d", ins->sreg1);
+			g_string_append_printf (sbuf, " R%d", ins->sreg1);
 		if (ins->sreg2 != -1)
-			printf (" R%d", ins->sreg2);
+			g_string_append_printf (sbuf, " R%d", ins->sreg2);
 		if (ins->sreg3 != -1)
-			printf (" R%d", ins->sreg3);
+			g_string_append_printf (sbuf, " R%d", ins->sreg3);
 
 		switch (ins->opcode) {
 		case OP_LBNE_UN:
@@ -500,39 +474,42 @@ mono_print_ins_index (int i, MonoInst *ins)
 		case OP_LBLE:
 		case OP_LBLE_UN:
 			if (!ins->inst_false_bb)
-				printf (" [B%d]", ins->inst_true_bb->block_num);
+				g_string_append_printf (sbuf, " [B%d]", ins->inst_true_bb->block_num);
 			else
-				printf (" [B%dB%d]", ins->inst_true_bb->block_num, ins->inst_false_bb->block_num);
+				g_string_append_printf (sbuf, " [B%dB%d]", ins->inst_true_bb->block_num, ins->inst_false_bb->block_num);
 			break;
 		case OP_PHI:
 		case OP_VPHI:
 		case OP_XPHI:
 		case OP_FPHI: {
 			int i;
-			printf (" [%d (", (int)ins->inst_c0);
+			g_string_append_printf (sbuf, " [%d (", (int)ins->inst_c0);
 			for (i = 0; i < ins->inst_phi_args [0]; i++) {
 				if (i)
-					printf (", ");
-				printf ("R%d", ins->inst_phi_args [i + 1]);
+					g_string_append_printf (sbuf, ", ");
+				g_string_append_printf (sbuf, "R%d", ins->inst_phi_args [i + 1]);
 			}
-			printf (")]");
+			g_string_append_printf (sbuf, ")]");
 			break;
 		}
 		case OP_LDADDR:
 		case OP_OUTARG_VTRETADDR:
-			printf (" R%d", ((MonoInst*)ins->inst_p0)->dreg);
+			g_string_append_printf (sbuf, " R%d", ((MonoInst*)ins->inst_p0)->dreg);
 			break;
 		case OP_REGOFFSET:
 		case OP_GSHAREDVT_ARG_REGOFFSET:
-			printf (" + 0x%lx", (long)ins->inst_offset);
+			g_string_append_printf (sbuf, " + 0x%lx", (long)ins->inst_offset);
+			break;
+		case OP_ISINST:
+		case OP_CASTCLASS:
+			g_string_append_printf (sbuf, " %s", m_class_get_name (ins->klass));
 			break;
 		default:
 			break;
 		}
 
-		printf ("\n");
 		//g_error ("Unknown opcode: %s\n", mono_inst_name (ins->opcode));
-		return;
+		return sbuf;
 	}
 
 	if (spec [MONO_INST_DEST]) {
@@ -540,44 +517,44 @@ mono_print_ins_index (int i, MonoInst *ins)
 		if (is_soft_reg (ins->dreg, bank)) {
 			if (spec [MONO_INST_DEST] == 'b') {
 				if (ins->inst_offset == 0)
-					printf (" [R%d] <-", ins->dreg);
+					g_string_append_printf (sbuf, " [R%d] <-", ins->dreg);
 				else
-					printf (" [R%d + 0x%lx] <-", ins->dreg, (long)ins->inst_offset);
+					g_string_append_printf (sbuf, " [R%d + 0x%lx] <-", ins->dreg, (long)ins->inst_offset);
 			}
 			else
-				printf (" R%d <-", ins->dreg);
+				g_string_append_printf (sbuf, " R%d <-", ins->dreg);
 		} else if (spec [MONO_INST_DEST] == 'b') {
 			if (ins->inst_offset == 0)
-				printf (" [%s] <-", mono_arch_regname (ins->dreg));
+				g_string_append_printf (sbuf, " [%s] <-", mono_arch_regname (ins->dreg));
 			else
-				printf (" [%s + 0x%lx] <-", mono_arch_regname (ins->dreg), (long)ins->inst_offset);
+				g_string_append_printf (sbuf, " [%s + 0x%lx] <-", mono_arch_regname (ins->dreg), (long)ins->inst_offset);
 		} else
-			printf (" %s <-", mono_regname_full (ins->dreg, bank));
+			g_string_append_printf (sbuf, " %s <-", mono_regname_full (ins->dreg, bank));
 	}
 	if (spec [MONO_INST_SRC1]) {
 		int bank = sreg1_bank (spec);
 		if (is_soft_reg (ins->sreg1, bank)) {
 			if (spec [MONO_INST_SRC1] == 'b')
-				printf (" [R%d + 0x%lx]", ins->sreg1, (long)ins->inst_offset);
+				g_string_append_printf (sbuf, " [R%d + 0x%lx]", ins->sreg1, (long)ins->inst_offset);
 			else
-				printf (" R%d", ins->sreg1);
+				g_string_append_printf (sbuf, " R%d", ins->sreg1);
 		} else if (spec [MONO_INST_SRC1] == 'b')
-			printf (" [%s + 0x%lx]", mono_arch_regname (ins->sreg1), (long)ins->inst_offset);
+			g_string_append_printf (sbuf, " [%s + 0x%lx]", mono_arch_regname (ins->sreg1), (long)ins->inst_offset);
 		else
-			printf (" %s", mono_regname_full (ins->sreg1, bank));
+			g_string_append_printf (sbuf, " %s", mono_regname_full (ins->sreg1, bank));
 	}
 	num_sregs = mono_inst_get_src_registers (ins, sregs);
 	for (j = 1; j < num_sregs; ++j) {
 		int bank = sreg_bank (j, spec);
 		if (is_soft_reg (sregs [j], bank))
-			printf (" R%d", sregs [j]);
+			g_string_append_printf (sbuf, " R%d", sregs [j]);
 		else
-			printf (" %s", mono_regname_full (sregs [j], bank));
+			g_string_append_printf (sbuf, " %s", mono_regname_full (sregs [j], bank));
 	}
 
 	switch (ins->opcode) {
 	case OP_ICONST:
-		printf (" [%d]", (int)ins->inst_c0);
+		g_string_append_printf (sbuf, " [%d]", (int)ins->inst_c0);
 		break;
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
 	case OP_X86_PUSH_IMM:
@@ -591,20 +568,20 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_IXOR_IMM:
 	case OP_SUB_IMM:
 	case OP_STORE_MEMBASE_IMM:
-		printf (" [%d]", (int)ins->inst_imm);
+		g_string_append_printf (sbuf, " [%d]", (int)ins->inst_imm);
 		break;
 	case OP_ADD_IMM:
 	case OP_LADD_IMM:
-		printf (" [%d]", (int)(gssize)ins->inst_p1);
+		g_string_append_printf (sbuf, " [%d]", (int)(gssize)ins->inst_p1);
 		break;
 	case OP_I8CONST:
-		printf (" [%lld]", (long long)ins->inst_l);
+		g_string_append_printf (sbuf, " [%lld]", (long long)ins->inst_l);
 		break;
 	case OP_R8CONST:
-		printf (" [%f]", *(double*)ins->inst_p0);
+		g_string_append_printf (sbuf, " [%f]", *(double*)ins->inst_p0);
 		break;
 	case OP_R4CONST:
-		printf (" [%f]", *(float*)ins->inst_p0);
+		g_string_append_printf (sbuf, " [%f]", *(float*)ins->inst_p0);
 		break;
 	case OP_CALL:
 	case OP_CALL_MEMBASE:
@@ -619,7 +596,11 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_VCALL2_MEMBASE:
 	case OP_VOIDCALL:
 	case OP_VOIDCALL_MEMBASE:
-	case OP_TAILCALL: {
+	case OP_TAILCALL:
+	case OP_TAILCALL_MEMBASE:
+	case OP_RCALL:
+	case OP_RCALL_REG:
+	case OP_RCALL_MEMBASE: {
 		MonoCallInst *call = (MonoCallInst*)ins;
 		GSList *list;
 
@@ -629,22 +610,22 @@ mono_print_ins_index (int i, MonoInst *ins)
 			 * JIT passes them to backends.
 			 */
 			if (ins->dreg != -1)
-				printf (" R%d <-", ins->dreg);
+				g_string_append_printf (sbuf, " R%d <-", ins->dreg);
 		}
 
 		if (call->method) {
 			char *full_name = mono_method_full_name (call->method, TRUE);
-			printf (" [%s]", full_name);
+			g_string_append_printf (sbuf, " [%s]", full_name);
 			g_free (full_name);
 		} else if (call->fptr_is_patch) {
 			MonoJumpInfo *ji = (MonoJumpInfo*)call->fptr;
 
-			printf (" ");
+			g_string_append_printf (sbuf, " ");
 			mono_print_ji (ji);
 		} else if (call->fptr) {
 			MonoJitICallInfo *info = mono_find_jit_icall_by_addr (call->fptr);
 			if (info)
-				printf (" [%s]", info->name);
+				g_string_append_printf (sbuf, " [%s]", info->name);
 		}
 
 		list = call->out_ireg_args;
@@ -656,7 +637,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 			hreg = regpair >> 24;
 			reg = regpair & 0xffffff;
 
-			printf (" [%s <- R%d]", mono_arch_regname (hreg), reg);
+			g_string_append_printf (sbuf, " [%s <- R%d]", mono_arch_regname (hreg), reg);
 
 			list = g_slist_next (list);
 		}
@@ -669,7 +650,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 			hreg = regpair >> 24;
 			reg = regpair & 0xffffff;
 
-			printf (" [%s <- R%d]", mono_arch_fregname (hreg), reg);
+			g_string_append_printf (sbuf, " [%s <- R%d]", mono_arch_fregname (hreg), reg);
 
 			list = g_slist_next (list);
 		}
@@ -677,7 +658,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 	}
 	case OP_BR:
 	case OP_CALL_HANDLER:
-		printf (" [B%d]", ins->inst_target_bb->block_num);
+		g_string_append_printf (sbuf, " [B%d]", ins->inst_target_bb->block_num);
 		break;
 	case OP_IBNE_UN:
 	case OP_IBEQ:
@@ -700,27 +681,57 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_LBLE:
 	case OP_LBLE_UN:
 		if (!ins->inst_false_bb)
-			printf (" [B%d]", ins->inst_true_bb->block_num);
+			g_string_append_printf (sbuf, " [B%d]", ins->inst_true_bb->block_num);
 		else
-			printf (" [B%dB%d]", ins->inst_true_bb->block_num, ins->inst_false_bb->block_num);
+			g_string_append_printf (sbuf, " [B%dB%d]", ins->inst_true_bb->block_num, ins->inst_false_bb->block_num);
 		break;
 	case OP_LIVERANGE_START:
 	case OP_LIVERANGE_END:
 	case OP_GC_LIVENESS_DEF:
 	case OP_GC_LIVENESS_USE:
-		printf (" R%d", (int)ins->inst_c1);
+		g_string_append_printf (sbuf, " R%d", (int)ins->inst_c1);
 		break;
 	case OP_IL_SEQ_POINT:
 	case OP_SEQ_POINT:
-		printf (" il: 0x%x%s", (int)ins->inst_imm, ins->flags & MONO_INST_NONEMPTY_STACK ? ", nonempty-stack" : "");
+		g_string_append_printf (sbuf, " il: 0x%x%s", (int)ins->inst_imm, ins->flags & MONO_INST_NONEMPTY_STACK ? ", nonempty-stack" : "");
+		break;
+	case OP_COND_EXC_EQ:
+	case OP_COND_EXC_GE:
+	case OP_COND_EXC_GT:
+	case OP_COND_EXC_LE:
+	case OP_COND_EXC_LT:
+	case OP_COND_EXC_NE_UN:
+	case OP_COND_EXC_GE_UN:
+	case OP_COND_EXC_GT_UN:
+	case OP_COND_EXC_LE_UN:
+	case OP_COND_EXC_LT_UN:
+	case OP_COND_EXC_OV:
+	case OP_COND_EXC_NO:
+	case OP_COND_EXC_C:
+	case OP_COND_EXC_NC:
+	case OP_COND_EXC_IEQ:
+	case OP_COND_EXC_IGE:
+	case OP_COND_EXC_IGT:
+	case OP_COND_EXC_ILE:
+	case OP_COND_EXC_ILT:
+	case OP_COND_EXC_INE_UN:
+	case OP_COND_EXC_IGE_UN:
+	case OP_COND_EXC_IGT_UN:
+	case OP_COND_EXC_ILE_UN:
+	case OP_COND_EXC_ILT_UN:
+	case OP_COND_EXC_IOV:
+	case OP_COND_EXC_INO:
+	case OP_COND_EXC_IC:
+	case OP_COND_EXC_INC:
+		g_string_append_printf (sbuf, " %s", ins->inst_p1);
 		break;
 	default:
 		break;
 	}
 
 	if (spec [MONO_INST_CLOB])
-		printf (" clobbers: %c", spec [MONO_INST_CLOB]);
-	printf ("\n");
+		g_string_append_printf (sbuf, " clobbers: %c", spec [MONO_INST_CLOB]);
+	return sbuf;
 }
 
 static void
@@ -743,22 +754,11 @@ print_regtrack (RegTrack *t, int num)
 }
 #else
 
-const char*
-mono_ji_type_to_string (MonoJumpInfoType type)
-{
-	return "";
-}
-
-void
-mono_print_ji (const MonoJumpInfo *ji)
-{
-}
-
 void
 mono_print_ins_index (int i, MonoInst *ins)
 {
 }
-#endif /* !defined(DISABLE_LOGGING) && !defined(DISABLE_JIT) */
+#endif /* !defined(DISABLE_LOGGING) */
 
 void
 mono_print_ins (MonoInst *ins)
@@ -842,11 +842,6 @@ spill_vreg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *ins
 	else
 		mono_regstate_free_int (rs, sel);
 }
-
-/* This isn't defined on older glib versions and on some platforms */
-#ifndef G_GUINT64_FORMAT
-#define G_GUINT64_FORMAT "ul"
-#endif
 
 static int
 get_register_spilling (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *ins, regmask_t regmask, int reg, int bank)
@@ -1047,6 +1042,9 @@ alloc_general_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoIn
 	if (val < 0)
 		val = get_register_spilling (cfg, bb, last, ins, dest_mask, sym_reg, bank);
 
+#ifdef MONO_ARCH_HAVE_TRACK_FPREGS
+	cfg->arch.used_fp_regs |= 1 << val;
+#endif
 	return val;
 }
 
@@ -1114,8 +1112,6 @@ get_callee_mask (const char spec)
 static gint8 desc_to_fixed_reg [256];
 static gboolean desc_to_fixed_reg_inited = FALSE;
 
-#ifndef DISABLE_JIT
-
 /*
  * Local register allocation.
  * We first scan the list of instructions and we save the liveness info of
@@ -1180,10 +1176,11 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	if (cfg->reginfo && cfg->reginfo_len < max)
 		cfg->reginfo = NULL;
 
-	reginfo = cfg->reginfo;
+	reginfo = (RegTrack *)cfg->reginfo;
 	if (!reginfo) {
 		cfg->reginfo_len = MAX (1024, max * 2);
-		reginfo = cfg->reginfo = mono_mempool_alloc (cfg->mempool, sizeof (RegTrack) * cfg->reginfo_len);
+		reginfo = (RegTrack *)mono_mempool_alloc (cfg->mempool, sizeof (RegTrack) * cfg->reginfo_len);
+		cfg->reginfo = reginfo;
 	} 
 	else
 		g_assert (cfg->reginfo_len >= rs->next_vreg);
@@ -2450,7 +2447,7 @@ mono_opcode_to_cond (int opcode)
 	default:
 		printf ("%s\n", mono_inst_name (opcode));
 		g_assert_not_reached ();
-		return 0;
+		return (CompRelation)0;
 	}
 }
 
@@ -2512,50 +2509,9 @@ mono_opcode_to_type (int opcode, int cmp_opcode)
 		}
 	} else {
 		g_error ("Unknown opcode '%s' in opcode_to_type", mono_inst_name (opcode));
-		return 0;
+		return (CompType)0;
 	}
 }
-
-#endif /* DISABLE_JIT */
-
-gboolean
-mono_is_regsize_var (MonoType *t)
-{
-	t = mini_get_underlying_type (t);
-	switch (t->type) {
-	case MONO_TYPE_I1:
-	case MONO_TYPE_U1:
-	case MONO_TYPE_I2:
-	case MONO_TYPE_U2:
-	case MONO_TYPE_I4:
-	case MONO_TYPE_U4:
-	case MONO_TYPE_I:
-	case MONO_TYPE_U:
-	case MONO_TYPE_PTR:
-	case MONO_TYPE_FNPTR:
-#if SIZEOF_REGISTER == 8
-	case MONO_TYPE_I8:
-	case MONO_TYPE_U8:
-#endif
-		return TRUE;
-	case MONO_TYPE_OBJECT:
-	case MONO_TYPE_STRING:
-	case MONO_TYPE_CLASS:
-	case MONO_TYPE_SZARRAY:
-	case MONO_TYPE_ARRAY:
-		return TRUE;
-	case MONO_TYPE_GENERICINST:
-		if (!mono_type_generic_inst_is_valuetype (t))
-			return TRUE;
-		return FALSE;
-	case MONO_TYPE_VALUETYPE:
-		return FALSE;
-	default:
-		return FALSE;
-	}
-}
-
-#ifndef DISABLE_JIT
 
 /*
  * mono_peephole_ins:
@@ -2688,6 +2644,19 @@ mono_peephole_ins (MonoBasicBlock *bb, MonoInst *ins)
 			ins->sreg1 = last_ins->sreg1;
 		}
 		break;
+	case OP_LOADX_MEMBASE:
+		if (last_ins && last_ins->opcode == OP_STOREX_MEMBASE &&
+			ins->inst_basereg == last_ins->inst_destbasereg &&
+			ins->inst_offset == last_ins->inst_offset) {
+			if (ins->dreg == last_ins->sreg1) {
+				MONO_DELETE_INS (bb, ins);
+				break;
+			} else {
+				ins->opcode = OP_XMOVE;
+				ins->sreg1 = last_ins->sreg1;
+			}
+		}
+		break;
 	case OP_MOVE:
 	case OP_FMOVE:
 		/*
@@ -2763,9 +2732,9 @@ mini_type_is_hfa (MonoType *t, int *out_nfields, int *out_esize)
 			if (!mini_type_is_hfa (ftype, &nested_nfields, &nested_esize))
 				return FALSE;
 			if (nested_esize == 4)
-				ftype = &mono_defaults.single_class->byval_arg;
+				ftype = m_class_get_byval_arg (mono_defaults.single_class);
 			else
-				ftype = &mono_defaults.double_class->byval_arg;
+				ftype = m_class_get_byval_arg (mono_defaults.double_class);
 			if (prev_ftype && prev_ftype->type != ftype->type)
 				return FALSE;
 			prev_ftype = ftype;
@@ -2806,3 +2775,40 @@ mono_regstate_free (MonoRegState *rs) {
 }
 
 #endif /* DISABLE_JIT */
+
+gboolean
+mono_is_regsize_var (MonoType *t)
+{
+	t = mini_get_underlying_type (t);
+	switch (t->type) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+	case MONO_TYPE_I:
+	case MONO_TYPE_U:
+	case MONO_TYPE_PTR:
+	case MONO_TYPE_FNPTR:
+#if SIZEOF_REGISTER == 8
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+#endif
+		return TRUE;
+	case MONO_TYPE_OBJECT:
+	case MONO_TYPE_STRING:
+	case MONO_TYPE_CLASS:
+	case MONO_TYPE_SZARRAY:
+	case MONO_TYPE_ARRAY:
+		return TRUE;
+	case MONO_TYPE_GENERICINST:
+		if (!mono_type_generic_inst_is_valuetype (t))
+			return TRUE;
+		return FALSE;
+	case MONO_TYPE_VALUETYPE:
+		return FALSE;
+	default:
+		return FALSE;
+	}
+}

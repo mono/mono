@@ -1,10 +1,12 @@
-/*
- * coree.h: mscoree.dll functions
+/**
+ * \file
+ * mscoree.dll functions
  *
  * Author:
  *   Kornel Pal <http://www.kornelpal.hu/>
  *
  * Copyright (C) 2008 Kornel Pal
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #ifndef __MONO_COREE_H__
@@ -15,14 +17,14 @@
 
 #ifdef HOST_WIN32
 
-#include <mono/io-layer/io-layer.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/w32api.h>
 #include "image.h"
 
 #define STATUS_SUCCESS 0x00000000L
 #define STATUS_INVALID_IMAGE_FORMAT 0xC000007BL
 
-STDAPI MonoFixupCorEE(HMODULE ModuleHandle);
+MONO_API STDAPI MonoFixupCorEE(HMODULE ModuleHandle);
 
 /* Defined by the linker. */
 #ifndef _MSC_VER

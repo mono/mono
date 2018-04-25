@@ -4,8 +4,8 @@ include ../../build/rules.make
 LIBRARY = System.Windows.Forms.dll
 
 LIB_REFS = System System.Xml System.Drawing Accessibility System.Data Mono.Posix Mono.WebBrowser System.Configuration System.Runtime.Serialization.Formatters.Soap
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = /unsafe \
-	/r:$(corlib) \
 	@System.Windows.Forms.dll.resources \
 	-nowarn:618,612,809
 
@@ -14,7 +14,8 @@ LIB_MCS_FLAGS += /define:GENERATING_RESOURCES
 endif
 
 RESX_RESOURCES = \
-	resources/keyboards.resources
+	resources/keyboards.resources \
+        resources/System.Windows.Forms.resources
 
 CLEAN_FILES += $(RESX_RESOURCES)
 
@@ -90,6 +91,7 @@ TEST_DISTFILES = \
 	Test/System.Resources/compat_1_1.resx \
 	Test/System.Resources/compat_2_0.resx \
 	Test/System.Windows.Forms/bitmaps/a.png \
+	Test/simple/Program.cs \
 	Test/DummyAssembly/AnotherSerializable.cs \
 	Test/DummyAssembly/Convertable.cs \
 	Test/DummyAssembly/Properties/AssemblyInfo.cs \
@@ -100,19 +102,21 @@ EXTRA_DISTFILES = \
 	$(IMAGES_RESOURCES) \
 	$(TEST_DISTFILES)
 
-TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll /r:Accessibility.dll -r:System.dll -r:System.Xml.dll -r:System.Runtime.Serialization.Formatters.Soap\
+TEST_LIB_REFS = System.Data System.Drawing Accessibility System System.Xml System.Runtime.Serialization.Formatters.Soap
+TEST_MCS_FLAGS = \
 	-resource:Test/resources/a.cur,a.cur \
 	-resource:Test/resources/32x32.ico,32x32.ico \
 	-nowarn:618,612
 
 DummyAssembly.dll:
-	$(CSCOMPILE) /target:library /out:$@ Test/DummyAssembly/AnotherSerializable.cs Test/DummyAssembly/Convertable.cs Test/DummyAssembly/Properties/AssemblyInfo.cs
+	$(CSCOMPILE) /target:library /out:$@ Test/DummyAssembly/AnotherSerializable.cs Test/DummyAssembly/Convertable.cs Test/DummyAssembly/Properties/AssemblyInfo.cs \
+	-r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll
 
 test-local: DummyAssembly.dll
 
 include ../../build/library.make
 
-TEST_HARNESS_EXCLUDES = -exclude=Interactive,NotWorking,ValueAdd,CAS,InetAccess
+TEST_HARNESS_EXCLUDES = -exclude=Interactive,NotWorking,CAS
 TEST_HARNESS_EXCLUDES_ONDOTNET = -exclude=Interactive,NotDotNet,CAS
 
 $(the_lib): $(RESOURCES)
@@ -126,3 +130,15 @@ $(PREBUILT): %.prebuilt: %
 	cp $* $@
 
 dist-default: $(PREBUILT)
+
+simple-test.exe: Test/simple/Program.cs $(topdir)/class/lib/$(PROFILE)/System.Windows.Forms.dll $(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+	$(CSCOMPILE) -out:$@ Test/simple/Program.cs -r:$(topdir)/class/lib/$(PROFILE)/System.Windows.Forms.dll -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+
+test-simple: simple-test.exe
+	$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) simple-test.exe
+
+notepad.exe: samples/notepad.cs $(topdir)/class/lib/$(PROFILE)/System.Windows.Forms.dll $(topdir)/class/lib/$(PROFILE)/System.Drawing.dll $(topdir)/class/lib/$(PROFILE)/System.dll $(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+	$(CSCOMPILE) -out:$@ samples/notepad.cs -r:$(topdir)/class/lib/$(PROFILE)/System.Windows.Forms.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Drawing.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+
+test-notepad: notepad.exe
+	$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) notepad.exe

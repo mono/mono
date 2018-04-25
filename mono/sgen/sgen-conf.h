@@ -1,23 +1,13 @@
-/*
- * sgen-conf.h: Tunable parameters and debugging switches.
+/**
+ * \file
+ * Tunable parameters and debugging switches.
  *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
  * Copyright (C) 2012 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #ifndef __MONO_SGENCONF_H__
 #define __MONO_SGENCONF_H__
@@ -46,13 +36,6 @@ typedef mword SgenDescriptor;
 #else
 #define HEAVY_STAT(x)
 #endif
-
-/*
- * Define this to allow the user to change the nursery size by
- * specifying its value in the MONO_GC_PARAMS environmental
- * variable. See mono_gc_base_init for details.
- */
-#define USER_CONFIG 1
 
 /*
  * The binary protocol enables logging a lot of the GC ativity in a way that is not very
@@ -120,6 +103,20 @@ typedef mword SgenDescriptor;
 #endif
 #endif
 #endif
+
+#if defined (HOST_WASM)
+#define DEFAULT_MAJOR SGEN_MAJOR_SERIAL
+#define DEFAULT_SWEEP_MODE SGEN_SWEEP_SERIAL
+#elif defined(HAVE_CONC_GC_AS_DEFAULT)
+/* Use concurrent major on deskstop platforms */
+#define DEFAULT_MAJOR SGEN_MAJOR_CONCURRENT
+#define DEFAULT_SWEEP_MODE SGEN_SWEEP_CONCURRENT
+#else
+#define DEFAULT_MAJOR SGEN_MAJOR_SERIAL
+#define DEFAULT_SWEEP_MODE SGEN_SWEEP_CONCURRENT
+#endif
+
+
 
 /*
  * Maximum level of debug to enable on this build.
@@ -191,12 +188,6 @@ typedef mword SgenDescriptor;
 #define SGEN_DEFAULT_ALLOWANCE_HEAP_SIZE_RATIO 0.33
 
 /*
- * How much more we allow the heap to grow, relative to the allowance, while doing
- * a concurrent collection, before forcing its finish.
- */
-#define SGEN_DEFAULT_CONCURRENT_HEAP_ALLOWANCE_RATIO 0.25
-
-/*
  * Default ratio of memory we want to release in a major collection in relation to the the current heap size.
  *
  * A major collection target is to free a given amount of memory. This amount is a ratio of the major heap size.
@@ -226,5 +217,29 @@ typedef mword SgenDescriptor;
 #define SGEN_CEMENT_HASH_SIZE	(1 << SGEN_CEMENT_HASH_SHIFT)
 #define SGEN_CEMENT_HASH(hv)	(((hv) ^ ((hv) >> SGEN_CEMENT_HASH_SHIFT)) & (SGEN_CEMENT_HASH_SIZE - 1))
 #define SGEN_CEMENT_THRESHOLD	1000
+
+/*
+ * Default values for the nursery size
+ */
+#define SGEN_DEFAULT_NURSERY_MIN_SIZE	(1 << 19)
+#define SGEN_DEFAULT_NURSERY_SIZE	(1 << 22)
+#define SGEN_DEFAULT_NURSERY_MAX_SIZE	(1 << 25)
+
+/*
+ * We are trying to keep pauses lower than this (ms). We use it for dynamic nursery
+ * sizing heuristics. We are keeping leeway in order to be prepared for work-load
+ * variations.
+ */
+#define SGEN_DEFAULT_MAX_PAUSE_TIME 30
+#define SGEN_DEFAULT_MAX_PAUSE_MARGIN 0.66f
+
+
+#define SGEN_PAUSE_MODE_MAX_PAUSE_MARGIN 0.5f
+
+/*
+ * In practice, for nurseries smaller than this, the parallel minor tends to be
+ * ineffective, even leading to regressions. Avoid using it for smaller nurseries.
+ */
+#define SGEN_PARALLEL_MINOR_MIN_NURSERY_SIZE (1 << 24)
 
 #endif

@@ -40,119 +40,17 @@ using System.Text;
 
 namespace System.Reflection.Emit
 {
-	internal enum TypeKind : int {
-		SZARRAY = 0x1d,
-		ARRAY = 0x14
-	}
-
 	[StructLayout (LayoutKind.Sequential)]
-	internal abstract class DerivedType : Type
+	abstract partial class SymbolType
 	{
-		internal Type elementType;
+		internal Type m_baseType;
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern void create_unmanaged_type (Type type);
-
-		internal DerivedType (Type elementType)
+		internal SymbolType (Type elementType)
 		{
-			this.elementType = elementType;
+			this.m_baseType = elementType;
 		}
 
 		internal abstract String FormatName (string elementName);
-
-		public override Type GetInterface (string name, bool ignoreCase)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override Type[] GetInterfaces ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override Type GetElementType ()
-		{
-			return elementType;
-		}
-
-		public override EventInfo GetEvent (string name, BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override EventInfo[] GetEvents (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override FieldInfo GetField( string name, BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override FieldInfo[] GetFields (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override MemberInfo[] GetMembers (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr, Binder binder,
-		                                             CallingConventions callConvention, Type[] types,
-		                                             ParameterModifier[] modifiers)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override MethodInfo[] GetMethods (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override Type GetNestedType (string name, BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override Type[] GetNestedTypes (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override PropertyInfo[] GetProperties (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr, Binder binder,
-		                                                 Type returnType, Type[] types, ParameterModifier[] modifiers)
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr,
-								       Binder binder,
-								       CallingConventions callConvention,
-								       Type[] types,
-								       ParameterModifier[] modifiers)
-		{
-			throw new NotSupportedException ();
-		}
-
-
-		protected override TypeAttributes GetAttributeFlagsImpl ()
-		{
-			/*LAMEIMPL MS just return the elementType.Attributes*/
-			return elementType.Attributes; 
-		}
-
-		protected override bool HasElementTypeImpl ()
-		{
-			return true;
-		}
 
 		protected override bool IsArrayImpl ()
 		{
@@ -164,58 +62,9 @@ namespace System.Reflection.Emit
 			return false;
 		}
 
-		protected override bool IsCOMObjectImpl ()
-		{
-			return false;
-		}
-
 		protected override bool IsPointerImpl ()
 		{
 			return false;
-		}
-
-		protected override bool IsPrimitiveImpl ()
-		{
-			return false;
-		}
-
-
-		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override object InvokeMember (string name, BindingFlags invokeAttr,
-						     Binder binder, object target, object[] args,
-						     ParameterModifier[] modifiers,
-						     CultureInfo culture, string[] namedParameters)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override InterfaceMapping GetInterfaceMap (Type interfaceType)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override bool IsInstanceOfType (object o)
-		{
-			return false;
-		}
-
-		public override bool IsAssignableFrom (Type c)
-		{
-			return false;
-		}
-
-		public override bool ContainsGenericParameters {
-			get { return elementType.ContainsGenericParameters; }
-		}
-
-		//FIXME this should be handled by System.Type
-		public override Type MakeGenericType (params Type[] typeArguments)
-		{
-			throw new NotSupportedException ();
 		}
 
 		public override Type MakeArrayType ()
@@ -242,91 +91,51 @@ namespace System.Reflection.Emit
 
 		public override string ToString ()
 		{
-			return FormatName (elementType.ToString ());
-		}
-
-		public override GenericParameterAttributes GenericParameterAttributes {
-			get { throw new NotSupportedException (); }
-		}
-
-		public override StructLayoutAttribute StructLayoutAttribute {
-			get { throw new NotSupportedException (); }
-		}
-
-		public override Assembly Assembly {
-			get { return elementType.Assembly; }
+			return FormatName (m_baseType.ToString ());
 		}
 
 		public override string AssemblyQualifiedName {
 			get {
-				string fullName = FormatName (elementType.FullName);
+				string fullName = FormatName (m_baseType.FullName);
 				if (fullName == null)
 					return null;
-				return fullName + ", " + elementType.Assembly.FullName;
+				return fullName + ", " + m_baseType.Assembly.FullName;
 			}
 		}
 
 
 		public override string FullName {
 			get {
-				return FormatName (elementType.FullName);
+				return FormatName (m_baseType.FullName);
 			}
 		}
 
 		public override string Name {
 			get {
-				return FormatName (elementType.Name);
+				return FormatName (m_baseType.Name);
 			}
 		}
-
-		public override Guid GUID {
-			get { throw new NotSupportedException (); }
-		}
-
-		public override Module Module {
-			get { return elementType.Module; }
-		}
 	
-		public override string Namespace {
-			get { return elementType.Namespace; }
-		}
-
-		public override RuntimeTypeHandle TypeHandle {
-			get { throw new NotSupportedException (); }
-		}
-
 		public override Type UnderlyingSystemType {
 			get {
-				create_unmanaged_type (this);
 				return this;
 			}
 		}
 
-		//MemberInfo
-		public override bool IsDefined (Type attributeType, bool inherit)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override object [] GetCustomAttributes (bool inherit)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
-		{
-			throw new NotSupportedException ();
-		}
-
 		internal override bool IsUserType {
 			get {
-				return elementType.IsUserType;
+				return m_baseType.IsUserType;
 			}
+		}
+
+		// Called from the runtime to return the corresponding finished Type object
+		internal override Type RuntimeResolve () {
+			return InternalResolve ();
 		}
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-	internal class ArrayType : DerivedType
+	internal class ArrayType : SymbolType
 	{
 		int rank;
 
@@ -342,9 +151,17 @@ namespace System.Reflection.Emit
 
 		internal override Type InternalResolve ()
 		{
-			Type et = elementType.InternalResolve (); 
+			Type et = m_baseType.InternalResolve ();
 			if (rank == 0)
-				return et.MakeArrayType ();			
+				return et.MakeArrayType ();
+			return et.MakeArrayType (rank);
+		}
+
+		internal override Type RuntimeResolve ()
+		{
+			Type et = m_baseType.RuntimeResolve ();
+			if (rank == 0)
+				return et.MakeArrayType ();
 			return et.MakeArrayType (rank);
 		}
 
@@ -356,15 +173,6 @@ namespace System.Reflection.Emit
 		public override int GetArrayRank ()
 		{
 			return (rank == 0) ? 1 : rank;
-		}
-
-		public override Type BaseType {
-			get { return typeof (System.Array); }
-		}
-
-		protected override TypeAttributes GetAttributeFlagsImpl ()
-		{
-			return elementType.Attributes;
 		}
 
 		internal override String FormatName (string elementName)
@@ -383,7 +191,7 @@ namespace System.Reflection.Emit
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-	internal class ByRefType : DerivedType
+	internal class ByRefType : SymbolType
 	{
 		internal ByRefType (Type elementType) : base (elementType)
 		{
@@ -391,16 +199,12 @@ namespace System.Reflection.Emit
 
 		internal override Type InternalResolve ()
 		{
-			return elementType.InternalResolve ().MakeByRefType (); 
+			return m_baseType.InternalResolve ().MakeByRefType (); 
 		}
 
 		protected override bool IsByRefImpl ()
 		{
 			return true;
-		}
-
-		public override Type BaseType {
-			get { return typeof (Array); }
 		}
 
 		internal override String FormatName (string elementName)
@@ -432,7 +236,7 @@ namespace System.Reflection.Emit
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-	internal class PointerType : DerivedType
+	internal class PointerType : SymbolType
 	{
 		internal PointerType (Type elementType) : base (elementType)
 		{
@@ -440,16 +244,12 @@ namespace System.Reflection.Emit
 
 		internal override Type InternalResolve ()
 		{
-			return elementType.InternalResolve ().MakePointerType (); 
+			return m_baseType.InternalResolve ().MakePointerType (); 
 		}
 
 		protected override bool IsPointerImpl ()
 		{
 			return true;
-		}
-
-		public override Type BaseType {
-			get { return typeof(Array); }
 		}
 
 		internal override String FormatName (string elementName)

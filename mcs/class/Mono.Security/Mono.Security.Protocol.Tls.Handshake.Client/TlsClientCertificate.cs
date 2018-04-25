@@ -72,7 +72,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		private void GetClientCertificate ()
 		{
-#warning "Client certificate selection is unfinished"
+// TODO: Client certificate selection is unfinished
 			ClientContext context = (ClientContext)this.Context;
 
 			// note: the server may ask for mutual authentication 
@@ -131,15 +131,17 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		private X509Certificate FindParentCertificate (X509Certificate cert)
 		{
+			#pragma warning disable 618
 			// This certificate is the root certificate
 			if (cert.GetName () == cert.GetIssuerName ())
 				return null;
 
 			foreach (X509Certificate certificate in this.Context.ClientSettings.Certificates) {
-				if (cert.GetName () == cert.GetIssuerName ())
+				if (certificate.GetName () == cert.GetIssuerName ())
 					return certificate;
 			}
 			return null;
+			#pragma warning restore 618
 		}
 
 		#endregion

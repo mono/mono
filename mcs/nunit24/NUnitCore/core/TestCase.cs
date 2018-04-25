@@ -49,6 +49,13 @@ namespace NUnit.Core
 				TestCaseResult testResult = MakeTestCaseResult();
 
 				listener.TestStarted( this.TestName );
+
+				// The babysitter's enter/leave "listeners" specifically exist to track crashes,
+				// so unfortunately they can't work through the (asynchronous) listener interface.
+				bool willRun = this.RunState == RunState.Runnable || this.RunState == RunState.Explicit;
+				if (willRun)
+					BabysitterSupport.RecordEnterTest(this.TestName.FullName);
+
 				long startTime = DateTime.Now.Ticks;
 
 				switch (this.RunState)
@@ -68,6 +75,10 @@ namespace NUnit.Core
 				}
 
 				long stopTime = DateTime.Now.Ticks;
+
+				if (willRun)
+					BabysitterSupport.RecordLeaveTest(this.TestName.FullName);
+
 				double time = ((double)(stopTime - startTime)) / (double)TimeSpan.TicksPerSecond;
 				testResult.Time = time;
 

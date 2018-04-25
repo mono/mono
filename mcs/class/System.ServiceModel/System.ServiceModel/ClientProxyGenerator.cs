@@ -79,7 +79,7 @@ namespace System.ServiceModel
 
 			string modname = "dummy";
 			Type crtype =
-#if !NET_2_1
+#if !MOBILE
 				duplex ? typeof (DuplexClientRuntimeChannel) :
 #endif
 				typeof (ClientRuntimeChannel);
@@ -131,7 +131,7 @@ namespace System.ServiceModel
 			BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 			foreach (OperationDescription od in cd.Operations) {
 				// FIXME: handle properties and events.
-#if !NET_2_1
+#if !MOBILE
 				if (od.SyncMethod != null)
 					GenerateMethodImpl (c, crtype.GetMethod ("Process", bf), od.Name, od.SyncMethod);
 #endif

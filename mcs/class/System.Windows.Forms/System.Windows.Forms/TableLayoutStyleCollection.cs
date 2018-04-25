@@ -34,14 +34,13 @@ namespace System.Windows.Forms {
 	public abstract class TableLayoutStyleCollection : IList, ICollection, IEnumerable
 	{
 		ArrayList al = new ArrayList ();
-		TableLayoutPanel table;
+		IArrangedContainer table;
+		string property_name;
 		
-		internal TableLayoutStyleCollection (TableLayoutPanel table)
+		internal TableLayoutStyleCollection (IArrangedContainer table, string propertyName)
 		{
-			if (table == null)
-				throw new ArgumentNullException("table");
-			
 			this.table = table;
+			this.property_name = propertyName;
 		}
 		
 		public int Add (TableLayoutStyle style)
@@ -54,7 +53,8 @@ namespace System.Windows.Forms {
 			foreach (TableLayoutStyle style in al)
 				style.Owner = null;
 			al.Clear ();
-			table.PerformLayout ();
+			if (table != null)
+				table.PerformLayout (table, this.property_name);
 		}
 		
 		public int Count {
@@ -65,7 +65,8 @@ namespace System.Windows.Forms {
 		{
 			((TableLayoutStyle)al[index]).Owner = null;
 			al.RemoveAt (index);
-			table.PerformLayout ();
+			if (table != null)
+				table.PerformLayout (table, this.property_name);
 		}
 		
 #region IList methods
@@ -82,7 +83,7 @@ namespace System.Windows.Forms {
 			int result = al.Add (layoutStyle);
 
 			if (table != null)
-				table.PerformLayout ();
+				table.PerformLayout (table, this.property_name);
 
 			return result;
 		}
@@ -103,14 +104,16 @@ namespace System.Windows.Forms {
 				throw new ArgumentException ("Style is already owned");
 			((TableLayoutStyle)style).Owner = table;
 			al.Insert (index, (TableLayoutStyle) style);
-			table.PerformLayout ();
+			if (table != null)
+				table.PerformLayout (table, this.property_name);
 		}
 
 		void IList.Remove (object style)
 		{
 			((TableLayoutStyle)style).Owner = null;
 			al.Remove ((TableLayoutStyle) style);
-			table.PerformLayout ();
+			if (table != null)
+				table.PerformLayout (table, this.property_name);
 		}
 
 		bool IList.IsFixedSize {
@@ -134,7 +137,8 @@ namespace System.Windows.Forms {
 					throw new ArgumentException ("Style is already owned");
 				((TableLayoutStyle)value).Owner = table;
 				al [index] = value;
-				table.PerformLayout ();
+				if (table != null)
+					table.PerformLayout (table, this.property_name);
 			}
 		}
 #endregion
@@ -173,6 +177,5 @@ namespace System.Windows.Forms {
 				((IList)this)[index] = value;
 			}
 		}
-	}
-		
+	}		
 }

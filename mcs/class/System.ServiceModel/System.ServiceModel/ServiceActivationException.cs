@@ -34,9 +34,9 @@ namespace System.ServiceModel {
 	public class ServiceActivationException : CommunicationException
 	{
 		public ServiceActivationException () : base () {}
-		public ServiceActivationException (string msg) : base (msg) {}
-		public ServiceActivationException (string msg, Exception inner)
-			: base (msg, inner) {}		
+		public ServiceActivationException (string message) : base (message) {}
+		public ServiceActivationException (string message, Exception innerException)
+			: base (message, innerException) {}		
 		protected ServiceActivationException (SerializationInfo info,
 					       StreamingContext context)
 			: base (info, context) {}

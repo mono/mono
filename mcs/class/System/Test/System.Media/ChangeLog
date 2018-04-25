@@ -1,4 +1,0 @@
-2007-11-07  Gert Driesen  <drieseng@users.sourceforge.net>
-
-	* SoundPlayerTest.cs: Added trivial ctor tests. Added test for
-	Stream property.

@@ -114,11 +114,11 @@ namespace System.ServiceModel.Configuration
 
 		protected abstract void OnApplyConfiguration (ServiceEndpoint endpoint, ChannelEndpointElement channelEndpointElement);
 
-		protected abstract void OnApplyConfiguration (ServiceEndpoint endpoint, ServiceEndpointElement channelEndpointElement);
+		protected abstract void OnApplyConfiguration (ServiceEndpoint endpoint, ServiceEndpointElement serviceEndpointElement);
 
 		protected abstract void OnInitializeAndValidate (ChannelEndpointElement channelEndpointElement);
 
-		protected abstract void OnInitializeAndValidate (ServiceEndpointElement channelEndpointElement);
+		protected abstract void OnInitializeAndValidate (ServiceEndpointElement serviceEndpointElement);
 
 		protected override void Reset (ConfigurationElement parentElement)
 		{

@@ -24,6 +24,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,16 +67,24 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				var client = new Service1Client (binding, remoteAddress);
 
 				var wait = new ManualResetEvent (false);
+
+				Exception error = null;
+				object result = null;
+
 				client.GetDataCompleted += delegate (object o, GetDataCompletedEventArgs e) {
-					if (e.Error != null)
-						throw e.Error;
-					Assert.AreEqual ("A", ((DataType1) e.Result).Id, "#1");
-					wait.Set ();
+					try {
+						error = e.Error;
+						result = e.Error == null ? e.Result : null;
+					} finally {
+						wait.Set ();
+					}
 				};
 
 				client.GetDataAsync ();
-				if (!wait.WaitOne (TimeSpan.FromSeconds (20)))
-					Assert.Fail ("timeout");
+
+				Assert.IsTrue (wait.WaitOne (TimeSpan.FromSeconds (20)), "timeout");
+				Assert.IsNull (error, "#1, inner exception: {0}", error);
+				Assert.AreEqual ("A", ((DataType1) result).Id, "#2");
 			} finally {
 				serviceHost.Close ();
 			}
@@ -380,3 +389,4 @@ namespace WebServiceMoonlightTest.ServiceReference1 {
 */
     }
 }
+#endif

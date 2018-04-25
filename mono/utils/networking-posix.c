@@ -1,5 +1,6 @@
-/*
- * networking-posix.c: Modern posix networking code
+/**
+ * \file
+ * Modern posix networking code
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -7,7 +8,7 @@
  * (C) 2015 Xamarin
  */
 
-#include <mono/utils/networking.h>
+#include <config.h>
 #include <glib.h>
 
 #ifdef HAVE_NETDB_H
@@ -15,6 +16,9 @@
 #endif
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
+#endif
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
 #endif
 #ifdef HAVE_NET_IF_H
 #include <net/if.h>
@@ -26,14 +30,19 @@
 #include <ifaddrs.h>
 #endif
 
+#include <mono/utils/networking.h>
+#include <mono/utils/mono-threads-coop.h>
+
 static void*
 get_address_from_sockaddr (struct sockaddr *sa)
 {
 	switch (sa->sa_family) {
 	case AF_INET:
 		return &((struct sockaddr_in*)sa)->sin_addr;
+#ifdef HAVE_STRUCT_SOCKADDR_IN6
 	case AF_INET6:
 		return &((struct sockaddr_in6*)sa)->sin6_addr;
+#endif
 	}
 	return NULL;
 }
@@ -47,6 +56,7 @@ mono_get_address_info (const char *hostname, int port, int flags, MonoAddressInf
 	struct addrinfo hints, *res = NULL, *info;
 	MonoAddressEntry *cur = NULL, *prev = NULL;
 	MonoAddressInfo *addr_info;
+	int ret;
 
 	memset (&hints, 0, sizeof (struct addrinfo));
 	*result = NULL;
@@ -68,7 +78,12 @@ mono_get_address_info (const char *hostname, int port, int flags, MonoAddressInf
 		hints.ai_flags = AI_ADDRCONFIG;
 #endif
 	sprintf (service_name, "%d", port);
-    if (getaddrinfo (hostname, service_name, &hints, &info))
+
+	MONO_ENTER_GC_SAFE;
+	ret = getaddrinfo (hostname, service_name, &hints, &info);
+	MONO_EXIT_GC_SAFE;
+
+	if (ret)
 		return 1; /* FIXME propagate the error */
 
 	res = info;
@@ -82,9 +97,11 @@ mono_get_address_info (const char *hostname, int port, int flags, MonoAddressInf
 		if (cur->family == PF_INET) {
 			cur->address_len = sizeof (struct in_addr);
 			cur->address.v4 = ((struct sockaddr_in*)res->ai_addr)->sin_addr;
+#ifdef HAVE_STRUCT_SOCKADDR_IN6			
 		} else if (cur->family == PF_INET6) {
 			cur->address_len = sizeof (struct in6_addr);
 			cur->address.v6 = ((struct sockaddr_in6*)res->ai_addr)->sin6_addr;
+#endif
 		} else {
 			g_warning ("Cannot handle address family %d", cur->family);
 			res = res->ai_next;
@@ -182,7 +199,7 @@ mono_get_local_interfaces (int family, int *interface_count)
 
 	memset (&ifc, 0, sizeof (ifc));
 	ifc.ifc_len = IFCONF_BUFF_SIZE;
-	ifc.ifc_buf = g_malloc (IFCONF_BUFF_SIZE); /* We can't have such huge buffers on the stack. */
+	ifc.ifc_buf = (char *)g_malloc (IFCONF_BUFF_SIZE); /* We can't have such huge buffers on the stack. */
 	if (ioctl (fd, SIOCGIFCONF, &ifc) < 0)
 		goto done;
 
@@ -219,7 +236,8 @@ mono_get_local_interfaces (int family, int *interface_count)
 		++if_count;
 	}
 
-	result_ptr = result = g_malloc (if_count * mono_address_size_for_family (family));
+	result = (char *)g_malloc (if_count * mono_address_size_for_family (family));
+	result_ptr = (char *)result;
 	FOREACH_IFR (ifr, ifc) {
 		if (ifr->ifr_name [0] == '\0')
 			continue;

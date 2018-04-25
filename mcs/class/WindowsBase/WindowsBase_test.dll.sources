@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 System.Collections.ObjectModel/ObservableCollectionTest.cs
 System.Collections.ObjectModel/ReadOnlyObservableCollectionTest.cs
 System.Collections.Specialized/NotifyCollectionChangedEventArgsTest.cs
@@ -24,15 +25,20 @@ System.Windows/DependencyObjectTypeTest.cs
 System.Windows/DependencyPropertyTest.cs
 System.Windows/Int32RectTest.cs
 System.Windows/Int32RectConverterTest.cs
+System.Windows/Int32RectValueSerializerTest.cs
 System.Windows/PointTest.cs
 System.Windows/PointConverterTest.cs
+System.Windows/PointValueSerializerTest.cs
 System.Windows/PropertyMetadataTest.cs
 System.Windows/RectTest.cs
 System.Windows/RectConverterTest.cs
+System.Windows/RectValueSerializerTest.cs
 System.Windows/SizeTest.cs
 System.Windows/SizeConverterTest.cs
+System.Windows/SizeValueSerializerTest.cs
 System.Windows/VectorTest.cs
 System.Windows/VectorConverterTest.cs
+System.Windows/VectorValueSerializerTest.cs
 System.Windows.Markup/ConstructorArgumentAttributeTest.cs
 System.Windows.Markup/ContentPropertyAttributeTest.cs
 System.Windows.Markup/ContentWrapperAttributeTest.cs
@@ -41,5 +47,7 @@ System.Windows.Markup/DependsOnAttributeTest.cs
 System.Windows.Markup/MarkupExtensionReturnTypeAttributeTest.cs
 System.Windows.Markup/ValueSerializerTest.cs
 System.Windows.Media/MatrixTest.cs
+System.Windows.Media/MatrixConverterTest.cs
+System.Windows.Media/MatrixValueSerializerTest.cs
 System.Windows.Threading/DispatcherTest.cs
 System.Windows.Threading/DispatcherTimerTest.cs

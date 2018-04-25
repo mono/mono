@@ -464,6 +464,8 @@ namespace Microsoft.Build.BuildEngine {
 			List<string> args = new List<string> ();
 			int parens = 0;
 			bool backticks = false;
+			bool inDoubleQuotes = false;
+			bool inSingleQuotes = false;
 			int start = pos;
 			for (; pos < text.Length; ++pos) {
 				var ch = text [pos];
@@ -475,6 +477,16 @@ namespace Microsoft.Build.BuildEngine {
 
 				if (backticks)
 					continue;
+
+				if(ch == '\'' && !inDoubleQuotes) {
+					inSingleQuotes = !inSingleQuotes;
+					continue;
+				}
+
+				if (ch == '\"' && !inSingleQuotes) {
+					inDoubleQuotes = !inDoubleQuotes;
+					continue;
+				}
 
 				if (ch == '(') {
 					++parens;
@@ -498,7 +510,7 @@ namespace Microsoft.Build.BuildEngine {
 				if (parens != 0)
 					continue;
 
-				if (ch == ',') {
+				if (ch == ',' && !inDoubleQuotes && !inSingleQuotes) {
 					args.Add (text.Substring (start, pos - start));
 					start = pos + 1;
 					continue;

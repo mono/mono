@@ -1,11 +1,11 @@
-../../build/common/Consts.cs
 ../../build/common/SR.cs
 Assembly/AssemblyInfo.cs
 
 ReferenceSources/DiagnosticUtility.cs
 ReferenceSources/FxTrace.cs
+ReferenceSources/LocalAppContextSwitches.cs
 ReferenceSources/SR.cs
-ReferenceSources/SR_missing.cs
+ReferenceSources/SR.missing.cs
 ReferenceSources/XmlExceptionHelper.cs
 
 ReferenceSources/BitFlagsGenerator.cs
@@ -16,3 +16,7 @@ ReferenceSources/XmlDataContract_static.cs
 ReferenceSources/XmlFormatReaderGenerator_static.cs
 ReferenceSources/XmlFormatWriterGenerator_static.cs
 
+ReferenceSources/DataContractSerializerExtensions.cs
+ReferenceSources/NotImplemented.cs
+
+../../../external/corefx/src/System.Runtime.Serialization.Primitives/src/System/Runtime/Serialization/ISerializationSurrogateProvider.cs

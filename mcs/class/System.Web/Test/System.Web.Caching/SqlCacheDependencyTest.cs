@@ -30,7 +30,6 @@ using System.Web;
 using System.Web.Caching;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.Web.Caching
 {
@@ -41,7 +40,7 @@ namespace MonoTests.System.Web.Caching
 		public void Constructor_1 ()
 		{
 			SqlCacheDependency sqc;
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				sqc = new SqlCacheDependency (null);
 			}, "#A1");
 		}
@@ -51,16 +50,16 @@ namespace MonoTests.System.Web.Caching
 		{
 			SqlCacheDependency sqc;
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				sqc = new SqlCacheDependency (null, "myTable");
 			}, "#A1");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				sqc = new SqlCacheDependency ("myDatabase", null);
 			}, "#A2");
 
 			// Cannot be tested without an existing database
-			//AssertExtensions.Throws<ArgumentNullException> (() => {
+			//Assert.Throws<ArgumentNullException> (() => {
 			//	sqc = new SqlCacheDependency ("myDatabase", "myTable");
 			//}, "#A3");
 		}
@@ -70,15 +69,15 @@ namespace MonoTests.System.Web.Caching
 		{
 			CacheDependency sqc;
 
-			AssertExtensions.Throws<HttpException> (() => {
+			Assert.Throws<HttpException> (() => {
 				sqc = SqlCacheDependency.CreateOutputCacheDependency (null);
 			}, "#A1");
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				sqc = SqlCacheDependency.CreateOutputCacheDependency (String.Empty);
 			}, "#A2");
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				sqc = SqlCacheDependency.CreateOutputCacheDependency ("Database");
 			}, "#A2");
 

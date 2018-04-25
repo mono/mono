@@ -1,22 +1,22 @@
 // TODO:
-//    DispatcherObject returned by BeginInvoke must allow:
-//       * Waiting until delegate is invoked.
-//       See: BeginInvoke documentation for details
+//	DispatcherObject returned by BeginInvoke must allow:
+//	   * Waiting until delegate is invoked.
+//	   See: BeginInvoke documentation for details
 //
-//    Implement the "Invoke" methods, they are currently not working.
+//	Implement the "Invoke" methods, they are currently not working.
 //
-//    Add support for disabling the dispatcher and resuming it.
-//    Add support for Waiting for new tasks to be pushed, so that we dont busy loop.
-//    Add support for aborting an operation (emit the hook.operationaborted too) 
+//	Add support for disabling the dispatcher and resuming it.
+//	Add support for Waiting for new tasks to be pushed, so that we dont busy loop.
+//	Add support for aborting an operation (emit the hook.operationaborted too) 
 //
 // Very confusing information about Shutdown: it states that shutdown is
 // not over, until all events are unwinded, and also states that all events
 // are aborted at that point.  See 'Dispatcher.InvokeShutdown' docs,
 //
 // Testing reveals that 
-//     -> InvokeShutdown() stops processing, even if events are available,
-//        there is no "unwinding" of events, even of higher priority events,
-//        they are just ignored.
+//	 -> InvokeShutdown() stops processing, even if events are available,
+//		there is no "unwinding" of events, even of higher priority events,
+//		they are just ignored.
 //
 // The documentation for the Dispatcher family is poorly written, complete
 // sections are cut-and-pasted that add no value and the important pieces
@@ -43,9 +43,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2016 Quamotion (http://quamotion.mobi)
 //
 // Authors:
 //	Miguel de Icaza (miguel@novell.com)
+//	Frederik Carlier (frederik.carlier@quamotion.mobi)
 //
 using System;
 using System.Collections;
@@ -179,6 +181,21 @@ namespace System.Windows.Threading {
 			Queue (priority, op);
 
 			return op;
+		}
+
+		public DispatcherOperation InvokeAsync (Action callback)
+		{
+			return this.BeginInvoke(callback);
+		}
+
+		public DispatcherOperation InvokeAsync (Action callback, DispatcherPriority priority)
+		{
+			return this.BeginInvoke(callback, priority);
+		}
+
+		public DispatcherOperation InvokeAsync (Action callback, DispatcherPriority priority, CancellationToken cancellationToken)
+		{
+			return this.BeginInvoke(callback, priority);
 		}
 
 		public object Invoke (Delegate method, params object[] args)
@@ -521,32 +538,33 @@ namespace System.Windows.Threading {
 
 		public void Enqueue (object obj)
 		{
-                        if (size == array.Length)
-                                Grow ();
-                        array[tail] = obj;
-                        tail = (tail+1) % array.Length;
-                        size++;
+			if (size == array.Length)
+					Grow ();
+			array[tail] = obj;
+			tail = (tail+1) % array.Length;
+			size++;
 		}
 
 		public object Dequeue ()
-                {
-                        if (size < 1)
-                                throw new InvalidOperationException ();
-                        object result = array[head];
-                        array [head] = null;
-                        head = (head + 1) % array.Length;
-                        size--;
-                        return result;
-                }
+		{
+			if (size < 1)
+					throw new InvalidOperationException ();
+			object result = array[head];
+			array [head] = null;
+			head = (head + 1) % array.Length;
+			size--;
+			return result;
+		}
 
-		void Grow () {
-                        int newc = array.Length * 2;
-                        object[] new_contents = new object[newc];
-                        array.CopyTo (new_contents, 0);
-                        array = new_contents;
-                        head = 0;
-                        tail = head + size;
-                }
+		void Grow () 
+		{
+			int newc = array.Length * 2;
+			object[] new_contents = new object[newc];
+			array.CopyTo (new_contents, 0);
+			array = new_contents;
+			head = 0;
+			tail = head + size;
+		}
 
 		public int Count {
 			get {

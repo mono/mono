@@ -34,6 +34,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Security.Claims;
+using Microsoft.Win32.SafeHandles;
 
 namespace System.Security.Principal {
 
@@ -182,6 +183,18 @@ namespace System.Security.Principal {
 			return new WindowsImpersonationContext (userToken);
 		}
 
+		[SecuritySafeCritical]
+		public static void RunImpersonated (SafeAccessTokenHandle safeAccessTokenHandle, Action action)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[SecuritySafeCritical]
+		public static T RunImpersonated<T> (SafeAccessTokenHandle safeAccessTokenHandle, Func<T> func)
+		{
+			throw new NotImplementedException ();
+		}
+
 		// properties
 		sealed override
 		public string AuthenticationType {
@@ -310,6 +323,10 @@ namespace System.Security.Principal {
 				if (_type == null)
 					_type = "NTLM";
 			}
+		}
+
+		public SafeAccessTokenHandle AccessToken {
+			get { throw new NotImplementedException (); }
 		}
 
 		// see mono/mono/metadata/security.c for implementation

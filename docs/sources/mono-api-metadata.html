@@ -617,7 +617,6 @@ MONO_TYPESPEC_SIZE
 
 <h4><a name="api:mono_image_get_table_info">mono_image_get_table_info</a></h4>
 <h4><a name="api:mono_image_get_table_rows">mono_image_get_table_rows</a></h4>
-<h4><a name="api:mono_metadata_get_table">mono_metadata_get_table</a></h4>
 <h4><a name="api:mono_metadata_decode_row_col">mono_metadata_decode_row_col</a></h4>
 <h4><a name="api:mono_metadata_decode_row">mono_metadata_decode_row</a></h4>
 <h4><a name="api:mono_metadata_compute_size">mono_metadata_compute_size</a></h4>
@@ -631,9 +630,10 @@ MONO_TYPESPEC_SIZE
 	<p>This is the low-level API for accessing the metadata
 	images.
 	
-<h4><a name="api:mono_cli_rva_image_map">mono_cli_rva_image_map</a></h4>
 <h4><a name="api:mono_pe_file_open">mono_pe_file_open</a></h4> 
 <h4><a name="api:mono_metadata_events_from_typedef">mono_metadata_events_from_typedef</a></h4>
+<h4><a name="api:mono_metadata_decode_table_row">mono_metadata_decode_table_row</a></h4>
+<h4><a name="api:mono_metadata_decode_table_row_col">mono_metadata_decode_table_row_col</a></h4>
 <h4><a name="api:mono_metadata_field_info">mono_metadata_field_info</a></h4>
 <h4><a name="api:mono_metadata_free_array">mono_metadata_free_array</a></h4>
 <h4><a name="api:mono_metadata_free_marshal_spec">mono_metadata_free_marshal_spec</a></h4>
@@ -652,6 +652,7 @@ MONO_TYPESPEC_SIZE
 <h4><a name="api:mono_metadata_packing_from_typedef">mono_metadata_packing_from_typedef</a></h4>
 <h4><a name="api:mono_metadata_properties_from_typedef">mono_metadata_properties_from_typedef</a></h4>
 <h4><a name="api:mono_metadata_token_from_dor">mono_metadata_token_from_dor</a></h4>
+<h4><a name="api:mono_metadata_translate_token_index">mono_metadata_translate_token_index</a></h4>
 <h4><a name="api:mono_metadata_typedef_from_field">mono_metadata_typedef_from_field</a></h4>
 <h4><a name="api:mono_metadata_typedef_from_method">mono_metadata_typedef_from_method</a></h4>
 <h4><a name="api:mono_metadata_type_equal">mono_metadata_type_equal</a></h4>
@@ -661,24 +662,20 @@ MONO_TYPESPEC_SIZE
 
 <h3>Retrieving Objects from Tokens</h3>
 
+<h4><a name="api:mono_metadata_parse_array">mono_metadata_parse_array</a></h4>
 <h4><a name="api:mono_metadata_parse_custom_mod">mono_metadata_parse_custom_mod</a></h4>
 <h4><a name="api:mono_metadata_parse_field_type">mono_metadata_parse_field_type</a></h4>
 <h4><a name="api:mono_metadata_parse_marshal_spec">mono_metadata_parse_marshal_spec</a></h4>
-<h4><a name="api:mono_metadata_parse_method_signature_full">mono_metadata_parse_method_signature_full</a></h4>
 <h4><a name="api:mono_metadata_parse_method_signature">mono_metadata_parse_method_signature</a></h4>
-<h4><a name="api:mono_metadata_parse_mh_full">mono_metadata_parse_mh_full</a></h4>
 <h4><a name="api:mono_metadata_parse_mh">mono_metadata_parse_mh</a></h4>
 <h4><a name="api:mono_metadata_parse_param">mono_metadata_parse_param</a></h4>
 <h4><a name="api:mono_metadata_parse_signature">mono_metadata_parse_signature</a></h4>
 <h4><a name="api:mono_metadata_parse_typedef_or_ref">mono_metadata_parse_typedef_or_ref</a></h4>
-<h4><a name="api:mono_metadata_parse_type_full">mono_metadata_parse_type_full</a></h4>
 <h4><a name="api:mono_metadata_parse_type">mono_metadata_parse_type</a></h4>
 
 <h2>Generics Support</h2>
 
 <h4><a name="api:mono_metadata_generic_class_is_valuetype">mono_metadata_generic_class_is_valuetype</a></h4> 
-<h4><a name="api:mono_metadata_inflate_generic_inst">mono_metadata_inflate_generic_inst</a></h4> 
-<h4><a name="api:mono_metadata_load_generic_params">mono_metadata_load_generic_params</a></h4>
 
 <h2>Tokens</h2>
 

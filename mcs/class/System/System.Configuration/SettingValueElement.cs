@@ -40,7 +40,12 @@ namespace System.Configuration
 #endif
 	{
 #if XML_DEP
-		XmlNode node, original;
+		XmlNode node;
+
+#if (CONFIGURATION_DEP)
+		XmlNode original;
+#endif
+
 #endif
 
 		[MonoTODO]

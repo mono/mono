@@ -41,6 +41,8 @@ using System.Security;
 using System.Text;
 using System.Security.AccessControl;
 
+using Microsoft.Win32.SafeHandles;
+
 namespace System.IO {
 	
 	[Serializable]
@@ -62,7 +64,7 @@ namespace System.IO {
 
 			FullPath = Path.GetFullPath (path);
 			if (simpleOriginalPath)
-				OriginalPath = Path.GetFileName (path);
+				OriginalPath = Path.GetFileName (FullPath);
 			else
 				OriginalPath = path;
 
@@ -102,12 +104,13 @@ namespace System.IO {
 
 		public override bool Exists {
 			get {
-				Refresh (false);
+				if (_dataInitialised == -1)
+					Refresh ();
 
-				if (stat.Attributes == MonoIO.InvalidFileAttributes)
+				if (_data.fileAttributes == MonoIO.InvalidFileAttributes)
 					return false;
 
-				if ((stat.Attributes & FileAttributes.Directory) == 0)
+				if ((_data.fileAttributes & FileAttributes.Directory) == 0)
 					return false;
 
 				return true;
@@ -423,41 +426,73 @@ namespace System.IO {
 			return EnumerateFileSystemInfos (FullPath, searchPattern, searchOption);
 		}
 
-		static internal IEnumerable<FileSystemInfo> EnumerateFileSystemInfos (string full, string searchPattern, SearchOption searchOption)
+		static internal IEnumerable<FileSystemInfo> EnumerateFileSystemInfos (string basePath, string searchPattern, SearchOption searchOption)
 		{
-			string path_with_pattern = Path.Combine (full, searchPattern);
-			IntPtr handle;
-			MonoIOError error;
-			FileAttributes rattr;
-			bool subdirs = searchOption == SearchOption.AllDirectories;
+			Path.Validate (basePath);
 
-			Path.Validate (full);
-			
-			string s = MonoIO.FindFirst (full, path_with_pattern, out rattr, out error, out handle);
-			if (s == null)
-				yield break;
-			if (error != 0)
-				throw MonoIO.GetException (Path.GetDirectoryName (path_with_pattern), (MonoIOError) error);
+			SafeFindHandle findHandle = null;
 
 			try {
+				string filePath;
+				int nativeAttrs;
+
+				string basePathWithPattern = Path.Combine (basePath, searchPattern);
+
+				int nativeError;
+				try {} finally {
+					findHandle = new SafeFindHandle (MonoIO.FindFirstFile (basePathWithPattern, out filePath, out nativeAttrs, out nativeError));
+				}
+
+				if (findHandle.IsInvalid) {
+					MonoIOError error = (MonoIOError) nativeError;
+					if (error != MonoIOError.ERROR_FILE_NOT_FOUND)
+						throw MonoIO.GetException (Path.GetDirectoryName (basePathWithPattern), error);
+
+					yield break;
+				}
+
 				do {
-					if (((rattr & FileAttributes.ReparsePoint) == 0)){
-						if ((rattr & FileAttributes.Directory) != 0)
-							yield return new DirectoryInfo (s);
+					if (filePath == null)
+						yield break;
+
+					if (filePath == "." || filePath == "..")
+						continue;
+
+					FileAttributes attrs = (FileAttributes) nativeAttrs;
+
+					string fullPath = Path.Combine (basePath, filePath);
+
+					if ((attrs & FileAttributes.ReparsePoint) == 0) {
+						if ((attrs & FileAttributes.Directory) != 0)
+							yield return new DirectoryInfo (fullPath);
 						else
-							yield return new FileInfo (s);
+							yield return new FileInfo (fullPath);
 					}
 
-					if (((rattr & FileAttributes.Directory) != 0) && subdirs)
-						foreach (FileSystemInfo child in EnumerateFileSystemInfos (s, searchPattern, searchOption))
+					if ((attrs & FileAttributes.Directory) != 0 && searchOption == SearchOption.AllDirectories) {
+						foreach (FileSystemInfo child in EnumerateFileSystemInfos (fullPath, searchPattern, searchOption))
 							yield return child;
-
-				} while ((s = MonoIO.FindNext (handle, out rattr, out error)) != null);
+					}
+				} while (MonoIO.FindNextFile (findHandle.DangerousGetHandle (), out filePath, out nativeAttrs, out int _));
 			} finally {
-				MonoIO.FindClose (handle);
+				if (findHandle != null)
+					findHandle.Dispose ();
 			}
 		}
 		
-		
+		internal void CheckPath (string path)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.");
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Illegal characters in path.");
+			if (Environment.IsRunningOnWindows) {
+				int idx = path.IndexOf (':');
+				if (idx >= 0 && idx != 1)
+					throw new ArgumentException ("path");
+			}
+		}
 	}
 }

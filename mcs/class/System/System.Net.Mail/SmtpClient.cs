@@ -32,19 +32,11 @@
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 
 #if MONO_SECURITY_ALIAS
 using MSI = MonoSecurity::Mono.Security.Interface;
 #else
 using MSI = Mono.Security.Interface;
-#endif
-#if MONO_X509_ALIAS
-using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#else
-using X509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
 using System.Security.Cryptography.X509Certificates;
 #endif
@@ -79,6 +71,7 @@ namespace System.Net.Mail {
 		ICredentialsByHost credentials;
 		string pickupDirectoryLocation;
 		SmtpDeliveryMethod deliveryMethod;
+		SmtpDeliveryFormat deliveryFormat;
 		bool enableSsl;
 #if SECURITY_DEP		
 		X509CertificateCollection clientCertificates;
@@ -231,7 +224,15 @@ namespace System.Net.Mail {
 				port = value;
 			}
 		}
-
+		
+		public SmtpDeliveryFormat DeliveryFormat {
+			get { return deliveryFormat; }
+			set {
+				CheckState ();
+				deliveryFormat = value;
+			}
+		}
+		
 		[MonoTODO]
 		public ServicePoint ServicePoint {
 			get { throw new NotImplementedException (); }
@@ -285,7 +286,7 @@ namespace System.Net.Mail {
 		private static string EncodeAddress(MailAddress address)
 		{
 			if (!String.IsNullOrEmpty (address.DisplayName)) {
-				string encodedDisplayName = ContentType.EncodeSubjectRFC2047 (address.DisplayName, Encoding.UTF8);
+				string encodedDisplayName = MailMessage.EncodeSubjectRFC2047 (address.DisplayName, Encoding.UTF8);
 				return "\"" + encodedDisplayName + "\" <" + address.Address + ">";
 			}
 			return address.ToString ();
@@ -307,7 +308,7 @@ namespace System.Net.Mail {
 
 		private string EncodeSubjectRFC2047 (MailMessage message)
 		{
-			return ContentType.EncodeSubjectRFC2047 (message.Subject, message.SubjectEncoding);
+			return MailMessage.EncodeSubjectRFC2047 (message.Subject, message.SubjectEncoding);
 		}
 
 		private string EncodeBody (MailMessage message)
@@ -592,8 +593,16 @@ namespace System.Net.Mail {
 			// FIXME: parse the list of extensions so we don't bother wasting
 			// our time trying commands if they aren't supported.
 			
-			// Get the FQDN of the local machine
-			string fqdn = Dns.GetHostEntry (Dns.GetHostName ()).HostName;
+			// get the host name (not fully qualified)
+			string fqdn = Dns.GetHostName ();
+			try {
+				// we'll try for the fully qualified name - ref: bug #33551
+				fqdn = Dns.GetHostEntry (fqdn).HostName;
+			}
+			catch (SocketException) {
+				// we could not resolve our name but will continue with the partial name
+				// IOW we won't fail to send email because of this - ref: bug #37246
+			}
 			status = SendCommand ("EHLO " + fqdn);
 			
 			if (IsError (status)) {
@@ -710,7 +719,7 @@ namespace System.Net.Mail {
 				SendHeader ("Reply-To", EncodeAddresses (message.ReplyToList));
 
 			foreach (string s in message.Headers.AllKeys)
-				SendHeader (s, ContentType.EncodeSubjectRFC2047 (message.Headers [s], message.HeadersEncoding));
+				SendHeader (s, MailMessage.EncodeSubjectRFC2047 (message.Headers [s], message.HeadersEncoding));
 	
 			AddPriorityHeader (message);
 
@@ -733,9 +742,9 @@ namespace System.Net.Mail {
 			}
 		}
 
-		public void Send (string from, string to, string subject, string body)
+		public void Send (string from, string recipients, string subject, string body)
 		{
-			Send (new MailMessage (from, to, subject, body));
+			Send (new MailMessage (from, recipients, subject, body));
 		}
 
 		public Task SendMailAsync (MailMessage message)
@@ -794,13 +803,8 @@ namespace System.Net.Mail {
 				CheckCancellation ();
 
 				if (escapeDots) {
-					int i;
-					for (i = 0; i < line.Length; i++) {
-						if (line[i] != '.')
-							break;
-					}
-					if (i > 0 && i == line.Length) {
-						line += ".";
+					if (line.Length > 0 && line[0] == '.') {
+						line = "." + line;
 					}
 				}
 				writer.Write (line);
@@ -832,9 +836,9 @@ namespace System.Net.Mail {
 			worker.RunWorkerAsync (userToken);
 		}
 
-		public void SendAsync (string from, string to, string subject, string body, object userToken)
+		public void SendAsync (string from, string recipients, string subject, string body, object userToken)
 		{
-			SendAsync (new MailMessage (from, to, subject, body), userToken);
+			SendAsync (new MailMessage (from, recipients, subject, body), userToken);
 		}
 
 		public void SendAsyncCancel ()

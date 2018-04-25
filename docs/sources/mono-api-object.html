@@ -6,15 +6,17 @@
 
 	<p>The object API has methods for accessing <a
 	href="#fields">fields</a>, <a
-	href="#properties">properties</a>, <a
+	href="#properties">properties</a>, <a href="mono-api-methods.html">methods</a>, <a
 	href="#events">events</a>, <a href="#delegates">delegates</a>.
+	
+
 
 	<p>There are some advanced uses that are useful to document
 	here dealing with <a href="#remote">remote fields</a>.
 	
 <h2>Synopsis</h2>
 
-<div class="header">
+<div class="mapi-header">
 #include &lt;metadata/object.h&gt;
 
 typedef struct MonoVTable MonoVTable;
@@ -43,7 +45,7 @@ typedef struct {
 @API_IDX@
 </div>
 
-	<p>MonoObject is the base definition for all managed objects
+	<p>`MonoObject` is the base definition for all managed objects
 	in the Mono runtime, it represents the <a
 	href="http://www.mono-project.com/monodoc/T:System.Object">System.Object</a>
 	managed type.
@@ -54,12 +56,11 @@ typedef struct {
 	following the pattern where the parent class is the first
 	field of a structure definition, for example:
 
-	<div class="code">
-	typedef struct {
-		MonoObject parent;
-		int my_new_field;
-	} MyNewObject
-	</div>
+	<div class="mapi-code">
+typedef struct {
+	MonoObject parent;
+	int my_new_field;
+} MyNewObject</div>
 
 <a name="objects"></a>
 <h2>Core Object Methods</h2>
@@ -69,7 +70,7 @@ typedef struct {
 	<p>For example, if you wanted to create an object of type
 	System.Version, you would use a piece of code like this:
 
-	<div class="code">
+<div class="mapi-code">
 MonoClass *version_class;
 MonoObject *result;
 
@@ -79,7 +80,7 @@ version_class = mono_class_from_name (mono_get_corlib (),
 
 /* Create an object of that class */
 result = mono_object_new (mono_domain_get (), version_class);
-	</div>
+</div>
 
 <h4><a name="api:mono_object_new_alloc_specific">mono_object_new_alloc_specific</a></h4>
 <h4><a name="api:mono_object_new_fast">mono_object_new_fast</a></h4>
@@ -94,6 +95,8 @@ result = mono_object_new (mono_domain_get (), version_class);
 <h4><a name="api:mono_object_unbox">mono_object_unbox</a></h4>
 <h4><a name="api:mono_object_castclass_mbyref">mono_object_castclass_mbyref</a></h4>
 <h4><a name="api:mono_object_get_size">mono_object_get_size</a></h4>
+<h4><a name="api:mono_object_hash">mono_object_hash</a></h4>
+<h4><a name="api:mono_object_to_string">mono_object_to_string</a></h4>
 
 <a name="valuetypes"></a>
 <h2>Value Types</h2>
@@ -112,19 +115,17 @@ result = mono_object_new (mono_domain_get (), version_class);
 	elements of type <tt>System.Byte</tt>, and sets the values
 	0xca and 0xfe on it:
 	
-	<pre class="code">
+	<pre class="mapi-code">
+MonoArray *CreateByteArray (MonoDomain *domain)
+{
+    MonoArray *data;
 
-	MonoArray *CreateByteArray (MonoDomain *domain)
-	{
-	    MonoArray *data;
+    data = mono_array_new (domain, mono_get_byte_class (), 2);
+    mono_array_set (data, guint8, 0, 0xca);
+    mono_array_set (data, guint8, 0, 0xfe);
 
-	    data = mono_array_new (domain, mono_get_byte_class (), 2);
-	    mono_array_set (data, guint8, 0, 0xca);
-	    mono_array_set (data, guint8, 0, 0xfe);
-
-	    return data;
-	}
-
+    return data;
+}
 	</pre>
 
 <h3>Creating Arrays</h3>
@@ -137,12 +138,31 @@ result = mono_object_new (mono_domain_get (), version_class);
 
 <h3>Using Arrays</h3>
 
+	<p>Arrays are represented by the `MonoArray` data type and are
+	instances of `MonoObject`.   While you can use the `bounds`
+	and `max_length` fields of the type, the actual storage
+	(represented by `vector`) is not very useful.   Instead you
+	should use one of the accesor methods described below to
+	fetch or set the values in the array.
+
+	<p>When setting values in an array, you should
+	use <a href="api:mono_array_set">mono_array_set</a> for
+	setting elements in an array that contains value types, and
+	<a
+	href="api:mono_array_setref">mono_array_setref</a> for arrays
+	that contain reference types. 
+	
+	<p>The <a href="api:mono_array_get">mono_array_get</a>,
+	<a href="api:mono_array_set">mono_array_set</a> and <a
+	href="api:mono_array_setref">mono_array_setref</a> are C
+	macros that wrap the underlying array access.   
+	
+<h4><a name="api:mono_array_get">mono_array_get</a></h4>
+<h4><a name="api:mono_array_length">mono_array_length</a></h4>
 <h4><a name="api:mono_array_set">mono_array_set</a></h4>
 <h4><a name="api:mono_array_setref">mono_array_setref</a></h4>
-<h4><a name="api:mono_array_length">mono_array_length</a></h4>
 <h4><a name="api:mono_array_addr">mono_array_addr</a></h4>
 <h4><a name="api:mono_array_addr_with_size">mono_array_addr_with_size</a></h4>
-<h4><a name="api:mono_array_get">mono_array_get</a></h4>
 <h4><a name="api:mono_array_element_size">mono_array_element_size</a></h4>
 
 <a name="fields"></a>
@@ -190,3 +210,7 @@ result = mono_object_new (mono_domain_get (), version_class);
 <h4><a name="api:mono_store_remote_field">mono_store_remote_field</a></h4>
 <h4><a name="api:mono_store_remote_field_new">mono_store_remote_field_new</a></h4>
 
+<a name="delegates"></a>
+<h2>Delegates</h2>
+<h4><a name="api:mono_get_delegate_begin_invoke">mono_get_delegate_begin_invoke</a></h4>
+<h4><a name="api:mono_get_delegate_end_invoke">mono_get_delegate_end_invoke</a></h4>

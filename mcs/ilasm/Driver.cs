@@ -44,8 +44,8 @@ namespace Mono.ILASM {
                         private Target target = Target.Exe;
                         private string target_string = "exe";
                         private bool show_tokens = false;
-                        private bool show_method_def = false;
-                        private bool show_method_ref = false;
+//                        private bool show_method_def = false;
+//                        private bool show_method_ref = false;
                         private bool show_parser = false;
                         private bool scan_only = false;
 			private bool debugging_info = false;
@@ -53,6 +53,7 @@ namespace Mono.ILASM {
 			private bool keycontainer = false;
 			private string keyname;
 			private StrongName sn;
+                        bool noautoinherit;
 
                         public DriverMain (string[] args)
                         {
@@ -67,7 +68,7 @@ namespace Mono.ILASM {
                                 if (output_file == null)
                                         output_file = CreateOutputFilename ();
                                 try {
-                                        codegen = new CodeGen (output_file, target == Target.Dll, debugging_info);
+                                        codegen = new CodeGen (output_file, target == Target.Dll, debugging_info, noautoinherit);
                                         foreach (string file_path in il_file_list) {
                                                 Report.FilePath = file_path;
                                                 ProcessFile (file_path);
@@ -189,7 +190,7 @@ namespace Mono.ILASM {
                                         ie.FilePath = file_path;
                                         ie.Location = scanner.Reader.Location;
                                         throw;
-                                } catch (Exception e){
+                                } catch (Exception){
                                         Console.Write ("{0} ({1}, {2}): ",file_path, scanner.Reader.Location.line, scanner.Reader.Location.column);
                                         throw;
                                 } finally {
@@ -270,6 +271,9 @@ namespace Mono.ILASM {
 						else
 							keyname = command_arg;
 						break;
+                                        case "noautoinherit":
+                                                noautoinherit = true;
+                                                break;
                                         case "scan_only":
                                                 scan_only = true;
                                                 break;
@@ -277,10 +281,10 @@ namespace Mono.ILASM {
                                                 show_tokens = true;
                                                 break;
                                         case "show_method_def":
-                                                show_method_def = true;
+//                                                show_method_def = true;
                                                 break;
                                         case "show_method_ref":
-                                                show_method_ref = true;
+//                                                show_method_ref = true;
                                                 break;
                                         case "show_parser":
                                                 show_parser = true;
@@ -336,16 +340,17 @@ namespace Mono.ILASM {
 
                         private void Usage ()
                         {
-                                Console.WriteLine ("Mono ILasm compiler\n" +
+                                Console.WriteLine ("Mono IL assembler compiler\n" +
                                         "ilasm [options] source-files\n" +
-                                        "   --about            About the Mono ILasm compiler\n" +
-                                        "   --version          Print the version number of the Mono ILasm compiler\n" +
+                                        "   --about            About the Mono IL assembler compiler\n" +
+                                        "   --version          Print the version number of the compiler\n" +
                                         "   /output:file_name  Specifies output file.\n" +
                                         "   /exe               Compile to executable.\n" +
                                         "   /dll               Compile to library.\n" +
                                         "   /debug             Include debug information.\n" +
 					"   /key:keyfile       Strongname using the specified key file\n" +
 					"   /key:@container    Strongname using the specified key container\n" +
+                                        "   /noautoinherit     Disable inheriting from System.Object by default\n" +
                                         "Options can be of the form -option or /option\n");
                                 Environment.Exit (1);
                         }
@@ -361,7 +366,7 @@ namespace Mono.ILASM {
                         private void Version ()
                         {
                                 string version = System.Reflection.Assembly.GetExecutingAssembly ().GetName ().Version.ToString ();
-                                Console.WriteLine ("Mono ILasm compiler version {0}", version);
+                                Console.WriteLine ("Mono IL assembler compiler version {0}", version);
                                 Environment.Exit (0);
                         }
 

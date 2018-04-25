@@ -25,8 +25,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+#if !MOBILE && !XAMMAC_4_5
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
+#endif
 using System.ServiceModel.Channels;
 using System.ServiceModel.Security;
 using System.Text;
@@ -114,6 +117,7 @@ namespace System.ServiceModel.Security.Tokens
 
 		protected abstract SecurityTokenParameters CloneCore ();
 
+#if !MOBILE && !XAMMAC_4_5
 		protected abstract SecurityKeyIdentifierClause CreateKeyIdentifierClause (
 			SecurityToken token, SecurityTokenReferenceStyle referenceStyle);
 
@@ -125,11 +129,13 @@ namespace System.ServiceModel.Security.Tokens
 		}
 
 		protected internal abstract void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement);
+#endif
 
 		internal BindingContext IssuerBindingContext {
 			set { issuer_binding_context = value; }
 		}
 
+#if !MOBILE && !XAMMAC_4_5
 		internal void CallInitializeSecurityTokenRequirement (SecurityTokenRequirement requirement)
 		{
 			if (issuer_binding_context != null)
@@ -145,5 +151,6 @@ namespace System.ServiceModel.Security.Tokens
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

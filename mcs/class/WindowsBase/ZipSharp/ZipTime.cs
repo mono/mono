@@ -25,13 +25,13 @@ namespace zipsharp
 			minute = (uint) time.Minute;
 			hour = (uint) time.Hour;
 			day = (uint) time.Day;
-			month = (uint) time.Month;
+			month = (uint) time.Month - 1;
 			year = (uint) time.Year;
 		}
 
 		public DateTime Date
 		{
-			get { return new DateTime ((int) year, (int) month, (int) day, (int) hour, (int) minute, (int) second); }
+			get { return new DateTime ((int) year, (int) month + 1, (int) day, (int) hour, (int) minute, (int) second); }
 		}
 	}
 }

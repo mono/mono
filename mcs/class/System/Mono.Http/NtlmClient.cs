@@ -30,16 +30,17 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH || MONODROID
-using Mono.Security.Protocol.Ntlm;
-#else
+#if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security.Protocol.Ntlm;
+#else
+using Mono.Security.Protocol.Ntlm;
 #endif
 
 using System;
 using System.Collections;
 using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace Mono.Http
 {
@@ -122,14 +123,8 @@ namespace Mono.Http
 
 	class NtlmClient : IAuthenticationModule
 	{
-		static Hashtable cache;
-
-		static NtlmClient () 
-		{
-			cache = new Hashtable ();
-		}
-	
-		public NtlmClient () {}
+		static readonly ConditionalWeakTable<HttpWebRequest, NtlmSession> cache =
+			new ConditionalWeakTable<HttpWebRequest, NtlmSession> ();
 	
 		public Authorization Authenticate (string challenge, WebRequest webRequest, ICredentials credentials) 
 		{
@@ -153,12 +148,7 @@ namespace Mono.Http
 				return null;
 
 			lock (cache) {
-				NtlmSession ds = (NtlmSession) cache [request];
-				if (ds == null) {
-					ds = new NtlmSession ();
-					cache.Add (request, ds);
-				}
-
+				var ds = cache.GetValue (request, x => new NtlmSession ());
 				return ds.Authenticate (header, webRequest, credentials);
 			}
 		}

@@ -45,7 +45,7 @@ namespace Mono.CSharp {
 		PropertyAccess,
 		EventAccess,
 		IndexerAccess,
-		Nothing, 
+		Nothing,
 	}
 
 	/// <remarks>
@@ -126,11 +126,12 @@ namespace Mono.CSharp {
 	/// <remarks>
 	///   Base class for expressions
 	/// </remarks>
-	public abstract class Expression {
+	public abstract class Expression
+	{
 		public ExprClass eclass;
 		protected TypeSpec type;
 		protected Location loc;
-		
+
 		public TypeSpec Type {
 			get { return type; }
 			set { type = value; }
@@ -238,6 +239,15 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		protected void CheckExpressionVariable (ResolveContext rc)
+		{
+			if (rc.HasAny (ResolveContext.Options.BaseInitializer | ResolveContext.Options.FieldInitializerScope) && rc.CurrentAnonymousMethod == null) {
+				rc.Report.Error (8200, loc, "Out variable and pattern variable declarations are not allowed within constructor initializers, field initializers, or property initializers");
+			} else if (rc.HasSet (ResolveContext.Options.QueryClauseScope)) {
+				rc.Report.Error (8201, loc, "Out variable and pattern variable declarations are not allowed within a query clause");
+			}
+		}
+
 		public static void ErrorIsInaccesible (IMemberContext rc, string member, Location loc)
 		{
 			rc.Module.Compiler.Report.Error (122, loc, "`{0}' is inaccessible due to its protection level", member);
@@ -245,7 +255,7 @@ namespace Mono.CSharp {
 
 		public void Error_ExpressionMustBeConstant (ResolveContext rc, Location loc, string e_name)
 		{
-			rc.Report.Error (133, loc, "The expression being assigned to `{0}' must be constant", e_name);
+			rc.Report.Error (133, loc, "The expression being assigned to `{0}' must be a constant or default value", e_name);
 		}
 
 		public void Error_ConstantCanBeInitializedWithNullOnly (ResolveContext rc, TypeSpec type, Location loc, string name)
@@ -258,7 +268,7 @@ namespace Mono.CSharp {
 		{
 			report.Error (201, loc, "Only assignment, call, increment, decrement, await, and new object expressions can be used as a statement");
 		}
-		
+
 		public void Error_InvalidExpressionStatement (BlockContext bc)
 		{
 			Error_InvalidExpressionStatement (bc.Report, loc);
@@ -288,8 +298,17 @@ namespace Mono.CSharp {
 			if (type == InternalType.ErrorType || target == InternalType.ErrorType)
 				return;
 
+			if (type.MemberDefinition.DeclaringAssembly.IsMissing ||
+				target.MemberDefinition.DeclaringAssembly.IsMissing)
+				return;
+
 			string from_type = type.GetSignatureForError ();
+			if (type.Kind == MemberKind.ByRef)
+				from_type = "ref " + from_type;
 			string to_type = target.GetSignatureForError ();
+			if (target.Kind == MemberKind.ByRef)
+				to_type = "ref " + to_type;
+
 			if (from_type == to_type) {
 				from_type = type.GetSignatureForErrorIncludingAssemblyName ();
 				to_type = target.GetSignatureForErrorIncludingAssemblyName ();
@@ -469,8 +488,13 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected static TypeSpec LiftMemberType (ResolveContext rc, TypeSpec type)
+		protected TypeSpec LiftMemberType (ResolveContext rc, TypeSpec type)
 		{
+			var tps = type as TypeParameterSpec;
+			if (tps != null && !(tps.IsReferenceType || tps.IsValueType)) {
+				Error_OperatorCannotBeApplied (rc, loc, "?", type);
+			}
+
 			return TypeSpec.IsValueType (type) && !type.IsNullableType ?
 				Nullable.NullableInfo.MakeType (rc.Module, type) :
 				type;
@@ -540,18 +564,18 @@ namespace Mono.CSharp {
 		public Expression ResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			int errors = ec.Report.Errors;
-			bool out_access = right_side == EmptyExpression.OutAccess;
+			//bool out_access = right_side == EmptyExpression.OutAccess;
 
 			Expression e = DoResolveLValue (ec, right_side);
 
-			if (e != null && out_access && !(e is IMemoryLocation)) {
+			//if (e != null && out_access && !(e is IMemoryLocation)) {
 				// FIXME: There's no problem with correctness, the 'Expr = null' handles that.
 				//        Enabling this 'throw' will "only" result in deleting useless code elsewhere,
 
 				//throw new InternalErrorException ("ResolveLValue didn't return an IMemoryLocation: " +
 				//				  e.GetType () + " " + e.GetSignatureForError ());
-				e = null;
-			}
+			//	e = null;
+			//}
 
 			if (e == null) {
 				if (errors == ec.Report.Errors) {
@@ -626,6 +650,10 @@ namespace Mono.CSharp {
 		{
 			Emit (ec);
 			ec.Emit (OpCodes.Pop);
+		}
+
+		public virtual void EmitPrepare (EmitContext ec)
+		{
 		}
 
 		//
@@ -831,22 +859,38 @@ namespace Mono.CSharp {
 		public static Expression MemberLookup (IMemberContext rc, bool errorMode, TypeSpec queried_type, string name, int arity, MemberLookupRestrictions restrictions, Location loc)
 		{
 			var members = MemberCache.FindMembers (queried_type, name, false);
-			if (members == null)
-				return null;
 
-			Expression expr;
-			do {
-				expr = MemberLookupToExpression (rc, members, errorMode, queried_type, name, arity, restrictions, loc);
-				if (expr != null)
-					return expr;
+			if (members != null) {
+				Expression expr;
+				do {
+					expr = MemberLookupToExpression (rc, members, errorMode, queried_type, name, arity, restrictions, loc);
+					if (expr != null)
+						return expr;
 
-				if (members [0].DeclaringType.BaseType == null)
-					members = null;
-				else
-					members = MemberCache.FindMembers (members [0].DeclaringType.BaseType, name, false);
-			} while (members != null);
+					if (members [0].DeclaringType.BaseType == null)
+						members = null;
+					else
+						members = MemberCache.FindMembers (members [0].DeclaringType.BaseType, name, false);
+				} while (members != null);
+			}
 
-			return expr;
+			var tps = queried_type as TypeParameterSpec;
+			if (tps != null) {
+				members = MemberCache.FindInterfaceMembers (tps, name);
+				if (members != null)
+					return MemberLookupToExpression (rc, members, errorMode, queried_type, name, arity, restrictions, loc);
+			}
+
+			if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0) {
+				var ntuple = queried_type as NamedTupleSpec;
+				if (ntuple != null) {
+					var ms = ntuple.FindElement (rc, name, loc);
+					if (ms != null)
+						return ExprClassFromMemberInfo (ms, loc);
+				}
+			}
+
+			return null;
 		}
 
 		public static Expression MemberLookupToExpression (IMemberContext rc, IList<MemberSpec> members, bool errorMode, TypeSpec queried_type, string name, int arity, MemberLookupRestrictions restrictions, Location loc)
@@ -891,15 +935,6 @@ namespace Mono.CSharp {
 
 				if ((restrictions & MemberLookupRestrictions.InvocableOnly) != 0) {
 					if (member is MethodSpec) {
-						//
-						// Interface members that are hidden by class members are removed from the set. This
-						// step only has an effect if T is a type parameter and T has both an effective base 
-						// class other than object and a non-empty effective interface set
-						//
-						var tps = queried_type as TypeParameterSpec;
-						if (tps != null && tps.HasTypeConstraint)
-							members = RemoveHiddenTypeParameterMethods (members);
-
 						return new MethodGroupExpr (members, queried_type, loc);
 					}
 
@@ -949,57 +984,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		static IList<MemberSpec> RemoveHiddenTypeParameterMethods (IList<MemberSpec> members)
-		{
-			if (members.Count < 2)
-				return members;
-
-			//
-			// If M is a method, then all non-method members declared in an interface declaration
-			// are removed from the set, and all methods with the same signature as M declared in
-			// an interface declaration are removed from the set
-			//
-
-			bool copied = false;
-			for (int i = 0; i < members.Count; ++i) {
-				var method = members[i] as MethodSpec;
-				if (method == null) {
-					if (!copied) {
-						copied = true;
-						members = new List<MemberSpec> (members);
-					} 
-					
-					members.RemoveAt (i--);
-					continue;
-				}
-
-				if (!method.DeclaringType.IsInterface)
-					continue;
-
-				for (int ii = 0; ii < members.Count; ++ii) {
-					var candidate = members[ii] as MethodSpec;
-					if (candidate == null || !candidate.DeclaringType.IsClass)
-						continue;
-
-					if (!TypeSpecComparer.Override.IsEqual (candidate.Parameters, method.Parameters))
-						continue;
-
-					if (!AParametersCollection.HasSameParameterDefaults (candidate.Parameters, method.Parameters))
-						continue;
-
-					if (!copied) {
-						copied = true;
-						members = new List<MemberSpec> (members);
-					}
-
-					members.RemoveAt (i--);
-					break;
-				}
-			}
-
-			return members;
-		}
-
 		protected static void Error_NamedArgument (NamedArgument na, Report Report)
 		{
 			Report.Error (1742, na.Location, "An element access expression cannot use named argument");
@@ -1036,6 +1020,11 @@ namespace Mono.CSharp {
 
 		public virtual void FlowAnalysis (FlowAnalysisContext fc)
 		{
+		}
+
+		public virtual Reachability MarkReachable (Reachability rc)
+		{
+			return rc;
 		}
 
 		//
@@ -1171,6 +1160,16 @@ namespace Mono.CSharp {
 		public static void UnsafeError (Report Report, Location loc)
 		{
 			Report.Error (214, loc, "Pointers and fixed size buffers may only be used in an unsafe context");
+		}
+
+		public static void UnsafeInsideIteratorError (ResolveContext rc, Location loc)
+		{
+			UnsafeInsideIteratorError (rc.Report, loc);
+		}
+
+		public static void UnsafeInsideIteratorError (Report report, Location loc)
+		{
+			report.Error (1629, loc, "Unsafe code may not appear in iterators");
 		}
 
 		//
@@ -1328,11 +1327,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class ExpressionStatement : Expression
 	{
-		public virtual void MarkReachable (Reachability rc)
-		{
-		}
-
-		public ExpressionStatement ResolveStatement (BlockContext ec)
+		public virtual ExpressionStatement ResolveStatement (BlockContext ec)
 		{
 			Expression e = Resolve (ec);
 			if (e == null)
@@ -1491,6 +1486,11 @@ namespace Mono.CSharp {
 				SLE.Expression.ConvertChecked (child.MakeExpression (ctx), type.GetMetaInfo ()) :
 				SLE.Expression.Convert (child.MakeExpression (ctx), type.GetMetaInfo ());
 #endif
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			return child.MarkReachable (rc);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -2434,12 +2434,22 @@ namespace Mono.CSharp {
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
-			expr.FlowAnalysis (fc);
+			orig_expr.FlowAnalysis (fc);
+		}
+
+		public override void FlowAnalysisConditional (FlowAnalysisContext fc)
+		{
+			orig_expr.FlowAnalysisConditional (fc);
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return orig_expr.MakeExpression (ctx);
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			return expr.MarkReachable (rc);
 		}
 	}
 
@@ -2795,9 +2805,13 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public bool IsPossibleTypeOrNamespace (IMemberContext mc)
+		bool IsPossibleTypeOrNamespace (IMemberContext mc)
 		{
-			return mc.LookupNamespaceOrType (Name, Arity, LookupMode.Probing, loc) != null;
+			//
+			// Has to ignore static usings because we are looking for any member not just type
+			// in this context
+			//
+			return mc.LookupNamespaceOrType (Name, Arity, LookupMode.Probing | LookupMode.IgnoreStaticUsing, loc) != null;
 		}
 
 		public bool IsPossibleType (IMemberContext mc)
@@ -2942,6 +2956,13 @@ namespace Mono.CSharp {
 
 				if ((restrictions & MemberLookupRestrictions.NameOfExcluded) == 0 && Name == "nameof")
 					return new NameOf (this);
+
+				if ((restrictions & MemberLookupRestrictions.ReadAccess) == 0 && Name == "_") {
+					if (rc.Module.Compiler.Settings.Version < LanguageVersion.V_7)
+						rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, loc, "discards");
+
+					return new Discard (loc).Resolve (rc);
+				}
 
 				if (errorMode) {
 					if (variable_found) {
@@ -3395,6 +3416,8 @@ namespace Mono.CSharp {
 				// introduce redundant storey but with `this' only but it's tricky to avoid
 				// at this stage as we don't know what expressions follow base
 				//
+				// TODO: It's needed only when the method with base call is moved to a storey
+				//
 				if (rc.CurrentAnonymousMethod != null) {
 					if (targs == null && method.IsGeneric) {
 						targs = method.TypeArguments;
@@ -3497,8 +3520,12 @@ namespace Mono.CSharp {
 				CheckProtectedMemberAccess (rc, member);
 			}
 
-			if (member.MemberType.IsPointer && !rc.IsUnsafe) {
-				UnsafeError (rc, loc);
+			if (member.MemberType.IsPointer) {
+				if (rc.CurrentIterator != null) {
+					UnsafeInsideIteratorError (rc, loc);
+				} else if (!rc.IsUnsafe) {
+					UnsafeError (rc, loc);
+				}
 			}
 
 			var dep = member.GetMissingDependencies ();
@@ -3682,13 +3709,18 @@ namespace Mono.CSharp {
 
 		public virtual MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
 		{
-			if (left != null && !ConditionalAccess && left.IsNull && TypeSpec.IsReferenceType (left.Type)) {
+			if (left != null && !ConditionalAccess && !ec.HasSet (ResolveContext.Options.NameOfScope) && left.IsNull && TypeSpec.IsReferenceType (left.Type)) {
 				ec.Report.Warning (1720, 1, left.Location,
 					"Expression will always cause a `{0}'", "System.NullReferenceException");
 			}
 
 			InstanceExpression = left;
 			return this;
+		}
+
+		public virtual void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
+		{
+
 		}
 
 		protected void EmitInstance (EmitContext ec, bool prepare_for_load)
@@ -3766,7 +3798,7 @@ namespace Mono.CSharp {
 		// For extension methodgroup we are not looking for base members but parent
 		// namespace extension methods
 		//
-		public override IList<MemberSpec> GetBaseMembers (TypeSpec baseType)
+		public override IList<MemberSpec> GetBaseMembers (TypeSpec type)
 		{
 			// TODO: candidates are null only when doing error reporting, that's
 			// incorrect. We have to discover same extension methods in error mode
@@ -3795,27 +3827,9 @@ namespace Mono.CSharp {
 				Convert.ImplicitBoxingConversion (null, argType, extensionType) != null;
 		}
 
-		public bool ResolveNameOf (ResolveContext rc, MemberAccess ma)
+		public override void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
 		{
-			rc.Report.Error (8093, ma.Location, "An argument to nameof operator cannot be extension method group");
-
-			// Not included in C#6
-			/*
-			ExtensionExpression = ExtensionExpression.Resolve (rc);
-			if (ExtensionExpression == null)
-				return false;
-
-			var argType = ExtensionExpression.Type;
-			foreach (MethodSpec candidate in Candidates) {
-				if (ExtensionMethodGroupExpr.IsExtensionTypeCompatible (argType, candidate.Parameters.ExtensionMethodType))
-					return true;
-			}
-
-			// TODO: Scan full hierarchy
-
-			ma.Error_TypeDoesNotContainDefinition (rc, argType, ma.Name);
-			*/
-			return false;
+			rc.Report.Error (8093, expr.Location, "An argument to nameof operator cannot be extension method group");
 		}
 
 		public override MethodGroupExpr LookupExtensionMethod (ResolveContext rc)
@@ -4022,6 +4036,13 @@ namespace Mono.CSharp {
 			return Methods.First ().GetSignatureForError ();
 		}
 
+		static MethodSpec CandidateDevirtualization (TypeSpec type, MethodSpec method)
+		{
+			// Assumes no generics get involved
+			var filter = new MemberFilter (method.Name, method.Arity, MemberKind.Method, method.Parameters, null);
+			return MemberCache.FindMember (type, filter, BindingRestriction.InstanceOnly | BindingRestriction.OverrideOnly | BindingRestriction.DeclaredOnly) as MethodSpec;
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (best_candidate == null) {
@@ -4055,6 +4076,11 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			throw new NotSupportedException ();
+		}
+
+		public override void EmitPrepare (EmitContext ec)
+		{
+			InstanceExpression?.EmitPrepare (ec);
 		}
 
 		public void EmitCall (EmitContext ec, Arguments arguments, bool statement)
@@ -4165,6 +4191,22 @@ namespace Mono.CSharp {
 						}
 
 						InstanceExpression.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup | ResolveFlags.Type);
+
+						var expr_type = InstanceExpression.Type;
+						if ((expr_type.IsByRefLike || expr_type.IsSpecialRuntimeType) && best_candidate.DeclaringType != expr_type) {
+							MethodSpec devirt = null;
+							if ((best_candidate.Modifiers & (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE)) != 0) {
+								devirt = CandidateDevirtualization (expr_type, best_candidate);
+							}
+
+							if (devirt == null) {
+								// CSC: Should be better error message
+								ec.Report.Error (29, InstanceExpression.Location, "Cannot implicitly convert type `{0}' to `{1}'",
+												 InstanceExpression.Type.GetSignatureForError (), best_candidate.DeclaringType.GetSignatureForError ());
+							} else {
+								best_candidate = devirt;
+							}
+						}
 					}
 				}
 
@@ -4216,6 +4258,17 @@ namespace Mono.CSharp {
 			return base.ResolveMemberAccess (ec, left, original);
 		}
 
+		public override void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
+		{
+			if (!HasAccessibleCandidate (rc)) {
+				ErrorIsInaccesible (rc, expr.GetSignatureForError (), loc);
+			}
+
+			if (expr.HasTypeArguments) {
+				rc.Report.Error (8084, expr.Location, "An argument to nameof operator cannot be method group with type arguments");
+			}
+		}
+
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
 		{
 			type_arguments = ta;
@@ -4223,9 +4276,19 @@ namespace Mono.CSharp {
 
 		#region IBaseMembersProvider Members
 
-		public virtual IList<MemberSpec> GetBaseMembers (TypeSpec baseType)
+		public virtual IList<MemberSpec> GetBaseMembers (TypeSpec type)
 		{
-			return baseType == null ? null : MemberCache.FindMembers (baseType, Methods [0].Name, false);
+			var baseType = type.BaseType;
+			
+			IList<MemberSpec> members = baseType == null ? null : MemberCache.FindMembers (baseType, Methods [0].Name, false);
+
+			if (members == null && !type.IsInterface) {
+				var tps = queried_type as TypeParameterSpec;
+				if (tps != null)
+					members = MemberCache.FindInterfaceMembers (tps, Methods [0].Name);
+			}
+
+			return members;
 		}
 
 		public IParametersMember GetOverrideMemberParameters (MemberSpec member)
@@ -4255,6 +4318,7 @@ namespace Mono.CSharp {
 
 			var emg = new ExtensionMethodGroupExpr (methods, InstanceExpression, loc);
 			emg.SetTypeArguments (rc, type_arguments);
+			emg.ConditionalAccess = ConditionalAccess;
 			return emg;
 		}
 
@@ -4462,6 +4526,10 @@ namespace Mono.CSharp {
 			TypeSpec argument_type = a.Type;
 
 			//
+			// Exactly matching Expression phase
+			//
+
+			//
 			// If argument is an anonymous function
 			//
 			if (argument_type == InternalType.AnonymousMethod && ec.Module.Compiler.Settings.Version > LanguageVersion.ISO_2) {
@@ -4476,8 +4544,8 @@ namespace Mono.CSharp {
 					//
 					// Uwrap delegate from Expression<T>
 					//
-					q = TypeManager.GetTypeArguments (q)[0];
-					p = TypeManager.GetTypeArguments (p)[0];
+					q = TypeManager.GetTypeArguments (q) [0];
+					p = TypeManager.GetTypeArguments (p) [0];
 				}
 
 				var p_m = Delegate.GetInvokeMethod (p);
@@ -4504,10 +4572,10 @@ namespace Mono.CSharp {
 				// if p has a return type Y, and q is void returning, then C1 is the better conversion.
 				//
 				if (q.Kind == MemberKind.Void) {
-					return p.Kind != MemberKind.Void ? 1: 0;
+					return p.Kind != MemberKind.Void ? 1 : 0;
 				}
 
-				var am = (AnonymousMethodExpression) a.Expr;
+				var am = (AnonymousMethodExpression)a.Expr;
 
 				//
 				// When anonymous method is an asynchronous, and P has a return type Task<Y1>, and Q has a return type Task<Y2>
@@ -4515,24 +4583,27 @@ namespace Mono.CSharp {
 				//
 				if (p.IsGenericTask || q.IsGenericTask) {
 					if (am.Block.IsAsync && p.IsGenericTask && q.IsGenericTask) {
-						q = q.TypeArguments[0];
-						p = p.TypeArguments[0];
+						q = q.TypeArguments [0];
+						p = p.TypeArguments [0];
 					}
 				}
 
 				if (q != p) {
 					//
-					// An inferred return type X exists for E in the context of that parameter list, and 
-					// the conversion from X to Y1 is better than the conversion from X to Y2
+					// An inferred return type X exists for E in the context of the parameter list, and
+					// an identity conversion exists from X to the return type of D
 					//
-					argument_type = am.InferReturnType (ec, null, orig_q);
-					if (argument_type == null) {
-						// TODO: Can this be hit?
-						return 1;
-					}
+					var inferred_type = am.InferReturnType (ec, null, orig_q);
+					if (inferred_type != null) {
+						if (inferred_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+							inferred_type = ec.BuiltinTypes.Object;
 
-					if (argument_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
-						argument_type = ec.BuiltinTypes.Object;
+						if (inferred_type == p)
+							return 1;
+
+						if (inferred_type == q)
+							return 2;
+					}
 				}
 			}
 
@@ -4542,11 +4613,78 @@ namespace Mono.CSharp {
 			if (argument_type == q)
 				return 2;
 
-			//
-			// The parameters are identicial and return type is not void, use better type conversion
-			// on return type to determine better one
-			//
-			return BetterTypeConversion (ec, p, q);
+			return IsBetterConversionTarget (ec, p, q);
+		}
+
+		static int IsBetterConversionTarget (ResolveContext rc, TypeSpec p, TypeSpec q)
+		{
+			if ((p.Kind == MemberKind.Delegate || p.IsExpressionTreeType) && (q.Kind == MemberKind.Delegate || q.IsExpressionTreeType)) {
+
+				if (p.Kind != MemberKind.Delegate) {
+					p = TypeManager.GetTypeArguments (p) [0];
+				}
+
+				if (q.Kind != MemberKind.Delegate) {
+					q = TypeManager.GetTypeArguments (q) [0];
+				}
+
+				var p_m = Delegate.GetInvokeMethod (p);
+				var q_m = Delegate.GetInvokeMethod (q);
+
+				p = p_m.ReturnType;
+				q = q_m.ReturnType;
+
+				//
+				// if p is void returning, and q has a return type Y, then C2 is the better conversion.
+				//
+				if (p.Kind == MemberKind.Void) {
+					return q.Kind != MemberKind.Void ? 2 : 0;
+				}
+
+				//
+				// if p has a return type Y, and q is void returning, then C1 is the better conversion.
+				//
+				if (q.Kind == MemberKind.Void) {
+					return p.Kind != MemberKind.Void ? 1 : 0;
+				}
+
+				return IsBetterConversionTarget (rc, p, q);
+			}
+
+			if (p.IsGenericTask && q.IsGenericTask) {
+				q = q.TypeArguments [0];
+				p = p.TypeArguments [0];
+				return IsBetterConversionTarget (rc, p, q);
+			}
+
+			var p_orig = p;
+			if (p.IsNullableType) {
+				p = Nullable.NullableInfo.GetUnderlyingType (p);
+				if (!BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (p))
+					return BetterTypeConversionImplicitConversion (rc, p_orig, q);
+
+				//
+				// Spec expects implicit conversion check between p and q, q and p
+				// to be done before nullable unwrapping but that's expensive operation.
+				// 
+				// Extra manual tweak is needed because BetterTypeConversion works on
+				// unwrapped types
+				//
+				if (p == q)
+					return 2;
+			}
+
+			var q_orig = q;
+			if (q.IsNullableType) {
+				q = Nullable.NullableInfo.GetUnderlyingType (q);
+				if (!BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (q))
+					return BetterTypeConversionImplicitConversion (rc, p_orig, q_orig);
+
+				if (q == p)
+					return 1;
+			}
+
+			return BetterTypeConversion (rc, p, q);
 		}
 
 		//
@@ -4584,8 +4722,9 @@ namespace Mono.CSharp {
 				}
 				break;
 			case BuiltinTypeSpec.Type.Dynamic:
-				// Dynamic is never better
-				return 2;
+				// LAMESPEC: Dynamic conversions is not considered
+				p = ec.Module.Compiler.BuiltinTypes.Object;
+				break;
 			}
 
 			switch (q.BuiltinType) {
@@ -4615,18 +4754,22 @@ namespace Mono.CSharp {
 				}
 				break;
 			case BuiltinTypeSpec.Type.Dynamic:
-				// Dynamic is never better
-				return 1;
+				// LAMESPEC: Dynamic conversions is not considered
+				q = ec.Module.Compiler.BuiltinTypes.Object;
+				break;
 			}
 
-			// FIXME: handle lifted operators
+			return BetterTypeConversionImplicitConversion (ec, p, q);
+		}
 
+		static int BetterTypeConversionImplicitConversion (ResolveContext rc, TypeSpec p, TypeSpec q)
+		{
 			// TODO: this is expensive
 			Expression p_tmp = new EmptyExpression (p);
 			Expression q_tmp = new EmptyExpression (q);
 
-			bool p_to_q = Convert.ImplicitConversionExists (ec, p_tmp, q);
-			bool q_to_p = Convert.ImplicitConversionExists (ec, q_tmp, p);
+			bool p_to_q = Convert.ImplicitConversionExists (rc, p_tmp, q);
+			bool q_to_p = Convert.ImplicitConversionExists (rc, q_tmp, p);
 
 			if (p_to_q && !q_to_p)
 				return 1;
@@ -4646,13 +4789,15 @@ namespace Mono.CSharp {
 		///     false if candidate ain't better
 		///     true  if candidate is better than the current best match
 		/// </remarks>
-		static bool BetterFunction (ResolveContext ec, Arguments args, MemberSpec candidate, AParametersCollection cparam, bool candidate_params,
+		bool BetterFunction (ResolveContext ec, Arguments args, MemberSpec candidate, AParametersCollection cparam, bool candidate_params,
 			MemberSpec best, AParametersCollection bparam, bool best_params)
 		{
 			AParametersCollection candidate_pd = ((IParametersMember) candidate).Parameters;
 			AParametersCollection best_pd = ((IParametersMember) best).Parameters;
 
-			bool better_at_least_one = false;
+			int candidate_better_count = 0;
+			int best_better_count = 0;
+
 			bool are_equivalent = true;
 			int args_count = args == null ? 0 : args.Count;
 			int j = 0;
@@ -4703,28 +4848,58 @@ namespace Mono.CSharp {
 
 				// for each argument, the conversion to 'ct' should be no worse than 
 				// the conversion to 'bt'.
-				if (result == 2)
-					return false;
+				if (result == 2) {
+					//
+					// No optional parameters tie breaking rules for delegates overload resolution
+					//
+					if ((restrictions & Restrictions.CovariantDelegate) != 0)
+						return false;
+
+					++best_better_count;
+					continue;
+				}
 
 				// for at least one argument, the conversion to 'ct' should be better than 
 				// the conversion to 'bt'.
 				if (result != 0)
-					better_at_least_one = true;
+					++candidate_better_count;
 			}
 
-			if (better_at_least_one)
+			if (candidate_better_count != 0 && best_better_count == 0)
 				return true;
 
+			if (best_better_count > 0 && candidate_better_count == 0)
+				return false;
+
 			//
-			// Tie-breaking rules are applied only for equivalent parameter types
+			// LAMESPEC: Tie-breaking rules for not equivalent parameter types
 			//
 			if (!are_equivalent) {
+				while (j < args_count && !args [j++].IsDefaultArgument) ;
+
 				//
-				// LAMESPEC: A candidate with less default parameters is still better when there
-				// is no better expression conversion
+				// A candidate with no default parameters is still better when there
+				// is no better expression conversion and does not have more parameters
 				//
-				if (candidate_pd.Count < best_pd.Count && !candidate_params && best_pd.FixedParameters [j].HasDefaultValue) {
-					return true;
+				if (candidate_pd.Count < best_pd.Count) {
+					if (candidate_params)
+						return false;
+					
+					if (!candidate_pd.FixedParameters [j - 1].HasDefaultValue)
+						return true;
+
+					if (best_pd.FixedParameters [j].HasDefaultValue)
+						return true;
+					
+				} else if (candidate_pd.Count == best_pd.Count) {
+					if (candidate_params)
+						return false;
+
+					if (!candidate_pd.FixedParameters [j - 1].HasDefaultValue && best_pd.FixedParameters [j - 1].HasDefaultValue)
+						return true;
+
+					if (candidate_pd.FixedParameters [j - 1].HasDefaultValue && best_pd.HasParams)
+						return true;
 				}
 
 				return false;
@@ -4745,7 +4920,7 @@ namespace Mono.CSharp {
 				var cand_param = candidate_pd.FixedParameters [j];
 				var best_param = best_pd.FixedParameters [j];
 
-				if (cand_param.HasDefaultValue != best_param.HasDefaultValue)
+				if (cand_param.HasDefaultValue != best_param.HasDefaultValue && (!candidate_pd.HasParams || !best_pd.HasParams))
 					return cand_param.HasDefaultValue;
 
 				defaults_ambiguity = true;
@@ -4979,7 +5154,7 @@ namespace Mono.CSharp {
 
 								// The slot has been taken by positional argument
 								if (temp != null && !(temp is NamedArgument))
-									break;
+									return NamedArgumentsMismatch - i - 1;
 							}
 
 							if (!arg_moved) {
@@ -5151,7 +5326,7 @@ namespace Mono.CSharp {
 						if ((fp.ModFlags & Parameter.Modifier.CallerLineNumber) != 0) {
 							e = new IntLiteral (ec.BuiltinTypes, loc.Row, loc);
 						} else if ((fp.ModFlags & Parameter.Modifier.CallerFilePath) != 0) {
-							e = new StringLiteral (ec.BuiltinTypes, loc.NameFullPath, loc);
+							e = new StringLiteral (ec.BuiltinTypes, loc.SourceFile.GetFullPathName (ec.Module.Compiler.Settings.PathMap), loc);
 						} else if (ec.MemberContext.CurrentMemberDefinition != null) {
 							e = new StringLiteral (ec.BuiltinTypes, ec.MemberContext.CurrentMemberDefinition.GetCallerMemberName (), loc);
 						}
@@ -5274,8 +5449,13 @@ namespace Mono.CSharp {
 				}
 
 				if (arg_type != parameter) {
-					if (arg_type == InternalType.VarOutType)
+					if (arg_type == InternalType.VarOutType || arg_type == InternalType.Discard)
 						return 0;
+
+					var ref_arg_type = arg_type as ReferenceContainer;
+					if (ref_arg_type != null) {
+						arg_type = ref_arg_type.Element;
+					}
 
 					//
 					// Do full equality check after quick path
@@ -5309,10 +5489,8 @@ namespace Mono.CSharp {
 
 		static TypeSpec MoreSpecific (TypeSpec p, TypeSpec q)
 		{
-			if (TypeManager.IsGenericParameter (p) && !TypeManager.IsGenericParameter (q))
-				return q;
-			if (!TypeManager.IsGenericParameter (p) && TypeManager.IsGenericParameter (q))
-				return p;
+			if (p.IsGenericParameter != q.IsGenericParameter)
+				return p.IsGenericParameter ? q : p;
 
 			var ac_p = p as ArrayContainer;
 			if (ac_p != null) {
@@ -5325,18 +5503,22 @@ namespace Mono.CSharp {
 					return p;
 				if (specific == ac_q.Element)
 					return q;
-			} else if (p.IsGeneric && q.IsGeneric) {
-				var pargs = TypeManager.GetTypeArguments (p);
-				var qargs = TypeManager.GetTypeArguments (q);
+
+				return null;
+			}
+
+			if (p.IsGeneric && q.IsGeneric) {
+				var pargs = p.TypeArguments;
+				var qargs = q.TypeArguments;
 
 				bool p_specific_at_least_once = false;
 				bool q_specific_at_least_once = false;
 
 				for (int i = 0; i < pargs.Length; i++) {
-					TypeSpec specific = MoreSpecific (pargs[i], qargs[i]);
-					if (specific == pargs[i])
+					TypeSpec specific = MoreSpecific (pargs [i], qargs [i]);
+					if (specific == pargs [i])
 						p_specific_at_least_once = true;
-					if (specific == qargs[i])
+					if (specific == qargs [i])
 						q_specific_at_least_once = true;
 				}
 
@@ -5516,7 +5698,7 @@ namespace Mono.CSharp {
 						// Restore expanded arguments
 						candidate_args = args;
 					}
-				} while (best_candidate_rate != 0 && (type_members = base_provider.GetBaseMembers (type_members[0].DeclaringType.BaseType)) != null);
+				} while (best_candidate_rate != 0 && (type_members = base_provider.GetBaseMembers (type_members[0].DeclaringType)) != null);
 
 				//
 				// We've found exact match
@@ -5840,13 +6022,13 @@ namespace Mono.CSharp {
 			int arg_count = args == null ? 0 : args.Count;
 
 			for (; a_idx < arg_count; a_idx++, ++a_pos) {
-				a = args[a_idx];
+				a = args [a_idx];
 				if (a == null)
 					continue;
 
 				if (p_mod != Parameter.Modifier.PARAMS) {
 					p_mod = cpd.FixedParameters [a_idx].ModFlags;
-					pt = ptypes[a_idx];
+					pt = ptypes [a_idx];
 					has_unsafe_arg |= pt.IsPointer;
 
 					if (p_mod == Parameter.Modifier.PARAMS) {
@@ -5876,6 +6058,19 @@ namespace Mono.CSharp {
 						continue;
 					}
 
+					if (arg_type == InternalType.Discard) {
+						a.Expr.Type = pt;
+						continue;
+					}
+
+					var ref_arg_type = arg_type as ReferenceContainer;
+					if (ref_arg_type != null) {
+						if (ref_arg_type.Element != pt)
+							break;
+
+						return true;
+					}
+
 					if (!TypeSpecComparer.IsEqual (arg_type, pt))
 						break;
 				}
@@ -5901,9 +6096,15 @@ namespace Mono.CSharp {
 						else
 							ec.Report.SymbolRelatedToPreviousError (member);
 
-						ec.Report.Error (1744, na.Location,
-							"Named argument `{0}' cannot be used for a parameter which has positional argument specified",
-							na.Name);
+						if (name_index > a_idx) {
+							ec.Report.Error (8323, na.Location,
+								"Named argument `{0}' is used out of position but is followed by positional argument",
+								na.Name);
+						} else {
+							ec.Report.Error (1744, na.Location,
+								"Named argument `{0}' cannot be used for a parameter which has positional argument specified",
+								na.Name);
+						}
 					}
 				}
 				
@@ -5996,8 +6197,12 @@ namespace Mono.CSharp {
 				arg_count++;
 			}
 
-			if (has_unsafe_arg && !ec.IsUnsafe) {
-				Expression.UnsafeError (ec, loc);
+			if (has_unsafe_arg) {
+				if (ec.CurrentIterator != null) {
+					Expression.UnsafeInsideIteratorError (ec, loc);
+				} else if (!ec.IsUnsafe) {
+					Expression.UnsafeError (ec, loc);
+				}
 			}
 
 			//
@@ -6058,6 +6263,12 @@ namespace Mono.CSharp {
 			ResolveInstanceExpression (rc, null);
 			DoBestMemberChecks (rc, constant);
 
+			if (rc.HasSet (ResolveContext.Options.NameOfScope)) {
+				eclass = ExprClass.Value;
+				type = constant.MemberType;
+				return this;
+			}
+
 			var c = constant.GetConstant (rc);
 
 			// Creates reference expression to the constant value
@@ -6072,6 +6283,11 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			return constant.GetSignatureForError ();
+		}
+
+		public override void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
+		{
+			constant.CheckObsoleteness (rc, expr.Location);
 		}
 
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
@@ -6303,6 +6519,11 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
+		{
+			spec.CheckObsoleteness (rc, expr.Location);
+		}
+
 		public void SetFieldAssigned (FlowAnalysisContext fc)
 		{
 			if (!IsInstance)
@@ -6363,12 +6584,12 @@ namespace Mono.CSharp {
 						GetSignatureForError ());
 				}
 
-				return null;
+				return ErrorExpression.Instance;
 			}
 
 			if (right_side == EmptyExpression.LValueMemberAccess) {
 				// Already reported as CS1648/CS1650
-				return null;
+				return ErrorExpression.Instance;
 			}
 
 			if (right_side == EmptyExpression.LValueMemberOutAccess) {
@@ -6379,7 +6600,7 @@ namespace Mono.CSharp {
 					rc.Report.Error (1649, loc, "Members of readonly field `{0}' cannot be passed ref or out (except in a constructor)",
 						GetSignatureForError ());
 				}
-				return null;
+				return ErrorExpression.Instance;
 			}
 
 			if (IsStatic) {
@@ -6390,7 +6611,7 @@ namespace Mono.CSharp {
 					GetSignatureForError ());
 			}
 
-			return null;
+			return ErrorExpression.Instance;
 		}
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
@@ -6536,6 +6757,8 @@ namespace Mono.CSharp {
 
 				ec.Emit (OpCodes.Ldsfld, spec);
 			} else {
+				var ca = ec.ConditionalAccess;
+
 				if (!prepared) {
 					if (conditional_access_receiver)
 						ec.ConditionalAccess = new ConditionalAccessContext (type, ec.DefineLabel ());
@@ -6561,6 +6784,7 @@ namespace Mono.CSharp {
 
 				if (conditional_access_receiver) {
 					ec.CloseConditionalAccess (type.IsNullableType && type != spec.MemberType ? type : null);
+					ec.ConditionalAccess = ca;
 				}
 			}
 
@@ -6907,7 +7131,7 @@ namespace Mono.CSharp {
 		public override void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
 			if (backing_field != null) {
-				backing_field.EmitAssign (ec, source, false, false);
+				backing_field.EmitAssign (ec, source, leave_copy, false);
 				return;
 			}
 
@@ -7070,6 +7294,14 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public override void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
+		{
+			if (!best_candidate.IsAccessible (rc))
+				ErrorIsInaccesible (rc, best_candidate.GetSignatureForError (), expr.Location);
+
+			best_candidate.CheckObsoleteness (rc, expr.Location);
+		}
+
 		public void SetBackingFieldAssigned (FlowAnalysisContext fc)
 		{
 			if (backing_field != null) {
@@ -7159,6 +7391,9 @@ namespace Mono.CSharp {
 			if (!ResolveGetter (ec))
 				return null;
 
+			if (type.Kind == MemberKind.ByRef)
+				return ByRefDereference.Create (this).Resolve (ec);
+
 			return this;
 		}
 
@@ -7168,6 +7403,14 @@ namespace Mono.CSharp {
 				Error_NullPropagatingLValue (rc);
 
 			if (right_side == EmptyExpression.OutAccess) {
+				if (OverloadResolve (rc, null) == null)
+					return null;
+
+				if (best_candidate?.MemberType.Kind == MemberKind.ByRef) {
+					getter = CandidateToBaseOverride (rc, best_candidate.Get);
+					return this;
+				}
+
 				// TODO: best_candidate can be null at this point
 				INamedBlockVariable variable = null;
 				if (best_candidate != null && rc.CurrentBlock.ParametersBlock.TopBlock.GetLocalName (best_candidate.Name, rc.CurrentBlock, ref variable) && variable is Linq.RangeVariable) {
@@ -7193,6 +7436,11 @@ namespace Mono.CSharp {
 			if (!best_candidate.HasSet) {
 				if (ResolveAutopropertyAssignment (rc, right_side))
 					return this;
+
+				if (best_candidate.MemberType.Kind == MemberKind.ByRef) {
+					getter = CandidateToBaseOverride (rc, best_candidate.Get);
+					return ByRefDereference.Create (this).Resolve (rc);
+				}
 
 				rc.Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read-only)",
 					GetSignatureForError ());
@@ -7491,6 +7739,11 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpSignature (spec);
 		}
 
+		public override void ResolveNameOf (ResolveContext rc, ATypeNameExpression expr)
+		{
+			spec.CheckObsoleteness (rc, expr.Location);
+		}
+
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
 		{
 			Error_TypeArgumentsCannotBeUsed (ec, "event", GetSignatureForError (), loc);
@@ -7639,13 +7892,14 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public bool InferType (ResolveContext ec, Expression right_side)
+		public bool InferType (ResolveContext ec, Expression rhs)
 		{
 			if (type != null)
 				throw new InternalErrorException ("An implicitly typed local variable could not be redefined");
 			
-			type = right_side.Type;
-			if (type == InternalType.NullLiteral || type.Kind == MemberKind.Void || type == InternalType.AnonymousMethod || type == InternalType.MethodGroup) {
+			type = rhs.Type;
+
+			if (type.Kind == MemberKind.Void || InternalType.HasNoType (type) || (rhs is TupleLiteral && TupleLiteral.ContainsNoTypeElement (type))) {
 				ec.Report.Error (815, loc,
 					"An implicitly typed local variable declaration cannot be initialized with `{0}'",
 					type.GetSignatureForError ());

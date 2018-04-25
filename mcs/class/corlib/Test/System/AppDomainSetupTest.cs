@@ -23,8 +23,12 @@ namespace MonoTests.System
 
 		private bool RunningOnWindows {
 			get {
-				int os = (int)Environment.OSVersion.Platform;
-				return (os != 4);
+				return Path.DirectorySeparatorChar == '\\';
+			}
+		}
+		private bool RunningOnMono {
+			get {
+				return (Type.GetType ("System.MonoType", false) != null);
 			}
 		}
 
@@ -72,22 +76,18 @@ namespace MonoTests.System
 		[Test]
 		public void ApplicationBase1 ()
 		{
-			string expected_path = tmpPath.Replace(@"\", @"/");
+			string expected_path = tmpPath;
 			AppDomainSetup setup = new AppDomainSetup ();
-			string fileUri = "file://" + expected_path;
+			string fileUri = "file://" + tmpPath.Replace(@"\", @"/");
 			setup.ApplicationBase = fileUri;
-			// with MS 1.1 SP1 the expected_path starts with "//" but this make
-			// sense only under Windows (i.e. reversed \\ for local files)
-			if (RunningOnWindows)
-				expected_path = "//" + expected_path;
 			try {
-				// under 2.0 the NotSupportedException is throw when getting 
+				// under .NET the NotSupportedException is throw when getting 
 				// (and not setting) the ApplicationBase property
 				Assert.AreEqual (expected_path, setup.ApplicationBase);
 			}
 			catch (NotSupportedException) {
-				// however the path is invalid only on Windows
-				if (!RunningOnWindows)
+				// however the path is invalid only on .NET
+				if (RunningOnMono)
 					throw;
 			}
 		}
@@ -114,16 +114,17 @@ namespace MonoTests.System
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
 			setup.ApplicationBase = "lala:la";
-			try {
-				// under 2.0 the NotSupportedException is throw when getting 
-				// (and not setting) the ApplicationBase property
+			if (!RunningOnWindows) {
 				Assert.AreEqual (Path.GetFullPath ("lala:la"), setup.ApplicationBase);
-			}
-			catch (NotSupportedException) {
-				// however the path is invalid only on Windows
-				// (same exceptions as Path.GetFullPath)
-				if (!RunningOnWindows)
-					throw;
+			} else {
+				// On Windows we expect a NotSupportedException to be thrown because
+				// of the illegal character (:) in the path
+				try {
+					Assert.Fail ("NotSupportedException expected but setup.ApplicationBase returned:" + setup.ApplicationBase);
+				}
+				catch (NotSupportedException) {
+					// Expected
+				}
 			}
 		}
 
@@ -133,16 +134,18 @@ namespace MonoTests.System
 			// This is failing because of (probably) a windows-ism, so don't worry
 			AppDomainSetup setup = new AppDomainSetup ();
 			setup.ApplicationBase = "file:///lala:la";
-			try {
-				// under 2.0 the NotSupportedException is throw when getting 
-				// (and not setting) the ApplicationBase property
-				Assert.AreEqual ("/lala:la", setup.ApplicationBase);
-			}
-			catch (NotSupportedException) {
-				// however the path is invalid only on Windows
-				// (same exceptions as Path.GetFullPath)
-				if (!RunningOnWindows)
-					throw;
+			string expected = "/lala:la";
+			if (!RunningOnWindows) {
+				Assert.AreEqual (expected, setup.ApplicationBase);
+			} else {
+				// On Windows we expect a NotSupportedException to be thrown because
+				// of the illegal character (:) in the path
+				try {
+					Assert.Fail ("NotSupportedException expected but setup.ApplicationBase returned:" + setup.ApplicationBase);
+				}
+				catch (NotSupportedException) {
+					// Expected
+				}
 			}
 		}
 
@@ -153,22 +156,49 @@ namespace MonoTests.System
 			setup.ApplicationBase = "la?lala";
 			// paths containing "?" are *always* bad on Windows
 			// but are legal for linux so we return a full path
-			if (RunningOnWindows) {
+			if (!RunningOnWindows) {
+				Assert.AreEqual (Path.GetFullPath ("la?lala"), setup.ApplicationBase);
+			} else {
+				// On Windows we expect a ArgumentException to be thrown because
+				// of the illegal character (?) in the path
 				try {
-					// ArgumentException is throw when getting 
-					// (and not setting) the ApplicationBase property
-					Assert.Fail ("setup.ApplicationBase returned :" + setup.ApplicationBase);
+					Assert.Fail ("ArgumentException expected but setup.ApplicationBase returned:" + setup.ApplicationBase);
 				}
 				catch (ArgumentException) {
+					// Expected
 				}
-				catch (Exception e) {
-					Assert.Fail ("Unexpected exception: " + e.ToString ());
-				}
-			} else {
-				Assert.AreEqual (Path.GetFullPath ("la?lala"), setup.ApplicationBase);
 			}
 		}
 
+		[Test]
+		public void ApplicationBase7 ()
+		{
+			if (RunningOnWindows) {
+				// Extended paths are Windows only
+				AppDomainSetup setup = new AppDomainSetup ();
+				string expected = @"\\?\" + curDir;
+				setup.ApplicationBase = expected;
+				Assert.AreEqual (expected, setup.ApplicationBase);
+			}
+		}
+
+		[Test]
+		public void ApplicationBase8 ()
+		{
+			if (RunningOnWindows) {
+				// Extended paths are Windows only
+				AppDomainSetup setup = new AppDomainSetup ();
+				setup.ApplicationBase = @"\\?\C:\lala:la";
+				try {
+					Assert.Fail ("NotSupportedException expected but setup.ApplicationBase returned:" + setup.ApplicationBase);
+				}
+				catch (NotSupportedException) {
+					// Expected
+				}
+			}
+		}
+
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		[Test]
 #if MOBILE
 		[Category ("NotWorking")]
@@ -184,6 +214,7 @@ namespace MonoTests.System
 			Assert.IsNotNull (data);
 			Assert.IsTrue ((bool) data);
 		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 
 		static void AppDomainInitialized1 (string [] args)
 		{
@@ -199,6 +230,7 @@ namespace MonoTests.System
 		{
 		}
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		[Test]
 #if MOBILE
 		[Category ("NotWorking")]
@@ -211,5 +243,6 @@ namespace MonoTests.System
 			s.AppDomainInitializer = InstanceInitializer;
 			AppDomain.CreateDomain ("MyDomain", null, s);
 		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 	}
 }

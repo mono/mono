@@ -155,6 +155,54 @@ namespace MonoTests.System.Runtime.InteropServices
 			}
 		}
 
+		readonly String[] TestStrings = new String[] {
+			"", //Empty String
+			"Test String",
+			"A", //Single character string
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself. " +
+			"This is a very long string as it repeats itself.",
+			"This \n is \n a \n multiline \n string",
+			"This \0 is \0 a \0 string \0 with \0 nulls",
+			"\0string",
+			"string\0",
+			"\0\0\0\0\0\0\0\0"
+		};
+
+		[Test]
+		public unsafe void PtrToStringUTF8_Test ()
+		{
+			int i = 0; 
+			foreach (String srcString in TestStrings)
+			{
+				i++;
+				// we assume string null terminated
+				if (srcString.Contains("\0"))
+					continue;
+
+				IntPtr ptrString = Marshal.StringToAllocatedMemoryUTF8(srcString);
+				string retString = Marshal.PtrToStringUTF8(ptrString);
+
+				Assert.AreEqual (srcString, retString, "#" + i);
+				if (srcString.Length > 0)
+				{
+					string retString2 = Marshal.PtrToStringUTF8(ptrString, srcString.Length - 1);
+					Assert.AreEqual (srcString.Substring(0, srcString.Length - 1), retString2, "#s" + i);
+				}
+				Marshal.FreeHGlobal(ptrString);
+			}			
+		}
+		
 		[Test]
 		public unsafe void UnsafeAddrOfPinnedArrayElement ()
 		{
@@ -208,8 +256,8 @@ namespace MonoTests.System.Runtime.InteropServices
 		[Test]
 		public void GetHINSTANCE ()
 		{
-			if (RunningOnUnix)
-				Assert.Ignore ("GetHINSTANCE only applies to Windows.");
+			if (RunningOnMono)
+				Assert.Ignore ("GetHINSTANCE only applies to .NET on Windows.");
 
 			Assembly a;
 			IntPtr hinstance;
@@ -260,6 +308,15 @@ namespace MonoTests.System.Runtime.InteropServices
 			}
 		}
 #endif
+
+		[Test]
+		public void GetHRForException ()
+		{
+			Assert.AreEqual (0, Marshal.GetHRForException (null));
+			Assert.IsTrue (Marshal.GetHRForException (new Exception ()) < 0);
+			Assert.AreEqual (12345, Marshal.GetHRForException (new IOException ("test message", 12345)));
+		}
+
 		[Test] // bug #319009
 		public void StringToHGlobalUni ()
 		{
@@ -298,9 +355,7 @@ namespace MonoTests.System.Runtime.InteropServices
 				Assert.AreEqual (0x1234, Marshal.ReadInt16 (ptr));
 				Assert.AreEqual (0x1234, Marshal.ReadInt16 (ptr, 0));
 				Assert.AreEqual (0x4567, Marshal.ReadInt16 (ptr, 2));
-#if NET_4_5
 				Assert.AreEqual (0x4567, Marshal.ReadInt16 ((ptr + 5)));
-#endif
 				Assert.AreEqual (0x4567, Marshal.ReadInt16 (ptr, 5));
 			} finally {
 				Marshal.FreeHGlobal (ptr);
@@ -318,9 +373,7 @@ namespace MonoTests.System.Runtime.InteropServices
 				Assert.AreEqual (0x12345678, Marshal.ReadInt32 (ptr));
 				Assert.AreEqual (0x12345678, Marshal.ReadInt32 (ptr, 0));
 				Assert.AreEqual (0x77654321, Marshal.ReadInt32 (ptr, 4));
-#if NET_4_5
 				Assert.AreEqual (0x77654321, Marshal.ReadInt32 ((ptr + 10)));
-#endif
 				Assert.AreEqual (0x77654321, Marshal.ReadInt32 (ptr, 10));
 			} finally {
 				Marshal.FreeHGlobal (ptr);
@@ -363,7 +416,6 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")]
 		public void BSTR_Roundtrip ()
 		{
 			string s = "mono";
@@ -373,7 +425,6 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")]
 		public void StringToBSTRWithNullValues ()
 		{
 			int size = 128;
@@ -671,7 +722,7 @@ namespace MonoTests.System.Runtime.InteropServices
 			}
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		[Test]
 		public void TestGetComSlotForMethodInfo ()
 		{
@@ -798,13 +849,13 @@ namespace MonoTests.System.Runtime.InteropServices
 			ex = Marshal.GetExceptionForHR (E_INVALIDARG);
 			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "E_INVALIDARG");
 		}
-		bool RunningOnUnix {
+		bool RunningOnMono {
 			get {
-				int p = (int) Environment.OSVersion.Platform;
-				return ((p == 4) || (p == 128) || (p == 6));
+				return (Type.GetType ("System.MonoType", false) != null);
 			}
 		}
 
+#if !MOBILE
 		[DllImport ("kernel32.dll", SetLastError = true)]
 		[PreserveSig]
 		static extern uint GetModuleFileName (
@@ -816,8 +867,157 @@ namespace MonoTests.System.Runtime.InteropServices
 			[MarshalAs (UnmanagedType.U4)]
 			int nSize
 		);
+#endif
+
+#if !FULL_AOT_RUNTIME
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
+		public class FourByteStruct
+		{
+			public UInt16 value1;
+			public UInt16 value2;
+		}
+
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
+		public class ByteArrayFourByteStruct : FourByteStruct
+		{
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 5 )]
+			public byte[] array;
+		}
+
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
+		public class SingleByteStruct
+		{
+			public byte value1;
+		}
+
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
+		public class ByteArraySingleByteStruct : SingleByteStruct
+		{
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 5 )]
+			public byte[] array1;
+			public byte value2;
+		}
+
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
+		public class ByteArraySingleByteChildStruct : ByteArraySingleByteStruct
+		{
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 5 )]
+			public byte[] array2;
+		}
+
+		[Test]
+		public void CheckByteArrayFourByteStruct()
+		{
+			ByteArrayFourByteStruct myStruct = new ByteArrayFourByteStruct
+			{ value1 = 42, value2 = 53, array = Encoding.UTF8.GetBytes( "Hello" ) };
+
+			byte[] buffer = Serialize (myStruct);
+
+			UInt16 value1 = BitConverter.ToUInt16 (buffer, 0);
+			UInt16 value2 = BitConverter.ToUInt16 (buffer, 2);
+			string array = Encoding.UTF8.GetString (buffer, 4, 5);
+
+			Assert.AreEqual((UInt16)42, value1);
+			Assert.AreEqual((UInt16)53, value2);
+			Assert.AreEqual ("Hello", array);
+		}
+
+		[Test]
+		public void CheckByteArraySingleByteChildStruct()
+		{
+			ByteArraySingleByteChildStruct myStruct = new ByteArraySingleByteChildStruct
+			{ value1 = 42, array1 = Encoding.UTF8.GetBytes( "Hello" ), value2 = 53,  array2 = Encoding.UTF8.GetBytes( "World" ) };
+
+			byte[] array = Serialize (myStruct);
+
+			byte value1 = array [0];
+			string array1 = Encoding.UTF8.GetString (array, 1, 5);
+			byte value2 = array [6];
+			string array2 = Encoding.UTF8.GetString (array, 7, 5);
+
+			Assert.AreEqual((byte)42, value1);
+			Assert.AreEqual ("Hello", array1);
+			Assert.AreEqual((byte)53, value2);
+			Assert.AreEqual ("World", array2);
+		}
+
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		public struct FiveByteStruct
+		{
+			public uint uIntField;
+			public byte byteField;
+		};
+
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		public class Base
+		{
+			public ushort firstUShortField;
+			public ushort secondUShortField;
+		}
+
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		public class Derived : Base
+		{
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+			public FiveByteStruct[] arrayField;
+		}
+
+		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
+		public void CheckPtrToStructureWithFixedArrayAndBaseClassFields()
+		{
+			const int arraySize = 6;
+			var derived = new Derived
+			{
+				arrayField = new FiveByteStruct[arraySize],
+				firstUShortField = 42,
+				secondUShortField = 43
+			};
+
+			for (var i = 0; i < arraySize; ++i)
+			{
+				derived.arrayField[i].byteField = (byte)i;
+				derived.arrayField[i].uIntField = (uint)i * 10;
+			}
+
+			var array = Serialize(derived);
+			var deserializedDerived = Deserialize<Derived>(array);
+
+			Assert.AreEqual(derived.firstUShortField, deserializedDerived.firstUShortField, "The firstUShortField differs, which is not expected.");
+			Assert.AreEqual(derived.secondUShortField, deserializedDerived.secondUShortField, "The secondUShortField differs, which is not expected.");
+
+			for (var i = 0; i < arraySize; ++i)
+			{
+				Assert.AreEqual(derived.arrayField[i].byteField, deserializedDerived.arrayField[i].byteField, string.Format("The byteField at index {0} differs, which is not expected.", i));
+				Assert.AreEqual(derived.arrayField[i].uIntField, deserializedDerived.arrayField[i].uIntField, string.Format("The uIntField at index {0} differs, which is not expected.", i));
+			}
+		}
+
+		public static byte[] Serialize( object obj )
+		{
+			int nTypeSize = Marshal.SizeOf( obj );
+			byte[] arrBuffer = new byte[nTypeSize];
+
+			GCHandle hGCHandle = GCHandle.Alloc( arrBuffer, GCHandleType.Pinned );
+			IntPtr pBuffer = hGCHandle.AddrOfPinnedObject();
+			Marshal.StructureToPtr( obj, pBuffer, false );
+			hGCHandle.Free();
+
+			return arrBuffer;
+		}
+
+		public static T Deserialize<T>(byte[] buffer)
+		{
+			var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+			var pBuffer = handle.AddrOfPinnedObject();
+			var objResult = (T)Marshal.PtrToStructure(pBuffer, typeof(T));
+			handle.Free();
+
+			return objResult;
+		}
+#endif
 	}
-#if !NET_2_1
+#if !MOBILE
 	[ComImport()]
 	[Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")]
 	interface ITestDefault

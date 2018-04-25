@@ -1,5 +1,6 @@
-/*
- * rand.c: System.Security.Cryptography.RNGCryptoServiceProvider support
+/**
+ * \file
+ * System.Security.Cryptography.RNGCryptoServiceProvider support
  *
  * Authors:
  *      Mark Crichton (crichton@gimp.org)
@@ -8,11 +9,14 @@
  *
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
+#include <config.h>
 #include <glib.h>
 
 #include "object.h"
+#include "object-internals.h"
 #include "rand.h"
 #include "utils/mono-rand.h"
 
@@ -32,8 +36,10 @@ ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngInitialize (M
 gpointer
 ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngGetBytes (gpointer handle, MonoArray *arry)
 {
+	ERROR_DECL (error);
 	g_assert (arry);
-	mono_rand_try_get_bytes (&handle, mono_array_addr (arry, guchar, 0), mono_array_length (arry));
+	mono_rand_try_get_bytes (&handle, mono_array_addr (arry, guchar, 0), mono_array_length (arry), error);
+	mono_error_set_pending_exception (error);
 	return handle;
 }
 

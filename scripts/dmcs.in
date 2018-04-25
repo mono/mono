@@ -1,2 +1,3 @@
 #!/bin/sh
+echo "Note: dmcs is deprecated, please use mcs instead!"
 exec @bindir@/mono $MONO_OPTIONS @mono_instdir@/4.5/mcs.exe -sdk:4.0 "$@"

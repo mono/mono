@@ -230,7 +230,7 @@ namespace MonoTests.System.Web.Compilation {
 			string originalHtml = @"<!--[if IE 6]>
 		<link rel=""styleheet"" type=""text/css"" href=""~/compat-ie6.css""></link>
 	<![endif]-->";
-			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+			HtmlDiff.AssertAreEqual (originalHtml.Replace ("\r\n","\n"), renderedHtml, "#A1");
 		}
 		
 		[Test (Description="Bug #400807")]
@@ -286,7 +286,7 @@ namespace MonoTests.System.Web.Compilation {
 			string originalHtml = @"<!-- comment start
   <input id=""testBox"" type=""checkbox"" name=""testBox"" />
 comment end -->";
-			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+			HtmlDiff.AssertAreEqual (originalHtml.Replace ("\r\n","\n"), renderedHtml, "#A1");
 		}
 
 		[Test]

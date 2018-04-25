@@ -22,6 +22,8 @@
 // Authors:
 //	Jackson Harper	jackson@ximian.com
 
+// #undef DebugCurrencyManager
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -673,14 +675,14 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		void CurrentChanged (object sender, EventArgs args)
 		{
 			current_changed = ++event_num;
-			Console.WriteLine ("current_changed = {0}", current_changed);
+			DebugWriteLine ("current_changed = {0}", current_changed);
 			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: CurrentChanged\n", current_changed);
 		}
 		void PositionChanged (object sender, EventArgs args)
 		{
 			position_changed = ++event_num;
-			Console.WriteLine ("position_changed = {0}", position_changed);
+			DebugWriteLine ("position_changed = {0}", position_changed);
 			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: PositionChanged (to {1})\n", position_changed, ((CurrencyManager)sender).Position);
 		}
@@ -688,20 +690,20 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		{
 			item_changed = ++event_num;
 			item_changed_args = args;
-			Console.WriteLine ("item_changed = {0}, index = {1}", item_changed, args.Index);
+			DebugWriteLine ("item_changed = {0}, index = {1}", item_changed, args.Index);
 			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: ItemChanged (index = {1})\n", item_changed, args.Index);
 		}
 		void ListChanged (object sender, ListChangedEventArgs args)
 		{
-			Console.WriteLine ("ListChanged ({0},{1},{2})", args.ListChangedType, args.OldIndex, args.NewIndex);
+			DebugWriteLine ("ListChanged ({0},{1},{2})", args.ListChangedType, args.OldIndex, args.NewIndex);
 			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format (" : ListChanged ({0}, {1}, {2})\n", args.ListChangedType, args.OldIndex, args.NewIndex);
 		}
 		void MetaDataChanged (object sender, EventArgs args)
 		{
 			metadata_changed = ++event_num;
-			Console.WriteLine ("metadata_changed = {0}", metadata_changed);
+			DebugWriteLine ("metadata_changed = {0}", metadata_changed);
 			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: MetaDataChanged\n", metadata_changed);
 		}
@@ -710,7 +712,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		{
 			list_changed_called = true;
 			list_changed_args = args;
-			Console.WriteLine ("CurrencyManager.ListChanged ({0},{1},{2})", args.ListChangedType, args.OldIndex, args.NewIndex);
+			DebugWriteLine ("CurrencyManager.ListChanged ({0},{1},{2})", args.ListChangedType, args.OldIndex, args.NewIndex);
 
 		}
 
@@ -872,7 +874,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Assert.AreEqual (10, cm.Count, "EndAddNew2");
 
 			cm.AddNew ();
-			Console.WriteLine ("position = {0}", cm.Position);
+			DebugWriteLine ("position = {0}", cm.Position);
 
 			Assert.AreEqual (0, item_changed, "EndAddNew3");
 			Assert.AreEqual (-1, item_changed_args.Index, "EndAddNew4");
@@ -880,7 +882,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Assert.AreEqual (2, position_changed, "EndAddNew6");
 
 			cm.EndCurrentEdit ();
-			Console.WriteLine ("position = {0}", cm.Position);
+			DebugWriteLine ("position = {0}", cm.Position);
 
 			Assert.AreEqual (3, item_changed, "EndAddNew7");
 			Assert.AreEqual (-1, item_changed_args.Index, "EndAddNew8");
@@ -896,7 +898,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 		void DataView_ListChanged (object sender, ListChangedEventArgs e)
 		{
-			Console.WriteLine ("{0} {1} {2}", e.ListChangedType, e.OldIndex, e.NewIndex);
+			DebugWriteLine ("{0} {1} {2}", e.ListChangedType, e.OldIndex, e.NewIndex);
 		}
 
 		// Support for ICancelNew interface
@@ -1088,38 +1090,38 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			CurrencyManager cm = bc [data_source] as CurrencyManager;
 
-			Console.WriteLine ("cm properties:");
+			DebugWriteLine ("cm properties:");
 			foreach (PropertyDescriptor pd in cm.GetItemProperties ())
-				Console.WriteLine (" + {0}", pd.Name);
-			Console.WriteLine ();
+				DebugWriteLine (" + {0}", pd.Name);
+			DebugWriteLine ();
 
-			Console.WriteLine ("dataset:");
-			Console.WriteLine ("cm = {0}", cm.GetType());
-			Console.WriteLine ("cm.Count = {0}", cm.Count);
+			DebugWriteLine ("dataset:");
+			DebugWriteLine ("cm = {0}", cm.GetType());
+			DebugWriteLine ("cm.Count = {0}", cm.Count);
 			cm.Position = 0;
-			Console.WriteLine ("cm.Current = {0}", cm.Current);
-			Console.WriteLine ("cm.Current properties");
+			DebugWriteLine ("cm.Current = {0}", cm.Current);
+			DebugWriteLine ("cm.Current properties");
 			foreach (PropertyDescriptor pd in ((ICustomTypeDescriptor)cm.Current).GetProperties ())
-				Console.WriteLine (" + {0}", pd.Name);
-			Console.WriteLine ();
+				DebugWriteLine (" + {0}", pd.Name);
+			DebugWriteLine ();
 
 			cm = bc [data_source.Tables["Customers"]] as CurrencyManager;
-			Console.WriteLine ("datatable:");
-			Console.WriteLine ("cm = {0}", cm.GetType());
-			Console.WriteLine ("cm.Count = {0}", cm.Count);
+			DebugWriteLine ("datatable:");
+			DebugWriteLine ("cm = {0}", cm.GetType());
+			DebugWriteLine ("cm.Count = {0}", cm.Count);
 			cm.Position = 0;
-			Console.WriteLine ("cm.Current = {0}", cm.Current);
-			Console.WriteLine ("cm.Current properties");
+			DebugWriteLine ("cm.Current = {0}", cm.Current);
+			DebugWriteLine ("cm.Current properties");
 			foreach (PropertyDescriptor pd in ((ICustomTypeDescriptor)cm.Current).GetProperties ())
-				Console.WriteLine (" + {0}", pd.Name);
+				DebugWriteLine (" + {0}", pd.Name);
 
-			Console.WriteLine ();
+			DebugWriteLine ();
 
 			DataViewManager vm = new DataViewManager (data_source);
-			Console.WriteLine ("vm properties:");
+			DebugWriteLine ("vm properties:");
 			foreach (PropertyDescriptor pd in ((ITypedList)vm).GetItemProperties (null))
-				Console.WriteLine (" + {0}", pd.Name);
-			Console.WriteLine ();
+				DebugWriteLine (" + {0}", pd.Name);
+			DebugWriteLine ();
 
 		}
 
@@ -1240,5 +1242,16 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			}
 		}
 
+		[global::System.Diagnostics.Conditional("DebugCurrencyManager")]
+		void DebugWriteLine ()
+		{
+			Console.WriteLine ();
+		}
+
+		[global::System.Diagnostics.Conditional("DebugCurrencyManager")]
+		void DebugWriteLine (string text, params object[] p)
+		{
+			Console.WriteLine (text, p);
+		}
 	}
 }

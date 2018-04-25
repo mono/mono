@@ -41,4 +41,3 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 
 [assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../mono.pub")]

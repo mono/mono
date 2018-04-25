@@ -35,8 +35,8 @@ namespace System
 	public class UriTemplateMatchException : SystemException
 	{
 		public UriTemplateMatchException () : base () {}
-		public UriTemplateMatchException (string msg) : base (msg) {}
-		public UriTemplateMatchException (string msg, Exception inner) : base (msg, inner) {}
+		public UriTemplateMatchException (string message) : base (message) {}
+		public UriTemplateMatchException (string message, Exception innerException) : base (message, innerException) {}
 		protected UriTemplateMatchException (SerializationInfo info, StreamingContext context) :
 			base (info, context) {}
 	}

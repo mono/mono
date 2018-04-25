@@ -14,6 +14,12 @@
       </li>
 	  <li>
 		<object type="text/sitemap">
+	      <param name="Name" value="Embedding Mono"/>
+	      <param name="Local" value="deploy/mono-api-embedding.html"/>
+		</object>
+	  </li>
+	  <li>
+		<object type="text/sitemap">
 	      <param name="Name" value="Assemblies"/>
 	      <param name="Local" value="deploy/mono-api-assembly.html"/>
 		</object>
@@ -50,26 +56,8 @@
 	  </li>
 	  <li>
 		<object type="text/sitemap">
-	      <param name="Name" value="Code Generation"/>
-	      <param name="Local" value="deploy/mono-api-codegen.html"/>
-		</object>
-	  </li>
-	  <li>
-		<object type="text/sitemap">
-	      <param name="Name" value="Decimal Representation"/>
-	      <param name="Local" value="deploy/mono-api-decimal.html"/>
-		</object>
-	  </li>
-	  <li>
-		<object type="text/sitemap">
 	      <param name="Name" value="Application Domains"/>
 	      <param name="Local" value="deploy/mono-api-domains.html"/>
-		</object>
-	  </li>
-	  <li>
-		<object type="text/sitemap">
-	      <param name="Name" value="Dynamic Code Generation"/>
-	      <param name="Local" value="deploy/mono-api-dynamic-codegen.html"/>
 		</object>
 	  </li>
 	  <li>
@@ -92,20 +80,8 @@
 	  </li>
 	  <li>
 		<object type="text/sitemap">
-	      <param name="Name" value="Embedding Mono"/>
-	      <param name="Local" value="deploy/mono-api-embedding.html"/>
-		</object>
-	  </li>
-	  <li>
-		<object type="text/sitemap">
 	      <param name="Name" value="Just in Time Compiler"/>
 	      <param name="Local" value="deploy/mono-api-jit.html"/>
-		</object>
-	  </li>
-	  <li>
-		<object type="text/sitemap">
-	      <param name="Name" value="Marshalling"/>
-	      <param name="Local" value="deploy/mono-api-marshal.html"/>
 		</object>
 	  </li>
 	  <li>
@@ -140,12 +116,6 @@
 		  </object>
 		  </li>
 	  -->
-	  <li>
-		<object type="text/sitemap">
-	      <param name="Name" value="JIT Counters"/>
-	      <param name="Local" value="deploy/mono-api-counters.html"/>
-		</object>
-	  </li>
 	  <li>
 		<object type="text/sitemap">
 	      <param name="Name" value="Types"/>
@@ -184,8 +154,20 @@
 	  </li>
 	  <li>
 		<object type="text/sitemap">
+	      <param name="Name" value="JIT Counters"/>
+	      <param name="Local" value="deploy/mono-api-counters.html"/>
+		</object>
+	  </li>
+	  <li>
+		<object type="text/sitemap">
 	      <param name="Name" value="Unsorted"/>
 	      <param name="Local" value="deploy/mono-api-unsorted.html"/>
+		</object>
+	  </li>
+	  <li>
+		<object type="text/sitemap">
+	      <param name="Name" value="Internal: Dynamic Code Generation"/>
+	      <param name="Local" value="deploy/mono-api-dynamic-codegen.html"/>
 		</object>
 	  </li>
     </ul>

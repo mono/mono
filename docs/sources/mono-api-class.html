@@ -1,52 +1,108 @@
 <h2>Class Operations</h2>
 
+	<p>The operations on <code>MonoClass*</code> allow you to
+	query a number of properties of a .NET class from the C API.
+
+	<p>This page contains information
+	for <a href="#class-getting">how to obtain a MonoClass*</a>,
+	how to <a href="#class-work">probe for different
+	features of a MonoClass*</a> and APIs
+	to <a href="#class-members">access class members</a> and 
+	<a href="#class-fields">access fields</a>.   To access
+	methods, see the <a href="mono-api-methods.html">method
+	documentation API</a>.
+
+<a name="class-getting"></a>
+<h3>Getting a MonoClass</h3>
+
+	<p>You typically would obtain a <code>MonoClass*</code>
+	pointer by using a combination of the <code>MonoImage*</code>
+	where the type is located, the namespace and name using the
+	<code><a href="api:mono_class_from_name">mono_class_from_name</a></code>
+	or
+	the <code><a href="api:mono_class_from_name_case">mono_class_from_name_case</a></code>
+	APIs or by using
+	the <code><a href="api:mono_class_from_typeref">mono_class_from_typeref</a></code>
+	or <code><a href="api:mono_class_from_typeref">mono_class_from_typeref_checked</a></code>
+	methods.
+
+	<p>For low-level access, you can get the <code>MonoClass
+	*</code> from an image and an ECMA type token relative to
+	the <code>MonoImage*</code> by using <a href="api:mono_class_get">mono_class_get</a>.
+
+	
+<h4><a name="api:mono_class_get">mono_class_get</a></h4>
+<h4><a name="api:mono_class_from_mono_type">mono_class_from_mono_type</a></h4>
+<h4><a name="api:mono_class_from_name">mono_class_from_name</a></h4>
+<h4><a name="api:mono_class_from_name_case">mono_class_from_name_case</a></h4>
+<h4><a name="api:mono_class_from_typeref">mono_class_from_typeref</a></h4>
+<h4><a name="api:mono_class_from_typeref_checked">mono_class_from_typeref_checked</a></h4>
+<h4><a name="api:mono_class_from_generic_parameter">mono_class_from_generic_parameter</a></h4>
+
+<h3>Working with a MonoClass</h3>
+
 <h4><a name="api:mono_class_array_element_size">mono_class_array_element_size</a></h4>
 <h4><a name="api:mono_class_data_size">mono_class_data_size</a></h4>
 <h4><a name="api:mono_class_enum_basetype">mono_class_enum_basetype</a></h4>
-<h4><a name="api:mono_class_from_generic_parameter">mono_class_from_generic_parameter</a></h4>
-<h4><a name="api:mono_class_from_mono_type">mono_class_from_mono_type</a></h4>
-<h4><a name="api:mono_class_from_name_case">mono_class_from_name_case</a></h4>
-<h4><a name="api:mono_class_from_name">mono_class_from_name</a></h4>
-<h4><a name="api:mono_class_from_typeref">mono_class_from_typeref</a></h4>
 <h4><a name="api:mono_class_get_byref_type">mono_class_get_byref_type</a></h4>
 <h4><a name="api:mono_class_get_element_class">mono_class_get_element_class</a></h4>
-<h4><a name="api:mono_class_get_events">mono_class_get_events</a></h4>
 <h4><a name="api:mono_class_get_event_token">mono_class_get_event_token</a></h4>
-<h4><a name="api:mono_class_get_field_from_name">mono_class_get_field_from_name</a></h4>
 <h4><a name="api:mono_class_get_field">mono_class_get_field</a></h4>
-<h4><a name="api:mono_class_get_fields">mono_class_get_fields</a></h4>
 <h4><a name="api:mono_class_get_field_token">mono_class_get_field_token</a></h4>
 <h4><a name="api:mono_class_get_flags">mono_class_get_flags</a></h4>
 <h4><a name="api:mono_class_get_full">mono_class_get_full</a></h4>
 <h4><a name="api:mono_class_get_image">mono_class_get_image</a></h4>
 <h4><a name="api:mono_class_get_interfaces">mono_class_get_interfaces</a></h4>
-<h4><a name="api:mono_class_get_method_from_name">mono_class_get_method_from_name</a></h4>
-<h4><a name="api:mono_class_get_methods">mono_class_get_methods</a></h4>
-<h4><a name="api:mono_class_get">mono_class_get</a></h4>
 <h4><a name="api:mono_class_get_name">mono_class_get_name</a></h4>
 <h4><a name="api:mono_class_get_namespace">mono_class_get_namespace</a></h4>
-<h4><a name="api:mono_class_get_nested_types">mono_class_get_nested_types</a></h4>
 <h4><a name="api:mono_class_get_nesting_type">mono_class_get_nesting_type</a></h4>
 <h4><a name="api:mono_class_get_parent">mono_class_get_parent</a></h4>
-<h4><a name="api:mono_class_get_properties">mono_class_get_properties</a></h4>
-<h4><a name="api:mono_class_get_property_from_name">mono_class_get_property_from_name</a></h4>
 <h4><a name="api:mono_class_get_property_token">mono_class_get_property_token</a></h4>
 <h4><a name="api:mono_class_get_rank">mono_class_get_rank</a></h4>
 <h4><a name="api:mono_class_get_type">mono_class_get_type</a></h4>
+<h4><a name="api:mono_class_get_type_token">mono_class_get_type_token</a></h4>
+<h4><a name="api:mono_class_implements_interface">mono_class_implements_interface</a></h4>
 <h4><a name="api:mono_class_inflate_generic_method">mono_class_inflate_generic_method</a></h4>
 <h4><a name="api:mono_class_inflate_generic_type">mono_class_inflate_generic_type</a></h4>
 <h4><a name="api:mono_class_init">mono_class_init</a></h4>
 <h4><a name="api:mono_class_instance_size">mono_class_instance_size</a></h4>
 <h4><a name="api:mono_class_is_assignable_from">mono_class_is_assignable_from</a></h4>
+<h4><a name="api:mono_class_is_delegate">mono_class_is_delegate</a></h4>
 <h4><a name="api:mono_class_is_enum">mono_class_is_enum</a></h4>
 <h4><a name="api:mono_class_is_subclass_of">mono_class_is_subclass_of</a></h4>
 <h4><a name="api:mono_class_is_valuetype">mono_class_is_valuetype</a></h4>
 <h4><a name="api:mono_class_min_align">mono_class_min_align</a></h4>
+<h4><a name="api:mono_class_name_from_token">mono_class_name_from_token</a></h4> 
 <h4><a name="api:mono_class_num_events">mono_class_num_events</a></h4>
 <h4><a name="api:mono_class_num_fields">mono_class_num_fields</a></h4>
 <h4><a name="api:mono_class_num_methods">mono_class_num_methods</a></h4>
 <h4><a name="api:mono_class_num_properties">mono_class_num_properties</a></h4>
 <h4><a name="api:mono_class_value_size">mono_class_value_size</a></h4>
 <h4><a name="api:mono_class_vtable">mono_class_vtable</a></h4>
+
+<a name="class-members"></a>
+<h3>Getting Class Members</h3>
+
+<h4><a name="api:mono_class_get_fields">mono_class_get_fields</a></h4>
+<h4><a name="api:mono_class_get_field_from_name">mono_class_get_field_from_name</a></h4>
+<h4><a name="api:mono_class_get_methods">mono_class_get_methods</a></h4>
+<h4><a name="api:mono_class_get_method_from_name">mono_class_get_method_from_name</a></h4>
 <h4><a name="api:mono_class_get_method_from_name_flags">mono_class_get_method_from_name_flags</a></h4> 
-<h4><a name="api:mono_class_name_from_token">mono_class_name_from_token</a></h4> 
+<h4><a name="api:mono_class_get_nested_types">mono_class_get_nested_types</a></h4>
+<h4><a name="api:mono_class_get_properties">mono_class_get_properties</a></h4>
+<h4><a name="api:mono_class_get_property_from_name">mono_class_get_property_from_name</a></h4>
+<h4><a name="api:mono_class_get_events">mono_class_get_events</a></h4>
+
+<a name="class-fields"></a>
+<h3>Fields</h3>
+
+<h4><a name="api:mono_field_get_data">mono_field_get_data</a></h4>
+<h4><a name="api:mono_field_get_offset">mono_field_get_offset</a></h4>
+<h4><a name="api:mono_field_full_name">mono_field_full_name</a></h4>
+
+<h3>Method Accessibility</h3>
+
+<h4><a name="api:mono_method_can_access_field">mono_method_can_access_field</a></h4>
+<h4><a name="api:mono_method_can_access_method">mono_method_can_access_method</a></h4>
+
+<p>

@@ -17,6 +17,10 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifndef MONO_API
+#define MONO_API
+#endif
+
 #ifndef TRUE
 #define FALSE 0
 #define TRUE 1
@@ -26,6 +30,11 @@
 #define ARGUMENT_ERROR -10
 #define IO_ERROR -11
 
+#define z_malloc(size)          ((gpointer) malloc(size))
+#define z_malloc0(size)         ((gpointer) calloc(1,size))
+#define z_new(type,size)        ((type *) z_malloc (sizeof (type) * (size)))
+#define z_new0(type,size)       ((type *) z_malloc0 (sizeof (type)* (size)))
+
 typedef gint (*read_write_func) (guchar *buffer, gint length, void *gchandle);
 struct _ZStream {
 	z_stream *stream;
@@ -34,26 +43,27 @@ struct _ZStream {
 	void *gchandle;
 	guchar compress;
 	guchar eof;
+	guint32 total_in;
 };
 typedef struct _ZStream ZStream;
 
-ZStream *CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle);
-gint CloseZStream (ZStream *zstream);
-gint Flush (ZStream *stream);
-gint ReadZStream (ZStream *stream, guchar *buffer, gint length);
-gint WriteZStream (ZStream *stream, guchar *buffer, gint length);
+MONO_API ZStream *CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle);
+MONO_API gint CloseZStream (ZStream *zstream);
+MONO_API gint Flush (ZStream *stream);
+MONO_API gint ReadZStream (ZStream *stream, guchar *buffer, gint length);
+MONO_API gint WriteZStream (ZStream *stream, guchar *buffer, gint length);
 static gint flush_internal (ZStream *stream, gboolean is_final);
 
 static void *
 z_alloc (void *opaque, unsigned int nitems, unsigned int item_size)
 {
-	return g_malloc0 (nitems * item_size);
+	return z_malloc0 (nitems * item_size);
 }
 
 static void
 z_free (void *opaque, void *ptr)
 {
-	g_free (ptr);
+	free (ptr);
 }
 
 ZStream *
@@ -71,7 +81,7 @@ CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle)
 	return NULL;
 #endif
 
-	z = g_new0 (z_stream, 1);
+	z = z_new0 (z_stream, 1);
 	if (compress) {
 		retval = deflateInit2 (z, Z_DEFAULT_COMPRESSION, Z_DEFLATED, gzip ? 31 : -15, 8, Z_DEFAULT_STRATEGY);
 	} else {
@@ -79,19 +89,20 @@ CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle)
 	}
 
 	if (retval != Z_OK) {
-		g_free (z);
+		free (z);
 		return NULL;
 	}
 	z->zalloc = z_alloc;
 	z->zfree = z_free;
-	result = g_new0 (ZStream, 1);
+	result = z_new0 (ZStream, 1);
 	result->stream = z;
 	result->func = func;
 	result->gchandle = gchandle;
 	result->compress = compress;
-	result->buffer = g_new (guchar, BUFFER_SIZE);
+	result->buffer = z_new (guchar, BUFFER_SIZE);
 	result->stream->next_out = result->buffer;
 	result->stream->avail_out = BUFFER_SIZE;
+	result->stream->total_in = 0;
 	return result;
 }
 
@@ -118,10 +129,10 @@ CloseZStream (ZStream *zstream)
 	} else {
 		inflateEnd (zstream->stream);
 	}
-	g_free (zstream->buffer);
-	g_free (zstream->stream);
+	free (zstream->buffer);
+	free (zstream->stream);
 	memset (zstream, 0, sizeof (ZStream));
-	g_free (zstream);
+	free (zstream);
 	return status;
 }
 
@@ -183,18 +194,20 @@ ReadZStream (ZStream *stream, guchar *buffer, gint length)
 	while (zs->avail_out > 0) {
 		if (zs->avail_in == 0) {
 			n = stream->func (stream->buffer, BUFFER_SIZE, stream->gchandle);
-			if (n <= 0) {
-				stream->eof = TRUE;
-			}
+			n = n < 0 ? 0 : n;
+			stream->total_in += n;
 			zs->next_in = stream->buffer;
-			zs->avail_in = n < 0 ? 0 : n;
+			zs->avail_in = n;
 		}
 
 		if (zs->avail_in == 0 && zs->total_in == 0)
-			return Z_STREAM_END;
+			return 0;
 
 		status = inflate (stream->stream, Z_SYNC_FLUSH);
 		if (status == Z_STREAM_END) {
+			stream->eof = TRUE;
+			break;
+		} else if (status == Z_BUF_ERROR && stream->total_in == zs->total_in) {
 			stream->eof = TRUE;
 			break;
 		} else if (status != Z_OK) {

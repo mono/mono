@@ -507,6 +507,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestConstructSingle ()
 		{
 			Decimal d;
@@ -629,6 +630,7 @@ namespace MonoTests.System
 
 		[Test]
 		[SetCulture("en-US")]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestConstructDouble ()
 		{
 			Decimal d;
@@ -727,6 +729,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestConstructDoubleRound ()
 		{
 			decimal d;
@@ -979,6 +982,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ToInt32 ()
 		{
 			Decimal d = 254.9m;
@@ -1041,6 +1045,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ToSingle ()
 		{
 			Decimal d = 254.9m;
@@ -1054,6 +1059,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ToDouble ()
 		{
 			Decimal d = 254.9m;
@@ -1571,7 +1577,7 @@ namespace MonoTests.System
 		{
 			decimal value = 1.600000m;
 			var roundedValue = Math.Round (value, 3);
-			Assert.AreEqual ("1.600", roundedValue.ToString (), "#1");
+			Assert.AreEqual ("1.600", roundedValue.ToString (CultureInfo.InvariantCulture), "#1");
 		}
 
 		[Test] // Bug Xamarin#17538
@@ -1585,7 +1591,6 @@ namespace MonoTests.System
 		}
 
 		[Test] // Bug Xamarin #24411
-		[Category ("MobileNotWorking")] // Bug Xamarin #27269
 		public void DecimalDivision_24411  ()
 		{
 			decimal dd = 45m;
@@ -1599,19 +1604,18 @@ namespace MonoTests.System
 			// The side effect is that 45m/100 should render as 0.45, not 0.4500000000000000000000000000
 			// Just for completeness:
 
-			Assert.AreEqual ("0.45", (45m/100).ToString ());
+			Assert.AreEqual ("0.45", (45m/100).ToString (CultureInfo.InvariantCulture));
 		}
 
 		[Test] // Bug SUSE #655780
-		[Category ("MobileNotWorking")] // Bug Xamarin #27269
 		public void TrailingZerosBug ()
 		{
 			decimal d;
-			Assert.AreEqual ("0", (0m/5).ToString ());
-			Assert.AreEqual ("0.2", (1m/5).ToString ());
-			Assert.AreEqual ("0.4", (2m/5).ToString ());
-			Assert.AreEqual ("0.6", (3m/5).ToString ());
-			Assert.AreEqual ("0.8", (4m/5).ToString ());
+			Assert.AreEqual ("0", (0m/5).ToString (CultureInfo.InvariantCulture));
+			Assert.AreEqual ("0.2", (1m/5).ToString (CultureInfo.InvariantCulture));
+			Assert.AreEqual ("0.4", (2m/5).ToString (CultureInfo.InvariantCulture));
+			Assert.AreEqual ("0.6", (3m/5).ToString (CultureInfo.InvariantCulture));
+			Assert.AreEqual ("0.8", (4m/5).ToString (CultureInfo.InvariantCulture));
 		}
 	}
 }

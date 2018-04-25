@@ -2,7 +2,7 @@ thisdir = tools/culevel
 SUBDIRS = 
 include ../../build/rules.make
 
-LOCAL_MCS_FLAGS = 
+LIB_REFS = System System.Xml
 PROGRAM = culevel.exe
 
 CLEAN_FILES = culevel.exe culevel.exe.mdb

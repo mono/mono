@@ -36,7 +36,6 @@ using Mono.Net.Security;
 
 namespace Mono.Security.Interface
 {
-	#if (!MONOTOUCH && !MONODROID) || INSIDE_SYSTEM
 	public class ValidationResult
 	{
 		bool trusted;
@@ -52,12 +51,11 @@ namespace Mono.Security.Interface
 			this.policy_errors = policy_errors;
 		}
 
-		internal ValidationResult (bool trusted, bool user_defined, int error_code)
+		internal ValidationResult (bool trusted, bool user_denied, int error_code)
 		{
 			this.trusted = trusted;
 			this.user_denied = user_denied;
 			this.error_code = error_code;
-			this.policy_errors = policy_errors;
 		}
 
 		public bool Trusted {
@@ -97,13 +95,14 @@ namespace Mono.Security.Interface
 		 * If @serverMode is true, then we're a server and want to validate a certificate that we received from a client.
 		 */
 		ValidationResult ValidateCertificate (string targetHost, bool serverMode, X509CertificateCollection certificates);
+	}
 
+	internal interface ICertificateValidator2 : ICertificateValidator
+	{
 		/*
-		 * On OS X and Mobile, the @chain will be initialized with the @certificates, but not actually built.
+		 * Internal use only.
 		 */
-		bool InvokeSystemValidator (
-			string targetHost, bool serverMode, X509CertificateCollection certificates,
-			X509Chain chain, ref MonoSslPolicyErrors errors, ref int status11);
+		ValidationResult ValidateCertificate (string targetHost, bool serverMode, X509Certificate leaf, X509Chain chain);
 	}
 
 	public static class CertificateValidationHelper
@@ -139,17 +138,18 @@ namespace Mono.Security.Interface
 			get { return supportsTrustAnchors; }
 		}
 
-		static ICertificateValidator GetDefaultValidator (MonoTlsProvider provider, MonoTlsSettings settings)
-		{
-			return (ICertificateValidator)NoReflectionHelper.GetDefaultCertificateValidator (provider, settings);
-		}
-
 		/*
 		 * Internal API, intended to be used by MonoTlsProvider implementations.
 		 */
-		public static ICertificateValidator GetValidator (MonoTlsProvider provider, MonoTlsSettings settings)
+		internal static ICertificateValidator2 GetInternalValidator (MonoTlsSettings settings, MonoTlsProvider provider)
 		{
-			return GetDefaultValidator (provider, settings);
+			return (ICertificateValidator2)NoReflectionHelper.GetInternalValidator (provider, settings);
+		}
+
+		[Obsolete ("Use GetInternalValidator")]
+		internal static ICertificateValidator2 GetDefaultValidator (MonoTlsSettings settings, MonoTlsProvider provider)
+		{
+			return GetInternalValidator (settings, provider);
 		}
 
 		/*
@@ -157,8 +157,7 @@ namespace Mono.Security.Interface
 		 */
 		public static ICertificateValidator GetValidator (MonoTlsSettings settings)
 		{
-			return GetDefaultValidator (null, settings);
+			return (ICertificateValidator)NoReflectionHelper.GetDefaultValidator (settings);
 		}
 	}
-#endif
 }

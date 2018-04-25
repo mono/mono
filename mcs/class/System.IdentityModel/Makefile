@@ -2,23 +2,39 @@ thisdir = class/System.IdentityModel
 SUBDIRS = 
 include ../../build/rules.make
 
-ifndef NO_SYSTEM_WEB_APPSERVICES_DEPENDENCY
-ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-OTHER_LIB_MCS_FLAGS = -r:System.Web.ApplicationServices.dll
-endif
+ifndef NO_MONO_SECURITY
+MONO_SECURITY=Mono.Security
 endif
 
 LIBRARY = System.IdentityModel.dll
-LIB_REFS = System System.Xml System.Security System.Configuration Mono.Security System.Runtime.Serialization
+LIB_REFS = System System.Xml System.Security $(MONO_SECURITY) System.Runtime.Serialization
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = \
 		/d:NET_3_0	\
 	        $(OTHER_LIB_MCS_FLAGS)
 
-ifndef NO_SYSTEM_WEB_DEPENDENCY
-LIB_REFS += System.Web
+ifneq (2.1, $(FRAMEWORK_VERSION))
+LIB_REFS += System.Configuration
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+ifndef NO_SYSTEM_WEB_DEPENDENCY
+ifneq (2.1, $(FRAMEWORK_VERSION))
+LIB_REFS += System.Web
+endif
+endif
+
+ifndef NO_SYSTEM_WEB_APPSERVICES_DEPENDENCY
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+LIB_REFS += System.Web.ApplicationServices
+endif
+endif
+
+TEST_MCS_FLAGS =
+TEST_LIB_REFS = System System.Xml System.Security System.Runtime.Serialization
+
+ifdef MOBILE_PROFILE
+NO_TEST = yes
+endif
 
 EXTRA_DISTFILES = \
 	Test/Resources/test.cer \

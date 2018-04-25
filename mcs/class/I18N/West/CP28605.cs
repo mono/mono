@@ -97,12 +97,11 @@ public class CP28605 : ByteEncoding
 			return GetBytesImpl(chars, count, null, 0);
 		}
 		else
-		
 		{
 			return count;
 		}
 	}
-	
+
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount (String s)
 	{
@@ -123,7 +122,7 @@ public class CP28605 : ByteEncoding
 			return s.Length;
 		}
 	}
-	
+
 	//ToBytes is just an alias for GetBytesImpl, but doesn't return byte count
 	protected unsafe override void ToBytes(char* chars, int charCount,
 	                                byte* bytes, int byteCount)
@@ -133,7 +132,7 @@ public class CP28605 : ByteEncoding
 			throw new ArgumentNullException("bytes");
 		GetBytesImpl(chars, charCount, bytes, byteCount);
 	}
-	
+
 	public unsafe override int GetBytesImpl (char* chars, int charCount,
 	                                         byte* bytes, int byteCount)
 	{
@@ -144,8 +143,6 @@ public class CP28605 : ByteEncoding
 		while (charCount > 0)
 		{
 			ch = (int)(chars[charIndex]);
-			charIndex++;
-			charCount--;
 			if(ch >= 164) switch(ch)
 			{
 				case 0x00A5:
@@ -250,6 +247,8 @@ public class CP28605 : ByteEncoding
 					else
 					{
 						HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
+						charIndex++;
+						charCount--;
 						continue;
 					}
 				}
@@ -260,132 +259,11 @@ public class CP28605 : ByteEncoding
 				bytes[byteIndex] = (byte)ch;
 			byteIndex++;
 			byteCount--;
+			charIndex++;
+			charCount--;
 		}
 		return byteIndex;
 	}
-
-	/*
-	protected override void ToBytes(String s, int charIndex, int charCount,
-	                                byte[] bytes, int byteIndex)
-	{
-		int ch;
-		while(charCount > 0)
-		{
-			ch = (int)(s[charIndex++]);
-			if(ch >= 164) switch(ch)
-			{
-				case 0x00A5:
-				case 0x00A7:
-				case 0x00A9:
-				case 0x00AA:
-				case 0x00AB:
-				case 0x00AC:
-				case 0x00AD:
-				case 0x00AE:
-				case 0x00AF:
-				case 0x00B0:
-				case 0x00B1:
-				case 0x00B2:
-				case 0x00B3:
-				case 0x00B5:
-				case 0x00B6:
-				case 0x00B7:
-				case 0x00B9:
-				case 0x00BA:
-				case 0x00BB:
-				case 0x00BF:
-				case 0x00C0:
-				case 0x00C1:
-				case 0x00C2:
-				case 0x00C3:
-				case 0x00C4:
-				case 0x00C5:
-				case 0x00C6:
-				case 0x00C7:
-				case 0x00C8:
-				case 0x00C9:
-				case 0x00CA:
-				case 0x00CB:
-				case 0x00CC:
-				case 0x00CD:
-				case 0x00CE:
-				case 0x00CF:
-				case 0x00D0:
-				case 0x00D1:
-				case 0x00D2:
-				case 0x00D3:
-				case 0x00D4:
-				case 0x00D5:
-				case 0x00D6:
-				case 0x00D7:
-				case 0x00D8:
-				case 0x00D9:
-				case 0x00DA:
-				case 0x00DB:
-				case 0x00DC:
-				case 0x00DD:
-				case 0x00DE:
-				case 0x00DF:
-				case 0x00E0:
-				case 0x00E1:
-				case 0x00E2:
-				case 0x00E3:
-				case 0x00E4:
-				case 0x00E5:
-				case 0x00E6:
-				case 0x00E7:
-				case 0x00E8:
-				case 0x00E9:
-				case 0x00EA:
-				case 0x00EB:
-				case 0x00EC:
-				case 0x00ED:
-				case 0x00EE:
-				case 0x00EF:
-				case 0x00F0:
-				case 0x00F1:
-				case 0x00F2:
-				case 0x00F3:
-				case 0x00F4:
-				case 0x00F5:
-				case 0x00F6:
-				case 0x00F7:
-				case 0x00F8:
-				case 0x00F9:
-				case 0x00FA:
-				case 0x00FB:
-				case 0x00FC:
-				case 0x00FD:
-				case 0x00FE:
-				case 0x00FF:
-					break;
-				case 0x0152: ch = 0xBC; break;
-				case 0x0153: ch = 0xBD; break;
-				case 0x0160: ch = 0xA6; break;
-				case 0x0161: ch = 0xA8; break;
-				case 0x0178: ch = 0xBE; break;
-				case 0x017D: ch = 0xB4; break;
-				case 0x017E: ch = 0xB8; break;
-				case 0x20AC: ch = 0xA4; break;
-				default:
-				{
-					if(ch >= 0xFF01 && ch <= 0xFF5E)
-					{
-						ch -= 0xFEE0;
-					}
-					else
-					{
-						ch = 0x3F;
-					}
-				}
-				break;
-			}
-			bytes[byteIndex++] = (byte)ch;
-			--charCount;
-		}
-	}
-	*/
-
 }; // class CP28605
 
 [Serializable]

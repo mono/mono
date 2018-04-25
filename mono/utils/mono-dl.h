@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_UTILS_DL_H__
 #define __MONO_UTILS_DL_H__
 
@@ -8,9 +12,9 @@
 #define MONO_SOLIB_EXT ".dll"
 #elif defined(__ppc__) && defined(TARGET_MACH)
 #define MONO_SOLIB_EXT ".dylib"
-#elif defined(TARGET_MACH) && defined(TARGET_X86) && !defined(__native_client_codegen__)
+#elif defined(TARGET_MACH) && defined(TARGET_X86)
 #define MONO_SOLIB_EXT ".dylib"
-#elif defined(TARGET_MACH) && defined(TARGET_AMD64) && !defined(__native_client_codegen__)
+#elif defined(TARGET_MACH) && defined(TARGET_AMD64)
 #define MONO_SOLIB_EXT ".dylib"
 #else
 #define MONO_SOLIB_EXT ".so"
@@ -25,7 +29,7 @@ typedef struct {
 } MonoDl;
 
 
-MonoDl*     mono_dl_open       (const char *name, int flags, char **error_msg) MONO_LLVM_INTERNAL;
+MONO_API MonoDl*     mono_dl_open       (const char *name, int flags, char **error_msg) MONO_LLVM_INTERNAL;
 char*       mono_dl_symbol     (MonoDl *module, const char *name, void **symbol) MONO_LLVM_INTERNAL;
 void        mono_dl_close      (MonoDl *module) MONO_LLVM_INTERNAL;
 

@@ -54,9 +54,9 @@ namespace System.ComponentModel.Design.Serialization
 			return _statements.GetEnumerator ();
 		}
 
-		public CodeStatementCollection this[object owner]
+		public CodeStatementCollection this[object statementOwner]
 		{
-			get { return _statements[owner] as CodeStatementCollection; }
+			get { return _statements[statementOwner] as CodeStatementCollection; }
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()

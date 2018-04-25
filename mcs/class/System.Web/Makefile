@@ -225,41 +225,36 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/BoundField_Bug646505.aspx.cs \
 	Test/mainsoft/NunitWebResources/HtmlTitleCodeRender_Bug662918.aspx
 
-RESX_DIST =  resources/TranslationResources.resx
-RESX_RES = $(RESX_DIST:.resx=.resources)
+RESOURCE_DEFS = \
+	TranslationResources,resources/TranslationResources.resx
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 NUNIT_APP_CODE_FILES = $(TEST_APP_CODE_FILES)
 NUNIT_APP_GLOBALRESOURCES_FILES = $(TEST_APP_GLOBALRESOURCES_FILES)
 
 OTHER_RES += $(RESOURCE_FILES_2)
-OTHER_LIB_MCS_FLAGS = -d:INSIDE_SYSTEM_WEB -nowarn:618 -r:System.Configuration.dll -r:Mono.Data.Sqlite.dll
+OTHER_LIB_MCS_FLAGS = -d:INSIDE_SYSTEM_WEB -nowarn:436,618
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-OTHER_LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
 OTHER_RES += $(RESOURCE_FILES_4)
 endif
 
-RESOURCE_STRINGS = ../../../external/referencesource/System.Web/System.Web.txt
+TXT_RESOURCE_STRINGS = ../referencesource/System.Web/System.Web.txt
 
-LIB_REFS = System System.Core System.Drawing System.Data System.Xml System.EnterpriseServices System.Runtime.Serialization.Formatters.Soap System.ComponentModel.DataAnnotations
+LIB_REFS = System System.Core System.Drawing System.Data System.Xml System.EnterpriseServices System.Runtime.Serialization.Formatters.Soap \
+	System.ComponentModel.DataAnnotations System.Web.ApplicationServices System.Configuration Mono.Data.Sqlite System.Web.Services System.Design
+KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = \
 	-unsafe \
 	-nowarn:612,618	\
-	-r:$(corlib)	 		\
 	$(OTHER_LIB_MCS_FLAGS) \
 	$(RESX_RES:%=/resource:%) \
 	$(OTHER_RES:%=/resource:%)
 
-ifneq (plainweb/,$(intermediate))
-LIB_REFS += System.Web.Services System.Design
-LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -lib:$(the_libdir_base)plaindesign
+#all-local: System.Web/UplevelHelper.cs 
 
-all-local: System.Web/UplevelHelper.cs resources/TranslationResources.resources 
-
-endif
-
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,1591 -r:SystemWebTestShim.dll \
+TEST_LIB_REFS = SystemWebTestShim
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,1591 \
 	$(NUNIT_RESOURCE_FILES:%=/resource:%) \
 	$(foreach file,$(NUNIT_APP_CODE_FILES),$(shell echo $(file) | sed -e 's;\(.*\)/\(.*\);/resource:\1/\2,App_Code/\2 ;g')) \
 	$(foreach file,$(NUNIT_APP_GLOBALRESOURCES_FILES),$(shell echo $(file) | sed -e 's;\(.*\)/\(.*\);/resource:\1/\2,App_GlobalResources/\2 ;g'))
@@ -272,7 +267,6 @@ EXTRA_DISTFILES = \
 	$(TEST_APP_CODE_FILES) \
 	$(TEST_APP_GLOBALRESOURCES_FILES) \
 	UplevelHelperDefinitions.xml \
-	$(RESX_DIST) \
 	SQLiteProviders_DatabaseSchema.sql \
 	$(shell find Test/standalone-runner-support/ -name "*.cs" -type f -printf "'%p' ") \
 	$(shell find Test/standalone-tests/ -name "*.cs" -type f -printf "'%p' " -o -name "*.cs.in" -type f -printf "'%p' ") \
@@ -286,19 +280,6 @@ EXTRA_DISTFILES = \
 BUILT_SOURCES = System.Web/UplevelHelper.cs 
 
 include ../../build/library.make
-
-$(the_libdir_base)System.Web.dll: $(the_libdir_base)System.Web.Services.dll
-
-$(the_libdir_base)System.Web.Services.dll:
-	(cd ../System.Web.Services; $(MAKE) $@)
-
-ifneq (plainweb/,$(intermediate))
-$(the_libdir_base)plainweb/System.Web.dll:
-	$(MAKE) intermediate=plainweb/ $(the_libdir_base)plainweb/System.Web.dll
-
-endif
-
-.NOTPARALLEL: $(the_libdir_base)plainweb/System.Web.dll $(the_libdir_base)System.Web.Services.dll
 
 ifdef DEBUG
 LIB_MCS_FLAGS += -define:DEBUG
@@ -322,11 +303,11 @@ endif
 
 CLASSLIB_DIR = $(topdir)/class/lib/$(PROFILE)
 
-STANDALONE_RUNNER_SUPPORT_MCS_FLAGS = $(LIB_MCS_FLAGS) $(PROFILE_MCS_FLAGS) -d:STANDALONE_TEST -debug:full -r:System.Web.dll -r:nunit.framework.dll
+STANDALONE_RUNNER_SUPPORT_MCS_FLAGS = $(LIB_MCS_FLAGS) $(PROFILE_MCS_FLAGS) -d:STANDALONE_TEST -r:$(topdir)/class/lib/$(PROFILE)/System.Web.dll -r:$(topdir)/class/lib/$(PROFILE)/nunit.framework.dll
 STANDALONE_RUNNER_SUPPORT_ASSEMBLY = $(CLASSLIB_DIR)/standalone-runner-support.dll
 STANDALONE_RUNNER_SUPPORT_MAKEFRAG = $(depsdir)/$(PROFILE)_standalone-runner-support.dll.makefrag
 
-STANDALONE_TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(PROFILE_MCS_FLAGS) -debug:full -r:$(STANDALONE_RUNNER_SUPPORT_ASSEMBLY) -r:System.Web.dll -r:nunit.framework.dll
+STANDALONE_TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(PROFILE_MCS_FLAGS) -r:$(STANDALONE_RUNNER_SUPPORT_ASSEMBLY) -r:$(topdir)/class/lib/$(PROFILE)/System.Web.dll -r:$(topdir)/class/lib/$(PROFILE)/nunit.framework.dll
 STANDALONE_TEST_ASSEMBLY = System.Web_standalone_test_$(PROFILE).dll
 STANDALONE_TEST_MAKEFRAG = $(depsdir)/$(STANDALONE_TEST_ASSEMBLY).makefrag
 
@@ -357,7 +338,7 @@ STANDALONE_TEST_RUNNER = Test/tools/standalone-runner.exe
 ifeq (2, $(FRAMEWORK_VERSION_MAJOR))
 RUN_STANDALONE = MONO_TESTS_IN_PROGRESS=yes
 endif
-RUN_STANDALONE += $(TEST_RUNTIME) $(STANDALONE_TEST_RUNNER) --output=StandaloneTestResult-$(PROFILE).log 
+RUN_STANDALONE += $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(STANDALONE_TEST_RUNNER) --output=StandaloneTestResult-$(PROFILE).log 
 ifdef TESTNAME
 RUN_STANDALONE += --test=$(TESTNAME)
 endif
@@ -374,13 +355,13 @@ System.Web/UplevelHelper.cs: UplevelHelperDefinitions.xml
 	MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/culevel.exe -o $@ $^
 
 run-aaa: test
-	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \
+	$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \
 	/output:TestResult-$(PROFILE).log /include:aaa /xml:TestResult-$(PROFILE).xml $(test_assemblies) || ok=false; \
 	(echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Tests run: /d'; \
 	$$ok
 
 run-nunitweb: test
-	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \
+	$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \
 	/output:TestResult-$(PROFILE).log /include:NunitWeb /xml:TestResult-$(PROFILE).xml $(test_assemblies) || ok=false; \
 	(echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Tests run: /d'; \
 	$$ok
@@ -429,11 +410,4 @@ ifdef STANDALONE_TEST_COMPILABLE_TESTS
 	for d in $(STANDALONE_TEST_COMPILABLE_TESTS); do \
 		$(MAKE) -C Test/standalone/$$d clean ; \
 	done
-endif
-
-ifndef intermediate
-ifneq ($(PROFILE),basic)
-csproj-local:
-	$(MAKE) csproj-local intermediate=plainweb/
-endif
 endif

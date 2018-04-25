@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 ../../../build/common/Consts.cs
 System.Windows.Forms/ApplicationTest.cs
 System.Windows.Forms/AutoCompleteStringCollectionTest.cs
@@ -78,6 +79,7 @@ System.Windows.Forms/FocusTest.cs
 System.Windows.Forms/FolderBrowserDialogTest.cs
 System.Windows.Forms/FormEventTest.cs
 System.Windows.Forms/FormHandleTest.cs
+System.Windows.Forms/FormThreadTest.cs
 System.Windows.Forms/FormTest.cs
 System.Windows.Forms/EventArgsTest.cs
 System.Windows.Forms/EventLogger.cs
@@ -122,6 +124,7 @@ System.Windows.Forms/PaintEventArgsTest.cs
 System.Windows.Forms/PanelTest.cs
 System.Windows.Forms/PictureBoxTest.cs
 System.Windows.Forms/PrintDialogTest.cs
+System.Windows.Forms/PrintPreviewControlTest.cs
 System.Windows.Forms/ProgressBarTest.cs
 System.Windows.Forms/PropertyGridTest.cs
 System.Windows.Forms/PropertyManagerTest.cs

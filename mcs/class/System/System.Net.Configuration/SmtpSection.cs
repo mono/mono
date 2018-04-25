@@ -44,6 +44,12 @@ namespace System.Net.Configuration {
 					set { base ["deliveryMethod"] = value; }
                 }
 
+                [ConfigurationProperty ("deliveryFormat", DefaultValue = SmtpDeliveryFormat.SevenBit)]
+                public SmtpDeliveryFormat DeliveryFormat {
+                                        get { return (SmtpDeliveryFormat) base ["deliveryFormat"]; }
+                                        set { base ["deliveryFormat"] = value; }
+                }
+
                 [ConfigurationProperty ("from")]
                 public string From {
 					get { return (string) base ["from"]; }

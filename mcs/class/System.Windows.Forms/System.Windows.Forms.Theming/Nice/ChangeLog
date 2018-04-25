@@ -1,6 +1,0 @@
-2007-04-15  Andreia Gaita  <avidigal@novell.com>
-
-	* TabControlPainter.cs: Stub where the refactoring of the 
-	tabcontrol drawing for the nice theme will go to.
-
-	

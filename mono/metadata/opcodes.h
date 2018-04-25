@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_METADATA_OPCODES_H__
 #define __MONO_METADATA_OPCODES_H__
 
@@ -62,7 +66,7 @@ typedef struct {
 	unsigned short opval;
 } MonoOpcode;
 
-extern const MonoOpcode mono_opcodes [];
+MONO_API extern const MonoOpcode mono_opcodes [];
 
 MONO_API const char*
 mono_opcode_name (int opcode);

@@ -255,10 +255,10 @@ namespace System.Diagnostics {
 				WritePrefix ();
 			}
 
-			WriteDebugString (message);
-
 			if (Debugger.IsLogging())
 				Debugger.Log (0, null, message);
+			else
+				WriteDebugString (message);
 
 			WriteLogFile (message, LogFileName);
 		}

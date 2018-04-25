@@ -2,7 +2,8 @@ thisdir = tools/mod
 SUBDIRS = 
 include ../../build/rules.make
 
-LOCAL_MCS_FLAGS = /r:monodoc.dll
+LIB_REFS = monodoc
+LOCAL_MCS_FLAGS =
 
 PROGRAM = mod.exe
 

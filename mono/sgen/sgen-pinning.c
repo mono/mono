@@ -1,22 +1,12 @@
-/*
- * sgen-pinning.c: The pin queue.
+/**
+ * \file
+ * The pin queue.
  *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  * Copyright (C) 2012 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -32,15 +22,35 @@
 
 static SgenPointerQueue pin_queue;
 static size_t last_num_pinned = 0;
+/*
+ * While we hold the pin_queue_mutex, all objects in pin_queue_objs will
+ * stay pinned, which means they can't move, therefore they can be scanned.
+ */
+static SgenPointerQueue pin_queue_objs;
+static mono_mutex_t pin_queue_mutex;
 
 #define PIN_HASH_SIZE 1024
 static void *pin_hash_filter [PIN_HASH_SIZE];
+
+void
+sgen_pinning_init (void)
+{
+	mono_os_mutex_init (&pin_queue_mutex);
+}
 
 void
 sgen_init_pinning (void)
 {
 	memset (pin_hash_filter, 0, sizeof (pin_hash_filter));
 	pin_queue.mem_type = INTERNAL_MEM_PIN_QUEUE;
+	sgen_client_pinning_start ();
+}
+
+void
+sgen_init_pinning_for_conc (void)
+{
+	mono_os_mutex_lock (&pin_queue_mutex);
+	sgen_pointer_queue_clear (&pin_queue_objs);
 }
 
 void
@@ -48,6 +58,32 @@ sgen_finish_pinning (void)
 {
 	last_num_pinned = pin_queue.next_slot;
 	sgen_pointer_queue_clear (&pin_queue);
+}
+
+void
+sgen_finish_pinning_for_conc (void)
+{
+	mono_os_mutex_unlock (&pin_queue_mutex);
+}
+
+void
+sgen_pinning_register_pinned_in_nursery (GCObject *obj)
+{
+	sgen_pointer_queue_add (&pin_queue_objs, obj);
+}
+
+void
+sgen_scan_pin_queue_objects (ScanCopyContext ctx)
+{
+	int i;
+	ScanObjectFunc scan_func = ctx.ops->scan_object;
+
+	mono_os_mutex_lock (&pin_queue_mutex);
+	for (i = 0; i < pin_queue_objs.next_slot; ++i) {
+		GCObject *obj = (GCObject *)pin_queue_objs.data [i];
+		scan_func (obj, sgen_obj_get_descriptor_safe (obj), ctx.queue);
+	}
+	mono_os_mutex_unlock (&pin_queue_mutex);
 }
 
 void
@@ -173,7 +209,7 @@ sgen_dump_pin_queue (void)
 	int i;
 
 	for (i = 0; i < last_num_pinned; ++i) {
-		void *ptr = pin_queue.data [i];
+		GCObject *ptr = (GCObject *)pin_queue.data [i];
 		SGEN_LOG (3, "Bastard pinning obj %p (%s), size: %zd", ptr, sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (ptr)), sgen_safe_object_get_size (ptr));
 	}
 }
@@ -182,6 +218,7 @@ typedef struct _CementHashEntry CementHashEntry;
 struct _CementHashEntry {
 	GCObject *obj;
 	unsigned int count;
+	gboolean forced; /* if it should stay cemented after the finishing pause */
 };
 
 static CementHashEntry cement_hash [SGEN_CEMENT_HASH_SIZE];
@@ -197,8 +234,68 @@ sgen_cement_init (gboolean enabled)
 void
 sgen_cement_reset (void)
 {
-	memset (cement_hash, 0, sizeof (cement_hash));
-	binary_protocol_cement_reset ();
+	int i;
+	for (i = 0; i < SGEN_CEMENT_HASH_SIZE; i++) {
+		if (cement_hash [i].forced) {
+			cement_hash [i].forced = FALSE;
+		} else {
+			cement_hash [i].obj = NULL;
+			cement_hash [i].count = 0;
+		}
+	}
+	sgen_binary_protocol_cement_reset ();
+}
+
+
+/*
+ * The pin_queue should be full and sorted, without entries from the cemented
+ * objects. We traverse the cement hash and check if each object is pinned in
+ * the pin_queue (the pin_queue contains entries between obj and obj+obj_len)
+ */
+void
+sgen_cement_force_pinned (void)
+{
+	int i;
+
+	if (!cement_enabled)
+		return;
+
+	for (i = 0; i < SGEN_CEMENT_HASH_SIZE; i++) {
+		GCObject *obj = cement_hash [i].obj;
+		size_t index;
+		if (!obj)
+			continue;
+		if (cement_hash [i].count < SGEN_CEMENT_THRESHOLD)
+			continue;
+		SGEN_ASSERT (0, !cement_hash [i].forced, "Why do we have a forced cemented object before forcing ?");
+
+		/* Returns the index of the target or of the first element greater than it */
+		index = sgen_pointer_queue_search (&pin_queue, obj);
+		if (index == pin_queue.next_slot)
+			continue;
+		SGEN_ASSERT (0, pin_queue.data [index] >= (gpointer)obj, "Binary search should return a pointer greater than the search target");
+		if (pin_queue.data [index] < (gpointer)((char*)obj + sgen_safe_object_get_size (obj)))
+			cement_hash [i].forced = TRUE;
+	}
+}
+
+gboolean
+sgen_cement_is_forced (GCObject *obj)
+{
+	guint hv = sgen_aligned_addr_hash (obj);
+	int i = SGEN_CEMENT_HASH (hv);
+
+	SGEN_ASSERT (5, sgen_ptr_in_nursery (obj), "Looking up cementing for non-nursery objects makes no sense");
+
+	if (!cement_enabled)
+		return FALSE;
+
+	if (!cement_hash [i].obj)
+		return FALSE;
+	if (cement_hash [i].obj != obj)
+		return FALSE;
+
+	return cement_hash [i].forced;
 }
 
 gboolean
@@ -236,8 +333,11 @@ sgen_cement_lookup_or_register (GCObject *obj)
 	SGEN_ASSERT (5, sgen_ptr_in_nursery (obj), "Can only cement pointers to nursery objects");
 
 	if (!hash [i].obj) {
-		SGEN_ASSERT (5, !hash [i].count, "Cementing hash inconsistent");
-		hash [i].obj = obj;
+		GCObject *old_obj;
+		old_obj = mono_atomic_cas_ptr ((gpointer*)&hash [i].obj, obj, NULL);
+		/* Check if the slot was occupied by some other object */
+		if (old_obj != NULL && old_obj != obj)
+			return FALSE;
 	} else if (hash [i].obj != obj) {
 		return FALSE;
 	}
@@ -245,13 +345,12 @@ sgen_cement_lookup_or_register (GCObject *obj)
 	if (hash [i].count >= SGEN_CEMENT_THRESHOLD)
 		return TRUE;
 
-	++hash [i].count;
-	if (hash [i].count == SGEN_CEMENT_THRESHOLD) {
+	if (mono_atomic_inc_i32 ((gint32*)&hash [i].count) == SGEN_CEMENT_THRESHOLD) {
 		SGEN_ASSERT (9, sgen_get_current_collection_generation () >= 0, "We can only cement objects when we're in a collection pause.");
 		SGEN_ASSERT (9, SGEN_OBJECT_IS_PINNED (obj), "Can only cement pinned objects");
 		SGEN_CEMENT_OBJECT (obj);
 
-		binary_protocol_cement (obj, (gpointer)SGEN_LOAD_VTABLE (obj),
+		sgen_binary_protocol_cement (obj, (gpointer)SGEN_LOAD_VTABLE (obj),
 				(int)sgen_safe_object_get_size (obj));
 	}
 
@@ -269,8 +368,9 @@ pin_from_hash (CementHashEntry *hash, gboolean has_been_reset)
 		if (has_been_reset)
 			SGEN_ASSERT (5, hash [i].count >= SGEN_CEMENT_THRESHOLD, "Cementing hash inconsistent");
 
+		sgen_client_pinned_cemented_object (hash [i].obj);
 		sgen_pin_stage_ptr (hash [i].obj);
-		binary_protocol_cement_stage (hash [i].obj);
+		sgen_binary_protocol_cement_stage (hash [i].obj);
 		/* FIXME: do pin stats if enabled */
 
 		SGEN_CEMENT_OBJECT (hash [i].obj);

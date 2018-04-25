@@ -313,6 +313,20 @@ namespace System.Net.Http.Headers
 					start = pos - 1;
 					while (pos < s.Length) {
 						ch = s [pos++];
+
+						//
+						// The backslash character ("\") MAY be used as a single-character
+   						// quoting mechanism only within quoted-string
+						//
+						if (ch == '\\') {
+							if (pos + 1 < s.Length) {
+								++pos;
+								continue;
+							}
+
+							break;
+						}
+
 						if (ch == '"') {
 							ttype = Token.Type.QuotedString;
 							break;

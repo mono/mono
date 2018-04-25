@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_METADATA_BASIC_BLOCK_H__
 #define __MONO_METADATA_BASIC_BLOCK_H__
 
@@ -19,7 +23,7 @@ struct _MonoSimpleBasicBlock {
 };
 
 MonoSimpleBasicBlock*
-mono_basic_block_split (MonoMethod *method, MonoError *error);
+mono_basic_block_split (MonoMethod *method, MonoError *error, MonoMethodHeader *header);
 
 void
 mono_basic_block_free (MonoSimpleBasicBlock *bb);

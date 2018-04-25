@@ -1,11 +1,14 @@
-/*
- * debug-mono-symfile.c: 
+/**
+ * \file
+ *
+ *   Support for reading debug info from .mdb files.
  *
  * Author:
  *	Mono Project (http://www.mono-project.com)
  *
  * Copyright (C) 2005-2008 Novell, Inc. (http://www.novell.com)
  * Copyright 2012 Xamarin Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include <config.h>
@@ -25,12 +28,13 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/debug-mono-symfile.h>
-#include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/bsearch.h>
+
+#ifndef DISABLE_MDB
 
 #include <fcntl.h>
 #ifdef HAVE_UNISTD_H
@@ -135,6 +139,9 @@ load_symfile (MonoDebugHandle *handle, MonoSymbolFile *symfile, mono_bool in_the
 	return TRUE;
 }
 
+/**
+ * mono_debug_open_mono_symbols:
+ */
 MonoSymbolFile *
 mono_debug_open_mono_symbols (MonoDebugHandle *handle, const uint8_t *raw_contents,
 			      int size, gboolean in_the_debugger)
@@ -147,7 +154,7 @@ mono_debug_open_mono_symbols (MonoDebugHandle *handle, const uint8_t *raw_conten
 	if (raw_contents != NULL) {
 		unsigned char *p;
 		symfile->raw_contents_size = size;
-		symfile->raw_contents = p = g_malloc (size);
+		symfile->raw_contents = p = (unsigned char *)g_malloc (size);
 		memcpy (p, raw_contents, size);
 		symfile->filename = g_strdup_printf ("LoadedFromMemory");
 		symfile->was_loaded_from_memory = TRUE;
@@ -163,7 +170,7 @@ mono_debug_open_mono_symbols (MonoDebugHandle *handle, const uint8_t *raw_conten
 					g_warning ("stat of %s failed: %s",
 						   symfile->filename,  g_strerror (errno));
 			} else {
-				symfile->raw_contents = mono_file_map (symfile->raw_contents_size, MONO_MMAP_READ|MONO_MMAP_PRIVATE, mono_file_map_fd (f), 0, &symfile->raw_contents_handle);
+				symfile->raw_contents = (const unsigned char *)mono_file_map (symfile->raw_contents_size, MONO_MMAP_READ|MONO_MMAP_PRIVATE, mono_file_map_fd (f), 0, &symfile->raw_contents_handle);
 			}
 
 			mono_file_map_close (f);
@@ -183,6 +190,9 @@ mono_debug_open_mono_symbols (MonoDebugHandle *handle, const uint8_t *raw_conten
 	return symfile;
 }
 
+/**
+ * mono_debug_close_mono_symbol_file:
+ */
 void
 mono_debug_close_mono_symbol_file (MonoSymbolFile *symfile)
 {
@@ -200,18 +210,19 @@ mono_debug_close_mono_symbol_file (MonoSymbolFile *symfile)
 			mono_file_unmap ((gpointer) symfile->raw_contents, symfile->raw_contents_handle);
 	}
 
-	if (symfile->filename)
-		g_free (symfile->filename);
+	g_free (symfile->filename);
 	g_free (symfile);
 	mono_debugger_unlock ();
 }
 
+/**
+ * mono_debug_symfile_is_loaded:
+ */
 mono_bool
 mono_debug_symfile_is_loaded (MonoSymbolFile *symfile)
 {
 	return symfile && symfile->offset_table;
 }
-
 
 static int
 read_leb128 (const uint8_t *ptr, const uint8_t **rptr)
@@ -296,13 +307,12 @@ check_line (StatementMachine *stm, int offset, MonoDebugSourceLocation **locatio
 
 /**
  * mono_debug_symfile_lookup_location:
- * @minfo: A `MonoDebugMethodInfo' which can be retrieved by
- *         mono_debug_lookup_method().
- * @offset: IL offset within the corresponding method's CIL code.
+ * \param minfo A \c MonoDebugMethodInfo which can be retrieved by \c mono_debug_lookup_method.
+ * \param offset IL offset within the corresponding method's CIL code.
  *
- * This function is similar to mono_debug_lookup_location(), but we
+ * This function is similar to \c mono_debug_lookup_location, but we
  * already looked up the method and also already did the
- * `native address -> IL offset' mapping.
+ * native address -> IL offset mapping.
  */
 MonoDebugSourceLocation *
 mono_debug_symfile_lookup_location (MonoDebugMethodInfo *minfo, uint32_t offset)
@@ -423,14 +433,14 @@ add_line (StatementMachine *stm, GPtrArray *il_offset_array, GPtrArray *line_num
 		stm->first_file = stm->file;
 }
 
-/*
+/**
  * mono_debug_symfile_free_location:
  *
- *   Free a MonoDebugSourceLocation returned by
- *   mono_debug_symfile_lookup_location
+ * Free a \c MonoDebugSourceLocation returned by
+ * \c mono_debug_symfile_lookup_location
  */
 void
-mono_debug_symfile_free_location   (MonoDebugSourceLocation  *location)
+mono_debug_symfile_free_location (MonoDebugSourceLocation  *location)
 {
 	g_free (location->source_file);
 	g_free (location);
@@ -444,7 +454,7 @@ get_source_info (MonoSymbolFile *symfile, int index)
 {
 	MonoDebugSourceInfo *info;
 
-	info = g_hash_table_lookup (symfile->source_hash, GUINT_TO_POINTER (index));
+	info = (MonoDebugSourceInfo *)g_hash_table_lookup (symfile->source_hash, GUINT_TO_POINTER (index));
 	if (!info) {
 		int offset = read32(&(symfile->offset_table->_source_table_offset)) +
 			(index - 1) * sizeof (MonoSymbolFileSourceEntry);
@@ -454,10 +464,10 @@ get_source_info (MonoSymbolFile *symfile, int index)
 
 		info = g_new0 (MonoDebugSourceInfo, 1);
 		info->source_file = read_string (ptr, &ptr);
-		info->guid = g_malloc0 (16);
+		info->guid = (guint8 *)g_malloc0 (16);
 		memcpy (info->guid, ptr, 16);
 		ptr += 16;
-		info->hash = g_malloc0 (16);
+		info->hash = (guint8 *)g_malloc0 (16);
 		memcpy (info->hash, ptr, 16);
 		ptr += 16;
 		g_hash_table_insert (symfile->source_hash, GUINT_TO_POINTER (index), info);
@@ -478,7 +488,7 @@ method_get_lnt_flags (MonoDebugMethodInfo *minfo)
 	guint32 flags;
 
 	if ((symfile = minfo->handle->symfile) == NULL)
-		return FALSE;
+		return (LineNumberTableFlags)0;
 
 	ptr = symfile->raw_contents + minfo->data_offset;
 
@@ -497,7 +507,7 @@ method_get_lnt_flags (MonoDebugMethodInfo *minfo)
 	read_leb128 (ptr, &ptr);
 
 	flags = read_leb128 (ptr, &ptr);
-	return flags;
+	return (LineNumberTableFlags)flags;
 }
 
 /*
@@ -635,7 +645,7 @@ mono_debug_symfile_get_seq_points (MonoDebugMethodInfo *minfo, char **source_fil
 
 		*source_file_list = g_ptr_array_new ();
 		if (source_files)
-			*source_files = g_malloc (il_offset_array->len * sizeof (int));
+			*source_files = (int *)g_malloc (il_offset_array->len * sizeof (int));
 
 		for (i = 0; i < il_offset_array->len; ++i) {
 			file = GPOINTER_TO_UINT (g_ptr_array_index (source_file_array, i));
@@ -647,11 +657,6 @@ mono_debug_symfile_get_seq_points (MonoDebugMethodInfo *minfo, char **source_fil
 			last_file = file;
 			if (source_files)
 				(*source_files) [i] = (*source_file_list)->len - 1;
-		}
-		if ((*source_file_list)->len == 0 && stm.file) {
-			MonoDebugSourceInfo *info = get_source_info (symfile, stm.file);
-
-			g_ptr_array_add (*source_file_list, info);
 		}
 	}				
 
@@ -729,6 +734,9 @@ compare_method (const void *key, const void *object)
 	return token - read32(&(me->_token));
 }
 
+/**
+ * mono_debug_symfile_lookup_method:
+ */
 MonoDebugMethodInfo *
 mono_debug_symfile_lookup_method (MonoDebugHandle *handle, MonoMethod *method)
 {
@@ -744,7 +752,7 @@ mono_debug_symfile_lookup_method (MonoDebugHandle *handle, MonoMethod *method)
 
 	mono_debugger_lock ();
 
-	minfo = g_hash_table_lookup (symfile->method_hash, method);
+	minfo = (MonoDebugMethodInfo *)g_hash_table_lookup (symfile->method_hash, method);
 	if (minfo) {
 		mono_debugger_unlock ();
 		return minfo;
@@ -753,7 +761,7 @@ mono_debug_symfile_lookup_method (MonoDebugHandle *handle, MonoMethod *method)
 	first_ie = (MonoSymbolFileMethodEntry *)
 		(symfile->raw_contents + read32(&(symfile->offset_table->_method_table_offset)));
 
-	ie = mono_binary_search (GUINT_TO_POINTER (mono_method_get_token (method)), first_ie,
+	ie = (MonoSymbolFileMethodEntry *)mono_binary_search (GUINT_TO_POINTER (mono_method_get_token (method)), first_ie,
 				   read32(&(symfile->offset_table->_method_count)),
 				   sizeof (MonoSymbolFileMethodEntry), compare_method);
 
@@ -776,12 +784,12 @@ mono_debug_symfile_lookup_method (MonoDebugHandle *handle, MonoMethod *method)
 	return minfo;
 }
 
-/*
+/**
  * mono_debug_symfile_lookup_locals:
  *
- *   Return information about the local variables of MINFO from the symbol file.
+ * Return information about the local variables of \p minfo from the symbol file.
  * Return NULL if no information can be found.
- * The result should be freed using mono_debug_symfile_free_locals ().
+ * The result should be freed using \c mono_debug_symfile_free_locals.
  */
 MonoDebugLocalsInfo*
 mono_debug_symfile_lookup_locals (MonoDebugMethodInfo *minfo)
@@ -823,7 +831,7 @@ mono_debug_symfile_lookup_locals (MonoDebugMethodInfo *minfo)
 	for (i = 0; i < num_locals; ++i) {
 		res->locals [i].index = read_leb128 (p, &p);
 		len = read_leb128 (p, &p);
-		res->locals [i].name = g_malloc (len + 1);
+		res->locals [i].name = (char *)g_malloc (len + 1);
 		memcpy (res->locals [i].name, p, len);
 		res->locals [i].name [len] = '\0';
 		p += len;
@@ -834,3 +842,54 @@ mono_debug_symfile_lookup_locals (MonoDebugMethodInfo *minfo)
 
 	return res;
 }
+
+#else /* DISABLE_MDB */
+
+MonoSymbolFile *
+mono_debug_open_mono_symbols (MonoDebugHandle *handle, const uint8_t *raw_contents,
+			      int size, gboolean in_the_debugger)
+{
+	return NULL;
+}
+
+void
+mono_debug_close_mono_symbol_file (MonoSymbolFile *symfile)
+{
+}
+
+mono_bool
+mono_debug_symfile_is_loaded (MonoSymbolFile *symfile)
+{
+	return FALSE;
+}
+
+MonoDebugMethodInfo *
+mono_debug_symfile_lookup_method (MonoDebugHandle *handle, MonoMethod *method)
+{
+	return NULL;
+}
+
+void
+mono_debug_symfile_get_seq_points (MonoDebugMethodInfo *minfo, char **source_file, GPtrArray **source_file_list, int **source_files, MonoSymSeqPoint **seq_points, int *n_seq_points)
+{
+	g_assert_not_reached ();
+}
+
+MonoDebugSourceLocation *
+mono_debug_symfile_lookup_location (MonoDebugMethodInfo *minfo, uint32_t offset)
+{
+	return NULL;
+}
+
+MonoDebugLocalsInfo*
+mono_debug_symfile_lookup_locals (MonoDebugMethodInfo *minfo)
+{
+	return NULL;
+}
+
+void
+mono_debug_symfile_free_location (MonoDebugSourceLocation  *location)
+{
+}
+
+#endif

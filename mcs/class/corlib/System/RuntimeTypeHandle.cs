@@ -62,7 +62,7 @@ namespace System
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
-			MonoType mt = ((MonoType) info.GetValue ("TypeObj", typeof (MonoType)));
+			RuntimeType mt = ((RuntimeType) info.GetValue ("TypeObj", typeof (RuntimeType)));
 			value = mt.TypeHandle.Value;
 			if (value == IntPtr.Zero)
 				throw new SerializationException (Locale.GetText ("Insufficient state."));
@@ -82,7 +82,7 @@ namespace System
 			if (value == IntPtr.Zero)
 				throw new SerializationException ("Object fields may not be properly initialized");
 
-			info.AddValue ("TypeObj", Type.GetTypeHandle (this), typeof (MonoType));
+			info.AddValue ("TypeObj", Type.GetTypeHandle (this), typeof (RuntimeType));
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
@@ -188,6 +188,9 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static bool IsPrimitive (RuntimeType type);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool HasReferences (RuntimeType type);
+
 		internal static bool IsComObject (RuntimeType type, bool isGenericCOM)
 		{
 			return isGenericCOM ? false : IsComObject (type);
@@ -243,5 +246,9 @@ namespace System
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static bool IsGenericTypeDefinition (RuntimeType type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static IntPtr GetGenericParameterInfo (RuntimeType type);
+
 	}
 }

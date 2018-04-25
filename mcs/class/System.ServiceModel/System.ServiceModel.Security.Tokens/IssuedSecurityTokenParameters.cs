@@ -61,17 +61,17 @@ namespace System.ServiceModel.Security.Tokens
 			binding = issuerBinding;
 		}
 
-		protected IssuedSecurityTokenParameters (IssuedSecurityTokenParameters source)
-			: base (source)
+		protected IssuedSecurityTokenParameters (IssuedSecurityTokenParameters other)
+			: base (other)
 		{
-			binding = source.binding;
-			issuer_address = source.issuer_address;
-			issuer_meta_address = source.issuer_meta_address;
-			key_size = source.key_size;
-			key_type = source.key_type;
-			token_type = source.token_type;
-			reqs = new Collection<ClaimTypeRequirement> (source.reqs);
-			additional_reqs = new Collection<XmlElement> (source.additional_reqs);
+			binding = other.binding;
+			issuer_address = other.issuer_address;
+			issuer_meta_address = other.issuer_meta_address;
+			key_size = other.key_size;
+			key_type = other.key_type;
+			token_type = other.token_type;
+			reqs = new Collection<ClaimTypeRequirement> (other.reqs);
+			additional_reqs = new Collection<XmlElement> (other.additional_reqs);
 		}
 
 		Binding binding;

@@ -38,14 +38,14 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
-		public BindingElementCollection (BindingElement [] bindings)
+		public BindingElementCollection (BindingElement [] elements)
 		{
-			AddRange (bindings);
+			AddRange (elements);
 		}
 
-		public BindingElementCollection (IEnumerable<BindingElement> bindings)
+		public BindingElementCollection (IEnumerable<BindingElement> elements)
 		{
-			foreach (BindingElement e in bindings)
+			foreach (BindingElement e in elements)
 				Add (e);
 		}
 

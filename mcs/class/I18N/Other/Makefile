@@ -3,8 +3,10 @@ SUBDIRS =
 include ../../../build/rules.make
 
 LIBRARY = I18N.Other.dll
-LOCAL_MCS_FLAGS = /r:$(corlib) /r:I18N.dll /unsafe
-NO_TEST = yes
+LIB_REFS = I18N
+KEYFILE = ../../mono.pub
+LOCAL_MCS_FLAGS = /unsafe
+TEST_LIB_REFS = I18N
 
 EXTRA_DISTFILES = $(wildcard *.ucm)
 

@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 
 using System;
 using System.CodeDom;
@@ -40,7 +40,7 @@ using Microsoft.CSharp;
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-	public class TypedDataSetGeneratorTest : Assertion
+	public class TypedDataSetGeneratorTest
 	{
 		private ICodeGenerator gen;
 		private ICodeCompiler compiler;
@@ -70,20 +70,20 @@ namespace MonoTests.System.Data
 		public void TestGenerateIdName ()
 		{
 		
-			AssertEquals ("#1", "a", TypedDataSetGenerator.GenerateIdName ("a", gen));
-			AssertEquals ("#2", "_int", TypedDataSetGenerator.GenerateIdName ("int", gen));
-			AssertEquals ("#3", "_", TypedDataSetGenerator.GenerateIdName ("_", gen));
-			AssertEquals ("#3-2", "_", TypedDataSetGenerator.GenerateIdName ("_", gen));
-			AssertEquals ("#4", "_1", TypedDataSetGenerator.GenerateIdName ("1", gen));
-			AssertEquals ("#4-2", "_1", TypedDataSetGenerator.GenerateIdName ("1", gen));
-			AssertEquals ("#5", "_1a", TypedDataSetGenerator.GenerateIdName ("1a", gen));
-			AssertEquals ("#6", "_1_2", TypedDataSetGenerator.GenerateIdName ("1*2", gen));
-			AssertEquals ("#7", "__", TypedDataSetGenerator.GenerateIdName ("-", gen));
-			AssertEquals ("#8", "__", TypedDataSetGenerator.GenerateIdName ("+", gen));
-			AssertEquals ("#9", "_", TypedDataSetGenerator.GenerateIdName ("", gen));
-			AssertEquals ("#10", "___", TypedDataSetGenerator.GenerateIdName ("--", gen));
-			AssertEquals ("#11", "___", TypedDataSetGenerator.GenerateIdName ("++", gen));
-			AssertEquals ("#12", "\u3042", TypedDataSetGenerator.GenerateIdName ("\u3042", gen));
+			Assert.AreEqual ("a", TypedDataSetGenerator.GenerateIdName ("a", gen), "#1");
+			Assert.AreEqual ("_int", TypedDataSetGenerator.GenerateIdName ("int", gen), "#2");
+			Assert.AreEqual ("_", TypedDataSetGenerator.GenerateIdName ("_", gen), "#3");
+			Assert.AreEqual ("_", TypedDataSetGenerator.GenerateIdName ("_", gen), "#3-2");
+			Assert.AreEqual ("_1", TypedDataSetGenerator.GenerateIdName ("1", gen), "#4");
+			Assert.AreEqual ("_1", TypedDataSetGenerator.GenerateIdName ("1", gen), "#4-2");
+			Assert.AreEqual ("_1a", TypedDataSetGenerator.GenerateIdName ("1a", gen), "#5");
+			Assert.AreEqual ("_1_2", TypedDataSetGenerator.GenerateIdName ("1*2", gen), "#6");
+			Assert.AreEqual ("__", TypedDataSetGenerator.GenerateIdName ("-", gen), "#7");
+			Assert.AreEqual ("__", TypedDataSetGenerator.GenerateIdName ("+", gen), "#8");
+			Assert.AreEqual ("_", TypedDataSetGenerator.GenerateIdName ("", gen), "#9");
+			Assert.AreEqual ("___", TypedDataSetGenerator.GenerateIdName ("--", gen), "#10");
+			Assert.AreEqual ("___", TypedDataSetGenerator.GenerateIdName ("++", gen), "#11");
+			Assert.AreEqual ("\u3042", TypedDataSetGenerator.GenerateIdName ("\u3042", gen), "#12");
 		}
 
 		[Test]
@@ -98,7 +98,7 @@ namespace MonoTests.System.Data
 			ccu.Namespaces.Add (cns);
 			CompilerResults r = compiler.CompileAssemblyFromDom (
 				new CompilerParameters (), ccu);
-			AssertEquals (0, r.Errors.Count);
+			Assert.AreEqual (0, r.Errors.Count);
 		}
 	}
 }

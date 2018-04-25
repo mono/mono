@@ -118,7 +118,7 @@ namespace System.Windows.Forms {
 					return lqueue.Peek ();
 				}
 			}				
-			return xqueue.Peek();
+			return xqueue.Peek ();
 		}
 
 		public bool DispatchIdle {
@@ -136,22 +136,30 @@ namespace System.Windows.Forms {
 			private XEvent		xevent;
 			
 			public PaintQueue (int size) {
-				hwnds = new ArrayList(size);
-				xevent = new XEvent();
+				hwnds = new ArrayList (size);
+				xevent = new XEvent ();
 				xevent.AnyEvent.type = XEventName.Expose;
 			}
 
 			public int Count {
-				get { return hwnds.Count; }
+				get {
+					lock (hwnds) {
+						return hwnds.Count;
+					}
+				}
 			}
 
 			public void Enqueue (Hwnd hwnd) {
-				hwnds.Add(hwnd);
+				lock (hwnds) {
+					hwnds.Add (hwnd);
+				}
 			}
 
 			public void Remove(Hwnd hwnd) {
 				if (!hwnd.expose_pending && !hwnd.nc_expose_pending) {
-					hwnds.Remove(hwnd);
+					lock (hwnds) {
+						hwnds.Remove (hwnd);
+					}
 				}
 			}
 
@@ -159,36 +167,38 @@ namespace System.Windows.Forms {
 				Hwnd		hwnd;
 				IEnumerator	next;
 
-				if (hwnds.Count == 0) {
-					xevent.ExposeEvent.window = IntPtr.Zero;
-					return xevent;
-				}
+				lock (hwnds) {
+					if (hwnds.Count == 0) {
+						xevent.ExposeEvent.window = IntPtr.Zero;
+						return xevent;
+					}
 
-				next = hwnds.GetEnumerator();
-				next.MoveNext();
-				hwnd = (Hwnd)next.Current;
+					next = hwnds.GetEnumerator ();
+					next.MoveNext ();
+					hwnd = (Hwnd)next.Current;
 
-				// We only remove the event from the queue if we have one expose left since
-				// a single 'entry in our queue may be for both NC and Client exposed
-				if ( !(hwnd.nc_expose_pending && hwnd.expose_pending)) {
-					hwnds.Remove(hwnd);
-				}
-				if (hwnd.expose_pending) {
-					xevent.ExposeEvent.window = hwnd.client_window;
+					// We only remove the event from the queue if we have one expose left since
+					// a single 'entry in our queue may be for both NC and Client exposed
+					if (!(hwnd.nc_expose_pending && hwnd.expose_pending)) {
+						hwnds.Remove (hwnd);
+					}
+					if (hwnd.expose_pending) {
+						xevent.ExposeEvent.window = hwnd.client_window;
 #if not
-					xevent.ExposeEvent.x = hwnd.invalid.X;
-					xevent.ExposeEvent.y = hwnd.invalid.Y;
-					xevent.ExposeEvent.width = hwnd.invalid.Width;
-					xevent.ExposeEvent.height = hwnd.invalid.Height;
+						xevent.ExposeEvent.x = hwnd.invalid.X;
+						xevent.ExposeEvent.y = hwnd.invalid.Y;
+						xevent.ExposeEvent.width = hwnd.invalid.Width;
+						xevent.ExposeEvent.height = hwnd.invalid.Height;
 #endif
-					return xevent;
-				} else {
-					xevent.ExposeEvent.window = hwnd.whole_window;
-					xevent.ExposeEvent.x = hwnd.nc_invalid.X;
-					xevent.ExposeEvent.y = hwnd.nc_invalid.Y;
-					xevent.ExposeEvent.width = hwnd.nc_invalid.Width;
-					xevent.ExposeEvent.height = hwnd.nc_invalid.Height;
-					return xevent;
+						return xevent;
+					} else {
+						xevent.ExposeEvent.window = hwnd.whole_window;
+						xevent.ExposeEvent.x = hwnd.nc_invalid.X;
+						xevent.ExposeEvent.y = hwnd.nc_invalid.Y;
+						xevent.ExposeEvent.width = hwnd.nc_invalid.Width;
+						xevent.ExposeEvent.height = hwnd.nc_invalid.Height;
+						return xevent;
+					}
 				}
 			}
 		}

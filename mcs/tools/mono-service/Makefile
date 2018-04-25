@@ -4,14 +4,17 @@ include ../../build/rules.make
 
 PROGRAM = mono-service.exe
 
-include ../../build/executable.make
+PROGRAM_SNK = ../../class/mono.snk
 
-LOCAL_MCS_FLAGS = -r:System.ServiceProcess.dll -r:Mono.Posix.dll -unsafe
+LOCAL_MCS_FLAGS = -unsafe -publicsign -keyfile:../../class/mono.snk
+LIB_REFS = System.ServiceProcess Mono.Posix System
+
+include ../../build/executable.make
 
 # Copied from library.make
 
 # -- begin --
-ifeq ($(PLATFORM), win32)
+ifeq ($(BUILD_PLATFORM), win32)
 GACDIR = `cygpath -w $(mono_libdir)`
 GACROOT = `cygpath -w $(DESTDIR)$(mono_libdir)`
 test_flags += -d:WINDOWS

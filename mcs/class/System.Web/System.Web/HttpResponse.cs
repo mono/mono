@@ -1207,7 +1207,7 @@ namespace System.Web
 		internal void TransmitFile (string filename, bool final_flush)
 		{
 			FileInfo fi = new FileInfo (filename);
-			using (Stream s = fi.OpenRead ()); // Just check if we can read.
+			using (Stream s = fi.OpenRead ()) { } // Just check if we can read.
 			output_stream.WriteFile (filename, 0, fi.Length);
 			output_stream.ApplyFilter (final_flush);
 			Flush (final_flush);

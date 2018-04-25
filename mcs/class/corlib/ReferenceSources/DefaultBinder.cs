@@ -36,7 +36,10 @@ namespace System
 				return false;
 
 			var from = Type.GetTypeCode (source);
-			switch (Type.GetTypeCode (target)) {
+			var to = Type.GetTypeCode (target);
+			if (from == to && source.IsPrimitive)
+				return true;
+			switch (to) {
 			case TypeCode.Char:
 				switch (from) {
 				case TypeCode.Byte:

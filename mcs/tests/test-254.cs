@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 [assembly: Test]
 
@@ -130,7 +131,8 @@ public class ClassMain
 		Assert (ei.GetRemoveMethod ().GetCustomAttributes (true), false, 44);
 		Assert (ei.GetRemoveMethod ().ReturnTypeCustomAttributes.GetCustomAttributes (true), false, 45);
 		FieldInfo fi = typeof(Test_3).GetField ("e_1", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-		Assert (fi.GetCustomAttributes (true), true, 46);
+		Assert (fi.GetCustomAttributes (typeof (CompilerGeneratedAttribute), true), true, 46);
+		Assert (fi.GetCustomAttributes (typeof (TestAttribute), true), true, 47);
 
 		ei = typeof(Test_3).GetEvent ("e_2");
 		Assert (ei.GetCustomAttributes (true), false, 51);
@@ -139,7 +141,8 @@ public class ClassMain
 		Assert (ei.GetRemoveMethod ().GetCustomAttributes (true), true, 54);
 		Assert (ei.GetRemoveMethod ().ReturnTypeCustomAttributes.GetCustomAttributes (true), false, 55);
 		fi = typeof(Test_3).GetField ("e_2", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-		Assert (fi.GetCustomAttributes (true), false, 56);
+		Assert (fi.GetCustomAttributes (typeof (CompilerGeneratedAttribute), true), true, 56);
+		Assert (fi.GetCustomAttributes (typeof (TestAttribute), true), false, 57);
 
 		ei = typeof(Test_4).GetEvent ("e_2");
 		Assert (ei.GetCustomAttributes (true), false, 71);
@@ -148,7 +151,8 @@ public class ClassMain
 		Assert (ei.GetRemoveMethod ().GetCustomAttributes (true), false, 74);
 		Assert (ei.GetRemoveMethod ().ReturnTypeCustomAttributes.GetCustomAttributes (true), true, 75);
 		fi = typeof(Test_3).GetField ("e_2", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-		Assert (fi.GetCustomAttributes (true), false, 76);
+		Assert (fi.GetCustomAttributes (typeof (CompilerGeneratedAttribute), true), true, 76);
+		Assert (fi.GetCustomAttributes (typeof (TestAttribute), true), false, 77);
 
 		ei = typeof(Test_4).GetEvent ("e_3");
 		Assert (ei.GetCustomAttributes (true), false, 81);
@@ -159,7 +163,8 @@ public class ClassMain
 		Assert (ei.GetRemoveMethod ().ReturnTypeCustomAttributes.GetCustomAttributes (true), false, 86);
 		Assert (ei.GetRemoveMethod ().GetParameters ()[0].GetCustomAttributes (true), true, 87);
 		fi = typeof(Test_3).GetField ("e_2", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-		Assert (fi.GetCustomAttributes (true), false, 88);
+		Assert (fi.GetCustomAttributes (typeof (CompilerGeneratedAttribute), true), true, 86);
+		Assert (fi.GetCustomAttributes (typeof (TestAttribute), true), false, 87);
 
 		return failed ? 1 : 0;
 	}

@@ -1,7 +1,9 @@
-/*
- * hazard-pointer.h: Hazard pointer related code.
+/**
+ * \file
+ * Hazard pointer related code.
  *
  * (C) Copyright 2011 Novell, Inc
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #ifndef __MONO_HAZARD_POINTER_H__
 #define __MONO_HAZARD_POINTER_H__
@@ -9,6 +11,7 @@
 #include <glib.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-membar.h>
+#include <mono/utils/mono-publib.h>
 
 #define HAZARD_POINTER_COUNT 3
 
@@ -18,12 +21,13 @@ typedef struct {
 
 typedef void (*MonoHazardousFreeFunc) (gpointer p);
 
-void mono_thread_hazardous_free_or_queue (gpointer p, MonoHazardousFreeFunc free_func,
-		gboolean free_func_might_lock, gboolean lock_free_context);
-void mono_thread_hazardous_try_free_all (void);
+MONO_API gboolean mono_thread_hazardous_try_free (gpointer p, MonoHazardousFreeFunc free_func);
+MONO_API void mono_thread_hazardous_queue_free (gpointer p, MonoHazardousFreeFunc free_func);
+
+MONO_API void mono_thread_hazardous_try_free_all (void);
 void mono_thread_hazardous_try_free_some (void);
-MonoThreadHazardPointers* mono_hazard_pointer_get (void);
-gpointer get_hazardous_pointer (gpointer volatile *pp, MonoThreadHazardPointers *hp, int hazard_index);
+MONO_API MonoThreadHazardPointers* mono_hazard_pointer_get (void);
+gpointer mono_get_hazardous_pointer (gpointer volatile *pp, MonoThreadHazardPointers *hp, int hazard_index);
 
 #define mono_hazard_pointer_set(hp,i,v)	\
 	do { g_assert ((i) >= 0 && (i) < HAZARD_POINTER_COUNT); \
@@ -36,6 +40,7 @@ gpointer get_hazardous_pointer (gpointer volatile *pp, MonoThreadHazardPointers 
 
 #define mono_hazard_pointer_clear(hp,i)	\
 	do { g_assert ((i) >= 0 && (i) < HAZARD_POINTER_COUNT); \
+		mono_memory_write_barrier (); \
 		(hp)->hazard_pointers [(i)] = NULL; \
 	} while (0)
 
@@ -45,6 +50,9 @@ int mono_thread_small_id_alloc (void);
 
 int mono_hazard_pointer_save_for_signal_handler (void);
 void mono_hazard_pointer_restore_for_signal_handler (int small_id);
+
+typedef void (*MonoHazardFreeQueueSizeCallback)(size_t size);
+void mono_hazard_pointer_install_free_queue_size_callback (MonoHazardFreeQueueSizeCallback cb);
 
 void mono_thread_smr_init (void);
 void mono_thread_smr_cleanup (void);

@@ -114,13 +114,13 @@ namespace System.Net
 		
 		// Static properties
 		
-		private static ICertificatePolicy policy = new DefaultCertificatePolicy ();
+		private static ICertificatePolicy policy;
 		private static int defaultConnectionLimit = DefaultPersistentConnectionLimit;
 		private static int maxServicePointIdleTime = 100000; // 100 seconds
 		private static int maxServicePoints = 0;
 		private static int dnsRefreshTimeout = 2 * 60 * 1000;
 		private static bool _checkCRL = false;
-		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
+		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
 		static bool expectContinue = true;
 		static bool useNagle;
@@ -132,20 +132,20 @@ namespace System.Net
 		// Fields
 		
 		public const int DefaultNonPersistentConnectionLimit = 4;
-#if MONOTOUCH
+#if MOBILE
 		public const int DefaultPersistentConnectionLimit = 10;
 #else
 		public const int DefaultPersistentConnectionLimit = 2;
 #endif
 
-#if !NET_2_1
+#if !MOBILE
 		const string configKey = "system.net/connectionManagement";
 		static ConnectionManagementData manager;
 #endif
 		
 		static ServicePointManager ()
 		{
-#if !NET_2_1
+#if !MOBILE
 #if CONFIGURATION_DEP
 			object cfg = ConfigurationManager.GetSection (configKey);
 			ConnectionManagementSection s = cfg as ConnectionManagementSection;
@@ -158,7 +158,10 @@ namespace System.Net
 				return;
 			}
 #endif
+
+#pragma warning disable 618
 			manager = (ConnectionManagementData) ConfigurationSettings.GetConfig (configKey);
+#pragma warning restore 618
 			if (manager != null) {
 				defaultConnectionLimit = (int) manager.GetMaxConnections ("*");				
 			}
@@ -174,7 +177,11 @@ namespace System.Net
 		
 		[Obsolete ("Use ServerCertificateValidationCallback instead", false)]
 		public static ICertificatePolicy CertificatePolicy {
-			get { return policy; }
+			get {
+				if (policy == null)
+					Interlocked.CompareExchange (ref policy, new DefaultCertificatePolicy (), null);
+				return policy;
+			}
 			set { policy = value; }
 		}
 
@@ -196,7 +203,7 @@ namespace System.Net
 					throw new ArgumentOutOfRangeException ("value");
 
 				defaultConnectionLimit = value; 
-#if !NET_2_1
+#if !MOBILE
                 if (manager != null)
 					manager.Add ("*", defaultConnectionLimit);
 #endif
@@ -252,6 +259,12 @@ namespace System.Net
 			}
 		}
 
+		[MonoTODO]
+		public static bool ReusePort {
+			get { return false; }
+			set { throw new NotImplementedException (); }
+		}
+
 		public static SecurityProtocolType SecurityProtocol {
 			get { return _securityProtocol; }
 			set { _securityProtocol = value; }
@@ -276,6 +289,13 @@ namespace System.Net
 			}
 		}
 
+		[MonoTODO ("Always returns EncryptionPolicy.RequireEncryption.")]
+		public static EncryptionPolicy EncryptionPolicy {
+			get {
+				return EncryptionPolicy.RequireEncryption;
+			}
+		}
+
 		public static bool Expect100Continue {
 			get { return expectContinue; }
 			set { expectContinue = value; }
@@ -287,6 +307,10 @@ namespace System.Net
 		}
 
 		internal static bool DisableStrongCrypto {
+			get { return false; }
+		}
+
+		internal static bool DisableSendAuxRecord {
 			get { return false; }
 		}
 
@@ -307,7 +331,7 @@ namespace System.Net
 
 		public static ServicePoint FindServicePoint (Uri address) 
 		{
-			return FindServicePoint (address, GlobalProxySelection.Select);
+			return FindServicePoint (address, null);
 		}
 		
 		public static ServicePoint FindServicePoint (string uriString, IWebProxy proxy)
@@ -328,7 +352,7 @@ namespace System.Net
 				usesProxy = true;
 				bool isSecure = address.Scheme == "https";
 				address = proxy.GetProxy (address);
-				if (address.Scheme != "http" && !isSecure)
+				if (address.Scheme != "http")
 					throw new NotSupportedException ("Proxy scheme not supported.");
 
 				if (isSecure && address.Scheme == "http")
@@ -348,7 +372,7 @@ namespace System.Net
 					throw new InvalidOperationException ("maximum number of service points reached");
 
 				int limit;
-#if NET_2_1
+#if MOBILE
 				limit = defaultConnectionLimit;
 #else
 				string addr = address.ToString ();

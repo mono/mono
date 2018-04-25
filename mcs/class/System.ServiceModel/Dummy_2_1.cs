@@ -7,6 +7,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.Text;
 using System.Xml;
+using System.Threading;
 
 namespace System.Runtime.CompilerServices
 {
@@ -22,9 +23,91 @@ namespace System.Runtime.CompilerServices
 namespace System.ServiceModel
 {
 	public class EndpointIdentity {}
-	public class InstanceContext
+	public class InstanceContext : CommunicationObject, IExtensibleObject<InstanceContext>
 	{
-		public InstanceContext (object dummy) {}
+		protected internal override TimeSpan DefaultCloseTimeout
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		protected internal override TimeSpan DefaultOpenTimeout
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public IExtensionCollection<InstanceContext> Extensions
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public SynchronizationContext SynchronizationContext {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		public InstanceContext (object implementation)
+		{
+		}
+
+		public object GetServiceInstance (Message message)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnAbort ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override IAsyncResult OnBeginOpen (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnClose (TimeSpan timeout)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnClosed ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnEndClose (IAsyncResult result)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnEndOpen (IAsyncResult result)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnFaulted ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnOpen (TimeSpan timeout)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnOpened ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnOpening ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 	// introduced for silverlight sdk compatibility
 	internal class OperationFormatStyleHelper

@@ -59,11 +59,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-
-// Only do the poll when building with mono for now
-#if __MonoCS__
 using Mono.Unix.Native;
-#endif
 
 /// X11 Version
 namespace System.Windows.Forms {
@@ -382,9 +378,7 @@ namespace System.Windows.Forms {
 		
 		// Message Loop
 		private static XEventQueue	MessageQueue;		// Holds our queued up events
-		#if __MonoCS__						//
 		private static Pollfd[]		pollfds;		// For watching the X11 socket
-		#endif							//
 		private static X11Keyboard	Keyboard;		//
 		private static X11Dnd		Dnd;
 		private static Socket		listen;			//
@@ -662,7 +656,6 @@ namespace System.Windows.Forms {
 				wake.Connect (listen.LocalEndPoint);
 				wake_receive = listen.Accept ();
 				
-				#if __MonoCS__
 				pollfds = new Pollfd [2];
 				pollfds [0] = new Pollfd ();
 				pollfds [0].fd = XConnectionNumber (DisplayHandle);
@@ -671,7 +664,6 @@ namespace System.Windows.Forms {
 				pollfds [1] = new Pollfd ();
 				pollfds [1].fd = wake_receive.Handle.ToInt32 ();
 				pollfds [1].events = PollEvents.POLLIN;
-				#endif
 				
 				Keyboard = new X11Keyboard (DisplayHandle);
 				Dnd = new X11Dnd (DisplayHandle);
@@ -1213,13 +1205,11 @@ namespace System.Windows.Forms {
 				
 				timeout = NextTimeout (now);
 				if (timeout > 0) {
-					#if __MonoCS__
 					Syscall.poll (pollfds, (uint) pollfds.Length, timeout);
 					// Clean out buffer, so we're not busy-looping on the same data
 					if (pollfds[1].revents != 0) {
 						wake_receive.Receive(network_buffer, 0, 1, SocketFlags.None);
 					}
-					#endif
 					lock (XlibLock) {
 						pending = XPending (DisplayHandle);
 					}

@@ -1,15 +1,13 @@
-/*
- * console-io.c: ConsoleDriver internal calls for Unix systems.
+/**
+ * \file
+ * ConsoleDriver internal calls for Unix systems.
  *
  * Author:
  *	Gonzalo Paniagua Javier (gonzalo@ximian.com)
  *
  * Copyright (C) 2005-2009 Novell, Inc. (http://www.novell.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
-#if defined(__native_client__)
-#include "console-null.c"
-#else
-
 #include <config.h>
 #include <glib.h>
 #include <stdio.h>
@@ -33,9 +31,10 @@
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/metadata.h>
-#include <mono/metadata/threadpool-ms.h>
+#include <mono/metadata/threadpool.h>
 #include <mono/utils/mono-signal-handler.h>
 #include <mono/utils/mono-proclib.h>
+#include <mono/utils/w32api.h>
 
 /* On solaris, curses.h must come before both termios.h and term.h */
 #ifdef HAVE_CURSES_H
@@ -92,7 +91,7 @@ mono_console_init (void)
 static struct termios initial_attr;
 
 MonoBoolean
-ves_icall_System_ConsoleDriver_Isatty (HANDLE handle)
+ves_icall_System_ConsoleDriver_Isatty (HANDLE handle, MonoError* error)
 {
 	return isatty (GPOINTER_TO_INT (handle));
 }
@@ -127,20 +126,19 @@ set_property (gint property, gboolean value)
 }
 
 MonoBoolean
-ves_icall_System_ConsoleDriver_SetEcho (MonoBoolean want_echo)
+ves_icall_System_ConsoleDriver_SetEcho (MonoBoolean want_echo, MonoError* error)
 {
-	
 	return set_property (ECHO, want_echo);
 }
 
 MonoBoolean
-ves_icall_System_ConsoleDriver_SetBreak (MonoBoolean want_break)
+ves_icall_System_ConsoleDriver_SetBreak (MonoBoolean want_break, MonoError* error)
 {
 	return set_property (IGNBRK, !want_break);
 }
 
 gint32
-ves_icall_System_ConsoleDriver_InternalKeyAvailable (gint32 timeout)
+ves_icall_System_ConsoleDriver_InternalKeyAvailable (gint32 timeout, MonoError* error)
 {
 	fd_set rfds;
 	struct timeval tv;
@@ -220,38 +218,19 @@ tty_teardown (void)
 static void
 do_console_cancel_event (void)
 {
-	static MonoClassField *cancel_handler_field;
-	MonoDomain *domain = mono_domain_get ();
-	MonoClass *klass;
-	MonoDelegate *load_value;
-	MonoMethod *method;
-	MonoVTable *vtable;
+	static MonoMethod *System_Console_DoConsoleCancelEventBackground_method = ((gpointer)-1);
+	ERROR_DECL (error);
 
-	/* FIXME: this should likely iterate all the domains, instead */
-	if (!domain->domain)
+	if (mono_defaults.console_class == NULL)
 		return;
 
-	klass = mono_class_from_name (mono_defaults.corlib, "System", "Console");
-	if (klass == NULL)
+	if (System_Console_DoConsoleCancelEventBackground_method == ((gpointer)-1))
+		System_Console_DoConsoleCancelEventBackground_method = mono_class_get_method_from_name (mono_defaults.console_class, "DoConsoleCancelEventInBackground", 0);
+	if (System_Console_DoConsoleCancelEventBackground_method == NULL)
 		return;
 
-	if (cancel_handler_field == NULL) {
-		cancel_handler_field = mono_class_get_field_from_name (klass, "cancel_handler");
-		g_assert (cancel_handler_field);
-	}
-
-	vtable = mono_class_vtable_full (domain, klass, FALSE);
-	if (vtable == NULL)
-		return;
-	mono_field_static_get_value (vtable, cancel_handler_field, &load_value);
-	if (load_value == NULL)
-		return;
-
-	klass = load_value->object.vtable->klass;
-	method = mono_class_get_method_from_name (klass, "BeginInvoke", -1);
-	g_assert (method != NULL);
-
-	mono_threadpool_ms_begin_invoke (domain, (MonoObject*) load_value, method, NULL);
+	mono_runtime_invoke_checked (System_Console_DoConsoleCancelEventBackground_method, NULL, NULL, error);
+	mono_error_assert_ok (error);
 }
 
 static int need_cancel = FALSE;
@@ -344,20 +323,20 @@ console_set_signal_handlers ()
 	memset (&sigwinch, 0, sizeof (struct sigaction));
 	
 	// Continuing
-	sigcont.sa_handler = (void *) sigcont_handler;
-	sigcont.sa_flags = 0;
+	sigcont.sa_handler = (void (*)(int)) sigcont_handler;
+	sigcont.sa_flags = SA_RESTART;
 	sigemptyset (&sigcont.sa_mask);
 	sigaction (SIGCONT, &sigcont, &save_sigcont);
 	
 	// Interrupt handler
-	sigint.sa_handler = (void *) sigint_handler;
-	sigint.sa_flags = 0;
+	sigint.sa_handler = (void (*)(int)) sigint_handler;
+	sigint.sa_flags = SA_RESTART;
 	sigemptyset (&sigint.sa_mask);
 	sigaction (SIGINT, &sigint, &save_sigint);
 
 	// Window size changed
-	sigwinch.sa_handler = (void *) sigwinch_handler;
-	sigwinch.sa_flags = 0;
+	sigwinch.sa_handler = (void (*)(int)) sigwinch_handler;
+	sigwinch.sa_flags = SA_RESTART;
 	sigemptyset (&sigwinch.sa_mask);
 	sigaction (SIGWINCH, &sigwinch, &save_sigwinch);
 #endif
@@ -378,77 +357,83 @@ console_restore_signal_handlers ()
 #endif
 
 static void
-set_control_chars (MonoArray *control_chars, const guchar *cc)
+set_control_chars (gchar *control_chars, const guchar *cc)
 {
 	/* The index into the array comes from corlib/System/ControlCharacters.cs */
 #ifdef VINTR
-	mono_array_set (control_chars, gchar, 0, cc [VINTR]);
+	control_chars [0] = cc [VINTR];
 #endif
 #ifdef VQUIT
-	mono_array_set (control_chars, gchar, 1, cc [VQUIT]);
+	control_chars [1] = cc [VQUIT];
 #endif
 #ifdef VERASE
-	mono_array_set (control_chars, gchar, 2, cc [VERASE]);
+	control_chars [2] = cc [VERASE];
 #endif
 #ifdef VKILL
-	mono_array_set (control_chars, gchar, 3, cc [VKILL]);
+	control_chars [3] = cc [VKILL];
 #endif
 #ifdef VEOF
-	mono_array_set (control_chars, gchar, 4, cc [VEOF]);
+	control_chars [4] = cc [VEOF];
 #endif
 #ifdef VTIME
-	mono_array_set (control_chars, gchar, 5, cc [VTIME]);
+	control_chars [5] = cc [VTIME];
 #endif
 #ifdef VMIN
-	mono_array_set (control_chars, gchar, 6, cc [VMIN]);
+	control_chars [6] = cc [VMIN];
 #endif
 #ifdef VSWTC
-	mono_array_set (control_chars, gchar, 7, cc [VSWTC]);
+	control_chars [7] = cc [VSWTC];
 #endif
 #ifdef VSTART
-	mono_array_set (control_chars, gchar, 8, cc [VSTART]);
+	control_chars [8] = cc [VSTART];
 #endif
 #ifdef VSTOP
-	mono_array_set (control_chars, gchar, 9, cc [VSTOP]);
+	control_chars [9] = cc [VSTOP];
 #endif
 #ifdef VSUSP
-	mono_array_set (control_chars, gchar, 10, cc [VSUSP]);
+	control_chars [10] = cc [VSUSP];
 #endif
 #ifdef VEOL
-	mono_array_set (control_chars, gchar, 11, cc [VEOL]);
+	control_chars [11] = cc [VEOL];
 #endif
 #ifdef VREPRINT
-	mono_array_set (control_chars, gchar, 12, cc [VREPRINT]);
+	control_chars [12] = cc [VREPRINT];
 #endif
 #ifdef VDISCARD
-	mono_array_set (control_chars, gchar, 13, cc [VDISCARD]);
+	control_chars [13] = cc [VDISCARD];
 #endif
 #ifdef VWERASE
-	mono_array_set (control_chars, gchar, 14, cc [VWERASE]);
+	control_chars [14] = cc [VWERASE];
 #endif
 #ifdef VLNEXT
-	mono_array_set (control_chars, gchar, 15, cc [VLNEXT]);
+	control_chars [15] = cc [VLNEXT];
 #endif
 #ifdef VEOL2
-	mono_array_set (control_chars, gchar, 16, cc [VEOL2]);
+	control_chars [16] = cc [VEOL2];
 #endif
 }
 
 MonoBoolean
-ves_icall_System_ConsoleDriver_TtySetup (MonoString *keypad, MonoString *teardown, MonoArray **control_chars, int **size)
+ves_icall_System_ConsoleDriver_TtySetup (MonoStringHandle keypad, MonoStringHandle teardown, MonoArrayHandleOut control_chars, int **size, MonoError* error)
 {
+	// FIXME Lock around the globals?
+
 	int dims;
 
 	dims = terminal_get_dimensions ();
 	if (dims == -1){
 		int cols = 0, rows = 0;
 				      
-		const char *str = g_getenv ("COLUMNS");
-		if (str != NULL)
+		char *str = g_getenv ("COLUMNS");
+		if (str != NULL) {
 			cols = atoi (str);
+			g_free (str);
+		}
 		str = g_getenv ("LINES");
-		if (str != NULL)
+		if (str != NULL) {
 			rows = atoi (str);
+			g_free (str);
+		}
 
 		if (cols != 0 && rows != 0)
 			cols_and_lines = (cols << 16) | rows;
@@ -462,7 +447,10 @@ ves_icall_System_ConsoleDriver_TtySetup (MonoString *keypad, MonoString *teardow
 
 	/* 17 is the number of entries set in set_control_chars() above.
 	 * NCCS is the total size, but, by now, we only care about those 17 values*/
-	mono_gc_wbarrier_generic_store (control_chars, (MonoObject*) mono_array_new (mono_domain_get (), mono_defaults.byte_class, 17));
+	MonoArrayHandle control_chars_arr = mono_array_new_handle (mono_domain_get (), mono_defaults.byte_class, 17, error);
+	return_val_if_nok (error, FALSE);
+
+	MONO_HANDLE_ASSIGN (control_chars, control_chars_arr);
 	if (tcgetattr (STDIN_FILENO, &initial_attr) == -1)
 		return FALSE;
 
@@ -475,26 +463,39 @@ ves_icall_System_ConsoleDriver_TtySetup (MonoString *keypad, MonoString *teardow
 	/* Disable C-y being used as a suspend character on OSX */
 	mono_attr.c_cc [VDSUSP] = 255;
 #endif
-	if (tcsetattr (STDIN_FILENO, TCSANOW, &mono_attr) == -1)
+	gint ret;
+	do {
+		MONO_ENTER_GC_SAFE;
+		ret = tcsetattr (STDIN_FILENO, TCSANOW, &mono_attr);
+		MONO_EXIT_GC_SAFE;
+	} while (ret == -1 && errno == EINTR);
+
+	if (ret == -1)
 		return FALSE;
 
-	set_control_chars (*control_chars, mono_attr.c_cc);
+	uint32_t h;
+	set_control_chars (MONO_ARRAY_HANDLE_PIN (control_chars_arr, gchar, 0, &h), mono_attr.c_cc);
+	mono_gchandle_free (h);
 	/* If initialized from another appdomain... */
 	if (setup_finished)
 		return TRUE;
 
-	keypad_xmit_str = keypad != NULL ? mono_string_to_utf8 (keypad) : NULL;
+	keypad_xmit_str = NULL;
+	if (!MONO_HANDLE_IS_NULL (keypad)) {
+		keypad_xmit_str = mono_string_handle_to_utf8 (keypad, error);
+		return_val_if_nok (error, FALSE);
+	}
 	
 	console_set_signal_handlers ();
 	setup_finished = TRUE;
 	if (!atexit_called) {
-		if (teardown != NULL)
-			teardown_str = mono_string_to_utf8 (teardown);
+		if (!MONO_HANDLE_IS_NULL (teardown)) {
+			teardown_str = mono_string_handle_to_utf8 (teardown, error);
+			return_val_if_nok (error, FALSE);
+		}
 
 		mono_atexit (tty_teardown);
 	}
 
 	return TRUE;
 }
-#endif /* #if defined(__native_client__) */
-

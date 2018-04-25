@@ -1,4 +1,4 @@
-//
+﻿//
 // MonoTlsSettings.cs
 //
 // Author:
@@ -49,7 +49,7 @@ namespace Mono.Security.Interface
 			set { checkCertRevocationStatus = value; }
 		}
 
-		public bool UseServicePointManagerCallback {
+		public bool? UseServicePointManagerCallback {
 			get { return useServicePointManagerCallback; }
 			set { useServicePointManagerCallback = value; }
 		}
@@ -65,6 +65,13 @@ namespace Mono.Security.Interface
 		}
 
 		/*
+		 * Use custom time for certificate expiration checks
+		 */
+		public DateTime? CertificateValidationTime {
+			get; set;
+		}
+
+		/*
 		 * This is only supported if CertificateValidationHelper.SupportsTrustAnchors is true.
 		 */
 		public X509CertificateCollection TrustAnchors {
@@ -75,6 +82,17 @@ namespace Mono.Security.Interface
 			get; set;
 		}
 
+		internal string[] CertificateSearchPaths {
+			get; set;
+		}
+
+		/*
+		 * This is only supported if MonoTlsProvider.SupportsCleanShutdown is true.
+		 */
+		internal bool SendCloseNotify {
+			get; set;
+		}
+
 		/*
 		 * If you set this here, then it will override 'ServicePointManager.SecurityProtocol'.
 		 */
@@ -82,10 +100,15 @@ namespace Mono.Security.Interface
 			get; set;
 		}
 
+		[CLSCompliant (false)]
+		public CipherSuiteCode[] EnabledCiphers {
+			get; set;
+		}
+
 		bool cloned = false;
 		bool checkCertName = true;
 		bool checkCertRevocationStatus = false;
-		bool useServicePointManagerCallback = true;
+		bool? useServicePointManagerCallback = null;
 		bool skipSystemValidators = false;
 		bool callbackNeedsChain = true;
 		ICertificateValidator certificateValidator;
@@ -94,7 +117,7 @@ namespace Mono.Security.Interface
 		{
 		}
 
-		volatile static MonoTlsSettings defaultSettings;
+		static MonoTlsSettings defaultSettings;
 
 		public static MonoTlsSettings DefaultSettings {
 			get {
@@ -155,7 +178,16 @@ namespace Mono.Security.Interface
 			callbackNeedsChain = other.callbackNeedsChain;
 			UserSettings = other.UserSettings;
 			EnabledProtocols = other.EnabledProtocols;
-			TrustAnchors = other.TrustAnchors;
+			EnabledCiphers = other.EnabledCiphers;
+			CertificateValidationTime = other.CertificateValidationTime;
+			SendCloseNotify = other.SendCloseNotify;
+			if (other.TrustAnchors != null)
+				TrustAnchors = new X509CertificateCollection (other.TrustAnchors);
+			if (other.CertificateSearchPaths != null) {
+				CertificateSearchPaths = new string [other.CertificateSearchPaths.Length];
+				other.CertificateSearchPaths.CopyTo (CertificateSearchPaths, 0);
+			}
+
 			cloned = true;
 		}
 

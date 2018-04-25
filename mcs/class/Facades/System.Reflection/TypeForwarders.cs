@@ -46,4 +46,12 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.TargetInvocationException))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.TargetParameterCountException))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.TypeInfo))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.BindingFlags))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.ICustomAttributeProvider))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.InvalidFilterCriteriaException))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.MemberFilter))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.MemberTypes))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.ParameterModifier))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.TargetException))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.TypeFilter))]
 

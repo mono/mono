@@ -1,7 +1,0 @@
-2008-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
-
-	* ProviderCollectionTest.cs: Moved from System assembly.
-
-2007-08-31  Gert Driesen  <drieseng@users.sourceforge.net>
-
-	* ProviderBaseTest.cs: Added tests for Initialize.

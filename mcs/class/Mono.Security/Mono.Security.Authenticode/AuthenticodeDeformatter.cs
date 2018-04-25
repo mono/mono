@@ -205,6 +205,18 @@ namespace Mono.Security.Authenticode {
 					ha = SHA1.Create ();
 					hash = GetHash (ha);
 					break;
+				case 32:
+					ha = SHA256.Create ();
+					hash = GetHash (ha);
+					break;
+				case 48:
+					ha = SHA384.Create ();
+					hash = GetHash (ha);
+					break;
+				case 64:
+					ha = SHA512.Create ();
+					hash = GetHash (ha);
+					break;
 				default:
 					reason = 5;
 					Close ();
@@ -401,6 +413,15 @@ namespace Mono.Security.Authenticode {
 					break;
 				case 20:
 					hashName = "SHA1";
+					break;
+				case 32:
+					hashName = "SHA256";
+					break;
+				case 48:
+					hashName = "SHA384";
+					break;
+				case 64:
+					hashName = "SHA512";
 					break;
 			}
 			HashAlgorithm ha = HashAlgorithm.Create (hashName);

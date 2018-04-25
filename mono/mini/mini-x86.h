@@ -1,16 +1,13 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_MINI_X86_H__
 #define __MONO_MINI_X86_H__
 
 #include <mono/arch/x86/x86-codegen.h>
 #include <mono/utils/mono-sigcontext.h>
 #include <mono/utils/mono-context.h>
-
-#ifdef __native_client_codegen__
-#define kNaClAlignmentX86 32
-#define kNaClAlignmentMaskX86 (kNaClAlignmentX86 - 1)
-
-#define kNaClLengthOfCallImm kx86NaClLengthOfCallImm
-#endif
 
 #ifdef HOST_WIN32
 #include <windows.h>
@@ -41,18 +38,12 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
 
 #endif /* HOST_WIN32 */
 
-#ifdef __HAIKU__
-struct sigcontext {
-	vregs regs;
-};
-#endif /* __HAIKU__ */
-
 #if defined( __linux__) || defined(__sun) || defined(__APPLE__) || defined(__NetBSD__) || \
        defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__OpenBSD__)
 #define MONO_ARCH_USE_SIGACTION
 #endif
 
-#if defined(__native_client__) || defined(HOST_WATCHOS)
+#if defined(HOST_WATCHOS)
 #undef MONO_ARCH_USE_SIGACTION
 #endif
 
@@ -87,7 +78,6 @@ struct sigcontext {
 #else
 #define MONO_ARCH_SIGNAL_STACK_SIZE (16 * 1024)
 #endif
-#define MONO_ARCH_HAVE_RESTORE_STACK_SUPPORT 1
 
 #define MONO_ARCH_CPU_SPEC mono_x86_desc
 
@@ -148,7 +138,7 @@ struct MonoLMF {
 	 * If the second lowest bit is set to 1, then this is a MonoLMFExt structure, and
 	 * the other fields are not valid.
 	 */
-	guint32    previous_lmf;
+	gpointer    previous_lmf;
 	gpointer    lmf_addr;
 	/* Only set in trampoline LMF frames */
 	MonoMethod *method;
@@ -165,6 +155,7 @@ typedef struct {
 	gboolean need_stack_frame_inited;
 	gboolean need_stack_frame;
 	int sp_fp_offset, param_area_size;
+	gpointer cinfo;
 	gpointer ss_tramp_var;
 	gpointer bp_tramp_var;
 } MonoCompileArch;
@@ -204,21 +195,12 @@ typedef struct {
 #define MONO_ARCH_HAVE_IS_INT_OVERFLOW 1
 #define MONO_ARCH_HAVE_INVALIDATE_METHOD 1
 #define MONO_ARCH_NEED_GOT_VAR 1
-#ifndef HOST_WIN32
-/* X86 uses jit_tls->lmf (See emit_push_lmf ()) */
-#define MONO_ARCH_ENABLE_MONO_LMF_VAR 1
-#endif
-#define MONO_ARCH_HAVE_TLS_GET (mono_x86_have_tls_get ())
 #define MONO_ARCH_IMT_REG X86_EDX
 #define MONO_ARCH_VTABLE_REG X86_EDX
 #define MONO_ARCH_RGCTX_REG MONO_ARCH_IMT_REG
-#define MONO_ARCH_EXC_REG X86_EAX
-#define MONO_ARCH_HAVE_GENERALIZED_IMT_THUNK 1
-#define MONO_ARCH_HAVE_LIVERANGE_OPS 1
+#define MONO_ARCH_HAVE_GENERALIZED_IMT_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
-#if !defined(__native_client_codegen__)
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
-#endif
 #define MONO_ARCH_GOT_REG X86_EBX
 #define MONO_ARCH_HAVE_GET_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
@@ -234,13 +216,11 @@ typedef struct {
 #define MONO_ARCH_AOT_SUPPORTED 1
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
-#define MONO_ARCH_HAVE_LLVM_IMT_TRAMPOLINE 1
 #define MONO_ARCH_LLVM_SUPPORTED 1
 
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 
 #define MONO_ARCH_HAVE_EXCEPTIONS_INIT 1
-#define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
 
 #define MONO_ARCH_HAVE_CARD_TABLE_WBARRIER 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
@@ -248,10 +228,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
-#define MONO_ARCH_HAVE_OP_TAIL_CALL 1
-#define MONO_ARCH_HAVE_TRANSLATE_TLS_OFFSET 1
-#define MONO_ARCH_HAVE_TLS_GET_REG 1
-#define MONO_ARCH_HAVE_DUMMY_INIT 1
+#define MONO_ARCH_HAVE_OP_TAILCALL_MEMBASE 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 
@@ -267,6 +244,10 @@ typedef struct {
             MONO_ADD_INS ((cfg)->cbb, inst); \
 			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
 	} while (0)
+
+// Does the ABI have a volatile non-parameter register, so tailcall
+// can pass context to generics or interfaces?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 1
 
 /* Return value marshalling for calls between gsharedvt and normal code */
 typedef enum {
@@ -301,17 +282,52 @@ typedef struct {
 	int map [MONO_ZERO_LEN_ARRAY];
 } GSharedVtCallInfo;
 
-guint8*
-mono_x86_emit_tls_get (guint8* code, int dreg, int tls_offset);
+typedef enum {
+	ArgInIReg,
+	ArgInFloatSSEReg,
+	ArgInDoubleSSEReg,
+	ArgOnStack,
+	ArgValuetypeInReg,
+	ArgOnFloatFpStack,
+	ArgOnDoubleFpStack,
+	/* gsharedvt argument passed by addr */
+	ArgGSharedVt,
+	ArgNone
+} ArgStorage;
 
-guint8*
-mono_x86_emit_tls_get_reg (guint8* code, int dreg, int offset_reg);
+typedef struct {
+	gint16 offset;
+	gint8  reg;
+	ArgStorage storage;
+	int nslots;
+	gboolean is_pair;
+
+	/* Only if storage == ArgValuetypeInReg */
+	ArgStorage pair_storage [2];
+	gint8 pair_regs [2];
+	guint8 pass_empty_struct : 1; // Set in scenarios when empty structs needs to be represented as argument.
+} ArgInfo;
+
+typedef struct {
+	int nargs;
+	guint32 stack_usage;
+	guint32 reg_usage;
+	guint32 freg_usage;
+	gboolean need_stack_align;
+	guint32 stack_align_amount;
+	gboolean vtype_retaddr;
+	/* The index of the vret arg in the argument list */
+	int vret_arg_index;
+	int vret_arg_offset;
+	/* Argument space popped by the callee */
+	int callee_stack_pop;
+	ArgInfo ret;
+	ArgInfo sig_cookie;
+	ArgInfo args [1];
+} CallInfo;
 
 guint32
 mono_x86_get_this_arg_offset (MonoMethodSignature *sig);
-
-gboolean
-mono_x86_have_tls_get (void);
 
 void
 mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc, 
@@ -326,6 +342,9 @@ mono_x86_patch (unsigned char* code, gpointer target);
 
 gpointer
 mono_x86_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg);
+
+CallInfo*
+mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig);
 
 #endif /* __MONO_MINI_X86_H__ */  
 

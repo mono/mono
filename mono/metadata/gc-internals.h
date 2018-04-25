@@ -1,10 +1,12 @@
-/*
- * metadata/gc-internals.h: Internal GC interface
+/**
+ * \file
+ * Internal GC interface
  *
  * Author: Paolo Molaro <lupus@ximian.com>
  *
  * (C) 2002 Ximian, Inc.
  * Copyright 2012 Xamarin Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #ifndef __MONO_METADATA_GC_INTERNAL_H__
@@ -15,25 +17,14 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/sgen/gc-internal-agnostic.h>
-#include <mono/utils/gc_wrapper.h>
 
-#define mono_domain_finalizers_lock(domain) mono_mutex_lock (&(domain)->finalizable_objects_hash_lock);
-#define mono_domain_finalizers_unlock(domain) mono_mutex_unlock (&(domain)->finalizable_objects_hash_lock);
+#define mono_domain_finalizers_lock(domain) mono_os_mutex_lock (&(domain)->finalizable_objects_hash_lock);
+#define mono_domain_finalizers_unlock(domain) mono_os_mutex_unlock (&(domain)->finalizable_objects_hash_lock);
 
 /* Register a memory area as a conservatively scanned GC root */
-#define MONO_GC_REGISTER_ROOT_PINNING(x,src,msg) mono_gc_register_root ((char*)&(x), sizeof(x), MONO_GC_DESCRIPTOR_NULL, (src), (msg))
+#define MONO_GC_REGISTER_ROOT_PINNING(x,src,key,msg) mono_gc_register_root ((char*)&(x), sizeof(x), MONO_GC_DESCRIPTOR_NULL, (src), (key), (msg))
 
 #define MONO_GC_UNREGISTER_ROOT(x) mono_gc_deregister_root ((char*)&(x))
-
-/*
- * Register a memory location as a root pointing to memory allocated using
- * mono_gc_alloc_fixed (). This includes MonoGHashTable.
- */
-/* The result of alloc_fixed () is not GC tracked memory */
-#define MONO_GC_REGISTER_ROOT_FIXED(x,src,msg) do { \
-	if (!mono_gc_is_moving ())				\
-		MONO_GC_REGISTER_ROOT_PINNING ((x),(src),(msg)); \
-	} while (0)
 
 /*
  * Return a GC descriptor for an array containing N pointers to memory allocated
@@ -43,18 +34,18 @@
 #define MONO_GC_ROOT_DESCR_FOR_FIXED(n) (mono_gc_is_moving () ? mono_gc_make_root_descr_all_refs (0) : MONO_GC_DESCRIPTOR_NULL)
 
 /* Register a memory location holding a single object reference as a GC root */
-#define MONO_GC_REGISTER_ROOT_SINGLE(x,src,msg) do { \
+#define MONO_GC_REGISTER_ROOT_SINGLE(x,src,key,msg) do { \
 	g_assert (sizeof (x) == sizeof (MonoObject*)); \
-	mono_gc_register_root ((char*)&(x), sizeof(MonoObject*), mono_gc_make_root_descr_all_refs (1), (src), (msg)); \
+	mono_gc_register_root ((char*)&(x), sizeof(MonoObject*), mono_gc_make_root_descr_all_refs (1), (src), (key),(msg)); \
 	} while (0)
 
 /*
  * This is used for fields which point to objects which are kept alive by other references
  * when using Boehm.
  */
-#define MONO_GC_REGISTER_ROOT_IF_MOVING(x,src,msg) do { \
+#define MONO_GC_REGISTER_ROOT_IF_MOVING(x,src,key,msg) do { \
 	if (mono_gc_is_moving ()) \
-		MONO_GC_REGISTER_ROOT_SINGLE(x,src,msg);		\
+		MONO_GC_REGISTER_ROOT_SINGLE(x,src,key,msg);		\
 } while (0)
 
 #define MONO_GC_UNREGISTER_ROOT_IF_MOVING(x) do { \
@@ -66,6 +57,9 @@
 #define IS_GC_REFERENCE(class,t) (mono_gc_is_moving () ? FALSE : ((t)->type == MONO_TYPE_U && (class)->image == mono_defaults.corlib))
 
 void   mono_object_register_finalizer               (MonoObject  *obj);
+void
+mono_object_register_finalizer_handle (MonoObjectHandle obj);
+
 void   ves_icall_System_GC_InternalCollect          (int          generation);
 gint64 ves_icall_System_GC_GetTotalMemory           (MonoBoolean  forceCollection);
 void   ves_icall_System_GC_KeepAlive                (MonoObject  *obj);
@@ -80,7 +74,6 @@ gpointer    ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle);
 void        ves_icall_System_GC_register_ephemeron_array (MonoObject *array);
 MonoObject  *ves_icall_System_GC_get_ephemeron_tombstone (void);
 
-MonoBoolean ves_icall_Mono_Runtime_SetGCAllowSynchronousMajor (MonoBoolean flag);
 
 extern void mono_gc_init (void);
 extern void mono_gc_base_init (void);
@@ -102,17 +95,11 @@ extern void mono_gc_set_stack_end (void *stack_end);
  */
 gboolean mono_object_is_alive (MonoObject* obj);
 gboolean mono_gc_is_finalizer_thread (MonoThread *thread);
-gpointer mono_gc_out_of_memory (size_t size);
-void     mono_gc_enable_events (void);
-void     mono_gc_enable_alloc_events (void);
 
 void mono_gchandle_set_target (guint32 gchandle, MonoObject *obj);
 
 /*Ephemeron functionality. Sgen only*/
 gboolean    mono_gc_ephemeron_array_add (MonoObject *obj);
-
-/* To disable synchronous, evacuating collections - concurrent SGen only */
-gboolean    mono_gc_set_allow_synchronous_major (gboolean flag);
 
 MonoBoolean
 mono_gc_GCHandle_CheckCurrentDomain (guint32 gchandle);
@@ -136,10 +123,8 @@ gboolean mono_gc_user_markers_supported (void);
  * The memory is non-moving and it will be explicitly deallocated.
  * size bytes will be available from the returned address (ie, descr
  * must not be stored in the returned memory)
- * NOTE: Under Boehm, this returns memory allocated using GC_malloc, so the result should
- * be stored into a location registered using MONO_GC_REGISTER_ROOT_FIXED ().
  */
-void* mono_gc_alloc_fixed            (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg);
+void* mono_gc_alloc_fixed            (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
 void  mono_gc_free_fixed             (void* addr);
 
 /* make sure the gchandle was allocated for an object in domain */
@@ -148,25 +133,53 @@ void     mono_gchandle_free_domain  (MonoDomain *domain);
 
 typedef void (*FinalizerThreadCallback) (gpointer user_data);
 
-/* if there are finalizers to run, run them. Returns the number of finalizers run */
-gboolean mono_gc_pending_finalizers (void);
-void     mono_gc_finalize_notify    (void);
-
 void* mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
+
+MonoObjectHandle
+mono_gc_alloc_handle_pinned_obj (MonoVTable *vtable, gsize size);
+
 void* mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
+
+MonoObjectHandle
+mono_gc_alloc_handle_obj (MonoVTable *vtable, gsize size);
+
 void* mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
+
+MonoArrayHandle
+mono_gc_alloc_handle_vector (MonoVTable *vtable, gsize size, gsize max_length);
+
 void* mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
+
+MonoArrayHandle
+mono_gc_alloc_handle_array (MonoVTable *vtable, gsize size, gsize max_length, gsize bounds_size);
+
 void* mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
+
+MonoStringHandle
+mono_gc_alloc_handle_string (MonoVTable *vtable, gsize size, gint32 len);
+
+void* mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
 MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
 
-void  mono_gc_register_for_finalization (MonoObject *obj, void *user_data);
+MonoObjectHandle
+mono_gc_alloc_handle_mature (MonoVTable *vtable, gsize size);
+
+void mono_gc_register_obj_with_weak_fields (void *obj);
+void
+mono_gc_register_object_with_weak_fields (MonoObjectHandle obj);
+
+typedef void (*MonoFinalizationProc)(gpointer, gpointer); // same as SGenFinalizationProc, GC_finalization_proc
+
+void  mono_gc_register_for_finalization (MonoObject *obj, MonoFinalizationProc user_data);
 void  mono_gc_add_memory_pressure (gint64 value);
-MONO_API int   mono_gc_register_root (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg);
+MONO_API int   mono_gc_register_root (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
 void  mono_gc_deregister_root (char* addr);
-int   mono_gc_finalizers_for_domain (MonoDomain *domain, MonoObject **out_array, int out_size);
+void  mono_gc_finalize_domain (MonoDomain *domain);
 void  mono_gc_run_finalize (void *obj, void *data);
 void  mono_gc_clear_domain (MonoDomain * domain);
-void* mono_gc_alloc_mature (MonoVTable *vtable);
+/* Signal early termination of finalizer processing inside the gc */
+void  mono_gc_suspend_finalizers (void);
+
 
 /* 
  * Register a root which can only be written using a write barrier.
@@ -178,7 +191,7 @@ void* mono_gc_alloc_mature (MonoVTable *vtable);
  * FIXME: Add an API for clearing remset entries if a root with a user defined
  * mark routine is deleted.
  */
-int mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg);
+int mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
 
 void mono_gc_wbarrier_set_root (gpointer ptr, MonoObject *value);
 
@@ -187,14 +200,21 @@ void mono_gc_wbarrier_set_root (gpointer ptr, MonoObject *value);
 	mono_gc_wbarrier_set_root (&((s)->fieldname), (MonoObject*)value); \
 } while (0)
 
-void  mono_gc_finalize_threadpool_threads (void);
-
 /* fast allocation support */
+
+typedef enum {
+	// Regular fast path allocator.
+	MANAGED_ALLOCATOR_REGULAR,
+	// Managed allocator that just calls into the runtime.
+	MANAGED_ALLOCATOR_SLOW_PATH,
+	// Managed allocator that works like the regular one but also calls into the profiler.
+	MANAGED_ALLOCATOR_PROFILER,
+} ManagedAllocatorVariant;
 
 int mono_gc_get_aligned_size_for_allocator (int size);
 MonoMethod* mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean known_instance_size);
 MonoMethod* mono_gc_get_managed_array_allocator (MonoClass *klass);
-MonoMethod *mono_gc_get_managed_allocator_by_type (int atype, gboolean slowpath);
+MonoMethod *mono_gc_get_managed_allocator_by_type (int atype, ManagedAllocatorVariant variant);
 
 guint32 mono_gc_get_managed_allocator_types (void);
 
@@ -206,10 +226,14 @@ MonoMethod* mono_gc_get_specific_write_barrier (gboolean is_concurrent);
 MonoMethod* mono_gc_get_write_barrier (void);
 
 /* Fast valuetype copy */
-void mono_gc_wbarrier_value_copy_bitmap (gpointer dest, gpointer src, int size, unsigned bitmap);
+/* WARNING: [dest, dest + size] must be within the bounds of a single type, otherwise the GC will lose remset entries */
+void mono_gc_wbarrier_range_copy (gpointer dest, gpointer src, int size);
+void* mono_gc_get_range_copy_func (void);
+
 
 /* helper for the managed alloc support */
-MonoString *mono_string_alloc (int length);
+MonoString *
+ves_icall_string_alloc (int length);
 
 /* 
  * Functions supplied by the runtime and called by the GC. Currently only used
@@ -295,9 +319,9 @@ gboolean mono_gc_card_table_nursery_check (void);
 
 void* mono_gc_get_nursery (int *shift_bits, size_t *size);
 
-void mono_gc_set_current_thread_appdomain (MonoDomain *domain);
-
-void mono_gc_set_skip_thread (gboolean skip);
+// Don't use directly; set/unset MONO_THREAD_INFO_FLAGS_NO_GC instead.
+void mono_gc_skip_thread_changing (gboolean skip);
+void mono_gc_skip_thread_changed (gboolean skip);
 
 #ifndef HOST_WIN32
 int mono_gc_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void *(*start_routine)(void *), void *arg);
@@ -356,12 +380,22 @@ MONO_API void mono_gc_register_finalizer_callbacks (MonoGCFinalizerCallbacks *ca
 BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reserved);
 #endif
 
+MonoVTable *mono_gc_get_vtable (MonoObject *obj);
+
 guint mono_gc_get_vtable_bits (MonoClass *klass);
 
 void mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer altstack, gint32 altstack_size);
 
+gboolean mono_gc_is_critical_method (MonoMethod *method);
+
+gpointer mono_gc_thread_attach (THREAD_INFO_TYPE *info);
+
+void mono_gc_thread_detach_with_lock (THREAD_INFO_TYPE *info);
+
+gboolean mono_gc_thread_in_critical_region (THREAD_INFO_TYPE *info);
+
 /* If set, print debugging messages around finalizers. */
-extern gboolean log_finalizers;
+extern gboolean mono_log_finalizers;
 
 /* If set, do not run finalizers. */
 extern gboolean mono_do_not_finalize;

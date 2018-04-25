@@ -1,6 +1,0 @@
-2008-10-13  Jonathan Pryor  <jpryor@novell.com>
-
-	* ChangeLog: Started.
-	* AssemblyInfo.cs: Added; assembly-level attributes for
-	  Mono.Options.dll.
-

@@ -4,9 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = System.Reactive.Windows.Threading.dll
 LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq WindowsBase
-LIB_MCS_FLAGS = \
-		@more_build_args \
-		-r:WindowsBase.dll
+KEYFILE = ../reactive.pub
+LIB_MCS_FLAGS = -d:SIGNED -delaysign -resource:Strings_WindowsThreading.resources,System.Reactive.Strings_WindowsThreading.resources
 
 ifeq (true, $(GENERATE_RESOURCES))
 LIB_MCS_FLAGS += /define:GENERATING_RESOURCES
@@ -32,7 +31,7 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-EXTRA_DISTFILES = more_build_args $(RESX_RESOURCES:.resources=.resx) $(PREBUILT)
+EXTRA_DISTFILES = $(RESX_RESOURCES:.resources=.resx) $(PREBUILT)
 
 INSTALL_PROFILE := $(filter net_4_x, $(PROFILE))
 ifndef INSTALL_PROFILE

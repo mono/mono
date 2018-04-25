@@ -790,7 +790,7 @@ namespace MonoTests.System
 				Assert.IsNull (ex.InnerException, "#C3");
 				Assert.IsNotNull (ex.Message, "#C4");
 				Assert.IsNotNull (ex.ParamName, "#C5");
-				Assert.AreEqual ("byteArray", ex.ParamName, "#C6");
+				Assert.AreEqual ("value", ex.ParamName, "#C6");
 			}
 		}
 

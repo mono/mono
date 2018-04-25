@@ -60,7 +60,7 @@ namespace System
 		private object m_target;
 		private IntPtr method;
 		private IntPtr delegate_trampoline;
-		private IntPtr rgctx;
+		private IntPtr extra_arg;
 		private IntPtr method_code;
 		private MethodInfo method_info;
 
@@ -102,17 +102,7 @@ namespace System
 
 		public MethodInfo Method {
 			get {
-				if (method_info != null) {
-					return method_info;
-				} else {
-					if (method != IntPtr.Zero) {
-						if (!method_is_virtual)
-							method_info = (MethodInfo)MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (method));
-						else
-							method_info = GetVirtualMethod_internal ();
-					}
-					return method_info;
-				}
+				return GetMethodImpl ();
 			}
 		}
 
@@ -124,6 +114,8 @@ namespace System
 				return m_target;
 			}
 		}
+
+		internal IntPtr GetNativeFunctionPointer () => method_ptr;
 
 		//
 		// Methods
@@ -143,6 +135,8 @@ namespace System
 			// enum basetypes
 			if (!match) {
 				if (delArgType.IsEnum && Enum.GetUnderlyingType (delArgType) == argType)
+					match = true;
+				else if (argType.IsEnum && Enum.GetUnderlyingType (argType) == delArgType)
 					match = true;
 			}
 
@@ -505,13 +499,26 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			/* same implementation as CoreCLR */
-			return GetType ().GetHashCode ();
+			MethodInfo m;
+
+			m = Method;
+
+			return (m != null ? m.GetHashCode () : GetType ().GetHashCode ()) ^ RuntimeHelpers.GetHashCode (m_target);
 		}
 
 		protected virtual MethodInfo GetMethodImpl ()
 		{
-			return Method;
+			if (method_info != null) {
+				return method_info;
+			} else {
+				if (method != IntPtr.Zero) {
+					if (!method_is_virtual)
+						method_info = (MethodInfo)MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (method));
+					else
+						method_info = GetVirtualMethod_internal ();
+				}
+				return method_info;
+			}
 		}
 
 		// This is from ISerializable
@@ -533,6 +540,12 @@ namespace System
 		{
 			if (a == null)
 				return b;
+
+			if (b == null)
+				return a;
+
+			if (a.GetType () != b.GetType ())
+				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types. First is {0} second is {1}.", a.GetType ().FullName, b.GetType ().FullName));
 
 			return a.CombineImpl (b);
 		}

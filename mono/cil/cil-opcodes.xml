@@ -315,4 +315,11 @@
 <opcode name="mono_ldptr_int_req_flag" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x14" flow="next" />
 <opcode name="mono_ldptr_card_table" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x15" flow="next" />
 <opcode name="mono_ldptr_nursery_start" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x16" flow="next" />
+<opcode name="mono_ldptr_nursery_bits" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x17" flow="next" />
+<opcode name="mono_calli_extra_arg" input="VarPop" output="VarPush" args="InlineSig" o1="0xF0" o2="0x18" flow="call" />
+<opcode name="mono_lddomain" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x19" flow="next" />
+<opcode name="mono_atomic_store_i4" input="PopI+PopI" output="Push0" args="InlineI" o1="0xF0" o2="0x1A" flow="next" />
+<opcode name="mono_get_last_error" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x1B" flow="next" />
+<opcode name="mono_get_rgctx_arg" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x1C" flow="next" />
+<opcode name="mono_ldptr_profiler_allocation_count" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x1D" flow="next" />
 </opdesc>

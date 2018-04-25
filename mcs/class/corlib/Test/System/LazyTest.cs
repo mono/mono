@@ -111,6 +111,7 @@ namespace MonoTests.System
 		static int counter;
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void EnsureSingleThreadSafeExecution ()
 		{
 			counter = 42;
@@ -279,6 +280,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ConcurrentInitialization ()
 		{
 			var init = new AutoResetEvent (false);

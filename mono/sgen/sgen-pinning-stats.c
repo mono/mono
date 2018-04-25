@@ -1,26 +1,10 @@
-/*
+/**
+ * \file
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
  * 
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -54,6 +38,9 @@ static gboolean do_pin_stats = FALSE;
 static PinStatAddress *pin_stat_addresses = NULL;
 static size_t pinned_byte_counts [PIN_TYPE_MAX];
 
+static size_t pinned_bytes_in_generation [GENERATION_MAX];
+static int pinned_objects_in_generation [GENERATION_MAX];
+
 static SgenPointerQueue pinned_objects = SGEN_POINTER_QUEUE_INIT (INTERNAL_MEM_STATISTICS);
 
 static SgenHashTable pinned_class_hash_table = SGEN_HASH_TABLE_INIT (INTERNAL_MEM_STATISTICS, INTERNAL_MEM_STAT_PINNED_CLASS, sizeof (PinnedClassEntry), g_str_hash, g_str_equal);
@@ -83,6 +70,10 @@ sgen_pin_stats_reset (void)
 	pin_stat_addresses = NULL;
 	for (i = 0; i < PIN_TYPE_MAX; ++i)
 		pinned_byte_counts [i] = 0;
+	for (i = 0; i < GENERATION_MAX; ++i) {
+		pinned_bytes_in_generation [i] = 0;
+		pinned_objects_in_generation [i] = 0;
+	}
 	sgen_pointer_queue_clear (&pinned_objects);
 	sgen_hash_table_clean (&pinned_class_hash_table);
 	sgen_hash_table_clean (&global_remset_class_hash_table);
@@ -95,6 +86,8 @@ sgen_pin_stats_register_address (char *addr, int pin_type)
 	PinStatAddress *node;
 	int pin_type_bit = 1 << pin_type;
 
+	if (!do_pin_stats)
+		return;
 	while (*node_ptr) {
 		node = *node_ptr;
 		if (addr == node->addr) {
@@ -107,7 +100,7 @@ sgen_pin_stats_register_address (char *addr, int pin_type)
 			node_ptr = &node->right;
 	}
 
-	node = sgen_alloc_internal_dynamic (sizeof (PinStatAddress), INTERNAL_MEM_STATISTICS, TRUE);
+	node = (PinStatAddress *)sgen_alloc_internal_dynamic (sizeof (PinStatAddress), INTERNAL_MEM_STATISTICS, TRUE);
 	node->addr = addr;
 	node->pin_types = pin_type_bit;
 	node->left = node->right = NULL;
@@ -161,7 +154,7 @@ register_vtable (GCVTable vtable, int pin_types)
 	int i;
 
 	memset (&empty_entry, 0, sizeof (PinnedClassEntry));
-	entry = lookup_vtable_entry (&pinned_class_hash_table, vtable, &empty_entry);
+	entry = (PinnedClassEntry *)lookup_vtable_entry (&pinned_class_hash_table, vtable, &empty_entry);
 
 	for (i = 0; i < PIN_TYPE_MAX; ++i) {
 		if (pin_types & (1 << i))
@@ -170,12 +163,22 @@ register_vtable (GCVTable vtable, int pin_types)
 }
 
 void
-sgen_pin_stats_register_object (GCObject *obj, size_t size)
+sgen_pin_stats_register_object (GCObject *obj, int generation)
 {
 	int pin_types = 0;
+	size_t size = 0;
+
+	if (sgen_binary_protocol_is_enabled ()) {
+		size = sgen_safe_object_get_size (obj);
+		pinned_bytes_in_generation [generation] += size;
+		++pinned_objects_in_generation [generation];
+	}
 
 	if (!do_pin_stats)
 		return;
+
+	if (!size)
+		size = sgen_safe_object_get_size (obj);
 
 	pin_stats_count_object_from_tree (obj, size, pin_stat_addresses, &pin_types);
 	sgen_pointer_queue_add (&pinned_objects, obj);
@@ -194,36 +197,39 @@ sgen_pin_stats_register_global_remset (GCObject *obj)
 		return;
 
 	memset (&empty_entry, 0, sizeof (GlobalRemsetClassEntry));
-	entry = lookup_vtable_entry (&global_remset_class_hash_table, SGEN_LOAD_VTABLE (obj), &empty_entry);
+	entry = (GlobalRemsetClassEntry *)lookup_vtable_entry (&global_remset_class_hash_table, SGEN_LOAD_VTABLE (obj), &empty_entry);
 
 	++entry->num_remsets;
 }
 
 void
-sgen_pin_stats_print_class_stats (void)
+sgen_pin_stats_report (void)
 {
 	char *name;
 	PinnedClassEntry *pinned_entry;
 	GlobalRemsetClassEntry *remset_entry;
 
+	sgen_binary_protocol_pin_stats (pinned_objects_in_generation [GENERATION_NURSERY], pinned_bytes_in_generation [GENERATION_NURSERY],
+			pinned_objects_in_generation [GENERATION_OLD], pinned_bytes_in_generation [GENERATION_OLD]);
+
 	if (!do_pin_stats)
 		return;
 
-	mono_gc_printf (gc_debug_file, "\n%-50s  %10s  %10s  %10s\n", "Class", "Stack", "Static", "Other");
-	SGEN_HASH_TABLE_FOREACH (&pinned_class_hash_table, name, pinned_entry) {
+	mono_gc_printf (sgen_gc_debug_file, "\n%-50s  %10s  %10s  %10s\n", "Class", "Stack", "Static", "Other");
+	SGEN_HASH_TABLE_FOREACH (&pinned_class_hash_table, char *, name, PinnedClassEntry *, pinned_entry) {
 		int i;
-		mono_gc_printf (gc_debug_file, "%-50s", name);
+		mono_gc_printf (sgen_gc_debug_file, "%-50s", name);
 		for (i = 0; i < PIN_TYPE_MAX; ++i)
-			mono_gc_printf (gc_debug_file, "  %10ld", pinned_entry->num_pins [i]);
-		mono_gc_printf (gc_debug_file, "\n");
+			mono_gc_printf (sgen_gc_debug_file, "  %10ld", pinned_entry->num_pins [i]);
+		mono_gc_printf (sgen_gc_debug_file, "\n");
 	} SGEN_HASH_TABLE_FOREACH_END;
 
-	mono_gc_printf (gc_debug_file, "\n%-50s  %10s\n", "Class", "#Remsets");
-	SGEN_HASH_TABLE_FOREACH (&global_remset_class_hash_table, name, remset_entry) {
-		mono_gc_printf (gc_debug_file, "%-50s  %10ld\n", name, remset_entry->num_remsets);
+	mono_gc_printf (sgen_gc_debug_file, "\n%-50s  %10s\n", "Class", "#Remsets");
+	SGEN_HASH_TABLE_FOREACH (&global_remset_class_hash_table, char *, name, GlobalRemsetClassEntry *, remset_entry) {
+		mono_gc_printf (sgen_gc_debug_file, "%-50s  %10ld\n", name, remset_entry->num_remsets);
 	} SGEN_HASH_TABLE_FOREACH_END;
 
-	mono_gc_printf (gc_debug_file, "\nTotal bytes pinned from stack: %ld  static: %ld  other: %ld\n",
+	mono_gc_printf (sgen_gc_debug_file, "\nTotal bytes pinned from stack: %ld  static: %ld  other: %ld\n",
 			pinned_byte_counts [PIN_TYPE_STACK],
 			pinned_byte_counts [PIN_TYPE_STATIC_DATA],
 			pinned_byte_counts [PIN_TYPE_OTHER]);

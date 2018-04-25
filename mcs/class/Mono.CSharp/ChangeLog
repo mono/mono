@@ -1,5 +1,0 @@
-2010-05-08  Daniel Nauck <dna@mono-project.de>
-
- * Mono.CSharp.csproj: add double quotes around path directives
-			in the prebuild event for jay to support
-			compile locations with spaces in path.

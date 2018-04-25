@@ -1183,6 +1183,9 @@ public class CompareInfoTest
 		AssertCompare ("#12", 0, "aE", "AE", CompareOptions.OrdinalIgnoreCase);
 		AssertCompare ("#13", 0, "ae", "AE", CompareOptions.OrdinalIgnoreCase);
 		AssertCompare ("#14", 0, "ola", "OLA", CompareOptions.OrdinalIgnoreCase);
+		// check ignorable characters
+		AssertCompare ("#15", 0, "AE\uFFFC", "AE", CompareOptions.None);
+		AssertCompare ("#16", 1, "AE\uFFFC", "AE", CompareOptions.OrdinalIgnoreCase);
 	}
 
 	[Test]

@@ -64,36 +64,37 @@ namespace Mono.CodeContracts.Rewrite {
 
 			var readerParameters = new ReaderParameters ();
 
-			if (options.Debug)
+			if (options.Debug && options.WritePdbFile)
 				readerParameters.ReadSymbols = true;
 
-			var assembly = this.options.Assembly.IsFilename ?
+			using (var assembly = this.options.Assembly.IsFilename ?
 				AssemblyDefinition.ReadAssembly (options.Assembly.Filename, readerParameters) :
-				AssemblyDefinition.ReadAssembly (options.Assembly.Streams.Assembly, readerParameters);
+				AssemblyDefinition.ReadAssembly (options.Assembly.Streams.Assembly, readerParameters)) {
 			
-			if (this.options.ForceAssemblyRename != null) {
-				assembly.Name.Name = this.options.ForceAssemblyRename;
-			} else if (this.options.OutputFile.IsSet && this.options.OutputFile.IsFilename) {
-				assembly.Name.Name = Path.GetFileNameWithoutExtension(this.options.OutputFile.Filename);
-			}
+				if (this.options.ForceAssemblyRename != null) {
+					assembly.Name.Name = this.options.ForceAssemblyRename;
+				} else if (this.options.OutputFile.IsSet && this.options.OutputFile.IsFilename) {
+					assembly.Name.Name = Path.GetFileNameWithoutExtension(this.options.OutputFile.Filename);
+				}
 
-			var output = this.options.OutputFile.IsSet ? this.options.OutputFile : this.options.Assembly;
-			var writerParameters = new WriterParameters ();
-			if (options.WritePdbFile) {
-				if (!options.Debug) {
-					return RewriterResults.Error ("Must specify -debug if using -writePDBFile.");
+				var output = this.options.OutputFile.IsSet ? this.options.OutputFile : this.options.Assembly;
+				var writerParameters = new WriterParameters ();
+				if (options.WritePdbFile) {
+					if (!options.Debug) {
+						return RewriterResults.Error ("Must specify -debug if using -writePDBFile.");
+					}
+					
+					writerParameters.WriteSymbols = true;
 				}
 				
-				writerParameters.WriteSymbols = true;
-			}
-			
-			PerformRewrite rewriter = new PerformRewrite (this.options);
-			rewriter.Rewrite (assembly);
+				PerformRewrite rewriter = new PerformRewrite (this.options);
+				rewriter.Rewrite (assembly);
 
-			if (output.IsFilename) {
-				assembly.Write (output.Filename, writerParameters);
-			} else {
-				assembly.Write (output.Streams.Assembly, writerParameters);
+				if (output.IsFilename) {
+					assembly.Write (output.Filename, writerParameters);
+				} else {
+					assembly.Write (output.Streams.Assembly, writerParameters);
+				}
 			}
 		
 			return new RewriterResults (warnings, errors);

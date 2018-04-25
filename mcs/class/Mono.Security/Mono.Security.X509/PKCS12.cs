@@ -383,8 +383,13 @@ namespace Mono.Security.X509 {
 
 				byte[] authSafeData = authSafe.Content [0].Value;
 				byte[] calculatedMac = MAC (_password, macSalt.Value, _iterations, authSafeData);
-				if (!Compare (macValue, calculatedMac))
-					throw new CryptographicException ("Invalid MAC - file may have been tampered!");
+				if (!Compare (macValue, calculatedMac)) {
+					byte[] nullPassword = {0, 0};
+					calculatedMac = MAC(nullPassword, macSalt.Value, _iterations, authSafeData);
+					if (!Compare (macValue, calculatedMac))
+						throw new CryptographicException ("Invalid MAC - file may have been tampered with!");
+					_password = nullPassword;
+				}
 			}
 
 			// we now returns to our original presentation - PFX

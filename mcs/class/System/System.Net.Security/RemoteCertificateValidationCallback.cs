@@ -28,12 +28,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if !MONO_FEATURE_NEW_TLS
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#endif
-
 using System.Security.Cryptography.X509Certificates;
 
 namespace System.Net.Security 
@@ -44,4 +38,3 @@ namespace System.Net.Security
 		X509Chain chain,
 		SslPolicyErrors sslPolicyErrors);
 }
-#endif

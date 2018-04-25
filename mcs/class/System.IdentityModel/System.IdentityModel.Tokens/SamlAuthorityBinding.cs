@@ -46,11 +46,11 @@ namespace System.IdentityModel.Tokens
 		{
 		}
 
-		public SamlAuthorityBinding (XmlQualifiedName kind, string binding, string location)
+		public SamlAuthorityBinding (XmlQualifiedName authorityKind, string binding, string location)
 		{
-			if (kind == null)
-				throw new ArgumentNullException ("kind");
-			AuthorityKind = kind;
+			if (authorityKind == null)
+				throw new ArgumentNullException ("authorityKind");
+			AuthorityKind = authorityKind;
 			Binding = binding;
 			Location = location;
 		}

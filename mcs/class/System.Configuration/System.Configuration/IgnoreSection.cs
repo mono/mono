@@ -54,15 +54,15 @@ namespace System.Configuration {
 			return false;
 		}
 
-		protected internal override void DeserializeSection (XmlReader reader)
+		protected internal override void DeserializeSection (XmlReader xmlReader)
 		{
-			xml = reader.ReadOuterXml ();
+			xml = xmlReader.ReadOuterXml ();
 		}
 
 		[MonoTODO]
-		protected internal override void Reset (ConfigurationElement parentElement)
+		protected internal override void Reset (ConfigurationElement parentSection)
 		{
-			base.Reset (parentElement);
+			base.Reset (parentSection);
 		}
 
 		[MonoTODO]
@@ -71,7 +71,7 @@ namespace System.Configuration {
 			base.ResetModified ();
 		}
 
-		protected internal override string SerializeSection (ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
+		protected internal override string SerializeSection (ConfigurationElement parentSection, string name, ConfigurationSaveMode saveMode)
 		{
 			return xml;
 		}

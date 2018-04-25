@@ -12,6 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -428,10 +429,10 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
-		public void GetCultureInfo_Identifier_Negative ()
+		public void GetCultureInfo_Identifier_Nonpositive ()
 		{
 			try {
-				CultureInfo.GetCultureInfo (-1);
+				CultureInfo.GetCultureInfo (0);
 				Assert.Fail ("#1");
 			} catch (ArgumentOutOfRangeException ex) {
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
@@ -607,10 +608,7 @@ namespace MonoTests.System.Globalization
 		[ExpectedException (typeof (CultureNotFoundException))]
 		public void CultureNotFound ()
 		{
-			// that's how the 'locale' gets defined for a device with an English UI
-			// and it's international settings set for Hong Kong
-			// https://bugzilla.xamarin.com/show_bug.cgi?id=3471
-			new CultureInfo ("en-HK");
+			new CultureInfo ("en-HKX");
 		}
 
 		[Test]
@@ -623,7 +621,6 @@ namespace MonoTests.System.Globalization
 			Assert.IsFalse (zh2.Equals (zh1), "#2");
 		}
 
-#if NET_4_5
 		CountdownEvent barrier = new CountdownEvent (3);
 		AutoResetEvent[] evt = new AutoResetEvent [] { new AutoResetEvent (false), new AutoResetEvent (false), new AutoResetEvent (false), new AutoResetEvent (false)};
 
@@ -667,6 +664,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void DefaultThreadCurrentCulture () {
 
 			Action c = () => {
@@ -728,21 +726,51 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
-		public void DefaultThreadCurrentCultureAndNumberFormaters () {
+		[Category ("MultiThreaded")]
+		public void DefaultThreadCurrentCultureIsIgnoredWhenCultureFlowsToThread ()
+		{
 			string us_str = null;
 			string br_str = null;
+
+			/* explicitly set CurrentCulture, as the documentation states:
+			 * > If you have not explicitly set the culture of any existing
+			 * > threads executing in an application domain, setting the
+			 * > P:System.Globalization.CultureInfo.DefaultThreadCurrentCulture
+			 * > property also changes the culture of these threads.
+			 */
+			Thread.CurrentThread.CurrentCulture = old_culture;
+
 			var thread = new Thread (() => {
 				CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 				us_str = 100000.ToString ("C");
 				CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("pt-BR");
 				br_str = 100000.ToString ("C");
 			});
+
+			var expected = 100000.ToString ("C");
+
 			thread.Start ();
-			thread.Join ();
+			Assert.IsTrue (thread.Join (5000), "#0");
 			CultureInfo.DefaultThreadCurrentCulture = null;
-			Assert.AreEqual ("$100,000.00", us_str, "#1");
-			Assert.AreEqual ("R$ 100.000,00", br_str, "#2");
+			Assert.AreEqual (expected, us_str, "#1");
+			Assert.AreEqual (expected, br_str, "#2");
 		}
-#endif
+
+		[Test]
+		public void FlowCultureInfoFromParentThreadSinceNet46 ()
+		{
+			if (SynchronizationContext.Current != null) {
+				Assert.Ignore ();
+				return;
+			}
+
+			Func<Task> f = async () => {
+				Thread.CurrentThread.CurrentUICulture = new CultureInfo ("pt-BR");
+				await Task.Yield ();
+				Assert.AreEqual ("pt-BR", Thread.CurrentThread.CurrentUICulture.Name);
+			};
+
+			Assert.IsTrue (f ().Wait (5 * 1000), "#1");
+		}
 	}
 }

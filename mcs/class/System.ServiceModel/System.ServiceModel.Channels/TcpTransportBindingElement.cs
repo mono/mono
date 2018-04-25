@@ -31,7 +31,9 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.ServiceModel.Channels;
+#if !MOBILE && !XAMMAC_4_5
 using System.ServiceModel.Channels.NetTcp;
+#endif
 using System.ServiceModel.Description;
 
 namespace System.ServiceModel.Channels
@@ -51,12 +53,12 @@ namespace System.ServiceModel.Channels
 		}
 
 		protected TcpTransportBindingElement (
-			TcpTransportBindingElement other)
-			: base (other)
+			TcpTransportBindingElement elementToBeCloned)
+			: base (elementToBeCloned)
 		{
-			listen_backlog = other.listen_backlog;
-			port_sharing_enabled = other.port_sharing_enabled;
-			pool.CopyPropertiesFrom (other.pool);
+			listen_backlog = elementToBeCloned.listen_backlog;
+			port_sharing_enabled = elementToBeCloned.port_sharing_enabled;
+			pool.CopyPropertiesFrom (elementToBeCloned.pool);
 		}
 		
 		public TcpConnectionPoolSettings ConnectionPoolSettings {
@@ -88,9 +90,15 @@ namespace System.ServiceModel.Channels
 		{
 			if (!CanBuildChannelFactory<TChannel> (context))
 				throw new InvalidOperationException (String.Format ("Not supported channel factory type '{0}'", typeof (TChannel)));
+
+#if !MOBILE && !XAMMAC_4_5
 			return new TcpChannelFactory<TChannel> (this, context);
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 
+#if !MOBILE && !XAMMAC_4_5
 		public override IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
 			BindingContext context)
@@ -99,6 +107,7 @@ namespace System.ServiceModel.Channels
 				throw new InvalidOperationException (String.Format ("Not supported channel listener type '{0}'", typeof (TChannel)));
 			return new TcpChannelListener<TChannel> (this, context);
 		}
+#endif
 
 		public override BindingElement Clone ()
 		{

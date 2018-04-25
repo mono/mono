@@ -46,7 +46,7 @@ namespace MonoTests.System.Xaml
 		XamlReader GetReader (string filename)
 		{
 			const string ver = "net_4_x";
-			string xml = File.ReadAllText (Path.Combine ("Test/XmlFiles", filename)).Replace ("net_4_0", ver);
+			string xml = File.ReadAllText (Path.Combine ("Test/XmlFiles", filename)).Replace ("System.Xaml_test_net_4_0", ver + "_System.Xaml_test");
 			return new XamlXmlReader (XmlReader.Create (new StringReader (xml)));
 		}
 

@@ -257,6 +257,14 @@ class Tests
 		return 0;
 	}
 
+	public static int test_0_float_abs () {
+		float f = -1.0f;
+
+		if (Math.Abs (f) != 1.0f)
+			return 1;
+		return 0;
+	}
+
 	public static int test_0_round () {
 		if (Math.Round (5.0) != 5.0)
 			return 1;
@@ -291,6 +299,58 @@ class Tests
 		if (Math.Round (Double.MaxValue) != Double.MaxValue)
 			return 11;
 
+		return 0;
+	}
+
+	public static int test_0_mathf_sin () {
+		float f = MathF.Sin (3.14159f);
+		return f < 0.01f ? 0 : 1;
+	}
+
+	public static int test_0_mathf_cos () {
+		float f = MathF.Cos (3.14159f);
+		return f - -1f < 0.01f ? 0 : 1;
+	}
+
+	public static int test_0_mathf_abs () {
+		float f;
+
+		f = MathF.Abs (2.25f) - 2.25f;
+		if (f > 0.01f || f < -0.01f)
+			return 1;
+		f = MathF.Abs (-2.25f) - 2.25f;
+		if (f > 0.01f || f < -0.01f)
+			return 2;
+		return 0;
+	}
+
+	public static int test_0_mathf_sqrt () {
+		float f;
+
+		f = MathF.Sqrt (16.0f) - 4.0f;
+		if (f > 0.01f || f < -0.01f)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_mathf_max () {
+		float f;
+
+		f = MathF.Max (1.0f, 2.0f) - 2.0f;
+		if (f > 0.01f || f < -0.01f)
+			return 1;
+		f = MathF.Max (2.0f, 1.0f) - 2.0f;
+		if (f > 0.01f || f < -0.01f)
+			return 2;
+		return 0;
+	}
+
+	public static int test_0_mathf_pow () {
+		float f;
+
+		f = MathF.Pow (2.0f, 4.0f) - 16.0f;
+		if (f > 0.01f || f < -0.01f)
+			return 1;
 		return 0;
 	}
 }

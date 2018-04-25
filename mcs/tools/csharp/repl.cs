@@ -38,9 +38,15 @@ namespace Mono {
 		static string target_host;
 		static int target_port;
 		static string agent;
+		static string [] script_args;
+
+		public static string [] ScriptArgs => script_args;
 		
 		static int Main (string [] args)
 		{
+			if (!SplitDriverAndScriptArguments (ref args, out script_args))
+				return 1;
+
 			var cmd = new CommandLineParser (Console.Out);
 			cmd.UnknownOptionHandler += HandleExtraArguments;
 
@@ -55,7 +61,7 @@ namespace Mono {
 			var startup_files = new string [settings.SourceFiles.Count];
 			int i = 0;
 			foreach (var source in settings.SourceFiles)
-				startup_files [i++] = source.FullPathName;
+				startup_files [i++] = source.OriginalFullPathName;
 			settings.SourceFiles.Clear ();
 
 			TextWriter agent_stderr = null;
@@ -88,6 +94,55 @@ namespace Mono {
 				shell = new CSharpShell (eval);
 
 			return shell.Run (startup_files);
+		}
+
+		static bool SplitDriverAndScriptArguments (ref string [] driver_args, out string [] script_args)
+		{
+			// split command line arguments into two groups:
+			// - anything before '--' or '-s' goes to the mcs driver, which may
+			//   call back into the csharp driver for further processing
+			// - anything after '--' or '-s' is made available to the REPL/script
+			//   via the 'Args' global, similar to csi.
+			// - if '-s' is used, the argument immediately following it will
+			//   also be processed by the mcs driver (e.g. a source file)
+
+			int driver_args_count = 0;
+			int script_args_offset = 0;
+			string script_file = null;
+
+			while (driver_args_count < driver_args.Length && script_args_offset == 0) {
+				switch (driver_args [driver_args_count]) {
+				case "--":
+					script_args_offset = driver_args_count + 1;
+					break;
+				case "-s":
+					if (driver_args_count + 1 >= driver_args.Length) {
+						script_args = null;
+						Console.Error.WriteLine ("usage is: -s SCRIPT_FILE");
+						return false;
+					}
+					driver_args_count++;
+					script_file = driver_args [driver_args_count];
+					script_args_offset = driver_args_count + 1;
+					break;
+				default:
+					driver_args_count++;
+					break;
+				}
+			}
+
+			if (script_args_offset > 0) {
+				int script_args_count = driver_args.Length - script_args_offset;
+				script_args = new string [script_args_count];
+				Array.Copy (driver_args, script_args_offset, script_args, 0, script_args_count);
+			} else
+				script_args = Array.Empty<string> ();
+
+			Array.Resize (ref driver_args, driver_args_count);
+			if (script_file != null)
+				driver_args [driver_args_count - 1] = script_file;
+
+			return true;
 		}
 
 		static int HandleExtraArguments (string [] args, int pos)
@@ -163,9 +218,13 @@ namespace Mono {
 		public static new string help {
 			get {
 				return InteractiveBase.help +
-					"  TabAtStartCompletes      - Whether tab will complete even on empty lines\n";
+					"  TabAtStartCompletes      - Whether tab will complete even on empty lines\n" +
+					"  Args                     - Any command line arguments passed to csharp\n" +
+					"                             after the '--' (stop processing) argument";
 			}
 		}
+
+		public static string [] Args => Driver.ScriptArgs;
 	}
 	
 	public class CSharpShell {
@@ -197,7 +256,9 @@ namespace Mono {
 			} else
 				dumb = false;
 			
-			editor = new Mono.Terminal.LineEditor ("csharp", 300);
+			editor = new Mono.Terminal.LineEditor ("csharp", 300) {
+				HeuristicsMode = "csharp"
+			};
 			InteractiveBaseShell.Editor = editor;
 
 			editor.AutoCompleteEvent += delegate (string s, int pos){
@@ -399,9 +460,45 @@ namespace Mono {
 			output.Write (s);
 		}
 
-		static string EscapeString (string s)
+		static void EscapeString (TextWriter output, string s)
 		{
-			return s.Replace ("\"", "\\\"");
+			foreach (var c in s){
+				if (c >= 32){
+					output.Write (c);
+					continue;
+				}
+				switch (c){
+				case '\"':
+					output.Write ("\\\""); break;
+				case '\a':
+					output.Write ("\\a"); break;
+				case '\b':
+					output.Write ("\\b"); break;
+				case '\n':
+					output.Write ("\n");
+					break;
+				
+				case '\v':
+					output.Write ("\\v");
+					break;
+				
+				case '\r':
+					output.Write ("\\r");
+					break;
+				
+				case '\f':
+					output.Write ("\\f");
+					break;
+				
+				case '\t':
+					output.Write ("\\t");
+					break;
+
+				default:
+					output.Write ("\\x{0:x}", (int) c);
+					break;
+				}
+			}
 		}
 		
 		static void EscapeChar (TextWriter output, char c)
@@ -410,7 +507,7 @@ namespace Mono {
 				output.Write ("'\\''");
 				return;
 			}
-			if (c > 32){
+			if (c >= 32){
 				output.Write ("'{0}'", c);
 				return;
 			}
@@ -444,7 +541,7 @@ namespace Mono {
 				break;
 
 			default:
-				output.Write ("'\\x{0:x}", (int) c);
+				output.Write ("'\\x{0:x}'", (int) c);
 				break;
 			}
 		}
@@ -491,7 +588,9 @@ namespace Mono {
 				else
 					p (output, "false");
 			} else if (result is string){
-				p (output, String.Format ("\"{0}\"", EscapeString ((string)result)));
+				p (output, "\"");
+				EscapeString (output, (string)result);
+				p (output, "\"");
 			} else if (result is IDictionary){
 				IDictionary dict = (IDictionary) result;
 				int top = dict.Count, count = 0;

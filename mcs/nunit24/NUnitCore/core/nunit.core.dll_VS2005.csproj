@@ -65,6 +65,9 @@
     <Compile Include="AssemblyResolver.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="BabysitterSupport.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="CoreExtensions.cs" />
     <Compile Include="CultureDetector.cs" />
     <Compile Include="ExtensionPoint.cs" />

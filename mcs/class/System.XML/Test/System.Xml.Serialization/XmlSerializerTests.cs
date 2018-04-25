@@ -161,14 +161,12 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		// test constructors
-#if USE_VERSION_1_1	// It doesn't pass on MS.NET 1.1.
 		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestConstructor()
 		{
 			XmlSerializer ser = new XmlSerializer (null, "");
 		}
-#else
-#endif
 
 		// test basic types ////////////////////////////////////////////////////////
 		[Test]
@@ -1939,6 +1937,17 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset (res), WriterText);
 		}
 
+		[Test] // Covers #36829
+		public void TestSubclassElementList ()
+		{
+			var o = new SubclassTestList () { Items = new List<object> () { new SubclassTestSub () } };
+			Serialize (o);
+
+			string res = "<SubclassTestList xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>";
+			res += "<b xsi:type=\"SubclassTestSub\"/></SubclassTestList>";
+			Assert.AreEqual (Infoset (res), WriterText);
+		}
+
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestArrayAttributeWithWrongDataType ()
@@ -2312,6 +2321,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ("<:ErrorneousGetSchema></>", Infoset (sw.ToString ()));
 		}
 
+		[Test]
 		public void DateTimeRoundtrip ()
 		{
 			// bug #337729

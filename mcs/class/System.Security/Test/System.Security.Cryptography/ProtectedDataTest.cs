@@ -12,6 +12,9 @@
 using NUnit.Framework;
 
 using System;
+using System.Text;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Security.Cryptography;
 
 namespace MonoTests.System.Security.Cryptography {
@@ -63,6 +66,33 @@ namespace MonoTests.System.Security.Cryptography {
 			// not if it's really limited to the scope specified
 			ProtectUnprotect (notMuchEntropy, DataProtectionScope.LocalMachine);
 		}
+
+#if !MOBILE // System.PlatformNotSupportedException: Operation is not supported on this platform.
+		[Test] // https://bugzilla.xamarin.com/show_bug.cgi?id=38933
+		public void ProtectCurrentUserMultiThread ()
+		{
+			string data = "Hello World";
+			string entropy = "This is a long string with no meaningful content.";
+			var entropyBytes = Encoding.UTF8.GetBytes (entropy);
+			var dataBytes = Encoding.UTF8.GetBytes (data);
+			var tasks = new List<Task> ();
+
+			for (int i = 0; i < 20; i++)
+			{
+				tasks.Add (new Task (() => {
+					byte[] encryptedBytes = ProtectedData.Protect (dataBytes, entropyBytes, DataProtectionScope.CurrentUser);
+					Assert.IsFalse (IsEmpty (encryptedBytes), "#1");
+
+					byte[] decryptedBytes = ProtectedData.Unprotect (encryptedBytes, entropyBytes, DataProtectionScope.CurrentUser);
+					string decryptedString = Encoding.UTF8.GetString(decryptedBytes);
+					Assert.AreEqual (data, decryptedString, "#2");
+				}, TaskCreationOptions.LongRunning));
+			}
+
+			foreach (var t in tasks) t.Start ();
+			Task.WaitAll (tasks.ToArray ());
+		}
+#endif
 
 		[Test]
 		public void DataProtectionScope_All ()

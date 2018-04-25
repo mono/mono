@@ -1,5 +1,6 @@
-/*
- * abcremoval.h: Array bounds check removal
+/**
+ * \file
+ * Array bounds check removal
  *
  * Author:
  *   Massimiliano Mantione (massi@ximian.com)
@@ -179,14 +180,12 @@ typedef struct MonoRelationsEvaluationRanges {
 
 /**
  * The context of a variable evaluation.
- * status: the evaluation status
  * current_relation: the relation that is currently evaluated.
  * ranges: the result of the evaluation.
  * father: the context of the evaluation that invoked this one (used to
  *         perform the backtracking when loops are detected.
  */
 typedef struct MonoRelationsEvaluationContext {
-	MonoRelationsEvaluationStatus status;
 	MonoSummarizedValueRelation *current_relation;
 	MonoRelationsEvaluationRanges ranges;
 	struct MonoRelationsEvaluationContext *father;
@@ -308,7 +307,17 @@ typedef struct MonoRelationsEvaluationContext {
 typedef struct MonoVariableRelationsEvaluationArea {
 	MonoCompile *cfg;
 	MonoSummarizedValueRelation *relations;
+
+/**
+ * statuses and contexts are parallel arrays. A given index into each refers to
+ * the same context. This is a performance optimization. Clean_context was
+ * coming to dominate the running time of abcremoval. By
+ * storing the statuses together, we can memset the entire
+ * region.
+ */ 
+	MonoRelationsEvaluationStatus *statuses;
 	MonoRelationsEvaluationContext *contexts;
+
 	MonoIntegerValueKind *variable_value_kind;
 	MonoInst **defs;
 } MonoVariableRelationsEvaluationArea;

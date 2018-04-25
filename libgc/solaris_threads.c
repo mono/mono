@@ -642,10 +642,15 @@ int GC_thread_is_registered (void)
 	return ptr ? 1 : 0;
 }
 
-int GC_thread_register_foreign (void *base_addr)
+void GC_allow_register_threads (void)
+{
+	/* No-op for GC pre-v7. */
+}
+
+int GC_register_my_thread (struct GC_stack_base *sb)
 {
 	/* FIXME: */
-	return 0;
+	return GC_UNIMPLEMENTED;
 }
 
 void GC_register_altstack (void *stack, int stack_size, void *altstack, int altstack_size)

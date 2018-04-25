@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" InitialTargets="_ValidateEssentialProperties" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" InitialTargets="_CheckForInvalidConfigurationAndPlatform" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<ImportByWildcardBeforeMicrosoftCommonTargets Condition="'$(ImportByWildcardBeforeMicrosoftCommonTargets)' == ''">true</ImportByWildcardBeforeMicrosoftCommonTargets>
 		<ImportByWildcardAfterMicrosoftCommonTargets Condition="'$(ImportByWildcardAfterMicrosoftCommonTargets)' == ''">true</ImportByWildcardAfterMicrosoftCommonTargets>
@@ -30,7 +30,6 @@
 		<AssemblyName Condition="'$(AssemblyName)' == ''">$(MSBuildProjectName)</AssemblyName>
 		<OutputPath Condition="'$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)')">$(OutputPath)\</OutputPath>
 		<OutputPath Condition=" '$(Platform)'=='' and '$(Configuration)'=='' and '$(OutputPath)'=='' ">bin\Debug\</OutputPath>
-		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
 
 		<TargetFrameworkIdentifier Condition="'$(TargetFrameworkIdentifier)' == ''">.NETFramework</TargetFrameworkIdentifier>
 		<TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v4.0</TargetFrameworkVersion>
@@ -50,7 +49,10 @@
 		<_OriginalPlatform>$(Platform)</_OriginalPlatform>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 		<PlatformName Condition="'$(PlatformName)' == ''">$(Platform)</PlatformName>
+	</PropertyGroup>
 
+	<!-- in MSBuild, these properties are set in a separate file that is only imported for .NETFramework -->
+	<PropertyGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
 		<AddAdditionalExplicitAssemblyReferences Condition="'$(AddAdditionalExplicitAssemblyReferences)' == ''">true</AddAdditionalExplicitAssemblyReferences>
 		<AdditionalExplicitAssemblyReferences Condition="'$(AddAdditionalExplicitAssemblyReferences)' == 'true' and '$(TargetFrameworkVersion)' != 'v2.0' and '$(TargetFrameworkVersion)' != 'v3.0'">System.Core;$(AdditionalExplicitAssemblyReferences)</AdditionalExplicitAssemblyReferences>
 	</PropertyGroup>
@@ -91,7 +93,7 @@
 		<TargetingClr2Framework Condition="('$(TargetFrameworkIdentifier)' == '.NETFramework') and ('$(TargetFrameworkVersion)' == 'v2.0' or '$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5')">true</TargetingClr2Framework>
 	</PropertyGroup>
 
-	<Target Name="_ValidateEssentialProperties">
+	<Target Name="_CheckForInvalidConfigurationAndPlatform">
 		<Error Condition=" '$(OutputPath)' == '' and '$(SkipInvalidConfigurations)' != 'true'"
 			Text="'OutputPath' property is not set for this project. Usually this is caused by invalid Configuration/Platform combination. Original values: Configuration: $(_OriginalConfiguration) Platform: $(_OriginalPlatform)."/>
 
@@ -147,7 +149,7 @@
 		Condition="'$(TargetFrameworkIdentifier)' == '' or '$(TargetFrameworkIdentifier)' == '.NETFramework'"
 		DependsOnTargets="$(GetFrameworkPathsDependsOn)">
 		<GetFrameworkPath>
-			<Output Condition="'$(TargetFrameworkVersion)' == 'v4.5' and '$(TargetFrameworkVersion)' == 'v4.5.1'"
+			<Output Condition="'$(TargetFrameworkVersion)' == 'v4.5' or '$(TargetFrameworkVersion)' == 'v4.5.1' or '$(TargetFrameworkVersion)' == 'v4.5.2'"
 				TaskParameter="FrameworkVersion45Path"
 				ItemName="_CombinedTargetFrameworkDirectoriesItem"/>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v4.0'"
@@ -168,7 +170,7 @@
 		</CreateProperty>
 
 		<Warning Text="TargetFrameworkVersion '$(TargetFrameworkVersion)' not supported by this toolset (ToolsVersion: $(MSBuildToolsVersion))."
-			Condition="'$(TargetFrameworkVersion)' != 'v4.5.1' and '$(TargetFrameworkVersion)' != 'v4.5' and '$(TargetFrameworkVersion)' != 'v4.0' and '$(TargetFrameworkVersion)' != 'v3.5' and '$(TargetFrameworkVersion)' != 'v3.0' and '$(TargetFrameworkVersion)' != 'v2.0'"/>
+			Condition="'$(TargetFrameworkVersion)' != 'v4.5.2' and '$(TargetFrameworkVersion)' != 'v4.5.1' and '$(TargetFrameworkVersion)' != 'v4.5' and '$(TargetFrameworkVersion)' != 'v4.0' and '$(TargetFrameworkVersion)' != 'v3.5' and '$(TargetFrameworkVersion)' != 'v3.0' and '$(TargetFrameworkVersion)' != 'v2.0'"/>
 	</Target>
 
 	<PropertyGroup>
@@ -221,6 +223,7 @@
 		<AllowedReferenceRelatedFileExtensions Condition=" '$(AllowedReferenceRelatedFileExtensions)' == '' ">
 			.exe.mdb;
 			.dll.mdb;
+			.pdb;
 			.xml
 		</AllowedReferenceRelatedFileExtensions>
 
@@ -260,11 +263,10 @@
 		<FileWrites Include="$(TargetFrameworkMonikerAssemblyAttributesPath)" />
 	</ItemGroup>
 
-	<Target Name="GenerateTargetFrameworkMonikerAttribute"
+	<Target Name="_GenerateTargetFrameworkMonikerAttribute"
 		DependsOnTargets="PrepareForBuild;GetReferenceAssemblyPaths"
 		Inputs="$(MSBuildToolsPath)\Microsoft.Common.targets"
-		Outputs="$(TargetFrameworkMonikerAssemblyAttributesPath)"
-		Condition="'$(GenerateTargetFrameworkAttribute)' == 'true'">
+		Outputs="$(TargetFrameworkMonikerAssemblyAttributesPath)">
 
 		<WriteLinesToFile
 			File="$(TargetFrameworkMonikerAssemblyAttributesPath)"
@@ -273,6 +275,11 @@
 			ContinueOnError="true"
 			Condition="'@(Compile)' != '' and '$(TargetFrameworkMonikerAssemblyAttributeText)' != ''"
 		/>
+	</Target>
+
+	<Target Name="GenerateTargetFrameworkMonikerAttribute"
+		DependsOnTargets="_GenerateTargetFrameworkMonikerAttribute"
+		Condition="'$(GenerateTargetFrameworkAttribute)' == 'true'">
 
 		<ItemGroup Condition="'@(Compile)' != '' and '$(TargetFrameworkMonikerAssemblyAttributeText)' != ''">
 			<Compile Include="$(TargetFrameworkMonikerAssemblyAttributesPath)"/>
@@ -328,13 +335,13 @@
 		<AssignProjectConfiguration
 			ProjectReferences = "@(ProjectReference)"
 			SolutionConfigurationContents = "$(CurrentSolutionConfigurationContents)"
-			Condition="'$(BuildingSolutionFile)' == 'true' or '$(BuildingInsideVisualStudio)' == 'true'">
+			Condition="$(CurrentSolutionConfigurationContents) != '' and ('$(BuildingSolutionFile)' == 'true' or '$(BuildingInsideVisualStudio)' == 'true')">
 
 			<Output TaskParameter = "AssignedProjects" ItemName = "ProjectReferenceWithConfiguration"/>
 		</AssignProjectConfiguration>
 
 		<!-- Else, just -->
-		<CreateItem Include="@(ProjectReference)" Condition="'$(BuildingSolutionFile)' != 'true' and '$(BuildingInsideVisualStudio)' != 'true'">
+		<CreateItem Include="@(ProjectReference)" Condition="$(CurrentSolutionConfigurationContents) == '' or ('$(BuildingSolutionFile)' != 'true' and '$(BuildingInsideVisualStudio)' != 'true')">
 			<Output TaskParameter="Include" ItemName="ProjectReferenceWithConfiguration"/>
 		</CreateItem>
 
@@ -625,6 +632,14 @@
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
 
+		<Copy
+			SourceFiles="$(IntermediateOutputPath)$(AssemblyName).pdb"
+			Condition="'$(OutDir)' != '' and Exists('$(IntermediateOutputPath)$(AssemblyName).pdb')"
+			DestinationFolder="$(OutDir)"
+			SkipUnchangedFiles="$(SkipCopyUnchangedFiles)" >
+			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+		</Copy>
+
 		<Copy SourceFiles="@(IntermediateAssembly)" Condition="'$(OutDir)' != '' and Exists ('@(IntermediateAssembly)')" DestinationFolder="$(OutDir)" SkipUnchangedFiles="$(SkipCopyUnchangedFiles)">
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
@@ -859,6 +874,11 @@
 
 		<CreateItem Include="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb"
 			Condition="Exists('$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb')">
+			<Output TaskParameter="Include" ItemName="FileWrites"/>
+		</CreateItem>
+
+		<CreateItem Include="$(IntermediateOutputPath)$(AssemblyName).pdb"
+			Condition="Exists('$(IntermediateOutputPath)$(AssemblyName).pdb')">
 			<Output TaskParameter="Include" ItemName="FileWrites"/>
 		</CreateItem>
 	</Target>

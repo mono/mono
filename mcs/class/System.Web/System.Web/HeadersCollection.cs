@@ -39,6 +39,30 @@ namespace System.Web
 		{
 		}
 
+		public override void Add (string name, string value)
+		{
+			if (IsReadOnly)
+				throw new PlatformNotSupportedException ();
+
+			base.Set (name, value);
+		}
+
+		public override void Set (string name, string value)
+		{
+			if (IsReadOnly)
+				throw new PlatformNotSupportedException ();
+
+			base.Set (name, value);
+		}
+
+		public override void Remove (string name)
+		{
+			if (IsReadOnly)
+				throw new PlatformNotSupportedException ();
+
+			base.Remove (name);
+		}
+
 		protected override void InsertInfo()
 		{
 			HttpWorkerRequest worker_request = _request.WorkerRequest;

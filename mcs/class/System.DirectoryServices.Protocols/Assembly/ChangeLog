@@ -1,7 +1,0 @@
-2009-01-11  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* AssemblyInfo.cs : fix wrong key and versions.
-
-2009-01-11  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* AssemblyInfo.cs : initial checkin.

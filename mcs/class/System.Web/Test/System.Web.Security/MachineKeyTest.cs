@@ -32,7 +32,6 @@ using System;
 using System.Text;
 using System.Web.Security;
 
-using MonoTests.Common;
 using NUnit.Framework;
 
 namespace MonoTests.System.Web.Security
@@ -53,7 +52,7 @@ namespace MonoTests.System.Web.Security
 #endif
 			const int VALIDATION_EXPECTED_SIZE = 64;
 			
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				MachineKey.Encode (null, MachineKeyProtection.All);
 			}, "#A1-1");
 
@@ -79,11 +78,11 @@ namespace MonoTests.System.Web.Security
 		{
 			byte[] decoded;
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				MachineKey.Decode (null, MachineKeyProtection.All);
 			}, "#A1-1");
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				decoded = MachineKey.Decode (String.Empty, MachineKeyProtection.All);
 			}, "#A1-2");
 
@@ -107,15 +106,15 @@ namespace MonoTests.System.Web.Security
 			Assert.IsNotNull (decoded, "#A5-1");
 			Assert.AreEqual (5, decoded.Length, "#A5-2");
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				decoded = MachineKey.Decode ("test", MachineKeyProtection.All);
 			}, "#B1-1");
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				decoded = MachineKey.Decode ("test", MachineKeyProtection.Encryption);
 			}, "#B1-2");
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				decoded = MachineKey.Decode ("test", MachineKeyProtection.Validation);
 			}, "#B1-3");
 
@@ -169,15 +168,14 @@ namespace MonoTests.System.Web.Security
 			}
 		}
 
-#if NET_4_5
 		[Test]
 		public void Protect ()
 		{
-			AssertExtensions.Throws<ArgumentNullException> (() =>
+			Assert.Throws<ArgumentNullException> (() =>
 				MachineKey.Protect (null, null), 
 				"MachineKey.Protect not throwing an ArgumentNullException");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => 
+			Assert.Throws<ArgumentNullException> (() => 
 				MachineKey.Protect (null, new [] { "test" }), 
 				"MachineKey.Protect not throwing an ArgumentNullException");
 
@@ -192,14 +190,13 @@ namespace MonoTests.System.Web.Security
 
 			Assert.AreEqual (plainBytes, validDecryptedBytes, "Decryption didn't work");
 
-			AssertExtensions.Throws<CryptographicException> (() => 
+			Assert.Throws<CryptographicException> (() => 
 				MachineKey.Unprotect (encryptedBytes, invalidUsages), 
 				"Purposes not encrypting properly");
 
-			AssertExtensions.Throws<CryptographicException> (() => 
+			Assert.Throws<CryptographicException> (() => 
 				MachineKey.Unprotect (encryptedBytes, oneUsage), 
 				"Single purpose working when multiple supplied");
 		}
-#endif
 	}
 }

@@ -48,7 +48,7 @@ mono_hazard_pointer_clear_all (MonoThreadHazardPointers *hp, int retain)
 static void
 free_node (void *n)
 {
-	node_t *node = n;
+	node_t *node = (node_t *)n;
 	assert (node->state == STATE_BUSY);
 	node->state = STATE_OUT;
 }
@@ -56,7 +56,7 @@ free_node (void *n)
 static void*
 worker (void *arg)
 {
-	thread_data_t *thread_data = arg;
+	thread_data_t *thread_data = (thread_data_t *)arg;
 	MonoThreadHazardPointers *hp;
 	int skip = thread_data->skip;
 	int i, j;
@@ -73,7 +73,7 @@ worker (void *arg)
 			mono_thread_hazardous_try_free_some ();
 			break;
 		case STATE_OUT:
-			if (InterlockedCompareExchange (&nodes [i].state, STATE_BUSY, STATE_OUT) == STATE_OUT) {
+			if (mono_atomic_cas_i32 (&nodes [i].state, STATE_BUSY, STATE_OUT) == STATE_OUT) {
 				result = mono_lls_find (&lls, hp, i);
 				assert (!result);
 				mono_hazard_pointer_clear_all (hp, -1);
@@ -88,7 +88,7 @@ worker (void *arg)
 			}
 			break;
 		case STATE_IN:
-			if (InterlockedCompareExchange (&nodes [i].state, STATE_BUSY, STATE_IN) == STATE_IN) {
+			if (mono_atomic_cas_i32 (&nodes [i].state, STATE_BUSY, STATE_IN) == STATE_IN) {
 				result = mono_lls_find (&lls, hp, i);
 				assert (result);
 				assert (mono_hazard_pointer_get_val (hp, 1) == &nodes [i].node);
@@ -116,15 +116,12 @@ int
 main (int argc, char *argv [])
 {
 	int primes [] = { 1, 2, 3, 5, 7, 11, 13, 17 };
-	MonoThreadInfoCallbacks thread_callbacks;
 	thread_data_t thread_data [NUM_THREADS];
 	int i;
 
-	memset (&thread_callbacks, 0, sizeof (thread_callbacks));
-
 	mono_metadata_init ();
 
-	mono_threads_init (&thread_callbacks, 0);
+	mono_thread_info_init (0);
 
 	mono_lls_init (&lls, free_node);
 

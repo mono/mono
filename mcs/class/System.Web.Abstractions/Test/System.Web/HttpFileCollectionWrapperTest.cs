@@ -30,8 +30,6 @@ using System;
 using System.Web;
 using NUnit.Framework;
 
-using MonoTests.Common;
-
 namespace MonoTests.System.Web
 {
 	[TestFixture]
@@ -55,7 +53,7 @@ namespace MonoTests.System.Web
 			var files = req.Files;
 			var wrapper = new HttpFileCollectionWrapper (files);
 
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				wrapper.Get (0);
 			}, "#A1");
 		}
@@ -78,7 +76,7 @@ namespace MonoTests.System.Web
 			var files = req.Files;
 			var wrapper = new HttpFileCollectionWrapper (files);
 
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				var f = wrapper [0];
 			}, "#A1");
 		}

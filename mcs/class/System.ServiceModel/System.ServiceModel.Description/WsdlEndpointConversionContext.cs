@@ -76,7 +76,7 @@ namespace System.ServiceModel.Description
 		}
 
 		public MessageDescription GetMessageDescription (
-			MessageBinding message)
+			MessageBinding messageBinding)
 		{
 			throw new NotImplementedException ();
 		}
@@ -88,7 +88,7 @@ namespace System.ServiceModel.Description
 		}
 
 		public OperationDescription GetOperationDescription (
-			OperationBinding operation)
+			OperationBinding operationBinding)
 		{
 			throw new NotImplementedException ();
 		}

@@ -33,6 +33,7 @@ using System.Security.Policy;
 
 namespace System.Runtime.Hosting {
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 	[ComVisible (true)]
 	[MonoTODO ("missing manifest support")]
 	public class ApplicationActivator {
@@ -91,5 +92,30 @@ namespace System.Runtime.Hosting {
 			return ad.CreateInstance ("assemblyName", "typeName", null);
 		}
 	}
+#else
+	[Obsolete ("ApplicationActivator is not supported on this platform.", true)]
+	public class ApplicationActivator {
+
+		public ApplicationActivator ()
+		{
+			throw new PlatformNotSupportedException ("ApplicationActivator is not supported on this platform.");
+		}
+
+		public virtual ObjectHandle CreateInstance (ActivationContext activationContext)
+		{
+			throw new PlatformNotSupportedException ("ApplicationActivator is not supported on this platform.");
+		}
+
+		public virtual ObjectHandle CreateInstance (ActivationContext activationContext, string[] activationCustomData)
+		{
+			throw new PlatformNotSupportedException ("ApplicationActivator is not supported on this platform.");
+		}
+
+		protected static ObjectHandle CreateInstanceHelper (AppDomainSetup adSetup)
+		{
+			throw new PlatformNotSupportedException ("ApplicationActivator is not supported on this platform.");
+		}
+	}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 }
 

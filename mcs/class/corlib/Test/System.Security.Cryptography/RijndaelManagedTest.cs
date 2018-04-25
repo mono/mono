@@ -177,19 +177,6 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		[ExpectedException (typeof (CryptographicException))]
-		public void CreateEncryptor_KeyNull ()
-		{
-			ICryptoTransform encryptor = aes.CreateEncryptor (null, aes.IV);
-			byte[] data = new byte[encryptor.InputBlockSize];
-			byte[] encdata = encryptor.TransformFinalBlock (data, 0, data.Length);
-
-			ICryptoTransform decryptor = aes.CreateDecryptor (aes.Key, aes.IV);
-			byte[] decdata = decryptor.TransformFinalBlock (encdata, 0, encdata.Length);
-			// null key != SymmetricAlgorithm.Key
-		}
-
-		[Test]
 		public void CreateEncryptor_IvNull ()
 		{
 			ICryptoTransform encryptor = aes.CreateEncryptor (aes.Key, null);
@@ -218,19 +205,6 @@ namespace MonoTests.System.Security.Cryptography {
 			Assert.AreEqual (originalKey, aes.Key, "Key");
 			Assert.AreEqual (originalIV, aes.IV, "IV");
 			// SymmetricAlgorithm Key and IV not changed by CreateEncryptor
-		}
-
-		[Test]
-		[ExpectedException (typeof (CryptographicException))]
-		public void CreateDecryptor_KeyNull ()
-		{
-			ICryptoTransform encryptor = aes.CreateEncryptor (aes.Key, aes.IV);
-			byte[] data = new byte[encryptor.InputBlockSize];
-			byte[] encdata = encryptor.TransformFinalBlock (data, 0, data.Length);
-
-			ICryptoTransform decryptor = aes.CreateDecryptor (null, aes.IV);
-			byte[] decdata = decryptor.TransformFinalBlock (encdata, 0, encdata.Length);
-			// null key != SymmetricAlgorithm.Key
 		}
 
 		[Test]
@@ -303,7 +277,7 @@ namespace MonoTests.System.Security.Cryptography {
 			CreateEncryptor_IV (size);
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
 		// Rijndael is the only implementation that has
@@ -350,7 +324,7 @@ namespace MonoTests.System.Security.Cryptography {
 			int size = (aes.BlockSize >> 3);
 			CreateDecryptor_IV (size);
 		}
-#if !NET_2_1
+#if !MOBILE
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
 		// Rijndael is the only implementation that has

@@ -29,13 +29,13 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH || MONODROID
-using Mono.Security;
-using Mono.Security.Cryptography;
-#else
+#if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security;
 using MonoSecurity::Mono.Security.Cryptography;
+#else
+using Mono.Security;
+using Mono.Security.Cryptography;
 #endif
 
 using System.Security.Cryptography.X509Certificates;
@@ -157,9 +157,9 @@ namespace System.Security.Cryptography {
 				return SubjectKeyIdentifierExtension (multiLine);
 			// other known objects (i.e. supported structure) - 
 			// but without any corresponding framework class
-			case Oid.oidSubjectAltName:
+			case "2.5.29.17": // oidSubjectAltName:
 				return SubjectAltName (multiLine);
-			case Oid.oidNetscapeCertType:
+			case "2.16.840.1.113730.1.1": // oidNetscapeCertType
 				return NetscapeCertType (multiLine);
 			default:
 				return Default (multiLine);

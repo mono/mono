@@ -71,7 +71,7 @@ namespace System.ServiceModel
 		{
 			if (CanCastTo<IClientChannel> (t))
 				return true;
-#if !NET_2_1
+#if !MOBILE
 			if (isDuplex && CanCastTo<IDuplexContextChannel> (t))
 				return true;
 #endif

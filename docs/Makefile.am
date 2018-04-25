@@ -17,10 +17,8 @@ EXTRA_DIST = \
 	check-exports		\
 	check-coverage		\
 	convert.cs		\
-	current-api		\
 	deploy			\
 	docs.make		\
-	documented		\
 	embedded-api		\
 	exdoc			\
 	file-share-modes	\
@@ -43,8 +41,6 @@ EXTRA_DIST = \
 	object-layout		\
 	precise-gc		\
 	produce-lists		\
-	public			\
-	public-api		\
 	README			\
 	remoting		\
 	ssapre.txt		\
@@ -68,6 +64,7 @@ dist-hook:
 
 clean-local:
 	-rm -Rf html
+	-rm -Rf doxygen-output
 	-rm -f deploy/* convert.exe* AgilityPack.dll*
 	-rm -f $(ASSEMBLED_DOCS)
 
@@ -90,7 +87,7 @@ mono-file-formats.zip: mono-file-formats.tree
 mono-file-formats.tree: $(srcdir)/docs.make $(srcdir)/Makefile.am $(srcdir)/deploy/.stamp
 	$(TOOL_MAKE) $@
 
-deploy/.stamp: convert.exe Makefile.am 
+deploy/.stamp: convert.exe Makefile.am exdoc
 	$(mkdir_p) html
 	runtimedir=`cd ../runtime && pwd`; export runtimedir; \
 	MONO_PATH=$(CLASS) perl $(srcdir)/exdoc -h $(srcdir) -t . $(srcdir)/../mono/*/*.c
@@ -104,3 +101,7 @@ convert.exe: convert.cs AgilityPack.dll
 AgilityPack.dll: 
 	$(TOOL_MAKE) AgilityPack.dll
 
+doxygen:
+	doxygen doxyfile
+
+.PHONY: doxygen

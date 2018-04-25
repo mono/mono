@@ -3,18 +3,7 @@
  *
  * Copyright (C) 2014 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -22,6 +11,7 @@
 #include "utils/mono-threads.h"
 #include "utils/mono-conc-hashtable.h"
 #include "utils/checked-build.h"
+#include "metadata/w32handle.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -37,24 +27,24 @@ single_writer_single_reader (void)
 	MonoConcurrentHashTable *h;
 	int res = 0;
 
-	mono_mutex_init (&mutex);
+	mono_os_mutex_init (&mutex);
 	h = mono_conc_hashtable_new (NULL, NULL);
 
-	mono_mutex_lock (&mutex);
+	mono_os_mutex_lock (&mutex);
 	mono_conc_hashtable_insert (h, GUINT_TO_POINTER (10), GUINT_TO_POINTER (20));
-	mono_mutex_unlock (&mutex);
+	mono_os_mutex_unlock (&mutex);
 
-	mono_mutex_lock (&mutex);
+	mono_os_mutex_lock (&mutex);
 	mono_conc_hashtable_insert (h, GUINT_TO_POINTER (30), GUINT_TO_POINTER (40));
-	mono_mutex_unlock (&mutex);
+	mono_os_mutex_unlock (&mutex);
 
-	mono_mutex_lock (&mutex);
+	mono_os_mutex_lock (&mutex);
 	mono_conc_hashtable_insert (h, GUINT_TO_POINTER (50), GUINT_TO_POINTER (60));
-	mono_mutex_unlock (&mutex);
+	mono_os_mutex_unlock (&mutex);
 
-	mono_mutex_lock (&mutex);
+	mono_os_mutex_lock (&mutex);
 	mono_conc_hashtable_insert (h, GUINT_TO_POINTER (2), GUINT_TO_POINTER (3));
-	mono_mutex_unlock (&mutex);
+	mono_os_mutex_unlock (&mutex);
 
 	if (mono_conc_hashtable_lookup (h, GUINT_TO_POINTER (30)) != GUINT_TO_POINTER (40))
 		res = 1;
@@ -66,7 +56,7 @@ single_writer_single_reader (void)
 		res = 4;
 
 	mono_conc_hashtable_destroy (h);
-	mono_mutex_destroy (&mutex);
+	mono_os_mutex_destroy (&mutex);
 	if (res)
 		printf ("SERIAL TEST FAILED %d\n", res);
 	return res;
@@ -79,12 +69,12 @@ static void*
 pw_sr_thread (void *arg)
 {
 	int i, idx = 1000 * GPOINTER_TO_INT (arg);
-	mono_thread_info_attach ((gpointer)&arg);
+	mono_thread_info_attach ();
 
 	for (i = 0; i < 1000; ++i) {
-		mono_mutex_lock (&global_mutex);
+		mono_os_mutex_lock (&global_mutex);
 		mono_conc_hashtable_insert (hash, GINT_TO_POINTER (i + idx), GINT_TO_POINTER (i + 1));
-		mono_mutex_unlock (&global_mutex);
+		mono_os_mutex_unlock (&global_mutex);
 	}
 	return NULL;
 }
@@ -95,7 +85,7 @@ parallel_writer_single_reader (void)
 	pthread_t a,b,c;
 	int i, j, res = 0;
 
-	mono_mutex_init (&global_mutex);
+	mono_os_mutex_init (&global_mutex);
 	hash = mono_conc_hashtable_new (NULL, NULL);
 
 	pthread_create (&a, NULL, pw_sr_thread, GINT_TO_POINTER (1));
@@ -117,7 +107,7 @@ parallel_writer_single_reader (void)
 
 done:
 	mono_conc_hashtable_destroy (hash);
-	mono_mutex_destroy (&global_mutex);
+	mono_os_mutex_destroy (&global_mutex);
 	if (res)
 		printf ("PAR_WRITER_SINGLE_READER TEST FAILED %d\n", res);
 	return res;
@@ -128,7 +118,7 @@ static void*
 pr_sw_thread (void *arg)
 {
 	int i = 0, idx = 100 * GPOINTER_TO_INT (arg);
-	mono_thread_info_attach ((gpointer)&arg);
+	mono_thread_info_attach ();
 
 	while (i < 100) {
 		gpointer res = mono_conc_hashtable_lookup (hash, GINT_TO_POINTER (i + idx + 1));
@@ -149,7 +139,7 @@ single_writer_parallel_reader (void)
 	int i, res = 0;
 	ra = rb = rc = GINT_TO_POINTER (1);
 
-	mono_mutex_init (&global_mutex);
+	mono_os_mutex_init (&global_mutex);
 	hash = mono_conc_hashtable_new (NULL, NULL);
 
 	pthread_create (&a, NULL, pr_sw_thread, GINT_TO_POINTER (0));
@@ -157,17 +147,17 @@ single_writer_parallel_reader (void)
 	pthread_create (&c, NULL, pr_sw_thread, GINT_TO_POINTER (2));
 
 	for (i = 0; i < 100; ++i) {
-		mono_mutex_lock (&global_mutex);
+		mono_os_mutex_lock (&global_mutex);
 		mono_conc_hashtable_insert (hash, GINT_TO_POINTER (i +   0 + 1), GINT_TO_POINTER ((i +   0) * 2 + 1));
-		mono_mutex_unlock (&global_mutex);
+		mono_os_mutex_unlock (&global_mutex);
 
-		mono_mutex_lock (&global_mutex);
+		mono_os_mutex_lock (&global_mutex);
 		mono_conc_hashtable_insert (hash, GINT_TO_POINTER (i + 100 + 1), GINT_TO_POINTER ((i + 100) * 2 + 1));
-		mono_mutex_unlock (&global_mutex);
+		mono_os_mutex_unlock (&global_mutex);
 
-		mono_mutex_lock (&global_mutex);
+		mono_os_mutex_lock (&global_mutex);
 		mono_conc_hashtable_insert (hash, GINT_TO_POINTER (i + 200 + 1), GINT_TO_POINTER ((i + 200) * 2 + 1));
-		mono_mutex_unlock (&global_mutex);
+		mono_os_mutex_unlock (&global_mutex);
 	}
 
 	pthread_join (a, &ra);
@@ -176,7 +166,7 @@ single_writer_parallel_reader (void)
 	res = GPOINTER_TO_INT (ra) + GPOINTER_TO_INT (rb) + GPOINTER_TO_INT (rc);
 
 	mono_conc_hashtable_destroy (hash);
-	mono_mutex_destroy (&global_mutex);
+	mono_os_mutex_destroy (&global_mutex);
 	if (res)
 		printf ("SINGLE_WRITER_PAR_READER TEST FAILED %d\n", res);
 	return res;
@@ -188,7 +178,7 @@ static void*
 pw_pr_r_thread (void *arg)
 {
 	int key, val, i;
-	mono_thread_info_attach ((gpointer)&arg);
+	mono_thread_info_attach ();
 
 	/* i will not be incremented as long as running is set to 1, this guarantee that
 	   we loop over all the keys at least once after the writer threads have finished */
@@ -210,12 +200,12 @@ pw_pr_w_add_thread (void *arg)
 {
 	int i, idx = 1000 * GPOINTER_TO_INT (arg);
 
-	mono_thread_info_attach ((gpointer)&arg);
+	mono_thread_info_attach ();
 
 	for (i = idx; i < idx + 1000; i++) {
-		mono_mutex_lock (&global_mutex);
+		mono_os_mutex_lock (&global_mutex);
 		mono_conc_hashtable_insert (hash, GINT_TO_POINTER (i + 1), GINT_TO_POINTER (i + 1));
-		mono_mutex_unlock (&global_mutex);
+		mono_os_mutex_unlock (&global_mutex);
 	}
 	return NULL;
 }
@@ -225,12 +215,12 @@ pw_pr_w_del_thread (void *arg)
 {
 	int i, idx = 1000 * GPOINTER_TO_INT (arg);
 
-	mono_thread_info_attach ((gpointer)&arg);
+	mono_thread_info_attach ();
 
 	for (i = idx; i < idx + 1000; i++) {
-		mono_mutex_lock (&global_mutex);
+		mono_os_mutex_lock (&global_mutex);
 		mono_conc_hashtable_remove (hash, GINT_TO_POINTER (i + 1));
-		mono_mutex_unlock (&global_mutex);
+		mono_os_mutex_unlock (&global_mutex);
 	}
 	return NULL;
 }
@@ -244,7 +234,7 @@ parallel_writer_parallel_reader (void)
 
 	srand(time(NULL));
 
-	mono_mutex_init (&global_mutex);
+	mono_os_mutex_init (&global_mutex);
 	hash = mono_conc_hashtable_new (NULL, NULL);
 
 	for (i = 0; i < 2; i++) {
@@ -284,7 +274,7 @@ parallel_writer_parallel_reader (void)
 		printf ("PAR_WRITER_PAR_READER TEST FAILED %d %d %d\n", GPOINTER_TO_INT (a), GPOINTER_TO_INT (b), GPOINTER_TO_INT (c));
 
 	mono_conc_hashtable_destroy (hash);
-	mono_mutex_destroy (&global_mutex);
+	mono_os_mutex_destroy (&global_mutex);
 
 	return res;
 }
@@ -328,15 +318,28 @@ benchmark_glib (void)
 	g_hash_table_destroy (h);
 }
 
+static void
+thread_state_init (MonoThreadUnwindState *ctx)
+{
+}
+
+
 int
 main (void)
 {
-	MonoThreadInfoCallbacks cb = { NULL };
+	MonoThreadInfoRuntimeCallbacks ticallbacks;
 	int res = 0;
 
 	CHECKED_MONO_INIT ();
-	mono_threads_init (&cb, sizeof (MonoThreadInfo));
-	mono_thread_info_attach ((gpointer)&cb);
+	mono_thread_info_init (sizeof (MonoThreadInfo));
+	memset (&ticallbacks, 0, sizeof (ticallbacks));
+	ticallbacks.thread_state_init = thread_state_init;
+	mono_thread_info_runtime_init (&ticallbacks);
+#ifndef HOST_WIN32
+	mono_w32handle_init ();
+#endif
+
+	mono_thread_info_attach ();
 
 	// benchmark_conc ();
 	// benchmark_glib ();

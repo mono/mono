@@ -129,6 +129,20 @@ class Tests
 		return ldelem_any (arr);
 	}
 
+	public static int test_1_ldelem_stelem_any_single () {
+		float[] arr = new float [3];
+		stelem_any (arr, 1);
+
+		return (int) ldelem_any (arr);
+	}
+
+	public static int test_1_ldelem_stelem_any_double () {
+		double[] arr = new double [3];
+		stelem_any (arr, 1);
+
+		return (int) ldelem_any (arr);
+	}
+
 	public static T return_ref<T> (ref T t) {
 		return t;
 	}
@@ -231,6 +245,42 @@ class Tests
 			return 3;
 
 		return 0;
+	}
+
+	interface NonGenericInterface {
+		int return_field ();
+	}
+
+	interface GenericInterface<T> : NonGenericInterface {
+		T not_used ();
+	}
+
+	struct ImplementGenericInterface<T> : GenericInterface<T> {
+		public Object padding1;
+		public Object padding2;
+		public Object padding3;
+		public T[] arr_t;
+
+		public ImplementGenericInterface (T[] arr_t) {
+			this.padding1 = null;
+			this.padding2 = null;
+			this.padding3 = null;
+			this.arr_t = arr_t;
+		}
+
+		public T not_used () {
+			return arr_t [0];
+		}
+
+		public int return_field () {
+			return arr_t.Length;
+		}
+	}
+
+	public static int test_8_struct_implements_generic_interface () {
+		int[] arr = {1, 2, 3, 4};
+		NonGenericInterface s = new ImplementGenericInterface<int> (arr);
+		return s.return_field () + s.return_field ();
 	}
 
 	public static int test_0_generic_get_value_optimization_vtype () {
@@ -898,6 +948,7 @@ class Tests
 	}
 
 	[Category ("!FULLAOT")]
+	[Category ("!BITCODE")]
 	public static int test_0_regress_668095_synchronized_gshared () {
 		return DoSomething (new DefaultRetriever ());
 	}
@@ -987,6 +1038,19 @@ class Tests
             object o = enumerator.Current;
         }
 
+		return 0;
+	}
+
+	class AClass {
+	}
+
+	class BClass : AClass {
+	}
+
+	public static int test_0_fullaot_variant_iface () {
+		var arr = new BClass [10];
+		var enumerable = (IEnumerable<AClass>)arr;
+		enumerable.GetEnumerator ();
 		return 0;
 	}
 
@@ -1230,6 +1294,159 @@ class Tests
             };
 		test("a", "b", "c", "d", "e", "f", "g", "h");
 		return delegate_8_args_res == "h" ? 0 : 1;
+	}
+
+	static void throw_catch_t<T> () where T: Exception {
+		try {
+			throw new NotSupportedException ();
+		} catch (T) {
+		}
+	}
+
+	public static int test_0_gshared_catch_open_type () {
+		throw_catch_t<NotSupportedException> ();
+		return 0;
+	}
+
+	class ThrowClass<T> where T: Exception {
+		public void throw_catch_t () {
+			try {
+				throw new NotSupportedException ();
+			} catch (T) {
+			}
+		}
+	}
+
+	public static int test_0_gshared_catch_open_type_instance () {
+		var c = new ThrowClass<NotSupportedException> ();
+		c.throw_catch_t ();
+		return 0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static bool is_ref_or_contains_refs<T> () {
+		return RuntimeHelpers.IsReferenceOrContainsReferences<T> ();
+	}
+
+	class IsRefClass<T> {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public bool is_ref () {
+			return RuntimeHelpers.IsReferenceOrContainsReferences<T> ();
+		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static bool is_ref_or_contains_refs_gen_ref<T> () {
+		return RuntimeHelpers.IsReferenceOrContainsReferences<GenStruct<T>> ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static bool is_ref_or_contains_refs_gen_noref<T> () {
+		return RuntimeHelpers.IsReferenceOrContainsReferences<NoRefGenStruct<T>> ();
+	}
+
+	struct GenStruct<T> {
+		T t;
+	}
+
+	struct NoRefGenStruct<T> {
+	}
+
+	struct RefStruct {
+		string s;
+	}
+
+	struct NestedRefStruct {
+		RefStruct r;
+	}
+
+	struct NoRefStruct {
+		int i;
+	}
+
+	struct AStruct3<T1, T2, T3> {
+		T1 t1;
+		T2 t2;
+		T3 t3;
+	}
+
+	public static int test_0_isreference_intrins () {
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<int> ())
+			return 1;
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<string> ())
+			return 2;
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<RefStruct> ())
+			return 3;
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<NestedRefStruct> ())
+			return 4;
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<NoRefStruct> ())
+			return 5;
+		// Generic code
+		if (is_ref_or_contains_refs<int> ())
+			return 6;
+		// Shared code
+		if (!is_ref_or_contains_refs<string> ())
+			return 7;
+		// Complex type from shared code
+		if (!is_ref_or_contains_refs_gen_ref<string> ())
+			return 8;
+		if (is_ref_or_contains_refs_gen_ref<int> ())
+			return 9;
+		if (is_ref_or_contains_refs_gen_noref<string> ())
+			return 10;
+
+		// Complex type from shared class method
+		var c1 = new IsRefClass<AStruct3<int, int, int>> ();
+		if (c1.is_ref ())
+			return 11;
+		var c2 = new IsRefClass<AStruct3<string, int, int>> ();
+		if (!c2.is_ref ())
+			return 12;
+
+		return 0;
+	}
+
+	class LdobjStobj {
+		public int counter;
+		public LdobjStobj buffer1;
+		public LdobjStobj buffer2;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void swap<T>(ref T first, ref T second) {
+		second = first;
+	}
+
+	public static int test_42_ldobj_stobj_ref () {
+		var obj = new LdobjStobj ();
+		obj.counter = 42;
+		swap (ref obj.buffer1, ref obj.buffer2);
+		return obj.counter;
+	}
+
+	public interface ICompletion {
+		Type UnsafeOnCompleted ();
+	}
+
+	public struct TaskAwaiter<T> : ICompletion {
+		public Type UnsafeOnCompleted () {
+			typeof(T).GetHashCode ();
+			return typeof(T);
+		}
+	}
+
+	public struct AStruct {
+        public Type Caller<TAwaiter>(ref TAwaiter awaiter)
+            where TAwaiter : ICompletion {
+			return awaiter.UnsafeOnCompleted();
+		}
+	}
+
+    public static int test_0_partial_constrained_call_llvmonly () {
+		var builder = new AStruct ();
+		var awaiter = new TaskAwaiter<bool> ();
+		var res = builder.Caller (ref awaiter);
+		return res == typeof (bool) ? 0 : 1;
 	}
 }
 

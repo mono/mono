@@ -83,7 +83,13 @@ namespace System.Security.Policy {
 			if (url.Length == 0)
 				return new Zone (z);
 
-			Uri uri = new Uri (url);
+			Uri uri = null;
+			try {
+				uri = new Uri (url);
+			}
+			catch {
+				return new Zone (z);
+			}
 			// TODO: apply zone configuration
 			// this is the only way to use the Trusted and Untrusted zones
 

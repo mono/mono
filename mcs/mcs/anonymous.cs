@@ -343,7 +343,7 @@ namespace Mono.CSharp {
 			}
 
 			if (hoisted == null) {
-				hoisted = new HoistedLocalVariable (this, localVariable, GetVariableMangledName (localVariable));
+				hoisted = new HoistedLocalVariable (this, localVariable, GetVariableMangledName (ec, localVariable));
 				localVariable.HoistedVariant = hoisted;
 
 				if (hoisted_locals == null)
@@ -667,7 +667,7 @@ namespace Mono.CSharp {
 			return f_ind;
 		}
 
-		protected virtual string GetVariableMangledName (LocalVariable local_info)
+		protected virtual string GetVariableMangledName (ResolveContext rc, LocalVariable local_info)
 		{
 			//
 			// No need to mangle anonymous method hoisted variables cause they
@@ -838,6 +838,11 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
 			GetFieldExpression (ec).EmitAssign (ec, source, leave_copy, false);
+		}
+
+		public void EmitAssignFromStack (EmitContext ec)
+		{
+			GetFieldExpression (ec).EmitAssignFromStack (ec);
 		}
 	}
 
@@ -1595,6 +1600,15 @@ namespace Mono.CSharp {
 			if (res && errors != ec.Report.Errors)
 				return null;
 
+			if (block.IsAsync && block.Original.ParametersBlock.HasCapturedThis && ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.block.IsAsync) {
+				//
+				// We'll do ldftn to load the fabricated m_X method but
+				// because we are inside struct the method can be hoisted
+				// anywhere in the parent scope
+				//
+				ec.CurrentBlock.ParametersBlock.HasReferenceToStoreyForInstanceLambdas = true;
+			}
+
 			return res ? this : null;
 		}
 
@@ -1643,9 +1657,10 @@ namespace Mono.CSharp {
 			fc.TryFinally = prev_tf;
 		}
 
-		public override void MarkReachable (Reachability rc)
+		public override Reachability MarkReachable (Reachability rc)
 		{
 			block.MarkReachable (rc);
+			return rc;
 		}
 
 		public void SetHasThisAccess ()
@@ -1798,6 +1813,8 @@ namespace Mono.CSharp {
 							parent = storey = sm;
 						}
 					}
+				} else if (src_block.ParametersBlock.HasReferenceToStoreyForInstanceLambdas) {
+					src_block.ParametersBlock.StateMachine.AddParentStoreyReference (ec, storey);
 				}
 
 				modifiers = storey != null ? Modifiers.INTERNAL : Modifiers.PRIVATE;

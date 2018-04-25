@@ -3,9 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Reactive.Testing.dll
-LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq System.Reactive.PlatformServices System.Reactive.Providers System.Reactive.Runtime.Remoting System.Reactive.Experimental System.Reactive.Windows.Forms System.Reactive.Windows.Threading System.Reactive.Observable.Aliases System.Windows.Forms WindowsBase nunit.framework
+LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq System.Reactive.PlatformServices System.Reactive.Providers System.Reactive.Runtime.Remoting System.Reactive.Experimental System.Reactive.Windows.Forms System.Reactive.Windows.Threading System.Reactive.Observable.Aliases System.Windows.Forms WindowsBase nunitlite
 LIB_MCS_FLAGS = \
-		@more_build_args \
 		-d:NUNIT -d:MONO -d:DESKTOPCLR
 		# NO_PERF is required to disable ObservableMultipleTest.Catch_TailRecursive2 which blocked test execution.
 		# disabled -d:HAS_WINFORMS
@@ -21,7 +20,7 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618
 
-EXTRA_DISTFILES = more_build_args
+EXTRA_DISTFILES =
 
 VALID_PROFILE := $(filter net_4_x, $(PROFILE))
 ifndef VALID_PROFILE

@@ -1,4 +1,4 @@
-﻿//
+//
 // SecurityTokenNotYetValidException.cs
 //
 // Author:
@@ -41,8 +41,8 @@ namespace System.IdentityModel.Tokens
 			: base(message)
 		{ }
 
-		public SecurityTokenNotYetValidException(string message, Exception innerException)
-			: base(message, innerException)
+		public SecurityTokenNotYetValidException(string message, Exception inner)
+			: base(message, inner)
 		{ }
 
 		public SecurityTokenNotYetValidException(SerializationInfo info, StreamingContext context)

@@ -184,5 +184,33 @@ namespace MonoTests.System.IO.Packaging {
                                                         d.RelationshipType == node.Attributes["Type"].InnerText));
             }
         }
+
+        [Test]
+        public void CheckRelationshipDeletion ()
+        {
+            AddThreeRelationShips ();
+            package.Flush ();
+
+            foreach (PackageRelationship p in new List<PackageRelationship> (package.GetRelationships ()).Skip(1))
+                package.DeleteRelationship (p.Id);
+
+            PackagePart part = package.GetPart (new Uri ("/_rels/.rels", UriKind.Relative));
+            Assert.IsNotNull (package.GetPart (new Uri ("/_RELS/.RELS", UriKind.Relative)), "#0");
+            package.Flush ();
+            Assert.IsNotNull (part, "#1");
+
+            Stream stream = part.GetStream ();
+            Assert.IsTrue (stream.Length > 0, "#2a");
+
+            XmlDocument doc = new XmlDocument ();
+            XmlNamespaceManager manager = new XmlNamespaceManager (doc.NameTable);
+            manager.AddNamespace("rel", "http://schemas.openxmlformats.org/package/2006/relationships");
+            doc.Load (new StreamReader (stream));
+
+            Assert.IsNotNull (doc.SelectSingleNode ("/rel:Relationships", manager), "#2b");
+
+            XmlNodeList list = doc.SelectNodes ("/rel:Relationships/*", manager);
+            Assert.AreEqual (1, list.Count);
+        }
     }
 }

@@ -1,23 +1,13 @@
-/*
- * sgen-descriptor.c: GC descriptors describe object layout.
+/**
+ * \file
+ * GC descriptors describe object layout.
  *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
  * Copyright (C) 2012 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include "config.h"
 #ifdef HAVE_SGEN_GC
@@ -44,16 +34,13 @@
 
 #include "mono/sgen/sgen-gc.h"
 #include "mono/sgen/gc-internal-agnostic.h"
+#include "mono/sgen/sgen-array-list.h"
 
 #define MAX_USER_DESCRIPTORS 16
 
 #define MAKE_ROOT_DESC(type,val) ((type) | ((val) << ROOT_DESC_TYPE_SHIFT))
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
-
-static gsize* complex_descriptors = NULL;
-static int complex_descriptors_size = 0;
-static int complex_descriptors_next = 0;
+static SgenArrayList complex_descriptors = SGEN_ARRAY_LIST_INIT (NULL, NULL, NULL, INTERNAL_MEM_COMPLEX_DESCRIPTORS);
 static SgenUserRootMarkFunc user_descriptors [MAX_USER_DESCRIPTORS];
 static int user_descriptors_next = 0;
 static SgenDescriptor all_ref_root_descrs [32];
@@ -67,43 +54,50 @@ static int
 alloc_complex_descriptor (gsize *bitmap, int numbits)
 {
 	int nwords, res, i;
+	volatile gpointer *slot;
+	gsize *descriptor;
+
+	SGEN_ASSERT (0, sizeof (gsize) == sizeof (mword), "We expect gsize and mword to have same size");
 
 	numbits = ALIGN_TO (numbits, GC_BITS_PER_WORD);
 	nwords = numbits / GC_BITS_PER_WORD + 1;
 
 	sgen_gc_lock ();
-	res = complex_descriptors_next;
 	/* linear search, so we don't have duplicates with domain load/unload
 	 * this should not be performance critical or we'd have bigger issues
 	 * (the number and size of complex descriptors should be small).
 	 */
-	for (i = 0; i < complex_descriptors_next; ) {
-		if (complex_descriptors [i] == nwords) {
+	SGEN_ARRAY_LIST_FOREACH_SLOT (&complex_descriptors, slot) {
+		gsize first_word = *(gsize*)slot;
+		if (first_word == 0) {
+			/* Unused slots should be 0 so we simply skip them */
+			continue;
+		} else if (first_word == nwords) {
 			int j, found = TRUE;
 			for (j = 0; j < nwords - 1; ++j) {
-				if (complex_descriptors [i + 1 + j] != bitmap [j]) {
+				if (((gsize*)slot) [j + 1] != bitmap [j]) {
 					found = FALSE;
 					break;
 				}
 			}
 			if (found) {
 				sgen_gc_unlock ();
-				return i;
+				return __index;
 			}
 		}
-		i += (int)complex_descriptors [i];
-	}
-	if (complex_descriptors_next + nwords > complex_descriptors_size) {
-		int new_size = complex_descriptors_size * 2 + nwords;
-		complex_descriptors = g_realloc (complex_descriptors, new_size * sizeof (gsize));
-		complex_descriptors_size = new_size;
-	}
-	SGEN_LOG (6, "Complex descriptor %d, size: %d (total desc memory: %d)", res, nwords, complex_descriptors_size);
-	complex_descriptors_next += nwords;
-	complex_descriptors [res] = nwords;
+		/* Skip the bitmap words */
+		__index += (guint32)(first_word - 1);
+		__offset += (guint32)(first_word - 1);
+	} SGEN_ARRAY_LIST_END_FOREACH_SLOT;
+
+	res = sgen_array_list_alloc_block (&complex_descriptors, nwords);
+
+	SGEN_LOG (6, "Complex descriptor %d, size: %d (total desc memory: %d)", res, nwords, complex_descriptors.capacity);
+	descriptor = (gsize*)sgen_array_list_get_slot (&complex_descriptors, res);
+	descriptor [0] = nwords;
 	for (i = 0; i < nwords - 1; ++i) {
-		complex_descriptors [res + 1 + i] = bitmap [i];
-		SGEN_LOG (6, "\tvalue: %p", (void*)complex_descriptors [res + 1 + i]);
+		descriptor [1 + i] = bitmap [i];
+		SGEN_LOG (6, "\tvalue: %p", (void*)descriptor [1 + i]);
 	}
 	sgen_gc_unlock ();
 	return res;
@@ -112,7 +106,7 @@ alloc_complex_descriptor (gsize *bitmap, int numbits)
 gsize*
 sgen_get_complex_descriptor (SgenDescriptor desc)
 {
-	return complex_descriptors + (desc >> LOW_TYPE_BITS);
+	return (gsize*) sgen_array_list_get_slot (&complex_descriptors, desc >> LOW_TYPE_BITS);
 }
 
 /*
@@ -123,10 +117,7 @@ mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
 {
 	int first_set = -1, num_set = 0, last_set = -1, i;
 	SgenDescriptor desc = 0;
-	size_t stored_size = obj_size;
-
-	stored_size += SGEN_ALLOC_ALIGN - 1;
-	stored_size &= ~(SGEN_ALLOC_ALIGN - 1);
+	size_t stored_size = SGEN_ALIGN_UP (obj_size);
 
 	for (i = 0; i < numbits; ++i) {
 		if (bitmap [i / GC_BITS_PER_WORD] & ((gsize)1 << (i % GC_BITS_PER_WORD))) {
@@ -200,7 +191,7 @@ mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_
 		}
 		/* Note: we also handle structs with just ref fields */
 		if (num_set * sizeof (gpointer) == elem_size) {
-			return desc | VECTOR_SUBTYPE_REFS | ((gssize)(-1) << 16);
+			return desc | VECTOR_SUBTYPE_REFS | ((gsize)(-1) << 16);
 		}
 		/* FIXME: try run-len first */
 		/* Note: we can't skip the object header here, because it's not present */
@@ -270,6 +261,9 @@ mono_gc_get_bitmap_for_descr (SgenDescriptor descr, int *numbits)
 	}
 }
 
+/**
+ * mono_gc_make_descr_from_bitmap:
+ */
 SgenDescriptor
 mono_gc_make_descr_from_bitmap (gsize *bitmap, int numbits)
 {
@@ -284,6 +278,12 @@ mono_gc_make_descr_from_bitmap (gsize *bitmap, int numbits)
 }
 
 SgenDescriptor
+mono_gc_make_vector_descr (void)
+{
+	return MAKE_ROOT_DESC (ROOT_DESC_VECTOR, 0);
+}
+
+SgenDescriptor
 mono_gc_make_root_descr_all_refs (int numbits)
 {
 	gsize *gc_bitmap;
@@ -293,7 +293,7 @@ mono_gc_make_root_descr_all_refs (int numbits)
 	if (numbits < 32 && all_ref_root_descrs [numbits])
 		return all_ref_root_descrs [numbits];
 
-	gc_bitmap = g_malloc0 (ALIGN_TO (ALIGN_TO (numbits, 8) + 1, sizeof (gsize)));
+	gc_bitmap = (gsize *)g_malloc0 (ALIGN_TO (ALIGN_TO (numbits, 8) + 1, sizeof (gsize)));
 	memset (gc_bitmap, 0xff, num_bytes);
 	if (numbits < ((sizeof (*gc_bitmap) * 8) - ROOT_DESC_TYPE_SHIFT)) 
 		gc_bitmap[0] = GUINT64_TO_LE(gc_bitmap[0]);
@@ -325,7 +325,7 @@ sgen_make_user_root_descriptor (SgenUserRootMarkFunc marker)
 void*
 sgen_get_complex_descriptor_bitmap (SgenDescriptor desc)
 {
-	return complex_descriptors + (desc >> ROOT_DESC_TYPE_SHIFT);
+	return (void*) sgen_array_list_get_slot (&complex_descriptors, desc >> ROOT_DESC_TYPE_SHIFT);
 }
 
 SgenUserRootMarkFunc

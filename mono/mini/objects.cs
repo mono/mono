@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Reflection;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
@@ -639,6 +640,7 @@ class Tests {
 	public static int test_0_vector_array_cast () {
 		Array arr1 = Array.CreateInstance (typeof (int), new int[] {1}, new int[] {0});
 		Array arr2 = Array.CreateInstance (typeof (int), new int[] {1}, new int[] {10});
+		Array arr5 = Array.CreateInstance (typeof (string), new int[] {1}, new int[] {10});
 
 		if (arr1.GetType () != typeof (int[]))
 			return 1;
@@ -659,6 +661,9 @@ class Tests {
 
 		if (arr2 is int[])
 			return 4;
+		var as_object_arr = arr5 as object [];
+		if (as_object_arr != null)
+			return 5;
 
 		int [,] [] arr3 = new int [1, 1] [];
 		object o = arr3;
@@ -783,6 +788,11 @@ class Tests {
 		}
 		if (!ok)
 			return 12;
+
+		object arr = new int [10];
+		if (arr is IList<int?>)
+			return 13;
+
 		return 0;
 	}
 
@@ -872,6 +882,49 @@ class Tests {
 		if (v != 5)
 			return 0;
 		return 2;
+	}
+
+	class InstanceDelegateTest {
+		public int a;
+
+		public int return_field () {
+			return a;
+		}
+	}
+
+	public static int test_2_instance_delegate_with_field () {
+		InstanceDelegateTest t = new InstanceDelegateTest () { a = 1337 };
+		GetIntDel del = new GetIntDel (t.return_field);
+		int v = del ();
+		if (v != 1337)
+			return 0;
+		return 2;
+	}
+
+	interface IFaceVirtualDel {
+		int return_field ();
+	}
+
+	struct VtypeVirtualDelStruct : IFaceVirtualDel {
+		public int f;
+		public int return_field_nonvirt () {
+			return f;
+		}
+		public int return_field () {
+			return f;
+		}
+	}
+
+	public static int test_42_vtype_delegate () {
+		var s = new VtypeVirtualDelStruct () { f = 42 };
+		Func<int> f = s.return_field_nonvirt;
+		return f ();
+	}
+
+	public static int test_42_vtype_virtual_delegate () {
+		IFaceVirtualDel s = new VtypeVirtualDelStruct () { f = 42 };
+		Func<int> f = s.return_field;
+		return f ();
 	}
 
 	public static int test_1_store_decimal () {
@@ -985,6 +1038,19 @@ class Tests {
 		if (!(b <= System.Byte.MaxValue))
 			return 3;
 		
+		return 0;
+	}
+
+	static Nullable<bool> s_nullb;
+	static AStruct s_struct1;
+
+	/* test if VES uses correct sizes for value type write to static field */
+	public static int test_0_static_nullable_bool () {
+		s_struct1 = new AStruct (0x1337dead);
+		s_nullb = true;
+		/* make sure that the write to s_nullb didn't smash the value after it */
+		if (s_struct1.i != 0x1337dead)
+			return 2;
 		return 0;
 	}
 
@@ -1302,6 +1368,7 @@ ncells ) {
 		return 1.4e-45f;
 	}
 
+	[Category ("!BITCODE")] // bug #59953
 	public static int test_0_float_return_spill () {
 		// The return value of return_float () is spilled because of the
 		// boxing call
@@ -1686,6 +1753,160 @@ ncells ) {
 		}
 		return 0;
 	}
+
+	struct Struct16 {
+		public int a, b, c, d;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static int pass_struct16 (object o0, object o2, object o3, object o4, object o5, object o6, object o7, Struct16 o8) {
+		// This disables LLVM
+		try {
+		} catch {
+		}
+		return o8.a;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static int pass_struct16 (object o0, object o2, object o3, object o6, object o7, Struct16 o8) {
+		return pass_struct16 (o0, o2, null, o3, null, o6, o7, o8);
+	}
+
+	public static int test_42_pass_16byte_struct_split () {
+		return pass_struct16 (null, null, null, null, null, new Struct16 () { a = 42 });
+	}
+
+	public interface IComparer2
+	{
+		Type foo<T> ();
+	}
+
+	public class AClass : IComparer2 {
+		public Type foo<T> () {
+			return typeof(T);
+		}
+	}
+
+	public static int test_0_delegate_to_virtual_generic_on_ifaces () {
+		IComparer2 c = new AClass ();
+
+		Func<Type> f = c.foo<string>;
+		return f () == typeof(string) ? 0 : 1;
+	}
+
+	public enum ByteEnum2 : byte {
+		High = 142
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int enum_arg_zero_extend (ByteEnum2 b) {
+		return (int)b;
+	}
+
+	public static int test_142_byte_enum_arg_zero_extend () {
+		return enum_arg_zero_extend (ByteEnum2.High);
+	}
+
+	enum Mine { One, Two }
+
+	public static int test_0_enum_gethashcode_opt () {
+		int sum = 0;
+        for (int i = 0; i < 1000000; ++i)
+			sum += Mine.Two.GetHashCode();
+
+        return 0;
+    }
+
+	public static int test_0_typedref () {
+		int i = 5;
+		System.TypedReference r = __makeref(i);
+		System.Type t = __reftype(r);
+
+		if (t != typeof (int))
+			return 1;
+		int j = __refvalue(r, int);
+		if (j != 5)
+			return 2;
+
+		try {
+			object o = __refvalue (r, object);
+		} catch (InvalidCastException) {
+		}
+
+		return 0;
+	}
+
+	enum FooEnum { Bar }
+	//https://github.com/mono/mono/issues/6666
+	public static int test_0_bad_unbox_nullable_of_enum () {
+		try {
+			var enumValue = FooEnum.Bar;
+			object value = (int)enumValue;
+			var res = (FooEnum?)value; // Should throw
+		} catch (InvalidCastException) {
+			return 0;
+		}
+		return 1;
+	}
+
+	//https://github.com/mono/mono/issues/6666
+	public static int test_0_unbox_nullable_of_enum () {
+		try {
+			var enumValue = FooEnum.Bar;
+			object value = (object)enumValue;
+			var res = (FooEnum?)value; // Should not throw
+		} catch (InvalidCastException) {
+			return 1;
+		}
+		return 0;
+	}
+
+	static void decode (out sbyte v) {
+		byte tmp = 134;
+		v = (sbyte)tmp;
+	}
+
+	// gh #6414
+	public static int test_0_alias_analysis_sign_extend () {
+	  sbyte t;
+	  decode (out t);
+
+	  return t == -122 ? 0 : 1;
+	}
+
+	public interface IFoo
+	{
+	  int MyInt { get; }
+	}
+
+	public class IFooImpl : IFoo
+	{
+	  public int MyInt => 0;
+	}
+
+	//gh 6266
+    public static int test_0_store_to_magic_iface_array ()
+    {
+      ICollection<IFoo> arr1 = new IFooImpl[1] { new IFooImpl() };
+      ICollection<IFoo> arr2 = new IFooImpl[1] { new IFooImpl() };
+
+      ICollection<IFoo>[] a2d = new ICollection<IFoo>[2] {
+        arr1,
+        arr2,
+      };
+
+	  return 0;
+    }
+
+	static volatile bool abool;
+
+	public static unsafe int test_0_stind_r4_float32_stack_merge () {
+		Single* dataPtr = stackalloc Single[4];
+		abool = true;
+		dataPtr[0] = abool ? 1.0f : 2.0f;
+		return dataPtr [0] == 1.0f ? 0 : 1;
+	}
+
 }
 
 #if __MOBILE__

@@ -30,18 +30,6 @@ using System.Collections.Specialized;
 using System.Globalization;
 
 namespace System.Net.NetworkInformation {
-	public abstract class UdpStatistics {
-		protected UdpStatistics ()
-		{
-		}
-
-		public abstract long DatagramsReceived { get; }
-		public abstract long DatagramsSent { get; }
-		public abstract long IncomingDatagramsDiscarded { get; }
-		public abstract long IncomingDatagramsWithErrors { get; }
-		public abstract int UdpListeners { get; }
-	}
-
 	class MibUdpStatistics : UdpStatistics
 	{
 		StringDictionary dic;
@@ -73,7 +61,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-#if !MOBILE
+#if WIN_PLATFORM
 	class Win32UdpStatistics : UdpStatistics
 	{
 		Win32_MIB_UDPSTATS info;

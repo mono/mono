@@ -104,10 +104,10 @@ public class Program
 		if (Test_5 () != 0)
 			return 5;
 
-		if (Test_6 () != 0)
+		if (Test_6 () != 1)
 			return 6;
 
-		if (Test_7 (false) != 0)
+		if (Test_7 (false) != 1)
 			return 7;
 
 		if (Test_8 (typeof (bool)) != 0)

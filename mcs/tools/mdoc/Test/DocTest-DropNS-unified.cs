@@ -4,6 +4,8 @@ namespace MyNamespace {
 		public float Hello(int value) {
 			return 0.0f;
 		}
+		public char OnlyInUnified {get;set;} 
+		
 		#if DELETETEST
 		public string InBoth {get;set;}
 		public string InBothUnified {get;set;}
@@ -20,6 +22,9 @@ namespace MyNamespace {
 		#endif
 	}
 
+	public static class MyClassExtensions {
+		public static bool AnExtension (this MyClass value) { return false; }
+	}
 	#if DELETETEST
 	public struct nint {
 

@@ -1,13 +1,54 @@
+/*
+ * sgen-grep-binprot.c: Platform specific binary protocol entries reader
+ *
+ * Copyright (C) 2016 Xamarin Inc
+ *
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <glib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <config.h>
+#include "sgen-entry-stream.h"
+#include "sgen-grep-binprot.h"
 
-#define SGEN_BINARY_PROTOCOL
-#define MONO_INTERNAL
+static int file_version = 0;
 
+#ifdef BINPROT_HAS_HEADER
+#define PACKED_SUFFIX	p
+#else
+#define PROTOCOL_STRUCT_ATTR
+#define PACKED_SUFFIX
+#endif
+
+#ifndef BINPROT_SIZEOF_VOID_P
+#define BINPROT_SIZEOF_VOID_P SIZEOF_VOID_P
+#define ARCH_SUFFIX
+#endif
+
+#if BINPROT_SIZEOF_VOID_P == 4
+typedef int32_t mword;
+#define MWORD_FORMAT_SPEC_D PRId32
+#define MWORD_FORMAT_SPEC_P PRIx32
+#ifndef ARCH_SUFFIX
+#define ARCH_SUFFIX	32
+#endif
+#else
+typedef int64_t mword;
+#define MWORD_FORMAT_SPEC_D PRId64
+#define MWORD_FORMAT_SPEC_P PRIx64
+#ifndef ARCH_SUFFIX
+#define ARCH_SUFFIX	64
+#endif
+#endif
+#define TYPE_SIZE	mword
+#define TYPE_POINTER	mword
 #include <mono/sgen/sgen-protocol.h>
 
 #define SGEN_PROTOCOL_EOF	255
@@ -16,68 +57,25 @@
 #define WORKER(t)	((t) & 0x80)
 
 #define MAX_ENTRY_SIZE (1 << 10)
-#define BUFFER_SIZE (1 << 20)
-
-typedef struct {
-	int file;
-	char *buffer;
-	const char *end;
-	const char *pos;
-} EntryStream;
-
-static void
-init_stream (EntryStream *stream, int file)
-{
-	stream->file = file;
-	stream->buffer = g_malloc0 (BUFFER_SIZE);
-	stream->end = stream->buffer + BUFFER_SIZE;
-	stream->pos = stream->end;
-}
-
-static void
-close_stream (EntryStream *stream)
-{
-	g_free (stream->buffer);
-}
-
-static gboolean
-refill_stream (EntryStream *in, size_t size)
-{
-	size_t remainder = in->end - in->pos;
-	ssize_t refilled;
-	g_assert (size > 0);
-	g_assert (in->pos >= in->buffer);
-	if (in->pos + size <= in->end)
-		return TRUE;
-	memmove (in->buffer, in->pos, remainder);
-	in->pos = in->buffer;
-	refilled = read (in->file, in->buffer + remainder, BUFFER_SIZE - remainder);
-	if (refilled < 0)
-		return FALSE;
-	g_assert (refilled + remainder <= BUFFER_SIZE);
-	in->end = in->buffer + refilled + remainder;
-	return in->end - in->buffer >= size;
-}
-
-static ssize_t
-read_stream (EntryStream *stream, void *out, size_t size)
-{
-	if (refill_stream (stream, size)) {
-		memcpy (out, stream->pos, size);
-		stream->pos += size;
-		return size;
-	}
-	return 0;
-}
 
 static int
-read_entry (EntryStream *stream, void *data)
+read_entry (EntryStream *stream, void *data, unsigned char *windex)
 {
 	unsigned char type;
 	ssize_t size;
 
 	if (read_stream (stream, &type, 1) <= 0)
 		return SGEN_PROTOCOL_EOF;
+
+	if (windex) {
+		if (file_version >= 2) {
+			if (read_stream (stream, windex, 1) <= 0)
+				return SGEN_PROTOCOL_EOF;
+		} else {
+			*windex = !!(WORKER (type));
+		}
+	}
+
 	switch (TYPE (type)) {
 
 #define BEGIN_PROTOCOL_ENTRY0(method) \
@@ -186,8 +184,6 @@ is_always_match (int type)
 	}
 }
 
-#define WORKER_PREFIX(t)	(WORKER ((t)) ? "w" : " ")
-
 enum { NO_COLOR = -1 };
 
 typedef struct {
@@ -224,10 +220,10 @@ print_entry_content (int entries_size, PrintEntry *entries, gboolean color_outpu
 			printf ("%lld", *(long long*) entries [i].data);
 			break;
 		case TYPE_SIZE:
-			printf ("%lu", *(size_t*) entries [i].data);
+			printf ("%"MWORD_FORMAT_SPEC_D, *(mword*) entries [i].data);
 			break;
 		case TYPE_POINTER:
-			printf ("%p", *(gpointer*) entries [i].data);
+			printf ("0x%"MWORD_FORMAT_SPEC_P, *(mword*) entries [i].data);
 			break;
 		case TYPE_BOOL:
 			printf ("%s", *(gboolean*) entries [i].data ? "true" : "false");
@@ -252,10 +248,13 @@ index_color (int index, int num_nums, int *match_indices)
 }
 
 static void
-print_entry (int type, void *data, int num_nums, int *match_indices, gboolean color_output)
+print_entry (int type, void *data, int num_nums, int *match_indices, gboolean color_output, unsigned char worker_index)
 {
 	const char *always_prefix = is_always_match (type) ? "  " : "";
-	printf ("%s%s ", WORKER_PREFIX (type), always_prefix);
+	if (worker_index)
+		printf ("w%-2d%s ", worker_index, always_prefix);
+	else
+		printf ("   %s ", always_prefix);
 
 	switch (TYPE (type)) {
 
@@ -431,13 +430,13 @@ print_entry (int type, void *data, int num_nums, int *match_indices, gboolean co
 
 #define TYPE_INT int
 #define TYPE_LONGLONG long long
-#define TYPE_SIZE size_t
-#define TYPE_POINTER gpointer
+#define TYPE_SIZE mword
+#define TYPE_POINTER mword
 
 static gboolean
-matches_interval (gpointer ptr, gpointer start, int size)
+matches_interval (mword ptr, mword start, int size)
 {
-	return ptr >= start && (char*)ptr < (char*)start + size;
+	return ptr >= start && ptr < start + size;
 }
 
 /* Returns the index of the field where a match was found,
@@ -445,7 +444,7 @@ matches_interval (gpointer ptr, gpointer start, int size)
  * BINARY_PROTOCOL_MATCH for a match with no index.
  */
 static int
-match_index (gpointer ptr, int type, void *data)
+match_index (mword ptr, int type, void *data)
 {
 	switch (TYPE (type)) {
 
@@ -508,7 +507,7 @@ match_index (gpointer ptr, int type, void *data)
 }
 
 static gboolean
-is_vtable_match (gpointer ptr, int type, void *data)
+is_vtable_match (mword ptr, int type, void *data)
 {
 	switch (TYPE (type)) {
 
@@ -575,85 +574,60 @@ is_vtable_match (gpointer ptr, int type, void *data)
 #undef TYPE_SIZE
 #undef TYPE_POINTER
 
-int
-main (int argc, char *argv[])
+static gboolean
+sgen_binary_protocol_read_header (EntryStream *stream)
+{
+#ifdef BINPROT_HAS_HEADER
+	char data [MAX_ENTRY_SIZE];
+	int type = read_entry (stream, data, NULL);
+	if (type == SGEN_PROTOCOL_EOF)
+		return FALSE;
+	if (type == PROTOCOL_ID (binary_protocol_header)) {
+		PROTOCOL_STRUCT (binary_protocol_header) * str = (PROTOCOL_STRUCT (binary_protocol_header) *) data;
+		if (str->check == PROTOCOL_HEADER_CHECK && str->ptr_size == BINPROT_SIZEOF_VOID_P) {
+			if (str->version > PROTOCOL_HEADER_VERSION) {
+				fprintf (stderr, "The file contains a newer version %d. We support up to %d. Please update.\n", str->version, PROTOCOL_HEADER_VERSION);
+				exit (1);
+			}
+			file_version = str->version;
+			return TRUE;
+		}
+	}
+	return FALSE;
+#else
+	/*
+	 * This implementation doesn't account for the presence of a header,
+	 * reading all the entries with the default configuration of the host
+	 * machine. It has to be used only after all other implementations
+	 * fail to identify a header, for backward compatibility.
+	 */
+	return TRUE;
+#endif
+}
+
+#define CONC(A, B) CONC_(A, B)
+#define CONC_(A, B) A##B
+#define GREP_ENTRIES_FUNCTION_NAME CONC(sgen_binary_protocol_grep_entries, CONC(ARCH_SUFFIX,PACKED_SUFFIX))
+
+gboolean
+GREP_ENTRIES_FUNCTION_NAME (EntryStream *stream, int num_nums, long nums [], int num_vtables, long vtables [],
+			gboolean dump_all, gboolean pause_times, gboolean color_output, unsigned long long first_entry_to_consider)
 {
 	int type;
+	unsigned char worker_index;
 	void *data = g_malloc0 (MAX_ENTRY_SIZE);
-	int num_args = argc - 1;
-	int num_nums = 0;
-	int num_vtables = 0;
 	int i;
-	long nums [num_args];
-	long vtables [num_args];
-	gboolean dump_all = FALSE;
-	gboolean pause_times = FALSE;
 	gboolean pause_times_stopped = FALSE;
 	gboolean pause_times_concurrent = FALSE;
 	gboolean pause_times_finish = FALSE;
-	gboolean color_output = FALSE;
 	long long pause_times_ts = 0;
-	const char *input_path = NULL;
-	int input_file;
-	EntryStream stream;
 	unsigned long long entry_index;
-	unsigned long long first_entry_to_consider = 0;
 
-	for (i = 0; i < num_args; ++i) {
-		char *arg = argv [i + 1];
-		char *next_arg = argv [i + 2];
-		if (!strcmp (arg, "--all")) {
-			dump_all = TRUE;
-		} else if (!strcmp (arg, "--pause-times")) {
-			pause_times = TRUE;
-		} else if (!strcmp (arg, "-v") || !strcmp (arg, "--vtable")) {
-			vtables [num_vtables++] = strtoul (next_arg, NULL, 16);
-			++i;
-		} else if (!strcmp (arg, "-s") || !strcmp (arg, "--start-at")) {
-			first_entry_to_consider = strtoull (next_arg, NULL, 10);
-			++i;
-		} else if (!strcmp (arg, "-c") || !strcmp (arg, "--color")) {
-			color_output = TRUE;
-		} else if (!strcmp (arg, "-i") || !strcmp (arg, "--input")) {
-			input_path = next_arg;
-			++i;
-		} else if (!strcmp (arg, "--help")) {
-			printf (
-				"\n"
-				"Usage:\n"
-				"\n"
-				"\tsgen-grep-binprot [options] [pointer...]\n"
-				"\n"
-				"Examples:\n"
-				"\n"
-				"\tsgen-grep-binprot --all </tmp/binprot\n"
-				"\tsgen-grep-binprot --input /tmp/binprot --color 0xdeadbeef\n"
-				"\n"
-				"Options:\n"
-				"\n"
-				"\t--all                    Print all entries.\n"
-				"\t--color, -c              Highlight matches in color.\n"
-				"\t--help                   You're looking at it.\n"
-				"\t--input FILE, -i FILE    Read input from FILE instead of standard input.\n"
-				"\t--pause-times            Print GC pause times.\n"
-				"\t--start-at N, -s N       Begin filtering at the Nth entry.\n"
-				"\t--vtable PTR, -v PTR     Search for vtable pointer PTR.\n"
-				"\n");
-			return 0;
-		} else {
-			nums [num_nums++] = strtoul (arg, NULL, 16);
-		}
-	}
+	if (!sgen_binary_protocol_read_header (stream))
+		return FALSE;
 
-	if (dump_all)
-		assert (!pause_times);
-	if (pause_times)
-		assert (!dump_all);
-
-	input_file = input_path ? open (input_path, O_RDONLY) : STDIN_FILENO;
-	init_stream (&stream, input_file);
 	entry_index = 0;
-	while ((type = read_entry (&stream, data)) != SGEN_PROTOCOL_EOF) {
+	while ((type = read_entry (stream, data, &worker_index)) != SGEN_PROTOCOL_EOF) {
 		if (entry_index < first_entry_to_consider)
 			goto next_entry;
 		if (pause_times) {
@@ -689,15 +663,15 @@ main (int argc, char *argv[])
 		} else {
 			int match_indices [num_nums + 1];
 			gboolean match = is_always_match (type);
-			match_indices [num_nums] = num_nums == 0 ? match_index (NULL, type, data) : BINARY_PROTOCOL_NO_MATCH;
+			match_indices [num_nums] = num_nums == 0 ? match_index (0, type, data) : BINARY_PROTOCOL_NO_MATCH;
 			match = match_indices [num_nums] != BINARY_PROTOCOL_NO_MATCH;
 			for (i = 0; i < num_nums; ++i) {
-				match_indices [i] = match_index ((gpointer) nums [i], type, data);
+				match_indices [i] = match_index ((mword) nums [i], type, data);
 				match = match || match_indices [i] != BINARY_PROTOCOL_NO_MATCH;
 			}
 			if (!match) {
 				for (i = 0; i < num_vtables; ++i) {
-					if (is_vtable_match ((gpointer) vtables [i], type, data)) {
+					if (is_vtable_match ((mword) vtables [i], type, data)) {
 						match = TRUE;
 						break;
 					}
@@ -708,15 +682,11 @@ main (int argc, char *argv[])
 			if (dump_all)
 				printf (match ? "* " : "  ");
 			if (match || dump_all)
-				print_entry (type, data, num_nums, match_indices, color_output);
+				print_entry (type, data, num_nums, match_indices, color_output, worker_index);
 		}
 	next_entry:
 		++entry_index;
 	}
-	close_stream (&stream);
-	if (input_path)
-		close (input_file);
 	g_free (data);
-
-	return 0;
+	return TRUE;
 }

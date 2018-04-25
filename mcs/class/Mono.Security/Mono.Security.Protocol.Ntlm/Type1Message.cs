@@ -39,12 +39,7 @@ using System.Text;
 
 namespace Mono.Security.Protocol.Ntlm {
 
-#if INSIDE_SYSTEM
-	internal
-#else
-	public
-#endif
-	class Type1Message : MessageBase {
+	public class Type1Message : MessageBase {
 
 		private string _host;
 		private string _domain;

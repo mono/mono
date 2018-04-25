@@ -197,6 +197,19 @@ namespace MonoTests.Microsoft.Build.Tasks
 			return 0;
 		}
 
+		public int CheckFullLog (string text)
+		{
+			for (int i = 0; i < all_messages.Count; i ++) {
+				BuildEventArgs arg = all_messages [i];
+				if (text == arg.Message) {
+					all_messages.RemoveAt (i);
+					return 0;
+				}
+			}
+
+			return 1;
+		}
+
 		public void DumpMessages ()
 		{
 			foreach (BuildEventArgs arg in all_messages)

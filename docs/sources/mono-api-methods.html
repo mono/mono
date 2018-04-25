@@ -1,5 +1,159 @@
-<h3>Methods</h3>
+<h2>Methods</h2>
 
+	<p>Methods are represented by the <code>MonoMethod*</code>
+	instances.  Various APIs surface these instances, but usually
+	you will use the <a href="#method-desc">method description</a>
+	API to get a handle to a Mono Method.   You can <a href="method-invoking">invoke</a> those methods from C,
+	or you can probe <a href="method-working">probe various properties</a> of a method, and in particular
+	its <a href="method-signature">method signature</a> or get
+	some <a href="method-header">low-level information</a> about them.
+
+	<p>The following code snippet from the Mono runtime shows you
+	how to create a managed <code>System.Version</code> instance
+	with four integers by looking up the constructor in the
+	managed implementation of System.Version, creating an instance
+	of the object, and then invoking the constructor on it.
+
+	<div class="mapi-header">
+MonoObject*
+create_version (MonoDomain *domain, guint32 major, guint32 minor, guint32 build, guint32 revision)
+{
+    MonoClass *System_Version;
+    MonoMethod *create_version;
+    MonoError error;
+    MonoObject *result;
+    gpointer args [4];
+
+    System_Version = mono_class_from_name (mono_defaults.corlib, "System", "Version");
+
+    // Create a method description that we use to search for the
+    // constructor method
+    MonoMethodDesc *desc = mono_method_desc_new (":.ctor(int,int,int,int)", FALSE);
+    create_version = mono_method_desc_search_in_class (desc, System_Version);
+    mono_method_desc_free (desc);
+
+    // Setup the parameters to pass.
+    args [0] = &major;
+    args [1] = &minor;
+    args [2] = &build;
+    args [3] = &revision;
+
+    // Create the object instance
+    result = mono_object_new_checked (domain, System_Version, &error);
+
+    // Raise an exception in case of an error
+    mono_error_raise_exception (&error);
+
+    // Otherwise, invoke the constructor
+    mono_runtime_invoke (create_version, result, args, NULL);
+
+    // Return ther esult
+    return result;
+}
+
+	</div>
+	
+<a name="method-desc"></a>
+<h3>Method Descriptions</h3>
+
+	<p>Methods are represented by the <code>MonoMethod*</code>
+	instances.  To simplify the process of getting
+	a <code>MonoMethod*</code>, you use Method Descriptors, which
+	are C-strings that describe the method that you are looking
+	for, and then you perform a search in either
+	a <a href="mono-api-type.html">type</a>, or a
+	loaded <a href="mono-api-image.html">image</a>.
+
+	
+	<p>To describe a method, you use the Method Description API.
+	Method descriptions are used to locate a method in the
+	executing program.   They can either be fully specified, that
+	is, they would include the namespace, class, method name and
+	all of its arguments or they omit the namespace and arguments
+	and even use wildcard matches for the class name and method names.
+
+	<p>You use the fully specified version to identify a
+	particular method, or you can use the partial version to find
+	a method or a family of methods in the code.   
+
+	<p>Method descriptions are typically created from a C string
+	representation, and take the following form:
+
+	<p><code>[namespace.]classname:methodname[(args...)]</code>
+
+	<p>Both classname and methodname can contain the '*' character
+	which can be used to match anything.  Arguments are separated
+	by commas.
+
+	<p>You can use the type shortcuts to match the fully qualified
+	parameter types.  The supported type shortcuts are:
+        <code>char</code>,
+        <code>bool</code>,
+        <code>byte</code>,
+        <code>sbyte</code>,
+        <code>uint16</code>,
+        <code>int16</code>,
+        <code>uint</code>,
+        <code>int</code>,
+        <code>ulong</code>,
+        <code>long</code>,
+        <code>uintptr</code>,
+        <code>intptr</code>,
+        <code>single</code>,
+        <code>double</code>,
+        <code>string</code> and 
+        <code>object</code>.
+
+	<p>The type parameters can use the "&" and "*" type modifiers.
+	
+	<p>Examples of method descriptions:
+	<ul>
+		<li>"Monitor:Exit": matches classes and methods called "Monitor.Exit"
+		<li>"Monitor:enter_with_atomic_var(object,bool&)":
+		matches a method in the class Monitor with two
+		specific type parameters.
+		<li>":.ctor(int,int,int,int)": matches constructors
+		that take four integers.
+		<li>"System.Globalization.CultureInfo:CreateCulture(string,bool)":
+		matches the CreateCultureMethod that takes a string
+		and a boolean on the System.Globalization.CultureInfo class.
+	</ul>
+
+	<p>You can
+	then <a href="api:mono_method_desc_search_in_image">search for
+	methods in MonoImages</a>
+	or <a href="api:mono_method_desc_search_in_class">search for
+	methods in classes</a>. 
+
+<h4><a name="api:mono_method_desc_new">mono_method_desc_new</a></h4>
+<h4><a name="api:mono_method_desc_free">mono_method_desc_free</a></h4>
+<h4><a name="api:mono_method_desc_from_method">mono_method_desc_from_method</a></h4>
+<h4><a name="api:mono_method_desc_full_match">mono_method_desc_full_match</a></h4>
+<h4><a name="api:mono_method_desc_match">mono_method_desc_match</a></h4>
+<h4><a name="api:mono_method_desc_search_in_class">mono_method_desc_search_in_class</a></h4>
+<h4><a name="api:mono_method_desc_search_in_image">mono_method_desc_search_in_image</a></h4>
+
+<a name="method-working"></a>
+<h3>Working with Methods</h3>
+
+<h4><a name="api:mono_method_full_name">mono_method_full_name</a></h4>
+<h4><a name="api:mono_method_get_class">mono_method_get_class</a></h4>
+<h4><a name="api:mono_method_get_flags">mono_method_get_flags</a></h4>
+<h4><a name="api:mono_method_get_last_managed">mono_method_get_last_managed</a></h4>
+<h4><a name="api:mono_method_get_marshal_info">mono_method_get_marshal_info</a></h4>
+<h4><a name="api:mono_method_get_name">mono_method_get_name</a></h4>
+<h4><a name="api:mono_method_get_object">mono_method_get_object</a></h4>
+<h4><a name="api:mono_method_get_param_names">mono_method_get_param_names</a></h4>
+<h4><a name="api:mono_method_get_param_token">mono_method_get_param_token</a></h4>
+<h4><a name="api:mono_method_get_signature">mono_method_get_signature</a></h4>
+<h4><a name="api:mono_method_get_index">mono_method_get_index</a></h4> 
+<h4><a name="api:mono_method_get_signature_full">mono_method_get_signature_full</a></h4> 
+<h4><a name="api:mono_method_get_token">mono_method_get_token</a></h4>
+<h4><a name="api:mono_method_get_unmanaged_thunk">mono_method_get_unmanaged_thunk</a></h4>
+<h4><a name="api:mono_method_has_marshal_info">mono_method_has_marshal_info</a></h4>
+<h4><a name="api:mono_method_verify">mono_method_verify</a></h4>
+
+<a name="method-invoking"></a>
 <h3>Invoking Methods</h3>
 
 <h4><a name="api:mono_runtime_invoke">mono_runtime_invoke</a></h4>
@@ -8,7 +162,7 @@ If you want to invoke generic methods, you must call the method on the
 "inflated" class, which you can obtain from the
 <tt>mono_object_get_class()</tt>
 
-<div class="code">
+<div class="mapi-code">
 MonoClass *clazz;
 MonoMethod *method;
 
@@ -29,29 +183,8 @@ mono_runtime_invoke (method, obj, args, &amp;exception);
 <h4><a name="api:mono_runtime_delegate_invoke">mono_runtime_delegate_invoke</a></h4>
 
 <h4><a name="api:mono_method_body_get_object">mono_method_body_get_object</a></h4>
-<h4><a name="api:mono_method_desc_free">mono_method_desc_free</a></h4>
-<h4><a name="api:mono_method_desc_from_method">mono_method_desc_from_method</a></h4>
-<h4><a name="api:mono_method_desc_full_match">mono_method_desc_full_match</a></h4>
-<h4><a name="api:mono_method_desc_match">mono_method_desc_match</a></h4>
-<h4><a name="api:mono_method_desc_new">mono_method_desc_new</a></h4>
-<h4><a name="api:mono_method_desc_search_in_class">mono_method_desc_search_in_class</a></h4>
-<h4><a name="api:mono_method_desc_search_in_image">mono_method_desc_search_in_image</a></h4>
-<h4><a name="api:mono_method_full_name">mono_method_full_name</a></h4>
-<h4><a name="api:mono_method_get_class">mono_method_get_class</a></h4>
-<h4><a name="api:mono_method_get_flags">mono_method_get_flags</a></h4>
-<h4><a name="api:mono_method_get_last_managed">mono_method_get_last_managed</a></h4>
-<h4><a name="api:mono_method_get_marshal_info">mono_method_get_marshal_info</a></h4>
-<h4><a name="api:mono_method_get_name">mono_method_get_name</a></h4>
-<h4><a name="api:mono_method_get_object">mono_method_get_object</a></h4>
-<h4><a name="api:mono_method_get_param_names">mono_method_get_param_names</a></h4>
-<h4><a name="api:mono_method_get_param_token">mono_method_get_param_token</a></h4>
-<h4><a name="api:mono_method_get_signature">mono_method_get_signature</a></h4>
-<h4><a name="api:mono_method_get_index">mono_method_get_index</a></h4> 
-<h4><a name="api:mono_method_get_signature_full">mono_method_get_signature_full</a></h4> 
-<h4><a name="api:mono_method_get_token">mono_method_get_token</a></h4>
-<h4><a name="api:mono_method_has_marshal_info">mono_method_has_marshal_info</a></h4>
-<h4><a name="api:mono_method_verify">mono_method_verify</a></h4>
 
+<a name="method-signature"></a>
 <h3>Method Signatures</h3>
 
 <h4><a name="api:mono_method_signature">mono_method_signature</a></h4>
@@ -63,11 +196,13 @@ mono_runtime_invoke (method, obj, args, &amp;exception);
 <h4><a name="api:mono_signature_get_return_type">mono_signature_get_return_type</a></h4>
 <h4><a name="api:mono_signature_hash">mono_signature_hash</a></h4>
 <h4><a name="api:mono_signature_is_instance">mono_signature_is_instance</a></h4>
+<h4><a name="api:mono_signature_param_is_out">mono_signature_param_is_out</a></h4>
 <h4><a name="api:mono_signature_vararg_start">mono_signature_vararg_start</a></h4>
 <h4><a name="api:mono_param_get_objects">mono_param_get_objects</a></h4>
 <h4><a name="api:mono_get_method_full">mono_get_method_full</a></h4>
 <h4><a name="api:mono_get_method">mono_get_method</a></h4>
 
+<a name="method-header"></a>
 <h3>Methods Header Operations</h3>
 
 <h4><a name="api:mono_method_get_header">mono_method_get_header</a></h4>

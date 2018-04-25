@@ -38,6 +38,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.Text;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace System.ServiceModel.Dispatcher
@@ -135,6 +136,11 @@ namespace System.ServiceModel.Dispatcher
 
 			protected override void OnWriteBodyContents (XmlDictionaryWriter writer)
 			{
+				if (writer.WriteState == WriteState.Element) {
+					writer.WriteXmlnsAttribute ("xsi", XmlSchema.InstanceNamespace);
+					writer.WriteXmlnsAttribute ("xsd", XmlSchema.Namespace);
+				}
+
 				serializer.Serialize (writer, body);
 			}
 		}

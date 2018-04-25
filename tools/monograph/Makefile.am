@@ -3,21 +3,18 @@ if HOST_WIN32
 export HOST_CC
 endif
 
+glib_libs = $(top_builddir)/mono/eglib/libeglib.la
+
 if DISABLE_EXECUTABLES
 runtime_lib=$(top_builddir)/mono/mini/$(LIBMONO_LA) $(static_libs)
 else
-if !SHARED_MONO
 static_libs=	\
-	$(top_builddir)/mono/metadata/libmonoruntime-static.la	\
-	$(top_builddir)/mono/io-layer/libwapi.la	\
+	$(top_builddir)/mono/metadata/libmonoruntimesgen.la	\
+	$(top_builddir)/mono/sgen/libmonosgen.la	\
 	$(top_builddir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV) \
-	$(LIBGC_STATIC_LIBS)
+	$(glib_libs)
 
-runtime_lib=$(top_builddir)/mono/mini/$(LIBMONO_LA) $(static_libs)
-else
-runtime_lib=$(top_builddir)/mono/mini/$(LIBMONO_LA)
-endif
+runtime_lib=$(static_libs)
 endif
 
 if DISABLE_EXECUTABLES
@@ -26,7 +23,7 @@ else
 if DISABLE_LIBRARIES
 bin_PROGRAMS =
 else
-if SUPPORT_BOEHM
+if SUPPORT_SGEN
 bin_PROGRAMS = monograph
 endif
 endif
@@ -38,13 +35,11 @@ AM_CPPFLAGS = 				\
 
 monograph_LDADD = \
 	$(runtime_lib)			\
-	$(GLIB_LIBS)			\
-	$(LLVM_LIBS)			\
-	$(LIBICONV)			\
-	-lm
+	$(glib_libs)			\
+	$(LLVM_LIBS)
 
-if PLATFORM_DARWIN
-monograph_LDFLAGS=-framework CoreFoundation
+if HOST_DARWIN
+monograph_LDFLAGS=-framework CoreFoundation -framework Foundation
 endif
 
 GRAPHS=System.Object System.Enum System.Attribute System.ValueType System.Reflection.MemberInfo
@@ -56,5 +51,4 @@ graphs: $(OUT)
 	./monograph -n -o $*.png corlib.dll $*
 	convert -geometry '480x360>' $*.png $*.jpeg
 
-EXTRA_DIST = ChangeLog
 

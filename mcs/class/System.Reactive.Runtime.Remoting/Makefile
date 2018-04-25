@@ -4,9 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = System.Reactive.Runtime.Remoting.dll
 LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq
-LIB_MCS_FLAGS = \
-		@more_build_args \
-		-r:System.Reactive.Linq.dll
+KEYFILE = ../reactive.pub
+LIB_MCS_FLAGS = -d:SIGNED -delaysign
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NO_TASK_DELAY
@@ -19,7 +18,7 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-EXTRA_DISTFILES = more_build_args
+EXTRA_DISTFILES =
 
 INSTALL_PROFILE := $(filter net_4_x, $(PROFILE))
 ifndef INSTALL_PROFILE

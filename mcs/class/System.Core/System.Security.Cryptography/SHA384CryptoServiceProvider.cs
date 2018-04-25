@@ -29,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !NET_2_1
-
 namespace System.Security.Cryptography {
 
 	// this is a wrapper around SHA384Managed
@@ -78,5 +76,3 @@ namespace System.Security.Cryptography {
 		}
 	}
 }
-
-#endif

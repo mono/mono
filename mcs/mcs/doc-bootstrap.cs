@@ -11,7 +11,7 @@
 //
 //
 
-#if BOOTSTRAP_WITH_OLDLIB || NET_2_1
+#if BOOTSTRAP_WITH_OLDLIB || MOBILE
 
 using XmlElement = System.Object;
 

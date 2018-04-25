@@ -30,6 +30,7 @@ namespace Mono.CSharp
 		protected T machine_initializer;
 		int resume_pc;
 		ExceptionStatement inside_try_block;
+		TryCatch inside_catch_block;
 
 		protected YieldStatement (Expression expr, Location l)
 		{
@@ -69,6 +70,7 @@ namespace Mono.CSharp
 
 			machine_initializer = bc.CurrentAnonymousMethod as T;
 			inside_try_block = bc.CurrentTryBlock;
+			inside_catch_block = bc.CurrentTryCatch;
 			return true;
 		}
 
@@ -80,7 +82,7 @@ namespace Mono.CSharp
 			if (inside_try_block == null) {
 				resume_pc = machine_initializer.AddResumePoint (this);
 			} else {
-				resume_pc = inside_try_block.AddResumePoint (this, resume_pc, machine_initializer);
+				resume_pc = inside_try_block.AddResumePoint (this, resume_pc, machine_initializer, inside_catch_block);
 				unwind_protect = true;
 				inside_try_block = null;
 			}
@@ -159,7 +161,6 @@ namespace Mono.CSharp
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
-			throw new NotSupportedException ();
 		}
 
 		protected override bool DoResolve (BlockContext bc)
@@ -202,7 +203,6 @@ namespace Mono.CSharp
 
 		Field pc_field;
 		StateMachineMethod method;
-		int local_name_idx;
 
 		protected StateMachine (ParametersBlock block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
 			: base (block, parent, host, tparams, name, kind)
@@ -244,12 +244,19 @@ namespace Mono.CSharp
 			return base.DoDefineMembers ();
 		}
 
-		protected override string GetVariableMangledName (LocalVariable local_info)
+		protected override string GetVariableMangledName (ResolveContext rc, LocalVariable local_info)
 		{
 			if (local_info.IsCompilerGenerated)
-				return base.GetVariableMangledName (local_info);
+				return base.GetVariableMangledName (rc, local_info);
 
-			return "<" + local_info.Name + ">__" + local_name_idx++.ToString ("X");
+			//
+			// Special format which encodes original variable name and
+			// it's scope to support lifted variables debugging. This
+			// is same what csc does and allows to correctly set fields
+			// scope information (like ambiguity, out of scope, etc).
+			//
+			var id = rc.CurrentBlock.Explicit.GetDebugSymbolScopeIndex ();
+			return "<" + local_info.Name + ">__" + id;
 		}
 	}
 
@@ -1059,6 +1066,7 @@ namespace Mono.CSharp
 
 			method.Block = new ToplevelBlock (method.Compiler, method.ParameterInfo, loc,
 				ToplevelBlock.Flags.CompilerGenerated | ToplevelBlock.Flags.NoFlowAnalysis);
+
 			method.Block.AddStatement (new TryFinallyBlockProxyStatement (this, block));
 
 			// Cannot it add to storey because it'd be emitted before nested
@@ -1179,11 +1187,15 @@ namespace Mono.CSharp
 				return;
 
 			if (!CheckType (ret, parent, out iterator_type, out is_enumerable)) {
-				parent.Compiler.Report.Error (1624, method.Location,
-					      "The body of `{0}' cannot be an iterator block " +
-					      "because `{1}' is not an iterator interface type",
-					      method.GetSignatureForError (),
-					      ret.GetSignatureForError ());
+				if (ret.Kind == MemberKind.ByRef) {
+					parent.Compiler.Report.Error (8154, method.Location,
+							  "The body of `{0}' cannot be an iterator block because the method returns by reference",
+							  method.GetSignatureForError ());
+				} else {
+					parent.Compiler.Report.Error (1624, method.Location,
+							  "The body of `{0}' cannot be an iterator block because `{1}' is not an iterator interface type",
+							  method.GetSignatureForError (), ret.GetSignatureForError ());
+				}
 				return;
 			}
 
@@ -1211,7 +1223,7 @@ namespace Mono.CSharp
 			}
 
 			if ((modifiers & Modifiers.UNSAFE) != 0) {
-				parent.Compiler.Report.Error (1629, method.Location, "Unsafe code may not appear in iterators");
+				Expression.UnsafeInsideIteratorError (parent.Compiler.Report, method.Location);
 			}
 
 			method.Block = method.Block.ConvertToIterator (method, parent, iterator_type, is_enumerable);

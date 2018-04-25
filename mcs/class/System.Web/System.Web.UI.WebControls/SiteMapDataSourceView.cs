@@ -42,13 +42,13 @@ namespace System.Web.UI.WebControls
 	{
 		SiteMapNodeCollection collection;
 		
-		public SiteMapDataSourceView (SiteMapDataSource owner, string viewName, SiteMapNode node)
-		: this (owner, viewName, new SiteMapNodeCollection (node))
+		public SiteMapDataSourceView (SiteMapDataSource owner, string name, SiteMapNode node)
+		: this (owner, name, new SiteMapNodeCollection (node))
 		{
 		}
 		
-		public SiteMapDataSourceView (SiteMapDataSource owner, string viewName, SiteMapNodeCollection collection)
-		: base (owner, viewName)
+		public SiteMapDataSourceView (SiteMapDataSource owner, string name, SiteMapNodeCollection collection)
+		: base (owner, name)
 		{
 			this.collection = collection;
 		}

@@ -73,7 +73,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			// Check server prf against client prf
 			if (!Compare (clientHash, serverHash))
 			{
-#warning Review that selected alert is correct
+// TODO: Review that selected alert is correct
 				throw new TlsException(AlertDescription.InsuficientSecurity, "Invalid ServerFinished message received.");
 			}
 		}

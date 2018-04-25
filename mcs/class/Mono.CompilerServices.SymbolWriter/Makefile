@@ -4,7 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = Mono.CompilerServices.SymbolWriter.dll
 LIB_REFS = System
-LIB_MCS_FLAGS = -lib:$(bare_libdir)
+KEYFILE = ../mono.pub
+LIB_MCS_FLAGS =
 
 NO_TEST = yes
 
@@ -17,10 +18,3 @@ LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
 include ../../build/library.make
-
-$(build_lib): $(bare_libdir)/System.dll
-
-$(bare_libdir)/System.dll:
-	(cd ../System; make $@)
-
-.NOTPARALLEL: $(bare_libdir)/System.dll

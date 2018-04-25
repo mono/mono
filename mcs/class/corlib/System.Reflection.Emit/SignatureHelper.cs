@@ -361,6 +361,8 @@ namespace System.Reflection.Emit {
 
 		public byte[] GetSignature ()
 		{
+			TypeBuilder.ResolveUserTypes (arguments);
+
 			switch (type) {
 			case SignatureHelperType.HELPER_LOCAL:
 				return get_signature_local ();

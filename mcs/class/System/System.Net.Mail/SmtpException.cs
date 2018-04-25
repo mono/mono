@@ -57,14 +57,14 @@ namespace System.Net.Mail {
 		{
 		}
 
-		protected SmtpException (SerializationInfo info, StreamingContext context)
-			: base (info, context)
+		protected SmtpException (SerializationInfo serializationInfo, StreamingContext streamingContext)
+			: base (serializationInfo, streamingContext)
 		{
 			try {
-				statusCode = (SmtpStatusCode) info.GetValue ("Status", typeof (int));
+				statusCode = (SmtpStatusCode) serializationInfo.GetValue ("Status", typeof (int));
 			} catch (SerializationException) {
 				//For compliance with previously serialized version:
-				statusCode = (SmtpStatusCode) info.GetValue ("statusCode", typeof (SmtpStatusCode));
+				statusCode = (SmtpStatusCode) serializationInfo.GetValue ("statusCode", typeof (SmtpStatusCode));
 			}
 		}
 
@@ -91,12 +91,12 @@ namespace System.Net.Mail {
 
 		#endregion // Properties
 
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		public override void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
-			base.GetObjectData (info, context);
-			info.AddValue ("Status", statusCode, typeof (int));
+			if (serializationInfo == null)
+				throw new ArgumentNullException ("serializationInfo");
+			base.GetObjectData (serializationInfo, streamingContext);
+			serializationInfo.AddValue ("Status", statusCode, typeof (int));
 		}
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{

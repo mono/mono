@@ -10,6 +10,12 @@
 
 G_BEGIN_DECLS
 
+int
+Mono_Posix_Stdlib_GetLastError (void)
+{
+	return errno;
+}
+
 void
 Mono_Posix_Stdlib_SetLastError (int error_number)
 {
@@ -80,7 +86,7 @@ Mono_Posix_Syscall_strerror_r (int errnum, char *buf, mph_size_t n)
 	mph_return_if_size_t_overflow (n);
 
 	/* first, check for valid errnum */
-#if PLATFORM_ANDROID
+#if HOST_ANDROID
 	/* Android NDK defines _GNU_SOURCE but strerror_r follows the XSI semantics
 	 * not the GNU one. XSI version returns an integer, as opposed to the GNU one
 	 * which returns pointer to the buffer.

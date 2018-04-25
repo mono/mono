@@ -1,25 +1,9 @@
-/*
+/**
+ * \file
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #ifndef __MONO_SGEN_MEMORY_GOVERNOR_H__
 #define __MONO_SGEN_MEMORY_GOVERNOR_H__
@@ -31,13 +15,15 @@ gboolean sgen_memgov_try_alloc_space (mword size, int space);
 
 /* GC trigger heuristics */
 void sgen_memgov_minor_collection_start (void);
-void sgen_memgov_minor_collection_end (void);
+void sgen_memgov_minor_collection_end (const char *reason, gboolean is_overflow);
 
-void sgen_memgov_major_collection_start (void);
-void sgen_memgov_major_collection_end (gboolean forced);
+void sgen_memgov_major_pre_sweep (void);
+void sgen_memgov_major_post_sweep (mword used_slots_size);
+void sgen_memgov_major_collection_start (gboolean concurrent, const char *reason);
+void sgen_memgov_major_collection_end (gboolean forced, gboolean concurrent, const char *reason, gboolean is_overflow);
 
 void sgen_memgov_collection_start (int generation);
-void sgen_memgov_collection_end (int generation, GGTimingInfo* info, int info_count);
+void sgen_memgov_collection_end (int generation, gint64 stw);
 
 gboolean sgen_need_major_collection (mword space_needed);
 
@@ -48,10 +34,30 @@ typedef enum {
 	SGEN_ALLOC_ACTIVATE = 2
 } SgenAllocFlags;
 
+typedef enum {
+	SGEN_LOG_NURSERY,
+	SGEN_LOG_MAJOR_SERIAL,
+	SGEN_LOG_MAJOR_CONC_START,
+	SGEN_LOG_MAJOR_CONC_FINISH,
+	SGEN_LOG_MAJOR_SWEEP_FINISH
+} SgenLogType;
+
+typedef struct {
+	SgenLogType type;
+	const char *reason;
+	gboolean is_overflow;
+	gint64 time;
+	mword promoted_size;
+	mword major_size;
+	mword major_size_in_use;
+	mword los_size;
+	mword los_size_in_use;
+} SgenLogEntry;
+
 /* OS memory allocation */
-void* sgen_alloc_os_memory (size_t size, SgenAllocFlags flags, const char *assert_description);
-void* sgen_alloc_os_memory_aligned (size_t size, mword alignment, SgenAllocFlags flags, const char *assert_description);
-void sgen_free_os_memory (void *addr, size_t size, SgenAllocFlags flags);
+void* sgen_alloc_os_memory (size_t size, SgenAllocFlags flags, const char *assert_description, MonoMemAccountType type);
+void* sgen_alloc_os_memory_aligned (size_t size, mword alignment, SgenAllocFlags flags, const char *assert_description, MonoMemAccountType type);
+void sgen_free_os_memory (void *addr, size_t size, SgenAllocFlags flags, MonoMemAccountType type);
 
 /* Error handling */
 void sgen_assert_memory_alloc (void *ptr, size_t requested_size, const char *assert_description);

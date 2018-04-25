@@ -65,7 +65,7 @@ namespace System.ServiceModel.Channels
 			var f = mbe.CreateMessageEncoderFactory ();
 			var t = typeof (TChannel);
 			if (t == typeof (IRequestSessionChannel) ||
-#if !NET_2_1
+#if !MOBILE
 			    t == typeof (IReplySessionChannel) ||
 #endif
 			    t == typeof (IInputSessionChannel) ||

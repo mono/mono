@@ -34,9 +34,6 @@
 
 #if SECURITY_DEP
 
-#if MONO_X509_ALIAS
-extern alias PrebuiltSystem;
-#endif
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -56,9 +53,6 @@ using MonoSecurityProtocolType = Mono.Security.Protocol.Tls.SecurityProtocolType
 using Mono.Security.Protocol.Tls;
 using Mono.Security.Interface;
 #endif
-#if MONO_X509_ALIAS
-using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#endif
 
 using CipherAlgorithmType = System.Security.Authentication.CipherAlgorithmType;
 using HashAlgorithmType = System.Security.Authentication.HashAlgorithmType;
@@ -75,28 +69,29 @@ using System.Security.Cryptography;
 
 using System.Threading.Tasks;
 
-namespace Mono.Net.Security 
+namespace Mono.Net.Security.Private
 {
+	/*
+	 * Strictly private - do not use outside the Mono.Net.Security directory.
+	 */
 	[MonoTODO ("Non-X509Certificate2 certificate is not supported")]
 	internal class LegacySslStream : AuthenticatedStream, IMonoSslStream
 	{
 		#region Fields
 
 		SslStreamBase ssl_stream;
-		MonoTlsProvider provider;
-		MonoTlsSettings settings;
 		ICertificateValidator certificateValidator;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public LegacySslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsProvider provider, MonoTlsSettings settings)
+		public LegacySslStream (Stream innerStream, bool leaveInnerStreamOpen, SslStream owner, MonoTlsProvider provider, MonoTlsSettings settings)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
-			this.provider = provider;
-			this.settings = settings;
-			this.certificateValidator = ChainValidationHelper.GetDefaultValidator (provider, settings);
+			SslStream = owner;
+			Provider = provider;
+			certificateValidator = ChainValidationHelper.GetInternalValidator (provider, settings);
 		}
 		#endregion // Constructors
 
@@ -321,12 +316,14 @@ namespace Mono.Net.Security
 */
 		X509Certificate OnCertificateSelection (X509CertificateCollection clientCerts, X509Certificate serverCert, string targetHost, X509CertificateCollection serverRequestedCerts)
 		{
+#pragma warning disable 618
 			string [] acceptableIssuers = new string [serverRequestedCerts != null ? serverRequestedCerts.Count : 0];
 			for (int i = 0; i < acceptableIssuers.Length; i++)
 				acceptableIssuers [i] = serverRequestedCerts [i].GetIssuerName ();
 			X509Certificate clientCertificate;
 			certificateValidator.SelectClientCertificate (targetHost, clientCerts, serverCert, acceptableIssuers, out clientCertificate);
 			return clientCertificate;
+#pragma warning restore 618
 		}
 
 		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState)
@@ -578,12 +575,30 @@ namespace Mono.Net.Security
 
 		#region IMonoSslStream
 
+		Task IMonoSslStream.ShutdownAsync ()
+		{
+			return Task.CompletedTask;
+		}
+
 		AuthenticatedStream IMonoSslStream.AuthenticatedStream {
 			get { return this; }
 		}
 
 		TransportContext IMonoSslStream.TransportContext {
 			get { throw new NotSupportedException (); }
+		}
+
+		public SslStream SslStream {
+			get;
+		}
+
+		public MonoTlsProvider Provider {
+			get;
+		}
+
+		public MonoTlsConnectionInfo GetConnectionInfo ()
+		{
+			return null;
 		}
 
 		#endregion

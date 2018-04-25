@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #include <config.h>
 
 #ifdef HOST_WIN32
@@ -60,7 +64,7 @@ mono_poll (mono_pollfd *ufds, unsigned int nfds, int timeout)
 			return 1;
 		}
 #else
-		if (fd > FD_SETSIZE) {
+		if (fd >= FD_SETSIZE) {
 			ufds [i].revents = MONO_POLLNVAL;
 			return 1;
 		}

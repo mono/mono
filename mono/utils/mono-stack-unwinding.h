@@ -1,6 +1,8 @@
-/*
+/**
+ * \file
  * Copyright 2008-2010 Novell, Inc.
  * Copyright 2011 Xamarin Inc.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #ifndef __MONO_MONO_STACK_UNWINDING_H__
 #define __MONO_MONO_STACK_UNWINDING_H__
@@ -20,7 +22,11 @@ typedef enum {
 	/* Frame for transitioning to native code */
 	FRAME_TYPE_MANAGED_TO_NATIVE = 2,
 	FRAME_TYPE_TRAMPOLINE = 3,
-	FRAME_TYPE_NUM = 4
+	/* Interpreter frame */
+	FRAME_TYPE_INTERP = 4,
+	/* Frame for transitioning from interpreter to managed code */
+	FRAME_TYPE_INTERP_TO_MANAGED = 5,
+	FRAME_TYPE_NUM = 6
 } MonoStackFrameType;
 
 typedef enum {
@@ -58,6 +64,7 @@ typedef struct {
 	MonoMethod *actual_method;
 	/* The domain containing the code executed by this frame */
 	MonoDomain *domain;
+	/* Whenever method is a user level method */
 	gboolean managed;
 	/*
 	 * Whenever this frame was loaded in async context.
@@ -70,6 +77,21 @@ typedef struct {
 	 *  il offset resultion was requested (MONO_UNWIND_LOOKUP_IL_OFFSET)
 	 */
 	int il_offset;
+
+	/* For FRAME_TYPE_INTERP_EXIT */
+	gpointer interp_exit_data;
+
+	/* For FRAME_TYPE_INTERP */
+	gpointer interp_frame;
+
+	/*
+	 * A stack address associated with the frame which can be used
+	 * to compare frames.
+	 * This is needed because ctx is not changed when unwinding through
+	 * interpreter frames, it still refers to the last native interpreter
+	 * frame.
+	 */
+	gpointer frame_addr;
 
 	/* The next fields are only useful for the jit */
 	gpointer lmf;

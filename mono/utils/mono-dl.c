@@ -1,11 +1,13 @@
-/*
- * mono-dl.c: Interface to the dynamic linker
+/**
+ * \file
+ * Interface to the dynamic linker
  *
  * Author:
  *    Mono Team (http://www.mono-project.com)
  *
  * Copyright 2001-2004 Ximian, Inc.
  * Copyright 2004-2009 Novell, Inc.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include "config.h"
 #include "mono/utils/mono-dl.h"
@@ -113,20 +115,19 @@ get_dl_name_from_libtool (const char *libtool_file)
 
 /**
  * mono_dl_open:
- * @name: name of file containing shared module
- * @flags: flags
- * @error_msg: pointer for error message on failure
+ * \param name name of file containing shared module
+ * \param flags flags
+ * \param error_msg pointer for error message on failure
  *
- * Load the given file @name as a shared library or dynamically loadable
- * module. @name can be NULL to indicate loading the currently executing
+ * Load the given file \p name as a shared library or dynamically loadable
+ * module. \p name can be NULL to indicate loading the currently executing
  * binary image.
- * @flags can have the MONO_DL_LOCAL bit set to avoid exporting symbols
- * from the module to the shared namespace. The MONO_DL_LAZY bit can be set
+ * \p flags can have the \c MONO_DL_LOCAL bit set to avoid exporting symbols
+ * from the module to the shared namespace. The \c MONO_DL_LAZY bit can be set
  * to lazily load the symbols instead of resolving everithing at load time.
- * @error_msg points to a string where an error message will be stored in
- * case of failure.   The error must be released with g_free.
- *
- * Returns: a MonoDl pointer on success, NULL on failure.
+ * \p error_msg points to a string where an error message will be stored in
+ * case of failure.   The error must be released with \c g_free.
+ * \returns a \c MonoDl pointer on success, NULL on failure.
  */
 MonoDl*
 mono_dl_open (const char *name, int flags, char **error_msg)
@@ -139,7 +140,7 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 	if (error_msg)
 		*error_msg = NULL;
 
-	module = (MonoDl *) malloc (sizeof (MonoDl));
+	module = (MonoDl *) g_malloc (sizeof (MonoDl));
 	if (!module) {
 		if (error_msg)
 			*error_msg = g_strdup ("Out of memory");
@@ -173,7 +174,7 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 		const char *ext;
 		/* This platform does not support dlopen */
 		if (name == NULL) {
-			free (module);
+			g_free (module);
 			return NULL;
 		}
 		
@@ -192,7 +193,7 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 			if (error_msg) {
 				*error_msg = mono_dl_current_error_string ();
 			}
-			free (module);
+			g_free (module);
 			return NULL;
 		}
 	}
@@ -203,14 +204,12 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 
 /**
  * mono_dl_symbol:
- * @module: a MonoDl pointer
- * @name: symbol name
- * @symbol: pointer for the result value
- *
- * Load the address of symbol @name from the given @module.
- * The address is stored in the pointer pointed to by @symbol.
- *
- * Returns: NULL on success, an error message on failure
+ * \param module a MonoDl pointer
+ * \param name symbol name
+ * \param symbol pointer for the result value
+ * Load the address of symbol \p name from the given \p module.
+ * The address is stored in the pointer pointed to by \p symbol.
+ * \returns NULL on success, an error message on failure
  */
 char*
 mono_dl_symbol (MonoDl *module, const char *name, void **symbol)
@@ -223,11 +222,11 @@ mono_dl_symbol (MonoDl *module, const char *name, void **symbol)
 	} else {
 #if MONO_DL_NEED_USCORE
 		{
-			char *usname = malloc (strlen (name) + 2);
+			char *usname = g_malloc (strlen (name) + 2);
 			*usname = '_';
 			strcpy (usname + 1, name);
 			sym = mono_dl_lookup_symbol (module, usname);
-			free (usname);
+			g_free (usname);
 		}
 #else
 		sym = mono_dl_lookup_symbol (module, name);
@@ -246,11 +245,9 @@ mono_dl_symbol (MonoDl *module, const char *name, void **symbol)
 
 /**
  * mono_dl_close:
- * @module: a MonoDl pointer
- *
+ * \param module a \c MonoDl pointer
  * Unload the given module and free the module memory.
- *
- * Returns: 0 on success.
+ * \returns \c 0 on success.
  */
 void
 mono_dl_close (MonoDl *module)
@@ -263,23 +260,22 @@ mono_dl_close (MonoDl *module)
 	} else
 		mono_dl_close_handle (module);
 	
-	free (module);
+	g_free (module);
 }
 
 /**
  * mono_dl_build_path:
- * @directory: optional directory
- * @name: base name of the library
- * @iter: iterator token
- *
+ * \param directory optional directory
+ * \param name base name of the library
+ * \param iter iterator token
  * Given a directory name and the base name of a library, iterate
  * over the possible file names of the library, taking into account
  * the possible different suffixes and prefixes on the host platform.
  *
  * The returned file name must be freed by the caller.
- * @iter must point to a NULL pointer the first time the function is called
+ * \p iter must point to a NULL pointer the first time the function is called
  * and then passed unchanged to the following calls.
- * Returns: the filename or NULL at the end of the iteration
+ * \returns the filename or NULL at the end of the iteration
  */
 char*
 mono_dl_build_path (const char *directory, const char *name, void **iter)
@@ -401,28 +397,35 @@ mono_dl_open_runtime_lib (const char* lib_name, int flags, char **error_msg)
 	if (binl != -1) {
 		char *base;
 		char *resolvedname, *name;
+		char *baseparent = NULL;
 		buf [binl] = 0;
 		resolvedname = mono_path_resolve_symlinks (buf);
 		base = g_path_get_dirname (resolvedname);
 		name = g_strdup_printf ("%s/.libs", base);
 		runtime_lib = try_load (lib_name, name, flags, error_msg);
 		g_free (name);
+		if (!runtime_lib)
+			baseparent = g_path_get_dirname (base);
 		if (!runtime_lib) {
-			char *newbase = g_path_get_dirname (base);
-			name = g_strdup_printf ("%s/lib", newbase);
+			name = g_strdup_printf ("%s/lib", baseparent);
 			runtime_lib = try_load (lib_name, name, flags, error_msg);
 			g_free (name);
 		}
 #ifdef __MACH__
 		if (!runtime_lib) {
-			char *newbase = g_path_get_dirname (base);
-			name = g_strdup_printf ("%s/Libraries", newbase);
+			name = g_strdup_printf ("%s/Libraries", baseparent);
 			runtime_lib = try_load (lib_name, name, flags, error_msg);
 			g_free (name);
 		}
 #endif
+		if (!runtime_lib) {
+			name = g_strdup_printf ("%s/profiler/.libs", baseparent);
+			runtime_lib = try_load (lib_name, name, flags, error_msg);
+			g_free (name);
+		}
 		g_free (base);
 		g_free (resolvedname);
+		g_free (baseparent);
 	}
 	if (!runtime_lib)
 		runtime_lib = try_load (lib_name, NULL, flags, error_msg);

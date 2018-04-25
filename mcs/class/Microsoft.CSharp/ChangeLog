@@ -1,7 +1,0 @@
-2009-12-08  Marek Safar  <marek.safar@gmail.com>
-
-	* Makefile: Replace dmcs reference with Mono.CSharp.
-
-2009-06-29  Marek Safar  <marek.safar@gmail.com>
-
-	* Initial commit.

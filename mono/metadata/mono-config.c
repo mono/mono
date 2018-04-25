@@ -1,5 +1,5 @@
-/*
- * mono-config.c
+/**
+ * \file
  *
  * Runtime and assembly configuration file support routines.
  *
@@ -7,6 +7,7 @@
  *
  * Copyright 2002-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include "config.h"
 #include <glib.h>
@@ -41,6 +42,8 @@
 #define CONFIG_OS "hpux"
 #elif defined(__HAIKU__)
 #define CONFIG_OS "haiku"
+#elif defined (TARGET_WASM)
+#define CONFIG_OS "wasm"
 #else
 #warning Unknown operating system
 #define CONFIG_OS "unknownOS"
@@ -56,7 +59,7 @@
 #elif defined(sparc) || defined(__sparc__)
 #define CONFIG_CPU "sparc"
 #define CONFIG_WORDSIZE "32"
-#elif defined(__ppc64__) || defined(__powerpc64__) || defined(TARGET_POWERPC)
+#elif defined(__ppc64__) || defined(__powerpc64__) || defined(_ARCH_64) || defined(TARGET_POWERPC)
 #define CONFIG_WORDSIZE "64"
 #ifdef __mono_ppc_ilp32__ 
 #   define CONFIG_CPU "ppc64ilp32"
@@ -78,11 +81,11 @@
 #elif defined(__aarch64__)
 #define CONFIG_CPU "armv8"
 #define CONFIG_WORDSIZE "64"
-#elif defined(__ia64__)
-#define CONFIG_CPU "ia64"
-#define CONFIG_WORDSIZE "64"
 #elif defined(mips) || defined(__mips) || defined(_mips)
 #define CONFIG_CPU "mips"
+#define CONFIG_WORDSIZE "32"
+#elif defined(TARGET_WASM)
+#define CONFIG_CPU "wasm"
 #define CONFIG_WORDSIZE "32"
 #else
 #error Unknown CPU
@@ -90,32 +93,65 @@
 #endif
 #endif
 
+/**
+ * mono_config_get_os:
+ *
+ * Returns the operating system that Mono is running on, as used for dllmap entries.
+ */
+const char *
+mono_config_get_os (void)
+{
+	return CONFIG_OS;
+}
+
+/**
+ * mono_config_get_cpu:
+ *
+ * Returns the architecture that Mono is running on, as used for dllmap entries.
+ */
+const char *
+mono_config_get_cpu (void)
+{
+	return CONFIG_CPU;
+}
+
+/**
+ * mono_config_get_wordsize:
+ *
+ * Returns the word size that Mono is running on, as used for dllmap entries.
+ */
+const char *
+mono_config_get_wordsize (void)
+{
+	return CONFIG_WORDSIZE;
+}
+
 static void start_element (GMarkupParseContext *context, 
                            const gchar         *element_name,
 			   const gchar        **attribute_names,
 			   const gchar        **attribute_values,
 			   gpointer             user_data,
-			   GError             **error);
+			   GError             **gerror);
 
 static void end_element   (GMarkupParseContext *context,
                            const gchar         *element_name,
 			   gpointer             user_data,
-			   GError             **error);
+			   GError             **gerror);
 
 static void parse_text    (GMarkupParseContext *context,
                            const gchar         *text,
 			   gsize                text_len,
 			   gpointer             user_data,
-			   GError             **error);
+			   GError             **gerror);
 
 static void passthrough   (GMarkupParseContext *context,
                            const gchar         *text,
 			   gsize                text_len,
 			   gpointer             user_data,
-			   GError             **error);
+			   GError             **gerror);
 
 static void parse_error   (GMarkupParseContext *context,
-                           GError              *error,
+                           GError              *gerror,
 			   gpointer             user_data);
 
 static const GMarkupParser 
@@ -129,8 +165,7 @@ mono_parser = {
 
 static GHashTable *config_handlers;
 
-static const char *mono_cfg_dir = NULL;
-static char *mono_cfg_dir_allocated = NULL;
+static char *mono_cfg_dir = NULL;
 
 /* when this interface is stable, export it. */
 typedef struct MonoParseHandler MonoParseHandler;
@@ -164,11 +199,11 @@ static void start_element (GMarkupParseContext *context,
 			   const gchar        **attribute_names,
 			   const gchar        **attribute_values,
 			   gpointer             user_data,
-			   GError             **error)
+			   GError             **gerror)
 {
-	ParseState *state = user_data;
+	ParseState *state = (ParseState *)user_data;
 	if (!state->current) {
-		state->current = g_hash_table_lookup (config_handlers, element_name);
+		state->current = (MonoParseHandler *)g_hash_table_lookup (config_handlers, element_name);
 		if (state->current && state->current->init)
 			state->user_data = state->current->init (state->assembly);
 	}
@@ -179,9 +214,9 @@ static void start_element (GMarkupParseContext *context,
 static void end_element   (GMarkupParseContext *context,
                            const gchar         *element_name,
 			   gpointer             user_data,
-			   GError             **error)
+			   GError             **gerror)
 {
-	ParseState *state = user_data;
+	ParseState *state = (ParseState *)user_data;
 	if (state->current) {
 		if (state->current->end)
 			state->current->end (state->user_data, element_name);
@@ -198,9 +233,9 @@ static void parse_text    (GMarkupParseContext *context,
                            const gchar         *text,
 			   gsize                text_len,
 			   gpointer             user_data,
-			   GError             **error)
+			   GError             **gerror)
 {
-	ParseState *state = user_data;
+	ParseState *state = (ParseState *)user_data;
 	if (state->current && state->current->text)
 		state->current->text (state->user_data, text, text_len);
 }
@@ -209,21 +244,21 @@ static void passthrough   (GMarkupParseContext *context,
                            const gchar         *text,
 			   gsize                text_len,
 			   gpointer             user_data,
-			   GError             **error)
+			   GError             **gerror)
 {
 	/* do nothing */
 }
 
 static void parse_error   (GMarkupParseContext *context,
-                           GError              *error,
+                           GError              *gerror,
 			   gpointer             user_data)
 {
-	ParseState *state = user_data;
+	ParseState *state = (ParseState *)user_data;
 	const gchar *msg;
 	const gchar *filename;
 
 	filename = state && state->user_data ? (gchar *) state->user_data : "<unknown>";
-	msg = error && error->message ? error->message : "";
+	msg = gerror && gerror->message ? gerror->message : "";
 	g_warning ("Error parsing %s: %s", filename, msg);
 }
 
@@ -267,7 +302,7 @@ dllmap_start (gpointer user_data,
               const gchar        **attribute_values)
 {
 	int i;
-	DllInfo *info = user_data;
+	DllInfo *info = (DllInfo *)user_data;
 	
 	if (strcmp (element_name, "dllmap") == 0) {
 		g_free (info->dll);
@@ -280,13 +315,14 @@ dllmap_start (gpointer user_data,
 			else if (strcmp (attribute_names [i], "target") == 0){
 				char *p = strstr (attribute_values [i], "$mono_libdir");
 				if (p != NULL){
-					const char *libdir = mono_assembly_getrootdir ();
+					char *libdir = mono_native_getrootdir ();
 					size_t libdir_len = strlen (libdir);
 					char *result;
 					
-					result = g_malloc (libdir_len-strlen("$mono_libdir")+strlen(attribute_values[i])+1);
-					strncpy (result, attribute_names[i], p-attribute_values[i]);
-					strcat (result, libdir);
+					result = (char *)g_malloc (libdir_len-strlen("$mono_libdir")+strlen(attribute_values[i])+1);
+					strncpy (result, attribute_values[i], p-attribute_values[i]);
+					strcpy (result+(p-attribute_values[i]), libdir);
+					g_free (libdir);
 					strcat (result, p+strlen("$mono_libdir"));
 					info->target = result;
 				} else 
@@ -327,7 +363,7 @@ dllmap_start (gpointer user_data,
 static void
 dllmap_finish (gpointer user_data)
 {
-	DllInfo *info = user_data;
+	DllInfo *info = (DllInfo *)user_data;
 
 	g_free (info->dll);
 	g_free (info->target);
@@ -430,12 +466,15 @@ mono_config_init (void)
 	g_hash_table_insert (config_handlers, (gpointer) aot_cache_handler.element_name, (gpointer) &aot_cache_handler);
 }
 
+/**
+ * mono_config_cleanup:
+ */
 void
 mono_config_cleanup (void)
 {
 	if (config_handlers)
 		g_hash_table_destroy (config_handlers);
-	g_free (mono_cfg_dir_allocated);
+	g_free (mono_cfg_dir);
 }
 
 /* FIXME: error handling */
@@ -448,7 +487,7 @@ mono_config_parse_xml_with_context (ParseState *state, const char *text, gsize l
 	if (!inited)
 		mono_config_init ();
 
-	context = g_markup_parse_context_new (&mono_parser, 0, state, NULL);
+	context = g_markup_parse_context_new (&mono_parser, (GMarkupParseFlags)0, state, NULL);
 	if (g_markup_parse_context_parse (context, text, len, NULL)) {
 		g_markup_parse_context_end_parse (context, NULL);
 	}
@@ -481,8 +520,7 @@ mono_config_parse_file_with_context (ParseState *state, const char *filename)
 
 /**
  * mono_config_parse_memory:
- * @buffer: a pointer to an string XML representation of the configuration
- *
+ * \param buffer a pointer to an string XML representation of the configuration
  * Parses the configuration from a buffer
  */
 void
@@ -532,6 +570,9 @@ static BundledConfig *bundled_configs = NULL;
 
 static const char *bundled_machine_config = NULL;
 
+/**
+ * mono_register_config_for_assembly:
+ */
 void
 mono_register_config_for_assembly (const char* assembly_name, const char* config_xml)
 {
@@ -544,6 +585,9 @@ mono_register_config_for_assembly (const char* assembly_name, const char* config
 	bundled_configs = bconfig;
 }
 
+/**
+ * mono_config_string_for_assembly_file:
+ */
 const char *
 mono_config_string_for_assembly_file (const char *filename)
 {
@@ -556,6 +600,9 @@ mono_config_string_for_assembly_file (const char *filename)
 	return NULL;
 }
 
+/**
+ * mono_config_for_assembly:
+ */
 void 
 mono_config_for_assembly (MonoImage *assembly)
 {
@@ -598,10 +645,9 @@ mono_config_for_assembly (MonoImage *assembly)
 
 /**
  * mono_config_parse:
- * @filename: the filename to load the configuration variables from.
- *
+ * \param filename the filename to load the configuration variables from.
  * Pass a NULL filename to parse the default config files
- * (or the file in the MONO_CONFIG env var).
+ * (or the file in the \c MONO_CONFIG env var).
  */
 void
 mono_config_parse (const char *filename) {
@@ -616,9 +662,10 @@ mono_config_parse (const char *filename) {
 		return;
 	}
 
-	home = g_getenv ("MONO_CONFIG");
-	if (home) {
-		mono_config_parse_file (home);
+	// FIXME: leak, do we store any references to home
+	char *env_home = g_getenv ("MONO_CONFIG");
+	if (env_home) {
+		mono_config_parse_file (env_home);
 		return;
 	}
 
@@ -626,7 +673,7 @@ mono_config_parse (const char *filename) {
 	mono_config_parse_file (mono_cfg);
 	g_free (mono_cfg);
 
-#if !defined(TARGET_WIN32) && !defined(__native_client__)
+#if !defined(TARGET_WIN32)
 	home = g_get_home_dir ();
 	user_cfg = g_strconcat (home, G_DIR_SEPARATOR_S, ".mono/config", NULL);
 	mono_config_parse_file (user_cfg);
@@ -634,16 +681,24 @@ mono_config_parse (const char *filename) {
 #endif
 }
 
-/* Invoked during startup */
+/**
+ * mono_set_config_dir:
+ * Invoked during startup
+ */
 void
 mono_set_config_dir (const char *dir)
 {
-	/* If this variable is set, overrides the directory computed */
-	mono_cfg_dir = g_getenv ("MONO_CFG_DIR");
-	if (mono_cfg_dir == NULL)
-		mono_cfg_dir = mono_cfg_dir_allocated = g_strdup (dir);
+	/* If this environment variable is set, overrides the directory computed */
+	char *env_mono_cfg_dir = g_getenv ("MONO_CFG_DIR");
+	if (env_mono_cfg_dir == NULL && dir != NULL)
+		env_mono_cfg_dir = g_strdup (dir);
+
+	mono_cfg_dir = env_mono_cfg_dir;
 }
 
+/**
+ * mono_get_config_dir:
+ */
 const char* 
 mono_get_config_dir (void)
 {
@@ -653,12 +708,18 @@ mono_get_config_dir (void)
 	return mono_cfg_dir;
 }
 
+/**
+ * mono_register_machine_config:
+ */
 void
 mono_register_machine_config (const char *config_xml)
 {
 	bundled_machine_config = config_xml;
 }
 
+/**
+ * mono_get_machine_config:
+ */
 const char *
 mono_get_machine_config (void)
 {
@@ -668,7 +729,7 @@ mono_get_machine_config (void)
 static void
 assembly_binding_end (gpointer user_data, const char *element_name)
 {
-	ParserUserData *pud = user_data;
+	ParserUserData *pud = (ParserUserData *)user_data;
 
 	if (!strcmp (element_name, "dependentAssembly")) {
 		if (pud->info_parsed && pud->info) {
@@ -689,7 +750,7 @@ publisher_policy_start (gpointer user_data,
 	MonoAssemblyBindingInfo *info;
 	int n;
 
-	pud = user_data;
+	pud = (ParserUserData *)user_data;
 	info = pud->info;
 	if (!strcmp (element_name, "dependentAssembly")) {
 		info->name = NULL;
@@ -701,7 +762,7 @@ publisher_policy_start (gpointer user_data,
 		memset (&info->old_version_bottom, 0, sizeof (info->old_version_bottom));
 		memset (&info->old_version_top, 0, sizeof (info->old_version_top));
 		memset (&info->new_version, 0, sizeof (info->new_version));
-	} if (!strcmp (element_name, "assemblyIdentity")) {
+	} else if (!strcmp (element_name, "assemblyIdentity")) {
 		for (n = 0; attribute_names [n]; n++) {
 			const gchar *attribute_name = attribute_names [n];
 			
@@ -854,12 +915,18 @@ mono_config_parse_assembly_bindings (const char *filename, int amajor, int amino
 
 static mono_bool mono_server_mode = FALSE;
 
+/**
+ * mono_config_set_server_mode:
+ */
 void
 mono_config_set_server_mode (mono_bool server_mode)
 {
 	mono_server_mode = server_mode;
 }
 
+/**
+ * mono_config_is_server_mode:
+ */
 mono_bool
 mono_config_is_server_mode (void)
 {

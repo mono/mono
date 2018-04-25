@@ -1,9 +1,0 @@
-2005-12-05  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* chinese-utf8.txt chinese-936.txt chinese-54936.txt
-	  chinese2-utf8.txt chinese2-950.txt
-	  japanese-utf8.txt japanese-932.txt japanese-51932.txt
-	  japanese-50221.txt japanese-50222.txt
-	  japanese2-utf8.txt japanese2-50220.txt
-	  korean-utf8.txt korean-949.txt : tested text files.
-	* conv.cs : simple reference output generator.

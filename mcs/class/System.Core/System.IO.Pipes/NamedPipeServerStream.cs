@@ -32,6 +32,8 @@ using Microsoft.Win32.SafeHandles;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Security.AccessControl;
 using System.Security.Permissions;
 using System.Security.Principal;
@@ -70,9 +72,16 @@ namespace System.IO.Pipes
 		}
 
 		public NamedPipeServerStream (string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize)
+#if MOBILE		
+			: base (direction, inBufferSize)
+		{
+			throw new NotImplementedException ();
+		}
+#else
 			: this (pipeName, direction, maxNumberOfServerInstances, transmissionMode, options, inBufferSize, outBufferSize, null)
 		{
 		}
+#endif
 
 		public NamedPipeServerStream (string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize, PipeSecurity pipeSecurity)
 			: this (pipeName, direction, maxNumberOfServerInstances, transmissionMode, options, inBufferSize, outBufferSize, pipeSecurity, HandleInheritability.None)
@@ -88,6 +97,9 @@ namespace System.IO.Pipes
 		public NamedPipeServerStream (string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize, PipeSecurity pipeSecurity, HandleInheritability inheritability, PipeAccessRights additionalAccessRights)
 			: base (direction, transmissionMode, outBufferSize)
 		{
+#if MOBILE
+			throw new NotImplementedException ();
+#else
 			var rights = ToAccessRights (direction) | additionalAccessRights;
 			// FIXME: reject some rights declarations (for ACL).
 
@@ -100,17 +112,27 @@ namespace System.IO.Pipes
 								rights, options, inBufferSize, outBufferSize, inheritability);
 
 			InitializeHandle (impl.Handle, false, (options & PipeOptions.Asynchronous) != PipeOptions.None);
+#endif
 		}
 
 		public NamedPipeServerStream (PipeDirection direction, bool isAsync, bool isConnected, SafePipeHandle safePipeHandle)
 			: base (direction, DefaultBufferSize)
 		{
+#if MOBILE
+			throw new NotImplementedException ();
+#else
 			if (IsWindows)
 				impl = new Win32NamedPipeServer (this, safePipeHandle);
 			else
 				impl = new UnixNamedPipeServer (this, safePipeHandle);
 			IsConnected = isConnected;
 			InitializeHandle (safePipeHandle, true, isAsync);
+#endif
+		}
+
+		~NamedPipeServerStream ()
+		{
+			// To be compatible with .net
 		}
 
 		INamedPipeServer impl;
@@ -131,6 +153,17 @@ namespace System.IO.Pipes
 		{
 			impl.WaitForConnection ();
 			IsConnected = true;
+		}
+
+		public Task WaitForConnectionAsync ()
+		{
+			return WaitForConnectionAsync (CancellationToken.None);
+		}
+
+		[MonoTODO]
+		public Task WaitForConnectionAsync (CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

@@ -33,7 +33,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !NET_2_1
+#if WIN_PLATFORM
 
 using System;
 using System.Collections;
@@ -92,14 +92,17 @@ namespace Microsoft.Win32
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegDeleteValue")]
 		private static extern int RegDeleteValue (IntPtr keyHandle, string valueName);
 
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegEnumKey")]
-		private static extern int RegEnumKey (IntPtr keyBase, int index, StringBuilder nameBuffer, int bufferLength);
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegEnumKeyExW")]
+		internal unsafe static extern int RegEnumKeyEx (IntPtr keyHandle, int dwIndex,
+					char* lpName, ref int lpcbName, int[] lpReserved,
+					[Out]StringBuilder lpClass, int[] lpcbClass,
+					long[] lpftLastWriteTime);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegEnumValue")]
-		private static extern int RegEnumValue (IntPtr keyBase, 
-				int index, StringBuilder nameBuffer, 
-				ref int nameLength, IntPtr reserved, 
-				ref RegistryValueKind type, IntPtr data, IntPtr dataLength);
+		internal unsafe static extern int RegEnumValue (IntPtr hKey, int dwIndex,
+					char* lpValueName, ref int lpcbValueName,
+					IntPtr lpReserved_MustBeZero, int[] lpType, byte[] lpData,
+					int[] lpcbData);
 
 //		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
 //		private static extern int RegSetValueEx (IntPtr keyBase, 
@@ -145,6 +148,14 @@ namespace Microsoft.Win32
 		private static extern int RegQueryValueEx (IntPtr keyBase,
 				string valueName, IntPtr reserved, ref RegistryValueKind type,
 				ref long data, ref int dataSize);
+
+		[DllImport ("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint="RegQueryInfoKeyW")]
+		internal static extern int RegQueryInfoKey (IntPtr hKey, [Out]StringBuilder lpClass,
+			int[] lpcbClass, IntPtr lpReserved_MustBeZero, ref int lpcSubKeys,
+			int[] lpcbMaxSubKeyLen, int[] lpcbMaxClassLen,
+			ref int lpcValues, int[] lpcbMaxValueNameLen,
+			int[] lpcbMaxValueLen, int[] lpcbSecurityDescriptor,
+			int[] lpftLastWriteTime);
 
 		// Returns our handle from the RegistryKey
 		public IntPtr GetHandle (RegistryKey key)
@@ -241,48 +252,66 @@ namespace Microsoft.Win32
 		public void SetValue (RegistryKey rkey, string name, object value, RegistryValueKind valueKind)
 		{
 			Type type = value.GetType ();
-			int result;
 			IntPtr handle = GetHandle (rkey);
 
-			if (valueKind == RegistryValueKind.QWord && type == typeof (long)) {
-				long rawValue = (long)value;
-				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.QWord, ref rawValue, Int64ByteSize); 
-			} else if (valueKind == RegistryValueKind.DWord && type == typeof (int)) {
-				int rawValue = (int)value;
-				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.DWord, ref rawValue, Int32ByteSize); 
-			} else if (valueKind == RegistryValueKind.Binary && type == typeof (byte[])) {
-				byte[] rawValue = (byte[]) value;
-				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.Binary, rawValue, rawValue.Length);
-			} else if (valueKind == RegistryValueKind.MultiString && type == typeof (string[])) {
-				string[] vals = (string[]) value;
-				StringBuilder fullStringValue = new StringBuilder ();
-				foreach (string v in vals)
-				{
-					fullStringValue.Append (v);
-					fullStringValue.Append ('\0');
+			switch (valueKind) {
+			case RegistryValueKind.QWord:
+				try {
+					long rawValue = Convert.ToInt64 (value);
+					CheckResult (RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.QWord, ref rawValue, Int64ByteSize));
+					return;
+				} catch (OverflowException) {
 				}
-				fullStringValue.Append ('\0');
+				break;
+			case RegistryValueKind.DWord:
+				try {
+					int rawValue = Convert.ToInt32 (value);
+					CheckResult (RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.DWord, ref rawValue, Int32ByteSize));
+					return;
+				} catch (OverflowException) {
+				}
+				break;
+			case RegistryValueKind.Binary:
+				if (type == typeof (byte[])) {
+					byte[] rawValue = (byte[]) value;
+					CheckResult (RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.Binary, rawValue, rawValue.Length));
+					return;
+				}
+				break;
+			case RegistryValueKind.MultiString:
+				if (type == typeof (string[])) {
+					string[] vals = (string[]) value;
+					StringBuilder fullStringValue = new StringBuilder ();
+					foreach (string v in vals)
+					{
+						fullStringValue.Append (v);
+						fullStringValue.Append ('\0');
+					}
+					fullStringValue.Append ('\0');
 
-				byte[] rawValue = Encoding.Unicode.GetBytes (fullStringValue.ToString ());
+					byte[] rawValue = Encoding.Unicode.GetBytes (fullStringValue.ToString ());
 			
-				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.MultiString, rawValue, rawValue.Length); 
-			} else if ((valueKind == RegistryValueKind.String || valueKind == RegistryValueKind.ExpandString) &&
-				   type == typeof (string)){
-				string rawValue = String.Format ("{0}{1}", value, '\0');
-				result = RegSetValueEx (handle, name, IntPtr.Zero, valueKind, rawValue,
-							rawValue.Length * NativeBytesPerCharacter);
-				
-			} else if (type.IsArray) {
-				throw new ArgumentException ("Only string and byte arrays can written as registry values");
-			} else {
-				throw new ArgumentException ("Type does not match the valueKind");
+					CheckResult (RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.MultiString, rawValue, rawValue.Length));
+					return;
+				}
+				break;
+			case RegistryValueKind.String:
+			case RegistryValueKind.ExpandString:
+				if (type == typeof (string)) {
+					string rawValue = String.Format ("{0}{1}", value, '\0');
+					CheckResult (RegSetValueEx (handle, name, IntPtr.Zero, valueKind, rawValue,
+								rawValue.Length * NativeBytesPerCharacter));
+					return;
+				}
+				break;
+			default:
+				if (type.IsArray) {
+					throw new ArgumentException ("Only string and byte arrays can written as registry values");
+				}
+				break;
 			}
 
-			// handle the result codes
-			if (result != Win32ResultCode.Success)
-			{
-				GenerateException (result);
-			}
+			throw new ArgumentException ("Type does not match the valueKind");
 		}
 	
 		public void SetValue (RegistryKey rkey, string name, object value)
@@ -318,9 +347,6 @@ namespace Microsoft.Win32
 							rawValue.Length * NativeBytesPerCharacter);
 			}
 
-			if (result == Win32ResultCode.MarkedForDeletion)
-				throw RegistryKey.CreateMarkedForDeletionException ();
-
 			// handle the result codes
 			if (result != Win32ResultCode.Success)
 			{
@@ -340,65 +366,54 @@ namespace Microsoft.Win32
 			return result;
 		}
 
-		
-		// Arbitrary max size for key/values names that can be fetched.
-		// .NET framework SDK docs say that the max name length that can 
-		// be used is 255 characters, we'll allow for a bit more.
-		const int BufferMaxLength = 1024;
+		// MSDN defines the following limits for registry key names & values:
+		// Key Name: 255 characters
+		// Value name:  16,383 Unicode characters
+		// Value: either 1 MB or current available memory, depending on registry format.
+		private const int MaxKeyLength = 255;
+		private const int MaxValueLength = 16383;
 		
 		public int SubKeyCount (RegistryKey rkey)
 		{
-			int index;
-			StringBuilder stringBuffer = new StringBuilder (BufferMaxLength);
-			IntPtr handle = GetHandle (rkey);
-			
-			for (index = 0; true; index ++) {
-				int result = RegEnumKey (handle, index, stringBuffer,
-					stringBuffer.Capacity);
+			int subkeys = 0;
+			int junk = 0;
+			int ret = RegQueryInfoKey (GetHandle (rkey),
+									   null,
+									   null,
+									   IntPtr.Zero,
+									   ref subkeys,  // subkeys
+									   null,
+									   null,
+									   ref junk,     // values
+									   null,
+									   null,
+									   null,
+									   null);
 
-				if (result == Win32ResultCode.MarkedForDeletion)
-					throw RegistryKey.CreateMarkedForDeletionException ();
-
-				if (result == Win32ResultCode.Success)
-					continue;
-				
-				if (result == Win32ResultCode.NoMoreEntries)
-					break;
-				
-				// something is wrong!!
-				GenerateException (result);
-			}
-			return index;
+			if (ret != Win32ResultCode.Success)
+				GenerateException (ret);
+			return subkeys;
 		}
 
 		public int ValueCount (RegistryKey rkey)
 		{
-			int index, result, bufferCapacity;
-			RegistryValueKind type;
-			StringBuilder buffer = new StringBuilder (BufferMaxLength);
-			
-			IntPtr handle = GetHandle (rkey);
-			for (index = 0; true; index ++) {
-				type = 0;
-				bufferCapacity = buffer.Capacity;
-				result = RegEnumValue (handle, index, 
-						       buffer, ref bufferCapacity,
-						       IntPtr.Zero, ref type, 
-						       IntPtr.Zero, IntPtr.Zero);
-
-				if (result == Win32ResultCode.MarkedForDeletion)
-					throw RegistryKey.CreateMarkedForDeletionException ();
-
-				if (result == Win32ResultCode.Success || result == Win32ResultCode.MoreData)
-					continue;
-				
-				if (result == Win32ResultCode.NoMoreEntries)
-					break;
-				
-				// something is wrong
-				GenerateException (result);
-			}
-			return index;
+			int values = 0;
+			int junk = 0;
+			int ret = RegQueryInfoKey (GetHandle (rkey),
+									   null,
+									   null,
+									   IntPtr.Zero,
+									   ref junk,     // subkeys
+									   null,
+									   null,
+									   ref values,   // values
+									   null,
+									   null,
+									   null,
+									   null);
+			if (ret != Win32ResultCode.Success)
+				GenerateException (ret);
+			return values;
 		}
 
 		public RegistryKey OpenRemoteBaseKey (RegistryHive hKey, string machineName)
@@ -470,9 +485,6 @@ namespace Microsoft.Win32
 				RegOptionsNonVolatile,
 				OpenRegKeyRead | OpenRegKeyWrite, IntPtr.Zero, out subKeyHandle, out disposition);
 
-			if (result == Win32ResultCode.MarkedForDeletion)
-				throw RegistryKey.CreateMarkedForDeletionException ();
-
 			if (result != Win32ResultCode.Success) {
 				GenerateException (result);
 			}
@@ -489,9 +501,6 @@ namespace Microsoft.Win32
 			int result = RegCreateKeyEx (handle , keyName, 0, IntPtr.Zero,
 				options == RegistryOptions.Volatile ? RegOptionsVolatile : RegOptionsNonVolatile,
 				OpenRegKeyRead | OpenRegKeyWrite, IntPtr.Zero, out subKeyHandle, out disposition);
-
-			if (result == Win32ResultCode.MarkedForDeletion)
-				throw RegistryKey.CreateMarkedForDeletionException ();
 
 			if (result != Win32ResultCode.Success)
 				GenerateException (result);
@@ -533,60 +542,77 @@ namespace Microsoft.Win32
 				GenerateException (result);
 		}
 
-		public string [] GetSubKeyNames (RegistryKey rkey)
+		public unsafe string [] GetSubKeyNames (RegistryKey rkey)
 		{
-			IntPtr handle = GetHandle (rkey);
-			StringBuilder buffer = new StringBuilder (BufferMaxLength);
-			var keys = new List<string> ();
-				
-			for (int index = 0; true; index ++) {
-				int result = RegEnumKey (handle, index, buffer, buffer.Capacity);
+			int subkeys = SubKeyCount (rkey);
+			var names = new string [subkeys];  // Returns 0-length array if empty.
 
-				if (result == Win32ResultCode.Success) {
-					keys.Add (buffer.ToString ());
-					buffer.Length = 0;
-					continue;
+			if (subkeys > 0) {
+				var hkey = GetHandle (rkey);
+				char[] name = new char [MaxKeyLength + 1];
+				int namelen;
+
+				fixed (char* namePtr = &name [0]) {
+					for (int i = 0; i < subkeys; i++) {
+						namelen = name.Length; // Don't remove this. The API's doesn't work if this is not properly initialised.
+						int ret = RegEnumKeyEx (hkey,
+							i,
+							namePtr,
+							ref namelen,
+							null,
+							null,
+							null,
+							null);
+
+						if (ret != 0)
+							GenerateException (ret);
+						names [i] = new String (namePtr);
+					}
 				}
-
-				if (result == Win32ResultCode.NoMoreEntries)
-					break;
-
-				// should not be here!
-				GenerateException (result);
 			}
-			return keys.ToArray ();
+
+			return names;
 		}
 
-
-		public string [] GetValueNames (RegistryKey rkey)
+		public unsafe string [] GetValueNames (RegistryKey rkey)
 		{
-			IntPtr handle = GetHandle (rkey);
-			var values = new List<string> ();
-			
-			for (int index = 0; true; index ++)
-			{
-				StringBuilder buffer = new StringBuilder (BufferMaxLength);
-				int bufferCapacity = buffer.Capacity;
-				RegistryValueKind type = 0;
-				
-				int result = RegEnumValue (handle, index, buffer, ref bufferCapacity,
-							IntPtr.Zero, ref type, IntPtr.Zero, IntPtr.Zero);
+			int values = ValueCount (rkey);
+			String[] names = new String [values];
 
-				if (result == Win32ResultCode.Success || result == Win32ResultCode.MoreData) {
-					values.Add (buffer.ToString ());
-					continue;
+			if (values > 0) {
+				IntPtr hkey = GetHandle (rkey);
+				char[] name = new char [MaxValueLength + 1];
+				int namelen;
+
+				fixed (char* namePtr = &name [0]) {
+					for (int i = 0; i < values; i++) {
+						namelen = name.Length;
+
+						int ret = RegEnumValue (hkey,
+							i,
+							namePtr,
+							ref namelen,
+							IntPtr.Zero,
+							null,
+							null,
+							null);
+
+						if (ret != Win32ResultCode.Success && ret != Win32Native.ERROR_MORE_DATA)
+							GenerateException (ret);
+
+						names [i] = new String (namePtr);
+					}
 				}
-				
-				if (result == Win32ResultCode.NoMoreEntries)
-					break;
-
-				if (result == Win32ResultCode.MarkedForDeletion)
-					throw RegistryKey.CreateMarkedForDeletionException ();
-
-				GenerateException (result);
 			}
 
-			return values.ToArray ();
+			return names;
+		}
+
+		private void CheckResult (int result)
+		{
+			if (result != Win32ResultCode.Success) {
+				GenerateException (result);
+			}
 		}
 
 		/// <summary>
@@ -604,6 +630,10 @@ namespace Microsoft.Win32
 					throw new IOException ("The network path was not found.");
 				case Win32ResultCode.InvalidHandle:
 					throw new IOException ("Invalid handle.");
+				case Win32ResultCode.MarkedForDeletion:
+					throw RegistryKey.CreateMarkedForDeletionException ();
+				case Win32ResultCode.ChildMustBeVolatile:
+					throw new IOException ("Cannot create a stable subkey under a volatile parent key.");
 				default:
 					// unidentified system exception
 					throw new SystemException ();
@@ -626,5 +656,5 @@ namespace Microsoft.Win32
 	}
 }
 
-#endif // NET_2_1
+#endif // MOBILE
 

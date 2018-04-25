@@ -656,7 +656,7 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.AreEqual ("FOO", ((ObsoleteAttribute) attrs [0]).Message, "#B3");
 			}
 		}
-#if !NET_2_1
+#if !MOBILE
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestAddDeclarativeSecurityAlreadyCreated ()
@@ -1024,6 +1024,7 @@ namespace MonoTests.System.Reflection.Emit
 	    }
 
 		[Test]//bug #626441
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void CanCallVarargMethods ()
 		{
 			var tb = module.DefineType ("foo");

@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 Microsoft.CSharp/CodeGeneratorFromCompileUnitTest.cs
 Microsoft.CSharp/CodeGeneratorFromExpressionTest.cs
 Microsoft.CSharp/CodeGeneratorFromNamespaceTest.cs
@@ -198,6 +199,7 @@ System.Diagnostics/EventSourceCreationDataTest.cs
 System.Diagnostics/FileVersionInfoTest.cs
 System.Diagnostics/PerformanceCounterPermissionAttributeTest.cs
 System.Diagnostics/PerformanceCounterPermissionTest.cs
+System.Diagnostics/PerformanceCounterTest.cs
 System.Diagnostics/ProcessStartInfoTest.cs
 System.Diagnostics/ProcessTest.cs
 System.Diagnostics/CounterCreationDataTest.cs
@@ -216,7 +218,7 @@ System.Net/DnsTest.cs
 System.Net/EndPointTest.cs
 System.Net/FileWebRequestTest.cs
 System.Net/FileWebResponseTest.cs
-System.Net/FtpWebRequestTest.cs
+#System.Net/FtpWebRequestTest.cs
 System.Net/HttpWebRequestTest.cs
 System.Net/HttpWebResponseTest.cs
 System.Net/HttpListenerTest.cs
@@ -231,7 +233,6 @@ System.Net/ServicePointManagerTest.cs
 System.Net/ServicePointTest.cs
 System.Net/SocketPermissionAttributeTest.cs
 System.Net/SocketPermissionTest.cs
-System.Net/SocketResponder.cs
 System.Net/WebHeaderCollectionTest.cs
 System.Net/WebPermissionAttributeTest.cs
 System.Net/WebPermissionTest.cs
@@ -248,6 +249,7 @@ System.Net.Sockets/MulticastOptionTest.cs
 System.Net.Sockets/NetworkStreamTest.cs
 System.Net.Sockets/TcpClientTest.cs
 System.Net.Sockets/TcpListenerTest.cs
+System.Net.Sockets/SocketAcceptAsyncTest.cs
 System.Net.Sockets/SocketTest.cs
 System.Net.Sockets/SocketAsyncEventArgsTest.cs
 System.Net.Sockets/SocketConnectAsyncTest.cs
@@ -277,6 +279,7 @@ System.Net.Security/SslStreamTest.cs
 System.Runtime.Versioning/FrameworkNameTest.cs
 System.Security.AccessControl/SemaphoreSecurityTest.cs
 System.Security.Cryptography/AsnEncodedDataTest.cs
+System.Security.Cryptography/CryptoConfigTest.cs
 System.Security.Cryptography/OidCollectionTest.cs
 System.Security.Cryptography/OidEnumeratorTest.cs
 System.Security.Cryptography/OidTest.cs
@@ -499,6 +502,7 @@ System.Threading/SemaphoreFullExceptionCas.cs
 System.Threading/SemaphoreTest.cs
 System.Threading/BarrierTest.cs
 System.Threading/ThreadExceptionEventArgsCas.cs
+System.Threading/WaitHandleTests.cs
 System.Timers/TimersDescriptionAttributeCas.cs
 System.Timers/ElapsedEventArgsCas.cs
 System.Timers/TimerCas.cs
@@ -510,3 +514,4 @@ System.Collections.Concurrent/CollectionStressTestHelper.cs
 System.Collections.Concurrent/ParallelTestHelper.cs
 System.Net.WebSockets/ClientWebSocketTest.cs
 ../../test-helpers/NetworkHelpers.cs
+../../test-helpers/SocketResponder.cs

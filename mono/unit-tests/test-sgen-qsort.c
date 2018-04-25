@@ -3,24 +3,13 @@
  *
  * Copyright (C) 2013 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
 
-#include <sgen/sgen-gc.h>
-#include <sgen/sgen-qsort.h>
+#include <mono/sgen/sgen-gc.h>
+#include <mono/sgen/sgen-qsort.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -83,7 +72,13 @@ compare_sorts (void *base, size_t nel, size_t width, int (*compar) (const void*,
 	qsort (b1, nel, width, compar);
 	sgen_qsort (b2, nel, width, compar);
 
-	assert (!memcmp (b1, b2, len));
+	/* We can't assert that qsort and sgen_qsort produce the same results
+	 * because qsort is not guaranteed to be stable, so they will tend to differ
+	 * in adjacent equal elements. Instead, we assert that the array is sorted
+	 * according to the comparator.
+	 */
+	for (size_t i = 0; i < nel - 1; ++i)
+		assert (compar ((char *)b2 + i * width, (char *)b2 + (i + 1) * width) <= 0);
 
 	free (b1);
 	free (b2);
@@ -92,7 +87,8 @@ compare_sorts (void *base, size_t nel, size_t width, int (*compar) (const void*,
 static void
 compare_sorts2 (void *base, size_t nel)
 {
-	size_t len = nel * sizeof (teststruct_t*);
+	size_t width = sizeof (teststruct_t*);
+	size_t len = nel * width;
 	void *b1 = malloc (len);
 	void *b2 = malloc (len);
 
@@ -100,9 +96,10 @@ compare_sorts2 (void *base, size_t nel)
 	memcpy (b2, base, len);
 
 	qsort (b1, nel, sizeof (teststruct_t*), compare_teststructs2);
-	qsort_test_struct (b2, nel);
+	qsort_test_struct ((teststruct_t **)b2, nel);
 
-	assert (!memcmp (b1, b2, len));
+	for (size_t i = 0; i < nel - 1; ++i)
+		assert (compare_teststructs2 ((char *)b2 + i * width, (char *)b2 + (i + 1) * width) <= 0);
 
 	free (b1);
 	free (b2);

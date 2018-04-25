@@ -34,8 +34,8 @@ namespace System.ServiceModel {
 	public class InvalidMessageContractException : SystemException
 	{
 		public InvalidMessageContractException () : base () {}
-		public InvalidMessageContractException (string msg) : base (msg) {}
-		public InvalidMessageContractException (string msg, Exception inner) : base (msg, inner) {}
+		public InvalidMessageContractException (string message) : base (message) {}
+		public InvalidMessageContractException (string message, Exception innerException) : base (message, innerException) {}
 		protected InvalidMessageContractException (SerializationInfo info, StreamingContext context) :
 			base (info, context) {}
 	}

@@ -313,7 +313,7 @@ typedef struct {
 	GC_hidden_pointer weak_ref;
 } GCToggleRef;
 
-static int (*GC_toggleref_callback) (GC_PTR obj);
+static GC_ToggleRefStatus (*GC_toggleref_callback) (GC_PTR obj);
 static GCToggleRef *GC_toggleref_array;
 static int GC_toggleref_array_size;
 static int GC_toggleref_array_capacity;
@@ -326,7 +326,7 @@ GC_process_togglerefs (void)
 	int toggle_ref_counts [3] = { 0, 0, 0 };
 
 	for (i = w = 0; i < GC_toggleref_array_size; ++i) {
-		int res;
+		GC_ToggleRefStatus res;
 		GCToggleRef r = GC_toggleref_array [i];
 
 		GC_PTR obj;
@@ -341,14 +341,14 @@ GC_process_togglerefs (void)
 		res = GC_toggleref_callback (obj);
 		++toggle_ref_counts [res];
 		switch (res) {
-		case 0:
+		case GC_TOGGLE_REF_DROP:
 			break;
-		case 1:
+		case GC_TOGGLE_REF_STRONG:
 			GC_toggleref_array [w].strong_ref = obj;
 			GC_toggleref_array [w].weak_ref = (GC_hidden_pointer)NULL;
 			++w;
 			break;
-		case 2:
+		case GC_TOGGLE_REF_WEAK:
 			GC_toggleref_array [w].strong_ref = NULL;
 			GC_toggleref_array [w].weak_ref = HIDE_POINTER (obj);
 			++w;
@@ -370,7 +370,7 @@ GC_process_togglerefs (void)
 static void (*GC_object_finalized_proc) (GC_PTR obj);
 
 void
-GC_set_finalizer_notify_proc (void (*proc) (GC_PTR obj))
+GC_set_await_finalize_proc (void (*proc) (GC_PTR obj))
 {
 	GC_object_finalized_proc = proc;
 }
@@ -423,17 +423,19 @@ static void GC_clear_togglerefs ()
 
 
 
-void GC_toggleref_register_callback(int (*proccess_toggleref) (GC_PTR obj))
+void GC_set_toggleref_func(GC_ToggleRefStatus (*proccess_toggleref) (GC_PTR obj))
 {
 	GC_toggleref_callback = proccess_toggleref;
 }
 
-static void
+static GC_bool
 ensure_toggleref_capacity (int capacity)
 {
 	if (!GC_toggleref_array) {
 		GC_toggleref_array_capacity = 32;
 		GC_toggleref_array = (GCToggleRef *) GC_INTERNAL_MALLOC_IGNORE_OFF_PAGE (GC_toggleref_array_capacity * sizeof (GCToggleRef), NORMAL);
+		if (!GC_toggleref_array)
+			return FALSE;
 	}
 	if (GC_toggleref_array_size + capacity >= GC_toggleref_array_capacity) {
 		GCToggleRef *tmp;
@@ -442,15 +444,19 @@ ensure_toggleref_capacity (int capacity)
 			GC_toggleref_array_capacity *= 2;
 
 		tmp = (GCToggleRef *) GC_INTERNAL_MALLOC_IGNORE_OFF_PAGE (GC_toggleref_array_capacity * sizeof (GCToggleRef), NORMAL);
+		if (!tmp)
+			return FALSE;
 		memcpy (tmp, GC_toggleref_array, GC_toggleref_array_size * sizeof (GCToggleRef));
 		GC_INTERNAL_FREE (GC_toggleref_array);
 		GC_toggleref_array = tmp;
 	}
+	return TRUE;
 }
 
-void
+int
 GC_toggleref_add (GC_PTR object, int strong_ref)
 {
+	int res = GC_SUCCESS;
     DCL_LOCK_STATE;
 # ifdef THREADS
 	DISABLE_SIGNALS();
@@ -460,7 +466,10 @@ GC_toggleref_add (GC_PTR object, int strong_ref)
 	if (!GC_toggleref_callback)
 		goto end;
 
-	ensure_toggleref_capacity (1);
+	if (!ensure_toggleref_capacity (1)) {
+		res = GC_NO_MEMORY;
+		goto end;
+	}
 	GC_toggleref_array [GC_toggleref_array_size].strong_ref = strong_ref ? object : NULL;
 	GC_toggleref_array [GC_toggleref_array_size].weak_ref = strong_ref ? (GC_hidden_pointer)NULL : HIDE_POINTER (object);
 	++GC_toggleref_array_size;
@@ -470,6 +479,7 @@ end:
 	UNLOCK();
 	ENABLE_SIGNALS();
 # endif
+	return res;
 }
 
 

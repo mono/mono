@@ -1,5 +1,6 @@
 # Copyright 2011-2013 Xamarin, Inc (http://www.xamarin.com)
 # Copyright 2003-2011 Novell, Inc (http://www.novell.com)
+# Licensed under the MIT license. See LICENSE file in the project root for full license information.
 # arm64 cpu description file
 # this file is read by genmdesc to pruduce a table with all the relevant information
 # about the cpu instructions that may be used by the regsiter allocator, the scheduler
@@ -51,7 +52,6 @@
 nop: len:4
 relaxed_nop: len:4
 break: len:20
-jmp: len:92
 br: len:16
 switch: src1:i len:12
 # See the comment in resume_from_signal_handler, we can't copy the fp regs from sigctx to MonoContext on linux,
@@ -100,6 +100,8 @@ vcall: len:32 clob:c
 vcall_reg: src1:i len:32 clob:c
 vcall_membase: src1:b len:32 clob:c
 tailcall: len:64 clob:c
+tailcall_membase: src1:b len:128 clob:c # FIXME len? Eventually depends on stack_usage.
+tailcall_reg: src1:b len:255 clob:c # FIXME len
 iconst: dest:i len:16
 r4const: dest:f len:24
 r8const: dest:f len:20
@@ -246,9 +248,7 @@ br_reg: src1:i len:8
 bigmul: len:8 dest:l src1:i src2:i
 bigmul_un: len:8 dest:l src1:i src2:i
 tls_get: dest:i len:32
-tls_get_reg: dest:i src1:i len:32
 tls_set: src1:i len:32
-tls_set_reg: src1:i src2:i len:32
 
 # 32 bit opcodes
 int_add: dest:i src1:i src2:i len:4
@@ -301,7 +301,10 @@ arm_rsc_imm: dest:i src1:i len:4
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
+dummy_iconst: dest:i len:0
+dummy_i8const: dest:i len:0
+dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -361,7 +364,7 @@ long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:36
 vcall2: len:40 clob:c
 vcall2_reg: src1:i len:40 clob:c
 vcall2_membase: src1:b len:40 clob:c
-dyn_call: src1:i src2:i len:192 clob:c
+dyn_call: src1:i src2:i len:216 clob:c
 
 # This is different from the original JIT opcodes
 float_beq: len:32
@@ -441,7 +444,7 @@ long_conv_to_u2: dest:i src1:i len:4
 long_conv_to_r8: dest:f src1:i len:8
 long_conv_to_r4: dest:f src1:i len:12
 loadi8_membase: dest:i src1:b len:12
-storei8_membase_imm: dest:b  len:20
+storei8_membase_imm: dest:b len:20
 storei8_membase_reg: dest:b src1:i len:12
 long_conv_to_r_un: dest:f src1:i len:8
 arm_setfreg_r4: dest:f src1:f len:8
@@ -458,26 +461,28 @@ atomic_exchange_i8: dest:i src1:i src2:i len:32
 atomic_cas_i4: dest:i src1:i src2:i src3:i len:32
 atomic_cas_i8: dest:i src1:i src2:i src3:i len:32
 memory_barrier: len:8 clob:a
-atomic_load_i1: dest:i src1:b len:20
-atomic_load_u1: dest:i src1:b len:20
-atomic_load_i2: dest:i src1:b len:20
-atomic_load_u2: dest:i src1:b len:20
-atomic_load_i4: dest:i src1:b len:16
-atomic_load_u4: dest:i src1:b len:16
-atomic_load_i8: dest:i src1:b len:12
-atomic_load_u8: dest:i src1:b len:12
-atomic_load_r4: dest:f src1:b len:24
-atomic_load_r8: dest:f src1:b len:20
-atomic_store_i1: dest:b src1:i len:16
-atomic_store_u1: dest:b src1:i len:16
-atomic_store_i2: dest:b src1:i len:16
-atomic_store_u2: dest:b src1:i len:16
-atomic_store_i4: dest:b src1:i len:16
-atomic_store_u4: dest:b src1:i len:16
-atomic_store_i8: dest:b src1:i len:12
-atomic_store_u8: dest:b src1:i len:12
-atomic_store_r4: dest:b src1:f len:24
-atomic_store_r8: dest:b src1:f len:20
+atomic_load_i1: dest:i src1:b len:24
+atomic_load_u1: dest:i src1:b len:24
+atomic_load_i2: dest:i src1:b len:24
+atomic_load_u2: dest:i src1:b len:24
+atomic_load_i4: dest:i src1:b len:24
+atomic_load_u4: dest:i src1:b len:24
+atomic_load_i8: dest:i src1:b len:20
+atomic_load_u8: dest:i src1:b len:20
+atomic_load_r4: dest:f src1:b len:28
+atomic_load_r8: dest:f src1:b len:24
+atomic_store_i1: dest:b src1:i len:20
+atomic_store_u1: dest:b src1:i len:20
+atomic_store_i2: dest:b src1:i len:20
+atomic_store_u2: dest:b src1:i len:20
+atomic_store_i4: dest:b src1:i len:20
+atomic_store_u4: dest:b src1:i len:20
+atomic_store_i8: dest:b src1:i len:20
+atomic_store_u8: dest:b src1:i len:20
+atomic_store_r4: dest:b src1:f len:28
+atomic_store_r8: dest:b src1:f len:24
 
 generic_class_init: src1:a len:44 clob:c
 gc_safe_point: src1:i len:12 clob:c
+
+fill_prof_call_ctx: src1:i len:128

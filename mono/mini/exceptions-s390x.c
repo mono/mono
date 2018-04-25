@@ -1,20 +1,20 @@
-/*------------------------------------------------------------------*/
-/* 								    */
-/* Name        - exceptions-s390.c				    */
-/* 								    */
-/* Function    - Exception support for S/390.                       */
-/* 								    */
-/* Name	       - Neale Ferguson (Neale.Ferguson@SoftwareAG-usa.com) */
-/* 								    */
-/* Date        - January, 2004					    */
-/* 								    */
-/* Derivation  - From exceptions-x86 & exceptions-ppc		    */
-/* 	         Paolo Molaro (lupus@ximian.com) 		    */
-/* 		 Dietmar Maurer (dietmar@ximian.com)		    */
-/* 								    */
-/* Copyright   - 2001 Ximian, Inc.				    */
-/* 								    */
-/*------------------------------------------------------------------*/
+/**
+ * \file
+ *
+ * Function    - Exception support for S/390.
+ *
+ * Name	       - Neale Ferguson (Neale.Ferguson@SoftwareAG-usa.com)
+ *
+ * Date        - January, 2004
+ *
+ * Derivation  - From exceptions-x86 & exceptions-ppc
+ * 	         Paolo Molaro (lupus@ximian.com)
+ * 		 Dietmar Maurer (dietmar@ximian.com)
+ *
+ * Copyright   - 2001 Ximian, Inc.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ *
+ */
 
 /*------------------------------------------------------------------*/
 /*                 D e f i n e s                                    */
@@ -59,6 +59,9 @@
 
 #include "mini.h"
 #include "mini-s390x.h"
+#include "support-s390x.h"
+#include "mini-runtime.h"
+#include "aot-runtime.h"
 
 /*========================= End of Includes ========================*/
 
@@ -214,7 +217,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	g_assert ((code - start) < SZ_THROW); 
 
 	mono_arch_flush_icache(start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create ("call_filter",
@@ -239,6 +242,7 @@ throw_exception (MonoObject *exc, unsigned long ip, unsigned long sp,
 		 gulong *int_regs, gdouble *fp_regs, gint32 *acc_regs, 
 		 guint fpc, gboolean rethrow)
 {
+	ERROR_DECL (error);
 	MonoContext ctx;
 	int iReg;
 
@@ -260,13 +264,14 @@ throw_exception (MonoObject *exc, unsigned long ip, unsigned long sp,
 	MONO_CONTEXT_SET_BP (&ctx, sp);
 	MONO_CONTEXT_SET_IP (&ctx, ip);
 	
-	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
+	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		}
 	}
+	mono_error_assert_ok (error);
 //	mono_arch_handle_exception (&ctx, exc, FALSE);
 	mono_handle_exception (&ctx, exc);
 	mono_restore_context(&ctx);
@@ -306,12 +311,8 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info,
 	s390_stg  (code, s390_r14, 0, STK_BASE, 0);
 	s390_lgr  (code, s390_r3, s390_r2);
 	if (corlib) {
-		s390_basr (code, s390_r13, 0);
-		s390_j    (code, 10);
-		s390_llong(code, mono_defaults.exception_class->image);
-		s390_llong(code, mono_exception_from_token);
-		s390_lg   (code, s390_r2, 0, s390_r13, 4);
-		s390_lg   (code, s390_r1, 0, s390_r13, 12);
+		S390_SET  (code, s390_r1, (guint8 *)mono_exception_from_token);
+		S390_SET  (code, s390_r2, (guint8 *)m_class_get_image (mono_defaults.exception_class));
 		s390_basr (code, s390_r14, s390_r1);
 	}
 
@@ -354,19 +355,16 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info,
 	s390_la   (code, s390_r7, 0, STK_BASE, S390_THROWSTACK_ACCREGS);
 	s390_stg  (code, s390_r7, 0, STK_BASE, S390_THROWSTACK_ACCPRM);
 	s390_stfpc(code, STK_BASE, S390_THROWSTACK_FPCPRM+4);
+	S390_SET  (code, s390_r1, (guint8 *)throw_exception);
 	s390_lghi (code, s390_r7, rethrow);
 	s390_stg  (code, s390_r7, 0, STK_BASE, S390_THROWSTACK_RETHROW);
-	s390_basr (code, s390_r13, 0);
-	s390_j    (code, 6);
-	s390_llong(code, throw_exception);
-	s390_lg   (code, s390_r1, 0, s390_r13, 4);
 	s390_basr (code, s390_r14, s390_r1);
 	/* we should never reach this breakpoint */
 	s390_break (code);
 	g_assert ((code - start) < size);
 
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create (corlib ? "throw_corlib_exception" 
@@ -537,7 +535,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 static void
 handle_signal_exception (gpointer obj)
 {
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
@@ -568,7 +566,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	 * signal is disabled, and we could run arbitrary code though the debugger. So
 	 * resume into the normal stack and do most work there if possible.
 	 */
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 
 	/* Pass the ctx parameter in TLS */
 	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);

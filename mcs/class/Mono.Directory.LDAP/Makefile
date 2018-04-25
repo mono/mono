@@ -4,6 +4,6 @@ include ../../build/rules.make
 
 LIBRARY = Mono.Directory.LDAP.dll
 LIB_REFS = System System.Data
-LIB_MCS_FLAGS = /r:$(corlib)
+LIB_MCS_FLAGS =
 
 include ../../build/library.make

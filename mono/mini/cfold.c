@@ -1,5 +1,6 @@
-/*
- * cfold.c: Constant folding support
+/**
+ * \file
+ * Constant folding support
  *
  * Author:
  *   Paolo Molaro (lupus@ximian.com)
@@ -335,6 +336,19 @@ mono_constant_fold_ins (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 					dest->inst_c0 = res;
 				}
 				break;
+			case OP_COND_EXC_EQ:
+				res = arg1->inst_c0 == arg2->inst_c0;
+				if (!res) {
+					if (overwrite) {
+						NULLIFY_INS (ins);
+						NULLIFY_INS (next);
+					} else {
+						ALLOC_DEST (cfg, dest, ins);
+						dest->opcode = OP_ICONST;
+						dest->inst_c0 = res;
+					}
+				}
+				break;
 			case OP_NOP:
 			case OP_BR:
 				/* This happens when a conditional branch is eliminated */
@@ -346,6 +360,24 @@ mono_constant_fold_ins (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIns
 				break;
 			default:
 				return NULL;
+			}
+		}
+		if ((arg1->opcode == OP_PCONST) && (arg2->opcode == OP_PCONST) && ins->next) {
+			MonoInst *next = ins->next;
+
+			if (next->opcode == OP_LCEQ) {
+				gboolean res = arg1->inst_p0 == arg2->inst_p0;
+				if (overwrite) {
+					NULLIFY_INS (ins);
+					next->opcode = OP_ICONST;
+					next->inst_c0 = res;
+					MONO_INST_NULLIFY_SREGS (next);
+				} else {
+					ALLOC_DEST (cfg, dest, ins);
+					dest->opcode = OP_ICONST;
+					dest->inst_c0 = res;
+				}
+				break;
 			}
 		}
 		break;

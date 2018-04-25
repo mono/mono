@@ -45,7 +45,7 @@ namespace System.ServiceModel
 		}
 
 		Message incoming_message;
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		EndpointDispatcher dispatcher;
 #endif
 		IContextChannel channel;
@@ -83,7 +83,7 @@ namespace System.ServiceModel
 		}
 
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		public EndpointDispatcher EndpointDispatcher {
 			get { return dispatcher; }
 			set { dispatcher = value; }
@@ -146,7 +146,7 @@ namespace System.ServiceModel
 			get { return Channel.SessionId; }
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public ServiceSecurityContext ServiceSecurityContext {
 			get { return IncomingMessageProperties != null ? IncomingMessageProperties.Security.ServiceSecurityContext : null; }
 		}

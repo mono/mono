@@ -304,7 +304,7 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 
-		protected internal override void Render (HtmlTextWriter w)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			Page page = Page;
 			if (page != null) {
@@ -318,38 +318,38 @@ namespace System.Web.UI.WebControls
 				if (!RenderingCompatibilityLessThan40)
 					ControlStyle.PrependCssClass (DisabledCssClass);
 				else
-					w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
+					writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 				need_span = true;
 			}
 
 			if (need_span) {
-				AddDisplayStyleAttribute (w);
-				ControlStyle.AddAttributesToRender (w, this);
+				AddDisplayStyleAttribute (writer);
+				ControlStyle.AddAttributesToRender (writer, this);
 			}
 			
 			string tt = ToolTip;
 			if (tt != null && tt.Length > 0){
-				w.AddAttribute ("title", tt);
+				writer.AddAttribute ("title", tt);
 				need_span = true;
 			}
 
-			if (HasAttributes && AddAttributesForSpan (w))
+			if (HasAttributes && AddAttributesForSpan (writer))
 				need_span = true;
 			
 			if (need_span)
-				w.RenderBeginTag (HtmlTextWriterTag.Span);
+				writer.RenderBeginTag (HtmlTextWriterTag.Span);
 
 			TextAlign align = TextAlign;
 			if (align == TextAlign.Right) {
-				RenderInput (w, enabled);
-				RenderLabel (w);
+				RenderInput (writer, enabled);
+				RenderLabel (writer);
 			} else {
-				RenderLabel (w);
-				RenderInput (w, enabled);
+				RenderLabel (writer);
+				RenderInput (writer, enabled);
 			}
 
 			if (need_span)
-				w.RenderEndTag ();
+				writer.RenderEndTag ();
 		}
 
 		void RenderInput (HtmlTextWriter w, bool enabled)

@@ -4,7 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = Microsoft.VisualC.dll
 LIB_REFS = System
-LIB_MCS_FLAGS = /r:$(corlib)
+KEYFILE = ../msfinal.pub
+
 NO_TEST = yes
 
 include ../../build/library.make

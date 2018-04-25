@@ -7,10 +7,10 @@
   	<capture>
   		<userAgent match="^(?'refuacapturename'.*)$" />
   	</capture>
-    <controlAdapters markupTextWriterType="MonoTests.System.Web.CustomHtmlTextWriter, System.Web_test_net_2_0">
+    <controlAdapters markupTextWriterType="MonoTests.System.Web.CustomHtmlTextWriter, net_4_x_System.Web_test">
       <adapter 
-            controlType="MonoTests.System.Web.UI.Customadaptercontrol, System.Web_test_net_2_0"
-            adapterType="MonoTests.System.Web.UI.Customadapter, System.Web_test_net_2_0" 
+            controlType="MonoTests.System.Web.UI.Customadaptercontrol, net_4_x_System.Web_test"
+            adapterType="MonoTests.System.Web.UI.Customadapter, net_4_x_System.Web_test" 
       />
     </controlAdapters>
     <capabilities>

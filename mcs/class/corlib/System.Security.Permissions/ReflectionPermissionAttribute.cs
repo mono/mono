@@ -113,7 +113,7 @@ namespace System.Security.Permissions {
 		// Methods
 		public override IPermission CreatePermission ()
 		{
-#if NET_2_1
+#if MOBILE
 			return null;
 #else
 			ReflectionPermission perm = null;

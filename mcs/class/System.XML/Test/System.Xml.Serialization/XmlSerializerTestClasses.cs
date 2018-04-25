@@ -711,6 +711,13 @@ namespace MonoTests.System.Xml.TestClasses
 		public object data;
 	}
 
+	public class SubclassTestList
+	{
+		[XmlElement ("a", typeof (SimpleClass))]
+		[XmlElement ("b", typeof (SubclassTestBase))]
+		public List<object> Items;
+	}
+
 	public class DictionaryWithIndexer : DictionaryBase
 	{
 		public TimeSpan this[int index]
@@ -1062,6 +1069,12 @@ namespace MonoTests.System.Xml.TestClasses
 	{
 		[XmlElementAttribute (DataType = "date")]
 		public DateTime SomeDate;
+	}
+
+	public class UtcTimeClass
+	{
+		[XmlElementAttribute (DataType = "time")]
+		public DateTime DateTimeValue;
 	}
 
 	public class Bug8468BaseClass

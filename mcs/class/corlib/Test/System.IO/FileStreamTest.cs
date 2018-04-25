@@ -25,10 +25,6 @@ namespace MonoTests.System.IO
 	{
 		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 		static readonly char DSC = Path.DirectorySeparatorChar;
-		static bool MacOSX = false;
-
-		[DllImport ("libc")]
-		static extern int uname (IntPtr buf);
 
 		[TearDown]
 		public void TearDown ()
@@ -44,13 +40,6 @@ namespace MonoTests.System.IO
 				Directory.Delete (TempFolder, true);
 
 			Directory.CreateDirectory (TempFolder);
-#if !MOBILE			
-			// from XplatUI.cs
-			IntPtr buf = Marshal.AllocHGlobal (8192);
-			if (uname (buf) == 0)
-				MacOSX = Marshal.PtrToStringAnsi (buf) == "Darwin";
-			Marshal.FreeHGlobal (buf);
-#endif
 		}
 
 		public void TestCtr ()
@@ -1553,6 +1542,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BeginWrite_Recursive ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
@@ -1660,6 +1650,28 @@ namespace MonoTests.System.IO
 			
 		}
 
+		[Test]
+		public void OpenCharDeviceRepeatedly ()
+		{
+			// https://bugzilla.xamarin.com/show_bug.cgi?id=38408
+			try {
+				using (var f = new FileStream ("/dev/zero", FileMode.Open))
+				{
+				}
+			} catch (FileNotFoundException) {
+				// Only run this test on platforms where /dev/zero exists
+				Assert.Ignore();
+			} catch (DirectoryNotFoundException) {
+				// Only run this test on platforms where /dev exists
+				Assert.Ignore();
+			}
+
+			// this shouldn't throw
+			using (var g = new FileStream ("/dev/zero", FileMode.Open))
+			{
+			}
+		}
+
 #if !MOBILE
 		[Test]
 		public void WriteWithExposedHandle ()
@@ -1706,5 +1718,40 @@ namespace MonoTests.System.IO
 			}
 		}
 #endif
+
+		[Test] // Covers #11699
+		public void ReadWriteFileLength ()
+		{
+			int bufferSize = 128;
+			int readLength = 1;
+			int writeLength = bufferSize + 1;
+
+			string path = TempFolder + DSC + "readwritefilelength.tmp";
+
+			try {
+				File.WriteAllBytes (path, new byte [readLength + 1]);
+
+				using (var file = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.Read,
+												 bufferSize, FileOptions.SequentialScan))
+				{
+					file.Read (new byte [readLength], 0, readLength);
+					file.Write (new byte [writeLength], 0, writeLength);
+
+					Assert.AreEqual (readLength + writeLength, file.Length);
+				}
+			} finally {
+				DeleteFile (path);
+			}
+		}
+
+		[Test]
+		public void NamePropertyNormalization ()
+		{
+			string fname = TempFolder + DSC + ".." + DSC + "MonoTests.System.IO.Tests" + DSC + "tfile.txt";
+
+			using (var s = new FileStream (fname, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Delete)) {
+				Assert.AreEqual (TempFolder + DSC + "tfile.txt", s.Name);
+			}
+		}
 	}
 }

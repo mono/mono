@@ -45,12 +45,12 @@ namespace System.ServiceModel
 		{
 		}
 
-		public ServiceHost (object serviceInstance,
+		public ServiceHost (object singletonInstance,
 			params Uri [] baseAddresses)
 		{
-			if (serviceInstance == null)
-				throw new ArgumentNullException ("serviceInstance");
-			InitializeDescription (serviceInstance,
+			if (singletonInstance == null)
+				throw new ArgumentNullException ("singletonInstance");
+			InitializeDescription (singletonInstance,
 				new UriSchemeKeyedCollection (baseAddresses));
 		}
 
@@ -151,7 +151,7 @@ namespace System.ServiceModel
 
 		TAttr PopulateAttribute<TAttr> ()
 		{
-			object [] atts = service_type.GetCustomAttributes (typeof (TAttr), false);
+			object [] atts = service_type.GetCustomAttributes (typeof (TAttr), true);
 			return (TAttr) (atts.Length > 0 ? atts [0] : Activator.CreateInstance (typeof (TAttr)));
 		}
 
@@ -165,10 +165,10 @@ namespace System.ServiceModel
 			InitializeDescription (baseAddresses);
 		}
 
-		protected void InitializeDescription (object serviceInstance, UriSchemeKeyedCollection baseAddresses)
+		protected void InitializeDescription (object singletonInstance, UriSchemeKeyedCollection baseAddresses)
 		{
-			instance = serviceInstance;
-			InitializeDescription (serviceInstance.GetType (), baseAddresses);
+			instance = singletonInstance;
+			InitializeDescription (singletonInstance.GetType (), baseAddresses);
 		}
 	}
 }

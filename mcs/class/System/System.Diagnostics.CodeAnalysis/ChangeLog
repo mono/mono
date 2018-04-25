@@ -1,3 +1,0 @@
-2010-04-06  Jb Evain  <jbevain@novell.com>
-
-	* ExcludeFromCodeCoverageAttribute.cs: new attribute.

@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <time.h>
 #include <math.h>
+#include <setjmp.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -34,7 +35,7 @@ typedef int (STDCALL *SimpleDelegate) (int a);
 #if defined(WIN32) && defined (_MSC_VER)
 #define LIBTEST_API __declspec(dllexport)
 #elif defined(__GNUC__)
-#define LIBTEST_API  __attribute__ ((visibility ("default")))
+#define LIBTEST_API  __attribute__ ((__visibility__ ("default")))
 #else
 #define LIBTEST_API
 #endif
@@ -99,7 +100,7 @@ static gunichar2* marshal_bstr_alloc(const gchar* str)
 	int slen = strlen (str);
 	gunichar2* temp;
 	/* allocate len + 1 utf16 characters plus 4 byte integer for length*/
-	ret = g_malloc ((slen + 1) * sizeof(gunichar2) + sizeof(guint32));
+	ret = (gchar *)g_malloc ((slen + 1) * sizeof(gunichar2) + sizeof(guint32));
 	if (ret == NULL)
 		return NULL;
 	temp = g_utf8_to_utf16 (str, -1, NULL, NULL, NULL);
@@ -129,7 +130,7 @@ test_lpwstr_marshal (unsigned short* chars, long length)
 	int i = 0;
 	unsigned short *res;
 
-	res = marshal_alloc (2 * (length + 1));
+	res = (unsigned short *)marshal_alloc (2 * (length + 1));
 
 	// printf("test_lpwstr_marshal()\n");
 	
@@ -152,7 +153,7 @@ test_lpwstr_marshal_out (unsigned short** chars)
 	const char abc[] = "ABC";
 	glong len = strlen(abc);
 
-	*chars = marshal_alloc (2 * (len + 1));
+	*chars = (unsigned short *)marshal_alloc (2 * (len + 1));
 	
 	while ( i < len ) {
 		(*chars) [i] = abc[i];
@@ -278,6 +279,25 @@ mono_return_nested_float (void)
 	f.fi.f3 = 3.0;
 	f.f4 = 4.0;
 	return f;
+}
+
+struct Scalar4 {
+	double val[4];
+};
+
+struct Rect {
+	int x;
+	int y;
+	int width;
+	int height;
+};
+
+LIBTEST_API char * STDCALL
+mono_return_struct_4_double (void *ptr, struct Rect rect, struct Scalar4 sc4, int a, int b, int c)
+{
+	char *buffer = (char *) malloc (1024 * sizeof (char));
+	sprintf (buffer, "sc4 = {%.1f, %.1f, %.1f, %.1f }, a=%x, b=%x, c=%x\n", (float) sc4.val [0], (float) sc4.val [1], (float) sc4.val [2], (float) sc4.val [3], a, b, c);
+	return buffer;
 }
 
 LIBTEST_API int STDCALL  
@@ -515,7 +535,7 @@ mono_test_marshal_out_byref_array_out_size_param (int **out_arr, int *out_len)
 	int i, len;
 
 	len = 4;
-	arr = marshal_alloc (sizeof (gint32) * len);
+	arr = (gint32 *)marshal_alloc (sizeof (gint32) * len);
 	for (i = 0; i < len; ++i)
 		arr [i] = i;
 	*out_arr = arr;
@@ -623,7 +643,7 @@ LIBTEST_API int STDCALL
 mono_test_marshal_out_struct (int a, simplestruct *ss, int b, OutVTypeDelegate func)
 {
 	/* Check that the input pointer is ignored */
-	ss->d = (gpointer)0x12345678;
+	ss->d = (const char *)0x12345678;
 
 	func (a, ss, b);
 
@@ -889,12 +909,12 @@ mono_test_marshal_return_delegate (SimpleDelegate delegate)
 	return delegate;
 }
 
-typedef int DelegateByrefDelegate (void *);
+typedef int (STDCALL *DelegateByrefDelegate) (void *);
 
 LIBTEST_API int STDCALL
 mono_test_marshal_delegate_ref_delegate (DelegateByrefDelegate del)
 {
-	int (*ptr) (int i);
+	int (STDCALL *ptr) (int i);
 
 	del (&ptr);
 
@@ -1018,7 +1038,7 @@ mono_test_marshal_delegate7 (SimpleDelegate7 delegate)
 	simplestruct *ptr;
 
 	/* Check that the input pointer is ignored */
-	ptr = (gpointer)0x12345678;
+	ptr = (simplestruct *)0x12345678;
 
 	res = delegate (&ptr);
 	if (res != 0)
@@ -1067,7 +1087,7 @@ typedef int (STDCALL *SimpleDelegate9) (return_int_fnt d);
 LIBTEST_API int STDCALL 
 mono_test_marshal_delegate9 (SimpleDelegate9 delegate, gpointer ftn)
 {
-	return delegate (ftn);
+	return delegate ((return_int_fnt)ftn);
 }
 
 static int STDCALL 
@@ -1109,6 +1129,22 @@ mono_test_marshal_return_delegate_delegate (ReturnDelegateDelegate d)
 	return (d ()) (55);
 }
 
+typedef int (STDCALL *VirtualDelegate) (int);
+
+LIBTEST_API int STDCALL
+mono_test_marshal_virtual_delegate (VirtualDelegate del)
+{
+	return del (42);
+}
+
+typedef char* (STDCALL *IcallDelegate) (const char *);
+LIBTEST_API int STDCALL
+mono_test_marshal_icall_delegate (IcallDelegate del)
+{
+	char *res = del ("ABC");
+	return strcmp (res, "ABC") == 0 ? 0 : 1;
+}
+
 LIBTEST_API int STDCALL  
 mono_test_marshal_stringbuilder (char *s, int n)
 {
@@ -1116,7 +1152,7 @@ mono_test_marshal_stringbuilder (char *s, int n)
 
 	if (strcmp (s, "ABCD") != 0)
 		return 1;
-	strncpy(s, m, n);
+	memcpy(s, m, n);
 	s [n] = '\0';
 	return 0;
 }
@@ -1142,7 +1178,7 @@ mono_test_marshal_stringbuilder_default (char *s, int n)
 {
 	const char m[] = "This is my message.  Isn't it nice?";
 
-	strncpy(s, m, n);
+	memcpy(s, m, n);
 	s [n] = '\0';
 	return 0;
 }
@@ -1172,7 +1208,7 @@ mono_test_marshal_stringbuilder_out (char **s)
 	const char m[] = "This is my message.  Isn't it nice?";
 	char *str;
 
-	str = marshal_alloc (strlen (m) + 1);
+	str = (char *)marshal_alloc (strlen (m) + 1);
 	memcpy (str, m, strlen (m) + 1);
 	
 	*s = str;
@@ -1188,7 +1224,7 @@ mono_test_marshal_stringbuilder_out_unicode (gunichar2 **s)
 	s2 = g_utf8_to_utf16 (m, -1, NULL, &len, NULL);
 	
 	len = (len * 2) + 2;
-	*s = marshal_alloc (len);
+	*s = (gunichar2 *)marshal_alloc (len);
 	memcpy (*s, s2, len);
 
 	g_free (s2);
@@ -1205,18 +1241,36 @@ mono_test_marshal_stringbuilder_ref (char **s)
 	if (strcmp (*s, "ABC"))
 		return 1;
 
-	str = marshal_alloc (strlen (m) + 1);
+	str = (char *)marshal_alloc (strlen (m) + 1);
 	memcpy (str, m, strlen (m) + 1);
 	
 	*s = str;
 	return 0;
 }
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wc++-compat"
+#endif
+
+/*
+* Standard C and C++ doesn't allow empty structs, empty structs will always have a size of 1 byte.
+* GCC have an extension to allow empty structs, https://gcc.gnu.org/onlinedocs/gcc/Empty-Structures.html.
+* This cause a little dilemma since runtime build using none GCC compiler will not be compatible with
+* GCC build C libraries and the other way around. On platforms where empty structs has size of 1 byte
+* it must be represented in call and cannot be dropped. On Windows x64 structs will always be represented in the call
+* meaning that an empty struct must have a representation in the callee in order to correctly follow the ABI used by the
+* C/C++ standard and the runtime.
+*/
 typedef struct {
-#ifndef __GNUC__
+#if !defined(__GNUC__) || defined(TARGET_WIN32)
     char a;
 #endif
 } EmptyStruct;
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 LIBTEST_API int STDCALL 
 mono_test_marshal_empty_string_array (char **array)
@@ -1271,10 +1325,10 @@ mono_test_marshal_stringbuilder_array (char **array)
 LIBTEST_API int STDCALL 
 mono_test_marshal_unicode_string_array (gunichar2 **array, char **array2)
 {
-	GError *error = NULL;
+	GError *gerror = NULL;
 	char *s;
 	
-	s = g_utf16_to_utf8 (array [0], -1, NULL, NULL, &error);
+	s = g_utf16_to_utf8 (array [0], -1, NULL, NULL, &gerror);
 	if (strcmp (s, "ABC")) {
 		g_free (s);
 		return 1;
@@ -1282,7 +1336,7 @@ mono_test_marshal_unicode_string_array (gunichar2 **array, char **array2)
 	else
 		g_free (s);
 
-	s = g_utf16_to_utf8 (array [1], -1, NULL, NULL, &error);
+	s = g_utf16_to_utf8 (array [1], -1, NULL, NULL, &gerror);
 	if (strcmp (s, "DEF")) {
 		g_free (s);
 		return 2;
@@ -1320,7 +1374,12 @@ mono_test_return_empty_struct (int a)
 {
 	EmptyStruct s;
 
+	memset (&s, 0, sizeof (s));
+
+#if !(defined(__i386__) && defined(__clang__))
+	/* https://bugzilla.xamarin.com/show_bug.cgi?id=58901 */
 	g_assert (a == 42);
+#endif
 
 	return s;
 }
@@ -1334,7 +1393,7 @@ mono_test_byvalstr_gen (void)
 {
 	ByValStrStruct *ret;
        
-	ret = malloc(sizeof(ByValStrStruct));
+	ret = (ByValStrStruct *)malloc (sizeof (ByValStrStruct));
 	memset(ret, 'a', sizeof(ByValStrStruct)-1);
 	ret->a[sizeof(ByValStrStruct)-1] = 0;
 
@@ -1490,7 +1549,7 @@ class_marshal_test4 (SimpleObj *obj1)
 LIBTEST_API void STDCALL
 class_marshal_test1 (SimpleObj **obj1)
 {
-	SimpleObj *res = malloc (sizeof (SimpleObj));
+	SimpleObj *res = (SimpleObj *)malloc (sizeof (SimpleObj));
 
 	res->str = marshal_strdup ("ABC");
 	res->i = 5;
@@ -1730,10 +1789,10 @@ mono_test_asany (void *ptr, int what)
 			return 1;
 	}
 	case 4: {
-		GError *error = NULL;
+		GError *gerror = NULL;
 		char *s;
 
-		s = g_utf16_to_utf8 (ptr, -1, NULL, NULL, &error);
+		s = g_utf16_to_utf8 ((const gunichar2 *)ptr, -1, NULL, NULL, &gerror);
 
 		if (!s)
 			return 1;
@@ -1765,7 +1824,7 @@ typedef struct
 LIBTEST_API int STDCALL 
 mono_test_marshal_asany_in (void* ptr)
 {
-	AsAnyStruct* asAny = ptr;
+	AsAnyStruct *asAny = (AsAnyStruct *)ptr;
 	int res = asAny->i + asAny->j + asAny->k;
 
 	return res;
@@ -1774,7 +1833,7 @@ mono_test_marshal_asany_in (void* ptr)
 LIBTEST_API int STDCALL 
 mono_test_marshal_asany_inout (void* ptr)
 {
-	AsAnyStruct* asAny = ptr;
+	AsAnyStruct *asAny = (AsAnyStruct *)ptr;
 	int res = asAny->i + asAny->j + asAny->k;
 
 	marshal_free (asAny->s);
@@ -1790,7 +1849,7 @@ mono_test_marshal_asany_inout (void* ptr)
 LIBTEST_API int STDCALL 
 mono_test_marshal_asany_out (void* ptr)
 {
-	AsAnyStruct* asAny = ptr;
+	AsAnyStruct *asAny = (AsAnyStruct *)ptr;
 	int res = asAny->i + asAny->j + asAny->k;
 
 	asAny->i = 10;
@@ -1976,7 +2035,7 @@ mono_test_marshal_pass_return_custom_in_delegate (PassReturnPtrDelegate del)
 	buf [0] = 0;
 	buf [1] = 10;
 
-	ptr = del (&buf);
+	ptr = (guint32 *)del (&buf);
 
 	res = ptr [1];
 
@@ -3301,6 +3360,7 @@ typedef struct
 	int (STDCALL *DoubleIn)(MonoComObject* pUnk, double a);
 	int (STDCALL *ITestIn)(MonoComObject* pUnk, MonoComObject* pUnk2);
 	int (STDCALL *ITestOut)(MonoComObject* pUnk, MonoComObject* *ppUnk);
+	int (STDCALL *Return22NoICall)(MonoComObject* pUnk);
 } MonoIUnknown;
 
 struct MonoComObject
@@ -3417,6 +3477,13 @@ ITestOut(MonoComObject* pUnk, MonoComObject* *ppUnk)
 	return S_OK;
 }
 
+LIBTEST_API int STDCALL
+Return22NoICall(MonoComObject* pUnk)
+{
+	return 22;
+}
+
+
 static void create_com_object (MonoComObject** pOut);
 
 LIBTEST_API int STDCALL 
@@ -3448,6 +3515,7 @@ static void create_com_object (MonoComObject** pOut)
 	(*pOut)->vtbl->ITestIn = ITestIn;
 	(*pOut)->vtbl->ITestOut = ITestOut;
 	(*pOut)->vtbl->get_ITest = get_ITest;
+	(*pOut)->vtbl->Return22NoICall = Return22NoICall;
 }
 
 static MonoComObject* same_object = NULL;
@@ -3536,12 +3604,34 @@ mono_test_marshal_ccw_itest (MonoComObject *pUnk)
 	return 0;
 }
 
+// Xamarin-47560
+LIBTEST_API int STDCALL
+mono_test_marshal_array_ccw_itest (int count, MonoComObject ** ppUnk)
+{
+	int hr = 0;
+
+	if (!ppUnk)
+		return 1;
+
+	if (count < 1)
+		return 2;
+
+	if (!ppUnk[0])
+		return 3;
+
+	hr = ppUnk[0]->vtbl->SByteIn (ppUnk[0], -100);
+	if (hr != 0)
+		return 4;
+
+	return 0;
+}
+
 /*
  * mono_method_get_unmanaged_thunk tests
  */
 
 #if defined(__GNUC__) && ((defined(__i386__) && (defined(__linux__) || defined (__APPLE__)) || defined (__FreeBSD__) || defined(__OpenBSD__)) || (defined(__ppc__) && defined(__APPLE__)))
-#define ALIGN(size) __attribute__ ((aligned(size)))
+#define ALIGN(size) __attribute__ ((__aligned__(size)))
 #else
 #define ALIGN(size)
 #endif
@@ -3570,6 +3660,8 @@ mono_test_marshal_lookup_symbol (const char *symbol_name)
 	return lookup_mono_symbol (symbol_name);
 }
 
+
+// FIXME use runtime headers
 #define MONO_BEGIN_EFRAME { void *__dummy; void *__region_cookie = mono_threads_enter_gc_unsafe_region ? mono_threads_enter_gc_unsafe_region (&__dummy) : NULL;
 #define MONO_END_EFRAME if (mono_threads_exit_gc_unsafe_region) mono_threads_exit_gc_unsafe_region (__region_cookie, &__dummy); }
 
@@ -3585,23 +3677,29 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 {
 	int ret = 0;
 
+	// FIXME use runtime headers
 	gpointer (*mono_method_get_unmanaged_thunk)(gpointer)
-		= lookup_mono_symbol ("mono_method_get_unmanaged_thunk");
+		= (gpointer (*)(gpointer))lookup_mono_symbol ("mono_method_get_unmanaged_thunk");
 
+	// FIXME use runtime headers
 	gpointer (*mono_string_new_wrapper)(const char *)
-		= lookup_mono_symbol ("mono_string_new_wrapper");
+		= (gpointer (*)(const char *))lookup_mono_symbol ("mono_string_new_wrapper");
 
-	char* (*mono_string_to_utf8)(gpointer)
-		= lookup_mono_symbol ("mono_string_to_utf8");
+	// FIXME use runtime headers
+	char *(*mono_string_to_utf8)(gpointer)
+		= (char *(*)(gpointer))lookup_mono_symbol ("mono_string_to_utf8");
 
+	// FIXME use runtime headers
 	gpointer (*mono_object_unbox)(gpointer)
-		= lookup_mono_symbol ("mono_object_unbox");
+		= (gpointer (*)(gpointer))lookup_mono_symbol ("mono_object_unbox");
 
+	// FIXME use runtime headers
 	gpointer (*mono_threads_enter_gc_unsafe_region) (gpointer)
-		= lookup_mono_symbol ("mono_threads_enter_gc_unsafe_region");
+		= (gpointer (*)(gpointer))lookup_mono_symbol ("mono_threads_enter_gc_unsafe_region");
 
+	// FIXME use runtime headers
 	void (*mono_threads_exit_gc_unsafe_region) (gpointer, gpointer)
-		= lookup_mono_symbol ("mono_threads_exit_gc_unsafe_region");
+		= (void (*)(gpointer, gpointer))lookup_mono_symbol ("mono_threads_exit_gc_unsafe_region");
 
 	
 
@@ -3621,7 +3719,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 		goto done;
 	}
 
-	CreateObject = mono_method_get_unmanaged_thunk (create_object_method_handle);
+	CreateObject = (gpointer (STDCALL *)(gpointer *))mono_method_get_unmanaged_thunk (create_object_method_handle);
 	if (!CreateObject) {
 		ret = 3;
 		goto done;
@@ -3632,14 +3730,14 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 
 	case 0: {
 		/* thunks.cs:Test.Test0 */
-		void (STDCALL *F)(gpointer*) = test_method;
+		void (STDCALL *F)(gpointer *) = (void (STDCALL *)(gpointer *))test_method;
 		F (&ex);
 		break;
 	}
 
 	case 1: {
 		/* thunks.cs:Test.Test1 */
-		int (STDCALL *F)(gpointer*) = test_method;
+		int (STDCALL *F)(gpointer *) = (int (STDCALL *)(gpointer *))test_method;
 		if (F (&ex) != 42) {
 			ret = 4;
 			goto done;
@@ -3649,7 +3747,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 
 	case 2: {
 		/* thunks.cs:Test.Test2 */
-		gpointer (STDCALL *F)(gpointer, gpointer*) = test_method;
+		gpointer (STDCALL *F)(gpointer, gpointer*) = (gpointer (STDCALL *)(gpointer, gpointer *))test_method;
 		gpointer str = mono_string_new_wrapper ("foo");
 		if (str != F (str, &ex)) {
 			ret = 4;
@@ -3664,7 +3762,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 		gpointer obj;
 		gpointer str;
 
-		F = test_method;
+		F = (gpointer (STDCALL *)(gpointer, gpointer, gpointer *))test_method;
 		obj = CreateObject (&ex);
 		str = mono_string_new_wrapper ("bar");
 
@@ -3681,7 +3779,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 		gpointer obj;
 		gpointer str;
 
-		F = test_method;
+		F = (int (STDCALL *)(gpointer, gpointer, int, gpointer *))test_method;
 		obj = CreateObject (&ex);
 		str = mono_string_new_wrapper ("bar");
 
@@ -3699,7 +3797,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 		gpointer obj;
 		gpointer str;
 
-		F = test_method;
+		F = (int (STDCALL *)(gpointer, gpointer, int, gpointer *))test_method;
 		obj = CreateObject (&ex);
 		str = mono_string_new_wrapper ("bar");
 
@@ -3720,7 +3818,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 		gpointer str = mono_string_new_wrapper ("Test6");
 		int res;
 
-		F = test_method;
+		F = (int (STDCALL *)(gpointer, guint8, gint16, gint32, gint64, float, double, gpointer, gpointer *))test_method;
 		obj = CreateObject (&ex);
 
 		res = F (obj, 254, 32700, -245378, 6789600, 3.1415, 3.1415, str, &ex);
@@ -3739,7 +3837,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 
 	case 7: {
 		/* thunks.cs:Test.Test7 */
-		gint64 (STDCALL *F)(gpointer*) = test_method;
+		gint64 (STDCALL *F)(gpointer*) = (gint64 (STDCALL *)(gpointer *))test_method;
 		if (F (&ex) != G_MAXINT64) {
 			ret = 4;
 			goto done;
@@ -3760,7 +3858,8 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 		double a6;
 		gpointer a7;
 
-		F = test_method;
+		F = (void (STDCALL *)(guint8 *, gint16 *, gint32 *, gint64 *, float *, double *,
+			gpointer *, gpointer *))test_method;
 
 		F (&a1, &a2, &a3, &a4, &a5, &a6, &a7, &ex);
 		if (ex) {
@@ -3785,7 +3884,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 	case 9: {
 		/* thunks.cs:Test.Test9 */
 		void (STDCALL *F)(guint8*, gint16*, gint32*, gint64*, float*, double*,
-				 gpointer*, gpointer*);
+			gpointer*, gpointer*);
 
 		guint8 a1;
 		gint16 a2;
@@ -3795,7 +3894,8 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 		double a6;
 		gpointer a7;
 
-		F = test_method;
+		F = (void (STDCALL *)(guint8 *, gint16 *, gint32 *, gint64 *, float *, double *,
+			gpointer *, gpointer *))test_method;
 
 		F (&a1, &a2, &a3, &a4, &a5, &a6, &a7, &ex);
 		if (!ex) {
@@ -3818,7 +3918,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 			goto done;
 		}
 
-		F = test_method;
+		F = (void (STDCALL *)(gpointer *, gpointer *))test_method;
 
 		F (&obj1, &ex);
 		if (ex) {
@@ -3853,7 +3953,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 			goto done;
 		}
 
-		a1 = mono_object_unbox (obj);
+		a1 = (TestStruct *)mono_object_unbox (obj);
 		if (!a1) {
 			ret = 6;
 			goto done;
@@ -3862,9 +3962,9 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 		a1->A = 42;
 		a1->B = 3.1415;
 
-		F = test_method;
+		F = (int (STDCALL *)(gpointer *, gpointer *))test_method;
 
-		res = F (obj, &ex);
+		res = F ((gpointer *)obj, &ex);
 		if (ex) {
 			ret = 7;
 			goto done;
@@ -3902,13 +4002,13 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 			goto done;
 		}
 
-		a1 = mono_object_unbox (obj);
+		a1 = (TestStruct *)mono_object_unbox (obj);
 		if (!a1) {
 			ret = 6;
 			goto done;
 		}
 
-		F = test_method;
+		F = (void (STDCALL *)(gpointer, gpointer *))test_method;
 
 		F (obj, &ex);
 		if (ex) {
@@ -3936,7 +4036,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 		TestStruct *a1;
 		gpointer obj;
 
-		F = test_method;
+		F = (gpointer (STDCALL *)(gpointer *))test_method;
 
 		obj = F (&ex);
 		if (ex) {
@@ -3949,7 +4049,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 			goto done;
 		}
 
-		a1 = mono_object_unbox (obj);
+		a1 = (TestStruct *)mono_object_unbox (obj);
 
 		if (a1->A != 42) {
 			ret = 5;
@@ -3982,7 +4082,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 			goto done;
 		}
 		
-		a1 = mono_object_unbox (obj);
+		a1 = (TestStruct *)mono_object_unbox (obj);
 
 		if (!a1) {
 			ret = 6;
@@ -3992,7 +4092,7 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 		a1->A = 42;
 		a1->B = 3.1415;
 
-		F = test_method;
+		F = (void (STDCALL *)(gpointer, gpointer *))test_method;
 
 		F (obj, &ex);
 		if (ex) {
@@ -5406,7 +5506,7 @@ static int call_managed_res;
 static void
 call_managed (gpointer arg)
 {
-	SimpleDelegate del = arg;
+	SimpleDelegate del = (SimpleDelegate)arg;
 
 	call_managed_res = del (42);
 }
@@ -5420,7 +5520,39 @@ mono_test_marshal_thread_attach (SimpleDelegate del)
 	int res;
 	pthread_t t;
 
-	res = pthread_create (&t, NULL, (gpointer)call_managed, del);
+	res = pthread_create (&t, NULL, (gpointer (*)(gpointer))call_managed, del);
+	g_assert (res == 0);
+	pthread_join (t, NULL);
+
+	return call_managed_res;
+#endif
+}
+
+typedef struct {
+	char arr [4 * 1024];
+} LargeStruct;
+
+typedef int (STDCALL *LargeStructDelegate) (LargeStruct *s);
+
+static void
+call_managed_large_vt (gpointer arg)
+{
+	LargeStructDelegate del = (LargeStructDelegate)arg;
+	LargeStruct s;
+
+	call_managed_res = del (&s);
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_thread_attach_large_vt (SimpleDelegate del)
+{
+#ifdef WIN32
+	return 43;
+#else
+	int res;
+	pthread_t t;
+
+	res = pthread_create (&t, NULL, (gpointer (*)(gpointer))call_managed_large_vt, del);
 	g_assert (res == 0);
 	pthread_join (t, NULL);
 
@@ -5466,7 +5598,7 @@ mono_test_marshal_lpwstr (gunichar2 *str)
 LIBTEST_API char* STDCALL
 mono_test_marshal_return_lpstr (void)
 {
-	char *res = marshal_alloc (4);
+	char *res = (char *)marshal_alloc (4);
 	strcpy (res, "XYZ");
 	return res;
 }
@@ -5475,7 +5607,7 @@ mono_test_marshal_return_lpstr (void)
 LIBTEST_API gunichar2* STDCALL
 mono_test_marshal_return_lpwstr (void)
 {
-	gunichar2 *res = marshal_alloc (8);
+	gunichar2 *res = (gunichar2 *)marshal_alloc (8);
 	gunichar2* tmp = g_utf8_to_utf16 ("XYZ", -1, NULL, NULL, NULL);
 
 	memcpy (res, tmp, 8);
@@ -7180,5 +7312,286 @@ mono_return_double_array4 (double_array4 sa4, int addend) {
 	}
 	sa4.f1[0]+=addend; sa4.f1[1]+=addend; sa4.f1[2]+=addend; sa4.f1[3]+=addend; 
 	return sa4;
+}
+
+typedef struct {
+	int array [3];
+} FixedArrayStruct;
+
+LIBTEST_API int STDCALL
+mono_test_marshal_fixed_array (FixedArrayStruct s)
+{
+	return s.array [0] + s.array [1] + s.array [2];
+}
+
+typedef struct {
+	char array [16];
+	char c;
+} FixedBufferChar;
+
+LIBTEST_API int STDCALL
+mono_test_marshal_fixed_buffer_char (FixedBufferChar *s)
+{
+	if (!(s->array [0] == 'A' && s->array [1] == 'B' && s->array [2] == 'C' && s->c == 'D'))
+		return 1;
+	s->array [0] = 'E';
+	s->array [1] = 'F';
+	s->c = 'G';
+	return 0;
+}
+
+typedef struct {
+	short array [16];
+	short c;
+} FixedBufferUnicode;
+
+LIBTEST_API int STDCALL
+mono_test_marshal_fixed_buffer_unicode (FixedBufferUnicode *s)
+{
+	if (!(s->array [0] == 'A' && s->array [1] == 'B' && s->array [2] == 'C' && s->c == 'D'))
+		return 1;
+	s->array [0] = 'E';
+	s->array [1] = 'F';
+	s->c = 'G';
+	return 0;
+}
+
+const int NSTRINGS = 6;
+//test strings
+const char  *utf8Strings[] = {  
+                                "Managed",
+                                 "Sîne klâwen durh die wolken sint geslagen" ,
+                                 "काचं शक्नोम्यत्तुम् । नोपहिनस्ति माम्",
+                                 "我能吞下玻璃而不伤身体",
+                                 "ღმერთსი შემვედრე,შემვედრე, ნუთუ კვლა დამხსნას შემვედრე,სოფლისა შემვედრე, შემვედრე,შემვედრე,შემვედრე,შრომასა, ცეცხლს, წყალსა და მიწასა, ჰაერთა თანა მრომასა; მომცნეს ფრთენი და აღვფრინდე, მივჰხვდე მას ჩემსა ნდომასა, დღისით და ღამით ვჰხედვიდე მზისა ელვათა კრთომაასაშემვედრე,შემვედრე,",
+                                 "Τη γλώσσα μου έδωσαν ελληνική",
+"\0"
+};
+
+LIBTEST_API char *
+build_return_string(const char* pReturn)
+{
+	char *ret = 0;
+	if (pReturn == 0 || *pReturn == 0)
+		return ret;
+
+	size_t strLength = strlen(pReturn);
+	ret = (char *)(marshal_alloc (sizeof(char)* (strLength + 1)));
+	memcpy(ret, pReturn, strLength);
+	ret [strLength] = '\0';
+	return ret;
+}
+
+LIBTEST_API char *
+StringParameterInOut(/*[In,Out]*/ char *s, int index)
+{
+	// return a copy
+	return build_return_string(s);
+}
+
+LIBTEST_API void
+StringParameterRefOut(/*out*/ char **s, int index)
+{
+	char *pszTextutf8 = (char*)utf8Strings[index];
+	size_t strLength = strlen(pszTextutf8);
+	*s = (char *)(marshal_alloc (sizeof(char)* (strLength + 1)));
+	memcpy(*s, pszTextutf8, strLength);
+	(*s)[strLength] = '\0';
+}
+
+LIBTEST_API void
+StringParameterRef(/*ref*/ char **s, int index)
+{
+    char *pszTextutf8 = (char*)utf8Strings[index];
+    size_t strLength = strlen(pszTextutf8);
+    // do byte by byte validation of in string
+    size_t szLen = strlen(*s);
+    for (size_t i = 0; i < szLen; i++)
+    {
+        if ((*s)[i] != pszTextutf8[i])
+        {
+            printf("[in] managed string do not match native string\n");
+	    abort ();
+        }
+    }
+
+    if (*s)
+    {
+       marshal_free (*s);
+    }
+    // overwrite the orginal 
+    *s = (char *)(marshal_alloc (sizeof(char)* (strLength + 1)));
+    memcpy(*s, pszTextutf8, strLength);
+    (*s)[strLength] = '\0';
+}
+
+LIBTEST_API void
+StringBuilderParameterInOut(/*[In,Out] StringBuilder*/ char *s, int index)
+{
+    // if string.empty 
+    if (s == 0 || *s == 0)
+        return;
+
+    char *pszTextutf8 = (char*)utf8Strings[index];
+
+    // do byte by byte validation of in string
+    size_t szLen = strlen(s);
+    for (size_t i = 0; i < szLen; i++) 
+    {
+        if (s[i] != pszTextutf8[i])
+        {
+            printf("[in] managed string do not match native string\n");
+	    abort ();
+        }
+    }  
+
+    // modify the string inplace 
+    size_t outLen = strlen(pszTextutf8);
+    for (size_t i = 0; i < outLen; i++) {
+        s[i] = pszTextutf8[i];
+    }
+    s[outLen] = '\0';
+}
+
+//out string builder
+LIBTEST_API void
+StringBuilderParameterOut(/*[Out] StringBuilder*/ char *s, int index)
+{
+    char *pszTextutf8 = (char*)utf8Strings[index];
+
+    printf ("SBPO: Receiving %s\n", s);
+    // modify the string inplace 
+    size_t outLen = strlen(pszTextutf8);
+    for (size_t i = 0; i < outLen; i++) {
+        s[i] = pszTextutf8[i];
+    }
+    s[outLen] = '\0';
+}
+
+LIBTEST_API char *
+StringParameterOut(/*[Out]*/ char *s, int index)
+{
+    // return a copy
+    return build_return_string(s);
+}
+
+// Utf8 field
+typedef struct FieldWithUtf8
+{
+    char *pFirst;
+    int index;
+}FieldWithUtf8;
+
+//utf8 struct field
+LIBTEST_API void
+TestStructWithUtf8Field(struct FieldWithUtf8 fieldStruct)
+{
+    char *pszManagedutf8 = fieldStruct.pFirst;
+    int stringIndex = fieldStruct.index;
+    char *pszNative = 0;
+    size_t outLen = 0;
+
+    if (pszManagedutf8 == 0 || *pszManagedutf8 == 0)
+        return;
+
+    pszNative = (char*)utf8Strings[stringIndex];
+
+    outLen = strlen(pszNative);
+    // do byte by byte comparision
+    for (size_t i = 0; i < outLen; i++) 
+    {
+        if (pszNative[i] != pszManagedutf8[i]) 
+        {
+            printf("Native and managed string do not match.\n");
+	    abort ();
+        }
+    }
+}
+
+typedef void (* Callback2)(char *text, int index);
+
+LIBTEST_API void
+Utf8DelegateAsParameter(Callback2 managedCallback)
+{
+    for (int i = 0; i < NSTRINGS; ++i) 
+    {
+        char *pszNative = 0;
+        pszNative = (char*)utf8Strings[i];
+        managedCallback(pszNative, i);
+    }
+}
+
+
+LIBTEST_API char*
+StringBuilderParameterReturn(int index)
+{
+    char *pszTextutf8 = (char*)utf8Strings[index];
+    size_t strLength = strlen(pszTextutf8);
+    char * ret = (char *)(marshal_alloc (sizeof(char)* (strLength + 1)));
+    memcpy(ret, pszTextutf8, strLength);
+    ret[strLength] = '\0';
+
+    return  ret;
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_pointer_array (int *arr[])
+{
+	int i;
+
+	for (i = 0; i < 10; ++i) {
+		if (*arr [i] != -1)
+			return 1;
+	}
+	return 0;
+}
+
+#ifndef WIN32
+
+typedef void (*NativeToManagedExceptionRethrowFunc) (void);
+
+void *mono_test_native_to_managed_exception_rethrow_thread (void *arg)
+{
+	NativeToManagedExceptionRethrowFunc func = (NativeToManagedExceptionRethrowFunc) arg;
+	func ();
+	return NULL;
+}
+
+LIBTEST_API void STDCALL
+mono_test_native_to_managed_exception_rethrow (NativeToManagedExceptionRethrowFunc func)
+{
+	pthread_t t;
+	pthread_create (&t, NULL, mono_test_native_to_managed_exception_rethrow_thread, func);
+	pthread_join (t, NULL);
+}
+#endif
+
+typedef void (*VoidVoidCallback) (void);
+typedef void (*MonoFtnPtrEHCallback) (guint32 gchandle);
+
+static jmp_buf test_jmp_buf;
+static guint32 test_gchandle;
+
+static void
+mono_test_longjmp_callback (guint32 gchandle)
+{
+	test_gchandle = gchandle;
+	longjmp (test_jmp_buf, 1);
+}
+
+LIBTEST_API void STDCALL
+mono_test_setjmp_and_call (VoidVoidCallback managedCallback, intptr_t *out_handle)
+{
+	void (*mono_install_ftnptr_eh_callback) (MonoFtnPtrEHCallback) =
+		(void (*) (MonoFtnPtrEHCallback)) (lookup_mono_symbol ("mono_install_ftnptr_eh_callback"));
+	if (setjmp (test_jmp_buf) == 0) {
+		*out_handle = 0;
+		mono_install_ftnptr_eh_callback (mono_test_longjmp_callback);
+		managedCallback ();
+		*out_handle = 0; /* Do not expect to return here */
+	} else {
+		mono_install_ftnptr_eh_callback (NULL);
+		*out_handle = test_gchandle;
+	}
 }
 

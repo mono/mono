@@ -65,13 +65,13 @@ namespace System.ServiceModel.Description
 
 		public int MaxItemsInObjectGraph { get; set; }
 
-#if !NET_2_1
+#if !MOBILE
 		public IDataContractSurrogate DataContractSurrogate { get; set; }
 #endif
 
 		public virtual XmlObjectSerializer CreateSerializer (Type type, string name, string ns, IList<Type> knownTypes)
 		{
-#if NET_2_1
+#if MOBILE
 			return new DataContractSerializer (type, name, ns, knownTypes);
 #else
 			return new DataContractSerializer (type, name, ns, knownTypes, MaxItemsInObjectGraph, IgnoreExtensionDataObject, false, DataContractSurrogate);
@@ -80,7 +80,7 @@ namespace System.ServiceModel.Description
 
 		public virtual XmlObjectSerializer CreateSerializer (Type type, XmlDictionaryString name, XmlDictionaryString ns, IList<Type> knownTypes)
 		{
-#if NET_2_1
+#if MOBILE
 			return new DataContractSerializer (type, name, ns, knownTypes);
 #else
 			return new DataContractSerializer (type, name, ns, knownTypes, MaxItemsInObjectGraph, IgnoreExtensionDataObject, false, DataContractSurrogate);
@@ -112,7 +112,7 @@ namespace System.ServiceModel.Description
 		{
 		}
 		
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		//IWsdlExportExtension
 
 		void IWsdlExportExtension.ExportContract (WsdlExporter exporter,

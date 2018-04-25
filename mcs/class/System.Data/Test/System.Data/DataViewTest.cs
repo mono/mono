@@ -42,7 +42,7 @@ using System.IO;
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-	public class DataViewTest : Assertion
+	public class DataViewTest
 	{
 		DataTable dataTable;
 		DataView  dataView;
@@ -145,7 +145,7 @@ namespace MonoTests.System.Data
 			dv.Sort = "abc";
 			dv.Sort = string.Empty;
 			dv.Sort = "abc";
-			AssertEquals ("test#01", "abc", dv.Sort);
+			Assert.AreEqual ("abc", dv.Sort, "test#01");
 		}
 
 		[Test]
@@ -154,24 +154,24 @@ namespace MonoTests.System.Data
 			DataView dv1,dv2,dv3;
 			dv1 = new DataView ();
 			// AssertEquals ("test#01",null,dv1.Table);
-			AssertEquals ("test#02",true,dv1.AllowNew);
-			AssertEquals ("test#03",true,dv1.AllowEdit);
-			AssertEquals ("test#04",true,dv1.AllowDelete);
-			AssertEquals ("test#05",false,dv1.ApplyDefaultSort);
-			AssertEquals ("test#06",string.Empty,dv1.RowFilter);
-			AssertEquals ("test#07",DataViewRowState.CurrentRows,dv1.RowStateFilter);
-			AssertEquals ("test#08",string.Empty,dv1.Sort);
+			Assert.AreEqual (true,dv1.AllowNew,"test#02");;
+			Assert.AreEqual (true,dv1.AllowEdit,"test#03");;
+			Assert.AreEqual (true,dv1.AllowDelete,"test#04");;
+			Assert.AreEqual (false,dv1.ApplyDefaultSort,"test#05");;
+			Assert.AreEqual (string.Empty,dv1.RowFilter,"test#06");;
+			Assert.AreEqual (DataViewRowState.CurrentRows,dv1.RowStateFilter,"test#07");;
+			Assert.AreEqual (string.Empty,dv1.Sort,"test#08");;
 			
 			dv2 = new DataView (dataTable);
-			AssertEquals ("test#09","itemTable",dv2.Table.TableName);
-			AssertEquals ("test#10",string.Empty,dv2.Sort);
-			AssertEquals ("test#11",false,dv2.ApplyDefaultSort);
-			AssertEquals ("test#12",dataTable.Rows[0],dv2[0].Row);
+			Assert.AreEqual ("itemTable",dv2.Table.TableName,"test#09");;
+			Assert.AreEqual (string.Empty,dv2.Sort,"test#10");;
+			Assert.AreEqual (false,dv2.ApplyDefaultSort,"test#11");;
+			Assert.AreEqual (dataTable.Rows[0],dv2[0].Row,"test#12");;
 			
 			dv3 = new DataView (dataTable,"","itemId DESC",DataViewRowState.CurrentRows);
-			AssertEquals ("test#13","",dv3.RowFilter);
-			AssertEquals ("test#14","itemId DESC",dv3.Sort);
-			AssertEquals ("test#15",DataViewRowState.CurrentRows,dv3.RowStateFilter);
+			Assert.AreEqual ("",dv3.RowFilter,"test#13");;
+			Assert.AreEqual ("itemId DESC",dv3.Sort,"test#14");;
+			Assert.AreEqual (DataViewRowState.CurrentRows,dv3.RowStateFilter,"test#15");;
 			//AssertEquals ("test#16",dataTable.Rows.[(dataTable.Rows.Count-1)],dv3[0]);
 		}
 
@@ -179,20 +179,20 @@ namespace MonoTests.System.Data
 		 public void TestValue ()
 		 {
 			DataView TestView = new DataView (dataTable);
-			Assertion.AssertEquals ("Dv #1", "item 1", TestView [0]["itemId"]);
+			Assert.AreEqual ("item 1", TestView [0]["itemId"], "Dv #1");
 		 }
 
 		 [Test]
 		 public void TestCount ()
 		 {
 			DataView TestView = new DataView (dataTable);
-			Assertion.AssertEquals ("Dv #3", 5, TestView.Count);
+			Assert.AreEqual (5, TestView.Count, "Dv #3");
 		 }
 
 		[Test]
 		public void AllowNew ()
 		{
-			AssertEquals ("test#01",true,dataView.AllowNew);
+			Assert.AreEqual (true, dataView.AllowNew, "test#01");
 		}
 
 		[Test]
@@ -203,7 +203,7 @@ namespace MonoTests.System.Data
 			dataView.ApplyDefaultSort = true;
 			// dataView.Sort = "itemName";
 			// AssertEquals ("test#01","item 1",dataView[0]["itemId"]);
-			AssertEquals ("test#02",ListChangedType.Reset,listChangedArgs.ListChangedType);
+			Assert.AreEqual (ListChangedType.Reset,listChangedArgs.ListChangedType, "test#02");
 			// UnComment the line below to see if dataView is sorted
 			//   PrintTableOrView (dataView,"* OnApplyDefaultSort");
 		}
@@ -212,7 +212,7 @@ namespace MonoTests.System.Data
 		public void RowStateFilter ()
 		{
 			dataView.RowStateFilter = DataViewRowState.Deleted;
-			AssertEquals ("test#01",ListChangedType.Reset,listChangedArgs.ListChangedType);
+			Assert.AreEqual (ListChangedType.Reset,listChangedArgs.ListChangedType, "test#01");
 		}
 
 		[Test]
@@ -239,16 +239,16 @@ namespace MonoTests.System.Data
 			dataView [0] ["col1"] = -1;
 			dataView.RowStateFilter = DataViewRowState.ModifiedOriginal;
 			v = dataView [0] [0].ToString ();
-			AssertEquals ("ModifiedOriginal.Count", 1, dataView.Count);
-			AssertEquals ("ModifiedOriginal.Value", "1", v);
+			Assert.AreEqual (1, dataView.Count, "ModifiedOriginal.Count");
+			Assert.AreEqual ("1", v, "ModifiedOriginal.Value");
 
 			// Deleting the row
 			dataView.Delete (0);
 			dataView.RowStateFilter = DataViewRowState.Deleted;
 
 			v = dataView [0] [0].ToString ();
-			AssertEquals ("Deleted.Count", 1, dataView.Count);
-			AssertEquals ("Deleted.Value", "1", v);
+			Assert.AreEqual (1, dataView.Count, "Deleted.Count");
+			Assert.AreEqual ("1", v, "Deleted.Value");
 		}
 
 		//xamarin bug #18898 # / novell bug #595899
@@ -276,10 +276,10 @@ namespace MonoTests.System.Data
 			another_new_row[0] = "9";
 			another_new_row[1] = "10";
 
-			AssertEquals ("#1", dv[2][0], "9");
+			Assert.AreEqual (dv[2][0], "9", "#1");
 
 			//This should not throw a System.Data.VersionNotFoundException: "There is no Proposed data to accces"
-			AssertEquals ("#1", dv[1][0], "7");	
+			Assert.AreEqual (dv[1][0], "7", "#1");	
 
 		}
 
@@ -288,7 +288,7 @@ namespace MonoTests.System.Data
 		{
 			DataView dataview = new DataView ();
 			PropertyDescriptorCollection col = ((ITypedList)dataview).GetItemProperties (null);
-			AssertEquals ("1", 0, col.Count);
+			Assert.AreEqual (0, col.Count, "1");
 		}
 
 		#region Sort Tests
@@ -296,7 +296,7 @@ namespace MonoTests.System.Data
 		public void SortListChangedTest ()
 		{
 			dataView.Sort = "itemName DESC";
-			AssertEquals ("test#01",ListChangedType.Reset,listChangedArgs.ListChangedType);
+			Assert.AreEqual (ListChangedType.Reset,listChangedArgs.ListChangedType, "test#01");
 			// UnComment the line below to see if dataView is sorted
 			// PrintTableOrView (dataView);
 		}
@@ -338,60 +338,60 @@ namespace MonoTests.System.Data
 			DataView dataView = dataTable.DefaultView;
 
 			string s = "Default sorting: ";
-			AssertEquals (s + "First entry has wrong item", 1, dataView[0][0]);
-			AssertEquals (s + "Second entry has wrong item", 0, dataView[1][0]);
-			AssertEquals (s + "Third entry has wrong item", 3, dataView[2][0]);
-			AssertEquals (s + "Fourth entry has wrong item", 2, dataView[3][0]);
+			Assert.AreEqual (1, dataView[0][0], s + "First entry has wrong item");
+			Assert.AreEqual (0, dataView[1][0], s + "Second entry has wrong item");
+			Assert.AreEqual (3, dataView[2][0], s + "Third entry has wrong item");
+			Assert.AreEqual (2, dataView[3][0], s + "Fourth entry has wrong item");
 
 			s = "Ascending sorting 1: ";
 			dataView.Sort = "itemId ASC";
-			AssertEquals (s + "First entry has wrong item", 0, dataView[0][0]);
-			AssertEquals (s + "Second entry has wrong item", 1, dataView[1][0]);
-			AssertEquals (s + "Third entry has wrong item", 2, dataView[2][0]);
-			AssertEquals (s + "Fourth entry has wrong item", 3, dataView[3][0]);
+			Assert.AreEqual (0, dataView[0][0], s + "First entry has wrong item");
+			Assert.AreEqual (1, dataView[1][0], s + "Second entry has wrong item");
+			Assert.AreEqual (2, dataView[2][0], s + "Third entry has wrong item");
+			Assert.AreEqual (3, dataView[3][0], s + "Fourth entry has wrong item");
 
 			// bug #77104 (2-5)
 			s = "Ascending sorting 2: ";
 			dataView.Sort = "itemId     ASC";
-			AssertEquals (s + "First entry has wrong item", 0, dataView[0][0]);
-			AssertEquals (s + "Second entry has wrong item", 1, dataView[1][0]);
-			AssertEquals (s + "Third entry has wrong item", 2, dataView[2][0]);
-			AssertEquals (s + "Fourth entry has wrong item", 3, dataView[3][0]);
+			Assert.AreEqual (0, dataView[0][0], s + "First entry has wrong item");
+			Assert.AreEqual (1, dataView[1][0], s + "Second entry has wrong item");
+			Assert.AreEqual (2, dataView[2][0], s + "Third entry has wrong item");
+			Assert.AreEqual (3, dataView[3][0], s + "Fourth entry has wrong item");
 
 			s = "Ascending sorting 3: ";
 			dataView.Sort = "[itemId] ASC";
-			AssertEquals (s + "First entry has wrong item", 0, dataView[0][0]);
-			AssertEquals (s + "Second entry has wrong item", 1, dataView[1][0]);
-			AssertEquals (s + "Third entry has wrong item", 2, dataView[2][0]);
-			AssertEquals (s + "Fourth entry has wrong item", 3, dataView[3][0]);
+			Assert.AreEqual (0, dataView[0][0], s + "First entry has wrong item");
+			Assert.AreEqual (1, dataView[1][0], s + "Second entry has wrong item");
+			Assert.AreEqual (2, dataView[2][0], s + "Third entry has wrong item");
+			Assert.AreEqual (3, dataView[3][0], s + "Fourth entry has wrong item");
 
 			s = "Ascending sorting 4: ";
 			dataView.Sort = "[itemId]       ASC";
-			AssertEquals (s + "First entry has wrong item", 0, dataView[0][0]);
-			AssertEquals (s + "Second entry has wrong item", 1, dataView[1][0]);
-			AssertEquals (s + "Third entry has wrong item", 2, dataView[2][0]);
-			AssertEquals (s + "Fourth entry has wrong item", 3, dataView[3][0]);
+			Assert.AreEqual (0, dataView[0][0], s + "First entry has wrong item");
+			Assert.AreEqual (1, dataView[1][0], s + "Second entry has wrong item");
+			Assert.AreEqual (2, dataView[2][0], s + "Third entry has wrong item");
+			Assert.AreEqual (3, dataView[3][0], s + "Fourth entry has wrong item");
 
 			s = "Ascending sorting 5: ";
 			try {
 				dataView.Sort = "itemId \tASC";
-				AssertEquals (s + "Tab cannot be a separator" , true, false);
+				Assert.AreEqual (true, false, s + "Tab cannot be a separator");
 			}catch (IndexOutOfRangeException e) {
 			}
 
 			s = "Descending sorting : ";
 			dataView.Sort = "itemId DESC";
-			AssertEquals (s + "First entry has wrong item", 3, dataView[0][0]);
-			AssertEquals (s + "Second entry has wrong item", 2, dataView[1][0]);
-			AssertEquals (s + "Third entry has wrong item", 1, dataView[2][0]);
-			AssertEquals (s + "Fourth entry has wrong item", 0, dataView[3][0]);
+			Assert.AreEqual (3, dataView[0][0], s + "First entry has wrong item");
+			Assert.AreEqual (2, dataView[1][0], s + "Second entry has wrong item");
+			Assert.AreEqual (1, dataView[2][0], s + "Third entry has wrong item");
+			Assert.AreEqual (0, dataView[3][0], s + "Fourth entry has wrong item");
 
 			s = "Reverted to default sorting: ";
 			dataView.Sort = null;
-			AssertEquals (s + "First entry has wrong item", 1, dataView[0][0]);
-			AssertEquals (s + "Second entry has wrong item", 0, dataView[1][0]);
-			AssertEquals (s + "Third entry has wrong item", 3, dataView[2][0]);
-			AssertEquals (s + "Fourth entry has wrong item", 2, dataView[3][0]);
+			Assert.AreEqual (1, dataView[0][0], s + "First entry has wrong item");
+			Assert.AreEqual (0, dataView[1][0], s + "Second entry has wrong item");
+			Assert.AreEqual (3, dataView[2][0], s + "Third entry has wrong item");
+			Assert.AreEqual (2, dataView[3][0], s + "Fourth entry has wrong item");
 		}
 		
 		#endregion // Sort Tests
@@ -409,21 +409,21 @@ namespace MonoTests.System.Data
 		{
 			dataView.AllowNew = true;
 			DataRowView drv = dataView.AddNew ();
-			AssertEquals ("test#01",ListChangedType.ItemAdded,listChangedArgs.ListChangedType);
-			AssertEquals ("test#02",-1,listChangedArgs.OldIndex);
-			AssertEquals ("test#03",5,listChangedArgs.NewIndex);
-			AssertEquals ("test#04",drv["itemName"],dataView [dataView.Count - 1]["itemName"]);
+			Assert.AreEqual (ListChangedType.ItemAdded,listChangedArgs.ListChangedType, "test#01");
+			Assert.AreEqual (-1,listChangedArgs.OldIndex, "test#02");
+			Assert.AreEqual (5,listChangedArgs.NewIndex, "test#03");
+			Assert.AreEqual (drv["itemName"],dataView [dataView.Count - 1]["itemName"], "test#04");
 			listChangedArgs = null;
 			drv["itemId"] = "item " + 1001;
 			drv["itemName"] = "name " + rndm.Next();
 			drv["itemPrice"] = "Rs. " + (rndm.Next() % 1000);
 			drv["itemCategory"] = "Cat " + ((rndm.Next() % 10) + 1);
 			// Actually no events are arisen when items are set.
-			AssertNull ("test#05", listChangedArgs);
+			Assert.IsNull (listChangedArgs, "test#05");
 			drv.CancelEdit ();
-			AssertEquals ("test#06",ListChangedType.ItemDeleted,listChangedArgs.ListChangedType);
-			AssertEquals ("test#07",-1,listChangedArgs.OldIndex);
-			AssertEquals ("test#08",5,listChangedArgs.NewIndex);
+			Assert.AreEqual (ListChangedType.ItemDeleted,listChangedArgs.ListChangedType, "test#06");
+			Assert.AreEqual (-1,listChangedArgs.OldIndex, "test#07");
+			Assert.AreEqual (5,listChangedArgs.NewIndex, "test#08");
 		}
 
 		[Test]
@@ -439,15 +439,15 @@ namespace MonoTests.System.Data
 			table.Columns.AddRange (new DataColumn[] {col1,col2});
 
 			dv.Table = table;
-			AssertNull ("#1", dv.Table);
+			Assert.IsNull (dv.Table, "#1");
 			dv.EndInit ();
 
-			AssertNull ("#2", dv.Table); // still.
-			AssertEquals ("#3", 0, table.Columns.Count);
+			Assert.IsNull (dv.Table, "#2"); // still.
+			Assert.AreEqual (0, table.Columns.Count, "#3");
 
 			table.EndInit ();
-			AssertEquals ("#5", table, dv.Table);
-			AssertEquals ("#4", 2, table.Columns.Count);
+			Assert.AreEqual (table, dv.Table, "#4");
+			Assert.AreEqual (2, table.Columns.Count, "#5");
 		}
 
 		private bool dvInitialized;
@@ -472,19 +472,19 @@ namespace MonoTests.System.Data
 			table.Columns.AddRange (new DataColumn[] {col1,col2});
 
 			dv.Table = table;
-			AssertNull ("#1", dv.Table);
+			Assert.IsNull (dv.Table, "#1");
 			dv.EndInit ();
 			
-			AssertNull ("#2", dv.Table);
-			AssertEquals ("#3", 0, table.Columns.Count);
+			Assert.IsNull (dv.Table, "#2");
+			Assert.AreEqual (0, table.Columns.Count, "#3");
 
 			table.EndInit ();
 
 			dv.Initialized -= new EventHandler (OnDataViewInitialized); // this should not be unregistered before table.EndInit().
 			
-			AssertEquals ("#4", 2, table.Columns.Count);
-			AssertEquals ("#6", table, dv.Table);
-			AssertEquals ("DataViewInitialized #5", true, dvInitialized);
+			Assert.AreEqual (2, table.Columns.Count, "#4");
+			Assert.AreEqual (table, dv.Table, "#6");
+			Assert.AreEqual (true, dvInitialized, "DataViewInitialized #5");
 		}
 
 		[Test]
@@ -503,21 +503,21 @@ namespace MonoTests.System.Data
 			randInt = rndm.Next () % rowCount;
 			dataView.Sort = "itemId";
 			drv = dataView [randInt];
-			AssertEquals ("test#01",randInt,dataView.Find (drv ["itemId"]));
+			Assert.AreEqual (randInt,dataView.Find (drv ["itemId"]), "test#01");
 			
 			dataView.Sort = "itemId DESC";
 			drv = dataView [randInt];
-			AssertEquals ("test#02",randInt,dataView.Find (drv ["itemId"]));
+			Assert.AreEqual (randInt,dataView.Find (drv ["itemId"]), "test#02");
 			
 			dataView.Sort = "itemId, itemName";
 			drv = dataView [randInt];
 			object [] keys = new object [2];
 			keys [0] = drv ["itemId"];
 			keys [1] = drv ["itemName"];
-			AssertEquals ("test#03",randInt,dataView.Find (keys));
+			Assert.AreEqual (randInt,dataView.Find (keys), "test#03");
 			
 			dataView.Sort = "itemId";
-			AssertEquals ("test#04",-1,dataView.Find("no item"));
+			Assert.AreEqual (-1,dataView.Find("no item"), "test#04");
 
 		}
 
@@ -540,7 +540,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void ToStringTest ()
 		{
-			AssertEquals ("test#01","System.Data.DataView",dataView.ToString());
+			Assert.AreEqual ("System.Data.DataView",dataView.ToString(), "test#01");
 		}
 
 		[Test]
@@ -556,38 +556,38 @@ namespace MonoTests.System.Data
 			dataTable.Rows.Add(dr);
 
 			//PrintTableOrView(dataView, "ItemAdded");
-			AssertEquals ("test#01",ListChangedType.ItemAdded,listChangedArgs.ListChangedType);
+			Assert.AreEqual (ListChangedType.ItemAdded,listChangedArgs.ListChangedType, "test#01");
 			listChangedArgs = null;
 
 			dr ["itemId"] = "aitem 0";
 			// PrintTableOrView(dataView, "ItemChanged");
-			AssertEquals ("test#02",ListChangedType.ItemChanged,listChangedArgs.ListChangedType);
+			Assert.AreEqual (ListChangedType.ItemChanged,listChangedArgs.ListChangedType, "test#02");
 			listChangedArgs = null;
 
 			dr ["itemId"] = "zitem 0";
 			// PrintTableOrView(dataView, "ItemMoved");
-			AssertEquals ("test#03",ListChangedType.ItemMoved,listChangedArgs.ListChangedType);
+			Assert.AreEqual (ListChangedType.ItemMoved,listChangedArgs.ListChangedType, "test#03");
 			listChangedArgs = null;
 
 			dataTable.Rows.Remove (dr);
 			// PrintTableOrView(dataView, "ItemDeleted");
-			AssertEquals ("test#04",ListChangedType.ItemDeleted,listChangedArgs.ListChangedType);
+			Assert.AreEqual (ListChangedType.ItemDeleted,listChangedArgs.ListChangedType, "test#04");
 			
 			listChangedArgs = null;
 			DataColumn dc5 = new DataColumn ("itemDesc");
 			dataTable.Columns.Add (dc5);
 			// PrintTableOrView(dataView, "PropertyDescriptorAdded");
-			AssertEquals ("test#05",ListChangedType.PropertyDescriptorAdded,listChangedArgs.ListChangedType);
+			Assert.AreEqual (ListChangedType.PropertyDescriptorAdded,listChangedArgs.ListChangedType, "test#05");
 			
 			listChangedArgs = null;
 			dc5.ColumnName = "itemDescription";
 			// PrintTableOrView(dataView, "PropertyDescriptorChanged");
-			// AssertEquals ("test#06",ListChangedType.PropertyDescriptorChanged,listChangedArgs.ListChangedType);
+			// Assert.AreEqual ("test#06",ListChangedType.PropertyDescriptorChanged,listChangedArgs.ListChangedType);
 			
 			listChangedArgs = null;
 			dataTable.Columns.Remove (dc5);
 			// PrintTableOrView(dataView, "PropertyDescriptorDeleted");
-			AssertEquals ("test#07",ListChangedType.PropertyDescriptorDeleted,listChangedArgs.ListChangedType);
+			Assert.AreEqual (ListChangedType.PropertyDescriptorDeleted,listChangedArgs.ListChangedType, "test#07");
 		}
 	
 		[Test]
@@ -596,8 +596,8 @@ namespace MonoTests.System.Data
 			DataView TestView = new DataView (dataTable);
 			TestView.Sort = "itemId";
 			DataRowView[] Result = TestView.FindRows ("item 3");
-			Assertion.AssertEquals ("Dv #1", 1, Result.Length);
-			Assertion.AssertEquals ("Dv #2", "item 3", Result [0]["itemId"]);
+			Assert.AreEqual (1, Result.Length, "Dv #1");
+			Assert.AreEqual ("item 3", Result [0]["itemId"], "Dv #2");
 		}
 
 		[Test]
@@ -642,7 +642,7 @@ namespace MonoTests.System.Data
 			DataView TestView = new DataView (dataTable);
 			TestView.Delete (0);
 			DataRow r = TestView.Table.Rows [0];
-			Assertion.Assert ("Dv #1", !((string)r ["itemId"] == "item 1"));
+			Assert.IsTrue (!((string)r ["itemId"] == "item 1"), "Dv #1");
 		}
 
 		[Test]
@@ -685,13 +685,13 @@ namespace MonoTests.System.Data
 
 			DataView dataView = new DataView (dataset.Tables[0]);
 
-			AssertEquals ("before delete", 3, dataView.Count);
+			Assert.AreEqual (3, dataView.Count, "before delete");
 			dataView.AllowDelete = true;
 
 			// Deleting the first row
 			dataView.Delete (0);
 
-			AssertEquals ("before delete", 2, dataView.Count);
+			Assert.AreEqual (2, dataView.Count, "before delete");
 		}
 
 		[Test]
@@ -746,7 +746,7 @@ namespace MonoTests.System.Data
 			eventWriter.Write (" ------" + dv.Count);
 			DataRowView a3 = dv.AddNew ();
 
-			AssertEquals (reference, eventWriter.ToString ());
+			Assert.AreEqual (reference, eventWriter.ToString ());
 		}
 
 		[Test]
@@ -766,7 +766,7 @@ table was set.
 
 			dc2.ColumnName = "new_column_name";
 
-			AssertEquals (result.Replace ("\r\n", "\n"), eventWriter.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), eventWriter.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		private void ListChanged (object o, ListChangedEventArgs e)
@@ -830,7 +830,7 @@ removed relation 2
 			ds.Relations.Remove (dr);
 			eventWriter.WriteLine ("removed relation 2");
 
-			AssertEquals (result.Replace ("\r\n", "\n"), eventWriter.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), eventWriter.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -942,7 +942,7 @@ table changed.
 			dv.Table = new DataTable ("table2");
 			eventWriter.WriteLine ("table changed.");
 
-			AssertEquals (result.Replace ("\r\n", "\n"), eventWriter.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), eventWriter.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -982,7 +982,7 @@ table was set.
 			dt.Columns.Add ("");
 			eventWriter.WriteLine (" add a column with an empty name.");
 
-			AssertEquals (result.Replace ("\r\n", "\n"), eventWriter.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), eventWriter.ToString ().Replace ("\r\n", "\n"));
 			GC.KeepAlive (dv);
 		}
 

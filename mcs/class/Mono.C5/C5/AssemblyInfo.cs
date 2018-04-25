@@ -76,6 +76,4 @@ using System;
 //       documentation for more information on this.
 //
 [assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("c5.pub")]
-
 [assembly: CLSCompliant(true)]

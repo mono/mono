@@ -469,8 +469,13 @@ namespace System.Runtime.Serialization
 				PrimitiveDataContract primitiveContract = PrimitiveDataContract.GetPrimitiveDataContract(memberType);
 				if (primitiveContract != null && !writeXsiType)
 					primitiveContract.XmlFormatContentWriterMethod.Invoke (writer, new object [] {memberValue});
-				else
-					InternalSerialize(XmlFormatGeneratorStatics.InternalSerializeMethod, () => memberValue, memberType, writeXsiType);
+				else {
+					// InternalSerialize(XmlFormatGeneratorStatics.InternalSerializeMethod, () => memberValue, memberType, writeXsiType);
+					var typeHandleValue = Type.GetTypeHandle (memberValue);
+					var isDeclaredType = typeHandleValue.Equals (CodeInterpreter.ConvertValue (memberValue, memberType, Globals.TypeOfObject));
+					
+					ctx.InternalSerialize (writer, memberValue, isDeclaredType, writeXsiType, DataContract.GetId (memberType.TypeHandle), memberType.TypeHandle);
+				}
 			}
 			else
 			{
@@ -500,20 +505,21 @@ namespace System.Runtime.Serialization
 						if (isNull2) {
 							XmlFormatGeneratorStatics.WriteNullMethod.Invoke (ctx, new object [] {writer, memberType, DataContract.IsTypeSerializable(memberType)});
 						} else {
-							InternalSerialize((isNullableOfT ? XmlFormatGeneratorStatics.InternalSerializeMethod : XmlFormatGeneratorStatics.InternalSerializeReferenceMethod),
-								() => memberValue, memberType, writeXsiType);
+							var typeHandleValue = Type.GetTypeHandle (memberValue);
+							var isDeclaredType = typeHandleValue.Equals (CodeInterpreter.ConvertValue (memberValue, memberType, Globals.TypeOfObject));
+							if (isNullableOfT) {
+								ctx.InternalSerialize (writer, memberValue, isDeclaredType, writeXsiType, DataContract.GetId (memberType.TypeHandle), memberType.TypeHandle);
+							} else if (memberType == Globals.TypeOfObject) {
+								var dataContract = DataContract.GetDataContract (memberValue.GetType());
+								writer.WriteAttributeQualifiedName (Globals.XsiPrefix, DictionaryGlobals.XsiTypeLocalName, DictionaryGlobals.SchemaInstanceNamespace, dataContract.Name, dataContract.Namespace);
+								ctx.InternalSerializeReference (writer, memberValue, false, false, -1, typeHandleValue);
+							} else {
+								ctx.InternalSerializeReference (writer, memberValue, isDeclaredType, writeXsiType, DataContract.GetId (memberType.TypeHandle), memberType.TypeHandle);
+							}
 						}
 					}
 				}
 			}
-		}
-
-		void InternalSerialize (MethodInfo methodInfo, Func<object> memberValue, Type memberType, bool writeXsiType)
-		{
-			var v = memberValue ();
-			var typeHandleValue = Type.GetTypeHandle (v);
-			var isDeclaredType = typeHandleValue.Equals (CodeInterpreter.ConvertValue (v, memberType, Globals.TypeOfObject));
-			methodInfo.Invoke (ctx, new object [] {writer, memberValue != null ? v : null, isDeclaredType, writeXsiType, DataContract.GetId (memberType.TypeHandle), memberType.TypeHandle});
 		}
 
 		object UnwrapNullableObject(Func<object> memberValue, ref Type memberType, out bool isNull)// Leaves !HasValue on stack

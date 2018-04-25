@@ -44,7 +44,7 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		private static XplatUIWin32	instance;
 		private static int		ref_count;
-		private static IntPtr		FosterParent;
+		private static IntPtr		FosterParentLast;
 
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
@@ -64,7 +64,6 @@ namespace System.Windows.Forms {
 		private static Hashtable	wm_nc_registered;
 		private static RECT		clipped_cursor_rect;
 		private Hashtable		registered_classes;
-		private Hwnd HwndCreating; // the Hwnd we are currently creating (see CreateWindow)
 
 		#endregion	// Local Variables
 
@@ -847,11 +846,7 @@ namespace System.Windows.Forms {
 
 			wnd_proc = new WndProc(InternalWndProc);
 
-			FosterParent=Win32CreateWindow(WindowExStyles.WS_EX_TOOLWINDOW, "static", "Foster Parent Window", WindowStyles.WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-
-			if (FosterParent==IntPtr.Zero) {
-				Win32MessageBox(IntPtr.Zero, "Could not create foster window, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
-			}
+			FosterParentLast = IntPtr.Zero;
 
 			scroll_height = Win32GetSystemMetrics(SystemMetrics.SM_CYHSCROLL);
 			scroll_width = Win32GetSystemMetrics(SystemMetrics.SM_CXVSCROLL);
@@ -862,6 +857,19 @@ namespace System.Windows.Forms {
 		#endregion	// Constructor & Destructor
 
 		#region Private Support Methods
+
+		private IntPtr GetFosterParent()
+		{
+			if (!IsWindow(FosterParentLast))
+			{
+				FosterParentLast=Win32CreateWindow(WindowExStyles.WS_EX_TOOLWINDOW, "static", "Foster Parent Window", WindowStyles.WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+
+				if (FosterParentLast==IntPtr.Zero) {
+					Win32MessageBox(IntPtr.Zero, "Could not create foster window, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
+				}
+			}
+			return FosterParentLast;
+		}
 
 		private string RegisterWindowClass (int classStyle)
 		{
@@ -1608,32 +1616,28 @@ namespace System.Windows.Forms {
 		internal override IntPtr CreateWindow(CreateParams cp) {
 			IntPtr	WindowHandle;
 			IntPtr	ParentHandle;
-			Hwnd	hwnd;
-
-			hwnd = new Hwnd();
 
 			ParentHandle=cp.Parent;
 
 			if ((ParentHandle==IntPtr.Zero) && (cp.Style & (int)(WindowStyles.WS_CHILD))!=0) {
 				// We need to use our foster parent window until this poor child gets it's parent assigned
-				ParentHandle = FosterParent;
+				ParentHandle = GetFosterParent();
 			}
 
 			if ( ((cp.Style & (int)(WindowStyles.WS_CHILD | WindowStyles.WS_POPUP))==0) && ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) == 0)) {
 				// If we want to be hidden from the taskbar we need to be 'owned' by 
 				// something not on the taskbar. FosterParent is just that
-				ParentHandle = FosterParent;
+				ParentHandle = GetFosterParent();
 			}
 
 			Point location;
-			if (cp.HasWindowManager) {
-				location = Hwnd.GetNextStackedFormLocation (cp, Hwnd.ObjectFromHandle (cp.Parent));
+			if (cp.control is Form && cp.X == int.MinValue && cp.Y == int.MinValue) {
+				location = Hwnd.GetNextStackedFormLocation (cp);
 			} else {
 				location = new Point (cp.X, cp.Y);
 			}
 
 			string class_name = RegisterWindowClass (cp.ClassStyle);
-			HwndCreating = hwnd;
 
 			// We cannot actually send the WS_EX_MDICHILD flag to Windows because we
 			// are faking MDI, not uses Windows' version.
@@ -1642,16 +1646,12 @@ namespace System.Windows.Forms {
 				
 			WindowHandle = Win32CreateWindow (cp.WindowExStyle, class_name, cp.Caption, cp.WindowStyle, location.X, location.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
-			HwndCreating = null;
-
 			if (WindowHandle==IntPtr.Zero) {
 				int error = Marshal.GetLastWin32Error ();
 
 				Win32MessageBox(IntPtr.Zero, "Error : " + error.ToString(), "Failed to create window, class '"+cp.ClassName+"'", 0);
 			}
 
-			hwnd.ClientWindow = WindowHandle;
-			hwnd.Mapped = true;
 			Win32SetWindowLong(WindowHandle, WindowLong.GWL_USERDATA, (uint)ThemeEngine.Current.DefaultControlBackColor.ToArgb());
 
 			return WindowHandle;
@@ -1676,12 +1676,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void DestroyWindow(IntPtr handle) {
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
 			Win32DestroyWindow(handle);
-			hwnd.Dispose();
-			return;
 		}
 
 		internal override void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max) {
@@ -1801,20 +1796,28 @@ namespace System.Windows.Forms {
 			Win32UpdateWindow(handle);
 		}
 
+		class Win32PaintEventArgs : PaintEventArgs
+		{
+			public Win32PaintEventArgs(Graphics g, Rectangle clip, object context)
+				: base(g, clip)
+			{
+				this.Context = context;
+			}
+
+			public object Context { get; private set; }
+		}
+
 		internal override PaintEventArgs PaintEventStart(ref Message msg, IntPtr handle, bool client) {
 			IntPtr		hdc;
 			PAINTSTRUCT	ps;
 			PaintEventArgs	paint_event;
 			RECT		rect;
 			Rectangle	clip_rect;
-			Hwnd		hwnd;
 
 			clip_rect = new Rectangle();
 			rect = new RECT();
 			ps = new PAINTSTRUCT();
 
-			hwnd = Hwnd.ObjectFromHandle(msg.HWnd);
-			
 			if (client) {
 				if (Win32GetUpdateRect(msg.HWnd, ref rect, false)) {
 					if (handle != msg.HWnd) {
@@ -1843,29 +1846,24 @@ namespace System.Windows.Forms {
 			// If we called BeginPaint, store the PAINTSTRUCT,
 			// otherwise store hdc, so that PaintEventEnd can know
 			// whether to call EndPaint or ReleaseDC.
+			object context;
 			if (ps.hdc != IntPtr.Zero) {
-				hwnd.drawing_stack.Push (ps);
+				context = ps;
 			} else {
-				hwnd.drawing_stack.Push (hdc);
+				context = hdc;
 			}
-			
-			Graphics dc = Graphics.FromHdc(hdc);
-			hwnd.drawing_stack.Push (dc);
 
-			paint_event = new PaintEventArgs(dc, clip_rect);
+			Graphics dc = Graphics.FromHdc(hdc);
+			paint_event = new Win32PaintEventArgs(dc, clip_rect, context);
 
 			return paint_event;
 		}
 
-		internal override void PaintEventEnd(ref Message m, IntPtr handle, bool client) {
-			Hwnd		hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(m.HWnd);
-
-			Graphics dc = (Graphics)hwnd.drawing_stack.Pop();
-			dc.Dispose ();
-
-			object o = hwnd.drawing_stack.Pop();
+		internal override void PaintEventEnd(ref Message m, IntPtr handle, bool client, PaintEventArgs pevent) {
+			if (pevent.Graphics != null)
+				pevent.Graphics.Dispose ();
+ 
+			object o = ((Win32PaintEventArgs)pevent).Context;
 			if (o is IntPtr) {
 				IntPtr hdc = (IntPtr) o;
 				Win32ReleaseDC (handle, hdc);
@@ -1946,8 +1944,6 @@ namespace System.Windows.Forms {
 
 		private IntPtr InternalWndProc (IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam)
 		{
-			if (HwndCreating != null && HwndCreating.ClientWindow == IntPtr.Zero)
-				HwndCreating.ClientWindow = hWnd;
 			return NativeWindow.WndProc (hWnd, msg, wParam, lParam);
 		}
 
@@ -2265,7 +2261,7 @@ namespace System.Windows.Forms {
 			
 			if (parent == IntPtr.Zero) {
 				new_style = style & ~WindowStyles.WS_CHILD;
-				result = Win32SetParent (handle, FosterParent);
+				result = Win32SetParent (handle, GetFosterParent());
 			} else {
 				new_style = style | WindowStyles.WS_CHILD;
 				result = Win32SetParent (handle, parent);
@@ -2281,8 +2277,12 @@ namespace System.Windows.Forms {
 		}
 
 		// If we ever start using this, we should probably replace FosterParent with IntPtr.Zero
-		internal override IntPtr GetParent(IntPtr handle) {
-			return Win32GetParent(handle);
+		internal override IntPtr GetParent(IntPtr handle, bool with_owner) {
+			if (with_owner) {
+				return Win32GetParent(handle);
+			} else {
+				return Win32GetAncestor(handle, AncestorType.GA_PARENT);
+			}
 		}
 
 		// This is a nop on win32 and x11
@@ -2562,11 +2562,12 @@ namespace System.Windows.Forms {
 
 		internal override void SendAsyncMethod (AsyncMethodData method)
 		{
-			Win32PostMessage(FosterParent, Msg.WM_ASYNC_MESSAGE, IntPtr.Zero, (IntPtr)GCHandle.Alloc (method));
+			Win32PostMessage(GetFosterParent(), Msg.WM_ASYNC_MESSAGE, IntPtr.Zero, (IntPtr)GCHandle.Alloc (method));
 		}
 
 		internal override void SetTimer (Timer timer)
 		{
+			IntPtr	FosterParent=GetFosterParent();
 			int	index;
 
 			index = timer.GetHashCode();
@@ -2824,7 +2825,7 @@ namespace System.Windows.Forms {
 
 		internal override IntPtr ClipboardOpen(bool primary_selection) {
 			// Win32 does not have primary selection
-			Win32OpenClipboard(FosterParent);
+			Win32OpenClipboard(GetFosterParent());
 			return clip_magic;
 		}
 
@@ -3220,7 +3221,7 @@ namespace System.Windows.Forms {
 			string		magic_string = "The quick brown fox jumped over the lazy dog.";
 			double		magic_number = 44.549996948242189;
 
-			g = Graphics.FromHwnd(FosterParent);
+			g = Graphics.FromHwnd(GetFosterParent());
 
 			width = (float) (g.MeasureString (magic_string, font).Width / magic_number);
 			return new SizeF(width, font.Height);
@@ -3594,6 +3595,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="IsWindowVisible", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool IsWindowVisible(IntPtr hwnd);
+
+		[DllImport ("user32.dll", EntryPoint="IsWindow", CallingConvention=CallingConvention.StdCall)]
+		private extern static bool IsWindow(IntPtr hwnd);
 
 		//[DllImport ("user32.dll", EntryPoint="SetClassLong", CallingConvention=CallingConvention.StdCall)]
 		//private extern static bool Win32SetClassLong(IntPtr hwnd, ClassLong nIndex, IntPtr dwNewLong);

@@ -53,7 +53,7 @@ using nwind;
         {
             var db = CreateDB();
             var customer = db.Customers.First();
-            Assert.Greater(customer.Orders.Count, 0);
+            AssertHelper.Greater(customer.Orders.Count, 0);
         }
 
 #if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
@@ -65,7 +65,7 @@ using nwind;
             var db = CreateDB();
             var results = (from c in db.Customers select c.Orders).ToList();
 
-            Assert.Greater(results.Count, 0);
+            AssertHelper.Greater(results.Count, 0);
         }
 
         [Test]
@@ -98,7 +98,7 @@ using nwind;
             var db = CreateDB();
             var customer = db.Customers.First();
 
-            Assert.Greater(customer.Orders.Count, 0, "#1");
+            AssertHelper.Greater(customer.Orders.Count, 0, "#1");
             Assert.IsTrue(customer.Orders.HasLoadedOrAssignedValues, "#2");
             customer.Orders.SetSource(System.Linq.Enumerable.Empty<Order>());
         }
@@ -136,7 +136,7 @@ using nwind;
             int ordersCount = (from cust in db.Customers
                                select cust.Orders.Count).First();
 
-            Assert.Greater(ordersCount, 0);
+            AssertHelper.Greater(ordersCount, 0);
 
             var customer2 = db.Customers.First();
             customer2.Orders.SetSource(System.Linq.Enumerable.Empty<Order>());
@@ -154,11 +154,11 @@ using nwind;
             var c = db.Customers.First();
 
             int beforeCount = c.Orders.Count;
-            Assert.Greater(beforeCount, 0);
+            AssertHelper.Greater(beforeCount, 0);
             c.Orders.Clear();
             Assert.AreEqual(c.Orders.Count, 0);
             c.Orders.AddRange(db.Orders);
-            Assert.Greater(c.Orders.Count, beforeCount);
+            AssertHelper.Greater(c.Orders.Count, beforeCount);
             db.Refresh(RefreshMode.OverwriteCurrentValues, c.Orders);
 
             Assert.AreEqual(c.Orders.Count, beforeCount);
@@ -174,13 +174,13 @@ using nwind;
             var c = db.Customers.First();
 
             int beforeCount = c.Orders.Count;
-            Assert.Greater(beforeCount, 0);
+            AssertHelper.Greater(beforeCount, 0);
             c.Orders.Clear();
             Assert.AreEqual(c.Orders.Count, 0);
             c.Orders.AddRange(db.Orders);
 
             int middleCount = c.Orders.Count;
-            Assert.Greater(c.Orders.Count, beforeCount);
+            AssertHelper.Greater(c.Orders.Count, beforeCount);
 
             db.Refresh(RefreshMode.KeepCurrentValues, c.Orders);
             Assert.AreEqual(c.Orders.Count, middleCount);
@@ -233,7 +233,7 @@ using nwind;
         {
             var db = CreateDB();
             var customer = db.Customers.Where(c => c.Orders.Count > 0).First();
-            Assert.Greater(customer.Orders.Count, 0);
+            AssertHelper.Greater(customer.Orders.Count, 0);
             bool ok;
             System.ComponentModel.ListChangedEventArgs args = null;
             customer.Orders.ListChanged += delegate(object sender, System.ComponentModel.ListChangedEventArgs a) 

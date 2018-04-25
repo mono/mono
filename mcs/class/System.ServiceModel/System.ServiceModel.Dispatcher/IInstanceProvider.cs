@@ -31,8 +31,8 @@ namespace System.ServiceModel.Dispatcher
 {
 	public interface IInstanceProvider
 	{
-		object GetInstance (InstanceContext context);
-		object GetInstance (InstanceContext context, Message message);
-		void ReleaseInstance (InstanceContext context, object instance);
+		object GetInstance (InstanceContext instanceContext);
+		object GetInstance (InstanceContext instanceContext, Message message);
+		void ReleaseInstance (InstanceContext instanceContext, object instance);
 	}
 }

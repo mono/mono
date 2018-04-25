@@ -1,5 +1,6 @@
-/*
- * helpers.c: Assorted routines
+/**
+ * \file
+ * Assorted routines
  *
  * (C) 2003 Ximian, Inc.
  */
@@ -125,19 +126,15 @@ mono_blockset_print (MonoCompile *cfg, MonoBitSet *set, const char *name, guint 
 }
 
 /**
- * mono_disassemble_code:
- * @cfg: compilation context
- * @code: a pointer to the code
- * @size: the code size in bytes
+ * \param cfg compilation context
+ * \param code a pointer to the code
+ * \param size the code size in bytes
  *
  * Disassemble to code to stdout.
  */
 void
 mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 {
-#if defined(__native_client__)
-	return;
-#endif
 #ifndef DISABLE_LOGGING
 	GHashTable *offset_to_bb_hash = NULL;
 	int i, cindex, bb_num;
@@ -145,7 +142,7 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 #ifdef HOST_WIN32
 	const char *tmp = g_get_tmp_dir ();
 #endif
-	const char *objdump_args = g_getenv ("MONO_OBJDUMP_ARGS");
+	char *objdump_args = g_getenv ("MONO_OBJDUMP_ARGS");
 	char *as_file;
 	char *o_file;
 	char *cmd;
@@ -276,11 +273,11 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 	unused = system (cmd); 
 	g_free (cmd);
 	if (!objdump_args)
-		objdump_args = "";
+		objdump_args = g_strdup ("");
 
 	fflush (stdout);
 
-#ifdef __arm__
+#if defined(__arm__) || defined(__aarch64__)
 	/* 
 	 * The arm assembler inserts ELF directives instructing objdump to display 
 	 * everything as data.
@@ -293,6 +290,7 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 	cmd = g_strdup_printf (ARCH_PREFIX DIS_CMD " %s %s", objdump_args, o_file);
 	unused = system (cmd);
 	g_free (cmd);
+	g_free (objdump_args);
 #else
 	g_assert_not_reached ();
 #endif /* HAVE_SYSTEM */

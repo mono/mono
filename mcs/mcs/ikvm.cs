@@ -134,7 +134,7 @@ namespace Mono.CSharp
 				if (t.Name[0] == '<')
 					continue;
 
-				var it = CreateType (t, null, new DynamicTypeReader (t), true);
+				var it = CreateType (t, null, new AttributesTypeInfoReader (t), true);
 				if (it == null)
 					continue;
 
@@ -220,7 +220,7 @@ namespace Mono.CSharp
 			return Builder.__AddModule (moduleFile);
 		}
 
-		protected override List<string[]> GetNotUnifiedReferences (AssemblyName assemblyName)
+		protected override List<AssemblyReferenceMessageInfo> GetNotUnifiedReferences (AssemblyName assemblyName)
 		{
 			return loader.GetNotUnifiedReferences (assemblyName);
 		}
@@ -238,14 +238,25 @@ namespace Mono.CSharp
 		Assembly corlib;
 		readonly List<Tuple<AssemblyName, string, Assembly>> loaded_names;
 		static readonly Dictionary<string, string[]> sdk_directory;
-		Dictionary<AssemblyName, List<string[]>> resolved_version_mismatches;
+		Dictionary<AssemblyName, List<AssemblyReferenceMessageInfo>> resolved_version_mismatches;
+		static readonly TypeName objectTypeName = new TypeName ("System", "Object");
 
 		static StaticLoader ()
 		{
 			sdk_directory = new Dictionary<string, string[]> ();
-			sdk_directory.Add ("2", new string[] { "2.0", "net_2_0", "v2.0.50727" });
-			sdk_directory.Add ("4", new string[] { "4.0", "net_4_0", "v4.0.30319" });
-			sdk_directory.Add ("4.5", new string[] { "4.5", "net_4_x", "v4.0.30319" });
+			sdk_directory.Add ("2", new string[] { "2.0-api", "v2.0.50727" });
+			sdk_directory.Add ("2.0", new string[] { "2.0-api", "v2.0.50727" });
+			sdk_directory.Add ("4", new string[] { "4.0-api", "v4.0.30319" });
+			sdk_directory.Add ("4.0", new string[] { "4.0-api", "v4.0.30319" });
+			sdk_directory.Add ("4.5", new string[] { "4.5-api", "v4.0.30319" });
+			sdk_directory.Add ("4.5.1", new string[] { "4.5.1-api", "v4.0.30319" });
+			sdk_directory.Add ("4.5.2", new string[] { "4.5.2-api", "v4.0.30319" });
+			sdk_directory.Add ("4.6", new string[] { "4.6-api", "v4.0.30319" });
+			sdk_directory.Add ("4.6.1", new string[] { "4.6.1-api", "v4.0.30319" });
+			sdk_directory.Add ("4.6.2", new string [] { "4.6.2-api", "v4.0.30319" });
+			sdk_directory.Add ("4.7", new string [] { "4.7-api", "v4.0.30319" });
+			sdk_directory.Add ("4.7.1", new string [] { "4.7.1-api", "v4.0.30319" });
+			sdk_directory.Add ("4.x", new string [] { "4.5", "net_4_x", "v4.0.30319" });
 		}
 
 		public StaticLoader (StaticImporter importer, CompilerContext compiler)
@@ -254,7 +265,7 @@ namespace Mono.CSharp
 			this.importer = importer;
 			domain = new Universe (UniverseOptions.MetadataOnly | UniverseOptions.ResolveMissingMembers | 
 				UniverseOptions.DisableFusion | UniverseOptions.DecodeVersionInfoAttributeBlobs |
-				UniverseOptions.DeterministicOutput);
+				UniverseOptions.DeterministicOutput | UniverseOptions.DisableDefaultAssembliesLookup);
 			
 			domain.AssemblyResolve += AssemblyReferenceResolver;
 			loaded_names = new List<Tuple<AssemblyName, string, Assembly>> ();
@@ -265,7 +276,7 @@ namespace Mono.CSharp
 
 				string sdk_path = null;
 
-				string sdk_version = compiler.Settings.SdkVersion ?? "4.5";
+				string sdk_version = compiler.Settings.SdkVersion ?? "4.x";
 				string[] sdk_sub_dirs;
 
 				if (!sdk_directory.TryGetValue (sdk_version, out sdk_sub_dirs))
@@ -352,43 +363,36 @@ namespace Mono.CSharp
 			}
 
 			if (version_mismatch != null) {
-				if (version_mismatch is AssemblyBuilder)
+				if (is_fx_assembly || version_mismatch is AssemblyBuilder)
 					return version_mismatch;
 
-				var v1 = new AssemblyName (refname).Version;
+				var ref_an = new AssemblyName (refname);
+				var v1 = ref_an.Version;
 				var v2 = version_mismatch.GetName ().Version;
+				AssemblyReferenceMessageInfo messageInfo;
 
 				if (v1 > v2) {
-					if (resolved_version_mismatches == null)
-						resolved_version_mismatches = new Dictionary<AssemblyName, List<string[]>> ();
-
-					var an = args.RequestingAssembly.GetName ();
-					List<string[]> names;
-					if (!resolved_version_mismatches.TryGetValue (an, out names)) {
-						names = new List<string[]> ();
-						resolved_version_mismatches.Add (an, names);
-					}
-
-					names.Add (new[] {
-						args.RequestingAssembly.Location,
-						string.Format ("Assembly `{0}' depends on `{1}' which has a higher version number than referenced assembly `{2}'",
-							args.RequestingAssembly.FullName, refname, version_mismatch.GetName ().FullName)
+					messageInfo = new AssemblyReferenceMessageInfo (ref_an, report => {
+						report.SymbolRelatedToPreviousError (args.RequestingAssembly.Location);
+						report.Error (1705, string.Format ("Assembly `{0}' depends on `{1}' which has a higher version number than referenced assembly `{2}'",
+														   args.RequestingAssembly.FullName, refname, version_mismatch.GetName ().FullName));
 					});
 
-					return version_mismatch;
+				} else {
+					messageInfo = new AssemblyReferenceMessageInfo (ref_an, report => {
+						if (v1.Major != v2.Major || v1.Minor != v2.Minor) {
+							report.Warning (1701, 2,
+								"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to supply runtime policy",
+								refname, version_mismatch.GetName ().FullName);
+						} else {
+							report.Warning (1702, 3,
+								"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to supply runtime policy",
+								refname, version_mismatch.GetName ().FullName);
+						}
+					});
 				}
 
-				if (!is_fx_assembly) {
-					if (v1.Major != v2.Major || v1.Minor != v2.Minor) {
-						compiler.Report.Warning (1701, 2,
-							"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to supply runtime policy",
-							refname, version_mismatch.GetName ().FullName);
-					} else {
-						compiler.Report.Warning (1702, 3,
-							"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to supply runtime policy",
-							refname, version_mismatch.GetName ().FullName);
-					}
-				}
+				AddReferenceVersionMismatch (args.RequestingAssembly.GetName (), messageInfo);
 
 				return version_mismatch;
 			}
@@ -404,6 +408,20 @@ namespace Mono.CSharp
 			// AssemblyReference has not been found in the domain
 			// create missing reference and continue
 			return domain.CreateMissingAssembly (args.Name);
+		}
+
+		void AddReferenceVersionMismatch (AssemblyName an, AssemblyReferenceMessageInfo errorInfo)
+		{
+			if (resolved_version_mismatches == null)
+				resolved_version_mismatches = new Dictionary<AssemblyName, List<AssemblyReferenceMessageInfo>> ();
+
+			List<AssemblyReferenceMessageInfo> names;
+			if (!resolved_version_mismatches.TryGetValue (an, out names)) {
+				names = new List<AssemblyReferenceMessageInfo> ();
+				resolved_version_mismatches.Add (an, names);
+			}
+
+			names.Add (errorInfo);
 		}
 
 		public void Dispose ()
@@ -430,19 +448,24 @@ namespace Mono.CSharp
 			return default_references.ToArray ();
 		}
 
-		public List<string[]> GetNotUnifiedReferences (AssemblyName assemblyName)
+		public List<AssemblyReferenceMessageInfo> GetNotUnifiedReferences (AssemblyName assemblyName)
 		{
-			List<string[]> list = null;
+			List<AssemblyReferenceMessageInfo> list = null;
 			if (resolved_version_mismatches != null)
 				resolved_version_mismatches.TryGetValue (assemblyName, out list);
 
 			return list;
 		}
 
-		public override bool HasObjectType (Assembly assembly)
+		public override Assembly HasObjectType (Assembly assembly)
 		{
 			try {
-				return assembly.GetType (compiler.BuiltinTypes.Object.FullName) != null;
+				// System.Object can be forwarded and ikvm
+				// transparently finds it in target assembly therefore
+				// need to return actual obj assembly becauase in such
+				// case it's different to assembly parameter
+				var obj = assembly.FindType (objectTypeName);
+				return obj == null ? null : obj.Assembly;
 			} catch (Exception e) {
 				throw new InternalErrorException (e, "Failed to load assembly `{0}'", assembly.FullName);
 			}
@@ -498,13 +521,23 @@ namespace Mono.CSharp
 									return null;
 								}
 
-								if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey)) {
-									compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
-									compiler.Report.SymbolRelatedToPreviousError (fileName);
-									compiler.Report.Error (1703,
-										"An assembly `{0}' with the same identity has already been imported. Consider removing one of the references",
-										an.Name);
-									return null;
+								AssemblyComparisonResult result;
+								if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey) &&
+								    (domain.CompareAssemblyIdentity (an.FullName, false, loaded_name.FullName, false, out result))) {
+
+									//
+									// Roslyn is much more lenient than native compiler here
+									//
+									switch (result) {
+									case AssemblyComparisonResult.EquivalentFXUnified:
+									case AssemblyComparisonResult.EquivalentUnified:
+										compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
+										compiler.Report.SymbolRelatedToPreviousError (fileName);
+										compiler.Report.Error (1703,
+											"An assembly `{0}' with the same identity has already been imported. Consider removing one of the references",
+											an.Name);
+										return null;
+									}
 								}
 							}
 
@@ -567,7 +600,7 @@ namespace Mono.CSharp
 
 			compiler.TimeReporter.Start (TimeReporter.TimerType.ReferencesImporting);
 
-			if (corlib == null) {
+			if (corlib == null || corlib.__IsMissing) {
 				// System.Object was not found in any referenced assembly, use compiled assembly as corlib
 				corlib = module.DeclaringAssembly.Builder;
 			} else {
@@ -612,7 +645,7 @@ namespace Mono.CSharp
 
 		public override void AddTypeForwarder (TypeSpec type, Location loc)
 		{
-			builder.__AddTypeForwarder (type.GetMetaInfo ());
+			builder.__AddTypeForwarder (type.GetMetaInfo (), false);
 		}
 
 		public override void DefineWin32IconResource (string fileName)

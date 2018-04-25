@@ -3,8 +3,9 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Security.Win32.dll
+KEYFILE = ../mono.pub
 LIB_MCS_FLAGS = /unsafe
-EXTRA_DISTFILES = README Test/ChangeLog
+EXTRA_DISTFILES = README
 
 ifneq (win32, $(PROFILE))
 NO_TEST = yes

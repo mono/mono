@@ -1,24 +1,12 @@
-TOP=../..
-include $(TOP)/mk/common.inc
+include $(top_srcdir)/mk/common.mk
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)
 
 if SUPPORT_SGEN
-if DISABLE_EXECUTABLES
 shared_libraries = libmonosgen.la
-else
-if SHARED_MONO
-shared_libraries = libmonosgen.la
-endif
-endif
-libraries = $(shared_libraries) libmonosgen-static.la
 endif
 
-if DISABLE_EXECUTABLES
 noinst_LTLIBRARIES = $(shared_libraries)
-else
-noinst_LTLIBRARIES = $(libraries)
-endif
 
 monosgen_sources = \
 	gc-internal-agnostic.h \
@@ -46,7 +34,6 @@ monosgen_sources = \
 	sgen-los.c \
 	sgen-major-copy-object.h \
 	sgen-marksweep-drain-gray-stack.h \
-	sgen-marksweep-scan-object-concurrent.h \
 	sgen-marksweep.c \
 	sgen-memory-governor.c \
 	sgen-memory-governor.h \
@@ -58,6 +45,8 @@ monosgen_sources = \
 	sgen-pinning.h \
 	sgen-pointer-queue.c \
 	sgen-pointer-queue.h \
+	sgen-array-list.h \
+	sgen-array-list.c \
 	sgen-protocol-def.h \
 	sgen-protocol.c \
 	sgen-protocol.h \
@@ -74,7 +63,3 @@ monosgen_sources = \
 
 libmonosgen_la_SOURCES = $(monosgen_sources)
 libmonosgen_la_CFLAGS = $(SGEN_DEFINES)
-
-libmonosgen_static_la_SOURCES = $(libmonosgen_la_SOURCES)
-libmonosgen_static_la_CFLAGS = $(SGEN_DEFINES)
-libmonosgen_static_la_LDFLAGS = -static

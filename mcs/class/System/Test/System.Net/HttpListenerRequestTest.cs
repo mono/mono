@@ -30,10 +30,15 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.Net
 {
@@ -47,12 +52,12 @@ namespace MonoTests.System.Net
 			HttpListenerContext ctx;
 			HttpListenerRequest request;
 			NetworkStream ns;
-
+			var port = NetworkHelpers.FindFreePort ();
 			HttpListener listener = HttpListener2Test.CreateAndStartListener (
-				"http://127.0.0.1:9000/HasEntityBody/");
+				"http://127.0.0.1:" + port + "/HasEntityBody/");
 
 			// POST with non-zero Content-Lenth
-			ns = HttpListener2Test.CreateNS (9000);
+			ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "POST /HasEntityBody/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
 			ctx = listener.GetContext ();
 			request = ctx.Request;
@@ -60,7 +65,7 @@ namespace MonoTests.System.Net
 			HttpListener2Test.Send (ctx.Response.OutputStream, "%%%OK%%%");
 
 			// POST with zero Content-Lenth
-			ns = HttpListener2Test.CreateNS (9000);
+			ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "POST /HasEntityBody/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 0\r\n\r\n123");
 			ctx = listener.GetContext ();
 			request = ctx.Request;
@@ -68,7 +73,7 @@ namespace MonoTests.System.Net
 			HttpListener2Test.Send (ctx.Response.OutputStream, "%%%OK%%%");
 
 			// POST with chunked encoding
-			ns = HttpListener2Test.CreateNS (9000);
+			ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "POST /HasEntityBody HTTP/1.1\r\nHost: 127.0.0.1\r\nTransfer-Encoding: chunked\r\n\r\n0\r\n");
 			ctx = listener.GetContext ();
 			request = ctx.Request;
@@ -76,7 +81,7 @@ namespace MonoTests.System.Net
 			HttpListener2Test.Send (ctx.Response.OutputStream, "%%%OK%%%");
 
 			// GET with no Content-Length
-			ns = HttpListener2Test.CreateNS (9000);
+			ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "GET /HasEntityBody HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n");
 			ctx = listener.GetContext ();
 			request = ctx.Request;
@@ -84,7 +89,7 @@ namespace MonoTests.System.Net
 			HttpListener2Test.Send (ctx.Response.OutputStream, "%%%OK%%%");
 
 			// GET with non-zero Content-Length
-			ns = HttpListener2Test.CreateNS (9000);
+			ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "GET /HasEntityBody HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n");
 			ctx = listener.GetContext ();
 			request = ctx.Request;
@@ -92,7 +97,7 @@ namespace MonoTests.System.Net
 			HttpListener2Test.Send (ctx.Response.OutputStream, "%%%OK%%%");
 
 			// GET with zero Content-Length
-			ns = HttpListener2Test.CreateNS (9000);
+			ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "GET /HasEntityBody HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 0\r\n\r\n");
 			ctx = listener.GetContext ();
 			request = ctx.Request;
@@ -100,7 +105,7 @@ namespace MonoTests.System.Net
 			HttpListener2Test.Send (ctx.Response.OutputStream, "%%%OK%%%");
 
 			// GET with chunked encoding
-			ns = HttpListener2Test.CreateNS (9000);
+			ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "GET /HasEntityBody HTTP/1.1\r\nHost: 127.0.0.1\r\nTransfer-Encoding: chunked\r\n\r\n0\r\n");
 			ctx = listener.GetContext ();
 			request = ctx.Request;
@@ -108,35 +113,35 @@ namespace MonoTests.System.Net
 			HttpListener2Test.Send (ctx.Response.OutputStream, "%%%OK%%%");
 
 			// PUT with non-zero Content-Lenth
-			ns = HttpListener2Test.CreateNS (9000);
+			ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "PUT /HasEntityBody/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
 			ctx = listener.GetContext ();
 			request = ctx.Request;
 			Assert.IsTrue (request.HasEntityBody, "#H");
 
 			// PUT with zero Content-Lenth
-			ns = HttpListener2Test.CreateNS (9000);
+			ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "PUT /HasEntityBody/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 0\r\n\r\n123");
 			ctx = listener.GetContext ();
 			request = ctx.Request;
 			Assert.IsFalse (request.HasEntityBody, "#I");
 
 			// INVALID with non-zero Content-Lenth
-			ns = HttpListener2Test.CreateNS (9000);
+			ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "INVALID /HasEntityBody/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
 			ctx = listener.GetContext ();
 			request = ctx.Request;
 			Assert.IsTrue (request.HasEntityBody, "#J");
 
 			// INVALID with zero Content-Lenth
-			ns = HttpListener2Test.CreateNS (9000);
+			ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "INVALID /HasEntityBody/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 0\r\n\r\n123");
 			ctx = listener.GetContext ();
 			request = ctx.Request;
 			Assert.IsFalse (request.HasEntityBody, "#K");
 
 			// INVALID with chunked encoding
-			ns = HttpListener2Test.CreateNS (9000);
+			ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "INVALID /HasEntityBody/ HTTP/1.1\r\nHost: 127.0.0.1\r\nTransfer-Encoding: chunked\r\n\r\n0\r\n");
 			ctx = listener.GetContext ();
 			request = ctx.Request;
@@ -146,11 +151,15 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpMethod ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			HttpListener listener = HttpListener2Test.CreateAndStartListener (
-				"http://127.0.0.1:9000/HttpMethod/");
-			NetworkStream ns = HttpListener2Test.CreateNS (9000);
+				"http://127.0.0.1:" + port + "/HttpMethod/");
+			NetworkStream ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "pOsT /HttpMethod/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
 			HttpListenerContext ctx = listener.GetContext ();
 			HttpListenerRequest request = ctx.Request;
@@ -159,12 +168,19 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+#if MONOTOUCH
+		[Ignore ("Randomly produces ObjectDisposedExceptions, in particular on device. See bug #39780.")]
+#endif
 		public void HttpBasicAuthScheme ()
 		{
-			HttpListener listener = HttpListener2Test.CreateAndStartListener ("http://*:9000/authTest/", AuthenticationSchemes.Basic);
+			var port = NetworkHelpers.FindFreePort ();			
+			HttpListener listener = HttpListener2Test.CreateAndStartListener ("http://*:" + port + "/authTest/", AuthenticationSchemes.Basic);
 			//dummy-wait for context
 			listener.BeginGetContext (null, listener);
-			NetworkStream ns = HttpListener2Test.CreateNS (9000);
+			NetworkStream ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "GET /authTest/ HTTP/1.0\r\n\r\n");
 			String response = HttpListener2Test.Receive (ns, 512);
 			Assert.IsTrue (response.Contains ("WWW-Authenticate: Basic realm"), "#A");
@@ -173,11 +189,15 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpRequestUriIsNotDecoded ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			HttpListener listener = HttpListener2Test.CreateAndStartListener (
-				"http://127.0.0.1:9000/RequestUriDecodeTest/");
-			NetworkStream ns = HttpListener2Test.CreateNS (9000);
+				"http://127.0.0.1:" + port + "/RequestUriDecodeTest/");
+			NetworkStream ns = HttpListener2Test.CreateNS (port);
 			HttpListener2Test.Send (ns, "GET /RequestUriDecodeTest/?a=b&c=d%26e HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n");
 			HttpListenerContext ctx = listener.GetContext ();
 			HttpListenerRequest request = ctx.Request;
@@ -185,10 +205,45 @@ namespace MonoTests.System.Net
 			listener.Close ();
 		}
 
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void HttpRequestIsLocal ()
+		{
+			var port = NetworkHelpers.FindFreePort ();
+			var ips = new List<IPAddress> ();
+			ips.Add (IPAddress.Loopback);
+			foreach (var adapter in NetworkInterface.GetAllNetworkInterfaces ()) {
+				if (adapter.OperationalStatus != OperationalStatus.Up)
+					continue;
+				foreach (var ip in adapter.GetIPProperties ().UnicastAddresses) {
+					ips.Add (ip.Address);
+				}
+			}
+
+			foreach (var ip in ips) {
+				if (ip.AddressFamily != AddressFamily.InterNetwork)
+					continue;
+
+				HttpListener listener = HttpListener2Test.CreateAndStartListener (
+					"http://" + ip + ":" + port + "/HttpRequestIsLocal/");
+				NetworkStream ns = HttpListener2Test.CreateNS (ip, port);
+				HttpListener2Test.Send (ns, "GET /HttpRequestIsLocal/ HTTP/1.0\r\n\r\n");
+				HttpListenerContext ctx = listener.GetContext ();
+				HttpListenerRequest request = ctx.Request;
+				Assert.AreEqual (true, request.IsLocal, "IP " + ip + " is not local");
+				listener.Close ();
+			}
+		}
+
 		[Test] // #29927
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpRequestUriUnescape ()
 		{
-			var prefix = "http://localhost:12345/";
+			var prefix = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
 			var key = "Product/1";
 
 			var expectedUrl = prefix + key + "/";
@@ -203,11 +258,52 @@ namespace MonoTests.System.Net
 			var request = (HttpWebRequest) WebRequest.Create (rawUrl);
 			request.GetResponseAsync ();
 
-			if(!contextTask.Wait (1000))
-				Assert.Fail ("Timeout");
+			Assert.IsTrue (contextTask.Wait (1000));
 
 			Assert.AreEqual (expectedUrl, contextTask.Result.Request.Url.AbsoluteUri);
 
+			listener.Close ();
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void EmptyWrite ()
+		{
+			var prefix = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
+
+			HttpListener listener = new HttpListener ();
+			listener.Prefixes.Add (prefix);
+			listener.Start ();
+
+			Task.Run (() => {
+				var context = listener.GetContext ();
+
+				var s = context.Response.OutputStream;
+				s.Write (new byte[10], 0, 0);
+				return;
+			});
+
+			var request = (HttpWebRequest)WebRequest.Create (prefix);
+			var rsp = request.GetResponseAsync ();
+			Assert.IsFalse (rsp.Wait (1000), "Don't send on empty write");
+		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void HttpRequestIgnoreBadCookies ()
+		{
+			var port = NetworkHelpers.FindFreePort ();
+			HttpListener listener = HttpListener2Test.CreateAndStartListener (
+				"http://127.0.0.1:" + port + "/HttpRequestIgnoreBadCookiesTest/");
+			NetworkStream ns = HttpListener2Test.CreateNS (port);
+			HttpListener2Test.Send (ns, "GET /HttpRequestIgnoreBadCookiesTest/?a=b HTTP/1.1\r\nHost: 127.0.0.1\r\nCookie: ELOQUA=GUID=5ca2346347357f4-f877-4eff-96aa-70fe0b677650; ELQSTATUS=OK; WRUID=609099666.123259461695; CommunityServer-UserCookie2101=lv=Thu, 26 Jul 2012 15:25:11 GMT&mra=Mon, 01 Oct 2012 17:40:05 GMT; PHPSESSID=1234dg3opfjb4qafp0oo645; __utma=9761706.1153317537.1357240270.1357240270.1357317902.2; __utmb=9761706.6.10.1357317902; __utmc=9761706; __utmz=9761706.1357240270.1.1.utmcsr=test.testdomain.com|utmccn=(referral)|utmcmd=referral|utmcct=/test/1234\r\n\r\n");
+			HttpListenerContext ctx = listener.GetContext ();
+			HttpListenerRequest request = ctx.Request;
+			Assert.AreEqual ("/HttpRequestIgnoreBadCookiesTest/?a=b", request.Url.PathAndQuery);
 			listener.Close ();
 		}
 	}

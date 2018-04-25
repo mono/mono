@@ -55,20 +55,17 @@ using System.Runtime.InteropServices;
 
 	[assembly: CLSCompliant (true)]
 	[assembly: AssemblyDelaySign (true)]
-#if NET_2_1
+#if MOBILE
 	[assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else
 	[assembly: AssemblyKeyFile ("../ecma.pub")]
 #endif
 
-#if NET_2_1
+#if MOBILE
 	[assembly: InternalsVisibleTo ("System.ServiceModel.Web, PublicKey=00240000048000009400000006020000002400005253413100040000010001008D56C76F9E8649383049F383C44BE0EC204181822A6C31CF5EB7EF486944D032188EA1D3920763712CCB12D75FB77E9811149E6148E5D32FBAAB37611C1878DDC19E20EF135D0CB2CFF2BFEC3D115810C3D9069638FE4BE215DBF795861920E5AB6F7DB2E2CEEF136AC23D5DD2BF031700AEC232F6C6B1C785B4305C123B37AB")]
-	// System.Xml.Serialization (from Microsoft Silverlight 2.0 SDK) requires access to System.Xml internals
-	[assembly: InternalsVisibleTo ("System.Xml.Serialization, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
 #else
 	[assembly: AllowPartiallyTrustedCallers]
 #endif
-	[assembly: InternalsVisibleTo ("System.Runtime.Serialization, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull, AllInternalsVisible = false)]
 	[assembly: InternalsVisibleTo ("System.Xml.Linq, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull, AllInternalsVisible = false)]
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]

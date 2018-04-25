@@ -27,54 +27,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
-#if MONOTOUCH || MONODROID
-using Mono.Security;
-using Mono.Security.Cryptography;
-using MX = Mono.Security.X509;
-#else
+#if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
-
 using MonoSecurity::Mono.Security;
 using MonoSecurity::Mono.Security.Cryptography;
 using MX = MonoSecurity::Mono.Security.X509;
-#endif
-
+#else
+using Mono.Security;
+using Mono.Security.Cryptography;
+using MX = Mono.Security.X509;
 #endif
 
 using System.IO;
 using System.Text;
+using System.Collections;
+using System.Runtime.Serialization;
 
 namespace System.Security.Cryptography.X509Certificates {
 
 	[Serializable]
 	public class X509Certificate2 : X509Certificate {
-#if !SECURITY_DEP
-		// Used in Mono.Security HttpsClientStream
-		public X509Certificate2 (byte[] rawData)
-		{
+	
+		new internal X509Certificate2Impl Impl {
+			get {
+				var impl2 = base.Impl as X509Certificate2Impl;
+				X509Helper2.ThrowIfContextInvalid (impl2);
+				return impl2;
+			}
 		}
-#endif
-#if SECURITY_DEP
-		private bool _archived;
-		private X509ExtensionCollection _extensions;
-		private string _name = String.Empty;
-		private string _serial;
-		private PublicKey _publicKey;
-		private X500DistinguishedName issuer_name;
-		private X500DistinguishedName subject_name;
-		private Oid signature_algorithm;
 
-		private MX.X509Certificate _cert;
-
-		private static string empty_error = Locale.GetText ("Certificate instance is empty.");
+		string friendlyName = string.Empty;
 
 		// constructors
 
 		public X509Certificate2 ()
 		{
-			_cert = null;
 		}
 
 		public X509Certificate2 (byte[] rawData)
@@ -129,206 +116,92 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public X509Certificate2 (IntPtr handle) : base (handle) 
 		{
-			_cert = new MX.X509Certificate (base.GetRawCertData ());
+			throw new NotImplementedException ();
 		}
 
 		public X509Certificate2 (X509Certificate certificate) 
-			: base (certificate)
+			: base (X509Helper2.Import (certificate))
 		{
-			_cert = new MX.X509Certificate (base.GetRawCertData ());
+		}
+
+		protected X509Certificate2 (SerializationInfo info, StreamingContext context) : base (info, context)
+		{
+		}
+
+		internal X509Certificate2 (X509Certificate2Impl impl)
+			: base (impl)
+		{
 		}
 
 		// properties
 
 		public bool Archived {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				return _archived;
-			}
-			set {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				_archived = value;
-			}
+			get { return Impl.Archived; }
+			set { Impl.Archived = true; }
 		}
 
 		public X509ExtensionCollection Extensions {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				if (_extensions == null)
-					_extensions = new X509ExtensionCollection (_cert);
-				return _extensions;
-			}
+			get { return Impl.Extensions; }
 		}
 
 		public string FriendlyName {
 			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				return _name;
+				ThrowIfContextInvalid ();
+				return friendlyName;
 			}
 			set {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				_name = value;
+				ThrowIfContextInvalid ();
+				friendlyName = value;
 			}
 		}
 
-		// FIXME - Could be more efficient
 		public bool HasPrivateKey {
-			get { return PrivateKey != null; }
+			get { return Impl.HasPrivateKey; }
 		}
 
 		public X500DistinguishedName IssuerName {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				if (issuer_name == null)
-					issuer_name = new X500DistinguishedName (_cert.GetIssuerName ().GetBytes ());
-				return issuer_name;
-			}
+			get { return Impl.IssuerName; }
 		} 
 
 		public DateTime NotAfter {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				return _cert.ValidUntil.ToLocalTime ();
-			}
+			get { return Impl.GetValidUntil ().ToLocalTime (); }
 		}
 
 		public DateTime NotBefore {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				return _cert.ValidFrom.ToLocalTime ();
-			}
+			get { return Impl.GetValidFrom ().ToLocalTime (); }
 		}
 
 		public AsymmetricAlgorithm PrivateKey {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				try {
-					if (_cert.RSA != null) {
-						RSACryptoServiceProvider rcsp = _cert.RSA as RSACryptoServiceProvider;
-						if (rcsp != null)
-							return rcsp.PublicOnly ? null : rcsp;
-
-						RSAManaged rsam = _cert.RSA as RSAManaged;
-						if (rsam != null)
-							return rsam.PublicOnly ? null : rsam;
-
-						_cert.RSA.ExportParameters (true);
-						return _cert.RSA;
-					} else if (_cert.DSA != null) {
-						DSACryptoServiceProvider dcsp = _cert.DSA as DSACryptoServiceProvider;
-						if (dcsp != null)
-							return dcsp.PublicOnly ? null : dcsp;
-
-						_cert.DSA.ExportParameters (true);
-						return _cert.DSA;
-					}
-				}
-				catch {
-				}
-				return null;
-			}
-			set {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-
-				// allow NULL so we can "forget" the key associated to the certificate
-				// e.g. in case we want to export it in another format (see bug #396620)
-				if (value == null) {
-					_cert.RSA = null;
-					_cert.DSA = null;
-				} else 	if (value is RSA)
-					_cert.RSA = (RSA) value;
-				else if (value is DSA)
-					_cert.DSA = (DSA) value;
-				else
-					throw new NotSupportedException ();
-			}
+			get { return Impl.PrivateKey; }
+			set { Impl.PrivateKey = value; }
 		} 
 
 		public PublicKey PublicKey {
-			get { 
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-
-				if (_publicKey == null) {
-					try {
-						_publicKey = new PublicKey (_cert);
-					}
-					catch (Exception e) {
-						string msg = Locale.GetText ("Unable to decode public key.");
-						throw new CryptographicException (msg, e);
-					}
-				}
-				return _publicKey;
-			}
+			get { return Impl.PublicKey; }
 		} 
 
 		public byte[] RawData {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-
-				return base.GetRawCertData ();
-			}
-		} 
+			get { return GetRawCertData (); }
+		}
 
 		public string SerialNumber {
-			get { 
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-
-				if (_serial == null) {
-					StringBuilder sb = new StringBuilder ();
-					byte[] serial = _cert.SerialNumber;
-					for (int i=serial.Length - 1; i >= 0; i--)
-						sb.Append (serial [i].ToString ("X2"));
-					_serial = sb.ToString ();
-				}
-				return _serial; 
-			}
+			get { return GetSerialNumberString (); }
 		} 
 
 		public Oid SignatureAlgorithm {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-
-				if (signature_algorithm == null)
-					signature_algorithm = new Oid (_cert.SignatureAlgorithm);
-				return signature_algorithm;
-			}
+			get { return Impl.SignatureAlgorithm; }
 		} 
 
 		public X500DistinguishedName SubjectName {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-
-				if (subject_name == null)
-					subject_name = new X500DistinguishedName (_cert.GetSubjectName ().GetBytes ());
-				return subject_name;
-			}
+			get { return Impl.SubjectName; }
 		} 
 
 		public string Thumbprint {
-			get { return base.GetCertHashString (); }
+			get { return GetCertHashString (); }
 		} 
 
 		public int Version {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				return _cert.Version;
-			}
+			get { return Impl.Version; }
 		}
 
 		// methods
@@ -336,135 +209,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		[MonoTODO ("always return String.Empty for UpnName, DnsFromAlternativeName and UrlName")]
 		public string GetNameInfo (X509NameType nameType, bool forIssuer) 
 		{
-			switch (nameType) {
-			case X509NameType.SimpleName:
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				// return CN= or, if missing, the first part of the DN
-				ASN1 sn = forIssuer ? _cert.GetIssuerName () : _cert.GetSubjectName ();
-				ASN1 dn = Find (commonName, sn);
-				if (dn != null)
-					return GetValueAsString (dn);
-				if (sn.Count == 0)
-					return String.Empty;
-				ASN1 last_entry = sn [sn.Count - 1];
-				if (last_entry.Count == 0)
-					return String.Empty;
-				return GetValueAsString (last_entry [0]);
-			case X509NameType.EmailName:
-				// return the E= part of the DN (if present)
-				ASN1 e = Find (email, forIssuer ? _cert.GetIssuerName () : _cert.GetSubjectName ());
-				if (e != null)
-					return GetValueAsString (e);
-				return String.Empty;
-			case X509NameType.UpnName:
-				// FIXME - must find/create test case
-				return String.Empty;
-			case X509NameType.DnsName:
-				// return the CN= part of the DN (if present)
-				ASN1 cn = Find (commonName, forIssuer ? _cert.GetIssuerName () : _cert.GetSubjectName ());
-				if (cn != null)
-					return GetValueAsString (cn);
-				return String.Empty;
-			case X509NameType.DnsFromAlternativeName:
-				// FIXME - must find/create test case
-				return String.Empty;
-			case X509NameType.UrlName:
-				// FIXME - must find/create test case
-				return String.Empty;
-			default:
-				throw new ArgumentException ("nameType");
-			}
-		}
-
-		static byte[] commonName = { 0x55, 0x04, 0x03 };
-		static byte[] email = { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x01 };
-
-		private ASN1 Find (byte[] oid, ASN1 dn)
-		{
-			if (dn.Count == 0)
-				return null;
-
-			// process SET
-			for (int i = 0; i < dn.Count; i++) {
-				ASN1 set = dn [i];
-				for (int j = 0; j < set.Count; j++) {
-					ASN1 pair = set [j];
-					if (pair.Count != 2)
-						continue;
-
-					ASN1 poid = pair [0];
-					if (poid == null)
-						continue;
-
-					if (poid.CompareValue (oid))
-						return pair;
-				}
-			}
-			return null;
-		}
-
-		private string GetValueAsString (ASN1 pair)
-		{
-			if (pair.Count != 2)
-				return String.Empty;
-
-			ASN1 value = pair [1];
-			if ((value.Value == null) || (value.Length == 0))
-				return String.Empty;
-
-			if (value.Tag == 0x1E) {
-				// BMPSTRING
-				StringBuilder sb = new StringBuilder ();
-				for (int j = 1; j < value.Value.Length; j += 2)
-					sb.Append ((char)value.Value [j]);
-				return sb.ToString ();
-			} else {
-				return Encoding.UTF8.GetString (value.Value);
-			}
-		}
-
-		private MX.X509Certificate ImportPkcs12 (byte[] rawData, string password)
-		{
-			MX.PKCS12 pfx = null;
-			if (string.IsNullOrEmpty (password)) {
-				try {
-					// Support both unencrypted PKCS#12..
-					pfx = new MX.PKCS12 (rawData, (string)null);
-				} catch {
-					// ..and PKCS#12 encrypted with an empty password
-					pfx = new MX.PKCS12 (rawData, string.Empty);
-				}
-			} else {
-				pfx = new MX.PKCS12 (rawData, password);
-			}
-
-			if (pfx.Certificates.Count == 0) {
-				// no certificate was found
-				return null;
-			} else if (pfx.Keys.Count == 0) {
-				// no key were found - pick the first certificate
-				return pfx.Certificates [0];
-			} else {
-				// find the certificate that match the first key
-				MX.X509Certificate cert = null;
-				var keypair = (pfx.Keys [0] as AsymmetricAlgorithm);
-				string pubkey = keypair.ToXmlString (false);
-				foreach (var c in pfx.Certificates) {
-					if (((c.RSA != null) && (pubkey == c.RSA.ToXmlString (false))) ||
-						((c.DSA != null) && (pubkey == c.DSA.ToXmlString (false)))) {
-						cert = c;
-						break;
-					}
-				}
-				if (cert == null) {
-					cert = pfx.Certificates [0]; // no match, pick first certificate without keys
-				} else {
-					cert.RSA = (keypair as RSA);
-					cert.DSA = (keypair as DSA);
-				}
-				return cert;
-			}
+			return Impl.GetNameInfo (nameType, forIssuer);
 		}
 
 		public override void Import (byte[] rawData) 
@@ -475,37 +220,8 @@ namespace System.Security.Cryptography.X509Certificates {
 		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
-			MX.X509Certificate cert = null;
-			if (password == null) {
-				try {
-					cert = new MX.X509Certificate (rawData);
-				}
-				catch (Exception e) {
-					try {
-						cert = ImportPkcs12 (rawData, null);
-					}
-					catch {
-						string msg = Locale.GetText ("Unable to decode certificate.");
-						// inner exception is the original (not second) exception
-						throw new CryptographicException (msg, e);
-					}
-				}
-			} else {
-				// try PKCS#12
-				try {
-					cert = ImportPkcs12 (rawData, password);
-				}
-				catch {
-					// it's possible to supply a (unrequired/unusued) password
-					// fix bug #79028
-					cert = new MX.X509Certificate (rawData);
-				}
-			}
-			// we do not have to fully re-decode the certificate since X509Certificate does not deal with keys
-			if (cert != null) {
-				base.Import (cert.RawData, (string) null, keyStorageFlags);
-				_cert = cert; // becuase base call will call Reset!
-			}
+			var impl = X509Helper2.Import (rawData, password, keyStorageFlags);
+			ImportHandle (impl);
 		}
 
 		[MonoTODO ("SecureString is incomplete")]
@@ -537,64 +253,25 @@ namespace System.Security.Cryptography.X509Certificates {
 		[MonoTODO ("X509ContentType.SerializedCert is not supported")]
 		public override byte[] Export (X509ContentType contentType, string password)
 		{
-			if (_cert == null)
-				throw new CryptographicException (empty_error);
-
-			switch (contentType) {
-			case X509ContentType.Cert:
-				return _cert.RawData;
-			case X509ContentType.Pfx: // this includes Pkcs12
-				return ExportPkcs12 (password);
-			case X509ContentType.SerializedCert:
-				// TODO
-				throw new NotSupportedException ();
-			default:
-				string msg = Locale.GetText ("This certificate format '{0}' cannot be exported.", contentType);
-				throw new CryptographicException (msg);
-			}
-		}
-
-		byte[] ExportPkcs12 (string password)
-		{
-			var pfx = new MX.PKCS12 ();
-			try {
-				if (password != null)
-					pfx.Password = password;
-				pfx.AddCertificate (_cert);
-				var privateKey = PrivateKey;
-				if (privateKey != null)
-					pfx.AddPkcs8ShroudedKeyBag (privateKey);
-				return pfx.GetBytes ();
-			} finally {
-				pfx.Password = null;
-			}
+			return Impl.Export (contentType, password);
 		}
 
 		public override void Reset () 
 		{
-			_cert = null;
-			_archived = false;
-			_extensions = null;
-			_name = String.Empty;
-			_serial = null;
-			_publicKey = null;
-			issuer_name = null;
-			subject_name = null;
-			signature_algorithm = null;
+			friendlyName = string.Empty;
 			base.Reset ();
 		}
 
 		public override string ToString ()
 		{
-			if (_cert == null)
+			if (!IsValid)
 				return "System.Security.Cryptography.X509Certificates.X509Certificate2";
-
 			return base.ToString (true);
 		}
 
 		public override string ToString (bool verbose)
 		{
-			if (_cert == null)
+			if (!IsValid)
 				return "System.Security.Cryptography.X509Certificates.X509Certificate2";
 
 			// the non-verbose X509Certificate2 == verbose X509Certificate
@@ -644,14 +321,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		[MonoTODO ("by default this depends on the incomplete X509Chain")]
 		public bool Verify ()
 		{
-			if (_cert == null)
-				throw new CryptographicException (empty_error);
-
-			X509Chain chain = X509Chain.Create ();
-			if (!chain.Build (this))
-				return false;
-			// TODO - check chain and other stuff ???
-			return true;
+			return Impl.Verify (this);
 		}
 
 		// static methods
@@ -718,16 +388,11 @@ namespace System.Security.Cryptography.X509Certificates {
 		// internal stuff because X509Certificate2 isn't complete enough
 		// (maybe X509Certificate3 will be better?)
 
+		[MonoTODO ("See comment in X509Helper2.GetMonoCertificate().")]
 		internal MX.X509Certificate MonoCertificate {
-			get { return _cert; }
+			get {
+				return X509Helper2.GetMonoCertificate (this);
+			}
 		}
-
-#else
-		// HACK - this ensure the type X509Certificate2 and PrivateKey property exists in the build before
-		// Mono.Security.dll is built. This is required to get working client certificate in SSL/TLS
-		public AsymmetricAlgorithm PrivateKey {
-			get { return null; }
-		}
-#endif
 	}
 }

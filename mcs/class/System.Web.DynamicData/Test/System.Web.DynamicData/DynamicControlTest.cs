@@ -52,7 +52,6 @@ using System.Web.UI.WebControls;
 using System.IO;
 
 using NUnit.Framework;
-using NUnit.Mocks;
 using MonoTests.stand_alone.WebHarness;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.Common;
@@ -255,7 +254,7 @@ namespace MonoTests.System.Web.DynamicData
 			string html = @"<span class=""activeCssClass"">
 
 <span class=""field"">Active</span>:";
-			Assert.IsTrue (p.IndexOf (html) != -1, "#Y1");
+			Assert.IsTrue (p.IndexOf (html.Replace ("\r\n", "\n")) != -1, "#Y1");
 		}
 
 		static void CssClass_OnLoad (Page p)
@@ -363,7 +362,7 @@ namespace MonoTests.System.Web.DynamicData
 			//   at System.Web.DynamicData.DynamicControl.ResolveColumn()
 			//   at System.Web.DynamicData.DynamicControl.OnInit(EventArgs e)
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				var c = lc.FindChild<DynamicControl> ("FirstName");
 			}, "#A1");
 		}
@@ -390,7 +389,7 @@ namespace MonoTests.System.Web.DynamicData
 			//   at System.Web.DynamicData.DynamicControl.ResolveColumn()
 			//   at System.Web.DynamicData.DynamicControl.OnInit(EventArgs e)
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				var dc = lc.FindChild<DynamicControl> ("FirstName");
 			}, "#A1");
 		}
@@ -642,7 +641,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual ("value", dc.GetAttribute ("MyAttribute"), "#B1");
 
 			// Nice...
-			AssertExtensions.Throws<KeyNotFoundException> (() => {
+			Assert.Throws<KeyNotFoundException> (() => {
 				dc.GetAttribute ("NoSuchAttribute");
 			}, "#C1");
 		}

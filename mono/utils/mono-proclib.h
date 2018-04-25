@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_PROC_LIB_H__
 #define __MONO_PROC_LIB_H__
 /*
@@ -6,6 +10,7 @@
 
 #include <glib.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-publib.h>
 
 /* never remove or reorder these enums values: they are used in corlib/System */
 
@@ -67,7 +72,7 @@ gint64    mono_process_get_data_with_error (gpointer pid, MonoProcessData data, 
 
 int       mono_process_current_pid (void);
 
-int       mono_cpu_count    (void);
+MONO_API int       mono_cpu_count    (void);
 gint64    mono_cpu_get_data (int cpu_id, MonoCpuData data, MonoProcessError *error);
 gint32    mono_cpu_usage (MonoCpuUsageState *prev);
 

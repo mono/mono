@@ -64,17 +64,16 @@ namespace MonoTests.System.Configuration.Util {
 			}
 		}
 
-		public static string ThisDllName {
+		public static string ThisApplicationPath {
 			get {
-				var asm = Assembly.GetCallingAssembly ();
-				return Path.GetFileName (asm.Location);
+				var asm = Assembly.GetEntryAssembly ();
+				return asm.Location;
 			}
 		}
 
 		public static string ThisConfigFileName {
 			get {
-				var asm = Assembly.GetCallingAssembly ();
-				var exe = Path.GetFileName (asm.Location);
+				var exe = Path.GetFileName (ThisApplicationPath);
 				return exe + ".config";
 			}
 		}

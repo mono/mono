@@ -230,6 +230,26 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		public void ConvertFrom_Type_String_FilePathWithBackslashes ()
+		{
+			if (Path.DirectorySeparatorChar == '\\')
+				// non-windows test
+				return;
+
+			string fileContents = "foobar";
+			string fileName = "foo.txt";
+			string filePath = Path.Combine (_tempDirectory, fileName);
+			File.WriteAllText (filePath, fileContents);
+
+			filePath = _tempDirectory + "\\.\\" + fileName;
+
+			string fileRef = filePath + ";" + typeof (string).AssemblyQualifiedName;
+			string result = _converter.ConvertFrom (fileRef) as string;
+			Assert.IsNotNull (result, "#A1");
+			Assert.AreEqual (result, fileContents, "#A2");
+		}
+
+		[Test]
 		public void ConvertFrom_Type_StreamReader ()
 		{
 			// read UTF-7 content without setting encoding

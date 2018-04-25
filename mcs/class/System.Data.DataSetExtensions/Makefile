@@ -1,17 +1,19 @@
 thisdir = class/System.Data.DataSetExtensions
-SUBDIRS = Test
+SUBDIRS = 
 include ../../build/rules.make
 
 LIBRARY = System.Data.DataSetExtensions.dll
 
-RESOURCE_STRINGS = ../../../external/referencesource/System.Data.DataSetExtensions/System.Data.DataSetExtensions.txt
-
 LIB_REFS = System.Core System System.Data System.Xml
+KEYFILE = ../ecma.pub
+LIB_MCS_FLAGS = -nowarn:436 -d:COREFX
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml)  -nowarn:219 -nowarn:169 $(NUNIT_RESOURCE_FILES:%=/resource:%)
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:219 -nowarn:169 $(NUNIT_RESOURCE_FILES:%=/resource:%)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES) \
 	Test/System.Data/testdataset1.xml
 
-include ../../build/library.make
+RESX_RESOURCE_STRING = \
+	../../../external/corefx/src/System.Data.DataSetExtensions/src/Resources/Strings.resx
 
+include ../../build/library.make

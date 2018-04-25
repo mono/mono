@@ -145,12 +145,17 @@ namespace System.Net.Mail {
 		}
 
 		internal TransferEncoding ContentTransferEncoding {
-			get { return ContentType.GuessTransferEncoding (BodyEncoding); }
+			get { return GuessTransferEncoding (BodyEncoding); }
 		}
 
 		public Encoding BodyEncoding {
 			get { return bodyEncoding; }
 			set { bodyEncoding = value; }
+		}
+
+		public TransferEncoding BodyTransferEncoding {
+			get { return GuessTransferEncoding (BodyEncoding); }
+			set { throw new NotImplementedException (); }
 		}
 
 		public MailAddressCollection CC {
@@ -244,9 +249,63 @@ namespace System.Net.Mail {
 
 		private Encoding GuessEncoding (string s)
 		{
-			return ContentType.GuessEncoding (s);
+			for (int i = 0; i < s.Length; i++)
+				if (s [i] >= '\u0080')
+					return UTF8Unmarked;
+			return null;
 		}
 
+		internal static TransferEncoding GuessTransferEncoding (Encoding enc)
+		{
+			if (Encoding.ASCII.Equals (enc))
+				return TransferEncoding.SevenBit;
+			else if (Encoding.UTF8.CodePage == enc.CodePage ||
+#if !MOBILE
+			    Encoding.Unicode.CodePage == enc.CodePage || Encoding.UTF32.CodePage == enc.CodePage
+#else
+			    Encoding.Unicode.CodePage == enc.CodePage
+#endif
+					 )
+				return TransferEncoding.Base64;
+			else
+				return TransferEncoding.QuotedPrintable;
+		}
+
+		static char [] hex = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+		internal static string To2047(byte [] bytes)
+		{
+			StringBuilder sb = new StringBuilder ();
+			foreach (byte i in bytes) {
+				if (i < 0x21 || i > 0x7E || i == '?' || i == '=' || i == '_') {
+					sb.Append ('=');
+					sb.Append (hex [(i >> 4) & 0x0f]);
+					sb.Append (hex [i & 0x0f]);
+				} else
+					sb.Append ((char) i);
+			}
+			return sb.ToString ();
+		}
+
+		internal static string EncodeSubjectRFC2047 (string s, Encoding enc)
+		{
+			if (s == null || Encoding.ASCII.Equals (enc))
+				return s;
+			for (int i = 0; i < s.Length; i++)
+				if (s [i] >= '\u0080') {
+					string quoted = To2047(enc.GetBytes (s));
+					return String.Concat ("=?", enc.HeaderName, "?Q?", quoted, "?=");
+				}
+			return s;
+		}
+
+		static Encoding utf8unmarked;
+		static Encoding UTF8Unmarked {
+			get {
+				if (utf8unmarked == null)
+					utf8unmarked = new UTF8Encoding (false);
+				return utf8unmarked;
+			}
+		}
 		#endregion // Methods
 	}
 }

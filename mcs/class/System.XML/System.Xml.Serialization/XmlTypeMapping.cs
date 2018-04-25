@@ -646,8 +646,15 @@ namespace System.Xml.Serialization
 			{
 				if (memberValue == null) return null;
 				Type type = memberValue.GetType();
-				foreach (XmlTypeMapElementInfo elem in _itemInfo)
-					if (elem.TypeData.Type == type) return elem;
+				XmlTypeMapElementInfo bestMatch = null;
+				foreach (XmlTypeMapElementInfo elem in _itemInfo) {
+					if (elem.TypeData.Type == type)
+						return elem;
+					if (elem.TypeData.Type.IsAssignableFrom (type) &&
+						(bestMatch == null || elem.TypeData.Type.IsAssignableFrom (bestMatch.TypeData.Type)))
+						bestMatch = elem;
+				}
+				return bestMatch;
 			}
 			return null;
 		}	

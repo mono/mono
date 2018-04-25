@@ -307,19 +307,34 @@ public class SignatureDescriptionTest {
 	}
 
 	[Test]
-	public void RSASignatureDescription () 
+	public void RSASignatureDescription ()
+	{
+#if FEATURE_CRYPTO_CONFIGURABLE
+		RSASignatureDescriptionCore ("http://www.w3.org/2000/09/xmldsig#rsa-sha1", "System.Security.Cryptography.SHA1Cng", "System.Security.Cryptography.SHA1Cng");
+		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", "System.Security.Cryptography.SHA256Cng", "System.Security.Cryptography.SHA256Cng");
+		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha384", "System.Security.Cryptography.SHA384Cng", "System.Security.Cryptography.SHA384Cng");
+		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha512", "System.Security.Cryptography.SHA512Cng", "System.Security.Cryptography.SHA512Cng");
+#else
+		RSASignatureDescriptionCore ("http://www.w3.org/2000/09/xmldsig#rsa-sha1", "System.Security.Cryptography.SHA1Cng", "System.Security.Cryptography.SHA1CryptoServiceProvider");
+		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", "System.Security.Cryptography.SHA256Cng", "System.Security.Cryptography.SHA256Managed");
+		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha384", "System.Security.Cryptography.SHA384Cng", "System.Security.Cryptography.SHA384Managed");
+		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha512", "System.Security.Cryptography.SHA512Cng", "System.Security.Cryptography.SHA512Managed");
+#endif
+	}
+
+	void RSASignatureDescriptionCore (string name, string expectedDigestAlgorithm, string expectedSelectedDigestAlgorithm) 
 	{
 		// internal class - we cannot create one without CryptoConfig
-		SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName ("http://www.w3.org/2000/09/xmldsig#rsa-sha1");
-		Assert.AreEqual ("System.Security.Cryptography.SHA1CryptoServiceProvider", sd.DigestAlgorithm);
+		SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName (name);
+		Assert.AreEqual (expectedDigestAlgorithm, sd.DigestAlgorithm);
 		Assert.AreEqual ("System.Security.Cryptography.RSAPKCS1SignatureDeformatter", sd.DeformatterAlgorithm);
 		Assert.AreEqual ("System.Security.Cryptography.RSAPKCS1SignatureFormatter", sd.FormatterAlgorithm);
-		Assert.AreEqual ("System.Security.Cryptography.RSACryptoServiceProvider", sd.KeyAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.RSA", sd.KeyAlgorithm);
 
 		HashAlgorithm hash = sd.CreateDigest();
-		Assert.AreEqual ("System.Security.Cryptography.SHA1CryptoServiceProvider", hash.ToString ());
+		Assert.AreEqual (expectedSelectedDigestAlgorithm, hash.ToString ());
 
-		Assert.AreEqual (rsa.ToString (), sd.KeyAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.RSA", sd.KeyAlgorithm);
 
 		AsymmetricSignatureDeformatter asd = sd.CreateDeformatter (rsa);
 		Assert.AreEqual ("System.Security.Cryptography.RSAPKCS1SignatureDeformatter", asd.ToString ());

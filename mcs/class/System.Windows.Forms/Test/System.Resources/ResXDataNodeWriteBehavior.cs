@@ -252,7 +252,7 @@ namespace MonoTests.System.Resources {
 			Assert.IsNotNull (finalNode, "#A3");
 
 			object finalVal = finalNode.GetValue ((ITypeResolutionService) null);
-			Assert.IsNotInstanceOfType (typeof (serializableSubClass), finalVal, "#A4");
+			AssertHelper.IsNotInstanceOfType (typeof (serializableSubClass), finalVal, "#A4");
 			Assert.IsInstanceOfType (typeof (serializable), finalVal, "#A5");
 		}
 

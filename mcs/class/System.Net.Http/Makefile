@@ -5,8 +5,15 @@ include ../../build/rules.make
 LIBRARY = System.Net.Http.dll
 
 LIB_REFS = System.Core System
+KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = $(EXTRA_LIB_MCS_FLAGS)
+ifeq (monodroid,$(PROFILE))
+LIB_MCS_FLAGS += -d:XAMARIN_MODERN
+endif
 
-TEST_MCS_FLAGS = -r:System.dll -r:System.Core.dll
+TEST_LIB_REFS = System System.Core
+TEST_MCS_FLAGS =
+
+LIBRARY_WARN_AS_ERROR = yes
 
 include ../../build/library.make

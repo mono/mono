@@ -1,8 +1,0 @@
-2007-10-05  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* ServiceInstallerDialogResult.cs, ServiceInstallerDialog.cs :
-	  added missing files (winforms dependencies).
-
-2006-09-22  Gert Driesen  <drieseng@users.sourceforge.net>
-
-	* ServiceNameConverter.cs: Dummy implementation to fix class status.

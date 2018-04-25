@@ -11,7 +11,7 @@
 // (C) 2003 Martin Willemoes Hansen
 //
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 
 using NUnit.Framework;
 using System;
@@ -190,8 +190,8 @@ namespace MonoTests.System.Diagnostics {
 		public void NullSwitchHasEmptyDisplayNameAndDescription ()
 		{
 			var s = new TestNullSwitch ();
-			Assert.IsEmpty (s.DisplayName);
-			Assert.IsEmpty (s.Description);
+			AssertHelper.IsEmpty (s.DisplayName);
+			AssertHelper.IsEmpty (s.Description);
 		}
 	}
 }

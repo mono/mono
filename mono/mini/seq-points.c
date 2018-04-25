@@ -1,41 +1,101 @@
-/*
- * seq-points.c: Sequence Points functions
+/**
+ * \file
+ * Sequence Points functions
  *
  * Authors:
  *   Marcos Henrich (marcos.henrich@xamarin.com)
  *
  * Copyright 2014 Xamarin, Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "seq-points.h"
 
 static void
-collect_pred_seq_points (MonoBasicBlock *bb, MonoInst *ins, GSList **next, int depth)
+insert_pred_seq_point (MonoInst *last_seq_ins, MonoInst *ins, GSList **next)
 {
-	int i;
-	MonoBasicBlock *in_bb;
 	GSList *l;
+	int src_index = last_seq_ins->backend.size;
+	int dst_index = ins->backend.size;
 
-	for (i = 0; i < bb->in_count; ++i) {
-		in_bb = bb->in_bb [i];
+	/* bb->in_bb might contain duplicates */
+	for (l = next [src_index]; l; l = l->next)
+		if (GPOINTER_TO_UINT (l->data) == dst_index)
+			break;
+	if (!l)
+		next [src_index] = g_slist_append (next [src_index], GUINT_TO_POINTER (dst_index));
+}
 
-		if (in_bb->last_seq_point) {
-			int src_index = in_bb->last_seq_point->backend.size;
-			int dst_index = ins->backend.size;
+static void
+recursively_make_pred_seq_points (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+	const gpointer MONO_SEQ_SEEN_LOOP = GINT_TO_POINTER(-1);
 
-			/* bb->in_bb might contain duplicates */
-			for (l = next [src_index]; l; l = l->next)
-				if (GPOINTER_TO_UINT (l->data) == dst_index)
-					break;
-			if (!l)
-				next [src_index] = g_slist_append (next [src_index], GUINT_TO_POINTER (dst_index));
-		} else {
-			/* Have to look at its predecessors */
-			if (depth < 5)
-				collect_pred_seq_points (in_bb, ins, next, depth + 1);
+	GArray *predecessors = g_array_new (FALSE, TRUE, sizeof (gpointer));
+	GHashTable *seen = g_hash_table_new_full (g_direct_hash, NULL, NULL, NULL);
+
+	// Insert/remove sentinel into the memoize table to detect loops containing bb
+	bb->pred_seq_points = MONO_SEQ_SEEN_LOOP;
+
+	for (int i = 0; i < bb->in_count; ++i) {
+		MonoBasicBlock *in_bb = bb->in_bb [i];
+		
+		// This bb has the last seq point, append it and continue
+		if (in_bb->last_seq_point != NULL) {
+			predecessors = g_array_append_val (predecessors, in_bb->last_seq_point);
+			continue;
 		}
+
+		// We've looped or handled this before, exit early.
+		// No last sequence points to find.
+		if (in_bb->pred_seq_points == MONO_SEQ_SEEN_LOOP)
+			continue;
+
+		// Take sequence points from incoming basic blocks
+	
+		if (in_bb == cfg->bb_entry)
+			continue;
+
+		if (in_bb->pred_seq_points == NULL)
+			recursively_make_pred_seq_points (cfg, in_bb);
+
+		// Union sequence points with incoming bb's
+		for (int i=0; i < in_bb->num_pred_seq_points; i++) {
+			if (!g_hash_table_lookup (seen, in_bb->pred_seq_points [i])) {
+				g_array_append_val (predecessors, in_bb->pred_seq_points [i]);
+				g_hash_table_insert (seen, in_bb->pred_seq_points [i], (gpointer)&MONO_SEQ_SEEN_LOOP);
+			}
+		}
+		// predecessors = g_array_append_vals (predecessors, in_bb->pred_seq_points, in_bb->num_pred_seq_points);
 	}
+
+	g_hash_table_destroy (seen);
+
+	if (predecessors->len != 0) {
+		bb->pred_seq_points = (MonoInst **)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst *) * predecessors->len);
+		bb->num_pred_seq_points = predecessors->len;
+
+		for (int newer = 0; newer < bb->num_pred_seq_points; newer++) {
+			bb->pred_seq_points [newer] = g_array_index(predecessors, gpointer, newer);
+		}
+	} 
+
+	g_array_free (predecessors, TRUE);
+}
+
+static void
+collect_pred_seq_points (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GSList **next)
+{
+	// Doesn't have a last sequence point, must find from incoming basic blocks
+	if (bb->pred_seq_points == NULL && bb != cfg->bb_entry)
+		recursively_make_pred_seq_points (cfg, bb);
+
+	for (int i = 0; i < bb->num_pred_seq_points; i++)
+		insert_pred_seq_point (bb->pred_seq_points [i], ins, next);
+
+	return;
 }
 
 void
@@ -58,7 +118,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 
 	for (i = 0; i < cfg->seq_points->len; ++i) {
 		SeqPoint *sp = &seq_points [i];
-		MonoInst *ins = g_ptr_array_index (cfg->seq_points, i);
+		MonoInst *ins = (MonoInst *)g_ptr_array_index (cfg->seq_points, i);
 
 		sp->il_offset = ins->inst_imm;
 		sp->native_offset = ins->inst_offset;
@@ -79,7 +139,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 			bb_seq_points = g_slist_reverse (bb->seq_points);
 			last = NULL;
 			for (l = bb_seq_points; l; l = l->next) {
-				MonoInst *ins = l->data;
+				MonoInst *ins = (MonoInst *)l->data;
 
 				if (ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET)
 				/* Used to implement method entry/exit events */
@@ -92,7 +152,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 					next [last->backend.size] = g_slist_append (next [last->backend.size], GUINT_TO_POINTER (ins->backend.size));
 				} else {
 					/* Link with the last bb in the previous bblocks */
-					collect_pred_seq_points (bb, ins, next, 0);
+					collect_pred_seq_points (cfg, bb, ins, next);
 				}
 
 				last = ins;
@@ -108,13 +168,13 @@ mono_save_seq_point_info (MonoCompile *cfg)
 				 */
 				l = g_slist_last (bb->seq_points);
 				if (l) {
-					endfinally_seq_point = l->data;
+					endfinally_seq_point = (MonoInst *)l->data;
 
-					for (bb2 = cfg->bb_entry; bb2; bb2 = bb2->next_bb) {
+					for (bb2 = bb->next_bb; bb2; bb2 = bb2->next_bb) {
 						GSList *l = g_slist_last (bb2->seq_points);
 
 						if (l) {
-							MonoInst *ins = l->data;
+							MonoInst *ins = (MonoInst *)l->data;
 
 							if (!(ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET) && ins != endfinally_seq_point)
 								next [endfinally_seq_point->backend.size] = g_slist_append (next [endfinally_seq_point->backend.size], GUINT_TO_POINTER (ins->backend.size));
@@ -165,20 +225,24 @@ mono_save_seq_point_info (MonoCompile *cfg)
 		}
 	}
 
+	g_free (seq_points);
+
 	if (has_debug_data)
 		g_free (next);
 
 	cfg->seq_point_info = mono_seq_point_info_new (array->len, TRUE, array->data, has_debug_data, &seq_info_size);
-	mono_jit_stats.allocated_seq_points_size += seq_info_size;
+	mono_atomic_fetch_add_i32 (&mono_jit_stats.allocated_seq_points_size, seq_info_size);
 
 	g_byte_array_free (array, TRUE);
 
 	// FIXME: dynamic methods
 	if (!cfg->compile_aot) {
 		mono_domain_lock (domain);
-		// FIXME: How can the lookup succeed ?
+		// FIXME: The lookup can fail if the method is JITted recursively though a type cctor
 		if (!g_hash_table_lookup (domain_jit_info (domain)->seq_points, cfg->method_to_register))
 			g_hash_table_insert (domain_jit_info (domain)->seq_points, cfg->method_to_register, cfg->seq_point_info);
+		else
+			mono_seq_point_info_free (cfg->seq_point_info);
 		mono_domain_unlock (domain);
 	}
 
@@ -189,21 +253,23 @@ mono_save_seq_point_info (MonoCompile *cfg)
 MonoSeqPointInfo*
 mono_get_seq_points (MonoDomain *domain, MonoMethod *method)
 {
+	ERROR_DECL (error);
 	MonoSeqPointInfo *seq_points;
 	MonoMethod *declaring_generic_method = NULL, *shared_method = NULL;
 
 	if (method->is_inflated) {
 		declaring_generic_method = mono_method_get_declaring_generic_method (method);
-		shared_method = mini_get_shared_method (method);
+		shared_method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
+		mono_error_assert_ok (error);
 	}
 
 	mono_loader_lock ();
-	seq_points = g_hash_table_lookup (domain_jit_info (domain)->seq_points, method);
+	seq_points = (MonoSeqPointInfo *)g_hash_table_lookup (domain_jit_info (domain)->seq_points, method);
 	if (!seq_points && method->is_inflated) {
 		/* generic sharing + aot */
-		seq_points = g_hash_table_lookup (domain_jit_info (domain)->seq_points, declaring_generic_method);
+		seq_points = (MonoSeqPointInfo *)g_hash_table_lookup (domain_jit_info (domain)->seq_points, declaring_generic_method);
 		if (!seq_points)
-			seq_points = g_hash_table_lookup (domain_jit_info (domain)->seq_points, shared_method);
+			seq_points = (MonoSeqPointInfo *)g_hash_table_lookup (domain_jit_info (domain)->seq_points, shared_method);
 	}
 	mono_loader_unlock ();
 
@@ -293,12 +359,4 @@ mono_bb_deduplicate_op_il_seq_points (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		MONO_REMOVE_INS (bb, prev);
 	};
-}
-
-void
-mono_image_get_aot_seq_point_path (MonoImage *image, char **str)
-{
-	int size = strlen (image->name) + strlen (SEQ_POINT_AOT_EXT) + 1;
-	*str = g_malloc (size);
-	g_sprintf (*str, "%s%s", image->name, SEQ_POINT_AOT_EXT);
 }

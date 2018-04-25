@@ -1,5 +1,6 @@
-/*
- * tramp-arm.c: JIT trampoline code for ARM
+/**
+ * \file
+ * JIT trampoline code for ARM
  *
  * Authors:
  *   Paolo Molaro (lupus@ximian.com)
@@ -7,6 +8,7 @@
  * (C) 2001-2003 Ximian, Inc.
  * Copyright 2003-2011 Novell Inc
  * Copyright 2011 Xamarin Inc
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include <config.h>
@@ -22,56 +24,14 @@
 
 #include "mini.h"
 #include "mini-arm.h"
+#include "mini-runtime.h"
 #include "debugger-agent.h"
+#include "jit-icalls.h"
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
+#ifndef DISABLE_INTERPRETER
+#include "interp/interp.h"
+#endif
 
-#ifdef USE_JUMP_TABLES
-
-static guint16
-decode_imm16 (guint32 insn)
-{
-	return (((insn >> 16) & 0xf) << 12) | (insn & 0xfff);
-}
-
-#define INSN_MASK 0xff00000
-#define MOVW_MASK ((3 << 24) | (0 << 20))
-#define MOVT_MASK ((3 << 24) | (4 << 20))
-
-gpointer*
-mono_arch_jumptable_entry_from_code (guint8 *code)
-{
-	guint32 insn1 = ((guint32*)code) [0];
-	guint32 insn2 = ((guint32*)code) [1];
-
-	if (((insn1 & INSN_MASK) == MOVW_MASK) &&
-	    ((insn2 & INSN_MASK) == MOVT_MASK) ) {
-		guint32 imm_lo = decode_imm16 (insn1);
-		guint32 imm_hi = decode_imm16 (insn2);
-		return (gpointer*) GUINT_TO_POINTER (imm_lo | (imm_hi << 16));
-	} else {
-		g_assert_not_reached ();
-		return NULL;
-	}
-}
-
-#undef INSN_MASK
-#undef MOVW_MASK
-#undef MOVT_MASK
-
-void
-mono_arch_patch_callsite (guint8 *method_start, guint8 *code_ptr, guint8 *addr)
-{
-	gpointer *jte;
-	/*
-	 * code_ptr is 4 instructions after MOVW/MOVT used to address
-	 * jumptable entry.
-	 */
-	jte = mono_jumptable_get_entry (code_ptr - 16);
-	g_assert ( jte != NULL);
-	*jte = addr;
-}
-#else
 void
 mono_arch_patch_callsite (guint8 *method_start, guint8 *code_ptr, guint8 *addr)
 {
@@ -99,7 +59,6 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *code_ptr, guint8 *addr)
 
 	g_assert_not_reached ();
 }
-#endif
 
 void
 mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr)
@@ -133,7 +92,6 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
 
 #define arm_is_imm12(v) ((int)(v) > -4096 && (int)(v) < 4096)
 
-#ifndef USE_JUMP_TABLES
 /*
  * Return the instruction to jump from code to target, 0 if not
  * reachable with a single instruction
@@ -153,7 +111,6 @@ branch_for_target_reachable (guint8 *branch, guint8 *target)
 	}
 	return 0;
 }
-#endif
 
 static inline guint8*
 emit_bx (guint8* code, int reg)
@@ -180,21 +137,13 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 {
 	char *tramp_name;
 	guint8 *buf, *code = NULL;
-#ifdef USE_JUMP_TABLES
-	gpointer *load_get_lmf_addr = NULL, *load_trampoline = NULL;
-#else
-        guint8 *load_get_lmf_addr  = NULL, *load_trampoline  = NULL;
+	guint8 *load_get_lmf_addr  = NULL, *load_trampoline  = NULL;
+	guint8 *labels [16];
 	gpointer *constants;
-#endif
-
-	int cfa_offset, regsave_size, lr_offset;
+	int i, orig_cfa_offset, cfa_offset, regsave_size, lr_offset;
 	GSList *unwind_ops = NULL;
 	MonoJumpInfo *ji = NULL;
 	int buf_len;
-
-#ifdef USE_JUMP_TABLES
-	g_assert (!aot);
-#endif
 
 	/* Now we'll create in 'buf' the ARM trampoline code. This
 	 is the trampoline code common to all methods  */
@@ -223,6 +172,9 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	mono_add_unwind_op_def_cfa (unwind_ops, code, buf, ARMREG_SP, cfa_offset);
 	// PC saved at sp+LR_OFFSET
 	mono_add_unwind_op_offset (unwind_ops, code, buf, ARMREG_LR, -4);
+	/* Callee saved regs */
+	for (i = 0; i < 8; ++i)
+		mono_add_unwind_op_offset (unwind_ops, code, buf, ARMREG_R4 + i, -regsave_size + ((4 + i) * 4));
 
 	if (aot) {
 		/* 
@@ -268,13 +220,8 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		code += 4;
 		ARM_LDR_REG_REG (code, ARMREG_R0, ARMREG_PC, ARMREG_R0);
 	} else {
-#ifdef USE_JUMP_TABLES
-                load_get_lmf_addr = mono_jumptable_add_entry ();
-                code = mono_arm_load_jumptable_entry (code, load_get_lmf_addr, ARMREG_R0);
-#else
 		load_get_lmf_addr = code;
 		code += 4;
-#endif
 	}
 	ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
 	code = emit_bx (code, ARMREG_R0);
@@ -352,13 +299,8 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		code += 4;
 		ARM_LDR_REG_REG (code, ARMREG_IP, ARMREG_PC, ARMREG_IP);
 	} else {
-#ifdef USE_JUMP_TABLES
-		load_trampoline = mono_jumptable_add_entry ();
-		code = mono_arm_load_jumptable_entry (code, load_trampoline, ARMREG_IP);
-#else
 		load_trampoline = code;
 		code += 4;
-#endif
 	}
 
 	ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
@@ -371,33 +313,6 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	 */
 	ARM_STR_IMM (code, ARMREG_R0, ARMREG_V1, MONO_STRUCT_OFFSET (MonoLMF, iregs) + (ARMREG_R12 * sizeof (mgreg_t)));
 
-	/* Check for thread interruption */
-	/* This is not perf critical code so no need to check the interrupt flag */
-	/* 
-	 * Have to call the _force_ variant, since there could be a protected wrapper on the top of the stack.
-	 */
-	if (aot) {
-		ji = mono_patch_info_list_prepend (ji, code - buf, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_thread_force_interruption_checkpoint");
-		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
-		ARM_B (code, 0);
-		*(gpointer*)code = NULL;
-		code += 4;
-		ARM_LDR_REG_REG (code, ARMREG_IP, ARMREG_PC, ARMREG_IP);
-	} else {
-#ifdef USE_JUMP_TABLES
-		gpointer *jte = mono_jumptable_add_entry ();
-		code = mono_arm_load_jumptable_entry (code, jte, ARMREG_IP);
-		jte [0] = mono_thread_force_interruption_checkpoint;
-#else
-		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
-		ARM_B (code, 0);
-		*(gpointer*)code = mono_thread_force_interruption_checkpoint;
-		code += 4;
-#endif
-	}
-	ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
-	code = emit_bx (code, ARMREG_IP);
-
 	/*
 	 * Now we restore the MonoLMF (see emit_epilogue in mini-arm.c)
 	 * and the rest of the registers, so the method called will see
@@ -409,6 +324,28 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	ARM_LDR_IMM (code, ARMREG_LR, ARMREG_V1, MONO_STRUCT_OFFSET (MonoLMF, lmf_addr));
 	/* *(lmf_addr) = previous_lmf */
 	ARM_STR_IMM (code, ARMREG_IP, ARMREG_LR, MONO_STRUCT_OFFSET (MonoLMF, previous_lmf));
+
+	/* Check for thread interruption */
+	/* This is not perf critical code so no need to check the interrupt flag */
+	if (aot) {
+		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_thread_force_interruption_checkpoint_noraise");
+	} else {
+		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
+		ARM_B (code, 0);
+		*(gpointer*)code = mono_thread_force_interruption_checkpoint_noraise;
+		code += 4;
+	}
+	ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
+	code = emit_bx (code, ARMREG_IP);
+
+	/* Check whenever an exception needs to be thrown */
+	ARM_CMP_REG_IMM (code, ARMREG_R0, 0, 0);
+	labels [0] = code;
+	ARM_B_COND (code, ARMCOND_NE, 0);
+
+	orig_cfa_offset = cfa_offset;
+
+	/* Normal case */
 
 	/* Restore VFP registers. */
 	if (mono_arm_is_hard_float ()) {
@@ -438,10 +375,6 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	else
 		code = emit_bx (code, ARMREG_IP);
 
-#ifdef USE_JUMP_TABLES
-	load_get_lmf_addr [0] = mono_get_lmf_addr;
-	load_trampoline [0] = (gpointer)mono_get_trampoline_func (tramp_type);
-#else
 	constants = (gpointer*)code;
 	constants [0] = mono_get_lmf_addr;
 	constants [1] = (gpointer)mono_get_trampoline_func (tramp_type);
@@ -453,11 +386,52 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	}
 
 	code += 8;
-#endif
+
+	/* Exception case */
+	arm_patch (labels [0], code);
+
+	cfa_offset = orig_cfa_offset;
+
+	/*
+	 * We have an exception we want to throw in the caller's frame, so pop
+	 * the trampoline frame and throw from the caller.
+	 */
+	/* Store the exception in place of IP */
+	ARM_STR_IMM (code, ARMREG_R0, ARMREG_V1, MONO_STRUCT_OFFSET (MonoLMF, iregs) + (ARMREG_R12 * sizeof (mgreg_t)));
+
+	ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, STACK - regsave_size);
+	cfa_offset -= STACK - regsave_size;
+	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, buf, cfa_offset);
+	/* Restore all regs */
+	ARM_POP_NWB (code, 0x5fff);
+	mono_add_unwind_op_same_value (unwind_ops, code, buf, ARMREG_LR);
+	ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, regsave_size);
+	cfa_offset -= regsave_size;
+	g_assert (cfa_offset == 0);
+	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, buf, cfa_offset);
+	/* We are in the parent frame, the exception is in ip */
+	ARM_MOV_REG_REG (code, ARMREG_R0, ARMREG_IP);
+	/*
+	 * EH is initialized after trampolines, so get the address of the variable
+	 * which contains throw_exception, and load it from there.
+	 */
+	if (aot) {
+		/* Not really a jit icall */
+		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP, MONO_PATCH_INFO_JIT_ICALL_ADDR, "throw_exception_addr");
+	} else {
+		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
+		ARM_B (code, 0);
+		*(gpointer*)code = mono_get_throw_exception_addr ();
+		code += 4;
+	}
+	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_IP, 0);
+	/* Branch to the throw trampoline */
+	/* lr contains the return address, the trampoline will use it as the throw site */
+	code = emit_bx (code, ARMREG_IP);
 
 	/* Flush instruction cache, since we've generated code */
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
 
 	/* Sanity check */
 	g_assert ((code - buf) <= buf_len);
@@ -477,47 +451,24 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 {
 	guint8 *code, *buf, *tramp;
 	gpointer *constants;
-#ifndef USE_JUMP_TABLES
 	guint32 short_branch = FALSE;
-#endif
 	guint32 size = SPEC_TRAMP_SIZE;
 
 	tramp = mono_get_trampoline_code (tramp_type);
 
 	if (domain) {
 		mono_domain_lock (domain);
-#ifdef USE_JUMP_TABLES
-		code = buf = mono_domain_code_reserve_align (domain, size, 4);
-#else
 		code = buf = mono_domain_code_reserve_align (domain, size, 4);
 		if ((short_branch = branch_for_target_reachable (code + 4, tramp))) {
 			size = 12;
 			mono_domain_code_commit (domain, code, SPEC_TRAMP_SIZE, size);
-	}
-#endif
+		}
 		mono_domain_unlock (domain);
 	} else {
 		code = buf = mono_global_codeman_reserve (size);
 		short_branch = FALSE;
 	}
 
-#ifdef USE_JUMP_TABLES
-	/* For jumptables case we always generate the same code for trampolines,
-	 * namely
-	 *   push {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, lr}
-	 *   movw lr, lo(jte)
-	 *   movt lr, hi(jte)
-	 *   ldr r1, [lr + 4]
-	 *   bx r1
-	 */
-	ARM_PUSH (code, 0x5fff);
-	constants = mono_jumptable_add_entries (2);
-	code = mono_arm_load_jumptable_entry_addr (code, constants, ARMREG_LR);
-	ARM_LDR_IMM (code, ARMREG_R1, ARMREG_LR, 4);
-	code = emit_bx (code, ARMREG_R1);
-	constants [0] = arg1;
-	constants [1] = tramp;
-#else
 	/* we could reduce this to 12 bytes if tramp is within reach:
 	 * ARM_PUSH ()
 	 * ARM_BL ()
@@ -547,11 +498,10 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 		constants [1] = tramp;
 		code += 8;
 	}
-#endif
 
 	/* Flush instruction cache, since we've generated code */
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_SPECIFIC_TRAMPOLINE, mono_get_generic_trampoline_simple_name (tramp_type));
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_SPECIFIC_TRAMPOLINE, mono_get_generic_trampoline_simple_name (tramp_type)));
 
 	g_assert ((code - buf) <= size);
 
@@ -576,32 +526,19 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	guint8 *code, *start;
 	MonoDomain *domain = mono_domain_get ();
 	GSList *unwind_ops;
-#ifdef USE_JUMP_TABLES
-	gpointer *jte;
-	guint32 size = 20;
-#else
-        guint32 size = 16;
-#endif
+	guint32 size = 16;
 
 	start = code = mono_domain_code_reserve (domain, size);
 
 	unwind_ops = mono_arch_get_cie_program ();
 
-#ifdef USE_JUMP_TABLES
-	jte = mono_jumptable_add_entry ();
-	code = mono_arm_load_jumptable_entry (code, jte, ARMREG_IP);
-	ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_R0, sizeof (MonoObject));
-	code = emit_bx (code, ARMREG_IP);
-	jte [0] = addr;
-#else
 	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 4);
 	ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_R0, sizeof (MonoObject));
 	code = emit_bx (code, ARMREG_IP);
 	*(guint32*)code = (guint32)addr;
 	code += 4;
-#endif
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_UNBOX_TRAMPOLINE, m);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_UNBOX_TRAMPOLINE, m));
 	g_assert ((code - start) <= size);
 	/*g_print ("unbox trampoline at %d for %s:%s\n", this_pos, m->klass->name, m->name);
 	g_print ("unbox code is at %p for method at %p\n", start, addr);*/
@@ -612,43 +549,58 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 }
 
 gpointer
-mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericContext *mrgctx, gpointer addr)
+mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 {
 	guint8 *code, *start;
 	GSList *unwind_ops;
-#ifdef USE_JUMP_TABLES
-	int buf_len = 20;
-	gpointer *jte;
-#else
 	int buf_len = 16;
-#endif
 	MonoDomain *domain = mono_domain_get ();
 
 	start = code = mono_domain_code_reserve (domain, buf_len);
 
 	unwind_ops = mono_arch_get_cie_program ();
 
-#ifdef USE_JUMP_TABLES
-	jte = mono_jumptable_add_entries (2);
-	code = mono_arm_load_jumptable_entry_addr (code, jte, ARMREG_IP);
-	ARM_LDR_IMM (code, MONO_ARCH_RGCTX_REG, ARMREG_IP, 0);
-	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_IP, 4);
-	ARM_BX (code, ARMREG_IP);
-	jte [0] = mrgctx;
-	jte [1] = addr;
-#else
 	ARM_LDR_IMM (code, MONO_ARCH_RGCTX_REG, ARMREG_PC, 0);
 	ARM_LDR_IMM (code, ARMREG_PC, ARMREG_PC, 0);
-	*(guint32*)code = (guint32)mrgctx;
+	*(guint32*)code = (guint32)arg;
 	code += 4;
 	*(guint32*)code = (guint32)addr;
 	code += 4;
-#endif
 
 	g_assert ((code - start) <= buf_len);
 
 	mono_arch_flush_icache (start, code - start);
-	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
+
+	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, unwind_ops), domain);
+
+	return start;
+}
+
+/* Same as static rgctx trampoline, but clobbering ARMREG_IP, which is scratch */
+gpointer
+mono_arch_get_ftnptr_arg_trampoline (gpointer arg, gpointer addr)
+{
+	guint8 *code, *start;
+	GSList *unwind_ops;
+	int buf_len = 16;
+	MonoDomain *domain = mono_domain_get ();
+
+	start = code = mono_domain_code_reserve (domain, buf_len);
+
+	unwind_ops = mono_arch_get_cie_program ();
+
+	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
+	ARM_LDR_IMM (code, ARMREG_PC, ARMREG_PC, 0);
+	*(guint32*)code = (guint32)arg;
+	code += 4;
+	*(guint32*)code = (guint32)addr;
+	code += 4;
+
+	g_assert ((code - start) <= buf_len);
+
+	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, unwind_ops), domain);
 
@@ -668,9 +620,6 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	gboolean mrgctx;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
-#ifdef USE_JUMP_TABLES
-	gpointer *jte;
-#endif
 
 	mrgctx = MONO_RGCTX_SLOT_IS_MRGCTX (slot);
 	index = MONO_RGCTX_SLOT_INDEX (slot);
@@ -758,21 +707,14 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 		tramp = mono_arch_create_specific_trampoline (GUINT_TO_POINTER (slot), MONO_TRAMPOLINE_RGCTX_LAZY_FETCH, mono_get_root_domain (), &code_len);
 
 		/* Jump to the actual trampoline */
-#ifdef USE_JUMP_TABLES
-		jte = mono_jumptable_add_entry ();
-		jte [0] = tramp;
-		code = mono_arm_load_jumptable_entry (code, jte, ARMREG_R1);
-		code = emit_bx (code, ARMREG_R1);
-#else
 		ARM_LDR_IMM (code, ARMREG_R1, ARMREG_PC, 0); /* temp reg */
 		code = emit_bx (code, ARMREG_R1);
 		*(gpointer*)code = tramp;
 		code += 4;
-#endif
 	}
 
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
 	g_assert (code - buf <= tramp_size);
 
@@ -807,66 +749,11 @@ mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboo
 	code = emit_bx (code, ARMREG_R1);
 
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
 	g_assert (code - buf <= tramp_size);
 
 	*info = mono_tramp_info_create ("rgctx_fetch_trampoline_general", buf, code - buf, ji, unwind_ops);
-
-	return buf;
-}
-
-static gpointer
-handler_block_trampoline_helper (gpointer *ptr)
-{
-	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
-	return jit_tls->handler_block_return_address;
-}
-
-gpointer
-mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboolean aot)
-{
-	guint8 *tramp;
-	guint8 *code, *buf;
-	int tramp_size = 64;
-	MonoJumpInfo *ji = NULL;
-	GSList *unwind_ops = NULL;
-
-	g_assert (!aot);
-
-	code = buf = mono_global_codeman_reserve (tramp_size);
-
-	unwind_ops = mono_arch_get_cie_program ();
-
-	tramp = mono_arch_create_specific_trampoline (NULL, MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD, NULL, NULL);
-
-	/*
-	This trampoline restore the call chain of the handler block then jumps into the code that deals with it.
-	*/
-
-	/*
-	 * We are in a method frame after the call emitted by OP_CALL_HANDLER.
-	 */
-	/* Obtain jit_tls->handler_block_return_address */
-	ARM_LDR_IMM (code, ARMREG_R0, ARMREG_PC, 0);
-	ARM_B (code, 0);
-	*(gpointer*)code = handler_block_trampoline_helper;
-	code += 4;
-
-	/* Set it as the return address so the trampoline will return to it */
-	ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_R0);
-
-	/* Call the trampoline */
-	ARM_LDR_IMM (code, ARMREG_R0, ARMREG_PC, 0);
-	code = emit_bx (code, ARMREG_R0);
-	*(gpointer*)code = tramp;
-	code += 4;
-
-	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
-	g_assert (code - buf <= tramp_size);
-
-	*info = mono_tramp_info_create ("handler_block_trampoline", buf, code - buf, ji, unwind_ops);
 
 	return buf;
 }
@@ -907,30 +794,34 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	ARM_STR_IMM (code, ARMREG_R0, ARMREG_FP, MONO_STRUCT_OFFSET (MonoContext, regs) + 4 * ARMREG_SP);
 
 	/* make ctx.eip hold the address of the call. */
-	ARM_SUB_REG_IMM8 (code, ARMREG_LR, ARMREG_LR, 4);
+	//ARM_SUB_REG_IMM8 (code, ARMREG_LR, ARMREG_LR, 4);
 	ARM_STR_IMM (code, ARMREG_LR, ARMREG_FP, MONO_STRUCT_OFFSET (MonoContext, pc));
 
 	/* r0 now points to the MonoContext */
 	ARM_MOV_REG_REG (code, ARMREG_R0, ARMREG_FP);
 
 	/* call */
-	// FIXME: AOT
-#ifdef USE_JUMP_TABLES
-	{
-		gpointer *jte = mono_jumptable_add_entry ();
-		code = mono_arm_load_jumptable_entry (code, jte, ARMREG_IP);
-		jte [0] = function;
+	if (aot) {
+		if (single_step)
+			ji = mono_patch_info_list_prepend (ji, code - buf, MONO_PATCH_INFO_JIT_ICALL_ADDR, "debugger_agent_single_step_from_context");
+		else
+			ji = mono_patch_info_list_prepend (ji, code - buf, MONO_PATCH_INFO_JIT_ICALL_ADDR, "debugger_agent_breakpoint_from_context");
+		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
+		ARM_B (code, 0);
+		*(gpointer*)code = NULL;
+		code += 4;
+		ARM_LDR_REG_REG (code, ARMREG_IP, ARMREG_PC, ARMREG_IP);
+		ARM_BLX_REG (code, ARMREG_IP);
+	} else {
+		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
+		ARM_B (code, 0);
+		if (single_step)
+			*(gpointer*)code = mini_get_dbg_callbacks ()->single_step_from_context;
+		else
+			*(gpointer*)code = mini_get_dbg_callbacks ()->breakpoint_from_context;
+		code += 4;
+		ARM_BLX_REG (code, ARMREG_IP);
 	}
-#else
-	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
-	ARM_B (code, 0);
-	if (single_step)
-		*(gpointer*)code = debugger_agent_single_step_from_context;
-	else
-		*(gpointer*)code = debugger_agent_breakpoint_from_context;
-	code += 4;
-#endif
-	ARM_BLX_REG (code, ARMREG_IP);
 
 	/* we're back; save ctx.eip and ctx.esp into the corresponding regs slots. */
 	ARM_LDR_IMM (code, ARMREG_R0, ARMREG_FP, MONO_STRUCT_OFFSET (MonoContext, pc));
@@ -942,12 +833,192 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	ARM_LDM (code, ARMREG_IP, 0xffff);
 
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
 
 	const char *tramp_name = single_step ? "sdb_single_step_trampoline" : "sdb_breakpoint_trampoline";
 	*info = mono_tramp_info_create (tramp_name, buf, code - buf, ji, unwind_ops);
 
 	return buf;
+}
+
+/*
+ * mono_arch_get_interp_to_native_trampoline:
+ *
+ *   See tramp-amd64.c for documentation.
+ */
+gpointer
+mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
+{
+#ifndef DISABLE_INTERPRETER
+	guint8 *start = NULL, *code;
+	guint8 *label_start_copy, *label_exit_copy;
+	MonoJumpInfo *ji = NULL;
+	GSList *unwind_ops = NULL;
+	int buf_len, i, off_methodargs, off_targetaddr;
+	const int fp_reg = ARMREG_R7;
+	int framesize;
+
+	buf_len = 512 + 1024;
+	start = code = (guint8 *) mono_global_codeman_reserve (buf_len);
+
+	/*
+	* iOS ABI
+	*
+	* FIXME We save rgctx reg here so we don't regress tests. It should
+	* not be clobbered by native->interp transition.
+	*/
+	ARM_PUSH (code, (1 << MONO_ARCH_RGCTX_REG) | (1 << fp_reg) | (1 << ARMREG_LR));
+	ARM_MOV_REG_REG (code, fp_reg, ARMREG_SP);
+
+	/* allocate space for saving the target addr and the call context and align stack */
+	framesize = sizeof (mgreg_t) + ALIGN_TO (2 * sizeof (mgreg_t), MONO_ARCH_FRAME_ALIGNMENT);
+	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, framesize);
+
+	/* save CallContext* onto stack */
+	off_methodargs = -4;
+	ARM_STR_IMM (code, ARMREG_R1, fp_reg, off_methodargs);
+
+	/* save target address onto stack */
+	off_targetaddr = -8;
+	ARM_STR_IMM (code, ARMREG_R0, fp_reg, off_targetaddr);
+
+	/* allocate the stack space necessary for the call */
+	ARM_LDR_IMM (code, ARMREG_R3, ARMREG_R1, MONO_STRUCT_OFFSET (CallContext, stack_size));
+	ARM_SUB_REG_REG (code, ARMREG_SP, ARMREG_SP, ARMREG_R3);
+
+	/* copy stack from the CallContext, R0 = dest, R1 = source */
+	ARM_MOV_REG_REG (code, ARMREG_R0, ARMREG_SP);
+	ARM_LDR_IMM (code, ARMREG_R1, ARMREG_R1, MONO_STRUCT_OFFSET (CallContext, stack));
+
+	label_start_copy = code;
+
+	ARM_CMP_REG_IMM (code, ARMREG_R3, 0, 0);
+	label_exit_copy = code;
+	ARM_B_COND (code, ARMCOND_EQ, 0);
+	ARM_LDR_IMM (code, ARMREG_R2, ARMREG_R1, 0);
+	ARM_STR_IMM (code, ARMREG_R2, ARMREG_R0, 0);
+	ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_R0, sizeof (mgreg_t));
+	ARM_ADD_REG_IMM8 (code, ARMREG_R1, ARMREG_R1, sizeof (mgreg_t));
+	ARM_SUB_REG_IMM8 (code, ARMREG_R3, ARMREG_R3, sizeof (mgreg_t));
+	ARM_B (code, 0);
+	arm_patch (code - 4, label_start_copy);
+	arm_patch (label_exit_copy, code);
+
+	ARM_LDR_IMM (code, ARMREG_IP, fp_reg, off_methodargs);
+	/* set all general purpose registers from CallContext */
+	for (i = 0; i < PARAM_REGS; i++)
+		ARM_LDR_IMM (code, i, ARMREG_IP, MONO_STRUCT_OFFSET (CallContext, gregs) + i * sizeof (mgreg_t));
+
+	/* set all floating registers from CallContext  */
+	for (i = 0; i < FP_PARAM_REGS; i++)
+		ARM_FLDD (code, i * 2, ARMREG_IP, MONO_STRUCT_OFFSET (CallContext, fregs) + i * sizeof (double));
+
+	/* load target addr */
+	ARM_LDR_IMM (code, ARMREG_IP, fp_reg, off_targetaddr);
+
+	/* call into native function */
+	ARM_BLX_REG (code, ARMREG_IP);
+
+	/* load CallContext*/
+	ARM_LDR_IMM (code, ARMREG_IP, fp_reg, off_methodargs);
+
+	/* set all general purpose registers to CallContext */
+	for (i = 0; i < PARAM_REGS; i++)
+		ARM_STR_IMM (code, i, ARMREG_IP, MONO_STRUCT_OFFSET (CallContext, gregs) + i * sizeof (mgreg_t));
+
+	/* set all floating registers to CallContext  */
+	for (i = 0; i < FP_PARAM_REGS; i++)
+		ARM_FSTD (code, i * 2, ARMREG_IP, MONO_STRUCT_OFFSET (CallContext, fregs) + i * sizeof (double));
+
+	ARM_MOV_REG_REG (code, ARMREG_SP, fp_reg);
+	ARM_POP (code, (1 << MONO_ARCH_RGCTX_REG) | (1 << fp_reg) | (1 << ARMREG_PC));
+
+	g_assert (code - start < buf_len);
+
+	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
+
+	if (info)
+		*info = mono_tramp_info_create ("interp_to_native_trampoline", start, code - start, ji, unwind_ops);
+
+	return start;
+#else
+	g_assert_not_reached ();
+	return NULL;
+#endif /* DISABLE_INTERPRETER */
+}
+
+gpointer
+mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info)
+{
+#ifndef DISABLE_INTERPRETER
+	guint8 *start = NULL, *code;
+	MonoJumpInfo *ji = NULL;
+	GSList *unwind_ops = NULL;
+	int buf_len, i;
+	const int fp_reg = ARMREG_R7;
+	int framesize;
+
+	buf_len = 512;
+	start = code = (guint8 *) mono_global_codeman_reserve (buf_len);
+
+	unwind_ops = mono_arch_get_cie_program ();
+
+	/* iOS ABI */
+	ARM_PUSH (code, (1 << fp_reg) | (1 << ARMREG_LR));
+	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 2 * sizeof (mgreg_t));
+	mono_add_unwind_op_offset (unwind_ops, code, start, ARMREG_LR, -4);
+	mono_add_unwind_op_offset (unwind_ops, code, start, fp_reg, -8);
+
+	ARM_MOV_REG_REG (code, fp_reg, ARMREG_SP);
+	mono_add_unwind_op_def_cfa_reg (unwind_ops, code, start, fp_reg);
+
+	/* allocate the CallContext on the stack */
+	framesize = ALIGN_TO (sizeof (CallContext), MONO_ARCH_FRAME_ALIGNMENT);
+	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, framesize);
+
+	/* save all general purpose registers into the CallContext */
+	for (i = 0; i < PARAM_REGS; i++)
+		ARM_STR_IMM (code, i, ARMREG_SP, MONO_STRUCT_OFFSET (CallContext, gregs) + i * sizeof (mgreg_t));
+
+        /* save all floating registers into the CallContext  */
+	for (i = 0; i < FP_PARAM_REGS; i++)
+		ARM_FSTD (code, i * 2, ARMREG_SP, MONO_STRUCT_OFFSET (CallContext, fregs) + i * sizeof (double));
+
+	/* set the stack pointer to the value at call site */
+	ARM_ADD_REG_IMM8 (code, ARMREG_R0, fp_reg, 2 * sizeof (mgreg_t));
+	ARM_STR_IMM (code, ARMREG_R0, ARMREG_SP, MONO_STRUCT_OFFSET (CallContext, stack));
+
+	/* call interp_entry with the ccontext and rmethod as arguments */
+	ARM_MOV_REG_REG (code, ARMREG_R0, ARMREG_SP);
+	ARM_LDR_IMM (code, ARMREG_R1, ARMREG_IP, MONO_STRUCT_OFFSET (MonoFtnDesc, arg));
+	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_IP, MONO_STRUCT_OFFSET (MonoFtnDesc, addr));
+	ARM_BLX_REG (code, ARMREG_IP);
+
+	/* load the return values from the context */
+	for (i = 0; i < PARAM_REGS; i++)
+		ARM_LDR_IMM (code, i, ARMREG_SP, MONO_STRUCT_OFFSET (CallContext, gregs) + i * sizeof (mgreg_t));
+
+	for (i = 0; i < FP_PARAM_REGS; i++)
+		ARM_FLDD (code, i * 2, ARMREG_SP, MONO_STRUCT_OFFSET (CallContext, fregs) + i * sizeof (double));
+
+	/* reset stack and return */
+	ARM_MOV_REG_REG (code, ARMREG_SP, fp_reg);
+	ARM_POP (code, (1 << fp_reg) | (1 << ARMREG_PC));
+
+	g_assert (code - start < buf_len);
+
+	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
+
+	if (info)
+		*info = mono_tramp_info_create ("native_to_interp_trampoline", start, code - start, ji, unwind_ops);
+
+	return start;
+#else
+	g_assert_not_reached ();
+	return NULL;
+#endif /* DISABLE_INTERPRETER */
 }
 
 #else
@@ -974,7 +1045,14 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 }
 
 gpointer
-mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericContext *mrgctx, gpointer addr)
+mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_ftnptr_arg_trampoline (gpointer arg, gpointer addr)
 {
 	g_assert_not_reached ();
 	return NULL;
@@ -987,20 +1065,26 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	return NULL;
 }
 
-gpointer
-mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboolean aot)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-
 guint8*
 mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gboolean aot)
 {
 	g_assert_not_reached ();
 	return NULL;
 }
-	
+
+gpointer
+mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
 #endif /* DISABLE_JIT */
 
 guint8*
@@ -1008,13 +1092,8 @@ mono_arch_get_call_target (guint8 *code)
 {
 	guint32 ins = ((guint32*)(gpointer)code) [-1];
 
-#if MONOTOUCH
 	/* Should be a 'bl' or a 'b' */
 	if (((ins >> 25) & 0x7) == 0x5) {
-#else
-	/* Should be a 'bl' */
-	if ((((ins >> 25) & 0x7) == 0x5) && (((ins >> 24) & 0x1) == 0x1)) {
-#endif
 		gint32 disp = ((((gint32)ins) & 0xffffff) << 8) >> 8;
 		guint8 *target = code - 4 + 8 + (disp * 4);
 
@@ -1112,9 +1191,8 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 
 	g_assert ((code - buf) <= buf_len);
 
-	nacl_domain_code_validate (domain, &buf, buf_len, &code);
 	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, buf, code - buf, NULL, NULL), domain);
 
@@ -1131,25 +1209,3 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 }
 
 #endif
-
-#if defined(ENABLE_GSHAREDVT)
-
-#include "../../../mono-extensions/mono/mini/tramp-arm-gsharedvt.c"
-
-#else
-
-gpointer
-mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-
-gpointer
-mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
-{
-	*info = NULL;
-	return NULL;
-}
-
-#endif /* !MONOTOUCH */

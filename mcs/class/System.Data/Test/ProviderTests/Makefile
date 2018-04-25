@@ -30,7 +30,7 @@ ifdef OSQLCMD
 	$(OSQLCMD) sql/$(DATABASE).sql
 endif
 	ok=:; \
-	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) -output:TestResult-$(PROFILE).log -include=$(DATABASE) -xml:TestResult-$(PROFILE).xml $< || ok=false; \
+	$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) -output:TestResult-$(PROFILE).log -include=$(DATABASE) -xml:TestResult-$(PROFILE).xml $< || ok=false; \
 	sed '1,/^Tests run: /d' TestResult-$(PROFILE).log; \
 	$$ok
 

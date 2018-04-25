@@ -299,6 +299,9 @@ namespace System.Drawing.Printing
 			CUPS_OPTIONS cups_options;
 			string option_name, option_value;
 			int cups_size = Marshal.SizeOf(typeof(CUPS_OPTIONS));
+
+			LoadOptionList (ppd, "PageSize", paper_names, out defsize);
+			LoadOptionList (ppd, "InputSlot", paper_sources, out defsource);
 			
 			for (int j = 0; j < numOptions; j++)
 			{
@@ -306,6 +309,8 @@ namespace System.Drawing.Printing
 				option_name = Marshal.PtrToStringAnsi(cups_options.name);
 				option_value = Marshal.PtrToStringAnsi(cups_options.val);
 
+				if (option_name == "PageSize") defsize = option_value;
+				else if (option_name == "InputSlot") defsource = option_value;
 				#if PrintDebug
 				Console.WriteLine("{0} = {1}", option_name, option_value);
 				#endif
@@ -314,9 +319,6 @@ namespace System.Drawing.Printing
 
 				options = (IntPtr) ((long)options + cups_size);
 			}
-			
-			LoadOptionList (ppd, "PageSize", paper_names, out defsize);
-			LoadOptionList (ppd, "InputSlot", paper_sources, out defsource);
 		}
 		
 		/// <summary>
@@ -431,7 +433,7 @@ namespace System.Drawing.Printing
 				return null;
 			}
 
-			return new PrinterResolution (x_resolution, y_resolution, PrinterResolutionKind.Custom);
+			return new PrinterResolution (PrinterResolutionKind.Custom, x_resolution, y_resolution);
 		}
 
 		/// <summary>
@@ -450,7 +452,7 @@ namespace System.Drawing.Printing
 			PPD_SIZE size;
 			PaperSize ps;
 
-			PaperSize defsize = new PaperSize ("A4", 827, 1169, GetPaperKind (827, 1169), true);
+			PaperSize defsize = new PaperSize (GetPaperKind (827, 1169), "A4", 827, 1169);
 			ppd = (PPD_FILE) Marshal.PtrToStructure (ppd_handle, typeof (PPD_FILE));
 			ptr = ppd.sizes;
 			float w, h;
@@ -460,8 +462,8 @@ namespace System.Drawing.Printing
 				w = size.width * 100 / 72;
 				h = size.length * 100 / 72;
 				PaperKind kind = GetPaperKind ((int) w, (int) h);
-				ps = new PaperSize (real_name, (int) w, (int) h, kind, def_size == kind.ToString ());
-				ps.SetKind (kind);
+				ps = new PaperSize (kind, real_name, (int) w, (int) h);
+				ps.RawKind = (int)kind;
 				if (def_size == ps.Kind.ToString ())
 					defsize = ps;
 				settings.paper_sizes.Add (ps);
@@ -505,7 +507,7 @@ namespace System.Drawing.Printing
 						kind = PaperSourceKind.Custom;
 						break;
 				}
-				settings.paper_sources.Add (new PaperSource (paper_sources[source], kind, def_source == source));
+				settings.paper_sources.Add (new PaperSource (kind, paper_sources[source]));
 				if (def_source == source)
 					defsource = settings.paper_sources[settings.paper_sources.Count-1];
 			}
@@ -923,6 +925,7 @@ namespace System.Drawing.Printing
 
 		#endregion
 
+#pragma warning disable 649
 		#region Struct
 		public struct DOCINFO
 		{
@@ -1035,6 +1038,7 @@ namespace System.Drawing.Printing
 		}
 		
 		#endregion
+#pragma warning restore 649
 	}
 
 	class GlobalPrintingServicesUnix : GlobalPrintingServices

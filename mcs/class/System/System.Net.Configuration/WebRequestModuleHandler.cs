@@ -42,7 +42,7 @@ namespace System.Net.Configuration
 	{
 		public virtual object Create (object parent, object configContext, XmlNode section)
 		{
-#if (XML_DEP)			
+#if XML_DEP
 			if (section.Attributes != null && section.Attributes.Count != 0)
 				HandlersUtil.ThrowException ("Unrecognized attribute", section);
 
@@ -60,26 +60,28 @@ namespace System.Net.Configuration
 					if (child.Attributes != null && child.Attributes.Count != 0)
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
-					WebRequest.ClearPrefixes ();
+					WebRequest.PrefixList = new ArrayList ();
 					continue;
 				}
 
-				string prefix = HandlersUtil.ExtractAttributeValue ("prefix", child);
+				//string prefix = HandlersUtil.ExtractAttributeValue ("prefix", child);
 				if (name == "add") {
-					string type = HandlersUtil.ExtractAttributeValue ("type", child, false);
+					//string type = HandlersUtil.ExtractAttributeValue ("type", child, false);
 					if (child.Attributes != null && child.Attributes.Count != 0)
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
-					WebRequest.AddPrefix (prefix, type);
-					continue;
+					throw new NotImplementedException ();
+					//WebRequest.PrefixList.Add (new WebRequestPrefixElement(prefix, type));
+					//continue;
 				}
 
 				if (name == "remove") {
 					if (child.Attributes != null && child.Attributes.Count != 0)
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
-					WebRequest.RemovePrefix (prefix);
-					continue;
+					throw new NotImplementedException ();
+					// WebRequest.RemovePrefix (prefix);
+					// continue;
 				}
 
 				HandlersUtil.ThrowException ("Unexpected element", child);

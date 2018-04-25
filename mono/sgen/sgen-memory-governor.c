@@ -1,6 +1,6 @@
-/*
- * sgen-memory-governor.c: When to schedule collections based on
- * memory usage.
+/**
+ * \file
+ * When to schedule collections based on memory usage.
  *
  * Author:
  * 	Rodrigo Kumpera (rkumpera@novell.com)
@@ -10,18 +10,7 @@
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
  * Copyright (C) 2012 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -31,10 +20,24 @@
 
 #include "mono/sgen/sgen-gc.h"
 #include "mono/sgen/sgen-memory-governor.h"
-#include "mono/sgen/sgen-thread-pool.h"
+#include "mono/sgen/sgen-workers.h"
 #include "mono/sgen/sgen-client.h"
 
-#define MIN_MINOR_COLLECTION_ALLOWANCE	((mword)(DEFAULT_NURSERY_SIZE * default_allowance_nursery_size_ratio))
+/*
+ * The allowance we are targeting is a third of the current heap size. Still, we
+ * allow the heap to grow at least 4 times the nursery size before triggering a
+ * major, to reduce unnecessary collections. We make sure we don't set the minimum
+ * allowance too high when using a soft heap limit.
+ */
+#define MIN_MINOR_COLLECTION_ALLOWANCE	(MIN(((mword)(sgen_nursery_size * default_allowance_nursery_size_ratio)), (soft_heap_limit * SGEN_DEFAULT_ALLOWANCE_HEAP_SIZE_RATIO)))
+
+static SgenPointerQueue log_entries = SGEN_POINTER_QUEUE_INIT (INTERNAL_MEM_TEMPORARY);
+static mono_mutex_t log_entries_mutex;
+
+mword sgen_total_promoted_size = 0;
+mword sgen_total_allocated_major = 0;
+static mword total_promoted_size_start;
+static mword total_allocated_major_end;
 
 /*Heap limits and allocation knobs*/
 static mword max_heap_size = ((mword)0)- ((mword)1);
@@ -48,6 +51,9 @@ static mword allocated_heap;
 static mword total_alloc = 0;
 static mword total_alloc_max = 0;
 
+static SGEN_TV_DECLARE(last_minor_start);
+static SGEN_TV_DECLARE(last_major_start);
+
 /* GC triggers. */
 
 static gboolean debug_print_allowance = FALSE;
@@ -56,13 +62,14 @@ static gboolean debug_print_allowance = FALSE;
 /* use this to tune when to do a major/minor collection */
 static mword major_collection_trigger_size;
 
-static mword last_major_num_sections = 0;
-static mword last_los_memory_usage = 0;
+static mword major_pre_sweep_heap_size;
+static mword major_start_heap_size;
 
 static gboolean need_calculate_minor_collection_allowance;
 
 /* The size of the LOS after the last major collection, after sweeping. */
 static mword last_collection_los_memory_usage = 0;
+static mword last_used_slots_size = 0;
 
 static mword sgen_memgov_available_free_space (void);
 
@@ -73,13 +80,14 @@ static void
 sgen_memgov_calculate_minor_collection_allowance (void)
 {
 	size_t new_major, new_heap_size, allowance_target, allowance;
+	size_t decrease;
 
 	if (!need_calculate_minor_collection_allowance)
 		return;
 
-	SGEN_ASSERT (0, major_collector.have_swept (), "Can only calculate allowance if heap is swept");
+	SGEN_ASSERT (0, sgen_major_collector.have_swept (), "Can only calculate allowance if heap is swept");
 
-	new_major = major_collector.get_bytes_survived_last_sweep ();
+	new_major = sgen_major_collector.get_bytes_survived_last_sweep ();
 	new_heap_size = new_major + last_collection_los_memory_usage;
 
 	/*
@@ -90,6 +98,16 @@ sgen_memgov_calculate_minor_collection_allowance (void)
 
 	allowance = MAX (allowance_target, MIN_MINOR_COLLECTION_ALLOWANCE);
 
+	/*
+	 * For the concurrent collector, we decrease the allowance relative to the memory
+	 * growth during the M&S phase, survival rate of the collection and the allowance
+	 * ratio.
+	 */
+	decrease = (major_pre_sweep_heap_size - major_start_heap_size) * ((float)new_heap_size / major_pre_sweep_heap_size) * (SGEN_DEFAULT_ALLOWANCE_HEAP_SIZE_RATIO + 1);
+	if (decrease > allowance)
+		decrease = allowance;
+	allowance -= decrease;
+
 	if (new_heap_size + allowance > soft_heap_limit) {
 		if (new_heap_size > soft_heap_limit)
 			allowance = MIN_MINOR_COLLECTION_ALLOWANCE;
@@ -98,8 +116,8 @@ sgen_memgov_calculate_minor_collection_allowance (void)
 	}
 
 	/* FIXME: Why is this here? */
-	if (major_collector.free_swept_blocks)
-		major_collector.free_swept_blocks (allowance);
+	if (sgen_major_collector.free_swept_blocks)
+		sgen_major_collector.free_swept_blocks (sgen_major_collector.get_num_major_sections () * SGEN_DEFAULT_ALLOWANCE_HEAP_SIZE_RATIO);
 
 	major_collection_trigger_size = new_heap_size + allowance;
 
@@ -115,7 +133,7 @@ sgen_memgov_calculate_minor_collection_allowance (void)
 static inline size_t
 get_heap_size (void)
 {
-	return major_collector.get_num_major_sections () * major_collector.section_size + los_memory_usage;
+	return sgen_major_collector.get_num_major_sections () * sgen_major_collector.section_size + sgen_los_memory_usage;
 }
 
 gboolean
@@ -123,24 +141,25 @@ sgen_need_major_collection (mword space_needed)
 {
 	size_t heap_size;
 
-	if (sgen_concurrent_collection_in_progress ()) {
+	if (sgen_get_concurrent_collection_in_progress ()) {
 		heap_size = get_heap_size ();
 
 		if (heap_size <= major_collection_trigger_size)
 			return FALSE; 
 
-		/* We allow the heap to grow an additional third of the allowance during a concurrent collection */
-		if ((heap_size - major_collection_trigger_size) >
-				(major_collection_trigger_size
-				* (SGEN_DEFAULT_ALLOWANCE_HEAP_SIZE_RATIO / (SGEN_DEFAULT_ALLOWANCE_HEAP_SIZE_RATIO + 1))
-				* SGEN_DEFAULT_CONCURRENT_HEAP_ALLOWANCE_RATIO)) {
+		/*
+		 * The more the heap grows, the more we need to decrease the allowance above,
+		 * in order to have similar trigger sizes as the synchronous collector.
+		 * If the heap grows so much that we would need to have a negative allowance,
+		 * we force the finishing of the collection, to avoid increased memory usage.
+		 */
+		if ((heap_size - major_start_heap_size) > major_start_heap_size * SGEN_DEFAULT_ALLOWANCE_HEAP_SIZE_RATIO)
 			return TRUE;
-		}
 		return FALSE;
 	}
 
 	/* FIXME: This is a cop-out.  We should have some way of figuring this out. */
-	if (!major_collector.have_swept ())
+	if (!sgen_major_collector.have_swept ())
 		return FALSE;
 
 	if (space_needed > sgen_memgov_available_free_space ())
@@ -156,28 +175,110 @@ sgen_need_major_collection (mword space_needed)
 void
 sgen_memgov_minor_collection_start (void)
 {
+	total_promoted_size_start = sgen_total_promoted_size;
+	SGEN_TV_GETTIME (last_minor_start);
+}
+
+static void
+sgen_add_log_entry (SgenLogEntry *log_entry)
+{
+	mono_os_mutex_lock (&log_entries_mutex);
+	sgen_pointer_queue_add (&log_entries, log_entry);
+	mono_os_mutex_unlock (&log_entries_mutex);
 }
 
 void
-sgen_memgov_minor_collection_end (void)
+sgen_memgov_minor_collection_end (const char *reason, gboolean is_overflow)
 {
-}
+	if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_GC)) {
+		SgenLogEntry *log_entry = (SgenLogEntry*)sgen_alloc_internal (INTERNAL_MEM_LOG_ENTRY);
+		SGEN_TV_DECLARE (current_time);
+		SGEN_TV_GETTIME (current_time);
 
-void
-sgen_memgov_major_collection_start (void)
-{
-	need_calculate_minor_collection_allowance = TRUE;
+		log_entry->type = SGEN_LOG_NURSERY;
+		log_entry->reason = reason;
+		log_entry->is_overflow = is_overflow;
+		log_entry->time = SGEN_TV_ELAPSED (last_minor_start, current_time);
+		log_entry->promoted_size = sgen_total_promoted_size - total_promoted_size_start;
+		log_entry->major_size = sgen_major_collector.get_num_major_sections () * sgen_major_collector.section_size;
+		log_entry->major_size_in_use = last_used_slots_size + sgen_total_allocated_major - total_allocated_major_end;
+		log_entry->los_size = sgen_los_memory_usage_total;
+		log_entry->los_size_in_use = sgen_los_memory_usage;
 
-	if (debug_print_allowance) {
-		SGEN_LOG (0, "Starting collection with heap size %ld bytes", (long)get_heap_size ());
+		sgen_add_log_entry (log_entry);
 	}
 }
 
 void
-sgen_memgov_major_collection_end (gboolean forced)
+sgen_memgov_major_pre_sweep (void)
 {
-	last_collection_los_memory_usage = los_memory_usage;
+	if (sgen_get_concurrent_collection_in_progress ()) {
+		major_pre_sweep_heap_size = get_heap_size ();
+	} else {
+		/* We decrease the allowance only in the concurrent case */
+		major_pre_sweep_heap_size = major_start_heap_size;
+	}
+}
 
+void
+sgen_memgov_major_post_sweep (mword used_slots_size)
+{
+	if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_GC)) {
+		SgenLogEntry *log_entry = (SgenLogEntry*)sgen_alloc_internal (INTERNAL_MEM_LOG_ENTRY);
+
+		log_entry->type = SGEN_LOG_MAJOR_SWEEP_FINISH;
+		log_entry->major_size = sgen_major_collector.get_num_major_sections () * sgen_major_collector.section_size;
+		log_entry->major_size_in_use = used_slots_size + sgen_total_allocated_major - total_allocated_major_end;
+
+		sgen_add_log_entry (log_entry);
+	}
+	last_used_slots_size = used_slots_size;
+}
+
+void
+sgen_memgov_major_collection_start (gboolean concurrent, const char *reason)
+{
+	need_calculate_minor_collection_allowance = TRUE;
+	major_start_heap_size = get_heap_size ();
+
+	if (debug_print_allowance) {
+		SGEN_LOG (0, "Starting collection with heap size %ld bytes", (long)major_start_heap_size);
+	}
+	if (concurrent && mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_GC)) {
+		SgenLogEntry *log_entry = (SgenLogEntry*)sgen_alloc_internal (INTERNAL_MEM_LOG_ENTRY);
+
+		log_entry->type = SGEN_LOG_MAJOR_CONC_START;
+		log_entry->reason = reason;
+
+		sgen_add_log_entry (log_entry);
+	}
+	SGEN_TV_GETTIME (last_major_start);
+}
+
+void
+sgen_memgov_major_collection_end (gboolean forced, gboolean concurrent, const char *reason, gboolean is_overflow)
+{
+	if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_GC)) {
+		SgenLogEntry *log_entry = (SgenLogEntry*)sgen_alloc_internal (INTERNAL_MEM_LOG_ENTRY);
+		SGEN_TV_DECLARE (current_time);
+		SGEN_TV_GETTIME (current_time);
+
+		if (concurrent) {
+			log_entry->type = SGEN_LOG_MAJOR_CONC_FINISH;
+		} else {
+			log_entry->type = SGEN_LOG_MAJOR_SERIAL;
+		}
+		log_entry->time = SGEN_TV_ELAPSED (last_major_start, current_time);
+		log_entry->reason = reason;
+		log_entry->is_overflow = is_overflow;
+		log_entry->los_size = sgen_los_memory_usage_total;
+		log_entry->los_size_in_use = sgen_los_memory_usage;
+
+		sgen_add_log_entry (log_entry);
+	}
+
+	last_collection_los_memory_usage = sgen_los_memory_usage;
+	total_allocated_major_end = sgen_total_allocated_major;
 	if (forced) {
 		sgen_get_major_collector ()->finish_sweeping ();
 		sgen_memgov_calculate_minor_collection_allowance ();
@@ -189,15 +290,77 @@ sgen_memgov_collection_start (int generation)
 {
 }
 
-void
-sgen_memgov_collection_end (int generation, GGTimingInfo* info, int info_count)
+static void
+sgen_output_log_entry (SgenLogEntry *entry, gint64 stw_time, int generation)
 {
-	int i;
-	for (i = 0; i < info_count; ++i) {
-		if (info[i].generation != -1)
-			sgen_client_log_timing (&info [i], last_major_num_sections, last_los_memory_usage);
+	char full_timing_buff [1024];
+	full_timing_buff [0] = '\0';
+
+	if (!entry->is_overflow)
+                sprintf (full_timing_buff, "stw %.2fms", stw_time / 10000.0f);
+
+	switch (entry->type) {
+		case SGEN_LOG_NURSERY:
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MINOR%s: (%s) time %.2fms, %s promoted %zdK major size: %zdK in use: %zdK los size: %zdK in use: %zdK",
+				entry->is_overflow ? "_OVERFLOW" : "",
+				entry->reason ? entry->reason : "",
+				entry->time / 10000.0f,
+				(generation == GENERATION_NURSERY) ? full_timing_buff : "",
+				entry->promoted_size / 1024,
+				entry->major_size / 1024,
+				entry->major_size_in_use / 1024,
+				entry->los_size / 1024,
+				entry->los_size_in_use / 1024);
+			break;
+		case SGEN_LOG_MAJOR_SERIAL:
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR%s: (%s) time %.2fms, %s los size: %zdK in use: %zdK",
+				entry->is_overflow ? "_OVERFLOW" : "",
+				entry->reason ? entry->reason : "",
+				(int)entry->time / 10000.0f,
+				full_timing_buff,
+				entry->los_size / 1024,
+				entry->los_size_in_use / 1024);
+			break;
+		case SGEN_LOG_MAJOR_CONC_START:
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR_CONCURRENT_START: (%s)", entry->reason ? entry->reason : "");
+			break;
+		case SGEN_LOG_MAJOR_CONC_FINISH:
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR_CONCURRENT_FINISH: (%s) time %.2fms, %s los size: %zdK in use: %zdK",
+				entry->reason ? entry->reason : "",
+				entry->time / 10000.0f,
+				full_timing_buff,
+				entry->los_size / 1024,
+				entry->los_size_in_use / 1024);
+			break;
+		case SGEN_LOG_MAJOR_SWEEP_FINISH:
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR_SWEEP: major size: %zdK in use: %zdK",
+				entry->major_size / 1024,
+				entry->major_size_in_use / 1024);
+			break;
+		default:
+			SGEN_ASSERT (0, FALSE, "Invalid log entry type");
+			break;
 	}
-	last_major_num_sections = major_collector.get_num_major_sections ();
+}
+
+void
+sgen_memgov_collection_end (int generation, gint64 stw_time)
+{
+	/*
+	 * At this moment the world has been restarted which means we can log all pending entries
+	 * without risking deadlocks.
+	 */
+	if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_GC)) {
+		size_t i;
+		SGEN_ASSERT (0, !sgen_is_world_stopped (), "We can't log if the world is stopped");
+		mono_os_mutex_lock (&log_entries_mutex);
+		for (i = 0; i < log_entries.next_slot; i++) {
+			sgen_output_log_entry (log_entries.data [i], stw_time, generation);
+			sgen_free_internal (log_entries.data [i], INTERNAL_MEM_LOG_ENTRY);
+		}
+		sgen_pointer_queue_clear (&log_entries);
+		mono_os_mutex_unlock (&log_entries_mutex);
+	}
 }
 
 /*
@@ -227,13 +390,13 @@ sgen_assert_memory_alloc (void *ptr, size_t requested_size, const char *assert_d
  * This must not require any lock.
  */
 void*
-sgen_alloc_os_memory (size_t size, SgenAllocFlags flags, const char *assert_description)
+sgen_alloc_os_memory (size_t size, SgenAllocFlags flags, const char *assert_description, MonoMemAccountType type)
 {
 	void *ptr;
 
 	g_assert (!(flags & ~(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE)));
 
-	ptr = mono_valloc (0, size, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE));
+	ptr = mono_valloc (0, size, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE), type);
 	sgen_assert_memory_alloc (ptr, size, assert_description);
 	if (ptr) {
 		SGEN_ATOMIC_ADD_P (total_alloc, size);
@@ -243,14 +406,15 @@ sgen_alloc_os_memory (size_t size, SgenAllocFlags flags, const char *assert_desc
 }
 
 /* size must be a power of 2 */
+// FIXME: remove assert_description
 void*
-sgen_alloc_os_memory_aligned (size_t size, mword alignment, SgenAllocFlags flags, const char *assert_description)
+sgen_alloc_os_memory_aligned (size_t size, mword alignment, SgenAllocFlags flags, const char *assert_description, MonoMemAccountType type)
 {
 	void *ptr;
 
 	g_assert (!(flags & ~(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE)));
 
-	ptr = mono_valloc_aligned (size, alignment, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE));
+	ptr = mono_valloc_aligned (size, alignment, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE), type);
 	sgen_assert_memory_alloc (ptr, size, assert_description);
 	if (ptr) {
 		SGEN_ATOMIC_ADD_P (total_alloc, size);
@@ -263,11 +427,11 @@ sgen_alloc_os_memory_aligned (size_t size, mword alignment, SgenAllocFlags flags
  * Free the memory returned by sgen_alloc_os_memory (), returning it to the OS.
  */
 void
-sgen_free_os_memory (void *addr, size_t size, SgenAllocFlags flags)
+sgen_free_os_memory (void *addr, size_t size, SgenAllocFlags flags, MonoMemAccountType type)
 {
 	g_assert (!(flags & ~SGEN_ALLOC_HEAP));
 
-	mono_vfree (addr, size);
+	mono_vfree (addr, size, type);
 	SGEN_ATOMIC_ADD_P (total_alloc, -(gssize)size);
 	total_alloc_max = MAX (total_alloc_max, total_alloc);
 }
@@ -301,7 +465,7 @@ gboolean
 sgen_memgov_try_alloc_space (mword size, int space)
 {
 	if (sgen_memgov_available_free_space () < size) {
-		SGEN_ASSERT (4, !sgen_thread_pool_is_thread_pool_thread (mono_native_thread_id_get ()), "Memory shouldn't run out in worker thread");
+		SGEN_ASSERT (4, !sgen_workers_is_worker_thread (mono_native_thread_id_get ()), "Memory shouldn't run out in worker thread");
 		return FALSE;
 	}
 
@@ -319,8 +483,12 @@ sgen_memgov_init (size_t max_heap, size_t soft_limit, gboolean debug_allowance, 
 	debug_print_allowance = debug_allowance;
 	major_collection_trigger_size = MIN_MINOR_COLLECTION_ALLOWANCE;
 
-	mono_counters_register ("Memgov alloc", MONO_COUNTER_GC | MONO_COUNTER_WORD | MONO_COUNTER_BYTES | MONO_COUNTER_VARIABLE, &total_alloc);
-	mono_counters_register ("Memgov max alloc", MONO_COUNTER_GC | MONO_COUNTER_WORD | MONO_COUNTER_BYTES | MONO_COUNTER_MONOTONIC, &total_alloc_max);
+	mono_counters_register ("Memgov alloc", MONO_COUNTER_GC | MONO_COUNTER_WORD | MONO_COUNTER_BYTES | MONO_COUNTER_VARIABLE, (void*)&total_alloc);
+	mono_counters_register ("Memgov max alloc", MONO_COUNTER_GC | MONO_COUNTER_WORD | MONO_COUNTER_BYTES | MONO_COUNTER_MONOTONIC, (void*)&total_alloc_max);
+
+	mono_os_mutex_init (&log_entries_mutex);
+
+	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_LOG_ENTRY, sizeof (SgenLogEntry));
 
 	if (max_heap == 0)
 		return;
@@ -330,11 +498,11 @@ sgen_memgov_init (size_t max_heap, size_t soft_limit, gboolean debug_allowance, 
 		max_heap = soft_limit;
 	}
 
-	if (max_heap < sgen_nursery_size * 4) {
+	if (max_heap < SGEN_DEFAULT_NURSERY_SIZE * 4) {
 		sgen_env_var_error (MONO_GC_PARAMS_NAME, "Setting to minimum.", "`max-heap-size` must be at least 4 times as large as `nursery size`.");
-		max_heap = sgen_nursery_size * 4;
+		max_heap = SGEN_DEFAULT_NURSERY_SIZE * 4;
 	}
-	max_heap_size = max_heap - sgen_nursery_size;
+	max_heap_size = max_heap - SGEN_DEFAULT_NURSERY_SIZE;
 
 	if (allowance_ratio)
 		default_allowance_nursery_size_ratio = allowance_ratio;

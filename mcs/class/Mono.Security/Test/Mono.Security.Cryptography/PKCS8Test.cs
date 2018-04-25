@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.Mono.Security.Cryptography {
 
 	[TestFixture]
-	public class PKCS8Test : Assertion {
+	public class PKCS8Test {
 
 		static public byte[] pkcs8_der = { 0x30, 0x82, 0x02, 0xB2, 0x30, 0x1C, 0x06, 0x0A, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x0C, 0x01, 0x03, 0x30, 0x0E, 0x04, 0x08, 0x86, 0x2A, 0xA9, 0x71, 0x6D, 0xA4, 0xB8, 0x2D, 0x02, 0x02, 0x07, 0xD0, 0x04, 0x82, 0x02, 0x90, 0x90, 0x14, 0xB5, 0xF0, 0xB6, 0x86, 0x56, 0xCB, 0xFA, 0x63, 0xAD, 0x9F, 0x5A, 0x59, 0x6C, 0xAD, 0x00, 0x3C, 0x37, 0x8A, 0xC3, 0x88, 0x58, 0x8B, 0xD7, 0x48, 0x53, 0x7A, 0xC8, 0x5B, 0x0D, 0x98, 0xDD, 0x8B, 0xB3, 0xEC, 0x4C, 0xAC, 0x61, 0x18, 0xE3, 0x5E, 0x47, 0xAD, 0xC7, 0x92, 0xBC, 0xD3, 0x00, 0x07, 0xFF, 0x1A, 0x68, 0x74, 0x45, 0x8E, 0xD8, 0x7C, 0x9F, 0x18, 0x7B, 0xD7, 0xC8, 
 			0x47, 0xBA, 0x6B, 0x19, 0xF2, 0xBF, 0x7E, 0x51, 0x0B, 0x4B, 0x43, 0xE8, 0xB9, 0x56, 0x7E, 0xD0, 0x74, 0xC7, 0xDE, 0x76, 0xDB, 0xFF, 0x5C, 0x6B, 0x53, 0xBE, 0x31, 0x06, 0xAE, 0x6C, 0x8F, 0xDC, 0x49, 0x04, 0x71, 0x74, 0xEE, 0xB8, 0x06, 0xCB, 0xAD, 0x86, 0xB4, 0x4E, 0xB9, 0x46, 0xA1, 0x03, 0x5E, 0x0E, 0xA7, 0xC7, 0x37, 0x6B, 0xB0, 0x8D, 0x2D, 0x81, 0x1F, 0xE3, 0xC2, 0x05, 0xDE, 0xEF, 0x51, 0x07, 0x70, 0x6E, 0x35, 0x9A, 0xAD, 0x19, 0x5E, 0xAF, 0xEB, 0x7F, 0xEF, 0xE4, 0xAB, 0x07, 0xF3, 0xF6, 0xEA, 0xFA, 0x0E, 0x83, 0x65, 0x06, 0x3C, 0xF3, 0xBD, 0x96, 0x08, 0x14, 0xC5, 0x34, 0x26, 0xED, 0xC0, 0x10, 
@@ -32,13 +32,13 @@ namespace MonoTests.Mono.Security.Cryptography {
 		[Test]
 		public void EncryptedPrivateKey_Farscape () 
 		{
-			AssertEquals ("PKCS8.GetType", PKCS8.KeyInfo.EncryptedPrivateKey, PKCS8.GetType (pkcs8_der));
+			Assert.AreEqual (PKCS8.KeyInfo.EncryptedPrivateKey, PKCS8.GetType (pkcs8_der), "PKCS8.GetType");
 			PKCS8.EncryptedPrivateKeyInfo p8 = new PKCS8.EncryptedPrivateKeyInfo (pkcs8_der);
-			AssertEquals ("Algorithm", "1.2.840.113549.1.12.1.3", p8.Algorithm);
-			AssertEquals ("EncryptedData", "90-14-B5-F0-B6-86-56-CB-FA-63-AD-9F-5A-59-6C-AD-00-3C-37-8A-C3-88-58-8B-D7-48-53-7A-C8-5B-0D-98-DD-8B-B3-EC-4C-AC-61-18-E3-5E-47-AD-C7-92-BC-D3-00-07-FF-1A-68-74-45-8E-D8-7C-9F-18-7B-D7-C8-47-BA-6B-19-F2-BF-7E-51-0B-4B-43-E8-B9-56-7E-D0-74-C7-DE-76-DB-FF-5C-6B-53-BE-31-06-AE-6C-8F-DC-49-04-71-74-EE-B8-06-CB-AD-86-B4-4E-B9-46-A1-03-5E-0E-A7-C7-37-6B-B0-8D-2D-81-1F-E3-C2-05-DE-EF-51-07-70-6E-35-9A-AD-19-5E-AF-EB-7F-EF-E4-AB-07-F3-F6-EA-FA-0E-83-65-06-3C-F3-BD-96-08-14-C5-34-26-ED-C0-10-CC-AE-2D-8F-BE-ED-98-0D-88-1B-1E-C7-37-F0-FC-DB-3C-E3-1B-66-52-45-6E-05-A6-D9-12-23-05-5F-E3-9F-7D-21-9B-2E-3E-9E-3C-EE-D1-9B-55-DE-57-60-A5-24-2D-C7-94-EC-FC-B1-6A-65-BD-85-02-5C-58-AA-5A-6A-F3-AC-6B-DD-0E-63-B2-4B-5B-67-3D-C3-BF-E4-C8-EF-3F-89-5A-CD-6D-EF-05-22-2B-72-FF-80-7A-DD-F1-59-A7-6F-00-B1-BD-4D-88-D6-E4-8A-DD-A9-FC-D9-01-0A-65-8E-52-F9-7E-20-72-67-0D-5B-EE-67-5B-46-4A-15-A2-6F-15-2B-5B-9A-93-12-4F-F4-AD-49-D0-11-F1-7E-40-DE-32-96-2E-B3-E8-71-60-27-6E-A2-71-83-C7-FE-0E-8B-31-06-64-E1-19-02-B9-44-25-0C-94-64-7E-5F-89-4D-7E-99-0B-91-B8-22-A5-33-92-D3-49-07-1D-C6-25-4A-D7-6D-E2-94-3F-FA-10-72-59-62-F5-C6-D4-3A-EE-8F-BC-9C-BC-FC-C7-37-BF-7C-A0-67-B0-FF-0F-29-A0-A2-71-6B-21-00-F4-54-D9-3D-1B-CE-F4-FE-6F-F5-21-CB-47-58-17-F6-45-2F-A0-3B-8B-D9-B8-8A-33-3F-16-E0-C7-8A-B8-11-2F-A8-7E-7D-A7-7B-65-27-89-3C-67-4D-D5-70-28-76-60-96-68-BF-FB-CD-49-E0-8A-7C-6F-76-06-48-6D-63-67-8A-47-82-5E-7F-0E-AC-46-B6-BC-0A-6D-E2-1A-3A-20-A5-C7-81-71-6E-2B-16-97-D4-FA-C0-DD-72-5B-9F-A3-43-F4-85-B1-C6-A8-E0-62-81-5D-A5-07-29-6A-6A-2D-E1-1D-BE-12-6D-42-58-6F-4E-30-3D-BF-32-11-38-BC-36-76-60-FC-57-2F-D3-9E-C4-1A-92-EA-DE-85-FD-E7-AA-30-A6-97-2C-36-3B-3B-0E-92-52-FF-42-D7-62-6C-C1-3A-E7-1B-4E-13-8C-95-B3-4B-A7-9E-42-75-A8-CA-63-76-C4-45-74-96-43-D8-86-82-BE-37-FF-9B-EB-B7-18-A1-2F-E3-6C-08-E8-11-96-8C-5E-9E-2B-E7-DB-7D-54-E1-DB-1E-D3-8F-B5-19-4B-B2-16-DB-CF-EC-88-0B-6C-3C-E4-F2-C4-FF-4D-3E-53-52-3A-81-0B-6E-AC-95-EA-5A-6E-4D-83-23-82-C9-90-02-74-10-2A-6C-FB-97-4F-5F-70-8E-F0-B9", 
-				BitConverter.ToString (p8.EncryptedData));
-			AssertEquals ("Salt", "86-2A-A9-71-6D-A4-B8-2D", BitConverter.ToString (p8.Salt));
-			AssertEquals ("IterationCount", 2000, p8.IterationCount);
+			Assert.AreEqual ("1.2.840.113549.1.12.1.3", p8.Algorithm, "Algorithm");
+			Assert.AreEqual ("90-14-B5-F0-B6-86-56-CB-FA-63-AD-9F-5A-59-6C-AD-00-3C-37-8A-C3-88-58-8B-D7-48-53-7A-C8-5B-0D-98-DD-8B-B3-EC-4C-AC-61-18-E3-5E-47-AD-C7-92-BC-D3-00-07-FF-1A-68-74-45-8E-D8-7C-9F-18-7B-D7-C8-47-BA-6B-19-F2-BF-7E-51-0B-4B-43-E8-B9-56-7E-D0-74-C7-DE-76-DB-FF-5C-6B-53-BE-31-06-AE-6C-8F-DC-49-04-71-74-EE-B8-06-CB-AD-86-B4-4E-B9-46-A1-03-5E-0E-A7-C7-37-6B-B0-8D-2D-81-1F-E3-C2-05-DE-EF-51-07-70-6E-35-9A-AD-19-5E-AF-EB-7F-EF-E4-AB-07-F3-F6-EA-FA-0E-83-65-06-3C-F3-BD-96-08-14-C5-34-26-ED-C0-10-CC-AE-2D-8F-BE-ED-98-0D-88-1B-1E-C7-37-F0-FC-DB-3C-E3-1B-66-52-45-6E-05-A6-D9-12-23-05-5F-E3-9F-7D-21-9B-2E-3E-9E-3C-EE-D1-9B-55-DE-57-60-A5-24-2D-C7-94-EC-FC-B1-6A-65-BD-85-02-5C-58-AA-5A-6A-F3-AC-6B-DD-0E-63-B2-4B-5B-67-3D-C3-BF-E4-C8-EF-3F-89-5A-CD-6D-EF-05-22-2B-72-FF-80-7A-DD-F1-59-A7-6F-00-B1-BD-4D-88-D6-E4-8A-DD-A9-FC-D9-01-0A-65-8E-52-F9-7E-20-72-67-0D-5B-EE-67-5B-46-4A-15-A2-6F-15-2B-5B-9A-93-12-4F-F4-AD-49-D0-11-F1-7E-40-DE-32-96-2E-B3-E8-71-60-27-6E-A2-71-83-C7-FE-0E-8B-31-06-64-E1-19-02-B9-44-25-0C-94-64-7E-5F-89-4D-7E-99-0B-91-B8-22-A5-33-92-D3-49-07-1D-C6-25-4A-D7-6D-E2-94-3F-FA-10-72-59-62-F5-C6-D4-3A-EE-8F-BC-9C-BC-FC-C7-37-BF-7C-A0-67-B0-FF-0F-29-A0-A2-71-6B-21-00-F4-54-D9-3D-1B-CE-F4-FE-6F-F5-21-CB-47-58-17-F6-45-2F-A0-3B-8B-D9-B8-8A-33-3F-16-E0-C7-8A-B8-11-2F-A8-7E-7D-A7-7B-65-27-89-3C-67-4D-D5-70-28-76-60-96-68-BF-FB-CD-49-E0-8A-7C-6F-76-06-48-6D-63-67-8A-47-82-5E-7F-0E-AC-46-B6-BC-0A-6D-E2-1A-3A-20-A5-C7-81-71-6E-2B-16-97-D4-FA-C0-DD-72-5B-9F-A3-43-F4-85-B1-C6-A8-E0-62-81-5D-A5-07-29-6A-6A-2D-E1-1D-BE-12-6D-42-58-6F-4E-30-3D-BF-32-11-38-BC-36-76-60-FC-57-2F-D3-9E-C4-1A-92-EA-DE-85-FD-E7-AA-30-A6-97-2C-36-3B-3B-0E-92-52-FF-42-D7-62-6C-C1-3A-E7-1B-4E-13-8C-95-B3-4B-A7-9E-42-75-A8-CA-63-76-C4-45-74-96-43-D8-86-82-BE-37-FF-9B-EB-B7-18-A1-2F-E3-6C-08-E8-11-96-8C-5E-9E-2B-E7-DB-7D-54-E1-DB-1E-D3-8F-B5-19-4B-B2-16-DB-CF-EC-88-0B-6C-3C-E4-F2-C4-FF-4D-3E-53-52-3A-81-0B-6E-AC-95-EA-5A-6E-4D-83-23-82-C9-90-02-74-10-2A-6C-FB-97-4F-5F-70-8E-F0-B9", BitConverter.ToString (p8.EncryptedData), 
+				"EncryptedData");
+			Assert.AreEqual ("86-2A-A9-71-6D-A4-B8-2D", BitConverter.ToString (p8.Salt), "Salt");
+			Assert.AreEqual (2000, p8.IterationCount, "IterationCount");
 		}
 
 		static public byte[] End_Certificate_CP_01_01_crtx = { 0x30, 0x82, 0x02, 0x78, 0x02, 0x01, 0x00, 0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00, 0x04, 0x82, 0x02, 0x62, 0x30, 0x82, 0x02, 0x5E, 0x02, 0x01, 0x00, 0x02, 0x81, 0x81, 0x00, 0xC6, 0x34, 0xEC, 0x6F, 0x0C, 0xE0, 0x59, 0x0E, 0xBC, 0x5F, 0xBA, 0x2E, 0x93, 0xBB, 0x04, 0xA7, 0x03, 0xB9, 0x70, 0x8A, 0xB9, 0xD7, 0xE5, 0xD7, 0xE6, 0xCA, 0x4A, 0x8C, 0x23, 0xD8, 0x60, 0xB3, 0x6B, 0xCB, 0x88, 0x88, 0xC7, 0xD8, 0x48, 0x7E, 0x64, 0xF9, 0xF6, 0x1B, 0xE3, 0x79, 0x46, 0x41, 0xE4, 0x61, 0xF7, 0x25, 0x47, 0x71, 0xF3, 0x50, 0x94, 0x4E, 0xF2, 0x7C, 0x6A, 0x37, 0xB6, 0x0C, 
@@ -68,25 +68,25 @@ namespace MonoTests.Mono.Security.Cryptography {
 		[Test]
 		public void PrivateKeyInfo_End_Certificate_CP_01_01 () 
 		{
-			AssertEquals ("PKCS8.GetType", PKCS8.KeyInfo.PrivateKey, PKCS8.GetType (End_Certificate_CP_01_01_crtx));
+			Assert.AreEqual (PKCS8.KeyInfo.PrivateKey, PKCS8.GetType (End_Certificate_CP_01_01_crtx), "PKCS8.GetType");
 			PKCS8.PrivateKeyInfo p8 = new PKCS8.PrivateKeyInfo (End_Certificate_CP_01_01_crtx);
-			AssertEquals ("Algorithm", "1.2.840.113549.1.1.1", p8.Algorithm);
-			AssertEquals ("Attributes", 0, p8.Attributes.Count);
-			AssertEquals ("PrivateKey", BitConverter.ToString (End_Certificate_CP_01_01_pki), BitConverter.ToString (p8.PrivateKey));
-			AssertEquals ("Version", 0, p8.Version);
+			Assert.AreEqual ("1.2.840.113549.1.1.1", p8.Algorithm, "Algorithm");
+			Assert.AreEqual (0, p8.Attributes.Count, "Attributes");
+			Assert.AreEqual (BitConverter.ToString (End_Certificate_CP_01_01_pki), BitConverter.ToString (p8.PrivateKey), "PrivateKey");
+			Assert.AreEqual (0, p8.Version, "Version");
 		}
 
 		[Test]
 		public void PrivateKeyInfo_End_Certificate_CP_01_02 () 
 		{
 			PKCS8.PrivateKeyInfo p8 = new PKCS8.PrivateKeyInfo (End_Certificate_CP_01_02_crtx);
-			AssertEquals ("Algorithm", "1.2.840.113549.1.1.1", p8.Algorithm);
-			AssertEquals ("Attributes", 0, p8.Attributes.Count);
-			AssertEquals ("PrivateKey", "30-82-02-5B-02-01-00-02-81-81-00-D6-39-9E-21-93-E2-BA-35-7F-E5-F8-E8-87-0B-8A-5F-28-25-85-B7-E5-CC-DA-7F-D3-C7-09-2A-63-E9-AD-8F-D0-A8-EF-BA-CF-3C-FB-55-03-B9-83-29-4E-0E-89-84-FB-E2-62-16-1F-9D-87-40-16-6B-F8-F4-66-38-58-74-67-D4-B5-A1-3A-4B-6F-13-4B-08-37-3A-3A-64-0A-06-8E-A2-7B-14-88-B7-F8-CE-6A-D1-45-9B-39-93-67-BF-0A-AB-DB-37-9D-FA-CE-54-0F-37-82-09-8F-0D-33-E4-B8-6E-46-C1-CC-4F-80-5A-B4-BD-19-80-27-40-84-49-02-03-01-00-01-02-81-80-14-95-5A-AD-4D-41-56-B4-F7-42-08-85-87-1C-43-C2-5A-E0-28-16-00-5D-8B-8D-06-B3-34-1D-3F-96-5F-57-D7-2B-B4-45-15-CE-7D-33-B0-F4-ED-36-55-CA-AD-C9-FA-4D-C9-30-E8-FE-C0-D5-16-92-6F-4C-44-5A-1B-9D-7E-AE-B8-01-6D-38-9D-DC-93-68-AB-93-D6-C0-8A-8A-63-B4-D6-DA-21-C1-A0-28-8C-24-C4-27-E1-4B-30-D2-2D-87-62-F9-17-75-21-5E-E1-3C-E2-2D-92-03-C6-A1-8D-1D-E9-67-F4-CE-FF-AC-52-86-D2-F5-0F-EB-03-01-02-41-00-ED-6A-AE-A7-33-B0-B8-86-36-91-BA-E7-D2-DD-15-3A-97-A2-66-31-98-24-A6-0D-E7-09-E3-BD-36-79-91-F2-5E-23-AA-21-C9-71-43-24-10-FA-F0-E6-FC-E4-C6-1F-08-45-E8-91-74-13-69-63-A5-40-8F-38-44-2B-54-69-02-41-00-E6-FE-39-8B-6F-DB-44-CA-E7-72-D3-CA-09-5B-3D-B1-53-85-29-36-FC-F1-B9-D8-1F-64-02-D4-F7-F5-71-E5-9F-17-D7-F3-9F-5A-3A-A6-A3-62-46-F6-93-3D-D3-CD-18-F2-12-BD-68-02-AA-91-55-DA-64-26-D7-16-34-E1-02-40-60-3F-F4-C8-72-4B-3D-B3-A3-A1-D6-FD-2E-DE-54-41-E9-C1-7B-DE-B5-48-7E-4D-7A-91-E6-D3-09-A7-A5-84-75-A7-CD-CC-5E-C7-5D-29-DC-FC-6E-F7-A6-24-F5-31-15-80-89-F5-95-F2-5C-B2-7A-07-3F-48-D7-52-1D-A9-02-40-40-1B-FC-C2-9B-57-E2-DE-E1-9F-B7-F2-11-E8-B5-D5-9A-55-91-DB-C6-16-1C-BB-43-F3-10-EA-24-AB-85-61-F2-66-BE-B3-C9-DD-53-FB-DD-CA-AF-E1-4D-7A-52-67-50-EE-16-8F-64-E7-A0-89-57-A7-96-36-45-69-CF-61-02-40-3D-9E-E3-29-D6-BD-59-FF-A5-C3-AC-57-CB-74-FE-B0-C3-67-34-A8-40-EB-04-88-C3-C2-74-4F-69-77-13-48-8A-97-3C-C2-4B-CD-E8-E0-97-98-A2-3F-B6-E2-71-D3-65-9F-5A-C6-C8-AE-FE-BA-B1-ED-DA-08-8A-5B-7B-12", BitConverter.ToString (p8.PrivateKey));
-			AssertEquals ("Version", 0, p8.Version);
+			Assert.AreEqual ("1.2.840.113549.1.1.1", p8.Algorithm, "Algorithm");
+			Assert.AreEqual (0, p8.Attributes.Count, "Attributes");
+			Assert.AreEqual ("30-82-02-5B-02-01-00-02-81-81-00-D6-39-9E-21-93-E2-BA-35-7F-E5-F8-E8-87-0B-8A-5F-28-25-85-B7-E5-CC-DA-7F-D3-C7-09-2A-63-E9-AD-8F-D0-A8-EF-BA-CF-3C-FB-55-03-B9-83-29-4E-0E-89-84-FB-E2-62-16-1F-9D-87-40-16-6B-F8-F4-66-38-58-74-67-D4-B5-A1-3A-4B-6F-13-4B-08-37-3A-3A-64-0A-06-8E-A2-7B-14-88-B7-F8-CE-6A-D1-45-9B-39-93-67-BF-0A-AB-DB-37-9D-FA-CE-54-0F-37-82-09-8F-0D-33-E4-B8-6E-46-C1-CC-4F-80-5A-B4-BD-19-80-27-40-84-49-02-03-01-00-01-02-81-80-14-95-5A-AD-4D-41-56-B4-F7-42-08-85-87-1C-43-C2-5A-E0-28-16-00-5D-8B-8D-06-B3-34-1D-3F-96-5F-57-D7-2B-B4-45-15-CE-7D-33-B0-F4-ED-36-55-CA-AD-C9-FA-4D-C9-30-E8-FE-C0-D5-16-92-6F-4C-44-5A-1B-9D-7E-AE-B8-01-6D-38-9D-DC-93-68-AB-93-D6-C0-8A-8A-63-B4-D6-DA-21-C1-A0-28-8C-24-C4-27-E1-4B-30-D2-2D-87-62-F9-17-75-21-5E-E1-3C-E2-2D-92-03-C6-A1-8D-1D-E9-67-F4-CE-FF-AC-52-86-D2-F5-0F-EB-03-01-02-41-00-ED-6A-AE-A7-33-B0-B8-86-36-91-BA-E7-D2-DD-15-3A-97-A2-66-31-98-24-A6-0D-E7-09-E3-BD-36-79-91-F2-5E-23-AA-21-C9-71-43-24-10-FA-F0-E6-FC-E4-C6-1F-08-45-E8-91-74-13-69-63-A5-40-8F-38-44-2B-54-69-02-41-00-E6-FE-39-8B-6F-DB-44-CA-E7-72-D3-CA-09-5B-3D-B1-53-85-29-36-FC-F1-B9-D8-1F-64-02-D4-F7-F5-71-E5-9F-17-D7-F3-9F-5A-3A-A6-A3-62-46-F6-93-3D-D3-CD-18-F2-12-BD-68-02-AA-91-55-DA-64-26-D7-16-34-E1-02-40-60-3F-F4-C8-72-4B-3D-B3-A3-A1-D6-FD-2E-DE-54-41-E9-C1-7B-DE-B5-48-7E-4D-7A-91-E6-D3-09-A7-A5-84-75-A7-CD-CC-5E-C7-5D-29-DC-FC-6E-F7-A6-24-F5-31-15-80-89-F5-95-F2-5C-B2-7A-07-3F-48-D7-52-1D-A9-02-40-40-1B-FC-C2-9B-57-E2-DE-E1-9F-B7-F2-11-E8-B5-D5-9A-55-91-DB-C6-16-1C-BB-43-F3-10-EA-24-AB-85-61-F2-66-BE-B3-C9-DD-53-FB-DD-CA-AF-E1-4D-7A-52-67-50-EE-16-8F-64-E7-A0-89-57-A7-96-36-45-69-CF-61-02-40-3D-9E-E3-29-D6-BD-59-FF-A5-C3-AC-57-CB-74-FE-B0-C3-67-34-A8-40-EB-04-88-C3-C2-74-4F-69-77-13-48-8A-97-3C-C2-4B-CD-E8-E0-97-98-A2-3F-B6-E2-71-D3-65-9F-5A-C6-C8-AE-FE-BA-B1-ED-DA-08-8A-5B-7B-12", BitConverter.ToString (p8.PrivateKey), "PrivateKey");
+			Assert.AreEqual (0, p8.Version, "Version");
 			// static
 			RSA rsa = PKCS8.PrivateKeyInfo.DecodeRSA (p8.PrivateKey);
-			AssertEquals ("DecodeRSA", "<RSAKeyValue><Modulus>1jmeIZPiujV/5fjohwuKXyglhbflzNp/08cJKmPprY/QqO+6zzz7VQO5gylODomE++JiFh+dh0AWa/j0ZjhYdGfUtaE6S28TSwg3OjpkCgaOonsUiLf4zmrRRZs5k2e/CqvbN536zlQPN4IJjw0z5LhuRsHMT4BatL0ZgCdAhEk=</Modulus><Exponent>AQAB</Exponent><P>7WqupzOwuIY2kbrn0t0VOpeiZjGYJKYN5wnjvTZ5kfJeI6ohyXFDJBD68Ob85MYfCEXokXQTaWOlQI84RCtUaQ==</P><Q>5v45i2/bRMrnctPKCVs9sVOFKTb88bnYH2QC1Pf1ceWfF9fzn1o6pqNiRvaTPdPNGPISvWgCqpFV2mQm1xY04Q==</Q><DP>YD/0yHJLPbOjodb9Lt5UQenBe961SH5NepHm0wmnpYR1p83MXsddKdz8bvemJPUxFYCJ9ZXyXLJ6Bz9I11IdqQ==</DP><DQ>QBv8wptX4t7hn7fyEei11ZpVkdvGFhy7Q/MQ6iSrhWHyZr6zyd1T+93Kr+FNelJnUO4Wj2TnoIlXp5Y2RWnPYQ==</DQ><InverseQ>PZ7jKda9Wf+lw6xXy3T+sMNnNKhA6wSIw8J0T2l3E0iKlzzCS83o4JeYoj+24nHTZZ9axsiu/rqx7doIilt7Eg==</InverseQ><D>FJVarU1BVrT3QgiFhxxDwlrgKBYAXYuNBrM0HT+WX1fXK7RFFc59M7D07TZVyq3J+k3JMOj+wNUWkm9MRFobnX6uuAFtOJ3ck2irk9bAiopjtNbaIcGgKIwkxCfhSzDSLYdi+Rd1IV7hPOItkgPGoY0d6Wf0zv+sUobS9Q/rAwE=</D></RSAKeyValue>", rsa.ToXmlString (true));
+			Assert.AreEqual ("<RSAKeyValue><Modulus>1jmeIZPiujV/5fjohwuKXyglhbflzNp/08cJKmPprY/QqO+6zzz7VQO5gylODomE++JiFh+dh0AWa/j0ZjhYdGfUtaE6S28TSwg3OjpkCgaOonsUiLf4zmrRRZs5k2e/CqvbN536zlQPN4IJjw0z5LhuRsHMT4BatL0ZgCdAhEk=</Modulus><Exponent>AQAB</Exponent><P>7WqupzOwuIY2kbrn0t0VOpeiZjGYJKYN5wnjvTZ5kfJeI6ohyXFDJBD68Ob85MYfCEXokXQTaWOlQI84RCtUaQ==</P><Q>5v45i2/bRMrnctPKCVs9sVOFKTb88bnYH2QC1Pf1ceWfF9fzn1o6pqNiRvaTPdPNGPISvWgCqpFV2mQm1xY04Q==</Q><DP>YD/0yHJLPbOjodb9Lt5UQenBe961SH5NepHm0wmnpYR1p83MXsddKdz8bvemJPUxFYCJ9ZXyXLJ6Bz9I11IdqQ==</DP><DQ>QBv8wptX4t7hn7fyEei11ZpVkdvGFhy7Q/MQ6iSrhWHyZr6zyd1T+93Kr+FNelJnUO4Wj2TnoIlXp5Y2RWnPYQ==</DQ><InverseQ>PZ7jKda9Wf+lw6xXy3T+sMNnNKhA6wSIw8J0T2l3E0iKlzzCS83o4JeYoj+24nHTZZ9axsiu/rqx7doIilt7Eg==</InverseQ><D>FJVarU1BVrT3QgiFhxxDwlrgKBYAXYuNBrM0HT+WX1fXK7RFFc59M7D07TZVyq3J+k3JMOj+wNUWkm9MRFobnX6uuAFtOJ3ck2irk9bAiopjtNbaIcGgKIwkxCfhSzDSLYdi+Rd1IV7hPOItkgPGoY0d6Wf0zv+sUobS9Q/rAwE=</D></RSAKeyValue>", rsa.ToXmlString (true), "DecodeRSA");
 		}
 
 		[Test]
@@ -109,31 +109,31 @@ namespace MonoTests.Mono.Security.Cryptography {
 		public void PrivateKeyInfo () 
 		{
 			PKCS8.PrivateKeyInfo p8 = new PKCS8.PrivateKeyInfo ();
-			AssertNull ("Default-Algorithm", p8.Algorithm);
-			AssertEquals ("Default-Attributes", 0, p8.Attributes.Count);
-			AssertNull ("Default-PrivateKey", p8.PrivateKey);
-			AssertEquals ("Default-Version", 0, p8.Version);
+			Assert.IsNull (p8.Algorithm, "Default-Algorithm");
+			Assert.AreEqual (0, p8.Attributes.Count, "Default-Attributes");
+			Assert.IsNull (p8.PrivateKey, "Default-PrivateKey");
+			Assert.AreEqual (0, p8.Version, "Default-Version");
 			
 			byte[] key = new byte [8];
 			p8.Algorithm = "1.2.3.4.5";
 			p8.Attributes.Add (new ASN1 (0x05)); // NULL
 			p8.PrivateKey = key;
 			p8.Version = 1;
-			AssertEquals ("Algorithm", "1.2.3.4.5", p8.Algorithm);
-			AssertEquals ("Attributes", 1, p8.Attributes.Count);
-			AssertEquals ("PrivateKey", 8, p8.PrivateKey.Length);
-			AssertEquals ("Version", 1, p8.Version);
+			Assert.AreEqual ("1.2.3.4.5", p8.Algorithm, "Algorithm");
+			Assert.AreEqual (1, p8.Attributes.Count, "Attributes");
+			Assert.AreEqual (8, p8.PrivateKey.Length, "PrivateKey");
+			Assert.AreEqual (1, p8.Version, "Version");
 			
 			key [0] = 1;
-			AssertEquals ("PrivateKey not directly accessible", 0, p8.PrivateKey [0]);
+			Assert.AreEqual (0, p8.PrivateKey [0], "PrivateKey not directly accessible");
 			
 			byte[] p8pki = p8.GetBytes ();
 			
 			PKCS8.PrivateKeyInfo decoded = new PKCS8.PrivateKeyInfo (p8pki);
-			AssertEquals ("Decoded-Algorithm", "1.2.3.4.5", decoded.Algorithm);
-			AssertEquals ("Decoded-Attributes", 1, decoded.Attributes.Count);
-			AssertEquals ("Decoded-PrivateKey", 8, decoded.PrivateKey.Length);
-			AssertEquals ("Decoded-Version", 1, decoded.Version);
+			Assert.AreEqual ("1.2.3.4.5", decoded.Algorithm, "Decoded-Algorithm");
+			Assert.AreEqual (1, decoded.Attributes.Count, "Decoded-Attributes");
+			Assert.AreEqual (8, decoded.PrivateKey.Length, "Decoded-PrivateKey");
+			Assert.AreEqual (1, decoded.Version, "Decoded-Version");
 		}
 		
 		[Test]

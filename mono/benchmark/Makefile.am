@@ -1,5 +1,4 @@
-TOP=../..
-include $(TOP)/mk/common.inc
+include $(top_srcdir)/mk/common.mk
 
 TEST_PROG=../mini/mono
 RUNTIME_ARGS="-O=all"

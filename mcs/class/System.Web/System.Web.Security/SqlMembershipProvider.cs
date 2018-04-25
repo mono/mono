@@ -122,28 +122,28 @@ namespace System.Web.Security {
 				throw new ArgumentException (String.Format ("invalid format for {0}", pName));
 		}
 
-		public override bool ChangePassword (string username, string oldPwd, string newPwd)
+		public override bool ChangePassword (string username, string oldPassword, string newPassword)
 		{
 			if (username != null) username = username.Trim ();
-			if (oldPwd != null) oldPwd = oldPwd.Trim ();
-			if (newPwd != null) newPwd = newPwd.Trim ();
+			if (oldPassword != null) oldPassword = oldPassword.Trim ();
+			if (newPassword != null) newPassword = newPassword.Trim ();
 
 			CheckParam ("username", username, 256);
-			CheckParam ("oldPwd", oldPwd, 128);
-			CheckParam ("newPwd", newPwd, 128);
+			CheckParam ("oldPassword", oldPassword, 128);
+			CheckParam ("newPassword", newPassword, 128);
 
-			if (!CheckPassword (newPwd))
+			if (!CheckPassword (newPassword))
 				throw new ArgumentException (string.Format (
 						"New Password invalid. New Password length minimum: {0}. Non-alphanumeric characters required: {1}.",
 						MinRequiredPasswordLength,
 						MinRequiredNonAlphanumericCharacters));
 
 			using (DbConnection connection = CreateConnection ()) {
-				PasswordInfo pi = ValidateUsingPassword (username, oldPwd);
+				PasswordInfo pi = ValidateUsingPassword (username, oldPassword);
 
 				if (pi != null) {
-					EmitValidatingPassword (username, newPwd, false);
-					string db_password = EncodePassword (newPwd, pi.PasswordFormat, pi.PasswordSalt);
+					EmitValidatingPassword (username, newPassword, false);
+					string db_password = EncodePassword (newPassword, pi.PasswordFormat, pi.PasswordSalt);
 
 					DbCommand command = factory.CreateCommand ();
 					command.Connection = connection;
@@ -169,23 +169,23 @@ namespace System.Web.Security {
 			}
 		}
 
-		public override bool ChangePasswordQuestionAndAnswer (string username, string password, string newPwdQuestion, string newPwdAnswer)
+		public override bool ChangePasswordQuestionAndAnswer (string username, string password, string newPasswordQuestion, string newPasswordAnswer)
 		{
 			if (username != null) username = username.Trim ();
-			if (newPwdQuestion != null) newPwdQuestion = newPwdQuestion.Trim ();
-			if (newPwdAnswer != null) newPwdAnswer = newPwdAnswer.Trim ();
+			if (newPasswordQuestion != null) newPasswordQuestion = newPasswordQuestion.Trim ();
+			if (newPasswordAnswer != null) newPasswordAnswer = newPasswordAnswer.Trim ();
 
 			CheckParam ("username", username, 256);
 			if (RequiresQuestionAndAnswer)
-				CheckParam ("newPwdQuestion", newPwdQuestion, 128);
+				CheckParam ("newPasswordQuestion", newPasswordQuestion, 128);
 			if (RequiresQuestionAndAnswer)
-				CheckParam ("newPwdAnswer", newPwdAnswer, 128);
+				CheckParam ("newPasswordAnswer", newPasswordAnswer, 128);
 
 			using (DbConnection connection = CreateConnection ()) {
 				PasswordInfo pi = ValidateUsingPassword (username, password);
 
 				if (pi != null) {
-					string db_passwordAnswer = EncodePassword (newPwdAnswer, pi.PasswordFormat, pi.PasswordSalt);
+					string db_passwordAnswer = EncodePassword (newPasswordAnswer, pi.PasswordFormat, pi.PasswordSalt);
 
 					DbCommand command = factory.CreateCommand ();
 					command.Connection = connection;
@@ -194,7 +194,7 @@ namespace System.Web.Security {
 
 					AddParameter (command, "@ApplicationName", ApplicationName);
 					AddParameter (command, "@UserName", username);
-					AddParameter (command, "@NewPasswordQuestion", newPwdQuestion);
+					AddParameter (command, "@NewPasswordQuestion", newPasswordQuestion);
 					AddParameter (command, "@NewPasswordAnswer", db_passwordAnswer);
 					DbParameter returnValue = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
@@ -212,8 +212,8 @@ namespace System.Web.Security {
 		public override MembershipUser CreateUser (string username,
 							   string password,
 							   string email,
-							   string pwdQuestion,
-							   string pwdAnswer,
+							   string passwordQuestion,
+							   string passwordAnswer,
 							   bool isApproved,
 							   object providerUserKey,
 							   out MembershipCreateStatus status)
@@ -221,8 +221,8 @@ namespace System.Web.Security {
 			if (username != null) username = username.Trim ();
 			if (password != null) password = password.Trim ();
 			if (email != null) email = email.Trim ();
-			if (pwdQuestion != null) pwdQuestion = pwdQuestion.Trim ();
-			if (pwdAnswer != null) pwdAnswer = pwdAnswer.Trim ();
+			if (passwordQuestion != null) passwordQuestion = passwordQuestion.Trim ();
+			if (passwordAnswer != null) passwordAnswer = passwordAnswer.Trim ();
 
 			/* some initial validation */
 			if (username == null || username.Length == 0 || username.Length > 256 || username.IndexOf (',') != -1) {
@@ -245,14 +245,14 @@ namespace System.Web.Security {
 				return null;
 			}
 			if (RequiresQuestionAndAnswer &&
-				(pwdQuestion == null ||
-				 pwdQuestion.Length == 0 || pwdQuestion.Length > 256)) {
+				(passwordQuestion == null ||
+				 passwordQuestion.Length == 0 || passwordQuestion.Length > 256)) {
 				status = MembershipCreateStatus.InvalidQuestion;
 				return null;
 			}
 			if (RequiresQuestionAndAnswer &&
-				(pwdAnswer == null ||
-				 pwdAnswer.Length == 0 || pwdAnswer.Length > 128)) {
+				(passwordAnswer == null ||
+				 passwordAnswer.Length == 0 || passwordAnswer.Length > 128)) {
 				status = MembershipCreateStatus.InvalidAnswer;
 				return null;
 			}
@@ -275,7 +275,7 @@ namespace System.Web.Security {
 
 			password = EncodePassword (password, PasswordFormat, passwordSalt);
 			if (RequiresQuestionAndAnswer)
-				pwdAnswer = EncodePassword (pwdAnswer, PasswordFormat, passwordSalt);
+				passwordAnswer = EncodePassword (passwordAnswer, PasswordFormat, passwordSalt);
 
 			/* make sure the hashed/encrypted password and
 			 * answer are still under 128 characters. */
@@ -285,7 +285,7 @@ namespace System.Web.Security {
 			}
 
 			if (RequiresQuestionAndAnswer) {
-				if (pwdAnswer.Length > 128) {
+				if (passwordAnswer.Length > 128) {
 					status = MembershipCreateStatus.InvalidAnswer;
 					return null;
 				}
@@ -307,8 +307,8 @@ namespace System.Web.Security {
 					AddParameter (command, "@Password", password);
 					AddParameter (command, "@PasswordSalt", passwordSalt);
 					AddParameter (command, "@Email", email);
-					AddParameter (command, "@PasswordQuestion", pwdQuestion);
-					AddParameter (command, "@PasswordAnswer", pwdAnswer);
+					AddParameter (command, "@PasswordQuestion", passwordQuestion);
+					AddParameter (command, "@PasswordAnswer", passwordAnswer);
 					AddParameter (command, "@IsApproved", isApproved);
 					AddParameter (command, "@CurrentTimeUtc", Now);
 					AddParameter (command, "@CreateDate", Now);
@@ -429,9 +429,9 @@ namespace System.Web.Security {
 			}
 		}
 
-		public override MembershipUserCollection FindUsersByName (string nameToMatch, int pageIndex, int pageSize, out int totalRecords)
+		public override MembershipUserCollection FindUsersByName (string usernameToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
-			CheckParam ("nameToMatch", nameToMatch, 256);
+			CheckParam ("usernameToMatch", usernameToMatch, 256);
 
 			if (pageIndex < 0)
 				throw new ArgumentException ("pageIndex must be >= 0");
@@ -449,7 +449,7 @@ namespace System.Web.Security {
 
 				AddParameter (command, "@PageIndex", pageIndex);
 				AddParameter (command, "@PageSize", pageSize);
-				AddParameter (command, "@UserNameToMatch", nameToMatch);
+				AddParameter (command, "@UserNameToMatch", usernameToMatch);
 				AddParameter (command, "@ApplicationName", ApplicationName);
 				// return value
 				AddParameter (command, "@ReturnValue", ParameterDirection.ReturnValue, null);
@@ -529,20 +529,20 @@ namespace System.Web.Security {
 			}
 		}
 
-		public override string GetPassword (string username, string answer)
+		public override string GetPassword (string username, string passwordAnswer)
 		{
 			if (!EnablePasswordRetrieval)
 				throw new NotSupportedException ("this provider has not been configured to allow the retrieval of passwords");
 
 			CheckParam ("username", username, 256);
 			if (RequiresQuestionAndAnswer)
-				CheckParam ("answer", answer, 128);
+				CheckParam ("passwordAnswer", passwordAnswer, 128);
 
 			PasswordInfo pi = GetPasswordInfo (username);
 			if (pi == null)
 				throw new ProviderException ("An error occurred while retrieving the password from the database");
 
-			string user_answer = EncodePassword (answer, pi.PasswordFormat, pi.PasswordSalt);
+			string user_answer = EncodePassword (passwordAnswer, pi.PasswordFormat, pi.PasswordSalt);
 			string password = null;
 
 			using (DbConnection connection = CreateConnection ()) {
@@ -790,7 +790,7 @@ namespace System.Web.Security {
 				ProvidersHelper.GetDbProviderFactory (connectionString.ProviderName);
 		}
 
-		public override string ResetPassword (string username, string answer)
+		public override string ResetPassword (string username, string passwordAnswer)
 		{
 			if (!EnablePasswordReset)
 				throw new NotSupportedException ("this provider has not been configured to allow the resetting of passwords");
@@ -798,7 +798,7 @@ namespace System.Web.Security {
 			CheckParam ("username", username, 256);
 
 			if (RequiresQuestionAndAnswer)
-				CheckParam ("answer", answer, 128);
+				CheckParam ("passwordAnswer", passwordAnswer, 128);
 
 			using (DbConnection connection = CreateConnection ()) {
 
@@ -810,7 +810,7 @@ namespace System.Web.Security {
 				EmitValidatingPassword (username, newPassword, false);
 
 				string db_password = EncodePassword (newPassword, pi.PasswordFormat, pi.PasswordSalt);
-				string db_answer = EncodePassword (answer, pi.PasswordFormat, pi.PasswordSalt);
+				string db_answer = EncodePassword (passwordAnswer, pi.PasswordFormat, pi.PasswordSalt);
 
 				DbCommand command = factory.CreateCommand ();
 				command.Connection = connection;

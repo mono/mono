@@ -48,24 +48,29 @@ namespace System.ServiceModel.Channels.Http
 			Entries = new List<HttpChannelListenerEntry> ();
 		}
 
-		public List<HttpChannelListenerEntry> Entries { get; private set; }
+		protected List<HttpChannelListenerEntry> Entries { get; private set; }
+		object entries_lock = new object ();
 
 		public abstract void RegisterListener (ChannelDispatcher channel, HttpTransportBindingElement element, TimeSpan timeout);
 		public abstract void UnregisterListener (ChannelDispatcher channel, TimeSpan timeout);
 
 		protected void RegisterListenerCommon (ChannelDispatcher channel, TimeSpan timeout)
 		{
-			Entries.Add (new HttpChannelListenerEntry (channel, new AutoResetEvent (false)));
+			lock (entries_lock) {
+				Entries.Add (new HttpChannelListenerEntry (channel, new AutoResetEvent (false)));
 
-			Entries.Sort (HttpChannelListenerEntry.CompareEntries);
+				Entries.Sort (HttpChannelListenerEntry.CompareEntries);
+			}
 		}
 
 		protected void UnregisterListenerCommon (ChannelDispatcher channel, TimeSpan timeout)
 		{
-			var entry = Entries.First (e => e.ChannelDispatcher == channel);
-			Entries.Remove (entry);
+			lock (entries_lock) {
+				var entry = Entries.First (e => e.ChannelDispatcher == channel);
+				Entries.Remove (entry);
 
-			entry.WaitHandle.Set (); // make sure to finish pending requests.
+				entry.WaitHandle.Set (); // make sure to finish pending requests.
+			}
 		}
 
 		public void ProcessNewContext (HttpContextInfo ctxi)
@@ -79,18 +84,23 @@ namespace System.ServiceModel.Channels.Http
 
 		HttpChannelListenerEntry SelectChannel (HttpContextInfo ctx)
 		{
-			foreach (var e in Entries)
-				if (e.FilterHttpContext (ctx))
-					return e;
+			lock (entries_lock) {
+				foreach (var e in Entries)
+					if (e.FilterHttpContext (ctx))
+						return e;
+			}
 			return null;
 		}
 
 		public bool TryDequeueRequest (ChannelDispatcher channel, TimeSpan timeout, out HttpContextInfo context)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 
 			context = null;
-			var ce = Entries.FirstOrDefault (e => e.ChannelDispatcher == channel);
+			HttpChannelListenerEntry ce = null;
+			lock (entries_lock) {
+				ce = Entries.FirstOrDefault (e => e.ChannelDispatcher == channel);
+			}
 			if (ce == null)
 				return false;
 			lock (ce.RetrieverLock) {
@@ -101,7 +111,7 @@ namespace System.ServiceModel.Channels.Http
 					if (timeout == TimeSpan.MaxValue)
 						waitTimeout = TimeSpan.FromMilliseconds (int.MaxValue);
 					bool ret = ce.WaitHandle.WaitOne (waitTimeout);
-					return ret && TryDequeueRequest (channel, waitTimeout - (DateTime.Now - start), out context); // recurse, am lazy :/
+					return ret && TryDequeueRequest (channel, waitTimeout - (DateTime.UtcNow - start), out context); // recurse, am lazy :/
 				}
 				context = q.Dequeue ();
 				return true;

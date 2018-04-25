@@ -1,20 +1,10 @@
-/*
- * memfuncs.c: Our own bzero/memmove.
+/**
+ * \file
+ * Our own bzero/memmove.
  *
  * Copyright (C) 2013-2015 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 /*
@@ -64,11 +54,11 @@
 
 /**
  * mono_gc_bzero_aligned:
- * @dest: address to start to clear
- * @size: size of the region to clear
+ * \param dest address to start to clear
+ * \param size size of the region to clear
  *
- * Zero @size bytes starting at @dest.
- * The address of @dest MUST be aligned to word boundaries
+ * Zero \p size bytes starting at \p dest.
+ * The address of \p dest MUST be aligned to word boundaries
  *
  * FIXME borrow faster code from some BSD libc or bionic
  */
@@ -110,12 +100,12 @@ mono_gc_bzero_aligned (void *dest, size_t size)
 
 /**
  * mono_gc_bzero_atomic:
- * @dest: address to start to clear
- * @size: size of the region to clear
+ * \param dest address to start to clear
+ * \param size size of the region to clear
  *
- * Zero @size bytes starting at @dest.
+ * Zero \p size bytes starting at \p dest.
  *
- * Use this to zero memory without word tearing when dest is aligned.
+ * Use this to zero memory without word tearing when \p dest is aligned.
  */
 void
 mono_gc_bzero_atomic (void *dest, size_t size)
@@ -147,14 +137,15 @@ mono_gc_bzero_atomic (void *dest, size_t size)
 
 /**
  * mono_gc_memmove_aligned:
- * @dest: destination of the move
- * @src: source
- * @size: size of the block to move
+ * \param dest destination of the move
+ * \param src source
+ * \param size size of the block to move
  *
- * Move @size bytes from @src to @dest.
+ * Move \p size bytes from \p src to \p dest.
  *
  * Use this to copy memory without word tearing when both pointers are aligned
- */void
+ */
+void
 mono_gc_memmove_aligned (void *dest, const void *src, size_t size)
 {
 	g_assert (unaligned_bytes (dest) == 0);
@@ -188,7 +179,7 @@ mono_gc_memmove_aligned (void *dest, const void *src, size_t size)
 			while (p > align_end)
 			        *--p = *--s;
 
-			word_start = align_up (start);
+			word_start = (char *)align_up (start);
 			bytes_to_memmove = p - word_start;
 			p -= bytes_to_memmove;
 			s -= bytes_to_memmove;
@@ -214,11 +205,11 @@ mono_gc_memmove_aligned (void *dest, const void *src, size_t size)
 
 /**
  * mono_gc_memmove_atomic:
- * @dest: destination of the move
- * @src: source
- * @size: size of the block to move
+ * \param dest destination of the move
+ * \param src source
+ * \param size size of the block to move
  *
- * Move @size bytes from @src to @dest.
+ * Move \p size bytes from \p src to \p dest.
  *
  * Use this to copy memory without word tearing when both pointers are aligned
  */

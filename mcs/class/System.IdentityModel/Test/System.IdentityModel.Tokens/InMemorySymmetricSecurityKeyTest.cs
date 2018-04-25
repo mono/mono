@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE
 using System;
 using System.IO;
 using System.Text;
@@ -275,5 +276,23 @@ namespace MonoTests.System.IdentityModel.Tokens
 			Assert.IsFalse (key.IsSymmetricAlgorithm (SecurityAlgorithms.RsaOaepKeyWrap), "#3");
 			Assert.IsTrue (key.IsSymmetricAlgorithm (SecurityAlgorithms.Psha1KeyDerivation), "#4");
 		}
+
+		[Test]
+		public void GetKeyedHashAlgorithm()
+		{
+			InMemorySymmetricSecurityKey key = new InMemorySymmetricSecurityKey(new byte[0]);
+
+			Assert.That(() => key.GetKeyedHashAlgorithm(SecurityAlgorithms.HmacSha256Signature), Throws.Nothing);
+		}
+
+		[Test]
+		public void IsSupportedAlgorithm()
+		{
+			InMemorySymmetricSecurityKey key = new InMemorySymmetricSecurityKey(new byte[0]);
+
+			Assert.That(() => key.IsSupportedAlgorithm(SecurityAlgorithms.HmacSha256Signature), Is.True);
+		}
+	    
 	}
 }
+#endif

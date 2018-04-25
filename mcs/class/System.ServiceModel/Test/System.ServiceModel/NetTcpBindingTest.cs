@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.ObjectModel;
 using System.Net.Sockets;
@@ -189,6 +190,7 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
+		[Category ("NotWorking")] // Fails randomly
 		public void StreamedConnection ()
 		{
 			var host = new ServiceHost (typeof (Foo));
@@ -211,6 +213,13 @@ namespace MonoTests.System.ServiceModel
 			}
 			Assert.IsTrue (Foo.AddCalled, "#1");
 			Assert.IsTrue (Foo.JoinCalled, "#2");
+		}
+
+		[Test]
+		public void ReaderQuotasDefault_Bug15153 ()
+		{
+			NetTcpBinding binding = new NetTcpBinding(SecurityMode.None);
+			binding.ReaderQuotas.MaxStringContentLength = 8192;
 		}
 
 		[ServiceContract]
@@ -245,3 +254,4 @@ namespace MonoTests.System.ServiceModel
 		}
 	}
 }
+#endif

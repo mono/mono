@@ -1,15 +1,19 @@
+/**
+ * \file
+ */
 
 #include "config.h"
 #include "tasklets.h"
 #include "mono/metadata/exception.h"
 #include "mono/metadata/gc-internals.h"
 #include "mini.h"
+#include "mini-runtime.h"
 
 #if defined(MONO_SUPPORT_TASKLETS)
 
 static mono_mutex_t tasklets_mutex;
-#define tasklets_lock() mono_mutex_lock(&tasklets_mutex)
-#define tasklets_unlock() mono_mutex_unlock(&tasklets_mutex)
+#define tasklets_lock() mono_os_mutex_lock(&tasklets_mutex)
+#define tasklets_unlock() mono_os_mutex_unlock(&tasklets_mutex)
 
 /* LOCKING: tasklets_mutex is assumed to e taken */
 static void
@@ -47,13 +51,14 @@ continuation_mark_frame (MonoContinuation *cont)
 	if (cont->domain)
 		return mono_get_exception_argument ("cont", "Already marked");
 
-	jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 	lmf = mono_get_lmf();
 	cont->domain = mono_domain_get ();
 	cont->thread_id = mono_native_thread_id_get ();
 
 	/* get to the frame that called Mark () */
 	memset (&rji, 0, sizeof (rji));
+	memset (&ctx, 0, sizeof (ctx));
 	do {
 		ji = mono_find_jit_info (cont->domain, jit_tls, &rji, NULL, &ctx, &new_ctx, NULL, &lmf, NULL, NULL);
 		if (!ji || ji == (gpointer)-1) {
@@ -108,7 +113,7 @@ continuation_store (MonoContinuation *cont, int state, MonoException **e)
 			mono_gc_free_fixed (cont->saved_stack);
 		cont->stack_used_size = num_bytes;
 		cont->stack_alloc_size = num_bytes * 1.1;
-		cont->saved_stack = mono_gc_alloc_fixed (cont->stack_alloc_size, NULL, MONO_ROOT_SOURCE_THREADING, "saved tasklet stack");
+		cont->saved_stack = mono_gc_alloc_fixed (cont->stack_alloc_size, NULL, MONO_ROOT_SOURCE_THREADING, NULL, "Tasklet Saved Stack");
 		tasklets_unlock ();
 	}
 	memcpy (cont->saved_stack, cont->return_sp, num_bytes);
@@ -136,7 +141,7 @@ continuation_restore (MonoContinuation *cont, int state)
 void
 mono_tasklets_init (void)
 {
-	mono_mutex_init_recursive (&tasklets_mutex);
+	mono_os_mutex_init_recursive (&tasklets_mutex);
 
 	mono_add_internal_call ("Mono.Tasklets.Continuation::alloc", continuation_alloc);
 	mono_add_internal_call ("Mono.Tasklets.Continuation::free", continuation_free);
@@ -149,6 +154,57 @@ void
 mono_tasklets_cleanup (void)
 {
 }
+#else
 
+static
+void continuations_not_supported (void)
+{
+	mono_set_pending_exception (mono_get_exception_not_implemented ("Tasklets are not implemented on this platform."));
+}
+
+static void*
+continuation_alloc (void)
+{
+	continuations_not_supported ();
+	return NULL;
+}
+
+static void
+continuation_free (MonoContinuation *cont)
+{
+	continuations_not_supported ();
+}
+
+static MonoException*
+continuation_mark_frame (MonoContinuation *cont)
+{
+	continuations_not_supported ();
+	return NULL;
+}
+
+static int
+continuation_store (MonoContinuation *cont, int state, MonoException **e)
+{
+	continuations_not_supported ();
+	return 0;
+}
+
+static MonoException*
+continuation_restore (MonoContinuation *cont, int state)
+{
+	continuations_not_supported ();
+	return NULL;
+}
+
+void
+mono_tasklets_init(void)
+{
+	mono_add_internal_call ("Mono.Tasklets.Continuation::alloc", continuation_alloc);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::free", continuation_free);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::mark", continuation_mark_frame);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::store", continuation_store);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::restore", continuation_restore);
+
+}
 #endif
 

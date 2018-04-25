@@ -673,10 +673,10 @@ namespace System.Web.UI.WebControls {
 			registered_class = name;
 		}
 
-		public CssStyleCollection GetStyleAttributes (IUrlResolutionService resolver)
+		public CssStyleCollection GetStyleAttributes (IUrlResolutionService urlResolver)
 		{
 			CssStyleCollection col = new CssStyleCollection ();
-			FillStyleAttributes (col, resolver);
+			FillStyleAttributes (col, urlResolver);
 			return col;
 		}
 

@@ -54,7 +54,8 @@ namespace Microsoft.Build.Execution
 		
 		public void Dispose ()
 		{
-			WaitHandle.WaitAll (submissions.Select (s => s.WaitHandle).ToArray ());
+			if (submissions.Count > 0)
+				WaitHandle.WaitAll (submissions.Select (s => s.WaitHandle).ToArray ());
 			BuildNodeManager.Stop ();
 		}
 

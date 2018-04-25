@@ -31,7 +31,7 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-#if !MONOTOUCH
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 #endif
 using System.IO;
@@ -355,7 +355,7 @@ namespace MonoTests.System.Reflection
 				get { return 99; }
 			}
 		}
-#if !MONOTOUCH
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
 		public void ConstantValue () {
 			/*This test looks scary because we can't generate a default value with C# */
@@ -391,7 +391,12 @@ namespace MonoTests.System.Reflection
 			var p = t.GetProperty ("Prop");
 			Assert.AreEqual ("test", p.GetConstantValue (), "#1");
 
-			File.Delete (Path.Combine (Path.GetTempPath (), an));
+			try {
+				// This throws an exception under MS.NET and Mono on Windows,
+				// open files cannot be deleted. That's fine.
+				File.Delete (Path.Combine (Path.GetTempPath (), an));
+			} catch (Exception) {
+			}
 
 			var pa = typeof (TestE).GetProperty ("PropE");
 			try {

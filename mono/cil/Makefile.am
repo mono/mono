@@ -1,5 +1,4 @@
-TOP=../..
-include $(TOP)/mk/common.inc
+include $(top_srcdir)/mk/common.mk
 
 opcode.def: make-opcodes-def.pl cil-opcodes.xml
 	perl $(srcdir)/make-opcodes-def.pl $(srcdir)/cil-opcodes.xml $@.tmp

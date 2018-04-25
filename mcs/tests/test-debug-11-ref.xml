@@ -378,8 +378,7 @@
       </locals>
       <scopes>
         <entry index="0" start="0x1" end="0x1e" />
-        <entry index="1" start="0xb" end="0x11" />
-        <entry index="2" start="0xf" end="0x10" />
+        <entry index="1" start="0xf" end="0x10" />
       </scopes>
     </method>
     <method token="0x6000019">
@@ -401,8 +400,7 @@
       </locals>
       <scopes>
         <entry index="0" start="0x1" end="0x37" />
-        <entry index="1" start="0xe" end="0x18" />
-        <entry index="2" start="0x16" end="0x17" />
+        <entry index="1" start="0x16" end="0x17" />
       </scopes>
     </method>
     <method token="0x600001a">
@@ -423,8 +421,7 @@
       </locals>
       <scopes>
         <entry index="0" start="0x1" end="0x3c" />
-        <entry index="1" start="0xf" end="0x18" />
-        <entry index="2" start="0x16" end="0x17" />
+        <entry index="1" start="0x16" end="0x17" />
       </scopes>
     </method>
     <method token="0x600001b">
@@ -446,8 +443,7 @@
       </locals>
       <scopes>
         <entry index="0" start="0x1" end="0x4d" />
-        <entry index="1" start="0x24" end="0x31" />
-        <entry index="2" start="0x2f" end="0x30" />
+        <entry index="1" start="0x2f" end="0x30" />
       </scopes>
     </method>
   </methods>

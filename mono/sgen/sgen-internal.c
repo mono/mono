@@ -1,20 +1,10 @@
-/*
- * sgen-internal.c: Internal lock-free memory allocator.
+/**
+ * \file
+ * Internal lock-free memory allocator.
  *
  * Copyright (C) 2012 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -28,19 +18,35 @@
 #include "mono/sgen/sgen-memory-governor.h"
 #include "mono/sgen/sgen-client.h"
 
-/* keep each size a multiple of ALLOC_ALIGN */
+/*
+ * When allocating sgen memory we choose the allocator with the smallest slot size
+ * that can fit our requested size. These slots are allocated within a block that
+ * can contain at least 2 slots of the specific size.
+ *
+ * Currently, slots from 8 to 2044/2040 are allocated inside 4096 sized blocks,
+ * 2728 to 4092/4088 inside 8192 sized blocks, and higher inside 16384 sized
+ * blocks. We also need to make sure the slots are pointer size aligned so we
+ * don't allocate unaligned memory.
+ *
+ * The computation of these sizes spawns from two basic rules :
+ * 	- if we use slots of size s1 that fit n times in a block, it is illogical
+ * to use another slot of size s2 which also fits the same n times in a block.
+ *	- if we use slots of size s1 that fit n times in a block, there is no
+ * s2 > s1 that can fit n times in the block. That would mean we are wasting memory
+ * when allocating size S where s1 < S <= s2.
+ */
 #if SIZEOF_VOID_P == 4
 static const int allocator_sizes [] = {
 	   8,   16,   24,   32,   40,   48,   64,   80,
-	  96,  128,  160,  192,  224,  248,  296,  320,
-	 384,  448,  504,  528,  584,  680,  816, 1088,
-	1360, 2044, 2336, 2728, 3272, 4092, 5456, 8188 };
+	  96,  124,  160,  192,  224,  252,  292,  340,
+	 408,  452,  508,  584,  680,  816, 1020,
+	1364, 2044, 2728, 4092, 5460, 8188 };
 #else
 static const int allocator_sizes [] = {
 	   8,   16,   24,   32,   40,   48,   64,   80,
-	  96,  128,  160,  192,  224,  248,  320,  328,
-	 384,  448,  528,  584,  680,  816, 1016, 1088,
-	1360, 2040, 2336, 2728, 3272, 4088, 5456, 8184 };
+	  96,  128,  160,  192,  224,  248,  288,  336,
+	 368,  448,  504,  584,  680,  816, 1016,
+	1360, 2040, 2728, 4088, 5456, 8184 };
 #endif
 
 #define NUM_ALLOCATORS	(sizeof (allocator_sizes) / sizeof (int))
@@ -60,12 +66,13 @@ block_size (size_t slot_size)
 	static int pagesize = -1;
 
 	int size;
+	size_t aligned_slot_size = SGEN_ALIGN_UP_TO (slot_size, SIZEOF_VOID_P);
 
 	if (pagesize == -1)
 		pagesize = mono_pagesize ();
 
 	for (size = pagesize; size < LOCK_FREE_ALLOC_SB_MAX_SIZE; size <<= 1) {
-		if (slot_size * 2 <= LOCK_FREE_ALLOC_SB_USABLE_SIZE (size))
+		if (aligned_slot_size * 2 <= LOCK_FREE_ALLOC_SB_USABLE_SIZE (size))
 			return size;
 	}
 	return LOCK_FREE_ALLOC_SB_MAX_SIZE;
@@ -107,8 +114,10 @@ sgen_register_fixed_internal_mem_type (int type, size_t size)
 
 	if (fixed_type_allocator_indexes [type] == -1)
 		fixed_type_allocator_indexes [type] = slot;
-	else
-		g_assert (fixed_type_allocator_indexes [type] == slot);
+	else {
+		if (fixed_type_allocator_indexes [type] != slot)
+			g_error ("Invalid double registration of type %d old slot %d new slot %d", type, fixed_type_allocator_indexes [type], slot);
+	}
 }
 
 static const char*
@@ -150,6 +159,8 @@ description_for_type (int type)
 	case INTERNAL_MEM_CARDTABLE_MOD_UNION: return "cardtable-mod-union";
 	case INTERNAL_MEM_BINARY_PROTOCOL: return "binary-protocol";
 	case INTERNAL_MEM_TEMPORARY: return "temporary";
+	case INTERNAL_MEM_LOG_ENTRY: return "log-entry";
+	case INTERNAL_MEM_COMPLEX_DESCRIPTORS: return "complex-descriptors";
 	default: {
 		const char *description = sgen_client_description_for_internal_mem_type (type);
 		SGEN_ASSERT (0, description, "Unknown internal mem type");
@@ -165,7 +176,7 @@ sgen_alloc_internal_dynamic (size_t size, int type, gboolean assert_on_failure)
 	void *p;
 
 	if (size > allocator_sizes [NUM_ALLOCATORS - 1]) {
-		p = sgen_alloc_os_memory (size, SGEN_ALLOC_INTERNAL | SGEN_ALLOC_ACTIVATE, NULL);
+		p = sgen_alloc_os_memory (size, (SgenAllocFlags)(SGEN_ALLOC_INTERNAL | SGEN_ALLOC_ACTIVATE), NULL, MONO_MEM_ACCOUNT_SGEN_INTERNAL);
 		if (!p)
 			sgen_assert_memory_alloc (NULL, size, description_for_type (type));
 	} else {
@@ -180,6 +191,8 @@ sgen_alloc_internal_dynamic (size_t size, int type, gboolean assert_on_failure)
 			sgen_assert_memory_alloc (NULL, size, description_for_type (type));
 		memset (p, 0, size);
 	}
+
+	SGEN_ASSERT (0, !(((mword)p) & (sizeof(gpointer) - 1)), "Why do we allocate unaligned addresses ?");
 	return p;
 }
 
@@ -190,7 +203,7 @@ sgen_free_internal_dynamic (void *addr, size_t size, int type)
 		return;
 
 	if (size > allocator_sizes [NUM_ALLOCATORS - 1])
-		sgen_free_os_memory (addr, size, SGEN_ALLOC_INTERNAL);
+		sgen_free_os_memory (addr, size, SGEN_ALLOC_INTERNAL, MONO_MEM_ACCOUNT_SGEN_INTERNAL);
 	else
 		mono_lock_free_free (addr, block_size (size));
 }
@@ -212,6 +225,8 @@ sgen_alloc_internal (int type)
 
 	p = mono_lock_free_alloc (&allocators [index]);
 	memset (p, 0, size);
+
+	SGEN_ASSERT (0, !(((mword)p) & (sizeof(gpointer) - 1)), "Why do we allocate unaligned addresses ?");
 
 	return p;
 }
@@ -267,17 +282,21 @@ sgen_init_internal_allocator (void)
 	for (i = 0; i < NUM_ALLOCATORS; ++i) {
 		allocator_block_sizes [i] = block_size (allocator_sizes [i]);
 		mono_lock_free_allocator_init_size_class (&size_classes [i], allocator_sizes [i], allocator_block_sizes [i]);
-		mono_lock_free_allocator_init_allocator (&allocators [i], &size_classes [i]);
+		mono_lock_free_allocator_init_allocator (&allocators [i], &size_classes [i], MONO_MEM_ACCOUNT_SGEN_INTERNAL);
 	}
 
 	for (size = mono_pagesize (); size <= LOCK_FREE_ALLOC_SB_MAX_SIZE; size <<= 1) {
-		int max_size = LOCK_FREE_ALLOC_SB_USABLE_SIZE (size) / 2;
+		int max_size = (LOCK_FREE_ALLOC_SB_USABLE_SIZE (size) / 2) & ~(SIZEOF_VOID_P - 1);
 		/*
 		 * we assert that allocator_sizes contains the biggest possible object size
-		 * per block (4K => 4080 / 2 = 2040, 8k => 8176 / 2 = 4088, 16k => 16368 / 2 = 8184 on 64bits),
+		 * per block which has to be an aligned address.
+		 * (4K => 2040, 8k => 4088, 16k => 8184 on 64bits),
 		 * so that we do not get different block sizes for sizes that should go to the same one
 		 */
 		g_assert (allocator_sizes [index_for_size (max_size)] == max_size);
+		g_assert (block_size (max_size) == size);
+		if (size < LOCK_FREE_ALLOC_SB_MAX_SIZE)
+			g_assert (block_size (max_size + 1) == size << 1);
 	}
 }
 

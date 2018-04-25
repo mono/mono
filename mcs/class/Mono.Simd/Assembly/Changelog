@@ -1,7 +1,0 @@
-2008-10-03  Rodrigo Kumpera  <rkumpera@novell.com>
-
-	* AssemblyInfo.cs : Added CLSCompliant attribute.
-
-2008-10-03  Rodrigo Kumpera  <rkumpera@novell.com>
-
-	* Initial checking of the file layout

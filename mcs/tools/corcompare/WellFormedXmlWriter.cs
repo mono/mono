@@ -15,11 +15,6 @@ namespace CorCompare {
 
 	public class WellFormedXmlWriter : DefaultXmlWriter
 	{
-		public static bool IsValid (int ch)
-		{
-			return !IsInvalid (ch);
-		}
-
 		public static bool IsInvalid (int ch)
 		{
 			switch (ch) {

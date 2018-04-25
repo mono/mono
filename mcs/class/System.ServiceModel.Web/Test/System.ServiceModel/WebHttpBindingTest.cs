@@ -16,7 +16,7 @@ namespace MonoTests.System.ServiceModel
 			Assert.AreEqual ("http", b.Scheme, "#1");
 			Assert.AreEqual (Encoding.UTF8, b.WriteEncoding, "#2");
 			Assert.AreEqual (0x10000, b.MaxBufferSize, "#3");
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 			Assert.AreEqual (0x80000, b.MaxBufferPoolSize, "#4");
 #endif
 			Assert.AreEqual (0x10000, b.MaxReceivedMessageSize, "#5");
@@ -32,5 +32,15 @@ namespace MonoTests.System.ServiceModel
 			Assert.AreEqual (typeof (WebMessageEncodingBindingElement), bc [0].GetType (), "#2");
 			Assert.AreEqual (typeof (HttpTransportBindingElement), bc [1].GetType (), "#3");
 		}
+        
+        [Test]
+        public void DefaultSchemeBasedOnSecurityMode ()
+        {
+            WebHttpBinding b = new WebHttpBinding(WebHttpSecurityMode.TransportCredentialOnly);
+            Assert.AreEqual("http", b.Scheme, "#1");
+
+            b = new WebHttpBinding(WebHttpSecurityMode.Transport);
+            Assert.AreEqual("https", b.Scheme, "#2");
+        }
 	}
 }

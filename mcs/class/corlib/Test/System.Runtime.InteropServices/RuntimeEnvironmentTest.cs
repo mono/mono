@@ -58,7 +58,7 @@ namespace MonoTests.System.Runtime.InteropServices {
 
 		[Test]
 #if MOBILE
-		[Ignore ("There's no GAC for the NET_2_1 based profiles (Moonlight, MonoTouch and Mono for Android")]
+		[Ignore ("There's no GAC for the MOBILE based profiles (Moonlight, MonoTouch and Mono for Android")]
 #endif
 		public void FromGlobalAccessCache ()
 		{
@@ -74,11 +74,7 @@ namespace MonoTests.System.Runtime.InteropServices {
 		{
 			string dirname = RuntimeEnvironment.GetRuntimeDirectory ();
 			Assert.IsNotNull (dirname, "GetRuntimeDirectory");
-#if MONODROID
-			Assert.IsTrue (dirname.Length == 0, "directory name empty");
-#else
-			Assert.IsTrue (Directory.Exists (dirname), "Exists");
-#endif
+			Assert.IsTrue (dirname.Length == 0 || Directory.Exists (dirname), "Exists");
 		}
 
 		[Test]

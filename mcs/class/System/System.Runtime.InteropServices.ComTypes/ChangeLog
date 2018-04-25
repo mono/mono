@@ -1,6 +1,0 @@
-2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* ADVF.cs DATADIR.cs DVASPECT.cs FORMATETC.cs IAdviseSink.cs
-	  IDataObject.cs IEnumFORMATETC.cs IEnumSTATDATA.cs STATDATA.cs
-	  STGMEDIUM.cs TYMED.cs : initial checkin.
-
