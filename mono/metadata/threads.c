@@ -4667,17 +4667,19 @@ mono_thread_execute_interruption (MonoExceptionHandle *pexc)
 	// This is not just an optimization -- it is needed to return
 	// a handle to the caller through an out-parameter.
 
+	gboolean fexc = FALSE;
+
 	if (!pexc) {
 		HANDLE_FUNCTION_ENTER ();
 		MonoExceptionHandle exc;
-		HANDLE_FUNCTION_RETURN_VAL (mono_thread_execute_interruption (&exc));
+		fexc = mono_thread_execute_interruption (&exc);
+		HANDLE_FUNCTION_RETURN_VAL (fexc);
 	}
 
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoInternalThreadHandle thread = mono_thread_internal_current_handle ();
 	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
-	gboolean fexc = FALSE;
 
 	lock_thread_handle (thread);
 	gboolean unlock = TRUE;
