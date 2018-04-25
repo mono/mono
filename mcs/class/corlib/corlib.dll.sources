@@ -1218,7 +1218,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/runtime/interopservices/arraywithoffset.cs
 ../referencesource/mscorlib/system/runtime/interopservices/attributes.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/BStrWrapper.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/CallingConvention.cs
+../referencesource/mscorlib/system/runtime/interopservices/callingconvention.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/CharSet.cs
 ../referencesource/mscorlib/system/runtime/interopservices/comexception.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComMemberType.cs
