@@ -1938,41 +1938,6 @@ mono_thread_internal_current_handle (void)
 	return MONO_HANDLE_NEW (MonoInternalThread, mono_thread_internal_current ());
 }
 
-static MonoThreadInfoWaitRet
-mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError *error)
-{
-	gint32 wait = ms;
-	gint64 const start = (ms == -1) ? 0 : mono_msec_ticks ();
-
-	// Allocate handle outside of the loop.
-	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
-
-	while (TRUE) {
-		MonoThreadInfoWaitRet ret;
-
-		MONO_ENTER_GC_SAFE;
-		ret = mono_thread_info_wait_one_handle (thread_to_join, wait, TRUE);
-		MONO_EXIT_GC_SAFE;
-
-		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
-			return ret;
-
-		if (mono_thread_execute_interruption (&exc)) {
-			mono_error_set_exception_handle (error, exc);
-			return ret;
-		}
-
-		if (ms == -1)
-			continue;
-
-		/* Re-calculate wait according to the time passed. */
-		gint32 diff_ms = (gint32)(mono_msec_ticks () - start);
-		if (diff_ms >= ms)
-			return MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
-		wait = ms - diff_ms;
-	}
-}
-
 gboolean
 ves_icall_System_Threading_Thread_Join_internal (MonoThread *this_obj, int ms)
 {
@@ -2002,7 +1967,41 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThread *this_obj, int ms)
 
 	mono_thread_set_state (cur_thread, ThreadState_WaitSleepJoin);
 
-	ret = mono_join_uninterrupted (handle, ms, error);
+	{ // mono_join_uninterrupted
+	MonoInternalThread *thread_to_join = handle;
+	gint32 wait = ms;
+	gint64 const start = (ms == -1) ? 0 : mono_msec_ticks ();
+
+	// Allocate handle outside of the loop.
+	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+
+	while (TRUE) {
+		MonoThreadInfoWaitRet ret;
+
+		MONO_ENTER_GC_SAFE;
+		ret = mono_thread_info_wait_one_handle (thread_to_join, wait, TRUE);
+		MONO_EXIT_GC_SAFE;
+
+		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
+			break;
+
+		if (mono_thread_execute_interruption (&exc)) {
+			mono_error_set_exception_handle (error, exc);
+			break;
+		}
+
+		if (ms == -1)
+			continue;
+
+		/* Re-calculate wait according to the time passed. */
+		gint32 diff_ms = (gint32)(mono_msec_ticks () - start);
+		if (diff_ms >= ms) {
+			ret = MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
+			break;
+		}
+		wait = ms - diff_ms;
+	}
+	}
 
 	mono_thread_clr_state (cur_thread, ThreadState_WaitSleepJoin);
 
