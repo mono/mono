@@ -1605,6 +1605,9 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 
 	MonoInternalThread * const thread = mono_thread_internal_current ();
 
+	// Allocate handle outside of the loop.
+	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+
 	while (TRUE) {
 		gboolean alerted = FALSE;
 
@@ -1617,8 +1620,6 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 		if (!alerted)
 			return;
 
-		// Only ever create one handle in the loop.
-		MonoExceptionHandle exc;
 		if (mono_thread_execute_interruption (&exc))
 			mono_set_pending_exception_handle (exc);
 		else if (ms == MONO_INFINITE_WAIT) // FIXME: !MONO_INFINITE_WAIT
@@ -1943,6 +1944,9 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 	gint32 wait = ms;
 	gint64 const start = (ms == -1) ? 0 : mono_msec_ticks ();
 
+	// Allocate handle outside of the loop.
+	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+
 	while (TRUE) {
 		MonoThreadInfoWaitRet ret;
 
@@ -1953,8 +1957,6 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
 			return ret;
 
-		// Only ever create one handle in the loop.
-		MonoExceptionHandle exc;
 		if (mono_thread_execute_interruption (&exc)) {
 			mono_error_set_exception_handle (error, exc);
 			return ret;
@@ -2064,6 +2066,9 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 
 	MonoW32HandleWaitRet ret;
 
+	// Allocate handle outside of the loop.
+	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+
 	for (;;) {
 #ifdef HOST_WIN32
 		MONO_ENTER_GC_SAFE;
@@ -2079,8 +2084,6 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 		if (ret != MONO_W32HANDLE_WAIT_RET_ALERTED)
 			break;
 
-		// Only ever create one handle in the loop.
-		MonoExceptionHandle exc;
 		if (mono_thread_execute_interruption (&exc)) {
 			mono_error_set_exception_handle (error, exc);
 			break;
@@ -4663,14 +4666,9 @@ static void CALLBACK dummy_apc (ULONG_PTR param)
 static gboolean
 mono_thread_execute_interruption (MonoExceptionHandle *pexc)
 {
-	// Use caller's frame if provided, else create one.
-	// This is not just an optimization -- it is needed to return
-	// a handle to the caller through an out-parameter.
-	//
-	// Caller cannot do the handle allocation because it has loops.
-
 	gboolean fexc = FALSE;
 
+	// Optimize away frame if caller supplied one.
 	if (!pexc) {
 		HANDLE_FUNCTION_ENTER ();
 		MonoExceptionHandle exc;
@@ -4742,7 +4740,7 @@ exit:
 		unlock_thread_handle (thread);
 
 	if (fexc)
-		*pexc = MONO_HANDLE_NEW (MonoException, MONO_HANDLE_RAW (exc));
+		MONO_HANDLE_ASSIGN (*pexc, exc);
 
 	return fexc;
 }
@@ -4773,9 +4771,6 @@ mono_thread_execute_interruption_ptr (void)
 static gboolean
 mono_thread_request_interruption_internal (gboolean running_managed, MonoExceptionHandle *pexc)
 {
-	// Skip frame allocation and do handle allocation in caller's frame, because
-	// caller has a loop.
-
 	MonoInternalThread *thread = mono_thread_internal_current ();
 
 	/* The thread may already be stopping */
