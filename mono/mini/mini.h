@@ -1698,7 +1698,7 @@ extern const char MONO_ARCH_CPU_SPEC [];
 extern const guint16 MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC) [];
 #define ins_get_spec(op) ((const char*)&MONO_ARCH_CPU_SPEC + MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC)[(op) - OP_LOAD])
 
-static inline unsigned
+static inline int
 ins_get_size (int opcode)
 {
 	return ((guint8 *)ins_get_spec (opcode))[MONO_INST_LEN];
