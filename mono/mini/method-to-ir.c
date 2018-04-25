@@ -2262,7 +2262,7 @@ emit_tailcall_parameters (MonoCompile *cfg, MonoMethodSignature *sig)
 	// OP_TAILCALL_PARAMETER is an overestimate because typically
 	// many parameters are in registers.
 
-	int n = sig->param_count + sig->hasthis + 1; // always at least one
+	const int n = sig->param_count + (sig->hasthis ? 1 : 0);
 	for (int i = 0; i < n; ++i) {
 		MonoInst *ins;
 		MONO_INST_NEW (cfg, ins, OP_TAILCALL_PARAMETER);
