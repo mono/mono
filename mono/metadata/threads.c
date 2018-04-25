@@ -4671,7 +4671,7 @@ mono_thread_execute_interruption (MonoExceptionHandle *pexc)
 	// Optimize away frame if caller supplied one.
 	if (!pexc) {
 		HANDLE_FUNCTION_ENTER ();
-		MonoExceptionHandle exc;
+		MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
 		fexc = mono_thread_execute_interruption (&exc);
 		HANDLE_FUNCTION_RETURN_VAL (fexc);
 	}
@@ -4755,7 +4755,7 @@ static MonoException*
 mono_thread_execute_interruption_ptr (void)
 {
 	HANDLE_FUNCTION_ENTER ();
-	MonoExceptionHandle exc;
+	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
 	MonoException *exc_raw = mono_thread_execute_interruption (&exc) ? MONO_HANDLE_RAW (exc) : NULL;
 	HANDLE_FUNCTION_RETURN_VAL (exc_raw);
 }
@@ -5239,7 +5239,7 @@ self_abort_internal (MonoError *error)
 	/*
 	Self aborts ignore the protected block logic and raise the TAE regardless. This is verified by one of the tests in mono/tests/abort-cctor.cs.
 	*/
-	MonoExceptionHandle exc;
+	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
 	if (mono_thread_request_interruption_managed (&exc))
 		mono_error_set_exception_handle (error, exc);
 	else
