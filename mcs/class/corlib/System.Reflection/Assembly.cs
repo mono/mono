@@ -531,6 +531,9 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static Assembly LoadFrom (String assemblyFile, bool refonly);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static Assembly LoadFile_internal (String assemblyFile);
+
 		public static Assembly LoadFrom (String assemblyFile)
 		{
 			return LoadFrom (assemblyFile, false);
@@ -575,8 +578,11 @@ namespace System.Reflection {
 				throw new ArgumentNullException ("path");
 			if (path == String.Empty)
 				throw new ArgumentException ("Path can't be empty", "path");
-			// FIXME: Make this do the right thing
-			return LoadFrom (path, securityEvidence);
+			Assembly a = LoadFile_internal (path);
+			if (a != null && securityEvidence != null) {
+				throw new NotImplementedException ();
+			}
+			return a;
 		}
 
 		public static Assembly LoadFile (String path)
