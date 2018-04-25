@@ -1280,14 +1280,16 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/runtime/interopservices/windowsruntime/irestrictederrorinfo.cs
 ../referencesource/mscorlib/system/runtime/interopservices/windowsruntime/windowsruntimemarshal.cs
 
-../referencesource/mscorlib//system/runtime/reliability/criticalfinalizerobject.cs
-../referencesource/mscorlib//system/runtime/reliability/prepreparemethodattribute.cs
-../referencesource/mscorlib//system/runtime/reliability/reliabilitycontractattribute.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/ConstrainedExecution/CriticalFinalizerObject.cs
+../../../external/corefx/src/System.Runtime/src/System/Runtime/ConstrainedExecution/PrePrepareMethodAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/ConstrainedExecution/ReliabilityContractAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/ConstrainedExecution/Consistency.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/ConstrainedExecution/Cer.cs
 
 ../referencesource/mscorlib/system/runtime/compilerservices/assemblyattributesgohere.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/assemblysettingattributes.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/AsyncMethodBuilder.cs
-../referencesource/mscorlib/system/runtime/compilerservices/callingconvention.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/CallingConvention.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/compilationrelaxations.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/compilermarshaloverride.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/decoratednameattribute.cs
@@ -1318,11 +1320,11 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/security/securitydocument.cs
 ../referencesource/mscorlib/system/security/safesecurityhandles.cs
 
-../referencesource/mscorlib/system/security/claims/Claim.cs
-../referencesource/mscorlib/system/security/claims/ClaimsIdentity.cs
-../referencesource/mscorlib/system/security/claims/ClaimsPrincipal.cs
-../referencesource/mscorlib/system/security/claims/ClaimTypes.cs
-../referencesource/mscorlib/system/security/claims/ClaimValueTypes.cs
+../../../external/corefx/src/System.Security.Claims/src/System/Security/Claims/Claim.cs
+../../../external/corefx/src/System.Security.Claims/src/System/Security/Claims/ClaimsIdentity.cs
+../../../external/corefx/src/System.Security.Claims/src/System/Security/Claims/ClaimsPrincipal.cs
+../../../external/corefx/src/System.Security.Claims/src/System/Security/Claims/ClaimTypes.cs
+../../../external/corefx/src/System.Security.Claims/src/System/Security/Claims/ClaimValueTypes.cs
 ../referencesource/mscorlib/system/security/claims/RoleClaimProvider.cs
 
 ../referencesource/mscorlib/system/security/cryptography/aes.cs
