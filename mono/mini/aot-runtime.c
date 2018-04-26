@@ -3955,8 +3955,9 @@ register_jump_target_got_slot (MonoDomain *domain, MonoMethod *method, gpointer 
 	 */
 	MonoJitDomainInfo *info = domain_jit_info (domain);
 	GSList *list;
-	method = mono_method_to_shared (method);
-
+	MonoMethod *shared_method = mini_method_to_shared (method);
+	method = shared_method ? shared_method : method;
+		
 	mono_domain_lock (domain);
 	if (!info->jump_target_got_slot_hash)
 		info->jump_target_got_slot_hash = g_hash_table_new (NULL, NULL);
