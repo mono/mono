@@ -2,6 +2,7 @@
 ../../build/common/Locale.cs
 ../../build/common/SR.cs
 ../../build/common/MonoTODOAttribute.cs
+corefx/SR.cs
 Assembly/AssemblyInfo.cs
 Mono.CodeGeneration/CodeAdd.cs
 Mono.CodeGeneration/CodeAnd.cs
@@ -952,7 +953,6 @@ System.ServiceModel/XmlSerializerFormatAttribute.cs
 System.ServiceModel.Channels/IHttpCookieContainer.cs
 System.ServiceModel.Channels/HttpCookieContainerBindingElement.cs
 
-../System.ServiceModel.Syndication/corefx/SR.cs
 ../../../external/corefx/src/System.ServiceModel.Syndication/src/System/ServiceModel/Syndication/*.cs
 ../../../external/corefx/src/System.ServiceModel.Syndication/src/System/ServiceModel/Channels/*.cs
 ../../../external/corefx/src/System.ServiceModel.Syndication/src/System/ServiceModel/*.cs
