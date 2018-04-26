@@ -161,7 +161,8 @@ MonoObject* ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThread
 void
 ves_icall_System_Threading_Thread_Suspend (MonoThreadObjectHandle this_obj, MonoError *error);
 
-void ves_icall_System_Threading_Thread_Resume (MonoThread *thread);
+void
+ves_icall_System_Threading_Thread_Resume (MonoThreadObjectHandle thread_handle, MonoError *error);
 void ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle thread, guint32 state, MonoError *error);
 void ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32 state, MonoError *error);
 guint32 ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error);

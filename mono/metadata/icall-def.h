@@ -977,7 +977,7 @@ ICALL(THREAD_53, "InterruptInternal", ves_icall_System_Threading_Thread_Interrup
 ICALL(THREAD_12, "JoinInternal", ves_icall_System_Threading_Thread_Join_internal)
 ICALL(THREAD_13, "MemoryBarrier", ves_icall_System_Threading_Thread_MemoryBarrier)
 HANDLES(ICALL(THREAD_14, "ResetAbortNative", ves_icall_System_Threading_Thread_ResetAbort))
-ICALL(THREAD_15, "ResumeInternal", ves_icall_System_Threading_Thread_Resume)
+HANDLES(ICALL(THREAD_15, "ResumeInternal", ves_icall_System_Threading_Thread_Resume))
 ICALL(THREAD_18, "SetName_internal(System.Threading.InternalThread,string)", ves_icall_System_Threading_Thread_SetName_internal)
 HANDLES(ICALL(THREAD_58, "SetPriorityNative", ves_icall_System_Threading_Thread_SetPriority))
 HANDLES(ICALL(THREAD_21, "SetState(System.Threading.InternalThread,System.Threading.ThreadState)", ves_icall_System_Threading_Thread_SetState))

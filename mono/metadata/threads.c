@@ -2647,11 +2647,20 @@ mono_thread_suspend (MonoInternalThread *thread)
 	return TRUE;
 }
 
+static const char thread_not_started_or_dead_message [ ] = "Thread has not been started, or is dead.";
+
+static void
+set_pending_exception_thread_not_started_or_dead (MonoError *error)
+{
+	mono_set_pending_exception_handle (mono_exception_new_thread_state (thread_not_started_or_dead_message, error));
+	mono_error_assert_ok (error);
+}
+
 void
 ves_icall_System_Threading_Thread_Suspend (MonoThreadObjectHandle this_obj, MonoError *error)
 {
 	if (!mono_thread_suspend (thread_handle_to_internal_ptr (this_obj)))
-		mono_error_set_generic_error (error, "System.Threading", "ThreadStateException", "Thread has not been started, or is dead.");
+		mono_error_set_generic_error (error, "System.Threading", "ThreadStateException", thread_not_started_or_dead_message);
 
 }
 
@@ -2699,16 +2708,23 @@ mono_thread_resume (MonoInternalThread *thread)
 }
 
 void
-ves_icall_System_Threading_Thread_Resume (MonoThread *thread)
+ves_icall_System_Threading_Thread_Resume (MonoThreadObjectHandle thread_handle, MonoError *error)
 {
-	if (!thread->internal_thread) {
-		mono_set_pending_exception (mono_get_exception_thread_state ("Thread has not been started, or is dead."));
+	// Internal threads are pinned so shallow coop/handle.
+	MonoInternalThread * const internal_thread = thread_handle_to_internal_ptr (thread_handle);
+	gboolean exception = FALSE;
+
+	if (!internal_thread) {
+		exception = TRUE;
 	} else {
-		LOCK_THREAD (thread->internal_thread);
-		if (!mono_thread_resume (thread->internal_thread))
-			mono_set_pending_exception (mono_get_exception_thread_state ("Thread has not been started, or is dead."));
-		UNLOCK_THREAD (thread->internal_thread);
+		LOCK_THREAD (internal_thread);
+		if (!mono_thread_resume (internal_thread))
+			exception = TRUE;
+		UNLOCK_THREAD (internal_thread);
 	}
+
+	if (exception)
+		set_pending_exception_thread_not_started_or_dead (error);
 }
 
 static gboolean
