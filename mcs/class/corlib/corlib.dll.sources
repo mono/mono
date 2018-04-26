@@ -120,7 +120,7 @@ System/MonoType.cs
 System/MonoTouchAOTHelper.cs
 System/MulticastDelegate.cs
 System/NullConsoleDriver.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Nullable.cs
+System/Nullable.cs
 System/NumberFormatter.cs
 System/Object.cs
 System/OperatingSystem.cs
