@@ -1289,7 +1289,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/assemblyattributesgohere.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/assemblysettingattributes.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/AsyncMethodBuilder.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/CallingConvention.cs
+../referencesource/mscorlib/system/runtime/compilerservices/callingconvention.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/compilationrelaxations.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/compilermarshaloverride.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/decoratednameattribute.cs
