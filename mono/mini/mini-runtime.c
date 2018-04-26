@@ -1735,6 +1735,7 @@ mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 			mono_error_assert_ok (error);
 		}
 #endif
+		g_slist_free (jlist);
 	}
 }
 
