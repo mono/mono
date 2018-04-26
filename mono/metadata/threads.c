@@ -4842,7 +4842,8 @@ mono_thread_resume_interruption (gboolean exec)
 		mono_thread_execute_interruption_void ();
 }
 
-gboolean mono_thread_interruption_requested ()
+gboolean
+mono_thread_interruption_requested (void)
 {
 	if (thread_interruption_requested) {
 		MonoInternalThread *thread = mono_thread_internal_current ();
@@ -4985,7 +4986,8 @@ mono_set_pending_exception_handle (MonoExceptionHandle exc)
  * mono_thread_interruption_checkpoint() is allways needed if the flag is not
  * zero.
  */
-gint32* mono_thread_interruption_request_flag ()
+gint32*
+mono_thread_interruption_request_flag (void)
 {
 	return &thread_interruption_requested;
 }
