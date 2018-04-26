@@ -1670,13 +1670,10 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 void
 mini_register_jump_site (MonoDomain *domain, MonoMethod *method, gpointer ip)
 {
-	ERROR_DECL (error);
 	MonoJumpList *jlist;
 
-	if (mono_method_is_generic_sharable (method, TRUE)) {
-		method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
-		mono_error_assert_ok (error);
-	}
+	MonoMethod *shared_method = mini_method_to_shared (method);
+	method = shared_method ? shared_method : method;
 
 	mono_domain_lock (domain);
 	jlist = (MonoJumpList *)g_hash_table_lookup (domain_jit_info (domain)->jump_target_hash, method);
@@ -1696,7 +1693,6 @@ mini_register_jump_site (MonoDomain *domain, MonoMethod *method, gpointer ip)
 void
 mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 {
-	ERROR_DECL (error);
 	GHashTable *hash = domain_jit_info (domain)->jump_target_hash;
 
 	if (!hash)
@@ -1707,10 +1703,8 @@ mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 	GSList *tmp;
 
 	/* The caller/callee might use different instantiations */
-	if (mono_method_is_generic_sharable (method, TRUE)) {
-		method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
-		mono_error_assert_ok (error);
-	}
+	MonoMethod *shared_method = mini_method_to_shared (method);
+	method = shared_method ? shared_method : method;
 
 	mono_domain_lock (domain);
 	jlist = (MonoJumpList *)g_hash_table_lookup (hash, method);
@@ -2180,7 +2174,7 @@ lookup_start:
 		if (mono_aot_mode == MONO_AOT_MODE_INTERP && method->wrapper_type == MONO_WRAPPER_UNKNOWN) {
 			WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 			g_assert (info);
-			if (info->subtype == WRAPPER_SUBTYPE_INTERP_IN)
+			if (info->subtype == WRAPPER_SUBTYPE_INTERP_IN || info->subtype == WRAPPER_SUBTYPE_INTERP_LMF)
 				/* AOT'd wrappers for interp must be owned by root domain */
 				domain = mono_get_root_domain ();
 		}
@@ -3947,6 +3941,12 @@ mono_ee_api_version (void)
 	return MONO_EE_API_VERSION;
 }
 
+void
+mono_interp_entry_from_trampoline (gpointer ccontext, gpointer imethod)
+{
+	mini_get_interp_callbacks ()->entry_from_trampoline (ccontext, imethod);
+}
+
 MonoDomain *
 mini_init (const char *filename, const char *runtime_version)
 {
@@ -4511,6 +4511,7 @@ register_icalls (void)
 	register_icall_no_wrapper (mono_tls_set_sgen_thread_info, "mono_tls_set_sgen_thread_info", "void ptr");
 	register_icall_no_wrapper (mono_tls_set_lmf_addr, "mono_tls_set_lmf_addr", "void ptr");
 
+	register_icall_no_wrapper (mono_interp_entry_from_trampoline, "mono_interp_entry_from_trampoline", "void ptr ptr");
 
 #ifdef MONO_ARCH_HAS_REGISTER_ICALL
 	mono_arch_register_icall ();

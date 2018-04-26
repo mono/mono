@@ -568,7 +568,7 @@ try_load_from (MonoAssembly **assembly, const gchar *path1, const gchar *path2,
 	*assembly = NULL;
 	fullpath = g_build_filename (path1, path2, path3, path4, NULL);
 	if (g_file_test (fullpath, G_FILE_TEST_IS_REGULAR))
-		*assembly = mono_assembly_open_predicate (fullpath, refonly, FALSE, NULL, NULL, NULL);
+		*assembly = mono_assembly_open_predicate (fullpath, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
 
 	g_free (fullpath);
 	return (*assembly != NULL);
@@ -794,7 +794,7 @@ main (int argc, char *argv [])
 
 		mono_verifier_set_mode (verifier_mode);
 
-		assembly = mono_assembly_open_predicate (file, FALSE, FALSE, NULL, NULL, NULL);
+		assembly = mono_assembly_open_predicate (file, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
 		/*fake an assembly for netmodules so the verifier works*/
 		if (!assembly && (image = mono_image_open (file, &status)) && image->tables [MONO_TABLE_ASSEMBLY].rows == 0) {
 			assembly = g_new0 (MonoAssembly, 1);

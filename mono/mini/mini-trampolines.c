@@ -141,6 +141,7 @@ mono_create_static_rgctx_trampoline (MonoMethod *m, gpointer addr)
 
 	return res;
 }
+
 #else
 gpointer
 mono_create_static_rgctx_trampoline (MonoMethod *m, gpointer addr)
@@ -152,6 +153,25 @@ mono_create_static_rgctx_trampoline (MonoMethod *m, gpointer addr)
        g_assert_not_reached ();
 }
 #endif
+
+gpointer
+mono_create_ftnptr_arg_trampoline (gpointer arg, gpointer addr)
+{
+	gpointer res;
+#ifdef MONO_ARCH_HAVE_FTNPTR_ARG_TRAMPOLINE
+	if (mono_aot_only)
+		g_error ("FIXME");
+	else
+		res = mono_arch_get_ftnptr_arg_trampoline (arg, addr);
+#else
+	if (mono_aot_only)
+		res = mono_aot_get_static_rgctx_trampoline (arg, addr);
+	else
+		res = mono_arch_get_static_rgctx_trampoline (arg, addr);
+#endif
+
+	return res;
+}
 
 #if 0
 #define DEBUG_IMT(stmt) do { stmt; } while (0)
@@ -772,6 +792,8 @@ common_call_trampoline (mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVTable *
 		 */
 		if (domain_jit_info (domain)->jump_target_got_slot_hash) {
 			GSList *list, *tmp;
+			MonoMethod *shared_method = mini_method_to_shared (m);
+			m = shared_method ? shared_method : m;
 
 			mono_domain_lock (domain);
 			list = (GSList *)g_hash_table_lookup (domain_jit_info (domain)->jump_target_got_slot_hash, m);

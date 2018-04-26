@@ -1088,7 +1088,7 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 }
 
 void
-mono_arch_set_native_call_context (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
+mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
 	CallInfo *cinfo = get_call_info (NULL, sig);
 	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
@@ -1158,7 +1158,7 @@ mono_arch_set_native_call_context (CallContext *ccontext, gpointer frame, MonoMe
 }
 
 void
-mono_arch_get_native_call_context (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
+mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
 	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo;
@@ -1280,6 +1280,10 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	/* An address on the callee's stack is passed as the first argument */
 	callee_ret = mini_get_underlying_type (callee_sig->ret);
 	res &= IS_SUPPORTED_TAILCALL (!(callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && callee_info->ret.storage != ArgValuetypeInReg));
+
+	// Limit stack_usage to 1G. Assume 32bit limits when we move parameters.
+	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage < (1 << 30));
+	res &= IS_SUPPORTED_TAILCALL (caller_info->stack_usage < (1 << 30));
 
 exit:
 	g_free (caller_info);
@@ -3804,11 +3808,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	MONO_BB_FOR_EACH_INS (bb, ins) {
 		offset = code - cfg->native_code;
 
-		max_len = ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
+		max_len = ins_get_size (ins->opcode);
 
 #define EXTRA_CODE_SPACE (16)
 
-		if (G_UNLIKELY ((offset + max_len + EXTRA_CODE_SPACE) > cfg->code_size)) {
+		while (G_UNLIKELY ((offset + max_len + EXTRA_CODE_SPACE) > cfg->code_size)) {
 			cfg->code_size *= 2;
 			cfg->native_code = (unsigned char *)mono_realloc_native_code(cfg);
 			code = cfg->native_code + offset;
@@ -4640,6 +4644,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				amd64_sse_movsd_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
 		}
+
+		case OP_TAILCALL_PARAMETER:
+			// This opcode helps compute sizes, i.e.
+			// of the subsequent OP_TAILCALL, but contributes no code.
+			g_assert (ins->next);
+			break;
+
 		case OP_TAILCALL:
 		case OP_TAILCALL_REG:
 		case OP_TAILCALL_MEMBASE: {
@@ -4650,12 +4661,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			g_assert (!cfg->method->save_lmf);
 
-			/* the size of the tailcall op depends on signature, let's check for enough
-			 * space in the code buffer here again */
-			max_len += AMD64_NREG * 4 + call->stack_usage * 15 + EXTRA_CODE_SPACE;
-			max_len += 64; // FIXME make this two pass for an accurate size
-
-			if (G_UNLIKELY (offset + max_len > cfg->code_size)) {
+			max_len += AMD64_NREG * 4;
+			max_len += call->stack_usage / sizeof (mgreg_t) * ins_get_size (OP_TAILCALL_PARAMETER);
+			while (G_UNLIKELY (offset + max_len > cfg->code_size)) {
 				cfg->code_size *= 2;
 				cfg->native_code = (unsigned char *) mono_realloc_native_code(cfg);
 				code = cfg->native_code + offset;

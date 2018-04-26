@@ -7,7 +7,7 @@ else ${TESTCMD} --label=aot-test --timeout=30m make -w -C mono/tests -j4 -k test
 fi
 ${TESTCMD} --label=compile-bcl-tests --timeout=40m make -i -w -C runtime -j4 test
 ${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j4 tests
-${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1 CI_PR=${ghprbPullId}
+${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1 CI_PR=$([[ ${CI_TAGS} == *'pull-request'* ]] && echo 1 || true)
 ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
 ${TESTCMD} --label=corlib-xunit --timeout=10m make -w -C mcs/class/corlib run-xunit-test
