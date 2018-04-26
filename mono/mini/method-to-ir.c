@@ -87,10 +87,10 @@
 /* Used to LLVM JIT */
 #define LLVM_JIT_INLINE_LENGTH_LIMIT 100
 
+static const gboolean debug_tailcall = FALSE;               // logging
 static const gboolean debug_tailcall_break_compile = FALSE; // break in method_to_ir
 static const gboolean debug_tailcall_break_run = FALSE;     // insert breakpoint in generated code
 static const gboolean debug_tailcall_try_all = FALSE;       // consider any call followed by ret
-static const gboolean debug_tailcall = FALSE;               // logging
 
 static gboolean
 tailcall_print_enabled (void)
@@ -401,11 +401,14 @@ mono_create_helper_signatures (void)
 	helper_sig_set_tls_tramp = mono_create_icall_signature ("void ptr");
 }
 
-static MONO_NEVER_INLINE void
+static MONO_NEVER_INLINE gboolean
 break_on_unverified (void)
 {
-	if (mini_get_debug_options ()->break_on_unverified)
+	if (mini_get_debug_options ()->break_on_unverified) {
 		G_BREAKPOINT ();
+		return TRUE;
+	}
+	return FALSE;
 }
 
 static void
@@ -2015,7 +2018,7 @@ convert_value (MonoCompile *cfg, MonoType *type, MonoInst *ins)
  *
  * FIXME: implement this using target_type_is_incompatible ()
  */
-static int
+static gboolean
 check_call_signature (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args)
 {
 	MonoType *simple_type;
@@ -2023,21 +2026,20 @@ check_call_signature (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **arg
 
 	if (sig->hasthis) {
 		if (args [0]->type != STACK_OBJ && args [0]->type != STACK_MP && args [0]->type != STACK_PTR)
-			return 1;
+			return TRUE;
 		args++;
 	}
 	for (i = 0; i < sig->param_count; ++i) {
 		if (sig->params [i]->byref) {
 			if (args [i]->type != STACK_MP && args [i]->type != STACK_PTR)
-				return 1;
+				return TRUE;
 			continue;
 		}
 		simple_type = mini_get_underlying_type (sig->params [i]);
 handle_enum:
 		switch (simple_type->type) {
 		case MONO_TYPE_VOID:
-			return 1;
-			continue;
+			return TRUE;
 		case MONO_TYPE_I1:
 		case MONO_TYPE_U1:
 		case MONO_TYPE_I2:
@@ -2045,14 +2047,14 @@ handle_enum:
 		case MONO_TYPE_I4:
 		case MONO_TYPE_U4:
 			if (args [i]->type != STACK_I4 && args [i]->type != STACK_PTR)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
 		case MONO_TYPE_PTR:
 		case MONO_TYPE_FNPTR:
 			if (args [i]->type != STACK_I4 && args [i]->type != STACK_PTR && args [i]->type != STACK_MP && args [i]->type != STACK_OBJ)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_CLASS:
 		case MONO_TYPE_STRING:
@@ -2060,20 +2062,20 @@ handle_enum:
 		case MONO_TYPE_SZARRAY:
 		case MONO_TYPE_ARRAY:    
 			if (args [i]->type != STACK_OBJ)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_I8:
 		case MONO_TYPE_U8:
 			if (args [i]->type != STACK_I8)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_R4:
 			if (args [i]->type != cfg->r4_stack_type)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_R8:
 			if (args [i]->type != STACK_R8)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_VALUETYPE:
 			if (m_class_is_enumtype (simple_type->data.klass)) {
@@ -2081,11 +2083,11 @@ handle_enum:
 				goto handle_enum;
 			}
 			if (args [i]->type != STACK_VTYPE)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_TYPEDBYREF:
 			if (args [i]->type != STACK_VTYPE)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_GENERICINST:
 			simple_type = m_class_get_byval_arg (simple_type->data.generic_class->container_class);
@@ -2094,14 +2096,14 @@ handle_enum:
 		case MONO_TYPE_MVAR:
 			/* gsharedvt */
 			if (args [i]->type != STACK_VTYPE)
-				return 1;
+				return TRUE;
 			continue;
 		default:
 			g_error ("unknown type 0x%02x in check_call_signature",
 				 simple_type->type);
 		}
 	}
-	return 0;
+	return FALSE;
 }
 
 static int
@@ -2250,6 +2252,25 @@ test_tailcall (MonoCompile *cfg, MonoBoolean tailcall)
 	tailcall_print ("tailcalllog %s from %s\n", tailcall ? "success" : "fail", cfg->method->name);
 }
 
+static void
+emit_tailcall_parameters (MonoCompile *cfg, MonoMethodSignature *sig)
+{
+	// OP_TAILCALL_PARAMETER helps compute the size of code, in order
+	// to size branches around OP_TAILCALL_[REG,MEMBASE].
+	//
+	// The actual bytes are output from OP_TAILCALL_[REG,MEMBASE].
+	// OP_TAILCALL_PARAMETER is an overestimate because typically
+	// many parameters are in registers.
+
+	const int n = sig->param_count + (sig->hasthis ? 1 : 0);
+	for (int i = 0; i < n; ++i) {
+		MonoInst *ins;
+		MONO_INST_NEW (cfg, ins, OP_TAILCALL_PARAMETER);
+		MONO_ADD_INS (cfg->cbb, ins);
+	}
+
+}
+
 static MonoCallInst *
 mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig, 
 		     MonoInst **args, gboolean calli, gboolean virtual_, gboolean tailcall,
@@ -2279,6 +2300,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 
 	if (tailcall) {
 		mini_profiler_emit_tail_call (cfg, target);
+		emit_tailcall_parameters (cfg, sig);
 		MONO_INST_NEW_CALL (cfg, call, calli ? OP_TAILCALL_REG : virtual_ ? OP_TAILCALL_MEMBASE : OP_TAILCALL);
 	} else
 		MONO_INST_NEW_CALL (cfg, call, ret_type_to_call_opcode (cfg, sig->ret, calli, virtual_));
@@ -8408,10 +8430,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				/* Handle tailcalls similarly to calls */
 				DISABLE_AOT (cfg);
 
+				emit_tailcall_parameters (cfg, fsig);
 				MONO_INST_NEW_CALL (cfg, call, OP_TAILCALL);
 				call->method = cmethod;
 				call->tailcall = TRUE;
-				call->signature = mono_method_signature (cmethod);
+				call->signature = fsig;
 				call->args = (MonoInst **)mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * n);
 				call->inst.inst_p0 = cmethod;
 				for (i = 0; i < n; ++i)
@@ -8469,8 +8492,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			sp -= n;
 
-			if (!(cfg->method->wrapper_type && cfg->method->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD) && check_call_signature (cfg, fsig, sp))
+			if (!(cfg->method->wrapper_type && cfg->method->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD) && check_call_signature (cfg, fsig, sp)) {
+				if (break_on_unverified ())
+					check_call_signature (cfg, fsig, sp); // Again, step through it.
 				UNVERIFIED;
+			}
 
 			inline_costs += 10 * num_calls++;
 
@@ -8562,16 +8588,18 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MonoInst *vtable_arg = NULL;
 			gboolean check_this = FALSE;
 			gboolean need_seq_point = FALSE;
-			guint32 call_opcode = *ip;
+			guint32 const call_opcode = *ip;
 			gboolean emit_widen = TRUE;
 			gboolean push_res = TRUE;
 			gboolean skip_ret = FALSE;
 			gboolean delegate_invoke = FALSE;
 			gboolean direct_icall = FALSE;
 			gboolean constrained_partial_call = FALSE;
-			MonoMethod *cil_method;
 			gboolean common_call = FALSE;
+			gboolean tailcall = FALSE;
+			gboolean tailcall_calli = FALSE;
 			gboolean tailcall_remove_ret = FALSE;
+			gboolean tailcall_testvalue = FALSE;
 
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
@@ -8584,7 +8612,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			cmethod = mini_get_method (cfg, method, token, NULL, generic_context);
 			CHECK_CFG_ERROR;
 
-			cil_method = cmethod;
+			MonoMethod *cil_method = cmethod;
 				
 			if (constrained_class) {
 				gboolean constrained_is_generic_param =
@@ -8893,8 +8921,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			for (int i = 0; i < fsig->param_count; ++i)
 				sp [i + fsig->hasthis] = convert_value (cfg, fsig->params [i], sp [i + fsig->hasthis]);
 
-			if (check_call_signature (cfg, fsig, sp))
+			if (check_call_signature (cfg, fsig, sp)) {
+				if (break_on_unverified ())
+					check_call_signature (cfg, fsig, sp); // Again, step through it.
 				UNVERIFIED;
+			}
 
 			if ((m_class_get_parent (cmethod->klass) == mono_defaults.multicastdelegate_class) && !strcmp (cmethod->name, "Invoke"))
 				delegate_invoke = TRUE;
@@ -9046,10 +9077,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			// tailcall means "the backend can and will handle it".
 			// inst_tailcall means the tail. prefix is present.
-			gboolean tailcall_calli_temp = FALSE;
-			const gboolean tailcall = inst_tailcall && is_supported_tailcall (cfg, ip, method, cmethod, fsig,
-						virtual_, vtable_arg, imt_arg, &tailcall_calli_temp);
-			const gboolean tailcall_calli = tailcall_calli_temp;
+			tailcall = inst_tailcall && is_supported_tailcall (cfg, ip, method, cmethod, fsig,
+						virtual_, vtable_arg, imt_arg, &tailcall_calli);
+			tailcall_testvalue = tailcall; // sometimes changed to tailcall_calli.
 			// Writes to imt_arg, vtable_arg, virtual_, cmethod, must not occur from here (inputs to is_supported_tailcall).
 
 			if (virtual_generic) {
@@ -9271,8 +9301,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					if (tailcall) // FIXME
 						tailcall_print ("missed tailcall llvmonly gsharedvt %s -> %s\n", method->name, cmethod->name);
 				} else {
-					ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, imt_arg, vtable_arg, tailcall_calli);
-					tailcall_remove_ret |= tailcall_calli;
+					// FIXME: Fix this when a test covers it.
+					//if (inst_tailcall)
+					//	tailcall_print ("%s tailcall_calli#1 %s -> %s\n", tailcall_calli ? "making" : "missed", method->name, cmethod->name);
+					ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, imt_arg, vtable_arg, FALSE/*tailcall_calli*/);
+					//tailcall_remove_ret |= tailcall_calli;
+					//tailcall_testvalue = tailcall_calli;
 				}
 				goto call_end;
 			}
@@ -9315,8 +9349,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						tailcall_print ("missed tailcall context_used_llvmonly %s -> %s\n", method->name, cmethod->name);
 				} else {
 					addr = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_GENERIC_METHOD_CODE);
+					if (inst_tailcall)
+						tailcall_print ("%s tailcall_calli#2 %s -> %s\n", tailcall_calli ? "making" : "missed", method->name, cmethod->name);
 					ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, imt_arg, vtable_arg, tailcall_calli);
 					tailcall_remove_ret |= tailcall_calli;
+					tailcall_testvalue = tailcall_calli;
 				}
 				goto call_end;
 			}
@@ -9444,7 +9481,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			if (ins_flag & MONO_INST_TAILCALL)
-				test_tailcall (cfg, tailcall);
+				test_tailcall (cfg, tailcall_testvalue);
 
 			/* End of call, INS should contain the result of the call, if any */
 

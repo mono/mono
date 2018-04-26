@@ -226,6 +226,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCanceledException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCompletionSource.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskSchedulerException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskToApm.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\ValueTask.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Tuple.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TupleExtensions.cs" />
@@ -289,14 +290,11 @@
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\ParallelLoopState.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\ParallelRangeManager.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\TaskReplicator.cs" />
-    <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Collections\Generic\LowLevelList.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
-    <Compile Include="..\..\..\external\corert\src\Runtime.Base\src\System\Runtime\InteropServices\NativeCallableAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Diagnostics\Debug.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\String.Manipulation.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\StringSpanHelpers.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\DeferredDisposableLifetime.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Internal\Runtime\Augments\AsyncCausalityTracer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Internal\Runtime\Augments\TaskTraceCallbacks.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Internal\Threading\Tasks\Tracing\TaskTrace.cs" />
@@ -308,16 +306,18 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\String.Comparison.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\String.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\LockHolder.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\ConcurrentExclusiveSchedulerPair.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.Dummy.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\Future.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\FutureFactory.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\ProducerConsumerQueues.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\Task.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\TaskContinuation.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\TaskExceptionHolder.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\TaskFactory.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\TaskScheduler.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\ThreadPoolTaskScheduler.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\ThreadPoolCallbackWrapper.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.Interop\src\InteropExtensions\Lock.cs" />
     <Compile Include="..\..\build\common\AssemblyRef.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
@@ -925,10 +925,6 @@
     <Compile Include="..\referencesource\mscorlib\system\threading\synchronizationcontext.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\synchronizationlockexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\AsyncCausalityTracer.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\ConcurrentExclusiveSchedulerPair.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\ProducerConsumerQueues.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\TaskExceptionHolder.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\TaskToApm.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\thread.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\threadabortexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\threadinterruptedexception.cs" />
@@ -1814,15 +1810,19 @@
     <Compile Include="System\WindowsConsoleDriver.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+    <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.MemAllocFree.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.MemAllocFree.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.ThreadPoolIO.cs" />
+    <Compile Include="..\..\..\external\corert\src\Runtime.Base\src\System\Runtime\InteropServices\NativeCallableAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Interop\Windows\Interop.Errors.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Interop\Windows\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Interop\Windows\Kernel32\Interop.FormatMessage.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\IO\Win32Marshal.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\DeferredDisposableLifetime.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Microsoft\Win32\SafeHandles\SafeThreadPoolIOHandle.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\ThreadPoolCallbackWrapper.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolBoundHandle.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolNativeOverlapped.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolNativeOverlapped.ExecutionContextCallbackArgs.cs" />
