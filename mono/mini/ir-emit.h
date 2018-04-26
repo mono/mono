@@ -504,14 +504,13 @@ handle_gsharedvt_ldaddr (MonoCompile *cfg)
 
 #define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
-#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
-
 /*
  * Since the IL stack (and our vregs) contain double values, we have to do a conversion
  * when loading/storing args/locals of type R4.
  */
 
 #define EMIT_NEW_VARLOAD_SFLOAT(cfg,dest,var,vartype) do { \
+		mono_soft_float_reached (); \
 		if (!COMPILE_LLVM ((cfg)) && !(vartype)->byref && (vartype)->type == MONO_TYPE_R4) { \
 			MonoInst *iargs [1]; \
 			EMIT_NEW_VARLOADA (cfg, iargs [0], (var), (vartype)); \
@@ -522,6 +521,7 @@ handle_gsharedvt_ldaddr (MonoCompile *cfg)
 	} while (0)
 
 #define EMIT_NEW_VARSTORE_SFLOAT(cfg,dest,var,vartype,inst) do {	\
+		mono_soft_float_reached (); \
 		if (COMPILE_SOFT_FLOAT ((cfg)) && !(vartype)->byref && (vartype)->type == MONO_TYPE_R4) { \
 			MonoInst *iargs [2]; \
 			iargs [0] = (inst); \
@@ -567,18 +567,6 @@ handle_gsharedvt_ldaddr (MonoCompile *cfg)
 			MONO_ADD_INS ((cfg)->cbb, (dest));	\
 		}	\
 	} while (0)
-
-#else
-
-#define EMIT_NEW_ARGLOAD(cfg,dest,num) do { NEW_ARGLOAD ((cfg), (dest), (num)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
-
-#define EMIT_NEW_LOCLOAD(cfg,dest,num) do { NEW_LOCLOAD ((cfg), (dest), (num)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
-
-#define EMIT_NEW_LOCSTORE(cfg,dest,num,inst) do { NEW_LOCSTORE ((cfg), (dest), (num), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
-
-#define EMIT_NEW_ARGSTORE(cfg,dest,num,inst) do { NEW_ARGSTORE ((cfg), (dest), (num), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
-
-#endif
 
 #define EMIT_NEW_TEMPLOAD(cfg,dest,num) do { NEW_TEMPLOAD ((cfg), (dest), (num)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 

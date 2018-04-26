@@ -1583,8 +1583,6 @@ typedef union {
 	double vald;
 } DVal;
 
-#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
-
 /**
  * mono_decompose_soft_float:
  *
@@ -1596,6 +1594,8 @@ typedef union {
 void
 mono_decompose_soft_float (MonoCompile *cfg)
 {
+	mono_soft_float_reached ();
+
 	MonoBasicBlock *bb, *first_bb;
 
 	/*
@@ -1880,8 +1880,6 @@ mono_decompose_soft_float (MonoCompile *cfg)
 
 	mono_decompose_long_opts (cfg);
 }
-
-#endif
 
 void
 mono_local_emulate_ops (MonoCompile *cfg)

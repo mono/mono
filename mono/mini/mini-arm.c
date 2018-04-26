@@ -940,7 +940,7 @@ mono_arch_opcode_needs_emulation (MonoCompile *cfg, int opcode)
 	return TRUE;
 }
 
-#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
+#if MONO_ARCH_SOFT_FLOAT_FALLBACK
 gboolean
 mono_arch_is_soft_float (void)
 {

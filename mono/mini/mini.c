@@ -3701,10 +3701,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if (cfg->llvm_only && cfg->gsharedvt)
 		mono_ssa_remove_gsharedvt (cfg);
 
-#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
 	if (COMPILE_SOFT_FLOAT (cfg))
 		mono_decompose_soft_float (cfg);
-#endif
+
 	MONO_TIME_TRACK (mono_jit_stats.jit_decompose_vtype_opts, mono_decompose_vtype_opts (cfg));
 	if (cfg->flags & MONO_CFG_HAS_ARRAY_ACCESS) {
 		MONO_TIME_TRACK (mono_jit_stats.jit_decompose_array_access_opts, mono_decompose_array_access_opts (cfg));
