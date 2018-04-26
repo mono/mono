@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">net_4_x</Platform>
     <ProjectGuid>{7C660E7A-C89B-4ACA-9458-492B6D14B168}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699</NoWarn>
+    <NoWarn>1699,3021</NoWarn>
     <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
@@ -104,14 +104,16 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\System.Json\src\System\Json\JavaScriptReader.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Json\src\System\Json\JsonArray.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Json\src\System\Json\JsonObject.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Json\src\System\Json\JsonPrimitive.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Json\src\System\Json\JsonType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Json\src\System\Json\JsonValue.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="System.Json\JavaScriptReader.cs" />
-    <Compile Include="System.Json\JsonArray.cs" />
-    <Compile Include="System.Json\JsonObject.cs" />
-    <Compile Include="System.Json\JsonPrimitive.cs" />
-    <Compile Include="System.Json\JsonType.cs" />
-    <Compile Include="System.Json\JsonValue.cs" />
+    <Compile Include="corefx\SR.cs" />
   </ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
