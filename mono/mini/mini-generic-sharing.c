@@ -1639,12 +1639,12 @@ mini_create_interp_lmf_wrapper (gpointer target)
 	MonoMethodSignature *sig;
 	MonoMethodBuilder *mb;
 	WrapperInfo *info;
-	MonoType *int_type = mono_get_int_type ();
+	MonoType *int_type = m_class_get_byval_arg (mono_defaults.int_class);
 
 	mb = mono_mb_new (mono_defaults.object_class, "interp_lmf", MONO_WRAPPER_UNKNOWN);
 
 	sig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
-	sig->ret = mono_get_void_type ();;
+	sig->ret = m_class_get_byval_arg (mono_defaults.void_class);
 	sig->params [0] = int_type;
 	sig->params [1] = int_type;
 
