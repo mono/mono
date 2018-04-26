@@ -10,6 +10,9 @@
 
 #include <mono/metadata/assembly.h>
 
+gboolean
+mono_assembly_get_assemblyref_checked (MonoImage *image, int index, MonoAssemblyName *aname, MonoError *error);
+
 MONO_API MonoImage*    mono_assembly_load_module_checked (MonoAssembly *assembly, uint32_t idx, MonoError *error);
 
 MonoAssembly * mono_assembly_open_a_lot (const char *filename, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context);
