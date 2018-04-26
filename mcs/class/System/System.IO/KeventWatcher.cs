@@ -232,8 +232,8 @@ namespace System.IO {
 					conn = -1;
 				}
 
-				if (!thread.Join (2000))
-					thread.Abort ();
+				while (!thread.Join (2000))
+					thread.Interrupt ();
 
 				requestStop = false;
 				started = false;
