@@ -382,7 +382,6 @@ System.Windows.Forms/HtmlWindowCollection.cs
 System.Windows.Forms/Hwnd.cs
 System.Windows.Forms/IButtonControl.cs
 System.Windows.Forms/IBindableComponent.cs
-System.Windows.Forms/IBounds.cs
 System.Windows.Forms/ICommandExecutor.cs
 System.Windows.Forms/IComponentEditorPageSite.cs
 System.Windows.Forms/IContainerControl.cs
@@ -821,6 +820,8 @@ System.Windows.Forms/XplatUIX11.cs
 System.Windows.Forms.Layout/ArrangedElementCollection.cs
 System.Windows.Forms.Layout/DefaultLayout.cs
 System.Windows.Forms.Layout/FlowLayout.cs
+System.Windows.Forms.Layout/IArrangedContainer.cs
+System.Windows.Forms.Layout/IArrangedElement.cs
 System.Windows.Forms.Layout/TableLayout.cs
 System.Windows.Forms.Layout/TableLayoutSettingsTypeConverter.cs
 System.Windows.Forms.Layout/LayoutEngine.cs

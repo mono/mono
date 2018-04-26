@@ -976,7 +976,8 @@ namespace System.Security.Cryptography {
             : base(true) {
         }
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll"), SuppressUnmanagedCodeSecurity]
+        [SecurityCritical]
         private static extern IntPtr LocalFree(IntPtr hMem);
 
         [SecuritySafeCritical]

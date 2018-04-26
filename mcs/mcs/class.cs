@@ -224,6 +224,24 @@ namespace Mono.CSharp
 			}
 		}
 
+		public void CloseContainerEarlyForReflectionEmit ()
+		{
+			if (containers != null) {
+				foreach (TypeContainer tc in containers) {
+					//
+					// SRE requires due to internal checks that any field of enum type is
+					// baked. We close all enum types before closing any other types to
+					// workaround this limitation
+					//
+					if (tc.Kind == MemberKind.Enum) {
+						tc.CloseContainer ();
+					} else {
+						tc.CloseContainerEarlyForReflectionEmit ();
+					}
+				}
+			}
+		}
+
 		public virtual void CreateMetadataName (StringBuilder sb)
 		{
 			if (Parent != null && Parent.MemberName != null)
@@ -1100,6 +1118,18 @@ namespace Mono.CSharp
 
 			foreach (var member in members)
 				member.GenerateDocComment (builder);
+		}
+
+		public TypeSpec GetAsyncMethodBuilder ()
+		{
+			if (OptAttributes == null)
+				return null;
+
+			Attribute a = OptAttributes.Search (Module.PredefinedAttributes.AsyncMethodBuilder);
+			if (a == null)
+				return null;
+
+			return a.GetAsyncMethodBuilderValue ();
 		}
 
 		public TypeSpec GetAttributeCoClass ()
@@ -2171,7 +2201,7 @@ namespace Mono.CSharp
 
 		public override void Emit ()
 		{
-			if (Interfaces != null) {
+			if (Interfaces != null && (ModFlags & Modifiers.PRIVATE) == 0) {
 				foreach (var iface in Interfaces) {
 					if (iface.HasNamedTupleElement) {
 						throw new NotImplementedException ("named tuples for .interfaceimpl");
@@ -3023,7 +3053,8 @@ namespace Mono.CSharp
 			Modifiers.INTERNAL  |
 			Modifiers.UNSAFE    |
 			Modifiers.PRIVATE   |
-			Modifiers.READONLY;
+			Modifiers.READONLY  |
+			Modifiers.REF;
 
 		public Struct (TypeContainer parent, MemberName name, Modifiers mod, Attributes attrs)
 			: base (parent, name, attrs, MemberKind.Struct)
@@ -3139,6 +3170,9 @@ namespace Mono.CSharp
 			if ((ModFlags & Modifiers.READONLY) != 0)
 				Module.PredefinedAttributes.IsReadOnly.EmitAttribute (TypeBuilder);
 
+			if ((ModFlags & Modifiers.REF) != 0)
+				Module.PredefinedAttributes.IsByRefLike.EmitAttribute (TypeBuilder);
+
 			CheckStructCycles ();
 
 			base.Emit ();
@@ -3213,6 +3247,10 @@ namespace Mono.CSharp
 		protected override TypeSpec[] ResolveBaseTypes (out FullNamedExpression base_class)
 		{
 			var ifaces = base.ResolveBaseTypes (out base_class);
+			if (ifaces != null && (ModFlags & Modifiers.REF) != 0) {
+				Report.Error (8343, Location, "`{0}': ref structs cannot implement interfaces", GetSignatureForError ());
+			}
+
 			base_type = Compiler.BuiltinTypes.ValueType;
 			return ifaces;
 		}
@@ -3915,7 +3953,7 @@ namespace Mono.CSharp
 
 		protected void IsTypePermitted ()
 		{
-			if (MemberType.IsSpecialRuntimeType) {
+			if (MemberType.IsSpecialRuntimeType || MemberType.IsByRefLike) {
 				if (Parent is StateMachine) {
 					Report.Error (4012, Location,
 						"Parameters or local variables of type `{0}' cannot be declared in async methods or iterators",
@@ -3923,6 +3961,19 @@ namespace Mono.CSharp
 				} else if (Parent is HoistedStoreyClass) {
 					Report.Error (4013, Location,
 						"Local variables of type `{0}' cannot be used inside anonymous methods, lambda expressions or query expressions",
+						MemberType.GetSignatureForError ());
+				} else if (MemberType.IsByRefLike) {
+					if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
+						return;
+
+					if ((ModFlags & Modifiers.AutoProperty) == 0 && this is Property)
+						return;
+
+					if ((ModFlags & Modifiers.STATIC) == 0 && (Parent.ModFlags & Modifiers.REF) != 0)
+						return;
+
+					Report.Error (8345, Location,
+						"Field or auto-implemented property cannot be of type `{0}' unless it is an instance member of a ref struct",
 						MemberType.GetSignatureForError ());
 				} else {
 					Report.Error (610, Location, 

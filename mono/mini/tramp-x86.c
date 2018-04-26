@@ -24,10 +24,9 @@
 
 #include "mini.h"
 #include "mini-x86.h"
+#include "mini-runtime.h"
 #include "debugger-agent.h"
 #include "jit-icalls.h"
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 /*
  * mono_arch_get_unbox_trampoline:
@@ -108,7 +107,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 	orig_code -= 6;
 	if (code [1] == 0xe8) {
 		if (can_write) {
-			InterlockedExchange ((gint32*)(orig_code + 2), (guint)addr - ((guint)orig_code + 1) - 5);
+			mono_atomic_xchg_i32 ((gint32*)(orig_code + 2), (guint)addr - ((guint)orig_code + 1) - 5);
 
 			/* Tell valgrind to recompile the patched code */
 			VALGRIND_DISCARD_TRANSLATIONS (orig_code + 2, 4);
@@ -116,7 +115,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 	} else if (code [1] == 0xe9) {
 		/* A PLT entry: jmp <DISP> */
 		if (can_write)
-			InterlockedExchange ((gint32*)(orig_code + 2), (guint)addr - ((guint)orig_code + 1) - 5);
+			mono_atomic_xchg_i32 ((gint32*)(orig_code + 2), (guint)addr - ((guint)orig_code + 1) - 5);
 	} else {
 		printf ("Invalid trampoline sequence: %x %x %x %x %x %x %x\n", code [0], code [1], code [2], code [3],
 				code [4], code [5], code [6]);
@@ -139,42 +138,6 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
 	if (!got)
 		got = (gpointer*)(gsize) regs [MONO_ARCH_GOT_REG];
 	*(guint8**)((guint8*)got + offset) = addr;
-}
-
-static gpointer
-get_vcall_slot (guint8 *code, mgreg_t *regs, int *displacement)
-{
-	const int kBufSize = 8;
-	guint8 buf [64];
-	guint8 reg = 0;
-	gint32 disp = 0;
-
-	mono_breakpoint_clean_code (NULL, code, kBufSize, buf, kBufSize);
-	code = buf + 8;
-
-	*displacement = 0;
-
-	if ((code [0] == 0xff) && ((code [1] & 0x18) == 0x10) && ((code [1] >> 6) == 2)) {
-		reg = code [1] & 0x07;
-		disp = *((gint32*)(code + 2));
-	} else {
-		g_assert_not_reached ();
-		return NULL;
-	}
-
-	*displacement = disp;
-	return (gpointer)regs [reg];
-}
-
-static gpointer*
-get_vcall_slot_addr (guint8* code, mgreg_t *regs)
-{
-	gpointer vt;
-	int displacement;
-	vt = get_vcall_slot (code, regs, &displacement);
-	if (!vt)
-		return NULL;
-	return (gpointer*)((char*)vt + displacement);
 }
 
 guchar*
@@ -394,7 +357,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	for (i = X86_EAX; i <= X86_EDI; ++i) {
 		if (i == X86_ESP || i == X86_EBP)
 			continue;
-		if (i == X86_EAX && !((tramp_type == MONO_TRAMPOLINE_RESTORE_STACK_PROT) || (tramp_type == MONO_TRAMPOLINE_AOT_PLT)))
+		if (i == X86_EAX && tramp_type != MONO_TRAMPOLINE_AOT_PLT)
 			continue;
 		x86_mov_reg_membase (code, i, X86_EBP, regarray_offset + (i * 4), 4);
 	}
@@ -653,7 +616,7 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
  * mono_arch_create_sdb_trampoline:
  *
  *   Return a trampoline which captures the current context, passes it to
- * debugger_agent_single_step_from_context ()/debugger_agent_breakpoint_from_context (),
+ * mini_get_dbg_callbacks ()->single_step_from_context ()/mini_get_dbg_callbacks ()->breakpoint_from_context (),
  * then restores the (potentially changed) context.
  */
 guint8*
@@ -717,9 +680,9 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 		x86_breakpoint (code);
 	} else {
 		if (single_step)
-			x86_call_code (code, debugger_agent_single_step_from_context);
+			x86_call_code (code, mini_get_dbg_callbacks ()->single_step_from_context);
 		else
-			x86_call_code (code, debugger_agent_breakpoint_from_context);
+			x86_call_code (code, mini_get_dbg_callbacks ()->breakpoint_from_context);
 	}
 
 	/* Restore registers from ctx */
@@ -742,6 +705,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	x86_ret (code);
 
 	mono_arch_flush_icache (code, code - buf);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
 	g_assert (code - buf <= tramp_size);
 
 	const char *tramp_name = single_step ? "sdb_single_step_trampoline" : "sdb_breakpoint_trampoline";
@@ -749,11 +713,3 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 
 	return buf;
 }
-
-gpointer
-mono_arch_get_enter_icall_trampoline (MonoTrampInfo **info)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-

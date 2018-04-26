@@ -32,6 +32,7 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/debug-internals.h>
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/exception.h>
@@ -45,8 +46,8 @@
 #include <mono/metadata/w32event.h>
 #include <mono/metadata/w32process.h>
 #include <mono/metadata/w32file.h>
-#include <metadata/threads.h>
-#include <metadata/profiler-private.h>
+#include <mono/metadata/threads.h>
+#include <mono/metadata/profiler-private.h>
 #include <mono/metadata/coree.h>
 
 //#define DEBUG_DOMAIN_UNLOAD 1
@@ -123,9 +124,6 @@ get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image, const MonoRu
 static const MonoRuntimeInfo*
 get_runtime_by_version (const char *version);
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-#define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
-
 static LockFreeMempool*
 lock_free_mempool_new (void)
 {
@@ -167,7 +165,7 @@ lock_free_mempool_chunk_new (LockFreeMempool *mp, int len)
 	/* Add to list of chunks lock-free */
 	while (TRUE) {
 		prev = mp->chunks;
-		if (InterlockedCompareExchangePointer ((volatile gpointer*)&mp->chunks, chunk, prev) == prev)
+		if (mono_atomic_cas_ptr ((volatile gpointer*)&mp->chunks, chunk, prev) == prev)
 			break;
 	}
 	chunk->prev = prev;
@@ -197,7 +195,7 @@ lock_free_mempool_alloc0 (LockFreeMempool *mp, guint size)
 	}
 
 	/* The code below is lock-free, 'chunk' is shared state */
-	oldpos = InterlockedExchangeAdd (&chunk->pos, size);
+	oldpos = mono_atomic_fetch_add_i32 (&chunk->pos, size);
 	if (oldpos + size > chunk->size) {
 		chunk = lock_free_mempool_chunk_new (mp, size);
 		g_assert (chunk->pos + size <= chunk->size);
@@ -292,6 +290,24 @@ mono_ptrarray_hash (gpointer *s)
 	return hash;	
 }
 
+//g_malloc on sgen and mono_gc_alloc_fixed on boehm
+static void*
+gc_alloc_fixed_non_heap_list (size_t size)
+{
+	if (mono_gc_is_moving ())
+		return g_malloc0 (size);
+	else
+		return mono_gc_alloc_fixed (appdomain_list_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, NULL, "Domain List");
+}
+
+static void
+gc_free_fixed_non_heap_list (void *ptr)
+{
+	if (mono_gc_is_moving ())
+		return g_free (ptr);
+	else
+		return mono_gc_free_fixed (ptr);
+}
 /*
  * Allocate an id for domain and set domain->domain_id.
  * LOCKING: must be called while holding appdomains_mutex.
@@ -306,7 +322,8 @@ domain_id_alloc (MonoDomain *domain)
 	int id = -1, i;
 	if (!appdomains_list) {
 		appdomain_list_size = 2;
-		appdomains_list = (MonoDomain **)mono_gc_alloc_fixed (appdomain_list_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "domains list");
+		appdomains_list = (MonoDomain **)gc_alloc_fixed_non_heap_list (appdomain_list_size * sizeof (void*));
+
 	}
 	for (i = appdomain_next; i < appdomain_list_size; ++i) {
 		if (!appdomains_list [i]) {
@@ -328,9 +345,9 @@ domain_id_alloc (MonoDomain *domain)
 		if (new_size >= (1 << 16))
 			g_assert_not_reached ();
 		id = appdomain_list_size;
-		new_list = (MonoDomain **)mono_gc_alloc_fixed (new_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "domains list");
+		new_list = (MonoDomain **)gc_alloc_fixed_non_heap_list (new_size * sizeof (void*));
 		memcpy (new_list, appdomains_list, appdomain_list_size * sizeof (void*));
-		mono_gc_free_fixed (appdomains_list);
+		gc_free_fixed_non_heap_list (appdomains_list);
 		appdomains_list = new_list;
 		appdomain_list_size = new_size;
 	}
@@ -386,12 +403,11 @@ mono_domain_create (void)
 	}
 	mono_appdomains_unlock ();
 
-	if (!mono_gc_is_moving ()) {
-		domain = (MonoDomain *)mono_gc_alloc_fixed (sizeof (MonoDomain), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "domain object");
-	} else {
-		domain = (MonoDomain *)mono_gc_alloc_fixed (sizeof (MonoDomain), domain_gc_desc, MONO_ROOT_SOURCE_DOMAIN, "domain object");
-		mono_gc_register_root ((char*)&(domain->MONO_DOMAIN_FIRST_GC_TRACKED), G_STRUCT_OFFSET (MonoDomain, MONO_DOMAIN_LAST_GC_TRACKED) - G_STRUCT_OFFSET (MonoDomain, MONO_DOMAIN_FIRST_GC_TRACKED), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "misc domain fields");
-	}
+	if (!mono_gc_is_moving ())
+		domain = (MonoDomain *)mono_gc_alloc_fixed (sizeof (MonoDomain), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, NULL, "Domain Structure");
+	else
+		domain = (MonoDomain *)mono_gc_alloc_fixed (sizeof (MonoDomain), domain_gc_desc, MONO_ROOT_SOURCE_DOMAIN, NULL, "Domain Structure");
+
 	domain->shadow_serial = shadow_serial;
 	domain->domain = NULL;
 	domain->setup = NULL;
@@ -403,15 +419,15 @@ mono_domain_create (void)
 	domain->mp = mono_mempool_new ();
 	domain->code_mp = mono_code_manager_new ();
 	domain->lock_free_mp = lock_free_mempool_new ();
-	domain->env = mono_g_hash_table_new_type ((GHashFunc)mono_string_hash, (GCompareFunc)mono_string_equal, MONO_HASH_KEY_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, "domain environment variables table");
+	domain->env = mono_g_hash_table_new_type ((GHashFunc)mono_string_hash, (GCompareFunc)mono_string_equal, MONO_HASH_KEY_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Environment Variable Table");
 	domain->domain_assemblies = NULL;
 	domain->assembly_bindings = NULL;
 	domain->assembly_bindings_parsed = FALSE;
 	domain->class_vtable_array = g_ptr_array_new ();
 	domain->proxy_vtable_hash = g_hash_table_new ((GHashFunc)mono_ptrarray_hash, (GCompareFunc)mono_ptrarray_equal);
 	mono_jit_code_hash_init (&domain->jit_code_hash);
-	domain->ldstr_table = mono_g_hash_table_new_type ((GHashFunc)mono_string_hash, (GCompareFunc)mono_string_equal, MONO_HASH_KEY_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, "domain string constants table");
-	domain->num_jit_info_tables = 1;
+	domain->ldstr_table = mono_g_hash_table_new_type ((GHashFunc)mono_string_hash, (GCompareFunc)mono_string_equal, MONO_HASH_KEY_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain String Pool Table");
+	domain->num_jit_info_table_duplicates = 0;
 	domain->jit_info_table = mono_jit_info_table_new (domain);
 	domain->jit_info_free_queue = NULL;
 	domain->finalizable_objects_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
@@ -423,15 +439,13 @@ mono_domain_create (void)
 	mono_os_mutex_init_recursive (&domain->jit_code_hash_lock);
 	mono_os_mutex_init_recursive (&domain->finalizable_objects_hash_lock);
 
-	domain->method_rgctx_hash = NULL;
-
 	mono_appdomains_lock ();
 	domain_id_alloc (domain);
 	mono_appdomains_unlock ();
 
 #ifndef DISABLE_PERFCOUNTERS
-	InterlockedIncrement (&mono_perfcounters->loader_appdomains);
-	InterlockedIncrement (&mono_perfcounters->loader_total_appdomains);
+	mono_atomic_inc_i32 (&mono_perfcounters->loader_appdomains);
+	mono_atomic_inc_i32 (&mono_perfcounters->loader_total_appdomains);
 #endif
 
 	mono_debug_domain_create (domain);
@@ -753,12 +767,17 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	        mono_defaults.corlib, "System.Collections.Generic", "IList`1");
 	mono_defaults.generic_ireadonlylist_class = mono_class_load_from_name (
 	        mono_defaults.corlib, "System.Collections.Generic", "IReadOnlyList`1");
+	mono_defaults.generic_ienumerator_class = mono_class_load_from_name (
+	        mono_defaults.corlib, "System.Collections.Generic", "IEnumerator`1");
 
 	mono_defaults.threadpool_wait_callback_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading", "_ThreadPoolWaitCallback");
 
 	mono_defaults.threadpool_perform_wait_callback_method = mono_class_get_method_from_name (
 		mono_defaults.threadpool_wait_callback_class, "PerformWaitCallback", 0);
+
+	mono_defaults.console_class = mono_class_try_load_from_name (
+		mono_defaults.corlib, "System", "Console");
 
 	domain->friendly_name = g_path_get_basename (filename);
 
@@ -952,7 +971,7 @@ mono_domain_foreach (MonoDomainFunc func, gpointer user_data)
 	 */
 	mono_appdomains_lock ();
 	size = appdomain_list_size;
-	copy = (MonoDomain **)mono_gc_alloc_fixed (appdomain_list_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "temporary domains list");
+	copy = (MonoDomain **)gc_alloc_fixed_non_heap_list (appdomain_list_size * sizeof (void*));
 	memcpy (copy, appdomains_list, appdomain_list_size * sizeof (void*));
 	mono_appdomains_unlock ();
 
@@ -961,7 +980,7 @@ mono_domain_foreach (MonoDomainFunc func, gpointer user_data)
 			func (copy [i], user_data);
 	}
 
-	mono_gc_free_fixed (copy);
+	gc_free_fixed_non_heap_list (copy);
 }
 
 /* FIXME: maybe we should integrate this with mono_assembly_open? */
@@ -1155,7 +1174,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	mono_thread_hazardous_try_free_all ();
 	if (domain->aot_modules)
 		mono_jit_info_table_free (domain->aot_modules);
-	g_assert (domain->num_jit_info_tables == 1);
+	g_assert (domain->num_jit_info_table_duplicates == 0);
 	mono_jit_info_table_free (domain->jit_info_table);
 	domain->jit_info_table = NULL;
 	g_assert (!domain->jit_info_free_queue);
@@ -1172,7 +1191,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	} else {
 #ifndef DISABLE_PERFCOUNTERS
 		/* FIXME: use an explicit subtraction method as soon as it's available */
-		InterlockedAdd (&mono_perfcounters->loader_bytes, -1 * mono_mempool_get_allocated (domain->mp));
+		mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, -1 * mono_mempool_get_allocated (domain->mp));
 #endif
 		mono_mempool_destroy (domain->mp);
 		domain->mp = NULL;
@@ -1184,10 +1203,6 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 
 	g_hash_table_destroy (domain->finalizable_objects_hash);
 	domain->finalizable_objects_hash = NULL;
-	if (domain->method_rgctx_hash) {
-		g_hash_table_destroy (domain->method_rgctx_hash);
-		domain->method_rgctx_hash = NULL;
-	}
 	if (domain->generic_virtual_cases) {
 		g_hash_table_destroy (domain->generic_virtual_cases);
 		domain->generic_virtual_cases = NULL;
@@ -1219,7 +1234,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	mono_gc_free_fixed (domain);
 
 #ifndef DISABLE_PERFCOUNTERS
-	InterlockedDecrement (&mono_perfcounters->loader_appdomains);
+	mono_atomic_dec_i32 (&mono_perfcounters->loader_appdomains);
 #endif
 
 	if (domain == mono_root_domain)
@@ -1287,7 +1302,7 @@ mono_domain_alloc (MonoDomain *domain, guint size)
 
 	mono_domain_lock (domain);
 #ifndef DISABLE_PERFCOUNTERS
-	InterlockedAdd (&mono_perfcounters->loader_bytes, size);
+	mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, size);
 #endif
 	res = mono_mempool_alloc (domain->mp, size);
 	mono_domain_unlock (domain);
@@ -1307,7 +1322,7 @@ mono_domain_alloc0 (MonoDomain *domain, guint size)
 
 	mono_domain_lock (domain);
 #ifndef DISABLE_PERFCOUNTERS
-	InterlockedAdd (&mono_perfcounters->loader_bytes, size);
+	mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, size);
 #endif
 	res = mono_mempool_alloc0 (domain->mp, size);
 	mono_domain_unlock (domain);
@@ -1708,7 +1723,7 @@ static void start_element (GMarkupParseContext *context,
 			   const gchar        **attribute_names,
 			   const gchar        **attribute_values,
 			   gpointer             user_data,
-			   GError             **error)
+			   GError             **gerror)
 {
 	AppConfigInfo* app_config = (AppConfigInfo*) user_data;
 	
@@ -1735,7 +1750,7 @@ static void start_element (GMarkupParseContext *context,
 static void end_element   (GMarkupParseContext *context,
                            const gchar         *element_name,
 			   gpointer             user_data,
-			   GError             **error)
+			   GError             **gerror)
 {
 	AppConfigInfo* app_config = (AppConfigInfo*) user_data;
 	

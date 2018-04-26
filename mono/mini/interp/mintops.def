@@ -40,6 +40,8 @@ OPDEF(MINT_LDC_I8, "ldc.i8", 5, MintOpLongInt)
 OPDEF(MINT_LDC_R4, "ldc.r4", 3, MintOpFloat)
 OPDEF(MINT_LDC_R8, "ldc.r8", 5, MintOpDouble)
 
+OPDEF(MINT_ARGLIST, "arglist", 1, MintOpNoArgs)
+
 OPDEF(MINT_LDARG_I1, "ldarg.i1", 2, MintOpUShortInt)
 OPDEF(MINT_LDARG_U1, "ldarg.u1", 2, MintOpUShortInt)
 OPDEF(MINT_LDARG_I2, "ldarg.i2", 2, MintOpUShortInt)
@@ -88,10 +90,10 @@ OPDEF(MINT_LDFLD_R4, "ldfld.r4", 2, MintOpUShortInt)
 OPDEF(MINT_LDFLD_R8, "ldfld.r8", 2, MintOpUShortInt)
 OPDEF(MINT_LDFLD_O, "ldfld.o", 2, MintOpUShortInt)
 OPDEF(MINT_LDFLD_P, "ldfld.p", 2, MintOpUShortInt)
-OPDEF(MINT_LDFLD_VT, "ldfld.vt", 4, MintOpShortAndInt)
+OPDEF(MINT_LDFLD_VT, "ldfld.vt", 3, MintOpUShortInt)
 
 OPDEF(MINT_LDRMFLD, "ldrmfld", 2, MintOpFieldToken)
-OPDEF(MINT_LDRMFLD_VT, "ldrmfld.vt", 4, MintOpShortAndInt)
+OPDEF(MINT_LDRMFLD_VT, "ldrmfld.vt", 2, MintOpUShortInt)
 
 OPDEF(MINT_LDFLDA, "ldflda", 2, MintOpUShortInt)
 OPDEF(MINT_LDFLDA_UNSAFE, "ldflda.unsafe", 2, MintOpUShortInt)
@@ -106,15 +108,15 @@ OPDEF(MINT_STFLD_R4, "stfld.r4", 2, MintOpUShortInt)
 OPDEF(MINT_STFLD_R8, "stfld.r8", 2, MintOpUShortInt)
 OPDEF(MINT_STFLD_O, "stfld.o", 2, MintOpUShortInt)
 OPDEF(MINT_STFLD_P, "stfld.p", 2, MintOpUShortInt)
-OPDEF(MINT_STFLD_VT, "stfld.vt", 4, MintOpShortAndInt)
+OPDEF(MINT_STFLD_VT, "stfld.vt", 3, MintOpTwoShorts)
 
 OPDEF(MINT_STRMFLD, "strmfld", 2, MintOpFieldToken)
-OPDEF(MINT_STRMFLD_VT, "strmfld.vt", 4, MintOpShortAndInt)
+OPDEF(MINT_STRMFLD_VT, "strmfld.vt", 2, MintOpUShortInt)
 
 OPDEF(MINT_LDSFLD, "ldsfld", 2, MintOpFieldToken)
 OPDEF(MINT_LDSFLD_VT, "ldsfld.vt", 4, MintOpShortAndInt)
 OPDEF(MINT_STSFLD, "stsfld", 2, MintOpUShortInt)
-OPDEF(MINT_STSFLD_VT, "stsfld.vt", 4, MintOpShortAndInt)
+OPDEF(MINT_STSFLD_VT, "stsfld.vt", 2, MintOpUShortInt)
 OPDEF(MINT_LDSFLDA, "ldsflda", 2, MintOpUShortInt)
 
 OPDEF(MINT_LDLOC_I1, "ldloc.i1", 2, MintOpUShortInt)
@@ -168,12 +170,16 @@ OPDEF(MINT_STIND_REF, "stind.ref", 1, MintOpNoArgs)
 
 OPDEF(MINT_BR, "br", 3, MintOpBranch)
 OPDEF(MINT_LEAVE, "leave", 3, MintOpBranch)
+OPDEF(MINT_LEAVE_CHECK, "leave.check", 3, MintOpBranch)
 OPDEF(MINT_BR_S, "br.s", 2, MintOpShortBranch)
 OPDEF(MINT_LEAVE_S, "leave.s", 2, MintOpShortBranch)
+OPDEF(MINT_LEAVE_S_CHECK, "leave.s.check", 2, MintOpShortBranch)
 
 OPDEF(MINT_THROW, "throw", 1, MintOpNoArgs)
 OPDEF(MINT_RETHROW, "rethrow", 2, MintOpUShortInt)
 OPDEF(MINT_ENDFINALLY, "endfinally", 2, MintOpNoArgs)
+
+OPDEF(MINT_CHECKPOINT, "checkpoint", 1, MintOpNoArgs)
 
 OPDEF(MINT_BRFALSE_I4, "brfalse.i4", 3, MintOpBranch)
 OPDEF(MINT_BRFALSE_I8, "brfalse.i8", 3, MintOpBranch)
@@ -256,6 +262,7 @@ OPDEF(MINT_BLT_UN_R8_S, "blt.un.r8.s", 2, MintOpShortBranch)
 OPDEF(MINT_SWITCH, "switch", 0, MintOpSwitch)
 
 OPDEF(MINT_LDSTR, "ldstr", 2, MintOpMethodToken) /* not really */
+OPDEF(MINT_LDSTR_TOKEN, "ldstr.token", 2, MintOpMethodToken) /* not really */
 
 OPDEF(MINT_CALL, "call", 2, MintOpMethodToken) 
 OPDEF(MINT_VCALL, "vcall", 2, MintOpMethodToken) 
@@ -324,12 +331,14 @@ OPDEF(MINT_ADD_I8, "add.i8", 1, MintOpNoArgs)
 OPDEF(MINT_ADD_R8, "add.r8", 1, MintOpNoArgs)
 
 OPDEF(MINT_ADD1_I4, "add1.i4", 1, MintOpNoArgs)
+OPDEF(MINT_ADD1_I8, "add1.i8", 1, MintOpNoArgs)
 
 OPDEF(MINT_SUB_I4, "sub.i4", 1, MintOpNoArgs)
 OPDEF(MINT_SUB_I8, "sub.i8", 1, MintOpNoArgs)
 OPDEF(MINT_SUB_R8, "sub.r8", 1, MintOpNoArgs)
 
 OPDEF(MINT_SUB1_I4, "sub1.i4", 1, MintOpNoArgs)
+OPDEF(MINT_SUB1_I8, "sub1.i8", 1, MintOpNoArgs)
 
 OPDEF(MINT_MUL_I4, "mul.i4", 1, MintOpNoArgs)
 OPDEF(MINT_MUL_I8, "mul.i8", 1, MintOpNoArgs)
@@ -512,9 +521,10 @@ OPDEF(MINT_CLT_UN_R8, "clt.un.r8", 1, MintOpNoArgs)
 OPDEF(MINT_CKFINITE, "ckfinite", 1, MintOpNoArgs)
 OPDEF(MINT_MKREFANY, "mkrefany", 2, MintOpClassToken)
 OPDEF(MINT_REFANYTYPE, "refanytype", 1, MintOpNoArgs)
-OPDEF(MINT_REFANYVAL, "refanyval", 1, MintOpNoArgs)
+OPDEF(MINT_REFANYVAL, "refanyval", 2, MintOpNoArgs)
 
 OPDEF(MINT_CKNULL, "cknull", 1, MintOpNoArgs)
+OPDEF(MINT_CKNULL_N, "cknull_n", 2, MintOpInt)
 
 OPDEF(MINT_GETCHR, "getchr", 1, MintOpNoArgs)
 OPDEF(MINT_STRLEN, "strlen", 1, MintOpNoArgs)
@@ -530,6 +540,8 @@ OPDEF(MINT_ICALL_PP_P, "mono_icall_pp_p", 2, MintOpClassToken)
 OPDEF(MINT_ICALL_PI_P, "mono_icall_pi_p", 2, MintOpClassToken)
 OPDEF(MINT_ICALL_PPP_V, "mono_icall_ppp_v", 2, MintOpClassToken)
 OPDEF(MINT_ICALL_PPI_V, "mono_icall_ppi_v", 2, MintOpClassToken)
+OPDEF(MINT_ICALL_PII_P, "mono_icall_pii_p", 2, MintOpClassToken)
+OPDEF(MINT_ICALL_PPII_V, "mono_icall_ppii_v", 2, MintOpClassToken)
 OPDEF(MINT_MONO_LDPTR, "mono_ldptr", 2, MintOpClassToken) 
 OPDEF(MINT_MONO_TLS, "mono_tls", 3, MintOpInt)
 OPDEF(MINT_MONO_NEWOBJ, "mono_newobj", 2, MintOpClassToken)
@@ -546,6 +558,9 @@ OPDEF(MINT_JIT_CALL, "mono_jit_call", 2, MintOpNoArgs)
 OPDEF(MINT_SDB_INTR_LOC, "sdb_intr_loc", 1, MintOpNoArgs)
 OPDEF(MINT_SDB_SEQ_POINT, "sdb_seq_point", 1, MintOpNoArgs)
 OPDEF(MINT_SDB_BREAKPOINT, "sdb_breakpoint", 1, MintOpNoArgs)
+
+OPDEF(MINT_START_ABORT_PROT, "start_abort_protected", 1, MintOpNoArgs)
+OPDEF(MINT_END_ABORT_PROT, "end_abort_protected", 1, MintOpNoArgs)
 
 /*
  * This needs to be an opcode because we need to trigger the enter event after

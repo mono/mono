@@ -32,7 +32,9 @@
 #ifdef HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
 #endif
+#ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
+#endif
 #endif
 #if defined(__HAIKU__)
 #include <os/kernel/OS.h>
@@ -519,7 +521,7 @@ get_user_hz (void)
 {
 	static int user_hz = 0;
 	if (user_hz == 0) {
-#ifdef _SC_CLK_TCK
+#if defined (_SC_CLK_TCK) && defined (HAVE_SYSCONF)
 		user_hz = sysconf (_SC_CLK_TCK);
 #endif
 		if (user_hz == 0)
@@ -548,8 +550,8 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 	
 	gint64 ret;
 	task_t task;
-	struct task_basic_info t_info;
-	mach_msg_type_number_t th_count = TASK_BASIC_INFO_COUNT;
+	task_vm_info_data_t t_info;
+	mach_msg_type_number_t info_count = TASK_VM_INFO_COUNT;
 	kern_return_t mach_ret;
 
 	if (pid == getpid ()) {
@@ -565,7 +567,7 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 	}
 
 	do {
-		mach_ret = task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &th_count);
+		mach_ret = task_info (task, TASK_VM_INFO, (task_info_t)&t_info, &info_count);
 	} while (mach_ret == KERN_ABORTED);
 
 	if (mach_ret != KERN_SUCCESS) {
@@ -574,12 +576,29 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
 	}
 
-	if (strcmp (item, "VmRSS") == 0 || strcmp (item, "VmHWM") == 0 || strcmp (item, "VmData") == 0)
+	if(strcmp (item, "VmData") == 0)
+		ret = t_info.internal + t_info.compressed;
+	else if (strcmp (item, "VmRSS") == 0)
 		ret = t_info.resident_size;
+	else if(strcmp (item, "VmHWM") == 0)
+		ret = t_info.resident_size_peak;
 	else if (strcmp (item, "VmSize") == 0 || strcmp (item, "VmPeak") == 0)
 		ret = t_info.virtual_size;
-	else if (strcmp (item, "Threads") == 0)
+	else if (strcmp (item, "Threads") == 0) {
+		struct task_basic_info t_info;
+		mach_msg_type_number_t th_count = TASK_BASIC_INFO_COUNT;
+		do {
+			mach_ret = task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &th_count);
+		} while (mach_ret == KERN_ABORTED);
+
+		if (mach_ret != KERN_SUCCESS) {
+			if (pid != getpid ())
+				mach_port_deallocate (mach_task_self (), task);
+			RET_ERROR (MONO_PROCESS_ERROR_OTHER);
+		}
 		ret = th_count;
+	} else if (strcmp (item, "VmSwap") == 0)
+		ret = t_info.compressed;
 	else
 		ret = 0;
 
@@ -761,7 +780,7 @@ mono_cpu_count (void)
  * [5] https://github.com/dotnet/coreclr/blob/7058273693db2555f127ce16e6b0c5b40fb04867/src/pal/src/misc/sysinfo.cpp#L148
  */
 
-#ifdef _SC_NPROCESSORS_CONF
+#if defined (_SC_NPROCESSORS_CONF) && defined (HAVE_SYSCONF)
 	{
 		int count = sysconf (_SC_NPROCESSORS_CONF);
 		if (count > 0)
@@ -778,7 +797,7 @@ mono_cpu_count (void)
 			return CPU_COUNT (&set);
 	}
 #endif
-#ifdef _SC_NPROCESSORS_ONLN
+#if defined (_SC_NPROCESSORS_ONLN) && defined (HAVE_SYSCONF)
 	{
 		int count = sysconf (_SC_NPROCESSORS_ONLN);
 		if (count > 0)
@@ -809,13 +828,13 @@ get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *s
 {
 	char buf [256];
 	char *s;
-	int hz = get_user_hz ();
+	int uhz = get_user_hz ();
 	guint64	user_ticks = 0, nice_ticks = 0, system_ticks = 0, idle_ticks = 0, irq_ticks = 0, sirq_ticks = 0;
 	FILE *f = fopen ("/proc/stat", "r");
 	if (!f)
 		return;
 	if (cpu_id < 0)
-		hz *= mono_cpu_count ();
+		uhz *= mono_cpu_count ();
 	while ((s = fgets (buf, sizeof (buf), f))) {
 		char *data = NULL;
 		if (cpu_id < 0 && strncmp (s, "cpu", 3) == 0 && g_ascii_isspace (s [3])) {
@@ -840,15 +859,15 @@ get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *s
 	fclose (f);
 
 	if (user)
-		*user = (user_ticks + nice_ticks) * 10000000 / hz;
+		*user = (user_ticks + nice_ticks) * 10000000 / uhz;
 	if (systemt)
-		*systemt = (system_ticks) * 10000000 / hz;
+		*systemt = (system_ticks) * 10000000 / uhz;
 	if (irq)
-		*irq = (irq_ticks) * 10000000 / hz;
+		*irq = (irq_ticks) * 10000000 / uhz;
 	if (sirq)
-		*sirq = (sirq_ticks) * 10000000 / hz;
+		*sirq = (sirq_ticks) * 10000000 / uhz;
 	if (idle)
-		*idle = (idle_ticks) * 10000000 / hz;
+		*idle = (idle_ticks) * 10000000 / uhz;
 }
 
 /**
@@ -913,6 +932,7 @@ gint32
 mono_cpu_usage (MonoCpuUsageState *prev)
 {
 	gint32 cpu_usage = 0;
+#ifdef HAVE_GETRUSAGE
 	gint64 cpu_total_time;
 	gint64 cpu_busy_time;
 	struct rusage resource_usage;
@@ -940,7 +960,7 @@ mono_cpu_usage (MonoCpuUsageState *prev)
 
 	if (cpu_total_time > 0 && cpu_busy_time > 0)
 		cpu_usage = (gint32)(cpu_busy_time * 100 / cpu_total_time);
-
+#endif
 	return cpu_usage;
 }
 #endif /* !HOST_WIN32 */

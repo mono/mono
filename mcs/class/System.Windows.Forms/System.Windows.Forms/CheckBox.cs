@@ -111,6 +111,7 @@ namespace System.Windows.Forms {
 			TextAlign = ContentAlignment.MiddleLeft;
 			SetStyle(ControlStyles.StandardDoubleClick, false);
 			SetAutoSizeMode (AutoSizeMode.GrowAndShrink);
+			can_cache_preferred_size = true;
 		}
 		#endregion	// Public Constructors
 

@@ -36,10 +36,8 @@ namespace System.Windows.Forms
 {
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-	public class ToolStripOverflow : ToolStripDropDown, IComponent, IDisposable
+	public class ToolStripOverflow : ToolStripDropDown, IComponent, IDisposable, IArrangedContainer
 	{
-		private LayoutEngine layout_engine;
-		
 		#region Public Constructors
 		public ToolStripOverflow (ToolStripItem parentItem)
 		{
@@ -52,15 +50,6 @@ namespace System.Windows.Forms
 		public override ToolStripItemCollection Items {
 			get { return base.Items; }
 		}
-		
-		public override LayoutEngine LayoutEngine {
-			get {
-				if (this.layout_engine == null)
-					this.layout_engine = new FlowLayout ();
-					
-				return base.LayoutEngine;
-			}
-		}
 		#endregion
 
 		#region Protected Properties
@@ -72,7 +61,8 @@ namespace System.Windows.Forms
 		#region Public Methods
 		public override Size GetPreferredSize (Size constrainingSize)
 		{
-			return base.GetToolStripPreferredSize (constrainingSize);
+			constrainingSize.Width = 200;
+			return base.GetPreferredSize (constrainingSize);
 		}
 		#endregion
 
@@ -81,46 +71,16 @@ namespace System.Windows.Forms
 		{
 			return new ToolStripOverflowAccessibleObject ();
 		}
-		
-		[MonoInternalNote ("This should stack in rows of ~3, but for now 1 column will work.")]
-		protected override void OnLayout (LayoutEventArgs e)
-		{
-			SetDisplayedItems ();
-			
-			// Find the widest menu item
-			int widest = 0;
 
-			foreach (ToolStripItem tsi in this.DisplayedItems) {
-				if (!tsi.Available)
-					continue;
-				if (tsi.GetPreferredSize (Size.Empty).Width > widest)
-					widest = tsi.GetPreferredSize (Size.Empty).Width;
+		protected override LayoutSettings CreateLayoutSettings(ToolStripLayoutStyle style) {
+			LayoutSettings layout_settings = base.CreateLayoutSettings (style);
+			if (style == ToolStripLayoutStyle.Flow) {
+				((FlowLayoutSettings)layout_settings).FlowDirection = FlowDirection.LeftToRight;
+				((FlowLayoutSettings)layout_settings).WrapContents = true;
 			}
-
-			int x = this.Padding.Left;
-			widest += this.Padding.Horizontal;
-			int y = this.Padding.Top;
-
-			foreach (ToolStripItem tsi in this.DisplayedItems) {
-				if (!tsi.Available)
-					continue;
-
-				y += tsi.Margin.Top;
-
-				int height = 0;
-
-				if (tsi is ToolStripSeparator)
-					height = 7;
-				else
-					height = tsi.GetPreferredSize (Size.Empty).Height;
-
-				tsi.SetBounds (new Rectangle (x, y, widest, height));
-				y += tsi.Height + tsi.Margin.Bottom;
-			}
-
-			this.Size = new Size (widest + this.Padding.Horizontal, y + this.Padding.Bottom);// + 2);
+			return layout_settings;
 		}
-
+		
 		protected override void SetDisplayedItems ()
 		{
 			this.displayed_items.ClearInternal ();
@@ -140,6 +100,11 @@ namespace System.Windows.Forms
 		internal ToolStrip ParentToolStrip {
 			get { return (ToolStrip)this.OwnerItem.Parent; }
 		}
+
+		ArrangedElementCollection IArrangedContainer.Controls {
+			get { return DisplayedItems; }
+		}
+
 		#endregion
 
 		#region ToolStripOverflowAccessibleObject Class

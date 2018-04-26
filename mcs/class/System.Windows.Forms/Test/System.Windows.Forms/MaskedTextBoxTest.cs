@@ -937,6 +937,7 @@ namespace MonoTests.System.Windows.Forms
 					case Keys.Right:
 					case Keys.Up:
 					case Keys.Down:
+					case Keys.Back:
 						is_input = true;
 						break;
 					}

@@ -52,7 +52,6 @@
 nop: len:4
 relaxed_nop: len:4
 break: len:20
-jmp: len:92
 br: len:16
 switch: src1:i len:12
 # See the comment in resume_from_signal_handler, we can't copy the fp regs from sigctx to MonoContext on linux,
@@ -101,6 +100,7 @@ vcall: len:32 clob:c
 vcall_reg: src1:i len:32 clob:c
 vcall_membase: src1:b len:32 clob:c
 tailcall: len:64 clob:c
+tailcall_membase: src1:b len:128 clob:c # FIXME len? Eventually depends on stack_usage.
 iconst: dest:i len:16
 r4const: dest:f len:24
 r8const: dest:f len:20
@@ -300,7 +300,10 @@ arm_rsc_imm: dest:i src1:i len:4
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
+dummy_iconst: dest:i len:0
+dummy_i8const: dest:i len:0
+dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -440,7 +443,7 @@ long_conv_to_u2: dest:i src1:i len:4
 long_conv_to_r8: dest:f src1:i len:8
 long_conv_to_r4: dest:f src1:i len:12
 loadi8_membase: dest:i src1:b len:12
-storei8_membase_imm: dest:b  len:20
+storei8_membase_imm: dest:b len:20
 storei8_membase_reg: dest:b src1:i len:12
 long_conv_to_r_un: dest:f src1:i len:8
 arm_setfreg_r4: dest:f src1:f len:8

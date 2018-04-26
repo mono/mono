@@ -101,6 +101,8 @@ namespace Mono.Profiler.Log {
 
 		public string Name { get; internal set; }
 
+		public Guid ModuleVersionId { get; internal set; }
+
 		internal override void Accept (LogEventVisitor visitor)
 		{
 			visitor.Visit (this);
@@ -161,6 +163,20 @@ namespace Mono.Profiler.Log {
 		}
 	}
 
+	public sealed class VTableLoadEvent : LogEvent {
+
+		public long VTablePointer { get; internal set; }
+
+		public long AppDomainId { get; internal set; }
+
+		public long ClassPointer { get; internal set; }
+
+		internal override void Accept (LogEventVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+	}
+
 	public sealed class JitEvent : LogEvent {
 
 		public long MethodPointer { get; internal set; }
@@ -195,7 +211,10 @@ namespace Mono.Profiler.Log {
 
 	public sealed class AllocationEvent : LogEvent {
 
+		[Obsolete ("This field is no longer produced.")]
 		public long ClassPointer { get; internal set; }
+
+		public long VTablePointer { get; internal set; }
 
 		public long ObjectPointer { get; internal set; }
 
@@ -236,9 +255,14 @@ namespace Mono.Profiler.Log {
 
 		public long ObjectPointer { get; internal set; }
 
+		[Obsolete ("This field is no longer produced.")]
 		public long ClassPointer { get; internal set; }
 
+		public long VTablePointer { get; internal set; }
+
 		public long ObjectSize { get; internal set; }
+
+		public int Generation { get; internal set; }
 
 		public IReadOnlyList<HeapObjectReference> References { get; internal set; }
 
@@ -252,16 +276,49 @@ namespace Mono.Profiler.Log {
 
 		public struct HeapRoot {
 
+			public long SlotPointer { get; internal set; }
+
 			public long ObjectPointer { get; internal set; }
 
+			[Obsolete ("This field is no longer produced.")]
 			public LogHeapRootAttributes Attributes { get; internal set; }
 
+			[Obsolete ("This field is no longer produced.")]
 			public long ExtraInfo { get; internal set; }
 		}
 
+		[Obsolete ("This field is no longer produced.")]
 		public long MaxGenerationCollectionCount { get; internal set; }
 
 		public IReadOnlyList<HeapRoot> Roots { get; internal set; }
+
+		internal override void Accept (LogEventVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+	}
+
+	public sealed class HeapRootRegisterEvent : LogEvent {
+
+		public long RootPointer { get; internal set; }
+
+		public long RootSize { get; internal set; }
+
+		public LogHeapRootSource Source { get; internal set; }
+
+		public long Key { get; internal set; }
+
+		public string Name { get; internal set; }
+
+		internal override void Accept (LogEventVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+	}
+
+	public sealed class HeapRootUnregisterEvent : LogEvent {
+
+		public long RootPointer { get; internal set; }
 
 		internal override void Accept (LogEventVisitor visitor)
 		{
@@ -273,7 +330,7 @@ namespace Mono.Profiler.Log {
 
 		public LogGCEvent Type { get; internal set; }
 
-		public byte Generation { get; internal set; }
+		public int Generation { get; internal set; }
 
 		internal override void Accept (LogEventVisitor visitor)
 		{
@@ -501,6 +558,7 @@ namespace Mono.Profiler.Log {
 		}
 	}
 
+	[Obsolete ("This event is no longer produced.")]
 	public sealed class UnmanagedBinaryEvent : LogEvent {
 
 		public long SegmentPointer { get; internal set; }
@@ -534,6 +592,16 @@ namespace Mono.Profiler.Log {
 	public sealed class SynchronizationPointEvent : LogEvent {
 
 		public LogSynchronizationPoint Type { get; internal set; }
+
+		internal override void Accept (LogEventVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+	}
+
+	public sealed class AotIdEvent : LogEvent {
+
+		public Guid AotId { get; internal set; }
 
 		internal override void Accept (LogEventVisitor visitor)
 		{

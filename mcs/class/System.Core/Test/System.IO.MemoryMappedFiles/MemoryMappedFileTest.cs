@@ -37,6 +37,7 @@ using NUnit.Framework;
 namespace MonoTests.System.IO.MemoryMappedFiles {
 
 	[TestFixture]
+	[Category("NotWasm")]
 	public class MemoryMappedFileTest {
 
 		void AssertThrows<ExType> (Action del) where ExType : Exception {

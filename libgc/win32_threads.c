@@ -48,6 +48,7 @@ struct GC_thread_Rep {
 			/* 0 ==> entry not valid.	*/
 			/* !in_use ==> stack_base == 0	*/
   GC_bool suspended;
+  GC_bool thread_blocked;
 
 # ifdef CYGWIN32
     void *status; /* hold exit value until join in case it's a pointer */
@@ -174,6 +175,7 @@ static GC_thread GC_new_thread(void) {
   /* the world, wait here.  Hopefully this can't happen on any	*/
   /* systems that don't allow us to block here.			*/
   while (GC_please_stop) Sleep(20);
+  GC_ASSERT(!thread_table[i]->thread_blocked);
   return thread_table + i;
 }
 
@@ -223,7 +225,6 @@ static void GC_delete_thread(DWORD thread_id) {
   }
 }
 
-
 #ifdef CYGWIN32
 
 /* Return a GC_thread corresponding to a given pthread_t.	*/
@@ -245,6 +246,20 @@ static GC_thread GC_lookup_thread(pthread_t id)
   return thread_table + i;
 }
 
+#else
+
+static GC_thread GC_lookup_thread(DWORD id)
+{
+  int i;
+  LONG max = GC_get_max_thread_index();
+
+  for (i = 0; i <= max; i++)
+    if (thread_table[i].in_use && thread_table[i].id == id)
+      return &thread_table[i];
+
+  return NULL;
+}
+
 #endif /* CYGWIN32 */
 
 void GC_push_thread_structures GC_PROTO((void))
@@ -264,6 +279,35 @@ void GC_push_thread_structures GC_PROTO((void))
 # endif
 }
 
+/* Wrappers for functions that are likely to block for an appreciable	*/
+/* length of time.  Must be called in pairs, if at all.			*/
+/* Nothing much beyond the system call itself should be executed	*/
+/* between these.							*/
+
+void GC_start_blocking(void) {
+    GC_thread me;
+    LOCK();
+#ifdef CYGWIN32
+    me = GC_lookup_thread(pthread_self());
+#else
+    me = GC_lookup_thread(GetCurrentThreadId());
+#endif
+    me->thread_blocked = TRUE;
+    UNLOCK();
+}
+
+void GC_end_blocking(void) {
+    GC_thread me;
+    LOCK();   /* This will block if the world is stopped.	*/
+#ifdef CYGWIN32
+    me = GC_lookup_thread(pthread_self());
+#else
+    me = GC_lookup_thread(GetCurrentThreadId());
+#endif
+    me->thread_blocked = FALSE;
+    UNLOCK();
+}
+
 /* Defined in misc.c */
 extern CRITICAL_SECTION GC_write_cs;
 
@@ -281,6 +325,8 @@ void GC_stop_world()
   for (i = 0; i <= GC_get_max_thread_index(); i++)
     if (thread_table[i].stack_base != 0
 	&& thread_table[i].id != thread_id) {
+      if (thread_table [i].thread_blocked)
+        continue;
 #     ifdef MSWINCE
         /* SuspendThread will fail if thread is running kernel code */
 	while (SuspendThread(thread_table[i].handle) == (DWORD)-1)

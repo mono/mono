@@ -130,7 +130,6 @@ System.Collections.Generic/SynchronizedKeyedCollection.cs
 System.Collections.Generic/SynchronizedReadOnlyCollection.cs
 System.IO/PipeException.cs
 System.ServiceModel.Activation/AspNetIntegrationRequirementsAttribute.cs
-System.ServiceModel.Activation/ServiceHostFactory.cs
 System.ServiceModel.Activation/ServiceHostFactoryBase.cs
 System.ServiceModel.Activation/VirtualPathExtension.cs
 System.ServiceModel.Channels/AddressHeader.cs
@@ -620,6 +619,7 @@ System.ServiceModel.Description/ServiceTimeoutsBehavior.cs
 System.ServiceModel.Description/SynchronousReceiveBehavior.cs
 System.ServiceModel.Description/TransactedBatchingBehavior.cs
 System.ServiceModel.Description/TypedMessageConverter.cs
+../referencesource/System.ServiceModel/System/ServiceModel/Description/UseRequestHeadersForMetadataAddressBehavior.cs
 System.ServiceModel.Description/WSTrustMessageConverters.cs
 System.ServiceModel.Description/WSTrustSTSContract.cs
 System.ServiceModel.Description/WsdlContractConversionContext.cs

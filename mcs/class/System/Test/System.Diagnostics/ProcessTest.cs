@@ -207,12 +207,6 @@ namespace MonoTests.System.Diagnostics
 				Assert.AreEqual (2, ex.NativeErrorCode, "#B6");
 			}
 
-			if (RunningOnUnix)
-				Assert.Ignore ("On Unix and Mac OS X, we try " +
-					"to open any file (using xdg-open, ...)" +
-					" and we do not report an exception " +
-					"if this fails.");
-
 			// absolute path, shell
 			process.StartInfo.FileName = exe;
 			process.StartInfo.UseShellExecute = true;

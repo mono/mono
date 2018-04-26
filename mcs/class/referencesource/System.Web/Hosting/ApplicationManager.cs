@@ -61,6 +61,7 @@ namespace System.Web.Hosting {
 
         private const string _clrQuirkAppSettingsAppContextPrefix = "AppContext.SetSwitch:";
         private const string _regexMatchTimeoutKey = "REGEX_DEFAULT_MATCH_TIMEOUT";
+        private const string _configBuildersIgnoreLoadFailuresSwitch = "ConfigurationBuilders.IgnoreLoadFailure";   // Keep in sync with System.Configuration
         private static readonly StrongName _mwiV1StrongName = GetMicrosoftWebInfrastructureV1StrongName();
 
         private static Object _applicationManagerStaticLock = new Object();
@@ -940,6 +941,8 @@ namespace System.Web.Hosting {
             try {
                 bool requireHostExecutionContextManager = false;
                 bool requireHostSecurityManager = false;
+
+                AppDomain.CurrentDomain.SetData(_configBuildersIgnoreLoadFailuresSwitch, true);
 
                 uncTokenConfig = appHost.GetConfigToken();
                 if (uncTokenConfig != IntPtr.Zero) {

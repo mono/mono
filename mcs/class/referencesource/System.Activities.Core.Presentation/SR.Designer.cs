@@ -846,5 +846,16 @@ namespace System.Activities.Core.Presentation {
                 return ResourceManager.GetString("WrongNumberOfArgumentsForActivityDelegate", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string for the automation name of ParallelSeparator
+        /// </summary>
+        internal static string ParallelSeparatorAutomationName
+        {
+            get
+            {
+                return ResourceManager.GetString("ParallelSeparatorAutomationName", resourceCulture);
+            }
+        }
     }
 }

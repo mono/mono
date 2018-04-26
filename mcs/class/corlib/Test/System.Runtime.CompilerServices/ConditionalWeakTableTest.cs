@@ -192,6 +192,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	}
 
 	[Test]
+	[Category ("MultiThreaded")]
 	public void Reachability () {
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
 			Assert.Ignore ("Not working on Boehm.");
@@ -241,6 +242,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	}
 
 	[Test]
+	[Category ("MultiThreaded")]
 	public void InsertStress () {
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
 			Assert.Ignore ("Not working on Boehm.");
@@ -289,6 +291,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	}
 
 	[Test]
+	[Category ("MultiThreaded")]
 	public void OldGenStress () {
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
 			Assert.Ignore ("Not working on Boehm.");
@@ -431,6 +434,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	}
 
 	[Test]
+	[Category ("MultiThreaded")]
 	public void FinalizableObjectsThatRetainDeadKeys ()
 	{
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
@@ -452,6 +456,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	}
 
 	[Test]
+	[Category("NotWasm")] //This test takes forever under WASM due to over allocating
 	public void OldGenKeysMakeNewGenObjectsReachable ()
 	{
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */

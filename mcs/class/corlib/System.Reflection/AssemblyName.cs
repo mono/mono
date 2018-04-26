@@ -456,7 +456,10 @@ namespace System.Reflection {
 				return (cultureinfo == null)? null : cultureinfo.Name;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value == null)
+					cultureinfo = null;
+				else
+					cultureinfo = new CultureInfo (value);
 			}
 		}
 

@@ -30,6 +30,7 @@
 /ilasm
 /ilasm1
 /ilasm2
+/illinkanalyzer
 /installvst
 /lc
 /macpack
@@ -87,6 +88,8 @@
 /sgen1
 /signcode
 /csc
+/csc-dim
+/vbc
 /sn
 /soapsuds
 /sqlmetal

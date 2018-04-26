@@ -662,7 +662,7 @@ char_needs_encoding (char c)
 }
 
 gchar *
-g_filename_to_uri (const gchar *filename, const gchar *hostname, GError **error)
+g_filename_to_uri (const gchar *filename, const gchar *hostname, GError **gerror)
 {
 	size_t n;
 	char *ret, *rp;
@@ -679,8 +679,8 @@ g_filename_to_uri (const gchar *filename, const gchar *hostname, GError **error)
 		g_warning ("%s", "eglib: g_filename_to_uri: hostname not handled");
 
 	if (!g_path_is_absolute (filename)){
-		if (error != NULL)
-			*error = g_error_new (NULL, 2, "Not an absolute filename");
+		if (gerror != NULL)
+			*gerror = g_error_new (NULL, 2, "Not an absolute filename");
 		
 		return NULL;
 	}
@@ -732,7 +732,7 @@ decode (char p)
 }
 
 gchar *
-g_filename_from_uri (const gchar *uri, gchar **hostname, GError **error)
+g_filename_from_uri (const gchar *uri, gchar **hostname, GError **gerror)
 {
 	const char *p;
 	char *r, *result;
@@ -744,8 +744,8 @@ g_filename_from_uri (const gchar *uri, gchar **hostname, GError **error)
 		g_warning ("%s", "eglib: g_filename_from_uri: hostname not handled");
 
 	if (strncmp (uri, "file:///", 8) != 0){
-		if (error != NULL)
-			*error = g_error_new (NULL, 2, "URI does not start with the file: scheme");
+		if (gerror != NULL)
+			*gerror = g_error_new (NULL, 2, "URI does not start with the file: scheme");
 		return NULL;
 	}
 
@@ -754,8 +754,8 @@ g_filename_from_uri (const gchar *uri, gchar **hostname, GError **error)
 			if (p [1] && p [2] && isxdigit (p [1]) && isxdigit (p [2])){
 				p += 2;
 			} else {
-				if (error != NULL)
-					*error = g_error_new (NULL, 2, "URI contains an invalid escape sequence");
+				if (gerror != NULL)
+					*gerror = g_error_new (NULL, 2, "URI contains an invalid escape sequence");
 				return NULL;
 			}
 		} 
@@ -884,6 +884,34 @@ g_ascii_strcasecmp (const gchar *s1, const gchar *s2)
 	}
 	
 	return (*sp1) - (*sp2);
+}
+
+gboolean
+g_utf16_ascii_equal (const gunichar2 *utf16, size_t ulen, const char *ascii, size_t alen)
+{
+	size_t i;
+	if (ulen != alen)
+		return FALSE;
+	for (i = 0; i < ulen; ++i) {
+		if (utf16[i] != ascii[i])
+			return FALSE;
+	}
+	return TRUE;
+}
+
+gboolean
+g_utf16_asciiz_equal (const gunichar2 *utf16, const char *ascii)
+// z for zero means null terminated
+{
+	while (1)
+	{
+		char a = *ascii++;
+		gunichar2 u = *utf16++;
+		if (a != u)
+			return FALSE;
+		if (a == 0)
+			return TRUE;
+	}
 }
 
 gchar *

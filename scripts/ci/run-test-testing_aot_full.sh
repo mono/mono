@@ -1,5 +1,10 @@
 #!/bin/bash -e
 
+if test -n "${MONO_STATIC_AOT}";
+then
+${TESTCMD} --label=mkbundle --timeout=25m make -j 4 -w -C mcs/class/corlib -k mkbundle-all-tests
+fi
+
 if test -n "${MONO_LLVMONLY}";
 then
 ${TESTCMD} --label=mini --timeout=25m make -j 4 -w -C mono/mini -k llvmonlycheck
@@ -19,6 +24,8 @@ ${TESTCMD} --label=System.Web.Services --timeout=5m make -w -C mcs/class/System.
 ${TESTCMD} --label=I18N.CJK --timeout=5m make -w -C mcs/class/I18N/CJK run-test
 ${TESTCMD} --label=I18N.West --timeout=5m make -w -C mcs/class/I18N/West run-test
 ${TESTCMD} --label=I18N.MidEast --timeout=5m make -w -C mcs/class/I18N/MidEast run-test
+${TESTCMD} --label=I18N.Rare --timeout=5m make -w -C mcs/class/I18N/Rare run-test
+${TESTCMD} --label=I18N.Other --timeout=5m make -w -C mcs/class/I18N/Other run-test
 ${TESTCMD} --label=System.Transactions --timeout=5m make -w -C mcs/class/System.Transactions run-test
 ${TESTCMD} --label=System.Core --timeout=15m make -w -C mcs/class/System.Core run-test
 ${TESTCMD} --label=System.Xml.Linq --timeout=5m make -w -C mcs/class/System.Xml.Linq run-test

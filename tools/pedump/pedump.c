@@ -24,6 +24,7 @@
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/w32handle.h>
@@ -364,18 +365,18 @@ dump_verify_info (MonoImage *image, int flags, gboolean valid_only)
 
 		for (i = 0; i < m->rows; ++i) {
 			MonoMethod *method;
-			MonoError error;
+			ERROR_DECL (error);
 
-			method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i+1), NULL, NULL, &error);
+			method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i+1), NULL, NULL, error);
 			if (!method) {
-				g_print ("Warning: Cannot lookup method with token 0x%08x due to %s\n", i + 1, mono_error_get_message (&error));
-				mono_error_cleanup (&error);
+				g_print ("Warning: Cannot lookup method with token 0x%08x due to %s\n", i + 1, mono_error_get_message (error));
+				mono_error_cleanup (error);
 				continue;
 			}
 			errors = mono_method_verify (method, flags);
 			if (errors) {
 				MonoClass *klass = mono_method_get_class (method);
-				char *name = mono_type_full_name (&klass->byval_arg);
+				char *name = mono_type_full_name (m_class_get_byval_arg (klass));
 				if (mono_method_signature (method) == NULL) {
 					g_print ("In method: %s::%s(ERROR)\n", name, mono_method_get_name (method));
 				} else {
@@ -515,31 +516,29 @@ verify_image_file (const char *fname)
 
 	table = &image->tables [MONO_TABLE_TYPEDEF];
 	for (i = 1; i <= table->rows; ++i) {
-		MonoError error;
+		ERROR_DECL (error);
 		guint32 token = i | MONO_TOKEN_TYPE_DEF;
-		MonoClass *klass = mono_class_get_checked (image, token, &error);
+		MonoClass *klass = mono_class_get_checked (image, token, error);
 		if (!klass) {
-			printf ("Could not load class with token %x due to %s\n", token, mono_error_get_message (&error));
-			mono_error_cleanup (&error);
+			printf ("Could not load class with token %x due to %s\n", token, mono_error_get_message (error));
+			mono_error_cleanup (error);
 			continue;
 		}
 		mono_class_init (klass);
 		if (mono_class_has_failure (klass)) {
-			MonoError type_load_error;
-			error_init (&type_load_error);
-			mono_error_set_for_class_failure (&type_load_error, klass);
-			printf ("Could not initialize class(0x%08x) %s.%s due to %s\n", token, klass->name_space, klass->name, mono_error_get_message (&type_load_error));
-			mono_error_cleanup (&type_load_error);
+			ERROR_DECL (type_load_error);
+			mono_error_set_for_class_failure (type_load_error, klass);
+			printf ("Could not initialize class(0x%08x) %s.%s due to %s\n", token, m_class_get_name_space (klass), m_class_get_name (klass), mono_error_get_message (type_load_error));
+			mono_error_cleanup (type_load_error);
 			++count;
 		}
 
 		mono_class_setup_vtable (klass);
 		if (mono_class_has_failure (klass)) {
-			MonoError type_load_error;
-			error_init (&type_load_error);
-			mono_error_set_for_class_failure (&type_load_error, klass);
-			printf ("Could not initialize vtable of class(0x%08x) %s.%s due to %s\n", token, klass->name_space, klass->name, mono_error_get_message (&type_load_error));
-			mono_error_cleanup (&type_load_error);
+			ERROR_DECL (type_load_error);
+			mono_error_set_for_class_failure (type_load_error, klass);
+			printf ("Could not initialize vtable of class(0x%08x) %s.%s due to %s\n", token, m_class_get_name_space (klass), m_class_get_name (klass), mono_error_get_message (type_load_error));
+			mono_error_cleanup (type_load_error);
 			++count;
 		}
 	}

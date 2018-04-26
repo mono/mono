@@ -6,6 +6,13 @@
 .assembly extern TestDriver {}
 .assembly extern mscorlib {}
 
+  .class private sequential ansi sealed beforefieldinit FLSharedKeys
+  extends [mscorlib]System.ValueType
+  {
+	 .pack 0
+	 .size 1
+  }
+
 .class public auto ansi sealed beforefieldinit Tests {
 
 	.method static public int32 Main(string[] args) il managed {
@@ -2383,6 +2390,7 @@ HAS_VALUE:	ldc.i4.1
 		ret
 	}
 
+/*	   Disabled until they can be fixed to run on amd64
 	.method public static float32 GetFloat32() cil managed noinlining
 	{
 		.maxstack  8
@@ -2390,7 +2398,6 @@ HAS_VALUE:	ldc.i4.1
 		ret
 	}
 
-/*	   Disabled until they can be fixed to run on amd64
 	.method public static default int32 test_0_implicit_float_to_double_conversion () cil managed
 	{
 		.maxstack 16
@@ -3228,4 +3235,86 @@ L_3:
 	ret
   }
 
+  .field public static class FLSharedKeys* keys
+
+  .method public hidebysig static int32 test_0_regress_60634 () cil managed
+  {
+	.maxstack 8
+	ldsflda     class FLSharedKeys* Tests::keys
+	initobj    class FLSharedKeys*
+	ldc.i4.0
+	ret
+  }
+
+  .method public hidebysig static int32 test_0_github_issue_6721 () cil managed
+  {
+       .maxstack 8
+       ldc.i4.0
+       conv.i8
+       ldc.i4.m1
+       conv.ovf.i8.un
+       sub.ovf
+       ldc.i8 0xffffffff00000001
+       beq.s IL_success
+       ldc.i4.1
+       ret
+       IL_success:
+       ldc.i4.0
+       ret
+  }
+
+  // Test that calli does signature checking
+  .method public static int32 calli_sig_check (string s) cil managed
+  {
+	.maxstack 16
+	ldc.i4.0
+	ret
+   }
+
+  .method public static int32 calli_sig_check_2 () cil managed
+  {
+	.maxstack 16
+
+	ldc.r4 1.13
+	ldftn int32 Tests::calli_sig_check(string)
+	calli int32(string)
+	ret
+   }
+
+	.method public static int32 test_0_calli_sig_check () cil managed
+	{
+	    .custom instance void [TestDriver]CategoryAttribute::.ctor(string) = ( 01 00 0C 21 49 4E 54 45 52 50 52 45 54 45 52 00 00 )   // ...!INTERPRETER.
+		.custom instance void class [TestDriver]CategoryAttribute::'.ctor'(string) =  (01 00 08 21 46 55 4C 4C 41 4F 54 00 00 ) // ...!FULLAOT..
+		.maxstack 16
+
+		.try {
+			call int32 Tests::calli_sig_check_2()
+			pop
+			leave L0
+		} catch [mscorlib]System.InvalidProgramException {
+			pop
+			leave L1
+		}
+
+		L0:
+			ldc.i4.1
+			ret
+		L1:
+			ldc.i4.0
+			ret
+	}
+
+  .method public hidebysig static int32 test_1_box_r8_r4_autoconv () cil managed
+  {
+		ldc.r8 1.234
+		box float64
+		unbox float64
+		ldind.r8
+		box float32
+		unbox float32
+		ldind.r4
+		conv.r8
+		conv.i4
+		ret
+	}
 }

@@ -9,7 +9,7 @@
  * typeid must be a C symbol name unique to the type, don't worry about namespace
  * 	pollution, since it will be automatically prefixed to avoid it.
  * typename is a C string containing the full name of the type
- * first_icall_id s the symbol ID of the first internal call of the declared
+ * first_icall_id is the symbol ID of the first internal call of the declared
  * 	type (see below)
  *
  * The list of internal calls of the methods of a type must follow the
@@ -18,7 +18,7 @@
  * 	ICALL(icallid, methodname, cfuncptr)
  *
  * icallid must be a C symbol, unique for each icall defined in this file and
- * tipically equal to the typeid + '_' + a sequential number.
+ * typically equal to the typeid + '_' + a sequential number.
  * methodname is a C string defining the method name and the optional signature
  * (the signature is required only when several internal calls in the type
  * have the same name)
@@ -64,7 +64,11 @@
  * Limitations: "out" and "ref" arguments are not supported yet. 
  */
 
-#ifndef DISABLE_PROCESS_HANDLING
+ #if defined(__APPLE__)
+ICALL_TYPE(CLR_INTEROP, "Interop/RunLoop", CLR_INTEROP_1)
+ICALL(CLR_INTEROP_1, "CFRunLoopRun", ves_icall_CoreFX_Interop_RunLoop_CFRunLoopRun)
+#endif
+
 ICALL_TYPE(NATIVEMETHODS, "Microsoft.Win32.NativeMethods", NATIVEMETHODS_1)
 ICALL(NATIVEMETHODS_1, "CloseProcess", ves_icall_Microsoft_Win32_NativeMethods_CloseProcess)
 ICALL(NATIVEMETHODS_2, "GetCurrentProcess", ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess)
@@ -77,7 +81,6 @@ ICALL(NATIVEMETHODS_8, "SetPriorityClass", ves_icall_Microsoft_Win32_NativeMetho
 ICALL(NATIVEMETHODS_9, "SetProcessWorkingSetSize", ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize)
 ICALL(NATIVEMETHODS_10, "TerminateProcess", ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess)
 ICALL(NATIVEMETHODS_11, "WaitForInputIdle", ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle)
-#endif /* !DISABLE_PROCESS_HANDLING */
 
 #ifndef DISABLE_COM
 ICALL_TYPE(COMPROX, "Mono.Interop.ComInteropProxy", COMPROX_1)
@@ -89,7 +92,9 @@ ICALL_TYPE(TLS_PROVIDER_FACTORY, "Mono.Net.Security.MonoTlsProviderFactory", TLS
 ICALL(TLS_PROVIDER_FACTORY_1, "IsBtlsSupported", ves_icall_Mono_TlsProviderFactory_IsBtlsSupported)
 
 ICALL_TYPE(RUNTIME, "Mono.Runtime", RUNTIME_1)
-HANDLES(ICALL(RUNTIME_1, "GetDisplayName", ves_icall_Mono_Runtime_GetDisplayName))
+ICALL(RUNTIME_1, "DisableMicrosoftTelemetry", ves_icall_Mono_Runtime_DisableMicrosoftTelemetry)
+ICALL(RUNTIME_2, "EnableMicrosoftTelemetry_internal", ves_icall_Mono_Runtime_EnableMicrosoftTelemetry)
+HANDLES(ICALL(RUNTIME_3, "GetDisplayName", ves_icall_Mono_Runtime_GetDisplayName))
 HANDLES(ICALL(RUNTIME_12, "GetNativeStackTrace", ves_icall_Mono_Runtime_GetNativeStackTrace))
 
 ICALL_TYPE(RTCLASS, "Mono.RuntimeClassHandle", RTCLASS_1)
@@ -180,11 +185,11 @@ HANDLES(ICALL(INTCFGHOST_1, "get_bundled_app_config", ves_icall_System_Configura
 HANDLES(ICALL(INTCFGHOST_2, "get_bundled_machine_config", ves_icall_System_Configuration_InternalConfigurationHost_get_bundled_machine_config))
 
 ICALL_TYPE(CONSOLE, "System.ConsoleDriver", CONSOLE_1)
-ICALL(CONSOLE_1, "InternalKeyAvailable", ves_icall_System_ConsoleDriver_InternalKeyAvailable )
-ICALL(CONSOLE_2, "Isatty", ves_icall_System_ConsoleDriver_Isatty )
-ICALL(CONSOLE_3, "SetBreak", ves_icall_System_ConsoleDriver_SetBreak )
-ICALL(CONSOLE_4, "SetEcho", ves_icall_System_ConsoleDriver_SetEcho )
-ICALL(CONSOLE_5, "TtySetup", ves_icall_System_ConsoleDriver_TtySetup )
+HANDLES(ICALL(CONSOLE_1, "InternalKeyAvailable", ves_icall_System_ConsoleDriver_InternalKeyAvailable))
+HANDLES(ICALL(CONSOLE_2, "Isatty", ves_icall_System_ConsoleDriver_Isatty))
+HANDLES(ICALL(CONSOLE_3, "SetBreak", ves_icall_System_ConsoleDriver_SetBreak))
+HANDLES(ICALL(CONSOLE_4, "SetEcho", ves_icall_System_ConsoleDriver_SetEcho))
+HANDLES(ICALL(CONSOLE_5, "TtySetup", ves_icall_System_ConsoleDriver_TtySetup))
 
 ICALL_TYPE(DTIME, "System.DateTime", DTIME_1)
 ICALL(DTIME_1, "GetSystemTimeAsFileTime", mono_100ns_datetime)
@@ -222,7 +227,6 @@ ICALL(TRACEL_1, "WriteWindowsDebugString", ves_icall_System_Diagnostics_DefaultT
 ICALL_TYPE(FILEV, "System.Diagnostics.FileVersionInfo", FILEV_1)
 ICALL(FILEV_1, "GetVersionInfo_internal(string)", ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal)
 
-#ifndef DISABLE_PROCESS_HANDLING
 ICALL_TYPE(PERFCTR, "System.Diagnostics.PerformanceCounter", PERFCTR_1)
 ICALL(PERFCTR_1, "FreeData", mono_perfcounter_free_data)
 ICALL(PERFCTR_2, "GetImpl", mono_perfcounter_get_impl)
@@ -247,23 +251,22 @@ ICALL(PROCESS_6, "GetProcess_internal(int)", ves_icall_System_Diagnostics_Proces
 ICALL(PROCESS_7, "GetProcesses_internal()", ves_icall_System_Diagnostics_Process_GetProcesses_internal)
 ICALL(PROCESS_10, "ProcessName_internal(intptr)", ves_icall_System_Diagnostics_Process_ProcessName_internal)
 ICALL(PROCESS_13, "ShellExecuteEx_internal(System.Diagnostics.ProcessStartInfo,System.Diagnostics.Process/ProcInfo&)", ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal)
-#endif /* !DISABLE_PROCESS_HANDLING */
 
 ICALL_TYPE(STOPWATCH, "System.Diagnostics.Stopwatch", STOPWATCH_1)
 ICALL(STOPWATCH_1, "GetTimestamp", mono_100ns_ticks)
 
 ICALL_TYPE(ENUM, "System.Enum", ENUM_1)
 HANDLES(ICALL(ENUM_1, "GetEnumValuesAndNames", ves_icall_System_Enum_GetEnumValuesAndNames))
-ICALL(ENUM_2, "InternalBoxEnum", ves_icall_System_Enum_ToObject)
-ICALL(ENUM_3, "InternalCompareTo", ves_icall_System_Enum_compare_value_to)
-ICALL(ENUM_4, "InternalGetUnderlyingType", ves_icall_System_Enum_get_underlying_type)
-ICALL(ENUM_5, "InternalHasFlag", ves_icall_System_Enum_InternalHasFlag)
-ICALL(ENUM_6, "get_hashcode", ves_icall_System_Enum_get_hashcode)
-ICALL(ENUM_7, "get_value", ves_icall_System_Enum_get_value)
+HANDLES(ICALL(ENUM_2, "InternalBoxEnum", ves_icall_System_Enum_ToObject))
+HANDLES(ICALL(ENUM_3, "InternalCompareTo", ves_icall_System_Enum_compare_value_to))
+HANDLES(ICALL(ENUM_4, "InternalGetUnderlyingType", ves_icall_System_Enum_get_underlying_type))
+HANDLES(ICALL(ENUM_5, "InternalHasFlag", ves_icall_System_Enum_InternalHasFlag))
+HANDLES(ICALL(ENUM_6, "get_hashcode", ves_icall_System_Enum_get_hashcode))
+HANDLES(ICALL(ENUM_7, "get_value", ves_icall_System_Enum_get_value))
 
 ICALL_TYPE(ENV, "System.Environment", ENV_1)
 ICALL(ENV_1, "Exit", ves_icall_System_Environment_Exit)
-ICALL(ENV_2, "GetCommandLineArgs", ves_icall_System_Environment_GetCommandLineArgs)
+HANDLES(ICALL(ENV_2, "GetCommandLineArgs", ves_icall_System_Environment_GetCommandLineArgs))
 ICALL(ENV_3, "GetEnvironmentVariableNames", ves_icall_System_Environment_GetEnvironmentVariableNames)
 ICALL(ENV_31, "GetIs64BitOperatingSystem", ves_icall_System_Environment_GetIs64BitOperatingSystem)
 ICALL(ENV_4, "GetLogicalDrivesInternal", ves_icall_System_Environment_GetLogicalDrives )
@@ -346,59 +349,63 @@ ICALL(INOW_3, "RemoveWatch", ves_icall_System_IO_InotifyWatcher_RemoveWatch)
 ICALL_TYPE(KQUEM, "System.IO.KqueueMonitor", KQUEM_1)
 ICALL(KQUEM_1, "kevent_notimeout", ves_icall_System_IO_KqueueMonitor_kevent_notimeout)
 
+ICALL_TYPE(LOGCATEXTWRITER, "System.IO.LogcatTextWriter", LOGCATEXTWRITER_1)
+HANDLES(ICALL(LOGCATEXTWRITER_1, "Log", ves_icall_System_IO_LogcatTextWriter_Log))
+
 ICALL_TYPE(MMAPIMPL, "System.IO.MemoryMappedFiles.MemoryMapImpl", MMAPIMPL_1)
-ICALL(MMAPIMPL_1, "CloseMapping", mono_mmap_close)
-ICALL(MMAPIMPL_2, "ConfigureHandleInheritability", mono_mmap_configure_inheritability)
-ICALL(MMAPIMPL_3, "Flush", mono_mmap_flush)
-ICALL(MMAPIMPL_4, "MapInternal", mono_mmap_map)
-ICALL(MMAPIMPL_5, "OpenFileInternal", mono_mmap_open_file)
-ICALL(MMAPIMPL_6, "OpenHandleInternal", mono_mmap_open_handle)
-ICALL(MMAPIMPL_7, "Unmap", mono_mmap_unmap)
+// FIXME rename to ves_icall...
+HANDLES(ICALL(MMAPIMPL_1, "CloseMapping", mono_mmap_close))
+HANDLES(ICALL(MMAPIMPL_2, "ConfigureHandleInheritability", mono_mmap_configure_inheritability))
+HANDLES(ICALL(MMAPIMPL_3, "Flush", mono_mmap_flush))
+HANDLES(ICALL(MMAPIMPL_4, "MapInternal", mono_mmap_map))
+HANDLES(ICALL(MMAPIMPL_5, "OpenFileInternal", mono_mmap_open_file))
+HANDLES(ICALL(MMAPIMPL_6, "OpenHandleInternal", mono_mmap_open_handle))
+HANDLES(ICALL(MMAPIMPL_7, "Unmap", mono_mmap_unmap))
 
 ICALL_TYPE(MONOIO, "System.IO.MonoIO", MONOIO_1)
 ICALL(MONOIO_1, "Close(intptr,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Close)
 #ifndef PLATFORM_RO_FS
-ICALL(MONOIO_2, "CopyFile(string,string,bool,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_CopyFile)
-ICALL(MONOIO_3, "CreateDirectory(string,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_CreateDirectory)
+ICALL(MONOIO_2, "CopyFile(char*,char*,bool,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_CopyFile)
+ICALL(MONOIO_3, "CreateDirectory(char*,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_CreateDirectory)
 ICALL(MONOIO_4, "CreatePipe", ves_icall_System_IO_MonoIO_CreatePipe)
-ICALL(MONOIO_5, "DeleteFile(string,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_DeleteFile)
+ICALL(MONOIO_5, "DeleteFile(char*,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_DeleteFile)
 #endif /* !PLATFORM_RO_FS */
 ICALL(MONOIO_38, "DumpHandles", ves_icall_System_IO_MonoIO_DumpHandles)
 ICALL(MONOIO_34, "DuplicateHandle", ves_icall_System_IO_MonoIO_DuplicateHandle)
 ICALL(MONOIO_37a, "FindCloseFile", ves_icall_System_IO_MonoIO_FindCloseFile)
-ICALL(MONOIO_35a, "FindFirstFile", ves_icall_System_IO_MonoIO_FindFirstFile)
-ICALL(MONOIO_36a, "FindNextFile", ves_icall_System_IO_MonoIO_FindNextFile)
+HANDLES(ICALL(MONOIO_35a, "FindFirstFile", ves_icall_System_IO_MonoIO_FindFirstFile))
+HANDLES(ICALL(MONOIO_36a, "FindNextFile", ves_icall_System_IO_MonoIO_FindNextFile))
 ICALL(MONOIO_6, "Flush(intptr,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Flush)
-ICALL(MONOIO_7, "GetCurrentDirectory(System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetCurrentDirectory)
-ICALL(MONOIO_8, "GetFileAttributes(string,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetFileAttributes)
-ICALL(MONOIO_9, "GetFileStat(string,System.IO.MonoIOStat&,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetFileStat)
+HANDLES(ICALL(MONOIO_7, "GetCurrentDirectory(System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetCurrentDirectory))
+ICALL(MONOIO_8, "GetFileAttributes(char*,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetFileAttributes)
+ICALL(MONOIO_9, "GetFileStat(char*,System.IO.MonoIOStat&,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetFileStat)
 ICALL(MONOIO_11, "GetFileType(intptr,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetFileType)
 ICALL(MONOIO_12, "GetLength(intptr,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetLength)
 #ifndef PLATFORM_RO_FS
 ICALL(MONOIO_14, "Lock(intptr,long,long,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Lock)
-ICALL(MONOIO_15, "MoveFile(string,string,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_MoveFile)
+ICALL(MONOIO_15, "MoveFile(char*,char*,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_MoveFile)
 #endif /* !PLATFORM_RO_FS */
-ICALL(MONOIO_16, "Open(string,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare,System.IO.FileOptions,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Open)
-ICALL(MONOIO_17, "Read(intptr,byte[],int,int,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Read)
+ICALL(MONOIO_16, "Open(char*,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare,System.IO.FileOptions,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Open)
+HANDLES(ICALL(MONOIO_17, "Read(intptr,byte[],int,int,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Read))
 #ifndef PLATFORM_RO_FS
-ICALL(MONOIO_18, "RemoveDirectory(string,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_RemoveDirectory)
-ICALL(MONOIO_18M, "ReplaceFile(string,string,string,bool,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_ReplaceFile)
+ICALL(MONOIO_18, "RemoveDirectory(char*,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_RemoveDirectory)
+ICALL(MONOIO_18M, "ReplaceFile(char*,char*,char*,bool,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_ReplaceFile)
 #endif /* !PLATFORM_RO_FS */
 ICALL(MONOIO_19, "Seek(intptr,long,System.IO.SeekOrigin,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Seek)
-ICALL(MONOIO_20, "SetCurrentDirectory(string,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_SetCurrentDirectory)
-ICALL(MONOIO_21, "SetFileAttributes(string,System.IO.FileAttributes,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_SetFileAttributes)
+ICALL(MONOIO_20, "SetCurrentDirectory(char*,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_SetCurrentDirectory)
+ICALL(MONOIO_21, "SetFileAttributes(char*,System.IO.FileAttributes,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_SetFileAttributes)
 ICALL(MONOIO_22, "SetFileTime(intptr,long,long,long,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_SetFileTime)
 ICALL(MONOIO_23, "SetLength(intptr,long,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_SetLength)
 #ifndef PLATFORM_RO_FS
 ICALL(MONOIO_24, "Unlock(intptr,long,long,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Unlock)
 #endif
-ICALL(MONOIO_25, "Write(intptr,byte[],int,int,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Write)
+HANDLES(ICALL(MONOIO_25, "Write(intptr,byte[],int,int,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Write))
 ICALL(MONOIO_26, "get_AltDirectorySeparatorChar", ves_icall_System_IO_MonoIO_get_AltDirectorySeparatorChar)
 ICALL(MONOIO_27, "get_ConsoleError", ves_icall_System_IO_MonoIO_get_ConsoleError)
 ICALL(MONOIO_28, "get_ConsoleInput", ves_icall_System_IO_MonoIO_get_ConsoleInput)
 ICALL(MONOIO_29, "get_ConsoleOutput", ves_icall_System_IO_MonoIO_get_ConsoleOutput)
 ICALL(MONOIO_30, "get_DirectorySeparatorChar", ves_icall_System_IO_MonoIO_get_DirectorySeparatorChar)
-ICALL(MONOIO_31, "get_InvalidPathChars", ves_icall_System_IO_MonoIO_get_InvalidPathChars)
+HANDLES(ICALL(MONOIO_31, "get_InvalidPathChars", ves_icall_System_IO_MonoIO_get_InvalidPathChars))
 ICALL(MONOIO_32, "get_PathSeparator", ves_icall_System_IO_MonoIO_get_PathSeparator)
 ICALL(MONOIO_33, "get_VolumeSeparatorChar", ves_icall_System_IO_MonoIO_get_VolumeSeparatorChar)
 
@@ -431,6 +438,31 @@ ICALL(MATH_22, "SplitFractionDouble", ves_icall_System_Math_SplitFractionDouble)
 ICALL(MATH_16, "Sqrt", ves_icall_System_Math_Sqrt)
 ICALL(MATH_17, "Tan", ves_icall_System_Math_Tan)
 ICALL(MATH_18, "Tanh", ves_icall_System_Math_Tanh)
+
+ICALL_TYPE(MATHF, "System.MathF", MATHF_1)
+ICALL(MATHF_1, "Acos", ves_icall_System_MathF_Acos)
+ICALL(MATHF_2, "Acosh", ves_icall_System_MathF_Acosh)
+ICALL(MATHF_3, "Asin", ves_icall_System_MathF_Asin)
+ICALL(MATHF_4, "Asinh", ves_icall_System_MathF_Asinh)
+ICALL(MATHF_5, "Atan", ves_icall_System_MathF_Atan)
+ICALL(MATHF_6, "Atan2", ves_icall_System_MathF_Atan2)
+ICALL(MATHF_7, "Atanh", ves_icall_System_MathF_Atanh)
+ICALL(MATHF_8, "Cbrt", ves_icall_System_MathF_Cbrt)
+ICALL(MATHF_9, "Ceiling", ves_icall_System_MathF_Ceiling)
+ICALL(MATHF_10, "Cos", ves_icall_System_MathF_Cos)
+ICALL(MATHF_11, "Cosh", ves_icall_System_MathF_Cosh)
+ICALL(MATHF_12, "Exp", ves_icall_System_MathF_Exp)
+ICALL(MATHF_22, "FMod", ves_icall_System_MathF_FMod)
+ICALL(MATHF_13, "Floor", ves_icall_System_MathF_Floor)
+ICALL(MATHF_14, "Log", ves_icall_System_MathF_Log)
+ICALL(MATHF_15, "Log10", ves_icall_System_MathF_Log10)
+ICALL(MATHF_23, "ModF(single,single*)", ves_icall_System_MathF_ModF)
+ICALL(MATHF_16, "Pow", ves_icall_System_MathF_Pow)
+ICALL(MATHF_17, "Sin", ves_icall_System_MathF_Sin)
+ICALL(MATHF_18, "Sinh", ves_icall_System_MathF_Sinh)
+ICALL(MATHF_19, "Sqrt", ves_icall_System_MathF_Sqrt)
+ICALL(MATHF_20, "Tan", ves_icall_System_MathF_Tan)
+ICALL(MATHF_21, "Tanh", ves_icall_System_MathF_Tanh)
 
 ICALL_TYPE(MCATTR, "System.MonoCustomAttrs", MCATTR_1)
 HANDLES(ICALL(MCATTR_1, "GetCustomAttributesDataInternal", ves_icall_MonoCustomAttrs_GetCustomAttributesDataInternal))
@@ -476,7 +508,7 @@ HANDLES(ICALL(SOCK_18, "SetSocketOption_internal(intptr,System.Net.Sockets.Socke
 HANDLES(ICALL(SOCK_19, "Shutdown_internal(intptr,System.Net.Sockets.SocketShutdown,int&)", ves_icall_System_Net_Sockets_Socket_Shutdown_internal))
 HANDLES(ICALL(SOCK_20, "Socket_internal(System.Net.Sockets.AddressFamily,System.Net.Sockets.SocketType,System.Net.Sockets.ProtocolType,int&)", ves_icall_System_Net_Sockets_Socket_Socket_internal))
 HANDLES(ICALL(SOCK_20a, "SupportsPortReuse", ves_icall_System_Net_Sockets_Socket_SupportPortReuse))
-HANDLES(ICALL(SOCK_21a, "cancel_blocking_socket_operation", icall_cancel_blocking_socket_operation))
+HANDLES(ICALL(SOCK_21a, "cancel_blocking_socket_operation", ves_icall_cancel_blocking_socket_operation))
 
 ICALL_TYPE(SOCKEX, "System.Net.Sockets.SocketException", SOCKEX_1)
 ICALL(SOCKEX_1, "WSAGetLastError_internal", ves_icall_System_Net_Sockets_SocketException_WSAGetLastError_internal)
@@ -626,14 +658,14 @@ HANDLES(ICALL(MMETH_10, "get_core_clr_security_level", ves_icall_MonoMethod_get_
 HANDLES(ICALL(MMETH_9, "get_name", ves_icall_MonoMethod_get_name))
 
 ICALL_TYPE(MMETHI, "System.Reflection.MonoMethodInfo", MMETHI_4)
-ICALL(MMETHI_4, "get_method_attributes", vell_icall_get_method_attributes)
+ICALL(MMETHI_4, "get_method_attributes", ves_icall_get_method_attributes)
 HANDLES(ICALL(MMETHI_1, "get_method_info", ves_icall_get_method_info))
 HANDLES(ICALL(MMETHI_2, "get_parameter_info", ves_icall_System_Reflection_MonoMethodInfo_get_parameter_info))
 HANDLES(ICALL(MMETHI_3, "get_retval_marshal", ves_icall_System_MonoMethodInfo_get_retval_marshal))
 
 ICALL_TYPE(MPROPI, "System.Reflection.MonoPropertyInfo", MPROPI_1)
 HANDLES(ICALL(MPROPI_1, "GetTypeModifiers", ves_icall_MonoPropertyInfo_GetTypeModifiers))
-ICALL(MPROPI_3, "get_default_value", property_info_get_default_value)
+ICALL(MPROPI_3, "get_default_value", ves_icall_property_info_get_default_value)
 HANDLES(ICALL(MPROPI_2, "get_property_info", ves_icall_MonoPropertyInfo_get_property_info))
 
 ICALL_TYPE(PARAMI, "System.Reflection.ParameterInfo", PARAMI_1)
@@ -791,7 +823,7 @@ HANDLES(ICALL(RT_21, "get_DeclaringMethod", ves_icall_RuntimeType_get_DeclaringM
 HANDLES(ICALL(RT_22, "get_DeclaringType", ves_icall_RuntimeType_get_DeclaringType))
 HANDLES(ICALL(RT_23, "get_Name", ves_icall_RuntimeType_get_Name))
 HANDLES(ICALL(RT_24, "get_Namespace", ves_icall_RuntimeType_get_Namespace))
-HANDLES(ICALL(RT_25, "get_core_clr_security_level", vell_icall_RuntimeType_get_core_clr_security_level))
+HANDLES(ICALL(RT_25, "get_core_clr_security_level", ves_icall_RuntimeType_get_core_clr_security_level))
 HANDLES(ICALL(RT_26, "make_array_type", ves_icall_RuntimeType_make_array_type))
 HANDLES(ICALL(RT_27, "make_byref_type", ves_icall_RuntimeType_make_byref_type))
 
@@ -854,7 +886,8 @@ ICALL(SECMAN_2, "get_SecurityEnabled", ves_icall_System_Security_SecurityManager
 ICALL(SECMAN_3, "set_SecurityEnabled", ves_icall_System_Security_SecurityManager_set_SecurityEnabled)
 
 ICALL_TYPE(STRING, "System.String", STRING_1)
-ICALL(STRING_1, ".ctor(char*)", ves_icall_System_String_ctor_RedirectToCreateString)
+ICALL(STRING_1, ".ctor(System.ReadOnlySpan`1<char>)", ves_icall_System_String_ctor_RedirectToCreateString)
+ICALL(STRING_1a, ".ctor(char*)", ves_icall_System_String_ctor_RedirectToCreateString)
 ICALL(STRING_2, ".ctor(char*,int,int)", ves_icall_System_String_ctor_RedirectToCreateString)
 ICALL(STRING_3, ".ctor(char,int)", ves_icall_System_String_ctor_RedirectToCreateString)
 ICALL(STRING_4, ".ctor(char[])", ves_icall_System_String_ctor_RedirectToCreateString)
@@ -897,10 +930,10 @@ ICALL(ILOCK_21, "Increment(long&)", ves_icall_System_Threading_Interlocked_Incre
 ICALL(ILOCK_22, "Read(long&)", ves_icall_System_Threading_Interlocked_Read_Long)
 
 ICALL_TYPE(ITHREAD, "System.Threading.InternalThread", ITHREAD_1)
-ICALL(ITHREAD_1, "Thread_free_internal", ves_icall_System_Threading_InternalThread_Thread_free_internal)
+HANDLES(ICALL(ITHREAD_1, "Thread_free_internal", ves_icall_System_Threading_InternalThread_Thread_free_internal))
 
 ICALL_TYPE(MONIT, "System.Threading.Monitor", MONIT_8)
-ICALL(MONIT_8, "Enter", mono_monitor_enter_internal)
+ICALL(MONIT_8, "Enter", ves_icall_System_Threading_Monitor_Monitor_Enter)
 ICALL(MONIT_1, "Exit", mono_monitor_exit)
 ICALL(MONIT_2, "Monitor_pulse", ves_icall_System_Threading_Monitor_Monitor_pulse)
 ICALL(MONIT_3, "Monitor_pulse_all", ves_icall_System_Threading_Monitor_Monitor_pulse_all)
@@ -928,30 +961,31 @@ ICALL(SEMA_3, "ReleaseSemaphore_internal(intptr,int,int&)", ves_icall_System_Thr
 
 ICALL_TYPE(THREAD, "System.Threading.Thread", THREAD_1)
 ICALL(THREAD_1, "Abort_internal(System.Threading.InternalThread,object)", ves_icall_System_Threading_Thread_Abort)
-ICALL(THREAD_1a, "ByteArrayToCurrentDomain(byte[])", ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain)
-ICALL(THREAD_1b, "ByteArrayToRootDomain(byte[])", ves_icall_System_Threading_Thread_ByteArrayToRootDomain)
-ICALL(THREAD_2, "ClrState(System.Threading.InternalThread,System.Threading.ThreadState)", ves_icall_System_Threading_Thread_ClrState)
-ICALL(THREAD_2a, "ConstructInternalThread", ves_icall_System_Threading_Thread_ConstructInternalThread)
+HANDLES(ICALL(THREAD_1a, "ByteArrayToCurrentDomain(byte[])", ves_icall_System_Threading_Thread_ByteArrayToCurrentDomain))
+HANDLES(ICALL(THREAD_1b, "ByteArrayToRootDomain(byte[])", ves_icall_System_Threading_Thread_ByteArrayToRootDomain))
+HANDLES(ICALL(THREAD_2, "ClrState(System.Threading.InternalThread,System.Threading.ThreadState)", ves_icall_System_Threading_Thread_ClrState))
+HANDLES(ICALL(THREAD_2a, "ConstructInternalThread", ves_icall_System_Threading_Thread_ConstructInternalThread))
 ICALL(THREAD_55, "GetAbortExceptionState", ves_icall_System_Threading_Thread_GetAbortExceptionState)
-ICALL(THREAD_60, "GetCurrentThread", ves_icall_System_Threading_Thread_GetCurrentThread)
-ICALL(THREAD_7, "GetDomainID", ves_icall_System_Threading_Thread_GetDomainID)
-ICALL(THREAD_8, "GetName_internal(System.Threading.InternalThread)", ves_icall_System_Threading_Thread_GetName_internal)
-ICALL(THREAD_57, "GetPriorityNative", ves_icall_System_Threading_Thread_GetPriority)
+HANDLES(ICALL(THREAD_60, "GetCurrentThread", ves_icall_System_Threading_Thread_GetCurrentThread))
+HANDLES(ICALL(THREAD_7, "GetDomainID", ves_icall_System_Threading_Thread_GetDomainID))
+HANDLES(ICALL(THREAD_8, "GetName_internal(System.Threading.InternalThread)", ves_icall_System_Threading_Thread_GetName_internal))
+HANDLES(ICALL(THREAD_57, "GetPriorityNative", ves_icall_System_Threading_Thread_GetPriority))
 ICALL(THREAD_59, "GetStackTraces", ves_icall_System_Threading_Thread_GetStackTraces)
-ICALL(THREAD_11, "GetState(System.Threading.InternalThread)", ves_icall_System_Threading_Thread_GetState)
+HANDLES(ICALL(THREAD_11, "GetState(System.Threading.InternalThread)", ves_icall_System_Threading_Thread_GetState))
 ICALL(THREAD_53, "InterruptInternal", ves_icall_System_Threading_Thread_Interrupt_internal)
 ICALL(THREAD_12, "JoinInternal", ves_icall_System_Threading_Thread_Join_internal)
 ICALL(THREAD_13, "MemoryBarrier", ves_icall_System_Threading_Thread_MemoryBarrier)
 ICALL(THREAD_14, "ResetAbortNative", ves_icall_System_Threading_Thread_ResetAbort)
 ICALL(THREAD_15, "ResumeInternal", ves_icall_System_Threading_Thread_Resume)
 ICALL(THREAD_18, "SetName_internal(System.Threading.InternalThread,string)", ves_icall_System_Threading_Thread_SetName_internal)
-ICALL(THREAD_58, "SetPriorityNative", ves_icall_System_Threading_Thread_SetPriority)
-ICALL(THREAD_21, "SetState(System.Threading.InternalThread,System.Threading.ThreadState)", ves_icall_System_Threading_Thread_SetState)
+HANDLES(ICALL(THREAD_58, "SetPriorityNative", ves_icall_System_Threading_Thread_SetPriority))
+HANDLES(ICALL(THREAD_21, "SetState(System.Threading.InternalThread,System.Threading.ThreadState)", ves_icall_System_Threading_Thread_SetState))
 ICALL(THREAD_22, "SleepInternal", ves_icall_System_Threading_Thread_Sleep_internal)
-ICALL(THREAD_54, "SpinWait_nop", ves_icall_System_Threading_Thread_SpinWait_nop)
-ICALL(THREAD_23, "SuspendInternal", ves_icall_System_Threading_Thread_Suspend)
-ICALL(THREAD_56, "SystemMaxStackStize", mono_threads_get_max_stack_size)
-ICALL(THREAD_25, "Thread_internal", ves_icall_System_Threading_Thread_Thread_internal)
+HANDLES(ICALL(THREAD_54, "SpinWait_nop", ves_icall_System_Threading_Thread_SpinWait_nop))
+HANDLES(ICALL(THREAD_23, "SuspendInternal", ves_icall_System_Threading_Thread_Suspend))
+// FIXME SystemMaxStackStize should be SystemMaxStackSize
+HANDLES(ICALL(THREAD_56, "SystemMaxStackStize", ves_icall_System_Threading_Thread_SystemMaxStackSize))
+HANDLES(ICALL(THREAD_25, "Thread_internal", ves_icall_System_Threading_Thread_Thread_internal))
 ICALL(THREAD_26, "VolatileRead(byte&)", ves_icall_System_Threading_Thread_VolatileRead1)
 ICALL(THREAD_27, "VolatileRead(double&)", ves_icall_System_Threading_Thread_VolatileReadDouble)
 ICALL(THREAD_28, "VolatileRead(int&)", ves_icall_System_Threading_Thread_VolatileRead4)
@@ -978,23 +1012,24 @@ ICALL(THREAD_48, "VolatileWrite(uint&,uint)", ves_icall_System_Threading_Thread_
 ICALL(THREAD_49, "VolatileWrite(uint16&,uint16)", ves_icall_System_Threading_Thread_VolatileWrite2)
 ICALL(THREAD_50, "VolatileWrite(uintptr&,uintptr)", ves_icall_System_Threading_Thread_VolatileWriteIntPtr)
 ICALL(THREAD_51, "VolatileWrite(ulong&,ulong)", ves_icall_System_Threading_Thread_VolatileWrite8)
-ICALL(THREAD_9, "YieldInternal", ves_icall_System_Threading_Thread_Yield)
-ICALL(THREAD_52, "current_lcid()", ves_icall_System_Threading_Thread_current_lcid)
+HANDLES(ICALL(THREAD_9, "YieldInternal", ves_icall_System_Threading_Thread_Yield))
+HANDLES(ICALL(THREAD_52, "current_lcid()", ves_icall_System_Threading_Thread_current_lcid))
 
 ICALL_TYPE(THREADP, "System.Threading.ThreadPool", THREADP_1)
-ICALL(THREADP_1, "BindIOCompletionCallbackNative", ves_icall_System_Threading_ThreadPool_BindIOCompletionCallbackNative)
-ICALL(THREADP_2, "GetAvailableThreadsNative", ves_icall_System_Threading_ThreadPool_GetAvailableThreadsNative)
-ICALL(THREADP_3, "GetMaxThreadsNative", ves_icall_System_Threading_ThreadPool_GetMaxThreadsNative)
-ICALL(THREADP_4, "GetMinThreadsNative", ves_icall_System_Threading_ThreadPool_GetMinThreadsNative)
-ICALL(THREADP_5, "InitializeVMTp", ves_icall_System_Threading_ThreadPool_InitializeVMTp)
-ICALL(THREADP_6, "IsThreadPoolHosted", ves_icall_System_Threading_ThreadPool_IsThreadPoolHosted)
-ICALL(THREADP_7, "NotifyWorkItemComplete", ves_icall_System_Threading_ThreadPool_NotifyWorkItemComplete)
-ICALL(THREADP_8, "NotifyWorkItemProgressNative", ves_icall_System_Threading_ThreadPool_NotifyWorkItemProgressNative)
-ICALL(THREADP_9, "PostQueuedCompletionStatus", ves_icall_System_Threading_ThreadPool_PostQueuedCompletionStatus)
-ICALL(THREADP_11, "ReportThreadStatus", ves_icall_System_Threading_ThreadPool_ReportThreadStatus)
-ICALL(THREADP_12, "RequestWorkerThread", ves_icall_System_Threading_ThreadPool_RequestWorkerThread)
-ICALL(THREADP_13, "SetMaxThreadsNative", ves_icall_System_Threading_ThreadPool_SetMaxThreadsNative)
-ICALL(THREADP_14, "SetMinThreadsNative", ves_icall_System_Threading_ThreadPool_SetMinThreadsNative)
+HANDLES(ICALL(THREADP_1, "BindIOCompletionCallbackNative", ves_icall_System_Threading_ThreadPool_BindIOCompletionCallbackNative))
+HANDLES(ICALL(THREADP_2, "GetAvailableThreadsNative", ves_icall_System_Threading_ThreadPool_GetAvailableThreadsNative))
+HANDLES(ICALL(THREADP_3, "GetMaxThreadsNative", ves_icall_System_Threading_ThreadPool_GetMaxThreadsNative))
+HANDLES(ICALL(THREADP_4, "GetMinThreadsNative", ves_icall_System_Threading_ThreadPool_GetMinThreadsNative))
+HANDLES(ICALL(THREADP_5, "InitializeVMTp", ves_icall_System_Threading_ThreadPool_InitializeVMTp))
+HANDLES(ICALL(THREADP_6, "IsThreadPoolHosted", ves_icall_System_Threading_ThreadPool_IsThreadPoolHosted))
+HANDLES(ICALL(THREADP_7, "NotifyWorkItemComplete", ves_icall_System_Threading_ThreadPool_NotifyWorkItemComplete))
+HANDLES(ICALL(THREADP_8, "NotifyWorkItemProgressNative", ves_icall_System_Threading_ThreadPool_NotifyWorkItemProgressNative))
+HANDLES(ICALL(THREADP_8m, "NotifyWorkItemQueued", ves_icall_System_Threading_ThreadPool_NotifyWorkItemQueued))
+HANDLES(ICALL(THREADP_9, "PostQueuedCompletionStatus", ves_icall_System_Threading_ThreadPool_PostQueuedCompletionStatus))
+HANDLES(ICALL(THREADP_11, "ReportThreadStatus", ves_icall_System_Threading_ThreadPool_ReportThreadStatus))
+HANDLES(ICALL(THREADP_12, "RequestWorkerThread", ves_icall_System_Threading_ThreadPool_RequestWorkerThread))
+HANDLES(ICALL(THREADP_13, "SetMaxThreadsNative", ves_icall_System_Threading_ThreadPool_SetMaxThreadsNative))
+HANDLES(ICALL(THREADP_14, "SetMinThreadsNative", ves_icall_System_Threading_ThreadPool_SetMinThreadsNative))
 
 ICALL_TYPE(TTIMER, "System.Threading.Timer", TTIMER_1)
 ICALL(TTIMER_1, "GetTimeMonotonic", mono_100ns_ticks)

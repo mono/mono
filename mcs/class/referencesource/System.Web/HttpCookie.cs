@@ -18,6 +18,7 @@ namespace System.Web {
     using System.Security.Permissions;
     using System.Web.Configuration;
     using System.Web.Management;
+    using Util;
 
 
     /// <devdoc>
@@ -334,6 +335,82 @@ namespace System.Web {
                 Values[key] = value;
                 _changed = true;
             }
+        }
+
+        /// <summary>
+        /// Converts the specified string representation of an HTTP cookie to HttpCookie
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static bool TryParse(string input, out HttpCookie result) {
+            result = null;
+
+            if (string.IsNullOrEmpty(input)) {
+                return false;
+            }
+
+            // The substring before the first ';' is cookie-pair, with format of cookiename[=key1=val2&key2=val2&...]
+            int dividerIndex = input.IndexOf(';');
+            string cookiePair = dividerIndex >= 0 ? input.Substring(0, dividerIndex) : input;
+
+            HttpCookie cookie = HttpRequest.CreateCookieFromString(cookiePair.Trim());
+
+            // If there was no cookie name being created, stop parsing and return
+            if (string.IsNullOrEmpty(cookie.Name)) {
+                return false;
+            }
+
+            //
+            // Parse the collections of cookie-av 
+            // cookie-av = expires-av/max-age-av/domain-av/path-av/secure-av/httponly-av/extension-av
+            // https://tools.ietf.org/html/rfc6265 
+
+            while (dividerIndex >= 0 && dividerIndex < input.Length - 1) {
+                int cookieAvStartIndex = dividerIndex + 1;
+                dividerIndex = input.IndexOf(';', cookieAvStartIndex);
+                string cookieAv = dividerIndex >= 0 ? input.Substring(cookieAvStartIndex, dividerIndex - cookieAvStartIndex).Trim() : input.Substring(cookieAvStartIndex).Trim();
+
+                int assignmentIndex = cookieAv.IndexOf('=');
+                string attributeName = assignmentIndex >= 0 ? cookieAv.Substring(0, assignmentIndex).Trim() : cookieAv;
+                string attributeValue = assignmentIndex >= 0 && assignmentIndex < cookieAv.Length - 1 ? cookieAv.Substring(assignmentIndex + 1).Trim() : null;
+
+                //
+                // Parse supported cookie-av Attribute
+
+                //
+                // Expires
+                if (StringUtil.EqualsIgnoreCase(attributeName, "Expires")) {
+                    DateTime dt;
+                    if (DateTime.TryParse(attributeValue, out dt)) {
+                        cookie.Expires = dt;
+                    }
+                }
+                //
+                // Domain
+                else if (attributeValue != null && StringUtil.EqualsIgnoreCase(attributeName, "Domain")) {
+                    cookie.Domain = attributeValue;
+                }
+                //
+                // Path
+                else if (attributeValue != null && StringUtil.EqualsIgnoreCase(attributeName, "Path")) {
+                    cookie.Path = attributeValue;
+                }
+                //
+                // Secure
+                else if (StringUtil.EqualsIgnoreCase(attributeName, "Secure")) {
+                    cookie.Secure = true;
+                }
+                //
+                // HttpOnly
+                else if (StringUtil.EqualsIgnoreCase(attributeName, "HttpOnly")) {
+                    cookie.HttpOnly = true;
+                }
+            }
+
+            result = cookie;
+
+            return true;
         }
 
         /*

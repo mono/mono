@@ -207,9 +207,10 @@ MINI_OP(OP_SHR_IMM,    "shr_imm", IREG, IREG, NONE)
 MINI_OP(OP_SHR_UN_IMM, "shr_un_imm", IREG, IREG, NONE)
 
 MINI_OP(OP_BR,         "br", NONE, NONE, NONE)
-MINI_OP(OP_JMP,        "jmp", NONE, NONE, NONE)
-/* Same as OP_JMP, but the passing of arguments is done similarly to calls */
+/* Similar to old OP_JMP, but the passing of arguments is done similarly to calls */
 MINI_OP(OP_TAILCALL,   "tailcall", NONE, NONE, NONE)
+MINI_OP(OP_TAILCALL_REG, "tailcall_reg", NONE, IREG, NONE)
+MINI_OP(OP_TAILCALL_MEMBASE, "tailcall_membase", NONE, IREG, NONE)
 MINI_OP(OP_BREAK,      "break", NONE, NONE, NONE)
 
 MINI_OP(OP_CEQ,   "ceq", IREG, NONE, NONE)
@@ -664,6 +665,8 @@ MINI_OP(OP_IMIN, "int_min", IREG, IREG, IREG)
 MINI_OP(OP_IMAX, "int_max", IREG, IREG, IREG)
 MINI_OP(OP_LMIN, "long_min", LREG, LREG, LREG)
 MINI_OP(OP_LMAX, "long_max", LREG, LREG, LREG)
+MINI_OP(OP_RMAX,     "rmax", FREG, FREG, FREG)
+MINI_OP(OP_RPOW,     "rpow", FREG, FREG, FREG)
 
 /* opcodes most architecture have */
 MINI_OP(OP_ADC,     "adc", IREG, IREG, IREG)
@@ -702,6 +705,10 @@ MINI_OP(OP_TAN,     "tan", FREG, FREG, NONE)
 MINI_OP(OP_ATAN,    "atan", FREG, FREG, NONE)
 MINI_OP(OP_SQRT,    "sqrt", FREG, FREG, NONE)
 MINI_OP(OP_ROUND,   "round", FREG, FREG, NONE)
+MINI_OP(OP_SINF,     "sinf", FREG, FREG, NONE)
+MINI_OP(OP_COSF,     "cosf", FREG, FREG, NONE)
+MINI_OP(OP_ABSF,     "absf", FREG, FREG, NONE)
+MINI_OP(OP_SQRTF,    "sqrtf", FREG, FREG, NONE)
 /* to optimize strings */
 MINI_OP(OP_STRLEN, "strlen", IREG, IREG, NONE)
 MINI_OP(OP_NEWARR, "newarr", IREG, IREG, NONE)
@@ -731,7 +738,6 @@ MINI_OP(OP_TLS_SET_REG,        "tls_set_reg", NONE, IREG, IREG)
 
 MINI_OP(OP_LOAD_GOTADDR, "load_gotaddr", IREG, NONE, NONE)
 MINI_OP(OP_DUMMY_USE, "dummy_use", NONE, IREG, NONE)
-MINI_OP(OP_DUMMY_STORE, "dummy_store", NONE, NONE, NONE)
 MINI_OP(OP_NOT_REACHED, "not_reached", NONE, NONE, NONE)
 MINI_OP(OP_NOT_NULL, "not_null", NONE, IREG, NONE)
 
@@ -1172,7 +1178,7 @@ MINI_OP(OP_AMD64_LOADI8_MEMINDEX,        "amd64_loadi8_memindex", IREG, IREG, IR
 MINI_OP(OP_AMD64_SAVE_SP_TO_LMF,         "amd64_save_sp_to_lmf", NONE, NONE, NONE)
 #endif
 
-#if  defined(__ppc__) || defined(__powerpc__) || defined(__ppc64__) || defined(TARGET_POWERPC)
+#if  defined(TARGET_POWERPC)
 MINI_OP(OP_PPC_SUBFIC,             "ppc_subfic", IREG, IREG, NONE)
 MINI_OP(OP_PPC_SUBFZE,             "ppc_subfze", IREG, IREG, NONE)
 MINI_OP(OP_CHECK_FINITE,           "ppc_check_finite", NONE, IREG, NONE)
@@ -1185,7 +1191,7 @@ MINI_OP(OP_ARM_RSC_IMM,             "arm_rsc_imm", IREG, IREG, NONE)
 MINI_OP(OP_ARM_SETFREG_R4,             "arm_setfreg_r4", FREG, FREG, NONE)
 #endif
 
-#if defined(__sparc__) || defined(sparc)
+#if defined(TARGET_SPARC)
 MINI_OP(OP_SPARC_BRZ,              "sparc_brz", NONE, NONE, NONE)
 MINI_OP(OP_SPARC_BRLEZ,            "sparc_brlez", NONE, NONE, NONE)
 MINI_OP(OP_SPARC_BRLZ,             "sparc_brlz", NONE, NONE, NONE)
@@ -1200,14 +1206,14 @@ MINI_OP(OP_SPARC_COND_EXC_LTZ,     "sparc_cond_exc_ltz", NONE, NONE, NONE)
 MINI_OP(OP_SPARC_COND_EXC_NEZ,     "sparc_cond_exc_nez", NONE, NONE, NONE)
 #endif
 
-#if defined(__s390__) || defined(s390)
+#if defined(TARGET_S390X)
 MINI_OP(OP_S390_LOADARG,	   "s390_loadarg", NONE, NONE, NONE)
 MINI_OP(OP_S390_ARGREG, 	   "s390_argreg", NONE, NONE, NONE)
 MINI_OP(OP_S390_ARGPTR, 	   "s390_argptr", NONE, NONE, NONE)
 MINI_OP(OP_S390_STKARG, 	   "s390_stkarg", NONE, NONE, NONE)
 MINI_OP(OP_S390_MOVE,	 	   "s390_move", IREG, IREG, NONE)
 MINI_OP(OP_S390_SETF4RET,	   "s390_setf4ret", FREG, FREG, NONE)
-MINI_OP(OP_S390_BKCHAIN, 	   "s390_bkchain", NONE, NONE, NONE)
+MINI_OP(OP_S390_BKCHAIN, 	   "s390_bkchain", IREG, IREG, NONE)
 MINI_OP(OP_S390_LADD,          "s390_long_add", LREG, IREG, IREG)
 MINI_OP(OP_S390_LADD_OVF,      "s390_long_add_ovf", LREG, IREG, IREG)
 MINI_OP(OP_S390_LADD_OVF_UN,   "s390_long_add_ovf_un", LREG, IREG, IREG)
@@ -1229,7 +1235,7 @@ MINI_OP(OP_S390_CGIJ,           "s390_cgij", LREG, NONE, NONE)
 MINI_OP(OP_S390_CLGIJ,          "s390_cgij_un", LREG, NONE, NONE)
 #endif
 
-#if defined(__mips__)
+#if defined(TARGET_MIPS)
 MINI_OP(OP_MIPS_BEQ,   "mips_beq", NONE, IREG, IREG)
 MINI_OP(OP_MIPS_BGEZ,  "mips_bgez", NONE, IREG, NONE)
 MINI_OP(OP_MIPS_BGTZ,  "mips_bgtz", NONE, IREG, NONE)

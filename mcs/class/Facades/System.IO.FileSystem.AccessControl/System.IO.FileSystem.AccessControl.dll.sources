@@ -1,5 +1,4 @@
 TypeForwarders.cs
 AssemblyInfo.cs
 
-../../../build/common/MonoTODOAttribute.cs
-FileSystemAclExtensions.cs
+../../../../external/corefx/src/System.IO.FileSystem.AccessControl/src/System/IO/FileSystemAclExtensions.net46.cs

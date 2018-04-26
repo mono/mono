@@ -23,7 +23,7 @@ namespace System.ServiceModel.Configuration
             set { base[ConfigurationStrings.RequireClientCertificate] = value; }
         }
 
-        [ConfigurationProperty(ConfigurationStrings.SslProtocols, DefaultValue = TransportDefaults.SslProtocols)]
+        [ConfigurationProperty(ConfigurationStrings.SslProtocols, DefaultValue = TransportDefaults.OldDefaultSslProtocols)]
         [ServiceModelEnumValidator(typeof(SslProtocolsHelper))]
         public SslProtocols SslProtocols
         {

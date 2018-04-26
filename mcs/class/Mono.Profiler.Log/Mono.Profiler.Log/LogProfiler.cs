@@ -101,6 +101,9 @@ namespace Mono.Profiler.Log {
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
+		public extern static void TriggerHeapshot ();
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern static int GetCallDepth ();
 
 		[MethodImpl (MethodImplOptions.InternalCall)]

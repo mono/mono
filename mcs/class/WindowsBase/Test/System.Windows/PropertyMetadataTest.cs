@@ -63,15 +63,15 @@ namespace MonoTests.System.Windows {
 
 		protected override void Merge (PropertyMetadata baseMetadata, DependencyProperty dp)
 		{
-			Console.WriteLine (Environment.StackTrace);
+//			Console.WriteLine (Environment.StackTrace);
 			base.Merge (baseMetadata, dp);
 		}
 
 		protected override void OnApply (DependencyProperty dp, Type targetType)
 		{
 			base.OnApply (dp, targetType);
-			Console.WriteLine ("IsSealed in OnApply? {0}", IsSealed);
-			Console.WriteLine (Environment.StackTrace);
+//			Console.WriteLine ("IsSealed in OnApply? {0}", IsSealed);
+//			Console.WriteLine (Environment.StackTrace);
 		}
 	}
 

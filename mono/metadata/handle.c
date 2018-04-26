@@ -32,17 +32,14 @@ Add counters for:
 	mix/max/avg size of stack marks
 	handle stack wastage
 
-Actually do something in mono_handle_verify
-
 Shrink the handles stack in mono_handle_stack_scan
-Properly report it to the profiler.
 Add a boehm implementation
 
 TODO (things to explore):
 
 There's no convenient way to wrap the object allocation function.
 Right now we do this:
-	MonoCultureInfoHandle culture = MONO_HANDLE_NEW (MonoCultureInfo, mono_object_new_checked (domain, klass, &error));
+	MonoCultureInfoHandle culture = MONO_HANDLE_NEW (MonoCultureInfo, mono_object_new_checked (domain, klass, error));
 
 Maybe what we need is a round of cleanup around all exposed types in the runtime to unify all helpers under the same hoof.
 Combine: MonoDefaults, GENERATE_GET_CLASS_WITH_CACHE, TYPED_HANDLE_DECL and friends.
@@ -69,41 +66,10 @@ Combine: MonoDefaults, GENERATE_GET_CLASS_WITH_CACHE, TYPED_HANDLE_DECL and frie
  * Note that the handle stack is scanned PRECISELY (see
  * sgen_client_scan_thread_data ()).  That means there should not be
  * stale objects scanned.  So when we manipulate the size of a chunk,
- * wemust ensure that the newly scannable slot is either null or
+ * we must ensure that the newly scannable slot is either null or
  * points to a valid value.
  */
 
-#if defined(HAVE_BOEHM_GC) || defined(HAVE_NULL_GC)
-static HandleStack*
-new_handle_stack (void)
-{
-	return (HandleStack *)mono_gc_alloc_fixed (sizeof (HandleStack), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_HANDLE, "Thread Handle Stack");
-}
-
-static void
-free_handle_stack (HandleStack *stack)
-{
-	mono_gc_free_fixed (stack);
-}
-
-static HandleChunk*
-new_handle_chunk (void)
-{
-#if defined(HAVE_BOEHM_GC)
-	return (HandleChunk *)GC_MALLOC (sizeof (HandleChunk));
-#elif defined(HAVE_NULL_GC)
-	return (HandleChunk *)g_malloc (sizeof (HandleChunk));
-#endif
-}
-
-static void
-free_handle_chunk (HandleChunk *chunk)
-{
-#if defined(HAVE_NULL_GC)
-	g_free (chunk);
-#endif
-}
-#else
 static HandleStack*
 new_handle_stack (void)
 {
@@ -127,7 +93,6 @@ free_handle_chunk (HandleChunk *chunk)
 {
 	g_free (chunk);
 }
-#endif
 
 const MonoObjectHandle mono_null_value_handle = NULL;
 
@@ -248,12 +213,12 @@ retry:
 		 * between 1 and 2, the object is still live)
 		 */
 		*objslot = NULL;
+		SET_OWNER (top,idx);
+		SET_SP (handles, top, idx);
 		mono_memory_write_barrier ();
 		top->size++;
 		mono_memory_write_barrier ();
 		*objslot = obj;
-		SET_OWNER (top,idx);
-		SET_SP (handles, top, idx);
 		return objslot;
 	}
 	if (G_LIKELY (top->next)) {
@@ -395,18 +360,13 @@ check_handle_stack_monotonic (HandleStack *stack)
 	while (cur) {
 		for (int i = 0;i < cur->size; ++i) {
 			HandleChunkElem *elem = chunk_element (cur, i);
-			if (prev && elem->alloc_sp < prev->alloc_sp) {
+			if (prev && elem->alloc_sp > prev->alloc_sp) {
 				monotonic = FALSE;
-				g_warning ("Handle %p (object %p) (allocated from \"%s\") is was allocated deeper in the call stack than its successor (allocated from \"%s\").", prev, prev->o,
 #ifdef MONO_HANDLE_TRACK_OWNER
-					   prev->owner,
-					   elem->owner
+				g_warning ("Handle %p (object %p) (allocated from \"%s\") was allocated deeper in the call stack than its successor Handle %p (object %p) (allocated from \"%s\").", prev, prev->o, prev->owner, elem, elem->o, elem->owner);
 #else
-					   "unknown owner",
-					   "unknown owner"
+				g_warning ("Handle %p (object %p) was allocated deeper in the call stack than its successor Handle %p (object %p).", prev, prev->o, elem, elem->o);
 #endif
-					);
-				
 			}
 			prev = elem;
 		}
@@ -419,10 +379,11 @@ check_handle_stack_monotonic (HandleStack *stack)
 }
 
 void
-mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, gboolean precise)
+mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, gboolean precise, gboolean check)
 {
-	if (precise) /* run just once (per handle stack) per GC */
+	if (check) /* run just once (per handle stack) per GC */
 		check_handle_stack_monotonic (stack);
+
 	/*
 	  We're called twice - on the imprecise pass we call func to pin the
 	  objects where the handle points to its interior.  On the precise
@@ -514,15 +475,6 @@ mono_array_new_full_handle (MonoDomain *domain, MonoClass *array_class, uintptr_
 	return MONO_HANDLE_NEW (MonoArray, mono_array_new_full_checked (domain, array_class, lengths, lower_bounds, error));
 }
 
-#ifdef ENABLE_CHECKED_BUILD
-/* Checked build helpers */
-void
-mono_handle_verify (MonoRawHandle raw_handle)
-{
-	
-}
-#endif
-
 uintptr_t
 mono_array_handle_length (MonoArrayHandle arr)
 {
@@ -575,7 +527,7 @@ mono_object_handle_pin_unbox (MonoObjectHandle obj, uint32_t *gchandle)
 {
 	g_assert (!MONO_HANDLE_IS_NULL (obj));
 	MonoClass *klass = mono_handle_class (obj);
-	g_assert (klass->valuetype);
+	g_assert (m_class_is_valuetype (klass));
 	*gchandle = mono_gchandle_from_handle (obj, TRUE);
 	return mono_object_unbox (MONO_HANDLE_RAW (obj));
 }

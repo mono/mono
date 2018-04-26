@@ -44,6 +44,7 @@ dist-hook:
 	rm -rf `find $(top_distdir)/external -path '*\.git'`
 	rm -f `find $(top_distdir)/external -path '*\.exe' -not -path '*/roslyn-binaries/*'`
 	rm -f `find $(top_distdir)/external -path '*\.dll' -not -path '*/binary-reference-assemblies/*' -not -path '*/roslyn-binaries/*'`
+	rm -rf "$(top_distdir)/external/linker/linker/Tests"
 
 pkgconfigdir = $(libdir)/pkgconfig
 noinst_DATA = mono-uninstalled.pc
@@ -114,7 +115,7 @@ update-csproj:
 	-rm msvc/scripts/order.xml
 	-rm -rf msvc/scripts/inputs
 	-mkdir msvc/scripts/inputs
-	(cd runtime; make V=1 extra_targets=csproj-local)
+	(cd runtime; $(MAKE) V=1 extra_targets=csproj-local)
 
 package-inputs:
 	echo '<?xml version="1.0" encoding="utf-8"?>' > msvc/scripts/order.xml
@@ -143,9 +144,10 @@ update-llvm-version:
 
 
 update-solution-files:
-	make update-csproj
-	make package-inputs
-	(cd msvc/scripts; make genproj.exe; mono genproj.exe $(GENPROJ_ARGS))
+	(pushd msvc/scripts; rm genproj.exe; $(MAKE) genproj.exe; popd)
+	$(MAKE) update-csproj
+	$(MAKE) package-inputs
+	(cd msvc/scripts; mono --debug genproj.exe $(GENPROJ_ARGS))
 
 update-solution-files-with-tests:
-	make "GENPROJ_ARGS=2012 true true" update-solution-files
+	$(MAKE) "GENPROJ_ARGS=2012 true true" update-solution-files

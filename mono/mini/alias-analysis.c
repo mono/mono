@@ -43,12 +43,12 @@ static gboolean
 lower_load (MonoCompile *cfg, MonoInst *load, MonoInst *ldaddr)
 {
 	MonoInst *var = (MonoInst *)ldaddr->inst_p0;
-	MonoType *type = &var->klass->byval_arg;
+	MonoType *type = m_class_get_byval_arg (var->klass);
 	int replaced_op = mono_type_to_load_membase (cfg, type);
 
 	if (load->opcode == OP_LOADV_MEMBASE && load->klass != var->klass) {
 		if (cfg->verbose_level > 2)
-			printf ("Incompatible load_vtype classes %s x %s\n", load->klass->name, var->klass->name);
+			printf ("Incompatible load_vtype classes %s x %s\n", m_class_get_name (load->klass), m_class_get_name (var->klass));
 		return FALSE;
 	}
 
@@ -63,9 +63,9 @@ lower_load (MonoCompile *cfg, MonoInst *load, MonoInst *ldaddr)
 	}
 
 	load->opcode = mono_type_to_regmove (cfg, type);
-	type_to_eval_stack_type (cfg, type, load);
+	mini_type_to_eval_stack_type (cfg, type, load);
 	load->sreg1 = var->dreg;
-	InterlockedIncrement (&mono_jit_stats.loads_eliminated);
+	mono_atomic_inc_i32 (&mono_jit_stats.loads_eliminated);
 	return TRUE;
 }
 
@@ -73,12 +73,12 @@ static gboolean
 lower_store (MonoCompile *cfg, MonoInst *store, MonoInst *ldaddr)
 {
 	MonoInst *var = (MonoInst *)ldaddr->inst_p0;
-	MonoType *type = &var->klass->byval_arg;
+	MonoType *type = m_class_get_byval_arg (var->klass);
 	int replaced_op = mono_type_to_store_membase (cfg, type);
 
 	if (store->opcode == OP_STOREV_MEMBASE && store->klass != var->klass) {
 		if (cfg->verbose_level > 2)
-			printf ("Incompatible store_vtype classes %s x %s\n", store->klass->name, store->klass->name);
+			printf ("Incompatible store_vtype classes %s x %s\n", m_class_get_name (store->klass), m_class_get_name (store->klass));
 		return FALSE;
 	}
 
@@ -93,10 +93,14 @@ lower_store (MonoCompile *cfg, MonoInst *store, MonoInst *ldaddr)
 		if (cfg->verbose_level > 2) { printf ("mem2reg replacing: "); mono_print_ins (store); }
 	}
 
-	store->opcode = mono_type_to_regmove (cfg, type);
-	type_to_eval_stack_type (cfg, type, store);
+	int coerce_op = mono_type_to_stloc_coerce (type);
+	if (coerce_op)
+		store->opcode = coerce_op;
+	else
+		store->opcode = mono_type_to_regmove (cfg, type);
+	mini_type_to_eval_stack_type (cfg, type, store);
 	store->dreg = var->dreg;
-	InterlockedIncrement (&mono_jit_stats.stores_eliminated);
+	mono_atomic_inc_i32 (&mono_jit_stats.stores_eliminated);
 	return TRUE;
 }
 
@@ -104,7 +108,7 @@ static gboolean
 lower_store_imm (MonoCompile *cfg, MonoInst *store, MonoInst *ldaddr)
 {
 	MonoInst *var = (MonoInst *)ldaddr->inst_p0;
-	MonoType *type = &var->klass->byval_arg;
+	MonoType *type = m_class_get_byval_arg (var->klass);
 	int store_op = mono_type_to_store_membase (cfg, type);
 	if (store_op == OP_STOREV_MEMBASE || store_op == OP_STOREX_MEMBASE)
 		return FALSE;
@@ -142,7 +146,7 @@ lower_store_imm (MonoCompile *cfg, MonoInst *store, MonoInst *ldaddr)
 	default:
 		return FALSE;
 	}
-	InterlockedIncrement (&mono_jit_stats.stores_eliminated);
+	mono_atomic_inc_i32 (&mono_jit_stats.stores_eliminated);
 	return TRUE;
 }
 
@@ -309,8 +313,8 @@ recompute_aliased_variables (MonoCompile *cfg, int *restored_vars)
 	}
 	*restored_vars = adds;
 
-	InterlockedAdd (&mono_jit_stats.alias_found, kills);
-	InterlockedAdd (&mono_jit_stats.alias_removed, kills - adds);
+	mono_atomic_fetch_add_i32 (&mono_jit_stats.alias_found, kills);
+	mono_atomic_fetch_add_i32 (&mono_jit_stats.alias_removed, kills - adds);
 	if (kills > adds) {
 		if (cfg->verbose_level > 2) {
 			printf ("Method: %s\n", mono_method_full_name (cfg->method, 1));

@@ -664,6 +664,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void DefaultThreadCurrentCulture () {
 
 			Action c = () => {
@@ -725,10 +726,19 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void DefaultThreadCurrentCultureIsIgnoredWhenCultureFlowsToThread ()
 		{
 			string us_str = null;
 			string br_str = null;
+
+			/* explicitly set CurrentCulture, as the documentation states:
+			 * > If you have not explicitly set the culture of any existing
+			 * > threads executing in an application domain, setting the
+			 * > P:System.Globalization.CultureInfo.DefaultThreadCurrentCulture
+			 * > property also changes the culture of these threads.
+			 */
+			Thread.CurrentThread.CurrentCulture = old_culture;
 
 			var thread = new Thread (() => {
 				CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");

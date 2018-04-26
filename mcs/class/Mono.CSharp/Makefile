@@ -24,7 +24,7 @@ LIB_MCS_FLAGS += $(REFERENCE_SOURCES_FLAGS)
 BUILT_SOURCES = $(PROFILE)-parser.cs
 
 $(PROFILE)-parser.cs: $(topdir)/mcs/cs-parser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay -c < $(topdir)/jay/skeleton.cs $< > $(PROFILE)-jay-tmp.out && mv $(PROFILE)-jay-tmp.out $@
+	$(topdir)/jay/jay -c -o $(PROFILE)-jay-tmp.out $< < $(topdir)/jay/skeleton.cs && mv $(PROFILE)-jay-tmp.out $@
 
 include ../../build/library.make
 

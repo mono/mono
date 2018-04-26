@@ -42,6 +42,7 @@ namespace ICSharpCode.SharpZipLib.Core
 	/// <summary>
 	/// Scanning filters support these operations.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public interface IScanFilter
 	{
 		/// <summary>
@@ -55,6 +56,7 @@ namespace ICSharpCode.SharpZipLib.Core
 	/// <summary>
 	/// PathFilter filters directories and files by full path name.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class PathFilter : IScanFilter
 	{
 		/// <summary>
@@ -84,6 +86,7 @@ namespace ICSharpCode.SharpZipLib.Core
 	/// <summary>
 	/// NameAnsSizeFilter filters based on name and file size.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class NameAndSizeFilter : PathFilter
 	{
 	

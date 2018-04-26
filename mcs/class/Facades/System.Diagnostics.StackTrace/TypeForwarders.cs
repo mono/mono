@@ -21,6 +21,7 @@
 // 
 
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.StackFrame))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.StackFrameExtensions))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.StackTrace))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.ISymbolBinder))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.ISymbolBinder1))]

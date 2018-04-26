@@ -42,9 +42,9 @@
 
 #include "mini.h"
 #include "mini-amd64.h"
+#include "mini-runtime.h"
+#include "aot-runtime.h"
 #include "tasklets.h"
-
-#define ALIGN_TO(val,align) (((val) + ((align) - 1)) & ~((align) - 1))
 
 #ifdef TARGET_WIN32
 static void (*restore_stack) (void);
@@ -71,6 +71,7 @@ static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 static gpointer
 get_win32_restore_stack (void)
 {
@@ -114,6 +115,14 @@ get_win32_restore_stack (void)
 
 	return start;
 }
+#else
+static gpointer
+get_win32_restore_stack (void)
+{
+	// _resetstkoflw unsupported on none desktop Windows platforms.
+	return NULL;
+}
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 /*
  * Unhandled Exception Filter
@@ -139,7 +148,7 @@ static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 
 	switch (er->ExceptionCode) {
 	case EXCEPTION_STACK_OVERFLOW:
-		if (!mono_aot_only) {
+		if (!mono_aot_only && restore_stack) {
 			if (mono_arch_handle_exception (ctx, domain->stack_overflow_ex)) {
 				/* need to restore stack protection once stack is unwound
 				 * restore_stack will restore stack protection and then
@@ -371,20 +380,20 @@ mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guin
 							guint64 dummy5, guint64 dummy6,
 							MonoContext *mctx, MonoObject *exc, gboolean rethrow)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoContext ctx;
 
 	/* mctx is on the caller's stack */
 	memcpy (&ctx, mctx, sizeof (MonoContext));
 
-	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, &error)) {
+	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		}
 	}
-	mono_error_assert_ok (&error);
+	mono_error_assert_ok (error);
 
 	/* adjust eip so that it point into the call instruction */
 	ctx.gregs [AMD64_RIP] --;
@@ -402,7 +411,7 @@ mono_amd64_throw_corlib_exception (guint64 dummy1, guint64 dummy2, guint64 dummy
 	guint32 ex_token = MONO_TOKEN_TYPE_DEF | ex_token_index;
 	MonoException *ex;
 
-	ex = mono_exception_from_token (mono_defaults.exception_class->image, ex_token);
+	ex = mono_exception_from_token (m_class_get_image (mono_defaults.exception_class), ex_token);
 
 	mctx->gregs [AMD64_RIP] -= pc_offset;
 
@@ -648,35 +657,12 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	} else if (*lmf) {
 		guint64 rip;
 
-		if (((guint64)(*lmf)->previous_lmf) & 2) {
-			MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
-
-			if (ext->debugger_invoke) {
-				/*
-				 * This LMF entry is created by the soft debug code to mark transitions to
-				 * managed code done during invokes.
-				 */
-				frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
-				memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
-			} else if (ext->interp_exit) {
-				frame->type = FRAME_TYPE_INTERP_TO_MANAGED;
-				frame->interp_exit_data = ext->interp_exit_data;
-			} else {
-				g_assert_not_reached ();
-			}
-
-			*lmf = (MonoLMF *)(((guint64)(*lmf)->previous_lmf) & ~7);
-
-			return TRUE;
-		}
+		g_assert ((((guint64)(*lmf)->previous_lmf) & 2) == 0);
 
 		if (((guint64)(*lmf)->previous_lmf) & 4) {
 			MonoLMFTramp *ext = (MonoLMFTramp*)(*lmf);
 
 			rip = (guint64)MONO_CONTEXT_GET_IP (ext->ctx);
-		} else if (((guint64)(*lmf)->previous_lmf) & 1) {
-			/* This LMF has the rip field set */
-			rip = (*lmf)->rip;
 		} else if ((*lmf)->rsp == 0) {
 			/* Top LMF entry */
 			return FALSE;
@@ -825,12 +811,20 @@ mono_arch_ip_from_context (void *sigctx)
 #endif	
 }
 
-static void
-restore_soft_guard_pages (void)
+static MonoObject*
+restore_soft_guard_pages ()
 {
 	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
 	if (jit_tls->stack_ovf_guard_base)
 		mono_mprotect (jit_tls->stack_ovf_guard_base, jit_tls->stack_ovf_guard_size, MONO_MMAP_NONE);
+
+	if (jit_tls->stack_ovf_pending) {
+		MonoDomain *domain = mono_domain_get ();
+		jit_tls->stack_ovf_pending = 0;
+		return (MonoObject *) domain->stack_overflow_ex;
+	}
+
+	return NULL;
 }
 
 /* 
@@ -863,8 +857,11 @@ altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, gboolean stack_o
 	mctx = *ctx;
 
 	mono_handle_exception (&mctx, obj);
-	if (stack_ovf)
+	if (stack_ovf) {
+		MonoJitTlsData *jit_tls = (MonoJitTlsData *) mono_tls_get_jit_tls ();
+		jit_tls->stack_ovf_pending = 1;
 		prepare_for_guard_pages (&mctx);
+	}
 	mono_restore_context (&mctx);
 }
 
@@ -906,19 +903,6 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 #endif
 }
 
-guint64
-mono_amd64_get_original_ip (void)
-{
-	MonoLMF *lmf = mono_get_lmf ();
-
-	g_assert (lmf);
-
-	/* Reset the change to previous_lmf */
-	lmf->previous_lmf = (gpointer)((guint64)lmf->previous_lmf & ~1);
-
-	return lmf->rip;
-}
-
 #ifndef DISABLE_JIT
 GSList*
 mono_amd64_get_exception_trampolines (gboolean aot)
@@ -946,7 +930,7 @@ mono_arch_exceptions_init (void)
 	GSList *tramps, *l;
 	gpointer tramp;
 
-	if (mono_aot_only) {
+	if (mono_ee_features.use_aot_trampolines) {
 		tramp = mono_aot_get_trampoline ("llvm_throw_corlib_exception_trampoline");
 		mono_register_jit_icall (tramp, "llvm_throw_corlib_exception_trampoline", NULL, TRUE);
 		tramp = mono_aot_get_trampoline ("llvm_throw_corlib_exception_abs_trampoline");
@@ -1763,6 +1747,21 @@ mono_arch_unwindinfo_get_code_count (GSList *unwind_ops)
 	return unwindinfo.CountOfCodes;
 }
 
+PUNWIND_INFO
+mono_arch_unwindinfo_alloc_unwind_info (GSList *unwind_ops)
+{
+	if (!unwind_ops)
+		return NULL;
+
+	return initialize_unwind_info_internal (unwind_ops);
+}
+
+void
+mono_arch_unwindinfo_free_unwind_info (PUNWIND_INFO unwind_info)
+{
+	g_free (unwind_info);
+}
+
 guint
 mono_arch_unwindinfo_init_method_unwind_info (gpointer cfg)
 {
@@ -1812,7 +1811,7 @@ mono_arch_unwindinfo_install_method_unwind_info (gpointer *monoui, gpointer code
 	}
 #endif /* ENABLE_CHECKED_BUILD_UNWINDINFO */
 
-	g_free (unwindinfo);
+	mono_arch_unwindinfo_free_unwind_info (unwindinfo);
 	*monoui = 0;
 
 	// Register unwind info in table.
@@ -1963,3 +1962,9 @@ mono_tasklets_arch_restore (void)
 	return NULL;
 }
 #endif /* !MONO_SUPPORT_TASKLETS || defined(DISABLE_JIT) */
+
+void
+mono_arch_undo_ip_adjustment (MonoContext *ctx)
+{
+	ctx->gregs [AMD64_RIP]++;
+}

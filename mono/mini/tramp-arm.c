@@ -24,14 +24,13 @@
 
 #include "mini.h"
 #include "mini-arm.h"
+#include "mini-runtime.h"
 #include "debugger-agent.h"
 #include "jit-icalls.h"
 
-#ifdef ENABLE_INTERPRETER
+#ifndef DISABLE_INTERPRETER
 #include "interp/interp.h"
 #endif
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 void
 mono_arch_patch_callsite (guint8 *method_start, guint8 *code_ptr, guint8 *addr)
@@ -139,8 +138,9 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	char *tramp_name;
 	guint8 *buf, *code = NULL;
 	guint8 *load_get_lmf_addr  = NULL, *load_trampoline  = NULL;
+	guint8 *labels [16];
 	gpointer *constants;
-	int i, cfa_offset, regsave_size, lr_offset;
+	int i, orig_cfa_offset, cfa_offset, regsave_size, lr_offset;
 	GSList *unwind_ops = NULL;
 	MonoJumpInfo *ji = NULL;
 	int buf_len;
@@ -313,27 +313,6 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	 */
 	ARM_STR_IMM (code, ARMREG_R0, ARMREG_V1, MONO_STRUCT_OFFSET (MonoLMF, iregs) + (ARMREG_R12 * sizeof (mgreg_t)));
 
-	/* Check for thread interruption */
-	/* This is not perf critical code so no need to check the interrupt flag */
-	/* 
-	 * Have to call the _force_ variant, since there could be a protected wrapper on the top of the stack.
-	 */
-	if (aot) {
-		ji = mono_patch_info_list_prepend (ji, code - buf, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_interruption_checkpoint_from_trampoline");
-		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
-		ARM_B (code, 0);
-		*(gpointer*)code = NULL;
-		code += 4;
-		ARM_LDR_REG_REG (code, ARMREG_IP, ARMREG_PC, ARMREG_IP);
-	} else {
-		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
-		ARM_B (code, 0);
-		*(gpointer*)code = mono_interruption_checkpoint_from_trampoline;
-		code += 4;
-	}
-	ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
-	code = emit_bx (code, ARMREG_IP);
-
 	/*
 	 * Now we restore the MonoLMF (see emit_epilogue in mini-arm.c)
 	 * and the rest of the registers, so the method called will see
@@ -345,6 +324,28 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	ARM_LDR_IMM (code, ARMREG_LR, ARMREG_V1, MONO_STRUCT_OFFSET (MonoLMF, lmf_addr));
 	/* *(lmf_addr) = previous_lmf */
 	ARM_STR_IMM (code, ARMREG_IP, ARMREG_LR, MONO_STRUCT_OFFSET (MonoLMF, previous_lmf));
+
+	/* Check for thread interruption */
+	/* This is not perf critical code so no need to check the interrupt flag */
+	if (aot) {
+		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_thread_force_interruption_checkpoint_noraise");
+	} else {
+		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
+		ARM_B (code, 0);
+		*(gpointer*)code = mono_thread_force_interruption_checkpoint_noraise;
+		code += 4;
+	}
+	ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
+	code = emit_bx (code, ARMREG_IP);
+
+	/* Check whenever an exception needs to be thrown */
+	ARM_CMP_REG_IMM (code, ARMREG_R0, 0, 0);
+	labels [0] = code;
+	ARM_B_COND (code, ARMCOND_NE, 0);
+
+	orig_cfa_offset = cfa_offset;
+
+	/* Normal case */
 
 	/* Restore VFP registers. */
 	if (mono_arm_is_hard_float ()) {
@@ -385,6 +386,48 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	}
 
 	code += 8;
+
+	/* Exception case */
+	arm_patch (labels [0], code);
+
+	cfa_offset = orig_cfa_offset;
+
+	/*
+	 * We have an exception we want to throw in the caller's frame, so pop
+	 * the trampoline frame and throw from the caller.
+	 */
+	/* Store the exception in place of IP */
+	ARM_STR_IMM (code, ARMREG_R0, ARMREG_V1, MONO_STRUCT_OFFSET (MonoLMF, iregs) + (ARMREG_R12 * sizeof (mgreg_t)));
+
+	ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, STACK - regsave_size);
+	cfa_offset -= STACK - regsave_size;
+	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, buf, cfa_offset);
+	/* Restore all regs */
+	ARM_POP_NWB (code, 0x5fff);
+	mono_add_unwind_op_same_value (unwind_ops, code, buf, ARMREG_LR);
+	ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, regsave_size);
+	cfa_offset -= regsave_size;
+	g_assert (cfa_offset == 0);
+	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, buf, cfa_offset);
+	/* We are in the parent frame, the exception is in ip */
+	ARM_MOV_REG_REG (code, ARMREG_R0, ARMREG_IP);
+	/*
+	 * EH is initialized after trampolines, so get the address of the variable
+	 * which contains throw_exception, and load it from there.
+	 */
+	if (aot) {
+		/* Not really a jit icall */
+		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP, MONO_PATCH_INFO_JIT_ICALL_ADDR, "throw_exception_addr");
+	} else {
+		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
+		ARM_B (code, 0);
+		*(gpointer*)code = mono_get_throw_exception_addr ();
+		code += 4;
+	}
+	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_IP, 0);
+	/* Branch to the throw trampoline */
+	/* lr contains the return address, the trampoline will use it as the throw site */
+	code = emit_bx (code, ARMREG_IP);
 
 	/* Flush instruction cache, since we've generated code */
 	mono_arch_flush_icache (buf, code - buf);
@@ -743,9 +786,9 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
 		ARM_B (code, 0);
 		if (single_step)
-			*(gpointer*)code = debugger_agent_single_step_from_context;
+			*(gpointer*)code = mini_get_dbg_callbacks ()->single_step_from_context;
 		else
-			*(gpointer*)code = debugger_agent_breakpoint_from_context;
+			*(gpointer*)code = mini_get_dbg_callbacks ()->breakpoint_from_context;
 		code += 4;
 		ARM_BLX_REG (code, ARMREG_IP);
 	}
@@ -769,163 +812,110 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 }
 
 /*
- * mono_arch_get_enter_icall_trampoline:
+ * mono_arch_get_interp_to_native_trampoline:
  *
  *   See tramp-amd64.c for documentation.
  */
 gpointer
-mono_arch_get_enter_icall_trampoline (MonoTrampInfo **info)
+mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
 {
-#ifdef ENABLE_INTERPRETER
-	const int gregs_num = INTERP_ICALL_TRAMP_IARGS;
-	const int fregs_num = INTERP_ICALL_TRAMP_FARGS;
-
-	guint8 *start = NULL, *code, *label_gexits [gregs_num], *label_fexits [fregs_num], *label_leave_tramp [3], *label_is_float_ret;
+#ifndef DISABLE_INTERPRETER
+	guint8 *start = NULL, *code;
+	guint8 *label_start_copy, *label_exit_copy;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
-	int buf_len, i, framesize, off_methodargs, off_targetaddr;
+	int buf_len, i, off_methodargs, off_targetaddr;
 	const int fp_reg = ARMREG_R7;
+	int framesize;
 
 	buf_len = 512 + 1024;
 	start = code = (guint8 *) mono_global_codeman_reserve (buf_len);
 
-	framesize = 5 * sizeof (mgreg_t); /* lr, r4, r8, r6 and plus one */
-
-	off_methodargs = -framesize;
-	framesize += sizeof (mgreg_t);
-
-	off_targetaddr = -framesize;
-	framesize += sizeof (mgreg_t);
-
-	framesize = ALIGN_TO (framesize + 4 * sizeof (mgreg_t), MONO_ARCH_FRAME_ALIGNMENT);
-
-	/* allocate space on stack for argument passing */
-	const int stack_space = ALIGN_TO (((gregs_num - ARMREG_R3) * sizeof (mgreg_t)), MONO_ARCH_FRAME_ALIGNMENT);
-
-	/* iOS ABI */
-	ARM_PUSH (code, (1 << fp_reg) | (1 << ARMREG_LR));
+	/*
+	* iOS ABI
+	*
+	* FIXME We save rgctx reg here so we don't regress tests. It should
+	* not be clobbered by native->interp transition.
+	*/
+	ARM_PUSH (code, (1 << MONO_ARCH_RGCTX_REG) | (1 << fp_reg) | (1 << ARMREG_LR));
 	ARM_MOV_REG_REG (code, fp_reg, ARMREG_SP);
 
-	/* use r4, r8 and r6 as scratch registers */
-	ARM_PUSH (code, (1 << ARMREG_R4) | (1 << ARMREG_R8) | (1 << ARMREG_R6));
-	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, stack_space + framesize);
+	/* allocate space for saving the target addr and the call context and align stack */
+	framesize = sizeof (mgreg_t) + ALIGN_TO (2 * sizeof (mgreg_t), MONO_ARCH_FRAME_ALIGNMENT);
+	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, framesize);
 
-	/* save InterpMethodArguments* onto stack */
+	/* save CallContext* onto stack */
+	off_methodargs = -4;
 	ARM_STR_IMM (code, ARMREG_R1, fp_reg, off_methodargs);
 
 	/* save target address onto stack */
+	off_targetaddr = -8;
 	ARM_STR_IMM (code, ARMREG_R0, fp_reg, off_targetaddr);
 
-	/* load pointer to InterpMethodArguments* into r4 */
-	ARM_MOV_REG_REG (code, ARMREG_R4, ARMREG_R1);
+	/* allocate the stack space necessary for the call */
+	ARM_LDR_IMM (code, ARMREG_R3, ARMREG_R1, MONO_STRUCT_OFFSET (CallContext, stack_size));
+	ARM_SUB_REG_REG (code, ARMREG_SP, ARMREG_SP, ARMREG_R3);
 
-	/* move flen into r8 */
-	ARM_LDR_IMM (code, ARMREG_R8, ARMREG_R4, MONO_STRUCT_OFFSET (InterpMethodArguments, flen));
-	/* load pointer to fargs into r6 */
-	ARM_LDR_IMM (code, ARMREG_R6, ARMREG_R4, MONO_STRUCT_OFFSET (InterpMethodArguments, fargs));
+	/* copy stack from the CallContext, R0 = dest, R1 = source */
+	ARM_MOV_REG_REG (code, ARMREG_R0, ARMREG_SP);
+	ARM_LDR_IMM (code, ARMREG_R1, ARMREG_R1, MONO_STRUCT_OFFSET (CallContext, stack));
 
-	for (i = 0; i < fregs_num; ++i) {
-		ARM_CMP_REG_IMM (code, ARMREG_R8, 0, 0);
-		label_fexits [i] = code;
-		ARM_B_COND (code, ARMCOND_EQ, 0);
+	label_start_copy = code;
 
-		g_assert (i <= ARM_VFP_D7); /* otherwise, need to pass args on stack */
-		ARM_FLDD (code, i, ARMREG_R6, i * sizeof (double));
-		ARM_SUB_REG_IMM8 (code, ARMREG_R8, ARMREG_R8, 1);
-	}
+	ARM_CMP_REG_IMM (code, ARMREG_R3, 0, 0);
+	label_exit_copy = code;
+	ARM_B_COND (code, ARMCOND_EQ, 0);
+	ARM_LDR_IMM (code, ARMREG_R2, ARMREG_R1, 0);
+	ARM_STR_IMM (code, ARMREG_R2, ARMREG_R0, 0);
+	ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_R0, sizeof (mgreg_t));
+	ARM_ADD_REG_IMM8 (code, ARMREG_R1, ARMREG_R1, sizeof (mgreg_t));
+	ARM_SUB_REG_IMM8 (code, ARMREG_R3, ARMREG_R3, sizeof (mgreg_t));
+	ARM_B (code, 0);
+	arm_patch (code - 4, label_start_copy);
+	arm_patch (label_exit_copy, code);
 
-	for (i = 0; i < fregs_num; i++)
-		arm_patch (label_fexits [i], code);
+	ARM_LDR_IMM (code, ARMREG_IP, fp_reg, off_methodargs);
+	/* set all general purpose registers from CallContext */
+	for (i = 0; i < PARAM_REGS; i++)
+		ARM_LDR_IMM (code, i, ARMREG_IP, MONO_STRUCT_OFFSET (CallContext, gregs) + i * sizeof (mgreg_t));
 
-	/* move ilen into r8 */
-	ARM_LDR_IMM (code, ARMREG_R8, ARMREG_R4, MONO_STRUCT_OFFSET (InterpMethodArguments, ilen));
-	/* load pointer to iargs into r6 */
-	ARM_LDR_IMM (code, ARMREG_R6, ARMREG_R4, MONO_STRUCT_OFFSET (InterpMethodArguments, iargs));
-
-	int stack_offset = 0;
-	for (i = 0; i < gregs_num; i++) {
-		ARM_CMP_REG_IMM (code, ARMREG_R8, 0, 0);
-		label_gexits [i] = code;
-		ARM_B_COND (code, ARMCOND_EQ, 0);
-
-		if (i <= ARMREG_R3) {
-			ARM_LDR_IMM (code, i, ARMREG_R6, i * sizeof (mgreg_t));
-		} else {
-			ARM_LDR_IMM (code, ARMREG_R4, ARMREG_R6, i * sizeof (mgreg_t));
-			ARM_STR_IMM (code, ARMREG_R4, ARMREG_SP, stack_offset);
-			stack_offset += sizeof (mgreg_t);
-		}
-		ARM_SUB_REG_IMM8 (code, ARMREG_R8, ARMREG_R8, 1);
-	}
-
-	for (i = 0; i < gregs_num; i++)
-		arm_patch (label_gexits [i], code);
+	/* set all floating registers from CallContext  */
+	for (i = 0; i < FP_PARAM_REGS; i++)
+		ARM_FLDD (code, i * 2, ARMREG_IP, MONO_STRUCT_OFFSET (CallContext, fregs) + i * sizeof (double));
 
 	/* load target addr */
-	ARM_LDR_IMM (code, ARMREG_R4, fp_reg, off_targetaddr);
+	ARM_LDR_IMM (code, ARMREG_IP, fp_reg, off_targetaddr);
 
 	/* call into native function */
-	ARM_BLX_REG (code, ARMREG_R4);
+	ARM_BLX_REG (code, ARMREG_IP);
 
-	/* load InterpMethodArguments */
-	ARM_LDR_IMM (code, ARMREG_R4, fp_reg, off_methodargs);
+	/* load CallContext*/
+	ARM_LDR_IMM (code, ARMREG_IP, fp_reg, off_methodargs);
 
-	/* load is_float_ret */
-	ARM_LDR_IMM (code, ARMREG_R8, ARMREG_R4, MONO_STRUCT_OFFSET (InterpMethodArguments, is_float_ret));
+	/* set all general purpose registers to CallContext */
+	for (i = 0; i < PARAM_REGS; i++)
+		ARM_STR_IMM (code, i, ARMREG_IP, MONO_STRUCT_OFFSET (CallContext, gregs) + i * sizeof (mgreg_t));
 
-	/* check if a float return value is expected */
-	ARM_CMP_REG_IMM (code, ARMREG_R8, 0, 0);
-	label_is_float_ret = code;
-	ARM_B_COND (code, ARMCOND_NE, 0);
+	/* set all floating registers to CallContext  */
+	for (i = 0; i < FP_PARAM_REGS; i++)
+		ARM_FSTD (code, i * 2, ARMREG_IP, MONO_STRUCT_OFFSET (CallContext, fregs) + i * sizeof (double));
 
-	/* greg return */
-	/* load retval */
-	ARM_LDR_IMM (code, ARMREG_R8, ARMREG_R4, MONO_STRUCT_OFFSET (InterpMethodArguments, retval));
-
-	ARM_CMP_REG_IMM (code, ARMREG_R8, 0, 0);
-	label_leave_tramp [0] = code;
-	ARM_B_COND (code, ARMCOND_EQ, 0);
-
-	/* store greg result, always write back 64bit */
-	ARM_STR_IMM (code, ARMREG_R0, ARMREG_R8, 0);
-	ARM_STR_IMM (code, ARMREG_R1, ARMREG_R8, 4);
-
-	label_leave_tramp [1] = code;
-	ARM_B_COND (code, ARMCOND_AL, 0);
-
-	/* freg return */
-	arm_patch (label_is_float_ret, code);
-	/* load retval */
-	ARM_LDR_IMM (code, ARMREG_R8, ARMREG_R4, MONO_STRUCT_OFFSET (InterpMethodArguments, retval));
-
-	ARM_CMP_REG_IMM (code, ARMREG_R8, 0, 0);
-	label_leave_tramp [2] = code;
-	ARM_B_COND (code, ARMCOND_EQ, 0);
-
-	/* store freg result */
-	ARM_FSTD (code, ARM_VFP_F0, ARMREG_R8, 0);
-
-	for (i = 0; i < 3; i++)
-		arm_patch (label_leave_tramp [i], code);
-
-	ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, stack_space + framesize);
-	ARM_POP (code, (1 << ARMREG_R4) | (1 << ARMREG_R8) | (1 << ARMREG_R6));
 	ARM_MOV_REG_REG (code, ARMREG_SP, fp_reg);
-	ARM_POP (code, (1 << fp_reg) | (1 << ARMREG_PC));
+	ARM_POP (code, (1 << MONO_ARCH_RGCTX_REG) | (1 << fp_reg) | (1 << ARMREG_PC));
 
 	g_assert (code - start < buf_len);
 
 	mono_arch_flush_icache (start, code - start);
-	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
 
 	if (info)
-		*info = mono_tramp_info_create ("enter_icall_trampoline", start, code - start, ji, unwind_ops);
+		*info = mono_tramp_info_create ("interp_to_native_trampoline", start, code - start, ji, unwind_ops);
 
 	return start;
 #else
 	g_assert_not_reached ();
 	return NULL;
-#endif /* ENABLE_INTERPRETER */
+#endif /* DISABLE_INTERPRETER */
 }
 
 #else
@@ -973,7 +963,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 }
 
 gpointer
-mono_arch_get_enter_icall_trampoline (MonoTrampInfo **info)
+mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
 {
 	g_assert_not_reached ();
 	return NULL;

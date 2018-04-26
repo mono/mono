@@ -43,7 +43,7 @@ namespace Xamarin.ApiDiff {
 
 		protected virtual bool IsBreakingRemoval (XElement e)
 		{
-			return true;
+			return !e.Elements ("attributes").SelectMany (a => a.Elements ("attribute")).Any (c => c.Attribute ("name")?.Value == "System.ObsoleteAttribute");
 		}
 
 		public void Compare (XElement source, XElement target)
@@ -122,17 +122,19 @@ namespace Xamarin.ApiDiff {
 		{
 			bool a = false;
 			foreach (var item in elements) {
+				var memberDescription = $"{State.Namespace}.{State.Type}: Added {GroupName}: {GetDescription (item)}";
+				State.LogDebugMessage ($"Possible -a value: {memberDescription}");
 				SetContext (item);
-				if (State.IgnoreAdded.Any (re => re.IsMatch (GetDescription (item))))
+				if (State.IgnoreAdded.Any (re => re.IsMatch (memberDescription)))
 					continue;
 				if (!a) {
-					BeforeAdding (elements);
+					Formatter.BeginMemberAddition (Output, elements, this);
 					a = true;
 				}
 				Added (item, false);
 			}
 			if (a)
-				AfterAdding ();
+				Formatter.EndMemberAddition (Output);
 		}
 
 		void Modify (ApiChanges modified)
@@ -140,18 +142,13 @@ namespace Xamarin.ApiDiff {
 			foreach (var changes in modified) {
 				if (State.IgnoreNonbreaking && changes.Value.All (c => !c.Breaking))
 					continue;
-				Output.WriteLine ("<p>{0}:</p>", changes.Key);
-				Output.WriteLine ("<pre>");
+				Formatter.BeginMemberModification (Output, changes.Key);
 				foreach (var element in changes.Value) {
 					if (State.IgnoreNonbreaking && !element.Breaking)
 						continue;
-					Output.Write ("<div {0}>", element.Breaking ? "data-is-breaking" : "data-is-non-breaking");
-					foreach (var line in element.Member.ToString ().Split ('\n'))
-						Output.WriteLine ("\t{0}", line);
-					Output.Write ("</div>");
-
+					Formatter.Diff (Output, element);
 				}
-				Output.WriteLine ("</pre>");
+				Formatter.EndMemberModification (Output);
 			}
 		}
 
@@ -159,19 +156,22 @@ namespace Xamarin.ApiDiff {
 		{
 			bool r = false;
 			foreach (var item in elements) {
-				if (State.IgnoreRemoved.Any (re => re.IsMatch (GetDescription (item))))
+				var memberDescription = $"{State.Namespace}.{State.Type}: Removed {GroupName}: {GetDescription (item)}";
+				State.LogDebugMessage ($"Possible -r value: {memberDescription}");
+				if (State.IgnoreRemoved.Any (re => re.IsMatch (memberDescription)))
 					continue;
 				SetContext (item);
 				if (State.IgnoreNonbreaking && !IsBreakingRemoval (item))
 					continue;
 				if (!r) {
-					BeforeRemoving (elements);
+					Formatter.BeginMemberRemoval (Output, elements, this);
+					first = true;
 					r = true;
 				}
 				Removed (item);
 			}
 			if (r)
-				AfterRemoving ();
+				Formatter.EndMemberRemoval (Output);
 		}
 			
 		public abstract string GetDescription (XElement e);
@@ -185,8 +185,6 @@ namespace Xamarin.ApiDiff {
 				if (o.Length > 0)
 					sb.Append (" (\"").Append (o).Append ("\")");
 				sb.AppendLine ("]");
-				for (int i = 0; i < State.Indent + 1; i++)
-					sb.Append ('\t');
 			}
 			return sb;
 		}
@@ -202,14 +200,6 @@ namespace Xamarin.ApiDiff {
 			return base.Equals (source, target, changes);
 		}
 
-		public virtual void BeforeAdding (IEnumerable<XElement> list)
-		{
-			first = true;
-			Output.WriteLine ("<div>");
-			Output.WriteLine ("<p>Added {0}:</p>", list.Count () > 1 ? GroupName : ElementName);
-			Output.WriteLine ("<pre>");
-		}
-
 		public override void Added (XElement target, bool wasParentAdded)
 		{
 			var o = GetObsoleteMessage (target);
@@ -217,27 +207,12 @@ namespace Xamarin.ApiDiff {
 				Output.WriteLine ();
 			Indent ();
 			bool isInterfaceBreakingChange = !wasParentAdded && IsInInterface (target);
-			Output.Write ("\t<span class='added added-{0} {1}' {2}>", ElementName, isInterfaceBreakingChange ? "breaking" : string.Empty, isInterfaceBreakingChange ? "data-is-breaking" : "data-is-non-breaking");
-			Output.Write ("{0}{1}", o, GetDescription (target));
-			Output.WriteLine ("</span>");
+			Formatter.AddMember (Output, this, isInterfaceBreakingChange, o.ToString (), GetDescription (target));
 			first = false;
-		}
-
-		public virtual void AfterAdding ()
-		{
-			Output.WriteLine ("</pre>");
-			Output.WriteLine ("</div>");
 		}
 
 		public override void Modified (XElement source, XElement target, ApiChanges change)
 		{
-		}
-
-		public virtual void BeforeRemoving (IEnumerable<XElement> list)
-		{
-			first = true;
-			Output.WriteLine ("<p>Removed {0}:</p>\n", list.Count () > 1 ? GroupName : ElementName);
-			Output.WriteLine ("<pre>");
 		}
 
 		public override void Removed (XElement source)
@@ -248,16 +223,8 @@ namespace Xamarin.ApiDiff {
 
 			bool is_breaking = IsBreakingRemoval (source);
 
-			Indent ();
-			Output.Write ("\t<span class='removed removed-{0} {2}' {1}>", ElementName, is_breaking ? "data-is-breaking" : "data-is-non-breaking", is_breaking ? "breaking" : string.Empty);
-			Output.Write ("{0}{1}", o, GetDescription (source));
-			Output.WriteLine ("</span>");
+			Formatter.RemoveMember (Output, this, is_breaking, o.ToString (), GetDescription (source));
 			first = false;
-		}
-
-		public virtual void AfterRemoving ()
-		{
-			Output.WriteLine ("</pre>");;
 		}
 
 		string RenderGenericParameter (XElement gp)
@@ -287,7 +254,7 @@ namespace Xamarin.ApiDiff {
 			if (srcCount == 0 && tgtCount == 0)
 				return;
 
-			change.Append ("&lt;");
+			change.Append (Formatter.LesserThan);
 			for (int i = 0; i < Math.Max (srcCount, tgtCount); i++) {
 				if (i > 0)
 					change.Append (", ");
@@ -306,7 +273,7 @@ namespace Xamarin.ApiDiff {
 					}
 					}
 				}
-			change.Append ("&gt;");
+			change.Append (Formatter.GreaterThan);
 		}
 
 		protected string FormatValue (string type, string value)
@@ -597,15 +564,9 @@ namespace Xamarin.ApiDiff {
 			if (srcObsolete == null) {
 				if (tgtObsolete == null)
 					return; // neither is obsolete
-				var change = new ApiChange ();
+				var change = new ApiChange (GetDescription (source));
 				change.Header = "Obsoleted " + GroupName;
-				change.Append (string.Format ("<span class='obsolete obsolete-{0}' data-is-non-breaking>", ElementName));
-				change.Append ("[Obsolete (");
-				if (tgtObsolete != string.Empty)
-					change.Append ("\"").Append (tgtObsolete).Append ("\"");
-				change.Append (")]\n");
-				change.Append (GetDescription (target));
-				change.Append ("</span>");
+				Formatter.RenderObsoleteMessage (change.Member, this, GetDescription (target), tgtObsolete);
 				change.AnyChange = true;
 				changes.Add (source, target, change);
 			} else if (tgtObsolete == null) {

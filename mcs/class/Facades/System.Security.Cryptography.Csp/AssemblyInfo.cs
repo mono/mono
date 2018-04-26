@@ -24,12 +24,12 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("System.Security.Cryptography.Csp.dll")]
-[assembly: AssemblyDescription ("System.Security.Cryptography.Csp.dll")]
-[assembly: AssemblyDefaultAlias ("System.Security.Cryptography.Csp.dll")]
-[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyTitle ("System.Security.Cryptography.Csp")]
+[assembly: AssemblyDescription ("System.Security.Cryptography.Csp")]
+[assembly: AssemblyDefaultAlias ("System.Security.Cryptography.Csp")]
+[assembly: AssemblyCompany ("Mono development team")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
-[assembly: AssemblyCopyright ("Copyright (c) 2015 Xamarin Inc. (http://www.xamarin.com)")]
+[assembly: AssemblyCopyright ("(c) Various Mono authors")]
 [assembly: AssemblyVersion ("4.0.0.0")]
 [assembly: AssemblyInformationalVersion ("4.0.0.0")]
 [assembly: AssemblyFileVersion ("4.0.0.0")]

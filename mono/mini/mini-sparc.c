@@ -130,8 +130,6 @@
 #endif
 #endif
 
-#define ALIGN_TO(val,align) (((val) + ((align) - 1)) & ~((align) - 1))
-
 #define SIGNAL_STACK_SIZE (64 * 1024)
 
 #define STACK_BIAS MONO_SPARC_STACK_BIAS
@@ -346,7 +344,7 @@ mono_arch_flush_register_windows (void)
 }
 
 gboolean 
-mono_arch_is_inst_imm (gint64 imm)
+mono_arch_is_inst_imm (int opcode, int imm_opcode, gint64 imm)
 {
 	return sparc_is_imm13 (imm);
 }
@@ -914,7 +912,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			ArgStorage storage;
 
 			if (sig->hasthis && (i == 0))
-				arg_type = &mono_defaults.object_class->byval_arg;
+				arg_type = mono_get_object_type ();
 			else
 				arg_type = sig->params [i - sig->hasthis];
 
@@ -1032,7 +1030,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	sig = mono_method_signature (cfg->method);
 
 	if (MONO_TYPE_ISSTRUCT ((sig->ret))) {
-		cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
+		cfg->vret_addr = mono_compile_create_var (cfg, mono_get_int_type (), OP_ARG);
 		if (G_UNLIKELY (cfg->verbose_level > 1)) {
 			printf ("vret_addr = ");
 			mono_print_ins (cfg->vret_addr);
@@ -1048,7 +1046,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	}
 
 	/* Add a properly aligned dword for use by int<->float conversion opcodes */
-	cfg->arch.float_spill_slot = mono_compile_create_var (cfg, &mono_defaults.double_class->byval_arg, OP_ARG);
+	cfg->arch.float_spill_slot = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.double_class), OP_ARG);
 	((MonoInst*)cfg->arch.float_spill_slot)->flags |= MONO_INST_VOLATILE;
 }
 
@@ -1175,7 +1173,7 @@ emit_pass_vtype (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo, ArgInfo 
 		align = sizeof (gpointer);
 	}
 	else if (pinvoke)
-		size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
+		size = mono_type_native_stack_size (m_class_get_byval_arg (in->klass), &align);
 	else {
 		/* 
 		 * Other backends use mono_type_stack_size (), but that
@@ -1305,7 +1303,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		in = call->args [i];
 
 		if (sig->hasthis && (i == 0))
-			arg_type = &mono_defaults.object_class->byval_arg;
+			arg_type = mono_get_object_type ();
 		else
 			arg_type = sig->params [i - sig->hasthis];
 
@@ -1569,7 +1567,7 @@ else { \
 static guint32*
 emit_call (MonoCompile *cfg, guint32 *code, guint32 patch_type, gconstpointer data)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	gpointer target;
 
 	/* FIXME: This only works if the target method is already compiled */
@@ -1579,8 +1577,8 @@ emit_call (MonoCompile *cfg, guint32 *code, guint32 patch_type, gconstpointer da
 		patch_info.type = patch_type;
 		patch_info.data.target = data;
 
-		target = mono_resolve_patch_target (cfg->method, cfg->domain, NULL, &patch_info, FALSE, &error);
-		mono_error_raise_exception (&error); /* FIXME: don't raise here */
+		target = mono_resolve_patch_target (cfg->method, cfg->domain, NULL, &patch_info, FALSE, error);
+		mono_error_raise_exception_deprecated (error); /* FIXME: don't raise here */
 
 		/* FIXME: Add optimizations if the target is close enough */
 		sparc_set (code, target, sparc_o7);
@@ -2105,7 +2103,7 @@ emit_move_return_value (MonoInst *ins, guint32 *code)
  * emit_load_volatile_arguments:
  *
  *  Load volatile arguments from the stack to the original input registers.
- * Required before a tail call.
+ * Required before a tailcall.
  */
 static guint32*
 emit_load_volatile_arguments (MonoCompile *cfg, guint32 *code)
@@ -2132,7 +2130,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint32 *code)
 		inst = cfg->args [i];
 
 		if (sig->hasthis && (i == 0))
-			arg_type = &mono_defaults.object_class->byval_arg;
+			arg_type = mono_get_object_type ();
 		else
 			arg_type = sig->params [i - sig->hasthis];
 
@@ -2358,9 +2356,10 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 		}
 	}
 
-	mono_arch_flush_icache ((guint8*)start, (code - start) * 4);
+	mono_arch_flush_icache ((guint8*)start, (code - start));
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL));
 
-	UnlockedAdd (&mono_stats.imt_trampolines_size, (code - start) * 4);
+	UnlockedAdd (&mono_stats.imt_trampolines_size, (code - start));
 	g_assert (code - start <= size);
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, NULL), domain);
@@ -2864,17 +2863,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_fmovs (code, ins->sreg1 + 1, ins->dreg + 1);
 #endif
 			break;
-		case OP_JMP:
-			if (cfg->method->save_lmf)
-				NOT_IMPLEMENTED;
-
-			code = emit_load_volatile_arguments (cfg, code);
-			mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, ins->inst_p0);
-			sparc_set_template (code, sparc_o7);
-			sparc_jmpl (code, sparc_o7, sparc_g0, sparc_g0);
-			/* Restore parent frame in delay slot */
-			sparc_restore_imm (code, sparc_g0, 0, sparc_g0);
-			break;
 		case OP_CHECK_THIS:
 			/* ensure ins->sreg1 is not NULL */
 			/* Might be misaligned in case of vtypes so use a byte load */
@@ -3136,7 +3124,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* This is a jump inside the method, so call_simple works even on V9 */
 			sparc_call_simple (code, 0);
 			sparc_nop (code);
-			mono_cfg_add_try_hole (cfg, ins->inst_eh_block, code, bb);
+			for (GList *tmp = ins->inst_eh_blocks; tmp != bb->clause_holes; tmp = tmp->prev)
+				mono_cfg_add_try_hole (cfg, ((MonoLeaveClause *) tmp->data)->clause, code, bb);
 			break;
 		case OP_LABEL:
 			ins->inst_c0 = (guint8*)code - cfg->native_code;
@@ -3144,7 +3133,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_RELAXED_NOP:
 		case OP_NOP:
 		case OP_DUMMY_USE:
-		case OP_DUMMY_STORE:
+		case OP_DUMMY_ICONST:
+		case OP_DUMMY_I8CONST:
+		case OP_DUMMY_R8CONST:
+		case OP_DUMMY_R4CONST:
 		case OP_NOT_REACHED:
 		case OP_NOT_NULL:
 			break;
@@ -3643,6 +3635,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_MEMORY_BARRIER:
 			sparc_membar (code, sparc_membar_all);
 			break;
+		case OP_LIVERANGE_START: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d START=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_start = code - cfg->native_code;
+			break;
+		}
+		case OP_LIVERANGE_END: {
+			if (cfg->verbose_level > 1)
+				printf ("R%d END=0x%x\n", MONO_VARINFO (cfg, ins->inst_c0)->vreg, (int)(code - cfg->native_code));
+			MONO_VARINFO (cfg, ins->inst_c0)->live_range_end = code - cfg->native_code;
+			break;
+		}
 		case OP_GC_SAFE_POINT:
 			break;
 
@@ -3776,7 +3780,7 @@ enum {
 };
 
 void*
-mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments, gboolean preserve_argument_registers)
+mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guint32 *code = (guint32*)p;
 	int save_mode = SAVE_NONE;
@@ -3945,7 +3949,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		inst = cfg->args [i];
 
 		if (sig->hasthis && (i == 0))
-			arg_type = &mono_defaults.object_class->byval_arg;
+			arg_type = mono_get_object_type ();
 		else
 			arg_type = sig->params [i - sig->hasthis];
 
@@ -4211,7 +4215,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 			sparc_patch ((guint32*)(cfg->native_code + patch_info->ip.i), code);
 
 			exc_class = mono_class_load_from_name (mono_defaults.corlib, "System", patch_info->data.name);
-			type_idx = exc_class->type_token - MONO_TOKEN_TYPE_DEF;
+			type_idx = m_class_get_type_token (exc_class) - MONO_TOKEN_TYPE_DEF;
 			throw_ip = patch_info->ip.i;
 
 			/* Find a throw sequence for the same exception class */
@@ -4423,6 +4427,12 @@ mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 
 gboolean
 mono_arch_opcode_supported (int opcode)
+{
+	return FALSE;
+}
+
+gboolean
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	return FALSE;
 }

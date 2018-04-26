@@ -29,9 +29,43 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
+
 namespace System.Security.Cryptography {
 
-	public partial class CryptoConfig {
+	public partial class CryptoConfig
+	{
+		static readonly object lockObject = new object ();
+		static Dictionary<string,Type> algorithms;
+
+		public static void AddAlgorithm (Type algorithm, params string[] names)
+		{
+			if (algorithm == null)
+				throw new ArgumentNullException (nameof (algorithm));
+			if (!algorithm.IsVisible)
+				throw new ArgumentException ("Algorithms added to CryptoConfig must be accessable from outside their assembly.", nameof (algorithm));
+			if (names == null)
+				throw new ArgumentNullException (nameof (names));
+
+			var algorithmNames = new string [names.Length];
+			Array.Copy (names, algorithmNames, algorithmNames.Length);
+
+			foreach (string name in algorithmNames) {
+				if (string.IsNullOrEmpty (name)) {
+					throw new ArgumentException ("CryptoConfig cannot add a mapping for a null or empty name.");
+				}
+			}
+
+			lock (lockObject) {
+				if (algorithms == null) {
+					Initialize ();
+				}
+
+				foreach (string name in algorithmNames) {
+					algorithms [name] = algorithm;
+				}
+			}
+		}
 
 		public static byte[] EncodeOID (string str)
 		{

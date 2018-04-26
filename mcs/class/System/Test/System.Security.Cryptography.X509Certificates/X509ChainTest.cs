@@ -205,6 +205,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+		[Category ("InetAccess")]
 		public void Build_Cert1_X509RevocationMode_Online ()
 		{
 			X509Chain c = new X509Chain ();

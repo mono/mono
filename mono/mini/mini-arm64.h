@@ -42,7 +42,6 @@
 #define MONO_ARCH_CALLEE_SAVED_FREGS 0xff00
 
 #define MONO_ARCH_USE_FPSTACK FALSE
-#define MONO_ARCH_FPSTACK_SIZE 0
 
 #define MONO_ARCH_INST_SREG2_MASK(ins) (0)
 
@@ -120,20 +119,16 @@ typedef struct {
 #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS 1
 #define MONO_ARCH_NEED_DIV_CHECK 1
 #define MONO_ARCH_EMULATE_MUL_OVF 1
-#define MONO_ARCH_HAVE_IMT 1
-#define MONO_ARCH_HAVE_OP_TAIL_CALL 1
-#define MONO_ARCH_THIS_AS_FIRST_ARG 1
+#define MONO_ARCH_HAVE_OP_TAILCALL_MEMBASE 1
 #define MONO_ARCH_RGCTX_REG ARMREG_R15
 #define MONO_ARCH_IMT_REG MONO_ARCH_RGCTX_REG
 #define MONO_ARCH_VTABLE_REG ARMREG_R0
-#define MONO_ARCH_EXC_REG ARMREG_R0
-#define MONO_ARCH_HAVE_XP_UNWIND 1
-#define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_TRAMPOLINE 1
 #define MONO_ARCH_USE_SIGACTION 1
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
 #define MONO_ARCH_GSHARED_SUPPORTED 1
+#define MONO_ARCH_INTERPRETER_SUPPORTED 1
 #define MONO_ARCH_AOT_SUPPORTED 1
 #define MONO_ARCH_LLVM_SUPPORTED 1
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
@@ -146,14 +141,18 @@ typedef struct {
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
-#define MONO_ARCH_HAVE_OP_GET_EX_OBJ 1
 #define MONO_ARCH_HAVE_OBJC_GET_SELECTOR 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
 #define MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION 1
 #define MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS 1
-#define MONO_ARCH_HAVE_INIT_LMF_EXT 1
+#define MONO_ARCH_FLOAT32_SUPPORTED 1
+#define MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP 1
+
+// Does the ABI have a volatile non-parameter register, so tailcall
+// can pass context to generics or interfaces?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 1
 
 #ifdef TARGET_IOS
 
@@ -229,6 +228,15 @@ typedef struct {
 	ArgInfo args [1];
 } CallInfo;
 
+typedef struct {
+	/* General registers + ARMREG_R8 for indirect returns */
+	mgreg_t gregs [PARAM_REGS + 1];
+	/* Floating registers */
+	double fregs [FP_PARAM_REGS];
+	/* Stack usage, used for passing params on stack */
+	guint32 stack_size;
+	guint8* stack;
+} CallContext;
 
 guint8* mono_arm_emit_imm64 (guint8 *code, int dreg, gint64 imm);
 

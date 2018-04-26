@@ -225,6 +225,7 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	FACADE_ASSEMBLY ("System.Net.WebHeaderCollection"),
 	FACADE_ASSEMBLY ("System.Net.WebSockets"),
 	FACADE_ASSEMBLY ("System.Net.WebSockets.Client"),
+	{"System.Numerics", 3},
 	{"System.Numerics.Vectors", 3},
 	FACADE_ASSEMBLY ("System.ObjectModel"),
 	FACADE_ASSEMBLY ("System.Reflection"),
@@ -340,7 +341,7 @@ static char* unquote (const char *str);
 static mono_mutex_t assemblies_mutex;
 
 /* If defined, points to the bundled assembly information */
-const MonoBundledAssembly **bundles;
+static const MonoBundledAssembly **bundles;
 
 static mono_mutex_t assembly_binding_mutex;
 
@@ -663,6 +664,39 @@ assembly_names_equal_flags (MonoAssemblyName *l, MonoAssemblyName *r, AssemblyNa
 		return FALSE;
 
 	return TRUE;
+}
+
+/**
+ * assembly_names_compare_versions:
+ * \param l left assembly name
+ * \param r right assembly name
+ * \param maxcomps how many version components to compare, or -1 to compare all.
+ *
+ * \returns a negative if \p l is a lower version than \p r; a positive value
+ * if \p r is a lower version than \p l, or zero if \p l and \p r are equal
+ * versions (comparing upto \p maxcomps components).
+ *
+ * Components are \c major, \c minor, \c revision, and \c build. \p maxcomps 1 means just compare
+ * majors. 2 means majors then minors. etc.
+ */
+static int
+assembly_names_compare_versions (MonoAssemblyName *l, MonoAssemblyName *r, int maxcomps)
+{
+	int i = 0;
+	if (maxcomps < 0) maxcomps = 4;
+#define CMP(field) do {				\
+		if (l-> field < r-> field && i < maxcomps) return -1;	\
+		if (l-> field > r-> field && i < maxcomps) return 1;	\
+	} while (0)
+	CMP (major);
+	++i;
+	CMP (minor);
+	++i;
+	CMP (revision);
+	++i;
+	CMP (build);
+#undef CMP
+	return 0;
 }
 
 static MonoAssembly *
@@ -1119,7 +1153,7 @@ assemblyref_public_tok (MonoImage *image, guint32 key_index, guint32 flags)
 void
 mono_assembly_addref (MonoAssembly *assembly)
 {
-	InterlockedIncrement (&assembly->ref_count);
+	mono_atomic_inc_i32 (&assembly->ref_count);
 }
 
 /*
@@ -1461,7 +1495,7 @@ struct AssemblyLoadHook {
 	gpointer user_data;
 };
 
-AssemblyLoadHook *assembly_load_hook = NULL;
+static AssemblyLoadHook *assembly_load_hook = NULL;
 
 /**
  * mono_assembly_invoke_load_hook:
@@ -1513,7 +1547,7 @@ struct AssemblySearchHook {
 	gpointer user_data;
 };
 
-AssemblySearchHook *assembly_search_hook = NULL;
+static AssemblySearchHook *assembly_search_hook = NULL;
 
 static MonoAssembly*
 mono_assembly_invoke_search_hook_internal (MonoAssemblyName *aname, MonoAssembly *requesting, gboolean refonly, gboolean postload)
@@ -1878,7 +1912,7 @@ mono_assembly_open_predicate (const char *filename, gboolean refonly,
 	*status = MONO_IMAGE_OK;
 
 	if (strncmp (filename, "file://", 7) == 0) {
-		GError *error = NULL;
+		GError *gerror = NULL;
 		gchar *uri = (gchar *) filename;
 		gchar *tmpuri;
 
@@ -1891,15 +1925,15 @@ mono_assembly_open_predicate (const char *filename, gboolean refonly,
 	
 		tmpuri = uri;
 		uri = mono_escape_uri_string (tmpuri);
-		fname = g_filename_from_uri (uri, NULL, &error);
+		fname = g_filename_from_uri (uri, NULL, &gerror);
 		g_free (uri);
 
 		if (tmpuri != filename)
 			g_free (tmpuri);
 
-		if (error != NULL) {
-			g_warning ("%s\n", error->message);
-			g_error_free (error);
+		if (gerror != NULL) {
+			g_warning ("%s\n", gerror->message);
+			g_error_free (gerror);
 			fname = g_strdup (filename);
 		}
 	} else {
@@ -1911,12 +1945,12 @@ mono_assembly_open_predicate (const char *filename, gboolean refonly,
 
 	new_fname = NULL;
 	if (!mono_assembly_is_in_gac (fname)) {
-		MonoError error;
-		new_fname = mono_make_shadow_copy (fname, &error);
-		if (!is_ok (&error)) {
+		ERROR_DECL (error);
+		new_fname = mono_make_shadow_copy (fname, error);
+		if (!is_ok (error)) {
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY,
-				    "Assembly Loader shadow copy error: %s.", mono_error_get_message (&error));
-			mono_error_cleanup (&error);
+				    "Assembly Loader shadow copy error: %s.", mono_error_get_message (error));
+			mono_error_cleanup (error);
 			*status = MONO_IMAGE_IMAGE_INVALID;
 			g_free (fname);
 			return NULL;
@@ -2010,7 +2044,7 @@ free_item (gpointer val, gpointer user_data)
 void
 mono_assembly_load_friends (MonoAssembly* ass)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	int i;
 	MonoCustomAttrInfo* attrs;
 	GSList *list;
@@ -2018,8 +2052,8 @@ mono_assembly_load_friends (MonoAssembly* ass)
 	if (ass->friend_assembly_names_inited)
 		return;
 
-	attrs = mono_custom_attrs_from_assembly_checked (ass, FALSE, &error);
-	mono_error_assert_ok (&error);
+	attrs = mono_custom_attrs_from_assembly_checked (ass, FALSE, error);
+	mono_error_assert_ok (error);
 	if (!attrs) {
 		mono_assemblies_lock ();
 		ass->friend_assembly_names_inited = TRUE;
@@ -2043,6 +2077,8 @@ mono_assembly_load_friends (MonoAssembly* ass)
 		MonoCustomAttrEntry *attr = &attrs->attrs [i];
 		MonoAssemblyName *aname;
 		const gchar *data;
+		uint32_t data_length;
+		gchar *data_with_terminator;
 		/* Do some sanity checking */
 		if (!attr->ctor || attr->ctor->klass != mono_class_try_get_internals_visible_class ())
 			continue;
@@ -2052,14 +2088,17 @@ mono_assembly_load_friends (MonoAssembly* ass)
 		/* 0xFF means null string, see custom attr format */
 		if (data [0] != 1 || data [1] != 0 || (data [2] & 0xFF) == 0xFF)
 			continue;
-		mono_metadata_decode_value (data + 2, &data);
+		data_length = mono_metadata_decode_value (data + 2, &data);
+		data_with_terminator = (char *)g_memdup (data, data_length + 1);
+		data_with_terminator[data_length] = 0;
 		aname = g_new0 (MonoAssemblyName, 1);
 		/*g_print ("friend ass: %s\n", data);*/
-		if (mono_assembly_name_parse_full (data, aname, TRUE, NULL, NULL)) {
+		if (mono_assembly_name_parse_full (data_with_terminator, aname, TRUE, NULL, NULL)) {
 			list = g_slist_prepend (list, aname);
 		} else {
 			g_free (aname);
 		}
+		g_free (data_with_terminator);
 	}
 	mono_custom_attrs_free (attrs);
 
@@ -2263,7 +2302,7 @@ mono_assembly_load_from_predicate (MonoImage *image, const char *fname,
 	 * candidate. */
 
 	if (!refonly) {
-		MonoError refasm_error;
+		ERROR_DECL_VALUE (refasm_error);
 		if (mono_assembly_has_reference_assembly_attribute (ass, &refasm_error)) {
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Image for assembly '%s' (%s) has ReferenceAssemblyAttribute, skipping", ass->aname.name, image->name);
 			g_free (ass);
@@ -2923,7 +2962,7 @@ probe_for_partial_name (const char *basepath, const char *fullname, MonoAssembly
 MonoAssembly*
 mono_assembly_load_with_partial_name (const char *name, MonoImageOpenStatus *status)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoAssembly *res;
 	MonoAssemblyName *aname, base_name;
 	MonoAssemblyName mapped_aname;
@@ -2987,9 +3026,9 @@ mono_assembly_load_with_partial_name (const char *name, MonoImageOpenStatus *sta
 	else {
 		MonoDomain *domain = mono_domain_get ();
 
-		res = mono_try_assembly_resolve (domain, name, NULL, FALSE, &error);
-		if (!is_ok (&error)) {
-			mono_error_cleanup (&error);
+		res = mono_try_assembly_resolve (domain, name, NULL, FALSE, error);
+		if (!is_ok (error)) {
+			mono_error_cleanup (error);
 			if (*status == MONO_IMAGE_OK)
 				*status = MONO_IMAGE_IMAGE_INVALID;
 		}
@@ -3292,7 +3331,7 @@ mono_domain_parse_assembly_bindings (MonoDomain *domain, int amajor, int aminor,
 static MonoAssemblyName*
 mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_name)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoAssemblyBindingInfo *info, *info2;
 	MonoImage *ppimage;
 	MonoDomain *domain;
@@ -3321,10 +3360,10 @@ mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_nam
 	}
 
 	if (domain && domain->setup && domain->setup->configuration_file) {
-		gchar *domain_config_file_name = mono_string_to_utf8_checked (domain->setup->configuration_file, &error);
+		gchar *domain_config_file_name = mono_string_to_utf8_checked (domain->setup->configuration_file, error);
 		/* expect this to succeed because mono_domain_set_options_from_config () did
 		 * the same thing when the domain was created. */
-		mono_error_assert_ok (&error);
+		mono_error_assert_ok (error);
 		mono_domain_parse_assembly_bindings (domain, aname->major, aname->minor, domain_config_file_name);
 		g_free (domain_config_file_name);
 
@@ -3505,7 +3544,7 @@ return_corlib_and_facades:
 static MonoAssembly*
 prevent_reference_assembly_from_running (MonoAssembly* candidate, gboolean refonly)
 {
-	MonoError refasm_error;
+	ERROR_DECL_VALUE (refasm_error);
 	error_init (&refasm_error);
 	if (candidate && !refonly) {
 		/* .NET Framework seems to not check for ReferenceAssemblyAttribute on dynamic assemblies */
@@ -3576,10 +3615,19 @@ framework_assembly_sn_match (MonoAssemblyName *wanted_name, MonoAssemblyName *ca
 			return result;
 		} else {
 			/* For facades, the name and public key token should
-			 * match, but the version doesn't matter. */
+			 * match, but the version doesn't matter as long as the
+			 * candidate is not older. */
 			gboolean result = assembly_names_equal_flags (wanted_name, candidate_name, ANAME_EQ_IGNORE_VERSION);
-			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Predicate: candidate and wanted names %s (ignoring version)", result ? "match, returning TRUE" : "don't match, returning FALSE");
-			return result;
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Predicate: candidate and wanted names %s (ignoring version)", result ? "match" : "don't match, returning FALSE");
+			if (result) {
+				// compare major of candidate and wanted
+				int c = assembly_names_compare_versions (candidate_name, wanted_name, 1);
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Predicate: candidate major version is %s wanted major version, returning %s\n", c == 0 ? "the same as" : (c < 0 ? "lower than" : "greater than"),
+					    (c >= 0) ? "TRUE" : "FALSE");
+				return (c >= 0);  // don't accept a candidate that's older than wanted.
+			} else {
+				return FALSE;
+			}
 		}
 	}
 #endif
@@ -3791,7 +3839,7 @@ mono_assembly_close_except_image_pools (MonoAssembly *assembly)
 		return FALSE;
 
 	/* Might be 0 already */
-	if (InterlockedDecrement (&assembly->ref_count) > 0)
+	if (mono_atomic_dec_i32 (&assembly->ref_count) > 0)
 		return FALSE;
 
 	MONO_PROFILER_RAISE (assembly_unloading, (assembly));
@@ -3857,9 +3905,9 @@ mono_assembly_close (MonoAssembly *assembly)
 MonoImage*
 mono_assembly_load_module (MonoAssembly *assembly, guint32 idx)
 {
-	MonoError error;
-	MonoImage *result = mono_assembly_load_module_checked (assembly, idx, &error);
-	mono_error_assert_ok (&error);
+	ERROR_DECL (error);
+	MonoImage *result = mono_assembly_load_module_checked (assembly, idx, error);
+	mono_error_assert_ok (error);
 	return result;
 }
 

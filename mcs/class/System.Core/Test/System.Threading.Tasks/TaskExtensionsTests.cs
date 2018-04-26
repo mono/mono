@@ -37,6 +37,7 @@ namespace MonoTests.System.Threading.Tasks
 	public class TaskExtensionsTests
 	{	
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TaskUnwrapingBehavioralTest ()
 		{
 			Task<int> t2 = Increment(4)

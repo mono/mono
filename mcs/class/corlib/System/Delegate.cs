@@ -115,6 +115,8 @@ namespace System
 			}
 		}
 
+		internal IntPtr GetNativeFunctionPointer () => method_ptr;
+
 		//
 		// Methods
 		//
@@ -133,6 +135,8 @@ namespace System
 			// enum basetypes
 			if (!match) {
 				if (delArgType.IsEnum && Enum.GetUnderlyingType (delArgType) == argType)
+					match = true;
+				else if (argType.IsEnum && Enum.GetUnderlyingType (argType) == delArgType)
 					match = true;
 			}
 

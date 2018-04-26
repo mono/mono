@@ -68,7 +68,7 @@ namespace System.ServiceModel.Channels
             }
         }
 
-        [DefaultValue(TransportDefaults.SslProtocols)]
+        [DefaultValue(TransportDefaults.OldDefaultSslProtocols)]
         public SslProtocols SslProtocols
         {
             get

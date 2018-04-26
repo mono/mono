@@ -207,9 +207,9 @@ namespace Mono.ILASM {
 
                 public void AddMethodDef (MethodDef methoddef)
                 {
-                        if (IsInterface && !methoddef.IsStatic && (!methoddef.IsVirtual || !methoddef.IsAbstract)) {
-                                Report.Warning (methoddef.StartLocation, "Non-virtual or non-abstract instance method in interface, set to such");
-                                methoddef.Attributes |= PEAPI.MethAttr.Abstract | PEAPI.MethAttr.Virtual;
+                        if (IsInterface && !methoddef.IsStatic && !methoddef.IsVirtual) {
+                                Report.Warning (methoddef.StartLocation, "Non-virtual instance method in interface, set to such");
+                                methoddef.Attributes |= PEAPI.MethAttr.Virtual;
                         }
 
                         if (method_table [methoddef.Signature] != null)

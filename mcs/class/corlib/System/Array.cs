@@ -49,7 +49,6 @@ namespace System
 		private Array ()
 		{
 		}
-
 		/*
 		 * These methods are used to implement the implicit generic interfaces 
 		 * implemented by arrays in NET 2.0.
@@ -68,7 +67,10 @@ namespace System
 
 		internal IEnumerator<T> InternalArray__IEnumerable_GetEnumerator<T> ()
 		{
-			return new InternalEnumerator<T> (this);
+			if (Length == 0)
+				return EmptyInternalEnumerator<T>.Value;
+			else
+				return new InternalEnumerator<T> (this);
 		}
 
 		internal void InternalArray__ICollection_Clear ()
@@ -207,7 +209,7 @@ namespace System
 			// we just decr the size, so, 0 - 1 == FINISHED
 			const int FINISHED = -1;
 			
-			Array array;
+			readonly Array array;
 			int idx;
 
 			internal InternalEnumerator (Array array)
@@ -218,7 +220,6 @@ namespace System
 
 			public void Dispose ()
 			{
-				idx = NOT_STARTED;
 			}
 
 			public bool MoveNext ()
@@ -272,6 +273,38 @@ namespace System
 			}
 		}
 
+		internal class EmptyInternalEnumerator<T> : IEnumerator<T>
+		{
+			public static readonly EmptyInternalEnumerator<T> Value = new EmptyInternalEnumerator<T> ();
+
+			public void Dispose ()
+			{
+				return;
+			}
+
+			public bool MoveNext ()
+			{
+				return false;
+			}
+
+			public T Current {
+				get {
+					throw new InvalidOperationException ("Enumeration has not started. Call MoveNext");
+				}
+			}
+
+			object IEnumerator.Current {
+				get {
+					return Current;
+				}
+			}
+
+			void IEnumerator.Reset ()
+			{
+				return;
+			}
+		}
+
 		// InternalCall Methods
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern int GetRank ();
@@ -320,7 +353,7 @@ namespace System
 					"Index has to be between upper and lower bound of the array."));
 
 			if (GetType ().GetElementType ().IsPointer)
-				throw new NotSupportedException ("Type is not supported");
+				throw new NotSupportedException ("Type is not supported.");
 
 			return GetValueImpl (index - lb);
 		}
@@ -348,7 +381,7 @@ namespace System
 					"Index has to be >= lower bound and <= upper bound of the array."));
 
 			if (GetType ().GetElementType ().IsPointer)
-				throw new NotSupportedException ("Type is not supported");
+				throw new NotSupportedException ("Type is not supported.");
 
 			SetValueImpl (value, index - lb);
 		}
@@ -701,7 +734,7 @@ namespace System
 				get {
 					if (_index < 0) throw new InvalidOperationException (SR.InvalidOperation_EnumNotStarted);
 					if (_index >= _endIndex) throw new InvalidOperationException (SR.InvalidOperation_EnumEnded);
-					if (_index == 0 && _array.GetType ().GetElementType ().IsPointer) throw new NotSupportedException ("Type is not supported");
+					if (_index == 0 && _array.GetType ().GetElementType ().IsPointer) throw new NotSupportedException ("Type is not supported.");
 					return _array.GetValueImpl(_index);
 				}
 			}

@@ -9,6 +9,7 @@
 
 empty :=
 space := $(empty) $(empty)
+_FILTER_OUT = $(foreach x,$(2),$(if $(findstring $(1),$(x)),,$(x)))
 
 # given $(thisdir), we compute the path to the top directory
 #
@@ -26,7 +27,11 @@ Q_MCS=$(if $(V),,@echo "$(if $(MCS_MODE),MCS,CSC)     [$(intermediate)$(PROFILE_
 Q_AOT=$(if $(V),,@echo "AOT     [$(intermediate)$(PROFILE_DIRECTORY)] $(notdir $(@))";)
 
 ifndef BUILD_TOOLS_PROFILE
+ifeq ($(PROFILE),basic)
+BUILD_TOOLS_PROFILE = basic
+else
 BUILD_TOOLS_PROFILE = build
+endif
 endif
 
 USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
@@ -43,14 +48,15 @@ INSTALL_BIN = $(INSTALL) -c -m 755
 INSTALL_LIB = $(INSTALL_BIN)
 MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
 INTERNAL_MBAS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/mbas/mbas.exe
-INTERNAL_ILASM = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/ilasm.exe
 INTERNAL_CSC_LOCATION = $(CSC_LOCATION)
 
 # Using CSC_SDK_PATH_DISABLED for sanity check that all references have path specified
 INTERNAL_CSC = CSC_SDK_PATH_DISABLED= $(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_FLAGS) $(INTERNAL_CSC_LOCATION)
 
-RESGEN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(RESGEN_EXE) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resgen.exe
+RESGEN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resgen.exe
 STRING_REPLACER = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/cil-stringreplacer.exe
+ILASM = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/ilasm.exe
+
 
 depsdir = $(topdir)/build/deps
 
@@ -155,7 +161,7 @@ gacutil = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/gacutil.exe
 GACUTIL = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(gacutil)
 endif
 
-STD_TARGETS = test run-test run-test-ondotnet clean install uninstall doc-update
+STD_TARGETS = test run-test run-xunit-test run-test-ondotnet clean install uninstall doc-update
 
 $(STD_TARGETS): %: do-%
 
@@ -171,11 +177,14 @@ do-all-aot:
 ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
 
 AOT_PROFILE_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/*)))))
+AOT_PROFILE_TESTS := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/tests/*)))))
+AOT_PROFILE_ASSEMBLIES_OUT := $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
+AOT_PROFILE_TESTS_OUT := $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_TESTS))
 
 # This can run in parallel
 .PHONY: aot-all-profile
 ifdef AOT_BUILD_FLAGS
-aot-all-profile: $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
+aot-all-profile: $(AOT_PROFILE_ASSEMBLIES_OUT) $(AOT_PROFILE_TESTS_OUT)
 else
 aot-all-profile:
 	echo AOT_BUILD_FLAGS not set, skipping AOT.
@@ -183,12 +192,12 @@ endif
 
 %.dll$(PLATFORM_AOT_SUFFIX): %.dll
 	@ mkdir -p $<_bitcode_tmp
-	$(Q_AOT) MONO_PATH="$(dir $<)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
+	$(Q_AOT) MONO_PATH="$(topdir)/class/lib/$(PROFILE)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
 	@ rm -rf $<_bitcode_tmp
 
 %.exe$(PLATFORM_AOT_SUFFIX): %.exe
 	@ mkdir -p $<_bitcode_tmp
-	$(Q_AOT) MONO_PATH="$(dir $<)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
+	$(Q_AOT) MONO_PATH="$(topdir)/class/lib/$(PROFILE)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
 	@ rm -rf $<_bitcode_tmp
 
 endif #ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
@@ -279,6 +288,15 @@ dist-recursive: dist-local
 	    (cd $$d && $(MAKE) distdir=$$reldir/$$d $@) || exit 1 ; \
 	done
 
+# function to dist files in groups of 100 entries to make sure we don't exceed shell char limits
+define distfilesingroups
+for f in $(wordlist 1, 100, $(1)) ; do \
+	dest=`dirname "$(distdir)/$$f"` ; \
+	$(MKINSTALLDIRS) $$dest && cp -p "$$f" $$dest || exit 1 ; \
+done
+$(if $(word 101, $(1)), $(call distfilesingroups, $(wordlist 101, $(words $(1)), $(1))))
+endef
+
 # The following target can be used like
 #
 #   dist-local: dist-default
@@ -287,17 +305,11 @@ dist-recursive: dist-local
 # Notes:
 #  1. we invert the test here to not end in an error if ChangeLog doesn't exist.
 #  2. we error out if we try to dist a nonexistant file.
-#  3. we pick up Makefile, makefile, or GNUmakefile.
+#  3. we pick up Makefile
 dist-default:
 	-mkdir -p $(distdir)
 	test '!' -f ChangeLog || cp ChangeLog $(distdir)
-	if test -f Makefile; then m=M; fi; \
-	if test -f makefile; then m=m; fi; \
-	if test -f GNUmakefile; then m=GNUm; fi; \
-	for f in $${m}akefile $(DISTFILES) ; do \
-	    dest=`dirname "$(distdir)/$$f"` ; \
-	    $(MKINSTALLDIRS) $$dest && cp -p "$$f" $$dest || exit 1 ; \
-	done
+	$(call distfilesingroups, Makefile $(DISTFILES))
 	if test -d Documentation ; then \
 		find . -name '*.xml' > .files ; \
 		tar cTf .files - | (cd $(distdir); tar xf -) ; \

@@ -86,6 +86,7 @@ namespace MonoTests.System.Net.Sockets
 
 		[Test]
 		[Category ("NotWorking")]
+		[Category ("InetAccess")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -162,6 +163,7 @@ namespace MonoTests.System.Net.Sockets
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Ignore ("https://github.com/mono/mono/issues/6513")] // frequently fails on ARM
 		public void AcceptBlockingStatus()
 		{
 			bool block;
@@ -252,12 +254,11 @@ namespace MonoTests.System.Net.Sockets
 		{
 			Socket srv = CreateServer (NetworkHelpers.FindFreePort ());
 			ClientSocket clnt = new ClientSocket (srv.LocalEndPoint);
-			Thread th = new Thread (new ThreadStart (clnt.ConnectSleepClose));
 			Socket acc = null;
 			try {
-				th.Start ();
-				acc = srv.Accept ();
+				clnt.Connect ();
 				clnt.Write ();
+				acc = srv.Accept ();
 				ArrayList list = new ArrayList ();
 				ArrayList empty = new ArrayList ();
 				list.Add (acc);
@@ -277,6 +278,7 @@ namespace MonoTests.System.Net.Sockets
 				if (acc != null)
 					acc.Close ();
 				srv.Close ();
+				clnt.Close ();
 			}
 		}
 
@@ -298,10 +300,13 @@ namespace MonoTests.System.Net.Sockets
 				sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			}
 
-			public void ConnectSleepClose ()
+			public void Connect ()
 			{
 				sock.Connect (ep);
-				Thread.Sleep (2000);
+			}
+
+			public void Close ()
+			{
 				sock.Close ();
 			}
 
@@ -1732,6 +1737,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginConnectAddressPortNull ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -1775,7 +1783,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ObjectDisposedException))]
+#endif
 		public void BeginConnectAddressPortClosed ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -1906,6 +1918,9 @@ namespace MonoTests.System.Net.Sockets
 
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginConnectMultipleNull ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -1956,7 +1971,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ObjectDisposedException))]
+#endif
 		public void BeginConnectMultipleClosed ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -2245,6 +2264,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectAddressPortNull ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -2287,7 +2309,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ObjectDisposedException))]
+#endif
 		public void ConnectAddressPortClosed ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -2396,6 +2422,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectMultipleNull ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -2444,7 +2473,11 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ObjectDisposedException))]
+#endif
 		public void ConnectMultipleClosed ()
 		{
 			var port = NetworkHelpers.FindFreePort ();
@@ -3724,6 +3757,9 @@ namespace MonoTests.System.Net.Sockets
 		// Test case for https://bugzilla.novell.com/show_bug.cgi?id=443346
 		// See also https://bugzilla.xamarin.com/show_bug.cgi?id=52157
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectedProperty ()
 		{
 			var port = NetworkHelpers.FindFreePort ();

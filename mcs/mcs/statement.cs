@@ -774,6 +774,8 @@ namespace Mono.CSharp {
 
 			ec.Emit (OpCodes.Br, test);
 			ec.MarkLabel (loop);
+
+			Condition?.EmitPrepare (ec);
 			Statement.Emit (ec);
 
 			ec.MarkLabel (ec.LoopBegin);
@@ -1158,7 +1160,8 @@ namespace Mono.CSharp {
 				//
 				if (ec.CurrentAnonymousMethod is AsyncInitializer) {
 					var storey = (AsyncTaskStorey) ec.CurrentAnonymousMethod.Storey;
-					if (storey.ReturnType == ec.Module.PredefinedTypes.Task.TypeSpec) {
+					var s_return_type = storey.ReturnType;
+					if (s_return_type == ec.Module.PredefinedTypes.Task.TypeSpec) {
 						//
 						// Extra trick not to emit ret/leave inside awaiter body
 						//
@@ -1166,8 +1169,8 @@ namespace Mono.CSharp {
 						return true;
 					}
 
-					if (storey.ReturnType.IsGenericTask)
-						block_return_type = storey.ReturnType.TypeArguments[0];
+					if (s_return_type.IsGenericTask || (s_return_type.Arity == 1 && s_return_type.IsCustomTaskType ()))
+					    block_return_type = s_return_type.TypeArguments[0];
 				}
 
 				if (ec.CurrentIterator != null) {
@@ -1218,7 +1221,7 @@ namespace Mono.CSharp {
 							return false;
 						}
 
-						if (!async_type.IsGenericTask) {
+						if (!async_type.IsGeneric) {
 							if (this is ContextualReturn)
 								return true;
 
@@ -2366,7 +2369,12 @@ namespace Mono.CSharp {
 			if (initializer == null)
 				return null;
 
-			var c = initializer as Constant;
+			Constant c;
+			if (initializer.Type == InternalType.DefaultType)
+				c = New.Constantify (li.Type, initializer.Location);
+			else
+				c = initializer as Constant;
+
 			if (c == null) {
 				initializer.Error_ExpressionMustBeConstant (bc, initializer.Location, li.Name);
 				return null;
@@ -2405,14 +2413,14 @@ namespace Mono.CSharp {
 			AddressTaken = 1 << 2,
 			CompilerGenerated = 1 << 3,
 			Constant = 1 << 4,
-			ForeachVariable = 1 << 5,
-			FixedVariable = 1 << 6,
-			UsingVariable = 1 << 7,
+			ForeachVariable = 1 << 5 | ReadonlyMask,
+			FixedVariable = 1 << 6 | ReadonlyMask,
+			UsingVariable = 1 << 7 | ReadonlyMask,
 			IsLocked = 1 << 8,
 			SymbolFileHidden = 1 << 9,
 			ByRef = 1 << 10,
 
-			ReadonlyMask = ForeachVariable | FixedVariable | UsingVariable
+			ReadonlyMask = 1 << 20
 		}
 
 		TypeSpec type;
@@ -2532,7 +2540,7 @@ namespace Mono.CSharp {
 
 		public bool IsFixed {
 			get {
-				return (flags & Flags.FixedVariable) != 0;
+				return (flags & Flags.FixedVariable) == Flags.FixedVariable;
 			}
 			set {
 				flags = value ? flags | Flags.FixedVariable : flags & ~Flags.FixedVariable;
@@ -2670,7 +2678,7 @@ namespace Mono.CSharp {
 
 		public string GetReadOnlyContext ()
 		{
-			switch (flags & Flags.ReadonlyMask) {
+			switch (flags & (Flags.ForeachVariable | Flags.FixedVariable | Flags.UsingVariable)) {
 			case Flags.FixedVariable:
 				return "fixed variable";
 			case Flags.ForeachVariable:
@@ -6554,18 +6562,26 @@ namespace Mono.CSharp {
 
 				// TODO: Should use Binary::Add
 				pinned_string.Emit (ec);
-				ec.Emit (OpCodes.Conv_I);
+				ec.Emit (OpCodes.Conv_U);
 
 				var m = ec.Module.PredefinedMembers.RuntimeHelpersOffsetToStringData.Resolve (loc);
 				if (m == null)
 					return;
 
+				var null_value = ec.DefineLabel ();
+				vi.EmitAssign (ec);
+				vi.Emit (ec);
+				ec.Emit (OpCodes.Brfalse_S, null_value);
+
+				vi.Emit (ec);
 				PropertyExpr pe = new PropertyExpr (m, pinned_string.Location);
 				//pe.InstanceExpression = pinned_string;
 				pe.Resolve (new ResolveContext (ec.MemberContext)).Emit (ec);
 
 				ec.Emit (OpCodes.Add);
 				vi.EmitAssign (ec);
+
+				ec.MarkLabel (null_value);
 			}
 
 			public override void EmitExit (EmitContext ec)
@@ -8189,7 +8205,9 @@ namespace Mono.CSharp {
 				}
 
 				if (iface_candidate == null) {
-					if (expr.Type != InternalType.ErrorType) {
+					if (expr.Type == InternalType.DefaultType) {
+						rc.Report.Error (8312, loc, "Use of default literal is not valid in this context");
+					} else if (expr.Type != InternalType.ErrorType) {
 						rc.Report.Error (1579, loc,
 							"foreach statement cannot operate on variables of type `{0}' because it does not contain a definition for `{1}' or is inaccessible",
 							expr.Type.GetSignatureForError (), "GetEnumerator");

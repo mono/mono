@@ -18,13 +18,31 @@
 # Have to rename to handle differences between assembly/directory names
 DEP_LIBS=$(patsubst System.Xml,System.XML,$(LIB_REFS))
 
-_FILTER_OUT = $(foreach x,$(2),$(if $(findstring $(1),$(x)),,$(x)))
-
-LIB_REFS_FULL = $(call _FILTER_OUT,=, $(LIB_REFS))
+LIB_REFS_FULL = $(call _FILTER_OUT,=, $(LIB_REFS)) $(DEFAULT_REFERENCES)
 LIB_REFS_ALIAS = $(filter-out $(LIB_REFS_FULL),$(LIB_REFS))
+
+ifdef TARGET_NET_REFERENCE
+# System*, mscorlib references come from the TARGET_NET_REFERENCE dir, others from the profile dir
+LIB_REFS_MONO_FULL = $(call _FILTER_OUT,System,$(call _FILTER_OUT,mscorlib,$(LIB_REFS_FULL)))
+LIB_REFS_MONO_ALIAS = $(call _FILTER_OUT,System,$(LIB_REFS_ALIAS))
+
+LIB_REFS_NET_FULL = $(filter-out $(LIB_REFS_MONO_FULL),$(LIB_REFS_FULL))
+LIB_REFS_NET_ALIAS = $(filter-out $(LIB_REFS_MONO_ALIAS),$(LIB_REFS_ALIAS))
+
+LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/../external/binary-reference-assemblies/$(TARGET_NET_REFERENCE)/%.dll,$(LIB_REFS_NET_FULL))
+LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/../external/binary-reference-assemblies/$(TARGET_NET_REFERENCE)/,$(LIB_REFS_NET_ALIAS)))
+
+LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.dll,$(LIB_REFS_MONO_FULL))
+LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/,$(LIB_REFS_MONO_ALIAS)))
+else
+
+ifdef API_BIN_REFS
+LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/../external/binary-reference-assemblies/$(API_BIN_PROFILE)/%.dll,$(API_BIN_REFS))
+endif
 
 LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.dll,$(LIB_REFS_FULL))
 LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/,$(LIB_REFS_ALIAS)))
+endif
 
 ifdef KEYFILE
 KEYFILE_MCS_FLAGS += /keyfile:$(KEYFILE)
@@ -45,6 +63,15 @@ the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE_DIRECTORY)/$(if $(LIBRARY
 ifdef RESOURCE_STRINGS
 ifneq (basic, $(PROFILE))
 RESOURCE_STRINGS_FILES += $(RESOURCE_STRINGS:%=--resourcestrings:%)
+IL_REPLACE_FILES += $(IL_REPLACE:%=--ilreplace:%)
+endif
+endif
+
+ifdef ENFORCE_LIBRARY_WARN_AS_ERROR
+ifeq ($(LIBRARY_WARN_AS_ERROR),yes)
+ifndef MCS_MODE
+LIB_MCS_FLAGS += -warnaserror
+endif
 endif
 endif
 
@@ -311,10 +338,10 @@ endif
 
 ifndef NO_BUILD
 
-$(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir)/.stamp $(GEN_RESOURCE_DEPS)
+$(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir)/.stamp $(GEN_RESOURCE_DEPS) $(MODULE_DEPS)
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(KEYFILE_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 ifdef RESOURCE_STRINGS_FILES
-	$(Q) $(STRING_REPLACER) $(RESOURCE_STRINGS_FILES) $@
+	$(Q) $(STRING_REPLACER) $(RESOURCE_STRINGS_FILES) $(IL_REPLACE_FILES) $@
 endif
 	$(Q) $(SN) -R $@ $(LIBRARY_SNK)
 
@@ -361,5 +388,11 @@ $(the_libdir)/.doc-stamp: $(the_lib)
 gen-deps:
 	@echo "$(DEPS_TARGET_DIR): $(DEP_DIRS) $(DEP_LIBS)" >> $(DEPS_FILE)
 
-update-corefx-sr: $(RESX_RESOURCE_STRING)
-	MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resx2sr.exe $(RESX_RESOURCE_STRING) >corefx/SR.cs
+update-corefx-sr-generic:
+ifneq ($(RESX_STRINGS),)
+	MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resx2sr.exe $(RESX_STRINGS) >$(SR_OUTPUT)
+endif
+
+update-corefx-sr: $(RESX_RESOURCE_STRING) $(XTEST_RESX_RESOURCE_STRING)
+	make SR_OUTPUT=corefx/SR.cs RESX_STRINGS="$(RESX_RESOURCE_STRING)" update-corefx-sr-generic \
+	&& make SR_OUTPUT=corefx/SR.tests.cs RESX_STRINGS=$(XTEST_RESX_RESOURCE_STRING) update-corefx-sr-generic

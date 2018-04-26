@@ -12,6 +12,7 @@ namespace System.Configuration.Internal {
     using System.Threading;
     using System.Security;
     using System.CodeDom.Compiler;
+    using System.Xml;
 
     //
     // A public implementation of IInternalConfigHost that simply 
@@ -30,15 +31,23 @@ namespace System.Configuration.Internal {
     //  * It allows straightforward chaining of host functionality,
     //    see UpdateConfigHost as an example.
     //
-    public class DelegatingConfigHost : IInternalConfigHost {
+    public class DelegatingConfigHost : IInternalConfigHost, IInternalConfigurationBuilderHost {
         IInternalConfigHost _host;
+        IInternalConfigurationBuilderHost _configBuilderHost;
 
         protected DelegatingConfigHost() {}
 
         // The host that is delegated to.
         protected IInternalConfigHost Host {
             get {return _host;}
-            set {_host = value;}
+            set {
+                _host = value;
+                _configBuilderHost = _host as IInternalConfigurationBuilderHost;
+            }
+        }
+
+        protected IInternalConfigurationBuilderHost ConfigBuilderHost {
+            get { return _configBuilderHost; }
         }
 
         public virtual void Init(IInternalConfigRoot configRoot, params object[] hostInitParams) {
@@ -224,6 +233,22 @@ namespace System.Configuration.Internal {
             get {
                 return Host.IsRemote;
             }
+        }
+
+        public virtual XmlNode ProcessRawXml(XmlNode rawXml, ConfigurationBuilder builder) {
+            if (ConfigBuilderHost != null) {
+                return ConfigBuilderHost.ProcessRawXml(rawXml, builder);
+            }
+
+            return rawXml;
+        }
+
+        public virtual ConfigurationSection ProcessConfigurationSection(ConfigurationSection configSection, ConfigurationBuilder builder) {
+            if (ConfigBuilderHost != null) {
+                return ConfigBuilderHost.ProcessConfigurationSection(configSection, builder);
+            }
+
+            return configSection;
         }
 
     }

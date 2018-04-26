@@ -5,8 +5,6 @@
 // (C) 2004 Ximian, Inc. http://www.ximian.com
 //
 
-#if !MOBILE
-
 using System;
 using System.Threading;
 using System.Reflection;
@@ -21,6 +19,7 @@ namespace MonoTests.System.Reflection {
 	[TestFixture]
 	public class AssemblyCultureAttributeTest
 	{
+#if !MOBILE
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
 		AssemblyCultureAttribute attr;
@@ -80,7 +79,14 @@ namespace MonoTests.System.Reflection {
 				attr.Match (new AssemblyCultureAttribute ("Spanish")),
 				false, "#1");
 		}
+#endif
+
+		[Test]
+		public void CtorTest ()
+		{
+			var a = new AssemblyCultureAttribute ("en");
+			Assert.AreEqual ("en", a.Culture);
+		}
 	}
 }
 
-#endif

@@ -7,6 +7,7 @@ namespace System.Activities.Core.Presentation
     using System.Activities.Presentation;
     using System.Activities.Presentation.Hosting;
     using System.Windows;
+    using System.Windows.Automation;
     using System.Windows.Media.Animation;
 
     partial class ParallelSeparator
@@ -22,6 +23,10 @@ namespace System.Activities.Core.Presentation
         public ParallelSeparator()
         {
             this.InitializeComponent();
+            if (!LocalAppContextSwitches.UseLegacyAccessibilityFeatures)
+            {
+                SetValue(AutomationProperties.NameProperty, SR.ParallelSeparatorAutomationName);
+            }
         }
 
         public Type AllowedItemType

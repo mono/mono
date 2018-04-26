@@ -77,6 +77,16 @@ typedef SSIZE_T ssize_t;
 #define MONO_EMPTY_SOURCE_FILE(x)
 #endif
 
+#ifdef _MSC_VER
+#define MONO_PRAGMA_WARNING_PUSH() __pragma(warning (push))
+#define MONO_PRAGMA_WARNING_DISABLE(x) __pragma(warning (disable:x))
+#define MONO_PRAGMA_WARNING_POP() __pragma(warning (pop))
+#else
+#define MONO_PRAGMA_WARNING_PUSH()
+#define MONO_PRAGMA_WARNING_DISABLE(x)
+#define MONO_PRAGMA_WARNING_POP()
+#endif
+
 #if !defined(_MSC_VER) && !defined(HOST_SOLARIS) && !defined(_WIN32) && !defined(__CYGWIN__) && !defined(MONOTOUCH) && HAVE_VISIBILITY_HIDDEN
 #if MONO_LLVM_LOADED
 #define MONO_LLVM_INTERNAL MONO_API
@@ -117,13 +127,22 @@ typedef SSIZE_T ssize_t;
 #endif
 
 #if defined(__has_feature)
+
 #if __has_feature(thread_sanitizer)
 #define MONO_HAS_CLANG_THREAD_SANITIZER 1
 #else
 #define MONO_HAS_CLANG_THREAD_SANITIZER 0
 #endif
+
+#if __has_feature(address_sanitizer)
+#define MONO_HAS_CLANG_ADDRESS_SANITIZER 1
+#else
+#define MONO_HAS_CLANG_ADDRESS_SANITIZER 0
+#endif
+
 #else
 #define MONO_HAS_CLANG_THREAD_SANITIZER 0
+#define MONO_HAS_CLANG_ADDRESS_SANITIZER 0
 #endif
 
 /* Used to tell Clang's ThreadSanitizer to not report data races that occur within a certain function */
@@ -133,8 +152,15 @@ typedef SSIZE_T ssize_t;
 #define MONO_NO_SANITIZE_THREAD
 #endif
 
+/* Used to tell Clang's AddressSanitizer to turn off instrumentation for a certain function */
+#if MONO_HAS_CLANG_ADDRESS_SANITIZER
+#define MONO_NO_SANITIZE_ADDRESS __attribute__ ((no_sanitize("address")))
+#else
+#define MONO_NO_SANITIZE_ADDRESS
+#endif
+
 /* Used when building with Android NDK's unified headers */
-#if defined(HOST_ANDROID)
+#if defined(HOST_ANDROID) && defined (ANDROID_UNIFIED_HEADERS)
 #if __ANDROID_API__ < 21
 
 typedef int32_t __mono_off32_t;
@@ -163,7 +189,7 @@ ssize_t sendfile (int out_fd, int in_fd, __mono_off32_t* offset, size_t count);
 #endif /* !sendfile */
 
 #endif /* __ANDROID_API__ < 21 */
-#endif /* HOST_ANDROID */
+#endif /* HOST_ANDROID && ANDROID_UNIFIED_HEADERS */
 
 #endif /* __UTILS_MONO_COMPILER_H__*/
 

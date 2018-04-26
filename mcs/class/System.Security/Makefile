@@ -3,16 +3,14 @@ SUBDIRS =
 include ../../build/rules.make
 
 ifndef NO_MONO_SECURITY
-MONO_SECURITY_DLL=$(the_libdir_base)/Mono.Security.dll
-MONO_SECURITY=Mono.Security
+MONO_SECURITY = Mono.Security
 endif
 
 LIBRARY = System.Security.dll
-LIB_REFS = secxml/System bare/System.Xml $(MONO_SECURITY)
+API_BIN_REFS := System.Numerics System.Core
+LIB_REFS = $(MONO_SECURITY) System System.Xml
 KEYFILE = ../msfinal.pub
-LIB_MCS_FLAGS = \
-	-nowarn:414,618 \
-	-d:SECURITY_DEP,SYSTEM_SECURITY_DLL
+LIB_MCS_FLAGS = -nowarn:414,618 -d:SECURITY_DEP
 
 LOCAL_MCS_FLAGS =
 
@@ -29,13 +27,3 @@ EXTRA_DISTFILES = \
 RESX_RESOURCE_STRING = ../../../external/corefx/src/System.Security.Cryptography.Xml/src/Resources/Strings.resx
 
 include ../../build/library.make
-
-$(build_lib): $(secxml_libdir)/System.dll $(MONO_SECURITY_DLL)
-
-$(secxml_libdir)/System.dll:
-	(cd ../System; $(MAKE) $@)
-
-$(the_libdir_base)/Mono.Security.dll:
-	(cd ../Mono.Security; $(MAKE))
-
-.NOTPARALLEL: $(secxml_libdir)/System.dll $(bare_libdir)/Mono.Security.dll

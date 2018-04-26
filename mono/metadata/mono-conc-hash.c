@@ -15,16 +15,6 @@
 #include <mono/utils/checked-build.h>
 #include <mono/utils/mono-threads-coop.h>
 
-#ifdef HAVE_BOEHM_GC
-#define mg_new0(type,n)  ((type *) GC_MALLOC(sizeof(type) * (n)))
-#define mg_new(type,n)   ((type *) GC_MALLOC(sizeof(type) * (n)))
-#define mg_free(x)       do { } while (0)
-#else
-#define mg_new0(x,n)     g_new0(x,n)
-#define mg_new(type,n)   g_new(type,n)
-#define mg_free(x)       g_free(x)
-#endif
-
 #define INITIAL_SIZE 32
 #define LOAD_FACTOR 0.75f
 #define PTR_TOMBSTONE ((gpointer)(ssize_t)-1)
@@ -48,6 +38,7 @@ struct _MonoConcGHashTable {
 	GDestroyNotify value_destroy_func;
 	MonoGHashGCType gc_type;
 	MonoGCRootSource source;
+	void *key;
 	const char *msg;
 };
 
@@ -55,23 +46,17 @@ struct _MonoConcGHashTable {
 static conc_table*
 conc_table_new (MonoConcGHashTable *hash, int size)
 {
-#ifdef HAVE_SGEN_GC
-	conc_table *table = mg_new0 (conc_table, 1);
-#else
-	conc_table *table = mono_gc_alloc_fixed (sizeof (conc_table), MONO_GC_ROOT_DESCR_FOR_FIXED (sizeof (conc_table)), hash->source, hash->msg);
-#endif
-	
-	table->keys = mg_new0 (void*, size);
-	table->values = mg_new0 (void*, size);
+	conc_table *table = g_new0 (conc_table, 1);
+
+	table->keys = g_new0 (void*, size);
+	table->values = g_new0 (void*, size);
 	table->table_size = size;
 	table->gc_type = hash->gc_type;
 
-#ifdef HAVE_SGEN_GC
 	if (hash->gc_type & MONO_HASH_KEY_GC)
-		mono_gc_register_root_wbarrier ((char*)table->keys, sizeof (MonoObject*) * size, mono_gc_make_vector_descr (), hash->source, hash->msg);
+		mono_gc_register_root_wbarrier ((char*)table->keys, sizeof (MonoObject*) * size, mono_gc_make_vector_descr (), hash->source, hash->key, hash->msg);
 	if (hash->gc_type & MONO_HASH_VALUE_GC)
-		mono_gc_register_root_wbarrier ((char*)table->values, sizeof (MonoObject*) * size, mono_gc_make_vector_descr (), hash->source, hash->msg);
-#endif
+		mono_gc_register_root_wbarrier ((char*)table->values, sizeof (MonoObject*) * size, mono_gc_make_vector_descr (), hash->source, hash->key, hash->msg);
 
 	return table;
 }
@@ -80,20 +65,14 @@ static void
 conc_table_free (gpointer ptr)
 {
 	conc_table *table = (conc_table *)ptr;
-#ifdef HAVE_SGEN_GC
 	if (table->gc_type & MONO_HASH_KEY_GC)
 		mono_gc_deregister_root ((char*)table->keys);
 	if (table->gc_type & MONO_HASH_VALUE_GC)
 		mono_gc_deregister_root ((char*)table->values);
-#endif
 
-	mg_free (table->keys);
-	mg_free (table->values);
-#ifdef HAVE_SGEN_GC
-	mg_free (table);
-#else
-	mono_gc_free_fixed (table);
-#endif
+	g_free (table->keys);
+	g_free (table->values);
+	g_free (table);
 }
 
 static void
@@ -190,7 +169,7 @@ expand_table (MonoConcGHashTable *hash_table)
 
 
 MonoConcGHashTable *
-mono_conc_g_hash_table_new_type (GHashFunc hash_func, GEqualFunc key_equal_func, MonoGHashGCType type, MonoGCRootSource source, const char *msg)
+mono_conc_g_hash_table_new_type (GHashFunc hash_func, GEqualFunc key_equal_func, MonoGHashGCType type, MonoGCRootSource source, void *key, const char *msg)
 {
 	MonoConcGHashTable *hash;
 
@@ -205,6 +184,7 @@ mono_conc_g_hash_table_new_type (GHashFunc hash_func, GEqualFunc key_equal_func,
 	hash->overflow_count = (int)(INITIAL_SIZE * LOAD_FACTOR);
 	hash->gc_type = type;
 	hash->source = source;
+	hash->key = key;
 	hash->msg = msg;
 
 	hash->table = conc_table_new (hash, INITIAL_SIZE);

@@ -171,6 +171,9 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+#if MONOTOUCH
+		[Ignore ("Randomly produces ObjectDisposedExceptions, in particular on device. See bug #39780.")]
+#endif
 		public void HttpBasicAuthScheme ()
 		{
 			var port = NetworkHelpers.FindFreePort ();			
@@ -288,6 +291,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpRequestIgnoreBadCookies ()
 		{
 			var port = NetworkHelpers.FindFreePort ();

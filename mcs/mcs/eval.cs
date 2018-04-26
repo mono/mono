@@ -788,6 +788,7 @@ namespace Mono.CSharp
 				return null;
 			}
 
+			module.CloseContainerEarlyForReflectionEmit ();
 			module.CloseContainer ();
 			if (host != null)
 				host.CloseContainer ();

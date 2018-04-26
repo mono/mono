@@ -54,15 +54,13 @@ a timestamp server (so the signature can still be verified after your
 certificate is expired).
 
 The command:
-mono signcode.exe -v yourkeypair.pvk -spc yourspc.spc -t
-http://timestamp.verisign.com/scripts/timstamp.dll yourassembly.exe
+mono signcode.exe -v yourkeypair.pvk -spc yourspc.spc -t http://timestamp.verisign.com/scripts/timstamp.dll yourassembly.exe
 
 will sign the specified PE file using your private key and embed your 
 certificate and a timestamp. Note: there are no "e" in timstamp.dll !
 
 example:
-mono signcode.exe -v spouliot.pvk -spc spouliot.spc -t
-http://timestamp.verisign.com/scripts/timstamp.dll small.exe
+mono signcode.exe -v spouliot.pvk -spc spouliot.spc -t http://timestamp.verisign.com/scripts/timstamp.dll small.exe
 
 
 4.    Checking an assembly

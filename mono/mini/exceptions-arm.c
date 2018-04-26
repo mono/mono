@@ -36,6 +36,8 @@
 
 #include "mini.h"
 #include "mini-arm.h"
+#include "mini-runtime.h"
+#include "aot-runtime.h"
 #include "mono/utils/mono-sigcontext.h"
 #include "mono/utils/mono-compiler.h"
 
@@ -82,6 +84,7 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 	g_assert ((code - start) < 128);
 
 	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create ("restore_context", start, code - start, ji, unwind_ops);
@@ -132,6 +135,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	g_assert ((code - start) < 320);
 
 	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create ("call_filter", start, code - start, ji, unwind_ops);
@@ -142,7 +146,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 void
 mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_regs, gdouble *fp_regs)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoContext ctx;
 	gboolean rethrow = sp & 1;
 
@@ -158,14 +162,14 @@ mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_
 	memcpy (((guint8*)&ctx.regs) + (ARMREG_R4 * sizeof (mgreg_t)), int_regs, 8 * sizeof (mgreg_t));
 	memcpy (&ctx.fregs, fp_regs, sizeof (double) * 16);
 
-	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, &error)) {
+	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		}
 	}
-	mono_error_assert_ok (&error);
+	mono_error_assert_ok (error);
 	mono_handle_exception (&ctx, exc);
 	mono_restore_context (&ctx);
 	g_assert_not_reached ();
@@ -296,6 +300,7 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 	ARM_DBRK (code);
 	g_assert ((code - start) < size);
 	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
 		*info = mono_tramp_info_create (tramp_name, start, code - start, ji, unwind_ops);
@@ -463,28 +468,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		return TRUE;
 	} else if (*lmf) {
-
-		if (((gsize)(*lmf)->previous_lmf) & 2) {
-			MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
-
-			if (ext->debugger_invoke) {
-				/*
-				 * This LMF entry is created by the soft debug code to mark transitions to
-				 * managed code done during invokes.
-				 */
-				frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
-				memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
-			} else if (ext->interp_exit) {
-				frame->type = FRAME_TYPE_INTERP_TO_MANAGED;
-				frame->interp_exit_data = ext->interp_exit_data;
-			} else {
-				g_assert_not_reached ();
-			}
-
-			*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
-
-			return TRUE;
-		}
+		g_assert ((((guint64)(*lmf)->previous_lmf) & 2) == 0);
 
 		frame->type = FRAME_TYPE_MANAGED_TO_NATIVE;
 		
@@ -645,4 +629,13 @@ mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 	else
 		/* Transition to ARM */
 		ctx->cpsr &= ~(1 << 5);
+}
+
+void
+mono_arch_undo_ip_adjustment (MonoContext *ctx)
+{
+	ctx->pc++;
+
+	if (mono_arm_thumb_supported ())
+		ctx->pc |= 1;
 }

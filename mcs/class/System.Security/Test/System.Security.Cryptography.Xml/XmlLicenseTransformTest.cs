@@ -12,7 +12,7 @@
 // (C) 2004 Novell (http://www.novell.com)
 // (C) 2008 Gert Driesen
 //
-
+#if !MOBILE
 
 using System;
 using System.IO;
@@ -88,4 +88,4 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 	}
 }
-
+#endif

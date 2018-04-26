@@ -129,6 +129,7 @@
 #define g_printerr monoeg_g_printerr
 #define g_propagate_error monoeg_g_propagate_error
 #define g_ptr_array_add monoeg_g_ptr_array_add
+#define g_ptr_array_capacity monoeg_g_ptr_array_capacity
 #define g_ptr_array_foreach monoeg_g_ptr_array_foreach
 #define g_ptr_array_free monoeg_g_ptr_array_free
 #define g_ptr_array_new monoeg_g_ptr_array_new
@@ -242,6 +243,9 @@
 #define g_usleep monoeg_g_usleep
 #define g_utf16_to_ucs4 monoeg_g_utf16_to_ucs4
 #define g_utf16_to_utf8 monoeg_g_utf16_to_utf8
+#define g_utf16_ascii_equal monoeg_g_utf16_ascii_equal
+#define g_utf16_asciiz_equal monoeg_g_utf16_asciiz_equal
+#define g_utf8_jump_table monoeg_g_utf8_jump_table
 #define g_utf8_get_char monoeg_g_utf8_get_char
 #define g_utf8_offset_to_pointer monoeg_g_utf8_offset_to_pointer
 #define g_utf8_pointer_to_offset monoeg_g_utf8_pointer_to_offset

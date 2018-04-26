@@ -93,6 +93,12 @@
 /* Disable advanced SSA JIT optimizations */
 /* #undef DISABLE_SSA */
 
+/* Disable interpreter */
+/* #undef DISABLE_INTERPRETER */
+
+/* Some VES is available at runtime */
+#define ENABLE_ILGEN 1
+
 /* Enable DTrace probes */
 /* #undef ENABLE_DTRACE */
 
@@ -588,6 +594,9 @@
 
 /* Defined as strtok_s in eglib-config.hw */
 #define HAVE_STRTOK_R 1
+
+/* Define to 1 if you have the `access' function. */
+#define HAVE_ACCESS 1
 
 /* Have a working sigaltstack */
 /* #undef HAVE_WORKING_SIGALTSTACK */

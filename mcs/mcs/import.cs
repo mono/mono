@@ -975,6 +975,10 @@ namespace Mono.CSharp
 						mod |= Modifiers.READONLY;
 					}
 
+					if (HasAttribute (CustomAttributeData.GetCustomAttributes (type), "IsByRefLikeAttribute", CompilerServicesNamespace)) {
+						mod |= Modifiers.REF;
+					}
+
 					break;
 				}
 			}
@@ -1401,6 +1405,7 @@ namespace Mono.CSharp
 			public string DefaultIndexerName;
 			public bool? CLSAttributeValue;
 			public TypeSpec CoClass;
+			public TypeSpec AsyncMethodBuilder;
 
 			static bool HasMissingType (ConstructorInfo ctor)
 			{
@@ -1442,7 +1447,14 @@ namespace Mono.CSharp
 						if (args.Count == 1) {
 							bag.Obsolete = new ObsoleteAttribute ((string) args[0].Value);
 						} else if (args.Count == 2) {
-							bag.Obsolete = new ObsoleteAttribute ((string) args[0].Value, (bool) args[1].Value);
+							const string ByRefLikeMarker = "Types with embedded references are not supported in this version of your compiler.";
+
+							var msg = (string)args[0].Value;
+
+							if (msg == ByRefLikeMarker)
+								continue;
+
+							bag.Obsolete = new ObsoleteAttribute (msg, (bool) args[1].Value);
 						} else {
 							bag.Obsolete = new ObsoleteAttribute ();
 						}
@@ -1520,6 +1532,20 @@ namespace Mono.CSharp
 								bag = new AttributesBag ();
 
 							bag.CoClass = importer.ImportType ((MetaType) a.ConstructorArguments[0].Value);
+							continue;
+						}
+
+						if (name == "AsyncMethodBuilderAttribute") {
+							if (dt.Namespace != "System.Runtime.CompilerServices")
+								continue;
+
+							if (HasMissingType (a.Constructor))
+								continue;
+
+							if (bag == null)
+								bag = new AttributesBag ();
+
+							bag.AsyncMethodBuilder = importer.ImportType ((MetaType)a.ConstructorArguments [0].Value);
 							continue;
 						}
 					}
@@ -2129,6 +2155,14 @@ namespace Mono.CSharp
 			}
 		}
 
+		public TypeSpec GetAsyncMethodBuilder ()
+		{
+			if (cattrs == null)
+				ReadAttributes ();
+
+			return cattrs.AsyncMethodBuilder;
+		}
+
 		public TypeSpec GetAttributeCoClass ()
 		{
 			if (cattrs == null)
@@ -2444,6 +2478,11 @@ namespace Mono.CSharp
 		}
 
 		#endregion
+
+		public TypeSpec GetAsyncMethodBuilder ()
+		{
+			return null;
+		}
 
 		public TypeSpec GetAttributeCoClass ()
 		{

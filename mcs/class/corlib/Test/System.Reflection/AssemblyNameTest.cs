@@ -1111,6 +1111,7 @@ public class AssemblyNameTest {
 
 	[Test]
 	[Category ("AndroidNotWorking")] // Accessing assemblies by asm.Location is not supported
+	[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
 	public void GetAssemblyName_CodeBase ()
 	{
 		Assembly execAssembly = Assembly.GetExecutingAssembly ();
@@ -1881,6 +1882,16 @@ public class AssemblyNameTest {
 		Assert.AreEqual (0x34, t [5], "#4.5");
 		Assert.AreEqual (0xE0, t [6], "#4.6");
 		Assert.AreEqual (0x89, t [7], "#4.7");
+	}
+
+	[Test]
+	public void TestSettingCultureName ()
+	{
+	    AssemblyName aname = Assembly.GetExecutingAssembly ().GetName ();
+	    aname.CultureName = null;
+	    Assert.IsFalse(aname.ToString().Contains("en-US"));
+	    aname.CultureName = "en-US";
+	    Assert.IsTrue(aname.ToString().Contains("en-US"));
 	}
 }
 

@@ -2788,6 +2788,41 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void GetType1_TypeName_Empty_nothrow ()
+		{
+			var t = Type.GetType ("");
+			Assert.IsNull (t);
+		}
+
+		[Test]
+		[ExpectedException (typeof (TypeLoadException))]
+		public void GetType2_TypeName_Empty ()
+		{
+			Type.GetType ("", true);
+		}
+
+		[Test]
+		public void GetType2_TypeName_Empty_nothrow ()
+		{
+			var t = Type.GetType ("", false);
+			Assert.IsNull (t);
+		}
+
+		[Test]
+		[ExpectedException (typeof (TypeLoadException))]
+		public void GetType3_TypeName_Empty ()
+		{
+			Type.GetType ("", true, false);
+		}
+
+		[Test]
+		public void GetType3_TypeName_Empty_nothrow ()
+		{
+			var t = Type.GetType ("", false, false);
+			Assert.IsNull (t);
+		}
+
+		[Test]
 		public void GetTypeArray_Args_Null ()
 		{
 			try {
@@ -3707,6 +3742,48 @@ namespace MonoTests.System
 		{
 		}
 
+		[Test]
+		public void IsAssignableFromArraySpecialInterfaceGtd ()
+		{
+			// Regression test for https://github.com/mono/mono/issues/7095
+			// An "array special interface" is a Mono name for some
+			// interfaces that are implemented by arrays.
+			// Check that an array special interface GTD (ie, IList<> not IList<Foo>) work
+			// correctly with IsAssignableFrom.
+			var il = typeof (IList<>);
+			var ie = typeof (IEnumerable<>);
+			var ilparam = il.GetTypeInfo ().GenericTypeParameters [0];
+			var ilparr = ilparam.MakeArrayType ();
+
+			Assert.IsTrue (ie.IsAssignableFrom (ie), "IList<> ---> IEnumerable<>");
+			Assert.IsTrue (il.IsAssignableFrom (ilparr), "!0[] ---> IList<>");
+
+			var ilparrarr = ilparr.MakeArrayType ();
+
+			Assert.IsFalse (il.IsAssignableFrom (ilparrarr), "!0[][] -!-> IList<>");
+
+			Assert.IsFalse (il.IsAssignableFrom (typeof (Array)), "System.Array -!-> IList<>");
+		}
+
+		[Test]
+		public void IsAssignableFromArrayEnumerator ()
+		{
+			// Regression test for https://github.com/mono/mono/issues/7093
+			// An array does not implement IEnumerator`1
+
+			var arrStr = typeof (string[]);
+			var ieStr = typeof (IEnumerator<string>);
+			var ieEqStr = typeof (IEnumerator<IEquatable<string>>);
+			Assert.IsFalse (ieStr.IsAssignableFrom (arrStr), "string[] -!-> IEnumerator<string>");
+			Assert.IsFalse (ieEqStr.IsAssignableFrom (arrStr), "string[] -!-> IEnumerator<IEquatable<string>>");
+
+			var arrInt = typeof (int[]);
+			var ieInt = typeof (IEnumerator<int>);
+			var ieEqInt = typeof (IEnumerator<IEquatable<int>>);
+			Assert.IsFalse (ieInt.IsAssignableFrom (arrInt), "int[] -!-> IEnumerator<int>");
+			Assert.IsFalse (ieEqInt.IsAssignableFrom (arrInt), "int[] -!-> IEnumerator<IEquatable<int>>");
+		}
+
 		[Test] // Bug #612780
 		public void CannotMakeDerivedTypesFromTypedByRef ()
 		{
@@ -4291,6 +4368,7 @@ namespace MonoTests.System
 		[Test]
 		public void NewGetTypeErrors () {
 			MustANE (null);
+			MustTLE ("");
 			MustAE ("!@#$%^&*");
 			MustAE (string.Format ("{0}[{1}&]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
 			MustAE (string.Format ("{0}[{1}*]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
@@ -4817,6 +4895,71 @@ namespace MonoTests.System
 			public CtorsC (int x)
 			{
 			}
+		}
+
+		// https://bugzilla.xamarin.com/show_bug.cgi?id=57938
+		[Test]
+		public void NullFullNameForSpecificGenericTypes()
+		{
+			var expected = new [] {
+				(
+					typeof(Bug59738Class<>).GetFields()[0].FieldType,
+					"Bug59738Interface`1", (string)null, 
+					"MonoTests.System.TypeTest+Bug59738Interface`1[U]"
+				),
+				(
+					typeof(Bug59738Derived<>).BaseType,
+					"Bug59738Class`1", (string)null, 
+					"MonoTests.System.TypeTest+Bug59738Class`1[U]"
+				),
+				(
+					typeof(Bug59738Class<int>),
+					"Bug59738Class`1", 
+					$"MonoTests.System.TypeTest+Bug59738Class`1[[System.Int32, {typeof (int).Assembly.FullName}]]",
+					"MonoTests.System.TypeTest+Bug59738Class`1[System.Int32]"
+				)
+			};
+
+			for (var i = 0; i < expected.Length; i++) {
+				var (t, name, fullname, tostring) = expected[i];
+				Assert.AreEqual(name, t.Name, $"{i}.Name");
+				Assert.AreEqual(fullname, t.FullName, $"{i}.FullName");
+				Assert.AreEqual(tostring, t.ToString(), $"{i}.ToString()");
+			}
+		}
+
+		// https://github.com/mono/mono/issues/6579
+		[Test]
+		public void GetInterfaceCaseInsensitiveTest()
+		{
+			var type = typeof(Dictionary<string, object>);
+
+			Assert.NotNull (
+				type.GetInterface ("System.Collections.IDictionary", false),
+				"strict named interface must be found (ignoreCase = false)"
+			);
+			Assert.NotNull (
+				type.GetInterface ("System.Collections.IDictionary", true),
+				"strict named interface must be found (ignoreCase = true)"
+			);
+			Assert.Null (
+				type.GetInterface ("System.Collections.Idictionary", false),
+				"interface, named in mixed case, must not be found (ignoreCase = false)"
+			);
+			Assert.NotNull (
+				type.GetInterface ("System.Collections.Idictionary", true),
+				"interface, named in mixed case, must be found (ignoreCase = true)"
+			);
+		}
+
+		interface Bug59738Interface<T> {
+		}
+
+		class Bug59738Class<U> {
+			public Bug59738Interface<U> Iface;
+		}
+
+		class Bug59738Derived<U> : Bug59738Class<U> {
 		}
 	}
 

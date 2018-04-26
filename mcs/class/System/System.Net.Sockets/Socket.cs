@@ -47,7 +47,7 @@ using System.Text;
 using System.Timers;
 using System.Net.NetworkInformation;
 
-namespace System.Net.Sockets 
+namespace System.Net.Sockets
 {
 	public partial class Socket : IDisposable
 	{
@@ -91,7 +91,14 @@ namespace System.Net.Sockets
 		int m_IntCleanedUp;
 		internal bool connect_in_progress;
 
-#region Constructors
+#if MONO_WEB_DEBUG
+		static int nextId;
+		internal readonly int ID = ++nextId;
+#else
+		internal readonly int ID;
+#endif
+
+		#region Constructors
 
 
 		public Socket (SocketInformation socketInformation)
@@ -1161,6 +1168,16 @@ namespace System.Net.Sockets
 			DnsEndPoint dep = e.RemoteEndPoint as DnsEndPoint;
 			if (dep != null) {
 				addresses = Dns.GetHostAddresses (dep.Host);
+				int last_valid = 0;
+				for (int i = 0; i < addresses.Length; ++i) {
+					if (addresses [i].AddressFamily != dep.AddressFamily)
+						continue;
+
+					addresses [last_valid++] = addresses [i];
+				}
+
+				if (last_valid != addresses.Length)
+					Array.Resize (ref addresses, last_valid);
 				return true;
 			} else {
 				e.ConnectByNameError = null;

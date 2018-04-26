@@ -242,9 +242,12 @@ namespace System
 #if WIN_PLATFORM
 			if (TimeZoneKey != null) {
 				foreach (string id in TimeZoneKey.GetSubKeyNames ()) {
-					try {
-						systemTimeZones.Add (FindSystemTimeZoneById (id));
-					} catch {}
+					using (RegistryKey subkey = TimeZoneKey.OpenSubKey (id))
+					{
+						if (subkey == null || subkey.GetValue ("TZI") == null)
+							continue;
+					}
+					systemTimeZones.Add (FindSystemTimeZoneById (id));
 				}
 
 				return;
@@ -296,11 +299,12 @@ namespace System
 			}
 		}
 #if LIBC
+		const string DefaultTimeZoneDirectory = "/usr/share/zoneinfo";
 		static string timeZoneDirectory;
 		static string TimeZoneDirectory {
 			get {
 				if (timeZoneDirectory == null)
-					timeZoneDirectory = "/usr/share/zoneinfo";
+					timeZoneDirectory = readlink (DefaultTimeZoneDirectory) ?? DefaultTimeZoneDirectory;
 				return timeZoneDirectory;
 			}
 			set {
@@ -690,15 +694,13 @@ namespace System
 			DateTime start_timeofday = new DateTime (1, 1, 1, daylight_hour, daylight_minute, daylight_second, daylight_millisecond);
 			TransitionTime start_transition_time;
 
+			start_date = new DateTime (start_year, 1, 1);
 			if (daylight_year == 0) {
-				start_date = new DateTime (start_year, 1, 1);
 				start_transition_time = TransitionTime.CreateFloatingDateRule (
 					start_timeofday, daylight_month, daylight_day,
 					(DayOfWeek) daylight_dayofweek);
 			}
 			else {
-				start_date = new DateTime (daylight_year, daylight_month, daylight_day,
-					daylight_hour, daylight_minute, daylight_second, daylight_millisecond);
 				start_transition_time = TransitionTime.CreateFixedDateRule (
 					start_timeofday, daylight_month, daylight_day);
 			}
@@ -707,15 +709,13 @@ namespace System
 			DateTime end_timeofday = new DateTime (1, 1, 1, standard_hour, standard_minute, standard_second, standard_millisecond);
 			TransitionTime end_transition_time;
 
+			end_date = new DateTime (end_year, 12, 31);
 			if (standard_year == 0) {
-				end_date = new DateTime (end_year, 12, 31);
 				end_transition_time = TransitionTime.CreateFloatingDateRule (
 					end_timeofday, standard_month, standard_day,
 					(DayOfWeek) standard_dayofweek);
 			}
 			else {
-				end_date = new DateTime (standard_year, standard_month, standard_day,
-					standard_hour, standard_minute, standard_second, standard_millisecond);
 				end_transition_time = TransitionTime.CreateFixedDateRule (
 					end_timeofday, standard_month, standard_day);
 			}

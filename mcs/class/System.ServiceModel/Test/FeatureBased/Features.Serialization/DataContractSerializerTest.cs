@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !MOBILE && !XAMMAC_4_5
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ServiceModel;
@@ -101,3 +102,4 @@ namespace NS1.NS3 {
 		public NS2.Type2 AType {get; set; }
 	}
 }
+#endif

@@ -110,10 +110,17 @@ mono_object_is_alive (MonoObject* o)
 }
 
 int
-mono_gc_register_root (char *start, size_t size, void *descr, MonoGCRootSource source, const char *msg)
+mono_gc_register_root (char *start, size_t size, void *descr, MonoGCRootSource source, void *key, const char *msg)
 {
 	return TRUE;
 }
+
+int
+mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg)
+{
+	return TRUE;
+}
+
 
 void
 mono_gc_deregister_root (char* addr)
@@ -157,7 +164,7 @@ mono_gc_make_root_descr_all_refs (int numbits)
 }
 
 void*
-mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, const char *msg)
+mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, void *key, const char *msg)
 {
 	return g_malloc0 (size);
 }
@@ -254,7 +261,7 @@ mono_gc_wbarrier_generic_store (gpointer ptr, MonoObject* value)
 void
 mono_gc_wbarrier_generic_store_atomic (gpointer ptr, MonoObject *value)
 {
-	InterlockedWritePointer (ptr, value);
+	mono_atomic_store_ptr (ptr, value);
 }
 
 void
@@ -513,7 +520,14 @@ mono_gc_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void 
 }
 #endif
 
-void mono_gc_set_skip_thread (gboolean value)
+void
+mono_gc_skip_thread_changing (gboolean skip)
+{
+	// No STW, nothing needs to be done.
+}
+
+void
+mono_gc_skip_thread_changed (gboolean skip)
 {
 }
 
@@ -523,6 +537,13 @@ BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reser
 	return TRUE;
 }
 #endif
+
+MonoVTable *
+mono_gc_get_vtable (MonoObject *obj)
+{
+	// No pointer tagging.
+	return obj->vtable;
+}
 
 guint
 mono_gc_get_vtable_bits (MonoClass *klass)

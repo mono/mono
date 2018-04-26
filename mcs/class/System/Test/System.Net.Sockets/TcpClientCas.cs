@@ -70,6 +70,7 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncConnect_StringIntAsyncCallbackObject ()
 		{
 			TcpClient s = new TcpClient ();
@@ -84,6 +85,7 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncConnect_IPAddressIntAsyncCallbackObject ()
 		{
 			IPHostEntry host = Dns.Resolve ("www.google.com");
@@ -99,6 +101,7 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncConnect_IPAddressArrayIntAsyncCallbackObject ()
 		{
 			IPHostEntry host = Dns.Resolve ("www.google.com");

@@ -1502,11 +1502,11 @@ namespace System.Windows.Forms.X11Internal {
 			return hwnd.PaintEventStart (ref m, client);
 		}
 
-		public void PaintEventEnd (ref Message m, IntPtr handle, bool client)
+		public void PaintEventEnd (ref Message m, IntPtr handle, bool client, PaintEventArgs pevent)
 		{
 			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
 
-			hwnd.PaintEventEnd (ref m, client);
+			hwnd.PaintEventEnd (ref m, client, pevent);
 
 			if (Caret.Visible == true) {
 				ShowCaret();

@@ -1359,6 +1359,25 @@ namespace System.Text
             return String.CreateStringFromEncoding(bytes, byteCount, this);
         }
 
+#if MONO
+        public virtual unsafe int GetChars(ReadOnlySpan<byte> bytes, Span<char> chars)
+        {
+            fixed (byte* bytesPtr = &System.Runtime.InteropServices.MemoryMarshal.GetReference(bytes))
+            fixed (char* charsPtr = &System.Runtime.InteropServices.MemoryMarshal.GetReference(chars))
+            {
+                return GetChars(bytesPtr, bytes.Length, charsPtr, chars.Length);
+            }
+        }
+
+        public unsafe string GetString(ReadOnlySpan<byte> bytes)
+        {
+            fixed (byte* bytesPtr = &bytes.DangerousGetPinnableReference())
+            {
+                return GetString(bytesPtr, bytes.Length);
+            }
+        }
+#endif
+
         // Returns the code page identifier of this encoding. The returned value is
         // an integer between 0 and 65535 if the encoding has a code page
         // identifier, or -1 if the encoding does not represent a code page.

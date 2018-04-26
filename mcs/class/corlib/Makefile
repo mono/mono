@@ -8,6 +8,8 @@ LIBRARY_NAME = mscorlib.dll
 
 LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) $(RESOURCE_FILES:%=-resource:%)
 
+USE_XTEST_REMOTE_EXECUTOR = YES
+LIBRARY_WARN_AS_ERROR = yes
 #LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 ifeq (2, $(FRAMEWORK_VERSION_MAJOR))
@@ -21,17 +23,30 @@ endif
 endif
 
 ifeq ($(PROFILE),build)
-CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/$(PROFILE)/csc.$(LIBRARY).aotprofile
+CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/csc.$(LIBRARY).aotprofile
 endif
-
-RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 
 RESX_RESOURCE_STRING = \
 	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx
+	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Memory/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Threading.Tasks.Parallel/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Collections/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Collections.NonGeneric/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Runtime.Extensions/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.ObjectModel/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Numerics.Vectors/src/Resources/Strings.resx
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
+
+ifneq ($(PROFILE),basic)
+RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
+include il/il.make
+
+MODULE_DEPS = $(IL_REPLACE)
+endif
 
 RESOURCE_FILES = \
 	resources/charinfo.nlp \
@@ -44,7 +59,7 @@ RESOURCE_FILES = \
 	resources/collation.cjkKOlv2.bin \
 	LinkerDescriptor/mscorlib.xml
 
-REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,GENERICS_WORK,FEATURE_LIST_PREDICATES,FEATURE_SERIALIZATION,FEATURE_ASCII,FEATURE_LATIN1,FEATURE_UTF7,FEATURE_UTF32,MONO_HYBRID_ENCODING_SUPPORT,FEATURE_ASYNC_IO,NEW_EXPERIMENTAL_ASYNC_IO,FEATURE_UTF32,FEATURE_EXCEPTIONDISPATCHINFO,FEATURE_CORRUPTING_EXCEPTIONS,FEATURE_EXCEPTION_NOTIFICATIONS,FEATURE_STRONGNAME_MIGRATION,FEATURE_USE_LCID,FEATURE_FUSION,FEATURE_CRYPTO,FEATURE_X509_SECURESTRINGS,FEATURE_SYNCHRONIZATIONCONTEXT,FEATURE_SYNCHRONIZATIONCONTEXT_WAIT,HAS_CORLIB_CONTRACTS
+REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,GENERICS_WORK,FEATURE_LIST_PREDICATES,FEATURE_SERIALIZATION,FEATURE_ENCODINGNLS,FEATURE_ASCII,FEATURE_LATIN1,FEATURE_UTF7,FEATURE_UTF32,MONO_HYBRID_ENCODING_SUPPORT,FEATURE_ASYNC_IO,NEW_EXPERIMENTAL_ASYNC_IO,FEATURE_UTF32,FEATURE_EXCEPTIONDISPATCHINFO,FEATURE_CORRUPTING_EXCEPTIONS,FEATURE_EXCEPTION_NOTIFICATIONS,FEATURE_STRONGNAME_MIGRATION,FEATURE_USE_LCID,FEATURE_FUSION,FEATURE_CRYPTO,FEATURE_X509_SECURESTRINGS,FEATURE_SYNCHRONIZATIONCONTEXT,FEATURE_SYNCHRONIZATIONCONTEXT_WAIT,HAS_CORLIB_CONTRACTS
 
 ifndef MOBILE_PROFILE
 REFERENCE_SOURCES_FLAGS += -d:FEATURE_MACL
@@ -85,13 +100,16 @@ ifdef MONO_FEATURE_APPLE_X509
 LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLE_X509
 endif
 
+COREFX_FLAGS := -d:FEATURE_PORTABLE_SPAN
+
 WARNING_ABOUT_DISABLED_WARNING=1635
-LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618,$(WARNING_ABOUT_DISABLED_WARNING) -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS)
+LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618,3001,3002,3003,$(WARNING_ABOUT_DISABLED_WARNING) -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS) $(COREFX_FLAGS)
 DEFAULT_REFERENCES =
 
 TEST_LIB_REFS = System.Core System
 
-XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Text.RegularExpressions System.Runtime.CompilerServices.Unsafe
+XTEST_LIB_FLAGS = -d:netcoreapp -publicsign -keyfile:../mono.snk
 
 ifndef AOT_FRIENDLY_PROFILE
 ifneq ($(PROFILE),testing_aot_hybrid)
@@ -101,7 +119,12 @@ endif
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
 TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe \
-				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%)
+				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%) -resource:LinkerDescriptor/mscorlib_test.xml,$(test_lib:.dll=.xml)
+
+ifeq ($(PROFILE),net_4_x)
+LIB_MCS_FLAGS += -d:FEATURE_CRYPTO_CONFIGURABLE
+TEST_MCS_FLAGS += -d:FEATURE_CRYPTO_CONFIGURABLE
+endif
 
 
 CC_PROFILE := $(filter monotouch% xammac, $(PROFILE))
@@ -137,7 +160,8 @@ EXTRA_DISTFILES = \
 	Test/resources/Fergie.GED		\
 	Test/resources/culture-*.cs		\
 	$(RESOURCE_FILES) \
-	$(TEST_RESOURCES:.resources=.resx)
+	$(TEST_RESOURCES:.resources=.resx) \
+	LinkerDescriptor/mscorlib_test.xml
 
 TEST_RESX_RESOURCES = \
 	Test/resources/Resources.resources
@@ -146,7 +170,7 @@ TEST_RESX_RESOURCES_SATELITE = \
 	Test/resources/Resources.es-ES.resources \
 	Test/resources/Resources.nn-NO.resources \
 
-CLEAN_FILES += $(TEST_RESX_RESOURCES)
+CLEAN_FILES += $(TEST_RESX_RESOURCES) $(IL_REPLACE)
 
 include $(topdir)/build/library.make
 
@@ -158,7 +182,7 @@ TEST_RESOURCES = $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE)
 satellite_assembly1 = es-ES/$(patsubst %.dll,%.resources.dll,$(test_lib))
 satellite_assembly2 = nn-NO/$(patsubst %.dll,%.resources.dll,$(test_lib))
 
-$(test_lib): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) 
+$(test_lib_output): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) $(test_lib_dir)
 
 $(satellite_assembly1): Test/resources/culture-es-ES.cs Test/resources/Resources.es-ES.resources
 	@mkdir -p es-ES
@@ -191,12 +215,9 @@ $(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe: $(vtsdir)/Bina
 		$(vtsdir)/BinarySerializationOverVersions.cs -out:$@
 	@cp $(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll $(vtsdir)/$(PROFILE)_TestLib
 
-# Need to define TEST_MONO_PATH to an absolute dir since the test is ran from a subdir
-TEST_MONO_PATH=$(PWD)/../lib/$(PROFILE)
-
 run-test-vts: test-vts
 	@echo Running vts tests...
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(NOSHADOW_FLAG) \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(NOSHADOW_FLAG) \
 		$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe
 
 ifdef NO_TEST
@@ -218,7 +239,10 @@ EXTRA_DISTFILES += \
 	$(vtsdir)/VersionTolerantSerializationTestLib/4.0/Address.cs \
 	$(vtsdir)/VersionTolerantSerializationTestLib/5.0/Address.cs \
 	$(vtsdir)/VersionTolerantSerializationTestLib/6.0/Address.cs \
-	$(vtsdir)/BinarySerializationOverVersions.cs
+	$(vtsdir)/BinarySerializationOverVersions.cs \
+	System.Runtime.CompilerServices/Unsafe.il \
+	il/il.make \
+	il/Makefile
 
 #
 # Android TimeZoneInfo testing....

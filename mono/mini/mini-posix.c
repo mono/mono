@@ -58,6 +58,7 @@
 #include <mono/utils/dtrace.h>
 #include <mono/utils/mono-signal-handler.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/os-event.h>
 
 #include "mini.h"
 #include <string.h>
@@ -65,13 +66,14 @@
 #include "trace.h"
 #include "version.h"
 #include "debugger-agent.h"
-
+#include "mini-runtime.h"
 #include "jit-icalls.h"
 
 #ifdef HOST_DARWIN
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 #include <mach/clock.h>
+#include <mono/utils/mono-merp.h>
 #endif
 
 #if defined(HOST_WATCHOS)
@@ -201,13 +203,27 @@ MONO_SIG_HANDLER_FUNC (static, sigabrt_signal_handler)
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
 	if (mono_thread_internal_current ())
-		ji = mono_jit_info_table_find_internal (mono_domain_get (), (char *)mono_arch_ip_from_context (ctx), TRUE, TRUE);
+		ji = mono_jit_info_table_find_internal (mono_domain_get (), mono_arch_ip_from_context (ctx), TRUE, TRUE);
 	if (!ji) {
         if (mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 		mono_handle_native_crash ("SIGABRT", ctx, info);
 	}
 }
+
+#ifdef TARGET_OSX
+MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
+{
+	MONO_SIG_HANDLER_INFO_TYPE *info = MONO_SIG_HANDLER_GET_INFO ();
+	MONO_SIG_HANDLER_GET_CONTEXT;
+
+	if (mono_merp_enabled ())
+		mono_handle_native_crash ("SIGTERM", ctx, info);
+
+	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
+	exit (1);
+}
+#endif
 
 #if (defined (USE_POSIX_BACKEND) && defined (SIGRTMIN)) || defined (SIGPROF)
 #define HAVE_PROFILER_SIGNAL
@@ -230,11 +246,11 @@ MONO_SIG_HANDLER_FUNC (static, profiler_signal_handler)
 
 	/* See the comment in mono_runtime_shutdown_stat_profiler (). */
 	if (mono_native_thread_id_get () == sampling_thread) {
-		InterlockedIncrement (&profiler_interrupt_signals_received);
+		mono_atomic_inc_i32 (&profiler_interrupt_signals_received);
 		return;
 	}
 
-	InterlockedIncrement (&profiler_signals_received);
+	mono_atomic_inc_i32 (&profiler_signals_received);
 
 	// Did a non-attached or detaching thread get the signal?
 	if (mono_thread_info_get_small_id () == -1 ||
@@ -245,9 +261,9 @@ MONO_SIG_HANDLER_FUNC (static, profiler_signal_handler)
 	}
 
 	// See the comment in sampling_thread_func ().
-	InterlockedWrite (&mono_thread_info_current ()->profiler_signal_ack, 1);
+	mono_atomic_store_i32 (&mono_thread_info_current ()->profiler_signal_ack, 1);
 
-	InterlockedIncrement (&profiler_signals_accepted);
+	mono_atomic_inc_i32 (&profiler_signals_accepted);
 
 	int hp_save_index = mono_hazard_pointer_save_for_signal_handler ();
 
@@ -359,6 +375,15 @@ remove_signal_handler (int signo)
 		g_assert (sigaction (signo, saved_action, NULL) != -1);
 	}
 }
+
+#ifdef TARGET_OSX
+void
+mini_register_sigterm_handler (void)
+{
+	/* always catch SIGTERM, conditionals inside of handler */
+	add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
+}
+#endif
 
 void
 mono_runtime_posix_install_handlers (void)
@@ -488,12 +513,12 @@ clock_sleep_ns_abs (guint64 ns_abs)
 
 		if (ret != KERN_SUCCESS && ret != KERN_ABORTED)
 			g_error ("%s: clock_sleep () returned %d", __func__, ret);
-	} while (ret == KERN_ABORTED && InterlockedRead (&sampling_thread_running));
+	} while (ret == KERN_ABORTED && mono_atomic_load_i32 (&sampling_thread_running));
 }
 
 #else
 
-clockid_t sampling_posix_clock;
+static clockid_t sampling_posix_clock;
 
 static void
 clock_init (MonoProfilerSampleMode mode)
@@ -557,7 +582,7 @@ clock_sleep_ns_abs (guint64 ns_abs)
 
 		if (ret != 0 && ret != EINTR)
 			g_error ("%s: clock_nanosleep () returned %d", __func__, ret);
-	} while (ret == EINTR && InterlockedRead (&sampling_thread_running));
+	} while (ret == EINTR && mono_atomic_load_i32 (&sampling_thread_running));
 #else
 	int ret;
 	gint64 diff;
@@ -598,7 +623,7 @@ clock_sleep_ns_abs (guint64 ns_abs)
 
 		if ((ret = nanosleep (&req, NULL)) == -1 && errno != EINTR)
 			g_error ("%s: nanosleep () returned -1, errno = %d", __func__, errno);
-	} while (ret == -1 && InterlockedRead (&sampling_thread_running));
+	} while (ret == -1 && mono_atomic_load_i32 (&sampling_thread_running));
 #endif
 }
 
@@ -606,12 +631,23 @@ clock_sleep_ns_abs (guint64 ns_abs)
 
 static int profiler_signal;
 static volatile gint32 sampling_thread_exiting;
+static MonoOSEvent sampling_thread_exited;
 
-static mono_native_thread_return_t
-sampling_thread_func (void *data)
+static gsize
+sampling_thread_func (gpointer unused)
 {
-	mono_threads_attach_tools_thread ();
-	mono_native_thread_set_name (mono_native_thread_id_get (), "Profiler sampler");
+	MonoInternalThread *thread = mono_thread_internal_current ();
+
+	thread->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
+
+	ERROR_DECL (error);
+
+	MonoString *name = mono_string_new_checked (mono_get_root_domain (), "Profiler Sampler", error);
+	mono_error_assert_ok (error);
+	mono_thread_set_name_internal (thread, name, FALSE, FALSE, error);
+	mono_error_assert_ok (error);
+
+	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
 
 	int old_policy;
 	struct sched_param old_sched;
@@ -642,7 +678,7 @@ init:
 	if (mode == MONO_PROFILER_SAMPLE_MODE_NONE) {
 		mono_profiler_sampling_thread_wait ();
 
-		if (!InterlockedRead (&sampling_thread_running))
+		if (!mono_atomic_load_i32 (&sampling_thread_running))
 			goto done;
 
 		goto init;
@@ -650,7 +686,7 @@ init:
 
 	clock_init (mode);
 
-	for (guint64 sleep = clock_get_time_ns (); InterlockedRead (&sampling_thread_running); clock_sleep_ns_abs (sleep)) {
+	for (guint64 sleep = clock_get_time_ns (); mono_atomic_load_i32 (&sampling_thread_running); clock_sleep_ns_abs (sleep)) {
 		uint32_t freq;
 		MonoProfilerSampleMode new_mode;
 
@@ -663,39 +699,40 @@ init:
 
 		sleep += 1000000000 / freq;
 
-		FOREACH_THREAD_SAFE (info) {
-			/* info should never be this thread as we're a tools thread. */
-			g_assert (mono_thread_info_get_tid (info) != mono_native_thread_id_get ());
+		FOREACH_THREAD_SAFE_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_SAMPLE) {
+			g_assert (mono_thread_info_get_tid (info) != sampling_thread);
 
 			/*
 			 * Require an ack for the last sampling signal sent to the thread
 			 * so that we don't overflow the signal queue, leading to all sorts
 			 * of problems (e.g. GC STW failing).
 			 */
-			if (profiler_signal != SIGPROF && !InterlockedCompareExchange (&info->profiler_signal_ack, 0, 1))
+			if (profiler_signal != SIGPROF && !mono_atomic_cas_i32 (&info->profiler_signal_ack, 0, 1))
 				continue;
 
 			mono_threads_pthread_kill (info, profiler_signal);
-			InterlockedIncrement (&profiler_signals_sent);
+			mono_atomic_inc_i32 (&profiler_signals_sent);
 		} FOREACH_THREAD_SAFE_END
 	}
 
 	clock_cleanup ();
 
 done:
-	InterlockedWrite (&sampling_thread_exiting, 1);
+	mono_atomic_store_i32 (&sampling_thread_exiting, 1);
 
 	pthread_setschedparam (pthread_self (), old_policy, &old_sched);
 
-	mono_thread_info_detach ();
+	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NONE);
 
-	return NULL;
+	mono_os_event_set (&sampling_thread_exited);
+
+	return 0;
 }
 
 void
 mono_runtime_shutdown_stat_profiler (void)
 {
-	InterlockedWrite (&sampling_thread_running, 0);
+	mono_atomic_store_i32 (&sampling_thread_running, 0);
 
 	mono_profiler_sampling_thread_post ();
 
@@ -717,7 +754,7 @@ mono_runtime_shutdown_stat_profiler (void)
 
 	// Did it shut down already?
 	if ((info = mono_thread_info_lookup (sampling_thread))) {
-		while (!InterlockedRead (&sampling_thread_exiting)) {
+		while (!mono_atomic_load_i32 (&sampling_thread_exiting)) {
 			mono_threads_pthread_kill (info, profiler_signal);
 			mono_thread_info_usleep (10 * 1000 /* 10ms */);
 		}
@@ -727,7 +764,8 @@ mono_runtime_shutdown_stat_profiler (void)
 	}
 #endif
 
-	mono_native_thread_join (sampling_thread);
+	mono_os_event_wait_one (&sampling_thread_exited, MONO_INFINITE_WAIT, FALSE);
+	mono_os_event_destroy (&sampling_thread_exited);
 
 	/*
 	 * We can't safely remove the signal handler because we have no guarantee
@@ -769,8 +807,15 @@ mono_runtime_setup_stat_profiler (void)
 	mono_counters_register ("Sampling signals accepted", MONO_COUNTER_UINT | MONO_COUNTER_PROFILER | MONO_COUNTER_MONOTONIC, &profiler_signals_accepted);
 	mono_counters_register ("Shutdown signals received", MONO_COUNTER_UINT | MONO_COUNTER_PROFILER | MONO_COUNTER_MONOTONIC, &profiler_interrupt_signals_received);
 
-	InterlockedWrite (&sampling_thread_running, 1);
-	mono_native_thread_create (&sampling_thread, sampling_thread_func, NULL);
+	mono_os_event_init (&sampling_thread_exited, FALSE);
+
+	mono_atomic_store_i32 (&sampling_thread_running, 1);
+
+	MonoError error;
+	MonoInternalThread *thread = mono_thread_create_internal (mono_get_root_domain (), sampling_thread_func, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
+	mono_error_assert_ok (&error);
+
+	sampling_thread = MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid);
 }
 
 #else
@@ -887,7 +932,7 @@ exec:
 #if !defined (__MACH__)
 
 gboolean
-mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info)
+mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info, void *sigctx)
 {
 	g_error ("Posix systems don't support mono_thread_state_init_from_handle");
 	return FALSE;

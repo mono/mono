@@ -166,7 +166,6 @@ typedef gdouble		mips_freg;
 #define mips_ftemp mips_f18
 
 #define MONO_ARCH_USE_FPSTACK FALSE
-#define MONO_ARCH_FPSTACK_SIZE 0
 
 /* Parameters used by the register allocator */
 
@@ -282,7 +281,6 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_GSHARED_SUPPORTED 1
-#define MONO_ARCH_HAVE_INIT_LMF_EXT 1
 
 /* set the next to 0 once inssel-mips.brg is updated */
 #define MIPS_PASS_STRUCTS_BY_VALUE 1
@@ -290,6 +288,10 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_USE_SIGACTION
 #define MONO_ARCH_NEED_DIV_CHECK 1
 #define MONO_ARCH_NO_IOV_CHECK 1
+
+// Does the ABI have a volatile non-parameter register, so tailcall
+// can pass context to generics or interfaces?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0 // FIXME?
 
 #define MIPS_NUM_REG_ARGS (MIPS_LAST_ARG_REG-MIPS_FIRST_ARG_REG+1)
 #define MIPS_NUM_REG_FPARGS (MIPS_LAST_FPARG_REG-MIPS_FIRST_FPARG_REG+1)

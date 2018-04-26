@@ -7,6 +7,7 @@
 #ifndef __MONO_METADATA_DOMAIN_INTERNALS_H__
 #define __MONO_METADATA_DOMAIN_INTERNALS_H__
 
+#include <mono/metadata/object-forward.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/lock-tracer.h>
@@ -359,7 +360,7 @@ struct _MonoDomain {
 	/* Protected by 'jit_code_hash_lock' */
 	MonoInternalHashTable jit_code_hash;
 	mono_mutex_t    jit_code_hash_lock;
-	int		    num_jit_info_tables;
+	int		    num_jit_info_table_duplicates;
 	MonoJitInfoTable * 
 	  volatile          jit_info_table;
 	/*
@@ -389,8 +390,6 @@ struct _MonoDomain {
 	mono_mutex_t   finalizable_objects_hash_lock;
 	/* Used when accessing 'domain_assemblies' */
 	mono_mutex_t    assemblies_lock;
-
-	GHashTable	   *method_rgctx_hash;
 
 	GHashTable	   *generic_virtual_cases;
 
@@ -603,12 +602,15 @@ void mono_reflection_cleanup_domain (MonoDomain *domain);
 
 void mono_assembly_cleanup_domain_bindings (guint32 domain_id);
 
-MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_aot, gboolean allow_trampolines);
+MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, gpointer addr, gboolean try_aot, gboolean allow_trampolines);
 
 void mono_enable_debug_domain_unload (gboolean enable);
 
 MonoReflectionAssembly *
-mono_domain_try_type_resolve_checked (MonoDomain *domain, char *name, MonoObject *tb, MonoError *error);
+mono_domain_try_type_resolve_name (MonoDomain *domain, const char *name, MonoError *error);
+
+MonoReflectionAssembly *
+mono_domain_try_type_resolve_typebuilder (MonoDomain *domain, MonoReflectionTypeBuilder *typebuilder, MonoError *error);
 
 void
 mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoThreadAttachCB attach_cb, MonoError *error);

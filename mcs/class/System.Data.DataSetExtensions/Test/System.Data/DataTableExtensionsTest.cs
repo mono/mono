@@ -89,6 +89,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (2, i.Current ["ID"], "#4");
 		}
 
+#if !COREFX //LinqDataView is not supported yet
 		[Test]
 		public void AsDataView ()
 		{
@@ -99,5 +100,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (1, dv [0] ["ID"], "#1");
 			Assert.AreEqual (4, dv [1] ["ID"], "#2");
 		}
+#endif
 	}
 }

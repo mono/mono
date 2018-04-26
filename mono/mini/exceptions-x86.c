@@ -30,7 +30,9 @@
 
 #include "mini.h"
 #include "mini-x86.h"
+#include "mini-runtime.h"
 #include "tasklets.h"
+#include "aot-runtime.h"
 
 static gpointer signal_exception_trampoline;
 
@@ -453,7 +455,7 @@ void
 mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc, 
 						  mgreg_t eip, gboolean rethrow)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoContext ctx;
 
 	ctx.esp = regs [X86_ESP];
@@ -471,14 +473,14 @@ mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc,
 	g_assert ((ctx.esp % MONO_ARCH_FRAME_ALIGNMENT) == 0);
 #endif
 
-	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, &error)) {
+	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		}
 	}
-	mono_error_assert_ok (&error);
+	mono_error_assert_ok (error);
 
 	/* adjust eip so that it point into the call instruction */
 	ctx.eip -= 1;
@@ -497,7 +499,7 @@ mono_x86_throw_corlib_exception (mgreg_t *regs, guint32 ex_token_index,
 	guint32 ex_token = MONO_TOKEN_TYPE_DEF | ex_token_index;
 	MonoException *ex;
 
-	ex = mono_exception_from_token (mono_defaults.exception_class->image, ex_token);
+	ex = mono_exception_from_token (m_class_get_image (mono_defaults.exception_class), ex_token);
 
 	eip -= pc_offset;
 
@@ -841,24 +843,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		return TRUE;
 	} else if (*lmf) {
-
-		if (((guint64)(*lmf)->previous_lmf) & 2) {
-			/* 
-			 * This LMF entry is created by the soft debug code to mark transitions to
-			 * managed code done during invokes.
-			 */
-			MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
-
-			g_assert (ext->debugger_invoke);
-
-			memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
-
-			*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
-
-			frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
-
-			return TRUE;
-		}
+		g_assert ((((gsize)(*lmf)->previous_lmf) & 2) == 0);
 
 		if ((ji = mini_jit_info_table_find (domain, (gpointer)(*lmf)->eip, NULL))) {
 			frame->ji = ji;
@@ -880,7 +865,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		frame->type = FRAME_TYPE_MANAGED_TO_NATIVE;
 
 		/* Check if we are in a trampoline LMF frame */
-		if ((guint32)((*lmf)->previous_lmf) & 1) {
+		if ((gsize)((*lmf)->previous_lmf) & 1) {
 			/* lmf->esp is set by the trampoline code */
 			new_ctx->esp = (*lmf)->esp;
 		}
@@ -1049,12 +1034,20 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 #endif
 }
 
-static void
-restore_soft_guard_pages (void)
+static MonoObject*
+restore_soft_guard_pages ()
 {
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
+
 	if (jit_tls->stack_ovf_guard_base)
 		mono_mprotect (jit_tls->stack_ovf_guard_base, jit_tls->stack_ovf_guard_size, MONO_MMAP_NONE);
+
+	if (jit_tls->stack_ovf_pending) {
+		MonoDomain *domain = mono_domain_get ();
+		jit_tls->stack_ovf_pending = 0;
+		return (MonoObject *) domain->stack_overflow_ex;
+	}
+	return NULL;
 }
 
 /* 
@@ -1069,11 +1062,12 @@ prepare_for_guard_pages (MonoContext *mctx)
 	gpointer *sp;
 	sp = (gpointer)(mctx->esp);
 	sp -= 1;
-	/* the resturn addr */
+	/* the return addr */
 	sp [0] = (gpointer)(mctx->eip);
 	mctx->eip = (unsigned long)restore_soft_guard_pages;
 	mctx->esp = (unsigned long)sp;
 }
+
 
 static void
 altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
@@ -1083,8 +1077,11 @@ altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 	mctx = *ctx;
 
 	mono_handle_exception (&mctx, obj);
-	if (stack_ovf)
+	if (stack_ovf) {
+		MonoJitTlsData *jit_tls = (MonoJitTlsData *) mono_tls_get_jit_tls ();
+		jit_tls->stack_ovf_pending = 1;
 		prepare_for_guard_pages (&mctx);
+	}
 	mono_restore_context (&mctx);
 }
 
@@ -1180,7 +1177,11 @@ mono_tasklets_arch_restore (void)
 	x86_mov_membase_reg (code, X86_ECX, 0, X86_EDX, 4);*/
 
 	x86_jump_membase (code, X86_EDX, MONO_STRUCT_OFFSET (MonoContinuation, return_ip));
+
+	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 	g_assert ((code - start) <= 48);
+
 	saved = start;
 	return (MonoContinuationRestore)saved;
 }

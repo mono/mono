@@ -15,7 +15,6 @@ partial class SR
 	public const string BoundsCannotBeLessThanOne = "Bounds count cannot be less than 1";
 	public const string TypeMustNotBeByRef = "Type must not be ByRef";
 	public const string TypeMustNotBePointer = "Type must not be a pointer type";
-	public const string TypeDoesNotHaveConstructorForTheSignature = "Type doesn't have constructor with a given signature";
 	public const string SetterMustBeVoid = "Setter should have void type.";
 	public const string PropertyTypeMustMatchGetter = "Property type must match the value type of getter";
 	public const string PropertyTypeMustMatchSetter = "Property type must match the value type of setter";
@@ -88,7 +87,6 @@ partial class SR
 	public const string PropertyDoesNotHaveAccessor = "The property '{0}' has no 'get' or 'set' accessors";
 	public const string NotAMemberOfType = "'{0}' is not a member of type '{1}'";
 	public const string NotAMemberOfAnyType = "'{0}' is not a member of any type";
-	public const string ExpressionNotSupportedForType = "The expression '{0}' is not supported for type '{1}'";
 	public const string UnsupportedExpressionType = "The expression type '{0}' is not supported";
 	public const string ParameterExpressionNotValidAsDelegate = "ParameterExpression of type '{0}' cannot be used for delegate parameter of type '{1}'";
 	public const string PropertyNotDefinedForType = "Property '{0}' is not defined for type '{1}'";
@@ -104,12 +102,9 @@ partial class SR
 	public const string ElementInitializerMethodWithZeroArgs = "Element initializer method must have at least 1 parameter";
 	public const string ElementInitializerMethodStatic = "Element initializer method must be an instance method";
 	public const string TypeNotIEnumerable = "Type '{0}' is not IEnumerable";
-	public const string UnexpectedCoalesceOperator = "Unexpected coalesce operator.";
-	public const string InvalidCast = "Cannot cast from type '{0}' to type '{1}";
 	public const string UnhandledBinary = "Unhandled binary: {0}";
 	public const string UnhandledBinding = "Unhandled binding ";
 	public const string UnhandledBindingType = "Unhandled Binding Type: {0}";
-	public const string UnhandledConvert = "Unhandled convert: {0}";
 	public const string UnhandledUnary = "Unhandled unary: {0}";
 	public const string UnknownBindingType = "Unknown binding type";
 	public const string UserDefinedOpMustHaveConsistentTypes = "The user-defined operator method '{1}' for operator '{0}' must have identical parameter and return types.";
@@ -131,11 +126,9 @@ partial class SR
 	public const string ControlCannotEnterTry = "Control cannot enter a try block.";
 	public const string ControlCannotEnterExpression = "Control cannot enter an expression--only statements can be jumped into.";
 	public const string NonLocalJumpWithValue = "Cannot jump to non-local label '{0}' with a value. Only jumps to labels defined in outer blocks can pass values.";
-	public const string ExtensionNotReduced = "Extension should have been reduced.";
 	public const string CannotCompileConstant = "CompileToMethod cannot compile constant '{0}' because it is a non-trivial value, such as a live object. Instead, create an expression tree that can construct this value.";
 	public const string CannotCompileDynamic = "Dynamic expressions are not supported by CompileToMethod. Instead, create an expression tree that uses System.Runtime.CompilerServices.CallSite.";
 	public const string InvalidLvalue = "Invalid lvalue for assignment: {0}.";
-	public const string UnknownLiftType = "unknown lift type: '{0}'.";
 	public const string UndefinedVariable = "variable '{0}' of type '{1}' referenced from scope '{2}', but it is not defined";
 	public const string CannotCloseOverByRef = "Cannot close over byref parameter '{0}' referenced in lambda '{1}'";
 	public const string UnexpectedVarArgsCall = "Unexpected VarArgs call to method '{0}'";
@@ -162,7 +155,6 @@ partial class SR
 	public const string IncorrectNumberOfMethodCallArguments = "Incorrect number of arguments supplied for call to method '{0}'";
 	public const string IncorrectNumberOfLambdaArguments = "Incorrect number of arguments supplied for lambda invocation";
 	public const string IncorrectNumberOfConstructorArguments = "Incorrect number of arguments for constructor";
-	public const string OperatorNotImplementedForType = "The operator '{0}' is not implemented for type '{1}'";
 	public const string NonStaticConstructorRequired = "The constructor should not be static";
 	public const string NonAbstractConstructorRequired = "Can't compile a NewExpression with a constructor declared on an abstract class";
 	public const string FirstArgumentMustBeCallSite = "First argument of delegate must be CallSite";
@@ -181,6 +173,7 @@ partial class SR
 	public const string CollectionReadOnly = "Collection is read-only.";
 	public const string KeyDoesNotExistInExpando = "The specified key '{0}' does not exist in the ExpandoObject.";
 	public const string SameKeyExistsInExpando = "An element with the same key '{0}' already exists in the ExpandoObject.";
+	public const string Arg_KeyNotFoundWithKey = "The given key '{0}' was not present in the dictionary.";
 	public const string EmptyEnumerable = "Enumeration yielded no results";
 	public const string MoreThanOneElement = "Sequence contains more than one element";
 	public const string MoreThanOneMatch = "Sequence contains more than one matching element";

@@ -21,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+#if !FEATURE_NO_BSD_SOCKETS
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -53,7 +54,7 @@ namespace MonoTests.System.ServiceModel
 					element
 				});
 
-#if !MOBILE
+#if !MOBILE && !XAMMAC_4_5
 			// Init service
 			ServiceHost serviceHost = new ServiceHost (typeof (HelloWorldServiceImpl), new Uri (url));
 			serviceHost.AddServiceEndpoint (typeof (IHelloWorldService), binding, string.Empty);
@@ -82,7 +83,7 @@ namespace MonoTests.System.ServiceModel
 				client.SayHelloToAsync(str);
 
 				Assert.IsTrue (wait.WaitOne (TimeSpan.FromSeconds (20)), "timeout");
-#if MOBILE
+#if MOBILE || XAMMAC_4_5
 				if (error.GetType() == typeof(EndpointNotFoundException))
 					return;
 #endif
@@ -90,7 +91,7 @@ namespace MonoTests.System.ServiceModel
 				Assert.IsNull (error, "#1, inner exception: {0}", error);
 				Assert.AreEqual (str, result, "#2");
 			}  finally {
-#if !MOBILE
+#if !MOBILE && !XAMMAC_4_5
 				serviceHost.Close ();
 #endif
 			}
@@ -583,3 +584,4 @@ public partial class HelloWorldServiceClient : System.ServiceModel.ClientBase<IH
         }
     }
 }
+#endif

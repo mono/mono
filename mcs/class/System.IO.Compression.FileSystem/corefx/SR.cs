@@ -6,5 +6,4 @@ partial class SR
 {
 	public const string IO_DirectoryNameWithData = "Zip entry name ends in directory separator character but contains data.";
 	public const string IO_ExtractingResultsInOutside = "Extracting Zip entry would have resulted in a file outside the specified destination directory.";
-	public const string ArgumentException_BufferNotFromPool = "The buffer is not associated with this pool and may not be returned to it.";
 }

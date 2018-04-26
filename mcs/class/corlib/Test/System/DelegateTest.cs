@@ -851,6 +851,7 @@ namespace MonoTests.System
 		delegate object Boxer ();
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void BoxingCovariance ()
 		{
 			var boxer = (Boxer) Delegate.CreateDelegate (
@@ -912,6 +913,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void NullFirstArgumentOnStaticMethod ()
 		{
 			CallTarget call = (CallTarget) Delegate.CreateDelegate (
@@ -925,6 +927,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 #if MONOTOUCH || FULL_AOT_RUNTIME
 		[Category ("NotWorking")] // #10539
 #endif
@@ -1024,6 +1027,7 @@ namespace MonoTests.System
 #if MONOTOUCH || FULL_AOT_RUNTIME
 		[Category ("NotWorking")] // #10539
 #endif
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ClosedOverNullReferenceStaticMethod ()
 		{
 			var del = (Func<long?,long?>) Delegate.CreateDelegate (
@@ -1101,6 +1105,7 @@ namespace MonoTests.System
 		event Action bar_handler;
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		[ExpectedException (typeof (ArgumentException))] // #635349, #605936
 		public void NewDelegateClosedOverNullReferenceInstanceMethod ()
 		{
@@ -1144,6 +1149,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void DynamicInvokeOpenInstanceDelegate ()
 		{
 			var d1 = Delegate.CreateDelegate (typeof (Func<DelegateTest, int>), typeof(DelegateTest).GetMethod ("DynamicInvokeOpenInstanceDelegate_CB"));
@@ -1281,6 +1287,7 @@ namespace MonoTests.System
 		}
 #if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void CreateDelegateWithLdFtnAndAbstractMethod ()
 		{
 			AssemblyName assemblyName = new AssemblyName ();
@@ -1386,6 +1393,23 @@ namespace MonoTests.System
 				Delegate.CreateDelegate(typeof (Func<StringComparison, StringComparison, bool>), dm.Method) as
 				Func<StringComparison, StringComparison, bool>; 
 			Assert.IsTrue (d (0, 0));
+		}
+
+		[Test]
+		public void EnumBaseTypeConversion2 () {
+			Func<Enum22, int> dm = EnumArg;
+			var d = (Func<int, int>)Delegate.CreateDelegate (typeof (Func<int, int>), dm.Method);
+			Assert.AreEqual (1, d (1));
+		}
+
+		public enum Enum22 {
+			none,
+			one,
+			two
+		}
+
+		public static int EnumArg (Enum22 e) {
+			return (int)e;
 		}
 
 #if !MONOTOUCH && !FULL_AOT_RUNTIME

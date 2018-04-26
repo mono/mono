@@ -58,6 +58,9 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ListenUri ()
 		{
 			Uri uri = new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ());

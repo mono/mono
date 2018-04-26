@@ -2304,21 +2304,6 @@ namespace MonoTests.System.Xml
 			r.ReadAsync ();
 		}
 
-		Exception RunAsync (Action action)
-		{
-			var task = Task<Exception>.Run (async () => {
-				try {
-					action ();
-					return null;
-				} catch (Exception ex) {
-					return ex;
-				}
-			});
-			task.Wait ();
-			Assert.That (task.IsCompleted);
-			return task.Result;
-		}
-
 		[Test]
 		public void SimpleAsync ()
 		{

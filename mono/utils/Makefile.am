@@ -48,6 +48,8 @@ monoutils_sources = \
 	mono-log-posix.c	\
 	mono-log-android.c \
 	mono-log-darwin.c \
+	mono-merp.c	\
+	mono-merp.h	\
 	mono-internal-hash.c	\
 	mono-internal-hash.h	\
 	mono-io-portability.c 	\
@@ -73,6 +75,7 @@ monoutils_sources = \
 	mono-proclib.h		\
 	mono-proclib-windows-internals.h		\
 	mono-publib.c		\
+	mono-jemalloc.c		\
 	mono-string.h		\
 	mono-time.c  		\
 	mono-time.h  		\
@@ -110,7 +113,6 @@ monoutils_sources = \
 	mono-uri.h	\
 	mono-stdlib.h	\
 	valgrind.h	\
-	mach-support.c	\
 	mach-support.h  \
 	memcheck.h	\
 	mono-context.c	\
@@ -139,6 +141,7 @@ monoutils_sources = \
 	mono-threads-openbsd.c	\
 	mono-threads-android.c	\
 	mono-threads-haiku.c	\
+	mono-threads-aix.c	\
 	mono-threads-wasm.c	\
 	mono-threads.h	\
 	mono-threads-debug.h	\
@@ -147,6 +150,8 @@ monoutils_sources = \
 	mono-threads-coop.h	\
 	mono-tls.h	\
 	mono-tls.c	\
+	mono-utils-debug.c \
+	mono-utils-debug.h \
 	linux_magic.h	\
 	mono-memory-model.h	\
 	atomic.h	\
@@ -180,7 +185,8 @@ monoutils_sources = \
 	os-event.h \
 	refcount.h	\
 	w32api.h	\
-	unlocked.h
+	unlocked.h	\
+	ward.h
 
 arch_sources = 
 
@@ -261,13 +267,22 @@ arch_sources += mono-hwcap-cross.c
 endif
 
 libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources)
+libmonoutils_la_CFLAGS = $(JEMALLOC_CFLAGS)
+libmonoutils_la_LDFLAGS = $(JEMALLOC_LDFLAGS)
 libmonoutilsincludedir = $(includedir)/mono-$(API_VER)/mono/utils
 
 libmonoutilsinclude_HEADERS = 	\
 	mono-logger.h		\
 	mono-error.h		\
 	mono-publib.h		\
+	mono-jemalloc.h		\
 	mono-dl-fallback.h	\
 	mono-counters.h
 
 EXTRA_DIST = mono-embed.h mono-embed.c
+
+DIST_SUBDIRS = jemalloc
+
+if MONO_JEMALLOC_ENABLED
+SUBDIRS = jemalloc
+endif

@@ -97,7 +97,7 @@ namespace System.IO {
 		public override string ReadToEnd ()
 		{
 			try {
-				return (base.ReadToEnd ());
+				return driver.ReadToEnd ();
 			} catch (IOException) {
 			}
 

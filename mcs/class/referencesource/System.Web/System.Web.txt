@@ -3800,3 +3800,5 @@ Request_Queue_Limit_Per_Session_Exceeded=The request queue limit of the session 
 MembershipPasswordFormat_Obsoleted=Unsecured Passwords Format Detected. The Membership Provider that contains the unsecure passwords format is: {0}. The obsoleted password format is: {1}. For more information, see https://go.microsoft.com/fwlink/?linkid=834784.
 
 Unhandled_Monitor_Exception=An unhandled exception occurred while executing '{0}' in '{1}'.
+
+OnExecuteRequestStep_Cannot_Be_Called=Method OnExecuteRequestStep can only be called during HttpApplication initialization or IHttpModule initialization.

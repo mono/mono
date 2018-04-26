@@ -75,20 +75,20 @@ namespace MonoTests.System.Data.Connected.Odbc
 				AssertInsertParameters (cmd, "#B3:");
 
 				cb = new OdbcCommandBuilder (da);
-				cb.QuoteSuffix = "´";
+				cb.QuoteSuffix = "Â´";
 
 				cmd = cb.GetInsertCommand ();
-				Assert.AreEqual ("INSERT INTO employee´ (id´, lname´) VALUES (?, ?)",
+				Assert.AreEqual ("INSERT INTO employeeÂ´ (idÂ´, lnameÂ´) VALUES (?, ?)",
 						cmd.CommandText, "#C1");
 				Assert.AreSame (conn, cmd.Connection, "#C2");
 				AssertInsertParameters (cmd, "#C3:");
 
 				cb = new OdbcCommandBuilder (da);
 				cb.QuotePrefix = "\"";
-				cb.QuoteSuffix = "´";
+				cb.QuoteSuffix = "Â´";
 
 				cmd = cb.GetInsertCommand ();
-				Assert.AreEqual ("INSERT INTO \"employee´ (\"id´, \"lname´) VALUES (?, ?)",
+				Assert.AreEqual ("INSERT INTO \"employeeÂ´ (\"idÂ´, \"lnameÂ´) VALUES (?, ?)",
 						cmd.CommandText, "#D1");
 				Assert.AreSame (conn, cmd.Connection, "#D2");
 				AssertInsertParameters (cmd, "#D3:");
@@ -158,20 +158,20 @@ namespace MonoTests.System.Data.Connected.Odbc
 				AssertUpdateParameters (cmd, "#B3:");
 
 				cb = new OdbcCommandBuilder (da);
-				cb.QuoteSuffix = "´";
+				cb.QuoteSuffix = "Â´";
 
 				cmd = cb.GetUpdateCommand ();
-				Assert.AreEqual ("UPDATE employee´ SET id´ = ?, lname´ = ? WHERE ((id´ = ?) AND ((? = 1 AND lname´ IS NULL) OR (lname´ = ?)))",
+				Assert.AreEqual ("UPDATE employeeÂ´ SET idÂ´ = ?, lnameÂ´ = ? WHERE ((idÂ´ = ?) AND ((? = 1 AND lnameÂ´ IS NULL) OR (lnameÂ´ = ?)))",
 						cmd.CommandText, "#C1");
 				Assert.AreSame (conn, cmd.Connection, "#C2");
 				AssertUpdateParameters (cmd, "#C3:");
 
 				cb = new OdbcCommandBuilder (da);
 				cb.QuotePrefix = "\"";
-				cb.QuoteSuffix = "´";
+				cb.QuoteSuffix = "Â´";
 
 				cmd = cb.GetUpdateCommand ();
-				Assert.AreEqual ("UPDATE \"employee´ SET \"id´ = ?, \"lname´ = ? WHERE ((\"id´ = ?) AND ((? = 1 AND \"lname´ IS NULL) OR (\"lname´ = ?)))",
+				Assert.AreEqual ("UPDATE \"employeeÂ´ SET \"idÂ´ = ?, \"lnameÂ´ = ? WHERE ((\"idÂ´ = ?) AND ((? = 1 AND \"lnameÂ´ IS NULL) OR (\"lnameÂ´ = ?)))",
 						cmd.CommandText, "#D1");
 				Assert.AreSame (conn, cmd.Connection, "#D2");
 				AssertUpdateParameters (cmd, "#D3:");
@@ -385,20 +385,20 @@ namespace MonoTests.System.Data.Connected.Odbc
 				AssertDeleteParameters (cmd, "#B3:");
 
 				cb = new OdbcCommandBuilder (da);
-				cb.QuoteSuffix = "´";
+				cb.QuoteSuffix = "Â´";
 
 				cmd = cb.GetDeleteCommand ();
-				Assert.AreEqual ("DELETE FROM employee´ WHERE ((id´ = ?) AND ((? = 1 AND lname´ IS NULL) OR (lname´ = ?)))",
+				Assert.AreEqual ("DELETE FROM employeeÂ´ WHERE ((idÂ´ = ?) AND ((? = 1 AND lnameÂ´ IS NULL) OR (lnameÂ´ = ?)))",
 						cmd.CommandText, "#C1");
 				Assert.AreSame (conn, cmd.Connection, "#C2");
 				AssertDeleteParameters (cmd, "#C3:");
 
 				cb = new OdbcCommandBuilder (da);
 				cb.QuotePrefix = "\"";
-				cb.QuoteSuffix = "´";
+				cb.QuoteSuffix = "Â´";
 
 				cmd = cb.GetDeleteCommand ();
-				Assert.AreEqual ("DELETE FROM \"employee´ WHERE ((\"id´ = ?) AND ((? = 1 AND \"lname´ IS NULL) OR (\"lname´ = ?)))",
+				Assert.AreEqual ("DELETE FROM \"employeeÂ´ WHERE ((\"idÂ´ = ?) AND ((? = 1 AND \"lnameÂ´ IS NULL) OR (\"lnameÂ´ = ?)))",
 						cmd.CommandText, "#D1");
 				Assert.AreSame (conn, cmd.Connection, "#D2");
 				AssertDeleteParameters (cmd, "#D3:");
@@ -638,6 +638,7 @@ namespace MonoTests.System.Data.Connected.Odbc
 		}
 
 		[Test] // QuoteIdentifier (String, OdbcConnection)
+		[Category("NotWorking")] //needs https://github.com/dotnet/corefx/pull/22499
 		public void QuoteIdentifier2 ()
 		{
 			OdbcCommandBuilder cb;

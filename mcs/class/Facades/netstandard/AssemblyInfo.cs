@@ -24,12 +24,12 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("netstandard.dll")]
-[assembly: AssemblyDescription ("netstandard.dll")]
-[assembly: AssemblyDefaultAlias ("netstandard.dll")]
-[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyTitle ("netstandard")]
+[assembly: AssemblyDescription ("netstandard")]
+[assembly: AssemblyDefaultAlias ("netstandard")]
+[assembly: AssemblyCompany ("Mono development team")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
-[assembly: AssemblyCopyright ("Copyright (c) 2016 Xamarin Inc. (http://www.xamarin.com)")]
+[assembly: AssemblyCopyright ("(c) Various Mono authors")]
 [assembly: AssemblyVersion ("2.0.0.0")]
 [assembly: AssemblyInformationalVersion ("2.0.0.0")]
 [assembly: AssemblyFileVersion ("2.0.0.0")]

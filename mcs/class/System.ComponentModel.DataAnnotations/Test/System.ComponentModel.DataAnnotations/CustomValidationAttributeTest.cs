@@ -30,7 +30,6 @@ using System.ComponentModel.Design;
 using System.Text;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.ComponentModel.DataAnnotations
 {
@@ -86,7 +85,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			var attr = new CustomValidationAttribute (null, null);
 			string msg = null;
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				// MonoTests.System.ComponentModel.DataAnnotations.CustomValidationAttributeTest.FormatErrorMessage:
 				// System.InvalidOperationException : The CustomValidationAttribute.ValidatorType was not specified.
 				//
@@ -98,7 +97,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			}, "#A1");
 
 			attr = new CustomValidationAttribute (typeof (string), null);
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				// MonoTests.System.ComponentModel.DataAnnotations.CustomValidationAttributeTest.FormatErrorMessage:
 				// System.InvalidOperationException : The CustomValidationAttribute.Method was not specified.
 				//
@@ -110,7 +109,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			}, "#A2");
 
 			attr = new CustomValidationAttribute (typeof (string), String.Empty);
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				// MonoTests.System.ComponentModel.DataAnnotations.CustomValidationAttributeTest.FormatErrorMessage:
 				// System.InvalidOperationException : The CustomValidationAttribute.Method was not specified.
 				//
@@ -122,7 +121,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			}, "#A3");
 
 			attr = new CustomValidationAttribute (typeof (string), "NoSuchMethod");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				// MonoTests.System.ComponentModel.DataAnnotations.CustomValidationAttributeTest.FormatErrorMessage:
 				// System.InvalidOperationException : The CustomValidationAttribute method 'NoSuchMethod' does not exist in type 'String' or is not public and static.
 				//
@@ -134,7 +133,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			}, "#A4");
 
 			attr = new CustomValidationAttribute (typeof (PrivateValidatorMethodContainer), "MethodOne");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				// MonoTests.System.ComponentModel.DataAnnotations.CustomValidationAttributeTest.FormatErrorMessage:
 				// System.InvalidOperationException : The custom validation type 'PrivateValidatorMethodContainer' must be public.
 				//
@@ -146,7 +145,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			}, "#A5");
 
 			attr = new CustomValidationAttribute (typeof (PublicValidatorMethodContainer), "MethodOne");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				// MonoTests.System.ComponentModel.DataAnnotations.CustomValidationAttributeTest.FormatErrorMessage:
 				// System.InvalidOperationException : The CustomValidationAttribute method 'MethodOne' in type 'PublicValidatorMethodContainer' 
 				//        must return System.ComponentModel.DataAnnotations.ValidationResult.  Use System.ComponentModel.DataAnnotations.ValidationResult.Success 
@@ -159,7 +158,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			}, "#A6");
 
 			attr = new CustomValidationAttribute (typeof (PublicValidatorMethodContainer), "MethodTwo");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				// MonoTests.System.ComponentModel.DataAnnotations.CustomValidationAttributeTest.FormatErrorMessage:
 				// System.InvalidOperationException : The CustomValidationAttribute method 'MethodTwo' in type 'PublicValidatorMethodContainer' must match the expected signature: public static ValidationResult MethodTwo(object value, ValidationContext context).  The value can be strongly typed.  The ValidationContext parameter is optional.
 				//
@@ -182,7 +181,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.AreEqual ("test is not valid.", msg, "#A9-3");
 			
 			attr = new CustomValidationAttribute (typeof (PublicValidatorMethodContainer), "MethodFive");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				// MonoTests.System.ComponentModel.DataAnnotations.CustomValidationAttributeTest.FormatErrorMessage:
 				// System.InvalidOperationException : The CustomValidationAttribute method 'MethodFive' in type 'PublicValidatorMethodContainer' must match the expected signature: public static ValidationResult MethodFive(object value, ValidationContext context).  The value can be strongly typed.  The ValidationContext parameter is optional.
 				//
@@ -193,7 +192,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			}, "#A10");
 
 			attr = new CustomValidationAttribute (typeof (PublicValidatorMethodContainer), "MethodSix");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				// MonoTests.System.ComponentModel.DataAnnotations.CustomValidationAttributeTest.FormatErrorMessage:
 				// System.InvalidOperationException : The CustomValidationAttribute method 'MethodSix' in type 'PublicValidatorMethodContainer' must match the expected signature: public static ValidationResult MethodSix(object value, ValidationContext context).  The value can be strongly typed.  The ValidationContext parameter is optional.
 				//
@@ -209,37 +208,37 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 		{
 			var attr = new CustomValidationAttribute (null, null);
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				attr.IsValid ("test");
 			}, "#A1");
 
 			attr = new CustomValidationAttribute (typeof (string), null);
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				attr.IsValid ("test");
 			}, "#A2");
 
 			attr = new CustomValidationAttribute (typeof (string), String.Empty);
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				attr.IsValid ("test");
 			}, "#A3");
 
 			attr = new CustomValidationAttribute (typeof (string), "NoSuchMethod");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				attr.IsValid ("test");
 			}, "#A4");
 
 			attr = new CustomValidationAttribute (typeof (PrivateValidatorMethodContainer), "MethodOne");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				attr.IsValid ("test");
 			}, "#A5");
 
 			attr = new CustomValidationAttribute (typeof (PublicValidatorMethodContainer), "MethodOne");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				attr.IsValid ("test");
 			}, "#A6");
 
 			attr = new CustomValidationAttribute (typeof (PublicValidatorMethodContainer), "MethodTwo");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				attr.IsValid ("test");
 			}, "#A7");
 
@@ -260,17 +259,17 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.IsFalse (valid, "#A9-3");
 
 			attr = new CustomValidationAttribute (typeof (PublicValidatorMethodContainer), "MethodFive");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				attr.IsValid ("test");
 			}, "#A10");
 
 			attr = new CustomValidationAttribute (typeof (PublicValidatorMethodContainer), "MethodSix");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				attr.IsValid ("test");
 			}, "#A11");
 
 			attr = new CustomValidationAttribute (typeof (PublicValidatorMethodContainer), "MethodSeven");
-			AssertExtensions.Throws<ApplicationException> (() => {
+			Assert.Throws<ApplicationException> (() => {
 				attr.IsValid ("test");
 			}, "#A12");
 		}

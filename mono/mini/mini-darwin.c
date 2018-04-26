@@ -52,6 +52,7 @@
 #include <mono/utils/dtrace.h>
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include <string.h>
 #include <ctype.h>
 #include "trace.h"
@@ -95,7 +96,7 @@ mono_runtime_install_handlers (void)
 }
 
 gboolean
-mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info)
+mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info, void *sigctx)
 {
 	kern_return_t ret;
 	mach_msg_type_number_t num_state, num_fpstate;

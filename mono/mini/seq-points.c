@@ -10,6 +10,7 @@
  */
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "seq-points.h"
 
 static void
@@ -230,7 +231,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 		g_free (next);
 
 	cfg->seq_point_info = mono_seq_point_info_new (array->len, TRUE, array->data, has_debug_data, &seq_info_size);
-	InterlockedAdd (&mono_jit_stats.allocated_seq_points_size, seq_info_size);
+	mono_atomic_fetch_add_i32 (&mono_jit_stats.allocated_seq_points_size, seq_info_size);
 
 	g_byte_array_free (array, TRUE);
 
@@ -252,12 +253,14 @@ mono_save_seq_point_info (MonoCompile *cfg)
 MonoSeqPointInfo*
 mono_get_seq_points (MonoDomain *domain, MonoMethod *method)
 {
+	ERROR_DECL (error);
 	MonoSeqPointInfo *seq_points;
 	MonoMethod *declaring_generic_method = NULL, *shared_method = NULL;
 
 	if (method->is_inflated) {
 		declaring_generic_method = mono_method_get_declaring_generic_method (method);
-		shared_method = mini_get_shared_method (method);
+		shared_method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
+		mono_error_assert_ok (error);
 	}
 
 	mono_loader_lock ();

@@ -18,11 +18,12 @@ namespace System.Configuration.Internal {
     using System.Security.Permissions;
     using System.Security.Policy;
     using System.Threading;
+    using System.Xml;
 
     //
     // An IInternalConfigHost with common implementations of some file functions.
     //
-    internal sealed class InternalConfigHost : IInternalConfigHost {
+    internal sealed class InternalConfigHost : IInternalConfigHost, IInternalConfigurationBuilderHost {
         private IInternalConfigRoot _configRoot;
 
         internal InternalConfigHost() {
@@ -446,6 +447,21 @@ namespace System.Configuration.Internal {
             }
         }
 
+        XmlNode IInternalConfigurationBuilderHost.ProcessRawXml(XmlNode rawXml, ConfigurationBuilder builder) {
+            if (builder != null) {
+                return builder.ProcessRawXml(rawXml);
+            }
+
+            return rawXml;
+        }
+
+        ConfigurationSection IInternalConfigurationBuilderHost.ProcessConfigurationSection(ConfigurationSection configSection, ConfigurationBuilder builder) {
+            if (builder != null) {
+                return builder.ProcessConfigurationSection(configSection);
+            }
+
+            return configSection;
+        }
     }
 }
 

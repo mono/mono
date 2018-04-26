@@ -589,21 +589,6 @@ public class MyScrollBar : HScrollBar
 		       myform.Dispose ();
 	       }
 
-	    [Test]
-	    public void ImeModehangedTest ()
-	       {
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       ScrollBar myHscrlbar = new HScrollBar ();
-		       myform.Controls.Add (myHscrlbar);
-		       myHscrlbar.ImeModeChanged += new EventHandler (ScrollBar_EventHandler);
-		       myHscrlbar.ImeMode = ImeMode.Katakana;
-		       Assert.AreEqual (true, eventhandled, "I2");
-		       eventhandled = false;
-		       myform.Dispose ();
-	       }
-
 	    //[Test]
 	    //public void MouseDownTest ()
 	    //   {

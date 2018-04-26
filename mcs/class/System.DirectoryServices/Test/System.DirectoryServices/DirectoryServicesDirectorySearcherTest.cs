@@ -15,6 +15,7 @@ using System.Threading;
 namespace MonoTests.System.DirectoryServices 
 {
 	[TestFixture]
+	[Category ("InetAccess")]
 	public class DirectoryServicesDirectorySearcherTest
 	{
 		#region Fields

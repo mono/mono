@@ -24,15 +24,30 @@
 
 #if defined(TARGET_X86)
 #if defined(__APPLE__)
+#define MONO_HAVE_SIMD_REG
 typedef struct __darwin_xmm_reg MonoContextSimdReg;
 #endif
 #elif defined(TARGET_AMD64)
 #if defined(__APPLE__)
+#define MONO_HAVE_SIMD_REG
 typedef struct __darwin_xmm_reg MonoContextSimdReg;
-#elif defined(__linux__)
+#elif defined(__linux__) && defined(__GLIBC__)
+#define MONO_HAVE_SIMD_REG
 typedef struct _libc_xmmreg MonoContextSimdReg;
+#elif defined(HOST_WIN32)
+#define MONO_HAVE_SIMD_REG
+#include <emmintrin.h>
+typedef __m128d MonoContextSimdReg;
+#elif defined(HOST_ANDROID)
+#define MONO_HAVE_SIMD_REG
+typedef struct _libc_xmmreg MonoContextSimdReg;
+#elif defined(__linux__) || defined(__OpenBSD__)
+#define MONO_HAVE_SIMD_REG
+#include <emmintrin.h>
+typedef __m128d MonoContextSimdReg;
 #endif
 #elif defined(TARGET_ARM64)
+#define MONO_HAVE_SIMD_REG
 typedef __uint128_t MonoContextSimdReg;
 #endif
 
@@ -239,15 +254,26 @@ typedef struct {
 
 #if !defined( HOST_WIN32 )
 
-#if defined(HAVE_SIGACTION) || defined(__APPLE__)  // the __APPLE__ check is required for the tvos simulator, which has ucontext_t but not sigaction
+// the __APPLE__ check is required for the tvos simulator, which has ucontext_t but not sigaction
+#if defined(HAVE_SIGACTION) || defined(__APPLE__)
 #define MONO_SIGNAL_USE_UCONTEXT_T 1
 #endif
 
 #endif
 
+#ifdef __HAIKU__
+/* sigcontext surrogate */
+struct sigcontext {
+	vregs regs;
+};
+
+// Haiku doesn't support this
+#undef MONO_SIGNAL_USE_UCONTEXT_T
+#endif
+
 typedef struct {
 	mgreg_t gregs [AMD64_NREG];
-#if defined(__APPLE__) || defined(__linux__)
+#if defined(MONO_HAVE_SIMD_REG)
 	MonoContextSimdReg fregs [AMD64_XMM_NREG];
 #else
 	double fregs [AMD64_XMM_NREG];

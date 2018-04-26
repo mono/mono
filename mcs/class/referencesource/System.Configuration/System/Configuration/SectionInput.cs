@@ -15,8 +15,14 @@ namespace System.Configuration {
         private static object                   s_unevaluated = new object();
 
         // input from the XML file
-        private SectionXmlInfo                  _sectionXmlInfo;        
+        private SectionXmlInfo                  _sectionXmlInfo;
 
+        // Provider to enhance config sources
+        private ConfigurationBuilder _configBuilder;
+
+        // Has the config provider been determined for this input?
+        private bool _isConfigBuilderDetermined;
+        
         // Provider to use for encryption
         private ProtectedConfigurationProvider  _protectionProvider;    
 
@@ -77,6 +83,18 @@ namespace System.Configuration {
         internal void ClearResult() {
             _result = s_unevaluated;
             _resultRuntimeObject = s_unevaluated;
+        }
+
+        internal bool IsConfigBuilderDetermined {
+            get { return _isConfigBuilderDetermined; }
+        }
+
+        internal ConfigurationBuilder ConfigBuilder {
+            get { return _configBuilder; }
+            set {
+                _configBuilder = value;
+                _isConfigBuilderDetermined = true;
+            }
         }
 
         internal bool IsProtectionProviderDetermined {

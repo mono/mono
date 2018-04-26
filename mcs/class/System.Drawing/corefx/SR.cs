@@ -95,4 +95,5 @@ partial class SR
 	public const string DCTypeInvalid = "GetObjectType on this dc returned an invalid value.";
 	public const string InvalidEnumArgument = "The value of argument '{0}' ({1}) is invalid for Enum type '{2}'.";
 	public const string ConvertInvalidPrimitive = "{0} is not a valid value for {1}.";
+	public const string LibgdiplusNotFound = "The native library \"libgdiplus\" is not installed on the system, or was otherwise unable to be loaded.";
 }

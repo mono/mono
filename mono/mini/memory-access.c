@@ -246,13 +246,13 @@ create_write_barrier_bitmap (MonoCompile *cfg, MonoClass *klass, unsigned *wb_bi
 
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
-		foffset = klass->valuetype ? field->offset - sizeof (MonoObject): field->offset;
+		foffset = m_class_is_valuetype (klass) ? field->offset - sizeof (MonoObject): field->offset;
 		if (mini_type_is_reference (mono_field_get_type (field))) {
 			g_assert ((foffset % SIZEOF_VOID_P) == 0);
 			*wb_bitmap |= 1 << ((offset + foffset) / SIZEOF_VOID_P);
 		} else {
 			MonoClass *field_class = mono_class_from_mono_type (field->type);
-			if (field_class->has_references)
+			if (m_class_has_references (field_class))
 				create_write_barrier_bitmap (cfg, field_class, wb_bitmap, offset + foffset);
 		}
 	}
@@ -353,7 +353,7 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 	*/
 
 	if (cfg->gshared)
-		klass = mono_class_from_mono_type (mini_get_underlying_type (&klass->byval_arg));
+		klass = mono_class_from_mono_type (mini_get_underlying_type (m_class_get_byval_arg (klass)));
 
 	/*
 	 * This check breaks with spilled vars... need to handle it during verification anyway.
@@ -376,7 +376,7 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 	if (explicit_align)
 		align = explicit_align;
 
-	if (mini_type_is_reference (&klass->byval_arg)) { // Refs *MUST* be naturally aligned
+	if (mini_type_is_reference (m_class_get_byval_arg (klass))) { // Refs *MUST* be naturally aligned
 		MonoInst *store, *load;
 		int dreg = alloc_ireg_ref (cfg);
 
@@ -387,7 +387,9 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 		MONO_ADD_INS (cfg->cbb, store);
 
 		mini_emit_write_barrier (cfg, dest, src);
-	} else if (cfg->gen_write_barriers && (klass->has_references || size_ins) && !native) { 	/* if native is true there should be no references in the struct */
+		return;
+
+	} else if (cfg->gen_write_barriers && (m_class_has_references (klass) || size_ins) && !native) { 	/* if native is true there should be no references in the struct */
 		/* Avoid barriers when storing to the stack */
 		if (!((dest->opcode == OP_ADD_IMM && dest->sreg1 == cfg->frame_reg) ||
 			  (dest->opcode == OP_LDADDR))) {
@@ -474,8 +476,6 @@ mini_emit_memory_load (MonoCompile *cfg, MonoType *type, MonoInst *src, int offs
 void
 mini_emit_memory_store (MonoCompile *cfg, MonoType *type, MonoInst *dest, MonoInst *value, int ins_flag)
 {
-	MonoInst *ins;
-
 	if (ins_flag & MONO_INST_VOLATILE) {
 		/* Volatile stores have release semantics, see 12.6.7 in Ecma 335 */
 		mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
@@ -488,12 +488,14 @@ mini_emit_memory_store (MonoCompile *cfg, MonoType *type, MonoInst *dest, MonoIn
 		EMIT_NEW_TEMPSTORE (cfg, mov, tmp_var->inst_c0, value);
 		EMIT_NEW_VARLOADA (cfg, addr, tmp_var, tmp_var->inst_vtype);
 		mini_emit_memory_copy_internal (cfg, dest, addr, mono_class_from_mono_type (type), 1, FALSE);
+	} else {
+		MonoInst *ins;
+
+		/* FIXME: should check item at sp [1] is compatible with the type of the store. */
+		EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, type, dest->dreg, 0, value->dreg);
+		ins->flags |= ins_flag;
 	}
 
-	/* FIXME: should check item at sp [1] is compatible with the type of the store. */
-
-	EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, type, dest->dreg, 0, value->dreg);
-	ins->flags |= ins_flag;
 	if (cfg->gen_write_barriers && cfg->method->wrapper_type != MONO_WRAPPER_WRITE_BARRIER &&
 		mini_type_is_reference (type) && !MONO_INS_IS_PCONST_NULL (value)) {
 		/* insert call to write barrier */
@@ -582,5 +584,7 @@ mini_emit_memory_copy (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClas
 		mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_SEQ);
 	}
 }
+#else /* !DISABLE_JIT */
 
+MONO_EMPTY_SOURCE_FILE (memory_access);
 #endif

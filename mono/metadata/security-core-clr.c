@@ -10,6 +10,8 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
+#include <config.h>
+#include <mono/metadata/class-init.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/assembly.h>
@@ -18,6 +20,7 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/reflection-internals.h>
 #include <mono/utils/mono-logger-internals.h>
 
 #include "security-core-clr.h"
@@ -160,8 +163,8 @@ static void
 set_type_load_exception_type (const char *format, MonoClass *klass)
 {
 	char *type_name = mono_type_get_full_name (klass);
-	char *parent_name = mono_type_get_full_name (klass->parent);
-	char *message = mono_image_strdup_printf (klass->image, format, type_name, parent_name);
+	char *parent_name = mono_type_get_full_name (m_class_get_parent (klass));
+	char *message = mono_image_strdup_printf (m_class_get_image (klass), format, type_name, parent_name);
 
 	g_free (parent_name);
 	g_free (type_name);
@@ -184,7 +187,7 @@ set_type_load_exception_methods (const char *format, MonoMethod *override, MonoM
 {
 	char *method_name = get_method_full_name (override);
 	char *base_name = get_method_full_name (base);
-	char *message = mono_image_strdup_printf (override->klass->image, format, method_name, base_name);
+	char *message = mono_image_strdup_printf (m_class_get_image (override->klass), format, method_name, base_name);
 
 	g_free (base_name);
 	g_free (method_name);
@@ -204,13 +207,14 @@ get_default_ctor (MonoClass *klass)
 	int i;
 
 	mono_class_setup_methods (klass);
-	if (!klass->methods)
+	if (!m_class_get_methods (klass))
 		return NULL;
 
 	int mcount = mono_class_get_method_count (klass);
+	MonoMethod **klass_methods = m_class_get_methods (klass);
 	for (i = 0; i < mcount; ++i) {
 		MonoMethodSignature *sig;
-		MonoMethod *method = klass->methods [i];
+		MonoMethod *method = klass_methods [i];
 
 		if (!method)
 			continue;
@@ -252,7 +256,7 @@ void
 mono_security_core_clr_check_inheritance (MonoClass *klass)
 {
 	MonoSecurityCoreCLRLevel class_level, parent_level;
-	MonoClass *parent = klass->parent;
+	MonoClass *parent = m_class_get_parent (klass);
 
 	if (!parent)
 		return;
@@ -337,14 +341,14 @@ get_caller_no_reflection_related (MonoMethod *m, gint32 no, gint32 ilo, gboolean
 		return FALSE;
 
 	/* quick out (any namespace not starting with an 'S' */
-	ns = m->klass->name_space;
+	ns = m_class_get_name_space (m->klass);
 	if (!ns || (*ns != 'S')) {
 		*dest = m;
 		return TRUE;
 	}
 
 	/* stop if the method is not part of platform code */
-	if (!mono_security_core_clr_is_platform_image (m->klass->image)) {
+	if (!mono_security_core_clr_is_platform_image (m_class_get_image (m->klass))) {
 		*dest = m;
 		return TRUE;
 	}
@@ -359,7 +363,7 @@ get_caller_no_reflection_related (MonoMethod *m, gint32 no, gint32 ilo, gboolean
 
 	/* calls from System.Delegate are also possible and allowed */
 	if (strcmp (ns, "System") == 0) {
-		const char *kname = m->klass->name;
+		const char *kname = m_class_get_name (m->klass);
 		if ((*kname == 'A') && (strcmp (kname, "Activator") == 0))
 			return FALSE;
 
@@ -437,7 +441,7 @@ get_caller_of_elevated_trust_code (MonoMethod *m, gint32 no, gint32 ilo, gboolea
 		return FALSE;
 
 	/* end stack walk if we find ourselves outside platform code (we won't find critical code anymore) */
-	if (!mono_security_core_clr_is_platform_image (m->klass->image)) {
+	if (!mono_security_core_clr_is_platform_image (m_class_get_image (m->klass))) {
 		cookie->caller = m;
 		return TRUE;
 	}
@@ -445,9 +449,9 @@ get_caller_of_elevated_trust_code (MonoMethod *m, gint32 no, gint32 ilo, gboolea
 	switch (cookie->depth) {
 	/* while depth == 0 look for SecurityManager::[Check|Ensure]ElevatedPermissions */
 	case 0:
-		if (strcmp (m->klass->name_space, "System.Security"))
+		if (strcmp (m_class_get_name_space (m->klass), "System.Security"))
 			return FALSE;
-		if (strcmp (m->klass->name, "SecurityManager"))
+		if (strcmp (m_class_get_name (m->klass), "SecurityManager"))
 			return FALSE;
 		if ((strcmp (m->name, "EnsureElevatedPermissions")) && strcmp (m->name, "CheckElevatedPermissions"))
 			return FALSE;
@@ -513,13 +517,13 @@ check_field_access (MonoMethod *caller, MonoClassField *field)
 {
 	/* if get_reflection_caller returns NULL then we assume the caller has NO privilege */
 	if (caller) {
-		MonoError error;
+		ERROR_DECL (error);
 		MonoClass *klass;
 
 		/* this check can occur before the field's type is resolved (and that can fail) */
-		mono_field_get_type_checked (field, &error);
-		if (!mono_error_ok (&error)) {
-			mono_error_cleanup (&error);
+		mono_field_get_type_checked (field, error);
+		if (!mono_error_ok (error)) {
+			mono_error_cleanup (error);
 			return FALSE;
 		}
 
@@ -639,7 +643,7 @@ mono_security_core_clr_ensure_reflection_access_field (MonoClassField *field, Mo
 		return TRUE;
 
 	if (mono_security_core_clr_get_options () & MONO_SECURITY_CORE_CLR_OPTIONS_RELAX_REFLECTION) {
-		if (!mono_security_core_clr_is_platform_image (mono_field_get_parent(field)->image))
+		if (!mono_security_core_clr_is_platform_image (m_class_get_image (mono_field_get_parent(field))))
 			return TRUE;
 	}
 
@@ -680,7 +684,7 @@ mono_security_core_clr_ensure_reflection_access_method (MonoMethod *method, Mono
 		return TRUE;
 
 	if (mono_security_core_clr_get_options () & MONO_SECURITY_CORE_CLR_OPTIONS_RELAX_REFLECTION) {
-		if (!mono_security_core_clr_is_platform_image (method->klass->image))
+		if (!mono_security_core_clr_is_platform_image (m_class_get_image (method->klass)))
 			return TRUE;
 	}
 
@@ -717,16 +721,16 @@ mono_security_core_clr_ensure_reflection_access_method (MonoMethod *method, Mono
 static gboolean
 can_avoid_corlib_reflection_delegate_optimization (MonoMethod *method)
 {
-	if (!mono_security_core_clr_is_platform_image (method->klass->image))
+	if (!mono_security_core_clr_is_platform_image (m_class_get_image (method->klass)))
 		return FALSE;
 
-	if (strcmp (method->klass->name_space, "System.Reflection") != 0)
+	if (strcmp (m_class_get_name_space (method->klass), "System.Reflection") != 0)
 		return FALSE;
 
-	if (strcmp (method->klass->name, "MonoProperty") == 0) {
+	if (strcmp (m_class_get_name (method->klass), "MonoProperty") == 0) {
 		if ((strcmp (method->name, "GetterAdapterFrame") == 0) || strcmp (method->name, "StaticGetterAdapterFrame") == 0)
 			return TRUE;
-	} else if (strcmp (method->klass->name, "EventInfo") == 0) {
+	} else if (strcmp (m_class_get_name (method->klass), "EventInfo") == 0) {
 		if ((strcmp (method->name, "AddEventFrame") == 0) || strcmp (method->name, "StaticAddEventAdapterFrame") == 0)
 			return TRUE;
 	}
@@ -769,7 +773,7 @@ mono_security_core_clr_ensure_delegate_creation (MonoMethod *method, MonoError *
 	}
 
 	if (mono_security_core_clr_get_options () & MONO_SECURITY_CORE_CLR_OPTIONS_RELAX_DELEGATE) {
-		if (!mono_security_core_clr_is_platform_image (method->klass->image))
+		if (!mono_security_core_clr_is_platform_image (m_class_get_image (method->klass)))
 			return TRUE;
 	}
 
@@ -800,7 +804,7 @@ mono_security_core_clr_ensure_dynamic_method_resolved_object (gpointer ref, Mono
 		MonoClassField *field = (MonoClassField*) ref;
 		MonoClass *klass = mono_field_get_parent (field);
 		/* fields coming from platform code have extra protection (accessibility check) */
-		if (mono_security_core_clr_is_platform_image (klass->image)) {
+		if (mono_security_core_clr_is_platform_image (m_class_get_image (klass))) {
 			MonoMethod *caller = get_reflection_caller ();
 			/* XXX Critical code probably can do this / need some test cases (safer off otherwise) XXX */
 			if (!check_field_access (caller, field)) {
@@ -812,7 +816,7 @@ mono_security_core_clr_ensure_dynamic_method_resolved_object (gpointer ref, Mono
 	} else if (handle_class == mono_defaults.methodhandle_class) {
 		MonoMethod *method = (MonoMethod*) ref;
 		/* methods coming from platform code have extra protection (accessibility check) */
-		if (mono_security_core_clr_is_platform_image (method->klass->image)) {
+		if (mono_security_core_clr_is_platform_image (m_class_get_image (method->klass))) {
 			MonoMethod *caller = get_reflection_caller ();
 			/* XXX Critical code probably can do this / need some test cases (safer off otherwise) XXX */
 			if (!check_method_access (caller, method)) {
@@ -933,15 +937,17 @@ mono_security_core_clr_level_from_cinfo (MonoCustomAttrInfo *cinfo, MonoImage *i
 static MonoSecurityCoreCLRLevel
 mono_security_core_clr_class_level_no_platform_check (MonoClass *klass)
 {
+	ERROR_DECL (error);
 	MonoSecurityCoreCLRLevel level = MONO_SECURITY_CORE_CLR_TRANSPARENT;
-	MonoCustomAttrInfo *cinfo = mono_custom_attrs_from_class (klass);
+	MonoCustomAttrInfo *cinfo = mono_custom_attrs_from_class_checked (klass, error);
+	mono_error_cleanup (error);
 	if (cinfo) {
-		level = mono_security_core_clr_level_from_cinfo (cinfo, klass->image);
+		level = mono_security_core_clr_level_from_cinfo (cinfo, m_class_get_image (klass));
 		mono_custom_attrs_free (cinfo);
 	}
 
-	if (level == MONO_SECURITY_CORE_CLR_TRANSPARENT && klass->nested_in)
-		level = mono_security_core_clr_class_level_no_platform_check (klass->nested_in);
+	if (level == MONO_SECURITY_CORE_CLR_TRANSPARENT && m_class_get_nested_in (klass))
+		level = mono_security_core_clr_class_level_no_platform_check (m_class_get_nested_in (klass));
 
 	return level;
 }
@@ -955,7 +961,7 @@ MonoSecurityCoreCLRLevel
 mono_security_core_clr_class_level (MonoClass *klass)
 {
 	/* non-platform code is always Transparent - whatever the attributes says */
-	if (!mono_security_core_clr_test && !mono_security_core_clr_is_platform_image (klass->image))
+	if (!mono_security_core_clr_test && !mono_security_core_clr_is_platform_image (m_class_get_image (klass)))
 		return MONO_SECURITY_CORE_CLR_TRANSPARENT;
 
 	return mono_security_core_clr_class_level_no_platform_check (klass);
@@ -972,6 +978,7 @@ mono_security_core_clr_class_level (MonoClass *klass)
 MonoSecurityCoreCLRLevel
 mono_security_core_clr_field_level (MonoClassField *field, gboolean with_class_level)
 {
+	ERROR_DECL (error);
 	MonoCustomAttrInfo *cinfo;
 	MonoSecurityCoreCLRLevel level = MONO_SECURITY_CORE_CLR_TRANSPARENT;
 
@@ -980,12 +987,13 @@ mono_security_core_clr_field_level (MonoClassField *field, gboolean with_class_l
 		return level;
 
 	/* non-platform code is always Transparent - whatever the attributes says */
-	if (!mono_security_core_clr_test && !mono_security_core_clr_is_platform_image (field->parent->image))
+	if (!mono_security_core_clr_test && !mono_security_core_clr_is_platform_image (m_class_get_image (field->parent)))
 		return level;
 
-	cinfo = mono_custom_attrs_from_field (field->parent, field);
+	cinfo = mono_custom_attrs_from_field_checked (field->parent, field, error);
+	mono_error_cleanup (error);
 	if (cinfo) {
-		level = mono_security_core_clr_level_from_cinfo (cinfo, field->parent->image);
+		level = mono_security_core_clr_level_from_cinfo (cinfo, m_class_get_image (field->parent));
 		mono_custom_attrs_free (cinfo);
 	}
 
@@ -1006,6 +1014,7 @@ mono_security_core_clr_field_level (MonoClassField *field, gboolean with_class_l
 MonoSecurityCoreCLRLevel
 mono_security_core_clr_method_level (MonoMethod *method, gboolean with_class_level)
 {
+	ERROR_DECL (error);
 	MonoCustomAttrInfo *cinfo;
 	MonoSecurityCoreCLRLevel level = MONO_SECURITY_CORE_CLR_TRANSPARENT;
 
@@ -1014,12 +1023,13 @@ mono_security_core_clr_method_level (MonoMethod *method, gboolean with_class_lev
 		return level;
 
 	/* non-platform code is always Transparent - whatever the attributes says */
-	if (!mono_security_core_clr_test && !mono_security_core_clr_is_platform_image (method->klass->image))
+	if (!mono_security_core_clr_test && !mono_security_core_clr_is_platform_image (m_class_get_image (method->klass)))
 		return level;
 
-	cinfo = mono_custom_attrs_from_method (method);
+	cinfo = mono_custom_attrs_from_method_checked (method, error);
+	mono_error_cleanup (error);
 	if (cinfo) {
-		level = mono_security_core_clr_level_from_cinfo (cinfo, method->klass->image);
+		level = mono_security_core_clr_level_from_cinfo (cinfo, m_class_get_image (method->klass));
 		mono_custom_attrs_free (cinfo);
 	}
 

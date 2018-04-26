@@ -242,7 +242,7 @@ namespace System
 			//
 
 			try {
-				if (GetDynamicTimeZoneInformationEffectiveYears (ref timeZoneInformation, out firstYear, out lastYear) == 0) {
+				if (GetDynamicTimeZoneInformationEffectiveYears (ref timeZoneInformation, out firstYear, out lastYear) != 0) {
 					firstYear = lastYear = 0;
 				}
 			} catch {

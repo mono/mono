@@ -325,5 +325,14 @@ namespace MonoTests.System.Threading {
 				t.Change (new TimeSpan (UInt32.MaxValue), new TimeSpan (UInt32.MaxValue));
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Change_After_Dispose ()
+		{
+			var t = new Timer (o => DoNothing (o), null, 0, 0);
+			t.Dispose ();
+			t.Change (1, 1);
+		}
 	}
 }

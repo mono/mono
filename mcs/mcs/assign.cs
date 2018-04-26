@@ -391,9 +391,21 @@ namespace Mono.CSharp {
 			return System.Linq.Expressions.Expression.Assign (target_object, source_object);
 		}
 
-		protected virtual Expression ResolveConversions (ResolveContext ec)
+		protected virtual Expression ResolveConversions (ResolveContext rc)
 		{
-			source = Convert.ImplicitConversionRequired (ec, source, target.Type, source.Location);
+			var ttype = target.Type;
+			var stackAlloc = source as StackAlloc;
+			if (stackAlloc != null && ttype.Arity == 1 && ttype.GetDefinition () == rc.Module.PredefinedTypes.SpanGeneric.TypeSpec &&
+			    rc.Module.Compiler.Settings.Version >= LanguageVersion.V_7_2) {
+
+				var etype = ttype.TypeArguments [0];
+				var stype = ((PointerContainer)source.Type).Element;
+				if (etype == stype && stackAlloc.ResolveSpanConversion (rc, ttype)) {
+					return this;
+				}
+			}
+
+			source = Convert.ImplicitConversionRequired (rc, source, ttype, source.Location);
 			if (source == null)
 				return null;
 

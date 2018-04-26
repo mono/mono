@@ -1748,6 +1748,47 @@ public class DirectoryTest
 		}
 	}
 
+#if !MOBILE
+	[Test]
+	public void ResolvePathBeforeDirectoryExists ()
+	{
+		if (!RunningOnUnix)
+			Assert.Ignore ("Not running on Unix.");
+
+		string cwd = Directory.GetCurrentDirectory ();
+
+		string root = Path.Combine (TempFolder, "test_ResolvePathBeforeExists");
+		string testPath = Path.Combine (root, "test");
+		string test2Path = Path.Combine (testPath, "test2");
+		string testFile = Path.Combine (test2Path, "test_file");
+		string symlinkPath = Path.Combine (root, "test3");
+		try 
+		{	
+			Directory.CreateDirectory (root);
+			Directory.SetCurrentDirectory (root);
+			Directory.CreateDirectory (testPath);
+			Directory.CreateDirectory (test2Path);
+			File.WriteAllText (testFile, "hello");
+
+			var info = new UnixFileInfo (test2Path);
+			info.CreateSymbolicLink (symlinkPath);
+
+			var partial_path_with_symlink = "test3/../test3"; // test3 is a symlink to test/test2
+
+			Assert.AreEqual (Directory.Exists (partial_path_with_symlink), true);
+		}
+		finally 
+		{
+			DeleteFile (symlinkPath);
+			DeleteFile (testFile);
+			DeleteDirectory (test2Path);
+			DeleteDirectory (testPath);
+			Directory.SetCurrentDirectory (cwd);
+			DeleteDirectory (root);
+		}
+	}
+#endif
+
 	private void DeleteDirectory (string path)
 	{
 		if (Directory.Exists (path))

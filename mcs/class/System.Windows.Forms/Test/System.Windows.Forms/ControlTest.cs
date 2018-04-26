@@ -329,9 +329,10 @@ namespace MonoTests.System.Windows.Forms
 
 			try {
 				control.CreateControl ();
-			} catch (ObjectDisposedException ex) {
-				Console.WriteLine (ex);
-				Assert.Fail ("#1");
+				Assert.Fail("#1");
+			}
+			catch (ObjectDisposedException ex) {
+				//Console.WriteLine (ex);
 			}
 			Assert.IsFalse (control.IsHandleCreated, "#2");
 
@@ -1838,9 +1839,29 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (test.Visible, "1");
 			test.Visible = true;
 			Assert.IsTrue (test.Visible, "2");
-			Assert.IsTrue (test.reached, "3");
+			// OnCreateControl is only called when the control is truly visible, which
+			// this one is not since it's not top-level.
+			Assert.IsFalse (test.reached, "3");
 		}
 
+		[Test]
+		public void CreateControlOnFormVisibleTest()
+		{
+			using (Form f = new Form())
+			{
+				OnCreateControlTest test = new OnCreateControlTest();
+				test.Visible = false;
+				Assert.IsFalse(test.IsHandleCreated, "0");
+				Assert.IsFalse(test.Visible, "1");
+				f.Show();
+				f.Controls.Add(test);
+				Assert.IsFalse(test.IsHandleCreated, "2");
+				Assert.IsFalse(test.Visible, "3");
+				test.Visible = true;
+				Assert.IsTrue(test.Visible, "4");
+				Assert.IsTrue(test.reached, "5");
+			}
+		}
 
 		[Test]
 		public void CreateGraphicsTest ()
@@ -2942,6 +2963,24 @@ namespace MonoTests.System.Windows.Forms
 			c1.Controls.Remove(c3);
 			Assert.AreEqual (c2, c3.Parent);
 		}
+
+		[Test]
+		public void DrawToBitmap ()
+		{
+			var b = new Bitmap (20, 20);
+			var l = new Label ();
+			l.Location = new Point (100, 100);
+			l.Size = new Size (10, 10);
+			l.BackColor = Color.Blue;
+			using (var g = Graphics.FromImage (b))
+				g.Clear (Color.White);
+			l.DrawToBitmap (b, new Rectangle(10, 10, 5, 5));
+			using (var g = Graphics.FromImage (b)) {
+				Assert.AreEqual (Color.White.ToArgb(), b.GetPixel(0, 0).ToArgb());
+				Assert.AreEqual (Color.Blue.ToArgb(), b.GetPixel(10, 10).ToArgb());
+				Assert.AreEqual (Color.White.ToArgb(), b.GetPixel(15, 15).ToArgb());
+			}
+		}
 	}
 
 	[TestFixture]
@@ -3239,7 +3278,7 @@ namespace MonoTests.System.Windows.Forms
 
 			protected override void WndProc(ref Message m)
 			{
-				Console.WriteLine ("WndProc: " + m.ToString ());
+				//Console.WriteLine ("WndProc: " + m.ToString ());
 				Messages.Add (m);
 				base.WndProc (ref m);
 			}

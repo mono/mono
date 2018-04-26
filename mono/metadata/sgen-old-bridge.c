@@ -11,7 +11,7 @@
 
 #include "config.h"
 
-#ifdef HAVE_SGEN_GC
+#if defined (HAVE_SGEN_GC) && !defined (DISABLE_SGEN_GC_BRIDGE)
 
 #include <stdlib.h>
 
@@ -385,7 +385,7 @@ set_config (const SgenBridgeProcessorConfig *config)
 static MonoGCBridgeObjectKind
 class_kind (MonoClass *klass)
 {
-	return bridge_callbacks.bridge_class_kind (klass);
+	return mono_bridge_callbacks.bridge_class_kind (klass);
 }
 
 static HashEntry*
@@ -677,7 +677,7 @@ processing_build_callback_data (int generation)
 	if (!dyn_array_ptr_size (&registered_bridges))
 		return;
 
-	g_assert (bridge_processing_in_progress);
+	g_assert (mono_bridge_processing_in_progress);
 
 	SGEN_TV_GETTIME (atv);
 
@@ -749,7 +749,7 @@ processing_build_callback_data (int generation)
 			HashEntryWithAccounting *entry = (HashEntryWithAccounting*)all_entries [i];
 			if (entry->entry.is_bridge) {
 				MonoClass *klass = SGEN_LOAD_VTABLE (entry->entry.obj)->klass;
-				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "OBJECT %s::%s (%p) weight %f", klass->name_space, klass->name, entry->entry.obj, entry->weight);
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "OBJECT %s::%s (%p) weight %f", m_class_get_name_space (klass), m_class_get_name (klass), entry->entry.obj, entry->weight);
 			}
 		}
 	}

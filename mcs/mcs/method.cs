@@ -701,6 +701,10 @@ namespace Mono.CSharp {
 			if (MemberType.IsStatic) {
 				Error_StaticReturnType ();
 			}
+
+			if (MemberType.IsSpecialRuntimeType && Compiler.Settings.StdLib) {
+				Error_ReturnTypeCantBeRefAny (Location, ReturnType, Report);
+			}
 		}
 
 		public override void Emit ()
@@ -716,6 +720,8 @@ namespace Mono.CSharp {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder);
 			} else if (ReturnType.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder, ReturnType, Location);
+			} else if (ReturnType is ReadOnlyReferenceContainer) {
+				Module.PredefinedAttributes.IsReadOnly.EmitAttribute (CreateReturnBuilder ().Builder);
 			}
 
 			if (ReturnType.HasNamedTupleElement) {
@@ -762,6 +768,11 @@ namespace Mono.CSharp {
 			Report.Error (577, Location,
 				"Conditional not valid on `{0}' because it is a constructor, destructor, operator or explicit interface implementation",
 				GetSignatureForError ());
+		}
+
+		public static void Error_ReturnTypeCantBeRefAny (Location loc, TypeSpec t, Report Report)
+		{
+			Report.Error (1599, loc, "The return type of `{0}' is not allowed", t.GetSignatureForError ());
 		}
 
 		public bool IsPartialDefinition {
@@ -1231,11 +1242,6 @@ namespace Mono.CSharp {
 					"Introducing `Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
 			}
 
-			if (Compiler.Settings.StdLib && ReturnType.IsSpecialRuntimeType) {
-				Error1599 (Location, ReturnType, Report);
-				return false;
-			}
-
 			if (CurrentTypeParameters == null) {
 				if (base_method != null && !IsExplicitImpl) {
 					if (parameters.Count == 1 && ParameterTypes[0].BuiltinType == BuiltinTypeSpec.Type.Object && MemberName.Name == "Equals")
@@ -1261,8 +1267,9 @@ namespace Mono.CSharp {
 				if ((ModFlags & Modifiers.ASYNC) != 0) {
 					if (ReturnType.Kind != MemberKind.Void &&
 						ReturnType != Module.PredefinedTypes.Task.TypeSpec &&
-						!ReturnType.IsGenericTask) {
-						Report.Error (1983, Location, "The return type of an async method must be void, Task, or Task<T>");
+						!ReturnType.IsGenericTask &&
+					    !ReturnType.IsCustomTaskType ()) {
+						Report.Error (1983, Location, "The return type of an async method must be void or task type");
 					}
 
 					block = (ToplevelBlock) block.ConvertToAsyncTask (this, Parent.PartialContainer, parameters, ReturnType, null, Location);
@@ -1394,11 +1401,6 @@ namespace Mono.CSharp {
 				return false;
 
 			return base.EnableOverloadChecks (overload);
-		}
-
-		public static void Error1599 (Location loc, TypeSpec t, Report Report)
-		{
-			Report.Error (1599, loc, "Method or delegate cannot return type `{0}'", t.GetSignatureForError ());
 		}
 
 		protected override bool ResolveMemberType ()
@@ -2467,6 +2469,8 @@ namespace Mono.CSharp {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder);
 			} else if (ReturnType.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder, ReturnType, Location);
+			} else if (ReturnType is ReadOnlyReferenceContainer) {
+				Module.PredefinedAttributes.IsReadOnly.EmitAttribute (CreateReturnBuilder ().Builder);
 			}
 
 			if (ReturnType.HasNamedTupleElement) {

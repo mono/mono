@@ -15,11 +15,11 @@
  */
 
 #include "mini.h"
+#include "mini-runtime.h"
+#include "aot-runtime.h"
 
 #include <mono/arch/arm64/arm64-codegen.h>
 #include <mono/metadata/abi-details.h>
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 #ifndef DISABLE_JIT
 
@@ -374,7 +374,7 @@ mono_arch_exceptions_init (void)
 void
 mono_arm_throw_exception (gpointer arg, mgreg_t pc, mgreg_t *int_regs, gdouble *fp_regs, gboolean corlib, gboolean rethrow)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoContext ctx;
 	MonoObject *exc = NULL;
 	guint32 ex_token_index, ex_token;
@@ -398,14 +398,14 @@ mono_arm_throw_exception (gpointer arg, mgreg_t pc, mgreg_t *int_regs, gdouble *
 	ctx.has_fregs = 1;
 	ctx.pc = pc;
 
-	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, &error)) {
+	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		}
 	}
-	mono_error_assert_ok (&error);
+	mono_error_assert_ok (error);
 
 	mono_handle_exception (&ctx, exc);
 
@@ -487,27 +487,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		return TRUE;
 	} else if (*lmf) {
-		if (((gsize)(*lmf)->previous_lmf) & 2) {
-			MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
-
-			if (ext->debugger_invoke) {
-				/*
-				 * This LMF entry is created by the soft debug code to mark transitions to
-				 * managed code done during invokes.
-				 */
-				frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
-				memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
-			} else if (ext->interp_exit) {
-				frame->type = FRAME_TYPE_INTERP_TO_MANAGED;
-				frame->interp_exit_data = ext->interp_exit_data;
-			} else {
-				g_assert_not_reached ();
-			}
-
-			*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
-
-			return TRUE;
-		}
+		g_assert ((((guint64)(*lmf)->previous_lmf) & 2) == 0);
 
 		frame->type = FRAME_TYPE_MANAGED_TO_NATIVE;
 
@@ -614,4 +594,10 @@ void
 mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 {
 	MONO_CONTEXT_SET_IP (ctx,func);
+}
+
+void
+mono_arch_undo_ip_adjustment (MonoContext *ctx)
+{
+	ctx->pc++;
 }

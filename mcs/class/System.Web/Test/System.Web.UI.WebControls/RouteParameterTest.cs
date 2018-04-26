@@ -31,7 +31,6 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using NUnit.Framework;
-using MonoTests.Common;
 using MonoTests.System.Web;
 
 namespace MonoTests.System.Web.UI.WebControls
@@ -60,7 +59,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RouteParameter rp;
 			RouteParameter original;
 
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				rp = new FakeRouteParameter ((RouteParameter) null);
 			}, "#A1");
 
@@ -137,7 +136,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			Assert.IsNull (rp.DoEvaluate (null, new Control ()), "#A1-1");
 			Assert.IsNull (rp.DoEvaluate (ctx, null), "#A1-2");
-			AssertExtensions.Throws <NullReferenceException> (() => {
+			Assert.Throws <NullReferenceException> (() => {
 				rp.DoEvaluate (ctx, new Control ());
 			}, "#A1-2");
 		}

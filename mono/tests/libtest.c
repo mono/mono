@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <time.h>
 #include <math.h>
+#include <setjmp.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -278,6 +279,25 @@ mono_return_nested_float (void)
 	f.fi.f3 = 3.0;
 	f.f4 = 4.0;
 	return f;
+}
+
+struct Scalar4 {
+	double val[4];
+};
+
+struct Rect {
+	int x;
+	int y;
+	int width;
+	int height;
+};
+
+LIBTEST_API char * STDCALL
+mono_return_struct_4_double (void *ptr, struct Rect rect, struct Scalar4 sc4, int a, int b, int c)
+{
+	char *buffer = (char *) malloc (1024 * sizeof (char));
+	sprintf (buffer, "sc4 = {%.1f, %.1f, %.1f, %.1f }, a=%x, b=%x, c=%x\n", (float) sc4.val [0], (float) sc4.val [1], (float) sc4.val [2], (float) sc4.val [3], a, b, c);
+	return buffer;
 }
 
 LIBTEST_API int STDCALL  
@@ -1305,10 +1325,10 @@ mono_test_marshal_stringbuilder_array (char **array)
 LIBTEST_API int STDCALL 
 mono_test_marshal_unicode_string_array (gunichar2 **array, char **array2)
 {
-	GError *error = NULL;
+	GError *gerror = NULL;
 	char *s;
 	
-	s = g_utf16_to_utf8 (array [0], -1, NULL, NULL, &error);
+	s = g_utf16_to_utf8 (array [0], -1, NULL, NULL, &gerror);
 	if (strcmp (s, "ABC")) {
 		g_free (s);
 		return 1;
@@ -1316,7 +1336,7 @@ mono_test_marshal_unicode_string_array (gunichar2 **array, char **array2)
 	else
 		g_free (s);
 
-	s = g_utf16_to_utf8 (array [1], -1, NULL, NULL, &error);
+	s = g_utf16_to_utf8 (array [1], -1, NULL, NULL, &gerror);
 	if (strcmp (s, "DEF")) {
 		g_free (s);
 		return 2;
@@ -1769,10 +1789,10 @@ mono_test_asany (void *ptr, int what)
 			return 1;
 	}
 	case 4: {
-		GError *error = NULL;
+		GError *gerror = NULL;
 		char *s;
 
-		s = g_utf16_to_utf8 ((const gunichar2 *)ptr, -1, NULL, NULL, &error);
+		s = g_utf16_to_utf8 ((const gunichar2 *)ptr, -1, NULL, NULL, &gerror);
 
 		if (!s)
 			return 1;
@@ -3640,6 +3660,8 @@ mono_test_marshal_lookup_symbol (const char *symbol_name)
 	return lookup_mono_symbol (symbol_name);
 }
 
+
+// FIXME use runtime headers
 #define MONO_BEGIN_EFRAME { void *__dummy; void *__region_cookie = mono_threads_enter_gc_unsafe_region ? mono_threads_enter_gc_unsafe_region (&__dummy) : NULL;
 #define MONO_END_EFRAME if (mono_threads_exit_gc_unsafe_region) mono_threads_exit_gc_unsafe_region (__region_cookie, &__dummy); }
 
@@ -3655,21 +3677,27 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 {
 	int ret = 0;
 
+	// FIXME use runtime headers
 	gpointer (*mono_method_get_unmanaged_thunk)(gpointer)
 		= (gpointer (*)(gpointer))lookup_mono_symbol ("mono_method_get_unmanaged_thunk");
 
+	// FIXME use runtime headers
 	gpointer (*mono_string_new_wrapper)(const char *)
 		= (gpointer (*)(const char *))lookup_mono_symbol ("mono_string_new_wrapper");
 
+	// FIXME use runtime headers
 	char *(*mono_string_to_utf8)(gpointer)
 		= (char *(*)(gpointer))lookup_mono_symbol ("mono_string_to_utf8");
 
+	// FIXME use runtime headers
 	gpointer (*mono_object_unbox)(gpointer)
 		= (gpointer (*)(gpointer))lookup_mono_symbol ("mono_object_unbox");
 
+	// FIXME use runtime headers
 	gpointer (*mono_threads_enter_gc_unsafe_region) (gpointer)
 		= (gpointer (*)(gpointer))lookup_mono_symbol ("mono_threads_enter_gc_unsafe_region");
 
+	// FIXME use runtime headers
 	void (*mono_threads_exit_gc_unsafe_region) (gpointer, gpointer)
 		= (void (*)(gpointer, gpointer))lookup_mono_symbol ("mono_threads_exit_gc_unsafe_region");
 
@@ -5493,6 +5521,38 @@ mono_test_marshal_thread_attach (SimpleDelegate del)
 	pthread_t t;
 
 	res = pthread_create (&t, NULL, (gpointer (*)(gpointer))call_managed, del);
+	g_assert (res == 0);
+	pthread_join (t, NULL);
+
+	return call_managed_res;
+#endif
+}
+
+typedef struct {
+	char arr [4 * 1024];
+} LargeStruct;
+
+typedef int (STDCALL *LargeStructDelegate) (LargeStruct *s);
+
+static void
+call_managed_large_vt (gpointer arg)
+{
+	LargeStructDelegate del = (LargeStructDelegate)arg;
+	LargeStruct s;
+
+	call_managed_res = del (&s);
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_thread_attach_large_vt (SimpleDelegate del)
+{
+#ifdef WIN32
+	return 43;
+#else
+	int res;
+	pthread_t t;
+
+	res = pthread_create (&t, NULL, (gpointer (*)(gpointer))call_managed_large_vt, del);
 	g_assert (res == 0);
 	pthread_join (t, NULL);
 
@@ -7505,3 +7565,33 @@ mono_test_native_to_managed_exception_rethrow (NativeToManagedExceptionRethrowFu
 	pthread_join (t, NULL);
 }
 #endif
+
+typedef void (*VoidVoidCallback) (void);
+typedef void (*MonoFtnPtrEHCallback) (guint32 gchandle);
+
+static jmp_buf test_jmp_buf;
+static guint32 test_gchandle;
+
+static void
+mono_test_longjmp_callback (guint32 gchandle)
+{
+	test_gchandle = gchandle;
+	longjmp (test_jmp_buf, 1);
+}
+
+LIBTEST_API void STDCALL
+mono_test_setjmp_and_call (VoidVoidCallback managedCallback, intptr_t *out_handle)
+{
+	void (*mono_install_ftnptr_eh_callback) (MonoFtnPtrEHCallback) =
+		(void (*) (MonoFtnPtrEHCallback)) (lookup_mono_symbol ("mono_install_ftnptr_eh_callback"));
+	if (setjmp (test_jmp_buf) == 0) {
+		*out_handle = 0;
+		mono_install_ftnptr_eh_callback (mono_test_longjmp_callback);
+		managedCallback ();
+		*out_handle = 0; /* Do not expect to return here */
+	} else {
+		mono_install_ftnptr_eh_callback (NULL);
+		*out_handle = test_gchandle;
+	}
+}
+

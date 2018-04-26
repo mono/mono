@@ -36,7 +36,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	guint8 *code, *start;
 	int reg;
 
-	start = code = mono_global_codeman_reserve (36);
+	start = code = mono_domain_code_reserve (mono_domain_get (), 36);
 
 	/* This executes in the context of the caller, hence o0 */
 	sparc_add_imm (code, 0, sparc_o0, sizeof (MonoObject), sparc_o0);
@@ -52,6 +52,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	g_assert ((code - start) <= 36);
 
 	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_UNBOX_TRAMPOLINE, m));
 
 	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, NULL), NULL);
 
@@ -71,8 +72,6 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
 {
 	g_assert_not_reached ();
 }
-
-#define ALIGN_TO(val,align) (((val) + ((align) - 1)) & ~((align) - 1))
 
 guchar*
 mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInfo **info, gboolean aot)
@@ -172,7 +171,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	sparc_sti_imm (code, sparc_o0, sparc_sp, MONO_SPARC_STACK_BIAS + 304);
 
 	/* Check for thread interruption */
-	sparc_set (code, (guint8*)mono_interruption_checkpoint_from_trampoline, sparc_o7);
+	sparc_set (code, (guint8*)mono_interruption_checkpoint_from_trampoline_deprecated, sparc_o7);
 	sparc_jmpl (code, sparc_o7, sparc_g0, sparc_o7);
 	sparc_nop (code);
 
@@ -217,6 +216,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	g_assert ((code - buf) <= 512);
 
 	mono_arch_flush_icache (buf, code - buf);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
 
 	return buf;
 }
@@ -246,9 +246,10 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	g_assert ((code - buf) <= TRAMPOLINE_SIZE);
 
 	if (code_len)
-		*code_len = (code - buf) * 4;
+		*code_len = (code - buf);
 
-	mono_arch_flush_icache ((guint8*)buf, (code - buf) * 4);
+	mono_arch_flush_icache ((guint8*)buf, (code - buf));
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_SPECIFIC_TRAMPOLINE, mono_get_generic_trampoline_simple_name (tramp_type)));
 
 	return buf;
 }	

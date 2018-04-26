@@ -24,12 +24,12 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("System.ValueTuple.dll")]
-[assembly: AssemblyDescription ("System.ValueTuple.dll")]
-[assembly: AssemblyDefaultAlias ("System.ValueTuple.dll")]
-[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyTitle ("System.ValueTuple")]
+[assembly: AssemblyDescription ("System.ValueTuple")]
+[assembly: AssemblyDefaultAlias ("System.ValueTuple")]
+[assembly: AssemblyCompany ("Mono development team")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
-[assembly: AssemblyCopyright ("Copyright (c) 2016 Xamarin Inc. (http://www.xamarin.com)")]
+[assembly: AssemblyCopyright ("(c) Various Mono authors")]
 [assembly: AssemblyVersion ("4.0.3.0")]
 [assembly: AssemblyInformationalVersion ("4.0.0.0")]
 [assembly: AssemblyFileVersion ("4.0.0.0")]

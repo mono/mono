@@ -14,6 +14,7 @@ RUNTIME = MONO_PATH=$(CLASS) $(abs_top_builddir)/runtime/mono-wrapper --debug
 TOOLS_RUNTIME = MONO_PATH=$(TOOLS_CLASS) $(abs_top_builddir)/runtime/mono-wrapper --debug
 MCS = $(TOOLS_RUNTIME) $(CSC) -nologo -noconfig -lib:$(CLASS) -r:System.dll -r:System.Core.dll -r:System.Xml.dll -r:Microsoft.CSharp.dll
 ILASM = $(TOOLS_RUNTIME) $(TOOLS_CLASS)/ilasm.exe
+XUNIT = $(RUNTIME) $(abs_top_builddir)/external/xunit-binaries/xunit.console.exe
 
 include versions.mk
 include profiler-stress.mk

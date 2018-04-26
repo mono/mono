@@ -40,6 +40,7 @@
 	<dllmap dll="gdiplus.dll" target="@libgdiplus_install_loc@"  os="!windows"/>
 	<dllmap dll="gdi32" target="@libgdiplus_install_loc@" os="!windows"/>
 	<dllmap dll="gdi32.dll" target="@libgdiplus_install_loc@" os="!windows"/>
+	<dllmap dll="System.Native" target="__Internal"/>
 	<!-- architecture-specific dll mapping for MonoPosixHelper in Wine Mono -->
 	<dllmap dll="MonoPosixHelper" target="c:\windows\mono\mono-2.0\bin\MonoPosixHelper-x86.dll" os="windows" cpu="x86"/>
 	<dllmap dll="MonoPosixHelper" target="c:\windows\mono\mono-2.0\bin\MonoPosixHelper-x86_64.dll" os="windows" cpu="x86-64"/>

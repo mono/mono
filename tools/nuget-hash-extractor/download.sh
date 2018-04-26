@@ -16,36 +16,49 @@ mkdir nugets
 ##
 
 #System.Runtime.InteropServices.RuntimeInformation
-wget https://www.nuget.org/api/v2/package/System.Runtime.InteropServices.RuntimeInformation/4.3.0 -O nugets/system.runtime.interopservices.runtimeinformation.4.3.0.nupkg
-wget https://www.nuget.org/api/v2/package/System.Runtime.InteropServices.RuntimeInformation/4.0.0 -O nugets/system.runtime.interopservices.runtimeinformation.4.0.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Runtime.InteropServices.RuntimeInformation/4.3.0 -o nugets/system.runtime.interopservices.runtimeinformation.4.3.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Runtime.InteropServices.RuntimeInformation/4.0.0 -o nugets/system.runtime.interopservices.runtimeinformation.4.0.0.nupkg
 
 #System.Globalization.Extensions
-wget https://www.nuget.org/api/v2/package/System.Globalization.Extensions/4.3.0 -O nugets/system.globalization.extensions.4.3.0.nupkg
-wget https://www.nuget.org/api/v2/package/System.Globalization.Extensions/4.0.1 -O nugets/system.globalization.extensions.4.0.1.nupkg
-wget https://www.nuget.org/api/v2/package/System.Globalization.Extensions/4.0.0 -O nugets/system.globalization.extensions.4.0.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Globalization.Extensions/4.3.0 -o nugets/system.globalization.extensions.4.3.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Globalization.Extensions/4.0.1 -o nugets/system.globalization.extensions.4.0.1.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Globalization.Extensions/4.0.0 -o nugets/system.globalization.extensions.4.0.0.nupkg
 
 #System.IO.Compression
-wget https://www.nuget.org/api/v2/package/System.IO.Compression/4.3.0 -O nugets/system.io.compression.4.3.0.nupkg
-wget https://www.nuget.org/api/v2/package/System.IO.Compression/4.1.0 -O nugets/system.io.compression.4.1.0.nupkg
-wget https://www.nuget.org/api/v2/package/System.IO.Compression/4.0.0 -O nugets/system.io.compression.4.0.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.IO.Compression/4.3.0 -o nugets/system.io.compression.4.3.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.IO.Compression/4.1.0 -o nugets/system.io.compression.4.1.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.IO.Compression/4.0.0 -o nugets/system.io.compression.4.0.0.nupkg
 
 #System.Net.Http
-wget https://www.nuget.org/api/v2/package/System.Net.Http/4.3.2 -O nugets/system.net.http.4.3.2.nupkg
-wget https://www.nuget.org/api/v2/package/System.Net.Http/4.3.1 -O nugets/system.net.http.4.3.1.nupkg
-wget https://www.nuget.org/api/v2/package/System.Net.Http/4.3.0 -O nugets/system.net.http.4.3.0.nupkg
-wget https://www.nuget.org/api/v2/package/System.Net.Http/4.1.1 -O nugets/system.net.http.4.1.1.nupkg
-wget https://www.nuget.org/api/v2/package/System.Net.Http/4.1.0 -O nugets/system.net.http.4.1.0.nupkg
-wget https://www.nuget.org/api/v2/package/System.Net.Http/4.0.0 -O nugets/system.net.http.4.0.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.3.3 -o nugets/system.net.http.4.3.3.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.3.2 -o nugets/system.net.http.4.3.2.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.3.1 -o nugets/system.net.http.4.3.1.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.3.0 -o nugets/system.net.http.4.3.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.1.1 -o nugets/system.net.http.4.1.1.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.1.0 -o nugets/system.net.http.4.1.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.0.0 -o nugets/system.net.http.4.0.0.nupkg
 
 #System.Text.Encoding.CodePages
-wget https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.4.0 -O nugets/system.text.encoding.codepages.4.4.0.nupkg
-wget https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.3.0 -O nugets/system.text.encoding.codepages.4.3.0.nupkg
-wget https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.0.1 -O nugets/system.text.encoding.codepages.4.0.1.nupkg
-wget https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.0.0 -O nugets/system.text.encoding.codepages.4.0.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.4.0 -o nugets/system.text.encoding.codepages.4.4.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.3.0 -o nugets/system.text.encoding.codepages.4.3.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.0.1 -o nugets/system.text.encoding.codepages.4.0.1.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.0.0 -o nugets/system.text.encoding.codepages.4.0.0.nupkg
 
 #System.Threading.Overlapped
-wget https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.3.0 -O nugets/system.threading.overlapped.4.3.0.nupkg
-wget https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.0.1 -O nugets/system.threading.overlapped.4.0.1.nupkg
-wget https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.0.0 -O nugets/system.threading.overlapped.4.0.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.3.0 -o nugets/system.threading.overlapped.4.3.0.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.0.1 -o nugets/system.threading.overlapped.4.0.1.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.0.0 -o nugets/system.threading.overlapped.4.0.0.nupkg
+
+# Assemblies from Microsoft.NET.Build.Extensions are bundled with msbuild and they contain net4x assemblies, some of which
+# are incompatible with mono
+
+MS_EXTN_VERSIONS="2.0.0-preview3-20170622-1" # https://github.com/dotnet/cli/blob/7c928a9f18f81001e586e5bf0411f9bfa92e30d4/build/DependencyVersions.props
+MS_EXTN_VERSIONS="$MS_EXTN_VERSIONS 15.5.0-preview-20171027-2" # https://github.com/dotnet/cli/blob/ed916bb13e798a470855fb4f60acd3cabb2765fc/build/DependencyVersions.props
+MS_EXTN_VERSIONS="$MS_EXTN_VERSIONS 2.1.0-preview1-62414-02" # https://github.com/dotnet/cli/blob/501e11d928c21608999c934f0a7078570b688c6c/build/DependencyVersions.props
+MS_EXTN_VERSIONS="$MS_EXTN_VERSIONS 2.1.100-preview-62617-01" # https://github.com/dotnet/cli/blob/b9e74c65201ef39c74b6d75cedbb605a88cd26ec/build/DependencyVersions.props
+
+for ver in $MS_EXTN_VERSIONS; do
+	curl -L https://dotnet.myget.org/F/dotnet-core/api/v2/package/Microsoft.NET.Build.Extensions/${ver} -o nugets/microsoft.net.build.extensions.${ver}.nupkg
+done
 
 touch .download_stamp_file
