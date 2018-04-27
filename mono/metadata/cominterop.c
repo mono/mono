@@ -43,7 +43,6 @@
 #include <string.h>
 #include <errno.h>
 #include <mono/utils/w32api.h>
-#include "mono/metadata/exception-internals.h"
 
 #if defined(HOST_WIN32)
 #include <oleauto.h>
@@ -1686,7 +1685,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetCCW (MonoObject* object, Mon
 	klass = mono_type_get_class (type->type);
 	g_assert (klass);
 	if (!mono_class_init (klass)) {
-		mono_set_pending_exception_class_failure (klass);
+		mono_error_set_for_class_failure (error, klass);
+		mono_error_set_pending_exception (error);
 		return NULL;
 	}
 
@@ -1856,7 +1856,8 @@ ves_icall_System_ComObject_GetInterfaceInternal (MonoComObject* obj, MonoReflect
 	ERROR_DECL (error);
 	MonoClass *klass = mono_type_get_class (type->type);
 	if (!mono_class_init (klass)) {
-		mono_set_pending_exception_class_failure (klass);
+		mono_error_set_for_class_failure (error, klass);
+		mono_error_set_pending_exception (error);
 		return NULL;
 	}
 

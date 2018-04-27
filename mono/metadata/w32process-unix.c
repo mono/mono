@@ -72,7 +72,6 @@
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-io-portability.h>
 #include <mono/utils/w32api.h>
-#include "mono/metadata/exception-internals.h"
 
 #ifndef MAXPATHLEN
 #define MAXPATHLEN 242
@@ -2330,7 +2329,8 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 
 	pidarray = mono_process_list (&count);
 	if (!pidarray) {
-		mono_set_pending_exception_not_supported ("This system does not support EnumProcesses");
+		mono_error_set_not_supported (error, "This system does not support EnumProcesses");
+		mono_error_set_pending_exception (error);
 		return NULL;
 	}
 	procs = mono_array_new_checked (mono_domain_get (), mono_get_int32_class (), count, error);

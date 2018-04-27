@@ -196,6 +196,9 @@ static void self_suspend_internal (void);
 static gboolean
 mono_thread_set_interruption_requested_flags (MonoInternalThread *thread, gboolean sync);
 
+MONO_COLD static void
+mono_set_pending_exception_handle (MonoExceptionHandle exc);
+
 static MonoException*
 mono_thread_execute_interruption_ptr (void);
 
@@ -1750,7 +1753,7 @@ mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, g
 	} else if (this_obj->flags & MONO_THREAD_FLAG_NAME_SET) {
 		UNLOCK_THREAD (this_obj);
 		
-		mono_error_set_invalid_operation (error, "Thread.Name can only be set once.");
+		mono_error_set_invalid_operation (error, "%s", "Thread.Name can only be set once.");
 		return;
 	}
 	if (this_obj->name) {
@@ -2442,8 +2445,11 @@ mono_thread_current_check_pending_interrupt (void)
 	
 	UNLOCK_THREAD (thread);
 
-	if (throw_)
-		mono_set_pending_exception_thread_interrupted ();
+	if (throw_) {
+		ERROR_DECL (error);
+		mono_error_set_thread_interrupted (error);
+		mono_error_set_pending_exception (error);
+	}
 	return throw_;
 }
 
@@ -4959,7 +4965,7 @@ mono_runtime_set_pending_exception (MonoException *exc, mono_bool overwrite)
  *   Set the pending exception of the current thread to EXC.
  * The exception will be thrown when execution returns to managed code.
  */
-MONO_COLD void
+MONO_COLD static void
 mono_set_pending_exception_handle (MonoExceptionHandle exc)
 {
 	MonoThread *thread = mono_thread_current ();

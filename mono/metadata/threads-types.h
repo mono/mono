@@ -330,7 +330,4 @@ mono_threads_enter_gc_safe_region_unbalanced_internal (MonoStackData *stackdata)
 void
 mono_threads_exit_gc_safe_region_unbalanced_internal (gpointer cookie, MonoStackData *stackdata);
 
-MONO_COLD void
-mono_set_pending_exception_handle (MonoExceptionHandle exc);
-
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

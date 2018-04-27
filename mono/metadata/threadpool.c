@@ -472,7 +472,9 @@ mono_threadpool_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObj
 	mono_monitor_enter ((MonoObject*) ares);
 
 	if (ares->endinvoke_called) {
-		mono_error_set_invalid_operation(error, "Delegate EndInvoke method called more than once");
+		ERROR_DECL (error);
+		mono_error_set_invalid_operation(error, "%s", "Delegate EndInvoke method called more than once");
+		mono_error_set_pending_exception (error);
 		mono_monitor_exit ((MonoObject*) ares);
 		return NULL;
 	}
