@@ -355,21 +355,21 @@ MonoArray *
 ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 {
 	ERROR_DECL (error);
-	MonoArray *procs;
+	MonoArray *procs = NULL;
 	gboolean ret;
 	DWORD needed;
 	int count;
-	DWORD *pids;
+	DWORD *pids = NULL;
 
 	count = 512;
 	do {
 		pids = g_new0 (DWORD, count);
 		ret = mono_process_win_enum_processes (pids, count * sizeof (guint32), &needed);
 		if (ret == FALSE) {
-			g_free (pids);
+			ERROR_DECL (error);
 			mono_error_set_not_supported (error, "This system does not support EnumProcesses");
 			mono_error_set_pending_exception (error);
-			return NULL;
+			goto exit;
 		}
 		if (needed < (count * sizeof (guint32)))
 			break;
@@ -386,9 +386,8 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 	}
 
 	memcpy (mono_array_addr (procs, guint32, 0), pids, needed);
+exit:
 	g_free (pids);
-	pids = NULL;
-
 	return procs;
 }
 
