@@ -42,10 +42,10 @@
 
 #include <stddef.h>
 extern void *memset(void *, int, size_t);
-void bzero (void *to, size_t count) { memset (to, 0, count); }
+
 
 #endif
-
+void bzero(void *to, size_t count) { memset(to, 0, count); }
 #if LLVM_API_VERSION < 4
 #error "The version of the mono llvm repository is too old."
 #endif
@@ -3786,7 +3786,7 @@ mono_llvm_emit_match_exception_call (EmitContext *ctx, LLVMBuilderRef builder, g
 	ctx->builder = builder;
 
 	const int num_args = 5;
-	LLVMValueRef args [num_args];
+	LLVMValueRef args [5];
 	args [0] = convert (ctx, get_aotconst (ctx, MONO_PATCH_INFO_AOT_JIT_INFO, GINT_TO_POINTER (ctx->cfg->method_index)), IntPtrType ());
 	args [1] = LLVMConstInt (LLVMInt32Type (), region_start, 0);
 	args [2] = LLVMConstInt (LLVMInt32Type (), region_end, 0);

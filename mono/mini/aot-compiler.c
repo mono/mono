@@ -12765,7 +12765,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 			if (strcmp (acfg->aot_opts.temp_path, "") != 0) {
 				temp_path = g_strdup (acfg->aot_opts.temp_path);
 			} else {
-				temp_path = mkdtemp(g_strdup ("mono_aot_XXXXXX"));
+				temp_path = g_mkdtemp(g_strdup ("mono_aot_XXXXXX"));
 				g_assertf (temp_path, "mkdtemp failed, error = (%d) %s", errno, g_strerror (errno));
 			}
 				

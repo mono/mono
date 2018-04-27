@@ -689,3 +689,7 @@
 #define MONO_CORLIB_VERSION #MONO_CORLIB_VERSION#
 
 #endif
+
+#define ENABLE_LLVM 1
+#define ENABLE_LLVM_RUNTIME 1
+#define LLVM_VERSION "3.9.1-mono"

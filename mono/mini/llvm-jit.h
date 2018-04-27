@@ -16,7 +16,7 @@
 #include "llvm-c/Core.h"
 #include "llvm-c/ExecutionEngine.h"
 
-#include <unwind.h>
+//#include <unwind.h>
 
 G_BEGIN_DECLS
 

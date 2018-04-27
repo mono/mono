@@ -68,10 +68,10 @@ static std::vector<T> singletonSet(T t) {
 
 #include <stddef.h>
 extern void *memset(void *, int, size_t);
-void bzero (void *to, size_t count) { memset (to, 0, count); }
+
 
 #endif
-
+void bzero(void *to, size_t count) { memset(to, 0, count); }
 static AllocCodeMemoryCb *alloc_code_mem_cb;
 
 class MonoJitMemoryManager : public RTDyldMemoryManager
