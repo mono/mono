@@ -71,4 +71,49 @@ mono_exception_new_thread_abort (MonoError *error);
 MonoExceptionHandle
 mono_exception_new_thread_state (const char *msg, MonoError *error);
 
+void
+mono_set_pending_exception_class_failure (MonoClass *klass);
+
+void
+mono_set_pending_exception_remoting (const char *message);
+
+void
+mono_set_pending_exception_appdomain_unloaded (void);
+
+void
+mono_set_pending_exception_argument (const char *name, const char *message);
+
+void
+mono_set_pending_exception_argument_null (const char *name);
+
+void
+mono_set_pending_exception_argument_out_of_range (const char *name);
+
+void
+mono_set_pending_exception_divide_by_zero (void);
+
+void
+mono_set_pending_exception_execution_engine (const char *message);
+
+void
+mono_set_pending_exception_index_out_of_range (void);
+
+void
+mono_set_pending_exception_invalid_operation (const char *message);
+
+void
+mono_set_pending_exception_not_supported (const char *message);
+
+void
+mono_set_pending_exception_overflow (void);
+
+void
+mono_set_pending_exception_synchronization_lock (const char *message);
+
+void
+mono_set_pending_exception_thread_interrupted (void);
+
+void
+mono_set_pending_exception_not_implemented (const char *message);
+
 #endif

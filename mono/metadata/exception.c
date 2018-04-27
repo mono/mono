@@ -290,7 +290,7 @@ mono_exception_from_name_two_strings_checked (MonoImage *image, const char *name
  * \returns the initialized exception instance.
  */
 static MonoExceptionHandle
-mono_exception_new_by_name_msg (MonoImage *image, const char *name_space,
+mono_exception_new_by_name_message (MonoImage *image, const char *name_space,
 			      const char *name, const char *msg, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ()
@@ -436,6 +436,7 @@ mono_exception_new_thread_interrupted (MonoError *error)
  * mono_get_exception_thread_interrupted:
  * \returns a new instance of the \c System.Threading.ThreadInterruptedException
  */
+MONO_RT_EXTERNAL_ONLY
 MonoException *
 mono_get_exception_thread_interrupted ()
 {
@@ -570,6 +571,7 @@ mono_get_exception_type_load (MonoString *class_name, char *assembly_name)
  * \param msg the message to pass to the user
  * \returns a new instance of the \c System.NotImplementedException
  */
+MONO_RT_EXTERNAL_ONLY
 MonoException *
 mono_get_exception_not_implemented (const char *msg)
 {
@@ -683,7 +685,7 @@ MonoExceptionHandle
 mono_exception_new_argument (const char *arg, const char *msg, MonoError *error)
 {
 	MonoExceptionHandle ex;
-	ex = mono_exception_new_by_name_msg (mono_get_corlib (), "System", "ArgumentException", msg, error);
+	ex = mono_exception_new_by_name_message (mono_get_corlib (), "System", "ArgumentException", msg, error);
 
 	if (arg && !MONO_HANDLE_IS_NULL (ex)) {
 		MonoArgumentExceptionHandle argex = (MonoArgumentExceptionHandle)ex;
@@ -733,7 +735,7 @@ mono_get_exception_thread_state (const char *msg)
 MonoExceptionHandle
 mono_exception_new_thread_state (const char *msg, MonoError *error)
 {
-	return mono_exception_new_by_name_msg (
+	return mono_exception_new_by_name_message (
 		mono_get_corlib (), "System.Threading", "ThreadStateException", msg, error);
 }
 
@@ -851,6 +853,7 @@ mono_get_exception_type_initialization_checked (const gchar *type_name, MonoExce
  * \param inner the inner exception.
  * \returns a new instance of the \c System.SynchronizationLockException
  */
+MONO_RT_EXTERNAL_ONLY
 MonoException *
 mono_get_exception_synchronization_lock (const char *msg)
 {
@@ -1436,4 +1439,116 @@ mono_error_set_simple_file_not_found (MonoError *error, const char *file_name, g
 		mono_error_set_file_not_found (error, file_name, "Cannot resolve dependency to assembly because it has not been preloaded. When using the ReflectionOnly APIs, dependent assemblies must be pre-loaded or loaded on demand through the ReflectionOnlyAssemblyResolve event.");
 	else
 		mono_error_set_file_not_found (error, file_name, "Could not load file or assembly '%s' or one of its dependencies.", file_name);
+}
+
+static void
+mono_set_pending_exception_new (const char *name_space, const char *name)
+{
+	ERROR_DECL (error);
+	HANDLE_FUNCTION_ENTER ();
+	mono_set_pending_exception_handle (
+		mono_exception_new_by_name (mono_get_corlib (), name_space, name, error));
+	mono_error_assert_ok (error);
+	HANDLE_FUNCTION_RETURN ();
+}
+
+static void
+mono_set_pending_exception_new_message (const char *name_space, const char *name, const char *message)
+{
+	ERROR_DECL (error);
+	HANDLE_FUNCTION_ENTER ();
+	mono_set_pending_exception_handle (
+		mono_exception_new_by_name_message (mono_get_corlib (), name_space, name, message, error));
+	mono_error_assert_ok (error);
+	HANDLE_FUNCTION_RETURN ();
+}
+
+void
+mono_set_pending_exception_class_failure (MonoClass *klass)
+{
+	mono_set_pending_exception (mono_class_get_exception_for_failure (klass)); //FIXMEcoop
+}
+
+void
+mono_set_pending_exception_remoting (const char *message)
+{
+	mono_set_pending_exception_new_message ("System.Runtime.Remoting", "RemotingException", message);
+}
+
+void
+mono_set_pending_exception_appdomain_unloaded (void)
+{
+	mono_set_pending_exception_new ("System", "AppDomainUnloadedException");
+}
+
+void
+mono_set_pending_exception_argument (const char *name, const char *message)
+{
+	mono_set_pending_exception (mono_get_exception_argument (name, message)); //FIXMEcoop
+}
+
+void
+mono_set_pending_exception_argument_null (const char *name)
+{
+	mono_set_pending_exception (mono_get_exception_argument_null (name)); //FIXMEcoop
+}
+
+void
+mono_set_pending_exception_argument_out_of_range (const char *name)
+{
+	mono_set_pending_exception (mono_get_exception_argument_out_of_range (name)); //FIXMEcoop
+}
+
+void
+mono_set_pending_exception_divide_by_zero (void)
+{
+	mono_set_pending_exception_new ("System", "DivideByZeroException");
+}
+
+void
+mono_set_pending_exception_execution_engine (const char *message)
+{
+	mono_set_pending_exception_new_message ("System", "ExecutionEngineException", message);
+}
+
+void
+mono_set_pending_exception_index_out_of_range (void)
+{
+	mono_set_pending_exception_new ("System", "IndexOutOfRangeException");
+}
+
+void
+mono_set_pending_exception_invalid_operation (const char *message)
+{
+	mono_set_pending_exception_new_message ("System", "InvalidOperationException", message);
+}
+
+void
+mono_set_pending_exception_not_supported (const char *message)
+{
+	mono_set_pending_exception_new_message ("System", "NotSupportedException", message);
+}
+
+void
+mono_set_pending_exception_overflow (void)
+{
+	mono_set_pending_exception_new ("System", "OverflowException");
+}
+
+void
+mono_set_pending_exception_synchronization_lock (const char *message)
+{
+	mono_set_pending_exception_new_message ("System.Threading", "SynchronizationLockException", message);
+}
+
+void
+mono_set_pending_exception_thread_interrupted (void)
+{
+	mono_set_pending_exception_new ("System.Threading", "ThreadInterruptedException");
+}
+
+void
+mono_set_pending_exception_not_implemented (const char *message)
+{
+	mono_set_pending_exception_new_message ("System", "NotImplementedException", message);
 }

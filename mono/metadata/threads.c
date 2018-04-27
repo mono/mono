@@ -196,9 +196,6 @@ static void self_suspend_internal (void);
 static gboolean
 mono_thread_set_interruption_requested_flags (MonoInternalThread *thread, gboolean sync);
 
-MONO_COLD static void
-mono_set_pending_exception_handle (MonoExceptionHandle exc);
-
 static MonoException*
 mono_thread_execute_interruption_ptr (void);
 
@@ -2446,7 +2443,7 @@ mono_thread_current_check_pending_interrupt (void)
 	UNLOCK_THREAD (thread);
 
 	if (throw_)
-		mono_set_pending_exception (mono_get_exception_thread_interrupted ());
+		mono_set_pending_exception_thread_interrupted ();
 	return throw_;
 }
 
@@ -4962,7 +4959,7 @@ mono_runtime_set_pending_exception (MonoException *exc, mono_bool overwrite)
  *   Set the pending exception of the current thread to EXC.
  * The exception will be thrown when execution returns to managed code.
  */
-MONO_COLD static void
+MONO_COLD void
 mono_set_pending_exception_handle (MonoExceptionHandle exc)
 {
 	MonoThread *thread = mono_thread_current ();

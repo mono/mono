@@ -156,7 +156,7 @@ mono_llmult_ovf_un (guint64 a, guint64 b)
 	return res;
 
  raise_exception:
-	mono_set_pending_exception (mono_get_exception_overflow ());
+	mono_set_pending_exception_overflow ();
 	return 0;
 }
 
@@ -265,7 +265,7 @@ mono_llmult_ovf (gint64 a, gint64 b)
 		return res;
 
  raise_exception:
-	mono_set_pending_exception (mono_get_exception_overflow ());
+	mono_set_pending_exception_overflow ();
 	return 0;
 }
 
@@ -274,11 +274,11 @@ mono_lldiv (gint64 a, gint64 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		mono_set_pending_exception_divide_by_zero ();
 		return 0;
 	}
 	else if (b == -1 && a == (-9223372036854775807LL - 1LL)) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		mono_set_pending_exception_overflow ();
 		return 0;
 	}
 #endif
@@ -290,11 +290,11 @@ mono_llrem (gint64 a, gint64 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		mono_set_pending_exception_divide_by_zero ();
 		return 0;
 	}
 	else if (b == -1 && a == (-9223372036854775807LL - 1LL)) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		mono_set_pending_exception_overflow ();
 		return 0;
 	}
 #endif
@@ -306,7 +306,7 @@ mono_lldiv_un (guint64 a, guint64 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		mono_set_pending_exception_divide_by_zero ();
 		return 0;
 	}
 #endif
@@ -318,7 +318,7 @@ mono_llrem_un (guint64 a, guint64 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		mono_set_pending_exception_divide_by_zero ();
 		return 0;
 	}
 #endif
@@ -374,11 +374,11 @@ mono_idiv (gint32 a, gint32 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		mono_set_pending_exception_divide_by_zero ();
 		return 0;
 	}
 	else if (b == -1 && a == (0x80000000)) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		mono_set_pending_exception_overflow ();
 		return 0;
 	}
 #endif
@@ -390,7 +390,7 @@ mono_idiv_un (guint32 a, guint32 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		mono_set_pending_exception_divide_by_zero ();
 		return 0;
 	}
 #endif
@@ -402,11 +402,11 @@ mono_irem (gint32 a, gint32 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		mono_set_pending_exception_divide_by_zero ();
 		return 0;
 	}
 	else if (b == -1 && a == (0x80000000)) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		mono_set_pending_exception_overflow ();
 		return 0;
 	}
 #endif
@@ -418,7 +418,7 @@ mono_irem_un (guint32 a, guint32 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		mono_set_pending_exception_divide_by_zero ();
 		return 0;
 	}
 #endif
@@ -443,7 +443,7 @@ mono_imul_ovf (gint32 a, gint32 b)
 	res = (gint64)a * (gint64)b;
 
 	if ((res > 0x7fffffffL) || (res < -2147483648LL)) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		mono_set_pending_exception_overflow ();
 		return 0;
 	}
 
@@ -458,7 +458,7 @@ mono_imul_ovf_un (guint32 a, guint32 b)
 	res = (guint64)a * (guint64)b;
 
 	if (res >> 32) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		mono_set_pending_exception_overflow ();
 		return 0;
 	}
 
@@ -989,7 +989,7 @@ mono_fconv_ovf_i8 (double v)
 	res = (gint64)v;
 
 	if (isnan(v) || trunc (v) != res) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		mono_set_pending_exception_overflow ();
 		return 0;
 	}
 	return res;
@@ -1011,14 +1011,14 @@ mono_fconv_ovf_u8 (double v)
  */
 #if defined(__arm__) && defined(MONO_ARCH_SOFT_FLOAT_FALLBACK)
 	if (isnan (v) || !(v >= -0.5 && v <= ULLONG_MAX+0.5)) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		mono_set_pending_exception_overflow ();
 		return 0;
 	}
 	res = (guint64)v;
 #else
 	res = (guint64)v;
 	if (isnan(v) || trunc (v) != res) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		mono_set_pending_exception_overflow ();
 		return 0;
 	}
 #endif
@@ -1041,7 +1041,7 @@ mono_rconv_ovf_i8 (float v)
 	res = (gint64)v;
 
 	if (isnan(v) || trunc (v) != res) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		mono_set_pending_exception_overflow ();
 		return 0;
 	}
 	return res;
@@ -1054,7 +1054,7 @@ mono_rconv_ovf_u8 (float v)
 
 	res = (guint64)v;
 	if (isnan(v) || trunc (v) != res) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		mono_set_pending_exception_overflow ();
 		return 0;
 	}
 	return res;

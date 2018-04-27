@@ -33,6 +33,7 @@
 #include <mono/utils/atomic.h>
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-os-wait.h>
+#include "mono/metadata/exception-internals.h"
 
 /*
  * Pull the list of opcodes
@@ -643,7 +644,7 @@ mono_monitor_ensure_owned (LockWord lw, guint32 id)
 			return TRUE;
 	}
 
-	mono_set_pending_exception (mono_get_exception_synchronization_lock ("Object synchronization method was called from an unsynchronized block of code."));
+	mono_set_pending_exception_synchronization_lock ("Object synchronization method was called from an unsynchronized block of code.");
 	return FALSE;
 }
 
@@ -757,7 +758,7 @@ mono_monitor_try_enter_inflated (MonoObject *obj, guint32 ms, gboolean allow_int
 	LOCK_DEBUG (g_message("%s: (%d) Trying to lock object %p (%d ms)", __func__, id, obj, ms));
 
 	if (G_UNLIKELY (!obj)) {
-		mono_set_pending_exception (mono_get_exception_argument_null ("obj"));
+		mono_set_pending_exception_argument_null ("obj");
 		return FALSE;
 	}
 
@@ -1022,7 +1023,7 @@ mono_monitor_enter_internal (MonoObject *obj)
 	gint32 res;
 	gboolean allow_interruption = TRUE;
 	if (G_UNLIKELY (!obj)) {
-		mono_set_pending_exception (mono_get_exception_argument_null ("obj"));
+		mono_set_pending_exception_argument_null ("obj");
 		return FALSE;
 	}
 
@@ -1078,7 +1079,7 @@ gboolean
 mono_monitor_try_enter (MonoObject *obj, guint32 ms)
 {
 	if (G_UNLIKELY (!obj)) {
-		mono_set_pending_exception (mono_get_exception_argument_null ("obj"));
+		mono_set_pending_exception_argument_null ("obj");
 		return FALSE;
 	}
 	return mono_monitor_try_enter_internal (obj, ms, FALSE) == 1;
@@ -1095,7 +1096,7 @@ mono_monitor_exit (MonoObject *obj)
 	LOCK_DEBUG (g_message ("%s: (%d) Unlocking %p", __func__, mono_thread_info_get_small_id (), obj));
 
 	if (G_UNLIKELY (!obj)) {
-		mono_set_pending_exception (mono_get_exception_argument_null ("obj"));
+		mono_set_pending_exception_argument_null ("obj");
 		return;
 	}
 
@@ -1149,7 +1150,7 @@ ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject
 	gint32 res;
 	gboolean allow_interruption = TRUE;
 	if (G_UNLIKELY (!obj)) {
-		mono_set_pending_exception (mono_get_exception_argument_null ("obj"));
+		mono_set_pending_exception_argument_null ("obj");
 		return;
 	}
 	do {
@@ -1177,7 +1178,7 @@ void
 mono_monitor_enter_v4 (MonoObject *obj, char *lock_taken)
 {
 	if (*lock_taken == 1) {
-		mono_set_pending_exception (mono_get_exception_argument ("lockTaken", "lockTaken is already true"));
+		mono_set_pending_exception_argument ("lockTaken", "lockTaken is already true");
 		return;
 	}
 
@@ -1192,7 +1193,7 @@ void
 mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken)
 {
 	if (*lock_taken == 1) {
-		mono_set_pending_exception (mono_get_exception_argument ("lockTaken", "lockTaken is already true"));
+		mono_set_pending_exception_argument ("lockTaken", "lockTaken is already true");
 		return;
 	}
 
@@ -1357,7 +1358,7 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	
 	event = mono_w32event_create (FALSE, FALSE);
 	if (event == NULL) {
-		mono_set_pending_exception (mono_get_exception_synchronization_lock ("Failed to set up wait event"));
+		mono_set_pending_exception_synchronization_lock ("Failed to set up wait event");
 		return FALSE;
 	}
 	

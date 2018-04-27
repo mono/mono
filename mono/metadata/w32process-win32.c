@@ -366,12 +366,8 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 		pids = g_new0 (DWORD, count);
 		ret = mono_process_win_enum_processes (pids, count * sizeof (guint32), &needed);
 		if (ret == FALSE) {
-			MonoException *exc;
-
 			g_free (pids);
-			pids = NULL;
-			exc = mono_get_exception_not_supported ("This system does not support EnumProcesses");
-			mono_set_pending_exception (exc);
+			mono_set_pending_exception_not_supported ("This system does not support EnumProcesses");
 			return NULL;
 		}
 		if (needed < (count * sizeof (guint32)))

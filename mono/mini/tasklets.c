@@ -8,6 +8,7 @@
 #include "mono/metadata/gc-internals.h"
 #include "mini.h"
 #include "mini-runtime.h"
+#include "mono/metadata/exception-internals.h"
 
 #if defined(MONO_SUPPORT_TASKLETS)
 
@@ -159,7 +160,7 @@ mono_tasklets_cleanup (void)
 static
 void continuations_not_supported (void)
 {
-	mono_set_pending_exception (mono_get_exception_not_implemented ("Tasklets are not implemented on this platform."));
+	mono_set_pending_exception_not_implemented ("Tasklets are not implemented on this platform.");
 }
 
 static void*
