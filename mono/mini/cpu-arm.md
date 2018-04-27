@@ -81,24 +81,25 @@ rcompare: src1:f src2:f len:12
 oparglist: src1:i len:12
 setlret: src1:i src2:i len:12
 checkthis: src1:b len:4
-call: dest:a clob:c len:20
-call_reg: dest:a src1:i len:8 clob:c
-call_membase: dest:a src1:b len:30 clob:c
-voidcall: len:20 clob:c
-voidcall_reg: src1:i len:8 clob:c
-voidcall_membase: src1:b len:24 clob:c
-fcall: dest:g len:28 clob:c
-fcall_reg: dest:g src1:i len:16 clob:c
-fcall_membase: dest:g src1:b len:30 clob:c
-rcall: dest:g len:28 clob:c
-rcall_reg: dest:g src1:i len:16 clob:c
-rcall_membase: dest:g src1:b len:30 clob:c
-lcall: dest:l len:20 clob:c
-lcall_reg: dest:l src1:i len:8 clob:c
-lcall_membase: dest:l src1:b len:24 clob:c
-vcall: len:64 clob:c
-vcall_reg: src1:i len:64 clob:c
-vcall_membase: src1:b len:70 clob:c
+
+call: dest:a clob:c len:48
+call_reg: dest:a src1:i len:36 clob:c
+call_membase: dest:a src1:b len:58 clob:c
+voidcall: len:48 clob:c
+voidcall_reg: src1:i len:36 clob:c
+voidcall_membase: src1:b len:52 clob:c
+fcall: dest:g len:56 clob:c
+fcall_reg: dest:g src1:i len:44 clob:c
+fcall_membase: dest:g src1:b len:58 clob:c
+rcall: dest:g len:56 clob:c
+rcall_reg: dest:g src1:i len:44 clob:c
+rcall_membase: dest:g src1:b len:58 clob:c
+lcall: dest:l len:48 clob:c
+lcall_reg: dest:l src1:i len:36 clob:c
+lcall_membase: dest:l src1:b len:52 clob:c
+vcall: len:92 clob:c
+vcall_reg: src1:i len:92 clob:c
+vcall_membase: src1:b len:98 clob:c
 
 tailcall: len:255 clob:c # FIXME len
 tailcall_membase: src1:b len:255 clob:c # FIXME len

@@ -444,34 +444,23 @@ typedef struct {
 } FloatArgData;
 
 static guint8 *
-emit_float_args (MonoCompile *cfg, MonoCallInst *inst, guint8 *code, int *max_len, guint *offset)
+emit_float_args (MonoCompile *cfg, MonoCallInst *inst, guint8 *code)
 {
 	GSList *list;
-
-	set_code_cursor (cfg, code);
 
 	for (list = inst->float_args; list; list = list->next) {
 		FloatArgData *fad = list->data;
 		MonoInst *var = get_vreg_to_inst (cfg, fad->vreg);
 		gboolean imm = arm_is_fpimm8 (var->inst_offset);
 
-		/* 4+1 insns for emit_big_add () and 1 for FLDS. */
-		if (!imm)
-			*max_len += 20 + 4;
-
-		*max_len += 4;
-
-		code = realloc_code (cfg, *max_len);
-
 		if (!imm) {
 			code = emit_big_add (code, ARMREG_LR, var->inst_basereg, var->inst_offset);
 			ARM_FLDS (code, fad->hreg, ARMREG_LR, 0);
 		} else
 			ARM_FLDS (code, fad->hreg, var->inst_basereg, var->inst_offset);
-
-		set_code_cursor (cfg, code);
-		*offset = code - cfg->native_code;
 	}
+
+	set_code_cursor (cfg, code);
 
 	return code;
 }
@@ -4380,7 +4369,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	}
 
 	MONO_BB_FOR_EACH_INS (bb, ins) {
-		guint offset = code - cfg->native_code;
+		const guint offset = code - cfg->native_code;
 		set_code_cursor (cfg, code);
 		max_len = ins_get_size (ins->opcode);
 		code = realloc_code (cfg, max_len);
@@ -5213,7 +5202,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			call = (MonoCallInst*)ins;
 
 			if (IS_HARD_FLOAT)
-				code = emit_float_args (cfg, call, code, &max_len, &offset);
+				code = emit_float_args (cfg, call, code);
 
 			if (ins->flags & MONO_INST_HAS_METHOD)
 				mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD, call->method);
@@ -5232,7 +5221,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_VOIDCALL_REG:
 		case OP_CALL_REG:
 			if (IS_HARD_FLOAT)
-				code = emit_float_args (cfg, (MonoCallInst *)ins, code, &max_len, &offset);
+				code = emit_float_args (cfg, (MonoCallInst *)ins, code);
 
 			code = emit_call_reg (code, ins->sreg1);
 			ins->flags |= MONO_INST_GC_CALLSITE;
@@ -5250,7 +5239,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			call = (MonoCallInst*)ins;
 
 			if (IS_HARD_FLOAT)
-				code = emit_float_args (cfg, call, code, &max_len, &offset);
+				code = emit_float_args (cfg, call, code);
 			if (!arm_is_imm12 (ins->inst_offset)) {
 				/* sreg1 might be IP */
 				ARM_MOV_REG_REG (code, ARMREG_LR, ins->sreg1);
@@ -6126,7 +6115,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 	       
 		cpos += max_len;
-
 		last_ins = ins;
 	}
 
