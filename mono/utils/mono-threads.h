@@ -552,7 +552,7 @@ gint mono_threads_suspend_get_abort_signal (void);
 
 gboolean
 mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data,
-	gsize* const stack_size, MonoNativeThreadId *tid);
+	size_t* const stack_size, MonoNativeThreadId *tid);
 
 void mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize);
 void mono_threads_platform_init (void);

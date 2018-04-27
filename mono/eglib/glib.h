@@ -152,10 +152,10 @@ static inline gchar   *g_strdup (const gchar *str) { if (str) { return (gchar*) 
 gchar **g_strdupv (gchar **str_array);
 
 typedef struct {
-	gpointer (*malloc)      (gsize    n_bytes);
-	gpointer (*realloc)     (gpointer mem, gsize n_bytes);
+	gpointer (*malloc)      (size_t   n_bytes);
+	gpointer (*realloc)     (gpointer mem, size_t n_bytes);
 	void     (*free)        (gpointer mem);
-	gpointer (*calloc)      (gsize    n_blocks, gsize n_block_bytes);
+	gpointer (*calloc)      (size_t   n_blocks, size_t n_block_bytes);
 } GMemVTable;
 
 void g_mem_set_vtable (GMemVTable* vtable);

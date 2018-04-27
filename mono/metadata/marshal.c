@@ -4767,7 +4767,7 @@ mono_marshal_alloc (gsize size, MonoError *error)
 
 	res = mono_marshal_alloc_co_task_mem (size);
 	if (!res)
-		mono_error_set_out_of_memory (error, "Could not allocate %lu bytes", size);
+		mono_error_set_out_of_memory (error, "Could not allocate %" G_GSIZE_FORMAT " bytes", size);
 
 	return res;
 }

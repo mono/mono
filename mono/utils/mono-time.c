@@ -201,6 +201,7 @@ mono_msec_boottime (void)
     retval = (tv.tv_sec * tccSecondsToMillieSeconds) + (tv.tv_usec / tccMillieSecondsToMicroSeconds);
 
 #endif /* HAVE_CLOCK_MONOTONIC */
+	goto exit; // fix ifdef-dependent warning about unused label
 exit:
 	return retval;
 }

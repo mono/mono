@@ -1202,7 +1202,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	StartInfo *start_info = NULL;
 	MonoNativeThreadId tid;
 	gboolean ret;
-	gsize stack_set_size;
+	size_t stack_set_size;
 
 	if (start_delegate)
 		g_assert (!start_func && !start_func_arg);
