@@ -290,7 +290,7 @@ mono_exception_from_name_two_strings_checked (MonoImage *image, const char *name
  * \returns the initialized exception instance.
  */
 static MonoExceptionHandle
-mono_exception_new_by_name_message (MonoImage *image, const char *name_space,
+mono_exception_new_by_name_msg (MonoImage *image, const char *name_space,
 			      const char *name, const char *msg, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ()
@@ -685,7 +685,7 @@ MonoExceptionHandle
 mono_exception_new_argument (const char *arg, const char *msg, MonoError *error)
 {
 	MonoExceptionHandle ex;
-	ex = mono_exception_new_by_name_message (mono_get_corlib (), "System", "ArgumentException", msg, error);
+	ex = mono_exception_new_by_name_msg (mono_get_corlib (), "System", "ArgumentException", msg, error);
 
 	if (arg && !MONO_HANDLE_IS_NULL (ex)) {
 		MonoArgumentExceptionHandle argex = (MonoArgumentExceptionHandle)ex;
@@ -735,7 +735,7 @@ mono_get_exception_thread_state (const char *msg)
 MonoExceptionHandle
 mono_exception_new_thread_state (const char *msg, MonoError *error)
 {
-	return mono_exception_new_by_name_message (
+	return mono_exception_new_by_name_msg (
 		mono_get_corlib (), "System.Threading", "ThreadStateException", msg, error);
 }
 
@@ -1458,7 +1458,7 @@ mono_set_pending_exception_new_message (const char *name_space, const char *name
 	ERROR_DECL (error);
 	HANDLE_FUNCTION_ENTER ();
 	mono_set_pending_exception_handle (
-		mono_exception_new_by_name_message (mono_get_corlib (), name_space, name, message, error));
+		mono_exception_new_by_name_msg (mono_get_corlib (), name_space, name, message, error));
 	mono_error_assert_ok (error);
 	HANDLE_FUNCTION_RETURN ();
 }
