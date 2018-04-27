@@ -2414,9 +2414,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		spec = ins_get_spec (ins->opcode);
 
-		max_len = ((guint8 *)spec)[MONO_INST_LEN];
+		max_len = ins_get_size (ins->opcode);
 
-		if (offset > (cfg->code_size - max_len - 16)) {
+#define EXTRA_CODE_SPACE (16)
+
+		while (offset > (cfg->code_size - max_len - EXTRA_CODE_SPACE)) {
 			cfg->code_size *= 2;
 			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
 			code = (guint32*)(cfg->native_code + offset);
@@ -2862,17 +2864,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_fmovs (code, ins->sreg1, ins->dreg);
 			sparc_fmovs (code, ins->sreg1 + 1, ins->dreg + 1);
 #endif
-			break;
-		case OP_JMP:
-			if (cfg->method->save_lmf)
-				NOT_IMPLEMENTED;
-
-			code = emit_load_volatile_arguments (cfg, code);
-			mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, ins->inst_p0);
-			sparc_set_template (code, sparc_o7);
-			sparc_jmpl (code, sparc_o7, sparc_g0, sparc_g0);
-			/* Restore parent frame in delay slot */
-			sparc_restore_imm (code, sparc_g0, 0, sparc_g0);
 			break;
 		case OP_CHECK_THIS:
 			/* ensure ins->sreg1 is not NULL */
@@ -4438,6 +4429,12 @@ mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 
 gboolean
 mono_arch_opcode_supported (int opcode)
+{
+	return FALSE;
+}
+
+gboolean
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	return FALSE;
 }

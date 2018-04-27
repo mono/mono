@@ -201,7 +201,10 @@ mono_class_from_typeref_checked (MonoImage *image, guint32 type_token, MonoError
 		
 		mono_assembly_get_assemblyref (image, idx - 1, &aname);
 		human_name = mono_stringify_assembly_name (&aname);
-		mono_error_set_simple_file_not_found (error, human_name, image->assembly ? image->assembly->ref_only : FALSE);
+		gboolean refonly = FALSE;
+		if (image->assembly)
+			refonly = mono_asmctx_get_kind (&image->assembly->context) == MONO_ASMCTX_REFONLY;
+		mono_error_set_simple_file_not_found (error, human_name, refonly);
 		g_free (human_name);
 		return NULL;
 	}
@@ -2603,11 +2606,12 @@ mono_type_get_checked (MonoImage *image, guint32 type_token, MonoGenericContext 
 	if ((type_token & 0xff000000) != MONO_TOKEN_TYPE_SPEC) {
 		MonoClass *klass = mono_class_get_checked (image, type_token, error);
 
-		if (!klass) {
+		if (!klass)
+			return NULL;
+		if (m_class_has_failure (klass)) {
+			mono_error_set_for_class_failure (error, klass);
 			return NULL;
 		}
-
-		g_assert (klass);
 		return mono_class_get_type (klass);
 	}
 

@@ -1608,7 +1608,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		if (i >= sig->hasthis)
 			t = sig->params [i - sig->hasthis];
 		else
-			t = mono_get_int_type ()
+			t = mono_get_int_type ();
 		t = mini_get_underlying_type (t);
 
 		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos))
@@ -3105,12 +3105,6 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 	return code;
 }
 
-static int
-ins_native_length (MonoCompile *cfg, MonoInst *ins)
-{
-	return ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
-}
-
 static guint8*
 emit_reserve_param_area (MonoCompile *cfg, guint8 *code)
 {
@@ -3180,9 +3174,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	MONO_BB_FOR_EACH_INS (bb, ins) {
 		offset = code - cfg->native_code;
 
-		max_len = ins_native_length (cfg, ins);
+		max_len = ins_get_size (cfg, ins);
 
-		if (offset > (cfg->code_size - max_len - 16)) {
+#define EXTRA_CODE_SPACE (16)
+
+		while (offset > (cfg->code_size - max_len - EXTRA_CODE_SPACE)) {
 			cfg->code_size *= 2;
 			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
 			code = cfg->native_code + offset;
@@ -4916,7 +4912,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		bb->max_offset = max_offset;
 
 		MONO_BB_FOR_EACH_INS (bb, ins)
-			max_offset += ins_native_length (cfg, ins);
+			max_offset += ins_get_size (cfg, ins);
 	}
 
 	/* load arguments allocated to register from the stack */
@@ -5227,15 +5223,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					ppc_ldptr (code, ppc_r12, ainfo->offset, ppc_r12);
 				} else {
 					ppc_mr (code, ppc_r12, ainfo->reg);
-				}
-
-				if (cfg->tailcall_valuetype_addrs) {
-					MonoInst *addr = cfg->tailcall_valuetype_addrs [tailcall_struct_index];
-
-					g_assert (ppc_is_imm16 (addr->inst_offset));
-					ppc_stptr (code, ppc_r12, addr->inst_offset, addr->inst_basereg);
-
-					tailcall_struct_index++;
 				}
 
 				g_assert (ppc_is_imm16 (inst->inst_offset));

@@ -1122,7 +1122,7 @@ no_intrinsic:
 			}
 			ADD_CODE (td, MINT_BOX);
 			ADD_CODE (td, get_data_item_index (td, constrained_class));
-			ADD_CODE (td, csignature->param_count | ((td->sp - 1)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
+			ADD_CODE (td, csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
 		} else if (!m_class_is_valuetype (constrained_class)) {
 			/* managed pointer on the stack, we need to deref that puppy */
 			ADD_CODE (td, MINT_LDIND_I);
@@ -1151,7 +1151,7 @@ no_intrinsic:
 					}
 					ADD_CODE (td, MINT_BOX);
 					ADD_CODE (td, get_data_item_index (td, constrained_class));
-					ADD_CODE (td, csignature->param_count | ((td->sp - 1)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
+					ADD_CODE (td, csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
 				}
 			}
 			is_virtual = FALSE;
@@ -2867,7 +2867,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			} else {
 				/* defer allocation to execution-time */
 				ADD_CODE (td, MINT_LDSTR_TOKEN);
-				ADD_CODE (td, get_data_item_index (td, (gpointer) token));
+				ADD_CODE (td, get_data_item_index (td, GUINT_TO_POINTER (token)));
 			}
 			PUSH_TYPE(td, STACK_TYPE_O, mono_defaults.string_class);
 			break;
@@ -3180,11 +3180,22 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 					ADD_CODE (td, 1);
 					ADD_CODE (td, mt == MINT_TYPE_VT ? MINT_STSFLD_VT : MINT_STSFLD);
 					ADD_CODE (td, get_data_item_index (td, field));
+
+					/* the vtable of the field might not be initialized at this point */
+					MonoClass *fld_klass = mono_class_from_mono_type (field->type);
+					mono_class_vtable_checked (domain, fld_klass, error);
+					goto_if_nok (error, exit);
 				} else {
 					ADD_CODE (td, MINT_STFLD_I1 + mt - MINT_TYPE_I1);
 					ADD_CODE (td, m_class_is_valuetype (klass) ? field->offset - sizeof(MonoObject) : field->offset);
-					if (mt == MINT_TYPE_VT)
+					if (mt == MINT_TYPE_VT) {
 						ADD_CODE (td, get_data_item_index (td, field));
+
+						/* the vtable of the field might not be initialized at this point */
+						MonoClass *fld_klass = mono_class_from_mono_type (field->type);
+						mono_class_vtable_checked (domain, fld_klass, error);
+						goto_if_nok (error, exit);
+					}
 				}
 			}
 			if (mt == MINT_TYPE_VT) {
@@ -3239,6 +3250,12 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			mt = mint_type (ftype);
 			ADD_CODE(td, mt == MINT_TYPE_VT ? MINT_STSFLD_VT : MINT_STSFLD);
 			ADD_CODE(td, get_data_item_index (td, field));
+
+			/* the vtable of the field might not be initialized at this point */
+			MonoClass *fld_klass = mono_class_from_mono_type (field->type);
+			mono_class_vtable_checked (domain, fld_klass, error);
+			goto_if_nok (error, exit);
+
 			if (mt == MINT_TYPE_VT) {
 				MonoClass *klass = mono_class_from_mono_type (ftype);
 				int size = mono_class_value_size (klass, NULL);

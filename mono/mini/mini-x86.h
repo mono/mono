@@ -138,7 +138,7 @@ struct MonoLMF {
 	 * If the second lowest bit is set to 1, then this is a MonoLMFExt structure, and
 	 * the other fields are not valid.
 	 */
-	guint32    previous_lmf;
+	gpointer    previous_lmf;
 	gpointer    lmf_addr;
 	/* Only set in trampoline LMF frames */
 	MonoMethod *method;
@@ -228,7 +228,6 @@ typedef struct {
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
-#define MONO_ARCH_HAVE_OP_TAILCALL 1
 #define MONO_ARCH_HAVE_OP_TAILCALL_MEMBASE 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1

@@ -74,9 +74,6 @@ static mono_mutex_t mini_arch_mutex;
 
 #define OP_SEQ_POINT_BP_OFFSET 7
 
-static guint8*
-emit_load_aotconst (guint8 *start, guint8 *code, MonoCompile *cfg, MonoJumpInfo **ji, int dreg, int tramp_type, gconstpointer target);
-
 const char*
 mono_arch_regname (int reg)
 {
@@ -688,6 +685,10 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	// FIXME: Pass caller's caller's return area to callee.
 	callee_ret = mini_get_underlying_type (callee_sig->ret);
 	res &= IS_SUPPORTED_TAILCALL (!(callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && callee_info->ret.storage != ArgValuetypeInReg));
+
+	// Limit stack_usage to 1G.
+	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage < (1 << 30));
+	res &= IS_SUPPORTED_TAILCALL (caller_info->stack_usage < (1 << 30));
 
 exit:
 	g_free (caller_info);
@@ -2455,11 +2456,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	MONO_BB_FOR_EACH_INS (bb, ins) {
 		offset = code - cfg->native_code;
 
-		max_len = ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
+		max_len = ins_get_size (ins->opcode);
 
 #define EXTRA_CODE_SPACE (16)
 
-		if (G_UNLIKELY (offset > (cfg->code_size - max_len - EXTRA_CODE_SPACE))) {
+		while (G_UNLIKELY (offset > (cfg->code_size - max_len - EXTRA_CODE_SPACE))) {
 			cfg->code_size *= 2;
 			cfg->native_code = mono_realloc_native_code(cfg);
 			code = cfg->native_code + offset;
@@ -3084,6 +3085,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ins->dreg != ins->sreg1)
 				x86_mov_reg_reg (code, ins->dreg, ins->sreg1, 4);
 			break;
+
+		case OP_TAILCALL_PARAMETER:
+			// This opcode helps compute sizes, i.e.
+			// of the subsequent OP_TAILCALL, but contributes no code.
+			g_assert (ins->next);
+			break;
+
 		case OP_TAILCALL:
 		case OP_TAILCALL_MEMBASE: {
 			call = (MonoCallInst*)ins;
@@ -3093,6 +3101,16 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			gboolean const sreg1_ecx = sreg1 == X86_ECX;
 			gboolean const tailcall_membase_ecx = tailcall_membase && sreg1_ecx;
 			gboolean const tailcall_membase_not_ecx = tailcall_membase && !sreg1_ecx;
+
+			max_len += (call->stack_usage - call->stack_align_amount) / sizeof (mgreg_t) * ins_get_size (OP_TAILCALL_PARAMETER);
+			max_len += EXTRA_CODE_SPACE * 4; // FIXME accurate code sizing
+
+			while (G_UNLIKELY (offset + max_len > cfg->code_size)) {
+				cfg->code_size *= 2;
+				cfg->native_code = (unsigned char *)mono_realloc_native_code (cfg);
+				code = cfg->native_code + offset;
+				cfg->stat_code_reallocs++;
+			}
 
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
@@ -3134,6 +3152,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			/* Copy arguments on the stack to our argument area */
+			// FIXME use rep mov for constant code size, before nonvolatiles
+			// restored, first saving esi, edi into volatiles
 			for (i = 0; i < call->stack_usage - call->stack_align_amount; i += 4) {
 				x86_mov_reg_membase (code, X86_EAX, X86_ESP, i, 4);
 				x86_mov_membase_reg (code, X86_EBP, 8 + i, X86_EAX, 4);
@@ -3147,6 +3167,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			} else if (tailcall_membase_not_ecx) {
 				x86_jump_reg (code, X86_ECX);
 			} else {
+				// FIXME alignment
 				offset = code - cfg->native_code;
 				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_METHOD_JUMP, call->method);
 				x86_jump32 (code, 0);
@@ -6341,17 +6362,6 @@ mono_arch_emit_load_got_addr (guint8 *start, guint8 *code, MonoCompile *cfg, Mon
 	x86_pop_reg (code, MONO_ARCH_GOT_REG);
 	x86_alu_reg_imm (code, X86_ADD, MONO_ARCH_GOT_REG, 0xf0f0f0f0);
 
-	return code;
-}
-
-static guint8*
-emit_load_aotconst (guint8 *start, guint8 *code, MonoCompile *cfg, MonoJumpInfo **ji, int dreg, int tramp_type, gconstpointer target)
-{
-	if (cfg)
-		mono_add_patch_info (cfg, code - cfg->native_code, tramp_type, target);
-	else
-		g_assert_not_reached ();
-	x86_mov_reg_membase (code, dreg, MONO_ARCH_GOT_REG, 0xf0f0f0f0, 4);
 	return code;
 }
 
