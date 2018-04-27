@@ -10,4 +10,11 @@ partial class SR
     public const string PlatformNotSupported_Serialization = "This instance contains state that cannot be serialized and deserialized on this platform.";
     public const string PrivilegeNotHeld_Default = "The process does not possess some privilege required for this operation.";
     public const string PrivilegeNotHeld_Named = "The process does not possess the '{0}' privilege which is required for this operation.";
+    public const string CountdownEvent_Decrement_BelowZero = "CountdownEvent_Decrement_BelowZero";
+    public const string CountdownEvent_Increment_AlreadyZero = "CountdownEvent_Increment_AlreadyZero";
+    public const string CountdownEvent_Increment_AlreadyMax = "CountdownEvent_Increment_AlreadyMax";
+    public const string ArrayWithOffsetOverflow = "ArrayWithOffsetOverflow";
+    public const string Arg_NotIsomorphic = "Arg_NotIsomorphic";
+    public const string StructArrayTooLarge = "StructArrayTooLarge";
+    public const string IO_DriveNotFound = "IO_DriveNotFound";
 }

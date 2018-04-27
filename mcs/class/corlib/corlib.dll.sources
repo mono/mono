@@ -1114,17 +1114,17 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/io/binarywriter.cs
 ../referencesource/mscorlib/system/io/bufferedstream.cs
 ../referencesource/mscorlib/system/io/directory.cs
-../referencesource/mscorlib/system/io/directorynotfoundexception.cs
-../referencesource/mscorlib/system/io/drivenotfoundexception.cs
-../referencesource/mscorlib/system/io/endofstreamexception.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/DirectoryNotFoundException.cs
+../../../external/corefx/src/System.IO.FileSystem.DriveInfo/src/System/IO/DriveNotFoundException.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/EndOfStreamException.cs
 ../referencesource/mscorlib/system/io/ioexception.cs
 ../referencesource/mscorlib/system/io/fileinfo.cs
 ../referencesource/mscorlib/system/io/fileloadexception.cs
-../referencesource/mscorlib/system/io/filenotfoundexception.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/FileNotFoundException.cs
 ../referencesource/mscorlib/system/io/filesysteminfo.cs
 ../referencesource/mscorlib/system/io/filesystemenumerable.cs
 ../referencesource/mscorlib/system/io/memorystream.cs
-../referencesource/mscorlib/system/io/pathtoolongexception.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/PathTooLongException.cs
 ../referencesource/mscorlib/system/io/pinnedbuffermemorystream.cs
 ../referencesource/mscorlib/system/io/stream.cs
 ../referencesource/mscorlib/system/io/streamreader.cs
@@ -1135,7 +1135,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/io/textwriter.cs
 ../referencesource/mscorlib/system/io/unmanagedmemoryaccessor.cs
 ../referencesource/mscorlib/system/io/unmanagedmemorystream.cs
-../referencesource/mscorlib/system/io/unmanagedmemorystreamwrapper.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/UnmanagedMemoryStreamWrapper.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AmbiguousMatchException.cs
 ../referencesource/mscorlib/system/reflection/assemblyattributes.cs
@@ -1198,13 +1198,13 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Resources/MissingManifestResourceException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Resources/MissingSatelliteAssemblyException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Resources/NeutralResourcesLanguageAttribute.cs
-../referencesource/mscorlib/system/resources/resourcefallbackmanager.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Resources/ResourceFallbackManager.cs
 ../referencesource/mscorlib/system/resources/resourcemanager.cs
 ../referencesource/mscorlib/system/resources/resourcereader.cs
 ../referencesource/mscorlib/system/resources/resourceset.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Resources/ResourceTypeCode.cs
 ../referencesource/mscorlib/system/resources/resourcewriter.cs
-../referencesource/mscorlib/system/resources/runtimeresourceset.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Resources/RuntimeResourceSet.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Resources/SatelliteContractVersionAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Resources/UltimateResourceFallbackLocation.cs
 
@@ -1220,11 +1220,11 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/BStrWrapper.cs
 ../referencesource/mscorlib/system/runtime/interopservices/callingconvention.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/CharSet.cs
-../referencesource/mscorlib/system/runtime/interopservices/comexception.cs
+../../../external/corert/src/System.Private.Interop/src/Shared/ComException.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComMemberType.cs
 ../referencesource/mscorlib/system/runtime/interopservices/criticalhandle.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/CurrencyWrapper.cs
-../referencesource/mscorlib/system/runtime/interopservices/dispatchwrapper.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/DispatchWrapper.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ErrorWrapper.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/ExternalException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/HandleRef.cs
@@ -1249,27 +1249,27 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/UnknownWrapper.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/VariantWrapper.cs
 
-../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ibindctx.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IBindCtx.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IConnectionPoint.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IConnectionPointContainer.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IEnumConnectionPoints.cs
-../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ienumconnections.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IEnumConnections.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ienumerable.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ienumerator.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IEnumMoniker.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IEnumString.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IEnumVARIANT.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/iexpando.cs
-../referencesource/mscorlib/system/runtime/interopservices/ComTypes/imoniker.cs
-../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ipersistfile.cs
-../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ireflect.cs
-../referencesource/mscorlib/system/runtime/interopservices/ComTypes/irunningobjecttable.cs
-../referencesource/mscorlib/system/runtime/interopservices/ComTypes/istream.cs
-../referencesource/mscorlib/system/runtime/interopservices/ComTypes/itypecomp.cs
-../referencesource/mscorlib/system/runtime/interopservices/ComTypes/itypeinfo.cs
-../referencesource/mscorlib/system/runtime/interopservices/ComTypes/itypeinfo2.cs
-../referencesource/mscorlib/system/runtime/interopservices/ComTypes/itypelib.cs
-../referencesource/mscorlib/system/runtime/interopservices/ComTypes/itypelib2.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IMoniker.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IPersistFile.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/IReflect.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IRunningObjectTable.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IStream.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/ITypeComp.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/ITypeInfo.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/ITypeInfo2.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/ITypeLib.cs
+../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/ITypeLib2.cs
 
 ../referencesource/mscorlib/system/runtime/interopservices/expando/iexpando.cs
 
@@ -1394,7 +1394,7 @@ ReferenceSources/AppContextDefaultValues.cs
 
 ../referencesource/mscorlib/system/security/cryptography/x509certificates/x509utils.cs
 
-../referencesource/mscorlib/system/security/principal/genericidentity.cs
+../../../external/corefx/src/System.Security.Claims/src/System/Security/Claims/GenericIdentity.cs
 
 ../referencesource/mscorlib/system/security/util/hex.cs
 ../referencesource/mscorlib/system/security/util/parser.cs
@@ -1488,21 +1488,19 @@ ReferenceSources/AppContextDefaultValues.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/AbandonedMutexException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ApartmentState.cs
-../referencesource/mscorlib/system/threading/asynclocal.cs
-#../../../external/corefx/src/Common/src/CoreLib/System/Threading/AsyncLocal.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/AsyncLocal.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/AutoResetEvent.cs
-../referencesource/mscorlib/system/threading/CancellationToken.cs
-#../../../external/corert/src/System.Private.CoreLib/src/System/Threading/CancellationToken.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/CancellationToken.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/CancellationTokenRegistration.cs
-../referencesource/mscorlib/system/threading/CancellationTokenSource.cs
-../referencesource/mscorlib/system/threading/CountdownEvent.cs
-#../../../external/corefx/src/System.Threading/src/System/Threading/CountdownEvent.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/CancellationTokenSource.cs
+../../../external/corefx/src/System.Threading/src/System/Threading/CountdownEvent.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/EventResetMode.cs
 ../referencesource/mscorlib/system/threading/eventwaithandle.cs
 ../referencesource/mscorlib/system/threading/executioncontext.cs
-../referencesource/mscorlib/system/threading/LazyInitializer.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/LazyInitializer.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/LazyThreadSafetyMode.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/LockRecursionException.cs
-../referencesource/mscorlib/system/threading/manualresetevent.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/ManualResetEvent.cs
 ../referencesource/mscorlib/system/threading/ManualResetEventSlim.cs
 ../referencesource/mscorlib/system/threading/monitor.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ParameterizedThreadStart.cs
@@ -1516,8 +1514,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/threading/thread.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ThreadAbortException.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/ThreadInterruptedException.cs
-../referencesource/mscorlib/system/threading/ThreadLocal.cs
-#../../../external/corert/src/System.Private.CoreLib/src/System/Threading/ThreadLocal.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/ThreadLocal.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ThreadPriority.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ThreadStart.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ThreadStartException.cs
