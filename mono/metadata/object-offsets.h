@@ -67,7 +67,7 @@ DECL_OFFSET(MonoObject, synchronisation)
 DECL_OFFSET(MonoObjectHandlePayload, __raw)
 
 DECL_OFFSET(MonoClass, interface_bitmap)
-DECL_OFFSET(MonoClass, byval_arg)
+DECL_OFFSET(MonoClass, _byval_arg)
 DECL_OFFSET(MonoClass, cast_class)
 DECL_OFFSET(MonoClass, element_class)
 DECL_OFFSET(MonoClass, idepth)
@@ -183,7 +183,6 @@ DECL_OFFSET(MonoContext, wasm_bp)
 DECL_OFFSET(MonoContext, wasm_sp)
 DECL_OFFSET(MonoContext, llvm_exc_reg)
 
-DECL_OFFSET(MonoLMF, method)
 DECL_OFFSET(MonoLMF, lmf_addr)
 
 #elif defined(TARGET_X86)
@@ -285,6 +284,9 @@ DECL_OFFSET(CallContext, fregs)
 DECL_OFFSET(CallContext, stack_size)
 DECL_OFFSET(CallContext, stack)
 #endif
+
+DECL_OFFSET(MonoFtnDesc, arg)
+DECL_OFFSET(MonoFtnDesc, addr)
 
 #endif //DISABLE_JIT_OFFSETS
 

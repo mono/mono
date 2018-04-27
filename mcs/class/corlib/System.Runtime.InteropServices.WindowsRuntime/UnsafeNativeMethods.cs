@@ -30,6 +30,7 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 {
 	internal unsafe static class UnsafeNativeMethods
 	{
+#if !DISABLE_COM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern int WindowsCreateString(string sourceString, int length, IntPtr* hstring);
 		
@@ -47,5 +48,30 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern IRestrictedErrorInfo GetRestrictedErrorInfo();
+#else
+		public static int WindowsCreateString(string sourceString, int length, IntPtr* hstring) {
+			throw new NotImplementedException ();
+		}
+
+		public static int WindowsDeleteString(IntPtr hstring) {
+			throw new NotImplementedException ();
+		}
+
+		public static char* WindowsGetStringRawBuffer(IntPtr hstring, uint* length) {
+			throw new NotImplementedException ();
+		}
+
+		public static bool RoOriginateLanguageException(int error, string message, IntPtr languageException) {
+			throw new NotImplementedException ();
+		}
+
+		public static void RoReportUnhandledError(IRestrictedErrorInfo error) {
+			throw new NotImplementedException ();
+		}
+
+		public static IRestrictedErrorInfo GetRestrictedErrorInfo() {
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

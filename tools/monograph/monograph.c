@@ -10,7 +10,10 @@
 #include "mono/metadata/mono-endian.h"
 #include "mono/metadata/appdomain.h" /* mono_init */
 #include "mono/metadata/debug-helpers.h"
+#include "mono/utils/checked-build.h"
 #include "mono/utils/mono-compiler.h"
+#include "mono/utils/mono-counters.h"
+#include "mono/utils/mono-threads.h"
 
 static FILE *output;
 static int include_namespace = 0;
@@ -26,9 +29,9 @@ void __nacl_suspend_thread_if_needed() {}
 static void
 output_type_edge (MonoClass *first, MonoClass *second) {
 	if (include_namespace)
-		fprintf (output, "\t\"%s.%s\" -> \"%s.%s\"\n", first->name_space, first->name, second->name_space, second->name);
+		fprintf (output, "\t\"%s.%s\" -> \"%s.%s\"\n", mono_class_get_namespace (first), mono_class_get_name (first), mono_class_get_namespace (second), mono_class_get_name (second));
 	else
-		fprintf (output, "\t\"%s\" -> \"%s\"\n", first->name, second->name);
+		fprintf (output, "\t\"%s\" -> \"%s\"\n", mono_class_get_name (first), mono_class_get_name (second));
 }
 
 static void
@@ -42,7 +45,7 @@ print_subtypes (MonoImage *image, MonoClass *class, int depth) {
 
 	t = mono_image_get_table_info (image, MONO_TABLE_TYPEDEF);
 	
-	token = mono_metadata_token_index (class->type_token);
+	token = mono_metadata_token_index (mono_class_get_type_token (class));
 	token <<= MONO_TYPEDEFORREF_BITS;
 	token |= MONO_TYPEDEFORREF_TYPEDEF;
 
@@ -83,7 +86,7 @@ type_graph (MonoImage *image, const char* cname) {
 	fprintf (output, "%s", graph_properties);
 	child = class;
 	/* go back and print the parents for the node as well: not sure it's a good idea */
-	for (parent = class->parent; parent; parent = parent->parent) {
+	for (parent = mono_class_get_parent (class); parent; parent = mono_class_get_parent (parent)) {
 		output_type_edge (parent, child);
 		child = parent;
 	}
@@ -119,7 +122,7 @@ interface_graph (MonoImage *image, const char* cname) {
 	fprintf (output, "digraph interface {\n");
 	fprintf (output, "%s", graph_properties);
 	/* TODO: handle inetrface defined in one image and class defined in another. */
-	token = mono_metadata_token_index (class->type_token);
+	token = mono_metadata_token_index (mono_class_get_type_token (class));
 	token <<= MONO_TYPEDEFORREF_BITS;
 	token |= MONO_TYPEDEFORREF_TYPEDEF;
 	for (i = 0; i < mono_table_info_get_rows (intf); ++i) {
@@ -133,7 +136,7 @@ interface_graph (MonoImage *image, const char* cname) {
 	}
 	fprintf (output, "}\n");
 	if (verbose && !count)
-		g_print ("No class implements %s.%s\n", class->name_space, class->name);
+		g_print ("No class implements %s.%s\n", mono_class_get_namespace (class), mono_class_get_name (class));
 
 }
 
@@ -259,7 +262,7 @@ method_stats (MonoMethod *method) {
 		case MonoInlineType:
 			if (i == MONO_CEE_CASTCLASS || i == MONO_CEE_ISINST) {
 				guint32 token = read32 (ip + 1);
-				MonoClass *k = mono_class_get (method->klass->image, token);
+				MonoClass *k = mono_class_get (mono_class_get_image (method->klass), token);
 				if (k && mono_class_get_flags (k) & TYPE_ATTRIBUTE_SEALED)
 					cast_sealed++;
 				if (k && mono_class_get_flags (k) & TYPE_ATTRIBUTE_INTERFACE)
@@ -361,7 +364,7 @@ method_stats (MonoMethod *method) {
 			break;
 		case MonoInlineMethod:
 			if (i == MONO_CEE_CALLVIRT) {
-				MonoMethod *cm = mono_get_method (method->klass->image, read32 (ip + 1), NULL);
+				MonoMethod *cm = mono_get_method (mono_class_get_image (method->klass), read32 (ip + 1), NULL);
 				if (cm && !(cm->flags & METHOD_ATTRIBUTE_VIRTUAL))
 					nonvirt_callvirt++;
 				if (cm && (mono_class_get_flags (cm->klass) & TYPE_ATTRIBUTE_INTERFACE))
@@ -434,10 +437,10 @@ type_stats (MonoClass *klass) {
 		num_ifaces++;
 		return;
 	}
-	parent = klass->parent;
+	parent = mono_class_get_parent (klass);
 	while (parent) {
 		depth++;
-		parent = parent->parent;
+		parent = mono_class_get_parent (parent);
 	}
 	if (pdepth_array_next >= pdepth_array_size) {
 		pdepth_array_size *= 2;
@@ -527,7 +530,7 @@ type_size_stats (MonoClass *klass)
 		mono_method_header_get_code (header, &size, &maxs);
 		code_size += size;
 	}
-	g_print ("%s.%s: code: %d\n", klass->name_space, klass->name, code_size);
+	g_print ("%s.%s: code: %d\n", mono_class_get_namespace (klass), mono_class_get_name (klass), code_size);
 }
 
 static void
@@ -555,10 +558,10 @@ get_signature (MonoMethod *method) {
 		return result;
 
 	res = g_string_new ("");
-	if (include_namespace && *(method->klass->name_space))
-		g_string_append_printf (res, "%s.", method->klass->name_space);
+	if (include_namespace && *mono_class_get_namespace (method->klass))
+		g_string_append_printf (res, "%s.", mono_class_get_namespace (method->klass));
 	result = mono_signature_get_desc (mono_method_signature (method), include_namespace);
-	g_string_append_printf (res, "%s:%s(%s)", method->klass->name, method->name, result);
+	g_string_append_printf (res, "%s:%s(%s)", mono_class_get_name (method->klass), method->name, result);
 	g_free (result);
 	g_hash_table_insert (hash, method, res->str);
 
@@ -666,7 +669,7 @@ print_method (MonoMethod *method, int depth) {
 			ip++;
 			token = read32 (ip);
 			ip += 4;
-			called = mono_get_method (method->klass->image, token, NULL);
+			called = mono_get_method (mono_class_get_image (method->klass), token, NULL);
 			if (!called)
 				break; /* warn? */
 			if (g_hash_table_lookup (hash, called))
@@ -1069,6 +1072,11 @@ enum {
 	GRAPH_STATS
 };
 
+static void
+thread_state_init (MonoThreadUnwindState *ctx)
+{
+}
+
 /*
  * TODO:
  * * virtual method calls as explained above
@@ -1093,6 +1101,7 @@ main (int argc, char *argv[]) {
 	int graphtype = GRAPH_TYPES;
 	int callneato = 0;
 	int i;
+	MonoThreadInfoRuntimeCallbacks ticallbacks;
 	
 	output = stdout;
 
@@ -1132,6 +1141,12 @@ main (int argc, char *argv[]) {
 		aname = argv [i];
 	if (argc > i + 1)
 		cname = argv [i + 1];
+	CHECKED_MONO_INIT ();
+	mono_counters_init ();
+	mono_tls_init_runtime_keys ();
+	memset (&ticallbacks, 0, sizeof (ticallbacks));
+	ticallbacks.thread_state_init = thread_state_init;
+	mono_thread_info_runtime_init (&ticallbacks);
 	if (aname) {
 		mono_init_from_assembly (argv [0], aname);
 		assembly = mono_assembly_open (aname, NULL);

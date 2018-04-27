@@ -43,6 +43,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.HMACSHA256))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.HMACSHA384))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.HMACSHA512))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.IncrementalHash))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.MaskGenerationMethod))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.MD5))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Cryptography.PKCS1MaskGenerationMethod))]

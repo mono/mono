@@ -1685,10 +1685,12 @@ namespace MonoTests.System.Net
 		// We throw a PlatformNotSupportedException deeper, which is caught and re-thrown as WebException
 		[ExpectedException (typeof (WebException))]
 #endif
+		[Category ("MobileNotWorking")] // https://github.com/xamarin/xamarin-macios/issues/3827
+		[Category ("InetAccess")]
 		public void GetWebRequestOverriding ()
 		{
 			GetWebRequestOverridingTestClass testObject = new GetWebRequestOverridingTestClass ();
-			testObject.DownloadData ("http://www.mono-project.com");
+			testObject.DownloadData ("http://www.example.com");
 
 			Assert.IsTrue (testObject.overridedCodeRan, "Overrided code wasn't called");
 		}

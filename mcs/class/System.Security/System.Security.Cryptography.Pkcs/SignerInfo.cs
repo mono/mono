@@ -46,7 +46,7 @@ namespace System.Security.Cryptography.Pkcs {
 		// only accessible from SignedPkcs7.SignerInfos
 		internal SignerInfo (string hashName, X509Certificate2 certificate, SubjectIdentifierType type, object o, int version)
 		{
-			_digest = new Oid (CryptoConfig.MapNameToOID (hashName));
+			_digest = new Oid (CryptoConfig.MapNameToOID (hashName) ?? hashName);
 			_certificate = certificate;
 			_counter = new SignerInfoCollection ();
 			_signed = new CryptographicAttributeObjectCollection ();

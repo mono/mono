@@ -129,6 +129,20 @@ class Tests
 		return ldelem_any (arr);
 	}
 
+	public static int test_1_ldelem_stelem_any_single () {
+		float[] arr = new float [3];
+		stelem_any (arr, 1);
+
+		return (int) ldelem_any (arr);
+	}
+
+	public static int test_1_ldelem_stelem_any_double () {
+		double[] arr = new double [3];
+		stelem_any (arr, 1);
+
+		return (int) ldelem_any (arr);
+	}
+
 	public static T return_ref<T> (ref T t) {
 		return t;
 	}
@@ -1408,6 +1422,31 @@ class Tests
 		obj.counter = 42;
 		swap (ref obj.buffer1, ref obj.buffer2);
 		return obj.counter;
+	}
+
+	public interface ICompletion {
+		Type UnsafeOnCompleted ();
+	}
+
+	public struct TaskAwaiter<T> : ICompletion {
+		public Type UnsafeOnCompleted () {
+			typeof(T).GetHashCode ();
+			return typeof(T);
+		}
+	}
+
+	public struct AStruct {
+        public Type Caller<TAwaiter>(ref TAwaiter awaiter)
+            where TAwaiter : ICompletion {
+			return awaiter.UnsafeOnCompleted();
+		}
+	}
+
+    public static int test_0_partial_constrained_call_llvmonly () {
+		var builder = new AStruct ();
+		var awaiter = new TaskAwaiter<bool> ();
+		var res = builder.Caller (ref awaiter);
+		return res == typeof (bool) ? 0 : 1;
 	}
 }
 

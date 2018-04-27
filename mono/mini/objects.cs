@@ -1873,6 +1873,40 @@ ncells ) {
 
 	  return t == -122 ? 0 : 1;
 	}
+
+	public interface IFoo
+	{
+	  int MyInt { get; }
+	}
+
+	public class IFooImpl : IFoo
+	{
+	  public int MyInt => 0;
+	}
+
+	//gh 6266
+    public static int test_0_store_to_magic_iface_array ()
+    {
+      ICollection<IFoo> arr1 = new IFooImpl[1] { new IFooImpl() };
+      ICollection<IFoo> arr2 = new IFooImpl[1] { new IFooImpl() };
+
+      ICollection<IFoo>[] a2d = new ICollection<IFoo>[2] {
+        arr1,
+        arr2,
+      };
+
+	  return 0;
+    }
+
+	static volatile bool abool;
+
+	public static unsafe int test_0_stind_r4_float32_stack_merge () {
+		Single* dataPtr = stackalloc Single[4];
+		abool = true;
+		dataPtr[0] = abool ? 1.0f : 2.0f;
+		return dataPtr [0] == 1.0f ? 0 : 1;
+	}
+
 }
 
 #if __MOBILE__

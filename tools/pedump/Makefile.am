@@ -1,6 +1,8 @@
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)
 
+glib_libs = $(top_builddir)/mono/eglib/libeglib.la
+
 if DISABLE_EXECUTABLES
 bin_PROGRAMS =
 else
@@ -22,8 +24,7 @@ pedump_LDADD = 			\
 	$(top_builddir)/mono/utils/libmonoutils.la \
 	$(LLVM_LIBS)			\
 	$(LLVM_LDFLAGS)			\
-	$(GLIB_LIBS)			\
-	$(LIBICONV)
+	$(glib_libs)
 
 if HOST_DARWIN
 pedump_LDFLAGS=-framework CoreFoundation -framework Foundation

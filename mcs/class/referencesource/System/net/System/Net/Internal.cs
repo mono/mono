@@ -989,6 +989,10 @@ namespace System.Net {
             }
         }
 
+#if MONO
+        internal static WebException TimeoutException => new WebException(SR.net_timeout);
+#endif
+
         internal static NotSupportedException MethodNotSupportedException {
             get {
                 return new NotSupportedException(SR.GetString(SR.net_MethodNotSupportedException));

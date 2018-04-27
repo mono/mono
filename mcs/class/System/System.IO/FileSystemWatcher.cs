@@ -45,6 +45,8 @@ namespace System.IO {
 
 		#region Fields
 
+		bool inited;
+		bool start_requested;
 		bool enableRaisingEvents;
 		string filter;
 		bool includeSubdirectories;
@@ -59,6 +61,7 @@ namespace System.IO {
 		bool disposed;
 		string mangledFilter;
 		static IFileWatcher watcher;
+		object watcher_handle;
 		static object lockobj = new object ();
 
 		#endregion // Fields
@@ -69,7 +72,7 @@ namespace System.IO {
 		{
 			this.notifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
 			this.enableRaisingEvents = false;
-			this.filter = "*.*";
+			this.filter = "*";
 			this.includeSubdirectories = false;
 			this.internalBufferSize = 8192;
 			this.path = "";
@@ -77,7 +80,7 @@ namespace System.IO {
 		}
 
 		public FileSystemWatcher (string path)
-			: this (path, "*.*")
+			: this (path, "*")
 		{
 		}
 
@@ -95,8 +98,13 @@ namespace System.IO {
 			if (!Directory.Exists (path))
 				throw new ArgumentException ("Directory does not exist", "path");
 
+			this.inited = false;
+			this.start_requested = false;
 			this.enableRaisingEvents = false;
 			this.filter = filter;
+			if (this.filter == "*.*")
+				this.filter = "*";
+
 			this.includeSubdirectories = false;
 			this.internalBufferSize = 8192;
 			this.notifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
@@ -121,28 +129,39 @@ namespace System.IO {
 				switch (mode) {
 				case 1: // windows
 					ok = DefaultWatcher.GetInstance (out watcher);
-					//ok = WindowsWatcher.GetInstance (out watcher);
+					watcher_handle = this;
 					break;
 				case 2: // libfam
 					ok = FAMWatcher.GetInstance (out watcher, false);
+					watcher_handle = this;
 					break;
 				case 3: // kevent
 					ok = KeventWatcher.GetInstance (out watcher);
+					watcher_handle = this;
 					break;
 				case 4: // libgamin
 					ok = FAMWatcher.GetInstance (out watcher, true);
+					watcher_handle = this;
 					break;
 				case 5: // inotify
 					ok = InotifyWatcher.GetInstance (out watcher, true);
+					watcher_handle = this;
+					break;
+				case 6: // CoreFX
+					ok = CoreFXFileSystemWatcherProxy.GetInstance (out watcher);
+					watcher_handle = (watcher as CoreFXFileSystemWatcherProxy).NewWatcher (this);
 					break;
 				}
 
 				if (mode == 0 || !ok) {
 					if (String.Compare (managed, "disabled", true) == 0)
 						NullFileWatcher.GetInstance (out watcher);
-					else
+					else {
 						DefaultWatcher.GetInstance (out watcher);
+						watcher_handle = this;
+					}
 				}
+				this.inited = true;
 
 				ShowWatcherInfo ();
 			}
@@ -173,9 +192,6 @@ namespace System.IO {
 					return mangledFilter;
 
 				string filterLocal = "*.*";
-				if (!(watcher.GetType () == typeof (WindowsWatcher)))
-					filterLocal = "*";
-
 				return filterLocal;
 			}
 		}
@@ -183,7 +199,7 @@ namespace System.IO {
 		internal SearchPattern2 Pattern {
 			get {
 				if (pattern == null) {
-					if (watcher.GetType () == typeof (KeventWatcher))
+					if (watcher?.GetType () == typeof (KeventWatcher))
 						pattern = new SearchPattern2 (MangledFilter, true); //assume we want to ignore case (OS X)
 					else
 						pattern = new SearchPattern2 (MangledFilter);
@@ -210,6 +226,12 @@ namespace System.IO {
 		public bool EnableRaisingEvents {
 			get { return enableRaisingEvents; }
 			set {
+				if (disposed)
+					throw new ObjectDisposedException (GetType().Name);
+
+				start_requested = true;
+				if (!inited)
+					return;
 				if (value == enableRaisingEvents)
 					return; // Do nothing
 
@@ -218,6 +240,7 @@ namespace System.IO {
 					Start ();
 				} else {
 					Stop ();
+					start_requested = false;
 				}
 			}
 		}
@@ -230,10 +253,10 @@ namespace System.IO {
 			get { return filter; }
 			set {
 				if (value == null || value == "")
-					value = "*.*";
+					value = "*";
 
-				if (filter != value) {
-					filter = value;
+				if (!string.Equals(filter, value, PathInternal.StringComparison)) {
+					filter = value == "*.*" ? "*" : value;
 					pattern = null;
 					mangledFilter = null;
 				}
@@ -264,8 +287,8 @@ namespace System.IO {
 				if (internalBufferSize == value)
 					return;
 
-				if (value < 4196)
-					value = 4196;
+				if (value < 4096)
+					value = 4096;
 
 				internalBufferSize = value;
 				if (enableRaisingEvents) {
@@ -299,7 +322,11 @@ namespace System.IO {
 		public string Path {
 			get { return path; }
 			set {
-				if (path == value)
+				if (disposed)
+					throw new ObjectDisposedException (GetType().Name);
+
+				value = (value == null) ? string.Empty : value;
+				if (string.Equals(path, value, PathInternal.StringComparison))
 					return;
 
 				bool exists = false;
@@ -312,10 +339,10 @@ namespace System.IO {
 				}
 
 				if (exc != null)
-					throw new ArgumentException ("Invalid directory name", "value", exc);
+					throw new ArgumentException(SR.Format(SR.InvalidDirName, value), nameof(Path));
 
 				if (!exists)
-					throw new ArgumentException ("Directory does not exist", "value");
+					throw new ArgumentException(SR.Format(SR.InvalidDirName_NotExists, value), nameof(Path));
 
 				path = value;
 				fullpath = null;
@@ -329,7 +356,12 @@ namespace System.IO {
 		[Browsable(false)]
 		public override ISite Site {
 			get { return base.Site; }
-			set { base.Site = value; }
+			set
+			{
+				base.Site = value;
+				if (Site != null && Site.DesignMode)
+					this.EnableRaisingEvents = true;
+			}
 		}
 
 		[DefaultValue(null)]
@@ -347,27 +379,41 @@ namespace System.IO {
 		public void BeginInit ()
 		{
 			// Not necessary in Mono
+			// but if called, EndInit() must be called
+			inited = false;
 		}
 
 		protected override void Dispose (bool disposing)
 		{
-			if (!disposed) {
-				disposed = true;
-				Stop ();
-			}
+			if (disposed)
+				return;
 
+			try {
+				watcher?.StopDispatching (watcher_handle);
+				watcher?.Dispose (watcher_handle);
+			} catch (Exception) { }
+
+			watcher_handle = null;
+			watcher = null;
+
+			disposed = true;
 			base.Dispose (disposing);
+			GC.SuppressFinalize (this);
 		}
 
 		~FileSystemWatcher ()
 		{
-			disposed = true;
-			Stop ();
+			if (disposed)
+				return;
+
+			Dispose (false);
 		}
 		
 		public void EndInit ()
 		{
-			// Not necessary in Mono
+			inited = true;
+			if (start_requested)
+				this.EnableRaisingEvents = true;
 		}
 
 		enum EventType {
@@ -384,13 +430,13 @@ namespace System.IO {
 				foreach (var target in ev.GetInvocationList()) {
 					switch (evtype) {
 					case EventType.RenameEvent:
-						((RenamedEventHandler)target).BeginInvoke (this, (RenamedEventArgs)arg, null, null);
+						((RenamedEventHandler)target).Invoke (this, (RenamedEventArgs)arg);
 						break;
 					case EventType.ErrorEvent:
-						((ErrorEventHandler)target).BeginInvoke (this, (ErrorEventArgs)arg, null, null);
+						((ErrorEventHandler)target).Invoke (this, (ErrorEventArgs)arg);
 						break;
 					case EventType.FileSystemEvent:
-						((FileSystemEventHandler)target).BeginInvoke (this, (FileSystemEventArgs)arg, null, null);
+						((FileSystemEventHandler)target).Invoke (this, (FileSystemEventArgs)arg);
 						break;
 					}
 				}
@@ -503,12 +549,20 @@ namespace System.IO {
 
 		void Start ()
 		{
-			watcher.StartDispatching (this);
+			if (disposed)
+				return;
+			if (watcher_handle == null)
+				return;
+			watcher?.StartDispatching (watcher_handle);
 		}
 
 		void Stop ()
 		{
-			watcher.StopDispatching (this);
+			if (disposed)
+				return;
+			if (watcher_handle == null)
+				return;
+			watcher?.StopDispatching (watcher_handle);
 		}
 		#endregion // Methods
 
@@ -537,6 +591,7 @@ namespace System.IO {
 		/* 3 -> Kevent		*/
 		/* 4 -> gamin		*/
 		/* 5 -> inotify		*/
+		/* 6 -> CoreFX		*/
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern int InternalSupportsFSW ();
 	}

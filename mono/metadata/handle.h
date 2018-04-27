@@ -22,6 +22,7 @@
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/checked-build.h>
+#include <mono/metadata/class-internals.h>
 
 G_BEGIN_DECLS
 
@@ -208,18 +209,21 @@ Icall macros
 	CLEAR_ICALL_FRAME;			\
 	} while (0)
 
+// Return a non-pointer or non-managed pointer, e.g. gboolean.
 #define HANDLE_FUNCTION_RETURN_VAL(VAL)		\
 	CLEAR_ICALL_FRAME;			\
 	return (VAL);				\
 	} while (0)
 
+// Return a raw pointer from coop handle.
 #define HANDLE_FUNCTION_RETURN_OBJ(HANDLE)			\
 	do {							\
-		void* __result = (MONO_HANDLE_RAW (HANDLE));	\
+		void* __result = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME;				\
 		return __result;				\
 	} while (0); } while (0);
 
+// Return a coop handle from coop handle.
 #define HANDLE_FUNCTION_RETURN_REF(TYPE, HANDLE)			\
 	do {								\
 		MonoRawHandle __result;					\
@@ -290,13 +294,6 @@ mono_thread_info_push_stack_mark (MonoThreadInfo *info, void *mark)
 Handle macros/functions
 */
 
-#ifdef ENABLE_CHECKED_BUILD
-void mono_handle_verify (MonoRawHandle handle);
-#define HANDLE_INVARIANTS(H) mono_handle_verify((void*)(H))
-#else
-#define HANDLE_INVARIANTS(H) (0)
-#endif
-
 #define TYPED_HANDLE_PAYLOAD_NAME(TYPE) TYPE ## HandlePayload
 #define TYPED_HANDLE_NAME(TYPE) TYPE ## Handle
 #define TYPED_OUT_HANDLE_NAME(TYPE) TYPE ## HandleOut
@@ -345,7 +342,7 @@ void mono_handle_verify (MonoRawHandle handle);
 #define NULL_HANDLE mono_null_value_handle
 
 //XXX add functions to get/set raw, set field, set field to null, set array, set array to null
-#define MONO_HANDLE_RAW(HANDLE) (HANDLE_INVARIANTS (HANDLE), ((HANDLE)->__raw))
+#define MONO_HANDLE_RAW(HANDLE) ((HANDLE)->__raw)
 #define MONO_HANDLE_DCL(TYPE, NAME) TYPED_HANDLE_NAME(TYPE) NAME = MONO_HANDLE_NEW (TYPE, (NAME ## _raw))
 
 #ifndef MONO_HANDLE_TRACK_OWNER
@@ -385,14 +382,17 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 /* N.B. RESULT is evaluated before HANDLE */
 #define MONO_HANDLE_GET(RESULT, HANDLE, FIELD) do {			\
 		MonoObjectHandle __dest = MONO_HANDLE_CAST(MonoObject, RESULT);	\
-		MONO_HANDLE_SUPPRESS (mono_gc_wbarrier_generic_store (&__dest->__raw,  (MonoObject*)(MONO_HANDLE_RAW(MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD))); \
+		MONO_HANDLE_SUPPRESS (*(gpointer*)&__dest->__raw = (gpointer)MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD); \
 	} while (0)
 
+// Get ((type)handle)->field as a handle.
 #define MONO_HANDLE_NEW_GET(TYPE,HANDLE,FIELD) (MONO_HANDLE_NEW(TYPE,MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD)))
 
+// Get handle->field, where field is not a pointer (an integer or non-managed pointer).
 #define MONO_HANDLE_GETVAL(HANDLE, FIELD) MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD)
 
-/* VS doesn't support typeof :( :( :( */
+// This would be easier to write with the gcc extension typeof,
+// but it is not widely enough implemented (i.e. Microsoft C).
 #define MONO_HANDLE_SETVAL(HANDLE, FIELD, TYPE, VALUE) do {	\
 		TYPE __val = (VALUE);	\
 		MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD = __val); \
@@ -401,19 +401,21 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 #define MONO_HANDLE_ARRAY_SETREF(HANDLE, IDX, VALUE) do {	\
 		uintptr_t __idx = (IDX);	\
    		MonoObjectHandle __val = MONO_HANDLE_CAST (MonoObject, VALUE);		\
-		do {							\
+		{	/* FIXME scope needed by Centrinel */		\
+			/* FIXME mono_array_setref_fast is not an expression. */ \
 			MONO_HANDLE_SUPPRESS_SCOPE(1);			\
 			mono_array_setref_fast (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE)), __idx, MONO_HANDLE_RAW (__val)); \
-		} while (0);						\
+		}							\
 	} while (0)
 
 #define MONO_HANDLE_ARRAY_SETVAL(HANDLE, TYPE, IDX, VALUE) do {		\
 		uintptr_t __idx = (IDX);				\
    		TYPE __val = (VALUE);					\
-		do {							\
+		{	/* FIXME scope needed by Centrinel */		\
+			/* FIXME mono_array_set is not an expression. */ \
 			MONO_HANDLE_SUPPRESS_SCOPE(1);			\
 			mono_array_set (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE)), TYPE, __idx, __val); \
-		} while (0);						\
+		}							\
 	} while (0)
 
 #define MONO_HANDLE_ARRAY_SETRAW(HANDLE, IDX, VALUE) do {	\
@@ -443,7 +445,7 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 /* Given an object and a MonoClassField, return the value (must be non-object)
  * of the field.  It's the caller's responsibility to check that the object is
  * of the correct class. */
-#define MONO_HANDLE_GET_FIELD_VAL(HANDLE,TYPE,FIELD) *(TYPE *)(mono_handle_unsafe_field_addr (MONO_HANDLE_CAST (MonoObject, (HANDLE)), (FIELD)))
+#define MONO_HANDLE_GET_FIELD_VAL(HANDLE,TYPE,FIELD) (*(TYPE *)(mono_handle_unsafe_field_addr (MONO_HANDLE_CAST (MonoObject, (HANDLE)), (FIELD))))
 
 #define MONO_HANDLE_NEW_GET_FIELD(HANDLE,TYPE,FIELD) MONO_HANDLE_NEW (TYPE, MONO_HANDLE_SUPPRESS (*(TYPE**)(mono_handle_unsafe_field_addr (MONO_HANDLE_CAST (MonoObject, MONO_HANDLE_UNSUPPRESS (HANDLE)), (FIELD)))))
 
@@ -485,11 +487,11 @@ extern const MonoObjectHandle mono_null_value_handle;
 static inline void
 mono_handle_assign (MonoObjectHandleOut dest, MonoObjectHandle src)
 {
-	MONO_HANDLE_SUPPRESS (mono_gc_wbarrier_generic_store (&dest->__raw, src ? MONO_HANDLE_RAW(src) : NULL));
+	MONO_HANDLE_SUPPRESS (dest->__raw = (gpointer)(src ? MONO_HANDLE_RAW (src) : NULL));
 }
 
 /* It is unsafe to call this function directly - it does not pin the handle!  Use MONO_HANDLE_GET_FIELD_VAL(). */
-static inline gchar*
+static inline gpointer
 mono_handle_unsafe_field_addr (MonoObjectHandle h, MonoClassField *field)
 {
 	return MONO_HANDLE_SUPPRESS (((gchar *)MONO_HANDLE_RAW (h)) + field->offset);
@@ -507,7 +509,7 @@ uintptr_t mono_array_handle_length (MonoArrayHandle arr);
 static inline void
 mono_handle_array_getref (MonoObjectHandleOut dest, MonoArrayHandle array, uintptr_t index)
 {
-	MONO_HANDLE_SUPPRESS (mono_gc_wbarrier_generic_store (&dest->__raw, mono_array_get (MONO_HANDLE_RAW (array),gpointer, index)));
+	MONO_HANDLE_SUPPRESS (dest->__raw = (gpointer)mono_array_get(MONO_HANDLE_RAW (array), gpointer, index));
 }
 
 #define mono_handle_class(o) MONO_HANDLE_SUPPRESS (mono_object_class (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (o))))
@@ -537,6 +539,13 @@ mono_string_handle_pin_chars (MonoStringHandle s, uint32_t *gchandle_out);
 
 gpointer
 mono_object_handle_pin_unbox (MonoObjectHandle boxed_valuetype_obj, uint32_t *gchandle_out);
+
+static inline gpointer
+mono_handle_unbox_unsafe (MonoObjectHandle handle)
+{
+	g_assert (m_class_is_valuetype (MONO_HANDLE_GETVAL (handle, vtable)->klass));
+	return MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle) + 1);
+}
 
 void
 mono_error_set_exception_handle (MonoError *error, MonoExceptionHandle exc);

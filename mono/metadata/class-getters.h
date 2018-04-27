@@ -8,6 +8,8 @@
 /* No include guards - this file is meant to be included multiple times.
  * Before including the file define the following macros:
  * MONO_CLASS_GETTER(funcname, rettype, optref, argtype, fieldname)
+ * 
+ * MONO_CLASS_OFFSET(funcname, argtype, fieldname)
  */
 
 /* Accessors for _MonoClass fields. */
@@ -68,7 +70,7 @@ MONO_CLASS_GETTER(m_class_get_sizes, union _MonoClassSizes, , MonoClass, sizes)
 MONO_CLASS_GETTER(m_class_get_fields, MonoClassField *, , MonoClass, fields)
 MONO_CLASS_GETTER(m_class_get_methods, MonoMethod **, ,  MonoClass, methods)
 MONO_CLASS_GETTER(m_class_get_this_arg, MonoType*, &, MonoClass, this_arg)
-MONO_CLASS_GETTER(m_class_get_byval_arg, MonoType*, &, MonoClass, byval_arg)
+MONO_CLASS_GETTER(m_class_get_byval_arg, MonoType*, &, MonoClass, _byval_arg)
 MONO_CLASS_GETTER(m_class_get_gc_descr, MonoGCDescriptor, , MonoClass, gc_descr)
 MONO_CLASS_GETTER(m_class_get_runtime_info, MonoClassRuntimeInfo *, , MonoClass, runtime_info)
 MONO_CLASS_GETTER(m_class_get_vtable, MonoMethod **, , MonoClass, vtable)
@@ -81,7 +83,7 @@ MONO_CLASS_GETTER(m_classdef_get_first_method_idx, guint32, ,  MonoClassDef, fir
 MONO_CLASS_GETTER(m_classdef_get_first_field_idx, guint32, , MonoClassDef, first_field_idx)
 MONO_CLASS_GETTER(m_classdef_get_method_count, guint32, ,  MonoClassDef, method_count)
 MONO_CLASS_GETTER(m_classdef_get_field_count, guint32, ,  MonoClassDef, field_count)
-MONO_CLASS_GETTER(m_classdef_get_next_class_cache, MonoClass *, , MonoClassDef, next_class_cache)
+MONO_CLASS_GETTER(m_classdef_get_next_class_cache, MonoClass **, &, MonoClassDef, next_class_cache)
 
 /* Accessors for _MonoClassGtd fields. */
 MONO_CLASS_GETTER(m_classgtd_get_klass, MonoClassDef*, &, MonoClassGtd, klass)
@@ -101,3 +103,16 @@ MONO_CLASS_GETTER(m_classarray_get_method_count, guint32, , MonoClassArray, meth
 
 /* Accessors for _MonoClassPointer fields. */
 MONO_CLASS_GETTER(m_classpointer_get_klass, MonoClass*, &, MonoClassPointer, klass)
+
+MONO_CLASS_OFFSET(m_class_offsetof_interface_bitmap, MonoClass, interface_bitmap)
+MONO_CLASS_OFFSET(m_class_offsetof_byval_arg, MonoClass, _byval_arg)
+MONO_CLASS_OFFSET(m_class_offsetof_cast_class, MonoClass, cast_class)
+MONO_CLASS_OFFSET(m_class_offsetof_element_class, MonoClass, element_class)
+MONO_CLASS_OFFSET(m_class_offsetof_idepth, MonoClass, idepth)
+MONO_CLASS_OFFSET(m_class_offsetof_instance_size, MonoClass, instance_size)
+MONO_CLASS_OFFSET(m_class_offsetof_interface_id, MonoClass, interface_id)
+MONO_CLASS_OFFSET(m_class_offsetof_max_interface_id, MonoClass, max_interface_id)
+MONO_CLASS_OFFSET(m_class_offsetof_parent, MonoClass, parent)
+MONO_CLASS_OFFSET(m_class_offsetof_rank, MonoClass, rank)
+MONO_CLASS_OFFSET(m_class_offsetof_sizes, MonoClass, sizes)
+MONO_CLASS_OFFSET(m_class_offsetof_supertypes, MonoClass, supertypes)

@@ -377,7 +377,7 @@ dump_verify_info (MonoImage *image, int flags, gboolean valid_only)
 			errors = mono_method_verify (method, flags);
 			if (errors) {
 				MonoClass *klass = mono_method_get_class (method);
-				char *name = mono_type_full_name (&klass->byval_arg);
+				char *name = mono_type_full_name (m_class_get_byval_arg (klass));
 				if (mono_method_signature (method) == NULL) {
 					g_print ("In method: %s::%s(ERROR)\n", name, mono_method_get_name (method));
 				} else {
@@ -430,8 +430,6 @@ verify_image_file (const char *fname)
 	MonoAssembly *assembly;
 	MonoImageOpenStatus status;
 	int i, count = 0;
-
-	error_init (error);
 
 	if (!strstr (fname, "mscorlib.dll")) {
 		image = mono_image_open_raw (fname, &status);
@@ -529,7 +527,7 @@ verify_image_file (const char *fname)
 		if (mono_class_has_failure (klass)) {
 			ERROR_DECL (type_load_error);
 			mono_error_set_for_class_failure (type_load_error, klass);
-			printf ("Could not initialize class(0x%08x) %s.%s due to %s\n", token, klass->name_space, klass->name, mono_error_get_message (type_load_error));
+			printf ("Could not initialize class(0x%08x) %s.%s due to %s\n", token, m_class_get_name_space (klass), m_class_get_name (klass), mono_error_get_message (type_load_error));
 			mono_error_cleanup (type_load_error);
 			++count;
 		}
@@ -538,7 +536,7 @@ verify_image_file (const char *fname)
 		if (mono_class_has_failure (klass)) {
 			ERROR_DECL (type_load_error);
 			mono_error_set_for_class_failure (type_load_error, klass);
-			printf ("Could not initialize vtable of class(0x%08x) %s.%s due to %s\n", token, klass->name_space, klass->name, mono_error_get_message (type_load_error));
+			printf ("Could not initialize vtable of class(0x%08x) %s.%s due to %s\n", token, m_class_get_name_space (klass), m_class_get_name (klass), mono_error_get_message (type_load_error));
 			mono_error_cleanup (type_load_error);
 			++count;
 		}
@@ -549,7 +547,7 @@ verify_image_file (const char *fname)
 
 invalid_image:
 	if (!is_ok (error)) {
-		printf ("FAIL: %s\n", mono_error_get_message (error));
+		g_print ("FAIL: %s\n", mono_error_get_message (error));
 		mono_error_cleanup (error);
 		++count;
 	}
@@ -567,7 +565,7 @@ try_load_from (MonoAssembly **assembly, const gchar *path1, const gchar *path2,
 	*assembly = NULL;
 	fullpath = g_build_filename (path1, path2, path3, path4, NULL);
 	if (g_file_test (fullpath, G_FILE_TEST_IS_REGULAR))
-		*assembly = mono_assembly_open_predicate (fullpath, refonly, FALSE, NULL, NULL, NULL);
+		*assembly = mono_assembly_open_predicate (fullpath, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
 
 	g_free (fullpath);
 	return (*assembly != NULL);
@@ -793,7 +791,7 @@ main (int argc, char *argv [])
 
 		mono_verifier_set_mode (verifier_mode);
 
-		assembly = mono_assembly_open_predicate (file, FALSE, FALSE, NULL, NULL, NULL);
+		assembly = mono_assembly_open_predicate (file, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
 		/*fake an assembly for netmodules so the verifier works*/
 		if (!assembly && (image = mono_image_open (file, &status)) && image->tables [MONO_TABLE_ASSEMBLY].rows == 0) {
 			assembly = g_new0 (MonoAssembly, 1);

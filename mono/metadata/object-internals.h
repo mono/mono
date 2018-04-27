@@ -127,7 +127,7 @@ struct _MonoArray {
 	mono_64bitaligned_t vector [MONO_ZERO_LEN_ARRAY];
 };
 
-#define MONO_SIZEOF_MONO_ARRAY (sizeof (MonoArray) - MONO_ZERO_LEN_ARRAY * sizeof (double))
+#define MONO_SIZEOF_MONO_ARRAY (sizeof (MonoArray) - MONO_ZERO_LEN_ARRAY * sizeof (mono_64bitaligned_t))
 
 struct _MonoString {
 	MonoObject object;
@@ -629,6 +629,7 @@ typedef struct {
 	gpointer (*create_delegate_trampoline) (MonoDomain *domain, MonoClass *klass);
 	gpointer (*interp_get_remoting_invoke) (gpointer imethod, MonoError *error);
 	GHashTable *(*get_weak_field_indexes) (MonoImage *image);
+	void     (*runtime_telemetry_callback) (void);
 } MonoRuntimeCallbacks;
 
 typedef gboolean (*MonoInternalStackWalk) (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
@@ -641,6 +642,7 @@ typedef struct {
 	void (*mono_raise_exception_with_ctx) (MonoException *ex, MonoContext *ctx);
 	gboolean (*mono_exception_walk_trace) (MonoException *ex, MonoInternalExceptionFrameWalk func, gpointer user_data);
 	gboolean (*mono_install_handler_block_guard) (MonoThreadUnwindState *unwind_state);
+	void (*mono_uninstall_current_handler_block_guard) (void);
 	gboolean (*mono_current_thread_has_handle_block_guard) (void);
 	gboolean (*mono_above_abort_threshold) (void);
 	void (*mono_clear_abort_threshold) (void);
@@ -741,7 +743,7 @@ mono_domain_get_tls_offset (void);
  * encountering instances of user defined subclasses of System.Type.
  */
 
-#define IS_MONOTYPE(obj) (!(obj) || (((MonoObject*)(obj))->vtable->klass->image == mono_defaults.corlib && ((MonoReflectionType*)(obj))->type != NULL))
+#define IS_MONOTYPE(obj) (!(obj) || (m_class_get_image (mono_object_class ((obj))) == mono_defaults.corlib && ((MonoReflectionType*)(obj))->type != NULL))
 
 #define IS_MONOTYPE_HANDLE(obj) IS_MONOTYPE (MONO_HANDLE_RAW (obj))
 
@@ -1161,7 +1163,6 @@ typedef struct {
 	MonoString *name;
 	MonoObject *def_value;
 	gint32 offset;
-	gint32 table_idx;
 	MonoReflectionType *typeb;
 	MonoArray *rva_data;
 	MonoArray *cattrs;
@@ -1221,6 +1222,7 @@ typedef struct {
 	gboolean is_main;
 	MonoArray *resources;
 	GHashTable *unparented_classes;
+	MonoArray *table_indexes;
 } MonoReflectionModuleBuilder;
 
 /* Safely acess System.Reflection.Emit.ModuleBuidler from native code */
@@ -1622,8 +1624,14 @@ mono_nullable_init_from_handle (guint8 *buf, MonoObjectHandle value, MonoClass *
 MonoObject *
 mono_value_box_checked (MonoDomain *domain, MonoClass *klass, void* val, MonoError *error);
 
+MonoObjectHandle
+mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer val, MonoError *error);
+
 MonoObject*
-mono_nullable_box (guint8 *buf, MonoClass *klass, MonoError *error);
+mono_nullable_box (gpointer buf, MonoClass *klass, MonoError *error);
+
+MonoObjectHandle
+mono_nullable_box_handle (gpointer buf, MonoClass *klass, MonoError *error);
 
 #ifdef MONO_SMALL_CONFIG
 #define MONO_IMT_SIZE 9
@@ -1703,9 +1711,6 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error);
 
 void
 mono_method_clear_object (MonoDomain *domain, MonoMethod *method);
-
-void
-mono_class_compute_gc_descriptor (MonoClass *klass);
 
 gsize*
 mono_class_compute_bitmap (MonoClass *klass, gsize *bitmap, int size, int offset, int *max_set, gboolean static_fields);
@@ -1810,14 +1815,20 @@ mono_glist_to_array (GList *list, MonoClass *eclass, MonoError *error);
 MonoObject *
 mono_object_new_checked (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
+MonoObjectHandle
+mono_object_new_handle (MonoDomain *domain, MonoClass *klass, MonoError *error);
+
 MonoObject*
 mono_object_new_mature (MonoVTable *vtable, MonoError *error);
 
-MonoObject*
-mono_object_new_fast_checked (MonoVTable *vtable, MonoError *error);
+MonoObjectHandle
+mono_object_new_handle_mature (MonoVTable *vtable, MonoError *error);
 
 MonoObject *
 mono_object_clone_checked (MonoObject *obj, MonoError *error);
+
+MonoObjectHandle
+mono_object_clone_handle (MonoObjectHandle obj, MonoError *error);
 
 MonoObject *
 mono_object_isinst_checked (MonoObject *obj, MonoClass *klass, MonoError *error);
@@ -1837,7 +1848,7 @@ mono_ldstr_checked (MonoDomain *domain, MonoImage *image, uint32_t str_index, Mo
 MonoString*
 mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length, MonoError *error);
 
-MonoString*
+MONO_PROFILER_API MonoString*
 mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *merror);
 
 MonoString*
@@ -1857,6 +1868,9 @@ mono_string_from_utf32_checked (mono_unichar4 *data, MonoError *error);
 
 char*
 mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error);
+
+char*
+mono_utf16_to_utf8 (const mono_unichar2 *s, gsize slength, MonoError *error);
 
 gboolean
 mono_runtime_object_init_checked (MonoObject *this_obj, MonoError *error);
@@ -1958,5 +1972,12 @@ ves_icall_ModuleBuilder_set_wrappers_type (MonoReflectionModuleBuilderHandle mod
 
 MonoAssembly*
 mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
+
+gboolean
+mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error);
+
+/* GC write barriers support */
+void
+mono_gc_wbarrier_object_copy_handle (MonoObjectHandle obj, MonoObjectHandle src);
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

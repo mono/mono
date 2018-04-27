@@ -125,6 +125,30 @@ namespace System {
         public abstract int Compare(String x, String y);
         public abstract bool Equals(String x, String y);        
         public abstract int GetHashCode(string obj);        
+
+#if MONO
+        // Convert a StringComparison to a StringComparer
+        public static StringComparer FromComparison(StringComparison comparisonType)
+        {
+            switch (comparisonType)
+            {
+                case StringComparison.CurrentCulture:
+                    return CurrentCulture;
+                case StringComparison.CurrentCultureIgnoreCase:
+                    return CurrentCultureIgnoreCase;
+                case StringComparison.InvariantCulture:
+                    return InvariantCulture;
+                case StringComparison.InvariantCultureIgnoreCase:
+                    return InvariantCultureIgnoreCase;
+                case StringComparison.Ordinal:
+                    return Ordinal;
+                case StringComparison.OrdinalIgnoreCase:
+                    return OrdinalIgnoreCase;
+                default:
+                    throw new ArgumentException(SR.NotSupported_StringComparison, nameof(comparisonType));
+            }
+        }
+#endif
     }
     
     [Serializable]

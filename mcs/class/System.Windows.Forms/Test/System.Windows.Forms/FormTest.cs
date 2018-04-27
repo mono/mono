@@ -1140,6 +1140,9 @@ namespace MonoTests.System.Windows.Forms
 			f2.Show ();
 			f2.Parent = null;
 			Assert.IsNull (f2.Parent, "#2");
+
+			f1.Close();
+			f2.Close();
 		}
 
 		[Test] // bug #80791
@@ -1210,7 +1213,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (true, Child.Visible, "#A0");
 				Main.Controls.Add (Child);
 				Assert.AreEqual (true, Child.Visible, "#B0");
-				Assert.AreEqual ("ParentChanged;BindingContextChanged;Layout;VisibleChanged;BindingContextChanged;BindingContextChanged", log.EventsJoined (), "#B1");
+				Assert.AreEqual ("ParentChanged;BindingContextChanged;VisibleChanged;Layout;VisibleChanged", log.EventsJoined (), "#B1");
 			}
 		}
 		[Test]
@@ -2508,52 +2511,56 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void GetScaledBoundsTest ()
 		{
-			if (TestHelper.RunningOnUnix)
-				Assert.Ignore ("Depends on WM decoration sizes, values correspond to windows");
-
 			ScaleForm c = new ScaleForm ();
 
 			Rectangle r = new Rectangle (100, 200, 300, 400);
+			Size b = c.Size - c.ClientSize;
 
-			Assert.AreEqual (new Rectangle (100, 200, 584, 218), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.All), "A1");
+			Size rescaled_size = new Size(600 - b.Width, (int)((400 - b.Height) *.5f) + b.Height);
+			Assert.AreEqual (new Rectangle (100, 200, rescaled_size.Width, rescaled_size.Height), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.All), "A1");
 			Assert.AreEqual (new Rectangle (100, 200, 300, 400), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Location), "A2");
-			Assert.AreEqual (new Rectangle (100, 200, 584, 218), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Size), "A3");
-			Assert.AreEqual (new Rectangle (100, 200, 300, 218), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Height), "A4");
+			Assert.AreEqual (new Rectangle (100, 200, rescaled_size.Width, rescaled_size.Height), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Size), "A3");
+			Assert.AreEqual (new Rectangle (100, 200, 300, rescaled_size.Height), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.Height), "A4");
 			Assert.AreEqual (new Rectangle (100, 200, 300, 400), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.X), "A5");
 			Assert.AreEqual (new Rectangle (100, 200, 300, 400), c.PublicGetScaledBounds (r, new SizeF (2f, .5f), BoundsSpecified.None), "A6");
 
 			Assert.AreEqual (new Rectangle (100, 200, 300, 400), c.PublicGetScaledBounds (r, new SizeF (1f, 1f), BoundsSpecified.All), "A6-2");
-			Assert.AreEqual (new Rectangle (100, 200, 584, 764), c.PublicGetScaledBounds (r, new SizeF (2f, 2f), BoundsSpecified.All), "A7");
-			Assert.AreEqual (new Rectangle (100, 200, 868, 1128), c.PublicGetScaledBounds (r, new SizeF (3f, 3f), BoundsSpecified.All), "A8");
-			Assert.AreEqual (new Rectangle (100, 200, 1152, 1492), c.PublicGetScaledBounds (r, new SizeF (4f, 4f), BoundsSpecified.All), "A9");
-			Assert.AreEqual (new Rectangle (100, 200, 158, 218), c.PublicGetScaledBounds (r, new SizeF (.5f, .5f), BoundsSpecified.All), "A10");
+			Assert.AreEqual (new Rectangle (100, 200, 600 - b.Width, 800 - b.Height), c.PublicGetScaledBounds (r, new SizeF (2f, 2f), BoundsSpecified.All), "A7");
+			Assert.AreEqual (new Rectangle (100, 200, 900 - 2 * b.Width, 1200 - 2 * b.Height), c.PublicGetScaledBounds (r, new SizeF (3f, 3f), BoundsSpecified.All), "A8");
+			Assert.AreEqual (new Rectangle (100, 200, 1200 - 3 * b.Width, 1600 - 3 * b.Height), c.PublicGetScaledBounds (r, new SizeF (4f, 4f), BoundsSpecified.All), "A9");
+			rescaled_size = new Size((int)((300 - b.Width) * .5f) + b.Width, (int)((400 - b.Height) * .5f) + b.Height);
+			Assert.AreEqual (new Rectangle (100, 200, rescaled_size.Width, rescaled_size.Height), c.PublicGetScaledBounds (r, new SizeF (.5f, .5f), BoundsSpecified.All), "A10");
 		}
 
 		[Test]
 		public void MethodScaleControl ()
 		{
-			if (TestHelper.RunningOnUnix)
-				Assert.Ignore ("Depends on WM decoration sizes, values correspond to windows");
-			
 			ScaleForm f = new ScaleForm ();
 			f.Location = new Point (5, 10);
+			f.ClientSize = new Size (300, 300);
 
-			Assert.AreEqual (new Rectangle (5, 10, 300, 300), f.Bounds, "A1");
+			Assert.AreEqual (new Point (5, 10), f.Location, "A1a");
+			Assert.AreEqual (new Size (300, 300), f.ClientSize, "A1b");
 
 			f.PublicScaleControl (new SizeF (2.0f, 2.0f), BoundsSpecified.All);
-			Assert.AreEqual (new Rectangle (5, 10, 584, 564), f.Bounds, "A2");
+			Assert.AreEqual (new Point (5, 10), f.Location, "A2a");
+			Assert.AreEqual (new Size (600, 600), f.ClientSize, "A2b");
 
 			f.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Location);
-			Assert.AreEqual (new Rectangle (5, 10, 584, 564), f.Bounds, "A3");
+			Assert.AreEqual (new Point (5, 10), f.Location, "A3a");
+			Assert.AreEqual (new Size (600, 600), f.ClientSize, "A3b");
 
 			f.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Size);
-			Assert.AreEqual (new Rectangle (5, 10, 300, 300), f.Bounds, "A4");
+			Assert.AreEqual (new Point (5, 10), f.Location, "A4a");
+			Assert.AreEqual (new Size (300, 300), f.ClientSize, "A4b");
 
 			f.PublicScaleControl (new SizeF (2.5f, 2.5f), BoundsSpecified.Size);
-			Assert.AreEqual (new Rectangle (5, 10, 726, 696), f.Bounds, "A5");
+			Assert.AreEqual (new Point (5, 10), f.Location, "A5a");
+			Assert.AreEqual (new Size (750, 750), f.ClientSize, "A5b");
 
 			f.PublicScaleControl (new SizeF (.3f, .3f), BoundsSpecified.Size);
-			Assert.AreEqual (new Rectangle (5, 10, 229, 234), f.Bounds, "A6");
+			Assert.AreEqual (new Point (5, 10), f.Location, "A6a");
+			Assert.AreEqual (new Size (225, 225), f.ClientSize, "A6b");
 
 			f.Dispose ();
 		}

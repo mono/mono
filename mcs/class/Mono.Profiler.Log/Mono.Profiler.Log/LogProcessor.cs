@@ -232,10 +232,18 @@ namespace Mono.Profiler.Log {
 					break;
 				case LogMetadataType.Image:
 					if (load) {
-						ev = new ImageLoadEvent {
+						var ile = new ImageLoadEvent {
 							ImagePointer = ReadPointer (),
 							Name = _reader.ReadCString (),
 						};
+
+						if (StreamHeader.FormatVersion >= 16) {
+							var guid = _reader.ReadCString ();
+
+							ile.ModuleVersionId = guid == string.Empty ? Guid.Empty : Guid.Parse (guid);
+						}
+
+						ev = ile;
 					} else if (unload) {
 						ev = new ImageUnloadEvent {
 							ImagePointer = ReadPointer (),
@@ -408,6 +416,7 @@ namespace Mono.Profiler.Log {
 						ClassPointer = StreamHeader.FormatVersion < 15 ? ReadPointer () : 0,
 						VTablePointer = StreamHeader.FormatVersion >= 15 ? ReadPointer () : 0,
 						ObjectSize = (long) _reader.ReadULeb128 (),
+						Generation = StreamHeader.FormatVersion >= 16 ? _reader.ReadByte () : 0,
 					};
 
 					var list = new HeapObjectEvent.HeapObjectReference [(int) _reader.ReadULeb128 ()];
@@ -434,7 +443,7 @@ namespace Mono.Profiler.Log {
 
 					for (var i = 0; i < list.Length; i++) {
 						list [i] = new HeapRootsEvent.HeapRoot {
-							AddressPointer = StreamHeader.FormatVersion >= 15 ? ReadPointer () : 0,
+							SlotPointer = StreamHeader.FormatVersion >= 15 ? ReadPointer () : 0,
 							ObjectPointer = ReadObject (),
 							Attributes = StreamHeader.FormatVersion < 15 ?
 							             (StreamHeader.FormatVersion == 13 ?
@@ -595,6 +604,11 @@ namespace Mono.Profiler.Log {
 				case LogEventType.MetaSynchronizationPoint:
 					ev = new SynchronizationPointEvent {
 						Type = (LogSynchronizationPoint) _reader.ReadByte (),
+					};
+					break;
+				case LogEventType.MetaAotId:
+					ev = new AotIdEvent {
+						AotId = Guid.Parse (_reader.ReadCString ()),
 					};
 					break;
 				default:

@@ -121,7 +121,6 @@ typedef struct _InterpMethod
 struct _InterpFrame {
 	InterpFrame *parent; /* parent */
 	InterpMethod  *imethod; /* parent */
-	MonoMethod     *method; /* parent */
 	stackval       *retval; /* parent */
 	char           *args;
 	char           *varargs;
@@ -146,10 +145,12 @@ typedef struct {
 	InterpFrame *handler_frame;
 	/* IP to resume execution at */
 	gpointer handler_ip;
+	/* Clause that we are resuming to */
+	MonoJitExceptionInfo *handler_ei;
 } ThreadContext;
 
 extern int mono_interp_traceopt;
-extern GSList *jit_classes;
+extern GSList *mono_interp_jit_classes;
 
 MonoException *
 mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, InterpFrame *frame);
@@ -204,7 +205,7 @@ enum_type:
 	case MONO_TYPE_ARRAY:
 		return MINT_TYPE_O;
 	case MONO_TYPE_VALUETYPE:
-		if (type->data.klass->enumtype) {
+		if (m_class_is_enumtype (type->data.klass)) {
 			type = mono_class_enum_basetype (type->data.klass);
 			goto enum_type;
 		} else
@@ -212,7 +213,7 @@ enum_type:
 	case MONO_TYPE_TYPEDBYREF:
 		return MINT_TYPE_VT;
 	case MONO_TYPE_GENERICINST:
-		type = &type->data.generic_class->container_class->byval_arg;
+		type = m_class_get_byval_arg (type->data.generic_class->container_class);
 		goto enum_type;
 	default:
 		g_warning ("got type 0x%02x", type->type);

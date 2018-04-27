@@ -75,7 +75,7 @@ get_type_name (MonoErrorInternal *error)
 		return error->type_name;
 	MonoClass *klass = get_class (error);
 	if (klass)
-		return klass->name;
+		return m_class_get_name (klass);
 	return "<unknown type>";
 }
 
@@ -85,8 +85,8 @@ get_assembly_name (MonoErrorInternal *error)
 	if (error->assembly_name)
 		return error->assembly_name;
 	MonoClass *klass = get_class (error);
-	if (klass && klass->image)
-		return klass->image->name;
+	if (klass && m_class_get_image (klass))
+		return m_class_get_image (klass)->name;
 	return "<unknown assembly>";
 }
 
@@ -428,6 +428,17 @@ mono_error_set_invalid_program (MonoError *oerror, const char *msg_format, ...)
 	set_error_message ();
 }
 
+void
+mono_error_set_member_access (MonoError *oerror, const char *msg_format, ...)
+{
+	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
+
+	mono_error_prepare (error);
+	error->error_code = MONO_ERROR_MEMBER_ACCESS;
+
+	set_error_message ();
+}
+
 /**
  * mono_error_set_invalid_cast:
  *
@@ -531,7 +542,7 @@ get_type_name_as_mono_string (MonoErrorInternal *error, MonoDomain *domain, Mono
 	} else {
 		MonoClass *klass = get_class (error);
 		if (klass) {
-			char *name = mono_type_full_name (&klass->byval_arg);
+			char *name = mono_type_full_name (m_class_get_byval_arg (klass));
 			if (name) {
 				res = string_new_cleanup (domain, name);
 				g_free (name);
@@ -551,6 +562,13 @@ set_message_on_exception (MonoException *exception, MonoErrorInternal *error, Mo
 		MONO_OBJECT_SETREF (exception, message, msg);
 	else
 		mono_error_set_out_of_memory (error_out, "Could not allocate exception object");
+}
+
+static MonoExceptionHandle
+mono_error_prepare_exception_handle (MonoError *oerror, MonoError *error_out)
+// Can fail with out-of-memory
+{
+	return MONO_HANDLE_NEW (MonoException, mono_error_prepare_exception (oerror, error_out));
 }
 
 /*Can fail with out-of-memory*/
@@ -581,6 +599,9 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 	case MONO_ERROR_MISSING_FIELD:
 		exception = mono_corlib_exception_new_with_args ("System", "MissingFieldException", error->full_message, error->first_argument, error_out);
 		break;
+	case MONO_ERROR_MEMBER_ACCESS:
+		exception = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MemberAccessException", error->full_message);
+		break;
 
 	case MONO_ERROR_TYPE_LOAD:
 		if ((error->type_name && error->assembly_name) || error->exn.klass) {
@@ -607,7 +628,10 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		break;
 
 	case MONO_ERROR_OUT_OF_MEMORY:
-		exception = mono_get_exception_out_of_memory ();
+		if (domain)
+			exception = domain->out_of_memory_ex;
+		if (!exception)
+			exception = mono_get_exception_out_of_memory ();
 		break;
 
 	case MONO_ERROR_ARGUMENT:
@@ -675,7 +699,6 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 Convert this MonoError to an exception if it's faulty or return NULL.
 The error object is cleant after.
 */
-
 MonoException*
 mono_error_convert_to_exception (MonoError *target_error)
 {

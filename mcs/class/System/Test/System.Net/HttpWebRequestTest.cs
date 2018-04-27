@@ -2621,7 +2621,8 @@ namespace MonoTests.System.Net
 			var hwr = (HttpWebRequest)WebRequest.Create (uri);
 
 			hwr.Host = address2;
-			Assert.AreEqual (address2, hwr.Host, "#1");
+			var expected = "[2001::1:1:1:157:0]";
+			Assert.AreEqual (expected, hwr.Host, "#1");
 		}
 
 		[Test]
@@ -2639,21 +2640,6 @@ namespace MonoTests.System.Net
 				Assert.Fail ("#1");
 			} catch (ArgumentException) {
 				;
-			}
-		}
-
-		[Test]
-#if FEATURE_NO_BSD_SOCKETS
-		[ExpectedException (typeof (PlatformNotSupportedException))]
-#endif
-		public void AllowReadStreamBuffering ()
-		{
-			var hr = WebRequest.CreateHttp ("http://www.google.com");
-			Assert.IsFalse (hr.AllowReadStreamBuffering, "#1");
-			try {
-				hr.AllowReadStreamBuffering = true;
-				Assert.Fail ("#2");
-			} catch (InvalidOperationException) {
 			}
 		}
 
@@ -3253,7 +3239,7 @@ namespace MonoTests.System.Net
 						Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 						Assert.IsNull (ex.InnerException, "#A3");
 						Assert.IsNotNull (ex.Message, "#A4");
-						Assert.AreEqual ("size", ex.ParamName, "#A5");
+						Assert.AreEqual ("count", ex.ParamName, "#A5");
 					}
 				}
 
@@ -3284,7 +3270,7 @@ namespace MonoTests.System.Net
 						Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
 						Assert.IsNull (ex.InnerException, "#3");
 						Assert.IsNotNull (ex.Message, "#4");
-						Assert.AreEqual ("size", ex.ParamName, "#5");
+						Assert.AreEqual ("count", ex.ParamName, "#5");
 					}
 				}
 
@@ -3471,6 +3457,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MobileNotWorking")] // https://github.com/xamarin/xamarin-macios/issues/3827
 		// Bug6737
 		// This test is supposed to fail prior to .NET 4.0
 		public void Post_EmptyRequestStream ()

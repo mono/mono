@@ -10,6 +10,7 @@
 #include <mono/metadata/blob.h>
 #include <mono/metadata/row-indexes.h>
 #include <mono/metadata/image.h>
+#include <mono/metadata/object-forward.h>
 
 MONO_BEGIN_DECLS
 
@@ -18,13 +19,11 @@ MONO_BEGIN_DECLS
 #define MONO_TYPE_IS_POINTER(t) mono_type_is_pointer (t)
 #define MONO_TYPE_IS_REFERENCE(t) mono_type_is_reference (t)
 
-#define MONO_CLASS_IS_INTERFACE(c) ((mono_class_get_flags (c) & TYPE_ATTRIBUTE_INTERFACE) || (c->byval_arg.type == MONO_TYPE_VAR) || (c->byval_arg.type == MONO_TYPE_MVAR))
+#define MONO_CLASS_IS_INTERFACE(c) ((mono_class_get_flags (c) & TYPE_ATTRIBUTE_INTERFACE) || mono_type_is_generic_parameter (mono_class_get_type (c)))
 
 #define MONO_CLASS_IS_IMPORT(c) ((mono_class_get_flags (c) & TYPE_ATTRIBUTE_IMPORT))
 
-typedef struct _MonoClass MonoClass;
 typedef struct _MonoDomain MonoDomain;
-typedef struct _MonoMethod MonoMethod;
 
 typedef enum {
 	MONO_EXCEPTION_CLAUSE_NONE,
@@ -309,6 +308,12 @@ typedef struct {
 	unsigned int required : 1;
 	unsigned int token    : 31;
 } MonoCustomMod;
+
+typedef struct _MonoCustomModContainer {
+	uint8_t count; /* max 64 modifiers follow at the end */
+	MonoImage *image; /* Image containing types in modifiers array */
+	MonoCustomMod modifiers [1]; /* Actual length is count */
+} MonoCustomModContainer;
 
 struct _MonoArrayType {
 	MonoClass *eklass;

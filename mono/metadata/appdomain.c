@@ -491,7 +491,7 @@ mono_domain_create_appdomain_checked (char *friendly_name, char *configuration_f
 	MonoDomain *result = NULL;
 
 	MonoClass *klass = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
-	MonoAppDomainSetupHandle setup = MONO_HANDLE_NEW (MonoAppDomainSetup, mono_object_new_checked (mono_domain_get (), klass, error));
+	MonoAppDomainSetupHandle setup = (MonoAppDomainSetupHandle)mono_object_new_handle (mono_domain_get (), klass, error);
 	goto_if_nok (error, leave);
 	MonoStringHandle config_file;
 	if (configuration_file != NULL) {
@@ -560,7 +560,7 @@ copy_app_domain_setup (MonoDomain *domain, MonoAppDomainSetupHandle setup, MonoE
 	caller_domain = mono_domain_get ();
 	ads_class = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
 
-	MonoAppDomainSetupHandle copy = MONO_HANDLE_NEW (MonoAppDomainSetup, mono_object_new_checked (domain, ads_class, error));
+	MonoAppDomainSetupHandle copy = (MonoAppDomainSetupHandle)mono_object_new_handle(domain, ads_class, error);
 	goto_if_nok (error, leave);
 
 	mono_domain_set_internal (domain);
@@ -624,7 +624,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 	/* FIXME: pin all those objects */
 	data = mono_domain_create();
 
-	MonoAppDomainHandle ad = MONO_HANDLE_NEW (MonoAppDomain,  mono_object_new_checked (data, adclass, error));
+	MonoAppDomainHandle ad = (MonoAppDomainHandle)mono_object_new_handle (data, adclass, error);
 	goto_if_nok (error, leave);
 	MONO_HANDLE_SETVAL (ad, data, MonoDomain*, data);
 	data->domain = MONO_HANDLE_RAW (ad);
@@ -1158,7 +1158,9 @@ ves_icall_System_AppDomain_GetAssemblies (MonoAppDomainHandle ad, MonoBoolean re
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
-		if (refonly != ass->ref_only)
+		MonoBoolean ass_refonly = mono_asmctx_get_kind (&ass->context) == MONO_ASMCTX_REFONLY;
+		/* .NET Framework GetAssemblies() includes LoadFrom and Load(byte[]) assemblies, too */
+		if (refonly != ass_refonly)
 			continue;
 		if (ass->corlib_internal)
 			continue;
@@ -1228,7 +1230,7 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 	}
 	ret = !MONO_HANDLE_IS_NULL (result) ? MONO_HANDLE_GETVAL (result, assembly) : NULL;
 
-	if (ret && !refonly && ret->ref_only) {
+	if (ret && !refonly && mono_asmctx_get_kind (&ret->context) == MONO_ASMCTX_REFONLY) {
 		/* .NET Framework throws System.IO.FileNotFoundException in this case */
 		mono_error_set_file_not_found (error, NULL, "AssemblyResolveEvent handlers cannot return Assemblies loaded for reflection only");
 		ret = NULL;
@@ -1551,29 +1553,66 @@ mono_make_shadow_copy (const char *filename, MonoError *error)
 	return (char *) filename;
 }
 #else
+
+typedef enum {
+	SHADOW_COPY_SIBLING_EXT_APPEND,
+	SHADOW_COPY_SIBLING_EXT_REPLACE,
+} ShadowCopySiblingExt;
+
+static
+gchar *
+make_sibling_path (const gchar *path, gint pathlen, const char *extension, ShadowCopySiblingExt extopt)
+{
+	gchar *result = NULL;
+	switch (extopt) {
+	case SHADOW_COPY_SIBLING_EXT_APPEND: {
+		result = g_strconcat (path, extension, NULL);
+		break;
+	}
+	case SHADOW_COPY_SIBLING_EXT_REPLACE: {
+		/* expect path to be a .dll or .exe (or some case insensitive variant) */
+		g_assert (pathlen >= 4 && path[pathlen - 4] == '.');
+		GString *s = g_string_sized_new (pathlen - 4 + strlen (extension));
+		g_string_append_len (s, path, pathlen - 4);
+		g_string_append (s, extension);
+		result = g_string_free (s, FALSE);
+		break;
+	}
+	default:
+		g_assert_not_reached ();
+	}
+	return result;
+}
+
 static gboolean
-shadow_copy_sibling (gchar *src, gint srclen, const char *extension, gchar *target, gint targetlen, gint tail_len)
+shadow_copy_sibling (const gchar *src_pristine, gint srclen, const char *extension, ShadowCopySiblingExt extopt, const gchar *target_pristine, gint targetlen)
 {
 	guint16 *orig, *dest;
 	gboolean copy_result;
 	gint32 copy_error;
+	gchar *src = NULL;
+	gchar *target = NULL;
 	
-	strcpy (src + srclen - tail_len, extension);
+	src = make_sibling_path (src_pristine, srclen, extension, extopt);
 
 	if (IS_PORTABILITY_CASE) {
 		gchar *file = mono_portability_find_file (src, TRUE);
 
-		if (file == NULL)
+		if (file == NULL) {
+			g_free (src);
 			return TRUE;
+		}
 
 		g_free (file);
 	} else if (!g_file_test (src, G_FILE_TEST_IS_REGULAR)) {
+		g_free (src);
 		return TRUE;
 	}
 
 	orig = g_utf8_to_utf16 (src, strlen (src), NULL, NULL, NULL);
 
-	strcpy (target + targetlen - tail_len, extension);
+	target = make_sibling_path (target_pristine, targetlen, extension, extopt);
+
 	dest = g_utf8_to_utf16 (target, strlen (target), NULL, NULL, NULL);
 	
 	mono_w32file_delete (dest);
@@ -1588,6 +1627,8 @@ shadow_copy_sibling (gchar *src, gint srclen, const char *extension, gchar *targ
 	g_free (orig);
 	g_free (dest);
 	
+	g_free (src);
+	g_free (target);
 	return copy_result;
 }
 
@@ -1838,8 +1879,7 @@ char *
 mono_make_shadow_copy (const char *filename, MonoError *oerror)
 {
 	ERROR_DECL (error);
-	gchar *sibling_source, *sibling_target;
-	gint sibling_source_len, sibling_target_len;
+	gint filename_len, shadow_len;
 	guint16 *orig, *dest;
 	guint32 attrs;
 	char *shadow;
@@ -1927,20 +1967,15 @@ mono_make_shadow_copy (const char *filename, MonoError *oerror)
 		return NULL;
 	}
 
-	/* attempt to copy .mdb, .config if they exist */
-	sibling_source = g_strconcat (filename, ".config", NULL);
-	sibling_source_len = strlen (sibling_source);
-	sibling_target = g_strconcat (shadow, ".config", NULL);
-	sibling_target_len = strlen (sibling_target);
+	/* attempt to copy .mdb, .pdb and .config if they exist */
+	filename_len = strlen (filename);
+	shadow_len = strlen (shadow);
 
-	copy_result = shadow_copy_sibling (sibling_source, sibling_source_len, ".mdb", sibling_target, sibling_target_len, 7);
+	copy_result = shadow_copy_sibling (filename, filename_len, ".mdb", SHADOW_COPY_SIBLING_EXT_APPEND, shadow, shadow_len);
 	if (copy_result)
-		copy_result = shadow_copy_sibling (sibling_source, sibling_source_len, ".pdb", sibling_target, sibling_target_len, 11);
+		copy_result = shadow_copy_sibling (filename, filename_len, ".pdb", SHADOW_COPY_SIBLING_EXT_REPLACE, shadow, shadow_len);
 	if (copy_result)
-		copy_result = shadow_copy_sibling (sibling_source, sibling_source_len, ".config", sibling_target, sibling_target_len, 7);
-	
-	g_free (sibling_source);
-	g_free (sibling_target);
+		copy_result = shadow_copy_sibling (filename, filename_len, ".config", SHADOW_COPY_SIBLING_EXT_APPEND, shadow, shadow_len);
 	
 	if (!copy_result)  {
 		g_free (shadow);
@@ -2000,7 +2035,7 @@ static gboolean
 try_load_from (MonoAssembly **assembly,
 	       const gchar *path1, const gchar *path2,
 	       const gchar *path3, const gchar *path4,
-	       gboolean refonly, gboolean is_private,
+	       MonoAssemblyContextKind asmctx, gboolean is_private,
 	       MonoAssemblyCandidatePredicate predicate, gpointer user_data)
 {
 	gchar *fullpath;
@@ -2020,14 +2055,14 @@ try_load_from (MonoAssembly **assembly,
 		found = g_file_test (fullpath, G_FILE_TEST_IS_REGULAR);
 	
 	if (found)
-		*assembly = mono_assembly_open_predicate (fullpath, refonly, FALSE, predicate, user_data, NULL);
+		*assembly = mono_assembly_open_predicate (fullpath, asmctx, predicate, user_data, NULL);
 
 	g_free (fullpath);
 	return (*assembly != NULL);
 }
 
 static MonoAssembly *
-real_load (gchar **search_path, const gchar *culture, const gchar *name, gboolean refonly, MonoAssemblyCandidatePredicate predicate, gpointer user_data)
+real_load (gchar **search_path, const gchar *culture, const gchar *name, MonoAssemblyContextKind asmctx, MonoAssemblyCandidatePredicate predicate, gpointer user_data)
 {
 	MonoAssembly *result = NULL;
 	gchar **path;
@@ -2054,22 +2089,22 @@ real_load (gchar **search_path, const gchar *culture, const gchar *name, gboolea
 		/* See test cases in bug #58992 and bug #57710 */
 		/* 1st try: [culture]/[name].dll (culture may be empty) */
 		strcpy (filename + len - 4, ".dll");
-		if (try_load_from (&result, *path, local_culture, "", filename, refonly, is_private, predicate, user_data))
+		if (try_load_from (&result, *path, local_culture, "", filename, asmctx, is_private, predicate, user_data))
 			break;
 
 		/* 2nd try: [culture]/[name].exe (culture may be empty) */
 		strcpy (filename + len - 4, ".exe");
-		if (try_load_from (&result, *path, local_culture, "", filename, refonly, is_private, predicate, user_data))
+		if (try_load_from (&result, *path, local_culture, "", filename, asmctx, is_private, predicate, user_data))
 			break;
 
 		/* 3rd try: [culture]/[name]/[name].dll (culture may be empty) */
 		strcpy (filename + len - 4, ".dll");
-		if (try_load_from (&result, *path, local_culture, name, filename, refonly, is_private, predicate, user_data))
+		if (try_load_from (&result, *path, local_culture, name, filename, asmctx, is_private, predicate, user_data))
 			break;
 
 		/* 4th try: [culture]/[name]/[name].exe (culture may be empty) */
 		strcpy (filename + len - 4, ".exe");
-		if (try_load_from (&result, *path, local_culture, name, filename, refonly, is_private, predicate, user_data))
+		if (try_load_from (&result, *path, local_culture, name, filename, asmctx, is_private, predicate, user_data))
 			break;
 	}
 
@@ -2111,13 +2146,44 @@ mono_domain_assembly_preload (MonoAssemblyName *aname,
 			}
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "End of domain %s search path.", domain->friendly_name);			
 		}
-		result = real_load (domain->search_path, aname->culture, aname->name, refonly, predicate, predicate_ud);
+		result = real_load (domain->search_path, aname->culture, aname->name, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, predicate, predicate_ud);
 	}
 
 	if (result == NULL && assemblies_path && assemblies_path [0] != NULL) {
-		result = real_load (assemblies_path, aname->culture, aname->name, refonly, predicate, predicate_ud);
+		result = real_load (assemblies_path, aname->culture, aname->name, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, predicate, predicate_ud);
 	}
 
+	return result;
+}
+
+/**
+ * mono_assembly_load_from_assemblies_path:
+ *
+ * \param assemblies_path directories to search for given assembly name, terminated by NULL
+ * \param aname assembly name to look for
+ * \param asmctx assembly load context for this load operation
+ *
+ * Given a NULL-terminated array of paths, look for \c name.ext, \c name, \c
+ * culture/name.ext, \c culture/name/name.ext where \c ext is \c dll and \c
+ * exe and try to load it in the given assembly load context.
+ *
+ * \returns A \c MonoAssembly if probing was successful, or NULL otherwise.
+ */
+MonoAssembly*
+mono_assembly_load_from_assemblies_path (gchar **assemblies_path, MonoAssemblyName *aname, MonoAssemblyContextKind asmctx)
+{
+	MonoAssemblyCandidatePredicate predicate = NULL;
+	void* predicate_ud = NULL;
+#if !defined(DISABLE_DESKTOP_LOADER)
+	if (G_LIKELY (mono_loader_get_strict_strong_names ())) {
+		predicate = &mono_assembly_candidate_predicate_sn_same_name;
+		predicate_ud = aname;
+	}
+#endif
+	MonoAssembly *result = NULL;
+	if (assemblies_path && assemblies_path[0] != NULL) {
+		result = real_load (assemblies_path, aname->culture, aname->name, asmctx, predicate, predicate_ud);
+	}
 	return result;
 }
 
@@ -2137,7 +2203,8 @@ mono_domain_assembly_search (MonoAssemblyName *aname,
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
 		/* Dynamic assemblies can't match here in MS.NET */
-		if (assembly_is_dynamic (ass) || refonly != ass->ref_only || !mono_assembly_names_equal (aname, &ass->aname))
+		gboolean ass_ref_only = mono_asmctx_get_kind (&ass->context) == MONO_ASMCTX_REFONLY;
+		if (assembly_is_dynamic (ass) || refonly != ass_ref_only || !mono_assembly_names_equal (aname, &ass->aname))
 			continue;
 
 		mono_domain_assemblies_unlock (domain);
@@ -2168,7 +2235,7 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoole
 	name = filename = mono_string_handle_to_utf8 (fname, error);
 	goto_if_nok (error, leave);
 	
-	MonoAssembly *ass = mono_assembly_open_predicate (filename, refOnly, TRUE, NULL, NULL, &status);
+	MonoAssembly *ass = mono_assembly_open_predicate (filename, refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_LOADFROM, NULL, NULL, &status);
 	
 	if (!ass) {
 		if (status == MONO_IMAGE_IMAGE_INVALID)
@@ -2183,6 +2250,37 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoole
 leave:
 	g_free (name);
 	return result;
+}
+
+MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname, MonoError *error)
+{
+	MonoDomain *domain = mono_domain_get ();
+	MonoReflectionAssemblyHandle result = MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE);
+	char *filename = NULL;
+	if (MONO_HANDLE_IS_NULL (fname)) {
+		mono_error_set_argument_null (error, "assemblyFile", "");
+		goto leave;
+	}
+
+	filename = mono_string_handle_to_utf8 (fname, error);
+	goto_if_nok (error, leave);
+
+	MonoImageOpenStatus status;
+	MonoAssembly *ass = mono_assembly_open_predicate (filename, MONO_ASMCTX_INDIVIDUAL, NULL, NULL, &status);
+	if (!ass) {
+		if (status == MONO_IMAGE_IMAGE_INVALID)
+			mono_error_set_bad_image_by_name (error, filename, "Invalid Image");
+		else
+			mono_error_set_file_not_found (error, filename, "Invalid Image");
+		goto leave;
+	}
+
+	result = mono_assembly_get_object_handle (domain, ass, error);
+leave:
+	g_free (filename);
+	return result;
+
 }
 
 MonoReflectionAssemblyHandle
@@ -2226,7 +2324,19 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 		mono_gchandle_free (symbol_gchandle);
 	}
 
-	ass = mono_assembly_load_from_full (image, "", &status, refonly);
+	MonoAssembly* redirected_asm = NULL;
+	MonoImageOpenStatus new_status = MONO_IMAGE_OK;
+	if ((redirected_asm = mono_assembly_binding_applies_to_image (image, &new_status))) {
+		mono_image_close (image);
+		image = redirected_asm->image;
+		mono_image_addref (image); /* so that mono_image close, below, has something to do */
+	} else if (new_status != MONO_IMAGE_OK) {
+		mono_image_close (image);
+		mono_error_set_bad_image_by_name (error, "In Memory assembly", "0x%p was assembly binding redirected to another assembly that failed to load", assembly_data);
+		return refass;
+	}
+
+	ass = mono_assembly_load_from_predicate (image, "", refonly? MONO_ASMCTX_REFONLY : MONO_ASMCTX_INDIVIDUAL, NULL, NULL, &status);
 
 
 	if (!ass) {
@@ -2276,7 +2386,7 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandl
 		return refass;
 	}
 
-	ass = mono_assembly_load_full_nosearch (&aname, NULL, &status, refOnly);
+	ass = mono_assembly_load_full_nosearch (&aname, NULL, refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, &status);
 	mono_assembly_name_free (&aname);
 
 	if (!ass) {
@@ -2507,10 +2617,10 @@ clear_cached_vtable (MonoVTable *vtable)
 	MonoClassRuntimeInfo *runtime_info;
 	void *data;
 
-	runtime_info = klass->runtime_info;
+	runtime_info = m_class_get_runtime_info (klass);
 	if (runtime_info && runtime_info->max_domain >= domain->domain_id)
 		runtime_info->domain_vtables [domain->domain_id] = NULL;
-	if (klass->has_static_refs && (data = mono_vtable_get_static_field_data (vtable)))
+	if (m_class_has_static_refs (klass) && (data = mono_vtable_get_static_field_data (vtable)))
 		mono_gc_free_fixed (data);
 }
 
@@ -2520,7 +2630,7 @@ zero_static_data (MonoVTable *vtable)
 	MonoClass *klass = vtable->klass;
 	void *data;
 
-	if (klass->has_static_refs && (data = mono_vtable_get_static_field_data (vtable)))
+	if (m_class_has_static_refs (klass) && (data = mono_vtable_get_static_field_data (vtable)))
 		mono_gc_bzero_aligned (data, mono_class_data_size (klass));
 }
 

@@ -40,4 +40,5 @@
 	<dllmap dll="gdiplus.dll" target="@libgdiplus_install_loc@"  os="!windows"/>
 	<dllmap dll="gdi32" target="@libgdiplus_install_loc@" os="!windows"/>
 	<dllmap dll="gdi32.dll" target="@libgdiplus_install_loc@" os="!windows"/>
+	<dllmap dll="System.Native" target="__Internal"/>
 </configuration>

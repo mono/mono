@@ -20,7 +20,9 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Buffers/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Private.Uri/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.IO.Ports/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Net.HttpListener/src/Resources/Strings.resx
+	../../../external/corefx/src/System.Net.HttpListener/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Net.Requests/src/Resources/Strings.resx	\
+	../../../external/corefx/src/System.ComponentModel.TypeConverter/src/Resources/Strings.resx
 
 TEST_RESOURCES = \
 	Test/System/test-uri-props.txt \
@@ -29,13 +31,12 @@ TEST_RESOURCES = \
 
 USE_XTEST_REMOTE_EXECUTOR = YES
 XTEST_LIB_REFS = System System.Core System.Net Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation System.Net.Http
-LIB_MCS_FLAGS = -d:CONFIGURATION_2_0 -d:XML_DEP $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%) -nowarn:436
+LIB_MCS_FLAGS = -d:COREFX -d:CONFIGURATION_2_0 -d:XML_DEP -d:SECURITY_DEP $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%) -nowarn:436
 
 ifndef NO_MONO_SECURITY
-MONO_SECURITY=Mono.Security
-MONO_SECURITY_REF=MonoSecurity=Mono.Security
-MONO_SECURITY_DLL=$(the_libdir_base)Mono.Security.dll
-EXTERN_ALIAS_FLAGS = -d:MONO_SECURITY_ALIAS
+MONO_SECURITY := Mono.Security
+LIB_MCS_FLAGS += -d:MONO_SECURITY_ALIAS
+LIB_REFS += MonoSecurity=Mono.Security
 else
 LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
 endif
@@ -66,6 +67,10 @@ endif
 
 ifdef MONO_FEATURE_APPLETLS
 LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLETLS
+endif
+
+ifndef AOT_FRIENDLY_PROFILE
+LIB_MCS_FLAGS += -d:FEATURE_COMPILED
 endif
 
 ifdef ONLY_APPLETLS
@@ -100,32 +105,15 @@ TXT_RESOURCE_STRINGS = ../referencesource/System/System.txt
 
 API_BIN_REFS := System.Net.Http System.Xml
 
-#
-# Flags used to build the secxml version of System.
-#
-ifeq (secxml/, $(intermediate))
-LOCAL_MCS_FLAGS =
-LIB_REFS += $(MONO_SECURITY_REF)
-LIB_MCS_FLAGS += -d:SECURITY_DEP $(EXTERN_ALIAS_FLAGS)
-endif
-
-#
-# Flags used to build the final version of System (when intermediate is not defined)
-#
-ifndef intermediate
-LIB_REFS += $(MONO_SECURITY_REF)
-LIB_MCS_FLAGS += -d:SECURITY_DEP $(EXTERN_ALIAS_FLAGS)
-
 ifndef MOBILE_PROFILE
 API_BIN_REFS += System.Configuration
 LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
 endif
 
-endif
-
 EXTRA_DISTFILES = \
 	common.sources					\
 	common_networking.sources		\
+	corefx.unix.sources				\
 	Test/test-config-file				\
 	Test/System.Security.Cryptography.X509Certificates/pkits/Makefile	\
 	Test/System.Security.Cryptography.X509Certificates/pkits/README		\
@@ -135,45 +123,8 @@ EXTRA_DISTFILES = \
 
 include ../../build/library.make
 
-system_library_deps := \
-	$(MONO_SECURITY_DLL)				\
-	$(bare_libdir)/System.dll
-
-artifacts = $(system_library_deps) 			\
-	$(MONO_SECURITY_DLL)
-
-.NOTPARALLEL: $(system_library_deps)
-
-$(the_libdir_base)System.dll: $(system_library_deps) ../Mono.Security/Makefile
-
-ifeq (bare/,$(intermediate))
-build-bare:
-else
-$(bare_libdir)/System.dll:
-	$(MAKE) intermediate=bare/ $(bare_libdir)/System.dll
-endif
-
-$(the_libdir_base)Mono.Security.dll: ../Mono.Security/Makefile
-	(cd ../Mono.Security; $(MAKE))
-
-$(build_lib): $(CYCLIC_DEP_FILES)
-
 $(test_lib_output): $(TEST_RESOURCES) $(test_lib_dir)
-
-CLEAN_FILES = $(test_lib).config $(bare_libdir)/System.dll $(secxml_libdir)/System.dll $(bare_libdir)/System.dll.mdb $(secxml_libdir)/System.dll.mdb
 
 # Helper target to run the perl regex test suite
 regex-check:
 	$(MAKE) check FIXTURE=System.Text.RegularExpressions.PerlTest
-
-#Debuging target
-fresh: clean
-	rm -rf ../../class/lib/$(PROFILE)/bare ../../class/lib/$(PROFILE)/bare/ $(system_library_deps)
-
-ifndef intermediate
-ifneq ($(PROFILE),basic)
-csproj-local:
-	$(MAKE) csproj-local intermediate=bare/
-	$(MAKE) csproj-local intermediate=secxml/
-endif
-endif

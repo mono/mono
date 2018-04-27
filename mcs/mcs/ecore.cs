@@ -241,7 +241,7 @@ namespace Mono.CSharp {
 
 		protected void CheckExpressionVariable (ResolveContext rc)
 		{
-			if (rc.HasAny (ResolveContext.Options.BaseInitializer | ResolveContext.Options.FieldInitializerScope)) {
+			if (rc.HasAny (ResolveContext.Options.BaseInitializer | ResolveContext.Options.FieldInitializerScope) && rc.CurrentAnonymousMethod == null) {
 				rc.Report.Error (8200, loc, "Out variable and pattern variable declarations are not allowed within constructor initializers, field initializers, or property initializers");
 			} else if (rc.HasSet (ResolveContext.Options.QueryClauseScope)) {
 				rc.Report.Error (8201, loc, "Out variable and pattern variable declarations are not allowed within a query clause");

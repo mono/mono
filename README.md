@@ -29,7 +29,7 @@ The Mono project is part of the [.NET Foundation](http://www.dotnetfoundation.or
 | Windows      | amd64              | [![windows-amd64][15]][16]   |
 | Windows      | i386               | [![windows-i386][17]][18]    |
 | CentOS       | s390x (cs)         | [![centos-s390x][19]][20]    |
-| Debian 8     | ppc64el (cs)       | [![debian-8-ppc64el][21]][22]|
+| Debian 9     | ppc64el (cs)       | [![debian-9-ppc64el][21]][22]|
 
 _(cs) = community supported architecture_
 
@@ -53,8 +53,8 @@ _(cs) = community supported architecture_
 [18]: https://jenkins.mono-project.com/job/z/label=w32/
 [19]: https://jenkins.mono-project.com/job/test-mono-mainline-community/label=centos-s390x/badge/icon
 [20]: https://jenkins.mono-project.com/job/test-mono-mainline-community/label=centos-s390x
-[21]: https://jenkins.mono-project.com/job/test-mono-mainline-community-chroot/label=debian-8-ppc64el/badge/icon
-[22]: https://jenkins.mono-project.com/job/test-mono-mainline-community-chroot/label=debian-8-ppc64el
+[21]: https://jenkins.mono-project.com/job/test-mono-mainline-community-chroot/label=debian-9-ppc64el/badge/icon
+[22]: https://jenkins.mono-project.com/job/test-mono-mainline-community-chroot/label=debian-9-ppc64el
 
 Compilation and Installation
 ============================
@@ -111,7 +111,7 @@ Once you have installed the software, you can run a few programs:
 
 * `mono program.exe` runtime engine
 
-* `mcs program.cs` C# compiler 
+* `mcs program.cs` C# compiler
 
 * `monodis program.exe` CIL Disassembler
 
@@ -128,6 +128,14 @@ Directory Roadmap
 
 * `external/` - Git submodules for external libraries (Newtonsoft.Json, ikvm, etc).
 
+* `ikvm-native/` - Glue code for ikvm.
+
+* `libgc/` - The (deprecated) Boehm GC implementation.
+
+* `llvm/` - Utility Makefiles for integrating the Mono LLVM fork.
+
+* `m4/` - General utility Makefiles.
+
 * `man/` - Manual pages for the various Mono commands and programs.
 
 * `mcs/` - The class libraries, compiler and tools
@@ -142,25 +150,51 @@ Directory Roadmap
 
   * `arch/` - Architecture specific portions.
 
+  * `benchmark/` - A collection of benchmarks.
+
+  * `btls/` - Build files for the BTLS library which incorporates BoringSSL.
+
   * `cil/` - Common Intermediate Representation, XML
 definition of the CIL bytecodes.
 
-  * `dis/` - CIL executable Disassembler
+  * `dis/` - CIL executable Disassembler.
 
-  * `io-layer/` - The I/O layer and system abstraction for 
-emulating the .NET IO model.
+  * `eglib/` - Independent implementation of the glib API.
 
   * `metadata/` - The object system and metadata reader.
 
   * `mini/` - The Just in Time Compiler.
 
+  * `profiler/` - The profiler implementation.
+
+  * `sgen/` - The SGen Garbage Collector implementation.
+
+  * `tests/` - The main runtime tests.
+
+  * `unit-tests/` - Additional runtime unit tests.
+
+  * `utils/` - Utility functions used across the runtime codebase.
+
+* `msvc/` - Logic for the MSVC / Visual Studio based runtime and BCL build system.
+The latter is experimental at the moment.
+
+* `packaging/` - Packaging logic for the OS X and Windows Mono packages.
+
+* `po/` - Translation files.
+
 * `runtime/` - A directory that contains the Makefiles that link the
 mono/ and mcs/ build systems.
 
-* `samples/` -Some simple sample programs on uses of the Mono
-runtime as an embedded library.   
+* `samples/` - Some simple sample programs on uses of the Mono
+runtime as an embedded library.
 
 * `scripts/` - Scripts used to invoke Mono and the corresponding program.
+
+* `sdks/` - A new way of embedding Mono into Xamarin.iOS, Xamarin.Android and other products.
+
+* `support/` - Various support libraries.
+
+* `tools/` - A collection of tools, mostly used during Mono development.
 
 Contributing to Mono
 ====================
@@ -207,12 +241,12 @@ Disables the inclusion of a Boehm garbage collector.
 
   * This defaults to `included`.
 
-* `--with-cooperative-gc`
+* `--enable-cooperative-suspend`
 
   * If you pass this flag the Mono runtime is configured to only use
   the cooperative mode of the garbage collector.  If you do not pass
   this flag, then you can control at runtime the use of the
-  cooperative GC mode by setting the `MONO_ENABLE_COOP` flag.
+  cooperative GC mode by setting the `MONO_ENABLE_COOP_SUSPEND` flag.
   
 * `--with-tls=__thread,pthread`
 

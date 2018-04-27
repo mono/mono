@@ -77,13 +77,14 @@ namespace Mono.Globalization.Unicode
 {
 	internal class SimpleCollator
 	{
+/*
 		// this environment variable is for debugging quick check.
 #pragma warning disable 169, 414
 		static bool QuickCheckDisabled =
 			Environment.internalGetEnvironmentVariable (
 			"MONO_COLLATION_QUICK_CHECK_DISABLED") == "yes";
 #pragma warning restore 169, 414		
-
+*/
 		unsafe internal struct Context
 		{
 			public Context (CompareOptions opt, byte* alwaysMatchFlags, byte* neverMatchFlags, byte* buffer1, byte* buffer2, byte* prev1/*, bool quickCheckPossible*/)
@@ -1660,7 +1661,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 		public unsafe int LastIndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
 			if (opt == CompareOptions.Ordinal)
-				return LastIndexOfOrdinal (s, target, start, length);
+				throw new NotSupportedException ("Should not be reached");
 			if (opt == CompareOptions.OrdinalIgnoreCase)
 				throw new NotSupportedException ("Should not be reached");
 			byte* alwaysMatchFlags = stackalloc byte [16];

@@ -1,6 +1,7 @@
 ../../../external/linker/linker/Linker/Pipeline.cs
 ../../../external/linker/linker/Linker/AssemblyInfo.cs
 ../../../external/linker/linker/Linker/AssemblyResolver.cs
+../../../external/linker/linker/Linker/AssemblyUtilities.cs
 ../../../external/linker/linker/Linker/TypePreserve.cs
 ../../../external/linker/linker/Linker/TypeReferenceExtensions.cs
 ../../../external/linker/linker/Linker/Annotations.cs
@@ -24,6 +25,7 @@
 ../../../external/linker/linker/Linker.Steps/ResolveFromXmlStep.cs
 ../../../external/linker/linker/Linker.Steps/SweepStep.cs
 ../../../external/linker/linker/Linker.Steps/RegenerateGuidStep.cs
+../../../external/linker/linker/Linker.Steps/RemoveSecurityStep.cs
 ../../../external/linker/linker/Linker.Steps/ResolveFromXApiStep.cs
 ../../../external/linker/linker/Linker.Steps/ResolveFromAssemblyStep.cs
 ../../../external/linker/linker/Linker.Steps/ResolveStep.cs

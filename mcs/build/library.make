@@ -18,19 +18,19 @@
 # Have to rename to handle differences between assembly/directory names
 DEP_LIBS=$(patsubst System.Xml,System.XML,$(LIB_REFS))
 
-LIB_REFS_FULL = $(call _FILTER_OUT,=, $(LIB_REFS))
+LIB_REFS_FULL = $(call _FILTER_OUT,=, $(LIB_REFS)) $(DEFAULT_REFERENCES)
 LIB_REFS_ALIAS = $(filter-out $(LIB_REFS_FULL),$(LIB_REFS))
 
 ifdef TARGET_NET_REFERENCE
-# System.*.dll references come from the TARGET_NET_REFERENCE dir, others from the profile dir
-LIB_REFS_MONO_FULL = $(call _FILTER_OUT,System,$(LIB_REFS_FULL))
+# System*, mscorlib references come from the TARGET_NET_REFERENCE dir, others from the profile dir
+LIB_REFS_MONO_FULL = $(call _FILTER_OUT,System,$(call _FILTER_OUT,mscorlib,$(LIB_REFS_FULL)))
 LIB_REFS_MONO_ALIAS = $(call _FILTER_OUT,System,$(LIB_REFS_ALIAS))
 
-LIB_REFS_SYSTEM_FULL = $(filter-out $(LIB_REFS_MONO_FULL),$(LIB_REFS_FULL))
-LIB_REFS_SYSTEM_ALIAS = $(filter-out $(LIB_REFS_MONO_ALIAS),$(LIB_REFS_ALIAS))
+LIB_REFS_NET_FULL = $(filter-out $(LIB_REFS_MONO_FULL),$(LIB_REFS_FULL))
+LIB_REFS_NET_ALIAS = $(filter-out $(LIB_REFS_MONO_ALIAS),$(LIB_REFS_ALIAS))
 
-LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/../external/binary-reference-assemblies/$(TARGET_NET_REFERENCE)/%.dll,$(LIB_REFS_SYSTEM_FULL))
-LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/../external/binary-reference-assemblies/$(TARGET_NET_REFERENCE)/,$(LIB_REFS_SYSTEM_ALIAS)))
+LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/../external/binary-reference-assemblies/$(TARGET_NET_REFERENCE)/%.dll,$(LIB_REFS_NET_FULL))
+LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/../external/binary-reference-assemblies/$(TARGET_NET_REFERENCE)/,$(LIB_REFS_NET_ALIAS)))
 
 LIB_MCS_FLAGS += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/%.dll,$(LIB_REFS_MONO_FULL))
 LIB_MCS_FLAGS += $(patsubst %,-r:%.dll, $(subst =,=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/,$(LIB_REFS_MONO_ALIAS)))
@@ -394,5 +394,5 @@ ifneq ($(RESX_STRINGS),)
 endif
 
 update-corefx-sr: $(RESX_RESOURCE_STRING) $(XTEST_RESX_RESOURCE_STRING)
-	make SR_OUTPUT=corefx/SR.cs RESX_STRINGS=$(RESX_RESOURCE_STRING) update-corefx-sr-generic \
+	make SR_OUTPUT=corefx/SR.cs RESX_STRINGS="$(RESX_RESOURCE_STRING)" update-corefx-sr-generic \
 	&& make SR_OUTPUT=corefx/SR.tests.cs RESX_STRINGS=$(XTEST_RESX_RESOURCE_STRING) update-corefx-sr-generic

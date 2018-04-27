@@ -1,3 +1,32 @@
+//glue code to deal with the differences between ch, d8, jsc and sm.
+if (print == undefined)
+	print = console.log;
+
+if (console.warn === undefined)
+	console.warn = console.log;
+
+fail_exec = function(reason) {
+	print (reason);
+	throw "FAIL";
+}
+
+try {
+	arguments = WScript.Arguments;
+	load = WScript.LoadScriptFile;
+	read = WScript.LoadBinaryFile;
+	fail_exec = function(reason) {
+		print (reason);
+		WScript.Quit(1);
+	}
+} catch(e) {}
+
+try {
+	if (scriptArgs !== undefined)
+		arguments = scriptArgs;
+} catch(e) {}
+//end of all the nice shell glue code.
+
+
 function inspect_object (o){
     var r="";
     for(var p in o) {
@@ -35,7 +64,7 @@ var Module = {
 	},
 };
 
-var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll", "wasm_System_test.dll", "wasm_System.Core_test.dll" ];
+var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "Mono.Security.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll", "wasm_System_test.dll", "wasm_System.Core_test.dll" ];
 
 load ("mono.js");
 Module.finish_loading ();
@@ -51,7 +80,7 @@ assemblies.forEach (function(asm_name) {
 });
 
 
-var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string'])
+var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number'])
 var assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string'])
 var find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string'])
 var find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number'])
@@ -60,22 +89,24 @@ var mono_string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'number', 
 var mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string'])
 
 function call_method (method, this_arg, args) {
-	var stack = Module.Runtime.stackSave ();
-	var args_mem = Runtime.stackAlloc (args.length);
-	var eh_throw = Runtime.stackAlloc (4);
+	var args_mem = Module._malloc (args.length * 4);
+	var eh_throw = Module._malloc (4);
 	for (var i = 0; i < args.length; ++i)
 		Module.setValue (args_mem + i * 4, args [i], "i32");
 	Module.setValue (eh_throw, 0, "i32");
 
 	var res = invoke_method (method, this_arg, args_mem, eh_throw);
 
-	if (Module.getValue (eh_throw, "i32") != 0) {
-		Module.Runtime.stackRestore(stack);
+	var eh_res = Module.getValue (eh_throw, "i32");
+
+	Module._free (args_mem);
+	Module._free (eh_throw);
+
+	if (eh_res != 0) {
 		var msg = conv_string (res);
 		throw new Error (msg); //the convention is that invoke_method ToString () any outgoing exception
 	}
 
-	Module.Runtime.stackRestore(stack);
 	return res;
 }
 
@@ -91,16 +122,18 @@ function conv_string (mono_obj) {
 	return res;
 }
 
+var bad_semd_msg_detected = false;
 function mono_send_msg (key, val) {
 	try {
 		return conv_string (call_method (send_message, null, [mono_string (key), mono_string (val)]));
 	} catch (e) {
 		print ("BAD SEND MSG: " + e);
+		bad_semd_msg_detected = true;
 		return null;
 	}
 }
 
-load_runtime ("managed");
+load_runtime ("managed", 0);
 var main_module = assembly_load ("main")
 if (!main_module)
 	throw 1;
@@ -132,4 +165,7 @@ for (var i = 0; i < arguments.length; ++i) {
 var status = mono_send_msg ("test-result", "");
 print ("Test status " + status)
 if (status != "PASS")
-	exit (1)
+	fail_exec ("BAD TEST STATUS");
+
+if (bad_semd_msg_detected)
+	fail_exec ("BAD MSG SEND DETECTED");

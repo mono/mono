@@ -1,39 +1,19 @@
 
-$(TOP)/sdks/builds/toolchains/mxe:
-	git clone -b xamarin https://github.com/xamarin/mxe.git $@
+MXE_SRC?=$(TOP)/sdks/builds/toolchains/mxe
+MXE_PREFIX_DIR?=$(TOP)/sdks/out
 
-##
-# Parameters
-#  $(1): target
-#  $(2): arch
-define MxeTemplate
+# This is not overridable
+MXE_PREFIX:=$(MXE_PREFIX_DIR)/mxe-$(shell echo $(MXE_HASH) | head -c 7)
 
-.stamp-mxe-$(1)-toolchain: | $$(TOP)/sdks/builds/toolchains/mxe
-	cd $$(TOP)/sdks/builds/toolchains/mxe && git checkout $$(MXE_HASH)
-	touch $$@
+$(MXE_SRC)/Makefile:
+	git clone -b xamarin https://github.com/xamarin/mxe.git $(dir $@)
+	cd $(dir $@) && git checkout $(MXE_HASH)
 
-.stamp-mxe-$(1)-configure:
-	touch $$@
+$(MXE_PREFIX)/.stamp: $(MXE_SRC)/Makefile
+	$(MAKE) -C $(MXE_SRC) gcc cmake zlib pthreads dlfcn-win32 mman-win32 \
+		PREFIX="$(MXE_PREFIX)" MXE_TARGETS="i686-w64-mingw32.static x86_64-w64-mingw32.static" \
+			OS_SHORT_NAME="disable-native-plugins" PATH="$$PATH:$(MXE_PREFIX)/bin:$(dir $(shell brew list gettext | grep bin/autopoint$))"
+	touch $@
 
-.PHONY: build-custom-mxe-$(1)
-build-custom-mxe-$(1):
-	PATH="$$$$PATH:$$(dir $$(shell which autopoint))" $$(MAKE) -C $$(TOP)/sdks/builds/toolchains/mxe gcc cmake zlib pthreads dlfcn-win32 mman-win32 \
-		MXE_TARGETS="$(2)-w64-mingw32.static" PREFIX="$$(TOP)/sdks/out/mxe-$(1)" OS_SHORT_NAME="disable-native-plugins"
-
-.PHONY: setup-custom-mxe-$(1)
-setup-custom-mxe-$(1):
-
-.PHONY: package-mxe-$(1)
-package-mxe-$(1):
-
-.PHONY: clean-mxe-$(1)
-clean-mxe-$(1):
-	$$(MAKE) -C $$(TOP)/sdks/builds/toolchains/mxe clean \
-		MXE_TARGETS="$(2)-w64-mingw32.static" PREFIX="$$(TOP)/sdks/out/mxe-$(1)"
-
-TARGETS += mxe-$(1)
-
-endef
-
-$(eval $(call MxeTemplate,Win32,i686))
-$(eval $(call MxeTemplate,Win64,x86_64))
+.PHONY: provision-mxe
+provision-mxe: $(MXE_PREFIX)/.stamp

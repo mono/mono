@@ -664,6 +664,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void DefaultThreadCurrentCulture () {
 
 			Action c = () => {

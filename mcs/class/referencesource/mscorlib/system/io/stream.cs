@@ -518,14 +518,14 @@ namespace System.IO {
             // If the wait has already complete, run the task.
             if (asyncWaiter.IsCompleted)
             {
-                Contract.Assert(asyncWaiter.IsRanToCompletion, "The semaphore wait should always complete successfully.");
+                Contract.Assert(asyncWaiter.IsCompletedSuccessfully, "The semaphore wait should always complete successfully.");
                 RunReadWriteTask(readWriteTask);
             }                
             else  // Otherwise, wait for our turn, and then run the task.
             {
                 asyncWaiter.ContinueWith((t, state) =>
                     {
-                        Contract.Assert(t.IsRanToCompletion, "The semaphore wait should always complete successfully.");
+                        Contract.Assert(t.IsCompletedSuccessfully, "The semaphore wait should always complete successfully.");
                         var tuple = (Tuple<Stream,ReadWriteTask>)state;
                         tuple.Item1.RunReadWriteTask(tuple.Item2); // RunReadWriteTask(readWriteTask);
                     }, Tuple.Create<Stream,ReadWriteTask>(this, readWriteTask),
@@ -699,6 +699,8 @@ namespace System.IO {
                     using(context) ExecutionContext.Run(context, invokeAsyncCallback, this, true);
                 }
             }
+            
+            public bool InvokeMayRunArbitraryCode => true;
         }
 #endif
 

@@ -266,11 +266,12 @@ namespace System
 			}
 		}
 #if LIBC
+		const string DefaultTimeZoneDirectory = "/usr/share/zoneinfo";
 		static string timeZoneDirectory;
 		static string TimeZoneDirectory {
 			get {
 				if (timeZoneDirectory == null)
-					timeZoneDirectory = "/usr/share/zoneinfo";
+					timeZoneDirectory = readlink (DefaultTimeZoneDirectory) ?? DefaultTimeZoneDirectory;
 				return timeZoneDirectory;
 			}
 			set {

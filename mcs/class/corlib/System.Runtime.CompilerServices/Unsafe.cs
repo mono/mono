@@ -26,6 +26,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if BIT64
+using nuint = System.UInt64;
+using nint = System.Int64;
+#else
+using nuint = System.UInt32;
+using nint = System.Int32;
+#endif
+
 namespace System.Runtime.CompilerServices
 {
 	static partial class Unsafe
@@ -60,7 +68,12 @@ namespace System.Runtime.CompilerServices
 			throw new NotImplementedException ();
 		}
 		
-		public static ref TTo As<TFrom, TTo>(ref TFrom source)
+		public static ref TTo As<TFrom, TTo> (ref TFrom source)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public unsafe static void* AsPointer<T> (ref T value)
 		{
 			throw new NotImplementedException ();
 		}
@@ -95,6 +108,11 @@ namespace System.Runtime.CompilerServices
 			throw new NotImplementedException ();
 		}
 
+		public unsafe static T ReadUnaligned<T> (void* source)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public static T ReadUnaligned<T> (ref byte source)
 		{
 			throw new NotImplementedException ();
@@ -113,6 +131,13 @@ namespace System.Runtime.CompilerServices
 		public static void WriteUnaligned<T> (ref byte destination, T value)
 		{
 			throw new NotImplementedException ();
+		}
+
+
+		[MethodImpl (MethodImplOptions.AggressiveInlining)]
+		unsafe internal static ref T AddByteOffset<T> (ref T source, nuint byteOffset)
+		{
+			return ref AddByteOffset (ref source, (IntPtr)(void*)byteOffset);
 		}
 	}
 }

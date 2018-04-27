@@ -55,6 +55,8 @@ namespace MonoTests.System.Windows.Forms
 			}
 			// with bug 694908 we don't come here. Instead NUnit exits.
 			Assert.IsTrue (CrashingForm.HasHandledException);
+
+			Application.ThreadException -= CrashingForm.HandleThreadException;
 		}
 
 		class CrashingForm: Form

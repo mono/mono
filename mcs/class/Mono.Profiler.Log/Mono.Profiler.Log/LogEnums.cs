@@ -66,6 +66,7 @@ namespace Mono.Profiler.Log {
 		RuntimeJitHelper = 1 << 4,
 
 		MetaSynchronizationPoint = 0 << 4,
+		MetaAotId = 1 << 4,
 	}
 
 	// mono/profiler/log.h : TYPE_*
@@ -123,12 +124,14 @@ namespace Mono.Profiler.Log {
 	// mono/metadata/profiler.h : MonoProfilerCodeBufferType
 	public enum LogJitHelper {
 		Method = 0,
+		[Obsolete ("This value is no longer produced.")]
 		MethodTrampoline = 1,
 		UnboxTrampoline = 2,
 		ImtTrampoline = 3,
 		GenericsTrampoline = 4,
 		SpecificTrampoline = 5,
 		Helper = 6,
+		[Obsolete ("This value is no longer produced.")]
 		Monitor = 7,
 		DelegateInvoke = 8,
 		ExceptionHandling = 9,

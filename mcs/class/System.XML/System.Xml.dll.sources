@@ -5,6 +5,7 @@ Assembly/AssemblyInfo.cs
 ReferenceSources/Res.cs
 ReferenceSources/LocalAppContextSwitches.cs
 ReferenceSources/ThisAssembly.cs
+ReferenceSources/BinaryCompatibility.cs
 ../referencesource/System.Data.SqlXml/System/Xml/Xsl/IlGen/GenerateHelper.cs
 ../referencesource/System.Data.SqlXml/System/Xml/Xsl/IlGen/IteratorDescriptor.cs
 ../referencesource/System.Data.SqlXml/System/Xml/Xsl/IlGen/OptimizerPatterns.cs
@@ -237,7 +238,6 @@ ReferenceSources/ThisAssembly.cs
 ../referencesource/System.Xml/System/Xml/Cache/XPathNodeInfoAtom.cs
 ../referencesource/System.Xml/System/Xml/Cache/XPathNodeView.cs
 ../referencesource/System.Xml/System/Xml/Cache/XPathNodeViewPropertyDescriptor.cs
-../referencesource/System.Xml/System/Xml/Core/BinaryCompatibility.cs
 ../referencesource/System.Xml/System/Xml/Core/CharEntityEncoderFallback.cs
 ../referencesource/System.Xml/System/Xml/Core/ConformanceLevel.cs
 ../referencesource/System.Xml/System/Xml/Core/DtdProcessing.cs

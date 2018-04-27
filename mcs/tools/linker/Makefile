@@ -6,9 +6,10 @@ PROGRAM = monolinker.exe
 
 LIB_REFS = System System.Core System.Xml Mono.Cecil
 
-TEST_CASES = \
+TEST_CASES := \
 	mscorlib/test-array.cs \
-	mscorlib/test-remoting.cs
+	mscorlib/test-remoting.cs \
+	System/test-security.cs
 
 ifndef AOT_FRIENDLY_PROFILE
 TEST_CASES += \
@@ -25,6 +26,9 @@ compile-tests: $(TEST_CASES)
 mscorlib/test-%.cs:
 	$(TESTS_COMPILER) Tests/$@ /out:Tests/$(@:.cs=.exe)
 
+System/test-%.cs:
+	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
+
 run-tests: $(TEST_CASES:.cs=.exe)
 
 LINKER_OUTPUT := illink-output-$(PROFILE_DIRECTORY)
@@ -34,7 +38,7 @@ TEST_EXEC = MONO_PATH=$(LINKER_OUTPUT) $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-a
 
 .NOTPARALLEL:
 
-mscorlib/test-%.exe:
+System/test-%.exe mscorlib/test-%.exe:
 	@rm -rf $(LINKER_OUTPUT)
 	@mkdir $(LINKER_OUTPUT)
 	@echo Testing $@

@@ -8,6 +8,7 @@
 
 #include <glib.h>
 #include <mono/metadata/metadata.h>
+#include <mono/metadata/class-internals.h>
 
 MONO_BEGIN_DECLS
 
@@ -74,6 +75,17 @@ mono_class_setup_parent    (MonoClass *klass, MonoClass *parent);
 void
 mono_class_setup_mono_type (MonoClass *klass);
 
+void
+mono_class_setup_has_finalizer (MonoClass *klass);
+
+void
+mono_class_setup_nested_types (MonoClass *klass);
+
+void
+mono_class_setup_runtime_info (MonoClass *klass, MonoDomain *domain, MonoVTable *vtable);
+
+MonoClass *
+mono_class_create_array_fill_type (void);
 
 MONO_END_DECLS
 

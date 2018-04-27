@@ -7,7 +7,7 @@ LIBRARY = System.Data.dll
 LIB_REFS = System System.Xml System.Core System.Numerics System.Transactions
 KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = \
-	-nowarn:219,414,649,619 \
+	-nowarn:219,414,649,619,436 \
 	-d:COREFX	\
 	-d:PLATFORM_UNIX \
 	-d:USEOFFSET \
@@ -43,9 +43,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618,169,612,219,168
 TEST_NUNITLITE_APP_CONFIG_GLOBAL=Test/test-config-file
 
 USE_XTEST_REMOTE_EXECUTOR = YES
-XTEST_LIB_REFS = System System.Core System.Xml Facades/System.Text.Encoding.CodePages Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation 
-
-TEST_MONO_PATH = .
+XTEST_LIB_REFS = System System.Core System.Xml Facades/System.Text.Encoding.CodePages Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation Facades/System.Text.RegularExpressions
 
 EXTRA_DISTFILES = \
 	$(wildcard Test/System.Data/*.xml)		\

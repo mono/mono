@@ -2,11 +2,6 @@ thisdir = errors
 SUBDIRS = 
 include ../build/rules.make
 
-with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
-
-ilasm = $(topdir)/class/lib/$(PROFILE)/ilasm.exe
-ILASM = $(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
-
 DISTFILES = \
 	CONTRIBUTORS_README 	\
 	errors.txt 		\
@@ -84,52 +79,52 @@ dist-local: dist-default
 csproj-local install-local uninstall-local:
 
 CS0029-26-lib.dll : CS0029-26-lib.cs
-	$(CSCOMPILE) /target:library /publicsign /keyfile:key.snk /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /publicsign /keyfile:key.snk /out:$@ $<
 
 CS0266-25-lib.dll: CS0266-25-lib.cs
-	$(CSCOMPILE) /target:library /r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll /out:$@ $<
 
 dlls/first/CS1701-lib.dll: dlls/first/CS1701-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/first/CS1702-lib.dll: dlls/first/CS1702-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/first/CS1703-lib.dll: dlls/first/CS1703-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/first/CS1705-lib.dll: dlls/first/CS1705-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/second/CS1701-lib.dll: dlls/second/CS1701-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/second/CS1702-lib.dll: dlls/second/CS1702-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/second/CS1703-lib.dll: dlls/second/CS1703-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 dlls/second/CS1705-lib.dll: dlls/second/CS1705-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
 
 CS1701-lib.dll : CS1701-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /r:dlls/first/CS1701-lib.dll /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /r:dlls/first/CS1701-lib.dll /out:$@ $<
 
 CS1702-lib.dll : CS1702-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /r:dlls/first/CS1702-lib.dll /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /r:dlls/first/CS1702-lib.dll /out:$@ $<
 
 CS1705-lib.dll : CS1705-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /r:dlls/first/CS1705-lib.dll /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /r:dlls/first/CS1705-lib.dll /out:$@ $<
 
 CSFriendAssembly-lib.dll : CSFriendAssembly-lib.cs
-	$(CSCOMPILE) /target:library /publicsign /keyfile:key.snk /warn:0 /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /publicsign /keyfile:key.snk /warn:0 /out:$@ $<
 
 %-lib.dll: %-lib.cs
-	$(CSCOMPILE) /target:library /warn:0 /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /out:$@ $<
 
 %-module.dll: %-module.cs
-	$(CSCOMPILE) /target:module /out:$@ $<
+	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:module /out:$@ $<
 
 %-lib.dll: %-lib.il
 	$(ILASM) /dll /out:$@ $<

@@ -1,10 +1,22 @@
 TOP=$(realpath $(CURDIR)/../..)
+-include $(TOP)/sdks/Make.config
+
+MAKEFLAGS += --no-builtin-rules
+
+CONFIGURATION?=release
+
+RELEASE=$(if $(filter $(CONFIGURATION),release),1)
+
+CCACHE:=$(if $(DISABLE_CCACHE),,$(shell which ccache))
+
+UNAME=$(shell uname)
+ifneq ($(UNAME),Darwin)
+# iOS requires Xcode to be available, and Xcode is only available on macOS
+DISABLE_IOS=1
+endif
+
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
-
-RELEASE?=true
-
-CONFIGURATION=$(if $(filter $(RELEASE),true),release,debug)
 
 #brew's libtool is not compatible with some of the deps needed (I.E. V8) so in those systems we need to explicit add to the path
 #this is due mono not being compatible with xcode's libtool, which is what's on path by default
@@ -12,16 +24,18 @@ ifeq (, $(shell which glibtoolize))
 EXTRA_PATH=$(wildcard /usr/local/Cellar/libtool/*/bin/)
 endif
 
-# Some of the targets cannot be built in parallel (ex: mxe). This is a gross hack, but fixing it would mean a unknown
-# amount of change. For example, we could invoke the MXE targets with `$(MAKE) -f mxe.mk build-mxe-Win32` and move the
-# .NOTPARALLEL there.
-.NOTPARALLEL:
-
 all: package
 
 ## Common Mono targets
+
+.PHONY: configure-mono
+configure-mono: $(TOP)/configure
+
 $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh
+
+$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offsets-tool/*.cs)
+	$(MAKE) -C $(dir $@) MonoAotOffsetsDumper.exe
 
 TARGETS=
 
@@ -49,6 +63,12 @@ endif
 ## iOS targets
 ifndef DISABLE_IOS
 include ios.mk
+endif
+
+## Desktop targets
+## To run host-side tests
+ifndef DISABLE_DESKTOP
+include desktop.mk
 endif
 
 ## WASM targets

@@ -19,10 +19,11 @@ else
 LLVMMONOF=$(LLVM_LIBS) $(LLVM_LDFLAGS)
 endif
 
+glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 test_cflags = $(AM_CFLAGS) $(SGEN_DEFINES)
 test_ldadd = libtestlib.la \
-	$(LIBGC_LIBS) $(GLIB_LIBS) -lm $(LIBICONV) $(LLVMMONOF)
+	$(LIBGC_LIBS) $(glib_libs) $(LLVMMONOF)
 if HOST_DARWIN
 test_ldflags = -framework CoreFoundation -framework Foundation
 endif
@@ -32,13 +33,17 @@ sgen_libs = \
 	$(monodir)/mono/metadata/libmonoruntimesgen.la	\
 	$(monodir)/mono/sgen/libmonosgen.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV)
+	$(glib_libs)
 
 mini_libs = \
 	$(monodir)/mono/mini/libmini.la
 
 if !DISABLE_INTERPRETER
 mini_libs += $(monodir)/mono/mini/libmono-ee-interp.la
+endif
+
+if !DISABLE_DEBUGGER_AGENT
+mini_libs += $(monodir)/mono/mini/libmono-dbg.la
 endif
 
 if !CROSS_COMPILE

@@ -1118,5 +1118,17 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 				isf.DeleteDirectory ("/test");
 			}
 		}
+
+		[Test] //fixes bxc #11771
+	    public void GetFileNamesWithMultiSegmentDirectory ()
+	    {
+			string dir = Path.Combine("Dir", "Level");
+			using (var f = IsolatedStorageFile.GetUserStoreForAssembly ())
+			{
+				f.CreateDirectory (dir);
+				f.GetFileNames (Path.Combine (dir, "*"));
+				f.DeleteDirectory (dir);
+			}
+		}
 	}
 }

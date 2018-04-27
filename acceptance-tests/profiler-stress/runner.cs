@@ -40,7 +40,6 @@ namespace Mono.Profiling.Tests.Stress {
 		public int? ExitCode { get; set; }
 		public string StandardOutput { get; set; }
 		public string StandardError { get; set; }
-		public string CombinedOutput { get; set; }
 	}
 
 	static class Program {
@@ -125,6 +124,11 @@ namespace Mono.Profiling.Tests.Stress {
 			if (Environment.GetEnvironmentVariable ("MONO_PROFILER_STRESS_OPTIONS") is string envOptions)
 				options = envOptions;
 
+			var suspend = false;
+
+			if (Environment.GetEnvironmentVariable ("MONO_PROFILER_STRESS_SUSPEND") is string envSuspend)
+				suspend = bool.Parse (envSuspend);
+
 			var rand = new Random (seed);
 			var cpus = Environment.ProcessorCount;
 
@@ -175,6 +179,9 @@ namespace Mono.Profiling.Tests.Stress {
 				info.EnvironmentVariables.Clear ();
 				info.EnvironmentVariables.Add ("MONO_PATH", classDir);
 
+				if (suspend)
+					info.EnvironmentVariables.Add ("MONO_DEBUG", "suspend-on-native-crash,suspend-on-unhandled");
+
 				var progress = $"({i + 1}/{benchmarks.Length})";
 
 				Console.ForegroundColor = ConsoleColor.Blue;
@@ -191,22 +198,17 @@ namespace Mono.Profiling.Tests.Stress {
 
 					var stdout = new StringBuilder ();
 					var stderr = new StringBuilder ();
-					var combined = new StringBuilder ();
 
 					proc.OutputDataReceived += (sender, args) => {
 						if (args.Data != null)
-							lock (result) {
+							lock (result)
 								stdout.AppendLine (args.Data);
-								combined.AppendLine (args.Data);
-							}
 					};
 
 					proc.ErrorDataReceived += (sender, args) => {
 						if (args.Data != null)
-							lock (result) {
+							lock (result)
 								stderr.AppendLine (args.Data);
-								combined.AppendLine (args.Data);
-							}
 					};
 
 					result.Stopwatch.Start ();
@@ -233,7 +235,6 @@ namespace Mono.Profiling.Tests.Stress {
 					lock (result) {
 						result.StandardOutput = stdout.ToString ();
 						result.StandardError = stderr.ToString ();
-						result.CombinedOutput = combined.ToString ();
 					}
 				}
 
@@ -245,10 +246,16 @@ namespace Mono.Profiling.Tests.Stress {
 
 				if (result.ExitCode != 0) {
 					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine ("===== stdout + stderr =====");
+					Console.WriteLine ("===== stdout =====");
 					Console.ResetColor ();
 
-					Console.WriteLine (result.CombinedOutput);
+					Console.WriteLine (result.StandardOutput);
+
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine ("===== stderr =====");
+					Console.ResetColor ();
+
+					Console.WriteLine (result.StandardError);
 				}
 
 				results.Add (result);

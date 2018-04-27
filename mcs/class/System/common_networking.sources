@@ -20,12 +20,16 @@ System.Net/AuthenticationManager.cs
 System.Net/ChunkedInputStream.cs
 System.Net/EndPointListener.cs
 System.Net/EndPointManager.cs
-System.Net/FtpAsyncResult.cs
-System.Net/FtpDataStream.cs
-System.Net/FtpRequestCreator.cs
-System.Net/FtpStatus.cs
-System.Net/FtpWebRequest.cs
-System.Net/FtpWebResponse.cs
+
+../../../external/corefx/src/Common/src/System/Net/TlsStream.cs
+../../../external/corefx/src/Common/src/System/Net/ContextAwareResult.cs
+../../../external/corefx/src/System.Net.Requests/src/System/Net/NetworkStreamWrapper.cs
+../../../external/corefx/src/System.Net.Requests/src/System/Net/CommandStream.cs
+../../../external/corefx/src/System.Net.Requests/src/System/Net/FtpControlStream.cs
+../../../external/corefx/src/System.Net.Requests/src/System/Net/FtpDataStream.cs
+../../../external/corefx/src/System.Net.Requests/src/System/Net/FtpWebRequest.cs
+../../../external/corefx/src/System.Net.Requests/src/System/Net/FtpWebResponse.cs
+
 System.Net/HttpConnection.cs
 System.Net/HttpListener.cs
 System.Net/HttpListener.Mono.cs
@@ -43,6 +47,7 @@ System.Net/ServicePoint.cs
 System.Net/ServicePointManager.cs
 System.Net/ServicePointManager.extra.cs
 System.Net/ServicePointScheduler.cs
+System.Net/WebCompletionSource.cs
 System.Net/WebConnection.cs
 System.Net/WebConnectionStream.cs
 System.Net/WebConnectionTunnel.cs
@@ -54,4 +59,5 @@ System.Net/WebResponseStream.cs
 ../referencesource/System/net/System/Net/Sockets/TCPListener.cs
 ../referencesource/System/net/System/Net/Sockets/UDPClient.cs
 
+../../../external/corefx/src/Common/src/System/Net/HttpValidationHelpers.cs
 ../../../external/corefx/src/System.Net.HttpListener/src/System/Net/WebSockets/HttpListenerWebSocketContext.cs

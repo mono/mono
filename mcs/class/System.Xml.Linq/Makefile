@@ -16,8 +16,8 @@ ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:MONO_HYBRID_SYSTEM_XML
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
-
+TEST_LIB_REFS = System.Core System.Xml System
+TEST_MCS_FLAGS =
 EXTRA_DISTFILES =
 
 include ../../build/library.make

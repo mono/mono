@@ -1168,6 +1168,16 @@ namespace System.Net.Sockets
 			DnsEndPoint dep = e.RemoteEndPoint as DnsEndPoint;
 			if (dep != null) {
 				addresses = Dns.GetHostAddresses (dep.Host);
+				int last_valid = 0;
+				for (int i = 0; i < addresses.Length; ++i) {
+					if (addresses [i].AddressFamily != dep.AddressFamily)
+						continue;
+
+					addresses [last_valid++] = addresses [i];
+				}
+
+				if (last_valid != addresses.Length)
+					Array.Resize (ref addresses, last_valid);
 				return true;
 			} else {
 				e.ConnectByNameError = null;

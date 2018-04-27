@@ -10,7 +10,10 @@ namespace System.Diagnostics
 	/// <summary>Base class used for all tests that need to spawn a remote process.</summary>
 	public abstract partial class RemoteExecutorTestBase : FileCleanupTestBase
 	{
+		// protected static readonly string HostRunnerName = "mono";
 		protected static readonly string HostRunner = Process.GetCurrentProcess().MainModule.FileName;
-		static readonly string ExtraParameter = "RemoteExecutorConsoleApp.exe";
+
+		// Should be ../lib/$(PROFILE)/RemoteExecutorConsoleApp.exe
+		static readonly string ExtraParameter = "--debug " + Environment.GetEnvironmentVariable ("REMOTE_EXECUTOR");
 	}
 }

@@ -1,5 +1,7 @@
 all: runtime libmonoios.a
 
+CONFIGURATION?=release
+
 XCODE_ROOT=$(shell xcode-select -p)
 
 UNREFERENCED_SYMBOLS =                                                  \
@@ -15,7 +17,7 @@ UNREFERENCED_SYMBOLS =                                                  \
 CC = $(XCODE_ROOT)/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
 SIM_SYSROOT = $(XCODE_ROOT)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk
 SIM_ARCH = x86_64
-SIM_SDK_DIR = ../../out/ios-sim64
+SIM_SDK_DIR = ../../out/ios-sim64-$(CONFIGURATION)
 SIM_CFLAGS = \
 	-std=gnu11 \
 	-fobjc-arc \
@@ -41,7 +43,7 @@ runtime: sim-main.o sim-runtime.o sim-AppDelegate.o sim-ViewController.o
 	$(ENV) $(CC) -arch $(SIM_ARCH) $(SIM_LDFLAGS) -o $@ $^
 
 DEV_ARCH = arm64
-DEV_SDK_DIR = ../../out/ios-target64
+DEV_SDK_DIR = ../../out/ios-target64-$(CONFIGURATION)
 DEV_SYSROOT = $(XCODE_ROOT)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/
 DEV_CFLAGS = \
 	-isysroot $(DEV_SYSROOT) \

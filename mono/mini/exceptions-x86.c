@@ -499,7 +499,7 @@ mono_x86_throw_corlib_exception (mgreg_t *regs, guint32 ex_token_index,
 	guint32 ex_token = MONO_TOKEN_TYPE_DEF | ex_token_index;
 	MonoException *ex;
 
-	ex = mono_exception_from_token (mono_defaults.exception_class->image, ex_token);
+	ex = mono_exception_from_token (m_class_get_image (mono_defaults.exception_class), ex_token);
 
 	eip -= pc_offset;
 
@@ -843,7 +843,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		return TRUE;
 	} else if (*lmf) {
-		g_assert ((((guint64)(*lmf)->previous_lmf) & 2) == 0);
+		g_assert ((((gsize)(*lmf)->previous_lmf) & 2) == 0);
 
 		if ((ji = mini_jit_info_table_find (domain, (gpointer)(*lmf)->eip, NULL))) {
 			frame->ji = ji;
@@ -865,7 +865,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		frame->type = FRAME_TYPE_MANAGED_TO_NATIVE;
 
 		/* Check if we are in a trampoline LMF frame */
-		if ((guint32)((*lmf)->previous_lmf) & 1) {
+		if ((gsize)((*lmf)->previous_lmf) & 1) {
 			/* lmf->esp is set by the trampoline code */
 			new_ctx->esp = (*lmf)->esp;
 		}
@@ -1177,7 +1177,11 @@ mono_tasklets_arch_restore (void)
 	x86_mov_membase_reg (code, X86_ECX, 0, X86_EDX, 4);*/
 
 	x86_jump_membase (code, X86_EDX, MONO_STRUCT_OFFSET (MonoContinuation, return_ip));
+
+	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 	g_assert ((code - start) <= 48);
+
 	saved = start;
 	return (MonoContinuationRestore)saved;
 }

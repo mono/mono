@@ -19,6 +19,17 @@
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/appdomain.h"
+#ifdef MONO_CLASS_DEF_PRIVATE
+/* Rationale: we want the functions in this file to work even when everything
+ * is broken.  They may be called from a debugger session, for example.  If
+ * MonoClass getters include assertions or trigger class loading, we don't want
+ * that kicked off by a call to one of the functions in here.
+ */
+#define REALLY_INCLUDE_CLASS_DEF 1
+#include <mono/metadata/class-private-definition.h>
+#undef REALLY_INCLUDE_CLASS_DEF
+#endif
+
 
 struct MonoMethodDesc {
 	char *name_space;
@@ -163,14 +174,14 @@ mono_type_get_desc (GString *res, MonoType *type, gboolean include_namespace)
 		g_string_append_c (res, '*');
 		break;
 	case MONO_TYPE_ARRAY:
-		mono_type_get_desc (res, &type->data.array->eklass->byval_arg, include_namespace);
+		mono_type_get_desc (res, &type->data.array->eklass->_byval_arg, include_namespace);
 		g_string_append_c (res, '[');
 		for (i = 1; i < type->data.array->rank; ++i)
 			g_string_append_c (res, ',');
 		g_string_append_c (res, ']');
 		break;
 	case MONO_TYPE_SZARRAY:
-		mono_type_get_desc (res, &type->data.klass->byval_arg, include_namespace);
+		mono_type_get_desc (res, &type->data.klass->_byval_arg, include_namespace);
 		g_string_append (res, "[]");
 		break;
 	case MONO_TYPE_CLASS:
@@ -180,7 +191,7 @@ mono_type_get_desc (GString *res, MonoType *type, gboolean include_namespace)
 	case MONO_TYPE_GENERICINST: {
 		MonoGenericContext *context;
 
-		mono_type_get_desc (res, &type->data.generic_class->container_class->byval_arg, include_namespace);
+		mono_type_get_desc (res, &type->data.generic_class->container_class->_byval_arg, include_namespace);
 		g_string_append (res, "<");
 		context = &type->data.generic_class->context;
 		if (context->class_inst) {
@@ -869,9 +880,9 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 	}
 
 	if (format == MONO_TYPE_NAME_FORMAT_IL)
-		klass_desc = mono_type_full_name (&method->klass->byval_arg);
+		klass_desc = mono_type_full_name (&method->klass->_byval_arg);
 	else
-		klass_desc = mono_type_get_name_full (&method->klass->byval_arg, format);
+		klass_desc = mono_type_get_name_full (&method->klass->_byval_arg, format);
 
 	if (method->is_inflated && ((MonoMethodInflated*)method)->context.method_inst) {
 		GString *str = g_string_new ("");
