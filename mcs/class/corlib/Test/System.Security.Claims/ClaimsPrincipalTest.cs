@@ -185,8 +185,7 @@ namespace MonoTests.System.Security.Claims
 			Assert.IsNotNull (p.Claims, "#3");
 			Assert.AreEqual (1, p.Claims.Count (), "#4");
 
-			// The Identity property favours WindowsIdentity
-			Assert.AreEqual (baseId3, p.Identity, "#5");
+			Assert.AreNotEqual (baseId3, p.Identity, "#5");
 
 			Assert.IsTrue (p.Claims.Any (claim => claim.Type == ClaimsIdentity.DefaultNameClaimType && claim.Value == "generic_name"), "#6");
 
