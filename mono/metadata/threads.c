@@ -1481,13 +1481,11 @@ mono_thread_exit (void)
 static void
 mono_thread_construct_internal (MonoThreadObjectHandle this_obj_handle)
 {
-	MonoInternalThread *internal;
-
-	internal = create_internal_thread_object ();
+	MonoInternalThread * const internal = create_internal_thread_object ();
 
 	internal->state = ThreadState_Unstarted;
 
-	int thread_gchandle = mono_gchandle_from_handle ((MonoObjectHandle)this_obj_handle, TRUE);
+	int const thread_gchandle = mono_gchandle_from_handle ((MonoObjectHandle)this_obj_handle, TRUE);
 
 	MonoThreadObject *this_obj = MONO_HANDLE_RAW (this_obj_handle);
 
@@ -1514,6 +1512,18 @@ thread_handle_to_internal_ptr (MonoThreadObjectHandle thread_handle)
 	return MONO_HANDLE_GETVAL(thread_handle, internal_thread); // InternalThreads are always pinned.
 }
 
+static void
+mono_error_set_exception_thread_state (MonoError *error, const char *exception_message)
+{
+	mono_error_set_generic_error (error, "System.Threading", "ThreadStateException", "%s", exception_message);
+}
+
+static void
+mono_error_set_exception_thread_not_started_or_dead (MonoError *error)
+{
+	mono_error_set_exception_thread_state (error, "Thread has not been started, or is dead.");
+}
+
 MonoBoolean
 ves_icall_System_Threading_Thread_Thread_internal (MonoThreadObjectHandle thread_handle, MonoObjectHandle start_handle, MonoError *error)
 {
@@ -1536,7 +1546,7 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThreadObjectHandle thread
 
 	if ((internal->state & ThreadState_Unstarted) == 0) {
 		UNLOCK_THREAD (internal);
-		mono_set_pending_exception (mono_get_exception_thread_state ("Thread has already been started."));
+		mono_error_set_exception_thread_state (error, "Thread has already been started.");
 		return FALSE;
 	}
 
@@ -1947,7 +1957,7 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 	MonoThreadInfoWaitRet ret;
 	gint32 wait = ms;
 
-	gint64 start = (ms == -1) ? 0 : mono_msec_ticks ();
+	const gint64 start = (ms == -1) ? 0 : mono_msec_ticks ();
 	while (TRUE) {
 		MONO_ENTER_GC_SAFE;
 		ret = mono_thread_info_wait_one_handle (thread_to_join, wait, TRUE);
@@ -1966,7 +1976,7 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 			continue;
 
 		/* Re-calculate ms according to the time passed */
-		gint32 diff_ms = (gint32)(mono_msec_ticks () - start);
+		const gint32 diff_ms = (gint32)(mono_msec_ticks () - start);
 		if (diff_ms >= ms) {
 			ret = MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
 			return ret;
@@ -1978,23 +1988,23 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 }
 
 gboolean
-ves_icall_System_Threading_Thread_Join_internal (MonoThread *this_obj, int ms)
+ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_handle, int ms, MonoError *error)
 {
-	MonoInternalThread *thread = this_obj->internal_thread;
-	MonoThreadHandle *handle = thread->handle;
-	MonoInternalThread *cur_thread = mono_thread_internal_current ();
-	gboolean ret;
-	ERROR_DECL (error);
-
 	if (mono_thread_current_check_pending_interrupt ())
 		return FALSE;
+
+	// Internal threads are pinned so shallow coop/handle.
+	MonoInternalThread * const thread = thread_handle_to_internal_ptr (thread_handle);
+	MonoThreadHandle *handle = thread->handle;
+	MonoInternalThread *cur_thread = mono_thread_internal_current ();
+	gboolean ret = FALSE;
 
 	LOCK_THREAD (thread);
 	
 	if ((thread->state & ThreadState_Unstarted) != 0) {
 		UNLOCK_THREAD (thread);
 		
-		mono_set_pending_exception (mono_get_exception_thread_state ("Thread has not been started."));
+		mono_error_set_exception_thread_state (error, "Thread has not been started.");
 		return FALSE;
 	}
 
@@ -2405,24 +2415,22 @@ ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_hand
 	return state;
 }
 
-void ves_icall_System_Threading_Thread_Interrupt_internal (MonoThread *this_obj)
+void
+ves_icall_System_Threading_Thread_Interrupt_internal (MonoThreadObjectHandle thread_handle, MonoError *error)
 {
-	MonoInternalThread *current;
-	gboolean throw_;
-	MonoInternalThread *thread = this_obj->internal_thread;
+	// Internal threads are pinned so shallow coop/handle.
+	MonoInternalThread * const thread = thread_handle_to_internal_ptr (thread_handle);
+	MonoInternalThread * const current = mono_thread_internal_current ();
 
 	LOCK_THREAD (thread);
 
-	current = mono_thread_internal_current ();
-
 	thread->thread_interrupt_requested = TRUE;
-	throw_ = current != thread && (thread->state & ThreadState_WaitSleepJoin);
+	gboolean const throw_ = current != thread && (thread->state & ThreadState_WaitSleepJoin);
 
 	UNLOCK_THREAD (thread);
 
-	if (throw_) {
+	if (throw_)
 		async_abort_internal (thread, FALSE);
-	}
 }
 
 /**
@@ -2545,14 +2553,11 @@ ves_icall_System_Threading_Thread_ResetAbort (MonoThreadObjectHandle this_obj, M
 	UNLOCK_THREAD (thread);
 
 	if (!was_aborting) {
-		const char *msg = "Unable to reset abort because no abort was requested";
-		mono_set_pending_exception_handle (mono_exception_new_thread_state (msg, error));
-		mono_error_assert_ok (error);
-		return;
-	} else if (is_domain_abort) {
-		/* Silently ignore abort resets in unloading appdomains */
+		mono_error_set_exception_thread_state (error, "Unable to reset abort because no abort was requested");
 		return;
 	}
+	if (is_domain_abort) // Silently ignore abort resets in unloading appdomains
+		return;
 
 	mono_get_eh_callbacks ()->mono_clear_abort_threshold ();
 	thread->abort_exc = NULL;
@@ -2647,20 +2652,11 @@ mono_thread_suspend (MonoInternalThread *thread)
 	return TRUE;
 }
 
-static const char thread_not_started_or_dead_message [ ] = "Thread has not been started, or is dead.";
-
-static void
-set_pending_exception_thread_not_started_or_dead (MonoError *error)
-{
-	mono_set_pending_exception_handle (mono_exception_new_thread_state (thread_not_started_or_dead_message, error));
-	mono_error_assert_ok (error);
-}
-
 void
 ves_icall_System_Threading_Thread_Suspend (MonoThreadObjectHandle this_obj, MonoError *error)
 {
 	if (!mono_thread_suspend (thread_handle_to_internal_ptr (this_obj)))
-		mono_error_set_generic_error (error, "System.Threading", "ThreadStateException", thread_not_started_or_dead_message);
+		mono_error_set_exception_thread_not_started_or_dead (error);
 
 }
 
@@ -2724,7 +2720,7 @@ ves_icall_System_Threading_Thread_Resume (MonoThreadObjectHandle thread_handle, 
 	}
 
 	if (exception)
-		set_pending_exception_thread_not_started_or_dead (error);
+		mono_error_set_exception_thread_not_started_or_dead (error);
 }
 
 static gboolean
