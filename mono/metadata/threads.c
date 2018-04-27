@@ -2555,9 +2555,10 @@ ves_icall_System_Threading_Thread_ResetAbort (MonoThreadObjectHandle this_obj, M
 	if (!was_aborting) {
 		mono_error_set_exception_thread_state (error, "Unable to reset abort because no abort was requested");
 		return;
-	}
-	if (is_domain_abort) // Silently ignore abort resets in unloading appdomains
+	} else if (is_domain_abort) {
+		/* Silently ignore abort resets in unloading appdomains */
 		return;
+	}
 
 	mono_get_eh_callbacks ()->mono_clear_abort_threshold ();
 	thread->abort_exc = NULL;
