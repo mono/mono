@@ -67,7 +67,8 @@ ldvirtfn_internal (MonoObject *obj, MonoMethod *method, gboolean gshared)
 	MonoMethod *res;
 
 	if (obj == NULL) {
-		mono_set_pending_exception (mono_get_exception_null_reference ());
+		mono_error_set_null_reference (error);
+		mono_error_set_pending_exception (error);
 		return NULL;
 	}
 
@@ -111,7 +112,8 @@ mono_helper_stelem_ref_check (MonoArray *array, MonoObject *val)
 {
 	ERROR_DECL (error);
 	if (!array) {
-		mono_set_pending_exception (mono_get_exception_null_reference ());
+		mono_error_set_null_reference (error);
+		mono_error_set_pending_exception (error);
 		return;
 	}
 	if (val && !mono_object_isinst_checked (val, m_class_get_element_class (mono_object_class (array)), error)) {
@@ -1135,7 +1137,8 @@ mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, gpointe
 	UnlockedIncrement (&mono_jit_stats.generic_virtual_invocations);
 
 	if (obj == NULL) {
-		mono_set_pending_exception (mono_get_exception_null_reference ());
+		mono_error_set_null_reference (error);
+		mono_error_set_pending_exception (error);
 		return NULL;
 	}
 	vmethod = mono_object_get_virtual_method (obj, method);
