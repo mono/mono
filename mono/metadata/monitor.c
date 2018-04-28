@@ -645,7 +645,7 @@ mono_monitor_ensure_owned (LockWord lw, guint32 id)
 
 	ERROR_DECL (error);
 	mono_error_set_synchronization_lock (error, "Object synchronization method was called from an unsynchronized block of code.");
-	mono_set_pending_exception (error);
+	mono_error_set_pending_exception (error);
 	return FALSE;
 }
 
@@ -761,7 +761,7 @@ mono_monitor_try_enter_inflated (MonoObject *obj, guint32 ms, gboolean allow_int
 	if (G_UNLIKELY (!obj)) {
 		ERROR_DECL (error);
 		mono_error_set_argument_null (error, "obj", "");
-		mono_set_pending_exception (error);
+		mono_error_set_pending_exception (error);
 		return FALSE;
 	}
 
@@ -1028,7 +1028,7 @@ mono_monitor_enter_internal (MonoObject *obj)
 	if (G_UNLIKELY (!obj)) {
 		ERROR_DECL (error);
 		mono_error_set_argument_null (error, "obj", "");
-		mono_set_pending_exception (error);
+		mono_error_set_pending_exception (error);
 		return FALSE;
 	}
 
@@ -1086,7 +1086,7 @@ mono_monitor_try_enter (MonoObject *obj, guint32 ms)
 	if (G_UNLIKELY (!obj)) {
 		ERROR_DECL (error);
 		mono_error_set_argument_null (error, "obj", "");
-		mono_set_pending_exception (error);
+		mono_error_set_pending_exception (error);
 		return FALSE;
 	}
 	return mono_monitor_try_enter_internal (obj, ms, FALSE) == 1;
@@ -1105,7 +1105,7 @@ mono_monitor_exit (MonoObject *obj)
 	if (G_UNLIKELY (!obj)) {
 		ERROR_DECL (error);
 		mono_error_set_argument_null (error, "obj", "");
-		mono_set_pending_exception (error);
+		mono_error_set_pending_exception (error);
 		return;
 	}
 
@@ -1161,7 +1161,7 @@ ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject
 	if (G_UNLIKELY (!obj)) {
 		ERROR_DECL (error);
 		mono_error_set_argument_null (error, "obj", "");
-		mono_set_pending_exception (error);
+		mono_error_set_pending_exception (error);
 		return;
 	}
 	do {
@@ -1191,7 +1191,7 @@ mono_monitor_enter_v4 (MonoObject *obj, char *lock_taken)
 	if (*lock_taken == 1) {
 		ERROR_DECL (error);
 		mono_error_set_argument (error, "lockTaken", "lockTaken is already true");
-		mono_set_pending_exception (error);
+		mono_error_set_pending_exception (error);
 		return;
 	}
 
@@ -1208,7 +1208,7 @@ mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken)
 	if (*lock_taken == 1) {
 		ERROR_DECL (error);
 		mono_error_set_argument (error, "lockTaken", "lockTaken is already true");
-		mono_set_pending_exception (error);
+		mono_error_set_pending_exception (error);
 		return;
 	}
 
@@ -1375,7 +1375,7 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	if (event == NULL) {
 		ERROR_DECL (error);
 		mono_error_set_synchronization_lock (error, "Failed to set up wait event");
-		mono_set_pending_exception (error);
+		mono_error_set_pending_exception (error);
 		return FALSE;
 	}
 	

@@ -1245,7 +1245,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 	mcast_delegate = (MonoMulticastDelegate *) delegate;
 	if (mcast_delegate->delegates != NULL) {
 		mono_error_set_argument (error, NULL, "The delegate must have only one target");
-		mono_set_pending_exception (error);
+		mono_error_set_pending_exception (error);
 		return NULL;
 	}
 
@@ -5934,7 +5934,7 @@ mono_marshal_asany (MonoObject *o, MonoMarshalNative string_encoding, int param_
 		break;
 	}
 	mono_error_set_argument (error, "", "No PInvoke conversion exists for value passed to Object-typed parameter.");
-	mono_set_pending_exception (error);
+	mono_error_set_pending_exception (error);
 	return NULL;
 }
 
