@@ -344,10 +344,10 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 }
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-static inline gboolean
+static gboolean
 mono_process_win_enum_processes (DWORD *pids, DWORD count, DWORD *needed)
 {
-	return EnumProcesses (pids, count, needed);
+	return !!EnumProcesses (pids, count, needed);
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
@@ -356,17 +356,14 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 {
 	ERROR_DECL (error);
 	MonoArray *procs = NULL;
-	gboolean ret;
-	DWORD needed;
-	int count;
+	DWORD needed = 0;
 	DWORD *pids = NULL;
+	int count = 512;
 
-	count = 512;
 	do {
 		pids = g_new0 (DWORD, count);
-		ret = mono_process_win_enum_processes (pids, count * sizeof (guint32), &needed);
-		if (ret == FALSE) {
-			ERROR_DECL (error);
+		if (!mono_process_win_enum_processes (pids, count * sizeof (guint32), &needed)) {
+			// FIXME GetLastError?
 			mono_error_set_not_supported (error, "This system does not support EnumProcesses");
 			mono_error_set_pending_exception (error);
 			goto exit;
@@ -381,8 +378,8 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 	count = needed / sizeof (guint32);
 	procs = mono_array_new_checked (mono_domain_get (), mono_get_int32_class (), count, error);
 	if (mono_error_set_pending_exception (error)) {
-		g_free (pids);
-		return NULL;
+		procs = NULL;
+		goto exit;
 	}
 
 	memcpy (mono_array_addr (procs, guint32, 0), pids, needed);
