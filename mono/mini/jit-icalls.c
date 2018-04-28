@@ -352,9 +352,7 @@ mono_llrem_un (guint64 a, guint64 b)
 guint64 
 mono_lshl (guint64 a, gint32 shamt)
 {
-	guint64 res;
-
-	res = a << (shamt & 0x7f);
+	const guint64 res = a << (shamt & 0x7f);
 
 	/*printf ("TESTL %lld << %d = %lld\n", a, shamt, res);*/
 
@@ -364,9 +362,7 @@ mono_lshl (guint64 a, gint32 shamt)
 guint64 
 mono_lshr_un (guint64 a, gint32 shamt)
 {
-	guint64 res;
-
-	res = a >> (shamt & 0x7f);
+	const guint64 res = a >> (shamt & 0x7f);
 
 	/*printf ("TESTR %lld >> %d = %lld\n", a, shamt, res);*/
 
@@ -376,9 +372,7 @@ mono_lshr_un (guint64 a, gint32 shamt)
 gint64 
 mono_lshr (gint64 a, gint32 shamt)
 {
-	gint64 res;
-
-	res = a >> (shamt & 0x7f);
+	const gint64 res = a >> (shamt & 0x7f);
 
 	/*printf ("TESTR %lld >> %d = %lld\n", a, shamt, res);*/
 
