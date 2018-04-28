@@ -1201,7 +1201,7 @@ ves_pinvoke_method (InterpFrame *frame, MonoMethodSignature *sig, MonoFuncV addr
 #endif
 	interp_pop_lmf (&ext);
 
-	if (*mono_thread_interruption_request_flag ()) {
+	if (!context->has_resume_state && *mono_thread_interruption_request_flag ()) {
 		MonoException *exc = mono_thread_interruption_checkpoint ();
 		if (exc)
 			interp_throw (context, exc, frame, NULL, FALSE);
