@@ -156,9 +156,11 @@ mono_llmult_ovf_un (guint64 a, guint64 b)
 	return res;
 
  raise_exception:
-	ERROR_DECL (error);
-	mono_error_set_overflow (error);
-	mono_error_set_pending_exception (error);
+	{
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
+	}
 	return 0;
 }
 
@@ -267,9 +269,11 @@ mono_llmult_ovf (gint64 a, gint64 b)
 		return res;
 
  raise_exception:
-	ERROR_DECL (error);
-	mono_error_set_overflow (error);
-	mono_error_set_pending_exception (error);
+	{
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
+	}
 	return 0;
 }
 
