@@ -538,6 +538,9 @@ static const gunichar2 *utf16_space = utf16_space_bytes;
 static const gunichar2 utf16_quote_bytes [2] = { 0x22, 0 };
 static const gunichar2 *utf16_quote = utf16_quote_bytes;
 
+static MonoBoolean
+mono_get_exit_code_process (gpointer handle, gint32 *exitcode);
+
 /* Check if a pid is valid - i.e. if a process exists with this pid. */
 static gboolean
 process_is_alive (pid_t pid)
@@ -2208,7 +2211,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 			gint32 exitcode;
 			MonoW32HandleWaitRet waitret;
 			waitret = process_wait (process_info->process_handle, MONO_INFINITE_WAIT, NULL);
-			ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (process_info->process_handle, &exitcode);
+			mono_get_exit_code_process (process_info->process_handle, &exitcode);
 			if (exitcode != 0)
 				ret = FALSE;
 		}
@@ -2362,7 +2365,13 @@ ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (MonoError *error)
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode)
+ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode, MonoError *error)
+{
+	return mono_get_exit_code_process (handle, exitcode);
+}
+
+static MonoBoolean
+mono_get_exit_code_process (gpointer handle, gint32 *exitcode)
 {
 	MonoW32Handle *handle_data;
 	MonoW32HandleProcess *process_handle;

@@ -408,7 +408,7 @@ ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint3
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode)
+ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode, MonoError *error)
 {
 	return GetExitCodeProcess (handle, exitcode);
 }
