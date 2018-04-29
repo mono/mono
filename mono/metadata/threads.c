@@ -1973,14 +1973,17 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_h
 	}
 
 	MonoThreadHandle *handle = thread->handle;
-	MonoInternalThread *cur_thread = mono_thread_internal_current ();
-	MonoThreadInfoWaitRet ret = FALSE;
 
 	if (ms == -1)
 		ms = MONO_INFINITE_WAIT;
+
 	THREAD_DEBUG (g_message ("%s: joining thread handle %p, %d ms", __func__, handle, ms));
 
+	MonoInternalThread * const cur_thread = mono_thread_internal_current ();
+
 	mono_thread_set_state (cur_thread, ThreadState_WaitSleepJoin);
+
+	MonoThreadInfoWaitRet ret;
 
 	{ // mono_join_uninterrupted
 		gint32 wait = ms;
