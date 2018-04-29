@@ -2523,7 +2523,7 @@ ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handl
 }
 
 gint32
-ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle)
+ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle, MonoError *error)
 {
 #ifdef HAVE_GETPRIORITY
 	MonoW32Handle *handle_data;

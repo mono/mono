@@ -450,7 +450,7 @@ mono_icall_get_priority_class (gpointer handle)
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 gint32
-ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle)
+ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle, MonoError *error)
 {
 	return mono_icall_get_priority_class (handle);
 }
