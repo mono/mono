@@ -2668,7 +2668,7 @@ ticks_to_processtime (guint64 ticks, ProcessTime *processtime)
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64 *creation_time, gint64 *exit_time, gint64 *kernel_time, gint64 *user_time)
+ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64 *creation_time, gint64 *exit_time, gint64 *kernel_time, gint64 *user_time, MonoError *error)
 {
 	MonoW32Handle *handle_data;
 	MonoW32HandleProcess *process_handle;
