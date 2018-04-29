@@ -1871,17 +1871,16 @@ ves_icall_System_ComObject_GetInterfaceInternal (MonoComObject* obj, MonoReflect
 }
 
 void
-ves_icall_Mono_Interop_ComInteropProxy_AddProxy (gpointer pUnk, MonoComInteropProxy* proxy)
+ves_icall_Mono_Interop_ComInteropProxy_AddProxy (gpointer pUnk, MonoComInteropProxyHandle proxy, MonoError *error)
 {
 #ifndef DISABLE_COM
-	guint32 gchandle = 0;
 	if (!rcw_hash) {
 		mono_cominterop_lock ();
 		rcw_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 		mono_cominterop_unlock ();
 	}
 
-	gchandle = mono_gchandle_new_weakref ((MonoObject*)proxy, FALSE);
+	guint32 const gchandle = mono_gchandle_new_weakref_from_handle ((MonoObjectHandle)proxy);
 
 	mono_cominterop_lock ();
 	g_hash_table_insert (rcw_hash, pUnk, GUINT_TO_POINTER (gchandle));
