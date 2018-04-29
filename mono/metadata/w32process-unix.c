@@ -2356,7 +2356,7 @@ mono_w32process_set_cli_launcher (gchar *path)
 }
 
 gpointer
-ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void)
+ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (MonoError *error)
 {
 	return current_process;
 }

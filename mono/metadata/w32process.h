@@ -113,7 +113,7 @@ gint64
 ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, gint32 *error);
 
 gpointer
-ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void);
+ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (MonoError *error);
 
 MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode);

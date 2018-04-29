@@ -476,7 +476,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64
 }
 
 gpointer
-ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void)
+ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (MonoError *error)
 {
 	return GetCurrentProcess ();
 }
