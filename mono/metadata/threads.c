@@ -1953,7 +1953,7 @@ mono_thread_internal_current_handle (void)
 }
 
 static MonoThreadInfoWaitRet
-mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError *error)
+mono_join_uninterrupted (MonoThreadHandle* handle, gint32 ms, MonoError *error)
 {
 	MonoThreadInfoWaitRet ret;
 	gint32 wait = ms;
@@ -1963,7 +1963,7 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 
 	while (TRUE) {
 		MONO_ENTER_GC_SAFE;
-		ret = mono_thread_info_wait_one_handle (thread_to_join, wait, TRUE);
+		ret = mono_thread_info_wait_one_handle (handle, wait, TRUE);
 		MONO_EXIT_GC_SAFE;
 
 		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
