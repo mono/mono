@@ -422,7 +422,7 @@ mono_icall_get_process_working_set_size (gpointer handle, gsize *min, gsize *max
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max)
+ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max, MonoError *error)
 {
 	return mono_icall_get_process_working_set_size (handle, min, max);
 }
