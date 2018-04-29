@@ -119,7 +119,7 @@ MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode);
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle);
+ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle, MonoError *error);
 
 MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode);

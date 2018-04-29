@@ -396,7 +396,7 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle)
+ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle, MonoError *error)
 {
 	return CloseHandle (handle);
 }
