@@ -1998,7 +1998,7 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_h
 	MonoInternalThread * const thread = thread_handle_to_internal_ptr (thread_handle);
 	MonoThreadHandle *handle = thread->handle;
 	MonoInternalThread *cur_thread = mono_thread_internal_current ();
-	gboolean ret = FALSE;
+	MonoThreadInfoWaitRet ret = FALSE;
 
 	LOCK_THREAD (thread);
 	
