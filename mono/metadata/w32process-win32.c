@@ -464,7 +464,7 @@ mono_icall_set_priority_class (gpointer handle, gint32 priorityClass)
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass)
+ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass, MonoError *error)
 {
 	return mono_icall_set_priority_class (handle, priorityClass);
 }
