@@ -1952,43 +1952,6 @@ mono_thread_internal_current_handle (void)
 	return MONO_HANDLE_NEW (MonoInternalThread, mono_thread_internal_current ());
 }
 
-static MonoThreadInfoWaitRet
-mono_join_uninterrupted (MonoThreadHandle* handle, gint32 ms, MonoError *error)
-{
-	MonoThreadInfoWaitRet ret;
-	gint32 wait = ms;
-	const gint64 start = (ms == -1) ? 0 : mono_msec_ticks ();
-	// Allocate handle outside of the loop.
-	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
-
-	while (TRUE) {
-		MONO_ENTER_GC_SAFE;
-		ret = mono_thread_info_wait_one_handle (handle, wait, TRUE);
-		MONO_EXIT_GC_SAFE;
-
-		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
-			break;
-
-		if (mono_thread_execute_interruption (&exc)) {
-			mono_error_set_exception_handle (error, exc);
-			break;
-		}
-
-		if (ms == -1)
-			continue;
-
-		/* Re-calculate ms according to the time passed */
-		const gint32 diff_ms = (gint32)(mono_msec_ticks () - start);
-		if (diff_ms >= ms) {
-			ret = MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
-			break;
-		}
-		wait = ms - diff_ms;
-	}
-
-	return ret;
-}
-
 gboolean
 ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_handle, int ms, MonoError *error)
 {
@@ -2002,10 +1965,10 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_h
 	MonoThreadInfoWaitRet ret = FALSE;
 
 	LOCK_THREAD (thread);
-	
+
 	if ((thread->state & ThreadState_Unstarted) != 0) {
 		UNLOCK_THREAD (thread);
-		
+
 		mono_error_set_exception_thread_state (error, "Thread has not been started.");
 		return FALSE;
 	}
@@ -2018,7 +1981,37 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_h
 
 	mono_thread_set_state (cur_thread, ThreadState_WaitSleepJoin);
 
-	ret = mono_join_uninterrupted (handle, ms, error);
+	{ // mono_join_uninterrupted
+		gint32 wait = ms;
+		const gint64 start = (ms == -1) ? 0 : mono_msec_ticks ();
+		// Allocate handle outside of the loop.
+		MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+
+		while (TRUE) {
+			MONO_ENTER_GC_SAFE;
+			ret = mono_thread_info_wait_one_handle (handle, wait, TRUE);
+			MONO_EXIT_GC_SAFE;
+
+			if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
+				break;
+
+			if (mono_thread_execute_interruption (&exc)) {
+				mono_error_set_exception_handle (error, exc);
+				break;
+			}
+
+			if (ms == -1)
+				continue;
+
+			/* Re-calculate ms according to the time passed */
+			const gint32 diff_ms = (gint32)(mono_msec_ticks () - start);
+			if (diff_ms >= ms) {
+				ret = MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
+				break;
+			}
+			wait = ms - diff_ms;
+		}
+	}
 
 	mono_thread_clr_state (cur_thread, ThreadState_WaitSleepJoin);
 
