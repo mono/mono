@@ -122,7 +122,7 @@ MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle, MonoError *error);
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode);
+ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode, MonoError *error);
 
 MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max);

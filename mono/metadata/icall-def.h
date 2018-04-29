@@ -79,7 +79,7 @@ ICALL(NATIVEMETHODS_6, "GetProcessTimes", ves_icall_Microsoft_Win32_NativeMethod
 ICALL(NATIVEMETHODS_7, "GetProcessWorkingSetSize", ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize)
 ICALL(NATIVEMETHODS_8, "SetPriorityClass", ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass)
 ICALL(NATIVEMETHODS_9, "SetProcessWorkingSetSize", ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize)
-ICALL(NATIVEMETHODS_10, "TerminateProcess", ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess)
+HANDLES(ICALL(NATIVEMETHODS_10, "TerminateProcess", ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess))
 ICALL(NATIVEMETHODS_11, "WaitForInputIdle", ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle)
 
 #ifndef DISABLE_COM
