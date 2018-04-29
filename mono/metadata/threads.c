@@ -1967,11 +1967,11 @@ mono_join_uninterrupted (MonoThreadHandle* handle, gint32 ms, MonoError *error)
 		MONO_EXIT_GC_SAFE;
 
 		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
-			return ret;
+			break;
 
 		if (mono_thread_execute_interruption (&exc)) {
 			mono_error_set_exception_handle (error, exc);
-			return ret;
+			break;
 		}
 
 		if (ms == -1)
@@ -1981,7 +1981,7 @@ mono_join_uninterrupted (MonoThreadHandle* handle, gint32 ms, MonoError *error)
 		const gint32 diff_ms = (gint32)(mono_msec_ticks () - start);
 		if (diff_ms >= ms) {
 			ret = MONO_THREAD_INFO_WAIT_RET_TIMEOUT;
-			return ret;
+			break;
 		}
 		wait = ms - diff_ms;
 	}
