@@ -1960,20 +1960,21 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_h
 
 	// Internal threads are pinned so shallow coop/handle.
 	MonoInternalThread * const thread = thread_handle_to_internal_ptr (thread_handle);
-	MonoThreadHandle *handle = thread->handle;
-	MonoInternalThread *cur_thread = mono_thread_internal_current ();
-	MonoThreadInfoWaitRet ret = FALSE;
 
 	LOCK_THREAD (thread);
 
-	if ((thread->state & ThreadState_Unstarted) != 0) {
-		UNLOCK_THREAD (thread);
+	const gboolean unstarted = (thread->state & ThreadState_Unstarted) != 0;
 
+	UNLOCK_THREAD (thread);
+
+	if (unstarted) {
 		mono_error_set_exception_thread_state (error, "Thread has not been started.");
 		return FALSE;
 	}
 
-	UNLOCK_THREAD (thread);
+	MonoThreadHandle *handle = thread->handle;
+	MonoInternalThread *cur_thread = mono_thread_internal_current ();
+	MonoThreadInfoWaitRet ret = FALSE;
 
 	if (ms == -1)
 		ms = MONO_INFINITE_WAIT;
