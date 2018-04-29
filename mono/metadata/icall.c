@@ -3134,7 +3134,7 @@ ICALL_EXPORT MonoBoolean
 ves_icall_System_RuntimeType_IsTypeExportedToWindowsRuntime (MonoError *error)
 {
 	error_init (error);
-	mono_error_set_not_implemented (error, "");
+	mono_error_set_not_implemented (error, "%s", "System.RuntimeType.IsTypeExportedToWindowsRuntime");
 	return FALSE;
 }
 
@@ -3142,7 +3142,7 @@ ICALL_EXPORT MonoBoolean
 ves_icall_System_RuntimeType_IsWindowsRuntimeObjectType (MonoError *error)
 {
 	error_init (error);
-	mono_error_set_not_implemented (error, "");
+	mono_error_set_not_implemented (error, "%s", "System.RuntimeType.IsWindowsRuntimeObjectType");
 	return FALSE;
 }
 
