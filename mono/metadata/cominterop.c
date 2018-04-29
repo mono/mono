@@ -1890,24 +1890,24 @@ ves_icall_Mono_Interop_ComInteropProxy_AddProxy (gpointer pUnk, MonoComInteropPr
 #endif
 }
 
-MonoComInteropProxy*
-ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer pUnk)
+MonoComInteropProxyHandle
+ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer pUnk, MonoError *error)
 {
 #ifndef DISABLE_COM
-	MonoComInteropProxy* proxy = NULL;
 	guint32 gchandle = 0;
 
 	mono_cominterop_lock ();
 	if (rcw_hash)
 		gchandle = GPOINTER_TO_UINT (g_hash_table_lookup (rcw_hash, pUnk));
 	mono_cominterop_unlock ();
-	if (gchandle) {
-		proxy = (MonoComInteropProxy*)mono_gchandle_get_target (gchandle);
-		/* proxy is null means we need to free up old RCW */
-		if (!proxy) {
-			mono_gchandle_free (gchandle);
-			g_hash_table_remove (rcw_hash, pUnk);
-		}
+	if (!gchandle)
+		return MONO_HANDLE_NEW (MonoComInteropProxy, NULL);
+
+	MonoComInteropProxyHandle const proxy = (MonoComInteropProxyHandle)mono_gchandle_get_target_handle (gchandle);
+	/* proxy is null means we need to free up old RCW */
+	if (MONO_HANDLE_IS_NULL (proxy)) {
+		mono_gchandle_free (gchandle);
+		g_hash_table_remove (rcw_hash, pUnk);
 	}
 	return proxy;
 #else
