@@ -1609,6 +1609,24 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 	}
 }
 
+static gboolean
+is_infinite_wait (gint32 wait_milliseconds)
+{
+	return wait_milliseconds == -1; // MONO_INFINITE_WAIT
+}
+
+static gboolean
+is_finite_wait (gint32 wait_milliseconds)
+{
+	return wait_milliseconds != -1; // MONO_INFINITE_WAIT
+}
+
+static gint64
+get_start_for_wait (gint32 wait_milliseconds)
+{
+	return is_infinite_wait (wait_milliseconds) ? 0 : mono_msec_ticks ();
+}
+
 void
 ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 {
@@ -1636,8 +1654,11 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 
 		if (mono_thread_execute_interruption (&exc))
 			mono_set_pending_exception_handle (exc);
-		else if (ms == MONO_INFINITE_WAIT) // FIXME: !MONO_INFINITE_WAIT
+		else if (is_infinite_wait (ms))
 			continue;
+		else {
+			 // FIXME: !MONO_INFINITE_WAIT
+		}
 		return;
 	}
 }
@@ -1974,9 +1995,6 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_h
 
 	MonoThreadHandle *handle = thread->handle;
 
-	if (ms == -1)
-		ms = MONO_INFINITE_WAIT;
-
 	THREAD_DEBUG (g_message ("%s: joining thread handle %p, %d ms", __func__, handle, ms));
 
 	MonoInternalThread * const cur_thread = mono_thread_internal_current ();
@@ -1987,7 +2005,7 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_h
 
 	{ // mono_join_uninterrupted
 		gint32 wait = ms;
-		const gint64 start = (ms == -1) ? 0 : mono_msec_ticks ();
+		const gint64 start = get_start_for_wait (ms);
 		// Allocate handle outside of the loop.
 		MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
 
@@ -2004,7 +2022,7 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_h
 				break;
 			}
 
-			if (ms == -1)
+			if (is_infinite_wait (ms))
 				continue;
 
 			/* Re-calculate ms according to the time passed */
@@ -2066,12 +2084,7 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 
 	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 
-	gint64 start = 0;
-
-	if (timeout == -1)
-		timeout = MONO_INFINITE_WAIT;
-	if (timeout != MONO_INFINITE_WAIT)
-		start = mono_msec_ticks ();
+	const gint64 start = get_start_for_wait (timeout);
 
 	guint32 timeoutLeft = timeout;
 
@@ -2100,7 +2113,7 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 			break;
 		}
 
-		if (timeout != MONO_INFINITE_WAIT) {
+		if (is_finite_wait (timeout)) {
 			gint64 const elapsed = mono_msec_ticks () - start;
 			if (elapsed >= timeout) {
 				ret = MONO_W32HANDLE_WAIT_RET_TIMEOUT;
@@ -2123,9 +2136,6 @@ ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (gpointer toSignal,
 {
 	MonoW32HandleWaitRet ret;
 	MonoInternalThread *thread = mono_thread_internal_current ();
-
-	if (ms == -1)
-		ms = MONO_INFINITE_WAIT;
 
 	if (mono_thread_current_check_pending_interrupt ())
 		return map_native_wait_result_to_managed (MONO_W32HANDLE_WAIT_RET_FAILED, 0);
@@ -4200,7 +4210,7 @@ mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 		timeout -= mono_msec_ticks () - start_time;
 		start_time = mono_msec_ticks ();
 
-		if (orig_timeout != -1 && timeout < 0)
+		if (is_finite_wait (orig_timeout) && timeout < 0)
 			return FALSE;
 	}
 	while (user_data.wait.num > 0);
