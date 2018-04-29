@@ -1957,8 +1957,10 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 {
 	MonoThreadInfoWaitRet ret;
 	gint32 wait = ms;
-
 	const gint64 start = (ms == -1) ? 0 : mono_msec_ticks ();
+	// Allocate handle outside of the loop.
+	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+
 	while (TRUE) {
 		MONO_ENTER_GC_SAFE;
 		ret = mono_thread_info_wait_one_handle (thread_to_join, wait, TRUE);
@@ -1967,9 +1969,8 @@ mono_join_uninterrupted (MonoThreadHandle* thread_to_join, gint32 ms, MonoError 
 		if (ret != MONO_THREAD_INFO_WAIT_RET_ALERTED)
 			return ret;
 
-		MonoException *exc = mono_thread_execute_interruption_ptr ();
-		if (exc) {
-			mono_error_set_exception_instance (error, exc);
+		if (mono_thread_execute_interruption (&exc)) {
+			mono_error_set_exception_handle (error, exc);
 			return ret;
 		}
 
