@@ -69,6 +69,10 @@ elif [[ ${CI_TAGS} == *'all-profiles'* ]]; then
     export EXTERNAL_FACADE_DRAWING_REFERENCE=${MONO_REPO_ROOT}/mcs/class/lib/build/System.Drawing.dll
 fi
 
+if [[ ${CI_TAGS} == *'interpreter'* ]]; then
+	export TEST_WITH_INTERPRETER=1
+fi
+
 if [ -x "/usr/bin/dpkg-architecture" ];
 	then
 	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS --host=`/usr/bin/dpkg-architecture -qDEB_HOST_GNU_TYPE`"

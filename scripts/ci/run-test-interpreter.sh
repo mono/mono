@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 export TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
-export TEST_WITH_INTERPRETER=1
 
 ${TESTCMD} --label=interpreter-regression --timeout=10m make -C mono/mini richeck
 ${TESTCMD} --label=mixedmode-regression --timeout=10m make -C mono/mini mixedcheck
