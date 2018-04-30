@@ -322,6 +322,7 @@ worker_callback (void)
 	domains_lock ();
 
 	previous_tpdomain = NULL;
+	gboolean set_thread_name = FALSE;
 
 	while (!mono_runtime_is_shutting_down ()) {
 		gboolean retire = FALSE;
@@ -350,10 +351,13 @@ worker_callback (void)
 
 		domains_unlock ();
 
-		MonoString *thread_name = mono_string_new_checked (mono_get_root_domain (), "Thread Pool Worker", error);
-		mono_error_assert_ok (error);
-		mono_thread_set_name_internal (thread, thread_name, FALSE, TRUE, error);
-		mono_error_assert_ok (error);
+		if (!set_thread_name) {
+			set_thread_name = TRUE;
+			MonoString *thread_name = mono_string_new_checked (mono_get_root_domain (), "Thread Pool Worker", error);
+			mono_error_assert_ok (error);
+			mono_thread_set_name_internal (thread, thread_name, FALSE, TRUE, error);
+			mono_error_assert_ok (error);
+		}
 
 		mono_thread_clear_and_set_state (thread,
 			(MonoThreadState)~ThreadState_Background,
