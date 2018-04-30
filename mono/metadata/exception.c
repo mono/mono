@@ -437,7 +437,7 @@ mono_exception_new_thread_interrupted (MonoError *error)
  * \returns a new instance of the \c System.Threading.ThreadInterruptedException
  */
 MonoException *
-mono_get_exception_thread_interrupted ()
+mono_get_exception_thread_interrupted (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System.Threading",
 					 "ThreadInterruptedException");
@@ -448,7 +448,7 @@ mono_get_exception_thread_interrupted ()
  * \returns a new instance of the \c System.ArithmeticException
  */
 MonoException *
-mono_get_exception_arithmetic ()
+mono_get_exception_arithmetic (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System",
 					 "ArithmeticException");
@@ -459,7 +459,7 @@ mono_get_exception_arithmetic ()
  * \returns a new instance of the \c System.OverflowException
  */
 MonoException *
-mono_get_exception_overflow ()
+mono_get_exception_overflow (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System",
 					 "OverflowException");
@@ -470,7 +470,7 @@ mono_get_exception_overflow ()
  * \returns a new instance of the \c System.NullReferenceException
  */
 MonoException *
-mono_get_exception_null_reference ()
+mono_get_exception_null_reference (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System",
 					 "NullReferenceException");
@@ -536,7 +536,7 @@ mono_get_exception_index_out_of_range ()
  * \returns a new instance of the \c System.ArrayTypeMismatchException
  */
 MonoException *
-mono_get_exception_array_type_mismatch ()
+mono_get_exception_array_type_mismatch (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System",
 					 "ArrayTypeMismatchException");
