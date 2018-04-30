@@ -17,4 +17,8 @@ partial class SR
     public const string Arg_NotIsomorphic = "Arg_NotIsomorphic";
     public const string StructArrayTooLarge = "StructArrayTooLarge";
     public const string IO_DriveNotFound = "IO_DriveNotFound";
+    public const string Argument_MustSupplyParent = "Argument_MustSupplyParent";
+    public const string Argument_MemberAndArray = "Argument_MemberAndArray";
+    public const string Argument_MustSupplyContainer = "Argument_MustSupplyContainer";
+    public const string Serialization_NoID = "Serialization_NoID";
 }
