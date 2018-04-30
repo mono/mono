@@ -772,8 +772,6 @@ ves_icall_System_ComObject_ReleaseInterfaces(MonoComObject* obj);
 gpointer
 ves_icall_System_ComObject_GetInterfaceInternal (MonoComObject* obj, MonoReflectionType* type, MonoBoolean throw_exception);
 
-TYPED_HANDLE_DECL (MonoComInteropProxy);
-
 void
 ves_icall_Mono_Interop_ComInteropProxy_AddProxy (gpointer pUnk, MonoComInteropProxyHandle proxy, MonoError *error);
 
