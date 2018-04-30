@@ -1264,7 +1264,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IPersistFile.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/IReflect.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IRunningObjectTable.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IStream.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/istream.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/ITypeComp.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/itypeinfo.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/itypeinfo2.cs
