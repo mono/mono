@@ -1564,7 +1564,7 @@ if ($artifact)
 	elsif($^O eq 'darwin')
 	{
 		$embedDirArchDestination = "$embedDirRoot/osx";
-		$distDirArchBin = "$distdir/bin";
+		$distDirArchBin = "$distdir/bin-osx";
 		$versionsOutputFile = "$buildsroot/versions-osx.txt";
 	}
 	else
