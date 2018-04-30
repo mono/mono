@@ -2000,7 +2000,7 @@ ves_icall_MonoField_GetValueInternal (MonoReflectionField *field, MonoObject *ob
 	MonoClassField *cf = field->field;
 	MonoDomain *domain = mono_object_domain (field);
 
-	if (m_class_get_image (fklass)->assembly->ref_only) {
+	if (mono_asmctx_get_kind (&m_class_get_image (fklass)->assembly->context) == MONO_ASMCTX_REFONLY) {
 		mono_set_pending_exception (mono_get_exception_invalid_operation (
 					"It is illegal to get the value on a field on a type loaded using the ReflectionOnly methods."));
 		return NULL;
@@ -2035,7 +2035,7 @@ ves_icall_MonoField_SetValueInternal (MonoReflectionFieldHandle field, MonoObjec
 	MonoClassField *cf = MONO_HANDLE_GETVAL (field, field);
 
 	MonoClass *field_klass = MONO_HANDLE_GETVAL (field, klass);
-	if (m_class_get_image (field_klass)->assembly->ref_only) {
+	if (mono_asmctx_get_kind (&m_class_get_image (field_klass)->assembly->context) == MONO_ASMCTX_REFONLY) {
 		mono_error_set_invalid_operation (error, "It is illegal to set the value on a field on a type loaded using the ReflectionOnly methods.");
 		return;
 	}
@@ -3369,7 +3369,7 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 	}
 
 	image = m_class_get_image (m->klass);
-	if (image->assembly->ref_only) {
+	if (mono_asmctx_get_kind (&image->assembly->context) == MONO_ASMCTX_REFONLY) {
 		mono_gc_wbarrier_generic_store (exc, (MonoObject*) mono_get_exception_invalid_operation ("It is illegal to invoke a method on a type loaded using the ReflectionOnly api."));
 		return NULL;
 	}
@@ -4765,7 +4765,7 @@ ves_icall_System_Reflection_Assembly_get_ReflectionOnly (MonoReflectionAssemblyH
 {
 	error_init (error);
 	MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_h, assembly);
-	return assembly->ref_only;
+	return mono_asmctx_get_kind (&assembly->context) == MONO_ASMCTX_REFONLY;
 }
 
 ICALL_EXPORT MonoStringHandle
@@ -4857,7 +4857,8 @@ create_referenced_assembly_name (MonoDomain *domain, MonoImage *image, MonoTable
 	error_init (error);
 	MonoAssemblyName *aname = g_new0 (MonoAssemblyName, 1);
 
-	mono_assembly_get_assemblyref (image, i, aname);
+	mono_assembly_get_assemblyref_checked (image, i, aname, error);
+	return_val_if_nok (error, NULL);
 	aname->hash_alg = ASSEMBLY_HASH_SHA1 /* SHA1 (default) */;
 	/* name and culture are pointers into the image tables, but we need
 	 * real malloc'd strings (so that we can g_free() them later from
@@ -7916,13 +7917,13 @@ mono_icall_wait_for_input_idle (gpointer handle, gint32 milliseconds)
 #endif /* !HOST_WIN32 */
 
 ICALL_EXPORT gint32
-ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle (gpointer handle, gint32 milliseconds)
+ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle (gpointer handle, gint32 milliseconds, MonoError *error)
 {
 	return mono_icall_wait_for_input_idle (handle, milliseconds);
 }
 
 ICALL_EXPORT gint32
-ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId (void)
+ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId (MonoError *error)
 {
 	return mono_process_current_pid ();
 }

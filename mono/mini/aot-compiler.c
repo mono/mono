@@ -187,6 +187,7 @@ typedef struct MonoAotOptions {
 	// When set, we are emitting inflated methods only
 	char *dedup_include; 
 	gboolean gnu_asm;
+	gboolean try_llvm;
 	gboolean llvm;
 	gboolean llvm_only;
 	int nthreads;
@@ -7047,6 +7048,10 @@ emit_trampolines (MonoAotCompile *acfg)
 		if (mono_aot_mode_is_interp (&acfg->aot_opts)) {
 			mono_arch_get_interp_to_native_trampoline (&info);
 			emit_trampoline (acfg, acfg->got_offset, info);
+#ifdef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
+			mono_arch_get_native_to_interp_trampoline (&info);
+			emit_trampoline (acfg, acfg->got_offset, info);
+#endif
 		}
 
 #endif /* #ifdef MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES */
@@ -7465,6 +7470,12 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->mtriple = g_strdup (arg + strlen ("mtriple="));
 		} else if (str_begins_with (arg, "llvm-path=")) {
 			opts->llvm_path = clean_path (g_strdup (arg + strlen ("llvm-path=")));
+		} else if (!strcmp (arg, "try-llvm")) {
+			// If we can load LLVM, use it
+			// Note: if you call this function from anywhere but mono_compile_assembly,
+			// this will only set the try_llvm attribute and not do the probing / set the
+			// attribute.
+			opts->try_llvm = TRUE;
 		} else if (!strcmp (arg, "llvm")) {
 			opts->llvm = TRUE;
 		} else if (str_begins_with (arg, "readonly-value=")) {
@@ -12565,6 +12576,9 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		acfg->flags = (MonoAotFileFlags)(acfg->flags | MONO_AOT_FILE_FLAG_DEBUG);
 	}
 
+	if (acfg->aot_opts.try_llvm)
+		acfg->aot_opts.llvm = mini_llvm_init ();
+
 	if (mono_use_llvm || acfg->aot_opts.llvm) {
 		acfg->llvm = TRUE;
 		acfg->aot_opts.asm_writer = TRUE;
@@ -12708,11 +12722,14 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 #endif
 
 	if (mono_aot_mode_is_interp (&acfg->aot_opts)) {
+		MonoMethod *wrapper = mini_get_interp_lmf_wrapper ();
+		add_method (acfg, wrapper);
+
 		for (int i = 0; i < sizeof (interp_in_static_sigs) / sizeof (const char *); i++) {
 			MonoMethodSignature *sig = mono_create_icall_signature (interp_in_static_sigs [i]);
 			sig = mono_metadata_signature_dup_full (mono_get_corlib (), sig);
 			sig->pinvoke = FALSE;
-			MonoMethod *wrapper = mini_get_interp_in_wrapper (sig);
+			wrapper = mini_get_interp_in_wrapper (sig);
 			add_method (acfg, wrapper);
 		}
 	}

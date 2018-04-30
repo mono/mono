@@ -317,7 +317,6 @@ public class TimeZoneTest {
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void GetUtcOffsetAtDSTBoundary ()
 		{
 			/*

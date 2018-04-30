@@ -448,6 +448,8 @@ emit_float_args (MonoCompile *cfg, MonoCallInst *inst, guint8 *code, int *max_le
 {
 	GSList *list;
 
+	set_code_cursor (cfg, code);
+
 	for (list = inst->float_args; list; list = list->next) {
 		FloatArgData *fad = list->data;
 		MonoInst *var = get_vreg_to_inst (cfg, fad->vreg);
@@ -459,12 +461,7 @@ emit_float_args (MonoCompile *cfg, MonoCallInst *inst, guint8 *code, int *max_le
 
 		*max_len += 4;
 
-		if (*offset + *max_len > cfg->code_size) {
-			cfg->code_size += *max_len;
-			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-
-			code = cfg->native_code + *offset;
-		}
+		code = realloc_code (cfg, *max_len);
 
 		if (!imm) {
 			code = emit_big_add (code, ARMREG_LR, var->inst_basereg, var->inst_offset);
@@ -472,6 +469,7 @@ emit_float_args (MonoCompile *cfg, MonoCallInst *inst, guint8 *code, int *max_le
 		} else
 			ARM_FLDS (code, fad->hreg, var->inst_basereg, var->inst_offset);
 
+		set_code_cursor (cfg, code);
 		*offset = code - cfg->native_code;
 	}
 
@@ -1611,11 +1609,63 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 	return cinfo;
 }
 
-void
-mono_arch_set_native_call_context (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
+/*
+ * We need to create a temporary value if the argument is not stored in
+ * a linear memory range in the ccontext (this normally happens for
+ * value types if they are passed both by stack and regs).
+ */
+static int
+arg_need_temp (ArgInfo *ainfo)
 {
-	CallInfo *cinfo = get_call_info (NULL, sig);
+	if (ainfo->storage == RegTypeStructByVal && ainfo->vtsize)
+		return ainfo->struct_size;
+	return 0;
+}
+
+static gpointer
+arg_get_storage (CallContext *ccontext, ArgInfo *ainfo)
+{
+	switch (ainfo->storage) {
+		case RegTypeIRegPair:
+		case RegTypeGeneral:
+		case RegTypeStructByVal:
+			return &ccontext->gregs [ainfo->reg];
+		case RegTypeHFA:
+		case RegTypeFP:
+			return &ccontext->fregs [ainfo->reg];
+		case RegTypeBase:
+			return ccontext->stack + ainfo->offset;
+		default:
+			g_error ("Arg storage type not yet supported");
+	}
+}
+
+static void
+arg_get_val (CallContext *ccontext, ArgInfo *ainfo, gpointer dest)
+{
+	int reg_size = ainfo->size * sizeof (mgreg_t);
+	g_assert (arg_need_temp (ainfo));
+	memcpy (dest, &ccontext->gregs [ainfo->reg], reg_size);
+	memcpy ((mgreg_t*)dest + ainfo->size, ccontext->stack + ainfo->offset, ainfo->struct_size - reg_size);
+}
+
+static void
+arg_set_val (CallContext *ccontext, ArgInfo *ainfo, gpointer src)
+{
+	int reg_size = ainfo->size * sizeof (mgreg_t);
+	g_assert (arg_need_temp (ainfo));
+	memcpy (&ccontext->gregs [ainfo->reg], src, reg_size);
+	memcpy (ccontext->stack + ainfo->offset, (mgreg_t*)src + ainfo->size, ainfo->struct_size - reg_size);
+}
+
+/* Set arguments in the ccontext (for i2n entry) */
+void
+mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
+{
 	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
+	CallInfo *cinfo = get_call_info (NULL, sig);
+	gpointer storage;
+	ArgInfo *ainfo;
 
 	memset (ccontext, 0, sizeof (CallContext));
 
@@ -1624,99 +1674,105 @@ mono_arch_set_native_call_context (CallContext *ccontext, gpointer frame, MonoMe
 		ccontext->stack = calloc (1, ccontext->stack_size);
 
 	if (sig->ret->type != MONO_TYPE_VOID) {
-		if (cinfo->ret.storage == RegTypeStructByAddr) {
-			gpointer ret_storage = interp_cb->frame_arg_to_storage ((MonoInterpFrameHandle)frame, sig, -1);
-			ccontext->gregs [cinfo->ret.reg] = (mgreg_t)ret_storage;
+		ainfo = &cinfo->ret;
+		if (ainfo->storage == RegTypeStructByAddr) {
+			storage = interp_cb->frame_arg_to_storage ((MonoInterpFrameHandle)frame, sig, -1);
+			ccontext->gregs [cinfo->ret.reg] = (mgreg_t)storage;
 		}
 	}
 
-	for (int i = 0; i < sig->param_count + sig->hasthis; i++) {
-		ArgInfo *ainfo = &cinfo->args [i];
-		gpointer storage;
-		int storage_type = ainfo->storage;
-		int reg_storage = ainfo->reg;
-		switch (storage_type) {
-			case RegTypeIRegPair:
-			case RegTypeGeneral: {
-				storage = &ccontext->gregs [reg_storage];
-				break;
-			}
-			case RegTypeHFA:
-			case RegTypeFP: {
-				storage = &ccontext->fregs [reg_storage];
-				break;
-			}
-			case RegTypeBase: {
-				storage = ccontext->stack + ainfo->offset;
-				break;
-			}
-			case RegTypeStructByVal: {
-				storage = alloca (ainfo->struct_size);
-				memset (storage, 0, ainfo->struct_size);
-				break;
-			}
-			default:
-				g_error ("Arg storage type not yet supported");
-		}
+	g_assert (!sig->hasthis);
+
+	for (int i = 0; i < sig->param_count; i++) {
+		ainfo = &cinfo->args [i];
+		int temp_size = arg_need_temp (ainfo);
+
+		if (temp_size)
+			storage = alloca (temp_size);
+		else
+			storage = arg_get_storage (ccontext, ainfo);
+
 		interp_cb->frame_arg_to_data ((MonoInterpFrameHandle)frame, sig, i, storage);
-		if (storage_type == RegTypeStructByVal) {
-			if (ainfo->vtsize) {
-				int reg_size = ainfo->size * sizeof (mgreg_t);
-				memcpy (&ccontext->gregs [ainfo->reg], storage, reg_size);
-				memcpy (ccontext->stack + ainfo->offset, (mgreg_t*)storage + ainfo->size, ainfo->struct_size - reg_size);
-			} else {
-				memcpy (&ccontext->gregs [ainfo->reg], storage, ainfo->struct_size);
-			}
+		if (temp_size)
+			arg_set_val (ccontext, ainfo, storage);
+	}
+
+	g_free (cinfo);
+}
+
+/* Set return value in the ccontext (for n2i return) */
+void
+mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
+{
+	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
+	CallInfo *cinfo = get_call_info (NULL, sig);
+	gpointer storage;
+	ArgInfo *ainfo;
+
+	if (sig->ret->type != MONO_TYPE_VOID) {
+		ainfo = &cinfo->ret;
+		if (ainfo->storage != RegTypeStructByAddr) {
+			g_assert (!arg_need_temp (ainfo));
+			storage = arg_get_storage (ccontext, ainfo);
+			memset (ccontext, 0, sizeof (CallContext)); // FIXME
+			interp_cb->frame_arg_to_data ((MonoInterpFrameHandle)frame, sig, -1, storage);
 		}
 	}
 
 	g_free (cinfo);
 }
 
+/* Gets the arguments from ccontext (for n2i entry) */
 void
-mono_arch_get_native_call_context (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
+mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
 	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
-	CallInfo *cinfo;
-
-	/* No return value */
-	if (sig->ret->type == MONO_TYPE_VOID)
-		return;
-
-	cinfo = get_call_info (NULL, sig);
-
-	/* The return values were stored directly at address passed in reg */
-	if (cinfo->ret.storage == RegTypeStructByAddr)
-		goto done;
-
-	ArgInfo *ainfo = &cinfo->ret;
+	CallInfo *cinfo = get_call_info (NULL, sig);
 	gpointer storage;
-	int storage_type = ainfo->storage;
-	int reg_storage = ainfo->reg;
-	switch (storage_type) {
-		case RegTypeIRegPair:
-		case RegTypeGeneral: {
-			storage = &ccontext->gregs [reg_storage];
-			break;
-		}
-		case RegTypeHFA:
-		case RegTypeFP: {
-			storage = &ccontext->fregs [reg_storage];
-			break;
-		}
-		case RegTypeStructByVal: {
-			storage = alloca (ainfo->struct_size);
-			g_assert (!ainfo->vtsize);
-			/* Reconstruct the value type */
-			memcpy (storage, &ccontext->gregs [reg_storage], ainfo->struct_size);
-			break;
-		}
-		default:
-			g_error ("Arg storage type not yet supported");
-	}
-	interp_cb->data_to_frame_arg ((MonoInterpFrameHandle)frame, sig, -1, storage);
+	ArgInfo *ainfo;
 
-done:
+	if (sig->ret->type != MONO_TYPE_VOID) {
+		ainfo = &cinfo->ret;
+		if (ainfo->storage == RegTypeStructByAddr) {
+			storage = (gpointer) ccontext->gregs [cinfo->ret.reg];
+			interp_cb->frame_arg_set_storage ((MonoInterpFrameHandle)frame, sig, -1, storage);
+		}
+	}
+
+	for (int i = 0; i < sig->param_count + sig->hasthis; i++) {
+		ainfo = &cinfo->args [i];
+		int temp_size = arg_need_temp (ainfo);
+
+		if (temp_size) {
+			storage = alloca (temp_size);
+			arg_get_val (ccontext, ainfo, storage);
+		} else {
+			storage = arg_get_storage (ccontext, ainfo);
+		}
+		interp_cb->data_to_frame_arg ((MonoInterpFrameHandle)frame, sig, i, storage);
+	}
+
+	g_free (cinfo);
+}
+
+/* Gets the return value from ccontext (for i2n exit) */
+void
+mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
+{
+	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
+	CallInfo *cinfo = get_call_info (NULL, sig);
+	ArgInfo *ainfo;
+	gpointer storage;
+
+	if (sig->ret->type != MONO_TYPE_VOID) {
+		ainfo = &cinfo->ret;
+		if (ainfo->storage != RegTypeStructByAddr) {
+			g_assert (!arg_need_temp (ainfo));
+			storage = arg_get_storage (ccontext, ainfo);
+			interp_cb->data_to_frame_arg ((MonoInterpFrameHandle)frame, sig, -1, storage);
+		}
+	}
+
 	g_free (cinfo);
 }
 
@@ -1758,7 +1814,10 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	if (!res && !debug_tailcall)
 		goto exit;
 
-	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= 16 * 4); // FIXME why?
+	// FIXME The limit here is that moving the parameters requires addressing the parameters
+	// with 12bit (4K) immediate offsets.
+	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage < 4096);
+	res &= IS_SUPPORTED_TAILCALL (caller_info->stack_usage < 4096);
 
 exit:
 	g_free (caller_info);
@@ -3132,7 +3191,6 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 {
 	guchar *code = p;
 	int save_mode = SAVE_NONE;
-	int offset;
 	MonoMethod *method = cfg->method;
 	MonoType *ret_type = mini_get_underlying_type (mono_method_signature (method)->ret);
 	int rtype = ret_type->type;
@@ -3140,13 +3198,10 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	save_offset += 7;
 	save_offset &= ~7;
 	
-	offset = code - cfg->native_code;
+	set_code_cursor (cfg, code);
 	/* we need about 16 instructions */
-	if (offset > (cfg->code_size - 16 * 4)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		code = cfg->native_code + offset;
-	}
+	code = realloc_code (cfg, 16 * 4);
+
 	switch (rtype) {
 	case MONO_TYPE_VOID:
 		/* special case string .ctor icall */
@@ -4306,10 +4361,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins;
 	MonoCallInst *call;
-	guint offset;
 	guint8 *code = cfg->native_code + cfg->code_len;
 	MonoInst *last_ins = NULL;
-	guint last_offset = 0;
 	int max_len, cpos;
 	int imm8, rot_amount;
 
@@ -4327,15 +4380,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	}
 
 	MONO_BB_FOR_EACH_INS (bb, ins) {
-		offset = code - cfg->native_code;
-
-		max_len = ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
-
-		if (offset > (cfg->code_size - max_len - 16)) {
-			cfg->code_size *= 2;
-			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-			code = cfg->native_code + offset;
-		}
+		guint offset = code - cfg->native_code;
+		set_code_cursor (cfg, code);
+		max_len = ins_get_size (ins->opcode);
+		code = realloc_code (cfg, max_len);
 	//	if (ins->cil_code)
 	//		g_print ("cil code\n");
 		mono_debug_record_line_number (cfg, ins, offset);
@@ -4739,7 +4787,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			/* Breakpoint check */
 			if (cfg->compile_aot) {
-				guint32 offset = code - cfg->native_code;
+				const guint32 offset = code - cfg->native_code;
 				guint32 val;
 
 				var = info_var;
@@ -5072,8 +5120,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 			}
 			break;
+
+		case OP_TAILCALL_PARAMETER:
+			// This opcode helps compute sizes, i.e.
+			// of the subsequent OP_TAILCALL, but contributes no code.
+			g_assert (ins->next);
+			break;
+
 		case OP_TAILCALL: {
 			MonoCallInst *call = (MonoCallInst*)ins;
+
+			max_len += call->stack_usage / sizeof (mgreg_t) * ins_get_size (OP_TAILCALL_PARAMETER);
+			code = realloc_code (cfg, max_len);
 
 			/*
 			 * The stack looks like the following:
@@ -5100,6 +5158,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				code = emit_big_add (code, ARMREG_IP, cfg->frame_reg, cfg->stack_usage + prev_sp_offset);
 
 				/* Copy arguments on the stack to our argument area */
+				// FIXME a fixed size memcpy is desirable here,
+				// at least for larger values of stack_usage.
 				for (i = 0; i < call->stack_usage; i += sizeof (mgreg_t)) {
 					ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, i);
 					ARM_STR_IMM (code, ARMREG_LR, ARMREG_IP, i);
@@ -5156,9 +5216,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				code = emit_float_args (cfg, call, code, &max_len, &offset);
 
 			if (ins->flags & MONO_INST_HAS_METHOD)
-				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_METHOD, call->method);
+				mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD, call->method);
 			else
-				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_ABS, call->fptr);
+				mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_ABS, call->fptr);
 			code = emit_call_seq (cfg, code);
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
@@ -5277,7 +5337,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				labels [0] = code;
 				ARM_B_COND (code, ARMCOND_EQ, 0);
 				for (i = 0; i < FP_PARAM_REGS; ++i) {
-					int offset = MONO_STRUCT_OFFSET (DynCallArgs, fpregs) + (i * sizeof (double));
+					const int offset = MONO_STRUCT_OFFSET (DynCallArgs, fpregs) + (i * sizeof (double));
 					g_assert (arm_is_fpimm8 (offset));
 					ARM_FLDD (code, i * 2, ARMREG_LR, offset);
 				}
@@ -5458,12 +5518,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 */
 			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_SWITCH, ins->inst_p0);
 			max_len += 4 * GPOINTER_TO_INT (ins->klass);
-			if (offset + max_len > (cfg->code_size - 16)) {
-				cfg->code_size += max_len;
-				cfg->code_size *= 2;
-				cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-				code = cfg->native_code + offset;
-			}
+			code = realloc_code (cfg, max_len);
 			ARM_LDR_REG_REG_SHIFT (code, ARMREG_PC, ARMREG_PC, ins->sreg1, ARMSHIFT_LSL, 2);
 			ARM_NOP (code);
 			code += 4 * GPOINTER_TO_INT (ins->klass);
@@ -6073,10 +6128,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		cpos += max_len;
 
 		last_ins = ins;
-		last_offset = offset;
 	}
 
-	cfg->code_len = code - cfg->native_code;
+	set_code_cursor (cfg, code);
 }
 
 #endif /* DISABLE_JIT */
@@ -6308,7 +6362,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		bb->max_offset = max_offset;
 
 		MONO_BB_FOR_EACH_INS (bb, ins)
-			max_offset += ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
+			max_offset += ins_get_size (ins->opcode);
 	}
 
 	/* stack alignment check */
@@ -6646,8 +6700,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		}
 	}
 
-	cfg->code_len = code - cfg->native_code;
-	g_assert (cfg->code_len < cfg->code_size);
+	set_code_cursor (cfg, code);
 	g_free (cinfo);
 
 	return code;
@@ -6668,13 +6721,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	if (mono_jit_trace_calls != NULL)
 		max_epilog_size += 50;
 
-	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		cfg->stat_code_reallocs++;
-	}
-
-	code = cfg->native_code + cfg->code_len;
+	code = realloc_code (cfg, max_epilog_size);
 
 	/* Save the uwind state which is needed by the out-of-line code */
 	mono_emit_unwind_op_remember_state (cfg, code);
@@ -6808,9 +6855,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	/* Restore the unwind state to be the same as before the epilog */
 	mono_emit_unwind_op_restore_state (cfg, code);
 
-	cfg->code_len = code - cfg->native_code;
-
-	g_assert (cfg->code_len < cfg->code_size);
+	set_code_cursor (cfg, code);
 
 }
 
@@ -6844,13 +6889,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 		}
 	}
 
-	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		cfg->stat_code_reallocs++;
-	}
-
-	code = cfg->native_code + cfg->code_len;
+	code = realloc_code (cfg, max_epilog_size);
 
 	/* add code to raise exceptions */
 	for (patch_info = cfg->patch_info; patch_info; patch_info = patch_info->next) {
@@ -6888,10 +6927,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 		}
 	}
 
-	cfg->code_len = code - cfg->native_code;
-
-	g_assert (cfg->code_len < cfg->code_size);
-
+	set_code_cursor (cfg, code);
 }
 
 #endif /* #ifndef DISABLE_JIT */
