@@ -817,6 +817,7 @@ TESTS_IL_SRC=			\
 	tailcall-generic-cast-conservestack-il.il \
 	tailcall-generic-cast-nocrash-il.il \
 	tailcall-member-function-in-valuetype.il \
+	tailcall-return-valuetype.il \
 	tailcall-valuetype-parameter.il \
 	ldfldvt.il \
 	newobj-abstract.il
@@ -879,6 +880,7 @@ TESTS_GSHARED_SRC = \
 
 PLATFORM_DISABLED_TESTS=\
 	tailcall-member-function-in-valuetype.exe \
+	tailcall-return-valuetype.exe \
 	tailcall-rgctxb.exe
 
 if HOST_WIN32
