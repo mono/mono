@@ -1,8 +1,0 @@
-<feed xml:lang="My Language" xmlns="http://www.w3.org/2005/Atom">
-  <title type="text">My Title</title>
-  <id>FeedNoItems</id>
-  <rights type="text">My Description</rights>
-  <updated>2000-05-12T04:00:00Z</updated>
-  <logo>http://example.org/image.png</logo>
-  <generator>My Generator</generator>
-</feed>
