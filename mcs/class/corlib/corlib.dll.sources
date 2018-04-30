@@ -1249,27 +1249,27 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/UnknownWrapper.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/VariantWrapper.cs
 
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IBindCtx.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IConnectionPoint.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IConnectionPointContainer.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IEnumConnectionPoints.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ibindctx.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/iconnectionpoint.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/iconnectionpointcontainer.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ienumconnectionpoints.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ienumconnections.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ienumerable.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ienumerator.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IEnumMoniker.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IEnumString.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IEnumVARIANT.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ienummoniker.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ienumstring.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ienumvariant.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/iexpando.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IMoniker.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IPersistFile.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Reflection/IReflect.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/IRunningObjectTable.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/imoniker.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ipersistfile.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/ireflect.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/irunningobjecttable.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/istream.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/ITypeComp.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/itypecomp.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/itypeinfo.cs
 ../referencesource/mscorlib/system/runtime/interopservices/ComTypes/itypeinfo2.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/ITypeLib.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComTypes/ITypeLib2.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/itypelib.cs
+../referencesource/mscorlib/system/runtime/interopservices/ComTypes/itypelib2.cs
 
 ../referencesource/mscorlib/system/runtime/interopservices/expando/iexpando.cs
 
