@@ -1880,7 +1880,7 @@ ves_icall_Mono_Interop_ComInteropProxy_AddProxy (gpointer pUnk, MonoComInteropPr
 		mono_cominterop_unlock ();
 	}
 
-	guint32 const gchandle = mono_gchandle_new_weakref_from_handle ((MonoObjectHandle)proxy);
+	guint32 const gchandle = mono_gchandle_new_weakref_from_handle (MONO_HANDLE_CAST (MonoObject, proxy));
 
 	mono_cominterop_lock ();
 	g_hash_table_insert (rcw_hash, pUnk, GUINT_TO_POINTER (gchandle));
@@ -1903,7 +1903,7 @@ ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer pUnk, MonoError *erro
 	if (!gchandle)
 		return MONO_HANDLE_NEW (MonoComInteropProxy, NULL);
 
-	MonoComInteropProxyHandle const proxy = (MonoComInteropProxyHandle)mono_gchandle_get_target_handle (gchandle);
+	MonoComInteropProxyHandle const proxy = MONO_HANDLE_CAST (MonoComInteropProxy, mono_gchandle_get_target_handle (gchandle));
 	/* proxy is null means we need to free up old RCW */
 	if (MONO_HANDLE_IS_NULL (proxy)) {
 		mono_gchandle_free (gchandle);
