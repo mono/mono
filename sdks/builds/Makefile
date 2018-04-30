@@ -41,10 +41,7 @@ $(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offs
 TARGETS=
 
 ## MXE targets
-ifndef DISABLE_ANDROID
-# FIXME add iOS support(?)
 include mxe.mk
-endif
 
 ## LLVM targets
 ifeq ($(and $(DISABLE_ANDROID),$(DISABLE_IOS)),)

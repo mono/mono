@@ -7,6 +7,15 @@ $(TOP)/sdks/builds/toolchains/llvm:
 
 $(LLVM_SRC)/configure: | $(LLVM_SRC)
 
+# Compile only a subset of tools to speed up the build and avoid building tools which use threads since they don't build on mxe
+llvm_base_CMAKE_FLAGS = \
+	-DCMAKE_BUILD_TYPE=Release \
+	-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64" \
+	-DLLVM_BUILD_TESTS=Off -DLLVM_INCLUDE_TESTS=Off \
+	-DLLVM_BUILD_EXAMPLES=Off -DLLVM_INCLUDE_EXAMPLES=Off \
+	-DLLVM_TOOLS_TO_BUILD="opt;llc;llvm-config;llvm-dis" \
+	$(if $(NINJA),-G Ninja,)
+
 ##
 # Parameters
 #  $(1): target
@@ -24,10 +33,9 @@ _llvm_$(1)_CONFIGURE_ENVIRONMENT= \
 	LDFLAGS="$$(_llvm_$(1)_LDFLAGS)"
 
 _llvm_$(1)_CMAKE_FLAGS = \
+	$(llvm_base_CMAKE_FLAGS) \
 	-DCMAKE_INSTALL_PREFIX=$$(TOP)/sdks/out/llvm-$(1) \
-	-DCMAKE_BUILD_TYPE=Release \
 	$$(llvm_$(1)_CMAKE_FLAGS) \
-	$(if $(NINJA),-G Ninja,) \
 	$(LLVM_SRC)
 
 .stamp-llvm-$(1)-toolchain: | $$(LLVM_SRC)
@@ -62,7 +70,7 @@ TARGETS += llvm-$(1)
 
 endef
 
-llvm_llvm64_CMAKE_FLAGS = -DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64"
+llvm_llvm64_CMAKE_FLAGS =
 # We only use this for the cross compiler so it needs no architectures/tools
 # Some products might only build llvm32 so disable this for now
 #llvm_llvm32_CMAKE_FLAGS = -DLLVM_BUILD_32_BITS=On -DLLVM_TARGETS_TO_BUILD="" -DLLVM_BUILD_TOOLS=Off -DLLVM_BUILD_UTILS=Off
@@ -80,56 +88,38 @@ $(eval $(call LLVMTemplate,llvm64,x86_64))
 #  llvm_$(1)_CONFIGURE_ENVIRONMENT
 define LLVMMxeTemplate
 
-_llvm_$(1)_PATH=$$(MXE_PREFIX)/bin
-
-_llvm_$(1)_AR=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ar
-_llvm_$(1)_AS=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-as
-_llvm_$(1)_CC=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-gcc
-_llvm_$(1)_CXX=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-g++
-_llvm_$(1)_DLLTOOL=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-dlltool
-_llvm_$(1)_LD=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ld
-_llvm_$(1)_OBJDUMP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-objdump
-_llvm_$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ranlib
-_llvm_$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-strip
-
 _llvm_$(1)_CXXFLAGS=
 
 _llvm_$(1)_LDFLAGS=
 
-_llvm_$(1)_CONFIGURE_ENVIRONMENT = \
-	AR="$$(_llvm_$(1)_AR)" \
-	AS="$$(_llvm_$(1)_AS)" \
-	CC="$$(_llvm_$(1)_CC)" \
-	CXX="$$(_llvm_$(1)_CXX)" \
-	DLLTOOL="$$(_llvm_$(1)_DLLTOOL)" \
-	LD="$$(_llvm_$(1)_LD)" \
-	OBJDUMP="$$(_llvm_$(1)_OBJDUMP)" \
-	RANLIB="$$(_llvm_$(1)_RANLIB)" \
-	STRIP="$$(_llvm_$(1)_STRIP)" \
-	CXXFLAGS="$$(_llvm_$(1)_CXXFLAGS)" \
-	LDFLAGS="$$(_llvm_$(1)_LDFLAGS)"
-
-_llvm_$(1)_CONFIGURE_FLAGS = \
-	--host=$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static) \
-	--cache-file=$$(TOP)/sdks/builds/llvm-$(1).config.cache \
-	--prefix=$$(TOP)/sdks/out/llvm-$(1) \
-	--enable-assertions=no \
-	--enable-optimized \
-	--enable-targets="arm,aarch64,x86" \
-	--disable-pthreads \
-	--disable-zlib
+_llvm_$(1)_CMAKE_FLAGS = \
+	$(llvm_base_CMAKE_FLAGS) \
+	-DCMAKE_INSTALL_PREFIX=$$(TOP)/sdks/out/llvm-$(1) \
+	$$(llvm_$(1)_CMAKE_FLAGS) \
+	-DLLVM_ENABLE_THREADS=OFF \
+	$(LLVM_SRC)
 
 .stamp-llvm-$(1)-toolchain: | $$(LLVM_SRC)
 	touch $$@
 
-.stamp-llvm-$(1)-configure: $$(LLVM_SRC)/configure | $(if $(IGNORE_PROVISION_MXE),,provision-mxe)
+.stamp-llvm-$(1)-configure:
 	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
-	cd $$(TOP)/sdks/builds/llvm-$(1) && PATH="$$$$PATH:$$(_llvm_$(1)_PATH)" $$< $$(_llvm_$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm_$(1)_CONFIGURE_FLAGS)
+	cd $$(TOP)/sdks/builds/llvm-$(1) && $$(llvm_$(1)_CMAKE) $$(_llvm_$(1)_CMAKE_FLAGS)
 	touch $$@
 
-.PHONY: package-llvm-$(1)
+ifneq ($(NINJA),)
+build-custom-llvm-$(1):
+	ninja -C $$(TOP)/sdks/builds/llvm-$(1)
+
 package-llvm-$(1):
-	$$(MAKE) -C $$(TOP)/sdks/builds/llvm-$(1) install
+	ninja -C $$(TOP)/sdks/builds/llvm-$(1) install
+else
+build-custom-llvm-$(1):
+	$(MAKE) -C $$(TOP)/sdks/builds/llvm-$(1)
+
+package-llvm-$(1):
+	$(MAKE) -C $$(TOP)/sdks/builds/llvm-$(1) install
+endif
 
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1):
@@ -138,6 +128,16 @@ clean-llvm-$(1):
 TARGETS += llvm-$(1)
 
 endef
+
+# -DLLVM_ENABLE_THREADS=0 is needed because mxe doesn't define std::mutex etc.
+# -DLLVM_BUILD_EXECUTION_ENGINE=Off is needed because it depends on threads
+# -DCROSS_TOOLCHAIN_FLAGS_NATIVE is needed to compile the native tools (tlbgen) using the host compilers
+llvm_win_configure_flags = -DLLVM_ENABLE_THREADS=0 -DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$(LLVM_SRC)/cmake/modules/NATIVE.cmake -DLLVM_BUILD_EXECUTION_ENGINE=Off
+
+llvm_llvmwin64_CMAKE = $(MXE_PREFIX)/bin/x86_64-w64-mingw32.static-cmake
+llvm_llvmwin64_CMAKE_FLAGS = $(llvm_win_configure_flags)
+llvm_llvmwin32_CMAKE = $(MXE_PREFIX)/bin/i686-w64-mingw32.static-cmake
+llvm_llvmwin32_CMAKE_FLAGS = $(llvm_win_configure_flags) -DLLVM_BUILD_32_BITS=On
 
 ifneq ($(MXE_PREFIX),)
 $(eval $(call LLVMMxeTemplate,llvmwin32,i686))
