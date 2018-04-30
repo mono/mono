@@ -93,7 +93,7 @@
 #define MONO_ARCH_CONTEXT_DEF
 #endif
 
-#ifdef TARGET_OSX
+#ifndef HOST_WIN32
 #include <dlfcn.h>
 #endif
 
@@ -1242,7 +1242,7 @@ next:
 	}
 }
 
-#ifdef TARGET_OSX
+#ifndef HOST_WIN32
 static gboolean
 mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, char *out_name)
 {
@@ -1350,8 +1350,7 @@ mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *c
 	// 
 	// Summarize unmanaged stack
 	// 
-
-#ifdef TARGET_OSX
+#ifndef HOST_WIN32
 	// for dladdr support
 
 	out->num_unmanaged_frames = backtrace ((void **)frame_ips, MONO_MAX_SUMMARY_FRAMES);
@@ -2858,6 +2857,39 @@ static void print_process_map (void)
 #endif
 }
 
+static void
+mono_crash_dump (const char *jsonFile) 
+{
+	guint32 size = strlen (jsonFile);
+
+	pid_t pid = getpid ();
+	intptr_t increment = 0;
+
+	// Save up to 100 dump files for a pid, in case mono is embedded?
+	for (int increment = 0; increment < 100; increment++) {
+		FILE* fp;
+		const char *name = g_strdup_printf ("mono_crash.%d.%d.json", pid, increment);
+
+		if ((fp = fopen (name, "ab"))) {
+			if (ftell (fp) == 0) {
+				fwrite (jsonFile, size, 1, fp);
+				fclose (fp);
+				g_free (name);
+				return;
+			} else {
+				// File exists
+				g_free (name);
+				fclose (fp);
+			}
+		} else {
+			// Couldn't make file and file doesn't exist
+			g_warning ("Didn't have permission to access %s for file dump\n", name);
+			g_free (name);
+			return;
+		}
+	}
+}
+
 static gboolean handle_crash_loop = FALSE;
 
 /*
@@ -2929,11 +2961,26 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 		gchar *output = NULL;
 		MonoContext mctx;
 		if (ctx) {
-			mono_sigctx_to_monoctx (ctx, &mctx);
+			gboolean leave = FALSE;
+			if (!mono_merp_enabled ()) {
+#ifdef DISABLE_STRUCTURED_CRASH
+				leave = TRUE;
+#else
+				mini_register_sigterm_handler ();
+#endif
+			}
 
-			// Do before forking
-			if (!mono_threads_summarize (&mctx, &output))
-				g_assert_not_reached ();
+			if (!leave) {
+				mono_sigctx_to_monoctx (ctx, &mctx);
+				// Do before forking
+				if (!mono_threads_summarize (&mctx, &output))
+					g_assert_not_reached ();
+			}
+
+			// We want our crash, and don't have telemetry
+			// So we dump to disk
+			if (!leave && !mono_merp_enabled ())
+				mono_crash_dump (output);
 		}
 
 		/*
