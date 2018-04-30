@@ -2606,7 +2606,6 @@ END:
 
 	.method public static default int32 test_0_wrap_non_exception_throws () cil managed
 	{
-	  .custom instance void [TestDriver]CategoryAttribute::.ctor(string) = ( 01 00 0C 21 49 4E 54 45 52 50 52 45 54 45 52 00 00 )   // ...!INTERPRETER.
 	  .try {
 	  	    newobj instance void class [mscorlib]System.Object::'.ctor'()
 			throw
@@ -3191,4 +3190,27 @@ L_3:
 		conv.i4
 		ret
 	}
+
+	.method public hidebysig static int32 test_1_dont_verify_ptr_byrefs () cil managed
+	 {
+		.locals init (int32 v_0, int32 *& v_1, int32 *v_2)
+
+		//v_0 = 1
+		ldc.i4.1
+		stloc.0
+
+		//v_1 = &v_0 < bad store of `int32&` to ìnt32*&` but must work
+		ldloca v_0
+		stloc.1
+
+		//v_2 = (intptr)v_1
+		ldloc.1
+		conv.u
+		stloc.2
+
+		//return *v_2
+		ldloc.2
+		ldind.i4
+		ret
+	 }
 }

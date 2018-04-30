@@ -201,7 +201,10 @@ mono_class_from_typeref_checked (MonoImage *image, guint32 type_token, MonoError
 		
 		mono_assembly_get_assemblyref (image, idx - 1, &aname);
 		human_name = mono_stringify_assembly_name (&aname);
-		mono_error_set_simple_file_not_found (error, human_name, image->assembly ? image->assembly->ref_only : FALSE);
+		gboolean refonly = FALSE;
+		if (image->assembly)
+			refonly = mono_asmctx_get_kind (&image->assembly->context) == MONO_ASMCTX_REFONLY;
+		mono_error_set_simple_file_not_found (error, human_name, refonly);
 		g_free (human_name);
 		return NULL;
 	}
@@ -1212,10 +1215,8 @@ mono_class_find_enum_basetype (MonoClass *klass, MonoError *error)
 		if (cols [MONO_FIELD_FLAGS] & FIELD_ATTRIBUTE_STATIC) //no need to decode static fields
 			continue;
 
-		if (!mono_verifier_verify_field_signature (image, cols [MONO_FIELD_SIGNATURE], NULL)) {
-			mono_error_set_bad_image (error, image, "Invalid field signature %x", cols [MONO_FIELD_SIGNATURE]);
+		if (!mono_verifier_verify_field_signature (image, cols [MONO_FIELD_SIGNATURE], error))
 			goto fail;
-		}
 
 		sig = mono_metadata_blob_heap (image, cols [MONO_FIELD_SIGNATURE]);
 		mono_metadata_decode_value (sig, &sig);
@@ -5623,11 +5624,8 @@ mono_field_resolve_type (MonoClassField *field, MonoError *error)
 		/* first_field_idx and idx points into the fieldptr table */
 		mono_metadata_decode_table_row (image, MONO_TABLE_FIELD, idx, cols, MONO_FIELD_SIZE);
 
-		if (!mono_verifier_verify_field_signature (image, cols [MONO_FIELD_SIGNATURE], NULL)) {
-			char *full_name = mono_type_get_full_name (klass);
-			mono_error_set_type_load_class (error, klass, "Could not verify field '%s:%s' signature", full_name, field->name);;
+		if (!mono_verifier_verify_field_signature (image, cols [MONO_FIELD_SIGNATURE], error)) {
 			mono_class_set_type_load_failure (klass, "%s", mono_error_get_message (error));
-			g_free (full_name);
 			return;
 		}
 

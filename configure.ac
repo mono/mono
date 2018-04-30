@@ -3528,7 +3528,9 @@ case "$host" in
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
-			CFLAGS="$CFLAGS -mminimal-toc"
+			if ! (echo $CC | grep -q -- 'clang'); then
+				CFLAGS="$CFLAGS -mminimal-toc"
+			fi
 		else
 			TARGET=POWERPC;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__"
@@ -4963,6 +4965,7 @@ acceptance-tests/Makefile
 llvm/Makefile
 scripts/mono-find-provides
 scripts/mono-find-requires
+mk/Makefile
 mono/Makefile
 mono/btls/Makefile
 mono/utils/Makefile

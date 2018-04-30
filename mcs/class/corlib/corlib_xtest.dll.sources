@@ -165,7 +165,7 @@
 
 # System.Threading.Tasks
 ../../../external/corefx/src/System.Threading.Tasks/tests/System.Runtime.CompilerServices/*.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/*.cs:*.netcoreapp.cs,TaskContinueWithTests.cs
+../../../external/corefx/src/System.Threading.Tasks/tests/Task/*.cs:*.netcoreapp.cs,TaskContinueWithTests.cs,ExecutionContextFlowTest.cs
 ../../../external/corefx/src/System.Threading.Tasks/tests/TaskFactory/*.cs
 ../../../external/corefx/src/System.Threading.Tasks/tests/TaskScheduler/*.cs
 ../../../external/corefx/src/System.Threading.Tasks/tests/*.cs:UnwrapTests.cs,CancellationTokenTests.netcoreapp.cs
@@ -187,8 +187,8 @@
 ../../../external/corefx/src/System.Memory/tests/Binary/*.cs
 ../../../external/corefx/src/System.Memory/tests/Memory/*.cs
 ../../../external/corefx/src/System.Memory/tests/ReadOnlyMemory/*.cs
-../../../external/corefx/src/System.Memory/tests/ReadOnlySpan/*.cs
-../../../external/corefx/src/System.Memory/tests/Span/*.cs:Reflection.cs
+../../../external/corefx/src/System.Memory/tests/ReadOnlySpan/*.cs:GetPinnableReference.cs
+../../../external/corefx/src/System.Memory/tests/Span/*.cs:Reflection.cs,GetPinnableReference.cs
 
 # System.Collections
 ../../../external/corefx/src/Common/tests/System/Collections/CollectionAsserts.cs

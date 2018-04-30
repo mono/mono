@@ -30,7 +30,6 @@
 ../../../external/corefx/src/Common/src/Interop/Windows/sspicli/SSPIInterface.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/sspicli/SecurityPackageInfoClass.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/sspicli/SecurityPackageInfo.cs
-../../../external/corefx/src/Common/src/System/Net/IntPtrHelper.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/sspicli/SSPIAuthType.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/sspicli/SSPISecureChannelType.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/sspicli/SSPIWrapper.cs
