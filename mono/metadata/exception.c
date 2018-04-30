@@ -436,7 +436,6 @@ mono_exception_new_thread_interrupted (MonoError *error)
  * mono_get_exception_thread_interrupted:
  * \returns a new instance of the \c System.Threading.ThreadInterruptedException
  */
-MONO_RT_EXTERNAL_ONLY
 MonoException *
 mono_get_exception_thread_interrupted ()
 {
@@ -571,7 +570,6 @@ mono_get_exception_type_load (MonoString *class_name, char *assembly_name)
  * \param msg the message to pass to the user
  * \returns a new instance of the \c System.NotImplementedException
  */
-MONO_RT_EXTERNAL_ONLY
 MonoException *
 mono_get_exception_not_implemented (const char *msg)
 {
@@ -853,7 +851,6 @@ mono_get_exception_type_initialization_checked (const gchar *type_name, MonoExce
  * \param inner the inner exception.
  * \returns a new instance of the \c System.SynchronizationLockException
  */
-MONO_RT_EXTERNAL_ONLY
 MonoException *
 mono_get_exception_synchronization_lock (const char *msg)
 {
