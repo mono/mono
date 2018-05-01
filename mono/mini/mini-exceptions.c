@@ -123,7 +123,9 @@ static void mono_runtime_walk_stack_with_ctx (MonoJitStackWalk func, MonoContext
 static gboolean mono_current_thread_has_handle_block_guard (void);
 static gboolean mono_install_handler_block_guard (MonoThreadUnwindState *ctx);
 
+#ifndef HOST_WIN32
 static void mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx);
+#endif
 
 static gboolean
 first_managed (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer addr)
@@ -234,7 +236,9 @@ mono_exceptions_init (void)
 
 	cbs.mono_walk_stack_with_state = mono_walk_stack_with_state;
 
+#ifndef HOST_WIN32
 	cbs.mono_summarize_stack = mono_summarize_stack;
+#endif
 
 	if (mono_llvm_only) {
 		cbs.mono_raise_exception = mono_llvm_raise_exception;
@@ -1297,7 +1301,6 @@ mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, char *out_name)
 #endif
 	return TRUE;
 }
-#endif
 
 
 static gboolean
@@ -1382,6 +1385,7 @@ mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *c
 
 	return;
 }
+#endif
 
 MonoBoolean
 ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info, 
