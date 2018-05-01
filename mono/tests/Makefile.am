@@ -133,8 +133,7 @@ TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.exe \
 	tailcall/coreclr/JIT/opt/FastTailCall/GitHubIssue12479.exe \
 	tailcall/coreclr/JIT/opt/FastTailCall/StackFixup.exe \
-	tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.exe \
-	tailcall/coreclr/JIT/opt/Loops/SearchLoopTail.exe
+	tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.exe
 
 # This test is also slow, though its sleep can be dialed down.
 #TAILCALL_DISABLED_TESTS_RUN += tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.exe
@@ -1767,8 +1766,7 @@ TEST_TAILCALL_CS_SRC=\
 	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.cs \
 	tailcall/coreclr/JIT/opt/FastTailCall/GitHubIssue12479.cs \
 	tailcall/coreclr/JIT/opt/FastTailCall/StackFixup.cs \
-	tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.cs \
-	tailcall/coreclr/JIT/opt/Loops/SearchLoopTail.cs
+	tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.cs
 
 # At these locations we have .cs and .il.
 # The .il is clearly derived from the .cs, such as by running
