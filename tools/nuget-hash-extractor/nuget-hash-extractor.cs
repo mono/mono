@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 using System.IO.Compression;
 using System.Reflection;
+using System.Text;
 
 class Driver {
 
@@ -18,6 +19,12 @@ class Driver {
 		{"System.Reflection.DispatchProxy.dll", "SYS_REF_DISP_PROXY"},
 		{"System.Threading.Overlapped.dll", "SYS_THREADING_OVERLAPPED"}
 	};
+
+	// IGNORED_ASSEMBLY
+	internal static Dictionary<string, NuGetData> ignoredAsmTable = new Dictionary<string, NuGetData> ();
+
+	// IGNORED_ASM_VER
+	internal static SortedDictionary<string, NuGetData> ignoredAsmVerTable = new SortedDictionary<string, NuGetData> ();
 
 	static ZipArchiveEntry FindSpecFile (ZipArchive zip) {
 		foreach (var entry in zip.Entries) {
@@ -45,7 +52,7 @@ class Driver {
 		//
 		IEnumerable<ZipArchiveEntry> entries = null;
 		foreach (var prefix in prefixesToCheckInOrder) {
-			entries = zip.Entries.Where (e => e.FullName.StartsWith (prefix) && e.Name.EndsWith (".dll") && BadAssembliesToEnumTable.ContainsKey (e.Name));
+			entries = zip.Entries.Where (e => e.FullName.StartsWith (prefix) && !e.FullName.Contains ("/ref/") && e.Name.EndsWith (".dll") && BadAssembliesToEnumTable.ContainsKey (e.Name));
 			if (entries.Any ())
 				break;
 		}
@@ -58,6 +65,51 @@ class Driver {
 		// Only take assemblies from first prefix
 		foreach (var et in entries) {
 			LoadAndDump (et, version);
+		}
+	}
+
+	static void DumpOutput ()
+	{
+		if (dump_asm) {
+			var sb = new StringBuilder();
+			// sorted just by hashcode
+			foreach (var data in ignoredAsmTable.Values.OrderBy (data => data.HashCode)) {
+				sb.AppendLine ($"IGNORED_ASSEMBLY (0x{data.HashCode}, {data.EnumName}, \"{data.ModuleVersionId}\", \"{data.NuGetVersionAndFramework}\"),");
+			}
+
+			if (sb.Length > 2)
+				sb.Length = sb.Length - 2;
+			Console.WriteLine (sb.ToString ());
+		}
+
+		//IGNORED_ASM_VER (SYS_IO_COMPRESSION, 4, 1, 2, 0),
+		if (dump_ver) {
+			// the default key (IgnoredAsmVerKey) is the order which we need for this
+			var sb = new StringBuilder();
+			foreach (var key in ignoredAsmVerTable.Keys) {
+				var data = ignoredAsmVerTable [key];
+				var ver = data.AssemblyVersion;
+				sb.AppendLine ($"IGNORED_ASM_VER ({data.EnumName}, {ver.Major}, {ver.Minor}, {ver.Build}, {ver.Revision}),");
+			}
+
+			if (sb.Length > 2)
+				sb.Length = sb.Length - 2;
+			Console.WriteLine (sb.ToString ());
+		}
+
+		if (dump_guids_for_msbuild) {
+			// This needs to be kept in sync with FilterDeniedAssemblies msbuild task in msbuild
+			// Sory by assembly name and version
+			var query = ignoredAsmTable.Values
+						.GroupBy (data => data.AssemblyName)
+						.Select (group => new { AssemblyName = group.Key, NuGets = group.OrderBy (data => data.AssemblyVersion) });
+
+			foreach (var g in query) {
+				foreach (var data in g.NuGets) {
+					var ver = data.AssemblyVersion;
+					Console.WriteLine ($"denied:{data.AssemblyName},{data.ModuleVersionId},{ver.Major},{ver.Minor},{ver.Build},{ver.Revision}");
+				}
+			}
 		}
 	}
 
@@ -74,6 +126,8 @@ class Driver {
 		foreach (var f in Directory.GetFiles (args [0], "*.nupkg")) {
 			DumpNuget (f);
 		}
+
+		DumpOutput ();
 	}
 
 	static byte[] StreamToArray (Stream s) {
@@ -88,7 +142,14 @@ class Driver {
 		var data = StreamToArray (entry.Open ());
 		AppDomain ad = AppDomain.CreateDomain ("parse_" + ++domain_id);
 		DoParse p = (DoParse)ad.CreateInstanceAndUnwrap (typeof (DoParse).Assembly.FullName, typeof (DoParse).FullName);
-		p.ParseAssembly (data, version, entry.Name, entry.FullName, dump_asm, dump_ver, dump_guids_for_msbuild);
+		var nugetData = p.ParseAssembly (data, version, entry.Name, entry.FullName);
+
+		if (!ignoredAsmTable.ContainsKey (nugetData.IgnoredAsmKey))
+			ignoredAsmTable [nugetData.IgnoredAsmKey] = nugetData;
+
+		if (!ignoredAsmVerTable.ContainsKey (nugetData.IgnoredAsmVerKey))
+			ignoredAsmVerTable [nugetData.IgnoredAsmVerKey] = nugetData;
+
 		AppDomain.Unload (ad);
 	}
 }
@@ -113,26 +174,32 @@ class DoParse : MarshalByRefObject {
 						? Driver.BadAssembliesToEnumTable [name]
 						: throw new Exception ($"No idea what to do with {name}");
 
-	public void ParseAssembly (byte[] data, string version, string name, string fullname, bool dump_asm, bool dump_ver, bool dump_guids_for_msbuild) {
+	public NuGetData ParseAssembly (byte[] data, string version, string name, string fullname) {
 		var a = Assembly.ReflectionOnlyLoad (data);
 		var m = a.GetModules ()[0];
 		var id = m.ModuleVersionId.ToString ().ToUpper ();
-		var hash_code = Hash (id).ToString ("X");
-		var str = FileToEnum (name);
 
-		string ver_str = version + " " + FileToMoniker (fullname);
-
-		if (dump_asm)
-			Console.WriteLine ($"IGNORED_ASSEMBLY (0x{hash_code}, {str}, \"{id}\", \"{ver_str}\"),");
-
-		//IGNORED_ASM_VER (SYS_IO_COMPRESSION, 4, 1, 2, 0),
-		var ver = a.GetName ().Version;
-		if (dump_ver) {
-			Console.WriteLine ($"IGNORED_ASM_VER ({str}, {ver.Major}, {ver.Minor}, {ver.Build}, {ver.Revision}),");
-		} else if (dump_guids_for_msbuild) {
-			// This needs to be kept in sync with FilterDeniedAssemblies msbuild task in msbuild
-			Console.WriteLine ($"{name},{id},{ver.Major},{ver.Minor},{ver.Build},{ver.Revision}");
-		}
-		
+		return new NuGetData {
+			AssemblyName = name,
+			EnumName = FileToEnum (name),
+			NuGetVersionAndFramework = version + " " + FileToMoniker (fullname),
+			AssemblyVersion = a.GetName ().Version,
+			HashCode = Hash (id).ToString ("X"),
+			ModuleVersionId = id
+		};
 	}
+}
+
+[Serializable]
+class NuGetData
+{
+	public string AssemblyName;
+	public string EnumName;
+	public string NuGetVersionAndFramework;
+	public Version AssemblyVersion;
+	public string HashCode;
+	public string ModuleVersionId;
+
+	public string IgnoredAsmKey => $"{HashCode},{EnumName},{ModuleVersionId}";
+	public string IgnoredAsmVerKey => $"{EnumName},{AssemblyVersion.ToString()}";
 }
