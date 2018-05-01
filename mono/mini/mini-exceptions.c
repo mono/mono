@@ -126,7 +126,9 @@ static gboolean mono_current_thread_has_handle_block_guard (void);
 static gboolean mono_install_handler_block_guard (MonoThreadUnwindState *ctx);
 static void mono_uninstall_current_handler_block_guard (void);
 
+#ifndef WIN_32
 static void mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx);
+#endif
 
 static gboolean
 first_managed (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer addr)
@@ -232,7 +234,9 @@ mono_exceptions_init (void)
 	cbs.mono_walk_stack_with_ctx = mono_runtime_walk_stack_with_ctx;
 	cbs.mono_walk_stack_with_state = mono_walk_stack_with_state;
 
+#ifndef WIN_32
 	cbs.mono_summarize_stack = mono_summarize_stack;
+#endif
 
 	if (mono_llvm_only) {
 		cbs.mono_raise_exception = mono_llvm_raise_exception;
@@ -1277,7 +1281,6 @@ mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, char *out_name)
 #endif
 	return TRUE;
 }
-#endif
 
 typedef struct {
 	MonoFrameSummary *frames;
@@ -1350,8 +1353,6 @@ mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *c
 	// 
 	// Summarize unmanaged stack
 	// 
-#ifndef HOST_WIN32
-	// for dladdr support
 
 	out->num_unmanaged_frames = backtrace ((void **)frame_ips, MONO_MAX_SUMMARY_FRAMES);
 
@@ -1365,9 +1366,9 @@ mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *c
 		if (out->unmanaged_frames [i].str_descr [0] != '\0')
 			out->unmanaged_frames [i].unmanaged_data.has_name = TRUE;
 	}
-#endif
 	return;
 }
+#endif
 
 MonoBoolean
 ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info, 
