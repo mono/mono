@@ -7,6 +7,7 @@ class MSBuild (GitHubPackage):
 
 	def build (self):
 		self.sh ('./build.sh -host mono -configuration Release -skipTests')
+		self.sh ('zip msbuild-bin-logs.zip artifacts/Release-MONO/log/*')
 
 	def install (self):
                 # use the bootstrap msbuild as the system might not have one available!
