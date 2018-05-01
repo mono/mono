@@ -1960,7 +1960,7 @@ emit_sig_cookie (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 	MonoMethodSignature *tmp_sig;
 	int sig_reg;
 
-	if (call->tailcall)
+	if (MONO_IS_TAILCALL (&call->inst))
 		NOT_IMPLEMENTED;
 
 	g_assert (cinfo->sig_cookie.storage == ArgOnStack);
@@ -2152,7 +2152,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 
 		t = mini_get_underlying_type (t);
 		//XXX what about ArgGSharedVtOnStack here?
-		if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !call->tailcall) {
+		if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !MONO_IS_TAILCALL (&call->inst)) {
 			if (!t->byref) {
 				if (t->type == MONO_TYPE_R4)
 					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER4_MEMBASE_REG, AMD64_RSP, ainfo->offset, in->dreg);
@@ -2211,11 +2211,11 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		case ArgValuetypeAddrOnStack:
 		case ArgGSharedVtInReg:
 		case ArgGSharedVtOnStack: {
-			if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !call->tailcall)
+			if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !MONO_IS_TAILCALL (&call->inst))
 				/* Already emitted above */
 				break;
 			//FIXME what about ArgGSharedVtOnStack ?
-			if (ainfo->storage == ArgOnStack && call->tailcall) {
+			if (ainfo->storage == ArgOnStack && MONO_IS_TAILCALL (&call->inst)) {
 				MonoInst *call_inst = (MonoInst*)call;
 				cfg->args [i]->flags |= MONO_INST_VOLATILE;
 				EMIT_NEW_ARGSTORE (cfg, call_inst, i, in);
@@ -2285,7 +2285,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			if (call->vret_var)
 				NULLIFY_INS (call->vret_var);
 		} else {
-			if (call->tailcall)
+			if (MONO_IS_TAILCALL (&call->inst))
 				NOT_IMPLEMENTED;
 			/*
 			 * The valuetype is in RAX:RDX after the call, need to be copied to

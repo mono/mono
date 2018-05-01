@@ -274,8 +274,10 @@ enum {
 
 // OP_DYN_CALL is not a MonoCallInst
 
+#define MONO_IS_TAILCALL(ins) ((ins)->opcode == OP_TAILCALL || (ins)->opcode == OP_TAILCALL_MEMBASE || (ins)->opcode == OP_TAILCALL_REG)
+
 #define MONO_IS_CALL(ins) (((ins)->opcode >= OP_VOIDCALL && (ins)->opcode <= OP_VCALL2_MEMBASE) || \
-	(ins)->opcode == OP_TAILCALL || (ins)->opcode == OP_TAILCALL_MEMBASE || (ins)->opcode == OP_TAILCALL_REG)
+	MONO_IS_TAILCALL (ins))
 
 #define MONO_IS_JUMP_TABLE(ins) (((ins)->opcode == OP_JUMP_TABLE) ? TRUE : ((((ins)->opcode == OP_AOTCONST) && (ins->inst_i1 == (gpointer)MONO_PATCH_INFO_SWITCH)) ? TRUE : ((ins)->opcode == OP_SWITCH) ? TRUE : ((((ins)->opcode == OP_GOT_ENTRY) && ((ins)->inst_right->inst_i1 == (gpointer)MONO_PATCH_INFO_SWITCH)) ? TRUE : FALSE)))
 
@@ -715,7 +717,6 @@ struct MonoCallInst {
 	guint stack_usage;
 	guint stack_align_amount;
 	guint is_virtual : 1;
-	guint tailcall : 1;
 	/* If this is TRUE, 'fptr' points to a MonoJumpInfo instead of an address. */
 	guint fptr_is_patch : 1;
 	/*

@@ -2489,7 +2489,7 @@ emit_sig_cookie (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 	MonoMethodSignature *tmp_sig;
 	int sig_reg;
 
-	if (call->tailcall)
+	if (MONO_IS_TAILCALL (&call->inst))
 		NOT_IMPLEMENTED;
 
 	g_assert (cinfo->sig_cookie.storage == ArgOnStack);
@@ -2527,19 +2527,19 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 	switch (cinfo->ret.storage) {
 	case ArgVtypeInIRegs:
 	case ArgHFA:
-		if (!call->tailcall) {
-			/*
-			 * The vtype is returned in registers, save the return area address in a local, and save the vtype into
-			 * the location pointed to by it after call in emit_move_return_value ().
-			 */
-			if (!cfg->arch.vret_addr_loc) {
-				cfg->arch.vret_addr_loc = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
-				/* Prevent it from being register allocated or optimized away */
-				((MonoInst*)cfg->arch.vret_addr_loc)->flags |= MONO_INST_VOLATILE;
-			}
-
-			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ((MonoInst*)cfg->arch.vret_addr_loc)->dreg, call->vret_var->dreg);
+		if (MONO_IS_TAILCALL (&call->inst))
+			break;
+		/*
+		 * The vtype is returned in registers, save the return area address in a local, and save the vtype into
+		 * the location pointed to by it after call in emit_move_return_value ().
+		 */
+		if (!cfg->arch.vret_addr_loc) {
+			cfg->arch.vret_addr_loc = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
+			/* Prevent it from being register allocated or optimized away */
+			((MonoInst*)cfg->arch.vret_addr_loc)->flags |= MONO_INST_VOLATILE;
 		}
+
+		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ((MonoInst*)cfg->arch.vret_addr_loc)->dreg, call->vret_var->dreg);
 		break;
 	case ArgVtypeByRef:
 		/* Pass the vtype return address in R8 */
