@@ -1338,6 +1338,7 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	tailcall-rgctxa.exe \
 	tailcall-rgctxb.exe \
 	tailcall-virt.exe \
+	tailcall-return-valuetype.exe \
 	tailcall/fsharp-deeptail.exe \
 	tailcall/2.exe \
 	tailcall/3.exe \
