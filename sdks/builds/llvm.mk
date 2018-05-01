@@ -48,19 +48,11 @@ _llvm_$(1)_CMAKE_FLAGS = \
 
 .PHONY: package-llvm-$(1)
 
-ifneq ($(NINJA),)
 build-custom-llvm-$(1):
-	ninja -C $$(TOP)/sdks/builds/llvm-$(1)
+	cmake --build $$(TOP)/sdks/builds/llvm-$(1)
 
 package-llvm-$(1):
-	ninja -C $$(TOP)/sdks/builds/llvm-$(1) install
-else
-build-custom-llvm-$(1):
-	$(MAKE) -C $$(TOP)/sdks/builds/llvm-$(1)
-
-package-llvm-$(1):
-	$(MAKE) -C $$(TOP)/sdks/builds/llvm-$(1) install
-endif
+	cmake --build $$(TOP)/sdks/builds/llvm-$(1) --target install
 
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1):
@@ -92,11 +84,18 @@ _llvm_$(1)_CXXFLAGS=
 
 _llvm_$(1)_LDFLAGS=
 
+_llvm_$(1)_CMAKE = $(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)
+
+# -DLLVM_ENABLE_THREADS=0 is needed because mxe doesn't define std::mutex etc.
+# -DLLVM_BUILD_EXECUTION_ENGINE=Off is needed because it depends on threads
+# -DCROSS_TOOLCHAIN_FLAGS_NATIVE is needed to compile the native tools (tlbgen) using the host compilers
 _llvm_$(1)_CMAKE_FLAGS = \
 	$(llvm_base_CMAKE_FLAGS) \
 	-DCMAKE_INSTALL_PREFIX=$$(TOP)/sdks/out/llvm-$(1) \
-	$$(llvm_$(1)_CMAKE_FLAGS) \
 	-DLLVM_ENABLE_THREADS=OFF \
+	-DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$(LLVM_SRC)/cmake/modules/NATIVE.cmake \
+	-DLLVM_BUILD_EXECUTION_ENGINE=Off
+	$$(llvm_$(1)_CMAKE_FLAGS) \
 	$(LLVM_SRC)
 
 .stamp-llvm-$(1)-toolchain: | $$(LLVM_SRC)
@@ -104,22 +103,14 @@ _llvm_$(1)_CMAKE_FLAGS = \
 
 .stamp-llvm-$(1)-configure:
 	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
-	cd $$(TOP)/sdks/builds/llvm-$(1) && $$(llvm_$(1)_CMAKE) $$(_llvm_$(1)_CMAKE_FLAGS)
+	cd $$(TOP)/sdks/builds/llvm-$(1) && $$(_llvm_$(1)_CMAKE) $$(_llvm_$(1)_CMAKE_FLAGS)
 	touch $$@
 
-ifneq ($(NINJA),)
 build-custom-llvm-$(1):
-	ninja -C $$(TOP)/sdks/builds/llvm-$(1)
+	$(_llvm_$(1)_CMAKE) --build $$(TOP)/sdks/builds/llvm-$(1)
 
 package-llvm-$(1):
-	ninja -C $$(TOP)/sdks/builds/llvm-$(1) install
-else
-build-custom-llvm-$(1):
-	$(MAKE) -C $$(TOP)/sdks/builds/llvm-$(1)
-
-package-llvm-$(1):
-	$(MAKE) -C $$(TOP)/sdks/builds/llvm-$(1) install
-endif
+	$(_llvm_$(1)_CMAKE) --build $$(TOP)/sdks/builds/llvm-$(1) --target install
 
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1):
@@ -129,15 +120,8 @@ TARGETS += llvm-$(1)
 
 endef
 
-# -DLLVM_ENABLE_THREADS=0 is needed because mxe doesn't define std::mutex etc.
-# -DLLVM_BUILD_EXECUTION_ENGINE=Off is needed because it depends on threads
-# -DCROSS_TOOLCHAIN_FLAGS_NATIVE is needed to compile the native tools (tlbgen) using the host compilers
-llvm_win_configure_flags = -DLLVM_ENABLE_THREADS=0 -DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$(LLVM_SRC)/cmake/modules/NATIVE.cmake -DLLVM_BUILD_EXECUTION_ENGINE=Off
-
-llvm_llvmwin64_CMAKE = $(MXE_PREFIX)/bin/x86_64-w64-mingw32.static-cmake
-llvm_llvmwin64_CMAKE_FLAGS = $(llvm_win_configure_flags)
-llvm_llvmwin32_CMAKE = $(MXE_PREFIX)/bin/i686-w64-mingw32.static-cmake
-llvm_llvmwin32_CMAKE_FLAGS = $(llvm_win_configure_flags) -DLLVM_BUILD_32_BITS=On
+llvm_llvmwin64_CMAKE_FLAGS =
+llvm_llvmwin32_CMAKE_FLAGS = -DLLVM_BUILD_32_BITS=On
 
 ifneq ($(MXE_PREFIX),)
 $(eval $(call LLVMMxeTemplate,llvmwin32,i686))
