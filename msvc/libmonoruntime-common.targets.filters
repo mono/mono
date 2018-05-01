@@ -418,15 +418,6 @@
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\reflection-internals.h">
       <Filter>Header Files$(MonoRuntimeFilterSubFolder)\common</Filter>
     </ClInclude>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\file-mmap-posix.c">
-      <Filter>Source Files$(MonoRuntimeFilterSubFolder)\common</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\file-mmap-windows.c">
-      <Filter>Source Files$(MonoRuntimeFilterSubFolder)\common</Filter>
-    </ClCompile>
-    <ClInclude Include="$(MonoSourceLocation)\mono\metadata\file-mmap.h">
-      <Filter>Header Files$(MonoRuntimeFilterSubFolder)\common</Filter>
-    </ClInclude>
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\object-offsets.h">
       <Filter>Header Files$(MonoRuntimeFilterSubFolder)\common</Filter>
     </ClInclude>

@@ -26,6 +26,7 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.IO.MemoryMappedFiles/src/Resources/Strings.resx
 
 LIBRARY_WARN_AS_ERROR = yes
+USE_XTEST_REMOTE_EXECUTOR = YES
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5

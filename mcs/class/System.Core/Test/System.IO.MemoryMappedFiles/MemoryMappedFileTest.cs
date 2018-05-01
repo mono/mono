@@ -421,7 +421,7 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			File.WriteAllBytes (f, new byte [size]);
 
 			FileStream file = File.OpenRead (f);
-			MemoryMappedFile.CreateFromFile (file, null, size, MemoryMappedFileAccess.Read, null, 0, false);
+			MemoryMappedFile.CreateFromFile (file, null, size, MemoryMappedFileAccess.Read, 0, false);
 		}
 
 		[Test]

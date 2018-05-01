@@ -88,3 +88,15 @@ corefx/SR.tests.cs
 #../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.UnixDomainSockets.cs
 ../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTestBase.cs
 
+# System.IO.MemoryMappedFiles
+../../../external/corefx/src/System.IO.MemoryMappedFiles/tests/MemoryMappedFile.CreateOrOpen.Tests.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/tests/MemoryMappedViewStream.Tests.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/tests/MemoryMappedFile.CreateNew.Tests.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/tests/MemoryMappedViewAccessor.Tests.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/tests/MemoryMappedFile.CreateFromFile.Tests.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/tests/MemoryMappedFile.OpenExisting.Tests.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/tests/MemoryMappedFilesTestsBase.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/tests/MemoryMappedFile.CrossProcess.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/tests/MemoryMappedFilesTestsBase.Unix.cs
+../../../external/corefx/src/Common/tests/System/IO/TempFile.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Text/StringBuilderCache.cs

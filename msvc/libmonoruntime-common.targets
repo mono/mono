@@ -145,11 +145,6 @@
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\custom-attrs-internals.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\sre-internals.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\reflection-internals.h" />
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\file-mmap-posix.c">
-      <ExcludedFromBuild>$(ExcludeFromWindowsBuild)</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\file-mmap-windows.c" />
-    <ClInclude Include="$(MonoSourceLocation)\mono\metadata\file-mmap.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\object-offsets.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\abi-details.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\class-abi-details.h" />

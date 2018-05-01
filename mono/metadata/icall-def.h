@@ -338,16 +338,6 @@ ICALL(KQUEM_1, "kevent_notimeout", ves_icall_System_IO_KqueueMonitor_kevent_noti
 ICALL_TYPE(LOGCATEXTWRITER, "System.IO.LogcatTextWriter", LOGCATEXTWRITER_1)
 HANDLES(ICALL(LOGCATEXTWRITER_1, "Log", ves_icall_System_IO_LogcatTextWriter_Log))
 
-ICALL_TYPE(MMAPIMPL, "System.IO.MemoryMappedFiles.MemoryMapImpl", MMAPIMPL_1)
-// FIXME rename to ves_icall...
-HANDLES(ICALL(MMAPIMPL_1, "CloseMapping", mono_mmap_close))
-HANDLES(ICALL(MMAPIMPL_2, "ConfigureHandleInheritability", mono_mmap_configure_inheritability))
-HANDLES(ICALL(MMAPIMPL_3, "Flush", mono_mmap_flush))
-HANDLES(ICALL(MMAPIMPL_4, "MapInternal", mono_mmap_map))
-HANDLES(ICALL(MMAPIMPL_5, "OpenFileInternal", mono_mmap_open_file))
-HANDLES(ICALL(MMAPIMPL_6, "OpenHandleInternal", mono_mmap_open_handle))
-HANDLES(ICALL(MMAPIMPL_7, "Unmap", mono_mmap_unmap))
-
 ICALL_TYPE(MONOIO, "System.IO.MonoIO", MONOIO_1)
 NOHANDLES(ICALL(MONOIO_1, "Close(intptr,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Close))
 #ifndef PLATFORM_RO_FS

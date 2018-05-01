@@ -47,9 +47,6 @@ namespace System.Runtime.InteropServices
 		[CLSCompliant (false)]
 		public void Initialize (ulong numBytes)
 		{
-			if (numBytes == 0)
-				throw new ArgumentOutOfRangeException ("numBytes");
-
 			inited = true;
 			byte_length = numBytes;
 			unsafe {

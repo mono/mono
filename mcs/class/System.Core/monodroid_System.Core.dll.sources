@@ -1,4 +1,4 @@
-#include common_System.Core.dll.sources
+#include unix_common_System.Core.dll.sources
 #include dynamic_System.Core.dll.sources
 #include pipes_pns.sources
 

@@ -1,2 +1,6 @@
 #include net_4_x_System.Core.dll.sources
 #include pipes_pns.sources
+System.IO.MemoryMappedFiles/SafeMemoryMappedFileHandle.NotSupported.cs
+System.IO.MemoryMappedFiles/SafeMemoryMappedViewHandle.NotSupported.cs
+System.IO.MemoryMappedFiles/MemoryMappedView.NotSupported.cs
+System.IO.MemoryMappedFiles/MemoryMappedFile.NotSupported.cs

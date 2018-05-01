@@ -4,10 +4,14 @@
 
 Assembly/AssemblyInfo.cs
 System/Util.cs
-System.IO.MemoryMappedFiles/MemoryMappedFile.cs
-System.IO.MemoryMappedFiles/MemoryMappedView.cs
-Microsoft.Win32.SafeHandles/SafeMemoryMappedFileHandle.cs
-Microsoft.Win32.SafeHandles/SafeMemoryMappedViewHandle.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/src/System/IO/MemoryMappedFiles/MemoryMappedFileRights.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/src/System/IO/MemoryMappedFiles/MemoryMappedFileAccess.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/src/System/IO/MemoryMappedFiles/MemoryMappedFileOptions.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/src/System/IO/MemoryMappedFiles/MemoryMappedView.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/src/System/IO/MemoryMappedFiles/MemoryMappedFile.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/src/Microsoft/Win32/SafeMemoryMappedViewHandle.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/src/System/IO/MemoryMappedFiles/MemoryMappedViewAccessor.cs
+../../../external/corefx/src/System.IO.MemoryMappedFiles/src/System/IO/MemoryMappedFiles/MemoryMappedViewStream.cs
 System.Security.Cryptography/AesCng.cs
 System.Security.Cryptography/TripleDESCng.cs
 System.Security.Cryptography.X509Certificates/ECDsaCertificateExtensions.cs
@@ -50,11 +54,6 @@ corefx/SR.missing.cs
 ../referencesource/System.Core/System/TimeZoneNotFoundException.cs
 
 ../referencesource/System.Core/System/IO/Enums.cs
-
-../referencesource/System.Core/System/IO/MemoryMappedFiles/Enums.cs
-../referencesource/System.Core/System/IO/MemoryMappedFiles/MemoryMappedFileSecurity.cs
-../referencesource/System.Core/System/IO/MemoryMappedFiles/MemoryMappedViewAccessor.cs
-../referencesource/System.Core/System/IO/MemoryMappedFiles/MemoryMappedViewStream.cs
 
 ../referencesource/System.Core/System/Runtime/CompilerServices/DynamicAttribute.cs
 ../referencesource/System.Core/System/Runtime/CompilerServices/ExecutionScope.cs
