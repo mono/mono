@@ -112,12 +112,6 @@ TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.exe \
 	tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfault_tail.exe \
 	tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_i2_bool.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_i4_i1.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_i4_u.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_i_u2.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_gc.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_inst.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_value.exe \
@@ -901,8 +895,6 @@ PLATFORM_DISABLED_TESTS += finally_guard.exe
 if HOST_LINUX
 
 PLATFORM_DISABLED_TESTS += \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
@@ -1017,8 +1009,6 @@ endif
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
 PLATFORM_DISABLED_TESTS += \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
