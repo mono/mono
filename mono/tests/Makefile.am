@@ -877,7 +877,6 @@ TESTS_GSHARED_SRC = \
 	generic-type-builder.2.cs
 
 PLATFORM_DISABLED_TESTS=\
-	tailcall-return-valuetype.exe \
 	tailcall-rgctxb.exe
 
 if HOST_WIN32
