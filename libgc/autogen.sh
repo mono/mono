@@ -74,7 +74,7 @@ if test x$NOCONFIGURE = x && test -z "$*"; then
   echo
 fi
 
-am_opt="--add-missing --gnu -Wno-obsolete"
+am_opt="--add-missing --copy --gnu -Wno-obsolete"
 
 case $CC in
 xlc )
