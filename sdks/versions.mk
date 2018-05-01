@@ -5,7 +5,10 @@ MXE_HASH?=b9cbb53541a0e10fe4fe81f22bd586cb9cdc922a
 
 # LLVM
 
-LLVM_HASH?=3b82b3c9041eb997f627f881a67d20be37264e9c
+#LLVM_HASH?=3b82b3c9041eb997f627f881a67d20be37264e9c
+#LLVM_JENKINS_LANE=build-package-osx-llvm
+LLVM_HASH?=10787c7c7f64f06ea5001f5593da62dc7a5b8eea
+LLVM_JENKINS_LANE=build-package-osx-llvm-release60
 
 # Android
 
