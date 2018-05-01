@@ -130,7 +130,6 @@ TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.exe \
 	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallCandidates.exe \
 	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.exe \
-	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.exe \
 	tailcall/coreclr/JIT/opt/FastTailCall/GitHubIssue12479.exe \
 	tailcall/coreclr/JIT/opt/FastTailCall/StackFixup.exe \
 	tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.exe
