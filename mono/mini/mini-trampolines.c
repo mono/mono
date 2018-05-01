@@ -881,6 +881,8 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 	gpointer res;
 	ERROR_DECL (error);
 
+	MONO_ENTER_GC_UNSAFE;
+	
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	g_assert (mono_thread_is_gc_unsafe_mode ());
@@ -890,9 +892,10 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 	res = common_call_trampoline (regs, code, (MonoMethod *)arg, NULL, NULL, error);
 	if (!is_ok (error)) {
 		mono_error_set_pending_exception (error);
-		return NULL;
+		res = NULL;
 	}
 
+	MONO_EXIT_GC_UNSAFE;
 	return res;
 }
 
@@ -904,6 +907,8 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 static gpointer
 mono_vcall_trampoline (mgreg_t *regs, guint8 *code, int slot, guint8 *tramp)
 {
+	gpointer res;
+	MONO_ENTER_GC_UNSAFE;
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoObject *this_arg;
@@ -911,7 +916,8 @@ mono_vcall_trampoline (mgreg_t *regs, guint8 *code, int slot, guint8 *tramp)
 	gpointer *vtable_slot;
 	MonoMethod *m;
 	ERROR_DECL (error);
-	gpointer addr, res = NULL;
+	gpointer addr;
+	res = NULL;
 
 	UnlockedIncrement (&trampoline_calls);
 
@@ -942,7 +948,8 @@ mono_vcall_trampoline (mgreg_t *regs, guint8 *code, int slot, guint8 *tramp)
 			if (mono_domain_owns_vtable_slot (mono_domain_get (), vtable_slot))
 				*vtable_slot = addr;
 
-			return mono_create_ftnptr (mono_domain_get (), addr);
+			res = mono_create_ftnptr (mono_domain_get (), addr);
+			goto leave;
 		}
 
 		/*
@@ -970,8 +977,9 @@ mono_vcall_trampoline (mgreg_t *regs, guint8 *code, int slot, guint8 *tramp)
 leave:
 	if (!mono_error_ok (error)) {
 		mono_error_set_pending_exception (error);
-		return NULL;
+		res = NULL;
 	}
+	MONO_EXIT_GC_UNSAFE;
 	return res;
 }
 
