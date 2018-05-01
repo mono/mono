@@ -1563,9 +1563,10 @@ if ($artifact)
 	}
 	elsif($^O eq 'darwin')
 	{
-		$embedDirArchDestination = "$embedDirRoot/osx";
-		$distDirArchBin = "$distdir/bin";
-		$versionsOutputFile = "$buildsroot/versions-osx.txt";
+		# Note these tmp directories will get merged into a single 'osx' directory later by a parent script
+		$embedDirArchDestination = "$embedDirRoot/osx-tmp-$monoHostArch";
+		$distDirArchBin = "$distdir/bin-osx-tmp-$monoHostArch";
+		$versionsOutputFile = $arch32 ? "$buildsroot/versions-osx32.txt" : "$buildsroot/versions-osx64.txt";
 	}
 	else
 	{
