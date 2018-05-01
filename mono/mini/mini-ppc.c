@@ -1346,24 +1346,10 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 {
 	CallInfo *c1, *c2;
 	gboolean res;
-	int i;
 
 	c1 = get_call_info (caller_sig);
 	c2 = get_call_info (callee_sig);
 	res = c1->stack_usage >= c2->stack_usage;
-	if (callee_sig->ret && MONO_TYPE_ISSTRUCT (callee_sig->ret))
-		/* An address on the callee's stack is passed as the first argument */
-		res = FALSE;
-	for (i = 0; i < c2->nargs; ++i) {
-		if (c2->args [i].regtype == RegTypeStructByAddr)
-			/* An address on the callee's stack is passed as the argument */
-			res = FALSE;
-	}
-
-	/*
-	if (!mono_debug_count ())
-		res = FALSE;
-	*/
 
 	g_free (c1);
 	g_free (c2);
