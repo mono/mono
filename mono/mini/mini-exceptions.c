@@ -2898,7 +2898,12 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 		MonoContext mctx;
 		if (ctx) {
 			gboolean leave = FALSE;
-			if (!mono_merp_enabled ()) {
+			gboolean dump_for_merp = FALSE;
+#if defined(TARGET_OSX)
+			dump_for_merp = mono_merp_enabled ();
+#endif
+
+			if (!dump_for_merp) {
 #ifdef DISABLE_STRUCTURED_CRASH
 				leave = TRUE;
 #else
@@ -2915,7 +2920,7 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 
 			// We want our crash, and don't have telemetry
 			// So we dump to disk
-			if (!leave && !mono_merp_enabled ())
+			if (!leave && !dump_for_merp)
 				mono_crash_dump (output);
 		}
 
