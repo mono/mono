@@ -120,6 +120,9 @@ class Driver {
 			dump_asm = args [1].Equals ("asm");
 			dump_ver = args [1].Equals ("ver");
 			dump_guids_for_msbuild = args [1].Equals ("guids_for_msbuild");
+
+			if (args [1].Equals("all"))
+				dump_asm = dump_ver = dump_guids_for_msbuild = true;
 		} else {
 			dump_asm = true;
 		}
