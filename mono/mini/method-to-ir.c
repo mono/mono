@@ -2313,10 +2313,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	mini_type_to_eval_stack_type ((cfg), sig_ret, &call->inst);
 
 	if (tailcall) {
-		if (mini_type_is_vtype (sig_ret)) {
-			call->vret_var = cfg->vret_addr;
-			//g_assert_not_reached ();
-		}
+		call->vret_var = cfg->vret_addr;
 	} else if (mini_type_is_vtype (sig_ret)) {
 		MonoInst *temp = mono_compile_create_var (cfg, sig_ret, OP_LOCAL);
 		MonoInst *loada;
