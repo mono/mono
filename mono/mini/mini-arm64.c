@@ -2757,32 +2757,6 @@ is_supported_tailcall_helper (gboolean value, const char *svalue)
 
 #define IS_SUPPORTED_TAILCALL(x) (is_supported_tailcall_helper((x), #x))
 
-static gboolean
-tailcall_return_storage_supported (ArgStorage storage)
-{
-	switch (storage) {
-	case ArgInIReg:
-	case ArgInFReg:
-	case ArgInFRegR4:
-	case ArgNone:
-		return TRUE;
-
-	case ArgHFA:
-	case ArgOnStack:
-	case ArgOnStackR8:
-	case ArgOnStackR4:
-	case ArgVtypeByRef:
-	case ArgVtypeByRefOnStack:
-	case ArgVtypeInIRegs: // FIXME: Pass caller's caller's return area to callee.
-	case ArgVtypeOnStack:
-		return FALSE;
-
-	default:
-		g_assert_not_reached ();
-		return FALSE;
-	}
-}
-
 gboolean
 mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
@@ -2797,8 +2771,7 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	CallInfo *callee_info = get_call_info (NULL, callee_sig);
 
 	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
-		  && IS_SUPPORTED_TAILCALL (caller_info->ret.storage == callee_info->ret.storage)
-		  && IS_SUPPORTED_TAILCALL (tailcall_return_storage_supported (caller_info->ret.storage));
+		  && IS_SUPPORTED_TAILCALL (caller_info->ret.storage == callee_info->ret.storage);
 
 	// FIXME Limit stack_usage to 1G. emit_ldrx / strx has 32bit limits.
 	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage < (1 << 30));
