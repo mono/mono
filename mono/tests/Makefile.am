@@ -70,6 +70,18 @@ TAILCALL_DISABLED_TESTS_RUN = \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe \
 	$(TAILCALL_DISABLED_TESTS_COMPILE)
 
+TAILCALL_DISABLED_TESTS_RUN += \
+	tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_gc.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_inst.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_value.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_virt.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.exe \
+	tailcall/coreclr/JIT/opt/ETW/TailCallCases.exe
+
 if FULL_AOT_TESTS
 
 # FullAOT Assertion at method-to-ir.c:9203, condition `*ip == CEE_RET' not met
@@ -102,6 +114,7 @@ TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/tailcall_AV.exe \
 	tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.exe
 
+<<<<<<< HEAD
 # Tests fail no assert, print that they pass, but exit with non-zero.
 # These are effectively passing, but need change to indicate so.
 # Leaving us with no FullAOT tests.
@@ -134,6 +147,8 @@ TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/opt/FastTailCall/StackFixup.exe \
 	tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.exe
 
+=======
+>>>>>>> [Tailcall] Enable CoreCLR tests, having changed success return value from 100 to 0.
 # This test is also slow, though its sleep can be dialed down.
 #TAILCALL_DISABLED_TESTS_RUN += tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.exe
 
@@ -879,6 +894,7 @@ TESTS_GSHARED_SRC = \
 	generic-type-builder.2.cs
 
 PLATFORM_DISABLED_TESTS=\
+	$(TAILCALL_DISABLED_TESTS_RUN) \
 	tailcall-member-function-in-valuetype.exe \
 	tailcall-rgctxb.exe
 
@@ -890,19 +906,6 @@ if AMD64
 # #651684
 PLATFORM_DISABLED_TESTS += finally_guard.exe
 
-if HOST_LINUX
-
-PLATFORM_DISABLED_TESTS += \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe
-
-endif
-
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += w32message.exe
 endif
@@ -910,16 +913,6 @@ endif
 endif
 
 if X86
-
-PLATFORM_DISABLED_TESTS += \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe
 
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe \
@@ -972,11 +965,6 @@ PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += ivtail1.exe
 PLATFORM_DISABLED_TESTS += appdomain-threadpool-unload.exe
 PLATFORM_DISABLED_TESTS += bug-60848.exe
-
-PLATFORM_DISABLED_TESTS += \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe
 endif
 
 if ARM
@@ -992,29 +980,10 @@ PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += ivtail1.exe
-PLATFORM_DISABLED_TESTS += \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe
 endif
 
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
-PLATFORM_DISABLED_TESTS += \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe
 endif
 
 if MIPS
@@ -1056,6 +1025,8 @@ PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
 PROFILE_DISABLED_TESTS= \
+	$(TAILCALL_DISABLED_TESTS_RUN) \
+	tailcall-member-function-in-valuetype.exe \
 	tailcall-rgctxb.exe
 
 if FULL_AOT_TESTS
@@ -1285,6 +1256,7 @@ LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 # threads-init.exe: runs out of system threads
 # dim-constrainedcall.exe: fails on dontnet as well (https://github.com/dotnet/coreclr/issues/15353)
 # tailcall-rgctxb.exe seems like it would but it does not, needs debugging
+# tailcall-member-function-in-valuetype.exe never works, for understood reason
 KNOWN_FAILING_TESTS = \
 	delegate-async-exception.exe	\
 	bug-348522.2.exe	\
@@ -1303,6 +1275,7 @@ KNOWN_FAILING_TESTS = \
 	tail1.exe \
 	taili1.exe \
 	vtail1.exe \
+	tailcall-member-function-in-valuetype.exe \
 	tailcall-rgctxb.exe
 
 DISABLED_TESTS = \
@@ -1340,6 +1313,7 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	tailcall/3.exe \
 	tailcall/4.exe \
 	tailcall/8273.exe \
+	$(TAILCALL_DISABLED_TESTS_RUN) \
 	bug-60843.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
