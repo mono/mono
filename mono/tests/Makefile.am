@@ -880,7 +880,6 @@ TESTS_GSHARED_SRC = \
 
 PLATFORM_DISABLED_TESTS=\
 	tailcall-member-function-in-valuetype.exe \
-	tailcall-return-valuetype.exe \
 	tailcall-rgctxb.exe
 
 if HOST_WIN32
