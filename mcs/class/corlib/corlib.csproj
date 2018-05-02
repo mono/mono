@@ -161,6 +161,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.Invariant.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\GlobalizationExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HResults.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ISpanFormattable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Marvin.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MathF.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Memory.cs" />
@@ -222,6 +223,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanHelpers.T.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\String.Searching.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\StringSplitOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\StringBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\Sources\IValueTaskSource.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCanceledException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCompletionSource.cs" />
@@ -235,6 +237,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Concurrent\ConcurrentQueue_Segment.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LowLevelDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\StringBuilderCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\BeginEndAwaitableAdapter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\RendezvousAwaitable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\ArrayPool.cs" />
@@ -892,8 +895,6 @@
     <Compile Include="..\referencesource\mscorlib\system\text\encodingprovider.cs" />
     <Compile Include="..\referencesource\mscorlib\system\text\latin1encoding.cs" />
     <Compile Include="..\referencesource\mscorlib\system\text\mlangcodepageencoding.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\text\stringbuilder.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\text\stringbuildercache.cs" />
     <Compile Include="..\referencesource\mscorlib\system\text\surrogateencoder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\text\unicodeencoding.cs" />
     <Compile Include="..\referencesource\mscorlib\system\text\utf32encoding.cs" />
@@ -966,6 +967,7 @@
     <Compile Include="corefx\AwaitTaskContinuation.cs" />
     <Compile Include="corefx\CompareInfo.cs" />
     <Compile Include="corefx\GlobalizationMode.cs" />
+    <Compile Include="corefx\MemoryExtensions.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />
