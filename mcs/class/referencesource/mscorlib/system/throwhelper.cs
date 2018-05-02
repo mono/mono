@@ -597,7 +597,8 @@ namespace System {
         destination,
         byteOffset,
         minimumBufferSize,
-        offset
+        offset,
+        values
 #endif
     }
 
