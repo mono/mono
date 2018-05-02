@@ -1344,15 +1344,14 @@ get_call_info (MonoMethodSignature *sig)
 gboolean
 mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
-	CallInfo *c1, *c2;
-	gboolean res;
+	CallInfo *caller_info = get_call_info (NULL, caller_sig);
+	CallInfo *callee_info = get_call_info (NULL, callee_sig);
 
-	c1 = get_call_info (caller_sig);
-	c2 = get_call_info (callee_sig);
-	res = c1->stack_usage >= c2->stack_usage;
+	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
+                    && IS_SUPPORTED_TAILCALL (callee_info->ret.storage == caller_info->ret.storage);
 
-	g_free (c1);
-	g_free (c2);
+	g_free (caller_info);
+	g_free (callee_info);
 
 	return res;
 }
