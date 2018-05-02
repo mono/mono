@@ -36,8 +36,8 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Private.Xml.Linq/src/System/Xml/Linq/XStreamingElement.cs
 ../../../external/corefx/src/System.Private.Xml.Linq/src/System/Xml/Linq/XText.cs
 ../../../external/corefx/src/System.Private.Xml.Linq/src/System/Xml/Schema/XNodeValidator.cs
-../../../external/corefx/src/System.Private.Xml.Linq/src/System/Xml/Xpath/XAttributeExtensions.cs
-../../../external/corefx/src/System.Private.Xml.Linq/src/System/Xml/Xpath/XNodeNavigator.cs
-../../../external/corefx/src/System.Private.Xml.Linq/src/System/Xml/Xpath/XObjectExtensions.cs
+../../../external/corefx/src/System.Private.Xml.Linq/src/System/Xml/XPath/XAttributeExtensions.cs
+../../../external/corefx/src/System.Private.Xml.Linq/src/System/Xml/XPath/XNodeNavigator.cs
+../../../external/corefx/src/System.Private.Xml.Linq/src/System/Xml/XPath/XObjectExtensions.cs
 
 ../../../external/corefx/src/System.Xml.XPath.XDocument/src/System/Xml/XPath/XDocumentExtensions.cs
