@@ -1424,8 +1424,9 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/text/mlangcodepageencoding.cs
 ../referencesource/mscorlib/system/text/surrogateencoder.cs
 
-../referencesource/mscorlib/system/text/stringbuilder.cs
-../referencesource/mscorlib/system/text/stringbuildercache.cs
+../../../external/corefx/src/Common/src/CoreLib/System/ISpanFormattable.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Text/StringBuilder.cs
+../../../external/corefx/src/Common/src/System/IO/StringBuilderCache.cs
 
 ../referencesource/mscorlib/system/runtime/remoting/callcontext.cs
 
@@ -1539,6 +1540,7 @@ corefx/AwaitTaskContinuation.cs
 corefx/SynchronizationContext.cs
 corefx/SR.cs
 corefx/CompareInfo.cs
+corefx/MemoryExtensions.cs
 corefx/GlobalizationMode.cs
 corefx/MemoryMarshal.cs
 
