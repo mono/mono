@@ -63,7 +63,7 @@ class TailCallStructPassing
 
         if (temp.a == 15)
         {
-            return 100;
+            return 0;
         }
 
         else

@@ -1145,7 +1145,7 @@ public class FastTailCallCandidates
             
             if (retVal.b == 1.0)
             {
-                return 100;
+                return 0;
             }
             else
             {
@@ -1160,6 +1160,7 @@ public class FastTailCallCandidates
 
     public static int Main()
     {
-        return Tester(1);
+        int a = Tester(1);
+        return (a == 100) ? 0 : a;
     }
 }

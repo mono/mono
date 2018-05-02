@@ -307,7 +307,7 @@ ret
 
     IL_006e:  ldstr      "Test Passed"
     IL_0073:  call       void [mscorlib]System.Console::WriteLine(string)
-    IL_0078:  ldc.i4.s   100
+    IL_0078:  ldc.i4.s   0
     IL_007a:  stloc.2
     IL_007b:  br.s       IL_007d
 
