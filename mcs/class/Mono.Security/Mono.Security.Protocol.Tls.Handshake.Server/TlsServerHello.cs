@@ -97,18 +97,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			random = this.Context.GetSecureRandomBytes(28);
 			this.Write(this.random);
 						
-			if (this.Context.SessionId == null)
-			{
-				this.WriteByte(0);
-			}
-			else
-			{
-				// Write Session ID length
-				this.WriteByte((byte)this.Context.SessionId.Length);
-
-				// Write Session ID
-				this.Write(this.Context.SessionId);
-			}
+			// Write empty session ID. Resumption is unsupported.
+			this.WriteByte(0);
 
 			// Write selected cipher suite
 			this.Write(this.Context.Negotiating.Cipher.Code);
