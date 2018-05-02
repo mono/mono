@@ -1670,13 +1670,10 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 void
 mini_register_jump_site (MonoDomain *domain, MonoMethod *method, gpointer ip)
 {
-	ERROR_DECL (error);
 	MonoJumpList *jlist;
 
-	if (mono_method_is_generic_sharable (method, TRUE)) {
-		method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
-		mono_error_assert_ok (error);
-	}
+	MonoMethod *shared_method = mini_method_to_shared (method);
+	method = shared_method ? shared_method : method;
 
 	mono_domain_lock (domain);
 	jlist = (MonoJumpList *)g_hash_table_lookup (domain_jit_info (domain)->jump_target_hash, method);
@@ -1696,7 +1693,6 @@ mini_register_jump_site (MonoDomain *domain, MonoMethod *method, gpointer ip)
 void
 mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 {
-	ERROR_DECL (error);
 	GHashTable *hash = domain_jit_info (domain)->jump_target_hash;
 
 	if (!hash)
@@ -1707,10 +1703,8 @@ mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 	GSList *tmp;
 
 	/* The caller/callee might use different instantiations */
-	if (mono_method_is_generic_sharable (method, TRUE)) {
-		method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
-		mono_error_assert_ok (error);
-	}
+	MonoMethod *shared_method = mini_method_to_shared (method);
+	method = shared_method ? shared_method : method;
 
 	mono_domain_lock (domain);
 	jlist = (MonoJumpList *)g_hash_table_lookup (hash, method);
@@ -3587,6 +3581,9 @@ mini_parse_debug_option (const char *option)
 	// It is asserted.
 	else if (!strcmp (option, "test-tailcall-require"))
 		mini_debug_options.test_tailcall_require = TRUE;
+	else if (!strncmp (option, "thread-dump-dir=", 16)) {
+		mono_set_thread_dump_dir(g_strdup(option + 16));
+	}
 	else
 		return FALSE;
 
@@ -3613,7 +3610,7 @@ mini_parse_debug_options (void)
 			// test-tailcall-require is also accepted but not documented.
 			// empty string is also accepted and ignored as a consequence
 			// of appending ",foo" without checking for empty.
-			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break'\n");
+			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break', 'thread-dump-dir=DIR'\n");
 			exit (1);
 		}
 	}

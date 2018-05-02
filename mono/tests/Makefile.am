@@ -1,3 +1,5 @@
+include $(top_srcdir)/mk/common.mk
+
 SUBDIRS = gc-descriptors . testing_gac
 
 check-local:
@@ -814,6 +816,7 @@ TESTS_IL_SRC=			\
 	dim-valuetypes.il \
 	tailcall-generic-cast-conservestack-il.il \
 	tailcall-generic-cast-nocrash-il.il \
+	ldfldvt.il \
 	newobj-abstract.il
 
 TESTS_GSHARED_SRC = \
@@ -927,6 +930,7 @@ PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += tailcall/2.exe
 PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 
 endif
 
@@ -940,6 +944,7 @@ PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/2.exe
 PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += ivtail1.exe
@@ -959,6 +964,7 @@ PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/2.exe
 PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += ivtail1.exe
@@ -980,6 +986,7 @@ PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/2.exe
 PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += ivtail1.exe
@@ -1020,6 +1027,7 @@ PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/2.exe
 PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += ivtail1.exe
@@ -1041,6 +1049,7 @@ PLATFORM_DISABLED_TESTS += tailcall-virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/2.exe
 PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += ivtail1.exe
@@ -1234,7 +1243,6 @@ endif
 AOT_DISABLED_TESTS= \
 	constraints-load.exe
 
-# tailcall/fsharp AOT hangs
 # tailcall/fsharp FullAOT stack overflow in CI but not locally.
 AOT_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 
@@ -1330,6 +1338,7 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	tailcall/2.exe \
 	tailcall/3.exe \
 	tailcall/4.exe \
+	tailcall/8273.exe \
 	bug-60843.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
@@ -2335,7 +2344,7 @@ assembly-load-dir1/LibStrongName.dll: assembly-load-dir1/LibStrongName.cs testin
 assembly-load-dir2/LibStrongName.dll: assembly-load-dir2/LibStrongName.cs testing_gac/testkey.snk
 	$(MCS) -target:library -out:$@ $<
 
-EXTRA_DIST += assembly-load-dir1/Lib.cs assmebly-load-dir2/Lib.cs \
+EXTRA_DIST += assembly-load-dir1/Lib.cs assembly-load-dir2/Lib.cs \
 	assembly-load-dir1/LibStrongName.cs assembly-load-dir2/LibStrongName.cs
 
 assembly-load-bytes.exe: assembly-load-dir1/Lib.dll assembly-load-dir2/Lib.dll

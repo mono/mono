@@ -85,8 +85,6 @@ namespace MonoTests.System.ServiceModel.Syndication
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotDotNet")] // LAMESPEC. See below.
 		public void SetRelativeUriAsBaseUri ()
 		{
 			SyndicationLink link = new SyndicationLink (new Uri ("empty.xml", UriKind.Relative));
