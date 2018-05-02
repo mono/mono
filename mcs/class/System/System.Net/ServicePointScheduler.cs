@@ -126,7 +126,7 @@ namespace System.Net
 		{
 			lock (ServicePoint) {
 				if (Interlocked.CompareExchange (ref running, 1, 0) == 0)
-					StartScheduler ();
+					Task.Run (() => StartScheduler ());
 
 				schedulerEvent.Set ();
 			}
