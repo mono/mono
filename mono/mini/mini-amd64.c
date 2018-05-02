@@ -1266,8 +1266,6 @@ is_supported_tailcall_helper (gboolean value, const char *svalue)
 gboolean
 mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
-	MonoType *callee_ret;
-
 	CallInfo *caller_info = get_call_info (NULL, caller_sig);
 	CallInfo *callee_info = get_call_info (NULL, callee_sig);
 	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
@@ -1275,11 +1273,6 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 
 	if (!res && !debug_tailcall)
 		goto exit;
-
-	// FIXME: Pass caller's caller's return area to callee.
-	/* An address on the callee's stack is passed as the first argument */
-	callee_ret = mini_get_underlying_type (callee_sig->ret);
-	res &= IS_SUPPORTED_TAILCALL (!(callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && callee_info->ret.storage != ArgValuetypeInReg));
 
 	// Limit stack_usage to 1G. Assume 32bit limits when we move parameters.
 	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage < (1 << 30));
@@ -1967,7 +1960,7 @@ emit_sig_cookie (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 	MonoMethodSignature *tmp_sig;
 	int sig_reg;
 
-	if (call->tailcall)
+	if (MONO_IS_TAILCALL (&call->inst))
 		NOT_IMPLEMENTED;
 
 	g_assert (cinfo->sig_cookie.storage == ArgOnStack);
@@ -2159,7 +2152,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 
 		t = mini_get_underlying_type (t);
 		//XXX what about ArgGSharedVtOnStack here?
-		if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !call->tailcall) {
+		if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !MONO_IS_TAILCALL (&call->inst)) {
 			if (!t->byref) {
 				if (t->type == MONO_TYPE_R4)
 					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER4_MEMBASE_REG, AMD64_RSP, ainfo->offset, in->dreg);
@@ -2218,11 +2211,11 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		case ArgValuetypeAddrOnStack:
 		case ArgGSharedVtInReg:
 		case ArgGSharedVtOnStack: {
-			if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !call->tailcall)
+			if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !MONO_IS_TAILCALL (&call->inst))
 				/* Already emitted above */
 				break;
 			//FIXME what about ArgGSharedVtOnStack ?
-			if (ainfo->storage == ArgOnStack && call->tailcall) {
+			if (ainfo->storage == ArgOnStack && MONO_IS_TAILCALL (&call->inst)) {
 				MonoInst *call_inst = (MonoInst*)call;
 				cfg->args [i]->flags |= MONO_INST_VOLATILE;
 				EMIT_NEW_ARGSTORE (cfg, call_inst, i, in);
@@ -2292,7 +2285,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			if (call->vret_var)
 				NULLIFY_INS (call->vret_var);
 		} else {
-			if (call->tailcall)
+			if (MONO_IS_TAILCALL (&call->inst))
 				NOT_IMPLEMENTED;
 			/*
 			 * The valuetype is in RAX:RDX after the call, need to be copied to

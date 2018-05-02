@@ -2279,7 +2279,10 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	MonoType *sig_ret;
 	MonoCallInst *call;
 
-	if (tailcall && cfg->llvm_only) { // FIXME?
+	if (tailcall && cfg->llvm_only) {
+		// FIXME tailcall should not be changed this late.
+		// FIXME It really should not be changed due to llvm_only.
+		// Accuracy is presently available MONO_IS_TAILCALL (call->inst).
 		tailcall = FALSE;
 		tailcall_print ("losing tailcall in %s due to llvm_only\n", cfg->method->name);
 		test_tailcall (cfg, FALSE);
@@ -2313,10 +2316,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	mini_type_to_eval_stack_type ((cfg), sig_ret, &call->inst);
 
 	if (tailcall) {
-		if (mini_type_is_vtype (sig_ret)) {
-			call->vret_var = cfg->vret_addr;
-			//g_assert_not_reached ();
-		}
+		call->vret_var = cfg->vret_addr;
 	} else if (mini_type_is_vtype (sig_ret)) {
 		MonoInst *temp = mono_compile_create_var (cfg, sig_ret, OP_LOCAL);
 		MonoInst *loada;
@@ -2559,7 +2559,6 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 		call->method = method;
 	call->inst.flags |= MONO_INST_HAS_METHOD;
 	call->inst.inst_left = this_ins;
-	call->tailcall = tailcall;
 
 	if (virtual_) {
 		int vtable_reg, slot_reg, this_reg;
@@ -8433,7 +8432,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				emit_tailcall_parameters (cfg, fsig);
 				MONO_INST_NEW_CALL (cfg, call, OP_TAILCALL);
 				call->method = cmethod;
-				call->tailcall = TRUE;
 				call->signature = fsig;
 				call->args = (MonoInst **)mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * n);
 				call->inst.inst_p0 = cmethod;
