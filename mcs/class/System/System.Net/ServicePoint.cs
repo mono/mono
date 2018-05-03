@@ -58,11 +58,16 @@ namespace System.Net
 
 		// Constructors
 
-		internal ServicePoint (Uri uri, int connectionLimit, int maxIdleTime)
+		internal ServicePoint (ServicePointManager.SPKey key, Uri uri, int connectionLimit, int maxIdleTime)
 		{
+			Key = key;
 			this.uri = uri;
 
 			Scheduler = new ServicePointScheduler (this, connectionLimit, maxIdleTime);
+		}
+
+		internal ServicePointManager.SPKey Key {
+			get;
 		}
 
 		internal ServicePointScheduler Scheduler {

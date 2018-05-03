@@ -38,6 +38,7 @@ namespace System.Net
 	{
 		public ServicePoint ServicePoint {
 			get;
+			private set;
 		}
 
 		public int MaxIdleTime {
@@ -78,12 +79,7 @@ namespace System.Net
 			operations = new LinkedList<(ConnectionGroup, WebOperation)> ();
 			idleConnections = new LinkedList<(ConnectionGroup, WebConnection, Task)> ();
 			idleSince = DateTime.UtcNow;
-		}
-
-		[Conditional ("MONO_WEB_DEBUG")]
-		void Debug (string message, params object[] args)
-		{
-			WebConnection.Debug ($"SPS({ID}): {string.Format (message, args)}");
+			Interlocked.Increment (ref countInstances);
 		}
 
 		[Conditional ("MONO_WEB_DEBUG")]
@@ -124,15 +120,27 @@ namespace System.Net
 
 		public void Run ()
 		{
-			lock (ServicePoint) {
-				if (Interlocked.CompareExchange (ref running, 1, 0) == 0)
-					StartScheduler ();
+			Debug ($"RUN");
+			if (Interlocked.CompareExchange (ref running, 1, 0) == 0)
+				Task.Run (() => StartScheduler ());
 
-				schedulerEvent.Set ();
+			schedulerEvent.Set ();
+		}
+
+		static int countInstances;
+		static int countRunning;
+
+		async void StartScheduler ()
+		{
+			Interlocked.Increment (ref countRunning);
+			try {
+				await RunScheduler ().ConfigureAwait (false);
+			} finally {
+				Interlocked.Decrement (ref countRunning);
 			}
 		}
 
-		async void StartScheduler ()
+		async Task RunScheduler ()
 		{
 			idleSince = DateTime.UtcNow + TimeSpan.FromDays (3650);
 
@@ -143,36 +151,47 @@ namespace System.Net
 				ValueTuple<ConnectionGroup, WebOperation>[] operationArray;
 				ValueTuple<ConnectionGroup, WebConnection, Task>[] idleArray;
 				var taskList = new List<Task> ();
+				Task<bool> schedulerTask;
+				bool finalCleanup = false;
 				lock (ServicePoint) {
 					Cleanup ();
-					if (groups == null && defaultGroup.IsEmpty () && operations.Count == 0 && idleConnections.Count == 0) {
-						Debug ($"MAIN LOOP DONE");
-						running = 0;
-						idleSince = DateTime.UtcNow;
-						schedulerEvent.Reset ();
-						return;
-					}
 
 					operationArray = new ValueTuple<ConnectionGroup, WebOperation>[operations.Count];
 					operations.CopyTo (operationArray, 0);
 					idleArray = new ValueTuple<ConnectionGroup, WebConnection, Task>[idleConnections.Count];
 					idleConnections.CopyTo (idleArray, 0);
 
-					taskList.Add (schedulerEvent.WaitAsync (maxIdleTime));
-					foreach (var item in operationArray)
-						taskList.Add (item.Item2.Finished.Task);
-					foreach (var item in idleArray)
-						taskList.Add (item.Item3);
+					schedulerTask = schedulerEvent.WaitAsync (maxIdleTime);
+					taskList.Add (schedulerTask);
+
+					if (groups == null && defaultGroup.IsEmpty () && operations.Count == 0 && idleConnections.Count == 0) {
+						Debug ($"MAIN LOOP DONE");
+						idleSince = DateTime.UtcNow;
+						finalCleanup = true;
+					} else {
+						foreach (var item in operationArray)
+							taskList.Add (item.Item2.Finished.Task);
+						foreach (var item in idleArray)
+							taskList.Add (item.Item3);
+					}
 				}
 
-				Debug ($"MAIN LOOP #1: operations={operationArray.Length} idle={idleArray.Length}");
+				Debug ($"MAIN LOOP #1: operations={operationArray.Length} idle={idleArray.Length} finalCleanup={finalCleanup}");
 
 				var ret = await Task.WhenAny (taskList).ConfigureAwait (false);
 
 				lock (ServicePoint) {
 					bool runMaster = false;
-					if (ret == taskList[0])
+					if (finalCleanup) {
+						if (schedulerTask.Result)
+							runMaster = true;
+						else {
+							FinalCleanup ();
+							return;
+						}
+					} else if (ret == taskList[0]) {
 						runMaster = true;
+					}
 
 					/*
 					 * We discard the `taskList` at this point as it is only used to wake us up.
@@ -377,6 +396,21 @@ namespace System.Net
 				if (node.Value.Item2 == connection)
 					idleConnections.Remove (node);
 			}
+		}
+
+		void FinalCleanup ()
+		{
+			Debug ($"FINAL CLEANUP");
+
+			groups = null;
+			operations = null;
+			idleConnections = null;
+			defaultGroup = null;
+
+			ServicePointManager.RemoveServicePoint (ServicePoint);
+			ServicePoint = null;
+
+			Interlocked.Decrement (ref countInstances);
 		}
 
 		public void SendRequest (WebOperation operation, string groupName)
