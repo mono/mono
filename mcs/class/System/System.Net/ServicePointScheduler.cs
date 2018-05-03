@@ -124,12 +124,10 @@ namespace System.Net
 
 		public void Run ()
 		{
-			lock (ServicePoint) {
-				if (Interlocked.CompareExchange (ref running, 1, 0) == 0)
-					Task.Run (() => StartScheduler ());
+			if (Interlocked.CompareExchange (ref running, 1, 0) == 0)
+				Task.Run (() => StartScheduler ());
 
-				schedulerEvent.Set ();
-			}
+			schedulerEvent.Set ();
 		}
 
 		async void StartScheduler ()
