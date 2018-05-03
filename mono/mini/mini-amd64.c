@@ -1271,14 +1271,18 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
                     && IS_SUPPORTED_TAILCALL (callee_info->ret.storage == caller_info->ret.storage);
 
-	if (!res && !debug_tailcall)
-		goto exit;
-
 	// Limit stack_usage to 1G. Assume 32bit limits when we move parameters.
 	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage < (1 << 30));
 	res &= IS_SUPPORTED_TAILCALL (caller_info->stack_usage < (1 << 30));
 
-exit:
+	// valuetype parameters are address of local
+	const ArgInfo *ainfo;
+	ainfo = callee_info->args + callee_sig->hasthis;
+	for (int i = 0; res && i < callee_sig->param_count; ++i) {
+		res = IS_SUPPORTED_TAILCALL (ainfo [i].storage != ArgValuetypeAddrInIReg)
+			&& IS_SUPPORTED_TAILCALL (ainfo [i].storage != ArgValuetypeAddrOnStack);
+	}
+
 	g_free (caller_info);
 	g_free (callee_info);
 

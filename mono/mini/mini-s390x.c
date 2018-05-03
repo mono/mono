@@ -7561,6 +7561,9 @@ is_supported_tailcall_helper (gboolean value, const char *svalue)
 gboolean
 mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
+	g_assert (caller_sig);
+	g_assert (callee_sig);
+
 	CallInfo *caller_info = get_call_info (NULL, caller_sig);
 	CallInfo *callee_info = get_call_info (NULL, callee_sig);
 
@@ -7568,6 +7571,15 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 		&& IS_SUPPORTED_TAILCALL (callee_info->ret.storage == caller_info->ret.storage)
 		&& IS_SUPPORTED_TAILCALL (callee_info->struct_ret == caller_info->struct_ret)
 		&& IS_SUPPORTED_TAILCALL (callee_info->ret.size == caller_info->ret.size);
+
+	// valuetypes passed semantic-byvalue ABI-byref are often to a local.
+	// FIXME ABIs vary as to if this local is in the parameter area or not,
+	// so this check might not be needed.
+	ArgInfo const * const ainfo = callee_info->args + callee_sig->hasthis;
+	for (int i = 0; res && i < callee_sig->param_count; ++i) {
+		res = IS_SUPPORTED_TAILCALL (ainfo [i].storage != RegTypeStructByAddr)
+			&& IS_SUPPORTED_TAILCALL (ainfo [i].storage != RegTypeStructByAddrOnStack);
+	}
 
 	g_free (caller_info);
 	g_free (callee_info);

@@ -1362,8 +1362,10 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
 		&& IS_SUPPORTED_TAILCALL (callee_info->ret.storage == caller_info->ret.storage);
 
+	// FIXME ABIs vary as to if this local is in the parameter area or not,
+	// so this check might not be needed.
 	for (int i = 0; res && i < callee_info->nargs; ++i) {
-		res = callee_info->args [i].regtype != RegTypeStructByAddr;
+		res = IS_SUPPORTED_TAILCALL (callee_info->args [i].regtype != RegTypeStructByAddr);
 			/* An address on the callee's stack is passed as the argument */
 	}
 
