@@ -1960,7 +1960,7 @@ emit_sig_cookie (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 	MonoMethodSignature *tmp_sig;
 	int sig_reg;
 
-	if (call->tailcall)
+	if (call->tailcall) // FIXME tailcall is not always yet initialized.
 		NOT_IMPLEMENTED;
 
 	g_assert (cinfo->sig_cookie.storage == ArgOnStack);
@@ -2152,6 +2152,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 
 		t = mini_get_underlying_type (t);
 		//XXX what about ArgGSharedVtOnStack here?
+		// FIXME tailcall is not always yet initialized.
 		if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !call->tailcall) {
 			if (!t->byref) {
 				if (t->type == MONO_TYPE_R4)
@@ -2211,10 +2212,12 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		case ArgValuetypeAddrOnStack:
 		case ArgGSharedVtInReg:
 		case ArgGSharedVtOnStack: {
+			// FIXME tailcall is not always yet initialized.
 			if (ainfo->storage == ArgOnStack && !MONO_TYPE_ISSTRUCT (t) && !call->tailcall)
 				/* Already emitted above */
 				break;
 			//FIXME what about ArgGSharedVtOnStack ?
+			// FIXME tailcall is not always yet initialized.
 			if (ainfo->storage == ArgOnStack && call->tailcall) {
 				MonoInst *call_inst = (MonoInst*)call;
 				cfg->args [i]->flags |= MONO_INST_VOLATILE;

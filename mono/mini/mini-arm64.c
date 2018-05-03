@@ -2489,7 +2489,7 @@ emit_sig_cookie (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 	MonoMethodSignature *tmp_sig;
 	int sig_reg;
 
-	if (call->tailcall)
+	if (MONO_IS_TAILCALL_OPCODE (call))
 		NOT_IMPLEMENTED;
 
 	g_assert (cinfo->sig_cookie.storage == ArgOnStack);
@@ -2527,7 +2527,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 	switch (cinfo->ret.storage) {
 	case ArgVtypeInIRegs:
 	case ArgHFA:
-		if (call->tailcall)
+		if (MONO_IS_TAILCALL_OPCODE (call))
 			break;
 		/*
 		 * The vtype is returned in registers, save the return area address in a local, and save the vtype into
@@ -2543,6 +2543,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		break;
 	case ArgVtypeByRef:
 		/* Pass the vtype return address in R8 */
+		g_assert (!MONO_IS_TAILCALL_OPCODE (call) || call->vret_var == cfg->vret_addr);
 		MONO_INST_NEW (cfg, vtarg, OP_MOVE);
 		vtarg->sreg1 = call->vret_var->dreg;
 		vtarg->dreg = mono_alloc_preg (cfg);
