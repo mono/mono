@@ -817,6 +817,7 @@ TESTS_IL_SRC=			\
 	tailcall-generic-cast-conservestack-il.il \
 	tailcall-generic-cast-nocrash-il.il \
 	tailcall-member-function-in-valuetype.il \
+	tailcall-valuetype-parameter.il \
 	ldfldvt.il \
 	newobj-abstract.il
 
