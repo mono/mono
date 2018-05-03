@@ -63,7 +63,7 @@ namespace System.Net
 		string ME => $"WO({ID},{Connection?.ID ?? -1})";
 #else
 		internal readonly int ID;
-		string ME;
+		string ME = null;
 #endif
 
 		public WebOperation (HttpWebRequest request, BufferOffsetSize writeBuffer, bool isNtlmChallenge, CancellationToken cancellationToken)
