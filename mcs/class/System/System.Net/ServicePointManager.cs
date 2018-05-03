@@ -362,10 +362,9 @@ namespace System.Net
 
 			address = new Uri (address.Scheme + "://" + address.Authority);
 			
-			ServicePoint sp = null;
-			SPKey key = new SPKey (origAddress, usesProxy ? address : null, useConnect);
+			var key = new SPKey (origAddress, usesProxy ? address : null, useConnect);
 			lock (servicePoints) {
-				if (servicePoints.TryGetValue (key, out sp))
+				if (servicePoints.TryGetValue (key, out var sp))
 					return sp;
 
 				if (maxServicePoints > 0 && servicePoints.Count >= maxServicePoints)
@@ -387,8 +386,6 @@ namespace System.Net
 
 				return servicePoints.GetOrAdd (key, sp);
 			}
-			
-			return sp;
 		}
 
 		internal static void CloseConnectionGroup (string connectionGroupName)

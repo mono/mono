@@ -79,7 +79,6 @@ namespace System.Net
 			operations = new LinkedList<(ConnectionGroup, WebOperation)> ();
 			idleConnections = new LinkedList<(ConnectionGroup, WebConnection, Task)> ();
 			idleSince = DateTime.UtcNow;
-			Interlocked.Increment (ref countInstances);
 		}
 
 		[Conditional ("MONO_WEB_DEBUG")]
@@ -122,22 +121,9 @@ namespace System.Net
 		{
 			Debug ($"RUN");
 			if (Interlocked.CompareExchange (ref running, 1, 0) == 0)
-				Task.Run (() => StartScheduler ());
+				Task.Run (() => RunScheduler ());
 
 			schedulerEvent.Set ();
-		}
-
-		static int countInstances;
-		static int countRunning;
-
-		async void StartScheduler ()
-		{
-			Interlocked.Increment (ref countRunning);
-			try {
-				await RunScheduler ().ConfigureAwait (false);
-			} finally {
-				Interlocked.Decrement (ref countRunning);
-			}
 		}
 
 		async Task RunScheduler ()
@@ -409,8 +395,6 @@ namespace System.Net
 
 			ServicePointManager.RemoveServicePoint (ServicePoint);
 			ServicePoint = null;
-
-			Interlocked.Decrement (ref countInstances);
 		}
 
 		public void SendRequest (WebOperation operation, string groupName)
