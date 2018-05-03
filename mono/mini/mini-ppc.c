@@ -1362,13 +1362,10 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
 		&& IS_SUPPORTED_TAILCALL (callee_info->ret.storage == caller_info->ret.storage);
 
-	if (callee_sig->ret && MONO_TYPE_ISSTRUCT (callee_sig->ret))
-		/* An address on the callee's stack is passed as the first argument */
-		res = FALSE;
-
-	for (int i = 0; res && i < callee_info->nargs; ++i)
+	for (int i = 0; res && i < callee_info->nargs; ++i) {
 		res = callee_info->args [i].regtype != RegTypeStructByAddr;
 			/* An address on the callee's stack is passed as the argument */
+	}
 
 	g_free (caller_info);
 	g_free (callee_info);

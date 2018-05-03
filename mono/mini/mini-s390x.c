@@ -7563,22 +7563,12 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 {
 	CallInfo *caller_info = get_call_info (NULL, caller_sig);
 	CallInfo *callee_info = get_call_info (NULL, callee_sig);
-	MonoType *callee_ret;
 
 	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
 		&& IS_SUPPORTED_TAILCALL (callee_info->ret.storage == caller_info->ret.storage)
 		&& IS_SUPPORTED_TAILCALL (callee_info->struct_ret == caller_info->struct_ret)
 		&& IS_SUPPORTED_TAILCALL (callee_info->ret.size == caller_info->ret.size);
 
-	if (!res)
-		goto exit;
-
-	callee_ret = mini_get_underlying_type (callee_sig->ret);
-	if (callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && callee_info->struct_ret && callee_info->ret.size > 8)
-		/* An address on the callee's stack is passed as the first argument */
-		res = FALSE;
-
-exit:
 	g_free (caller_info);
 	g_free (callee_info);
 
