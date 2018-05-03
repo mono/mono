@@ -588,6 +588,11 @@ Controls whether the runtime should attempt to inline (the default),
 or not inline methods invocations
 .ne
 .RE
+\fB--response=FILE\fR
+Provides a response file, this instructs the Mono command to read
+other command line options from the specified file, as if the
+options had been specified on the command line.   Useful when you have
+very long command lines.
 .TP
 \fB--runtime=VERSION\fR
 Mono supports different runtime versions. The version used depends on the program
