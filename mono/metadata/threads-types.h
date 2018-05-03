@@ -91,8 +91,11 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThreadObjectHandle this_o
 void
 ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThreadHandle this_obj, MonoError *error);
 
-void ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms);
-gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this_obj, int ms);
+void
+ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error);
+
+gboolean
+ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_handle, int ms, MonoError *error);
 
 gint32
 ves_icall_System_Threading_Thread_GetDomainID (MonoError *error);
@@ -148,14 +151,19 @@ gint64 ves_icall_System_Threading_Interlocked_Increment_Long(gint64 *location);
 gint32 ves_icall_System_Threading_Interlocked_Decrement_Int(gint32 *location);
 gint64 ves_icall_System_Threading_Interlocked_Decrement_Long(gint64 * location);
 
-void ves_icall_System_Threading_Thread_Abort (MonoInternalThread *thread, MonoObject *state);
-void ves_icall_System_Threading_Thread_ResetAbort (MonoThread *this_obj);
+void
+ves_icall_System_Threading_Thread_Abort (MonoInternalThreadHandle thread_handle, MonoObjectHandle state, MonoError *error);
+
+void
+ves_icall_System_Threading_Thread_ResetAbort (MonoThreadObjectHandle this_obj, MonoError *error);
+
 MonoObject* ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThread *thread);
 
 void
 ves_icall_System_Threading_Thread_Suspend (MonoThreadObjectHandle this_obj, MonoError *error);
 
-void ves_icall_System_Threading_Thread_Resume (MonoThread *thread);
+void
+ves_icall_System_Threading_Thread_Resume (MonoThreadObjectHandle thread_handle, MonoError *error);
 void ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle thread, guint32 state, MonoError *error);
 void ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32 state, MonoError *error);
 guint32 ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error);
@@ -197,7 +205,9 @@ void ves_icall_System_Threading_Volatile_WriteDouble (void *ptr, double);
 void ves_icall_System_Threading_Volatile_Write_T (void *ptr, MonoObject *value);
 
 void ves_icall_System_Threading_Thread_MemoryBarrier (void);
-void ves_icall_System_Threading_Thread_Interrupt_internal (MonoThread *this_obj);
+
+void
+ves_icall_System_Threading_Thread_Interrupt_internal (MonoThreadObjectHandle thread_handle, MonoError *error);
 
 void
 ves_icall_System_Threading_Thread_SpinWait_nop (MonoError *error);
@@ -260,6 +270,9 @@ mono_thread_interruption_checkpoint_bool (void);
 void
 mono_thread_interruption_checkpoint_void (void);
 
+MonoExceptionHandle
+mono_thread_interruption_checkpoint_handle (void);
+
 MonoException* mono_thread_force_interruption_checkpoint_noraise (void);
 gint32* mono_thread_interruption_request_flag (void);
 
@@ -320,5 +333,9 @@ mono_threads_enter_gc_safe_region_unbalanced_internal (MonoStackData *stackdata)
 
 void
 mono_threads_exit_gc_safe_region_unbalanced_internal (gpointer cookie, MonoStackData *stackdata);
+
+// Set directory to store thread dumps captured by SIGQUIT
+void
+mono_set_thread_dump_dir(gchar* dir);
 
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

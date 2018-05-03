@@ -14,6 +14,9 @@ run: download nuget-hash-extractor.exe exec-ver exec-asm exec-msbuild
 
 run-asm: download nuget-hash-extractor.exe exec-asm
 
+exec-all:
+	mono nuget-hash-extractor.exe nugets all
+
 exec-asm:
 	mono nuget-hash-extractor.exe nugets asm
 

@@ -9,17 +9,6 @@ using System.Text;
 using System.Xml;
 using System.Threading;
 
-namespace System.Runtime.CompilerServices
-{
-	// introduced for silverlight sdk compatibility
-	internal class FriendAccessAllowedAttribute : Attribute
-	{
-		public FriendAccessAllowedAttribute ()
-		{
-		}
-	}
-}
-
 namespace System.ServiceModel
 {
 	public class EndpointIdentity {}

@@ -7,7 +7,8 @@ export PATH=${MONO_REPO_ROOT}/external/bockbuild/stage/bin:$PATH
 
 # Bundled MSBuild
 cd ${MONO_REPO_ROOT}/external/bockbuild/builds/msbuild-15/
-${TESTCMD} --label="msbuild-tests" --timeout=180m ./cibuild.sh --scope Test --host Mono --target Mono
+${TESTCMD} --label="msbuild-tests" --timeout=180m ./build.sh -host mono -configuration Release
+zip ${MONO_REPO_ROOT}/msbuild-test-results.zip artifacts/2/Release-MONO/TestResults/*
 
 # Bundled LLVM
 cd ${MONO_REPO_ROOT}/external/bockbuild/builds/mono

@@ -1658,8 +1658,8 @@ Currently, the following options are supported:
 Enables small structs alignment to 4/8 bytes.
 .TP
 \fBarm-use-fallback-tls\fR
-When this option is set on ARM, a fallback TLS will be used instead
-of the default fast TLS.
+When this option is set on ARM, a fallback thread local store will be used instead
+of the default fast thread local storage primitives.
 .TP
 \fBbreak-on-unverified\fR
 If this variable is set, when the Mono VM runs into a verification
@@ -1791,6 +1791,9 @@ This option will suspend the program when an exception occurs.
 .TP
 \fBsuspend-on-unhandled\fR
 This option will suspend the program when an unhandled exception occurs.
+.TP
+\fBthread-dump-dir=DIR\fR
+Use DIR for storage thread dumps created by SIGQUIT.
 .ne
 .RE
 .TP
