@@ -34,12 +34,12 @@ using System.Threading;
 using Novell.Directory.Ldap.Asn1;
 using Novell.Directory.Ldap.Rfc2251;
 using Novell.Directory.Ldap.Utilclass;
-using Mono.Security.Protocol.Tls;
 using Mono.Security.X509.Extensions;
 using Syscert = System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 using System.Net;
 using System.Net.Sockets;
+using System.Net.Security;
 using System.Collections;
 using System.IO;
 using System.Text;
@@ -643,9 +643,10 @@ namespace Novell.Directory.Ldap
 
 
 /****************************************************************************/
- public  bool ServerCertificateValidation(
+		public  bool ServerCertificateValidation(
                         Syscert.X509Certificate certificate,
-                        int[]                   certificateErrors)
+			Syscert.X509Chain chain,
+			SslPolicyErrors errors)
                 {
 			if (null != OnCertificateValidation)
 			{
@@ -657,7 +658,8 @@ namespace Novell.Directory.Ldap
 	
 		public bool DefaultCertificateValidationHandler(
 			Syscert.X509Certificate certificate,
-			int[]                   certificateErrors)
+			Syscert.X509Chain chain,
+			SslPolicyErrors errors)
 		{
 			bool retFlag=false;
 
@@ -750,45 +752,15 @@ namespace Novell.Directory.Ldap
 							{
 								throw new LdapException(ExceptionMessages.SSL_PROVIDER_MISSING, LdapException.SSL_PROVIDER_NOT_FOUND, null);
 							}
-							Type tSslClientStream = a.GetType("Mono.Security.Protocol.Tls.SslClientStream");
-							BindingFlags flags = (BindingFlags.NonPublic  | BindingFlags.Public |
-								BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-	
-							object[] consArgs = new object[4];
-							consArgs[0] = nstream;
-							consArgs[1] = host;
-							consArgs[2] = false;
-							Type tSecurityProtocolType = a.GetType("Mono.Security.Protocol.Tls.SecurityProtocolType");
-							Enum objSPType = (Enum)(Activator.CreateInstance(tSecurityProtocolType));
-							int nSsl3Val = (int) Enum.Parse(tSecurityProtocolType, "Ssl3");
-							int nTlsVal = (int) Enum.Parse(tSecurityProtocolType, "Tls");
-							consArgs[3] = Enum.ToObject(tSecurityProtocolType, nSsl3Val | nTlsVal);
-	
-							object objSslClientStream = 
-								Activator.CreateInstance(tSslClientStream, consArgs);
-	
-							// Register ServerCertValidationDelegate handler
-							PropertyInfo pi = tSslClientStream.GetProperty("ServerCertValidationDelegate");
-							pi.SetValue(objSslClientStream, 
-								Delegate.CreateDelegate(pi.PropertyType, this, "ServerCertificateValidation"),
-								null);
-							
+
+							// FIXME: Pass the custom validation callback.
+							//        The erorr code -2146762481 means SslPolicyErrors.RemoteCertificateNameMismatch.
+							var stream = new SslStream (nstream, false);
+							stream.AuthenticateAsClient (host);
+
 							// Get the in and out streams
-							in_Renamed = (System.IO.Stream) objSslClientStream;
-							out_Renamed = (System.IO.Stream) objSslClientStream;
-							/*
-							SslClientStream sslstream = new SslClientStream(
-												nstream,
-												host,
-												false,
-												Mono.Security.Protocol.Tls.SecurityProtocolType.Ssl3|Mono.Security.Protocol.Tls.SecurityProtocolType.Tls);
-							sslstream.ServerCertValidationDelegate += new CertificateValidationCallback(ServerCertificateValidation);*/
-							//						byte[] buffer = new byte[0];
-							//						sslstream.Read(buffer, 0, buffer.Length);
-							//						sslstream.doHandshake();												
-							/*
-							in_Renamed = (System.IO.Stream) sslstream;
-							out_Renamed = (System.IO.Stream) sslstream;*/
+							in_Renamed = stream;
+							out_Renamed = stream;
 						}
 						else{
 							socket = new System.Net.Sockets.TcpClient(host, port);				
@@ -1264,52 +1236,15 @@ namespace Novell.Directory.Ldap
 				sock.Connect(ephost);
 */
 //				NetworkStream nstream = new NetworkStream(this.socket,true);
-				// Load Mono.Security.dll
-				Assembly a = null;
-				try
-				{
-					a = Assembly.LoadFrom("Mono.Security.dll");
-				}
-				catch(System.IO.FileNotFoundException)
-				{
-					throw new LdapException(ExceptionMessages.SSL_PROVIDER_MISSING, LdapException.SSL_PROVIDER_NOT_FOUND, null);							
-				}
-				Type tSslClientStream = a.GetType("Mono.Security.Protocol.Tls.SslClientStream");
-				BindingFlags flags = (BindingFlags.NonPublic  | BindingFlags.Public |
-					BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
-				object[] consArgs = new object[4];
-				consArgs[0] = socket.GetStream();
-				consArgs[1] = host;
-				consArgs[2] = false;
-				Type tSecurityProtocolType = a.GetType("Mono.Security.Protocol.Tls.SecurityProtocolType");
-				Enum objSPType = (Enum)(Activator.CreateInstance(tSecurityProtocolType));
-				int nSsl3Val = (int) Enum.Parse(tSecurityProtocolType, "Ssl3");
-				int nTlsVal = (int) Enum.Parse(tSecurityProtocolType, "Tls");
-				consArgs[3] = Enum.ToObject(tSecurityProtocolType, nSsl3Val | nTlsVal);
+				// FIXME: Pass the custom validation callback.
+				//        The erorr code -2146762481 means SslPolicyErrors.RemoteCertificateNameMismatch.
+				var stream = new SslStream (nstream, false);
+				stream.AuthenticateAsClient (host);
 
-				object objSslClientStream = 
-					Activator.CreateInstance(tSslClientStream, consArgs);
-
-				// Register ServerCertValidationDelegate handler
-				EventInfo ei = tSslClientStream.GetEvent("ServerCertValidationDelegate");
-				ei.AddEventHandler(objSslClientStream, 
-					Delegate.CreateDelegate(ei.EventHandlerType, this, "ServerCertificateValidation"));
-						
 				// Get the in and out streams
-				in_Renamed = (System.IO.Stream) objSslClientStream;
-				out_Renamed = (System.IO.Stream) objSslClientStream;
-
-				/*
-				SslClientStream sslstream = new SslClientStream(
-									socket.GetStream(),
-									nstream,
-									host,
-									false,
-									Mono.Security.Protocol.Tls.SecurityProtocolType.Ssl3| Mono.Security.Protocol.Tls.SecurityProtocolType.Tls);
-				sslstream.ServerCertValidationDelegate = new CertificateValidationCallback(ServerCertificateValidation);
-				this.in_Renamed = (System.IO.Stream) sslstream;
-				this.out_Renamed = (System.IO.Stream) sslstream;*/
+				in_Renamed = stream;
+				out_Renamed = stream;
 			}
 			catch (System.IO.IOException ioe)
 			{
