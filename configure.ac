@@ -4164,41 +4164,21 @@ AC_CHECK_LIB([iconv], [locale_charset],[],[AC_CHECK_LIB([charset], [locale_chars
 AC_CHECK_HEADER(alloca.h, [HAVE_ALLOCA_H=1], [HAVE_ALLOCA_H=0])
 AC_SUBST(HAVE_ALLOCA_H)
 
-if test $ac_cv_sizeof_void_p = $ac_cv_sizeof_int; then
-   GPOINTER_TO_INT="((gint) (ptr))"
-   GPOINTER_TO_UINT="((guint) (ptr))"
-   GINT_TO_POINTER="((gpointer) (v))"
-   GUINT_TO_POINTER="((gpointer) (v))"
-   GSIZE="int"
-   GSIZE_FORMAT='"u"'
-elif test $ac_cv_sizeof_void_p = $ac_cv_sizeof_long; then
-   GPOINTER_TO_INT="((gint)(long) (ptr))"
-   GPOINTER_TO_UINT="((guint)(long) (ptr))"
-   GINT_TO_POINTER="((gpointer)(glong) (v))"
-   GUINT_TO_POINTER="((gpointer)(gulong) (v))"
-   GSIZE="long"
-   GSIZE_FORMAT='"lu"'
-elif test $ac_cv_sizeof_void_p = $ac_cv_sizeof_long_long; then
-   GPOINTER_TO_INT="((gint)(long long) (ptr))"
-   GPOINTER_TO_UINT="((guint)(unsigned long long) (ptr))"
-   GINT_TO_POINTER="((gpointer)(long long) (v))"
-   GUINT_TO_POINTER="((gpointer)(unsigned long long) (v))"
-   GSIZE="long long"
-   GSIZE_FORMAT='"I64u"'
+# If size_t/ptrdiff_t is correct, use it. Otherwise C99 [u]intptr_t.
+# This provides for an exact match with functions that
+# take size_t like malloc and pthread_attr_getstacksize.
+# uintptr_t is not quite the same.
+
+if test $ac_cv_sizeof_void_p = $ac_cv_sizeof_size_t; then
+   GSIZE="size_t"
+   GSSIZE="ptrdiff_t"
 else
-   AC_MSG_ERROR([unsupported pointer size])
+   GSIZE="uintptr_t"
+   GSSIZE="intptr_t"
 fi
 
-AC_SUBST(GPOINTER_TO_INT)
-AC_SUBST(GPOINTER_TO_UINT)
-AC_SUBST(GINT_TO_POINTER)
-AC_SUBST(GUINT_TO_POINTER)
 AC_SUBST(GSIZE)
-AC_SUBST(GSIZE_FORMAT)
-AC_SUBST(G_GUINT64_FORMAT)
-AC_SUBST(G_GINT64_FORMAT)
-AC_SUBST(G_GUINT32_FORMAT)
-AC_SUBST(G_GINT32_FORMAT)
+AC_SUBST(GSSIZE)
 
 #
 # END OF EGLIB CHECKS
