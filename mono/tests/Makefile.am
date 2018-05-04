@@ -750,6 +750,7 @@ TESTS_IL_SRC=			\
 	tailcall-virt.il 	\
 	tailcall-rgctxa.il 	\
 	tailcall-rgctxb.il 	\
+	tailcall-rgctxb-static.il \
 	tailcall-mrgctx.il 	\
 	tailcall-interface-conservestack.il \
 	tailcall-interface-justrun.il \
@@ -1254,8 +1255,32 @@ LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 # appdomain-marshalbyref-assemblyload.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=49308
 # threads-init.exe: runs out of system threads
 # dim-constrainedcall.exe: fails on dontnet as well (https://github.com/dotnet/coreclr/issues/15353)
-# tailcall-rgctxb.exe seems like it would but it does not, needs debugging
-# tailcall-member-function-in-valuetype.exe never works, for understood reason
+
+#
+# tailcall-rgctxb.exe
+# tailcall-member-function-in-valuetype.exe
+#	Any time we have a byref/out parameter, be it
+#	an integer, or valuetype-this, we pessimistically
+#	will never tailcall.
+#
+#	These two cases have valuetype-this.
+#	tailcall-rgctxb.exe strives for additional coverage
+#	related to generic context, but both tests suffer from
+#	the same problem.
+#
+#	I suggest we insert range checks.
+#	If all parameters are outside the frame,
+#	do a tailcall. If any are not, regular call.
+#
+#	It'll be a little bigger and have a slowdown,
+#	and a speedup (stack locality speeds things up),
+#	and enable code that does not work otherwise.
+#
+#	Again, tailcall is not just an optimization.
+#	It lets code process large data within small stack.
+#	If it was just an optimization, desktop CLR would not
+#	go so far out of their way to implement it.
+
 KNOWN_FAILING_TESTS = \
 	delegate-async-exception.exe	\
 	bug-348522.2.exe	\
