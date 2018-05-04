@@ -33,6 +33,7 @@ TAILCALL_DISABLED_TESTS_COMPILE += \
 	tailcall/coreclr/JIT/opt/ETW/TailCallCases.exe
 
 # FIXME Some of these sound like negative tests -- "badtailcall". Verify and automate.
+# FIXME investigate and explain every test failure.
 TAILCALL_DISABLED_TESTS_RUN = \
 	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.exe \
 	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/tailwinapi.exe \
@@ -69,6 +70,7 @@ TAILCALL_DISABLED_TESTS_RUN = \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe \
 	$(TAILCALL_DISABLED_TESTS_COMPILE)
 
+# FIXME investigate and explain every test failure.
 TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_gc.exe \
@@ -78,8 +80,7 @@ TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.exe \
-	tailcall/coreclr/JIT/opt/ETW/TailCallCases.exe
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.exe
 
 if FULL_AOT_TESTS
 
@@ -113,41 +114,6 @@ TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/tailcall_AV.exe \
 	tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.exe
 
-<<<<<<< HEAD
-# Tests fail no assert, print that they pass, but exit with non-zero.
-# These are effectively passing, but need change to indicate so.
-# Leaving us with no FullAOT tests.
-TAILCALL_DISABLED_TESTS_RUN += \
-	tailcall/coreclr/JIT/CodeGenBringUpTests/RecursiveTailCall.exe \
-	tailcall/coreclr/JIT/Directed/IL/Tailcall/JitTailcall1.exe \
-	tailcall/coreclr/JIT/Methodical/Boxing/boxunbox/tailcall.exe \
-	tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.exe \
-	tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfault_tail.exe \
-	tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/deep_gc.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/deep_inst.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/deep_value.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/deep_value.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/deep_virt.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.exe \
-	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallCandidates.exe \
-	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.exe \
-	tailcall/coreclr/JIT/opt/FastTailCall/GitHubIssue12479.exe \
-	tailcall/coreclr/JIT/opt/FastTailCall/StackFixup.exe \
-	tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.exe
-
-=======
->>>>>>> [Tailcall] Enable CoreCLR tests, having changed success return value from 100 to 0.
 # This test is also slow, though its sleep can be dialed down.
 #TAILCALL_DISABLED_TESTS_RUN += tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.exe
 
