@@ -1028,6 +1028,7 @@ PLATFORM_DISABLED_TESTS += \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe
+PLATFORM_DISABLED_TESTS += jmp1.exe
 endif
 
 if MIPS
