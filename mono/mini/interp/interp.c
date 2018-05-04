@@ -4047,7 +4047,7 @@ array_constructed:
 			if (MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (c)))
 				mono_gc_wbarrier_generic_store (sp [-2].data.p, sp [-1].data.p);
 			else
-				stackval_from_data (m_class_get_byval_arg (c), sp [-2].data.p, (char *) &sp [-1].data.p, FALSE);
+				stackval_to_data (m_class_get_byval_arg (c), &sp [-1], sp [-2].data.p, FALSE);
 			sp -= 2;
 			MINT_IN_BREAK;
 		}
