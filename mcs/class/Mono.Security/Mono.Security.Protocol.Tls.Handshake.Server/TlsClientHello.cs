@@ -56,7 +56,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			this.selectCipherSuite();
 			this.selectCompressionMethod();
 
-			this.Context.SessionId			= this.sessionId;
 			this.Context.ClientRandom		= this.random;
 			this.Context.ProtocolNegotiated	= true;
 		}
