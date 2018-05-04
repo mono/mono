@@ -207,7 +207,9 @@ public class ServicePointTest
 			req.ServicePoint.MaxIdleTime = 1;
 
 			req.BeginGetRequestStream (new AsyncCallback (GetRequestStreamCallback), req);
-			Thread.Sleep (1);
+			// Use a slightly larger value here to give the ServicePointScheduler time
+			// to actually clean up.
+			Thread.Sleep (50);
 			req.ServicePoint.CloseConnectionGroup (req.ConnectionGroupName);
 		}
 	}

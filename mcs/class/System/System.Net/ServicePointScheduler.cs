@@ -36,9 +36,8 @@ namespace System.Net
 {
 	class ServicePointScheduler
 	{
-		public ServicePoint ServicePoint {
-			get;
-			private set;
+		ServicePoint ServicePoint {
+			get; set;
 		}
 
 		public int MaxIdleTime {
@@ -393,6 +392,7 @@ namespace System.Net
 			idleConnections = null;
 			defaultGroup = null;
 
+			ServicePoint.FreeServicePoint ();
 			ServicePointManager.RemoveServicePoint (ServicePoint);
 			ServicePoint = null;
 		}
@@ -410,25 +410,23 @@ namespace System.Net
 
 		public bool CloseConnectionGroup (string groupName)
 		{
-			lock (ServicePoint) {
-				ConnectionGroup group;
-				if (string.IsNullOrEmpty (groupName))
-					group = defaultGroup;
-				else if (groups == null || !groups.TryGetValue (groupName, out group))
-					return false;
+			ConnectionGroup group;
+			if (string.IsNullOrEmpty (groupName))
+				group = defaultGroup;
+			else if (groups == null || !groups.TryGetValue (groupName, out group))
+				return false;
 
-				Debug ($"CLOSE CONNECTION GROUP: group={group.ID}");
+			Debug ($"CLOSE CONNECTION GROUP: group={group.ID}");
 
-				if (group != defaultGroup) {
-					groups.Remove (groupName);
-					if (groups.Count == 0)
-						groups = null;
-				}
-
-				group.Close ();
-				Run ();
-				return true;
+			if (group != defaultGroup) {
+				groups.Remove (groupName);
+				if (groups.Count == 0)
+					groups = null;
 			}
+
+			group.Close ();
+			Run ();
+			return true;
 		}
 
 		ConnectionGroup GetConnectionGroup (string name)

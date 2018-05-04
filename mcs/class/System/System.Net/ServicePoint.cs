@@ -55,6 +55,7 @@ namespace System.Net
 		bool tcp_keepalive;
 		int tcp_keepalive_time;
 		int tcp_keepalive_interval;
+		bool disposed;
 
 		// Constructors
 
@@ -62,6 +63,8 @@ namespace System.Net
 		{
 			Key = key;
 			this.uri = uri;
+			this.connectionLimit = connectionLimit;
+			this.maxIdleTime = maxIdleTime;
 
 			Scheduler = new ServicePointScheduler (this, connectionLimit, maxIdleTime);
 		}
@@ -70,8 +73,8 @@ namespace System.Net
 			get;
 		}
 
-		internal ServicePointScheduler Scheduler {
-			get;
+		ServicePointScheduler Scheduler {
+			get; set;
 		}
 
 		// Properties
@@ -100,9 +103,16 @@ namespace System.Net
 			}
 		}
 
+		int connectionLimit;
+		int maxIdleTime;
+
 		public int ConnectionLimit {
-			get { return Scheduler.ConnectionLimit; }
-			set { Scheduler.ConnectionLimit = value; }
+			get { return connectionLimit; }
+			set {
+				connectionLimit = value;
+				if (!disposed)
+					Scheduler.ConnectionLimit = value;
+			}
 		}
 
 		public string ConnectionName {
@@ -111,19 +121,25 @@ namespace System.Net
 
 		public int CurrentConnections {
 			get {
-				return Scheduler.CurrentConnections;
+				return disposed ? 0 : Scheduler.CurrentConnections;
 			}
 		}
 
 		public DateTime IdleSince {
 			get {
+				if (disposed)
+					return DateTime.MinValue;
 				return Scheduler.IdleSince.ToLocalTime ();
 			}
 		}
 
 		public int MaxIdleTime {
-			get { return Scheduler.MaxIdleTime; }
-			set { Scheduler.MaxIdleTime = value; }
+			get { return maxIdleTime; }
+			set {
+				maxIdleTime = value;
+				if (!disposed)
+					Scheduler.MaxIdleTime = value;
+			}
 		}
 
 		public virtual Version ProtocolVersion {
@@ -270,6 +286,8 @@ namespace System.Net
 		internal void SendRequest (WebOperation operation, string groupName)
 		{
 			lock (this) {
+				if (disposed)
+					throw new ObjectDisposedException (typeof (ServicePoint).FullName);
 				Scheduler.SendRequest (operation, groupName);
 			}
 		}
@@ -277,8 +295,16 @@ namespace System.Net
 		public bool CloseConnectionGroup (string connectionGroupName)
 		{
 			lock (this) {
+				if (disposed)
+					return true;
 				return Scheduler.CloseConnectionGroup (connectionGroupName);
 			}
+		}
+
+		internal void FreeServicePoint ()
+		{
+			disposed = true;
+			Scheduler = null;
 		}
 
 		//
