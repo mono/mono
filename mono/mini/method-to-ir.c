@@ -8433,8 +8433,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				link_bblock (cfg, cfg->cbb, end_bblock);
 			} else {
 				/* Handle tailcalls similarly to calls */
-				DISABLE_AOT (cfg);
-
 				emit_tailcall_parameters (cfg, fsig);
 				MONO_INST_NEW_CALL (cfg, call, OP_TAILCALL);
 				call->method = cmethod;
