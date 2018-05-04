@@ -46,7 +46,6 @@ TAILCALL_DISABLED_TESTS_RUN = \
 	tailcall/coreclr/JIT/IL_Conformance/Old/Base/tailcall.exe \
 	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_call.exe \
 	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_calli.exe \
-	tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_obj.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.exe \
