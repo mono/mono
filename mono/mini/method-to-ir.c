@@ -8444,7 +8444,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					call->vret_var = cfg->vret_addr;
 
 				mono_arch_emit_call (cfg, call);
-				call->tailcall = TRUE;
+				call->tailcall = TRUE;  // Must be after mono_arch_emit_call().
 				cfg->param_area = MAX (cfg->param_area, call->stack_usage);
 				MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
 				start_new_bblock = 1;
