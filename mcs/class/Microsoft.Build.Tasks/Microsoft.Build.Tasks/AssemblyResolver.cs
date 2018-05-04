@@ -67,8 +67,30 @@ namespace Microsoft.Build.Tasks {
 				search_log.Clear ();
 		}
 
-		string GetGacPath ()
+		HashSet<string> GetGacPaths ()
 		{
+			var paths = new HashSet<string> ();
+
+			var main_path = GetMainGacPath ();
+			if (!string.IsNullOrEmpty (main_path))
+				paths.Add (main_path);
+
+			string env_paths = Environment.GetEnvironmentVariable ("MONO_GAC_PREFIX");
+			var prefixes = env_paths.Split (new char[] { Path.PathSeparator },
+				StringSplitOptions.RemoveEmptyEntries);
+
+			foreach (var prefix in prefixes) {
+				var full_path = Path.Combine (Path.Combine (Path.Combine (prefix, "lib"), "mono"), "gac");
+				if (!Directory.Exists (full_path))
+					continue;
+
+				paths.Add (full_path);
+			}
+
+			return paths;
+		}
+
+		string GetMainGacPath () {
 			// NOTE: code from mcs/tools/gacutil/driver.cs
 			PropertyInfo gac = typeof (System.Environment).GetProperty ("GacPath", BindingFlags.Static | BindingFlags.NonPublic);
 
@@ -81,9 +103,18 @@ namespace Microsoft.Build.Tasks {
 
 		void GatherGacAssemblies ()
 		{
-			string gac_path = GetGacPath ();
-			if (gac_path == null)
+			var gac_paths = GetGacPaths ();
+
+			if (gac_paths.Count == 0)
 				throw new InvalidOperationException ("XBuild must be run on Mono runtime");
+
+			foreach (var path in gac_paths) {
+				GatherGacAssembliesIn (path);
+			}
+		}
+
+		void GatherGacAssembliesIn (string gac_path)
+		{
 			if (!Directory.Exists (gac_path))
 				return; // in case mono isn't "installed".
 
