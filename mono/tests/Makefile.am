@@ -28,6 +28,10 @@ TAILCALL_DISABLED_TESTS_COMPILE = \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyTransparentLibraryWithPrefix.exe \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyVerifiableLibraryWithPrefix.exe
 
+# FIXME valuetype parameter.
+TAILCALL_DISABLED_TESTS_COMPILE += \
+	tailcall/coreclr/JIT/opt/ETW/TailCallCases.exe
+
 # FIXME Some of these sound like negative tests -- "badtailcall". Verify and automate.
 TAILCALL_DISABLED_TESTS_RUN = \
 	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.exe \
@@ -130,7 +134,6 @@ TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.exe \
-	tailcall/coreclr/JIT/opt/ETW/TailCallCases.exe \
 	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallCandidates.exe \
 	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.exe \
 	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.exe \
