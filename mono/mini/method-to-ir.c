@@ -8439,9 +8439,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				emit_tailcall_parameters (cfg, fsig);
 				MONO_INST_NEW_CALL (cfg, call, OP_TAILCALL);
 				call->method = cmethod;
-				// FIXME Other initialization of the tailcall field occurs after
-				// it is used. So this is the only "real" use and needs more attention.
-				call->tailcall = TRUE;
 				call->signature = fsig;
 				call->args = (MonoInst **)mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * n);
 				call->inst.inst_p0 = cmethod;
@@ -8452,6 +8449,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					call->vret_var = cfg->vret_addr;
 
 				mono_arch_emit_call (cfg, call);
+				call->tailcall = TRUE;
 				cfg->param_area = MAX(cfg->param_area, call->stack_usage);
 				MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
 			}
