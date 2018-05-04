@@ -82,6 +82,10 @@ TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.exe
 
+if X86
+TAILCALL_DISABLED_TESTS_RUN += tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.exe
+endif
+
 if FULL_AOT_TESTS
 
 # FullAOT Assertion at method-to-ir.c:9203, condition `*ip == CEE_RET' not met
@@ -97,7 +101,6 @@ TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/Directed/zeroinit/tail.exe \
 	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_call.exe \
 	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_calli.exe \
-	tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/Desktop/thread-race.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_obj.exe \
@@ -892,6 +895,7 @@ PLATFORM_DISABLED_TESTS += tailcall/2.exe
 PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/8273.exe
+PLATFORM_DISABLED_TESTS += tailcall-rgctxb-static.exe
 
 endif
 
@@ -1296,6 +1300,7 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	tailcall-mrgctx.exe \
 	tailcall-rgctxa.exe \
 	tailcall-rgctxb.exe \
+	tailcall-rgctxb-static.exe \
 	tailcall-virt.exe \
 	tailcall-return-valuetype.exe \
 	tailcall/fsharp-deeptail.exe \
