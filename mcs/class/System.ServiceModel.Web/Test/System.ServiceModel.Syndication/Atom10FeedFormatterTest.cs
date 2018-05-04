@@ -171,7 +171,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 			StringWriter sw = new StringWriter ();
 			using (XmlWriter w = CreateWriter (sw))
 				new Atom10FeedFormatter (feed).WriteTo (w);
-			Assert.AreEqual ("<feed xml:base=\"http://mono-project.com/\" xmlns=\"http://www.w3.org/2005/Atom\"><title type=\"text\"></title><id>XXX</id><rights type=\"text\">No rights reserved</rights><updated>2008-01-01T00:00:00Z</updated><subtitle type=\"text\">A sample feed for unit testing</subtitle><logo>http://mono-project.com/images/mono.png</logo><generator>mono test generator</generator></feed>", DummyId (sw.ToString ()));
+			Assert.AreEqual ("<feed xml:base=\"http://mono-project.com/\" xmlns=\"http://www.w3.org/2005/Atom\"><title type=\"text\"></title><subtitle type=\"text\">A sample feed for unit testing</subtitle><id>XXX</id><rights type=\"text\">No rights reserved</rights><updated>2008-01-01T00:00:00Z</updated><logo>http://mono-project.com/images/mono.png</logo><generator>mono test generator</generator></feed>", DummyId (sw.ToString ()));
 		}
 
 		[Test]

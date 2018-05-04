@@ -43,7 +43,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618,169,612,219,168
 TEST_NUNITLITE_APP_CONFIG_GLOBAL=Test/test-config-file
 
 USE_XTEST_REMOTE_EXECUTOR = YES
-XTEST_LIB_REFS = System System.Core System.Xml Facades/System.Text.Encoding.CodePages Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation 
+XTEST_LIB_REFS = System System.Core System.Xml Facades/System.Text.Encoding.CodePages Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation Facades/System.Text.RegularExpressions
 
 EXTRA_DISTFILES = \
 	$(wildcard Test/System.Data/*.xml)		\
