@@ -70,7 +70,42 @@ static mono_mutex_t mini_arch_mutex;
 #define CALLCONV_IS_STDCALL(sig) ((sig)->pinvoke && ((sig)->call_convention == MONO_CALL_STDCALL || (sig)->call_convention == MONO_CALL_THISCALL))
 #endif
 
-#define X86_IS_CALLEE_SAVED_REG(reg) (((reg) == X86_EBX) || ((reg) == X86_EDI) || ((reg) == X86_ESI))
+#define callee_saved_regs_count 3
+
+typedef struct _MonoX86CalleeSavedRegisters {
+	int count;
+	int bitset;
+	int push [callee_saved_regs_count];
+	int pop [callee_saved_regs_count];
+	int monolmf [callee_saved_regs_count + 1];          // +1 for EBP special case
+	int monolmf_offset [callee_saved_regs_count + 1];   // +1 for EBP special case
+} MonoX86CalleeSavedRegisters;
+
+const static MonoX86CalleeSavedRegisters
+callee_saved_regs = {
+	callee_saved_regs_count,                            // count
+	(1 << X86_EBX) | (1 << X86_EDI) | (1 << X86_ESI),   // bitset
+	{ X86_EBX, X86_EDI, X86_ESI },                      // push
+	{ X86_ESI, X86_EDI, X86_EBX },                      // pop
+	{ X86_EBX, X86_EDI, X86_ESI, X86_EBP },             // monolmf -- same as push but order does not matter since move is used.
+	{                                                   // monolmf_offset; order does not really matter, but must match monolmf above.
+		MONO_STRUCT_OFFSET (MonoLMF, ebx),
+		MONO_STRUCT_OFFSET (MonoLMF, edi),
+		MONO_STRUCT_OFFSET (MonoLMF, esi),
+		MONO_STRUCT_OFFSET (MonoLMF, ebp),
+	}
+};
+
+#undef callee_saved_regs_count
+
+static int
+count_set_bits (int set)
+{
+	int result = 0;
+	for (int i = 0; i < 31; ++i)
+		result += (set & (1 << i)) != 0;
+	return result;
+}
 
 #define OP_SEQ_POINT_BP_OFFSET 7
 
@@ -1050,25 +1085,15 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	if (cfg->has_atomic_add_i4 || cfg->has_atomic_exchange_i4) {
 		/* The opcode implementations use callee-saved regs as scratch regs by pushing and pop-ing them, but that is not async safe */
-		cfg->used_int_regs |= (1 << X86_EBX) | (1 << X86_EDI) | (1 << X86_ESI);
+		cfg->used_int_regs |= callee_saved_regs.bitset;
 	}
 
-	/* Reserve space to save LMF and caller saved registers */
+	/* Reserve space to save LMF and callee saved registers */
 
 	if (cfg->method->save_lmf) {
 		/* The LMF var is allocated normally */
 	} else {
-		if (cfg->used_int_regs & (1 << X86_EBX)) {
-			offset += 4;
-		}
-
-		if (cfg->used_int_regs & (1 << X86_EDI)) {
-			offset += 4;
-		}
-
-		if (cfg->used_int_regs & (1 << X86_ESI)) {
-			offset += 4;
-		}
+		offset += 4 * count_set_bits (cfg->used_int_regs & callee_saved_regs.bitset);
 	}
 
 	switch (cinfo->ret.storage) {
@@ -2470,14 +2495,15 @@ mono_x86_emit_tls_set (guint8* code, int sreg, int tls_offset)
 static guint8*
 emit_setup_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset, int cfa_offset)
 {
-	/* save all caller saved regs */
-	x86_mov_membase_reg (code, cfg->frame_reg, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, ebx), X86_EBX, sizeof (mgreg_t));
-	mono_emit_unwind_op_offset (cfg, code, X86_EBX, - cfa_offset + lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, ebx));
-	x86_mov_membase_reg (code, cfg->frame_reg, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, edi), X86_EDI, sizeof (mgreg_t));
-	mono_emit_unwind_op_offset (cfg, code, X86_EDI, - cfa_offset + lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, edi));
-	x86_mov_membase_reg (code, cfg->frame_reg, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, esi), X86_ESI, sizeof (mgreg_t));
-	mono_emit_unwind_op_offset (cfg, code, X86_ESI, - cfa_offset + lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, esi));
-	x86_mov_membase_reg (code, cfg->frame_reg, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, ebp), X86_EBP, sizeof (mgreg_t));
+	/* save all callee saved regs */
+
+	for (int i = 0; i < callee_saved_regs.count + 1; ++i) {
+		int const reg = callee_saved_regs.monolmf [i];
+		int const monolmf_offset = callee_saved_regs.monolmf_offset [i];
+		x86_mov_membase_reg (code, cfg->frame_reg, lmf_offset + monolmf_offset, reg, sizeof (mgreg_t));
+		if (reg != X86_EBP)
+			mono_emit_unwind_op_offset (cfg, code, reg, - cfa_offset + lmf_offset + monolmf_offset);
+	}
 
 	/* save the current IP */
 	if (cfg->compile_aot) {
@@ -3203,20 +3229,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				x86_mov_reg_membase (code, X86_ECX, sreg1, ins->inst_offset, 4);
 
 			/* restore callee saved registers */
-			for (i = 0; i < X86_NREG; ++i)
-				if (X86_IS_CALLEE_SAVED_REG (i) && cfg->used_int_regs & (1 << i))
-					pos -= 4;
-			if (cfg->used_int_regs & (1 << X86_ESI)) {
-				x86_mov_reg_membase (code, X86_ESI, X86_EBP, pos, 4);
-				pos += 4;
-			}
-			if (cfg->used_int_regs & (1 << X86_EDI)) {
-				x86_mov_reg_membase (code, X86_EDI, X86_EBP, pos, 4);
-				pos += 4;
-			}
-			if (cfg->used_int_regs & (1 << X86_EBX)) {
-				x86_mov_reg_membase (code, X86_EBX, X86_EBP, pos, 4);
-				pos += 4;
+			pos -= 4 * count_set_bits (cfg->used_int_regs & callee_saved_regs.bitset);
+
+			for (i = 0; i < callee_saved_regs.count; ++i) {
+				int const reg = callee_saved_regs.pop [i];
+				if (cfg->used_int_regs & (1 << reg)) {
+					x86_mov_reg_membase (code, reg, X86_EBP, pos, 4);
+					pos += 4;
+				}
 			}
 
 			/* Copy arguments on the stack to our argument area */
@@ -5202,29 +5222,16 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	pos = 0;
 
 	if (!method->save_lmf) {
-		if (cfg->used_int_regs & (1 << X86_EBX)) {
-			x86_push_reg (code, X86_EBX);
-			pos += 4;
-			cfa_offset += sizeof (gpointer);
-			mono_emit_unwind_op_offset (cfg, code, X86_EBX, - cfa_offset);
-			/* These are handled automatically by the stack marking code */
-			mini_gc_set_slot_type_from_cfa (cfg, - cfa_offset, SLOT_NOREF);
-		}
-
-		if (cfg->used_int_regs & (1 << X86_EDI)) {
-			x86_push_reg (code, X86_EDI);
-			pos += 4;
-			cfa_offset += sizeof (gpointer);
-			mono_emit_unwind_op_offset (cfg, code, X86_EDI, - cfa_offset);
-			mini_gc_set_slot_type_from_cfa (cfg, - cfa_offset, SLOT_NOREF);
-		}
-
-		if (cfg->used_int_regs & (1 << X86_ESI)) {
-			x86_push_reg (code, X86_ESI);
-			pos += 4;
-			cfa_offset += sizeof (gpointer);
-			mono_emit_unwind_op_offset (cfg, code, X86_ESI, - cfa_offset);
-			mini_gc_set_slot_type_from_cfa (cfg, - cfa_offset, SLOT_NOREF);
+		for (int i = 0; i < callee_saved_regs.count; ++i) {
+			int const reg = callee_saved_regs.push [i];
+			if (cfg->used_int_regs & (1 << reg)) {
+				x86_push_reg (code, reg);
+				pos += 4;
+				cfa_offset += sizeof (gpointer);
+				mono_emit_unwind_op_offset (cfg, code, reg, - cfa_offset);
+				/* These are handled automatically by the stack marking code */
+				mini_gc_set_slot_type_from_cfa (cfg, - cfa_offset, SLOT_NOREF);
+			}
 		}
 	}
 
@@ -5393,16 +5400,11 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	if (method->save_lmf) {
 		gint32 lmf_offset = cfg->lmf_var->inst_offset;
 
-		/* restore caller saved regs */
-		if (cfg->used_int_regs & (1 << X86_EBX)) {
-			x86_mov_reg_membase (code, X86_EBX, cfg->frame_reg, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, ebx), 4);
-		}
-
-		if (cfg->used_int_regs & (1 << X86_EDI)) {
-			x86_mov_reg_membase (code, X86_EDI, cfg->frame_reg, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, edi), 4);
-		}
-		if (cfg->used_int_regs & (1 << X86_ESI)) {
-			x86_mov_reg_membase (code, X86_ESI, cfg->frame_reg, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, esi), 4);
+		/* restore callee saved regs */
+		for (int i = 0; i < callee_saved_regs.count; ++i) {
+			int const reg = callee_saved_regs.monolmf [i];
+			if (cfg->used_int_regs & (1 << reg))
+				x86_mov_reg_membase (code, reg, cfg->frame_reg, lmf_offset + callee_saved_regs.monolmf_offset [i], 4);
 		}
 
 		/* EBP is restored by LEAVE */
@@ -5418,14 +5420,10 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 			x86_lea_membase (code, X86_ESP, X86_EBP, pos);
 		}
 
-		if (cfg->used_int_regs & (1 << X86_ESI)) {
-			x86_pop_reg (code, X86_ESI);
-		}
-		if (cfg->used_int_regs & (1 << X86_EDI)) {
-			x86_pop_reg (code, X86_EDI);
-		}
-		if (cfg->used_int_regs & (1 << X86_EBX)) {
-			x86_pop_reg (code, X86_EBX);
+		for (int i = 0; i < callee_saved_regs.count; ++i) {
+			int const reg = callee_saved_regs.pop [i];
+			if (cfg->used_int_regs & (1 << reg))
+				x86_pop_reg (code, reg);
 		}
 	}
 
