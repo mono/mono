@@ -8413,12 +8413,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			fsig = mono_method_signature (cmethod);
 			n = fsig->param_count + fsig->hasthis;
-			if (cfg->llvm_only) {
-				MonoInst **args;
 
-				args = (MonoInst **)mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * n);
-				for (i = 0; i < n; ++i)
-					EMIT_NEW_ARGLOAD (cfg, args [i], i);
+			MonoInst ** const args = (MonoInst **)mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * n);
+
+			for (i = 0; i < n; ++i)
+				EMIT_NEW_ARGLOAD (cfg, args [i], i);
+
+			if (cfg->llvm_only) {
 				ins = mono_emit_method_call_full (cfg, cmethod, fsig, TRUE, args, NULL, NULL, NULL);
 				/*
 				 * The code in mono-basic-block.c treats the rest of the code as dead, but we
@@ -8430,8 +8431,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->inst_target_bb = end_bblock;
 				MONO_ADD_INS (cfg->cbb, ins);
 				link_bblock (cfg, cfg->cbb, end_bblock);
-				ip += 5;
-				break;
 			} else {
 				/* Handle tailcalls similarly to calls */
 				DISABLE_AOT (cfg);
@@ -8440,22 +8439,20 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MONO_INST_NEW_CALL (cfg, call, OP_TAILCALL);
 				call->method = cmethod;
 				call->signature = fsig;
-				call->args = (MonoInst **)mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * n);
+				call->args = args;
 				call->inst.inst_p0 = cmethod;
-				for (i = 0; i < n; ++i)
-					EMIT_NEW_ARGLOAD (cfg, call->args [i], i);
 
 				if (mini_type_is_vtype (mini_get_underlying_type (call->signature->ret)))
 					call->vret_var = cfg->vret_addr;
 
 				mono_arch_emit_call (cfg, call);
 				call->tailcall = TRUE;
-				cfg->param_area = MAX(cfg->param_area, call->stack_usage);
+				cfg->param_area = MAX (cfg->param_area, call->stack_usage);
 				MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
+				start_new_bblock = 1;
 			}
 
 			ip += 5;
-			start_new_bblock = 1;
 			break;
 		}
 		case CEE_CALLI: {
