@@ -202,7 +202,11 @@ static guint8*
 emit_big_add (guint8 *code, int dreg, int sreg, int imm)
 {
 	int imm8, rot_amount;
-	if ((imm8 = mono_arm_is_rotated_imm8 (imm, &rot_amount)) >= 0) {
+
+	if (imm == 0) {
+		if (sreg != dreg)
+			ARM_MOV_REG_REG (code, dreg, sreg);
+	} else if ((imm8 = mono_arm_is_rotated_imm8 (imm, &rot_amount)) >= 0) {
 		ARM_ADD_REG_IMM (code, dreg, sreg, imm8, rot_amount);
 		return code;
 	}
