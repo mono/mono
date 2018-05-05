@@ -27,7 +27,13 @@ typedef int pid_t;
 #define G_SEARCHPATH_SEPARATOR_S ";"
 #define G_SEARCHPATH_SEPARATOR   ';'
 
+#ifdef _WIN64
+// Correct for Win32 and Win64 since circa 2000.
 #define G_GSIZE_FORMAT   "Iu"
+#else
+// Correct for Win32 since circa 1992.
+#define G_GSIZE_FORMAT   "u"
+#endif
 
 // https://msdn.microsoft.com/en-us/library/40bbyw78.aspx
 #define STDOUT_FILENO (1)
