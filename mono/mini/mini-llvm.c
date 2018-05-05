@@ -9283,9 +9283,11 @@ static void
 emit_default_dbg_loc (EmitContext *ctx, LLVMBuilderRef builder)
 {
 #if LLVM_API_VERSION > 100
-	LLVMValueRef loc_md;
-	loc_md = mono_llvm_di_create_location (ctx->module->di_builder, ctx->dbg_md, 0, 0);
-	mono_llvm_di_set_location (builder, loc_md);
+	if (ctx->minfo) {
+		LLVMValueRef loc_md;
+		loc_md = mono_llvm_di_create_location (ctx->module->di_builder, ctx->dbg_md, 0, 0);
+		mono_llvm_di_set_location (builder, loc_md);
+	}
 #else
 	/* Older llvm versions don't require this */
 #endif
