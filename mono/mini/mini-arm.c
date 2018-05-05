@@ -296,16 +296,23 @@ emit_memcpy (guint8 *code, int size, int dreg, int doffset, int sreg, int soffse
 }
 
 static guint8*
+emit_jmp_reg (guint8 *code, int reg)
+{
+	if (thumb_supported)
+		ARM_BX (code, reg);
+	else
+		ARM_MOV_REG_REG (code, ARMREG_PC, reg);
+	return code;
+}
+
+static guint8*
 emit_call_reg (guint8 *code, int reg)
 {
 	if (v5_supported) {
 		ARM_BLX_REG (code, reg);
 	} else {
 		ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
-		if (thumb_supported)
-			ARM_BX (code, reg);
-		else
-			ARM_MOV_REG_REG (code, ARMREG_PC, reg);
+		return emit_jmp_reg (code, reg);
 	}
 	return code;
 }
