@@ -61,4 +61,11 @@ for ver in $MS_EXTN_VERSIONS; do
 	curl -L https://dotnet.myget.org/F/dotnet-core/api/v2/package/Microsoft.NET.Build.Extensions/${ver} -o nugets/microsoft.net.build.extensions.${ver}.nupkg
 done
 
+MS_EXTN_VERSIONS_PRODCON="2.1.300-preview3-62804-06" # https://github.com/dotnet/cli/blob/8c937a0db08e56660aca456ac088f2d0e70735ab/build/DependencyVersions.props
+MS_EXTN_VERSIONS_PRODCON="$MS_EXTN_VERSIONS_PRODCON 2.1.200-preview-62827-05" # https://github.com/dotnet/cli/blob/b390c9805e6730886129e424f9ce23ee4604266c/build/DependencyVersions.props
+
+for ver in $MS_EXTN_VERSIONS_PRODCON; do
+	curl -f https://dotnetfeed.blob.core.windows.net/dotnet-core/flatcontainer/microsoft.net.build.extensions/${ver}/microsoft.net.build.extensions.${ver}.nupkg -o nugets/microsoft.net.build.extensions.${ver}.nupkg
+done
+
 touch .download_stamp_file
