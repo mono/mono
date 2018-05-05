@@ -1,11 +1,12 @@
 //
-// Mono.Cairo.SurfaceType.cs
+// Mono.Cairo.GLSurface.cs
 //
 // Authors:
-//    John Luke
-//    JP Bruyère
+//			JP Bruyère (jp_bruyere@hotmail.com)
 //
-// (C) John Luke, 2006.
+// This is an OO wrapper API for the Cairo API
+//
+// Copyright (C) 2016 JP Bruyère
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,32 +32,30 @@ using System;
 
 namespace Cairo {
 
-	[Serializable]
-	public enum SurfaceType
+	public class GLSurface : Surface
 	{
-		Image,
-		Pdf,
-		PS,
-		Xlib,
-		Xcb,
-		Glitz,
-		Quartz,
-		Win32,
-		BeOS,
-		DirectFB,
-		Svg,
-		OS2,
-		Win32Printing,
-		QuartzImage,
-		Script,
-		Qt,
-		Recording,
-		VG,
-		GL,
-		Drm,
-		Tee,
-		Xml,
-		Skia,
-		SubSurface
+		
+		public GLSurface (IntPtr ptr, bool own) : base (ptr, own)
+		{}
+
+		public GLSurface (Device device, Cairo.Content content, uint tex, int width, int height)
+			: base (NativeMethods.cairo_gl_surface_create_for_texture (device.Handle, (uint)content, tex, width, height), true)
+		{}
+
+		public GLSurface (EGLDevice device, IntPtr eglSurf, int width, int height)
+			: base (NativeMethods.cairo_gl_surface_create_for_egl (device.Handle, eglSurf, width, height), true)
+		{}
+
+		public GLSurface (GLXDevice device, IntPtr window, int width, int height)
+			: base (NativeMethods.cairo_gl_surface_create_for_window (device.Handle, window, width, height),true)
+		{}
+
+		public GLSurface (WGLDevice device, IntPtr hdc, int width, int height)
+			: base (NativeMethods.cairo_gl_surface_create_for_dc (device.Handle, hdc, width, height), true)
+		{}
+
+		public void SwapBuffers(){
+			NativeMethods.cairo_gl_surface_swapbuffers (this.Handle);
+		}
 	}
 }
