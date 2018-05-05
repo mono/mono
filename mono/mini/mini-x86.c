@@ -1925,30 +1925,43 @@ if (ins->inst_true_bb->native_offset) { \
 	x86_fnstsw (code); \
 } while (0); 
 
+static guint8*
+x86_align_for_patch (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data, int align_offset)
+{
+	if (cfg->compile_aot)
+		return code;
+
+	if (cfg->abs_patches) {
+		MonoJumpInfo *jinfo = g_hash_table_lookup (cfg->abs_patches, data);
+		if (jinfo && jinfo->type == MONO_PATCH_INFO_JIT_ICALL_ADDR)
+			return code;
+	}
+
+	/*The address must be 4 bytes aligned to avoid spanning multiple cache lines.
+	This is required for code patching to be safe on SMP machines.
+	*/
+	guint32 pad_size = (guint32)(code + align_offset - cfg->native_code) & 0x3;
+	if (pad_size)
+		x86_padding (code, 4 - pad_size);
+
+	return code;
+}
+
+static guint8*
+x86_align_and_patch (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data, int align_offset)
+{
+	code = x86_align_for_patch (cfg, code, patch_type, data, align_offset);
+
+	mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
+
+	return code;
+}
 
 static guint8*
 emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data)
 {
-	gboolean needs_paddings = TRUE;
-	guint32 pad_size;
-	MonoJumpInfo *jinfo = NULL;
+	code = x86_align_and_patch (cfg, code, patch_type, data, 1);
 
-	if (cfg->abs_patches) {
-		jinfo = g_hash_table_lookup (cfg->abs_patches, data);
-		if (jinfo && jinfo->type == MONO_PATCH_INFO_JIT_ICALL_ADDR)
-			needs_paddings = FALSE;
-	}
-
-	if (cfg->compile_aot)
-		needs_paddings = FALSE;
-	/*The address must be 4 bytes aligned to avoid spanning multiple cache lines.
-	This is required for code patching to be safe on SMP machines.
-	*/
-	pad_size = (guint32)(code + 1 - cfg->native_code) & 0x3;
-	if (needs_paddings && pad_size)
-		x86_padding (code, 4 - pad_size);
-
-	mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
 	x86_call_code (code, 0);
 
 	return code;
