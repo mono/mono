@@ -22,7 +22,7 @@
 typedef @GSIZE@ gsize;
 typedef @GSSIZE@ gssize;
 
-#define G_GSIZE_FORMAT   "zu"
+#define G_GSIZE_FORMAT   @GSIZE_FORMAT@
 
 #if @G_HAVE_ISO_VARARGS@ == 1
 #define G_HAVE_ISO_VARARGS

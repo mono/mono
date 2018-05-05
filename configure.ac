@@ -4164,10 +4164,81 @@ AC_CHECK_LIB([iconv], [locale_charset],[],[AC_CHECK_LIB([charset], [locale_chars
 AC_CHECK_HEADER(alloca.h, [HAVE_ALLOCA_H=1], [HAVE_ALLOCA_H=0])
 AC_SUBST(HAVE_ALLOCA_H)
 
+# Get the exact type of size_t, not just its size.
+# This is so we can find an exact printf format among u, lu, llu, I64u.
+# To avoid warnings about slight mismatches.
+# C99 runtime "zu" dependency is being avoided here.
+#
+# We have to compile as C++ because C is too lenient
+# and lets the wrong thing compile, with warnings.
+#
+# Note: "zu" or ifdef <something> have the advantage
+# of producing installable "biarch" headers. i.e. one Mac header
+# for Mac/x86 and Mac/amd64.
+
+AC_LANG_PUSH([C++])
+
+# Check long before int because it is the overwhelming Unix answer,
+# across 32bit and 64bit systems -- fewer compiler invocations in autoconf.
+#
+# long ahead of int also tends to produce biarch-compatible headers except Windows.
+#
+AC_MSG_CHECKING(if size_t is unsigned long)
+AC_COMPILE_IFELSE([
+	#include <stddef.h>
+	unsigned long *a = (size_t*)0;
+], [
+	AC_MSG_RESULT(yes)
+	AC_SUBST(GSIZE_FORMAT, '"%lu"')
+], [
+	AC_MSG_RESULT(no)
+	AC_MSG_CHECKING(if size_t is unsigned int)
+	AC_COMPILE_IFELSE([
+		#include <stddef.h>
+		unsigned *a = (size_t*)0;
+	], [
+		AC_MSG_RESULT(yes)
+		AC_SUBST(GSIZE_FORMAT, '"%u"')
+	], [
+# At this point the vast majority of systems have their answer,
+# and we descend into non-standard or new-standard territory.
+#
+# Check __int64 first because I64 on some systems predates ll, enabling
+# new compiler/old runtime interop, and the types always have the same size.
+		AC_MSG_RESULT(no)
+		AC_MSG_CHECKING(if size_t is unsigned __int64)
+		AC_COMPILE_IFELSE([
+			#include <stddef.h>
+			unsigned __int64 *a = (size_t*)0;
+		], [
+			AC_MSG_RESULT(yes)
+			AC_SUBST(GSIZE_FORMAT, '"%I64u"')
+		], [
+			AC_MSG_RESULT(no)
+			AC_MSG_CHECKING(if size_t is unsigned long long)
+			AC_COMPILE_IFELSE([
+				#include <stddef.h>
+				unsigned long long *a = (size_t*)0;
+			], [
+				AC_MSG_RESULT(yes)
+				AC_SUBST(GSIZE_FORMAT, '"%llu"')
+			], [
+				AC_MSG_RESULT(no)
+				AC_MSG_ERROR(Unable to determine size_t among unsigned int, long, __int64, long long)
+			] )
+		] )
+	] )
+] )
+
+AC_LANG_POP([C++])
+
 # If size_t/ptrdiff_t is correct, use it. Otherwise C99 [u]intptr_t.
 # This provides for an exact match with functions that
-# take size_t like malloc and pthread_attr_getstacksize.
-# uintptr_t is not quite the same.
+# take size_t like malloc and pthread_attr_getstacksize, avoiding warnings.
+# uintptr_t is not necessarily the same, but it probably is.
+#
+# ptrdiff_t is preferred over ssize_t as it is C89 vs. new Posix.
+# ssize_t looks prettier but ptrdiff_t is dressed up as gssize anyway.
 
 if test $ac_cv_sizeof_void_p = $ac_cv_sizeof_size_t; then
    GSIZE="size_t"
@@ -4179,6 +4250,7 @@ fi
 
 AC_SUBST(GSIZE)
 AC_SUBST(GSSIZE)
+AC_SUBST(GSIZE_FORMAT)
 
 #
 # END OF EGLIB CHECKS
