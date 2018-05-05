@@ -3247,8 +3247,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			} else if (tailcall_reg || tailcall_membase_not_ecx) {
 				x86_jump_reg (code, X86_ECX);
 			} else {
-				// FIXME alignment
-				mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
+				// FIXME Patch data instead of code.
+				code = x86_align_and_patch (cfg, code, MONO_PATCH_INFO_METHOD_JUMP, call->method, 1);
 				x86_jump32 (code, 0);
 			}
 
