@@ -2,7 +2,7 @@
 LLVM_SRC?=$(TOP)/sdks/builds/toolchains/llvm
 
 $(TOP)/sdks/builds/toolchains/llvm:
-	git clone -b master https://github.com/mono/llvm.git $@
+	git clone -b $(LLVM_BRANCH) https://github.com/mono/llvm.git $@
 	cd $@ && git checkout $(LLVM_HASH)
 
 $(LLVM_SRC)/configure: | $(LLVM_SRC)
