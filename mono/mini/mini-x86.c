@@ -3253,7 +3253,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			ins->flags |= MONO_INST_GC_CALLSITE;
-			cfg->disable_aot = TRUE;
 			break;
 		}
 		case OP_CHECK_THIS:
