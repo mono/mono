@@ -1,11 +1,12 @@
-//
-// Mono.Cairo.SurfaceType.cs
+﻿//
+// Mono.Cairo.Device.cs
 //
 // Authors:
-//    John Luke
-//    JP Bruyère
+//			JP Bruyère (jp_bruyere@hotmail.com)
 //
-// (C) John Luke, 2006.
+// This is an OO wrapper API for the Cairo API
+//
+// Copyright (C) 2016 JP Bruyère
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,37 +27,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 
-namespace Cairo {
-
-	[Serializable]
-	public enum SurfaceType
+namespace Cairo
+{
+	public class WGLDevice : Device
 	{
-		Image,
-		Pdf,
-		PS,
-		Xlib,
-		Xcb,
-		Glitz,
-		Quartz,
-		Win32,
-		BeOS,
-		DirectFB,
-		Svg,
-		OS2,
-		Win32Printing,
-		QuartzImage,
-		Script,
-		Qt,
-		Recording,
-		VG,
-		GL,
-		Drm,
-		Tee,
-		Xml,
-		Skia,
-		SubSurface
+		public WGLDevice (IntPtr hglrc) : base (NativeMethods.cairo_wgl_device_create (hglrc), true)
+		{
+		}
+
+		public IntPtr Context {
+			get { return NativeMethods.cairo_wgl_device_get_context (Handle); }
+		}
 	}
 }
+

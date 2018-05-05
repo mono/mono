@@ -48,6 +48,11 @@ APP_SOURCES = \
 	main.cs	\
 	incrementalrunner.cs
 
+BINDING_TEST_SOURCES = \
+	bindings.cs	\
+	bindings-test.cs
+
+
 MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
 
 TEST_DEPS = $(patsubst %,managed/%,$(BCL_ASSEMBLIES))
@@ -77,13 +82,13 @@ debug/:
 release/:
 	mkdir -p $@
 
-debug/.stamp-build: driver.o library_mono.js $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a | debug/
-	$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s ASSERTIONS=2 --js-library library_mono.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o debug/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
+debug/.stamp-build: driver.o library_mono.js binding_support.js $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a | debug/
+	$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s ASSERTIONS=2 --js-library library_mono.js --js-library binding_support.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o debug/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
 	touch $@
 
 # Notice that release/.stamp-build depends on debug/.stamp-build. This is the case as emcc is believed to not work well with parallel builds.
-release/.stamp-build: driver.o library_mono.js $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a debug/.stamp-build | release/
-	$(EMCC) -Oz --llvm-opts 2 --llvm-lto 1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o release/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
+release/.stamp-build: driver.o library_mono.js binding_support.js $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a debug/.stamp-build | release/
+	$(EMCC) -Oz --llvm-opts 2 --llvm-lto 1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js --js-library binding_support.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o release/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
 	touch $@
 
 
@@ -127,7 +132,10 @@ managed/main.exe: .stamp-bcl-test-deps $(TEST_DEPS) $(APP_SOURCES) | managed/
 managed/mini_tests.dll: .stamp-bcl-test-deps $(TEST_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs | managed/
 	$(CSC) /debug:portable /nostdlib /noconfig /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(MINI_TEST_SOURCES) mini-test-runner.cs
 
-build-managed: bcl-test-deps managed/mini_tests.dll managed/main.exe
+managed/binding_tests.dll: .stamp-bcl-test-deps $(TEST_DEPS) $(BINDING_TEST_SOURCES) | managed/
+	$(CSC) /debug:portable /nostdlib /noconfig /unsafe -target:library -out:$@ $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(BINDING_TEST_SOURCES)
+
+build-managed: bcl-test-deps managed/binding_tests.dll managed/mini_tests.dll managed/main.exe
 
 build: build-native build-managed
 
@@ -164,6 +172,7 @@ package: build
 	cp driver.c tmp/
 	cp $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a tmp/
 	cp library_mono.js tmp/
+	cp binding_support.js tmp/
 	cp mono.js tmp/
 	cp -r debug tmp/
 	cp -r release tmp/
