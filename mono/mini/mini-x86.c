@@ -3162,10 +3162,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 
 		case OP_TAILCALL:
-		case OP_TAILCALL_MEMBASE: {
+		case OP_TAILCALL_MEMBASE:
+		case OP_TAILCALL_REG: {
 			call = (MonoCallInst*)ins;
 			int pos = 0, i;
 			gboolean const tailcall_membase = ins->opcode == OP_TAILCALL_MEMBASE;
+			gboolean const tailcall_reg = (ins->opcode == OP_TAILCALL_REG);
 			int const sreg1 = ins->sreg1;
 			gboolean const sreg1_ecx = sreg1 == X86_ECX;
 			gboolean const tailcall_membase_ecx = tailcall_membase && sreg1_ecx;
@@ -3190,8 +3192,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			// just end with jmp [ecx+offset] -- one instruction.
 			// if ecx is not the base, then move ecx, [reg+offset] and later jmp [ecx] -- two instructions.
 
-			if (tailcall_membase_not_ecx)
+			if (tailcall_reg) {
+				g_assert (sreg1 > -1);
+				if (!sreg1_ecx)
+					x86_mov_reg_reg (code, X86_ECX, sreg1, 4);
+			} else if (tailcall_membase_not_ecx) {
+				g_assert (sreg1 > -1);
 				x86_mov_reg_membase (code, X86_ECX, sreg1, ins->inst_offset, 4);
+			}
 
 			/* restore callee saved registers */
 			for (i = 0; i < X86_NREG; ++i)
@@ -3223,7 +3231,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			if (tailcall_membase_ecx) {
 				x86_jump_membase (code, X86_ECX, ins->inst_offset);
-			} else if (tailcall_membase_not_ecx) {
+			} else if (tailcall_reg || tailcall_membase_not_ecx) {
 				x86_jump_reg (code, X86_ECX);
 			} else {
 				// FIXME alignment
