@@ -5131,6 +5131,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			MonoCallInst *call = (MonoCallInst*)ins;
 
 			max_len += call->stack_usage / sizeof (mgreg_t) * ins_get_size (OP_TAILCALL_PARAMETER);
+
+			if (IS_HARD_FLOAT)
+				code = emit_float_args (cfg, call, code, &max_len, &offset);
+
 			code = realloc_code (cfg, max_len);
 
 			/*
