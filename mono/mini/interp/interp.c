@@ -569,18 +569,17 @@ stackval_to_data (MonoType *type_, stackval *val, char *data, gboolean pinvoke)
 	}
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8: {
-		gint64 *p = (gint64*)data;
-		*p = val->data.l;
+		memmove (data, &val->data.l, sizeof (gint64));
 		return;
 	}
 	case MONO_TYPE_R4: {
-		float *p = (float*)data;
-		*p = val->data.f;
+		float tmp = (float)val->data.f;
+		/* memmove handles unaligned case */
+		memmove (data, &tmp, sizeof (float));
 		return;
 	}
 	case MONO_TYPE_R8: {
-		double *p = (double*)data;
-		*p = val->data.f;
+		memmove (data, &val->data.f, sizeof (double));
 		return;
 	}
 	case MONO_TYPE_STRING:
