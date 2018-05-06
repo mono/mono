@@ -7218,7 +7218,7 @@ is_not_supported_tailcall_helper (gboolean value, const char *svalue, MonoMethod
 
 static gboolean
 is_supported_tailcall (MonoCompile *cfg, const guint8 *ip, MonoMethod *method, MonoMethod *cmethod, MonoMethodSignature *fsig,
-	gboolean virtual_, MonoInst *vtable_arg, MonoInst *imt_arg, gboolean *ptailcall_calli)
+	gboolean virtual_, gboolean extra_arg, gboolean *ptailcall_calli)
 {
 	// Some checks apply to "regular", some to "calli", some to both.
 	// To ease burden on caller, always compute regular and calli.
@@ -7272,7 +7272,7 @@ is_supported_tailcall (MonoCompile *cfg, const guint8 *ip, MonoMethod *method, M
 		//
 		// Interface method dispatch has the same problem (imt_arg).
 
-		|| IS_NOT_SUPPORTED_TAILCALL ((vtable_arg || imt_arg) && !cfg->backend->have_volatile_non_param_register)
+		|| IS_NOT_SUPPORTED_TAILCALL (extra_arg && !cfg->backend->have_volatile_non_param_register)
 		) {
 		tailcall_calli = FALSE;
 		tailcall = FALSE;
@@ -7318,9 +7318,9 @@ is_supported_tailcall (MonoCompile *cfg, const guint8 *ip, MonoMethod *method, M
 	if (tailcall_calli && IS_NOT_SUPPORTED_TAILCALL (should_check_stack_pointer (cfg)))
 		tailcall_calli = FALSE;
 exit:
-	tailcall_print ("tail.%s %s -> %s tailcall:%d tailcall_calli:%d gshared:%d vtable_arg:%d imt_arg:%d virtual_:%d\n",
+	tailcall_print ("tail.%s %s -> %s tailcall:%d tailcall_calli:%d gshared:%d extra_arg:%d virtual_:%d\n",
 			mono_opcode_name (*ip), method->name, cmethod->name, tailcall, tailcall_calli,
-			cfg->gshared, !!vtable_arg, !!imt_arg, virtual_);
+			cfg->gshared, extra_arg, virtual_);
 
 	*ptailcall_calli = tailcall_calli;
 	return tailcall;
@@ -9046,7 +9046,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			/* Calling virtual generic methods */
 
-			// These temporaries help disentangle "pure" computation of
+			// These temporaries help detangle "pure" computation of
 			// inputs to is_supported_tailcall from side effects, so that
 			// is_supported_tailcall can be computed just once.
 			gboolean virtual_generic = FALSE;
@@ -9083,6 +9083,34 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 			}
 
+			// Capture some intent before computing tailcall.
+
+			gboolean make_generic_call_out_of_gsharedvt_method;
+			gboolean will_have_imt_arg;
+
+			make_generic_call_out_of_gsharedvt_method = FALSE;
+			will_have_imt_arg = FALSE;
+
+			/*
+			 * Making generic calls out of gsharedvt methods.
+			 * This needs to be used for all generic calls, not just ones with a gsharedvt signature, to avoid
+			 * patching gshared method addresses into a gsharedvt method.
+			 */
+			if (cfg->gsharedvt && (mini_is_gsharedvt_signature (fsig) || cmethod->is_inflated || mono_class_is_ginst (cmethod->klass)) &&
+				!(m_class_get_rank (cmethod->klass) && m_class_get_byval_arg (cmethod->klass)->type != MONO_TYPE_SZARRAY) &&
+				(!(cfg->llvm_only && virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL)))) {
+
+				make_generic_call_out_of_gsharedvt_method = TRUE;
+
+				if (virtual_) {
+					if (fsig->generic_param_count) {
+						will_have_imt_arg = TRUE;
+					} else if (mono_class_is_interface (cmethod->klass) && !imt_arg) {
+						will_have_imt_arg = TRUE;
+					}
+				}
+			}
+
 			/* Tail prefix / tailcall optimization */
 
 			/* FIXME: Enabling TAILC breaks some inlining/stack trace/etc tests.
@@ -9093,7 +9121,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			// tailcall means "the backend can and will handle it".
 			// inst_tailcall means the tail. prefix is present.
 			tailcall = inst_tailcall && is_supported_tailcall (cfg, ip, method, cmethod, fsig,
-						virtual_, vtable_arg, imt_arg, &tailcall_calli);
+						virtual_, vtable_arg || imt_arg || will_have_imt_arg, &tailcall_calli);
 			tailcall_testvalue = tailcall; // sometimes changed to tailcall_calli.
 			// Writes to imt_arg, vtable_arg, virtual_, cmethod, must not occur from here (inputs to is_supported_tailcall).
 
@@ -9274,10 +9302,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 * This needs to be used for all generic calls, not just ones with a gsharedvt signature, to avoid
 			 * patching gshared method addresses into a gsharedvt method.
 			 */
-			if (cfg->gsharedvt && (mini_is_gsharedvt_signature (fsig) || cmethod->is_inflated || mono_class_is_ginst (cmethod->klass)) &&
-				!(m_class_get_rank (cmethod->klass) && m_class_get_byval_arg (cmethod->klass)->type != MONO_TYPE_SZARRAY) &&
-				(!(cfg->llvm_only && virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL)))) {
-				MonoRgctxInfoType info_type;
+			if (make_generic_call_out_of_gsharedvt_method) {
 
 				if (virtual_) {
 					//if (mono_class_is_interface (cmethod->klass))
@@ -9288,6 +9313,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					if (fsig->generic_param_count) {
 						/* virtual generic call */
 						g_assert (!imt_arg);
+						g_assert (will_have_imt_arg);
 						/* Same as the virtual generic case above */
 						imt_arg = emit_get_rgctx_method (cfg, context_used,
 														 cmethod, MONO_RGCTX_INFO_METHOD);
@@ -9296,6 +9322,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						vtable_arg = NULL;
 					} else if (mono_class_is_interface (cmethod->klass) && !imt_arg) {
 						/* This can happen when we call a fully instantiated iface method */
+						g_assert (will_have_imt_arg);
 						imt_arg = emit_get_rgctx_method (cfg, context_used,
 														 cmethod, MONO_RGCTX_INFO_METHOD);
 						g_assert (imt_arg);
@@ -9305,6 +9332,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				if ((m_class_get_parent (cmethod->klass) == mono_defaults.multicastdelegate_class) && (!strcmp (cmethod->name, "Invoke")))
 					keep_this_alive = sp [0];
+
+				MonoRgctxInfoType info_type;
 
 				if (virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL))
 					info_type = MONO_RGCTX_INFO_METHOD_GSHAREDVT_OUT_TRAMPOLINE_VIRT;
