@@ -70,6 +70,7 @@ ${TESTCMD} --label=System.Web.Extensions --timeout=5m make -w -C mcs/class/Syste
 ${TESTCMD} --label=System.Core --timeout=15m make -w -C mcs/class/System.Core run-test
 ${TESTCMD} --label=System.Core-xunit --timeout=15m make -w -C mcs/class/System.Core run-xunit-test
 ${TESTCMD} --label=System.Xml.Linq --timeout=5m make -w -C mcs/class/System.Xml.Linq run-test
+${TESTCMD} --label=System.Xml.Linq-xunit --timeout=5m make -w -C mcs/class/System.Xml.Linq run-xunit-test
 ${TESTCMD} --label=System.Data.DSE --timeout=5m make -w -C mcs/class/System.Data.DataSetExtensions run-test
 ${TESTCMD} --label=System.Web.Abstractions --timeout=5m make -w -C mcs/class/System.Web.Abstractions run-test
 ${TESTCMD} --label=System.Web.Routing --timeout=5m make -w -C mcs/class/System.Web.Routing run-test
