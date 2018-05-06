@@ -2137,6 +2137,8 @@ emit_imt_argument (MonoCompile *cfg, MonoCallInst *call, MonoMethod *method, Mon
 {
 	int method_reg;
 
+	g_assert (method || imt_arg);
+
 	if (COMPILE_LLVM (cfg)) {
 		if (imt_arg) {
 			method_reg = alloc_preg (cfg);
@@ -2429,6 +2431,8 @@ mini_emit_calli_full (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **arg
 	MonoCallInst *call;
 	MonoInst *ins;
 	int rgctx_reg = -1;
+
+	g_assert (!rgctx_arg || !imt_arg);
 
 	if (rgctx_arg) {
 		rgctx_reg = mono_alloc_preg (cfg);
