@@ -8462,6 +8462,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			break;
 		}
 		case CEE_CALLI: {
+			// FIXME tail.calli is problemetic because the this pointer's type
+			// is not in the signature, and we cannot check for a byref valuetype.
 			MonoInst *addr;
 			MonoMethodSignature *fsig;
 
