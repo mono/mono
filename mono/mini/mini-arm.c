@@ -199,9 +199,11 @@ mono_arch_fregname (int reg)
 
 #ifndef DISABLE_JIT
 static guint8*
-emit_big_add (guint8 *code, int dreg, int sreg, int imm)
+emit_big_add_temp (guint8 *code, int dreg, int sreg, int imm, int temp)
 {
 	int imm8, rot_amount;
+
+	g_assert (temp == ARMREG_IP || temp == ARMREG_LR);
 
 	if (imm == 0) {
 		if (sreg != dreg)
@@ -211,13 +213,19 @@ emit_big_add (guint8 *code, int dreg, int sreg, int imm)
 		return code;
 	}
 	if (dreg == sreg) {
-		code = mono_arm_emit_load_imm (code, ARMREG_IP, imm);
-		ARM_ADD_REG_REG (code, dreg, sreg, ARMREG_IP);
+		code = mono_arm_emit_load_imm (code, temp, imm);
+		ARM_ADD_REG_REG (code, dreg, sreg, temp);
 	} else {
 		code = mono_arm_emit_load_imm (code, dreg, imm);
 		ARM_ADD_REG_REG (code, dreg, dreg, sreg);
 	}
 	return code;
+}
+
+static guint8*
+emit_big_add (guint8 *code, int dreg, int sreg, int imm)
+{
+	return emit_big_add_temp (code, dreg, sreg, imm, ARMREG_IP);
 }
 
 static guint8*
@@ -5205,8 +5213,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * Keep in sync with mono_arch_emit_epilog
 			 */
 			g_assert (!cfg->method->save_lmf);
-
-			code = emit_big_add (code, ARMREG_SP, cfg->frame_reg, cfg->stack_usage);
+			code = emit_big_add_temp (code, ARMREG_SP, cfg->frame_reg, cfg->stack_usage, ARMREG_LR);
 			if (iphone_abi) {
 				if (cfg->used_int_regs)
 					ARM_POP (code, cfg->used_int_regs);
