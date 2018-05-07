@@ -49,8 +49,6 @@ TAILCALL_DISABLED_TESTS_RUN = \
 	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_calli.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_obj.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4_inl.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_v.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_array.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_array_nz.exe \
@@ -93,6 +91,12 @@ if FULL_AOT_TESTS
 TAILCALL_DISABLED_TESTS_COMPILE += \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe
 
+# return type mismatch (float32 vs. float64)
+# 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4_inl.exe
+# 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.exe
+# return type mismatch (int32 vs. enum)
+# 	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.exe
+
 # Tests that fail assert about tailcall.
 TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.exe \
@@ -102,13 +106,7 @@ TAILCALL_DISABLED_TESTS_RUN += \
 	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_call.exe \
 	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_calli.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/Desktop/thread-race.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_obj.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4_inl.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_v.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_array_nz.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_nested.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/pointer.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/reference_i.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_mutual_rec.exe \
