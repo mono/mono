@@ -50,15 +50,15 @@ namespace System.Windows.Forms
 		internal int			ascent;			// Ascent of the line (highest distance above the baseline, including character offset)
 		internal HorizontalAlignment	alignment;		// Alignment of the line
 		internal int			align_shift;		// Pixel shift caused by the alignment
-		internal int			indent;			// Left indent for the first line
-		internal int			hanging_indent;		// Hanging indent (difference between first line indent and other lines, cannot be less than -indent)
-		internal int			right_indent;		// Right indent for all lines
+		internal float			indent;			// Left indent for the first line
+		internal float			hanging_indent;		// Hanging indent (difference between first line indent and other lines, cannot be less than -indent)
+		internal float			right_indent;		// Right indent for all lines
 		internal LineEnding		ending;
-		internal int			spacing_before;
-		internal int			spacing_after;
-		internal int			line_spacing;
+		internal float			spacing_before;
+		internal float			spacing_after;
+		internal float			line_spacing;
 		internal bool			line_spacing_multiple;
-		internal int[]			tab_stops;		// Custom tabstops for this paragraph.
+		internal TabStopCollection		tab_stops;		// Custom tabstops for this paragraph.
 
 		// Stuff that's important for the tree
 		internal Line			parent;			// Our parent line
@@ -93,7 +93,7 @@ namespace System.Windows.Forms
 			text = new StringBuilder (Text, space);
 			line_no = LineNo;
 			this.ending = ending;
-			tab_stops = new int[0];
+			tab_stops = new TabStopCollection();
 			
 			widths = new float[space + 1];
 
@@ -111,7 +111,7 @@ namespace System.Windows.Forms
 			line_no = LineNo;
 			this.ending = ending;
 			alignment = align;
-			tab_stops = new int[0];
+			tab_stops = new TabStopCollection();
 
 			widths = new float[space + 1];
 
@@ -122,9 +122,9 @@ namespace System.Windows.Forms
 		}
 
 		internal Line (Document document, int LineNo, string Text, HorizontalAlignment align, Font font, Color color,
-		               Color back_color, TextPositioning text_position, int char_offset, int left_indent, int hanging_indent,
-						int right_indent, int spacing_before, int spacing_after, int line_spacing, bool line_spacing_multiple,
-						int[] tab_stops, bool visible, LineEnding ending) : this(document, ending)
+		               Color back_color, TextPositioning text_position, float char_offset, float left_indent, float hanging_indent,
+					   float right_indent, float spacing_before, float spacing_after, float line_spacing, bool line_spacing_multiple,
+					   TabStopCollection tab_stops, bool visible, LineEnding ending) : this(document, ending)
 		{
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
 			
@@ -178,7 +178,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal int HangingIndent {
+		internal float HangingIndent {
 			get { return hanging_indent; }
 			set {
 				if (hanging_indent >= -indent)
@@ -201,18 +201,18 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal int[] TabStops {
+		internal TabStopCollection TabStops {
 			get { return tab_stops; }
 			set { tab_stops = value; }
 		}
 
-		internal int TotalParagraphSpacing {
+		internal float TotalParagraphSpacing {
 			get {
 				return SpacingBefore + SpacingAfter;
 			}
 		}
 
-		internal int LineSpacing {
+		internal float LineSpacing {
 			get {
 				if (textHeight == 0) {
 					throw new InvalidOperationException("Can't get LineSpacing when the line height isn't calculated!");
@@ -220,14 +220,14 @@ namespace System.Windows.Forms
 				if (line_spacing < 0) {
 					return -line_spacing;
 				} else if (line_spacing_multiple) {
-					return (int)(line_spacing * textHeight * 6f / document.dpi);
+					return line_spacing * textHeight * 6f / document.dpi;
 				} else {
 					return Math.Max(line_spacing, textHeight);
 				}
 			}
 		}
 
-		internal int SpacingBefore {
+		internal float SpacingBefore {
 			get {
 				bool has_spacing = true;
 				if (line_no > 1) {
@@ -242,7 +242,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal int SpacingAfter {
+		internal float SpacingAfter {
 			get {
 				if (ending == LineEnding.Wrap)
 					return 0;
@@ -251,7 +251,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal int Indent {
+		internal float Indent {
 			get { return indent; }
 			set { 
 				indent = value;
@@ -264,7 +264,7 @@ namespace System.Windows.Forms
 			set { line_no = value; }
 		}
 
-		internal int RightIndent {
+		internal float RightIndent {
 			get { return right_indent; }
 			set { 
 				right_indent = value;
@@ -599,14 +599,18 @@ namespace System.Windows.Forms
 			bool first_in_para;
 			Line line;
 			int wrap_pos;
+			int prev_wrap_pos;
 			int prev_height;
 			int prev_ascent;
+			float prev_spacing_before;
 			float add_width;
-			int prev_spacing_before;
 			int max_above_baseline;
 			int max_below_baseline;
 			int total_ascent;
 			int total_descent;
+			TabStop lastTab;
+			int lastTabPos;
+			char c;
 
 			pos = 0;
 			len = this.text.Length;
@@ -619,6 +623,8 @@ namespace System.Windows.Forms
 			max_below_baseline = 0;
 			total_ascent = 0;
 			total_descent = 0;
+			lastTab = null;
+			lastTabPos = 0;
 			this.height = 0;		// Reset line height
 			this.ascent = 0;		// Reset the ascent for the line
 			tag.Shift = 0;			// Reset shift (which should be stored as pixels, not as points)
@@ -640,6 +646,7 @@ namespace System.Windows.Forms
 			wrapped = false;
 
 			wrap_pos = 0;
+			prev_wrap_pos = 0;
 			add_width = 0;
 
 			while (pos < len) {
@@ -671,39 +678,90 @@ namespace System.Windows.Forms
 				}
 				else
 				{
-					size = tag.SizeOfPosition (g, pos);
+				c = text[pos];
+
+				if (c != '\t') {
+					size = tag.SizeOfPosition(g, pos);
 					w = size.Width;
-					newWidth = widths[pos] + w;
-					if (text[pos] == '\t') add_width += w;
+				} else {
+					if (lastTab != null) {
+						ProcessLastTab(lastTab, lastTabPos, pos);
+						lastTab = null;
+					}
+
+					float l = widths [pos];
+					w = -1;
+					for (int i = 0; i < tab_stops.Count; i++) {
+						if (tab_stops [i].Position > l) {
+							lastTab = tab_stops[i];
+							lastTabPos = pos;
+							w = lastTab.GetInitialWidth(this, pos);
+							break;
+						}
+					}
+
+					if (w < 0) {
+						w = tag.SizeOfPosition(g, pos).Width;
+					}
 				}
 
-				if (Char.IsWhiteSpace (text[pos])) //TODO: no, we can't wrap on all whitespace -- e.g. what if it is a no-break space?
-					wrap_pos = pos + 1;
+				// FIXME: Technically there are multiple no-break spaces, not just the main one.
+				if ((Char.IsWhiteSpace (c) && c != '\u00A0') || c == '-' || c == '\u2013' || c == '\u2014') {
+					// Primarily break on whitespace except a no-break space, or dashes.
+					prev_wrap_pos = wrap_pos;
+					if (c == '\t') {
+						wrap_pos = pos; // Wrap before tabs for some reason.
+					} else {
+						wrap_pos = pos + 1;
+					}
+				}
 
 				if (doc.wrap) {
 					if ((wrap_pos > 0) && (wrap_pos != len) && (newWidth + 5) > (doc.viewport_width - this.right_indent)) {
-						// Make sure to set the last width of the line before wrapping
+						LineTag split_tag = null;
+						if (wrap_pos > 0) {
+							// Make sure to set the last width of the line before wrapping
 						widths[pos + 1] = newWidth;
 
-						pos = wrap_pos;
-						len = text.Length;
-						doc.Split (this, tag, pos);
-						ending = LineEnding.Wrap;
-						len = this.text.Length;
+							if (wrap_pos > pos && Char.IsWhiteSpace(c)) {
+								while (wrap_pos < text.Length && Char.IsWhiteSpace(text[wrap_pos]) && text[wrap_pos] != '\t') {
+									wrap_pos++;
+								}
+								pos++;
+								wrapped = true; // don't try pulling more into this line, but keep looping to deal with the rest of the widths and tags
+							} else {
+								if (wrap_pos > pos) {
+									wrap_pos = prev_wrap_pos > 0 ? prev_wrap_pos : pos;
+								}
+								split_tag = tag;
+								pos = wrap_pos;
+							}
+						} else if (pos > 0) {
+							// No suitable wrap position was found so break right in the middle of a word
 
-						retval = true;
-						wrapped = true;
-					} else if (pos > 1 && newWidth > (doc.viewport_width - this.right_indent)) {
-						// No suitable wrap position was found so break right in the middle of a word
-
-						// Make sure to set the last width of the line before wrapping
+							// Make sure to set the last width of the line before wrapping
 						widths[pos + 1] = newWidth;
 
-						doc.Split (this, tag, pos);
-						ending = LineEnding.Wrap;
-						len = this.text.Length;
-						retval = true;
-						wrapped = true;
+							split_tag = tag;
+						} // Else don't wrap -- pos == 0, so we'd infinite loop adding blank lines before this.
+
+						if (split_tag != null) {
+							if (lastTab != null) {
+								ProcessLastTab(lastTab, lastTabPos, pos);
+								lastTab = null;
+							}
+
+							while (pos < split_tag.Start)
+								split_tag = split_tag.Previous;
+							// We have to pass Split the correct tag, and that can change if pos is set somewhere before the tag change (e.g. by wrap_pos).
+
+							doc.Split(this, split_tag, pos);
+							ending = LineEnding.Wrap;
+							len = this.text.Length;
+
+							retval = true;
+							wrapped = true;
+						}
 					}
 				}
 
@@ -742,8 +800,8 @@ namespace System.Windows.Forms
 					 * However, we move the normal baseline when CharOffset is trying to push
 					 * stuff off the top.
 					 */
-					total_ascent = tag.Ascent + tag.CharOffset;
-					total_descent = tag.Descent - tag.CharOffset; // gets bigger as CharOffset gets smaller
+					total_ascent = tag.Ascent + (int)tag.CharOffset;
+					total_descent = tag.Descent - (int)tag.CharOffset; // gets bigger as CharOffset gets smaller
 					if (total_ascent > max_above_baseline) {
 						int moveBy = total_ascent - max_above_baseline;
 						max_above_baseline = total_ascent;
@@ -754,7 +812,7 @@ namespace System.Windows.Forms
 							t = t.Next;
 						}
 
-						tag.Shift = tag.CharOffset;
+						tag.Shift = (int)tag.CharOffset;
 						this.ascent = max_above_baseline;
 					} else {
 						tag.Shift = (this.ascent - tag.Ascent);
@@ -769,7 +827,7 @@ namespace System.Windows.Forms
 					tag = tag.Next;
 					if (tag != null) {
 						tag.Shift = 0;
-						wrap_pos = pos;
+						//wrap_pos = pos; //No, we can't just wrap on tag boundaries -- e.g. if the first letter of the word has a different colour / font.
 					}
 				}
 			}
@@ -792,6 +850,11 @@ namespace System.Windows.Forms
 				}
 			}
 
+			if (lastTab != null) {
+				ProcessLastTab(lastTab, lastTabPos, pos);
+				lastTab = null;
+			}
+
 			while (tag != null) {	
 				tag.Shift = (tag.Line.ascent - tag.Ascent); // / 72;
 				tag = tag.Next;
@@ -804,13 +867,23 @@ namespace System.Windows.Forms
 			}
 
 			this.textHeight = this.height;
-			this.height = this.LineSpacing + this.TotalParagraphSpacing;
+			this.height = (int)(this.LineSpacing + this.TotalParagraphSpacing);
 
 			if (prev_offset != offset || prev_height != this.height || prev_ascent != this.ascent ||
-				prev_spacing_before != this.SpacingBefore)
+				Math.Abs(prev_spacing_before - this.SpacingBefore) > document.dpi / 1440f)
 				retval = true;
 
 			return retval;
+		}
+
+		private void ProcessLastTab(TabStop tab, int tab_pos, int pos) {
+			float prevTabRight = widths[tab_pos + 1];
+			float tabRight = tab.CalculateRight(this, tab_pos);
+			float change = tabRight - prevTabRight;
+
+			for (int i = tab_pos + 1; i <= pos; i++) {
+				widths[i] += change;
+			}
 		}
 
 		/// <summary>
@@ -842,7 +915,7 @@ namespace System.Windows.Forms
 
 			this.textHeight = (int)tag.Font.Height;
 			tag.Height = this.textHeight;
-			this.height = this.textHeight + this.LineSpacing + this.TotalParagraphSpacing;
+			this.height = (int)(this.textHeight + this.LineSpacing + this.TotalParagraphSpacing);
 
 			this.ascent = tag.Ascent;
 
@@ -852,6 +925,32 @@ namespace System.Windows.Forms
 			}
 
 			return ret;
+		}
+
+		internal void CalculateAlignment() {
+			switch (alignment) {
+			case HorizontalAlignment.Left:
+				align_shift = 0;
+				break;
+			case HorizontalAlignment.Center:
+				align_shift = (document.viewport_width - GetLineWidth()) / 2;
+				break;
+			case HorizontalAlignment.Right:
+				align_shift = document.viewport_width - GetLineWidth() - document.right_margin - (int)right_indent;
+				break;
+			}
+		}
+
+		private int GetLineWidth() {
+			int last = text.Length - 1;
+			if (last < 0)
+				return 0;
+			
+			char c = text[last];
+			while (last > 0 && Char.IsWhiteSpace(c) && c != '\t' && c != '\u00A0') {
+				c = text[--last];
+			}
+			return (int)(widths[last + 1] - document.left_margin - indent);
 		}
 		
 		internal void Streamline (int lines)

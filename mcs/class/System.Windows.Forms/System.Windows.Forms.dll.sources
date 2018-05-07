@@ -657,6 +657,7 @@ System.Windows.Forms/TableLayoutRowStyleCollection.cs
 System.Windows.Forms/TableLayoutSettings.cs
 System.Windows.Forms/TableLayoutStyle.cs
 System.Windows.Forms/TableLayoutStyleCollection.cs
+System.Windows.Forms/TabStops.cs
 System.Windows.Forms/TextBox.cs
 System.Windows.Forms/TextBoxBase.cs
 System.Windows.Forms/TextBoxRenderer.cs

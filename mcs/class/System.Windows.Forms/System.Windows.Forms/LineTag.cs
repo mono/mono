@@ -48,7 +48,7 @@ namespace System.Windows.Forms
 		private bool		visible;
 		private TextPositioning	text_position;	// Normal / superscript / subscript
 		private Font		small_font;			// Cached font for superscript / subscript
-		private int			char_offset;		// Shift the text baseline up or down
+		private float		char_offset;		// Shift the text baseline up or down
 
 		// Payload; text
 		private int		start;		// start, in chars; index into Line.text
@@ -157,7 +157,7 @@ namespace System.Windows.Forms
 			set { text_position = value; }
 		}
 
-		public int CharOffset {
+		public float CharOffset {
 			get { return char_offset; }
 			set { char_offset = value; }
 		}
@@ -485,11 +485,6 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-		public static bool FormatText (Line line, int formatStart, int length, LineTag copyFrom) {
-			return FormatText(line, formatStart, length, copyFrom.Font, copyFrom.Color, copyFrom.BackColor,
-				copyFrom.TextPosition, copyFrom.CharOffset, copyFrom.Visible, FormatSpecified.All);
-		}
-
 		public static bool FormatText (Line line, int formatStart, int length, Font font, Color color, Color backColor, FormatSpecified specified)
 		{
 			return FormatText (line, formatStart, length, font, color, backColor, TextPositioning.Normal, 0, true, specified);
@@ -500,7 +495,7 @@ namespace System.Windows.Forms
 		/// returns true if lineheight has changed</summary>
 		/// <param name="formatStart">1-based character position on line</param>
 		public static bool FormatText (Line line, int formatStart, int length, Font font, Color color, Color backColor,
-		                               TextPositioning text_position, int char_offset, bool visible, FormatSpecified specified)
+		                               TextPositioning text_position, float char_offset, bool visible, FormatSpecified specified)
 		{
 			LineTag tag;
 			LineTag start_tag;
@@ -673,7 +668,7 @@ namespace System.Windows.Forms
 		}
 
 		private static void SetFormat (LineTag tag, Font font, Color color, Color back_color, TextPositioning text_position,
-		                               int char_offset, bool visible, FormatSpecified specified)
+		                               float char_offset, bool visible, FormatSpecified specified)
 		{
 			if ((FormatSpecified.Font & specified) == FormatSpecified.Font) {
 				tag.Font = font;
@@ -702,14 +697,18 @@ namespace System.Windows.Forms
 			case '\t':
 				if (!line.document.multiline)
 					goto case 10;
-				SizeF res = TextBoxTextRenderer.MeasureText (dc, " ", FontToDisplay);
-				//res.Width *= 8.0F;
+				SizeF res = TextBoxTextRenderer.MeasureText (dc, " ", FontToDisplay); // This way we get the height, not that it is ever used...
 				float left = line.widths [pos];
 				float right = -1;
-				int[] stops = line.tab_stops;
-				for (int i = 0; i < stops.Length; i++) {
-					if (stops [i] > left) {
-						right = stops [i];
+				TabStopCollection stops = line.tab_stops;
+				float tabPos;
+				for (int i = 0; i < stops.Count; i++) {
+					tabPos = stops[i].Position;
+					if (tabPos >= left) {
+						if (tabPos <= line.document.viewport_width - line.RightIndent)
+							break; // Can't use tabs that are past the end of the line.
+						
+						right = stops [i].CalculateRight(line, pos);
 						break;
 					}
 				}

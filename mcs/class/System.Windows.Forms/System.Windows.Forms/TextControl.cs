@@ -116,7 +116,7 @@ namespace System.Windows.Forms {
 
 		None = 0
 	}
-	
+
 	internal class Document : ICloneable, IEnumerable {
 		#region Structures
 		// FIXME - go through code and check for places where
@@ -1294,10 +1294,7 @@ namespace System.Windows.Forms {
 						caret.height = caret.tag.DrawnHeight;
 						XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
 					}
-					XplatUI.SetCaretPos(owner.Handle, 
-						offset_x + (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, 
-					    offset_y + caret.line.Y + caret.line.SpacingBefore + caret.tag.OffsetY -
-					    caret.tag.CharOffset + caret.tag.Shift - viewport_y + caret_shift);
+					SetCaretPos();
 				}
 
 				if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
@@ -1323,10 +1320,7 @@ namespace System.Windows.Forms {
 
 			if (owner.ShowSelection && (!selection_visible || owner.show_caret_w_selection)) {
 				XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, 
-					(int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x + offset_x, 
-				    offset_y + caret.line.Y + caret.line.SpacingBefore + caret.tag.OffsetY -
-				    caret.tag.CharOffset + caret.tag.Shift - viewport_y + caret_shift);
+				SetCaretPos();
 			}
 
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
@@ -1335,10 +1329,7 @@ namespace System.Windows.Forms {
 		internal void CaretHasFocus() {
 			if ((caret.tag != null) && owner.IsHandleCreated) {
 				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, 
-					offset_x + (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, 
-				    offset_y + caret.line.Y + caret.line.SpacingBefore + caret.tag.OffsetY - 
-				    caret.tag.CharOffset + caret.tag.Shift - viewport_y + caret_shift);
+				SetCaretPos();
 
 				DisplayCaret ();
 			}
@@ -1384,10 +1375,7 @@ namespace System.Windows.Forms {
 
 			if (owner.Focused) {
 				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
-				XplatUI.SetCaretPos (owner.Handle, 
-					offset_x + (int) caret.tag.Line.widths [caret.pos] + caret.line.X - viewport_x, 
-				    offset_y + caret.line.Y + caret.line.SpacingBefore + caret.tag.OffsetY -
-				    caret.tag.CharOffset + caret.tag.Shift + viewport_y + caret_shift);
+				SetCaretPos();
 				DisplayCaret ();
 			}
 
@@ -1409,14 +1397,19 @@ namespace System.Windows.Forms {
 			}
 
 			if (owner.Focused) {
-				XplatUI.SetCaretPos(owner.Handle, 
-					offset_x + (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, 
-				    offset_y + caret.line.Y + caret.line.SpacingBefore + caret.tag.OffsetY -
-				    caret.tag.CharOffset + caret.tag.Shift - viewport_y + caret_shift);
+				SetCaretPos();
 				DisplayCaret ();
 			}
 			
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
+		}
+
+		void SetCaretPos() {
+			XplatUI.SetCaretPos(owner.Handle,
+				(int)Math.Min(offset_x + caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x,
+					viewport_width - caret.tag.Line.right_indent - caret_width), // Limit X, because whitespace can be outside this.
+				(int)(offset_y + caret.line.Y + caret.line.SpacingBefore + caret.tag.OffsetY -
+				caret.tag.CharOffset + caret.tag.Shift - viewport_y + caret_shift));
 		}
 
 		internal void DisplayCaret() {
@@ -2603,13 +2596,13 @@ namespace System.Windows.Forms {
 		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, LineEnding ending)
 		{
 			Add (LineNo, Text, align, font, color, Color.Empty, TextPositioning.Normal,
-				0, 0, 0, 0, 0, 0, 0, false, new int[0], true, ending);
+				0, 0, 0, 0, 0, 0, 0, false, new TabStopCollection(), true, ending);
 		}
 
 		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, Color back_color,
-		                   TextPositioning text_position, int char_offset, int left_indent, int hanging_indent, int right_indent,
-							int spacing_before, int spacing_after, int line_spacing, bool line_spacing_multiple, int[] tab_stops,
-							bool visible, LineEnding ending)
+		                   TextPositioning text_position, float char_offset, float left_indent, float hanging_indent,
+						   float right_indent, float spacing_before, float spacing_after, float line_spacing,
+						   bool line_spacing_multiple, TabStopCollection tab_stops, bool visible, LineEnding ending)
 		{
 			Line	add;
 			Line	line;
@@ -3344,8 +3337,18 @@ namespace System.Windows.Forms {
 			}
 
 			if (!String.IsNullOrEmpty(s)) {
+				int old_line_count = lines;
 				Insert(selection_start.line, selection_start.pos, false, s);
-				LineTag.FormatText(selection_start.line, selection_start.pos + 1, s.Length, formatTag); // 0-base to 1-base...
+				Line end_line;
+				int end_pos;
+				if (lines == old_line_count) {
+					end_line = selection_start.line;
+					end_pos = selection_start.pos + s.Length + 1;
+				} else {
+					end_line = GetLine(selection_start.line.line_no + lines - old_line_count);
+					end_pos = end_line.text.Length;
+				}
+				FormatText(selection_start.line, selection_start.pos + 1, end_line, end_pos, formatTag); // 0-base to 1-base...
 				undo.RecordInsertString(selection_start.line, selection_start.pos, s);
 			}
 
@@ -3691,6 +3694,11 @@ namespace System.Windows.Forms {
 			return tag;
 		}
 
+		public void FormatText (Line start_line, int start_pos, Line end_line, int end_pos, LineTag copyFrom) {
+			FormatText(start_line, start_pos, end_line, end_pos, copyFrom.Font, copyFrom.Color,
+				copyFrom.BackColor, copyFrom.TextPosition, copyFrom.CharOffset, copyFrom.Visible, FormatSpecified.All);
+		}
+
 		internal void FormatText (Line start_line, int start_pos, Line end_line, int end_pos, Font font,
 		                          Color color, Color back_color, FormatSpecified specified)
 		{
@@ -3702,7 +3710,7 @@ namespace System.Windows.Forms {
 		/// <param name="start_pos">1-based start position on start_line</param>
 		/// <param name="end_pos">1-based end position on end_line </param>
 		internal void FormatText (Line start_line, int start_pos, Line end_line, int end_pos, Font font,
-		                          Color color, Color back_color, TextPositioning text_position, int char_offset,
+		                          Color color, Color back_color, TextPositioning text_position, float char_offset,
 		                          bool visible, FormatSpecified specified)
 		{
 			Line    l;
@@ -3744,17 +3752,7 @@ namespace System.Windows.Forms {
 				line = GetLine(line_no);
 
 				if (line != null) {
-					switch (line.alignment) {
-					case HorizontalAlignment.Left:
-						line.align_shift = 0;
-						break;
-					case HorizontalAlignment.Center:
- 						line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
-						break;
-					case HorizontalAlignment.Right:
- 						line.align_shift = viewport_width - (int)line.widths[line.text.Length] - right_margin;
-						break;
-					}
+					line.CalculateAlignment();
 				}
 
 				line_no++;

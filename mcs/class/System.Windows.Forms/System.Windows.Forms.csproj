@@ -799,6 +799,7 @@
     <Compile Include="System.Windows.Forms\TableLayoutSettings.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutStyle.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutStyleCollection.cs" />
+    <Compile Include="System.Windows.Forms\TabStops.cs" />
     <Compile Include="System.Windows.Forms\TextBox.cs" />
     <Compile Include="System.Windows.Forms\TextBoxBase.cs" />
     <Compile Include="System.Windows.Forms\TextBoxRenderer.cs" />

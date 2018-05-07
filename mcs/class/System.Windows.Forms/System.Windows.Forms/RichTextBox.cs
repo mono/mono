@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -596,7 +597,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int SelectionCharOffset {
 			get {
-				int		char_offset;
+				float		char_offset;
 				LineTag	start;
 				LineTag	end;
 				LineTag	tag;
@@ -614,7 +615,7 @@ namespace System.Windows.Forms {
 				tag = start;
 				while (tag != null) {
 					
-					if (char_offset != tag.CharOffset)
+					if (Math.Abs(char_offset - tag.CharOffset) > 0.01)
 						return 0;
 					
 					if (tag == end)
@@ -623,7 +624,7 @@ namespace System.Windows.Forms {
 					tag = document.NextTag (tag);
 				}
 				
-				return char_offset;
+				return (int)char_offset;
 			}
 
 			set {
@@ -772,14 +773,14 @@ namespace System.Windows.Forms {
 				Line			line;
 				
 				start = document.ParagraphStart(document.selection_start.line);
-				indent = start.hanging_indent;
+				indent = (int)start.hanging_indent;
 				
 				end = document.ParagraphEnd(document.selection_end.line);
 				
 				line = start;
 				
 				while (true) {
-					if (line.hanging_indent != indent) {
+					if ((int)line.hanging_indent != indent) {
 						return 0;
 					}
 					
@@ -826,14 +827,14 @@ namespace System.Windows.Forms {
 				Line			line;
 				
 				start = document.ParagraphStart(document.selection_start.line);
-				indent = start.indent;
+				indent = (int)start.indent;
 				
 				end = document.ParagraphEnd(document.selection_end.line);
 				
 				line = start;
 				
 				while (true) {
-					if (line.indent != indent) {
+					if ((int)line.indent != indent) {
 						return 0;
 					}
 					
@@ -905,14 +906,14 @@ namespace System.Windows.Forms {
 				Line			line;
 				
 				start = document.ParagraphStart(document.selection_start.line);
-				indent = start.right_indent;
+				indent = (int)start.right_indent;
 				
 				end = document.ParagraphEnd(document.selection_end.line);
 				
 				line = start;
 				
 				while (true) {
-					if (line.right_indent != indent) {
+					if ((int)line.right_indent != indent) {
 						return 0;
 					}
 					
@@ -952,11 +953,11 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int[] SelectionTabs {
 			get {
-				int[]			tabs;
+				TabStopCollection		tabs;
 				Line			start;
 				Line			end;
 				Line			line;
-				
+
 				start = document.ParagraphStart(document.selection_start.line);
 				tabs = start.TabStops;
 				
@@ -965,19 +966,15 @@ namespace System.Windows.Forms {
 				line = start;
 				
 				while (true) {
-					if (line.TabStops.Length != tabs.Length)
+					if (!line.TabStops.Equals(tabs))
 						return new int[0];
-					
-					for (int i = 0; i < tabs.Length; i++)
-						if (line.TabStops[i] != tabs[i])
-							return new int[0];
-					
+				
 					if (line == end)
 						break;
 					line = document.GetLine(line.line_no + 1);
 				}
-				
-				return tabs;
+
+				return tabs.ToPosArray();
 			}
 			
 			set {
@@ -992,8 +989,9 @@ namespace System.Windows.Forms {
 				line = start;
 				
 				while (true) {
-					line.TabStops = new int[value.Length];
-					value.CopyTo(line.TabStops, 0);
+					line.TabStops.Clear();
+					foreach (int val in value)
+						line.TabStops.Add(new LeftTabStop(val));
 					
 					if (line == end) {
 						break;
@@ -1617,19 +1615,20 @@ namespace System.Windows.Forms {
 			internal RTF.Font rtf_rtffont;
 			internal float rtf_rtffont_size;
 			internal FontStyle rtf_rtfstyle;
-			internal HorizontalAlignment rtf_rtfalign;
-			internal int rtf_par_line_left_indent;
-			internal int rtf_par_first_line_indent;
-			internal int rtf_par_line_right_indent;
+			internal HorizontalAlignment rtf_par_align;
+			internal float rtf_par_line_left_indent;
+			internal float rtf_par_first_line_indent;
+			internal float rtf_par_line_right_indent;
 			internal bool rtf_visible;
 			internal int rtf_skip_width;
-			internal int rtf_par_spacing_after;
-			internal int rtf_par_spacing_before;
-			internal int rtf_par_line_spacing;
+			internal float rtf_par_spacing_after;
+			internal float rtf_par_spacing_before;
+			internal float rtf_par_line_spacing;
 			internal bool rtf_par_line_spacing_multiple;
 			internal TextPositioning rtf_text_position;
-			internal int rtf_char_offset;
-			internal ArrayList rtf_par_tab_stops = new ArrayList();
+			internal float rtf_char_offset;
+			internal TabStop rtf_par_next_tab_stop = null;
+			internal TabStopCollection rtf_par_tab_stops = new TabStopCollection();
 
 			public object Clone ()
 			{
@@ -1640,7 +1639,7 @@ namespace System.Windows.Forms {
 				new_style.rtf_par_line_left_indent = rtf_par_line_left_indent;
 				new_style.rtf_par_first_line_indent = rtf_par_first_line_indent;
 				new_style.rtf_par_line_right_indent = rtf_par_line_right_indent;
-				new_style.rtf_rtfalign = rtf_rtfalign;
+				new_style.rtf_par_align = rtf_par_align;
 				new_style.rtf_rtffont = rtf_rtffont;
 				new_style.rtf_rtffont_size = rtf_rtffont_size;
 				new_style.rtf_rtfstyle = rtf_rtfstyle;
@@ -1652,7 +1651,7 @@ namespace System.Windows.Forms {
 				new_style.rtf_par_line_spacing_multiple = rtf_par_line_spacing_multiple;
 				new_style.rtf_text_position = rtf_text_position;
 				new_style.rtf_char_offset = rtf_char_offset;
-				new_style.rtf_par_tab_stops.AddRange (rtf_par_tab_stops);
+				new_style.rtf_par_tab_stops = rtf_par_tab_stops.Clone();
 
 				return new_style;
 			}
@@ -1848,13 +1847,13 @@ namespace System.Windows.Forms {
 
 						case RTF.Minor.SuperScript: {
 							FlushText (rtf, false);
-							rtf_style.rtf_char_offset = (int) (((float) rtf.Param / 144.0F) * document.dpi + 0.5F);
+							rtf_style.rtf_char_offset = ((float) rtf.Param / 144.0F) * document.dpi;
 							break;
 						}
 						
 						case RTF.Minor.SubScript: {
 							FlushText (rtf, false);
-							rtf_style.rtf_char_offset = -(int) (((float) rtf.Param / 144.0F) * document.dpi + 0.5F);
+							rtf_style.rtf_char_offset = -((float) rtf.Param / 144.0F) * document.dpi;
 							break;
 						}
 					}
@@ -1873,56 +1872,80 @@ namespace System.Windows.Forms {
 					rtf_style.rtf_par_spacing_before = 0;
 					rtf_style.rtf_par_line_spacing = 0;
 					rtf_style.rtf_par_line_spacing_multiple = false;
-					rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
+					rtf_style.rtf_par_align = HorizontalAlignment.Left;
+					rtf_style.rtf_par_next_tab_stop = null;
 					rtf_style.rtf_par_tab_stops.Clear ();
 					break;
 
+				case RTF.Minor.TabLeft:
+					rtf_style.rtf_par_next_tab_stop = new LeftTabStop();
+					break;
+
+				case RTF.Minor.TabCenter:
+					rtf_style.rtf_par_next_tab_stop = new CentredTabStop();
+					break;
+
+				case RTF.Minor.TabRight:
+					rtf_style.rtf_par_next_tab_stop = new RightTabStop();
+					break;
+
+				case RTF.Minor.TabDecimal:
+					rtf_style.rtf_par_next_tab_stop = new DecimalTabStop();
+					break;
+
 				case RTF.Minor.TabPos:
-					rtf_style.rtf_par_tab_stops.Add((int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F));
+					float tabPos = ((float)rtf.Param / 1440.0F) * document.dpi;
+					if (rtf_style.rtf_par_next_tab_stop != null) {
+						rtf_style.rtf_par_next_tab_stop.Position = tabPos;
+						rtf_style.rtf_par_tab_stops.Add(rtf_style.rtf_par_next_tab_stop);
+						rtf_style.rtf_par_next_tab_stop = null;
+					} else {
+						rtf_style.rtf_par_tab_stops.Add(new LeftTabStop(tabPos));
+					}
 					break;
 
 				case RTF.Minor.LeftIndent:
-					rtf_style.rtf_par_line_left_indent = (int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F);
+					rtf_style.rtf_par_line_left_indent = ((float) rtf.Param / 1440.0F) * document.dpi;
 					break;
 
 				case RTF.Minor.FirstIndent:
-					rtf_style.rtf_par_first_line_indent = (int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F);
+					rtf_style.rtf_par_first_line_indent = ((float) rtf.Param / 1440.0F) * document.dpi;
 					break;
 
 				case RTF.Minor.RightIndent:
-					rtf_style.rtf_par_line_right_indent = (int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F);
+					rtf_style.rtf_par_line_right_indent = ((float) rtf.Param / 1440.0F) * document.dpi;
 					break;
 
 				case RTF.Minor.QuadCenter:
 					FlushText (rtf, false);
-					rtf_style.rtf_rtfalign = HorizontalAlignment.Center;
+					rtf_style.rtf_par_align = HorizontalAlignment.Center;
 					break;
 
 				case RTF.Minor.QuadJust:
 					FlushText (rtf, false);
-					rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
+					rtf_style.rtf_par_align = HorizontalAlignment.Left;
 					break;
 
 				case RTF.Minor.QuadLeft:
 					FlushText (rtf, false);
-					rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
+					rtf_style.rtf_par_align = HorizontalAlignment.Left;
 					break;
 
 				case RTF.Minor.QuadRight:
 					FlushText (rtf, false);
-					rtf_style.rtf_rtfalign = HorizontalAlignment.Right;
+					rtf_style.rtf_par_align = HorizontalAlignment.Right;
 					break;
 
 				case RTF.Minor.SpaceAfter:
-					rtf_style.rtf_par_spacing_after = (int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F);
+					rtf_style.rtf_par_spacing_after = ((float) rtf.Param / 1440.0F) * document.dpi;
 					break;
 
 				case RTF.Minor.SpaceBefore:
-					rtf_style.rtf_par_spacing_before = (int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F);
+					rtf_style.rtf_par_spacing_before = ((float) rtf.Param / 1440.0F) * document.dpi;
 					break;
 
 				case RTF.Minor.SpaceBetween:
-					rtf_style.rtf_par_line_spacing = (int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F);
+					rtf_style.rtf_par_line_spacing = ((float) rtf.Param / 1440.0F) * document.dpi;
 					break;
 
 				case RTF.Minor.SpaceMultiply:
@@ -2054,8 +2077,8 @@ namespace System.Windows.Forms {
 
 		private void FlushText(RTF.RTF rtf, bool newline, bool force) {
 			int		length;
-			int hanging_indent;
-			int left_indent;
+			float hanging_indent;
+			float left_indent;
 			Font		font;
 
 			length = rtf_line.Length;
@@ -2095,11 +2118,11 @@ namespace System.Windows.Forms {
 				if (newline && rtf_line.ToString ().EndsWith (Environment.NewLine) == false)
 					rtf_line.Append (Environment.NewLine);
 
-				document.Add (rtf_cursor_y, rtf_line.ToString (), rtf_style.rtf_rtfalign, font, rtf_style.rtf_color,
+				document.Add (rtf_cursor_y, rtf_line.ToString (), rtf_style.rtf_par_align, font, rtf_style.rtf_color,
 					rtf_style.rtf_back_color, rtf_style.rtf_text_position, rtf_style.rtf_char_offset, left_indent, hanging_indent,
 				    rtf_style.rtf_par_line_right_indent, rtf_style.rtf_par_spacing_before, rtf_style.rtf_par_spacing_after,
 					rtf_style.rtf_par_line_spacing, rtf_style.rtf_par_line_spacing_multiple,
-				    (int[]) rtf_style.rtf_par_tab_stops.ToArray(typeof (int)) , rtf_style.rtf_visible,
+					rtf_style.rtf_par_tab_stops.Clone() , rtf_style.rtf_visible,
 				    newline ? LineEnding.Rich : LineEnding.None);
 			} else {
 				Line line = document.GetLine (rtf_cursor_y);
@@ -2117,7 +2140,7 @@ namespace System.Windows.Forms {
 				line.spacing_before = Math.Max (rtf_style.rtf_par_spacing_before, line.spacing_before);
 				line.line_spacing = Math.Max (rtf_style.rtf_par_line_spacing, line.line_spacing);
 				line.line_spacing_multiple = rtf_style.rtf_par_line_spacing_multiple;
-				line.alignment = rtf_style.rtf_rtfalign;
+				line.alignment = rtf_style.rtf_par_align;
 
 				if (rtf_line.Length > 0) {
 					document.InsertString (line, rtf_cursor_x, rtf_line.ToString ());
@@ -2165,7 +2188,7 @@ namespace System.Windows.Forms {
 			rtf_style.rtf_color = Color.Empty;
 			rtf_style.rtf_back_color = Color.Empty;
 			rtf_style.rtf_rtffont_size = (int)this.Font.Size;
-			rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
+			rtf_style.rtf_par_align = HorizontalAlignment.Left;
 			rtf_style.rtf_rtfstyle = FontStyle.Regular;
 			rtf_style.rtf_text_position = TextPositioning.Normal;
 			rtf_style.rtf_par_spacing_after = 0;
@@ -2224,7 +2247,8 @@ namespace System.Windows.Forms {
 				using (var graphics = CreateGraphics())
 					document.RecalculateDocument(graphics, cursor_y, document.Lines, false);
 				document.ResumeRecalc (true);
-				document.Invalidate (document.GetLine(cursor_y), 0, document.GetLine(document.Lines), -1);
+			//document.Invalidate (document.GetLine(cursor_y), 0, document.GetLine(document.Lines), -1);
+			document.InvalidateLinesAfter(document.GetLine(cursor_y));
 			} else {
 				document.ResumeRecalc (false);
 			}
@@ -2263,7 +2287,7 @@ namespace System.Windows.Forms {
 				rtf.Append(String.Format("\\f{0}", font_index));	// Font table entry
 			}
 
-			if ((prev_font == null) || (prev_font.Size != font.Size)) {
+			if ((prev_font == null) || (Math.Abs(prev_font.Size - font.Size) > 0.01)) {
 				rtf.Append(String.Format("\\fs{0}", (int)(font.Size * 2)));		// Font size
 			}
 
@@ -2414,6 +2438,83 @@ namespace System.Windows.Forms {
 			sb.Append("}");
 		}
 
+		private void EmitTabStops(StringBuilder sb, TabStopCollection tabs) {
+			foreach (var tab in tabs) {
+				if (tab is DecimalTabStop) {
+					sb.Append("\\tqdec");
+				} else if (tab is CentredTabStop) {
+					sb.Append("\\tqc");
+				} else if (tab is RightTabStop) {
+					sb.Append("\\tqr");
+				}
+				sb.Append("\\tx");
+				sb.Append(Int(tab.Position / document.dpi * 1440f));
+			}
+		}
+
+		void EmitPard(StringBuilder sb, ArrayList fonts, Line line, LineTag tag, TabStopCollection tabs, float ppt) {
+			var first_line_indent = -line.HangingIndent;
+			var left_indent = line.Indent - first_line_indent;
+			var right_indent = line.RightIndent;
+
+			sb.Append("\\pard");
+			// Reset to default paragraph properties
+			switch (line.alignment) {
+			case HorizontalAlignment.Left:
+				sb.Append("\\ql");
+				break;
+			case HorizontalAlignment.Center:
+				sb.Append("\\qc");
+				break;
+			case HorizontalAlignment.Right:
+				sb.Append("\\qr");
+				break;
+			}
+			if (Math.Abs(line.spacing_after) > ppt) {
+				sb.Append("\\sa");
+				sb.Append(Int(line.spacing_after / ppt));
+			}
+			if (Math.Abs(line.spacing_before) > ppt) {
+				sb.Append("\\sb");
+				sb.Append(Int(line.spacing_before / ppt));
+			}
+			if (Math.Abs(line.line_spacing) > ppt) {
+				sb.Append("\\sl");
+				sb.Append(Int(line.line_spacing / ppt));
+				sb.Append("\\slmult");
+				sb.Append(line.line_spacing_multiple ? "1" : "0");
+			}
+			if (Math.Abs(left_indent) > ppt) {
+				sb.Append("\\li");
+				sb.Append(Int(left_indent / ppt));
+			}
+			if (Math.Abs(first_line_indent) > ppt) {
+				sb.Append("\\fi");
+				sb.Append(Int(first_line_indent / ppt));
+			}
+			if (Math.Abs(right_indent) > ppt) {
+				sb.Append("\\ri");
+				sb.Append(Int(right_indent / ppt));
+			}
+			if (tabs.Count > 0) {
+				EmitTabStops(sb, tabs);
+			}
+		}
+
+		static void LoadParaSettings(Line line, out HorizontalAlignment line_alignment, out float spacing_after, out float spacing_before, out float line_spacing, out bool line_spacing_multiple, out float left_indent, out float prev_left_indent, out float first_line_indent, out float prev_first_line_indent, out float right_indent, out TabStopCollection tabs) {
+			spacing_after = line.spacing_after;
+			spacing_before = line.spacing_before;
+			line_spacing = line.line_spacing;
+			line_spacing_multiple = line.line_spacing_multiple;
+			line_alignment = line.alignment;
+			first_line_indent = -line.HangingIndent;
+			left_indent = line.Indent - first_line_indent;
+			prev_first_line_indent = first_line_indent;
+			prev_left_indent = left_indent;
+			right_indent = line.RightIndent;
+			tabs = line.TabStops;
+		}
+
 		// start_pos and end_pos are 0-based
 		private StringBuilder GenerateRTF(Line start_line, int start_pos, Line end_line, int end_pos) {
 			StringBuilder	sb;
@@ -2426,26 +2527,34 @@ namespace System.Windows.Forms {
 			LineTag		tag;
 			TextPositioning text_position;
 			HorizontalAlignment line_alignment;
-			int		spacing_after;
-			int		spacing_before;
-			int		line_spacing;
-			bool	line_spacing_multiple;
-			int		left_indent;
-			int		prev_left_indent;
-			int		first_line_indent;
-			int		prev_first_line_indent;
-			int		right_indent;
-			int		char_offset;
+			float		spacing_after;
+			float		spacing_before;
+			float		line_spacing;
+			bool		line_spacing_multiple;
+			float		left_indent;
+			float		prev_left_indent;
+			float		first_line_indent;
+			float		prev_first_line_indent;
+			float		right_indent;
+			TabStopCollection tabs;
+			TabStopCollection tabDiff;
+			bool emit_defaults;
+			float		char_offset;
 			bool	visible;
 			int		pos;
 			int		line_no;
 			int		line_len;
-			int		i;
+			int		i, j;
 			int		length;
+			float 	ppt; // pixels per twip
+
+			ppt = document.dpi / 1440f; // 1 twip = 1/20 point, 1 point = 1/72 inch, thus 1440 twips = 1 inch.
+			emit_defaults = false;
 
 			sb = new StringBuilder();
 			fonts = new ArrayList(10);
 			colors = new ArrayList(10);
+			tabDiff = new TabStopCollection();
 
 			// Two runs, first we parse to determine tables;
 			// and unlike most of our processing here we work on tags
@@ -2549,58 +2658,13 @@ namespace System.Windows.Forms {
 			line = start_line;
 			line_no = start_line.line_no;
 			pos = start_pos;
-			spacing_after = line.spacing_after;
-			spacing_before = line.spacing_before;
-			line_spacing = line.line_spacing;
-			line_spacing_multiple = line.line_spacing_multiple;
-			line_alignment = line.alignment;
-			first_line_indent = -line.HangingIndent;
-			left_indent = line.Indent - first_line_indent;
-			prev_first_line_indent = first_line_indent;
-			prev_left_indent = left_indent;
-			right_indent = line.RightIndent;
+			LoadParaSettings(line, out line_alignment, out spacing_after, out spacing_before, out line_spacing,
+				out line_spacing_multiple, out left_indent, out prev_left_indent, out first_line_indent,
+				out prev_first_line_indent, out right_indent, out tabs);
 
-			// Emit initial paragraph settings
-			sb.Append("\\pard");	// Reset to default paragraph properties
-			switch (line.alignment) {
-			case HorizontalAlignment.Left:
-				sb.Append("\\ql");
-				break;
-			case HorizontalAlignment.Center:
-				sb.Append("\\qc");
-				break;
-			case HorizontalAlignment.Right:
-				sb.Append("\\qr");
-				break;
-			}
-			if (line.spacing_after != 0) {
-				sb.Append("\\sa");
-				sb.Append((line.spacing_after / document.dpi) * 1440);
-			}
-			if (line.spacing_before != 0) {
-				sb.Append("\\sb");
-				sb.Append((line.spacing_before / document.dpi) * 1440);
-			}
-			if (line.line_spacing != 0) {
-				sb.Append("\\sl");
-				sb.Append((line.line_spacing / document.dpi) * 1440);
-				sb.Append("\\slmult");
-				sb.Append(line.line_spacing_multiple ? "1" : "0");
-			}
-			if (left_indent != 0) {
-				sb.Append("\\li");
-				sb.Append(((left_indent) / document.dpi) * 1440);
-			}
-			if (first_line_indent != 0) {
-				sb.Append("\\fi");
-				sb.Append((first_line_indent / document.dpi) * 1440);
-			}
-			if (line.right_indent != 0) {
-				sb.Append("\\ri");
-				sb.Append((line.right_indent / document.dpi) * 1440);
-			}
-			EmitRTFFontProperties(sb, -1, fonts.IndexOf(tag.Font.Name), null, tag.Font);	// Font properties
-			sb.Append(" ");		// Space separator
+			EmitPard(sb, fonts, line, tag, tabs, ppt);
+			EmitRTFFontProperties(sb, -1, fonts.IndexOf(tag.Font.Name), null, tag.Font); // Font properties
+			sb.Append(" "); // Space separator
 
 			while (line_no <= end_line.line_no) {
 				line = document.GetLine(line_no);
@@ -2612,69 +2676,107 @@ namespace System.Windows.Forms {
 					line_len = end_pos;
 				}
 
-				length = sb.Length;
-				if (line.Alignment != line_alignment) {
-					line_alignment = line.Alignment;
-					switch (line_alignment) {
-					case HorizontalAlignment.Left:
-						sb.Append("\\ql");
-						break;
-					case HorizontalAlignment.Center:
-						sb.Append("\\qc");
-						break;
-					case HorizontalAlignment.Right:
-						sb.Append("\\qr");
-						break;
+				i = 0;
+				j = 0;
+				tabDiff.Clear();
+				emit_defaults = line.TabStops.Count < tabs.Count; // If there are less tabs on the new line, we've got to start over.
+				while (!emit_defaults && i < tabs.Count && j < line.TabStops.Count) {
+					if (tabs[i].Equals(line.TabStops[j])) {
+						i++;
+						j++;
+					} else if (tabs[i].Position - ppt > line.TabStops[j].Position) {
+						// The current tabstop is after the new line's one, so we need to add one in between.
+						tabDiff.Add(line.TabStops[j]);
+						j++;
+					} else {
+						// Either the tabs are at the same position and are of different types, or this line is missing at least one.
+						// This in turn means we must start the line with a \pard, and re-emit all other paragraph properties.
+						emit_defaults = true;
 					}
 				}
+				if (i < tabs.Count) // We didn't reach the end of the existing tabstops, so the rest have to be removed.
+					emit_defaults = true;
+				while (!emit_defaults && j < line.TabStops.Count) { // Any new ones have to be added on the end too.
+					tabDiff.Add(line.TabStops[j]);
+					j++;
+				}
+				tabs = line.TabStops;
+
+				if (!emit_defaults) {
+					length = sb.Length;
+					if (line.Alignment != line_alignment) {
+						line_alignment = line.Alignment;
+						switch (line_alignment) {
+						case HorizontalAlignment.Left:
+							sb.Append("\\ql");
+							break;
+						case HorizontalAlignment.Center:
+							sb.Append("\\qc");
+							break;
+						case HorizontalAlignment.Right:
+							sb.Append("\\qr");
+							break;
+						}
+					}
+
+					if (Math.Abs(line.spacing_after - spacing_after) > ppt) {
+						spacing_after = line.spacing_after;
+						sb.Append("\\sa");
+						sb.Append(Int(spacing_after / ppt));
+					}
 				
-				if (line.spacing_after != spacing_after) {
-					spacing_after = line.spacing_after;
-					sb.Append("\\sa");
-					sb.Append((int) ((spacing_after / document.dpi) * 1440));
-				}
-				
-				if (line.spacing_before != spacing_before) {
-					spacing_before = line.spacing_before;
-					sb.Append("\\sb");
-					sb.Append((int) ((spacing_before / document.dpi) * 1440));
-				}
+					if (Math.Abs(line.spacing_before - spacing_before) > ppt) {
+						spacing_before = line.spacing_before;
+						sb.Append("\\sb");
+						sb.Append(Int(spacing_before / ppt));
+					}
 
-				if (line.line_spacing != line_spacing) {
-					line_spacing = line.line_spacing;
-					sb.Append("\\sl");
-					sb.Append((line.line_spacing / document.dpi) * 1440);
-				}
+					if (Math.Abs(line.line_spacing - line_spacing) > ppt) {
+						line_spacing = line.line_spacing;
+						sb.Append("\\sl");
+						sb.Append(Int(line.line_spacing / ppt));
+					}
 
-				if (line.line_spacing_multiple != line_spacing_multiple) {
-					line_spacing_multiple = line.line_spacing_multiple;
-					sb.Append("\\slmult");
-					sb.Append(line.line_spacing_multiple ? "1" : "0");
-				}
+					if (line.line_spacing_multiple != line_spacing_multiple) {
+						line_spacing_multiple = line.line_spacing_multiple;
+						sb.Append("\\slmult");
+						sb.Append(line.line_spacing_multiple ? "1" : "0");
+					}
 
-				first_line_indent = -line.HangingIndent;
-				left_indent = line.Indent - first_line_indent;
+					first_line_indent = -line.HangingIndent;
+					left_indent = line.Indent - first_line_indent;
 
-				if (prev_left_indent != left_indent) {
-					prev_left_indent = left_indent;
-					sb.Append("\\li");
-					sb.Append((left_indent / document.dpi) * 1440);
-				}
+					if (Math.Abs(prev_left_indent - left_indent) > ppt) {
+						prev_left_indent = left_indent;
+						sb.Append("\\li");
+						sb.Append(Int(left_indent / ppt));
+					}
 
-				if (prev_first_line_indent != first_line_indent) {
-					prev_first_line_indent = first_line_indent;
-					sb.Append("\\fi");
-					sb.Append((first_line_indent / document.dpi) * 1440);
-				}
+					if (Math.Abs(prev_first_line_indent - first_line_indent) > ppt) {
+						prev_first_line_indent = first_line_indent;
+						sb.Append("\\fi");
+						sb.Append(Int(first_line_indent / ppt));
+					}
 
-				if (line.right_indent != right_indent) {
-					right_indent = line.right_indent;
-					sb.Append("\\ri");
-					sb.Append((right_indent / document.dpi) * 1440);
-				}
+					if (Math.Abs(line.right_indent - right_indent) > ppt) {
+						right_indent = line.right_indent;
+						sb.Append("\\ri");
+						sb.Append(Int(right_indent / ppt));
+					}
 
-				if (length != sb.Length) {
+					if (tabDiff.Count > 0) {
+						EmitTabStops(sb, tabDiff);
+					}
+
+					if (length != sb.Length) {
+						sb.Append(" ");
+					}
+				} else {
+					EmitPard(sb, fonts, line, tag, tabs, ppt);
 					sb.Append(" ");
+					LoadParaSettings(line, out line_alignment, out spacing_after, out spacing_before, out line_spacing,
+						out line_spacing_multiple, out left_indent, out prev_left_indent, out first_line_indent,
+						out prev_first_line_indent, out right_indent, out tabs);
 				}
 
 				while (pos < line_len && tag != null) {
@@ -2720,10 +2822,10 @@ namespace System.Windows.Forms {
 						char_offset = tag.CharOffset;
 						if (char_offset >= 0) {
 							sb.Append("\\up");
-							sb.Append((int) ((char_offset / document.dpi) * 144));
+							sb.Append(Int((char_offset / document.dpi) * 144));
 						} else {
 							sb.Append("\\dn");
-							sb.Append(-(int) ((char_offset / document.dpi) * 144));
+							sb.Append(-Int((char_offset / document.dpi) * 144));
 						}
 					}
 
@@ -2775,6 +2877,10 @@ namespace System.Windows.Forms {
 			sb.Append(Environment.NewLine);
 
 			return sb;
+		}
+
+		int Int(float f) {
+			return (int)(f + 0.5f);
 		}
 		#endregion	// Private Methods
 	}
