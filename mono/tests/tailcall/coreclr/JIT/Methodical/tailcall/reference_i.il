@@ -101,6 +101,6 @@
   IL_0035:  br.s       IL_0004
 
   IL_0037:  call       void [mscorlib]System.Console::WriteLine()
-  IL_003c:  ldc.i4     0x64
+  IL_003c:  ldc.i4     0
   IL_0041:  ret
 } // end of global method main

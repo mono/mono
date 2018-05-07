@@ -66,14 +66,23 @@
 
       IL_0017:  ldstr      "failed"
       IL_001c:  br.s       IL_0023
-
       IL_001e:  ldstr      "passed"
       IL_0023:  call       void [mscorlib]System.Console::WriteLine(class System.String)
+
       IL_0028:  ldloc.0
       IL_0029:  stloc.1
       IL_002a:  br.s       IL_002c
 
       IL_002c:  ldloc.1
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
       IL_002d:  ret
     } // end of method LargeVT::Main
 

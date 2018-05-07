@@ -290,6 +290,15 @@
     IL_006e:  ldstr      "Test SUCCESS"
     IL_0073:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0078:  ldc.i4.s   100
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
     IL_007a:  ret
   } 
 
