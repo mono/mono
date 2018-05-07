@@ -8616,6 +8616,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			gboolean tailcall_remove_ret = FALSE;
 			gboolean tailcall_testvalue = FALSE;
 
+			// variables to help in assertions
+			gboolean called_is_supported_tailcall = FALSE;
+			MonoMethod *tailcall_method = NULL;
+			MonoMethod *tailcall_cmethod = NULL;
+			MonoMethodSignature *tailcall_fsig = NULL;
+			gboolean tailcall_virtual = FALSE;
+			gboolean tailcall_extra_arg = FALSE;
+
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 
@@ -9124,6 +9132,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						virtual_, vtable_arg || imt_arg || will_have_imt_arg, &tailcall_calli);
 			tailcall_testvalue = tailcall; // sometimes changed to tailcall_calli.
 			// Writes to imt_arg, vtable_arg, virtual_, cmethod, must not occur from here (inputs to is_supported_tailcall).
+			// Capture values to later assert they don't change.
+			called_is_supported_tailcall = TRUE;
+			tailcall_method = method;
+			tailcall_cmethod = cmethod;
+			tailcall_fsig = fsig;
+			tailcall_virtual = virtual_;
+			tailcall_extra_arg = vtable_arg || imt_arg || will_have_imt_arg;
 
 			if (virtual_generic) {
 				if (virtual_generic_imt) {
@@ -9211,6 +9226,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					(cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
 					/* Prevent inlining of methods that call wrappers */
 					INLINE_FAILURE ("wrapper call");
+					// FIXME? Does this write to cmethod impact tailcall_supported? Probably not.
+					// Neither pinvoke or icall are likely to be tailcalled.
 					cmethod = mono_marshal_get_native_wrapper (cmethod, TRUE, FALSE);
 					always = TRUE;
 				}
@@ -9293,8 +9310,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 */
 			if (cfg->method->wrapper_type == MONO_WRAPPER_SYNCHRONIZED) {
 				MonoMethod *orig = mono_marshal_method_from_wrapper (cfg->method);
-				if (cmethod == orig || (cmethod->is_inflated && mono_method_get_declaring_generic_method (cmethod) == orig))
+				if (cmethod == orig || (cmethod->is_inflated && mono_method_get_declaring_generic_method (cmethod) == orig)) {
+					// FIXME? Does this write to cmethod impact tailcall_supported? Probably not.
 					cmethod = mono_marshal_get_synchronized_inner_wrapper (cmethod);
+				}
 			}
 
 			/*
@@ -9498,6 +9517,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			common_call = TRUE;
 
 			call_end:
+
+			// Check that the decision to tailcall would not have changed.
+			g_assert (!called_is_supported_tailcall || tailcall_method == method);
+			// FIXME? cmethod does change, weaken the assert if we weren't tailcalling anyway.
+			// If this still fails, restructure the code, or call tailcall_supported again and assert no change.
+			g_assert (!called_is_supported_tailcall || !tailcall_testvalue || tailcall_cmethod == cmethod);
+			g_assert (!called_is_supported_tailcall || tailcall_fsig == fsig);
+			g_assert (!called_is_supported_tailcall || tailcall_virtual == virtual_);
+			g_assert (!called_is_supported_tailcall || tailcall_extra_arg == (vtable_arg || imt_arg || will_have_imt_arg));
 
 			if (common_call) // FIXME goto call_end && !common_call often skips tailcall processing.
 				ins = mono_emit_method_call_full (cfg, cmethod, fsig, tailcall, sp, virtual_ ? sp [0] : NULL,
