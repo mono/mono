@@ -1926,31 +1926,26 @@ if (ins->inst_true_bb->native_offset) { \
 } while (0); 
 
 static guint8*
-x86_align_for_patch (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data, int align_offset)
+x86_align_and_patch (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data)
 {
-	if (cfg->compile_aot)
-		return code;
+	gboolean needs_paddings = TRUE;
+	guint32 pad_size;
+	MonoJumpInfo *jinfo = NULL;
 
 	if (cfg->abs_patches) {
-		MonoJumpInfo *jinfo = g_hash_table_lookup (cfg->abs_patches, data);
+		jinfo = g_hash_table_lookup (cfg->abs_patches, data);
 		if (jinfo && jinfo->type == MONO_PATCH_INFO_JIT_ICALL_ADDR)
-			return code;
+			needs_paddings = FALSE;
 	}
 
+	if (cfg->compile_aot)
+		needs_paddings = FALSE;
 	/*The address must be 4 bytes aligned to avoid spanning multiple cache lines.
 	This is required for code patching to be safe on SMP machines.
 	*/
-	guint32 pad_size = (guint32)(code + align_offset - cfg->native_code) & 0x3;
-	if (pad_size)
+	pad_size = (guint32)(code + 1 - cfg->native_code) & 0x3;
+	if (needs_paddings && pad_size)
 		x86_padding (code, 4 - pad_size);
-
-	return code;
-}
-
-static guint8*
-x86_align_and_patch (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data, int align_offset)
-{
-	code = x86_align_for_patch (cfg, code, patch_type, data, align_offset);
 
 	mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
 
@@ -1960,7 +1955,7 @@ x86_align_and_patch (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstp
 static guint8*
 emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data)
 {
-	code = x86_align_and_patch (cfg, code, patch_type, data, 1);
+	code = x86_align_and_patch (cfg, code, patch_type, data);
 
 	x86_call_code (code, 0);
 
@@ -3248,7 +3243,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				x86_jump_reg (code, X86_ECX);
 			} else {
 				// FIXME Patch data instead of code.
-				code = x86_align_and_patch (cfg, code, MONO_PATCH_INFO_METHOD_JUMP, call->method, 1);
+				code = x86_align_and_patch (cfg, code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
 				x86_jump32 (code, 0);
 			}
 
