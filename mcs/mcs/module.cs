@@ -472,6 +472,18 @@ namespace Mono.CSharp
 			attributes.AddAttribute (attr);
 		}
 
+		public void AddAssemblyReferences (List<Assembly> names)
+		{
+			if (names == null)
+				return;
+
+#if STATIC
+			foreach (var name in names) {
+				Builder.__GetAssemblyToken (name);
+			}
+#endif
+		}
+
 		public override void AddTypeContainer (TypeContainer tc)
 		{
 			AddTypeContainerMember (tc);
