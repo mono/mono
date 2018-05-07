@@ -1488,7 +1488,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/threading/asynclocal.cs
 ../referencesource/mscorlib/system/threading/autoresetevent.cs
 ../referencesource/mscorlib/system/threading/CancellationToken.cs
-../referencesource/mscorlib/system/threading/CancellationTokenRegistration.cs
 ../referencesource/mscorlib/system/threading/CancellationTokenSource.cs
 ../referencesource/mscorlib/system/threading/CountdownEvent.cs
 ../referencesource/mscorlib/system/threading/eventresetmode.cs
@@ -1523,6 +1522,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/threading/waithandleExtensions.cs
 
 ../referencesource/mscorlib/system/threading/Tasks/AsyncCausalityTracer.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/CancellationTokenRegistration.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskExceptionHolder.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/ProducerConsumerQueues.cs
