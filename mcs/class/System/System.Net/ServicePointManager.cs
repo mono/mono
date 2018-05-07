@@ -120,7 +120,7 @@ namespace System.Net
 		private static int maxServicePoints = 0;
 		private static int dnsRefreshTimeout = 2 * 60 * 1000;
 		private static bool _checkCRL = false;
-		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.SystemDefault;
 
 		static bool expectContinue = true;
 		static bool useNagle;
