@@ -7491,7 +7491,7 @@ ves_icall_MonoMethod_get_name (MonoReflectionMethodHandle m, MonoError *error)
 }
 
 ICALL_EXPORT void
-mono_ArgIterator_Setup (MonoArgIterator *iter, char* argsp, char* start)
+mono_ArgIterator_Setup (MonoArgIterator *iter, char* argsp, char* start, MonoError *error)
 {
 	iter->sig = *(MonoMethodSignature**)argsp;
 	
@@ -7511,7 +7511,7 @@ mono_ArgIterator_Setup (MonoArgIterator *iter, char* argsp, char* start)
 }
 
 ICALL_EXPORT MonoTypedRef
-mono_ArgIterator_IntGetNextArg (MonoArgIterator *iter)
+mono_ArgIterator_IntGetNextArg (MonoArgIterator *iter, MonoError *error)
 {
 	guint32 i, arg_size;
 	gint32 align;
@@ -7544,7 +7544,7 @@ mono_ArgIterator_IntGetNextArg (MonoArgIterator *iter)
 }
 
 ICALL_EXPORT MonoTypedRef
-mono_ArgIterator_IntGetNextArgT (MonoArgIterator *iter, MonoType *type)
+mono_ArgIterator_IntGetNextArgT (MonoArgIterator *iter, MonoType *type, MonoError *error)
 {
 	guint32 i, arg_size;
 	gint32 align;
@@ -7579,7 +7579,7 @@ mono_ArgIterator_IntGetNextArgT (MonoArgIterator *iter, MonoType *type)
 }
 
 ICALL_EXPORT MonoType*
-mono_ArgIterator_IntGetNextArgType (MonoArgIterator *iter)
+mono_ArgIterator_IntGetNextArgType (MonoArgIterator *iter, MonoError *error)
 {
 	gint i;
 	
