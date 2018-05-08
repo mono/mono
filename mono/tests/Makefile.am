@@ -90,10 +90,10 @@ TAILCALL_DISABLED_TESTS_COMPILE += \
 #
 # return type mismatch (int32 vs. enum)
 # 	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.exe
-
+#
 # FIXME depends on msvcrt.dll, and calli
 #	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.exe
-
+#
 # FIXME reference parameter; requires range check to allow
 #	tailcall/coreclr/JIT/Directed/zeroinit/tail.exe
 
@@ -945,6 +945,7 @@ PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += ivtail1.exe
+PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Directed/tailcall/tailcall.exe  # interface
 endif
 
 if ARM64
@@ -1769,8 +1770,6 @@ TEST_TAILCALL_IL_SRC=\
 	tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.il \
 	tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_obj.il \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.il \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4_inl.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_v.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_array.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_array_nz.il \
