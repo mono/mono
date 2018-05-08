@@ -112,6 +112,15 @@
     IL_004d:  br.s       IL_004f
 
     IL_004f:  ldloc.2
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
     IL_0050:  ret
   } // end of method AA::Main
 

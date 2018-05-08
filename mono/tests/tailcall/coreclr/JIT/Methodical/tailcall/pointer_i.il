@@ -89,7 +89,7 @@
   IL_0035:  br.s       IL_0004
 
   IL_0037:  call       void [mscorlib]System.Console::WriteLine()
-  			ldc.i4     0x64
+			ldc.i4     0
   			ret
 } 
 
