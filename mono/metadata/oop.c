@@ -369,7 +369,7 @@ oop_jit_info_table_find(
     return NULL;
 }
 
-int
+MONO_API int
 mono_unity_oop_get_stack_frame_details(
     const MonoDomain* domain,
     const void* frameAddress,
