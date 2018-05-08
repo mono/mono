@@ -1,9 +1,11 @@
 
 LLVM_SRC?=$(TOP)/sdks/builds/toolchains/llvm
 
-$(TOP)/sdks/builds/toolchains/llvm:
-	git clone -b $(LLVM_BRANCH) https://github.com/mono/llvm.git $@
-	cd $@ && git checkout $(LLVM_HASH)
+# Looks ugly, but llvm/Makefile might not exist yet
+reset-llvm:
+	$(MAKE) -C ../../llvm -f Makefile.am top_srcdir=$(PWD)/../.. LLVM_PATH=$(LLVM_SRC) reset-llvm
+
+$(TOP)/sdks/builds/toolchains/llvm: reset-llvm
 
 $(LLVM_SRC)/configure: | $(LLVM_SRC)
 
