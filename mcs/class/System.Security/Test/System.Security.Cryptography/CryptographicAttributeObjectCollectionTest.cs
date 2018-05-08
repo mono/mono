@@ -43,8 +43,9 @@ namespace MonoTests.System.Security.Cryptography {
 
 		private void CommonStuff (CryptographicAttributeObjectCollection coll)
 		{
-			Assert.IsFalse (coll.IsSynchronized, "IsSynchronized");
-			Assert.AreSame (coll, coll.SyncRoot, "SyncRoot");
+			ICollection collection = coll as ICollection;
+			Assert.IsFalse (collection.IsSynchronized, "IsSynchronized");
+			Assert.AreSame (collection, collection.SyncRoot, "SyncRoot");
 			Assert.IsNotNull (coll.GetEnumerator (), "GetEnumerator");
 
 			int i = coll.Count;
