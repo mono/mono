@@ -690,11 +690,6 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	g_assert (caller_sig);
 	g_assert (callee_sig);
 
-	if (cfg->compile_aot && !cfg->full_aot)
-		/* OP_TAILCALL doesn't work with AOT */
-		return FALSE;
-
-	MonoType *callee_ret;
 	CallInfo *caller_info = get_call_info (NULL, caller_sig);
 	CallInfo *callee_info = get_call_info (NULL, callee_sig);
 
@@ -706,10 +701,6 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 				&& IS_SUPPORTED_TAILCALL (caller_info->ret.storage == callee_info->ret.storage);
 	if (!res && !debug_tailcall)
 		goto exit;
-
-	// FIXME: Pass caller's caller's return area to callee.
-	callee_ret = mini_get_underlying_type (callee_sig->ret);
-	res &= IS_SUPPORTED_TAILCALL (!(callee_ret && MONO_TYPE_ISSTRUCT (callee_ret) && callee_info->ret.storage != ArgValuetypeInReg));
 
 	// Limit stack_usage to 1G.
 	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage < (1 << 30));
@@ -1740,7 +1731,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	}
 
 	if (argument_copy_size) {
-		x86_mov_reg_reg (code, X86_EAX, X86_ESP, 4);
+		x86_mov_reg_reg (code, X86_EAX, X86_ESP);
 	}
 
 	g_assert (MONO_ARCH_FRAME_ALIGNMENT >= 8);
@@ -2328,8 +2319,7 @@ mono_emit_stack_alloc (MonoCompile *cfg, guchar *code, MonoInst* tree)
 		}
 		
 		x86_shift_reg_imm (code, X86_SHR, sreg, 2);
-		if (sreg != X86_ECX)
-			x86_mov_reg_reg (code, X86_ECX, sreg, 4);
+		x86_mov_reg_reg (code, X86_ECX, sreg);
 		x86_alu_reg_reg (code, X86_XOR, X86_EAX, X86_EAX);
 				
 		if (cfg->param_area)
@@ -2359,8 +2349,7 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 	case OP_CALL:
 	case OP_CALL_REG:
 	case OP_CALL_MEMBASE:
-		if (ins->dreg != X86_EAX)
-			x86_mov_reg_reg (code, ins->dreg, X86_EAX, 4);
+		x86_mov_reg_reg (code, ins->dreg, X86_EAX);
 		break;
 	default:
 		break;
@@ -2954,7 +2943,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			jump_to_end = code; x86_branch8 (code, X86_CC_EQ, 0, TRUE);
 
 			/* handle shift over 32 bit */
-			x86_mov_reg_reg (code, ins->backend.reg3, ins->sreg1, 4);
+			x86_mov_reg_reg (code, ins->backend.reg3, ins->sreg1);
 			x86_clear_reg (code, ins->sreg1);
 			
 			x86_patch (jump_to_end, code);
@@ -2971,7 +2960,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			jump_to_end = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
 
 			/* handle shifts over 31 bits */
-			x86_mov_reg_reg (code, ins->sreg1, ins->backend.reg3, 4);
+			x86_mov_reg_reg (code, ins->sreg1, ins->backend.reg3);
 			x86_shift_reg_imm (code, X86_SAR, ins->backend.reg3, 31);
 			
 			x86_patch (jump_to_end, code);
@@ -2988,7 +2977,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			jump_to_end = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
 
 			/* handle shifts over 31 bits */
-			x86_mov_reg_reg (code, ins->sreg1, ins->backend.reg3, 4);
+			x86_mov_reg_reg (code, ins->sreg1, ins->backend.reg3);
 			x86_clear_reg (code, ins->backend.reg3);
 			
 			x86_patch (jump_to_end, code);
@@ -2996,7 +2985,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_LSHL_IMM:
 			if (ins->inst_imm >= 32) {
-				x86_mov_reg_reg (code, ins->backend.reg3, ins->sreg1, 4);
+				x86_mov_reg_reg (code, ins->backend.reg3, ins->sreg1);
 				x86_clear_reg (code, ins->sreg1);
 				x86_shift_reg_imm (code, X86_SHL, ins->backend.reg3, ins->inst_imm - 32);
 			} else {
@@ -3006,7 +2995,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_LSHR_IMM:
 			if (ins->inst_imm >= 32) {
-				x86_mov_reg_reg (code, ins->sreg1, ins->backend.reg3,  4);
+				x86_mov_reg_reg (code, ins->sreg1, ins->backend.reg3);
 				x86_shift_reg_imm (code, X86_SAR, ins->backend.reg3, 0x1f);
 				x86_shift_reg_imm (code, X86_SAR, ins->sreg1, ins->inst_imm - 32);
 			} else {
@@ -3016,7 +3005,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_LSHR_UN_IMM:
 			if (ins->inst_imm >= 32) {
-				x86_mov_reg_reg (code, ins->sreg1, ins->backend.reg3, 4);
+				x86_mov_reg_reg (code, ins->sreg1, ins->backend.reg3);
 				x86_clear_reg (code, ins->backend.reg3);
 				x86_shift_reg_imm (code, X86_SHR, ins->sreg1, ins->inst_imm - 32);
 			} else {
@@ -3040,8 +3029,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			case 2:
 				/* MOV r1, r2 */
 				/* ADD r1, r1 */
-				if (ins->dreg != ins->sreg1)
-					x86_mov_reg_reg (code, ins->dreg, ins->sreg1, 4);
+				x86_mov_reg_reg (code, ins->dreg, ins->sreg1);
 				x86_alu_reg_reg (code, X86_ADD, ins->dreg, ins->dreg);
 				break;
 			case 3:
@@ -3112,7 +3100,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 					saved_eax = TRUE;
 					x86_push_reg (code, X86_EAX);
 				}
-				x86_mov_reg_reg (code, X86_EAX, ins->sreg1, 4);
+				x86_mov_reg_reg (code, X86_EAX, ins->sreg1);
 				non_eax_reg = ins->sreg2;
 			}
 			if (ins->dreg == X86_EDX) {
@@ -3126,8 +3114,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			x86_mul_reg (code, non_eax_reg, FALSE);
 			/* save before the check since pop and mov don't change the flags */
-			if (ins->dreg != X86_EAX)
-				x86_mov_reg_reg (code, ins->dreg, X86_EAX, 4);
+			x86_mov_reg_reg (code, ins->dreg, X86_EAX);
 			if (saved_edx)
 				x86_pop_reg (code, X86_EDX);
 			if (saved_eax)
@@ -3160,8 +3147,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_push_membase (code, ins->inst_basereg, 0xf0f0f0f0);
 			break;
 		case OP_MOVE:
-			if (ins->dreg != ins->sreg1)
-				x86_mov_reg_reg (code, ins->dreg, ins->sreg1, 4);
+			x86_mov_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
 
 		case OP_TAILCALL_PARAMETER:
@@ -3337,7 +3323,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_alu_reg_imm (code, X86_ADD, ins->sreg1, MONO_ARCH_LOCALLOC_ALIGNMENT - 1);
 			x86_alu_reg_imm (code, X86_AND, ins->sreg1, ~(MONO_ARCH_LOCALLOC_ALIGNMENT - 1));
 			code = mono_emit_stack_alloc (cfg, code, ins);
-			x86_mov_reg_reg (code, ins->dreg, X86_ESP, 4);
+			x86_mov_reg_reg (code, ins->dreg, X86_ESP);
 			if (cfg->param_area)
 				x86_alu_reg_imm (code, X86_ADD, ins->dreg, ALIGN_TO (cfg->param_area, MONO_ARCH_FRAME_ALIGNMENT));
 			break;
@@ -3351,10 +3337,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ins->sreg1 = ins->dreg;
 
 				code = mono_emit_stack_alloc (cfg, code, ins);
-				x86_mov_reg_reg (code, ins->dreg, X86_ESP, 4);
+				x86_mov_reg_reg (code, ins->dreg, X86_ESP);
 			} else {
 				x86_alu_reg_imm (code, X86_SUB, X86_ESP, size);
-				x86_mov_reg_reg (code, ins->dreg, X86_ESP, 4);
+				x86_mov_reg_reg (code, ins->dreg, X86_ESP);
 			}
 			if (cfg->param_area)
 				x86_alu_reg_imm (code, X86_ADD, ins->dreg, ALIGN_TO (cfg->param_area, MONO_ARCH_FRAME_ALIGNMENT));
@@ -3407,8 +3393,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_GET_EX_OBJ:
-			if (ins->dreg != X86_EAX)
-				x86_mov_reg_reg (code, ins->dreg, X86_EAX, sizeof (gpointer));
+			x86_mov_reg_reg (code, ins->dreg, X86_EAX);
 			break;
 
 		case OP_LABEL:
@@ -3721,8 +3706,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			br [2] = code; x86_branch8 (code, X86_CC_NE, 0, TRUE);
 			x86_patch (br [2], label [0]);
 
-			if (ins->dreg != ins->sreg1)
-				x86_mov_reg_reg (code, ins->dreg, ins->sreg1, 4);
+			x86_mov_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
 		}
 		case OP_FMOVE:
@@ -4279,14 +4263,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				x86_push_reg (code, dreg);
 			}
 
-			x86_mov_reg_reg (code, dreg, ins->sreg2, 4);
+			x86_mov_reg_reg (code, dreg, ins->sreg2);
 			x86_prefix (code, X86_LOCK_PREFIX);
 			x86_xadd_membase_reg (code, ins->inst_basereg, ins->inst_offset, dreg, 4);
 			/* dreg contains the old value, add with sreg2 value */
 			x86_alu_reg_reg (code, X86_ADD, dreg, ins->sreg2);
 			
 			if (ins->dreg != dreg) {
-				x86_mov_reg_reg (code, ins->dreg, dreg, 4);
+				x86_mov_reg_reg (code, ins->dreg, dreg);
 				x86_pop_reg (code, dreg);
 			}
 
@@ -4309,13 +4293,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ins->sreg2 == X86_EAX) {
 				sreg2 = (breg == X86_EDX) ? X86_EBX : X86_EDX;
 				x86_push_reg (code, sreg2);
-				x86_mov_reg_reg (code, sreg2, X86_EAX, 4);
+				x86_mov_reg_reg (code, sreg2, X86_EAX);
 			}
 
 			if (breg == X86_EAX) {
 				breg = (sreg2 == X86_ESI) ? X86_EDI : X86_ESI;
 				x86_push_reg (code, breg);
-				x86_mov_reg_reg (code, breg, X86_EAX, 4);
+				x86_mov_reg_reg (code, breg, X86_EAX);
 			}
 
 			x86_mov_reg_membase (code, X86_EAX, breg, ins->inst_offset, 4);
@@ -4440,12 +4424,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			if (card_table_nursery_check) {
 				if (value != X86_EDX)
-					x86_mov_reg_reg (code, X86_EDX, value, 4);
+					x86_mov_reg_reg (code, X86_EDX, value);
 				x86_shift_reg_imm (code, X86_SHR, X86_EDX, nursery_shift);
 				x86_alu_reg_imm (code, X86_CMP, X86_EDX, nursery_start >> nursery_shift);
 				br = code; x86_branch8 (code, X86_CC_NE, -1, FALSE);
 			}
-			x86_mov_reg_reg (code, X86_EDX, ptr, 4);
+			x86_mov_reg_reg (code, X86_EDX, ptr);
 			x86_shift_reg_imm (code, X86_SHR, X86_EDX, card_table_shift);
 			if (card_table_mask)
 				x86_alu_reg_imm (code, X86_AND, X86_EDX, (int)card_table_mask);
@@ -5056,10 +5040,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			bb->spill_slot_defs = g_slist_prepend_mempool (cfg->mempool, bb->spill_slot_defs, ins);
 			break;
 		case OP_GET_SP:
-			x86_mov_reg_reg (code, ins->dreg, X86_ESP, sizeof (mgreg_t));
+			x86_mov_reg_reg (code, ins->dreg, X86_ESP);
 			break;
 		case OP_SET_SP:
-			x86_mov_reg_reg (code, X86_ESP, ins->sreg1, sizeof (mgreg_t));
+			x86_mov_reg_reg (code, X86_ESP, ins->sreg1);
 			break;
 		case OP_FILL_PROF_CALL_CTX:
 			x86_mov_membase_reg (code, ins->sreg1, MONO_STRUCT_OFFSET (MonoContext, esp), X86_ESP, sizeof (mgreg_t));
@@ -5156,7 +5140,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		guint8 *br [16];
 
 	/* Check that the stack is aligned on osx */
-	x86_mov_reg_reg (code, X86_EAX, X86_ESP, sizeof (mgreg_t));
+	x86_mov_reg_reg (code, X86_EAX, X86_ESP);
 	x86_alu_reg_imm (code, X86_AND, X86_EAX, 15);
 	x86_alu_reg_imm (code, X86_CMP, X86_EAX, 0xc);
 	br [0] = code;
@@ -5187,7 +5171,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		cfa_offset += sizeof (gpointer);
 		mono_emit_unwind_op_def_cfa_offset (cfg, code, cfa_offset);
 		mono_emit_unwind_op_offset (cfg, code, X86_EBP, - cfa_offset);
-		x86_mov_reg_reg (code, X86_EBP, X86_ESP, 4);
+		x86_mov_reg_reg (code, X86_EBP, X86_ESP);
 		mono_emit_unwind_op_def_cfa_reg (cfg, code, X86_EBP);
 		/* These are handled automatically by the stack marking code */
 		mini_gc_set_slot_type_from_cfa (cfg, -cfa_offset, SLOT_NOREF);
@@ -5275,7 +5259,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 #if DEBUG_STACK_ALIGNMENT
 	/* check the stack is aligned */
 	if (need_stack_frame && method->wrapper_type == MONO_WRAPPER_NONE) {
-		x86_mov_reg_reg (code, X86_ECX, X86_ESP, 4);
+		x86_mov_reg_reg (code, X86_ECX, X86_ESP);
 		x86_alu_reg_imm (code, X86_AND, X86_ECX, MONO_ARCH_FRAME_ALIGNMENT - 1);
 		x86_alu_reg_imm (code, X86_CMP, X86_ECX, 0);
 		x86_branch_disp (code, X86_CC_EQ, 3, FALSE);
@@ -5347,7 +5331,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		ainfo = &cinfo->args [pos];
 		if (inst->opcode == OP_REGVAR) {
 			if (storage_in_ireg (ainfo->storage)) {
-				x86_mov_reg_reg (code, inst->dreg, ainfo->reg, 4);
+				x86_mov_reg_reg (code, inst->dreg, ainfo->reg);
 			} else {
 				g_assert (need_stack_frame);
 				x86_mov_reg_membase (code, inst->dreg, X86_EBP, ainfo->offset + ARGS_OFFSET, 4);

@@ -279,18 +279,25 @@ namespace Mono.AppleTls
 			result = SSLSetConnection (Handle, GCHandle.ToIntPtr (handle));
 			CheckStatusAndThrow (result);
 
+			/*
+			 * If 'EnabledProtocols' is zero, then we use the system default values.
+			 *
+			 * In CoreFX, 'ServicePointManager.SecurityProtocol' defaults to
+			 * 'SecurityProtocolType.SystemDefault', which is zero.
+			 */
+
 			if ((EnabledProtocols & SSA.SslProtocols.Tls) != 0)
 				MinProtocol = SslProtocol.Tls_1_0;
 			else if ((EnabledProtocols & SSA.SslProtocols.Tls11) != 0)
 				MinProtocol = SslProtocol.Tls_1_1;
-			else
+			else if ((EnabledProtocols & SSA.SslProtocols.Tls12) != 0)
 				MinProtocol = SslProtocol.Tls_1_2;
 
 			if ((EnabledProtocols & SSA.SslProtocols.Tls12) != 0)
 				MaxProtocol = SslProtocol.Tls_1_2;
 			else if ((EnabledProtocols & SSA.SslProtocols.Tls11) != 0)
 				MaxProtocol = SslProtocol.Tls_1_1;
-			else
+			else if ((EnabledProtocols & SSA.SslProtocols.Tls) != 0)
 				MaxProtocol = SslProtocol.Tls_1_0;
 
 			if (Settings != null && Settings.EnabledCiphers != null) {

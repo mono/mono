@@ -187,7 +187,7 @@
       			pop
       IL_000c:  ldstr      "=== TEST PASSED ==="
       IL_0011:  call       void [mscorlib]System.Console::WriteLine(string)
-      IL_0016:  ldc.i4.s   100
+      IL_0016:  ldc.i4.s   0
       IL_0018:  stloc.0
       IL_0019:  br.s       IL_001b
 

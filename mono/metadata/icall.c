@@ -1585,13 +1585,13 @@ ves_icall_System_Type_internal_from_handle (MonoType *handle, MonoError *error)
 }
 
 ICALL_EXPORT MonoType*
-ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass)
+ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass, MonoError *error)
 {
 	return mono_class_get_type (klass);
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree (GPtrArray *ptr_array)
+ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree (GPtrArray *ptr_array, MonoError *error)
 {
 	g_ptr_array_free (ptr_array, TRUE);
 }
@@ -5738,7 +5738,7 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssemblyHandle asse
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, gboolean free_struct)
+ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, gboolean free_struct, MonoError *error)
 {
 	mono_assembly_name_free (aname);
 	if (free_struct)
@@ -5746,7 +5746,7 @@ ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, gboolea
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (void)
+ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (MonoError *error)
 {
 #ifdef TARGET_OSX
 	mono_merp_disable ();
@@ -5757,7 +5757,7 @@ ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (void)
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath)
+ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath, MonoError *error)
 {
 #ifdef TARGET_OSX
 	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath);
@@ -7398,13 +7398,13 @@ ves_icall_get_resources_ptr (MonoReflectionAssemblyHandle assembly, gpointer *re
 }
 
 ICALL_EXPORT MonoBoolean
-ves_icall_System_Diagnostics_Debugger_IsAttached_internal (void)
+ves_icall_System_Diagnostics_Debugger_IsAttached_internal (MonoError *error)
 {
 	return mono_is_debugger_attached ();
 }
 
 ICALL_EXPORT MonoBoolean
-ves_icall_System_Diagnostics_Debugger_IsLogging (void)
+ves_icall_System_Diagnostics_Debugger_IsLogging (MonoError *error)
 {
 	if (mono_get_runtime_callbacks ()->debug_log_is_enabled)
 		return mono_get_runtime_callbacks ()->debug_log_is_enabled ();
@@ -7413,7 +7413,7 @@ ves_icall_System_Diagnostics_Debugger_IsLogging (void)
 }
 
 ICALL_EXPORT void
-ves_icall_System_Diagnostics_Debugger_Log (int level, MonoString *category, MonoString *message)
+ves_icall_System_Diagnostics_Debugger_Log (int level, MonoStringHandle category, MonoStringHandle message, MonoError *error)
 {
 	if (mono_get_runtime_callbacks ()->debug_log)
 		mono_get_runtime_callbacks ()->debug_log (level, category, message);

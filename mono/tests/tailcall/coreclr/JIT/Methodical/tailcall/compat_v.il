@@ -71,7 +71,7 @@
       IL_0021:  call       void [mscorlib]System.Console::WriteLine(class System.Object)
       IL_0026:  ldstr      "passed"
       IL_002b:  call       void [mscorlib]System.Console::WriteLine(class System.String)
-      IL_0030:  ldc.i4.s   100
+      IL_0030:  ldc.i4.s   0
       			ret
     } // end of method BaseStruct::Main
 

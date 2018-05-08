@@ -119,10 +119,15 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\ArrayPool.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\ArrayPoolEventSource.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\ConfigurableArrayPool.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\IMemoryOwner.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\IPinnable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\MemoryHandle.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\MemoryManager.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\TlsOverPerCoreLockedStacksArrayPool.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\Utilities.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Comparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\DictionaryEntry.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\Dictionary.cs" />
@@ -157,6 +162,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\ObjectModel\Collection.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\ObjectModel\ReadOnlyCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Diagnostics\StackTraceHiddenAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Gen2GcCallback.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.Invariant.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\GlobalizationExtensions.cs" />
@@ -262,11 +268,6 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\StringBuilderCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\BeginEndAwaitableAdapter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\RendezvousAwaitable.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\ArrayPool.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\ArrayPoolEventSource.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\DefaultArrayPool.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\DefaultArrayPoolBucket.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Buffers\src\System\Buffers\Utilities.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\CDSCollectionETWBCLProvider.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\ConcurrentDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\ConcurrentQueue.cs" />
