@@ -848,15 +848,6 @@ mono_jit_thread_attach (MonoDomain *domain)
 	attached = mono_tls_get_jit_tls () != NULL;
 
 	if (!attached) {
-		if (mono_threads_is_blocking_transition_enabled ()) {
-			/* This should only happen when we come in from Xamarin.Mac because they have
-			 * code that calls it before they start messing with managed objects.
-			 * We're committed to switching the runtime to UNSAFE when they do so.
-			 */
-			g_warning ("JIT Attaching thread %" G_GSIZE_FORMAT " to mono", mono_native_thread_id_get ());
-		}
-
-
 		mono_thread_attach (domain);
 
 		// #678164

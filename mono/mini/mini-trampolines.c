@@ -907,7 +907,6 @@ mono_vcall_trampoline (mgreg_t *regs, guint8 *code, int slot, guint8 *tramp)
 {
 	gpointer res;
 	MONO_ENTER_GC_UNSAFE;
-	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoObject *this_arg;
 	MonoVTable *vt;

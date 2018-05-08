@@ -2831,7 +2831,6 @@ mono_object_get_virtual_method (MonoObject *obj_raw, MonoMethod *method)
 	HANDLE_FUNCTION_ENTER ();
 	MonoMethod *result;
 	MONO_ENTER_GC_UNSAFE;
-	MONO_REQ_GC_UNSAFE_MODE;
 	ERROR_DECL (error);
 	MONO_HANDLE_DCL (MonoObject, obj);
 	result = mono_object_handle_get_virtual_method (obj, method, error);
@@ -6146,7 +6145,6 @@ mono_array_new (MonoDomain *domain, MonoClass *eclass, uintptr_t n)
 {
 	MonoArray *result;
 	MONO_ENTER_GC_UNSAFE;
-	MONO_REQ_GC_UNSAFE_MODE;
 
 	ERROR_DECL (error);
 	result = mono_array_new_checked (domain, eclass, n, error);
@@ -6611,7 +6609,6 @@ mono_string_new_wrapper (const char *text)
 {
 	MonoString *res;
 	MONO_ENTER_GC_UNSAFE;
-	MONO_REQ_GC_UNSAFE_MODE;
 
 	res = mono_string_new_internal (mono_domain_get (), text);
 	MONO_EXIT_GC_UNSAFE;
@@ -6831,7 +6828,6 @@ mono_object_get_class (MonoObject *obj)
 {
 	MonoClass *res;
 	MONO_ENTER_GC_UNSAFE;
-	MONO_REQ_GC_UNSAFE_MODE;
 
 	res = mono_object_class (obj);
 	MONO_EXIT_GC_UNSAFE;
@@ -6877,7 +6873,6 @@ mono_object_unbox (MonoObject *obj)
 {
 	gpointer res;
 	MONO_ENTER_GC_UNSAFE;
-	MONO_REQ_GC_UNSAFE_MODE;
 
 	/* add assert for valuetypes? */
 	g_assert (m_class_is_valuetype (mono_object_class (obj)));
@@ -6898,7 +6893,6 @@ mono_object_isinst (MonoObject *obj_raw, MonoClass *klass)
 	HANDLE_FUNCTION_ENTER ();
 	MonoObjectHandle result;
 	MONO_ENTER_GC_UNSAFE;
-	MONO_REQ_GC_UNSAFE_MODE;
 
 	MONO_HANDLE_DCL (MonoObject, obj);
 	ERROR_DECL (error);
@@ -8792,7 +8786,6 @@ mono_array_addr_with_size (MonoArray *array, int size, uintptr_t idx)
 {
 	char *res;
 	MONO_ENTER_GC_UNSAFE;
-	MONO_REQ_GC_UNSAFE_MODE;
 
 	res = ((char*)(array)->vector) + size * idx;
 	MONO_EXIT_GC_UNSAFE;
