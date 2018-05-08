@@ -3244,8 +3244,9 @@ emit_create_string_hack_noilgen (MonoMethodBuilder *mb, MonoMethodSignature *csi
 }
 
 static void
-emit_native_icall_wrapper_noilgen (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig, gboolean check_exceptions, gboolean aot, MonoMethodPInvoke *pinfo)
+emit_native_icall_wrapper_noilgen (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig, gboolean check_exceptions, gboolean aot, MonoMethodPInvoke *pinfo, gboolean *out_uses_handles)
 {
+	*out_uses_handles = FALSE;
 }
 
 /**
@@ -3267,6 +3268,7 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 	GHashTable *cache;
 	gboolean pinvoke = FALSE;
 	gpointer iter;
+	gboolean uses_handles = FALSE;
 	int i;
 	const char *exc_class = "MissingMethodException";
 	const char *exc_arg = NULL;
@@ -3401,10 +3403,11 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 		if (method->string_ctor)
 			csig->ret = string_type;
 
-		get_marshal_cb ()->emit_native_icall_wrapper (mb, method, csig, check_exceptions, aot, piinfo);
+		get_marshal_cb ()->emit_native_icall_wrapper (mb, method, csig, check_exceptions, aot, piinfo, &uses_handles);
 
 		info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_NONE);
 		info->d.managed_to_native.method = method;
+		info->d.managed_to_native.direct_callable = !uses_handles;
 
 		csig = mono_metadata_signature_dup_full (get_method_image (method), csig);
 		csig->pinvoke = 0;

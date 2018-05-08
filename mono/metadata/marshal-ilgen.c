@@ -6217,7 +6217,7 @@ signature_param_uses_handles (MonoMethodSignature *sig, MonoMethodSignature *gen
 }
 
 static void
-emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig, gboolean check_exceptions, gboolean aot, MonoMethodPInvoke *piinfo)
+emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig, gboolean check_exceptions, gboolean aot, MonoMethodPInvoke *piinfo, gboolean *out_uses_handles)
 {
 	// FIXME:
 	MonoClass *handle_stack_mark_class;
@@ -6230,6 +6230,8 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	MonoMethodSignature *sig = mono_method_signature (method);
 
 	(void) mono_lookup_internal_call_full (method, &uses_handles);
+
+	*out_uses_handles = uses_handles;
 
 	/* If it uses handles and MonoError, it had better check exceptions */
 	g_assert (!uses_handles || check_exceptions);

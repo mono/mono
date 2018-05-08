@@ -150,6 +150,7 @@ typedef struct {
 
 typedef struct {
 	MonoMethod *method;
+	gboolean direct_callable;
 } ManagedToNativeWrapperInfo;
 
 typedef struct {
@@ -259,7 +260,7 @@ typedef enum {
 } MonoStelemrefKind;
 
 
-#define MONO_MARSHAL_CALLBACKS_VERSION 2
+#define MONO_MARSHAL_CALLBACKS_VERSION 3
 
 typedef struct {
 	int version;
@@ -297,7 +298,7 @@ typedef struct {
 	void (*emit_generic_array_helper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig);
 	void (*emit_thunk_invoke_wrapper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig);
 	void (*emit_create_string_hack) (MonoMethodBuilder *mb, MonoMethodSignature *csig, MonoMethod *res);
-	void (*emit_native_icall_wrapper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig, gboolean check_exceptions, gboolean aot, MonoMethodPInvoke *pinfo);
+	void (*emit_native_icall_wrapper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig, gboolean check_exceptions, gboolean aot, MonoMethodPInvoke *pinfo, gboolean *out_uses_handles);
 	void (*emit_icall_wrapper) (MonoMethodBuilder *mb, MonoMethodSignature *sig, gconstpointer func, MonoMethodSignature *csig2, gboolean check_exceptions);
 	void (*emit_vtfixup_ftnptr) (MonoMethodBuilder *mb, MonoMethod *method, int param_count, guint16 type);
 	void (*mb_skip_visibility) (MonoMethodBuilder *mb);

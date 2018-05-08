@@ -2795,8 +2795,6 @@ emit_llvmonly_calli (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **arg
 static gboolean
 direct_icalls_enabled (MonoCompile *cfg)
 {
-	return FALSE;
-
 	/* LLVM on amd64 can't handle calls to non-32 bit addresses */
 #ifdef TARGET_AMD64
 	if (cfg->compile_llvm && !cfg->llvm_only)
@@ -3968,6 +3966,30 @@ handle_box (MonoCompile *cfg, MonoInst *val, MonoClass *klass, int context_used)
 		EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (klass), alloc->dreg, sizeof (MonoObject), val->dreg);
 		return alloc;
 	}
+}
+
+static gboolean
+icall_is_direct_callable (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod *wrapper)
+{
+	/* Invoke still throws exceptions from native code since it calls runtime_invoke with exc == NULL */
+	if (!strcmp (m_class_get_name (cmethod->klass), "MonoMethod") || !strcmp (m_class_get_name (cmethod->klass), "MonoCMethod"))
+		return FALSE;
+	/* Same for Marshal.PtrToStructure/StructurToPtr */
+	if (!strcmp (cmethod->name, "PtrToStructure") || !strcmp (cmethod->name, "StructureToPtr"))
+		return FALSE;
+	/* StackTrace needs to control the number of frames on the stack */
+	if (!strcmp (m_class_get_name (cmethod->klass), "StackTrace") || !strcmp (m_class_get_name (cmethod->klass), "StackFrame"))
+		return FALSE;
+	if (!strcmp (m_class_get_name (cmethod->klass), "Continuation"))
+		return FALSE;
+	if (!strcmp (m_class_get_name (cmethod->klass), "RemotingServices"))
+		return FALSE;
+	if (wrapper->wrapper_type) {
+		WrapperInfo *info = mono_marshal_get_wrapper_info (wrapper);
+		/* info might be NULL for cominterop methods */
+		return info && info->d.managed_to_native.direct_callable;
+	}
+	return FALSE;
 }
 
 static gboolean
@@ -8777,7 +8799,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				mini_class_is_system_array (cmethod->klass)) {
 				array_rank = m_class_get_rank (cmethod->klass);
 			} else if ((cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) && direct_icalls_enabled (cfg)) {
-				direct_icall = TRUE;
+				MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod, TRUE, cfg->compile_aot);
+				if (icall_is_direct_callable (cfg, cmethod, wrapper))
+					direct_icall = TRUE;
+				fsig = mono_method_signature (wrapper);
 			} else if (fsig->pinvoke) {
 				MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod, TRUE, cfg->compile_aot);
 				fsig = mono_method_signature (wrapper);
