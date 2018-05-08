@@ -5158,7 +5158,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			} else if (tailcall_membase) {
 				g_assert (ins->sreg1 > -1);
 				if (!arm_is_imm12 (ins->inst_offset)) {
-					g_assert (ins->sreg1 != ARMREG_IP); //. temp in emit_big_add
+					g_assert (ins->sreg1 != ARMREG_IP); // temp in emit_big_add
 					code = emit_big_add (code, ARMREG_IP, ins->sreg1, ins->inst_offset);
 					ARM_LDR_IMM (code, ARMREG_IP, ARMREG_IP, 0);
 				} else {
