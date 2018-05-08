@@ -3202,8 +3202,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			if (tailcall_reg) {
 				g_assert (sreg1 > -1);
-				if (!sreg1_ecx)
-					x86_mov_reg_reg (code, X86_ECX, sreg1, 4);
+				x86_mov_reg_reg (code, X86_ECX, sreg1);
 			} else if (tailcall_membase_not_ecx) {
 				g_assert (sreg1 > -1);
 				x86_mov_reg_membase (code, X86_ECX, sreg1, ins->inst_offset, 4);
