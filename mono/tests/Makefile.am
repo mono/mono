@@ -91,9 +91,6 @@ TAILCALL_DISABLED_TESTS_COMPILE += \
 # return type mismatch (int32 vs. enum)
 # 	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.exe
 
-# FIXME calli
-#	tailcall/coreclr/JIT/Methodical/tailcall/test_switch.exe
-
 # FIXME depends on msvcrt.dll, and calli
 #	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.exe
 
@@ -1795,6 +1792,7 @@ TEST_TAILCALL_IL_SRC=\
 	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_implicit.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_mutual_rec.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_switch.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_virt.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_void.il \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateTail.il \
