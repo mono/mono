@@ -307,12 +307,12 @@ $(gensources): $(topdir)/build/gensources.cs
 ifdef PROFILE_RUNTIME
 GENSOURCES_RUNTIME = $(PROFILE_RUNTIME)
 else
-GENSOURCES_RUNTIME = $(RUNTIME)
+GENSOURCES_RUNTIME = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"  $(RUNTIME)
 endif
 
 sourcefile = $(depsdir)/$(SOURCES_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
 $(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp $(gensources)
-	$(with_mono_path_monolite) $(GENSOURCES_RUNTIME) --debug $(gensources) --trace2 "$@" "$(LIBRARY)" "$(SOURCES_PLATFORM)" "$(PROFILE)"
+	$(GENSOURCES_RUNTIME) --debug $(gensources) --trace2 "$@" "$(LIBRARY)" "$(SOURCES_PLATFORM)" "$(PROFILE)"
 
 library_CLEAN_FILES += $(sourcefile)
 
