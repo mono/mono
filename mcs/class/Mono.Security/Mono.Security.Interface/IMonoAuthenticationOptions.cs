@@ -1,10 +1,10 @@
-﻿//
-// MonoBtlsStream.cs
+//
+// IMonoAuthenticationOptions.cs
 //
 // Author:
-//       Martin Baulig <martin.baulig@xamarin.com>
+//       Martin Baulig <mabaul@microsoft.com>
 //
-// Copyright (c) 2016 Xamarin Inc. (http://www.xamarin.com)
+// Copyright (c) 2018 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,39 +23,55 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP && MONO_FEATURE_BTLS
-#if MONO_SECURITY_ALIAS
-extern alias MonoSecurity;
-#endif
-
 using System;
 using System.IO;
+using System.Net;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
+using System.Security.Cryptography;
 
-#if MONO_SECURITY_ALIAS
-using MonoSecurity::Mono.Security.Interface;
-#else
-using Mono.Security.Interface;
-#endif
-
-using MNS = Mono.Net.Security;
-
-namespace Mono.Btls
+namespace Mono.Security.Interface
 {
-	class MonoBtlsStream : MNS.MobileAuthenticatedStream
+	delegate X509Certificate MonoServerCertificateSelectionCallback (object sender, string hostName);
+
+	interface IMonoAuthenticationOptions
 	{
-		public MonoBtlsStream (Stream innerStream, bool leaveInnerStreamOpen, SslStream owner,
-		                       MonoTlsSettings settings, MonoTlsProvider provider)
-			: base (innerStream, leaveInnerStreamOpen, owner, settings, provider)
-		{
+		bool AllowRenegotiation {
+			get; set;
 		}
 
-		protected override MNS.MobileTlsContext CreateContext (MNS.MonoSslAuthenticationOptions options)
-		{
-			return new MonoBtlsContext (this, options);
+		RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+
+		SslProtocols EnabledSslProtocols {
+			get; set;
+		}
+
+		EncryptionPolicy EncryptionPolicy {
+			get; set;
+		}
+
+		X509RevocationMode CertificateRevocationCheckMode {
+			get; set;
 		}
 	}
+
+	interface IMonoSslClientAuthenticationOptions : IMonoAuthenticationOptions
+	{
+		LocalCertificateSelectionCallback LocalCertificateSelectionCallback { get; set; }
+
+		string TargetHost { get; set; }
+
+		X509CertificateCollection ClientCertificates { get; set; }
+	}
+
+	interface IMonoSslServerAuthenticationOptions : IMonoAuthenticationOptions
+	{
+		bool ClientCertificateRequired { get; set; }
+
+		MonoServerCertificateSelectionCallback ServerCertificateSelectionCallback { get; set; }
+
+		X509Certificate ServerCertificate { get; set; }
+	}
 }
-#endif
