@@ -301,8 +301,7 @@ PROFILE_excludes = $(firstword $(if $(SOURCES_PLATFORM),$(wildcard $(SOURCES_PLA
 
 gensources = $(topdir)/build/gensources.exe
 $(gensources): $(topdir)/build/gensources.cs
-	echo $(BOOTSTRAP_MCS) -noconfig -debug -r:mscorlib.dll -r:System.dll -r:System.Core.dll -out:$(gensources) $(topdir)/build/gensources.cs
-	$(BOOTSTRAP_MCS) -noconfig -debug -r:mscorlib.dll -r:System.dll -r:System.Core.dll -out:$(gensources) $(topdir)/build/gensources.cs
+	$(BOOTSTRAP_MCS) -noconfig -debug:portable -r:mscorlib.dll -r:System.dll -r:System.Core.dll -out:$(gensources) $(topdir)/build/gensources.cs
 
 ifdef PROFILE_RUNTIME
 GENSOURCES_RUNTIME = $(PROFILE_RUNTIME)
