@@ -295,9 +295,8 @@ endif
 # The library
 
 # If the directory contains the per profile include file, generate list file.
-SOURCES_PLATFORM ?= $(PROFILE_PLATFORM)
-PROFILE_sources := $(firstword $(if $(SOURCES_PLATFORM),$(wildcard $(SOURCES_PLATFORM)_$(PROFILE)_$(LIBRARY).sources)) $(wildcard $(PROFILE)_$(LIBRARY).sources) $(wildcard $(LIBRARY).sources))
-PROFILE_excludes = $(firstword $(if $(SOURCES_PLATFORM),$(wildcard $(SOURCES_PLATFORM)_$(PROFILE)_$(LIBRARY).exclude.sources)) $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources))
+PROFILE_sources := $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).sources)) $(wildcard $(PROFILE)_$(LIBRARY).sources) $(wildcard $(LIBRARY).sources))
+PROFILE_excludes = $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).exclude.sources)) $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources))
 
 gensources = $(topdir)/build/gensources.exe
 $(gensources): $(topdir)/build/gensources.cs
@@ -309,19 +308,19 @@ else
 GENSOURCES_RUNTIME = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"  $(RUNTIME)
 endif
 
-sourcefile = $(depsdir)/$(SOURCES_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
+sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
 $(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp $(gensources)
-	$(GENSOURCES_RUNTIME) --debug $(gensources) --trace2 "$@" "$(LIBRARY)" "$(SOURCES_PLATFORM)" "$(PROFILE)"
+	$(GENSOURCES_RUNTIME) --debug $(gensources) --trace2 "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
 library_CLEAN_FILES += $(sourcefile)
 
-response = $(depsdir)/$(SOURCES_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).response
+response = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).response
 $(response): $(sourcefile) $(topdir)/build/library.make $(depsdir)/.stamp
 	$(PLATFORM_CHANGE_SEPARATOR_CMD) <$(sourcefile) >$@
 
 library_CLEAN_FILES += $(response)
 
-makefrag = $(depsdir)/$(SOURCES_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).makefrag
+makefrag = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).makefrag
 $(makefrag): $(sourcefile) $(topdir)/build/library.make $(depsdir)/.stamp
 #	@echo Creating $@ ...
 	@sed 's,^,$(build_lib): ,' $< >$@
