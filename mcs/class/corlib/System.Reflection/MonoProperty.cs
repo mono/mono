@@ -378,7 +378,9 @@ namespace System.Reflection {
 		{
 			if (index == null || index.Length == 0) {
 				/*FIXME we should check if the number of arguments matches the expected one, otherwise the error message will be pretty criptic.*/
-#if !FULL_AOT_RUNTIME
+// Once we ship the changes to make il2cpp always use the unityaot profile, we should change
+// this define to be UNITY_AOT. for now though, we'll take the AOT-friendly code path in all profiles.
+#if !FULL_AOT_RUNTIME && !UNITY
 				if (cached_getter == null) {
 					MethodInfo method = GetGetMethod (true);
 					if (!DeclaringType.IsValueType && !method.ContainsGenericParameters) { //FIXME find a way to build an invoke delegate for value types.
