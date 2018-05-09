@@ -891,7 +891,7 @@ PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall-rgctxb-static.exe
-
+PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Methodical/tailcall/test_virt.exe # fix pending
 endif
 
 if POWERPC
