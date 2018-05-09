@@ -5,6 +5,8 @@
 # into $top_srcdir/llvm/llvm.
 #
 
+top_srcdir=$(realpath ..)
+
 LLVM_PATH=llvm
 
 SUBMODULES_CONFIG_FILE = $(top_srcdir)/llvm/SUBMODULES.json
