@@ -8547,7 +8547,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			inst_tailcall && is_supported_tailcall (cfg, ip, method, NULL, fsig,
-						FALSE/*virtual irrelevant*/, addr, addr, &tailcall_calli);
+						FALSE/*virtual irrelevant*/, addr != NULL, &tailcall_calli);
 
 			if (callee) {
 				if (method->wrapper_type != MONO_WRAPPER_DELEGATE_INVOKE)
