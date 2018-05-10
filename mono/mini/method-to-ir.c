@@ -2678,7 +2678,6 @@ mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoInst **args, Mo
 MonoInst*
 mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature *sig,
 					   MonoInst **args)
-// FIXME tailcall?
 {
 	MonoCallInst *call;
 
@@ -2694,7 +2693,6 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 
 MonoInst*
 mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args)
-// FIXME tailcall?
 {
 	MonoJitICallInfo *info = mono_find_jit_icall_by_addr (func);
 
@@ -2711,7 +2709,6 @@ mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args)
 static MonoInst*
 mono_emit_abs_call (MonoCompile *cfg, MonoJumpInfoType patch_type, gconstpointer data, 
 					MonoMethodSignature *sig, MonoInst **args)
-// FIXME tailcall?
 {
 	MonoJumpInfo *ji = mono_patch_info_new (cfg->mempool, 0, patch_type, data);
 	MonoInst *ins;
@@ -7327,13 +7324,11 @@ ldc_i4:
 				}
 
 				if (info_type == MONO_PATCH_INFO_ICALL_ADDR) {
-					// FIXME tailcall?
 					tailcall_calli = FALSE;
 					ins = (MonoInst*)mono_emit_abs_call (cfg, MONO_PATCH_INFO_ICALL_ADDR_CALL, info_data, fsig, sp);
 					NULLIFY_INS (addr);
 					goto calli_end;
 				} else if (info_type == MONO_PATCH_INFO_JIT_ICALL_ADDR) {
-					// FIXME tailcall?
 					tailcall_calli = FALSE;
 					ins = (MonoInst*)mono_emit_abs_call (cfg, info_type, info_data, fsig, sp);
 					NULLIFY_INS (addr);
