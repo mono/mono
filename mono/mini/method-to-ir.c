@@ -6910,6 +6910,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		gboolean skip_ret = FALSE;
 		gboolean tailcall_remove_ret = FALSE;
 
+		// FIXME split 500 lines load/store field into separate file/function and make this const
 		int il_op = *ip;
 
 		switch (il_op) {
