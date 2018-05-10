@@ -517,7 +517,15 @@ public class ArrayTest
 		var arr2_2 = new C [1] { new DC () };
 		try {
 			Array.Copy (arr2_2, arr1_2, 1);
-			Assert.Fail ("#1");
+			Assert.Fail ("#2");
+		} catch (InvalidCastException) {
+		}
+
+		var arr1_3 = new float [5];
+		var arr2_3 = new object [1];
+		try {
+			Array.Copy (arr2_3, arr1_3, 1);
+			Assert.Fail ("#3");
 		} catch (InvalidCastException) {
 		}
 	}
@@ -2278,7 +2286,7 @@ public class ArrayTest
 					errorThrown = true;
 				}
 
-				Assert.IsTrue (!errorThrown, "#M93(" + types [i] + ")");
+				Assert.IsFalse (errorThrown, "#M93(" + types [i] + ")");
 			}
 
 			// Copy
