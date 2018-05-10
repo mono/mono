@@ -121,6 +121,21 @@ namespace Mono.Net.Security.Private
 			return (t, lc, rc, ai) => callback (t, lc, rc, ai);
 		}
 
+		internal static ServerCertificateSelectionCallback MonoToPublic (MSI.MonoServerCertificateSelectionCallback callback)
+		{
+			if (callback == null)
+				return null;
+
+			return (s, h) => callback (s, h);
+		}
+
+		internal static MSI.MonoServerCertificateSelectionCallback PublicToMono (ServerCertificateSelectionCallback callback)
+		{
+			if (callback == null)
+				return null;
+
+			return (s, h) => callback (s, h);
+		}
 	}
 }
 
