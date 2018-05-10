@@ -3209,7 +3209,7 @@ emit_rgctx_fetch_inline (MonoCompile *cfg, MonoInst *rgctx, MonoJumpInfoRgctxEnt
  *   Emit IR to load the value of the rgctx entry ENTRY from the rgctx
  * given by RGCTX.
  */
-static inline MonoInst*
+static MonoInst*
 emit_rgctx_fetch (MonoCompile *cfg, MonoInst *rgctx, MonoJumpInfoRgctxEntry *entry)
 {
 	if (cfg->llvm_only)
