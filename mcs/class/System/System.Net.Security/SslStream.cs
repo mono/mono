@@ -56,9 +56,10 @@ using MNS = Mono.Net.Security;
 
 namespace System.Net.Security
 {
+	public delegate X509Certificate ServerCertificateSelectionCallback (object sender, string hostName);
+
 	/*
-	 * These two are defined by the referencesource; add them heere to make
-	 * it easy to switch between the two implementations.
+	 * Internal delegates from the referencesource / corefx.
 	 */
 
 	internal delegate bool RemoteCertValidationCallback (
@@ -72,6 +73,8 @@ namespace System.Net.Security
 		X509CertificateCollection localCertificates,
 		X509Certificate remoteCertificate,
 		string[] acceptableIssuers);
+
+	internal delegate X509Certificate ServerCertSelectionCallback (string hostName);
 
 	public class SslStream : AuthenticatedStream
 	{

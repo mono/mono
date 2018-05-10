@@ -8,6 +8,9 @@ Mono.Net.Security/LegacySslStream.cs
 Mono.Net.Security/LegacyTlsProvider.cs
 Mono.Net.Security/MobileAuthenticatedStream.cs
 Mono.Net.Security/MobileTlsContext.cs
+Mono.Net.Security/MonoSslAuthenticationOptions.cs
+Mono.Net.Security/MonoSslClientAuthenticationOptions.cs
+Mono.Net.Security/MonoSslServerAuthenticationOptions.cs
 Mono.Net.Security/MonoTlsProviderFactory.cs
 Mono.Net.Security/MonoTlsStream.cs
 Mono.Net.Security/NoReflectionHelper.cs

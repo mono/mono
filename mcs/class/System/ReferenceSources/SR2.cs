@@ -15,4 +15,7 @@ partial class SR
 	public const string net_log_set_socketoption_reuseport_default_on = "net_log_set_socketoption_reuseport_default_on";
 	public const string net_log_set_socketoption_reuseport_not_supported = "net_log_set_socketoption_reuseport_not_supported";
 	public const string net_log_set_socketoption_reuseport = "net_log_set_socketoption_reuseport";
+
+	public const string net_ssl_app_protocols_invalid = "The application protocol list is invalid.";
+	public const string net_ssl_app_protocol_invalid = "The application protocol value is invalid.";
 }

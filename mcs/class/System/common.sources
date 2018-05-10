@@ -908,3 +908,9 @@ corefx/SR.cs
 
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/Generic/ValueListBuilder.Pop.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/HashtableExtensions.cs
+
+../../../external/corefx/src/Common/src/System/Net/Security/SslClientAuthenticationOptionsExtensions.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/SslClientAuthenticationOptions.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/SslServerAuthenticationOptions.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/SslAuthenticationOptions.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/SslApplicationProtocol.cs
