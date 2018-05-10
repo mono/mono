@@ -7359,7 +7359,7 @@ ldc_i4:
 		case CEE_CALLVIRT: {
 			MonoInst *addr = NULL;
 			int array_rank = 0;
-			int virtual_ = *ip == CEE_CALLVIRT;
+			gboolean virtual_ = *ip == CEE_CALLVIRT;
 			gboolean pass_imt_from_rgctx = FALSE;
 			MonoInst *imt_arg = NULL;
 			gboolean pass_vtable = FALSE;
@@ -7459,7 +7459,7 @@ ldc_i4:
 
 			if (!virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT))
 				/* MS.NET seems to silently convert this to a callvirt */
-				virtual_ = 1;
+				virtual_ = TRUE;
 
 			{
 				/*
@@ -7471,7 +7471,7 @@ ldc_i4:
 				const int test_flags = METHOD_ATTRIBUTE_VIRTUAL | METHOD_ATTRIBUTE_FINAL | METHOD_ATTRIBUTE_STATIC;
 				const int expected_flags = METHOD_ATTRIBUTE_VIRTUAL | METHOD_ATTRIBUTE_FINAL;
 				if (!virtual_ && mono_class_is_marshalbyref (cmethod->klass) && (cmethod->flags & test_flags) == expected_flags && cfg->method->wrapper_type == MONO_WRAPPER_NONE)
-					virtual_ = 1;
+					virtual_ = TRUE;
 			}
 
 			if (!m_class_is_inited (cmethod->klass))
@@ -7693,7 +7693,7 @@ ldc_i4:
 							CHECK_CFG_EXCEPTION;
 						}
 					}
-					virtual_ = 0;
+					virtual_ = FALSE;
 				}
 				constrained_class = NULL;
 			}
@@ -7794,7 +7794,7 @@ ldc_i4:
 					!mono_class_is_marshalbyref (cmethod->klass)) {
 					if (virtual_)
 						check_this = TRUE;
-					virtual_ = 0;
+					virtual_ = FALSE;
 				}
 			}
 
