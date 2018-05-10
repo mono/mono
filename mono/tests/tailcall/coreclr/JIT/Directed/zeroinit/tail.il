@@ -22,7 +22,7 @@
   .method private hidebysig static void  Caller1(int64& A,
                                                  int64& B) cil managed
   {
-    .maxstack  2
+    .maxstack  99
     .locals init (int64 V_0)
     ldarg.0
     ldloca.s 0
@@ -37,7 +37,7 @@
           Callee2() cil managed
   {
     // Code size       9 (0x9)
-    .maxstack  1
+    .maxstack  99
     .locals init (int64 V_0)
     ldloca.s 0
     ldind.i8
@@ -48,7 +48,7 @@
           Caller2() cil managed
   {
     // Code size       15 (0xf)
-    .maxstack  2
+    .maxstack  99
     .locals init (int64 V_0)
     ldloca.s 0
     ldind.i8
@@ -64,7 +64,7 @@
   {
     .entrypoint
     // Code size       81 (0x51)
-    .maxstack  2
+    .maxstack  99
     .locals init (int64 V_0,
              int64 V_1,
              int32 V_2)
@@ -128,7 +128,7 @@ exit:
           instance void  .ctor() cil managed
   {
     // Code size       7 (0x7)
-    .maxstack  1
+    .maxstack  99
     IL_0000:  ldarg.0
     IL_0001:  call       instance void [mscorlib]System.Object::.ctor()
     IL_0006:  ret
