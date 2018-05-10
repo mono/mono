@@ -6301,7 +6301,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	MonoBasicBlock *tblock = NULL;
 	MonoBasicBlock *init_localsbb = NULL, *init_localsbb2 = NULL;
 	MonoSimpleBasicBlock *bb = NULL, *original_bb = NULL;
-	MonoMethod *cmethod, *method_definition;
+	MonoMethod *method_definition;
 	MonoInst **arg_array;
 	MonoMethodHeader *header;
 	MonoImage *image;
@@ -6894,7 +6894,25 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		if (cfg->verbose_level > 3)
 			printf ("converting (in B%d: stack: %d) %s", cfg->cbb->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
 
-		switch (*ip) {
+		// Variables shared by CEE_CALLI CEE_CALL CEE_CALLVIRT CEE_JMP.
+		// Initialize to either what they all need or zero.
+		gboolean emit_widen = TRUE;
+		gboolean tailcall = FALSE;
+		gboolean common_call = FALSE;
+		MonoInst *keep_this_alive = NULL;
+		MonoMethod *cmethod = NULL;
+		MonoMethodSignature *fsig = NULL;
+
+		// These are used only in CALL/CALLVIRT but must be initialized also for CALLI,
+		// since it jumps into CALL/CALLVIRT.
+		gboolean need_seq_point = FALSE;
+		gboolean push_res = TRUE;
+		gboolean skip_ret = FALSE;
+		gboolean tailcall_remove_ret = FALSE;
+
+		int op = *ip;
+
+		switch (op) {
 		case CEE_NOP:
 			if (seq_points && !sym_seq_points && sp != stack_start) {
 				/*
@@ -7152,7 +7170,6 @@ ldc_i4:
 			break;
 		case CEE_JMP: {
 			MonoCallInst *call;
-			MonoMethodSignature *fsig;
 			int i, n;
 
 			INLINE_FAILURE ("jmp");
@@ -7221,11 +7238,12 @@ ldc_i4:
 			// FIXME tail.calli is problemetic because the this pointer's type
 			// is not in the signature, and we cannot check for a byref valuetype.
 			MonoInst *addr;
-			MonoMethodSignature *fsig;
 			MonoInst *callee = NULL;
-			gboolean push_res = TRUE;
-			gboolean skip_ret = FALSE;
-			gboolean tailcall = FALSE;
+
+			// Variables shared by CEE_CALLI and CEE_CALL/CEE_CALLVIRT.
+			common_call = TRUE; // i.e. skip_ret/push_res/seq_point logic
+			cmethod = NULL;
+
 			gboolean const inst_tailcall = G_UNLIKELY (debug_tailcall_try_all
 							? (next_ip < end && next_ip [0] == CEE_RET)
 							: ((ins_flag & MONO_INST_TAILCALL) != 0));
@@ -7234,7 +7252,6 @@ ldc_i4:
 			ins = NULL;
 
 			//GSHAREDVT_FAILURE (*ip);
-			cmethod = NULL;
 			CHECK_STACK (1);
 			--sp;
 			addr = *sp;
@@ -7336,72 +7353,26 @@ ldc_i4:
 				}
 			}
 			ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, NULL, NULL, tailcall);
-
-			calli_end:
-			if (ins_flag & MONO_INST_TAILCALL)
-				test_tailcall (cfg, tailcall);
-
-			// Tailcall does not return, and the subsequent code confuses the JIT, and
-			// can usually be optimized away. However note that valid code can branch
-			// past the calli to the ret, so keep it sometimes (JIT might still
-			// be confused).
-
-			if (tailcall && !cfg->llvm_only) {
-				link_bblock (cfg, cfg->cbb, end_bblock);
-				start_new_bblock = 1;
-
-				GET_BBLOCK (cfg, tblock, next_ip);
-				if (tblock == cfg->cbb || tblock->in_count == 0)
-					skip_ret = TRUE;
-				push_res = FALSE;
-			}
-
-			/* End of call, INS should contain the result of the call, if any */
-
-			if (push_res && !MONO_TYPE_IS_VOID (fsig->ret)) {
-				g_assert (ins);
-				*sp++ = mono_emit_widen_call_res (cfg, ins, fsig);
-			}
-
-			CHECK_CFG_EXCEPTION;
-
-			ins_flag = 0;
-			constrained_class = NULL;
-
-			if (skip_ret) {
-				// FIXME When not followed by CEE_RET, correct behavior is to raise an exception.
-				g_assert (next_ip [0] == CEE_RET);
-				next_ip += 1;
-				il_op = MonoOpcodeEnum_Invalid; // Call or ret? Unclear.
-			}
-
-			break;
+			goto calli_end;
 		}
 		case CEE_CALL:
 		case CEE_CALLVIRT: {
 			MonoInst *addr = NULL;
-			MonoMethodSignature *fsig = NULL;
 			int array_rank = 0;
 			int virtual_ = *ip == CEE_CALLVIRT;
 			gboolean pass_imt_from_rgctx = FALSE;
 			MonoInst *imt_arg = NULL;
-			MonoInst *keep_this_alive = NULL;
 			gboolean pass_vtable = FALSE;
 			gboolean pass_mrgctx = FALSE;
 			MonoInst *vtable_arg = NULL;
 			gboolean check_this = FALSE;
-			gboolean need_seq_point = FALSE;
-			guint32 const call_opcode = *ip;
-			gboolean emit_widen = TRUE;
-			gboolean push_res = TRUE;
-			gboolean skip_ret = FALSE;
 			gboolean delegate_invoke = FALSE;
 			gboolean direct_icall = FALSE;
 			gboolean constrained_partial_call = FALSE;
-			gboolean common_call = FALSE;
-			gboolean tailcall = FALSE;
 			gboolean tailcall_calli = FALSE;
-			gboolean tailcall_remove_ret = FALSE;
+
+			// Variables shared by CEE_CALLI and CEE_CALL/CEE_CALLVIRT.
+			common_call = FALSE;
 
 			// variables to help in assertions
 			gboolean called_is_supported_tailcall = FALSE;
@@ -8316,6 +8287,7 @@ ldc_i4:
 				ins = mono_emit_method_call_full (cfg, cmethod, fsig, tailcall, sp, virtual_ ? sp [0] : NULL,
 												  imt_arg, vtable_arg);
 
+calli_end:
 			if ((tailcall_remove_ret || (common_call && tailcall)) && !cfg->llvm_only) {
 				link_bblock (cfg, cfg->cbb, end_bblock);
 				start_new_bblock = 1;
