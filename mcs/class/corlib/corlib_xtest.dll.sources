@@ -177,6 +177,10 @@
 ../../../external/corefx/src/System.Memory/tests/ReadOnlySpan/*.cs:GetPinnableReference.cs
 ../../../external/corefx/src/System.Memory/tests/Span/*.cs:Reflection.cs,GetPinnableReference.cs
 
+#../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/*.cs
+#../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/Formatter/*.cs
+#../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/Parser/*.cs
+
 # System.Collections
 ../../../external/corefx/src/Common/tests/System/Collections/CollectionAsserts.cs
 ../../../external/corefx/src/Common/tests/System/Collections/TestBase.NonGeneric.cs

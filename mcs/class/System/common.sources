@@ -792,8 +792,6 @@ corefx/SR.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/ValueListBuilder.cs
 
-../../../external/corefx/src/Common/src/CoreLib/System/Text/ValueStringBuilder.cs
-
 ../../../external/corefx/src/Common/src/System/NotImplemented.cs
 ../../../external/corefx/src/Common/src/System/StringExtensions.cs
 
