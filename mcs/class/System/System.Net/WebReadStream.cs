@@ -40,25 +40,23 @@ namespace System.Net
 			get;
 		}
 
-		protected readonly string ME;
+#if MONO_WEB_DEBUG
+		internal string ME => $"WRS({GetType ().Name}:Op={operation.ID})";
+#else
+		internal string ME => null;
+#endif
 
 		public WebReadStream (WebOperation operation, Stream innerStream)
 		{
 			Operation = operation;
 			InnerStream = innerStream;
-
-#if MONO_WEB_DEBUG
-			ME = $"WRS({GetType ().Name}:Op={operation.ID})";
-#endif
 		}
 
-		Exception NotSupported => new NotSupportedException ();
-
-		public override long Length => throw NotSupported;
+		public override long Length => throw new NotSupportedException ();
 
 		public override long Position {
-			get => throw NotSupported;
-			set => throw NotSupported;
+			get => throw new NotSupportedException ();
+			set => throw new NotSupportedException ();
 		}
 
 		public override bool CanSeek => false;
@@ -69,22 +67,22 @@ namespace System.Net
 
 		public override void SetLength (long value)
 		{
-			throw NotSupported;
+			throw new NotSupportedException ();
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)
 		{
-			throw NotSupported;
+			throw new NotSupportedException ();
 		}
 
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-			throw NotSupported;
+			throw new NotSupportedException ();
 		}
 
 		public override void Flush ()
 		{
-			throw NotSupported;
+			throw new NotSupportedException ();
 		}
 
 		protected Exception GetException (Exception e)
