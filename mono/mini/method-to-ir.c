@@ -7225,7 +7225,7 @@ ldc_i4:
 			MonoInst *callee = NULL;
 			gboolean push_res = TRUE;
 			gboolean skip_ret = FALSE;
-			gboolean tailcall_calli = FALSE;
+			gboolean tailcall = FALSE;
 			gboolean const inst_tailcall = G_UNLIKELY (debug_tailcall_try_all
 							? (next_ip < end && next_ip [0] == CEE_RET)
 							: ((ins_flag & MONO_INST_TAILCALL) != 0));
@@ -7288,7 +7288,7 @@ ldc_i4:
 			}
 
 			inst_tailcall && is_supported_tailcall (cfg, ip, method, NULL, fsig,
-						FALSE/*virtual irrelevant*/, addr != NULL, &tailcall_calli);
+						FALSE/*virtual irrelevant*/, addr != NULL, &tailcall);
 
 			if (callee) {
 				if (method->wrapper_type != MONO_WRAPPER_DELEGATE_INVOKE)
@@ -7300,7 +7300,7 @@ ldc_i4:
 					GSHAREDVT_FAILURE (*ip);
 
 				addr = emit_get_rgctx_sig (cfg, context_used, fsig, MONO_RGCTX_INFO_SIG_GSHAREDVT_OUT_TRAMPOLINE_CALLI);
-				ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, NULL, callee, tailcall_calli);
+				ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, NULL, callee, tailcall);
 				goto calli_end;
 			}
 
@@ -7324,29 +7324,29 @@ ldc_i4:
 				}
 
 				if (info_type == MONO_PATCH_INFO_ICALL_ADDR) {
-					tailcall_calli = FALSE;
+					tailcall = FALSE;
 					ins = (MonoInst*)mono_emit_abs_call (cfg, MONO_PATCH_INFO_ICALL_ADDR_CALL, info_data, fsig, sp);
 					NULLIFY_INS (addr);
 					goto calli_end;
 				} else if (info_type == MONO_PATCH_INFO_JIT_ICALL_ADDR) {
-					tailcall_calli = FALSE;
+					tailcall = FALSE;
 					ins = (MonoInst*)mono_emit_abs_call (cfg, info_type, info_data, fsig, sp);
 					NULLIFY_INS (addr);
 					goto calli_end;
 				}
 			}
-			ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, NULL, NULL, tailcall_calli);
+			ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, NULL, NULL, tailcall);
 
 			calli_end:
 			if (ins_flag & MONO_INST_TAILCALL)
-				test_tailcall (cfg, tailcall_calli);
+				test_tailcall (cfg, tailcall);
 
 			// Tailcall does not return, and the subsequent code confuses the JIT, and
 			// can usually be optimized away. However note that valid code can branch
 			// past the calli to the ret, so keep it sometimes (JIT might still
 			// be confused).
 
-			if (tailcall_calli && !cfg->llvm_only) {
+			if (tailcall && !cfg->llvm_only) {
 				link_bblock (cfg, cfg->cbb, end_bblock);
 				start_new_bblock = 1;
 
@@ -7402,7 +7402,6 @@ ldc_i4:
 			gboolean tailcall = FALSE;
 			gboolean tailcall_calli = FALSE;
 			gboolean tailcall_remove_ret = FALSE;
-			gboolean tailcall_testvalue = FALSE;
 
 			// variables to help in assertions
 			gboolean called_is_supported_tailcall = FALSE;
@@ -7918,7 +7917,6 @@ ldc_i4:
 			tailcall_extra_arg = vtable_arg || imt_arg || will_have_imt_arg || mono_class_is_interface (cmethod->klass);
 			tailcall = inst_tailcall && is_supported_tailcall (cfg, ip, method, cmethod, fsig,
 						virtual_, tailcall_extra_arg, &tailcall_calli);
-			tailcall_testvalue = tailcall; // sometimes changed to tailcall_calli.
 			// Writes to imt_arg, vtable_arg, virtual_, cmethod, must not occur from here (inputs to is_supported_tailcall).
 			// Capture values to later assert they don't change.
 			called_is_supported_tailcall = TRUE;
@@ -8153,9 +8151,9 @@ ldc_i4:
 					if (inst_tailcall) // FIXME
 						tailcall_print ("missed tailcall llvmonly gsharedvt %s -> %s\n", method->name, cmethod->name);
 				} else {
-					ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, imt_arg, vtable_arg, tailcall_calli);
-					tailcall_remove_ret |= tailcall_calli;
-					tailcall_testvalue = tailcall_calli;
+					tailcall = tailcall_calli;
+					ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, imt_arg, vtable_arg, tailcall);
+					tailcall_remove_ret |= tailcall;
 				}
 				goto call_end;
 			}
@@ -8200,9 +8198,9 @@ ldc_i4:
 					addr = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_GENERIC_METHOD_CODE);
 					if (inst_tailcall)
 						tailcall_print ("%s tailcall_calli#2 %s -> %s\n", tailcall_calli ? "making" : "missed", method->name, cmethod->name);
-					ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, imt_arg, vtable_arg, tailcall_calli);
-					tailcall_remove_ret |= tailcall_calli;
-					tailcall_testvalue = tailcall_calli;
+					tailcall = tailcall_calli;
+					ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, imt_arg, vtable_arg, tailcall);
+					tailcall_remove_ret |= tailcall;
 				}
 				goto call_end;
 			}
@@ -8309,7 +8307,7 @@ ldc_i4:
 			g_assert (!called_is_supported_tailcall || tailcall_method == method);
 			// FIXME? cmethod does change, weaken the assert if we weren't tailcalling anyway.
 			// If this still fails, restructure the code, or call tailcall_supported again and assert no change.
-			g_assert (!called_is_supported_tailcall || !tailcall_testvalue || tailcall_cmethod == cmethod);
+			g_assert (!called_is_supported_tailcall || !tailcall || tailcall_cmethod == cmethod);
 			g_assert (!called_is_supported_tailcall || tailcall_fsig == fsig);
 			g_assert (!called_is_supported_tailcall || tailcall_virtual == virtual_);
 			g_assert (!called_is_supported_tailcall || tailcall_extra_arg == (vtable_arg || imt_arg || will_have_imt_arg || mono_class_is_interface (cmethod->klass)));
@@ -8336,7 +8334,7 @@ ldc_i4:
 			}
 
 			if (ins_flag & MONO_INST_TAILCALL)
-				test_tailcall (cfg, tailcall_testvalue);
+				test_tailcall (cfg, tailcall);
 
 			/* End of call, INS should contain the result of the call, if any */
 
