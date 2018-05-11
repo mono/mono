@@ -136,7 +136,7 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 
 
 gboolean
-mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, size_t* const stack_size, MonoNativeThreadId *tid)
+mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *tid)
 {
 	g_warning ("WASM doesn't support threading");
 	return FALSE;

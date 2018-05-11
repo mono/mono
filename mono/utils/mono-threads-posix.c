@@ -37,7 +37,7 @@ extern int tkill (pid_t tid, int signal);
 #include <sys/resource.h>
 
 gboolean
-mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, size_t* const stack_size, MonoNativeThreadId *tid)
+mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *tid)
 {
 	pthread_attr_t attr;
 	pthread_t thread;
