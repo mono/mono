@@ -7969,8 +7969,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	ins_flag = 0;
 	start_new_bblock = 0;
+	MonoOpcodeEnum il_op = MonoOpcodeEnum_Invalid;
+
 	for (unsigned char *next_ip = ip; ip < end; ip = next_ip) {
-		const int op_size = mono_opcode_size (ip, end);
+		MonoOpcodeEnum previous_il_op = il_op;
+		const unsigned char *tmp_ip = ip;
+		const int op_size = mono_opcode_value_and_size (&tmp_ip, end, &il_op);
 		CHECK_OPSIZE (op_size);
 		next_ip += op_size;
 
@@ -8211,8 +8215,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_LOCAL (ip [1]);
 
 			if ((tmp_ip = emit_optimized_ldloca_ir (cfg, ip, end, 1))) {
-				ip = tmp_ip;
-				next_ip = ip;
+				next_ip = tmp_ip;
+				il_op = CEE_INITOBJ;
 				inline_costs += 1;
 				break;
 			}
@@ -8594,6 +8598,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				// FIXME When not followed by CEE_RET, correct behavior is to raise an exception.
 				g_assert (next_ip [0] == CEE_RET);
 				next_ip += 1;
+				il_op = MonoOpcodeEnum_Invalid; // Call or ret? Unclear.
 			}
 
 			break;
@@ -9592,6 +9597,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				// FIXME When not followed by CEE_RET, correct behavior is to raise an exception.
 				g_assert (next_ip [0] == CEE_RET);
 				next_ip += 1;
+				il_op = MonoOpcodeEnum_Invalid; // Call or ret? Unclear.
 			}
 			ins_flag = 0;
 			constrained_class = NULL;
@@ -10172,6 +10178,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (klass), sp [0]->dreg, 0);
 				ins->dreg = cfg->locals [loc_index]->dreg;
 				ins->flags |= ins_flag;
+				il_op = (MonoOpcodeEnum)next_ip [0];
 				next_ip += stloc_len;
 				if (ins_flag & MONO_INST_VOLATILE) {
 					/* Volatile loads have acquire semantics, see 12.6.7 in Ecma 335 */
@@ -10189,6 +10196,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				mini_emit_memory_copy (cfg, sp [0], sp [1], klass, FALSE, ins_flag);
 
+				il_op = (MonoOpcodeEnum)next_ip [0];
 				next_ip += 5;
 				ins_flag = 0;
 				break;
@@ -10589,6 +10597,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					MonoInst *enum_this, *enum_flag;
 
 					next_ip += 6 + 5;
+					il_op = MONO_CEE_CALLVIRT;
 					--sp;
 
 					enum_this = sp [0];
@@ -10612,6 +10621,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MonoBasicBlock *true_bb, *false_bb;
 
 				ip = next_ip;
+				il_op = (MonoOpcodeEnum)ip [0];
 
 				if (cfg->verbose_level > 3) {
 					printf ("converting (in B%d: stack: %d) %s", cfg->cbb->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
@@ -11389,6 +11399,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				EMIT_NEW_ICONST (cfg, iargs [2], data_size);
 				mono_emit_method_call (cfg, memcpy_method, iargs, NULL);
 				next_ip += 11;
+				il_op = MONO_CEE_CALL;
 			}
 
 			break;
@@ -11721,6 +11732,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					}
 					ins->type = STACK_OBJ;
 					ins->klass = cmethod->klass;
+					il_op = (MonoOpcodeEnum)next_ip [0];
 					next_ip += 5;
 				} else {
 					MonoInst *addr, *vtvar;
@@ -12622,6 +12634,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 								CHECK_CFG_EXCEPTION;
 								sp ++;
 								next_ip += 5;
+								il_op = MONO_CEE_NEWOBJ;
 								break;
 							} else {
 								CHECK_CFG_ERROR;
@@ -12655,7 +12668,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				/*
 				 * Optimize the common case of ldvirtftn+delegate creation
 				 */
+				//  FIXME readbehind is invalid here. Use previous_il_op instead.
 				if ((sp > stack_start) && (next_ip + 4 < end) && ip_in_bb (cfg, cfg->cbb, next_ip) && (next_ip [0] == CEE_NEWOBJ) && (ip > header->code) && (ip [-1] == CEE_DUP)) {
+
+					g_assert (previous_il_op == CEE_DUP);
 
 					MonoMethod *ctor_method = mini_get_method (cfg, method, read32 (next_ip + 1), NULL, generic_context);
 					if (ctor_method && (m_class_get_parent (ctor_method->klass) == mono_defaults.multicastdelegate_class)) {
@@ -12684,6 +12700,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 								*sp = handle_ins;
 								CHECK_CFG_EXCEPTION;
 								next_ip += 5;
+								previous_il_op = MONO_CEE_NEWOBJ;
 								sp ++;
 								break;
 							} else {
@@ -12754,8 +12771,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_LOCAL (n);
 
 				if ((tmp_ip = emit_optimized_ldloca_ir (cfg, ip, end, 2))) {
-					ip = tmp_ip;
-					next_ip = ip;
+					next_ip = tmp_ip;
+					il_op = MONO_CEE_INITOBJ;
 					inline_costs += 1;
 					break;
 				}			
