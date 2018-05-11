@@ -4,14 +4,13 @@ namespace System.Net {
 	static class Logging
 	{
 
-        internal static bool On {
-            get {
-                return false;
-            }
-        }
+		internal static bool On {
+			get {
+				return false;
+			    }
+		}
 
-
-        internal static TraceSource Web {
+		internal static TraceSource Web {
 			get {
 				return null;
 			}
