@@ -7969,8 +7969,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	ins_flag = 0;
 	start_new_bblock = 0;
-	unsigned char *next_ip = ip;
-	for (; ip < end; ip = next_ip) {
+	for (unsigned char *next_ip = ip; ip < end; ip = next_ip) {
 		const int op_size = mono_opcode_size (ip, end);
 		CHECK_OPSIZE (op_size);
 		next_ip += op_size;
@@ -8448,7 +8447,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			gboolean skip_ret = FALSE;
 			gboolean tailcall_calli = FALSE;
 			gboolean const inst_tailcall = G_UNLIKELY (debug_tailcall_try_all
-							? (next_ip < end && ip [5] == CEE_RET)
+							? (next_ip < end && next_ip [0] == CEE_RET)
 							: ((ins_flag & MONO_INST_TAILCALL) != 0));
 			token = read32 (ip + 1);
 
@@ -8573,7 +8572,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				link_bblock (cfg, cfg->cbb, end_bblock);
 				start_new_bblock = 1;
 
-				GET_BBLOCK (cfg, tblock, ip + 5);
+				GET_BBLOCK (cfg, tblock, next_ip);
 				if (tblock == cfg->cbb || tblock->in_count == 0)
 					skip_ret = TRUE;
 				push_res = FALSE;
@@ -8754,7 +8753,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (cmethod->klass == mono_defaults.monitor_class && !strcmp (cmethod->name, "Enter") && mono_method_signature (cmethod)->param_count == 1) {
 				MonoBasicBlock *tbb;
 
-				GET_BBLOCK (cfg, tbb, ip + 5);
+				GET_BBLOCK (cfg, tbb, next_ip);
 				if (tbb->try_start && MONO_REGION_FLAGS(tbb->region) == MONO_EXCEPTION_CLAUSE_FINALLY) {
 					/*
 					 * We want to extend the try block to cover the call, but we can't do it if the
@@ -8766,7 +8765,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			mono_save_token_info (cfg, image, token, cil_method);
 
-			if (!(seq_point_locs && mono_bitset_test_fast (seq_point_locs, ip + 5 - header->code)))
+			if (!(seq_point_locs && mono_bitset_test_fast (seq_point_locs, next_ip - header->code)))
 				need_seq_point = TRUE;
 
 			/* Don't support calls made using type arguments for now */
@@ -9200,7 +9199,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (cmethod->klass == mono_defaults.monitor_class && !strcmp (cmethod->name, "Enter") && mono_method_signature (cmethod)->param_count == 1) {
 				MonoBasicBlock *tbb;
 
-				GET_BBLOCK (cfg, tbb, ip + 5);
+				GET_BBLOCK (cfg, tbb, next_ip);
 				/* 
 				 * Only extend try blocks with a finally, to avoid catching exceptions thrown
 				 * from Monitor.Enter like ArgumentNullException.
@@ -9299,7 +9298,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					start_new_bblock = 1;
 
 					/* skip the CEE_RET, too */
-					if (ip_in_bb (cfg, cfg->cbb, ip + 5))
+					if (ip_in_bb (cfg, cfg->cbb, next_ip))
 						skip_ret = TRUE;
 					push_res = FALSE;
 					need_seq_point = FALSE;
@@ -9550,7 +9549,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				 * OP_TAILCALL has no return value, so skip the CEE_RET if it is
 				 * only reachable from this call.
 				 */
-				GET_BBLOCK (cfg, tblock, ip + 5);
+				GET_BBLOCK (cfg, tblock, next_ip);
 				if (tblock == cfg->cbb || tblock->in_count == 0)
 					skip_ret = TRUE;
 				push_res = FALSE;
@@ -10148,18 +10147,18 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_TYPELOAD (klass);
 
 			/* Optimize the common ldobj+stloc combination */
-			if (ip + 5 < end) {
-				switch (ip [5]) {
+			if (next_ip < end) {
+				switch (next_ip [0]) {
 				case CEE_STLOC_S:
 					CHECK_OPSIZE (7);
-					loc_index = ip [6];
+					loc_index = next_ip [1];
 					stloc_len = 2;
 					break;
 				case CEE_STLOC_0:
 				case CEE_STLOC_1:
 				case CEE_STLOC_2:
 				case CEE_STLOC_3:
-					loc_index = ip [5] - CEE_STLOC_0;
+					loc_index = next_ip [0] - CEE_STLOC_0;
 					stloc_len = 1;
 					break;
 				default:
@@ -10167,7 +10166,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 			}
 
-			if ((loc_index != -1) && ip_in_bb (cfg, cfg->cbb, ip + 5)) {
+			if ((loc_index != -1) && ip_in_bb (cfg, cfg->cbb, next_ip)) {
 				CHECK_LOCAL (loc_index);
 
 				EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (klass), sp [0]->dreg, 0);
@@ -10183,7 +10182,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			/* Optimize the ldobj+stobj combination */
-			if (ip + 9 < end && ip [5] == CEE_STOBJ && ip_in_bb (cfg, cfg->cbb, ip + 5) && read32 (ip + 6) == token) {
+			if (ip + 9 < end && next_ip [0] == CEE_STOBJ && ip_in_bb (cfg, cfg->cbb, next_ip) && read32 (next_ip + 1) == token) {
 				CHECK_STACK (1);
 
 				sp --;
@@ -10572,14 +10571,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 */
 			if ((cfg->opt & MONO_OPT_INTRINS) &&
 			    /* Cheap checks first. */
-			    ip + 5 + 6 + 5 < end &&
-			    ip [5] == CEE_PREFIX1 &&
-			    ip [6] == CEE_CONSTRAINED_ &&
-			    ip [11] == CEE_CALLVIRT &&
-			    ip_in_bb (cfg, cfg->cbb, ip + 5 + 6 + 5) &&
+			    next_ip + 6 + 5 < end &&
+			    next_ip [0] == CEE_PREFIX1 &&
+			    next_ip [1] == CEE_CONSTRAINED_ &&
+			    next_ip [6] == CEE_CALLVIRT &&
+			    ip_in_bb (cfg, cfg->cbb, next_ip + 6 + 5) &&
 			    mono_class_is_enum (klass) &&
-			    (enum_class = mini_get_class (method, read32 (ip + 7), generic_context)) &&
-			    (has_flag = mini_get_method (cfg, method, read32 (ip + 12), NULL, generic_context)) &&
+			    (enum_class = mini_get_class (method, read32 (next_ip + 2), generic_context)) &&
+			    (has_flag = mini_get_method (cfg, method, read32 (next_ip + 7), NULL, generic_context)) &&
 			    has_flag->klass == mono_defaults.enum_class &&
 			    !strcmp (has_flag->name, "HasFlag") &&
 			    has_flag->signature->hasthis &&
@@ -10603,12 +10602,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			// FIXME: LLVM can't handle the inconsistent bb linking
 			if (!mono_class_is_nullable (klass) &&
 				!mini_is_gsharedvt_klass (klass) &&
-				ip + 5 < end && ip_in_bb (cfg, cfg->cbb, ip + 5) &&
-				(ip [5] == CEE_BRTRUE || 
-				 ip [5] == CEE_BRTRUE_S ||
-				 ip [5] == CEE_BRFALSE ||
-				 ip [5] == CEE_BRFALSE_S)) {
-				gboolean is_true = ip [5] == CEE_BRTRUE || ip [5] == CEE_BRTRUE_S;
+				next_ip < end && ip_in_bb (cfg, cfg->cbb, next_ip) &&
+				(next_ip [0] == CEE_BRTRUE ||
+				 next_ip [0] == CEE_BRTRUE_S ||
+				 next_ip [0] == CEE_BRFALSE ||
+				 next_ip [0] == CEE_BRFALSE_S)) {
+				gboolean is_true = next_ip [0] == CEE_BRTRUE || next_ip [0] == CEE_BRTRUE_S;
 				int dreg;
 				MonoBasicBlock *true_bb, *false_bb;
 
@@ -10623,15 +10622,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				case CEE_BRTRUE_S:
 				case CEE_BRFALSE_S:
 					CHECK_OPSIZE (2);
-					target = ip + 2 + (signed char)next_ip [1];
-					ip += 2;
+					target = ip + 2 + (signed char)ip [1];
 					next_ip += 2;
 					break;
 				case CEE_BRTRUE:
 				case CEE_BRFALSE:
 					CHECK_OPSIZE (5);
-					target = ip + 5 + (gint)(read32 (next_ip + 1));
-					ip += 5;
+					target = ip + 5 + (gint)(read32 (ip + 1));
 					next_ip += 5;
 					break;
 				default:
@@ -10645,7 +10642,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				 * generate an ICONST+BRTRUE, the branch opts will get rid of them.
 				 */
 				GET_BBLOCK (cfg, true_bb, target);
-				GET_BBLOCK (cfg, false_bb, ip);
+				GET_BBLOCK (cfg, false_bb, next_ip);
 
 				mono_link_bblock (cfg, cfg->cbb, true_bb);
 				mono_link_bblock (cfg, cfg->cbb, false_bb);
@@ -11692,8 +11689,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				EMIT_NEW_TEMPLOAD (cfg, ins, vtvar->inst_c0);
 			} else {
-				if ((ip + 9 < end) && ip_in_bb (cfg, cfg->cbb, ip + 5) &&
-					((ip [5] == CEE_CALL) || (ip [5] == CEE_CALLVIRT)) && 
+				if ((ip + 9 < end) && ip_in_bb (cfg, cfg->cbb, next_ip) &&
+					((next_ip [0] == CEE_CALL) || (next_ip [0] == CEE_CALLVIRT)) &&
 					(cmethod = mini_get_method (cfg, method, read32 (ip + 6), NULL, generic_context)) &&
 					(cmethod->klass == mono_defaults.systemtype_class) &&
 					(strcmp (cmethod->name, "GetTypeFromHandle") == 0)) {
@@ -11802,9 +11799,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			GList *handlers;
 
 			if (*ip == CEE_LEAVE) {
-				target = ip + 5 + (gint32)read32 (ip + 1);
+				target = next_ip + (gint32)read32 (ip + 1);
 			} else {
-				target = ip + 2 + (signed char)(ip [1]);
+				target = next_ip + (signed char)ip [1];
 			}
 
 			/* empty the stack */
