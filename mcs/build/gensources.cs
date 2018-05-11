@@ -85,7 +85,8 @@ public static class Program {
         var parser = new SourcesParser (platformsFolder, profilesFolder);
         var result = parser.Parse (libraryDirectory, libraryName, platformName, profileName);
 
-        Console.Error.WriteLine ($"// Writing sources for platform {platformName} and profile {profileName}, relative to {libraryDirectory}, to {outFile}.");
+        if (SourcesParser.TraceLevel > 0)
+            Console.Error.WriteLine ($"// Writing sources for platform {platformName} and profile {profileName}, relative to {libraryDirectory}, to {outFile}.");
 
         TextWriter output;
         if (useStdout)
@@ -329,7 +330,8 @@ public class SourcesParser {
     }
 
     private void PrintSummary (State state) {
-        Console.Error.WriteLine ($"// Parsed {state.SourcesFilesParsed} sources file(s) and {state.ExclusionsFilesParsed} exclusions file(s).");
+        if (TraceLevel > 0)
+            Console.Error.WriteLine ($"// Parsed {state.SourcesFilesParsed} sources file(s) and {state.ExclusionsFilesParsed} exclusions file(s).");
     }
 
     private void HandleMetaDirective (State state, string directory, bool asExclusionsList, string directive) {
