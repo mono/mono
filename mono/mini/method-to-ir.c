@@ -440,7 +440,7 @@ inline_failure (MonoCompile *cfg, const char *msg)
 static MONO_NEVER_INLINE void
 gshared_failure (MonoCompile *cfg, int opcode, const char *file, int line)
 {
-	if (cfg->verbose_level > 2)											\
+	if (cfg->verbose_level > 2)
 		printf ("sharing failed for method %s.%s.%s/%d opcode %s line %d\n", m_class_get_name_space (cfg->current_method->klass), m_class_get_name (cfg->current_method->klass), cfg->current_method->name, cfg->current_method->signature->param_count, mono_opcode_name (opcode), line);
 	mono_cfg_set_exception (cfg, MONO_EXCEPTION_GENERIC_SHARING_FAILED);
 }
