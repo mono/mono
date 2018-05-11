@@ -375,15 +375,22 @@ public class SourcesParser {
                 if (parts.Length > 1) {
                     var explicitExclusions = parts[1].Split (',');
 
-                    // FIXME: Directory-relative? If these are globs do we resolve them now?
-                    foreach (var pattern in explicitExclusions)
+                    // gensources.sh implemented these explicit exclusions like so:
+                    // ../foo/bar/*.cs:A.cs,B.cs
+                    // This would generate exclusions for ../foo/bar/A.cs and ../foo/bar/B.cs,
+                    //  not ./A.cs and ./B.cs as you might expect
+
+                    var mainPatternDirectory = Path.GetDirectoryName (parts[0]);
+
+                    foreach (var pattern in explicitExclusions) {
                         state.ParsedExclusions.Add (new ParseEntry {
                             SourcesFileName = fileName,
                             Directory = directory,
-                            Pattern = pattern,
+                            Pattern = Path.Combine (mainPatternDirectory, pattern),
                             HostPlatform = state.HostPlatform,
                             ProfileName = state.ProfileName
                         });
+                    }
                 }
 
                 (asExclusionsList ? state.ParsedExclusions : state.ParsedSources)
