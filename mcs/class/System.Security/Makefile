@@ -16,6 +16,8 @@ LOCAL_MCS_FLAGS =
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:168,169,183,219,414
 
+XTEST_LIB_REFS = System.Core System Facades/System.Linq Facades/System.Threading.Tasks
+
 EXTRA_DISTFILES = \
 	Test/System.Security.Cryptography.Xml/sample.pfx \
 	Test/System.Security.Cryptography.Xml/EncryptedXmlSample1.xml \

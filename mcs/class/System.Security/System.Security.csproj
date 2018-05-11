@@ -133,9 +133,10 @@
     <Compile Include="System.Security.Cryptography.Pkcs\SubjectIdentifierOrKey.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\SubjectIdentifierOrKeyType.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\SubjectIdentifierType.cs" />
-    <Compile Include="System.Security.Cryptography\CryptographicAttribute.cs" />
-    <Compile Include="System.Security.Cryptography\CryptographicAttributeCollection.cs" />
-    <Compile Include="System.Security.Cryptography\CryptographicAttributeEnumerator.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObject.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObjectCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObjectEnumerator.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography/Oids" />
     <Compile Include="System.Security.Cryptography\DataProtectionScope.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedData.cs" />
   </ItemGroup>
