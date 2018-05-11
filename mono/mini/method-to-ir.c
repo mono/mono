@@ -441,7 +441,7 @@ static MONO_NEVER_INLINE void
 gshared_failure (MonoCompile *cfg, int opcode, const char *file, int line)
 {
 	if (cfg->verbose_level > 2)											\
-		printf ("sharing failed for method %s.%s.%s/%d opcode %s line %d\n", m_class_get_name_space (cfg->current_method->klass), m_class_get_name (cfg->current_method->klass), cfg->current_method->name, cfg->current_method->signature->param_count, mono_opcode_name ((opcode)), line);
+		printf ("sharing failed for method %s.%s.%s/%d opcode %s line %d\n", m_class_get_name_space (cfg->current_method->klass), m_class_get_name (cfg->current_method->klass), cfg->current_method->name, cfg->current_method->signature->param_count, mono_opcode_name (opcode), line);
 	mono_cfg_set_exception (cfg, MONO_EXCEPTION_GENERIC_SHARING_FAILED);
 }
 
@@ -7971,7 +7971,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	start_new_bblock = 0;
 	unsigned char *next_ip = ip;
 	for (; ip < end; ip = next_ip) {
-
+		const unsigned char* previous_ip = ip;
 		const int op_size = mono_opcode_size (ip, end);
 		CHECK_OPSIZE (op_size);
 		next_ip += op_size;
@@ -9863,7 +9863,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			targets = (MonoBasicBlock **)mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * n);
 			for (i = 0; i < n; ++i) {
-				GET_BBLOCK (cfg, tblock, target + (gint32)read32(ip));
+				GET_BBLOCK (cfg, tblock, target + (gint32)read32 (ip));
 				targets [i] = tblock;
 				targets [i]->flags |= BB_INDIRECT_JUMP_TARGET;
 				ip += 4;
@@ -9945,7 +9945,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MONO_EMIT_NEW_UNALU (cfg, OP_BR_REG, -1, target_reg);
 			}
 			start_new_bblock = 1;
-			inline_costs += (BRANCH_COST * 2);
+			inline_costs += BRANCH_COST * 2;
 			break;
 		}
 		case CEE_LDIND_I1:
@@ -11894,7 +11894,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			GList *handlers;
 
 			if (*ip == CEE_LEAVE) {
-				target = ip + 5 + (gint32)read32(ip + 1);
+				target = ip + 5 + (gint32)read32 (ip + 1);
 			} else {
 				target = ip + 2 + (signed char)(ip [1]);
 			}
@@ -13148,12 +13148,24 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_UNUSED58:
 		case CEE_UNUSED1:
 			UNVERIFIED;
+			break;
 
 		default:
 			g_warning ("opcode 0x%02x not handled", *ip);
 			UNVERIFIED;
 		}
-		g_assert  (ip == next_ip);
+		if (ip != next_ip) {
+			unsigned char bytes [6] = { 0 };
+			int const computed_size = (int)(ip - previous_ip);
+			if (previous_ip)
+				memcpy (bytes, previous_ip, MIN (6, MIN (op_size, computed_size)));
+			fprintf (stderr, "ip:%p != next_ip:%p previous_ip:%p bytes:{%#X %#X %#X %#X %X %#X} size:%#X computed_size:%#X %s\n",
+				ip, next_ip, previous_ip,
+				bytes [0], bytes [1], bytes [2], bytes [3], bytes [4], bytes [5],
+				op_size, computed_size,
+				mono_opcode_name (*previous_ip));
+			exit (1);
+		}
 	}
 	if (start_new_bblock != 1)
 		UNVERIFIED;
