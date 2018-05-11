@@ -135,7 +135,7 @@
       IL_001e:  call       void [mscorlib]System.Console::WriteLine()
       IL_0023:  ldstr      "*** PASSED ***"
       IL_0028:  call       void [mscorlib]System.Console::WriteLine(class System.String)
-      IL_002d:  ldc.i4    0x64
+      IL_002d:  ldc.i4    0
       IL_002e:  ret
     } // end of method 'Test::Main'
 

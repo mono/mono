@@ -116,21 +116,25 @@ namespace Mono.Net.Security
 			get { return clientCertificates; }
 		}
 
-		protected void GetProtocolVersions (out TlsProtocolCode min, out TlsProtocolCode max)
+		protected void GetProtocolVersions (out TlsProtocolCode? min, out TlsProtocolCode? max)
 		{
 			if ((enabledProtocols & SslProtocols.Tls) != 0)
 				min = TlsProtocolCode.Tls10;
 			else if ((enabledProtocols & SslProtocols.Tls11) != 0)
 				min = TlsProtocolCode.Tls11;
-			else
+			else if ((enabledProtocols & SslProtocols.Tls12) != 0)
 				min = TlsProtocolCode.Tls12;
+			else
+				min = null;
 
 			if ((enabledProtocols & SslProtocols.Tls12) != 0)
 				max = TlsProtocolCode.Tls12;
 			else if ((enabledProtocols & SslProtocols.Tls11) != 0)
 				max = TlsProtocolCode.Tls11;
-			else
+			else if ((enabledProtocols & SslProtocols.Tls) != 0)
 				max = TlsProtocolCode.Tls10;
+			else
+				max = null;
 		}
 
 		public abstract void StartHandshake ();

@@ -86,6 +86,8 @@ namespace Cairo {
 				return new DirectFBSurface (surface, owned);
 			case SurfaceType.Svg:
 				return new SvgSurface (surface, owned);
+			case SurfaceType.GL:
+				return new GLSurface (surface, owned);
 			default:
 				return new Surface (surface, owned);
 			}

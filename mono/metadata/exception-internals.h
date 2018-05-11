@@ -60,9 +60,12 @@ MonoExceptionHandle
 mono_exception_new_argument (const char *arg, const char *msg, MonoError *error);
 
 MonoExceptionHandle
-mono_exception_new_thread_abort (MonoError *error);
+mono_exception_new_thread_interrupted (MonoError *error);
 
 MonoExceptionHandle
 mono_exception_new_thread_interrupted (MonoError *error);
+
+MonoExceptionHandle
+mono_exception_new_thread_abort (MonoError *error);
 
 #endif

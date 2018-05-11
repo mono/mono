@@ -54,7 +54,7 @@
     {
       .entrypoint
       // Code size       39 (0x27)
-      .maxstack  1
+      .maxstack  99
       .locals (int32 V_0)
       IL_0000:  ldc.i4.0
       IL_0001:  call       class JitTest.BaseClass JitTest.BaseClass::caller(bool)
@@ -69,6 +69,15 @@
       IL_0023:  br.s       IL_0025
 
       IL_0025:  ldloc.0
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
       IL_0026:  ret
     } // end of method DerivedClass::Main
 

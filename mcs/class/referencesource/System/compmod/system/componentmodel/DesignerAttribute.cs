@@ -18,6 +18,9 @@ namespace System.ComponentModel {
     ///    <para>Specifies the class to use to implement design-time services.</para>
     /// </devdoc>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
+#if MOBILE
+    [Conditional("FALSE")]
+#endif
     public sealed class DesignerAttribute : Attribute {
         private readonly string designerTypeName;
         private readonly string designerBaseTypeName;

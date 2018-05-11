@@ -390,6 +390,7 @@ namespace Mono.ILASM {
 %token K_LPSTR
 %token K_LPWSTR
 %token K_LPTSTR
+%token K_VBBYREFSTR
 %token K_OBJECTREF
 %token K_IUNKNOWN
 %token K_IDISPATCH
@@ -1318,6 +1319,10 @@ native_type		: /* EMPTY */
                           {
                                 $$ = NativeType.LPTStr;
                           }
+		  	| K_VBBYREFSTR
+			  {
+				$$ = NativeType.ByValStr;
+			  }
 			| K_OBJECTREF
 			| K_IUNKNOWN
                           {

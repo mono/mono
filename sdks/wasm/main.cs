@@ -11,26 +11,6 @@ using NUnit.Framework.Api;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-namespace WebAssembly {
-	public sealed class Runtime {
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string InvokeJS (string str, out int exceptional_result);
-
-		public static string InvokeJS (string str)
-		{
-			int exception = 0;
-			var res = InvokeJS (str, out exception);
-			if (exception != 0)
-				throw new JSException (res);
-			return res;
-		}
-	}
-
-	public class JSException : Exception {
-		public JSException (string msg) : base (msg) {}
-	}
-}
-
 public class Driver {
 	static void Main () {
 		Console.WriteLine ("hello");
@@ -155,6 +135,7 @@ public class Driver {
 
 	static TestSuite[] suites = new TestSuite [] {
 		new TestSuite () { Name = "mini", File = "managed/mini_tests.dll" },
+		new TestSuite () { Name = "binding", File = "managed/binding_tests.dll" },
 		new TestSuite () { Name = "corlib", File = "managed/wasm_corlib_test.dll" },
 		new TestSuite () { Name = "system", File = "managed/wasm_System_test.dll" },
 		new TestSuite () { Name = "system-core", File = "managed/wasm_System.Core_test.dll" },

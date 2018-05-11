@@ -54,8 +54,10 @@
     <Compile Include=".\Mono.Cairo\Color.cs" />
     <Compile Include=".\Mono.Cairo\Content.cs" />
     <Compile Include=".\Mono.Cairo\Context.cs" />
+    <Compile Include=".\Mono.Cairo\Device.cs" />
     <Compile Include=".\Mono.Cairo\DirectFBSurface.cs" />
     <Compile Include=".\Mono.Cairo\Distance.cs" />
+    <Compile Include=".\Mono.Cairo\EGLDevice.cs" />
     <Compile Include=".\Mono.Cairo\Extend.cs" />
     <Compile Include=".\Mono.Cairo\FillRule.cs" />
     <Compile Include=".\Mono.Cairo\Filter.cs" />
@@ -67,6 +69,8 @@
     <Compile Include=".\Mono.Cairo\FontWeight.cs" />
     <Compile Include=".\Mono.Cairo\Format.cs" />
     <Compile Include=".\Mono.Cairo\GlitzSurface.cs" />
+    <Compile Include=".\Mono.Cairo\GLSurface.cs" />
+    <Compile Include=".\Mono.Cairo\GLXDevice.cs" />
     <Compile Include=".\Mono.Cairo\Glyph.cs" />
     <Compile Include=".\Mono.Cairo\Gradient.cs" />
     <Compile Include=".\Mono.Cairo\HintMetrics.cs" />
@@ -98,6 +102,7 @@
     <Compile Include=".\Mono.Cairo\SvgSurface.cs" />
     <Compile Include=".\Mono.Cairo\SvgVersion.cs" />
     <Compile Include=".\Mono.Cairo\TextExtents.cs" />
+    <Compile Include=".\Mono.Cairo\WGLDevice.cs" />
     <Compile Include=".\Mono.Cairo\Win32Surface.cs" />
     <Compile Include=".\Mono.Cairo\XcbSurface.cs" />
     <Compile Include=".\Mono.Cairo\XlibSurface.cs" />

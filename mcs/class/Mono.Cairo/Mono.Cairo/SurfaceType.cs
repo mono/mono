@@ -3,6 +3,7 @@
 //
 // Authors:
 //    John Luke
+//    JP Bruyère
 //
 // (C) John Luke, 2006.
 //
@@ -44,5 +45,18 @@ namespace Cairo {
 		BeOS,
 		DirectFB,
 		Svg,
+		OS2,
+		Win32Printing,
+		QuartzImage,
+		Script,
+		Qt,
+		Recording,
+		VG,
+		GL,
+		Drm,
+		Tee,
+		Xml,
+		Skia,
+		SubSurface
 	}
 }

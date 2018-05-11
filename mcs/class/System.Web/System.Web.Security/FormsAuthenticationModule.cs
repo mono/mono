@@ -155,7 +155,7 @@ namespace System.Web.Security
 				// incorrect cookie value, suppress the exception
 				return;
 			}
-			if (ticket == null || (!ticket.IsPersistent && ticket.Expired))
+			if (ticket == null || ticket.Expired)
 				return;
 
 			FormsAuthenticationTicket oldticket = ticket;

@@ -916,6 +916,15 @@ IL_0027:
       ldloc.0
       ldc.i4.0
       ldelem.i4
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
       ret
     } // end of method TestClass::Main
 

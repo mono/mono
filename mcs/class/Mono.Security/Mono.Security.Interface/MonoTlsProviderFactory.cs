@@ -178,8 +178,13 @@ namespace Mono.Security.Interface
 		 *
 		 * Negative version numbers are reserved for martin work branches.
 		 *
+		 * Version History:
+		 *
+		 * - 1: everything up until May 2018
+		 * - 2: the new ServicePointScheduler changes have landed
+		 *
 		 */
-		internal const int InternalVersion = 1;
+		internal const int InternalVersion = 2;
 
 		#endregion
 	}

@@ -1,3 +1,5 @@
+include $(top_srcdir)/mk/common.mk
+
 noinst_LTLIBRARIES = libmonoutils.la
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)
@@ -50,6 +52,8 @@ monoutils_sources = \
 	mono-log-darwin.c \
 	mono-merp.c	\
 	mono-merp.h	\
+	mono-state.h	\
+	mono-state.c	\
 	mono-internal-hash.c	\
 	mono-internal-hash.h	\
 	mono-io-portability.c 	\

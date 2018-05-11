@@ -507,7 +507,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestConstructSingle ()
 		{
 			Decimal d;
@@ -630,7 +629,6 @@ namespace MonoTests.System
 
 		[Test]
 		[SetCulture("en-US")]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestConstructDouble ()
 		{
 			Decimal d;
@@ -729,7 +727,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestConstructDoubleRound ()
 		{
 			decimal d;
@@ -982,7 +979,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ToInt32 ()
 		{
 			Decimal d = 254.9m;
@@ -1045,7 +1041,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ToSingle ()
 		{
 			Decimal d = 254.9m;
@@ -1059,7 +1054,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ToDouble ()
 		{
 			Decimal d = 254.9m;

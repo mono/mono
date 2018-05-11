@@ -2117,7 +2117,8 @@ namespace Mono.CSharp
 			encoder.Encode (GetAttributeDefaultMember ());
 			encoder.EncodeEmptyNamedArguments ();
 
-			TypeBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			TypeBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			Module.AddAssemblyReferences (references);
 		}
 
 		public override void VerifyMembers ()

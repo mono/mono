@@ -74,11 +74,12 @@ if test x$NOCONFIGURE = x && test -z "$*"; then
   echo
 fi
 
+am_opt="--add-missing --copy --gnu -Wno-obsolete"
+
 case $CC in
 xlc )
-  am_opt=--include-deps;;
+  am_opt="$am_opt --include-deps";;
 esac
-
 
 if grep "^AC_PROG_LIBTOOL" configure.ac >/dev/null; then
   if test -z "$NO_LIBTOOLIZE" ; then 
@@ -104,8 +105,8 @@ if grep "^AC_CONFIG_HEADERS" configure.ac >/dev/null; then
   autoheader || { echo "**Error**: autoheader failed."; exit 1; }
 fi
 
-echo "Running automake --gnu $am_opt ..."
-automake --add-missing --gnu -Wno-obsolete $am_opt ||
+echo "Running automake $am_opt ..."
+automake $am_opt ||
   { echo "**Error**: automake failed."; exit 1; }
 echo "Running autoconf ..."
 autoconf || { echo "**Error**: autoconf failed."; exit 1; }

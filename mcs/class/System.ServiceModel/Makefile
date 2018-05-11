@@ -6,6 +6,9 @@ RESOURCE_FILES = \
 	resources/WS-Addressing.schema	\
 	resources/ws-addr.xsd
 
+RESX_RESOURCE_STRING = \
+	../../../external/corefx/src/System.ServiceModel.Syndication/src/Resources/Strings.resx
+
 LIBRARY = System.ServiceModel.dll
 
 LIB_REFS = System System.Xml System.Core System.Runtime.Serialization System.IdentityModel

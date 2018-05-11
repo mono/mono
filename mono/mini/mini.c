@@ -1922,21 +1922,13 @@ mono_destroy_compile (MonoCompile *cfg)
 {
 	mono_empty_compile (cfg);
 
-	if (cfg->header)
-		mono_metadata_free_mh (cfg->header);
+	mono_metadata_free_mh (cfg->header);
 
-	if (cfg->spvars)
-		g_hash_table_destroy (cfg->spvars);
-	if (cfg->exvars)
-		g_hash_table_destroy (cfg->exvars);
-
+	g_hash_table_destroy (cfg->spvars);
+	g_hash_table_destroy (cfg->exvars);
 	g_list_free (cfg->ldstr_list);
-
-	if (cfg->token_info_hash)
-		g_hash_table_destroy (cfg->token_info_hash);
-
-	if (cfg->abs_patches)
-		g_hash_table_destroy (cfg->abs_patches);
+	g_hash_table_destroy (cfg->token_info_hash);
+	g_hash_table_destroy (cfg->abs_patches);
 
 	mono_debug_free_method (cfg);
 
@@ -2218,7 +2210,7 @@ mono_codegen (MonoCompile *cfg)
 
 	code = mono_arch_emit_prolog (cfg);
 
-	cfg->code_len = code - cfg->native_code;
+	set_code_cursor (cfg, code);
 	cfg->prolog_end = cfg->code_len;
 	cfg->cfa_reg = cfg->cur_cfa_reg;
 	cfg->cfa_offset = cfg->cur_cfa_offset;
@@ -4402,13 +4394,26 @@ mono_add_patch_info (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpoin
 	g_assert_not_reached ();
 }
 
+#else // DISABLE_JIT
+
+guint8*
+mini_realloc_code_slow (MonoCompile *cfg, int size)
+{
+	const int EXTRA_CODE_SPACE = 16;
+
+	if (cfg->code_len + size > (cfg->code_size - EXTRA_CODE_SPACE)) {
+		while (cfg->code_len + size > (cfg->code_size - EXTRA_CODE_SPACE))
+			cfg->code_size = cfg->code_size * 2 + EXTRA_CODE_SPACE;
+		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
+		cfg->stat_code_reallocs++;
+	}
+	return cfg->native_code + cfg->code_len;
+}
+
 #endif /* DISABLE_JIT */
 
 gboolean
 mini_class_is_system_array (MonoClass *klass)
 {
-	if (m_class_get_parent (klass) == mono_defaults.array_class)
-		return TRUE;
-	else
-		return FALSE;
+	return m_class_get_parent (klass) == mono_defaults.array_class;
 }

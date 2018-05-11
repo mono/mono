@@ -301,7 +301,7 @@ ifndef IGNORE_PACKAGE_LLVM
 
 # Download a prebuilt llvm
 .stamp-ios-llvm-$(LLVM_HASH):
-	./download-llvm.sh $(LLVM_HASH)
+	./download-llvm.sh $(LLVM_HASH) $(LLVM_JENKINS_LANE)
 	touch $@
 
 build-ios-llvm: .stamp-ios-llvm-$(LLVM_HASH)

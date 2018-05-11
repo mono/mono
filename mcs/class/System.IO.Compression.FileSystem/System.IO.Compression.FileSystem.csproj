@@ -108,6 +108,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\PathInternal.CaseSensitivity.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.ZipFile\src\System\IO\Compression\ZipFile.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.ZipFile\src\System\IO\Compression\ZipFileExtensions.cs" />
+    <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="corefx\SR.cs" />
   </ItemGroup>

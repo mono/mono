@@ -608,7 +608,7 @@
       IL_0008:  ldstr      "Test SUCCESS"
       IL_000d:  call       void [mscorlib]System.Console::WriteLine(string)
       IL_0012:  nop
-      IL_0013:  ldc.i4.s   100
+      IL_0013:  ldc.i4.s   0
       IL_0015:  stloc.1
       IL_0016:  leave.s    IL_0031
 

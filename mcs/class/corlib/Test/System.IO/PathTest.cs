@@ -434,7 +434,7 @@ namespace MonoTests.System.IO
 			string testFileName = Path.GetFileName (path1);
 
 			Assert.AreEqual ("test.txt", testFileName, "#1");
-			testFileName = Path.GetFileName (null);
+			testFileName = Path.GetFileName ((string)null);
 			Assert.AreEqual (null, testFileName, "#2");
 			testFileName = Path.GetFileName (String.Empty);
 			Assert.AreEqual (String.Empty, testFileName, "#3");

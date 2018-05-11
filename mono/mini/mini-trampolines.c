@@ -141,6 +141,7 @@ mono_create_static_rgctx_trampoline (MonoMethod *m, gpointer addr)
 
 	return res;
 }
+
 #else
 gpointer
 mono_create_static_rgctx_trampoline (MonoMethod *m, gpointer addr)
@@ -152,6 +153,25 @@ mono_create_static_rgctx_trampoline (MonoMethod *m, gpointer addr)
        g_assert_not_reached ();
 }
 #endif
+
+gpointer
+mono_create_ftnptr_arg_trampoline (gpointer arg, gpointer addr)
+{
+	gpointer res;
+#ifdef MONO_ARCH_HAVE_FTNPTR_ARG_TRAMPOLINE
+	if (mono_aot_only)
+		g_error ("FIXME");
+	else
+		res = mono_arch_get_ftnptr_arg_trampoline (arg, addr);
+#else
+	if (mono_aot_only)
+		res = mono_aot_get_static_rgctx_trampoline (arg, addr);
+	else
+		res = mono_arch_get_static_rgctx_trampoline (arg, addr);
+#endif
+
+	return res;
+}
 
 #if 0
 #define DEBUG_IMT(stmt) do { stmt; } while (0)
@@ -772,6 +792,8 @@ common_call_trampoline (mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVTable *
 		 */
 		if (domain_jit_info (domain)->jump_target_got_slot_hash) {
 			GSList *list, *tmp;
+			MonoMethod *shared_method = mini_method_to_shared (m);
+			m = shared_method ? shared_method : m;
 
 			mono_domain_lock (domain);
 			list = (GSList *)g_hash_table_lookup (domain_jit_info (domain)->jump_target_got_slot_hash, m);
@@ -859,7 +881,7 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 	gpointer res;
 	ERROR_DECL (error);
 
-	MONO_REQ_GC_UNSAFE_MODE;
+	MONO_ENTER_GC_UNSAFE;
 
 	g_assert (mono_thread_is_gc_unsafe_mode ());
 
@@ -868,9 +890,10 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 	res = common_call_trampoline (regs, code, (MonoMethod *)arg, NULL, NULL, error);
 	if (!is_ok (error)) {
 		mono_error_set_pending_exception (error);
-		return NULL;
+		res = NULL;
 	}
 
+	MONO_EXIT_GC_UNSAFE;
 	return res;
 }
 
@@ -882,14 +905,16 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 static gpointer
 mono_vcall_trampoline (mgreg_t *regs, guint8 *code, int slot, guint8 *tramp)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	gpointer res;
+	MONO_ENTER_GC_UNSAFE;
 
 	MonoObject *this_arg;
 	MonoVTable *vt;
 	gpointer *vtable_slot;
 	MonoMethod *m;
 	ERROR_DECL (error);
-	gpointer addr, res = NULL;
+	gpointer addr;
+	res = NULL;
 
 	UnlockedIncrement (&trampoline_calls);
 
@@ -920,7 +945,8 @@ mono_vcall_trampoline (mgreg_t *regs, guint8 *code, int slot, guint8 *tramp)
 			if (mono_domain_owns_vtable_slot (mono_domain_get (), vtable_slot))
 				*vtable_slot = addr;
 
-			return mono_create_ftnptr (mono_domain_get (), addr);
+			res = mono_create_ftnptr (mono_domain_get (), addr);
+			goto leave;
 		}
 
 		/*
@@ -948,8 +974,9 @@ mono_vcall_trampoline (mgreg_t *regs, guint8 *code, int slot, guint8 *tramp)
 leave:
 	if (!mono_error_ok (error)) {
 		mono_error_set_pending_exception (error);
-		return NULL;
+		res = NULL;
 	}
+	MONO_EXIT_GC_UNSAFE;
 	return res;
 }
 
@@ -1385,11 +1412,8 @@ mono_trampolines_init (void)
 void
 mono_trampolines_cleanup (void)
 {
-	if (rgctx_lazy_fetch_trampoline_hash)
-		g_hash_table_destroy (rgctx_lazy_fetch_trampoline_hash);
-	if (rgctx_lazy_fetch_trampoline_hash_addr)
-		g_hash_table_destroy (rgctx_lazy_fetch_trampoline_hash_addr);
-
+	g_hash_table_destroy (rgctx_lazy_fetch_trampoline_hash);
+	g_hash_table_destroy (rgctx_lazy_fetch_trampoline_hash_addr);
 	mono_os_mutex_destroy (&trampolines_mutex);
 }
 

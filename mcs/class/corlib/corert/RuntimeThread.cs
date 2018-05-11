@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Internal.Runtime.Augments
 {
-	class RuntimeThread
+	sealed class RuntimeThread
 	{
 		readonly Thread thread;
 
@@ -32,6 +32,12 @@ namespace Internal.Runtime.Augments
 		{
 			Thread.SpinWait (iterations);
 			return true;
+		}
+
+		public static int GetCurrentProcessorId ()
+		{
+			// TODO: Implement correctly
+			return 1;
 		}
 	}
 }

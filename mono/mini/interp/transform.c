@@ -1122,7 +1122,7 @@ no_intrinsic:
 			}
 			ADD_CODE (td, MINT_BOX);
 			ADD_CODE (td, get_data_item_index (td, constrained_class));
-			ADD_CODE (td, csignature->param_count | ((td->sp - 1)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
+			ADD_CODE (td, csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
 		} else if (!m_class_is_valuetype (constrained_class)) {
 			/* managed pointer on the stack, we need to deref that puppy */
 			ADD_CODE (td, MINT_LDIND_I);
@@ -1151,7 +1151,7 @@ no_intrinsic:
 					}
 					ADD_CODE (td, MINT_BOX);
 					ADD_CODE (td, get_data_item_index (td, constrained_class));
-					ADD_CODE (td, csignature->param_count | ((td->sp - 1)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
+					ADD_CODE (td, csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
 				}
 			}
 			is_virtual = FALSE;
@@ -1183,7 +1183,7 @@ no_intrinsic:
 		return_if_nok (error);
 		int called_inited = vt->initialized;
 
-		if (/*mono_metadata_signature_equal (method->signature, target_method->signature) */ method == target_method && *(td->ip + 5) == CEE_RET) {
+		if (method == target_method && *(td->ip + 5) == CEE_RET && !(csignature->hasthis && m_class_is_valuetype (target_method->klass))) {
 			int offset;
 			if (td->verbose_level)
 				g_print ("Optimize tail call of %s.%s\n", m_class_get_name (target_method->klass), target_method->name);
@@ -1207,8 +1207,7 @@ no_intrinsic:
 				has_vt_arg |= !mini_type_is_reference (csignature->params [i]);
 
 			gboolean empty_callee = mheader && *mheader->code == CEE_RET;
-			if (mheader)
-				mono_metadata_free_mh (mheader);
+			mono_metadata_free_mh (mheader);
 
 			if (empty_callee && called_inited && !has_vt_arg) {
 				if (td->verbose_level)
@@ -3145,9 +3144,22 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			if (td->sp [-1].type == STACK_TYPE_VT) {
 				int size = mono_class_value_size (klass, NULL);
 				size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
+				int field_vt_size = 0;
+				if (mt == MINT_TYPE_VT) {
+					/*
+					 * Pop the loaded field from the vtstack (it will still be present
+					 * at the same vtstack address) and we will load it in place of the
+					 * containing valuetype with the second MINT_VTRESULT.
+					 */
+					field_vt_size = mono_class_value_size (field_klass, NULL);
+					field_vt_size = ALIGN_TO (field_vt_size, MINT_VT_ALIGNMENT);
+					ADD_CODE (td, MINT_VTRESULT);
+					ADD_CODE (td, 0);
+					WRITE32 (td, &field_vt_size);
+				}
 				td->vt_sp -= size;
 				ADD_CODE (td, MINT_VTRESULT);
-				ADD_CODE (td, 0);
+				ADD_CODE (td, field_vt_size);
 				WRITE32 (td, &size);
 			}
 			td->ip += 5;
@@ -3180,11 +3192,22 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 					ADD_CODE (td, 1);
 					ADD_CODE (td, mt == MINT_TYPE_VT ? MINT_STSFLD_VT : MINT_STSFLD);
 					ADD_CODE (td, get_data_item_index (td, field));
+
+					/* the vtable of the field might not be initialized at this point */
+					MonoClass *fld_klass = mono_class_from_mono_type (field->type);
+					mono_class_vtable_checked (domain, fld_klass, error);
+					goto_if_nok (error, exit);
 				} else {
 					ADD_CODE (td, MINT_STFLD_I1 + mt - MINT_TYPE_I1);
 					ADD_CODE (td, m_class_is_valuetype (klass) ? field->offset - sizeof(MonoObject) : field->offset);
-					if (mt == MINT_TYPE_VT)
+					if (mt == MINT_TYPE_VT) {
 						ADD_CODE (td, get_data_item_index (td, field));
+
+						/* the vtable of the field might not be initialized at this point */
+						MonoClass *fld_klass = mono_class_from_mono_type (field->type);
+						mono_class_vtable_checked (domain, fld_klass, error);
+						goto_if_nok (error, exit);
+					}
 				}
 			}
 			if (mt == MINT_TYPE_VT) {
@@ -3239,6 +3262,12 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			mt = mint_type (ftype);
 			ADD_CODE(td, mt == MINT_TYPE_VT ? MINT_STSFLD_VT : MINT_STSFLD);
 			ADD_CODE(td, get_data_item_index (td, field));
+
+			/* the vtable of the field might not be initialized at this point */
+			MonoClass *fld_klass = mono_class_from_mono_type (field->type);
+			mono_class_vtable_checked (domain, fld_klass, error);
+			goto_if_nok (error, exit);
+
 			if (mt == MINT_TYPE_VT) {
 				MonoClass *klass = mono_class_from_mono_type (ftype);
 				int size = mono_class_value_size (klass, NULL);
@@ -4598,7 +4627,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 	error_init (error);
 
 	if (mono_class_is_open_constructed_type (m_class_get_byval_arg (method->klass))) {
-		mono_error_set_invalid_operation (error, "Could not execute the method because the containing type is not fully instantiated.");
+		mono_error_set_invalid_operation (error, "%s", "Could not execute the method because the containing type is not fully instantiated.");
 		return mono_error_convert_to_exception (error);
 	}
 

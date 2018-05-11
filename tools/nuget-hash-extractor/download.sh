@@ -61,4 +61,6 @@ for ver in $MS_EXTN_VERSIONS; do
 	curl -L https://dotnet.myget.org/F/dotnet-core/api/v2/package/Microsoft.NET.Build.Extensions/${ver} -o nugets/microsoft.net.build.extensions.${ver}.nupkg
 done
 
+curl https://dotnetfeed.blob.core.windows.net/dotnet-core/flatcontainer/microsoft.net.build.extensions/2.1.300-preview3-62804-06/microsoft.net.build.extensions.2.1.300-preview3-62804-06.nupkg -o nugets//microsoft.net.build.extensions.2.1.300-preview3-62804-06.nupkg
+
 touch .download_stamp_file

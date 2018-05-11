@@ -113,7 +113,7 @@ namespace JitTest
                 return -1;
             }
             Console.WriteLine("Passed");
-            return 100;
+            return 0;
         }
     }
 }

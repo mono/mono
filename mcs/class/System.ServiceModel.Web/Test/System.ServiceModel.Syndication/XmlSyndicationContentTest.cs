@@ -133,7 +133,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 			using (var xw = XmlWriter.Create (ms))
 				new XmlSyndicationContent (XmlReader.Create (new StringReader (inxml))).WriteTo (xw, "contentsss", "urn:x");
 			ms.Position = 0;
-			var expected = "<?xml version='1.0' encoding='utf-8'?><contentsss type='text/xml' xmlns='urn:x'><int xmlns='http://schemas.microsoft.com/2003/10/Serialization/'>6</int></contentsss>".Replace ('\'', '"');
+			var expected = "<?xml version='1.0' encoding='utf-8'?><contentsss type='text/xhtml' xmlns='urn:x'><int xmlns='http://schemas.microsoft.com/2003/10/Serialization/'>6</int></contentsss>".Replace ('\'', '"');
 			Assert.AreEqual (expected, new StreamReader (ms).ReadToEnd (), "#1");
 		}
 	}

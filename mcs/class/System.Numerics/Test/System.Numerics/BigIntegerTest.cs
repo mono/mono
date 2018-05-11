@@ -974,7 +974,7 @@ namespace MonoTests.System.Numerics
 		[Test]
 		public void TryParse () {
 			BigInteger x = BigInteger.One;
-			Assert.IsFalse (BigInteger.TryParse (null, out x), "#1");
+			Assert.IsFalse (BigInteger.TryParse ((string)null, out x), "#1");
 			Assert.AreEqual (0, (int)x, "#1a");
 			Assert.IsFalse (BigInteger.TryParse ("", out x), "#2");
 			Assert.IsFalse (BigInteger.TryParse (" ", out x), "#3");

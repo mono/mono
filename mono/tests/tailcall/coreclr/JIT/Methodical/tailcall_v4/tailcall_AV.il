@@ -89,6 +89,15 @@
     .maxstack  8
     IL_0000:  call       void TCS.TailCallStructs::Head_0()
 ldc.i4 100
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
     IL_0019:  ret
   } // end of method TailCallStructs::Main
 

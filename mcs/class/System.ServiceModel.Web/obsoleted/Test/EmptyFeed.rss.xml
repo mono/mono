@@ -1,8 +1,0 @@
-<rss xmlns:a10="http://www.w3.org/2005/Atom" version="2.0">
-  <channel>
-    <title />
-    <description />
-    <lastBuildDate>Fri, 12 May 2000 04:00:00 Z</lastBuildDate>
-    <a10:id>Id should be guid if not set</a10:id>
-  </channel>
-</rss>

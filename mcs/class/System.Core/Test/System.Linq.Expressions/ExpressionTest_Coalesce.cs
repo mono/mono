@@ -133,6 +133,7 @@ namespace MonoTests.System.Linq.Expressions
 
 		[Test]
 		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=349822
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void CoalesceUserDefinedConversion ()
 		{
 			var s = Expression.Parameter (typeof (string), "s");

@@ -202,6 +202,15 @@
       IL_00ad:  br.s       IL_00af
 
       IL_00af:  ldloc.3
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
       IL_00b0:  ret
     } // end of method Test::Main
 

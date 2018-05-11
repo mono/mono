@@ -1257,6 +1257,13 @@
 
       IL_0053:  ldloca     V_0
       IL_0057:  ldfld      int32 JitTest.ValueClass::m_fld
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
       IL_005c:  ret
     } // end of method TestClass::Main
 

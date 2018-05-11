@@ -1,5 +1,5 @@
 AssemblyInfo.cs
-#../../build/common/Consts.cs
+../../build/common/Consts.cs
 
 corefx/SR.cs
 

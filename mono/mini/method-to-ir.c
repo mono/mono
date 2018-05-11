@@ -87,10 +87,10 @@
 /* Used to LLVM JIT */
 #define LLVM_JIT_INLINE_LENGTH_LIMIT 100
 
+static const gboolean debug_tailcall = FALSE;               // logging
 static const gboolean debug_tailcall_break_compile = FALSE; // break in method_to_ir
 static const gboolean debug_tailcall_break_run = FALSE;     // insert breakpoint in generated code
 static const gboolean debug_tailcall_try_all = FALSE;       // consider any call followed by ret
-static const gboolean debug_tailcall = FALSE;               // logging
 
 static gboolean
 tailcall_print_enabled (void)
@@ -401,11 +401,14 @@ mono_create_helper_signatures (void)
 	helper_sig_set_tls_tramp = mono_create_icall_signature ("void ptr");
 }
 
-static MONO_NEVER_INLINE void
+static MONO_NEVER_INLINE gboolean
 break_on_unverified (void)
 {
-	if (mini_get_debug_options ()->break_on_unverified)
+	if (mini_get_debug_options ()->break_on_unverified) {
 		G_BREAKPOINT ();
+		return TRUE;
+	}
+	return FALSE;
 }
 
 static void
@@ -437,8 +440,8 @@ inline_failure (MonoCompile *cfg, const char *msg)
 static MONO_NEVER_INLINE void
 gshared_failure (MonoCompile *cfg, int opcode, const char *file, int line)
 {
-	if (cfg->verbose_level > 2)											\
-		printf ("sharing failed for method %s.%s.%s/%d opcode %s line %d\n", m_class_get_name_space (cfg->current_method->klass), m_class_get_name (cfg->current_method->klass), cfg->current_method->name, cfg->current_method->signature->param_count, mono_opcode_name ((opcode)), line);
+	if (cfg->verbose_level > 2)
+		printf ("sharing failed for method %s.%s.%s/%d opcode %s line %d\n", m_class_get_name_space (cfg->current_method->klass), m_class_get_name (cfg->current_method->klass), cfg->current_method->name, cfg->current_method->signature->param_count, mono_opcode_name (opcode), line);
 	mono_cfg_set_exception (cfg, MONO_EXCEPTION_GENERIC_SHARING_FAILED);
 }
 
@@ -470,7 +473,7 @@ gsharedvt_failure (MonoCompile *cfg, int opcode, const char *file, int line)
 		(tblock) = cfg->cil_offset_to_bb [(ip) - cfg->cil_start]; \
 		if (!(tblock)) {	\
 			if ((ip) >= end || (ip) < header->code) UNVERIFIED; \
-            NEW_BBLOCK (cfg, (tblock)); \
+			NEW_BBLOCK (cfg, (tblock)); \
 			(tblock)->cil_code = (ip);	\
 			ADD_BBLOCK (cfg, (tblock));	\
 		} \
@@ -575,7 +578,7 @@ add_widen_op (MonoCompile *cfg, MonoInst *ins, MonoInst **arg1_ref, MonoInst **a
 			ins->inst_false_bb = (next_block);	\
 			start_new_bblock = 1;	\
 		} else {	\
-			GET_BBLOCK (cfg, tblock, ip);		\
+			GET_BBLOCK (cfg, tblock, next_ip);	\
 			link_bblock (cfg, cfg->cbb, tblock);	\
 			ins->inst_false_bb = tblock;	\
 			start_new_bblock = 2;	\
@@ -682,7 +685,7 @@ mono_find_block_region (MonoCompile *cfg, int offset)
 		if ((clause->flags == MONO_EXCEPTION_CLAUSE_FILTER) && (offset >= clause->data.filter_offset) &&
 		    (offset < (clause->handler_offset)))
 			return ((i + 1) << 8) | MONO_REGION_FILTER | clause->flags;
-			   
+
 		if (MONO_OFFSET_IN_HANDLER (clause, offset)) {
 			if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY)
 				return ((i + 1) << 8) | MONO_REGION_FINALLY | clause->flags;
@@ -1864,8 +1867,8 @@ target_type_is_incompatible (MonoCompile *cfg, MonoType *target, MonoInst *arg)
 			MonoClass *target_class_lowered = mono_class_from_mono_type (mini_get_underlying_type (m_class_get_byval_arg (mono_class_from_mono_type (target))));
 			MonoClass *source_class_lowered = mono_class_from_mono_type (mini_get_underlying_type (m_class_get_byval_arg (arg->klass)));
 
-			/* if the target is native int& or same type */
-			if (target->type == MONO_TYPE_I || target_class_lowered == source_class_lowered)
+			/* if the target is native int& or X* or same type */
+			if (target->type == MONO_TYPE_I || target->type == MONO_TYPE_PTR || target_class_lowered == source_class_lowered)
 				return 0;
 
 			/* Both are primitive type byrefs and the source points to a larger type that the destination */
@@ -2022,7 +2025,7 @@ convert_value (MonoCompile *cfg, MonoType *type, MonoInst *ins)
  *
  * FIXME: implement this using target_type_is_incompatible ()
  */
-static int
+static gboolean
 check_call_signature (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **args)
 {
 	MonoType *simple_type;
@@ -2030,21 +2033,20 @@ check_call_signature (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **arg
 
 	if (sig->hasthis) {
 		if (args [0]->type != STACK_OBJ && args [0]->type != STACK_MP && args [0]->type != STACK_PTR)
-			return 1;
+			return TRUE;
 		args++;
 	}
 	for (i = 0; i < sig->param_count; ++i) {
 		if (sig->params [i]->byref) {
 			if (args [i]->type != STACK_MP && args [i]->type != STACK_PTR)
-				return 1;
+				return TRUE;
 			continue;
 		}
 		simple_type = mini_get_underlying_type (sig->params [i]);
 handle_enum:
 		switch (simple_type->type) {
 		case MONO_TYPE_VOID:
-			return 1;
-			continue;
+			return TRUE;
 		case MONO_TYPE_I1:
 		case MONO_TYPE_U1:
 		case MONO_TYPE_I2:
@@ -2052,7 +2054,7 @@ handle_enum:
 		case MONO_TYPE_I4:
 		case MONO_TYPE_U4:
 			if (args [i]->type != STACK_I4 && args [i]->type != STACK_PTR)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
@@ -2063,7 +2065,7 @@ handle_enum:
 		case MONO_TYPE_FNPTR:
 			if (args [i]->type != STACK_I4 && !(SIZEOF_VOID_P == 8 && args [i]->type == STACK_I8) &&
 				args [i]->type != STACK_PTR && args [i]->type != STACK_MP && args [i]->type != STACK_OBJ)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_CLASS:
 		case MONO_TYPE_STRING:
@@ -2071,21 +2073,21 @@ handle_enum:
 		case MONO_TYPE_SZARRAY:
 		case MONO_TYPE_ARRAY:    
 			if (args [i]->type != STACK_OBJ)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_I8:
 		case MONO_TYPE_U8:
 			if (args [i]->type != STACK_I8 &&
 				!(SIZEOF_VOID_P == 8 && (args [i]->type == STACK_I4 || args [i]->type == STACK_PTR)))
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_R4:
 			if (args [i]->type != cfg->r4_stack_type)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_R8:
 			if (args [i]->type != STACK_R8)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_VALUETYPE:
 			if (m_class_is_enumtype (simple_type->data.klass)) {
@@ -2093,11 +2095,11 @@ handle_enum:
 				goto handle_enum;
 			}
 			if (args [i]->type != STACK_VTYPE)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_TYPEDBYREF:
 			if (args [i]->type != STACK_VTYPE)
-				return 1;
+				return TRUE;
 			continue;
 		case MONO_TYPE_GENERICINST:
 			simple_type = m_class_get_byval_arg (simple_type->data.generic_class->container_class);
@@ -2106,14 +2108,14 @@ handle_enum:
 		case MONO_TYPE_MVAR:
 			/* gsharedvt */
 			if (args [i]->type != STACK_VTYPE)
-				return 1;
+				return TRUE;
 			continue;
 		default:
 			g_error ("unknown type 0x%02x in check_call_signature",
 				 simple_type->type);
 		}
 	}
-	return 0;
+	return FALSE;
 }
 
 static int
@@ -2146,6 +2148,8 @@ static void
 emit_imt_argument (MonoCompile *cfg, MonoCallInst *call, MonoMethod *method, MonoInst *imt_arg)
 {
 	int method_reg;
+
+	g_assert (method || imt_arg);
 
 	if (COMPILE_LLVM (cfg)) {
 		if (imt_arg) {
@@ -2262,6 +2266,25 @@ test_tailcall (MonoCompile *cfg, MonoBoolean tailcall)
 	tailcall_print ("tailcalllog %s from %s\n", tailcall ? "success" : "fail", cfg->method->name);
 }
 
+static void
+emit_tailcall_parameters (MonoCompile *cfg, MonoMethodSignature *sig)
+{
+	// OP_TAILCALL_PARAMETER helps compute the size of code, in order
+	// to size branches around OP_TAILCALL_[REG,MEMBASE].
+	//
+	// The actual bytes are output from OP_TAILCALL_[REG,MEMBASE].
+	// OP_TAILCALL_PARAMETER is an overestimate because typically
+	// many parameters are in registers.
+
+	const int n = sig->param_count + (sig->hasthis ? 1 : 0);
+	for (int i = 0; i < n; ++i) {
+		MonoInst *ins;
+		MONO_INST_NEW (cfg, ins, OP_TAILCALL_PARAMETER);
+		MONO_ADD_INS (cfg->cbb, ins);
+	}
+
+}
+
 static MonoCallInst *
 mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig, 
 		     MonoInst **args, gboolean calli, gboolean virtual_, gboolean tailcall,
@@ -2270,7 +2293,10 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	MonoType *sig_ret;
 	MonoCallInst *call;
 
-	if (tailcall && cfg->llvm_only) { // FIXME?
+	if (tailcall && cfg->llvm_only) {
+		// FIXME tailcall should not be changed this late.
+		// FIXME It really should not be changed due to llvm_only.
+		// Accuracy is presently available MONO_IS_TAILCALL_OPCODE (call).
 		tailcall = FALSE;
 		tailcall_print ("losing tailcall in %s due to llvm_only\n", cfg->method->name);
 		test_tailcall (cfg, FALSE);
@@ -2291,6 +2317,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 
 	if (tailcall) {
 		mini_profiler_emit_tail_call (cfg, target);
+		emit_tailcall_parameters (cfg, sig);
 		MONO_INST_NEW_CALL (cfg, call, calli ? OP_TAILCALL_REG : virtual_ ? OP_TAILCALL_MEMBASE : OP_TAILCALL);
 	} else
 		MONO_INST_NEW_CALL (cfg, call, ret_type_to_call_opcode (cfg, sig->ret, calli, virtual_));
@@ -2416,6 +2443,8 @@ mini_emit_calli_full (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **arg
 	MonoCallInst *call;
 	MonoInst *ins;
 	int rgctx_reg = -1;
+
+	g_assert (!rgctx_arg || !imt_arg);
 
 	if (rgctx_arg) {
 		rgctx_reg = mono_alloc_preg (cfg);
@@ -2549,6 +2578,9 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 		call->method = method;
 	call->inst.flags |= MONO_INST_HAS_METHOD;
 	call->inst.inst_left = this_ins;
+
+	// FIXME This has already been read in amd64 parameter construction.
+	// Fixing it generates incorrect code. CEE_JMP needs attention.
 	call->tailcall = tailcall;
 
 	if (virtual_) {
@@ -2659,6 +2691,7 @@ mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoInst **args, Mo
 MonoInst*
 mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature *sig,
 					   MonoInst **args)
+// FIXME tailcall?
 {
 	MonoCallInst *call;
 
@@ -2674,6 +2707,7 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 
 MonoInst*
 mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args)
+// FIXME tailcall?
 {
 	MonoJitICallInfo *info = mono_find_jit_icall_by_addr (func);
 
@@ -2687,9 +2721,10 @@ mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args)
  *
  *   Emit a call to the runtime function described by PATCH_TYPE and DATA.
  */
-inline static MonoInst*
+static MonoInst*
 mono_emit_abs_call (MonoCompile *cfg, MonoJumpInfoType patch_type, gconstpointer data, 
 					MonoMethodSignature *sig, MonoInst **args)
+// FIXME tailcall?
 {
 	MonoJumpInfo *ji = mono_patch_info_new (cfg->mempool, 0, patch_type, data);
 	MonoInst *ins;
@@ -2750,6 +2785,7 @@ emit_extra_arg_calli (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **or
 /* Emit an indirect call to the function descriptor ADDR */
 static MonoInst*
 emit_llvmonly_calli (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **args, MonoInst *addr)
+// FIXME no tailcall support
 {
 	int addr_reg, arg_reg;
 	MonoInst *call_target;
@@ -6434,7 +6470,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 #define CHECK_STACK_OVF(num) if (((sp - stack_start) + (num)) > header->max_stack) UNVERIFIED
 #define CHECK_ARG(num) if ((unsigned)(num) >= (unsigned)num_args) UNVERIFIED
 #define CHECK_LOCAL(num) if ((unsigned)(num) >= (unsigned)header->num_locals) UNVERIFIED
-#define CHECK_OPSIZE(size) if (ip + size > end) UNVERIFIED
+#define CHECK_OPSIZE(size) if ((size) < 0 || ip + (size) > end) UNVERIFIED
 #define CHECK_UNVERIFIABLE(cfg) if (cfg->unverifiable) UNVERIFIED
 #define CHECK_TYPELOAD(klass) if (!(klass) || mono_class_has_failure (klass)) TYPE_LOAD_ERROR ((klass))
 
@@ -7197,7 +7233,7 @@ is_not_supported_tailcall_helper (gboolean value, const char *svalue, MonoMethod
 
 static gboolean
 is_supported_tailcall (MonoCompile *cfg, const guint8 *ip, MonoMethod *method, MonoMethod *cmethod, MonoMethodSignature *fsig,
-	gboolean virtual_, MonoInst *vtable_arg, MonoInst *imt_arg, gboolean *ptailcall_calli)
+	gboolean virtual_, gboolean extra_arg, gboolean *ptailcall_calli)
 {
 	// Some checks apply to "regular", some to "calli", some to both.
 	// To ease burden on caller, always compute regular and calli.
@@ -7214,10 +7250,16 @@ is_supported_tailcall (MonoCompile *cfg, const guint8 *ip, MonoMethod *method, M
 	if (!tailcall && !tailcall_calli)
 		goto exit;
 
-	if (       IS_NOT_SUPPORTED_TAILCALL (fsig->hasthis && m_class_is_valuetype (cmethod->klass)) // This might point to the current method's stack. Emit range check?
-		|| IS_NOT_SUPPORTED_TAILCALL (cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
+	// FIXME in calli, there is no type for for the this parameter,
+	// so we assume it might be valuetype; in future we should issue a range
+	// check, so rule out pointing to frame (for other reference parameters also)
+
+	if (       IS_NOT_SUPPORTED_TAILCALL (cmethod && fsig->hasthis && m_class_is_valuetype (cmethod->klass)) // This might point to the current method's stack. Emit range check?
+		|| IS_NOT_SUPPORTED_TAILCALL (cmethod && (cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
+		|| IS_NOT_SUPPORTED_TAILCALL (fsig->pinvoke) // i.e. if !cmethod (calli)
 		|| IS_NOT_SUPPORTED_TAILCALL (cfg->method->save_lmf)
-		|| IS_NOT_SUPPORTED_TAILCALL (cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
+		|| IS_NOT_SUPPORTED_TAILCALL (!cmethod && fsig->hasthis) // FIXME could be valuetype to current frame; range check
+		|| IS_NOT_SUPPORTED_TAILCALL (cmethod && cmethod->wrapper_type && cmethod->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD)
 
 		// http://www.mono-project.com/docs/advanced/runtime/docs/generic-sharing/
 		//
@@ -7251,7 +7293,7 @@ is_supported_tailcall (MonoCompile *cfg, const guint8 *ip, MonoMethod *method, M
 		//
 		// Interface method dispatch has the same problem (imt_arg).
 
-		|| IS_NOT_SUPPORTED_TAILCALL ((vtable_arg || imt_arg) && !cfg->backend->have_volatile_non_param_register)
+		|| IS_NOT_SUPPORTED_TAILCALL (extra_arg && !cfg->backend->have_volatile_non_param_register)
 		) {
 		tailcall_calli = FALSE;
 		tailcall = FALSE;
@@ -7269,7 +7311,7 @@ is_supported_tailcall (MonoCompile *cfg, const guint8 *ip, MonoMethod *method, M
 	MonoMethodSignature *caller_signature;
 	MonoMethodSignature *callee_signature;
 	caller_signature = mono_method_signature (method);
-	callee_signature = mono_method_signature (cmethod);
+	callee_signature = cmethod ? mono_method_signature (cmethod) : fsig;
 
 	g_assert (caller_signature);
 	g_assert (callee_signature);
@@ -7297,21 +7339,21 @@ is_supported_tailcall (MonoCompile *cfg, const guint8 *ip, MonoMethod *method, M
 	if (tailcall_calli && IS_NOT_SUPPORTED_TAILCALL (should_check_stack_pointer (cfg)))
 		tailcall_calli = FALSE;
 exit:
-	tailcall_print ("tail.%s %s -> %s tailcall:%d tailcall_calli:%d gshared:%d vtable_arg:%d imt_arg:%d virtual_:%d\n",
-			mono_opcode_name (*ip), method->name, cmethod->name, tailcall, tailcall_calli,
-			cfg->gshared, !!vtable_arg, !!imt_arg, virtual_);
+	tailcall_print ("tail.%s %s -> %s tailcall:%d tailcall_calli:%d gshared:%d extra_arg:%d virtual_:%d\n",
+			mono_opcode_name (*ip), method->name, cmethod ? cmethod->name : "calli", tailcall, tailcall_calli,
+			cfg->gshared, extra_arg, virtual_);
 
 	*ptailcall_calli = tailcall_calli;
 	return tailcall;
 }
 
 /*
- * is_adressable_valuetype_load
+ * is_addressable_valuetype_load
  *
  *    Returns true if a previous load can be done without doing an extra copy, given the new instruction ip and the type of the object being loaded ldtype
  */
 static gboolean
-is_adressable_valuetype_load (MonoCompile* cfg, guint8* ip, MonoType* ldtype)
+is_addressable_valuetype_load (MonoCompile* cfg, guint8* ip, MonoType* ldtype)
 {
 	/* Avoid loading a struct just to load one of its fields */
 	gboolean is_load_instruction = (*ip == CEE_LDFLD);
@@ -7747,7 +7789,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					NEW_SEQ_POINT (cfg, ins, clause->handler_offset, TRUE);
 					MONO_ADD_INS (tblock, ins);
 				}
-				
+
 				if (clause->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
 					GET_BBLOCK (cfg, tblock, ip + clause->data.filter_offset);
 					tblock->flags |= BB_EXCEPTION_HANDLER;
@@ -7939,7 +7981,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	ins_flag = 0;
 	start_new_bblock = 0;
-	while (ip < end) {
+	for (unsigned char *next_ip = ip; ip < end; ip = next_ip) {
+		const int op_size = mono_opcode_size (ip, end);
+		CHECK_OPSIZE (op_size);
+		next_ip += op_size;
+
 		if (cfg->method == method)
 			cfg->real_offset = ip - header->code;
 		else
@@ -7995,7 +8041,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				bb = bb->next;
 
 			if (bb->dead) {
-				int op_size = mono_opcode_size (ip, end);
 				g_assert (op_size > 0); /*The BB formation pass must catch all bad ops*/
 
 				if (cfg->verbose_level > 3) printf ("SKIPPING DEAD OP at %x\n", ip_offset);
@@ -8005,8 +8050,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					MONO_ADD_INS (cfg->cbb, ins);
 					start_new_bblock = 1;
 				}
-
-				ip += op_size;
 				continue;
 			}
 		}
@@ -8081,7 +8124,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MONO_INST_NEW (cfg, ins, OP_HARD_NOP);
 			else
 				MONO_INST_NEW (cfg, ins, OP_NOP);
-			ip++;
 			MONO_ADD_INS (cfg->cbb, ins);
 			break;
 		case CEE_BREAK:
@@ -8090,7 +8132,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			} else {
 				MONO_INST_NEW (cfg, ins, OP_NOP);
 			}
-			ip++;
 			MONO_ADD_INS (cfg->cbb, ins);
 			break;
 		case CEE_LDARG_0:
@@ -8100,12 +8141,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK_OVF (1);
 			n = (*ip)-CEE_LDARG_0;
 			CHECK_ARG (n);
-			if (ip + 1 < end && is_adressable_valuetype_load (cfg, ip + 1, cfg->arg_types[n])) {
+			if (ip + 1 < end && is_addressable_valuetype_load (cfg, ip + 1, cfg->arg_types[n])) {
 				EMIT_NEW_ARGLOADA (cfg, ins, n);
 			} else {
 				EMIT_NEW_ARGLOAD (cfg, ins, n);
 			}
-			ip++;
 			*sp++ = ins;
 			break;
 		case CEE_LDLOC_0:
@@ -8115,12 +8155,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK_OVF (1);
 			n = (*ip)-CEE_LDLOC_0;
 			CHECK_LOCAL (n);
-			if (ip + 1 < end && is_adressable_valuetype_load (cfg, ip + 1, header->locals[n])) {
+			if (ip + 1 < end && is_addressable_valuetype_load (cfg, ip + 1, header->locals[n])) {
 				EMIT_NEW_LOCLOADA (cfg, ins, n);
 			} else {
 				EMIT_NEW_LOCLOAD (cfg, ins, n);
 			}
-			ip++;
 			*sp++ = ins;
 			break;
 		case CEE_STLOC_0:
@@ -8135,35 +8174,29 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [n], *sp))
 				UNVERIFIED;
 			emit_stloc_ir (cfg, sp, header, n);
-			++ip;
 			inline_costs += 1;
 			break;
 			}
 		case CEE_LDARG_S:
-			CHECK_OPSIZE (2);
 			CHECK_STACK_OVF (1);
 			n = ip [1];
 			CHECK_ARG (n);
-			if (ip + 2 < end && is_adressable_valuetype_load (cfg, ip + 2, cfg->arg_types[n])) {
+			if (ip + 2 < end && is_addressable_valuetype_load (cfg, ip + 2, cfg->arg_types[n])) {
 				EMIT_NEW_ARGLOADA (cfg, ins, n);
 			} else {
 				EMIT_NEW_ARGLOAD (cfg, ins, n);
 			}
 			*sp++ = ins;
-			ip += 2;
 			break;
 		case CEE_LDARGA_S:
-			CHECK_OPSIZE (2);
 			CHECK_STACK_OVF (1);
 			n = ip [1];
 			CHECK_ARG (n);
 			NEW_ARGLOADA (cfg, ins, n);
 			MONO_ADD_INS (cfg->cbb, ins);
 			*sp++ = ins;
-			ip += 2;
 			break;
 		case CEE_STARG_S:
-			CHECK_OPSIZE (2);
 			CHECK_STACK (1);
 			--sp;
 			n = ip [1];
@@ -8172,60 +8205,52 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [ip [1]], *sp))
 				UNVERIFIED;
 			emit_starg_ir (cfg, sp, n);
-			ip += 2;
 			break;
 		case CEE_LDLOC_S:
-			CHECK_OPSIZE (2);
 			CHECK_STACK_OVF (1);
 			n = ip [1];
 			CHECK_LOCAL (n);
-			if (ip + 2 < end && is_adressable_valuetype_load (cfg, ip + 2, header->locals[n])) {
+			if (ip + 2 < end && is_addressable_valuetype_load (cfg, ip + 2, header->locals[n])) {
 				EMIT_NEW_LOCLOADA (cfg, ins, n);
 			} else {
 				EMIT_NEW_LOCLOAD (cfg, ins, n);
 			}
 			*sp++ = ins;
-			ip += 2;
 			break;
 		case CEE_LDLOCA_S: {
 			unsigned char *tmp_ip;
-			CHECK_OPSIZE (2);
 			CHECK_STACK_OVF (1);
 			CHECK_LOCAL (ip [1]);
 
 			if ((tmp_ip = emit_optimized_ldloca_ir (cfg, ip, end, 1))) {
 				ip = tmp_ip;
+				next_ip = ip;
 				inline_costs += 1;
 				break;
 			}
 
 			EMIT_NEW_LOCLOADA (cfg, ins, ip [1]);
 			*sp++ = ins;
-			ip += 2;
 			break;
 		}
 		case CEE_STLOC_S:
-			CHECK_OPSIZE (2);
 			CHECK_STACK (1);
 			--sp;
 			CHECK_LOCAL (ip [1]);
 			if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [ip [1]], *sp))
 				UNVERIFIED;
 			emit_stloc_ir (cfg, sp, header, ip [1]);
-			ip += 2;
 			inline_costs += 1;
 			break;
 		case CEE_LDNULL:
 			CHECK_STACK_OVF (1);
 			EMIT_NEW_PCONST (cfg, ins, NULL);
 			ins->type = STACK_OBJ;
-			++ip;
 			*sp++ = ins;
 			break;
 		case CEE_LDC_I4_M1:
 			CHECK_STACK_OVF (1);
 			EMIT_NEW_ICONST (cfg, ins, -1);
-			++ip;
 			*sp++ = ins;
 			break;
 		case CEE_LDC_I4_0:
@@ -8239,34 +8264,25 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_LDC_I4_8:
 			CHECK_STACK_OVF (1);
 			EMIT_NEW_ICONST (cfg, ins, (*ip) - CEE_LDC_I4_0);
-			++ip;
 			*sp++ = ins;
 			break;
 		case CEE_LDC_I4_S:
-			CHECK_OPSIZE (2);
 			CHECK_STACK_OVF (1);
-			++ip;
-			EMIT_NEW_ICONST (cfg, ins, *((signed char*)ip));
-			++ip;
+			EMIT_NEW_ICONST (cfg, ins, (signed char)ip [1]);
 			*sp++ = ins;
 			break;
 		case CEE_LDC_I4:
-			CHECK_OPSIZE (5);
 			CHECK_STACK_OVF (1);
 			EMIT_NEW_ICONST (cfg, ins, (gint32)read32 (ip + 1));
-			ip += 5;
 			*sp++ = ins;
 			break;
 		case CEE_LDC_I8:
-			CHECK_OPSIZE (9);
 			CHECK_STACK_OVF (1);
 			MONO_INST_NEW (cfg, ins, OP_I8CONST);
 			ins->type = STACK_I8;
 			ins->dreg = alloc_dreg (cfg, STACK_I8);
-			++ip;
-			ins->inst_l = (gint64)read64 (ip);
+			ins->inst_l = (gint64)read64 (ip + 1);
 			MONO_ADD_INS (cfg->cbb, ins);
-			ip += 8;
 			*sp++ = ins;
 			break;
 		case CEE_LDC_R4: {
@@ -8281,7 +8297,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			/* FIXME: we should really allocate this only late in the compilation process */
 			f = (float *)mono_domain_alloc (cfg->domain, sizeof (float));
-			CHECK_OPSIZE (5);
 			CHECK_STACK_OVF (1);
 
 			if (use_aotconst) {
@@ -8300,9 +8315,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->inst_p0 = f;
 				MONO_ADD_INS (cfg->cbb, ins);
 			}
-			++ip;
-			readr4 (ip, f);
-			ip += 4;
+			readr4 (ip + 1, f);
 			*sp++ = ins;			
 			break;
 		}
@@ -8318,7 +8331,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			/* FIXME: we should really allocate this only late in the compilation process */
 			d = (double *)mono_domain_alloc (cfg->domain, sizeof (double));
-			CHECK_OPSIZE (9);
 			CHECK_STACK_OVF (1);
 
 			if (use_aotconst) {
@@ -8337,9 +8349,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->inst_p0 = d;
 				MONO_ADD_INS (cfg->cbb, ins);
 			}
-			++ip;
-			readr8 (ip, d);
-			ip += 8;
+			readr8 (ip + 1, d);
 			*sp++ = ins;
 			break;
 		}
@@ -8359,13 +8369,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			EMIT_NEW_TEMPLOAD (cfg, ins, temp->inst_c0);
 			*sp++ = ins;
 
-			++ip;
 			inline_costs += 2;
 			break;
 		}
 		case CEE_POP:
 			CHECK_STACK (1);
-			ip++;
 			--sp;
 
 #ifdef TARGET_X86
@@ -8382,7 +8390,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			INLINE_FAILURE ("jmp");
 			GSHAREDVT_FAILURE (*ip);
 
-			CHECK_OPSIZE (5);
 			if (stack_start != sp)
 				UNVERIFIED;
 			token = read32 (ip + 1);
@@ -8414,16 +8421,18 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->inst_target_bb = end_bblock;
 				MONO_ADD_INS (cfg->cbb, ins);
 				link_bblock (cfg, cfg->cbb, end_bblock);
-				ip += 5;
 				break;
 			} else {
 				/* Handle tailcalls similarly to calls */
 				DISABLE_AOT (cfg);
 
+				emit_tailcall_parameters (cfg, fsig);
 				MONO_INST_NEW_CALL (cfg, call, OP_TAILCALL);
 				call->method = cmethod;
+				// FIXME Other initialization of the tailcall field occurs after
+				// it is used. So this is the only "real" use and needs more attention.
 				call->tailcall = TRUE;
-				call->signature = mono_method_signature (cmethod);
+				call->signature = fsig;
 				call->args = (MonoInst **)mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * n);
 				call->inst.inst_p0 = cmethod;
 				for (i = 0; i < n; ++i)
@@ -8437,15 +8446,21 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
 			}
 
-			ip += 5;
 			start_new_bblock = 1;
 			break;
 		}
 		case CEE_CALLI: {
+			// FIXME tail.calli is problemetic because the this pointer's type
+			// is not in the signature, and we cannot check for a byref valuetype.
 			MonoInst *addr;
 			MonoMethodSignature *fsig;
-
-			CHECK_OPSIZE (5);
+			MonoInst *callee = NULL;
+			gboolean push_res = TRUE;
+			gboolean skip_ret = FALSE;
+			gboolean tailcall_calli = FALSE;
+			gboolean const inst_tailcall = G_UNLIKELY (debug_tailcall_try_all
+							? (next_ip < end && next_ip [0] == CEE_RET)
+							: ((ins_flag & MONO_INST_TAILCALL) != 0));
 			token = read32 (ip + 1);
 
 			ins = NULL;
@@ -8455,6 +8470,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK (1);
 			--sp;
 			addr = *sp;
+			g_assert (addr);
 			fsig = mini_get_signature (method, token, generic_context, &cfg->error);
 			CHECK_CFG_ERROR;
 
@@ -8470,6 +8486,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				EMIT_NEW_IMAGECONST (cfg, args [0], m_class_get_image (method->klass));
 				EMIT_NEW_PCONST (cfg, args [1], fsig);
 				args [2] = addr;
+				// FIXME tailcall?
 				addr = mono_emit_jit_icall (cfg, mono_get_native_calli_wrapper, args);
 			}
 
@@ -8481,8 +8498,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			sp -= n;
 
-			if (!(cfg->method->wrapper_type && cfg->method->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD) && check_call_signature (cfg, fsig, sp))
+			if (!(cfg->method->wrapper_type && cfg->method->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD) && check_call_signature (cfg, fsig, sp)) {
+				if (break_on_unverified ())
+					check_call_signature (cfg, fsig, sp); // Again, step through it.
 				UNVERIFIED;
+			}
 
 			inline_costs += 10 * num_calls++;
 
@@ -8495,8 +8515,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				/*
 				 * We pass the address to the gsharedvt trampoline in the rgctx reg
 				 */
-				MonoInst *callee = addr;
+				callee = addr;
+				g_assert (addr); // Doubles as boolean after tailcall check.
+			}
 
+			inst_tailcall && is_supported_tailcall (cfg, ip, method, NULL, fsig,
+						FALSE/*virtual irrelevant*/, addr != NULL, &tailcall_calli);
+
+			if (callee) {
 				if (method->wrapper_type != MONO_WRAPPER_DELEGATE_INVOKE)
 					/* Not tested */
 					GSHAREDVT_FAILURE (*ip);
@@ -8505,9 +8531,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					// FIXME:
 					GSHAREDVT_FAILURE (*ip);
 
-				addr = emit_get_rgctx_sig (cfg, context_used,
-											  fsig, MONO_RGCTX_INFO_SIG_GSHAREDVT_OUT_TRAMPOLINE_CALLI);
-				ins = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, callee);
+				addr = emit_get_rgctx_sig (cfg, context_used, fsig, MONO_RGCTX_INFO_SIG_GSHAREDVT_OUT_TRAMPOLINE_CALLI);
+				ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, NULL, callee, tailcall_calli);
 				goto calli_end;
 			}
 
@@ -8531,33 +8556,58 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 
 				if (info_type == MONO_PATCH_INFO_ICALL_ADDR) {
+					// FIXME tailcall?
+					tailcall_calli = FALSE;
 					ins = (MonoInst*)mono_emit_abs_call (cfg, MONO_PATCH_INFO_ICALL_ADDR_CALL, info_data, fsig, sp);
 					NULLIFY_INS (addr);
 					goto calli_end;
 				} else if (info_type == MONO_PATCH_INFO_JIT_ICALL_ADDR) {
+					// FIXME tailcall?
+					tailcall_calli = FALSE;
 					ins = (MonoInst*)mono_emit_abs_call (cfg, info_type, info_data, fsig, sp);
 					NULLIFY_INS (addr);
 					goto calli_end;
 				}
 			}
-			ins = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
+			ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, NULL, NULL, tailcall_calli);
 
 			calli_end:
 			if (ins_flag & MONO_INST_TAILCALL)
-				test_tailcall (cfg, FALSE); // Currently we never tailcall calli.
+				test_tailcall (cfg, tailcall_calli);
+
+			// Tailcall does not return, and the subsequent code confuses the JIT, and
+			// can usually be optimized away. However note that valid code can branch
+			// past the calli to the ret, so keep it sometimes (JIT might still
+			// be confused).
+
+			if (tailcall_calli && !cfg->llvm_only) {
+				link_bblock (cfg, cfg->cbb, end_bblock);
+				start_new_bblock = 1;
+
+				GET_BBLOCK (cfg, tblock, next_ip);
+				if (tblock == cfg->cbb || tblock->in_count == 0)
+					skip_ret = TRUE;
+				push_res = FALSE;
+			}
 
 			/* End of call, INS should contain the result of the call, if any */
 
-			if (!MONO_TYPE_IS_VOID (fsig->ret)) {
+			if (push_res && !MONO_TYPE_IS_VOID (fsig->ret)) {
 				g_assert (ins);
 				*sp++ = mono_emit_widen_call_res (cfg, ins, fsig);
 			}
 
 			CHECK_CFG_EXCEPTION;
 
-			ip += 5;
 			ins_flag = 0;
 			constrained_class = NULL;
+
+			if (skip_ret) {
+				// FIXME When not followed by CEE_RET, correct behavior is to raise an exception.
+				g_assert (next_ip [0] == CEE_RET);
+				next_ip += 1;
+			}
+
 			break;
 		}
 		case CEE_CALL:
@@ -8574,29 +8624,38 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MonoInst *vtable_arg = NULL;
 			gboolean check_this = FALSE;
 			gboolean need_seq_point = FALSE;
-			guint32 call_opcode = *ip;
+			guint32 const call_opcode = *ip;
 			gboolean emit_widen = TRUE;
 			gboolean push_res = TRUE;
 			gboolean skip_ret = FALSE;
 			gboolean delegate_invoke = FALSE;
 			gboolean direct_icall = FALSE;
 			gboolean constrained_partial_call = FALSE;
-			MonoMethod *cil_method;
 			gboolean common_call = FALSE;
+			gboolean tailcall = FALSE;
+			gboolean tailcall_calli = FALSE;
 			gboolean tailcall_remove_ret = FALSE;
+			gboolean tailcall_testvalue = FALSE;
 
-			CHECK_OPSIZE (5);
+			// variables to help in assertions
+			gboolean called_is_supported_tailcall = FALSE;
+			MonoMethod *tailcall_method = NULL;
+			MonoMethod *tailcall_cmethod = NULL;
+			MonoMethodSignature *tailcall_fsig = NULL;
+			gboolean tailcall_virtual = FALSE;
+			gboolean tailcall_extra_arg = FALSE;
+
 			token = read32 (ip + 1);
 
 			gboolean const inst_tailcall = G_UNLIKELY (debug_tailcall_try_all
-							? (ip + 5 < end && ip [5] == CEE_RET)
+							? (next_ip < end && next_ip [0] == CEE_RET)
 							: ((ins_flag & MONO_INST_TAILCALL) != 0));
 			ins = NULL;
 
 			cmethod = mini_get_method (cfg, method, token, NULL, generic_context);
 			CHECK_CFG_ERROR;
 
-			cil_method = cmethod;
+			MonoMethod *cil_method = cmethod;
 				
 			if (constrained_class) {
 				gboolean constrained_is_generic_param =
@@ -8706,7 +8765,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (cmethod->klass == mono_defaults.monitor_class && !strcmp (cmethod->name, "Enter") && mono_method_signature (cmethod)->param_count == 1) {
 				MonoBasicBlock *tbb;
 
-				GET_BBLOCK (cfg, tbb, ip + 5);
+				GET_BBLOCK (cfg, tbb, next_ip);
 				if (tbb->try_start && MONO_REGION_FLAGS(tbb->region) == MONO_EXCEPTION_CLAUSE_FINALLY) {
 					/*
 					 * We want to extend the try block to cover the call, but we can't do it if the
@@ -8718,7 +8777,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			mono_save_token_info (cfg, image, token, cil_method);
 
-			if (!(seq_point_locs && mono_bitset_test_fast (seq_point_locs, ip + 5 - header->code)))
+			if (!(seq_point_locs && mono_bitset_test_fast (seq_point_locs, next_ip - header->code)))
 				need_seq_point = TRUE;
 
 			/* Don't support calls made using type arguments for now */
@@ -8762,7 +8821,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						ins = handle_constrained_gsharedvt_call (cfg, cmethod, fsig, sp, constrained_class, &emit_widen);
 						CHECK_CFG_EXCEPTION;
 						g_assert (ins);
-						if (inst_tailcall) // FIXME tailcall not computed yet
+						if (inst_tailcall) // FIXME
 							tailcall_print ("missed tailcall constrained_class %s -> %s\n", method->name, cmethod->name);
 						goto call_end;
 					}
@@ -8837,7 +8896,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						cfg->cbb = end_bb;
 
 						nonbox_call->dreg = ins->dreg;
-						if (inst_tailcall) // FIXME tailcall not computed yet
+						if (inst_tailcall) // FIXME
 							tailcall_print ("missed tailcall constrained_partial_need_box %s -> %s\n", method->name, cmethod->name);
 						goto call_end;
 					} else {
@@ -8847,7 +8906,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							ins = emit_llvmonly_calli (cfg, fsig, sp, addr);
 						else
 							ins = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
-						if (inst_tailcall) // FIXME tailcall not computed yet
+						if (inst_tailcall) // FIXME
 							tailcall_print ("missed tailcall constrained_partial %s -> %s\n", method->name, cmethod->name);
 						goto call_end;
 					}
@@ -8905,8 +8964,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			for (int i = 0; i < fsig->param_count; ++i)
 				sp [i + fsig->hasthis] = convert_value (cfg, fsig->params [i], sp [i + fsig->hasthis]);
 
-			if (check_call_signature (cfg, fsig, sp))
+			if (check_call_signature (cfg, fsig, sp)) {
+				if (break_on_unverified ())
+					check_call_signature (cfg, fsig, sp); // Again, step through it.
 				UNVERIFIED;
+			}
 
 			if ((m_class_get_parent (cmethod->klass) == mono_defaults.multicastdelegate_class) && !strcmp (cmethod->name, "Invoke"))
 				delegate_invoke = TRUE;
@@ -8917,7 +8979,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					emit_widen = FALSE;
 				}
 
-				if (inst_tailcall) // FIXME tailcall not computed yet
+				if (inst_tailcall) // FIXME
 					tailcall_print ("missed tailcall intrins_sharable %s -> %s\n", method->name, cmethod->name);
 				goto call_end;
 			}
@@ -9012,7 +9074,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			/* Calling virtual generic methods */
 
-			// These temporaries help disentangle "pure" computation of
+			// These temporaries help detangle "pure" computation of
 			// inputs to is_supported_tailcall from side effects, so that
 			// is_supported_tailcall can be computed just once.
 			gboolean virtual_generic = FALSE;
@@ -9049,6 +9111,34 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 			}
 
+			// Capture some intent before computing tailcall.
+
+			gboolean make_generic_call_out_of_gsharedvt_method;
+			gboolean will_have_imt_arg;
+
+			make_generic_call_out_of_gsharedvt_method = FALSE;
+			will_have_imt_arg = FALSE;
+
+			/*
+			 * Making generic calls out of gsharedvt methods.
+			 * This needs to be used for all generic calls, not just ones with a gsharedvt signature, to avoid
+			 * patching gshared method addresses into a gsharedvt method.
+			 */
+			if (cfg->gsharedvt && (mini_is_gsharedvt_signature (fsig) || cmethod->is_inflated || mono_class_is_ginst (cmethod->klass)) &&
+				!(m_class_get_rank (cmethod->klass) && m_class_get_byval_arg (cmethod->klass)->type != MONO_TYPE_SZARRAY) &&
+				(!(cfg->llvm_only && virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL)))) {
+
+				make_generic_call_out_of_gsharedvt_method = TRUE;
+
+				if (virtual_) {
+					if (fsig->generic_param_count) {
+						will_have_imt_arg = TRUE;
+					} else if (mono_class_is_interface (cmethod->klass) && !imt_arg) {
+						will_have_imt_arg = TRUE;
+					}
+				}
+			}
+
 			/* Tail prefix / tailcall optimization */
 
 			/* FIXME: Enabling TAILC breaks some inlining/stack trace/etc tests.
@@ -9058,11 +9148,17 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			// tailcall means "the backend can and will handle it".
 			// inst_tailcall means the tail. prefix is present.
-			gboolean tailcall_calli_temp = FALSE;
-			const gboolean tailcall = inst_tailcall && is_supported_tailcall (cfg, ip, method, cmethod, fsig,
-						virtual_, vtable_arg, imt_arg, &tailcall_calli_temp);
-			const gboolean tailcall_calli = tailcall_calli_temp;
+			tailcall_extra_arg = vtable_arg || imt_arg || will_have_imt_arg || mono_class_is_interface (cmethod->klass);
+			tailcall = inst_tailcall && is_supported_tailcall (cfg, ip, method, cmethod, fsig,
+						virtual_, tailcall_extra_arg, &tailcall_calli);
+			tailcall_testvalue = tailcall; // sometimes changed to tailcall_calli.
 			// Writes to imt_arg, vtable_arg, virtual_, cmethod, must not occur from here (inputs to is_supported_tailcall).
+			// Capture values to later assert they don't change.
+			called_is_supported_tailcall = TRUE;
+			tailcall_method = method;
+			tailcall_cmethod = cmethod;
+			tailcall_fsig = fsig;
+			tailcall_virtual = virtual_;
 
 			if (virtual_generic) {
 				if (virtual_generic_imt) {
@@ -9094,7 +9190,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				ins = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
 
-				if (tailcall)
+				if (inst_tailcall) // FIXME
 					tailcall_print ("missed tailcall virtual generic %s -> %s\n", method->name, cmethod->name);
 				goto call_end;
 			}
@@ -9115,7 +9211,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (cmethod->klass == mono_defaults.monitor_class && !strcmp (cmethod->name, "Enter") && mono_method_signature (cmethod)->param_count == 1) {
 				MonoBasicBlock *tbb;
 
-				GET_BBLOCK (cfg, tbb, ip + 5);
+				GET_BBLOCK (cfg, tbb, next_ip);
 				/* 
 				 * Only extend try blocks with a finally, to avoid catching exceptions thrown
 				 * from Monitor.Enter like ArgumentNullException.
@@ -9133,7 +9229,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					emit_widen = FALSE;
 				}
 				// FIXME This is only missed if in fact the intrinsic involves a call.
-				if (tailcall)
+				if (inst_tailcall) // FIXME
 					tailcall_print ("missed tailcall intrins %s -> %s\n", method->name, cmethod->name);
 				goto call_end;
 			}
@@ -9150,6 +9246,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					(cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
 					/* Prevent inlining of methods that call wrappers */
 					INLINE_FAILURE ("wrapper call");
+					// FIXME? Does this write to cmethod impact tailcall_supported? Probably not.
+					// Neither pinvoke or icall are likely to be tailcalled.
 					cmethod = mono_marshal_get_native_wrapper (cmethod, TRUE, FALSE);
 					always = TRUE;
 				}
@@ -9176,14 +9274,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					// like desktop, then this factor mostly falls away, except
 					// that inlining can affect tailcall performance due to
 					// signature match/mismatch.
-					if (tailcall)
+					if (inst_tailcall) // FIXME
 						tailcall_print ("missed tailcall inline %s -> %s\n", method->name, cmethod->name);
 					goto call_end;
 				}
 			}
 
 			/* Tail recursion elimination */
-			if ((cfg->opt & MONO_OPT_TAILCALL) && call_opcode == CEE_CALL && cmethod == method && ip + 5 < end && ip [5] == CEE_RET && !vtable_arg) {
+			if ((cfg->opt & MONO_OPT_TAILCALL) && call_opcode == CEE_CALL && cmethod == method && next_ip < end && next_ip [0] == CEE_RET && !vtable_arg) {
 				gboolean has_vtargs = FALSE;
 				int i;
 
@@ -9212,7 +9310,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					start_new_bblock = 1;
 
 					/* skip the CEE_RET, too */
-					if (ip_in_bb (cfg, cfg->cbb, ip + 5))
+					if (ip_in_bb (cfg, cfg->cbb, next_ip))
 						skip_ret = TRUE;
 					push_res = FALSE;
 					need_seq_point = FALSE;
@@ -9232,8 +9330,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 */
 			if (cfg->method->wrapper_type == MONO_WRAPPER_SYNCHRONIZED) {
 				MonoMethod *orig = mono_marshal_method_from_wrapper (cfg->method);
-				if (cmethod == orig || (cmethod->is_inflated && mono_method_get_declaring_generic_method (cmethod) == orig))
+				if (cmethod == orig || (cmethod->is_inflated && mono_method_get_declaring_generic_method (cmethod) == orig)) {
+					// FIXME? Does this write to cmethod impact tailcall_supported? Probably not.
 					cmethod = mono_marshal_get_synchronized_inner_wrapper (cmethod);
+				}
 			}
 
 			/*
@@ -9241,10 +9341,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 * This needs to be used for all generic calls, not just ones with a gsharedvt signature, to avoid
 			 * patching gshared method addresses into a gsharedvt method.
 			 */
-			if (cfg->gsharedvt && (mini_is_gsharedvt_signature (fsig) || cmethod->is_inflated || mono_class_is_ginst (cmethod->klass)) &&
-				!(m_class_get_rank (cmethod->klass) && m_class_get_byval_arg (cmethod->klass)->type != MONO_TYPE_SZARRAY) &&
-				(!(cfg->llvm_only && virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL)))) {
-				MonoRgctxInfoType info_type;
+			if (make_generic_call_out_of_gsharedvt_method) {
 
 				if (virtual_) {
 					//if (mono_class_is_interface (cmethod->klass))
@@ -9255,21 +9352,27 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					if (fsig->generic_param_count) {
 						/* virtual generic call */
 						g_assert (!imt_arg);
+						g_assert (will_have_imt_arg);
 						/* Same as the virtual generic case above */
 						imt_arg = emit_get_rgctx_method (cfg, context_used,
 														 cmethod, MONO_RGCTX_INFO_METHOD);
+						g_assert (imt_arg);
 						/* This is not needed, as the trampoline code will pass one, and it might be passed in the same reg as the imt arg */
 						vtable_arg = NULL;
 					} else if (mono_class_is_interface (cmethod->klass) && !imt_arg) {
 						/* This can happen when we call a fully instantiated iface method */
+						g_assert (will_have_imt_arg);
 						imt_arg = emit_get_rgctx_method (cfg, context_used,
 														 cmethod, MONO_RGCTX_INFO_METHOD);
+						g_assert (imt_arg);
 						vtable_arg = NULL;
 					}
 				}
 
 				if ((m_class_get_parent (cmethod->klass) == mono_defaults.multicastdelegate_class) && (!strcmp (cmethod->name, "Invoke")))
 					keep_this_alive = sp [0];
+
+				MonoRgctxInfoType info_type;
 
 				if (virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL))
 					info_type = MONO_RGCTX_INFO_METHOD_GSHAREDVT_OUT_TRAMPOLINE_VIRT;
@@ -9280,11 +9383,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (cfg->llvm_only) {
 					// FIXME: Avoid initializing vtable_arg
 					ins = emit_llvmonly_calli (cfg, fsig, sp, addr);
-					if (tailcall) // FIXME
+					if (inst_tailcall) // FIXME
 						tailcall_print ("missed tailcall llvmonly gsharedvt %s -> %s\n", method->name, cmethod->name);
 				} else {
 					ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, imt_arg, vtable_arg, tailcall_calli);
 					tailcall_remove_ret |= tailcall_calli;
+					tailcall_testvalue = tailcall_calli;
 				}
 				goto call_end;
 			}
@@ -9323,12 +9427,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						addr = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_GENERIC_METHOD_CODE);
 					// FIXME: Avoid initializing imt_arg/vtable_arg
 					ins = emit_llvmonly_calli (cfg, fsig, sp, addr);
-					if (tailcall) // FIXME
+					if (inst_tailcall) // FIXME
 						tailcall_print ("missed tailcall context_used_llvmonly %s -> %s\n", method->name, cmethod->name);
 				} else {
 					addr = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_GENERIC_METHOD_CODE);
+					if (inst_tailcall)
+						tailcall_print ("%s tailcall_calli#2 %s -> %s\n", tailcall_calli ? "making" : "missed", method->name, cmethod->name);
 					ins = (MonoInst*)mini_emit_calli_full (cfg, fsig, sp, addr, imt_arg, vtable_arg, tailcall_calli);
 					tailcall_remove_ret |= tailcall_calli;
+					tailcall_testvalue = tailcall_calli;
 				}
 				goto call_end;
 			}
@@ -9353,12 +9460,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				inline_costs += costs;
 
-				// FIXME If wrapper is before-only possible; if before/after not possible.
-				if (tailcall)
+				if (inst_tailcall) // FIXME
 					tailcall_print ("missed tailcall direct_icall %s -> %s\n", method->name, cmethod->name);
 				goto call_end;
 			}
-	      				
+
 			/* Array methods */
 			if (array_rank) {
 				MonoInst *addr;
@@ -9371,10 +9477,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 						iargs [0] = sp [0];
 						iargs [1] = val;
-						
+
 						mono_emit_jit_icall (cfg, mono_helper_stelem_ref_check, iargs);
 					}
-					
+
 					addr = mini_emit_ldelema_ins (cfg, cmethod, sp, ip, TRUE);
 					EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, fsig->params [fsig->param_count - 1], addr->dreg, 0, val->dreg);
 					if (cfg->gen_write_barriers && val->type == STACK_OBJ && !MONO_INS_IS_PCONST_NULL (val))
@@ -9389,7 +9495,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					if (!m_class_is_valuetype (m_class_get_element_class (cmethod->klass)) && !readonly)
 						mini_emit_check_array_type (cfg, sp [0], cmethod->klass);
 					CHECK_TYPELOAD (cmethod->klass);
-					
+
 					readonly = FALSE;
 					addr = mini_emit_ldelema_ins (cfg, cmethod, sp, ip, FALSE);
 					ins = addr;
@@ -9398,16 +9504,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 
 				emit_widen = FALSE;
-				// FIXME This is missed if the intrinsic includes function calls -- like "Set" -- if that
-				// is not post-wrapped.
-				if (tailcall)
+				if (inst_tailcall) // FIXME
 					tailcall_print ("missed tailcall array_rank %s -> %s\n", method->name, cmethod->name);
 				goto call_end;
 			}
 
 			ins = mini_redirect_call (cfg, cmethod, fsig, sp, virtual_ ? sp [0] : NULL);
 			if (ins) {
-				if (tailcall) // FIXME but very narrow case
+				if (inst_tailcall) // FIXME
 					tailcall_print ("missed tailcall redirect %s -> %s\n", method->name, cmethod->name);
 				goto call_end;
 			}
@@ -9434,6 +9538,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			call_end:
 
+			// Check that the decision to tailcall would not have changed.
+			g_assert (!called_is_supported_tailcall || tailcall_method == method);
+			// FIXME? cmethod does change, weaken the assert if we weren't tailcalling anyway.
+			// If this still fails, restructure the code, or call tailcall_supported again and assert no change.
+			g_assert (!called_is_supported_tailcall || !tailcall_testvalue || tailcall_cmethod == cmethod);
+			g_assert (!called_is_supported_tailcall || tailcall_fsig == fsig);
+			g_assert (!called_is_supported_tailcall || tailcall_virtual == virtual_);
+			g_assert (!called_is_supported_tailcall || tailcall_extra_arg == (vtable_arg || imt_arg || will_have_imt_arg || mono_class_is_interface (cmethod->klass)));
+
 			if (common_call) // FIXME goto call_end && !common_call often skips tailcall processing.
 				ins = mono_emit_method_call_full (cfg, cmethod, fsig, tailcall, sp, virtual_ ? sp [0] : NULL,
 												  imt_arg, vtable_arg);
@@ -9448,7 +9561,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				 * OP_TAILCALL has no return value, so skip the CEE_RET if it is
 				 * only reachable from this call.
 				 */
-				GET_BBLOCK (cfg, tblock, ip + 5);
+				GET_BBLOCK (cfg, tblock, next_ip);
 				if (tblock == cfg->cbb || tblock->in_count == 0)
 					skip_ret = TRUE;
 				push_res = FALSE;
@@ -9456,7 +9569,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			if (ins_flag & MONO_INST_TAILCALL)
-				test_tailcall (cfg, tailcall);
+				test_tailcall (cfg, tailcall_testvalue);
 
 			/* End of call, INS should contain the result of the call, if any */
 
@@ -9487,16 +9600,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			CHECK_CFG_EXCEPTION;
 
-			ip += 5;
 			if (skip_ret) {
 				// FIXME When not followed by CEE_RET, correct behavior is to raise an exception.
-				g_assert (*ip == CEE_RET);
-				ip += 1;
+				g_assert (next_ip [0] == CEE_RET);
+				next_ip += 1;
 			}
 			ins_flag = 0;
 			constrained_class = NULL;
 			if (need_seq_point)
-				emit_seq_point (cfg, method, ip, FALSE, TRUE);
+				emit_seq_point (cfg, method, next_ip, FALSE, TRUE);
 			break;
 		}
 		case CEE_RET:
@@ -9567,18 +9679,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (sp != stack_start)
 				UNVERIFIED;
 			MONO_INST_NEW (cfg, ins, OP_BR);
-			ip++;
 			ins->inst_target_bb = end_bblock;
 			MONO_ADD_INS (cfg->cbb, ins);
 			link_bblock (cfg, cfg->cbb, end_bblock);
 			start_new_bblock = 1;
 			break;
 		case CEE_BR_S:
-			CHECK_OPSIZE (2);
 			MONO_INST_NEW (cfg, ins, OP_BR);
-			ip++;
-			target = ip + 1 + (signed char)(*ip);
-			++ip;
+			target = next_ip + (signed char)ip [1];
 			GET_BBLOCK (cfg, tblock, target);
 			link_bblock (cfg, cfg->cbb, tblock);
 			ins->inst_target_bb = tblock;
@@ -9601,12 +9709,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_BGT_UN_S:
 		case CEE_BLE_UN_S:
 		case CEE_BLT_UN_S:
-			CHECK_OPSIZE (2);
 			CHECK_STACK (2);
 			MONO_INST_NEW (cfg, ins, *ip + BIG_BRANCH_OFFSET);
-			ip++;
-			target = ip + 1 + *(signed char*)ip;
-			ip++;
+			target = next_ip + (signed char)ip [1];
 
 			ADD_BINCOND (NULL);
 
@@ -9614,12 +9719,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			inline_costs += BRANCH_COST;
 			break;
 		case CEE_BR:
-			CHECK_OPSIZE (5);
 			MONO_INST_NEW (cfg, ins, OP_BR);
-			ip++;
 
-			target = ip + 4 + (gint32)read32(ip);
-			ip += 4;
+			target = next_ip + (gint32)read32 (ip + 1);
 			GET_BBLOCK (cfg, tblock, target);
 			link_bblock (cfg, cfg->cbb, tblock);
 			ins->inst_target_bb = tblock;
@@ -9641,21 +9743,17 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MonoInst *cmp;
 			gboolean is_short = ((*ip) == CEE_BRFALSE_S) || ((*ip) == CEE_BRTRUE_S);
 			gboolean is_true = ((*ip) == CEE_BRTRUE_S) || ((*ip) == CEE_BRTRUE);
-			guint32 opsize = is_short ? 1 : 4;
 
-			CHECK_OPSIZE (opsize);
 			CHECK_STACK (1);
 			if (sp [-1]->type == STACK_VTYPE || sp [-1]->type == STACK_R8)
 				UNVERIFIED;
-			ip ++;
-			target = ip + opsize + (is_short ? *(signed char*)ip : (gint32)read32(ip));
-			ip += opsize;
+			target = next_ip + (is_short ? (signed char)ip [1] : (gint32)read32 (ip + 1));
 
 			sp--;
 
 			GET_BBLOCK (cfg, tblock, target);
 			link_bblock (cfg, cfg->cbb, tblock);
-			GET_BBLOCK (cfg, tblock, ip);
+			GET_BBLOCK (cfg, tblock, next_ip);
 			link_bblock (cfg, cfg->cbb, tblock);
 
 			if (sp != stack_start) {
@@ -9685,10 +9783,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MONO_INST_NEW (cfg, ins, is_true ? CEE_BNE_UN : CEE_BEQ);
 			type_from_op (cfg, ins, sp [0], NULL);
 			MONO_ADD_INS (cfg->cbb, ins);
-			ins->inst_many_bb = (MonoBasicBlock **)mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);
+			ins->inst_many_bb = (MonoBasicBlock **)mono_mempool_alloc (cfg->mempool, sizeof (gpointer) * 2);
 			GET_BBLOCK (cfg, tblock, target);
 			ins->inst_true_bb = tblock;
-			GET_BBLOCK (cfg, tblock, ip);
+			GET_BBLOCK (cfg, tblock, next_ip);
 			ins->inst_false_bb = tblock;
 			start_new_bblock = 2;
 
@@ -9706,12 +9804,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_BGT_UN:
 		case CEE_BLE_UN:
 		case CEE_BLT_UN:
-			CHECK_OPSIZE (5);
 			CHECK_STACK (2);
 			MONO_INST_NEW (cfg, ins, *ip);
-			ip++;
-			target = ip + 4 + (gint32)read32(ip);
-			ip += 4;
+			target = next_ip + (gint32)read32 (ip + 1);
 
 			ADD_BINCOND (NULL);
 
@@ -9729,7 +9824,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			int sum_reg = alloc_preg (cfg);
 			gboolean use_op_switch;
 
-			CHECK_OPSIZE (5);
 			CHECK_STACK (1);
 			n = read32 (ip + 1);
 			--sp;
@@ -9738,15 +9832,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				UNVERIFIED;
 
 			ip += 5;
-			CHECK_OPSIZE (n * sizeof (guint32));
-			target = ip + n * sizeof (guint32);
 
-			GET_BBLOCK (cfg, default_bblock, target);
+			GET_BBLOCK (cfg, default_bblock, next_ip);
 			default_bblock->flags |= BB_INDIRECT_JUMP_TARGET;
 
 			targets = (MonoBasicBlock **)mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * n);
 			for (i = 0; i < n; ++i) {
-				GET_BBLOCK (cfg, tblock, target + (gint32)read32(ip));
+				GET_BBLOCK (cfg, tblock, next_ip + (gint32)read32 (ip));
 				targets [i] = tblock;
 				targets [i]->flags |= BB_INDIRECT_JUMP_TARGET;
 				ip += 4;
@@ -9828,7 +9920,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MONO_EMIT_NEW_UNALU (cfg, OP_BR_REG, -1, target_reg);
 			}
 			start_new_bblock = 1;
-			inline_costs += (BRANCH_COST * 2);
+			inline_costs += BRANCH_COST * 2;
 			break;
 		}
 		case CEE_LDIND_I1:
@@ -9848,7 +9940,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins = mini_emit_memory_load (cfg, m_class_get_byval_arg (ldind_to_type (*ip)), sp [0], 0, ins_flag);
 			*sp++ = ins;
 			ins_flag = 0;
-			++ip;
 			break;
 		case CEE_STIND_REF:
 		case CEE_STIND_I1:
@@ -9883,7 +9974,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			inline_costs += 1;
-			++ip;
 			break;
 		}
 		case CEE_MUL:
@@ -9913,7 +10003,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MONO_ADD_INS ((cfg)->cbb, (ins));
 
 			*sp++ = mono_decompose_opcode (cfg, ins);
-			ip++;
 			break;
 		case CEE_ADD:
 		case CEE_SUB:
@@ -9965,7 +10054,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MONO_ADD_INS ((cfg)->cbb, (ins));
 
 			*sp++ = mono_decompose_opcode (cfg, ins);
-			ip++;
 			break;
 		}
 		case CEE_NEG:
@@ -10005,7 +10093,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			else {
 				ADD_UNOP (*ip);
 			}
-			ip++;
 			break;
 		case CEE_CONV_OVF_I4:
 		case CEE_CONV_OVF_I1:
@@ -10020,7 +10107,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			} else {
 				ADD_UNOP (*ip);
 			}
-			ip++;
 			break;
 		case CEE_CONV_OVF_U1:
 		case CEE_CONV_OVF_U2:
@@ -10033,7 +10119,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			} else {
 				ADD_UNOP (*ip);
 			}
-			ip++;
 			break;
 		case CEE_CONV_OVF_I1_UN:
 		case CEE_CONV_OVF_I2_UN:
@@ -10052,7 +10137,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK (1);
 			ADD_UNOP (*ip);
 			CHECK_CFG_EXCEPTION;
-			ip++;
 			break;
 		case CEE_ADD_OVF:
 		case CEE_ADD_OVF_UN:
@@ -10062,11 +10146,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_SUB_OVF_UN:
 			CHECK_STACK (2);
 			ADD_BINOP (*ip);
-			ip++;
 			break;
 		case CEE_CPOBJ:
 			GSHAREDVT_FAILURE (*ip);
-			CHECK_OPSIZE (5);
 			CHECK_STACK (2);
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
@@ -10074,13 +10156,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			sp -= 2;
 			mini_emit_memory_copy (cfg, sp [0], sp [1], klass, FALSE, ins_flag);
 			ins_flag = 0;
-			ip += 5;
 			break;
 		case CEE_LDOBJ: {
 			int loc_index = -1;
 			int stloc_len = 0;
 
-			CHECK_OPSIZE (5);
 			CHECK_STACK (1);
 			--sp;
 			token = read32 (ip + 1);
@@ -10088,18 +10168,18 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_TYPELOAD (klass);
 
 			/* Optimize the common ldobj+stloc combination */
-			if (ip + 5 < end) {
-				switch (ip [5]) {
+			if (next_ip < end) {
+				switch (next_ip [0]) {
 				case CEE_STLOC_S:
 					CHECK_OPSIZE (7);
-					loc_index = ip [6];
+					loc_index = next_ip [1];
 					stloc_len = 2;
 					break;
 				case CEE_STLOC_0:
 				case CEE_STLOC_1:
 				case CEE_STLOC_2:
 				case CEE_STLOC_3:
-					loc_index = ip [5] - CEE_STLOC_0;
+					loc_index = next_ip [0] - CEE_STLOC_0;
 					stloc_len = 1;
 					break;
 				default:
@@ -10107,14 +10187,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 			}
 
-			if ((loc_index != -1) && ip_in_bb (cfg, cfg->cbb, ip + 5)) {
+			if ((loc_index != -1) && ip_in_bb (cfg, cfg->cbb, next_ip)) {
 				CHECK_LOCAL (loc_index);
 
 				EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (klass), sp [0]->dreg, 0);
 				ins->dreg = cfg->locals [loc_index]->dreg;
 				ins->flags |= ins_flag;
-				ip += 5;
-				ip += stloc_len;
+				next_ip += stloc_len;
 				if (ins_flag & MONO_INST_VOLATILE) {
 					/* Volatile loads have acquire semantics, see 12.6.7 in Ecma 335 */
 					mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_ACQ);
@@ -10124,14 +10203,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			/* Optimize the ldobj+stobj combination */
-			if (ip + 9 < end && ip [5] == CEE_STOBJ && ip_in_bb (cfg, cfg->cbb, ip + 5) && read32 (ip + 6) == token) {
+			if (ip + 9 < end && next_ip [0] == CEE_STOBJ && ip_in_bb (cfg, cfg->cbb, next_ip) && read32 (next_ip + 1) == token) {
 				CHECK_STACK (1);
 
 				sp --;
 
 				mini_emit_memory_copy (cfg, sp [0], sp [1], klass, FALSE, ins_flag);
 
-				ip += 5 + 5;
+				next_ip += 5;
 				ins_flag = 0;
 				break;
 			}
@@ -10139,14 +10218,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins = mini_emit_memory_load (cfg, m_class_get_byval_arg (klass), sp [0], 0, ins_flag);
 			*sp++ = ins;
 
-			ip += 5;
 			ins_flag = 0;
 			inline_costs += 1;
 			break;
 		}
 		case CEE_LDSTR:
 			CHECK_STACK_OVF (1);
-			CHECK_OPSIZE (5);
 			n = read32 (ip + 1);
 
 			if (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD) {
@@ -10205,7 +10282,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						ins->type = STACK_OBJ;
 						ins->inst_p0 = mono_ldstr_checked (cfg->domain, image, mono_metadata_token_index (n), &cfg->error);
 						CHECK_CFG_ERROR;
-						
+
 						if (!ins->inst_p0)
 							OUT_OF_MEMORY_FAILURE;
 
@@ -10216,7 +10293,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			sp++;
-			ip += 5;
 			break;
 		case CEE_NEWOBJ: {
 			MonoInst *iargs [2];
@@ -10225,7 +10301,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MonoInst *alloc;
 			MonoInst *vtable_arg = NULL;
 
-			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			cmethod = mini_get_method (cfg, method, token, NULL, generic_context);
 			CHECK_CFG_ERROR;
@@ -10239,7 +10314,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				TYPE_LOAD_ERROR (cmethod->klass);
 
 			context_used = mini_method_check_context_used (cfg, cmethod);
-					
+
 			if (!dont_verify && !cfg->skip_visibility) {
 				MonoMethod *cil_method = cmethod;
 				MonoMethod *target_method = cil_method;
@@ -10248,7 +10323,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					target_method = mini_get_method_allow_open (method, token, NULL, &(mono_method_get_generic_container (method_definition)->context), &cfg->error);
 					CHECK_CFG_ERROR;
 				}
-				
+
 				if (!mono_method_can_access_method (method_definition, target_method) &&
 					!mono_method_can_access_method (method, cil_method))
 					emit_method_access_failure (cfg, method, cil_method);
@@ -10302,7 +10377,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					g_assert_not_reached ();
 				}
 
-				ip += 5;
 				inline_costs += 5;
 				break;
 			}
@@ -10404,17 +10478,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				*sp++ = alloc;
 			}
 			
-			ip += 5;
 			inline_costs += 5;
-			if (!(seq_point_locs && mono_bitset_test_fast (seq_point_locs, ip - header->code)))
-				emit_seq_point (cfg, method, ip, FALSE, TRUE);
+			if (!(seq_point_locs && mono_bitset_test_fast (seq_point_locs, next_ip - header->code)))
+				emit_seq_point (cfg, method, next_ip, FALSE, TRUE);
 			break;
 		}
 		case CEE_CASTCLASS:
 		case CEE_ISINST: {
 			CHECK_STACK (1);
 			--sp;
-			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
 			CHECK_TYPELOAD (klass);
@@ -10430,7 +10502,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			CHECK_CFG_EXCEPTION;
 			*sp++ = ins;
-			ip += 5;
 
 			cfg->flags |= MONO_CFG_HAS_TYPE_CHECK;
 			break;
@@ -10440,7 +10511,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			CHECK_STACK (1);
 			--sp;
-			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
 			CHECK_TYPELOAD (klass);
@@ -10476,7 +10546,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			*sp ++ = res;
-			ip += 5;
 			break;
 		}
 		case CEE_BOX: {
@@ -10487,7 +10556,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK (1);
 			--sp;
 			val = *sp;
-			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
 			CHECK_TYPELOAD (klass);
@@ -10498,7 +10566,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			if (mini_class_is_reference (klass)) {
 				*sp++ = val;
-				ip += 5;
 				break;
 			}
 
@@ -10525,14 +10592,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 */
 			if ((cfg->opt & MONO_OPT_INTRINS) &&
 			    /* Cheap checks first. */
-			    ip + 5 + 6 + 5 < end &&
-			    ip [5] == CEE_PREFIX1 &&
-			    ip [6] == CEE_CONSTRAINED_ &&
-			    ip [11] == CEE_CALLVIRT &&
-			    ip_in_bb (cfg, cfg->cbb, ip + 5 + 6 + 5) &&
+			    next_ip + 6 + 5 < end &&
+			    next_ip [0] == CEE_PREFIX1 &&
+			    next_ip [1] == CEE_CONSTRAINED_ &&
+			    next_ip [6] == CEE_CALLVIRT &&
+			    ip_in_bb (cfg, cfg->cbb, next_ip + 6 + 5) &&
 			    mono_class_is_enum (klass) &&
-			    (enum_class = mini_get_class (method, read32 (ip + 7), generic_context)) &&
-			    (has_flag = mini_get_method (cfg, method, read32 (ip + 12), NULL, generic_context)) &&
+			    (enum_class = mini_get_class (method, read32 (next_ip + 2), generic_context)) &&
+			    (has_flag = mini_get_method (cfg, method, read32 (next_ip + 7), NULL, generic_context)) &&
 			    has_flag->klass == mono_defaults.enum_class &&
 			    !strcmp (has_flag->name, "HasFlag") &&
 			    has_flag->signature->hasthis &&
@@ -10542,7 +10609,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (enum_class == klass) {
 					MonoInst *enum_this, *enum_flag;
 
-					ip += 5 + 6 + 5;
+					next_ip += 6 + 5;
 					--sp;
 
 					enum_this = sp [0];
@@ -10556,16 +10623,16 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			// FIXME: LLVM can't handle the inconsistent bb linking
 			if (!mono_class_is_nullable (klass) &&
 				!mini_is_gsharedvt_klass (klass) &&
-				ip + 5 < end && ip_in_bb (cfg, cfg->cbb, ip + 5) &&
-				(ip [5] == CEE_BRTRUE || 
-				 ip [5] == CEE_BRTRUE_S ||
-				 ip [5] == CEE_BRFALSE ||
-				 ip [5] == CEE_BRFALSE_S)) {
-				gboolean is_true = ip [5] == CEE_BRTRUE || ip [5] == CEE_BRTRUE_S;
+				next_ip < end && ip_in_bb (cfg, cfg->cbb, next_ip) &&
+				(next_ip [0] == CEE_BRTRUE ||
+				 next_ip [0] == CEE_BRTRUE_S ||
+				 next_ip [0] == CEE_BRFALSE ||
+				 next_ip [0] == CEE_BRFALSE_S)) {
+				gboolean is_true = next_ip [0] == CEE_BRTRUE || next_ip [0] == CEE_BRTRUE_S;
 				int dreg;
 				MonoBasicBlock *true_bb, *false_bb;
 
-				ip += 5;
+				ip = next_ip;
 
 				if (cfg->verbose_level > 3) {
 					printf ("converting (in B%d: stack: %d) %s", cfg->cbb->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
@@ -10576,16 +10643,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				case CEE_BRTRUE_S:
 				case CEE_BRFALSE_S:
 					CHECK_OPSIZE (2);
-					ip++;
-					target = ip + 1 + (signed char)(*ip);
-					ip++;
+					target = ip + 2 + (signed char)ip [1];
+					next_ip += 2;
 					break;
 				case CEE_BRTRUE:
 				case CEE_BRFALSE:
 					CHECK_OPSIZE (5);
-					ip++;
-					target = ip + 4 + (gint)(read32 (ip));
-					ip += 4;
+					target = ip + 5 + (gint)(read32 (ip + 1));
+					next_ip += 5;
 					break;
 				default:
 					g_assert_not_reached ();
@@ -10598,7 +10663,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				 * generate an ICONST+BRTRUE, the branch opts will get rid of them.
 				 */
 				GET_BBLOCK (cfg, true_bb, target);
-				GET_BBLOCK (cfg, false_bb, ip);
+				GET_BBLOCK (cfg, false_bb, next_ip);
 
 				mono_link_bblock (cfg, cfg->cbb, true_bb);
 				mono_link_bblock (cfg, cfg->cbb, false_bb);
@@ -10629,14 +10694,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			*sp++ = handle_box (cfg, val, klass, context_used);
 
 			CHECK_CFG_EXCEPTION;
-			ip += 5;
 			inline_costs += 1;
 			break;
 		}
 		case CEE_UNBOX: {
 			CHECK_STACK (1);
 			--sp;
-			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
 			CHECK_TYPELOAD (klass);
@@ -10656,7 +10719,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins = handle_unbox (cfg, klass, sp, context_used);
 				*sp++ = ins;
 			}
-			ip += 5;
 			inline_costs += 2;
 			break;
 		}
@@ -10702,7 +10764,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 			}
 
-			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			if (method->wrapper_type != MONO_WRAPPER_NONE) {
 				field = (MonoClassField *)mono_method_get_wrapper_data (method, token);
@@ -10777,7 +10838,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 											   iargs, ip, cfg->real_offset, TRUE);
 						CHECK_CFG_EXCEPTION;
 						g_assert (costs > 0);
-						      
+
 						cfg->real_offset += 5;
 
 						inline_costs += costs;
@@ -10833,7 +10894,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					store->flags |= ins_flag;
 				}
 				ins_flag = 0;
-				ip += 5;
 				break;
 			}
 
@@ -10853,7 +10913,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 										   iargs, ip, cfg->real_offset, TRUE);
 					CHECK_CFG_EXCEPTION;
 					g_assert (costs > 0);
-						      
+
 					cfg->real_offset += 5;
 
 					*sp++ = iargs [0];
@@ -10876,7 +10936,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						var = mono_compile_create_var_for_vreg (cfg, m_class_get_byval_arg (klass), OP_LOCAL, sp [0]->dreg);
 					else
 						g_assert (var->klass == klass);
-					
+
 					EMIT_NEW_VARLOADA (cfg, ins, var, m_class_get_byval_arg (var->klass));
 					sp [0] = ins;
 				}
@@ -10912,7 +10972,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						if (ins) {
 							*sp++ = ins;
 							ins_flag = 0;
-							ip += 5;
 							break;
 						}
 					}
@@ -10938,7 +10997,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			if (is_instance) {
 				ins_flag = 0;
-				ip += 5;
 				break;
 			}
 
@@ -11242,13 +11300,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			ins_flag = 0;
-			ip += 5;
 			break;
 		}
 		case CEE_STOBJ:
 			CHECK_STACK (2);
 			sp -= 2;
-			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			klass = mini_get_class (method, token, generic_context);
 			CHECK_TYPELOAD (klass);
@@ -11256,7 +11312,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			/* FIXME: should check item at sp [1] is compatible with the type of the store. */
 			mini_emit_memory_store (cfg, m_class_get_byval_arg (klass), sp [0], sp [1], ins_flag);
 			ins_flag = 0;
-			ip += 5;
 			inline_costs += 1;
 			break;
 
@@ -11272,7 +11327,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK (1);
 			--sp;
 
-			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 
 			klass = mini_get_class (method, token, generic_context);
@@ -11364,7 +11418,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 				EMIT_NEW_ICONST (cfg, iargs [2], data_size);
 				mono_emit_method_call (cfg, memcpy_method, iargs, NULL);
-				ip += 11;
+				next_ip += 11;
 			}
 
 			break;
@@ -11390,7 +11444,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_LDELEMA:
 			CHECK_STACK (2);
 			sp -= 2;
-			CHECK_OPSIZE (5);
 			if (sp [0]->type != STACK_OBJ)
 				UNVERIFIED;
 
@@ -11411,7 +11464,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			readonly = FALSE;
 			ins = mini_emit_ldelema_1_ins (cfg, klass, sp [0], sp [1], TRUE);
 			*sp++ = ins;
-			ip += 5;
 			break;
 		case CEE_LDELEM:
 		case CEE_LDELEM_I1:
@@ -11431,7 +11483,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			sp -= 2;
 
 			if (*ip == CEE_LDELEM) {
-				CHECK_OPSIZE (5);
 				token = read32 (ip + 1);
 				klass = mini_get_class (method, token, generic_context);
 				CHECK_TYPELOAD (klass);
@@ -11465,10 +11516,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (klass), addr->dreg, 0);
 			}
 			*sp++ = ins;
-			if (*ip == CEE_LDELEM)
-				ip += 5;
-			else
-				++ip;
 			break;
 		}
 		case CEE_STELEM_I:
@@ -11486,7 +11533,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			cfg->flags |= MONO_CFG_HAS_LDELEMA;
 
 			if (*ip == CEE_STELEM) {
-				CHECK_OPSIZE (5);
 				token = read32 (ip + 1);
 				klass = mini_get_class (method, token, generic_context);
 				CHECK_TYPELOAD (klass);
@@ -11501,10 +11547,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			sp [2] = convert_value (cfg, m_class_get_byval_arg (klass), sp [2]);
 			emit_array_store (cfg, klass, sp, TRUE);
 
-			if (*ip == CEE_STELEM)
-				ip += 5;
-			else
-				++ip;
 			inline_costs += 1;
 			break;
 		}
@@ -11528,7 +11570,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				*sp++ = mono_decompose_opcode (cfg, ins);
 			}
 
-			++ip;
 			break;
 		}
 		case CEE_REFANYVAL: {
@@ -11542,7 +11583,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK (1);
 			MONO_INST_NEW (cfg, ins, *ip);
 			--sp;
-			CHECK_OPSIZE (5);
 			klass = mini_get_class (method, read32 (ip + 1), generic_context);
 			CHECK_TYPELOAD (klass);
 
@@ -11571,7 +11611,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins->type = STACK_MP;
 			ins->klass = klass;
 			*sp++ = ins;
-			ip += 5;
 			break;
 		}
 		case CEE_MKREFANY: {
@@ -11582,7 +11621,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_STACK (1);
 			MONO_INST_NEW (cfg, ins, *ip);
 			--sp;
-			CHECK_OPSIZE (5);
 			klass = mini_get_class (method, read32 (ip + 1), generic_context);
 			CHECK_TYPELOAD (klass);
 
@@ -11614,7 +11652,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins->type = STACK_VTYPE;
 			ins->klass = mono_defaults.typed_reference_class;
 			*sp++ = ins;
-			ip += 5;
 			break;
 		}
 		case CEE_LDTOKEN: {
@@ -11623,7 +11660,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			CHECK_STACK_OVF (1);
 
-			CHECK_OPSIZE (5);
 			n = read32 (ip + 1);
 
 			if (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD ||
@@ -11683,8 +11719,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				EMIT_NEW_TEMPLOAD (cfg, ins, vtvar->inst_c0);
 			} else {
-				if ((ip + 9 < end) && ip_in_bb (cfg, cfg->cbb, ip + 5) &&
-					((ip [5] == CEE_CALL) || (ip [5] == CEE_CALLVIRT)) && 
+				if ((ip + 9 < end) && ip_in_bb (cfg, cfg->cbb, next_ip) &&
+					((next_ip [0] == CEE_CALL) || (next_ip [0] == CEE_CALLVIRT)) &&
 					(cmethod = mini_get_method (cfg, method, read32 (ip + 6), NULL, generic_context)) &&
 					(cmethod->klass == mono_defaults.systemtype_class) &&
 					(strcmp (cmethod->name, "GetTypeFromHandle") == 0)) {
@@ -11716,7 +11752,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					}
 					ins->type = STACK_OBJ;
 					ins->klass = cmethod->klass;
-					ip += 5;
+					next_ip += 5;
 				} else {
 					MonoInst *addr, *vtvar;
 
@@ -11748,7 +11784,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			*sp++ = ins;
-			ip += 5;
 			break;
 		}
 		case CEE_THROW:
@@ -11759,7 +11794,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MONO_INST_NEW (cfg, ins, OP_THROW);
 			--sp;
 			ins->sreg1 = sp [0]->dreg;
-			ip++;
 			cfg->cbb->out_of_line = TRUE;
 			MONO_ADD_INS (cfg->cbb, ins);
 			MONO_INST_NEW (cfg, ins, OP_NOT_REACHED);
@@ -11780,7 +11814,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				emit_seq_point (cfg, method, ip, FALSE, FALSE);
 			MONO_INST_NEW (cfg, ins, OP_ENDFINALLY);
 			MONO_ADD_INS (cfg->cbb, ins);
-			ip++;
 			start_new_bblock = 1;
 
 			/*
@@ -11796,11 +11829,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			GList *handlers;
 
 			if (*ip == CEE_LEAVE) {
-				CHECK_OPSIZE (5);
-				target = ip + 5 + (gint32)read32(ip + 1);
+				target = next_ip + (gint32)read32 (ip + 1);
 			} else {
-				CHECK_OPSIZE (2);
-				target = ip + 2 + (signed char)(ip [1]);
+				target = next_ip + (signed char)ip [1];
 			}
 
 			/* empty the stack */
@@ -11922,12 +11953,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins->inst_target_bb = tblock;
 
 			start_new_bblock = 1;
-
-			if (*ip == CEE_LEAVE)
-				ip += 5;
-			else
-				ip += 2;
-
 			break;
 		}
 
@@ -11938,13 +11963,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			g_assert (method->wrapper_type != MONO_WRAPPER_NONE);
 
-			CHECK_OPSIZE (2);
 			switch (ip [1]) {
 			case CEE_MONO_ICALL: {
 				gpointer func;
 				MonoJitICallInfo *info;
 
-				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				func = mono_method_get_wrapper_data (method, token);
 				info = mono_find_jit_icall_by_addr (func);
@@ -11984,9 +12007,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (!MONO_TYPE_IS_VOID (info->sig->ret))
 					*sp++ = ins;
 
-				ip += 6;
 				inline_costs += 10 * num_calls++;
-
 				break;
 			}
 			case CEE_MONO_LDPTR_CARD_TABLE:
@@ -12018,7 +12039,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 
 				*sp++ = ins;
-				ip += 2;
 				inline_costs += 10 * num_calls++;
 				break;
 			}
@@ -12026,13 +12046,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				gpointer ptr;
 
 				CHECK_STACK_OVF (1);
-				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 
 				ptr = mono_method_get_wrapper_data (method, token);
 				EMIT_NEW_PCONST (cfg, ins, ptr);
 				*sp++ = ins;
-				ip += 6;
 				inline_costs += 10 * num_calls++;
 				/* Can't embed random pointers into AOT code */
 				DISABLE_AOT (cfg);
@@ -12043,7 +12061,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				gpointer ptr;
 
 				CHECK_STACK_OVF (1);
-				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 
 				ptr = mono_method_get_wrapper_data (method, token);
@@ -12051,7 +12068,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				g_assert (callinfo);
 				EMIT_NEW_JIT_ICALL_ADDRCONST (cfg, ins, (char*)callinfo->name);
 				*sp++ = ins;
-				ip += 6;
 				inline_costs += 10 * num_calls++;
 				break;
 			}
@@ -12060,7 +12076,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				gpointer ptr;
 
 				CHECK_STACK_OVF (1);
-				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 
 				cmethod = (MonoMethod *)mono_method_get_wrapper_data (method, token);
@@ -12083,7 +12098,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					EMIT_NEW_PCONST (cfg, ins, ptr);
 				}
 				*sp++ = ins;
-				ip += 6;
 				break;
 			}
 			case CEE_MONO_VTADDR: {
@@ -12096,14 +12110,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				src_var = get_vreg_to_inst (cfg, sp [0]->dreg);
 				EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
 				*sp++ = src;
-				ip += 2;
 				break;
 			}
 			case CEE_MONO_NEWOBJ: {
 				MonoInst *iargs [2];
 
 				CHECK_STACK_OVF (1);
-				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
 				mono_class_init (klass);
@@ -12112,7 +12124,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				NEW_CLASSCONST (cfg, iargs [1], klass);
 				MONO_ADD_INS (cfg->cbb, iargs [1]);
 				*sp++ = mono_emit_jit_icall (cfg, ves_icall_object_new, iargs);
-				ip += 6;
 				inline_costs += 10 * num_calls++;
 				break;
 			}
@@ -12125,7 +12136,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->type = STACK_MP;
 				MONO_ADD_INS (cfg->cbb, ins);
 				*sp++ = ins;
-				ip += 2;
 				break;
 			case CEE_MONO_LDNATIVEOBJ:
 				/*
@@ -12133,7 +12143,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				 * representation of the vtype to the stack.
 				 */
 				CHECK_STACK (1);
-				CHECK_OPSIZE (6);
 				--sp;
 				token = read32 (ip + 2);
 				klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
@@ -12154,7 +12163,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					dest->klass = klass;
 
 					*sp ++ = dest;
-					ip += 6;
 				}
 				break;
 			case CEE_MONO_RETOBJ: {
@@ -12166,8 +12174,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				g_assert (mono_method_signature (method)->pinvoke); 
 				CHECK_STACK (1);
 				--sp;
-				
-				CHECK_OPSIZE (6);
+
 				token = read32 (ip + 2);    
 				klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
 
@@ -12179,10 +12186,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					EMIT_NEW_RETLOADA (cfg, ins);
 				}
 				mini_emit_memory_copy (cfg, ins, sp [0], klass, TRUE, 0);
-				
+
 				if (sp != stack_start)
 					UNVERIFIED;
-				
+
 				mini_profiler_emit_leave (cfg, sp [0]);
 
 				MONO_INST_NEW (cfg, ins, OP_BR);
@@ -12190,31 +12197,25 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MONO_ADD_INS (cfg->cbb, ins);
 				link_bblock (cfg, cfg->cbb, end_bblock);
 				start_new_bblock = 1;
-				ip += 6;
 				break;
 			}
 			case CEE_MONO_SAVE_LMF:
 			case CEE_MONO_RESTORE_LMF:
-				ip += 2;
 				break;
 			case CEE_MONO_CLASSCONST:
 				CHECK_STACK_OVF (1);
-				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				EMIT_NEW_CLASSCONST (cfg, ins, mono_method_get_wrapper_data (method, token));
 				*sp++ = ins;
-				ip += 6;
 				inline_costs += 10 * num_calls++;
 				break;
 			case CEE_MONO_NOT_TAKEN:
 				cfg->cbb->out_of_line = TRUE;
-				ip += 2;
 				break;
 			case CEE_MONO_TLS: {
 				MonoTlsKey key;
 
 				CHECK_STACK_OVF (1);
-				CHECK_OPSIZE (6);
 				key = (MonoTlsKey)read32 (ip + 2);
 				g_assert (key < TLS_KEY_NUM);
 
@@ -12222,7 +12223,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				g_assert (ins);
 				ins->type = STACK_PTR;
 				*sp++ = ins;
-				ip += 6;
 				break;
 			}
 			case CEE_MONO_DYN_CALL: {
@@ -12251,21 +12251,16 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				/* OP_DYN_CALL might need to allocate a dynamically sized param area */
 				cfg->flags |= MONO_CFG_HAS_ALLOCA;
 
-				ip += 2;
 				inline_costs += 10 * num_calls++;
-
 				break;
 			}
 			case CEE_MONO_MEMORY_BARRIER: {
-				CHECK_OPSIZE (6);
 				mini_emit_memory_barrier (cfg, (int)read32 (ip + 2));
-				ip += 6;
 				break;
 			}
 			case CEE_MONO_ATOMIC_STORE_I4: {
 				g_assert (mono_arch_opcode_supported (OP_ATOMIC_STORE_I4));
 
-				CHECK_OPSIZE (6);
 				CHECK_STACK (2);
 				sp -= 2;
 
@@ -12274,8 +12269,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->sreg1 = sp [1]->dreg;
 				ins->backend.memory_barrier_kind = (int) read32 (ip + 2);
 				MONO_ADD_INS (cfg->cbb, ins);
-
-				ip += 6;
 				break;
 			}
 			case CEE_MONO_JIT_ATTACH: {
@@ -12339,8 +12332,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				init_localsbb2 = cfg->cbb;
 				NEW_BBLOCK (cfg, next_bb);
 				MONO_START_BB (cfg, next_bb);
-
-				ip += 2;
 				break;
 			}
 			case CEE_MONO_JIT_DETACH: {
@@ -12350,7 +12341,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				dreg = alloc_ireg (cfg);
 				EMIT_NEW_UNALU (cfg, args [0], OP_MOVE, dreg, cfg->orig_domain_var->dreg);
 				mono_emit_jit_icall (cfg, mono_jit_set_domain, args);
-				ip += 2;
 				break;
 			}
 			case CEE_MONO_CALLI_EXTRA_ARG: {
@@ -12366,7 +12356,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				 */
 				g_assert (method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE);
 
-				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 
 				ins = NULL;
@@ -12493,7 +12482,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				CHECK_CFG_EXCEPTION;
 
-				ip += 6;
 				ins_flag = 0;
 				constrained_class = NULL;
 				break;
@@ -12501,11 +12489,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			case CEE_MONO_LDDOMAIN:
 				CHECK_STACK_OVF (1);
 				EMIT_NEW_PCONST (cfg, ins, cfg->compile_aot ? NULL : cfg->domain);
-				ip += 2;
 				*sp++ = ins;
 				break;
 			case CEE_MONO_GET_LAST_ERROR:
-				CHECK_OPSIZE (2);
 				CHECK_STACK_OVF (1);
 
 				MONO_INST_NEW (cfg, ins, OP_GET_LAST_ERROR);
@@ -12513,11 +12499,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->type = STACK_I4;
 				MONO_ADD_INS (cfg->cbb, ins);
 
-				ip += 2;
 				*sp++ = ins;
 				break;
 			case CEE_MONO_GET_RGCTX_ARG:
-				CHECK_OPSIZE (2);
 				CHECK_STACK_OVF (1);
 
 				mono_create_rgctx_var (cfg);
@@ -12528,7 +12512,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->type = STACK_PTR;
 				MONO_ADD_INS (cfg->cbb, ins);
 
-				ip += 2;
 				*sp++ = ins;
 				break;
 			default:
@@ -12539,7 +12522,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		}
 
 		case CEE_PREFIX1: {
-			CHECK_OPSIZE (2);
 			switch (ip [1]) {
 			case CEE_ARGLIST: {
 				/* somewhat similar to LDTOKEN */
@@ -12554,7 +12536,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->type = STACK_VTYPE;
 				ins->klass = mono_defaults.argumenthandle_class;
 				*sp++ = ins;
-				ip += 2;
 				break;
 			}
 			case CEE_CEQ:
@@ -12609,7 +12590,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 				MONO_ADD_INS (cfg->cbb, ins);
 				*sp++ = ins;
-				ip += 2;
 				break;
 			}
 			case CEE_LDFTN: {
@@ -12617,7 +12597,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MonoMethod *cil_method;
 
 				CHECK_STACK_OVF (1);
-				CHECK_OPSIZE (6);
 				n = read32 (ip + 2);
 				cmethod = mini_get_method (cfg, method, n, NULL, generic_context);
 				CHECK_CFG_ERROR;
@@ -12666,20 +12645,18 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 						/* FIXME: SGEN support */
 						if (invoke_context_used == 0 || cfg->llvm_only) {
-							ip += 6;
 							if (cfg->verbose_level > 3)
-								g_print ("converting (in B%d: stack: %d) %s", cfg->cbb->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
+								g_print ("converting (in B%d: stack: %d) %s", cfg->cbb->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip + 6, NULL));
 							if ((handle_ins = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod, context_used, FALSE))) {
 								sp --;
 								*sp = handle_ins;
 								CHECK_CFG_EXCEPTION;
-								ip += 5;
 								sp ++;
+								next_ip += 5;
 								break;
 							} else {
 								CHECK_CFG_ERROR;
 							}
-							ip -= 6;
 						}
 					}
 				}
@@ -12687,8 +12664,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				argconst = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_METHOD);
 				ins = mono_emit_jit_icall (cfg, mono_ldftn, &argconst);
 				*sp++ = ins;
-				
-				ip += 6;
+
 				inline_costs += 10 * num_calls++;
 				break;
 			}
@@ -12696,7 +12672,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MonoInst *args [2];
 
 				CHECK_STACK (1);
-				CHECK_OPSIZE (6);
 				n = read32 (ip + 2);
 				cmethod = mini_get_method (cfg, method, n, NULL, generic_context);
 				CHECK_CFG_ERROR;
@@ -12732,20 +12707,18 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 						/* FIXME: SGEN support */
 						if (invoke_context_used == 0 || cfg->llvm_only) {
-							ip += 6;
 							if (cfg->verbose_level > 3)
-								g_print ("converting (in B%d: stack: %d) %s", cfg->cbb->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
+								g_print ("converting (in B%d: stack: %d) %s", cfg->cbb->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip + 6, NULL));
 							if ((handle_ins = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod, context_used, is_virtual))) {
 								sp -= 2;
 								*sp = handle_ins;
 								CHECK_CFG_EXCEPTION;
-								ip += 5;
+								next_ip += 5;
 								sp ++;
 								break;
 							} else {
 								CHECK_CFG_ERROR;
 							}
-							ip -= 6;
 						}
 					}
 				}
@@ -12761,87 +12734,75 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				else
 					*sp++ = mono_emit_jit_icall (cfg, mono_ldvirtfn, args);
 
-				ip += 6;
 				inline_costs += 10 * num_calls++;
 				break;
 			}
 			case CEE_LDARG:
 				CHECK_STACK_OVF (1);
-				CHECK_OPSIZE (4);
 				n = read16 (ip + 2);
 				CHECK_ARG (n);
-				if (is_adressable_valuetype_load (cfg, ip + 4, cfg->arg_types[n])) {
+				if (is_addressable_valuetype_load (cfg, ip + 4, cfg->arg_types[n])) {
 					EMIT_NEW_ARGLOADA (cfg, ins, n);
 				} else {
 					EMIT_NEW_ARGLOAD (cfg, ins, n);
 				}
 				*sp++ = ins;
-				ip += 4;
 				break;
 			case CEE_LDARGA:
 				CHECK_STACK_OVF (1);
-				CHECK_OPSIZE (4);
 				n = read16 (ip + 2);
 				CHECK_ARG (n);
 				NEW_ARGLOADA (cfg, ins, n);
 				MONO_ADD_INS (cfg->cbb, ins);
 				*sp++ = ins;
-				ip += 4;
 				break;
 			case CEE_STARG:
 				CHECK_STACK (1);
 				--sp;
-				CHECK_OPSIZE (4);
 				n = read16 (ip + 2);
 				CHECK_ARG (n);
 				*sp = convert_value (cfg, param_types [n], *sp);
 				if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [n], *sp))
 					UNVERIFIED;
 				emit_starg_ir (cfg, sp, n);
-				ip += 4;
 				break;
 			case CEE_LDLOC:
 				CHECK_STACK_OVF (1);
-				CHECK_OPSIZE (4);
 				n = read16 (ip + 2);
 				CHECK_LOCAL (n);
-				if (is_adressable_valuetype_load (cfg, ip + 4, header->locals[n])) {
+				if (is_addressable_valuetype_load (cfg, ip + 4, header->locals[n])) {
 					EMIT_NEW_LOCLOADA (cfg, ins, n);
 				} else {
 					EMIT_NEW_LOCLOAD (cfg, ins, n);
 				}
 				*sp++ = ins;
-				ip += 4;
 				break;
 			case CEE_LDLOCA: {
 				unsigned char *tmp_ip;
 				CHECK_STACK_OVF (1);
-				CHECK_OPSIZE (4);
 				n = read16 (ip + 2);
 				CHECK_LOCAL (n);
 
 				if ((tmp_ip = emit_optimized_ldloca_ir (cfg, ip, end, 2))) {
 					ip = tmp_ip;
+					next_ip = ip;
 					inline_costs += 1;
 					break;
 				}			
-				
+
 				EMIT_NEW_LOCLOADA (cfg, ins, n);
 				*sp++ = ins;
-				ip += 4;
 				break;
 			}
 			case CEE_STLOC:
 				CHECK_STACK (1);
 				--sp;
-				CHECK_OPSIZE (4);
 				n = read16 (ip + 2);
 				CHECK_LOCAL (n);
 				*sp = convert_value (cfg, header->locals [n], *sp);
 				if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [n], *sp))
 					UNVERIFIED;
 				emit_stloc_ir (cfg, sp, header, n);
-				ip += 4;
 				inline_costs += 1;
 				break;
 			case CEE_LOCALLOC: {
@@ -12886,7 +12847,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->type = STACK_PTR;
 
 				*sp++ = ins;
-				ip += 2;
 				break;
 			}
 			case CEE_ENDFILTER: {
@@ -12901,18 +12861,17 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->sreg1 = (*sp)->dreg;
 				MONO_ADD_INS (cfg->cbb, ins);
 				start_new_bblock = 1;
-				ip += 2;
 
 				nearest = NULL;
 				for (cc = 0; cc < header->num_clauses; ++cc) {
 					clause = &header->clauses [cc];
 					if ((clause->flags & MONO_EXCEPTION_CLAUSE_FILTER) &&
-						((ip - header->code) > clause->data.filter_offset && (ip - header->code) <= clause->handler_offset) &&
+						((next_ip - header->code) > clause->data.filter_offset && (next_ip - header->code) <= clause->handler_offset) &&
 					    (!nearest || (clause->data.filter_offset < nearest->data.filter_offset)))
 						nearest = clause;
 				}
 				g_assert (nearest);
-				if ((ip - header->code) != nearest->handler_offset)
+				if ((next_ip - header->code) != nearest->handler_offset)
 					UNVERIFIED;
 
 				break;
@@ -12920,24 +12879,19 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			case CEE_UNALIGNED_:
 				ins_flag |= MONO_INST_UNALIGNED;
 				/* FIXME: record alignment? we can assume 1 for now */
-				CHECK_OPSIZE (3);
-				ip += 3;
 				break;
 			case CEE_VOLATILE_:
 				ins_flag |= MONO_INST_VOLATILE;
-				ip += 2;
 				break;
 			case CEE_TAIL_:
 				ins_flag   |= MONO_INST_TAILCALL;
 				cfg->flags |= MONO_CFG_HAS_TAILCALL;
 				/* Can't inline tailcalls at this time */
 				inline_costs += 100000;
-				ip += 2;
 				break;
 			case CEE_INITOBJ:
 				CHECK_STACK (1);
 				--sp;
-				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				klass = mini_get_class (method, token, generic_context);
 				CHECK_TYPELOAD (klass);
@@ -12945,21 +12899,17 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STORE_MEMBASE_IMM, sp [0]->dreg, 0, 0);
 				else
 					mini_emit_initobj (cfg, *sp, NULL, klass);
-				ip += 6;
 				inline_costs += 1;
 				break;
 			case CEE_CONSTRAINED_:
-				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				constrained_class = mini_get_class (method, token, generic_context);
 				CHECK_TYPELOAD (constrained_class);
-				ip += 6;
 				break;
 			case CEE_CPBLK:
 				CHECK_STACK (3);
 				sp -= 3;
 				mini_emit_memory_copy_bytes (cfg, sp [0], sp [1], sp [2], ins_flag);
-				ip += 2;
 				ins_flag = 0;
 				inline_costs += 1;
 				break;
@@ -12967,20 +12917,17 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_STACK (3);
 				sp -= 3;
 				mini_emit_memory_init_bytes (cfg, sp [0], sp [1], sp [2], ins_flag);
-				ip += 2;
 				ins_flag = 0;
 				inline_costs += 1;
 				break;
 			case CEE_NO_:
-				CHECK_OPSIZE (3);
-				if (ip [2] & 0x1)
+				if (ip [2] & 1)
 					ins_flag |= MONO_INST_NOTYPECHECK;
-				if (ip [2] & 0x2)
+				if (ip [2] & 2)
 					ins_flag |= MONO_INST_NORANGECHECK;
 				/* we ignore the no-nullcheck for now since we
 				 * really do it explicitly only when doing callvirt->call
 				 */
-				ip += 3;
 				break;
 			case CEE_RETHROW: {
 				MonoInst *load;
@@ -13010,7 +12957,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				sp = stack_start;
 				link_bblock (cfg, cfg->cbb, end_bblock);
 				start_new_bblock = 1;
-				ip += 2;
 				break;
 			}
 			case CEE_SIZEOF: {
@@ -13018,7 +12964,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				int ialign;
 
 				CHECK_STACK_OVF (1);
-				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				if (mono_metadata_token_table (token) == MONO_TABLE_TYPESPEC && !image_is_dynamic (m_class_get_image (method->klass)) && !generic_context) {
 					MonoType *type = mono_type_create_from_typespec_checked (image, token, &cfg->error);
@@ -13036,7 +12981,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 				EMIT_NEW_ICONST (cfg, ins, val);
 				*sp++= ins;
-				ip += 6;
 				break;
 			}
 			case CEE_REFANYTYPE: {
@@ -13054,12 +12998,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				EMIT_NEW_VARLOADA (cfg, src, src_var, src_var->inst_vtype);
 				EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (mono_defaults.typehandle_class), src->dreg, MONO_STRUCT_OFFSET (MonoTypedRef, type));
 				*sp++ = ins;
-				ip += 2;
 				break;
 			}
 			case CEE_READONLY_:
 				readonly = TRUE;
-				ip += 2;
 				break;
 
 			case CEE_UNUSED56:
@@ -14382,7 +14324,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 					}
 
 					g_assert (var->opcode == OP_REGOFFSET);
-						
+
 					load_opcode = mono_type_to_load_membase (cfg, var->inst_vtype);
 
 					g_assert (load_opcode != OP_LOADV_MEMBASE);

@@ -75,7 +75,7 @@ namespace MonoTests.System.Web.UI
 			Assert.AreEqual (0, cvt.ConvertFrom (null, null, String.Empty), "#A1-2");
 			Assert.AreEqual (0, cvt.ConvertFrom (null, null, "infinite"), "#A1-3");
 			Assert.AreEqual (0, cvt.ConvertFrom (null, null, "INfINiTE"), "#A1-4");
-			Assert.Throws<Exception> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				cvt.ConvertFrom (null, null, "dummy");
 			}, "#A1-5");
 			Assert.AreEqual (5, cvt.ConvertFrom (null, null, "5"), "#A1-6");

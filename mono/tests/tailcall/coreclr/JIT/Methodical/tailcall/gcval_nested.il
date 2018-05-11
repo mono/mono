@@ -16,7 +16,7 @@
             callee(int32 retcode) il managed
     {
       // Code size       33 (0x21)
-      .maxstack  8
+      .maxstack  99
       .locals (value class JitTest.LargeVT lv)
       ldloca lv
       initobj JitTest.LargeVT
@@ -46,7 +46,7 @@
             caller(int32 retcode) il managed
     {
 		// Code size       11 (0xb)
-		.maxstack  8
+	      .maxstack  99
 		ldarg.0
 		tail. call value class JitTest.LargeVT JitTest.LargeVT::callee(int32)
 		ret
@@ -57,7 +57,7 @@
     {
       .entrypoint
       // Code size       46 (0x2e)
-      .maxstack  2
+      .maxstack  99
       .locals (int32 V_0,
                int32 V_1,
                value class JitTest.LargeVT V_2)
@@ -85,6 +85,15 @@
       ldloc.0
       stloc.1
       ldloc.1
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
       ret
     } // end of method LargeVT::Main
 

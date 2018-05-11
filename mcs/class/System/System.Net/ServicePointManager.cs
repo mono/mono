@@ -33,6 +33,7 @@ using System;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Net.Configuration;
@@ -63,7 +64,7 @@ using System.Diagnostics;
 namespace System.Net 
 {
 	public partial class ServicePointManager {
-		class SPKey {
+		internal class SPKey {
 			Uri uri; // schema/host/port
 			Uri proxy;
 			bool use_connect;
@@ -110,8 +111,8 @@ namespace System.Net
 			}
 		}
 
-		private static HybridDictionary servicePoints = new HybridDictionary ();
-		
+		static ConcurrentDictionary<SPKey, ServicePoint> servicePoints = new ConcurrentDictionary<SPKey, ServicePoint> ();
+
 		// Static properties
 		
 		private static ICertificatePolicy policy;
@@ -120,7 +121,7 @@ namespace System.Net
 		private static int maxServicePoints = 0;
 		private static int dnsRefreshTimeout = 2 * 60 * 1000;
 		private static bool _checkCRL = false;
-		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.SystemDefault;
 
 		static bool expectContinue = true;
 		static bool useNagle;
@@ -361,11 +362,9 @@ namespace System.Net
 
 			address = new Uri (address.Scheme + "://" + address.Authority);
 			
-			ServicePoint sp = null;
-			SPKey key = new SPKey (origAddress, usesProxy ? address : null, useConnect);
+			var key = new SPKey (origAddress, usesProxy ? address : null, useConnect);
 			lock (servicePoints) {
-				sp = servicePoints [key] as ServicePoint;
-				if (sp != null)
+				if (servicePoints.TryGetValue (key, out var sp))
 					return sp;
 
 				if (maxServicePoints > 0 && servicePoints.Count >= maxServicePoints)
@@ -378,16 +377,15 @@ namespace System.Net
 				string addr = address.ToString ();
 				limit = (int) manager.GetMaxConnections (addr);
 #endif
-				sp = new ServicePoint (address, limit, maxServicePointIdleTime);
+				sp = new ServicePoint (key, address, limit, maxServicePointIdleTime);
 				sp.Expect100Continue = expectContinue;
 				sp.UseNagleAlgorithm = useNagle;
 				sp.UsesProxy = usesProxy;
 				sp.UseConnect = useConnect;
 				sp.SetTcpKeepAlive (tcp_keepalive, tcp_keepalive_time, tcp_keepalive_interval);
-				servicePoints.Add (key, sp);
+
+				return servicePoints.GetOrAdd (key, sp);
 			}
-			
-			return sp;
 		}
 
 		internal static void CloseConnectionGroup (string connectionGroupName)
@@ -397,6 +395,11 @@ namespace System.Net
 					sp.CloseConnectionGroup (connectionGroupName);
 				}
 			}
+		}
+
+		internal static void RemoveServicePoint (ServicePoint sp)
+		{
+			servicePoints.TryRemove (sp.Key, out var value);
 		}
 	}
 }

@@ -86,6 +86,15 @@
       IL_0028:  br.s       IL_002a
 
       IL_002a:  ldloc.0
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
       IL_002b:  ret
     } 
 

@@ -33,6 +33,6 @@ class TailCallStructPassingSimple
         temp.c = 62;
 
         int ret = ImplicitTailCallTenByteStruct(temp);
-        return ret;
+        return (ret == 100) ? 0 : ret;
     } 
 }
