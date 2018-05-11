@@ -391,9 +391,6 @@
     <Compile Include="..\Mono.Security\Mono.Security\BitConverterLE.cs" />
     <Compile Include="..\Mono.Security\Mono.Security\PKCS7.cs" />
     <Compile Include="..\Mono.Security\Mono.Security\StrongName.cs" />
-    <Compile Include="..\referencesource\mscorlib\\system\runtime\reliability\criticalfinalizerobject.cs" />
-    <Compile Include="..\referencesource\mscorlib\\system\runtime\reliability\prepreparemethodattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\\system\runtime\reliability\reliabilitycontractattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\safefilehandle.cs" />
     <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\safefindhandle.cs" />
     <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\saferegistryhandle.cs" />
@@ -769,6 +766,9 @@
     <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\windowsruntime\windowsruntimemarshal.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\NgenServicingAttributes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\ProfileOptimization.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\runtime\reliability\criticalfinalizerobject.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\runtime\reliability\prepreparemethodattribute.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\runtime\reliability\reliabilitycontractattribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\remoting\callcontext.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\serialization\deserializationeventhandler.cs" />
     <Compile Include="..\referencesource\mscorlib\system\runtime\serialization\formatter.cs" />
