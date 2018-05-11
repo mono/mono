@@ -50,8 +50,10 @@ namespace System.Net
 
 		public WebRequestStream (WebConnection connection, WebOperation operation,
 					 Stream stream, WebConnectionTunnel tunnel)
-			: base (connection, operation, stream)
+			: base (connection, operation)
 		{
+			InnerStream = stream;
+
 			allowBuffering = operation.Request.InternalAllowBuffering;
 			sendChunked = operation.Request.SendChunked && operation.WriteBuffer == null;
 			if (!sendChunked && allowBuffering && operation.WriteBuffer == null)
@@ -66,14 +68,12 @@ namespace System.Net
 #endif
 		}
 
-		public bool KeepAlive {
+		internal Stream InnerStream {
 			get;
 		}
 
-		public override long Length {
-			get {
-				throw new NotSupportedException ();
-			}
+		public bool KeepAlive {
+			get;
 		}
 
 		public override bool CanRead => false;
