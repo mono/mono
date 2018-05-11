@@ -422,7 +422,7 @@ mono_ppdb_get_seq_points (MonoDebugMethodInfo *minfo, char **source_file, GPtrAr
 			   method_idx - 1, methodbody_table->rows, method_name, image->name);
 		g_free (method_name);
 	}
-	mono_metadata_decode_row (methodbody_table, method_idx-1, cols, MONO_METHODBODY_SIZE);
+	mono_metadata_decode_row (methodbody_table, method_idx - 1, cols, MONO_METHODBODY_SIZE);
 
 	docidx = cols [MONO_METHODBODY_DOCUMENT];
 
