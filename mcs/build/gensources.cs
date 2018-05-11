@@ -94,7 +94,7 @@ public static class Program {
             output = new StreamWriter (outFile);
 
         using (output) {
-            foreach (var fileName in result.GetFileNames ())
+            foreach (var fileName in result.GetFileNames ().OrderBy (s => s, StringComparer.Ordinal))
                 output.WriteLine (fileName);
         }
 
