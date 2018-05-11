@@ -7969,7 +7969,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	ins_flag = 0;
 	start_new_bblock = 0;
-	while (ip < end) {
+	unsigned char *next_ip = ip;
+	for (; ip < end; ip = next_ip) {
+
+		const int op_size = mono_opcode_size (ip, end);
+		CHECK_OPSIZE (op_size);
+		next_ip += op_size;
+
 		if (cfg->method == method)
 			cfg->real_offset = ip - header->code;
 		else
@@ -8025,7 +8031,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				bb = bb->next;
 
 			if (bb->dead) {
-				int op_size = mono_opcode_size (ip, end);
 				g_assert (op_size > 0); /*The BB formation pass must catch all bad ops*/
 
 				if (cfg->verbose_level > 3) printf ("SKIPPING DEAD OP at %x\n", ip_offset);
@@ -8035,8 +8040,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					MONO_ADD_INS (cfg->cbb, ins);
 					start_new_bblock = 1;
 				}
-
-				ip += op_size;
 				continue;
 			}
 		}
@@ -8096,13 +8099,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 		if (cfg->verbose_level > 3)
 			printf ("converting (in B%d: stack: %d) %s", cfg->cbb->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
-
-		{
-			int il_op_unused = -1;
-			unsigned char *next_ip_unused = ip;
-			const int opsize = mono_opcode_value_and_size (&next_ip_unused, end, &il_op_unused);
-			CHECK_OPSIZE (opsize);
-		}
 
 		switch (*ip) {
 		case CEE_NOP:
@@ -8227,6 +8223,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			if ((tmp_ip = emit_optimized_ldloca_ir (cfg, ip, end, 1))) {
 				ip = tmp_ip;
+				next_ip = ip;
 				inline_costs += 1;
 				break;
 			}
@@ -8627,6 +8624,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				// FIXME When not followed by CEE_RET, correct behavior is to raise an exception.
 				g_assert (*ip == CEE_RET);
 				ip += 1;
+				next_ip += 1;
 			}
 
 			break;
@@ -9626,6 +9624,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				// FIXME When not followed by CEE_RET, correct behavior is to raise an exception.
 				g_assert (*ip == CEE_RET);
 				ip += 1;
+				next_ip += 1;
 			}
 			ins_flag = 0;
 			constrained_class = NULL;
@@ -10231,6 +10230,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->flags |= ins_flag;
 				ip += 5;
 				ip += stloc_len;
+				next_ip += stloc_len;
 				if (ins_flag & MONO_INST_VOLATILE) {
 					/* Volatile loads have acquire semantics, see 12.6.7 in Ecma 335 */
 					mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_ACQ);
@@ -10248,6 +10248,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				mini_emit_memory_copy (cfg, sp [0], sp [1], klass, FALSE, ins_flag);
 
 				ip += 5 + 5;
+				next_ip += 5;
 				ins_flag = 0;
 				break;
 			}
@@ -10654,6 +10655,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					MonoInst *enum_this, *enum_flag;
 
 					ip += 5 + 6 + 5;
+					next_ip += 6 + 5;
 					--sp;
 
 					enum_this = sp [0];
@@ -10690,6 +10692,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ip++;
 					target = ip + 1 + (signed char)(*ip);
 					ip++;
+					next_ip += 2;
 					break;
 				case CEE_BRTRUE:
 				case CEE_BRFALSE:
@@ -10697,6 +10700,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ip++;
 					target = ip + 4 + (gint)(read32 (ip));
 					ip += 4;
+					next_ip += 5;
 					break;
 				default:
 					g_assert_not_reached ();
@@ -11463,6 +11467,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				EMIT_NEW_ICONST (cfg, iargs [2], data_size);
 				mono_emit_method_call (cfg, memcpy_method, iargs, NULL);
 				ip += 11;
+				next_ip += 11;
 			}
 
 			break;
@@ -11809,6 +11814,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ins->type = STACK_OBJ;
 					ins->klass = cmethod->klass;
 					ip += 5;
+					next_ip += 5;
 				} else {
 					MonoInst *addr, *vtvar;
 
@@ -12748,6 +12754,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 								CHECK_CFG_EXCEPTION;
 								ip += 5;
 								sp ++;
+								next_ip += 5;
 								break;
 							} else {
 								CHECK_CFG_ERROR;
@@ -12812,6 +12819,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 								*sp = handle_ins;
 								CHECK_CFG_EXCEPTION;
 								ip += 5;
+								next_ip += 5;
 								sp ++;
 								break;
 							} else {
@@ -12889,6 +12897,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				if ((tmp_ip = emit_optimized_ldloca_ir (cfg, ip, end, 2))) {
 					ip = tmp_ip;
+					next_ip = ip;
 					inline_costs += 1;
 					break;
 				}			
@@ -13144,6 +13153,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			g_warning ("opcode 0x%02x not handled", *ip);
 			UNVERIFIED;
 		}
+		g_assert  (ip == next_ip);
 	}
 	if (start_new_bblock != 1)
 		UNVERIFIED;
