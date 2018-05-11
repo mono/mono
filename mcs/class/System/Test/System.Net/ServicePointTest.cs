@@ -186,33 +186,6 @@ public class ServicePointTest
 		Assert.IsTrue (called, "#A2");
 	}
 
-	public static void GetRequestStreamCallback (IAsyncResult asynchronousResult)
-	{
-	}
-
-	[Test] //Covers #19823
-#if FEATURE_NO_BSD_SOCKETS
-	// This test uses HttpWebRequest
-	[ExpectedException (typeof (PlatformNotSupportedException))]
-#endif
-	public void CloseConnectionGroupConcurency ()
-	{
-		// Try with multiple service points
-		for (var i = 0; i < 10; i++) {
-			Uri targetUri = new Uri ("http://" + i + ".mono-project.com");
-			var req = (HttpWebRequest) HttpWebRequest.Create (targetUri);
-			req.ContentType = "application/x-www-form-urlencoded";
-			req.Method = "POST";
-			req.ConnectionGroupName = "" + i;
-			req.ServicePoint.MaxIdleTime = 1;
-
-			req.BeginGetRequestStream (new AsyncCallback (GetRequestStreamCallback), req);
-			Thread.Sleep (1);
-			req.ServicePoint.CloseConnectionGroup (req.ConnectionGroupName);
-		}
-	}
-
-
 	[Test]
 	[Category ("RequiresBSDSockets")] // Tests internals, so it doesn't make sense to assert that PlatformNotSupportedExceptions are thrown.
 	public void DnsRefreshTimeout ()

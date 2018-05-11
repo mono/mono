@@ -54,7 +54,7 @@
     {
       .entrypoint
       // Code size       39 (0x27)
-      .maxstack  1
+      .maxstack  99
       .locals (int32 V_0)
       IL_0000:  ldc.i4.0
       IL_0001:  call       class JitTest.BaseClass JitTest.BaseClass::caller(bool)

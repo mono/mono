@@ -1585,30 +1585,27 @@ ves_icall_System_Type_internal_from_handle (MonoType *handle, MonoError *error)
 }
 
 ICALL_EXPORT MonoType*
-ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass)
+ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass, MonoError *error)
 {
 	return mono_class_get_type (klass);
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree (GPtrArray *ptr_array)
+ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree (GPtrArray *ptr_array, MonoError *error)
 {
 	g_ptr_array_free (ptr_array, TRUE);
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_SafeStringMarshal_GFree (void *c_str)
+ves_icall_Mono_SafeStringMarshal_GFree (void *c_str, MonoError *error)
 {
 	g_free (c_str);
 }
 
 ICALL_EXPORT char*
-ves_icall_Mono_SafeStringMarshal_StringToUtf8 (MonoString *s)
+ves_icall_Mono_SafeStringMarshal_StringToUtf8 (MonoStringHandle s, MonoError *error)
 {
-	ERROR_DECL (error);
-	char *res = mono_string_to_utf8_checked (s, error);
-	mono_error_set_pending_exception (error);
-	return res;
+	return mono_string_handle_to_utf8 (s, error);
 }
 
 /* System.TypeCode */
@@ -5738,7 +5735,7 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssemblyHandle asse
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, gboolean free_struct)
+ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, gboolean free_struct, MonoError *error)
 {
 	mono_assembly_name_free (aname);
 	if (free_struct)
@@ -5746,7 +5743,7 @@ ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, gboolea
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (void)
+ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (MonoError *error)
 {
 #ifdef TARGET_OSX
 	mono_merp_disable ();
@@ -5757,12 +5754,12 @@ ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (void)
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath)
+ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath, MonoError *error)
 {
 #ifdef TARGET_OSX
 	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath);
 
-	mono_get_runtime_callbacks ()->runtime_telemetry_callback ();
+	mono_get_runtime_callbacks ()->install_state_summarizer ();
 #else
 	// Icall has platform check in managed too.
 	g_assert_not_reached ();
@@ -7398,13 +7395,13 @@ ves_icall_get_resources_ptr (MonoReflectionAssemblyHandle assembly, gpointer *re
 }
 
 ICALL_EXPORT MonoBoolean
-ves_icall_System_Diagnostics_Debugger_IsAttached_internal (void)
+ves_icall_System_Diagnostics_Debugger_IsAttached_internal (MonoError *error)
 {
 	return mono_is_debugger_attached ();
 }
 
 ICALL_EXPORT MonoBoolean
-ves_icall_System_Diagnostics_Debugger_IsLogging (void)
+ves_icall_System_Diagnostics_Debugger_IsLogging (MonoError *error)
 {
 	if (mono_get_runtime_callbacks ()->debug_log_is_enabled)
 		return mono_get_runtime_callbacks ()->debug_log_is_enabled ();
@@ -7413,7 +7410,7 @@ ves_icall_System_Diagnostics_Debugger_IsLogging (void)
 }
 
 ICALL_EXPORT void
-ves_icall_System_Diagnostics_Debugger_Log (int level, MonoString *category, MonoString *message)
+ves_icall_System_Diagnostics_Debugger_Log (int level, MonoStringHandle category, MonoStringHandle message, MonoError *error)
 {
 	if (mono_get_runtime_callbacks ()->debug_log)
 		mono_get_runtime_callbacks ()->debug_log (level, category, message);
@@ -7421,14 +7418,14 @@ ves_icall_System_Diagnostics_Debugger_Log (int level, MonoString *category, Mono
 
 #ifndef HOST_WIN32
 static inline void
-mono_icall_write_windows_debug_string (MonoString *message)
+mono_icall_write_windows_debug_string (const gunichar2 *message)
 {
 	g_warning ("WriteWindowsDebugString called and HOST_WIN32 not defined!\n");
 }
 #endif /* !HOST_WIN32 */
 
 ICALL_EXPORT void
-ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString (MonoString *message)
+ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString (const gunichar2 *message, MonoError *error)
 {
 	mono_icall_write_windows_debug_string (message);
 }

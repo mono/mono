@@ -331,6 +331,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\TaskAwaiter.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\String.Comparison.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\String.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\CancellationTokenRegistration.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\LockHolder.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\ConcurrentExclusiveSchedulerPair.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.cs" />
@@ -908,7 +909,6 @@
     <Compile Include="..\referencesource\mscorlib\system\threading\asynclocal.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\autoresetevent.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\CancellationToken.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\CancellationTokenRegistration.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\CancellationTokenSource.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\CountdownEvent.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\eventresetmode.cs" />

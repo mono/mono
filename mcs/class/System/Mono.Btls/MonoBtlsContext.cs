@@ -236,11 +236,13 @@ namespace Mono.Btls
 
 			ctx.SetVerifyParam (MonoBtlsProvider.GetVerifyParam (Settings, ServerName, IsServer));
 
-			TlsProtocolCode minProtocol, maxProtocol;
+			TlsProtocolCode? minProtocol, maxProtocol;
 			GetProtocolVersions (out minProtocol, out maxProtocol);
 
-			ctx.SetMinVersion ((int)minProtocol);
-			ctx.SetMaxVersion ((int)maxProtocol);
+			if (minProtocol != null)
+				ctx.SetMinVersion ((int)minProtocol.Value);
+			if (maxProtocol != null)
+				ctx.SetMaxVersion ((int)maxProtocol.Value);
 
 			if (Settings != null && Settings.EnabledCiphers != null) {
 				var ciphers = new short [Settings.EnabledCiphers.Length];
