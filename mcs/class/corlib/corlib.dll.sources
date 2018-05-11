@@ -1278,9 +1278,9 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/runtime/interopservices/windowsruntime/irestrictederrorinfo.cs
 ../referencesource/mscorlib/system/runtime/interopservices/windowsruntime/windowsruntimemarshal.cs
 
-../referencesource/mscorlib//system/runtime/reliability/criticalfinalizerobject.cs
-../referencesource/mscorlib//system/runtime/reliability/prepreparemethodattribute.cs
-../referencesource/mscorlib//system/runtime/reliability/reliabilitycontractattribute.cs
+../referencesource/mscorlib/system/runtime/reliability/criticalfinalizerobject.cs
+../referencesource/mscorlib/system/runtime/reliability/prepreparemethodattribute.cs
+../referencesource/mscorlib/system/runtime/reliability/reliabilitycontractattribute.cs
 
 ../referencesource/mscorlib/system/runtime/compilerservices/assemblyattributesgohere.cs
 ../referencesource/mscorlib/system/runtime/compilerservices/assemblysettingattributes.cs
