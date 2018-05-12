@@ -8095,11 +8095,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (costs) {
 					cfg->real_offset += 5;
 
- 					if (!MONO_TYPE_IS_VOID (fsig->ret)) {
+					if (!MONO_TYPE_IS_VOID (fsig->ret))
 						/* *sp is already set by inline_method */
- 						sp++;
-						push_res = FALSE;
-					}
+						ins = *sp;
 
 					inline_costs += costs;
 					// FIXME This is missed if the inlinee contains tail calls that
@@ -8291,11 +8289,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				g_assert (costs > 0);
 				cfg->real_offset += 5;
 
-				if (!MONO_TYPE_IS_VOID (fsig->ret)) {
+				if (!MONO_TYPE_IS_VOID (fsig->ret))
 					/* *sp is already set by inline_method */
-					sp++;
-					push_res = FALSE;
-				}
+					ins = *sp;
 
 				inline_costs += costs;
 
