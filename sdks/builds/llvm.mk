@@ -1,9 +1,14 @@
 
 LLVM_SRC?=$(TOP)/sdks/builds/toolchains/llvm
 
-# Looks ugly, but llvm/Makefile might not exist yet
-reset-llvm:
-	$(MAKE) -C ../../llvm -f Makefile.am top_srcdir=$(PWD)/../.. LLVM_PATH=$(LLVM_SRC) reset-llvm
+# Needed by versions.mk
+top_srcdir=$(TOP)
+LLVM_PATH=$(LLVM_SRC)
+
+SUBMODULES_CONFIG_FILE = $(top_srcdir)/sdks/SUBMODULES.json
+include $(top_srcdir)/scripts/submodules/versions.mk
+
+$(eval $(call ValidateVersionTemplate,llvm,LLVM))
 
 $(TOP)/sdks/builds/toolchains/llvm: reset-llvm
 
