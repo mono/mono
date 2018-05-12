@@ -9942,7 +9942,7 @@ calli_end:
 							/* .cctors: too many apps depend on them */
 							/* running with a specific order... */
 							g_assert (vtable);
-							if (! vtable->initialized)
+							if (!vtable->initialized && m_class_has_cctor (vtable->klass))
 								INLINE_FAILURE ("class init");
 							if (!mono_runtime_class_init_full (vtable, &cfg->error)) {
 								mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
