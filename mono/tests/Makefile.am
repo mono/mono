@@ -799,7 +799,8 @@ TESTS_IL_SRC=			\
 	tailcall-return-valuetype.il \
 	tailcall-valuetype-parameter.il \
 	ldfldvt.il \
-	newobj-abstract.il
+	newobj-abstract.il \
+	incorrect-ldvirtftn-read-behind-for-dup.il
 
 TESTS_GSHARED_SRC = \
 	generics-sharing.2.cs	\

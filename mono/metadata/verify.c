@@ -5144,7 +5144,7 @@ mono_method_verify (MonoMethod *method, int level)
 		ip_offset = (guint) (ip - code_start);
 		{
 			const unsigned char *ip_copy = ip;
-			int op;
+			MonoOpcodeEnum op;
 
 			if (ip_offset > bb->end) {
 				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Branch or EH block at [0x%04x] targets middle instruction at 0x%04x", bb->end, ip_offset));
