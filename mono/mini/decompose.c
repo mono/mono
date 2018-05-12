@@ -1532,6 +1532,9 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 
 			for (ins = bb->code; ins; ins = ins->next) {
 				switch (ins->opcode) {
+				case OP_TYPED_OBJREF:
+					ins->opcode = OP_MOVE;
+					break;
 				case OP_LDLEN:
 					NEW_LOAD_MEMBASE_FLAGS (cfg, dest, OP_LOADI4_MEMBASE, ins->dreg, ins->sreg1,
 											MONO_STRUCT_OFFSET (MonoArray, max_length), ins->flags | MONO_INST_INVARIANT_LOAD);
