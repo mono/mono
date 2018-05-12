@@ -68,6 +68,7 @@
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-utils-debug.h>
 #include <mono/utils/mono-logger-internals.h>
+#include <mono/metadata/verify-internals.h>
 
 #include "trace.h"
 
@@ -6680,6 +6681,62 @@ ensure_method_is_allowed_to_call_method (MonoCompile *cfg, MonoMethod *caller, M
 		emit_throw_exception (cfg, ex);
 }
 
+static unsigned char*
+il_read_op (unsigned char *ip, unsigned char *end, unsigned char first_byte, MonoOpcodeEnum desired_il_op)
+// If ip is desired_il_op, return the next ip, else NULL.
+{
+	if (G_LIKELY (ip < end) && G_UNLIKELY (*ip == first_byte)) {
+		MonoOpcodeEnum il_op = MonoOpcodeEnum_Invalid;
+		// mono_opcode_value_and_size updates ip, but not in the expected way.
+		const unsigned char *temp_ip  = ip;
+		const int size = mono_opcode_value_and_size (&temp_ip, end, &il_op);
+		return G_UNLIKELY (size > 0 && il_op == desired_il_op) ? (ip + size) : NULL;
+	}
+	return NULL;
+}
+
+static unsigned char*
+il_read_op_and_token (unsigned char *ip, unsigned char *end, unsigned char first_byte, MonoOpcodeEnum desired_il_op, guint32 *token)
+{
+	ip = il_read_op (ip, end, first_byte, desired_il_op);
+	if (ip)
+		*token = read32 (ip - 4); // could be +1 or +2 from start
+	return ip;
+}
+
+static unsigned char*
+il_read_branch_and_target (unsigned char *ip, unsigned char *end, unsigned char first_byte, MonoOpcodeEnum desired_il_op, int size, unsigned char **target)
+{
+	ip = il_read_op (ip, end, first_byte, desired_il_op);
+	if (ip) {
+		gint32 delta = 0;
+		switch (size) {
+		case  1:
+			delta = (signed char)ip [-1];
+			break;
+		case  4:
+			delta = (gint32)read32 (ip - 4);
+			break;
+		}
+		// FIXME verify it is within the function.
+		*target = ip + delta;
+		return ip;
+	}
+	return NULL;
+}
+
+#define il_read_brtrue(ip, end, target) 	(il_read_branch_and_target (ip, end, CEE_BRTRUE,    MONO_CEE_BRTRUE,    4, target))
+#define il_read_brtrue_s(ip, end, target) 	(il_read_branch_and_target (ip, end, CEE_BRTRUE_S,  MONO_CEE_BRTRUE_S,  1, target))
+#define il_read_brfalse(ip, end, target) 	(il_read_branch_and_target (ip, end, CEE_BRFALSE,   MONO_CEE_BRFALSE,   4, target))
+#define il_read_brfalse_s(ip, end, target) 	(il_read_branch_and_target (ip, end, CEE_BRFALSE_s, MONO_CEE_BRFALSE_s, 1, target))
+#define il_read_dup(ip, end) 			(il_read_op 		   (ip, end, CEE_DUP, MONO_CEE_DUP))
+#define il_read_newobj(ip, end, token) 		(il_read_op_and_token 	   (ip, end, CEE_NEW_OBJ, MONO_CEE_NEWOBJ, token))
+#define il_read_ldtoken(ip, end, token) 	(il_read_op_and_token 	   (ip, end, CEE_LDTOKEN, MONO_CEE_LDTOKEN, token))
+#define il_read_call(ip, end, token) 		(il_read_op_and_token      (ip, end, CEE_CALL, MONO_CEE_CALL, token))
+#define il_read_callvirt(ip, end, token)	(il_read_op_and_token 	   (ip, end, CEE_CALLVIRT, MONO_CEE_CALLVIRT, token))
+#define il_read_initobj(ip, end, token)         (il_read_op_and_token 	   (ip, end, CEE_PREFIX1, MONO_CEE_INITOBJ, token))
+#define il_read_constrained(ip, end, token)     (il_read_op_and_token      (ip, end, CEE_PREFIX1, MONO_CEE_CONSTRAINED_, token))
+
 /*
  * Check that the IL instructions at ip are the array initialization
  * sequence and return the pointer to the data and the size.
@@ -6693,11 +6750,12 @@ initialize_array_data (MonoMethod *method, gboolean aot, unsigned char *ip, unsi
 	 * ldtoken field valuetype ...
 	 * call void class [mscorlib]System.Runtime.CompilerServices.RuntimeHelpers::InitializeArray(class [mscorlib]System.Array, valuetype [mscorlib]System.RuntimeFieldHandle)
 	 */
-	if (ip + 10 < end && ip [0] == CEE_DUP && ip [1] == CEE_LDTOKEN && ip [5] == 0x4 && ip [6] == CEE_CALL) {
+
+	guint32 token;
+	guint32 field_token;
+
+	if  ((ip = il_read_dup (ip, end)) && (ip = il_read_ldtoken (ip, end, &field_token)) && IS_FIELD_DEF (field_token) && il_read_call (ip, end, &token)) {
 		ERROR_DECL (error);
-		guint32 token = read32 (ip + 7);
-		guint32 field_token = read32 (ip + 2);
-		guint32 field_index = field_token & 0xffffff;
 		guint32 rva;
 		const char *data_ptr;
 		int size = 0;
@@ -6746,7 +6804,7 @@ initialize_array_data (MonoMethod *method, gboolean aot, unsigned char *ip, unsi
 		/*g_print ("optimized in %s: size: %d, numelems: %d\n", method->name, size, newarr->inst_newa_len->inst_c0);*/
 		MonoImage *method_klass_image = m_class_get_image (method->klass);
 		if (!image_is_dynamic (method_klass_image)) {
-			field_index = read32 (ip + 2) & 0xffffff;
+			guint32 field_index = mono_metadata_token_index (field_token);
 			mono_metadata_field_info (method_klass_image, field_index - 1, NULL, &rva, NULL);
 			data_ptr = mono_image_rva_map (method_klass_image, rva);
 			/*g_print ("field: 0x%08x, rva: %d, rva_ptr: %p\n", read32 (ip + 2), rva, data_ptr);*/
@@ -6898,29 +6956,22 @@ emit_starg_ir (MonoCompile *cfg, MonoInst **sp, int n)
  * ldloca inhibits many optimizations so try to get rid of it in common
  * cases.
  */
-static inline unsigned char *
-emit_optimized_ldloca_ir (MonoCompile *cfg, unsigned char *ip, unsigned char *end, int size)
+static unsigned char *
+emit_optimized_ldloca_ir (MonoCompile *cfg, unsigned char *ip, unsigned char *end, int local)
 {
-	int local, token;
+	guint32 token;
 	MonoClass *klass;
 	MonoType *type;
 
-	if (size == 1) {
-		local = ip [1];
-		ip += 2;
-	} else {
-		local = read16 (ip + 2);
-		ip += 4;
-	}
-	
-	if (ip + 5 < end && (ip [0] == CEE_PREFIX1) && (ip [1] == CEE_INITOBJ) && ip_in_bb (cfg, cfg->cbb, ip + 1)) {
+	unsigned char *start = ip;
+
+	if  ((ip = il_read_initobj (ip, end, &token)) && ip_in_bb (cfg, cfg->cbb, start + 1)) {
 		/* From the INITOBJ case */
-		token = read32 (ip + 2);
 		klass = mini_get_class (cfg->current_method, token, cfg->generic_context);
 		CHECK_TYPELOAD (klass);
 		type = mini_get_underlying_type (m_class_get_byval_arg (klass));
 		emit_init_local (cfg, local, type, TRUE);
-		return ip + 6;
+		return ip;
 	}
  exception_exit:
 	return NULL;
@@ -8211,17 +8262,19 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			break;
 		case CEE_LDLOCA_S: {
 			unsigned char *tmp_ip;
+			n = ip [1];
+ldloca_common:
 			CHECK_STACK_OVF (1);
-			CHECK_LOCAL (ip [1]);
+			CHECK_LOCAL (n);
 
-			if ((tmp_ip = emit_optimized_ldloca_ir (cfg, ip, end, 1))) {
+			if ((tmp_ip = emit_optimized_ldloca_ir (cfg, next_ip, end, n))) {
 				next_ip = tmp_ip;
 				il_op = CEE_INITOBJ;
 				inline_costs += 1;
 				break;
 			}
 
-			EMIT_NEW_LOCLOADA (cfg, ins, ip [1]);
+			EMIT_NEW_LOCLOADA (cfg, ins, n);
 			*sp++ = ins;
 			break;
 		}
@@ -10577,16 +10630,19 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 * are equal, we can emit a specialized instruction sequence instead of
 			 * the very slow HasFlag () call.
 			 */
+			guint32 constrained_token;
+			guint32 callvirt_token;
+
 			if ((cfg->opt & MONO_OPT_INTRINS) &&
-			    /* Cheap checks first. */
-			    next_ip + 6 + 4 < end &&
-			    next_ip [0] == CEE_PREFIX1 &&
-			    next_ip [1] == CEE_CONSTRAINED_ &&
-			    next_ip [6] == CEE_CALLVIRT &&
-			    ip_in_bb (cfg, cfg->cbb, next_ip + 6 + 5) &&
+			    //  FIXME ip_in_bb as we go?
+			    next_ip < end && ip_in_bb (cfg, cfg->cbb, next_ip) &&
+			    (ip = il_read_constrained (next_ip, end, &constrained_token)) &&
+			    ip_in_bb (cfg, cfg->cbb, ip) &&
+			    (ip = il_read_callvirt (ip, end, &callvirt_token)) &&
+			    ip_in_bb (cfg, cfg->cbb, ip) &&
 			    mono_class_is_enum (klass) &&
-			    (enum_class = mini_get_class (method, read32 (next_ip + 2), generic_context)) &&
-			    (has_flag = mini_get_method (cfg, method, read32 (next_ip + 7), NULL, generic_context)) &&
+			    (enum_class = mini_get_class (method, constrained_token, generic_context)) &&
+			    (has_flag = mini_get_method (cfg, method, callvirt_token, NULL, generic_context)) &&
 			    has_flag->klass == mono_defaults.enum_class &&
 			    !strcmp (has_flag->name, "HasFlag") &&
 			    has_flag->signature->hasthis &&
@@ -10596,7 +10652,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (enum_class == klass) {
 					MonoInst *enum_this, *enum_flag;
 
-					next_ip += 6 + 5;
+					next_ip = ip;
 					il_op = MONO_CEE_CALLVIRT;
 					--sp;
 
@@ -10608,41 +10664,26 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 			}
 
+			gboolean is_true;
+
 			// FIXME: LLVM can't handle the inconsistent bb linking
 			if (!mono_class_is_nullable (klass) &&
 				!mini_is_gsharedvt_klass (klass) &&
 				next_ip < end && ip_in_bb (cfg, cfg->cbb, next_ip) &&
-				(next_ip [0] == CEE_BRTRUE ||
-				 next_ip [0] == CEE_BRTRUE_S ||
-				 next_ip [0] == CEE_BRFALSE ||
-				 next_ip [0] == CEE_BRFALSE_S)) {
-				gboolean is_true = next_ip [0] == CEE_BRTRUE || next_ip [0] == CEE_BRTRUE_S;
+				( (is_true = !!(ip = il_read_brtrue   (next_ip, end, &target))) ||
+				  (is_true = !!(ip = il_read_brtrue_s (next_ip, end, &target))) ||
+					       (ip = il_read_brfalse  (next_ip, end, &target))  ||
+					       (ip = il_read_brtrue_s (next_ip, end, &target)))) {
+
 				int dreg;
 				MonoBasicBlock *true_bb, *false_bb;
 
-				ip = next_ip;
-				il_op = (MonoOpcodeEnum)ip [0];
+				il_op = (MonoOpcodeEnum)next_ip [0];
+				next_ip = ip;
 
 				if (cfg->verbose_level > 3) {
 					printf ("converting (in B%d: stack: %d) %s", cfg->cbb->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
 					printf ("<box+brtrue opt>\n");
-				}
-
-				switch (*ip) {
-				case CEE_BRTRUE_S:
-				case CEE_BRFALSE_S:
-					CHECK_OPSIZE (2);
-					target = ip + 2 + (signed char)ip [1];
-					next_ip += 2;
-					break;
-				case CEE_BRTRUE:
-				case CEE_BRFALSE:
-					CHECK_OPSIZE (5);
-					target = ip + 5 + (gint)(read32 (ip + 1));
-					next_ip += 5;
-					break;
-				default:
-					g_assert_not_reached ();
 				}
 
 				/* 
@@ -12668,10 +12709,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				/*
 				 * Optimize the common case of ldvirtftn+delegate creation
 				 */
-				//  FIXME readbehind is invalid here. Use previous_il_op instead.
-				if ((sp > stack_start) && (next_ip + 4 < end) && ip_in_bb (cfg, cfg->cbb, next_ip) && (next_ip [0] == CEE_NEWOBJ) && (ip > header->code) && (ip [-1] == CEE_DUP)) {
-
-					g_assert (previous_il_op == CEE_DUP);
+				if (previous_il_op == CEE_DUP && (sp > stack_start) && (next_ip + 4 < end) && ip_in_bb (cfg, cfg->cbb, next_ip) && (next_ip [0] == CEE_NEWOBJ)) {
 
 					MonoMethod *ctor_method = mini_get_method (cfg, method, read32 (next_ip + 1), NULL, generic_context);
 					if (ctor_method && (m_class_get_parent (ctor_method->klass) == mono_defaults.multicastdelegate_class)) {
@@ -12764,23 +12802,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 				*sp++ = ins;
 				break;
-			case CEE_LDLOCA: {
-				unsigned char *tmp_ip;
-				CHECK_STACK_OVF (1);
+			case CEE_LDLOCA:
 				n = read16 (ip + 2);
-				CHECK_LOCAL (n);
-
-				if ((tmp_ip = emit_optimized_ldloca_ir (cfg, ip, end, 2))) {
-					next_ip = tmp_ip;
-					il_op = MONO_CEE_INITOBJ;
-					inline_costs += 1;
-					break;
-				}			
-
-				EMIT_NEW_LOCLOADA (cfg, ins, n);
-				*sp++ = ins;
-				break;
-			}
+				goto ldloca_common;
 			case CEE_STLOC:
 				CHECK_STACK (1);
 				--sp;
