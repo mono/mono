@@ -6459,7 +6459,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 #define CHECK_STACK_OVF(num) if (((sp - stack_start) + (num)) > header->max_stack) UNVERIFIED
 #define CHECK_ARG(num) if ((unsigned)(num) >= (unsigned)num_args) UNVERIFIED
 #define CHECK_LOCAL(num) if ((unsigned)(num) >= (unsigned)header->num_locals) UNVERIFIED
-#define CHECK_OPSIZE(size) if ((size) < 0 || ip + (size) > end) UNVERIFIED
+#define CHECK_OPSIZE(size) if ((size) < 1 || ip + (size) > end) UNVERIFIED
 #define CHECK_UNVERIFIABLE(cfg) if (cfg->unverifiable) UNVERIFIED
 #define CHECK_TYPELOAD(klass) if (!(klass) || mono_class_has_failure (klass)) TYPE_LOAD_ERROR ((klass))
 
@@ -8181,36 +8181,41 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_LDARG_1:
 		case CEE_LDARG_2:
 		case CEE_LDARG_3:
+			n = (*ip) - CEE_LDARG_0;
+ldarg:
 			CHECK_STACK_OVF (1);
-			n = (*ip)-CEE_LDARG_0;
 			CHECK_ARG (n);
-			if (ip + 1 < end && is_addressable_valuetype_load (cfg, ip + 1, cfg->arg_types[n])) {
+			if (next_ip < end && is_addressable_valuetype_load (cfg, next_ip, cfg->arg_types[n])) {
 				EMIT_NEW_ARGLOADA (cfg, ins, n);
 			} else {
 				EMIT_NEW_ARGLOAD (cfg, ins, n);
 			}
 			*sp++ = ins;
 			break;
+
 		case CEE_LDLOC_0:
 		case CEE_LDLOC_1:
 		case CEE_LDLOC_2:
 		case CEE_LDLOC_3:
+			n = (*ip) - CEE_LDLOC_0;
+ldloc:
 			CHECK_STACK_OVF (1);
-			n = (*ip)-CEE_LDLOC_0;
 			CHECK_LOCAL (n);
-			if (ip + 1 < end && is_addressable_valuetype_load (cfg, ip + 1, header->locals[n])) {
+			if (next_ip < end && is_addressable_valuetype_load (cfg, next_ip, header->locals[n])) {
 				EMIT_NEW_LOCLOADA (cfg, ins, n);
 			} else {
 				EMIT_NEW_LOCLOAD (cfg, ins, n);
 			}
 			*sp++ = ins;
 			break;
+
 		case CEE_STLOC_0:
 		case CEE_STLOC_1:
 		case CEE_STLOC_2:
 		case CEE_STLOC_3: {
+			n = (*ip) - CEE_STLOC_0;
+stloc:
 			CHECK_STACK (1);
-			n = (*ip)-CEE_STLOC_0;
 			CHECK_LOCAL (n);
 			--sp;
 			*sp = convert_value (cfg, header->locals [n], *sp);
@@ -8221,49 +8226,35 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			break;
 			}
 		case CEE_LDARG_S:
-			CHECK_STACK_OVF (1);
 			n = ip [1];
-			CHECK_ARG (n);
-			if (ip + 2 < end && is_addressable_valuetype_load (cfg, ip + 2, cfg->arg_types[n])) {
-				EMIT_NEW_ARGLOADA (cfg, ins, n);
-			} else {
-				EMIT_NEW_ARGLOAD (cfg, ins, n);
-			}
-			*sp++ = ins;
-			break;
+			goto ldarg;
 		case CEE_LDARGA_S:
-			CHECK_STACK_OVF (1);
 			n = ip [1];
+ldarga:
+			CHECK_STACK_OVF (1);
 			CHECK_ARG (n);
 			NEW_ARGLOADA (cfg, ins, n);
 			MONO_ADD_INS (cfg->cbb, ins);
 			*sp++ = ins;
 			break;
 		case CEE_STARG_S:
+			n = ip [1];
+starg:
 			CHECK_STACK (1);
 			--sp;
-			n = ip [1];
 			CHECK_ARG (n);
-			*sp = convert_value (cfg, param_types [ip [1]], *sp);
-			if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [ip [1]], *sp))
+			*sp = convert_value (cfg, param_types [n], *sp);
+			if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [n], *sp))
 				UNVERIFIED;
 			emit_starg_ir (cfg, sp, n);
 			break;
 		case CEE_LDLOC_S:
-			CHECK_STACK_OVF (1);
 			n = ip [1];
-			CHECK_LOCAL (n);
-			if (ip + 2 < end && is_addressable_valuetype_load (cfg, ip + 2, header->locals[n])) {
-				EMIT_NEW_LOCLOADA (cfg, ins, n);
-			} else {
-				EMIT_NEW_LOCLOAD (cfg, ins, n);
-			}
-			*sp++ = ins;
-			break;
+			goto ldloc;
 		case CEE_LDLOCA_S: {
 			unsigned char *tmp_ip;
 			n = ip [1];
-ldloca_common:
+ldloca:
 			CHECK_STACK_OVF (1);
 			CHECK_LOCAL (n);
 
@@ -8279,14 +8270,9 @@ ldloca_common:
 			break;
 		}
 		case CEE_STLOC_S:
-			CHECK_STACK (1);
-			--sp;
-			CHECK_LOCAL (ip [1]);
-			if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [ip [1]], *sp))
-				UNVERIFIED;
-			emit_stloc_ir (cfg, sp, header, ip [1]);
-			inline_costs += 1;
-			break;
+			n = ip [1];
+			goto stloc;
+
 		case CEE_LDNULL:
 			CHECK_STACK_OVF (1);
 			EMIT_NEW_PCONST (cfg, ins, NULL);
@@ -8294,10 +8280,8 @@ ldloca_common:
 			*sp++ = ins;
 			break;
 		case CEE_LDC_I4_M1:
-			CHECK_STACK_OVF (1);
-			EMIT_NEW_ICONST (cfg, ins, -1);
-			*sp++ = ins;
-			break;
+			n = -1;
+			goto ldc_i4;
 		case CEE_LDC_I4_0:
 		case CEE_LDC_I4_1:
 		case CEE_LDC_I4_2:
@@ -8307,18 +8291,16 @@ ldloca_common:
 		case CEE_LDC_I4_6:
 		case CEE_LDC_I4_7:
 		case CEE_LDC_I4_8:
-			CHECK_STACK_OVF (1);
-			EMIT_NEW_ICONST (cfg, ins, (*ip) - CEE_LDC_I4_0);
-			*sp++ = ins;
-			break;
+			n = (*ip) - CEE_LDC_I4_0;
+			goto ldc_i4;
 		case CEE_LDC_I4_S:
-			CHECK_STACK_OVF (1);
-			EMIT_NEW_ICONST (cfg, ins, (signed char)ip [1]);
-			*sp++ = ins;
-			break;
+			n = (signed char)ip [1];
+			goto ldc_i4;
 		case CEE_LDC_I4:
+			n = (gint32)read32 (ip + 1);
+ldc_i4:
 			CHECK_STACK_OVF (1);
-			EMIT_NEW_ICONST (cfg, ins, (gint32)read32 (ip + 1));
+			EMIT_NEW_ICONST (cfg, ins, n);
 			*sp++ = ins;
 			break;
 		case CEE_LDC_I8:
@@ -12763,59 +12745,23 @@ ldloca_common:
 				break;
 			}
 			case CEE_LDARG:
-				CHECK_STACK_OVF (1);
 				n = read16 (ip + 2);
-				CHECK_ARG (n);
-				if (is_addressable_valuetype_load (cfg, ip + 4, cfg->arg_types[n])) {
-					EMIT_NEW_ARGLOADA (cfg, ins, n);
-				} else {
-					EMIT_NEW_ARGLOAD (cfg, ins, n);
-				}
-				*sp++ = ins;
-				break;
+				goto ldarg;
 			case CEE_LDARGA:
-				CHECK_STACK_OVF (1);
 				n = read16 (ip + 2);
-				CHECK_ARG (n);
-				NEW_ARGLOADA (cfg, ins, n);
-				MONO_ADD_INS (cfg->cbb, ins);
-				*sp++ = ins;
-				break;
+				goto ldarga;
 			case CEE_STARG:
-				CHECK_STACK (1);
-				--sp;
 				n = read16 (ip + 2);
-				CHECK_ARG (n);
-				*sp = convert_value (cfg, param_types [n], *sp);
-				if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [n], *sp))
-					UNVERIFIED;
-				emit_starg_ir (cfg, sp, n);
-				break;
+				goto starg;
 			case CEE_LDLOC:
-				CHECK_STACK_OVF (1);
 				n = read16 (ip + 2);
-				CHECK_LOCAL (n);
-				if (is_addressable_valuetype_load (cfg, ip + 4, header->locals[n])) {
-					EMIT_NEW_LOCLOADA (cfg, ins, n);
-				} else {
-					EMIT_NEW_LOCLOAD (cfg, ins, n);
-				}
-				*sp++ = ins;
-				break;
+				goto ldloc;
 			case CEE_LDLOCA:
 				n = read16 (ip + 2);
-				goto ldloca_common;
+				goto ldloca;
 			case CEE_STLOC:
-				CHECK_STACK (1);
-				--sp;
 				n = read16 (ip + 2);
-				CHECK_LOCAL (n);
-				*sp = convert_value (cfg, header->locals [n], *sp);
-				if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [n], *sp))
-					UNVERIFIED;
-				emit_stloc_ir (cfg, sp, header, n);
-				inline_costs += 1;
-				break;
+				goto stloc;
 			case CEE_LOCALLOC: {
 				CHECK_STACK (1);
 				MonoBasicBlock *non_zero_bb, *end_bb;
