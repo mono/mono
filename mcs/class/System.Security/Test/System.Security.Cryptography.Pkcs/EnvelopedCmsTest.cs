@@ -75,7 +75,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual (0, ep.ContentEncryptionAlgorithm.KeyLength, "ContentEncryptionAlgorithm.KeyLength");
 			Assert.AreEqual (tdesName, ep.ContentEncryptionAlgorithm.Oid.FriendlyName, "ContentEncryptionAlgorithm.Oid.FriendlyName");
 			Assert.AreEqual (tdesOid, ep.ContentEncryptionAlgorithm.Oid.Value, "ContentEncryptionAlgorithm.Oid.Value");
-			Assert.AreEqual (0, ep.ContentEncryptionAlgorithm.Parameters.Length, "ContentEncryptionAlgorithm.Parameters");
 			Assert.AreEqual (p7DataName, ep.ContentInfo.ContentType.FriendlyName, "ContentInfo.ContentType.FriendlyName");
 			Assert.AreEqual (p7DataOid, ep.ContentInfo.ContentType.Value, "ContentInfo.ContentType.Value");
 			Assert.AreEqual (contentLength, ep.ContentInfo.Content.Length, "ContentInfo.Content");
@@ -199,7 +198,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual (192, ep.ContentEncryptionAlgorithm.KeyLength, "ContentEncryptionAlgorithm.KeyLength");
 			Assert.AreEqual (tdesName, ep.ContentEncryptionAlgorithm.Oid.FriendlyName, "ContentEncryptionAlgorithm.Oid.FriendlyName");
 			Assert.AreEqual (tdesOid, ep.ContentEncryptionAlgorithm.Oid.Value, "ContentEncryptionAlgorithm.Oid.Value");
-			Assert.AreEqual (16, ep.ContentEncryptionAlgorithm.Parameters.Length, "ContentEncryptionAlgorithm.Parameters");
 			Assert.AreEqual (p7DataName, ep.ContentInfo.ContentType.FriendlyName, "ContentInfo.ContentType.FriendlyName");
 			Assert.AreEqual (p7DataOid, ep.ContentInfo.ContentType.Value, "ContentInfo.ContentType.Value");
 			Assert.AreEqual (14, ep.ContentInfo.Content.Length, "ContentInfo.Content");
@@ -243,7 +241,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual (192, ep.ContentEncryptionAlgorithm.KeyLength, "ContentEncryptionAlgorithm.KeyLength");
 			Assert.AreEqual (tdesName, ep.ContentEncryptionAlgorithm.Oid.FriendlyName, "ContentEncryptionAlgorithm.Oid.FriendlyName");
 			Assert.AreEqual (tdesOid, ep.ContentEncryptionAlgorithm.Oid.Value, "ContentEncryptionAlgorithm.Oid.Value");
-			Assert.AreEqual (16, ep.ContentEncryptionAlgorithm.Parameters.Length, "ContentEncryptionAlgorithm.Parameters");
 			Assert.AreEqual (p7DataName, ep.ContentInfo.ContentType.FriendlyName, "ContentInfo.ContentType.FriendlyName");
 			Assert.AreEqual (p7DataOid, ep.ContentInfo.ContentType.Value, "ContentInfo.ContentType.Value");
 			Assert.AreEqual ("05-00", BitConverter.ToString (ep.ContentInfo.Content), "ContentInfo.Content");

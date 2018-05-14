@@ -60,7 +60,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual (0, ktri.KeyEncryptionAlgorithm.KeyLength, "KeyEncryptionAlgorithm.KeyLength");
 			Assert.AreEqual ("RSA", ktri.KeyEncryptionAlgorithm.Oid.FriendlyName, "KeyEncryptionAlgorithm.Oid.FriendlyName");
 			Assert.AreEqual ("1.2.840.113549.1.1.1", ktri.KeyEncryptionAlgorithm.Oid.Value, "KeyEncryptionAlgorithm.Oid.Value");
-			Assert.AreEqual (0, ktri.KeyEncryptionAlgorithm.Parameters.Length, "KeyEncryptionAlgorithm.Parameters");
 			Assert.AreEqual (SubjectIdentifierType.IssuerAndSerialNumber, ktri.RecipientIdentifier.Type, "RecipientIdentifier.Type");
 			X509IssuerSerial xis = (X509IssuerSerial) ktri.RecipientIdentifier.Value;
 			Assert.AreEqual ("CN=Motus Technologies inc.(test)", xis.IssuerName, "RecipientIdentifier.Value.IssuerName");
@@ -78,7 +77,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual (0, ktri.KeyEncryptionAlgorithm.KeyLength, "KeyEncryptionAlgorithm.KeyLength");
 			Assert.AreEqual ("RSA", ktri.KeyEncryptionAlgorithm.Oid.FriendlyName, "KeyEncryptionAlgorithm.Oid.FriendlyName");
 			Assert.AreEqual ("1.2.840.113549.1.1.1", ktri.KeyEncryptionAlgorithm.Oid.Value, "KeyEncryptionAlgorithm.Oid.Value");
-			Assert.AreEqual (0, ktri.KeyEncryptionAlgorithm.Parameters.Length, "KeyEncryptionAlgorithm.Parameters");
 			Assert.AreEqual (SubjectIdentifierType.SubjectKeyIdentifier, ktri.RecipientIdentifier.Type, "RecipientIdentifier.Type");
 			Assert.AreEqual ("02E1A73254AEFDC0A43236F6FE236A037228B1F7", (string)ktri.RecipientIdentifier.Value, "RecipientIdentifier.Value");
 			Assert.AreEqual (RecipientInfoType.KeyTransport, ktri.Type, "Type");

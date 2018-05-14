@@ -50,7 +50,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual (0, ai.KeyLength, "KeyLength");
 			Assert.AreEqual (defaultName, ai.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (defaultOid, ai.Oid.Value, "Oid.Value");
-			Assert.AreEqual (0, ai.Parameters.Length, "Parameters");
 		}
 
 		[Test]
@@ -60,7 +59,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			AlgorithmIdentifier ai = new AlgorithmIdentifier (o);
 			Assert.AreEqual (0, ai.KeyLength, "KeyLength");
 			Assert.AreEqual (validOid, ai.Oid.Value, "Oid");
-			Assert.AreEqual (0, ai.Parameters.Length, "Parameters");
 		}
 
 		[Test]
@@ -70,7 +68,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			AlgorithmIdentifier ai = new AlgorithmIdentifier (null);
 			Assert.IsNull (ai.Oid, "Oid");
 			Assert.AreEqual (0, ai.KeyLength, "KeyLength");
-			Assert.AreEqual (0, ai.Parameters.Length, "Parameters");
 		}
 
 		[Test]
@@ -80,7 +77,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			AlgorithmIdentifier ai = new AlgorithmIdentifier (o, 128);
 			Assert.AreEqual (128, ai.KeyLength, "KeyLength");
 			Assert.AreEqual (validOid, ai.Oid.Value, "Oid");
-			Assert.AreEqual (0, ai.Parameters.Length, "Parameters");
 		}
 
 		[Test]
@@ -90,7 +86,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			AlgorithmIdentifier ai = new AlgorithmIdentifier (null, 128);
 			Assert.IsNull (ai.Oid, "Oid");
 			Assert.AreEqual (128, ai.KeyLength, "KeyLength");
-			Assert.AreEqual (0, ai.Parameters.Length, "Parameters");
 		}
 
 		[Test]
@@ -101,7 +96,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			AlgorithmIdentifier ai = new AlgorithmIdentifier (o, -1);
 			Assert.AreEqual (-1, ai.KeyLength, "KeyLength");
 			Assert.AreEqual (validOid, ai.Oid.Value, "Oid");
-			Assert.AreEqual (0, ai.Parameters.Length, "Parameters");
 		}
 
 		[Test]
@@ -124,16 +118,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual (validOid, ai.Oid.Value, "Oid");
 			ai.Oid = null;
 			Assert.IsNull (ai.Oid, "Oid-Null");
-		}
-
-		[Test]
-		public void Parameters () 
-		{
-			AlgorithmIdentifier ai = new AlgorithmIdentifier ();
-			ai.Parameters = new byte[2] { 0x05, 0x00 }; // ASN.1 NULL
-			Assert.AreEqual ("05-00", BitConverter.ToString (ai.Parameters), "Parameters");
-			ai.Parameters = null;
-			Assert.IsNull (ai.Parameters, "Parameters-Null");
 		}
 	}
 }
