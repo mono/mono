@@ -104,10 +104,15 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\Oids.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObject.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObjectCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObjectEnumerator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Xml\X509IssuerSerial.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\AlgorithmIdentifier.cs" />
@@ -133,9 +138,6 @@
     <Compile Include="System.Security.Cryptography.Pkcs\SubjectIdentifierOrKey.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\SubjectIdentifierOrKeyType.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\SubjectIdentifierType.cs" />
-    <Compile Include="System.Security.Cryptography\CryptographicAttribute.cs" />
-    <Compile Include="System.Security.Cryptography\CryptographicAttributeCollection.cs" />
-    <Compile Include="System.Security.Cryptography\CryptographicAttributeEnumerator.cs" />
     <Compile Include="System.Security.Cryptography\DataProtectionScope.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedData.cs" />
   </ItemGroup>
