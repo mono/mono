@@ -224,7 +224,7 @@ test-local run-test-local run-test-ondotnet-local:
 ccomma = ,
 define RESOURCE_template
 $(1).resources: $(2)
-	$(RESGEN) "$$<" "$$@"
+	$$(RESGEN) "$$<" "$$@"
 
 GEN_RESOURCE_DEPS += $(1).resources
 GEN_RESOURCE_FLAGS += -resource:$(1).resources
