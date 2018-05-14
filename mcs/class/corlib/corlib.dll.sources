@@ -1111,7 +1111,9 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/globalization/CalendricalCalculationsHelper.cs
 ../referencesource/mscorlib/system/globalization/calendardata.cs
 ../referencesource/mscorlib/system/globalization/calendarweekrule.cs
-../referencesource/mscorlib/system/globalization/charunicodeinfo.cs
+System/Debug.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/CharUnicodeInfo.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/CharUnicodeInfoData.cs
 ../referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
 ../referencesource/mscorlib/system/globalization/compareinfo.cs
 ../referencesource/mscorlib/system/globalization/culturenotfoundexception.cs
