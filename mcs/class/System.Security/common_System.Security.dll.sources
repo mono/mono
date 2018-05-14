@@ -33,7 +33,7 @@ System.Security.Cryptography.Pkcs/Pkcs9SigningTime.cs
 System.Security.Cryptography.Pkcs/RecipientInfo.cs
 System.Security.Cryptography.Pkcs/RecipientInfoCollection.cs
 System.Security.Cryptography.Pkcs/RecipientInfoEnumerator.cs
-System.Security.Cryptography.Pkcs/RecipientInfoType.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/RecipientInfoType.cs
 System.Security.Cryptography.Pkcs/SubjectIdentifier.cs
 System.Security.Cryptography.Pkcs/SubjectIdentifierOrKey.cs
 System.Security.Cryptography.Pkcs/SubjectIdentifierOrKeyType.cs
