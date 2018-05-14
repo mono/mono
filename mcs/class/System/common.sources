@@ -42,7 +42,7 @@ System.IO/WatcherChangeTypes.cs
 
 System.Net/BasicClient.cs
 System.Net/BindIPEndPoint.cs
-System.Net/MonoChunkStream.cs
+System.Net/MonoChunkParser.cs
 System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
