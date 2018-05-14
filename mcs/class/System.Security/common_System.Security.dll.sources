@@ -36,7 +36,7 @@ System.Security.Cryptography.Pkcs/RecipientInfoEnumerator.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/RecipientInfoType.cs
 System.Security.Cryptography.Pkcs/SubjectIdentifier.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/SubjectIdentifierOrKey.cs
-System.Security.Cryptography.Pkcs/SubjectIdentifierOrKeyType.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/SubjectIdentifierOrKeyType.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/SubjectIdentifierType.cs
 
 # System.Security.Cryptography.Xml
