@@ -37,7 +37,7 @@ System.Security.Cryptography.Pkcs/RecipientInfoType.cs
 System.Security.Cryptography.Pkcs/SubjectIdentifier.cs
 System.Security.Cryptography.Pkcs/SubjectIdentifierOrKey.cs
 System.Security.Cryptography.Pkcs/SubjectIdentifierOrKeyType.cs
-System.Security.Cryptography.Pkcs/SubjectIdentifierType.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/SubjectIdentifierType.cs
 
 # System.Security.Cryptography.Xml
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Xml/X509IssuerSerial.cs
