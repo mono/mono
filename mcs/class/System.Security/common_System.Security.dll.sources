@@ -11,7 +11,7 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/CryptographicAttributeObjectCollection.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/CryptographicAttributeObjectEnumerator.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/Internal/Cryptography/Oids.cs
-System.Security.Cryptography/DataProtectionScope.cs
+../../../external/corefx/src/System.Security.Cryptography.ProtectedData/src/System/Security/Cryptography/DataProtectionScope.cs
 System.Security.Cryptography/ProtectedData.cs
 
 # System.Security.Cryptography.Pkcs
