@@ -1,7 +1,10 @@
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/CryptographicAttributeObjectCollectionTests.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/CmsRecipientCollectionTests.cs
 
 # Dependencies
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
+../../../external/corefx/src/Common/tests/System/Security/Cryptography/ByteUtils.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/Oids.cs
-../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/CertLoader.Settings.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/CertLoader.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/CertLoader.Settings.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/Certificates.cs
