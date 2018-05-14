@@ -177,9 +177,11 @@
 ../../../external/corefx/src/System.Memory/tests/ReadOnlySpan/*.cs:GetPinnableReference.cs
 ../../../external/corefx/src/System.Memory/tests/Span/*.cs:Reflection.cs,GetPinnableReference.cs
 
-#../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/*.cs
-#../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/Formatter/*.cs
-#../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/Parser/*.cs
+../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/*.cs
+../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/Formatter/*.cs
+../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/Parser/*.cs
+# FIXME: this is internal in corlib
+../../../external/corefx/src/Common/src/System/MutableDecimal.cs
 
 # System.Collections
 ../../../external/corefx/src/Common/tests/System/Collections/CollectionAsserts.cs
