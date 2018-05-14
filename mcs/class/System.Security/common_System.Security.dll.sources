@@ -29,7 +29,7 @@ System.Security.Cryptography.Pkcs/Pkcs9DocumentDescription.cs
 System.Security.Cryptography.Pkcs/Pkcs9DocumentName.cs
 System.Security.Cryptography.Pkcs/Pkcs9MessageDigest.cs
 System.Security.Cryptography.Pkcs/Pkcs9SigningTime.cs
-System.Security.Cryptography.Pkcs/PublicKeyInfo.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/PublicKeyInfo.cs
 System.Security.Cryptography.Pkcs/RecipientInfo.cs
 System.Security.Cryptography.Pkcs/RecipientInfoCollection.cs
 System.Security.Cryptography.Pkcs/RecipientInfoEnumerator.cs
