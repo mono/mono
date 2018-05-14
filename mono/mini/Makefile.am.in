@@ -463,6 +463,7 @@ common_sources = \
 	lldb.h			\
 	lldb.c	\
 	memory-access.c	\
+	intrinsics.c \
 	mini-profiler.c	\
 	interp-stubs.c \
 	aot-runtime.h	\
@@ -626,8 +627,8 @@ endif
 
 libmono_ee_interp_la_SOURCES = $(interp_sources)
 libmono_ee_interp_la_CFLAGS = $(mono_CFLAGS)
-libmono_ee_interp_la_LDFLAGS = $(libmonoldflags)
 if BITCODE
+libmono_ee_interp_la_LDFLAGS = $(libmonoldflags)
 if DISABLE_INTERPRETER
 libmono_ee_interp_la_LIBADD = libmonosgen-2.0.la
 endif

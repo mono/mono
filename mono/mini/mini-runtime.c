@@ -838,8 +838,6 @@ mono_jit_thread_attach (MonoDomain *domain)
 	MonoDomain *orig;
 	gboolean attached;
 
-	g_assert (!mono_threads_is_blocking_transition_enabled ());
-
 	if (!domain) {
 		/* Happens when called from AOTed code which is only used in the root domain. */
 		domain = mono_get_root_domain ();
@@ -4039,7 +4037,7 @@ mini_init (const char *filename, const char *runtime_version)
 	callbacks.get_weak_field_indexes = mono_aot_get_weak_field_indexes;
 
 #ifdef TARGET_OSX
-	callbacks.runtime_telemetry_callback = mini_register_sigterm_handler;
+	callbacks.install_state_summarizer = mini_register_sigterm_handler;
 #endif
 
 	mono_install_callbacks (&callbacks);

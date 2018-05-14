@@ -918,7 +918,7 @@
     <Compile Include="System.Net\IPv6Address.cs" />
     <Compile Include="System.Net\IWebProxyScript.cs" />
     <Compile Include="System.Net\ListenerPrefix.cs" />
-    <Compile Include="System.Net\MonoChunkStream.cs" />
+    <Compile Include="System.Net\MonoChunkParser.cs" />
     <Compile Include="System.Net\MonoHttpDate.cs" />
     <Compile Include="System.Net\NetConfig.cs" />
     <Compile Include="System.Net\RequestStream.cs" />
@@ -1391,12 +1391,15 @@
     <Compile Include="System.Net.Mail\SmtpPermissionAttribute.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\DnsAsyncResult.cs" />
     <Compile Include="System.Net\DnsPermission.cs" />
     <Compile Include="System.Net\DnsPermissionAttribute.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -1410,6 +1413,7 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -1421,6 +1425,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Runtime.InteropServices\StandardOleMarshalObject.cs" />
@@ -1472,9 +1477,12 @@
     <Compile Include="System.Net.Mail\SmtpClient.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -1488,6 +1496,7 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -1499,6 +1508,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
@@ -1535,9 +1545,12 @@
     <Compile Include="System.Net.Mail\SmtpClient.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -1551,6 +1564,7 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -1562,6 +1576,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
@@ -1597,9 +1612,12 @@
     <Compile Include="System.Net.Mail\SmtpClient.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -1613,6 +1631,7 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -1624,6 +1643,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
@@ -1713,9 +1733,12 @@
     <Compile Include="System.Net.Mail\SmtpClient.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -1729,6 +1752,7 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -1740,6 +1764,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
@@ -1775,9 +1800,12 @@
     <Compile Include="System.Net.Mail\SmtpClient.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -1791,6 +1819,7 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -1802,6 +1831,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
@@ -1841,9 +1871,12 @@
     <Compile Include="System.Net.Mail\SmtpClient.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -1857,6 +1890,7 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -1868,6 +1902,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
@@ -1903,9 +1938,12 @@
     <Compile Include="System.Net.Mail\SmtpClient.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -1919,6 +1957,7 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -1930,6 +1969,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
@@ -1965,9 +2005,12 @@
     <Compile Include="System.Net.Mail\SmtpClient.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -1981,6 +2024,7 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -1992,6 +2036,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
@@ -2031,9 +2076,12 @@
     <Compile Include="System.Net.Mail\SmtpClient.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -2047,6 +2095,7 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -2058,6 +2107,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
@@ -2456,12 +2506,15 @@
     <Compile Include="System.Net.Mail\SmtpPermissionAttribute.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\DnsAsyncResult.cs" />
     <Compile Include="System.Net\DnsPermission.cs" />
     <Compile Include="System.Net\DnsPermissionAttribute.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -2475,6 +2528,7 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -2486,6 +2540,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Runtime.InteropServices\StandardOleMarshalObject.cs" />
@@ -2532,9 +2587,12 @@
     <Compile Include="System.Net.Mail\SmtpClient.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -2547,6 +2605,7 @@
     <Compile Include="System.Net\HttpWebRequest.cs" />
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -2558,6 +2617,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
   </ItemGroup>
@@ -2596,9 +2656,12 @@
     <Compile Include="System.Net.Mail\SmtpClient.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -2612,6 +2675,7 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -2623,6 +2687,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
@@ -2658,9 +2723,12 @@
     <Compile Include="System.Net.Mail\SmtpClient.cs" />
     <Compile Include="System.Net.Security\SslStream.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
+    <Compile Include="System.Net\BufferedReadStream.cs" />
     <Compile Include="System.Net\ChunkedInputStream.cs" />
+    <Compile Include="System.Net\ContentDecodeStream.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
+    <Compile Include="System.Net\FixedSizeReadStream.cs" />
     <Compile Include="System.Net\HttpConnection.cs" />
     <Compile Include="System.Net\HttpListener.cs" />
     <Compile Include="System.Net\HttpListener.Mono.cs" />
@@ -2674,6 +2742,7 @@
     <Compile Include="System.Net\HttpWebResponse.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\MacProxy.cs" />
+    <Compile Include="System.Net\MonoChunkStream.cs" />
     <Compile Include="System.Net\NtlmClient.cs" />
     <Compile Include="System.Net\ResponseStream.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
@@ -2685,6 +2754,7 @@
     <Compile Include="System.Net\WebConnectionStream.cs" />
     <Compile Include="System.Net\WebConnectionTunnel.cs" />
     <Compile Include="System.Net\WebOperation.cs" />
+    <Compile Include="System.Net\WebReadStream.cs" />
     <Compile Include="System.Net\WebRequestStream.cs" />
     <Compile Include="System.Net\WebResponseStream.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
