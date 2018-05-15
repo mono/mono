@@ -117,7 +117,7 @@ namespace System.IO {
 		void InitWatcher ()
 		{
 			lock (lockobj) {
-				if (watcher != null)
+				if (watcher_handle != null)
 					return;
 
 				string managed = Environment.GetEnvironmentVariable ("MONO_MANAGED_WATCHER");
