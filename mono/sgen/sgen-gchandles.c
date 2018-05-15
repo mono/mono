@@ -48,11 +48,11 @@ protocol_gchandle_update (int handle_type, gpointer link, gpointer old_value, gp
 		return;
 
 	if (!old && new_)
-		binary_protocol_dislink_add (link, MONO_GC_REVEAL_POINTER (new_value, TRUE), track);
+		sgen_binary_protocol_dislink_add (link, MONO_GC_REVEAL_POINTER (new_value, TRUE), track);
 	else if (old && !new_)
-		binary_protocol_dislink_remove (link, track);
+		sgen_binary_protocol_dislink_remove (link, track);
 	else if (old && new_ && old_value != new_value)
-		binary_protocol_dislink_update (link, MONO_GC_REVEAL_POINTER (new_value, TRUE), track);
+		sgen_binary_protocol_dislink_update (link, MONO_GC_REVEAL_POINTER (new_value, TRUE), track);
 }
 
 /* Returns the new value in the slot, or NULL if the CAS failed. */
@@ -365,6 +365,9 @@ sgen_gchandle_get_metadata (guint32 gchandle)
 void
 sgen_gchandle_free (guint32 gchandle)
 {
+	if (!gchandle)
+		return;
+
 	guint32 index = MONO_GC_HANDLE_SLOT (gchandle);
 	GCHandleType type = MONO_GC_HANDLE_TYPE (gchandle);
 	HandleData *handles = gc_handles_for_type (type);
@@ -406,7 +409,7 @@ null_link_if_necessary (gpointer hidden, GCHandleType handle_type, int max_gener
 	if (object_older_than (obj, max_generation))
 		return hidden;
 
-	if (major_collector.is_object_live (obj))
+	if (sgen_major_collector.is_object_live (obj))
 		return hidden;
 
 	/* Clear link if object is ready for finalization. This check may be redundant wrt is_object_live(). */
@@ -432,7 +435,7 @@ scan_for_weak (gpointer hidden, GCHandleType handle_type, int max_generation, gp
 	GCObject *obj = (GCObject *)MONO_GC_REVEAL_POINTER (hidden, is_weak);
 
 	/* If the object is dead we free the gc handle */
-	if (!sgen_is_object_alive (obj))
+	if (!sgen_is_object_alive_for_current_gen (obj))
 		return NULL;
 
 	/* Relocate it */
@@ -446,7 +449,7 @@ scan_for_weak (gpointer hidden, GCHandleType handle_type, int max_generation, gp
 			GCObject *field = *addr;
 
 			/* if the object in the weak field is alive, we relocate it */
-			if (field && sgen_is_object_alive (field))
+			if (field && sgen_is_object_alive_for_current_gen (field))
 				ctx->ops->copy_or_mark_object (addr, ctx->queue);
 			else
 				*addr = NULL;

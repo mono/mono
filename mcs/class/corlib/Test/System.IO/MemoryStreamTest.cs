@@ -334,6 +334,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BeginReadIsBlockingNextRead ()
 		{
 			byte[] readBytes = new byte[5];
@@ -394,6 +395,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BeginRead_BeginWrite ()
 		{
 			byte[] readBytes = new byte[5];

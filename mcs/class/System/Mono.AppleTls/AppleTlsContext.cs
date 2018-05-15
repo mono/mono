@@ -66,20 +66,16 @@ namespace Mono.AppleTls
 
 		Exception lastException;
 
-		public AppleTlsContext (
-			MobileAuthenticatedStream parent, bool serverMode, string targetHost,
-			SSA.SslProtocols enabledProtocols, X509Certificate serverCertificate,
-			X509CertificateCollection clientCertificates, bool askForClientCert)
-			: base (parent, serverMode, targetHost, enabledProtocols,
-				serverCertificate, clientCertificates, askForClientCert)
+		public AppleTlsContext (MobileAuthenticatedStream parent, MonoSslAuthenticationOptions options)
+			: base (parent, options)
 		{
 			handle = GCHandle.Alloc (this, GCHandleType.Weak);
 			readFunc = NativeReadCallback;
 			writeFunc = NativeWriteCallback;
 
 			if (IsServer) {
-				if (serverCertificate == null)
-					throw new ArgumentNullException ("serverCertificate");
+				if (LocalServerCertificate == null)
+					throw new ArgumentNullException (nameof (LocalServerCertificate));
 			}
 		}
 
@@ -279,18 +275,25 @@ namespace Mono.AppleTls
 			result = SSLSetConnection (Handle, GCHandle.ToIntPtr (handle));
 			CheckStatusAndThrow (result);
 
+			/*
+			 * If 'EnabledProtocols' is zero, then we use the system default values.
+			 *
+			 * In CoreFX, 'ServicePointManager.SecurityProtocol' defaults to
+			 * 'SecurityProtocolType.SystemDefault', which is zero.
+			 */
+
 			if ((EnabledProtocols & SSA.SslProtocols.Tls) != 0)
 				MinProtocol = SslProtocol.Tls_1_0;
 			else if ((EnabledProtocols & SSA.SslProtocols.Tls11) != 0)
 				MinProtocol = SslProtocol.Tls_1_1;
-			else
+			else if ((EnabledProtocols & SSA.SslProtocols.Tls12) != 0)
 				MinProtocol = SslProtocol.Tls_1_2;
 
 			if ((EnabledProtocols & SSA.SslProtocols.Tls12) != 0)
 				MaxProtocol = SslProtocol.Tls_1_2;
 			else if ((EnabledProtocols & SSA.SslProtocols.Tls11) != 0)
 				MaxProtocol = SslProtocol.Tls_1_1;
-			else
+			else if ((EnabledProtocols & SSA.SslProtocols.Tls) != 0)
 				MaxProtocol = SslProtocol.Tls_1_0;
 
 			if (Settings != null && Settings.EnabledCiphers != null) {

@@ -45,7 +45,7 @@
 #    endif
 #endif
 
-const char *my_charset;
+const char *eg_my_charset;
 
 /*
  * Character set conversion
@@ -98,7 +98,7 @@ g_unichar_break_type (gunichar c)
 	return G_UNICODE_BREAK_UNKNOWN;
 }
 
-gunichar
+static gunichar
 g_unichar_case (gunichar c, gboolean upper)
 {
 	gint8 i, i2;
@@ -206,18 +206,18 @@ static gboolean is_utf8;
 gboolean
 g_get_charset (G_CONST_RETURN char **charset)
 {
-	if (my_charset == NULL) {
+	if (eg_my_charset == NULL) {
 		/* These shouldn't be heap allocated */
 #if defined(HAVE_LOCALCHARSET_H)
-		my_charset = locale_charset ();
+		eg_my_charset = locale_charset ();
 #else
-		my_charset = "UTF-8";
+		eg_my_charset = "UTF-8";
 #endif
-		is_utf8 = strcmp (my_charset, "UTF-8") == 0;
+		is_utf8 = strcmp (eg_my_charset, "UTF-8") == 0;
 	}
 	
 	if (charset != NULL)
-		*charset = my_charset;
+		*charset = eg_my_charset;
 
 	return is_utf8;
 }
@@ -228,7 +228,7 @@ g_locale_to_utf8 (const gchar *opsysstring, gssize len, gsize *bytes_read, gsize
 {
 	g_get_charset (NULL);
 
-	return g_convert (opsysstring, len, "UTF-8", my_charset, bytes_read, bytes_written, gerror);
+	return g_convert (opsysstring, len, "UTF-8", eg_my_charset, bytes_read, bytes_written, gerror);
 }
 
 gchar *
@@ -236,5 +236,5 @@ g_locale_from_utf8 (const gchar *utf8string, gssize len, gsize *bytes_read, gsiz
 {
 	g_get_charset (NULL);
 
-	return g_convert (utf8string, len, my_charset, "UTF-8", bytes_read, bytes_written, gerror);
+	return g_convert (utf8string, len, eg_my_charset, "UTF-8", bytes_read, bytes_written, gerror);
 }

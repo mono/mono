@@ -102,8 +102,8 @@ namespace MonoTests.Microsoft.Build.Execution
 			AssertHelper.GreaterOrEqual (endBuildDone, TimeSpan.FromSeconds (1), "#2");
 			AssertHelper.GreaterOrEqual (waitDone, TimeSpan.FromSeconds (1), "#3");
 			AssertHelper.GreaterOrEqual (endBuildDone, waitDone, "#4");
-			AssertHelper.LessOrEqual (endBuildDone, TimeSpan.FromSeconds (2), "#5");
-			AssertHelper.LessOrEqual (waitDone, TimeSpan.FromSeconds (2), "#6");
+			AssertHelper.LessOrEqual (endBuildDone, TimeSpan.FromSeconds (10.0), "#5");
+			AssertHelper.LessOrEqual (waitDone, TimeSpan.FromSeconds (10.0), "#6");
 		}
 		
 		[Test]

@@ -12,6 +12,7 @@
 
 #include "config.h"
 #include "mini-gc.h"
+#include "mini-runtime.h"
 #include <mono/metadata/gc-internals.h>
 
 static gboolean
@@ -94,8 +95,6 @@ typedef struct {
 	guint8 *reg_ref_bitmap;
 	guint8 *reg_pin_bitmap;
 } MonoCompileGC;
-
-#define ALIGN_TO(val,align) ((((mgreg_t)val) + ((align) - 1)) & ~((align) - 1))
 
 #undef DEBUG
 
@@ -1678,7 +1677,7 @@ process_variables (MonoCompile *cfg)
 
 		/* For some reason, 'this' is byref */
 		if (sig->hasthis && ins == cfg->args [0] && !cfg->method->klass->valuetype) {
-			t = &cfg->method->klass->byval_arg;
+			t = m_class_get_byval_arg (cfg->method->klass);
 			is_this = TRUE;
 		}
 
@@ -1968,7 +1967,7 @@ process_param_area_slots (MonoCompile *cfg)
 	}
 
 	/*
-	 * We treat param area slots as being part of the callee's frame, to be able to handle tail calls which overwrite
+	 * We treat param area slots as being part of the callee's frame, to be able to handle tailcalls which overwrite
 	 * the argument area of the caller.
 	 */
 }

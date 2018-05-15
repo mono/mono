@@ -379,6 +379,26 @@ namespace System {
             return t1._ticks >= t2._ticks;
         }
 
+        public static TimeSpan operator / (TimeSpan timeSpan, double divisor)
+        {
+            if (double.IsNaN (divisor)) {
+                throw new ArgumentException (SR.Arg_CannotBeNaN, nameof (divisor));
+            }
+
+            double ticks = Math.Round (timeSpan.Ticks / divisor);
+            if (ticks > long.MaxValue | ticks < long.MinValue || double.IsNaN (ticks)) {
+                throw new OverflowException (SR.Overflow_TimeSpanTooLong);
+            }
+
+            return FromTicks ((long)ticks);
+        }
+
+        // Using floating-point arithmetic directly means that infinities can be returned, which is reasonable
+        // if we consider TimeSpan.FromHours(1) / TimeSpan.Zero asks how many zero-second intervals there are in
+        // an hour for which infinity is the mathematic correct answer. Having TimeSpan.Zero / TimeSpan.Zero return NaN
+        // is perhaps less useful, but no less useful than an exception.
+        public static double operator /(TimeSpan t1, TimeSpan t2) => t1.Ticks / (double)t2.Ticks;
+
 
         //
         // In .NET Framework v1.0 - v3.5 System.TimeSpan did not implement IFormattable
@@ -412,10 +432,16 @@ namespace System {
         //        "TimeSpan_LegacyFormatMode"=dword:00000001
         //
 #if !FEATURE_CORECLR
+#if MONO
+        private static bool LegacyFormatMode() {
+			return false;
+		}
+#else
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern bool LegacyFormatMode();
+#endif
 #endif // !FEATURE_CORECLR
         //
         // In Silverlight v4, specifying the APP_EARLIER_THAN_SL4.0 quirks mode allows applications to

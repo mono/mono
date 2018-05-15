@@ -20,6 +20,7 @@
 #endif
 #include <string.h>
 #include "mini.h"
+#include "mini-runtime.h"
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-memory-model.h>
@@ -86,17 +87,17 @@ static char *
 string_to_utf8 (MonoString *s)
 {
 	char *as;
-	GError *error = NULL;
+	GError *gerror = NULL;
 
 	g_assert (s);
 
 	if (!s->length)
 		return g_strdup ("");
 
-	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, NULL, &error);
-	if (error) {
+	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, NULL, &gerror);
+	if (gerror) {
 		/* Happens with StringBuilders */
-		g_error_free (error);
+		g_error_free (gerror);
 		return g_strdup ("<INVALID UTF8>");
 	}
 	else
@@ -142,7 +143,26 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 	g_free (fname);
 
 	if (!ebp) {
+
+// https://github.com/mono/mono/issues/8572
+// Build fails on Redhat 6.8 with GCC 4.4.7.
+// Old gcc does not allow pragma diagnostic within function.
+#if __clang__ || __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+#define GCC_PRAGMA_DIAGNOSTIC_WITHIN_FUNCTION 1
+#endif
+
+#if GCC_PRAGMA_DIAGNOSTIC_WITHIN_FUNCTION
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunknown-warning-option"
+#pragma GCC diagnostic ignored "-Wframe-address"
+#endif
+
 		printf (") ip: %p\n", MONO_RETURN_ADDRESS_N (1));
+
+#if GCC_PRAGMA_DIAGNOSTIC_WITHIN_FUNCTION
+#pragma GCC diagnostic pop
+#endif
+
 		goto unlock;
 	}
 
@@ -173,7 +193,7 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 
 	if (mono_method_signature (method)->hasthis) {
 		gpointer *this_obj = (gpointer *)(ebp + arg_info [0].offset);
-		if (method->klass->valuetype) {
+		if (m_class_is_valuetype (method->klass)) {
 			printf ("value:%p, ", *arg_in_stack_slot(this_obj, gpointer *));
 		} else {
 			o = *arg_in_stack_slot(this_obj, MonoObject *);
@@ -188,7 +208,7 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 					printf ("this:[STRING:%p:%s], ", o, as);
 					g_free (as);
 				} else {
-					printf ("this:%p[%s.%s %s], ", o, klass->name_space, klass->name, o->vtable->domain->friendly_name);
+					printf ("this:%p[%s.%s %s], ", o, m_class_get_name_space (klass), m_class_get_name (klass), o->vtable->domain->friendly_name);
 				}
 			} else 
 				printf ("this:NULL, ");
@@ -253,7 +273,7 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 				} else if (klass == mono_defaults.runtimetype_class) {
 					printf ("[TYPE:%s], ", mono_type_full_name (((MonoReflectionType*)o)->type));
 				} else
-					printf ("[%s.%s:%p], ", klass->name_space, klass->name, o);
+					printf ("[%s.%s:%p], ", m_class_get_name_space (klass), m_class_get_name (klass), o);
 			} else {
 				printf ("%p, ", *arg_in_stack_slot(cpos, gpointer));
 			}
@@ -380,7 +400,7 @@ mono_trace_leave_method (MonoMethod *method, ...)
 			} else if  (o->vtable->klass == mono_defaults.int64_class) {
 				printf ("[INT64:%p:%lld]", o, (long long)*((gint64 *)((char *)o + sizeof (MonoObject))));	
 			} else
-				printf ("[%s.%s:%p]", o->vtable->klass->name_space, o->vtable->klass->name, o);
+				printf ("[%s.%s:%p]", m_class_get_name_space (mono_object_class (o)), m_class_get_name (mono_object_class (o)), o);
 		} else
 			printf ("[OBJECT:%p]", o);
 	       

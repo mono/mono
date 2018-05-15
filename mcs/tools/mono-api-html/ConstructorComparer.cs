@@ -68,7 +68,7 @@ namespace Xamarin.ApiDiff {
 			if (base.Equals (source, target, changes))
 				return true;
 				
-			var change = new ApiChange ();
+			var change = new ApiChange (GetDescription (source));
 			change.Header = "Modified " + GroupName;
 			RenderMethodAttributes (source, target, change);
 			RenderReturnType (source, target, change);
@@ -125,7 +125,7 @@ namespace Xamarin.ApiDiff {
 				foreach (var p in genericp.Elements ("generic-parameter")) {
 					list.Add (p.GetTypeName ("name"));
 				}
-				sb.Append ("&lt;").Append (String.Join (", ", list)).Append ("&gt;");
+				sb.Append (Formatter.LesserThan).Append (String.Join (", ", list)).Append (Formatter.GreaterThan);
 			}
 
 			sb.Append (" (");

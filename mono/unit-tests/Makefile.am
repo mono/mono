@@ -1,3 +1,5 @@
+include $(top_srcdir)/mk/common.mk
+
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) -DMONO_BINDIR=\"$(bindir)/\" -DMONO_ASSEMBLIES=\"$(assembliesdir)\" -DMONO_CFG_DIR=\"$(confdir)\"
 
 CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
@@ -19,10 +21,11 @@ else
 LLVMMONOF=$(LLVM_LIBS) $(LLVM_LDFLAGS)
 endif
 
+glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 test_cflags = $(AM_CFLAGS) $(SGEN_DEFINES)
 test_ldadd = libtestlib.la \
-	$(LIBGC_LIBS) $(GLIB_LIBS) -lm $(LIBICONV) $(LLVMMONOF)
+	$(LIBGC_LIBS) $(glib_libs) $(LLVMMONOF)
 if HOST_DARWIN
 test_ldflags = -framework CoreFoundation -framework Foundation
 endif
@@ -32,12 +35,21 @@ sgen_libs = \
 	$(monodir)/mono/metadata/libmonoruntimesgen.la	\
 	$(monodir)/mono/sgen/libmonosgen.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV)
+	$(glib_libs)
+
+mini_libs = \
+	$(monodir)/mono/mini/libmini.la
+
+if !DISABLE_INTERPRETER
+mini_libs += $(monodir)/mono/mini/libmono-ee-interp.la
+endif
+
+if !DISABLE_DEBUGGER_AGENT
+mini_libs += $(monodir)/mono/mini/libmono-dbg.la
+endif
 
 if !CROSS_COMPILE
 if !HOST_WIN32
-if SUPPORT_BOEHM
-if SUPPORT_SGEN
 
 noinst_LTLIBRARIES = libtestlib.la
 libtestlib_la_SOURCES =
@@ -70,13 +82,13 @@ test_mono_handle_LDFLAGS = $(test_ldflags)
 
 test_mono_callspec_SOURCES = test-mono-callspec.c
 test_mono_callspec_CFLAGS = $(AM_CFLAGS)
-test_mono_callspec_LDADD = $(test_ldadd) ../mini/libmini.la $(sgen_libs)
+test_mono_callspec_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs)
 test_mono_callspec_LDFLAGS = $(test_ldflags)
 test_mono_callspec_DEPENDENCIES = callspec.exe
 
 test_mono_string_SOURCES = test-mono-string.c
 test_mono_string_CFLAGS = $(test-cflags)
-test_mono_string_LDADD = $(test_ldadd) ../mini/libmini.la $(sgen_libs)
+test_mono_string_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs)
 test_mono_string_LDFLAGS = $(test_ldflags)
 
 check_PROGRAMS = test-sgen-qsort test-memfuncs test-mono-linked-list-set test-conc-hashtable test-mono-handle	\
@@ -103,8 +115,6 @@ clean-local:
 %.exe: %.cs
 	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
 
-endif SUPPORT_SGEN
-endif SUPPORT_BOEHM
 endif !HOST_WIN32
 endif !CROSS_COMPILE
 

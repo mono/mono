@@ -9,7 +9,8 @@ namespace Mono.Profiler.Log {
 	public sealed class LogStreamHeader {
 		
 		const int MinVersion = 13;
-		const int MaxVersion = 15;
+
+		const int MaxVersion = 17;
 
 		const int Id = 0x4d505a01;
 
@@ -20,6 +21,8 @@ namespace Mono.Profiler.Log {
 		public byte PointerSize { get; }
 
 		public ulong StartupTime { get; }
+
+		public ulong TimestampStartupTime { get; }
 
 		public int TimerOverhead { get; }
 
@@ -50,6 +53,10 @@ namespace Mono.Profiler.Log {
 			
 			PointerSize = reader.ReadByte ();
 			StartupTime = reader.ReadUInt64 ();
+
+			if (Version.Major >= 3)
+				TimestampStartupTime = reader.ReadUInt64 ();
+
 			TimerOverhead = reader.ReadInt32 ();
 			Flags = reader.ReadInt32 ();
 			ProcessId = reader.ReadInt32 ();

@@ -18,7 +18,7 @@
 #include "mini-llvm-cpp.h"
 #include "llvm-jit.h"
 
-#if !defined(MONO_CROSS_COMPILE) && LLVM_API_VERSION > 100
+#if defined(MONO_ARCH_LLVM_JIT_SUPPORTED) && !defined(MONO_CROSS_COMPILE) && LLVM_API_VERSION > 100
 
 /*
  * LLVM 3.9 uses the OrcJIT APIs
@@ -244,21 +244,23 @@ public:
 
 			auto sym = CompileLayer.findSymbolIn (ModuleHandle, mangle (var->getName ()), true);
 			auto addr = sym.getAddress ();
-			g_assert (addr);
 #if LLVM_API_VERSION >= 500
+			g_assert ((bool)addr);
 			callee_addrs [i] = (gpointer)addr.get ();
 #else
+			g_assert (addr);
 			callee_addrs [i] = (gpointer)addr;
 #endif
 		}
 
 		auto ehsym = CompileLayer.findSymbolIn(ModuleHandle, "mono_eh_frame", false);
 		auto ehaddr = ehsym.getAddress ();
-		g_assert (ehaddr);
 #if LLVM_API_VERSION >= 500
+		g_assert ((bool)ehaddr);
 		*eh_frame = (gpointer)ehaddr.get ();
 		return (gpointer)BodyAddr.get ();
 #else
+		g_assert (ehaddr);
 		*eh_frame = (gpointer)ehaddr;
 		return (gpointer)BodyAddr;
 #endif
@@ -333,7 +335,7 @@ LLVMGetPointerToGlobal(LLVMExecutionEngineRef EE, LLVMValueRef Global)
 	return NULL;
 }
 
-#elif !defined(MONO_CROSS_COMPILE) && LLVM_API_VERSION < 100
+#elif defined(MONO_ARCH_LLVM_JIT_SUPPORTED) && !defined(MONO_CROSS_COMPILE) && LLVM_API_VERSION < 100
 
 #include <stdint.h>
 
@@ -730,6 +732,10 @@ init_llvm (void)
   LLVMInitializeARMTarget ();
   LLVMInitializeARMTargetInfo ();
   LLVMInitializeARMTargetMC ();
+#elif defined(TARGET_ARM64)
+  LLVMInitializeAArch64Target ();
+  LLVMInitializeAArch64TargetInfo ();
+  LLVMInitializeAArch64TargetMC ();
 #elif defined(TARGET_X86) || defined(TARGET_AMD64)
   LLVMInitializeX86Target ();
   LLVMInitializeX86TargetInfo ();
@@ -868,7 +874,7 @@ mono_llvm_set_unhandled_exception_handler (void)
 MonoEERef
 mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb, ExceptionTableCb *exception_cb, DlSymCb *dlsym_cb, LLVMExecutionEngineRef *ee)
 {
-	g_assert_not_reached ();
+	g_error ("LLVM JIT not supported on this platform.");
 	return NULL;
 }
 

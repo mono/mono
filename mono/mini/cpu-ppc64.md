@@ -46,13 +46,13 @@
 # See the code in mini-x86.c for more details on how the specifiers are used.
 #
 tailcall: len:124 clob:c
+tailcall_parameter: len:0 # PowerPC outputs a nice fixed size memcpy loop for larger stack_usage, so 0.
 memory_barrier: len:4
 nop: len:4
 relaxed_nop: len:4
 break: len:40
 seq_point: len:48
 il_seq_point: len:0
-jmp: len:96
 call: dest:a clob:c len:36
 br: len:4
 throw: src1:i len:40
@@ -223,7 +223,10 @@ bigmul_un: len:12 dest:i src1:i src2:i
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
+dummy_iconst: dest:i len:0
+dummy_i8const: dest:i len:0
+dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -395,4 +398,6 @@ atomic_add_i8: src1:b src2:i dest:i len:28
 atomic_cas_i4: src1:b src2:i src3:i dest:i len:38
 atomic_cas_i8: src1:b src2:i src3:i dest:i len:38
 
+liverange_start: len:0
+liverange_end: len:0
 gc_safe_point: len:0

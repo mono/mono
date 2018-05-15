@@ -19,6 +19,23 @@ include $(CLEAR_VARS)
 LOCAL_LDLIBS    := -llog
 LOCAL_MODULE    := runtime-bootstrap
 LOCAL_SRC_FILES := runtime-bootstrap.c
+
+ifneq ($(MONO_BCL_TESTS),)
+LOCAL_CFLAGS    += -DMONO_BCL_TESTS=1
+endif
+
+ifneq ($(MONO_DEBUGGER_TESTS),)
+LOCAL_CFLAGS    += -DMONO_DEBUGGER_TESTS=1
+endif
+
+ifneq ($(RUN_WITH_MANAGED_DEBUGGER),)
+LOCAL_CFLAGS    += -DRUN_WITH_MANAGED_DEBUGGER=1
+endif
+
+ifneq ($(MONO_WAIT_LLDB),)
+LOCAL_CFLAGS    += -DMONO_WAIT_LLDB=1
+endif
+
 include $(BUILD_SHARED_LIBRARY)
 
 

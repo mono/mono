@@ -97,7 +97,7 @@ namespace Xamarin.ApiDiff {
 			var name = source.GetAttribute ("name");
 			var srcValue = source.GetAttribute ("value");
 			var tgtValue = target.GetAttribute ("value");
-			var change = new ApiChange ();
+			var change = new ApiChange (GetDescription (source));
 			change.Header = "Modified " + GroupName;
 
 			if (State.BaseType == "System.Enum") {
@@ -185,29 +185,6 @@ namespace Xamarin.ApiDiff {
 			}
 
 			return sb.ToString ();
-		}
-
-		public override void BeforeAdding (IEnumerable<XElement> list)
-		{
-			first = true;
-			if (State.BaseType == "System.Enum") {
-				Output.WriteLine ("<div>");
-				Output.WriteLine ("<p>Added value{0}:</p>", list.Count () > 1 ? "s" : String.Empty);
-				Output.WriteLine ("<pre class='added' data-is-non-breaking>");
-			} else {
-				base.BeforeAdding (list);
-			}
-		}
-
-		public override void BeforeRemoving (IEnumerable<XElement> list)
-		{
-			first = true;
-			if (State.BaseType == "System.Enum") {
-				Output.WriteLine ("<p>Removed value{0}:</p>", list.Count () > 1 ? "s" : String.Empty);
-				Output.WriteLine ("<pre class='removed' data-is-breaking>");
-			} else {
-				base.BeforeRemoving (list);
-			}
 		}
 	}
 }

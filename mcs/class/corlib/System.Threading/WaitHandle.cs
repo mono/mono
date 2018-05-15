@@ -55,7 +55,9 @@ namespace System.Threading
 		static int WaitOneNative (SafeHandle waitableSafeHandle, uint millisecondsTimeout, bool hasThreadAffinity, bool exitContext)
 		{
 			bool release = false;
+#if !MONODROID
 			var context = SynchronizationContext.Current;
+#endif
 			try {
 				waitableSafeHandle.DangerousAddRef (ref release);
 
@@ -64,6 +66,7 @@ namespace System.Threading
 					SynchronizationAttribute.ExitContext ();
 #endif
 
+#if !MONODROID
 				// HACK: Documentation (and public posts by experts like Joe Duffy) suggests that
 				//  users must first call SetWaitNotificationRequired to flag that a given synchronization
 				//  context overrides .Wait. Because invoking the Wait method is somewhat expensive, we use
@@ -79,7 +82,9 @@ namespace System.Threading
 						false, 
 						(int)millisecondsTimeout
 					);
-				} else {
+				} else
+#endif
+				{
 					unsafe {
 						IntPtr handle = waitableSafeHandle.DangerousGetHandle ();
 						return Wait_internal (&handle, 1, false, (int)millisecondsTimeout);
@@ -174,5 +179,15 @@ namespace System.Threading
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern int SignalAndWait_Internal (IntPtr toSignal, IntPtr toWaitOn, int ms);
+
+		internal static int ToTimeoutMilliseconds(TimeSpan timeout)
+		{
+			var timeoutMilliseconds = (long)timeout.TotalMilliseconds;
+			if (timeoutMilliseconds < -1 || timeoutMilliseconds > int.MaxValue)
+			{
+				throw new ArgumentOutOfRangeException(nameof(timeout), SR.ArgumentOutOfRange_NeedNonNegOrNegative1);
+			}
+			return (int)timeoutMilliseconds;
+		}
 	}
 }

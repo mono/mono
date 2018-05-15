@@ -15,8 +15,6 @@ endif
 TEST_MCS_FLAGS = -nowarn:618
 TEST_LIB_REFS = System System.Xml System.Core
 
-TEST_MONO_PATH = .
-
 EXTRA_DISTFILES = Test/corba-example.cs Test/simple-example.cs
 
 include ../../build/library.make

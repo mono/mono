@@ -66,7 +66,6 @@ public class BuiltinTests {
 		return 0;
 	}
 
-#if FALSE
 	static int test_0_nint_inc ()
 	{
 		var x = (nint)10;
@@ -84,7 +83,6 @@ public class BuiltinTests {
 			return 1;
 		return 0;
 	}
-#endif
 
 	static int test_0_nint_add ()
 	{
@@ -330,7 +328,6 @@ public class BuiltinTests {
 		return 0;
 	}
 
-#if FALSE
 	static int test_0_nuint_inc ()
 	{
 		var x = (nuint)10;
@@ -348,7 +345,6 @@ public class BuiltinTests {
 			return 1;
 		return 0;
 	}
-#endif
 
 	static int test_0_nuint_add ()
 	{
@@ -719,7 +715,6 @@ public class BuiltinTests {
 	}
 
 	/* fails on arm64 */
-#if FALSE
 	static int test_0_nfloat_cmp_left_nan ()
 	{
 		var x = (nfloat)float.NaN;
@@ -733,9 +728,9 @@ public class BuiltinTests {
 		if (x > y)
 			return 4;
 		if (x <= y)
-			return 1;
+			return 5;
 		if (x >= y)
-			return 1;
+			return 6;
 		return 0;
 	}
 
@@ -753,12 +748,11 @@ public class BuiltinTests {
 		if (x > y)
 			return 4;
 		if (x <= y)
-			return 1;
+			return 5;
 		if (x >= y)
-			return 1;
+			return 6;
 		return 0;
 	}
-#endif
 
 	// static int test_0_nfloat_call_boxed_equals ()
 	// {
@@ -1067,7 +1061,7 @@ namespace System
 #endif
 		}
 
-		public static explicit operator nint (long v)
+		public static implicit operator nint (long v)
 		{
 #if NINT_JIT_OPTIMIZED
 			throw new NotImplementedException ();
@@ -1187,13 +1181,6 @@ namespace System
 		public static nint operator ~ (nint v) { return new nint (~v.v); }
 #endif
 
-#if NINT_JIT_OPTIMIZED
-		public static nint operator ++ (nint v) { throw new NotImplementedException (); }
-		public static nint operator -- (nint v) { throw new NotImplementedException (); }
-#else
-		public static nint operator ++ (nint v) { return new nint (v.v + 1); }
-		public static nint operator -- (nint v) { return new nint (v.v - 1); }
-#endif
 
 #if NINT_JIT_OPTIMIZED
 		public static nint operator + (nint l, nint r) { throw new NotImplementedException (); }
@@ -1614,7 +1601,7 @@ namespace System
 #endif
 		}
 
-		public static explicit operator nuint (ulong v)
+		public static implicit operator nuint (ulong v)
 		{
 #if NINT_JIT_OPTIMIZED
 			throw new NotImplementedException ();
@@ -1708,14 +1695,6 @@ namespace System
 #else
 		public static nuint operator + (nuint v) { return new nuint (+v.v); }
 		public static nuint operator ~ (nuint v) { return new nuint (~v.v); }
-#endif
-
-#if NINT_JIT_OPTIMIZED
-		public static nuint operator ++ (nuint v) { throw new NotImplementedException (); }
-		public static nuint operator -- (nuint v) { throw new NotImplementedException (); }
-#else
-		public static nuint operator ++ (nuint v) { return new nuint (v.v + 1); }
-		public static nuint operator -- (nuint v) { return new nuint (v.v - 1); }
 #endif
 
 #if NINT_JIT_OPTIMIZED

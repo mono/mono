@@ -115,6 +115,8 @@ namespace System.Globalization
 		internal const int InvariantCultureId = 0x7F;
 		const int CalendarTypeBits = 8;
 
+		internal const int LOCALE_INVARIANT = 0x007F;
+
 		const string MSG_READONLY = "This instance is read only";
 
 		static volatile CultureInfo s_DefaultThreadCurrentUICulture;
@@ -179,6 +181,8 @@ namespace System.Globalization
 		internal string Territory {
 			get { return territory; }
 		}
+
+		internal string _name => m_name;
 
 		// FIXME: It is implemented, but would be hell slow.
 		[ComVisible (false)]

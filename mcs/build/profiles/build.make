@@ -13,8 +13,8 @@ PLATFORMS = darwin linux win32
 profile-check:
 	@:
 
-DEFAULT_REFERENCES = -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
-PROFILE_MCS_FLAGS = -d:NET_4_0 -d:NET_4_5 -d:MONO -d:WIN_PLATFORM -nowarn:1699 -nostdlib $(DEFAULT_REFERENCES)
+DEFAULT_REFERENCES = mscorlib
+PROFILE_MCS_FLAGS = -d:NET_4_0 -d:NET_4_5 -d:MONO -d:WIN_PLATFORM -nowarn:1699 -nostdlib
 API_BIN_PROFILE = v4.7.1
 
 NO_SIGN_ASSEMBLY = yes
@@ -22,3 +22,5 @@ NO_TEST = yes
 NO_INSTALL = yes
 
 FRAMEWORK_VERSION = 4.5
+MONO_FEATURE_APPLETLS=1
+

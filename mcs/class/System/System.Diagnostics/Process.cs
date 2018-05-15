@@ -60,9 +60,7 @@ namespace System.Diagnostics
 			 * the Start_internal icall in
 			 * mono/metadata/process.c
 			 */
-			public IntPtr thread_handle;
 			public int pid; // Contains -GetLastError () on failure.
-			public int tid;
 			public string[] envVariables;
 			public string UserName;
 			public string Domain;
@@ -803,7 +801,7 @@ namespace System.Diagnostics
 			if (startInfo.RedirectStandardOutput) {
 				MonoIO.Close (stdout_write, out error);
 
-				Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? Console.Out.Encoding;
+				Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? Console.OutputEncoding;
 
 				standardOutput = new StreamReader (new FileStream (stdout_read, FileAccess.Read, true, 8192), stdoutEncoding, true);
 			}
@@ -811,7 +809,7 @@ namespace System.Diagnostics
 			if (startInfo.RedirectStandardError) {
 				MonoIO.Close (stderr_write, out error);
 
-				Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? Console.Out.Encoding;
+				Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? Console.OutputEncoding;
 
 				standardError = new StreamReader (new FileStream (stderr_read, FileAccess.Read, true, 8192), stderrEncoding, true);
 			}

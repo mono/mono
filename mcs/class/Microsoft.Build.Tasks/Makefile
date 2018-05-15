@@ -29,7 +29,7 @@ EXTRA_DISTFILES = \
 	Test/resources/junk.txt
 
 Test/resources/test.dll: Test/resources/test.cs
-	$(CSCOMPILE) -target:library /out:$@ $<
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -target:library /out:$@ $<
 
 clean-test-resources:
 	rm -f Test/resources/test.dll

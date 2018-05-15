@@ -134,9 +134,10 @@ namespace MonoTests.System.IO.Compression.FileSystem
 			{
 				var entry = archive.GetEntry (file);
 				Assert.IsNotNull (entry);
-				Assert.AreEqual(entry.LastWriteTime.Year, date.Year);
-				Assert.AreEqual(entry.LastWriteTime.Month, date.Month);
-				Assert.AreEqual(entry.LastWriteTime.Day, date.Day);
+				var lastWriteTimeUtc = entry.LastWriteTime.ToUniversalTime ();
+				Assert.AreEqual (date.Year, lastWriteTimeUtc.Year);
+				Assert.AreEqual (date.Month, lastWriteTimeUtc.Month);
+				Assert.AreEqual (date.Day, lastWriteTimeUtc.Day);
 			}
 		}
 	}

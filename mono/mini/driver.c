@@ -74,6 +74,7 @@
 static FILE *mini_stats_fd;
 
 static void mini_usage (void);
+static void mono_runtime_set_execution_mode (MonoEEMode mode);
 
 #ifdef HOST_WIN32
 /* Need this to determine whether to detach console */
@@ -140,9 +141,12 @@ opt_names [] = {
 	MONO_OPT_GSHARED |	\
 	MONO_OPT_SIMD |	\
 	MONO_OPT_ALIAS_ANALYSIS	| \
-	MONO_OPT_AOT)
+	MONO_OPT_AOT | \
+	MONO_OPT_FLOAT32)
 
-#define EXCLUDED_FROM_ALL (MONO_OPT_SHARED | MONO_OPT_PRECOMP | MONO_OPT_UNSAFE | MONO_OPT_GSHAREDVT | MONO_OPT_FLOAT32)
+#define EXCLUDED_FROM_ALL (MONO_OPT_SHARED | MONO_OPT_PRECOMP | MONO_OPT_UNSAFE | MONO_OPT_GSHAREDVT)
+
+static char *mono_parse_options (const char *options, int *ref_argc, char **ref_argv [], gboolean prepend);
 
 static guint32
 parse_optimizations (guint32 opt, const char* p, gboolean cpu_opts)
@@ -322,7 +326,7 @@ opt_sets [] = {
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_ALIAS_ANALYSIS,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS,
-       MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_TAILC,
+       MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_TAILCALL,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_SSA,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_EXCEPTION,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_EXCEPTION | MONO_OPT_CMOV,
@@ -374,9 +378,9 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 		fprintf (mini_stats_fd, "[");
 	for (i = 0; i < mono_image_get_table_rows (image, MONO_TABLE_METHOD); ++i) {
 		ERROR_DECL (error);
-		MonoMethod *method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i + 1), NULL, NULL, &error);
+		MonoMethod *method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i + 1), NULL, NULL, error);
 		if (!method) {
-			mono_error_cleanup (&error); /* FIXME don't swallow the error */
+			mono_error_cleanup (error); /* FIXME don't swallow the error */
 			continue;
 		}
 		if (strncmp (method->name, "test_", 5) == 0) {
@@ -393,8 +397,8 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 					g_print ("Running '%s' ...\n", method->name);
 #ifdef MONO_USE_AOT_COMPILER
 				ERROR_DECL (error);
-				func = (TestMethod)mono_aot_get_method_checked (mono_get_root_domain (), method, &error);
-				mono_error_cleanup (&error);
+				func = (TestMethod)mono_aot_get_method (mono_get_root_domain (), method, error);
+				mono_error_cleanup (error);
 				if (!func)
 					func = (TestMethod)(gpointer)cfg->native_code;
 #else
@@ -473,9 +477,9 @@ mini_regression (MonoImage *image, int verbose, int *total_run)
 	/* load the metadata */
 	for (i = 0; i < mono_image_get_table_rows (image, MONO_TABLE_METHOD); ++i) {
 		ERROR_DECL (error);
-		method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i + 1), NULL, NULL, &error);
+		method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i + 1), NULL, NULL, error);
 		if (!method) {
-			mono_error_cleanup (&error);
+			mono_error_cleanup (error);
 			continue;
 		}
 		mono_class_init (method->klass);
@@ -545,7 +549,7 @@ mini_regression_list (int verbose, int count, char *images [])
 	
 	total_run =  total = 0;
 	for (i = 0; i < count; ++i) {
-		ass = mono_assembly_open_predicate (images [i], FALSE, FALSE, NULL, NULL, NULL);
+		ass = mono_assembly_open_predicate (images [i], MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
 		if (!ass) {
 			g_warning ("failed to load assembly: %s", images [i]);
 			continue;
@@ -582,9 +586,9 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 	for (i = 0; i < mono_image_get_table_rows (image, MONO_TABLE_METHOD); ++i) {
 		MonoObject *exc = NULL;
 		ERROR_DECL (error);
-		MonoMethod *method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i + 1), NULL, NULL, &error);
+		MonoMethod *method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i + 1), NULL, NULL, error);
 		if (!method) {
-			mono_error_cleanup (&error); /* FIXME don't swallow the error */
+			mono_error_cleanup (error); /* FIXME don't swallow the error */
 			continue;
 		}
 
@@ -605,8 +609,8 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 			}
 		} else { /* no filter, check for `Category' attribute on method */
 			filter = TRUE;
-			MonoCustomAttrInfo* ainfo = mono_custom_attrs_from_method_checked (method, &error);
-			mono_error_cleanup (&error);
+			MonoCustomAttrInfo* ainfo = mono_custom_attrs_from_method_checked (method, error);
+			mono_error_cleanup (error);
 
 			if (ainfo) {
 				int j;
@@ -616,18 +620,18 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 						continue;
 
 					MonoClass *klass = centry->ctor->klass;
-					if (strcmp (klass->name, "CategoryAttribute"))
+					if (strcmp (m_class_get_name (klass), "CategoryAttribute"))
 						continue;
 
-					MonoObject *obj = mono_custom_attrs_get_attr_checked (ainfo, klass, &error);
+					MonoObject *obj = mono_custom_attrs_get_attr_checked (ainfo, klass, error);
 					/* FIXME: there is an ordering problem if there're multiple attributes, do this instead:
-					 * MonoObject *obj = create_custom_attr (ainfo->image, centry->ctor, centry->data, centry->data_size, &error); */
-					mono_error_cleanup (&error);
+					 * MonoObject *obj = create_custom_attr (ainfo->image, centry->ctor, centry->data, centry->data_size, error); */
+					mono_error_cleanup (error);
 					MonoMethod *getter = mono_class_get_method_from_name (klass, "get_Category", -1);
-					MonoObject *str = mini_get_interp_callbacks ()->runtime_invoke (getter, obj, NULL, &exc, &error);
-					mono_error_cleanup (&error);
-					char *utf8_str = mono_string_to_utf8_checked ((MonoString *) str, &error);
-					mono_error_cleanup (&error);
+					MonoObject *str = mini_get_interp_callbacks ()->runtime_invoke (getter, obj, NULL, &exc, error);
+					mono_error_cleanup (error);
+					char *utf8_str = mono_string_to_utf8_checked ((MonoString *) str, error);
+					mono_error_cleanup (error);
 					if (!strcmp (utf8_str, "!INTERPRETER")) {
 						g_print ("skip %s...\n", method->name);
 						filter = FALSE;
@@ -636,7 +640,7 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 			}
 		}
 		if (strncmp (method->name, "test_", 5) == 0 && filter) {
-			ERROR_DECL (interp_error);
+			ERROR_DECL_VALUE (interp_error);
 			MonoObject *exc = NULL;
 
 			result_obj = mini_get_interp_callbacks ()->runtime_invoke (method, NULL, NULL, &exc, &interp_error);
@@ -687,9 +691,9 @@ interp_regression (MonoImage *image, int verbose, int *total_run)
 	/* load the metadata */
 	for (i = 0; i < mono_image_get_table_rows (image, MONO_TABLE_METHOD); ++i) {
 		ERROR_DECL (error);
-		method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i + 1), NULL, NULL, &error);
+		method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i + 1), NULL, NULL, error);
 		if (!method) {
-			mono_error_cleanup (&error);
+			mono_error_cleanup (error);
 			continue;
 		}
 		mono_class_init (method->klass);
@@ -711,7 +715,7 @@ mono_interp_regression_list (int verbose, int count, char *images [])
 
 	total_run = total = 0;
 	for (i = 0; i < count; ++i) {
-		MonoAssembly *ass = mono_assembly_open_predicate (images [i], FALSE, FALSE, NULL, NULL, NULL);
+		MonoAssembly *ass = mono_assembly_open_predicate (images [i], MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
 		if (!ass) {
 			g_warning ("failed to load assembly: %s", images [i]);
 			continue;
@@ -928,7 +932,7 @@ test_thread_func (ThreadData *td)
 					guint pos = (*data)->start + random () % (*data)->length;
 					MonoJitInfo *ji;
 
-					ji = mono_jit_info_table_find (domain, (char*)(gulong) pos);
+					ji = mono_jit_info_table_find (domain, (char*)(gsize)pos);
 
 					g_assert (ji->cas_inited);
 					g_assert ((*data)->ji == ji);
@@ -1044,8 +1048,8 @@ jit_info_table_test (MonoDomain *domain)
 	*/
 
 	for (i = 0; i < num_threads; ++i) {
-		mono_thread_create_checked (domain, test_thread_func, &thread_datas [i], &error);
-		mono_error_assert_ok (&error);
+		mono_thread_create_checked (domain, test_thread_func, &thread_datas [i], error);
+		mono_error_assert_ok (error);
 	}
 }
 #endif
@@ -1085,9 +1089,9 @@ compile_all_methods_thread_main_inner (CompileAllThreadArgs *args)
 		if (mono_metadata_has_generic_params (image, token))
 			continue;
 
-		method = mono_get_method_checked (image, token, NULL, NULL, &error);
+		method = mono_get_method_checked (image, token, NULL, NULL, error);
 		if (!method) {
-			mono_error_cleanup (&error); /* FIXME don't swallow the error */
+			mono_error_cleanup (error); /* FIXME don't swallow the error */
 			continue;
 		}
 		if ((method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
@@ -1118,7 +1122,10 @@ compile_all_methods_thread_main_inner (CompileAllThreadArgs *args)
 		}
 		cfg = mini_method_compile (method, mono_get_optimizations_for_method (method, args->opts), mono_get_root_domain (), (JitFlags)JIT_FLAG_DISCARD_RESULTS, 0, -1);
 		if (cfg->exception_type != MONO_EXCEPTION_NONE) {
-			printf ("Compilation of %s failed with exception '%s':\n", mono_method_full_name (cfg->method, TRUE), cfg->exception_message);
+			const char *msg = cfg->exception_message;
+			if (cfg->exception_type == MONO_EXCEPTION_MONO_ERROR)
+				msg = mono_error_get_message (&cfg->error);
+			g_print ("Compilation of %s failed with exception '%s':\n", mono_method_full_name (cfg->method, TRUE), msg);
 			fail_count ++;
 		}
 		mono_destroy_compile (cfg);
@@ -1151,8 +1158,8 @@ compile_all_methods (MonoAssembly *ass, int verbose, guint32 opts, guint32 recom
 	 * Need to create a mono thread since compilation might trigger
 	 * running of managed code.
 	 */
-	mono_thread_create_checked (mono_domain_get (), compile_all_methods_thread_main, &args, &error);
-	mono_error_assert_ok (&error);
+	mono_thread_create_checked (mono_domain_get (), compile_all_methods_thread_main, &args, error);
+	mono_error_assert_ok (error);
 
 	mono_thread_manage ();
 }
@@ -1179,10 +1186,10 @@ mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[
 		return 1;
 	}
 
-	method = mono_get_method_checked (image, entry, NULL, NULL, &error);
+	method = mono_get_method_checked (image, entry, NULL, NULL, error);
 	if (method == NULL){
-		g_print ("The entry point method could not be loaded due to %s\n", mono_error_get_message (&error));
-		mono_error_cleanup (&error);
+		g_print ("The entry point method could not be loaded due to %s\n", mono_error_get_message (error));
+		mono_error_cleanup (error);
 		mono_environment_exitcode_set (1);
 		return 1;
 	}
@@ -1199,9 +1206,9 @@ mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[
 		}
 		return res;
 	} else {
-		int res = mono_runtime_run_main_checked (method, argc, argv, &error);
-		if (!is_ok (&error)) {
-			MonoException *ex = mono_error_convert_to_exception (&error);
+		int res = mono_runtime_run_main_checked (method, argc, argv, error);
+		if (!is_ok (error)) {
+			MonoException *ex = mono_error_convert_to_exception (error);
 			if (ex) {
 				mono_unhandled_exception (&ex->object);
 				mono_invoke_unhandled_exception_hook (&ex->object);
@@ -1303,7 +1310,7 @@ load_agent (MonoDomain *domain, char *desc)
 		args = NULL;
 	}
 
-	agent_assembly = mono_assembly_open_predicate (agent, FALSE, FALSE, NULL, NULL, &open_status);
+	agent_assembly = mono_assembly_open_predicate (agent, MONO_ASMCTX_DEFAULT, NULL, NULL, &open_status);
 	if (!agent_assembly) {
 		fprintf (stderr, "Cannot open agent assembly '%s': %s.\n", agent, mono_image_strerror (open_status));
 		g_free (agent);
@@ -1322,10 +1329,10 @@ load_agent (MonoDomain *domain, char *desc)
 		return 1;
 	}
 
-	method = mono_get_method_checked (image, entry, NULL, NULL, &error);
+	method = mono_get_method_checked (image, entry, NULL, NULL, error);
 	if (method == NULL){
-		g_print ("The entry point method of assembly '%s' could not be loaded due to %s\n", agent, mono_error_get_message (&error));
-		mono_error_cleanup (&error);
+		g_print ("The entry point method of assembly '%s' could not be loaded due to %s\n", agent, mono_error_get_message (error));
+		mono_error_cleanup (error);
 		g_free (agent);
 		return 1;
 	}
@@ -1333,18 +1340,18 @@ load_agent (MonoDomain *domain, char *desc)
 	mono_thread_set_main (mono_thread_current ());
 
 	if (args) {
-		main_args = (MonoArray*)mono_array_new_checked (domain, mono_defaults.string_class, 1, &error);
+		main_args = (MonoArray*)mono_array_new_checked (domain, mono_defaults.string_class, 1, error);
 		if (main_args) {
-			MonoString *str = mono_string_new_checked (domain, args, &error);
+			MonoString *str = mono_string_new_checked (domain, args, error);
 			if (str)
 				mono_array_set (main_args, MonoString*, 0, str);
 		}
 	} else {
-		main_args = (MonoArray*)mono_array_new_checked (domain, mono_defaults.string_class, 0, &error);
+		main_args = (MonoArray*)mono_array_new_checked (domain, mono_defaults.string_class, 0, error);
 	}
 	if (!main_args) {
-		g_print ("Could not allocate array for main args of assembly '%s' due to %s\n", agent, mono_error_get_message (&error));
-		mono_error_cleanup (&error);
+		g_print ("Could not allocate array for main args of assembly '%s' due to %s\n", agent, mono_error_get_message (error));
+		mono_error_cleanup (error);
 		g_free (agent);
 		return 1;
 	}
@@ -1352,10 +1359,10 @@ load_agent (MonoDomain *domain, char *desc)
 
 	pa [0] = main_args;
 	/* Pass NULL as 'exc' so unhandled exceptions abort the runtime */
-	mono_runtime_invoke_checked (method, NULL, pa, &error);
-	if (!is_ok (&error)) {
-		g_print ("The entry point method of assembly '%s' could not execute due to %s\n", agent, mono_error_get_message (&error));
-		mono_error_cleanup (&error);
+	mono_runtime_invoke_checked (method, NULL, pa, error);
+	if (!is_ok (error)) {
+		g_print ("The entry point method of assembly '%s' could not execute due to %s\n", agent, mono_error_get_message (error));
+		mono_error_cleanup (error);
 		g_free (agent);
 		return 1;
 	}
@@ -1523,7 +1530,7 @@ static const char info[] =
 #ifdef MONO_BIG_ARRAYS
 	"bigarrays "
 #endif
-#if defined(MONO_ARCH_SOFT_DEBUG_SUPPORTED) && !defined(DISABLE_SOFT_DEBUG)
+#if !defined(DISABLE_SDB)
 	"softdebug "
 #endif
 		"\n"
@@ -1577,7 +1584,7 @@ mono_jit_parse_options (int argc, char * argv[])
  		if (strncmp (argv [i], "--debugger-agent=", 17) == 0) {
 			MonoDebugOptions *opt = mini_get_debug_options ();
 
- 			mono_debugger_agent_parse_options (argv [i] + 17);
+			sdb_options = g_strdup (argv [i] + 17);
 			opt->mdb_optimizations = TRUE;
 			enable_debugging = TRUE;
 		} else if (!strcmp (argv [i], "--soft-breakpoints")) {
@@ -1752,21 +1759,19 @@ apply_root_domain_configuration_file_bindings (MonoDomain *domain, char *root_do
 static void
 mono_enable_interp (const char *opts)
 {
-#ifndef DISABLE_INTERPRETER
-	mono_use_interpreter = TRUE;
+	mono_runtime_set_execution_mode (MONO_EE_MODE_INTERP);
 	if (opts)
-		mono_interp_parse_options (opts);
-#endif
+		mono_interp_opts_string = opts;
 
 #ifdef DISABLE_INTERPRETER
-	g_warning ("Mono IL interpreter support is missing\n");
+	g_error ("Mono IL interpreter support is missing\n");
 #endif
 
 #ifdef MONO_CROSS_COMPILE
 	g_error ("--interpreter on cross-compile runtimes not supported\n");
 #endif
 
-#if !defined(TARGET_AMD64) && !defined(TARGET_ARM) && !defined(TARGET_ARM64)
+#ifndef MONO_ARCH_INTERPRETER_SUPPORTED
 	g_error ("--interpreter not supported on this architecture.\n");
 #endif
 }
@@ -2063,7 +2068,7 @@ mono_main (int argc, char* argv[])
  		} else if (strncmp (argv [i], "--debugger-agent=", 17) == 0) {
 			MonoDebugOptions *opt = mini_get_debug_options ();
 
- 			mono_debugger_agent_parse_options (argv [i] + 17);
+			sdb_options = g_strdup (argv [i] + 17);
 			opt->mdb_optimizations = TRUE;
 			enable_debugging = TRUE;
 		} else if (strcmp (argv [i], "--security") == 0) {
@@ -2157,6 +2162,16 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--help-handlers") == 0) {
 			mono_runtime_install_custom_handlers_usage ();
 			return 0;
+		} else if (strncmp (argv [i], "--response=", 11) == 0){
+			gchar *text;
+			gsize len;
+			
+			if (!g_file_get_contents (&argv[i][11], &text, &len, NULL)){
+				fprintf (stderr, "The specified response file can not be read\n");
+				exit (1);
+			}
+			mono_parse_options (text, &argc, &argv, FALSE);
+			g_free (text);
 		} else if (argv [i][0] == '-' && argv [i][1] == '-' && mini_parse_debug_option (argv [i] + 2)) {
 		} else {
 			fprintf (stderr, "Unknown command line option: '%s'\n", argv [i]);
@@ -2282,7 +2297,6 @@ mono_main (int argc, char* argv[])
 	case DO_SINGLE_METHOD_REGRESSION:
 		mono_do_single_method_regression = TRUE;
 	case DO_REGRESSION:
-#ifndef DISABLE_INTERPRETER
 		if (mono_use_interpreter) {
 			if (mono_interp_regression_list (2, argc -i, argv + i)) {
 				g_print ("Regression ERRORS!\n");
@@ -2292,7 +2306,6 @@ mono_main (int argc, char* argv[])
 			// mini_cleanup (domain);
 			return 0;
 		}
-#endif
 		if (mini_regression_list (mini_verbose, argc -i, argv + i)) {
 			g_print ("Regression ERRORS!\n");
 			mini_cleanup (domain);
@@ -2343,7 +2356,7 @@ mono_main (int argc, char* argv[])
 		apply_root_domain_configuration_file_bindings (domain, extra_bindings_config_file);
 	}
 
-	assembly = mono_assembly_open_predicate (aname, FALSE, FALSE, NULL, NULL, &open_status);
+	assembly = mono_assembly_open_predicate (aname, MONO_ASMCTX_DEFAULT, NULL, NULL, &open_status);
 	if (!assembly) {
 		fprintf (stderr, "Cannot open assembly '%s': %s.\n", aname, mono_image_strerror (open_status));
 		mini_cleanup (domain);
@@ -2560,6 +2573,59 @@ mono_jit_set_aot_only (gboolean val)
 	mono_aot_only = val;
 }
 
+static void
+mono_runtime_set_execution_mode (MonoEEMode mode)
+{
+	memset (&mono_ee_features, 0, sizeof (mono_ee_features));
+
+	switch (mode) {
+	case MONO_AOT_MODE_LLVMONLY:
+		mono_aot_only = TRUE;
+		mono_llvm_only = TRUE;
+
+		mono_ee_features.use_aot_trampolines = TRUE;
+		break;
+
+	case MONO_AOT_MODE_FULL:
+		mono_aot_only = TRUE;
+
+		mono_ee_features.use_aot_trampolines = TRUE;
+		break;
+
+	case MONO_AOT_MODE_HYBRID:
+		mono_set_generic_sharing_vt_supported (TRUE);
+		mono_set_partial_sharing_supported (TRUE);
+		break;
+
+	case MONO_AOT_MODE_INTERP:
+		mono_aot_only = TRUE;
+		mono_use_interpreter = TRUE;
+
+		mono_ee_features.use_aot_trampolines = TRUE;
+		break;
+
+	case MONO_AOT_MODE_INTERP_LLVMONLY:
+		mono_aot_only = TRUE;
+		mono_use_interpreter = TRUE;
+		mono_llvm_only = TRUE;
+
+		mono_ee_features.force_use_interpreter = TRUE;
+		break;
+
+	case MONO_EE_MODE_INTERP:
+		mono_use_interpreter = TRUE;
+
+		mono_ee_features.force_use_interpreter = TRUE;
+		break;
+
+	case MONO_AOT_MODE_NORMAL:
+		break;
+
+	default:
+		g_error ("Unknown execution-mode %d", mode);
+	}
+}
+
 /**
  * mono_jit_set_aot_mode:
  */
@@ -2569,27 +2635,9 @@ mono_jit_set_aot_mode (MonoAotMode mode)
 	/* we don't want to set mono_aot_mode twice */
 	g_assert (mono_aot_mode == MONO_AOT_MODE_NONE);
 	mono_aot_mode = mode;
+	
+	mono_runtime_set_execution_mode ((MonoEEMode)mode);
 
-	if (mono_aot_mode == MONO_AOT_MODE_LLVMONLY) {
-		mono_aot_only = TRUE;
-		mono_llvm_only = TRUE;
-	}
-	if (mono_aot_mode == MONO_AOT_MODE_FULL) {
-		mono_aot_only = TRUE;
-	}
-	if (mono_aot_mode == MONO_AOT_MODE_HYBRID) {
-		mono_set_generic_sharing_vt_supported (TRUE);
-		mono_set_partial_sharing_supported (TRUE);
-	}
-	if (mono_aot_mode == MONO_AOT_MODE_INTERP) {
-		mono_aot_only = TRUE;
-		mono_use_interpreter = TRUE;
-	}
-	if (mono_aot_mode == MONO_AOT_MODE_INTERP_LLVMONLY) {
-		mono_aot_only = TRUE;
-		mono_use_interpreter = TRUE;
-		mono_llvm_only = TRUE;
-	}
 }
 
 mono_bool
@@ -2679,6 +2727,12 @@ mono_set_crash_chaining (gboolean chain_crashes)
 char *
 mono_parse_options_from (const char *options, int *ref_argc, char **ref_argv [])
 {
+	return mono_parse_options (options, ref_argc, ref_argv, TRUE);
+}
+
+static char *
+mono_parse_options (const char *options, int *ref_argc, char **ref_argv [], gboolean prepend)
+{
 	int argc = *ref_argc;
 	char **argv = *ref_argv;
 	GPtrArray *array = g_ptr_array_new ();
@@ -2693,7 +2747,7 @@ mono_parse_options_from (const char *options, int *ref_argc, char **ref_argv [])
 	
 	for (p = options; *p; p++){
 		switch (*p){
-		case ' ': case '\t':
+		case ' ': case '\t': case '\n':
 			if (!in_quotes) {
 				if (buffer->len != 0){
 					g_ptr_array_add (array, g_strdup (buffer->str));
@@ -2739,13 +2793,20 @@ mono_parse_options_from (const char *options, int *ref_argc, char **ref_argv [])
 		int j;
 
 		new_argv [0] = argv [0];
-		
-		/* First the environment variable settings, to allow the command line options to override */
-		for (i = 0; i < array->len; i++)
-			new_argv [i+1] = (char *)g_ptr_array_index (array, i);
-		i++;
+
+		i = 1;
+		if (prepend){
+			/* First the environment variable settings, to allow the command line options to override */
+			for (i = 0; i < array->len; i++)
+				new_argv [i+1] = (char *)g_ptr_array_index (array, i);
+			i++;
+		}
 		for (j = 1; j < argc; j++)
 			new_argv [i++] = argv [j];
+		if (!prepend){
+			for (j = 0; j < array->len; j++)
+				new_argv [i++] = (char *)g_ptr_array_index (array, j);
+		}
 		new_argv [i] = NULL;
 
 		*ref_argc = new_argc;

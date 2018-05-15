@@ -51,8 +51,11 @@ relaxed_nop: len:4
 break: len:32
 seq_point: len:24
 il_seq_point: len:0
-jmp: len:108
 tailcall: len:120 clob:c
+
+# PowerPC outputs a nice fixed size memcpy loop for larger stack_usage, so 0.
+tailcall_parameter: len:0
+
 call: dest:a clob:c len:16
 br: len:4
 throw: src1:i len:20
@@ -220,7 +223,9 @@ bigmul_un: len:12 dest:l src1:i src2:i
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
+dummy_iconst: dest:i len:0
+dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -327,4 +332,6 @@ jump_table: dest:i len:8
 atomic_add_i4: src1:b src2:i dest:i len:28
 atomic_cas_i4: src1:b src2:i src3:i dest:i len:38
 
+liverange_start: len:0
+liverange_end: len:0
 gc_safe_point: len:0

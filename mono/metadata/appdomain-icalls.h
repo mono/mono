@@ -56,6 +56,10 @@ ves_icall_System_AppDomain_GetAssemblies           (MonoAppDomainHandle ad,
 						    MonoError *error);
 
 MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname,
+							MonoError *error);
+
+MonoReflectionAssemblyHandle
 ves_icall_System_Reflection_Assembly_LoadFrom      (MonoStringHandle fname,
 						    MonoBoolean refonly,
 						    MonoError *error);
@@ -114,7 +118,7 @@ MonoStringHandle
 ves_icall_System_AppDomain_InternalGetProcessGuid (MonoStringHandle newguid, MonoError *error);
 
 MonoBoolean
-ves_icall_System_CLRConfig_CheckThrowUnobservedTaskExceptions (void);
+ves_icall_System_CLRConfig_CheckThrowUnobservedTaskExceptions (MonoError *error);
 
 
 #endif /*__MONO_METADATA_APPDOMAIN_ICALLS_H__*/

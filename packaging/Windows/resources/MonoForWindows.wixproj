@@ -6,7 +6,8 @@
     <ProductVersion>3.9</ProductVersion>
     <ProjectGuid>9f279b8c-fc0d-49d4-b5bd-ade0db0c3095</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>MonoForWindows-$(Platform)</OutputName>
+    <OutputName Condition=" '$(Platform)' == 'x86'">mono-$(MONO_VERSION)-gtksharp-$(GTKSHARP_VERSION)-win32-0</OutputName>
+    <OutputName Condition=" '$(Platform)' == 'x64'">mono-$(MONO_VERSION)-x64-0</OutputName>
     <OutputType>Package</OutputType>
     <SuppressIces>ICE61;</SuppressIces>
     <DefineSolutionProperties>false</DefineSolutionProperties>

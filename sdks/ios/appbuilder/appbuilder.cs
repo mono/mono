@@ -53,6 +53,8 @@ public class AppBuilder
 		string sysroot = null;
 		string aotdir = null;
 		string exe = null;
+		string signing_identity = null;
+		string profile = null;
 		bool isdev = false;
 		bool isrelease = false;
 		bool isllvm = false;
@@ -68,6 +70,8 @@ public class AppBuilder
 				{ "bundle-identifier=", s => bundle_identifier = s },
 				{ "bundle-name=", s => bundle_name = s },
 				{ "bundle-executable=", s => bundle_executable = s },
+				{ "signing-identity=", s => signing_identity = s },
+				{ "profile=", s => profile = s },
 				{ "llvm", s => isllvm = true },
 				{ "exe=", s => exe = s },
 				{ "r=", s => assemblies.Add (s) },
@@ -80,6 +84,7 @@ public class AppBuilder
 		check_mandatory (appdir, "--appdir");
 		check_mandatory (mono_sdkdir, "--mono-sdkdir");
 		check_mandatory (sysroot, "--sysroot");
+		check_mandatory (signing_identity, "--signing-identity");
 
 		switch (target) {
 		case "ios-dev64":
@@ -102,7 +107,7 @@ public class AppBuilder
 			aot_args = "soft-debug";
 		if (isllvm) {
 			cross_runtime_args = "--llvm";
-			aot_args = ",llvm-path=$mono_sdkdir/llvm64/bin,llvm-outfile=$llvm_outfile";
+			aot_args = ",llvm-path=$mono_sdkdir/ios-llvm64/bin,llvm-outfile=$llvm_outfile";
 		}
 
 		Directory.CreateDirectory (builddir);
@@ -130,10 +135,11 @@ public class AppBuilder
 		ninja.WriteLine ($"monoios_dir = {runtimedir}");
 		ninja.WriteLine ($"appdir = {appdir}");
 		ninja.WriteLine ($"sysroot = {sysroot}");
-		ninja.WriteLine ("cross = $mono_sdkdir/ios-cross64/bin/aarch64-darwin-mono-sgen");
+		ninja.WriteLine ("cross = $mono_sdkdir/ios-cross64-release/bin/aarch64-darwin-mono-sgen");
 		ninja.WriteLine ($"builddir = .");
 		if (aotdir != null)
 			ninja.WriteLine ($"aotdir = {aotdir}");
+		ninja.WriteLine ($"signing_identity = {signing_identity}");
 		// Rules
 		ninja.WriteLine ("rule aot");
 		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross -O=gsharedvt,float32 --debug {cross_runtime_args} --aot=mtriple=arm64-ios,full,static,asmonly,direct-icalls,no-direct-calls,dwarfdebug,{aot_args},outfile=$outfile,data-outfile=$data_outfile $src_file");
@@ -159,7 +165,7 @@ public class AppBuilder
 		ninja.WriteLine ("rule plutil");
 		ninja.WriteLine ("  command = cp $in $out; plutil -convert binary1 $out");
 		ninja.WriteLine ("rule codesign");
-		ninja.WriteLine ("  command = codesign -v --force --sign - --entitlements $entitlements --timestamp=none $in");
+		ninja.WriteLine ("  command = codesign -v --force --sign \"$signing_identity\" --entitlements $entitlements --timestamp=none $in");
 		ninja.WriteLine ("rule codesign-sim");
 		ninja.WriteLine ("  command = codesign --force --sign - --timestamp=none $in");
 		ninja.WriteLine ("rule mkdir");
@@ -224,7 +230,7 @@ public class AppBuilder
 		ninja.WriteLine ("build $appdir: mkdir");
 
 		if (isdev) {
-			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/main.o $mono_sdkdir/ios-target64/lib/libmonosgen-2.0.a $monoios_dir/libmonoios.a");
+			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/main.o $mono_sdkdir/ios-target64-release/lib/libmonosgen-2.0.a $monoios_dir/libmonoios.a");
 			ninja.WriteLine ("build $builddir/main.o: compile-objc $builddir/main.m");
 		} else {
 			ninja.WriteLine ($"build $appdir/{bundle_executable}: cp $monoios_dir/runtime");
@@ -233,6 +239,8 @@ public class AppBuilder
 		ninja.WriteLine ("build $appdir/Info.plist: cpifdiff $builddir/Info.plist.binary");
 		ninja.WriteLine ("build $appdir/config.json: cpifdiff $builddir/config.json");
 		ninja.WriteLine ("build $builddir/Entitlements.xcent: cpifdiff $monoios_dir/Entitlements.xcent");
+		if (profile != null)
+			ninja.WriteLine ($"build $builddir/embedded.mobileprovision: cp {profile}");
 		if (isdev)
 			ninja.WriteLine ($"build $appdir/_CodeSignature: codesign $appdir/{bundle_executable} | $builddir/Entitlements.xcent");
 		else

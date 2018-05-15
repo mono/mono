@@ -53,6 +53,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
    /// <remarks>
    /// The buffer supports decryption of incoming data.
    /// </remarks>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class InflaterInputBuffer
 	{
 		/// <summary>
@@ -325,6 +326,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 	///
 	/// Author of the original java version : John Leuner.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class InflaterInputStream : Stream
 	{
 		/// <summary>

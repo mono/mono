@@ -19,6 +19,7 @@
 #ifndef DISABLE_JIT
 
 #include "mini.h"
+#include "mini-runtime.h"
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
@@ -508,7 +509,7 @@ mono_ssa_remove_gsharedvt (MonoCompile *cfg)
 			printf ("\nREMOVE SSA %d:\n", bb->block_num);
 
 		for (ins = bb->code; ins; ins = ins->next) {
-			if (!(MONO_IS_PHI (ins) && ins->opcode == OP_VPHI && mini_is_gsharedvt_variable_type (&ins->klass->byval_arg)))
+			if (!(MONO_IS_PHI (ins) && ins->opcode == OP_VPHI && mini_is_gsharedvt_variable_type (m_class_get_byval_arg (ins->klass))))
 				continue;
 
 			g_assert (ins->inst_phi_args [0] == bb->in_count);

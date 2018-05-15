@@ -242,7 +242,7 @@ endif
 TXT_RESOURCE_STRINGS = ../referencesource/System.Web/System.Web.txt
 
 LIB_REFS = System System.Core System.Drawing System.Data System.Xml System.EnterpriseServices System.Runtime.Serialization.Formatters.Soap \
-	System.ComponentModel.DataAnnotations System.Web.ApplicationServices System.Configuration Mono.Data.Sqlite
+	System.ComponentModel.DataAnnotations System.Web.ApplicationServices System.Configuration Mono.Data.Sqlite System.Web.Services System.Design
 KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = \
 	-unsafe \
@@ -251,13 +251,7 @@ LIB_MCS_FLAGS = \
 	$(RESX_RES:%=/resource:%) \
 	$(OTHER_RES:%=/resource:%)
 
-ifneq (plainweb/,$(intermediate))
-LIB_REFS += System.Web.Services plaindesign/System.Design
-LIB_MCS_FLAGS += -define:WEBSERVICES_DEP
-
-all-local: System.Web/UplevelHelper.cs 
-
-endif
+#all-local: System.Web/UplevelHelper.cs 
 
 TEST_LIB_REFS = SystemWebTestShim
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,1591 \
@@ -286,19 +280,6 @@ EXTRA_DISTFILES = \
 BUILT_SOURCES = System.Web/UplevelHelper.cs 
 
 include ../../build/library.make
-
-$(the_libdir_base)System.Web.dll: $(the_libdir_base)System.Web.Services.dll
-
-$(the_libdir_base)System.Web.Services.dll:
-	(cd ../System.Web.Services; $(MAKE) $@)
-
-ifneq (plainweb/,$(intermediate))
-$(the_libdir_base)plainweb/System.Web.dll:
-	$(MAKE) intermediate=plainweb/ $(the_libdir_base)plainweb/System.Web.dll
-
-endif
-
-.NOTPARALLEL: $(the_libdir_base)plainweb/System.Web.dll $(the_libdir_base)System.Web.Services.dll
 
 ifdef DEBUG
 LIB_MCS_FLAGS += -define:DEBUG
@@ -429,11 +410,4 @@ ifdef STANDALONE_TEST_COMPILABLE_TESTS
 	for d in $(STANDALONE_TEST_COMPILABLE_TESTS); do \
 		$(MAKE) -C Test/standalone/$$d clean ; \
 	done
-endif
-
-ifndef intermediate
-ifneq ($(PROFILE),basic)
-csproj-local:
-	$(MAKE) csproj-local intermediate=plainweb/
-endif
 endif

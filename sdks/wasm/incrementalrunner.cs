@@ -97,7 +97,13 @@ class TestAction : AbstractAction {
 		SetupContext ();
         try
         {
-            testResult = test.MakeTestCommand ().Execute(this.context);
+			if (IncrementalTestRunner.testSkipCount > 0) {
+				--IncrementalTestRunner.testSkipCount;
+				testResult = ((Test)test).MakeTestResult ();
+				testResult.SetResult (ResultState.Success);
+			} else {
+				testResult = test.MakeTestCommand ().Execute(this.context);
+			}
         }
         finally
         {
@@ -283,6 +289,12 @@ public class IncrementalTestRunner {
 
 	internal Queue<Action> actions = new Queue<Action> ();
 	int test_step_count;
+	string test_status;
+	internal static int testSkipCount;
+
+	public string Status {
+		get { return test_status; }
+	}
 
 	TestSuiteAction rootAction;
 	void QueueActions (TestSuite suite) {
@@ -295,6 +307,10 @@ public class IncrementalTestRunner {
 		listener.SetValue (context, new MyListener ());
 		rootAction = new TestSuiteAction (suite, context, this);
 		actions.Enqueue (rootAction.PerformWork);
+	}
+
+	public void SkipFirst (int tsc) {
+		testSkipCount = tsc;
 	}
 
 	public void Start (int step) {
@@ -318,7 +334,13 @@ public class IncrementalTestRunner {
 		}
 
 		if (actions.Count == 0) {
-			new ResultReporter (rootAction.testResult, Console.Out).ReportResults ();
+			var res = new ResultReporter (rootAction.testResult, Console.Out);
+			if ((res.Summary.FailureCount + res.Summary.ErrorCount) > 0)
+				test_status = "FAIL";
+			else
+				test_status = "PASS";
+
+			res.ReportResults ();
 			return false;
 		}
 

@@ -26,7 +26,7 @@ EXTRA_DISTFILES = \
 EXPR_PARSER = Microsoft.Build.Internal/ExpressionParser
 
 $(EXPR_PARSER).cs: $(EXPR_PARSER).jay $(topdir)/jay/skeleton.cs
-	(cd Microsoft.Build.Internal; $(topdir)/../jay/jay -ctv < $(topdir)/../jay/skeleton.cs ExpressionParser.jay > ExpressionParser.cs)
+	(cd Microsoft.Build.Internal; $(topdir)/../jay/jay -ctv -o ExpressionParser.cs ExpressionParser.jay < $(topdir)/../jay/skeleton.cs )
 
 BUILT_SOURCES = $(EXPR_PARSER).cs
 

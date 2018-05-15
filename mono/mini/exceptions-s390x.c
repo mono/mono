@@ -264,14 +264,14 @@ throw_exception (MonoObject *exc, unsigned long ip, unsigned long sp,
 	MONO_CONTEXT_SET_BP (&ctx, sp);
 	MONO_CONTEXT_SET_IP (&ctx, ip);
 	
-	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, &error)) {
+	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		}
 	}
-	mono_error_assert_ok (&error);
+	mono_error_assert_ok (error);
 //	mono_arch_handle_exception (&ctx, exc, FALSE);
 	mono_handle_exception (&ctx, exc);
 	mono_restore_context(&ctx);
@@ -312,7 +312,7 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info,
 	s390_lgr  (code, s390_r3, s390_r2);
 	if (corlib) {
 		S390_SET  (code, s390_r1, (guint8 *)mono_exception_from_token);
-		S390_SET  (code, s390_r2, (guint8 *)mono_defaults.exception_class->image);
+		S390_SET  (code, s390_r2, (guint8 *)m_class_get_image (mono_defaults.exception_class));
 		s390_basr (code, s390_r14, s390_r1);
 	}
 

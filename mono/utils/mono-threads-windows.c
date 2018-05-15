@@ -29,13 +29,12 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 	HANDLE handle;
 	DWORD result;
 
-	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	handle = info->native_handle;
 	g_assert (handle);
 
 	result = SuspendThread (handle);
 	THREADS_SUSPEND_DEBUG ("SUSPEND %p -> %d\n", (void*)id, ret);
 	if (result == (DWORD)-1) {
-		CloseHandle (handle);
 		return FALSE;
 	}
 
@@ -48,16 +47,13 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 	CONTEXT context;
 	context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
 	if (!GetThreadContext (handle, &context)) {
-		CloseHandle (handle);
 		return FALSE;
 	}
 
 	/* We're in the middle of a self-suspend, resume and register */
 	if (!mono_threads_transition_finish_async_suspend (info)) {
-		mono_threads_add_to_pending_operation_set (info);
 		result = ResumeThread (handle);
 		g_assert (result == 1);
-		CloseHandle (handle);
 		THREADS_SUSPEND_DEBUG ("FAILSAFE RESUME/1 %p -> %d\n", (void*)id, 0);
 		//XXX interrupt_kernel doesn't make sense in this case as the target is not in a syscall
 		return TRUE;
@@ -71,7 +67,6 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 		THREADS_SUSPEND_DEBUG ("FAILSAFE RESUME/2 %p -> %d\n", (void*)info->native_handle, 0);
 	}
 
-	CloseHandle (handle);
 	return TRUE;
 }
 
@@ -86,15 +81,9 @@ mono_threads_suspend_check_suspend_result (MonoThreadInfo *info)
 void
 mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 {
-	DWORD id = mono_thread_info_get_tid (info);
-	HANDLE handle;
-
-	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
-	g_assert (handle);
-
-	mono_win32_abort_wait (info, handle, id);
-
-	CloseHandle (handle);
+	DWORD id = mono_thread_info_get_tid(info);
+	g_assert (info->native_handle);
+	mono_win32_abort_wait (info, info->native_handle, id);
 }
 
 gboolean
@@ -104,9 +93,10 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 	HANDLE handle;
 	DWORD result;
 
-	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	handle = info->native_handle;
 	g_assert (handle);
-
+	
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	if (info->async_target) {
 		MonoContext ctx;
 		CONTEXT context;
@@ -119,7 +109,6 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
 
 		if (!GetThreadContext (handle, &context)) {
-			CloseHandle (handle);
 			return FALSE;
 		}
 
@@ -131,13 +120,14 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
 		res = SetThreadContext (handle, &context);
 		if (!res) {
-			CloseHandle (handle);
 			return FALSE;
 		}
 	}
+#else
+	g_error ("Not implemented due to lack of SetThreadContext");	
+#endif
 
 	result = ResumeThread (handle);
-	CloseHandle (handle);
 
 	return result != (DWORD)-1;
 }
@@ -146,11 +136,20 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 void
 mono_threads_suspend_register (MonoThreadInfo *info)
 {
+	BOOL success;
+	HANDLE currentThreadHandle = NULL;
+
+	success = DuplicateHandle (GetCurrentProcess (), GetCurrentThread (), GetCurrentProcess (), &currentThreadHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+	g_assertf (success, "Failed to duplicate current thread handle");
+
+	info->native_handle = currentThreadHandle;
 }
 
 void
 mono_threads_suspend_free (MonoThreadInfo *info)
 {
+	CloseHandle (info->native_handle);
+	info->native_handle = NULL;
 }
 
 void
@@ -242,6 +241,12 @@ mono_native_thread_join_handle (HANDLE thread_handle, gboolean close_handle)
 	return res != WAIT_FAILED;
 }
 
+/*
+ * Can't OpenThread on UWP until SDK 15063 (our minspec today is 10240),
+ * but this function doesn't seem to be used on Windows anyway
+ */
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 gboolean
 mono_native_thread_join (MonoNativeThreadId tid)
 {
@@ -252,6 +257,8 @@ mono_native_thread_join (MonoNativeThreadId tid)
 
 	return mono_native_thread_join_handle (handle, TRUE);
 }
+
+#endif
 
 #if HAVE_DECL___READFSDWORD==0
 static MONO_ALWAYS_INLINE unsigned long long
@@ -269,7 +276,7 @@ void
 mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
 	MEMORY_BASIC_INFORMATION meminfo;
-#ifdef _WIN64
+#if defined(_WIN64) || defined(_M_ARM)
 	/* win7 apis */
 	NT_TIB* tib = (NT_TIB*)NtCurrentTeb();
 	guint8 *stackTop = (guint8*)tib->StackBase;
@@ -356,7 +363,7 @@ mono_threads_platform_exit (gsize exit_code)
 }
 
 int
-mono_threads_get_max_stack_size (void)
+ves_icall_System_Threading_Thread_SystemMaxStackSize (MonoError *error)
 {
 	//FIXME
 	return INT_MAX;

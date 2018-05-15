@@ -517,7 +517,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCellPositioning14 ()
 		{
 			// Col span = 3, fixed grow style

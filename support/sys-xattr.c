@@ -12,7 +12,7 @@
 #include <config.h>
 
 //If we're compiling to API level < 16 this won't be available
-#if __ANDROID_API__ < 16
+#if defined (HOST_ANDROID) && __ANDROID_API__ < 16
 #define ANDROID_NO_XATTR
 #endif
 

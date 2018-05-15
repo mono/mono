@@ -304,6 +304,7 @@ mono_trace_set_mask_string (const char *value)
 		               | MONO_TRACE_IO_LAYER_MUTEX
 		               | MONO_TRACE_IO_LAYER_HANDLE },
 		{ "w32handle", MONO_TRACE_IO_LAYER_HANDLE },
+		{ "tailcall", MONO_TRACE_TAILCALL },
 		{ "all", ~((MonoTraceMask)0) },
 		{ NULL, 0 },
 	};
@@ -343,7 +344,7 @@ mono_trace_set_mask_string (const char *value)
 gboolean
 mono_trace_is_traced (GLogLevelFlags level, MonoTraceMask mask)
 {
-	return (level <= mono_internal_current_level && (mask & mono_internal_current_mask));
+	return MONO_TRACE_IS_TRACED (level, mask);
 }
 
 /**

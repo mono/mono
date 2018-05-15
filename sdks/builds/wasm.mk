@@ -1,3 +1,5 @@
+#emcc has lots of bash'isms
+SHELL:=/bin/bash
 
 WASM_INTERP_CONFIGURE_FLAGS = \
 	--cache-file=$(TOP)/sdks/builds/wasm-interp.config.cache \
@@ -13,21 +15,21 @@ WASM_INTERP_CONFIGURE_FLAGS = \
 	--disable-executables \
 	--disable-support-build \
 	--disable-visibility-hidden \
-	--enable-minimal=ssa,com,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,remoting,shared_perfcounters \
+	--enable-minimal=ssa,com,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers \
 	--host=i386-apple-darwin10
 
 $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(TOP)/sdks/builds/toolchains/emsdk
 
 .stamp-wasm-toolchain: | $(TOP)/sdks/builds/toolchains/emsdk
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install latest
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded latest
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-1.37.36-64bit
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-1.37.36-64bit
 	touch $@
 
 .stamp-wasm-interp-toolchain: .stamp-wasm-toolchain
 	touch $@
 
-.stamp-wasm-interp-configure: $(TOP)/configure .stamp-wasm-interp-toolchain
+.stamp-wasm-interp-configure: $(TOP)/configure
 	mkdir -p $(TOP)/sdks/builds/wasm-interp
 	cd $(TOP)/sdks/builds/wasm-interp && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_INTERP_CONFIGURE_FLAGS)
 	touch $@

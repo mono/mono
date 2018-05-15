@@ -26,11 +26,13 @@ else
 endif
 endif
 
+ILASM = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/ilasm.exe
+STRING_REPLACER = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/tmp/cil-stringreplacer.exe
 MCS = $(BOOTSTRAP_MCS)
 
-DEFAULT_REFERENCES = -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+DEFAULT_REFERENCES = mscorlib
 
-PROFILE_MCS_FLAGS = -d:NET_4_0 -d:NET_4_5 -d:MONO -d:WIN_PLATFORM -d:BOOTSTRAP_BASIC -nowarn:1699 -nostdlib $(DEFAULT_REFERENCES)
+PROFILE_MCS_FLAGS = -d:NET_4_0 -d:NET_4_5 -d:MONO -d:WIN_PLATFORM -d:BOOTSTRAP_BASIC -nowarn:1699 -nostdlib
 API_BIN_PROFILE = v4.7.1
 
 NO_SIGN_ASSEMBLY = yes
@@ -113,7 +115,7 @@ endif
 
 $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs
 	$(MAKE) $(MAKE_Q) -C $(topdir)/packages
-	$(BOOTSTRAP_MCS) /warn:0 /noconfig /r:System.dll /r:mscorlib.dll /out:$@ $<
+	$(BOOTSTRAP_MCS) /warn:0 /noconfig /langversion:latest /r:System.dll /r:mscorlib.dll /out:$@ $<
 
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1

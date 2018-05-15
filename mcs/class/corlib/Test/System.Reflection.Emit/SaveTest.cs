@@ -317,9 +317,10 @@ public class SaveTest
 		// Type attributes
 		Assert.AreEqual (TypeAttributes.Public|TypeAttributes.SequentialLayout, type1.Attributes);
 		// Interfaces
-		Assert.AreEqual (2, type1.GetInterfaces ().Length); 
-		Assert.AreEqual (iface1, type1.GetInterfaces () [0]);
-		Assert.AreEqual (typeof (IComparable), type1.GetInterfaces () [1]);
+		var ifaces = type1.GetInterfaces ();
+		Assert.AreEqual (2, ifaces.Length);
+		Assert.IsTrue (iface1 == ifaces [0] || iface1 == ifaces [1]);
+		Assert.IsTrue (typeof (IComparable) == ifaces [0] || typeof (IComparable) == ifaces [1]);
 		CheckCattr (type1);
 		// FIXME: Class size/packing size
 

@@ -12,36 +12,6 @@
 
 #ifdef TARGET_WASM
 
-static void
-wasm_restore_context (void)
-{
-	g_error ("wasm_restore_context");
-}
-
-static void
-wasm_call_filter (void)
-{
-	g_error ("wasm_call_filter");
-}
-
-static void
-wasm_throw_exception (void)
-{
-	g_error ("wasm_throw_exception");
-}
-
-static void
-wasm_rethrow_exception (void)
-{
-	g_error ("wasm_rethrow_exception");
-}
-
-static void
-wasm_throw_corlib_exception (void)
-{
-	g_error ("wasm_throw_corlib_exception");
-}
-
 static char
 type_to_c (MonoType *t)
 {
@@ -77,14 +47,14 @@ handle_enum:
 	case MONO_TYPE_VOID:
 		return 'V';
 	case MONO_TYPE_VALUETYPE:
-		if (t->data.klass->enumtype) {
+		if (m_class_is_enumtype (t->data.klass)) {
 			t = mono_class_enum_basetype (t->data.klass);
 			goto handle_enum;
 		}
 
 		return 'I';
 	case MONO_TYPE_GENERICINST:
-		if (t->data.klass->valuetype)
+		if (m_class_is_valuetype (t->data.klass))
 			return 'S';
 		return 'I';
 	default:
@@ -120,61 +90,28 @@ get_long_arg (InterpMethodArguments *margs, int idx)
 
 #include "wasm_m2n_invoke.g.h"
 
-static void
-wasm_interp_to_native_trampoline (void *target_func, InterpMethodArguments *margs)
+void
+mono_wasm_interp_to_native_trampoline (void *target_func, InterpMethodArguments *margs)
 {
-	static char cookie [8];
-	static int c_count;
+	char cookie [32];
+	int c_count;
 
 	MonoMethodSignature *sig = margs->sig;
 
 	c_count = sig->param_count + sig->hasthis + 1;
+	g_assert (c_count < sizeof (cookie)); //ensure we don't overflow the local
+
 	cookie [0] = type_to_c (sig->ret);
 	if (sig->hasthis)
 		cookie [1] = 'I';
-	for (int i = 0; i < sig->param_count; ++i)
-		cookie [1 + sig->hasthis + i ] = type_to_c (sig->params [i]);
+	for (int i = 0; i < sig->param_count; ++i) {
+		cookie [1 + sig->hasthis + i] = type_to_c (sig->params [i]);
+	}
 	cookie [c_count] = 0;
 
 	icall_trampoline_dispatch (cookie, target_func, margs);
 }
 
-gpointer
-mono_aot_get_trampoline_full (const char *name, MonoTrampInfo **out_tinfo)
-{
-	gpointer code = NULL;
-
-	if (!strcmp (name, "restore_context"))
-		code = wasm_restore_context;
-	else if (!strcmp (name, "call_filter"))
-		code = wasm_call_filter;
-	else if (!strcmp (name, "throw_exception"))
-		code = wasm_throw_exception;
-	else if (!strcmp (name, "rethrow_exception"))
-		code = wasm_rethrow_exception;
-	else if (!strcmp (name, "throw_corlib_exception"))
-		code = wasm_throw_corlib_exception;
-	else if (!strcmp (name, "interp_to_native_trampoline"))
-		code = wasm_interp_to_native_trampoline;
-
-	g_assert (code);
-
-	if (out_tinfo) {
-		MonoTrampInfo *tinfo = g_new0 (MonoTrampInfo, 1);
-		tinfo->code = code;
-		tinfo->code_size = 1;
-		tinfo->name = g_strdup (name);
-		tinfo->ji = NULL;
-		tinfo->unwind_ops = NULL;
-		tinfo->uw_info = NULL;
-		tinfo->uw_info_len = 0;
-		tinfo->owns_uw_info = FALSE;
-
-		*out_tinfo = tinfo;
-	}
-
-	return code;
-}
 #else /* TARGET_WASM */
 
 MONO_EMPTY_SOURCE_FILE (aot_runtime_wasm);

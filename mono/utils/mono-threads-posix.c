@@ -15,6 +15,10 @@
 #define _DARWIN_C_SOURCE 1
 #endif
 
+#if defined (__HAIKU__)
+#include <os/kernel/OS.h>
+#endif
+
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/metadata/gc-internals.h>
@@ -125,7 +129,7 @@ mono_threads_platform_exit (gsize exit_code)
 }
 
 int
-mono_threads_get_max_stack_size (void)
+ves_icall_System_Threading_Thread_SystemMaxStackSize (MonoError *error)
 {
 	struct rlimit lim;
 
@@ -161,7 +165,24 @@ mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
 	g_error ("pthread_kill () is not supported by this platform");
 #endif
 
-	if (result && result != ESRCH)
+	/*
+	 * ESRCH just means the thread is gone; this is usually not fatal.
+	 *
+	 * ENOTSUP can occur if we try to send signals (e.g. for sampling) to Grand
+	 * Central Dispatch threads on Apple platforms. This is kinda bad, but
+	 * since there's really nothing we can do about it, we just ignore it and
+	 * move on.
+	 *
+	 * All other error codes are ill-documented and usually stem from various
+	 * OS-specific idiosyncracies. We want to know about these, so fail loudly.
+	 * One example is EAGAIN on Linux, which indicates a signal queue overflow.
+	 */
+	if (result &&
+	    result != ESRCH
+#if defined (__MACH__) && defined (ENOTSUP)
+	    && result != ENOTSUP
+#endif
+	    )
 		g_error ("%s: pthread_kill failed with error %d - potential kernel OOM or signal queue overflow", __func__, result);
 
 	return result;
@@ -209,6 +230,14 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 		strncpy (n, name, sizeof (n) - 1);
 		n [sizeof (n) - 1] = '\0';
 		pthread_setname_np (n);
+	}
+#elif defined (__HAIKU__)
+	thread_id haiku_tid;
+	haiku_tid = get_pthread_thread_id (tid);
+	if (!name) {
+		rename_thread (haiku_tid, "");
+	} else {
+		rename_thread (haiku_tid, name);
 	}
 #elif defined (__NetBSD__)
 	if (!name) {

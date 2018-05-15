@@ -1,3 +1,41 @@
+//glue code to deal with the differences between ch, d8, jsc and sm.
+if (print == undefined)
+	print = console.log;
+
+
+if (console != undefined) {
+	var has_console_warn = false;
+	try {
+		if (console.warn != undefined)
+			has_console_warn = true;
+	} catch(e) {}
+
+	if (!has_console_warn)
+		console.warn = console.log;
+}
+
+fail_exec = function(reason) {
+	print (reason);
+	throw "FAIL";
+}
+
+try {
+	arguments = WScript.Arguments;
+	load = WScript.LoadScriptFile;
+	read = WScript.LoadBinaryFile;
+	fail_exec = function(reason) {
+		print (reason);
+		WScript.Quit(1);
+	}
+} catch(e) {}
+
+try {
+	if (scriptArgs !== undefined)
+		arguments = scriptArgs;
+} catch(e) {}
+//end of all the nice shell glue code.
+
+
 function inspect_object (o){
     var r="";
     for(var p in o) {
@@ -35,7 +73,7 @@ var Module = {
 	},
 };
 
-var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll", "wasm_System_test.dll", "wasm_System.Core_test.dll" ];
+var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "Mono.Security.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll", "wasm_System_test.dll", "wasm_System.Core_test.dll", "binding_tests.dll" ];
 
 load ("mono.js");
 Module.finish_loading ();
@@ -51,60 +89,27 @@ assemblies.forEach (function(asm_name) {
 });
 
 
-var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string'])
+var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number'])
 var assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string'])
 var find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string'])
 var find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number'])
-var invoke_method = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'number'])
-var mono_string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'number', ['number'])
-var mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string'])
 
-function call_method (method, this_arg, args) {
-	var stack = Module.Runtime.stackSave ();
-	var args_mem = Runtime.stackAlloc (args.length);
-	var eh_throw = Runtime.stackAlloc (4);
-	for (var i = 0; i < args.length; ++i)
-		Module.setValue (args_mem + i * 4, args [i], "i32");
-	Module.setValue (eh_throw, 0, "i32");
-
-	var res = invoke_method (method, this_arg, args_mem, eh_throw);
-
-	if (Module.getValue (eh_throw, "i32") != 0) {
-		Module.Runtime.stackRestore(stack);
-		var msg = conv_string (res);
-		throw new Error (msg); //the convention is that invoke_method ToString () any outgoing exception
-	}
-
-	Module.Runtime.stackRestore(stack);
-	return res;
-}
-
-//FIXME this is wastefull, we could remove the temp malloc by going the UTF16 route
-//FIXME this is unsafe, cuz raw objects could be GC'd.
-function conv_string (mono_obj) {
-	if (mono_obj == 0)
-		return null;
-	var raw = mono_string_get_utf8 (mono_obj);
-	var res = Module.UTF8ToString (raw);
-	Module._free (raw);
-
-	return res;
-}
-
+//test driver support code
+var bad_semd_msg_detected = false;
 function mono_send_msg (key, val) {
 	try {
-		return conv_string (call_method (send_message, null, [mono_string (key), mono_string (val)]));
+		return Module.call_mono_method (send_message, null, "ss", [key, val]);
 	} catch (e) {
 		print ("BAD SEND MSG: " + e);
+		bad_semd_msg_detected = true;
 		return null;
 	}
 }
 
-load_runtime ("managed");
+load_runtime ("managed", 0);
 var main_module = assembly_load ("main")
 if (!main_module)
 	throw 1;
-
 
 var driver_class = find_class (main_module, "", "Driver")
 if (!driver_class)
@@ -113,6 +118,24 @@ if (!driver_class)
 var send_message = find_method (driver_class, "Send", -1)
 if (!send_message)
 	throw 3;
+
+//Ok, this is temporary
+//this is a super big hack (move it to a decently named assembly, at the very least)
+var binding_test_module = assembly_load ("binding_tests");
+
+//binding test suite support code
+var binding_test_class = find_class (binding_test_module, "", "TestClass");
+if (!binding_test_class)
+	throw 9;
+
+function call_test_method(method_name, signature, args)
+{
+	var target_method = find_method (binding_test_class, method_name, -1)
+	if (!target_method)
+		throw "Could not find " + method_name;
+
+	return Module.call_mono_method (target_method, null, signature, args);
+}
 
 print ("-----LOADED ----");
 
@@ -128,3 +151,11 @@ for (var i = 0; i < arguments.length; ++i) {
 		print ("\nDONE")
 	}
 }
+
+var status = mono_send_msg ("test-result", "");
+print ("Test status " + status)
+if (status != "PASS")
+	fail_exec ("BAD TEST STATUS");
+
+if (bad_semd_msg_detected)
+	fail_exec ("BAD MSG SEND DETECTED");

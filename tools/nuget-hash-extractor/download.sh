@@ -49,4 +49,18 @@ curl -L https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.3.0 -
 curl -L https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.0.1 -o nugets/system.threading.overlapped.4.0.1.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Threading.Overlapped/4.0.0 -o nugets/system.threading.overlapped.4.0.0.nupkg
 
+# Assemblies from Microsoft.NET.Build.Extensions are bundled with msbuild and they contain net4x assemblies, some of which
+# are incompatible with mono
+
+MS_EXTN_VERSIONS="2.0.0-preview3-20170622-1" # https://github.com/dotnet/cli/blob/7c928a9f18f81001e586e5bf0411f9bfa92e30d4/build/DependencyVersions.props
+MS_EXTN_VERSIONS="$MS_EXTN_VERSIONS 15.5.0-preview-20171027-2" # https://github.com/dotnet/cli/blob/ed916bb13e798a470855fb4f60acd3cabb2765fc/build/DependencyVersions.props
+MS_EXTN_VERSIONS="$MS_EXTN_VERSIONS 2.1.0-preview1-62414-02" # https://github.com/dotnet/cli/blob/501e11d928c21608999c934f0a7078570b688c6c/build/DependencyVersions.props
+MS_EXTN_VERSIONS="$MS_EXTN_VERSIONS 2.1.100-preview-62617-01" # https://github.com/dotnet/cli/blob/b9e74c65201ef39c74b6d75cedbb605a88cd26ec/build/DependencyVersions.props
+
+for ver in $MS_EXTN_VERSIONS; do
+	curl -L https://dotnet.myget.org/F/dotnet-core/api/v2/package/Microsoft.NET.Build.Extensions/${ver} -o nugets/microsoft.net.build.extensions.${ver}.nupkg
+done
+
+curl https://dotnetfeed.blob.core.windows.net/dotnet-core/flatcontainer/microsoft.net.build.extensions/2.1.300-preview3-62804-06/microsoft.net.build.extensions.2.1.300-preview3-62804-06.nupkg -o nugets//microsoft.net.build.extensions.2.1.300-preview3-62804-06.nupkg
+
 touch .download_stamp_file

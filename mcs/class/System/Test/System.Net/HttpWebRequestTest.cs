@@ -2341,73 +2341,6 @@ namespace MonoTests.System.Net
 			return;
 		}
 		
-		[Test]
-#if FEATURE_NO_BSD_SOCKETS
-		[ExpectedException (typeof (PlatformNotSupportedException))]
-#endif
-		public void TestLargeDataReading ()
-		{
-			int near2GBStartPosition = rand.Next (int.MaxValue - 500, int.MaxValue);
-			AutoResetEvent readyGetLastPortionEvent = new AutoResetEvent (false);
-			Exception testException = null;
-
-			DoRequest (
-			(request, waitHandle) =>
-			{
-				try
-				{
-					const int timeoutMs = 5000;
-
-					request.Timeout = timeoutMs;
-					request.ReadWriteTimeout = timeoutMs;
-
-					WebResponse webResponse = request.GetResponse ();
-					Stream webResponseStream = webResponse.GetResponseStream ();
-					Assert.IsNotNull (webResponseStream, null, "#1");
-					
-					Type webConnectionStreamType = webResponseStream.GetType ();
-					FieldInfo totalReadField = webConnectionStreamType.GetField ("totalRead", BindingFlags.NonPublic | BindingFlags.Instance);
-					Assert.IsNotNull (totalReadField, "#2");
-					totalReadField.SetValue (webResponseStream, near2GBStartPosition);
-					
-					byte[] readBuffer = new byte[int.MaxValue - near2GBStartPosition];
-					Assert.AreEqual (webResponseStream.Read (readBuffer, 0, readBuffer.Length), readBuffer.Length, "#3");
-					readyGetLastPortionEvent.Set ();
-					Assert.IsTrue (webResponseStream.Read (readBuffer, 0, readBuffer.Length) > 0);
-					readyGetLastPortionEvent.Set ();
-					
-					webResponse.Close();
-				}
-				catch (Exception e)
-				{
-					testException = e;
-				}
-				finally
-				{
-					waitHandle.Set ();
-				}
-			},
-			processor =>
-			{
-				processor.Request.InputStream.Close ();
-				
-				HttpListenerResponse response = processor.Response;
-				response.SendChunked = true;
-				
-				Stream outputStream = response.OutputStream;
-				var writeBuffer = new byte[int.MaxValue - near2GBStartPosition];
-				outputStream.Write (writeBuffer, 0, writeBuffer.Length);
-				readyGetLastPortionEvent.WaitOne ();
-				outputStream.Write (writeBuffer, 0, writeBuffer.Length);
-				readyGetLastPortionEvent.WaitOne ();
-				
-				response.Close();
-			});
-
-			if (testException != null)
-				throw testException;
-		}
-
 		void DoRequest (Action<HttpWebRequest, EventWaitHandle> request)
 		{
 			int port = NetworkHelpers.FindFreePort ();
@@ -2621,7 +2554,8 @@ namespace MonoTests.System.Net
 			var hwr = (HttpWebRequest)WebRequest.Create (uri);
 
 			hwr.Host = address2;
-			Assert.AreEqual (address2, hwr.Host, "#1");
+			var expected = "[2001::1:1:1:157:0]";
+			Assert.AreEqual (expected, hwr.Host, "#1");
 		}
 
 		[Test]
@@ -2639,21 +2573,6 @@ namespace MonoTests.System.Net
 				Assert.Fail ("#1");
 			} catch (ArgumentException) {
 				;
-			}
-		}
-
-		[Test]
-#if FEATURE_NO_BSD_SOCKETS
-		[ExpectedException (typeof (PlatformNotSupportedException))]
-#endif
-		public void AllowReadStreamBuffering ()
-		{
-			var hr = WebRequest.CreateHttp ("http://www.google.com");
-			Assert.IsFalse (hr.AllowReadStreamBuffering, "#1");
-			try {
-				hr.AllowReadStreamBuffering = true;
-				Assert.Fail ("#2");
-			} catch (InvalidOperationException) {
 			}
 		}
 
@@ -3253,7 +3172,7 @@ namespace MonoTests.System.Net
 						Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 						Assert.IsNull (ex.InnerException, "#A3");
 						Assert.IsNotNull (ex.Message, "#A4");
-						Assert.AreEqual ("size", ex.ParamName, "#A5");
+						Assert.AreEqual ("count", ex.ParamName, "#A5");
 					}
 				}
 
@@ -3284,7 +3203,7 @@ namespace MonoTests.System.Net
 						Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
 						Assert.IsNull (ex.InnerException, "#3");
 						Assert.IsNotNull (ex.Message, "#4");
-						Assert.AreEqual ("size", ex.ParamName, "#5");
+						Assert.AreEqual ("count", ex.ParamName, "#5");
 					}
 				}
 
@@ -3471,6 +3390,7 @@ namespace MonoTests.System.Net
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("MobileNotWorking")] // https://github.com/xamarin/xamarin-macios/issues/3827
 		// Bug6737
 		// This test is supposed to fail prior to .NET 4.0
 		public void Post_EmptyRequestStream ()

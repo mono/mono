@@ -52,7 +52,6 @@
 nop: len:4
 relaxed_nop: len:4
 break: len:20
-jmp: len:92
 br: len:16
 switch: src1:i len:12
 # See the comment in resume_from_signal_handler, we can't copy the fp regs from sigctx to MonoContext on linux,
@@ -100,7 +99,23 @@ lcall_membase: dest:l src1:b len:32 clob:c
 vcall: len:32 clob:c
 vcall_reg: src1:i len:32 clob:c
 vcall_membase: src1:b len:32 clob:c
-tailcall: len:64 clob:c
+
+tailcall: len:255 clob:c # FIXME len
+tailcall_membase: src1:b len:255 clob:c # FIXME len
+tailcall_reg: src1:b len:255 clob:c # FIXME len
+
+# tailcall_parameter models the size of moving one parameter,
+# so that the required size of a branch around a tailcall can
+# be accurately estimated; something like:
+# void f1(volatile long *a)
+# {
+# a[large] = a[another large]
+# }
+#
+# This is two instructions typically, but can be 6 for frames larger than 32K.
+# FIXME A fixed size sequence to move parameters would moot this.
+tailcall_parameter: len:24
+
 iconst: dest:i len:16
 r4const: dest:f len:24
 r8const: dest:f len:20
@@ -300,7 +315,10 @@ arm_rsc_imm: dest:i src1:i len:4
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
+dummy_iconst: dest:i len:0
+dummy_i8const: dest:i len:0
+dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 

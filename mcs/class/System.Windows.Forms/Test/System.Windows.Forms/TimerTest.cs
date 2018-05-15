@@ -142,8 +142,13 @@ namespace MonoTests.System.Windows.Forms
 		[Test] // bug #325033
 		public void RunningThread ()
 		{
-			Application.Run (new Bug325033Form ());
-			Application.Run (new Bug325033Form2 ());
+			var f1 = new Bug325033Form ();
+			Application.Run (f1);
+			var f2 = new Bug325033Form2 ();
+			Application.Run (f2);
+
+			f1.Dispose ();
+			f2.Dispose ();
 		}
 
 		class Bug325033Form : Form

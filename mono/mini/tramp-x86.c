@@ -28,8 +28,6 @@
 #include "debugger-agent.h"
 #include "jit-icalls.h"
 
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
-
 /*
  * mono_arch_get_unbox_trampoline:
  * @m: method pointer
@@ -142,42 +140,6 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
 	*(guint8**)((guint8*)got + offset) = addr;
 }
 
-static gpointer
-get_vcall_slot (guint8 *code, mgreg_t *regs, int *displacement)
-{
-	const int kBufSize = 8;
-	guint8 buf [64];
-	guint8 reg = 0;
-	gint32 disp = 0;
-
-	mono_breakpoint_clean_code (NULL, code, kBufSize, buf, kBufSize);
-	code = buf + 8;
-
-	*displacement = 0;
-
-	if ((code [0] == 0xff) && ((code [1] & 0x18) == 0x10) && ((code [1] >> 6) == 2)) {
-		reg = code [1] & 0x07;
-		disp = *((gint32*)(code + 2));
-	} else {
-		g_assert_not_reached ();
-		return NULL;
-	}
-
-	*displacement = disp;
-	return (gpointer)regs [reg];
-}
-
-static gpointer*
-get_vcall_slot_addr (guint8* code, mgreg_t *regs)
-{
-	gpointer vt;
-	int displacement;
-	vt = get_vcall_slot (code, regs, &displacement);
-	if (!vt)
-		return NULL;
-	return (gpointer*)((char*)vt + displacement);
-}
-
 guchar*
 mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInfo **info, gboolean aot)
 {
@@ -219,7 +181,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, buf, cfa_offset);
 	mono_add_unwind_op_offset (unwind_ops, code, buf, X86_EBP, -cfa_offset);
 
-	x86_mov_reg_reg (code, X86_EBP, X86_ESP, sizeof (mgreg_t));
+	x86_mov_reg_reg (code, X86_EBP, X86_ESP);
 	mono_add_unwind_op_def_cfa_reg (unwind_ops, code, buf, X86_EBP);
 
 	/* There are three words on the stack, adding + 4 aligns the stack to 16, which is needed on osx */
@@ -237,7 +199,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		} else if (i == X86_ESP) {
 			/* Save original esp */
 			/* EAX is already saved */
-			x86_mov_reg_reg (code, X86_EAX, X86_EBP, sizeof (mgreg_t));
+			x86_mov_reg_reg (code, X86_EAX, X86_EBP);
 			/* Saved ebp + trampoline arg + return addr */
 			x86_alu_reg_imm (code, X86_ADD, X86_EAX, 3 * sizeof (mgreg_t));
 			reg = X86_EAX;
@@ -313,7 +275,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 #ifdef __APPLE__
 	/* check the stack is aligned after the ret ip is pushed */
 	/*
-	x86_mov_reg_reg (code, X86_EDX, X86_ESP, 4);
+	x86_mov_reg_reg (code, X86_EDX, X86_ESP);
 	x86_alu_reg_imm (code, X86_AND, X86_EDX, 15);
 	x86_alu_reg_imm (code, X86_CMP, X86_EDX, 0);
 	x86_branch_disp (code, X86_CC_Z, 3, FALSE);
@@ -395,7 +357,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	for (i = X86_EAX; i <= X86_EDI; ++i) {
 		if (i == X86_ESP || i == X86_EBP)
 			continue;
-		if (i == X86_EAX && !((tramp_type == MONO_TRAMPOLINE_RESTORE_STACK_PROT) || (tramp_type == MONO_TRAMPOLINE_AOT_PLT)))
+		if (i == X86_EAX && tramp_type != MONO_TRAMPOLINE_AOT_PLT)
 			continue;
 		x86_mov_reg_membase (code, i, X86_EBP, regarray_offset + (i * 4), 4);
 	}
@@ -654,7 +616,7 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
  * mono_arch_create_sdb_trampoline:
  *
  *   Return a trampoline which captures the current context, passes it to
- * debugger_agent_single_step_from_context ()/debugger_agent_breakpoint_from_context (),
+ * mini_get_dbg_callbacks ()->single_step_from_context ()/mini_get_dbg_callbacks ()->breakpoint_from_context (),
  * then restores the (potentially changed) context.
  */
 guint8*
@@ -690,7 +652,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, buf, cfa_offset);
 	mono_add_unwind_op_offset (unwind_ops, code, buf, X86_EBP, - cfa_offset);
 
-	x86_mov_reg_reg (code, X86_EBP, X86_ESP, sizeof(mgreg_t));
+	x86_mov_reg_reg (code, X86_EBP, X86_ESP);
 	mono_add_unwind_op_def_cfa_reg (unwind_ops, code, buf, X86_EBP);
 	/* The + 8 makes the stack aligned */
 	x86_alu_reg_imm (code, X86_SUB, X86_ESP, framesize + 8);
@@ -702,7 +664,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	x86_mov_membase_reg (code, X86_ESP, ctx_offset + G_STRUCT_OFFSET (MonoContext, edx), X86_EDX, sizeof (mgreg_t));
 	x86_mov_reg_membase (code, X86_EAX, X86_EBP, 0, sizeof (mgreg_t));
 	x86_mov_membase_reg (code, X86_ESP, ctx_offset + G_STRUCT_OFFSET (MonoContext, ebp), X86_EAX, sizeof (mgreg_t));
-	x86_mov_reg_reg (code, X86_EAX, X86_EBP, sizeof (mgreg_t));
+	x86_mov_reg_reg (code, X86_EAX, X86_EBP);
 	x86_alu_reg_imm (code, X86_ADD, X86_EAX, cfa_offset);
 	x86_mov_membase_reg (code, X86_ESP, ctx_offset + G_STRUCT_OFFSET (MonoContext, esp), X86_ESP, sizeof (mgreg_t));
 	x86_mov_membase_reg (code, X86_ESP, ctx_offset + G_STRUCT_OFFSET (MonoContext, esi), X86_ESI, sizeof (mgreg_t));
@@ -718,9 +680,9 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 		x86_breakpoint (code);
 	} else {
 		if (single_step)
-			x86_call_code (code, debugger_agent_single_step_from_context);
+			x86_call_code (code, mini_get_dbg_callbacks ()->single_step_from_context);
 		else
-			x86_call_code (code, debugger_agent_breakpoint_from_context);
+			x86_call_code (code, mini_get_dbg_callbacks ()->breakpoint_from_context);
 	}
 
 	/* Restore registers from ctx */
@@ -743,6 +705,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	x86_ret (code);
 
 	mono_arch_flush_icache (code, code - buf);
+	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL));
 	g_assert (code - buf <= tramp_size);
 
 	const char *tramp_name = single_step ? "sdb_single_step_trampoline" : "sdb_breakpoint_trampoline";
@@ -750,11 +713,3 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 
 	return buf;
 }
-
-gpointer
-mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-

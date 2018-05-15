@@ -101,6 +101,8 @@ namespace Mono.Profiler.Log {
 
 		public string Name { get; internal set; }
 
+		public Guid ModuleVersionId { get; internal set; }
+
 		internal override void Accept (LogEventVisitor visitor)
 		{
 			visitor.Visit (this);
@@ -260,6 +262,8 @@ namespace Mono.Profiler.Log {
 
 		public long ObjectSize { get; internal set; }
 
+		public int Generation { get; internal set; }
+
 		public IReadOnlyList<HeapObjectReference> References { get; internal set; }
 
 		internal override void Accept (LogEventVisitor visitor)
@@ -272,7 +276,7 @@ namespace Mono.Profiler.Log {
 
 		public struct HeapRoot {
 
-			public long AddressPointer { get; internal set; }
+			public long SlotPointer { get; internal set; }
 
 			public long ObjectPointer { get; internal set; }
 
@@ -326,7 +330,7 @@ namespace Mono.Profiler.Log {
 
 		public LogGCEvent Type { get; internal set; }
 
-		public byte Generation { get; internal set; }
+		public int Generation { get; internal set; }
 
 		internal override void Accept (LogEventVisitor visitor)
 		{
@@ -554,6 +558,7 @@ namespace Mono.Profiler.Log {
 		}
 	}
 
+	[Obsolete ("This event is no longer produced.")]
 	public sealed class UnmanagedBinaryEvent : LogEvent {
 
 		public long SegmentPointer { get; internal set; }
@@ -587,6 +592,16 @@ namespace Mono.Profiler.Log {
 	public sealed class SynchronizationPointEvent : LogEvent {
 
 		public LogSynchronizationPoint Type { get; internal set; }
+
+		internal override void Accept (LogEventVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+	}
+
+	public sealed class AotIdEvent : LogEvent {
+
+		public Guid AotId { get; internal set; }
 
 		internal override void Accept (LogEventVisitor visitor)
 		{

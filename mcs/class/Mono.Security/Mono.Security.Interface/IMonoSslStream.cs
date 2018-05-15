@@ -33,7 +33,6 @@ using SSA = System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Security.Cryptography;
-using Mono.Net.Security;
 
 namespace Mono.Security.Interface
 {
@@ -45,9 +44,13 @@ namespace Mono.Security.Interface
 
 		void AuthenticateAsClient (string targetHost);
 
+		void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, bool checkCertificateRevocation);
+
 		void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
 
 		IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState);
+
+		IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);
 
 		IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);
 
@@ -55,9 +58,13 @@ namespace Mono.Security.Interface
 
 		void AuthenticateAsServer (X509Certificate serverCertificate);
 
+		void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, bool checkCertificateRevocation);
+
 		void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
 
 		IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState);
+
+		IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);
 
 		IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);
 
@@ -65,9 +72,13 @@ namespace Mono.Security.Interface
 
 		Task AuthenticateAsClientAsync (string targetHost);
 
+		Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, bool checkCertificateRevocation);
+
 		Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
 
 		Task AuthenticateAsServerAsync (X509Certificate serverCertificate);
+
+		Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, bool checkCertificateRevocation);
 
 		Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
 
@@ -197,6 +208,13 @@ namespace Mono.Security.Interface
 
 
 		MonoTlsConnectionInfo GetConnectionInfo ();
+	}
+
+	interface IMonoSslStream2 : IMonoSslStream
+	{
+		Task AuthenticateAsClientAsync (IMonoSslClientAuthenticationOptions sslClientAuthenticationOptions, CancellationToken cancellationToken);
+
+		Task AuthenticateAsServerAsync (IMonoSslServerAuthenticationOptions sslServerAuthenticationOptions, CancellationToken cancellationToken);
 	}
 }
 

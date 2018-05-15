@@ -1,0 +1,14 @@
+corefx/SqlCommand.cs
+corefx/SqlException.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlBulkCopy.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlCommand.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlCommandBuilder.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlConnection.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlConnectionHelper.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlDataAdapter.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlException.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlParameter.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlParameterCollection.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlParameterCollectionHelper.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlParameterHelper.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SqlTransaction.cs

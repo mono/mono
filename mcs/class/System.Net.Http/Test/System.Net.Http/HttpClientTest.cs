@@ -276,7 +276,7 @@ namespace MonoTests.System.Net.Http
 				httpClient.PostAsync (restRequest.RequestUri, restRequest.Content).Wait (WaitTimeout);
 				Assert.Fail ("#1");
 			} catch (AggregateException e) {
-				Assert.IsTrue (e.InnerException is TaskCanceledException, "#2");
+				Assert.That (e.InnerException, Is.InstanceOf<TaskCanceledException> (), "#2");
 			}
 		}
 
@@ -680,16 +680,15 @@ namespace MonoTests.System.Net.Http
 #endif
 		public void Send_Complete_CustomHeaders_Host ()
 		{
-			bool? failed = null;
+			Exception error = null;
 			var port = NetworkHelpers.FindFreePort ();
 			var listener = CreateListener (l => {
 				var request = l.Request;
 
 				try {
 					Assert.AreEqual ("customhost", request.Headers["Host"], "#1");
-					failed = false;
-				} catch {
-					failed = true;
+				} catch (Exception ex) {
+					error = ex;
 				}
 			}, port);
 
@@ -704,7 +703,7 @@ namespace MonoTests.System.Net.Http
 
 				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
 				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
-				Assert.AreEqual (false, failed, "#102");
+				Assert.IsNull (error, "#102");
 			} finally {
 				listener.Abort ();
 				listener.Close ();
@@ -1440,10 +1439,29 @@ namespace MonoTests.System.Net.Http
 			ch.AllowAutoRedirect = false;
 		}
 
+#if !FEATURE_NO_BSD_SOCKETS
+		[Test]
+		// https://github.com/mono/mono/issues/7355
+		public void WildcardConnect ()
+		{
+			try {
+				using (var client = new HttpClient ()) {
+					client.GetAsync ("http://255.255.255.255").Wait (WaitTimeout);
+				}
+			} catch (AggregateException e) {
+				Assert.That (e.InnerException, Is.InstanceOf<HttpRequestException> (), "#1");
+				var rex = (HttpRequestException)e.InnerException;
+				Assert.That (rex.InnerException, Is.InstanceOf<WebException> (), "#2");
+				var wex = (WebException)rex.InnerException;
+				Assert.That (wex.Status, Is.EqualTo (WebExceptionStatus.ConnectFailure), "#3");
+			}
+		}
+#endif
+
 		HttpListener CreateListener (Action<HttpListenerContext> contextAssert, int port)
 		{
 			var l = new HttpListener ();
-			l.Prefixes.Add (string.Format ("http://+:{0}/", port));
+			l.Prefixes.Add (string.Format ("http://*:{0}/", port));
 			l.Start ();
 			AddListenerContext(l, contextAssert);
 

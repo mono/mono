@@ -470,7 +470,6 @@ namespace MonoTests.System.Reflection.Emit
 
 	public delegate object RetObj();
 		[Test] //#640702
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void GetCurrentMethodWorksWithDynamicMethods ()
 		{
 	        DynamicMethod dm = new DynamicMethod("Foo", typeof(object), null);
@@ -527,7 +526,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ExceptionHandling ()
 		{
 			var method = new DynamicMethod ("", typeof(void), new[] { typeof(int) }, typeof (DynamicMethodTest));
@@ -588,13 +586,12 @@ namespace MonoTests.System.Reflection.Emit
 				// Ignore Metadata
 				lines = lines.Where (l => !l.StartsWith ("[")).ToArray ();
 
-				Assert.AreEqual (5, lines.Length, "#1");
+				Assert.AreEqual (4, lines.Length, "#1");
 				Assert.IsTrue (lines [1].Contains ("---"), "#2");
 			}
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ExceptionHandlingWithExceptionDispatchInfo ()
 		{
 			var method = new DynamicMethod ("", typeof(void), new[] { typeof(int) }, typeof (DynamicMethodTest));
@@ -652,7 +649,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test] //see bxc #59334
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ExceptionWrapping ()
 		{
 			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (new AssemblyName ("ehatevfheiw"), AssemblyBuilderAccess.Run);

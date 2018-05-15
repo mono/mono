@@ -186,6 +186,10 @@ public class TimeZoneTest {
 				TST (t1);
 				break;
 			case "GMT":
+#if MONOTOUCH
+				if (string.IsNullOrEmpty (t1.DaylightName))
+					Assert.Ignore ("This test may fail due to: http://www.openradar.me/38174449");
+#endif
 				GMT (t1);
 				break;
 			case "NZST":
@@ -313,7 +317,6 @@ public class TimeZoneTest {
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void GetUtcOffsetAtDSTBoundary ()
 		{
 			/*

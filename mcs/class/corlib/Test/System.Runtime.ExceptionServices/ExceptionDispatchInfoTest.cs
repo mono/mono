@@ -66,7 +66,6 @@ namespace MonoTests.System.Runtime.ExceptionServices
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void Throw ()
 		{
 			Exception orig = null;
@@ -86,14 +85,13 @@ namespace MonoTests.System.Runtime.ExceptionServices
 				Assert.Fail ("#0");
 			} catch (Exception e) {
 				var s = GetLines (e.StackTrace);
-				Assert.AreEqual (4, s.Length, "#1");
+				Assert.AreEqual (3, s.Length, "#1");
 				Assert.AreEqual (orig, e, "#2");
 				Assert.AreNotEqual (orig_stack, e.StackTrace, "#3");
 			}
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ThrowWithEmptyFrames ()
 		{
 			var edi = ExceptionDispatchInfo.Capture (new OperationCanceledException ());
@@ -103,12 +101,11 @@ namespace MonoTests.System.Runtime.ExceptionServices
 			} catch (OperationCanceledException e) {
 				Assert.IsTrue (!e.StackTrace.Contains("---"));
 				var lines = GetLines (e.StackTrace);
-				Assert.AreEqual (2, lines.Length, "#1");
+				Assert.AreEqual (1, lines.Length, "#1");
 			}
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void LastThrowWins ()
 		{
 			Exception e;
@@ -134,13 +131,12 @@ namespace MonoTests.System.Runtime.ExceptionServices
 				edi.Throw ();
 			} catch (Exception ex) {
 				var lines = GetLines (ex.StackTrace);
-				Assert.AreEqual (4, lines.Length, "#1");
+				Assert.AreEqual (3, lines.Length, "#1");
 				Assert.IsTrue (lines [1].Contains ("---"), "#2");
 			}
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ThrowMultipleCaptures ()
 		{
 			Exception e;
@@ -162,14 +158,13 @@ namespace MonoTests.System.Runtime.ExceptionServices
 				edi.Throw ();
 			} catch (Exception ex) {
 				var lines = GetLines (ex.StackTrace);
-				Assert.AreEqual (7, lines.Length, "#1");
+				Assert.AreEqual (5, lines.Length, "#1");
 				Assert.IsTrue (lines [1].Contains ("---"), "#2");
-				Assert.IsTrue (lines [4].Contains ("---"), "#3");
+				Assert.IsTrue (lines [3].Contains ("---"), "#3");
 			}
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void StackTraceUserCopy ()
 		{
 			try {
@@ -182,7 +177,7 @@ namespace MonoTests.System.Runtime.ExceptionServices
 			} catch (Exception ex) {
 				var st = new StackTrace (ex, true);
 				var lines = GetLines (st.ToString ());
-				Assert.AreEqual (4, lines.Length, "#1");
+				Assert.AreEqual (3, lines.Length, "#1");
 				Assert.IsTrue (lines [1].Contains ("---"), "#2");
 			}
 		}

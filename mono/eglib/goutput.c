@@ -41,23 +41,27 @@ static void default_stdout_handler (const gchar *string);
 static void default_stderr_handler (const gchar *string);
 
 void
-g_print (const gchar *format, ...)
+g_printv (const gchar *format, va_list args)
 {
 	char *msg;
-	va_list args;
 
-	va_start (args, format);
-	if (g_vasprintf (&msg, format, args) < 0) {
-		va_end (args);
+	if (g_vasprintf (&msg, format, args) < 0)
 		return;
-	}
-	va_end (args);
 
 	if (!stdout_handler)
 		stdout_handler = default_stdout_handler;
 
 	stdout_handler (msg);
 	g_free (msg);
+}
+
+void
+g_print (const gchar *format, ...)
+{
+	va_list args;
+	va_start (args, format);
+	g_printv (format, args);
+	va_end (args);
 }
 
 void
@@ -126,12 +130,23 @@ g_log (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, .
 	va_end (args);
 }
 
+static char *failure_assertion = NULL;
+
+const char *
+g_get_assertion_message (void)
+{
+	return failure_assertion;
+}
+
 void
 g_assertion_message (const gchar *format, ...)
 {
 	va_list args;
 
 	va_start (args, format);
+
+	g_vasprintf (&failure_assertion, format, args);
+
 	g_logv (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, format, args);
 	va_end (args);
 	exit (0);

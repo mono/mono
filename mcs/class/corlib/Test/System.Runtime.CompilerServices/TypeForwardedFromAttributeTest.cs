@@ -42,8 +42,6 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		{
 			var a = new TypeForwardedFromAttribute ("System.Web, Version=2.0.0.0, Culture=Neutral, PublicKeyToken=b03f5f7f11d50a3a");
 			Assert.AreEqual ("System.Web, Version=2.0.0.0, Culture=Neutral, PublicKeyToken=b03f5f7f11d50a3a", a.AssemblyFullName);
-
-			Assert.Throws<ArgumentNullException> ( () => new TypeForwardedFromAttribute (null) );
 		}
 	}
 }

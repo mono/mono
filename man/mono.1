@@ -65,6 +65,45 @@ and
 See the description for 
 .B MONO_IOMAP
 in the environment variables section for more details.
+.SH METHOD DESCRIPTIONS
+A number of diagnostic command line options take as argument a method
+description.   A method description is a textual representation that
+can be used to uniquely identify a method.   The syntax is as follows:
+.nf
+[namespace]classname:methodname[(arguments)]
+.fi
+.PP
+The values in brackets are optional, like the namespace and the
+arguments.   The arguments themselves are either empty, or a
+comma-separated list of arguments.   Both the
+\fBclassname\fR
+and
+\fBmethodname\fR
+can be set to the special value '*' to match any values (Unix shell
+users should escape the argument to avoid the shell interpreting
+this).
+.PP
+The arguments, if present should be a comma separated list of types
+either a full typename, or for built-in types it should use the
+low-level ILAsm type names for the built-in types,
+like 'void', 'char', 'bool', 'byte', 'sbyte', 'uint16', 'int16', 'uint',
+'int', 'ulong', 'long', 'uintptr', 'intptr', 'single', 'double', 'string', 'object'.
+.PP
+Pointer types should be the name of the type, followed by a '*',
+arrays should be the typename followed by '[' one or more commas (to
+indicate the rank of the array), and ']'.
+.PP
+Generic values should use '<', one or more type names, separated by
+both a comma and a space and '>'.
+.PP
+By-reference arguments should include a "&" after the typename.
+.PP
+Examples:
+.nf
+*:ctor(int)		// All constructors that take an int as an argument
+*:Main			// Methods named Main in any class
+*:Main(string[])	// Methods named Main that take a string array in any class
+.fi
 .SH RUNTIME OPTIONS
 The following options are available:
 .TP
@@ -174,6 +213,13 @@ automatically enables the
 and
 .I llvm
 options. This feature is experimental.
+.TP
+.I llvmopts=[options]
+Use this option to override the built-in set of flags passed to the
+LLVM optimizer.   The list of possible flags that can be passed can be
+obtained by calling the bundled 
+.I opt
+program that comes with Mono.
 .TP
 .I llvm-outfile=[filename]
 Gives the path for the temporary LLVM bitcode file created during AOT.
@@ -542,6 +588,11 @@ Controls whether the runtime should attempt to inline (the default),
 or not inline methods invocations
 .ne
 .RE
+\fB--response=FILE\fR
+Provides a response file, this instructs the Mono command to read
+other command line options from the specified file, as if the
+options had been specified on the command line.   Useful when you have
+very long command lines.
 .TP
 \fB--runtime=VERSION\fR
 Mono supports different runtime versions. The version used depends on the program
@@ -1087,14 +1138,12 @@ When Mono is built with a soft float fallback on ARM and this variable is set to
 "1", Mono will always emit soft float code, even if a VFP unit is
 detected.
 .TP
-\fBMONO_DARWIN_WATCHER_MAXFDS\fR
-This is a debugging aid used to force limits on the FileSystemWatcher
-implementation in Darwin.   There is no limit by default.
+\fBMONO_DARWIN_USE_KQUEUE_FSW\fR
+Fall back on the kqueue FileSystemWatcher implementation in Darwin. The default is the FSEvent implementation.
 .TP
-\fBMONO_DISABLE_AIO\fR
-If set, tells mono NOT to attempt using native asynchronous I/O services. In
-that case, a default select/poll implementation is used. Currently only epoll()
-is supported.
+\fBMONO_DARWIN_WATCHER_MAXFDS\fR
+This is a debugging aid used to force limits on the kqueue FileSystemWatcher
+implementation in Darwin.   There is no limit by default.
 .TP
 \fBMONO_DISABLE_MANAGED_COLLATION\fR
 If this environment variable is `yes', the runtime uses unmanaged
@@ -1121,7 +1170,12 @@ For platforms that do not otherwise have a way of obtaining random bytes
 this can be set to the name of a file system socket on which an egd or
 prngd daemon is listening.
 .TP
-\fBMONO_ENABLE_COOP\fR
+\fBMONO_ENABLE_AIO\fR
+If set, tells mono to attempt using native asynchronous I/O services. If not
+set, a default select/poll implementation is used. Currently epoll and kqueue
+are supported.
+.TP
+\fBMONO_ENABLE_COOP_SUSPEND\fR
 This makes the Mono runtime and the SGen garbage collector run in cooperative
 mode as opposed to run on preemptive mode.   Preemptive mode is the mode
 that Mono has used historically, going back to the Boehm days, where the
@@ -1132,7 +1186,7 @@ safe point.   This makes for an easier to debug garbage collector.   As
 of Mono 4.3.0 it is a work in progress, and while it works, it has not
 been used extensively.   This option enabled the feature and allows us to
 find spots that need to be tuned for this mode of operation.   Alternatively,
-this mode can be enabled at compile time by using the --with-cooperative-gc
+this mode can be enabled at compile time by using the --enable-cooperative-suspend
 flag when calling configure.
 .TP
 \fBMONO_ENV_OPTIONS\fR
@@ -1557,12 +1611,6 @@ home directories that might be shared over the network.
 If set, extra checks are made during IO operations.  Currently, this
 includes only advisory locks around file writes.
 .TP
-\fBMONO_THEME\fR
-The name of the theme to be used by Windows.Forms.   Available themes today
-include "clearlooks", "nice" and "win32".
-.Sp
-The default is "win32".  
-.TP
 \fBMONO_TLS_SESSION_CACHE_TIMEOUT\fR
 The time, in seconds, that the SSL/TLS session cache will keep it's entry to
 avoid a new negotiation between the client and a server. Negotiation are very
@@ -1615,8 +1663,8 @@ Currently, the following options are supported:
 Enables small structs alignment to 4/8 bytes.
 .TP
 \fBarm-use-fallback-tls\fR
-When this option is set on ARM, a fallback TLS will be used instead
-of the default fast TLS.
+When this option is set on ARM, a fallback thread local store will be used instead
+of the default fast thread local storage primitives.
 .TP
 \fBbreak-on-unverified\fR
 If this variable is set, when the Mono VM runs into a verification
@@ -1745,6 +1793,9 @@ This option will suspend the program when an exception occurs.
 .TP
 \fBsuspend-on-unhandled\fR
 This option will suspend the program when an unhandled exception occurs.
+.TP
+\fBthread-dump-dir=DIR\fR
+Use DIR for storage thread dumps created by SIGQUIT.
 .ne
 .RE
 .TP
@@ -1826,7 +1877,10 @@ for example, to see managed frame names on gdb backtraces.
 \fBMONO_VERBOSE_METHOD\fR
 Enables the maximum JIT verbosity for the specified method. This is
 very helpfull to diagnose a miscompilation problems of a specific
-method.
+method.   This can be a comma-separated list of method names to
+match.  If the name is simple, this applies to any method with that
+name, otherwise you can use a mono method description (see the section
+METHOD DESCRIPTIONS).
 .TP
 \fBMONO_JIT_DUMP_METHOD\fR
 Enables sending of the JITs intermediate representation for a specified

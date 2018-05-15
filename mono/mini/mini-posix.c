@@ -58,6 +58,7 @@
 #include <mono/utils/dtrace.h>
 #include <mono/utils/mono-signal-handler.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/os-event.h>
 
 #include "mini.h"
 #include <string.h>
@@ -72,6 +73,11 @@
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 #include <mach/clock.h>
+#include <mono/utils/mono-merp.h>
+#endif
+
+#ifndef HOST_WIN32
+#include <mono/utils/mono-threads-debug.h>
 #endif
 
 #if defined(HOST_WATCHOS)
@@ -162,10 +168,8 @@ save_old_signal_handler (int signo, struct sigaction *old_action)
 static void
 free_saved_signal_handlers (void)
 {
-	if (mono_saved_signal_handlers) {
-		g_hash_table_destroy (mono_saved_signal_handlers);
-		mono_saved_signal_handlers = NULL;
-	}
+	g_hash_table_destroy (mono_saved_signal_handlers);
+	mono_saved_signal_handlers = NULL;
 }
 
 /*
@@ -201,13 +205,36 @@ MONO_SIG_HANDLER_FUNC (static, sigabrt_signal_handler)
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
 	if (mono_thread_internal_current ())
-		ji = mono_jit_info_table_find_internal (mono_domain_get (), (char *)mono_arch_ip_from_context (ctx), TRUE, TRUE);
+		ji = mono_jit_info_table_find_internal (mono_domain_get (), mono_arch_ip_from_context (ctx), TRUE, TRUE);
 	if (!ji) {
         if (mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 		mono_handle_native_crash ("SIGABRT", ctx, info);
 	}
 }
+
+#ifdef TARGET_OSX
+MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
+{
+	MONO_SIG_HANDLER_GET_CONTEXT;
+
+	// Note: this function only returns for a single thread
+	// When it's invoked on other threads once the dump begins,
+	// those threads perform their dumps and then sleep until we
+	// die. The dump ends with the exit(1) below
+	MonoContext mctx;
+	gchar *output = NULL;
+	mono_sigctx_to_monoctx (ctx, &mctx);
+	if (!mono_threads_summarize (&mctx, &output))
+		g_assert_not_reached ();
+
+	// Only the dumping-supervisor thread exits mono_thread_summarize
+	MOSTLY_ASYNC_SAFE_PRINTF("Unhandled exception dump: \n######\n%s\n######\n", output);
+
+	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
+	exit (1);
+}
+#endif
 
 #if (defined (USE_POSIX_BACKEND) && defined (SIGRTMIN)) || defined (SIGPROF)
 #define HAVE_PROFILER_SIGNAL
@@ -360,6 +387,15 @@ remove_signal_handler (int signo)
 	}
 }
 
+#ifdef TARGET_OSX
+void
+mini_register_sigterm_handler (void)
+{
+	/* always catch SIGTERM, conditionals inside of handler */
+	add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
+}
+#endif
+
 void
 mono_runtime_posix_install_handlers (void)
 {
@@ -493,7 +529,7 @@ clock_sleep_ns_abs (guint64 ns_abs)
 
 #else
 
-clockid_t sampling_posix_clock;
+static clockid_t sampling_posix_clock;
 
 static void
 clock_init (MonoProfilerSampleMode mode)
@@ -606,12 +642,23 @@ clock_sleep_ns_abs (guint64 ns_abs)
 
 static int profiler_signal;
 static volatile gint32 sampling_thread_exiting;
+static MonoOSEvent sampling_thread_exited;
 
-static mono_native_thread_return_t
-sampling_thread_func (void *data)
+static gsize
+sampling_thread_func (gpointer unused)
 {
-	mono_threads_attach_tools_thread ();
-	mono_native_thread_set_name (mono_native_thread_id_get (), "Profiler sampler");
+	MonoInternalThread *thread = mono_thread_internal_current ();
+
+	thread->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
+
+	ERROR_DECL (error);
+
+	MonoString *name = mono_string_new_checked (mono_get_root_domain (), "Profiler Sampler", error);
+	mono_error_assert_ok (error);
+	mono_thread_set_name_internal (thread, name, FALSE, FALSE, error);
+	mono_error_assert_ok (error);
+
+	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
 
 	int old_policy;
 	struct sched_param old_sched;
@@ -663,9 +710,8 @@ init:
 
 		sleep += 1000000000 / freq;
 
-		FOREACH_THREAD_SAFE (info) {
-			/* info should never be this thread as we're a tools thread. */
-			g_assert (mono_thread_info_get_tid (info) != mono_native_thread_id_get ());
+		FOREACH_THREAD_SAFE_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_SAMPLE) {
+			g_assert (mono_thread_info_get_tid (info) != sampling_thread);
 
 			/*
 			 * Require an ack for the last sampling signal sent to the thread
@@ -687,9 +733,11 @@ done:
 
 	pthread_setschedparam (pthread_self (), old_policy, &old_sched);
 
-	mono_thread_info_detach ();
+	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NONE);
 
-	return NULL;
+	mono_os_event_set (&sampling_thread_exited);
+
+	return 0;
 }
 
 void
@@ -727,7 +775,8 @@ mono_runtime_shutdown_stat_profiler (void)
 	}
 #endif
 
-	mono_native_thread_join (sampling_thread);
+	mono_os_event_wait_one (&sampling_thread_exited, MONO_INFINITE_WAIT, FALSE);
+	mono_os_event_destroy (&sampling_thread_exited);
 
 	/*
 	 * We can't safely remove the signal handler because we have no guarantee
@@ -769,8 +818,15 @@ mono_runtime_setup_stat_profiler (void)
 	mono_counters_register ("Sampling signals accepted", MONO_COUNTER_UINT | MONO_COUNTER_PROFILER | MONO_COUNTER_MONOTONIC, &profiler_signals_accepted);
 	mono_counters_register ("Shutdown signals received", MONO_COUNTER_UINT | MONO_COUNTER_PROFILER | MONO_COUNTER_MONOTONIC, &profiler_interrupt_signals_received);
 
+	mono_os_event_init (&sampling_thread_exited, FALSE);
+
 	mono_atomic_store_i32 (&sampling_thread_running, 1);
-	mono_native_thread_create (&sampling_thread, sampling_thread_func, NULL);
+
+	MonoError error;
+	MonoInternalThread *thread = mono_thread_create_internal (mono_get_root_domain (), sampling_thread_func, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
+	mono_error_assert_ok (&error);
+
+	sampling_thread = MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid);
 }
 
 #else
@@ -807,6 +863,12 @@ native_stack_with_gdb (pid_t crashed_pid, const char **argv, FILE *commands, cha
 	fprintf (commands, "attach %ld\n", (long) crashed_pid);
 	fprintf (commands, "info threads\n");
 	fprintf (commands, "thread apply all bt\n");
+	for (int i = 0; i < 32; ++i) {
+		fprintf (commands, "info registers\n");
+		fprintf (commands, "info frame\n");
+		fprintf (commands, "info locals\n");
+		fprintf (commands, "up\n");
+	}
 
 	return TRUE;
 }
@@ -830,6 +892,12 @@ native_stack_with_lldb (pid_t crashed_pid, const char **argv, FILE *commands, ch
 	fprintf (commands, "process attach --pid %ld\n", (long) crashed_pid);
 	fprintf (commands, "thread list\n");
 	fprintf (commands, "thread backtrace all\n");
+	for (int i = 0; i < 32; ++i) {
+		fprintf (commands, "reg read\n");
+		fprintf (commands, "frame info\n");
+		fprintf (commands, "frame variable\n");
+		fprintf (commands, "up\n");
+	}
 	fprintf (commands, "detach\n");
 	fprintf (commands, "quit\n");
 

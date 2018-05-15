@@ -82,11 +82,29 @@ g_file_test (const gchar *filename, GFileTest test)
 gchar *
 g_mkdtemp (char *tmp_template)
 {
-#ifdef HAVE_MKDTEMP
+/*
+ * On systems without mkdtemp, use a reimplemented version
+ * adapted from the Win32 version of this file. AIX is an
+ * exception because i before version 7.2 lacks mkdtemp in
+ * libc, and GCC can "fix" system headers so that it isn't
+ * present without redefining it.
+ */
+#if defined(HAVE_MKDTEMP) && !defined(_AIX)
 	char *template_copy = g_strdup (tmp_template);
 
 	return mkdtemp (template_copy);
 #else
-	g_error("Function mkdtemp not supported");
+	char *template = g_strdup (tmp_template);
+
+	template = mktemp(template);
+	if (template && *template) {
+		/* 0700 is the mode specified in specs */
+		if (mkdir (template, 0700) == 0){
+			return template;
+		}
+	}
+
+	g_free (template);
+	return NULL;
 #endif
 }

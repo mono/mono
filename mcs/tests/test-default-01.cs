@@ -41,7 +41,11 @@ static class X
 	static System.Func<int> M4 ()
 	{
 		return () => default;
-	} 
+	}
+
+	static void Foo (II a = default (II), II b = default, II c = (II) null)
+	{
+	}
 }
 /*
 enum E
@@ -50,3 +54,9 @@ enum E
 	B = default + 1
 }
 */
+
+
+interface II
+{
+
+}

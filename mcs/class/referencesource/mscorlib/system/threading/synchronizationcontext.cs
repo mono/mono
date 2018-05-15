@@ -60,7 +60,7 @@ namespace System.Threading
 #if !FEATURE_CORECLR
     [SecurityPermissionAttribute(SecurityAction.InheritanceDemand, Flags =SecurityPermissionFlag.ControlPolicy|SecurityPermissionFlag.ControlEvidence)]
 #endif
-    public class SynchronizationContext
+    public partial class SynchronizationContext
     {
 #if FEATURE_SYNCHRONIZATIONCONTEXT_WAIT
         SynchronizationContextProperties _props = SynchronizationContextProperties.None;

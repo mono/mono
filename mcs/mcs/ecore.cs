@@ -241,7 +241,7 @@ namespace Mono.CSharp {
 
 		protected void CheckExpressionVariable (ResolveContext rc)
 		{
-			if (rc.HasAny (ResolveContext.Options.BaseInitializer | ResolveContext.Options.FieldInitializerScope)) {
+			if (rc.HasAny (ResolveContext.Options.BaseInitializer | ResolveContext.Options.FieldInitializerScope) && rc.CurrentAnonymousMethod == null) {
 				rc.Report.Error (8200, loc, "Out variable and pattern variable declarations are not allowed within constructor initializers, field initializers, or property initializers");
 			} else if (rc.HasSet (ResolveContext.Options.QueryClauseScope)) {
 				rc.Report.Error (8201, loc, "Out variable and pattern variable declarations are not allowed within a query clause");
@@ -2957,6 +2957,13 @@ namespace Mono.CSharp {
 				if ((restrictions & MemberLookupRestrictions.NameOfExcluded) == 0 && Name == "nameof")
 					return new NameOf (this);
 
+				if ((restrictions & MemberLookupRestrictions.ReadAccess) == 0 && Name == "_") {
+					if (rc.Module.Compiler.Settings.Version < LanguageVersion.V_7)
+						rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, loc, "discards");
+
+					return new Discard (loc).Resolve (rc);
+				}
+
 				if (errorMode) {
 					if (variable_found) {
 						rc.Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", Name);
@@ -5442,7 +5449,7 @@ namespace Mono.CSharp {
 				}
 
 				if (arg_type != parameter) {
-					if (arg_type == InternalType.VarOutType)
+					if (arg_type == InternalType.VarOutType || arg_type == InternalType.Discard)
 						return 0;
 
 					var ref_arg_type = arg_type as ReferenceContainer;
@@ -6051,6 +6058,11 @@ namespace Mono.CSharp {
 						continue;
 					}
 
+					if (arg_type == InternalType.Discard) {
+						a.Expr.Type = pt;
+						continue;
+					}
+
 					var ref_arg_type = arg_type as ReferenceContainer;
 					if (ref_arg_type != null) {
 						if (ref_arg_type.Element != pt)
@@ -6084,9 +6096,15 @@ namespace Mono.CSharp {
 						else
 							ec.Report.SymbolRelatedToPreviousError (member);
 
-						ec.Report.Error (1744, na.Location,
-							"Named argument `{0}' cannot be used for a parameter which has positional argument specified",
-							na.Name);
+						if (name_index > a_idx) {
+							ec.Report.Error (8323, na.Location,
+								"Named argument `{0}' is used out of position but is followed by positional argument",
+								na.Name);
+						} else {
+							ec.Report.Error (1744, na.Location,
+								"Named argument `{0}' cannot be used for a parameter which has positional argument specified",
+								na.Name);
+						}
 					}
 				}
 				

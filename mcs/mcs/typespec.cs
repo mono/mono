@@ -1464,6 +1464,29 @@ namespace Mono.CSharp
 
 	class InternalType : TypeSpec, ITypeDefinition
 	{
+		sealed class InternalTypeAssembly : IAssemblyDefinition
+		{
+			public static readonly InternalTypeAssembly Instance = new InternalTypeAssembly ();
+
+			public string FullName => throw new NotImplementedException ();
+
+			public bool IsCLSCompliant => false;
+
+			public bool IsMissing => false;
+
+			public string Name => throw new NotImplementedException ();
+
+			public byte [] GetPublicKeyToken ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			public bool IsFriendAssemblyTo (IAssemblyDefinition assembly)
+			{
+				return false;
+			}
+		}
+
 		public static readonly InternalType AnonymousMethod = new InternalType ("anonymous method");
 		public static readonly InternalType Arglist = new InternalType ("__arglist");
 		public static readonly InternalType MethodGroup = new InternalType ("method group");
@@ -1474,6 +1497,7 @@ namespace Mono.CSharp
 		public static readonly InternalType VarOutType = new InternalType ("var out");
 		public static readonly InternalType ThrowExpr = new InternalType ("throw expression");
 		public static readonly InternalType DefaultType = new InternalType ("default");
+		public static readonly InternalType Discard = new InternalType ("discard");
 
 		readonly string name;
 
@@ -1498,7 +1522,7 @@ namespace Mono.CSharp
 
 		IAssemblyDefinition ITypeDefinition.DeclaringAssembly {
 			get {
-				throw new NotImplementedException ();
+				return InternalTypeAssembly.Instance;
 			}
 		}
 

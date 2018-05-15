@@ -1,3 +1,5 @@
+include $(top_srcdir)/mk/common.mk
+
 if HOST_WIN32
 win32_sources = \
 	console-win32.c \
@@ -20,6 +22,8 @@ win32_sources = \
 	w32error-win32.c
 
 platform_sources = $(win32_sources)
+
+glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 # Use -m here. This will use / as directory separator (C:/WINNT).
 # The files that use MONO_ASSEMBLIES and/or MONO_CFG_DIR replace the
@@ -69,38 +73,29 @@ else
 platform_sources += threadpool-worker-default.c
 endif
 
+if BITCODE
+libmonoldflags = -no-undefined
+endif
 
-#
-# libtool is not capable of creating static/shared versions of the same
-# convenience lib, so we have to do it ourselves
-#
 if SUPPORT_SGEN
-if DISABLE_EXECUTABLES
-shared_sgen_libraries = libmonoruntimesgen.la 
-else
-if SHARED_MONO
-shared_sgen_libraries = libmonoruntimesgen.la 
-endif
-endif
-sgen_libraries = $(shared_sgen_libraries) libmonoruntimesgen-static.la 
+sgen_libraries = libmonoruntimesgen.la
 endif
 
 if SUPPORT_BOEHM
-if DISABLE_EXECUTABLES
-shared_boehm_libraries = libmonoruntime.la
-else
-if SHARED_MONO
-shared_boehm_libraries = libmonoruntime.la
-endif
-endif
-boehm_libraries = $(shared_boehm_libraries) libmonoruntime-static.la
+boehm_libraries = libmonoruntime.la
 endif
 
-if DISABLE_EXECUTABLES
-noinst_LTLIBRARIES = libmonoruntime-config.la $(shared_sgen_libraries) $(shared_boehm_libraries)
-else
-noinst_LTLIBRARIES = libmonoruntime-config.la $(boehm_libraries) $(sgen_libraries)
+if DISABLE_ICALL_TABLES
+icall_table_libraries = libmono-icall-table.la
 endif
+
+if !ENABLE_ILGEN
+ilgen_libraries = libmono-ilgen.la
+endif
+
+noinst_LTLIBRARIES = libmonoruntime-config.la $(boehm_libraries) $(sgen_libraries)
+
+lib_LTLIBRARIES = $(icall_table_libraries) $(ilgen_libraries)
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)
 
@@ -122,6 +117,38 @@ libmonoruntime_config_la_SOURCES = \
 	mono-config-dirs.c
 libmonoruntime_config_la_CPPFLAGS = $(AM_CPPFLAGS) -DMONO_BINDIR=\"$(bindir)/\" -DMONO_ASSEMBLIES=\"$(assembliesdir)\" -DMONO_CFG_DIR=\"$(confdir)\" -DMONO_RELOC_LIBDIR=\"../$(reloc_libdir)\"
 
+#
+# This library contains the icall tables if the runtime was configured with --disable-icall-tables
+#
+if DISABLE_ICALL_TABLES
+libmono_icall_table_la_SOURCES = \
+	icall-table.c
+libmono_icall_table_la_CFLAGS = $(SGEN_DEFINES)
+libmono_icall_table_la_LDFLAGS = $(libmonoldflags)
+if BITCODE
+libmono_icall_table_la_LIBADD = $(glib_libs) ../utils/libmonoutils.la ../sgen/libmonosgen.la libmonoruntimesgen.la
+endif
+endif
+
+#
+# This library contains code to generate IL at runtime
+#
+if !ENABLE_ILGEN
+libmono_ilgen_la_SOURCES = \
+	method-builder-ilgen.c \
+	method-builder-ilgen.h \
+	method-builder-ilgen-internals.h \
+	marshal-ilgen.c \
+	marshal-ilgen.h	\
+	sgen-mono-ilgen.c \
+	sgen-mono-ilgen.h
+libmono_ilgen_la_CFLAGS = $(SGEN_DEFINES)
+libmono_ilgen_la_LDFLAGS = $(libmonoldflags)
+if BITCODE
+libmono_ilgen_la_LIBADD = $(glib_libs) ../utils/libmonoutils.la ../sgen/libmonosgen.la libmonoruntimesgen.la
+endif
+endif
+
 CLEANFILES = mono-bundle.stamp
 
 null_sources = \
@@ -131,6 +158,22 @@ null_gc_sources = \
 	null-gc.c \
 	null-gc-handles.h \
 	null-gc-handles.c
+
+if !DISABLE_ICALL_TABLES
+icall_tables_sources = \
+	icall-table.c
+endif
+
+if ENABLE_ILGEN
+ilgen_sources = \
+	method-builder-ilgen.c \
+	method-builder-ilgen.h \
+	method-builder-ilgen-internals.h \
+	marshal-ilgen.c \
+	marshal-ilgen.h	\
+	sgen-mono-ilgen.c \
+	sgen-mono-ilgen.h
+endif
 
 common_sources = \
 	$(platform_sources)	\
@@ -143,8 +186,12 @@ common_sources = \
 	attach.c		\
 	cil-coff.h		\
 	class.c			\
+	class-getters.h		\
+	class-init.h		\
+	class-init.c		\
 	class-internals.h	\
 	class-inlines.h		\
+	class-private-definition.h	\
 	class-accessors.c	\
 	cominterop.c		\
 	cominterop.h		\
@@ -176,6 +223,7 @@ common_sources = \
 	icall.c			\
 	icall-internals.h \
 	icall-def.h		\
+	icall-table.h	\
 	image.c			\
 	image-internals.h	\
 	jit-info.c		\
@@ -194,6 +242,7 @@ common_sources = \
 	metadata-verify.c	\
 	metadata-internals.h	\
 	method-builder.h 	\
+	method-builder-internals.h 	\
 	method-builder.c 	\
 	mono-basic-block.c	\
 	mono-basic-block.h	\
@@ -272,6 +321,7 @@ common_sources = \
 	file-mmap.h	\
 	object-offsets.h	\
 	abi-details.h	\
+	class-abi-details.h	\
 	metadata-cross-helpers.c	\
 	seq-points-data.h	\
 	seq-points-data.c	\
@@ -316,25 +366,16 @@ sgen_sources = \
 	sgen-toggleref.h		\
 	sgen-stw.c				\
 	sgen-mono.c		\
+	sgen-mono.h		\
 	sgen-client-mono.h
 
-libmonoruntime_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
+libmonoruntime_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilgen_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
 libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES)
 libmonoruntime_la_LIBADD = libmonoruntime-config.la
 
-libmonoruntimesgen_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(sgen_sources)
+libmonoruntimesgen_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilgen_sources) $(gc_dependent_sources) $(sgen_sources)
 libmonoruntimesgen_la_CFLAGS = $(SGEN_DEFINES)
 libmonoruntimesgen_la_LIBADD = libmonoruntime-config.la
-
-libmonoruntime_static_la_SOURCES = $(libmonoruntime_la_SOURCES)
-libmonoruntime_static_la_LDFLAGS = -static
-libmonoruntime_static_la_CFLAGS = $(BOEHM_DEFINES)
-libmonoruntime_static_la_LIBADD = $(bundle_obj) libmonoruntime-config.la
-
-libmonoruntimesgen_static_la_SOURCES = $(libmonoruntimesgen_la_SOURCES)
-libmonoruntimesgen_static_la_LDFLAGS = -static
-libmonoruntimesgen_static_la_CFLAGS = $(SGEN_DEFINES)
-libmonoruntimesgen_static_la_LIBADD = libmonoruntime-config.la
 
 libmonoruntimeincludedir = $(includedir)/mono-$(API_VER)/mono/metadata
 
@@ -356,6 +397,7 @@ libmonoruntimeinclude_HEADERS = \
 	mono-debug.h		\
 	mono-gc.h		\
 	object.h		\
+	object-forward.h	\
 	opcodes.h		\
 	profiler.h		\
 	profiler-events.h	\

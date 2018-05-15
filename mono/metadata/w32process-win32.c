@@ -111,13 +111,11 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 		process_info->pid = -GetLastError ();
 	} else {
 		process_info->process_handle = shellex.hProcess;
-		process_info->thread_handle = NULL;
 #if !defined(MONO_CROSS_COMPILE)
 		process_info->pid = GetProcessId (shellex.hProcess);
 #else
 		process_info->pid = 0;
 #endif
-		process_info->tid = 0;
 	}
 
 	return ret;
@@ -240,7 +238,7 @@ process_get_shell_arguments (MonoW32ProcessStartInfo *proc_start_info, MonoStrin
 {
 	gchar		*spath = NULL;
 	gchar		*new_cmd, *cmd_utf8;
-	ERROR_DECL (mono_error);
+	ERROR_DECL_VALUE (mono_error);
 
 	*cmd = proc_start_info->arguments;
 
@@ -335,11 +333,9 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 	if (ret) {
 		process_info->process_handle = procinfo.hProcess;
 		/*process_info->thread_handle=procinfo.hThread;*/
-		process_info->thread_handle = NULL;
 		if (procinfo.hThread != NULL && procinfo.hThread != INVALID_HANDLE_VALUE)
 			CloseHandle (procinfo.hThread);
 		process_info->pid = procinfo.dwProcessId;
-		process_info->tid = procinfo.dwThreadId;
 	} else {
 		process_info->pid = -GetLastError ();
 	}
@@ -348,10 +344,10 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 }
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-static inline gboolean
+static gboolean
 mono_process_win_enum_processes (DWORD *pids, DWORD count, DWORD *needed)
 {
-	return EnumProcesses (pids, count, needed);
+	return !!EnumProcesses (pids, count, needed);
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
@@ -359,24 +355,18 @@ MonoArray *
 ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 {
 	ERROR_DECL (error);
-	MonoArray *procs;
-	gboolean ret;
-	DWORD needed;
-	int count;
-	DWORD *pids;
+	MonoArray *procs = NULL;
+	DWORD needed = 0;
+	DWORD *pids = NULL;
+	int count = 512;
 
-	count = 512;
 	do {
 		pids = g_new0 (DWORD, count);
-		ret = mono_process_win_enum_processes (pids, count * sizeof (guint32), &needed);
-		if (ret == FALSE) {
-			MonoException *exc;
-
-			g_free (pids);
-			pids = NULL;
-			exc = mono_get_exception_not_supported ("This system does not support EnumProcesses");
-			mono_set_pending_exception (exc);
-			return NULL;
+		if (!mono_process_win_enum_processes (pids, count * sizeof (guint32), &needed)) {
+			// FIXME GetLastError?
+			mono_error_set_not_supported (error, "This system does not support EnumProcesses");
+			mono_error_set_pending_exception (error);
+			goto exit;
 		}
 		if (needed < (count * sizeof (guint32)))
 			break;
@@ -386,33 +376,32 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 	} while (TRUE);
 
 	count = needed / sizeof (guint32);
-	procs = mono_array_new_checked (mono_domain_get (), mono_get_int32_class (), count, &error);
-	if (mono_error_set_pending_exception (&error)) {
-		g_free (pids);
-		return NULL;
+	procs = mono_array_new_checked (mono_domain_get (), mono_get_int32_class (), count, error);
+	if (mono_error_set_pending_exception (error)) {
+		procs = NULL;
+		goto exit;
 	}
 
 	memcpy (mono_array_addr (procs, guint32, 0), pids, needed);
+exit:
 	g_free (pids);
-	pids = NULL;
-
 	return procs;
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle)
+ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle, MonoError *error)
 {
 	return CloseHandle (handle);
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode)
+ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode, MonoError *error)
 {
 	return TerminateProcess (handle, exitcode);
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode)
+ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode, MonoError *error)
 {
 	return GetExitCodeProcess (handle, exitcode);
 }
@@ -426,7 +415,7 @@ mono_icall_get_process_working_set_size (gpointer handle, gsize *min, gsize *max
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max)
+ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max, MonoError *error)
 {
 	return mono_icall_get_process_working_set_size (handle, min, max);
 }
@@ -440,7 +429,7 @@ mono_icall_set_process_working_set_size (gpointer handle, gsize min, gsize max)
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max)
+ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max, MonoError *error)
 {
 	return mono_icall_set_process_working_set_size (handle, min, max);
 }
@@ -454,7 +443,7 @@ mono_icall_get_priority_class (gpointer handle)
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 gint32
-ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle)
+ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle, MonoError *error)
 {
 	return mono_icall_get_priority_class (handle);
 }
@@ -468,19 +457,19 @@ mono_icall_set_priority_class (gpointer handle, gint32 priorityClass)
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass)
+ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass, MonoError *error)
 {
 	return mono_icall_set_priority_class (handle, priorityClass);
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64 *creationtime, gint64 *exittime, gint64 *kerneltime, gint64 *usertime)
+ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64 *creationtime, gint64 *exittime, gint64 *kerneltime, gint64 *usertime, MonoError *error)
 {
 	return GetProcessTimes (handle, (LPFILETIME) creationtime, (LPFILETIME) exittime, (LPFILETIME) kerneltime, (LPFILETIME) usertime);
 }
 
 gpointer
-ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void)
+ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (MonoError *error)
 {
 	return GetCurrentProcess ();
 }

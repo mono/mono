@@ -392,7 +392,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull (bbao.Help, "Help");
 			Assert.IsNull (bbao.Name, "Name");
 			Assert.AreEqual (AccessibleRole.PushButton, bbao.Role, "Role");
-			Assert.AreEqual (AccessibleStates.None, bbao.State, "State");
+			Assert.AreEqual (AccessibleStates.Focusable, bbao.State, "State");
 		}
 
 		[Test]
@@ -408,7 +408,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull (bbao.Help, "Help");
 			Assert.IsNull (bbao.Name, "Name");
 			Assert.AreEqual (AccessibleRole.PushButton, bbao.Role, "Role");
-			Assert.AreEqual (AccessibleStates.None, bbao.State, "State");
+			Assert.AreEqual (AccessibleStates.Focusable, bbao.State, "State");
 		}
 	}
 }

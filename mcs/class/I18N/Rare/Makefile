@@ -8,6 +8,7 @@ KEYFILE = ../../mono.pub
 LOCAL_MCS_FLAGS = /unsafe
 TEST_LIB_REFS = I18N
 
-EXTRA_DISTFILES = $(wildcard *.ucm)
+EXTRA_DISTFILES = $(wildcard *.ucm) \
+	$(wildcard Test/texts/*.txt)
 
 include ../../../build/library.make

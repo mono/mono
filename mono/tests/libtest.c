@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <time.h>
 #include <math.h>
+#include <setjmp.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -278,6 +279,25 @@ mono_return_nested_float (void)
 	f.fi.f3 = 3.0;
 	f.f4 = 4.0;
 	return f;
+}
+
+struct Scalar4 {
+	double val[4];
+};
+
+struct Rect {
+	int x;
+	int y;
+	int width;
+	int height;
+};
+
+LIBTEST_API char * STDCALL
+mono_return_struct_4_double (void *ptr, struct Rect rect, struct Scalar4 sc4, int a, int b, int c)
+{
+	char *buffer = (char *) malloc (1024 * sizeof (char));
+	sprintf (buffer, "sc4 = {%.1f, %.1f, %.1f, %.1f }, a=%x, b=%x, c=%x\n", (float) sc4.val [0], (float) sc4.val [1], (float) sc4.val [2], (float) sc4.val [3], a, b, c);
+	return buffer;
 }
 
 LIBTEST_API int STDCALL  
@@ -3640,6 +3660,8 @@ mono_test_marshal_lookup_symbol (const char *symbol_name)
 	return lookup_mono_symbol (symbol_name);
 }
 
+
+// FIXME use runtime headers
 #define MONO_BEGIN_EFRAME { void *__dummy; void *__region_cookie = mono_threads_enter_gc_unsafe_region ? mono_threads_enter_gc_unsafe_region (&__dummy) : NULL;
 #define MONO_END_EFRAME if (mono_threads_exit_gc_unsafe_region) mono_threads_exit_gc_unsafe_region (__region_cookie, &__dummy); }
 
@@ -3655,21 +3677,27 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 {
 	int ret = 0;
 
+	// FIXME use runtime headers
 	gpointer (*mono_method_get_unmanaged_thunk)(gpointer)
 		= (gpointer (*)(gpointer))lookup_mono_symbol ("mono_method_get_unmanaged_thunk");
 
+	// FIXME use runtime headers
 	gpointer (*mono_string_new_wrapper)(const char *)
 		= (gpointer (*)(const char *))lookup_mono_symbol ("mono_string_new_wrapper");
 
+	// FIXME use runtime headers
 	char *(*mono_string_to_utf8)(gpointer)
 		= (char *(*)(gpointer))lookup_mono_symbol ("mono_string_to_utf8");
 
+	// FIXME use runtime headers
 	gpointer (*mono_object_unbox)(gpointer)
 		= (gpointer (*)(gpointer))lookup_mono_symbol ("mono_object_unbox");
 
+	// FIXME use runtime headers
 	gpointer (*mono_threads_enter_gc_unsafe_region) (gpointer)
 		= (gpointer (*)(gpointer))lookup_mono_symbol ("mono_threads_enter_gc_unsafe_region");
 
+	// FIXME use runtime headers
 	void (*mono_threads_exit_gc_unsafe_region) (gpointer, gpointer)
 		= (void (*)(gpointer, gpointer))lookup_mono_symbol ("mono_threads_exit_gc_unsafe_region");
 
@@ -5629,6 +5657,24 @@ _mono_test_native_thiscall3 (int arg, int arg2, int arg3)
 	return arg + (arg2^1) + (arg3^2);
 }
 
+LIBTEST_API int STDCALL
+_mono_test_managed_thiscall1 (int (*fn)(int), int arg)
+{
+	return fn(arg);
+}
+
+LIBTEST_API int STDCALL
+_mono_test_managed_thiscall2 (int (*fn)(int,int), int arg, int arg2)
+{
+	return fn(arg, arg2);
+}
+
+LIBTEST_API int STDCALL
+_mono_test_managed_thiscall3 (int (*fn)(int,int,int), int arg, int arg2, int arg3)
+{
+	return fn(arg, arg2, arg3);
+}
+
 #elif defined(__GNUC__)
 
 LIBTEST_API int STDCALL
@@ -5666,6 +5712,27 @@ def_asm_fn(mono_test_native_thiscall3)
 "\txorl $2,%ecx\n"
 "\taddl %ecx,%eax\n"
 "\tret $8\n"
+
+def_asm_fn(mono_test_managed_thiscall1)
+"\tpopl %eax\n"
+"\tpopl %edx\n"
+"\tpopl %ecx\n"
+"\tpushl %eax\n"
+"\tjmp *%edx\n"
+
+def_asm_fn(mono_test_managed_thiscall2)
+"\tpopl %eax\n"
+"\tpopl %edx\n"
+"\tpopl %ecx\n"
+"\tpushl %eax\n"
+"\tjmp *%edx\n"
+
+def_asm_fn(mono_test_managed_thiscall3)
+"\tpopl %eax\n"
+"\tpopl %edx\n"
+"\tpopl %ecx\n"
+"\tpushl %eax\n"
+"\tjmp *%edx\n"
 
 );
 
@@ -7537,3 +7604,33 @@ mono_test_native_to_managed_exception_rethrow (NativeToManagedExceptionRethrowFu
 	pthread_join (t, NULL);
 }
 #endif
+
+typedef void (*VoidVoidCallback) (void);
+typedef void (*MonoFtnPtrEHCallback) (guint32 gchandle);
+
+static jmp_buf test_jmp_buf;
+static guint32 test_gchandle;
+
+static void
+mono_test_longjmp_callback (guint32 gchandle)
+{
+	test_gchandle = gchandle;
+	longjmp (test_jmp_buf, 1);
+}
+
+LIBTEST_API void STDCALL
+mono_test_setjmp_and_call (VoidVoidCallback managedCallback, intptr_t *out_handle)
+{
+	void (*mono_install_ftnptr_eh_callback) (MonoFtnPtrEHCallback) =
+		(void (*) (MonoFtnPtrEHCallback)) (lookup_mono_symbol ("mono_install_ftnptr_eh_callback"));
+	if (setjmp (test_jmp_buf) == 0) {
+		*out_handle = 0;
+		mono_install_ftnptr_eh_callback (mono_test_longjmp_callback);
+		managedCallback ();
+		*out_handle = 0; /* Do not expect to return here */
+	} else {
+		mono_install_ftnptr_eh_callback (NULL);
+		*out_handle = test_gchandle;
+	}
+}
+

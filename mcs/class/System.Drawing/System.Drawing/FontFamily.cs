@@ -49,17 +49,15 @@ namespace System.Drawing {
 			nativeFontFamily = fntfamily;		
 		}
 		
-		internal void refreshName()
+		internal unsafe void refreshName()
 		{
-			StringBuilder sb;
-
 			if (nativeFontFamily == IntPtr.Zero)
 				return;
 
-			sb = new StringBuilder (GDIPlus.FACESIZE);
-			Status status = GDIPlus.GdipGetFamilyName (nativeFontFamily, sb, 0);
+			char* namePtr = stackalloc char[GDIPlus.FACESIZE];
+			Status status = GDIPlus.GdipGetFamilyName (nativeFontFamily, (IntPtr)namePtr, 0);
 			GDIPlus.CheckStatus (status);
-			name = sb.ToString();
+			name = Marshal.PtrToStringUni((IntPtr)namePtr);
 		}
 		
 		~FontFamily()

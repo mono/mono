@@ -41,6 +41,9 @@ namespace MonoTests.System.Data.SqlClient
 	public class SqlDataAdapterTest
 	{
 		[Test] // SqlDataAdapter ()
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor1 ()
 		{
 			SqlDataAdapter da = new SqlDataAdapter ();
@@ -90,6 +93,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlDataAdapter (SqlCommand)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor2_SelectCommand_Null ()
 		{
 			SqlDataAdapter da = new SqlDataAdapter ((SqlCommand) null);
@@ -374,6 +380,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UpdateBatchSize ()
 		{
 			SqlDataAdapter da = new SqlDataAdapter ();
@@ -386,6 +395,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UpdateBatchSize_Negative ()
 		{
 			SqlDataAdapter da = new SqlDataAdapter ();

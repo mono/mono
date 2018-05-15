@@ -1,3 +1,4 @@
+../../build/common/SR.cs
 Assembly/AssemblyInfo.cs
 corefx/SR.cs
 
@@ -6,9 +7,10 @@ corefx/SR.cs
 ../../build/common/MonoTODOAttribute.cs
 
 # System.Security.Cryptography
-System.Security.Cryptography/CryptographicAttribute.cs
-System.Security.Cryptography/CryptographicAttributeCollection.cs
-System.Security.Cryptography/CryptographicAttributeEnumerator.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/CryptographicAttributeObject.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/CryptographicAttributeObjectCollection.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/CryptographicAttributeObjectEnumerator.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/Internal/Cryptography/Oids.cs
 System.Security.Cryptography/DataProtectionScope.cs
 System.Security.Cryptography/ProtectedData.cs
 
@@ -38,4 +40,4 @@ System.Security.Cryptography.Pkcs/SubjectIdentifierOrKeyType.cs
 System.Security.Cryptography.Pkcs/SubjectIdentifierType.cs
 
 # System.Security.Cryptography.Xml
-../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/X509IssuerSerial.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Xml/X509IssuerSerial.cs

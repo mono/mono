@@ -14,6 +14,7 @@ basic_SUBDIRS := \
 	Mono.Security \
 	System \
 	System.XML \
+	System.Security \
 	System.Core \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
@@ -31,8 +32,10 @@ build_SUBDIRS :=  \
 	Mono.Security \
 	System \
 	System.XML \
+	System.Security \
 	Mono.Posix \
 	System.Core \
+	System.Configuration \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
 	System.Xml.Linq \
@@ -45,8 +48,8 @@ build_SUBDIRS :=  \
 	../tools/cil-stringreplacer
 
 ifdef MCS_MODE
-basic_PARALLEL_SUBDIRS := ../mcs
-build_PARALLEL_SUBDIRS := ../mcs
+basic_PARALLEL_SUBDIRS := ../mcs $(pcl_facade_dirs)
+build_PARALLEL_SUBDIRS := ../mcs $(pcl_facade_dirs)
 else
 basic_PARALLEL_SUBDIRS := $(pcl_facade_dirs)
 build_PARALLEL_SUBDIRS := $(pcl_facade_dirs)
@@ -57,8 +60,8 @@ mobile_common_dirs := \
 	Mono.Security \
 	System	\
 	System.Core	\
-	System.Security	\
 	System.XML	\
+	System.Security	\
 	I18N		\
 	System.ServiceModel.Internals	\
 	System.Runtime.Serialization	\
@@ -154,10 +157,11 @@ xammac_4_5_dirs := \
 	corlib	\
 	Mono.Security \
 	System	\
-	Mono.Posix			\
-	System.Core	\
+	System.XML			\
 	System.Security			\
-	System.XML	\
+	Mono.Posix	\
+	System.Core	\
+	System.Configuration	\
 	I18N		\
 	System.ServiceModel.Internals	\
 	SMDiagnostics	\
@@ -204,10 +208,10 @@ net_4_x_dirs := \
 	Mono.Security \
 	System				\
 	System.XML			\
+	System.Security			\
 	Mono.CompilerServices.SymbolWriter \
 	Mono.Posix			\
 	System.Core			\
-	System.Security			\
 	System.Configuration	\
 	System.Drawing			\
 	System.IO.Compression 		\
@@ -227,9 +231,9 @@ net_4_x_dirs := \
 	System.Web.ApplicationServices	\
 	Novell.Directory.Ldap		\
 	System.DirectoryServices	\
-	System.Web			\
-	System.Web.Services		\
 	System.Design			\
+	System.Web.Services		\
+	System.Web			\
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
@@ -418,8 +422,8 @@ all-local-aot:
 
 monolite_dir = monolite-$(HOST_PLATFORM)/$(MONO_CORLIB_VERSION)
 
-# Files needed to bootstrap C# compiler
-build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
+# Files needed to bootstrap C# compiler and cil-stringreplacer
+build_files := mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
 	System.Numerics.dll System.Xml.Linq.dll \
 	Facades/System.Collections.Concurrent.dll Facades/System.Linq.dll Facades/System.Runtime.dll Facades/System.Collections.dll	\
 	Facades/System.Reflection.Extensions.dll Facades/System.Text.Encoding.Extensions.dll Facades/System.Diagnostics.Debug.dll \
@@ -429,7 +433,8 @@ build_files = mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Co
 	Facades/System.IO.dll Facades/System.Runtime.InteropServices.dll Facades/System.Xml.ReaderWriter.dll Facades/System.Linq.Expressions.dll \
 	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll Facades/System.IO.FileSystem.Primitives.dll Facades/System.IO.FileSystem.dll \
 	Facades/System.Diagnostics.FileVersionInfo.dll Facades/System.Security.Cryptography.Primitives.dll Facades/System.Security.Cryptography.Algorithms.dll \
-	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll
+	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll \
+	Mono.Cecil.dll
 
 monolite_files = $(build_files:%=lib/$(monolite_dir)/%)
 

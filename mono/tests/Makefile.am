@@ -1,7 +1,10 @@
+include $(top_srcdir)/mk/common.mk
+
 SUBDIRS = gc-descriptors . testing_gac
 
 check-local:
 	ok=:; \
+	$(MAKE) test-tailcall || ok=false; \
 	$(MAKE) test-jit || ok=false; \
 	$(MAKE) test-generic-sharing || ok=false; \
 	$(MAKE) test-type-load || ok=false; \
@@ -19,6 +22,115 @@ check-local:
 	$(MAKE) rm-empty-logs || ok=false; \
 	$(MAKE) runtest-gac-loading || ok=false; \
 	$$ok
+
+# These are not actually tests, but they are source files part of another test.
+TAILCALL_DISABLED_TESTS_COMPILE = \
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyTransparentLibraryWithPrefix.exe \
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyVerifiableLibraryWithPrefix.exe
+
+# FIXME valuetype parameter.
+TAILCALL_DISABLED_TESTS_COMPILE += \
+	tailcall/coreclr/JIT/opt/ETW/TailCallCases.exe
+
+# FIXME Some of these sound like negative tests -- "badtailcall". Verify and automate.
+# FIXME investigate and explain every test failure.
+TAILCALL_DISABLED_TESTS_RUN = \
+	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/tailwinapi.exe \
+	tailcall/coreclr/JIT/Directed/IL/Tailcall/Jittailcall2.exe \
+	tailcall/coreclr/JIT/Directed/IL/mutualrecur-tailcall/MutualRecur-TailCall.exe \
+	tailcall/coreclr/JIT/Directed/coverage/importer/Desktop/badtailcall.exe \
+	tailcall/coreclr/JIT/Directed/coverage/importer/badtailcall.exe \
+	tailcall/coreclr/JIT/Directed/pinvoke/tail.exe \
+	tailcall/coreclr/JIT/IL_Conformance/Old/Base/tailcall.exe \
+	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_call.exe \
+	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_calli.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_array.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_array_nz.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_nested.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/pointer_i.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/pointer.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/reference_i.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_implicit.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_mutual_rec.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_switch.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateTail.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/smallFrame.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/tailcall_AV.exe \
+	tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.exe \
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe \
+	$(TAILCALL_DISABLED_TESTS_COMPILE)
+
+# FIXME investigate and explain every test failure.
+TAILCALL_DISABLED_TESTS_RUN += \
+	tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_gc.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_inst.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_value.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_virt.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.exe
+
+if X86
+TAILCALL_DISABLED_TESTS_RUN += tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.exe
+endif
+
+if FULL_AOT_TESTS
+
+# FullAOT Assertion at method-to-ir.c:9203, condition `*ip == CEE_RET' not met
+# This should raise a bad image format exception.
+TAILCALL_DISABLED_TESTS_COMPILE += \
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe
+
+# return type mismatch (float32 vs. float64)
+# 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4_inl.exe
+# 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.exe
+#
+# return type mismatch (int32 vs. enum)
+# 	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.exe
+#
+# FIXME depends on msvcrt.dll, and calli
+#	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.exe
+#
+# FIXME reference parameter; requires range check to allow
+#	tailcall/coreclr/JIT/Directed/zeroinit/tail.exe
+
+# Tests that fail assert about tailcall.
+TAILCALL_DISABLED_TESTS_RUN += \
+	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/tailwinapi.exe \
+	tailcall/coreclr/JIT/Directed/pinvoke/tail.exe \
+	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_call.exe \
+	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_calli.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/Desktop/thread-race.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_array_nz.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/pointer.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/reference_i.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_mutual_rec.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateTail.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/tailcall_AV.exe \
+	tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.exe
+
+# This test is also slow, though its sleep can be dialed down.
+#TAILCALL_DISABLED_TESTS_RUN += tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.exe
+
+endif
+
+compile-tailcall: $(TESTS_TAILCALL_COMPILE) $(TESTSAOT_TAILCALL)
+
+if FULL_AOT_TESTS
+
+# FullAOT does not allow --compile-all.
+
+else
+
+TEST_TAILCALL_COMPILE_ALL=--runtime-args "--compile-all"
+
+endif
+
+test-tailcall: compile-tailcall test-runner.exe
+	MONO_DEBUG=test-tailcall-require $(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a $(TEST_TAILCALL_COMPILE_ALL) --testsuite-name "runtime-tailcall" --timeout 300 --disabled "$(DISABLED_TESTS)" $(TESTS_TAILCALL_RUN)
 
 check-full:
 	ok=; \
@@ -83,7 +195,15 @@ MCS = $(MCS_NO_LIB)
 
 ILASM = $(TOOLS_RUNTIME) $(mcs_topdir)/class/lib/build/ilasm.exe
 
-TEST_RUNNER = ./test-runner.exe --runtime $(top_builddir)/runtime/mono-wrapper --mono-path "$(CLASS)"
+TEST_RUNNER = ./test-runner.exe
+
+if HOST_WIN32
+TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),$(top_builddir)/runtime/mono-wrapper)"
+else
+TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(MONO_EXECUTABLE),$(top_builddir)/runtime/mono-wrapper)"
+endif
+
+TEST_RUNNER += --mono-path "$(CLASS)"
 
 if FULL_AOT_TESTS
 TEST_RUNNER += --runtime-args "$(TEST_AOT_RUN_FLAGS)"
@@ -93,11 +213,7 @@ if HYBRID_AOT_TESTS
 TEST_RUNNER += --runtime-args "$(TEST_AOT_RUN_FLAGS)"
 endif
 
-if HOST_WIN32
-TEST_RUNNER += --config tests-config --runtime $(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),mono)
-else
-TEST_RUNNER += --config tests-config --runtime $(if $(MONO_EXECUTABLE),$(MONO_EXECUTABLE),mono)
-endif
+TEST_RUNNER += --runtime-args "$(TEST_RUNTIME_FLAGS)"
 
 TEST_RUNNER += $(if $(V), --verbose,)
 
@@ -127,6 +243,12 @@ TESTS_CS_SRC=		\
 	array-init.cs		\
 	arraylist.cs		\
 	assembly-load-remap.cs	\
+	assembly-load-bytes.cs	\
+	assembly-loadfile.cs	\
+	assembly-loadfrom.cs	\
+	assembly-load-bytes-bindingredirect.cs	\
+	assembly-loadfile-bindingredirect.cs	\
+	assembly-loadfrom-bindingredirect.cs	\
 	assemblyresolve_event.cs	\
 	assemblyresolve_event3.cs	\
 	assemblyresolve_event4.cs	\
@@ -164,6 +286,8 @@ TESTS_CS_SRC=		\
 	exception16.cs		\
 	exception17.cs		\
 	exception18.cs		\
+	exception19.cs		\
+	exception20.cs		\
 	typeload-unaligned.cs	\
 	struct.cs		\
 	valuetype-gettype.cs	\
@@ -326,6 +450,7 @@ TESTS_CS_SRC=		\
 	desweak.cs		\
 	exists.cs		\
 	handleref.cs	\
+	install_eh_callback.cs	\
 	dbnull-missing.cs	\
 	test-type-ctor.cs 	\
 	soft-float-tests.cs	\
@@ -393,6 +518,7 @@ TESTS_CS_SRC=		\
 	nullable_boxing.2.cs	\
 	valuetype-equals.cs	\
 	custom-modifiers.2.cs	\
+	custom-modifiers-inheritance.cs	\
 	bug-382986.cs	\
 	test-inline-call-stack.cs	\
 	bug-324535.cs	\
@@ -427,6 +553,7 @@ TESTS_CS_SRC=		\
 	bug-685908.cs	\
 	sgen-long-vtype.cs	\
 	delegate-invoke.cs	\
+	delegate-prop.cs	\
 	bug-696593.cs	\
 	bug-705140.cs	\
 	bug-1147.cs	\
@@ -532,17 +659,65 @@ TESTS_CS_SRC=		\
 	init_array_with_lazy_type.cs \
 	weak-fields.cs \
 	threads-leak.cs	\
-	threads-init.cs
+	threads-init.cs \
+	bug-60848.cs \
+	bug-59400.cs \
+	tailcall-generic-cast-cs.cs \
+	tailcall-interface.cs \
+	bug-60843.cs	\
+	nested_type_visibility.cs
+
+# some tests fail to compile on mcs
+if CSC_IS_ROSLYN
+TESTS_CS_SRC += roslyn-bug-19038.cs sizeof-empty-structs.cs
+endif
 
 if AMD64
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
+if !HOST_WIN32
+# requires working altstack
+TESTS_CS_SRC += bug-60862.cs
+endif
 endif
 
 if X86
 TESTS_CS_SRC += async-exc-compilation.cs finally_guard.cs finally_block_ending_in_dead_bb.cs
+if !HOST_WIN32
+# requires working altstack
+TESTS_CS_SRC += bug-60862.cs
+endif
+endif
+
+#maybe this test works on linux, not sure
+if HOST_DARWIN
+TESTS_CS_SRC += bug-8417.cs
 endif
 
 TESTS_IL_SRC=			\
+	tailcall/2.il	     \
+	tailcall/3.il	     \
+	tailcall/4.il	     \
+	tailcall/fsharp-deeptail.il	     \
+	tailcall/fsharp-shallowtail.il	 \
+	tailcall/fsharp-shallownotail.il \
+	gptail1.il		\
+	itail1.il		\
+	itaili1.il		\
+	ivtail1.il		\
+	sirtail1.il		\
+	sitail1.il		\
+	srtail1.il		\
+	stail1.il		\
+	tail1.il		\
+	taili1.il		\
+	vtail1.il		\
+	tailcall-virt.il 	\
+	tailcall-rgctxa.il 	\
+	tailcall-rgctxb.il 	\
+	tailcall-rgctxb-static.il \
+	tailcall-mrgctx.il 	\
+	tailcall-interface-conservestack.il \
+	tailcall-interface-justrun.il \
 	field-access.il		\
 	method-access.il	\
 	ldftn-access.il		\
@@ -555,7 +730,7 @@ TESTS_IL_SRC=			\
 	locallocTest.il		\
 	initblkTest.il		\
 	qt-instance.il		\
-	vararg.il		\
+	vararg3.il		\
 	bug-29859.il		\
 	bug-78549.il		\
 	static-fields-nonconst.il	\
@@ -617,7 +792,17 @@ TESTS_IL_SRC=			\
 	dim-methodimpl.il	\
 	dim-sharedgenerics.il	\
 	dim-simple.il	\
-	dim-valuetypes.il
+	dim-valuetypes.il \
+	tailcall-generic-cast-conservestack-il.il \
+	tailcall-generic-cast-nocrash-il.il \
+	tailcall-member-function-in-valuetype.il \
+	tailcall-return-valuetype.il \
+	tailcall-valuetype-parameter.il \
+	ldfldvt.il \
+	newobj-abstract.il
+
+# This test crashes the runtime, even with recent fixes.
+#	incorrect-ldvirtftn-read-behind-for-dup.il
 
 TESTS_GSHARED_SRC = \
 	generics-sharing.2.cs	\
@@ -675,7 +860,10 @@ TESTS_GSHARED_SRC = \
 	bug-1147.cs	\
 	generic-type-builder.2.cs
 
-PLATFORM_DISABLED_TESTS=
+PLATFORM_DISABLED_TESTS=\
+	$(TAILCALL_DISABLED_TESTS_RUN) \
+	tailcall-member-function-in-valuetype.exe \
+	tailcall-rgctxb.exe
 
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe
@@ -700,11 +888,29 @@ PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_b
 	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
 endif
 
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/8273.exe
+PLATFORM_DISABLED_TESTS += tailcall-rgctxb-static.exe
+PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Methodical/tailcall/test_virt.exe # fix pending
 endif
 
 if POWERPC
 # bug #71274
 PLATFORM_DISABLED_TESTS += finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
+PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
+PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/8273.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
 if POWERPC64
@@ -714,32 +920,55 @@ PLATFORM_DISABLED_TESTS += monitor.exe threadpool-exceptions5.exe appdomain-unlo
 	pinvoke_ppcs.exe pinvoke_ppci.exe pinvoke_ppcf.exe pinvoke_ppcd.exe abort-cctor.exe load-exceptions.exe \
 	sgen-domain-unload-2.exe sgen-weakref-stress.exe sgen-cementing-stress.exe sgen-new-threads-dont-join-stw.exe \
 	sgen-new-threads-dont-join-stw-2.exe sgen-new-threads-collect.exe sgen-bridge.exe
+PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
+PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/8273.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
+PLATFORM_DISABLED_TESTS += appdomain-threadpool-unload.exe
+PLATFORM_DISABLED_TESTS += bug-60848.exe
 endif
 
 if ARM
 PLATFORM_DISABLED_TESTS += filter-stack.exe weak-fields.exe
-INTERP_PLATFORM_DISABLED_TESTS= \
-	assemblyresolve_event6.exe \
-	delegate-async-exit.exe \
-	delegate-delegate-exit.exe \
-	delegate-exit.exe \
-	delegate1.exe \
-	delegate3.exe \
-	thunks.exe \
-	finalizer-exception.exe \
-	monitor-abort.exe
+PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
+PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/8273.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
+PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Directed/tailcall/tailcall.exe  # interface
 endif
 
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
-INTERP_PLATFORM_DISABLED_TESTS= \
-	assemblyresolve_event6.exe \
-	finalizer-exception.exe
 endif
 
 if MIPS
 # monitor.exe is racy
 PLATFORM_DISABLED_TESTS += filter-stack.exe monitor.exe
+PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
+PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/8273.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
 if S390X
@@ -751,18 +980,26 @@ PLATFORM_DISABLED_TESTS += \
 	sgen-bridge.exe \
 	sgen-bridge-major-fragmentation.exe \
 	sgen-bridge-xref.exe
+PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
+PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/8273.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
-if ENABLE_COOP
-COOP_DISABLED_TESTS= thunks.exe
-else
-COOP_DISABLED_TESTS= 
-endif
-
-PROFILE_DISABLED_TESTS=
+PROFILE_DISABLED_TESTS= \
+	$(TAILCALL_DISABLED_TESTS_RUN) \
+	tailcall-member-function-in-valuetype.exe \
+	tailcall-rgctxb.exe
 
 if FULL_AOT_TESTS
-# Tests which rely on TypeLoadExceptions
+# Tests which rely on TypeLoadExceptions or MemberAccessExceptions
 # In full-aot mode, these cause the relevant methods to be not AOTed.
 PROFILE_DISABLED_TESTS += \
 	typeload-unaligned.exe \
@@ -783,7 +1020,8 @@ PROFILE_DISABLED_TESTS += \
 	resolve_field_bug.2.exe \
 	resolve_type_bug.2.exe \
 	bug-81691.exe \
-	bug-327438.2.exe
+	bug-327438.2.exe \
+	newobj-abstract.exe
 
 # Tests which rely on remoting
 PROFILE_DISABLED_TESTS += \
@@ -871,6 +1109,7 @@ PROFILE_DISABLED_TESTS += \
 	bug-389886-2.exe	\
 	bug-349190.2.exe	\
 	bug-389886-sre-generic-interface-instances.exe	\
+	custom-modifiers-inheritance.exe	\
 	bug-462592.exe	\
 	bug-575941.exe	\
 	bug-389886-3.exe	\
@@ -897,6 +1136,11 @@ PROFILE_DISABLED_TESTS += \
 PROFILE_DISABLED_TESTS += \
 	reference-loader.exe
 
+# Tests which have no way of finding AOT images because they use Assembly.Load(byte[])
+PROFILE_DISABLED_TESTS += \
+	assembly-load-bytes.exe \
+	assembly-load-bytes-bindingredirect.exe
+
 # constraints-load.il: 
 # Failed to load method 0x6000007 from '..../mono/tests/constraints-load.exe' due to 
 # Could not resolve type with token 01000002 assembly:mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089 type:System.BrokenIComparable`1 member:<none>.
@@ -916,19 +1160,31 @@ PROFILE_DISABLED_TESTS += \
 	assemblyresolve_event3.exe \
 	appdomain-serialize-exception.exe
 
+PROFILE_DISABLED_TESTS += \
+	delegate15.exe
+
 # https://bugzilla.xamarin.com/show_bug.cgi?id=60973
 PROFILE_DISABLED_TESTS += \
 	weak-fields.exe
+
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PROFILE_DISABLED_TESTS += tailcall-interface-conservestack.exe
+
 endif
 
 if HYBRID_AOT_TESTS
 PROFILE_DISABLED_TESTS += \
 	bug-80307.exe \
 	namedmutex-destroy-race.exe
+
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 endif
 
 AOT_DISABLED_TESTS= \
 	constraints-load.exe
+
+# tailcall/fsharp FullAOT stack overflow in CI but not locally.
+AOT_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 
 CI_DISABLED_TESTS = \
 	main-returns-background-resetabort.exe \
@@ -941,12 +1197,19 @@ CI_DISABLED_TESTS = \
 # failing tests which we temporarily disable for PRs
 # so they don't interfere with other people's work
 CI_PR_DISABLED_TESTS = \
-	appdomain-threadpool-unload.exe
+	appdomain-threadpool-unload.exe \
+	monitor-abort.exe \
+	monitor-wait-abort.exe \
+	process-stress-3.exe
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
 	finally_block_ending_in_dead_bb.exe \
 	appdomain-threadpool-unload.exe
+
+# https://github.com/mono/mono/issues/6490
+LLVM_DISABLED_TESTS += \
+	weak-fields.exe
 
 LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 
@@ -959,7 +1222,36 @@ LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 # appdomain-thread-abort.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=47054
 # abort-try-holes.exe is flaky due to unwinding failure to the finally block when aborting
 # appdomain-marshalbyref-assemblyload.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=49308
-# dim-*: https://github.com/mono/mono/pull/6252
+# threads-init.exe: runs out of system threads
+# dim-constrainedcall.exe: fails on dontnet as well (https://github.com/dotnet/coreclr/issues/15353)
+#
+# tailcall-rgctxb.exe
+# tailcall-member-function-in-valuetype.exe
+#	Any time we have a byref/out parameter, be it
+#	an integer, or valuetype-this, we pessimistically
+#	will never tailcall.
+#
+#	These two cases have valuetype-this.
+#	tailcall-rgctxb.exe strives for additional coverage
+#	related to generic context, but both tests suffer from
+#	the same problem.
+#
+#	I suggest we insert range checks.
+#	If all parameters are outside the frame,
+#	do a tailcall. If any are not, regular call.
+#
+#	It'll be a little bigger and have a slowdown,
+#	and a speedup (stack locality speeds things up),
+#	and enable code that does not work otherwise.
+#
+#	Again, tailcall is not just an optimization.
+#	It lets code process large data within small stack.
+#	If it was just an optimization, desktop CLR would not
+#	go so far out of their way to implement it.
+#
+# Some of the tailcall tests pass native pointers to locals.
+#   Mono does not yet allow that.
+#   tailcall "i" is either calli, or integer instead of pointer, and the latter sidesteps the matter.
 KNOWN_FAILING_TESTS = \
 	delegate-async-exception.exe	\
 	bug-348522.2.exe	\
@@ -968,76 +1260,147 @@ KNOWN_FAILING_TESTS = \
 	bug-Xamarin-5278.exe \
 	appdomain-marshalbyref-assemblyload.exe	\
 	abort-try-holes.exe \
-	dim-constrainedcall.exe	\
-	dim-diamondshape.exe	\
-	dim-methodimpl.exe	\
-	dim-simple.exe
+	threads-init.exe \
+	dim-constrainedcall.exe \
+	gptail1.exe \
+	itaili1.exe \
+	sirtail1.exe \
+	srtail1.exe \
+	stail1.exe \
+	tail1.exe \
+	taili1.exe \
+	vtail1.exe \
+	tailcall-member-function-in-valuetype.exe \
+	tailcall-rgctxb.exe
 
 DISABLED_TESTS = \
 	$(KNOWN_FAILING_TESTS) \
 	$(PLATFORM_DISABLED_TESTS) \
-	$(EXTRA_DISABLED_TESTS) \
-	$(COOP_DISABLED_TESTS) \
 	$(PROFILE_DISABLED_TESTS) \
 	$(if $(AOT),$(AOT_DISABLED_TESTS)) \
 	$(if $(CI),$(CI_DISABLED_TESTS)) \
 	$(if $(CI_PR),$(CI_PR_DISABLED_TESTS)) \
 	$(if $(LLVM),$(LLVM_DISABLED_TESTS))
 
-# bug-48015.exe: be careful when re-enabling, it happens that it returns with
-#                exit code 0, but doesn't actually execute the test.
-# block_guard_restore_aligment_on_exit.exe: flaky (10% of the time it hangs and thus times out)
-# weak-fields.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=60973
-# dim-valuetypes.exe: https://github.com/mono/mono/issues/6287
-INTERP_DISABLED_TESTS = \
-	$(KNOWN_FAILING_TESTS) \
-	$(INTERP_PLATFORM_DISABLED_TESTS) \
-	$(COOP_DISABLED_TESTS) \
-	$(if $(CI),$(CI_DISABLED_TESTS)) \
-	$(if $(CI_PR),$(CI_PR_DISABLED_TESTS)) \
+# Interpreter does not currently implement tailcall.
+# Disable all tailcall tests.
+INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
+	gptail1.exe \
+	itail1.exe \
+	itaili1.exe \
+	ivtail1.exe \
+	sitail1.exe \
+	sirtail1.exe \
+	srtail1.exe \
+	stail1.exe \
+	tail1.exe \
+	taili1.exe \
+	vtail1.exe \
+	tailcall-generic-cast-conservestack-il.exe \
+	tailcall-interface-conservestack.exe \
+	tailcall-mrgctx.exe \
+	tailcall-rgctxa.exe \
+	tailcall-rgctxb.exe \
+	tailcall-rgctxb-static.exe \
+	tailcall-virt.exe \
+	tailcall-return-valuetype.exe \
+	tailcall/fsharp-deeptail.exe \
+	tailcall/2.exe \
+	tailcall/3.exe \
+	tailcall/4.exe \
+	tailcall/8273.exe \
+	$(TAILCALL_DISABLED_TESTS_RUN) \
+	bug-60843.exe
+
+# bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
+# bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
+# bug-60843.exe: something goes wrong when turning the decoded enum value into a boxed enum, so the loaded value ends up being random bytes
+
+if ARM
+INTERP_DISABLED_TESTS += \
+	appdomain-unload-callback.exe \
 	appdomain-unload.exe \
-	array_load_exception.exe \
-	async-exc-compilation.exe \
+	assemblyresolve_event6.exe \
 	async-with-cb-throws.exe \
 	block_guard_restore_aligment_on_exit.exe \
+	bug-323114.exe \
 	bug-335131.2.exe \
 	bug-415577.exe \
 	bug-45841-fpstack-exceptions.exe \
 	bug-48015.exe \
-	bug-58782-capture-and-throw.exe \
-	bug-58782-plain-throw.exe \
+	bug-60862.exe \
+	bug-80307.exe \
+	bug-80392.2.exe \
 	bug445361.exe \
 	calliGenericTest.exe \
 	cominterop.exe \
 	context-static.exe \
+	delegate-async-exit.exe \
+	delegate-delegate-exit.exe \
+	delegate-exit.exe \
 	delegate-with-null-target.exe \
+	delegate1.exe \
+	delegate3.exe \
+	delegate5.exe \
+	delegate8.exe \
 	delegate9.exe \
+	dim-diamondshape.exe \
 	dynamic-method-stack-traces.exe \
 	even-odd.exe \
 	exception18.exe \
 	field-access.exe \
+	finalizer-exception.exe \
 	handleref.exe \
+	monitor-abort.exe \
 	nullable_boxing.2.exe \
+	pinvoke.exe \
 	pinvoke2.exe \
 	pinvoke3.exe \
+	remoting2.exe \
+	remoting3.exe \
 	safehandle.2.exe \
 	stackframes-async.2.exe \
 	static-constructor.exe \
-	thread6.exe \
 	threadpool-exceptions2.exe \
+	threadpool-exceptions3.exe \
 	threadpool-exceptions4.exe \
 	threadpool-exceptions5.exe \
+	threadpool-exceptions6.exe \
+	thunks.exe \
 	typeload-unaligned.exe \
-	weak-fields.exe \
 	vararg.exe \
 	vararg2.exe \
-	dim-valuetypes.exe
+	vararg3.exe
+endif
+
+if ARM64
+INTERP_DISABLED_TESTS += \
+	bug-48015.exe \
+	bug-80307.exe \
+	delegate-with-null-target.exe \
+	dim-diamondshape.exe \
+	pinvoke3.exe
+endif
+
+if AMD64
+INTERP_DISABLED_TESTS += \
+	assemblyresolve_event6.exe \
+	bug-48015.exe \
+	bug-60862.exe \
+	cominterop.exe \
+	delegate-with-null-target.exe \
+	dim-diamondshape.exe \
+	pinvoke.exe \
+	pinvoke3.exe
+endif
 
 TESTS_CS=$(filter-out $(DISABLED_TESTS),$(TESTS_CS_SRC:.cs=.exe))
 TESTS_IL=$(filter-out $(DISABLED_TESTS),$(TESTS_IL_SRC:.il=.exe))
 TESTS_BENCH=$(filter-out $(DISABLED_TESTS),$(TESTS_BENCH_SRC:.cs=.exe))
 TESTS_STRESS=$(filter-out $(DISABLED_TESTS),$(TESTS_STRESS_SRC:.cs=.exe))
 TESTS_GSHARED=$(filter-out $(DISABLED_TESTS),$(TESTS_GSHARED_SRC:.cs=.exe))
+TESTS_TAILCALL_COMPILE=$(filter-out $(TAILCALL_DISABLED_TESTS_COMPILE),$(TEST_TAILCALL_CS_SRC:.cs=.exe) $(TEST_TAILCALL_IL_SRC:.il=.exe))
+TESTS_TAILCALL_RUN=$(filter-out $(TAILCALL_DISABLED_TESTS_RUN),$(TESTS_TAILCALL_COMPILE))
 
 if FULL_AOT_TESTS
 TESTSAOT_CS=$(TESTS_CS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
@@ -1045,6 +1408,8 @@ TESTSAOT_IL=$(TESTS_IL:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_BENCH=$(TESTS_BENCH:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_STRESS=$(TESTS_STRESS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_GSHARED=$(TESTS_GSHARED:.exe=.exe$(PLATFORM_AOT_SUFFIX))
+# AOT tests are run by running the non-AOT files. Runtime probes for the AOT file.
+TESTSAOT_TAILCALL=$(TESTS_TAILCALL_COMPILE:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 if HYBRID_AOT_TESTS
@@ -1053,13 +1418,22 @@ TESTSAOT_IL=$(TESTS_IL:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_BENCH=$(TESTS_BENCH:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_STRESS=$(TESTS_STRESS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 TESTSAOT_GSHARED=$(TESTS_GSHARED:.exe=.exe$(PLATFORM_AOT_SUFFIX))
+TESTSAOT_TAILCALL=$(TESTS_TAILCALL_COMPILE:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 EXTRA_DIST=test-driver test-runner.cs $(TESTS_CS_SRC) $(TESTS_IL_SRC) \
-	$(TESTS_BENCH_SRC) $(TESTS_STRESS_SRC) stress-runner.pl
+	$(TESTS_BENCH_SRC) $(TESTS_STRESS_SRC) stress-runner.pl \
+	$(TEST_TAILCALL_CS_SRC) \
+	$(TEST_TAILCALL_IL_SRC)
+
+# This test has extra sources.
+tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe: \
+		tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyTransparentLibraryWithPrefix.il \
+		tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyVerifiableLibraryWithPrefix.il
 
 %.exe: %.il
-	$(ILASM) -out:$@ $<
+	$(MKDIR_P) $(dir $@)
+	$(ILASM) -out:$@ $^
 
 if !FULL_AOT_TESTS
 if !HYBRID_AOT_TESTS
@@ -1078,6 +1452,7 @@ endif
 endif
 
 %.exe: %.cs $(TEST_DRIVER_DEPEND)
+	$(MKDIR_P) $(dir $@)
 	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
 
 # N.B. test-runner.exe references the TOOLS_RUNTIME versions of the framework assemblies
@@ -1085,8 +1460,10 @@ test-runner.exe: test-runner.cs $(TEST_DRIVER_DEPEND)
 	$(MCS) -r:System.dll -r:System.Xml.dll -r:System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
 
 %.dll: %.cs
+	$(MKDIR_P) $(dir $@)
 	$(MCS) -r:$(CLASS)/System.dll -target:library -out:$@ $<
 %.dll: %.il
+	$(MKDIR_P) $(dir $@)
 	$(ILASM) /dll /output:$@ $<
 
 reference-loader.exe: reference-loader.cs TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_DEPEND)
@@ -1145,7 +1522,9 @@ test-env-options:
 
 # Precompile the test assemblies in parallel
 compile-tests:
-	$(MAKE) -j4 $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) compile-gac-loading
+	$(MAKE) -j4 compile-tests-parallel
+
+compile-tests-parallel: $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) $(TESTS_TAILCALL) $(TESTSAOT_TAILCALL) compile-gac-loading
 
 # Remove empty .stdout and .stderr files for wrench
 rm-empty-logs:
@@ -1189,7 +1568,7 @@ runtest: compile-tests
 	fi
 
 runtest-managed: test-runner.exe compile-tests
-	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --testsuite-name "runtime" --timeout 300 --disabled "$(DISABLED_TESTS)" --runtime-args "$(TEST_RUNTIME_FLAGS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
+	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --testsuite-name "runtime" --timeout 300 --disabled "$(DISABLED_TESTS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
 
 runtest-managed-serial: test-runner.exe compile-tests
 	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j 1 --testsuite-name "runtime" --disabled "$(DISABLED_TESTS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
@@ -1341,6 +1720,89 @@ endif
 if HYBRID_AOT_TESTS
 TESTSAOT_SGEN_REGULAR=$(TESTS_SGEN_REGULAR:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
+
+# The .cs tests are not interesting initially but should be later.
+
+#FIXME
+#coreclr/tailcall/CoreMangLib/system/span/SlowTailCallArgs.cs(124,13): error CS8107: Feature 'ref structs' is not available in C# 7.0. Please use language version 7.2 or greater.
+#coreclr/tailcall/CoreMangLib/cti/system/reflection/emit/opcodes/opcodestailcall.cs(17,9): error CS0103: The name 'TestLibrary' does not exist in the current context
+
+TEST_TAILCALL_CS_SRC=\
+	tailcall/coreclr/JIT/CodeGenBringUpTests/RecursiveTailCall.cs \
+	tailcall/coreclr/JIT/Methodical/tailcall/Desktop/thread-race.cs \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.cs \
+	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallCandidates.cs \
+	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.cs \
+	tailcall/coreclr/JIT/opt/FastTailCall/GitHubIssue12479.cs \
+	tailcall/coreclr/JIT/opt/FastTailCall/StackFixup.cs \
+	tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.cs
+
+# At these locations we have .cs and .il.
+# The .il is clearly derived from the .cs, such as by running
+# csc + ildasm + edit.
+# The .cs is opportunistically optimizable, see https://github.com/mono/mono/issues/7259.
+# But for now we only want the .il.
+#tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.cs
+#tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.cs
+#tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.cs
+#tailcall/coreclr/JIT/Methodical/tailcall/compat_i2_bool.il
+#tailcall/coreclr/JIT/Methodical/tailcall/compat_i4_i1.il
+#tailcall/coreclr/JIT/Methodical/tailcall/compat_i4_u.il
+#tailcall/coreclr/JIT/Methodical/tailcall/compat_i_u2.il
+#tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.il
+#tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.il
+
+TEST_TAILCALL_IL_SRC=\
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.il \
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyTransparentLibraryWithPrefix.il \
+	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyVerifiableLibraryWithPrefix.il \
+	tailcall/coreclr/JIT/Directed/coverage/importer/badtailcall.il \
+	tailcall/coreclr/JIT/Directed/coverage/importer/Desktop/badtailcall.il \
+	tailcall/coreclr/JIT/Directed/IL/mutualrecur-tailcall/MutualRecur-TailCall.il \
+	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/tailwinapi.il \
+	tailcall/coreclr/JIT/Directed/IL/Tailcall/JitTailcall1.il \
+	tailcall/coreclr/JIT/Directed/IL/Tailcall/Jittailcall2.il \
+	tailcall/coreclr/JIT/Directed/pinvoke/tail.il \
+	tailcall/coreclr/JIT/Directed/tailcall/tailcall.il \
+	tailcall/coreclr/JIT/IL_Conformance/Old/Base/tailcall.il \
+	tailcall/coreclr/JIT/Methodical/Boxing/boxunbox/tailcall.il \
+	tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.il \
+	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_call.il \
+	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_calli.il \
+	tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfault_tail.il \
+	tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.il \
+	tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_obj.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/compat_v.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_array.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_array_nz.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_gc.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_inst.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_value.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_virt.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_nested.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/pointer.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/pointer_i.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/reference_i.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_implicit.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_mutual_rec.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_switch.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_virt.il \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_void.il \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateTail.il \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.il \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/smallFrame.il \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/tailcall_AV.il \
+	tailcall/coreclr/JIT/opt/ETW/TailCallCases.il \
+	tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.il
 
 test-sgen-regular: $(TESTS_SGEN_REGULAR) $(TESTSAOT_SGEN_REGULAR)
 	ok=; \
@@ -1680,7 +2142,7 @@ test-unhandled-exception: unhandled-exception-test-runner.2.exe
 safehandle.2.exe winx64structs.exe thunks.exe pinvoke3.exe pinvoke2.exe pinvoke-2.2.exe pinvoke17.exe pinvoke13.exe \
 	pinvoke11.exe pinvoke_ppcs.exe pinvoke_ppci.exe pinvoke_ppcf.exe pinvoke_ppcd.exe pinvoke_ppcc.exe pinvoke.exe \
 	marshalbool.exe marshal9.exe marshal5.exe marshal.exe handleref.exe cominterop.exe bug-Xamarin-5278.exe \
-	bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe: libtest.la
+	bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe install_eh_callback.exe: libtest.la
 
 event-get.2.exe$(PLATFORM_AOT_SUFFIX): event-il.exe$(PLATFORM_AOT_SUFFIX)
 event-get.2.exe: event-il.exe
@@ -1840,6 +2302,42 @@ MidAssembly.dll: appdomain-marshalbyref-assemblyload-MidAssembly.cs LeafAssembly
 appdomain-marshalbyref-assemblyload.exe: appdomain-marshalbyref-assemblyload.cs MidAssembly.dll LeafAssembly.dll appdomain-marshalbyref-assemblyload2/LeafAssembly.dll
 	$(MCS) -out:$@ $< -r:MidAssembly.dll -r:LeafAssembly.dll
 
+assembly-load-dir1/Lib.dll: assembly-load-dir1/Lib.cs
+	$(MKDIR_P) $(dir $@)
+	$(MCS) -target:library -out:$@ $<
+assembly-load-dir2/Lib.dll: assembly-load-dir2/Lib.cs
+	$(MKDIR_P) $(dir $@)
+	$(MCS) -target:library -out:$@ $<
+
+assembly-load-dir1/LibStrongName.dll: assembly-load-dir1/LibStrongName.cs testing_gac/testkey.snk
+	$(MKDIR_P) $(dir $@)
+	$(MCS) -target:library -out:$@ $< -keyfile:$(dir $<)../testing_gac/testkey.snk
+
+assembly-load-dir2/LibStrongName.dll: assembly-load-dir2/LibStrongName.cs testing_gac/testkey.snk
+	$(MKDIR_P) $(dir $@)
+	$(MCS) -target:library -out:$@ $< -keyfile:$(dir $<)../testing_gac/testkey.snk
+
+EXTRA_DIST += assembly-load-dir1/Lib.cs assembly-load-dir2/Lib.cs \
+	assembly-load-dir1/LibStrongName.cs assembly-load-dir2/LibStrongName.cs
+
+assembly-load-bytes.exe: assembly-load-dir1/Lib.dll assembly-load-dir2/Lib.dll
+
+assembly-loadfrom.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/Lib.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/Lib.dll$(PLATFORM_AOT_SUFFIX)
+assembly-loadfrom.exe: assembly-load-dir1/Lib.dll assembly-load-dir2/Lib.dll
+
+assembly-loadfile.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/Lib.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/Lib.dll$(PLATFORM_AOT_SUFFIX)
+assembly-loadfile.exe: assembly-load-dir1/Lib.dll assembly-load-dir2/Lib.dll
+
+assembly-loadfrom-bindingredirect.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-loadfrom-bindingredirect.exe.config
+assembly-loadfrom-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-loadfrom-bindingredirect.exe.config
+
+assembly-loadfile-bindingredirect.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-loadfile-bindingredirect.exe.config
+assembly-loadfile-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-loadfile-bindingredirect.exe.config
+
+assembly-load-bytes-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-load-bytes-bindingredirect.exe.config
+
+EXTRA_DIST += assembly-loadfrom-bindingredirect.exe.config assembly-loadfile-bindingredirect.exe.config assembly-load-bytes-bindingredirect.exe.config
+
 gshared:
 	$(MAKE) test-generic-sharing
 
@@ -1984,7 +2482,7 @@ TESTSAOT_STRESS_PROCESS=$(TESTS_STRESS_PROCESS:.exe=.exe$(PLATFORM_AOT_SUFFIX))
 endif
 
 test-process-stress: $(TESTS_STRESS_PROCESS) $(TESTSAOT_STRESS_PROCESS) test-runner.exe
-	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --disabled "$(DISABLED_TESTS)" --timeout 600 $(TESTS_STRESS_PROCESS)
+	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --disabled "$(DISABLED_TESTS)" --timeout 900 $(TESTS_STRESS_PROCESS)
 
 coreclr-gcstress:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests coreclr-gcstress
@@ -2009,7 +2507,7 @@ else
 libtest_la_LDFLAGS = -rpath `pwd`
 endif
 libtest_la_SOURCES = libtest.c
-libtest_la_LIBADD = $(GLIB_LIBS) $(LIBICONV)
+libtest_la_LIBADD = $(top_builddir)/mono/eglib/libeglib.la
 
 INTERNALSVISIBLETO_TEST_SRC = \
 	internalsvisibleto-runtimetest.cs \
@@ -2086,3 +2584,4 @@ weak-fields.exe: weak-fields.cs Mono.Runtime.Testing.dll
 	$(MCS) -r:Mono.Runtime.Testing.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
 
 CLEANFILES = $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) *.dll *.stdout *.aotlog *.exe stest.dat LeafAssembly.dll MidAssembly.dll appdomain-marshalbyref-assemblyload2/*.dll 
+CLEANFILES += $(TESTS_TAILCALL_COMPILE) $(TESTSAOT_TAILCALL)

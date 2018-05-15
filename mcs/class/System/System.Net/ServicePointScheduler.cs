@@ -36,8 +36,8 @@ namespace System.Net
 {
 	class ServicePointScheduler
 	{
-		public ServicePoint ServicePoint {
-			get;
+		ServicePoint ServicePoint {
+			get; set;
 		}
 
 		public int MaxIdleTime {
@@ -81,12 +81,6 @@ namespace System.Net
 		}
 
 		[Conditional ("MONO_WEB_DEBUG")]
-		void Debug (string message, params object[] args)
-		{
-			WebConnection.Debug ($"SPS({ID}): {string.Format (message, args)}");
-		}
-
-		[Conditional ("MONO_WEB_DEBUG")]
 		void Debug (string message)
 		{
 			WebConnection.Debug ($"SPS({ID}): {message}");
@@ -124,15 +118,14 @@ namespace System.Net
 
 		public void Run ()
 		{
-			lock (ServicePoint) {
-				if (Interlocked.CompareExchange (ref running, 1, 0) == 0)
-					StartScheduler ();
+			Debug ($"RUN");
+			if (Interlocked.CompareExchange (ref running, 1, 0) == 0)
+				Task.Run (() => RunScheduler ());
 
-				schedulerEvent.Set ();
-			}
+			schedulerEvent.Set ();
 		}
 
-		async void StartScheduler ()
+		async Task RunScheduler ()
 		{
 			idleSince = DateTime.UtcNow + TimeSpan.FromDays (3650);
 
@@ -143,59 +136,80 @@ namespace System.Net
 				ValueTuple<ConnectionGroup, WebOperation>[] operationArray;
 				ValueTuple<ConnectionGroup, WebConnection, Task>[] idleArray;
 				var taskList = new List<Task> ();
+				Task<bool> schedulerTask;
+				bool finalCleanup = false;
 				lock (ServicePoint) {
 					Cleanup ();
-					if (groups == null && defaultGroup.IsEmpty () && operations.Count == 0 && idleConnections.Count == 0) {
-						Debug ($"MAIN LOOP DONE");
-						running = 0;
-						idleSince = DateTime.UtcNow;
-						schedulerEvent.Reset ();
-						return;
-					}
 
 					operationArray = new ValueTuple<ConnectionGroup, WebOperation>[operations.Count];
 					operations.CopyTo (operationArray, 0);
 					idleArray = new ValueTuple<ConnectionGroup, WebConnection, Task>[idleConnections.Count];
 					idleConnections.CopyTo (idleArray, 0);
 
-					taskList.Add (schedulerEvent.WaitAsync (maxIdleTime));
-					foreach (var item in operationArray)
-						taskList.Add (item.Item2.WaitForCompletion (true));
-					foreach (var item in idleArray)
-						taskList.Add (item.Item3);
+					schedulerTask = schedulerEvent.WaitAsync (maxIdleTime);
+					taskList.Add (schedulerTask);
+
+					if (groups == null && defaultGroup.IsEmpty () && operations.Count == 0 && idleConnections.Count == 0) {
+						Debug ($"MAIN LOOP DONE");
+						idleSince = DateTime.UtcNow;
+						finalCleanup = true;
+					} else {
+						foreach (var item in operationArray)
+							taskList.Add (item.Item2.Finished.Task);
+						foreach (var item in idleArray)
+							taskList.Add (item.Item3);
+					}
 				}
 
-				Debug ($"MAIN LOOP #1: operations={operationArray.Length} idle={idleArray.Length}");
+				Debug ($"MAIN LOOP #1: operations={operationArray.Length} idle={idleArray.Length} finalCleanup={finalCleanup}");
 
 				var ret = await Task.WhenAny (taskList).ConfigureAwait (false);
 
 				lock (ServicePoint) {
-					if (ret == taskList[0]) {
-						RunSchedulerIteration ();
-						continue;
-					}
-
-					int idx = -1;
-					for (int i = 0; i < operationArray.Length; i++) {
-						if (ret == taskList[i + 1]) {
-							idx = i;
-							break;
+					bool runMaster = false;
+					if (finalCleanup) {
+						if (schedulerTask.Result)
+							runMaster = true;
+						else {
+							FinalCleanup ();
+							return;
 						}
+					} else if (ret == taskList[0]) {
+						runMaster = true;
 					}
 
-					if (idx >= 0) {
-						var item = operationArray[idx];
-						Debug ($"MAIN LOOP #2: {idx} group={item.Item1.ID} Op={item.Item2.ID}");
+					/*
+					 * We discard the `taskList` at this point as it is only used to wake us up.
+					 *
+					 * The `WebCompletionSource<T>` assigns its `CurrentResult` property prior
+					 * to completing the `Task` instance, so whenever a task is finished we will
+					 * also get a non-null `CurrentResult`.
+					 * 
+					 */
+					for (int i = 0; i < operationArray.Length; i++) {
+						var item = operationArray[i];
+						var result = item.Item2.Finished.CurrentResult;
+						if (result == null)
+							continue;
+
+						Debug ($"MAIN LOOP #2: {i} group={item.Item1.ID} Op={item.Item2.ID} Status={result.Status}");
 						operations.Remove (item);
 
-						var opTask = (Task<ValueTuple<bool, WebOperation>>)ret;
-						var runLoop = OperationCompleted (item.Item1, item.Item2, opTask);
-						Debug ($"MAIN LOOP #2 DONE: {idx} {runLoop}");
-						if (runLoop)
-							RunSchedulerIteration ();
-						continue;
+						var runLoop = OperationCompleted (item.Item1, item.Item2);
+						Debug ($"MAIN LOOP #2 DONE: {i} {runLoop}");
+						runMaster |= runLoop;
 					}
 
+					/*
+					 * This needs to be called after we deal with pending completions to
+					 * ensure that connections are properly recognized as being idle.
+					 * 
+					 */
+					Debug ($"MAIN LOOP #3: runMaster={runMaster}");
+					if (runMaster)
+						RunSchedulerIteration ();
+
+					int idx = -1;
 					for (int i = 0; i < idleArray.Length; i++) {
 						if (ret == taskList[i + 1 + operationArray.Length]) {
 							idx = i;
@@ -205,7 +219,7 @@ namespace System.Net
 
 					if (idx >= 0) {
 						var item = idleArray[idx];
-						Debug ($"MAIN LOOP #3: {idx} group={item.Item1.ID} Cnc={item.Item2.ID}");
+						Debug ($"MAIN LOOP #4: {idx} group={item.Item1.ID} Cnc={item.Item2.ID}");
 						idleConnections.Remove (item);
 						CloseIdleConnection (item.Item1, item.Item2);
 					}
@@ -242,7 +256,7 @@ namespace System.Net
 
 				repeat = SchedulerIteration (defaultGroup);
 
-				Debug ($"ITERATION #1: {repeat} {groups != null}");
+				Debug ($"ITERATION #1: repeat={repeat} groups={groups?.Count}");
 
 				if (groups != null) {
 					foreach (var group in groups) {
@@ -251,11 +265,11 @@ namespace System.Net
 					}
 				}
 
-				Debug ($"ITERATION #3: {repeat}");
+				Debug ($"ITERATION #3: repeat={repeat}");
 			} while (repeat);
 		}
 
-		bool OperationCompleted (ConnectionGroup group, WebOperation operation, Task<(bool, WebOperation)> task)
+		bool OperationCompleted (ConnectionGroup group, WebOperation operation)
 		{
 #if MONO_WEB_DEBUG
 			var me = $"{nameof (OperationCompleted)}(group={group.ID}, Op={operation.ID}, Cnc={operation.Connection.ID})";
@@ -263,8 +277,10 @@ namespace System.Net
 			string me = null;
 #endif
 
-			var (ok, next) = task.Status == TaskStatus.RanToCompletion ? task.Result : (false, null);
-			Debug ($"{me}: {task.Status} {ok} {next?.ID}");
+			var result = operation.Finished.CurrentResult;
+			var (ok, next) = result.Success ? result.Argument : (false, null);
+
+			Debug ($"{me}: {operation.Finished.CurrentStatus} {ok} {next?.ID}");
 
 			if (!ok || !operation.Connection.Continue (next)) {
 				group.RemoveConnection (operation.Connection);
@@ -324,9 +340,10 @@ namespace System.Net
 
 			// Is there anything in the queue?
 			var next = group.GetNextOperation ();
-			Debug ($"{me} no pending operations.");
-			if (next == null)
+			if (next == null) {
+				Debug ($"{me} no pending operations.");
 				return false;
+			}
 
 			Debug ($"{me} found pending operation Op={next.ID}");
 
@@ -367,6 +384,20 @@ namespace System.Net
 			}
 		}
 
+		void FinalCleanup ()
+		{
+			Debug ($"FINAL CLEANUP");
+
+			groups = null;
+			operations = null;
+			idleConnections = null;
+			defaultGroup = null;
+
+			ServicePoint.FreeServicePoint ();
+			ServicePointManager.RemoveServicePoint (ServicePoint);
+			ServicePoint = null;
+		}
+
 		public void SendRequest (WebOperation operation, string groupName)
 		{
 			lock (ServicePoint) {
@@ -380,25 +411,23 @@ namespace System.Net
 
 		public bool CloseConnectionGroup (string groupName)
 		{
-			lock (ServicePoint) {
-				ConnectionGroup group;
-				if (string.IsNullOrEmpty (groupName))
-					group = defaultGroup;
-				else if (groups == null || !groups.TryGetValue (groupName, out group))
-					return false;
+			ConnectionGroup group;
+			if (string.IsNullOrEmpty (groupName))
+				group = defaultGroup;
+			else if (groups == null || !groups.TryGetValue (groupName, out group))
+				return false;
 
-				Debug ($"CLOSE CONNECTION GROUP: group={group.ID}");
+			Debug ($"CLOSE CONNECTION GROUP: group={group.ID}");
 
-				if (group != defaultGroup) {
-					groups.Remove (groupName);
-					if (groups.Count == 0)
-						groups = null;
-				}
-
-				group.Close ();
-				Run ();
-				return true;
+			if (group != defaultGroup) {
+				groups.Remove (groupName);
+				if (groups.Count == 0)
+					groups = null;
 			}
+
+			group.Close ();
+			Run ();
+			return true;
 		}
 
 		ConnectionGroup GetConnectionGroup (string name)
@@ -428,6 +457,19 @@ namespace System.Net
 		{
 			RemoveIdleConnection (connection);
 			Interlocked.Decrement (ref currentConnections);
+		}
+
+		public static async Task<bool> WaitAsync (Task workerTask, int millisecondTimeout)
+		{
+			var cts = new CancellationTokenSource ();
+			try {
+				var timeoutTask = Task.Delay (millisecondTimeout, cts.Token);
+				var ret = await Task.WhenAny (workerTask, timeoutTask).ConfigureAwait (false);
+				return ret != timeoutTask;
+			} finally {
+				cts.Cancel ();
+				cts.Dispose ();
+			}
 		}
 
 		class ConnectionGroup
@@ -556,7 +598,9 @@ namespace System.Net
 
 			public (WebConnection connection, bool created) CreateOrReuseConnection (WebOperation operation, bool force)
 			{
+				Scheduler.Debug ($"CREATE OR REUSE: group={ID} OP={operation.ID} force={force}");
 				var connection = FindIdleConnection (operation);
+				Scheduler.Debug ($"CREATE OR REUSE #1: group={ID} OP={operation.ID} force={force} - connection={connection?.ID}");
 				if (connection != null)
 					return (connection, false);
 
@@ -586,11 +630,9 @@ namespace System.Net
 				return m_tcs.Task.Wait (millisecondTimeout);
 			}
 
-			public async Task<bool> WaitAsync (int millisecondTimeout)
+			public Task<bool> WaitAsync (int millisecondTimeout)
 			{
-				var timeoutTask = Task.Delay (millisecondTimeout);
-				var ret = await Task.WhenAny (m_tcs.Task, timeoutTask).ConfigureAwait (false);
-				return ret != timeoutTask;
+				return ServicePointScheduler.WaitAsync (m_tcs.Task, millisecondTimeout);
 			}
 
 			public void Set ()

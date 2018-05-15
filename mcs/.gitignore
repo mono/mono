@@ -12,6 +12,7 @@ TestResult-*.xml
 TestResult*.xml
 .dep_dirs-*
 apidiff/*
+csprojdiff/*
 errors/*.log
 errors/dummy.xml
 class/Mono.Data.Sqlite/test.db

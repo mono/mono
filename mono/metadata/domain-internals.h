@@ -360,7 +360,7 @@ struct _MonoDomain {
 	/* Protected by 'jit_code_hash_lock' */
 	MonoInternalHashTable jit_code_hash;
 	mono_mutex_t    jit_code_hash_lock;
-	int		    num_jit_info_tables;
+	int		    num_jit_info_table_duplicates;
 	MonoJitInfoTable * 
 	  volatile          jit_info_table;
 	/*
@@ -390,8 +390,6 @@ struct _MonoDomain {
 	mono_mutex_t   finalizable_objects_hash_lock;
 	/* Used when accessing 'domain_assemblies' */
 	mono_mutex_t    assemblies_lock;
-
-	GHashTable	   *method_rgctx_hash;
 
 	GHashTable	   *generic_virtual_cases;
 
@@ -591,11 +589,6 @@ mono_try_assembly_resolve (MonoDomain *domain, const char *fname, MonoAssembly *
 MonoAssembly *
 mono_domain_assembly_postload_search (MonoAssemblyName *aname, MonoAssembly *requesting, gboolean refonly);
 
-MonoAssembly* mono_assembly_load_full_nosearch (MonoAssemblyName *aname, 
-						const char       *basedir, 
-						MonoImageOpenStatus *status,
-						gboolean refonly);
-
 void mono_domain_set_options_from_config (MonoDomain *domain);
 
 int mono_framework_version (void);
@@ -604,7 +597,7 @@ void mono_reflection_cleanup_domain (MonoDomain *domain);
 
 void mono_assembly_cleanup_domain_bindings (guint32 domain_id);
 
-MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_aot, gboolean allow_trampolines);
+MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, gpointer addr, gboolean try_aot, gboolean allow_trampolines);
 
 void mono_enable_debug_domain_unload (gboolean enable);
 
