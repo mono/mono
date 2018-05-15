@@ -96,12 +96,24 @@ namespace System.Reflection.Emit {
 		{
 			if (position > 0) {
 				Type t = methodb.GetParameterType (position - 1);
-				if (defaultValue != null && t != defaultValue.GetType ()) {
-					if(!t.IsEnum || t.UnderlyingSystemType != defaultValue.GetType ())
-						throw new ArgumentException ("Constant does not match the defined type.");
+				if (defaultValue == null) {
+					if (!(t.IsGenericType && t.GetGenericTypeDefinition () == typeof(Nullable<>)))
+						throw new ArgumentException("Null is not a valid constant value for this type");
+				} else {
+					if (t.IsEnum) {
+						Type underlyingType = Enum.GetUnderlyingType (t);
+						if (defaultValue.GetType () != underlyingType && defaultValue.GetType () != t) {
+							throw new ArgumentException ("Constant does not match the defined type.");
+						}
+					} else {
+						if (!t.IsAssignableFrom (defaultValue.GetType ()))
+							throw new ArgumentException ("Constant does not match the defined type.");
+					}
+
+					if (t.IsValueType && !t.IsPrimitive && !t.IsEnum && t != typeof (DateTime) &&
+					    !(t.IsGenericType && t.GetGenericTypeDefinition () == typeof (Nullable<>)))
+						throw new ArgumentException ("" + t + " is not a supported constant type.");
 				}
-				if (t.IsValueType && !t.IsPrimitive && !t.IsEnum && t != typeof (DateTime))
-					throw new ArgumentException ("" + t + " is not a supported constant type.");
 			}
 
 			def_value = defaultValue;
