@@ -1,10 +1,10 @@
-﻿//
-// MonoBtlsStream.cs
+//
+// MonoSslAuthenticationOptions.cs
 //
 // Author:
-//       Martin Baulig <martin.baulig@xamarin.com>
+//       Martin Baulig <mabaul@microsoft.com>
 //
-// Copyright (c) 2016 Xamarin Inc. (http://www.xamarin.com)
+// Copyright (c) 2018 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,39 +23,65 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP && MONO_FEATURE_BTLS
+
+#if SECURITY_DEP
+
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
-
-using System;
-using System.IO;
-using System.Net.Security;
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
 #else
 using Mono.Security.Interface;
 #endif
+#endif
 
-using MNS = Mono.Net.Security;
+using System;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Authentication;
 
-namespace Mono.Btls
+namespace Mono.Net.Security
 {
-	class MonoBtlsStream : MNS.MobileAuthenticatedStream
+	abstract class MonoSslAuthenticationOptions : IMonoAuthenticationOptions
 	{
-		public MonoBtlsStream (Stream innerStream, bool leaveInnerStreamOpen, SslStream owner,
-		                       MonoTlsSettings settings, MonoTlsProvider provider)
-			: base (innerStream, leaveInnerStreamOpen, owner, settings, provider)
-		{
+		public abstract bool ServerMode {
+			get;
 		}
 
-		protected override MNS.MobileTlsContext CreateContext (MNS.MonoSslAuthenticationOptions options)
-		{
-			return new MonoBtlsContext (this, options);
+		public abstract bool AllowRenegotiation {
+			get; set;
+		}
+
+		public abstract RemoteCertificateValidationCallback RemoteCertificateValidationCallback { get; set; }
+
+		public abstract SslProtocols EnabledSslProtocols {
+			get; set;
+		}
+
+		public abstract EncryptionPolicy EncryptionPolicy {
+			get; set;
+		}
+
+		public abstract X509RevocationMode CertificateRevocationCheckMode {
+			get; set;
+		}
+
+		public abstract string TargetHost {
+			get; set;
+		}
+
+		public abstract X509Certificate ServerCertificate {
+			get; set;
+		}
+
+		public abstract X509CertificateCollection ClientCertificates {
+			get; set;
+		}
+
+		public abstract bool ClientCertificateRequired {
+			get; set;
 		}
 	}
 }
-#endif
