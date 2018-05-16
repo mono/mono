@@ -6290,8 +6290,10 @@ typedef union _MonoOpcodeParameter {
 	guchar *branch_target;
 } MonoOpcodeParameter;
 
+#ifndef _MSC_VER
 _Static_assert (sizeof (float) == 4, "");
 _Static_assert (sizeof (double) == 8, "");
+#endif
 
 typedef struct _MonoOpcodeInfo {
 	guint constant : 4; // private
