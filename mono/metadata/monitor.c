@@ -116,15 +116,12 @@ mon_status_init_entry_count (guint32 status)
 }
 
 static inline guint32
-mon_status_increment_entry_count (guint32 status)
+mon_status_add_entry_count (guint32 status, int val)
 {
-	return status + (1 << ENTRY_COUNT_SHIFT);
-}
-
-static inline guint32
-mon_status_decrement_entry_count (guint32 status)
-{
-	return status - (1 << ENTRY_COUNT_SHIFT);
+	if (val > 0)
+		return status + (val << ENTRY_COUNT_SHIFT);
+	else
+		return status - ((-val) << ENTRY_COUNT_SHIFT);
 }
 
 static inline gboolean
@@ -677,14 +674,10 @@ mono_monitor_exit_inflated (MonoObject *obj)
 		 * object.
 		 */
 		for (;;) {
-			gboolean have_waiters = mon_status_have_waiters (old_status);
-	
 			new_status = mon_status_set_owner (old_status, 0);
-			if (have_waiters)
-				new_status = mon_status_decrement_entry_count (new_status);
 			tmp_status = mono_atomic_cas_i32 ((gint32*)&mon->status, new_status, old_status);
 			if (tmp_status == old_status) {
-				if (have_waiters)
+				if (mon_status_have_waiters (old_status))
 					mono_coop_sem_post (mon->entry_sem);
 				break;
 			}
@@ -723,21 +716,25 @@ mono_monitor_exit_flat (MonoObject *obj, LockWord old_lw)
 	LOCK_DEBUG (g_message ("%s: (%d) Object %p is now locked %d times; LW = %p", __func__, mono_thread_info_get_small_id (), obj, lock_word_get_nest (new_lw), obj->synchronisation));
 }
 
-static void
-mon_decrement_entry_count (MonoThreadsSync *mon)
+static gboolean
+mon_add_entry_count (MonoThreadsSync *mon, int val)
 {
 	guint32 old_status, tmp_status, new_status;
 
-	/* Decrement entry count */
 	old_status = mon->status;
 	for (;;) {
-		new_status = mon_status_decrement_entry_count (old_status);
+		/* The lock is free, we should retry */
+		if (val > 0 && mon_status_get_owner (old_status) == 0)
+			return FALSE;
+		new_status = mon_status_add_entry_count (old_status, val);
 		tmp_status = mono_atomic_cas_i32 ((gint32*)&mon->status, new_status, old_status);
 		if (tmp_status == old_status) {
 			break;
 		}
 		old_status = tmp_status;
 	}
+
+	return TRUE;
 }
 
 /* If allow_interruption==TRUE, the method will be interrumped if abort or suspend
@@ -754,7 +751,6 @@ mono_monitor_try_enter_inflated (MonoObject *obj, guint32 ms, gboolean allow_int
 	guint32 new_status, old_status, tmp_status;
 	MonoSemTimedwaitRet wait_ret;
 	MonoInternalThread *thread;
-	gboolean interrupted = FALSE;
 
 	LOCK_DEBUG (g_message("%s: (%d) Trying to lock object %p (%d ms)", __func__, id, obj, ms));
 
@@ -848,23 +844,9 @@ retry_contended:
 		}
 	}
 
-	/*
-	 * We need to register ourselves as waiting if it is the first time we are waiting,
-	 * of if we were signaled and failed to acquire the lock.
-	 */
-	if (!interrupted) {
-		old_status = mon->status;
-		for (;;) {
-			if (mon_status_get_owner (old_status) == 0)
-				goto retry_contended;
-			new_status = mon_status_increment_entry_count (old_status);
-			tmp_status = mono_atomic_cas_i32 ((gint32*)&mon->status, new_status, old_status);
-			if (tmp_status == old_status) {
-				break;
-			}
-			old_status = tmp_status;
-		}
-	}
+	/* We need to register ourselves as waiting */
+	if (!mon_add_entry_count (mon, 1))
+		goto retry_contended;
 
 	if (ms != MONO_INFINITE_WAIT) {
 		then = mono_msec_ticks ();
@@ -906,12 +888,13 @@ retry_contended:
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
 done_waiting:
+	mon_add_entry_count (mon, -1);
+
 #ifndef DISABLE_PERFCOUNTERS
 	mono_atomic_dec_i32 (&mono_perfcounters->thread_queue_len);
 #endif
 
 	if (wait_ret == MONO_SEM_TIMEDWAIT_RET_ALERTED && !allow_interruption) {
-		interrupted = TRUE;
 		/* 
 		 * We have to obey a stop/suspend request even if 
 		 * allow_interruption is FALSE to avoid hangs at shutdown.
@@ -934,15 +917,11 @@ done_waiting:
 			goto retry_contended;
 		}
 	} else if (wait_ret == MONO_SEM_TIMEDWAIT_RET_SUCCESS) {
-		interrupted = FALSE;
 		/* retry from the top */
 		goto retry_contended;
 	} else if (wait_ret == MONO_SEM_TIMEDWAIT_RET_TIMEDOUT) {
 		/* we're done */
 	}
-
-	/* Timed out or interrupted */
-	mon_decrement_entry_count (mon);
 
 	MONO_PROFILER_RAISE (monitor_failed, (obj));
 
