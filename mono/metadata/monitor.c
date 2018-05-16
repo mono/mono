@@ -834,13 +834,6 @@ retry_contended:
 		}
 	}
 
-	/* If the object is currently locked by this thread... */
-	if (mon_status_get_owner (old_status) == id) {
-		mon->nest++;
-		MONO_PROFILER_RAISE (monitor_acquired, (obj));
-		return 1;
-	}
-
 	/* We need to make sure there's a semaphore handle (creating it if
 	 * necessary), and block on it
 	 */
