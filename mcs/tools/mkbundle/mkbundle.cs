@@ -103,7 +103,8 @@ class MakeBundle {
 		""
 	};
 	static string target_server = "https://download.mono-project.com/runtimes/raw/";
-	
+	static string mono_api_struct_file;
+
 	static int Main (string [] args)
 	{
 		List<string> sources = new List<string> ();
@@ -452,6 +453,13 @@ class MakeBundle {
 				aot_args = String.Format("static,{0}", args [++i]);
 				aot_compile = true;
 				static_link = true;
+				break;
+			case "--mono-api-struct-path":
+				if (i+1 == top) {
+					Console.WriteLine ("Usage: --mono-api-struct-path <path/to/file>");
+					return 1;
+				}
+				mono_api_struct_file = args [++i];
 				break;
 			default:
 				sources.Add (args [i]);
@@ -845,8 +853,6 @@ typedef struct {
 	const unsigned char *data;
 	const unsigned int size;
 } MonoBundledAssembly;
-void          mono_register_bundled_assemblies (const MonoBundledAssembly **assemblies);
-void          mono_register_config_for_assembly (const char* assembly_name, const char* config_xml);
 ");
 
 				// These values are part of the public API, so they are expected not to change
@@ -862,6 +868,20 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				else
 					tc.WriteLine ("#include <mono/jit/jit.h>\n");
 			}
+
+			Stream template_stream;
+			if (String.IsNullOrEmpty (mono_api_struct_file)) {
+				tc.WriteLine ("#define USE_DEFAULT_MONO_API_STRUCT");
+				template_stream = typeof (MakeBundle).Assembly.GetManifestResourceStream ("bundle-mono-api.inc");
+			} else {
+				template_stream = File.OpenRead (mono_api_struct_file);
+			}
+
+			StreamReader s;
+			using (s = new StreamReader (template_stream)) {
+				tc.Write (s.ReadToEnd ());
+			}
+			template_stream.Dispose ();
 
 			if (compress) {
 				tc.WriteLine ("typedef struct _compressed_data {");
@@ -1012,6 +1032,12 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			}
 			tc.WriteLine ("\tNULL\n};\n");
 
+			// This must go before any attempt to access `mono_api`
+			using (template_stream = System.Reflection.Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template_common.inc")) {
+				using (s = new StreamReader (template_stream)) {
+					tc.Write (s.ReadToEnd ());
+				}
+			}
 
 			// AOT baked in plus loader
 			foreach (string asm in aot_names){
@@ -1020,7 +1046,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 			tc.WriteLine ("\nstatic void install_aot_modules (void) {\n");
 			foreach (string asm in aot_names){
-				tc.WriteLine ("\tmono_aot_register_module (mono_aot_module_{0}_info);\n", asm);
+				tc.WriteLine ("\tmono_api.mono_aot_register_module (mono_aot_module_{0}_info);\n", asm);
 			}
 
 			string enum_aot_mode;
@@ -1037,7 +1063,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			default:
 				throw new Exception ("Unsupported AOT mode");
 			}
-			tc.WriteLine ("\tmono_jit_set_aot_mode ({0});", enum_aot_mode);
+			tc.WriteLine ("\tmono_api.mono_jit_set_aot_mode ({0});", enum_aot_mode);
 
 			tc.WriteLine ("\n}\n");
 
@@ -1052,12 +1078,12 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 			tc.WriteLine ("\nstatic void install_dll_config_files (void) {\n");
 			foreach (string[] ass in config_names){
-				tc.WriteLine ("\tmono_register_config_for_assembly (\"{0}\", assembly_config_{1});\n", ass [0], ass [1]);
+				tc.WriteLine ("\tmono_api.mono_register_config_for_assembly (\"{0}\", assembly_config_{1});\n", ass [0], ass [1]);
 			}
 			if (config_file != null)
-				tc.WriteLine ("\tmono_config_parse_memory (&system_config);\n");
+				tc.WriteLine ("\tmono_api.mono_config_parse_memory (&system_config);\n");
 			if (machine_config_file != null)
-				tc.WriteLine ("\tmono_register_machine_config (&machine_config);\n");
+				tc.WriteLine ("\tmono_api.mono_register_machine_config (&machine_config);\n");
 			tc.WriteLine ("}\n");
 
 			if (config_dir != null)
@@ -1065,16 +1091,16 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			else
 				tc.WriteLine ("static const char *config_dir = NULL;");
 
-			Stream template_stream;
 			if (compress) {
 				template_stream = System.Reflection.Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template_z.c");
 			} else {
 				template_stream = System.Reflection.Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template.c");
 			}
 
-			StreamReader s = new StreamReader (template_stream);
-			string template = s.ReadToEnd ();
-			tc.Write (template);
+			using (s = new StreamReader (template_stream)) {
+				tc.Write (s.ReadToEnd ());
+			}
+			template_stream.Dispose ();
 
 			if (!nomain && custom_main == null) {
 				Stream template_main_stream = System.Reflection.Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template_main.c");
