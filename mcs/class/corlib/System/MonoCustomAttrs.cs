@@ -301,6 +301,35 @@ namespace System
 				throw new ArgumentNullException ("obj");
 
 			CustomAttributeData [] attrs = GetCustomAttributesDataInternal (obj);
+
+			object [] pseudoAttrs = System.Array.FindAll (GetPseudoCustomAttributes (obj, null), attr => attr is MarshalAsAttribute);
+			if (pseudoAttrs.Length > 0)
+			{
+				CustomAttributeData [] maAttrsData = new CustomAttributeData [pseudoAttrs.Length];
+				for (var i = 0; i < pseudoAttrs.Length; i++) {
+					MarshalAsAttribute maAttr = (MarshalAsAttribute)pseudoAttrs[i];
+					var attrValue = maAttr.Value;
+					var customAttributeData = (CustomAttributeData)Activator.CreateInstance (typeof (CustomAttributeData), true);
+					var ctorBackingField = customAttributeData.GetType ()
+						.GetField("ctorInfo", BindingFlags.Instance | BindingFlags.NonPublic);
+					var ctor = typeof (MarshalAsAttribute).GetConstructor (new[] { typeof (UnmanagedType) });
+					ctorBackingField.SetValue (customAttributeData, ctor);
+					var ctorArgListBackingField = customAttributeData.GetType ()
+						.GetField($"ctorArgs", BindingFlags.Instance | BindingFlags.NonPublic);
+					var constructorArgList = new List<CustomAttributeTypedArgument>
+					(
+						new[] { new CustomAttributeTypedArgument (typeof (UnmanagedType), attrValue) }
+					);
+					ctorArgListBackingField.SetValue (customAttributeData, constructorArgList);
+					maAttrsData [i] = customAttributeData;
+				}
+
+				CustomAttributeData [] res = new CustomAttributeData [attrs.Length + maAttrsData.Length];
+				System.Array.Copy (attrs, res, attrs.Length);
+				System.Array.Copy (maAttrsData, 0, res, attrs.Length, maAttrsData.Length);
+				return res;
+			}
+
 			return Array.AsReadOnly<CustomAttributeData> (attrs);
 		}
 
