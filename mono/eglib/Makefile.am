@@ -1,6 +1,7 @@
 include $(top_srcdir)/mk/common.mk
 
-SUBDIRS = test
+# FIXME
+#SUBDIRS = test
 
 noinst_LTLIBRARIES = libeglib.la
 

@@ -5018,7 +5018,6 @@ mono/mini/Makefile
 mono/profiler/Makefile
 mono/eglib/Makefile
 mono/eglib/eglib-config.h
-mono/eglib/test/Makefile
 m4/Makefile
 ikvm-native/Makefile
 scripts/Makefile
