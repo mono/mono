@@ -619,9 +619,8 @@ static gboolean buffer_replies;
 static ReplyPacket reply_packets [128];
 static int nreply_packets;
 
-#define dbg_lock() mono_coop_mutex_lock (&debug_mutex)
-#define dbg_unlock() mono_coop_mutex_unlock (&debug_mutex)
-static MonoCoopMutex debug_mutex;
+#define dbg_lock mono_de_lock
+#define dbg_unlock mono_de_unlock
 
 static void transport_init (void);
 static void transport_connect (const char *address);
@@ -875,10 +874,10 @@ debugger_agent_parse_options (char *options)
 static void
 debugger_agent_init (void)
 {
-	mono_coop_mutex_init_recursive (&debug_mutex);
-
 	if (!agent_config.enabled)
 		return;
+
+	mono_de_init ();
 
 	transport_init ();
 
@@ -1018,6 +1017,8 @@ mono_debugger_agent_cleanup (void)
 	breakpoints_cleanup ();
 	objrefs_cleanup ();
 	ids_cleanup ();
+
+	mono_de_cleanup ();
 }
 
 /*

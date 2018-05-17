@@ -146,4 +146,12 @@ typedef struct {
 	 */
 	GPtrArray *children;
 } MonoBreakpoint;
+
+void mono_de_init (void);
+void mono_de_cleanup (void);
+
+//locking - we expose the lock object from the debugging engine to ensure we keep the same locking semantics of sdb.
+void mono_de_lock (void);
+void mono_de_unlock (void);
+
 #endif
