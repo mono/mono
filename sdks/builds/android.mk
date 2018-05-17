@@ -6,6 +6,16 @@ ANT_URI?=https://archive.apache.org/dist/ant/binaries/
 
 ANDROID_TOOLCHAIN_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/toolchains
 
+ifeq ($(UNAME),Darwin)
+JDK_INCLUDE_DIRS?=$(wildcard /Library/Java/JavaVirtualMachines/jdk1.8.0_*.jdk/Contents/Home/include /Library/Java/JavaVirtualMachines/jdk1.8.0_*.jdk/Contents/Home/include/darwin)
+else
+ifeq ($(UNAME),Linux)
+JDK_INCLUDE_DIRS?=$(error "FIXME figure out where the jvm includes are on Linux")
+else
+$(error "Unknown UNAME=$(UNAME)")
+endif
+endif
+
 $(ANDROID_TOOLCHAIN_CACHE_DIR) $(ANDROID_TOOLCHAIN_DIR):
 	mkdir -p $@
 
@@ -211,8 +221,13 @@ _android-$(1)_LD=ld
 _android-$(1)_RANLIB=ranlib
 _android-$(1)_STRIP=strip
 
-_android-$(1)_CFLAGS=$$(android-$(1)_CFLAGS)
-_android-$(1)_CXXFLAGS=$$(android-$(1)_CXXFLAGS)
+_android-$(1)_CFLAGS= \
+	$$(patsubst %,-I%,$$(JDK_INCLUDE_DIRS)) \
+	$$(android-$(1)_CFLAGS)
+
+_android-$(1)_CXXFLAGS= \
+	$$(patsubst %,-I%,$$(JDK_INCLUDE_DIRS)) \
+	$$(android-$(1)_CXXFLAGS)
 
 _android-$(1)_CONFIGURE_FLAGS= \
 	--cache-file=$$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION).config.cache \
@@ -263,10 +278,14 @@ _android-$(1)_AC_VARS= \
 	ac_cv_search_dlopen=no
 
 _android-$(1)_CFLAGS= \
-	-DXAMARIN_PRODUCT_VERSION=0
+	-DXAMARIN_PRODUCT_VERSION=0 \
+	$$(patsubst %,-I%,$$(JDK_INCLUDE_DIRS)) \
+	$$(android-$(1)_CFLAGS)
 
 _android-$(1)_CXXFLAGS= \
-	-DXAMARIN_PRODUCT_VERSION=0
+	-DXAMARIN_PRODUCT_VERSION=0 \
+	$$(patsubst %,-I%,$$(JDK_INCLUDE_DIRS)) \
+	$$(android-$(1)_CXXFLAGS)
 
 _android-$(1)_CONFIGURE_FLAGS= \
 	--host=$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static) \
