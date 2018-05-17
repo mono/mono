@@ -16,7 +16,7 @@
             caller(bool which) il managed
     {
       // Code size       22 (0x16)
-      .maxstack  1
+      .maxstack  99
       .locals (value class JitTest.BaseStruct V_0,
                value class JitTest.BaseStruct V_1)
       IL_0000:  ldarg.0
@@ -37,7 +37,7 @@
             callee() il managed
     {
       // Code size       14 (0xe)
-      .maxstack  1
+      .maxstack  99
       .locals (value class JitTest.BaseStruct V_0,
                value class JitTest.BaseStruct V_1)
       IL_0000:  ldloca.s   V_1
@@ -55,7 +55,7 @@
     {
       .entrypoint
       // Code size       55 (0x37)
-      .maxstack  1
+      .maxstack  99
       .locals (int32 V_0)
       IL_0000:  ldc.i4.0
       IL_0001:  call       value class JitTest.BaseStruct JitTest.BaseStruct::caller(bool)
@@ -71,7 +71,7 @@
       IL_0021:  call       void [mscorlib]System.Console::WriteLine(class System.Object)
       IL_0026:  ldstr      "passed"
       IL_002b:  call       void [mscorlib]System.Console::WriteLine(class System.String)
-      IL_0030:  ldc.i4.s   100
+      IL_0030:  ldc.i4.s   0
       			ret
     } // end of method BaseStruct::Main
 

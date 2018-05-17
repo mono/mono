@@ -59,9 +59,11 @@ mono_get_exception_execution_engine    (const char *msg);
 MONO_API MonoException *
 mono_get_exception_thread_abort        (void);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoException *
 mono_get_exception_thread_state        (const char *msg);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoException *
 mono_get_exception_thread_interrupted  (void);
 
@@ -89,6 +91,7 @@ mono_get_exception_missing_method      (const char *class_name, const char *memb
 MONO_API MonoException *
 mono_get_exception_missing_field       (const char *class_name, const char *member_name);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoException *
 mono_get_exception_not_implemented     (const char *msg);
 
@@ -107,6 +110,7 @@ mono_get_exception_argument_out_of_range (const char *arg);
 MONO_API MonoException *
 mono_get_exception_io                    (const char *msg);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoException *
 mono_get_exception_file_not_found        (MonoString *fname);
 
@@ -118,6 +122,7 @@ MONO_RT_EXTERNAL_ONLY
 MONO_API MonoException *
 mono_get_exception_type_initialization (const char *type_name, MonoException *inner);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoException *
 mono_get_exception_synchronization_lock (const char *msg);
 

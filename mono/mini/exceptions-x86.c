@@ -92,7 +92,7 @@ mono_win32_get_handle_stackoverflow (void)
 	x86_mov_reg_membase (code, X86_EBX, X86_ESP, 4, 4);
 
 	/* move current stack into edi for later restore */
-	x86_mov_reg_reg (code, X86_EDI, X86_ESP, 4);
+	x86_mov_reg_reg (code, X86_EDI, X86_ESP);
 
 	/* use the new freed stack from sigcontext */
 	/* XXX replace usage of struct sigcontext with MonoContext so we can use MONO_STRUCT_OFFSET */
@@ -110,7 +110,7 @@ mono_win32_get_handle_stackoverflow (void)
 	x86_call_code (code, mono_arch_handle_exception);
 
 	/* restore the SEH handler stack */
-	x86_mov_reg_reg (code, X86_ESP, X86_EDI, 4);
+	x86_mov_reg_reg (code, X86_ESP, X86_EDI);
 
 	/* return */
 	x86_ret (code);
@@ -387,7 +387,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	start = code = mono_global_codeman_reserve (kMaxCodeSize);
 
 	x86_push_reg (code, X86_EBP);
-	x86_mov_reg_reg (code, X86_EBP, X86_ESP, 4);
+	x86_mov_reg_reg (code, X86_EBP, X86_ESP);
 	x86_push_reg (code, X86_EBX);
 	x86_push_reg (code, X86_EDI);
 	x86_push_reg (code, X86_ESI);
@@ -407,7 +407,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	x86_mov_reg_membase (code, X86_EDI, X86_EAX,  MONO_STRUCT_OFFSET (MonoContext, edi), 4);
 
 	/* align stack and save ESP */
-	x86_mov_reg_reg (code, X86_EDX, X86_ESP, 4);
+	x86_mov_reg_reg (code, X86_EDX, X86_ESP);
 	x86_alu_reg_imm (code, X86_AND, X86_ESP, -MONO_ARCH_FRAME_ALIGNMENT);
 	g_assert (MONO_ARCH_FRAME_ALIGNMENT >= 8);
 	x86_alu_reg_imm (code, X86_SUB, X86_ESP, MONO_ARCH_FRAME_ALIGNMENT - 8);
@@ -843,7 +843,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		return TRUE;
 	} else if (*lmf) {
-		g_assert ((((guint64)(*lmf)->previous_lmf) & 2) == 0);
+		g_assert ((((gsize)(*lmf)->previous_lmf) & 2) == 0);
 
 		if ((ji = mini_jit_info_table_find (domain, (gpointer)(*lmf)->eip, NULL))) {
 			frame->ji = ji;
@@ -865,7 +865,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		frame->type = FRAME_TYPE_MANAGED_TO_NATIVE;
 
 		/* Check if we are in a trampoline LMF frame */
-		if ((guint32)((*lmf)->previous_lmf) & 1) {
+		if ((gsize)((*lmf)->previous_lmf) & 1) {
 			/* lmf->esp is set by the trampoline code */
 			new_ctx->esp = (*lmf)->esp;
 		}

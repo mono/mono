@@ -62,16 +62,11 @@ namespace Mono.Btls
 		bool isAuthenticated;
 		bool connected;
 
-		public MonoBtlsContext (
-			MNS.MobileAuthenticatedStream parent,
-			bool serverMode, string targetHost,
-			SslProtocols enabledProtocols, X509Certificate serverCertificate,
-			X509CertificateCollection clientCertificates, bool askForClientCert)
-			: base (parent, serverMode, targetHost, enabledProtocols,
-			        serverCertificate, clientCertificates, askForClientCert)
+		public MonoBtlsContext (MNS.MobileAuthenticatedStream parent, MNS.MonoSslAuthenticationOptions options)
+			: base (parent, options)
 		{
-			if (serverMode)
-				nativeServerCertificate = GetPrivateCertificate (serverCertificate);
+			if (IsServer)
+				nativeServerCertificate = GetPrivateCertificate (LocalServerCertificate);
 		}
 
 		static X509CertificateImplBtls GetPrivateCertificate (X509Certificate certificate)
@@ -236,11 +231,13 @@ namespace Mono.Btls
 
 			ctx.SetVerifyParam (MonoBtlsProvider.GetVerifyParam (Settings, ServerName, IsServer));
 
-			TlsProtocolCode minProtocol, maxProtocol;
+			TlsProtocolCode? minProtocol, maxProtocol;
 			GetProtocolVersions (out minProtocol, out maxProtocol);
 
-			ctx.SetMinVersion ((int)minProtocol);
-			ctx.SetMaxVersion ((int)maxProtocol);
+			if (minProtocol != null)
+				ctx.SetMinVersion ((int)minProtocol.Value);
+			if (maxProtocol != null)
+				ctx.SetMaxVersion ((int)maxProtocol.Value);
 
 			if (Settings != null && Settings.EnabledCiphers != null) {
 				var ciphers = new short [Settings.EnabledCiphers.Length];

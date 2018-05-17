@@ -10,7 +10,7 @@
   {
     "name": "coreclr", 
     "url": "git://github.com/mono/coreclr.git", 
-    "rev": "83d8279997d8ce4ad344ff9b937b2d13d074dcaa", 
+    "rev": "aa62c0382ae79562293f3ea1a94ef0f16f80f498", 
     "remote-branch": "origin/mono", 
     "branch": "mono", 
     "directory": "coreclr"

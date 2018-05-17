@@ -152,6 +152,7 @@
     <Compile Include=".\Mono.Security.Interface\CipherSuiteCode.cs" />
     <Compile Include=".\Mono.Security.Interface\ExchangeAlgorithmType.cs" />
     <Compile Include=".\Mono.Security.Interface\HashAlgorithmType.cs" />
+    <Compile Include=".\Mono.Security.Interface\IMonoAuthenticationOptions.cs" />
     <Compile Include=".\Mono.Security.Interface\IMonoSslStream.cs" />
     <Compile Include=".\Mono.Security.Interface\MonoTlsConnectionInfo.cs" />
     <Compile Include=".\Mono.Security.Interface\MonoTlsProvider.cs" />

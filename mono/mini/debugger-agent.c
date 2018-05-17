@@ -2214,8 +2214,7 @@ debugger_agent_free_domain_info (MonoDomain *domain)
 
 	if (info) {
 		for (i = 0; i < ID_NUM; ++i)
-			if (info->val_to_id [i])
-				g_hash_table_destroy (info->val_to_id [i]);
+			g_hash_table_destroy (info->val_to_id [i]);
 		g_hash_table_destroy (info->loaded_classes);
 
 		g_hash_table_iter_init (&iter, info->source_files);
@@ -2509,7 +2508,7 @@ get_top_method_ji (gpointer ip, MonoDomain **domain, gpointer *out_ip)
 		MonoLMF *lmf = mono_get_lmf ();
 		MonoInterpFrameHandle *frame;
 
-		g_assert (((guint64)lmf->previous_lmf) & 2);
+		g_assert (((gsize)lmf->previous_lmf) & 2);
 		MonoLMFExt *ext = (MonoLMFExt*)lmf;
 
 		g_assert (ext->interp_exit);
@@ -4698,11 +4697,11 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 		}
 
 		if (!method_in_stack) {
-			fprintf (stderr, "[%p] The instruction pointer of the currently executing method(%s) is not on the recorded stack. This is likely due to a runtime bug. The %d frames are as follow: \n", (gpointer)(gsize)mono_native_thread_id_get (), mono_method_full_name (method, TRUE), tls->frame_count);
+			g_printerr ("[%p] The instruction pointer of the currently executing method(%s) is not on the recorded stack. This is likely due to a runtime bug. The %d frames are as follow: \n", (gpointer)(gsize)mono_native_thread_id_get (), mono_method_full_name (method, TRUE), tls->frame_count);
 			/*DEBUG_PRINTF (1, "[%p] The instruction pointer of the currently executing method(%s) is not on the recorded stack. This is likely due to a runtime bug. The %d frames are as follow: \n", (gpointer)(gsize)mono_native_thread_id_get (), mono_method_full_name (method, TRUE), tls->frame_count);*/
 
 			for (int i=0; i < tls->frame_count; i++)
-				DEBUG_PRINTF (1, "\t [%p] Frame (%d / %d): %s\n", (gpointer)(gsize)mono_native_thread_id_get (), i, tls->frame_count, mono_method_full_name (tls->frames [i]->method, TRUE));
+				g_printerr ("\t [%p] Frame (%d / %d): %s\n", (gpointer)(gsize)mono_native_thread_id_get (), i, tls->frame_count, mono_method_full_name (tls->frames [i]->method, TRUE));
 		}
 		g_assert (method_in_stack);
 
@@ -4981,7 +4980,7 @@ process_breakpoint (DebuggerTlsData *tls, gboolean from_signal)
 		MonoLMF *lmf = mono_get_lmf ();
 		MonoInterpFrameHandle *frame;
 
-		g_assert (((guint64)lmf->previous_lmf) & 2);
+		g_assert (((gsize)lmf->previous_lmf) & 2);
 		MonoLMFExt *ext = (MonoLMFExt*)lmf;
 
 		g_assert (ext->interp_exit);
@@ -5709,8 +5708,7 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 				if (sp->il_offset == asyncMethod->yield_offsets [i]) {
 					ss_req->async_id = get_this_async_id (frames [0]);
 					ss_bp_add_one (ss_req, &ss_req_bp_count, &ss_req_bp_cache, method, asyncMethod->resume_offsets [i]);
-					if (ss_req_bp_cache)
-						g_hash_table_destroy (ss_req_bp_cache);
+					g_hash_table_destroy (ss_req_bp_cache);
 					mono_debug_free_method_async_debug_info (asyncMethod);
 					return;
 				}
@@ -5726,8 +5724,7 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 					ss_req->async_id = get_this_async_id (frames [0]);
 					ss_req->async_stepout_method = get_notify_debugger_of_wait_completion_method ();
 					ss_bp_add_one (ss_req, &ss_req_bp_count, &ss_req_bp_cache, ss_req->async_stepout_method, 0);
-					if (ss_req_bp_cache)
-						g_hash_table_destroy (ss_req_bp_cache);
+					g_hash_table_destroy (ss_req_bp_cache);
 					mono_debug_free_method_async_debug_info (asyncMethod);
 					return;
 				}
@@ -5848,8 +5845,7 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 		ss_req->global = FALSE;
 	}
 
-	if (ss_req_bp_cache)
-		g_hash_table_destroy (ss_req_bp_cache);
+	g_hash_table_destroy (ss_req_bp_cache);
 }
 
 /*
@@ -6060,7 +6056,7 @@ ss_req_release (SingleStepReq *req)
  * Called from metadata by the icall for System.Diagnostics.Debugger:Log ().
  */
 static void
-debugger_agent_debug_log (int level, MonoString *category, MonoString *message)
+debugger_agent_debug_log (int level, MonoStringHandle category, MonoStringHandle message)
 {
 	ERROR_DECL (error);
 	int suspend_policy;
@@ -6076,13 +6072,13 @@ debugger_agent_debug_log (int level, MonoString *category, MonoString *message)
 
 	ei.level = level;
 	ei.category = NULL;
-	if (category) {
-		ei.category = mono_string_to_utf8_checked (category, error);
+	if (!MONO_HANDLE_IS_NULL (category)) {
+		ei.category = mono_string_handle_to_utf8 (category, error);
 		mono_error_cleanup (error);
 	}
 	ei.message = NULL;
-	if (message) {
-		ei.message = mono_string_to_utf8_checked (message, error);
+	if (!MONO_HANDLE_IS_NULL (message)) {
+		ei.message = mono_string_handle_to_utf8 (message, error);
 		mono_error_cleanup  (error);
 	}
 

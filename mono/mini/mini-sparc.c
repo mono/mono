@@ -2411,16 +2411,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		guint8* code_start;
 
 		offset = (guint8*)code - cfg->native_code;
-
 		spec = ins_get_spec (ins->opcode);
-
-		max_len = ((guint8 *)spec)[MONO_INST_LEN];
-
-		if (offset > (cfg->code_size - max_len - 16)) {
-			cfg->code_size *= 2;
-			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-			code = (guint32*)(cfg->native_code + offset);
-		}
+		max_len = ins_get_size (ins->opcode);
+		code = realloc_code (cfg, max_len);
 		code_start = (guint8*)code;
 		//	if (ins->cil_code)
 		//		g_print ("cil code\n");
@@ -2862,17 +2855,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_fmovs (code, ins->sreg1, ins->dreg);
 			sparc_fmovs (code, ins->sreg1 + 1, ins->dreg + 1);
 #endif
-			break;
-		case OP_JMP:
-			if (cfg->method->save_lmf)
-				NOT_IMPLEMENTED;
-
-			code = emit_load_volatile_arguments (cfg, code);
-			mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, ins->inst_p0);
-			sparc_set_template (code, sparc_o7);
-			sparc_jmpl (code, sparc_o7, sparc_g0, sparc_g0);
-			/* Restore parent frame in delay slot */
-			sparc_restore_imm (code, sparc_g0, 0, sparc_g0);
 			break;
 		case OP_CHECK_THIS:
 			/* ensure ins->sreg1 is not NULL */
@@ -3680,8 +3662,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		last_ins = ins;
 	}
-
-	cfg->code_len = (guint8*)code - cfg->native_code;
+	set_code_cursor (cfg, code);
 }
 
 void
@@ -4096,9 +4077,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
 		code = mono_arch_instrument_prolog (cfg, mono_trace_enter_method, code, TRUE);
 
-	cfg->code_len = (guint8*)code - cfg->native_code;
-
-	g_assert (cfg->code_len <= cfg->code_size);
+	set_code_cursor (cfg, code);
 
 	return (guint8*)code;
 }
@@ -4117,13 +4096,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	if (mono_jit_trace_calls != NULL)
 		max_epilog_size += 50;
 
-	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		cfg->stat_code_reallocs++;
-	}
-
-	code = (guint32*)(cfg->native_code + cfg->code_len);
+	code = (guint32 *)realloc_code (cfg, max_epilog_size);
 
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
 		code = mono_arch_instrument_epilog (cfg, mono_trace_leave_method, code, TRUE);
@@ -4175,10 +4148,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	else
 		sparc_restore_imm (code, sparc_g0, 0, sparc_g0);
 
-	cfg->code_len = (guint8*)code - cfg->native_code;
-
-	g_assert (cfg->code_len < cfg->code_size);
-
+	set_code_cursor (cfg, code);
 }
 
 void
@@ -4206,14 +4176,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 #else
 	code_size = exc_count * 24;
 #endif
-
-	while (cfg->code_len + code_size > (cfg->code_size - 16)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		cfg->stat_code_reallocs++;
-	}
-
-	code = (guint32*)(cfg->native_code + cfg->code_len);
+	code = (guint32*)realloc_code (cfg, code_size);
 
 	for (patch_info = cfg->patch_info; patch_info; patch_info = patch_info->next) {
 		switch (patch_info->type) {
@@ -4305,12 +4268,11 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 			/* do nothing */
 			break;
 		}
+
+		set_code_cursor (cfg, code);
 	}
 
-	cfg->code_len = (guint8*)code - cfg->native_code;
-
-	g_assert (cfg->code_len < cfg->code_size);
-
+	set_code_cursor (cfg, code);
 }
 
 gboolean lmf_addr_key_inited = FALSE;
@@ -4438,6 +4400,12 @@ mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 
 gboolean
 mono_arch_opcode_supported (int opcode)
+{
+	return FALSE;
+}
+
+gboolean
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	return FALSE;
 }

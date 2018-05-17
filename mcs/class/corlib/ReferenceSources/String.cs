@@ -60,6 +60,13 @@ namespace System
 				return new ReadOnlySpan<char> (start, value.Length);
 		}
 
+		public unsafe static implicit operator String (ReadOnlySpan<char> value)
+		{
+			if (value == null)
+				return default;
+			return new String (value);
+		}
+
 		internal unsafe int IndexOfUnchecked (string value, int startIndex, int count)
 		{
 			int valueLen = value.Length;

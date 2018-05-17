@@ -63,7 +63,7 @@ LoadOdd:
   .maxstack     1
   ldc.i4.5
   call          void EvenOdd::Test(int32)
-  ldc.i4        0x64
+  ldc.i4        0
   ret
 } // end of global method 'main'
 } // end of class 'EvenOdd'

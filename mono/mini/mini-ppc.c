@@ -1341,32 +1341,36 @@ get_call_info (MonoMethodSignature *sig)
 	return cinfo;
 }
 
+static const gboolean debug_tailcall = FALSE;
+
+static gboolean
+is_supported_tailcall_helper (gboolean value, const char *svalue)
+{
+	if (!value && debug_tailcall)
+		g_print ("%s %s\n", __func__, svalue);
+	return value;
+}
+
+#define IS_SUPPORTED_TAILCALL(x) (is_supported_tailcall_helper((x), #x))
+
 gboolean
 mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
-	CallInfo *c1, *c2;
-	gboolean res;
-	int i;
+	CallInfo *caller_info = get_call_info (caller_sig);
+	CallInfo *callee_info = get_call_info (callee_sig);
 
-	c1 = get_call_info (caller_sig);
-	c2 = get_call_info (callee_sig);
-	res = c1->stack_usage >= c2->stack_usage;
-	if (callee_sig->ret && MONO_TYPE_ISSTRUCT (callee_sig->ret))
-		/* An address on the callee's stack is passed as the first argument */
-		res = FALSE;
-	for (i = 0; i < c2->nargs; ++i) {
-		if (c2->args [i].regtype == RegTypeStructByAddr)
+	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
+		&& IS_SUPPORTED_TAILCALL (memcmp (&callee_info->ret, &caller_info->ret, sizeof (caller_info->ret)) == 0);
+
+	// FIXME ABIs vary as to if this local is in the parameter area or not,
+	// so this check might not be needed.
+	for (int i = 0; res && i < callee_info->nargs; ++i) {
+		res = IS_SUPPORTED_TAILCALL (callee_info->args [i].regtype != RegTypeStructByAddr);
 			/* An address on the callee's stack is passed as the argument */
-			res = FALSE;
 	}
 
-	/*
-	if (!mono_debug_count ())
-		res = FALSE;
-	*/
-
-	g_free (c1);
-	g_free (c2);
+	g_free (caller_info);
+	g_free (callee_info);
 
 	return res;
 }
@@ -1608,7 +1612,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		if (i >= sig->hasthis)
 			t = sig->params [i - sig->hasthis];
 		else
-			t = mono_get_int_type ()
+			t = mono_get_int_type ();
 		t = mini_get_underlying_type (t);
 
 		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos))
@@ -1902,20 +1906,15 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 {
 	guchar *code = p;
 	int save_mode = SAVE_NONE;
-	int offset;
 	MonoMethod *method = cfg->method;
 	int rtype = mini_get_underlying_type (mono_method_signature (method)->ret)->type;
 	int save_offset = PPC_STACK_PARAM_OFFSET + cfg->param_area;
 	save_offset += 15;
 	save_offset &= ~15;
 	
-	offset = code - cfg->native_code;
+	set_code_cursor (cfg, code);
 	/* we need about 16 instructions */
-	if (offset > (cfg->code_size - 16 * 4)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		code = cfg->native_code + offset;
-	}
+	code = realloc_code (cfg, 16 * 4);
 
 	switch (rtype) {
 	case MONO_TYPE_VOID:
@@ -3105,12 +3104,6 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 	return code;
 }
 
-static int
-ins_native_length (MonoCompile *cfg, MonoInst *ins)
-{
-	return ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
-}
-
 static guint8*
 emit_reserve_param_area (MonoCompile *cfg, guint8 *code)
 {
@@ -3163,10 +3156,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins, *next;
 	MonoCallInst *call;
-	guint offset;
 	guint8 *code = cfg->native_code + cfg->code_len;
 	MonoInst *last_ins = NULL;
-	guint last_offset = 0;
 	int max_len, cpos;
 	int L;
 
@@ -3178,15 +3169,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	cpos = bb->max_offset;
 
 	MONO_BB_FOR_EACH_INS (bb, ins) {
-		offset = code - cfg->native_code;
-
-		max_len = ins_native_length (cfg, ins);
-
-		if (offset > (cfg->code_size - max_len - 16)) {
-			cfg->code_size *= 2;
-			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-			code = cfg->native_code + offset;
-		}
+		const guint offset = code - cfg->native_code;
+		set_code_cursor (cfg, code);
+		max_len = ins_get_size (ins->opcode);
+		code = realloc_code (cfg, max_len);
 	//	if (ins->cil_code)
 	//		g_print ("cil code\n");
 		mono_debug_record_line_number (cfg, ins, offset);
@@ -3834,6 +3820,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_FCONV_TO_R4:
 			ppc_frsp (code, ins->dreg, ins->sreg1);
 			break;
+
+		case OP_TAILCALL_PARAMETER:
+			// This opcode helps compute sizes, i.e.
+			// of the subsequent OP_TAILCALL, but contributes no code.
+			g_assert (ins->next);
+			break;
+
 		case OP_TAILCALL: {
 			int i, pos;
 			MonoCallInst *call = (MonoCallInst*)ins;
@@ -4658,10 +4651,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		cpos += max_len;
 
 		last_ins = ins;
-		last_offset = offset;
 	}
 
-	cfg->code_len = code - cfg->native_code;
+	set_code_cursor (cfg, code);
 }
 #endif /* !DISABLE_JIT */
 
@@ -4916,7 +4908,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		bb->max_offset = max_offset;
 
 		MONO_BB_FOR_EACH_INS (bb, ins)
-			max_offset += ins_native_length (cfg, ins);
+			max_offset += ins_get_size (ins->opcode);
 	}
 
 	/* load arguments allocated to register from the stack */
@@ -5229,15 +5221,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					ppc_mr (code, ppc_r12, ainfo->reg);
 				}
 
-				if (cfg->tailcall_valuetype_addrs) {
-					MonoInst *addr = cfg->tailcall_valuetype_addrs [tailcall_struct_index];
-
-					g_assert (ppc_is_imm16 (addr->inst_offset));
-					ppc_stptr (code, ppc_r12, addr->inst_offset, addr->inst_basereg);
-
-					tailcall_struct_index++;
-				}
-
 				g_assert (ppc_is_imm16 (inst->inst_offset));
 				code = emit_memcpy (code, ainfo->vtsize, inst->inst_basereg, inst->inst_offset, ppc_r12, 0);
 				/*g_print ("copy in %s: %d bytes from %d to offset: %d\n", method->name, ainfo->vtsize, ainfo->reg, inst->inst_offset);*/
@@ -5302,8 +5285,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	if (tracing)
 		code = mono_arch_instrument_prolog (cfg, mono_trace_enter_method, code, TRUE);
 
-	cfg->code_len = code - cfg->native_code;
-	g_assert (cfg->code_len <= cfg->code_size);
+	set_code_cursor (cfg, code);
 	g_free (cinfo);
 
 	return code;
@@ -5323,13 +5305,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	if (mono_jit_trace_calls != NULL)
 		max_epilog_size += 50;
 
-	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		cfg->stat_code_reallocs++;
-	}
-
-	code = cfg->native_code + cfg->code_len;
+	code = realloc_code (cfg, max_epilog_size);
 
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method)) {
 		code = mono_arch_instrument_epilog (cfg, mono_trace_leave_method, code, TRUE);
@@ -5410,13 +5386,10 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 				ppc_add (code, ppc_sp, cfg->frame_reg, ppc_r12);
 			}
 		}
-
 	}
 	ppc_blr (code);
 
-	cfg->code_len = code - cfg->native_code;
-
-	g_assert (cfg->code_len < cfg->code_size);
+	set_code_cursor (cfg, code);
 
 }
 #endif /* ifndef DISABLE_JIT */
@@ -5486,13 +5459,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 		}
 	}
 
-	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
-		cfg->stat_code_reallocs++;
-	}
-
-	code = cfg->native_code + cfg->code_len;
+	code = realloc_code (cfg, max_epilog_size);
 
 	/* add code to raise exceptions */
 	for (patch_info = cfg->patch_info; patch_info; patch_info = patch_info->next) {
@@ -5571,9 +5538,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 		}
 	}
 
-	cfg->code_len = code - cfg->native_code;
-
-	g_assert (cfg->code_len <= cfg->code_size);
+	set_code_cursor (cfg, code);
 }
 #endif
 
@@ -5829,6 +5794,7 @@ mono_arch_emit_load_got_addr (guint8 *start, guint8 *code, MonoCompile *cfg, Mon
 	ppc_add (code, ppc_r30, ppc_r30, ppc_r0);
 #endif
 
+	set_code_cursor (cfg, code);
 	return code;
 }
 

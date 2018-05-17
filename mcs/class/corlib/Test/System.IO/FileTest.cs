@@ -1279,7 +1279,7 @@ namespace MonoTests.System.IO
 					var now = DateTime.UtcNow;
 					var diff = now - untouched;
 					// sanity check
-					Assert.IsTrue (diff.TotalSeconds >= 0 && diff.TotalSeconds < 1.0, $"Iteration #{i} failed, diff.TotalSeconds: {diff.TotalSeconds}, untouched: {untouched.ToString (fmt)}, now: {now.ToString (fmt)}");
+					Assert.IsTrue (diff.TotalSeconds >= 0 && diff.TotalSeconds < 2.0, $"Iteration #{i} failed, diff.TotalSeconds: {diff.TotalSeconds}, untouched: {untouched.ToString (fmt)}, now: {now.ToString (fmt)}");
 					File.SetLastWriteTimeUtc (path, now);
 					var touched = File.GetLastWriteTimeUtc (path);
 
