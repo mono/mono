@@ -1205,6 +1205,7 @@ if ($build)
 
 		# Need to define because Apple's SIP gets in the way of us telling mono where to find this
 		push @configureparams, "--with-libgdiplus=$addtoresultsdistdir/lib/libgdiplus.dylib";
+		push @configureparams, "--enable-minimal=shared_perfcounters";
 
 		print "\n";
 		print ">>> Setting environment:\n";
