@@ -518,7 +518,7 @@ class Tests
 	}
 
 	// Requires c# 7.2
-#if FALSE
+#if !__MonoCS__
 	public interface GameComponent {
 	}
 
