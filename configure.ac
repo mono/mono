@@ -1124,6 +1124,9 @@ elif test x$with_runtime_preset = xbitcode; then
    mono_feature_disable_reflection_emit='yes'
    mono_feature_disable_appdomains='yes'
 
+   if test x$host_darwin = xyes; then
+      CFLAGS="$CFLAGS -lc++"
+   fi
    AOT_BUILD_FLAGS="--runtime=mobile --aot=llvmonly,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --llvmonly"
    AOT_MODE="llvmonly"
@@ -1152,6 +1155,9 @@ elif test x$with_runtime_preset = xfullaot_llvm; then
    mono_feature_disable_reflection_emit='yes'
    mono_feature_disable_appdomains='yes'
 
+   if test x$host_darwin = xyes; then
+      CFLAGS="$CFLAGS -lc++"
+   fi
    AOT_BUILD_FLAGS="--runtime=mobile -O=gsharedvt --llvm --aot=full,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --full-aot"
    AOT_MODE="full"
@@ -1167,6 +1173,9 @@ elif test x$with_runtime_preset = xhybridaot_llvm; then
    with_testing_aot_hybrid_default=yes
    TEST_PROFILE=testing_aot_hybrid
 
+   if test x$host_darwin = xyes; then
+      CFLAGS="$CFLAGS -lc++"
+   fi
    AOT_BUILD_FLAGS="--runtime=mobile --llvm --aot=hybrid,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --hybrid-aot"
 elif test x$with_runtime_preset = xaot; then
@@ -1179,6 +1188,9 @@ elif test x$with_runtime_preset = xaot; then
 elif test x$with_runtime_preset = xaot_llvm; then
    with_profile4_x_default=yes
 
+   if test x$host_darwin = xyes; then
+      CFLAGS="$CFLAGS -lc++"
+   fi
    AOT_BUILD_FLAGS="--llvm --aot=$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS=""
 
