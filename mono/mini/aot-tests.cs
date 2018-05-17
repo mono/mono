@@ -506,7 +506,7 @@ class Tests
 		try {
 			Action d = delegate () { data.Cast<IEnumerable> ().GetEnumerator ().MoveNext (); };
 			d ();
-		} catch (Exception ex) {
+		} catch (Exception) {
 		}
 		return 0;
 	}
@@ -548,6 +548,7 @@ class Tests
 	// gh #8701
 	public static int test_0_readonly_modopt () {
 		typeof (ReadonlyTest<>).MakeGenericType (new Type[] { typeof (AStruct) }).GetMethod ("GetArray").Invoke (null, null);
+		return 0;
 	}
 #endif
 }
