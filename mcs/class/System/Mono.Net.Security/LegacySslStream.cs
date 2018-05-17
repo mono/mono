@@ -632,6 +632,13 @@ namespace Mono.Net.Security.Private
 			return null;
 		}
 
+		public bool CanRenegotiate => false;
+
+		public Task RenegotiateAsync (CancellationToken cancellationToken)
+		{
+			throw new NotSupportedException ();
+		}
+
 		#endregion
 	}
 }

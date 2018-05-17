@@ -163,6 +163,8 @@ namespace Mono.Net.Security
 
 		public abstract void Shutdown ();
 
+		public abstract bool PendingRenegotiation ();
+
 		protected bool ValidateCertificate (X509Certificate leaf, X509Chain chain)
 		{
 			var result = certificateValidator.ValidateCertificate (TargetHost, IsServer, leaf, chain);
@@ -175,23 +177,74 @@ namespace Mono.Net.Security
 			return result != null && result.Trusted && !result.UserDenied;
 		}
 
-		protected X509Certificate SelectClientCertificate (X509Certificate serverCertificate, string[] acceptableIssuers)
+		protected X509Certificate SelectClientCertificate (string[] acceptableIssuers)
 		{
+			if (RemoteCertificate == null)
+				throw new TlsException (AlertDescription.InternalError, "Cannot request client certificate before receiving one from the server.");
+
+			/*
+			 * We need to pass null to the user selection callback during the initial handshake, to allow the callback to distinguish
+			 * between an authenticated and unauthenticated session.
+			 */
 			X509Certificate certificate;
 			var selected = certificateValidator.SelectClientCertificate (
-				TargetHost, ClientCertificates, serverCertificate, acceptableIssuers, out certificate);
+				TargetHost, ClientCertificates, IsAuthenticated ? RemoteCertificate : null, acceptableIssuers, out certificate);
 			if (selected)
 				return certificate;
 
 			if (ClientCertificates == null || ClientCertificates.Count == 0)
 				return null;
 
-			if (ClientCertificates.Count == 1)
+			/*
+			 * .NET actually scans the entire collection to ensure the selected certificate has a private key in it.
+			 *
+			 * However, since we do not support private key retrieval from the key store, we require all certificates
+			 * to have a private key in them (explicitly or implicitly via OS X keychain lookup).
+			 */
+			if (acceptableIssuers == null || acceptableIssuers.Length == 0)
 				return ClientCertificates [0];
 
-			// FIXME: select onne.
-			throw new NotImplementedException ();
+			// Copied from the referencesource implementation in referencesource/System/net/System/Net/_SecureChannel.cs.
+			for (int i = 0; i < ClientCertificates.Count; i++) {
+				var certificate2 = ClientCertificates[i] as X509Certificate2;
+				if (certificate2 == null)
+					continue;
+
+				X509Chain chain = null;
+				try {
+					chain = new X509Chain ();
+					chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+					chain.ChainPolicy.VerificationFlags = X509VerificationFlags.IgnoreInvalidName;
+					chain.Build (certificate2);
+
+					//
+					// We ignore any errors happened with chain.
+					// Consider: try to locate the "best" client cert that has no errors and the lognest validity internal
+					//
+					if (chain.ChainElements.Count == 0)
+						continue;
+					for (int ii=0; ii< chain.ChainElements.Count; ++ii) {
+						var issuer = chain.ChainElements[ii].Certificate.Issuer;
+						if (Array.IndexOf (acceptableIssuers, issuer) != -1)
+							return certificate2;
+					}
+				} catch {
+					; // ignore errors
+				} finally {
+					if (chain != null)
+						chain.Reset ();
+				}
+			}
+
+			// No certificate matches.
+			return null;
 		}
+
+		public abstract bool CanRenegotiate {
+			get;
+		}
+
+		public abstract void Renegotiate ();
 
 		public void Dispose ()
 		{
