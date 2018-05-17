@@ -105,6 +105,9 @@ g_log_set_fatal_mask (const gchar *log_domain, GLogLevelFlags fatal_mask)
 	return fatal_mask;
 }
 
+#define g_logstr monoeg_g_logstr
+#define g_logv_nofree monoeg_g_logv_nofree
+
 static void
 g_logstr (const gchar *log_domain, GLogLevelFlags log_level, const gchar *msg)
 {
