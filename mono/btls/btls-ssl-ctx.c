@@ -155,6 +155,7 @@ cert_select_callback (SSL *ssl, void *arg)
 	void **cadata = NULL;
 	int count = 0;
 	int ret = 1;
+	int i;
 
 	debug_printf (ptr, "cert_select_callback(): %p\n", ptr->select_func);
 
@@ -168,7 +169,7 @@ cert_select_callback (SSL *ssl, void *arg)
 			ret = 0;
 			goto out;
 		}
-		for (int i = 0; i < count; i++) {
+		for (i = 0; i < count; i++) {
 			X509_NAME *name = sk_X509_NAME_value (ca_list, i);
 			cadata[i] = name->bytes->data;
 			sizes[i] = name->bytes->length;
@@ -296,12 +297,13 @@ MONO_API int
 mono_btls_ssl_ctx_set_client_ca_list (MonoBtlsSslCtx *ctx, int count, int *sizes, const void **data)
 {
 	STACK_OF(X509_NAME) *name_list;
+	int i;
 
 	name_list = sk_X509_NAME_new_null ();
 	if (!name_list)
 		return 0;
 
-	for (int i = 0; i < count; i++) {
+	for (i = 0; i < count; i++) {
 		X509_NAME *name;
 		const unsigned char *ptr = (const unsigned char*)data[i];
 
