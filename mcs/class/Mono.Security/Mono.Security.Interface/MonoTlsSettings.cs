@@ -100,6 +100,10 @@ namespace Mono.Security.Interface
 			get; set;
 		}
 
+		public bool DisallowUnauthenticatedCertificateRequest {
+			get; set;
+		}
+
 		/*
 		 * If you set this here, then it will override 'ServicePointManager.SecurityProtocol'.
 		 */
@@ -189,6 +193,7 @@ namespace Mono.Security.Interface
 			CertificateValidationTime = other.CertificateValidationTime;
 			SendCloseNotify = other.SendCloseNotify;
 			ClientCertificateIssuers = other.ClientCertificateIssuers;
+			DisallowUnauthenticatedCertificateRequest = other.DisallowUnauthenticatedCertificateRequest;
 			if (other.TrustAnchors != null)
 				TrustAnchors = new X509CertificateCollection (other.TrustAnchors);
 			if (other.CertificateSearchPaths != null) {

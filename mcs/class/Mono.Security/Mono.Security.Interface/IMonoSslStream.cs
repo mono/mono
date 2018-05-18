@@ -208,6 +208,12 @@ namespace Mono.Security.Interface
 
 
 		MonoTlsConnectionInfo GetConnectionInfo ();
+
+		bool CanRenegotiate {
+			get;
+		}
+
+		Task RenegotiateAsync (CancellationToken cancellationToken);
 	}
 
 	interface IMonoSslStream2 : IMonoSslStream

@@ -109,6 +109,10 @@ namespace Mono.Net.Security
 			get;
 		}
 
+		internal bool AllowRenegotiation {
+			get { return false; }
+		}
+
 		protected void GetProtocolVersions (out TlsProtocolCode? min, out TlsProtocolCode? max)
 		{
 			if ((EnabledProtocols & SslProtocols.Tls) != 0)
@@ -184,6 +188,9 @@ namespace Mono.Net.Security
 
 		protected X509Certificate SelectClientCertificate (string[] acceptableIssuers)
 		{
+			if (Settings.DisallowUnauthenticatedCertificateRequest && !IsAuthenticated)
+				return null;
+
 			if (RemoteCertificate == null)
 				throw new TlsException (AlertDescription.InternalError, "Cannot request client certificate before receiving one from the server.");
 

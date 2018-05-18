@@ -56,7 +56,7 @@ namespace Mono.AppleTls
 		MonoTlsConnectionInfo connectionInfo;
 		bool isAuthenticated;
 		bool handshakeFinished;
-		// bool renegotiating;
+		bool renegotiating;
 		int handshakeStarted;
 
 		bool closed;
@@ -145,6 +145,24 @@ namespace Mono.AppleTls
 
 			InitializeConnection ();
 
+			/*
+			 * SecureTransport is bugged OS X 10.5.8+ - renegotiation after
+			 * calling SetCertificate() will not work.
+			 *
+			 * We also cannot change options after the handshake has started,
+			 * so if you want to request a client certificate, it will happen
+			 * both during the initial handshake and during renegotiation.
+			 *
+			 * You may check 'SslStream.IsAuthenticated' (which will be false
+			 * during the initial handshake) from within your
+			 * 'LocalCertificateSelectionCallback' and return null to have the
+			 * callback invoked again during renegotiation.
+			 *
+			 * However, the first time your selection callback returns a client
+			 * certificate, that certificate will be used for the rest of the
+			 * session.
+			 */
+
 			SetSessionOption (SslSessionOption.BreakOnCertRequested, true);
 			SetSessionOption (SslSessionOption.BreakOnClientAuth, true);
 			SetSessionOption (SslSessionOption.BreakOnServerAuth, true);
@@ -174,7 +192,7 @@ namespace Mono.AppleTls
 
 		public override bool ProcessHandshake ()
 		{
-			if (handshakeFinished)
+			if (handshakeFinished && !renegotiating)
 				throw new NotSupportedException ("Handshake already finished.");
 
 			while (true) {
@@ -191,7 +209,9 @@ namespace Mono.AppleTls
 				} else if (status == SslStatus.WouldBlock) {
 					return false;
 				} else if (status == SslStatus.Success) {
+					Debug ("Handshake complete!");
 					handshakeFinished = true;
+					renegotiating = false;
 					return true;
 				}
 			}
@@ -320,6 +340,9 @@ namespace Mono.AppleTls
 			    !IPAddress.TryParse (TargetHost, out address)) {
 				PeerDomainName = ServerName;
 			}
+
+			if (Options.AllowRenegotiation)
+				SetSessionOption (SslSessionOption.AllowRenegotiation, true);
 		}
 
 		void InitializeSession ()
@@ -858,7 +881,19 @@ namespace Mono.AppleTls
 					return (0, false);
 				}
 
-				CheckStatusAndThrow (status, SslStatus.WouldBlock, SslStatus.ClosedGraceful);
+				CheckStatusAndThrow (status, SslStatus.WouldBlock, SslStatus.ClosedGraceful,
+				                     SslStatus.PeerAuthCompleted, SslStatus.PeerClientCertRequested);
+
+				if (status == SslStatus.PeerAuthCompleted) {
+					Debug ($"Renegotiation complete: {GetSessionState ()}");
+					EvaluateTrust ();
+					return (0, true);
+				} else if (status == SslStatus.PeerClientCertRequested) {
+					Debug ($"Renegotiation asked for client certificate: {GetSessionState ()}");
+					ClientCertificateRequested ();
+					return (0, true);
+				}
+
 				var wantMore = status == SslStatus.WouldBlock;
 				return ((int)processed, wantMore);
 			} catch (Exception ex) {
@@ -890,7 +925,16 @@ namespace Mono.AppleTls
 
 				Debug ("Write done: {0} {1}", status, processed);
 
-				CheckStatusAndThrow (status, SslStatus.WouldBlock);
+				CheckStatusAndThrow (status, SslStatus.WouldBlock,
+				                     SslStatus.PeerAuthCompleted, SslStatus.PeerClientCertRequested);
+
+				if (status == SslStatus.PeerAuthCompleted) {
+					Debug ($"Renegotiation complete: {GetSessionState ()}");
+					EvaluateTrust ();
+				} else if (status == SslStatus.PeerClientCertRequested) {
+					Debug ($"Renegotiation asked for client certificate: {GetSessionState ()}");
+					ClientCertificateRequested ();
+				}
 
 				var wantMore = status == SslStatus.WouldBlock;
 				return ((int)processed, wantMore);
@@ -929,7 +973,7 @@ namespace Mono.AppleTls
 
 			var status = SSLReHandshake (Handle);
 			CheckStatusAndThrow (status);
-			// renegotiating = true;
+			renegotiating = true;
 #endif
 		}
 
