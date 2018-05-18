@@ -305,6 +305,12 @@ mono_trace_set_mask_string (const char *value)
 		               | MONO_TRACE_IO_LAYER_HANDLE },
 		{ "w32handle", MONO_TRACE_IO_LAYER_HANDLE },
 		{ "tailcall", MONO_TRACE_TAILCALL },
+		{ "android-default", MONO_TRACE_ANDROID_DEFAULT },
+		{ "android-net", MONO_TRACE_ANDROID_NET },
+		{ "android-netlink", MONO_TRACE_ANDROID_NETLINK },
+		{ "android", MONO_TRACE_ANDROID_DEFAULT
+		              | MONO_TRACE_ANDROID_NET
+		              | MONO_TRACE_ANDROID_NETLINK },
 		{ "all", ~((MonoTraceMask)0) },
 		{ NULL, 0 },
 	};

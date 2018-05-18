@@ -29,6 +29,9 @@ typedef enum {
 	MONO_TRACE_IO_LAYER_MUTEX     = 1 << 14,
 	MONO_TRACE_IO_LAYER_HANDLE    = 1 << 15,
 	MONO_TRACE_TAILCALL           = 1 << 16,
+	MONO_TRACE_ANDROID_DEFAULT    = 1 << 18,
+	MONO_TRACE_ANDROID_NET        = 1 << 19,
+	MONO_TRACE_ANDROID_NETLINK    = 1 << 20,
 } MonoTraceMask;
 
 MONO_API extern GLogLevelFlags mono_internal_current_level;
