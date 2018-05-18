@@ -637,11 +637,11 @@ libmono_ee_interp_la_LIBADD = libmonosgen-2.0.la
 endif
 endif
 
-if WASM
-DISABLE_DEBUGGER_AGENT = yes
+if !WASM
+extra_libmono_dbg_source = debugger-engine.c
 endif
 
-libmono_dbg_la_SOURCES = debugger-agent.c debugger-engine.c
+libmono_dbg_la_SOURCES = debugger-agent.c $(extra_libmono_dbg_source)
 libmono_dbg_la_CFLAGS = $(mono_CFLAGS)
 if BITCODE
 if DISABLE_DEBUGGER_AGENT
