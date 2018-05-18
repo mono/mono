@@ -2085,6 +2085,8 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 				g_assert ((fklass->byval_arg.type == MONO_TYPE_PTR) || (fklass->byval_arg.type == MONO_TYPE_FNPTR));
 				*t = *(char *)data;
 			}
+			// can probably be in else clause above:
+			mono_gc_wbarrier_generic_nostore(t);
 			continue;
 		}		
 	}
@@ -3294,6 +3296,7 @@ mono_field_static_set_value (MonoVTable *vt, MonoClassField *field, void *value)
 		dest = (char*)mono_vtable_get_static_field_data (vt) + field->offset;
 	}
 	mono_copy_value (field->type, dest, value, FALSE);
+	mono_gc_wbarrier_generic_nostore(dest);
 }
 
 /**
@@ -3331,6 +3334,7 @@ mono_field_get_addr (MonoObject *obj, MonoVTable *vt, MonoClassField *field)
 			src = (guint8 *)mono_get_special_static_data (GPOINTER_TO_UINT (addr));
 		} else {
 			src = (guint8*)mono_vtable_get_static_field_data (vt) + field->offset;
+			mono_gc_wbarrier_generic_nostore(src);
 		}
 	} else {
 		src = (guint8*)obj + field->offset;
