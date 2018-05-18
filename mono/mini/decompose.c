@@ -1450,7 +1450,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 						src->klass = ins->klass;
 						src->dreg = ins->sreg1;
 					}
-					MonoInst *tmp = mini_emit_box (cfg, src, ins->klass, 0);
+					MonoInst *tmp = mini_emit_box (cfg, src, ins->klass, mini_class_check_context_used (cfg, ins->klass));
 					g_assert (tmp);
 
 					MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, tmp->dreg);
