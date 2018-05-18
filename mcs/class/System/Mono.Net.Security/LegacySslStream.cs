@@ -62,13 +62,12 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Security;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Security.Cryptography;
-
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Mono.Net.Security.Private
 {
@@ -92,7 +91,7 @@ namespace Mono.Net.Security.Private
 		{
 			SslStream = owner;
 			Provider = provider;
-			certificateValidator = ChainValidationHelper.GetInternalValidator (provider, settings);
+			certificateValidator = ChainValidationHelper.GetInternalValidator (owner, provider, settings);
 		}
 		#endregion // Constructors
 
