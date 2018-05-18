@@ -180,6 +180,13 @@ mono_gc_base_init (void)
 			} else if (g_str_has_prefix (opt, "toggleref-test")) {
 				register_test_toggleref_callback ();
 				continue;
+			} else if (g_str_has_prefix (opt, "incremental")) {
+				GC_enable_incremental();
+		#if HAVE_BDWGC_GC	
+				// value is in milliseconds
+				GC_set_time_limit(3);
+		#endif					
+				continue;
 			} else {
 				/* Could be a parameter for sgen */
 				/*
@@ -607,6 +614,7 @@ mono_gc_weak_link_add (void **link_addr, MonoObject *obj, gboolean track)
 {
 	/* libgc requires that we use HIDE_POINTER... */
 	*link_addr = (void*)HIDE_POINTER (obj);
+	GC_end_stubborn_change(link_addr);
 	if (track)
 		GC_REGISTER_LONG_LINK (link_addr, obj);
 	else
@@ -863,41 +871,48 @@ void
 mono_gc_wbarrier_set_field_internal (MonoObject *obj, gpointer field_ptr, MonoObject* value)
 {
 	*(void**)field_ptr = value;
+	GC_end_stubborn_change(field_ptr);
 }
 
 void
 mono_gc_wbarrier_set_arrayref_internal (MonoArray *arr, gpointer slot_ptr, MonoObject* value)
 {
 	*(void**)slot_ptr = value;
+	GC_end_stubborn_change(slot_ptr);
 }
 
 void
 mono_gc_wbarrier_arrayref_copy_internal (gpointer dest_ptr, gconstpointer src_ptr, int count)
 {
 	mono_gc_memmove_aligned (dest_ptr, src_ptr, count * sizeof (gpointer));
+	GC_end_stubborn_change(dest_ptr);
 }
 
 void
 mono_gc_wbarrier_generic_store_internal (void volatile* ptr, MonoObject* value)
 {
 	*(void**)ptr = value;
+	GC_end_stubborn_change(ptr);
 }
 
 void
 mono_gc_wbarrier_generic_store_atomic_internal (gpointer ptr, MonoObject *value)
 {
 	mono_atomic_store_ptr ((volatile gpointer *)ptr, value);
+	GC_end_stubborn_change(ptr);
 }
 
 void
 mono_gc_wbarrier_generic_nostore_internal (gpointer ptr)
 {
+	GC_end_stubborn_change(ptr);
 }
 
 void
 mono_gc_wbarrier_value_copy_internal (gpointer dest, gconstpointer src, int count, MonoClass *klass)
 {
 	mono_gc_memmove_atomic (dest, src, count * mono_class_value_size (klass, NULL));
+	GC_end_stubborn_change(dest);
 }
 
 void
@@ -906,6 +921,7 @@ mono_gc_wbarrier_object_copy_internal (MonoObject* obj, MonoObject *src)
 	/* do not copy the sync state */
 	mono_gc_memmove_aligned (mono_object_get_data (obj), (char*)src + MONO_ABI_SIZEOF (MonoObject),
 				m_class_get_instance_size (mono_object_class (obj)) - MONO_ABI_SIZEOF (MonoObject));
+	GC_end_stubborn_change(obj);
 }
 
 void
@@ -965,11 +981,48 @@ mono_gc_get_managed_allocator_types (void)
 	return 0;
 }
 
+static MonoMethod *write_barrier_conc_method;
 MonoMethod*
 mono_gc_get_write_barrier (void)
 {
-	g_assert_not_reached ();
-	return NULL;
+	MonoMethod *res;
+	MonoMethodBuilder *mb;
+	MonoMethodSignature *sig;
+	MonoMethod **write_barrier_method_addr;
+	WrapperInfo *info;
+
+	write_barrier_method_addr = &write_barrier_conc_method;
+
+	if (*write_barrier_method_addr)
+		return *write_barrier_method_addr;
+
+	/* Create the IL version of mono_gc_barrier_generic_store () */
+	sig = mono_metadata_signature_alloc(mono_defaults.corlib, 1);
+	sig->ret = mono_get_void_type();
+	sig->params[0] = mono_get_int_type();
+
+	mb = mono_mb_new (mono_defaults.object_class, "wbarrier_conc", MONO_WRAPPER_WRITE_BARRIER);
+
+	mono_mb_emit_ldarg (mb, 0);
+	mono_mb_emit_icall (mb, mono_gc_wbarrier_generic_nostore_internal);
+	mono_mb_emit_byte (mb, MONO_CEE_RET);
+
+	res = mono_mb_create_method (mb, sig, 16);
+	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_NONE);
+	mono_marshal_set_wrapper_info (res, info);
+	mono_mb_free (mb);
+
+	if (*write_barrier_method_addr) {
+		/* Already created */
+		mono_free_method (res);
+	} else {
+		/* double-checked locking */
+		mono_memory_barrier ();
+		*write_barrier_method_addr = res;
+	}
+
+	return *write_barrier_method_addr;
+
 }
 
 MonoMethod*
@@ -1012,7 +1065,7 @@ mono_gc_set_desktop_mode (void)
 gboolean
 mono_gc_is_moving (void)
 {
-	return FALSE;
+	return GC_is_incremental_mode();
 }
 
 gboolean
@@ -1027,7 +1080,8 @@ mono_gc_is_disabled (void)
 void
 mono_gc_wbarrier_range_copy (gpointer _dest, gconstpointer _src, int size)
 {
-	g_assert_not_reached ();
+	memcpy(_dest, _src, size);
+	GC_end_stubborn_change(_dest);
 }
 
 MonoRangeCopyFunction
@@ -1411,6 +1465,7 @@ handle_data_grow (HandleData *handles, gboolean track)
 		gpointer *entries;
 		entries = (void **)mono_gc_alloc_fixed (sizeof (*handles->entries) * new_size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, NULL, "GC Handle Table (Boehm)");
 		mono_gc_memmove_aligned (entries, handles->entries, sizeof (*handles->entries) * handles->size);
+		GC_end_stubborn_change(entries);
 		mono_gc_free_fixed (handles->entries);
 		handles->entries = entries;
 	}
@@ -1443,6 +1498,7 @@ alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
 			mono_gc_weak_link_add (&(handles->entries [slot]), obj, track);
 	} else {
 		handles->entries [slot] = obj;
+		GC_end_stubborn_change(handles->entries + slot);
 	}
 
 #ifndef DISABLE_PERFCOUNTERS
@@ -1563,6 +1619,7 @@ mono_gchandle_set_target (MonoGCHandle gch, MonoObject *obj)
 			handles->domain_ids [slot] = (obj ? mono_object_get_domain_internal (obj) : mono_domain_get ())->domain_id;
 		} else {
 			handles->entries [slot] = obj;
+			GC_end_stubborn_change(handles->entries + slot);
 		}
 	} else {
 		/* print a warning? */
@@ -1646,6 +1703,7 @@ mono_gchandle_free_internal (MonoGCHandle gch)
 				mono_gc_weak_link_remove (&handles->entries [slot], handles->type == HANDLE_WEAK_TRACK);
 		} else {
 			handles->entries [slot] = NULL;
+			GC_end_stubborn_change(handles->entries + slot);
 		}
 		vacate_slot (handles, slot);
 	} else {
@@ -1688,6 +1746,7 @@ mono_gchandle_free_domain (MonoDomain *domain)
 				if (handles->entries [slot] && mono_object_domain (handles->entries [slot]) == domain) {
 					vacate_slot (handles, slot);
 					handles->entries [slot] = NULL;
+					GC_end_stubborn_change(handles->entries + slot);
 				}
 			}
 		}

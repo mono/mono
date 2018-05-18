@@ -9967,6 +9967,11 @@ calli_end:
 
 				EMIT_NEW_STORE_MEMBASE_TYPE (cfg, store, ftype, ins->dreg, 0, store_val->dreg);
 				store->flags |= ins_flag;
+				if (cfg->gen_write_barriers && cfg->method->wrapper_type != MONO_WRAPPER_WRITE_BARRIER &&
+					mini_type_is_reference (ftype)) {
+					/* insert call to write barrier */
+					mini_emit_write_barrier (cfg, store, ins);
+				}			
 			} else {
 				gboolean is_const = FALSE;
 				MonoVTable *vtable = NULL;
