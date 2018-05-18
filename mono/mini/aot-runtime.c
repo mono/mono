@@ -274,6 +274,7 @@ load_image (MonoAotModule *amodule, int index, MonoError *error)
 
 	if (amodule->image_table [index])
 		return amodule->image_table [index];
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_AOT, "AOT: module %s wants to load image %d: %s", amodule->aot_name, index, amodule->image_names[index].name);
 	if (amodule->out_of_date) {
 		mono_error_set_bad_image_by_name (error, amodule->aot_name, "Image out of date");
 		return NULL;
@@ -632,9 +633,23 @@ decode_type (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError *err
 {
 	guint8 *p = buf;
 	MonoType *t;
-
-	t = (MonoType *)g_malloc0 (sizeof (MonoType));
 	error_init (error);
+
+	if (*p == MONO_TYPE_CMOD_REQD) {
+		++p;
+
+		int count = decode_value (p, &p);
+
+		t = (MonoType*)g_malloc0 (MONO_SIZEOF_TYPE + (count * sizeof (MonoCustomMod)));
+		t->num_mods = count;
+
+		for (int i = 0; i < count; ++i) {
+			t->modifiers [i].required = decode_value (p, &p);
+			t->modifiers [i].token = decode_value (p, &p);
+		}
+	} else {
+		t = (MonoType *) g_malloc0 (sizeof (MonoType));
+	}
 
 	while (TRUE) {
 		if (*p == MONO_TYPE_PINNED) {
