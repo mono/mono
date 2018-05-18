@@ -1046,6 +1046,10 @@ namespace System.Net.Sockets
 				sockares.EndPoint = remoteEP = sockares.socket.RemapIPEndPoint (ep);
 			}
 
+			if (!sockares.socket.CanTryAddressFamily(sockares.EndPoint.AddressFamily)) {
+				throw new ArgumentException(SR.net_invalidAddressList);
+			}
+
 			int error = 0;
 
 			if (sockares.socket.connect_in_progress) {
