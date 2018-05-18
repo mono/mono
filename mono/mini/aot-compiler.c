@@ -3115,7 +3115,17 @@ encode_type (MonoAotCompile *acfg, MonoType *t, guint8 *buf, guint8 **endbuf)
 {
 	guint8 *p = buf;
 
-	g_assert (t->num_mods == 0);
+	if (t->num_mods) {
+		*p = MONO_TYPE_CMOD_REQD;
+		++p;
+
+		encode_value (t->num_mods, p, &p);
+		for (int i = 0; i < t->num_mods; ++i) {
+			encode_value (t->modifiers [i].required, p, &p);
+			encode_value (t->modifiers [i].token, p, &p);
+		}
+	}
+
 	/* t->attrs can be ignored */
 	//g_assert (t->attrs == 0);
 
