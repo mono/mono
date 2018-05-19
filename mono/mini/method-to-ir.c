@@ -9485,7 +9485,8 @@ calli_end:
 				break;
 			}
 
-			if (mono_class_is_enum (klass)) {
+			if (mono_class_is_enum (klass) && !(val->type == STACK_I8 && SIZEOF_VOID_P == 4)) {
+				/* Can't do this with 64 bit enums on 32 bit since the vtype decomp pass is ran after the long decomp pass */
 				if (val->opcode == OP_ICONST) {
 					MONO_INST_NEW (cfg, ins, OP_BOX_ICONST);
 					ins->type = STACK_OBJ;
