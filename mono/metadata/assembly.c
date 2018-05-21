@@ -2052,7 +2052,11 @@ mono_assembly_open_from_bundle (const char *filename, MonoImageOpenStatus *statu
 MonoAssembly *
 mono_assembly_open_full (const char *filename, MonoImageOpenStatus *status, gboolean refonly)
 {
-	return mono_assembly_open_a_lot (filename, status, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT);
+	MonoAssembly *res;
+	MONO_ENTER_GC_UNSAFE;
+	res = mono_assembly_open_a_lot (filename, status, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT);
+	MONO_EXIT_GC_UNSAFE;
+	return res;
 }
 
 MonoAssembly *
@@ -2525,7 +2529,11 @@ mono_problematic_image_reprobe (MonoImage *image, MonoImageOpenStatus *status)
 MonoAssembly *
 mono_assembly_open (const char *filename, MonoImageOpenStatus *status)
 {
-	return mono_assembly_open_predicate (filename, MONO_ASMCTX_DEFAULT, NULL, NULL, status);
+	MonoAssembly *res;
+	MONO_ENTER_GC_UNSAFE;
+	res = mono_assembly_open_predicate (filename, MONO_ASMCTX_DEFAULT, NULL, NULL, status);
+	MONO_EXIT_GC_UNSAFE;
+	return res;
 }
 
 /**
