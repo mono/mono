@@ -3334,7 +3334,7 @@ mono_assembly_load_with_partial_name (const char *name, MonoImageOpenStatus *sta
 	if ((aname->major | aname->minor | aname->build | aname->revision) == 0)
 		aname = mono_assembly_remap_version (aname, &mapped_aname);
 	
-	res = mono_assembly_loaded (aname);
+	res = mono_assembly_loaded_full (aname, FALSE);
 	if (res) {
 		mono_assembly_name_free (aname);
 		return res;
@@ -4202,7 +4202,11 @@ mono_assembly_loaded_full (MonoAssemblyName *aname, gboolean refonly)
 MonoAssembly*
 mono_assembly_loaded (MonoAssemblyName *aname)
 {
-	return mono_assembly_loaded_full (aname, FALSE);
+	MonoAssembly *res;
+	MONO_ENTER_GC_UNSAFE;
+	res = mono_assembly_loaded_full (aname, FALSE);
+	MONO_EXIT_GC_UNSAFE;
+	return res;
 }
 
 void

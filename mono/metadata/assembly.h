@@ -37,6 +37,7 @@ MONO_API MonoAssembly* mono_assembly_load_from_full  (MonoImage *image, const ch
 
 MONO_API MonoAssembly* mono_assembly_load_with_partial_name (const char *name, MonoImageOpenStatus *status);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoAssembly* mono_assembly_loaded     (MonoAssemblyName *aname);
 MONO_API MonoAssembly* mono_assembly_loaded_full (MonoAssemblyName *aname, mono_bool refonly);
 MONO_API void          mono_assembly_get_assemblyref (MonoImage *image, int index, MonoAssemblyName *aname);
