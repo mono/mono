@@ -871,6 +871,8 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/StringNormalizationExtensions.cs
 ../../../external/corefx/src/System.Diagnostics.StackTrace/src/System/Diagnostics/StackFrameExtensions.cs
 
+../../../external/corefx/src/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/*.cs:Activity.DateTime.netfx.cs,Activity.Current.net45.cs
+
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemName.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
 
