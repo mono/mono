@@ -219,9 +219,12 @@ MonoReflectionAssembly*
 mono_assembly_get_object (MonoDomain *domain, MonoAssembly *assembly)
 {
 	HANDLE_FUNCTION_ENTER ();
+	MonoReflectionAssemblyHandle result;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-	MonoReflectionAssemblyHandle result = mono_assembly_get_object_handle (domain, assembly, error);
+	result = mono_assembly_get_object_handle (domain, assembly, error);
 	mono_error_cleanup (error); /* FIXME new API that doesn't swallow the error */
+	MONO_EXIT_GC_UNSAFE;
 	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
