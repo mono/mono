@@ -1,0 +1,11 @@
+[
+  {
+      "name": "llvm", 
+      "url": "git://github.com/mono/llvm.git",
+      "rev": "b606857f1dd008486df084481d4eacc5d91041d5",
+      "remote-branch": "origin/release_60",
+      "branch": "release_60",
+	  "jenkins-lane" : "build-package-osx-llvm-release60",
+      "directory": "llvm"
+  }
+]

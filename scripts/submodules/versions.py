@@ -33,6 +33,10 @@ elif command == "get-dir":
 elif command == "get-remote-branch":
     mod = find_module(submodules, sys.argv[3])
     print(mod["remote-branch"])
+elif command == "get-prop":
+    mod = find_module(submodules, sys.argv[3])
+    prop = sys.argv [4]
+    print(mod[prop])
 elif command == "set-rev":
     mod = find_module(submodules, sys.argv[3])
     mod["rev"] = sys.argv[4]

@@ -303,6 +303,9 @@ $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 
 ifndef IGNORE_PACKAGE_LLVM
 
+LLVM_HASH=$(shell ../../scripts/submodules/versions.py ../../sdks/SUBMODULES.json get-prop llvm rev)
+LLVM_JENKINS_LANE=$(shell ../../scripts/submodules/versions.py ../../sdks/SUBMODULES.json get-prop llvm jenkins-lane)
+
 # Download a prebuilt llvm
 .stamp-ios-llvm-$(LLVM_HASH):
 	./download-llvm.sh $(LLVM_HASH) $(LLVM_JENKINS_LANE)

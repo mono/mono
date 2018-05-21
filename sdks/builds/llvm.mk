@@ -1,9 +1,16 @@
 
 LLVM_SRC?=$(TOP)/sdks/builds/toolchains/llvm
 
-$(TOP)/sdks/builds/toolchains/llvm:
-	git clone -b $(LLVM_BRANCH) https://github.com/mono/llvm.git $@
-	cd $@ && git checkout $(LLVM_HASH)
+# Needed by versions.mk
+top_srcdir=$(TOP)
+LLVM_PATH=$(LLVM_SRC)
+
+SUBMODULES_CONFIG_FILE = $(top_srcdir)/sdks/SUBMODULES.json
+include $(top_srcdir)/scripts/submodules/versions.mk
+
+$(eval $(call ValidateVersionTemplate,llvm,LLVM))
+
+$(TOP)/sdks/builds/toolchains/llvm: reset-llvm
 
 $(LLVM_SRC)/configure: | $(LLVM_SRC)
 
