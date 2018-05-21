@@ -16,7 +16,7 @@
 
 #ifdef TARGET_OSX
 
-extern GCStats mono_gc_stats;
+GCStats mono_gc_stats;
 
 // For AOT mode
 #include <mono/mini/mini-runtime.h>
@@ -245,7 +245,7 @@ mono_native_state_add_ee_info  (JsonWriter *writer)
 
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "coop-enabled");
-	mono_json_writer_printf (writer, "\"%s\"\n", mono_threads_is_cooperative_suspension_enabled () ? "true" : "false");
+	mono_json_writer_printf (writer, "\"%s\"\n", mono_threads_is_coop_enabled () ? "true" : "false");
 
 	mono_json_writer_indent_pop (writer);
 	mono_json_writer_indent (writer);
@@ -476,4 +476,4 @@ mono_summarize_native_state_add_thread (MonoThreadSummary *thread, MonoContext *
 	mono_native_state_add_thread (&writer, thread, ctx);
 }
 
-#endif // HOST_WIN32
+#endif // TARGET_OSX

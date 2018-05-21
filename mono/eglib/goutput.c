@@ -143,10 +143,9 @@ g_assertion_message (const gchar *format, ...)
 {
 	va_list args;
 
-	va_start (args, format);
-
 	g_vasprintf (&failure_assertion, format, args);
 
+	va_start (args, format);
 	g_logv (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, format, args);
 	va_end (args);
 	exit (0);
