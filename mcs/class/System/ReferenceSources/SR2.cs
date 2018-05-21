@@ -19,4 +19,7 @@ partial class SR
 	public const string net_ssl_app_protocols_invalid = "The application protocol list is invalid.";
 	public const string net_ssl_app_protocol_invalid = "The application protocol value is invalid.";
 	public const string net_conflicting_options = "The '{0}' option was already set in the SslStream constructor.";
+
+	public const string HashCode_HashCodeNotSupported = "HashCode is a mutable struct and should not be compared with other HashCodes. Use ToHashCode to retrieve the computed hash code.";
+	public const string HashCode_EqualityNotSupported = "HashCode is a mutable struct and should not be compared with other HashCodes.";
 }
