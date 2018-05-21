@@ -1,4 +1,3 @@
-
 LLVM_SRC?=$(TOP)/sdks/builds/toolchains/llvm
 
 $(TOP)/sdks/builds/toolchains/llvm:
@@ -52,11 +51,15 @@ build-custom-llvm-$(1):
 	cmake --build $$(TOP)/sdks/builds/llvm-$(1)
 
 package-llvm-$(1):
-	cmake --build $$(TOP)/sdks/builds/llvm-$(1) --target install
+	$$(MAKE) -C $$(TOP)/llvm -f Makefile.am install-llvm \
+		LLVM_PATH="$(LLVM_SRC)" \
+		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
+		LLVM_PREFIX="$$(TOP)/sdks/out/llvm-$(1)" \
+		$$(if $$(llvm-$(1)_CMAKE_ARGS),LLVM_CMAKE_ARGS="$$(llvm-$(1)_CMAKE_ARGS)")
 
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1):
-	rm -rf .stamp-llvm-$(1)-toolchain .stamp-llvm-$(1)-configure $$(TOP)/sdks/builds/llvm-$(1) $$(TOP)/sdks/builds/llvm-$(1).config.cache $$(TOP)/sdks/out/llvm-$(1)
+	rm -rf .stamp-llvm-$(1)-toolchain .stamp-llvm-$(1)-configure && $$(MAKE) clean -C $$(TOP)/llvm
 
 TARGETS += llvm-$(1)
 

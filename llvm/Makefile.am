@@ -5,7 +5,11 @@
 # into $top_srcdir/llvm/llvm.
 #
 
-LLVM_PATH=llvm
+if INTERNAL_LLVM
+
+LLVM_PATH ?= $(abs_top_srcdir)/external/llvm
+LLVM_BUILD ?= $(abs_top_srcdir)/llvm/build
+LLVM_PREFIX ?= $(abs_top_srcdir)/llvm/usr
 
 SUBMODULES_CONFIG_FILE = $(top_srcdir)/llvm/SUBMODULES.json
 include $(top_srcdir)/scripts/submodules/versions.mk
@@ -25,6 +29,36 @@ bump-branch-llvm: __bump-branch-llvm
 bump-current-llvm: __bump-current-version-llvm
 
 clean-local:
-	$(RM) -r $(LLVM_PATH)
+	$(RM) -r $(LLVM_PATH) $(LLVM_BUILD) $(LLVM_PREFIX)
 
 EXTRA_DIST=SUBMODULES.json
+
+NINJA:=$(shell which ninja)
+
+$(LLVM_BUILD) $(LLVM_PREFIX):
+	mkdir -p $@
+
+.PHONY: all-local
+all-local: configure-llvm build-llvm install-llvm
+
+$(LLVM_PATH)/CMakeLists.txt: | reset-llvm
+
+.PHONY: configure-llvm
+configure-llvm: $(LLVM_PATH)/CMakeLists.txt | $(LLVM_BUILD)
+	cd $(LLVM_BUILD) && cmake \
+		$(if $(NINJA),-G Ninja) \
+		-DCMAKE_INSTALL_PREFIX="$(LLVM_PREFIX)" \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64" \
+		$(LLVM_CMAKE_ARGS) \
+		$(dir $<)
+
+.PHONY: build-llvm
+build-llvm: configure-llvm
+	$(if $(NINJA),$(NINJA),$(MAKE)) -C $(LLVM_BUILD)
+
+.PHONY: install-llvm
+install-llvm: build-llvm | $(LLVM_PREFIX)
+	$(if $(NINJA),$(NINJA),$(MAKE)) -C $(LLVM_BUILD) install
+
+endif # INTERNAL_LLVM
