@@ -594,7 +594,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 		
 		exit (1);
 	}
-	mono_defaults.corlib = mono_assembly_get_image (ass);
+	mono_defaults.corlib = mono_assembly_get_image_internal (ass);
 
 	mono_defaults.object_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System", "Object");

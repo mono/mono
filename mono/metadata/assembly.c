@@ -2551,7 +2551,11 @@ MonoAssembly *
 mono_assembly_load_from_full (MonoImage *image, const char*fname, 
 			      MonoImageOpenStatus *status, gboolean refonly)
 {
-	return mono_assembly_load_from_predicate (image, fname, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, NULL, NULL, status);
+	MonoAssembly *res;
+	MONO_ENTER_GC_UNSAFE;
+	res = mono_assembly_load_from_predicate (image, fname, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, NULL, NULL, status);
+	MONO_EXIT_GC_UNSAFE;
+	return res;
 }
 
 MonoAssembly *
@@ -2727,7 +2731,11 @@ MonoAssembly *
 mono_assembly_load_from (MonoImage *image, const char *fname,
 			 MonoImageOpenStatus *status)
 {
-	return mono_assembly_load_from_full (image, fname, status, FALSE);
+	MonoAssembly *res;
+	MONO_ENTER_GC_UNSAFE;
+	res = mono_assembly_load_from_predicate (image, fname, MONO_ASMCTX_DEFAULT, NULL, NULL, status);
+	MONO_EXIT_GC_UNSAFE;
+	return res;
 }
 
 /**
@@ -4417,6 +4425,17 @@ mono_assembly_get_main (void)
 MonoImage*
 mono_assembly_get_image (MonoAssembly *assembly)
 {
+	MonoImage *res;
+	MONO_ENTER_GC_UNSAFE;
+	res = mono_assembly_get_image_internal (assembly);
+	MONO_EXIT_GC_UNSAFE;
+	return res;
+}
+
+MonoImage*
+mono_assembly_get_image_internal (MonoAssembly *assembly)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
 	return assembly->image;
 }
 
@@ -4431,6 +4450,17 @@ mono_assembly_get_image (MonoAssembly *assembly)
 MonoAssemblyName *
 mono_assembly_get_name (MonoAssembly *assembly)
 {
+	MonoAssemblyName *res;
+	MONO_ENTER_GC_UNSAFE;
+	res = mono_assembly_get_name_internal (assembly);
+	MONO_EXIT_GC_UNSAFE;
+	return res;
+}
+
+MonoAssemblyName *
+mono_assembly_get_name_internal (MonoAssembly *assembly)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
 	return &assembly->aname;
 }
 
