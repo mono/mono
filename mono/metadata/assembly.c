@@ -4143,7 +4143,11 @@ mono_assembly_load_full_internal (MonoAssemblyName *aname, MonoAssembly *request
 MonoAssembly*
 mono_assembly_load_full (MonoAssemblyName *aname, const char *basedir, MonoImageOpenStatus *status, gboolean refonly)
 {
-	return mono_assembly_load_full_internal (aname, NULL, basedir, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, status);
+	MonoAssembly *res;
+	MONO_ENTER_GC_UNSAFE;
+	res = mono_assembly_load_full_internal (aname, NULL, basedir, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, status);
+	MONO_EXIT_GC_UNSAFE;
+	return res;
 }
 
 /**

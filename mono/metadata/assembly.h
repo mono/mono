@@ -22,6 +22,7 @@ MONO_API MonoAssembly *mono_assembly_open_full (const char *filename,
 MONO_API MonoAssembly* mono_assembly_load       (MonoAssemblyName *aname, 
                                        	const char       *basedir, 
 				     	MonoImageOpenStatus *status);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoAssembly* mono_assembly_load_full (MonoAssemblyName *aname, 
                                        	const char       *basedir, 
 				     	MonoImageOpenStatus *status,
