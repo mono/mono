@@ -192,15 +192,34 @@ CLEANFILES = etc/mono/config
 
 # depend on $(symlinks) to ensure 'etc/mono' directory exists
 etc/mono/config: ../data/config Makefile $(symlinks)
-	d=`cd ../support && pwd`; \
-	sed 's,target="$$mono_libdir/libMonoPosixHelper$(libsuffix)",target="'$$d'/libMonoPosixHelper.la",' ../data/config > $@t
-	d=`cd ../mono/btls/build-shared && pwd`; \
-	sed 's,target="$$mono_libdir/libmono-btls-shared$(libsuffix)",target="'$$d'/libmono-btls-shared$(libsuffix)",' $@t > $@tt
-	if test -z "$(libgdiplus_loc)"; then :; else \
-	  sed 's,target="$(libgdiplus_install_loc)",target="$(libgdiplus_loc)",' $@tt > $@ttt; \
-	  mv -f $@ttt $@tt; fi
-	mv -f $@tt $@
-	rm -f $@t
+	cp $< $@
+	if test -d "$(abs_top_builddir)/support"; then \
+		sed 's,target="$$mono_libdir/libMonoPosixHelper$(libsuffix)",target="$(abs_top_builddir)/support/libMonoPosixHelper.la",' $@ > $@.tmp \
+		 && mv $@.tmp $@ \
+		 ; \
+	else \
+		echo "Unknown directory '$(abs_top_builddir)/support'" && false; \
+	fi
+	if test -d "$(abs_top_builddir)/mono/metadata"; then \
+		sed 's,target="$$mono_libdir/libmono-system-native$(libsuffix)",target="$(abs_top_builddir)/mono/metadata/libmono-system-native.la",' $@ > $@.tmp \
+		 && mv $@.tmp $@ \
+		 ; \
+	else \
+		echo "Unknown directory '$(abs_top_builddir)/mono/metadata'" && false; \
+	fi
+	if test -d "$(abs_top_builddir)/mono/btls/build-shared"; then \
+		sed 's,target="$$mono_libdir/libmono-btls-shared$(libsuffix)",target="$(abs_top_builddir)/mono/btls/build-shared/libmono-btls-shared$(libsuffix)",' $@ > $@.tmp \
+		 && mv $@.tmp $@ \
+		 ; \
+	else \
+		echo "Unknown directory '$(abs_top_builddir)/mono/btls/build-shared'"; \
+	fi
+	if test -n "$(libgdiplus_loc)"; then \
+		sed 's,target="$(libgdiplus_install_loc)",target="$(libgdiplus_loc)",' $@ > $@.tmp \
+		 && mv $@.tmp $@ \
+		 ; \
+	fi
+	cat $@
 
 $(tmpinst)/bin/mono: mono-wrapper etc/mono/config
 	$(mkinstalldirs) $(tmpinst)/bin
