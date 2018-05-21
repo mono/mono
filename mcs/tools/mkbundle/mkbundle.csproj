@@ -65,8 +65,14 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+    <EmbeddedResource Include="bundle-mono-api.inc">
+      <LogicalName>bundle-mono-api.inc</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="template.c">
       <LogicalName>template.c</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="template_common.inc">
+      <LogicalName>template_common.inc</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="template_main.c">
       <LogicalName>template_main.c</LogicalName>
@@ -76,8 +82,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
+    <EmbeddedResource Include="bundle-mono-api.inc">
+      <LogicalName>bundle-mono-api.inc</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="template.c">
       <LogicalName>template.c</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="template_common.inc">
+      <LogicalName>template_common.inc</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="template_main.c">
       <LogicalName>template_main.c</LogicalName>

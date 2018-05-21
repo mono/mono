@@ -1017,6 +1017,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\Microsoft\CSharp\CSharpCodeGenerator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\Microsoft\CSharp\CSharpCodeProvider.cs" />
@@ -1138,6 +1139,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
@@ -1207,6 +1212,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
@@ -1445,6 +1453,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
@@ -1454,6 +1463,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
@@ -1470,6 +1483,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
@@ -1518,6 +1534,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
@@ -1527,6 +1544,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -1538,6 +1559,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
@@ -1585,6 +1609,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
@@ -1594,6 +1619,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -1605,6 +1634,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
@@ -1706,6 +1738,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
@@ -1715,6 +1748,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -1726,6 +1763,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
@@ -1773,6 +1813,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
@@ -1782,6 +1823,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -1793,6 +1838,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
@@ -1840,6 +1888,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
@@ -1849,6 +1898,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
@@ -1864,6 +1917,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
@@ -1911,6 +1967,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
@@ -1920,6 +1977,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -1931,6 +1992,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
@@ -1978,6 +2042,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
@@ -1987,6 +2052,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -1998,6 +2067,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
@@ -2045,6 +2117,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
@@ -2054,6 +2127,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
@@ -2069,6 +2146,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
@@ -2132,6 +2212,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.OSX.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\Microsoft\CSharp\CSharpCodeGenerator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.CodeDom\src\Microsoft\CSharp\CSharpCodeProvider.cs" />
@@ -2253,6 +2334,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
@@ -2322,6 +2407,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
@@ -2560,6 +2648,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
@@ -2569,6 +2658,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -2580,6 +2673,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
@@ -2625,6 +2721,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
@@ -2634,6 +2731,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
@@ -2649,6 +2750,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
@@ -2696,6 +2800,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
@@ -2705,6 +2810,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -2716,6 +2825,9 @@
     <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
     <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
     <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
     <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
     <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />

@@ -66,20 +66,16 @@ namespace Mono.AppleTls
 
 		Exception lastException;
 
-		public AppleTlsContext (
-			MobileAuthenticatedStream parent, bool serverMode, string targetHost,
-			SSA.SslProtocols enabledProtocols, X509Certificate serverCertificate,
-			X509CertificateCollection clientCertificates, bool askForClientCert)
-			: base (parent, serverMode, targetHost, enabledProtocols,
-				serverCertificate, clientCertificates, askForClientCert)
+		public AppleTlsContext (MobileAuthenticatedStream parent, MonoSslAuthenticationOptions options)
+			: base (parent, options)
 		{
 			handle = GCHandle.Alloc (this, GCHandleType.Weak);
 			readFunc = NativeReadCallback;
 			writeFunc = NativeWriteCallback;
 
 			if (IsServer) {
-				if (serverCertificate == null)
-					throw new ArgumentNullException ("serverCertificate");
+				if (LocalServerCertificate == null)
+					throw new ArgumentNullException (nameof (LocalServerCertificate));
 			}
 		}
 
