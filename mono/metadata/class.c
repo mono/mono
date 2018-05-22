@@ -4132,11 +4132,15 @@ mono_class_is_enum (MonoClass *klass)
 MonoType*
 mono_class_enum_basetype (MonoClass *klass)
 {
+	MonoType *res;
+	MONO_ENTER_GC_UNSAFE;
 	if (m_class_get_element_class (klass) == klass)
 		/* SRE or broken types */
-		return NULL;
+		res = NULL;
 	else
-		return m_class_get_byval_arg (m_class_get_element_class (klass));
+		res = m_class_get_byval_arg (m_class_get_element_class (klass));
+	MONO_EXIT_GC_UNSAFE;
+	return res;
 }
 
 /**
