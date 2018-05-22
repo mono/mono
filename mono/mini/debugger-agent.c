@@ -3094,6 +3094,7 @@ process_suspend (DebuggerTlsData *tls, MonoContext *ctx)
 static void
 suspend_vm (void)
 {
+	gboolean tp_suspend = FALSE;
 	mono_loader_lock ();
 
 	mono_coop_mutex_lock (&suspend_mutex);
@@ -3114,9 +3115,11 @@ suspend_vm (void)
 		/*
 		 * Suspend creation of new threadpool threads, since they cannot run
 		 */
-		mono_threadpool_suspend ();
-
+		tp_suspend = TRUE;
 	mono_loader_unlock ();
+
+	if (tp_suspend)
+		mono_threadpool_suspend ();
 }
 
 /*
@@ -3129,6 +3132,7 @@ static void
 resume_vm (void)
 {
 	g_assert (is_debugger_thread ());
+	gboolean tp_resume = FALSE;
 
 	mono_loader_lock ();
 
@@ -3152,9 +3156,11 @@ resume_vm (void)
 	//g_assert (err == 0);
 
 	if (suspend_count == 0)
-		mono_threadpool_resume ();
-
+		tp_resume = TRUE;
 	mono_loader_unlock ();
+
+	if (tp_resume)
+		mono_threadpool_resume ();
 }
 
 /*
@@ -3212,6 +3218,8 @@ free_frames (StackFrame **frames, int nframes)
 static void
 invalidate_frames (DebuggerTlsData *tls)
 {
+	mono_loader_lock ();
+
 	if (!tls)
 		tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
 	g_assert (tls);
@@ -3223,6 +3231,8 @@ invalidate_frames (DebuggerTlsData *tls)
 	free_frames (tls->restore_frames, tls->restore_frame_count);
 	tls->restore_frame_count = 0;
 	tls->restore_frames = NULL;
+
+	mono_loader_unlock ();
 }
 
 /*
@@ -3382,12 +3392,14 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 	SeqPoint sp;
 	int flags = 0;
 
+	mono_loader_lock ();
 	if (info->type != FRAME_TYPE_MANAGED && info->type != FRAME_TYPE_INTERP) {
 		if (info->type == FRAME_TYPE_DEBUGGER_INVOKE) {
 			/* Mark the last frame as an invoke frame */
 			if (ud->frames)
 				((StackFrame*)g_slist_last (ud->frames)->data)->flags |= FRAME_FLAG_DEBUGGER_INVOKE;
 		}
+		mono_loader_unlock ();
 		return FALSE;
 	}
 
@@ -3398,11 +3410,15 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 	actual_method = info->actual_method;
 	api_method = method;
 
-	if (!method)
+	if (!method) {
+		mono_loader_unlock ();
 		return FALSE;
+	}
 
-	if (!method || (method->wrapper_type && method->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD && method->wrapper_type != MONO_WRAPPER_MANAGED_TO_NATIVE))
+	if (!method || (method->wrapper_type && method->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD && method->wrapper_type != MONO_WRAPPER_MANAGED_TO_NATIVE)) {
+		mono_loader_unlock ();
 		return FALSE;
+	}
 
 	if (info->il_offset == -1) {
 		/* mono_debug_il_offset_from_address () doesn't seem to be precise enough (#2092) */
@@ -3417,12 +3433,16 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 	DEBUG_PRINTF (1, "\tFrame: %s:[il=0x%x, native=0x%x] %d\n", mono_method_full_name (method, TRUE), info->il_offset, info->native_offset, info->managed);
 
 	if (method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
-		if (!CHECK_PROTOCOL_VERSION (2, 17))
+		if (!CHECK_PROTOCOL_VERSION (2, 17)) {
 			/* Older clients can't handle this flag */
+			mono_loader_unlock ();
 			return FALSE;
+		}
 		api_method = mono_marshal_method_from_wrapper (method);
-		if (!api_method)
+		if (!api_method) {
+			mono_loader_unlock ();
 			return FALSE;
+		}
 		actual_method = api_method;
 		flags |= FRAME_FLAG_NATIVE_TRANSITION;
 	}
@@ -3446,6 +3466,7 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 
 	ud->frames = g_slist_append (ud->frames, frame);
 
+	mono_loader_unlock ();
 	return FALSE;
 }
 
@@ -6441,6 +6462,8 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 	/* Stop the previous operation */
 	ss_stop (ss_req);
 
+	gboolean locked = FALSE;
+
 	/*
 	 * Implement single stepping using breakpoints if possible.
 	 */
@@ -6453,6 +6476,10 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 			/* Need parent frames */
 			if (!tls->context.valid)
 				mono_thread_state_init_from_monoctx (&tls->context, ctx);
+
+			mono_loader_lock ();
+			locked = TRUE;
+
 			compute_frame_info (tls->thread, tls);
 			frames = tls->frames;
 			nframes = tls->frame_count;
@@ -6491,6 +6518,8 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 					if (ss_req_bp_cache)
 						g_hash_table_destroy (ss_req_bp_cache);
 					mono_debug_free_method_async_debug_info (asyncMethod);
+					if (locked)
+						mono_loader_unlock ();
 					return;
 				}
 			}
@@ -6508,6 +6537,8 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 					if (ss_req_bp_cache)
 						g_hash_table_destroy (ss_req_bp_cache);
 					mono_debug_free_method_async_debug_info (asyncMethod);
+					if (locked)
+						mono_loader_unlock ();
 					return;
 				}
 			}
@@ -6650,6 +6681,9 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 
 	if (ss_req_bp_cache)
 		g_hash_table_destroy (ss_req_bp_cache);
+
+	if (locked)
+		mono_loader_unlock ();
 }
 #endif // RUNTIME_IL2CPP
 
