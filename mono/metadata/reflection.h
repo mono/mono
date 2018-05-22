@@ -164,6 +164,7 @@ MONO_API MonoBoolean mono_declsec_get_method_action (MonoMethod *method, uint32_
 MONO_API MonoBoolean mono_declsec_get_class_action (MonoClass *klass, uint32_t action, MonoDeclSecurityEntry *entry);
 MONO_API MonoBoolean mono_declsec_get_assembly_action (MonoAssembly *assembly, uint32_t action, MonoDeclSecurityEntry *entry);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoType* mono_reflection_type_get_type (MonoReflectionType *reftype);
 
 MONO_API MonoAssembly* mono_reflection_assembly_get_assembly (MonoReflectionAssembly *refassembly);

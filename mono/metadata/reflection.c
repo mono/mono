@@ -2993,11 +2993,14 @@ mono_reflection_call_is_assignable_to (MonoClass *klass, MonoClass *oklass, Mono
 MonoType*
 mono_reflection_type_get_type (MonoReflectionType *reftype)
 {
+	MonoType *result;
+	MONO_ENTER_GC_UNSAFE;
 	g_assert (reftype);
 
 	ERROR_DECL (error);
-	MonoType *result = mono_reflection_type_get_handle (reftype, error);
+	result = mono_reflection_type_get_handle (reftype, error);
 	mono_error_assert_ok (error);
+	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
