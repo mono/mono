@@ -90,6 +90,9 @@ static gboolean process_guid_set = FALSE;
 
 static gboolean no_exec = FALSE;
 
+static const char *
+mono_check_corlib_version_internal (void);
+
 static MonoAssembly *
 mono_domain_assembly_preload (MonoAssemblyName *aname,
 			      gchar **assemblies_path,
@@ -363,6 +366,16 @@ mono_get_corlib_version (void)
  */
 const char*
 mono_check_corlib_version (void)
+{
+	const char* res;
+	MONO_ENTER_GC_UNSAFE;
+	res = mono_check_corlib_version_internal ();
+	MONO_EXIT_GC_UNSAFE;
+	return res;
+}
+
+static const char *
+mono_check_corlib_version_internal (void)
 {
 	int version = mono_get_corlib_version ();
 	if (version != MONO_CORLIB_VERSION)
