@@ -3413,6 +3413,14 @@ mono_field_get_addr (MonoObject *obj, MonoVTable *vt, MonoClassField *field)
 void
 mono_field_get_value (MonoObject *obj, MonoClassField *field, void *value)
 {
+	MONO_ENTER_GC_UNSAFE;
+	mono_field_get_value_internal (obj, field, value);
+	MONO_EXIT_GC_UNSAFE;
+}
+
+void
+mono_field_get_value_internal (MonoObject *obj, MonoClassField *field, void *value)
+{
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	void *src;
