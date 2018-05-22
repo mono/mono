@@ -1759,7 +1759,17 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/Binary/*.cs
 ../../../external/corefx/src/System.Memory/src/System/Runtime/InteropServices/MemoryMarshal.Portable.cs
 
+../../../external/corefx/src/Common/src/CoreLib/System/Buffers/Text/FormattingHelpers.CountDigits.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/StandardFormat.cs
+../../../external/corefx/src/System.Memory/src/System/Buffers/OperationStatus.cs
+../../../external/corefx/src/System.Memory/src/System/Buffers/Text/*.cs
+../../../external/corefx/src/System.Memory/src/System/Buffers/Text/Utf8Formatter/*.cs
+../../../external/corefx/src/System.Memory/src/System/Buffers/Text/Utf8Parser/*.cs
+# This implementation is another "part" of the partial class "Number". Long term, we want to switch our referencesource implementation over to corefx.
+# Once that's done, we still need these parts here - but their namespace should be changed back to System, to make them become part of the "Number" class.
+../../../external/corefx/src/System.Memory/src/System/Number/*.cs
+
+../../../external/corefx/src/Common/src/System/MutableDecimal.cs
 
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/OSPlatform.cs
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/Architecture.cs

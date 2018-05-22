@@ -30,6 +30,9 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.MemoryManager<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.MemoryHandle))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.Binary.BinaryPrimitives))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.Text.Base64))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.Text.Utf8Formatter))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.Text.Utf8Parser))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.InteropServices.MemoryMarshal))]
 
 // TODO: we don't have these types yet
@@ -40,7 +43,4 @@
 //[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.MemoryPool<>))]
 //[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.ReadOnlySequenceSegment<>))]
 //[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.ReadOnlySequence<>))]
-//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.Text.Base64))]
-//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.Text.Utf8Formatter))]
-//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.Text.Utf8Parser))]
 //[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.InteropServices.SequenceMarshal))]
