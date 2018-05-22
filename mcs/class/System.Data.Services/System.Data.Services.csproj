@@ -48,7 +48,7 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include=".\Assembly\AssemblyInfo.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.Data.Services.Internal\ExpandedWrapper`1.cs" />
     <Compile Include="System.Data.Services.Internal\ExpandedWrapper`10.cs" />
     <Compile Include="System.Data.Services.Internal\ExpandedWrapper`11.cs" />

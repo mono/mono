@@ -47,7 +47,7 @@
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include=".\Assembly\AssemblyInfo.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Code.cs" />
     <Compile Include="Metadata.cs" />
     <Compile Include="PEAPI.cs" />

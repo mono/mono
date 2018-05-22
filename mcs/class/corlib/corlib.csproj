@@ -248,10 +248,12 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\Latin1Encoding.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\NormalizationForm.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\StringBuilder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\StringBuilderCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\UnicodeEncoding.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\UTF32Encoding.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\UTF7Encoding.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\UTF8Encoding.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\ValueStringBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\Sources\IValueTaskSource.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCanceledException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCompletionSource.cs" />
@@ -265,7 +267,6 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Concurrent\ConcurrentQueue_Segment.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LowLevelDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\StringBuilderCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\BeginEndAwaitableAdapter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\RendezvousAwaitable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\CDSCollectionETWBCLProvider.cs" />
@@ -293,6 +294,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\ReaderLittleEndian.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\WriterBigEndian.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\WriterLittleEndian.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\StandardFormat.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\MemoryExtensions.Portable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Pinnable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ReadOnlySpan.Portable.cs" />
@@ -1866,7 +1868,6 @@
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1891,7 +1892,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1916,7 +1916,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1941,7 +1940,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1966,7 +1964,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1991,7 +1988,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -2064,7 +2060,6 @@
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
