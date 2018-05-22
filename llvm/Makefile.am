@@ -43,12 +43,17 @@ all-local: configure-llvm build-llvm install-llvm
 
 $(LLVM_PATH)/CMakeLists.txt: | reset-llvm
 
+if INTERNAL_LLVM_ASSERTS
+LLVM_ASSERTIONS=-DLLVM_ENABLE_ASSERTIONS=On
+endif # INTERNAL_LLVM_ASSERTS
+
 .PHONY: configure-llvm
 configure-llvm: $(LLVM_PATH)/CMakeLists.txt | $(LLVM_BUILD)
 	cd $(LLVM_BUILD) && cmake \
 		$(if $(NINJA),-G Ninja) \
 		-DCMAKE_INSTALL_PREFIX="$(LLVM_PREFIX)" \
 		-DCMAKE_BUILD_TYPE=Release \
+		$(LLVM_ASSERTIONS) \
 		-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64" \
 		$(LLVM_CMAKE_ARGS) \
 		$(dir $<)
