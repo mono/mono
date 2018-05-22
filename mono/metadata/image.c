@@ -1605,7 +1605,11 @@ mono_image_open_from_data_internal (char *data, guint32 data_len, gboolean need_
 MonoImage *
 mono_image_open_from_data_with_name (char *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status, gboolean refonly, const char *name)
 {
-	return mono_image_open_from_data_internal (data, data_len, need_copy, status, refonly, FALSE, name);
+	MonoImage *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_image_open_from_data_internal (data, data_len, need_copy, status, refonly, FALSE, name);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
