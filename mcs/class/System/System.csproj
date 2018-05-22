@@ -121,7 +121,6 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\ValueListBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ComponentModel\DefaultValueAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ComponentModel\EditorBrowsableAttribute.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\ValueStringBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ArrayBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\EnumerableHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LargeArrayBuilder.cs" />

@@ -126,6 +126,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\IPinnable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\MemoryHandle.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\MemoryManager.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\Text\FormattingHelpers.CountDigits.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\TlsOverPerCoreLockedStacksArrayPool.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\Utilities.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Comparer.cs" />
@@ -248,10 +249,12 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\Latin1Encoding.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\NormalizationForm.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\StringBuilder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\StringBuilderCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\UnicodeEncoding.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\UTF32Encoding.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\UTF7Encoding.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\UTF8Encoding.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\ValueStringBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\Sources\IValueTaskSource.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCanceledException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskCompletionSource.cs" />
@@ -265,7 +268,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Concurrent\ConcurrentQueue_Segment.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LowLevelDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\StringBuilderCache.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\MutableDecimal.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\BeginEndAwaitableAdapter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\RendezvousAwaitable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\CDSCollectionETWBCLProvider.cs" />
@@ -293,7 +296,64 @@
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\ReaderLittleEndian.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\WriterBigEndian.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Binary\WriterLittleEndian.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\OperationStatus.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\StandardFormat.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Base64Decoder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Base64Encoder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Constants.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\FormattingHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Boolean.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Date.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Date.G.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Date.L.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Date.O.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Date.R.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Decimal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Decimal.E.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Decimal.F.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Decimal.G.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Float.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Guid.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Signed.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Signed.D.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Signed.Default.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Signed.N.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Unsigned.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Unsigned.D.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Unsigned.Default.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Unsigned.N.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Unsigned.X.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Formatter\Utf8Formatter.TimeSpan.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\ParserHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Boolean.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Date.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Date.Default.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Date.G.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Date.Helpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Date.O.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Date.R.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Decimal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Float.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Guid.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Signed.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Signed.D.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Signed.N.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Unsigned.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Unsigned.D.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Unsigned.N.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Unsigned.X.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.Number.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.TimeSpan.BigG.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.TimeSpan.C.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.TimeSpan.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.TimeSpan.LittleG.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Buffers\Text\Utf8Parser\Utf8Parser.TimeSpanSplitter.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\MemoryExtensions.Portable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Number\Decimal.DecCalc.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Number\Number.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Number\Number.FormatAndParse.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Number\Number.NumberBuffer.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Pinnable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\ReadOnlySpan.Portable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Memory\src\System\Runtime\InteropServices\MemoryMarshal.Portable.cs" />
@@ -1866,7 +1926,6 @@
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1891,7 +1950,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1916,7 +1974,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1941,7 +1998,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1966,7 +2022,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1991,7 +2046,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -2064,7 +2118,6 @@
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />

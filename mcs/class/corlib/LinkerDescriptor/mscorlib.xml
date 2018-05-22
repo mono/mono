@@ -598,39 +598,39 @@
 		</type>
 
 		<type fullname="System.Reflection.Emit.AssemblyBuilder" preserve="fields" feature="sre">
-			<method name="AddPermissionRequests" />
-			<method name="AddModule" />
-			<method name="DefineIconResource" />
-			<method name="AddTypeForwarder" />
-			<method name="EmbedResourceFile" />
+			<method name="AddPermissionRequests" feature="sre" />
+			<method name="AddModule" feature="sre" />
+			<method name="DefineIconResource" feature="sre" />
+			<method name="AddTypeForwarder" feature="sre" />
+			<method name="EmbedResourceFile" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.ConstructorBuilder" preserve="fields" feature="sre">
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.CustomAttributeBuilder" preserve="fields" feature="sre" />
-		<type fullname="System.Reflection.Emit.DynamicMethod" preserve="fields" />
-		<type fullname="System.Reflection.Emit.EnumBuilder" preserve="fields" />
-		<type fullname="System.Reflection.Emit.EventBuilder" preserve="fields" />
-		<type fullname="System.Reflection.Emit.FieldBuilder" preserve="fields" >
-			<method name="RuntimeResolve" />
+		<type fullname="System.Reflection.Emit.DynamicMethod" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.EnumBuilder" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.EventBuilder" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.FieldBuilder" preserve="fields" feature="sre" >
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.GenericTypeParameterBuilder" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.ILExceptionBlock" preserve="fields" feature="sre" />
-		<type fullname="System.Reflection.Emit.ILExceptionInfo" preserve="fields" />
-		<type fullname="System.Reflection.Emit.ILGenerator" preserve="fields">
-			<method name="Mono_GetCurrentOffset" />
+		<type fullname="System.Reflection.Emit.ILExceptionInfo" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.ILGenerator" preserve="fields" feature="sre" >
+			<method name="Mono_GetCurrentOffset" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.LocalBuilder" preserve="fields" feature="sre" >
-			<method name="Mono_GetLocalIndex" />
+			<method name="Mono_GetLocalIndex" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.MethodBuilder" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.ModuleBuilder" preserve="fields" feature="sre">
-			<method name="Mono_GetGuid" />
-			<method name="RuntimeResolve" />
+			<method name="Mono_GetGuid" feature="sre" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.MonoResource" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.MonoWin32Resource" preserve="fields" feature="sre" />
@@ -638,34 +638,34 @@
 		<type fullname="System.Reflection.Emit.PropertyBuilder" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.SignatureHelper" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.TypeBuilder" preserve="fields" feature="sre">
-			<method name="SetCharSet" />
+			<method name="SetCharSet" feature="sre" />
 			<!-- reflection.c mono_reflection_call_is_assignable_to () -->
-			<method name="IsAssignableTo" />
+			<method name="IsAssignableTo" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.UnmanagedMarshal" preserve="fields" feature="sre" >
-			<method name="DefineCustom" />
-			<method name="DefineLPArrayInternal" />
+			<method name="DefineCustom" feature="sre" />
+			<method name="DefineLPArrayInternal" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.TypeBuilderInstantiation" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.ArrayType" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.ByRefType" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.PointerType" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.FieldOnTypeBuilderInst" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.MethodOnTypeBuilderInst" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.ConstructorOnTypeBuilderInst" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 
 		<!-- domain.c: mono_defaults.internals_visible_class -->

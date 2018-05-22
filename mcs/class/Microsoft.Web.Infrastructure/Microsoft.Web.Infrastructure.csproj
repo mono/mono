@@ -48,12 +48,12 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include=".\Assembly\AssemblyInfo.cs" />
-    <Compile Include=".\Microsoft.Web.Infrastructure.DynamicModuleHelper\DynamicModuleUtility.cs" />
-    <Compile Include=".\Microsoft.Web.Infrastructure.DynamicValidationHelper\LazyWebROCollection.cs" />
-    <Compile Include=".\Microsoft.Web.Infrastructure.DynamicValidationHelper\ValidationUtility.cs" />
-    <Compile Include=".\Microsoft.Web.Infrastructure\HttpContextHelper.cs" />
-    <Compile Include=".\Microsoft.Web.Infrastructure\InfrastructureHelper.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Microsoft.Web.Infrastructure.DynamicModuleHelper\DynamicModuleUtility.cs" />
+    <Compile Include="Microsoft.Web.Infrastructure.DynamicValidationHelper\LazyWebROCollection.cs" />
+    <Compile Include="Microsoft.Web.Infrastructure.DynamicValidationHelper\ValidationUtility.cs" />
+    <Compile Include="Microsoft.Web.Infrastructure\HttpContextHelper.cs" />
+    <Compile Include="Microsoft.Web.Infrastructure\InfrastructureHelper.cs" />
   </ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->

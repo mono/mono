@@ -48,7 +48,7 @@
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include=".\Assembly\AssemblyInfo.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Mono.Debugger.Soft\AbsentInformationException.cs" />
     <Compile Include="Mono.Debugger.Soft\AppDomainCreateEvent.cs" />
     <Compile Include="Mono.Debugger.Soft\AppDomainMirror.cs" />

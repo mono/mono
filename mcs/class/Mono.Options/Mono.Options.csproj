@@ -47,8 +47,8 @@
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include=".\Assembly\AssemblyInfo.cs" />
-    <Compile Include=".\Mono.Options\Options.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Mono.Options\Options.cs" />
   </ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->

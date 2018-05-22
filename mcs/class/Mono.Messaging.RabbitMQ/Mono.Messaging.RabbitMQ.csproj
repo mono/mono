@@ -47,15 +47,15 @@
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include=".\Assembly\AssemblyInfo.cs" />
-    <Compile Include=".\Mono.Messaging.RabbitMQ\IMessagingContext.cs" />
-    <Compile Include=".\Mono.Messaging.RabbitMQ\MessageFactory.cs" />
-    <Compile Include=".\Mono.Messaging.RabbitMQ\MessagingContext.cs" />
-    <Compile Include=".\Mono.Messaging.RabbitMQ\MessagingContextPool.cs" />
-    <Compile Include=".\Mono.Messaging.RabbitMQ\RabbitMQMessageEnumerator.cs" />
-    <Compile Include=".\Mono.Messaging.RabbitMQ\RabbitMQMessageQueue.cs" />
-    <Compile Include=".\Mono.Messaging.RabbitMQ\RabbitMQMessageQueueTransaction.cs" />
-    <Compile Include=".\Mono.Messaging.RabbitMQ\RabbitMQMessagingProvider.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Mono.Messaging.RabbitMQ\IMessagingContext.cs" />
+    <Compile Include="Mono.Messaging.RabbitMQ\MessageFactory.cs" />
+    <Compile Include="Mono.Messaging.RabbitMQ\MessagingContext.cs" />
+    <Compile Include="Mono.Messaging.RabbitMQ\MessagingContextPool.cs" />
+    <Compile Include="Mono.Messaging.RabbitMQ\RabbitMQMessageEnumerator.cs" />
+    <Compile Include="Mono.Messaging.RabbitMQ\RabbitMQMessageQueue.cs" />
+    <Compile Include="Mono.Messaging.RabbitMQ\RabbitMQMessageQueueTransaction.cs" />
+    <Compile Include="Mono.Messaging.RabbitMQ\RabbitMQMessagingProvider.cs" />
   </ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->

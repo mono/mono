@@ -150,7 +150,6 @@ public class BindingTests {
 		Assert.IsNotNull(TestClass.mkstr);
 
 		Assert.AreEqual (TestClass.mkstr, TestClass.string_res);
-
 	}
 
 	[Test]
@@ -294,4 +293,35 @@ public class BindingTests {
 		// Assert.AreEqual (99, TestClass.int_val);
 	}
 
+	[Test]
+	public static void BindStaticMethod () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var invoke_int = Module.mono_bind_static_method (""[binding_tests]TestClass:InvokeInt"");
+			invoke_int (200);
+		");
+
+		Assert.AreEqual (200, TestClass.int_val);
+	}
+
+	[Test]
+	public static void InvokeStaticMethod () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			Module.mono_call_static_method (""[binding_tests]TestClass:InvokeInt"", [ 300 ]);
+		");
+
+		Assert.AreEqual (300, TestClass.int_val);
+	}
+
+	[Test]
+	public static void ResolveMethod () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var invoke_int = Module.mono_method_resolve (""[binding_tests]TestClass:InvokeInt"");
+			call_test_method (""InvokeInt"", ""i"", [ invoke_int ]);
+		");
+
+		Assert.AreNotEqual (0, TestClass.int_val);
+	}
 }

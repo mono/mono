@@ -115,10 +115,6 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
-    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
-    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs" />
-    <Compile Include="..\..\class\Mono.Security\Mono.Security.Cryptography\CryptoConvert.cs" />
     <Compile Include="..\..\mcs\anonymous.cs" />
     <Compile Include="..\..\mcs\argument.cs" />
     <Compile Include="..\..\mcs\assembly.cs" />
@@ -171,6 +167,10 @@
     <Compile Include="..\..\mcs\typespec.cs" />
     <Compile Include="..\..\mcs\visit.cs" />
     <Compile Include="..\..\tools\monop\outline.cs" />
+    <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
+    <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
+    <Compile Include="..\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\CryptoConvert.cs" />
     <Compile Include="aot.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
   </ItemGroup>
