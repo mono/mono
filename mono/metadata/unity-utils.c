@@ -1130,6 +1130,31 @@ mono_unity_class_get_generic_parameter_count (MonoClass* klass)
 }
 
 MONO_API MonoClass*
+mono_unity_class_get_generic_argument_at (MonoClass* klass, guint32 index)
+{
+	if (!mono_class_is_ginst (klass))
+		return NULL;
+
+	MonoGenericClass* generic_class = mono_class_get_generic_class (klass);
+
+	if (index >= generic_class->context.class_inst->type_argc)
+		return NULL;
+
+	return mono_class_from_mono_type (generic_class->context.class_inst->type_argv[index]);
+}
+
+MONO_API guint32
+mono_unity_class_get_generic_argument_count (MonoClass* klass)
+{
+	if (!mono_class_is_ginst (klass))
+		return NULL;
+
+	MonoGenericClass* generic_class = mono_class_get_generic_class (klass);
+
+	return generic_class->context.class_inst->type_argc;
+}
+
+MONO_API MonoClass*
 mono_unity_class_get(MonoImage* image, guint32 type_token)
 {
 	// Unity expects to try to get classes that don't exist, and
