@@ -48,11 +48,11 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include=".\Assembly\AssemblyInfo.cs" />
-    <Compile Include=".\System.Runtime.InteropServices.CustomMarshalers\EnumerableToDispatchMarshaler.cs" />
-    <Compile Include=".\System.Runtime.InteropServices.CustomMarshalers\EnumeratorToEnumVariantMarshaler.cs" />
-    <Compile Include=".\System.Runtime.InteropServices.CustomMarshalers\ExpandoToDispatchExMarshaler.cs" />
-    <Compile Include=".\System.Runtime.InteropServices.CustomMarshalers\TypeToTypeInfoMarshaler.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Runtime.InteropServices.CustomMarshalers\EnumerableToDispatchMarshaler.cs" />
+    <Compile Include="System.Runtime.InteropServices.CustomMarshalers\EnumeratorToEnumVariantMarshaler.cs" />
+    <Compile Include="System.Runtime.InteropServices.CustomMarshalers\ExpandoToDispatchExMarshaler.cs" />
+    <Compile Include="System.Runtime.InteropServices.CustomMarshalers\TypeToTypeInfoMarshaler.cs" />
   </ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->

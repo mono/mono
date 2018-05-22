@@ -1866,7 +1866,6 @@
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1891,7 +1890,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1916,7 +1914,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1941,7 +1938,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1966,7 +1962,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -1991,7 +1986,6 @@
     <Compile Include="CommonCrypto\TripleDESCryptoServiceProvider.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -2064,7 +2058,6 @@
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\NonRandomizedStringEqualityComparer.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
