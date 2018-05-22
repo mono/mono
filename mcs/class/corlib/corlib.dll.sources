@@ -1419,6 +1419,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/UTF32Encoding.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/UTF7Encoding.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/UTF8Encoding.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Text/ValueStringBuilder.cs
 ../referencesource/mscorlib/system/text/codepageencoding.cs
 ../referencesource/mscorlib/system/text/encoding.cs
 ../referencesource/mscorlib/system/text/mlangcodepageencoding.cs
@@ -1426,7 +1427,7 @@ ReferenceSources/AppContextDefaultValues.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/ISpanFormattable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/StringBuilder.cs
-../../../external/corefx/src/Common/src/System/IO/StringBuilderCache.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Text/StringBuilderCache.cs
 
 ../referencesource/mscorlib/system/runtime/remoting/callcontext.cs
 
@@ -1757,6 +1758,8 @@ corert/RuntimeAugments.cs
 #../../../external/corefx/src/System.Memory/src/System/Buffers/ReadOnlySequenceSegment.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/Binary/*.cs
 ../../../external/corefx/src/System.Memory/src/System/Runtime/InteropServices/MemoryMarshal.Portable.cs
+
+../../../external/corefx/src/System.Memory/src/System/Buffers/StandardFormat.cs
 
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/OSPlatform.cs
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/Architecture.cs
