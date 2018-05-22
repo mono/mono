@@ -5996,8 +5996,8 @@ handle_call_res_devirt (MonoCompile *cfg, MonoMethod *cmethod, MonoInst *call_re
 			call_res = typed_objref;
 
 			/* Force decompose */
-			cfg->flags |= MONO_CFG_HAS_ARRAY_ACCESS;
-			cfg->cbb->has_array_access = TRUE;
+			cfg->flags |= MONO_CFG_NEEDS_DECOMPOSE;
+			cfg->cbb->needs_decompose = TRUE;
 		}
 	}
 
@@ -10243,8 +10243,8 @@ field_access_end:
 					ins->type = STACK_OBJ;
 					ins->klass = array_type;
 					MONO_ADD_INS (cfg->cbb, ins);
-					cfg->flags |= MONO_CFG_HAS_ARRAY_ACCESS;
-					cfg->cbb->has_array_access = TRUE;
+					cfg->flags |= MONO_CFG_NEEDS_DECOMPOSE;
+					cfg->cbb->needs_decompose = TRUE;
 
 					/* Needed so mono_emit_load_get_addr () gets called */
 					mono_get_got_var (cfg);
@@ -10297,8 +10297,8 @@ field_access_end:
 			/* This flag will be inherited by the decomposition */
 			ins->flags |= MONO_INST_FAULT;
 			MONO_ADD_INS (cfg->cbb, ins);
-			cfg->flags |= MONO_CFG_HAS_ARRAY_ACCESS;
-			cfg->cbb->has_array_access = TRUE;
+			cfg->flags |= MONO_CFG_NEEDS_DECOMPOSE;
+			cfg->cbb->needs_decompose = TRUE;
 			*sp++ = ins;
 			break;
 		case CEE_LDELEMA:
