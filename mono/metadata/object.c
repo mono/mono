@@ -7308,15 +7308,16 @@ mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error)
 char *
 mono_string_to_utf8 (MonoString *s)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
+	char *result;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-	char *result = mono_string_to_utf8_checked (s, error);
+	result = mono_string_to_utf8_checked (s, error);
 	
 	if (!is_ok (error)) {
 		mono_error_cleanup (error);
-		return NULL;
+		result = NULL;
 	}
+	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
