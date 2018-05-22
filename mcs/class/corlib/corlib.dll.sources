@@ -1749,15 +1749,13 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/System.Memory/src/System/Pinnable.cs
 ../../../external/corefx/src/System.Memory/src/System/MemoryExtensions.Portable.cs
 ../../../external/corefx/src/System.Memory/src/System/ReadOnlySpan.Portable.cs
-#../../../external/corefx/src/System.Memory/src/System/SequencePosition.cs
+../../../external/corefx/src/System.Memory/src/System/SequencePosition.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanHelpers.cs
 ../../../external/corefx/src/System.Memory/src/System/Span.Portable.cs
 ../../../external/corefx/src/System.Memory/src/System/ThrowHelper.cs
-#../../../external/corefx/src/System.Memory/src/System/Buffers/*.cs:ArrayMemoryPool.ArrayMemoryPoolBuffer.cs,ArrayMemoryPool.cs
-#../../../external/corefx/src/System.Memory/src/System/Buffers/ReadOnlySequence.cs
-#../../../external/corefx/src/System.Memory/src/System/Buffers/ReadOnlySequenceSegment.cs
+../../../external/corefx/src/System.Memory/src/System/Buffers/*.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/Binary/*.cs
-../../../external/corefx/src/System.Memory/src/System/Runtime/InteropServices/MemoryMarshal.Portable.cs
+../../../external/corefx/src/System.Memory/src/System/Runtime/InteropServices/*.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Buffers/Text/FormattingHelpers.CountDigits.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/StandardFormat.cs
