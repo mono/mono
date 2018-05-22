@@ -139,6 +139,7 @@ g_assertion_message (const gchar *format, ...)
 {
 	va_list args;
 
+	va_start (args, format);
 	g_vasprintf (&failure_assertion, format, args);
 
 	va_start (args, format);
