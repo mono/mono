@@ -19,8 +19,10 @@ typedef enum {
 	MONO_ANAME_EQ_IGNORE_PUBKEY = 0x1,
 	/* Don't compare the versions */
 	MONO_ANAME_EQ_IGNORE_VERSION = 0x2,
+	/* When comparing simple names, ignore case differences */
+	MONO_ANAME_EQ_IGNORE_CASE = 0x4,
 
-	MONO_ANAME_EQ_MASK = 0x3
+	MONO_ANAME_EQ_MASK = 0x7
 } MonoAssemblyNameEqFlags;
 
 gboolean

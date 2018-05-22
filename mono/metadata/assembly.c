@@ -653,7 +653,10 @@ mono_assembly_names_equal_flags (MonoAssemblyName *l, MonoAssemblyName *r, MonoA
 	if (!l->name || !r->name)
 		return FALSE;
 
-	if (strcmp (l->name, r->name))
+	if ((flags & MONO_ANAME_EQ_IGNORE_CASE) != 0 && g_strcasecmp (l->name, r->name))
+		return FALSE;
+
+	if ((flags & MONO_ANAME_EQ_IGNORE_CASE) == 0 && strcmp (l->name, r->name))
 		return FALSE;
 
 	if (l->culture && r->culture && strcmp (l->culture, r->culture))
