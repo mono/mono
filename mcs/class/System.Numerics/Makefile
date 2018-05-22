@@ -5,7 +5,7 @@ include ../../build/rules.make
 LIBRARY = System.Numerics.dll
 LIB_REFS = System
 KEYFILE = ../ecma.pub
-LIB_MCS_FLAGS = /unsafe
+LIB_MCS_FLAGS = /unsafe -nowarn:436
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 XTEST_LIB_REFS = System Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation System.Core System.Numerics.Vectors Microsoft.CSharp
 XTEST_LIB_FLAGS = -unsafe

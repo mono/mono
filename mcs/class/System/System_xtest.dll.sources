@@ -40,7 +40,7 @@ System/RemoteExecutorTests.cs
 ../../../external/corefx/src/Common/tests/System/Net/SslProtocolSupport.cs
 #../../../external/corefx/src/System.Net.Security/tests/UnitTests/*.cs:TlsAlertsMatchWindowsInterop.cs
 #../../../external/corefx/src/System.Net.Security/tests/UnitTests/System/Security/Authentication/ExtendedProtection/*.cs
-../../../external/corefx/src/System.Net.Security/tests/UnitTests/Fakes/*.cs:FakeSslState.cs,FakeLazyAsyncResult.cs
+#../../../external/corefx/src/System.Net.Security/tests/UnitTests/Fakes/*.cs:FakeSslState.cs,FakeLazyAsyncResult.cs
 ../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
 ../../../external/corefx/src/Common/src/System/Net/InternalException.cs
 ../../../external/corefx/src/System.Net.Security/src/System/Net/Security/TlsAlertMessage.cs
@@ -53,7 +53,7 @@ System/RemoteExecutorTests.cs
 #../../../external/corefx/src/System.Net.Ping/tests/FunctionalTests/*.cs
 
 # System.Net.WebSockets
-../../../external/corefx/src/System.Net.WebSockets/tests/*.cs
+#../../../external/corefx/src/System.Net.WebSockets/tests/*.cs
 
 # System.Net.WebProxy
 #../../../external/corefx/src/System.Net.WebProxy/tests/*.cs

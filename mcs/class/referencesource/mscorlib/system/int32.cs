@@ -389,7 +389,7 @@ namespace System {
 ///#endif // #if GENERICS_WORK
 
 #if MONO
-        public bool TryFormat(Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format = default, System.IFormatProvider provider = null)
+        internal bool TryFormat(Span<char> destination, out int charsWritten, System.ReadOnlySpan<char> format = default, System.IFormatProvider provider = null)
         {
             throw new NotImplementedException ();
         }
