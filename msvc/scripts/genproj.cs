@@ -1257,8 +1257,7 @@ class MsbuildGenerator {
 
 }
 
-public class Driver {
-
+public static class Driver {
 	static IEnumerable<XElement> GetProjects (bool withTests = false)
 	{
 		XDocument doc = XDocument.Load ("order.xml");
@@ -1290,24 +1289,30 @@ public class Driver {
 		}
 	}
 
-	static void Main (string [] args)
+	public static void Main (string [] args)
 	{
 		if (!File.Exists ("genproj.cs")) {
 			Console.Error.WriteLine ("This command must be executed from mono/msvc/scripts");
 			Environment.Exit (1);
 		}
 
-		if (args.Length == 1 && args [0].ToLower ().Contains ("-h")) {
-			Console.Error.WriteLine ("Usage:");
-			Console.Error.WriteLine ("genproj.exe [visual_studio_release] [output_full_solutions] [with_tests]");
-			Console.Error.WriteLine ("If output_full_solutions is false, only the main System*.dll");
-			Console.Error.WriteLine (" assemblies (and dependencies) is included in the solution.");
-			Console.Error.WriteLine ("Example:");
-			Console.Error.WriteLine ("genproj.exe 2012 false false");
-			Console.Error.WriteLine ("genproj.exe with no arguments is equivalent to 'genproj.exe 2012 true false'\n\n");
-			Console.Error.WriteLine ("genproj.exe deps");
-			Console.Error.WriteLine ("Generates a Makefile dependency file from the projects input");
-			Environment.Exit (0);
+		if (args.Length == 1) {
+			switch (args[0].ToLower()) {
+				case "-h":
+				case "--help":
+				case "-?":
+					Console.Error.WriteLine ("Usage:");
+					Console.Error.WriteLine ("genproj.exe [visual_studio_release] [output_full_solutions] [with_tests]");
+					Console.Error.WriteLine ("If output_full_solutions is false, only the main System*.dll");
+					Console.Error.WriteLine (" assemblies (and dependencies) is included in the solution.");
+					Console.Error.WriteLine ("Example:");
+					Console.Error.WriteLine (" genproj.exe 2012 false false");
+					Console.Error.WriteLine ("genproj.exe with no arguments is equivalent to 'genproj.exe 2012 true false'\n\n");
+					Console.Error.WriteLine ("genproj.exe deps");
+					Console.Error.WriteLine ("Generates a Makefile dependency file from the projects input");
+					Environment.Exit (0);
+					break;
+			}
 		}
 
 		var slnVersion = (args.Length > 0) ? args [0] : "2012";
