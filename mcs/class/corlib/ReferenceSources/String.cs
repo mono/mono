@@ -42,7 +42,7 @@ namespace System
 	partial class String
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern String (ReadOnlySpan<char> value);
+		internal extern String (ReadOnlySpan<char> value);
 
 		public int Length {
 			get {
@@ -50,7 +50,7 @@ namespace System
 			}
 		}
 
-		public unsafe static implicit operator ReadOnlySpan<char> (String value)
+		internal unsafe static ReadOnlySpan<char> ToReadOnlySpan (String value)
 		{
 			if (value == null)
 				return default;
@@ -58,7 +58,6 @@ namespace System
 			fixed (void* start = &value.m_firstChar)
 				return new ReadOnlySpan<char> (start, value.Length);
 		}
-
 
 		internal static unsafe int CompareOrdinalUnchecked (String strA, int indexA, int lenA, String strB, int indexB, int lenB)
 		{

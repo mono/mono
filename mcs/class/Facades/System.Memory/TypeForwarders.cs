@@ -20,16 +20,16 @@
 // THE SOFTWARE.
 // 
 
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.MemoryExtensions))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Memory<>))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.ReadOnlyMemory<>))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.ReadOnlySpan<>))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Span<>))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.MemoryHandle))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.OperationStatus))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.StandardFormat))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.Binary.BinaryPrimitives))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.InteropServices.MemoryMarshal))]
+//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.MemoryExtensions))]
+//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Memory<>))]
+//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.ReadOnlyMemory<>))]
+//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.ReadOnlySpan<>))]
+//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Span<>))]
+//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.MemoryHandle))]
+//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.OperationStatus))]
+//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.StandardFormat))]
+//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.Binary.BinaryPrimitives))]
+//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.InteropServices.MemoryMarshal))]
 
 // TODO: we don't have these types yet
 //[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.SequencePosition))]  
