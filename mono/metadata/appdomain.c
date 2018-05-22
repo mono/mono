@@ -2326,7 +2326,7 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 	mono_gchandle_free (gchandle); /* unpin */
 	MONO_HANDLE_ASSIGN (raw_assembly, NULL_HANDLE); /* don't reference the data anymore */
 	
-	MonoImage *image = mono_image_open_from_data_full (assembly_data, raw_assembly_len, FALSE, NULL, refonly);
+	MonoImage *image = mono_image_open_from_data_internal (assembly_data, raw_assembly_len, FALSE, NULL, refonly, FALSE, NULL);
 
 	if (!image) {
 		mono_error_set_bad_image_by_name (error, "In memory assembly", "0x%p", raw_data);
@@ -2362,7 +2362,7 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 		return refass; 
 	}
 
-	/* Clear the reference added by mono_image_open_from_data_full above */
+	/* Clear the reference added by mono_image_open_from_data_internal above */
 	mono_image_close (image);
 
 	refass = mono_assembly_get_object_handle (domain, ass, error);
