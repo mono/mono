@@ -3304,14 +3304,17 @@ handle_enum:
 void
 mono_field_set_value (MonoObject *obj, MonoClassField *field, void *value)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MONO_ENTER_GC_UNSAFE;
 
 	void *dest;
 
-	g_return_if_fail (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC));
+	if ((field->type->attrs & FIELD_ATTRIBUTE_STATIC))
+		goto leave;
 
 	dest = (char*)obj + field->offset;
 	mono_copy_value (field->type, dest, value, FALSE);
+leave:
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /**
