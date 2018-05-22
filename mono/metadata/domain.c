@@ -124,6 +124,9 @@ get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image, const MonoRu
 static const MonoRuntimeInfo*
 get_runtime_by_version (const char *version);
 
+MonoAssembly *
+mono_domain_assembly_open_internal (MonoDomain *domain, const char *name);
+
 static LockFreeMempool*
 lock_free_mempool_new (void)
 {
@@ -992,9 +995,21 @@ mono_domain_foreach (MonoDomainFunc func, gpointer user_data)
 MonoAssembly *
 mono_domain_assembly_open (MonoDomain *domain, const char *name)
 {
+	MonoAssembly *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_domain_assembly_open_internal (domain, name);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+MonoAssembly *
+mono_domain_assembly_open_internal (MonoDomain *domain, const char *name)
+{
 	MonoDomain *current;
 	MonoAssembly *ass;
 	GSList *tmp;
+
+	MONO_REQ_GC_UNSAFE_MODE;
 
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
