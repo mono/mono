@@ -85,6 +85,11 @@ namespace Mono.Net.Security
 			get { return xobileTlsContext != null; }
 		}
 
+		internal string TargetHost {
+			get;
+			private set;
+		}
+
 		internal void CheckThrow (bool authSuccessCheck, bool shutdownCheck = false)
 		{
 			if (lastException != null)
@@ -329,6 +334,7 @@ namespace Mono.Net.Security
 					throw new ArgumentException (nameof (options.TargetHost));
 				if (options.TargetHost.Length == 0)
 					options.TargetHost = "?" + Interlocked.Increment (ref uniqueNameInteger).ToString (NumberFormatInfo.InvariantInfo);
+				TargetHost = options.TargetHost;
 			}
 
 			if (lastException != null)
@@ -480,9 +486,15 @@ namespace Mono.Net.Security
 		internal readonly int ID = ++nextId;
 
 		[SD.Conditional ("MONO_TLS_DEBUG")]
-		protected internal void Debug (string message, params object[] args)
+		protected internal void Debug (string format, params object[] args)
 		{
-			MonoTlsProviderFactory.Debug ("MobileAuthenticatedStream({0}): {1}", ID, string.Format (message, args));
+			Debug (string.Format (format, args));
+		}
+
+		[SD.Conditional ("MONO_TLS_DEBUG")]
+		protected internal void Debug (string message)
+		{
+			MonoTlsProviderFactory.Debug ($"MobileAuthenticatedStream({ID}): {message}");
 		}
 
 #region Called back from native code via SslConnection

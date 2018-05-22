@@ -83,6 +83,7 @@ namespace System.Net.Security
 		MonoTlsSettings settings;
 		RemoteCertificateValidationCallback validationCallback;
 		LocalCertificateSelectionCallback selectionCallback;
+		bool explicitSettings;
 		IMonoSslStream impl;
 
 		internal IMonoSslStream Impl {
@@ -145,6 +146,7 @@ namespace System.Net.Security
 		{
 			this.provider = provider;
 			this.settings = settings.Clone ();
+			explicitSettings = true;
 			impl = provider.CreateSslStreamInternal (this, innerStream, leaveInnerStreamOpen, settings);
 		}
 
@@ -159,7 +161,7 @@ namespace System.Net.Security
 			if (validationCallback == null) {
 				validationCallback = callback;
 				settings.RemoteCertificateValidationCallback = MNS.Private.CallbackHelpers.PublicToMono (callback);
-			} else if (callback != null && validationCallback != callback) {
+			} else if ((callback != null && validationCallback != callback) || (explicitSettings & settings.RemoteCertificateValidationCallback != null)) {
 				throw new InvalidOperationException (SR.Format (SR.net_conflicting_options, nameof (RemoteCertificateValidationCallback)));
 			}
 		}
@@ -168,8 +170,11 @@ namespace System.Net.Security
 		{
 			if (selectionCallback == null) {
 				selectionCallback = callback;
-				settings.ClientCertificateSelectionCallback = MNS.Private.CallbackHelpers.PublicToMono (callback);
-			} else if (callback != null && selectionCallback != callback) {
+				if (callback == null)
+					settings.ClientCertificateSelectionCallback = null;
+				else
+					settings.ClientCertificateSelectionCallback = (t, lc, rc, ai) => callback (this, t, lc, rc, ai);
+			} else if ((callback != null && selectionCallback != callback) || (explicitSettings && settings.ClientCertificateSelectionCallback != null)) {
 				throw new InvalidOperationException (SR.Format (SR.net_conflicting_options, nameof (LocalCertificateSelectionCallback)));
 			}
 		}

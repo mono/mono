@@ -37,6 +37,7 @@ namespace Mono.Net.Security
 		protected MobileTlsContext (MobileAuthenticatedStream parent, MonoSslAuthenticationOptions options)
 		{
 			Parent = parent;
+			Options = options;
 			IsServer = options.ServerMode;
 			EnabledProtocols = options.EnabledSslProtocols;
 
@@ -54,8 +55,12 @@ namespace Mono.Net.Security
 				}
 			}
 
-			certificateValidator = CertificateValidationHelper.GetInternalValidator (
-				parent.Settings, parent.Provider);
+			certificateValidator = (ICertificateValidator2)ChainValidationHelper.GetInternalValidator (
+				parent.SslStream, parent.Provider, parent.Settings);
+		}
+
+		internal MonoSslAuthenticationOptions Options {
+			get;
 		}
 
 		internal MobileAuthenticatedStream Parent {
@@ -84,7 +89,7 @@ namespace Mono.Net.Security
 			get;
 		}
 
-		protected string TargetHost {
+		internal string TargetHost {
 			get;
 		}
 
