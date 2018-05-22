@@ -3,6 +3,7 @@
 ../../../external/corefx/src/Common/tests/System/RandomExtensions.cs
 ../../../external/corefx/src/Common/tests/System/RandomDataGenerator.cs
 
+../../../external/corefx/src/Common/tests/System/Buffers/NativeMemoryManager.cs
 ../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadTestHelpers.cs
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadPoolHelpers.cs
@@ -171,15 +172,19 @@
 
 # System.Memory
 ../../../external/corefx/src/System.Memory/tests/*.cs
+../../../external/corefx/src/System.Memory/tests/Base64/*.cs
 ../../../external/corefx/src/System.Memory/tests/Binary/*.cs
 ../../../external/corefx/src/System.Memory/tests/Memory/*.cs
+../../../external/corefx/src/System.Memory/tests/MemoryMarshal/*.cs:CreateReadOnlySpan.cs,CreateSpan.cs
+../../../external/corefx/src/System.Memory/tests/MemoryPool/*.cs
+../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/*.cs
+../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/Formatter/*.cs
+../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/Parser/*.cs
+../../../external/corefx/src/System.Memory/tests/ReadOnlyBuffer/*.cs
 ../../../external/corefx/src/System.Memory/tests/ReadOnlyMemory/*.cs
 ../../../external/corefx/src/System.Memory/tests/ReadOnlySpan/*.cs:GetPinnableReference.cs
 ../../../external/corefx/src/System.Memory/tests/Span/*.cs:Reflection.cs,GetPinnableReference.cs
 
-../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/*.cs
-../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/Formatter/*.cs
-../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/Parser/*.cs
 # FIXME: this is internal in corlib
 ../../../external/corefx/src/Common/src/System/MutableDecimal.cs
 
