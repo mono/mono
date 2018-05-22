@@ -575,9 +575,12 @@ MonoReflectionMethod*
 mono_method_get_object (MonoDomain *domain, MonoMethod *method, MonoClass *refclass)
 {
 	HANDLE_FUNCTION_ENTER ();
+	MonoReflectionMethodHandle ret;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-	MonoReflectionMethodHandle ret = mono_method_get_object_handle (domain, method, refclass, error);
+	ret = mono_method_get_object_handle (domain, method, refclass, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
 
