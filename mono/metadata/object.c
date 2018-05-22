@@ -5385,13 +5385,12 @@ object_new_handle_common_tail (MonoObjectHandle o, MonoClass *klass, MonoError *
 MonoObject *
 mono_object_new (MonoDomain *domain, MonoClass *klass)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
+	MonoObject * result;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-
-	MonoObject * result = mono_object_new_checked (domain, klass, error);
-
+	result = mono_object_new_checked (domain, klass, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
