@@ -19,7 +19,7 @@ libgc_static_libs=$(monodir)/libgc/libmonogc-static.la
 endif
 
 libbdwgc_libs=$(monodir)/external/bdwgc/libgc.la
-libbdwgc_static_libs=$(monodir)/external/bdwgc/libgc-static.la
+libbdwgc_static_libs=$(monodir)/external/bdwgc/libgc.la
 
 boehm_libs=	\
 	$(monodir)/mono/metadata/libmonoruntime.la	\
