@@ -6395,7 +6395,7 @@ namespace Mono.CSharp
 							}
 						}
 
-						if (conv_false_expr != null) {
+						if (conv_false_expr != null && false_type != InternalType.ErrorType && true_type != InternalType.ErrorType) {
 							ec.Report.Error (172, true_expr.Location,
 								"Type of conditional expression cannot be determined as `{0}' and `{1}' convert implicitly to each other",
 									true_type.GetSignatureForError (), false_type.GetSignatureForError ());
@@ -6408,7 +6408,7 @@ namespace Mono.CSharp
 				} else if ((conv = Convert.ImplicitConversion (ec, false_expr, true_type, loc)) != null) {
 					false_expr = conv;
 				} else {
-					if (false_type != InternalType.ErrorType) {
+					if (false_type != InternalType.ErrorType && true_type != InternalType.ErrorType) {
 						ec.Report.Error (173, true_expr.Location,
 							"Type of conditional expression cannot be determined because there is no implicit conversion between `{0}' and `{1}'",
 							true_type.GetSignatureForError (), false_type.GetSignatureForError ());
@@ -11970,8 +11970,10 @@ namespace Mono.CSharp
 		public bool ResolveSpanConversion (ResolveContext rc, TypeSpec spanType)
 		{
 			ctor = MemberCache.FindMember (spanType, MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (PointerContainer.MakeType (rc.Module, rc.Module.Compiler.BuiltinTypes.Void), rc.Module.Compiler.BuiltinTypes.Int)), BindingRestriction.DeclaredOnly) as MethodSpec;
-			if (ctor == null)
+			if (ctor == null) {
+				this.type = InternalType.ErrorType;
 				return false;
+			}
 			
 			this.type = spanType;
 			return true;
@@ -11987,11 +11989,13 @@ namespace Mono.CSharp
 
 		protected override void ResolveExpressionType (ResolveContext rc, TypeSpec elementType)
 		{
-			var span = rc.Module.PredefinedTypes.SpanGeneric;
-			if (!span.Define ())
+			var span = rc.Module.PredefinedTypes.SpanGeneric.Resolve ();
+			if (span == null) {
+				type = InternalType.ErrorType;
 				return;
+			}
 
-			type = span.TypeSpec.MakeGenericType (rc, new [] { elementType });
+			type = span.MakeGenericType (rc, new [] { elementType });
 			ResolveSpanConversion (rc, type);
 		}
 	}
