@@ -726,8 +726,8 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
 #endif
 
 #if defined(__GNUC__) && (__GNUC__ > 2)
-#define G_LIKELY(expr) (__builtin_expect ((expr) != 0, 1))
-#define G_UNLIKELY(expr) (__builtin_expect ((expr) != 0, 0))
+#define G_LIKELY(expr) (__builtin_expect (!!(expr), 1))
+#define G_UNLIKELY(expr) (__builtin_expect (!!(expr), 0))
 #else
 #define G_LIKELY(x) (x)
 #define G_UNLIKELY(x) (x)
