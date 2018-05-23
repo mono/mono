@@ -10742,7 +10742,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				store->flags |= ins_flag;
 				if (cfg->gen_write_barriers && cfg->method->wrapper_type != MONO_WRAPPER_WRITE_BARRIER &&
 					mini_type_is_reference (ftype)) {
-					/* insert call to write barrier */
+					/* insert call to write barrier. This is not needed by sgen, as it does not seem 
+					to need write barriers for uncollectable objects (like the vtables storing static 
+					fields), but it is needed for incremental boehm. */
 					mini_emit_write_barrier (cfg, store, ins);
 				}			
 			} else {
