@@ -3328,13 +3328,15 @@ leave:
 void
 mono_field_static_set_value (MonoVTable *vt, MonoClassField *field, void *value)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MONO_ENTER_GC_UNSAFE;
 
 	void *dest;
 
-	g_return_if_fail (field->type->attrs & FIELD_ATTRIBUTE_STATIC);
+	if ((field->type->attrs & FIELD_ATTRIBUTE_STATIC) == 0)
+		goto leave;
 	/* you cant set a constant! */
-	g_return_if_fail (!(field->type->attrs & FIELD_ATTRIBUTE_LITERAL));
+	if ((field->type->attrs & FIELD_ATTRIBUTE_LITERAL))
+		goto leave;
 
 	if (field->offset == -1) {
 		/* Special static */
@@ -3348,6 +3350,8 @@ mono_field_static_set_value (MonoVTable *vt, MonoClassField *field, void *value)
 		dest = (char*)mono_vtable_get_static_field_data (vt) + field->offset;
 	}
 	mono_copy_value (field->type, dest, value, FALSE);
+leave:
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /**
