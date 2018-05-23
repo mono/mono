@@ -180,12 +180,18 @@ mono_gc_base_init (void)
 			} else if (g_str_has_prefix (opt, "toggleref-test")) {
 				register_test_toggleref_callback ();
 				continue;
-			} else if (g_str_has_prefix (opt, "incremental")) {
-				GC_enable_incremental();
-		#if HAVE_BDWGC_GC	
-				// value is in milliseconds
-				GC_set_time_limit(3);
-		#endif					
+			} else if (g_str_has_prefix (opt, "incremental=")) {
+				size_t time_limit;
+
+				opt = strchr (opt, '=') + 1;
+				if (*opt && mono_gc_parse_environment_string_extract_number (opt, &time_limit)) {
+					GC_enable_incremental();
+			#if HAVE_BDWGC_GC	
+					if (time_limit != 0)
+						// value is in milliseconds
+						GC_set_time_limit(time_limit);
+			#endif					
+				}
 				continue;
 			} else {
 				/* Could be a parameter for sgen */
