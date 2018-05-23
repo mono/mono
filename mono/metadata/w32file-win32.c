@@ -82,25 +82,49 @@ mono_w32file_delete (const gunichar2 *name)
 	return res;
 }
 
-gboolean
-mono_w32file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
+static void
+cancel_w32_io (HANDLE file_handle)
 {
-	gboolean res;
-	MONO_ENTER_GC_SAFE;
-	res = ReadFile (handle, buffer, numbytes, bytesread, NULL);
-	MONO_PROFILER_RAISE (fileio, (1, *bytesread));
-	MONO_EXIT_GC_SAFE;
+	CancelIoEx (file_handle, NULL);
+}
+
+gboolean
+mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
+{
+	gboolean res = FALSE;
+	gboolean interrupted;
+
+	mono_thread_info_install_interrupt (cancel_w32_io, handle, &interrupted);
+	if (!interrupted)
+	{
+		MONO_ENTER_GC_SAFE;
+		res = ReadFile (handle, buffer, numbytes, bytesread, NULL);
+		MONO_PROFILER_RAISE (fileio, (1, *bytesread));
+		MONO_EXIT_GC_SAFE;
+
+		mono_thread_info_uninstall_interrupt (&interrupted);
+	}
+
 	return res;
 }
 
 gboolean
 mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
-	gboolean res;
-	MONO_ENTER_GC_SAFE;
-	res = WriteFile (handle, buffer, numbytes, byteswritten, NULL);
-	MONO_PROFILER_RAISE (fileio, (0, *byteswritten));
-	MONO_EXIT_GC_SAFE;
+	gboolean res = FALSE;
+	gboolean interrupted;
+
+	mono_thread_info_install_interrupt (cancel_w32_io, handle, &interrupted);
+	if (!interrupted)
+	{
+		MONO_ENTER_GC_SAFE;
+		res = WriteFile (handle, buffer, numbytes, byteswritten, NULL);
+		MONO_PROFILER_RAISE (fileio, (0, *byteswritten));
+		MONO_EXIT_GC_SAFE;
+
+		mono_thread_info_uninstall_interrupt (&interrupted);
+	}
+
 	return res;
 }
 
