@@ -3775,7 +3775,7 @@ mono_field_static_get_value_checked (MonoVTable *vt, MonoClassField *field, void
 void
 mono_property_set_value (MonoProperty *prop, void *obj, void **params, MonoObject **exc)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MONO_ENTER_GC_UNSAFE;
 
 	ERROR_DECL (error);
 	do_runtime_invoke (prop->set, obj, params, exc, error);
@@ -3784,6 +3784,7 @@ mono_property_set_value (MonoProperty *prop, void *obj, void **params, MonoObjec
 	} else {
 		mono_error_cleanup (error);
 	}
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /**
