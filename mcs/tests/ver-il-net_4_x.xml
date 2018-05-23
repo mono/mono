@@ -52826,19 +52826,6 @@
       </method>
     </type>
   </test>
-  <test name="test-948.cs">
-    <type name="X">
-      <method name="Void Main()" attrs="150">
-        <size>103</size>
-      </method>
-      <method name="Void Foo()" attrs="129">
-        <size>2</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
   <test name="test-95.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
@@ -67070,6 +67057,16 @@
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-binaryliteral.cs">
+    <type name="Demo">
+      <method name="Int32 Main()" attrs="145">
+        <size>503</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
