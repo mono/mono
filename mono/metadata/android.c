@@ -281,6 +281,12 @@ monodroid_get_system_property (const gchar *name, gchar **value)
 	return -1;
 }
 
+void
+monodroid_free (gpointer ptr)
+{
+	g_free (ptr);
+}
+
 gint32
 ves_icall_System_TimezoneInfo_AndroidTimeZones_GetSystemProperty (const gchar *name, gchar **value)
 {

@@ -53,6 +53,9 @@ monodroid_add_system_property (const gchar *name, const gchar *value);
 MONO_API gint32
 monodroid_get_system_property (const gchar *name, gchar **value);
 
+MONO_API void
+monodroid_free (gpointer ptr);
+
 gpointer
 ves_icall_System_TimezoneInfo_AndroidTimeZones_GetDefaultTimeZoneId (void);
 
