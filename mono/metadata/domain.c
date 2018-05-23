@@ -1227,8 +1227,12 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 
 	domain->setup = NULL;
 
+#if !HAVE_BDWGC_GC
+	// This crashes in bdwgc because we never register such a root.
+	// Not sure why/how it works in sgen, or if it is needed?
 	if (mono_gc_is_moving ())
 		mono_gc_deregister_root ((char*)&(domain->MONO_DOMAIN_FIRST_GC_TRACKED));
+#endif
 
 	mono_appdomains_lock ();
 	appdomains_list [domain->domain_id] = NULL;
