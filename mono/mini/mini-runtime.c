@@ -2371,6 +2371,9 @@ lookup_start:
 	if (!code)
 		code = compile_special (method, target_domain, error);
 
+	if (!code && mono_aot_only && mono_use_interpreter && method->wrapper_type != MONO_WRAPPER_UNKNOWN)
+		code = mini_get_interp_callbacks ()->create_method_pointer (method, error);
+
 	if (!code) {
 		if (mono_class_is_open_constructed_type (m_class_get_byval_arg (method->klass))) {
 			mono_error_set_invalid_operation (error, "Could not execute the method because the containing type is not fully instantiated.");
