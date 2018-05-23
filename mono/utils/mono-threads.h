@@ -385,7 +385,7 @@ mono_threads_get_runtime_callbacks (void);
 MONO_API int
 mono_thread_info_register_small_id (void);
 
-THREAD_INFO_TYPE *
+MONO_API THREAD_INFO_TYPE *
 mono_thread_info_attach (void);
 
 MONO_API void

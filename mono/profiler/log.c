@@ -3055,6 +3055,7 @@ new_filename (const char* filename)
 static MonoProfilerThread *
 profiler_thread_begin (const char *name, gboolean send)
 {
+	mono_thread_info_attach ();
 	MonoProfilerThread *thread = init_thread (FALSE);
 
 	mono_thread_attach (mono_get_root_domain ());
