@@ -3322,12 +3322,24 @@ probe_for_partial_name (const char *basepath, const char *fullname, MonoAssembly
 MonoAssembly*
 mono_assembly_load_with_partial_name (const char *name, MonoImageOpenStatus *status)
 {
+	MonoAssembly *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_assembly_load_with_partial_name_internal (name, status);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+MonoAssembly*
+mono_assembly_load_with_partial_name_internal (const char *name, MonoImageOpenStatus *status)
+{
 	ERROR_DECL (error);
 	MonoAssembly *res;
 	MonoAssemblyName *aname, base_name;
 	MonoAssemblyName mapped_aname;
 	gchar *fullname, *gacpath;
 	gchar **paths;
+
+	MONO_REQ_GC_UNSAFE_MODE;
 
 	memset (&base_name, 0, sizeof (MonoAssemblyName));
 	aname = &base_name;

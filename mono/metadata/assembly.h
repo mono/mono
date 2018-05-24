@@ -35,6 +35,7 @@ MONO_API MonoAssembly* mono_assembly_load_from_full  (MonoImage *image, const ch
 					MonoImageOpenStatus *status,
 					mono_bool refonly);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoAssembly* mono_assembly_load_with_partial_name (const char *name, MonoImageOpenStatus *status);
 
 MONO_RT_EXTERNAL_ONLY

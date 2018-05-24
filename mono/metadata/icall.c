@@ -4749,7 +4749,7 @@ ves_icall_System_Reflection_Assembly_load_with_partial_name (MonoStringHandle mn
 	
 	name = mono_string_handle_to_utf8 (mname, error);
 	goto_if_nok (error, leave);
-	MonoAssembly *res = mono_assembly_load_with_partial_name (name, &status);
+	MonoAssembly *res = mono_assembly_load_with_partial_name_internal (name, &status);
 
 	g_free (name);
 

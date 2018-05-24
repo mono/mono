@@ -40,6 +40,8 @@ MonoAssembly* mono_assembly_load_full_nosearch (MonoAssemblyName *aname,
 						MonoAssemblyContextKind asmctx,
 						MonoImageOpenStatus *status);
 
+MonoAssembly* mono_assembly_load_with_partial_name_internal (const char *name, MonoImageOpenStatus *status);
+
 
 /* If predicate returns true assembly should be loaded, if false ignore it. */
 typedef gboolean (*MonoAssemblyCandidatePredicate)(MonoAssembly *, gpointer);
