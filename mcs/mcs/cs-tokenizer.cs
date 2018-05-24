@@ -1217,6 +1217,7 @@ namespace Mono.CSharp
 
 				case Token.REF:
 				case Token.OUT:
+				case Token.IN:
 					can_be_type = is_type = false;
 					continue;
 
