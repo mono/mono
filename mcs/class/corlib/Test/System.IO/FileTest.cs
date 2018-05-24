@@ -115,7 +115,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Create_Path_Directory ()
 		{
-			string path = Path.Combine (tmpFolder, "foo");
+			string path = Path.Combine (tmpFolder, "foo_Create_Path_Directory");
 			Directory.CreateDirectory (path);
 			try {
 				File.Create (path);
@@ -149,7 +149,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Create_Path_ReadOnly ()
 		{
-			string path = Path.Combine (tmpFolder, "foo");
+			string path = Path.Combine (tmpFolder, "foo_Create_Path_ReadOnly");
 			File.Create (path).Close ();
 			File.SetAttributes (path, FileAttributes.ReadOnly);
 			try {
@@ -185,7 +185,7 @@ namespace MonoTests.System.IO
 		public void Create_Directory_DoesNotExist ()
 		{
 			FileStream stream = null;
-			string path = tmpFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo";
+			string path = tmpFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo_Create_Directory_DoesNotExist";
 			
 			try {
 				stream = File.Create (path);
@@ -210,7 +210,7 @@ namespace MonoTests.System.IO
 			string path = null;
 
 			/* positive test: create resources/foo */
-			path = tmpFolder + Path.DirectorySeparatorChar + "foo";
+			path = tmpFolder + Path.DirectorySeparatorChar + "foo_Create";
 			try {
 
 				stream = File.Create (path);
@@ -225,7 +225,7 @@ namespace MonoTests.System.IO
 			stream = null;
 
 			/* positive test: repeat test above again to test for overwriting file */
-			path = tmpFolder + Path.DirectorySeparatorChar + "foo";
+			path = tmpFolder + Path.DirectorySeparatorChar + "foo_Create";
 			try {
 				stream = File.Create (path);
 				Assert.IsTrue (File.Exists (path), "#2");
@@ -458,7 +458,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Delete_Directory_DoesNotExist ()
 		{
-			string path = tmpFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo";
+			string path = tmpFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo_Delete_Directory_DoesNotExist";
 			if (Directory.Exists (path))
 				Directory.Delete (path, true);
 
@@ -477,7 +477,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Delete ()
 		{
-			string foopath = tmpFolder + Path.DirectorySeparatorChar + "foo";
+			string foopath = tmpFolder + Path.DirectorySeparatorChar + "foo_Delete";
 			DeleteFile (foopath);
 			try {
 				File.Create (foopath).Close ();
@@ -549,7 +549,7 @@ namespace MonoTests.System.IO
 
 			FileAttributes attrs;
 
-			string path = Path.Combine (tmpFolder, "GetAttributes.tmp");
+			string path = Path.Combine (tmpFolder, "GetAttributes.tmp_GetAttributes_Archive");
 			File.Create (path).Close ();
 
 			attrs = File.GetAttributes (path);
@@ -568,7 +568,7 @@ namespace MonoTests.System.IO
 			if (RunningOnUnix)
 				Assert.Ignore ("bug #325181: FileAttributes.Archive has no effect on Unix.");
 
-			string path = Path.Combine (tmpFolder, "GetAttributes.tmp");
+			string path = Path.Combine (tmpFolder, "GetAttributes.tmp_GetAttributes_Default_File");
 			File.Create (path).Close ();
 
 			FileAttributes attrs = File.GetAttributes (path);
@@ -606,7 +606,7 @@ namespace MonoTests.System.IO
 
 			Assert.IsFalse ((attrs & FileAttributes.Directory) != 0, "#2");
 
-			string path = Path.Combine (tmpFolder, "GetAttributes.tmp");
+			string path = Path.Combine (tmpFolder, "GetAttributes.tmp_GetAttributes_Directory");
 			File.Create (path).Close ();
 
 			attrs = File.GetAttributes (path);
@@ -621,7 +621,7 @@ namespace MonoTests.System.IO
 		{
 			FileAttributes attrs;
 
-			string path = Path.Combine (tmpFolder, "GetAttributes.tmp");
+			string path = Path.Combine (tmpFolder, "GetAttributes.tmp_GetAttributes_ReadOnly");
 			File.Create (path).Close ();
 
 			attrs = File.GetAttributes (path);
@@ -646,7 +646,7 @@ namespace MonoTests.System.IO
 
 			FileAttributes attrs;
 
-			string path = Path.Combine (tmpFolder, "GetAttributes.tmp");
+			string path = Path.Combine (tmpFolder, "GetAttributes.tmp_GetAttributes_System");
 			File.Create (path).Close ();
 
 			attrs = File.GetAttributes (path);
@@ -662,7 +662,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void GetAttributes_Path_DoesNotExist ()
 		{
-			string path = Path.Combine (tmpFolder, "GetAttributes.tmp");
+			string path = Path.Combine (tmpFolder, "GetAttributes.tmp_GetAttributes_Path_DoesNotExist");
 			try {
 				File.GetAttributes (path);
 				Assert.Fail ("#1");
@@ -810,7 +810,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Move_DestFileName_DirectoryDoesNotExist ()
 		{
-			string sourceFile = tmpFolder + Path.DirectorySeparatorChar + "foo";
+			string sourceFile = tmpFolder + Path.DirectorySeparatorChar + "foo_Move_DestFileName_DirectoryDoesNotExist";
 			string destFile = Path.Combine (Path.Combine (tmpFolder, "doesnotexist"), "b");
 			DeleteFile (sourceFile);
 			try {
@@ -833,7 +833,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Move_DestFileName_AlreadyExists ()
 		{
-			string sourceFile = tmpFolder + Path.DirectorySeparatorChar + "foo";
+			string sourceFile = tmpFolder + Path.DirectorySeparatorChar + "foo_Move_DestFileName_AlreadyExists";
 			string destFile;
 
 			// move to same directory
