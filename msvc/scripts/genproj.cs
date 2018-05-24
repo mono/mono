@@ -793,6 +793,23 @@ class MsbuildGenerator {
 		if (File.Exists(generatedProjFile))
 			File.Delete(generatedProjFile);
 	}
+
+	private IEnumerable<string> ReadSources (string platformName, string profileName, string outputName) {
+        var libraryDirectory = Path.GetFullPath (Path.GetDirectoryName (GetProjectFilename ()));
+		var libraryName = outputName;
+
+        var platformsFolder = Path.GetFullPath ("../../mcs/build/platforms");
+        var profilesFolder = Path.GetFullPath ("../../mcs/build/profiles");
+
+		SourcesParser.TraceLevel = 1;
+        var parser = new SourcesParser (platformsFolder, profilesFolder);
+        var result = parser.Parse (libraryDirectory, libraryName);
+
+        return result.GetFileNames (
+        	hostPlatformName: platformName, 
+        	profileName: profileName
+    	).OrderBy (s => s, StringComparer.Ordinal);
+	}
 	
 	public VsCsproj Generate (string library_output, Dictionary<string,MsbuildGenerator> projects, out string profile, bool showWarnings = false)
 	{
@@ -880,6 +897,8 @@ class MsbuildGenerator {
 			}
 		}
 
+		var sourceFilesSet = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+
 		string [] source_files;
 		using (var reader = new StreamReader (NativeName (base_dir + "\\" + response))) {
 			source_files = reader.ReadToEnd ().Split ();
@@ -900,6 +919,8 @@ class MsbuildGenerator {
 			if (src.StartsWith (@"Test\..\"))
 				src = src.Substring (8, src.Length - 8);
 
+			sourceFilesSet.Add (src);
+
 			sources.AppendFormat ("    <Compile Include=\"{0}\" />" + NewLine, src);
 		}
 
@@ -914,10 +935,27 @@ class MsbuildGenerator {
 			if (src.StartsWith (@"Test\..\"))
 				src = src.Substring (8, src.Length - 8);
 
+			sourceFilesSet.Add (src);
+
 			sources.AppendFormat ("    <Compile Include=\"{0}\" />" + NewLine, src);
 		}
 
 		sources.Append ("  </ItemGroup>");
+
+		var readSources = ReadSources (null, profile, output_name).Select (s => s.Replace("/", "\\")).ToList();
+		readSources.Sort ();
+
+		var readSourcesSet = new HashSet<string> (readSources, StringComparer.OrdinalIgnoreCase);
+
+		foreach (var sf in sourceFilesSet) {
+			if (!readSourcesSet.Contains (sf))
+				Console.WriteLine($"sfs has {sf} but rs doesn't");
+		}
+
+		foreach (var rs in readSourcesSet) {
+			if (!sourceFilesSet.Contains (rs))
+				Console.WriteLine($"rs has {rs} but sfs doesn't");
+		}
 
 		//if (library == "corlib-build") // otherwise, does not compile on fx_version == 4.0
 		//{
