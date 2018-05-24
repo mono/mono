@@ -249,7 +249,7 @@
     IL_005a:  box        [mscorlib]System.Int32
     IL_005f:  call       void [mscorlib]System.Console::WriteLine(string,
                                                                   object)
-    IL_0064:  ldc.i4.s   100
+    IL_0064:  ldc.i4.s   0
     IL_0066:  ret
   } // end of method TailCallETW::Main
 

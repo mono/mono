@@ -73,6 +73,11 @@
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 #include <mach/clock.h>
+#include <mono/utils/mono-merp.h>
+#endif
+
+#ifndef HOST_WIN32
+#include <mono/utils/mono-threads-debug.h>
 #endif
 
 #if defined(HOST_WATCHOS)
@@ -163,10 +168,8 @@ save_old_signal_handler (int signo, struct sigaction *old_action)
 static void
 free_saved_signal_handlers (void)
 {
-	if (mono_saved_signal_handlers) {
-		g_hash_table_destroy (mono_saved_signal_handlers);
-		mono_saved_signal_handlers = NULL;
-	}
+	g_hash_table_destroy (mono_saved_signal_handlers);
+	mono_saved_signal_handlers = NULL;
 }
 
 /*
@@ -209,6 +212,29 @@ MONO_SIG_HANDLER_FUNC (static, sigabrt_signal_handler)
 		mono_handle_native_crash ("SIGABRT", ctx, info);
 	}
 }
+
+#ifdef TARGET_OSX
+MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
+{
+	MONO_SIG_HANDLER_GET_CONTEXT;
+
+	// Note: this function only returns for a single thread
+	// When it's invoked on other threads once the dump begins,
+	// those threads perform their dumps and then sleep until we
+	// die. The dump ends with the exit(1) below
+	MonoContext mctx;
+	gchar *output = NULL;
+	mono_sigctx_to_monoctx (ctx, &mctx);
+	if (!mono_threads_summarize (&mctx, &output, NULL))
+		g_assert_not_reached ();
+
+	// Only the dumping-supervisor thread exits mono_thread_summarize
+	MOSTLY_ASYNC_SAFE_PRINTF("Unhandled exception dump: \n######\n%s\n######\n", output);
+
+	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
+	exit (1);
+}
+#endif
 
 #if (defined (USE_POSIX_BACKEND) && defined (SIGRTMIN)) || defined (SIGPROF)
 #define HAVE_PROFILER_SIGNAL
@@ -360,6 +386,15 @@ remove_signal_handler (int signo)
 		g_assert (sigaction (signo, saved_action, NULL) != -1);
 	}
 }
+
+#ifdef TARGET_OSX
+void
+mini_register_sigterm_handler (void)
+{
+	/* always catch SIGTERM, conditionals inside of handler */
+	add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
+}
+#endif
 
 void
 mono_runtime_posix_install_handlers (void)
@@ -828,6 +863,14 @@ native_stack_with_gdb (pid_t crashed_pid, const char **argv, FILE *commands, cha
 	fprintf (commands, "attach %ld\n", (long) crashed_pid);
 	fprintf (commands, "info threads\n");
 	fprintf (commands, "thread apply all bt\n");
+	if (mini_get_debug_options ()->verbose_gdb) {
+		for (int i = 0; i < 32; ++i) {
+			fprintf (commands, "info registers\n");
+			fprintf (commands, "info frame\n");
+			fprintf (commands, "info locals\n");
+			fprintf (commands, "up\n");
+		}
+	}
 
 	return TRUE;
 }
@@ -851,6 +894,14 @@ native_stack_with_lldb (pid_t crashed_pid, const char **argv, FILE *commands, ch
 	fprintf (commands, "process attach --pid %ld\n", (long) crashed_pid);
 	fprintf (commands, "thread list\n");
 	fprintf (commands, "thread backtrace all\n");
+	if (mini_get_debug_options ()->verbose_gdb) {
+		for (int i = 0; i < 32; ++i) {
+			fprintf (commands, "reg read\n");
+			fprintf (commands, "frame info\n");
+			fprintf (commands, "frame variable\n");
+			fprintf (commands, "up\n");
+		}
+	}
 	fprintf (commands, "detach\n");
 	fprintf (commands, "quit\n");
 

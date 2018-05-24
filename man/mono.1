@@ -478,6 +478,9 @@ in your program, or Mono's class libraries attempts to generate code
 dynamically.  You should test your software upfront and make sure that
 you do not use any dynamic features.
 .TP
+\fB--full-aot-interp\fR
+Same as --full-aot with fallback to the interpreter.
+.TP
 \fB--gc=boehm\fR, \fB--gc=sgen\fR
 Selects the Garbage Collector engine for Mono to use, Boehm or SGen.
 Currently this merely ensures that you are running either the
@@ -588,6 +591,11 @@ Controls whether the runtime should attempt to inline (the default),
 or not inline methods invocations
 .ne
 .RE
+\fB--response=FILE\fR
+Provides a response file, this instructs the Mono command to read
+other command line options from the specified file, as if the
+options had been specified on the command line.   Useful when you have
+very long command lines.
 .TP
 \fB--runtime=VERSION\fR
 Mono supports different runtime versions. The version used depends on the program
@@ -1658,8 +1666,8 @@ Currently, the following options are supported:
 Enables small structs alignment to 4/8 bytes.
 .TP
 \fBarm-use-fallback-tls\fR
-When this option is set on ARM, a fallback TLS will be used instead
-of the default fast TLS.
+When this option is set on ARM, a fallback thread local store will be used instead
+of the default fast thread local storage primitives.
 .TP
 \fBbreak-on-unverified\fR
 If this variable is set, when the Mono VM runs into a verification
@@ -1788,6 +1796,12 @@ This option will suspend the program when an exception occurs.
 .TP
 \fBsuspend-on-unhandled\fR
 This option will suspend the program when an unhandled exception occurs.
+.TP
+\fBthread-dump-dir=DIR\fR
+Use DIR for storage thread dumps created by SIGQUIT.
+.TP
+\fBverbose-gdb\fR
+Make gdb output on native crashes more verbose.
 .ne
 .RE
 .TP

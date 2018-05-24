@@ -54,7 +54,6 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include=".\Properties\AssemblyInfo.cs" />
     <Compile Include="Mono.Btls.Interface\BtlsObject.cs" />
     <Compile Include="Mono.Btls.Interface\BtlsProvider.cs" />
     <Compile Include="Mono.Btls.Interface\BtlsX509.cs" />
@@ -72,6 +71,7 @@
     <Compile Include="Mono.Btls.Interface\BtlsX509VerifyFlags.cs" />
     <Compile Include="Mono.Btls.Interface\BtlsX509VerifyParam.cs" />
     <Compile Include="Mono.Btls.Interface\VersionInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>

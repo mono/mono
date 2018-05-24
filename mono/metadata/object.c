@@ -72,9 +72,6 @@ mono_string_to_utf8_mp	(MonoMemPool *mp, MonoString *s, MonoError *error);
 static void
 array_full_copy_unchecked_size (MonoArray *src, MonoArray *dest, MonoClass *klass, uintptr_t size);
 
-static MonoMethod*
-class_get_virtual_method (MonoClass *klass, MonoMethod *method, gboolean is_proxy, MonoError *error);
-
 /* Class lazy loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (pointer, "System.Reflection", "Pointer")
 static GENERATE_GET_CLASS_WITH_CACHE (remoting_services, "System.Runtime.Remoting", "RemotingServices")
@@ -2828,12 +2825,14 @@ leave:
 MonoMethod*
 mono_object_get_virtual_method (MonoObject *obj_raw, MonoMethod *method)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
 	HANDLE_FUNCTION_ENTER ();
+	MonoMethod *result;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
 	MONO_HANDLE_DCL (MonoObject, obj);
-	MonoMethod *result = mono_object_handle_get_virtual_method (obj, method, error);
+	result = mono_object_handle_get_virtual_method (obj, method, error);
 	mono_error_assert_ok (error);
+	MONO_EXIT_GC_UNSAFE;
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
@@ -2856,17 +2855,17 @@ mono_object_handle_get_virtual_method (MonoObjectHandle obj, MonoMethod *method,
 		klass = remote_class->proxy_class;
 		is_proxy = TRUE;
 	}
-	return class_get_virtual_method (klass, method, is_proxy, error);
+	return mono_class_get_virtual_method (klass, method, is_proxy, error);
 }
 
-static MonoMethod*
-class_get_virtual_method (MonoClass *klass, MonoMethod *method, gboolean is_proxy, MonoError *error)
+MonoMethod*
+mono_class_get_virtual_method (MonoClass *klass, MonoMethod *method, gboolean is_proxy, MonoError *error)
 {
+	MONO_REQ_GC_NEUTRAL_MODE;
 	error_init (error);
 
-
 	if (!is_proxy && ((method->flags & METHOD_ATTRIBUTE_FINAL) || !(method->flags & METHOD_ATTRIBUTE_VIRTUAL)))
-			return method;
+		return method;
 
 	mono_class_setup_vtable (klass);
 	MonoMethod **vtable = m_class_get_vtable (klass);
@@ -2984,8 +2983,9 @@ do_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **ex
 MonoObject*
 mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc)
 {
-	ERROR_DECL (error);
 	MonoObject *res;
+	MONO_ENTER_GC_UNSAFE;
+	ERROR_DECL (error);
 	if (exc) {
 		res = mono_runtime_try_invoke (method, obj, params, exc, error);
 		if (*exc == NULL && !mono_error_ok(error)) {
@@ -2996,6 +2996,7 @@ mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **
 		res = mono_runtime_invoke_checked (method, obj, params, error);
 		mono_error_raise_exception_deprecated (error); /* OK to throw, external only without a good alternative */
 	}
+	MONO_EXIT_GC_UNSAFE;
 	return res;
 }
 
@@ -3412,9 +3413,12 @@ mono_field_get_value (MonoObject *obj, MonoClassField *field, void *value)
 MonoObject *
 mono_field_get_value_object (MonoDomain *domain, MonoClassField *field, MonoObject *obj)
 {	
+	MonoObject* result;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-	MonoObject* result = mono_field_get_value_object_checked (domain, field, obj, error);
+	result = mono_field_get_value_object_checked (domain, field, obj, error);
 	mono_error_assert_ok (error);
+	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
@@ -4782,6 +4786,7 @@ mono_runtime_exec_managed_code (MonoDomain *domain,
 static void
 prepare_thread_to_exec_main (MonoDomain *domain, MonoMethod *method)
 {
+	MONO_REQ_GC_UNSAFE_MODE;
 	MonoInternalThread* thread = mono_thread_internal_current ();
 	MonoCustomAttrInfo* cinfo;
 	gboolean has_stathread_attribute;
@@ -4923,16 +4928,18 @@ do_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 int
 mono_runtime_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 {
+	int rval;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
 	prepare_thread_to_exec_main (mono_object_domain (args), method);
 	if (exc) {
-		int rval = do_try_exec_main (method, args, exc);
-		return rval;
+		rval = do_try_exec_main (method, args, exc);
 	} else {
-		int rval = do_exec_main_checked (method, args, error);
+		rval = do_exec_main_checked (method, args, error);
 		mono_error_raise_exception_deprecated (error); /* OK to throw, external only with no better option */
-		return rval;
 	}
+	MONO_EXIT_GC_UNSAFE;
+	return rval;
 }
 
 /*
@@ -6132,11 +6139,13 @@ mono_array_new_full_checked (MonoDomain *domain, MonoClass *array_class, uintptr
 MonoArray *
 mono_array_new (MonoDomain *domain, MonoClass *eclass, uintptr_t n)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MonoArray *result;
+	MONO_ENTER_GC_UNSAFE;
 
 	ERROR_DECL (error);
-	MonoArray *result = mono_array_new_checked (domain, eclass, n, error);
+	result = mono_array_new_checked (domain, eclass, n, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
@@ -6486,7 +6495,11 @@ mono_string_new_internal (MonoDomain *domain, const char *text)
 MonoString*
 mono_string_new (MonoDomain *domain, const char *text)
 {
-	return mono_string_new_internal (domain, text);
+	MonoString *res;
+	MONO_ENTER_GC_UNSAFE;
+	res = mono_string_new_internal (domain, text);
+	MONO_EXIT_GC_UNSAFE;
+	return res;
 }
 
 /**
@@ -6590,9 +6603,12 @@ mono_string_new_wtf8_len_checked (MonoDomain *domain, const char *text, guint le
 MonoString*
 mono_string_new_wrapper (const char *text)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MonoString *res;
+	MONO_ENTER_GC_UNSAFE;
 
-	return mono_string_new_internal (mono_domain_get (), text);
+	res = mono_string_new_internal (mono_domain_get (), text);
+	MONO_EXIT_GC_UNSAFE;
+	return res;
 }
 
 /**
@@ -6806,9 +6822,12 @@ mono_object_get_domain (MonoObject *obj)
 MonoClass*
 mono_object_get_class (MonoObject *obj)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MonoClass *res;
+	MONO_ENTER_GC_UNSAFE;
 
-	return mono_object_class (obj);
+	res = mono_object_class (obj);
+	MONO_EXIT_GC_UNSAFE;
+	return res;
 }
 /**
  * mono_object_get_size:
@@ -6848,11 +6867,14 @@ mono_object_get_size (MonoObject* o)
 gpointer
 mono_object_unbox (MonoObject *obj)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	gpointer res;
+	MONO_ENTER_GC_UNSAFE;
 
 	/* add assert for valuetypes? */
 	g_assert (m_class_is_valuetype (mono_object_class (obj)));
-	return ((char*)obj) + sizeof (MonoObject);
+	res = ((char*)obj) + sizeof (MonoObject);
+	MONO_EXIT_GC_UNSAFE;
+	return res;
 }
 
 /**
@@ -6864,13 +6886,15 @@ mono_object_unbox (MonoObject *obj)
 MonoObject *
 mono_object_isinst (MonoObject *obj_raw, MonoClass *klass)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
 	HANDLE_FUNCTION_ENTER ();
+	MonoObjectHandle result;
+	MONO_ENTER_GC_UNSAFE;
+
 	MONO_HANDLE_DCL (MonoObject, obj);
 	ERROR_DECL (error);
-	MonoObjectHandle result = mono_object_handle_isinst (obj, klass, error);
+	result = mono_object_handle_isinst (obj, klass, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 	
@@ -7193,8 +7217,8 @@ mono_ldstr_checked (MonoDomain *domain, MonoImage *image, guint32 idx, MonoError
 		MonoString *str = (MonoString *)mono_lookup_dynamic_token (image, MONO_TOKEN_STRING | idx, NULL, error);
 		return str;
 	} else {
-		if (!mono_verifier_verify_string_signature (image, idx, NULL))
-			return NULL; /*FIXME we should probably be raising an exception here*/
+		if (!mono_verifier_verify_string_signature (image, idx, error))
+			return NULL;
 		MonoString *str = mono_ldstr_metadata_sig (domain, mono_metadata_user_string (image, idx), error);
 		return str;
 	}
@@ -7270,8 +7294,8 @@ mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error)
 
 	error_init (error);
 
-	if (!mono_verifier_verify_string_signature (image, idx, NULL))
-		return NULL; /*FIXME we should probably be raising an exception here*/
+	if (!mono_verifier_verify_string_signature (image, idx, error))
+		return NULL;
 	str = mono_metadata_user_string (image, idx);
 
 	len2 = mono_metadata_decode_blob_size (str, &str);
@@ -8756,9 +8780,12 @@ mono_array_length (MonoArray *array)
 char*
 mono_array_addr_with_size (MonoArray *array, int size, uintptr_t idx)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	char *res;
+	MONO_ENTER_GC_UNSAFE;
 
-	return ((char*)(array)->vector) + size * idx;
+	res = ((char*)(array)->vector) + size * idx;
+	MONO_EXIT_GC_UNSAFE;
+	return res;
 }
 
 

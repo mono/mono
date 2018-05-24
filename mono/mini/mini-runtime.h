@@ -220,6 +220,10 @@ typedef struct MonoDebugOptions {
 	 * identify the stack on some platforms
 	 */
 	gboolean disable_omit_fp;
+	/*
+	 * Make gdb output on native crashes more verbose.
+	 */
+	gboolean verbose_gdb;
 
 	// Internal testing feature.
 	gboolean test_tailcall_require;
@@ -526,6 +530,10 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
 //have a global view of sdb disable
 #if !defined(MONO_ARCH_SOFT_DEBUG_SUPPORTED) || defined (DISABLE_DEBUGGER_AGENT)
 #define DISABLE_SDB 1
+#endif
+
+#ifdef TARGET_OSX
+void mini_register_sigterm_handler (void);
 #endif
 
 #endif /* __MONO_MINI_RUNTIME_H__ */

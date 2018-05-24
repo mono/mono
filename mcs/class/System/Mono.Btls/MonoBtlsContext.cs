@@ -62,16 +62,11 @@ namespace Mono.Btls
 		bool isAuthenticated;
 		bool connected;
 
-		public MonoBtlsContext (
-			MNS.MobileAuthenticatedStream parent,
-			bool serverMode, string targetHost,
-			SslProtocols enabledProtocols, X509Certificate serverCertificate,
-			X509CertificateCollection clientCertificates, bool askForClientCert)
-			: base (parent, serverMode, targetHost, enabledProtocols,
-			        serverCertificate, clientCertificates, askForClientCert)
+		public MonoBtlsContext (MNS.MobileAuthenticatedStream parent, MNS.MonoSslAuthenticationOptions options)
+			: base (parent, options)
 		{
-			if (serverMode)
-				nativeServerCertificate = GetPrivateCertificate (serverCertificate);
+			if (IsServer)
+				nativeServerCertificate = GetPrivateCertificate (LocalServerCertificate);
 		}
 
 		static X509CertificateImplBtls GetPrivateCertificate (X509Certificate certificate)
@@ -103,21 +98,26 @@ namespace Mono.Btls
 			}
 		}
 
-		int SelectCallback ()
+		int SelectCallback (string[] acceptableIssuers)
 		{
 			Debug ("SELECT CALLBACK!");
 
-			GetPeerCertificate ();
-			if (remoteCertificate == null)
-				throw new TlsException (AlertDescription.InternalError, "Cannot request client certificate before receiving one from the server.");
+			/*
+			 * Make behavior consistent with AppleTls, which does not call the selection callback after a
+			 * certificate has been set.  See the comment in AppleTlsContext for details.
+			 */
+			if (nativeClientCertificate != null)
+				return 1;
 
-			var clientCert = SelectClientCertificate (remoteCertificate, null);
-			Debug ("SELECT CALLBACK #1: {0}", clientCert);
+			GetPeerCertificate ();
+
+			var clientCert = SelectClientCertificate (acceptableIssuers);
+			Debug ($"SELECT CALLBACK #1: {clientCert}");
 			if (clientCert == null)
 				return 1;
 
 			nativeClientCertificate = GetPrivateCertificate (clientCert);
-			Debug ("SELECT CALLBACK #2: {0}", nativeClientCertificate);
+			Debug ($"SELECT CALLBACK #2: {nativeClientCertificate}");
 			clientCertificate = new X509Certificate (nativeClientCertificate);
 			SetPrivateCertificate (nativeClientCertificate);
 			return 1;
@@ -161,6 +161,10 @@ namespace Mono.Btls
 			var error = MonoBtlsError.GetError (out file, out line);
 			if (error == 0)
 				return new MonoBtlsException (status);
+
+			var reason = MonoBtlsError.GetErrorReason (error);
+			if (reason > 0)
+				return new TlsException ((AlertDescription)reason);
 
 			var text = MonoBtlsError.GetErrorString (error);
 
@@ -236,11 +240,13 @@ namespace Mono.Btls
 
 			ctx.SetVerifyParam (MonoBtlsProvider.GetVerifyParam (Settings, ServerName, IsServer));
 
-			TlsProtocolCode minProtocol, maxProtocol;
+			TlsProtocolCode? minProtocol, maxProtocol;
 			GetProtocolVersions (out minProtocol, out maxProtocol);
 
-			ctx.SetMinVersion ((int)minProtocol);
-			ctx.SetMaxVersion ((int)maxProtocol);
+			if (minProtocol != null)
+				ctx.SetMinVersion ((int)minProtocol.Value);
+			if (maxProtocol != null)
+				ctx.SetMaxVersion ((int)maxProtocol.Value);
 
 			if (Settings != null && Settings.EnabledCiphers != null) {
 				var ciphers = new short [Settings.EnabledCiphers.Length];
@@ -248,6 +254,9 @@ namespace Mono.Btls
 					ciphers [i] = (short)Settings.EnabledCiphers [i];
 				ctx.SetCiphers (ciphers, true);
 			}
+
+			if (IsServer && Settings?.ClientCertificateIssuers != null)
+				ctx.SetClientCertificateIssuers (Settings.ClientCertificateIssuers);
 		}
 
 		void GetPeerCertificate ()
@@ -354,12 +363,28 @@ namespace Mono.Btls
 			}
 		}
 
+		public override bool CanRenegotiate {
+			get {
+				return false;
+			}
+		}
+
+		public override void Renegotiate ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override void Shutdown ()
 		{
 			Debug ("Shutdown!");
 			if (Settings == null || !Settings.SendCloseNotify)
 				ssl.SetQuietShutdown ();
 			ssl.Shutdown ();
+		}
+
+		public override bool PendingRenegotiation ()
+		{
+			return ssl.RenegotiatePending ();
 		}
 
 		void Dispose<T> (ref T disposable)

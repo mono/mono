@@ -13,6 +13,7 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Net.Security;
 using System.Reflection;
 using System.Security.Cryptography;
 using SSCX = System.Security.Cryptography.X509Certificates;
@@ -21,7 +22,6 @@ using System.Text;
 using Mono.Security.Authenticode;
 using Mono.Security.Cryptography;
 using Mono.Security.X509;
-using Mono.Security.Protocol.Tls;
 
 [assembly: AssemblyTitle ("Mono Certificate Manager")]
 [assembly: AssemblyDescription ("Manage X.509 certificates and CRL from stores.")]
@@ -447,36 +447,22 @@ namespace Mono.Tools {
 			Socket socket = new Socket (ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			socket.Connect (new IPEndPoint (ip, uri.Port));
 			NetworkStream ns = new NetworkStream (socket, false);
-			SslClientStream ssl = new SslClientStream (ns, uri.Host, false, Mono.Security.Protocol.Tls.SecurityProtocolType.Default, null);
-			ssl.ServerCertValidationDelegate += new CertificateValidationCallback (CertificateValidation);
 
-			try {
-				// we don't really want to write to the server (as we don't know
-				// the protocol it using) but we must send something to be sure the
-				// SSL handshake is done (so we receive the X.509 certificates).
-				StreamWriter sw = new StreamWriter (ssl);
-				sw.WriteLine (Environment.NewLine);
-				sw.Flush ();
-				socket.Poll (30000, SelectMode.SelectRead);
-			}
-			finally {
-				socket.Close ();
-			}
+			var certs = new X509CertificateCollection ();
+			var ssl = new SslStream (ns, false, (s, cert, chain, p) => {
+				var elements = chain?.ChainPolicy?.ExtraStore;
+				if (elements != null && elements.Count > 0) {
+					foreach (var element in elements) {
+						certs.Add (new X509Certificate (element.RawData));
+					}
+				} else {
+					certs.Add (new X509Certificate (cert.GetRawCertData ()));
+				}
+				return true;
+			});
+			ssl.AuthenticateAsClient (uri.Host);
 
-			// we need a little reflection magic to get this information
-			PropertyInfo pi = typeof (SslStreamBase).GetProperty ("ServerCertificates", BindingFlags.Instance | BindingFlags.NonPublic);
-			if (pi == null) {
-				Console.WriteLine ("Sorry but you need a newer version of Mono.Security.dll to use this feature.");
-				return null;
-			}
-			return (X509CertificateCollection) pi.GetValue (ssl, null);
-		}
-
-		static bool CertificateValidation (SSCX.X509Certificate certificate, int[] certificateErrors)
-		{
-			// the main reason to download it is that it's not trusted
-			return true;
-			// OTOH we ask user confirmation before adding certificates into the stores
+			return certs;
 		}
 
 		static void Ssl (string host, bool machine, bool verbose) 

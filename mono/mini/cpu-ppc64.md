@@ -46,13 +46,13 @@
 # See the code in mini-x86.c for more details on how the specifiers are used.
 #
 tailcall: len:124 clob:c
+tailcall_parameter: len:0 # PowerPC outputs a nice fixed size memcpy loop for larger stack_usage, so 0.
 memory_barrier: len:4
 nop: len:4
 relaxed_nop: len:4
 break: len:40
 seq_point: len:48
 il_seq_point: len:0
-jmp: len:96
 call: dest:a clob:c len:36
 br: len:4
 throw: src1:i len:40
@@ -133,6 +133,10 @@ storer8_memindex: dest:b src1:i src2:i len:4
 loadu4_mem: dest:i len:8
 move: dest:i src1:i len:4
 fmove: dest:f src1:f len:4
+move_f_to_i4: dest:i src1:f len:8
+move_i4_to_f: dest:f src1:i len:8
+move_f_to_i8: dest:i src1:f len:8
+move_i8_to_f: dest:f src1:i len:8
 add_imm: dest:i src1:i len:4
 sub_imm: dest:i src1:i len:4
 mul_imm: dest:i src1:i len:4

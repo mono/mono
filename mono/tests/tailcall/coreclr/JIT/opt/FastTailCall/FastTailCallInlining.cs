@@ -10,7 +10,7 @@ public class Test
    public static int Main()
    {
        A(2);
-       return 100;
+       return 0;
    }
       
    public static void A(int i)

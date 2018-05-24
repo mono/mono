@@ -3,6 +3,7 @@
 ../../../external/corefx/src/Common/tests/System/RandomExtensions.cs
 ../../../external/corefx/src/Common/tests/System/RandomDataGenerator.cs
 
+../../../external/corefx/src/Common/tests/System/Buffers/NativeMemoryManager.cs
 ../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadTestHelpers.cs
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadPoolHelpers.cs
@@ -127,22 +128,9 @@
 ../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderToString.cs
 
 ../../../external/corefx/src/System.Text.Encoding/tests/ASCIIEncoding/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Decoder/Decoder.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Decoder/DecoderConvert2.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Decoder/DecoderCtor.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Decoder/DecoderGetCharCount2.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Decoder/DecoderGetCharCount3.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Decoder/DecoderGetChars2.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Decoder/DecoderGetChars3.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Decoder/DecoderReset.cs
-#../../../external/corefx/src/System.Text.Encoding/tests/Decoder/DecoderSpanTests.netcoreapp.cs
+../../../external/corefx/src/System.Text.Encoding/tests/Decoder/*.cs
 ../../../external/corefx/src/System.Text.Encoding/tests/DecoderFallbackException/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Encoder/Encoder.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Encoder/EncoderConvert2.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Encoder/EncoderCtor.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Encoder/EncoderGetByteCount2.cs
-../../../external/corefx/src/System.Text.Encoding/tests/Encoder/EncoderGetBytes2.cs
-#../../../external/corefx/src/System.Text.Encoding/tests/Encoder/EncoderSpanTests.netcoreapp.cs
+../../../external/corefx/src/System.Text.Encoding/tests/Encoder/*.cs
 ../../../external/corefx/src/System.Text.Encoding/tests/EncoderFallbackException/*.cs
 ../../../external/corefx/src/System.Text.Encoding/tests/Encoding/*.cs
 ../../../external/corefx/src/System.Text.Encoding/tests/Fallback/*.cs
@@ -151,8 +139,8 @@
 ../../../external/corefx/src/System.Text.Encoding/tests/UTF7Encoding/*.cs
 ../../../external/corefx/src/System.Text.Encoding/tests/UTF8Encoding/*.cs
 ../../../external/corefx/src/System.Text.Encoding/tests/UTF32Encoding/*.cs
-../../../external/corefx/src/System.Text.Encoding/tests/EncodingTestHelpers.cs
-../../../external/corefx/src/System.Text.Encoding/tests/NegativeEncodingTests.cs
+../../../external/corefx/src/System.Text.Encoding/tests/*.cs:EncodingTestHelpers.netcoreapp.cs,NegativeEncodingTests.netcoreapp.cs
+../../../external/corefx/src/System.Text.Encoding.Extensions/tests/*.cs
 
 ../../../external/corefx/src/System.ValueTuple/tests/*.cs
 
@@ -160,12 +148,12 @@
 # TODO: Many more to be included
 ../../../external/corefx/src/System.Runtime/tests/System/String.SplitTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Reflection/BindingFlagsDoNotWrap.netcoreapp.cs
-
+../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
 
 # System.Threading.Tasks
 ../../../external/corefx/src/System.Threading.Tasks/tests/System.Runtime.CompilerServices/*.cs
-../../../external/corefx/src/System.Threading.Tasks/tests/Task/*.cs:*.netcoreapp.cs,TaskContinueWithTests.cs
+../../../external/corefx/src/System.Threading.Tasks/tests/Task/*.cs:*.netcoreapp.cs,TaskContinueWithTests.cs,ExecutionContextFlowTest.cs
 ../../../external/corefx/src/System.Threading.Tasks/tests/TaskFactory/*.cs
 ../../../external/corefx/src/System.Threading.Tasks/tests/TaskScheduler/*.cs
 ../../../external/corefx/src/System.Threading.Tasks/tests/*.cs:UnwrapTests.cs,CancellationTokenTests.netcoreapp.cs
@@ -184,11 +172,21 @@
 
 # System.Memory
 ../../../external/corefx/src/System.Memory/tests/*.cs
+../../../external/corefx/src/System.Memory/tests/Base64/*.cs
 ../../../external/corefx/src/System.Memory/tests/Binary/*.cs
 ../../../external/corefx/src/System.Memory/tests/Memory/*.cs
+../../../external/corefx/src/System.Memory/tests/MemoryMarshal/*.cs:CreateReadOnlySpan.cs,CreateSpan.cs
+../../../external/corefx/src/System.Memory/tests/MemoryPool/*.cs
+../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/*.cs
+../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/Formatter/*.cs
+../../../external/corefx/src/System.Memory/tests/ParsersAndFormatters/Parser/*.cs
+../../../external/corefx/src/System.Memory/tests/ReadOnlyBuffer/*.cs
 ../../../external/corefx/src/System.Memory/tests/ReadOnlyMemory/*.cs
-../../../external/corefx/src/System.Memory/tests/ReadOnlySpan/*.cs
-../../../external/corefx/src/System.Memory/tests/Span/*.cs:Reflection.cs
+../../../external/corefx/src/System.Memory/tests/ReadOnlySpan/*.cs:GetPinnableReference.cs
+../../../external/corefx/src/System.Memory/tests/Span/*.cs:Reflection.cs,GetPinnableReference.cs
+
+# FIXME: this is internal in corlib
+../../../external/corefx/src/Common/src/System/MutableDecimal.cs
 
 # System.Collections
 ../../../external/corefx/src/Common/tests/System/Collections/CollectionAsserts.cs

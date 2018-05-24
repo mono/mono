@@ -56,6 +56,9 @@ namespace Mono.Btls
 		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
 		extern static void mono_btls_error_get_error_string_n (int error, IntPtr buf, int len);
 
+		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
+		extern static int mono_btls_error_get_reason (int error);
+
 		public static int PeekError ()
 		{
 			return mono_btls_error_peek_error ();
@@ -105,6 +108,11 @@ namespace Mono.Btls
 			else
 				file = null;
 			return error;
+		}
+
+		public static int GetErrorReason (int error)
+		{
+			return mono_btls_error_get_reason (error);
 		}
 	}
 }

@@ -54,9 +54,9 @@ namespace Mono.AppleTls
 		X509Certificate remoteCertificate;
 		X509Certificate localClientCertificate;
 		MonoTlsConnectionInfo connectionInfo;
-		bool havePeerTrust;
 		bool isAuthenticated;
 		bool handshakeFinished;
+		// bool renegotiating;
 		int handshakeStarted;
 
 		bool closed;
@@ -66,20 +66,16 @@ namespace Mono.AppleTls
 
 		Exception lastException;
 
-		public AppleTlsContext (
-			MobileAuthenticatedStream parent, bool serverMode, string targetHost,
-			SSA.SslProtocols enabledProtocols, X509Certificate serverCertificate,
-			X509CertificateCollection clientCertificates, bool askForClientCert)
-			: base (parent, serverMode, targetHost, enabledProtocols,
-				serverCertificate, clientCertificates, askForClientCert)
+		public AppleTlsContext (MobileAuthenticatedStream parent, MonoSslAuthenticationOptions options)
+			: base (parent, options)
 		{
 			handle = GCHandle.Alloc (this, GCHandleType.Weak);
 			readFunc = NativeReadCallback;
 			writeFunc = NativeWriteCallback;
 
 			if (IsServer) {
-				if (serverCertificate == null)
-					throw new ArgumentNullException ("serverCertificate");
+				if (LocalServerCertificate == null)
+					throw new ArgumentNullException (nameof (LocalServerCertificate));
 			}
 		}
 
@@ -122,6 +118,12 @@ namespace Mono.AppleTls
 
 			case SslStatus.Protocol:
 				throw new TlsException (AlertDescription.ProtocolVersion);
+
+			case SslStatus.PeerNoRenegotiation:
+				throw new TlsException (AlertDescription.NoRenegotiation);
+
+			case SslStatus.PeerUnexpectedMsg:
+				throw new TlsException (AlertDescription.UnexpectedMessage);
 
 			default:
 				throw new TlsException (AlertDescription.InternalError, "Unknown Secure Transport error `{0}'.", status);
@@ -183,18 +185,9 @@ namespace Mono.AppleTls
 				CheckStatusAndThrow (status, SslStatus.WouldBlock, SslStatus.PeerAuthCompleted, SslStatus.PeerClientCertRequested);
 
 				if (status == SslStatus.PeerAuthCompleted) {
-					RequirePeerTrust ();
+					EvaluateTrust ();
 				} else if (status == SslStatus.PeerClientCertRequested) {
-					RequirePeerTrust ();
-					if (remoteCertificate == null)
-						throw new TlsException (AlertDescription.InternalError, "Cannot request client certificate before receiving one from the server.");
-					localClientCertificate = SelectClientCertificate (remoteCertificate, null);
-					if (localClientCertificate == null)
-						continue;
-					clientIdentity = AppleCertificateHelper.GetIdentity (localClientCertificate);
-					if (clientIdentity == null)
-						throw new TlsException (AlertDescription.CertificateUnknown);
-					SetCertificate (clientIdentity, new SecCertificate [0]);
+					ClientCertificateRequested ();
 				} else if (status == SslStatus.WouldBlock) {
 					return false;
 				} else if (status == SslStatus.Success) {
@@ -204,12 +197,17 @@ namespace Mono.AppleTls
 			}
 		}
 
-		void RequirePeerTrust ()
+		void ClientCertificateRequested ()
 		{
-			if (!havePeerTrust) {
-				EvaluateTrust ();
-				havePeerTrust = true;
-			}
+			EvaluateTrust ();
+			var acceptableIssuers = CopyDistinguishedNames ();
+			localClientCertificate = SelectClientCertificate (acceptableIssuers);
+			if (localClientCertificate == null)
+				return;
+			clientIdentity = AppleCertificateHelper.GetIdentity (localClientCertificate);
+			if (clientIdentity == null)
+				throw new TlsException (AlertDescription.CertificateUnknown);
+			SetCertificate (clientIdentity, new SecCertificate [0]);
 		}
 
 		void EvaluateTrust ()
@@ -279,18 +277,25 @@ namespace Mono.AppleTls
 			result = SSLSetConnection (Handle, GCHandle.ToIntPtr (handle));
 			CheckStatusAndThrow (result);
 
+			/*
+			 * If 'EnabledProtocols' is zero, then we use the system default values.
+			 *
+			 * In CoreFX, 'ServicePointManager.SecurityProtocol' defaults to
+			 * 'SecurityProtocolType.SystemDefault', which is zero.
+			 */
+
 			if ((EnabledProtocols & SSA.SslProtocols.Tls) != 0)
 				MinProtocol = SslProtocol.Tls_1_0;
 			else if ((EnabledProtocols & SSA.SslProtocols.Tls11) != 0)
 				MinProtocol = SslProtocol.Tls_1_1;
-			else
+			else if ((EnabledProtocols & SSA.SslProtocols.Tls12) != 0)
 				MinProtocol = SslProtocol.Tls_1_2;
 
 			if ((EnabledProtocols & SSA.SslProtocols.Tls12) != 0)
 				MaxProtocol = SslProtocol.Tls_1_2;
 			else if ((EnabledProtocols & SSA.SslProtocols.Tls11) != 0)
 				MaxProtocol = SslProtocol.Tls_1_1;
-			else
+			else if ((EnabledProtocols & SSA.SslProtocols.Tls) != 0)
 				MaxProtocol = SslProtocol.Tls_1_0;
 
 			if (Settings != null && Settings.EnabledCiphers != null) {
@@ -300,8 +305,15 @@ namespace Mono.AppleTls
 				SetEnabledCiphers (ciphers);
 			}
 
-			if (AskForClientCertificate)
+			if (IsServer && AskForClientCertificate)
 				SetClientSideAuthenticate (SslAuthenticate.Try);
+
+			if (IsServer && Settings?.ClientCertificateIssuers != null) {
+				Debug ("Set client certificate issuers.");
+				foreach (var issuer in Settings.ClientCertificateIssuers) {
+					AddDistinguishedName (issuer);
+				}
+			}
 
 			IPAddress address;
 			if (!IsServer && !string.IsNullOrEmpty (TargetHost) &&
@@ -455,6 +467,13 @@ namespace Mono.AppleTls
 				CheckStatusAndThrow (result);
 				return value;
 			}
+		}
+
+		SslSessionState GetSessionState ()
+		{
+			var value = SslSessionState.Invalid;
+			var result = SSLGetSessionState (Handle, ref value);
+			return result == SslStatus.Success ? value : SslSessionState.Invalid;
 		}
 
 		[DllImport (SecurityLibrary)]
@@ -665,6 +684,43 @@ namespace Mono.AppleTls
 			return (value == IntPtr.Zero) ? null : new SecTrust (value, true);
 		}
 
+		[DllImport (SecurityLibrary)]
+		extern static /* OSStatus */ SslStatus SSLAddDistinguishedName (/* SSLContextRef */ IntPtr context, /* const void * */ byte[] derDN, /* size_t */ IntPtr derDNLen);
+
+		void AddDistinguishedName (string name)
+		{
+			var dn = new X500DistinguishedName (name);
+			var bytes = dn.RawData;
+			var result = SSLAddDistinguishedName (Handle, bytes, (IntPtr)bytes.Length);
+			CheckStatusAndThrow (result);
+		}
+
+		[DllImport (SecurityLibrary)]
+		extern static /* OSStatus */ SslStatus SSLCopyDistinguishedNames (/* SSLContextRef */ IntPtr context, /* CFArrayRef  _Nullable * */ out IntPtr names);
+
+		string[] CopyDistinguishedNames ()
+		{
+			IntPtr arrayPtr;
+			var result = SSLCopyDistinguishedNames (Handle, out arrayPtr);
+			CheckStatusAndThrow (result);
+
+			if (arrayPtr == IntPtr.Zero)
+				return new string[0];
+
+			using (var array = new CFArray (arrayPtr, true)) {
+				var names = new string [array.Count];
+				for (int i = 0; i < array.Count; i++) {
+					using (var data = new CFData (array[i], false)) {
+						var buffer = new byte [(int)data.Length];
+						Marshal.Copy (data.Bytes, buffer, 0, buffer.Length);
+						var dn = new X500DistinguishedName (buffer);
+						names[i] = dn.Name;
+					}
+				}
+				return names;
+			}
+		}
+
 		#endregion
 
 		#region IO Functions
@@ -843,12 +899,51 @@ namespace Mono.AppleTls
 			}
 		}
 
+#if !MONOTOUCH
+		// Available on macOS 10.12+ and iOS 10.0+.
+		[DllImport (SecurityLibrary)]
+		extern static /* OSStatus */ SslStatus SSLReHandshake (/* SSLContextRef */ IntPtr context);
+#endif
+
+		public override bool CanRenegotiate {
+			get {
+#if MONOTOUCH
+				return false;
+#else
+				if (!IsServer)
+					return false;
+				if (Environment.OSVersion.Version < new Version (16, 6))
+					return false;
+				return true;
+#endif
+			}
+		}
+
+		public override void Renegotiate ()
+		{
+#if MONOTOUCH
+			throw new NotSupportedException ();
+#else
+			if (!CanRenegotiate)
+				throw new NotSupportedException ();
+
+			var status = SSLReHandshake (Handle);
+			CheckStatusAndThrow (status);
+			// renegotiating = true;
+#endif
+		}
+
 		[DllImport (SecurityLibrary)]
 		extern static /* OSStatus */ SslStatus SSLClose (/* SSLContextRef */ IntPtr context);
 
 		public override void Shutdown ()
 		{
 			closed = true;
+		}
+
+		public override bool PendingRenegotiation ()
+		{
+			return GetSessionState () == SslSessionState.Handshake;
 		}
 
 		#endregion

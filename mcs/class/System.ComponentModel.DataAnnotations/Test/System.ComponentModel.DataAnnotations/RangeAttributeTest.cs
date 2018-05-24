@@ -129,18 +129,18 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.IsFalse (attr.IsValid ("12"), "#A1-2");
 			Assert.IsTrue (attr.IsValid (null), "#A1-3");
 			Assert.IsTrue (attr.IsValid (String.Empty), "#A1-4");
-			Assert.Throws <Exception> (() => {
+			Assert.Throws <ArgumentException> (() => {
 				attr.IsValid ("zero");
 			}, "#A1-5");
 			Assert.IsTrue (attr.IsValid (null), "#A1-6");
 			attr = new DA.RangeAttribute (typeof (int), "minus ten", "ten");
-			Assert.Throws<Exception> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				attr.IsValid ("0");
 			}, "#A2-1");
-			Assert.Throws<Exception> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				attr.IsValid ("12");
 			}, "#A2-2");
-			Assert.Throws<Exception> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				attr.IsValid ("zero");
 			}, "#A2-3");
 

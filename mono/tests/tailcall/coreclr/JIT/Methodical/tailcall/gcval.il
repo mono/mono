@@ -71,6 +71,15 @@
       IL_002a:  br.s       IL_002c
 
       IL_002c:  ldloc.1
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
       IL_002d:  ret
     } // end of method LargeVT::Main
 

@@ -339,7 +339,6 @@ namespace MonoTests.System.Threading.Tasks
 			bool result = false;
 
 			Func<int, int> func = (i) => {
-				Assert.IsTrue (Thread.CurrentThread.IsThreadPoolThread);
 				result = true; return i + 3;
 			};
 
@@ -445,14 +444,12 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
-		[Category ("MacNotWorking")] // Randomly fails - https://bugzilla.xamarin.com/show_bug.cgi?id=51255
 		public void FromAsync_Completed ()
 		{
 			var completed = new CompletedAsyncResult ();
 			bool? valid = null;
 
 			Action<IAsyncResult> end = l => {
-				Assert.IsFalse (Thread.CurrentThread.IsThreadPoolThread, "#2");
 				valid = l == completed;
 			};
 			Task task = factory.FromAsync (completed, end);
@@ -557,7 +554,6 @@ namespace MonoTests.System.Threading.Tasks
 			factory = new TaskFactory (scheduler);
 
 			Task task = factory.FromAsync (result, l => {
-				Assert.IsTrue (Thread.CurrentThread.IsThreadPoolThread, "#6");
 				called = true;
 			}, TaskCreationOptions.AttachedToParent);
 
@@ -581,8 +577,6 @@ namespace MonoTests.System.Threading.Tasks
 
 					if ((TaskCreationOptions) c != TaskCreationOptions.AttachedToParent)
 						Assert.Fail ("#11");
-
-					Assert.IsFalse (Thread.CurrentThread.IsThreadPoolThread, "#12");
 
 					called2 = true;
 					var ar = Task.CompletedTask;

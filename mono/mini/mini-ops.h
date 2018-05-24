@@ -42,6 +42,11 @@ MINI_OP(OP_CHECK_THIS,	"checkthis", NONE, IREG, NONE)
 MINI_OP(OP_SEQ_POINT, "seq_point", NONE, NONE, NONE)
 MINI_OP(OP_IL_SEQ_POINT, "il_seq_point", NONE, NONE, NONE)
 MINI_OP(OP_IMPLICIT_EXCEPTION, "implicit_exception", NONE, NONE, NONE)
+MINI_OP(OP_BOX, "box", IREG, IREG, NONE)
+/* A box of the int value in inst_c0 */
+MINI_OP(OP_BOX_ICONST, "box_iconst", IREG, NONE, NONE)
+/* Same as OP_MOVE, ins->dreg is an objref of type ins->klass */
+MINI_OP(OP_TYPED_OBJREF, "typed_objref", IREG, IREG, NONE)
 
 /* CALL opcodes need to stay together, see MONO_IS_CALL macro */
 MINI_OP(OP_VOIDCALL,	"voidcall", NONE, NONE, NONE)
@@ -207,9 +212,10 @@ MINI_OP(OP_SHR_IMM,    "shr_imm", IREG, IREG, NONE)
 MINI_OP(OP_SHR_UN_IMM, "shr_un_imm", IREG, IREG, NONE)
 
 MINI_OP(OP_BR,         "br", NONE, NONE, NONE)
-MINI_OP(OP_JMP,        "jmp", NONE, NONE, NONE)
-/* Same as OP_JMP, but the passing of arguments is done similarly to calls */
+/* Similar to old OP_JMP, but the passing of arguments is done similarly to calls */
 MINI_OP(OP_TAILCALL,   "tailcall", NONE, NONE, NONE)
+MINI_OP(OP_TAILCALL_PARAMETER, "tailcall_parameter", NONE, NONE, NONE) // no code, just size
+MINI_OP(OP_TAILCALL_REG, "tailcall_reg", NONE, IREG, NONE)
 MINI_OP(OP_TAILCALL_MEMBASE, "tailcall_membase", NONE, IREG, NONE)
 MINI_OP(OP_BREAK,      "break", NONE, NONE, NONE)
 
