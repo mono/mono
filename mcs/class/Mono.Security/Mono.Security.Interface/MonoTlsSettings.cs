@@ -94,6 +94,13 @@ namespace Mono.Security.Interface
 		}
 
 		/*
+		 * Client Certificate Support.
+		 */
+		public string[] ClientCertificateIssuers {
+			get; set;
+		}
+
+		/*
 		 * If you set this here, then it will override 'ServicePointManager.SecurityProtocol'.
 		 */
 		public TlsProtocols? EnabledProtocols {
@@ -181,6 +188,7 @@ namespace Mono.Security.Interface
 			EnabledCiphers = other.EnabledCiphers;
 			CertificateValidationTime = other.CertificateValidationTime;
 			SendCloseNotify = other.SendCloseNotify;
+			ClientCertificateIssuers = other.ClientCertificateIssuers;
 			if (other.TrustAnchors != null)
 				TrustAnchors = new X509CertificateCollection (other.TrustAnchors);
 			if (other.CertificateSearchPaths != null) {

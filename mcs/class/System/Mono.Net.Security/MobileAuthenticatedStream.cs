@@ -114,6 +114,22 @@ namespace Mono.Net.Security
 			return new IOException (message, e);
 		}
 
+		internal static Exception GetRenegotiationException (string message)
+		{
+			var tlsExc = new MSI.TlsException (MSI.AlertDescription.NoRenegotiation, message);
+			return new AuthenticationException (SR.net_auth_SSPI, tlsExc);
+		}
+
+		internal static Exception GetInternalError ()
+		{
+			throw new InvalidOperationException ("Internal error.");
+		}
+
+		internal static Exception GetInvalidNestedCallException ()
+		{
+			throw new InvalidOperationException ("Invalid nested call.");
+		}
+
 		internal ExceptionDispatchInfo SetException (Exception e)
 		{
 			var info = ExceptionDispatchInfo.Capture (e);
@@ -326,12 +342,12 @@ namespace Mono.Net.Security
 
 			var asyncRequest = new AsyncHandshakeRequest (this, runSynchronously);
 			if (Interlocked.CompareExchange (ref asyncHandshakeRequest, asyncRequest, null) != null)
-				throw new InvalidOperationException ("Invalid nested call.");
+				throw GetInvalidNestedCallException ();
 			// Make sure no other async requests can be started during the handshake.
 			if (Interlocked.CompareExchange (ref asyncReadRequest, asyncRequest, null) != null)
-				throw new InvalidOperationException ("Invalid nested call.");
+				throw GetInvalidNestedCallException ();
 			if (Interlocked.CompareExchange (ref asyncWriteRequest, asyncRequest, null) != null)
-				throw new InvalidOperationException ("Invalid nested call.");
+				throw GetInvalidNestedCallException ();
 
 			AsyncProtocolResult result;
 
@@ -430,10 +446,10 @@ namespace Mono.Net.Security
 
 			if (type == OperationType.Read) {
 				if (Interlocked.CompareExchange (ref asyncReadRequest, asyncRequest, null) != null)
-					throw new InvalidOperationException ("Invalid nested call.");
+					throw GetInvalidNestedCallException ();
 			} else {
 				if (Interlocked.CompareExchange (ref asyncWriteRequest, asyncRequest, null) != null)
-					throw new InvalidOperationException ("Invalid nested call.");
+					throw GetInvalidNestedCallException ();
 			}
 
 			AsyncProtocolResult result;
