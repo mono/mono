@@ -1610,7 +1610,6 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/ReadOnlyDictionary.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Gen2GcCallback.cs
-../../../external/corefx/src/Common/src/CoreLib/System/HashCode.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/HResults.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MathF.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Marvin.cs
@@ -1676,9 +1675,6 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Numerics/Vector_Operations.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/BindingFlags.cs
-
-../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.GetRandomBytes.cs
-../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/Interop.Libraries.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/AsyncMethodBuilderAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/AsyncValueTaskMethodBuilder.cs
