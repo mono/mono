@@ -225,10 +225,26 @@ namespace System.IO {
             Contract.Requires(destination.CanWrite);
             Contract.Requires(bufferSize > 0);
             
+#if MONO
+            byte[] buffer = System.Buffers.ArrayPool<byte>.Shared.Rent(bufferSize);
+            try
+            {
+                int read;
+                while ((read = Read(buffer, 0, buffer.Length)) != 0)
+                {
+                    destination.Write(buffer, 0, read);
+                }
+            }
+            finally
+            {
+                System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
+            }
+#else
             byte[] buffer = new byte[bufferSize];
             int read;
             while ((read = Read(buffer, 0, buffer.Length)) != 0)
                 destination.Write(buffer, 0, read);
+#endif
         }
 
 
