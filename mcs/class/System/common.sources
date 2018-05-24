@@ -68,8 +68,6 @@ System.Net.Mail/AttachmentCollection.cs
 System.Net.Mail/DeliveryNotificationOptions.cs
 System.Net.Mail/LinkedResource.cs
 System.Net.Mail/LinkedResourceCollection.cs
-System.Net.Mail/MailAddress.cs
-System.Net.Mail/MailAddressCollection.cs
 System.Net.Mail/MailMessage.cs
 System.Net.Mail/MailPriority.cs
 System.Net.Mail/SendCompletedEventHandler.cs
@@ -739,7 +737,15 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Net.Mail/src/System/Net/BufferBuilder.cs
 ../../../external/corefx/src/System.Net.Mail/src/System/Net/CloseableStream.cs
 ../../../external/corefx/src/System.Net.Mail/src/System/Net/DelegatedStream.cs
+../../../external/corefx/src/Common/src/System/Net/Mail/DomainLiteralReader.cs
+../../../external/corefx/src/Common/src/System/Net/Mail/DotAtomReader.cs
+../../../external/corefx/src/Common/src/System/Net/Mail/MailAddressParser.cs
 ../../../external/corefx/src/Common/src/System/Net/Mail/MailBnfHelper.cs
+../../../external/corefx/src/Common/src/System/Net/Mail/QuotedPairReader.cs
+../../../external/corefx/src/Common/src/System/Net/Mail/QuotedStringFormatReader.cs
+../../../external/corefx/src/Common/src/System/Net/Mail/WhitespaceReader.cs
+../../../external/corefx/src/System.Net.Mail/src/System/Net/Mail/MailAddress.cs
+../../../external/corefx/src/System.Net.Mail/src/System/Net/Mail/MailAddressCollection.cs
 ../../../external/corefx/src/System.Net.Mail/src/System/Net/Mail/MailHeaderInfo.cs
 ../../../external/corefx/src/System.Net.Mail/src/System/Net/Mail/MailHeaderID.cs
 

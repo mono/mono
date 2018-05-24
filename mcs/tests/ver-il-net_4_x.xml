@@ -52944,6 +52944,47 @@
       </method>
     </type>
   </test>
+  <test name="test-961.cs">
+    <type name="B">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void Foo(Int32)" attrs="145">
+        <size>32</size>
+      </method>
+      <method name="Void &lt;Foo&gt;m__0(Int32)" attrs="145">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="Void Invoke(Int32)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="System.IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(System.IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Void set_Item(Int32, Int32)" attrs="2177">
+        <size>2</size>
+      </method>
+      <method name="System.String op_Implicit(M)" attrs="2198">
+        <size>9</size>
+      </method>
+      <method name="Void Test2(Int32)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor(Int32)" attrs="6278">
+        <size>8</size>
+      </method>
+    </type>
+  </test>
   <test name="test-97.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
