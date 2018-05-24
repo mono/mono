@@ -3114,7 +3114,7 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 	int flags = 0;
 
 	mono_loader_lock ();
-	if (info->type != FRAME_TYPE_MANAGED && info->type != FRAME_TYPE_INTERP) {
+	if (info->type != FRAME_TYPE_MANAGED && info->type != FRAME_TYPE_INTERP && info->type != FRAME_TYPE_MANAGED_TO_NATIVE) {
 		if (info->type == FRAME_TYPE_DEBUGGER_INVOKE) {
 			/* Mark the last frame as an invoke frame */
 			if (ud->frames)
