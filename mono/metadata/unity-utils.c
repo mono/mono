@@ -30,6 +30,10 @@
 #include <mono/metadata/tokentype.h>
 #include <mono/utils/mono-string.h>
 
+#if HAVE_BDWGC_GC
+#include <external/bdwgc/include/gc.h>
+#endif
+
 #include <glib.h>
 
 #ifdef WIN32
@@ -898,6 +902,25 @@ MONO_API unitytls_interface_struct*
 mono_unity_get_unitytls_interface()
 {
 	return gUnitytlsInterface;
+}
+
+// gc
+MONO_API void mono_unity_gc_enable()
+{
+#if HAVE_BDWGC_GC
+	GC_enable();
+#else
+	g_assert_not_reached ();
+#endif
+}
+
+MONO_API void mono_unity_gc_disable()
+{
+#if HAVE_BDWGC_GC
+	GC_disable();
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 MONO_API void 
