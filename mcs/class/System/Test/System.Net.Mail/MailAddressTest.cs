@@ -41,20 +41,6 @@ namespace MonoTests.System.Net.Mail
 			Assert.AreEqual ("\"Mr. Foo Bar\" <foo@example.com>", address.ToString (), "#B4");
 			Assert.AreEqual ("foo", address.User, "#B5");
 
-			address = new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever@You@Want");
-			Assert.AreEqual ("foo@example.com", address.Address, "#C1");
-			Assert.AreEqual ("Mr. F@@ Bar", address.DisplayName, "#C2");
-			Assert.AreEqual ("example.com", address.Host, "#C3");
-			Assert.AreEqual ("\"Mr. F@@ Bar\" <foo@example.com>", address.ToString (), "#C4");
-			Assert.AreEqual ("foo", address.User, "#C5");
-
-			address = new MailAddress ("\"Mr. F@@ Bar\" <foo@example.com> Whatever@You@Want");
-			Assert.AreEqual ("foo@example.com", address.Address, "#D1");
-			Assert.AreEqual ("Mr. F@@ Bar", address.DisplayName, "#D2");
-			Assert.AreEqual ("example.com", address.Host, "#D3");
-			Assert.AreEqual ("\"Mr. F@@ Bar\" <foo@example.com>", address.ToString (), "#D4");
-			Assert.AreEqual ("foo", address.User, "#D5");
-
 			address = new MailAddress ("FooBar <foo@example.com>");
 			Assert.AreEqual ("foo@example.com", address.Address, "#E1");
 			Assert.AreEqual ("FooBar", address.DisplayName, "#E2");
@@ -71,9 +57,9 @@ namespace MonoTests.System.Net.Mail
 
 			address = new MailAddress ("\"   FooBar   \"< foo@example.com >");
 			Assert.AreEqual ("foo@example.com", address.Address, "#G1");
-			Assert.AreEqual ("FooBar", address.DisplayName, "#G2");
+			Assert.AreEqual ("   FooBar   ", address.DisplayName, "#G2");
 			Assert.AreEqual ("example.com", address.Host, "#G3");
-			Assert.AreEqual ("\"FooBar\" <foo@example.com>", address.ToString (), "#G4");
+			Assert.AreEqual ("\"   FooBar   \" <foo@example.com>", address.ToString (), "#G4");
 			Assert.AreEqual ("foo", address.User, "#G5");
 
 			address = new MailAddress ("<foo@example.com>");
@@ -214,6 +200,24 @@ namespace MonoTests.System.Net.Mail
 				Assert.IsNull (ex.InnerException, "#I3");
 				Assert.IsNotNull (ex.Message, "#I4");
 			}
+
+			try {
+				new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever@You@Want");
+				Assert.Fail ("#J1");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#J2");
+				Assert.IsNull (ex.InnerException, "#J3");
+				Assert.IsNotNull (ex.Message, "#J4");
+			}
+
+			try {
+				new MailAddress ("\"Mr. F@@ Bar\" <foo@example.com> Whatever@You@Want");
+				Assert.Fail ("#K1");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#K2");
+				Assert.IsNull (ex.InnerException, "#K3");
+				Assert.IsNotNull (ex.Message, "#K4");
+			}
 		}
 
 		[Test]
@@ -226,40 +230,50 @@ namespace MonoTests.System.Net.Mail
 			Assert.AreEqual ("foo@example.com", address.ToString (), "#A4");
 			Assert.AreEqual ("foo", address.User, "#A5");
 
-			address = new MailAddress ("<foo@example.com> WhatEver", " Mr. Foo Bar ");
-			Assert.AreEqual ("foo@example.com", address.Address, "#B1");
-			Assert.AreEqual ("Mr. Foo Bar", address.DisplayName, "#B2");
-			Assert.AreEqual ("example.com", address.Host, "#B3");
-			Assert.AreEqual ("\"Mr. Foo Bar\" <foo@example.com>", address.ToString (), "#B4");
-			Assert.AreEqual ("foo", address.User, "#B5");
+			try {
+				new MailAddress ("<foo@example.com> WhatEver", " Mr. Foo Bar ");
+				Assert.Fail ("#B1");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
 
-			address = new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever", "BarFoo");
-			Assert.AreEqual ("foo@example.com", address.Address, "#C1");
-			Assert.AreEqual ("BarFoo", address.DisplayName, "#C2");
-			Assert.AreEqual ("example.com", address.Host, "#C3");
-			Assert.AreEqual ("\"BarFoo\" <foo@example.com>", address.ToString (), "#C4");
-			Assert.AreEqual ("foo", address.User, "#C5");
+			try {
+				new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever", "BarFoo");
+				Assert.Fail ("#C1");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+			}
 
-			address = new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever", string.Empty);
-			Assert.AreEqual ("foo@example.com", address.Address, "#D1");
-			Assert.AreEqual (string.Empty, address.DisplayName, "#D2");
-			Assert.AreEqual ("example.com", address.Host, "#D3");
-			Assert.AreEqual ("foo@example.com", address.ToString (), "#D4");
-			Assert.AreEqual ("foo", address.User, "#D5");
+			try {
+				new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever", string.Empty);
+				Assert.Fail ("#D1");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+			}
 
-			address = new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever", (string) null);
-			Assert.AreEqual ("foo@example.com", address.Address, "#E1");
-			Assert.AreEqual ("Mr. F@@ Bar", address.DisplayName, "#E2");
-			Assert.AreEqual ("example.com", address.Host, "#E3");
-			Assert.AreEqual ("\"Mr. F@@ Bar\" <foo@example.com>", address.ToString (), "#E4");
-			Assert.AreEqual ("foo", address.User, "#E5");
+			try {
+				new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever", (string) null);
+				Assert.Fail ("#E1");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+				Assert.IsNotNull (ex.Message, "#E4");
+			}
 
-			address = new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever", " ");
-			Assert.AreEqual ("foo@example.com", address.Address, "#F1");
-			Assert.AreEqual (string.Empty, address.DisplayName, "#F2");
-			Assert.AreEqual ("example.com", address.Host, "#F3");
-			Assert.AreEqual ("foo@example.com", address.ToString (), "#F4");
-			Assert.AreEqual ("foo", address.User, "#F5");
+			try {
+				new MailAddress ("Mr. F@@ Bar <foo@example.com> Whatever", " ");
+				Assert.Fail ("#F1");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#F2");
+				Assert.IsNull (ex.InnerException, "#F3");
+				Assert.IsNotNull (ex.Message, "#F4");
+			}
 		}
 
 		[Test]
@@ -270,7 +284,7 @@ namespace MonoTests.System.Net.Mail
 			ma = new MailAddress ("Hola <foo@bar.com>", "Adios");
 			Assert.AreEqual (ma.DisplayName, "Adios");
 			ma = new MailAddress ("Hola <foo@bar.com>", "");
-			Assert.AreEqual (ma.DisplayName, "");
+			Assert.AreEqual (ma.DisplayName, "Hola");
 		}
 
 		[Test]
