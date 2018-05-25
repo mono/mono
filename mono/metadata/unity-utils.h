@@ -153,6 +153,7 @@ MONO_API void mono_unity_install_unitytls_interface(unitytls_interface_struct* c
 // gc
 MONO_API void mono_unity_gc_enable();
 MONO_API void mono_unity_gc_disable();
+MONO_API int mono_unity_gc_is_disabled();
 
 //misc
 MonoAssembly* mono_unity_assembly_get_mscorlib();

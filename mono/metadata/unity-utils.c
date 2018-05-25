@@ -923,6 +923,16 @@ MONO_API void mono_unity_gc_disable()
 #endif
 }
 
+MONO_API int mono_unity_gc_is_disabled()
+{
+#if HAVE_BDWGC_GC
+	return GC_is_disabled ();
+#else
+	g_assert_not_reached ();
+	return 0;
+#endif	
+}
+
 MONO_API void 
 mono_unity_install_unitytls_interface(unitytls_interface_struct* callbacks)
 {
