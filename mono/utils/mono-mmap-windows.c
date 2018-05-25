@@ -122,6 +122,8 @@ mono_vfree (void *addr, size_t length, MonoMemAccountType type)
 	return 0;
 }
 
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) || G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
+
 static void
 remove_trailing_whitespace_utf16 (wchar_t *s)
 {
@@ -216,6 +218,8 @@ mono_file_unmap (void *addr, void *handle)
 	CloseHandle (handle);
 	return 0;
 }
+
+#endif // G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) || G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
 
 int
 mono_mprotect (void *addr, size_t length, int flags)
