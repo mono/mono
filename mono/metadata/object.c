@@ -2084,9 +2084,11 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 				/* it's a pointer type: add check */
 				g_assert ((fklass->byval_arg.type == MONO_TYPE_PTR) || (fklass->byval_arg.type == MONO_TYPE_FNPTR));
 				*t = *(char *)data;
+				/* This is not needed by sgen, as it does not seem 
++				to need write barriers for uncollectable objects (like the vtables storing static 
++				fields), but it is needed for incremental boehm. */
+				mono_gc_wbarrier_generic_nostore(t);
 			}
-			// can probably be in else clause above:
-			mono_gc_wbarrier_generic_nostore(t);
 			continue;
 		}		
 	}
@@ -3296,7 +3298,11 @@ mono_field_static_set_value (MonoVTable *vt, MonoClassField *field, void *value)
 		dest = (char*)mono_vtable_get_static_field_data (vt) + field->offset;
 	}
 	mono_copy_value (field->type, dest, value, FALSE);
-	mono_gc_wbarrier_generic_nostore(dest);
+	/* This is not needed by sgen, as it does not seem 
+	to need write barriers for uncollectable objects (like the vtables storing static 
++	fields), but it is needed for incremental boehm. */
+	if (field->offset == -1)
+		mono_gc_wbarrier_generic_nostore(dest);
 }
 
 /**
@@ -3334,7 +3340,6 @@ mono_field_get_addr (MonoObject *obj, MonoVTable *vt, MonoClassField *field)
 			src = (guint8 *)mono_get_special_static_data (GPOINTER_TO_UINT (addr));
 		} else {
 			src = (guint8*)mono_vtable_get_static_field_data (vt) + field->offset;
-			mono_gc_wbarrier_generic_nostore(src);
 		}
 	} else {
 		src = (guint8*)obj + field->offset;
