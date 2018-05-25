@@ -216,40 +216,6 @@ mono_exception_from_name_two_strings_checked (MonoImage *image, const char *name
 }
 
 /**
- * mono_exception_new_by_name_msg:
- * \param image the Mono image where to look for the class
- * \param name_space the namespace for the class
- * \param name class name
- * \param msg the message to embed inside the exception
- *
- * Creates an exception and initializes its message field.
- *
- * \returns the initialized exception instance.
- */
-static MonoExceptionHandle
-mono_exception_new_by_name_msg (MonoImage *image, const char *name_space,
-			      const char *name, const char *msg, MonoError *error)
-{
-	HANDLE_FUNCTION_ENTER ()
-
-	MonoExceptionHandle ex = mono_exception_new_by_name (image, name_space, name, error);
-	goto_if_nok (error, return_null);
-
-	if (msg) {
-		MonoStringHandle msg_str = mono_string_new_handle (MONO_HANDLE_DOMAIN (ex), msg, error);
-		// FIXME? Maybe just ignore this error, the exception is close to correct.
-		goto_if_nok (error, return_null);
-		// ex->message = msg_str;
-		MONO_HANDLE_SET (ex, message, msg_str);
-	}
-	goto exit;
-return_null:
-	MONO_HANDLE_ASSIGN (ex, NULL);
-exit:
-	HANDLE_FUNCTION_RETURN_REF (MonoException, ex)
-}
-
-/**
  * mono_exception_from_name_msg:
  * \param image the Mono image where to look for the class
  * \param name_space the namespace for the class
