@@ -4565,7 +4565,8 @@ array_constructed:
 			ip ++;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_END_ABORT_PROT)
-			mono_threads_end_abort_protected_block ();
+			if (mono_threads_end_abort_protected_block ())
+				frame->ex = mono_thread_interruption_checkpoint ();
 			ip ++;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_ENDFINALLY)
@@ -4581,6 +4582,8 @@ array_constructed:
 				finally_ips = g_slist_remove (finally_ips, ip);
 				goto main_loop;
 			}
+			if (frame->ex)
+				THROW_EX (frame->ex, ip);
 			ves_abort();
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LEAVE) /* Fall through */
