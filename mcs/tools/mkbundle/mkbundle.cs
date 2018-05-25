@@ -470,7 +470,7 @@ class MakeBundle {
 		// Modern bundling starts here
 		if (!custom_mode){
 			if (runtime != null){
-				// Nothing to do here, the user has chosen to manually specify --runtime nad libraries
+				// Nothing to do here, the user has chosen to manually specify --runtime and libraries
 			} else if (sdk_path != null) {
 				VerifySdk (sdk_path);
 			} else if (cross_target == "default" || cross_target == null){
@@ -655,7 +655,7 @@ class MakeBundle {
 
 	class PackageMaker {
 		Dictionary<string, Tuple<long,int>> locations = new Dictionary<string, Tuple<long,int>> ();
-		const int align = 4096;
+		const int align = 1 << 16;
 		Stream package;
 		
 		public PackageMaker (string output)
