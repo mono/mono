@@ -78,6 +78,7 @@
     <Compile Include="..\..\..\external\linker\linker\Linker\MethodReferenceExtensions.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\Pipeline.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\Tracer.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\TypeNameParser.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\TypePreserve.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\TypeReferenceExtensions.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\XApiReader.cs" />
