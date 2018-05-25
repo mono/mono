@@ -689,6 +689,7 @@ class MakeBundle {
 
 		public void AddString (string entry, string text)
 		{
+			// FIXME Strings are over-aligned?
 			var bytes = Encoding.UTF8.GetBytes (text);
 			locations [entry] = Tuple.Create (package.Position, bytes.Length);
 			package.Write (bytes, 0, bytes.Length);
@@ -697,6 +698,7 @@ class MakeBundle {
 
 		public void AddStringPair (string entry, string key, string value)
 		{
+			// FIXME Strings are over-aligned?
 			var kbytes = Encoding.UTF8.GetBytes (key);
 			var vbytes = Encoding.UTF8.GetBytes (value);
 
