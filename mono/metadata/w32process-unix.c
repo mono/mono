@@ -3074,6 +3074,12 @@ map_pe_file (gunichar2 *filename, gint32 *map_size, void **handle)
 
 		g_free (located_filename);
 	}
+	else if (fd == -1) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Error opening file %s (3): %s", __func__, filename_ext, strerror (errno));
+		g_free (filename_ext);
+		mono_w32error_set_last (mono_w32error_unix_to_win32 (errno));
+		return NULL;
+	}
 
 	if (fstat (fd, &statbuf) == -1) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Error stat()ing file %s: %s", __func__, filename_ext, strerror (errno));
