@@ -606,7 +606,7 @@ fun:mono_threads_transition_finish_async_suspend
 
 # mono-threads.c #
 
-fun:mono_thread_info_uninstall_interrupt
+fun:mono_thread_uninstall_interrupt
 
 # os-event-unix.c #
 

@@ -22,6 +22,8 @@
 #include "utils/mono-threads.h"
 #include "utils/mono-time.h"
 
+#include "threads-types.h"
+
 #undef DEBUG_REFS
 
 #define HANDLES_PER_SLOT 240
@@ -698,7 +700,7 @@ mono_w32handle_timedwait_signal (guint32 timeout, gboolean poll, gboolean *alert
 		*alerted = FALSE;
 
 	if (alerted) {
-		mono_thread_info_install_interrupt (signal_global, NULL, alerted);
+		mono_thread_install_interrupt (signal_global, NULL, alerted);
 		if (*alerted)
 			return 0;
 	}
@@ -706,7 +708,7 @@ mono_w32handle_timedwait_signal (guint32 timeout, gboolean poll, gboolean *alert
 	res = mono_w32handle_timedwait_signal_naked (&global_signal_cond, &global_signal_mutex, timeout, poll, alerted);
 
 	if (alerted)
-		mono_thread_info_uninstall_interrupt (alerted);
+		mono_thread_uninstall_interrupt (alerted);
 
 	return res;
 }
@@ -751,7 +753,7 @@ mono_w32handle_timedwait_signal_handle (MonoW32Handle *handle_data, guint32 time
 		*alerted = FALSE;
 
 	if (alerted) {
-		mono_thread_info_install_interrupt (signal_handle_and_unref, handle_duplicate = mono_w32handle_duplicate (handle_data), alerted);
+		mono_thread_install_interrupt (signal_handle_and_unref, handle_duplicate = mono_w32handle_duplicate (handle_data), alerted);
 		if (*alerted) {
 			mono_w32handle_close (handle_duplicate);
 			return 0;
@@ -761,7 +763,7 @@ mono_w32handle_timedwait_signal_handle (MonoW32Handle *handle_data, guint32 time
 	res = mono_w32handle_timedwait_signal_naked (&handle_data->signal_cond, &handle_data->signal_mutex, timeout, poll, alerted);
 
 	if (alerted) {
-		mono_thread_info_uninstall_interrupt (alerted);
+		mono_thread_uninstall_interrupt (alerted);
 		if (!*alerted) {
 			/* if it is alerted, then the handle_duplicate is closed in the interrupt callback */
 			mono_w32handle_close (handle_duplicate);

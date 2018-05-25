@@ -1051,7 +1051,7 @@ static gboolean
 file_read(FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
 	gint ret;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoInternalThread *internal = mono_thread_internal_current ();
 
 	if(bytesread!=NULL) {
 		*bytesread=0;
@@ -1069,7 +1069,7 @@ file_read(FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *by
 		ret = read (((MonoFDHandle*) filehandle)->fd, buffer, numbytes);
 		MONO_EXIT_GC_SAFE;
 	} while (ret == -1 && errno == EINTR &&
-		 !mono_thread_info_is_interrupt_state (info));
+		 !mono_thread_is_interrupt_state (internal));
 			
 	if(ret==-1) {
 		gint err = errno;
@@ -1091,7 +1091,7 @@ file_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint
 {
 	gint ret;
 	off_t current_pos = 0;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoInternalThread *internal = mono_thread_internal_current ();
 	
 	if(byteswritten!=NULL) {
 		*byteswritten=0;
@@ -1129,7 +1129,7 @@ file_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint
 		ret = write (((MonoFDHandle*) filehandle)->fd, buffer, numbytes);
 		MONO_EXIT_GC_SAFE;
 	} while (ret == -1 && errno == EINTR &&
-		 !mono_thread_info_is_interrupt_state (info));
+		 !mono_thread_is_interrupt_state (internal));
 	
 	if (lock_while_writing) {
 		_wapi_unlock_file_region (((MonoFDHandle*) filehandle)->fd, current_pos, numbytes);
@@ -1266,7 +1266,7 @@ static gboolean file_setendoffile(FileHandle *filehandle)
 	struct stat statbuf;
 	off_t pos;
 	gint ret;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoInternalThread *internal = mono_thread_internal_current ();
 	
 	if(!(filehandle->fileaccess & (GENERIC_WRITE | GENERIC_ALL))) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
@@ -1320,7 +1320,7 @@ static gboolean file_setendoffile(FileHandle *filehandle)
 			ret = write (((MonoFDHandle*) filehandle)->fd, "", 1);
 			MONO_EXIT_GC_SAFE;
 		} while (ret == -1 && errno == EINTR &&
-			 !mono_thread_info_is_interrupt_state (info));
+			 !mono_thread_is_interrupt_state (internal));
 
 		if(ret==-1) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d extend write failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
@@ -1350,7 +1350,7 @@ static gboolean file_setendoffile(FileHandle *filehandle)
 		ret=ftruncate(((MonoFDHandle*) filehandle)->fd, pos);
 		MONO_EXIT_GC_SAFE;
 	}
-	while (ret==-1 && errno==EINTR && !mono_thread_info_is_interrupt_state (info)); 
+	while (ret==-1 && errno==EINTR && !mono_thread_is_interrupt_state (internal)); 
 	if(ret==-1) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d ftruncate failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 		
@@ -1573,7 +1573,7 @@ static gboolean
 console_read(FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
 	gint ret;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoInternalThread *internal = mono_thread_internal_current ();
 
 	if(bytesread!=NULL) {
 		*bytesread=0;
@@ -1590,7 +1590,7 @@ console_read(FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 
 		MONO_ENTER_GC_SAFE;
 		ret=read(((MonoFDHandle*) filehandle)->fd, buffer, numbytes);
 		MONO_EXIT_GC_SAFE;
-	} while (ret==-1 && errno==EINTR && !mono_thread_info_is_interrupt_state (info));
+	} while (ret==-1 && errno==EINTR && !mono_thread_is_interrupt_state (internal));
 
 	if(ret==-1) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: read of fd %d error: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
@@ -1610,7 +1610,7 @@ static gboolean
 console_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
 	gint ret;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoInternalThread *internal = mono_thread_internal_current ();
 	
 	if(byteswritten!=NULL) {
 		*byteswritten=0;
@@ -1628,7 +1628,7 @@ console_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, gu
 		ret = write(((MonoFDHandle*) filehandle)->fd, buffer, numbytes);
 		MONO_EXIT_GC_SAFE;
 	} while (ret == -1 && errno == EINTR &&
-		 !mono_thread_info_is_interrupt_state (info));
+		 !mono_thread_is_interrupt_state (internal));
 
 	if (ret == -1) {
 		if (errno == EINTR) {
@@ -1652,7 +1652,7 @@ static gboolean
 pipe_read (FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
 {
 	gint ret;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoInternalThread *internal = mono_thread_internal_current ();
 
 	if(bytesread!=NULL) {
 		*bytesread=0;
@@ -1671,7 +1671,7 @@ pipe_read (FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *b
 		MONO_ENTER_GC_SAFE;
 		ret=read(((MonoFDHandle*) filehandle)->fd, buffer, numbytes);
 		MONO_EXIT_GC_SAFE;
-	} while (ret==-1 && errno==EINTR && !mono_thread_info_is_interrupt_state (info));
+	} while (ret==-1 && errno==EINTR && !mono_thread_is_interrupt_state (internal));
 		
 	if (ret == -1) {
 		if (errno == EINTR) {
@@ -1698,7 +1698,7 @@ static gboolean
 pipe_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
 	gint ret;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoInternalThread *internal = mono_thread_internal_current ();
 	
 	if(byteswritten!=NULL) {
 		*byteswritten=0;
@@ -1718,7 +1718,7 @@ pipe_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint
 		ret = write (((MonoFDHandle*) filehandle)->fd, buffer, numbytes);
 		MONO_EXIT_GC_SAFE;
 	} while (ret == -1 && errno == EINTR &&
-		 !mono_thread_info_is_interrupt_state (info));
+		 !mono_thread_is_interrupt_state (internal));
 
 	if (ret == -1) {
 		if (errno == EINTR) {
@@ -2266,7 +2266,7 @@ write_file (gint src_fd, gint dest_fd, struct stat *st_src, gboolean report_erro
 	gint remain, n;
 	gchar *buf, *wbuf;
 	gint buf_size = st_src->st_blksize;
-	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoInternalThread *internal = mono_thread_internal_current ();
 
 	buf_size = buf_size < 8192 ? 8192 : (buf_size > 65536 ? 65536 : buf_size);
 	buf = (gchar *) g_malloc (buf_size);
@@ -2276,7 +2276,7 @@ write_file (gint src_fd, gint dest_fd, struct stat *st_src, gboolean report_erro
 		remain = read (src_fd, buf, buf_size);
 		MONO_EXIT_GC_SAFE;
 		if (remain < 0) {
-			if (errno == EINTR && !mono_thread_info_is_interrupt_state (info))
+			if (errno == EINTR && !mono_thread_is_interrupt_state (internal))
 				continue;
 
 			if (report_errors)
@@ -2295,7 +2295,7 @@ write_file (gint src_fd, gint dest_fd, struct stat *st_src, gboolean report_erro
 			n = write (dest_fd, wbuf, remain);
 			MONO_EXIT_GC_SAFE;
 			if (n < 0) {
-				if (errno == EINTR && !mono_thread_info_is_interrupt_state (info))
+				if (errno == EINTR && !mono_thread_is_interrupt_state (internal))
 					continue;
 
 				if (report_errors)

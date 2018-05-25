@@ -837,7 +837,7 @@ ves_icall_System_Net_Sockets_Socket_Accept_internal (gsize sock, gint32 *werror,
 	error_init (error);
 	*werror = 0;
 
-	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
+	mono_thread_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted) {
 		*werror = WSAEINTR;
 		return NULL;
@@ -847,7 +847,7 @@ ves_icall_System_Net_Sockets_Socket_Accept_internal (gsize sock, gint32 *werror,
 	if (newsock == INVALID_SOCKET)
 		*werror = mono_w32socket_get_last_error ();
 
-	mono_thread_info_uninstall_interrupt (&interrupted);
+	mono_thread_uninstall_interrupt (&interrupted);
 	if (interrupted)
 		*werror = WSAEINTR;
 
@@ -1299,7 +1299,7 @@ ves_icall_System_Net_Sockets_Socket_Poll_internal (gsize sock, gint mode,
 	start = time (NULL);
 
 	do {
-		mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
+		mono_thread_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 		if (interrupted) {
 			g_free (pfds);
 			*werror = WSAEINTR;
@@ -1312,7 +1312,7 @@ ves_icall_System_Net_Sockets_Socket_Poll_internal (gsize sock, gint mode,
 
 		MONO_EXIT_GC_SAFE;
 
-		mono_thread_info_uninstall_interrupt (&interrupted);
+		mono_thread_uninstall_interrupt (&interrupted);
 		if (interrupted) {
 			g_free (pfds);
 			*werror = WSAEINTR;
@@ -1372,7 +1372,7 @@ ves_icall_System_Net_Sockets_Socket_Connect_internal (gsize sock, MonoObjectHand
 
 	LOGDEBUG (g_message("%s: connecting to %s port %d", __func__, inet_ntoa (((struct sockaddr_in *)sa)->sin_addr), ntohs (((struct sockaddr_in *)sa)->sin_port)));
 
-	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
+	mono_thread_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted) {
 		*werror = WSAEINTR;
 		return;
@@ -1382,7 +1382,7 @@ ves_icall_System_Net_Sockets_Socket_Connect_internal (gsize sock, MonoObjectHand
 	if (ret == SOCKET_ERROR)
 		*werror = mono_w32socket_get_last_error ();
 
-	mono_thread_info_uninstall_interrupt (&interrupted);
+	mono_thread_uninstall_interrupt (&interrupted);
 	if (interrupted)
 		*werror = WSAEINTR;
 
@@ -1400,7 +1400,7 @@ ves_icall_System_Net_Sockets_Socket_Disconnect_internal (gsize sock, MonoBoolean
 
 	LOGDEBUG (g_message("%s: disconnecting from socket %p (reuse %d)", __func__, sock, reuse));
 
-	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
+	mono_thread_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted) {
 		*werror = WSAEINTR;
 		return;
@@ -1408,7 +1408,7 @@ ves_icall_System_Net_Sockets_Socket_Disconnect_internal (gsize sock, MonoBoolean
 
 	*werror = mono_w32socket_disconnect (sock, reuse);
 
-	mono_thread_info_uninstall_interrupt (&interrupted);
+	mono_thread_uninstall_interrupt (&interrupted);
 	if (interrupted)
 		*werror = WSAEINTR;
 }
@@ -1444,7 +1444,7 @@ ves_icall_System_Net_Sockets_Socket_Receive_internal (gsize sock, gchar *buffer,
 		return 0;
 	}
 
-	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
+	mono_thread_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted)
 		return 0;
 
@@ -1453,7 +1453,7 @@ ves_icall_System_Net_Sockets_Socket_Receive_internal (gsize sock, gchar *buffer,
 	if (ret == SOCKET_ERROR)
 		*werror = mono_w32socket_get_last_error ();
 
-	mono_thread_info_uninstall_interrupt (&interrupted);
+	mono_thread_uninstall_interrupt (&interrupted);
 	if (interrupted)
 		*werror = WSAEINTR;
 
@@ -1480,7 +1480,7 @@ ves_icall_System_Net_Sockets_Socket_Receive_array_internal (gsize sock, WSABUF *
 		return 0;
 	}
 
-	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
+	mono_thread_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted) {
 		*werror = WSAEINTR;
 		return 0;
@@ -1491,7 +1491,7 @@ ves_icall_System_Net_Sockets_Socket_Receive_array_internal (gsize sock, WSABUF *
 	if (ret == SOCKET_ERROR)
 		*werror = mono_w32socket_get_last_error ();
 
-	mono_thread_info_uninstall_interrupt (&interrupted);
+	mono_thread_uninstall_interrupt (&interrupted);
 	if (interrupted)
 		*werror = WSAEINTR;
 
@@ -1525,7 +1525,7 @@ ves_icall_System_Net_Sockets_Socket_ReceiveFrom_internal (gsize sock, gchar *buf
 		return 0;
 	}
 
-	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
+	mono_thread_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted) {
 		g_free (sa);
 		*werror = WSAEINTR;
@@ -1537,7 +1537,7 @@ ves_icall_System_Net_Sockets_Socket_ReceiveFrom_internal (gsize sock, gchar *buf
 	if (ret == SOCKET_ERROR)
 		*werror = mono_w32socket_get_last_error ();
 
-	mono_thread_info_uninstall_interrupt (&interrupted);
+	mono_thread_uninstall_interrupt (&interrupted);
 
 	if (interrupted)
 		*werror = WSAEINTR;
@@ -1584,7 +1584,7 @@ ves_icall_System_Net_Sockets_Socket_Send_internal (gsize sock, gchar *buffer, gi
 		return 0;
 	}
 
-	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
+	mono_thread_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted) {
 		*werror = WSAEINTR;
 		return 0;
@@ -1595,7 +1595,7 @@ ves_icall_System_Net_Sockets_Socket_Send_internal (gsize sock, gchar *buffer, gi
 	if (ret == SOCKET_ERROR)
 		*werror = mono_w32socket_get_last_error ();
 
-	mono_thread_info_uninstall_interrupt (&interrupted);
+	mono_thread_uninstall_interrupt (&interrupted);
 	if (interrupted)
 		*werror = WSAEINTR;
 
@@ -1622,7 +1622,7 @@ ves_icall_System_Net_Sockets_Socket_Send_array_internal (gsize sock, WSABUF *buf
 		return 0;
 	}
 
-	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
+	mono_thread_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted) {
 		*werror = WSAEINTR;
 		return 0;
@@ -1633,7 +1633,7 @@ ves_icall_System_Net_Sockets_Socket_Send_array_internal (gsize sock, WSABUF *buf
 	if (ret == SOCKET_ERROR)
 		*werror = mono_w32socket_get_last_error ();
 
-	mono_thread_info_uninstall_interrupt (&interrupted);
+	mono_thread_uninstall_interrupt (&interrupted);
 	if (interrupted)
 		*werror = WSAEINTR;
 
@@ -1668,7 +1668,7 @@ ves_icall_System_Net_Sockets_Socket_SendTo_internal (gsize sock, gchar *buffer, 
 		return 0;
 	}
 
-	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
+	mono_thread_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted) {
 		g_free (sa);
 		*werror = WSAEINTR;
@@ -1680,7 +1680,7 @@ ves_icall_System_Net_Sockets_Socket_SendTo_internal (gsize sock, gchar *buffer, 
 	if (ret == SOCKET_ERROR)
 		*werror = mono_w32socket_get_last_error ();
 
-	mono_thread_info_uninstall_interrupt (&interrupted);
+	mono_thread_uninstall_interrupt (&interrupted);
 	if (interrupted)
 		*werror = WSAEINTR;
 
@@ -1795,7 +1795,7 @@ ves_icall_System_Net_Sockets_Socket_Select_internal (MonoArrayHandle sockets, gi
 	timeout = (timeout >= 0) ? (timeout / 1000) : -1;
 	start = time (NULL);
 	do {
-		mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
+		mono_thread_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 		if (interrupted) {
 			g_free (pfds);
 			*werror = WSAEINTR;
@@ -1808,7 +1808,7 @@ ves_icall_System_Net_Sockets_Socket_Select_internal (MonoArrayHandle sockets, gi
 
 		MONO_EXIT_GC_SAFE;
 
-		mono_thread_info_uninstall_interrupt (&interrupted);
+		mono_thread_uninstall_interrupt (&interrupted);
 		if (interrupted) {
 			g_free (pfds);
 			*werror = WSAEINTR;
@@ -2399,7 +2399,7 @@ ves_icall_System_Net_Sockets_Socket_Shutdown_internal (gsize sock, gint32 how, g
 	error_init (error);
 	*werror = 0;
 
-	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
+	mono_thread_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted) {
 		*werror = WSAEINTR;
 		return;
@@ -2410,7 +2410,7 @@ ves_icall_System_Net_Sockets_Socket_Shutdown_internal (gsize sock, gint32 how, g
 	if (ret == SOCKET_ERROR)
 		*werror = mono_w32socket_get_last_error ();
 
-	mono_thread_info_uninstall_interrupt (&interrupted);
+	mono_thread_uninstall_interrupt (&interrupted);
 	if (interrupted) {
 		*werror = WSAEINTR;
 	}
@@ -2754,7 +2754,7 @@ ves_icall_System_Net_Sockets_Socket_SendFile_internal (gsize sock, MonoStringHan
 		return FALSE;
 	}
 
-	mono_thread_info_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
+	mono_thread_install_interrupt (abort_syscall, (gpointer) (gsize) mono_native_thread_id_get (), &interrupted);
 	if (interrupted) {
 		mono_w32file_close (file);
 		mono_w32error_set_last (WSAEINTR);
@@ -2782,7 +2782,7 @@ ves_icall_System_Net_Sockets_Socket_SendFile_internal (gsize sock, MonoStringHan
 	if (!ret)
 		*werror = mono_w32socket_get_last_error ();
 
-	mono_thread_info_uninstall_interrupt (&interrupted);
+	mono_thread_uninstall_interrupt (&interrupted);
 	if (interrupted) {
 		mono_w32file_close (file);
 		*werror = WSAEINTR;

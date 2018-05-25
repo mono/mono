@@ -238,7 +238,7 @@ ves_icall_System_IO_KqueueMonitor_kevent_notimeout (int *kq_ptr, gpointer change
 	int res;
 	gboolean interrupted;
 
-	mono_thread_info_install_interrupt (interrupt_kevent, kq_ptr, &interrupted);
+	mono_thread_install_interrupt (interrupt_kevent, kq_ptr, &interrupted);
 	if (interrupted) {
 		close (*kq_ptr);
 		*kq_ptr = -1;
@@ -249,7 +249,7 @@ ves_icall_System_IO_KqueueMonitor_kevent_notimeout (int *kq_ptr, gpointer change
 	res = kevent (*kq_ptr, changelist, nchanges, eventlist, nevents, NULL);
 	MONO_EXIT_GC_SAFE;
 
-	mono_thread_info_uninstall_interrupt (&interrupted);
+	mono_thread_uninstall_interrupt (&interrupted);
 
 	return res;
 }
@@ -281,7 +281,7 @@ ves_icall_CoreFX_Interop_RunLoop_CFRunLoopRun (void)
 {
 	gpointer runloop_ref = CFRunLoopGetCurrent();
 	gboolean interrupted;
-	mono_thread_info_install_interrupt (interrupt_CFRunLoop, runloop_ref, &interrupted);
+	mono_thread_install_interrupt (interrupt_CFRunLoop, runloop_ref, &interrupted);
 
 	if (interrupted)
 		return;
@@ -290,7 +290,7 @@ ves_icall_CoreFX_Interop_RunLoop_CFRunLoopRun (void)
 	CFRunLoopRun();
 	MONO_EXIT_GC_SAFE;
 
-	mono_thread_info_uninstall_interrupt (&interrupted);
+	mono_thread_uninstall_interrupt (&interrupted);
 }
 
 #ifdef HOST_IOS

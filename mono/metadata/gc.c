@@ -141,7 +141,7 @@ coop_cond_timedwait_alertable (MonoCoopCond *cond, MonoCoopMutex *mutex, guint32
 		ud->cond = cond;
 		ud->mutex = mutex;
 
-		mono_thread_info_install_interrupt (break_coop_alertable_wait, ud, alertable);
+		mono_thread_install_interrupt (break_coop_alertable_wait, ud, alertable);
 		if (*alertable) {
 			g_free (ud);
 			return 0;
@@ -149,7 +149,7 @@ coop_cond_timedwait_alertable (MonoCoopCond *cond, MonoCoopMutex *mutex, guint32
 	}
 	res = mono_coop_cond_timedwait (cond, mutex, timeout_ms);
 	if (alertable) {
-		mono_thread_info_uninstall_interrupt (alertable);
+		mono_thread_uninstall_interrupt (alertable);
 		if (*alertable)
 			return 0;
 		else {

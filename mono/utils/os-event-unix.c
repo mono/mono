@@ -15,6 +15,9 @@
 #include "mono-threads.h"
 #include "mono-time.h"
 
+/* This is for mono_thread_{install,uninstall}_interrupt */
+#include "metadata/threads-types.h"
+
 static mono_lazy_init_t status = MONO_LAZY_INIT_STATUS_NOT_INITIALIZED;
 
 static mono_mutex_t signal_mutex;
@@ -138,7 +141,7 @@ mono_os_event_wait_multiple (MonoOSEvent **events, gsize nevents, gboolean waita
 		mono_os_event_init (&data->event, FALSE);
 
 		alerted = FALSE;
-		mono_thread_info_install_interrupt (signal_and_unref, data, &alerted);
+		mono_thread_install_interrupt (signal_and_unref, data, &alerted);
 		if (alerted) {
 			mono_os_event_destroy (&data->event);
 			g_free (data);
@@ -218,7 +221,7 @@ done:
 	mono_os_cond_destroy (&signal_cond);
 
 	if (alertable) {
-		mono_thread_info_uninstall_interrupt (&alerted);
+		mono_thread_uninstall_interrupt (&alerted);
 		if (alerted) {
 			if (mono_atomic_dec_i32 ((gint32*) &data->ref) == 0) {
 				mono_os_event_destroy (&data->event);

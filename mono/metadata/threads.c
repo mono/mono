@@ -211,6 +211,25 @@ mono_thread_execute_interruption_void (void);
 static gboolean
 mono_thread_execute_interruption (MonoExceptionHandle *pexc);
 
+#define INTERRUPT_STATE ((MonoThreadInterruptToken*) GINT_TO_POINTER (-1))
+
+typedef struct {
+	void (*callback) (gpointer data);
+	gpointer data;
+} MonoThreadInterruptToken;
+
+static MonoThreadInterruptToken*
+mono_thread_prepare_interrupt (MonoInternalThread *internal);
+
+static void
+mono_thread_finish_interrupt (MonoThreadInterruptToken *token);
+
+static void
+mono_thread_self_interrupt (void);
+
+static void
+mono_thread_clear_self_interrupt (void);
+
 static void ref_stack_destroy (gpointer rs);
 
 /* Spin lock for InterlockedXXX 64 bit functions */
@@ -4768,7 +4787,7 @@ mono_thread_execute_interruption (MonoExceptionHandle *pexc)
 #endif
 
 	/* Clear the interrupted flag of the thread so it can wait again */
-	mono_thread_info_clear_self_interrupt ();
+	mono_thread_clear_self_interrupt ();
 
 	/* If there's a pending exception and an AbortRequested, the pending exception takes precedence */
 	MONO_HANDLE_GET (exc, sys_thread, pending_exception);
@@ -4859,7 +4878,7 @@ mono_thread_request_interruption_internal (gboolean running_managed, MonoExcepti
 #ifdef HOST_WIN32
 		mono_win32_interrupt_wait (thread->thread_info, thread->native_handle, (DWORD)thread->tid);
 #else
-		mono_thread_info_self_interrupt ();
+		mono_thread_self_interrupt ();
 #endif
 		return FALSE;
 	}
@@ -4901,7 +4920,7 @@ mono_thread_resume_interruption (gboolean exec)
 	if (!mono_thread_set_interruption_requested (thread))
 		return;
 
-	mono_thread_info_self_interrupt ();
+	mono_thread_self_interrupt ();
 
 	if (exec) // Ignore the exception here, it will be raised later.
 		mono_thread_execute_interruption_void ();
@@ -5237,7 +5256,7 @@ mono_thread_info_get_last_managed (MonoThreadInfo *info)
 typedef struct {
 	MonoInternalThread *thread;
 	gboolean install_async_abort;
-	MonoThreadInfoInterruptToken *interrupt_token;
+	MonoThreadInterruptToken *interrupt_token;
 } AbortThreadData;
 
 static SuspendThreadResult
@@ -5274,7 +5293,7 @@ async_abort_critical (MonoThreadInfo *info, gpointer ud)
 		 * functions in the io-layer until the signal handler calls QueueUserAPC which will
 		 * make it return.
 		 */
-		data->interrupt_token = mono_thread_info_prepare_interrupt (info);
+		data->interrupt_token = mono_thread_prepare_interrupt (thread);
 
 		return MonoResumeThread;
 	}
@@ -5293,7 +5312,7 @@ async_abort_internal (MonoInternalThread *thread, gboolean install_async_abort)
 
 	mono_thread_info_safe_suspend_and_run (thread_get_tid (thread), TRUE, async_abort_critical, &data);
 	if (data.interrupt_token)
-		mono_thread_info_finish_interrupt (data.interrupt_token);
+		mono_thread_finish_interrupt (data.interrupt_token);
 	/*FIXME we need to wait for interruption to complete -- figure out how much into interruption we should wait for here*/
 }
 
@@ -5314,7 +5333,7 @@ self_abort_internal (MonoError *error)
 	if (mono_thread_request_interruption_managed (&exc))
 		mono_error_set_exception_handle (error, exc);
 	else
-		mono_thread_info_self_interrupt ();
+		mono_thread_self_interrupt ();
 
 	HANDLE_FUNCTION_RETURN ();
 }
@@ -5322,7 +5341,7 @@ self_abort_internal (MonoError *error)
 typedef struct {
 	MonoInternalThread *thread;
 	gboolean interrupt;
-	MonoThreadInfoInterruptToken *interrupt_token;
+	MonoThreadInterruptToken *interrupt_token;
 } SuspendThreadData;
 
 static SuspendThreadResult
@@ -5350,7 +5369,7 @@ async_suspend_critical (MonoThreadInfo *info, gpointer ud)
 	} else {
 		mono_thread_set_interruption_requested (thread);
 		if (data->interrupt)
-			data->interrupt_token = mono_thread_info_prepare_interrupt ((MonoThreadInfo *)thread->thread_info);
+			data->interrupt_token = mono_thread_prepare_interrupt (thread);
 
 		return MonoResumeThread;
 	}
@@ -5374,7 +5393,7 @@ async_suspend_internal (MonoInternalThread *thread, gboolean interrupt)
 
 	mono_thread_info_safe_suspend_and_run (thread_get_tid (thread), interrupt, async_suspend_critical, &data);
 	if (data.interrupt_token)
-		mono_thread_info_finish_interrupt (data.interrupt_token);
+		mono_thread_finish_interrupt (data.interrupt_token);
 
 	UNLOCK_THREAD (thread);
 }
@@ -5863,12 +5882,19 @@ mono_threads_is_ready_to_be_interrupted (void)
 void
 mono_thread_internal_describe (MonoInternalThread *internal, GString *text)
 {
+	MonoThreadInterruptToken *token;
+
+	g_assert (internal);
+
 	g_string_append_printf (text, ", thread handle : %p", internal->handle);
 
-	if (internal->thread_info) {
-		g_string_append (text, ", state : ");
-		mono_thread_info_describe_interrupt_token ((MonoThreadInfo*) internal->thread_info, text);
-	}
+	token = mono_atomic_load_ptr (&internal->interrupt_token);
+	if (token == NULL)
+		g_string_append_printf (text, ", state: not waiting");
+	else if (token == INTERRUPT_STATE)
+		g_string_append_printf (text, ", state: interrupted state");
+	else
+		g_string_append_printf (text, ", state: waiting");
 
 	if (internal->owned_mutexes) {
 		int i;
@@ -6069,7 +6095,7 @@ sleep_interruptable (guint32 ms, gboolean *alerted)
 				break;
 		}
 
-		mono_thread_info_install_interrupt (sleep_interrupt, NULL, alerted);
+		mono_thread_install_interrupt (sleep_interrupt, NULL, alerted);
 		if (*alerted) {
 			mono_coop_mutex_unlock (&sleep_mutex);
 			return WAIT_IO_COMPLETION;
@@ -6080,7 +6106,7 @@ sleep_interruptable (guint32 ms, gboolean *alerted)
 		else
 			mono_coop_cond_wait (&sleep_cond, &sleep_mutex);
 
-		mono_thread_info_uninstall_interrupt (alerted);
+		mono_thread_uninstall_interrupt (alerted);
 		if (*alerted) {
 			mono_coop_mutex_unlock (&sleep_mutex);
 			return WAIT_IO_COMPLETION;
@@ -6096,12 +6122,12 @@ gint
 mono_thread_sleep (guint32 ms, gboolean *alerted)
 {
 	if (ms == 0) {
-		MonoThreadInfo *info;
+		MonoInternalThread *internal;
 
 		mono_thread_info_yield ();
 
-		info = mono_thread_info_current ();
-		if (info && mono_thread_info_is_interrupt_state (info))
+		internal = mono_thread_internal_current ();
+		if (internal && mono_thread_is_interrupt_state (internal))
 			return WAIT_IO_COMPLETION;
 
 		return 0;
@@ -6158,4 +6184,184 @@ mono_thread_sleep (guint32 ms, gboolean *alerted)
 	MONO_EXIT_GC_SAFE;
 
 	return 0;
+}
+
+/*
+ * mono_thread_install_interrupt: install an interruption token for the current thread.
+ *
+ *  - @callback: must be able to be called from another thread and always cancel the wait
+ *  - @data: passed to the callback
+ *  - @interrupted: will be set to TRUE if a token is already installed, FALSE otherwise
+ *     if set to TRUE, it must mean that the thread is in interrupted state
+ */
+void
+mono_thread_install_interrupt (void (*callback) (gpointer data), gpointer data, gboolean *interrupted)
+{
+	MonoInternalThread *internal;
+	MonoThreadInterruptToken *previous_token, *token;
+
+	g_assert (callback);
+
+	g_assert (interrupted);
+	*interrupted = FALSE;
+
+	internal = mono_thread_internal_current ();
+	g_assert (internal);
+
+	/* The memory of this token can be freed at 2 places:
+	 *  - if the token is not interrupted: it will be freed in uninstall, as internal->interrupt_token has not been replaced
+	 *     by the INTERRUPT_STATE flag value, and it still contains the pointer to the memory location
+	 *  - if the token is interrupted: it will be freed in finish, as the token is now owned by the prepare/finish
+	 *     functions, and internal->interrupt_token does not contains a pointer to the memory anymore */
+	token = g_new0 (MonoThreadInterruptToken, 1);
+	token->callback = callback;
+	token->data = data;
+
+	previous_token = (MonoThreadInterruptToken *)mono_atomic_cas_ptr (&internal->interrupt_token, token, NULL);
+
+	if (previous_token) {
+		if (previous_token != INTERRUPT_STATE)
+			g_error ("mono_thread_install_interrupt: previous_token should be INTERRUPT_STATE (%p), but it was %p", INTERRUPT_STATE, previous_token);
+
+		g_free (token);
+
+		*interrupted = TRUE;
+	}
+
+	THREADS_INTERRUPT_DEBUG ("interrupt install    tid %p token %p previous_token %p interrupted %s\n",
+		mono_thread_info_get_tid (internal), token, previous_token, *interrupted ? "TRUE" : "FALSE");
+}
+
+void
+mono_thread_uninstall_interrupt (gboolean *interrupted)
+{
+	MonoInternalThread *internal;
+	MonoThreadInterruptToken *previous_token;
+
+	g_assert (interrupted);
+	*interrupted = FALSE;
+
+	internal = mono_thread_internal_current ();
+	g_assert (internal);
+
+	previous_token = (MonoThreadInterruptToken *)mono_atomic_xchg_ptr (&internal->interrupt_token, NULL);
+
+	/* only the installer can uninstall the token */
+	g_assert (previous_token);
+
+	if (previous_token == INTERRUPT_STATE) {
+		/* if it is interrupted, then it is going to be freed in finish interrupt */
+		*interrupted = TRUE;
+	} else {
+		g_free (previous_token);
+	}
+
+	THREADS_INTERRUPT_DEBUG ("interrupt uninstall  tid %p previous_token %p interrupted %s\n",
+		mono_thread_info_get_tid (internal), previous_token, *interrupted ? "TRUE" : "FALSE");
+}
+
+static MonoThreadInterruptToken*
+set_interrupt_state (MonoInternalThread *internal)
+{
+	MonoThreadInterruptToken *token, *previous_token;
+
+	g_assert (internal);
+
+	/* Atomically obtain the token the thread is
+	* waiting on, and change it to a flag value. */
+
+	do {
+		previous_token = (MonoThreadInterruptToken*) internal->interrupt_token;
+
+		/* Already interrupted */
+		if (previous_token == INTERRUPT_STATE) {
+			token = NULL;
+			break;
+		}
+
+		token = previous_token;
+	} while (mono_atomic_cas_ptr (&internal->interrupt_token, INTERRUPT_STATE, previous_token) != previous_token);
+
+	return token;
+}
+
+/*
+ * mono_thread_prepare_interrupt:
+ *
+ * The state of the thread info interrupt token is set to 'interrupted' which means that :
+ *  - if the thread calls one of the WaitFor functions, the function will return with
+ *     WAIT_IO_COMPLETION instead of waiting
+ *  - if the thread was waiting when this function was called, the wait will be broken
+ *
+ * It is possible that the wait functions return WAIT_IO_COMPLETION, but the target thread
+ * didn't receive the interrupt signal yet, in this case it should call the wait function
+ * again. This essentially means that the target thread will busy wait until it is ready to
+ * process the interruption.
+ */
+static MonoThreadInterruptToken*
+mono_thread_prepare_interrupt (MonoInternalThread *internal)
+{
+	MonoThreadInterruptToken *token;
+
+	token = set_interrupt_state (internal);
+
+	THREADS_INTERRUPT_DEBUG ("interrupt prepare    tid %p token %p\n",
+		mono_thread_info_get_tid (internal), token);
+
+	return token;
+}
+
+static void
+mono_thread_finish_interrupt (MonoThreadInterruptToken *token)
+{
+	THREADS_INTERRUPT_DEBUG ("interrupt finish     token %p\n", token);
+
+	if (token == NULL)
+		return;
+
+	g_assert (token->callback);
+
+	token->callback (token->data);
+
+	g_free (token);
+}
+
+static void
+mono_thread_self_interrupt (void)
+{
+	MonoInternalThread *internal;
+	MonoThreadInterruptToken *token;
+
+	internal = mono_thread_internal_current ();
+	g_assert (internal);
+
+	token = set_interrupt_state (internal);
+	g_assert (!token);
+
+	THREADS_INTERRUPT_DEBUG ("interrupt self       tid %p\n",
+		mono_thread_info_get_tid (internal));
+}
+
+/* Clear the interrupted flag of the current thread, set with
+ * mono_thread_self_interrupt, so it can wait again */
+static void
+mono_thread_clear_self_interrupt (void)
+{
+	MonoInternalThread *internal;
+	MonoThreadInterruptToken *previous_token;
+
+	internal = mono_thread_internal_current ();
+	g_assert (internal);
+
+	previous_token = (MonoThreadInterruptToken *)mono_atomic_cas_ptr (&internal->interrupt_token, NULL, INTERRUPT_STATE);
+	g_assert (previous_token == NULL || previous_token == INTERRUPT_STATE);
+
+	THREADS_INTERRUPT_DEBUG ("interrupt clear self tid %p previous_token %p\n", mono_thread_info_get_tid (info), previous_token);
+}
+
+gboolean
+mono_thread_is_interrupt_state (MonoInternalThread *internal)
+{
+	g_assert (internal);
+	return mono_atomic_load_ptr (&internal->interrupt_token) == INTERRUPT_STATE;
 }
