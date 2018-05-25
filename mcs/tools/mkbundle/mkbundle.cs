@@ -693,6 +693,7 @@ class MakeBundle {
 			var bytes = Encoding.UTF8.GetBytes (text);
 			locations [entry] = Tuple.Create (package.Position, bytes.Length);
 			package.Write (bytes, 0, bytes.Length);
+			package.WriteByte (0);
 			package.Position = package.Position + (align - (package.Position % align));
 		}
 
