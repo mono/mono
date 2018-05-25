@@ -54,6 +54,10 @@ namespace System.Collections.Generic
                 return (EqualityComparer<T>)(object)(new ByteEqualityComparer());
             }
 
+			/////////////////////////////////////////////////
+			// KEEP THIS IN SYNC WITH THE DEVIRT CODE
+			// IN METHOD-TO-IR.C
+			/////////////////////////////////////////////////
 #if MOBILE
             // Breaks .net serialization compatibility
             if (t == typeof (string))
