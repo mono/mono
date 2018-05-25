@@ -1,0 +1,4 @@
+<Project>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <Import Project="$(MonoWebAssemblySdkPath)\Mono.WebAssembly.Build\build\netstandard2.0\Mono.WebAssembly.Build.props" Condition="'$(MonoWebAssemblySdkPath)'!=''" />
+</Project>

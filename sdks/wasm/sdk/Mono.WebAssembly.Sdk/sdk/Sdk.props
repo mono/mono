@@ -1,0 +1,11 @@
+<Project>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <PropertyGroup>
+    <MonoWasmDevTargets
+  </PropertyGroup>
+  <ItemGroup Condition="'$(MonoWebAssemblySdkPath)'==''">
+    <PackageReference Include="Mono.WebAssembly.Build" Version="$(MonoWebAssemblyBuildPackageVersion)" />
+    <PackageReference Include="Mono.WebAssembly.Framework" Version="$(MonoWebAssemblyFrameworkPackageVersion)" />
+  </ItemGroup>
+  <Import Project="$(MonoWasmSdkDevPath)\Mono.WebAssembly.Build\build\netstandard2.0\Mono.WebAssembly.Build.props" Condition="'$(MonoWasmSdkDevPath)'!=''" />
+</Project>
