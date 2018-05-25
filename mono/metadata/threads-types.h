@@ -384,4 +384,7 @@ gboolean
 mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes);
 #endif
 
+gint
+mono_thread_sleep (guint32 ms, gboolean *alerted);
+
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

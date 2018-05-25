@@ -45,6 +45,7 @@
 #include <mono/utils/os-event.h>
 #include <mono/utils/mono-threads-debug.h>
 #include <mono/utils/unlocked.h>
+#include <mono/utils/mono-lazy-init.h>
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/w32event.h>
 #include <mono/metadata/w32mutex.h>
@@ -1403,7 +1404,7 @@ mono_thread_attach (MonoDomain *domain)
 	if (!mono_thread_attach_internal (thread, FALSE, TRUE)) {
 		/* Mono is shutting down, so just wait for the end */
 		for (;;)
-			mono_thread_info_sleep (10000, NULL);
+			mono_thread_sleep (10000, NULL);
 	}
 
 	THREAD_DEBUG (g_message ("%s: Attached thread ID %"G_GSIZE_FORMAT" (handle %p)", __func__, tid, internal->handle));
@@ -1628,7 +1629,7 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 
 		mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 
-		(void)mono_thread_info_sleep (ms, &alerted);
+		(void)mono_thread_sleep (ms, &alerted);
 
 		mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
@@ -3698,7 +3699,7 @@ void mono_thread_suspend_all_other_threads (void)
 				starting = FALSE;
 			mono_threads_unlock ();
 			if (starting)
-				mono_thread_info_sleep (100, NULL);
+				mono_thread_sleep (100, NULL);
 			else
 				finished = TRUE;
 		}
@@ -6025,3 +6026,136 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 #endif
 
 
+static mono_lazy_init_t sleep_init = MONO_LAZY_INIT_STATUS_NOT_INITIALIZED;
+static MonoCoopMutex sleep_mutex;
+static MonoCoopCond sleep_cond;
+
+static void
+sleep_initialize (void)
+{
+	mono_coop_mutex_init (&sleep_mutex);
+	mono_coop_cond_init (&sleep_cond);
+}
+
+static void
+sleep_interrupt (gpointer data)
+{
+	mono_coop_mutex_lock (&sleep_mutex);
+	mono_coop_cond_broadcast (&sleep_cond);
+	mono_coop_mutex_unlock (&sleep_mutex);
+}
+
+static inline guint32
+sleep_interruptable (guint32 ms, gboolean *alerted)
+{
+	gint64 now, end;
+
+	g_assert (MONO_INFINITE_WAIT == G_MAXUINT32);
+
+	g_assert (alerted);
+	*alerted = FALSE;
+
+	if (ms != MONO_INFINITE_WAIT)
+		end = mono_msec_ticks() + ms;
+
+	mono_lazy_initialize (&sleep_init, sleep_initialize);
+
+	mono_coop_mutex_lock (&sleep_mutex);
+
+	for (;;) {
+		if (ms != MONO_INFINITE_WAIT) {
+			now = mono_msec_ticks();
+			if (now >= end)
+				break;
+		}
+
+		mono_thread_info_install_interrupt (sleep_interrupt, NULL, alerted);
+		if (*alerted) {
+			mono_coop_mutex_unlock (&sleep_mutex);
+			return WAIT_IO_COMPLETION;
+		}
+
+		if (ms != MONO_INFINITE_WAIT)
+			mono_coop_cond_timedwait (&sleep_cond, &sleep_mutex, end - now);
+		else
+			mono_coop_cond_wait (&sleep_cond, &sleep_mutex);
+
+		mono_thread_info_uninstall_interrupt (alerted);
+		if (*alerted) {
+			mono_coop_mutex_unlock (&sleep_mutex);
+			return WAIT_IO_COMPLETION;
+		}
+	}
+
+	mono_coop_mutex_unlock (&sleep_mutex);
+
+	return 0;
+}
+
+gint
+mono_thread_sleep (guint32 ms, gboolean *alerted)
+{
+	if (ms == 0) {
+		MonoThreadInfo *info;
+
+		mono_thread_info_yield ();
+
+		info = mono_thread_info_current ();
+		if (info && mono_thread_info_is_interrupt_state (info))
+			return WAIT_IO_COMPLETION;
+
+		return 0;
+	}
+
+	if (alerted)
+		return sleep_interruptable (ms, alerted);
+
+	MONO_ENTER_GC_SAFE;
+
+	if (ms == MONO_INFINITE_WAIT) {
+		do {
+#ifdef HOST_WIN32
+			Sleep (G_MAXUINT32);
+#else
+			sleep (G_MAXUINT32);
+#endif
+		} while (1);
+	} else {
+		int ret;
+#if defined (__linux__) && !defined(HOST_ANDROID)
+		struct timespec start, target;
+
+		/* Use clock_nanosleep () to prevent time drifting problems when nanosleep () is interrupted by signals */
+		ret = clock_gettime (CLOCK_MONOTONIC, &start);
+		g_assert (ret == 0);
+
+		target = start;
+		target.tv_sec += ms / 1000;
+		target.tv_nsec += (ms % 1000) * 1000000;
+		if (target.tv_nsec > 999999999) {
+			target.tv_nsec -= 999999999;
+			target.tv_sec ++;
+		}
+
+		do {
+			ret = clock_nanosleep (CLOCK_MONOTONIC, TIMER_ABSTIME, &target, NULL);
+		} while (ret != 0);
+#elif HOST_WIN32
+		Sleep (ms);
+#else
+		struct timespec req, rem;
+
+		req.tv_sec = ms / 1000;
+		req.tv_nsec = (ms % 1000) * 1000000;
+
+		do {
+			memset (&rem, 0, sizeof (rem));
+			ret = nanosleep (&req, &rem);
+		} while (ret != 0);
+#endif /* __linux__ */
+	}
+
+	MONO_EXIT_GC_SAFE;
+
+	return 0;
+}

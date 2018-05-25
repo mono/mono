@@ -128,7 +128,7 @@ retry:
 
 	case 1:
 		do {
-			mono_thread_info_sleep (1, NULL); /* Been init'd by other threads, this is very rare. */
+			mono_thread_sleep (1, NULL); /* Been init'd by other threads, this is very rare. */
 		} while (mmap_init_state != 2);
 		break;
 	case 2:

@@ -700,7 +700,7 @@ monitor_thread (gpointer unused)
 				break;
 
 			ts = mono_msec_ticks ();
-			if (mono_thread_info_sleep (interval_left, &alerted) == 0)
+			if (mono_thread_sleep (interval_left, &alerted) == 0)
 				break;
 			interval_left -= mono_msec_ticks () - ts;
 
