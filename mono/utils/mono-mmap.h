@@ -65,6 +65,12 @@ MONO_API int   mono_file_unmap_fileio (void *addr, void *handle);
 #endif
 MONO_API int   mono_mprotect   (void *addr, size_t length, int flags);
 
+// Last two parameters are optional.
+// This is mono_file_map but with optionally returning an error message.
+// See https://github.com/mono/mono/issues/8225.
+MONO_API void*
+mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **ret_handle, const char *filepath, char **error_message);
+
 MONO_API const char* mono_mem_account_type_name (MonoMemAccountType type);
 MONO_API void  mono_mem_account_register_counters (void);
 
