@@ -22,7 +22,7 @@ corert/Interop.MemAllocFree.cs
 
 ../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.MemAllocFree.cs
 
-../../../external/corefx/src/Common/src/CoreLib/System/HashCode.cs
+#../../../external/corefx/src/Common/src/CoreLib/System/HashCode.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/Microsoft/Win32/SafeHandles/SafeThreadPoolIOHandle.cs
 

@@ -1,4 +1,4 @@
 #include net_4_x_corlib.dll.sources
 
-../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.BCryptGenRandom.cs
-../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Interop.Libraries.cs
+#../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.BCryptGenRandom.cs
+#../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Interop.Libraries.cs
