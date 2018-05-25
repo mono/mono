@@ -40,6 +40,10 @@
 
 #if HAVE_BOEHM_GC
 
+#if !HAVE_BDWGC_GC
+#define GC_dirty(x)
+#endif
+
 #undef TRUE
 #undef FALSE
 #define THREAD_LOCAL_ALLOC 1
@@ -643,7 +647,7 @@ mono_gc_weak_link_add (void **link_addr, MonoObject *obj, gboolean track)
 {
 	/* libgc requires that we use HIDE_POINTER... */
 	*link_addr = (void*)HIDE_POINTER (obj);
-	GC_end_stubborn_change(link_addr);
+	GC_dirty(link_addr);
 	if (track)
 		GC_REGISTER_LONG_LINK (link_addr, obj);
 	else
@@ -888,48 +892,48 @@ void
 mono_gc_wbarrier_set_field (MonoObject *obj, gpointer field_ptr, MonoObject* value)
 {
 	*(void**)field_ptr = value;
-	GC_end_stubborn_change(field_ptr);
+	GC_dirty(field_ptr);
 }
 
 void
 mono_gc_wbarrier_set_arrayref (MonoArray *arr, gpointer slot_ptr, MonoObject* value)
 {
 	*(void**)slot_ptr = value;
-	GC_end_stubborn_change(slot_ptr);
+	GC_dirty(slot_ptr);
 }
 
 void
 mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 {
 	mono_gc_memmove_aligned (dest_ptr, src_ptr, count * sizeof (gpointer));
-	GC_end_stubborn_change(dest_ptr);
+	GC_dirty(dest_ptr);
 }
 
 void
 mono_gc_wbarrier_generic_store (gpointer ptr, MonoObject* value)
 {
 	*(void**)ptr = value;
-	GC_end_stubborn_change(ptr);
+	GC_dirty(ptr);
 }
 
 void
 mono_gc_wbarrier_generic_store_atomic (gpointer ptr, MonoObject *value)
 {
 	mono_atomic_store_ptr ((volatile gpointer *)ptr, value);
-	GC_end_stubborn_change(ptr);
+	GC_dirty(ptr);
 }
 
 void
 mono_gc_wbarrier_generic_nostore (gpointer ptr)
 {
-	GC_end_stubborn_change(ptr);
+	GC_dirty(ptr);
 }
 
 void
 mono_gc_wbarrier_value_copy (gpointer dest, gpointer src, int count, MonoClass *klass)
 {
 	mono_gc_memmove_atomic (dest, src, count * mono_class_value_size (klass, NULL));
-	GC_end_stubborn_change(dest);
+	GC_dirty(dest);
 }
 
 void
@@ -938,7 +942,7 @@ mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 	/* do not copy the sync state */
 	mono_gc_memmove_aligned ((char*)obj + sizeof (MonoObject), (char*)src + sizeof (MonoObject),
 			mono_object_class (obj)->instance_size - sizeof (MonoObject));
-	GC_end_stubborn_change(obj);
+	GC_dirty(obj);
 }
 
 void
@@ -1510,7 +1514,7 @@ void
 mono_gc_wbarrier_range_copy (gpointer _dest, gpointer _src, int size)
 {
 	memcpy(_dest, _src, size);
-	GC_end_stubborn_change(_dest);
+	GC_dirty(_dest);
 }
 
 void*
@@ -1871,7 +1875,7 @@ handle_data_grow (HandleData *handles, gboolean track)
 		gpointer *entries;
 		entries = (void **)mono_gc_alloc_fixed (sizeof (*handles->entries) * new_size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, NULL, "GC Handle Table (Boehm)");
 		mono_gc_memmove_aligned (entries, handles->entries, sizeof (*handles->entries) * handles->size);
-		GC_end_stubborn_change(entries);
+		GC_dirty(entries);
 		mono_gc_free_fixed (handles->entries);
 		handles->entries = entries;
 	}
@@ -1904,7 +1908,7 @@ alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
 			mono_gc_weak_link_add (&(handles->entries [slot]), obj, track);
 	} else {
 		handles->entries [slot] = obj;
-		GC_end_stubborn_change(handles->entries + slot);
+		GC_dirty(handles->entries + slot);
 	}
 
 #ifndef DISABLE_PERFCOUNTERS
@@ -2022,7 +2026,7 @@ mono_gchandle_set_target (guint32 gchandle, MonoObject *obj)
 			handles->domain_ids [slot] = (obj ? mono_object_get_domain (obj) : mono_domain_get ())->domain_id;
 		} else {
 			handles->entries [slot] = obj;
-			GC_end_stubborn_change(handles->entries + slot);
+			GC_dirty(handles->entries + slot);
 		}
 	} else {
 		/* print a warning? */
@@ -2101,7 +2105,7 @@ mono_gchandle_free (guint32 gchandle)
 				mono_gc_weak_link_remove (&handles->entries [slot], handles->type == HANDLE_WEAK_TRACK);
 		} else {
 			handles->entries [slot] = NULL;
-			GC_end_stubborn_change(handles->entries + slot);
+			GC_dirty(handles->entries + slot);
 		}
 		vacate_slot (handles, slot);
 	} else {
@@ -2144,7 +2148,7 @@ mono_gchandle_free_domain (MonoDomain *domain)
 				if (handles->entries [slot] && mono_object_domain (handles->entries [slot]) == domain) {
 					vacate_slot (handles, slot);
 					handles->entries [slot] = NULL;
-					GC_end_stubborn_change(handles->entries + slot);
+					GC_dirty(handles->entries + slot);
 				}
 			}
 		}
