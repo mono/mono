@@ -655,7 +655,7 @@ class MakeBundle {
 
 	class PackageMaker {
 		Dictionary<string, Tuple<long,int>> locations = new Dictionary<string, Tuple<long,int>> ();
-		const int align = 1 << 16;
+		int align = 1 << 16; // first alignment
 		Stream package;
 		
 		public PackageMaker (string output)
@@ -675,6 +675,7 @@ class MakeBundle {
 					Console.WriteLine ("At {0:x} with input {1}", package.Position, fileStream.Length);
 				fileStream.CopyTo (package);
 				package.Position = package.Position + (align - (package.Position % align));
+				align = 4096; // rest of alignment
 				return (int) ret;
 			}
 		}
