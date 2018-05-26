@@ -136,6 +136,7 @@ csproj-library:
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(KEYFILE_MCS_FLAGS); \
+	echo $(LIBRARY); \
 	echo $(LIBRARY_NAME); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(build_lib); \
@@ -251,6 +252,7 @@ csproj-test:
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo false; \
 	echo $(USE_MCS_FLAGS) -r:$(the_assembly) $(TEST_MCS_FLAGS); \
+	echo $(LIBRARY); \
 	echo $(test_lib); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(test_lib); \

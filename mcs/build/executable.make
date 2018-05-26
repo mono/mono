@@ -192,6 +192,7 @@ csproj-local:
 	(echo $(is_boot); \
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(patsubst %,-r:%,$(LIB_REFS)); \
 	echo $(PROGRAM); \
+	echo $(PROGRAM); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(build_lib); \
 	echo $(FRAMEWORK_VERSION); \
