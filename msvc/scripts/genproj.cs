@@ -897,65 +897,26 @@ class MsbuildGenerator {
 			}
 		}
 
-		var sourceFilesSet = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
-
-		string [] source_files;
-		using (var reader = new StreamReader (NativeName (base_dir + "\\" + response))) {
-			source_files = reader.ReadToEnd ().Split ();
-		}
-
-		Array.Sort (source_files);
-
 		var groupConditional = $"Condition=\" '$(Platform)' == '{profile}' \"";
 
 		StringBuilder sources = new StringBuilder ();
 		sources.Append ($"  <ItemGroup {groupConditional}>{NewLine}");
 
-		foreach (string s in source_files) {
+		var readSources = ReadSources (null, profile, output_name).Select (s => s.Replace("/", "\\")).ToList();
+		readSources.Sort ();
+
+		foreach (string s in readSources) {
 			if (s.Length == 0)
 				continue;
 
 			string src = s.Replace ("/", "\\");
 			if (src.StartsWith (@"Test\..\"))
 				src = src.Substring (8, src.Length - 8);
-
-			sourceFilesSet.Add (src);
-
-			sources.AppendFormat ("    <Compile Include=\"{0}\" />" + NewLine, src);
-		}
-
-		source_files = built_sources.Split ();
-		Array.Sort (source_files);
-
-		foreach (string s in source_files) {
-			if (s.Length == 0)
-				continue;
-
-			string src = s.Replace ("/", "\\");
-			if (src.StartsWith (@"Test\..\"))
-				src = src.Substring (8, src.Length - 8);
-
-			sourceFilesSet.Add (src);
 
 			sources.AppendFormat ("    <Compile Include=\"{0}\" />" + NewLine, src);
 		}
 
 		sources.Append ("  </ItemGroup>");
-
-		var readSources = ReadSources (null, profile, output_name).Select (s => s.Replace("/", "\\")).ToList();
-		readSources.Sort ();
-
-		var readSourcesSet = new HashSet<string> (readSources, StringComparer.OrdinalIgnoreCase);
-
-		foreach (var sf in sourceFilesSet) {
-			if (!readSourcesSet.Contains (sf))
-				Console.WriteLine($"sfs has {sf} but rs doesn't");
-		}
-
-		foreach (var rs in readSourcesSet) {
-			if (!sourceFilesSet.Contains (rs))
-				Console.WriteLine($"rs has {rs} but sfs doesn't");
-		}
 
 		//if (library == "corlib-build") // otherwise, does not compile on fx_version == 4.0
 		//{

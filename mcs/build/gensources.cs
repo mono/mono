@@ -143,8 +143,7 @@ public class ParseResult {
 
         var relativeUri = Uri.UnescapeDataString (
             dirUri.MakeRelativeUri (pathUri).OriginalString
-        ).Replace ("/", SourcesParser.DirectorySeparator)
-         .Replace (SourcesParser.DirectorySeparator + SourcesParser.DirectorySeparator, SourcesParser.DirectorySeparator);
+        ).Replace ("/", SourcesParser.DirectorySeparator);
 
         if (SourcesParser.TraceLevel >= 4)
             Console.Error.WriteLine ($"// {fullPath} -> {relativeUri}");
@@ -157,6 +156,7 @@ public class ParseResult {
         string hostPlatformName, string profileName
     ) {
         var patternChars = new [] { '*', '?' };
+
         foreach (var entry in entries) {
             if (
                 (hostPlatformName != null) &&
@@ -169,7 +169,7 @@ public class ParseResult {
             )
                 continue;
 
-            var absolutePath = Path.Combine (entry.Directory, entry.Pattern).Trim ();
+            var absolutePath = Path.Combine (entry.Directory, entry.Pattern);
             var absoluteDirectory = Path.GetDirectoryName (absolutePath);
             var absolutePattern = Path.GetFileName (absolutePath);
 
@@ -186,23 +186,13 @@ public class ParseResult {
 
             if (absolutePattern.IndexOfAny (patternChars) >= 0) {
                 var matchingFiles = Directory.GetFiles (absoluteDirectory, absolutePattern);
-                if (matchingFiles.Length == 0) {
-                    Console.Error.WriteLine ($"// No matches for pattern '{absolutePattern}'");
-                    ErrorCount += 1;
-                }
-
                 foreach (var fileName in matchingFiles) {
                     var relativePath = GetRelativePath (fileName, LibraryDirectory);
                     yield return relativePath;
                 }
             } else {
-                if (!File.Exists (absolutePath)) {
-                    Console.Error.WriteLine ($"File does not exist: '{absolutePath}'");
-                    ErrorCount += 1;
-                } else {
-                    var relativePath = GetRelativePath (absolutePath, LibraryDirectory);
-                    yield return relativePath;
-                }
+                var relativePath = GetRelativePath (absolutePath, LibraryDirectory);
+                yield return relativePath;
             }
         }
     }
@@ -288,7 +278,7 @@ public class SourcesParser {
         TryParseSingleFile (state, testPath + ".exclude.sources", true);
 
         if (ok) {
-            PrintSummary (state);
+            PrintSummary (state, testPath);
             return state.Result;
         }
 
@@ -299,7 +289,7 @@ public class SourcesParser {
         TryParseSingleFile (state, testPath + ".exclude.sources", true);
 
         if (ok) {
-            PrintSummary (state);
+            PrintSummary (state, testPath);
             return state.Result;
         }
 
@@ -318,7 +308,7 @@ public class SourcesParser {
         TryParseSingleFile (state, testPath + ".sources", false);
         TryParseSingleFile (state, testPath + ".exclude.sources", true);
 
-        PrintSummary (state);
+        PrintSummary (state, testPath);
 
         return state.Result;
     }
@@ -350,14 +340,14 @@ public class SourcesParser {
             TryParseSingleFile (state, testPath + ".exclude.sources", true);
         }
 
-        PrintSummary (state);
+        PrintSummary (state, testPath);
 
         return state.Result;
     }
 
-    private void PrintSummary (State state) {
+    private void PrintSummary (State state, string testPath) {
         if (TraceLevel > 0)
-            Console.Error.WriteLine ($"// Parsed {state.SourcesFilesParsed} sources file(s) and {state.ExclusionsFilesParsed} exclusions file(s).");
+            Console.Error.WriteLine ($"// Parsed {state.SourcesFilesParsed} sources file(s) and {state.ExclusionsFilesParsed} exclusions file(s) from path '{testPath}'.");
     }
 
     private void HandleMetaDirective (State state, string directory, bool asExclusionsList, string directive) {
@@ -367,8 +357,11 @@ public class SourcesParser {
     }
 
     private bool TryParseSingleFile (State state, string fileName, bool asExclusionsList) {
-        if (!File.Exists (fileName))
+        if (!File.Exists (fileName)) {
+            if (TraceLevel >= 3)
+                Console.Error.WriteLine($"// Not found: {fileName}");
             return false;
+        }
 
         ParseSingleFile (state, fileName, asExclusionsList);
         return true;
