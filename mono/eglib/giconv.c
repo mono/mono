@@ -1020,6 +1020,28 @@ g_utf8_to_ucs4 (const gchar *str, glong len, glong *items_read, glong *items_wri
 	return outbuf;
 }
 
+gsize
+g_u16len (const gunichar2 *s)
+{
+#ifdef G_OS_WIN32
+	return wcslen (s);
+#else
+	const gunichar2 *t = s;
+	while (*s++) ;
+	return (gsize)(s - t - 1);
+#endif
+}
+
+#ifndef G_OS_WIN32
+
+gchar*
+u16to8 (const gunichar2 *str)
+{
+	return g_utf16_to_utf8 (str, (glong)g_u16len (str), NULL, NULL, NULL);
+}
+
+#endif
+
 gchar *
 g_utf16_to_utf8 (const gunichar2 *str, glong len, glong *items_read, glong *items_written, GError **err)
 {
@@ -1031,11 +1053,8 @@ g_utf16_to_utf8 (const gunichar2 *str, glong len, glong *items_read, glong *item
 	
 	g_return_val_if_fail (str != NULL, NULL);
 	
-	if (len < 0) {
-		len = 0;
-		while (str[len])
-			len++;
-	}
+	if (len < 0)
+		len = (glong)g_u16len (str);
 	
 	inptr = (char *) str;
 	inleft = len * 2;
@@ -1112,11 +1131,8 @@ g_utf16_to_ucs4 (const gunichar2 *str, glong len, glong *items_read, glong *item
 	
 	g_return_val_if_fail (str != NULL, NULL);
 	
-	if (len < 0) {
-		len = 0;
-		while (str[len])
-			len++;
-	}
+	if (len < 0)
+		len = (glong)g_u16len (str);
 	
 	inptr = (char *) str;
 	inleft = len * 2;
