@@ -212,15 +212,38 @@ namespace System.IO
 
 		public static FileAttributes GetAttributes (string path)
 		{
+			bool verbose = path.IndexOf ("/verbose") != -1;
+
+			if (verbose)
+				Console.WriteLine ($"GetAttributes 1 {path}");
+
 			Path.Validate (path);
+
+			if (verbose)
+				Console.WriteLine ($"GetAttributes 2 {path}");
+
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
+			if (verbose)
+				Console.WriteLine ($"GetAttributes 3 {path}");
 
 			MonoIOError error;
 			FileAttributes attrs;
 			
 			attrs = MonoIO.GetFileAttributes (path, out error);
-			if (error != MonoIOError.ERROR_SUCCESS)
+
+			if (verbose)
+				Console.WriteLine ($"GetAttributes 4 {path} {attrs} {error}");
+
+			if (error != MonoIOError.ERROR_SUCCESS) {
+				if (verbose)
+					Console.WriteLine ($"GetAttributes 5 throw {path} {attrs} {error}");
 				throw MonoIO.GetException (path, error);
+			}
+
+			if (verbose)
+				Console.WriteLine ($"GetAttributes 6 {path} {attrs} {error}");
+
 			return attrs;
 		}
 
@@ -439,11 +462,25 @@ namespace System.IO
 		public static void SetAttributes (string path,
 						  FileAttributes fileAttributes)
 		{
+			bool verbose = path.IndexOf ("/verbose") != -1;
+
+			if (verbose)
+				Console.WriteLine ($"SetAttributes 1 {path} {fileAttributes}");
+
 			MonoIOError error;
 			Path.Validate (path);
 
-			if (!MonoIO.SetFileAttributes (path, fileAttributes, out error))
+			if (verbose)
+				Console.WriteLine ($"SetAttributes 2 {path} {fileAttributes}");
+
+			if (!MonoIO.SetFileAttributes (path, fileAttributes, out error)) {
+				if (verbose)
+					Console.WriteLine ($"SetAttributes 3 throw {path} {fileAttributes}");
 				throw MonoIO.GetException (path, error);
+			}
+
+			if (verbose)
+				Console.WriteLine ($"SetAttributes 4 {path} {fileAttributes}");
 		}
 
 		public static void SetCreationTime (string path, DateTime creationTime)

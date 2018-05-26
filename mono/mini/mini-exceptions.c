@@ -2102,6 +2102,8 @@ interp_exit_finally_abort_blocks (MonoJitInfo *ji, int start_clause, int end_cla
 	}
 }
 
+extern gboolean mono_verbose_eh;
+
 /**
  * mono_handle_exception_internal:
  * \param ctx saved processor state
@@ -2111,6 +2113,9 @@ interp_exit_finally_abort_blocks (MonoJitInfo *ji, int start_clause, int end_cla
 static gboolean
 mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resume, MonoJitInfo **out_ji)
 {
+	if (mono_verbose_eh)
+		g_print ("%s\n", __func__);
+
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitInfo *ji, *prev_ji;
@@ -2631,6 +2636,9 @@ mono_debugger_run_finally (MonoContext *start_ctx)
 gboolean
 mono_handle_exception (MonoContext *ctx, MonoObject *obj)
 {
+	if (mono_verbose_eh)
+		g_print ("%s\n", __func__);
+
 	MONO_REQ_GC_UNSAFE_MODE;
 
 #ifndef DISABLE_PERFCOUNTERS
@@ -3479,6 +3487,9 @@ mono_thread_state_init_from_current (MonoThreadUnwindState *ctx)
 static void
 mono_raise_exception_with_ctx (MonoException *exc, MonoContext *ctx)
 {
+	if (mono_verbose_eh)
+		g_print ("%s\n", __func__);
+
 	mono_handle_exception (ctx, (MonoObject *)exc);
 	mono_restore_context (ctx);
 }

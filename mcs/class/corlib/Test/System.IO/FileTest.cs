@@ -149,7 +149,8 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Create_Path_ReadOnly ()
 		{
-			string path = Path.Combine (tmpFolder, "foo_Create_Path_ReadOnly");
+			var name = "verbose" + Guid.NewGuid ().ToString ("N");
+			string path = Path.Combine (tmpFolder, name + "foo_Create_Path_ReadOnly");
 			File.Create (path).Close ();
 			File.SetAttributes (path, FileAttributes.ReadOnly);
 			try {
@@ -624,7 +625,9 @@ namespace MonoTests.System.IO
 		{
 			FileAttributes attrs;
 
-			string path = Path.Combine (tmpFolder, "GetAttributes.tmp_GetAttributes_ReadOnly");
+			var name = "verbose" + Guid.NewGuid ().ToString ("N");
+
+			string path = Path.Combine (tmpFolder, name + "GetAttributes.tmp_GetAttributes_ReadOnly");
 			File.Create (path).Close ();
 
 			attrs = File.GetAttributes (path);

@@ -372,13 +372,46 @@ ves_icall_System_IO_MonoIO_DeleteFile (const gunichar2 *path, gint32 *error)
 	return(ret);
 }
 
-gint32 
+static ptrdiff_t
+strstr16 (const gunichar2 *haystack, size_t haystack_length, const gunichar2 *needle, size_t needle_length)
+{
+	if (!haystack_length || !needle_length || needle_length > haystack_length)
+		return -1;
+	gunichar2 const needle0 = needle [0];
+	for (ptrdiff_t i = 0; i <= (ptrdiff_t)(haystack_length - needle_length); ++i) {
+		if (haystack [i] == needle0 && memcmp (haystack + i, needle, needle_length * 2) == 0)
+			return i;
+	}
+	return -1;
+}
+
+#define CONSTANT_STRING_AND_LENGTH(x) (x), (sizeof (x) / sizeof (x [0]) - 1)
+gboolean mono_verbose_eh;
+
+const static gunichar2 slash_verbose [ ] = {'/','v','e','r','b','o','s','e',0};
+
+static gboolean
+has_verbose (const gunichar2 *path)
+{
+	return strstr16 (path, g_u16len (path), CONSTANT_STRING_AND_LENGTH (slash_verbose)) != -1;
+}
+
+gint32
 ves_icall_System_IO_MonoIO_GetFileAttributes (const gunichar2 *path, gint32 *error)
 {
 	gint32 ret;
 	*error=ERROR_SUCCESS;
 	
+	gboolean const verbose = has_verbose (path);
+	mono_verbose_eh |= verbose;
+
+	if (verbose)
+		g_print ("%s 1 %s\n", __func__, u16to8 (path));
+
 	ret = mono_w32file_get_attributes (path);
+
+	if (verbose)
+		g_print ("%s 2 %s 0x%X\n", __func__, u16to8 (path), ret);
 
 	/* 
 	 * The definition of INVALID_FILE_ATTRIBUTES in the cygwin win32
@@ -389,6 +422,8 @@ ves_icall_System_IO_MonoIO_GetFileAttributes (const gunichar2 *path, gint32 *err
 	if (ret==-1) {
 	  /* if(ret==INVALID_FILE_ATTRIBUTES) { */
 		*error=mono_w32error_get_last ();
+		if (verbose)
+			g_print ("%s 3 %s 0x%X 0x%X\n", __func__, u16to8 (path), ret, *error);
 	}
 	return(ret);
 }
@@ -399,11 +434,23 @@ ves_icall_System_IO_MonoIO_SetFileAttributes (const gunichar2 *path, gint32 attr
 {
 	gboolean ret;
 	*error=ERROR_SUCCESS;
+
+	gboolean const verbose = has_verbose (path);
+	mono_verbose_eh |= verbose;
+
+	if (verbose)
+		g_print ("%s 1 %s 0x%X\n", __func__, u16to8 (path), attrs);
 	
 	ret=mono_w32file_set_attributes (path,
 		convert_attrs ((MonoFileAttributes)attrs));
+
+	if (verbose)
+		g_print ("%s 2 %s 0x%X 0x%X\n", __func__, u16to8 (path), attrs, ret);
+
 	if(ret==FALSE) {
 		*error=mono_w32error_get_last ();
+		if (verbose)
+			g_print ("%s 3 %s 0x%X 0x%X 0x%X\n", __func__, u16to8 (path), attrs, ret, *error);
 	}
 	return(ret);
 }
