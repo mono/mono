@@ -797,13 +797,17 @@ gunichar  *g_utf16_to_ucs4 (const gunichar2 *str, glong len, glong *items_read, 
 gchar     *g_ucs4_to_utf8  (const gunichar *str, glong len, glong *items_read, glong *items_written, GError **err);
 gunichar2 *g_ucs4_to_utf16 (const gunichar *str, glong len, glong *items_read, glong *items_written, GError **err);
 
-#define u8to16(str) g_utf8_to_utf16(str, (glong)strlen(str), NULL, NULL, NULL)
+#define g_u16len monoeg_g_u16len
+gsize
+g_u16len (const gunichar2 *str);
 
-#ifdef G_OS_WIN32
-#define u16to8(str) g_utf16_to_utf8((gunichar2 *) (str), (glong)wcslen((wchar_t *) (str)), NULL, NULL, NULL)
-#else
-#define u16to8(str) g_utf16_to_utf8(str, (glong)strlen(str), NULL, NULL, NULL)
-#endif
+#define u8to16 monoeg_g_u8to16
+gunichar2*
+u8to16 (const gchar *str);
+
+#define u16to8 monoeg_g_u16to8
+gchar*
+u16to8 (const gunichar2 *str);
 
 /*
  * Path
