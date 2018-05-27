@@ -280,6 +280,11 @@ namespace System.IO
 
 		public static FileAttributes GetFileAttributes (string path, out MonoIOError error)
 		{
+			bool verbose = path != null && path.IndexOf ("/verbose") != -1;
+
+			if (verbose)
+				Console.WriteLine ($"MonoIO.GetFileAttributes 1 {path}");
+
 			unsafe {
 				fixed (char* pathChars = path) {
 					return GetFileAttributes (pathChars, out error);
@@ -292,6 +297,11 @@ namespace System.IO
 
 		public static bool SetFileAttributes (string path, FileAttributes attrs, out MonoIOError error)
 		{
+			bool verbose = path != null && path.IndexOf ("/verbose") != -1;
+
+			if (verbose)
+				Console.WriteLine ($"MonoIO.SetFileAttributes 1 {path} {attrs}");
+
 			unsafe {
 				fixed (char* pathChars = path) {
 					return SetFileAttributes (pathChars, attrs, out error);
@@ -338,10 +348,25 @@ namespace System.IO
 
 		public static bool Exists (string path, out MonoIOError error)
 		{
+			bool verbose = path != null && path.IndexOf ("/verbose") != -1;
+
+			if (verbose)
+				Console.WriteLine ($"MonoIO.Exists 1 {path}");
+
 			FileAttributes attrs = GetFileAttributes (path,
 								  out error);
-			if (attrs == InvalidFileAttributes)
+
+			if (verbose)
+				Console.WriteLine ($"MonoIO.Exists 2 {path} {attrs} {error}");
+
+			if (attrs == InvalidFileAttributes) {
+				if (verbose)
+					Console.WriteLine ($"MonoIO.Exists 3 {path} {attrs} {error}");
 				return false;
+			}
+
+			if (verbose)
+				Console.WriteLine ($"MonoIO.Exists 4 {path} {attrs} {error}");
 
 			return true;
 		}

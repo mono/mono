@@ -152,13 +152,23 @@ namespace System.IO
 
 		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool anonymous, FileOptions options)
 		{
+			bool verbose = path != null &&  path.IndexOf ("/verbose") != -1;
+			if (verbose)
+				Console.WriteLine ($"FileStream 1 {path}");
+
 			if (path == null) {
 				throw new ArgumentNullException ("path");
 			}
 
+			if (verbose)
+				Console.WriteLine ($"FileStream 2 {path}");
+
 			if (path.Length == 0) {
 				throw new ArgumentException ("Path is empty");
 			}
+
+			if (verbose)
+				Console.WriteLine ($"FileStream 3 {path}");
 
 			this.anonymous = anonymous;
 			// ignore the Inheritable flag
@@ -188,11 +198,18 @@ namespace System.IO
 				throw new ArgumentException ("Name has invalid chars");
 			}
 
+			if (verbose)
+				Console.WriteLine ($"FileStream 4 {path}");
+
 			path = Path.InsecureGetFullPath (path);
+
+			if (verbose)
+				Console.WriteLine ($"FileStream 5 {path}");
 
 			if (Directory.Exists (path)) {
 				// don't leak the path information for isolated storage
 				string msg = Locale.GetText ("Access to the path '{0}' is denied.");
+				Console.WriteLine ($"FileStream UnauthorizedAccessException denied");
 				throw new UnauthorizedAccessException (String.Format (msg, GetSecureFileName (path, false)));
 			}
 
@@ -201,6 +218,7 @@ namespace System.IO
 			 */
 			if (mode==FileMode.Append &&
 				(access&FileAccess.Read)==FileAccess.Read) {
+				Console.WriteLine ($"FileStream ArgumentException append");
 				throw new ArgumentException("Append access can be requested only in write-only mode.");
 			}
 
@@ -208,10 +226,14 @@ namespace System.IO
 				(mode != FileMode.Open && mode != FileMode.OpenOrCreate)) {
 				string msg = Locale.GetText ("Combining FileMode: {0} with " +
 					"FileAccess: {1} is invalid.");
+				Console.WriteLine ($"FileStream ArgumentException {msg} {access} {mode}");
 				throw new ArgumentException (string.Format (msg, access, mode));
 			}
 
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
+			if (verbose)
+				Console.WriteLine ($"FileStream 6 {path}");
 
 			string dname = Path.GetDirectoryName (path);
 			if (dname.Length > 0) {
@@ -230,14 +252,25 @@ namespace System.IO
 
 			// TODO: demand permissions
 
-			MonoIOError error;
+			MonoIOError error = 0;
+
+			if (verbose)
+				Console.WriteLine ($"FileStream 7 {path}");
 
 			var nativeHandle = MonoIO.Open (path, mode, access, share, options, out error);
 
+			if (verbose)
+				Console.WriteLine ($"FileStream 8 {path} {mode} {access} {share} {options} {nativeHandle}");
+
 			if (nativeHandle == MonoIO.InvalidHandle) {
 				// don't leak the path information for isolated storage
+				if (verbose)
+					Console.WriteLine ($"FileStream 8throw {path} {nativeHandle} {MonoIO.InvalidHandle}");
 				throw MonoIO.GetException (GetSecureFileName (path), error);
 			}
+
+			if (verbose)
+				Console.WriteLine ($"FileStream 9 {path} {nativeHandle} {MonoIO.InvalidHandle}");
 
 			this.safeHandle = new SafeFileHandle (nativeHandle, false);
 
@@ -263,6 +296,9 @@ namespace System.IO
 				}
 			}
 
+			if (verbose)
+				Console.WriteLine ($"FileStream 10 {path}");
+
 			InitBuffer (bufferSize, false);
 
 			if (mode==FileMode.Append) {
@@ -271,6 +307,9 @@ namespace System.IO
 			} else {
 				this.append_startpos=0;
 			}
+
+			if (verbose)
+				Console.WriteLine ($"FileStream 11 {path}");
 		}
 
 		private void Init (SafeFileHandle safeHandle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isConsoleWrapper)
@@ -282,7 +321,7 @@ namespace System.IO
 			if (!isConsoleWrapper && bufferSize <= 0)
 				throw new ArgumentOutOfRangeException("bufferSize", Environment.GetResourceString("ArgumentOutOfRange_NeedPosNum"));
 
-			MonoIOError error;
+			MonoIOError error = 0;
 			MonoFileType ftype = MonoIO.GetFileType (safeHandle, out error);
 
 			if (error != MonoIOError.ERROR_SUCCESS) {
@@ -360,7 +399,7 @@ namespace System.IO
 				// Buffered data might change the length of the stream
 				FlushBufferIfDirty ();
 
-				MonoIOError error;
+				MonoIOError error = 0;
 
 				long length = MonoIO.GetLength (safeHandle, out error);
 
@@ -385,7 +424,7 @@ namespace System.IO
 					return(buf_start + buf_offset);
 
 				// If the handle was leaked outside we always ask the real handle
-				MonoIOError error;
+				MonoIOError error = 0;
 
 				long ret = MonoIO.Seek (safeHandle, 0, SeekOrigin.Current, out error);
 
@@ -618,7 +657,7 @@ namespace System.IO
 		{
 			if (count > buf_size) {
 				// shortcut for long writes
-				MonoIOError error;
+				MonoIOError error = 0;
 
 				FlushBuffer ();
 
@@ -770,7 +809,7 @@ namespace System.IO
 
 			FlushBuffer ();
 
-			MonoIOError error;
+			MonoIOError error = 0;
 
 			buf_start = MonoIO.Seek (safeHandle, pos, SeekOrigin.Begin, out error);
 
@@ -798,7 +837,7 @@ namespace System.IO
 			
 			FlushBuffer ();
 
-			MonoIOError error;
+			MonoIOError error = 0;
 
 			MonoIO.SetLength (safeHandle, value, out error);
 			if (error != MonoIOError.ERROR_SUCCESS) {
@@ -827,7 +866,7 @@ namespace System.IO
 
 			// This does the fsync
 			if (flushToDisk){
-				MonoIOError error;
+				MonoIOError error = 0;
 				MonoIO.Flush (safeHandle, out error);
 			}
 		}
@@ -843,7 +882,7 @@ namespace System.IO
 				throw new ArgumentOutOfRangeException ("length must not be negative");
 			}
 
-			MonoIOError error;
+			MonoIOError error = 0;
 
 			MonoIO.Lock (safeHandle, position, length, out error);
 			if (error != MonoIOError.ERROR_SUCCESS) {
@@ -863,7 +902,7 @@ namespace System.IO
 				throw new ArgumentOutOfRangeException ("length must not be negative");
 			}
 
-			MonoIOError error;
+			MonoIOError error = 0;
 
 			MonoIO.Unlock (safeHandle, position, length, out error);
 			if (error != MonoIOError.ERROR_SUCCESS) {
@@ -893,7 +932,7 @@ namespace System.IO
 				}
 
 				if (owner) {
-					MonoIOError error;
+					MonoIOError error = 0;
 
 					MonoIO.Close (safeHandle.DangerousGetHandle (), out error);
 					if (error != MonoIOError.ERROR_SUCCESS) {
@@ -1010,7 +1049,7 @@ namespace System.IO
 		{
 			if (buf_dirty) {
 //				if (st == null) {
-					MonoIOError error;
+					MonoIOError error = 0;
 
 					if (CanSeek == true && !isExposed) {
 						MonoIO.Seek (safeHandle, buf_start, SeekOrigin.Begin, out error);
@@ -1058,7 +1097,7 @@ namespace System.IO
 		private int ReadData (SafeHandle safeHandle, byte[] buf, int offset,
 				      int count)
 		{
-			MonoIOError error;
+			MonoIOError error = 0;
 			int amount = 0;
 
 			/* when async == true, if we get here we don't suport AIO or it's disabled

@@ -372,13 +372,99 @@ ves_icall_System_IO_MonoIO_DeleteFile (const gunichar2 *path, gint32 *error)
 	return(ret);
 }
 
-gint32 
+static ptrdiff_t
+strstr16 (const gunichar2 *haystack, size_t haystack_length, const gunichar2 *needle, size_t needle_length)
+{
+	if (!haystack_length || !needle_length || needle_length > haystack_length)
+		return -1;
+	gunichar2 const needle0 = needle [0];
+	for (ptrdiff_t i = 0; i <= (ptrdiff_t)(haystack_length - needle_length); ++i) {
+		if (haystack [i] == needle0 && memcmp (haystack + i, needle, needle_length * 2) == 0)
+			return i;
+	}
+	return -1;
+}
+
+#define CONSTANT_STRING_AND_LENGTH(x) (x), (sizeof (x) / sizeof (x [0]) - 1)
+gboolean mono_verbose_eh;
+
+const static gunichar2 slash_verbose [ ] = {'/','v','e','r','b','o','s','e',0};
+
+static gboolean first_verbose;
+
+static void
+run (const char *a)
+{
+	fflush (stdout);
+	fflush (stderr);
+	g_print("%s\n", a);
+	system(a);
+	fflush (stdout);
+	fflush (stderr);
+}
+
+static void
+runv (const gchar *format, va_list args)
+{
+	char *msg;
+
+	if (g_vasprintf (&msg, format, args) < 0)
+		return;
+
+	run (msg);
+
+	g_free (msg);
+}
+
+
+static void
+runf (const char *format, ...)
+{
+	va_list args;
+	va_start (args, format);
+	runv (format, args);
+	va_end (args);
+}
+
+static gboolean
+has_verbose (const gunichar2 *path)
+{
+	if (path && strstr16 (path, g_u16len (path), CONSTANT_STRING_AND_LENGTH (slash_verbose)) != -1)
+	{
+		if (!first_verbose)
+		{
+			run("ls -l /tmp");
+			run("ls -l /");
+			run("ls -ld /tmp");
+			run("whoami");
+			run("umask");
+			run("cat /etc/lsb_release");
+			run("uname -a");
+		}
+		first_verbose = TRUE;
+		return FALSE;
+	}
+	return FALSE;
+}
+
+gint32
 ves_icall_System_IO_MonoIO_GetFileAttributes (const gunichar2 *path, gint32 *error)
 {
 	gint32 ret;
 	*error=ERROR_SUCCESS;
 	
+	gboolean const verbose = path && has_verbose (path);
+	mono_verbose_eh |= verbose;
+
+	if (verbose) {
+		g_print ("%s 1 %s\n", __func__, u16to8 (path));
+		runf("ls -l %s", u16to8 (path));
+	}
+
 	ret = mono_w32file_get_attributes (path);
+
+	if (verbose)
+		g_print ("%s 2 %s 0x%X\n", __func__, u16to8 (path), ret);
 
 	/* 
 	 * The definition of INVALID_FILE_ATTRIBUTES in the cygwin win32
@@ -389,6 +475,12 @@ ves_icall_System_IO_MonoIO_GetFileAttributes (const gunichar2 *path, gint32 *err
 	if (ret==-1) {
 	  /* if(ret==INVALID_FILE_ATTRIBUTES) { */
 		*error=mono_w32error_get_last ();
+		if (verbose)
+			g_print ("%s 3 %s 0x%X 0x%X\n", __func__, u16to8 (path), ret, *error);
+	}
+	else {
+		if (verbose)
+			g_print ("%s 4 %s 0x%X 0x%X\n", __func__, u16to8 (path), ret, *error);
 	}
 	return(ret);
 }
@@ -399,12 +491,32 @@ ves_icall_System_IO_MonoIO_SetFileAttributes (const gunichar2 *path, gint32 attr
 {
 	gboolean ret;
 	*error=ERROR_SUCCESS;
-	
+
+	gboolean const verbose = path && has_verbose (path);
+	mono_verbose_eh |= verbose;
+
+	if (verbose) {
+		g_print ("%s 1 %s 0x%X\n", __func__, u16to8 (path), attrs);
+		runf("ls -l %s", u16to8 (path));
+		g_print ("mono_w32file_get_attributes %X\n", mono_w32file_get_attributes (path));
+		g_print ("convert_attrs %X %X\n", attrs, convert_attrs ((MonoFileAttributes)attrs));
+	}
+
 	ret=mono_w32file_set_attributes (path,
 		convert_attrs ((MonoFileAttributes)attrs));
+
 	if(ret==FALSE) {
 		*error=mono_w32error_get_last ();
+		if (verbose)
+			g_print ("%s 3 %s 0x%X 0x%X 0x%X\n", __func__, u16to8 (path), attrs, ret, *error);
 	}
+
+	if (verbose) {
+		g_print ("%s 2 %s 0x%X 0x%X\n", __func__, u16to8 (path), attrs, ret);
+		runf("ls -l %s", u16to8 (path));
+		g_print ("mono_w32file_get_attributes %X\n", mono_w32file_get_attributes (path));
+	}
+
 	return(ret);
 }
 
@@ -453,6 +565,12 @@ ves_icall_System_IO_MonoIO_Open (const gunichar2 *filename, gint32 mode,
 
 	*error=ERROR_SUCCESS;
 
+	gboolean const verbose = filename && has_verbose (filename);
+	mono_verbose_eh |= verbose;
+
+	if (verbose)
+		g_print ("%s 1 %s mode:%X acc:%X sh:%X opt:%X\n", __func__, u16to8 (filename), mode, access_mode, share, options);
+
 	if (options != 0){
 		if (options & FileOptions_Encrypted)
 			attributes = FILE_ATTRIBUTE_ENCRYPTED;
@@ -484,8 +602,14 @@ ves_icall_System_IO_MonoIO_Open (const gunichar2 *filename, gint32 mode,
 	
 	ret=mono_w32file_create (filename, convert_access ((MonoFileAccess)access_mode), convert_share ((MonoFileShare)share), convert_mode ((MonoFileMode)mode), attributes);
 	if(ret==INVALID_HANDLE_VALUE) {
+
 		*error=mono_w32error_get_last ();
-	} 
+		if (verbose)
+			g_print ("%s 2inv %s mode:%X acc:%X sh:%X opt:%X ret:%p err:%X\n", __func__, u16to8 (filename), mode, access_mode, share, options, ret, *error);
+	} else {
+		if (verbose)
+			g_print ("%s 3succ %s mode:%X acc:%X sh:%X opt:%X ret:%p err:%X\n", __func__, u16to8 (filename), mode, access_mode, share, options, ret, *error);
+	}
 	
 	return(ret);
 }

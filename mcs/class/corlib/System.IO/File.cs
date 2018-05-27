@@ -71,7 +71,7 @@ namespace System.IO
 
 		public static void Copy (string sourceFileName, string destFileName, bool overwrite)
 		{
-			MonoIOError error;
+			MonoIOError error = 0;
 
 			if (sourceFileName == null)
 				throw new ArgumentNullException ("sourceFileName");
@@ -115,7 +115,7 @@ namespace System.IO
 			String fullSourceFileName = Path.GetFullPathInternal(sourceFileName);
 			String fullDestFileName = Path.GetFullPathInternal(destFileName);
 
-			MonoIOError error;
+			MonoIOError error = 0;
 
 			if (!MonoIO.CopyFile (fullSourceFileName, fullDestFileName, overwrite, out error)) {
 				string p = Locale.GetText ("{0}\" or \"{1}", sourceFileName, destFileName);
@@ -127,11 +127,17 @@ namespace System.IO
 
 		public static FileStream Create (string path)
 		{
+			bool verbose = path != null && path.IndexOf ("/verbose") != -1;
+			if (verbose)
+				Console.WriteLine ($"Create 1 {path}");
 			return Create (path, 8192);
 		}
 
 		public static FileStream Create (string path, int bufferSize)
 		{
+			bool verbose = path != null && path.IndexOf ("/verbose") != -1;
+			if (verbose)
+				Console.WriteLine ($"Create 2 {path}");
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
 				FileShare.None, bufferSize);
 		}
@@ -140,6 +146,9 @@ namespace System.IO
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options)
 		{
+			bool verbose = path != null && path.IndexOf ("/verbose") != -1;
+			if (verbose)
+				Console.WriteLine ($"Create 3 {path}");
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
 				FileShare.None, bufferSize, options);
 		}
@@ -149,6 +158,9 @@ namespace System.IO
 						 FileOptions options,
 						 FileSecurity fileSecurity)
 		{
+			bool verbose = path != null && path.IndexOf ("/verbose") != -1;
+			if (verbose)
+				Console.WriteLine ($"Create 4 {path}");
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
 				FileShare.None, bufferSize, options);
 		}
@@ -170,7 +182,7 @@ namespace System.IO
 
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
-			MonoIOError error;
+			MonoIOError error = 0;
 			
 			if (!MonoIO.DeleteFile (path, out error)){
 				if (error != MonoIOError.ERROR_FILE_NOT_FOUND)
@@ -192,7 +204,7 @@ namespace System.IO
 			if (!SecurityManager.CheckElevatedPermissions ())
 				return false;
 
-			MonoIOError error;
+			MonoIOError error = 0;
 			return MonoIO.ExistsFile (path, out error);
 		}
 
@@ -212,22 +224,45 @@ namespace System.IO
 
 		public static FileAttributes GetAttributes (string path)
 		{
+			bool verbose = path != null && path.IndexOf ("/verbose") != -1;
+
+			if (verbose)
+				Console.WriteLine ($"GetAttributes 1 {path}");
+
 			Path.Validate (path);
+
+			if (verbose)
+				Console.WriteLine ($"GetAttributes 2 {path}");
+
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
-			MonoIOError error;
+			if (verbose)
+				Console.WriteLine ($"GetAttributes 3 {path}");
+
+			MonoIOError error = 0;
 			FileAttributes attrs;
 			
 			attrs = MonoIO.GetFileAttributes (path, out error);
-			if (error != MonoIOError.ERROR_SUCCESS)
+
+			if (verbose)
+				Console.WriteLine ($"GetAttributes 4 {path} {attrs} {error}");
+
+			if (error != MonoIOError.ERROR_SUCCESS) {
+				if (verbose)
+					Console.WriteLine ($"GetAttributes 5 throw {path} {attrs} {error}");
 				throw MonoIO.GetException (path, error);
+			}
+
+			if (verbose)
+				Console.WriteLine ($"GetAttributes 6 {path} {attrs} {error}");
+
 			return attrs;
 		}
 
 		public static DateTime GetCreationTime (string path)
 		{
 			MonoIOStat stat;
-			MonoIOError error;
+			MonoIOError error = 0;
 			Path.Validate (path);
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
@@ -248,7 +283,7 @@ namespace System.IO
 		public static DateTime GetLastAccessTime (string path)
 		{
 			MonoIOStat stat;
-			MonoIOError error;
+			MonoIOError error = 0;
 			Path.Validate (path);
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
@@ -269,7 +304,7 @@ namespace System.IO
 		public static DateTime GetLastWriteTime (string path)
 		{
 			MonoIOStat stat;
-			MonoIOError error;
+			MonoIOError error = 0;
 			Path.Validate (path);
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
@@ -304,7 +339,7 @@ namespace System.IO
 
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
-			MonoIOError error;
+			MonoIOError error = 0;
 			if (!MonoIO.Exists (sourceFileName, out error))
 				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", sourceFileName), sourceFileName);
 
@@ -372,7 +407,7 @@ namespace System.IO
 					    string destinationBackupFileName,
 					    bool ignoreMetadataErrors)
 		{
-			MonoIOError error;
+			MonoIOError error = 0;
 
 			if (sourceFileName == null)
 				throw new ArgumentNullException ("sourceFileName");
@@ -439,16 +474,30 @@ namespace System.IO
 		public static void SetAttributes (string path,
 						  FileAttributes fileAttributes)
 		{
-			MonoIOError error;
+			bool verbose = path != null && path.IndexOf ("/verbose") != -1;
+
+			if (verbose)
+				Console.WriteLine ($"SetAttributes 1 {path} {fileAttributes}");
+
+			MonoIOError error = 0;
 			Path.Validate (path);
 
-			if (!MonoIO.SetFileAttributes (path, fileAttributes, out error))
+			if (verbose)
+				Console.WriteLine ($"SetAttributes 2 {path} {fileAttributes}");
+
+			if (!MonoIO.SetFileAttributes (path, fileAttributes, out error)) {
+				if (verbose)
+					Console.WriteLine ($"SetAttributes 3 throw {path} {fileAttributes}");
 				throw MonoIO.GetException (path, error);
+			}
+
+			if (verbose)
+				Console.WriteLine ($"SetAttributes 4 {path} {fileAttributes}");
 		}
 
 		public static void SetCreationTime (string path, DateTime creationTime)
 		{
-			MonoIOError error;
+			MonoIOError error = 0;
 			Path.Validate (path);
 			if (!MonoIO.Exists (path, out error))
 				throw MonoIO.GetException (path, error);
@@ -463,7 +512,7 @@ namespace System.IO
 
 		public static void SetLastAccessTime (string path, DateTime lastAccessTime)
 		{
-			MonoIOError error;
+			MonoIOError error = 0;
 			Path.Validate (path);
 			if (!MonoIO.Exists (path, out error))
 				throw MonoIO.GetException (path, error);
@@ -479,7 +528,7 @@ namespace System.IO
 		public static void SetLastWriteTime (string path,
 						     DateTime lastWriteTime)
 		{
-			MonoIOError error;
+			MonoIOError error = 0;
 			Path.Validate (path);
 			if (!MonoIO.Exists (path, out error))
 				throw MonoIO.GetException (path, error);
@@ -707,7 +756,7 @@ namespace System.IO
 			if (tryagain)
 				throw new NotImplementedException ();
 
-			MonoIOError error;
+			MonoIOError error = 0;
 			MonoIO.GetFileStat (path, out data, out error);
 
 			if (!returnErrorOnNotFound && (error == MonoIOError.ERROR_FILE_NOT_FOUND || error == MonoIOError.ERROR_PATH_NOT_FOUND || error == MonoIOError.ERROR_NOT_READY)) {

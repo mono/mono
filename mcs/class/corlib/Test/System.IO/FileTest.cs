@@ -103,7 +103,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Create (null);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -115,11 +115,11 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Create_Path_Directory ()
 		{
-			string path = Path.Combine (tmpFolder, "foo");
+			string path = Path.Combine (tmpFolder, "foo_Create_Path_Directory");
 			Directory.CreateDirectory (path);
 			try {
 				File.Create (path);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (UnauthorizedAccessException ex) {
 				// Access to the path '...' is denied
 				Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
@@ -136,7 +136,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Create (string.Empty);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -149,16 +149,20 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Create_Path_ReadOnly ()
 		{
-			string path = Path.Combine (tmpFolder, "foo");
+			var name = "verbose" + Guid.NewGuid ().ToString ("N");
+			string path = Path.Combine (tmpFolder, name + "foo_Create_Path_ReadOnly");
 			File.Create (path).Close ();
 			File.SetAttributes (path, FileAttributes.ReadOnly);
 			try {
 				File.Create (path);
-				Assert.Fail ("#1");
+				Console.WriteLine ($"#1 {path}"); Assert.Fail ("#1");
 			} catch (UnauthorizedAccessException ex) {
 				// Access to the path '...' is denied
+				Console.WriteLine ($"1 {ex}");
+				Console.WriteLine ($"2 {ex.Message}");
 				Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
+				Console.WriteLine (ex.InnerException);
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
 			} finally {
@@ -171,7 +175,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Create (" ");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -185,11 +189,11 @@ namespace MonoTests.System.IO
 		public void Create_Directory_DoesNotExist ()
 		{
 			FileStream stream = null;
-			string path = tmpFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo";
+			string path = tmpFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo_Create_Directory_DoesNotExist";
 			
 			try {
 				stream = File.Create (path);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (DirectoryNotFoundException ex) {
 				// Could not find a part of the path "..."
 				Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
@@ -210,7 +214,7 @@ namespace MonoTests.System.IO
 			string path = null;
 
 			/* positive test: create resources/foo */
-			path = tmpFolder + Path.DirectorySeparatorChar + "foo";
+			path = tmpFolder + Path.DirectorySeparatorChar + "foo_Create";
 			try {
 
 				stream = File.Create (path);
@@ -225,7 +229,7 @@ namespace MonoTests.System.IO
 			stream = null;
 
 			/* positive test: repeat test above again to test for overwriting file */
-			path = tmpFolder + Path.DirectorySeparatorChar + "foo";
+			path = tmpFolder + Path.DirectorySeparatorChar + "foo_Create";
 			try {
 				stream = File.Create (path);
 				Assert.IsTrue (File.Exists (path), "#2");
@@ -242,7 +246,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Copy (null, "b");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -256,7 +260,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Copy ("a", null);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -270,7 +274,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Copy (string.Empty, "b");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -285,7 +289,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Copy ("a", string.Empty);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -300,7 +304,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Copy (" ", "b");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -315,7 +319,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Copy ("a", " ");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -330,7 +334,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Copy ("doesnotexist", "b");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
 				Assert.AreEqual ("doesnotexist", ex.FileName, "#3");
@@ -351,7 +355,7 @@ namespace MonoTests.System.IO
 				File.Copy (source, dest);
 				try {
 					File.Copy (source, dest);
-					Assert.Fail ("#1");
+						Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (IOException ex) {
 					// The file '...' already exists.
 					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
@@ -375,7 +379,7 @@ namespace MonoTests.System.IO
 				File.Create (source).Close ();
 				try {
 					File.Copy (source, source, true);
-					Assert.Fail ("#1");
+					Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (IOException ex) {
 					// process cannot access file ... because it is being used by another process
 					Assert.IsNull (ex.InnerException, "#2");
@@ -416,7 +420,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Delete (null);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -430,7 +434,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Delete (string.Empty);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -445,7 +449,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Delete (" ");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -458,13 +462,13 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Delete_Directory_DoesNotExist ()
 		{
-			string path = tmpFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo";
+			string path = tmpFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo_Delete_Directory_DoesNotExist";
 			if (Directory.Exists (path))
 				Directory.Delete (path, true);
 
 			try {
 				File.Delete (path);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (DirectoryNotFoundException ex) {
 				// Could not find a part of the path "..."
 				Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
@@ -477,7 +481,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Delete ()
 		{
-			string foopath = tmpFolder + Path.DirectorySeparatorChar + "foo";
+			string foopath = tmpFolder + Path.DirectorySeparatorChar + "foo_Delete";
 			DeleteFile (foopath);
 			try {
 				File.Create (foopath).Close ();
@@ -500,7 +504,7 @@ namespace MonoTests.System.IO
 				stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 				try {
 					File.Delete (path);
-					Assert.Fail ("#1");
+					Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (IOException ex) {
 					// The process cannot access the file '...'
 					// because it is being used by another process
@@ -549,7 +553,7 @@ namespace MonoTests.System.IO
 
 			FileAttributes attrs;
 
-			string path = Path.Combine (tmpFolder, "GetAttributes.tmp");
+			string path = Path.Combine (tmpFolder, "GetAttributes.tmp_GetAttributes_Archive");
 			File.Create (path).Close ();
 
 			attrs = File.GetAttributes (path);
@@ -568,7 +572,7 @@ namespace MonoTests.System.IO
 			if (RunningOnUnix)
 				Assert.Ignore ("bug #325181: FileAttributes.Archive has no effect on Unix.");
 
-			string path = Path.Combine (tmpFolder, "GetAttributes.tmp");
+			string path = Path.Combine (tmpFolder, "GetAttributes.tmp_GetAttributes_Default_File");
 			File.Create (path).Close ();
 
 			FileAttributes attrs = File.GetAttributes (path);
@@ -606,7 +610,7 @@ namespace MonoTests.System.IO
 
 			Assert.IsFalse ((attrs & FileAttributes.Directory) != 0, "#2");
 
-			string path = Path.Combine (tmpFolder, "GetAttributes.tmp");
+			string path = Path.Combine (tmpFolder, "GetAttributes.tmp_GetAttributes_Directory");
 			File.Create (path).Close ();
 
 			attrs = File.GetAttributes (path);
@@ -621,17 +625,22 @@ namespace MonoTests.System.IO
 		{
 			FileAttributes attrs;
 
-			string path = Path.Combine (tmpFolder, "GetAttributes.tmp");
+			var name = "verbose" + Guid.NewGuid ().ToString ("N");
+
+			string path = Path.Combine (tmpFolder, name + "GetAttributes.tmp_GetAttributes_ReadOnly");
 			File.Create (path).Close ();
 
 			attrs = File.GetAttributes (path);
+			Console.WriteLine($"GetAttributes_ReadOnly 1 {path} {attrs}");
 			Assert.IsFalse ((attrs & FileAttributes.ReadOnly) != 0, "#1");
 
 			try {
 				attrs |= FileAttributes.ReadOnly;
+				Console.WriteLine($"GetAttributes_ReadOnly 2 {path} {attrs}");
 				File.SetAttributes (path, attrs);
 
 				attrs = File.GetAttributes (path);
+				Console.WriteLine($"GetAttributes_ReadOnly 3 {path} {attrs}");
 				Assert.IsTrue ((attrs & FileAttributes.ReadOnly) != 0, "#2");
 			} finally {
 				File.SetAttributes (path, FileAttributes.Normal);
@@ -646,7 +655,7 @@ namespace MonoTests.System.IO
 
 			FileAttributes attrs;
 
-			string path = Path.Combine (tmpFolder, "GetAttributes.tmp");
+			string path = Path.Combine (tmpFolder, "GetAttributes.tmp_GetAttributes_System");
 			File.Create (path).Close ();
 
 			attrs = File.GetAttributes (path);
@@ -662,10 +671,10 @@ namespace MonoTests.System.IO
 		[Test]
 		public void GetAttributes_Path_DoesNotExist ()
 		{
-			string path = Path.Combine (tmpFolder, "GetAttributes.tmp");
+			string path = Path.Combine (tmpFolder, "GetAttributes.tmp_GetAttributes_Path_DoesNotExist");
 			try {
 				File.GetAttributes (path);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
 				Assert.AreEqual (path, ex.FileName, "#3");
@@ -679,7 +688,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetAttributes (string.Empty);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -694,7 +703,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetAttributes (null);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -708,7 +717,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Move (null, "b");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -722,7 +731,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Move ("a", null);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -736,7 +745,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Move (string.Empty, "b");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -751,7 +760,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Move ("a", string.Empty);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -766,7 +775,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Move (" ", "b");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -781,7 +790,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.Move ("a", " ");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -798,7 +807,7 @@ namespace MonoTests.System.IO
 			DeleteFile (file);
 			try {
 				File.Move (file, "b");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
 				Assert.AreEqual (file, ex.FileName, "#3");
@@ -810,14 +819,14 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Move_DestFileName_DirectoryDoesNotExist ()
 		{
-			string sourceFile = tmpFolder + Path.DirectorySeparatorChar + "foo";
+			string sourceFile = tmpFolder + Path.DirectorySeparatorChar + "foo_Move_DestFileName_DirectoryDoesNotExist";
 			string destFile = Path.Combine (Path.Combine (tmpFolder, "doesnotexist"), "b");
 			DeleteFile (sourceFile);
 			try {
 				File.Create (sourceFile).Close ();
 				try {
 					File.Move (sourceFile, destFile);
-					Assert.Fail ("#1");
+					Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (DirectoryNotFoundException ex) {
 					// Could not find a part of the path
 					Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
@@ -833,7 +842,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Move_DestFileName_AlreadyExists ()
 		{
-			string sourceFile = tmpFolder + Path.DirectorySeparatorChar + "foo";
+			string sourceFile = tmpFolder + Path.DirectorySeparatorChar + "foo_Move_DestFileName_AlreadyExists";
 			string destFile;
 
 			// move to same directory
@@ -1035,7 +1044,7 @@ namespace MonoTests.System.IO
 			FileStream stream = null;
 			try {
 				stream = File.Open (tmpFolder + Path.DirectorySeparatorChar + "AFile.txt", FileMode.CreateNew, FileAccess.Read);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Combining FileMode: CreateNew with FileAccess: Read is invalid
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1058,7 +1067,7 @@ namespace MonoTests.System.IO
 				File.Create (path).Close ();
 			try {
 				s = File.Open (path, FileMode.Append, FileAccess.Read);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Combining FileMode: Append with FileAccess: Read is invalid
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1324,7 +1333,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetCreationTime (null as string);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1338,7 +1347,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetCreationTime (string.Empty);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1369,7 +1378,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetCreationTime ("    ");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1384,7 +1393,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetCreationTime (Path.InvalidPathChars [0].ToString ());
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1399,7 +1408,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetCreationTimeUtc (null as string);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1413,7 +1422,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetCreationTimeUtc (string.Empty);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1443,7 +1452,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetCreationTimeUtc ("    ");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1458,7 +1467,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetCreationTimeUtc (Path.InvalidPathChars [0].ToString ());
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1473,7 +1482,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastAccessTime (null as string);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1487,7 +1496,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastAccessTime (string.Empty);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1518,7 +1527,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastAccessTime ("    ");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1533,7 +1542,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastAccessTime (Path.InvalidPathChars [0].ToString ());
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1548,7 +1557,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastAccessTimeUtc (null as string);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1562,7 +1571,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastAccessTimeUtc (string.Empty);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1592,7 +1601,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastAccessTimeUtc ("    ");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1607,7 +1616,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString ());
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1622,7 +1631,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastWriteTime (null as string);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1636,7 +1645,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastWriteTime (string.Empty);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1667,7 +1676,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastWriteTime ("    ");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1682,7 +1691,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastWriteTime (Path.InvalidPathChars [0].ToString ());
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1697,7 +1706,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastWriteTimeUtc (null as string);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1711,7 +1720,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastWriteTimeUtc (string.Empty);
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1741,7 +1750,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastWriteTimeUtc ("    ");
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1756,7 +1765,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.GetLastWriteTimeUtc (Path.InvalidPathChars [0].ToString ());
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1789,7 +1798,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetCreationTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1803,7 +1812,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetCreationTime (string.Empty, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1818,7 +1827,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetCreationTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1836,7 +1845,7 @@ namespace MonoTests.System.IO
 				try {
 					File.SetCreationTime (Path.InvalidPathChars [1].ToString (),
 						new DateTime (2000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
+						Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (ArgumentException ex) {
 					// Illegal characters in path
 					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1855,7 +1864,7 @@ namespace MonoTests.System.IO
 			
 			try {
 				File.SetCreationTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
 				Assert.AreEqual (path, ex.FileName, "#3");
@@ -1892,7 +1901,7 @@ namespace MonoTests.System.IO
 				stream = File.Create (path);
 				try {
 					File.SetCreationTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
+					Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (IOException ex) {
 					// The process cannot access the file '...'
 					// because it is being used by another process
@@ -1913,7 +1922,7 @@ namespace MonoTests.System.IO
 		{ 
 			try {
 				File.SetCreationTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -1927,7 +1936,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetCreationTimeUtc (string.Empty, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1942,7 +1951,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetCreationTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1960,7 +1969,7 @@ namespace MonoTests.System.IO
 				try {
 					File.SetCreationTimeUtc (Path.InvalidPathChars [1].ToString (),
 						new DateTime (2000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
+					Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (ArgumentException ex) {
 					// Illegal characters in path
 					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1979,7 +1988,7 @@ namespace MonoTests.System.IO
 
 			try {
 				File.SetCreationTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
 				Assert.AreEqual (path, ex.FileName, "#3");
@@ -2016,7 +2025,7 @@ namespace MonoTests.System.IO
 				stream = File.Create (path);
 				try {
 					File.SetCreationTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
+					Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (IOException ex) {
 					// The process cannot access the file "..."
 					// because it is being used by another process
@@ -2039,7 +2048,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetLastAccessTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -2053,7 +2062,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetLastAccessTime (string.Empty, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -2068,7 +2077,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetLastAccessTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -2086,7 +2095,8 @@ namespace MonoTests.System.IO
 				try {
 					File.SetLastAccessTime (Path.InvalidPathChars [1].ToString (),
 						new DateTime (2000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
+				Console.WriteLine ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (ArgumentException ex) {
 					// Illegal characters in path
 					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -2105,7 +2115,7 @@ namespace MonoTests.System.IO
 
 			try {
 				File.SetLastAccessTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
 				Assert.AreEqual (path, ex.FileName, "#3");
@@ -2142,7 +2152,7 @@ namespace MonoTests.System.IO
 				stream = File.Create (path);
 				try {
 					File.SetLastAccessTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
+					Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (IOException ex) {
 					// The process cannot access the file "..."
 					// because it is being used by another process
@@ -2163,7 +2173,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetLastAccessTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -2177,7 +2187,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetLastAccessTimeUtc (string.Empty, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -2192,7 +2202,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetLastAccessTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -2210,7 +2220,7 @@ namespace MonoTests.System.IO
 				try {
 					File.SetLastAccessTimeUtc (Path.InvalidPathChars [1].ToString (),
 						new DateTime (2000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
+					Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (ArgumentException ex) {
 					// Illegal characters in path
 					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -2229,7 +2239,7 @@ namespace MonoTests.System.IO
 
 			try {
 				File.SetLastAccessTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
 				Assert.AreEqual (path, ex.FileName, "#3");
@@ -2266,7 +2276,7 @@ namespace MonoTests.System.IO
 				stream = File.Create (path);
 				try {
 					File.SetLastAccessTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
+					Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (IOException ex) {
 					// The process cannot access the file "..."
 					// because it is being used by another process
@@ -2289,7 +2299,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetLastWriteTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -2303,7 +2313,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetLastWriteTime (string.Empty, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -2318,7 +2328,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetLastWriteTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -2336,7 +2346,7 @@ namespace MonoTests.System.IO
 				try {
 					File.SetLastWriteTime (Path.InvalidPathChars [1].ToString (),
 						new DateTime (2000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
+					Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (ArgumentException ex) {
 					// Illegal characters in path
 					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -2355,7 +2365,7 @@ namespace MonoTests.System.IO
 
 			try {
 				File.SetLastWriteTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
 				Assert.AreEqual (path, ex.FileName, "#3");
@@ -2392,7 +2402,7 @@ namespace MonoTests.System.IO
 				stream = File.Create (path);
 				try {
 					File.SetLastWriteTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
+					Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (IOException ex) {
 					// The process cannot access the file '...'
 					// because it is being used by another process
@@ -2413,7 +2423,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetLastWriteTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -2427,7 +2437,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetLastWriteTimeUtc (string.Empty, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -2442,7 +2452,7 @@ namespace MonoTests.System.IO
 		{
 			try {
 				File.SetLastWriteTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -2460,7 +2470,7 @@ namespace MonoTests.System.IO
 				try {
 					File.SetLastWriteTimeUtc (Path.InvalidPathChars [1].ToString (),
 						new DateTime (2000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
+					Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (ArgumentException ex) {
 					// Illegal characters in path
 					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -2479,7 +2489,7 @@ namespace MonoTests.System.IO
 
 			try {
 				File.SetLastWriteTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
-				Assert.Fail ("#1");
+				Console.WriteLine ("#1"); Assert.Fail ("#1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
 				Assert.AreEqual (path, ex.FileName, "#3");
@@ -2516,7 +2526,7 @@ namespace MonoTests.System.IO
 				stream = File.Create (path);
 				try {
 					File.SetLastWriteTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
+					Console.WriteLine ("#1"); Assert.Fail ("#1");
 				} catch (IOException ex) {
 					// The process cannot access the file '...'
 					// because it is being used by another process
