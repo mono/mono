@@ -37,7 +37,6 @@ static GLogFunc default_log_func;
 static gpointer default_log_func_user_data;
 static GPrintFunc stdout_handler, stderr_handler;
 
-static void default_stdout_handler (const gchar *string);
 static void default_stderr_handler (const gchar *string);
 
 void
@@ -49,7 +48,7 @@ g_printv (const gchar *format, va_list args)
 		return;
 
 	if (!stdout_handler)
-		stdout_handler = default_stdout_handler;
+		stdout_handler = default_stderr_handler;
 
 	stdout_handler (msg);
 	g_free (msg);
@@ -240,13 +239,6 @@ g_log_default_handler (const gchar *log_domain, GLogLevelFlags log_level, const 
 }
 
 static void
-default_stdout_handler (const gchar *message)
-{
-	/* TODO: provide a proper app name */
-	android_log (ANDROID_LOG_ERROR, "mono", message);
-}
-
-static void
 default_stderr_handler (const gchar *message)
 {
 	/* TODO: provide a proper app name */
@@ -281,12 +273,6 @@ g_log_default_handler (const gchar *log_domain, GLogLevelFlags log_level, const 
 }
 
 static void
-default_stdout_handler (const gchar *message)
-{
-	asl_log (NULL, NULL, ASL_LEVEL_WARNING, "%s", message);
-}
-
-static void
 default_stderr_handler (const gchar *message)
 {
 	asl_log (NULL, NULL, ASL_LEVEL_WARNING, "%s", message);
@@ -309,12 +295,6 @@ g_log_default_handler (const gchar *log_domain, GLogLevelFlags log_level, const 
 		fflush (stderr);
 		abort ();
 	}
-}
-
-static void
-default_stdout_handler (const gchar *string)
-{
-	fprintf (stdout, "%s", string);
 }
 
 static void
