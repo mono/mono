@@ -249,7 +249,7 @@ namespace System.IO
 
 			// TODO: demand permissions
 
-			MonoIOError error;
+			MonoIOError error = 0;
 
 			if (verbose)
 				Console.WriteLine ($"FileStream 7 {path}");
@@ -316,7 +316,7 @@ namespace System.IO
 			if (!isConsoleWrapper && bufferSize <= 0)
 				throw new ArgumentOutOfRangeException("bufferSize", Environment.GetResourceString("ArgumentOutOfRange_NeedPosNum"));
 
-			MonoIOError error;
+			MonoIOError error = 0;
 			MonoFileType ftype = MonoIO.GetFileType (safeHandle, out error);
 
 			if (error != MonoIOError.ERROR_SUCCESS) {
@@ -394,7 +394,7 @@ namespace System.IO
 				// Buffered data might change the length of the stream
 				FlushBufferIfDirty ();
 
-				MonoIOError error;
+				MonoIOError error = 0;
 
 				long length = MonoIO.GetLength (safeHandle, out error);
 
@@ -419,7 +419,7 @@ namespace System.IO
 					return(buf_start + buf_offset);
 
 				// If the handle was leaked outside we always ask the real handle
-				MonoIOError error;
+				MonoIOError error = 0;
 
 				long ret = MonoIO.Seek (safeHandle, 0, SeekOrigin.Current, out error);
 
@@ -652,7 +652,7 @@ namespace System.IO
 		{
 			if (count > buf_size) {
 				// shortcut for long writes
-				MonoIOError error;
+				MonoIOError error = 0;
 
 				FlushBuffer ();
 
@@ -804,7 +804,7 @@ namespace System.IO
 
 			FlushBuffer ();
 
-			MonoIOError error;
+			MonoIOError error = 0;
 
 			buf_start = MonoIO.Seek (safeHandle, pos, SeekOrigin.Begin, out error);
 
@@ -832,7 +832,7 @@ namespace System.IO
 			
 			FlushBuffer ();
 
-			MonoIOError error;
+			MonoIOError error = 0;
 
 			MonoIO.SetLength (safeHandle, value, out error);
 			if (error != MonoIOError.ERROR_SUCCESS) {
@@ -861,7 +861,7 @@ namespace System.IO
 
 			// This does the fsync
 			if (flushToDisk){
-				MonoIOError error;
+				MonoIOError error = 0;
 				MonoIO.Flush (safeHandle, out error);
 			}
 		}
@@ -877,7 +877,7 @@ namespace System.IO
 				throw new ArgumentOutOfRangeException ("length must not be negative");
 			}
 
-			MonoIOError error;
+			MonoIOError error = 0;
 
 			MonoIO.Lock (safeHandle, position, length, out error);
 			if (error != MonoIOError.ERROR_SUCCESS) {
@@ -897,7 +897,7 @@ namespace System.IO
 				throw new ArgumentOutOfRangeException ("length must not be negative");
 			}
 
-			MonoIOError error;
+			MonoIOError error = 0;
 
 			MonoIO.Unlock (safeHandle, position, length, out error);
 			if (error != MonoIOError.ERROR_SUCCESS) {
@@ -927,7 +927,7 @@ namespace System.IO
 				}
 
 				if (owner) {
-					MonoIOError error;
+					MonoIOError error = 0;
 
 					MonoIO.Close (safeHandle.DangerousGetHandle (), out error);
 					if (error != MonoIOError.ERROR_SUCCESS) {
@@ -1044,7 +1044,7 @@ namespace System.IO
 		{
 			if (buf_dirty) {
 //				if (st == null) {
-					MonoIOError error;
+					MonoIOError error = 0;
 
 					if (CanSeek == true && !isExposed) {
 						MonoIO.Seek (safeHandle, buf_start, SeekOrigin.Begin, out error);
@@ -1092,7 +1092,7 @@ namespace System.IO
 		private int ReadData (SafeHandle safeHandle, byte[] buf, int offset,
 				      int count)
 		{
-			MonoIOError error;
+			MonoIOError error = 0;
 			int amount = 0;
 
 			/* when async == true, if we get here we don't suport AIO or it's disabled
