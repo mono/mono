@@ -873,7 +873,7 @@ dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, 
 	gboolean has_param_row;
 	const char *method_name = "";
 	int free_method = 0;
-	char *retval, *esname;
+	char *retval = NULL, *esname;
 	char *type = NULL;
 	char *marshal_info = NULL, *ret_marshal_info = NULL;
 	char *gen_param = NULL;
@@ -906,7 +906,7 @@ dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, 
 
 			mono_metadata_decode_blob_size (sig, &sig);
 			method = mono_metadata_parse_method_signature_full (m, container, methoddef_row, sig, &sig, error);
-			g_assert (mono_error_ok (error)); /*FIXME don't swallow the error message*/
+			//FIXME? g_assert (mono_error_ok (error)); /*FIXME don't swallow the error message*/
 			free_method = 1;
 		}
 
@@ -921,8 +921,8 @@ dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, 
 		}
 	} 
 
-	start = method->hasthis ? 0 : 1;
-	for (i = 0; i < method->param_count + 1; ++i) {
+	start = (/*FIXME?*/method && method->hasthis) ? 0 : 1;
+	for (i = 0; /*FIXME?*/method && i < method->param_count + 1; ++i) {
 		marshal_info = NULL;
 		has_param_row = param_index && param_index < next_param_index;
 		esname = NULL;
@@ -979,12 +979,15 @@ dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, 
 	}
 	g_string_append (result, ") ");
 
+	if (method) //FIXME?
 	retval = dis_stringify_param (m, method->ret);
 
+	if (method) //FIXME?
 	if (method->hasthis)
 		g_string_append (result_ret, "instance ");
+	if (method) //FIXME?
 	g_string_append (result_ret, map (method->call_convention, call_conv_type_map));
-	g_string_append_printf (result_ret, " %s%s ", retval, ret_marshal_info ? ret_marshal_info :"");
+	g_string_append_printf (result_ret, " %s%s ", retval/*FIXME?*/ ? retval : "", ret_marshal_info ? ret_marshal_info :"");
 	g_free (ret_marshal_info);
 	if (type) {
 		char *estype = get_escaped_name (type);
@@ -1945,7 +1948,7 @@ get_method_core (MonoImage *m, guint32 token, gboolean fullsig, MonoGenericConta
 
 	mh = mono_get_method_checked (m, token, NULL, (MonoGenericContext *) container, error);
 	if (mh) {
-		if (mono_method_signature (mh)->is_inflated)
+		if (/*FIXME?*/mono_method_signature (mh) && mono_method_signature (mh)->is_inflated)
 			container = mono_method_get_generic_container (((MonoMethodInflated *) mh)->declaring);
 		esname = get_escaped_name (mh->name);
 		sig = dis_stringify_type (m, m_class_get_byval_arg (mh->klass), TRUE);
