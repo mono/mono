@@ -498,6 +498,8 @@ ves_icall_System_IO_MonoIO_SetFileAttributes (const gunichar2 *path, gint32 attr
 	if (verbose) {
 		g_print ("%s 1 %s 0x%X\n", __func__, u16to8 (path), attrs);
 		runf("ls -l %s", u16to8 (path));
+		g_print ("mono_w32file_get_attributes %X\n", mono_w32file_get_attributes (path));
+		g_print ("convert_attrs %X %X\n", attrs, convert_attrs ((MonoFileAttributes)attrs));
 	}
 
 	ret=mono_w32file_set_attributes (path,
@@ -506,6 +508,7 @@ ves_icall_System_IO_MonoIO_SetFileAttributes (const gunichar2 *path, gint32 attr
 	if (verbose) {
 		g_print ("%s 2 %s 0x%X 0x%X\n", __func__, u16to8 (path), attrs, ret);
 		runf("ls -l %s", u16to8 (path));
+		g_print ("mono_w32file_get_attributes %X\n", mono_w32file_get_attributes (path));
 	}
 
 	if(ret==FALSE) {
