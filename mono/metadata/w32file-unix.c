@@ -3450,7 +3450,13 @@ mono_w32file_get_attributes (const gunichar2 *name)
 	struct stat buf, linkbuf;
 	gint result;
 	guint32 ret;
-	
+
+	memset (&buf, 0, sizeof (buf));
+	memset (&linkbuf, 0, sizeof (linkbuf));
+
+	gboolean const verbose = path && has_verbose (path);
+	mono_verbose_eh |= verbose;
+
 	if (name == NULL) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: name is NULL", __func__);
 
