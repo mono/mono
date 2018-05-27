@@ -280,7 +280,7 @@ namespace System.IO
 
 		public static FileAttributes GetFileAttributes (string path, out MonoIOError error)
 		{
-			bool verbose = path.IndexOf ("/verbose") != -1;
+			bool verbose = path != null && path.IndexOf ("/verbose") != -1;
 
 			if (verbose)
 				Console.WriteLine ($"MonoIO.GetFileAttributes 1 {path}");
@@ -297,7 +297,7 @@ namespace System.IO
 
 		public static bool SetFileAttributes (string path, FileAttributes attrs, out MonoIOError error)
 		{
-			bool verbose = path.IndexOf ("/verbose") != -1;
+			bool verbose = path != null && path.IndexOf ("/verbose") != -1;
 
 			if (verbose)
 				Console.WriteLine ($"MonoIO.SetFileAttributes 1 {path} {attrs}");
@@ -348,7 +348,7 @@ namespace System.IO
 
 		public static bool Exists (string path, out MonoIOError error)
 		{
-			bool verbose = path.IndexOf ("/verbose") != -1;
+			bool verbose = path != null && path.IndexOf ("/verbose") != -1;
 
 			if (verbose)
 				Console.WriteLine ($"MonoIO.Exists 1 {path}");
