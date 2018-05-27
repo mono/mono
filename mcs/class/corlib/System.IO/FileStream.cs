@@ -152,13 +152,23 @@ namespace System.IO
 
 		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool anonymous, FileOptions options)
 		{
+			bool verbose = path.IndexOf ("/verbose") != -1;
+			if (verbose)
+				Console.WriteLine ($"FileStream 1 {path}");
+
 			if (path == null) {
 				throw new ArgumentNullException ("path");
 			}
 
+			if (verbose)
+				Console.WriteLine ($"FileStream 2 {path}");
+
 			if (path.Length == 0) {
 				throw new ArgumentException ("Path is empty");
 			}
+
+			if (verbose)
+				Console.WriteLine ($"FileStream 3 {path}");
 
 			this.anonymous = anonymous;
 			// ignore the Inheritable flag
@@ -188,7 +198,13 @@ namespace System.IO
 				throw new ArgumentException ("Name has invalid chars");
 			}
 
+			if (verbose)
+				Console.WriteLine ($"FileStream 4 {path}");
+
 			path = Path.InsecureGetFullPath (path);
+
+			if (verbose)
+				Console.WriteLine ($"FileStream 5 {path}");
 
 			if (Directory.Exists (path)) {
 				// don't leak the path information for isolated storage
@@ -213,6 +229,9 @@ namespace System.IO
 
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
+			if (verbose)
+				Console.WriteLine ($"FileStream 6 {path}");
+
 			string dname = Path.GetDirectoryName (path);
 			if (dname.Length > 0) {
 				string fp = Path.GetFullPath (dname);
@@ -232,12 +251,21 @@ namespace System.IO
 
 			MonoIOError error;
 
+			if (verbose)
+				Console.WriteLine ($"FileStream 7 {path}");
+
 			var nativeHandle = MonoIO.Open (path, mode, access, share, options, out error);
+
+			if (verbose)
+				Console.WriteLine ($"FileStream 8 {path}");
 
 			if (nativeHandle == MonoIO.InvalidHandle) {
 				// don't leak the path information for isolated storage
 				throw MonoIO.GetException (GetSecureFileName (path), error);
 			}
+
+			if (verbose)
+				Console.WriteLine ($"FileStream 9 {path}");
 
 			this.safeHandle = new SafeFileHandle (nativeHandle, false);
 
@@ -263,6 +291,9 @@ namespace System.IO
 				}
 			}
 
+			if (verbose)
+				Console.WriteLine ($"FileStream 10 {path}");
+
 			InitBuffer (bufferSize, false);
 
 			if (mode==FileMode.Append) {
@@ -271,6 +302,9 @@ namespace System.IO
 			} else {
 				this.append_startpos=0;
 			}
+
+			if (verbose)
+				Console.WriteLine ($"FileStream 11 {path}");
 		}
 
 		private void Init (SafeFileHandle safeHandle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isConsoleWrapper)

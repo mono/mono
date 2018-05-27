@@ -127,11 +127,17 @@ namespace System.IO
 
 		public static FileStream Create (string path)
 		{
+			bool verbose = path.IndexOf ("/verbose") != -1;
+			if (verbose)
+				Console.WriteLine ($"Create 1 {path}");
 			return Create (path, 8192);
 		}
 
 		public static FileStream Create (string path, int bufferSize)
 		{
+			bool verbose = path.IndexOf ("/verbose") != -1;
+			if (verbose)
+				Console.WriteLine ($"Create 2 {path}");
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
 				FileShare.None, bufferSize);
 		}
@@ -140,6 +146,9 @@ namespace System.IO
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options)
 		{
+			bool verbose = path.IndexOf ("/verbose") != -1;
+			if (verbose)
+				Console.WriteLine ($"Create 3 {path}");
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
 				FileShare.None, bufferSize, options);
 		}
@@ -149,6 +158,9 @@ namespace System.IO
 						 FileOptions options,
 						 FileSecurity fileSecurity)
 		{
+			bool verbose = path.IndexOf ("/verbose") != -1;
+			if (verbose)
+				Console.WriteLine ($"Create 4 {path}");
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
 				FileShare.None, bufferSize, options);
 		}
