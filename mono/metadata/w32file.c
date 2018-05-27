@@ -414,6 +414,9 @@ has_verbose (const gunichar2 *path)
 			run("ls -l /");
 			run("ls -ld /tmp");
 			run("whoami");
+			run("umask");
+			run("cat /etc/lsb_release");
+			run("uname -a");
 		}
 		first_verbose = TRUE;
 		return FALSE;
