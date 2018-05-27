@@ -1268,6 +1268,8 @@ static gboolean file_setendoffile(FileHandle *filehandle)
 	gint ret;
 	MonoThreadInfo *info = mono_thread_info_current ();
 	
+	memset (&statbuf, 0, sizeof (statbuf));
+
 	if(!(filehandle->fileaccess & (GENERIC_WRITE | GENERIC_ALL))) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 
@@ -1366,6 +1368,8 @@ static guint32 file_getfilesize(FileHandle *filehandle, guint32 *highsize)
 	struct stat statbuf;
 	guint32 size;
 	gint ret;
+
+	memset (&statbuf, 0, sizeof (statbuf));
 	
 	if(!(filehandle->fileaccess & (GENERIC_READ | GENERIC_WRITE | GENERIC_ALL))) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_READ or GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
@@ -1501,7 +1505,9 @@ static gboolean file_setfiletime(FileHandle *filehandle,
 {
 	struct stat statbuf;
 	gint ret;
-	
+
+	memset (&statbuf, 0, sizeof (statbuf));
+
 	if(!(filehandle->fileaccess & (GENERIC_WRITE | GENERIC_ALL))) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 
@@ -1940,6 +1946,8 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 	gchar *filename;
 	gint fd, ret;
 	struct stat statbuf;
+
+	memset (&statbuf, 0, sizeof (statbuf));
 
 	if (attrs & FILE_ATTRIBUTE_TEMPORARY)
 		perms = 0600;
@@ -3446,15 +3454,15 @@ mono_w32file_remove_directory (const gunichar2 *name)
 guint32
 mono_w32file_get_attributes (const gunichar2 *name)
 {
-	gchar *utf8_name;
-	struct stat buf, linkbuf;
-	gint result;
-	guint32 ret;
+	gchar *utf8_name = {0};
+	struct stat buf = {0}, linkbuf = {0};
+	gint result = {0};
+	guint32 ret = {0};
 
 	memset (&buf, 0, sizeof (buf));
 	memset (&linkbuf, 0, sizeof (linkbuf));
 
-	gboolean const verbose = path && has_verbose (path);
+	gboolean const verbose = name && has_verbose (name);
 	mono_verbose_eh |= verbose;
 
 	if (name == NULL) {
@@ -3505,7 +3513,10 @@ mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 
 	struct stat buf, linkbuf;
 	gint result;
-	
+
+	memset (&buf, 0, sizeof (buf));
+	memset (&linkbuf, 0, sizeof (linkbuf));
+
 	if (name == NULL) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: name is NULL", __func__);
 
@@ -3575,9 +3586,11 @@ gboolean
 mono_w32file_set_attributes (const gunichar2 *name, guint32 attrs)
 {
 	/* FIXME: think of something clever to do on unix */
-	gchar *utf8_name;
-	struct stat buf;
-	gint result;
+	gchar *utf8_name = {0};
+	struct stat buf = {0};
+	gint result = {0};
+
+	memset (&buf, 0, sizeof (buf));
 
 	/*
 	 * Currently we only handle one *internal* case, with a value that is
