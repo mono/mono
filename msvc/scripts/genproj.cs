@@ -794,15 +794,24 @@ class MsbuildGenerator {
 			File.Delete(generatedProjFile);
 	}
 
-	private IEnumerable<string> ReadSources (string platformName, string profileName, string outputName) {
-        var libraryDirectory = Path.GetFullPath (Path.GetDirectoryName (GetProjectFilename ()));
-		var libraryName = outputName;
+	SourcesParser _SourcesParser = null;
+
+	private SourcesParser GetSourcesParser () {
+		if (_SourcesParser != null)
+			return _SourcesParser;
 
         var platformsFolder = Path.GetFullPath ("../../mcs/build/platforms");
         var profilesFolder = Path.GetFullPath ("../../mcs/build/profiles");
 
 		SourcesParser.TraceLevel = 1;
-        var parser = new SourcesParser (platformsFolder, profilesFolder);
+        return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
+	}
+
+	private IEnumerable<string> ReadSources (string platformName, string profileName, string outputName) {
+        var libraryDirectory = Path.GetFullPath (Path.GetDirectoryName (GetProjectFilename ()));
+		var libraryName = outputName;
+
+		var parser = GetSourcesParser ();
         var result = parser.Parse (libraryDirectory, libraryName);
 
         return result.GetFileNames (
@@ -823,10 +832,11 @@ class MsbuildGenerator {
 			generatedProjFile
 		);
 
-		string boot, flags, output_name, built_sources, response, reskey;
+		string boot, flags, output_name, built_sources, response, reskey, sources_file_name;
 
 		boot = xproject.Element ("boot").Value;
 		flags = xproject.Element ("flags").Value;
+		sources_file_name = xproject.Element ("sources").Value;
 		output_name = xproject.Element ("output").Value;
 		if (output_name.EndsWith (".exe"))
 			Target = Target.Exe;
@@ -902,7 +912,7 @@ class MsbuildGenerator {
 		StringBuilder sources = new StringBuilder ();
 		sources.Append ($"  <ItemGroup {groupConditional}>{NewLine}");
 
-		var readSources = ReadSources (null, profile, output_name).Select (s => s.Replace("/", "\\")).ToList();
+		var readSources = ReadSources (null, profile, sources_file_name).Select (s => s.Replace("/", "\\")).ToList();
 		readSources.Sort ();
 
 		foreach (string s in readSources) {

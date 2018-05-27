@@ -114,6 +114,13 @@ public struct ParseEntry {
     public string ProfileName;
 }
 
+public struct MatchEntry {
+    public string SourcesFileName;
+    public string RelativePath;
+    public string HostPlatform;
+    public string ProfileName;
+}
+
 public struct Source {
     public string FileName;
 }
@@ -151,7 +158,7 @@ public class ParseResult {
         return relativeUri;
     }
 
-    private IEnumerable<string> EnumerateMatches (
+    private IEnumerable<MatchEntry> EnumerateMatches (
         IEnumerable<ParseEntry> entries,
         string hostPlatformName, string profileName
     ) {
@@ -188,11 +195,21 @@ public class ParseResult {
                 var matchingFiles = Directory.GetFiles (absoluteDirectory, absolutePattern);
                 foreach (var fileName in matchingFiles) {
                     var relativePath = GetRelativePath (fileName, LibraryDirectory);
-                    yield return relativePath;
+                    yield return new MatchEntry {
+                        SourcesFileName = entry.SourcesFileName,
+                        RelativePath = relativePath,
+                        HostPlatform = entry.HostPlatform,
+                        ProfileName = entry.ProfileName
+                    };
                 }
             } else {
                 var relativePath = GetRelativePath (absolutePath, LibraryDirectory);
-                yield return relativePath;
+                yield return new MatchEntry {
+                    SourcesFileName = entry.SourcesFileName,
+                    RelativePath = relativePath,
+                    HostPlatform = entry.HostPlatform,
+                    ProfileName = entry.ProfileName
+                };
             }
         }
     }
@@ -205,23 +222,23 @@ public class ParseResult {
         var encounteredFileNames = new HashSet<string> (StringComparer.Ordinal);
 
         var excludedFiles = new HashSet<string> (
-            EnumerateMatches (Exclusions, hostPlatformName, profileName),
+            (from m in EnumerateMatches (Exclusions, hostPlatformName, profileName) select m.RelativePath),
             StringComparer.Ordinal
         );
 
-        foreach (var fileName in EnumerateMatches (Sources, hostPlatformName, profileName)) {
-            if (excludedFiles.Contains (fileName)) {
+        foreach (var entry in EnumerateMatches (Sources, hostPlatformName, profileName)) {
+            if (excludedFiles.Contains (entry.RelativePath)) {
                 if (SourcesParser.TraceLevel >= 3)
-                    Console.Error.WriteLine ($"// Excluding {fileName}");
+                    Console.Error.WriteLine ($"// Excluding {entry.RelativePath}");
                 continue;
             }
 
             // Skip duplicates
-            if (encounteredFileNames.Contains (fileName))
+            if (encounteredFileNames.Contains (entry.RelativePath))
                 continue;
 
-            encounteredFileNames.Add (fileName);
-            yield return fileName;
+            encounteredFileNames.Add (entry.RelativePath);
+            yield return entry.RelativePath;
         }
     }
 }
