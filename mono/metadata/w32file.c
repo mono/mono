@@ -403,6 +403,29 @@ run (const char *a)
 	fflush (stderr);
 }
 
+static void
+runv (const gchar *format, va_list args)
+{
+	char *msg;
+
+	if (g_vasprintf (&msg, format, args) < 0)
+		return;
+
+	run (msg);
+
+	g_free (msg);
+}
+
+
+static void
+runf (const char *format, ...)
+{
+	va_list args;
+	va_start (args, format);
+	runv (format, args);
+	va_end (args);
+}
+
 static gboolean
 has_verbose (const gunichar2 *path)
 {
@@ -433,8 +456,10 @@ ves_icall_System_IO_MonoIO_GetFileAttributes (const gunichar2 *path, gint32 *err
 	gboolean const verbose = path && has_verbose (path);
 	mono_verbose_eh |= verbose;
 
-	if (verbose)
+	if (verbose) {
 		g_print ("%s 1 %s\n", __func__, u16to8 (path));
+		runf("ls -l %s", u16to8 (path));
+	}
 
 	ret = mono_w32file_get_attributes (path);
 
@@ -470,14 +495,18 @@ ves_icall_System_IO_MonoIO_SetFileAttributes (const gunichar2 *path, gint32 attr
 	gboolean const verbose = path && has_verbose (path);
 	mono_verbose_eh |= verbose;
 
-	if (verbose)
+	if (verbose) {
 		g_print ("%s 1 %s 0x%X\n", __func__, u16to8 (path), attrs);
-	
+		runf("ls -l %s", u16to8 (path));
+	}
+
 	ret=mono_w32file_set_attributes (path,
 		convert_attrs ((MonoFileAttributes)attrs));
 
-	if (verbose)
+	if (verbose) {
 		g_print ("%s 2 %s 0x%X 0x%X\n", __func__, u16to8 (path), attrs, ret);
+		runf("ls -l %s", u16to8 (path));
+	}
 
 	if(ret==FALSE) {
 		*error=mono_w32error_get_last ();
