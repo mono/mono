@@ -504,6 +504,12 @@ ves_icall_System_IO_MonoIO_Open (const gunichar2 *filename, gint32 mode,
 
 	*error=ERROR_SUCCESS;
 
+	gboolean const verbose = filename && has_verbose (filename);
+	mono_verbose_eh |= verbose;
+
+	if (verbose)
+		g_print ("%s 1 %s mode:%X acc:%X sh:%X opt:%X\n", __func__, u16to8 (filename), mode, access_mode, share, options);
+
 	if (options != 0){
 		if (options & FileOptions_Encrypted)
 			attributes = FILE_ATTRIBUTE_ENCRYPTED;
@@ -535,8 +541,14 @@ ves_icall_System_IO_MonoIO_Open (const gunichar2 *filename, gint32 mode,
 	
 	ret=mono_w32file_create (filename, convert_access ((MonoFileAccess)access_mode), convert_share ((MonoFileShare)share), convert_mode ((MonoFileMode)mode), attributes);
 	if(ret==INVALID_HANDLE_VALUE) {
+
 		*error=mono_w32error_get_last ();
-	} 
+		if (verbose)
+			g_print ("%s 2inv %s mode:%X acc:%X sh:%X opt:%X ret:%p err:%X\n", __func__, u16to8 (filename), mode, access_mode, share, options, ret, *error);
+	} else {
+		if (verbose)
+			g_print ("%s 3succ %s mode:%X acc:%X sh:%X opt:%X ret:%p err:%X\n", __func__, u16to8 (filename), mode, access_mode, share, options, ret, *error);
+	}
 	
 	return(ret);
 }

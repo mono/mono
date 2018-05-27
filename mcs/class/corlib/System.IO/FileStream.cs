@@ -257,10 +257,11 @@ namespace System.IO
 			var nativeHandle = MonoIO.Open (path, mode, access, share, options, out error);
 
 			if (verbose)
-				Console.WriteLine ($"FileStream 8 {path}");
+				Console.WriteLine ($"FileStream 8 {path} {mode} {access} {share} {options} {nativeHandle}");
 
 			if (nativeHandle == MonoIO.InvalidHandle) {
 				// don't leak the path information for isolated storage
+				Console.WriteLine ($"FileStream 8throw {path} {nativeHandle}");
 				throw MonoIO.GetException (GetSecureFileName (path), error);
 			}
 
