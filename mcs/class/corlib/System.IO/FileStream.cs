@@ -152,7 +152,7 @@ namespace System.IO
 
 		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool anonymous, FileOptions options)
 		{
-			bool verbose = path.IndexOf ("/verbose") != -1;
+			bool verbose = path != null &&  path.IndexOf ("/verbose") != -1;
 			if (verbose)
 				Console.WriteLine ($"FileStream 1 {path}");
 

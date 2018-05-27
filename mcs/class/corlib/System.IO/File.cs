@@ -127,7 +127,7 @@ namespace System.IO
 
 		public static FileStream Create (string path)
 		{
-			bool verbose = path.IndexOf ("/verbose") != -1;
+			bool verbose = path != null &&  path.IndexOf ("/verbose") != -1;
 			if (verbose)
 				Console.WriteLine ($"Create 1 {path}");
 			return Create (path, 8192);
@@ -135,7 +135,7 @@ namespace System.IO
 
 		public static FileStream Create (string path, int bufferSize)
 		{
-			bool verbose = path.IndexOf ("/verbose") != -1;
+			bool verbose = path != null &&  path.IndexOf ("/verbose") != -1;
 			if (verbose)
 				Console.WriteLine ($"Create 2 {path}");
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
@@ -146,7 +146,7 @@ namespace System.IO
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options)
 		{
-			bool verbose = path.IndexOf ("/verbose") != -1;
+			bool verbose = path != null &&  path.IndexOf ("/verbose") != -1;
 			if (verbose)
 				Console.WriteLine ($"Create 3 {path}");
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
@@ -158,7 +158,7 @@ namespace System.IO
 						 FileOptions options,
 						 FileSecurity fileSecurity)
 		{
-			bool verbose = path.IndexOf ("/verbose") != -1;
+			bool verbose = path != null &&  path.IndexOf ("/verbose") != -1;
 			if (verbose)
 				Console.WriteLine ($"Create 4 {path}");
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
@@ -224,7 +224,7 @@ namespace System.IO
 
 		public static FileAttributes GetAttributes (string path)
 		{
-			bool verbose = path.IndexOf ("/verbose") != -1;
+			bool verbose = path != null &&  path.IndexOf ("/verbose") != -1;
 
 			if (verbose)
 				Console.WriteLine ($"GetAttributes 1 {path}");
@@ -474,7 +474,7 @@ namespace System.IO
 		public static void SetAttributes (string path,
 						  FileAttributes fileAttributes)
 		{
-			bool verbose = path.IndexOf ("/verbose") != -1;
+			bool verbose = path != null &&  path.IndexOf ("/verbose") != -1;
 
 			if (verbose)
 				Console.WriteLine ($"SetAttributes 1 {path} {fileAttributes}");
