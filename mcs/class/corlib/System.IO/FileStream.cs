@@ -209,6 +209,7 @@ namespace System.IO
 			if (Directory.Exists (path)) {
 				// don't leak the path information for isolated storage
 				string msg = Locale.GetText ("Access to the path '{0}' is denied.");
+				Console.WriteLine ($"FileStream UnauthorizedAccessException denied");
 				throw new UnauthorizedAccessException (String.Format (msg, GetSecureFileName (path, false)));
 			}
 
@@ -217,6 +218,7 @@ namespace System.IO
 			 */
 			if (mode==FileMode.Append &&
 				(access&FileAccess.Read)==FileAccess.Read) {
+				Console.WriteLine ($"FileStream ArgumentException append");
 				throw new ArgumentException("Append access can be requested only in write-only mode.");
 			}
 
@@ -224,6 +226,7 @@ namespace System.IO
 				(mode != FileMode.Open && mode != FileMode.OpenOrCreate)) {
 				string msg = Locale.GetText ("Combining FileMode: {0} with " +
 					"FileAccess: {1} is invalid.");
+				Console.WriteLine ($"FileStream ArgumentException {msg} {access} {mode}");
 				throw new ArgumentException (string.Format (msg, access, mode));
 			}
 
