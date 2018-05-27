@@ -393,7 +393,7 @@ const static gunichar2 slash_verbose [ ] = {'/','v','e','r','b','o','s','e',0};
 static gboolean
 has_verbose (const gunichar2 *path)
 {
-	return strstr16 (path, g_u16len (path), CONSTANT_STRING_AND_LENGTH (slash_verbose)) != -1;
+	return path && strstr16 (path, g_u16len (path), CONSTANT_STRING_AND_LENGTH (slash_verbose)) != -1;
 }
 
 gint32
@@ -402,7 +402,7 @@ ves_icall_System_IO_MonoIO_GetFileAttributes (const gunichar2 *path, gint32 *err
 	gint32 ret;
 	*error=ERROR_SUCCESS;
 	
-	gboolean const verbose = has_verbose (path);
+	gboolean const verbose = path && has_verbose (path);
 	mono_verbose_eh |= verbose;
 
 	if (verbose)
@@ -439,7 +439,7 @@ ves_icall_System_IO_MonoIO_SetFileAttributes (const gunichar2 *path, gint32 attr
 	gboolean ret;
 	*error=ERROR_SUCCESS;
 
-	gboolean const verbose = has_verbose (path);
+	gboolean const verbose = path && has_verbose (path);
 	mono_verbose_eh |= verbose;
 
 	if (verbose)
