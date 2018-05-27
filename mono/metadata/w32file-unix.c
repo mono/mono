@@ -1894,9 +1894,39 @@ share_allows_delete (struct stat *statbuf, FileShare **share_info)
 	return(TRUE);
 }
 
+static ptrdiff_t
+strstr16 (const gunichar2 *haystack, size_t haystack_length, const gunichar2 *needle, size_t needle_length)
+{
+	if (!haystack_length || !needle_length || needle_length > haystack_length)
+		return -1;
+	gunichar2 const needle0 = needle [0];
+	for (ptrdiff_t i = 0; i <= (ptrdiff_t)(haystack_length - needle_length); ++i) {
+		if (haystack [i] == needle0 && memcmp (haystack + i, needle, needle_length * 2) == 0)
+			return i;
+	}
+	return -1;
+}
+
+#define CONSTANT_STRING_AND_LENGTH(x) (x), (sizeof (x) / sizeof (x [0]) - 1)
+gboolean mono_verbose_eh;
+
+const static gunichar2 slash_verbose [ ] = {'/','v','e','r','b','o','s','e',0};
+
+static gboolean
+has_verbose (const gunichar2 *path)
+{
+	return path && strstr16 (path, g_u16len (path), CONSTANT_STRING_AND_LENGTH (slash_verbose)) != -1;
+}
+
 gpointer
 mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode, guint32 createmode, guint32 attrs)
 {
+	gboolean const verbose = name && has_verbose (name);
+	mono_verbose_eh |= verbose;
+
+	if (verbose)
+		g_print ("%s 1 %s\n", __func__, u16to8 (name));
+
 	FileHandle *filehandle;
 	MonoFDType type;
 	gint flags=convert_flags(fileaccess, createmode);
@@ -1915,11 +1945,15 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 		perms = 0600;
 	
 	if (attrs & FILE_ATTRIBUTE_ENCRYPTED){
+		if (verbose)
+			g_print ("%s enc %s\n", __func__, u16to8 (name));
 		mono_w32error_set_last (ERROR_ENCRYPTION_FAILED);
 		return INVALID_HANDLE_VALUE;
 	}
 	
 	if (name == NULL) {
+		if (verbose)
+			g_print ("%s nul %s\n", __func__, u16to8 (name));
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: name is NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
@@ -1928,6 +1962,8 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 
 	filename = mono_unicode_to_external (name);
 	if (filename == NULL) {
+		if (verbose)
+			g_print ("%s nul2 %s\n", __func__, u16to8 (name));
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
@@ -1954,6 +1990,8 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 	}
 	
 	if (fd == -1) {
+		if (verbose)
+			g_print ("%s fdm1 %s\n", __func__, u16to8 (name));
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Error opening file %s: %s", __func__, filename, g_strerror(errno));
 		_wapi_set_last_path_error_from_errno (NULL, filename);
 		g_free (filename);
@@ -1965,6 +2003,8 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 	ret = fstat (fd, &statbuf);
 	MONO_EXIT_GC_SAFE;
 	if (ret == -1) {
+		if (verbose)
+			g_print ("%s fdm1-2 %s\n", __func__, u16to8 (name));
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fstat error of file %s: %s", __func__, filename, g_strerror (errno));
 		_wapi_set_last_error_from_errno ();
 		MONO_ENTER_GC_SAFE;
@@ -1995,6 +2035,8 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 	filehandle->attrs = attrs;
 
 	if (!share_allows_open (&statbuf, filehandle->sharemode, filehandle->fileaccess, &filehandle->share_info)) {
+		if (verbose)
+			g_print ("%s sh1 %s\n", __func__, u16to8 (name));
 		mono_w32error_set_last (ERROR_SHARING_VIOLATION);
 		MONO_ENTER_GC_SAFE;
 		close (((MonoFDHandle*) filehandle)->fd);
@@ -2004,6 +2046,8 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 		return (INVALID_HANDLE_VALUE);
 	}
 	if (!filehandle->share_info) {
+		if (verbose)
+			g_print ("%s too %s\n", __func__, u16to8 (name));
 		/* No space, so no more files can be opened */
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: No space in the share table", __func__);
 
@@ -2040,6 +2084,9 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 	mono_fdhandle_insert ((MonoFDHandle*) filehandle);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: returning handle %p", __func__, GINT_TO_POINTER(((MonoFDHandle*) filehandle)->fd));
+
+	if (verbose)
+		g_print ("%s good %s %p\n", __func__, u16to8 (name), GINT_TO_POINTER(((MonoFDHandle*) filehandle)->fd));
 
 	return GINT_TO_POINTER(((MonoFDHandle*) filehandle)->fd);
 }
