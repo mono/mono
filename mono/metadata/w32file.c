@@ -425,6 +425,10 @@ ves_icall_System_IO_MonoIO_GetFileAttributes (const gunichar2 *path, gint32 *err
 		if (verbose)
 			g_print ("%s 3 %s 0x%X 0x%X\n", __func__, u16to8 (path), ret, *error);
 	}
+	else {
+		if (verbose)
+			g_print ("%s 4 %s 0x%X 0x%X\n", __func__, u16to8 (path), ret, *error);
+	}
 	return(ret);
 }
 
