@@ -390,10 +390,35 @@ gboolean mono_verbose_eh;
 
 const static gunichar2 slash_verbose [ ] = {'/','v','e','r','b','o','s','e',0};
 
+static gboolean first_verbose;
+
+static void
+run (const char *a)
+{
+	fflush (stdout);
+	fflush (stderr);
+	g_print("%s\n", a);
+	system(a);
+	fflush (stdout);
+	fflush (stderr);
+}
+
 static gboolean
 has_verbose (const gunichar2 *path)
 {
-	return path && strstr16 (path, g_u16len (path), CONSTANT_STRING_AND_LENGTH (slash_verbose)) != -1;
+	if (path && strstr16 (path, g_u16len (path), CONSTANT_STRING_AND_LENGTH (slash_verbose)) != -1)
+	{
+		if (!first_verbose)
+		{
+			run("ls -l /tmp");
+			run("ls -l /");
+			run("ls -ld /tmp");
+			run("whoami");
+		}
+		first_verbose = TRUE;
+		return FALSE;
+	}
+	return FALSE;
 }
 
 gint32
