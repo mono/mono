@@ -56,10 +56,9 @@ static void CollectHashMapListClasses(gpointer key, gpointer value, gpointer use
 	}
 }
 
-static void CollectGenericClass(gpointer value, gpointer user_data)
+static void CollectGenericClass(MonoGenericClass* genericClass, gpointer user_data)
 {
 	CollectMetadataContext* context = (CollectMetadataContext*)user_data;
-	MonoGenericClass* genericClass = (MonoGenericClass*)value;
 
 	if (genericClass->cached_class != NULL)
 		ContextInsertClass(context, genericClass->cached_class);
@@ -349,7 +348,7 @@ static void IncrementCountForImageSetMemPoolNumChunks(MonoImageSet *imageSet, vo
 static int MonoImageSetsMemPoolNumChunks()
 {
 	int count = 0;	
-	mono_metadata_image_set_foreach((GFunc)IncrementCountForImageSetMemPoolNumChunks, &count);
+	mono_metadata_image_set_foreach(IncrementCountForImageSetMemPoolNumChunks, &count);
 	return count;
 }
 
@@ -410,7 +409,7 @@ static void* CaptureHeapInfo(void* user)
 	// Allocate memory for each image->class_cache hash table.
 	g_hash_table_foreach(monoImages, (GHFunc)AllocateMemoryForImageClassCache, &iterationContext);
 	// Allocate memory for each image->class_cache hash table.
-	mono_metadata_image_set_foreach((GFunc)AllocateMemoryForImageSetMemPool, &iterationContext);
+	mono_metadata_image_set_foreach(AllocateMemoryForImageSetMemPool, &iterationContext);
 
 	return NULL;
 }
@@ -512,7 +511,7 @@ static void CaptureManagedHeap(MonoManagedHeap* heap, GHashTable* monoImages)
 	mono_mempool_foreach_block(domain->mp, CopyMemPoolChunk, &iterationContext);
 	g_hash_table_foreach(monoImages, (GHFunc)CopyImageMemPool, &iterationContext);
 	g_hash_table_foreach(monoImages, (GHFunc)CopyImageClassCache, &iterationContext);
-	mono_metadata_image_set_foreach((GFunc)CopyImageSetMemPool, &iterationContext);
+	mono_metadata_image_set_foreach(CopyImageSetMemPool, &iterationContext);
 
 	GC_start_world_external();
 }
