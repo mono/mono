@@ -983,7 +983,7 @@ mono_domain_foreach (MonoDomainFunc func, gpointer user_data)
 }
 
 MONO_API void
-mono_domain_assembly_foreach (MonoDomain* domain, MonoDomainFunc func, void* user_data)
+mono_domain_assembly_foreach (MonoDomain* domain, MonoDomainAssemblyFunc func, void* user_data)
 {
 	MonoAssembly* assembly;
 	GSList *iter;
