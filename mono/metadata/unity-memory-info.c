@@ -22,8 +22,13 @@ typedef struct CollectMetadataContext
 
 static void ContextInsertClass(CollectMetadataContext* context, MonoClass* klass)
 {
-	if (klass->inited && g_hash_table_lookup(context->allTypes, klass) == NULL)
-		g_hash_table_insert(context->allTypes, klass, (gpointer)(context->currentIndex++));
+	gpointer orig_key, value;
+	/* use g_hash_table_lookup_extended as it returns boolean to indicate if value was found.
+	* If we use g_hash_table_lookup it returns the value which we were comparing to NULL. The problem is
+	* that 0 is a valid class index and was confusing our logic.
+	*/
+	if (klass->inited && !g_hash_table_lookup_extended(context->allTypes, klass, &orig_key, &value))
+		g_hash_table_insert(context->allTypes, klass, GINT_TO_POINTER(context->currentIndex++));
 }
 
 static void CollectHashMapClass(gpointer key, gpointer value, gpointer user_data)
@@ -104,18 +109,18 @@ static void CollectImageMetaData(MonoImage* image, gpointer value, CollectMetada
 
 static int FindClassIndex(GHashTable* hashTable, MonoClass* klass)
 {
-	gpointer value = g_hash_table_lookup(hashTable, klass);
+	gpointer orig_key, value;
 
-	if (!value)
+	if (!g_hash_table_lookup_extended(hashTable, klass, &orig_key, &value))
 		return -1;
 
-	return (int)value;
+	return GPOINTER_TO_INT(value);
 }
 
 static void AddMetadataType(gpointer key, gpointer value, gpointer user_data)
 {
 	MonoClass* klass = (MonoClass*)key;
-	int index = (int)value;
+	int index = GPOINTER_TO_INT(value);
 	CollectMetadataContext* context = (CollectMetadataContext*)user_data;
 	MonoMetadataSnapshot* metadata = context->metadata;
 	MonoMetadataType* type = &metadata->types[index];
@@ -562,7 +567,7 @@ static void VerifySnapshot(MonoManagedMemorySnapshot* snapshot, GHashTable* mono
 	while (g_hash_table_iter_next(&iter, &key, NULL))
 	{
 		MonoImage* image = (MonoImage*)key;
-		fprintf(file, "MonoImage [0x%016llX] dynamic: %i name: '%s'\n", (void*)image, image->dynamic, image->name);
+		fprintf(file, "MonoImage [0x%016llX] dynamic: %i name: '%s'\n", (uint64_t)image, image->dynamic, image->name);
 	}
 
 	/* Verify that we have collected memory sections for all types */
