@@ -2895,8 +2895,10 @@ static void print_process_map (void)
 	}
 
 	mono_runtime_printf_err ("/proc/self/maps:");
+	const int max_lines = 25;
+	int i = 0;
 
-	while (fgets (line, sizeof (line), fp)) {
+	while (fgets (line, sizeof (line), fp) && i++ < max_lines) {
 		// strip newline
 		size_t len = strlen (line) - 1;
 		if (len >= 0 && line [len] == '\n')
