@@ -713,7 +713,7 @@ ves_icall_System_IO_MonoIO_get_ConsoleError ()
 MonoBoolean
 ves_icall_System_IO_MonoIO_CreatePipe (HANDLE *read_handle, HANDLE *write_handle, gint32 *error)
 {
-	*error = 0;
+	*error = ERROR_SUCCESS;
 
 	gboolean ret;
 
