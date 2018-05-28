@@ -10,7 +10,6 @@
 #include <mono/metadata/blob.h>
 #include <mono/metadata/row-indexes.h>
 #include <mono/metadata/image.h>
-#include <glib.h>
 
 MONO_BEGIN_DECLS
 
@@ -333,6 +332,8 @@ typedef enum {
 	MONO_PARSE_FIELD
 } MonoParseTypeMode;
 
+typedef void(*MonoGenericClassFunc) (MonoGenericClass *genericClass, void* user_data);
+
 MONO_API mono_bool
 mono_type_is_byref       (MonoType *type);
 
@@ -424,8 +425,7 @@ MONO_API int            mono_type_stack_size            (MonoType        *type,
 
 MONO_API mono_bool       mono_type_generic_inst_is_valuetype      (MonoType *type);
 MONO_API mono_bool       mono_metadata_generic_class_is_valuetype (MonoGenericClass *gclass);
-MONO_API void            mono_metadata_image_set_foreach(GFunc func, gpointer user_data);
-MONO_API void            mono_metadata_generic_class_foreach(GFunc func, gpointer user_data);
+MONO_API void            mono_metadata_generic_class_foreach(MonoGenericClassFunc func, void* user_data);
 
 MONO_API unsigned int          mono_metadata_type_hash         (MonoType *t1);
 MONO_API mono_bool       mono_metadata_type_equal        (MonoType *t1, MonoType *t2);
