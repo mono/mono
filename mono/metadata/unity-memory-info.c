@@ -13,6 +13,10 @@
 #include <glib.h>
 #include <stdlib.h>
 
+#if HAVE_BDWGC_GC
+
+#include "external/bdwgc/include/gc.h"
+
 typedef struct CollectMetadataContext
 {
 	GHashTable *allTypes;
@@ -648,7 +652,7 @@ MonoManagedMemorySnapshot* mono_unity_capture_memory_snapshot()
 	FillRuntimeInformation(&snapshot->runtimeInformation);
 
 #if _DEBUG
-	VerifySnapshot(snapshot, monoImages);
+//	VerifySnapshot(snapshot, monoImages);
 #endif
 
 	g_hash_table_destroy(monoImages);
@@ -679,3 +683,20 @@ void mono_unity_free_captured_memory_snapshot(MonoManagedMemorySnapshot* snapsho
 	g_free(metadata->types);
 	g_free(snapshot);
 }
+
+#else
+
+MonoManagedMemorySnapshot* mono_unity_capture_memory_snapshot()
+{
+	MonoManagedMemorySnapshot* snapshot;
+	snapshot = g_new0(MonoManagedMemorySnapshot, 1);
+
+	return snapshot;
+}
+
+void mono_unity_free_captured_memory_snapshot(MonoManagedMemorySnapshot* snapshot)
+{
+	g_free(snapshot);
+}
+
+#endif
