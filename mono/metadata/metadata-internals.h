@@ -823,6 +823,8 @@ typedef struct {
 	char *aot_options;
 } MonoAotCacheConfig;
 
+typedef void(*MonoImageSetFunc) (MonoImageSet *imageSet, void* user_data);
+
 #define MONO_SIZEOF_METHOD_SIGNATURE (sizeof (struct _MonoMethodSignature) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
 
 static inline gboolean
@@ -967,6 +969,7 @@ mono_image_set_strdup (MonoImageSet *set, const char *s);
 
 MonoImageSet *
 mono_metadata_get_image_set_for_aggregate_modifiers (MonoAggregateModContainer *amods);
+void mono_metadata_image_set_foreach(MonoImageSetFunc func, gpointer user_data);
 
 MonoImageSet *
 mono_metadata_get_image_set_for_type (MonoType *type);
