@@ -65,6 +65,7 @@ static void CollectImageMetaData(MonoImage* image, gpointer value, CollectMetada
 {
 	int i;
 	MonoTableInfo *tdef = &image->tables[MONO_TABLE_TYPEDEF];
+	GSList *list;
 
 	if (image->dynamic)
 	{
@@ -82,6 +83,21 @@ static void CollectImageMetaData(MonoImage* image, gpointer value, CollectMetada
 			if (klass)
 				ContextInsertClass(context, klass);
 		}
+	}
+
+	/* Some classes are only in this list. 
+	   They are added in reflection_setup_internal_class_internal.
+	*/
+	list = image->reflection_info_unregister_classes;
+
+	while (list) 
+	{
+		MonoClass *klass = (MonoClass *)list->data;
+
+		if (klass)
+			ContextInsertClass(context, klass);
+
+		list = list->next;
 	}
 
 	for (i = 1; i < tdef->rows; ++i)
@@ -586,8 +602,16 @@ static void VerifySnapshot(MonoManagedMemorySnapshot* snapshot, GHashTable* mono
 
 static void CollectMonoImage(MonoImage* image, GHashTable* monoImages)
 {
-	if (g_hash_table_lookup(monoImages, image) == NULL)
-		g_hash_table_insert(monoImages, image, image);
+	if (g_hash_table_lookup(monoImages, image) != NULL)
+		return;
+
+	g_hash_table_insert(monoImages, image, image);
+
+	if (image->assembly->image != NULL &&
+		image != image->assembly->image)
+	{
+		CollectMonoImage(image->assembly->image, monoImages);
+	}
 
 	if (image->module_count > 0)
 	{
