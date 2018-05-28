@@ -1903,7 +1903,7 @@ mono_gchandle_free_domain (MonoDomain *domain)
 {
 	guint type;
 
-	for (type = HANDLE_TYPE_MIN; type < HANDLE_PINNED; ++type) {
+	for (type = HANDLE_TYPE_MIN; type <= HANDLE_PINNED; ++type) {
 		guint slot;
 		HandleData *handles = &gc_handles [type];
 		lock_handles (handles);
