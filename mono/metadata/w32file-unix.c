@@ -923,10 +923,17 @@ static gboolean lock_while_writing = FALSE;
  *
  * We generally assume that basic unix permission bits are authoritative. Which might not
  * be the case under systems with extended permissions systems (posix ACLs, SELinux, OSX/iOS sandboxing, etc)
+ *
+ * The choice of access as the fallback is due to the expected lower overhead compared to trying to open the file.
+ *
+ * The only expected problem with using access are for root, setuid or setgid programs as access is not consistent
+ * under those situations. It's to be expected that this should not happen in practice as those bits are very dangerous
+ * and should not be used with a dynamic runtime.
  */
 static gboolean
-is_file_writable (struct stat *st)
+is_file_writable (struct stat *st, const gchar *path)
 {
+	gboolean ret;
 #if __APPLE__
 	// OS X Finder "locked" or `ls -lO` "uchg".
 	// This only covers one of several cases where an OS X file could be unwritable through special flags.
@@ -946,8 +953,15 @@ is_file_writable (struct stat *st)
 	if ((st->st_gid == getegid ()) && (st->st_mode & S_IWGRP))
 		return 1;
 
-	return 0;
+	/* Fallback to using access(2). It's not ideal as it might not take into consideration euid/egid
+	 * but it's the only sane option we have on unix.
+	 */
+	MONO_ENTER_GC_SAFE;
+	ret = access (path, W_OK) == 0;
+	MONO_EXIT_GC_SAFE;
+	return ret;
 }
+
 
 static guint32 _wapi_stat_to_file_attributes (const gchar *pathname,
 					      struct stat *buf,
@@ -968,14 +982,14 @@ static guint32 _wapi_stat_to_file_attributes (const gchar *pathname,
 
 	if (S_ISDIR (buf->st_mode)) {
 		attrs = FILE_ATTRIBUTE_DIRECTORY;
-		if (!is_file_writable (buf)) {
+		if (!is_file_writable (buf, pathname)) {
 			attrs |= FILE_ATTRIBUTE_READONLY;
 		}
 		if (filename[0] == '.') {
 			attrs |= FILE_ATTRIBUTE_HIDDEN;
 		}
 	} else {
-		if (!is_file_writable (buf)) {
+		if (!is_file_writable (buf, pathname)) {
 			attrs = FILE_ATTRIBUTE_READONLY;
 
 			if (filename[0] == '.') {
