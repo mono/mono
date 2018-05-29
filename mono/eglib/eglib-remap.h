@@ -291,3 +291,7 @@
 #define g_log_set_default_handler monoeg_log_set_default_handler
 #define g_set_print_handler monoeg_set_print_handler
 #define g_set_printerr_handler monoeg_set_printerr_handler
+
+#define g_utf16len monoeg_g_utf16len
+#define u8to16 monoeg_g_u8to16
+#define u16to8 monoeg_g_u16to8
