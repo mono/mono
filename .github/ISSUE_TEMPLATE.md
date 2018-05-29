@@ -1,3 +1,7 @@
+<!--
+If you are new to the project get yourself familiar with http://mono-project.com/community/bugs/make-a-good-bug-report before filling the issue
+-->
+
 ## Steps to Reproduce
 
 1. 
@@ -39,7 +43,5 @@ Please paste the stack trace here if available.
 ```
 
 <!--
-
 You can join us at https://gitter.im/mono/mono to discuss your reported issue
-
 -->
