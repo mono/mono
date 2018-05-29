@@ -913,6 +913,10 @@ class MsbuildGenerator {
 		sources.Append ($"  <ItemGroup {groupConditional}>{NewLine}");
 
 		var readSources = ReadSources (null, profile, sources_file_name).Select (s => s.Replace("/", "\\")).ToList();
+
+		foreach (var bs in built_sources.Split ())
+			readSources.Add(bs);
+
 		readSources.Sort ();
 
 		foreach (string s in readSources) {
