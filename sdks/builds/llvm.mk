@@ -37,14 +37,6 @@ _llvm_$(1)_CMAKE_FLAGS = \
 	$$(llvm_$(1)_CMAKE_FLAGS) \
 	$(LLVM_SRC)
 
-.stamp-llvm-$(1)-toolchain: | $$(LLVM_SRC)
-	touch $$@
-
-.stamp-llvm-$(1)-configure:
-	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
-	cd $$(TOP)/sdks/builds/llvm-$(1) && cmake $$(_llvm_$(1)_CMAKE_FLAGS)
-	touch $$@
-
 .PHONY: package-llvm-$(1)
 
 build-custom-llvm-$(1):
@@ -59,7 +51,7 @@ package-llvm-$(1):
 
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1):
-	rm -rf .stamp-llvm-$(1)-toolchain .stamp-llvm-$(1)-configure && $$(MAKE) clean -C $$(TOP)/llvm
+	$$(MAKE) clean -C $$(TOP)/llvm
 
 TARGETS += llvm-$(1)
 
