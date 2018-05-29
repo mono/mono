@@ -655,11 +655,13 @@ class MakeBundle {
 
 	class PackageMaker {
 		Dictionary<string, Tuple<long,int>> locations = new Dictionary<string, Tuple<long,int>> ();
-		int align = 1 << 16; // first alignment
+		int align = 4096; // first non-Windows alignment, saving on average 30K
 		Stream package;
 		
 		public PackageMaker (string output)
 		{
+			if (style == "windows")
+				align = 1 << 16; // first Windows alignment
 			package = File.Create (output, 128*1024);
 			if (IsUnix){
 				File.SetAttributes (output, unchecked ((FileAttributes) 0x80000000));
@@ -675,7 +677,7 @@ class MakeBundle {
 					Console.WriteLine ("At {0:x} with input {1}", package.Position, fileStream.Length);
 				fileStream.CopyTo (package);
 				package.Position = package.Position + (align - (package.Position % align));
-				align = 4096; // rest of alignment
+				align = 4096; // rest of alignment for all systems
 				return (int) ret;
 			}
 		}
