@@ -797,9 +797,9 @@ gunichar  *g_utf16_to_ucs4 (const gunichar2 *str, glong len, glong *items_read, 
 gchar     *g_ucs4_to_utf8  (const gunichar *str, glong len, glong *items_read, glong *items_written, GError **err);
 gunichar2 *g_ucs4_to_utf16 (const gunichar *str, glong len, glong *items_read, glong *items_written, GError **err);
 
-#define g_u16len monoeg_g_u16len
+#define g_utf16len monoeg_g_utf16len
 gsize
-g_u16len (const gunichar2 *str);
+g_utf16len (const gunichar2 *str);
 
 #define u8to16 monoeg_g_u8to16
 gunichar2*
