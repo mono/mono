@@ -230,7 +230,7 @@ ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer
 }
 
 gboolean
-ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, const gunichar2 *group, MonoError *error)
+ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, const gchar *group, MonoError *error)
 {
 	/* Windows version use a cache built using WindowsIdentity._GetRoles */
 	g_warning ("IsMemberOfGroupName should never be called on Win32");

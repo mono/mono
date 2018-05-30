@@ -451,13 +451,12 @@ ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer
 }
 
 gboolean
-ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, const gunichar2 *group, MonoError *error)
+ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, const gchar *utf8_groupname, MonoError *error)
 {
 	gboolean result = FALSE;
 
 #ifdef HAVE_GRP_H
 
-	gchar * const utf8_groupname = mono_unicode_to_external (group);
 	if (utf8_groupname) {
 		struct group *g = NULL;
 #ifdef HAVE_GETGRNAM_R
@@ -477,14 +476,12 @@ ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpoint
 		g = getgrnam (utf8_groupname);
 		result = (g != NULL);
 #endif
-
 		if (result)
 			result = IsMemberOf ((uid_t) GPOINTER_TO_INT (user), g);
 
 #ifdef HAVE_GETGRNAM_R
 		g_free (fbuf);
 #endif
-		g_free (utf8_groupname);
 	}
 
 #endif /* HAVE_GRP_H */

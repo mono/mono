@@ -61,7 +61,7 @@ gboolean
 ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer user, gpointer group, MonoError *error);
 
 gboolean
-ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, const gunichar2 *group, MonoError *error);
+ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, const gchar *group, MonoError *error);
 
 
 /* Mono.Security.Cryptography.KeyPairPersistance */
