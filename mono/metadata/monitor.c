@@ -1270,14 +1270,14 @@ ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObject *obj)
  * any extra struct locking
  */
 
-void
-ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj)
+static void
+mono_monitor_pulse (MonoObject *obj, const char *func, gboolean all)
 {
 	int id;
 	LockWord lw;
 	MonoThreadsSync *mon;
 
-	LOCK_DEBUG (g_message ("%s: (%d) Pulsing %p", __func__, mono_thread_info_get_small_id (), obj));
+	LOCK_DEBUG (g_message ("%s: (%d) Pulsing %p", func, mono_thread_info_get_small_id (), obj));
 	
 	id = mono_thread_info_get_small_id ();
 	lw.sync = obj->synchronisation;
@@ -1292,46 +1292,28 @@ ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj)
 
 	mon = lock_word_get_inflated_lock (lw);
 
-	LOCK_DEBUG (g_message ("%s: (%d) %d threads waiting", __func__, mono_thread_info_get_small_id (), g_slist_length (mon->wait_list)));
+	LOCK_DEBUG (g_message ("%s: (%d) %d threads waiting", func, mono_thread_info_get_small_id (), g_slist_length (mon->wait_list)));
 
+again:
 	if (mon->wait_list != NULL) {
-		LOCK_DEBUG (g_message ("%s: (%d) signalling and dequeuing handle %p", __func__, mono_thread_info_get_small_id (), mon->wait_list->data));
-	
+		LOCK_DEBUG (g_message ("%s: (%d) signalling and dequeuing handle %p", func, mono_thread_info_get_small_id (), mon->wait_list->data));
+
 		mono_w32event_set (mon->wait_list->data);
 		mon->wait_list = g_slist_remove (mon->wait_list, mon->wait_list->data);
+		if (all)
+			goto again;
 	}
+}
+
+ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj)
+{
+	mono_monitor_pulse (obj, __func__, FALSE);
 }
 
 void
 ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObject *obj)
 {
-	int id;
-	LockWord lw;
-	MonoThreadsSync *mon;
-	
-	LOCK_DEBUG (g_message("%s: (%d) Pulsing all %p", __func__, mono_thread_info_get_small_id (), obj));
-
-	id = mono_thread_info_get_small_id ();
-	lw.sync = obj->synchronisation;
-
-	if (!mono_monitor_ensure_owned (lw, id))
-		return;
-
-	if (!lock_word_is_inflated (lw)) {
-		/* No threads waiting. A wait would have inflated the lock */
-		return;
-	}
-
-	mon = lock_word_get_inflated_lock (lw);
-
-	LOCK_DEBUG (g_message ("%s: (%d) %d threads waiting", __func__, mono_thread_info_get_small_id (), g_slist_length (mon->wait_list)));
-
-	while (mon->wait_list != NULL) {
-		LOCK_DEBUG (g_message ("%s: (%d) signalling and dequeuing handle %p", __func__, mono_thread_info_get_small_id (), mon->wait_list->data));
-	
-		mono_w32event_set (mon->wait_list->data);
-		mon->wait_list = g_slist_remove (mon->wait_list, mon->wait_list->data);
-	}
+	mono_monitor_pulse (obj, __func__, TRUE);
 }
 
 MonoBoolean
