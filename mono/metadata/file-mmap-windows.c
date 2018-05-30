@@ -229,7 +229,7 @@ open_handle (void *handle, const gunichar2 *mapName, gint mapName_length, int mo
 			if (waitSleep == 0) {
 				waitSleep = 10;
 			} else {
-				mono_thread_info_sleep (waitSleep, NULL);
+				mono_thread_sleep (waitSleep, NULL);
 				waitSleep *= 2;
 			}
 		}
@@ -328,7 +328,7 @@ mono_mmap_flush (void *mmap_handle, MonoError *error)
 
 	for (int w = 0; w < MAX_FLUSH_WAITS; w++) {
 		int pause = (1 << w);  // MaxFlushRetries should never be over 30
-		mono_thread_info_sleep (pause, NULL);
+		mono_thread_sleep (pause, NULL);
 
 		for (int r = 0; r < MAX_FLUSH_RETIRES_PER_WAIT; r++) {
 			if (FlushViewOfFile (h->address, h->length))

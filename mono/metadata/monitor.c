@@ -897,7 +897,7 @@ retry_contended:
 	thread = mono_thread_internal_current ();
 
 	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
-	mono_thread_info_install_interrupt (signal_monitor, mon, &interrupted);
+	mono_thread_install_interrupt (signal_monitor, mon, &interrupted);
 	if (!interrupted) {
 		timedout = FALSE;
 		if (ms == MONO_INFINITE_WAIT) {
@@ -906,7 +906,7 @@ retry_contended:
 			if (mono_coop_cond_timedwait (mon->entry_cond, mon->entry_mutex, waitms) == -1)
 				timedout = TRUE;
 		}
-		mono_thread_info_uninstall_interrupt (&interrupted);
+		mono_thread_uninstall_interrupt (&interrupted);
 	}
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 

@@ -384,4 +384,16 @@ gboolean
 mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes);
 #endif
 
+gint
+mono_thread_sleep (guint32 ms, gboolean *alerted);
+
+void
+mono_thread_install_interrupt (void (*callback) (gpointer data), gpointer data, gboolean *interrupted);
+
+void
+mono_thread_uninstall_interrupt (gboolean *interrupted);
+
+gboolean
+mono_thread_is_interrupt_state (MonoInternalThread *internal);
+
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

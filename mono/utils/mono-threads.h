@@ -151,8 +151,6 @@ enum {
 	ASYNC_SUSPEND_STATE_INDEX = 1,
 };
 
-typedef struct _MonoThreadInfoInterruptToken MonoThreadInfoInterruptToken;
-
 /*
  * These flags control how the rest of the runtime will see and interact with
  * a thread.
@@ -243,8 +241,6 @@ typedef struct {
 	MonoThreadHandle *handle;
 
 	void *jit_data;
-
-	MonoThreadInfoInterruptToken *interrupt_token;
 
 	/* HandleStack for coop handles */
 	gpointer handle_stack;
@@ -456,9 +452,6 @@ MONO_API gboolean
 mono_thread_info_yield (void);
 
 gint
-mono_thread_info_sleep (guint32 ms, gboolean *alerted);
-
-gint
 mono_thread_info_usleep (guint64 us);
 
 gpointer
@@ -469,30 +462,6 @@ mono_thread_info_tls_set (THREAD_INFO_TYPE *info, MonoTlsKey key, gpointer value
 
 void
 mono_thread_info_exit (gsize exit_code);
-
-void
-mono_thread_info_install_interrupt (void (*callback) (gpointer data), gpointer data, gboolean *interrupted);
-
-void
-mono_thread_info_uninstall_interrupt (gboolean *interrupted);
-
-MonoThreadInfoInterruptToken*
-mono_thread_info_prepare_interrupt (THREAD_INFO_TYPE *info);
-
-void
-mono_thread_info_finish_interrupt (MonoThreadInfoInterruptToken *token);
-
-void
-mono_thread_info_self_interrupt (void);
-
-void
-mono_thread_info_clear_self_interrupt (void);
-
-gboolean
-mono_thread_info_is_interrupt_state (THREAD_INFO_TYPE *info);
-
-void
-mono_thread_info_describe_interrupt_token (THREAD_INFO_TYPE *info, GString *text);
 
 gboolean
 mono_thread_info_is_live (THREAD_INFO_TYPE *info);

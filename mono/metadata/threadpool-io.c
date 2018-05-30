@@ -446,7 +446,7 @@ selector_thread (gpointer data)
 
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_SELECTOR, "io threadpool: wai");
 
-		mono_thread_info_install_interrupt (selector_thread_interrupt, NULL, &interrupted);
+		mono_thread_install_interrupt (selector_thread_interrupt, NULL, &interrupted);
 		if (interrupted)
 			continue;
 
@@ -454,7 +454,7 @@ selector_thread (gpointer data)
 		if (res == -1)
 			break;
 
-		mono_thread_info_uninstall_interrupt (&interrupted);
+		mono_thread_uninstall_interrupt (&interrupted);
 	}
 
 	mono_g_hash_table_destroy (states);
