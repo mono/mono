@@ -20,8 +20,6 @@
 
 ../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/ExportOptions.cs
 ../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/ImportOptions.cs
-../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/SchemaExporter.cs
-../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/SchemaHelper.cs
 ../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/SchemaImporter.cs
 ../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/XsdDataContractExporter.cs
 ../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/XsdDataContractImporter.cs
