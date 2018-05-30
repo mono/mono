@@ -37,6 +37,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace System.IO {
 	[DefaultEvent("Changed")]
@@ -117,7 +118,7 @@ namespace System.IO {
 		void InitWatcher ()
 		{
 			lock (lockobj) {
-				if (watcher != null)
+				if (watcher_handle != null)
 					return;
 
 				string managed = Environment.GetEnvironmentVariable ("MONO_MANAGED_WATCHER");
@@ -513,17 +514,17 @@ namespace System.IO {
 			case FileAction.Added:
 				lastData.Name = filename;
 				lastData.ChangeType = WatcherChangeTypes.Created;
-				OnCreated (new FileSystemEventArgs (WatcherChangeTypes.Created, path, filename));
+				Task.Run (() => OnCreated (new FileSystemEventArgs (WatcherChangeTypes.Created, path, filename)));
 				break;
 			case FileAction.Removed:
 				lastData.Name = filename;
 				lastData.ChangeType = WatcherChangeTypes.Deleted;
-				OnDeleted (new FileSystemEventArgs (WatcherChangeTypes.Deleted, path, filename));
+				Task.Run (() => OnDeleted (new FileSystemEventArgs (WatcherChangeTypes.Deleted, path, filename)));
 				break;
 			case FileAction.Modified:
 				lastData.Name = filename;
 				lastData.ChangeType = WatcherChangeTypes.Changed;
-				OnChanged (new FileSystemEventArgs (WatcherChangeTypes.Changed, path, filename));
+				Task.Run (() => OnChanged (new FileSystemEventArgs (WatcherChangeTypes.Changed, path, filename)));
 				break;
 			case FileAction.RenamedOldName:
 				if (renamed != null) {
@@ -539,7 +540,8 @@ namespace System.IO {
 				if (renamed == null) {
 					renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, path, "", filename);
 				}
-				OnRenamed (renamed);
+				var renamed_ref = renamed;
+				Task.Run (() => OnRenamed (renamed_ref));
 				renamed = null;
 				break;
 			default:

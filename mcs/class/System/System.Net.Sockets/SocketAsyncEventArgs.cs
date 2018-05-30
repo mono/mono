@@ -197,6 +197,7 @@ namespace System.Net.Sockets
 
 		internal void Complete ()
 		{
+			in_progress = 0;
 			OnCompleted (this);
 		}
 

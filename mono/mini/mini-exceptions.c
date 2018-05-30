@@ -2882,6 +2882,55 @@ print_stack_frame_to_string (StackFrameInfo *frame, MonoContext *ctx, gpointer d
 }
 
 #ifndef MONO_CROSS_COMPILE
+static gchar
+conv_ascii_char (gchar s)
+{
+	if (s < 0x20)
+		return '.';
+	if (s > 0x7e)
+		return '.';
+	return s;
+}
+
+static void
+xxd_mem (gpointer d, int len)
+{
+	guint8 *data = (guint8 *) d;
+
+	for (int off = 0; off < len; off += 0x10) {
+		g_printerr ("%p  ", data + off);
+
+		for (int i = 0; i < 0x10; i++) {
+			if ((i + off) >= len)
+				g_printerr ("   ");
+			else
+				g_printerr ("%02x ", data [off + i]);
+		}
+
+		g_printerr (" ");
+
+		for (int i = 0; i < 0x10; i++) {
+			if ((i + off) >= len)
+				g_printerr (" ");
+			else
+				g_printerr ("%c", conv_ascii_char (data [off + i]));
+		}
+
+		g_printerr ("\n");
+	}
+}
+
+static void
+dump_memory_around_ip (void *ctx)
+{
+#ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
+	MonoContext mctx;
+	mono_sigctx_to_monoctx (ctx, &mctx);
+	gpointer native_ip = MONO_CONTEXT_GET_IP (&mctx);
+	g_printerr ("Memory around native instruction pointer (%p):\n", native_ip);
+	xxd_mem (((guint8 *) native_ip) - 0x10, 0x40);
+#endif
+}
 
 static void print_process_map (void)
 {
@@ -2895,12 +2944,14 @@ static void print_process_map (void)
 	}
 
 	mono_runtime_printf_err ("/proc/self/maps:");
+	const int max_lines = 25;
+	int i = 0;
 
-	while (fgets (line, sizeof (line), fp)) {
+	while (fgets (line, sizeof (line), fp) && i++ < max_lines) {
 		// strip newline
-		size_t len = strlen (line) - 1;
-		if (len >= 0 && line [len] == '\n')
-			line [len] = '\0';
+		size_t len = strlen (line);
+		if (len > 0 && line [len - 1] == '\n')
+			line [len - 1] = '\0';
 
 		mono_runtime_printf_err ("%s", line);
 	}
@@ -2990,6 +3041,8 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 	}
 
 	print_process_map ();
+
+	dump_memory_around_ip (ctx);
 
 #ifdef HAVE_BACKTRACE_SYMBOLS
  {
