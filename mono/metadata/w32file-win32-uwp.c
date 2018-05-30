@@ -28,42 +28,6 @@ mono_w32file_move (const gunichar2 *path, const gunichar2 *dest, gint32 *error)
 	return result;
 }
 
-gboolean
-mono_w32file_replace (const gunichar2 *destinationFileName, const gunichar2 *sourceFileName,
-			   const gunichar2 *destinationBackupFileName, guint32 flags, gint32 *error)
-{
-	gboolean result = FALSE;
-	MONO_ENTER_GC_SAFE;
-
-	result = ReplaceFile (destinationFileName, sourceFileName, destinationBackupFileName, flags, NULL, NULL);
-	if (result == FALSE) {
-		*error=GetLastError ();
-	}
-
-	MONO_EXIT_GC_SAFE;
-	return result;
-}
-
-gboolean
-mono_w32file_copy (const gunichar2 *path, const gunichar2 *dest, gboolean overwrite, gint32 *error)
-{
-	gboolean						result = FALSE;
-	COPYFILE2_EXTENDED_PARAMETERS	copy_param = {0};
-
-	copy_param.dwSize = sizeof (COPYFILE2_EXTENDED_PARAMETERS);
-	copy_param.dwCopyFlags = (!overwrite) ? COPY_FILE_FAIL_IF_EXISTS : 0;
-
-	MONO_ENTER_GC_SAFE;
-
-	result = SUCCEEDED (CopyFile2 (path, dest, &copy_param));
-	if (result == FALSE) {
-		*error=GetLastError ();
-	}
-
-	MONO_EXIT_GC_SAFE;
-	return result;
-}
-
 gint64
 mono_w32file_get_file_size (HANDLE handle, gint32 *error)
 {
@@ -78,40 +42,6 @@ mono_w32file_get_file_size (HANDLE handle, gint32 *error)
 
 	MONO_EXIT_GC_SAFE;
 	return length.QuadPart;
-}
-
-gboolean
-mono_w32file_lock (HANDLE handle, gint64 position, gint64 length, gint32 *error)
-{
-	gboolean result = FALSE;
-	MONO_ENTER_GC_SAFE;
-
-	result = LockFile (handle, position & 0xFFFFFFFF, position >> 32,
-			   length & 0xFFFFFFFF, length >> 32);
-
-	if (result == FALSE) {
-		*error = GetLastError ();
-	}
-
-	MONO_EXIT_GC_SAFE;
-	return result;
-}
-
-gboolean
-mono_w32file_unlock (HANDLE handle, gint64 position, gint64 length, gint32 *error)
-{
-	gboolean result = FALSE;
-	MONO_ENTER_GC_SAFE;
-
-	result = UnlockFile (handle, position & 0xFFFFFFFF, position >> 32,
-			     length & 0xFFFFFFFF, length >> 32);
-
-	if (result == FALSE) {
-		*error = GetLastError ();
-	}
-
-	MONO_EXIT_GC_SAFE;
-	return result;
 }
 
 HANDLE

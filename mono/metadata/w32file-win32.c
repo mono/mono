@@ -393,6 +393,10 @@ mono_w32file_move (const gunichar2 *path, const gunichar2 *dest, gint32 *error)
 	return result;
 }
 
+#endif
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) || G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
+
 gboolean
 mono_w32file_replace (const gunichar2 *destinationFileName, const gunichar2 *sourceFileName, const gunichar2 *destinationBackupFileName, guint32 flags, gint32 *error)
 {
@@ -400,7 +404,7 @@ mono_w32file_replace (const gunichar2 *destinationFileName, const gunichar2 *sou
 
 	MONO_ENTER_GC_SAFE;
 
-	result = ReplaceFile (destinationFileName, sourceFileName, destinationBackupFileName, flags, NULL, NULL);
+	result = ReplaceFileW (destinationFileName, sourceFileName, destinationBackupFileName, flags, NULL, NULL);
 	if (!result)
 		*error = GetLastError ();
 
@@ -409,6 +413,16 @@ mono_w32file_replace (const gunichar2 *destinationFileName, const gunichar2 *sou
 	return result;
 }
 
+// Support older UWP SDK?
+WINBASEAPI
+BOOL
+WINAPI
+CopyFileW (
+	PCWSTR ExistingFileName,
+	PCWSTR NewFileName,
+	BOOL FailIfExists
+	);
+
 gboolean
 mono_w32file_copy (const gunichar2 *path, const gunichar2 *dest, gboolean overwrite, gint32 *error)
 {
@@ -416,7 +430,7 @@ mono_w32file_copy (const gunichar2 *path, const gunichar2 *dest, gboolean overwr
 
 	MONO_ENTER_GC_SAFE;
 
-	result = CopyFile (path, dest, !overwrite);
+	result = CopyFileW (path, dest, !overwrite);
 	if (!result)
 		*error = GetLastError ();
 
@@ -456,6 +470,10 @@ mono_w32file_unlock (gpointer handle, gint64 position, gint64 length, gint32 *er
 
 	return result;
 }
+
+#endif
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
 HANDLE
 mono_w32file_get_console_input (void)
@@ -505,15 +523,31 @@ mono_w32file_get_file_size (gpointer handle, gint32 *error)
 	return length | ((gint64)length_hi << 32);
 }
 
+#endif
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) || G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
+
+// Support older UWP SDK?
+WINBASEAPI
+UINT
+WINAPI
+GetDriveTypeW (
+	PCWSTR RootPathName
+	);
+
 guint32
 mono_w32file_get_drive_type (const gunichar2 *root_path_name)
 {
 	guint32 res;
 	MONO_ENTER_GC_SAFE;
-	res = GetDriveType (root_path_name);
+	res = GetDriveTypeW (root_path_name);
 	MONO_EXIT_GC_SAFE;
 	return res;
 }
+
+#endif
+
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 
 gint32
 mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)

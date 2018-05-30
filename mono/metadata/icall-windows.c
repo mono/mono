@@ -45,25 +45,26 @@ mono_icall_module_get_hinstance (MonoReflectionModuleHandle module)
 	return (gpointer) (-1);
 }
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) || G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
+
+// Support older UWP SDK?
+WINBASEAPI
+BOOL
+WINAPI
+GetComputerNameW (
+	PWSTR buffer,
+	PDWORD size
+	);
+
 MonoStringHandle
 mono_icall_get_machine_name (MonoError *error)
 {
-	gunichar2 *buf;
-	guint32 len;
-	MonoStringHandle result;
+	gunichar2 buf [MAX_COMPUTERNAME_LENGTH + 1];
+	DWORD len = G_N_ELEMENTS (buf);
 
-	len = MAX_COMPUTERNAME_LENGTH + 1;
-	buf = g_new (gunichar2, len);
-
-	result = NULL;
-	if (GetComputerName (buf, (PDWORD) &len)) {
-		result = mono_string_new_utf16_handle (mono_domain_get (), buf, len, error);
-	} else
-		result = MONO_HANDLE_NEW (MonoString, NULL);
-
-	g_free (buf);
-	return result;
+	if (GetComputerNameW (buf, &len))
+		return mono_string_new_utf16_handle (mono_domain_get (), buf, len, error);
+	return MONO_HANDLE_NEW (MonoString, NULL);
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 

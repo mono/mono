@@ -14,13 +14,6 @@
 #include "mono/metadata/icall-windows-internals.h"
 
 MonoStringHandle
-mono_icall_get_machine_name (MonoError *error)
-{
-	g_unsupported_api ("GetComputerName");
-	return mono_string_new_handle (mono_domain_get (), "mono", error);
-}
-
-MonoStringHandle
 mono_icall_get_windows_folder_path (int folder, MonoError *error)
 {
 	error_init (error);
@@ -56,20 +49,6 @@ mono_icall_broadcast_setting_change (MonoError *error)
 	SetLastError (ERROR_NOT_SUPPORTED);
 
 	return is_ok (error);
-}
-
-guint32
-mono_icall_drive_info_get_drive_type (MonoString *root_path_name)
-{
-	ERROR_DECL_VALUE (mono_error);
-	error_init (&mono_error);
-
-	g_unsupported_api ("GetDriveType");
-
-	mono_error_set_not_supported (&mono_error, G_UNSUPPORTED_API, "GetDriveType");
-	mono_error_set_pending_exception (&mono_error);
-
-	return DRIVE_UNKNOWN;
 }
 
 gint32
