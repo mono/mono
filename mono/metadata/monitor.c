@@ -1230,13 +1230,13 @@ mono_monitor_enter_v4_fast (MonoObject *obj, MonoBoolean *lock_taken)
 }
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObject *obj)
+ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObjectHandle obj, MonoError *error)
 {
 	LockWord lw;
 
 	LOCK_DEBUG (g_message ("%s: Testing if %p is owned by thread %d", __func__, obj, mono_thread_info_get_small_id()));
 
-	lw.sync = obj->synchronisation;
+	lw.sync = MONO_HANDLE_GETVAL (obj, synchronisation);
 
 	if (lock_word_is_flat (lw)) {
 		return lock_word_get_owner (lw) == mono_thread_info_get_small_id ();
@@ -1248,13 +1248,13 @@ ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObject *obj)
 }
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObject *obj)
+ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObjectHandle obj, MonoError *error)
 {
 	LockWord lw;
 
 	LOCK_DEBUG (g_message("%s: (%d) Testing if %p is owned by any thread", __func__, mono_thread_info_get_small_id (), obj));
 
-	lw.sync = obj->synchronisation;
+	lw.sync = MONO_HANDLE_GETVAL (obj, synchronisation);
 
 	if (lock_word_is_flat (lw)) {
 		return !lock_word_is_free (lw);
@@ -1271,15 +1271,15 @@ ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObject *obj)
  */
 
 static void
-mono_monitor_pulse (MonoObject *obj, const char *func, gboolean all)
+mono_monitor_pulse (MonoObjectHandle obj, const char *func, gboolean all)
 {
 	int const id = mono_thread_info_get_small_id ();
 	LockWord lw;
 	MonoThreadsSync *mon;
 
 	LOCK_DEBUG (g_message ("%s: (%d) Pulsing %p", func, id, obj));
-	
-	lw.sync = obj->synchronisation;
+
+	lw.sync = MONO_HANDLE_GETVAL (obj, synchronisation);
 
 	if (!mono_monitor_ensure_owned (lw, id))
 		return;
@@ -1304,13 +1304,13 @@ mono_monitor_pulse (MonoObject *obj, const char *func, gboolean all)
 }
 
 void
-ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj)
+ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObjectHandle obj, MonoError *error)
 {
 	mono_monitor_pulse (obj, __func__, FALSE);
 }
 
 void
-ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObject *obj)
+ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObjectHandle obj, MonoError *error)
 {
 	mono_monitor_pulse (obj, __func__, TRUE);
 }

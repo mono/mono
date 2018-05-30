@@ -15,6 +15,7 @@
 #include <mono/metadata/object.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-coop-mutex.h>
+#include <mono/metadata/handle.h>
 
 G_BEGIN_DECLS
 
@@ -128,16 +129,16 @@ mono_monitor_threads_sync_members_offset (int *status_offset, int *nest_offset);
 #define MONO_THREADS_SYNC_MEMBER_SIZE(o)	((o)&0xff)
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObject *obj);
+ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObjectHandle obj, MonoError *error);
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObject *obj);
+ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObjectHandle obj, MonoError *error);
 
 void
-ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj);
+ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObjectHandle obj, MonoError *error);
 
 void
-ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObject *obj);
+ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObjectHandle obj, MonoError *error);
 
 MonoBoolean
 ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms);
