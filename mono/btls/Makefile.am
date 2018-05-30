@@ -7,6 +7,8 @@ MONO_BTLS_SOURCES_FILES = \
 	btls-key.h \
 	btls-pkcs12.c \
 	btls-pkcs12.h \
+	btls-rand.c \
+	btls-rand.h \
 	btls-ssl.c \
 	btls-ssl-ctx.c \
 	btls-ssl-ctx.h \

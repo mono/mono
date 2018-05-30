@@ -1355,7 +1355,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/security/cryptography/md5.cs
 ../referencesource/mscorlib/system/security/cryptography/passwordderivebytes.cs
 ../referencesource/mscorlib/system/security/cryptography/pkcs1maskgenerationmethod.cs
-../referencesource/mscorlib/system/security/cryptography/randomnumbergenerator.cs
 ../referencesource/mscorlib/system/security/cryptography/rc2.cs
 ../referencesource/mscorlib/system/security/cryptography/rc2cryptoserviceprovider.cs
 ../referencesource/mscorlib/system/security/cryptography/rfc2898derivebytes.cs
@@ -1776,3 +1775,6 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509KeyStorageFlags.cs
 
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs
+
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/RandomNumberGenerator.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/Internal/Cryptography/RandomNumberGeneratorImplementation.cs
