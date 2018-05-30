@@ -2027,7 +2027,7 @@ mono_gchandle_free_domain (MonoDomain *domain)
 {
 	guint type;
 
-	for (type = HANDLE_TYPE_MIN; type < HANDLE_PINNED; ++type) {
+	for (type = HANDLE_TYPE_MIN; type <= HANDLE_PINNED; ++type) {
 		guint slot;
 		HandleData *handles = &gc_handles [type];
 		lock_handles (handles);
@@ -2056,6 +2056,30 @@ void
 mono_gc_register_obj_with_weak_fields (void *obj)
 {
 	g_error ("Weak fields not supported by boehm gc");
+}
+
+void
+mono_gc_strong_handle_foreach(GFunc func, gpointer user_data)
+{
+	int gcHandleTypeIndex;
+	uint32_t i;
+
+	lock_handles(handles);
+
+	for (gcHandleTypeIndex = HANDLE_NORMAL; gcHandleTypeIndex <= HANDLE_PINNED; gcHandleTypeIndex++)
+	{
+		HandleData* handles = &gc_handles[gcHandleTypeIndex];
+
+		for (i = 0; i < handles->size; i++)
+		{			
+			if (!slot_occupied(handles, i))
+				continue;
+			if (handles->entries[i] != NULL)
+				func(handles->entries[i], user_data);
+		}
+	}
+
+	unlock_handles(handles);
 }
 
 #else
