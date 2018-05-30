@@ -324,6 +324,8 @@ typedef struct {
 	MonoObject *synchronization_context;
 } MonoComObject;
 
+TYPED_HANDLE_DECL (MonoComObject);
+
 typedef struct {
 	MonoRealProxy real_proxy;
 	MonoComObject *com_object;

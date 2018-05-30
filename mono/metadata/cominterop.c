@@ -1841,22 +1841,17 @@ mono_cominterop_release_all_rcws (void)
 }
 
 gpointer
-ves_icall_System_ComObject_GetInterfaceInternal (MonoComObject* obj, MonoReflectionType* type, MonoBoolean throw_exception)
+ves_icall_System_ComObject_GetInterfaceInternal (MonoComObjectHandle obj, MonoReflectionTypeHandle ref_type, MonoBoolean throw_exception, MonoError *error)
 {
 #ifndef DISABLE_COM
-	ERROR_DECL (error);
-	MonoClass *klass = mono_type_get_class (type->type);
-	if (!mono_class_init (klass)) {
-		mono_error_set_for_class_failure (error, klass);
-		mono_error_set_pending_exception (error);
+	MonoType * const type = MONO_HANDLE_GETVAL (ref_type, type);
+	MonoClass * const klass = mono_class_from_mono_type (type);
+	if (!mono_class_init_checked (klass, error))
 		return NULL;
-	}
 
-	gpointer itf = cominterop_get_interface_checked (obj, klass, error);
-	if (throw_exception)
-		mono_error_set_pending_exception (error);
-	else
-		mono_error_cleanup (error);
+	ERROR_DECL (error_ignored);
+	gpointer const itf = cominterop_get_interface_checked (MONO_HANDLE_RAW (obj), klass, throw_exception ? error : error_ignored);
+	mono_error_cleanup (error_ignored);
 	return itf;
 #else
 	g_assert_not_reached ();
