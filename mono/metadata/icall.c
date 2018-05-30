@@ -6438,8 +6438,9 @@ ves_icall_System_Delegate_GetVirtualMethod_internal (MonoDelegateHandle delegate
 /* System.Buffer */
 
 static inline gint32 
-mono_array_get_byte_length (MonoArray *array)
+mono_array_get_byte_length (MonoArrayHandle array_handle)
 {
+	MonoArray *array = MONO_HANDLE_RAW (array_handle); //FIXME
 	MonoClass *klass;
 	int length;
 	int i;
@@ -6481,52 +6482,49 @@ mono_array_get_byte_length (MonoArray *array)
 }
 
 ICALL_EXPORT gint32 
-ves_icall_System_Buffer_ByteLengthInternal (MonoArray *array) 
+ves_icall_System_Buffer_ByteLengthInternal (MonoArrayHandle array, MonoError *error)
 {
 	return mono_array_get_byte_length (array);
 }
 
 ICALL_EXPORT gint8 
-ves_icall_System_Buffer_GetByteInternal (MonoArray *array, gint32 idx) 
+ves_icall_System_Buffer_GetByteInternal (MonoArrayHandle array, gint32 idx, MonoError *error)
 {
-	return mono_array_get (array, gint8, idx);
+	gint8 result = 0;
+	MONO_HANDLE_ARRAY_GETVAL (result, array, gint8, idx);
+	return result;
 }
 
 ICALL_EXPORT void 
-ves_icall_System_Buffer_SetByteInternal (MonoArray *array, gint32 idx, gint8 value) 
+ves_icall_System_Buffer_SetByteInternal (MonoArrayHandle array, gint32 idx, gint8 value, MonoError *error)
 {
-	mono_array_set (array, gint8, idx, value);
+	MONO_HANDLE_ARRAY_SETVAL (array, gint8, idx, value);
 }
 
 ICALL_EXPORT MonoBoolean
-ves_icall_System_Buffer_BlockCopyInternal (MonoArray *src, gint32 src_offset, MonoArray *dest, gint32 dest_offset, gint32 count) 
+ves_icall_System_Buffer_BlockCopyInternal (MonoArrayHandle src, gint32 src_offset, MonoArrayHandle dest, gint32 dest_offset, gint32 count, MonoError *error)
 {
-	guint8 *src_buf, *dest_buf;
-
 	if (count < 0) {
-		ERROR_DECL (error);
 		mono_error_set_argument (error, "count", "is negative");
-		mono_error_set_pending_exception (error);
 		return FALSE;
 	}
 
-	g_assert (count >= 0);
-
 	/* This is called directly from the class libraries without going through the managed wrapper */
-	MONO_CHECK_ARG_NULL (src, FALSE);
-	MONO_CHECK_ARG_NULL (dest, FALSE);
+	if (MONO_HANDLE_IS_NULL (src)) {
+		mono_error_set_argument_null (error, "src", "");
+		return FALSE;
+	}
+	if (MONO_HANDLE_IS_NULL (dest)) {
+		mono_error_set_argument_null (error, "dest", "");
+		return FALSE;
+	}
 
 	/* watch out for integer overflow */
 	if ((src_offset > mono_array_get_byte_length (src) - count) || (dest_offset > mono_array_get_byte_length (dest) - count))
 		return FALSE;
 
-	src_buf = (guint8 *)src->vector + src_offset;
-	dest_buf = (guint8 *)dest->vector + dest_offset;
-
-	if (src != dest)
-		memcpy (dest_buf, src_buf, count);
-	else
-		memmove (dest_buf, src_buf, count); /* Source and dest are the same array */
+	// Source and dest can be the same array.
+	memmove (dest_offset + (guint8 *)MONO_HANDLE_RAW (dest)->vector, src_offset + (guint8 *)MONO_HANDLE_RAW (src)->vector, count);
 
 	return TRUE;
 }
