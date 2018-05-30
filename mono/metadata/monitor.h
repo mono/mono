@@ -128,19 +128,19 @@ mono_monitor_threads_sync_members_offset (int *status_offset, int *nest_offset);
 #define MONO_THREADS_SYNC_MEMBER_SIZE(o)	((o)&0xff)
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_test_owner(MonoObject *obj);
+ves_icall_System_Threading_Monitor_Monitor_test_owner (MonoObject *obj);
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_test_synchronised(MonoObject *obj);
+ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObject *obj);
 
 void
-ves_icall_System_Threading_Monitor_Monitor_pulse(MonoObject *obj);
+ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj);
 
 void
-ves_icall_System_Threading_Monitor_Monitor_pulse_all(MonoObject *obj);
+ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObject *obj);
 
 MonoBoolean
-ves_icall_System_Threading_Monitor_Monitor_wait(MonoObject *obj, guint32 ms);
+ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms);
 
 void
 ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject *obj, guint32 ms, MonoBoolean *lockTaken);
