@@ -6757,6 +6757,7 @@ mono_llvm_check_method_supported (MonoCompile *cfg)
 	if (cfg->disable_llvm)
 		return;
 
+#if 0
 	/*
 	 * Nested clauses where one of the clauses is a finally clause is
 	 * not supported, because LLVM can't figure out the control flow,
@@ -6779,6 +6780,7 @@ mono_llvm_check_method_supported (MonoCompile *cfg)
 	}
 	if (cfg->disable_llvm)
 		return;
+#endif
 
 	/* FIXME: */
 	if (cfg->method->dynamic) {
@@ -7879,8 +7881,21 @@ decode_llvm_eh_info (EmitContext *ctx, gpointer eh_frame)
 
 	ei_len = info.ex_info_len;
 
-	// Nested clauses are currently disabled
+	/* Count nested clauses */
 	nested_len = 0;
+	for (i = 0; i < ei_len; ++i) {
+		gint32 cindex1 = *(gint32*)type_info [i];
+		MonoExceptionClause *clause1 = &cfg->header->clauses [cindex1];
+
+		for (int j = 0; j < cfg->header->num_clauses; ++j) {
+			int cindex2 = j;
+			MonoExceptionClause *clause2 = &cfg->header->clauses [cindex2];
+
+			if (cindex1 != cindex2 && clause1->try_offset >= clause2->try_offset && clause1->handler_offset <= clause2->handler_offset) {
+				nested_len ++;
+			}
+		}
+	}
 
 	cfg->llvm_ex_info = (MonoJitExceptionInfo*)mono_mempool_alloc0 (cfg->mempool, (ei_len + nested_len) * sizeof (MonoJitExceptionInfo));
 	cfg->llvm_ex_info_len = ei_len + nested_len;
