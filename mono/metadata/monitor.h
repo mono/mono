@@ -78,14 +78,9 @@ struct _MonoThreadsSync
  */
 
 typedef union {
-#if SIZEOF_REGISTER == 8
-	guint64 lock_word;
-#elif SIZEOF_REGISTER == 4
-	guint32 lock_word;
-#endif
+	gsize lock_word;
 	MonoThreadsSync *sync;
 } LockWord;
-
 
 enum {
 	LOCK_WORD_FLAT = 0,
