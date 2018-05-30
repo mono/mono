@@ -3,4 +3,12 @@
 #../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.GetRandomBytes.cs
 #../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/Interop.Libraries.cs
 
-corefx/RandomNumberGeneratorImplementation.OSX.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.Libraries.cs
+../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeCreateHandle.OSX.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.CoreFoundation.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.CoreFoundation.CFData.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.CoreFoundation.CFString.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.CoreFoundation.CFError.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/Internal/Cryptography/RandomNumberGeneratorImplementation.OSX.cs
+../../../external/corefx/src/Common/src/Interop/OSX/System.Security.Cryptography.Native.Apple/Interop.Err.cs
+../../../external/corefx/src/Common/src/Interop/OSX/System.Security.Cryptography.Native.Apple/Interop.Random.cs
