@@ -169,7 +169,6 @@ cominterop_get_ccw (MonoObject* object, MonoClass* itf);
 static gpointer
 cominterop_get_ccw_checked (MonoObject *object, MonoClass *itf, MonoError *error);
 
-
 static MonoObject*
 cominterop_get_ccw_object (MonoCCWInterface* ccw_entry, gboolean verify);
 
@@ -1698,7 +1697,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetCCW (MonoObject* object, Mon
 #endif
 }
 
-
 MonoBoolean
 ves_icall_System_Runtime_InteropServices_Marshal_IsComObject (MonoObject* object)
 {
@@ -1739,11 +1737,10 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal (MonoO
 }
 
 guint32
-ves_icall_System_Runtime_InteropServices_Marshal_GetComSlotForMethodInfoInternal (MonoReflectionMethod *m)
+ves_icall_System_Runtime_InteropServices_Marshal_GetComSlotForMethodInfoInternal (MonoReflectionMethodHandle m, MonoError *error)
 {
 #ifndef DISABLE_COM
-	ERROR_DECL (error);
-	int slot = cominterop_get_com_slot_for_method (m->method, error);
+	int const slot = cominterop_get_com_slot_for_method (MONO_HANDLE_GETVAL (m, method), error);
 	mono_error_assert_ok (error);
 	return slot;
 #else

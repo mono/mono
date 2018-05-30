@@ -668,7 +668,7 @@ MonoString *
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (gpointer ptr);
 
 guint32
-ves_icall_System_Runtime_InteropServices_Marshal_GetComSlotForMethodInfoInternal (MonoReflectionMethod *m);
+ves_icall_System_Runtime_InteropServices_Marshal_GetComSlotForMethodInfoInternal (MonoReflectionMethodHandle m, MonoError *error);
 
 guint32 
 ves_icall_System_Runtime_InteropServices_Marshal_GetLastWin32Error (void);
