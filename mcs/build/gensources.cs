@@ -121,10 +121,6 @@ public struct MatchEntry {
     public string ProfileName;
 }
 
-public struct Source {
-    public string FileName;
-}
-
 public class ParseResult {
     public readonly string LibraryDirectory, LibraryName;
 
@@ -193,6 +189,11 @@ public class ParseResult {
 
             if (absolutePattern.IndexOfAny (patternChars) >= 0) {
                 var matchingFiles = Directory.GetFiles (absoluteDirectory, absolutePattern);
+                if (matchingFiles.Length == 0) {
+                    if (SourcesParser.TraceLevel > 0)
+                        Console.Error.WriteLine ($"// No matches for pattern {absolutePattern}");
+                }
+
                 foreach (var fileName in matchingFiles) {
                     var relativePath = GetRelativePath (fileName, LibraryDirectory);
                     yield return new MatchEntry {
@@ -214,13 +215,9 @@ public class ParseResult {
         }
     }
 
-    // If you loaded sources files for multiple profiles, you can use the arguments here
-    //  to filter the results
-    public IEnumerable<string> GetFileNames (
+    public IEnumerable<MatchEntry> GetMatches (
         string hostPlatformName = null, string profileName = null
     ) {
-        var encounteredFileNames = new HashSet<string> (StringComparer.Ordinal);
-
         var excludedFiles = new HashSet<string> (
             (from m in EnumerateMatches (Exclusions, hostPlatformName, profileName) select m.RelativePath),
             StringComparer.Ordinal
@@ -233,7 +230,20 @@ public class ParseResult {
                 continue;
             }
 
-            // Skip duplicates
+            yield return entry;
+        }
+    }
+
+    // If you loaded sources files for multiple profiles, you can use the arguments here
+    //  to filter the results
+    public IEnumerable<string> GetFileNames (
+        string hostPlatformName = null, string profileName = null
+    ) {
+        var encounteredFileNames = new HashSet<string> (StringComparer.Ordinal);
+
+        foreach (var entry in GetMatches (hostPlatformName, profileName)) {
+            // Skip duplicates. We can't do this in GetMatches because we might want to have
+            //  duplicate entries with different platform/profile info
             if (encounteredFileNames.Contains (entry.RelativePath))
                 continue;
 

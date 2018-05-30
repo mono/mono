@@ -807,17 +807,14 @@ class MsbuildGenerator {
         return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
 	}
 
-	private IEnumerable<string> ReadSources (string platformName, string profileName, string outputName) {
+	private IEnumerable<MatchEntry> ReadSources (string outputName) {
         var libraryDirectory = Path.GetFullPath (Path.GetDirectoryName (GetProjectFilename ()));
 		var libraryName = outputName;
 
 		var parser = GetSourcesParser ();
         var result = parser.Parse (libraryDirectory, libraryName);
 
-        return result.GetFileNames (
-        	hostPlatformName: platformName, 
-        	profileName: profileName
-    	).OrderBy (s => s, StringComparer.Ordinal);
+        return result.GetMatches ().OrderBy (m => m.RelativePath, StringComparer.Ordinal);
 	}
 	
 	public VsCsproj Generate (string library_output, Dictionary<string,MsbuildGenerator> projects, out string profile, bool showWarnings = false)
@@ -868,6 +865,7 @@ class MsbuildGenerator {
 				fx_version = "4.6.2";
 				profile = "net_4_x";
 			}
+			Console.WriteLine ($"Using response fallback for {output_name}: {response}");
 		}
 		//
 		// Prebuild code, might be in inputs, check:
@@ -909,17 +907,34 @@ class MsbuildGenerator {
 
 		var groupConditional = $"Condition=\" '$(Platform)' == '{profile}' \"";
 
+		var readSources = ReadSources (sources_file_name).ToList ();
+
+		foreach (var bs in built_sources.Split ())
+			readSources.Add (new MatchEntry { RelativePath = bs, ProfileName = profile });
+
+		var entryTable = new Dictionary<(string, string), List<string>> ();
+
+		foreach (var rs in readSources) {
+			var key = (rs.ProfileName, rs.HostPlatform);
+			List<string> keyedList;
+			if (!entryTable.TryGetValue (key, out keyedList))
+				entryTable[key] = keyedList = new List<string> ();
+
+			keyedList.Add (rs.RelativePath);
+		}
+
+		foreach (var kvp in entryTable) {
+			Console.WriteLine ($"{kvp.Key} {kvp.Value.Count}");
+		}
+
 		StringBuilder sources = new StringBuilder ();
 		sources.Append ($"  <ItemGroup {groupConditional}>{NewLine}");
 
-		var readSources = ReadSources (null, profile, sources_file_name).Select (s => s.Replace("/", "\\")).ToList();
+		readSources.Sort ((lhs, rhs) => lhs.RelativePath.CompareTo (rhs.RelativePath));
 
-		foreach (var bs in built_sources.Split ())
-			readSources.Add(bs);
+		foreach (var rs in readSources) {
+			var s = rs.RelativePath;
 
-		readSources.Sort ();
-
-		foreach (string s in readSources) {
 			if (s.Length == 0)
 				continue;
 
@@ -1378,6 +1393,7 @@ public static class Driver {
 			}
 		}
 
+		if (false)
 		foreach (var csprojFile in projects.Values.Select (x => x.GetProjectFilename ()).Distinct ())
 		{
 			Console.WriteLine ("Deduplicating: " + csprojFile);
