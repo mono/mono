@@ -105,14 +105,16 @@ namespace System.Security.Principal {
 		}
 
 		override
-		public bool IsInRole (string role)
+		unsafe public bool IsInRole (string role)
 		{
 			if (role == null)
 				return false;	// ArgumentNullException
 
 			if (Environment.IsUnix) {
 				// note: Posix is always case-sensitive
-				return IsMemberOfGroupName (Token, role);
+				fixed (char* fixed_role = role) {
+					return IsMemberOfGroupName (Token, fixed_role);
+				}
 			}
 			else {
 				// Windows specific code that
@@ -168,6 +170,6 @@ namespace System.Security.Principal {
 
 		// note: never called by Win32 code (i.e. always return false)
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static bool IsMemberOfGroupName (IntPtr user, string group);
+		unsafe private extern static bool IsMemberOfGroupName (IntPtr user, char* group);
 	}
 }

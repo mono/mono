@@ -58,10 +58,10 @@ ves_icall_System_Security_Principal_WindowsImpersonationContext_RevertToSelf (vo
 
 /* System.Security.Principal.WindowsPrincipal */
 gboolean
-ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer user, gpointer group);
+ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer user, gpointer group, MonoError *error);
 
 gboolean
-ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, MonoString *group);
+ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, const gunichar2 *group, MonoError *error);
 
 
 /* Mono.Security.Cryptography.KeyPairPersistance */
