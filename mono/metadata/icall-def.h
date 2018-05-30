@@ -1088,7 +1088,7 @@ HANDLES(ICALL(WEBIC_3, "GetUnmanagedResourcesPtr", ves_icall_get_resources_ptr))
 
 #ifndef DISABLE_COM
 ICALL_TYPE(COMOBJ, "System.__ComObject", COMOBJ_1)
-ICALL(COMOBJ_1, "CreateRCW", ves_icall_System_ComObject_CreateRCW)
-ICALL(COMOBJ_2, "GetInterfaceInternal", ves_icall_System_ComObject_GetInterfaceInternal)
+HANDLES(ICALL(COMOBJ_1, "CreateRCW", ves_icall_System_ComObject_CreateRCW))
+HANDLES(ICALL(COMOBJ_2, "GetInterfaceInternal", ves_icall_System_ComObject_GetInterfaceInternal))
 ICALL(COMOBJ_3, "ReleaseInterfaces", ves_icall_System_ComObject_ReleaseInterfaces)
 #endif

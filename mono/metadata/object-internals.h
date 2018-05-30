@@ -1825,6 +1825,11 @@ mono_object_new_checked (MonoDomain *domain, MonoClass *klass, MonoError *error)
 MonoObjectHandle
 mono_object_new_handle (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
+// This function skips handling of remoting and COM.
+// "alloc" means "less".
+MonoObjectHandle
+mono_object_new_alloc_by_vtable (MonoVTable *vtable, MonoError *error);
+
 MonoObject*
 mono_object_new_mature (MonoVTable *vtable, MonoError *error);
 

@@ -763,8 +763,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_IsComObject (MonoObject* object
 gint32
 ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal (MonoObject* object);
 
-MonoObject *
-ves_icall_System_ComObject_CreateRCW (MonoReflectionType *type);
+MonoObjectHandle
+ves_icall_System_ComObject_CreateRCW (MonoReflectionTypeHandle ref_type, MonoError *error);
 
 void
 ves_icall_System_ComObject_ReleaseInterfaces(MonoComObject* obj);

@@ -1752,31 +1752,22 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetComSlotForMethodInfoInternal
 }
 
 /* Only used for COM RCWs */
-MonoObject *
-ves_icall_System_ComObject_CreateRCW (MonoReflectionType *type)
+MonoObjectHandle
+ves_icall_System_ComObject_CreateRCW (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
-	ERROR_DECL (error);
-	MonoClass *klass;
-	MonoDomain *domain;
-	MonoObject *obj;
-	
-	domain = mono_object_domain (type);
-	klass = mono_class_from_mono_type (type->type);
+	MonoDomain * const domain = MONO_HANDLE_DOMAIN (ref_type);
+	MonoType * const type = MONO_HANDLE_GETVAL (ref_type, type);
+	MonoClass * const klass = mono_class_from_mono_type (type);
 
-	/* call mono_object_new_alloc_specific_checked instead of mono_object_new
-	 * because we want to actually create object. mono_object_new checks
-	 * to see if type is import and creates transparent proxy. this method
+	/* Call mono_object_new_alloc_by_vtable instead of mono_object_new_by_vtable
+	 * because we want to actually create object. mono_object_new_by_vtable checks
+	 * to see if type is import and creates transparent proxy. This method
 	 * is called by the corresponding real proxy to create the real RCW.
 	 * Constructor does not need to be called. Will be called later.
-	*/
+	 */
 	MonoVTable *vtable = mono_class_vtable_checked (domain, klass, error);
-	if (mono_error_set_pending_exception (error))
-		return NULL;
-	obj = mono_object_new_alloc_specific_checked (vtable, error);
-	if (mono_error_set_pending_exception (error))
-		return NULL;
-
-	return obj;
+	return_val_if_nok (error, NULL);
+	return mono_object_new_alloc_by_vtable (vtable, error);
 }
 
 static gboolean    
