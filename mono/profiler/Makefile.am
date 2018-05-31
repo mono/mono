@@ -53,7 +53,8 @@ endif
 # shared libraries, so we want errors if the profiler modules contain any.
 if HOST_DARWIN
 if BITCODE
-prof_ldflags = -no-undefined
+# FIXME boehm?
+prof_ldflags = -no-undefined ../mini/libmonosgen-2.0.la
 else
 prof_ldflags = -Wl,-undefined -Wl,suppress -Wl,-flat_namespace
 endif
