@@ -658,14 +658,25 @@ class MakeBundle {
 		int align = 4096; // first non-Windows alignment, saving on average 30K
 		Stream package;
 		
-		public PackageMaker (string output)
+		public PackageMaker (string runtime, string output)
 		{
-			if (style == "windows")
-				align = 1 << 16; // first Windows alignment
 			package = File.Create (output, 128*1024);
 			if (IsUnix){
 				File.SetAttributes (output, unchecked ((FileAttributes) 0x80000000));
 			}
+
+			Console.WriteLine ("Using runtime: " + runtime);
+
+			// Probe for MZ signature to decide if we are targeting Windows,
+			// so we can optimize an average of 30K away on Unix.
+			using (Stream runtimeStream = File.OpenRead (runtime)) {
+				var runtimeBuffer = new byte [2];
+				if (runtimeStream.Read (runtimeBuffer, 0, 2) == 2
+					&& runtimeBuffer [0] == (byte)'M'
+					&& runtimeBuffer [1] == (byte)'Z')
+					align = 1 << 16; // first Windows alignment
+			}
+			AddFile (runtime);
 		}
 
 		public int AddFile (string fname)
@@ -791,9 +802,7 @@ class MakeBundle {
 			return false;
 		}
 		
-		var maker = new PackageMaker (output);
-		Console.WriteLine ("Using runtime: " + runtime);
-		maker.AddFile (runtime);
+		var maker = new PackageMaker (runtime, output);
 		
 		foreach (var url in files){
 			string fname = LocateFile (new Uri (url).LocalPath);
