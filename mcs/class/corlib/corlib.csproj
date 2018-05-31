@@ -28,7 +28,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;FEATURE_PORTABLE_SPAN;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_CONSOLE;MONO_FEATURE_APPLETLS;FEATURE_CRYPTO_CONFIGURABLE</DefineConstants>
+    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;FEATURE_PORTABLE_SPAN;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_MACL;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_CONSOLE;MONO_FEATURE_APPLETLS;FEATURE_CRYPTO_CONFIGURABLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
     <OutputPath>./../../class/lib/monodroid</OutputPath>
@@ -1887,16 +1887,6 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HashCode.cs" />
-    <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
-    <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.MemAllocFree.cs" />
-    <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
-    <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.MemAllocFree.cs" />
-    <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.ThreadPoolIO.cs" />
-    <Compile Include="..\..\..\external\corert\src\Runtime.Base\src\System\Runtime\InteropServices\NativeCallableAttribute.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\Interop\Windows\Interop.Errors.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\DeferredDisposableLifetime.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Microsoft\Win32\SafeHandles\SafeThreadPoolIOHandle.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\ThreadPoolCallbackWrapper.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
@@ -1908,8 +1898,6 @@
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha384managed.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha512managed.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledescryptoserviceprovider.cs" />
-    <Compile Include="corert\Interop.cs" />
-    <Compile Include="corert\Interop.MemAllocFree.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
     <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
@@ -2130,8 +2118,6 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HashCode.cs" />
-    <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
-    <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.MemAllocFree.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.MemAllocFree.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.ThreadPoolIO.cs" />
@@ -2158,7 +2144,6 @@
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha384managed.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha512managed.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledescryptoserviceprovider.cs" />
-    <Compile Include="corert\Interop.cs" />
     <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
