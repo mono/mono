@@ -1552,9 +1552,10 @@ corert/EnvironmentAugments.cs
 corert/RelocatedTypeAttribute.cs
 corert/RuntimeThread.cs
 corert/Stream.cs
-corert/ThreadPoolBoundHandle.cs
 corert/Task.cs
 corert/ThreadPool.cs
+corert/ThreadPoolBoundHandle.platformnotsupported.cs
+corert/PreAllocatedOverlapped.platformnotsupported.cs
 corert/RuntimeAugments.cs
 
 ../../../external/corert/src/Common/src/System/Collections/Generic/LowLevelList.cs

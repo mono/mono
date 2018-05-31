@@ -1,5 +1,3 @@
-#if !MULTIPLEX_OS
-
 namespace System.Threading
 {
 	public sealed class ThreadPoolBoundHandle : IDisposable
@@ -48,18 +46,4 @@ namespace System.Threading
 			throw new PlatformNotSupportedException ();
 		}
 	}
-
-	public sealed partial class PreAllocatedOverlapped : IDisposable
-	{
-		[System.CLSCompliantAttribute (false)]
-		public PreAllocatedOverlapped (System.Threading.IOCompletionCallback callback, object state, object pinData)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public void Dispose ()
-		{
-		}
-	}
 }
-#endif
