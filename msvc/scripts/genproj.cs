@@ -860,7 +860,7 @@ class MsbuildGenerator {
 			if (!profileSet.TryGetValue (platformName, out platformSet))
 				profileSet[platformName] = platformSet = new HashSet<string> ();
 
-			platformSet.Add (rs.RelativePath);
+			platformSet.Add (FixupSourceName (rs.RelativePath));
 		}
 
 
@@ -869,7 +869,7 @@ class MsbuildGenerator {
 		foreach (var platformSets in profileSets.Values) {
 			foreach (var platformSet in platformSets.Values) {
 				foreach (var bs in builtSourceList)
-					platformSet.Add (bs);
+					platformSet.Add (FixupSourceName (bs));
 
 				if (commonFileNames == null)
 					commonFileNames = new HashSet<string> (platformSet);
@@ -879,7 +879,7 @@ class MsbuildGenerator {
 		}
 
 		result.Append ($"  <ItemGroup>{NewLine}");
-		foreach (var cf in (from fn in commonFileNames orderby fn select FixupSourceName(fn)))
+		foreach (var cf in commonFileNames.OrderBy (_ => _))
 			result.Append ($"    <Compile Include=\"{cf}\" />{NewLine}");
 		result.Append ($"  </ItemGroup>{NewLine}");
 
@@ -897,8 +897,8 @@ class MsbuildGenerator {
 					: profileSet["default"]
 				let platformSpecificFileNames = 
 					(from fn in platformSet 
-					where !commonFileNames.Contains(fn)
-					orderby fn select fn).ToList()
+					where !commonFileNames.Contains (fn)
+					orderby fn select fn).ToList ()
 				where platformSpecificFileNames.Count > 0
 				select (platformName, platformSpecificFileNames)).ToList ();
 
@@ -916,13 +916,13 @@ class MsbuildGenerator {
 
 			result.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{profileName}' \">{NewLine}");
 
-			foreach (var cfn in (from fn in commonFileNamesForThisProfile select FixupSourceName(fn)))
+			foreach (var cfn in commonFileNamesForThisProfile)
 				result.Append ($"    <Compile Include=\"{cfn}\" />{NewLine}");
 
 			result.Append ($"  </ItemGroup>{NewLine}");
 
 			foreach (var tup in platformFileListTuples) {
-				var filteredFileNames = (from fn in tup.Item2 where !commonFileNamesForThisProfile.Contains(fn) select FixupSourceName(fn)).ToList();
+				var filteredFileNames = (from fn in tup.Item2 where !commonFileNamesForThisProfile.Contains (fn) select fn).ToList ();
 				if (filteredFileNames.Count == 0)
 					continue;
 
