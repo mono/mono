@@ -1,12 +1,17 @@
 #include net_4_x_corlib.dll.sources
 
-../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.BCryptGenRandom.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Interop.Libraries.cs
 
 ../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/Internal/Cryptography/RandomNumberGeneratorImplementation.Windows.cs
 
 ../../../external/corert/src/Common/src/Interop/Windows/Interop.Libraries.cs
-../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.BCryptGenRandom.cs
+../../../external/corefx/src/Common/src/Interop/Windows/BCrypt/Interop.BCryptGenRandom.cs
+../../../external/corefx/src/Common/src/Interop/Windows/BCrypt/Interop.CreateCryptographicException.cs
+../../../external/corefx/src/Common/src/Interop/Windows/NCrypt/Interop.NCryptAlgorithms.cs
+../../../external/corefx/src/Common/src/Interop/Windows/BCrypt/Interop.NTSTATUS.cs
+../../../external/corefx/src/Common/src/Interop/Windows/NCrypt/Interop.ErrorCode.cs
+../../../external/corefx/src/Common/src/Internal/Cryptography/Windows/ErrorCodeHelper.cs
+#../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.BCryptGenRandom.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Interop.Libraries.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Kernel32/Interop.FormatMessage.cs
