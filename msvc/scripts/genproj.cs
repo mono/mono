@@ -927,7 +927,7 @@ class MsbuildGenerator {
 					continue;
 
 				var platformName = tup.Item1;
-				result.Append ($"  <ItemGroup Condition=\" $(Platform)|$(HostPlatform)' == '{profileName}|{platformName}' \">{NewLine}");
+				result.Append ($"  <ItemGroup Condition=\" '$(Platform)|$(HostPlatform)' == '{profileName}|{platformName}' \">{NewLine}");
 
 				foreach (var ff in filteredFileNames)
 					result.Append ($"    <Compile Include=\"{ff}\" />{NewLine}");
