@@ -505,25 +505,23 @@ mono_w32file_get_console_error (void)
 	return res;
 }
 
+#endif
+
 gint64
-mono_w32file_get_file_size (gpointer handle, gint32 *error)
+mono_w32file_get_file_size (HANDLE handle, gint32 *error)
 {
-	gint64 length;
-	guint32 length_hi;
+	LARGE_INTEGER length;
 
 	MONO_ENTER_GC_SAFE;
 
-	length = GetFileSize (handle, &length_hi);
-	if(length==INVALID_FILE_SIZE) {
+	if (!GetFileSizeEx (handle, &length)) {
 		*error=GetLastError ();
+		length.QuadPart = INVALID_FILE_SIZE;
 	}
 
 	MONO_EXIT_GC_SAFE;
-
-	return length | ((gint64)length_hi << 32);
+	return length.QuadPart;
 }
-
-#endif
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) || G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
 

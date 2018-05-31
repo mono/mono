@@ -28,22 +28,6 @@ mono_w32file_move (const gunichar2 *path, const gunichar2 *dest, gint32 *error)
 	return result;
 }
 
-gint64
-mono_w32file_get_file_size (HANDLE handle, gint32 *error)
-{
-	LARGE_INTEGER length;
-
-	MONO_ENTER_GC_SAFE;
-
-	if (!GetFileSizeEx (handle, &length)) {
-		*error=GetLastError ();
-		length.QuadPart = INVALID_FILE_SIZE;
-	}
-
-	MONO_EXIT_GC_SAFE;
-	return length.QuadPart;
-}
-
 HANDLE
 mono_w32file_get_console_output (void)
 {
