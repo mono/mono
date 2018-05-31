@@ -13,3 +13,6 @@ System.Text/EncodingHelper.MonoTouch.cs
 System/Environment.iOS.cs
 System/Guid.MonoTouch.cs
 System/NotSupportedException.iOS.cs
+
+../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.GetRandomBytes.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/Interop.Libraries.cs
