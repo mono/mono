@@ -330,7 +330,7 @@ public class SourcesParser {
         TryParseSingleFile (state, testPath + ".exclude.sources", true);
 
         if (ok) {
-            PrintSummary (state);
+            PrintSummary (state, testPath);
             return state.Result;
         }
 
