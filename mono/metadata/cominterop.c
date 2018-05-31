@@ -1669,25 +1669,17 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetIDispatchForObjectInternal (
 }
 
 void*
-ves_icall_System_Runtime_InteropServices_Marshal_GetCCW (MonoObject* object, MonoReflectionType* type)
+ves_icall_System_Runtime_InteropServices_Marshal_GetCCW (MonoObjectHandle object, MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 #ifndef DISABLE_COM
-	ERROR_DECL (error);
-	MonoClass* klass = NULL;
-	void* itf = NULL;
+	g_assert (!MONO_HANDLE_IS_NULL (ref_type));
+	MonoType * const type = MONO_HANDLE_GETVAL (ref_type, type);
 	g_assert (type);
-	g_assert (type->type);
-	klass = mono_type_get_class (type->type);
+	MonoClass * const klass = mono_type_get_class (type);
 	g_assert (klass);
-	if (!mono_class_init (klass)) {
-		mono_error_set_for_class_failure (error, klass);
-		mono_error_set_pending_exception (error);
+	if (!mono_class_init_checked (klass, error))
 		return NULL;
-	}
-
-	itf = cominterop_get_ccw_checked (object, klass, error);
-	mono_error_set_pending_exception (error);
-	return itf;
+	return cominterop_get_ccw_checked (MONO_HANDLE_RAW (object), klass, error);
 #else
 	g_assert_not_reached ();
 #endif
