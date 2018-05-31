@@ -36,7 +36,7 @@ class SlnGenerator {
 	const string project_start = "Project(\"{0}\") = \"{1}\", \"{2}\", \"{3}\""; // Note: No need to double up on {} around {2}
 	const string project_end = "EndProject";
 
-	public List<string> profiles = new List<string> {
+	public static readonly List<string> profiles = new List<string> {
 		"net_4_x",
 		"monodroid",
 		"monotouch",
@@ -816,6 +816,112 @@ class MsbuildGenerator {
 
         return result.GetMatches ().OrderBy (m => m.RelativePath, StringComparer.Ordinal);
 	}
+
+	private string FixupSourceName (string s) {
+		string src = s.Replace ("/", "\\");
+		if (src.StartsWith (@"Test\..\"))
+			src = src.Substring (8, src.Length - 8);
+
+		return src;
+	}
+
+	private StringBuilder GenerateSourceItemGroups (
+		string profile,
+		string sources_file_name,
+		string built_sources,
+		string groupConditional
+	) {
+		var result = new StringBuilder ();
+		var readSources = ReadSources (sources_file_name).ToList ();
+
+		if (readSources.Count == 0)
+			return result;
+
+		foreach (var bs in built_sources.Split ()) {
+			var tbs = bs.Trim();
+			if (tbs.Length < 1)
+				continue;
+
+			readSources.Add (new MatchEntry { RelativePath = tbs, ProfileName = profile });
+		}
+
+
+		var observedHostPlatforms = new HashSet<string> ();
+		var profileSets = new Dictionary<string, Dictionary<string, HashSet<string>>> ();
+
+		foreach (var rs in readSources) {
+			if (rs.HostPlatform != null)
+				observedHostPlatforms.Add (rs.HostPlatform);
+
+			var profileName = rs.ProfileName ?? "default";
+			var platformName = rs.HostPlatform ?? "default";
+
+			Dictionary<string, HashSet<string>> profileSet;
+			if (!profileSets.TryGetValue (profileName, out profileSet))
+				profileSets[profileName] = profileSet = new Dictionary<string, HashSet<string>> ();
+
+			HashSet<string> platformSet;
+			if (!profileSet.TryGetValue (platformName, out platformSet))
+				profileSet[platformName] = platformSet = new HashSet<string> ();
+
+			platformSet.Add (rs.RelativePath);
+		}
+
+
+		HashSet<string> commonFileNames = null;
+
+		foreach (var platformSets in profileSets.Values) {
+			foreach (var platformSet in platformSets.Values) {
+				if (commonFileNames == null)
+					commonFileNames = new HashSet<string> (platformSet);
+				else
+					commonFileNames.IntersectWith (platformSet);
+			}
+		}
+
+		result.Append ($"  <!-- common files -->{NewLine}  <ItemGroup>{NewLine}");
+		foreach (var cf in (from fn in commonFileNames orderby fn select FixupSourceName(fn)))
+			result.Append ($"    <Compile Include=\"{cf}\" />{NewLine}");
+		result.Append ($"  </ItemGroup>{NewLine}");
+
+		if (observedHostPlatforms.Count == 0)
+			observedHostPlatforms.Add ("default");
+
+		foreach (var profileName in SlnGenerator.profiles) {
+			Dictionary<string, HashSet<string>> profileSet;
+			if (!profileSets.TryGetValue (profileName, out profileSet))
+				profileSet = profileSets["default"];
+
+			foreach (var platformName in observedHostPlatforms) {
+				HashSet<string> platformSet;
+				if (!profileSet.TryGetValue (platformName, out platformSet))
+					platformSet = profileSet["default"];
+				
+				var platformSpecificFileNames = 
+					(from fn in platformSet 
+					where !commonFileNames.Contains(fn) 
+					orderby fn 
+					select FixupSourceName(fn)).ToList();
+
+				if (platformSpecificFileNames.Count == 0)
+					continue;
+
+				if (observedHostPlatforms.Count == 1) {
+					// Only one host platform so we don't need the platform conditional.
+					result.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{profileName}' \">{NewLine}");
+				} else {
+					result.Append ($"  <ItemGroup Condition=\" ('$(Platform)' == '{profileName}') and ('$(HostPlatform)' == '{platformName}') \">{NewLine}");
+				}
+
+				foreach (var pf in platformSpecificFileNames)
+					result.Append ($"    <Compile Include=\"{pf}\" />{NewLine}");
+
+				result.Append ($"  </ItemGroup>{NewLine}");
+			}
+		}
+
+		return result;
+	}
 	
 	public VsCsproj Generate (string library_output, Dictionary<string,MsbuildGenerator> projects, out string profile, bool showWarnings = false)
 	{
@@ -907,45 +1013,10 @@ class MsbuildGenerator {
 
 		var groupConditional = $"Condition=\" '$(Platform)' == '{profile}' \"";
 
-		var readSources = ReadSources (sources_file_name).ToList ();
-
-		foreach (var bs in built_sources.Split ())
-			readSources.Add (new MatchEntry { RelativePath = bs, ProfileName = profile });
-
-		var entryTable = new Dictionary<(string, string), List<string>> ();
-
-		foreach (var rs in readSources) {
-			var key = (rs.ProfileName, rs.HostPlatform);
-			List<string> keyedList;
-			if (!entryTable.TryGetValue (key, out keyedList))
-				entryTable[key] = keyedList = new List<string> ();
-
-			keyedList.Add (rs.RelativePath);
-		}
-
-		foreach (var kvp in entryTable) {
-			Console.WriteLine ($"{kvp.Key} {kvp.Value.Count}");
-		}
-
-		StringBuilder sources = new StringBuilder ();
-		sources.Append ($"  <ItemGroup {groupConditional}>{NewLine}");
-
-		readSources.Sort ((lhs, rhs) => lhs.RelativePath.CompareTo (rhs.RelativePath));
-
-		foreach (var rs in readSources) {
-			var s = rs.RelativePath;
-
-			if (s.Length == 0)
-				continue;
-
-			string src = s.Replace ("/", "\\");
-			if (src.StartsWith (@"Test\..\"))
-				src = src.Substring (8, src.Length - 8);
-
-			sources.AppendFormat ("    <Compile Include=\"{0}\" />" + NewLine, src);
-		}
-
-		sources.Append ("  </ItemGroup>");
+		var sources = 
+			updatingExistingProject 
+				? new StringBuilder ()
+				: GenerateSourceItemGroups (profile, sources_file_name, built_sources, groupConditional);
 
 		//if (library == "corlib-build") // otherwise, does not compile on fx_version == 4.0
 		//{
