@@ -623,9 +623,8 @@ namespace System.ServiceModel.Dispatcher
 				} finally {
 					if (rc != null)
 						rc.Close ();
-					// unless it is closed by session/call manager, move it back to the loop to receive the next message.
-					if (loop && reply.State != CommunicationState.Closed)
-						ProcessRequestOrInput (reply);
+
+					reply.Close (owner.DefaultCloseTimeout); // close the channel
 				}
 			}
 
