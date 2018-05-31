@@ -1,5 +1,5 @@
 <!--
-If you are new to the project get yourself familiar with http://mono-project.com/community/bugs/make-a-good-bug-report before filling the issue
+If you are new to the project get yourself familiar with https://www.mono-project.com/community/bugs/make-a-good-bug-report/ before filling the issue
 -->
 
 ## Steps to Reproduce
