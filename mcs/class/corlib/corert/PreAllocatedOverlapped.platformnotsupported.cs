@@ -11,9 +11,5 @@ namespace System.Threading
 		public void Dispose ()
 		{
 		}
-
-		~PreAllocatedOverlapped ()
-		{
-		}
 	}
 }
