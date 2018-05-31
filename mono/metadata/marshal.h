@@ -752,7 +752,7 @@ MonoObject*
 ves_icall_System_Runtime_InteropServices_Marshal_GetObjectForCCW (void* pUnk);
 
 void*
-ves_icall_System_Runtime_InteropServices_Marshal_GetIDispatchForObjectInternal (MonoObject* object);
+ves_icall_System_Runtime_InteropServices_Marshal_GetIDispatchForObjectInternal (MonoObjectHandle object, MonoError *error);
 
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_GetCCW (MonoObject* object, MonoReflectionType* type);

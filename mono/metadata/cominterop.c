@@ -1574,7 +1574,6 @@ static gboolean cominterop_can_support_dispatch (MonoClass* klass)
 static void*
 cominterop_get_idispatch_for_object (MonoObject* object, MonoError *error)
 {
-	error_init (error);
 	if (!object)
 		return NULL;
 
@@ -1660,13 +1659,10 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetObjectForCCW (void* pUnk)
 }
 
 void*
-ves_icall_System_Runtime_InteropServices_Marshal_GetIDispatchForObjectInternal (MonoObject* object)
+ves_icall_System_Runtime_InteropServices_Marshal_GetIDispatchForObjectInternal (MonoObjectHandle object, MonoError *error)
 {
 #ifndef DISABLE_COM
-	ERROR_DECL (error);
-	void* idisp = cominterop_get_idispatch_for_object (object, error);
-	mono_error_set_pending_exception (error);
-	return idisp;
+	return cominterop_get_idispatch_for_object (MONO_HANDLE_RAW (object), error);
 #else
 	g_assert_not_reached ();
 #endif
