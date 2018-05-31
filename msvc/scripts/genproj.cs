@@ -879,10 +879,10 @@ class MsbuildGenerator {
 			}
 		}
 
-		result.Append ($"  <!-- common files -->{NewLine}  <ItemGroup>{NewLine}");
+		result.Append ($"  <ItemGroup>{NewLine}");
 		foreach (var cf in (from fn in commonFileNames orderby fn select FixupSourceName(fn)))
 			result.Append ($"    <Compile Include=\"{cf}\" />{NewLine}");
-		result.Append ($"  </ItemGroup>{NewLine}");
+		result.Append ($"  </ItemGroup>{NewLine}{NewLine}");
 
 		if (observedHostPlatforms.Count == 0)
 			observedHostPlatforms.Add ("default");
@@ -892,32 +892,51 @@ class MsbuildGenerator {
 			if (!profileSets.TryGetValue (profileName, out profileSet))
 				profileSet = profileSets["default"];
 
-			foreach (var platformName in observedHostPlatforms) {
-				HashSet<string> platformSet;
-				if (!profileSet.TryGetValue (platformName, out platformSet))
-					platformSet = profileSet["default"];
-				
-				var platformSpecificFileNames = 
+			var platformFileListTuples = (from platformName in observedHostPlatforms
+				let platformSet = profileSet.ContainsKey (platformName)
+					? profileSet[platformName]
+					: profileSet["default"]
+				let platformSpecificFileNames = 
 					(from fn in platformSet 
-					where !commonFileNames.Contains(fn) 
-					orderby fn 
-					select FixupSourceName(fn)).ToList();
+					where !commonFileNames.Contains(fn)
+					orderby fn select fn).ToList()
+				where platformSpecificFileNames.Count > 0
+				select (platformName, platformSpecificFileNames)).ToList ();
 
-				if (platformSpecificFileNames.Count == 0)
+			// ??????????????
+			if (platformFileListTuples.Count == 0)
+				continue;
+
+			HashSet<string> commonFileNamesForThisProfile = null;
+
+			foreach (var tup in platformFileListTuples)
+				if (commonFileNamesForThisProfile == null)
+					commonFileNamesForThisProfile = new HashSet<string> (tup.Item2);
+				else
+					commonFileNamesForThisProfile.IntersectWith (tup.Item2);			
+
+			result.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{profileName}' \">{NewLine}");
+
+			foreach (var cfn in (from fn in commonFileNamesForThisProfile select FixupSourceName(fn)))
+				result.Append ($"    <Compile Include=\"{cfn}\" />{NewLine}");
+
+			result.Append ($"  </ItemGroup>{NewLine}{NewLine}");
+
+			foreach (var tup in platformFileListTuples) {
+				var filteredFileNames = (from fn in tup.Item2 where !commonFileNamesForThisProfile.Contains(fn) select FixupSourceName(fn)).ToList();
+				if (filteredFileNames.Count == 0)
 					continue;
 
-				if (observedHostPlatforms.Count == 1) {
-					// Only one host platform so we don't need the platform conditional.
-					result.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{profileName}' \">{NewLine}");
-				} else {
-					result.Append ($"  <ItemGroup Condition=\" ('$(Platform)' == '{profileName}') and ('$(HostPlatform)' == '{platformName}') \">{NewLine}");
-				}
+				var platformName = tup.Item1;
+				result.Append ($"  <ItemGroup Condition=\" $(Platform)|$(HostPlatform)' == '{profileName}|{platformName}' \">{NewLine}");
 
-				foreach (var pf in platformSpecificFileNames)
-					result.Append ($"    <Compile Include=\"{pf}\" />{NewLine}");
+				foreach (var ff in filteredFileNames)
+					result.Append ($"    <Compile Include=\"{ff}\" />{NewLine}");
 
 				result.Append ($"  </ItemGroup>{NewLine}");
 			}
+
+			result.Append (NewLine);
 		}
 
 		return result;
