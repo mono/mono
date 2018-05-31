@@ -301,28 +301,19 @@ $(eval $(call iOSSimulatorTemplate,sim64,x86_64))
 $(eval $(call iOSSimulatorTemplate,simtv,x86_64))
 $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 
-ifndef IGNORE_PACKAGE_LLVM
-
 # Download a prebuilt llvm
-.stamp-ios-llvm-$(LLVM_HASH):
-	./download-llvm.sh $(LLVM_HASH) $(LLVM_JENKINS_LANE)
+.stamp-ios-download-llvm:
+	$(MAKE) -C $(TOP)/llvm -f build.mk download-llvm \
+		LLVM_PREFIX="$(TOP)/sdks/out/llvm"
+	mv $(TOP)/sdks/out/llvm/usr32 $(TOP)/sdks/out/llvm-llvm32
+	mv $(TOP)/sdks/out/llvm/usr64 $(TOP)/sdks/out/llvm-llvm64
+	rm -rf $(TOP)/sdks/out/llvm
 	touch $@
 
-build-ios-llvm: .stamp-ios-llvm-$(LLVM_HASH)
-
-clean-ios-llvm: clean-llvm-llvm32 clean-llvm-llvm64
-	$(RM) -rf ../out/ios-llvm64 ../out/ios-llvm32 .stamp-ios-llvm-$(LLVM_HASH)
-
-else
-
-build-ios-llvm: package-llvm-llvm64 package-llvm-llvm32
-	ln -sf ../out/llvm-llvm32 ../out/ios-llvm32
-	ln -sf ../out/llvm-llvm64 ../out/ios-llvm64
+build-ios-llvm: $(if $(IGNORE_PACKAGE_LLVM),.stamp-ios-download-llvm,package-llvm-llvm64 package-llvm-llvm32)
 
 clean-ios-llvm: clean-llvm-llvm64 clean-llvm-llvm32
-	$(RM) -rf ../out/{ios-llvm32,ios-llvm64}
-
-endif
+	$(RM) -rf $(TOP)/sdks/out/llvm-llvm{32,64} .stamp-ios-download-llvm
 
 ##
 # Parameters:
@@ -384,7 +375,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-icall-symbol-map \
 	--enable-minimal=com,remoting \
 	--with-cross-offsets=$(4).h \
-	--with-llvm=$$(TOP)/sdks/out/ios-$(3)
+	--with-llvm=$$(TOP)/sdks/out/llvm-$(3)
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@

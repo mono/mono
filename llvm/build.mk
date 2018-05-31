@@ -61,5 +61,10 @@ build-llvm: configure-llvm
 install-llvm: build-llvm | $(LLVM_PREFIX)
 	$(if $(NINJA),$(NINJA),$(MAKE)) -C $(LLVM_BUILD) install
 
+.PHONY: download-llvm
+download-llvm: | $(LLVM_PREFIX)
+	# wget --no-verbose -O - http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(NEEDED_LLVM_BRANCH)/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz | tar xzf - -C $(LLVM_PREFIX)
+	wget --no-verbose -O - http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz | tar xzf - -C $(LLVM_PREFIX)
+
 clean-llvm:
 	$(RM) -r $(LLVM_BUILD) $(LLVM_PREFIX)
