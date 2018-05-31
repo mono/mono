@@ -53,8 +53,7 @@ endif
 # shared libraries, so we want errors if the profiler modules contain any.
 if HOST_DARWIN
 if BITCODE
-# FIXME boehm?
-prof_ldflags = -no-undefined ../mini/libmonosgen-2.0.la
+prof_ldflags = -no-undefined
 else
 prof_ldflags = -Wl,-undefined -Wl,suppress -Wl,-flat_namespace
 endif
@@ -86,7 +85,16 @@ else
 if HOST_TIZEN
 libmono_dep = $(top_builddir)/mono/mini/$(LIBMONO_LA)
 else
+# BITCODE => -no-undefined
+if HOST_DARWIN
+if BITCODE
+libmono_dep = $(top_builddir)/mono/mini/$(LIBMONO_LA)
+else
 libmono_dep =
+endif
+else
+libmono_dep =
+endif
 endif
 endif
 endif
