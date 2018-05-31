@@ -76,7 +76,7 @@ class SlnGenerator {
 		try {
 			libraries.Add (vsproj);
 		} catch (Exception ex) {
-			Console.Error.WriteLine ($"Error while adding library: {ex.Message}");
+			Console.Error.WriteLine ($"// Error while adding library: {ex.Message}");
 		}
 	}
 
@@ -803,7 +803,7 @@ class MsbuildGenerator {
         var platformsFolder = Path.GetFullPath ("../../mcs/build/platforms");
         var profilesFolder = Path.GetFullPath ("../../mcs/build/profiles");
 
-		SourcesParser.TraceLevel = 1;
+		SourcesParser.TraceLevel = 0;
         return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
 	}
 
@@ -834,9 +834,6 @@ class MsbuildGenerator {
 		var result = new StringBuilder ();
 		var readSources = ReadSources (sources_file_name).ToList ();
 
-		if (readSources.Count == 0)
-			return result;
-
 		foreach (var bs in built_sources.Split ()) {
 			var tbs = bs.Trim();
 			if (tbs.Length < 1)
@@ -845,6 +842,10 @@ class MsbuildGenerator {
 			readSources.Add (new MatchEntry { RelativePath = tbs, ProfileName = profile });
 		}
 
+		if (readSources.Count == 0) {
+			Console.Error.WriteLine ($"// No sources built or loaded for {sources_file_name}");
+			return result;
+		}
 
 		var observedHostPlatforms = new HashSet<string> ();
 		var profileSets = new Dictionary<string, Dictionary<string, HashSet<string>>> ();
@@ -882,7 +883,7 @@ class MsbuildGenerator {
 		result.Append ($"  <ItemGroup>{NewLine}");
 		foreach (var cf in (from fn in commonFileNames orderby fn select FixupSourceName(fn)))
 			result.Append ($"    <Compile Include=\"{cf}\" />{NewLine}");
-		result.Append ($"  </ItemGroup>{NewLine}{NewLine}");
+		result.Append ($"  </ItemGroup>{NewLine}");
 
 		if (observedHostPlatforms.Count == 0)
 			observedHostPlatforms.Add ("default");
@@ -920,7 +921,7 @@ class MsbuildGenerator {
 			foreach (var cfn in (from fn in commonFileNamesForThisProfile select FixupSourceName(fn)))
 				result.Append ($"    <Compile Include=\"{cfn}\" />{NewLine}");
 
-			result.Append ($"  </ItemGroup>{NewLine}{NewLine}");
+			result.Append ($"  </ItemGroup>{NewLine}");
 
 			foreach (var tup in platformFileListTuples) {
 				var filteredFileNames = (from fn in tup.Item2 where !commonFileNamesForThisProfile.Contains(fn) select FixupSourceName(fn)).ToList();
@@ -935,8 +936,6 @@ class MsbuildGenerator {
 
 				result.Append ($"  </ItemGroup>{NewLine}");
 			}
-
-			result.Append (NewLine);
 		}
 
 		return result;
@@ -1362,7 +1361,7 @@ class MsbuildGenerator {
 
 		}
 		var ljoined = String.Join (", ", libs);
-		Console.Error.WriteLine ($"{library_output}: did not find referenced {dllReferenceName} with libs={ljoined}");
+		Console.Error.WriteLine ($"// {library_output}: did not find referenced {dllReferenceName} with libs={ljoined}");
 
 		// FIXME: This is incredibly noisy and generates a billion lines of output
 		if (false)
@@ -1469,7 +1468,7 @@ public static class Driver {
 				}
 				
 				if (profileName == null) {
-					Console.Error.WriteLine ($"{library_output} has no profile");
+					Console.Error.WriteLine ($"// {library_output} has no profile");
 				} else {
 					HashSet<string> profileNames;
 					if (!SlnGenerator.profilesByGuid.TryGetValue (csproj.projectGuid, out profileNames))
@@ -1483,11 +1482,10 @@ public static class Driver {
 			}
 		}
 
-		if (false)
 		foreach (var csprojFile in projects.Values.Select (x => x.GetProjectFilename ()).Distinct ())
 		{
 			Console.WriteLine ("Deduplicating: " + csprojFile);
-			DeduplicateSourcesAndProjectReferences (csprojFile);
+			DeduplicateProjectReferences (csprojFile);
 		}
 
 		Func<MsbuildGenerator.VsCsproj, bool> additionalFilter;
@@ -1535,7 +1533,7 @@ public static class Driver {
 		//WriteSolution (build_sln_gen, "mcs_build.sln");
 	}
 
-	static void DeduplicateSourcesAndProjectReferences (string csprojFilename)
+	static void DeduplicateProjectReferences (string csprojFilename)
 	{
 		XmlDocument doc = new XmlDocument ();
 		doc.Load (csprojFilename);
@@ -1543,17 +1541,10 @@ public static class Driver {
 		mgr.AddNamespace ("x", "http://schemas.microsoft.com/developer/msbuild/2003");
 
 		XmlNode root = doc.DocumentElement;
-		var allSources = new Dictionary<string, List<string>> ();
 		var allProjectReferences = new Dictionary<string, List<string>> ();
 
 		ProcessCompileOrProjectReferenceItems (mgr, root,
-		// grab all sources across all platforms
-		(source, platform) =>
-		{
-			if (!allSources.ContainsKey (platform))
-				allSources[platform] = new List<string> ();
-			allSources[platform].Add (source.Attributes["Include"].Value);
-		},
+		(source, platform) => {},
 		// grab all project references across all platforms
 		(projRef, platform) =>
 		{
@@ -1561,43 +1552,6 @@ public static class Driver {
 				allProjectReferences[platform] = new List<string> ();
 			allProjectReferences[platform].Add (projRef.Attributes["Include"].Value);
 		});
-
-		if (allSources.Count > 1)
-		{
-			// find the sources which are common across all platforms
-			var commonSources = allSources.Values.First ();
-			foreach (var l in allSources.Values.Skip (1))
-				commonSources = commonSources.Intersect (l).ToList ();
-
-			if (commonSources.Count > 0)
-			{
-				// remove common sources from the individual platforms
-				ProcessCompileOrProjectReferenceItems (mgr, root, (source, platform) =>
-				{
-					var parent = source.ParentNode;
-					if (commonSources.Contains (source.Attributes["Include"].Value))
-						parent.RemoveChild (source);
-
-					if (!parent.HasChildNodes)
-						parent.ParentNode.RemoveChild (parent);
-				}, null);
-
-				// add common sources as ItemGroup
-				XmlNode commonSourcesComment = root.SelectSingleNode ("//comment()[. = ' @COMMON_SOURCES@ ']");
-				XmlElement commonSourcesElement = doc.CreateElement ("ItemGroup", root.NamespaceURI);
-
-				foreach (var s in commonSources)
-				{
-					var c = doc.CreateElement ("Compile", root.NamespaceURI);
-					var v = doc.CreateAttribute ("Include");
-					v.Value = s;
-					c.Attributes.Append (v);
-
-					commonSourcesElement.AppendChild (c);
-				}
-				root.ReplaceChild (commonSourcesElement, commonSourcesComment);
-			}
-		}
 
 		if (allProjectReferences.Count > 1)
 		{
