@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NET_3_5;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER;FEATURE_PDB_GENERATOR</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NET_3_5;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER;FEATURE_PDB_GENERATOR</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
     <OutputPath>./../../class/lib/monodroid</OutputPath>
