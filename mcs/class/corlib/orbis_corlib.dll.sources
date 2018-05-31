@@ -1,0 +1,3 @@
+#include corlib.dll.sources
+
+corefx/Interop.GetRandomBytes.cs
