@@ -833,14 +833,9 @@ class MsbuildGenerator {
 	) {
 		var result = new StringBuilder ();
 		var readSources = ReadSources (sources_file_name).ToList ();
-
-		foreach (var bs in built_sources.Split ()) {
-			var tbs = bs.Trim();
-			if (tbs.Length < 1)
-				continue;
-
-			readSources.Add (new MatchEntry { RelativePath = tbs, ProfileName = profile });
-		}
+		var builtSourceList = (from bs in built_sources.Split () 
+			let tbs = bs.Trim () 
+			where tbs.Length > 0 select tbs).ToList ();
 
 		if (readSources.Count == 0) {
 			Console.Error.WriteLine ($"// No sources built or loaded for {sources_file_name}");
@@ -873,6 +868,9 @@ class MsbuildGenerator {
 
 		foreach (var platformSets in profileSets.Values) {
 			foreach (var platformSet in platformSets.Values) {
+				foreach (var bs in builtSourceList)
+					platformSet.Add (bs);
+
 				if (commonFileNames == null)
 					commonFileNames = new HashSet<string> (platformSet);
 				else
