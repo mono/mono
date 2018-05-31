@@ -800,21 +800,21 @@ class MsbuildGenerator {
 		if (_SourcesParser != null)
 			return _SourcesParser;
 
-        var platformsFolder = Path.GetFullPath ("../../mcs/build/platforms");
-        var profilesFolder = Path.GetFullPath ("../../mcs/build/profiles");
+		var platformsFolder = Path.GetFullPath ("../../mcs/build/platforms");
+		var profilesFolder = Path.GetFullPath ("../../mcs/build/profiles");
 
 		SourcesParser.TraceLevel = 0;
-        return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
+		return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
 	}
 
 	private IEnumerable<MatchEntry> ReadSources (string outputName) {
-        var libraryDirectory = Path.GetFullPath (Path.GetDirectoryName (GetProjectFilename ()));
+		var libraryDirectory = Path.GetFullPath (Path.GetDirectoryName (GetProjectFilename ()));
 		var libraryName = outputName;
 
 		var parser = GetSourcesParser ();
-        var result = parser.Parse (libraryDirectory, libraryName);
+		var result = parser.Parse (libraryDirectory, libraryName);
 
-        return result.GetMatches ().OrderBy (m => m.RelativePath, StringComparer.Ordinal);
+		return result.GetMatches ().OrderBy (m => m.RelativePath, StringComparer.Ordinal);
 	}
 
 	private string FixupSourceName (string s) {
