@@ -2,5 +2,3 @@
 
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.GetRandomBytes.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/Interop.Libraries.cs
-
-corefx/RandomNumberGeneratorImplementation.Unix.cs

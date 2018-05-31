@@ -286,6 +286,15 @@ public class SourcesParser {
             return state.Result;
         }
 
+        testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{libraryName}");
+        ok = TryParseSingleFile (state, testPath + ".sources", false);
+        TryParseSingleFile (state, testPath + ".exclude.sources", true);
+
+        if (ok) {
+            PrintSummary (state);
+            return state.Result;
+        }
+
         state.ProfileName = null;
 
         testPath = Path.Combine (libraryDirectory, libraryName);

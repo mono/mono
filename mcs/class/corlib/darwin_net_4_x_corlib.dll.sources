@@ -1,7 +1,7 @@
 #include net_4_x_corlib.dll.sources
 
-#../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.GetRandomBytes.cs
-#../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/Interop.Libraries.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.GetRandomBytes.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/Interop.Libraries.cs
 
 ../../../external/corefx/src/Common/src/Interop/OSX/Interop.Libraries.cs
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeCreateHandle.OSX.cs

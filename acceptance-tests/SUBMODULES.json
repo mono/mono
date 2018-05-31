@@ -2,7 +2,7 @@
   {
     "name": "roslyn", 
     "url": "git://github.com/mono/roslyn.git",
-    "rev": "1d9895045041925490038c5df0d8f947d8dcbd7f",
+    "rev": "380eec412868464a132cdcd3a45ef457fab6e060",
     "remote-branch": "origin/mono-testing",
     "branch": "mono-testing",
     "directory": "roslyn"
