@@ -136,22 +136,22 @@ public class ParseResult {
     }
 
     private static string GetRelativePath (string fullPath, string relativeToDirectory) {
-        fullPath = fullPath.Replace (SourcesParser.DirectorySeparator, "/");
-        relativeToDirectory = relativeToDirectory.Replace (SourcesParser.DirectorySeparator, "/");
+        fullPath = fullPath.Replace ("\\", "/");
+        relativeToDirectory = relativeToDirectory.Replace ("\\", "/");
 
-        if (!relativeToDirectory.EndsWith (SourcesParser.DirectorySeparator))
-            relativeToDirectory += SourcesParser.DirectorySeparator;
+        if (!relativeToDirectory.EndsWith ("/"))
+            relativeToDirectory += "/";
         var dirUri = new Uri (relativeToDirectory);
         var pathUri = new Uri (fullPath);
 
-        var relativeUri = Uri.UnescapeDataString (
+        var relativePath = Uri.UnescapeDataString (
             dirUri.MakeRelativeUri (pathUri).OriginalString
         ).Replace ("/", SourcesParser.DirectorySeparator);
 
         if (SourcesParser.TraceLevel >= 4)
-            Console.Error.WriteLine ($"// {fullPath} -> {relativeUri}");
+            Console.Error.WriteLine ($"// {fullPath} -> {relativePath}");
 
-        return relativeUri;
+        return relativePath;
     }
 
     private IEnumerable<MatchEntry> EnumerateMatches (
@@ -182,7 +182,7 @@ public class ParseResult {
             }            
 
             if (!Directory.Exists (absoluteDirectory)) {
-                Console.Error.WriteLine ($"Directory does not exist: {Path.GetFullPath (absoluteDirectory)}");
+                Console.Error.WriteLine ($"Directory does not exist: '{Path.GetFullPath (absoluteDirectory)}'");
                 ErrorCount += 1;
                 continue;
             }
@@ -191,7 +191,7 @@ public class ParseResult {
                 var matchingFiles = Directory.GetFiles (absoluteDirectory, absolutePattern);
                 if (matchingFiles.Length == 0) {
                     if (SourcesParser.TraceLevel > 0)
-                        Console.Error.WriteLine ($"// No matches for pattern {absolutePattern}");
+                        Console.Error.WriteLine ($"// No matches for pattern '{absolutePattern}'");
                 }
 
                 foreach (var fileName in matchingFiles) {
@@ -204,13 +204,18 @@ public class ParseResult {
                     };
                 }
             } else {
-                var relativePath = GetRelativePath (absolutePath, LibraryDirectory);
-                yield return new MatchEntry {
-                    SourcesFileName = entry.SourcesFileName,
-                    RelativePath = relativePath,
-                    HostPlatform = entry.HostPlatform,
-                    ProfileName = entry.ProfileName
-                };
+                if (!File.Exists (absolutePath)) {
+                    Console.Error.WriteLine ($"File does not exist: '{absolutePath}'");
+                    ErrorCount += 1;
+                } else {
+                    var relativePath = GetRelativePath (absolutePath, LibraryDirectory);
+                    yield return new MatchEntry {
+                        SourcesFileName = entry.SourcesFileName,
+                        RelativePath = relativePath,
+                        HostPlatform = entry.HostPlatform,
+                        ProfileName = entry.ProfileName
+                    };
+                }
             }
         }
     }
@@ -417,6 +422,8 @@ public class SourcesParser {
                     HandleMetaDirective (state, directory, asExclusionsList, line);
                     continue;
                 }
+
+                line = line.Trim ();
 
                 var parts = line.Split (':');
 
