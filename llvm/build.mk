@@ -1,53 +1,23 @@
-#
-# Conditional submodule for llvm
-#
-# make reset-llvm will checkout a version of llvm which is suitable for this version of mono
-# into $top_srcdir/llvm/llvm.
-#
-# Input variables
-# - LLVM_TARGET: if set to wasm32 will trigger a 32bits build that enable the experimental WebAssembly backend
-#
-
 top_srcdir ?= $(abspath $(CURDIR)/..)
 
-LLVM_PATH ?= $(abspath $(top_srcdir)/external/llvm)
 LLVM_BUILD ?= $(abspath $(top_srcdir)/llvm/build)
 LLVM_PREFIX ?= $(abspath $(top_srcdir)/llvm/usr)
 
-# FIXME: URL should be http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(NEEDED_LLVM_BRANCH)/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz
-LLVM_DOWNLOAD_LOCATION = "http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz"
+# LLVM_BRANCH  := $(shell git -C "$(top_srcdir)/external/llvm" rev-parse --abbrev-ref HEAD)
+LLVM_VERSION := $(shell git -C "$(top_srcdir)/external/llvm" rev-parse HEAD)
+
+# FIXME: URL should be http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(LLVM_BRANCH)/llvm-osx64-$(LLVM_VERSION).tar.gz
+LLVM_DOWNLOAD_LOCATION = "http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(LLVM_VERSION).tar.gz"
 
 CMAKE := $(or $(CMAKE),$(shell which cmake))
 NINJA := $(shell which ninja)
 
-SUBMODULES_CONFIG_FILE = $(top_srcdir)/llvm/SUBMODULES.json
-include $(top_srcdir)/scripts/submodules/versions.mk
-
-$(eval $(call ValidateVersionTemplate,llvm,LLVM))
-
-# Bump the given submodule to the revision given by the REV make variable
-# If COMMIT is 1, commit the change
-bump-llvm: __bump-version-llvm
-
-# Bump the given submodule to the branch given by the BRANCH/REMOTE_BRANCH make variables
-# If COMMIT is 1, commit the change
-bump-branch-llvm: __bump-branch-llvm
-
-# Bump the given submodule to its current GIT version
-# If COMMIT is 1, commit the change
-bump-current-llvm: __bump-current-version-llvm
-
 $(LLVM_BUILD) $(LLVM_PREFIX):
 	mkdir -p $@
 
-$(LLVM_PATH):
-	$(MAKE) -f build.mk reset-llvm
-
-$(LLVM_PATH)/CMakeLists.txt: | $(LLVM_PATH)
-
 EXTRA_LLVM_ARGS = $(if $(filter $(LLVM_TARGET),wasm32), -DLLVM_BUILD_32_BITS=On -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly",)
 
-$(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(LLVM_PATH)/CMakeLists.txt | $(LLVM_BUILD)
+$(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(top_srcdir)/external/llvm/CMakeLists.txt | $(LLVM_BUILD) $(LLVM_PREFIX)
 	cd $(LLVM_BUILD) && $(CMAKE) \
 		$(if $(NINJA),-G Ninja) \
 		-DCMAKE_INSTALL_PREFIX="$(LLVM_PREFIX)" \
