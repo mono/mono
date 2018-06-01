@@ -732,9 +732,13 @@ namespace System.Collections.Generic {
                         Array.Copy(_items, index+count, _items, index*2, _size-index);
                     }
                     else {
+#if MONO
+                        c.CopyTo(_items, index);
+#else
                         T[] itemsToInsert = new T[count];
                         c.CopyTo(itemsToInsert, 0);
                         itemsToInsert.CopyTo(_items, index);                    
+#endif
                     }
                     _size += count;
                 }                
