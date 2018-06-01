@@ -1305,6 +1305,7 @@ again:
 	}
 }
 
+void
 ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj)
 {
 	mono_monitor_pulse (obj, __func__, FALSE);
