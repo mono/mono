@@ -374,7 +374,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
-		[ExpectedException (typeof (CryptographicException))]
+		[ExpectedException (typeof (PlatformNotSupportedException))]
 		public void ComputeEmptySignature ()
 		{
 			SignedCms sp = new SignedCms ();

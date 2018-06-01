@@ -78,7 +78,7 @@ namespace System.Security.Cryptography.Pkcs {
 				throw new ArgumentNullException ("asnEncodedData");
 
 			Decode (asnEncodedData.RawData);
-			Oid = asnEncodedData.Oid;
+			(this as AsnEncodedData).Oid = asnEncodedData.Oid;
 			RawData = asnEncodedData.RawData;
 		}
 
