@@ -11,6 +11,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #include "mono/metadata/w32file-win32-internals.h"
+#include "mono/metadata/w32subset.h"
 
 void
 mono_w32file_init (void)
@@ -375,8 +376,7 @@ mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumenam
 	return res;
 }
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-
+#if HAVE_API_SUPPORT_WIN32_MOVE_FILE
 gboolean
 mono_w32file_move (const gunichar2 *path, const gunichar2 *dest, gint32 *error)
 {
@@ -392,27 +392,9 @@ mono_w32file_move (const gunichar2 *path, const gunichar2 *dest, gint32 *error)
 
 	return result;
 }
-
 #endif
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) || G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
-
-gboolean
-mono_w32file_replace (const gunichar2 *destinationFileName, const gunichar2 *sourceFileName, const gunichar2 *destinationBackupFileName, guint32 flags, gint32 *error)
-{
-	gboolean result;
-
-	MONO_ENTER_GC_SAFE;
-
-	result = ReplaceFileW (destinationFileName, sourceFileName, destinationBackupFileName, flags, NULL, NULL);
-	if (!result)
-		*error = GetLastError ();
-
-	MONO_EXIT_GC_SAFE;
-
-	return result;
-}
-
+#if HAVE_API_SUPPORT_WIN32_COPY_FILE
 // Support older UWP SDK?
 WINBASEAPI
 BOOL
@@ -430,7 +412,7 @@ mono_w32file_copy (const gunichar2 *path, const gunichar2 *dest, gboolean overwr
 
 	MONO_ENTER_GC_SAFE;
 
-	result = CopyFileW (path, dest, !overwrite);
+	result = CopyFile (path, dest, !overwrite);
 	if (!result)
 		*error = GetLastError ();
 
@@ -438,43 +420,9 @@ mono_w32file_copy (const gunichar2 *path, const gunichar2 *dest, gboolean overwr
 
 	return result;
 }
-
-gboolean
-mono_w32file_lock (gpointer handle, gint64 position, gint64 length, gint32 *error)
-{
-	gboolean result;
-
-	MONO_ENTER_GC_SAFE;
-
-	result = LockFile (handle, position & 0xFFFFFFFF, position >> 32, length & 0xFFFFFFFF, length >> 32);
-	if (!result)
-		*error = GetLastError ();
-
-	MONO_EXIT_GC_SAFE;
-
-	return result;
-}
-
-gboolean
-mono_w32file_unlock (gpointer handle, gint64 position, gint64 length, gint32 *error)
-{
-	gboolean result;
-
-	MONO_ENTER_GC_SAFE;
-
-	result = UnlockFile (handle, position & 0xFFFFFFFF, position >> 32, length & 0xFFFFFFFF, length >> 32);
-	if (!result)
-		*error = GetLastError ();
-
-	MONO_EXIT_GC_SAFE;
-
-	return result;
-}
-
 #endif
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-
+#if HAVE_API_SUPPORT_WIN32_GET_STD_HANDLE
 HANDLE
 mono_w32file_get_console_input (void)
 {
@@ -504,27 +452,9 @@ mono_w32file_get_console_error (void)
 	MONO_EXIT_GC_SAFE;
 	return res;
 }
+#endif // HAVE_API_SUPPORT_WIN32_GET_STD_HANDLE
 
-#endif
-
-gint64
-mono_w32file_get_file_size (HANDLE handle, gint32 *error)
-{
-	LARGE_INTEGER length;
-
-	MONO_ENTER_GC_SAFE;
-
-	if (!GetFileSizeEx (handle, &length)) {
-		*error=GetLastError ();
-		length.QuadPart = INVALID_FILE_SIZE;
-	}
-
-	MONO_EXIT_GC_SAFE;
-	return length.QuadPart;
-}
-
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) || G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
-
+#if HAVE_API_SUPPORT_WIN32_GET_DRIVE_TYPE
 // Support older UWP SDK?
 WINBASEAPI
 UINT
@@ -538,15 +468,13 @@ mono_w32file_get_drive_type (const gunichar2 *root_path_name)
 {
 	guint32 res;
 	MONO_ENTER_GC_SAFE;
-	res = GetDriveTypeW (root_path_name);
+	res = GetDriveType (root_path_name);
 	MONO_EXIT_GC_SAFE;
 	return res;
 }
-
 #endif
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-
+#if HAVE_API_SUPPORT_WIN32_GET_LOGICAL_DRIVE_STRINGS
 gint32
 mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
 {
@@ -556,5 +484,4 @@ mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
 	MONO_EXIT_GC_SAFE;
 	return res;
 }
-
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+#endif
