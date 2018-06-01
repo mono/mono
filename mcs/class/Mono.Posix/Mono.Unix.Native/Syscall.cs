@@ -151,7 +151,8 @@ namespace Mono.Unix.Native {
 		O_ASYNC     = 0x00002000,
 		O_LARGEFILE = 0x00008000,
 		O_CLOEXEC   = 0x00080000,
-		O_PATH      = 0x00200000
+		O_PATH      = 0x00200000,
+		O_NOATIME   = 0x00040000
 	}
 	
 	[Map][Flags]
