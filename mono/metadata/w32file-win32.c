@@ -394,6 +394,24 @@ mono_w32file_move (const gunichar2 *path, const gunichar2 *dest, gint32 *error)
 }
 #endif
 
+#if HAVE_API_SUPPORT_WIN32_REPLACE_FILE
+gboolean
+mono_w32file_replace (const gunichar2 *destinationFileName, const gunichar2 *sourceFileName, const gunichar2 *destinationBackupFileName, guint32 flags, gint32 *error)
+{
+	gboolean result;
+
+	MONO_ENTER_GC_SAFE;
+
+	result = ReplaceFile (destinationFileName, sourceFileName, destinationBackupFileName, flags, NULL, NULL);
+	if (!result)
+		*error = GetLastError ();
+
+	MONO_EXIT_GC_SAFE;
+
+	return result;
+}
+#endif
+
 #if HAVE_API_SUPPORT_WIN32_COPY_FILE
 // Support older UWP SDK?
 WINBASEAPI
@@ -413,6 +431,42 @@ mono_w32file_copy (const gunichar2 *path, const gunichar2 *dest, gboolean overwr
 	MONO_ENTER_GC_SAFE;
 
 	result = CopyFile (path, dest, !overwrite);
+	if (!result)
+		*error = GetLastError ();
+
+	MONO_EXIT_GC_SAFE;
+
+	return result;
+}
+#endif
+
+#if HAVE_API_SUPPORT_WIN32_LOCK_FILE
+gboolean
+mono_w32file_lock (gpointer handle, gint64 position, gint64 length, gint32 *error)
+{
+	gboolean result;
+
+	MONO_ENTER_GC_SAFE;
+
+	result = LockFile (handle, position & 0xFFFFFFFF, position >> 32, length & 0xFFFFFFFF, length >> 32);
+	if (!result)
+		*error = GetLastError ();
+
+	MONO_EXIT_GC_SAFE;
+
+	return result;
+}
+#endif
+
+#if HAVE_API_SUPPORT_WIN32_UNLOCK_FILE
+gboolean
+mono_w32file_unlock (gpointer handle, gint64 position, gint64 length, gint32 *error)
+{
+	gboolean result;
+
+	MONO_ENTER_GC_SAFE;
+
+	result = UnlockFile (handle, position & 0xFFFFFFFF, position >> 32, length & 0xFFFFFFFF, length >> 32);
 	if (!result)
 		*error = GetLastError ();
 
@@ -453,6 +507,22 @@ mono_w32file_get_console_error (void)
 	return res;
 }
 #endif // HAVE_API_SUPPORT_WIN32_GET_STD_HANDLE
+
+gint64
+mono_w32file_get_file_size (HANDLE handle, gint32 *error)
+{
+	LARGE_INTEGER length;
+
+	MONO_ENTER_GC_SAFE;
+
+	if (!GetFileSizeEx (handle, &length)) {
+		*error=GetLastError ();
+		length.QuadPart = INVALID_FILE_SIZE;
+	}
+
+	MONO_EXIT_GC_SAFE;
+	return length.QuadPart;
+}
 
 #if HAVE_API_SUPPORT_WIN32_GET_DRIVE_TYPE
 // Support older UWP SDK?
