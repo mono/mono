@@ -9053,9 +9053,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 			quote_obj, acfg->llvm_ofile, quote_obj);
 
 		aot_printf (acfg, "Executing clang: %s\n", command);
-		if (execute_system (command) != 0)
-			return FALSE;
-		return TRUE;
+		return execute_system (command) == 0;
 	}
 
 	if (!acfg->llc_args)
@@ -9102,9 +9100,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 
 	aot_printf (acfg, "Executing llc: %s\n", command);
 
-	if (execute_system (command) != 0)
-		return FALSE;
-	return TRUE;
+	return execute_system (command) == 0;
 }
 #endif
 
