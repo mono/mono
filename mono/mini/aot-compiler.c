@@ -7271,28 +7271,6 @@ clean_path (gchar * path)
 	return clean;
 }
 
-static gchar *
-wrap_path (gchar * path)
-{
-	int len;
-	if (!path)
-		return NULL;
-
-	// If the string contains no spaces, just return the original string.
-	if (strstr (path, " ") == NULL)
-		return path;
-
-	// If the string is already wrapped in quotes, return it.
-	len = strlen (path);
-	if (len >= 2 && path[0] == '\"' && path[len-1] == '\"')
-		return path;
-
-	// If the string contains spaces, then wrap it in quotes.
-	gchar *clean = g_strdup_printf ("\"%s\"", path);
-
-	return clean;
-}
-
 // Duplicate a char range and add it to a ptrarray, but only if it is nonempty
 static void
 ptr_array_add_range_if_nonempty(GPtrArray *args, gchar const *start, gchar const *end)
@@ -8967,8 +8945,20 @@ execute_system (const char * command)
 	return status;
 }
 
-#ifdef ENABLE_LLVM
+static const char*
+get_quote (const char *path)
+{
+	// Only output unsightly quotes for the unusual case of spaces in paths.
+	// i.e. like the former wrap_path but without the tendency to leak, and with
+	// the ability to concat more.
 
+	if (path == NULL || path [0] == '"' || strchr (path, ' ') == NULL)
+		return "";
+
+	return "\"";
+}
+
+#ifdef ENABLE_LLVM
 /*
  * emit_llvm_file:
  *
@@ -8978,14 +8968,29 @@ execute_system (const char * command)
 static gboolean
 emit_llvm_file (MonoAotCompile *acfg)
 {
-	char *command, *opts, *tempbc, *optbc, *output_fname;
+	char *command = NULL;
+	char *optbc = NULL;
+	char *opts = (char*)"";
+	char *tempbc = NULL;
+	int exit_code = 1;
+
+	// Only output unsightly quotes for the unusual case of spaces in paths.
+	char const * const quote_tmpbasename = get_quote (acfg->tmpbasename);
+	char const * const quote_llvm_outfile = get_quote (acfg->aot_opts.llvm_outfile);
+	char const *quote_optbc = "\"";
+	char const *quote_tempbc = "\"";
+	char const * const quote_llvm_path = get_quote (acfg->aot_opts.llvm_path);
 
 	if (acfg->aot_opts.llvm_only && acfg->aot_opts.asm_only) {
 		tempbc = g_strdup_printf ("%s.bc", acfg->tmpbasename);
-		optbc = g_strdup (acfg->aot_opts.llvm_outfile);
+		quote_tempbc = quote_tmpbasename;
+		optbc = acfg->aot_opts.llvm_outfile;
+		quote_optbc = quote_llvm_outfile;
 	} else {
 		tempbc = g_strdup_printf ("%s.bc", acfg->tmpbasename);
 		optbc = g_strdup_printf ("%s.opt.bc", acfg->tmpbasename);
+		quote_tempbc = quote_tmpbasename;
+		quote_optbc = quote_tmpbasename;
 	}
 
 	mono_llvm_emit_aot_module (tempbc, g_path_get_basename (acfg->image->name));
@@ -9017,43 +9022,57 @@ emit_llvm_file (MonoAotCompile *acfg)
 	 * Here, if 'Earlier' refers to a memset, and Later has no size info, it mistakenly thinks the memset is redundant.
 	 */
 	if (acfg->aot_opts.llvm_opts) {
-		opts = g_strdup (acfg->aot_opts.llvm_opts);
+		opts = acfg->aot_opts.llvm_opts;
 	} else if (acfg->aot_opts.llvm_only) {
 		// FIXME: This doesn't work yet
-		opts = g_strdup ("");
+		opts = (char*)"";
 	} else {
 #if LLVM_API_VERSION > 100
-		opts = g_strdup ("-O2 -disable-tail-calls");
+		opts = (char*)"-O2 -disable-tail-calls";
 #else
-		opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -inline-cost -inline -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -domtree -verify");
+		opts = (char*)"-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -inline-cost -inline -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -domtree -verify";
 #endif
 	}
 
-	command = g_strdup_printf ("\"%sopt\" -f %s -o \"%s\" \"%s\"", acfg->aot_opts.llvm_path, opts, optbc, tempbc);
+	command = g_strdup_printf ("%s%sopt%s -f %s -o %s%s%s %s%s%s",
+		quote_llvm_path, acfg->aot_opts.llvm_path, quote_llvm_path,
+		opts,
+		quote_optbc, optbc, quote_optbc,
+		quote_tempbc, tempbc, quote_tempbc);
+
 	aot_printf (acfg, "Executing opt: %s\n", command);
-	if (execute_system (command) != 0)
-		return FALSE;
-	g_free (opts);
+	if ((exit_code = execute_system (command)))
+		goto exit;
 
 	if (acfg->aot_opts.llvm_only && acfg->aot_opts.asm_only)
 		/* Nothing else to do */
-		return TRUE;
+		goto exit;
 
 	if (acfg->aot_opts.llvm_only) {
 		/* Use the stock clang from xcode */
 		// FIXME: arch
-		// Only output unsightly quotes for the unusual case of spaces in paths.
-		char const * const quote_obj = strchr (acfg->llvm_ofile, ' ') ? "\"" : "";
-		char const * const quote_bc  = strchr (acfg->tmpbasename, ' ') ? "\"" : "";
-		// Use llvm-dis to slowly paper over bitcode versioning.
+		char const * const common = "-fexceptions -march=x86-64 -fpic -msse -msse2 -msse3 -msse4 -O2 -fno-optimize-sibling-calls -Wno-override-module -c -o ";
+		char const * const quote_llvm_ofile = get_quote (acfg->llvm_ofile);
+		// First try bitcode directly to clang. This requires a new enough clang.
+		command = g_strdup_printf ("clang++ %s %s%s%s %s%s.opt.bc%s",
+			common,
+			quote_llvm_ofile, acfg->llvm_ofile, quote_llvm_ofile,
+			quote_tmpbasename, acfg->tmpbasename, quote_tmpbasename);
+		aot_printf (acfg, "Executing clang: %s\n", command);
+		if ((exit_code = execute_system (command)) == 0)
+			goto exit;
+
+		// If that fails, use llvm-dis to slowly paper over bitcode versioning.
 		// -x means language, IR means LLVM, - means stdin.
 		// See https://github.com/llvm-mirror/clang/blob/master/include/clang/Driver/Types.def.
-		command = g_strdup_printf ("llvm-dis %s%s.opt.bc%s | clang++ -xir - -fexceptions -march=x86-64 -fpic -msse -msse2 -msse3 -msse4 -O2 -fno-optimize-sibling-calls -Wno-override-module -c -o %s%s%s",
-			quote_bc, acfg->tmpbasename, quote_bc,
-			quote_obj, acfg->llvm_ofile, quote_obj);
-
+		g_free (command);
+		command = g_strdup_printf ("llvm-dis %s%s.opt.bc%s | clang++ -xir - %s %s%s%s",
+			quote_tmpbasename, acfg->tmpbasename, quote_tmpbasename,
+			common,
+			quote_llvm_ofile, acfg->llvm_ofile, quote_llvm_ofile);
 		aot_printf (acfg, "Executing clang: %s\n", command);
-		return execute_system (command) == 0;
+		exit_code = execute_system (command);
+		goto exit;
 	}
 
 	if (!acfg->llc_args)
@@ -9088,19 +9107,33 @@ emit_llvm_file (MonoAotCompile *acfg)
 		g_string_append_printf (acfg->llc_args, " -relocation-model=pic");
 #endif
 
+	char *output_fname;
+
 	if (acfg->llvm_owriter) {
 		/* Emit an object file directly */
-		output_fname = g_strdup_printf ("%s", acfg->llvm_ofile);
+		output_fname = acfg->llvm_ofile;
 		g_string_append_printf (acfg->llc_args, " -filetype=obj");
 	} else {
-		output_fname = g_strdup_printf ("%s", acfg->llvm_sfile);
+		output_fname =  acfg->llvm_sfile;
 	}
-	command = g_strdup_printf ("\"%sllc\" %s -o \"%s\" \"%s.opt.bc\"", acfg->aot_opts.llvm_path, acfg->llc_args->str, output_fname, acfg->tmpbasename);
-	g_free (output_fname);
+
+	char const *quote_output_fname;
+	quote_output_fname = get_quote (output_fname);
+
+	command = g_strdup_printf ("%s%sllc%s %s -o %s%s%s %s%s.opt.bc%s",
+		quote_llvm_path, acfg->aot_opts.llvm_path, quote_llvm_path,
+		acfg->llc_args->str,
+		quote_output_fname, output_fname, quote_output_fname,
+		quote_tmpbasename, acfg->tmpbasename, quote_tmpbasename);
 
 	aot_printf (acfg, "Executing llc: %s\n", command);
-
-	return execute_system (command) == 0;
+	exit_code = execute_system (command);
+exit:
+	g_free (command);
+	if (optbc != acfg->aot_opts.llvm_outfile)
+		g_free (optbc);
+	g_free (tempbc);
+	return exit_code == 0;
 }
 #endif
 
@@ -11154,10 +11187,14 @@ compile_methods (MonoAotCompile *acfg)
 static int
 compile_asm (MonoAotCompile *acfg)
 {
-	char *command, *objfile;
-	char *outfile_name, *tmp_outfile_name, *llvm_ofile;
+	char *command = NULL;
+	char *objfile = NULL;
+	char *outfile_name = NULL;
+	char *tmp_outfile_name = NULL;
+	char *llvm_ofile = NULL;
 	const char *tool_prefix = acfg->aot_opts.tool_prefix ? acfg->aot_opts.tool_prefix : "";
 	char *ld_flags = acfg->aot_opts.ld_flags ? acfg->aot_opts.ld_flags : g_strdup("");
+	int exit_code = 1;
 
 #ifdef TARGET_WIN32_MSVC
 #define AS_OPTIONS "-c -x assembler"
@@ -11235,39 +11272,48 @@ compile_asm (MonoAotCompile *acfg)
 		objfile = g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname);
 	}
 
+	char const * const quote_objfile = get_quote (objfile);
+
 #ifdef TARGET_OSX
 	g_string_append (acfg->as_args, "-c -x assembler");
 #endif
 
-	command = g_strdup_printf ("\"%s%s\" %s %s -o %s %s", tool_prefix, AS_NAME, AS_OPTIONS,
+	char const * const quote_tool_prefix = get_quote (tool_prefix);
+	char const * const quote_tmpfname = get_quote (acfg->tmpfname);
+
+	command = g_strdup_printf ("%s%s%s%s %s %s -o %s%s%s %s%s%s",
+			quote_tool_prefix, tool_prefix, AS_NAME, quote_tool_prefix, AS_OPTIONS,
 			acfg->as_args ? acfg->as_args->str : "", 
-			wrap_path (objfile), wrap_path (acfg->tmpfname));
+			quote_objfile, objfile, quote_objfile,
+			quote_tmpfname, acfg->tmpfname, quote_tmpfname);
 	aot_printf (acfg, "Executing the native assembler: %s\n", command);
-	if (execute_system (command) != 0) {
-		g_free (command);
-		g_free (objfile);
-		return 1;
-	}
+	if ((exit_code = execute_system (command)))
+		goto exit;
+
+	char const * const quote_llvm_ofile = get_quote (acfg->llvm_ofile);
 
 	if (acfg->llvm && !acfg->llvm_owriter) {
-		command = g_strdup_printf ("\"%s%s\" %s %s -o %s %s", tool_prefix, AS_NAME, AS_OPTIONS,
+
+		char const * const quote_llvm_sfile = get_quote (acfg->llvm_sfile);
+
+		command = g_strdup_printf ("%s%s%s%s %s %s -o %s%s%s %s%s%s",
+			quote_tool_prefix, tool_prefix, AS_NAME, quote_tool_prefix, AS_OPTIONS,
 			acfg->as_args ? acfg->as_args->str : "",
-			wrap_path (acfg->llvm_ofile), wrap_path (acfg->llvm_sfile));
+			quote_llvm_ofile, acfg->llvm_ofile, quote_llvm_ofile,
+			quote_llvm_sfile, acfg->llvm_sfile, quote_llvm_sfile);
 		aot_printf (acfg, "Executing the native assembler: %s\n", command);
-		if (execute_system (command) != 0) {
-			g_free (command);
-			g_free (objfile);
-			return 1;
-		}
+		if ((exit_code = execute_system (command)))
+			goto exit;
 	}
 
 	g_free (command);
+	command = NULL;
 
 	if (acfg->aot_opts.static_link) {
 		aot_printf (acfg, "Output file: '%s'.\n", objfile);
 		aot_printf (acfg, "Linking symbol: '%s'.\n", acfg->static_linking_symbol);
-		g_free (objfile);
-		return 0;
+		exit_code = 0;
+		goto exit;
 	}
 
 	if (acfg->aot_opts.outfile)
@@ -11276,12 +11322,13 @@ compile_asm (MonoAotCompile *acfg)
 		outfile_name = g_strdup_printf ("%s%s", acfg->image->name, MONO_SOLIB_EXT);
 
 	tmp_outfile_name = g_strdup_printf ("%s.tmp", outfile_name);
+	char const * quote_tmp_outfile_name;
+	quote_tmp_outfile_name = get_quote (tmp_outfile_name);
 
-	if (acfg->llvm) {
-		llvm_ofile = g_strdup_printf ("\"%s\"", acfg->llvm_ofile);
-	} else {
-		llvm_ofile = g_strdup ("");
-	}
+	if (acfg->llvm)
+		llvm_ofile = g_strdup_printf ("%s%s%s", quote_llvm_ofile, acfg->llvm_ofile, quote_llvm_ofile);
+	else
+		llvm_ofile = (char*)"";
 
 	/* replace the ; flags separators with spaces */
 	g_strdelimit (ld_flags, ";", ' ');
@@ -11292,43 +11339,48 @@ compile_asm (MonoAotCompile *acfg)
 #ifdef TARGET_WIN32_MSVC
 	g_assert (tmp_outfile_name != NULL);
 	g_assert (objfile != NULL);
-	command = g_strdup_printf ("\"%s%s\" %s %s /OUT:\"%s\" \"%s\"", tool_prefix, LD_NAME,
-			acfg->aot_opts.nodebug ? LD_OPTIONS : LD_DEBUG_OPTIONS, ld_flags, tmp_outfile_name, objfile);
+	command = g_strdup_printf ("%s%s%s%s %s %s /out:%s%s%s %s%s%s",
+			quote_tool_prefix, tool_prefix, LD_NAME, quote_tool_prefix,
+			acfg->aot_opts.nodebug ? LD_OPTIONS : LD_DEBUG_OPTIONS, ld_flags,
+			quote_tmp_outfile_name, tmp_outfile_name, quote_tmp_outfile_name,
+			quote_objfile, objfile, quote_objfile);
 #elif defined(LD_NAME)
-	command = g_strdup_printf ("%s%s %s -o %s %s %s %s", tool_prefix, LD_NAME, LD_OPTIONS,
-		wrap_path (tmp_outfile_name), wrap_path (llvm_ofile),
-		wrap_path (g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname)), ld_flags);
+	command = g_strdup_printf ("%s%s%s%s %s %s%s%s -o %s %s%s.%s%s %s",
+		quote_tool_prefix, tool_prefix, LD_NAME, quote_tool_prefix, LD_OPTIONS,
+		quote_tmp_outfile_name, tmp_outfile_name, quote_tmp_outfile_name,
+		llvm_ofile, // already quoted
+		quote_tmpfname, acfg->tmpfname, AS_OBJECT_FILE_SUFFIX, quote_tmpfname,
+		ld_flags);
 #else
 	// Default (linux)
 	if (acfg->aot_opts.tool_prefix) {
 		/* Cross compiling */
-		command = g_strdup_printf ("\"%sld\" %s -shared -o %s %s %s %s", tool_prefix, LD_OPTIONS,
-								   wrap_path (tmp_outfile_name), wrap_path (llvm_ofile),
-								   wrap_path (g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname)), ld_flags);
+		command = g_strdup_printf ("%s%sld%s %s -shared -o %s%s%s %s %s%s.%s%s %s",
+			quote_tool_prefix, tool_prefix, quote_tool_prefix, LD_OPTIONS,
+			quote_tmp_outfile_name, tmp_outfile_name, quote_tmp_outfile_name,
+			llvm_ofile, // already quoted
+			quote_tmpfname, acfg->tmpfname, AS_OBJECT_FILE_SUFFIX, quote_tmpfname,
+			ld_flags);
 	} else {
-		char *args = g_strdup_printf ("%s -shared -o %s %s %s %s", LD_OPTIONS,
-									  wrap_path (tmp_outfile_name), wrap_path (llvm_ofile),
-									  wrap_path (g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname)), ld_flags);
+		char *args = g_strdup_printf ("%s -shared -o %s%s%s %s %s%s.%s%s %s", LD_OPTIONS,
+			quote_tmp_outfile_name, tmp_outfile_name, quote_tmp_outfile_name,
+			llvm_ofile, // already quoted
+			quote_tmpfname, acfg->tmpfname, AS_OBJECT_FILE_SUFFIX, quote_tmpfname,
+			ld_flags);
 
-		if (acfg->aot_opts.llvm_only) {
+		if (acfg->aot_opts.llvm_only)
 			command = g_strdup_printf ("clang++ %s", args);
-		} else {
-			command = g_strdup_printf ("\"%sld\" %s", tool_prefix, args);
-		}
+		else
+			command = g_strdup_printf ("%s%sld%s %s", quote_tool_prefix, tool_prefix, quote_tool_prefix, args);
 		g_free (args);
 	}
 #endif
 	aot_printf (acfg, "Executing the native linker: %s\n", command);
-	if (execute_system (command) != 0) {
-		g_free (tmp_outfile_name);
-		g_free (outfile_name);
-		g_free (command);
-		g_free (objfile);
-		g_free (ld_flags);
-		return 1;
-	}
+	if ((exit_code = execute_system (command)))
+		goto exit;
 
 	g_free (command);
+	command = NULL;
 
 	/*com = g_strdup_printf ("strip --strip-unneeded %s%s", acfg->image->name, MONO_SOLIB_EXT);
 	printf ("Stripping the binary: %s\n", com);
@@ -11340,15 +11392,12 @@ compile_asm (MonoAotCompile *acfg)
 	 * gas generates 'mapping symbols' each time code and data is mixed, which 
 	 * happens a lot in emit_and_reloc_code (), so we need to get rid of them.
 	 */
-	command = g_strdup_printf ("\"%sstrip\" --strip-symbol=\\$a --strip-symbol=\\$d %s", wrap_path(tool_prefix), wrap_path(tmp_outfile_name));
+	command = g_strdup_printf ("%s%sstrip%s --strip-symbol=\\$a --strip-symbol=\\$d %s%s%s",
+		quote_tool_prefix, tool_prefix, quote_tool_prefix,
+		quote_tmp_outfile_name, tmp_outfile_name, quote_tmp_outfile_name);
 	aot_printf (acfg, "Stripping the binary: %s\n", command);
-	if (execute_system (command) != 0) {
-		g_free (tmp_outfile_name);
-		g_free (outfile_name);
-		g_free (command);
-		g_free (objfile);
-		return 1;
-	}
+	if ((exit_code = execute_system (command)))
+		goto exit;
 #endif
 
 	if (0 != rename (tmp_outfile_name, outfile_name)) {
@@ -11362,24 +11411,30 @@ compile_asm (MonoAotCompile *acfg)
 #if defined(TARGET_MACH)
 	command = g_strdup_printf ("dsymutil \"%s\"", outfile_name);
 	aot_printf (acfg, "Executing dsymutil: %s\n", command);
-	if (execute_system (command) != 0) {
-		return 1;
-	}
+	if ((exit_code = execute_system (command)))
+		goto exit;
 #endif
 
 	if (!acfg->aot_opts.save_temps)
 		unlink (objfile);
 
-	g_free (tmp_outfile_name);
-	g_free (outfile_name);
+	exit_code = 0;
+exit:
+	g_free (command);
+	if (ld_flags != acfg->aot_opts.ld_flags)
+		g_free (ld_flags);
 	g_free (objfile);
+	g_free (outfile_name);
+	g_free (tmp_outfile_name);
+	if  (llvm_ofile && llvm_ofile [0])
+		g_free (llvm_ofile);
 
 	if (acfg->aot_opts.save_temps)
 		aot_printf (acfg, "Retained input file.\n");
 	else
 		unlink (acfg->tmpfname);
 
-	return 0;
+	return exit_code ? 1 : 0;
 }
 
 static guint8
@@ -11396,9 +11451,9 @@ profread_byte (FILE *infile)
 static int
 profread_int (FILE *infile)
 {
-	int i, res;
+	gint32 i;
 
-	res = fread (&i, 4, 1, infile);
+	int const res = fread (&i, 4, 1, infile);
 	g_assert (res == 1);
 	return i;
 }
@@ -11421,9 +11476,8 @@ static void
 load_profile_file (MonoAotCompile *acfg, char *filename)
 {
 	FILE *infile;
-	char buf [1024];
-	int res, len, version;
-	char magic [32];
+	char buf [sizeof (AOT_PROFILER_MAGIC) - 1];
+	int version;
 
 	infile = fopen (filename, "r");
 	if (!infile) {
@@ -11433,12 +11487,9 @@ load_profile_file (MonoAotCompile *acfg, char *filename)
 
 	printf ("Using profile data file '%s'\n", filename);
 
-	sprintf (magic, AOT_PROFILER_MAGIC);
-	len = strlen (magic);
-	res = fread (buf, 1, len, infile);
-	magic [len] = '\0';
-	buf [len] = '\0';
-	if ((res != len) || strcmp (buf, magic) != 0) {
+	int const len = sizeof (AOT_PROFILER_MAGIC) - 1;
+	int const res = fread (buf, 1, len, infile);
+	if (res != len || memcmp (buf, AOT_PROFILER_MAGIC, len) != 0) {
 		printf ("Profile file has wrong header: '%s'.\n", buf);
 		fclose (infile);
 		exit (1);
