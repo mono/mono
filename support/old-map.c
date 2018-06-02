@@ -42,6 +42,8 @@ int map_Mono_Posix_OpenFlags (int x)
 		r |= O_APPEND;
 	if ((x & Mono_Posix_OpenFlags_O_NONBLOCK) != 0)
 		r |= O_NONBLOCK;
+	if ((x & Mono_Posix_OpenFlags_O_NOATIME) != 0)
+		r |= O_NOATIME;
 #ifdef O_SYNC
 	if ((x & Mono_Posix_OpenFlags_O_SYNC) != 0)
 		r |= O_SYNC;
