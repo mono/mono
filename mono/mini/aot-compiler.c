@@ -9061,7 +9061,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 		aot_printf (acfg, "Executing clang: %s\n", command);
 		if ((exit_code = execute_system (command)) == 0)
 			goto exit;
-
+/*
 		// If that fails, use llvm-dis to slowly paper over bitcode versioning.
 		// -x means language, IR means LLVM, - means stdin.
 		// See https://github.com/llvm-mirror/clang/blob/master/include/clang/Driver/Types.def.
@@ -9072,6 +9072,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 			quote_llvm_ofile, acfg->llvm_ofile, quote_llvm_ofile);
 		aot_printf (acfg, "Executing clang: %s\n", command);
 		exit_code = execute_system (command);
+*/
 		goto exit;
 	}
 
