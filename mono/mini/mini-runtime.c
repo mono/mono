@@ -4731,6 +4731,9 @@ print_jit_stats (void)
 void
 mini_cleanup (MonoDomain *domain)
 {
+#if 0 // FIXME This function historically disabled,
+      // but now enabled, and just call mono_threadpool_cleanup.
+
 	if (mono_profiler_sampling_enabled ())
 		mono_runtime_shutdown_stat_profiler ();
 
@@ -4755,7 +4758,13 @@ mini_cleanup (MonoDomain *domain)
 	mono_runtime_cleanup (domain);
 #endif
 
+#endif // FIXME This function historically disabled,
+       // but now enabled, and just call mono_threadpool_cleanup.
+
 	mono_threadpool_cleanup ();
+
+#if 0 // FIXME This function historically disabled,
+      // but now enabled, and just call mono_threadpool_cleanup.
 
 	MONO_PROFILER_RAISE (runtime_shutdown_end, ());
 
@@ -4802,8 +4811,7 @@ mini_cleanup (MonoDomain *domain)
 
 	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 
-	if (mono_inject_async_exc_method)
-		mono_method_desc_free (mono_inject_async_exc_method);
+	mono_method_desc_free (mono_inject_async_exc_method);
 
 	mono_tls_free_keys ();
 
@@ -4814,6 +4822,9 @@ mini_cleanup (MonoDomain *domain)
 #ifndef HOST_WIN32
 	mono_w32handle_cleanup ();
 #endif
+
+#endif // FIXME This function historically disabled,
+       // but now enabled, and just call mono_threadpool_cleanup.
 }
 
 void

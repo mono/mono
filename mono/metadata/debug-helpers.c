@@ -443,6 +443,8 @@ mono_method_desc_from_method (MonoMethod *method)
 void
 mono_method_desc_free (MonoMethodDesc *desc)
 {
+	if (!desc)
+		return;
 	if (desc->name_space)
 		g_free (desc->name_space);
 	else if (desc->klass)

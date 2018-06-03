@@ -212,9 +212,18 @@ rand_next (gpointer *handle, guint32 min, guint32 max)
 	return val;
 }
 
+static gboolean
+worker_try_unpark (void);
+
 static void
 destroy (gpointer data)
 {
+	// Wake all workers. This still seems racy with worker threads
+	// before they have incremented parked or parked_threads_count.
+	// Consider undoing 5f5c5e97a08f7086d7c18af37352c4a03dc4c0d1.
+	while (worker.parked_threads_count || COUNTER_READ ()._.parked)
+		worker_try_unpark ();
+
 	mono_coop_sem_destroy (&worker.parked_threads_sem);
 
 	mono_coop_mutex_destroy (&worker.worker_creation_lock);
@@ -462,9 +471,10 @@ worker_thread (gpointer unused)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker starting",
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
 
+/* FIXME? This prevents shutdown.
 	if (!mono_refcount_tryinc (&worker))
 		return 0;
-
+*/
 	COUNTER_ATOMIC (counter, {
 		counter._.starting --;
 		counter._.working ++;
@@ -500,7 +510,9 @@ worker_thread (gpointer unused)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker finishing",
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
 
+/* FIXME? This prevents shutdown.
 	mono_refcount_dec (&worker);
+*/
 
 	return 0;
 }
@@ -651,8 +663,7 @@ monitor_sufficient_delay_since_last_dequeue (void)
 	if (worker.cpu_usage < CPU_USAGE_LOW) {
 		threshold = MONITOR_INTERVAL;
 	} else {
-		ThreadPoolWorkerCounter counter;
-		counter = COUNTER_READ ();
+		ThreadPoolWorkerCounter counter = COUNTER_READ ();
 		threshold = counter._.max_working * MONITOR_INTERVAL * 2;
 	}
 
@@ -1117,11 +1128,9 @@ heuristic_notify_work_completed (void)
 gboolean
 mono_threadpool_worker_notify_completed (void)
 {
-	ThreadPoolWorkerCounter counter;
-
 	heuristic_notify_work_completed ();
 
-	counter = COUNTER_READ ();
+	ThreadPoolWorkerCounter counter = COUNTER_READ ();
 	return counter._.working <= counter._.max_working;
 }
 
