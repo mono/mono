@@ -9,6 +9,8 @@ use_monolite := $(wildcard $(monolite_flag))
 
 MONOLITE_MSCORLIB = $(monolite_path)/mscorlib.dll
 
+PLATFORMS = darwin linux win32
+
 ifdef use_monolite
 ifdef MCS_MODE
 	CSC_LOCATION = $(monolite_path)/mcs.exe
