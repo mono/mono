@@ -427,6 +427,43 @@ namespace System.Reflection {
 			return attrs;
 		}
 
+		internal CustomAttributeData[] GetPseudoCustomAttributesData ()
+		{
+			int count = 0;
+
+			/* MS.NET doesn't report MethodImplAttribute */
+
+			MonoMethodInfo info = MonoMethodInfo.GetMethodInfo (mhandle);
+			if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
+				count++;
+			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0)
+				count++;
+
+			if (count == 0)
+				return null;
+			CustomAttributeData[] attrsData = new CustomAttributeData [count];
+			count = 0;
+
+			if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
+				attrsData [count++] = CustomAttributeData.Create (
+					(typeof (PreserveSigAttribute)).GetConstructor (Type.EmptyTypes),
+					EmptyArray<CustomAttributeTypedArgument>.Value,
+					EmptyArray<CustomAttributeNamedArgument>.Value);
+			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0) {
+				this.GetPInvoke (out PInvokeAttributes flags, out string entryPoint, out string dllName);
+				var ctorArgs = new List<CustomAttributeTypedArgument> (
+					new[] { new CustomAttributeTypedArgument (typeof (string), dllName) }
+				);
+
+				attrsData [count++] = CustomAttributeData.Create (
+					(typeof (FieldOffsetAttribute)).GetConstructor (new[] { typeof (string) }),
+					ctorArgs,
+					EmptyArray<CustomAttributeNamedArgument>.Value); //FIXME Get named params
+			}
+
+			return attrsData;
+		}
+
 		public override MethodInfo MakeGenericMethod (Type [] methodInstantiation)
 		{
 			if (methodInstantiation == null)

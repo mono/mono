@@ -1,4 +1,4 @@
-// System.Reflection.ParameterInfo
+﻿// System.Reflection.ParameterInfo
 //
 // Authors:
 //   Sean MacIsaac (macisaac@ximian.com)
@@ -174,6 +174,54 @@ namespace System.Reflection
 
 			return attrs;
 		}			
+
+		internal CustomAttributeData[] GetPseudoCustomAttributesData ()
+		{
+			int count = 0;
+
+			if (IsIn)
+				count++;
+			if (IsOut)
+				count++;
+			if (IsOptional)
+				count++;
+			if (marshalAs != null)
+				count++;
+
+			if (count == 0)
+				return null;
+			CustomAttributeData[] attrsData = new CustomAttributeData [count];
+			count = 0;
+
+			if (IsIn)
+				attrsData [count++] = CustomAttributeData.Create (
+					(typeof (InAttribute)).GetConstructor (Type.EmptyTypes),
+					EmptyArray<CustomAttributeTypedArgument>.Value,
+					EmptyArray<CustomAttributeNamedArgument>.Value);
+			if (IsOptional)
+				attrsData [count++] = CustomAttributeData.Create (
+					(typeof (OptionalAttribute)).GetConstructor (Type.EmptyTypes),
+					EmptyArray<CustomAttributeTypedArgument>.Value,
+					EmptyArray<CustomAttributeNamedArgument>.Value);
+			if (IsOut)
+				attrsData [count++] = CustomAttributeData.Create (
+					(typeof (OutAttribute)).GetConstructor (Type.EmptyTypes),
+					EmptyArray<CustomAttributeTypedArgument>.Value,
+					EmptyArray<CustomAttributeNamedArgument>.Value);
+
+			if (marshalAs != null) {
+				var ctorArgs = new List<CustomAttributeTypedArgument> (
+					new[] { new CustomAttributeTypedArgument (typeof (UnmanagedType), marshalAs.Value) }
+				);
+
+				attrsData [count++] = CustomAttributeData.Create (
+					(typeof (MarshalAsAttribute)).GetConstructor (new[] { typeof( UnmanagedType) }),
+					ctorArgs,
+					EmptyArray<CustomAttributeNamedArgument>.Value);//FIXME Get named params
+			}
+
+			return attrsData;
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern Type[] GetTypeModifiers (bool optional);

@@ -295,13 +295,104 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern CustomAttributeData [] GetCustomAttributesDataInternal (ICustomAttributeProvider obj);
 
-		internal static IList<CustomAttributeData> GetCustomAttributesData (ICustomAttributeProvider obj)
+		internal static IList<CustomAttributeData> GetCustomAttributesData (ICustomAttributeProvider obj, bool inherit = false)
 		{
 			if (obj == null)
-				throw new ArgumentNullException ("obj");
+				throw new ArgumentNullException (nameof (obj));
 
-			CustomAttributeData [] attrs = GetCustomAttributesDataInternal (obj);
-			return Array.AsReadOnly<CustomAttributeData> (attrs);
+			if (!inherit)
+				return GetCustomAttributesDataBase (obj, null, false);
+
+			return GetCustomAttributesData (obj, typeof (MonoCustomAttrs), inherit);
+		}
+
+		private static IList<CustomAttributeData> GetCustomAttributesData (ICustomAttributeProvider obj, Type type, bool inherit)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal static IList<CustomAttributeData> GetCustomAttributesDataBase (ICustomAttributeProvider obj, Type attributeType, bool inheritedOnly)
+		{
+			CustomAttributeData[] attrsData;
+			if (IsUserCattrProvider (obj)) {
+				//FIXME resolve this case if it makes sense. Assign empty array for now.
+				//attrsData = obj.GetCustomAttributesData(attributeType, true);
+				attrsData = new CustomAttributeData [0];
+			} else
+				attrsData = GetCustomAttributesDataInternal (obj);
+
+			//
+			// All pseudo custom attributes are Inherited = false hence we can avoid
+			// building attributes data array which would be discarded by inherited checks
+			//
+			if (!inheritedOnly) {
+				CustomAttributeData[] pseudoAttrsData = GetPseudoCustomAttributesData (obj, attributeType);
+				if (pseudoAttrsData != null) {
+					CustomAttributeData[] res = new CustomAttributeData [attrsData.Length + pseudoAttrsData.Length];
+					Array.Copy (attrsData, res, attrsData.Length);
+					Array.Copy (pseudoAttrsData, 0, res, attrsData.Length, pseudoAttrsData.Length);
+					return Array.AsReadOnly (res);
+				}
+			}
+
+			return Array.AsReadOnly (attrsData);
+		}
+
+		internal static CustomAttributeData[] GetPseudoCustomAttributesData (ICustomAttributeProvider obj, Type attributeType)
+		{
+			CustomAttributeData[] pseudoAttrs = null;
+
+			/* FIXME: Add other types */
+			if (obj is MonoMethod)
+				pseudoAttrs = ((MonoMethod)obj).GetPseudoCustomAttributesData ();
+			else if (obj is FieldInfo)
+				pseudoAttrs = ((FieldInfo)obj).GetPseudoCustomAttributesData ();
+			else if (obj is ParameterInfo)
+				pseudoAttrs = ((ParameterInfo)obj).GetPseudoCustomAttributesData ();
+			else if (obj is Type)
+				pseudoAttrs = GetPseudoCustomAttributesData (((Type)obj));
+
+			if ((attributeType != null) && (pseudoAttrs != null)) {
+				for (int i = 0; i < pseudoAttrs.Length; ++i)
+					if (attributeType.IsAssignableFrom (pseudoAttrs [i].GetType ()))
+						if (pseudoAttrs.Length == 1)
+							return pseudoAttrs;
+						else
+							return new CustomAttributeData[] { pseudoAttrs [i] };
+				return EmptyArray<CustomAttributeData>.Value;
+			}
+
+			return pseudoAttrs;
+		}
+
+		static CustomAttributeData[] GetPseudoCustomAttributesData (Type type)
+		{
+			int count = 0;
+			var Attributes = type.Attributes;
+
+			/* IsSerializable returns true for delegates/enums as well */
+			if ((Attributes & TypeAttributes.Serializable) != 0)
+				count++;
+			if ((Attributes & TypeAttributes.Import) != 0)
+				count++;
+
+			if (count == 0)
+				return null;
+			CustomAttributeData[] attrsData = new CustomAttributeData [count];
+			count = 0;
+
+			if ((Attributes & TypeAttributes.Serializable) != 0)
+				attrsData [count++] = CustomAttributeData.Create (
+					(typeof (SerializableAttribute)).GetConstructor (Type.EmptyTypes),
+					EmptyArray<CustomAttributeTypedArgument>.Value,
+					EmptyArray<CustomAttributeNamedArgument>.Value);
+			if ((Attributes & TypeAttributes.Import) != 0)
+				attrsData [count++] = CustomAttributeData.Create (
+					(typeof (ComImportAttribute)).GetConstructor (Type.EmptyTypes),
+					EmptyArray<CustomAttributeTypedArgument>.Value,
+					EmptyArray<CustomAttributeNamedArgument>.Value);
+
+			return attrsData;
 		}
 
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)

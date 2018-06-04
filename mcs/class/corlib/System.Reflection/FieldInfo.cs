@@ -27,6 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -220,6 +221,55 @@ namespace System.Reflection {
 				attrs [count ++] = marshalAs;
 
 			return attrs;
+		}
+
+		internal CustomAttributeData[] GetPseudoCustomAttributesData ()
+		{
+			int count = 0;
+
+			if (IsNotSerialized)
+				count++;
+
+			if (DeclaringType.IsExplicitLayout)
+				count++;
+
+			MarshalAsAttribute marshalAs = get_marshal_info ();
+			if (marshalAs != null)
+				count++;
+
+			if (count == 0)
+				return null;
+			CustomAttributeData[] attrsData = new CustomAttributeData [count];
+			count = 0;
+
+			if (IsNotSerialized)
+				attrsData [count++] = CustomAttributeData.Create (
+					(typeof (NonSerializedAttribute)).GetConstructor (Type.EmptyTypes),
+					EmptyArray<CustomAttributeTypedArgument>.Value,
+					EmptyArray<CustomAttributeNamedArgument>.Value);
+			if (DeclaringType.IsExplicitLayout) {
+				var ctorArgs = new List<CustomAttributeTypedArgument> (
+					new[] { new CustomAttributeTypedArgument (typeof (int), GetFieldOffset ()) }
+				);
+
+				attrsData [count++] = CustomAttributeData.Create (
+					(typeof (FieldOffsetAttribute)).GetConstructor (new[] { typeof (int) }),
+					ctorArgs,
+					EmptyArray<CustomAttributeNamedArgument>.Value);
+			}
+
+			if (marshalAs != null) {
+				var ctorArgs = new List<CustomAttributeTypedArgument> (
+					new[] { new CustomAttributeTypedArgument (typeof (UnmanagedType), marshalAs.Value) }
+				);
+
+				attrsData [count++] = CustomAttributeData.Create (
+					(typeof (MarshalAsAttribute)).GetConstructor (new[] { typeof (UnmanagedType) }),
+					ctorArgs,
+					EmptyArray<CustomAttributeNamedArgument>.Value);//FIXME Get named params
+			}
+
+			return attrsData;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
