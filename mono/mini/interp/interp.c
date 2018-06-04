@@ -2011,6 +2011,9 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 	case MONO_TYPE_U8:
 		sp->data.l = *(guint64*)res_buf;
 		break;
+	case MONO_TYPE_R4:
+		sp->data.f = *(float*)res_buf;
+		break;
 	case MONO_TYPE_R8:
 		sp->data.f = *(double*)res_buf;
 		break;
