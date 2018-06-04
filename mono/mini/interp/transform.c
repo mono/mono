@@ -4017,6 +4017,12 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 		case MONO_CUSTOM_PREFIX:
 			++td->ip;
 		        switch (*td->ip) {
+				case CEE_MONO_LD_DELEGATE_METHOD_PTR:
+					--td->sp;
+					td->ip += 1;
+					ADD_CODE (td, MINT_LD_DELEGATE_METHOD_PTR);
+					PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
+					break;
 				case CEE_MONO_CALLI_EXTRA_ARG:
 					/* Same as CEE_CALLI, except that we drop the extra arg required for llvm specific behaviour */
 					ADD_CODE (td, MINT_POP);

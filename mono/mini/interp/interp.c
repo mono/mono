@@ -5184,6 +5184,16 @@ array_constructed:
 			THROW_EX_GENERAL (*(MonoException**)(frame->locals + exvar_offset), ip - 1, TRUE);
 			MINT_IN_BREAK;
 	   }
+	   MINT_IN_CASE(MINT_LD_DELEGATE_METHOD_PTR) {
+		   MonoDelegate *del;
+
+		   --sp;
+		   del = (MonoDelegate*)sp->data.p;
+		   sp->data.p = del->method_ptr;
+		   ++sp;
+		   ip += 1;
+		   MINT_IN_BREAK;
+	   }
 		MINT_IN_DEFAULT
 			g_print ("Unimplemented opcode: %04x %s at 0x%x\n", *ip, mono_interp_opname[*ip], ip-rtm->code);
 			THROW_EX (mono_get_exception_execution_engine ("Unimplemented opcode"), ip);
