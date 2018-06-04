@@ -5646,8 +5646,8 @@ fi
     echo "MONO_CORLIB_VERSION = $MONO_CORLIB_VERSION" >> $mcs_topdir/build/config.make
 
     if test x$host_darwin = xyes; then
-      echo "BUILD_PLATFORM = darwin" >> $mcs_topdir/build/config.make
-      echo "HOST_PLATFORM ?= darwin" >> $mcs_topdir/build/config.make
+      echo "BUILD_PLATFORM = macos" >> $mcs_topdir/build/config.make
+      echo "HOST_PLATFORM ?= macos" >> $mcs_topdir/build/config.make
       echo "XTEST_PLATFORM ?= osx" >> $mcs_topdir/build/config.make
     elif test x$host_win32 = xyes; then
       echo "BUILD_PLATFORM = win32" >> $mcs_topdir/build/config.make

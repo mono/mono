@@ -6,7 +6,7 @@ BUILD_TOOLS_PROFILE = basic
 BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_CSC)
 MCS = $(BOOTSTRAP_MCS)
 
-PLATFORMS = darwin linux win32
+PLATFORMS = macos linux win32
 
 # nuttzing!
 
