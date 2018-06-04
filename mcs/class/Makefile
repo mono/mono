@@ -412,7 +412,7 @@ DISTFILES = \
 	MicrosoftAjaxLibrary/License.htm	\
 	test-helpers/NetworkHelpers.cs	\
 	test-helpers/SocketResponder.cs	\
-	$(foreach HOST_PLATFORM,macos linux win32,lib/$(monolite_dir)/mcs.exe $(monolite_files))
+	$(foreach HOST_PLATFORM,macos linux win32 unix,lib/$(monolite_dir)/mcs.exe $(monolite_files))
 
 .PHONY: all-local $(STD_TARGETS:=-local)
 all-local $(STD_TARGETS:=-local):
@@ -460,6 +460,7 @@ dist-monolite-all-platforms:
 	$(MAKE) dist-monolite HOST_PLATFORM=macos
 	$(MAKE) dist-monolite HOST_PLATFORM=linux
 	$(MAKE) dist-monolite HOST_PLATFORM=win32
+	$(MAKE) dist-monolite HOST_PLATFORM=unix
 
 package-monolite-latest:
 	MONOLITE=monolite-$(HOST_PLATFORM)-$(MONO_CORLIB_VERSION)-latest; \
@@ -470,6 +471,7 @@ package-monolite-latest-all-platforms:
 	$(MAKE) package-monolite-latest HOST_PLATFORM=macos
 	$(MAKE) package-monolite-latest HOST_PLATFORM=linux
 	$(MAKE) package-monolite-latest HOST_PLATFORM=win32
+	$(MAKE) package-monolite-latest HOST_PLATFORM=unix
 
 monolite_url = https://download.mono-project.com/monolite/monolite-$(BUILD_PLATFORM)-$(MONO_CORLIB_VERSION)-latest.tar.gz
 
