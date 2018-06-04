@@ -3254,6 +3254,9 @@ if test "x$enable_llvm" = "xyes"; then
 		llvm_codegen="powerpccodegen"
 		LLVM_ARCH_LIBS="-lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter"
 		;;
+   aarch64*)
+		llvm_codegen="aarch64codegen"
+		;;
    esac
 
    if test "x$host_win32" = "xno"; then
