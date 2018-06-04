@@ -239,8 +239,10 @@ public class AppBuilder
 		ninja.WriteLine ("build $appdir/Info.plist: cpifdiff $builddir/Info.plist.binary");
 		ninja.WriteLine ("build $appdir/config.json: cpifdiff $builddir/config.json");
 		ninja.WriteLine ("build $builddir/Entitlements.xcent: cpifdiff $monoios_dir/Entitlements.xcent");
-		if (profile != null)
+		if (profile != null) {
 			ninja.WriteLine ($"build $builddir/embedded.mobileprovision: cp {profile}");
+			ninja.WriteLine ($"build $appdir/embedded.mobileprovision: cp $builddir/embedded.mobileprovision");
+		}
 		if (isdev)
 			ninja.WriteLine ($"build $appdir/_CodeSignature: codesign $appdir/{bundle_executable} | $builddir/Entitlements.xcent");
 		else

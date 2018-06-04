@@ -1,9 +1,23 @@
 
 var BindingSupportLib = {
-	$BINDING__postset: 'Module["call_mono_method"] = BINDING.call_method.bind(BINDING)',
+	$BINDING__postset: 'BINDING.export_functions (Module);',
 	$BINDING: {
 		BINDING_ASM: "binding_tests",
-		js_objects_table: [],		
+		js_objects_table: [],
+
+		mono_bindings_init: function (binding_asm) {
+			this.BINDING_ASM = binding_asm;
+		},
+
+		export_functions: function (module) {
+			module ["mono_bindings_init"] = BINDING.mono_bindings_init.bind(BINDING);
+			module ["mono_method_invoke"] = BINDING.call_method.bind(BINDING);
+			module ["mono_method_get_call_signature"] = BINDING.mono_method_get_call_signature.bind(BINDING);
+			module ["mono_method_resolve"] = BINDING.resolve_method_fqn.bind(BINDING);
+			module ["mono_bind_static_method"] = BINDING.bind_static_method.bind(BINDING);
+			module ["mono_call_static_method"] = BINDING.call_static_method.bind(BINDING);
+		},
+
 		bindings_lazy_init: function () {
 			if (this.init)
 				return;
@@ -28,7 +42,7 @@ var BindingSupportLib = {
 				throw "Can't find WebAssembly.Runtime class";
 
 			var get_method = function(method_name) {
-				var res = this.find_method (wasm_runtime_class, method_name, -1)
+				var res = BINDING.find_method (wasm_runtime_class, method_name, -1)
 				if (!res)
 					throw "Can't find method WebAssembly.Runtime:" + method_name;
 				return res;
@@ -47,6 +61,7 @@ var BindingSupportLib = {
 			this.set_tcs_result = get_method ("SetTaskSourceResult");
 			this.set_tcs_failure = get_method ("SetTaskSourceFailure");
 			this.tcs_get_task_and_bind = get_method ("GetTaskAndBind");
+			this.get_call_sig = get_method ("GetCallSignature");
 
 			this.init = true;
 		},		
@@ -125,6 +140,10 @@ var BindingSupportLib = {
 
 			case 7: // ref type
 				return this.extract_js_obj (mono_obj);
+
+			case 8: // bool
+				return this.mono_unbox_int (mono_obj) != 0;
+
 			default:
 				throw new Error ("no idea on how to unbox object kind " + type);
 			}
@@ -200,6 +219,12 @@ var BindingSupportLib = {
 			if (js_obj == null || js_obj == undefined || !js_obj.__mono_gchandle__)
 				return 0;
 			return this.wasm_get_raw_obj (js_obj.__mono_gchandle__);
+		},
+
+		mono_method_get_call_signature: function(method) {
+			this.bindings_lazy_init ();
+
+			return this.call_method (this.get_call_sig, null, "i", [ method ]);
 		},
 
 		get_task_and_bind: function (tcs, js_obj) {
@@ -324,6 +349,59 @@ var BindingSupportLib = {
 			var mono_args = this.js_array_to_mono_array (js_args);
 			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "m", [ mono_args ]);
 		},
+		
+		resolve_method_fqn: function (fqn) {
+			var assembly = fqn.substring(fqn.indexOf ("[") + 1, fqn.indexOf ("]")).trim();
+			fqn = fqn.substring (fqn.indexOf ("]") + 1).trim();
+
+			var methodname = fqn.substring(fqn.indexOf (":") + 1);
+			fqn = fqn.substring (0, fqn.indexOf (":")).trim ();
+
+			var namespace = "";
+			var classname = fqn;
+			if (fqn.indexOf(".") != -1) {
+				var idx = fqn.lastIndexOf(".");
+				namespace = fqn.substring (0, idx);
+				classname = fqn.substring (idx + 1);
+			}
+
+			var asm = this.assembly_load (assembly);
+			if (!asm)
+				throw new Error ("Could not find assembly: " + assembly);
+
+			var klass = this.find_class(asm, namespace, classname);
+			if (!klass)
+				throw new Error ("Could not find class: " + namespace + ":" +classname);
+
+			var method = this.find_method (klass, methodname, -1);
+			if (!method)
+				throw new Error ("Could not find method: " + methodname);
+			return method;
+		},
+
+		call_static_method: function (fqn, args, signature) {
+			this.bindings_lazy_init ();
+
+			var method = this.resolve_method_fqn (fqn);
+
+			if (typeof signature === "undefined")
+				signature = Module.mono_method_get_call_signature (method);
+
+			return this.call_method (method, null, signature, args);
+		},
+
+		bind_static_method: function (fqn, signature) {
+			this.bindings_lazy_init ();
+
+			var method = this.resolve_method_fqn (fqn);
+
+			if (typeof signature === "undefined")
+				signature = Module.mono_method_get_call_signature (method);
+
+			return function() {
+				return BINDING.call_method (method, null, signature, arguments);
+			};
+		}
 	},
 
 	mono_wasm_invoke_js_with_args: function(js_handle, method_name, args, is_exception) {

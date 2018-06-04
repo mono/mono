@@ -147,7 +147,7 @@ install()
 	done
 
 	# make sure we didn't miss any files with Mac paths
-	if grep -R 'Mono\.framework' . --exclude=xbuild.1 --exclude=MSBuild.dll.config --exclude=macpack.exe; then
+	if grep -R 'Mono\.framework' . --exclude=xbuild.1 --exclude=MSBuild.dll.config --exclude=Microsoft.Common.Mono.Before.targets --exclude=macpack.exe; then
 		echo "Found Mac paths in files, please make sure they're fixed."
 		exit 1
 	fi

@@ -15,8 +15,10 @@ WASM_INTERP_CONFIGURE_FLAGS = \
 	--disable-executables \
 	--disable-support-build \
 	--disable-visibility-hidden \
-	--enable-minimal=ssa,com,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers \
+	--enable-maintainer-mode	\
+	--enable-minimal=ssa,com,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug \
 	--host=i386-apple-darwin10
+
 
 $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(TOP)/sdks/builds/toolchains/emsdk

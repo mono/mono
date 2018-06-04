@@ -1,5 +1,6 @@
 TOP=$(realpath $(CURDIR)/../..)
 -include $(TOP)/sdks/Make.config
+-include $(TOP)/mcs/build/config.make
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
@@ -15,7 +16,9 @@ EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
 WASM_BCL_DIR=$(TOP)/sdks/out/bcl/wasm
 MANAGED_DEPLOY_DIR=$(TOP)/sdks/wasm/managed
 MINI_PATH=$(TOP)/mono/mini
-CSC= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(TOP)/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.7.0/tools/csc.exe
+CSC= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(CSC_LOCATION)
+CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
+
 
 BCL_ASSEMBLIES= \
         mscorlib.dll    \
@@ -127,13 +130,13 @@ $(patsubst %,managed/%,$(BCL_ASSEMBLIES)): managed/%: $(WASM_BCL_DIR)/% | manage
 bcl-test-deps: .stamp-bcl-test-deps
 
 managed/main.exe: .stamp-bcl-test-deps $(TEST_DEPS) $(APP_SOURCES) | managed/
-	$(CSC) /debug:portable /noconfig /nostdlib /unsafe -out:$@ $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(APP_SOURCES)
+	$(CSC) $(CSC_FLAGS) /unsafe -out:$@ $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(APP_SOURCES)
 
 managed/mini_tests.dll: .stamp-bcl-test-deps $(TEST_DEPS) $(MINI_TEST_SOURCES) mini-test-runner.cs | managed/
-	$(CSC) /debug:portable /nostdlib /noconfig /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(MINI_TEST_SOURCES) mini-test-runner.cs
+	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(MINI_TEST_SOURCES) mini-test-runner.cs
 
 managed/binding_tests.dll: .stamp-bcl-test-deps $(TEST_DEPS) $(BINDING_TEST_SOURCES) | managed/
-	$(CSC) /debug:portable /nostdlib /noconfig /unsafe -target:library -out:$@ $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(BINDING_TEST_SOURCES)
+	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(BINDING_TEST_SOURCES)
 
 build-managed: bcl-test-deps managed/binding_tests.dll managed/mini_tests.dll managed/main.exe
 

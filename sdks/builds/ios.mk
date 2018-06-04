@@ -60,6 +60,7 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_getentropy=no \
 	ac_cv_func_futimens=no \
 	ac_cv_func_utimensat=no \
+	ac_cv_func_shm_open_working_with_mmap=no \
 	mono_cv_sizeof_sunpath=104 \
 	mono_cv_uscore=yes \
 	$$(ios-$(1)_AC_VARS)
@@ -112,6 +113,7 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--enable-icall-export \
 	--enable-maintainer-mode \
 	--enable-minimal=ssa,com,interpreter,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,remoting,shared_perfcounters \
+	--enable-monotouch \
 	--with-lazy-gc-thread-creation=yes \
 	--with-monotouch \
 	--with-tls=pthread \
@@ -204,6 +206,7 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_getentropy=no \
 	ac_cv_func_futimens=no \
 	ac_cv_func_utimensat=no \
+	ac_cv_func_shm_open_working_with_mmap=no \
 	mono_cv_uscore=yes \
 	$(ios-$(1)_AC_VARS)
 
@@ -243,6 +246,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode \
 	--enable-minimal=com,remoting,shared_perfcounters \
+	--enable-monotouch \
 	--with-tls=pthread \
 	--without-ikvm-native \
 	$$(ios-$(1)_CONFIGURE_FLAGS)
@@ -342,6 +346,7 @@ _ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
 _ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
+	ac_cv_func_shm_open_working_with_mmap=no \
 	$$(ios-$(1)_AC_VARS)
 
 _ios-$(1)_CFLAGS= \

@@ -274,6 +274,7 @@ mono_wasm_string_from_js (const char *str)
 #define MARSHAL_TYPE_DELEGATE 5
 #define MARSHAL_TYPE_TASK 6
 #define MARSHAL_TYPE_OBJECT 7
+#define MARSHAL_TYPE_BOOL 8
 
 EMSCRIPTEN_KEEPALIVE int
 mono_wasm_get_obj_type (MonoObject *obj)
@@ -285,7 +286,8 @@ mono_wasm_get_obj_type (MonoObject *obj)
 
 	switch (mono_type_get_type (type)) {
 	// case MONO_TYPE_CHAR: prob should be done not as a number?
-	// case MONO_TYPE_BOOL: prob should be done not as a number?
+	case MONO_TYPE_BOOLEAN:
+		return MARSHAL_TYPE_BOOL;
 	case MONO_TYPE_I1:
 	case MONO_TYPE_U1:
 	case MONO_TYPE_I2:
@@ -322,6 +324,7 @@ mono_unbox_int (MonoObject *obj)
 	void *ptr = mono_object_unbox (obj);
 	switch (mono_type_get_type (type)) {
 	case MONO_TYPE_I1:
+	case MONO_TYPE_BOOLEAN:
 		return *(signed char*)ptr;
 	case MONO_TYPE_U1:
 		return *(unsigned char*)ptr;

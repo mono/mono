@@ -9,7 +9,7 @@ MXE_HASH?=b9cbb53541a0e10fe4fe81f22bd586cb9cdc922a
 #LLVM_JENKINS_LANE=build-package-osx-llvm
 LLVM_HASH?=b606857f1dd008486df084481d4eacc5d91041d5
 LLVM_JENKINS_LANE=build-package-osx-llvm-release60
-LLVM_BRANCH=release60
+LLVM_BRANCH=release_60
 
 # Android
 

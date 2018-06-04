@@ -10,13 +10,17 @@ namespace MonoTests.System.Threading.Tasks
 {
     [TestFixture]
     public class ThreadPrincipalTests
-    {   
+    {
+
+#if !MONOTOUCH // Uses LogicalCallContext
         [Test]
         public void PrincipalFlowsToAsyncTask ()
         {
-            var t = _PrincipalFlowsToAsyncTask();
-            t.GetAwaiter().GetResult();
+            /* run in different thread to work around problems on platforms
+            * where SynchronizationContext is set (e.g. Xamarin.iOS) */
+            Assert.IsTrue (Task.Run (async () => await _PrincipalFlowsToAsyncTask ()).Wait (5000));
         }
+#endif
 
         public async Task _PrincipalFlowsToAsyncTask ()
         {    

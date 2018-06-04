@@ -45,6 +45,7 @@ public class DebuggerTests
 	public static bool listening = Environment.GetEnvironmentVariable ("DBG_SUSPEND") != null;
 #endif
 	public static string runtime = Environment.GetEnvironmentVariable ("DBG_RUNTIME");
+	public static string runtime_args = Environment.GetEnvironmentVariable ("DBG_RUNTIME_ARGS");
 	public static string agent_args = Environment.GetEnvironmentVariable ("DBG_AGENT_ARGS");
 
 	// Not currently used, but can be useful when debugging individual tests.
@@ -84,6 +85,8 @@ public class DebuggerTests
 		if (string.IsNullOrEmpty (pi.FileName))
 			pi.FileName = "mono";
 		pi.Arguments = String.Join (" ", args);
+		if (runtime_args != null)
+			pi.Arguments = runtime_args + " " + pi.Arguments;
 		return pi;
 	}
 

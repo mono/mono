@@ -478,6 +478,9 @@ in your program, or Mono's class libraries attempts to generate code
 dynamically.  You should test your software upfront and make sure that
 you do not use any dynamic features.
 .TP
+\fB--full-aot-interp\fR
+Same as --full-aot with fallback to the interpreter.
+.TP
 \fB--gc=boehm\fR, \fB--gc=sgen\fR
 Selects the Garbage Collector engine for Mono to use, Boehm or SGen.
 Currently this merely ensures that you are running either the
@@ -1796,6 +1799,9 @@ This option will suspend the program when an unhandled exception occurs.
 .TP
 \fBthread-dump-dir=DIR\fR
 Use DIR for storage thread dumps created by SIGQUIT.
+.TP
+\fBverbose-gdb\fR
+Make gdb output on native crashes more verbose.
 .ne
 .RE
 .TP

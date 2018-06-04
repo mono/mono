@@ -63,23 +63,7 @@ namespace System.Reflection
 		protected ParameterInfo () {
 		}
 
-		public override string ToString() {
-			Type elementType = ClassImpl;
-			while (elementType.HasElementType) {
-					elementType = elementType.GetElementType();
-			}
-			bool useShort = elementType.IsPrimitive || ClassImpl == typeof(void)
-				|| ClassImpl.Namespace == MemberImpl.DeclaringType.Namespace;
-			string result = useShort
-				? ClassImpl.Name
-				: ClassImpl.FullName;
-			// MS.NET seems to skip this check and produce an extra space for return types
-			if (!IsRetval) {
-				result += ' ';
-				result += NameImpl;
-			}
-			return result;
-		}
+		public override string ToString() => ClassImpl.FormatTypeName() + " " + Name;
 
 		internal static void FormatParameters (StringBuilder sb, ParameterInfo[] p, CallingConventions callingConvention, bool serialization)
 		{

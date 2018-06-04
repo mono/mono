@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;FEATURE_SERIALIZATION</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;FEATURE_SERIALIZATION</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
     <OutputPath>./../../class/lib/monodroid</OutputPath>
@@ -103,10 +103,10 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\StringBuilderCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ArrayBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\EnumerableHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LargeArrayBuilder.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\StringBuilderCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Private.Xml.Linq\src\System\Xml\Linq\BaseUriAnnotation.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Private.Xml.Linq\src\System\Xml\Linq\Extensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Private.Xml.Linq\src\System\Xml\Linq\LineInfoAnnotation.cs" />

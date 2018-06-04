@@ -28,7 +28,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <OutputPath>./../../class/lib/xammac_net_4_5-$(HostPlatform)</OutputPath>
@@ -51,32 +51,32 @@
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include=".\Assembly\AssemblyInfo.cs" />
-    <Compile Include=".\Mono.Messaging\AcknowledgeTypes.cs" />
-    <Compile Include=".\Mono.Messaging\Acknowledgment.cs" />
-    <Compile Include=".\Mono.Messaging\CompletedEventArgs.cs" />
-    <Compile Include=".\Mono.Messaging\CompletedEventHandler.cs" />
-    <Compile Include=".\Mono.Messaging\ConcurrentLinkedQueue.cs" />
-    <Compile Include=".\Mono.Messaging\ConnectionException.cs" />
-    <Compile Include=".\Mono.Messaging\CryptographicProviderType.cs" />
-    <Compile Include=".\Mono.Messaging\EncryptionAlgorithm.cs" />
-    <Compile Include=".\Mono.Messaging\EncryptionRequired.cs" />
-    <Compile Include=".\Mono.Messaging\HashAlgorithm.cs" />
-    <Compile Include=".\Mono.Messaging\IMessage.cs" />
-    <Compile Include=".\Mono.Messaging\IMessageEnumerator.cs" />
-    <Compile Include=".\Mono.Messaging\IMessageQueue.cs" />
-    <Compile Include=".\Mono.Messaging\IMessageQueueTransaction.cs" />
-    <Compile Include=".\Mono.Messaging\IMessagingProvider.cs" />
-    <Compile Include=".\Mono.Messaging\MessageBase.cs" />
-    <Compile Include=".\Mono.Messaging\MessagePriority.cs" />
-    <Compile Include=".\Mono.Messaging\MessageQueueBase.cs" />
-    <Compile Include=".\Mono.Messaging\MessageQueueTransactionStatus.cs" />
-    <Compile Include=".\Mono.Messaging\MessageQueueTransactionType.cs" />
-    <Compile Include=".\Mono.Messaging\MessageType.cs" />
-    <Compile Include=".\Mono.Messaging\MessageUnavailableException.cs" />
-    <Compile Include=".\Mono.Messaging\MessagingProviderLocator.cs" />
-    <Compile Include=".\Mono.Messaging\MonoMessagingException.cs" />
-    <Compile Include=".\Mono.Messaging\QueueReference.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Mono.Messaging\AcknowledgeTypes.cs" />
+    <Compile Include="Mono.Messaging\Acknowledgment.cs" />
+    <Compile Include="Mono.Messaging\CompletedEventArgs.cs" />
+    <Compile Include="Mono.Messaging\CompletedEventHandler.cs" />
+    <Compile Include="Mono.Messaging\ConcurrentLinkedQueue.cs" />
+    <Compile Include="Mono.Messaging\ConnectionException.cs" />
+    <Compile Include="Mono.Messaging\CryptographicProviderType.cs" />
+    <Compile Include="Mono.Messaging\EncryptionAlgorithm.cs" />
+    <Compile Include="Mono.Messaging\EncryptionRequired.cs" />
+    <Compile Include="Mono.Messaging\HashAlgorithm.cs" />
+    <Compile Include="Mono.Messaging\IMessage.cs" />
+    <Compile Include="Mono.Messaging\IMessageEnumerator.cs" />
+    <Compile Include="Mono.Messaging\IMessageQueue.cs" />
+    <Compile Include="Mono.Messaging\IMessageQueueTransaction.cs" />
+    <Compile Include="Mono.Messaging\IMessagingProvider.cs" />
+    <Compile Include="Mono.Messaging\MessageBase.cs" />
+    <Compile Include="Mono.Messaging\MessagePriority.cs" />
+    <Compile Include="Mono.Messaging\MessageQueueBase.cs" />
+    <Compile Include="Mono.Messaging\MessageQueueTransactionStatus.cs" />
+    <Compile Include="Mono.Messaging\MessageQueueTransactionType.cs" />
+    <Compile Include="Mono.Messaging\MessageType.cs" />
+    <Compile Include="Mono.Messaging\MessageUnavailableException.cs" />
+    <Compile Include="Mono.Messaging\MessagingProviderLocator.cs" />
+    <Compile Include="Mono.Messaging\MonoMessagingException.cs" />
+    <Compile Include="Mono.Messaging\QueueReference.cs" />
   </ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>

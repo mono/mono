@@ -93,12 +93,13 @@ var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'num
 var assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string'])
 var find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string'])
 var find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number'])
+const IGNORE_PARAM_COUNT = -1;
 
 //test driver support code
 var bad_semd_msg_detected = false;
 function mono_send_msg (key, val) {
 	try {
-		return Module.call_mono_method (send_message, null, "ss", [key, val]);
+		return Module.mono_method_invoke (send_message, null, "ss", [key, val]);
 	} catch (e) {
 		print ("BAD SEND MSG: " + e);
 		bad_semd_msg_detected = true;
@@ -115,13 +116,14 @@ var driver_class = find_class (main_module, "", "Driver")
 if (!driver_class)
 	throw 2;
 
-var send_message = find_method (driver_class, "Send", -1)
+var send_message = find_method (driver_class, "Send", IGNORE_PARAM_COUNT)
 if (!send_message)
 	throw 3;
 
 //Ok, this is temporary
 //this is a super big hack (move it to a decently named assembly, at the very least)
 var binding_test_module = assembly_load ("binding_tests");
+Module.mono_bindings_init("binding_tests");
 
 //binding test suite support code
 var binding_test_class = find_class (binding_test_module, "", "TestClass");
@@ -130,11 +132,11 @@ if (!binding_test_class)
 
 function call_test_method(method_name, signature, args)
 {
-	var target_method = find_method (binding_test_class, method_name, -1)
+	var target_method = find_method (binding_test_class, method_name, IGNORE_PARAM_COUNT)
 	if (!target_method)
 		throw "Could not find " + method_name;
 
-	return Module.call_mono_method (target_method, null, signature, args);
+	return Module.mono_method_invoke (target_method, null, signature, args);
 }
 
 print ("-----LOADED ----");

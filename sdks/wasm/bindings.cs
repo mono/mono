@@ -1,13 +1,9 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Reflection;
-using NUnitLite.Runner;
-using NUnit.Framework.Internal;
-using NUnit.Framework.Api;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
@@ -107,6 +103,58 @@ namespace WebAssembly {
 
 		static object BoxBool (int b) {
 			return b == 0 ? false : true;
+		}
+
+		[StructLayout(LayoutKind.Explicit)]
+		internal struct IntPtrAndHandle {
+			[FieldOffset(0)]
+			internal IntPtr ptr;
+
+			[FieldOffset(0)]
+			internal RuntimeMethodHandle handle;
+		}
+
+		//FIXME this probably won't handle generics
+		static string GetCallSignature (IntPtr method_handle) {
+			IntPtrAndHandle tmp = default (IntPtrAndHandle);
+			tmp.ptr = method_handle;
+
+			var mb = MethodBase.GetMethodFromHandle (tmp.handle);
+
+			string res = "";
+			foreach (var p in mb.GetParameters ()) {
+				var t = p.ParameterType;
+
+				switch (Type.GetTypeCode (t)) {
+				case TypeCode.Byte:
+				case TypeCode.SByte:
+				case TypeCode.Int16:
+				case TypeCode.UInt16:
+				case TypeCode.Int32:
+				case TypeCode.UInt32:
+					res += "i";
+					break;
+				case TypeCode.Int64:
+				case TypeCode.UInt64:
+					res += "l";
+					break;
+				case TypeCode.Single:
+					res += "f";
+					break;
+				case TypeCode.Double:
+					res += "d";
+					break;
+				case TypeCode.String:
+					res += "s";
+					break;
+				default:
+					if (t.IsValueType)
+						throw new Exception ("Can't handle VT arguments");
+					res += "o";
+					break;
+				}
+			}
+			return res;
 		}
 
 		static MethodInfo gsjsc;

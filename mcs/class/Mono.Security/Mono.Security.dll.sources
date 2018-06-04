@@ -142,6 +142,7 @@
 ./Mono.Security.Interface/CipherSuiteCode.cs
 ./Mono.Security.Interface/ExchangeAlgorithmType.cs
 ./Mono.Security.Interface/HashAlgorithmType.cs
+./Mono.Security.Interface/IMonoAuthenticationOptions.cs
 ./Mono.Security.Interface/IMonoSslStream.cs
 ./Mono.Security.Interface/MonoTlsConnectionInfo.cs
 ./Mono.Security.Interface/MonoTlsProvider.cs

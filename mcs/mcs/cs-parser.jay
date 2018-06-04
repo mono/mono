@@ -34,8 +34,9 @@ namespace Mono.CSharp
 			Params	= 1 << 4,
 			Arglist	= 1 << 5,
 			DefaultValue = 1 << 6,
+			ReadOnly = 1 << 7,
 			
-			All = Ref | Out | This | Params | Arglist | DefaultValue,
+			All = Ref | Out | This | Params | Arglist | DefaultValue | ReadOnly,
 			PrimaryConstructor = Ref | Out | Params | DefaultValue
 		}
 		
@@ -1485,7 +1486,7 @@ method_header
 	  OPEN_PARENS
 	  {
 		lexer.parsing_generic_declaration = false;
-	  	valid_param_mod = ParameterModifierType.All;
+		valid_param_mod = ParameterModifierType.All;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS 
 	  {
@@ -1810,7 +1811,9 @@ parameter_modifiers
   		Parameter.Modifier mod = (Parameter.Modifier)$1 | p2;
   		if (((Parameter.Modifier)$1 & p2) == p2) {
   			Error_DuplicateParameterModifier (lexer.Location, p2);
-  		} else {
+		} else if ((mod & ~(Parameter.Modifier.This | Parameter.Modifier.ReadOnly)) == 0) {
+			// ok
+		} else {
 	  		switch (mod & ~Parameter.Modifier.This) {
   				case Parameter.Modifier.REF:
 					report.Error (1101, lexer.Location, "The parameter modifiers `this' and `ref' cannot be used altogether");
@@ -1852,6 +1855,13 @@ parameter_modifier
 	  			
 		$$ = Parameter.Modifier.This;
 	  }
+	| IN
+	  {
+		if (lang_version < LanguageVersion.V_7_2)
+			FeatureIsNotAvailable (GetLocation ($1), "readonly references");
+
+		$$ = Parameter.Modifier.ReadOnly;
+	  }
 	;
 
 parameter_array
@@ -1887,7 +1897,7 @@ params_modifier
 		if ((mod & Parameter.Modifier.This) != 0) {
 			report.Error (1104, GetLocation ($1), "The parameter modifiers `this' and `params' cannot be used altogether");
 		} else {
-			report.Error (1611, GetLocation ($1), "The params parameter cannot be declared as ref or out");
+			report.Error (1611, GetLocation ($1), "The params parameter cannot be declared as ref, out or in");
 		}	  
 	  }
 	| PARAMS params_modifier
@@ -2020,7 +2030,7 @@ indexer_declaration
 	: opt_attributes opt_modifiers
 	  ref_member_type indexer_declaration_name OPEN_BRACKET
 	  {
-	  	valid_param_mod = ParameterModifierType.Params | ParameterModifierType.DefaultValue;
+		valid_param_mod = ParameterModifierType.Params | ParameterModifierType.DefaultValue | ParameterModifierType.ReadOnly;
 	  }
 	  opt_formal_parameter_list CLOSE_BRACKET 
 	  {
@@ -2347,7 +2357,7 @@ operator_type
 operator_declarator
 	: operator_type OPERATOR overloadable_operator OPEN_PARENS
 	  {
-		valid_param_mod = ParameterModifierType.DefaultValue;
+		valid_param_mod = ParameterModifierType.DefaultValue | ParameterModifierType.ReadOnly;
 		if ((Operator.OpType) $3 == Operator.OpType.Is)
 			valid_param_mod |= ParameterModifierType.Out;
 	  }
@@ -2434,7 +2444,7 @@ overloadable_operator
 conversion_operator_declarator
 	: IMPLICIT OPERATOR type OPEN_PARENS
 	  {
-		valid_param_mod = ParameterModifierType.DefaultValue;
+		valid_param_mod = ParameterModifierType.DefaultValue | ParameterModifierType.ReadOnly;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS
 	  {
@@ -2457,7 +2467,7 @@ conversion_operator_declarator
 	  }
 	| EXPLICIT OPERATOR type OPEN_PARENS
 	  {
-		valid_param_mod = ParameterModifierType.DefaultValue;
+		valid_param_mod = ParameterModifierType.DefaultValue | ParameterModifierType.ReadOnly;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS
 	  {
@@ -3030,7 +3040,7 @@ delegate_declaration
 	  ref_member_type type_declaration_name
 	  OPEN_PARENS
 	  {
-		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.Params | ParameterModifierType.DefaultValue;
+		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.Params | ParameterModifierType.DefaultValue | ParameterModifierType.ReadOnly;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS
 	  {
@@ -4424,7 +4434,7 @@ opt_anonymous_method_signature
 anonymous_method_signature
 	: OPEN_PARENS
 	  {
-	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
+		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.ReadOnly;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS
 	  {
@@ -5335,7 +5345,7 @@ lambda_expression
 	  }
 	| OPEN_PARENS_LAMBDA
 	  {
-	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
+		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.ReadOnly;
 	  }
 	  opt_lambda_parameter_list CLOSE_PARENS ARROW 
 	  {
@@ -5349,7 +5359,7 @@ lambda_expression
 	  }
 	| ASYNC OPEN_PARENS_LAMBDA
 	  {
-	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;	  
+		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.ReadOnly;
 	  }
 	  opt_lambda_parameter_list CLOSE_PARENS ARROW 
 	  {
@@ -7750,7 +7760,7 @@ doc_cref
 	  }
 	| doc_type_declaration_name DOT THIS OPEN_BRACKET
 	  {
-		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
+		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.ReadOnly;
 	  }
 	  opt_doc_parameters CLOSE_BRACKET
 	  {
@@ -7794,7 +7804,7 @@ opt_doc_method_sig
 	: /* empty */
 	| OPEN_PARENS
 	  {
-		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
+		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.ReadOnly;
 	  }
 	  opt_doc_parameters CLOSE_PARENS
 	  {
