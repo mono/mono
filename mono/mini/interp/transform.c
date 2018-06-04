@@ -4683,7 +4683,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 			const char *name = method->name;
 			if (m_class_get_parent (method->klass) == mono_defaults.multicastdelegate_class) {
 				if (*name == '.' && (strcmp (name, ".ctor") == 0)) {
-					MonoJitICallInfo *mi = mono_find_jit_icall_by_name ("ves_icall_mono_delegate_ctor");
+					MonoJitICallInfo *mi = mono_find_jit_icall_by_name ("ves_icall_mono_delegate_ctor_interp");
 					g_assert (mi);
 					char *wrapper_name = g_strdup_printf ("__icall_wrapper_%s", mi->name);
 					nm = mono_marshal_get_icall_wrapper (mi->sig, wrapper_name, mi->func, TRUE);

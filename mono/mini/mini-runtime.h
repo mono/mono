@@ -54,6 +54,8 @@ typedef struct
 	/* Maps MonoMethod -> 	MonoMethodRuntimeGenericContext */
 	GHashTable *mrgctx_hash;
 	GHashTable *method_rgctx_hash;
+	/* Maps gpointer -> InterpMethod */
+	GHashTable *interp_method_pointer_hash;
 } MonoJitDomainInfo;
 
 #define domain_jit_info(domain) ((MonoJitDomainInfo*)((domain)->runtime_info))
