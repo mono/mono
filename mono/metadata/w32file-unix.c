@@ -14,6 +14,12 @@
 #ifdef HAVE_SYS_STATVFS_H
 #include <sys/statvfs.h>
 #endif
+#ifdef HAVE_COPYFILE_H
+#include <copyfile.h>
+#  if !defined(COPYFILE_CLONE)
+#    #define COPYFILE_CLONE 0
+#  endif
+#endif
 #if defined(HAVE_SYS_STATFS_H)
 #include <sys/statfs.h>
 #endif
@@ -2359,7 +2365,17 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 		
 		return(FALSE);
 	}
-	
+
+#if HAVE_COPYFILE_H
+	ret = copyfile (utf8_src, utf8_dest, NULL, COPYFILE_ALL | COPYFILE_CLONE | (fail_if_exists ? COPYFILE_EXCL : COPYFILE_UNLINK));
+	g_free (utf8_src);
+	g_free (utf8_dest);
+	if (ret != 0){
+		_wapi_set_last_error_from_errno ();
+		return FALSE;
+	}
+	return TRUE;
+#else
 	src_fd = _wapi_open (utf8_src, O_RDONLY, 0);
 	if (src_fd < 0) {
 		_wapi_set_last_path_error_from_errno (NULL, utf8_src);
@@ -2458,6 +2474,7 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 	g_free (utf8_dest);
 
 	return ret;
+#endif
 }
 
 static gchar*
