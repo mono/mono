@@ -15,7 +15,7 @@ corefx/SR.cs
 System.Security.Cryptography/ProtectedData.cs
 
 # System.Security.Cryptography.Pkcs
-../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/AlgorithmIdentifier.cs
+System.Security.Cryptography.Pkcs/AlgorithmIdentifier.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/CmsRecipient.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/CmsRecipientCollection.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/CmsRecipientEnumerator.cs
