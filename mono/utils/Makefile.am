@@ -89,6 +89,7 @@ monoutils_sources = \
 	mono-poll.c		\
 	mono-path.c		\
 	mono-os-semaphore.h	\
+	mono-coop-semaphore.c		\
 	mono-coop-semaphore.h		\
 	mono-sigcontext.h	\
 	mono-stdlib.c 		\

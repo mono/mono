@@ -33,6 +33,7 @@ mono_coop_sem_destroy (MonoCoopSem *sem)
 	mono_os_sem_destroy (&sem->s);
 }
 
+// FIXME alertable untimed wait interruptable also, like mono_coop_sem_timedwait?
 static inline gint
 mono_coop_sem_wait (MonoCoopSem *sem, MonoSemFlags flags)
 {
@@ -47,19 +48,8 @@ mono_coop_sem_wait (MonoCoopSem *sem, MonoSemFlags flags)
 	return res;
 }
 
-static inline MonoSemTimedwaitRet
-mono_coop_sem_timedwait (MonoCoopSem *sem, guint timeout_ms, MonoSemFlags flags)
-{
-	MonoSemTimedwaitRet res;
-
-	MONO_ENTER_GC_SAFE;
-
-	res = mono_os_sem_timedwait (&sem->s, timeout_ms, flags);
-
-	MONO_EXIT_GC_SAFE;
-
-	return res;
-}
+MonoSemTimedwaitRet
+mono_coop_sem_timedwait (MonoCoopSem *sem, guint timeout_ms, MonoSemFlags flags);
 
 static inline void
 mono_coop_sem_post (MonoCoopSem *sem)
