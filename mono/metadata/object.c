@@ -4396,8 +4396,7 @@ mono_runtime_try_run_main (MonoMethod *method, int argc, char* argv[],
 }
 
 static MonoObject*
-serialize_or_deserialize_object (MonoObject *obj, MonoError *error,
-	const gchar *method_name, MonoMethod **method)
+serialize_or_deserialize_object (MonoObject *obj, const gchar *method_name, MonoMethod **method, MonoError *error)
 {
 	if (!*method) {
 		MonoClass *klass = mono_class_get_remoting_services_class ();
@@ -4412,26 +4411,28 @@ serialize_or_deserialize_object (MonoObject *obj, MonoError *error,
 	MonoException *exc = NULL;
 	void *params [ ] = { obj };
 	MonoObject *result = mono_runtime_try_invoke (*method, NULL, params, (MonoObject**)&exc, error);
-	if (!is_ok (error) && exc)
+	if (is_ok (error) && exc)
 		mono_error_set_exception_instance (error, exc);
 
 	return result;
 }
 
+static MonoMethod *serialize_method;
+
 static MonoObject*
 serialize_object (MonoObject *obj, MonoError *error)
 {
-	static MonoMethod *method;
 	g_assert (!mono_class_is_marshalbyref (mono_object_class (obj)));
-	return serialize_or_deserialize_object (obj, error, "SerializeCallData", &method);
+	return serialize_or_deserialize_object (obj, "SerializeCallData", &serialize_method, error);
 }
+
+static MonoMethod *deserialize_method;
 
 static MonoObject*
 deserialize_object (MonoObject *obj, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
-	static MonoMethod *method;
-	return serialize_or_deserialize_object (obj, error, "DeserializeCallData", &method);
+	return serialize_or_deserialize_object (obj, "DeserializeCallData", &deserialize_method, error);
 }
 
 #ifndef DISABLE_REMOTING
