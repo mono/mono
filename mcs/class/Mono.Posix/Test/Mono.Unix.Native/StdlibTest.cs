@@ -29,6 +29,14 @@ namespace MonoTests.Mono.Unix.Native {
 			}
 		}
 
+
+		[Test]
+		public void GetPid ()
+		{
+			var currentPID = Mono.Unix.Native.Syscall.getpid();
+			Assert.AreNotEqual (0, currentPID);
+		}
+
 		// [Test]
 		public void Signal ()
 		{
