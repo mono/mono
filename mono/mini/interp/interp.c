@@ -1826,7 +1826,7 @@ do_icall (ThreadContext *context, int op, stackval *sp, gpointer ptr)
 }
 
 static MONO_NEVER_INLINE stackval *
-do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpFrame *frame, InterpMethod *rmethod)
+do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpFrame *frame, InterpMethod *rmethod, MonoError *error)
 {
 	MonoMethodSignature *sig;
 	MonoFtnDesc ftndesc;
@@ -1842,7 +1842,6 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 	 */
 	if (!rmethod->jit_wrapper) {
 		MonoMethod *method = rmethod->method;
-		ERROR_DECL (error);
 
 		sig = mono_method_signature (method);
 		g_assert (sig);
@@ -1854,8 +1853,8 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 		mono_error_assert_ok (error);
 
 		gpointer addr = mono_jit_compile_method_jit_only (method, error);
+		return_val_if_nok (error, NULL);
 		g_assert (addr);
-		mono_error_assert_ok (error);
 
 		rmethod->jit_addr = addr;
 		rmethod->jit_sig = sig;
@@ -2922,9 +2921,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		}
 		MINT_IN_CASE(MINT_JIT_CALL) {
 			InterpMethod *rmethod = rtm->data_items [* (guint16 *)(ip + 1)];
+			ERROR_DECL (error);
 			frame->ip = ip;
 			ip += 2;
-			sp = do_jit_call (sp, vt_sp, context, frame, rmethod);
+			sp = do_jit_call (sp, vt_sp, context, frame, rmethod, error);
+			if (!is_ok (error)) {
+				MonoException *ex = mono_error_convert_to_exception (error);
+				THROW_EX (ex, ip);
+			}
 
 			if (context->has_resume_state) {
 				/*
@@ -5239,6 +5243,13 @@ array_constructed:
 
 		   --sp;
 		   del = (MonoDelegate*)sp->data.p;
+		   if (!del->interp_method) {
+			   /* Not created from interpreted code */
+			   ERROR_DECL (error);
+			   g_assert (del->method);
+			   del->interp_method = mono_interp_get_imethod (del->object.vtable->domain, del->method, error);
+			   mono_error_assert_ok (error);
+		   }
 		   g_assert (del->interp_method);
 		   sp->data.p = del->interp_method;
 		   ++sp;
