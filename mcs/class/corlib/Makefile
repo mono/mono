@@ -42,7 +42,6 @@ MODULE_DEPS = $(IL_REPLACE)
 endif
 
 RESOURCE_FILES = \
-	resources/charinfo.nlp \
 	resources/collation.core.bin \
 	resources/collation.tailoring.bin \
 	resources/collation.cjkCHS.bin \
