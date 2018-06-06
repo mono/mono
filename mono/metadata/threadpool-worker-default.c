@@ -34,6 +34,7 @@
 #include <mono/utils/mono-rand.h>
 #include <mono/utils/refcount.h>
 #include <mono/utils/w32api.h>
+#include <mono/metadata/threads-types.h>
 
 #define CPU_USAGE_LOW 80
 #define CPU_USAGE_HIGH 95
@@ -356,6 +357,19 @@ mono_threadpool_worker_request (void)
 	mono_refcount_dec (&worker);
 }
 
+static gboolean
+worker_aborted (MonoInternalThread *thread)
+{
+	mono_lock_thread (thread);
+
+	gboolean const result = mono_thread_test_state_locked (thread, ThreadState_AbortRequested)
+		&& !(thread->flags & MONO_THREAD_FLAG_APPDOMAIN_ABORT);
+
+	mono_unlock_thread (thread);
+
+	return result;
+}
+
 /* return TRUE if timeout, FALSE otherwise (worker unpark or interrupt) */
 static gboolean
 worker_park (void)
@@ -369,7 +383,7 @@ worker_park (void)
 
 	MonoInternalThread * const thread = mono_thread_internal_current ();
 
-	if (!mono_runtime_is_shutting_down ()) {
+	if (!mono_runtime_is_shutting_down () && !worker_aborted (thread)) {
 		static gpointer rand_handle = NULL;
 		ThreadPoolWorkerCounter counter;
 
@@ -390,11 +404,7 @@ worker_park (void)
 			new = old + 1;
 		} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new, old) != old);
 
-		gboolean const abort_requested = mono_thread_test_state (thread, ThreadState_AbortRequested);
-		guint32 const min_wait = abort_requested ?  100 : ( 5 * 1000);
-		guint32 const max_wait = abort_requested ?  500 : (60 * 1000);
-
-		switch (mono_coop_sem_timedwait (&worker.parked_threads_sem, rand_next (&rand_handle, min_wait, max_wait), MONO_SEM_FLAGS_ALERTABLE)) {
+		switch (mono_coop_sem_timedwait (&worker.parked_threads_sem, rand_next (&rand_handle, 5 * 1000, 60 * 1000), MONO_SEM_FLAGS_ALERTABLE)) {
 		case MONO_SEM_TIMEDWAIT_RET_SUCCESS:
 			break;
 		case MONO_SEM_TIMEDWAIT_RET_ALERTED:
@@ -484,9 +494,7 @@ worker_thread (gpointer unused)
 			continue;
 
 		if (!work_item_try_pop ()) {
-			gboolean timeout;
-
-			timeout = worker_park ();
+			gboolean const timeout = worker_park ();
 			if (timeout)
 				break;
 
