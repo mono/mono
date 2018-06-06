@@ -367,7 +367,7 @@ worker_park (void)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker parking",
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
 
-	if (!mono_runtime_is_shutting_down ()) {
+	if (!mono_runtime_is_shutting_down () && !mono_thread_test_state (mono_thread_internal_current (), ThreadState_AbortRequested)) {
 		static gpointer rand_handle = NULL;
 		ThreadPoolWorkerCounter counter;
 
