@@ -229,6 +229,13 @@ typedef struct MonoDebugOptions {
 
 	// Internal testing feature.
 	gboolean test_tailcall_require;
+
+	/*
+	 * Internal testing feature
+	 * Testing feature, skip loading the Nth aot loadable method.
+	 */
+	gboolean aot_skip_set;
+	int aot_skip;
 } MonoDebugOptions;
 
 

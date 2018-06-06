@@ -3740,7 +3740,10 @@ mini_parse_debug_option (const char *option)
 		mini_debug_options.verbose_gdb = TRUE;
 	else if (!strncmp (option, "thread-dump-dir=", 16))
 		mono_set_thread_dump_dir(g_strdup(option + 16));
-	else
+	else if (!strncmp (option, "aot-skip=", 9)) {
+		mini_debug_options.aot_skip_set = TRUE;
+		mini_debug_options.aot_skip = atoi (option + 9);
+	} else
 		return FALSE;
 
 	return TRUE;
