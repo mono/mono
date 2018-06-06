@@ -367,7 +367,9 @@ worker_park (void)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker parking",
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
 
-	if (!mono_runtime_is_shutting_down () && !mono_thread_test_state (mono_thread_internal_current (), ThreadState_AbortRequested)) {
+	MonoInternalThread * const thread = mono_thread_internal_current ();
+
+	if (!mono_runtime_is_shutting_down ()) {
 		static gpointer rand_handle = NULL;
 		ThreadPoolWorkerCounter counter;
 
@@ -388,7 +390,11 @@ worker_park (void)
 			new = old + 1;
 		} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new, old) != old);
 
-		switch (mono_coop_sem_timedwait (&worker.parked_threads_sem, rand_next (&rand_handle, 5 * 1000, 60 * 1000), MONO_SEM_FLAGS_ALERTABLE)) {
+		gboolean const abort_requested = mono_thread_test_state (thread, ThreadState_AbortRequested);
+		guint32 const min_wait = abort_requested ?  100 : ( 5 * 1000);
+		guint32 const max_wait = abort_requested ?  500 : (60 * 1000);
+
+		switch (mono_coop_sem_timedwait (&worker.parked_threads_sem, rand_next (&rand_handle, min_wait, max_wait), MONO_SEM_FLAGS_ALERTABLE)) {
 		case MONO_SEM_TIMEDWAIT_RET_SUCCESS:
 			break;
 		case MONO_SEM_TIMEDWAIT_RET_ALERTED:
