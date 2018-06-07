@@ -740,6 +740,55 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (typeof (TypedRefTarget), TypedReference.GetTargetType (tr));
 		}
 #endif
+
+	    static Action GenerateProblematicMethod (bool add_extra, bool mismatch = false, bool use_vts = false)
+	    {
+			Type this_type = typeof(object);
+			Type bound_type = typeof(object);
+			if (mismatch) {
+				this_type = typeof (string);
+				bound_type = typeof (DynamicMethodTest);
+			} else if (use_vts) {
+				this_type = typeof (int);
+				bound_type = typeof (long);
+			}
+
+	        Type[] args;
+			if (add_extra)
+				args = new[] { this_type };
+			else
+				args = new Type [0];
+
+	        var mb = new DynamicMethod("Peek", null, args, bound_type, true);
+	        var il = mb.GetILGenerator ();
+	        il.Emit(OpCodes.Ret);
+	        return (Action) mb.CreateDelegate(typeof(Action));
+	    }
+
+		[Test]
+		public void ExtraArgGetsIgnored ()
+		{
+			GenerateProblematicMethod (true) ();
+		}
+
+		[Test]
+		public void ExactNumberOfArgsWork ()
+		{
+			GenerateProblematicMethod (false) ();
+		}
+
+		[Test]
+		public void ExtraArgWithMismatchedTypes ()
+		{
+			GenerateProblematicMethod (true, mismatch: true) ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ExtraArgWithValueType ()
+		{
+			GenerateProblematicMethod (true, use_vts: true) ();
+		}
 	}
 }
 
