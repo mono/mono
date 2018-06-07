@@ -7077,7 +7077,7 @@ ves_icall_System_Environment_get_TickCount (void)
 }
 
 ICALL_EXPORT gint32
-ves_icall_System_Runtime_Versioning_VersioningHelper_GetRuntimeId (void)
+ves_icall_System_Runtime_Versioning_VersioningHelper_GetRuntimeId (MonoError *error)
 {
 	return 9;
 }
@@ -7605,7 +7605,6 @@ mono_TypedReference_MakeTypedReferenceInternal (MonoObject *target, MonoArray *f
 	MonoType *ftype = NULL;
 	guint8 *p = NULL;
 	int i;
-	ERROR_DECL (error);
 
 	memset (&res, 0, sizeof (res));
 
