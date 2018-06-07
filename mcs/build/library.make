@@ -296,7 +296,7 @@ endif
 
 # If the directory contains the per profile include file, generate list file.
 # TODO: depend on all *.sources for now and figure out how to list only needed files later
-PROFILE_sources = $(shell ls *.sources)
+PROFILE_sources = $(wildcard *.sources)
 
 gensources = $(topdir)/build/gensources.exe
 $(gensources): $(topdir)/build/gensources.cs
