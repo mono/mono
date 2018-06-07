@@ -172,7 +172,7 @@ namespace System.Reflection.Emit {
 
 			CreateDynMethod ();
 
-			deleg = Delegate.CreateDelegate (delegateType, this);
+			deleg = Delegate.CreateDelegate (delegateType, null, this);
 			return deleg;
 		}
 
