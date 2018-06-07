@@ -19,15 +19,15 @@
 #include "mono/utils/mono-compiler.h"
 
 MonoBoolean
-ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngOpen (void);
+ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngOpen (MonoError *error);
 
 gpointer
-ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngInitialize (MonoArray *seed);
+ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngInitialize (const guchar *seed, gssize seed_length, MonoError *error);
 
 gpointer
-ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngGetBytes (gpointer handle, MonoArray *arry);
+ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngGetBytes (gpointer handle, guchar *array, gssize array_length, MonoError *error);
 
 void
-ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngClose (gpointer handle);
+ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngClose (gpointer handle, MonoError *error);
 
 #endif
