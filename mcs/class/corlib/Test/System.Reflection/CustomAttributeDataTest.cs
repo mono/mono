@@ -44,13 +44,14 @@ namespace MonoTests.System.Reflection
 	public class CustomAttributeDataTest
 	{
 		[MarshalAs (UnmanagedType.LPStr)]
-		public string fieldDecoratedWithMarshalAsAttribute = "test";
+		[NonSerialized]
+		public string fieldDecoratedWithPseudoCustomAttributes = "test";
 
 		[Attr (new byte [] { 1, 2 })]
 		public void MethodWithAttr () {
 		}
 
-		public void MethodWithParamDecoratedWithMarshalAs ([MarshalAs (UnmanagedType.LPStr)] String s)
+		public void MethodWithParamDecoratedWithPseudoCustomAttributes ([Optional, In, Out, MarshalAs (UnmanagedType.LPStr)] String s)
         {
         }
 
@@ -76,33 +77,47 @@ namespace MonoTests.System.Reflection
 		}
         
 		[Test]
-        public void ParameterIncludesMarshalAsAttributeData ()
-        {
-			var methodInfo = typeof (CustomAttributeDataTest).GetMethod ("MethodWithParamDecoratedWithMarshalAs");
+		public void ParameterIncludesPseudoCustomAttributesData ()
+		{
+			var methodInfo = typeof (CustomAttributeDataTest).GetMethod ("MethodWithParamDecoratedWithPseudoCustomAttributes");
 			var paramInfo = methodInfo.GetParameters () [0];
 			var customAttributesData = CustomAttributeData.GetCustomAttributes (paramInfo);
-			var marshalAsAttributeData = customAttributesData [0];
-			var ctorArg = marshalAsAttributeData.ConstructorArguments [0];
 
-			Assert.AreEqual (1, customAttributesData.Count);
+			Assert.AreEqual (4, customAttributesData.Count);
+
+			var inAttributeData = customAttributesData [0];
+			var optionalAttributeData = customAttributesData [1];
+			var outAttributeData = customAttributesData [2];
+			var marshalAsAttributeData = customAttributesData [3];
+
+			var marshalAsAttributeCtorArg = marshalAsAttributeData.ConstructorArguments [0];
+
+			Assert.AreEqual (typeof (InAttribute), inAttributeData.AttributeType);
+			Assert.AreEqual (typeof (OptionalAttribute), optionalAttributeData.AttributeType);
+			Assert.AreEqual (typeof (OutAttribute), outAttributeData.AttributeType);
+
 			Assert.AreEqual (typeof (MarshalAsAttribute), marshalAsAttributeData.AttributeType);
-			Assert.AreEqual (typeof (UnmanagedType), ctorArg.ArgumentType);
-			Assert.AreEqual (UnmanagedType.LPStr, ctorArg.Value);
-        }
+			Assert.AreEqual (typeof (UnmanagedType), marshalAsAttributeCtorArg.ArgumentType);
+			Assert.AreEqual (UnmanagedType.LPStr, marshalAsAttributeCtorArg.Value);
+		}
 
 		[Test]
-        public void FieldIncludesMarshalAsAttributeData ()
-        {
-			var fieldInfo = typeof (CustomAttributeDataTest).GetField ("fieldDecoratedWithMarshalAsAttribute");
+		public void FieldIncludesPseudoCustomAttributesData ()
+		{
+			var fieldInfo = typeof (CustomAttributeDataTest).GetField ("fieldDecoratedWithPseudoCustomAttributes");
 			var customAttributesData = CustomAttributeData.GetCustomAttributes (fieldInfo);
-            var marshalAsAttributeData = customAttributesData [0];
-            var ctorArg = marshalAsAttributeData.ConstructorArguments [0];
 
-            Assert.AreEqual (1, customAttributesData.Count);
-            Assert.AreEqual (typeof (MarshalAsAttribute), marshalAsAttributeData.AttributeType);
-            Assert.AreEqual (typeof (UnmanagedType), ctorArg.ArgumentType);
-			Assert.AreEqual (UnmanagedType.LPStr, ctorArg.Value);            
-        }
+			Assert.AreEqual (2, customAttributesData.Count);
+
+			var nonSerializedAttributeData = customAttributesData [0];
+			var marshalAsAttributeData = customAttributesData [1];
+			var marshalAsAttributeDataCtorArg = marshalAsAttributeData.ConstructorArguments [0];
+
+			Assert.AreEqual (typeof (NonSerializedAttribute), nonSerializedAttributeData.AttributeType);
+			Assert.AreEqual (typeof (MarshalAsAttribute), marshalAsAttributeData.AttributeType);
+			Assert.AreEqual (typeof (UnmanagedType), marshalAsAttributeDataCtorArg.ArgumentType);
+			Assert.AreEqual (UnmanagedType.LPStr, marshalAsAttributeDataCtorArg.Value);
+		}
 
 		[Test]
 		public void MethodIncludesMarshalAsAttributeData ()
