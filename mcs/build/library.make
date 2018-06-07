@@ -295,8 +295,8 @@ endif
 # The library
 
 # If the directory contains the per profile include file, generate list file.
-PROFILE_sources := $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).sources)) $(wildcard $(PROFILE)_$(LIBRARY).sources) $(wildcard $(LIBRARY).sources))
-PROFILE_excludes = $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).exclude.sources)) $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources))
+# TODO: depend on all *.sources for now and figure out how to list only needed files later
+PROFILE_sources = $(shell ls *.sources)
 
 gensources = $(topdir)/build/gensources.exe
 $(gensources): $(topdir)/build/gensources.cs
@@ -309,7 +309,7 @@ GENSOURCES_RUNTIME = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLAT
 endif
 
 sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp $(gensources)
+$(sourcefile): $(PROFILE_sources) $(depsdir)/.stamp $(gensources)
 	$(GENSOURCES_RUNTIME) --debug $(gensources) "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
 library_CLEAN_FILES += $(sourcefile)
