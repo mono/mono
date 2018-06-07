@@ -52,14 +52,14 @@ namespace MonoTests.System.Reflection
 		}
 
 		public void MethodWithParamDecoratedWithPseudoCustomAttributes ([Optional, In, Out, MarshalAs (UnmanagedType.LPStr)] String s)
-        {
-        }
+		{
+		}
 
 		[return: MarshalAs (UnmanagedType.LPStr)]
 		public string MethodWithReturnValueDecoratedWithMarshalAs ()
-        {
+		{
 			return "test";
-        }
+		}
 
 		[Test]
 		[Category ("MobileNotWorking")] // #10263
@@ -121,17 +121,17 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		public void MethodIncludesMarshalAsAttributeData ()
-        {
+		{
 			var methodInfo = typeof (CustomAttributeDataTest).GetMethod ("MethodWithReturnValueDecoratedWithMarshalAs");
-			var paramInfo = (ParameterInfo) methodInfo.ReturnTypeCustomAttributes;
+			var paramInfo = (ParameterInfo)methodInfo.ReturnTypeCustomAttributes;
 			var customAttributesData = CustomAttributeData.GetCustomAttributes (paramInfo);
-            var marshalAsAttributeData = customAttributesData [0];
-            var ctorArg = marshalAsAttributeData.ConstructorArguments [0];
+			var marshalAsAttributeData = customAttributesData [0];
+			var ctorArg = marshalAsAttributeData.ConstructorArguments [0];
 
-            Assert.AreEqual (1, customAttributesData.Count);
-            Assert.AreEqual (typeof (MarshalAsAttribute), marshalAsAttributeData.AttributeType);
-            Assert.AreEqual (typeof (UnmanagedType), ctorArg.ArgumentType);
+			Assert.AreEqual (1, customAttributesData.Count);
+			Assert.AreEqual (typeof (MarshalAsAttribute), marshalAsAttributeData.AttributeType);
+			Assert.AreEqual (typeof (UnmanagedType), ctorArg.ArgumentType);
 			Assert.AreEqual (UnmanagedType.LPStr, ctorArg.Value);
-        }
+		}
 	}
 }
