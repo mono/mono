@@ -2354,6 +2354,14 @@ lookup_method_pointer (gpointer addr)
 	return res;
 }
 
+#ifndef MONO_ARCH_HAVE_INTERP_NATIVE_TO_MANAGED
+static void
+interp_no_native_to_managed (void)
+{
+	g_error ("interpreter: native-to-managed transition not available on this platform");
+}
+#endif
+
 /*
  * interp_create_method_pointer:
  *
@@ -2363,6 +2371,9 @@ lookup_method_pointer (gpointer addr)
 static gpointer
 interp_create_method_pointer (MonoMethod *method, MonoError *error)
 {
+#ifndef MONO_ARCH_HAVE_INTERP_NATIVE_TO_MANAGED
+	return interp_no_native_to_managed;
+#else
 	gpointer addr, entry_func, entry_wrapper;
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitDomainInfo *info;
@@ -2440,6 +2451,7 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 	imethod->jit_entry = addr;
 
 	return addr;
+#endif
 }
 
 #if COUNT_OPS
