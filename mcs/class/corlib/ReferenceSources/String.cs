@@ -39,6 +39,8 @@ using System.Text;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Diagnostics.Private;
 
 namespace System
 {
@@ -50,15 +52,6 @@ namespace System
 		char _firstChar;
 
 		public static readonly String Empty;
-
-		public unsafe static implicit operator ReadOnlySpan<char> (String value)
-		{
-			if (value == null)
-				return default;
-
-			fixed (void* start = &value._firstChar)
-				return new ReadOnlySpan<char> (start, value.Length);
-		}
 
 		internal unsafe int IndexOfUnchecked (string value, int startIndex, int count)
 		{
@@ -203,6 +196,62 @@ namespace System
 				return false;
 
 			return value.Length == 1 ? true : StartsWithOrdinalHelper (this, value);
+		}
+
+		// copied from external/corert/src/System.Private.CoreLib/src/System/String.Comparison.cs
+		private static unsafe bool StartsWithOrdinalHelper(String str, String startsWith)
+		{
+			Debug.Assert(str != null);
+			Debug.Assert(startsWith != null);
+			Debug.Assert(str.Length >= startsWith.Length);
+
+			int length = startsWith.Length;
+
+			fixed (char* ap = &str._firstChar) fixed (char* bp = &startsWith._firstChar)
+			{
+				char* a = ap;
+				char* b = bp;
+
+#if BIT64
+				// Single int read aligns pointers for the following long reads
+				// No length check needed as this method is called when length >= 2
+				Debug.Assert(length >= 2);
+				if (*(int*)a != *(int*)b) goto ReturnFalse;
+				length -= 2; a += 2; b += 2;
+
+				while (length >= 12)
+				{
+					if (*(long*)a != *(long*)b) goto ReturnFalse;
+					if (*(long*)(a + 4) != *(long*)(b + 4)) goto ReturnFalse;
+					if (*(long*)(a + 8) != *(long*)(b + 8)) goto ReturnFalse;
+					length -= 12; a += 12; b += 12;
+				}
+#else
+				while (length >= 10)
+				{
+					if (*(int*)a != *(int*)b) goto ReturnFalse;
+					if (*(int*)(a + 2) != *(int*)(b + 2)) goto ReturnFalse;
+					if (*(int*)(a + 4) != *(int*)(b + 4)) goto ReturnFalse;
+					if (*(int*)(a + 6) != *(int*)(b + 6)) goto ReturnFalse;
+					if (*(int*)(a + 8) != *(int*)(b + 8)) goto ReturnFalse;
+					length -= 10; a += 10; b += 10;
+				}
+#endif
+
+				while (length >= 2)
+				{
+					if (*(int*)a != *(int*)b) goto ReturnFalse;
+					length -= 2; a += 2; b += 2;
+				}
+
+				// PERF: This depends on the fact that the String objects are always zero terminated 
+				// and that the terminating zero is not included in the length. For even string sizes
+				// this compare can include the zero terminator. Bitwise OR avoids a branch.
+				return length == 0 | *a == *b;
+
+			ReturnFalse:
+				return false;
+			}
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Globalization
 {
@@ -227,6 +228,159 @@ namespace System.Globalization
 					bp++;
 				}
 				return lengthA - lengthB;
+			}
+		}
+
+		private unsafe string ToLowerAsciiInvariant(string s)
+		{
+			if (s.Length == 0)
+			{
+				return string.Empty;
+			}
+			
+			fixed (char* pSource = s)
+			{
+				int i = 0;
+				while (i < s.Length)
+				{
+					if ((uint)(pSource[i] - 'A') <= (uint)('Z' - 'A'))
+					{
+						break;
+					}
+					i++;
+				}
+				
+				if (i >= s.Length)
+				{
+					return s;
+				}
+
+				string result = string.FastAllocateString(s.Length);
+				fixed (char* pResult = result)
+				{
+					for (int j = 0; j < i; j++)
+					{
+						pResult[j] = pSource[j];
+					}
+					
+					pResult[i] = (char)(pSource[i] | 0x20);
+					i++;
+
+					while (i < s.Length)
+					{
+						pResult[i] = ToLowerAsciiInvariant(pSource[i]);
+						i++;
+					}
+				}
+
+				return result;
+			}
+		}
+
+		internal void ToLowerAsciiInvariant(ReadOnlySpan<char> source, Span<char> destination)
+		{
+			for (int i = 0; i < source.Length; i++)
+			{
+				destination[i] = ToLowerAsciiInvariant(source[i]);
+			}
+		}
+
+		private unsafe string ToUpperAsciiInvariant(string s)
+		{
+			if (s.Length == 0)
+			{
+				return string.Empty;
+			}
+			
+			fixed (char* pSource = s)
+			{
+				int i = 0;
+				while (i < s.Length)
+				{
+					if ((uint)(pSource[i] - 'a') <= (uint)('z' - 'a'))
+					{
+						break;
+					}
+					i++;
+				}
+				
+				if (i >= s.Length)
+				{
+					return s;
+				}
+
+				string result = string.FastAllocateString(s.Length);
+				fixed (char* pResult = result)
+				{
+					for (int j = 0; j < i; j++)
+					{
+						pResult[j] = pSource[j];
+					}
+					
+					pResult[i] = (char)(pSource[i] & ~0x20);
+					i++;
+
+					while (i < s.Length)
+					{
+						pResult[i] = ToUpperAsciiInvariant(pSource[i]);
+						i++;
+					}
+				}
+
+				return result;
+			}
+		}
+
+		internal void ToUpperAsciiInvariant(ReadOnlySpan<char> source, Span<char> destination)
+		{
+			for (int i = 0; i < source.Length; i++)
+			{
+				destination[i] = ToUpperAsciiInvariant(source[i]);
+			}
+		}
+
+		internal unsafe void ChangeCase(ReadOnlySpan<char> source, Span<char> destination, bool toUpper)
+		{
+			if (source.IsEmpty)
+			{
+				return;
+			}
+
+			fixed (char* pSource = &MemoryMarshal.GetReference(source))
+			fixed (char* pResult = &MemoryMarshal.GetReference(destination))
+			{
+				if (IsAsciiCasingSameAsInvariant)
+				{
+					int length = 0;
+					char* a = pSource, b = pResult;
+					if (toUpper)
+					{
+						while (length < source.Length && *a < 0x80)
+						{
+							*b++ = ToUpperAsciiInvariant(*a++);
+							length++;
+						}
+					}
+					else
+					{
+						while (length < source.Length && *a < 0x80)
+						{
+							*b++ = ToLowerAsciiInvariant(*a++);
+							length++;
+						}
+					}
+
+					if (length != source.Length)
+					{
+						//ChangeCase(a, source.Length - length, b, destination.Length - length, toUpper);
+						throw new NotImplementedException ();
+					}
+				}
+				else
+				{
+					//ChangeCase(pSource, source.Length, pResult, destination.Length, toUpper);
+					throw new NotImplementedException ();
+				}
 			}
 		}
 	}
