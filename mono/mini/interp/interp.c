@@ -2354,6 +2354,26 @@ lookup_method_pointer (gpointer addr)
 	return res;
 }
 
+static gpointer
+cache_method_pointer (MonoDomain *domain, InterpMethod *imethod, gpointer addr)
+{
+	MonoJitDomainInfo *info;
+	gpointer res;
+
+	info = domain_jit_info (domain);
+	mono_domain_lock (domain);
+	if (!info->interp_method_pointer_hash)
+		info->interp_method_pointer_hash = g_hash_table_new (NULL, NULL);
+	res = g_hash_table_lookup (info->interp_method_pointer_hash, imethod);
+	if (!res) {
+		res = addr;
+		g_hash_table_insert (info->interp_method_pointer_hash, addr, imethod);
+	}
+	mono_domain_unlock (domain);
+
+	return res;
+}
+
 /*
  * interp_create_method_pointer:
  *
@@ -2365,7 +2385,6 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 {
 	gpointer addr, entry_func, entry_wrapper;
 	MonoDomain *domain = mono_domain_get ();
-	MonoJitDomainInfo *info;
 	InterpMethod *imethod = mono_interp_get_imethod (domain, method, error);
 
 	/* HACK: method_ptr of delegate should point to a runtime method*/
@@ -2375,6 +2394,15 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 
 	if (imethod->jit_entry)
 		return imethod->jit_entry;
+
+#ifdef TARGET_WASM
+	/* No trampolines, use imethod as the dummy value */
+	addr = cache_method_pointer (domain, imethod, imethod);
+
+	mono_memory_barrier ();
+	imethod->jit_entry = addr;
+	return addr;
+#endif
 
 	MonoMethodSignature *sig = mono_method_signature (method);
 #ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
@@ -2429,12 +2457,7 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 
 	addr = mono_create_ftnptr_arg_trampoline (ftndesc, entry_wrapper);
 
-	info = domain_jit_info (domain);
-	mono_domain_lock (domain);
-	if (!info->interp_method_pointer_hash)
-		info->interp_method_pointer_hash = g_hash_table_new (NULL, NULL);
-	g_hash_table_insert (info->interp_method_pointer_hash, addr, imethod);
-	mono_domain_unlock (domain);
+	addr = cache_method_pointer (domain, imethod, addr);
 
 	mono_memory_barrier ();
 	imethod->jit_entry = addr;
