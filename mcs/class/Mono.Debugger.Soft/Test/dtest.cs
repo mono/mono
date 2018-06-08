@@ -4859,5 +4859,108 @@ public class DebuggerTests
 		e = step_into ();
 		Assert.IsTrue ((e as StepEvent).Method.Name == "op_Equality" || (e as StepEvent).Method.Name == "if_property_stepping");
 	}
+
+	void HandleEvents () {
+		string failMessage = null;
+		var alreadyStopped = false;
+		while (true) {
+			var nextEventSet = vm.GetNextEventSet (5000);
+			if (nextEventSet == null)
+				break;
+
+			foreach (var e in nextEventSet.Events) {
+				if (e.EventType == EventType.AssemblyLoad) {
+					var assemblyload = e as AssemblyLoadEvent;
+					var amirror = assemblyload.Assembly;
+					if (amirror.GetName ().Name.Contains ("dtest-app")) {
+						var methodMirror = amirror.EntryPoint.DeclaringType.GetMethod ("attach_break");
+						vm.SetBreakpoint (methodMirror, 0);
+					}
+				}
+
+				if (e.EventType == EventType.TypeLoad) {
+					Assert.Fail ("Unexpected TypeLoadEvent");
+				}
+
+				if (e.EventType == EventType.Breakpoint) {
+					var typeLoadRequest = vm.CreateTypeLoadRequest ();
+					typeLoadRequest.SourceFileFilter = new[] {"dtest-app.cs"};
+					typeLoadRequest.Enable ();
+
+					if (alreadyStopped) {
+						Assert.Fail ("Unexpected BreakpointEvent");
+					}
+
+					alreadyStopped = true;
+					continue;
+				}
+
+				try {
+					vm.Resume ();
+				}
+				catch (VMNotSuspendedException ex) {
+					failMessage = ex.Message;
+				}
+			}
+		}
+
+		if (failMessage != null)
+			Assert.Fail (failMessage);
+	}
+
+	void ShouldNotSendUnexpectedTypeLoadEventsAndInvalidSuspendPolicyAfterAttach (int port) {
+		string failMessage = null;
+		try {
+			vm = ConnectToPort (port);
+
+			vm.EnableEvents (EventType.AssemblyLoad, EventType.ThreadStart);
+			var vmstart = GetNextEvent ();
+			Assert.AreEqual (EventType.VMStart, vmstart.EventType);
+			try {
+				vm.Resume ();
+			}
+			catch (VMNotSuspendedException e)
+			{
+				failMessage = e.Message;
+			}
+			HandleEvents ();
+		}
+		catch (Exception ex) {
+			failMessage = ex.Message;
+		}
+		finally {
+			vm.Exit (0);
+			vm = null;
+		}
+		if (failMessage != null)
+			Assert.Fail (failMessage);
+	}
+
+	[Test]
+	public void ShouldNotSendUnexpectedTypeLoadEventsAndInvalidSuspendPolicyAfterAttachIfSuspendIsTrue() {
+		vm.Exit (0);
+		var port = GetFreePort ();
+
+		// Launch the app using server=y,suspend=y
+		var pi = CreateStartInfo (new string[] { $"--debugger-agent=transport=dt_socket,address=127.0.0.1:{port},server=y,suspend=y", dtest_app_path, "attach" });
+		pi.UseShellExecute = false;
+		var process = Diag.Process.Start (pi);
+
+		ShouldNotSendUnexpectedTypeLoadEventsAndInvalidSuspendPolicyAfterAttach (port);
+	}
+
+	[Test]
+	[Category("NotWorking")]
+	public void ShouldNotSendUnexpectedTypeLoadEventsAndInvalidSuspendPolicyAfterAttachIfSuspendIsFalse() {
+		vm.Exit (0);
+		var port = GetFreePort ();
+
+		// Launch the app using server=y,suspend=n
+		var pi = CreateStartInfo (new string[] { $"--debugger-agent=transport=dt_socket,address=127.0.0.1:{port},server=y,suspend=n", dtest_app_path, "attach" });
+		pi.UseShellExecute = false;
+		var process = Diag.Process.Start (pi);
+
+		ShouldNotSendUnexpectedTypeLoadEventsAndInvalidSuspendPolicyAfterAttach (port);
+	}
 } // class DebuggerTests
 } // namespace
