@@ -1,3 +1,11 @@
+#if BIT64
+using nuint = System.UInt64;
+#else
+using nuint = System.UInt32;
+#endif
+
+using System.Runtime.CompilerServices;
+
 namespace System
 {
 	partial class Buffer
@@ -214,6 +222,11 @@ namespace System
 		internal static unsafe void Memmove (byte *dest, byte *src, uint len)
 		{
 			Memcpy (dest, src, (int) len);
+		}
+
+		internal static void Memmove<T>(ref T destination, ref T source, nuint elementCount)
+		{
+			Memmove (ref Unsafe.As<T, byte>(ref destination), ref Unsafe.As<T, byte>(ref source), (nuint)Unsafe.SizeOf<T>());
 		}
 	}
 }

@@ -901,7 +901,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/argumentnullexception.cs
 ../referencesource/mscorlib/system/argumentoutofrangeexception.cs
 ../referencesource/mscorlib/system/arithmeticexception.cs
-../referencesource/mscorlib/system/arraysegment.cs
 ../referencesource/mscorlib/system/arraytypemismatchexception.cs
 ../referencesource/mscorlib/system/asynccallback.cs
 ../referencesource/mscorlib/system/attribute.cs
@@ -1541,9 +1540,7 @@ corefx/AwaitTaskContinuation.cs
 corefx/SynchronizationContext.cs
 corefx/SR.cs
 corefx/CompareInfo.cs
-corefx/MemoryExtensions.cs
 corefx/GlobalizationMode.cs
-corefx/MemoryMarshal.cs
 
 corert/DependencyReductionRootAttribute.cs
 corert/AddrofIntrinsics.cs
@@ -1562,17 +1559,15 @@ corert/RuntimeAugments.cs
 
 ../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
 
-../../../external/corert/src/System.Private.CoreLib/shared/System/String.Manipulation.cs
-../../../external/corert/src/System.Private.CoreLib/shared/System/StringSpanHelpers.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/AsyncCausalityTracer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/TaskTraceCallbacks.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Array.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/ByReference.cs
 # TODO: Should all come from shared
 ../../../external/corert/src/System.Private.CoreLib/src/System/String.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/String.Comparison.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
 
@@ -1610,6 +1605,7 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/KeyedCollection.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/ReadOnlyDictionary.cs
 
+../../../external/corefx/src/Common/src/CoreLib/System/ArraySegment.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Gen2GcCallback.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/HResults.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MathF.cs
@@ -1617,14 +1613,19 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Memory.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MemoryDebugView.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MemoryExtensions.cs
+../../../external/corefx/src/Common/src/CoreLib/System/MemoryExtensions.Fast.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ReadOnlyMemory.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ReadOnlySpan.cs
+../../../external/corefx/src/Common/src/CoreLib/System/ReadOnlySpan.Fast.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Span.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Span.Fast.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/SpanDebugView.cs
-#../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.cs
+../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.BinarySearch.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.Byte.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.T.cs
+../../../external/corefx/src/Common/src/CoreLib/System/String.Comparison.cs
+../../../external/corefx/src/Common/src/CoreLib/System/String.Manipulation.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/String.Searching.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/StringSplitOptions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Tuple.cs
@@ -1721,6 +1722,7 @@ corert/RuntimeAugments.cs
 
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/MemoryMarshal.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/MemoryMarshal.Fast.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskCanceledException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskCompletionSource.cs
@@ -1748,15 +1750,12 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/PartitionerStatic.cs
 
 ../../../external/corefx/src/System.Memory/src/System/Pinnable.cs
-../../../external/corefx/src/System.Memory/src/System/MemoryExtensions.Portable.cs
-../../../external/corefx/src/System.Memory/src/System/ReadOnlySpan.Portable.cs
 ../../../external/corefx/src/System.Memory/src/System/SequencePosition.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanHelpers.cs
-../../../external/corefx/src/System.Memory/src/System/Span.Portable.cs
 ../../../external/corefx/src/System.Memory/src/System/ThrowHelper.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/*.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/Binary/*.cs
-../../../external/corefx/src/System.Memory/src/System/Runtime/InteropServices/*.cs
+../../../external/corefx/src/System.Memory/src/System/Runtime/InteropServices/*.cs:MemoryMarshal.Portable.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Buffers/Text/FormattingHelpers.CountDigits.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/StandardFormat.cs
