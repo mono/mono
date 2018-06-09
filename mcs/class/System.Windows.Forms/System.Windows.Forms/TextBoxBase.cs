@@ -2046,9 +2046,11 @@ namespace System.Windows.Forms
 			Invalidate();
 		}
 
-		internal void CalculateScrollBars ()
+		internal bool CalculateScrollBars ()
 		{
-			// FIXME - need separate calculations for center and right alignment
+			var old_canvas_width = canvas_width;
+			var old_canvas_height = canvas_height;
+
 			SizeControls ();
 
 			if (document.Width > document.ViewPortWidth) {
@@ -2113,16 +2115,20 @@ namespace System.Windows.Forms
 			PositionControls ();
 
 			SizeControls (); //Update sizings now we've decided whats visible
+
+			return (canvas_width != old_canvas_width || canvas_height != old_canvas_height);
 		}
 
 		private void document_WidthChanged (object sender, EventArgs e)
 		{
-			CalculateScrollBars();
+			if (CalculateScrollBars())
+				CalculateDocument(); // Viewport has changed due to the document change, update the document.
 		}
 
 		private void document_HeightChanged (object sender, EventArgs e)
 		{
-			CalculateScrollBars();
+			if (CalculateScrollBars())
+				CalculateDocument();
 		}
 
 		private void ScrollLinks (int xChange, int yChange)
@@ -2315,40 +2321,41 @@ namespace System.Windows.Forms
 			// If the caret moves to the left outside the visible area, we jump the document into view, not just one
 			// character, but 1/3 of the width of the document
 			// If the caret moves to the right outside the visible area, we scroll just enough to keep the caret visible
+			// For comparison, in Windows 8.1 / .Net 4:
+			//  Multiline: as above, but 1/4
+			//  Single line: either direction with the cursors jumps 1/4
+			// Both are irrespective of alignment.
 
 			// Handle horizontal scrolling
-			if (document.CaretLine.alignment == HorizontalAlignment.Left) {
-				// Check if we moved out of view to the left
-				if (pos.X < (document.ViewPortX)) {
-					do {
-						if ((hscroll.Value - document.ViewPortWidth / 3 - 1) >= hscroll.Minimum) {
-							hscroll.SafeValueSet (hscroll.Value - document.ViewPortWidth / 3 - 1); // - 1 so that we're guaranteed to move, even if document.ViewPortWidth is < 3.
-						} else {
-							hscroll.Value = hscroll.Minimum;
-						}
-					} while (hscroll.Value > pos.X);
-				}
-
-				// Check if we moved out of view to the right
-				if ((pos.X >= (document.ViewPortWidth + document.ViewPortX)) && (hscroll.Value != hscroll.Maximum)) {
-					if ((pos.X - document.ViewPortWidth + 1) <= hscroll.Maximum) {
-						if (pos.X - document.ViewPortWidth >= 0) {
-							hscroll.SafeValueSet (pos.X - document.ViewPortWidth + 1);
-						} else {
-							hscroll.Value = 0;
-						}
+			// Check if we moved out of view to the left
+			if (pos.X < (document.ViewPortX)) {
+				do {
+					var newVal = hscroll.Value - document.ViewPortWidth / 3 - 1;  // - 1 so that we're guaranteed to move, even if document.ViewPortWidth is < 3.
+					if (newVal >= hscroll.Minimum) {
+						hscroll.SafeValueSet (newVal);
 					} else {
-						hscroll.Value = hscroll.Maximum;
+						hscroll.Value = hscroll.Minimum;
 					}
-				}
-			} else if (document.CaretLine.alignment == HorizontalAlignment.Right) {
-//				hscroll.Value = pos.X;
+				} while (hscroll.Value > pos.X);
+			}
 
-//				if ((pos.X > (this.canvas_width + document.ViewPortX)) && (hscroll.Enabled && (hscroll.Value != hscroll.Maximum))) {
-//					hscroll.Value = hscroll.Maximum;
-//				}
-			} else {
-				// FIXME - implement center cursor alignment
+			// Check if we moved out of view to the right
+			if ((pos.X >= (document.ViewPortWidth + document.ViewPortX)) && (hscroll.Value != hscroll.Maximum)) {
+                int newVal;
+				if (Multiline) {
+					newVal = pos.X - document.ViewPortWidth + 1;
+				} else {
+					newVal = pos.X - document.ViewPortWidth * 2 / 3 + 1;
+				}
+                if (newVal <= hscroll.Maximum - document.ViewPortWidth + 1) {
+					if (newVal >= 0) {
+                        hscroll.SafeValueSet (newVal);
+					} else {
+						hscroll.Value = 0;
+					}
+				} else {
+					hscroll.Value = hscroll.Maximum - document.ViewPortWidth + 1;
+				}
 			}
 
 			if (Text.Length > 0)
@@ -2358,7 +2365,10 @@ namespace System.Windows.Forms
 				return;
 
 			// Handle vertical scrolling
-			height = document.CaretLine.Height + 1;
+			height = document.CaretLine.Height;
+
+			if (document.CaretLine.line_no < document.Lines)
+				height += 1; // Add a bit of room on the bottom if there are more lines - but don't scroll past the bottom when ther aren't.
 
 			if (pos.Y < document.ViewPortY)
 				vscroll.SafeValueSet (pos.Y);
