@@ -237,7 +237,7 @@ namespace System.Windows.Forms {
 		internal int		viewport_x;
 		internal int		viewport_y;		// The visible area of the document
 		internal int		offset_x;
-		internal int		offset_y;
+		internal int		offset_y;		// Never assigned to except in constructor, and a property that is also never assigned to?
 		internal int		viewport_width;
 		internal int		viewport_height;
 
@@ -415,7 +415,8 @@ namespace System.Windows.Forms {
 
 		internal int Length {
 			get {
-				return char_count + lines - 1;	// Add \n for each line but the last
+				var lastLine = GetLine(lines);
+				return char_count - LineEndingLength (lastLine.ending);
 			}
 		}
 
@@ -1726,15 +1727,17 @@ namespace System.Windows.Forms {
 
 		internal void DumpDoc ()
 		{
-			Console.WriteLine ("<doc lines='{0}'>", lines);
+			Console.WriteLine ("<doc lines='{0}' width='{1}' height='{2}' ownerwidth='{3}' ownerheight='{4}'>",
+				lines, document_x, document_y, owner.Width, owner.Height);
 			for (int i = 1; i <= lines ; i++) {
 				Line line = GetLine (i);
-				Console.WriteLine ("<line no='{0}' ending='{1}'>", line.line_no, line.ending);
+				Console.WriteLine ("<line no='{0}' ending='{1}' x='{2}' y='{3}' width='{4}' height='{5}' indent='{6}' hanging-indent='{7}' right-indent='{8}'>",
+					line.line_no, line.ending, line.X, line.Y, line.Width, line.Height, line.Indent, line.HangingIndent, line.RightIndent);
 
 				LineTag tag = line.tags;
 				while (tag != null) {
-					Console.Write ("\t<tag type='{0}' span='{1}->{2}' font='{3}' color='{4}' position='{5}' charoffset='{6}'>",
-						tag.GetType (), tag.Start, tag.Length, tag.Font, tag.Color, tag.TextPosition, tag.CharOffset);
+					Console.Write ("\t<tag type='{0}' span='{1}->{2}' font='{3}' color='{4}' position='{5}' charoffset='{6}' x='{7}' width='{8}' height='{11}' ascent='{9}' descent='{10}'>",
+						tag.GetType (), tag.Start, tag.Length, tag.Font, tag.Color, tag.TextPosition, tag.CharOffset, tag.X, tag.Width, tag.Ascent, tag.Descent, tag.MaxHeight());
 					Console.Write (tag.Text ());
 					Console.WriteLine ("</tag>");
 					tag = tag.Next;
@@ -1788,7 +1791,7 @@ namespace System.Windows.Forms {
 
 			/// Make sure that we aren't drawing one more line then we need to
 			line = GetLine (end - 1);
-			if (line != null && clip.Bottom == offset_y + line.Y + line.SpacingBefore + line.height - viewport_y)
+			if (line != null && clip.Bottom == offset_y + line.Y + (int)line.SpacingBefore + line.height - viewport_y)
 				end--;
 
 			line_no = start;
@@ -1863,8 +1866,8 @@ namespace System.Windows.Forms {
 						continue;
 					}
 
-					if (((tag.X + tag.Width) < (clip.Left - viewport_x - offset_x)) &&
-					     (tag.X > (clip.Right - viewport_x - offset_x))) {
+					if (((tag.X + tag.Width) < (clip.Left + viewport_x - offset_x)) ||
+					     (tag.X > (clip.Right + viewport_x - offset_x))) {
 						// Don't draw a tag that is horizontally outside the visible region.
 						tag = tag.Next;
 						continue;
@@ -2079,9 +2082,11 @@ namespace System.Windows.Forms {
 			// There are no line feeds in our text to be pasted
 			if (break_index == s.Length) {
 				line.InsertString (pos, s, tag);
+				CharCount += s.Length;
 			} else {
 				// Add up to the first line feed to our current position
 				line.InsertString (pos, s.Substring (0, break_index + LineEndingLength (ending)), tag);
+				CharCount += break_index + LineEndingLength (ending);
 				
 				// Split the rest of the original line to a new line
 				Split (line, pos + (break_index + LineEndingLength (ending)));
@@ -2110,14 +2115,12 @@ namespace System.Windows.Forms {
 
 				// Add the remainder of the insert text to the split
 				// part of the original line
+				CharCount += s.Length - break_index;
 				split_line.InsertString (0, s.Substring (break_index));
 			}
 			
 			// Allow the document to recalculate things
 			ResumeRecalc (false);
-
-			// Update our character count
-			CharCount += s.Length;
 
 			UpdateView (line, lines - old_line_count + 1, pos);
 
@@ -2266,8 +2269,15 @@ namespace System.Windows.Forms {
 			if (!multiline) {
 				UpdateView (line, lines, pos);
 				owner.Invalidate ();
-			} else 
+			} else {
+				if (line.line_no > 1) {
+					// If the previous line is wrapped, we update that too in case the wrap point has changed.
+					var l = GetLine(line.line_no - 1);
+					if (l != null && (l.ending == LineEnding.None || l.ending == LineEnding.Wrap))
+						line = l;
+				}
 				UpdateView (line, pos);
+			}
 		}
 
 		// Deletes a character at or after the given position (depending on forward); it will not delete past line limits
@@ -2608,8 +2618,6 @@ namespace System.Windows.Forms {
 			Line	line;
 			int	line_no;
 
-			CharCount += Text.Length;
-
 			if (LineNo<1 || Text == null) {
 				if (LineNo<1) {
 					throw new ArgumentNullException("LineNo", "Line numbers must be positive");
@@ -2617,6 +2625,8 @@ namespace System.Windows.Forms {
 					throw new ArgumentNullException("Text", "Cannot insert NULL line");
 				}
 			}
+			
+			CharCount += Text.Length;
 
 			add = new Line (this, LineNo, Text, align, font, color, back_color, text_position, char_offset, left_indent,
 				hanging_indent, right_indent, spacing_before, spacing_after, line_spacing, line_spacing_multiple, tab_stops, visible, ending);
@@ -3403,7 +3413,7 @@ namespace System.Windows.Forms {
 				start = chars;
 				chars += line.text.Length;
 
-				if (index <= chars) {
+				if (index < chars) {
 					// we found the line
 					tag = line.tags;
 
@@ -3841,17 +3851,10 @@ namespace System.Windows.Forms {
 				}
 
 				if (line.widths[line.text.Length] > new_width) {
-					new_width = (int)line.widths[line.text.Length];
+					new_width = (int)Math.Ceiling(line.widths[line.text.Length]);
 				}
 
-				// Calculate alignment
-				if (line.alignment != HorizontalAlignment.Left) {
-					if (line.alignment == HorizontalAlignment.Center) {
-						line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
-					} else {
-						line.align_shift = viewport_width - (int)line.widths[line.text.Length] - 1;
-					}
-				}
+				line.CalculateAlignment();
 
 				if (multiline)
 					offset += line.height;
