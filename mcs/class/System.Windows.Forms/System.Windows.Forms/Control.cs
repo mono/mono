@@ -2267,6 +2267,9 @@ namespace System.Windows.Forms
 					return false;
 				}
 
+				if (!is_visible || !is_enabled)
+					return false;
+
 				parent = this;
 				while (parent != null) {
 					if (!parent.is_visible || !parent.is_enabled) {
@@ -4838,6 +4841,8 @@ namespace System.Windows.Forms
 					XplatUI.SetVisible (Handle, is_visible, true);
 					if (!is_visible) {
 						if (parent != null && parent.IsHandleCreated) {
+							if (InternalContainsFocus)
+								parent.SelectNextControl(this, true, true, true, true);
 							parent.Invalidate (bounds);
 							parent.Update ();
 						} else {
