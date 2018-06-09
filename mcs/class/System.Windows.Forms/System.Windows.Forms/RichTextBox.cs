@@ -2133,12 +2133,12 @@ namespace System.Windows.Forms {
 					line.ending = LineEnding.Rich;
 				}
 
-				line.indent = Math.Max (left_indent, line.indent);
-				line.HangingIndent = Math.Max (hanging_indent, line.hanging_indent);
-				line.right_indent = Math.Max (rtf_style.rtf_par_line_right_indent, line.right_indent);
-				line.spacing_after = Math.Max (rtf_style.rtf_par_spacing_after, line.spacing_after);
-				line.spacing_before = Math.Max (rtf_style.rtf_par_spacing_before, line.spacing_before);
-				line.line_spacing = Math.Max (rtf_style.rtf_par_line_spacing, line.line_spacing);
+				line.indent = left_indent;
+				line.HangingIndent = hanging_indent;
+				line.right_indent = rtf_style.rtf_par_line_right_indent;
+				line.spacing_after = rtf_style.rtf_par_spacing_after;
+				line.spacing_before = rtf_style.rtf_par_spacing_before;
+				line.line_spacing = rtf_style.rtf_par_line_spacing;
 				line.line_spacing_multiple = rtf_style.rtf_par_line_spacing_multiple;
 				line.alignment = rtf_style.rtf_par_align;
 
@@ -2804,6 +2804,8 @@ namespace System.Windows.Forms {
 					}
 
 					if (tag.TextPosition != text_position) {
+						if (text_position != TextPositioning.Normal && tag.TextPosition != TextPositioning.Normal)
+							sb.Append("\\nosupersub"); // Technically it is possible to have subscripts in superscript and vise versa. But that's not what we've got.
 						text_position = tag.TextPosition;
 						switch (tag.TextPosition) {
 						case TextPositioning.Normal: 
