@@ -51,7 +51,7 @@ namespace System.Windows.Forms
 		internal HorizontalAlignment	alignment;		// Alignment of the line
 		internal int			align_shift;		// Pixel shift caused by the alignment
 		internal float			indent;			// Left indent for the first line
-		internal float			hanging_indent;		// Hanging indent (difference between first line indent and other lines, cannot be less than -indent)
+		internal float			hanging_indent;		// Hanging indent (difference between first line indent and other lines)
 		internal float			right_indent;		// Right indent for all lines
 		internal LineEnding		ending;
 		internal float			spacing_before;
@@ -181,10 +181,7 @@ namespace System.Windows.Forms
 		internal float HangingIndent {
 			get { return hanging_indent; }
 			set {
-				if (hanging_indent >= -indent)
-					this.hanging_indent = value;
-				else
-					this.hanging_indent = -indent;
+				this.hanging_indent = value;
 				recalc = true;
 			}
 		}
@@ -583,14 +580,11 @@ namespace System.Windows.Forms
 		/// </summary>
 		internal bool RecalculateLine (Graphics g, Document doc)
 		{
-			return RecalculateLine (g, doc, kerning_fonts.ContainsKey (tags.Font.GetHashCode ()));
-		}
-
-		private bool RecalculateLine (Graphics g, Document doc, bool handleKerning)
-		{
 			LineTag tag;
 			int pos;
 			int len;
+			Font currentFont;
+			int currentFontStart;
 			SizeF size;
 			float w;
 			int prev_offset;
@@ -603,7 +597,6 @@ namespace System.Windows.Forms
 			int prev_height;
 			int prev_ascent;
 			float prev_spacing_before;
-			float add_width;
 			int max_above_baseline;
 			int max_below_baseline;
 			int total_ascent;
@@ -611,9 +604,13 @@ namespace System.Windows.Forms
 			TabStop lastTab;
 			int lastTabPos;
 			char c;
+			bool handleKerning;
+			float right_indent;
 
 			pos = 0;
 			len = this.text.Length;
+			currentFont = tags.FontToDisplay;
+			currentFontStart = 0;
 			tag = this.tags;
 			prev_offset = this.offset;	// For drawing optimization calculations
 			prev_height = this.height;
@@ -628,6 +625,7 @@ namespace System.Windows.Forms
 			this.height = 0;		// Reset line height
 			this.ascent = 0;		// Reset the ascent for the line
 			tag.Shift = 0;			// Reset shift (which should be stored as pixels, not as points)
+			right_indent = Math.Max(this.right_indent, 0); // Ignore any negative right indent.
 
 			if (line_no > 0) {
 				line = doc.GetLine (LineNo - 1);
@@ -637,9 +635,14 @@ namespace System.Windows.Forms
 			}
 
 			if (first_in_para)
-				widths[0] = document.left_margin + indent;
+				widths[0] = indent;
 			else
-				widths[0] = document.left_margin + indent + hanging_indent;
+				widths[0] = indent + hanging_indent;
+			
+			if (widths[0] < 0)
+				widths[0] = 0; // Don't allow a negative indent to take the line to a negative position.
+			
+			widths[0] += document.left_margin;
 
 			this.recalc = false;
 			retval = false;
@@ -647,7 +650,8 @@ namespace System.Windows.Forms
 
 			wrap_pos = 0;
 			prev_wrap_pos = 0;
-			add_width = 0;
+			
+			handleKerning = kerning_fonts.ContainsKey (currentFont.GetHashCode ());
 
 			while (pos < len) {
 
@@ -655,7 +659,15 @@ namespace System.Windows.Forms
 					//tag.Ascent = 0;
 					tag.Shift = (tag.Line.ascent - tag.Ascent); // / 72;
 					tag = tag.Next;
+					if (tag.Length != 0 && tag.FontToDisplay != currentFont) {
+						CheckKerning(g, currentFont, currentFontStart, pos - currentFontStart);
+						currentFont = tag.FontToDisplay;
+						currentFontStart = pos;
+						handleKerning = kerning_fonts.ContainsKey (currentFont.GetHashCode ());
+					}
 				}
+
+				c = text[pos];
 
 				// kerning is a problem.  The original code in this method assumed that the
 				// width of a string equals the sum of the widths of its characters.  This is
@@ -673,17 +685,18 @@ namespace System.Windows.Forms
 					// MeasureText doesn't measure trailing spaces, so we do the best we can for those
 					// in the else branch.
 					// It doesn't measure /t characters either, we need to add it manually with add_width.
-					size = TextBoxTextRenderer.MeasureText (g, text.ToString (0, pos + 1), tag.Font);
-					newWidth = widths[0] + size.Width + add_width;
+					size = TextBoxTextRenderer.MeasureText (g, text.ToString (currentFontStart, pos + 1 - currentFontStart), currentFont);
+					newWidth = widths[currentFontStart] + size.Width;
 				}
-				else
-				{
-				c = text[pos];
-
-				if (c != '\t') {
+				else if (c != '\t') {
 					size = tag.SizeOfPosition(g, pos);
+					size = tag.SizeOfPosition (g, pos);
 					w = size.Width;
+					newWidth = widths[pos] + w;
 				} else {
+					CheckKerning(g, currentFont, currentFontStart, pos - currentFontStart);
+					currentFontStart = pos + 1; // Don't try handling the tab along with kerned text.
+					
 					if (lastTab != null) {
 						ProcessLastTab(lastTab, lastTabPos, pos);
 						lastTab = null;
@@ -703,25 +716,27 @@ namespace System.Windows.Forms
 					if (w < 0) {
 						w = tag.SizeOfPosition(g, pos).Width;
 					}
+					
+					newWidth = widths[pos] + w;
 				}
 
-				// FIXME: Technically there are multiple no-break spaces, not just the main one.
-				if ((Char.IsWhiteSpace (c) && c != '\u00A0') || c == '-' || c == '\u2013' || c == '\u2014') {
-					// Primarily break on whitespace except a no-break space, or dashes.
-					prev_wrap_pos = wrap_pos;
-					if (c == '\t') {
-						wrap_pos = pos; // Wrap before tabs for some reason.
-					} else {
-						wrap_pos = pos + 1;
+				if (doc.Wrap) {
+					// FIXME: Technically there are multiple no-break spaces, not just the main one.
+					if ((Char.IsWhiteSpace (c) && c != '\u00A0') || c == '-' || c == '\u2013' || c == '\u2014') {
+						// Primarily break on dashes or whitespace other than a no-break space.
+						prev_wrap_pos = wrap_pos;
+						if (c == '\t') {
+							wrap_pos = pos; // Wrap before tabs for some reason.
+						} else {
+							wrap_pos = pos + 1;
+						}
 					}
-				}
 
-				if (doc.wrap) {
-					if ((wrap_pos > 0) && (wrap_pos != len) && (newWidth + 5) > (doc.viewport_width - this.right_indent)) {
+					if ((newWidth) > (doc.viewport_width - this.right_indent)) {
 						LineTag split_tag = null;
 						if (wrap_pos > 0) {
 							// Make sure to set the last width of the line before wrapping
-						widths[pos + 1] = newWidth;
+							widths[pos + 1] = newWidth;
 
 							if (wrap_pos > pos && Char.IsWhiteSpace(c)) {
 								while (wrap_pos < text.Length && Char.IsWhiteSpace(text[wrap_pos]) && text[wrap_pos] != '\t') {
@@ -731,6 +746,8 @@ namespace System.Windows.Forms
 								wrapped = true; // don't try pulling more into this line, but keep looping to deal with the rest of the widths and tags
 							} else {
 								if (wrap_pos > pos) {
+									// We're at a dash (otherwise we'd be above), but don't have room to fit it in.
+									// Wrap at the previous wrap point if possible.
 									wrap_pos = prev_wrap_pos > 0 ? prev_wrap_pos : pos;
 								}
 								split_tag = tag;
@@ -740,7 +757,7 @@ namespace System.Windows.Forms
 							// No suitable wrap position was found so break right in the middle of a word
 
 							// Make sure to set the last width of the line before wrapping
-						widths[pos + 1] = newWidth;
+							widths[pos + 1] = newWidth;
 
 							split_tag = tag;
 						} // Else don't wrap -- pos == 0, so we'd infinite loop adding blank lines before this.
@@ -775,9 +792,11 @@ namespace System.Windows.Forms
 						line = doc.GetLine (this.line_no + 1);
 						do {
 							if ((line != null) && (ending == LineEnding.Wrap || ending == LineEnding.None) &&
-							    (widths[pos] < doc.viewport_width || line.text.Length == 0)) { // Only do this if the line isn't already full, or the next line is empty.
+							    (widths[pos] < (doc.viewport_width - this.right_indent) || line.text.Length == 0)) { // Only do this if the line isn't already full, or the next line is empty.
 								// Pull the two lines together
+								var h = this.height; // Back up h, because Combine sets it to zero.
 								doc.Combine (this, line);
+								this.height = h; // And restore it. There's no point starting at the start again.
 								tag = FindTag (pos - 1); // Document.Combine() called Line.Streamline(), so this is necessary in case tag points to one of the tags that got removed.
 								len = this.text.Length;
 								line = doc.GetLine (this.line_no + 1);
@@ -826,27 +845,15 @@ namespace System.Windows.Forms
 
 					tag = tag.Next;
 					if (tag != null) {
+						if (tag.Length != 0 && tag.FontToDisplay != currentFont) {
+							CheckKerning(g, currentFont, currentFontStart, pos - currentFontStart);
+							currentFont = tag.FontToDisplay;
+							currentFontStart = pos;
+							handleKerning = kerning_fonts.ContainsKey (currentFont.GetHashCode ());
+						}
 						tag.Shift = 0;
-						//wrap_pos = pos; //No, we can't just wrap on tag boundaries -- e.g. if the first letter of the word has a different colour / font.
+						// We can't just wrap on tag boundaries -- e.g. if the first letter of the word has a different colour / font.
 					}
-				}
-			}
-
-			var fullText = text.ToString();
-			if (!handleKerning && fullText.Length > 1 && !wrapped)
-			{
-				// Check whether kerning takes place for this string and font.
-				var realSize = TextBoxTextRenderer.MeasureText(g, fullText, tags.Font);
-				float realWidth = realSize.Width + widths[0];
-				// MeasureText ignores trailing whitespace, so we will too at this point.
-				int length = fullText.TrimEnd().Length;
-				float sumWidth = widths[length];
-				if (realWidth != sumWidth)
-				{
-					kerning_fonts.Add(tags.Font.GetHashCode (), true);
-					// Using a slightly incorrect width this time around isn't that bad. All that happens
-					// is that the cursor is a pixel or two off until the next character is typed.  It's
-					// the accumulation of pixel after pixel that causes display problems.
 				}
 			}
 
@@ -855,7 +862,7 @@ namespace System.Windows.Forms
 				lastTab = null;
 			}
 
-			while (tag != null) {	
+			while (tag != null) {
 				tag.Shift = (tag.Line.ascent - tag.Ascent); // / 72;
 				tag = tag.Next;
 			}
@@ -883,6 +890,27 @@ namespace System.Windows.Forms
 
 			for (int i = tab_pos + 1; i <= pos; i++) {
 				widths[i] += change;
+			}
+		}
+		
+		private void CheckKerning(Graphics g, Font font, int start, int length) {
+			if (length > 1) {
+				if (!kerning_fonts.ContainsKey (tags.Font.GetHashCode ())) {
+					// Check whether kerning takes place for this string and font.
+					var partText = text.ToString(start, length);
+					var realSize = TextBoxTextRenderer.MeasureText(g, partText, font);
+					float realWidth = realSize.Width + widths[start + 1];
+					// MeasureText ignores trailing whitespace, so we will too at this point.
+					int textLength = partText.TrimEnd().Length;
+					float sumWidth = widths[textLength + start + 1];
+					if (realWidth != sumWidth)
+					{
+						kerning_fonts.Add(tags.Font.GetHashCode (), true);
+						// Using a slightly incorrect width this time around isn't that bad. All that happens
+						// is that the cursor is a pixel or two off until the next character is typed.  It's
+						// the accumulation of pixel after pixel that causes display problems.
+					}
+				}
 			}
 		}
 
@@ -928,20 +956,25 @@ namespace System.Windows.Forms
 		}
 
 		internal void CalculateAlignment() {
-			switch (alignment) {
+            var alignmentWidth = document.ViewPortWidth - document.left_margin - document.right_margin;
+			var alignmentLineWidth = GetAlignmentLineWidth();
+
+            switch (alignment) {
 			case HorizontalAlignment.Left:
 				align_shift = 0;
 				break;
 			case HorizontalAlignment.Center:
-				align_shift = (document.viewport_width - GetLineWidth()) / 2;
+                    align_shift = (alignmentWidth - alignmentLineWidth) / 2;
 				break;
 			case HorizontalAlignment.Right:
-				align_shift = document.viewport_width - GetLineWidth() - document.right_margin - (int)right_indent;
+                    align_shift = alignmentWidth - alignmentLineWidth;
 				break;
 			}
+
+			align_shift = Math.Max(align_shift, 0); // Don't allow negative shifts.
 		}
 
-		private int GetLineWidth() {
+		private int GetAlignmentLineWidth() {
 			int last = text.Length - 1;
 			if (last < 0)
 				return 0;
@@ -950,7 +983,9 @@ namespace System.Windows.Forms
 			while (last > 0 && Char.IsWhiteSpace(c) && c != '\t' && c != '\u00A0') {
 				c = text[--last];
 			}
-			return (int)(widths[last + 1] - document.left_margin - indent);
+			// widths[0] has both the left margin and the left indents.
+			// Remove the margin (it is part of the viewport) and add the right indents (part of the line width, for alignment purposes).
+			return (int)(widths[last + 1] - document.left_margin + Math.Max(right_indent, 0));
 		}
 		
 		internal void Streamline (int lines)
