@@ -1882,6 +1882,12 @@ namespace System.Windows.Forms {
 			
 			UpdateBounds();
 
+			if (is_clientsize_set && clientsize_set != ClientSize) {
+				SuspendLayout();
+				this.Size += (clientsize_set - ClientSize);
+				ResumeLayout(false); // This is to avoid affecting children with anchors other than Top Left
+			}
+
 			if ((XplatUI.SupportsTransparency() & TransparencySupport.Set) != 0) {
 				if (allow_transparency) {
 					XplatUI.SetWindowTransparency(Handle, opacity, TransparencyKey);
@@ -2197,7 +2203,7 @@ namespace System.Windows.Forms {
 				if (keyData == Keys.Enter) {
 					IntPtr window = XplatUI.GetFocus ();
 					Control c = Control.FromHandle (window);
-					if (c is Button && c.FindForm () == this) {
+					if (c is Button && c.Visible && c.Enabled && c.FindForm () == this) {
 						((Button)c).PerformClick ();
 						return true;
 					}
