@@ -19,7 +19,7 @@
 	url = git://github.com/mono/ikdasm.git
 [submodule "external/reference-assemblies"]
 	path = external/binary-reference-assemblies
-	url = git://github.com/mono/reference-assemblies.git
+	url = git://github.com/filipnavara/reference-assemblies.git
 [submodule "external/nunit-lite"]
 	path = external/nunit-lite
 	url = git://github.com/mono/NUnitLite.git
@@ -36,7 +36,7 @@
 	branch = mono
 [submodule "external/corefx"]
 	path = external/corefx
-	url = git://github.com/mono/corefx.git
+	url = git://github.com/filipnavara/corefx.git
 [submodule "external/bockbuild"]
 	path = external/bockbuild
 	url = git://github.com/mono/bockbuild.git
