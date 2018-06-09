@@ -184,13 +184,14 @@ emit_span_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature
 {
 	MonoInst *ins;
 
+	MonoClassField *ptr_field = mono_class_get_field_from_name (cmethod->klass, "_pointer");
+	if (!ptr_field)
+		/* Portable Span<T> */
+		return NULL;
+
 	if (!strcmp (cmethod->name, "get_Item")) {
-		MonoClassField *ptr_field = mono_class_get_field_from_name (cmethod->klass, "_pointer");
 		MonoClassField *length_field = mono_class_get_field_from_name (cmethod->klass, "_length");
 
-		if (!ptr_field)
-			/* Portable Span<T> */
-			return NULL;
 		g_assert (length_field);
 
 		MonoGenericClass *gclass = mono_class_get_generic_class (cmethod->klass);
@@ -225,16 +226,12 @@ emit_span_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature
 		MonoClassField *length_field = mono_class_get_field_from_name (cmethod->klass, "_length");
 		g_assert (length_field);
 
-		MONO_INST_NEW (cfg, ins, OP_LDLEN);
-		ins->dreg = alloc_preg (cfg);
-		ins->sreg1 = args [0]->dreg;
-		ins->inst_imm = length_field->offset - sizeof (MonoObject);
-		ins->type = STACK_I4;
-		MONO_ADD_INS (cfg->cbb, ins);
-
-		cfg->flags |= MONO_CFG_NEEDS_DECOMPOSE;
-		cfg->cbb->needs_decompose = TRUE;
-
+		/*
+		 * We could convert this to OP_LDLEN, but it wouldn't help abcrem, since the src is a unique LDADDR not
+		 * the same array object.
+		 */
+		int reg = alloc_ireg (cfg);
+		EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADI4_MEMBASE, reg, args [0]->dreg, length_field->offset - sizeof (MonoObject));
 		return ins;
 	}
 
