@@ -227,11 +227,19 @@ emit_span_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature
 		g_assert (length_field);
 
 		/*
-		 * We could convert this to OP_LDLEN, but it wouldn't help abcrem, since the src is a unique LDADDR not
+		 * FIXME: This doesn't work with abcrem, since the src is a unique LDADDR not
 		 * the same array object.
 		 */
-		int reg = alloc_ireg (cfg);
-		EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADI4_MEMBASE, reg, args [0]->dreg, length_field->offset - sizeof (MonoObject));
+		MONO_INST_NEW (cfg, ins, OP_LDLEN);
+		ins->dreg = alloc_preg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		ins->inst_imm = length_field->offset - sizeof (MonoObject);
+		ins->type = STACK_I4;
+		MONO_ADD_INS (cfg->cbb, ins);
+
+		cfg->flags |= MONO_CFG_NEEDS_DECOMPOSE;
+		cfg->cbb->needs_decompose = TRUE;
+
 		return ins;
 	}
 

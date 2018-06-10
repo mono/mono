@@ -10314,7 +10314,7 @@ field_access_end:
 			ins->inst_imm = MONO_STRUCT_OFFSET (MonoArray, max_length);
 			ins->type = STACK_I4;
 			/* This flag will be inherited by the decomposition */
-			ins->flags |= MONO_INST_FAULT;
+			ins->flags |= MONO_INST_FAULT | MONO_INST_INVARIANT_LOAD;
 			MONO_ADD_INS (cfg->cbb, ins);
 			cfg->flags |= MONO_CFG_NEEDS_DECOMPOSE;
 			cfg->cbb->needs_decompose = TRUE;
