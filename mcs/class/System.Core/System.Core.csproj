@@ -486,6 +486,7 @@
     <Compile Include="System.IO.Pipes\PipeStreamImpersonationWorker.cs" />
     <Compile Include="System.IO.Pipes\PipeTransmissionMode.cs" />
     <Compile Include="System.Runtime.InteropServices\ComAwareEventInfo.cs" />
+    <Compile Include="System.Security.Cryptography.X509Certificates\DSACertificateExtensions.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\ECDsaCertificateExtensions.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\RSACertificateExtensions.cs" />
     <Compile Include="System.Security.Cryptography\AesCng.cs" />
