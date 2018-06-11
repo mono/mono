@@ -316,8 +316,115 @@ namespace System
 			if (attributeType == typeof (MonoCustomAttrs))
 				attributeType = null;
 
-			//FIXME align with GetCustomAttributes 
-			return GetCustomAttributesDataBase (obj, attributeType, false);
+			const string Message = "Invalid custom attribute data format";
+			IList<CustomAttributeData> r;
+			IList<CustomAttributeData> res = GetCustomAttributesDataBase (obj, attributeType, false);
+			// shortcut
+			if (!inherit && res.Count == 1) {
+				if (res [0] == null)
+					throw new CustomAttributeFormatException (Message);
+				if (attributeType != null) {
+					if (attributeType.IsAssignableFrom (res [0].AttributeType))
+						r = new CustomAttributeData[] { res [0] };
+					else
+						r = Array.Empty<CustomAttributeData> ();
+				} else {
+					r = new CustomAttributeData[] { res [0] };
+				}
+
+				return r;
+			}
+
+			if (inherit && GetBase (obj) == null)
+				inherit = false;
+
+			// if AttributeType is sealed, and Inherited is set to false, then 
+			// there's no use in scanning base types 
+			if ((attributeType != null && attributeType.IsSealed) && inherit) {
+				var usageAttribute = RetrieveAttributeUsage (attributeType);
+				if (!usageAttribute.Inherited)
+					inherit = false;
+			}
+
+			var initialSize = Math.Max (res.Count, 16);
+			List<CustomAttributeData> a = null;
+			ICustomAttributeProvider btype = obj;
+
+			/* Non-inherit case */
+			if (!inherit) {
+				if (attributeType == null) {
+					foreach (CustomAttributeData attrData in res) {
+						if (attrData == null)
+							throw new CustomAttributeFormatException (Message);
+					}
+
+					var result = new CustomAttributeData [res.Count];
+					res.CopyTo (result, 0);
+					return result;
+				} else {
+					a = new List<CustomAttributeData> (initialSize);
+					foreach (CustomAttributeData attrData in res) {
+						if (attrData == null)
+							throw new CustomAttributeFormatException (Message);
+						if (!attributeType.IsAssignableFrom (attrData.AttributeType))
+							continue;
+						a.Add (attrData);
+					}
+
+					return a.ToArray ();
+				}
+			}
+
+			/* Inherit case */
+			var attributeInfos = new Dictionary<Type, AttributeInfo> (initialSize);
+			int inheritanceLevel = 0;
+			a = new List<CustomAttributeData> (initialSize);
+
+			do {
+				foreach (CustomAttributeData attrData in res) {
+					AttributeUsageAttribute usage;
+					if (attrData == null)
+						throw new CustomAttributeFormatException (Message);
+
+					Type attrType = attrData.AttributeType;
+					if (attributeType != null) {
+						if (!attributeType.IsAssignableFrom (attrType))
+							continue;
+					}
+
+					AttributeInfo firstAttribute;
+					if (attributeInfos.TryGetValue (attrType, out firstAttribute))
+						usage = firstAttribute.Usage;
+					else
+						usage = RetrieveAttributeUsage (attrType);
+
+					// The same as for CustomAttributes.
+					//
+					// Only add attribute to the list of attributes if 
+					// - we are on the first inheritance level, or the attribute can be inherited anyway
+					// and (
+					// - multiple attributes of the type are allowed
+					// or (
+					// - this is the first attribute we've discovered
+					// or
+					// - the attribute is on same inheritance level than the first 
+					//   attribute that was discovered for this attribute type ))
+					if ((inheritanceLevel == 0 || usage.Inherited) && (usage.AllowMultiple ||
+						(firstAttribute == null || (firstAttribute != null
+							&& firstAttribute.InheritanceLevel == inheritanceLevel))))
+						a.Add(attrData);
+
+					if (firstAttribute == null)
+						attributeInfos.Add (attrType, new AttributeInfo (usage, inheritanceLevel));
+				}
+
+				if ((btype = GetBase (btype)) != null) {
+					inheritanceLevel++;
+					res = GetCustomAttributesDataBase (btype, attributeType, true);
+				}
+			} while (inherit && btype != null);
+
+			return a.ToArray ();
 		}
 
 		internal static IList<CustomAttributeData> GetCustomAttributesDataBase (ICustomAttributeProvider obj, Type attributeType, bool inheritedOnly)
