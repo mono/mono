@@ -202,7 +202,7 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\AlgorithmIdentifier.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\EnvelopedCms.Overloads.cs" />
+    <Compile Include="System.Security.Cryptography.Pkcs\EnvelopedCms.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\Pkcs9SigningTime.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedData.cs" />
   </ItemGroup>

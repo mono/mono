@@ -43,7 +43,7 @@ System.Security.Cryptography.Pkcs/AlgorithmIdentifier.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/CmsRecipientEnumerator.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/ContentInfo.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/EnvelopedCms.cs
-System.Security.Cryptography.Pkcs/EnvelopedCms.Overloads.cs
+System.Security.Cryptography.Pkcs/EnvelopedCms.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/KeyAgreeRecipientInfo.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/KeyTransRecipientInfo.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/Pkcs9AttributeObject.cs
