@@ -351,29 +351,32 @@ namespace System
 
 		internal static CustomAttributeData[] GetPseudoCustomAttributesData (ICustomAttributeProvider obj, Type attributeType)
 		{
-			CustomAttributeData[] pseudoAttrs = null;
+			CustomAttributeData[] pseudoAttrsData = null;
 
 			/* FIXME: Add other types */
 			if (obj is MonoMethod)
-				pseudoAttrs = ((MonoMethod)obj).GetPseudoCustomAttributesData ();
+				pseudoAttrsData = ((MonoMethod)obj).GetPseudoCustomAttributesData ();
 			else if (obj is FieldInfo)
-				pseudoAttrs = ((FieldInfo)obj).GetPseudoCustomAttributesData ();
+				pseudoAttrsData = ((FieldInfo)obj).GetPseudoCustomAttributesData ();
 			else if (obj is ParameterInfo)
-				pseudoAttrs = ((ParameterInfo)obj).GetPseudoCustomAttributesData ();
+				pseudoAttrsData = ((ParameterInfo)obj).GetPseudoCustomAttributesData ();
 			else if (obj is Type)
-				pseudoAttrs = GetPseudoCustomAttributesData (((Type)obj));
+				pseudoAttrsData = GetPseudoCustomAttributesData (((Type)obj));
 
-			if ((attributeType != null) && (pseudoAttrs != null)) {
-				for (int i = 0; i < pseudoAttrs.Length; ++i)
-					if (attributeType.IsAssignableFrom (pseudoAttrs [i].GetType ()))
-						if (pseudoAttrs.Length == 1)
-							return pseudoAttrs;
+			if ((attributeType != null) && (pseudoAttrsData != null)) {
+				for (int i = 0; i < pseudoAttrsData.Length; ++i) {
+					if (attributeType.IsAssignableFrom (pseudoAttrsData [i].AttributeType)) {
+						if (pseudoAttrsData.Length == 1)
+							return pseudoAttrsData;
 						else
-							return new CustomAttributeData[] { pseudoAttrs [i] };
-				return EmptyArray<CustomAttributeData>.Value;
+							return new CustomAttributeData[] { pseudoAttrsData[i] };
+					}
+				}
+
+				return Array.Empty<CustomAttributeData> ();
 			}
 
-			return pseudoAttrs;
+			return pseudoAttrsData;
 		}
 
 		static CustomAttributeData[] GetPseudoCustomAttributesData (Type type)
