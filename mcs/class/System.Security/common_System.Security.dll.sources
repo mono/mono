@@ -11,14 +11,14 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/CryptographicAttributeObjectCollection.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/CryptographicAttributeObjectEnumerator.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/Internal/Cryptography/Oids.cs
-System.Security.Cryptography/DataProtectionScope.cs
+../../../external/corefx/src/System.Security.Cryptography.ProtectedData/src/System/Security/Cryptography/DataProtectionScope.cs
 System.Security.Cryptography/ProtectedData.cs
 
 # System.Security.Cryptography.Pkcs
 System.Security.Cryptography.Pkcs/AlgorithmIdentifier.cs
-System.Security.Cryptography.Pkcs/CmsRecipient.cs
-System.Security.Cryptography.Pkcs/CmsRecipientCollection.cs
-System.Security.Cryptography.Pkcs/CmsRecipientEnumerator.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/CmsRecipient.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/CmsRecipientCollection.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/CmsRecipientEnumerator.cs
 System.Security.Cryptography.Pkcs/ContentInfo.cs
 System.Security.Cryptography.Pkcs/EnvelopedCms.cs
 System.Security.Cryptography.Pkcs/KeyAgreeRecipientInfo.cs
@@ -29,15 +29,15 @@ System.Security.Cryptography.Pkcs/Pkcs9DocumentDescription.cs
 System.Security.Cryptography.Pkcs/Pkcs9DocumentName.cs
 System.Security.Cryptography.Pkcs/Pkcs9MessageDigest.cs
 System.Security.Cryptography.Pkcs/Pkcs9SigningTime.cs
-System.Security.Cryptography.Pkcs/PublicKeyInfo.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/PublicKeyInfo.cs
 System.Security.Cryptography.Pkcs/RecipientInfo.cs
 System.Security.Cryptography.Pkcs/RecipientInfoCollection.cs
 System.Security.Cryptography.Pkcs/RecipientInfoEnumerator.cs
-System.Security.Cryptography.Pkcs/RecipientInfoType.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/RecipientInfoType.cs
 System.Security.Cryptography.Pkcs/SubjectIdentifier.cs
-System.Security.Cryptography.Pkcs/SubjectIdentifierOrKey.cs
-System.Security.Cryptography.Pkcs/SubjectIdentifierOrKeyType.cs
-System.Security.Cryptography.Pkcs/SubjectIdentifierType.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/SubjectIdentifierOrKey.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/SubjectIdentifierOrKeyType.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/SubjectIdentifierType.cs
 
 # System.Security.Cryptography.Xml
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Xml/X509IssuerSerial.cs

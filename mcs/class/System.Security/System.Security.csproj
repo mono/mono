@@ -108,7 +108,16 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObject.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObjectCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObjectEnumerator.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\CmsRecipient.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\CmsRecipientCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\CmsRecipientEnumerator.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\PublicKeyInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\RecipientInfoType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\SubjectIdentifierOrKey.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\SubjectIdentifierOrKeyType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\SubjectIdentifierType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Xml\X509IssuerSerial.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.ProtectedData\src\System\Security\Cryptography\DataProtectionScope.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
@@ -116,9 +125,6 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\AlgorithmIdentifier.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\CmsRecipient.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\CmsRecipientCollection.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\CmsRecipientEnumerator.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\ContentInfo.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\EnvelopedCms.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeRecipientInfo.cs" />
@@ -129,16 +135,10 @@
     <Compile Include="System.Security.Cryptography.Pkcs\Pkcs9DocumentName.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\Pkcs9MessageDigest.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\Pkcs9SigningTime.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\PublicKeyInfo.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\RecipientInfo.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\RecipientInfoCollection.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\RecipientInfoEnumerator.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\RecipientInfoType.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\SubjectIdentifier.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SubjectIdentifierOrKey.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SubjectIdentifierOrKeyType.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SubjectIdentifierType.cs" />
-    <Compile Include="System.Security.Cryptography\DataProtectionScope.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedData.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

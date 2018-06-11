@@ -5306,10 +5306,6 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 
 // FIXME these will move to header soon
 static MonoObjectHandle
-mono_object_new_alloc_by_vtable (MonoVTable *vtable, MonoError *error);
-
-// FIXME these will move to header soon
-static MonoObjectHandle
 mono_object_new_by_vtable (MonoVTable *vtable, MonoError *error);
 
 /**
@@ -5549,6 +5545,9 @@ mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error)
 static MonoObjectHandle
 mono_object_new_by_vtable (MonoVTable *vtable, MonoError *error)
 {
+	// This function handles remoting and COM.
+	// mono_object_new_alloc_by_vtable does not.
+
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoObjectHandle o = MONO_HANDLE_NEW (MonoObject, NULL);
@@ -5649,7 +5648,7 @@ mono_object_new_alloc_specific_checked (MonoVTable *vtable, MonoError *error)
 	return object_new_common_tail (o, vtable->klass, error);
 }
 
-static MonoObjectHandle
+MonoObjectHandle
 mono_object_new_alloc_by_vtable (MonoVTable *vtable, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
@@ -8195,7 +8194,7 @@ mono_delegate_ctor_with_method (MonoObjectHandle this_obj, MonoObjectHandle targ
 #ifndef DISABLE_REMOTING
 	if (!MONO_HANDLE_IS_NULL (target) && mono_class_is_transparent_proxy (mono_handle_class (target))) {
 		if (callbacks.interp_get_remoting_invoke) {
-			MONO_HANDLE_SETVAL (delegate, method_ptr, gpointer, callbacks.interp_get_remoting_invoke (addr, error));
+			MONO_HANDLE_SETVAL (delegate, interp_method, gpointer, callbacks.interp_get_remoting_invoke (addr, error));
 		} else {
 			g_assert (method);
 			method = mono_marshal_get_remoting_invoke (method, error);
