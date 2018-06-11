@@ -40,7 +40,7 @@ DISTFILES = \
 	corcompare.make			\
 	corcompare-api.xsl		\
 	executable.make			\
-	gensources.sh			\
+	gensources.cs			\
 	library.make			\
 	rules.make			\
 	tests.make			\
