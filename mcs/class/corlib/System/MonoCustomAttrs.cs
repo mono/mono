@@ -306,9 +306,18 @@ namespace System
 			return GetCustomAttributesData (obj, typeof (MonoCustomAttrs), inherit);
 		}
 
-		private static IList<CustomAttributeData> GetCustomAttributesData (ICustomAttributeProvider obj, Type type, bool inherit)
+		internal static IList<CustomAttributeData> GetCustomAttributesData (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
-			throw new NotImplementedException ();
+			if (obj == null)
+				throw new ArgumentNullException (nameof (obj));
+			if (attributeType == null)
+				throw new ArgumentNullException (nameof (attributeType));
+
+			if (attributeType == typeof (MonoCustomAttrs))
+				attributeType = null;
+
+			//FIXME align with GetCustomAttributes 
+			return GetCustomAttributesDataBase (obj, attributeType, false);
 		}
 
 		internal static IList<CustomAttributeData> GetCustomAttributesDataBase (ICustomAttributeProvider obj, Type attributeType, bool inheritedOnly)
@@ -317,7 +326,7 @@ namespace System
 			if (IsUserCattrProvider (obj)) {
 				//FIXME resolve this case if it makes sense. Assign empty array for now.
 				//attrsData = obj.GetCustomAttributesData(attributeType, true);
-				attrsData = new CustomAttributeData [0];
+				attrsData = Array.Empty<CustomAttributeData> ();
 			} else
 				attrsData = GetCustomAttributesDataInternal (obj);
 
@@ -328,6 +337,8 @@ namespace System
 			if (!inheritedOnly) {
 				CustomAttributeData[] pseudoAttrsData = GetPseudoCustomAttributesData (obj, attributeType);
 				if (pseudoAttrsData != null) {
+					if (attrsData.Length == 0)
+						return Array.AsReadOnly (pseudoAttrsData);
 					CustomAttributeData[] res = new CustomAttributeData [attrsData.Length + pseudoAttrsData.Length];
 					Array.Copy (attrsData, res, attrsData.Length);
 					Array.Copy (pseudoAttrsData, 0, res, attrsData.Length, pseudoAttrsData.Length);
@@ -382,15 +393,9 @@ namespace System
 			count = 0;
 
 			if ((Attributes & TypeAttributes.Serializable) != 0)
-				attrsData [count++] = CustomAttributeData.Create (
-					(typeof (SerializableAttribute)).GetConstructor (Type.EmptyTypes),
-					EmptyArray<CustomAttributeTypedArgument>.Value,
-					EmptyArray<CustomAttributeNamedArgument>.Value);
+				attrsData [count++] = new CustomAttributeData ((typeof (SerializableAttribute)).GetConstructor (Type.EmptyTypes));
 			if ((Attributes & TypeAttributes.Import) != 0)
-				attrsData [count++] = CustomAttributeData.Create (
-					(typeof (ComImportAttribute)).GetConstructor (Type.EmptyTypes),
-					EmptyArray<CustomAttributeTypedArgument>.Value,
-					EmptyArray<CustomAttributeNamedArgument>.Value);
+				attrsData [count++] = new CustomAttributeData ((typeof (ComImportAttribute)).GetConstructor (Type.EmptyTypes));
 
 			return attrsData;
 		}

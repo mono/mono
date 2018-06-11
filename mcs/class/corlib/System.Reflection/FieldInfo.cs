@@ -243,27 +243,18 @@ namespace System.Reflection {
 			count = 0;
 
 			if (IsNotSerialized)
-				attrsData [count++] = CustomAttributeData.Create (
-					(typeof (NonSerializedAttribute)).GetConstructor (Type.EmptyTypes),
-					EmptyArray<CustomAttributeTypedArgument>.Value,
-					EmptyArray<CustomAttributeNamedArgument>.Value);
+				attrsData [count++] = new CustomAttributeData ((typeof (NonSerializedAttribute)).GetConstructor (Type.EmptyTypes));
 			if (DeclaringType.IsExplicitLayout) {
-				var ctorArgs = new List<CustomAttributeTypedArgument> (
-					new[] { new CustomAttributeTypedArgument (typeof (int), GetFieldOffset ()) }
-				);
-
-				attrsData [count++] = CustomAttributeData.Create (
+				var ctorArgs = new CustomAttributeTypedArgument[] { new CustomAttributeTypedArgument (typeof (int), GetFieldOffset ()) };
+				attrsData [count++] = new CustomAttributeData (
 					(typeof (FieldOffsetAttribute)).GetConstructor (new[] { typeof (int) }),
 					ctorArgs,
 					EmptyArray<CustomAttributeNamedArgument>.Value);
 			}
 
 			if (marshalAs != null) {
-				var ctorArgs = new List<CustomAttributeTypedArgument> (
-					new[] { new CustomAttributeTypedArgument (typeof (UnmanagedType), marshalAs.Value) }
-				);
-
-				attrsData [count++] = CustomAttributeData.Create (
+				var ctorArgs = new CustomAttributeTypedArgument[] { new CustomAttributeTypedArgument (typeof (UnmanagedType), marshalAs.Value) };
+				attrsData [count++] = new CustomAttributeData (
 					(typeof (MarshalAsAttribute)).GetConstructor (new[] { typeof (UnmanagedType) }),
 					ctorArgs,
 					EmptyArray<CustomAttributeNamedArgument>.Value);//FIXME Get named params

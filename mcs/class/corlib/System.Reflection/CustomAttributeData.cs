@@ -64,13 +64,16 @@ namespace System.Reflection {
 			this.lazyData.data_length = data_length;
 		}
 
-		internal static CustomAttributeData Create (ConstructorInfo ctorInfo, IList<CustomAttributeTypedArgument> ctorArgs, IList<CustomAttributeNamedArgument> namedArgs)
+		internal CustomAttributeData (ConstructorInfo ctorInfo)
+			: this (ctorInfo, Array.Empty<CustomAttributeTypedArgument> (), Array.Empty<CustomAttributeNamedArgument> ())
 		{
-			var attrData = new CustomAttributeData ();
-			attrData.ctorInfo = ctorInfo;
-			attrData.ctorArgs = ctorArgs;
-			attrData.namedArgs = namedArgs;
-			return attrData;
+		}
+
+		internal CustomAttributeData (ConstructorInfo ctorInfo, IList<CustomAttributeTypedArgument> ctorArgs, IList<CustomAttributeNamedArgument> namedArgs)
+		{
+			this.ctorInfo = ctorInfo;
+			this.ctorArgs = ctorArgs;
+			this.namedArgs = namedArgs;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

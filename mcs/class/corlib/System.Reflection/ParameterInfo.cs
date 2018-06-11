@@ -194,27 +194,14 @@ namespace System.Reflection
 			count = 0;
 
 			if (IsIn)
-				attrsData [count++] = CustomAttributeData.Create (
-					(typeof (InAttribute)).GetConstructor (Type.EmptyTypes),
-					EmptyArray<CustomAttributeTypedArgument>.Value,
-					EmptyArray<CustomAttributeNamedArgument>.Value);
+				attrsData [count++] = new CustomAttributeData ((typeof (InAttribute)).GetConstructor (Type.EmptyTypes));
 			if (IsOptional)
-				attrsData [count++] = CustomAttributeData.Create (
-					(typeof (OptionalAttribute)).GetConstructor (Type.EmptyTypes),
-					EmptyArray<CustomAttributeTypedArgument>.Value,
-					EmptyArray<CustomAttributeNamedArgument>.Value);
+				attrsData [count++] = new CustomAttributeData ((typeof (OptionalAttribute)).GetConstructor (Type.EmptyTypes));
 			if (IsOut)
-				attrsData [count++] = CustomAttributeData.Create (
-					(typeof (OutAttribute)).GetConstructor (Type.EmptyTypes),
-					EmptyArray<CustomAttributeTypedArgument>.Value,
-					EmptyArray<CustomAttributeNamedArgument>.Value);
-
+				attrsData [count++] = new CustomAttributeData ((typeof (OutAttribute)).GetConstructor (Type.EmptyTypes));
 			if (marshalAs != null) {
-				var ctorArgs = new List<CustomAttributeTypedArgument> (
-					new[] { new CustomAttributeTypedArgument (typeof (UnmanagedType), marshalAs.Value) }
-				);
-
-				attrsData [count++] = CustomAttributeData.Create (
+				var ctorArgs = new CustomAttributeTypedArgument[] { new CustomAttributeTypedArgument (typeof (UnmanagedType), marshalAs.Value) };
+				attrsData [count++] = new CustomAttributeData (
 					(typeof (MarshalAsAttribute)).GetConstructor (new[] { typeof( UnmanagedType) }),
 					ctorArgs,
 					EmptyArray<CustomAttributeNamedArgument>.Value);//FIXME Get named params

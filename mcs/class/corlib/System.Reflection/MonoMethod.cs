@@ -445,17 +445,11 @@ namespace System.Reflection {
 			count = 0;
 
 			if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
-				attrsData [count++] = CustomAttributeData.Create (
-					(typeof (PreserveSigAttribute)).GetConstructor (Type.EmptyTypes),
-					EmptyArray<CustomAttributeTypedArgument>.Value,
-					EmptyArray<CustomAttributeNamedArgument>.Value);
+				attrsData [count++] = new CustomAttributeData ((typeof (PreserveSigAttribute)).GetConstructor (Type.EmptyTypes));
 			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0) {
 				this.GetPInvoke (out PInvokeAttributes flags, out string entryPoint, out string dllName);
-				var ctorArgs = new List<CustomAttributeTypedArgument> (
-					new[] { new CustomAttributeTypedArgument (typeof (string), dllName) }
-				);
-
-				attrsData [count++] = CustomAttributeData.Create (
+				var ctorArgs = new CustomAttributeTypedArgument[] { new CustomAttributeTypedArgument(typeof(string), dllName) };
+				attrsData [count++] = new CustomAttributeData (
 					(typeof (FieldOffsetAttribute)).GetConstructor (new[] { typeof (string) }),
 					ctorArgs,
 					EmptyArray<CustomAttributeNamedArgument>.Value); //FIXME Get named params
