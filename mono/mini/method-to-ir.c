@@ -669,7 +669,7 @@ mark_bb_in_region (MonoCompile *cfg, guint region, uint32_t start, uint32_t end)
 	g_assert (bb);
 
 	if (cfg->verbose_level)
-		printf ("FIRST BB for %d is BB_%d\n", start, bb->block_num);
+		g_print ("FIRST BB for %d is BB_%d\n", start, bb->block_num);
 	for (; bb && bb->real_offset < end; bb = bb->next_bb) {
 		//no one claimed this bb, take it.
 		if (bb->region == -1) {
@@ -723,7 +723,7 @@ compute_bb_regions (MonoCompile *cfg)
 	if (cfg->verbose_level > 2) {
 		MonoBasicBlock *bb;
 		for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
-			printf ("REGION BB%d IL_%04x ID_%08X\n", bb->block_num, bb->real_offset, bb->region);
+			g_print ("REGION BB%d IL_%04x ID_%08X\n", bb->block_num, bb->real_offset, bb->region);
 	}
 
 }
