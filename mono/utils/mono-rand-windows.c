@@ -87,6 +87,10 @@ mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, Mon
 		NTSTATUS const status = BCryptGenRandom (algorithm, buffer, size, flags);
 		if (!BCRYPT_SUCCESS (status)) {
 			mono_error_set_execution_engine (error, "Failed to gen random bytes (%ld)", status);
+#if !WIN7_OR_NEWER
+			// failure, close provider
+			BCryptCloseAlgorithmProvider (algorithm);
+#endif
 			*handle = 0;
 			return FALSE;
 		}
