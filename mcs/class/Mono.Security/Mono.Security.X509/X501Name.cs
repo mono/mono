@@ -184,11 +184,13 @@ namespace Mono.Security.X509 {
 
 				// in some cases we must quote (") the value
 				// Note: this doesn't seems to conform to RFC2253
-				char[] specials = { ',', '+', '"', '\\', '<', '>', ';', '#' };
+				// Set of characters that need quoting is taken from s_quoteNeedingChars
+				// in corefx/src/System.Security.Cryptography.X509Certificates/src/Internal/Cryptography/Pal.Unix/X500NameEncoder.cs
+				char[] specials = { ',', '+', '"', '=', '<', '>', ';', '#', '\n' };
 				if (quotes) {
 					if ((sValue.IndexOfAny (specials, 0, sValue.Length) > 0) ||
 					    sValue.StartsWith (" ") || (sValue.EndsWith (" ")))
-						sValue = "\"" + sValue + "\"";
+						sValue = "\"" + sValue.Replace ("\"", "") + "\"";
 				}
 
 				sb.Append (sValue);
