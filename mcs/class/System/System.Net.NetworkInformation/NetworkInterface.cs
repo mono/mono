@@ -465,9 +465,13 @@ namespace System.Net.NetworkInformation {
 			{
 				IntPtr ptr = IntPtr.Zero;
 				int len = 0;
-				GetAdaptersAddresses (0, 0, IntPtr.Zero, ptr, ref len);
+				uint flags = Win32_IP_ADAPTER_ADDRESSES.GAA_FLAG_INCLUDE_WINS_INFO | Win32_IP_ADAPTER_ADDRESSES.GAA_FLAG_INCLUDE_GATEWAYS;
+				GetAdaptersAddresses (0, flags, IntPtr.Zero, ptr, ref len);
+				if (Marshal.SizeOf (typeof (Win32_IP_ADAPTER_ADDRESSES)) > len)
+					throw new NetworkInformationException ();
+
 				ptr = Marshal.AllocHGlobal(len);
-				int ret = GetAdaptersAddresses (0, 0, IntPtr.Zero, ptr, ref len);
+				int ret = GetAdaptersAddresses (0, flags, IntPtr.Zero, ptr, ref len);
 				if (ret != 0)
 					throw new NetworkInformationException (ret);
 
@@ -828,14 +832,6 @@ namespace System.Net.NetworkInformation {
 
 		[DllImport ("iphlpapi.dll", SetLastError = true)]
 		static extern int GetIfEntry (ref Win32_MIB_IFROW row);
-
-		public static Win32_IP_ADAPTER_INFO GetAdapterInfoByIndex (int index)
-		{
-			foreach (Win32_IP_ADAPTER_INFO info in GetAdaptersInfo ())
-				if (info.Index == index)
-					return info;
-			throw new IndexOutOfRangeException ("No adapter found for index " + index);
-		}
 
 		static Win32_IP_ADAPTER_INFO [] GetAdaptersInfo ()
 		{
