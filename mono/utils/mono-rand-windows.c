@@ -12,7 +12,7 @@
 #include "mono-error-internals.h"
 #include "mono-rand.h"
 #include <windows.h>
-#include <brypt.h>
+#include <bcrypt.h>
 
 // FIXME Waiting for Unity et. al. to drop Vista support.
 #if _WIN32_WINNT >= 0x0601 // Windows 7 and UWP
