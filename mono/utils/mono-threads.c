@@ -1598,6 +1598,9 @@ mono_thread_info_install_interrupt (void (*callback) (gpointer data), gpointer d
 void
 mono_thread_info_uninstall_interrupt (gboolean *interrupted)
 {
+#ifdef HOST_WIN32
+	DWORD const win32error = GetLastError ();
+#endif
 	MonoThreadInfo *info;
 	MonoThreadInfoInterruptToken *previous_token;
 
@@ -1621,6 +1624,9 @@ mono_thread_info_uninstall_interrupt (gboolean *interrupted)
 
 	THREADS_INTERRUPT_DEBUG ("interrupt uninstall  tid %p previous_token %p interrupted %s\n",
 		mono_thread_info_get_tid (info), previous_token, *interrupted ? "TRUE" : "FALSE");
+#ifdef HOST_WIN32
+	SetLastError (win32error);
+#endif
 }
 
 static MonoThreadInfoInterruptToken*
