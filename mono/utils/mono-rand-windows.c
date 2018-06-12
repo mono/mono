@@ -13,6 +13,7 @@
 #include "mono-rand.h"
 #include <windows.h>
 #include <bcrypt.h>
+#include <limits.h>
 
 // FIXME Waiting for Unity et. al. to drop Vista support.
 #if _WIN32_WINNT >= 0x0601 // Windows 7 and UWP
@@ -83,7 +84,7 @@ mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, Mon
 	ULONG const flags = 0;
 #endif
 	while (buffer_size > 0) {
-		ULONG const size = (ULONG)MIN (buffer_size, MAXULONG);
+		ULONG const size = (ULONG)MIN (buffer_size, ULONG_MAX);
 		NTSTATUS const status = BCryptGenRandom (algorithm, buffer, size, flags);
 		if (!BCRYPT_SUCCESS (status)) {
 			mono_error_set_execution_engine (error, "Failed to gen random bytes (%ld)", status);
