@@ -12,26 +12,14 @@
 #include "mono-error-internals.h"
 #include "mono-rand.h"
 #include <windows.h>
-#include "mono/utils/mono-rand-windows-internals.h"
 #include <brypt.h>
 
-#ifndef BCRYPT_USE_SYSTEM_PREFERRED_RNG
-#define BCRYPT_USE_SYSTEM_PREFERRED_RNG (2)
+// FIXME Waiting for Unity et. al. to drop Vista support.
+#if _WIN32_WINNT >= 0x0601 // Windows 7 and UWP
+#define WIN7_OR_NEWER 1
+#define BCRYPT_USE_SYSTEM_PREFERRED_RNG 0x00000002
+const static char mono_rand_provider [ ] = "BCryptGenRandom";
 #endif
-
-long
-mono_rand_win_gen (guchar *buffer, size_t buffer_size)
-{
-	while (buffer_size > 0) {
-		ULONG const size = (ULONG)MIN (buffer_size, MAXULONG);
-		long const status = BCryptGenRandom (NULL, buffer, size, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
-		if (status < 0)
-			return status;
-		buffer += size;
-		buffer_size -= size;
-	}
-	return 0;
-}
 
 /**
  * mono_rand_open:
@@ -56,7 +44,17 @@ mono_rand_open (void)
 gpointer
 mono_rand_init (guchar *seed, gint seed_size)
 {
-	return (gpointer)"BCryptGenRandom"; // NULL will be interpreted as failure; return arbitrary nonzero pointer
+#if WIN7_OR_NEWER
+	// NULL will be interpreted as failure; return arbitrary nonzero pointer
+	return (gpointer)mono_rand_provider;
+#else
+	BCRYPT_ALG_HANDLE provider = 0;
+
+	if (!BCRYPT_SUCCESS (BCryptOpenAlgorithmProvider (&provider, BCRYPT_RNG_ALGORITHM, NULL, 0)))
+		provider = 0;
+
+	return (gpointer)provider;
+#endif
 }
 
 /**
@@ -72,15 +70,29 @@ gboolean
 mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, MonoError *error)
 {
 	g_assert (buffer || !buffer_size);
-
 	error_init (error);
-
-	long const status = mono_rand_win_gen (buffer, buffer_size);
-	if (status >= 0)
-		return TRUE;
-	mono_error_set_execution_engine (error, "Failed to gen random bytes (%ld)", status);
-	*handle = 0;
-	return FALSE;
+	if (!*handle)
+		return FALSE;
+#if WIN7_OR_NEWER
+	g_assert (*handle == mono_rand_provider);
+	BCRYPT_ALG_HANDLE const algorithm = 0;
+	ULONG const flags = BCRYPT_USE_SYSTEM_PREFERRED_RNG;
+#else
+	BCRYPT_ALG_HANDLE const algorithm = (BCRYPT_ALG_HANDLE)*handle;
+	ULONG const flags = 0;
+#endif
+	while (buffer_size > 0) {
+		ULONG const size = (ULONG)MIN (buffer_size, MAXULONG);
+		NTSTATUS const status = BCryptGenRandom (algorithm, buffer, size, flags);
+		if (!BCRYPT_SUCCESS (status)) {
+			mono_error_set_execution_engine (error, "Failed to gen random bytes (%ld)", status);
+			*handle = 0;
+			return FALSE;
+		}
+		buffer += size;
+		buffer_size -= size;
+	}
+	return TRUE;
 }
 
 /**
@@ -91,5 +103,11 @@ mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, Mon
 void
 mono_rand_close (gpointer handle)
 {
+#if WIN7_OR_NEWER
+	g_assert (handle == 0 || handle == mono_rand_provider);
+#else
+	if (handle)
+		BCryptCloseAlgorithmProvider ((BCRYPT_ALG_HANDLE)handle, 0);
+#endif
 }
 #endif /* HOST_WIN32 */
