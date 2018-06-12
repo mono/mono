@@ -21,6 +21,7 @@ check-local:
 	$(MAKE) test-internalsvisibleto || ok=false; \
 	$(MAKE) rm-empty-logs || ok=false; \
 	$(MAKE) runtest-gac-loading || ok=false; \
+	$(MAKE) test-verbose || ok=false; \
 	$$ok
 
 BUILT_SOURCES =
@@ -687,7 +688,8 @@ TESTS_CS_SRC=		\
 	tailcall-interface.cs \
 	bug-60843.cs	\
 	nested_type_visibility.cs	\
-	dynamic-method-churn.cs
+	dynamic-method-churn.cs	\
+	verbose.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
@@ -2024,6 +2026,15 @@ testbundle: console.exe
 	@$(MKBUNDLE) --static console.exe > mkbundle.stdout
 	@$(with_mono_path) MONO_CFG_DIR=$(mono_cfg_dir) ./a.out >> mkbundle.stdout
 	@- rm -rf a.out
+
+test-verbose: verbose.exe
+	@echo "Testing MONO_VERBOSE_METHOD"
+	$(Q) MONO_VERBOSE_METHOD='Method' $(RUNTIME) verbose.exe
+	$(Q) MONO_VERBOSE_METHOD='Method(int)' $(RUNTIME) verbose.exe
+	$(Q) MONO_VERBOSE_METHOD='N1.Test:Method' $(RUNTIME) verbose.exe
+	$(Q) MONO_VERBOSE_METHOD='Test:Method' $(RUNTIME) verbose.exe
+	$(Q) MONO_VERBOSE_METHOD='Method(int,int)' $(RUNTIME) verbose.exe
+	$(Q) MONO_VERBOSE_METHOD='Method(int,string[])' $(RUNTIME) verbose.exe
 
 EXTRA_DIST += load-missing.il t-missing.cs load-exceptions.cs
 
