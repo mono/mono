@@ -2029,12 +2029,12 @@ testbundle: console.exe
 
 test-verbose: verbose.exe
 	@echo "Testing MONO_VERBOSE_METHOD"
-	$(Q) MONO_VERBOSE_METHOD='Method' $(RUNTIME) verbose.exe
-	$(Q) MONO_VERBOSE_METHOD='Method(int)' $(RUNTIME) verbose.exe
-	$(Q) MONO_VERBOSE_METHOD='N1.Test:Method' $(RUNTIME) verbose.exe
-	$(Q) MONO_VERBOSE_METHOD='Test:Method' $(RUNTIME) verbose.exe
-	$(Q) MONO_VERBOSE_METHOD='Method(int,int)' $(RUNTIME) verbose.exe
-	$(Q) MONO_VERBOSE_METHOD='Method(int,string[])' $(RUNTIME) verbose.exe
+	$(Q) MONO_VERBOSE_METHOD='*:Method' $(RUNTIME) --compile-all verbose.exe
+	$(Q) MONO_VERBOSE_METHOD='*:Method(int)' $(RUNTIME) --compile-all verbose.exe
+	$(Q) MONO_VERBOSE_METHOD='N1.Test:Method' $(RUNTIME) --compile-all verbose.exe
+	$(Q) MONO_VERBOSE_METHOD='Test:Method' $(RUNTIME) --compile-all verbose.exe
+	$(Q) MONO_VERBOSE_METHOD='*:Method(int,string[])' $(RUNTIME) --compile-all verbose.exe
+	$(Q) MONO_VERBOSE_METHOD='*:Method(int);N2.*:Method(int,string[])' $(RUNTIME) --compile-all verbose.exe
 
 EXTRA_DIST += load-missing.il t-missing.cs load-exceptions.cs
 
