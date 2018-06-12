@@ -71,6 +71,7 @@ mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, Mon
 {
 	g_assert (buffer || !buffer_size);
 	error_init (error);
+	g_assert (handle);
 	if (!*handle)
 		return FALSE;
 #if WIN7_OR_NEWER
