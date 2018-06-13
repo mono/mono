@@ -53,7 +53,7 @@ if "%MONO_CORLIB_COUNTER:~2%" == "" set MONO_CORLIB_COUNTER=0%MONO_CORLIB_COUNTE
 set MONO_CORLIB_VERSION=1%MONO_VERSION_MAJOR%%MONO_VERSION_MINOR%%MONO_VERSION_PATCH%%MONO_CORLIB_COUNTER%
 
 :: Remove every define VERSION from config.h and add what we want.
-findstr /v /r /i /c:"#define..*VERSION" %win_config_h% > %monotemp%
+findstr /v /b /i /c:"#define PACKAGE_VERSION " /c:"#define VERSION " /c:"#define MONO_CORLIB_VERSION " %win_config_h% > %monotemp%
 echo #define PACKAGE_VERSION "%MONO_VERSION%" >> %monotemp%
 echo #define VERSION "%MONO_VERSION%" >> %monotemp%
 echo #define MONO_CORLIB_VERSION %MONO_CORLIB_VERSION% >> %monotemp%
