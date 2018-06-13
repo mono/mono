@@ -11,14 +11,20 @@ ECHO Setting up Mono configuration headers...
 :: generate unique temp file path
 uuidgen 2>nul || goto no_uuidgen
 for /f %%a in ('uuidgen') do set monotemp=%%a
-set monotemp=%monotemp:-=%
 goto :got_temp
 
 :no_uuidgen
-:: Note that random isn't very random. %time% and %date% help but are locale sensitive.
-set monotemp=%~n0%random%
+:: Random isn't very random or unique. %time% and %date% is not random but fairly unique.
+set monotemp=%~n0%random%%time%%date%
 
 :got_temp
+:: Remove special characters.
+set monotemp=%monotemp:-=%
+set monotemp=%monotemp:\=%
+set monotemp=%monotemp:/=%
+set monotemp=%monotemp::=%
+set monotemp=%monotemp: =%
+set monotemp=%monotemp:.=%
 set monotemp=%temp%\monotemp%monotemp%
 mkdir %monotemp%\.. 2>nul
 echo %monotemp%
