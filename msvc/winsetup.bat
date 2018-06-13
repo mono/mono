@@ -58,7 +58,7 @@ echo #define FULL_VERSION "Visual Studio built mono" > %monotemp%
 fc %monotemp% %version_h% || move /y %monotemp% %version_h%
 del %monotemp% 2>nul
 
-:: Show environment variables that start mono.
+:: Log environment variables that start "mono".
 set MONO
 
 ECHO Successfully setup Mono configuration headers.
