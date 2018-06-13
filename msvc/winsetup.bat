@@ -9,8 +9,16 @@ SET VERSION_H=%~dp0..\mono\mini\version.h
 ECHO Setting up Mono configuration headers...
 
 :: generate unique temp file path
+uuidgen 2>nul || goto no_uuidgen
 for /f %%a in ('uuidgen') do set monotemp=%%a
 set monotemp=%monotemp:-=%
+goto :got_temp
+
+:no_uuidgen
+:: Note that random isn't very random. %time% and %date% help but are locale sensitive.
+set monotemp=%~n0%random%
+
+:got_temp
 set monotemp=%temp%\monotemp%monotemp%
 mkdir %monotemp%\.. 2>nul
 echo %monotemp%
