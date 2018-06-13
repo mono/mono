@@ -1,10 +1,10 @@
 SetLocal
 
-SET CONFIG_H=%~dp0..\config.h
-SET CYG_CONFIG_H=%~dp0..\cygconfig.h
-SET WIN_CONFIG_H=%~dp0..\winconfig.h
-SET CONFIGURE_AC=%~dp0..\configure.ac
-SET VERSION_H=%~dp0..\mono\mini\version.h
+SET CONFIG_H="%~dp0..\config.h"
+SET CYG_CONFIG_H="%~dp0..\cygconfig.h"
+SET WIN_CONFIG_H="%~dp0..\winconfig.h"
+SET CONFIGURE_AC="%~dp0..\configure.ac"
+SET VERSION_H="%~dp0..\mono\mini\version.h"
 
 ECHO Setting up Mono configuration headers...
 
@@ -26,7 +26,8 @@ set monotemp=%monotemp::=%
 set monotemp=%monotemp: =%
 set monotemp=%monotemp:.=%
 set monotemp=%temp%\monotemp%monotemp%
-mkdir %monotemp%\.. 2>nul
+mkdir "%monotemp%\.." 2>nul
+set monotemp="%monotemp%"
 echo %monotemp%
 
 REM Backup existing config.h into cygconfig.h if its not already replaced.
