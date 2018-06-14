@@ -301,20 +301,6 @@ $(eval $(call iOSSimulatorTemplate,sim64,x86_64))
 $(eval $(call iOSSimulatorTemplate,simtv,x86_64))
 $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 
-# Download a prebuilt llvm
-.stamp-ios-download-llvm:
-	$(MAKE) -C $(TOP)/llvm -f build.mk download-llvm \
-		LLVM_PREFIX="$(TOP)/sdks/out/llvm"
-	mv $(TOP)/sdks/out/llvm/usr32 $(TOP)/sdks/out/llvm-llvm32
-	mv $(TOP)/sdks/out/llvm/usr64 $(TOP)/sdks/out/llvm-llvm64
-	rm -rf $(TOP)/sdks/out/llvm
-	touch $@
-
-build-ios-llvm: $(if $(IGNORE_PACKAGE_LLVM),.stamp-ios-download-llvm,package-llvm-llvm64 package-llvm-llvm32)
-
-clean-ios-llvm: clean-llvm-llvm64 clean-llvm-llvm32
-	$(RM) -rf $(TOP)/sdks/out/llvm-llvm{32,64} .stamp-ios-download-llvm
-
 ##
 # Parameters:
 #  $(1): target (cross32 or cross64)
@@ -375,12 +361,12 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-icall-symbol-map \
 	--enable-minimal=com,remoting \
 	--with-cross-offsets=$(4).h \
-	--with-llvm=$$(TOP)/sdks/out/llvm-$(3)
+	--with-llvm=$$(TOP)/sdks/out/ios-$(3)
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-.stamp-ios-$(1)-$$(CONFIGURATION)-configure: | build-ios-llvm
+.stamp-ios-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PACKAGE_LLVM),download-llvm-$(3),package-llvm-$(3))
 
 $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
 	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \

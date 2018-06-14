@@ -5,10 +5,14 @@
 # into $top_srcdir/llvm/llvm.
 #
 
-top_srcdir?=$(realpath $(CURDIR)/..)
-LLVM_PATH?=$(top_srcdir)/external/llvm
-LLVM_BUILD?=$(top_srcdir)/llvm/build
-LLVM_PREFIX?=$(top_srcdir)/llvm/usr
+top_srcdir ?= $(abspath $(CURDIR)/..)
+
+LLVM_PATH ?= $(abspath $(top_srcdir)/external/llvm)
+LLVM_BUILD ?= $(abspath $(top_srcdir)/llvm/build)
+LLVM_PREFIX ?= $(abspath $(top_srcdir)/llvm/usr)
+
+CMAKE := $(or $(CMAKE),$(shell which cmake))
+NINJA := $(shell which ninja)
 
 SUBMODULES_CONFIG_FILE = $(top_srcdir)/llvm/SUBMODULES.json
 include $(top_srcdir)/scripts/submodules/versions.mk
@@ -27,13 +31,10 @@ bump-branch-llvm: __bump-branch-llvm
 # If COMMIT is 1, commit the change
 bump-current-llvm: __bump-current-version-llvm
 
-CMAKE?=$(shell which cmake)
-NINJA:=$(shell which ninja)
-
 $(LLVM_BUILD) $(LLVM_PREFIX):
 	mkdir -p $@
 
-$(LLVM_PATH)/CMakeLists.txt: reset-llvm
+$(LLVM_PATH)/CMakeLists.txt: | reset-llvm
 
 $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(LLVM_PATH)/CMakeLists.txt | $(LLVM_BUILD)
 	cd $(LLVM_BUILD) && $(CMAKE) \
@@ -45,8 +46,8 @@ $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(LLVM_PATH)/CMakeLists.txt |
 		-DLLVM_BUILD_EXAMPLES=Off \
 		-DLLVM_INCLUDE_EXAMPLES=Off \
 		-DLLVM_TOOLS_TO_BUILD="opt;llc;llvm-config;llvm-dis" \
-		$(if $(INTERNAL_LLVM_ASSERTS),-DLLVM_ENABLE_ASSERTIONS=On) \
 		-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64" \
+		-DLLVM_ENABLE_ASSERTIONS=$(if $(INTERNAL_LLVM_ASSERTS),On,Off) \
 		$(LLVM_CMAKE_ARGS) \
 		$(dir $<)
 
@@ -61,10 +62,11 @@ build-llvm: configure-llvm
 install-llvm: build-llvm | $(LLVM_PREFIX)
 	$(if $(NINJA),$(NINJA),$(MAKE)) -C $(LLVM_BUILD) install
 
+# FIXME: URL should be http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(NEEDED_LLVM_BRANCH)/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz
 .PHONY: download-llvm
-download-llvm: | $(LLVM_PREFIX)
-	# wget --no-verbose -O - http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(NEEDED_LLVM_BRANCH)/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz | tar xzf - -C $(LLVM_PREFIX)
-	wget --no-verbose -O - http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz | tar xzf - -C $(LLVM_PREFIX)
+download-llvm:
+	wget --no-verbose -O - http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz | tar xzf -
 
+.PHONY: clean-llvm
 clean-llvm:
 	$(RM) -r $(LLVM_BUILD) $(LLVM_PREFIX)
