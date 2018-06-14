@@ -567,7 +567,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")] // do not get consistent result on MS
+		// [Category ("NotWorking")] // do not get consistent result on MS
 		public void EndGetRequestStream_Request_Aborted ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();

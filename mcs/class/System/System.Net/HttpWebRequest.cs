@@ -899,6 +899,11 @@ namespace System.Net
 
 			try {
 				return TaskToApm.End<Stream> (asyncResult);
+			} catch (System.Threading.Tasks.TaskCanceledException tce) {
+				if (Aborted)
+					throw CreateRequestAbortedException ();
+				else
+					throw FlattenException (tce);
 			} catch (Exception e) {
 				throw FlattenException (e);
 			}
@@ -1194,6 +1199,11 @@ namespace System.Net
 
 			try {
 				return TaskToApm.End<HttpWebResponse> (asyncResult);
+			} catch (System.Threading.Tasks.TaskCanceledException tce) {
+				if (Aborted)
+					throw CreateRequestAbortedException ();
+				else
+					throw FlattenException (tce);
 			} catch (Exception e) {
 				throw FlattenException (e);
 			}
