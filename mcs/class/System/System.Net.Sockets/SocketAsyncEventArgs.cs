@@ -273,7 +273,7 @@ namespace System.Net.Sockets
 			SetResults(SocketError.Success, bytesTransferred, flags);
 			current_socket = connectSocket;
 
-			OnCompleted (this);
+			Complete ();
 		}
 
 		internal void SetResults (SocketError socketError, int bytesTransferred, SocketFlags flags)

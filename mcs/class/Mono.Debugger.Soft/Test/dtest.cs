@@ -431,6 +431,86 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void MetadataAndPdbTest () {
+		run_until ("bp1");
+		var assemblyMirrors = entry_point.DeclaringType.Assembly.Domain.GetAssemblies ();
+		Assert.IsTrue (assemblyMirrors.Length > 0);
+
+		foreach (var assemblyMirror in assemblyMirrors) {
+			var metadata = assemblyMirror.Metadata;
+			Assert.AreEqual (metadata.MainModule.Mvid, assemblyMirror.ManifestModule.ModuleVersionId);
+
+			var location = assemblyMirror.Location;
+			if (!File.Exists (location))
+				continue;
+
+			Assert.IsFalse (assemblyMirror.IsDynamic);
+
+			var rawDataFromMemory = assemblyMirror.GetMetadataBlob ();
+			var rawDataFromDisk = File.ReadAllBytes (location);
+			Assert.IsTrue (rawDataFromMemory.SequenceEqual (rawDataFromDisk));
+
+			string pdbPath = Path.ChangeExtension (location, "pdb");
+			Assert.IsFalse (assemblyMirror.HasPdb);
+			Assert.IsFalse (assemblyMirror.HasFetchedPdb);
+			
+			var pdbFromMemory = assemblyMirror.GetPdbBlob ();
+			if (!File.Exists (pdbPath)) {
+				Assert.IsFalse (assemblyMirror.HasPdb);
+				Assert.IsTrue (assemblyMirror.HasFetchedPdb);
+				continue;
+			}
+
+			Assert.IsTrue (pdbFromMemory != null && pdbFromMemory.Length > 0);
+			var pdbFromDisk = File.ReadAllBytes (pdbPath);
+			Assert.IsTrue (pdbFromMemory.SequenceEqual (pdbFromDisk));
+			
+			Assert.IsTrue (assemblyMirror.HasPdb);
+			Assert.IsTrue (assemblyMirror.HasFetchedPdb);
+
+			foreach (var type in metadata.Modules.SelectMany (x => x.GetTypes ())) {
+				var typeMirror = assemblyMirror.GetType (type.MetadataToken.ToUInt32 ());
+				Assert.AreEqual (type.Name, typeMirror.Name);
+				Assert.AreEqual (type.MetadataToken.ToInt32 (), typeMirror.MetadataToken);
+
+				int methodCount = 0;
+				foreach (var method in type.Methods) {
+					var methodMirror = assemblyMirror.GetMethod (method.MetadataToken.ToUInt32 ());
+					Assert.AreEqual (method.Name, methodMirror.Name);
+					Assert.AreEqual (method.MetadataToken.ToInt32 (), methodMirror.MetadataToken);
+					
+					if (methodCount++ > 10)
+						break;
+				}
+
+				if (type.IsNested)
+					break;
+			}
+		}
+	}
+	
+	[Test]
+	public void IsDynamicAssembly () {
+		vm.Detach ();
+
+		Start (new string[] {"dtest-app.exe", "ref-emit-test"});
+
+		run_until ("ref_emit_call");
+		var assemblyMirrors = entry_point.DeclaringType.Assembly.Domain.GetAssemblies ();
+		bool dynamicAssemblyFound = false;
+		foreach (var assemblyMirror in assemblyMirrors) {
+			if (assemblyMirror.GetName ().Name == "foo") {
+				dynamicAssemblyFound = true;
+				Assert.IsTrue (assemblyMirror.IsDynamic);
+			}
+			else
+				Assert.IsFalse (assemblyMirror.IsDynamic);
+		}
+
+		Assert.IsTrue (dynamicAssemblyFound);
+	}
+
+	[Test]
 	public void BreakpointAlreadyJITted () {
 		Event e = run_until ("bp1");
 

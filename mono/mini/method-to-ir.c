@@ -657,51 +657,77 @@ mono_link_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 	link_bblock (cfg, from, to);
 }
 
-/**
- * mono_find_block_region:
- *
- *   We mark each basic block with a region ID. We use that to avoid BB
- *   optimizations when blocks are in different regions.
- *
- * Returns:
- *   A region token that encodes where this region is, and information
- *   about the clause owner for this block.
- *
- *   The region encodes the try/catch/filter clause that owns this block
- *   as well as the type.  -1 is a special value that represents a block
- *   that is in none of try/catch/filter.
- */
-static int
-mono_find_block_region (MonoCompile *cfg, int offset)
+static void
+mono_create_spvar_for_region (MonoCompile *cfg, int region);
+
+static void
+mark_bb_in_region (MonoCompile *cfg, guint region, uint32_t start, uint32_t end)
 {
-	MonoMethodHeader *header = cfg->header;
-	MonoExceptionClause *clause;
-	int i;
+	MonoBasicBlock *bb = cfg->cil_offset_to_bb [start];
 
-	for (i = 0; i < header->num_clauses; ++i) {
-		clause = &header->clauses [i];
-		if ((clause->flags == MONO_EXCEPTION_CLAUSE_FILTER) && (offset >= clause->data.filter_offset) &&
-		    (offset < (clause->handler_offset)))
-			return ((i + 1) << 8) | MONO_REGION_FILTER | clause->flags;
+	//start must exist in cil_offset_to_bb as those are il offsets used by EH which should have GET_BBLOCK early.
+	g_assert (bb);
 
-		if (MONO_OFFSET_IN_HANDLER (clause, offset)) {
-			if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY)
-				return ((i + 1) << 8) | MONO_REGION_FINALLY | clause->flags;
-			else if (clause->flags == MONO_EXCEPTION_CLAUSE_FAULT)
-				return ((i + 1) << 8) | MONO_REGION_FAULT | clause->flags;
-			else
-				return ((i + 1) << 8) | MONO_REGION_CATCH | clause->flags;
+	if (cfg->verbose_level)
+		g_print ("FIRST BB for %d is BB_%d\n", start, bb->block_num);
+	for (; bb && bb->real_offset < end; bb = bb->next_bb) {
+		//no one claimed this bb, take it.
+		if (bb->region == -1) {
+			bb->region = region;
+			continue;
+		}
+
+		//current region is an early handler, bail
+		if ((bb->region & (0xf << 4)) != MONO_REGION_TRY) {
+			continue;
+		}
+
+		//current region is a try, only overwrite if new region is a handler
+		if ((region & (0xf << 4)) != MONO_REGION_TRY) {
+			bb->region = region;
 		}
 	}
-	for (i = 0; i < header->num_clauses; ++i) {
-		clause = &header->clauses [i];
 
-		if (MONO_OFFSET_IN_CLAUSE (clause, offset))
-			return ((i + 1) << 8) | clause->flags;
+	if (cfg->spvars)
+		mono_create_spvar_for_region (cfg, region);
+}
+
+static void
+compute_bb_regions (MonoCompile *cfg)
+{
+	MonoBasicBlock *bb;
+	MonoMethodHeader *header = cfg->header;
+	int i;
+
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
+		bb->region = -1;
+
+	for (i = 0; i < header->num_clauses; ++i) {
+		MonoExceptionClause *clause = &header->clauses [i];
+
+		if (clause->flags == MONO_EXCEPTION_CLAUSE_FILTER)
+			mark_bb_in_region (cfg, ((i + 1) << 8) | MONO_REGION_FILTER | clause->flags, clause->data.filter_offset, clause->handler_offset);
+
+		guint handler_region;
+		if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY)
+			handler_region = ((i + 1) << 8) | MONO_REGION_FINALLY | clause->flags;
+		else if (clause->flags == MONO_EXCEPTION_CLAUSE_FAULT)
+			handler_region = ((i + 1) << 8) | MONO_REGION_FAULT | clause->flags;
+		else
+			handler_region = ((i + 1) << 8) | MONO_REGION_CATCH | clause->flags;
+
+		mark_bb_in_region (cfg, handler_region, clause->handler_offset, clause->handler_offset + clause->handler_len);
+		mark_bb_in_region (cfg, ((i + 1) << 8) | clause->flags, clause->try_offset, clause->try_offset + clause->try_len);
 	}
 
-	return -1;
+	if (cfg->verbose_level > 2) {
+		MonoBasicBlock *bb;
+		for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
+			g_print ("REGION BB%d IL_%04x ID_%08X\n", bb->block_num, bb->real_offset, bb->region);
+	}
+
 }
+
 
 static gboolean
 ip_in_finally_clause (MonoCompile *cfg, int offset)
@@ -2586,7 +2612,7 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 		if (!cfg->llvm_only && (m_class_get_parent (method->klass) == mono_defaults.multicastdelegate_class) && !strcmp (method->name, "Invoke")) {
 			MonoInst *dummy_use;
 
-			MONO_EMIT_NULL_CHECK (cfg, this_reg);
+			MONO_EMIT_NULL_CHECK (cfg, this_reg, FALSE);
 
 			/* Make a call to delegate->invoke_impl */
 			call->inst.inst_basereg = this_reg;
@@ -4501,24 +4527,11 @@ mini_field_access_needs_cctor_run (MonoCompile *cfg, MonoMethod *method, MonoCla
 	return TRUE;
 }
 
-MonoInst*
-mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, MonoInst *index, gboolean bcheck)
+int
+mini_emit_sext_index_reg (MonoCompile *cfg, MonoInst *index)
 {
-	MonoInst *ins;
-	guint32 size;
-	int mult_reg, add_reg, array_reg, index_reg, index2_reg;
-	int context_used;
-
-	if (mini_is_gsharedvt_variable_klass (klass)) {
-		size = -1;
-	} else {
-		mono_class_init (klass);
-		size = mono_class_array_element_size (klass);
-	}
-
-	mult_reg = alloc_preg (cfg);
-	array_reg = arr->dreg;
-	index_reg = index->dreg;
+	int index_reg = index->dreg;
+	int index2_reg;
 
 #if SIZEOF_REGISTER == 8
 	/* The array reg is 64 bits but the index reg is only 32 */
@@ -4541,6 +4554,29 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 		index2_reg = index_reg;
 	}
 #endif
+
+	return index2_reg;
+}
+
+MonoInst*
+mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, MonoInst *index, gboolean bcheck)
+{
+	MonoInst *ins;
+	guint32 size;
+	int mult_reg, add_reg, array_reg, index2_reg;
+	int context_used;
+
+	if (mini_is_gsharedvt_variable_klass (klass)) {
+		size = -1;
+	} else {
+		mono_class_init (klass);
+		size = mono_class_array_element_size (klass);
+	}
+
+	mult_reg = alloc_preg (cfg);
+	array_reg = arr->dreg;
+
+	index2_reg = mini_emit_sext_index_reg (cfg, index);
 
 	if (bcheck)
 		MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index2_reg);
@@ -5756,7 +5792,7 @@ emit_llvmonly_virtual_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSig
 	 * In llvm-only mode, vtables contain function descriptors instead of
 	 * method addresses/trampolines.
 	 */
-	MONO_EMIT_NULL_CHECK (cfg, sp [0]->dreg);
+	MONO_EMIT_NULL_CHECK (cfg, sp [0]->dreg, FALSE);
 
 	if (is_iface)
 		slot = mono_method_get_imt_slot (cmethod);
@@ -6695,7 +6731,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			try_bb->real_offset = clause->try_offset;
 			try_bb->try_start = TRUE;
-			try_bb->region = ((i + 1) << 8) | clause->flags;
 			GET_BBLOCK (cfg, tblock, ip + clause->handler_offset);
 			tblock->real_offset = clause->handler_offset;
 			tblock->flags |= BB_EXCEPTION_HANDLER;
@@ -9735,7 +9770,7 @@ calli_end:
 				{
 					MonoInst *store, *wbarrier_ptr_ins = NULL;
 
-					MONO_EMIT_NULL_CHECK (cfg, sp [0]->dreg);
+					MONO_EMIT_NULL_CHECK (cfg, sp [0]->dreg, foffset > mono_target_pagesize ());
 
 					if (ins_flag & MONO_INST_VOLATILE) {
 						/* Volatile stores have release semantics, see 12.6.7 in Ecma 335 */
@@ -9849,7 +9884,7 @@ calli_end:
 				} else {
 					MonoInst *load;
 
-					MONO_EMIT_NULL_CHECK (cfg, sp [0]->dreg);
+					MONO_EMIT_NULL_CHECK (cfg, sp [0]->dreg, foffset > mono_target_pagesize ());
 
 					if (sp [0]->opcode == OP_LDADDR && m_class_is_simd_type (klass) && cfg->opt & MONO_OPT_SIMD) {
 						ins = mono_emit_simd_field_load (cfg, field, sp [0]);
@@ -10301,9 +10336,10 @@ field_access_end:
 			MONO_INST_NEW (cfg, ins, OP_LDLEN);
 			ins->dreg = alloc_preg (cfg);
 			ins->sreg1 = sp [0]->dreg;
+			ins->inst_imm = MONO_STRUCT_OFFSET (MonoArray, max_length);
 			ins->type = STACK_I4;
 			/* This flag will be inherited by the decomposition */
-			ins->flags |= MONO_INST_FAULT;
+			ins->flags |= MONO_INST_FAULT | MONO_INST_INVARIANT_LOAD;
 			MONO_ADD_INS (cfg->cbb, ins);
 			cfg->flags |= MONO_CFG_NEEDS_DECOMPOSE;
 			cfg->cbb->needs_decompose = TRUE;
@@ -11879,17 +11915,7 @@ mono_ldptr:
 	cfg->ip = NULL;
 
 	if (cfg->method == method) {
-		MonoBasicBlock *bb;
-		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-			if (bb == cfg->bb_init)
-				bb->region = -1;
-			else
-				bb->region = mono_find_block_region (cfg, bb->real_offset);
-			if (cfg->spvars)
-				mono_create_spvar_for_region (cfg, bb->region);
-			if (cfg->verbose_level > 2)
-				printf ("REGION BB%d IL_%04x ID_%08X\n", bb->block_num, bb->real_offset, bb->region);
-		}
+		compute_bb_regions (cfg);
 	} else {
 		MonoBasicBlock *bb;
 		/* get_most_deep_clause () in mini-llvm.c depends on this for inlined bblocks */
@@ -12003,6 +12029,8 @@ mono_op_to_op_imm (int opcode)
 	case OP_LSHR_UN:
 		return OP_LSHR_UN_IMM;
 #if SIZEOF_REGISTER == 8
+	case OP_LMUL:
+		return OP_LMUL_IMM;
 	case OP_LREM:
 		return OP_LREM_IMM;
 #endif

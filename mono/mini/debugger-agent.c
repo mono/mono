@@ -80,6 +80,7 @@
 #include "mini-runtime.h"
 #include "interp/interp.h"
 #include "debugger-engine.h"
+#include "mono/metadata/debug-mono-ppdb.h"
 
 /*
  * On iOS we can't use System.Environment.Exit () as it will do the wrong
@@ -266,7 +267,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 46
+#define MINOR_VERSION 47
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -394,7 +395,12 @@ typedef enum {
 	CMD_ASSEMBLY_GET_OBJECT = 4,
 	CMD_ASSEMBLY_GET_TYPE = 5,
 	CMD_ASSEMBLY_GET_NAME = 6,
-	CMD_ASSEMBLY_GET_DOMAIN = 7
+	CMD_ASSEMBLY_GET_DOMAIN = 7,
+	CMD_ASSEMBLY_GET_METADATA_BLOB = 8,
+	CMD_ASSEMBLY_GET_IS_DYNAMIC = 9,
+	CMD_ASSEMBLY_GET_PDB_BLOB = 10,
+	CMD_ASSEMBLY_GET_TYPE_FROM_TOKEN = 11,
+	CMD_ASSEMBLY_GET_METHOD_FROM_TOKEN = 12
 } CmdAssembly;
 
 typedef enum {
@@ -672,8 +678,7 @@ static void ids_cleanup (void);
 
 static void suspend_init (void);
 
-static void ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint *sp, MonoSeqPointInfo *info, MonoContext *ctx, DebuggerTlsData *tls, gboolean step_to_catch,
-					  StackFrame **frames, int nframes);
+static void ss_start (SingleStepReq *ss_req, SingleStepArgs *args);
 static ErrorCode ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilter filter, EventRequest *req);
 static void ss_destroy (SingleStepReq *req);
 static SingleStepReq* ss_req_acquire (void);
@@ -1695,6 +1700,13 @@ buffer_add_string (Buffer *buf, const char *str)
 		buffer_add_int (buf, len);
 		buffer_add_data (buf, (guint8*)str, len);
 	}
+}
+
+static inline void
+buffer_add_byte_array (Buffer *buf, guint8 *bytes, guint32 arr_len)
+{
+    buffer_add_int (buf, arr_len);
+    buffer_add_data (buf, bytes, arr_len);
 }
 
 static inline void
@@ -4116,11 +4128,25 @@ event_requests_cleanup (void)
  *
  * Ensure DebuggerTlsData fields are filled out.
  */
-static void ss_calculate_framecount (DebuggerTlsData *tls, MonoContext *ctx)
+static void
+ss_calculate_framecount (DebuggerTlsData *tls, MonoContext *ctx, gboolean force_use_ctx)
 {
-	if (!tls->context.valid)
+	if (force_use_ctx || !tls->context.valid)
 		mono_thread_state_init_from_monoctx (&tls->context, ctx);
 	compute_frame_info (tls->thread, tls);
+}
+
+/*
+ * ss_discard_frame_data:
+ *
+ * Discard frame data and invalidate any context
+ */
+static void
+ss_discard_frame_context (void *de_tls) {
+	DebuggerTlsData *tls = de_tls;
+	tls->context.valid = FALSE;
+	tls->async_state.valid = FALSE;
+	invalidate_frames (tls);
 }
 
 static gboolean
@@ -4156,8 +4182,7 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 	gboolean hit = TRUE;
 
 	if ((req->filter & STEP_FILTER_STATIC_CTOR)) {
-		mono_thread_state_init_from_monoctx (&tls->context, ctx);
-		compute_frame_info (tls->thread, tls);
+		ss_calculate_framecount (tls, ctx, TRUE);
 
 		gboolean ret = FALSE;
 		gboolean method_in_stack = FALSE;
@@ -4183,9 +4208,7 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 		}
 		g_assert (method_in_stack);
 
-		tls->context.valid = FALSE;
-		tls->async_state.valid = FALSE;
-		invalidate_frames (tls);
+		ss_discard_frame_context (tls);
 
 		if (ret)
 			return FALSE;
@@ -4207,7 +4230,7 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 	if ((req->depth == STEP_DEPTH_OVER || req->depth == STEP_DEPTH_OUT) && hit && !req->async_stepout_method) {
 		gboolean is_step_out = req->depth == STEP_DEPTH_OUT;
 
-		ss_calculate_framecount (tls, ctx);
+		ss_calculate_framecount (tls, ctx, FALSE);
 
 		// Because functions can call themselves recursively, we need to make sure we're stopping at the right stack depth.
 		// In case of step out, the target is the frame *enclosing* the one where the request was made.
@@ -4220,7 +4243,7 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 	}
 
 	if (req->depth == STEP_DEPTH_INTO && req->size == STEP_SIZE_MIN && (sp->flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK) && req->start_method) {
-		ss_calculate_framecount (tls, ctx);
+		ss_calculate_framecount (tls, ctx, FALSE);
 		if (req->start_method == method && req->nframes && tls->frame_count == req->nframes) { //Check also frame count(could be recursion)
 			DEBUG_PRINTF (1, "[%p] Seq point at nonempty stack %x while stepping in, continuing single stepping.\n", (gpointer) (gsize) mono_native_thread_id_get (), sp->il_offset);
 			return FALSE;
@@ -4252,7 +4275,7 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, DebuggerTlsData *t
 		req->last_method = method;
 		hit = FALSE;
 	} else if (loc && method == req->last_method && loc->row == req->last_line) {
-		ss_calculate_framecount (tls, ctx);
+		ss_calculate_framecount (tls, ctx, FALSE);
 		if (tls->frame_count == req->nframes) { // If the frame has changed we're clearly not on the same source line.
 			DEBUG_PRINTF (1, "[%p] Same source line (%d), continuing single stepping.\n", (gpointer) (gsize) mono_native_thread_id_get (), loc->row);
 			hit = FALSE;
@@ -4504,10 +4527,8 @@ process_breakpoint (DebuggerTlsData *tls, gboolean from_signal)
 			if (ss_req->async_id == 0)
 				continue;
 
-			tls->context.valid = FALSE;
-			tls->async_state.valid = FALSE;
-			invalidate_frames (tls);
-			ss_calculate_framecount(tls, ctx);
+			ss_discard_frame_context (tls);
+			ss_calculate_framecount (tls, ctx, FALSE);
 			//make sure we have enough data to get current async method instance id
 			if (tls->frame_count == 0 || !ensure_jit (tls->frames [0]))
 				continue;
@@ -4527,10 +4548,8 @@ process_breakpoint (DebuggerTlsData *tls, gboolean from_signal)
 		//Update stepping request to new thread/frame_count that we are continuing on
 		//so continuing with normal stepping works as expected
 		if (ss_req->async_stepout_method || ss_req->async_id) {
-			tls->context.valid = FALSE;
-			tls->async_state.valid = FALSE;
-			invalidate_frames (tls);
-			ss_calculate_framecount (tls, ctx);
+			ss_discard_frame_context (tls);
+			ss_calculate_framecount (tls, ctx, FALSE);
 			ss_req->thread = mono_thread_internal_current ();
 			ss_req->nframes = tls->frame_count;
 		}
@@ -4539,8 +4558,17 @@ process_breakpoint (DebuggerTlsData *tls, gboolean from_signal)
 		if (hit)
 			g_ptr_array_add (ss_reqs, req);
 
-		/* Start single stepping again from the current sequence point */
-		ss_start (ss_req, method, &sp, info, ctx, tls, FALSE, NULL, 0);
+		SingleStepArgs args = {
+			.method = method,
+			.ctx = ctx,
+			.tls = tls,
+			.step_to_catch = FALSE,
+			.sp = sp,
+			.info = info,
+			.frames = NULL,
+			.nframes = 0
+		};
+		ss_start (ss_req, &args);
 	}
 	
 	if (ss_reqs->len > 0)
@@ -4789,7 +4817,17 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 		goto exit;
 
 	/* Start single stepping again from the current sequence point */
-	ss_start (ss_req, method, &sp, info, ctx, tls, FALSE, NULL, 0);
+	SingleStepArgs args = {
+		.method = method,
+		.ctx = ctx,
+		.tls = tls,
+		.step_to_catch = FALSE,
+		.sp = sp,
+		.info = info,
+		.frames = NULL,
+		.nframes = 0
+	};
+	ss_start (ss_req, &args);
 
 	if ((ss_req->filter & STEP_FILTER_STATIC_CTOR) &&
 		(method->flags & METHOD_ATTRIBUTE_SPECIAL_NAME) &&
@@ -5034,6 +5072,13 @@ is_last_non_empty (SeqPoint* sp, MonoSeqPointInfo *info)
 	return TRUE;
 }
 
+static void
+ss_args_destroy (SingleStepArgs *ss_args)
+{
+	if (ss_args->frames)
+		free_frames ((StackFrame**)ss_args->frames, ss_args->nframes);
+}
+
 /*
  * ss_start:
  *
@@ -5043,8 +5088,7 @@ is_last_non_empty (SeqPoint* sp, MonoSeqPointInfo *info)
  * If FRAMES is not-null, use that instead of tls->frames for placing breakpoints etc.
  */
 static void
-ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointInfo *info, MonoContext *ctx, DebuggerTlsData *tls,
-		  gboolean step_to_catch, StackFrame **frames, int nframes)
+ss_start (SingleStepReq *ss_req, SingleStepArgs *ss_args)
 {
 	int i, j, frame_index;
 	SeqPoint *next_sp, *parent_sp = NULL;
@@ -5064,18 +5108,24 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 
 	gboolean locked = FALSE;
 
+	DebuggerTlsData *tls = ss_args->tls;
+	MonoMethod *method = ss_args->method;
+	StackFrame **frames = (StackFrame**)ss_args->frames;
+	int nframes = ss_args->nframes;
+	SeqPoint *sp = &ss_args->sp;
+
 	/*
 	 * Implement single stepping using breakpoints if possible.
 	 */
-	if (step_to_catch) {
+	if (ss_args->step_to_catch) {
 		ss_bp_add_one (ss_req, &ss_req_bp_count, &ss_req_bp_cache, method, sp->il_offset);
 	} else {
 		frame_index = 1;
 
-		if (ctx && !frames) {
+		if (ss_args->ctx && !frames) {
 			/* Need parent frames */
 			if (!tls->context.valid)
-				mono_thread_state_init_from_monoctx (&tls->context, ctx);
+				mono_thread_state_init_from_monoctx (&tls->context, ss_args->ctx);
 
 			mono_loader_lock ();
 			locked = TRUE;
@@ -5119,12 +5169,12 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 					mono_debug_free_method_async_debug_info (asyncMethod);
 					if (locked)
 						mono_loader_unlock ();
-					return;
+					goto cleanup;
 				}
 			}
 			//If we are at end of async method and doing step-in or step-over...
 			//Switch to step-out, so whole NotifyDebuggerOfWaitCompletion magic happens...
-			if (is_last_non_empty (sp, info)) {
+			if (is_last_non_empty (sp, ss_args->info)) {
 				ss_req->depth = STEP_DEPTH_OUT;//setting depth to step-out is important, don't inline IF, because code later depends on this
 			}
 			if (ss_req->depth == STEP_DEPTH_OUT) {
@@ -5137,7 +5187,7 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 					mono_debug_free_method_async_debug_info (asyncMethod);
 					if (locked)
 						mono_loader_unlock ();
-					return;
+					goto cleanup;
 				}
 			}
 		}
@@ -5155,7 +5205,7 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 				StackFrame *frame = frames [frame_index];
 
 				method = frame->de.method;
-				found_sp = mono_find_prev_seq_point_for_native_offset (frame->de.domain, frame->de.method, frame->de.native_offset, &info, &local_sp);
+				found_sp = mono_find_prev_seq_point_for_native_offset (frame->de.domain, frame->de.method, frame->de.native_offset, &ss_args->info, &local_sp);
 				sp = (found_sp)? &local_sp : NULL;
 				frame_index ++;
 				if (sp && sp->next_len != 0)
@@ -5170,7 +5220,7 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 					StackFrame *frame = frames [frame_index];
 
 					method = frame->de.method;
-					found_sp = mono_find_prev_seq_point_for_native_offset (frame->de.domain, frame->de.method, frame->de.native_offset, &info, &local_sp);
+					found_sp = mono_find_prev_seq_point_for_native_offset (frame->de.domain, frame->de.method, frame->de.native_offset, &ss_args->info, &local_sp);
 					sp = (found_sp)? &local_sp : NULL;
 					if (sp && sp->next_len != 0)
 						break;
@@ -5196,7 +5246,7 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 		if (sp && sp->next_len > 0) {
 			SeqPoint* next = g_new(SeqPoint, sp->next_len);
 
-			mono_seq_point_init_next (info, *sp, next);
+			mono_seq_point_init_next (ss_args->info, *sp, next);
 			for (i = 0; i < sp->next_len; i++) {
 				next_sp = &next[i];
 
@@ -5239,9 +5289,7 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 		/*
 		 * The ctx/frame info computed above will become invalid when we continue.
 		 */
-		tls->context.valid = FALSE;
-		tls->async_state.valid = FALSE;
-		invalidate_frames (tls);
+		ss_discard_frame_context (tls);
 	}
 
 	if (enable_global) {
@@ -5260,18 +5308,26 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 
 	if (locked)
 		mono_loader_unlock ();
+
+cleanup:
+	ss_args_destroy (ss_args);
 }
 
-/*
- * Start single stepping of thread THREAD
- */
 static ErrorCode
-ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilter filter, EventRequest *req)
+ensure_runtime_is_suspended (void)
 {
-	DebuggerTlsData *tls;
+	if (suspend_count == 0)
+		return ERR_NOT_SUSPENDED;
+
+	wait_for_suspend ();
+
+	return ERR_NONE;
+}
+
+static ErrorCode
+ss_create_init_args (SingleStepReq *ss_req, SingleStepArgs *args)
+{
 	MonoSeqPointInfo *info = NULL;
-	SeqPoint *sp = NULL;
-	SeqPoint local_sp;
 	gboolean found_sp;
 	MonoMethod *method = NULL;
 	MonoDebugMethodInfo *minfo;
@@ -5280,37 +5336,8 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 	StackFrame **frames = NULL;
 	int nframes = 0;
 
-	if (suspend_count == 0)
-		return ERR_NOT_SUSPENDED;
-
-	wait_for_suspend ();
-
-	// FIXME: Multiple requests
-	if (the_ss_req) {
-		DEBUG_PRINTF (0, "Received a single step request while the previous one was still active.\n");
-		return ERR_NOT_IMPLEMENTED;
-	}
-
-	DEBUG_PRINTF (1, "[dbg] Starting single step of thread %p (depth=%s).\n", thread, ss_depth_to_string (depth));
-
-	SingleStepReq *ss_req = g_new0 (SingleStepReq, 1);
-	ss_req->req = req;
-	ss_req->thread = thread;
-	ss_req->size = size;
-	ss_req->depth = depth;
-	ss_req->filter = filter;
-	ss_req->refcount = 1;
-	req->info = ss_req;
-
-	for (int i = 0; i < req->nmodifiers; i++) {
-		if (req->modifiers[i].kind == MOD_KIND_ASSEMBLY_ONLY) {
-			ss_req->user_assemblies = req->modifiers[i].data.assemblies;
-			break;
-		}
-	}
-
 	mono_loader_lock ();
-	tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, thread);
+	DebuggerTlsData *tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, ss_req->thread);
 	mono_loader_unlock ();
 	g_assert (tls);
 	if (!tls->context.valid) {
@@ -5323,7 +5350,7 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 		 * Need to start single stepping from restore_state and not from the current state
 		 */
 		set_ip = TRUE;
-		frames = compute_frame_info_from (thread, tls, &tls->restore_state, &nframes);
+		frames = compute_frame_info_from (ss_req->thread, tls, &tls->restore_state, &nframes);
 	}
 
 	ss_req->start_sp = ss_req->last_sp = MONO_CONTEXT_GET_SP (&tls->context.ctx);
@@ -5341,11 +5368,10 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 		 * Find the seq point corresponding to the landing site ip, which is the first seq
 		 * point after ip.
 		 */
-		found_sp = mono_find_next_seq_point_for_native_offset (frame.domain, frame.method, frame.native_offset, &info, &local_sp);
-		sp = (found_sp)? &local_sp : NULL;
-		if (!sp)
+		found_sp = mono_find_next_seq_point_for_native_offset (frame.domain, frame.method, frame.native_offset, &info, &args->sp);
+		if (!found_sp)
 			no_seq_points_found (frame.method, frame.native_offset);
-		g_assert (sp);
+		g_assert (found_sp);
 
 		method = frame.method;
 
@@ -5361,7 +5387,7 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 			if (frames && nframes)
 				frame = frames [0];
 		} else {
-			compute_frame_info (thread, tls);
+			compute_frame_info (ss_req->thread, tls);
 
 			if (tls->frame_count)
 				frame = tls->frames [0];
@@ -5387,11 +5413,10 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 		if (frame) {
 			if (!method && frame->il_offset != -1) {
 				/* FIXME: Sort the table and use a binary search */
-				found_sp = mono_find_prev_seq_point_for_native_offset (frame->de.domain, frame->de.method, frame->de.native_offset, &info, &local_sp);
-				sp = (found_sp)? &local_sp : NULL;
-				if (!sp)
+				found_sp = mono_find_prev_seq_point_for_native_offset (frame->de.domain, frame->de.method, frame->de.native_offset, &info, &args->sp);
+				if (!found_sp)
 					no_seq_points_found (frame->de.method, frame->de.native_offset);
-				g_assert (sp);
+				g_assert (found_sp);
 				method = frame->de.method;
 			}
 		}
@@ -5399,12 +5424,59 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 
 	ss_req->start_method = method;
 
+	args->method = method;
+	args->ctx = set_ip ? &tls->restore_state.ctx : &tls->context.ctx;
+	args->tls = tls;
+	args->step_to_catch = step_to_catch;
+	args->info = info;
+	args->frames = (DbgEngineStackFrame**)frames;
+	args->nframes = nframes;
+
+	return ERR_NONE;
+}
+
+/*
+ * Start single stepping of thread THREAD
+ */
+static ErrorCode
+ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilter filter, EventRequest *req)
+{
+	int err = ensure_runtime_is_suspended ();
+	if (err)
+		return err;
+
+	// FIXME: Multiple requests
+	if (the_ss_req) {
+		DEBUG_PRINTF (0, "Received a single step request while the previous one was still active.\n");
+		return ERR_NOT_IMPLEMENTED;
+	}
+
+	DEBUG_PRINTF (1, "[dbg] Starting single step of thread %p (depth=%s).\n", thread, ss_depth_to_string (depth));
+
+	SingleStepReq *ss_req = g_new0 (SingleStepReq, 1);
+	ss_req->req = req;
+	ss_req->thread = thread;
+	ss_req->size = size;
+	ss_req->depth = depth;
+	ss_req->filter = filter;
+	ss_req->refcount = 1;
+	req->info = ss_req;
+
+	for (int i = 0; i < req->nmodifiers; i++) {
+		if (req->modifiers[i].kind == MOD_KIND_ASSEMBLY_ONLY) {
+			ss_req->user_assemblies = req->modifiers[i].data.assemblies;
+			break;
+		}
+	}
+
+	SingleStepArgs args;
+	err = ss_create_init_args (ss_req, &args);
+	if (err)
+		return err;
+
 	the_ss_req = ss_req;
 
-	ss_start (ss_req, method, sp, info, set_ip ? &tls->restore_state.ctx : &tls->context.ctx, tls, step_to_catch, frames, nframes);
-
-	if (frames)
-		free_frames (frames, nframes);
+	ss_start (ss_req, &args);
 
 	return ERR_NONE;
 }
@@ -7868,6 +7940,65 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		g_free (name);
 		break;
 	}
+    case CMD_ASSEMBLY_GET_METADATA_BLOB: {
+        MonoImage* image = ass->image;
+        if (ass->dynamic) {
+            return ERR_NOT_IMPLEMENTED;
+        }
+        buffer_add_byte_array (buf, (guint8*)image->raw_data, image->raw_data_len);
+        break;
+    }
+    case CMD_ASSEMBLY_GET_IS_DYNAMIC: {
+        buffer_add_byte (buf, ass->dynamic);
+        break;
+    }
+    case CMD_ASSEMBLY_GET_PDB_BLOB: {
+        MonoImage* image = ass->image;
+        MonoDebugHandle* handle = mono_debug_get_handle (image); 
+        if (!handle) {
+            return ERR_INVALID_ARGUMENT;
+        }
+        MonoPPDBFile* ppdb = handle->ppdb;
+        if (ppdb) {
+            image = mono_ppdb_get_image (ppdb);
+            buffer_add_byte_array (buf, (guint8*)image->raw_data, image->raw_data_len);
+        } else {
+            buffer_add_byte_array (buf, NULL, 0);
+        }
+        break;
+    }
+    case CMD_ASSEMBLY_GET_TYPE_FROM_TOKEN: {
+        if (ass->dynamic) {
+            return ERR_NOT_IMPLEMENTED;
+        }
+        guint32 token = decode_int (p, &p, end);
+        ERROR_DECL (error);
+        error_init (error);
+        MonoClass* mono_class = mono_class_get_checked (ass->image, token, error);
+        if (!is_ok (error)) {
+            mono_error_cleanup (error);
+            return ERR_INVALID_ARGUMENT;
+        }
+        buffer_add_typeid (buf, domain, mono_class);
+        mono_error_cleanup (error);
+        break;
+    }
+    case CMD_ASSEMBLY_GET_METHOD_FROM_TOKEN: {
+        if (ass->dynamic) {
+            return ERR_NOT_IMPLEMENTED;
+        }
+        guint32 token = decode_int (p, &p, end);
+        ERROR_DECL (error);
+        error_init (error);
+        MonoMethod* mono_method = mono_get_method_checked (ass->image, token, NULL, NULL, error);
+        if (!is_ok (error)) {
+            mono_error_cleanup (error);
+            return ERR_INVALID_ARGUMENT;
+        }
+        buffer_add_methodid (buf, domain, mono_method);
+        mono_error_cleanup (error);
+        break;
+    }
 	default:
 		return ERR_NOT_IMPLEMENTED;
 	}

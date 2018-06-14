@@ -85,8 +85,8 @@
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN;ASYNC;AGCLR;DISABLE_XSLT_COMPILER;DISABLE_XSLT_SCRIPT;MONO_HYBRID_SYSTEM_XML;DISABLE_CAS_USE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
-    <OutputPath>./../../class/lib/xammac_net_4_5-$(HostPlatform)</OutputPath>
-    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5-$(HostPlatform)</IntermediateOutputPath>
+    <OutputPath>./../../class/lib/xammac_net_4_5</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5</IntermediateOutputPath>
     <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN;ASYNC;CONFIGURATION_DEP</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'orbis' ">
