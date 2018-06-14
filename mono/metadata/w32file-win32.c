@@ -12,6 +12,7 @@
 #include <windows.h>
 #include "mono/metadata/w32file-win32-internals.h"
 #include "mono/metadata/profiler-private.h"
+#include "mono/metadata/w32error.h"
 
 void
 mono_w32file_init (void)
@@ -82,25 +83,59 @@ mono_w32file_delete (const gunichar2 *name)
 	return res;
 }
 
-gboolean
-mono_w32file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
+static void
+cancel_w32_io (HANDLE file_handle)
 {
-	gboolean res;
-	MONO_ENTER_GC_SAFE;
-	res = ReadFile (handle, buffer, numbytes, bytesread, NULL);
-	MONO_PROFILER_RAISE (fileio, (1, *bytesread));
-	MONO_EXIT_GC_SAFE;
+	CancelIoEx (file_handle, NULL);
+}
+
+gboolean
+mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
+{
+	gboolean res = FALSE;
+	gboolean interrupted;
+
+	mono_thread_info_install_interrupt (cancel_w32_io, handle, &interrupted);
+	if (!interrupted)
+	{
+		guint32 last_error;
+		MONO_ENTER_GC_SAFE;
+		res = ReadFile (handle, buffer, numbytes, bytesread, NULL);
+		MONO_PROFILER_RAISE (fileio, (1, *bytesread));
+		MONO_EXIT_GC_SAFE;
+
+		/* need to save and restore since clients expect error code set for
+		 * failed IO calls and mono_thread_info_uninstall_interrupt overwrites value */
+		last_error = mono_w32error_get_last ();
+		mono_thread_info_uninstall_interrupt (&interrupted);
+		mono_w32error_set_last (last_error);
+	}
+
 	return res;
 }
 
 gboolean
 mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
-	gboolean res;
-	MONO_ENTER_GC_SAFE;
-	res = WriteFile (handle, buffer, numbytes, byteswritten, NULL);
-	MONO_PROFILER_RAISE (fileio, (0, *byteswritten));
-	MONO_EXIT_GC_SAFE;
+	gboolean res = FALSE;
+	gboolean interrupted;
+
+	mono_thread_info_install_interrupt (cancel_w32_io, handle, &interrupted);
+	if (!interrupted)
+	{
+		guint32 last_error;
+		MONO_ENTER_GC_SAFE;
+		res = WriteFile (handle, buffer, numbytes, byteswritten, NULL);
+		MONO_PROFILER_RAISE (fileio, (0, *byteswritten));
+		MONO_EXIT_GC_SAFE;
+
+		/* need to save and restore since clients expect error code set for
+		* failed IO calls and mono_thread_info_uninstall_interrupt overwrites value */
+		last_error = mono_w32error_get_last ();
+		mono_thread_info_uninstall_interrupt (&interrupted);
+		mono_w32error_set_last (last_error);
+	}
+
 	return res;
 }
 

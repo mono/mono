@@ -140,6 +140,8 @@ MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
 
 void mono_gc_register_obj_with_weak_fields (void *obj);
 
+void mono_gc_strong_handle_foreach(GFunc func, gpointer user_data);
+
 void  mono_gc_register_for_finalization (MonoObject *obj, void *user_data);
 void  mono_gc_add_memory_pressure (gint64 value);
 MONO_API int   mono_gc_register_root (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
