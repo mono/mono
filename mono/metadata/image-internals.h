@@ -20,7 +20,4 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error);
 MonoImage *
 mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean refonly, gboolean load_from_context);
 
-gboolean
-mono_is_problematic_image (MonoImage *image);
-
 #endif /* __MONO_METADATA_IMAGE_INTERNALS_H__ */
