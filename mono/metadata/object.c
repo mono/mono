@@ -2224,7 +2224,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 				/* This is not needed by sgen, as it does not seem 
 +				to need write barriers for uncollectable objects (like the vtables storing static 
 +				fields), but it is needed for incremental boehm. */
-				mono_gc_wbarrier_generic_nostore(t);
+				mono_gc_wbarrier_generic_nostore (t);
 			}
 			continue;
 		}		
@@ -3471,7 +3471,7 @@ mono_field_static_set_value_internal (MonoVTable *vt, MonoClassField *field, voi
 	to need write barriers for uncollectable objects (like the vtables storing static 
 +	fields), but it is needed for incremental boehm. */
 	if (field->offset == -1)
-		mono_gc_wbarrier_generic_nostore(dest);
+		mono_gc_wbarrier_generic_nostore (dest);
 }
 
 /**
