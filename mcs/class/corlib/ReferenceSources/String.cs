@@ -59,6 +59,8 @@ namespace System
 
 		public static readonly String Empty;
 
+		public int Length => _stringLength;
+
 		internal unsafe int IndexOfUnchecked (string value, int startIndex, int count)
 		{
 			int valueLen = value.Length;
