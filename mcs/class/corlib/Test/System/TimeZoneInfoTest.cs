@@ -124,12 +124,387 @@ namespace MonoTests.System
 				} catch (DllNotFoundException e) {
 					return;
 				}
-#if !MONOTOUCH && !XAMMAC
+#if !MONOTOUCH && !XAMMAC && !UNITY
 				// this assumption is incorrect for iOS, tvO, watchOS and OSX
 				Assert.IsTrue (TimeZoneInfo.Local.Id != "Local", "Local timezone id should not be \"Local\"");
 #endif
 			}
 		}
+
+#if UNITY
+		[TestFixture]
+		public class UnityTests
+		{
+			public TimeZoneInfo GetLocalUnity ()
+			{
+				return (TimeZoneInfo)typeof (TimeZoneInfo).GetMethod ("CreateLocalUnity", BindingFlags.NonPublic | BindingFlags.Static).Invoke (null, null);
+			}
+
+			public void AssertNoDLS (TimeZoneInfo local, DateTime beforeDLSStart, DateTime afterDLSStart, DateTime beforeDLSEnd, DateTime afterDLSEnd)
+			{
+				Assert.IsFalse (local.IsDaylightSavingTime(beforeDLSStart), "Expected Not Daylight Savings " + beforeDLSStart.ToString ());
+				Assert.IsFalse (local.IsDaylightSavingTime(afterDLSStart), "Expected Not Daylight Savings " + afterDLSStart.ToString ());
+				Assert.IsFalse (local.IsDaylightSavingTime(beforeDLSEnd), "Expected Not Daylight Savings " + beforeDLSEnd.ToString ());
+				Assert.IsFalse (local.IsDaylightSavingTime(afterDLSEnd), "Expected Not Daylight Savings " + afterDLSEnd.ToString ());
+			}
+
+			public void AssertDLS (TimeZoneInfo local, DateTime beforeDLSStart, DateTime afterDLSStart, DateTime beforeDLSEnd, DateTime afterDLSEnd)
+			{
+				Assert.IsFalse (local.IsDaylightSavingTime (beforeDLSStart), "Expected Not Daylight Savings " + beforeDLSStart.ToString ());
+				Assert.IsTrue (local.IsDaylightSavingTime (afterDLSStart), "Expected Daylight Savings " + afterDLSStart.ToString ());
+				Assert.IsTrue (local.IsDaylightSavingTime (beforeDLSEnd), "Expected Daylight Savings " + beforeDLSEnd.ToString ());
+				Assert.IsFalse (local.IsDaylightSavingTime (afterDLSEnd), "Expected Not Daylight Savings " + afterDLSEnd.ToString ());
+			}
+
+			//Similar to Above but for Timezones that begin in daylight savings time jan 1
+			public void AssertDLSInverse (TimeZoneInfo local, DateTime beforeDLSEnd, DateTime afterDLSEnd, DateTime beforeDLSStart, DateTime afterDLSStart)
+			{
+				Assert.IsTrue (local.IsDaylightSavingTime (beforeDLSEnd), "Expected Daylight Savings " + beforeDLSEnd.ToString ());
+				Assert.IsFalse (local.IsDaylightSavingTime (afterDLSEnd), "Expected Not Daylight Savings " + afterDLSEnd.ToString ());
+				Assert.IsFalse (local.IsDaylightSavingTime (beforeDLSStart), "Expected Not Daylight Savings " + beforeDLSStart.ToString ());
+				Assert.IsTrue (local.IsDaylightSavingTime (afterDLSStart), "Expected Daylight Savings " + afterDLSStart.ToString ());
+			}
+
+			[Test]
+			public void CanGetLocalUnity ()
+			{
+				TimeZoneInfo local = GetLocalUnity ();
+				Assert.IsNotNull (local);
+				Assert.IsTrue (local.Id == "Local");
+			}
+
+			[Test]
+			public void LocalIsNotLocalUnityOnDesktop ()
+			{
+				TimeZoneInfo local = GetLocalUnity ();
+				Assert.IsNotNull (local);
+				Assert.AreNotEqual (local, TimeZoneInfo.Local);
+			}
+
+			[Test]
+			public void EST ()
+			{
+				Environment.SetEnvironmentVariable ("TZ", "America/New_York");
+				TimeZoneInfo local = GetLocalUnity ();
+
+				Assert.IsNotNull (local);
+				Assert.AreEqual ("-05:00:00", local.BaseUtcOffset.ToString ());
+				Assert.AreEqual ("Local", local.Id);
+				Assert.AreEqual ("EST", local.StandardName);
+				Assert.AreEqual ("EDT", local.DaylightName);
+				Assert.IsTrue (local.SupportsDaylightSavingTime);
+				Assert.AreEqual ("(GMT-05:00) Local Time", local.DisplayName);
+
+				var UTCInStandardMonth = new DateTime (2018,2,5,11,22,56);
+				var StandardTimeConverted = TimeZoneInfo.ConvertTimeFromUtc (UTCInStandardMonth, local);
+				Assert.AreEqual(6, StandardTimeConverted.Hour);
+
+				var UTCInDaylightMonth = new DateTime (2018,7,5,11,22,56);
+				var DaylightTimeConverted = TimeZoneInfo.ConvertTimeFromUtc (UTCInDaylightMonth, local);
+				Assert.AreEqual (7, DaylightTimeConverted.Hour);
+
+				//Before DLS Supported Year
+				AssertNoDLS (local,
+					new DateTime (1970,4,25),
+					new DateTime (1970,4,27),
+					new DateTime (1970,10,24),
+					new DateTime (1970,10,26)
+					);
+
+				//First DLS Supported Year
+				AssertDLS (local,
+					new DateTime (1971,4,24),
+					new DateTime (1971,4,26),
+					new DateTime (1971,10,30),
+					new DateTime (1971,11,1)
+					);
+
+				//Near current year
+				AssertDLS (local,
+					new DateTime (2018,3,10),
+					new DateTime (2018,3,12),
+					new DateTime (2018,11,3),
+					new DateTime (2018,11,5)
+					);
+
+				//Last DLS Supported Year
+				AssertDLS (local,
+					new DateTime (2037,3,7),
+					new DateTime (2037,3,9),
+					new DateTime (2037,10,30),
+					new DateTime (2037,11,2)
+					);
+
+				//After Last DLS Supported Year
+				AssertNoDLS (local,
+					new DateTime (2038,2,1),
+					new DateTime (2038,5,1),
+					new DateTime (2038,6,1),
+					new DateTime (2038,12,1)
+					);
+			}
+
+			[Test]
+			public void PST ()
+			{
+				Environment.SetEnvironmentVariable ("TZ", "America/Los_Angeles");
+				TimeZoneInfo local = GetLocalUnity ();
+
+				Assert.IsNotNull (local);
+				Assert.AreEqual ("-08:00:00", local.BaseUtcOffset.ToString ());
+				Assert.AreEqual ("Local", local.Id);
+				Assert.AreEqual ("PST", local.StandardName);
+				Assert.AreEqual ("PDT", local.DaylightName);
+				Assert.IsTrue (local.SupportsDaylightSavingTime);
+				Assert.AreEqual ("(GMT-08:00) Local Time", local.DisplayName);
+
+				var UTCInStandardMonth = new DateTime (2018,2,5,11,22,56);
+				var StandardTimeConverted = TimeZoneInfo.ConvertTimeFromUtc (UTCInStandardMonth, local);
+				Assert.AreEqual (3, StandardTimeConverted.Hour);
+
+				var UTCInDaylightMonth = new DateTime (2018,7,5,11,22,56);
+				var DaylightTimeConverted = TimeZoneInfo.ConvertTimeFromUtc (UTCInDaylightMonth, local);
+				Assert.AreEqual (4, DaylightTimeConverted.Hour);
+
+				//Before DLS Supported Year
+				AssertNoDLS (local,
+					new DateTime (1970,4,25),
+					new DateTime (1970,4,27),
+					new DateTime (1970,10,24),
+					new DateTime (1970,10,26)
+					);
+
+				//First DLS Supported Year
+				AssertDLS (local,
+					new DateTime (1971,4,24),
+					new DateTime (1971,4,26),
+					new DateTime (1971,10,30),
+					new DateTime (1971,11,1)
+					);
+
+				//Near current year
+				AssertDLS (local,
+					new DateTime (2018,3,10),
+					new DateTime (2018,3,12),
+					new DateTime (2018,11,3),
+					new DateTime (2018,11,5)
+					);
+
+				//Last DLS Supported Year
+				AssertDLS (local,
+					new DateTime (2037,3,7),
+					new DateTime (2037,3,9),
+					new DateTime (2037,10,30),
+					new DateTime (2037,11,2)
+					);
+
+				//After Last DLS Supported Year
+				AssertNoDLS (local,
+					new DateTime (2038,2,1),
+					new DateTime (2038,5,1),
+					new DateTime (2038,6,1),
+					new DateTime (2038,12,1)
+					);
+			}
+
+			[Test]
+			public void MST_Arizona ()
+			{
+				//Arizona is special in that there hasn't been daylight savings since 1967 (before our first supported year)
+				Environment.SetEnvironmentVariable ("TZ", "America/Phoenix");
+				TimeZoneInfo local = GetLocalUnity ();
+				Assert.IsNotNull (local);
+				Assert.AreEqual ("-07:00:00", local.BaseUtcOffset.ToString ());
+				Assert.AreEqual ("Local", local.Id);
+				Assert.AreEqual ("MST", local.StandardName);
+				Assert.AreEqual ("", local.DaylightName);
+				Assert.IsFalse (local.SupportsDaylightSavingTime);
+				Assert.AreEqual ("(GMT-07:00) Local Time", local.DisplayName);
+
+				var UTCInStandardMonth = new DateTime (2018,2,5,11,22,56);
+				var StandardTimeConverted = TimeZoneInfo.ConvertTimeFromUtc (UTCInStandardMonth, local);
+				Assert.AreEqual (4, StandardTimeConverted.Hour);
+			}
+
+			[Test]
+			public void EET_Egypt ()
+			{
+				//Egypt is special in that it stopped doing daylight savings in 2014 (after our first supported year)
+				Environment.SetEnvironmentVariable ("TZ", "Egypt");
+				TimeZoneInfo local = GetLocalUnity ();
+				Assert.IsNotNull (local);
+				Assert.AreEqual ("02:00:00", local.BaseUtcOffset.ToString ());
+				Assert.AreEqual ("Local", local.Id);
+				Assert.AreEqual ("EET", local.StandardName);
+				Assert.AreEqual ("", local.DaylightName);
+				Assert.IsFalse (local.SupportsDaylightSavingTime);
+				Assert.AreEqual ("(GMT+02:00) Local Time", local.DisplayName);
+
+				var UTCInStandardMonth = new DateTime (2018,2,5,11,22,56);
+				var StandardTimeConverted = TimeZoneInfo.ConvertTimeFromUtc (UTCInStandardMonth, local);
+				Assert.AreEqual (13, StandardTimeConverted.Hour);
+			}
+
+			[Test]
+			public void MSK_Crimea ()
+			{
+				//Crimea is special, because they switched form EET(with dls) to MSK (without dls) due to world conflicts in 2014
+				//C# timezoneinfo class only supports a single utc offset and transition times only account for daylight savings changes.
+				//In this case, it will display MSK with no support for daylight savings
+				Environment.SetEnvironmentVariable ("TZ", "Europe/Simferopol");
+				TimeZoneInfo local = GetLocalUnity ();
+				Assert.IsNotNull (local);
+				Assert.AreEqual ("03:00:00", local.BaseUtcOffset.ToString ());
+				Assert.AreEqual ("Local", local.Id);
+				Assert.AreEqual ("MSK", local.StandardName);
+				Assert.AreEqual ("", local.DaylightName);
+				Assert.IsFalse (local.SupportsDaylightSavingTime);
+				Assert.AreEqual ("(GMT+03:00) Local Time", local.DisplayName);
+
+				var UTCInStandardMonth = new DateTime (2018,2,5,11,22,56);
+				var StandardTimeConverted = TimeZoneInfo.ConvertTimeFromUtc (UTCInStandardMonth, local);
+				Assert.AreEqual (14, StandardTimeConverted.Hour);
+			}
+
+			[Test]
+			public void SA_Samoa ()
+			{
+				//Samoa is special, switched form -10/-11 to +13/+14 in 2011...The Timezoneinfo class only supports a single base utcoffset so
+				//years before 2011 will not have daylight savings information
+				Environment.SetEnvironmentVariable ("TZ", "Pacific/Apia");
+				TimeZoneInfo local = GetLocalUnity ();
+				Assert.IsNotNull (local);
+				Assert.AreEqual ("13:00:00", local.BaseUtcOffset.ToString ());
+				Assert.AreEqual ("Local", local.Id);
+				Assert.AreEqual ("+13", local.StandardName);
+				Assert.AreEqual ("+14", local.DaylightName);
+				Assert.IsTrue (local.SupportsDaylightSavingTime);
+				Assert.AreEqual ("(GMT+13:00) Local Time", local.DisplayName);
+
+				var UTCInStandardMonth = new DateTime (2018,4,5,1,22,56);
+				var StandardTimeConverted = TimeZoneInfo.ConvertTimeFromUtc (UTCInStandardMonth, local);
+				Assert.AreEqual (14, StandardTimeConverted.Hour);
+
+				var UTCInDaylightMonth = new DateTime (2018,11,5,1,22,56);
+				var DaylightTimeConverted = TimeZoneInfo.ConvertTimeFromUtc (UTCInDaylightMonth, local);
+				Assert.AreEqual (15, DaylightTimeConverted.Hour);
+
+				//2011 transitioned from utc -10 to utc +14...since we switched timezones in this year, we shouldn't have any DLS info for this year and prior
+				AssertNoDLS (local,
+					new DateTime (2011,4,1),
+					new DateTime (2011,4,3),
+					new DateTime (2011,12,28),
+					new DateTime (2011,12,31)
+					);
+				AssertNoDLS (local,
+					new DateTime (2010,9,24),
+					new DateTime (2010,9,26),
+					new DateTime (2010,12,28),
+					new DateTime (2010,12,31)
+					);
+
+				//Near current year
+				AssertDLSInverse (local,
+					new DateTime (2018,3,31),
+					new DateTime (2018,4,2),
+					new DateTime (2018,9,29),
+					new DateTime (2018,10,1)
+					);
+			}
+
+			[Test]
+			public void AEST ()
+			{
+				//Timezone that begins Jan 1 in DLS time
+				Environment.SetEnvironmentVariable ("TZ", "Australia/Sydney");
+				TimeZoneInfo local = GetLocalUnity ();
+				Assert.IsNotNull (local);
+				Assert.AreEqual ("10:00:00", local.BaseUtcOffset.ToString ());
+				Assert.AreEqual ("Local", local.Id);
+				Assert.AreEqual ("AEST", local.StandardName);
+				Assert.AreEqual ("AEDT", local.DaylightName);
+				Assert.IsTrue (local.SupportsDaylightSavingTime);
+				Assert.AreEqual ("(GMT+10:00) Local Time", local.DisplayName);
+				Assert.IsTrue (local.GetAdjustmentRules ().Length > 0);
+
+				var UTCInStandardMonth = new DateTime (2018,5,5,11,22,56);
+				var StandardTimeConverted = TimeZoneInfo.ConvertTimeFromUtc (UTCInStandardMonth, local);
+				Assert.AreEqual (21, StandardTimeConverted.Hour);
+
+				var UTCInDaylightMonth = new DateTime (2018,1,5,11,22,56);
+				var DaylightTimeConverted = TimeZoneInfo.ConvertTimeFromUtc (UTCInDaylightMonth, local);
+				Assert.AreEqual (22, DaylightTimeConverted.Hour);
+
+				//Before DLS Supported Year
+				AssertNoDLS (local,
+					new DateTime (1970,4,25),
+					new DateTime (1970,4,27),
+					new DateTime (1970,10,24),
+					new DateTime (1970,10,26)
+					);
+
+				//First DLS Supported Year...Austrialia did not start DLS until oct of 71
+				AssertNoDLS (local,
+					new DateTime (1971,10,30),
+					new DateTime (1971,11,1),
+					new DateTime (1971,2,26),
+					new DateTime (1971,2,28)
+					);
+
+				AssertDLSInverse (local,
+					new DateTime (1972,2,26),
+					new DateTime (1972,2,28),
+					new DateTime (1972,10,28),
+					new DateTime (1972,10,30)
+					);
+
+				//Near current year
+				AssertDLSInverse (local,
+					new DateTime (2018,3,31),
+					new DateTime (2018,4,2),
+					new DateTime (2018,10,6),
+					new DateTime (2018,10,8)
+					);
+
+				//Last DLS Supported Year
+				AssertDLSInverse (local,
+					new DateTime (2037,4,4),
+					new DateTime (2037,4,6),
+					new DateTime (2037,10,3),
+					new DateTime (2037,10,5)
+					);
+
+				//After Last DLS Supported Year
+				AssertNoDLS (local,
+					new DateTime (2038,2,1),
+					new DateTime (2038,5,1),
+					new DateTime (2038,6,1),
+					new DateTime (2038,12,1)
+					);
+			}
+
+			[Test]
+			public void Singapore ()
+			{
+				//Singapore changes it's timezone from +0730 to +08...use the latest offsets
+				Environment.SetEnvironmentVariable ("TZ", "Asia/Singapore");
+				TimeZoneInfo local = GetLocalUnity ();
+				Assert.IsNotNull (local);
+
+				Assert.AreEqual ("08:00:00", local.BaseUtcOffset.ToString ());
+				Assert.AreEqual ("Local", local.Id);
+				Assert.AreEqual ("+08", local.StandardName);
+				Assert.AreEqual ("", local.DaylightName);
+				Assert.IsFalse (local.SupportsDaylightSavingTime);
+				Assert.AreEqual ("(GMT+08:00) Local Time", local.DisplayName);
+
+				var UTCInStandardMonth = new DateTime (2018,5,5,11,22,56);
+				var StandardTimeConverted = TimeZoneInfo.ConvertTimeFromUtc (UTCInStandardMonth, local);
+				Assert.AreEqual (19, StandardTimeConverted.Hour);
+			}
+
+		}
+#endif
 
 		[TestFixture]
 		public class CreateCustomTimezoneTests

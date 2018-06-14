@@ -98,7 +98,7 @@ gmt_offset(struct tm *tm, time_t t)
  *  Returns true on success and zero on failure.
  */
 guint32
-ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray **data, MonoArray **names)
+ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray **data, MonoArray **names, MonoBoolean *daylight_inverted)
 {
 	MonoError error;
 #ifndef PLATFORM_WIN32
@@ -106,8 +106,9 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 	struct tm start, tt;
 	time_t t;
 
+	long int gmtoff_start;
 	long int gmtoff;
-	int is_daylight = 0, day;
+	int is_transitioned = 0, day;
 	char tzone [64];
 
 	MONO_CHECK_ARG_NULL (data, FALSE);
@@ -137,10 +138,14 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 		strftime (tzone, sizeof (tzone), "%Z", &tt);
 		mono_array_setref ((*names), 0, mono_string_new_checked (domain, tzone, &error));
 		mono_array_setref ((*names), 1, mono_string_new_checked (domain, tzone, &error));
+		*daylight_inverted = 0;
 		return 1;
 	}
 
+	*daylight_inverted = start.tm_isdst;
+
 	gmtoff = gmt_offset (&start, t);
+	gmtoff_start = gmtoff;
 
 	/* For each day of the year, calculate the tm_gmtoff. */
 	for (day = 0; day < 365; day++) {
@@ -169,25 +174,39 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 			strftime (tzone, sizeof (tzone), "%Z", &tt);
 			
 			/* Write data, if we're already in daylight saving, we're done. */
-			if (is_daylight) {
-				mono_array_setref ((*names), 0, mono_string_new_checked (domain, tzone, &error));
+			if (is_transitioned) {
+				if (!start.tm_isdst)
+					mono_array_setref ((*names), 0, mono_string_new_checked (domain, tzone, &error));
+				else
+					mono_array_setref ((*names), 1, mono_string_new_checked (domain, tzone, &error));
+
 				mono_array_set ((*data), gint64, 1, ((gint64)t1 + EPOCH_ADJUST) * 10000000L);
 				return 1;
 			} else {
-				mono_array_setref ((*names), 1, mono_string_new_checked (domain, tzone, &error));
+				if (!start.tm_isdst)
+					mono_array_setref ((*names), 1, mono_string_new_checked (domain, tzone, &error));
+				else
+					mono_array_setref ((*names), 0, mono_string_new_checked (domain, tzone, &error));
+
 				mono_array_set ((*data), gint64, 0, ((gint64)t1 + EPOCH_ADJUST) * 10000000L);
-				is_daylight = 1;
+				is_transitioned = 1;
 			}
 
 			/* This is only set once when we enter daylight saving. */
-			mono_array_set ((*data), gint64, 2, (gint64)gmtoff * 10000000L);
-			mono_array_set ((*data), gint64, 3, (gint64)(gmt_offset (&tt, t) - gmtoff) * 10000000L);
+			if (*daylight_inverted == 0) {
+				mono_array_set ((*data), gint64, 2, (gint64)gmtoff * 10000000L);
+				mono_array_set ((*data), gint64, 3, (gint64)(gmt_offset (&tt, t) - gmtoff) * 10000000L);
+			} else {
+				mono_array_set ((*data), gint64, 2, (gint64)(gmtoff_start + (gmt_offset (&tt, t) - gmtoff)) * 10000000L);
+				mono_array_set ((*data), gint64, 3, (gint64)(gmtoff - gmt_offset (&tt, t)) * 10000000L);
+			}
+
 
 			gmtoff = gmt_offset (&tt, t);
 		}
 	}
 
-	if (!is_daylight) {
+	if (!is_transitioned) {
 		strftime (tzone, sizeof (tzone), "%Z", &tt);
 		mono_array_setref ((*names), 0, mono_string_new_checked (domain, tzone, &error));
 		mono_array_setref ((*names), 1, mono_string_new_checked (domain, tzone, &error));
@@ -195,65 +214,12 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 		mono_array_set ((*data), gint64, 1, 0);
 		mono_array_set ((*data), gint64, 2, (gint64) gmtoff * 10000000L);
 		mono_array_set ((*data), gint64, 3, 0);
+		*daylight_inverted = 0;
 	}
 
 	return 1;
 #else
-	MonoDomain *domain = mono_domain_get ();
-	TIME_ZONE_INFORMATION tz_info;
-	FILETIME ft;
-	int i;
-	int err, tz_id;
-
-	tz_id = GetTimeZoneInformation (&tz_info);
-	if (tz_id == TIME_ZONE_ID_INVALID)
-		return 0;
-
-	MONO_CHECK_ARG_NULL (data);
-	MONO_CHECK_ARG_NULL (names);
-
-	mono_gc_wbarrier_generic_store (data, mono_array_new (domain, mono_defaults.int64_class, 4));
-	mono_gc_wbarrier_generic_store (names, mono_array_new (domain, mono_defaults.string_class, 2));
-
-	for (i = 0; i < 32; ++i)
-		if (!tz_info.DaylightName [i])
-			break;
-	mono_array_setref ((*names), 1, mono_string_new_utf16 (domain, tz_info.DaylightName, i));
-	for (i = 0; i < 32; ++i)
-		if (!tz_info.StandardName [i])
-			break;
-	mono_array_setref ((*names), 0, mono_string_new_utf16 (domain, tz_info.StandardName, i));
-
-	if ((year <= 1601) || (year > 30827)) {
-		/*
-		 * According to MSDN, the MS time functions can't handle dates outside
-		 * this interval.
-		 */
-		return 1;
-	}
-
-	/* even if the timezone has no daylight savings it may have Bias (e.g. GMT+13 it seems) */
-	if (tz_id != TIME_ZONE_ID_UNKNOWN) {
-		tz_info.StandardDate.wYear = year;
-		convert_to_absolute_date(&tz_info.StandardDate);
-		err = SystemTimeToFileTime (&tz_info.StandardDate, &ft);
-		//g_assert(err);
-		if (err == 0)
-			return 0;
-		
-		mono_array_set ((*data), gint64, 1, FILETIME_ADJUST + (((guint64)ft.dwHighDateTime<<32) | ft.dwLowDateTime));
-		tz_info.DaylightDate.wYear = year;
-		convert_to_absolute_date(&tz_info.DaylightDate);
-		err = SystemTimeToFileTime (&tz_info.DaylightDate, &ft);
-		//g_assert(err);
-		if (err == 0)
-			return 0;
-		
-		mono_array_set ((*data), gint64, 0, FILETIME_ADJUST + (((guint64)ft.dwHighDateTime<<32) | ft.dwLowDateTime));
-	}
-	mono_array_set ((*data), gint64, 2, (tz_info.Bias + tz_info.StandardBias) * -600000000LL);
-	mono_array_set ((*data), gint64, 3, (tz_info.DaylightBias - tz_info.StandardBias) * -600000000LL);
-
-	return 1;
+	//On Windows, we should always load timezones in managed
+	return 0;
 #endif
 }
