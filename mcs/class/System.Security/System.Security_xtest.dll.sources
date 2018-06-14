@@ -1,10 +1,10 @@
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/CryptographicAttributeObjectCollectionTests.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/CmsRecipientCollectionTests.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/EnvelopedCms/CertificateTests.cs
-../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/EnvelopedCms/ContentEncryptionAlgorithmTests.cs
+# ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/EnvelopedCms/ContentEncryptionAlgorithmTests.cs
 # ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/EnvelopedCms/DecryptTests.cs
 # ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/EnvelopedCms/DecryptTests.KeyPersistence.cs
-../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/EnvelopedCms/EdgeCasesTests.cs
+# ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/EnvelopedCms/EdgeCasesTests.cs
 # ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/EnvelopedCms/GeneralTests.cs
 # ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/EnvelopedCms/KeyAgreeRecipientInfoTests.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/EnvelopedCms/KeyTransRecipientInfoTests.cs
