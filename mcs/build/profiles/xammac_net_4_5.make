@@ -1,5 +1,7 @@
 include $(topdir)/build/profiles/net_4_x.make
 
+PLATFORMS =
+
 PROFILE_MCS_FLAGS = -d:NET_4_0 -d:NET_4_5 -d:NET_4_6 -d:MONO -nowarn:1699 -nostdlib $(PLATFORM_DEBUG_FLAGS) \
 	-d:FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK \
 	-d:NO_SYSTEM_DRAWING_DEPENDENCY \
