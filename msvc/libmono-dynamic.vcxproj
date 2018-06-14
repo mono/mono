@@ -89,6 +89,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\Users\Jo Shields\CMakeBuilds\42978d88-dc27-0e31-a1eb-0cb9a09df6c6\build\x64-Release\include;C:\source\repos\llvm\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
       <Command>
@@ -210,7 +213,7 @@
       <AdditionalOptions>/D /NODEFAULTLIB:LIBCD" " %(AdditionalOptions)</AdditionalOptions>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>$(MONO_DIR);$(MONO_INCLUDE_DIR);$(LIBGC_CPPFLAGS_INCLUDE);$(GLIB_CFLAGS_INCLUDE);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;$(GC_DEFINES);MONO_DLL_EXPORT;WIN64;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;$(GC_DEFINES);MONO_DLL_EXPORT;WIN64;NDEBUG;LLVM_API_VERSION=391;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -223,10 +226,11 @@
     <ProjectReference />
     <Link>
       <AdditionalDependencies Condition="'$(MONO_TARGET_GC)'=='boehm'">$(GC_LIB);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Jo Shields\CMakeBuilds\42978d88-dc27-0e31-a1eb-0cb9a09df6c6\build\x64-Release\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <ImportLibrary>$(MONO_BUILD_DIR_PREFIX)$(Platform)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
+      <AdditionalDependencies>Mswsock.lib;ws2_32.lib;ole32.lib;oleaut32.lib;psapi.lib;version.lib;advapi32.lib;winmm.lib;kernel32.lib;LLVMX86CodeGen.lib;LLVMX86Desc.lib;LLVMX86Info.lib;LLVMMCDisassembler.lib;LLVMX86AsmPrinter.lib;LLVMX86Utils.lib;LLVMSelectionDAG.lib;LLVMAsmPrinter.lib;LLVMDebugInfoCodeView.lib;LLVMCodeGen.lib;LLVMScalarOpts.lib;LLVMInstCombine.lib;LLVMInstrumentation.lib;LLVMBitWriter.lib;LLVMOrcJIT.lib;LLVMTransformUtils.lib;LLVMExecutionEngine.lib;LLVMTarget.lib;LLVMAnalysis.lib;LLVMProfileData.lib;LLVMRuntimeDyld.lib;LLVMObject.lib;LLVMMCParser.lib;LLVMBitReader.lib;LLVMMC.lib;LLVMCore.lib;LLVMSupport.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>.\libmono.bat "$(MONO_INCLUDE_DIR)" "$(SolutionDir)include\mono" -q</Command>

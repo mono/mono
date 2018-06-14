@@ -4,20 +4,10 @@
     <ExcludeFromWindowsBuild>true</ExcludeFromWindowsBuild>
   </PropertyGroup>
   <ItemGroup Label="llvm_sources">
-    <ClCompile Include="$(MonoSourceLocation)\mono\mini\mini-llvm-loaded.c">
-      <ExcludedFromBuild>$(ExcludeFromWindowsBuild)</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\mini\mini-llvm.c">
-      <ExcludedFromBuild>$(ExcludeFromWindowsBuild)</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\mini\llvm-runtime.cpp">
-      <ExcludedFromBuild>$(ExcludeFromWindowsBuild)</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\mini\mini-llvm-cpp.cpp">
-      <ExcludedFromBuild>$(ExcludeFromWindowsBuild)</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\mini\llvm-jit.cpp">
-      <ExcludedFromBuild>$(ExcludeFromWindowsBuild)</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\mono\mini\mini-llvm-loaded.c" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\mini\mini-llvm.c" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\mini\llvm-runtime.cpp" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\mini\mini-llvm-cpp.cpp" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\mini\llvm-jit.cpp" />
   </ItemGroup>
 </Project>
