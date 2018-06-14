@@ -690,7 +690,9 @@ TESTS_CS_SRC=		\
 	nested_type_visibility.cs	\
 	dynamic-method-churn.cs	\
 	verbose.cs \
-	generic-unmanaged-constraint.cs
+	generic-unmanaged-constraint.cs \
+	wait-dup-all.cs \
+	wait-dup-any.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
