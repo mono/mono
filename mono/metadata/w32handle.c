@@ -1029,21 +1029,17 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 
 		mono_w32handle_lock_signal_mutex ();
 
-		if (waitall) {
-			signalled = TRUE;
-			for (i = 0; i < nhandles; ++i) {
-				if (!mono_w32handle_issignalled (handles_data [i])) {
-					signalled = FALSE;
-					break;
-				}
-			}
-		} else {
-			signalled = FALSE;
-			for (i = 0; i < nhandles; ++i) {
-				if (mono_w32handle_issignalled (handles_data [i])) {
-					signalled = TRUE;
-					break;
-				}
+		// Check if all are signalled, or any are signalled.
+		// This is and'ing or or'ing all the values of mono_w32handle_issignalled, with short circuit.
+		// For  waitall, assume  TRUE, and flip it and break upon first FALSE.
+		// For !waitall, assume FALSE, and flip it and break upon first TRUE.
+		signalled = waitall;
+
+		for (i = 0; i < nhandles; ++i) {
+			// Inversions on next line normalize non-zero values.
+			if (!signalled != !mono_w32handle_issignalled (handles_data [i])) {
+				signalled = !signalled;
+				break;
 			}
 		}
 
