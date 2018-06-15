@@ -279,7 +279,7 @@ mono_type_initialization_init (void)
 	mono_coop_mutex_init_recursive (&type_initialization_section);
 	type_initialization_hash = g_hash_table_new (NULL, NULL);
 	blocked_thread_hash = g_hash_table_new (NULL, NULL);
-	mono_coop_mutex_init_recursive (&ldstr_section);
+	mono_coop_mutex_init (&ldstr_section);
 	mono_register_jit_icall (ves_icall_string_alloc, "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
 }
 
