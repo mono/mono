@@ -1,4 +1,15 @@
+.PHONY: provision-mxe
 
+ifeq ($(UNAME),Linux)
+LINUX_FLAVOR=$(shell ./determine-linux-flavor.sh)
+endif
+
+ifeq ($(LINUX_FLAVOR),Ubuntu)
+MXE_PREFIX=/usr
+
+provision-mxe:
+	@echo $(LINUX_FLAVOR) Linux does not require mxe provisioning. mingw from packages is used instead
+else
 MXE_SRC?=$(TOP)/sdks/builds/toolchains/mxe
 MXE_PREFIX_DIR?=$(TOP)/sdks/out
 
@@ -15,5 +26,5 @@ $(MXE_PREFIX)/.stamp: $(MXE_SRC)/Makefile
 			OS_SHORT_NAME="disable-native-plugins" PATH="$$PATH:$(MXE_PREFIX)/bin:$(dir $(shell brew list gettext | grep bin/autopoint$))"
 	touch $@
 
-.PHONY: provision-mxe
 provision-mxe: $(MXE_PREFIX)/.stamp
+endif
