@@ -326,8 +326,14 @@ namespace Mono.Net.Security
 			switch (type) {
 			case "default":
 #if MONO_FEATURE_APPLETLS
-				if (Platform.IsMacOS)
+				if (Platform.IsMacOS) {
+					if (Environment.OSVersion.Major <= 11) {
+						// The apple provider requires Apple API that was introduced in macOS 10.8 (Mountain Lion),
+						// so default to the legacy provider for earlier versions.
+						goto case "legacy";
+					}
 					goto case "apple";
+				}
 #endif
 #if MONO_FEATURE_BTLS
 				if (IsBtlsSupported ())
