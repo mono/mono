@@ -159,7 +159,7 @@ mono_conc_hashtable_lookup (MonoConcurrentHashTable *hash_table, gpointer key)
 {
 	MonoThreadHazardPointers* hp;
 	conc_table *table;
-	int hash, i, table_mask;
+	int hash, i, table_mask, first_i;
 	key_value_pair *kvs;
 	hash = mix_hash (hash_table->hash_func (key));
 	hp = mono_hazard_pointer_get ();
@@ -169,6 +169,7 @@ retry:
 	table_mask = table->table_size - 1;
 	kvs = table->kvs;
 	i = hash & table_mask;
+	first_i = i;
 
 	if (G_LIKELY (!hash_table->equal_func)) {
 		while (kvs [i].key) {
@@ -182,6 +183,9 @@ retry:
 				return value;
 			}
 			i = (i + 1) & table_mask;
+			if (i == first_i) {
+				break;
+			}
 		}
 	} else {
 		GEqualFunc equal = hash_table->equal_func;
@@ -201,6 +205,9 @@ retry:
 				return value;
 			}
 			i = (i + 1) & table_mask;
+			if (i == first_i) {
+				break;
+			}
 		}
 	}
 
@@ -223,7 +230,7 @@ mono_conc_hashtable_remove (MonoConcurrentHashTable *hash_table, gpointer key)
 {
 	conc_table *table;
 	key_value_pair *kvs;
-	int hash, i, table_mask;
+	int hash, i, table_mask, first_i;
 
 	g_assert (key != NULL && key != TOMBSTONE);
 
@@ -233,6 +240,7 @@ mono_conc_hashtable_remove (MonoConcurrentHashTable *hash_table, gpointer key)
 	kvs = table->kvs;
 	table_mask = table->table_size - 1;
 	i = hash & table_mask;
+	first_i = i;
 
 	if (!hash_table->equal_func) {
 		for (;;) {
@@ -255,6 +263,9 @@ mono_conc_hashtable_remove (MonoConcurrentHashTable *hash_table, gpointer key)
 				return value;
 			}
 			i = (i + 1) & table_mask;
+			if (i == first_i) {
+				return NULL;
+			}
 		}
 	} else {
 		GEqualFunc equal = hash_table->equal_func;
@@ -278,6 +289,9 @@ mono_conc_hashtable_remove (MonoConcurrentHashTable *hash_table, gpointer key)
 			}
 
 			i = (i + 1) & table_mask;
+			if (i == first_i) {
+				return NULL;
+			}
 		}
 	}
 }
