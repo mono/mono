@@ -111,14 +111,14 @@ namespace System.Security.Cryptography {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 
-			if (_lock == null) {
-				fixed (byte* fixed_data = data)
+			fixed (byte* fixed_data = data) {
+				if (_lock == null) {
 					_handle = RngGetBytes (_handle, fixed_data, data.LongLength);
-			} else {
-				// using a global handle for randomness
-				lock (_lock) {
-					fixed (byte* fixed_data = data)
+				} else {
+					// using a global handle for randomness
+					lock (_lock) {
 						_handle = RngGetBytes (_handle, fixed_data, data.LongLength);
+					}
 				}
 			}
 			Check ();
