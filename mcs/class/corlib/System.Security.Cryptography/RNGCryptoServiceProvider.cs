@@ -113,12 +113,12 @@ namespace System.Security.Cryptography {
 
 			if (_lock == null) {
 				fixed (byte* fixed_data = data)
-					_handle = RngGetBytes (_handle, fixed_data, (data != null) ? (IntPtr)data.Length : IntPtr.Zero);
+					_handle = RngGetBytes (_handle, fixed_data, data.LongLength);
 			} else {
 				// using a global handle for randomness
 				lock (_lock) {
 					fixed (byte* fixed_data = data)
-						_handle = RngGetBytes (_handle, fixed_data, (data != null) ? (IntPtr)data.Length : IntPtr.Zero);
+						_handle = RngGetBytes (_handle, fixed_data, data.LongLength);
 				}
 			}
 			Check ();
@@ -129,18 +129,18 @@ namespace System.Security.Cryptography {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 
-        		byte[] random = new byte [data.Length * 2];
-        		int i = 0;
-        		// one pass should be enough but hey this is random ;-)
-        		while (i < data.Length) {
+			byte[] random = new byte [data.LongLength * 2];
+			long i = 0;
+			// one pass should be enough but hey this is random ;-)
+			while (i < data.LongLength) {
 				fixed (byte* fixed_random = random)
-					_handle = RngGetBytes (_handle, fixed_random, (random != null) ? (IntPtr)random.Length : IntPtr.Zero);
+					_handle = RngGetBytes (_handle, fixed_random, random.LongLength);
 				Check ();
-                		for (int j=0; j < random.Length; j++) {
-                        		if (i == data.Length)
-                                		break;
-                        		if (random [j] != 0)
-                                		data [i++] = random [j];
+				for (long j = 0; j < random.LongLength; j++) {
+					if (i == data.LongLength)
+						break;
+					if (random [j] != 0)
+						data [i++] = random [j];
                 		}
         		}
 		}
