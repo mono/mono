@@ -741,22 +741,26 @@ namespace Mono.Security.X509 {
 		private void AddPrivateKey (PKCS8.PrivateKeyInfo pki) 
 		{
 			byte[] privateKey = pki.PrivateKey;
-			switch (privateKey [0]) {
-				case 0x02:
+			try {
+				switch (pki.Algorithm) {
+				case "1.2.840.113549.1.1.1": // Oids.RsaRsa
+					_keyBags.Add (PKCS8.PrivateKeyInfo.DecodeRSA (privateKey));
+					break;
+				case "1.2.840.10040.4.1": // Oids.DsaDsa
 					bool found;
 					DSAParameters p = GetExistingParameters (out found);
 					if (found) {
 						_keyBags.Add (PKCS8.PrivateKeyInfo.DecodeDSA (privateKey, p));
 					}
 					break;
-				case 0x30:
-					_keyBags.Add (PKCS8.PrivateKeyInfo.DecodeRSA (privateKey));
-					break;
+				case "1.2.840.10045.2.1": // TODO: Oids.Ecc
 				default:
-					Array.Clear (privateKey, 0, privateKey.Length);
 					throw new CryptographicException ("Unknown private key format");
+				}
 			}
-			Array.Clear (privateKey, 0, privateKey.Length);
+			finally {
+				Array.Clear (privateKey, 0, privateKey.Length);
+			}
 		}
 
 		private void ReadSafeBag (ASN1 safeBag) 
