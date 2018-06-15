@@ -327,7 +327,7 @@ namespace Mono.Net.Security
 			case "default":
 #if MONO_FEATURE_APPLETLS
 				if (Platform.IsMacOS) {
-					if (Environment.OSVersion.Major <= 11) {
+					if (Environment.OSVersion.Version.Major <= 11) {
 						// The apple provider requires Apple API that was introduced in macOS 10.8 (Mountain Lion),
 						// so default to the legacy provider for earlier versions.
 						goto case "legacy";
