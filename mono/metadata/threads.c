@@ -56,7 +56,6 @@
 #include <mono/utils/mono-os-wait.h>
 #include <mono/metadata/exception-internals.h>
 #include <mono/utils/mono-state.h>
-#include <mono/utils/mono-logger-internals.h>
 
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
@@ -2136,56 +2135,13 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 	// Allocate handle outside of the loop.
 	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
 
-	// Duplicate objects are not allowed for WaitAll, but are ok with WaitAny.
-	// There are the following implementation choices:
-	//  - qsort and look for adjacent equal, or bubble-sort-like and look for equal
-	//  - handle-based or object-based
-	//  - check for duplicate earlier or later
-	//
-	// Multiple combinations exist.
-	//
-	// CoreCLR/Windows: handle-based, sorted, checking after an error
-	// CoreCLR/Unix: object-based, bubble-sort-like
-	// Mono/Unix: object-based, sorted
-	// Mono/Windows: handle-based, sorted
-	//
-	// MSDN documentation is unclear as to handle-based or object-based -- probably object-based.
-	// For .NET to be object-based in a thin Win32-based implementation is impossible.
-	//
-	// Note that the lowest array index signaled is to be returned, so
-	// operating on the sorted data is incorrect, or needs an indirection to "unsort".
-
 	for (;;) {
 #ifdef HOST_WIN32
-		DWORD win32WaitResult;
 		MONO_ENTER_GC_SAFE;
-		win32WaitResult = (numhandles != 1)
-			? mono_win32_wait_for_multiple_objects_ex (numhandles, handles, waitall, timeoutLeft, TRUE)
-			: mono_win32_wait_for_single_object_ex (handles [0], timeoutLeft, TRUE);
+		ret =	(numhandles != 1)
+			? mono_w32handle_convert_wait_ret (mono_win32_wait_for_multiple_objects_ex (numhandles, handles, waitall, timeoutLeft, TRUE, error), numhandles)
+			: mono_w32handle_convert_wait_ret (mono_win32_wait_for_single_object_ex (handles [0], timeoutLeft, TRUE), 1);
 		MONO_EXIT_GC_SAFE;
-		// Duplicate detection here is based on CoreCLR.
-		// In particular, it is triggered by an error, and it is handled-based
-		// instead of object-based.
-		// See coreclr/src/vm/threads.cpp CheckForDuplicateHandles and its use.
-		if (win32WaitResult == WAIT_FAILED
-				&& waitall
-				&& numhandles > 1
-				&& numhandles <= MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS
-				&& GetLastError () == ERROR_INVALID_PARAMETER) {
-			gpointer handles_sorted [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS]; // 64
-			memcpy (handles_sorted, handles, numhandles * sizeof (handles [0]));
-			qsort (handles_sorted, numhandles, sizeof (gpointer), g_direct_equal);
-			for (gint32 i = 1; i < numhandles; ++i) {
-				if (handles_sorted [i - 1] == handles_sorted [i]) {
-					mono_error_set_duplicate_wait_object (error);
-					mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_HANDLE, "%s: handle %p is duplicated", __func__, handles_sorted [i]);
-					// win32WaitResult == WAIT_FAILED should suffice
-					// to exit function correctly.
-					break;
-				}
-			}
-		}
-		ret = mono_w32handle_convert_wait_ret (win32WaitResult, numhandles);
 #else
 		/* mono_w32handle_wait_multiple optimizes the case for numhandles == 1 */
 		ret = mono_w32handle_wait_multiple (handles, numhandles, waitall, timeoutLeft, TRUE, error);
