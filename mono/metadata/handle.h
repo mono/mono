@@ -147,7 +147,7 @@ static inline void
 mono_stack_mark_init (MonoThreadInfo *info, HandleStackMark *stackmark)
 {
 #ifdef MONO_HANDLE_TRACK_SP
-	gpointer sptop = (gpointer)(intptr_t)&stackmark;
+	gpointer sptop = &stackmark;
 #endif
 	HandleStack *handles = (HandleStack *)info->handle_stack;
 	stackmark->size = handles->top->size;
