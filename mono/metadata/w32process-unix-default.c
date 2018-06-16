@@ -41,6 +41,7 @@
 #define MAXPATHLEN 242
 #endif
 
+/* XXX: why don't we just use proclib? */
 gchar*
 mono_w32process_get_name (pid_t pid)
 {
