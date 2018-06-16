@@ -238,6 +238,8 @@ gboolean mono_thread_current_check_pending_interrupt (void);
 void mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state);
 void mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state);
 gboolean mono_thread_test_state (MonoInternalThread *thread, MonoThreadState test);
+gboolean
+mono_thread_test_state_locked (MonoInternalThread *thread, MonoThreadState test);
 gboolean mono_thread_test_and_set_state (MonoInternalThread *thread, MonoThreadState test, MonoThreadState set);
 void mono_thread_clear_and_set_state (MonoInternalThread *thread, MonoThreadState clear, MonoThreadState set);
 
@@ -337,7 +339,13 @@ mono_threads_exit_gc_safe_region_unbalanced_internal (gpointer cookie, MonoStack
 
 // Set directory to store thread dumps captured by SIGQUIT
 void
-mono_set_thread_dump_dir(gchar* dir);
+mono_set_thread_dump_dir (gchar* dir);
+
+void
+mono_lock_thread (MonoInternalThread *thread);
+
+void
+mono_unlock_thread (MonoInternalThread *thread);
 
 #ifdef TARGET_OSX
 #define MONO_MAX_SUMMARY_NAME_LEN 140
@@ -383,6 +391,7 @@ typedef struct {
 
 gboolean
 mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes);
+
 #endif
 
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

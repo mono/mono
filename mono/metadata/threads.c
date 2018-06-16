@@ -95,8 +95,8 @@ extern int tkill (pid_t tid, int signal);
 
 #define SPIN_UNLOCK(i) i = 0
 
-#define LOCK_THREAD(thread) lock_thread((thread))
-#define UNLOCK_THREAD(thread) unlock_thread((thread))
+#define LOCK_THREAD(thread) (mono_lock_thread(thread))
+#define UNLOCK_THREAD(thread) (mono_unlock_thread(thread))
 
 typedef union {
 	gint32 ival;
@@ -472,8 +472,8 @@ static void ensure_synch_cs_set (MonoInternalThread *thread)
 	}
 }
 
-static inline void
-lock_thread (MonoInternalThread *thread)
+void
+mono_lock_thread (MonoInternalThread *thread)
 {
 	if (!thread->synch_cs)
 		ensure_synch_cs_set (thread);
@@ -483,8 +483,8 @@ lock_thread (MonoInternalThread *thread)
 	mono_coop_mutex_lock (thread->synch_cs);
 }
 
-static inline void
-unlock_thread (MonoInternalThread *thread)
+void
+mono_unlock_thread (MonoInternalThread *thread)
 {
 	mono_coop_mutex_unlock (thread->synch_cs);
 }
@@ -492,13 +492,13 @@ unlock_thread (MonoInternalThread *thread)
 static void
 lock_thread_handle (MonoInternalThreadHandle thread)
 {
-	lock_thread (mono_internal_thread_handle_ptr (thread));
+	mono_lock_thread (mono_internal_thread_handle_ptr (thread));
 }
 
 static void
 unlock_thread_handle (MonoInternalThreadHandle thread)
 {
-	unlock_thread (mono_internal_thread_handle_ptr (thread));
+	mono_unlock_thread (mono_internal_thread_handle_ptr (thread));
 }
 
 static inline gboolean
@@ -5152,11 +5152,17 @@ mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state)
 }
 
 gboolean
+mono_thread_test_state_locked (MonoInternalThread *thread, MonoThreadState test)
+{
+	return (thread->state & test) != 0;
+}
+
+gboolean
 mono_thread_test_state (MonoInternalThread *thread, MonoThreadState test)
 {
 	LOCK_THREAD (thread);
 
-	gboolean const ret = ((thread->state & test) != 0);
+	gboolean const ret = mono_thread_test_state_locked (thread, test);
 	
 	UNLOCK_THREAD (thread);
 	

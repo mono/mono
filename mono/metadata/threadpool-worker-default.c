@@ -34,6 +34,7 @@
 #include <mono/utils/mono-rand.h>
 #include <mono/utils/refcount.h>
 #include <mono/utils/w32api.h>
+#include <mono/metadata/threads-types.h>
 
 #define CPU_USAGE_LOW 80
 #define CPU_USAGE_HIGH 95
@@ -356,6 +357,19 @@ mono_threadpool_worker_request (void)
 	mono_refcount_dec (&worker);
 }
 
+static gboolean
+worker_aborted (MonoInternalThread *thread)
+{
+	mono_lock_thread (thread);
+
+	gboolean const result = mono_thread_test_state_locked (thread, ThreadState_AbortRequested)
+		&& !(thread->flags & MONO_THREAD_FLAG_APPDOMAIN_ABORT);
+
+	mono_unlock_thread (thread);
+
+	return result;
+}
+
 /* return TRUE if timeout, FALSE otherwise (worker unpark or interrupt) */
 static gboolean
 worker_park (void)
@@ -367,7 +381,9 @@ worker_park (void)
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker parking",
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
 
-	if (!mono_runtime_is_shutting_down ()) {
+	MonoInternalThread * const thread = mono_thread_internal_current ();
+
+	if (!mono_runtime_is_shutting_down () && !worker_aborted (thread)) {
 		static gpointer rand_handle = NULL;
 		ThreadPoolWorkerCounter counter;
 
@@ -478,9 +494,7 @@ worker_thread (gpointer unused)
 			continue;
 
 		if (!work_item_try_pop ()) {
-			gboolean timeout;
-
-			timeout = worker_park ();
+			gboolean const timeout = worker_park ();
 			if (timeout)
 				break;
 
@@ -511,7 +525,7 @@ worker_try_create (void)
 	ERROR_DECL (error);
 	MonoInternalThread *thread;
 	gint64 current_ticks;
-	gint32 now;
+	gint32 now = 0;
 	ThreadPoolWorkerCounter counter;
 
 	if (mono_runtime_is_shutting_down ())
@@ -651,8 +665,7 @@ monitor_sufficient_delay_since_last_dequeue (void)
 	if (worker.cpu_usage < CPU_USAGE_LOW) {
 		threshold = MONITOR_INTERVAL;
 	} else {
-		ThreadPoolWorkerCounter counter;
-		counter = COUNTER_READ ();
+		ThreadPoolWorkerCounter counter = COUNTER_READ ();
 		threshold = counter._.max_working * MONITOR_INTERVAL * 2;
 	}
 
@@ -1065,8 +1078,7 @@ static gboolean
 heuristic_should_adjust (void)
 {
 	if (worker.heuristic_last_dequeue > worker.heuristic_last_adjustment + worker.heuristic_adjustment_interval) {
-		ThreadPoolWorkerCounter counter;
-		counter = COUNTER_READ ();
+		ThreadPoolWorkerCounter counter = COUNTER_READ ();
 		if (counter._.working <= counter._.max_working)
 			return TRUE;
 	}
@@ -1083,10 +1095,9 @@ heuristic_adjust (void)
 		gint64 sample_duration = sample_end - worker.heuristic_sample_start;
 
 		if (sample_duration >= worker.heuristic_adjustment_interval / 2) {
-			ThreadPoolWorkerCounter counter;
 			gint16 new_thread_count;
 
-			counter = COUNTER_READ ();
+			ThreadPoolWorkerCounter counter = COUNTER_READ ();
 			new_thread_count = hill_climbing_update (counter._.max_working, sample_duration, completions, &worker.heuristic_adjustment_interval);
 
 			COUNTER_ATOMIC (counter, {
@@ -1117,11 +1128,9 @@ heuristic_notify_work_completed (void)
 gboolean
 mono_threadpool_worker_notify_completed (void)
 {
-	ThreadPoolWorkerCounter counter;
-
 	heuristic_notify_work_completed ();
 
-	counter = COUNTER_READ ();
+	ThreadPoolWorkerCounter counter = COUNTER_READ ();
 	return counter._.working <= counter._.max_working;
 }
 
