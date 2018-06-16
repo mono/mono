@@ -352,7 +352,6 @@ Handle macros/functions
 #ifdef MONO_HANDLE_TRACK_OWNER
 #define STRINGIFY_(x) #x
 #define STRINGIFY(x) STRINGIFY_(x)
-#define HANDLE_OWNER_STRINGIFY(file,lineno) (const char*) (file ":" STRINGIFY(lineno))
 #define HANDLE_OWNER (__FILE__ ":" STRINGIFY (__LINE__))
 #endif
 
@@ -444,7 +443,7 @@ Handle macros/functions
 #ifndef MONO_HANDLE_TRACK_OWNER
 #define MONO_HANDLE_NEW(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( mono_handle_new ((MonoObject*)(VALUE)) )
 #else
-#define MONO_HANDLE_NEW(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( mono_handle_new ((MonoObject*)(VALUE), HANDLE_OWNER_STRINGIFY(__FILE__, __LINE__)))
+#define MONO_HANDLE_NEW(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( mono_handle_new ((MonoObject*)(VALUE), HANDLE_OWNER))
 #endif
 
 #define MONO_HANDLE_CAST(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( VALUE )
