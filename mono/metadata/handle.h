@@ -125,11 +125,9 @@ typedef void (*GcScanFunc) (gpointer*, gpointer);
 
 #ifndef MONO_HANDLE_TRACK_OWNER
 MonoRawHandle mono_handle_new (MonoObject *object);
-MonoRawHandle mono_handle_new_full (gpointer rawptr, gboolean interior);
 MonoRawHandle mono_handle_new_interior (gpointer rawptr);
 #else
 MonoRawHandle mono_handle_new (MonoObject *object, const char* owner);
-MonoRawHandle mono_handle_new_full (gpointer rawptr, gboolean interior, const char *owner);
 MonoRawHandle mono_handle_new_interior (gpointer rawptr, const char *owner);
 #endif
 
