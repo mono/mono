@@ -484,6 +484,7 @@ extern const MonoObjectHandle mono_null_value_handle;
 static inline void
 mono_handle_assign (MonoObjectHandleOut dest, MonoObjectHandle src)
 {
+	g_assert (dest);
 	MONO_HANDLE_SUPPRESS (dest->__raw = (gpointer)(src ? MONO_HANDLE_RAW (src) : NULL));
 }
 
