@@ -5443,7 +5443,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerIn
 	MonoClass *klass = mono_type_get_class (MONO_HANDLE_GETVAL (type, type));
 	if (!mono_class_init (klass)) {
 		mono_error_set_for_class_failure (error, klass);
-		return NULL;
+		return MONO_HANDLE_CAST (MonoDelegate, NULL_HANDLE);
 	}
 
 	return mono_ftnptr_to_delegate_handle (klass, ftn, error);
@@ -6223,9 +6223,9 @@ MonoObjectHandle
 mono_icall_handle_new (gpointer rawobj)
 {
 #ifdef MONO_HANDLE_TRACK_OWNER
-	return mono_handle_new (rawobj, "<marshal args>");
+	return MONO_HANDLE_NEW (MonoObject, (MonoObject*)rawobj, "<marshal args>");
 #else
-	return mono_handle_new (rawobj);
+	return MONO_HANDLE_NEW (MonoObject, (MonoObject*)rawobj);
 #endif
 }
 
@@ -6233,9 +6233,19 @@ MonoObjectHandle
 mono_icall_handle_new_interior (gpointer rawobj)
 {
 #ifdef MONO_HANDLE_TRACK_OWNER
-	return mono_handle_new_interior (rawobj, "<marshal args>");
+	MonoRawHandle const rawh = mono_handle_new_interior (rawobj, "<marshal args>");
 #else
-	return mono_handle_new_interior (rawobj);
+	MonoRawHandle const rawh = mono_handle_new_interior (rawobj);
+#endif
+#if MONO_TYPE_SAFE_HANDLES
+	// This is the only use of mono_handle_new_interior.
+	// It lacks the macro support of mono_handle_new.
+	//return *(MonoObjectHandle*)&rawh; // violates gcc -fstrict-aliasing
+	// Legal with gcc -fstrict-aliasing:
+	union { MonoRawHandle rawh; MonoObjectHandle objh; } type_pun = { rawh };
+	return type_pun.objh;
+#else
+	return rawh;
 #endif
 }
 
