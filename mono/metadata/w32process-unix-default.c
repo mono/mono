@@ -20,6 +20,14 @@
 #endif
 #endif
 
+#ifdef _AIX
+/* like solaris, just different */
+#include <sys/procfs.h>
+/* fallback for procfs-less i */
+#include <procinfo.h>
+#include <sys/types.h>
+#endif
+
 /* makedev() macro */
 #ifdef MAJOR_IN_MKDEV
 #include <sys/mkdev.h>
@@ -41,7 +49,7 @@ mono_w32process_get_name (pid_t pid)
 	gchar buf[256];
 	gchar *ret = NULL;
 
-#if defined(HOST_SOLARIS)
+#if defined(HOST_SOLARIS) || (defined(_AIX) && !defined(__PASE__))
 	filename = g_strdup_printf ("/proc/%d/psinfo", pid);
 	if ((fp = fopen (filename, "r")) != NULL) {
 		struct psinfo info;
@@ -55,6 +63,15 @@ mono_w32process_get_name (pid_t pid)
 		fclose (fp);
 	}
 	g_free (filename);
+#elif defined(__PASE__)
+	/* AIX has a procfs, but it's not available on i */
+	struct procentry64 proc;
+	pid_t newpid;
+
+	newpid = pid;
+	if (getprocs64(&proc, sizeof (proc), NULL, NULL, &newpid, 1) == 1) {
+		ret = g_strdup (proc.pi_comm);
+	}
 #else
 	memset (buf, '\0', sizeof(buf));
 	filename = g_strdup_printf ("/proc/%d/exe", pid);
