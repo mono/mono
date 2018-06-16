@@ -158,6 +158,74 @@ open_process_map (int pid, const char *mode)
 GSList*
 mono_w32process_get_modules (pid_t pid)
 {
+#if defined(_AIX)
+	/* due to procfs, this won't work on i */
+	GSList *ret = NULL;
+	FILE *fp;
+	MonoW32ProcessModule *mod;
+	struct prmap module;
+	int i;
+	fpos64_t curpos;
+
+	char pidpath[32]; /* "/proc/<uint64_t max>/map" plus null, rounded */
+	char libpath[MAXPATHLEN + 1];
+	char membername[MAXPATHLEN + 1];
+	char combinedname[(MAXPATHLEN * 2) + 3]; /* lib, member, (), and nul */
+
+	sprintf (pidpath, "/proc/%d/map", pid);
+	if ((fp = fopen(pidpath, "r"))) {
+		while (fread (&module, sizeof (module), 1, fp) == 1
+			/* proc(4) declares such a struct to be the array terminator */
+			&& (module.pr_size != 0 && module.pr_mflags != 0)
+			&& (module.pr_mflags & MA_READ)) {
+
+			fgetpos64 (fp, &curpos); /* save our position */
+			fseeko (fp, module.pr_pathoff, SEEK_SET);
+			while ((libpath[i++] = fgetc (fp)));
+			i = 0;
+			while ((membername[i++] = fgetc (fp)));
+			i = 0;
+			fsetpos64 (fp, &curpos); /* back to normal */
+
+			mod = g_new0 (MonoW32ProcessModule, 1);
+			mod->address_start = module.pr_vaddr;
+			mod->address_end = module.pr_vaddr + module.pr_size;
+			mod->address_offset = module.pr_off;
+			mod->perms = g_strdup ("r--p"); /* XXX? */
+
+			/* AIX has what appears to be device, channel and inode information,
+			 * but it's in a string. Try parsing it.
+			 *
+			 * XXX: I believe it's fstype.devno.chano.inode, but I'm uncertain
+			 * as to how that maps out, so I only fill in the inode (like BSD)
+			 */
+			sscanf (module.pr_mapname, "%*[^.].%*lu.%*u.%lu", &(mod->inode));
+
+			if (membername[0]) {
+				snprintf(combinedname, MAXPATHLEN, "%s(%s)", libpath, membername); 
+				mod->filename = g_strdup (combinedname);
+			} else {
+				mod->filename = g_strdup (libpath);
+			}
+
+			if (g_slist_find_custom (ret, mod, mono_w32process_module_equals) == NULL) {
+				ret = g_slist_prepend (ret, mod);
+			} else {
+				mono_w32process_module_free (mod);
+			}
+		}
+	} else {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Can't open process map file for pid %d", __func__, pid);
+		return NULL;
+	}
+
+	if (ret)
+		ret = g_slist_reverse (ret);
+
+	fclose (fp);
+
+	return(ret);
+#else
 	GSList *ret = NULL;
 	FILE *fp;
 	MonoW32ProcessModule *mod;
@@ -281,6 +349,7 @@ mono_w32process_get_modules (pid_t pid)
 	fclose (fp);
 
 	return(ret);
+#endif
 }
 
 #endif
