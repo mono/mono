@@ -202,7 +202,7 @@ get_entropy_from_egd (const char *path, guchar *buffer, gssize buffer_size, Mono
 gboolean
 mono_rand_open (void)
 {
-	static gint32 status = 0;
+	static gint32 status;
 	if (status != 0 || mono_atomic_cas_i32 (&status, 1, 0) != 0) {
 		while (status != 2)
 			mono_thread_info_yield ();
@@ -235,20 +235,15 @@ gboolean
 mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gssize buffer_size, MonoError *error)
 {
 	g_assert (buffer || !buffer_size);
-
-#if defined(HAVE_GETRANDOM) || defined(HAVE_GETENTROPY)
-	gint res;
-#endif
-
 	g_assert (handle);
 
 	error_init (error);
 
 #if defined(HAVE_GETRANDOM) || defined(HAVE_GETENTROPY)
 #ifdef HAVE_GETRANDOM
-	res = mono_getrandom (buffer, buffer_size, 0, error);
+	gint const res = mono_getrandom (buffer, buffer_size, 0, error);
 #else
-	res = mono_getentropy (buffer, buffer_size, error);
+	gint const res = mono_getentropy (buffer, buffer_size, error);
 #endif
 	if (res < 0)
 		return FALSE;
@@ -271,11 +266,8 @@ mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gssize buffer_size, M
 		g_free (socket_path);
 	} else {
 		/* Read until the buffer is filled. This may block if using NAME_DEV_RANDOM. */
-		gint count = 0;
-		gint err;
-
-		do {
-			err = read (file, buffer + count, buffer_size - count);
+		while (buffer_size > 0) {
+			gssize const err = read (file, buffer, buffer_size);
 			if (err < 0) {
 				if (errno == EINTR)
 					continue;
@@ -284,8 +276,9 @@ mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gssize buffer_size, M
 				mono_error_set_execution_engine (error, "Entropy error! Error in read (%s).", strerror (errno));
 				return FALSE;
 			}
-			count += err;
-		} while (count < buffer_size);
+			buffer += err;
+			buffer_size -= err;
+		}
 	}
 	return TRUE;
 }
@@ -303,7 +296,7 @@ mono_rand_close (gpointer provider)
 gboolean
 mono_rand_open (void)
 {
-	static gint32 status = 0;
+	static gint32 status;
 	if (status != 0 || mono_atomic_cas_i32 (&status, 1, 0) != 0) {
 		while (status != 2)
 			mono_thread_info_yield ();
@@ -326,27 +319,28 @@ mono_rand_init (const guchar *seed, gssize seed_size)
 gboolean
 mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gssize buffer_size, MonoError *error)
 {
+	// This functions is not used on any mainstream platform, perhaps not at all.
+
 	g_assert (buffer || !buffer_size);
 
-	gint count = 0;
-
 	error_init (error);
+
+	g_assert (RAND_MAX >= 0xFF); // FIXME static_assert when compilers catch up.
 	
-	do {
-		if (buffer_size - count >= sizeof (gint32) && RAND_MAX >= 0xFFFFFFFF) {
-			*(gint32*) buffer = rand();
-			count += sizeof (gint32);
-			buffer += sizeof (gint32) / sizeof (guchar);
-		} else if (buffer_size - count >= sizeof (gint16) && RAND_MAX >= 0xFFFF) {
-			*(gint16*) buffer = rand();
-			count += sizeof (gint16);
-			buffer += sizeof (gint16) / sizeof (guchar);
-		} else if (buffer_size - count >= sizeof (gint8) && RAND_MAX >= 0xFF) {
-			*(gint8*) buffer = rand();
-			count += sizeof (gint8);
-			buffer += sizeof (gint8) / sizeof (guchar);
+	while (buffer_size > 0) {
+		int const i = rand ();
+		int j;
+		if (buffer_size >= (j = 4) && RAND_MAX >= 0xFFFFFFFF)
+			*(gint32*) buffer = i;
+		else if (buffer_size >= (j = 2) && RAND_MAX >= 0xFFFF)
+			*(gint16*) buffer = i;
+		else {
+			j = 1;
+			*(gint8*) buffer = i;
 		}
-	} while (count < buffer_size);
+		buffer += j;
+		buffer_size -= j;
+	}
 
 	return TRUE;
 }
