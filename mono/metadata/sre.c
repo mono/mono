@@ -1842,7 +1842,7 @@ mono_reflection_type_handle_mono_type (MonoReflectionTypeHandle ref, MonoError *
 		mono_error_assert_ok (error);
 		result = MONO_HANDLE_GETVAL (ref, type);
 	} else {
-		g_error ("Cannot handle corlib user type %s", mono_type_full_name (m_class_get_byval_arg (mono_object_class(ref))));
+		g_error ("Cannot handle corlib user type %s", mono_type_full_name (m_class_get_byval_arg (mono_handle_class (ref))));
 	}
 leave:
 	HANDLE_FUNCTION_RETURN_VAL (result);
