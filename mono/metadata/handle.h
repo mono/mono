@@ -434,8 +434,15 @@ Handle macros/functions
 #define MONO_HANDLE_CAST(type, value) \
 	(((TYPED_HANDLE_NAME (type) (*)(gpointer))mono_handle_cast)((value).__raw))
 
-// FIXME double evaluation
-#define MONO_HANDLE_RAW(handle)     ((handle).__raw ? *(handle).__raw : NULL)
+// With Visual C++ compiling as C, the type of a ternary expression
+// yielding two unrelated non-void pointers is the type of the first, plus a warning.
+// This can be used to simulate gcc typeof extension.
+// Otherwise we are forced to evaluate twice, or use C++.
+#ifdef _MSC_VER
+#define MONO_HANDLE_RAW(handle)     (0 ? *(handle).__raw : (MonoObject*)mono_handle_raw ((handle).__raw))
+#else
+#define MONO_HANDLE_RAW(handle)     ((typeof (*(handle).__raw))mono_handle_raw ((handle).__raw))
+#endif
 #define MONO_HANDLE_IS_NULL(handle) (mono_handle_is_null ((handle).__raw))
 
 #else // MONO_TYPE_SAFE_HANDLES
@@ -445,10 +452,17 @@ Handle macros/functions
 #else
 #define MONO_HANDLE_NEW(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( mono_handle_new ((MonoObject*)(VALUE), HANDLE_OWNER))
 #endif
-
 #define MONO_HANDLE_CAST(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( VALUE )
-// FIXME double evaluation
-#define MONO_HANDLE_RAW(handle)     ((handle) ? ((handle)->__raw) : NULL)
+
+// With Visual C++ compiling as C, the type of a ternary expression
+// yielding two unrelated non-void pointers is the type of the first, plus a warning.
+// This can be used to simulate gcc typeof extension.
+// Otherwise we are forced to evaluate twice, or use C++.
+#ifdef _MSC_VER
+#define MONO_HANDLE_RAW(handle)     (0 ? (handle)->__raw : (MonoObject*)mono_handle_raw (handle))
+#else
+#define MONO_HANDLE_RAW(handle)     ((typeof ((handle)->__raw))mono_handle_raw (handle))
+#endif
 #define MONO_HANDLE_IS_NULL(handle) (mono_handle_is_null (handle))
 
 #endif // MONO_TYPE_SAFE_HANDLES
@@ -611,10 +625,10 @@ mono_handle_raw (MonoRawHandle raw_handle)
 	MONO_HANDLE_SUPPRESS_SCOPE (1);
 #if MONO_TYPE_SAFE_HANDLES
 	MonoObjectHandle *handle = (MonoObjectHandle*)&raw_handle;
-	return !handle->__raw ? NULL : *handle->__raw;
+	return handle->__raw ? *handle->__raw : NULL;
 #else
 	MonoObjectHandle handle = (MonoObjectHandle)raw_handle;
-	return !handle ? NULL : handle->__raw;
+	return handle ? handle->__raw : NULL;
 #endif
 }
 
