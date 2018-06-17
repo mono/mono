@@ -113,11 +113,11 @@ namespace System.Security.Cryptography {
 
 			fixed (byte* fixed_data = data) {
 				if (_lock == null) {
-					_handle = RngGetBytes (_handle, fixed_data, data.LongLength);
+					_handle = RngGetBytes (_handle, fixed_data, (IntPtr)data.LongLength);
 				} else {
 					// using a global handle for randomness
 					lock (_lock) {
-						_handle = RngGetBytes (_handle, fixed_data, data.LongLength);
+						_handle = RngGetBytes (_handle, fixed_data, (IntPtr)data.LongLength);
 					}
 				}
 			}
@@ -134,7 +134,7 @@ namespace System.Security.Cryptography {
 			// one pass should be enough but hey this is random ;-)
 			while (i < data.LongLength) {
 				fixed (byte* fixed_random = random)
-					_handle = RngGetBytes (_handle, fixed_random, random.LongLength);
+					_handle = RngGetBytes (_handle, fixed_random, (IntPtr)random.LongLength);
 				Check ();
 				for (long j = 0; j < random.LongLength; j++) {
 					if (i == data.LongLength)
