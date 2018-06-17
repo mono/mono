@@ -5354,7 +5354,7 @@ ICALL_EXPORT MonoStringHandle
 ves_icall_System_RuntimeType_getFullName (MonoReflectionTypeHandle object, gboolean full_name,
 										  gboolean assembly_qualified, MonoError *error)
 {
-	MonoDomain *domain = mono_object_domain (MONO_HANDLE_RAW (object));
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (object);
 	MonoType *type = MONO_HANDLE_RAW (object)->type;
 	MonoTypeNameFormat format;
 	MonoStringHandle res;
