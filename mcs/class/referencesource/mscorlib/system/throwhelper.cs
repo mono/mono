@@ -148,6 +148,11 @@ namespace System {
             throw new InvalidOperationException(SR.InvalidOperation_EnumEnded);
         }
 
+        internal static void ThrowInvalidOperationException_InvalidOperation_NoValue()
+        {
+            throw new InvalidOperationException(SR.InvalidOperation_NoValue);
+        }
+
         private static ArgumentOutOfRangeException GetArgumentOutOfRangeException(ExceptionArgument argument, string resource)
         {
             return new ArgumentOutOfRangeException(GetArgumentName(argument), resource);

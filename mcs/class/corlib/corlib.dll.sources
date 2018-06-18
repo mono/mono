@@ -120,7 +120,6 @@ System/MonoType.cs
 System/MonoTouchAOTHelper.cs
 System/MulticastDelegate.cs
 System/NullConsoleDriver.cs
-System/Nullable.cs
 System/NumberFormatter.cs
 System/Object.cs
 System/OperatingSystem.cs
@@ -1630,6 +1629,7 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Tuple.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TupleExtensions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ValueTuple.cs
+../../../external/corefx//src/Common/src/CoreLib/System/Nullable.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Buffers/ArrayPool.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Buffers/ArrayPoolEventSource.cs
