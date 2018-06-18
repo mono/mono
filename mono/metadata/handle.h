@@ -48,7 +48,7 @@
 // NOTE: Running this code depends on the ABI to pass a struct
 // with a pointer the same as a pointer. This is tied in with
 // marshaling. If this is not the case, turn off type-safety, perhaps per-OS per-CPU.
-#if 1 //..checkedbuild...
+#if !defined (HOST_WASM) && (!defined (TARGET_X86) || defined (HOST_WIN32) || defined (HOST_DARWIN))
 #define MONO_TYPE_SAFE_HANDLES 1
 #else
 #define MONO_TYPE_SAFE_HANDLES 0
