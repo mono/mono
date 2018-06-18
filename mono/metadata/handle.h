@@ -230,8 +230,8 @@ Icall macros
 // Therefore, cast the function pointer to change its return type.
 #define CLEAR_ICALL_FRAME_VALUE(type, handle)				\
 	((mono_stack_mark_record_size (__info, &__mark, __FUNCTION__)),	\
-	(((TYPED_HANDLE_NAME (type)(*)(MonoThreadInfo*, HandleStackMark*, TYPED_HANDLE_NAME (type))) \
-		mono_stack_mark_pop_value)(__info, &__mark, (handle))))
+	(((TYPED_HANDLE_NAME (type)(*) (MonoThreadInfo*, HandleStackMark*, TYPED_HANDLE_NAME (type))) \
+		mono_remove_function_type_to_suppress_gcc_warning (mono_stack_mark_pop_value)) (__info, &__mark, (handle))))
 
 #else
 
@@ -411,6 +411,18 @@ Handle macros/functions
 //XXX add functions to get/set raw, set field, set field to null, set array, set array to null
 #define MONO_HANDLE_DCL(TYPE, NAME) TYPED_HANDLE_NAME(TYPE) NAME = MONO_HANDLE_NEW (TYPE, (NAME ## _raw))
 
+#if defined (__GNUC__) && !defined (__clang__)
+static inline MONO_ALWAYS_INLINE gpointer
+mono_remove_function_type_to_suppress_gcc_warning (gpointer a)
+// gcc warning: function called through a non-compatible type
+// Passing the function through this function suppresses the warning.
+{
+	return a;
+}
+#else
+#define mono_remove_function_type_to_suppress_gcc_warning(a) (a)
+#endif
+
 #if MONO_TYPE_SAFE_HANDLES
 
 #ifndef MONO_HANDLE_TRACK_OWNER
@@ -418,21 +430,24 @@ Handle macros/functions
 // Structs cannot be cast to structs.
 // Therefore, cast the function pointer to change its return type and parameter type.
 #define MONO_HANDLE_NEW(type, object) \
-	(((TYPED_HANDLE_NAME (type)(*)(type*))mono_handle_new)(object))
+	(((TYPED_HANDLE_NAME (type)(*) (type*)) \
+		mono_remove_function_type_to_suppress_gcc_warning (mono_handle_new)) (object))
 
 #else
 
 // Structs cannot be cast to structs.
 // Therefore, cast the function pointer to change its return type and parameter type.
 #define MONO_HANDLE_NEW(type, object) \
-	(((TYPED_HANDLE_NAME (type)(*)  (type*, const char*))mono_handle_new)((object), HANDLE_OWNER))
+	(((TYPED_HANDLE_NAME (type)(*) (type*, const char*)) \
+		mono_remove_function_type_to_suppress_gcc_warning (mono_handle_new)) ((object), HANDLE_OWNER))
 
 #endif
 
 // Structs cannot be cast to structs.
 // Therefore, cast the function pointer to change its return type.
 #define MONO_HANDLE_CAST(type, value) \
-	(((TYPED_HANDLE_NAME (type) (*)(gpointer))mono_handle_cast)((value).__raw))
+	(((TYPED_HANDLE_NAME (type) (*) (gpointer)) \
+		mono_remove_function_type_to_suppress_gcc_warning (mono_handle_cast)) ((value).__raw))
 
 // With Visual C++ compiling as C, the type of a ternary expression
 // yielding two unrelated non-void pointers is the type of the first, plus a warning.
