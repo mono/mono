@@ -362,16 +362,24 @@ Handle macros/functions
  *
  * For example, TYPED_HANDLE_DECL(MonoObject) (see below) expands to:
  *
+ * #if MONO_TYPE_SAFE_HANDLES
+ *
  * typedef struct {
-#if MONO_TYPE_SAFE_HANDLES
  *   MonoObject **__raw;
-#else
+ * } MonoObjectHandlePayload;
+ *
+ * typedef MonoObjectHandlePayload MonoObjectHandle,
+ *                                 MonoObjectHandleOut;
+ * #else
+ *
+ * typedef struct {
  *   MonoObject *__raw;
-#endif
  * } MonoObjectHandlePayload;
  *
  * typedef MonoObjectHandlePayload* MonoObjectHandle;
  * typedef MonoObjectHandlePayload* MonoObjectHandleOut;
+ *
+ * #endif
  */
 
 #if MONO_TYPE_SAFE_HANDLES
@@ -389,16 +397,7 @@ Handle macros/functions
 /*
  * TYPED_VALUE_HANDLE_DECL(SomeType):
  *   Expands to a decl for handles to SomeType (which is a managed valuetype (likely a struct) of some sort) and to an internal payload struct.
- * For example TYPED_HANDLE_DECL(MonoMethodInfo) expands to:
- *
- * typedef struct {
-#if MONO_TYPE_SAFE_HANDLES
- *   MonoMethodInfo **__raw;
-#else
- *   MonoMethodInfo *__raw;
-#endif
- * } MonoMethodInfoHandlePayload;
- * typedef MonoMethodInfoHandlePayload* MonoMethodInfoHandle;
+ * It is currently identical to TYPED_HANDLE_DECL (valuetypes vs. referencetypes).
  */
 #define TYPED_VALUE_HANDLE_DECL(TYPE) TYPED_HANDLE_DECL(TYPE)
 
