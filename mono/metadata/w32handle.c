@@ -130,8 +130,6 @@ mono_w32handle_unlock_signal_mutex (void)
 void
 mono_w32handle_lock (MonoW32Handle *handle_data)
 {
-	if (!handle_data)
-		return;
 	mono_coop_mutex_lock (&handle_data->signal_mutex);
 }
 
@@ -144,8 +142,6 @@ mono_w32handle_trylock (MonoW32Handle *handle_data)
 void
 mono_w32handle_unlock (MonoW32Handle *handle_data)
 {
-	if (!handle_data)
-		return;
 	mono_coop_mutex_unlock (&handle_data->signal_mutex);
 }
 
@@ -421,9 +417,6 @@ mono_w32handle_ref_core (MonoW32Handle *handle_data)
 static gboolean
 mono_w32handle_unref_core (MonoW32Handle *handle_data)
 {
-	if (!handle_data)
-		return FALSE;
-
 	MonoW32Type type;
 	guint old, new_;
 
@@ -604,8 +597,11 @@ again:
 		if (!mono_w32handle_trylock (handles_data [i])) {
 			/* Bummer */
 
-			for (j = i - 1; j >= 0; j--)
+			for (j = i - 1; j >= 0; j--) {
+				if (!handles_data [j])
+					continue;
 				mono_w32handle_unlock (handles_data [j]);
+			}
 
 			iter += 10;
 			if (iter == 1000)
@@ -636,8 +632,11 @@ mono_w32handle_unlock_handles (MonoW32Handle **handles_data, gsize nhandles)
 {
 	gint i;
 
-	for (i = nhandles - 1; i >= 0; i--)
+	for (i = nhandles - 1; i >= 0; i--) {
+		if (!handles_data [i])
+			continue;
 		mono_w32handle_unlock (handles_data [i]);
+	}
 }
 
 static int
@@ -1121,6 +1120,8 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 done:
 	for (i = nhandles - 1; i >= 0; i--) {
 		/* Unref everything we reffed above */
+		if (!handles_data [i])
+			continue;
 		mono_w32handle_unref (handles_data [i]);
 	}
 
