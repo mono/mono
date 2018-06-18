@@ -224,22 +224,9 @@ Icall macros
 	mono_stack_mark_record_size (__info, &__mark, __FUNCTION__);	\
 	mono_stack_mark_pop (__info, &__mark);
 
-#if MONO_TYPE_SAFE_HANDLES
-
-// Structs cannot be cast to structs.
-// Therefore, cast the function pointer to change its return type.
-#define CLEAR_ICALL_FRAME_VALUE(type, handle)				\
-	((mono_stack_mark_record_size (__info, &__mark, __FUNCTION__)),	\
-	(((TYPED_HANDLE_NAME (type)(*) (MonoThreadInfo*, HandleStackMark*, TYPED_HANDLE_NAME (type))) \
-		mono_remove_function_type_to_suppress_gcc_warning (mono_stack_mark_pop_value)) (__info, &__mark, (handle))))
-
-#else
-
 #define CLEAR_ICALL_FRAME_VALUE(RESULT, HANDLE)				\
 	mono_stack_mark_record_size (__info, &__mark, __FUNCTION__);	\
 	(RESULT) = mono_stack_mark_pop_value (__info, &__mark, (HANDLE));
-
-#endif
 
 #define HANDLE_FUNCTION_ENTER() do {				\
 	MonoThreadInfo *__info = mono_thread_info_current ();	\
@@ -266,9 +253,12 @@ Icall macros
 #if MONO_TYPE_SAFE_HANDLES
 
 // Return a coop handle from coop handle.
-#define HANDLE_FUNCTION_RETURN_REF(type, handle)		\
-	return CLEAR_ICALL_FRAME_VALUE (type, (handle)); 	\
-	} while (0);
+#define HANDLE_FUNCTION_RETURN_REF(TYPE, HANDLE)			\
+	do {								\
+		MonoObjectHandle __result;				\
+		CLEAR_ICALL_FRAME_VALUE (__result.__raw, (HANDLE).__raw); \
+		return MONO_HANDLE_CAST (TYPE, __result);		\
+	} while (0); } while (0);
 
 #else
 
