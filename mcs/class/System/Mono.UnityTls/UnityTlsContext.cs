@@ -304,18 +304,17 @@ namespace Mono.Unity
 			if (lastException != null)
 				throw lastException;
 
-			// Not done is not an error if we are server and don't ask for ClientCertificate
-			if (result == UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_NOT_DONE && IsServer && !AskForClientCertificate)
+			// Not done is only an error if we are a client. Even servers with AskForClientCertificate should ignore it since .Net client authentification is always optional.
+			if (IsServer && result == UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_NOT_DONE) {
 				Unity.Debug.CheckAndThrow (errorState, "Handshake failed", AlertDescription.HandshakeFailure);
-			else
-				Unity.Debug.CheckAndThrow (errorState, result, "Handshake failed", AlertDescription.HandshakeFailure);
-
-			// .Net implementation gives the server a verification callback (with null cert) even if AskForClientCertificate is false.
-			// We stick to this behavior here.
-			if (IsServer && !AskForClientCertificate) {
+				
+				// .Net implementation gives the server a verification callback (with null cert) even if AskForClientCertificate is false.
+				// We stick to this behavior here.
 				if (!ValidateCertificate (null, null))
 					throw new TlsException (AlertDescription.HandshakeFailure, "Verification failure during handshake");
 			}
+			else
+				Unity.Debug.CheckAndThrow (errorState, result, "Handshake failed", AlertDescription.HandshakeFailure);
 
 			return true;
 		}
