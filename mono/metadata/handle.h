@@ -393,8 +393,6 @@ Handle macros/functions
 #define MONO_HANDLE_PAYLOAD_OFFSET_(PayloadType) MONO_STRUCT_OFFSET(PayloadType, __raw)
 #define MONO_HANDLE_PAYLOAD_OFFSET(TYPE) MONO_HANDLE_PAYLOAD_OFFSET_(TYPED_HANDLE_PAYLOAD_NAME (TYPE))
 
-#define NULL_HANDLE mono_null_value_handle
-
 //XXX add functions to get/set raw, set field, set field to null, set array, set array to null
 #define MONO_HANDLE_DCL(TYPE, NAME) TYPED_HANDLE_NAME(TYPE) NAME = MONO_HANDLE_NEW (TYPE, (NAME ## _raw))
 
@@ -640,9 +638,6 @@ mono_handle_raw (MonoRawHandle raw_handle)
 typedef MonoThread MonoThreadObject;
 TYPED_HANDLE_DECL (MonoThreadObject);
 
-#define NULL_HANDLE_STRING MONO_HANDLE_CAST(MonoString, NULL_HANDLE)
-#define NULL_HANDLE_ARRAY (MONO_HANDLE_CAST (MonoArray, NULL_HANDLE))
-
 /*
 This is the constant for a handle that points nowhere.
 Constant handles may be initialized to it, but non-constant
@@ -650,6 +645,9 @@ handles must be NEW'ed. Uses of these are suspicious and should
 be reviewed and probably changed FIXME.
 */
 extern const MonoObjectHandle mono_null_value_handle;
+#define NULL_HANDLE mono_null_value_handle
+#define NULL_HANDLE_STRING MONO_HANDLE_CAST(MonoString, NULL_HANDLE)
+#define NULL_HANDLE_ARRAY (MONO_HANDLE_CAST (MonoArray, NULL_HANDLE))
 
 #if MONO_TYPE_SAFE_HANDLES
 
