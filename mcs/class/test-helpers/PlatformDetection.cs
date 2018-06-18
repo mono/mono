@@ -22,6 +22,8 @@ namespace System
 		public static bool IsOpenSUSE => false;
 		public static bool IsUbuntu1404 => false;
 
+		public static bool IsNetfx462OrNewer => false;
+
 		public static bool IsWindows {
 			get {
 				PlatformID id = Environment.OSVersion.Platform;

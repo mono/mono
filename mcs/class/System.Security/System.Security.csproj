@@ -14,6 +14,7 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyName>System.Security</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <SignAssembly>true</SignAssembly>
@@ -104,15 +105,91 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Security\Cryptography\Asn1V2.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Security\Cryptography\Asn1V2.Serializer.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Security\Cryptography\AsnReader.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Security\Cryptography\AsnWriter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\DecryptorPal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\Helpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\KeyAgreeRecipientInfoPal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\KeyLengths.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\KeyTransRecipientInfoPal.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\Oids.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\Pal\AnyOS\AsnHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\Pal\AnyOS\ManagedPal.Asn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\Pal\AnyOS\ManagedPal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\Pal\AnyOS\ManagedPal.Decode.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\Pal\AnyOS\ManagedPal.Decrypt.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\Pal\AnyOS\ManagedPal.Encrypt.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\Pal\AnyOS\ManagedPal.Exceptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\Pal\AnyOS\ManagedPal.KeyAgree.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\Pal\AnyOS\ManagedPal.KeyTrans.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\Pal\AnyOS\PkcsPal.AnyOS.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\PkcsPal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\Internal\Cryptography\RecipientInfoPal.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObject.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObjectCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObjectEnumerator.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\AlgorithmIdentifierAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\AttributeAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\CertificateChoiceAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\ContentInfoAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\EncapsulatedContentInfoAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\EncryptedContentInfoAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\EnvelopedDataAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\GeneralName.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\IssuerAndSerialNumberAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\KeyAgreeRecipientIdentifierAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\KeyAgreeRecipientInfoAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\KeyTransRecipientInfoAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\MessageImprint.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\OriginatorIdentifierOrKeyAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\OriginatorInfoAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\OriginatorPublicKeyAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\OtherKeyAttributeAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\PssParamsAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\Rc2CbcParameters.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\RecipientEncryptedKeyAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\RecipientIdentifierAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\RecipientInfoAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\RecipientKeyIdentifier.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\Rfc3161Accuracy.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\Rfc3161TimeStampReq.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\Rfc3161TimeStampResp.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\Rfc3161TstInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\SignedDataAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\SignerIdentifierAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\SignerInfoAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\SigningCertificateAsn.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\X509ExtensionAsn.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\CmsRecipient.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\CmsRecipientCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\CmsRecipientEnumerator.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\CmsSignature.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\CmsSignature.DSA.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\CmsSignature.ECDsa.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\CmsSignature.RSA.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\CmsSigner.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\ContentInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\EnvelopedCms.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\KeyAgreeRecipientInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\KeyTransRecipientInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Pkcs9AttributeObject.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Pkcs9ContentType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Pkcs9DocumentDescription.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Pkcs9DocumentName.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Pkcs9MessageDigest.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\PublicKeyInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\RecipientInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\RecipientInfoCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\RecipientInfoEnumerator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\RecipientInfoType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\SignedCms.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\SignedCms.CtorOverloads.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\SignerInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\SignerInfoCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\SignerInfoEnumerator.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\SubjectIdentifier.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\SubjectIdentifierOrKey.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\SubjectIdentifierOrKeyType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\SubjectIdentifierType.cs" />
@@ -125,20 +202,8 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\AlgorithmIdentifier.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\ContentInfo.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\EnvelopedCms.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeRecipientInfo.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\KeyTransRecipientInfo.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\Pkcs9Attribute.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\Pkcs9ContentType.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\Pkcs9DocumentDescription.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\Pkcs9DocumentName.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\Pkcs9MessageDigest.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\Pkcs9SigningTime.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\RecipientInfo.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\RecipientInfoCollection.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\RecipientInfoEnumerator.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SubjectIdentifier.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedData.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -219,12 +284,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlLicenseTransform.cs" />
     <Compile Include="Mono.Security.Cryptography\ManagedProtection.cs" />
     <Compile Include="Mono.Security.Cryptography\NativeDapiProtection.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\CmsSigner.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignedCms.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfo.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfoCollection.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfoEnumerator.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
     <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />
@@ -313,12 +373,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlLicenseTransform.cs" />
     <Compile Include="Mono.Security.Cryptography\ManagedProtection.cs" />
     <Compile Include="Mono.Security.Cryptography\NativeDapiProtection.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\CmsSigner.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignedCms.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfo.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfoCollection.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfoEnumerator.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
     <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />
@@ -407,12 +462,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlLicenseTransform.cs" />
     <Compile Include="Mono.Security.Cryptography\ManagedProtection.cs" />
     <Compile Include="Mono.Security.Cryptography\NativeDapiProtection.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\CmsSigner.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignedCms.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfo.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfoCollection.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfoEnumerator.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
     <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />
@@ -501,12 +551,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlLicenseTransform.cs" />
     <Compile Include="Mono.Security.Cryptography\ManagedProtection.cs" />
     <Compile Include="Mono.Security.Cryptography\NativeDapiProtection.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\CmsSigner.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignedCms.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfo.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfoCollection.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfoEnumerator.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
     <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />
@@ -595,12 +640,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlLicenseTransform.cs" />
     <Compile Include="Mono.Security.Cryptography\ManagedProtection.cs" />
     <Compile Include="Mono.Security.Cryptography\NativeDapiProtection.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\CmsSigner.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignedCms.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfo.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfoCollection.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\SignerInfoEnumerator.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
     <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />

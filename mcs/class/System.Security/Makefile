@@ -10,7 +10,7 @@ LIBRARY = System.Security.dll
 API_BIN_REFS := System.Numerics System.Core
 LIB_REFS = $(MONO_SECURITY) System System.Xml
 KEYFILE = ../msfinal.pub
-LIB_MCS_FLAGS = -nowarn:414,618 -d:SECURITY_DEP
+LIB_MCS_FLAGS = -unsafe -nowarn:414,618 -d:SECURITY_DEP
 
 LOCAL_MCS_FLAGS =
 
