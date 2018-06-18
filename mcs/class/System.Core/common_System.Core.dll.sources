@@ -11,6 +11,7 @@ Microsoft.Win32.SafeHandles/SafeMemoryMappedViewHandle.cs
 System.Security.Cryptography/AesCng.cs
 System.Security.Cryptography/TripleDESCng.cs
 System.Security.Cryptography.X509Certificates/ECDsaCertificateExtensions.cs
+System.Security.Cryptography.X509Certificates/DSACertificateExtensions.cs
 System.Security.Cryptography.X509Certificates/RSACertificateExtensions.cs
 Microsoft.Win32.SafeHandles/SafeNCryptHandle.cs
 Microsoft.Win32.SafeHandles/SafeNCryptKeyHandle.cs

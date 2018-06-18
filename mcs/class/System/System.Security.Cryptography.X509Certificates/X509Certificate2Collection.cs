@@ -33,6 +33,7 @@
 
 using System.Collections;
 using System.Globalization;
+using Mono.Security;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -146,6 +147,17 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		static string[] newline_split = new string[] { Environment.NewLine };
 		
+		private string GetKeyIdentifier (X509Certificate2 x) 
+		{
+			// if present in certificate return value of the SubjectKeyIdentifier
+			X509SubjectKeyIdentifierExtension ski = (x.Extensions ["2.5.29.14"] as X509SubjectKeyIdentifierExtension);
+			if (ski == null) {
+				// if not then we must calculate the SubjectKeyIdentifier ourselve
+				ski = new X509SubjectKeyIdentifierExtension (x.PublicKey, X509SubjectKeyIdentifierHashAlgorithm.CapiSha1, false);
+			}
+			return ski.SubjectKeyIdentifier;
+		}
+
 		[MonoTODO ("Does not support X509FindType.FindByTemplateName, FindByApplicationPolicy and FindByCertificatePolicy")]
 		public X509Certificate2Collection Find (X509FindType findType, object findValue, bool validOnly) 
 		{
@@ -261,10 +273,7 @@ namespace System.Security.Cryptography.X509Certificates {
 					// TODO - find a valid test case
 					break;
 				case X509FindType.FindBySubjectKeyIdentifier:
-					X509SubjectKeyIdentifierExtension ski = (x.Extensions ["2.5.29.14"] as X509SubjectKeyIdentifierExtension);
-					if (ski != null) {
-						value_match = (String.Compare (str, ski.SubjectKeyIdentifier, true, cinv) == 0);
-					}
+					value_match = (String.Compare (str, GetKeyIdentifier (x), true, cinv) == 0);
 					break;
 				case X509FindType.FindByApplicationPolicy:
 					// note: include when no extensions are present (even if v3)

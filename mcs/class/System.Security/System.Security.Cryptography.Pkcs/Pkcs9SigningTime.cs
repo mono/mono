@@ -46,14 +46,14 @@ namespace System.Security.Cryptography.Pkcs {
 		public Pkcs9SigningTime () 
 		{
 			// Pkcs9Attribute remove the "set" accessor on Oid :-(
-			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
+			((AsnEncodedData)this).Oid = new Oid (oid, friendlyName);
 			_signingTime = DateTime.Now;
 			RawData = Encode ();
 		}
 
 		public Pkcs9SigningTime (DateTime signingTime)
 		{
-			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
+			((AsnEncodedData)this).Oid = new Oid (oid, friendlyName);
 			_signingTime = signingTime;
 			RawData = Encode ();
 		}
@@ -63,7 +63,7 @@ namespace System.Security.Cryptography.Pkcs {
 			if (encodedSigningTime == null)
 				throw new ArgumentNullException ("encodedSigningTime");
 
-			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
+			((AsnEncodedData)this).Oid = new Oid (oid, friendlyName);
 			RawData = encodedSigningTime;
 			Decode (encodedSigningTime);
 		}
@@ -78,7 +78,7 @@ namespace System.Security.Cryptography.Pkcs {
 				throw new ArgumentNullException ("asnEncodedData");
 
 			Decode (asnEncodedData.RawData);
-			Oid = asnEncodedData.Oid;
+			((AsnEncodedData)this).Oid = asnEncodedData.Oid;
 			RawData = asnEncodedData.RawData;
 		}
 
