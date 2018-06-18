@@ -900,7 +900,7 @@ namespace System.Net
 			try {
 				return TaskToApm.End<Stream> (asyncResult);
 			} catch (Exception e) {
-				throw FlattenException (e);
+				throw GetWebException (e);
 			}
 		}
 
@@ -909,7 +909,7 @@ namespace System.Net
 			try {
 				return GetRequestStreamAsync ().Result;
 			} catch (Exception e) {
-				throw FlattenException (e);
+				throw GetWebException (e);
 			}
 		}
 
@@ -925,35 +925,18 @@ namespace System.Net
 		}
 
 		internal static Task<T> RunWithTimeout<T> (
-			Func<CancellationToken, Task<T>> func, int timeout, Action abort)
-		{
-			// Call `func` here to propagate any potential exception that it
-			// might throw to our caller rather than returning a faulted task.
-			var cts = new CancellationTokenSource ();
-			var workerTask = func (cts.Token);
-			return RunWithTimeoutWorker (workerTask, timeout, abort, cts);
-		}
-
-		internal static Task<T> RunWithTimeout<T> (
 			Func<CancellationToken, Task<T>> func, int timeout, Action abort,
-			CancellationToken cancellationToken)
+			Func<bool> aborted, CancellationToken cancellationToken)
 		{
 			var cts = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken);
-			return RunWithTimeout (func, timeout, abort, cts);
-		}
-
-		static Task<T> RunWithTimeout<T> (
-			Func<CancellationToken, Task<T>> func, int timeout, Action abort,
-			CancellationTokenSource cts)
-		{
 			// Call `func` here to propagate any potential exception that it
 			// might throw to our caller rather than returning a faulted task.
 			var workerTask = func (cts.Token);
-			return RunWithTimeoutWorker (workerTask, timeout, abort, cts);
+			return RunWithTimeoutWorker (workerTask, timeout, abort, aborted, cts);
 		}
 
 		static async Task<T> RunWithTimeoutWorker<T> (
-			Task<T> workerTask, int timeout, Action abort,
+			Task<T> workerTask, int timeout, Action abort, Func<bool> aborted,
 			CancellationTokenSource cts)
 		{
 			try {
@@ -967,7 +950,7 @@ namespace System.Net
 				}
 				throw new WebException (SR.net_timeout, WebExceptionStatus.Timeout);
 			} catch (Exception ex) {
-				throw FlattenException (ex);
+				throw GetWebException (ex, aborted ());
 			} finally {
 				cts.Dispose ();
 			}
@@ -975,7 +958,11 @@ namespace System.Net
 
 		Task<T> RunWithTimeout<T> (Func<CancellationToken, Task<T>> func)
 		{
-			return RunWithTimeout (func, timeout, Abort);
+			// Call `func` here to propagate any potential exception that it
+			// might throw to our caller rather than returning a faulted task.
+			var cts = new CancellationTokenSource ();
+			var workerTask = func (cts.Token);
+			return RunWithTimeoutWorker (workerTask, timeout, Abort, () => Aborted, cts);
 		}
 
 		async Task<HttpWebResponse> MyGetResponseAsync (CancellationToken cancellationToken)
@@ -1164,12 +1151,17 @@ namespace System.Net
 
 		WebException GetWebException (Exception e)
 		{
+			return GetWebException (e, Aborted);
+		}
+
+		static WebException GetWebException (Exception e, bool aborted)
+		{
 			e = FlattenException (e);
 			if (e is WebException wexc) {
-				if (!Aborted || wexc.Status == WebExceptionStatus.RequestCanceled || wexc.Status == WebExceptionStatus.Timeout)
+				if (!aborted || wexc.Status == WebExceptionStatus.RequestCanceled || wexc.Status == WebExceptionStatus.Timeout)
 					return wexc;
 			}
-			if (Aborted || e is OperationCanceledException || e is ObjectDisposedException)
+			if (aborted || e is OperationCanceledException || e is ObjectDisposedException)
 				return CreateRequestAbortedException ();
 			return new WebException (e.Message, e, WebExceptionStatus.UnknownError, null);
 		}
@@ -1195,7 +1187,7 @@ namespace System.Net
 			try {
 				return TaskToApm.End<HttpWebResponse> (asyncResult);
 			} catch (Exception e) {
-				throw FlattenException (e);
+				throw GetWebException (e);
 			}
 		}
 
@@ -1213,7 +1205,7 @@ namespace System.Net
 			try {
 				return GetResponseAsync ().Result;
 			} catch (Exception e) {
-				throw FlattenException (e);
+				throw GetWebException (e);
 			}
 		}
 
