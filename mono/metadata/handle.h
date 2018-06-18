@@ -40,9 +40,7 @@
 //  8. mono_object_class (handle), instead of mono_handle_class
 //
 // None of those operations were likely intended.
-// Completely incidentally, the type-safe system is a little more expression-oriented than
-// the statement-based type-unsafe system, and might be valid C++ where type-unsafe is not (untested).
-
+//
 // FIXME Do this only on checked builds? Or certain architectures?
 // There is not runtime cost.
 // NOTE: Running this code depends on the ABI to pass a struct
@@ -659,7 +657,7 @@ static inline void
 mono_handle_assign (MonoObjectHandleOut dest, MonoObjectHandle src)
 {
 	g_assert (dest.__raw);
-	*dest.__raw = src.__raw ? *src.__raw : NULL;
+	MONO_HANDLE_SUPPRESS (*dest.__raw = src.__raw ? *src.__raw : NULL);
 }
 
 #else
