@@ -2326,7 +2326,7 @@ lookup_start:
 	if (opt & MONO_OPT_AOT) {
 		MonoDomain *domain = NULL;
 
-		if (mono_aot_mode == MONO_AOT_MODE_INTERP && method->wrapper_type == MONO_WRAPPER_UNKNOWN) {
+		if (mono_aot_mode == MONO_AOT_MODE_FULL_INTERP && method->wrapper_type == MONO_WRAPPER_UNKNOWN) {
 			WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 			g_assert (info);
 			if (info->subtype == WRAPPER_SUBTYPE_INTERP_IN || info->subtype == WRAPPER_SUBTYPE_INTERP_LMF)
