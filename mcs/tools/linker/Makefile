@@ -9,6 +9,9 @@ LIB_REFS = System System.Core System.Xml Mono.Cecil
 TEST_CASES := \
 	mscorlib/test-array.cs \
 	mscorlib/test-remoting.cs \
+	mscorlib/test-string-01.cs \
+	mscorlib/test-string-02.cs \
+	mscorlib/test-string-03.cs \
 	System/test-security.cs
 
 ifndef AOT_FRIENDLY_PROFILE
@@ -16,7 +19,7 @@ TEST_CASES += \
 	mscorlib/test-reflection.cs
 endif
 
-TESTS_COMPILER = $(MCS) -nologo -noconfig -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
+TESTS_COMPILER = $(MCS) -nologo -noconfig -unsafe -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
 
 check: compile-tests
 	$(MAKE) run-tests
