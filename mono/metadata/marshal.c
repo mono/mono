@@ -6229,23 +6229,13 @@ mono_icall_handle_new (gpointer rawobj)
 #endif
 }
 
-MonoObjectHandle
+gpointer
 mono_icall_handle_new_interior (gpointer rawobj)
 {
 #ifdef MONO_HANDLE_TRACK_OWNER
-	MonoRawHandle const rawh = mono_handle_new_interior (rawobj, "<marshal args>");
+	return mono_handle_new_interior (rawobj, "<marshal args>");
 #else
-	MonoRawHandle const rawh = mono_handle_new_interior (rawobj);
-#endif
-#if MONO_TYPE_SAFE_HANDLES
-	// This is the only use of mono_handle_new_interior.
-	// It lacks the macro support of mono_handle_new.
-	//return *(MonoObjectHandle*)&rawh; // violates gcc -fstrict-aliasing
-	// Legal with gcc -fstrict-aliasing:
-	union { MonoRawHandle rawh; MonoObjectHandle objh; } type_pun = { rawh };
-	return type_pun.objh;
-#else
-	return rawh;
+	return mono_handle_new_interior (rawobj);
 #endif
 }
 

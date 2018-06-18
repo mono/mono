@@ -244,7 +244,7 @@ retry:
 	goto retry;
 }
 
-MonoRawHandle
+gpointer
 #ifndef MONO_HANDLE_TRACK_OWNER
 mono_handle_new_interior (gpointer rawptr)
 #else
