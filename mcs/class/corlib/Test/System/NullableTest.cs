@@ -40,5 +40,19 @@ namespace MonoTests.System
 			Assert.AreSame (typeof (int), Nullable.GetUnderlyingType (typeof (Nullable<int>)), "#1");
 			Assert.IsNull (Nullable.GetUnderlyingType (typeof (Nullable<>)), "#2");
 		}
+
+		private struct MutatingStruct
+		{
+			public int Value;
+			public override bool Equals(object obj) => Value++.Equals(null);
+		}
+
+		[Test]
+		public void EqualsImpl ()
+		{
+			MutatingStruct? ms = new MutatingStruct () { Value = 1 };
+			ms.Equals (new object ());
+			Assert.AreEqual (ms.Value.Value, 2, "#1");
+		}
 	}
 }
