@@ -979,6 +979,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 						}
 					}
 				}
+				break;
 			}
 		}
 	}
