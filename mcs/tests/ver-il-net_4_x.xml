@@ -68778,7 +68778,7 @@
   <test name="test-decl-expr-05.cs">
     <type name="X">
       <method name="Void Test(System.String)" attrs="129">
-        <size>29</size>
+        <size>62</size>
       </method>
       <method name="Boolean Call(System.String ByRef)" attrs="145">
         <size>17</size>

@@ -5679,6 +5679,12 @@ namespace Mono.CSharp
 				ConvCast.Emit (ec, enum_conversion);
 		}
 
+		public override void EmitPrepare (EmitContext ec)
+		{
+			Left.EmitPrepare (ec);
+			Right.EmitPrepare (ec);
+		}
+
 		public override void EmitSideEffect (EmitContext ec)
 		{
 			if ((oper & Operator.LogicalMask) != 0 ||

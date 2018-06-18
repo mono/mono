@@ -6,6 +6,11 @@ class X
 		{
 			arg = s.ToString ();
 		}
+
+		while (true && Call (out string s2))
+		{
+			arg = s2.ToString ();
+		}
 	}
 
 	static bool Call (out string s)
