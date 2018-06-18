@@ -328,49 +328,43 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		private static byte[] signedData = new byte[] { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x07, 0x02 };
 
-		[MonoTODO ("Detection limited to Cert, Pfx, Pkcs12, Pkcs7 and Unknown")]
+		[MonoTODO ("Detection limited to Cert, Pfx/Pkcs12, Pkcs7 and Unknown")]
 		public static X509ContentType GetCertContentType (byte[] rawData)
 		{
 			if ((rawData == null) || (rawData.Length == 0))
 				throw new ArgumentException ("rawData");
 
-			X509ContentType type = X509ContentType.Unknown;
-			try {
-				ASN1 data = new ASN1 (rawData);
-				if (data.Tag != 0x30) {
-					string msg = Locale.GetText ("Unable to decode certificate.");
-					throw new CryptographicException (msg);
-				}
+			if (rawData[0] == 0x30) {
+				// ASN.1 SEQUENCE
+				try {
+					ASN1 data = new ASN1 (rawData);
 
-				if (data.Count == 0)
-					return type;
+					// SEQUENCE / SEQUENCE / BITSTRING
+					if (data.Count == 3 && data [0].Tag == 0x30 && data [1].Tag == 0x30 && data [2].Tag == 0x03)
+						return X509ContentType.Cert;
 
-				if (data.Count == 3) {
-					switch (data [0].Tag) {
-					case 0x30:
-						// SEQUENCE / SEQUENCE / BITSTRING
-						if ((data [1].Tag == 0x30) && (data [2].Tag == 0x03))
-							type = X509ContentType.Cert;
-						break;
-					case 0x02:
-						// INTEGER / SEQUENCE / SEQUENCE
-						if ((data [1].Tag == 0x30) && (data [2].Tag == 0x30))
-							type = X509ContentType.Pkcs12;
-						// note: Pfx == Pkcs12
-						break;
-					}
+					// INTEGER / SEQUENCE / SEQUENCE
+					if (data.Count == 3 && data [0].Tag == 0x02 && data [1].Tag == 0x30 && data [2].Tag == 0x30)
+						return X509ContentType.Pkcs12; // note: Pfx == Pkcs12
+
+					// check for PKCS#7 (count unknown but greater than 0)
+					// SEQUENCE / OID (signedData)
+					if (data.Count > 0 && data [0].Tag == 0x06 && data [0].CompareValue (signedData))
+						return X509ContentType.Pkcs7;
+					
+					return X509ContentType.Unknown;
 				}
-				// check for PKCS#7 (count unknown but greater than 0)
-				// SEQUENCE / OID (signedData)
-				if ((data [0].Tag == 0x06) && data [0].CompareValue (signedData))
-					type = X509ContentType.Pkcs7;
-			}
-			catch (Exception e) {
-				string msg = Locale.GetText ("Unable to decode certificate.");
-				throw new CryptographicException (msg, e);
+				catch (Exception) {
+					return X509ContentType.Unknown;
+				}
+			} else {
+				string pem = Encoding.ASCII.GetString (rawData);
+				int start = pem.IndexOf ("-----BEGIN CERTIFICATE-----");
+				if (start >= 0)
+					return X509ContentType.Cert;
 			}
 
-			return type;
+			return X509ContentType.Unknown;
 		}
 
 		[MonoTODO ("Detection limited to Cert, Pfx, Pkcs12 and Unknown")]

@@ -646,6 +646,7 @@ TESTS_CS_SRC=		\
 	generic-unloading.2.cs	\
 	namedmutex-destroy-race.cs	\
 	thread6.cs	\
+	thread7.cs	\
 	appdomain-threadpool-unload.cs	\
 	process-unref-race.cs	\
 	bug-46661.cs	\
@@ -1208,8 +1209,7 @@ CI_DISABLED_TESTS = \
 # failing tests which we temporarily disable for PRs
 # so they don't interfere with other people's work
 CI_PR_DISABLED_TESTS = \
-	appdomain-threadpool-unload.exe \
-	process-stress-3.exe
+	appdomain-threadpool-unload.exe
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
@@ -1320,6 +1320,7 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	tailcall/8273.exe \
 	$(TAILCALL_DISABLED_TESTS_RUN) \
 	thread6.exe \
+	thread7.exe \
 	bug-60843.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.

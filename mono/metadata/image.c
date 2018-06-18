@@ -1552,6 +1552,9 @@ register_image (MonoImage *image)
 		g_hash_table_insert (loaded_images_by_name, (char *) image->assembly_name, image);
 	mono_images_unlock ();
 
+	if (mono_is_problematic_image (image)) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Registering %s, problematic image '%s'", image->ref_only ? "REFONLY" : "default", image->name);
+	}
 	return image;
 }
 
@@ -1763,7 +1766,7 @@ mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean 
 	g_free (absfname);
 
 	if (image) { // Image already loaded
-		if (!load_from_context && mono_is_problematic_image (image)) {
+		if (!refonly && !load_from_context && mono_is_problematic_image (image)) {
 			// If we previously loaded a problematic image, don't
 			// return it if we're not in LoadFrom context.
 			//
@@ -1773,6 +1776,7 @@ mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean 
 			//  to see it again when we go searching for an image
 			//  to load.
 			mono_images_unlock ();
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Not returning problematic image '%s' refcount=%d", image->name, image->ref_count);
 			return NULL;
 		}
 		mono_image_addref (image);

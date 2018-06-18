@@ -110,23 +110,11 @@ namespace System
 
 		public override bool Equals (object other)
 		{
+			if (!has_value)
+				return other == null;
 			if (other == null)
-				return has_value == false;
-			if (!(other is Nullable<T>))
 				return false;
-
-			return Equals ((Nullable <T>) other);
-		}
-
-		bool Equals (Nullable<T> other)
-		{
-			if (other.has_value != has_value)
-				return false;
-
-			if (has_value == false)
-				return true;
-
-			return other.value.Equals (value);
+			return value.Equals (other);
 		}
 
 		public override int GetHashCode ()
