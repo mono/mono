@@ -743,17 +743,17 @@ namespace Mono.Security.X509 {
 			byte[] privateKey = pki.PrivateKey;
 			try {
 				switch (pki.Algorithm) {
-				case "1.2.840.113549.1.1.1": // Oids.RsaRsa
+				case X509Certificate.OID_RSA:
 					_keyBags.Add (PKCS8.PrivateKeyInfo.DecodeRSA (privateKey));
 					break;
-				case "1.2.840.10040.4.1": // Oids.DsaDsa
+				case X509Certificate.OID_DSA:
 					bool found;
 					DSAParameters p = GetExistingParameters (out found);
 					if (found) {
 						_keyBags.Add (PKCS8.PrivateKeyInfo.DecodeDSA (privateKey, p));
 					}
 					break;
-				case "1.2.840.10045.2.1": // TODO: Oids.Ecc
+				case X509Certificate.OID_ECC: // TODO
 				default:
 					throw new CryptographicException ("Unknown private key format");
 				}
