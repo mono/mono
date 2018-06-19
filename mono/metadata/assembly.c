@@ -3183,11 +3183,15 @@ mono_assembly_name_parse (const char *name, MonoAssemblyName *aname)
 MonoAssemblyName*
 mono_assembly_name_new (const char *name)
 {
+	MonoAssemblyName *result = NULL;
+	MONO_ENTER_GC_UNSAFE;
 	MonoAssemblyName *aname = g_new0 (MonoAssemblyName, 1);
 	if (mono_assembly_name_parse (name, aname))
-		return aname;
-	g_free (aname);
-	return NULL;
+		result = aname;
+	else
+		g_free (aname);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
