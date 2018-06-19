@@ -828,14 +828,10 @@ class MsbuildGenerator {
 	private StringBuilder GenerateSourceItemGroups (
 		string profile,
 		string sources_file_name,
-		string built_sources,
 		string groupConditional
 	) {
 		var result = new StringBuilder ();
 		var readSources = ReadSources (sources_file_name).ToList ();
-		var builtSourceList = (from bs in built_sources.Split () 
-			let tbs = bs.Trim () 
-			where tbs.Length > 0 select tbs).ToList ();
 
 		if (readSources.Count == 0) {
 			Console.Error.WriteLine ($"// No sources built or loaded for {sources_file_name}");
@@ -868,9 +864,6 @@ class MsbuildGenerator {
 
 		foreach (var platformSets in profileSets.Values) {
 			foreach (var platformSet in platformSets.Values) {
-				foreach (var bs in builtSourceList)
-					platformSet.Add (FixupSourceName (bs));
-
 				if (commonFileNames == null)
 					commonFileNames = new HashSet<string> (platformSet);
 				else
@@ -1032,7 +1025,7 @@ class MsbuildGenerator {
 		var sources = 
 			updatingExistingProject 
 				? new StringBuilder ()
-				: GenerateSourceItemGroups (profile, sources_file_name, built_sources, groupConditional);
+				: GenerateSourceItemGroups (profile, sources_file_name, groupConditional);
 
 		//if (library == "corlib-build") // otherwise, does not compile on fx_version == 4.0
 		//{
@@ -1227,6 +1220,14 @@ class MsbuildGenerator {
 			prebuild_postbuild.Append ($"  </PropertyGroup>{NewLine}");
 		}
 
+		var builtSources = new StringBuilder ();
+		builtSources.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{profile}' \">{NewLine}");
+		foreach (var fileName in built_sources.Split ()) {
+			var fixedFileName = FixupSourceName (fileName);
+			builtSources.Append ($"    <Compile Include=\"{fixedFileName}\" />{NewLine}");
+		}
+		builtSources.Append ($"  </ItemGroup>{NewLine}");
+
 		Csproj.output = textToUpdate.
 			Replace ("@OUTPUTTYPE@", Target == Target.Library ? "Library" : "Exe").
 			Replace ("@SIGNATURE@", strongNameSection).
@@ -1253,12 +1254,14 @@ class MsbuildGenerator {
 		var refsPlaceholder = "<!-- @ALL_REFERENCES@ -->";
 		var resourcesPlaceholder = "<!-- @ALL_RESOURCES@ -->";
 		var sourcesPlaceholder = "<!-- @ALL_SOURCES@ -->";
+		var builtSourcesPlaceholder = "<!-- @BUILT_SOURCES@ -->";
 
 		Csproj.output = Csproj.output.
 			Replace (propertiesPlaceholder, properties.ToString () + NewLine + propertiesPlaceholder).
 			Replace (refsPlaceholder, refs.ToString () + NewLine + refsPlaceholder).
 			Replace (resourcesPlaceholder, resources.ToString () + NewLine + resourcesPlaceholder).
-			Replace (sourcesPlaceholder, sources.ToString () + NewLine + sourcesPlaceholder);
+			Replace (sourcesPlaceholder, sources.ToString () + NewLine + sourcesPlaceholder).
+			Replace (builtSourcesPlaceholder, builtSources.ToString () + NewLine + builtSourcesPlaceholder);
 
 		Csproj.preBuildEvent = prebuild;
 		Csproj.postBuildEvent = postbuild;
