@@ -3213,7 +3213,11 @@ mono_assembly_name_get_name (MonoAssemblyName *aname)
 const char*
 mono_assembly_name_get_culture (MonoAssemblyName *aname)
 {
-	return aname->culture;
+	const char *result = NULL;
+	MONO_ENTER_GC_UNSAFE;
+	result = aname->culture;
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
