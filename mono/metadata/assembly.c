@@ -3200,7 +3200,11 @@ mono_assembly_name_new (const char *name)
 const char*
 mono_assembly_name_get_name (MonoAssemblyName *aname)
 {
-	return aname->name;
+	const char *result = NULL;
+	MONO_ENTER_GC_UNSAFE;
+	result = aname->name;
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
