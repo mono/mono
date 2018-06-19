@@ -952,7 +952,7 @@ class MsbuildGenerator {
 		output_name = xproject.Element ("output").Value;
 		if (output_name.EndsWith (".exe"))
 			Target = Target.Exe;
-		built_sources = xproject.Element ("built_sources").Value;
+		built_sources = xproject.Element ("built_sources").Value.Trim ();
 		response = xproject.Element ("response").Value;
 		reskey = xproject.Element ("resources").Value;
 
@@ -1221,12 +1221,14 @@ class MsbuildGenerator {
 		}
 
 		var builtSources = new StringBuilder ();
-		builtSources.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{profile}' \">{NewLine}");
-		foreach (var fileName in built_sources.Split ()) {
-			var fixedFileName = FixupSourceName (fileName);
-			builtSources.Append ($"    <Compile Include=\"{fixedFileName}\" />{NewLine}");
+		if (built_sources.Length > 0) {
+			builtSources.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{profile}' \">{NewLine}");
+			foreach (var fileName in built_sources.Split ()) {
+				var fixedFileName = FixupSourceName (fileName);
+				builtSources.Append ($"    <Compile Include=\"{fixedFileName}\" />{NewLine}");
+			}
+			builtSources.Append ($"  </ItemGroup>{NewLine}");
 		}
-		builtSources.Append ($"  </ItemGroup>{NewLine}");
 
 		Csproj.output = textToUpdate.
 			Replace ("@OUTPUTTYPE@", Target == Target.Library ? "Library" : "Exe").
