@@ -2759,6 +2759,16 @@ mono_assembly_load_from (MonoImage *image, const char *fname,
 void
 mono_assembly_name_free (MonoAssemblyName *aname)
 {
+	MONO_ENTER_GC_UNSAFE;
+	mono_assembly_name_free_internal (aname);
+	MONO_EXIT_GC_UNSAFE;
+}
+
+void
+mono_assembly_name_free_internal (MonoAssemblyName *aname)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
 	if (aname == NULL)
 		return;
 
