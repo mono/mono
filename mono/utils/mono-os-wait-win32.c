@@ -8,11 +8,11 @@
 * Licensed under the MIT license. See LICENSE file in the project root for full license information.
 */
 
-#include <mono/utils/mono-os-wait.h>
-#include <mono/utils/mono-threads.h>
-#include <mono/utils/mono-threads-debug.h>
-#include <mono/utils/mono-logger-internals.h>
-#include <mono/utils/mono-error-internals.h>
+#include "mono-os-wait.h"
+#include "mono-threads.h"
+#include "mono-threads-debug.h"
+#include "mono-logger-internals.h"
+#include "mono-error-internals.h"
 
 enum ThreadWaitInfo {
 	THREAD_WAIT_INFO_CLEARED = 0,
