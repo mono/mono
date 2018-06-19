@@ -3435,9 +3435,11 @@ gboolean
 mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 {
 	gboolean result = FALSE;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
 	mono_class_is_assignable_from_checked (klass, oklass, &result, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
