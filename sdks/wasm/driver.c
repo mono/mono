@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 
 typedef enum {
@@ -16,11 +17,6 @@ typedef enum {
 	MONO_AOT_MODE_FULL,
 	/* Same as full, but use only llvm compiled code */
 	MONO_AOT_MODE_LLVMONLY,
-	/* Uses Interpreter, JIT is disabled and not allowed,
-	 * equivalent to "--full-aot --interpreter" */
-	MONO_AOT_MODE_INTERP,
-	/* Same as INTERP, but use only llvm compiled code */
-	MONO_AOT_MODE_INTERP_LLVMONLY,
 } MonoAotMode;
 
 typedef enum {
@@ -84,11 +80,13 @@ typedef struct MonoArray_ MonoArray;
 typedef struct MonoThread_ MonoThread;
 typedef struct _MonoAssemblyName MonoAssemblyName;
 
+typedef int32_t mono_bool;
 
 //JS funcs
 extern MonoObject* mono_wasm_invoke_js_with_args (int js_handle, MonoString *method, MonoArray *args, int *is_exception);
 
 void mono_jit_set_aot_mode (MonoAotMode mode);
+void mono_runtime_use_interpreter (mono_bool enabled);
 MonoDomain*  mono_jit_init_version (const char *root_domain_name, const char *runtime_version);
 MonoAssembly* mono_assembly_open (const char *filename, MonoImageOpenStatus *status);
 int mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[]);
@@ -198,7 +196,8 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 {
 	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 1);
 	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 1);
-	mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
+	mono_jit_set_aot_mode (MONO_AOT_MODE_LLVMONLY);
+	mono_runtime_use_interpreter (1);
 	if (enable_debugging)
 		mono_wasm_enable_debugging ();
 	mono_set_assemblies_path (m_strdup (managed_path));

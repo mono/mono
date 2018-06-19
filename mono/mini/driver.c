@@ -1759,7 +1759,7 @@ apply_root_domain_configuration_file_bindings (MonoDomain *domain, char *root_do
 static void
 mono_enable_interp (const char *opts)
 {
-	mono_runtime_set_execution_mode (MONO_EE_MODE_INTERP);
+	mono_runtime_use_interpreter (TRUE);
 	if (opts)
 		mono_interp_opts_string = opts;
 
@@ -1988,7 +1988,8 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--hybrid-aot") == 0) {
 			mono_jit_set_aot_mode (MONO_AOT_MODE_HYBRID);
 		} else if (strcmp (argv [i], "--full-aot-interp") == 0) {
-			mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP);
+			mono_jit_set_aot_mode (MONO_AOT_MODE_FULL);
+			mono_runtime_use_interpreter (TRUE);
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
@@ -2578,14 +2579,14 @@ mono_jit_set_aot_only (gboolean val)
 static void
 mono_runtime_set_execution_mode (MonoEEMode mode)
 {
-	memset (&mono_ee_features, 0, sizeof (mono_ee_features));
-
 	switch (mode) {
 	case MONO_AOT_MODE_LLVMONLY:
 		mono_aot_only = TRUE;
 		mono_llvm_only = TRUE;
 
+#ifndef TARGET_WASM
 		mono_ee_features.use_aot_trampolines = TRUE;
+#endif
 		break;
 
 	case MONO_AOT_MODE_FULL:
@@ -2599,22 +2600,11 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 		mono_set_partial_sharing_supported (TRUE);
 		break;
 
-	case MONO_AOT_MODE_INTERP:
-		mono_aot_only = TRUE;
+	case MONO_EE_MODE_INTERP_FALLBACK:
 		mono_use_interpreter = TRUE;
-
-		mono_ee_features.use_aot_trampolines = TRUE;
 		break;
 
-	case MONO_AOT_MODE_INTERP_LLVMONLY:
-		mono_aot_only = TRUE;
-		mono_use_interpreter = TRUE;
-		mono_llvm_only = TRUE;
-
-		mono_ee_features.force_use_interpreter = TRUE;
-		break;
-
-	case MONO_EE_MODE_INTERP:
+	case MONO_EE_MODE_INTERP_ONLY:
 		mono_use_interpreter = TRUE;
 
 		mono_ee_features.force_use_interpreter = TRUE;
@@ -2628,12 +2618,42 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 	}
 }
 
+static gboolean interp_initted = FALSE;
+
+/**
+ * mono_runtime_use_interpreter:
+ * this *must* be called after `mono_jit_set_aot_mode`, if used.
+ */
+void
+mono_runtime_use_interpreter (mono_bool enabled)
+{
+#ifndef DISABLE_INTERPRETER
+	/* can't call mono_jit_use_interpreter more than once */
+	g_assert (!interp_initted);
+	interp_initted = TRUE;
+
+	if (enabled) {
+		if (mono_aot_mode == MONO_AOT_MODE_NONE || mono_aot_mode == MONO_AOT_MODE_LLVMONLY)
+			mono_runtime_set_execution_mode (MONO_EE_MODE_INTERP_ONLY);
+		else
+			mono_runtime_set_execution_mode (MONO_EE_MODE_INTERP_FALLBACK);
+	} else {
+		/* disabled by default */
+	}
+#else
+	g_error ("interpreter disabled in this configuration");
+#endif
+}
+
 /**
  * mono_jit_set_aot_mode:
  */
 void
 mono_jit_set_aot_mode (MonoAotMode mode)
 {
+	/* mono_jit_set_aot_mode () must be called before mono_runtime_use_interpreter () */
+	g_assert (!interp_initted);
+
 	/* we don't want to set mono_aot_mode twice */
 	g_assert (mono_aot_mode == MONO_AOT_MODE_NONE);
 	mono_aot_mode = mode;

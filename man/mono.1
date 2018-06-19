@@ -244,9 +244,13 @@ any code generation at runtime.  This option only makes sense with \fBmscorlib.d
 Embedders can set
 
 .nf
-mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP);
+mono_jit_set_aot_mode (MONO_AOT_MODE_FULL);
+mono_runtime_use_interpreter (TRUE);
 .fi
 .ne
+
+in order to use it.
+
 .TP
 .I ld-flags
 Additional flags to pass to the C linker (if the current AOT mode calls for invoking it).
