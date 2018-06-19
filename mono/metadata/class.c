@@ -65,6 +65,8 @@ static gboolean can_access_type (MonoClass *access_klass, MonoClass *member_klas
 static char* mono_assembly_name_from_token (MonoImage *image, guint32 type_token);
 static guint32 mono_field_resolve_flags (MonoClassField *field);
 
+static MonoProperty* mono_class_get_property_from_name_internal (MonoClass *klass, const char *name);
+
 static
 MonoImage *
 mono_method_get_image (MonoMethod *method)
@@ -2329,6 +2331,17 @@ mono_class_get_event_token (MonoEvent *event)
 MonoProperty*
 mono_class_get_property_from_name (MonoClass *klass, const char *name)
 {
+	MonoProperty *result = NULL;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_class_get_property_from_name_internal (klass, name);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+MonoProperty*
+mono_class_get_property_from_name_internal (MonoClass *klass, const char *name)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
 	while (klass) {
 		MonoProperty* p;
 		gpointer iter = NULL;
