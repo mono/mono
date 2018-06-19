@@ -803,7 +803,7 @@ class MsbuildGenerator {
 		var platformsFolder = Path.GetFullPath ("../../mcs/build/platforms");
 		var profilesFolder = Path.GetFullPath ("../../mcs/build/profiles");
 
-		SourcesParser.TraceLevel = 0;
+		SourcesParser.TraceLevel = 2;
 		return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
 	}
 
@@ -859,16 +859,29 @@ class MsbuildGenerator {
 			platformSet.Add (FixupSourceName (rs.RelativePath));
 		}
 
+		var hostPlatformNames = GetSourcesParser ().AllHostPlatformNames;
+
+		var allValidSets = (
+			from profileName in SlnGenerator.profiles
+			let actualProfileName = profileSets.ContainsKey (profileName)
+				? profileName
+				: "default"
+			let platformSets = profileSets[actualProfileName]
+			from platformName in hostPlatformNames
+			let actualPlatformName = platformSets.ContainsKey (platformName)
+				? platformName
+				: "default"
+			let platformSet = platformSets[actualPlatformName]
+			select (profileName: actualProfileName, platformName: actualPlatformName, set: platformSet)
+		);
 
 		HashSet<string> commonFileNames = null;
 
-		foreach (var platformSets in profileSets.Values) {
-			foreach (var platformSet in platformSets.Values) {
-				if (commonFileNames == null)
-					commonFileNames = new HashSet<string> (platformSet);
-				else
-					commonFileNames.IntersectWith (platformSet);
-			}
+		foreach (var tup in allValidSets) {
+			if (commonFileNames == null)
+				commonFileNames = new HashSet<string> (tup.set);
+			else
+				commonFileNames.IntersectWith (tup.set);
 		}
 
 		result.Append ($"  <ItemGroup>{NewLine}");
@@ -879,21 +892,16 @@ class MsbuildGenerator {
 		if (observedHostPlatforms.Count == 0)
 			observedHostPlatforms.Add ("default");
 
-		foreach (var profileName in SlnGenerator.profiles) {
-			Dictionary<string, HashSet<string>> profileSet;
-			if (!profileSets.TryGetValue (profileName, out profileSet))
-				profileSet = profileSets["default"];
+		var validSetsByProfile = allValidSets.GroupBy(tup => tup.profileName);
 
-			var platformFileListTuples = (from platformName in observedHostPlatforms
-				let platformSet = profileSet.ContainsKey (platformName)
-					? profileSet[platformName]
-					: profileSet["default"]
+		foreach (var profileSet in validSetsByProfile) {
+			var platformFileListTuples = (from tup in profileSet
 				let platformSpecificFileNames = 
-					(from fn in platformSet 
+					(from fn in tup.set
 					where !commonFileNames.Contains (fn)
 					orderby fn select fn).ToList ()
 				where platformSpecificFileNames.Count > 0
-				select (platformName, platformSpecificFileNames)).ToList ();
+				select (tup.platformName, platformSpecificFileNames)).ToList ();
 
 			// ??????????????
 			if (platformFileListTuples.Count == 0)
@@ -907,7 +915,7 @@ class MsbuildGenerator {
 				else
 					commonFileNamesForThisProfile.IntersectWith (tup.Item2);			
 
-			result.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{profileName}' \">{NewLine}");
+			result.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{profileSet.Key}' \">{NewLine}");
 
 			foreach (var cfn in commonFileNamesForThisProfile)
 				result.Append ($"    <Compile Include=\"{cfn}\" />{NewLine}");
@@ -915,12 +923,16 @@ class MsbuildGenerator {
 			result.Append ($"  </ItemGroup>{NewLine}");
 
 			foreach (var tup in platformFileListTuples) {
-				var filteredFileNames = (from fn in tup.Item2 where !commonFileNamesForThisProfile.Contains (fn) select fn).ToList ();
+				var filteredFileNames = (
+					from fn in tup.Item2 
+					where !commonFileNamesForThisProfile.Contains (fn) 
+					select fn
+				).ToList ();
 				if (filteredFileNames.Count == 0)
 					continue;
 
 				var platformName = tup.Item1;
-				result.Append ($"  <ItemGroup Condition=\" '$(Platform)|$(HostPlatform)' == '{profileName}|{platformName}' \">{NewLine}");
+				result.Append ($"  <ItemGroup Condition=\" '$(Platform)|$(HostPlatform)' == '{profileSet.Key}|{platformName}' \">{NewLine}");
 
 				foreach (var ff in filteredFileNames)
 					result.Append ($"    <Compile Include=\"{ff}\" />{NewLine}");
