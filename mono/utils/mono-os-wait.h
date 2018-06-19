@@ -10,6 +10,7 @@
 
 #include <winsock2.h>
 #include <windows.h>
+#include "mono-error.h"
 
 DWORD
 mono_win32_sleep_ex (DWORD timeout, BOOL alertable);
