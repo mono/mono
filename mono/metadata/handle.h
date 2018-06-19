@@ -337,6 +337,10 @@ Handle macros/functions
 #define TYPED_HANDLE_NAME(TYPE) TYPE ## Handle
 #define TYPED_OUT_HANDLE_NAME(TYPE) TYPE ## HandleOut
 
+// internal helpers:
+#define MONO_HANDLE_CAST_FOR(type) mono_handle_cast_##type
+#define MONO_HANDLE_TYPECHECK_FOR(type) mono_handle_typecheck_##type
+
 #ifdef MONO_HANDLE_TRACK_OWNER
 #define STRINGIFY_(x) #x
 #define STRINGIFY(x) STRINGIFY_(x)
@@ -380,13 +384,13 @@ Handle macros/functions
 /* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
 /* Another way to do this involved casting mono_handle_new function to a different type. */ \
 static inline MONO_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
-mono_handle_cast_##TYPE (gpointer a)				\
+MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
 {								\
 	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
 	return b;						\
 }								\
 static inline MONO_ALWAYS_INLINE gpointer 			\
-mono_handle_typecheck_##TYPE (TYPE *a)				\
+MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
 {								\
 	return a;						\
 }
@@ -428,18 +432,16 @@ typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type un
 #ifndef MONO_HANDLE_TRACK_OWNER
 
 #define MONO_HANDLE_NEW(type, object) \
-	mono_handle_cast_##type (mono_handle_new (mono_handle_typecheck_##type (object)))
+	MONO_HANDLE_CAST_FOR (type) (mono_handle_new (MONO_HANDLE_TYPECHECK_FOR (type) (object)))
 
 #else
 
 #define MONO_HANDLE_NEW(type, object) \
-	(mono_handle_cast_##type (mono_handle_new (mono_handle_typecheck_##type (object, HANDLE_OWNER))))
+	(MONO_HANDLE_CAST_FOR (type) (mono_handle_new (MONO_HANDLE_TYPECHECK_FOR (type) (object, HANDLE_OWNER))))
 
 #endif
 
-#define MONO_HANDLE_CAST(type, value) \
-	(mono_handle_cast_##type ((value).__raw))
-
+#define MONO_HANDLE_CAST(type, value) (MONO_HANDLE_CAST_FOR (type) ((value).__raw))
 #define MONO_HANDLE_RAW(handle)     (MONO_TYPEOF_CAST (*(handle).__raw, mono_handle_raw ((handle).__raw)))
 #define MONO_HANDLE_IS_NULL(handle) (mono_handle_is_null ((handle).__raw))
 
