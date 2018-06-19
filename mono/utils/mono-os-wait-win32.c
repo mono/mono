@@ -12,6 +12,7 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-threads-debug.h>
 #include <mono/utils/mono-logger-internals.h>
+#include <mono/utils/mono-error-internals.h>
 
 enum ThreadWaitInfo {
 	THREAD_WAIT_INFO_CLEARED = 0,
@@ -122,9 +123,8 @@ mono_win32_wait_for_single_object_ex (HANDLE handle, DWORD timeout, BOOL alertab
 
 	// NOTE, leave_alertable_wait should not affect GetLastError but
 	// if changed, GetLastError needs to be preserved and reset before returning.
-	if (alertable && info) {
+	if (info)
 		leave_alertable_wait (info);
-	}
 
 	return result;
 }
