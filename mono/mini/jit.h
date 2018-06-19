@@ -55,11 +55,13 @@ typedef enum {
 	MONO_AOT_MODE_FULL,
 	/* Same as full, but use only llvm compiled code */
 	MONO_AOT_MODE_LLVMONLY,
-	/* Uses Interpreter, JIT is disabled and not allowed,
-	 * equivalent to "--full-aot --interpreter" */
-	MONO_AOT_MODE_INTERP,
+	/* Uses FullAOT and interpreter as fallback, JIT is disabled and not
+	 * allowed, equivalent to "--full-aot --interpreter" */
+	MONO_AOT_MODE_FULL_INTERP,
 	/* Same as INTERP, but use only llvm compiled code */
 	MONO_AOT_MODE_INTERP_LLVMONLY,
+	/* Force interpreter execution only */
+	MONO_AOT_MODE_INTERP_ONLY,
 	/* Sentinel value used internally by the runtime. We use a large number to avoid clashing with some internal values. */
 	MONO_AOT_MODE_LAST = 1000,
 } MonoAotMode;

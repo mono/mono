@@ -221,8 +221,8 @@ mono_native_state_add_ee_info  (JsonWriter *writer)
 		/*case MONO_AOT_MODE_LLVMONLY:*/
 			/*aot_mode = "llvmonly";*/
 			/*break;*/
-		/*case MONO_AOT_MODE_INTERP:*/
-			/*aot_mode = "interp";*/
+		/*case MONO_AOT_MODE_FULL_INTERP:*/
+			/*aot_mode = "full_interp";*/
 			/*break;*/
 		/*case MONO_AOT_MODE_INTERP_LLVMONLY:*/
 			/*aot_mode = "interp_llvmonly";*/
