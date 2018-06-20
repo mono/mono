@@ -938,26 +938,31 @@ is_file_writable (struct stat *st, const gchar *path)
 	// OS X Finder "locked" or `ls -lO` "uchg".
 	// This only covers one of several cases where an OS X file could be unwritable through special flags.
 	if (st->st_flags & (UF_IMMUTABLE|SF_IMMUTABLE))
-		return 0;
+		return FALSE;
 #endif
 
 	/* Is it globally writable? */
 	if (st->st_mode & S_IWOTH)
-		return 1;
+		return TRUE;
+
+	uid_t const euid = geteuid ();
 
 	/* Am I the owner? */
-	if ((st->st_uid == geteuid ()) && (st->st_mode & S_IWUSR))
-		return 1;
+	if ((st->st_uid == euid) && (st->st_mode & S_IWUSR))
+		return TRUE;
 
 	/* Am I in the same group? */
 	if ((st->st_gid == getegid ()) && (st->st_mode & S_IWGRP))
-		return 1;
+		return TRUE;
 
-	/* Fallback to using access(2). It's not ideal as it might not take into consideration euid/egid
-	 * but it's the only sane option we have on unix.
+	/* If not root, fallback to using access(2). It's not ideal as it might not take into
+         * consideration euid/egid but it's the only sane option we have on unix.
+	 *
+	 * access grants root access here, which would then appear
+	 * as SetFileAtttributes(readonly) not working, as root.
 	 */
 	MONO_ENTER_GC_SAFE;
-	ret = access (path, W_OK) == 0;
+	ret = euid != 0 && access (path, W_OK) == 0;
 	MONO_EXIT_GC_SAFE;
 	return ret;
 }
