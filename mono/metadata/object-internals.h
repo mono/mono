@@ -74,7 +74,7 @@
 #define mono_class_get_field_from_name_cached(klass,name) ({ \
 			static MonoClassField *tmp_field; \
 			if (!tmp_field) { \
-				tmp_field = mono_class_get_field_from_name ((klass), (name)); \
+				tmp_field = mono_class_get_field_from_name_full ((klass), (name), NULL); \
 				g_assert (tmp_field); \
 			}; \
 			tmp_field; })

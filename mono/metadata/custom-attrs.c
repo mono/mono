@@ -883,7 +883,7 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 		named += name_len;
 		if (named_type == CATTR_TYPE_FIELD) {
 			/* how this fail is a blackbox */
-			field = mono_class_get_field_from_name (mono_object_class (attr), name);
+			field = mono_class_get_field_from_name_full (mono_object_class (attr), name, NULL);
 			if (!field) {
 				mono_error_set_generic_error (error, "System.Reflection", "CustomAttributeFormatException", "Could not find a field with name %s", name);
 				goto fail;
@@ -1041,7 +1041,7 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 		if (named_type == CATTR_TYPE_FIELD) {
 			/* Named arg is a field. */
 			MonoObject *obj;
-			MonoClassField *field = mono_class_get_field_from_name (attrklass, name);
+			MonoClassField *field = mono_class_get_field_from_name_full (attrklass, name, NULL);
 
 			if (!field) {
 				g_free (name);

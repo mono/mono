@@ -83,6 +83,7 @@ mono_ptr_class_get         (MonoType *type);
 MONO_API MonoClassField *
 mono_class_get_field       (MonoClass *klass, uint32_t field_token);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoClassField *
 mono_class_get_field_from_name (MonoClass *klass, const char *name);
 

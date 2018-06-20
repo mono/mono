@@ -4330,7 +4330,7 @@ get_async_method_builder (DbgEngineStackFrame *frame)
 	gpointer builder;
 	guint8 *this_addr;
 
-	builder_field = mono_class_get_field_from_name (frame->method->klass, "<>t__builder");
+	builder_field = mono_class_get_field_from_name_full (frame->method->klass, "<>t__builder", NULL);
 	g_assert (builder_field);
 
 	this_addr = get_this_addr (frame);
@@ -4370,7 +4370,7 @@ get_this_async_id (DbgEngineStackFrame *frame)
 	if (!builder)
 		return 0;
 
-	builder_field = mono_class_get_field_from_name (frame->method->klass, "<>t__builder");
+	builder_field = mono_class_get_field_from_name_full (frame->method->klass, "<>t__builder", NULL);
 	g_assert (builder_field);
 
 	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
@@ -4394,7 +4394,7 @@ get_this_async_id (DbgEngineStackFrame *frame)
 static gboolean
 set_set_notification_for_wait_completion_flag (DbgEngineStackFrame *frame)
 {
-	MonoClassField *builder_field = mono_class_get_field_from_name (frame->method->klass, "<>t__builder");
+	MonoClassField *builder_field = mono_class_get_field_from_name_full (frame->method->klass, "<>t__builder", NULL);
 	g_assert (builder_field);
 	gpointer builder = get_async_method_builder (frame);
 	g_assert (builder);

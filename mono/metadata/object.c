@@ -4738,7 +4738,7 @@ mono_unhandled_exception_checked (MonoObjectHandle exc, MonoError *error)
 			mono_thread_info_current ()->runtime_thread))
 		return;
 
-	field = mono_class_get_field_from_name (mono_defaults.appdomain_class, "UnhandledException");
+	field = mono_class_get_field_from_name_full (mono_defaults.appdomain_class, "UnhandledException", NULL);
 	g_assert (field);
 
 	current_domain = mono_domain_get ();
@@ -7769,7 +7769,7 @@ mono_wait_handle_get_handle (MonoWaitHandle *handle)
 	MonoSafeHandle *sh;
 
 	if (!f_safe_handle) {
-		f_safe_handle = mono_class_get_field_from_name (mono_defaults.manualresetevent_class, "safeWaitHandle");
+		f_safe_handle = mono_class_get_field_from_name_full (mono_defaults.manualresetevent_class, "safeWaitHandle", NULL);
 		g_assert (f_safe_handle);
 	}
 
