@@ -75,6 +75,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
+		[Ignore]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Constructor_DateTime_MinValue () 
 		{
@@ -82,6 +83,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
+		[Ignore]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Constructor_DateTime_1600 ()
 		{
@@ -90,6 +92,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
+		[Ignore]
 		[ExpectedException (typeof (CryptographicException))]
 		public void Constructor_DateTime_1601 ()
 		{
@@ -98,6 +101,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
+		[Ignore]
 		[ExpectedException (typeof (CryptographicException))]
 		public void Constructor_DateTime_MaxValue ()
 		{
@@ -105,6 +109,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
+		[Ignore]
 		[ExpectedException (typeof (CryptographicException))]
 		public void Constructor_DateTime_Before1950 ()
 		{
@@ -114,6 +119,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
+		[Ignore]
 		public void Constructor_DateTime_After1950 ()
 		{
 			DateTime dt = new DateTime (1950, 01, 01, 00, 00, 00);
@@ -129,6 +135,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
+		[Ignore]
 		public void Constructor_DateTime_Before2050 ()
 		{
 			DateTime dt = new DateTime (2049, 12, 31, 11, 59, 59);
@@ -144,6 +151,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
+		[Ignore]
 		[ExpectedException (typeof (CryptographicException))]
 		public void Constructor_DateTime_After2050 ()
 		{
