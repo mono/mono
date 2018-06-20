@@ -67,6 +67,8 @@ static guint32 mono_field_resolve_flags (MonoClassField *field);
 
 static MonoProperty* mono_class_get_property_from_name_internal (MonoClass *klass, const char *name);
 
+static MonoClass *mono_class_from_mono_type_internal (MonoType *type);
+
 static
 MonoImage *
 mono_method_get_image (MonoMethod *method)
@@ -1812,6 +1814,16 @@ mono_ptr_class_get (MonoType *type)
  */
 MonoClass *
 mono_class_from_mono_type (MonoType *type)
+{
+	MonoClass *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_class_from_mono_type_internal (type);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+MonoClass *
+mono_class_from_mono_type_internal (MonoType *type)
 {
 	switch (type->type) {
 	case MONO_TYPE_OBJECT:
