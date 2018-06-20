@@ -658,7 +658,7 @@ namespace System.Net
 					else
 						StatusDescription = string.Empty;
 
-					if (pos >= buffer.Size)
+					if (pos >= buffer.Offset)
 						return true;
 				}
 
