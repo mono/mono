@@ -2122,7 +2122,11 @@ mono_class_get_field (MonoClass *klass, guint32 field_token)
 MonoClassField *
 mono_class_get_field_from_name (MonoClass *klass, const char *name)
 {
-	return mono_class_get_field_from_name_full (klass, name, NULL);
+	MonoClassField *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_class_get_field_from_name_full (klass, name, NULL);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -2141,6 +2145,8 @@ mono_class_get_field_from_name (MonoClass *klass, const char *name)
 MonoClassField *
 mono_class_get_field_from_name_full (MonoClass *klass, const char *name, MonoType *type)
 {
+	MONO_REQ_GC_UNSAFE_MODE;
+
 	int i;
 
 	mono_class_setup_fields (klass);
