@@ -872,16 +872,23 @@ class MsbuildGenerator {
 				? platformName
 				: "default"
 			let platformSet = platformSets[actualPlatformName]
-			select (profileName: actualProfileName, platformName: actualPlatformName, set: platformSet)
-		);
+			select (profileName: profileName, platformName: platformName, set: platformSet)
+		).ToList ();
 
 		HashSet<string> commonFileNames = null;
 
+		Console.Error.WriteLine ("// -- allvalidsets --");
+
 		foreach (var tup in allValidSets) {
+			var countBefore = (commonFileNames == null) ? 0 : commonFileNames.Count;
 			if (commonFileNames == null)
 				commonFileNames = new HashSet<string> (tup.set);
 			else
 				commonFileNames.IntersectWith (tup.set);
+			var countAfter = (commonFileNames == null) ? 0 : commonFileNames.Count;
+			Console.Error.WriteLine ($"// {tup.profileName} {tup.platformName} [{tup.set.Count}] {countBefore} -> {countAfter}");
+			if (sources_file_name.Contains("corlib"))
+				Console.Error.WriteLine(string.Join(", ", tup.set));
 		}
 
 		result.Append ($"  <ItemGroup>{NewLine}");
@@ -904,8 +911,10 @@ class MsbuildGenerator {
 				select (tup.platformName, platformSpecificFileNames)).ToList ();
 
 			// ??????????????
-			if (platformFileListTuples.Count == 0)
+			if (platformFileListTuples.Count == 0) {
+				Console.Error.WriteLine($"No platform file list tuples for {profileSet.Key}");
 				continue;
+			}
 
 			HashSet<string> commonFileNamesForThisProfile = null;
 
