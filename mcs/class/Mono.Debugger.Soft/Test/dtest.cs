@@ -1602,16 +1602,16 @@ public class DebuggerTests
 		// nullables
 		field = o.Type.GetField ("field_nullable");
 		f = o.GetValue (field);
-		AssertValue (0, (f as StructMirror).Fields [0]);
-		AssertValue (false, (f as StructMirror).Fields [1]);
+		AssertValue (0, (f as StructMirror)["value"]);
+		AssertValue (false, (f as StructMirror)["hasValue"]);
 		o.SetValue (field, vm.CreateValue (6));
 		f = o.GetValue (field);
-		AssertValue (6, (f as StructMirror).Fields [0]);
-		AssertValue (true, (f as StructMirror).Fields [1]);
+		AssertValue (6, (f as StructMirror)["value"]);
+		AssertValue (true, (f as StructMirror)["hasValue"]);
 		o.SetValue (field, vm.CreateValue (null));
 		f = o.GetValue (field);
-		AssertValue (0, (f as StructMirror).Fields [0]);
-		AssertValue (false, (f as StructMirror).Fields [1]);
+		AssertValue (0, (f as StructMirror)["value"]);
+		AssertValue (false, (f as StructMirror)["hasValue"]);
 
 		// Argument checking
 		AssertThrows<ArgumentNullException> (delegate () {
@@ -2713,8 +2713,8 @@ public class DebuggerTests
 		v = this_obj.InvokeMethod (e.Thread, m, null);
 		Assert.IsInstanceOfType (typeof (StructMirror), v);
 		var s = v as StructMirror;
-		AssertValue (42, s.Fields [0]);
-		AssertValue (true, s.Fields [1]);
+		AssertValue (42, s["value"]);
+		AssertValue (true, s["hasValue"]);
 
 		// pass nullable as this
 		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
@@ -2731,8 +2731,8 @@ public class DebuggerTests
 		v = this_obj.InvokeMethod (e.Thread, m, null);
 		Assert.IsInstanceOfType (typeof (StructMirror), v);
 		s = v as StructMirror;
-		AssertValue (0, s.Fields [0]);
-		AssertValue (false, s.Fields [1]);
+		AssertValue (0, s["value"]);
+		AssertValue (false, s["hasValue"]);
 
 		// pass nullable as this
 		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
