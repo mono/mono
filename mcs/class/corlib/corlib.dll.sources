@@ -1541,6 +1541,7 @@ corefx/SynchronizationContext.cs
 corefx/SR.cs
 corefx/CompareInfo.cs
 corefx/GlobalizationMode.cs
+corefx/RuntimeImports.cs
 
 corert/DependencyReductionRootAttribute.cs
 corert/AddrofIntrinsics.cs

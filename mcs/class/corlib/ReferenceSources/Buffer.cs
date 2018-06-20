@@ -226,7 +226,7 @@ namespace System
 
 		internal static void Memmove<T>(ref T destination, ref T source, nuint elementCount)
 		{
-			Memmove (ref Unsafe.As<T, byte>(ref destination), ref Unsafe.As<T, byte>(ref source), (nuint)Unsafe.SizeOf<T>());
+			throw new NotImplementedException ("Buffer::Memmove<T>");
 		}
 	}
 }
