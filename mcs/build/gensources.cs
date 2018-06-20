@@ -168,7 +168,7 @@ public class ParseResult {
             )
                 continue;
 
-            var absolutePath = Path.Combine (entry.Directory, entry.Pattern);
+            var absolutePath = Path.Combine (entry.Directory, entry.Pattern).Trim ();
             var absoluteDirectory = Path.GetDirectoryName (absolutePath);
             var absolutePattern = Path.GetFileName (absolutePath);
 
