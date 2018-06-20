@@ -26,7 +26,7 @@ mono_100ns_ticks (void)
 gint64
 mono_100ns_datetime (void)
 {
-	return (gint64) UnityPalGetTicks100NanosecondsDateTime();
+	return (gint64) UnityPalGetSystemTimeAsFileTime();
 }
 
 gint64
