@@ -3846,6 +3846,8 @@ mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate)
 MonoMethod*
 mono_class_get_cctor (MonoClass *klass)
 {
+	MonoMethod *result = NULL;
+	ERROR_DECL (error);
 	MonoCachedClassInfo cached_info;
 
 	if (image_is_dynamic (m_class_get_image (klass))) {
@@ -3853,30 +3855,31 @@ mono_class_get_cctor (MonoClass *klass)
 		 * has_cctor is not set for these classes because mono_class_init () is
 		 * not run for them.
 		 */
-		return mono_class_get_method_from_name_flags (klass, ".cctor", -1, METHOD_ATTRIBUTE_SPECIAL_NAME);
+		result = mono_class_get_method_from_name_checked (klass, ".cctor", -1, METHOD_ATTRIBUTE_SPECIAL_NAME, error);
+		mono_error_assert_msg_ok (error, "Could not lookup class cctor in dynamic image");
+		return result;
 	}
 
 	mono_class_init (klass);
 
 	if (!m_class_has_cctor (klass))
-		return NULL;
+		return result;
 
 	if (mono_class_is_ginst (klass) && !m_class_get_methods (klass)) {
-		ERROR_DECL (error);
-		error_init (error);
-		MonoMethod *result = mono_class_get_inflated_method (klass, mono_class_get_cctor (mono_class_get_generic_class (klass)->container_class), error);
+		result = mono_class_get_inflated_method (klass, mono_class_get_cctor (mono_class_get_generic_class (klass)->container_class), error);
 		mono_error_assert_msg_ok (error, "Could not lookup inflated class cctor"); /* FIXME do proper error handling */
 		return result;
 	}
 
 	if (mono_class_get_cached_class_info (klass, &cached_info)) {
-		ERROR_DECL (error);
-		MonoMethod *result = mono_get_method_checked (m_class_get_image (klass), cached_info.cctor_token, klass, NULL, error);
+		result = mono_get_method_checked (m_class_get_image (klass), cached_info.cctor_token, klass, NULL, error);
 		mono_error_assert_msg_ok (error, "Could not lookup class cctor from cached metadata");
 		return result;
 	}
 
-	return mono_class_get_method_from_name_flags (klass, ".cctor", -1, METHOD_ATTRIBUTE_SPECIAL_NAME);
+	result = mono_class_get_method_from_name_checked (klass, ".cctor", -1, METHOD_ATTRIBUTE_SPECIAL_NAME, error);
+	mono_error_assert_msg_ok (error, "Could not lookup class cctor");
+	return result;
 }
 
 /**
@@ -4946,7 +4949,11 @@ mono_event_get_flags (MonoEvent *event)
 MonoMethod *
 mono_class_get_method_from_name (MonoClass *klass, const char *name, int param_count)
 {
-	return mono_class_get_method_from_name_flags (klass, name, param_count, 0);
+	MonoMethod *result;
+	ERROR_DECL (error);
+	result = mono_class_get_method_from_name_checked (klass, name, param_count, 0, error);
+	mono_error_cleanup (error);
+	return result;
 }
 
 MonoMethod*

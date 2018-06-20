@@ -4221,7 +4221,8 @@ emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	if (!mono_class_is_assignable_from (ICustomMarshaler, mklass))
 		exception_msg = g_strdup_printf ("Custom marshaler '%s' does not implement the ICustomMarshaler interface.", m_class_get_name (mklass));
 
-	get_instance = mono_class_get_method_from_name_flags (mklass, "GetInstance", 1, METHOD_ATTRIBUTE_STATIC);
+	get_instance = mono_class_get_method_from_name_checked (mklass, "GetInstance", 1, METHOD_ATTRIBUTE_STATIC, error);
+	mono_error_assert_ok (error);
 	if (get_instance) {
 		MonoMethodSignature *get_sig = mono_method_signature (get_instance);
 		if ((get_sig->ret->type != MONO_TYPE_CLASS) ||
@@ -4854,7 +4855,9 @@ emit_marshal_string_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			static MonoMethod *m;
 
 			if (!m) {
-				m = mono_class_get_method_from_name_flags (mono_defaults.string_class, "get_Length", -1, 0);
+				ERROR_DECL (error);
+				m = mono_class_get_method_from_name_checked (mono_defaults.string_class, "get_Length", -1, 0, error);
+				mono_error_assert_ok (error);
 				g_assert (m);
 			}
 

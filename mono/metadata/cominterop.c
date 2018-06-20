@@ -726,8 +726,11 @@ mono_cominterop_emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, 
 		mono_mb_emit_icall (mb, cominterop_get_ccw_object);
 		pos_ccw = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
 
-		if (!com_interop_proxy_get_proxy)
-			com_interop_proxy_get_proxy = mono_class_get_method_from_name_flags (mono_class_get_interop_proxy_class (), "GetProxy", 2, METHOD_ATTRIBUTE_PRIVATE);
+		if (!com_interop_proxy_get_proxy) {
+			ERROR_DECL (error);
+			com_interop_proxy_get_proxy = mono_class_get_method_from_name_checked (mono_class_get_interop_proxy_class (), "GetProxy", 2, METHOD_ATTRIBUTE_PRIVATE, error);
+			mono_error_assert_ok (error);
+		}
 #ifndef DISABLE_REMOTING
 		if (!get_transparent_proxy)
 			get_transparent_proxy = mono_class_get_method_from_name (mono_defaults.real_proxy_class, "GetTransparentProxy", 0);

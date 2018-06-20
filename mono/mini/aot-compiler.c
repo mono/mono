@@ -69,6 +69,24 @@
 #include "mini-llvm.h"
 #include "mini-runtime.h"
 
+static MonoMethod*
+try_get_method_nofail (MonoClass *klass, const char *method_name, int param_count, int flags)
+{
+	MonoMethod *result;
+	ERROR_DECL (error);
+	result = mono_class_get_method_from_name_checked (klass, method_name, param_count, flags, error);
+	mono_error_assert_ok (error);
+	return result;
+}
+
+static MonoMethod*
+get_method_nofail (MonoClass *klass, const char *method_name, int param_count, int flags)
+{
+	MonoMethod *result = try_get_method_nofail (klass, method_name, param_count, flags);
+	g_assertf (result, "Expected to find method %s in klass %s", method_name, m_class_get_name (klass));
+	return result;
+}
+
 #if !defined(DISABLE_AOT) && !defined(DISABLE_JIT)
 
 // Use MSVC toolchain, Clang for MSVC using MSVC codegen and linker, when compiling for AMD64
@@ -4109,7 +4127,7 @@ add_wrappers (MonoAotCompile *acfg)
 		add_method (acfg, get_runtime_invoke_sig (csig));
 
 		/* runtime-invoke used by finalizers */
-		add_method (acfg, get_runtime_invoke (acfg, mono_class_get_method_from_name_flags (mono_defaults.object_class, "Finalize", 0, 0), TRUE));
+		add_method (acfg, get_runtime_invoke (acfg, get_method_nofail (mono_defaults.object_class, "Finalize", 0, 0), TRUE));
 
 		/* This is used by mono_runtime_capture_context () */
 		method = mono_get_context_capture_method ();
@@ -4226,11 +4244,11 @@ add_wrappers (MonoAotCompile *acfg)
 
 			add_method (acfg, m);
 
-			method = mono_class_get_method_from_name_flags (klass, "BeginInvoke", -1, 0);
+			method = try_get_method_nofail (klass, "BeginInvoke", -1, 0);
 			if (method)
 				add_method (acfg, mono_marshal_get_delegate_begin_invoke (method));
 
-			method = mono_class_get_method_from_name_flags (klass, "EndInvoke", -1, 0);
+			method = try_get_method_nofail (klass, "EndInvoke", -1, 0);
 			if (method)
 				add_method (acfg, mono_marshal_get_delegate_end_invoke (method));
 

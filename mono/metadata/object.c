@@ -3580,7 +3580,8 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 
 		if (!m) {
 			MonoClass *ptr_klass = mono_class_get_pointer_class ();
-			m = mono_class_get_method_from_name_flags (ptr_klass, "Box", 2, METHOD_ATTRIBUTE_STATIC);
+			m = mono_class_get_method_from_name_checked (ptr_klass, "Box", 2, METHOD_ATTRIBUTE_STATIC, error);
+			return_val_if_nok (error, NULL);
 			g_assert (m);
 		}
 
@@ -4591,7 +4592,8 @@ create_unhandled_exception_eventargs (MonoObjectHandle exc, MonoError *error)
 	mono_class_init (klass);
 
 	/* UnhandledExceptionEventArgs only has 1 public ctor with 2 args */
-	MonoMethod * const method = mono_class_get_method_from_name_flags (klass, ".ctor", 2, METHOD_ATTRIBUTE_PUBLIC);
+	MonoMethod * const method = mono_class_get_method_from_name_checked (klass, ".ctor", 2, METHOD_ATTRIBUTE_PUBLIC, error);
+	goto_if_nok (error, return_null);
 	g_assert (method);
 
 	MonoBoolean is_terminating = TRUE;
@@ -8071,8 +8073,11 @@ prepare_to_string_method (MonoObject *obj, void **target)
 
 	*target = obj;
 
-	if (!to_string)
-		to_string = mono_class_get_method_from_name_flags (mono_get_object_class (), "ToString", 0, METHOD_ATTRIBUTE_VIRTUAL | METHOD_ATTRIBUTE_PUBLIC);
+	if (!to_string) {
+		ERROR_DECL (error);
+		to_string = mono_class_get_method_from_name_checked (mono_get_object_class (), "ToString", 0, METHOD_ATTRIBUTE_VIRTUAL | METHOD_ATTRIBUTE_PUBLIC, error);
+		mono_error_assert_ok (error);
+	}
 
 	method = mono_object_get_virtual_method (obj, to_string);
 

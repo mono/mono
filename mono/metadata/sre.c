@@ -4338,7 +4338,8 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 			   !strcmp (oklass->name, "ConstructorOnTypeBuilderInst")) {
 		static MonoMethod *resolve_method;
 		if (!resolve_method) {
-			MonoMethod *m = mono_class_get_method_from_name_flags (mono_class_get_module_builder_class (), "RuntimeResolve", 1, 0);
+			MonoMethod *m = mono_class_get_method_from_name_checked (mono_class_get_module_builder_class (), "RuntimeResolve", 1, 0, error);
+			mono_error_assert_ok (error);
 			g_assert (m);
 			mono_memory_barrier ();
 			resolve_method = m;
