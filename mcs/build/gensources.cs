@@ -155,6 +155,7 @@ public class ParseResult {
         IEnumerable<ParseEntry> entries,
         string hostPlatformName, string profileName
     ) {
+        var patternChars = new [] { '*', '?' };
         foreach (var entry in entries) {
             if (
                 (hostPlatformName != null) &&
@@ -182,10 +183,25 @@ public class ParseResult {
                 continue;
             }
 
-            var matchingFiles = Directory.GetFiles (absoluteDirectory, absolutePattern);
-            foreach (var fileName in matchingFiles) {
-                var relativePath = GetRelativePath (fileName, LibraryDirectory);
-                yield return relativePath;
+            if (absolutePattern.IndexOfAny (patternChars) >= 0) {
+                var matchingFiles = Directory.GetFiles (absoluteDirectory, absolutePattern);
+                if (matchingFiles.Length == 0) {
+                    Console.Error.WriteLine ($"// No matches for pattern '{absolutePattern}'");
+                    ErrorCount += 1;
+                }
+
+                foreach (var fileName in matchingFiles) {
+                    var relativePath = GetRelativePath (fileName, LibraryDirectory);
+                    yield return relativePath;
+                }
+            } else {
+                if (!File.Exists (absolutePath)) {
+                    Console.Error.WriteLine ($"File does not exist: '{absolutePath}'");
+                    ErrorCount += 1;
+                } else {
+                    var relativePath = GetRelativePath (absolutePath, LibraryDirectory);
+                    yield return relativePath;
+                }
             }
         }
     }
