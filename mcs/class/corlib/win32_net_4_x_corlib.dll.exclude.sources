@@ -1,2 +1,4 @@
+#include win32_corlib.dll.exclude.sources
+
 corert/PreAllocatedOverlapped.platformnotsupported.cs
 corert/ThreadPoolBoundHandle.platformnotsupported.cs
