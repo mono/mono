@@ -1,5 +1,3 @@
-@ECHO OFF
-
 REM Look for Clang VS2017 toolchain in VS installation folders.
 ECHO Searching for Clang in VS2017 toolchain...
 
@@ -8,7 +6,7 @@ IF "%VCINSTALLDIR%" == "" (
 	GOTO ON_ENV_ERROR
 )
 
-IF NOT "%VSCMD_ARG_TGT_ARCH%" == "x64" (
+IF /i NOT "%VSCMD_ARG_TGT_ARCH%" == "x64" (
 	ECHO VSCMD_ARG_TGT_ARCH environment variable not set to x64.
 	GOTO ON_ENV_ERROR
 )
@@ -64,10 +62,8 @@ IF EXIST "%VSWHERE_TOOLS_BIN%" (
 
 :ON_ERROR
 
-SET MONO_RESULT=-1
+SET MONO_RESULT=1
 
 :ON_EXIT
 
 EXIT /b %MONO_RESULT%
-
-@ECHO ON

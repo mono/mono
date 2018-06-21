@@ -1,12 +1,10 @@
-@ECHO OFF
-
 SET SCRIPT_DIR=%~dp0
 
 REM Look for Mono toolchain.
 ECHO Searching for Mono toolchain...
 IF NOT EXIST "%MONO_CROSS_COMPILER_HOME%\mono-sgen.exe" (
 	ECHO Could not find "%MONO_CROSS_COMPILER_HOME%\mono-sgen.exe".
-	EXIT /b -1
+	EXIT /b 1
 )
 
 ECHO Found "%MONO_CROSS_COMPILER_HOME%\mono-sgen.exe".
@@ -29,7 +27,7 @@ IF "%VisualStudioVersion%" == "14.0" (
 		ECHO Failed to identify supported Visual Studio toolchain. Environment variable VisualStudioVersion must be set to 14.0 for VS2015 or 15.0 for VS2017. Checking supported toolchains for more error diagnostics...
 		CALL %SCRIPT_DIR%clang-vs2015-toolchain.bat
 		CALL %SCRIPT_DIR%clang-vs2017-toolchain.bat
-		EXIT /b -1
+		EXIT /b 1
 	)
 )
 
@@ -40,5 +38,3 @@ IF NOT ERRORLEVEL == 0 (
 SET PATH=%MONO_JIT_EXECUTABLE_PATH%;%MONO_AOT_RUNTIME_PATH%;%MONO_AOT_COMPILER_PATH%;%MONO_LLVM_EXECUTABLES%;%PATH%
 
 EXIT /b 0
-
-@ECHO ON

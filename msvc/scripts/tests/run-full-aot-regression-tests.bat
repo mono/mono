@@ -1,7 +1,6 @@
 @ECHO OFF
 
 SET TEMP_PATH=%PATH%
-SET PATH=
 SET MONO_RESULT=1
 
 CALL setup-env.bat
@@ -23,7 +22,7 @@ SET RUN_TARGET=%1
 
 REM %FULLAOT_DIR%\basic-simd.exe not in full AOT profile on Windows.
 
-IF "all" == "%RUN_TARGET%" (
+IF /i "all" == "%RUN_TARGET%" (
 	SET RUN_TARGET=%FULLAOT_DIR%\basic.exe ^
 	%FULLAOT_DIR%\basic-float.exe ^
 	%FULLAOT_DIR%\basic-long.exe ^

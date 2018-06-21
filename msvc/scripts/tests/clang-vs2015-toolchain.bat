@@ -1,5 +1,3 @@
-@ECHO OFF
-
 REM Look for Clang VS2015 toolchain in VS installation folders.
 ECHO Searching for Clang in VS2015 toolchain...
 
@@ -8,7 +6,7 @@ IF "%VCINSTALLDIR%" == "" (
 	GOTO ON_ENV_ERROR
 )
 
-IF NOT "%Platform%" == "X64" (
+IF /i NOT "%Platform%" == "X64" (
 	ECHO Platform environment variable not set to X64.
 	GOTO ON_ENV_ERROR
 )
@@ -55,10 +53,8 @@ IF EXIST "%VC_VARS_ALL_FILE%" (
 
 :ON_ERROR
 
-SET MONO_RESULT=-1
+SET MONO_RESULT=1
 
 :ON_EXIT
 
 EXIT /b %MONO_RESULT%
-
-@ECHO ON

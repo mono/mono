@@ -1,7 +1,6 @@
 @ECHO OFF
 
 SET TEMP_PATH=%PATH%
-SET PATH=
 SET MONO_RESULT=1
 
 CALL setup-env.bat

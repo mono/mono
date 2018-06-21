@@ -1,5 +1,3 @@
-@ECHO OFF
-
 SET CURRENT_MONO_HOME=%MONO_HOME%
 IF "" == "%CURRENT_MONO_HOME%" (
 	SET CURRENT_MONO_HOME=%~dp0..\..\..
@@ -36,12 +34,10 @@ REM Look for Mono repositories.
 ECHO Searching for Mono repositories...
 IF NOT EXIST "%CURRENT_MONO_HOME%" (
 	ECHO Could not find "%CURRENT_MONO_HOME%".
-	EXIT /b -1'
+	EXIT /b 1
 )
 
 
 ECHO Found "%CURRENT_MONO_HOME%".
 
 EXIT /b 0
-
-@ECHO ON
