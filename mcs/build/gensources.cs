@@ -143,7 +143,8 @@ public class ParseResult {
 
         var relativeUri = Uri.UnescapeDataString (
             dirUri.MakeRelativeUri (pathUri).OriginalString
-        ).Replace ("/", SourcesParser.DirectorySeparator);
+        ).Replace ("/", SourcesParser.DirectorySeparator)
+         .Replace (SourcesParser.DirectorySeparator + SourcesParser.DirectorySeparator, SourcesParser.DirectorySeparator);
 
         if (SourcesParser.TraceLevel >= 4)
             Console.Error.WriteLine ($"// {fullPath} -> {relativeUri}");
