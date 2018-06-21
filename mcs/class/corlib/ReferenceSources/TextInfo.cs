@@ -231,111 +231,19 @@ namespace System.Globalization
 			}
 		}
 
-		private unsafe string ToLowerAsciiInvariant(string s)
-		{
-			if (s.Length == 0)
-			{
-				return string.Empty;
-			}
-			
-			fixed (char* pSource = s)
-			{
-				int i = 0;
-				while (i < s.Length)
-				{
-					if ((uint)(pSource[i] - 'A') <= (uint)('Z' - 'A'))
-					{
-						break;
-					}
-					i++;
-				}
-				
-				if (i >= s.Length)
-				{
-					return s;
-				}
-
-				string result = string.FastAllocateString(s.Length);
-				fixed (char* pResult = result)
-				{
-					for (int j = 0; j < i; j++)
-					{
-						pResult[j] = pSource[j];
-					}
-					
-					pResult[i] = (char)(pSource[i] | 0x20);
-					i++;
-
-					while (i < s.Length)
-					{
-						pResult[i] = ToLowerAsciiInvariant(pSource[i]);
-						i++;
-					}
-				}
-
-				return result;
-			}
-		}
-
-		internal void ToLowerAsciiInvariant(ReadOnlySpan<char> source, Span<char> destination)
+		internal void ToLowerAsciiInvariant (ReadOnlySpan<char> source, Span<char> destination)
 		{
 			for (int i = 0; i < source.Length; i++)
 			{
-				destination[i] = ToLowerAsciiInvariant(source[i]);
+				destination [i] = ToLowerAsciiInvariant (source [i]);
 			}
 		}
 
-		private unsafe string ToUpperAsciiInvariant(string s)
-		{
-			if (s.Length == 0)
-			{
-				return string.Empty;
-			}
-			
-			fixed (char* pSource = s)
-			{
-				int i = 0;
-				while (i < s.Length)
-				{
-					if ((uint)(pSource[i] - 'a') <= (uint)('z' - 'a'))
-					{
-						break;
-					}
-					i++;
-				}
-				
-				if (i >= s.Length)
-				{
-					return s;
-				}
-
-				string result = string.FastAllocateString(s.Length);
-				fixed (char* pResult = result)
-				{
-					for (int j = 0; j < i; j++)
-					{
-						pResult[j] = pSource[j];
-					}
-					
-					pResult[i] = (char)(pSource[i] & ~0x20);
-					i++;
-
-					while (i < s.Length)
-					{
-						pResult[i] = ToUpperAsciiInvariant(pSource[i]);
-						i++;
-					}
-				}
-
-				return result;
-			}
-		}
-
-		internal void ToUpperAsciiInvariant(ReadOnlySpan<char> source, Span<char> destination)
+		internal void ToUpperAsciiInvariant (ReadOnlySpan<char> source, Span<char> destination)
 		{
 			for (int i = 0; i < source.Length; i++)
 			{
-				destination[i] = ToUpperAsciiInvariant(source[i]);
+				destination [i] = ToUpperAsciiInvariant (source[i]);
 			}
 		}
 
