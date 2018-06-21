@@ -434,7 +434,6 @@ namespace System.Net
 		}
 
 		public string Host {
-
 			get {
 				Uri uri = hostUri ?? Address;
 				return (hostUri == null || !hostHasPort) && Address.IsDefaultPort ?
@@ -858,22 +857,21 @@ namespace System.Net
 			if (Aborted)
 				throw CreateRequestAbortedException ();
 
-			bool send = !(method == "GET" || method == "CONNECT" || method == "HEAD" ||
-					method == "TRACE");
+			bool send = !(method == "GET" || method == "CONNECT" || method == "HEAD" || method == "TRACE");
 			if (method == null || !send)
-				throw new ProtocolViolationException ("Cannot send data when method is: " + method);
+				throw new ProtocolViolationException (SR.net_nouploadonget);
 
 			if (contentLength == -1 && !sendChunked && !allowBuffering && KeepAlive)
 				throw new ProtocolViolationException ("Content-Length not set");
 
 			string transferEncoding = TransferEncoding;
 			if (!sendChunked && transferEncoding != null && transferEncoding.Trim () != "")
-				throw new ProtocolViolationException ("SendChunked should be true.");
+				throw new InvalidOperationException (SR.net_needchunked);
 
 			WebOperation operation;
 			lock (locker) {
 				if (getResponseCalled)
-					throw new InvalidOperationException ("The operation cannot be performed once the request has been submitted.");
+					throw new InvalidOperationException (SR.net_reqsubmitted);
 
 				operation = currentOperation;
 				if (operation == null) {
@@ -969,13 +967,6 @@ namespace System.Net
 		{
 			if (Aborted)
 				throw CreateRequestAbortedException ();
-
-			if (method == null)
-				throw new ProtocolViolationException ("Method is null.");
-
-			string transferEncoding = TransferEncoding;
-			if (!sendChunked && transferEncoding != null && transferEncoding.Trim () != "")
-				throw new ProtocolViolationException ("SendChunked should be true.");
 
 			var completion = new WebCompletionSource ();
 			WebOperation operation;
@@ -1175,6 +1166,20 @@ namespace System.Net
 		{
 			if (Aborted)
 				throw CreateRequestAbortedException ();
+
+			string transferEncoding = TransferEncoding;
+			if (!sendChunked && transferEncoding != null && transferEncoding.Trim () != "") {
+				/*
+				 * The only way we could get here without already catching this in the
+				 * `TransferEncoding` property settor is via HttpClient, which does not
+				 * do strict checking on all headers.
+				 *
+				 * We can remove this check again after switching to the CoreFX version
+				 * of HttpClient.
+				 *
+				 */
+				throw new InvalidOperationException (SR.net_needchunked);
+			}
 
 			return TaskToApm.Begin (RunWithTimeout (MyGetResponseAsync), callback, state);
 		}
