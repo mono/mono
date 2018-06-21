@@ -4094,7 +4094,7 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 		MonoMethod *invoke = mono_get_delegate_invoke (klass);
 		g_assert (invoke);
 
-		//FIXME
+		//FIXME verify & fix any issue with removing invoke_context_used restriction
 		if (invoke_context_used || !mono_get_delegate_virtual_invoke_impl (mono_method_signature (invoke), target_method_context_used ? NULL : method))
 			return NULL;
 	}
