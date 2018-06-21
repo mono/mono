@@ -356,8 +356,7 @@ namespace Mono.Net.Security
 				// last chance - try with older (deprecated) Netscape extensions
 				X509Extension ext = cert.Extensions ["2.16.840.1.113730.1.1"];
 				if (ext != null) {
-					string text = ext.NetscapeCertType (false);
-					return text.IndexOf ("SSL Server Authentication", StringComparison.Ordinal) != -1;
+					return IsNetscapeCertTypeSSLServerAuth (ext);
 				}
 				return true;
 			} catch (Exception e) {
@@ -365,6 +364,17 @@ namespace Mono.Net.Security
 				Console.Error.WriteLine ("Please, report this problem to the Mono team");
 				return false;
 			}
+		}
+
+		private static bool IsNetscapeCertTypeSSLServerAuth (X509Extension ext)
+		{
+			byte[] _raw = ext.RawData;
+			// 4 byte long, BITSTRING (0x03), Value length of 2
+			if ((_raw.Length < 4) || (_raw [0] != 0x03) || (_raw [1] != 0x02))
+				return false;
+			// first value byte is the number of unused bits
+			int value = (_raw [3] >> _raw [2]) << _raw [2];
+			return (value & 0x40) == 0x40;
 		}
 
 		// RFC2818 - HTTP Over TLS, Section 3.1

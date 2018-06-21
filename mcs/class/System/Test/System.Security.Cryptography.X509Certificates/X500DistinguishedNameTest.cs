@@ -317,7 +317,6 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			string expected = "dnQualifier=CA, SERIALNUMBER=345, S=Maryland, DC=testcertificates, DC=gov, O=Test Certificates, C=US";
 			X509Certificate2 cert = new X509Certificate2 (RFC3280MandatoryAttributeTypesCACert_crt);
-			// note: strangely the (also CryptoAPI based) certificate viewer in Windows seems to resolve 2.5.4.5 as "Serial Number"
 			Assert.AreEqual (expected, cert.SubjectName.Name, "SubjectName");
 			X500DistinguishedName build = new X500DistinguishedName (expected);
 			Assert.AreEqual (expected, build.Name, "Name");

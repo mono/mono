@@ -285,10 +285,7 @@ namespace Mono.Btls
 				ThrowIfContextInvalid ();
 				if (issuerName == null) {
 					using (var xname = x509.GetIssuerName ()) {
-						var encoding = xname.GetRawData (false);
-						var canonEncoding = xname.GetRawData (true);
-						var name = MonoBtlsUtils.FormatName (xname, true, ", ", true);
-						issuerName = new X500DistinguishedName (encoding, canonEncoding, name);
+						issuerName = new X500DistinguishedName (xname.GetRawData (false));
 					}
 				}
 				return issuerName;
@@ -334,10 +331,7 @@ namespace Mono.Btls
 				ThrowIfContextInvalid ();
 				if (subjectName == null) {
 					using (var xname = x509.GetSubjectName ()) {
-						var encoding = xname.GetRawData (false);
-						var canonEncoding = xname.GetRawData (true);
-						var name = MonoBtlsUtils.FormatName (xname, true, ", ", true);
-						subjectName = new X500DistinguishedName (encoding, canonEncoding, name);
+						subjectName = new X500DistinguishedName (xname.GetRawData (false));
 					}
 				}
 				return subjectName;

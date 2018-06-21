@@ -62,6 +62,8 @@ namespace System.Security.Cryptography.X509Certificates
 
 		static string empty_error = Locale.GetText ("Certificate instance is empty.");
 
+		static byte[] empty_byte_array = new byte[0];
+
 		public override bool IsValid {
 			get {
 				return _cert != null;
@@ -218,8 +220,51 @@ namespace System.Security.Cryptography.X509Certificates
 			get {
 				if (_cert == null)
 					throw new CryptographicException (empty_error);
-				if (_extensions == null)
-					_extensions = new X509ExtensionCollection (_cert);
+
+				if (_extensions == null) {
+					_extensions = new X509ExtensionCollection ();
+					
+					foreach (MX.X509Extension ext in _cert.Extensions) {
+						bool critical = ext.Critical;
+						string oid = ext.Oid;
+						byte[] raw_data = null;
+						
+						// extension data is embedded in an octet stream (4)
+						var value = ext.Value;
+						if ((value.Tag == 0x04) && (value.Count > 0))
+							raw_data = value [0].GetBytes ();
+
+						X509Extension newt = null;
+#if FULL_AOT_RUNTIME
+						// non-extensible
+						switch (oid) {
+						case "2.5.29.14":
+							newt = new X509SubjectKeyIdentifierExtension (new AsnEncodedData (oid, raw_data), critical);
+							break;
+						case "2.5.29.15":
+							newt = new X509KeyUsageExtension (new AsnEncodedData (oid, raw_data), critical);
+							break;
+						case "2.5.29.19":
+							newt = new X509BasicConstraintsExtension (new AsnEncodedData (oid, raw_data), critical);
+							break;
+						case "2.5.29.37":
+							newt = new X509EnhancedKeyUsageExtension (new AsnEncodedData (oid, raw_data), critical);
+							break;
+						}
+#else
+						object[] parameters = new object [2];
+						parameters [0] = new AsnEncodedData (oid, raw_data ?? empty_byte_array);
+						parameters [1] = critical;
+						newt = (X509Extension) CryptoConfig.CreateFromName (oid, parameters);
+#endif
+						if (newt == null) {
+							// not registred in CryptoConfig, using default
+							newt = new X509Extension (oid, raw_data ?? empty_byte_array, critical);
+						}
+						_extensions.Add (newt);
+					}
+				}
+
 				return _extensions;
 			}
 		}

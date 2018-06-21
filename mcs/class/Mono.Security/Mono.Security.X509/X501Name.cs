@@ -161,7 +161,7 @@ namespace Mono.Security.X509 {
 				else if (poid.CompareValue (initial))
 					sb.Append ("I=");
 				else if (poid.CompareValue (serialNumber))
-					sb.Append ("SERIALNUMBER=");					
+					sb.Append ("SERIALNUMBER=");
 				else {
 					// unknown OID
 					sb.Append ("OID.");	// NOTE: Not present as RFC2253

@@ -552,7 +552,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			// note: you revoke a trusted root by removing it from your trusted store (i.e. no CRL can do this job)
 
 			// 6.1.3.a.4 - check certificate issuer name
-			if (!X500DistinguishedName.AreEqual (certificate.IssuerName, working_issuer_name)) {
+			if (!X500DistinguishedNameAreEqual (certificate.IssuerName, working_issuer_name)) {
 				// NOTE: this is not the "right" error flag, but it's the closest one defined
 				element.StatusFlags |= X509ChainStatusFlags.InvalidNameConstraints;
 			}
@@ -579,6 +579,62 @@ namespace System.Security.Cryptography.X509Certificates {
 			//}
 
 			// TODO 6.1.3.f - verify explict_policy > 0 if valid_policy_tree != NULL
+		}
+		
+		private static string X500DistinguishedNameCanonize (string s)
+		{
+			int i = s.IndexOf ('=') + 1;
+			StringBuilder r = new StringBuilder (s.Substring (0, i));
+			// skip any white space starting the value
+			while (i < s.Length && Char.IsWhiteSpace (s, i))
+				i++;
+			// ensure we skip white spaces at the end of the value
+			s = s.TrimEnd ();
+			// keep track of internal multiple spaces
+			bool space = false;
+			for (; i < s.Length; i++) {
+				if (space) {
+					space = Char.IsWhiteSpace (s, i);
+					if (space)
+						continue;
+				}
+				if (Char.IsWhiteSpace (s, i))
+					space = true;
+				r.Append (Char.ToUpperInvariant (s[i]));
+			}
+			return r.ToString ();
+		}
+
+		// of all X500DistinguishedNameFlags flags nothing can do a "correct" comparison :|
+		private static bool X500DistinguishedNameAreEqual (X500DistinguishedName name1, X500DistinguishedName name2)
+		{
+			if (name1 == null)
+				return (name2 == null);
+			if (name2 == null)
+				return false;
+
+			/*if (name1.canonEncoding != null && name2.canonEncoding != null) {
+				if (name1.canonEncoding.Length != name2.canonEncoding.Length)
+					return false;
+				for (int i = 0; i < name1.canonEncoding.Length; i++) {
+					if (name1.canonEncoding[i] != name2.canonEncoding[i])
+						return false;
+				}
+				return true;
+			}*/
+
+			X500DistinguishedNameFlags flags = X500DistinguishedNameFlags.UseNewLines | X500DistinguishedNameFlags.DoNotUseQuotes;
+			string[] split = new string[] { Environment.NewLine };
+			string[] parts1 = name1.Decode (flags).Split (split, StringSplitOptions.RemoveEmptyEntries);
+			string[] parts2 = name2.Decode (flags).Split (split, StringSplitOptions.RemoveEmptyEntries);
+			if (parts1.Length != parts2.Length)
+				return false;
+
+			for (int i = 0; i < parts1.Length; i++) {
+				if (X500DistinguishedNameCanonize (parts1[i]) != X500DistinguishedNameCanonize (parts2[i]))
+					return false;
+			}
+			return true;
 		}
 
 		// CTL == Certificate Trust List / NOT SUPPORTED

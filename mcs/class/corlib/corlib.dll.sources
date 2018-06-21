@@ -1389,7 +1389,8 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/security/cryptography/tripledescryptoserviceprovider.cs
 ../referencesource/mscorlib/system/security/cryptography/utils.cs
 
-../referencesource/mscorlib/system/security/cryptography/x509certificates/x509utils.cs
+#../referencesource/mscorlib/system/security/cryptography/x509certificates/x509utils.cs
+System.Security.Cryptography/OidGroup.cs
 
 ../referencesource/mscorlib/system/security/principal/genericidentity.cs
 
