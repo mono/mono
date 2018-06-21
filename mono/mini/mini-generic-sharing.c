@@ -3920,9 +3920,9 @@ mini_get_rgctx_entry_slot (MonoJumpInfoRgctxEntry *entry)
 		slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, info, entry->info_type, mono_method_get_context (entry->method));
 		break;
 	}
-	case MONO_PATCH_INFO_DELE_TRAMP: {
+	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE: {
 		MonoDelegateClassMethodPair *info;
-		MonoDelegateClassMethodPair *oinfo = (MonoDelegateClassMethodPair *)entry->data->data.target;
+		MonoDelegateClassMethodPair *oinfo = entry->data->data.del_tramp;
 
 		info = (MonoDelegateClassMethodPair *)g_malloc0 (sizeof (MonoDelegateClassMethodPair));
 		memcpy (info, oinfo, sizeof (MonoDelegateClassMethodPair));

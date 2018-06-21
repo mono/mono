@@ -4070,7 +4070,7 @@ emit_get_rgctx_dele_tramp (MonoCompile *cfg, int context_used,
 	info->method = virt_method;
 	info->is_virtual = _virtual;
 
-	entry = mono_patch_info_rgctx_entry_new (cfg->mempool, cfg->method, context_used_is_mrgctx (cfg, context_used), MONO_PATCH_INFO_DELE_TRAMP, info, rgctx_type);
+	entry = mono_patch_info_rgctx_entry_new (cfg->mempool, cfg->method, context_used_is_mrgctx (cfg, context_used), MONO_PATCH_INFO_DELEGATE_TRAMPOLINE, info, rgctx_type);
 	rgctx = emit_get_rgctx (cfg, context_used);
 
 	return emit_rgctx_fetch (cfg, rgctx, entry);
