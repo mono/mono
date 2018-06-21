@@ -59,26 +59,40 @@ namespace System {
 			}
 
 			IntPtr buf = Marshal.AllocHGlobal (8192);
-			if (uname (buf) == 0) {
-				string os = Marshal.PtrToStringAnsi (buf);
-				switch (os) {
-				case "Darwin":
-					isMacOS = true;
-					break;
-				case "FreeBSD":
-					isFreeBSD = true;
-					break;
+			try {
+				if (uname (buf) == 0) {
+					string os = Marshal.PtrToStringAnsi (buf);
+					switch (os) {
+					case "Darwin":
+						isMacOS = true;
+						break;
+					case "FreeBSD":
+						isFreeBSD = true;
+						break;
+					}
 				}
 			}
-			Marshal.FreeHGlobal (buf);
-			checkedOS = true;
+			finally {
+				Marshal.FreeHGlobal (buf);
+				checkedOS = true;
+			}
 		}
 #endif
 
 		public static bool IsMacOS {
 			get {
 				if (!checkedOS)
+#if UNITY
+					try {
+						CheckOS();
+					}
+					catch (DllNotFoundException e) {
+						// libc does not exist, so this is not MacOS
+						isMacOS = false;
+					}
+#else
 					CheckOS();
+#endif
 				return isMacOS;
 			}
 		}
