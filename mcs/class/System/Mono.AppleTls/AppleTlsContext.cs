@@ -341,9 +341,11 @@ namespace Mono.AppleTls
 				PeerDomainName = ServerName;
 			}
 
-			if (Options.AllowRenegotiation)
+			if (Options.AllowRenegotiation && Environment.OSVersion.Version >= MinRenegotiationVersion)
 				SetSessionOption (SslSessionOption.AllowRenegotiation, true);
 		}
+
+		static readonly Version MinRenegotiationVersion = new Version (16, 6);
 
 		void InitializeSession ()
 		{
@@ -956,7 +958,7 @@ namespace Mono.AppleTls
 #else
 				if (!IsServer)
 					return false;
-				if (Environment.OSVersion.Version < new Version (16, 6))
+				if (Environment.OSVersion.Version < MinRenegotiationVersion)
 					return false;
 				return true;
 #endif
