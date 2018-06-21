@@ -1121,7 +1121,8 @@ PROFILE_DISABLED_TESTS += \
 	constant-division.exe	\
 	dynamic-method-resurrection.exe	\
 	assembly_append_ordering.exe \
-	assemblyresolve_event5.exe
+	assemblyresolve_event5.exe	\
+	dynamic-method-churn.exe
 
 # Test which needs System.Web support
 PROFILE_DISABLED_TESTS += \
