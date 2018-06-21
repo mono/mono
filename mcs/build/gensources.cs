@@ -143,7 +143,8 @@ public class ParseResult {
 
         var relativeUri = Uri.UnescapeDataString (
             dirUri.MakeRelativeUri (pathUri).OriginalString
-        ).Replace ("/", SourcesParser.DirectorySeparator);
+        ).Replace ("/", SourcesParser.DirectorySeparator)
+         .Replace (SourcesParser.DirectorySeparator + SourcesParser.DirectorySeparator, SourcesParser.DirectorySeparator);
 
         if (SourcesParser.TraceLevel >= 4)
             Console.Error.WriteLine ($"// {fullPath} -> {relativeUri}");
@@ -155,6 +156,7 @@ public class ParseResult {
         IEnumerable<ParseEntry> entries,
         string hostPlatformName, string profileName
     ) {
+        var patternChars = new [] { '*', '?' };
         foreach (var entry in entries) {
             if (
                 (hostPlatformName != null) &&
@@ -167,7 +169,7 @@ public class ParseResult {
             )
                 continue;
 
-            var absolutePath = Path.Combine (entry.Directory, entry.Pattern);
+            var absolutePath = Path.Combine (entry.Directory, entry.Pattern).Trim ();
             var absoluteDirectory = Path.GetDirectoryName (absolutePath);
             var absolutePattern = Path.GetFileName (absolutePath);
 
@@ -182,10 +184,25 @@ public class ParseResult {
                 continue;
             }
 
-            var matchingFiles = Directory.GetFiles (absoluteDirectory, absolutePattern);
-            foreach (var fileName in matchingFiles) {
-                var relativePath = GetRelativePath (fileName, LibraryDirectory);
-                yield return relativePath;
+            if (absolutePattern.IndexOfAny (patternChars) >= 0) {
+                var matchingFiles = Directory.GetFiles (absoluteDirectory, absolutePattern);
+                if (matchingFiles.Length == 0) {
+                    Console.Error.WriteLine ($"// No matches for pattern '{absolutePattern}'");
+                    ErrorCount += 1;
+                }
+
+                foreach (var fileName in matchingFiles) {
+                    var relativePath = GetRelativePath (fileName, LibraryDirectory);
+                    yield return relativePath;
+                }
+            } else {
+                if (!File.Exists (absolutePath)) {
+                    Console.Error.WriteLine ($"File does not exist: '{absolutePath}'");
+                    ErrorCount += 1;
+                } else {
+                    var relativePath = GetRelativePath (absolutePath, LibraryDirectory);
+                    yield return relativePath;
+                }
             }
         }
     }

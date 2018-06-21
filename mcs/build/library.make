@@ -310,7 +310,7 @@ endif
 
 sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
 $(sourcefile): $(PROFILE_sources) $(depsdir)/.stamp $(gensources)
-	$(GENSOURCES_RUNTIME) --debug $(gensources) "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
+	$(GENSOURCES_RUNTIME) --debug $(gensources) --strict "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
 library_CLEAN_FILES += $(sourcefile)
 
