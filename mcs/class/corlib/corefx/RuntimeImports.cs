@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.CompilerServices;
+
 #if BIT64
 using nuint = System.UInt64;
 #else
@@ -36,22 +38,23 @@ namespace System.Runtime
 {
 	static class RuntimeImports
 	{
-		internal static unsafe void RhZeroMemory (ref byte b, nuint byteLength)
-		{
-			fixed (byte* bytePointer = &b)
-			{
-				RhZeroMemory (bytePointer, byteLength);
+		internal static unsafe void RhZeroMemory (ref byte b, nuint byteLength) {
+			fixed (byte* bytePointer = &b) {
+				ZeroMemory (bytePointer, (uint)byteLength);
 			}
 		}
 
-		internal static unsafe void RhZeroMemory (IntPtr p, UIntPtr byteLength)
-		{
-            RhZeroMemory ((void*)p, (nuint) byteLength);
+		internal static unsafe void RhZeroMemory (IntPtr p, UIntPtr byteLength) {
+			ZeroMemory ((void*)p, (uint) byteLength);
 		}
 
-        private static unsafe void RhZeroMemory (void* b, nuint byteLength)
-        {
-			throw new NotImplementedException ();
-        }
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        static extern unsafe void ZeroMemory (void* p, uint byteLength);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal static extern unsafe void Memmove(byte* dest, byte* src, uint len);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal static extern unsafe void Memmove_wbarrier(byte* dest, byte* src, uint len, IntPtr type_handle);
 	}
 }
