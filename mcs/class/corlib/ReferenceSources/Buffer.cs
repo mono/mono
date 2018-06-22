@@ -5,6 +5,7 @@ using nuint = System.UInt32;
 #endif
 
 using System.Runtime.CompilerServices;
+using System.Runtime;
 
 namespace System
 {
@@ -221,12 +222,28 @@ namespace System
 
 		internal static unsafe void Memmove (byte *dest, byte *src, uint len)
 		{
+            if (((nuint)dest - (nuint)src < len) || ((nuint)src - (nuint)dest < len))
+				goto PInvoke;
 			Memcpy (dest, src, (int) len);
+			return;
+
+            PInvoke:
+            RuntimeImports.Memmove(dest, src, len);
 		}
 
 		internal static void Memmove<T>(ref T destination, ref T source, nuint elementCount)
 		{
-			throw new NotImplementedException ("Buffer::Memmove<T>");
+            if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) {
+                unsafe {
+                    fixed (byte* pDestination = &Unsafe.As<T, byte>(ref destination), pSource = &Unsafe.As<T, byte>(ref source))
+                        Memmove(pDestination, pSource, (uint)elementCount * (uint)Unsafe.SizeOf<T>());
+                }
+			} else {
+                unsafe {
+                    fixed (byte* pDestination = &Unsafe.As<T, byte>(ref destination), pSource = &Unsafe.As<T, byte>(ref source))
+                        RuntimeImports.Memmove_wbarrier(pDestination, pSource, (uint)elementCount, typeof(T).TypeHandle.Value);
+				}
+			}
 		}
 	}
 }
