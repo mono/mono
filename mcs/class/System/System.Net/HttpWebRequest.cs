@@ -828,7 +828,7 @@ namespace System.Net
 		WebOperation SendRequest (bool redirecting, BufferOffsetSize writeBuffer, CancellationToken cancellationToken)
 		{
 			lock (locker) {
-				WebConnection.Debug ($"HWR SEND REQUEST: Req={ID} requestSent={requestSent} redirecting={redirecting}");
+				WebConnection.Debug ($"HWR SEND REQUEST: Req={ID} requestSent={requestSent} actualUri={actualUri} redirecting={redirecting}");
 
 				WebOperation operation;
 				if (!redirecting) {
@@ -1025,14 +1025,14 @@ namespace System.Net
 				try {
 					cancellationToken.ThrowIfCancellationRequested ();
 
-					WebConnection.Debug ($"HWR GET RESPONSE LOOP: Req={ID} {auth_state.NtlmAuthState}");
+					WebConnection.Debug ($"HWR GET RESPONSE LOOP: Req={ID} Op={operation?.ID} {auth_state.NtlmAuthState}");
 
 					writeStream = await operation.GetRequestStreamInternal ();
 					await writeStream.WriteRequestAsync (cancellationToken).ConfigureAwait (false);
 
 					stream = await operation.GetResponseStream ();
 
-					WebConnection.Debug ($"HWR RESPONSE LOOP #0: Req={ID} - {stream?.Headers != null}");
+					WebConnection.Debug ($"HWR RESPONSE LOOP #0: Req={ID} Op={operation?.ID} - {stream?.Headers != null}");
 
 					(response, redirect, mustReadAll, writeBuffer, ntlm) = await GetResponseFromData (
 						stream, cancellationToken).ConfigureAwait (false);
@@ -1040,7 +1040,7 @@ namespace System.Net
 					throwMe = GetWebException (e);
 				}
 
-				WebConnection.Debug ($"HWR GET RESPONSE LOOP #1: Req={ID} - redirect={redirect} mustReadAll={mustReadAll} writeBuffer={writeBuffer != null} ntlm={ntlm != null} - {throwMe != null}");
+				WebConnection.Debug ($"HWR GET RESPONSE LOOP #1: Req={ID} Op={operation?.ID} - redirect={redirect} mustReadAll={mustReadAll} writeBuffer={writeBuffer != null} ntlm={ntlm != null} - {throwMe != null}");
 
 				lock (locker) {
 					if (throwMe != null) {
