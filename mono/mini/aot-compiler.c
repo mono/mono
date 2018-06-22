@@ -7846,7 +7846,7 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	 * does not need to support them by creating a fake GOT etc.
 	 */
 	flags = JIT_FLAG_AOT;
-	if (mono_aot_mode_is_full (&acfg->aot_opts))
+	if (mono_aot_mode_is_full (&acfg->aot_opts) || mono_aot_mode_is_interp (&acfg->aot_opts))
 		flags = (JitFlags)(flags | JIT_FLAG_FULL_AOT);
 	if (acfg->llvm)
 		flags = (JitFlags)(flags | JIT_FLAG_LLVM);
@@ -12591,7 +12591,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		}
 	}
 
-	if (mono_aot_mode_is_full (&acfg->aot_opts)) {
+	if (mono_aot_mode_is_full (&acfg->aot_opts) || mono_aot_mode_is_interp (&acfg->aot_opts)) {
 		acfg->flags = (MonoAotFileFlags)(acfg->flags | MONO_AOT_FILE_FLAG_FULL_AOT);
 		acfg->is_full_aot = TRUE;
 	}

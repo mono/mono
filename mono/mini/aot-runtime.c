@@ -4329,7 +4329,8 @@ init_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *method, M
 		} else {
 			llvm = TRUE;
 			got = amodule->llvm_got;
-			g_assert (got);
+			if (!got)
+				return FALSE;
 		}
 
 		patches = load_patch_info (amodule, mp, n_patches, llvm, &got_slots, p, &p);
