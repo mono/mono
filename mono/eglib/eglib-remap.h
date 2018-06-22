@@ -94,6 +94,7 @@
 #define g_list_length monoeg_g_list_length
 #define g_list_nth monoeg_g_list_nth
 #define g_list_nth_data monoeg_g_list_nth_data
+#define g_list_prepend monoeg_g_list_prepend
 #define g_list_remove monoeg_g_list_remove
 #define g_list_remove_all monoeg_g_list_remove_all
 #define g_list_remove_link monoeg_g_list_remove_link
@@ -207,7 +208,6 @@
 #define g_string_free monoeg_g_string_free
 #define g_string_new monoeg_g_string_new
 #define g_string_new_len monoeg_g_string_new_len
-#define g_string_prepend monoeg_g_string_prepend
 #define g_string_printf monoeg_g_string_printf
 #define g_string_set_size monoeg_g_string_set_size
 #define g_string_sized_new monoeg_g_string_sized_new
