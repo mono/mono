@@ -2896,7 +2896,8 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	MonoJitInfo *ji = NULL;
 	gboolean callee_gsharedvt = FALSE;
 
-	if (mono_use_interpreter && !mono_aot_only)
+	/* TODO: we need a better mechanism to identify if a method is available via fullAOT */
+	if (mono_use_interpreter /* && !mono_aot_only */)
 		return mini_get_interp_callbacks ()->runtime_invoke (method, obj, params, exc, error);
 
 	error_init (error);
