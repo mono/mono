@@ -58,18 +58,17 @@ MONO_API void* mono_valloc     (void *addr, size_t length, int flags, MonoMemAcc
 MONO_API void* mono_valloc_aligned (size_t length, size_t alignment, int flags, MonoMemAccountType type);
 MONO_API int   mono_vfree      (void *addr, size_t length, MonoMemAccountType type);
 MONO_API void* mono_file_map   (size_t length, int flags, int fd, guint64 offset, void **ret_handle);
+// Last two parameters are optional.
+// This is mono_file_map but with optionally returning an error message.
+// See https://github.com/mono/mono/issues/8225.
+void*
+mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **ret_handle, const char *filepath, char **error_message);
 MONO_API int   mono_file_unmap (void *addr, void *handle);
 #ifndef HOST_WIN32
 MONO_API void* mono_file_map_fileio   (size_t length, int flags, int fd, guint64 offset, void **ret_handle);
 MONO_API int   mono_file_unmap_fileio (void *addr, void *handle);
 #endif
 MONO_API int   mono_mprotect   (void *addr, size_t length, int flags);
-
-// Last two parameters are optional.
-// This is mono_file_map but with optionally returning an error message.
-// See https://github.com/mono/mono/issues/8225.
-MONO_API void*
-mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **ret_handle, const char *filepath, char **error_message);
 
 MONO_API const char* mono_mem_account_type_name (MonoMemAccountType type);
 MONO_API void  mono_mem_account_register_counters (void);
