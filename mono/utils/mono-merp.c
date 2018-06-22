@@ -269,7 +269,7 @@ mono_merp_send (const char *merpFile, const char *crashLog, const char *werXml)
 	write_file (crashLog, crashLogPath);
 	g_free (crashLogPath);
 
-	char *werXmlPath = g_strdup_printf ("%s/Library/Group Containers/UBF8T346G9.ms/WERInternalMetadata.txt", home);
+	char *werXmlPath = g_strdup_printf ("%s/Library/Group Containers/UBF8T346G9.ms/CustomLogsMetadata.xml", home);
 	write_file (werXml, werXmlPath);
 	g_free (werXmlPath);
 
