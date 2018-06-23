@@ -954,8 +954,11 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 	// as we have to return the lowest signaled one when multiple are signaled.
 	// Lowest in terms of array index in the input array.
 	qsort (handles_data_sorted, nhandles, sizeof (gpointer), g_direct_equal);
-	for (i = 1; i < nhandles; ++i) {
-		if (handles_data_sorted [i - 1] == handles_data_sorted [i]) {
+	{
+		gboolean duplicate = FALSE;
+		for (i = 1; !duplicate && i < nhandles; ++i)
+			duplicate = handles_data_sorted [i - 1] == handles_data_sorted [i];
+		if (duplicate) {
 			if (waitall) {
 				mono_error_set_duplicate_wait_object (error);
 				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_HANDLE, "%s: handle %p is duplicated", __func__, handles_data_sorted [i]);
@@ -979,7 +982,6 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 						}
 					}
 				}
-				break;
 			}
 		}
 	}
