@@ -252,12 +252,14 @@ mono_exception_from_name_two_strings_checked (MonoImage *image, const char *name
 					      const char *name, MonoStringHandle a1, MonoStringHandle a2,
 					      MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoClass *klass;
 
 	error_init (error);
 	klass = mono_class_load_from_name (image, name_space, name);
 
-	return create_exception_two_strings (klass, a1, a2, error);
+	HANDLE_FUNCTION_RETURN_REF (MonoException, create_exception_two_strings (klass, a1, a2, error));
 }
 
 /**
@@ -275,7 +277,7 @@ MonoExceptionHandle
 mono_exception_new_by_name_msg (MonoImage *image, const char *name_space,
 			      const char *name, const char *msg, MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER ()
+	HANDLE_FUNCTION_ENTER ();
 
 	MonoExceptionHandle ex = mono_exception_new_by_name (image, name_space, name, error);
 	goto_if_nok (error, return_null);
@@ -345,6 +347,8 @@ mono_exception_from_token_two_strings_checked (MonoImage *image, guint32 token,
 					       MonoStringHandle a1, MonoStringHandle a2,
 					       MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoClass *klass;
 
 	error_init (error);
@@ -352,7 +356,7 @@ mono_exception_from_token_two_strings_checked (MonoImage *image, guint32 token,
 	klass = mono_class_get_checked (image, token, error);
 	mono_error_assert_ok (error); /* FIXME handle the error. */
 
-	return create_exception_two_strings (klass, a1, a2, error);
+	HANDLE_FUNCTION_RETURN_REF (MonoException, create_exception_two_strings (klass, a1, a2, error));
 }
 
 /**
