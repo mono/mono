@@ -1019,6 +1019,8 @@ mono_get_exception_reflection_type_load (MonoArray *types_raw, MonoArray *except
 MonoExceptionHandle
 mono_get_exception_reflection_type_load_checked (MonoArrayHandle types, MonoArrayHandle exceptions, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoClass *klass;
 	MonoMethod *method;
 	gpointer iter;
@@ -1048,9 +1050,12 @@ mono_get_exception_reflection_type_load_checked (MonoArrayHandle types, MonoArra
 	gpointer args [ ] = { MONO_HANDLE_RAW (types), MONO_HANDLE_RAW (exceptions) };
 
 	mono_runtime_invoke_checked (method, MONO_HANDLE_RAW (exc), args, error);
-	return_val_if_nok (error, MONO_HANDLE_CAST (MonoException, mono_new_null ()));
-
-	return exc;
+	goto_if_nok (error, return_null);
+	goto exit;
+return_null:
+	exc = MONO_HANDLE_CAST (MonoException, mono_new_null ());
+exit:
+	HANDLE_FUNCTION_RETURN_REF (MonoException, exc);
 }
 
 /**
