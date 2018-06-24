@@ -1067,6 +1067,8 @@ mono_get_exception_runtime_wrapped (MonoObject *wrapped_exception_raw)
 MonoExceptionHandle
 mono_get_exception_runtime_wrapped_handle (MonoObjectHandle wrapped_exception, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoClass *klass;
 	MonoMethod *method;
 
@@ -1082,9 +1084,12 @@ mono_get_exception_runtime_wrapped_handle (MonoObjectHandle wrapped_exception, M
 	gpointer args [ ] = { MONO_HANDLE_RAW (wrapped_exception) };
 
 	mono_runtime_invoke_handle (method, o, args, error);
-	return_val_if_nok (error, MONO_HANDLE_CAST (MonoException, mono_new_null ()));
-
-	return MONO_HANDLE_CAST (MonoException, o);
+	goto_if_nok (error, return_null);
+	goto exit;
+return_null:
+	o = mono_new_null ();
+exit:
+	HANDLE_FUNCTION_RETURN_REF (MonoException, MONO_HANDLE_CAST (MonoException, o));
 }	
 
 static gboolean
