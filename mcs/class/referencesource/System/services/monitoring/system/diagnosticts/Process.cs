@@ -230,7 +230,10 @@ namespace System.Diagnostics {
             get {
                 EnsureState(State.Exited);
 #if MONO
-                if (exitCode == -1)
+		
+		int platform = (int)Environment.OSVersion.Platform;
+		
+                if (( (platform == 4) || (platform == 6) || (platform == 128) ) && exitCode == -1)
                     throw new InvalidOperationException ("Cannot get the exit code from a non-child process on Unix");
 #endif
                 return exitCode;
