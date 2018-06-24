@@ -1090,7 +1090,7 @@ return_null:
 	o = mono_new_null ();
 exit:
 	HANDLE_FUNCTION_RETURN_REF (MonoException, MONO_HANDLE_CAST (MonoException, o));
-}	
+}
 
 static gboolean
 append_frame_and_continue (MonoMethod *method, gpointer ip, size_t native_offset, gboolean managed, gpointer user_data)
