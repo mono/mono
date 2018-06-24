@@ -1472,7 +1472,7 @@ mono_error_set_argument_out_of_range (MonoError *error, const char *name)
 MonoExceptionHandle
 mono_error_convert_to_exception_handle (MonoError *error)
 {
-	// This "optimization" is important to signficantly reduce handle usage.
+	// This "optimization" is important to significantly reduce handle usage.
 	// FIXMEcoop Don't use mono_error_convert_to_exception.
 	return mono_error_ok (error) ? MONO_HANDLE_CAST (MonoException, NULL_HANDLE)
 		: MONO_HANDLE_NEW (MonoException, mono_error_convert_to_exception (error));
