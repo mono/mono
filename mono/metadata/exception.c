@@ -816,6 +816,8 @@ mono_get_exception_type_initialization (const gchar *type_name, MonoException* i
 MonoExceptionHandle
 mono_get_exception_type_initialization_handle (const gchar *type_name, MonoExceptionHandle inner, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoClass *klass;
 	MonoMethod *method;
 	gpointer iter;
@@ -847,8 +849,12 @@ mono_get_exception_type_initialization_handle (const gchar *type_name, MonoExcep
 	mono_error_assert_ok (error);
 
 	mono_runtime_invoke_handle (method, exc, args, error);
-	return_val_if_nok (error, MONO_HANDLE_CAST (MonoException, mono_new_null ()));
-	return MONO_HANDLE_CAST (MonoException, exc);
+	goto_if_nok (error, return_null);
+	goto exit;
+return_null:
+	exc = mono_new_null ();
+exit:
+	HANDLE_FUNCTION_RETURN_REF (MonoException, MONO_HANDLE_CAST (MonoException, exc));
 }
 
 /**
