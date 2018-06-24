@@ -1139,6 +1139,49 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		 * all inputs:
 		 * http://everything2.com/?node_id=1051618
 		 */
+		if (cmethod->klass == mono_defaults.math_class){
+			/* Constant folding for Math.{Sin,Cos,Tan,Sqrt} */
+			if (fsig->param_count == 1 && args [0]->opcode == OP_R8CONST){
+				int opcode = 0;
+				if (strcmp (cmethod->name, "Sin") == 0) {
+					opcode = OP_SIN;
+				} else if (strcmp (cmethod->name, "Cos") == 0) {
+					opcode = OP_COS;
+				} else if (strcmp (cmethod->name, "Sqrt") == 0) {
+					opcode = OP_SQRT;
+				} else if (strcmp (cmethod->name, "Abs") == 0 && fsig->params [0]->type == MONO_TYPE_R8) {
+					opcode = OP_ABS;
+				}
+
+				if (opcode){
+					double *dest = (double *) mono_domain_alloc (cfg->domain, sizeof (double));
+					double source = *(double *)args [0]->inst_p0;
+					double result;
+					MONO_INST_NEW (cfg, ins, OP_R8CONST);
+					ins->type = STACK_R8;
+					ins->dreg = mono_alloc_dreg (cfg, ins->type);
+					ins->inst_p0 = dest;
+					
+					switch (opcode){
+					case OP_SQRT:
+						result = sqrt (source);
+						break;
+					case OP_COS:
+						result = cos (source);
+						break;
+					case OP_SIN:
+						result = sin (source);
+						break;
+					case OP_ABS:
+						result = fabs (source);
+						break;
+					}
+					*dest = result;
+					MONO_ADD_INS (cfg->cbb, ins);
+					return ins;
+				}
+			}
+		}
 	} else if (cmethod->klass == mono_defaults.systemtype_class && !strcmp (cmethod->name, "op_Equality")) {
 		EMIT_NEW_BIALU (cfg, ins, OP_COMPARE, -1, args [0]->dreg, args [1]->dreg);
 		MONO_INST_NEW (cfg, ins, OP_PCEQ);
@@ -1235,7 +1278,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		ins = llvm_emit_inst_for_method (cfg, cmethod, fsig, args, in_corlib);
 		if (ins)
 			return ins;
-	}
+	} 
 
 	return mono_arch_emit_inst_for_method (cfg, cmethod, fsig, args);
 }
