@@ -313,7 +313,7 @@ mono_exception_from_name_msg (MonoImage *image, const char *name_space,
 {
 	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
-	MonoExceptionHandle ex = mono_exception_new_by_name_msg (image, name_space, msg, msg, error);
+	MonoExceptionHandle ex = mono_exception_new_by_name_msg (image, name_space, name, msg, error);
 	mono_error_cleanup (error);
 	HANDLE_FUNCTION_RETURN_OBJ (ex);
 }
