@@ -698,6 +698,15 @@ mono_delegate_ctor_with_method (MonoObjectHandle this_obj, MonoObjectHandle targ
 gboolean
 mono_delegate_ctor	    (MonoObjectHandle this_obj, MonoObjectHandle target, gpointer addr, MonoError *error);
 
+MonoMethod *
+mono_get_delegate_invoke_checked (MonoClass *klass, MonoError *error);
+
+MonoMethod *
+mono_get_delegate_begin_invoke_checked (MonoClass *klass, MonoError *error);
+
+MonoMethod *
+mono_get_delegate_end_invoke_checked (MonoClass *klass, MonoError *error);
+
 void
 mono_runtime_free_method    (MonoDomain *domain, MonoMethod *method);
 

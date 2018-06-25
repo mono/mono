@@ -581,8 +581,10 @@ create_cattr_typed_arg (MonoType *t, MonoObject *val, MonoError *error)
 
 	error_init (error);
 
-	if (!ctor)
-		ctor = mono_class_get_method_from_name (mono_class_get_custom_attribute_typed_argument_class (), ".ctor", 2);
+	if (!ctor) {
+		ctor = mono_class_get_method_from_name_checked (mono_class_get_custom_attribute_typed_argument_class (), ".ctor", 2, 0, error);
+		mono_error_assert_ok (error);
+	}
 	
 	params [0] = mono_type_get_object_checked (mono_domain_get (), t, error);
 	return_val_if_nok (error, NULL);
@@ -607,8 +609,10 @@ create_cattr_named_arg (void *minfo, MonoObject *typedarg, MonoError *error)
 
 	error_init (error);
 
-	if (!ctor)
-		ctor = mono_class_get_method_from_name (mono_class_get_custom_attribute_named_argument_class (), ".ctor", 2);
+	if (!ctor) {
+		ctor = mono_class_get_method_from_name_checked (mono_class_get_custom_attribute_named_argument_class (), ".ctor", 2, 0, error);
+		mono_error_assert_ok (error);
+	}
 
 	params [0] = minfo;
 	params [1] = typedarg;
@@ -1185,8 +1189,10 @@ create_custom_attr_data_handle (MonoImage *image, MonoCustomAttrEntry *cattr, Mo
 
 	g_assert (image->assembly);
 
-	if (!ctor)
-		ctor = mono_class_get_method_from_name (mono_defaults.customattribute_data_class, ".ctor", 4);
+	if (!ctor) {
+		ctor = mono_class_get_method_from_name_checked (mono_defaults.customattribute_data_class, ".ctor", 4, 0, error);
+		mono_error_assert_ok (error);
+	}
 
 	domain = mono_domain_get ();
 

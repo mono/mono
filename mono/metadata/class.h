@@ -273,7 +273,7 @@ mono_event_get_parent        (MonoEvent *event);
 MONO_API uint32_t
 mono_event_get_flags         (MonoEvent *event);
 
-MONO_API MonoMethod *
+MONO_RT_EXTERNAL_ONLY MONO_API MonoMethod *
 mono_class_get_method_from_name (MonoClass *klass, const char *name, int param_count);
 
 MONO_API char *

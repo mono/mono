@@ -1632,8 +1632,10 @@ mono_reflection_type_get_underlying_system_type (MonoReflectionTypeHandle t, Mon
 
 	error_init (error);
 
-	if (!method_get_underlying_system_type)
-		method_get_underlying_system_type = mono_class_get_method_from_name (mono_defaults.systemtype_class, "get_UnderlyingSystemType", 0);
+	if (!method_get_underlying_system_type) {
+		method_get_underlying_system_type = mono_class_get_method_from_name_checked (mono_defaults.systemtype_class, "get_UnderlyingSystemType", 0, 0, error);
+		mono_error_assert_ok (error);
+	}
 
 	MonoReflectionTypeHandle rt = MONO_HANDLE_NEW (MonoReflectionType, NULL);
 

@@ -4354,14 +4354,14 @@ add_wrappers (MonoAotCompile *acfg)
 
 			/* Add runtime-invoke wrappers too */
 
-			m = mono_class_get_method_from_name (klass, "Get", -1);
+			m = get_method_nofail (klass, "Get", -1, 0);
 			g_assert (m);
 			wrapper = mono_marshal_get_array_accessor_wrapper (m);
 			add_extra_method (acfg, wrapper);
 			if (!acfg->aot_opts.llvm_only)
 				add_extra_method (acfg, get_runtime_invoke (acfg, wrapper, FALSE));
 
-			m = mono_class_get_method_from_name (klass, "Set", -1);
+			m = get_method_nofail (klass, "Set", -1, 0);
 			g_assert (m);
 			wrapper = mono_marshal_get_array_accessor_wrapper (m);
 			add_extra_method (acfg, wrapper);
@@ -5218,20 +5218,21 @@ add_generic_instances (MonoAotCompile *acfg)
 		 * used for all instances of GetGenericValueImpl by the AOT runtime.
 		 */
 		{
+			ERROR_DECL (error);
 			MonoGenericContext ctx;
 			MonoType *args [16];
 			MonoMethod *get_method;
 			MonoClass *array_klass = m_class_get_parent (mono_class_create_array (mono_defaults.object_class, 1));
 
-			get_method = mono_class_get_method_from_name (array_klass, "GetGenericValueImpl", 2);
+			get_method = mono_class_get_method_from_name_checked (array_klass, "GetGenericValueImpl", 2, 0, error);
+			mono_error_assert_ok (error);
 
 			if (get_method) {
-				ERROR_DECL (error);
 				memset (&ctx, 0, sizeof (ctx));
 				args [0] = object_type;
 				ctx.method_inst = mono_metadata_get_generic_inst (1, args);
 				add_extra_method (acfg, mono_marshal_get_native_wrapper (mono_class_inflate_generic_method_checked (get_method, &ctx, error), TRUE, TRUE));
-				g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
+				mono_error_assert_ok (error); /* FIXME don't swallow the error */
 			}
 		}
 
@@ -5282,19 +5283,19 @@ add_generic_instances (MonoAotCompile *acfg)
 			MonoClass *obj_array_class = mono_class_create_array (mono_defaults.object_class, i);
 			MonoMethod *m;
 
-			m = mono_class_get_method_from_name (obj_array_class, "Get", i);
+			m = get_method_nofail (obj_array_class, "Get", i, 0);
 			g_assert (m);
 
 			m = mono_marshal_get_array_accessor_wrapper (m);
 			add_extra_method (acfg, m);
 
-			m = mono_class_get_method_from_name (obj_array_class, "Address", i);
+			m = get_method_nofail (obj_array_class, "Address", i, 0);
 			g_assert (m);
 
 			m = mono_marshal_get_array_accessor_wrapper (m);
 			add_extra_method (acfg, m);
 
-			m = mono_class_get_method_from_name (obj_array_class, "Set", i + 1);
+			m = get_method_nofail (obj_array_class, "Set", i + 1, 0);
 			g_assert (m);
 
 			m = mono_marshal_get_array_accessor_wrapper (m);
@@ -9581,7 +9582,7 @@ mono_aot_get_array_helper_from_wrapper (MonoMethod *method)
 		helper_name = g_strdup_printf ("InternalArray__%s", mname);
 	else
 		helper_name = g_strdup_printf ("InternalArray__%s_%s", iname, mname);
-	m = mono_class_get_method_from_name (mono_defaults.array_class, helper_name, mono_method_signature (method)->param_count);
+	m = get_method_nofail (mono_defaults.array_class, helper_name, mono_method_signature (method)->param_count, 0);
 	g_assert (m);
 	g_free (helper_name);
 	g_free (s);

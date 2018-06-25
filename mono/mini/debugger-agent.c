@@ -6540,8 +6540,11 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 
 #ifdef TRY_MANAGED_SYSTEM_ENVIRONMENT_EXIT
 		env_class = mono_class_try_load_from_name (mono_defaults.corlib, "System", "Environment");
-		if (env_class)
-			exit_method = mono_class_get_method_from_name (env_class, "Exit", 1);
+		if (env_class) {
+			ERROR_DECL (error);
+			exit_method = mono_class_get_method_from_name_checked (env_class, "Exit", 1, 0, error);
+			mono_error_assert_ok (error);
+		}
 #endif
 
 		mono_loader_lock ();
