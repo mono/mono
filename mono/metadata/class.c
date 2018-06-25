@@ -69,6 +69,9 @@ static MonoProperty* mono_class_get_property_from_name_internal (MonoClass *klas
 
 static MonoClass *mono_class_from_mono_type_internal (MonoType *type);
 
+static gboolean mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc, gboolean check_interfaces);
+
+
 static
 MonoImage *
 mono_method_get_image (MonoMethod *method)
@@ -3221,6 +3224,17 @@ mono_class_try_load_from_name (MonoImage *image, const char* name_space, const c
 gboolean
 mono_class_is_subclass_of (MonoClass *klass, MonoClass *klassc, 
 			   gboolean check_interfaces)
+{
+	gboolean result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_class_is_subclass_of_internal (klass, klassc, check_interfaces);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+gboolean
+mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc,
+				    gboolean check_interfaces)
 {
 	/* FIXME test for interfaces with variant generic arguments */
 	mono_class_init (klass);
