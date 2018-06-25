@@ -3949,8 +3949,10 @@ case "$host" in
 			BTLS_SUPPORTED=yes
 			BTLS_PLATFORM=x86_64
 			;;
-		  mingw*)
-			;;
+		  mingw*|cygwin*)
+			BTLS_SUPPORTED=yes
+			BTLS_PLATFORM=x86_64
+		    ;;
 		esac
 		;;
 	sparc*-*-*)
@@ -5142,10 +5144,21 @@ if test "x$enable_btls" = "xyes"; then
 		case $host_os in
 			darwin*)
 				btls_cflags="$btls_cflags -arch i386"
+				;;
+			mingw*|cygwin*)
+				btls_cflags="$btls_cflags -DNOCRYPT"
+				BTLS_CMAKE_ARGS="-D OPENSSL_NO_ASM=1"
+				;;
 		esac
 		;;
 	x86_64)
 		btls_arch=x86_64
+		case $host_os in
+			mingw*|cygwin*)
+				btls_cflags="$btls_cflags -DNOCRYPT"
+				BTLS_CMAKE_ARGS="-D OPENSSL_NO_ASM=1"
+				;;
+		esac
 		;;
 	arm)
 		btls_arch=arm

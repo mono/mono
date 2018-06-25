@@ -96,3 +96,7 @@ set (
 )
 
 add_library (mono-btls-shared SHARED ${MONO_BTLS_SOURCES})
+
+if (CYGWIN)
+	target_link_libraries (mono-btls-shared wsock32 ws2_32)
+endif ()
