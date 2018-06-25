@@ -457,8 +457,13 @@
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\StringNormalizationExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices\src\System\Security\SecureStringMarshal.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime\src\System\Collections\Generic\ISet.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\Internal\Cryptography\OidLookup.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\AsnEncodedDataCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\AsnEncodedDataEnumerator.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\Oid.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\OidCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\OidEnumerator.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\OidGroup.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\OpenFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreLocation.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreName.cs" />
@@ -735,8 +740,6 @@
     <Compile Include="..\referencesource\System\net\System\UriScheme.cs" />
     <Compile Include="..\referencesource\System\security\system\security\Authentication\ExtendedProtection\ServiceNameCollection.cs" />
     <Compile Include="..\referencesource\System\security\system\security\Authentication\ExtendedProtection\TokenBinding.cs" />
-    <Compile Include="..\referencesource\System\security\system\security\cryptography\oid.cs" />
-    <Compile Include="..\referencesource\System\security\system\security\cryptography\x509\x509utils.cs" />
     <Compile Include="..\referencesource\System\security\system\security\permissions\typedescriptorpermission.cs" />
     <Compile Include="..\referencesource\System\services\monitoring\system\diagnosticts\AsyncStreamReader.cs" />
     <Compile Include="..\referencesource\System\services\monitoring\system\diagnosticts\Process.cs" />
@@ -761,6 +764,7 @@
     <Compile Include="corefx\SR.missing.cs" />
     <Compile Include="corefx\StringDictionary.cs" />
     <Compile Include="corefx\ZLibNative.cs" />
+    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="Microsoft.Win32.SafeHandles\SafeX509ChainHandle.cs" />
     <Compile Include="Mono.AppleTls\AppleCertificateHelper.cs" />
     <Compile Include="Mono.AppleTls\AppleTlsContext.cs" />
@@ -817,7 +821,6 @@
     <Compile Include="MonoTouch\Dummy.cs" />
     <Compile Include="ReferenceSources\AssertWrapper.cs" />
     <Compile Include="ReferenceSources\AutoWebProxyScriptEngine.cs" />
-    <Compile Include="ReferenceSources\CAPI.cs" />
     <Compile Include="ReferenceSources\EnvironmentHelpers.cs" />
     <Compile Include="ReferenceSources\HttpApi.cs" />
     <Compile Include="ReferenceSources\HttpSysSettings.cs" />
@@ -2891,6 +2894,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll</HintPath>
@@ -2911,6 +2919,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monodroid/System.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monodroid/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monodroid/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -2924,6 +2937,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -2941,6 +2959,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -2956,6 +2979,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll">
@@ -2968,6 +2996,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll">
@@ -2978,6 +3011,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -2993,6 +3031,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -3014,6 +3057,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -3033,6 +3081,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -3046,6 +3099,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -3063,6 +3121,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -3076,6 +3139,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Xml.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Xml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll">
@@ -3098,6 +3166,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -3113,6 +3186,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -3126,6 +3204,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Xml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
