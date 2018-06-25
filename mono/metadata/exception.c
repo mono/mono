@@ -619,18 +619,6 @@ mono_get_exception_missing_method (const char *class_name, const char *member_na
 }
 
 /**
- * mono_get_exception_missing_method:
- * \param class_name the class where the lookup was performed.
- * \param member_name the name of the missing method.
- * \returns a new instance of the \c System.MissingMethodException
- */
-MonoException *
-mono_get_exception_missing_method (const char *class_name, const char *member_name)
-{
-	return mono_get_exception_missing_member ("MissingMethodException", class_name, member_name);
-}
-
-/**
  * mono_get_exception_missing_field:
  * \param class_name the class where the lookup was performed
  * \param member_name the name of the missing field.
