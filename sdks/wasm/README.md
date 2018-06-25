@@ -66,3 +66,16 @@ From within a browser, go to `locahost:8000/sample.html` to see the sample app, 
 [1]: https://github.com/kripken/emscripten
 
 [2]: https://docs.microsoft.com/en-us/dotnet/framework/tools/developer-command-prompt-for-vs
+
+## Debugger
+
+To experiment with the debugger, do the following steps:
+
+- Use debug.html or pass 1 to the second arguments of `load_runtime` 
+- Start Chrome with remove debugging enabled (IE `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222`)
+- Download and run the debugger proxy: https://github.com/kumpera/ws-proxy
+- Connect to the remote debugged Chrome and pick the page which is running the wasm code
+- Rewrite the request URL (just the `ws` argument) to use the proxy port instead of the browser port
+- Refresh the debugged page and you should be set
+
+Beware that the debugger is in active development so bugs and missing features will be present.

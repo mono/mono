@@ -9,7 +9,7 @@ MAKEFLAGS += --no-builtin-rules
 SHELL:=/bin/bash
 
 #Use either 'release' or 'debug' dependending on what you need
-DRIVER_CONF=debug
+DRIVER_CONF=release
 
 
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
@@ -133,6 +133,9 @@ $(patsubst %,managed/%,$(BCL_ASSEMBLIES)): managed/%: $(WASM_BCL_DIR)/% | manage
 .PHONY: bcl-test-deps
 bcl-test-deps: .stamp-bcl-test-deps
 
+managed/sample.dll: .stamp-bcl-test-deps $(TEST_DEPS) sample.cs | managed/
+	$(CSC) /debug:portable /noconfig /nostdlib /unsafe -out:$@ $(TEST_MCS_DEPS) /target:library sample.cs
+
 managed/main.exe: .stamp-bcl-test-deps $(TEST_DEPS) $(APP_SOURCES) | managed/
 	$(CSC) $(CSC_FLAGS) /unsafe -out:$@ $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(APP_SOURCES)
 
@@ -142,7 +145,7 @@ managed/mini_tests.dll: .stamp-bcl-test-deps $(TEST_DEPS) $(MINI_TEST_SOURCES) m
 managed/binding_tests.dll: .stamp-bcl-test-deps $(TEST_DEPS) $(BINDING_TEST_SOURCES) | managed/
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(BINDING_TEST_SOURCES)
 
-build-managed: bcl-test-deps managed/binding_tests.dll managed/mini_tests.dll managed/main.exe
+build-managed: bcl-test-deps managed/binding_tests.dll managed/mini_tests.dll managed/main.exe managed/sample.dll
 
 build: build-native build-managed
 
@@ -190,4 +193,8 @@ package: build
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 
-FORCE:
+serve:
+	python server.py
+
+canary:
+	/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222
