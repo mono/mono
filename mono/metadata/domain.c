@@ -966,6 +966,7 @@ mono_domain_set_internal (MonoDomain *domain)
 void
 mono_domain_foreach (MonoDomainFunc func, gpointer user_data)
 {
+	MONO_ENTER_GC_UNSAFE;
 	int i, size;
 	MonoDomain **copy;
 
@@ -986,6 +987,7 @@ mono_domain_foreach (MonoDomainFunc func, gpointer user_data)
 	}
 
 	gc_free_fixed_non_heap_list (copy);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /* FIXME: maybe we should integrate this with mono_assembly_open? */
