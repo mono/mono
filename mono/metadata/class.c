@@ -4950,9 +4950,11 @@ MonoMethod *
 mono_class_get_method_from_name (MonoClass *klass, const char *name, int param_count)
 {
 	MonoMethod *result;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
 	result = mono_class_get_method_from_name_checked (klass, name, param_count, 0, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
