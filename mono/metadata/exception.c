@@ -778,8 +778,6 @@ mono_get_exception_file_not_found2 (const char *msg, MonoString *fname_raw)
 	if (msg) {
 		s = mono_string_new_handle (mono_domain_get (), msg, error);
 		mono_error_assert_ok (error);
-	} else {
-		s = MONO_HANDLE_CAST (MonoString, mono_new_null ());
 	}
 	MonoExceptionHandle ret = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System.IO", "FileNotFoundException", s, fname, error);
 	mono_error_assert_ok (error);
@@ -910,8 +908,6 @@ mono_get_exception_bad_image_format2 (const char *msg, MonoString *fname_raw)
 	if (msg) {
 		s = mono_string_new_handle (mono_domain_get (), msg, error);
 		mono_error_assert_ok (error);
-	} else {
-		s = MONO_HANDLE_CAST (MonoString, mono_new_null ());
 	}
 
 	MonoExceptionHandle ret = mono_exception_from_name_two_strings_checked (
@@ -1288,10 +1284,10 @@ mono_corlib_exception_new_with_args (const char *name_space, const char *name, c
 	MonoExceptionHandle ex = MONO_HANDLE_CAST (MonoException, NULL_HANDLE);
 	MonoDomain * const domain = mono_domain_get ();
 
-	str_0 = arg_0 ? mono_string_new_handle (domain, arg_0, error) : MONO_HANDLE_CAST (MonoString, mono_new_null ());
+	str_0 = arg_0 ? mono_string_new_handle (domain, arg_0, error) : NULL_HANDLE_STRING;
 	goto_if_nok (error, return_null);
 
-	str_1 = arg_1 ? mono_string_new_handle (domain, arg_1, error) : MONO_HANDLE_CAST (MonoString, mono_new_null ());
+	str_1 = arg_1 ? mono_string_new_handle (domain, arg_1, error) : NULL_HANDLE_STRING;
 	goto_if_nok (error, return_null);
 
 	ex = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, name_space, name, str_0, str_1, error);
