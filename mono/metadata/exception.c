@@ -203,11 +203,9 @@ create_exception_two_strings (MonoClass *klass, MonoStringHandle a1, MonoStringH
 	gpointer args [ ] = { MONO_HANDLE_RAW (a1), MONO_HANDLE_RAW (a2) };
 
 	mono_runtime_invoke_handle (method, o, args, error);
-	goto_if_nok (error, return_null);
-	goto exit;
-return_null:
-	o = mono_new_null ();
-exit:
+	if (!is_ok (error))
+		o = mono_new_null ();
+
 	HANDLE_FUNCTION_RETURN_REF (MonoException, MONO_HANDLE_CAST (MonoException, o));
 }
 
