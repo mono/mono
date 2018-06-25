@@ -68,6 +68,10 @@ endif
 ifeq ($(UNAME_S),Darwin)
 	JSVU_OS=mac64
 endif
+.PHONY: jsup
+
+jsup:
+	node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=all
 
 .stamp-jsvu:
 	npm install
