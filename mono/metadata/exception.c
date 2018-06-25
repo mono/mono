@@ -467,7 +467,11 @@ mono_get_exception_null_reference (void)
 MonoException *
 mono_get_exception_execution_engine (const char *msg)
 {
-	return mono_exception_from_name_msg (mono_get_corlib (), "System", "ExecutionEngineException", msg);
+	MonoException *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_exception_from_name_msg (mono_get_corlib (), "System", "ExecutionEngineException", msg);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
