@@ -144,6 +144,10 @@ struct _MonoString {
 #define mono_string_length_fast(s) ((s)->length)
 
 #define mono_array_length_fast(array) ((array)->max_length)
+
+// Equivalent to mono_array_addr_with_size, except:
+// 1. A macro instead of a function.
+// 2. No GC enter/exit unsafe transition.
 #define mono_array_addr_with_size_fast(array,size,index) ( ((char*)(array)->vector) + (size) * (index) )
 
 #define mono_array_addr_fast(array,type,index) ((type*)(void*) mono_array_addr_with_size_fast (array, sizeof (type), index))
