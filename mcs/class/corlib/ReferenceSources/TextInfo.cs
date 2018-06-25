@@ -199,7 +199,7 @@ namespace System.Globalization
 			return c;
 		}
 
-		static unsafe int InternalCompareStringOrdinalIgnoreCase (String strA, int indexA, String strB, int indexB, int lenA, int lenB)
+		internal static unsafe int InternalCompareStringOrdinalIgnoreCase (String strA, int indexA, String strB, int indexB, int lenA, int lenB)
 		{
 			if (strA == null) {
 				return strB == null ? 0 : -1;
@@ -247,47 +247,27 @@ namespace System.Globalization
 			}
 		}
 
-		internal unsafe void ChangeCase(ReadOnlySpan<char> source, Span<char> destination, bool toUpper)
+		internal unsafe void ChangeCase (ReadOnlySpan<char> source, Span<char> destination, bool toUpper)
 		{
 			if (source.IsEmpty)
-			{
 				return;
-			}
 
-			fixed (char* pSource = &MemoryMarshal.GetReference(source))
-			fixed (char* pResult = &MemoryMarshal.GetReference(destination))
-			{
-				if (IsAsciiCasingSameAsInvariant)
-				{
-					int length = 0;
-					char* a = pSource, b = pResult;
-					if (toUpper)
-					{
-						while (length < source.Length && *a < 0x80)
-						{
-							*b++ = ToUpperAsciiInvariant(*a++);
-							length++;
-						}
-					}
-					else
-					{
-						while (length < source.Length && *a < 0x80)
-						{
-							*b++ = ToLowerAsciiInvariant(*a++);
-							length++;
-						}
-					}
+			var ti = CultureInfo.CurrentCulture.TextInfo;
 
-					if (length != source.Length)
-					{
-						//ChangeCase(a, source.Length - length, b, destination.Length - length, toUpper);
-						throw new NotImplementedException ();
+			fixed (char* pSource = &MemoryMarshal.GetReference (source))
+			fixed (char* pResult = &MemoryMarshal.GetReference (destination)) {
+				int length = 0;
+				char* a = pSource, b = pResult;
+				if (toUpper) {
+					while (length < source.Length) {
+						*b++ = ti.ToUpper (*a++);
+						length++;
 					}
-				}
-				else
-				{
-					//ChangeCase(pSource, source.Length, pResult, destination.Length, toUpper);
-					throw new NotImplementedException ();
+				} else {
+					while (length < source.Length) {
+						*b++ = ti.ToLower (*a++);
+						length++;
+					}
 				}
 			}
 		}
