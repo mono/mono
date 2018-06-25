@@ -267,13 +267,13 @@ mono_runtime_init (MonoDomain *domain, MonoThreadStartCB start_cb, MonoThreadAtt
 void
 mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoThreadAttachCB attach_cb, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoAppDomainSetupHandle setup;
 	MonoAppDomainHandle ad;
 	MonoClass *klass;
 
 	error_init (error);
-
-	HANDLE_FUNCTION_ENTER ();
 
 	mono_portability_helpers_init ();
 	
@@ -346,8 +346,8 @@ mono_context_set_default_context (MonoDomain *domain)
 static int
 mono_get_corlib_version (void)
 {
-	ERROR_DECL (error);
 	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
 
 	MonoClass *klass;
 	MonoClassField *field;
