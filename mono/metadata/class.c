@@ -5015,12 +5015,12 @@ mono_find_method_in_metadata (MonoClass *klass, const char *name, int param_coun
 MonoMethod *
 mono_class_get_method_from_name_flags (MonoClass *klass, const char *name, int param_count, int flags)
 {
+	MonoMethod *method;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-	error_init (error);
-
-	MonoMethod * const method = mono_class_get_method_from_name_checked (klass, name, param_count, flags, error);
-
+	method = mono_class_get_method_from_name_checked (klass, name, param_count, flags, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	return method;
 }
 
