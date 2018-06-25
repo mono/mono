@@ -998,9 +998,9 @@ mono_get_exception_reflection_type_load (MonoArray *types_raw, MonoArray *except
 	MONO_HANDLE_DCL (MonoArray, types);
 	MONO_HANDLE_DCL (MonoArray, exceptions);
 	MonoExceptionHandle ret = mono_get_exception_reflection_type_load_checked (types, exceptions, error);
-	if (is_ok (error)) { // FIXME
-		ret = MONO_HANDLE_CAST (MonoException, mono_new_null ());
+	if (is_ok (error)) { // FIXME?
 		mono_error_cleanup (error);
+		ret = MONO_HANDLE_CAST (MonoException, mono_new_null ());
 	}
 	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
@@ -1058,8 +1058,8 @@ mono_get_exception_runtime_wrapped (MonoObject *wrapped_exception_raw)
 	MONO_HANDLE_DCL (MonoObject, wrapped_exception);
 	MonoExceptionHandle ret = mono_get_exception_runtime_wrapped_handle (wrapped_exception, error);
 	if (!is_ok (error)) {
-		ret = MONO_HANDLE_CAST (MonoException, mono_new_null ());
 		mono_error_cleanup (error);
+		ret = MONO_HANDLE_CAST (MonoException, mono_new_null ());
 	}
 	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
@@ -1216,13 +1216,12 @@ gboolean
 mono_error_set_pending_exception (MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
-	gboolean result = FALSE;
 
 	MonoExceptionHandle ex = mono_error_convert_to_exception_handle (error);
-	if (!MONO_HANDLE_IS_NULL (ex)) {
+	gboolean const result = !MONO_HANDLE_IS_NULL (ex);
+	if (result)
 		mono_set_pending_exception_handle (ex);
-		result = TRUE;
-	}
+
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
@@ -1477,8 +1476,8 @@ mono_error_set_argument_out_of_range (MonoError *error, const char *name)
 MonoExceptionHandle
 mono_error_convert_to_exception_handle (MonoError *error)
 {
-	// This "optimization" is important to significantly reduce handle usage.
-	// FIXMEcoop Don't use mono_error_convert_to_exception.
+	//FIXMEcoop mono_error_convert_to_exception is raw pointer
+	// The "optimization" here is important to significantly reduce handle usage.
 	return mono_error_ok (error) ? MONO_HANDLE_CAST (MonoException, NULL_HANDLE)
 		: MONO_HANDLE_NEW (MonoException, mono_error_convert_to_exception (error));
 }
