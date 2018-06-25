@@ -45,6 +45,7 @@ namespace Internal.Cryptography
 			case "1.2.840.113549.1.9.3": return "Content Type";
 			case "1.2.840.113549.1.9.4": return "Message Digest";
 			case "1.2.840.113549.1.9.5": return "Signing Time";
+			case "1.2.840.113549.1.9.16.3.3": return "id-smime-alg-3DESwrap";
 			case "2.5.29.14": return "Subject Key Identifier";
 			case "2.5.29.15": return "Key Usage";
 			case "2.5.29.17": return "Subject Alternative Name";
@@ -62,6 +63,7 @@ namespace Internal.Cryptography
 			case "Content Type": return "1.2.840.113549.1.9.3";
 			case "Message Digest": return "1.2.840.113549.1.9.4";
 			case "Signing Time": return "1.2.840.113549.1.9.5";
+			case "id-smime-alg-3DESwrap": return "1.2.840.113549.1.9.16.3.3";
 			case "Subject Key Identifier": return "2.5.29.14";
 			case "Key Usage": return "2.5.29.15";
 			case "Subject Alternative Name": return "2.5.29.17";
