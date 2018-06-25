@@ -43,6 +43,16 @@ ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngGetBytes (gpo
 	return handle;
 }
 
+gpointer
+ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngGetBytes2 (gpointer handle, gpointer buffer, size_t length)
+{
+	ERROR_DECL (error);
+	g_assert (buffer);
+	mono_rand_try_get_bytes (&handle, buffer, length, error);
+	mono_error_set_pending_exception (error);
+	return handle;
+}
+
 void
 ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngClose (gpointer handle)
 {

@@ -21,6 +21,7 @@
 MonoBoolean ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngOpen (void);
 gpointer ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngInitialize (MonoArray *seed);
 gpointer ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngGetBytes (gpointer handle, MonoArray *arry);
+gpointer ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngGetBytes2 (gpointer handle, gpointer buffer, size_t length);
 void ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngClose (gpointer handle);
 
 #endif

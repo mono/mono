@@ -64,6 +64,14 @@ namespace System.Security.Cryptography {
 					
 			Cryptor.GetRandom (data);
 		}
+
+		internal unsafe void GetBytes (byte* buffer, int length)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException (nameof (buffer));
+
+			Cryptor.GetRandom (buffer, length);
+		}
 		
 		public override void GetNonZeroBytes (byte[] data) 
 		{

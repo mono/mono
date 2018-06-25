@@ -8,7 +8,7 @@ internal partial class Interop
 	internal static class MonoGetRandomBytesFallback
 	{
 		static object _rngAccess = new object ();
-		static RandomNumberGenerator _rng;
+		static RNGCryptoServiceProvider _rng;
 
 		internal static void GetRandomBytes (byte[] buffer)
 		{
@@ -21,9 +21,11 @@ internal partial class Interop
 
 		internal static unsafe void GetRandomBytes (byte* buffer, int length)
 		{
-			var bytes = new byte[length];
-			GetRandomBytes (bytes);
-			Marshal.Copy (bytes, 0, (IntPtr)buffer, length);
+			lock (_rngAccess) {
+				if (_rng == null)
+					_rng = new RNGCryptoServiceProvider ();
+				_rng.GetBytes (buffer, length);
+			}
 		}
 	}
 }

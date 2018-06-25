@@ -99,6 +99,9 @@ namespace System.Security.Cryptography {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern IntPtr RngGetBytes (IntPtr handle, byte[] data);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static unsafe extern IntPtr RngGetBytes2 (IntPtr handle, byte* buffer, IntPtr length);
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void RngClose (IntPtr handle);
 		
@@ -113,6 +116,22 @@ namespace System.Security.Cryptography {
 				// using a global handle for randomness
 				lock (_lock) {
 					_handle = RngGetBytes (_handle, data);
+				}
+			}
+			Check ();
+		}
+
+		internal unsafe void GetBytes (byte* buffer, int length)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException (nameof (buffer));
+
+			if (_lock == null) {
+				_handle = RngGetBytes2 (_handle, buffer, (IntPtr)length);
+			} else {
+				// using a global handle for randomness
+				lock (_lock) {
+					_handle = RngGetBytes2 (_handle, buffer, (IntPtr)length);
 				}
 			}
 			Check ();
