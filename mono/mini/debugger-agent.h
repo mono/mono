@@ -31,6 +31,22 @@ struct _MonoDebuggerCallbacks {
 };
 
 typedef struct _DebuggerTlsData DebuggerTlsData;
+typedef enum _MonoDebuggerThreadState MonoDebuggerThreadState;
+
+MonoGHashTable *
+mono_debugger_get_thread_states (void);
+
+gboolean
+mono_debugger_is_disconnected (void);
+
+gsize
+mono_debugger_tls_thread_id (DebuggerTlsData *debuggerTlsData);
+
+void
+mono_debugger_set_thread_state (DebuggerTlsData *ref, MonoDebuggerThreadState expected, MonoDebuggerThreadState set);
+
+MonoDebuggerThreadState
+mono_debugger_get_thread_state (DebuggerTlsData *ref);
 
 MONO_API void
 mono_debugger_agent_init (void);

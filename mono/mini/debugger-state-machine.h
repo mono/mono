@@ -18,12 +18,12 @@
 #include <mono/utils/json.h>
 #include "debugger-agent.h"
 
-typedef enum {
+enum _MonoDebuggerThreadState {
 	MONO_DEBUGGER_STARTED = 0,
 	MONO_DEBUGGER_RESUMED = 1,
 	MONO_DEBUGGER_SUSPENDED = 2,
 	MONO_DEBUGGER_TERMINATED = 3,
-} MonoDebuggerThreadState;
+};
 
 void
 mono_debugger_log_init (void);
