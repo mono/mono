@@ -41,7 +41,7 @@ class X
 
 		Version min_mono_version;
 #if __MonoCS__
-		min_mono_version = new Version (5, 13);
+		min_mono_version = new Version (5, 17);
 #else
 		min_mono_version = new Version (5, 10);
 #endif
