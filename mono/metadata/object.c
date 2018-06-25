@@ -8887,7 +8887,7 @@ mono_array_addr_with_size (MonoArray *array, int size, uintptr_t idx)
 	char *res;
 	MONO_ENTER_GC_UNSAFE;
 
-	res = ((char*)(array)->vector) + size * idx;
+	res = mono_array_addr_with_size_fast (array, size, idx);
 	MONO_EXIT_GC_UNSAFE;
 	return res;
 }
