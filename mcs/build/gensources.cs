@@ -106,12 +106,27 @@ public static class Program {
     }
 }
 
+public class SourcesFile {
+    public readonly string FileName;
+    public readonly string HostPlatform;
+    public readonly string ProfileName;
+    public readonly bool   IsExclusion;
+
+    public readonly List<ParseEntry> Sources = new List<ParseEntry> ();
+    public readonly List<ParseEntry> Exclusions = new List<ParseEntry> ();
+    public readonly List<SourcesFile> Includes = new List<SourcesFile> ();
+
+    public SourcesFile (string fileName, string hostPlatform, string profileName, bool isExclusion) {
+        FileName = fileName;
+        HostPlatform = hostPlatform;
+        ProfileName = profileName;
+        IsExclusion = isExclusion;
+    }
+}
+
 public struct ParseEntry {
-    public string SourcesFileName;
     public string Directory;
     public string Pattern;
-    public string HostPlatform;
-    public string ProfileName;
 }
 
 public struct MatchEntry {
@@ -124,8 +139,8 @@ public struct MatchEntry {
 public class ParseResult {
     public readonly string LibraryDirectory, LibraryName;
 
-    public readonly List<ParseEntry> Sources = new List<ParseEntry> ();
-    public readonly List<ParseEntry> Exclusions = new List<ParseEntry> ();
+    public readonly List<SourcesFile> SourcesFiles = new List<SourcesFile> ();
+    public readonly List<SourcesFile> ExclusionFiles = new List<SourcesFile> ();
 
     // FIXME: This is a bad spot for this value but enumerators don't have outparam support
     public int ErrorCount = 0;
@@ -383,10 +398,12 @@ public class SourcesParser {
             Console.Error.WriteLine ($"// Parsed {state.SourcesFilesParsed} sources file(s) and {state.ExclusionsFilesParsed} exclusions file(s) from path '{testPath}'.");
     }
 
-    private void HandleMetaDirective (State state, string directory, bool asExclusionsList, string directive) {
+    private void HandleMetaDirective (State state, SourcesFile file, string directory, bool asExclusionsList, string directive) {
         var include = "#include ";
-        if (directive.StartsWith (include))
-            ParseSingleFile (state, Path.Combine (directory, directive.Substring (include.Length)), asExclusionsList);
+        if (directive.StartsWith (include)) {
+            var newFile = ParseSingleFile (state, Path.Combine (directory, directive.Substring (include.Length)), asExclusionsList);
+            file.Includes.Add (newFile);
+        }
     }
 
     private bool TryParseSingleFile (State state, string fileName, bool asExclusionsList) {
@@ -400,13 +417,14 @@ public class SourcesParser {
         return true;
     }
 
-    private void ParseSingleFile (State state, string fileName, bool asExclusionsList) {
+    private SourcesFile ParseSingleFile (State state, string fileName, bool asExclusionsList) {
         var nullStr = "<none>";
         if (TraceLevel >= 1)
             Console.Error.WriteLine ($"// {new String (' ', ParseDepth * 2)}{fileName}  [{state.HostPlatform ?? nullStr}] [{state.ProfileName ?? nullStr}]");
         ParseDepth += 1;
 
         var directory = Path.GetDirectoryName (fileName);
+        var result = new SourcesFile (fileName, state.HostPlatform, state.ProfileName, asExclusionsList);
 
         using (var sr = new StreamReader (fileName)) {
             if (asExclusionsList)
@@ -420,7 +438,7 @@ public class SourcesParser {
                     continue;
 
                 if (line.StartsWith ("#")) {
-                    HandleMetaDirective (state, directory, asExclusionsList, line);
+                    HandleMetaDirective (state, result, directory, asExclusionsList, line);
                     continue;
                 }
 
@@ -439,27 +457,22 @@ public class SourcesParser {
                     var mainPatternDirectory = Path.GetDirectoryName (parts[0]);
 
                     foreach (var pattern in explicitExclusions) {
-                        state.ParsedExclusions.Add (new ParseEntry {
-                            SourcesFileName = fileName,
+                        result.Exclusions.Add (new ParseEntry {
                             Directory = directory,
-                            Pattern = Path.Combine (mainPatternDirectory, pattern),
-                            HostPlatform = state.HostPlatform,
-                            ProfileName = state.ProfileName
+                            Pattern = Path.Combine (mainPatternDirectory, pattern)
                         });
                     }
                 }
 
-                (asExclusionsList ? state.ParsedExclusions : state.ParsedSources)
+                (asExclusionsList ? result.Exclusions : result.Sources)
                     .Add (new ParseEntry {
-                        SourcesFileName = fileName,
                         Directory = directory,
-                        Pattern = parts[0],
-                        HostPlatform = state.HostPlatform,
-                        ProfileName = state.ProfileName
+                        Pattern = parts[0]
                     });
             }
         }
 
         ParseDepth -= 1;
+        return result;
     }
 }
