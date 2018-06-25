@@ -49,6 +49,15 @@ var MonoSupportLib = {
 
 			return res;
 		},
+
+		mono_wasm_start_single_stepping: function(kind) {
+			console.log (">> mono_wasm_start_single_stepping " + kind);
+			if (!this.mono_wasm_setup_single_step)
+				this.mono_wasm_setup_single_step = Module.cwrap ("mono_wasm_setup_single_step", 'void', [ 'number']);
+
+			this.mono_wasm_setup_single_step (kind);
+		},
+		
 	},
 
 	mono_wasm_add_bool_var: function(var_value) {
