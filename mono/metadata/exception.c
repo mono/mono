@@ -172,6 +172,8 @@ mono_exception_from_token (MonoImage *image, guint32 token)
 static MonoExceptionHandle
 create_exception_two_strings (MonoClass *klass, MonoStringHandle a1, MonoStringHandle a2, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoMethod *method = NULL;
 	int const count = 1 + !MONO_HANDLE_IS_NULL (a2);
 	gpointer iter;
@@ -201,9 +203,12 @@ create_exception_two_strings (MonoClass *klass, MonoStringHandle a1, MonoStringH
 	gpointer args [ ] = { MONO_HANDLE_RAW (a1), MONO_HANDLE_RAW (a2) };
 
 	mono_runtime_invoke_handle (method, o, args, error);
-	return_val_if_nok (error, MONO_HANDLE_CAST (MonoException, mono_new_null ()));
-
-	return MONO_HANDLE_CAST (MonoException, o);
+	goto_if_nok (error, return_null);
+	goto exit;
+return_null:
+	o = mono_new_null ();
+exit:
+	HANDLE_FUNCTION_RETURN_REF (MonoException, MONO_HANDLE_CAST (MonoException, o));
 }
 
 /**
