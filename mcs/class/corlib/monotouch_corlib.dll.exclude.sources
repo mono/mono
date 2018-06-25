@@ -1,4 +1,3 @@
-corefx/RandomNumberGeneratorImplementation.Mono.cs
 System.Security.Cryptography/MD5CryptoServiceProvider.cs
 System.Security.Cryptography/SHA1CryptoServiceProvider.cs
 System.Security.Cryptography/SHA1CryptoServiceProvider.cs
