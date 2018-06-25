@@ -434,7 +434,6 @@ namespace System.Net
 		}
 
 		public string Host {
-
 			get {
 				Uri uri = hostUri ?? Address;
 				return (hostUri == null || !hostHasPort) && Address.IsDefaultPort ?
@@ -858,22 +857,21 @@ namespace System.Net
 			if (Aborted)
 				throw CreateRequestAbortedException ();
 
-			bool send = !(method == "GET" || method == "CONNECT" || method == "HEAD" ||
-					method == "TRACE");
+			bool send = !(method == "GET" || method == "CONNECT" || method == "HEAD" || method == "TRACE");
 			if (method == null || !send)
-				throw new ProtocolViolationException ("Cannot send data when method is: " + method);
+				throw new ProtocolViolationException (SR.net_nouploadonget);
 
 			if (contentLength == -1 && !sendChunked && !allowBuffering && KeepAlive)
 				throw new ProtocolViolationException ("Content-Length not set");
 
 			string transferEncoding = TransferEncoding;
 			if (!sendChunked && transferEncoding != null && transferEncoding.Trim () != "")
-				throw new ProtocolViolationException ("SendChunked should be true.");
+				throw new InvalidOperationException (SR.net_needchunked);
 
 			WebOperation operation;
 			lock (locker) {
 				if (getResponseCalled)
-					throw new InvalidOperationException ("The operation cannot be performed once the request has been submitted.");
+					throw new InvalidOperationException (SR.net_reqsubmitted);
 
 				operation = currentOperation;
 				if (operation == null) {
@@ -900,7 +898,7 @@ namespace System.Net
 			try {
 				return TaskToApm.End<Stream> (asyncResult);
 			} catch (Exception e) {
-				throw FlattenException (e);
+				throw GetWebException (e);
 			}
 		}
 
@@ -909,7 +907,7 @@ namespace System.Net
 			try {
 				return GetRequestStreamAsync ().Result;
 			} catch (Exception e) {
-				throw FlattenException (e);
+				throw GetWebException (e);
 			}
 		}
 
@@ -925,35 +923,18 @@ namespace System.Net
 		}
 
 		internal static Task<T> RunWithTimeout<T> (
-			Func<CancellationToken, Task<T>> func, int timeout, Action abort)
-		{
-			// Call `func` here to propagate any potential exception that it
-			// might throw to our caller rather than returning a faulted task.
-			var cts = new CancellationTokenSource ();
-			var workerTask = func (cts.Token);
-			return RunWithTimeoutWorker (workerTask, timeout, abort, cts);
-		}
-
-		internal static Task<T> RunWithTimeout<T> (
 			Func<CancellationToken, Task<T>> func, int timeout, Action abort,
-			CancellationToken cancellationToken)
+			Func<bool> aborted, CancellationToken cancellationToken)
 		{
 			var cts = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken);
-			return RunWithTimeout (func, timeout, abort, cts);
-		}
-
-		static Task<T> RunWithTimeout<T> (
-			Func<CancellationToken, Task<T>> func, int timeout, Action abort,
-			CancellationTokenSource cts)
-		{
 			// Call `func` here to propagate any potential exception that it
 			// might throw to our caller rather than returning a faulted task.
 			var workerTask = func (cts.Token);
-			return RunWithTimeoutWorker (workerTask, timeout, abort, cts);
+			return RunWithTimeoutWorker (workerTask, timeout, abort, aborted, cts);
 		}
 
 		static async Task<T> RunWithTimeoutWorker<T> (
-			Task<T> workerTask, int timeout, Action abort,
+			Task<T> workerTask, int timeout, Action abort, Func<bool> aborted,
 			CancellationTokenSource cts)
 		{
 			try {
@@ -967,7 +948,7 @@ namespace System.Net
 				}
 				throw new WebException (SR.net_timeout, WebExceptionStatus.Timeout);
 			} catch (Exception ex) {
-				throw FlattenException (ex);
+				throw GetWebException (ex, aborted ());
 			} finally {
 				cts.Dispose ();
 			}
@@ -975,20 +956,17 @@ namespace System.Net
 
 		Task<T> RunWithTimeout<T> (Func<CancellationToken, Task<T>> func)
 		{
-			return RunWithTimeout (func, timeout, Abort);
+			// Call `func` here to propagate any potential exception that it
+			// might throw to our caller rather than returning a faulted task.
+			var cts = new CancellationTokenSource ();
+			var workerTask = func (cts.Token);
+			return RunWithTimeoutWorker (workerTask, timeout, Abort, () => Aborted, cts);
 		}
 
 		async Task<HttpWebResponse> MyGetResponseAsync (CancellationToken cancellationToken)
 		{
 			if (Aborted)
 				throw CreateRequestAbortedException ();
-
-			if (method == null)
-				throw new ProtocolViolationException ("Method is null.");
-
-			string transferEncoding = TransferEncoding;
-			if (!sendChunked && transferEncoding != null && transferEncoding.Trim () != "")
-				throw new ProtocolViolationException ("SendChunked should be true.");
 
 			var completion = new WebCompletionSource ();
 			WebOperation operation;
@@ -1164,12 +1142,17 @@ namespace System.Net
 
 		WebException GetWebException (Exception e)
 		{
+			return GetWebException (e, Aborted);
+		}
+
+		static WebException GetWebException (Exception e, bool aborted)
+		{
 			e = FlattenException (e);
 			if (e is WebException wexc) {
-				if (!Aborted || wexc.Status == WebExceptionStatus.RequestCanceled || wexc.Status == WebExceptionStatus.Timeout)
+				if (!aborted || wexc.Status == WebExceptionStatus.RequestCanceled || wexc.Status == WebExceptionStatus.Timeout)
 					return wexc;
 			}
-			if (Aborted || e is OperationCanceledException || e is ObjectDisposedException)
+			if (aborted || e is OperationCanceledException || e is ObjectDisposedException)
 				return CreateRequestAbortedException ();
 			return new WebException (e.Message, e, WebExceptionStatus.UnknownError, null);
 		}
@@ -1184,6 +1167,20 @@ namespace System.Net
 			if (Aborted)
 				throw CreateRequestAbortedException ();
 
+			string transferEncoding = TransferEncoding;
+			if (!sendChunked && transferEncoding != null && transferEncoding.Trim () != "") {
+				/*
+				 * The only way we could get here without already catching this in the
+				 * `TransferEncoding` property settor is via HttpClient, which does not
+				 * do strict checking on all headers.
+				 *
+				 * We can remove this check again after switching to the CoreFX version
+				 * of HttpClient.
+				 *
+				 */
+				throw new InvalidOperationException (SR.net_needchunked);
+			}
+
 			return TaskToApm.Begin (RunWithTimeout (MyGetResponseAsync), callback, state);
 		}
 
@@ -1195,7 +1192,7 @@ namespace System.Net
 			try {
 				return TaskToApm.End<HttpWebResponse> (asyncResult);
 			} catch (Exception e) {
-				throw FlattenException (e);
+				throw GetWebException (e);
 			}
 		}
 
@@ -1213,7 +1210,7 @@ namespace System.Net
 			try {
 				return GetResponseAsync ().Result;
 			} catch (Exception e) {
-				throw FlattenException (e);
+				throw GetWebException (e);
 			}
 		}
 
