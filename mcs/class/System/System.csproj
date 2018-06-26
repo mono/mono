@@ -457,6 +457,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\StringNormalizationExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices\src\System\Security\SecureStringMarshal.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime\src\System\Collections\Generic\ISet.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\AsnEncodedDataCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\AsnEncodedDataEnumerator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\OpenFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreLocation.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreName.cs" />
@@ -987,8 +989,6 @@
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Store.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SubjectKeyIdentifierExtension.cs" />
     <Compile Include="System.Security.Cryptography\AsnEncodedData.cs" />
-    <Compile Include="System.Security.Cryptography\AsnEncodedDataCollection.cs" />
-    <Compile Include="System.Security.Cryptography\AsnEncodedDataEnumerator.cs" />
     <Compile Include="System.Threading\ThreadExceptionEventArgs.cs" />
     <Compile Include="System.Threading\ThreadExceptionEventHandler.cs" />
     <Compile Include="System.Timers\ElapsedEventArgs.cs" />
