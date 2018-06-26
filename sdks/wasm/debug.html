@@ -11,11 +11,6 @@
 	  <br>
 	
 	<script type='text/javascript'>
-		var startLoadTime = Date.now();
-		var runtimeLoadTime = null;
-		var bclLoadTime = null;
-		var runtimeLoadTime = null;
-
 		function mono_wasm_set_breakpoint (assembly, method_token, iloffset) {
 			console.log (">>mono_wasm_set_breakpoint " + assembly + " method " +  method_token +  " off " + iloffset);
 			try {
@@ -24,12 +19,6 @@
 				console.log (e);
 				throw e;
 			}
-		}
-
-		var mono_wasm_runtime_is_ready = false;
-		function mono_wasm_runtime_ready () {
-			mono_wasm_runtime_is_ready = true;
-			debugger;
 		}
 
 		function mono_wasm_clear_all_breakpoints () {
@@ -42,131 +31,15 @@
 			}
 		}
 
-
-		var Module = { 
-			print: function(x) { console.log ("WASM: " + x) },
-			printErr: function(x) { console.log ("WASM-ERR: " + x) },
-
-			onRuntimeInitialized: function () {
-				var assemblies = [ "mscorlib.dll", "sample.dll", "sample.pdb", "main.exe", "main.pdb", "mini_tests.dll", "mini_tests.pdb" ];
-				runtimeLoadTime = Date.now ();
-				console.log ("Done with WASM module instantiation. Took " + (runtimeLoadTime - startLoadTime) + " ms");
-
-				Module.FS_createPath ("/", "managed", true, true);
-
-				var pending = 0;
-				assemblies.forEach (function(asm_name) {
-					console.log ("loading " + asm_name);
-					++pending;
-					fetch ("managed/" + asm_name, { credentials: 'same-origin' }).then (function (response) {
-						if (!response.ok)
-							throw "failed to load Assembly '" + asm_name + "'";
-						return response['arrayBuffer']();
-					}).then (function (blob) {
-						var asm = new Uint8Array (blob);
-						Module.FS_createDataFile ("managed/" + asm_name, null, asm, true, true, true);
-						console.log ("LOADED: " + asm_name);
-						--pending;
-						if (pending == 0)
-							Module.bclLoadingDone ();
-					});
-				});
-			},
-			
-			bclLoadingDone: function () {
-				bclLoadTime = Date.now ();
-				console.log ("Done loading the BCL. Took " + (bclLoadTime - runtimeLoadTime) + " ms");
-
-				MonoRuntime.init ();
-			}
-		};
-
-		var MonoRuntime = {
-			init: function () {
-				this.load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);
-				this.assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string']);
-				this.find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string']);
-				this.find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number']);
-				this.invoke_method = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'number']);
-				this.mono_string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'number', ['number']);
-				this.mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string']);
-				this.mono_wasm_set_breakpoint = Module.cwrap ('mono_wasm_set_breakpoint', 'number', ['string', 'number', 'number']);
-				this.mono_wasm_clear_all_breakpoints = Module.cwrap ('mono_wasm_clear_all_breakpoints', 'void', [ ]);
-
-				this.load_runtime ("managed", 1);
-
-				mono_wasm_runtime_ready ();
-
-				runtimeLoadTime = Date.now ();
-
-				console.log ("Done initializing the runtime. Took " + (runtimeLoadTime - bclLoadTime) + " ms");
-
-				App.init ();
-			},
-
-			conv_string: function (mono_obj) {
-				if (mono_obj == 0)
-					return null;
-				var raw = this.mono_string_get_utf8 (mono_obj);
-				var res = Module.UTF8ToString (raw);
-				Module._free (raw);
-
-				return res;
-			},
-
-			assembly_cache: {},
-			call_method: function (assembly, class_name, method_name, this_arg, args) {
-				var module = this.assembly_cache [assembly];
-				if (!module) {
-					module = this.assembly_load (assembly);
-					this.assembly_cache [assembly] = module;
-				}
-				if (!module)
-					throw "Could not load module: " + assembly;
-
-				//FIXME handle namespaces
-				var type = this.find_class (module, "", class_name);
-				if (!type)
-					throw "Could not find class: " + class_name;
-			
-				var method = this.find_method (type, method_name, -1)
-				if (!method)
-					throw "Could not find method: " + method_name;
-
-				var args_mem = Module._malloc (args.length * 4);
-				var eh_throw = Module._malloc (4);
-				for (var i = 0; i < args.length; ++i)
-					Module.setValue (args_mem + i * 4, args [i], "i32");
-				Module.setValue (eh_throw, 0, "i32");
-
-				var res = this.invoke_method (method, this_arg, args_mem, eh_throw);
-
-				var eh_res = Module.getValue (eh_throw, "i32");
-
-				Module._free (args_mem);
-				Module._free (eh_throw);
-
-				if (eh_res != 0) {
-					var msg = this.conv_string (res);
-					throw new Error (msg);
-				}
-
-				return res;
-			},
-
-			add_vals: function(key, val) {
-				return this.conv_string (this.call_method ("sample", "Math", "Add", 0, [ this.mono_string (key), this.mono_string (val) ]));
-			}
-		};
-
 		var App = {
 			onClick: function () {
 				this.output.value = "...";
-				var res = MonoRuntime.add_vals("10", "20");
-				this.output.value = res;
+				var res = this.int_add (10, 20);
+				this.output.value = "res is " + res;
 			},
 
 			init: function () {
+				this.int_add = Module.mono_bind_static_method ("[sample] Math:IntAdd");
 				this.output = document.getElementById ("output");
 				this.button = document.getElementById ("button");
 
@@ -175,6 +48,7 @@
 			},
 		};
       </script>
+      <script type="text/javascript" src="runtime.js"></script>
       <script async type="text/javascript" src="mono.js"></script>
   </body>
   </html>

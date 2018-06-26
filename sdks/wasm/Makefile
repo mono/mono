@@ -4,6 +4,8 @@ TOP=$(realpath $(CURDIR)/../..)
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
+all: build
+
 MAKEFLAGS += --no-builtin-rules
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
@@ -133,6 +135,9 @@ $(patsubst %,managed/%,$(BCL_ASSEMBLIES)): managed/%: $(WASM_BCL_DIR)/% | manage
 .PHONY: bcl-test-deps
 bcl-test-deps: .stamp-bcl-test-deps
 
+managed/bindings.dll: bindings.cs
+	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:managed/bindings.dll /r:managed//mscorlib.dll bindings.cs
+
 managed/sample.dll: .stamp-bcl-test-deps $(TEST_DEPS) sample.cs | managed/
 	$(CSC) /debug:portable /noconfig /nostdlib /unsafe -out:$@ $(TEST_MCS_DEPS) /target:library sample.cs
 
@@ -145,7 +150,7 @@ managed/mini_tests.dll: .stamp-bcl-test-deps $(TEST_DEPS) $(MINI_TEST_SOURCES) m
 managed/binding_tests.dll: .stamp-bcl-test-deps $(TEST_DEPS) $(BINDING_TEST_SOURCES) | managed/
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ $(TEST_MCS_DEPS) /r:managed/nunitlite.dll $(BINDING_TEST_SOURCES)
 
-build-managed: bcl-test-deps managed/binding_tests.dll managed/mini_tests.dll managed/main.exe managed/sample.dll
+build-managed: bcl-test-deps managed/binding_tests.dll managed/mini_tests.dll managed/main.exe managed/sample.dll managed/bindings.dll
 
 build: build-native build-managed
 
