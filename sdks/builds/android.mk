@@ -2,9 +2,9 @@
 include runtime.mk
 
 ANDROID_URI?=https://dl.google.com/android/repository/
-ANDROID_TOOLCHAIN_PREFIX?=$(TOP)/sdks/builds/toolchains/android
-ANDROID_TOOLCHAIN_DIR?=$(TOP)/sdks/builds/toolchains/android
-ANDROID_TOOLCHAIN_CACHE_DIR?=$(TOP)/sdks/builds/toolchains/android
+ANDROID_TOOLCHAIN_PREFIX?=$(HOME)/android-toolchain/toolchains
+ANDROID_TOOLCHAIN_DIR?=$(HOME)/android-toolchain
+ANDROID_TOOLCHAIN_CACHE_DIR?=$(HOME)/android-archives
 
 ANT_URI?=https://archive.apache.org/dist/ant/binaries/
 
