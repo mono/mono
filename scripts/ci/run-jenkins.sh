@@ -107,10 +107,7 @@ fi
 
 if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
    then
-        echo "ANDROID_TOOLCHAIN_DIR=$HOME/android-toolchain" > sdks/Make.config
-        echo "ANDROID_TOOLCHAIN_CACHE_DIR=$HOME/android-archives" >> sdks/Make.config
-        echo "MXE_PREFIX_DIR=$HOME/android-toolchain" >> sdks/Make.config
-        echo "IGNORE_PROVISION_ANDROID=1" >> sdks/Make.config
+        echo "IGNORE_PROVISION_ANDROID=1" > sdks/Make.config
         echo "IGNORE_PROVISION_MXE=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
         ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j4 -C sdks/builds provision-android

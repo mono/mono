@@ -11,7 +11,7 @@ provision-mxe:
 	@echo $(LINUX_FLAVOR) Linux does not require mxe provisioning. mingw from packages is used instead
 else
 MXE_SRC?=$(TOP)/sdks/builds/toolchains/mxe
-MXE_PREFIX_DIR?=$(TOP)/sdks/out
+MXE_PREFIX_DIR?=$(HOME)/android-toolchain
 
 # This is not overridable
 MXE_PREFIX:=$(MXE_PREFIX_DIR)/mxe-$(shell echo $(MXE_HASH) | head -c 7)
