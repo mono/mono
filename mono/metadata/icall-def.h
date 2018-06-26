@@ -69,6 +69,9 @@ ICALL_TYPE(CLR_INTEROP, "Interop/RunLoop", CLR_INTEROP_1)
 ICALL(CLR_INTEROP_1, "CFRunLoopRun", ves_icall_CoreFX_Interop_RunLoop_CFRunLoopRun)
 #endif
 
+ICALL_TYPE(CLR_INTEROP_SYS, "Interop/Sys", CLR_INTEROP_SYS_1)
+ICALL(CLR_INTEROP_SYS_1, "DoubleToString", ves_icall_Interop_Sys_DoubleToString)
+
 ICALL_TYPE(NATIVEMETHODS, "Microsoft.Win32.NativeMethods", NATIVEMETHODS_1)
 HANDLES(ICALL(NATIVEMETHODS_1, "CloseProcess", ves_icall_Microsoft_Win32_NativeMethods_CloseProcess))
 HANDLES(ICALL(NATIVEMETHODS_2, "GetCurrentProcess", ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess))
@@ -788,6 +791,9 @@ HANDLES(ICALL(REMSER_0, "GetVirtualMethod", ves_icall_Remoting_RemotingServices_
 ICALL(REMSER_1, "InternalExecute", ves_icall_InternalExecute)
 HANDLES(ICALL(REMSER_2, "IsTransparentProxy", ves_icall_IsTransparentProxy))
 #endif
+
+ICALL_TYPE(CLR_RUNTIME_IMPORTS, "System.Runtime.RuntimeImports", CLR_RUNTIME_IMPORTS_1)
+ICALL(CLR_RUNTIME_IMPORTS_1, "_ecvt_s", ves_icall_System_Runtime_RuntimeImports_ecvt_s)
 
 ICALL_TYPE(RVH, "System.Runtime.Versioning.VersioningHelper", RVH_1)
 HANDLES(ICALL(RVH_1, "GetRuntimeId", ves_icall_System_Runtime_Versioning_VersioningHelper_GetRuntimeId))

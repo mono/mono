@@ -207,6 +207,23 @@ namespace System {
         {
             return new InvalidOperationException(str);
         }
+
+        static Exception GetArraySegmentCtorValidationFailedException(Array array, int offset, int count)
+        {
+            if (array == null)
+                return new ArgumentNullException(nameof(array));
+            if (offset < 0)
+                return new ArgumentOutOfRangeException(nameof(offset), SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (count < 0)
+                return new ArgumentOutOfRangeException(nameof(count), SR.ArgumentOutOfRange_NeedNonNegNum);
+
+            return new ArgumentException(SR.Argument_InvalidOffLen);
+        }
+
+        internal static void ThrowArraySegmentCtorValidationFailedExceptions(Array array, int offset, int count)
+        {
+            throw GetArraySegmentCtorValidationFailedException(array, offset, count);
+        }
 #endif
 
         // Allow nulls for reference types and Nullable<U>, but not for value types.
@@ -598,7 +615,8 @@ namespace System {
         byteOffset,
         minimumBufferSize,
         offset,
-        values
+        values,
+        s
 #endif
     }
 
@@ -657,6 +675,9 @@ namespace System {
         TaskT_TransitionToFinal_AlreadyCompleted,
         TaskCompletionSourceT_TrySetException_NullException,
         TaskCompletionSourceT_TrySetException_NoExceptions,
+#if MONO
+        InvalidOperation_NullArray
+#endif
     }
 }
 

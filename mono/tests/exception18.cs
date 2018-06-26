@@ -40,7 +40,7 @@ class C
 
 		try {
 			try {
-				int.Parse (null);
+				int.Parse ("foo");
 			} catch (Exception) {
 				throw;
 			}
