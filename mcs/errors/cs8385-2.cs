@@ -1,4 +1,4 @@
-// CS0428: Cannot convert method group `Main' to non-delegate type `void*'. Consider using parentheses to invoke the method
+// CS8385: The given expression cannot be used in a fixed statement
 // Line: 9
 // Compiler options: -unsafe
 
