@@ -1459,6 +1459,40 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 					restart = TRUE;
 					break;
 				}
+				case OP_EXTRACTI4:
+				case OP_EXTRACTI: {
+					MonoInst *var, *addr;
+
+					if (COMPILE_LLVM (cfg) && !mini_is_gsharedvt_klass (ins->klass))
+						break;
+
+					/* Compute the vtype location */
+					var = get_vreg_to_inst (cfg, ins->sreg1);
+					g_assert (var);
+					EMIT_NEW_VARLOADA (cfg, addr, var, var->inst_vtype);
+
+					int opcode = mono_extract_to_load_membase (ins->opcode);
+					MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, opcode, ins->dreg, addr->dreg, ins->inst_offset);
+					break;
+				}
+				case OP_INSERTI4:
+				case OP_INSERTI: {
+					MonoInst *var, *addr;
+
+					if (COMPILE_LLVM (cfg) && !mini_is_gsharedvt_klass (ins->klass))
+						break;
+
+					g_assert (ins->dreg == ins->sreg1);
+
+					/* Compute the vtype location */
+					var = get_vreg_to_inst (cfg, ins->sreg1);
+					g_assert (var);
+					EMIT_NEW_VARLOADA (cfg, addr, var, var->inst_vtype);
+
+					int opcode = mono_insert_to_store_membase_reg (ins->opcode);
+					MONO_EMIT_NEW_STORE_MEMBASE (cfg, opcode, addr->dreg, ins->inst_offset, ins->sreg2);
+					break;
+				}
 				default:
 					break;
 				}

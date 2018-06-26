@@ -279,6 +279,7 @@ static void emit_dbg_info (MonoLLVMModule *module, const char *filename, const c
 static void emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *exc_type, LLVMValueRef cmp);
 static LLVMValueRef get_intrinsic (EmitContext *ctx, const char *name);
 static void decode_llvm_eh_info (EmitContext *ctx, gpointer eh_frame);
+static LLVMTypeRef type_to_llvm_type (EmitContext *ctx, MonoType *t);
 
 static inline void
 set_failure (EmitContext *ctx, const char *message)
@@ -420,7 +421,7 @@ type_to_simd_type (int type)
 }
 
 static LLVMTypeRef
-create_llvm_type_for_type (MonoLLVMModule *module, MonoClass *klass)
+create_llvm_type_for_type (EmitContext *ctx, MonoClass *klass)
 {
 	int i, size, nfields, esize;
 	LLVMTypeRef *eltypes;
@@ -442,6 +443,17 @@ create_llvm_type_for_type (MonoLLVMModule *module, MonoClass *klass)
 		eltypes = g_new (LLVMTypeRef, size);
 		for (i = 0; i < size; ++i)
 			eltypes [i] = esize == 4 ? LLVMFloatType () : LLVMDoubleType ();
+	} else if (mini_is_scalar_repl_class (klass)) {
+		int fcount = mono_class_get_field_count (klass);
+		MonoClassField *fields = m_class_get_fields (klass);
+
+		size = fcount;
+		eltypes = g_new (LLVMTypeRef, fcount);
+		for (int i = 0; i < fcount; ++i) {
+			MonoClassField *field = &fields [i];
+			MonoType *t = field->type;
+			eltypes [i] = type_to_llvm_type (ctx, t);
+		}
 	} else {
 		size = get_vtype_size (t);
 
@@ -451,7 +463,7 @@ create_llvm_type_for_type (MonoLLVMModule *module, MonoClass *klass)
 	}
 
 	name = mono_type_full_name (m_class_get_byval_arg (klass));
-	ltype = LLVMStructCreateNamed (module->context, name);
+	ltype = LLVMStructCreateNamed (ctx->module->context, name);
 	LLVMStructSetBody (ltype, eltypes, size, FALSE);
 	g_free (eltypes);
 	g_free (name);
@@ -523,7 +535,7 @@ type_to_llvm_type (EmitContext *ctx, MonoType *t)
 
 		ltype = (LLVMTypeRef)g_hash_table_lookup (ctx->module->llvm_types, klass);
 		if (!ltype) {
-			ltype = create_llvm_type_for_type (ctx->module, klass);
+			ltype = create_llvm_type_for_type (ctx, klass);
 			g_hash_table_insert (ctx->module->llvm_types, klass, ltype);
 		}
 		return ltype;
@@ -763,6 +775,7 @@ load_store_to_llvm_type (int opcode, int *size, gboolean *sext, gboolean *zext)
 	case OP_ATOMIC_STORE_I4:
 	case OP_ATOMIC_LOAD_U4:
 	case OP_ATOMIC_STORE_U4:
+	case OP_EXTRACTI4:
 		*size = 4;
 		return LLVMInt32Type ();
 	case OP_LOADI8_MEMBASE:
@@ -791,6 +804,7 @@ load_store_to_llvm_type (int opcode, int *size, gboolean *sext, gboolean *zext)
 	case OP_LOAD_MEM:
 	case OP_STORE_MEMBASE_REG:
 	case OP_STORE_MEMBASE_IMM:
+	case OP_EXTRACTI:
 		*size = sizeof (gpointer);
 		return IntPtrType ();
 	default:
@@ -5874,6 +5888,28 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [3] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
 			args [4] = LLVMConstInt (LLVMInt1Type (), 0, FALSE);
 			LLVMBuildCall (builder, get_intrinsic (ctx, "llvm.memcpy.p0i8.p0i8.i32"), args, 5, "");
+			break;
+		}
+		case OP_EXTRACTI:
+		case OP_EXTRACTI4: {
+			int findex = ins->inst_imm;
+
+			if (addresses [ins->sreg1]) {
+				LLVMValueRef indexes [16];
+				int size;
+				gboolean sext = FALSE, zext = FALSE;
+				LLVMTypeRef t;
+
+				t = load_store_to_llvm_type (ins->opcode, &size, &sext, &zext);
+
+				LLVMValueRef base = addresses [ins->sreg1];
+				indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
+				indexes [1] = LLVMConstInt (LLVMInt32Type (), findex, FALSE);
+				LLVMValueRef addr = LLVMBuildGEP (builder, base, indexes, 2, "");
+				values [ins->dreg] = emit_load_general (ctx, bb, &builder, size, addr, base, dname, FALSE, LLVM_BARRIER_NONE);
+			} else {
+				values [ins->dreg] = LLVMBuildExtractValue (builder, lhs, findex, "");
+			}
 			break;
 		}
 		case OP_LLVM_OUTARG_VT: {

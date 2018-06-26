@@ -4265,6 +4265,21 @@ mini_realloc_code_slow (MonoCompile *cfg, int size)
 	return cfg->native_code + cfg->code_len;
 }
 
+int
+mini_field_offset_to_field_index (MonoClass *klass, int offset)
+{
+	MonoClassField *fields = m_class_get_fields (klass);
+	int fcount = mono_class_get_field_count (klass);
+
+	for (int i = 0; i < fcount; ++i) {
+		MonoClassField *field = &fields [i];
+		if (field->offset - sizeof (MonoObject) == offset)
+			return i;
+	}
+	g_assert_not_reached ();
+	return -1;
+}
+
 #endif /* DISABLE_JIT */
 
 gboolean

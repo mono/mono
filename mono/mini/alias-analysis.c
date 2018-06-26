@@ -157,7 +157,44 @@ lower_memory_access (MonoCompile *cfg)
 	MonoInst *ins, *tmp;
 	gboolean needs_dce = FALSE;
 	GHashTable *addr_loads = g_hash_table_new (NULL, NULL);
-	//FIXME optimize
+	MonoInst **defs;
+
+	/*
+	 * Find all vregs whose only definition is an ldaddr opcode.
+	 */
+	defs = g_malloc0 (sizeof (MonoInst*) * cfg->next_vreg);
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		for (ins = bb->code; ins; ins = ins->next) {
+			if (ins->dreg != -1) {
+				if (defs [ins->dreg])
+					/* Mark as having multiple defs */
+					defs [ins->dreg] = GINT_TO_POINTER (-1);
+				else
+					defs [ins->dreg] = ins;
+			}
+		}
+	}
+
+	for (int i = 0; i < cfg->next_vreg; ++i) {
+		if (defs [i]) {
+			if (defs [i] == GINT_TO_POINTER (-1) || defs [i]->opcode != OP_LDADDR)
+				defs [i] = NULL;
+		}
+	}
+
+	for (int i = 0; i < cfg->next_vreg; ++i) {
+		if (defs [i]) {
+			ins = defs [i];
+			MonoInst *var = (MonoInst*)ins->inst_p0;
+			if (var->flags & MONO_INST_VOLATILE) {
+				if (cfg->verbose_level > 2) { printf ("Found address to volatile var, can't take it: "); mono_print_ins (ins); }
+				defs [i] = NULL;
+			} else {
+				if (cfg->verbose_level > 2) { printf ("New global address: "); mono_print_ins (ins); printf ("%s\n", mono_type_full_name (var->inst_vtype)); }
+			}
+		}
+	}
+
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		g_hash_table_remove_all (addr_loads);
 
@@ -208,16 +245,40 @@ handle_instruction:
 			case OP_LOADR4_MEMBASE:
 #endif
 			case OP_LOADR8_MEMBASE:
-				if (ins->inst_offset != 0)
-					continue;
-				tmp = (MonoInst *)g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->sreg1));
+				// FIXME: Unify the two kinds of lookups
+				tmp = defs [ins->sreg1];
 				if (tmp) {
-					if (cfg->verbose_level > 2) { printf ("Found candidate load:"); mono_print_ins (ins); }
-					if (lower_load (cfg, ins, tmp)) {
-						needs_dce = TRUE;
-						/* Try to propagate known aliases if an OP_MOVE was inserted */
-						goto handle_instruction;
+					MonoInst *var = (MonoInst*)tmp->inst_p0;
+					if (MONO_TYPE_ISSTRUCT (var->inst_vtype) && ins->opcode != OP_LOADV_MEMBASE && mini_is_scalar_repl_class (var->klass)) {
+						/* Loading a field of a vtype */
+						if (ins->opcode == OP_LOADI4_MEMBASE || ins->opcode == OP_LOAD_MEMBASE) {
+							if (cfg->verbose_level > 2) { printf ("Converted to extract:"); mono_print_ins (ins); }
+							MonoInst *var = (MonoInst*)tmp->inst_p0;
+							if (ins->opcode == OP_LOADI4_MEMBASE)
+								ins->opcode = OP_EXTRACTI4;
+							else
+								ins->opcode = OP_EXTRACTI;
+							ins->sreg1 = var->dreg;
+							ins->inst_imm = mini_field_offset_to_field_index (var->klass, ins->inst_offset);
+							ins->klass = var->klass;
+							needs_dce = TRUE;
+						} else {
+							if (cfg->verbose_level > 2) { printf ("Skipped:"); mono_print_ins (ins); }
+							continue;
+						}
+						break;
 					}
+				}
+				tmp = (MonoInst *)g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->sreg1));
+				if (!tmp)
+					break;
+				if (ins->inst_offset != 0)
+					break;
+				if (cfg->verbose_level > 2) { printf ("Found candidate load:"); mono_print_ins (ins); }
+				if (lower_load (cfg, ins, tmp)) {
+					needs_dce = TRUE;
+					/* Try to propagate known aliases if an OP_MOVE was inserted */
+					goto handle_instruction;
 				}
 				break;
 
@@ -268,7 +329,28 @@ handle_instruction:
 		}
 	}
 	g_hash_table_destroy (addr_loads);
+	g_free (defs);
+
 	return needs_dce;
+}
+
+/*
+ * mini_is_scalar_repl_class:
+ *
+ *   Return whenever scalar replacement of aggregates is enabled for KLASS.
+ */
+gboolean
+mini_is_scalar_repl_class (MonoClass *klass)
+{
+	if (!MONO_TYPE_ISSTRUCT (m_class_get_byval_arg (klass)))
+		return FALSE;
+
+	if (!(klass->image == mono_get_corlib () && (!strcmp (klass->name, "Span`1") || !strcmp (klass->name, "ReadOnlySpan`1"))))
+		return FALSE;
+	if (mono_class_get_field_count (klass) != 3)
+		/* Fast span */
+		return FALSE;
+	return TRUE;
 }
 
 static gboolean

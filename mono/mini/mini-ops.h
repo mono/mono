@@ -185,6 +185,15 @@ MINI_OP(OP_FMOVE,	"fmove", FREG, FREG, NONE)
 MINI_OP(OP_VMOVE,   "vmove", VREG, VREG, NONE)
 MINI_OP(OP_RMOVE,	"rmove", FREG, FREG, NONE)
 
+/* Load the field at inst_offset from the vtype sreg1 */
+/* inst_imm is the field index of the field loaded */
+MINI_OP(OP_EXTRACTI4, "extracti4", IREG, VREG, NONE)
+MINI_OP(OP_EXTRACTI, "extracti", IREG, VREG, NONE)
+
+/* Set the field at inst_offset in the vtype sreg1 from sreg2, store the result into dreg */
+MINI_OP(OP_INSERTI4, "inserti4", VREG, VREG, IREG)
+MINI_OP(OP_INSERTI, "inserti", VREG, VREG, IREG)
+
 /*
  * All 4 of these are only available when soft float isn't active. They
  * perform no conversions; they simply move values back and forth.

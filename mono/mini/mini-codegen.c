@@ -504,6 +504,16 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 		case OP_CASTCLASS:
 			g_string_append_printf (sbuf, " %s", m_class_get_name (ins->klass));
 			break;
+		case OP_LOCAL: {
+			char *name = mono_type_full_name (ins->inst_vtype);
+			g_string_append_printf (sbuf, " [%s]", name);
+			g_free (name);
+			break;
+		}
+		case OP_EXTRACTI4:
+		case OP_EXTRACTI:
+			g_string_append_printf (sbuf, " + 0x%lx [findex=%d]", (long)ins->inst_offset, (int)ins->inst_imm);
+			break;
 		default:
 			break;
 		}

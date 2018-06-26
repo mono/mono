@@ -4939,8 +4939,8 @@ check_inline_caller_method_name_limit (MonoMethod *caller_method)
 }
 #endif
 
-static void
-emit_init_rvar (MonoCompile *cfg, int dreg, MonoType *rtype)
+void
+mini_emit_init_rvar (MonoCompile *cfg, int dreg, MonoType *rtype)
 {
 	static double r8_0 = 0.0;
 	static float r4_0 = 0.0;
@@ -5002,7 +5002,7 @@ emit_dummy_init_rvar (MonoCompile *cfg, int dreg, MonoType *rtype)
 	} else if (((t == MONO_TYPE_VAR) || (t == MONO_TYPE_MVAR)) && mini_type_var_is_vt (rtype)) {
 		MONO_EMIT_NEW_DUMMY_INIT (cfg, dreg, OP_DUMMY_VZERO);
 	} else {
-		emit_init_rvar (cfg, dreg, rtype);
+		mini_emit_init_rvar (cfg, dreg, rtype);
 	}
 }
 
@@ -5014,11 +5014,11 @@ emit_init_local (MonoCompile *cfg, int local, MonoType *type, gboolean init)
 	if (COMPILE_SOFT_FLOAT (cfg)) {
 		MonoInst *store;
 		int reg = alloc_dreg (cfg, (MonoStackType)var->type);
-		emit_init_rvar (cfg, reg, type);
+		mini_emit_init_rvar (cfg, reg, type);
 		EMIT_NEW_LOCSTORE (cfg, store, local, cfg->cbb->last_ins);
 	} else {
 		if (init)
-			emit_init_rvar (cfg, var->dreg, type);
+			mini_emit_init_rvar (cfg, var->dreg, type);
 		else
 			emit_dummy_init_rvar (cfg, var->dreg, type);
 	}
@@ -5212,7 +5212,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 					if (bb->last_ins && bb->last_ins->opcode == OP_NOT_REACHED) {
 						cfg->cbb = bb;
 
-						emit_init_rvar (cfg, rvar->dreg, fsig->ret);
+						mini_emit_init_rvar (cfg, rvar->dreg, fsig->ret);
 					}
 				}
 			}
@@ -5226,7 +5226,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 			 * set, so set it to a dummy value.
 			 */
 			if (!ret_var_set)
-				emit_init_rvar (cfg, rvar->dreg, fsig->ret);
+				mini_emit_init_rvar (cfg, rvar->dreg, fsig->ret);
 
 			EMIT_NEW_TEMPLOAD (cfg, ins, rvar->inst_c0);
 			*sp++ = ins;
@@ -9375,7 +9375,7 @@ calli_end:
 			} else {
 				if (m_class_is_valuetype (cmethod->klass)) {
 					iargs [0] = mono_compile_create_var (cfg, m_class_get_byval_arg (cmethod->klass), OP_LOCAL);
-					emit_init_rvar (cfg, iargs [0]->dreg, m_class_get_byval_arg (cmethod->klass));
+					mini_emit_init_rvar (cfg, iargs [0]->dreg, m_class_get_byval_arg (cmethod->klass));
 					EMIT_NEW_TEMPLOADA (cfg, *sp, iargs [0]->inst_c0);
 
 					alloc = NULL;
@@ -12157,6 +12157,62 @@ mono_load_membase_to_load_mem (int opcode)
 #endif
 
 	return -1;
+}
+
+int
+mono_load_membase_to_extract (int opcode)
+{
+	switch (opcode) {
+	case OP_LOAD_MEMBASE:
+		return OP_EXTRACTI;
+	case OP_LOADI4_MEMBASE:
+		return OP_EXTRACTI4;
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
+}
+
+int
+mono_load_membase_to_insert (int opcode)
+{
+	switch (opcode) {
+	case OP_LOAD_MEMBASE:
+		return OP_INSERTI;
+	case OP_LOADI4_MEMBASE:
+		return OP_INSERTI4;
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
+}
+
+int
+mono_extract_to_load_membase (int opcode)
+{
+	switch (opcode) {
+	case OP_EXTRACTI:
+		return OP_LOAD_MEMBASE;
+	case OP_EXTRACTI4:
+		return OP_LOADI4_MEMBASE;
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
+}
+
+int
+mono_insert_to_store_membase_reg (int opcode)
+{
+	switch (opcode) {
+	case OP_INSERTI:
+		return OP_STORE_MEMBASE_REG;
+	case OP_INSERTI4:
+		return OP_STOREI4_MEMBASE_REG;
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
 }
 
 static inline int
