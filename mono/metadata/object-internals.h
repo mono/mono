@@ -94,11 +94,20 @@
 		__arr = mono_array_new_specific_checked (__vtable, (size), (error)); \
 	__arr; })
 
+/* eclass should be a run-time constant */
+#define mono_array_new_cached_handle(domain, eclass, size, error) ({	\
+	MonoVTable *__vtable = mono_class_vtable_checked ((domain), mono_array_class_get_cached ((eclass), 1), (error)); \
+	MonoArrayHandle __arr = NULL_HANDLE_ARRAY;			\
+	if (is_ok ((error)))						\
+		__arr = mono_array_new_specific_handle (__vtable, (size), (error)); \
+	__arr; })
+
 #else
 
 #define mono_class_get_field_from_name_cached(klass,name) mono_class_get_field_from_name ((klass), (name))
 #define mono_array_class_get_cached(eclass,rank) mono_class_create_array ((eclass), (rank))
 #define mono_array_new_cached(domain, eclass, size, error) mono_array_new_checked ((domain), (eclass), (size), (error))
+#define mono_array_new_cached_handle(domain, eclass, size, error) (mono_array_new_handle ((domain), (eclass), (size), (error)))
 
 #endif
 
@@ -1597,6 +1606,9 @@ mono_array_new_full_checked (MonoDomain *domain, MonoClass *array_class, uintptr
 MonoArray*
 mono_array_new_specific_checked (MonoVTable *vtable, uintptr_t n, MonoError *error);
 
+MonoArrayHandle
+mono_array_new_specific_handle (MonoVTable *vtable, uintptr_t n, MonoError *error);
+
 MonoArray*
 ves_icall_array_new (MonoDomain *domain, MonoClass *eclass, uintptr_t n);
 
@@ -1809,7 +1821,7 @@ MonoObjectHandle
 mono_static_field_get_value_handle (MonoDomain *domain, MonoClassField *field, MonoError *error);
 
 gboolean
-mono_property_set_value_checked (MonoProperty *prop, void *obj, void **params, MonoError *error);
+mono_property_set_value_handle (MonoProperty *prop, MonoObjectHandle obj, void **params, MonoError *error);
 
 MonoObject*
 mono_property_get_value_checked (MonoProperty *prop, void *obj, void **params, MonoError *error);
@@ -1921,6 +1933,13 @@ mono_runtime_object_init_checked (MonoObject *this_obj, MonoError *error);
 MonoObject*
 mono_runtime_try_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
 
+// The exc parameter is deliberately missing and so far this has proven to reduce code duplication.
+// In particular, if an exception is returned from underlying otherwise succeeded call,
+// is set into the MonoError with mono_error_set_exception_instance.
+// The result is that caller need only check MonoError.
+MonoObjectHandle
+mono_runtime_try_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error);
+
 MonoObject*
 mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoError *error);
 
@@ -2031,5 +2050,10 @@ mono_class_get_virtual_method (MonoClass *klass, MonoMethod *method, gboolean is
 
 MonoStringHandle
 mono_string_empty_handle (MonoDomain *domain);
+
+// FIXME value can be a raw pointer
+// We probably need mono_field_set_value_handle_ref and mono_field_set_value_handle_value
+void
+mono_field_set_value_handle (MonoObjectHandle obj, MonoClassField *field, void *value);
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
