@@ -977,7 +977,7 @@ ReferenceSources/Type.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IObserver.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IProgress.cs
 ../referencesource/mscorlib/system/iserviceobjectprovider.cs
-../../../external/corefx/src/Common/src/CoreLib/System/InvalidTimeZoneException.cs
+../referencesource/mscorlib/system/invalidtimezoneexception.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Lazy.cs
 ../referencesource/mscorlib/system/math.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MemberAccessException.cs
@@ -1024,7 +1024,7 @@ ReferenceSources/Type.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ThreadStaticAttribute.cs
 ../referencesource/mscorlib/system/throwhelper.cs
 ../referencesource/mscorlib/system/timezoneinfo.cs
-../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneNotFoundException.cs
+../referencesource/mscorlib/system/timezonenotfoundexception.cs
 ../referencesource/mscorlib/system/type.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TypeAccessException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TypeInitializationException.cs
