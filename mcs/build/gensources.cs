@@ -74,8 +74,8 @@ public static class Program {
 
         var outFile = Path.GetFullPath (args[0]);
         var libraryFullName = Path.GetFullPath (args[1]);
-        var platformName = args[2];
-        var profileName = args[3];
+        var platformName = args[2].Trim ();
+        var profileName = args[3].Trim ();
         var platformsFolder = Path.Combine (executableDirectory, "platforms");
         var profilesFolder = Path.Combine (executableDirectory, "profiles");
 
@@ -234,6 +234,11 @@ public class ParseResult {
         foreach (var m in EnumerateMatches (sourcesFile, sourcesFile.Exclusions))
             excludedFiles.Add (m.RelativePath);
 
+        foreach (var include in sourcesFile.Includes) {
+            foreach (var m in GetMatchesFromFile (include, excludedFiles))
+                yield return m;
+        }
+
         // FIXME: This is order-sensitive
         foreach (var entry in EnumerateMatches (sourcesFile, sourcesFile.Sources)) {
             if (excludedFiles.Contains (entry.RelativePath)) {
@@ -249,11 +254,12 @@ public class ParseResult {
     public IEnumerable<MatchEntry> GetMatches (string hostPlatformName, string profileName) {
         var excludedFiles = new HashSet<string> (StringComparer.Ordinal);
 
+        int count = 0;
         if (SourcesParser.TraceLevel >= 3)
-            Console.Error.WriteLine ($"// Scanning {ExclusionFiles.Count} exclusions files and {SourcesFiles.Count} sources files");
+            Console.Error.WriteLine ($"// Scanning {ExclusionFiles.Count} exclusions file trees and {SourcesFiles.Count} sources file trees");
 
         foreach (var ef in ExclusionFiles) {
-            if ((ef.HostPlatform != hostPlatformName) || (ef.ProfileName != profileName)) {
+            if ((ef.HostPlatform != (hostPlatformName ?? ef.HostPlatform)) || (ef.ProfileName != (profileName ?? ef.ProfileName))) {
                 if (SourcesParser.TraceLevel >= 4)
                     Console.Error.WriteLine ($"// Skipping exclusion file {ef.FileName} ({ef.HostPlatform}:{ef.ProfileName}) while looking for {hostPlatformName}:{profileName}");
                 continue;
@@ -264,15 +270,20 @@ public class ParseResult {
         }
 
         foreach (var sf in SourcesFiles) {
-            if ((sf.HostPlatform != hostPlatformName) || (sf.ProfileName != profileName)) {
+            if ((sf.HostPlatform != (hostPlatformName ?? sf.HostPlatform)) || (sf.ProfileName != (profileName ?? sf.ProfileName))) {
                 if (SourcesParser.TraceLevel >= 4)
                     Console.Error.WriteLine ($"// Skipping sources file {sf.FileName} ({sf.HostPlatform}:{sf.ProfileName}) while looking for {hostPlatformName}:{profileName}");
                 continue;
             }
 
-            foreach (var m in GetMatchesFromFile (sf, excludedFiles))
+            foreach (var m in GetMatchesFromFile (sf, excludedFiles)) {
+                count++;
                 yield return m;
+            }
         }
+
+        if (SourcesParser.TraceLevel >= 3)
+            Console.Error.WriteLine ($"// Scan complete. Generated {count} successful matches.");
     }
 
     // If you loaded sources files for multiple profiles, you can use the arguments here
@@ -454,15 +465,15 @@ public class SourcesParser {
 
             string line;
             while ((line = sr.ReadLine ()) != null) {
-                if (String.IsNullOrWhiteSpace (line))
-                    continue;
-
                 if (line.StartsWith ("#")) {
                     HandleMetaDirective (state, result, directory, asExclusionsList, line);
                     continue;
                 }
 
                 line = line.Trim ();
+
+                if (String.IsNullOrWhiteSpace (line))
+                    continue;
 
                 var parts = line.Split (':');
 
