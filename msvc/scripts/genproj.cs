@@ -814,7 +814,7 @@ class MsbuildGenerator {
 		var parser = GetSourcesParser ();
 		var result = parser.Parse (libraryDirectory, libraryName);
 
-		return result.GetMatches ().OrderBy (m => m.RelativePath, StringComparer.Ordinal);
+		return result.GetMatches (null, null).OrderBy (m => m.RelativePath, StringComparer.Ordinal);
 	}
 
 	private string FixupSourceName (string s) {
