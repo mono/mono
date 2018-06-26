@@ -65,7 +65,7 @@ UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
 	JSVU_OS=linux64
 endif
-ifeq ($(UNAME_S),Darwin)
+ifeq ($(UNAME),Darwin)
 	JSVU_OS=mac64
 endif
 .PHONY: jsup
