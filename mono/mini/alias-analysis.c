@@ -266,10 +266,7 @@ handle_instruction:
 						if (ins->opcode == OP_LOADI4_MEMBASE || ins->opcode == OP_LOAD_MEMBASE) {
 							if (cfg->verbose_level > 2) { printf ("Converted to extract:"); mono_print_ins (ins); }
 							MonoInst *var = (MonoInst*)tmp->inst_p0;
-							if (ins->opcode == OP_LOADI4_MEMBASE)
-								ins->opcode = OP_EXTRACTI4;
-							else
-								ins->opcode = OP_EXTRACTI;
+							ins->opcode = mono_load_membase_to_extract (ins->opcode);
 							ins->sreg1 = var->dreg;
 							ins->inst_imm = mini_field_offset_to_field_index (var->klass, ins->inst_offset);
 							ins->klass = var->klass;
