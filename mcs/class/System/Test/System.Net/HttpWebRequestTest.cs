@@ -2663,7 +2663,6 @@ namespace MonoTests.System.Net
 				238, 60, 227, 77, 217, 93, 117, 122, 111, 46, 173, 113, 
 			};
 		}
-#endif
 
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS
