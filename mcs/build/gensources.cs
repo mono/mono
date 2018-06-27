@@ -133,9 +133,11 @@ public struct MatchEntry {
 public class TargetParseResult {
     public (string hostPlatform, string profile) Key;
     public SourcesFile Sources, Exclusions;
+    public bool IsFallback;
 
     public override string ToString () {
-        return $"{Key} -> [{Sources?.FileName}, {Exclusions?.FileName}]";
+        var fallbackString = IsFallback ? " fallback" : "";
+        return $"{Key}{fallbackString} -> [{Sources?.FileName}, {Exclusions?.FileName}]";
     }
 }
 
@@ -183,7 +185,7 @@ public class ParseResult {
         return relativePath;
     }
 
-    private IEnumerable<MatchEntry> EnumerateMatches (
+    public IEnumerable<MatchEntry> EnumerateMatches (
         SourcesFile sourcesFile,
         IEnumerable<ParseEntry> entries
     ) {
@@ -259,6 +261,8 @@ public class ParseResult {
 
             yield return entry;
         }
+
+        // FIXME: Why am I not walking includes here
     }
 
     public IEnumerable<MatchEntry> GetMatches () {
@@ -336,7 +340,7 @@ public class SourcesParser {
         };
 
         var testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{profile}_{libraryName}");
-        var ok = TryParseTarget (state, testPath);
+        var ok = TryParseTargetInto (state, testPath);
 
         if (ok) {
             PrintSummary (state, testPath);
@@ -346,7 +350,7 @@ public class SourcesParser {
         state.HostPlatform = null;
 
         testPath = Path.Combine (libraryDirectory, $"{profile}_{libraryName}");
-        ok = TryParseTarget (state, testPath);
+        ok = TryParseTargetInto (state, testPath);
 
         if (ok) {
             PrintSummary (state, testPath);
@@ -354,7 +358,7 @@ public class SourcesParser {
         }
 
         testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{libraryName}");
-        ok = TryParseTarget (state, testPath);
+        ok = TryParseTargetInto (state, testPath);
 
         if (ok) {
             PrintSummary (state, testPath);
@@ -364,7 +368,7 @@ public class SourcesParser {
         state.ProfileName = null;
 
         testPath = Path.Combine (libraryDirectory, libraryName);
-        ok = TryParseTarget (state, testPath);
+        ok = TryParseTargetInto (state, testPath);
 
         PrintSummary (state, testPath);
 
@@ -377,30 +381,54 @@ public class SourcesParser {
         };
 
         string testPath = Path.Combine (libraryDirectory, libraryName);
-        TryParseTarget (state, testPath);
+        var defaultTarget = ParseTarget (state, testPath, null);
 
         foreach (var profile in AllProfileNames) {
             state.ProfileName = profile;
+            state.HostPlatform = null;
+
+            testPath = Path.Combine (libraryDirectory, $"{profile}_{libraryName}");
+            var profileTarget = ParseTarget (state, testPath, null);
+
+            var fallbackTargets = new List<TargetParseResult> ();
 
             foreach (var hostPlatform in AllHostPlatformNames) {
                 state.HostPlatform = hostPlatform;
 
                 testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{profile}_{libraryName}");
-                TryParseTarget (state, testPath);
+                var target = ParseTarget (state, testPath, profileTarget ?? defaultTarget);
+                if ((target != null) && target.IsFallback)
+                    fallbackTargets.Add (target);
             }
 
-            state.HostPlatform = null;
-
-            testPath = Path.Combine (libraryDirectory, $"{profile}_{libraryName}");
-            TryParseTarget (state, testPath);
+            if (fallbackTargets.Count == AllHostPlatformNames.Length) {
+                // If we didn't find any platform specific targets, remove them and just leave one single
+                //  platform-specific target entry
+                foreach (var target in fallbackTargets)
+                    state.Result.TargetDictionary.Remove (target.Key);
+            } else if (profileTarget != null) {
+                // Otherwise, strip the non-platform-specific target
+                state.Result.TargetDictionary.Remove (profileTarget.Key);
+            }
         }
+
+        var platformFallbackTargets = new List<TargetParseResult> ();
 
         foreach (var hostPlatform in AllHostPlatformNames) {
             state.ProfileName = null;
             state.HostPlatform = hostPlatform;
 
             testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{libraryName}");
-            TryParseTarget (state, testPath);
+            var target = ParseTarget (state, testPath, defaultTarget);
+            if ((target != null) && target.IsFallback)
+                platformFallbackTargets.Add (target);
+        }
+
+        if (platformFallbackTargets.Count == AllHostPlatformNames.Length) {
+            foreach (var target in platformFallbackTargets)
+                state.Result.TargetDictionary.Remove (target.Key);
+        } else { 
+            state.Result.TargetDictionary.Remove (defaultTarget.Key);
         }
 
         PrintSummary (state, testPath);
@@ -427,7 +455,14 @@ public class SourcesParser {
         }
     }
 
-    private bool TryParseTarget (State state, string prefix) {
+    private bool TryParseTargetInto (State state, string prefix) {
+        var result = ParseTarget (state, prefix, null);
+        if (result != null)
+            state.Result.TargetDictionary.Add (result.Key, result);
+        return (result != null);
+    }
+
+    private TargetParseResult ParseTarget (State state, string prefix, TargetParseResult fallbackTarget) {
         // FIXME: We determine the prefix for the pair of sources and exclusions,
         //  which may not match intended behavior:
         // if linux_net_4_x_foo.sources is present, but linux_net_4_x_foo.exclude.sources is not present,
@@ -442,9 +477,19 @@ public class SourcesParser {
         var exclusionsFileName = prefix + ".exclude.sources";
 
         if (!File.Exists (sourcesFileName)) {
-            if (TraceLevel >= 3)
-                Console.Error.WriteLine($"// Not found: {sourcesFileName}");
-            return false;
+            if (fallbackTarget != null) {
+                if (TraceLevel >= 3)
+                    Console.Error.WriteLine($"// Not found: {sourcesFileName}, falling back to {fallbackTarget}");
+                tpr.Sources = fallbackTarget.Sources;
+                tpr.Exclusions = fallbackTarget.Exclusions;
+                tpr.IsFallback = true;
+                state.Result.TargetDictionary.Add (tpr.Key, tpr);
+                return tpr;
+            } else {
+                if (TraceLevel >= 3)
+                    Console.Error.WriteLine($"// Not found: {sourcesFileName}");
+                return null;
+            }
         }
 
         tpr.Sources = ParseSingleFile (state, sourcesFileName, false);
@@ -453,8 +498,7 @@ public class SourcesParser {
             tpr.Exclusions = ParseSingleFile (state, exclusionsFileName, true);
 
         state.Result.TargetDictionary.Add (tpr.Key, tpr);
-
-        return true;
+        return tpr;
     }
 
     private SourcesFile ParseSingleFile (State state, string fileName, bool asExclusionsList) {
