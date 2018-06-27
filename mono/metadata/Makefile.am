@@ -186,7 +186,9 @@ libmono_system_native_la_SOURCES = \
 libmono_system_native_la_CFLAGS = -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/Common -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/System.Native -Wno-typedef-redefinition
 
 if HOST_DARWIN
+if !ENABLE_MONOTOUCH
 lib_LTLIBRARIES += libmono-apple-crypto.la
+endif
 endif
 
 libmono_apple_crypto_la_SOURCES = \
