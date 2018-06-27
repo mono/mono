@@ -264,6 +264,9 @@ public class ParseResult {
     public IEnumerable<MatchEntry> GetMatches () {
         var excludedFiles = new HashSet<string> (StringComparer.Ordinal);
 
+        if (TargetDictionary.Count == 0)
+            yield break;
+
         var target = Targets.First ();
 
         if (SourcesParser.TraceLevel >= 3)
