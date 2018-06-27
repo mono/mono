@@ -407,6 +407,15 @@ public class SourcesParser {
             TryParseSingleFileInto (state, testPath + ".exclude.sources", true);
         }
 
+        foreach (var hostPlatform in AllHostPlatformNames) {
+            state.ProfileName = null;
+            state.HostPlatform = hostPlatform;
+
+            testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{libraryName}");
+            TryParseSingleFileInto (state, testPath + ".sources", false);
+            TryParseSingleFileInto (state, testPath + ".exclude.sources", true);
+        }
+
         PrintSummary (state, testPath);
 
         return state.Result;

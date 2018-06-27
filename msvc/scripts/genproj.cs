@@ -807,14 +807,14 @@ class MsbuildGenerator {
 		return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
 	}
 
-	private IEnumerable<MatchEntry> ReadSources (string outputName) {
+	private ParseResult ReadSources (string outputName) {
 		var libraryDirectory = Path.GetFullPath (Path.GetDirectoryName (GetProjectFilename ()));
 		var libraryName = outputName;
 
 		var parser = GetSourcesParser ();
 		var result = parser.Parse (libraryDirectory, libraryName);
 
-		return result.GetMatches (null, null).OrderBy (m => m.RelativePath, StringComparer.Ordinal);
+		return result;
 	}
 
 	private string FixupSourceName (string s) {
@@ -831,7 +831,9 @@ class MsbuildGenerator {
 		string groupConditional
 	) {
 		var result = new StringBuilder ();
-		var readSources = ReadSources (sources_file_name).ToList ();
+		var parseResult = ReadSources (sources_file_name);
+
+		var readSources = parseResult.GetMatches (null, null).OrderBy (m => m.RelativePath, StringComparer.Ordinal).ToList ();
 
 		if (readSources.Count == 0) {
 			Console.Error.WriteLine ($"// No sources built or loaded for {sources_file_name}");
