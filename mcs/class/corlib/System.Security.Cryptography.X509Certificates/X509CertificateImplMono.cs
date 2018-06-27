@@ -62,22 +62,18 @@ namespace System.Security.Cryptography.X509Certificates
 			return new X509CertificateImplMono (x509);
 		}
 
-		public override string GetIssuerName (bool legacyV1Mode)
-		{
-			ThrowIfContextInvalid ();
-			if (legacyV1Mode)
-				return x509.IssuerName;
-			else
+		public override string Issuer {
+			get {
+				ThrowIfContextInvalid ();
 				return MX.X501.ToString (x509.GetIssuerName (), true, ", ", true);
+			}
 		}
 
-		public override string GetSubjectName (bool legacyV1Mode)
-		{
-			ThrowIfContextInvalid ();
-			if (legacyV1Mode)
-				return x509.SubjectName;
-			else
+		public override string Subject {
+			get {
+				ThrowIfContextInvalid ();
 				return MX.X501.ToString (x509.GetSubjectName (), true, ", ", true);
+			}
 		}
 
 		public override byte[] GetRawCertData ()
@@ -161,8 +157,8 @@ namespace System.Security.Cryptography.X509Certificates
 
 			string nl = Environment.NewLine;
 			StringBuilder sb = new StringBuilder ();
-			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, GetSubjectName (false));
-			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, GetIssuerName (false));
+			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, Subject);
+			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, Issuer);
 			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetValidFrom ().ToLocalTime ());
 			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetValidUntil ().ToLocalTime ());
 			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, X509Helper.ToHexString (GetCertHash ()));

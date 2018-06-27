@@ -97,24 +97,6 @@ namespace System.Security.Cryptography.X509Certificates
 
 #region Implemented X509CertificateImpl members
 
-		public override string GetIssuerName (bool legacyV1Mode)
-		{
-			ThrowIfContextInvalid ();
-			if (legacyV1Mode)
-				return _cert.IssuerName;
-			else
-				return MX.X501.ToString (_cert.GetIssuerName (), true, ", ", true);
-		}
-
-		public override string GetSubjectName (bool legacyV1Mode)
-		{
-			ThrowIfContextInvalid ();
-			if (legacyV1Mode)
-				return _cert.SubjectName;
-			else
-				return MX.X501.ToString (_cert.GetSubjectName (), true, ", ", true);
-		}
-
 		public override byte[] GetRawCertData ()
 		{
 			ThrowIfContextInvalid ();
@@ -576,8 +558,8 @@ namespace System.Security.Cryptography.X509Certificates
 
 			// the non-verbose X509Certificate2 == verbose X509Certificate
 			if (!verbose) {
-				sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, GetSubjectName (false));
-				sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, GetIssuerName (false));
+				sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, Subject);
+				sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, Issuer);
 				sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetValidFrom ().ToLocalTime ());
 				sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetValidUntil ().ToLocalTime ());
 				sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, X509Helper.ToHexString (GetCertHash ()));
@@ -586,8 +568,8 @@ namespace System.Security.Cryptography.X509Certificates
 			}
 
 			sb.AppendFormat ("[Version]{0}  V{1}{0}{0}", nl, Version);
-			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, GetSubjectName (false));
-			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, GetIssuerName (false));
+			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, Subject);
+			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, Issuer);
 			sb.AppendFormat ("[Serial Number]{0}  {1}{0}{0}", nl, GetSerialNumber ());
 			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetValidFrom ().ToLocalTime ());
 			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetValidUntil ().ToLocalTime ());

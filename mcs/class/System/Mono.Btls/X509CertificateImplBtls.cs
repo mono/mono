@@ -143,20 +143,6 @@ namespace Mono.Btls
 			return X509.GetRawData (MonoBtlsX509Format.DER);
 		}
 
-		public override string GetSubjectName (bool legacyV1Mode)
-		{
-			if (legacyV1Mode)
-				return SubjectName.Decode (X500DistinguishedNameFlags.None);
-			return SubjectName.Name;
-		}
-
-		public override string GetIssuerName (bool legacyV1Mode)
-		{
-			if (legacyV1Mode)
-				return IssuerName.Decode (X500DistinguishedNameFlags.None);
-			return IssuerName.Name;
-		}
-
 		public override DateTime GetValidFrom ()
 		{
 			return X509.GetNotBefore ().ToLocalTime ();
@@ -215,15 +201,15 @@ namespace Mono.Btls
 			ThrowIfContextInvalid ();
 
 			if (!full) {
-				var summary = GetSubjectName (false);
+				var summary = Subject;
 				return string.Format ("[X509Certificate: {0}]", summary);
 			}
 
 			string nl = Environment.NewLine;
 			StringBuilder sb = new StringBuilder ();
-			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, GetSubjectName (false));
+			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, Subject);
 
-			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, GetIssuerName (false));
+			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, Issuer);
 			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetValidFrom ().ToLocalTime ());
 			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetValidUntil ().ToLocalTime ());
 			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, X509Helper.ToHexString (GetCertHash ()));

@@ -43,6 +43,8 @@ namespace System.Security.Cryptography.X509Certificates
 			get;
 		}
 
+		public sealed override string Issuer => IssuerName.Name;
+
 		public abstract X500DistinguishedName IssuerName {
 			get;
 		}
@@ -58,6 +60,8 @@ namespace System.Security.Cryptography.X509Certificates
 		public abstract Oid SignatureAlgorithm {
 			get;
 		}
+
+		public sealed override string Subject => SubjectName.Name;
 
 		public abstract X500DistinguishedName SubjectName {
 			get;
