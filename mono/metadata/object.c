@@ -3325,13 +3325,6 @@ leave:
 	MONO_EXIT_GC_UNSAFE;
 }
 
-void
-mono_field_set_value_handle (MonoObjectHandle obj, MonoClassField *field, void *value)
-{
-	// FIXME value can be a raw managed pointer, or a value
-	mono_field_set_value (MONO_HANDLE_RAW (obj), field, value);
-}
-
 /**
  * mono_field_static_set_value:
  * \param field \c MonoClassField describing the field to set
@@ -6321,7 +6314,8 @@ mono_array_new_specific_checked (MonoVTable *vtable, uintptr_t n, MonoError *err
 
 MonoArrayHandle
 mono_array_new_specific_handle (MonoVTable *vtable, uintptr_t n, MonoError *error)
-{ // FIXMEcoop
+{
+	// FIXMEcoop invert relationship with mono_array_new_specific_checked
 	return MONO_HANDLE_NEW (MonoArray, mono_array_new_specific_checked (vtable, n, error));
 }
 

@@ -2051,9 +2051,4 @@ mono_class_get_virtual_method (MonoClass *klass, MonoMethod *method, gboolean is
 MonoStringHandle
 mono_string_empty_handle (MonoDomain *domain);
 
-// FIXME value can be a raw pointer
-// We probably need mono_field_set_value_handle_ref and mono_field_set_value_handle_value
-void
-mono_field_set_value_handle (MonoObjectHandle obj, MonoClassField *field, void *value);
-
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

@@ -258,6 +258,7 @@ load_cattr_type_object_with_header (MonoImage *image, MonoType *t, const char *p
 	return load_cattr_type_object (image, t, p, boundp, end, error, slen);
 }
 
+// FIXMEcoop This appears to be polymorphic between managed pointers and unmanaged.
 static void*
 load_cattr_value (MonoImage *image, MonoType *t, const char *p, const char *boundp, const char **end, MonoError *error)
 {
@@ -771,8 +772,8 @@ leave:
 	return is_ok (error);
 }
 
-static void
-create_custom_attr (MonoObjectHandle *result, MonoArrayHandle *result_array, int result_index, MonoImage *image, MonoMethod *method, const guchar *data, guint32 len, MonoError *error)
+static MonoObjectHandle
+create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, guint32 len, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 
@@ -788,7 +789,7 @@ create_custom_attr (MonoObjectHandle *result, MonoArrayHandle *result_array, int
 	char *name = NULL;
 	void *pparams [1] = { NULL };
 	MonoType *prop_type = NULL;
-	void *val = NULL;
+	void *val = NULL; // FIXMEcoop is this a raw pointer or a value?
 
 	error_init (error);
 
@@ -892,7 +893,7 @@ create_custom_attr (MonoObjectHandle *result, MonoArrayHandle *result_array, int
 			val = load_cattr_value (image, field->type, named, data_end, &named, error);
 			goto_if_nok (error, fail);
 
-			mono_field_set_value_handle (attr, field, val);
+			mono_field_set_value (MONO_HANDLE_RAW (attr), field, val); // FIXMEcoop
 		} else if (named_type == CATTR_TYPE_PROPERTY) {
 			MonoProperty *prop;
 			prop = mono_class_get_property_from_name (mono_handle_class (attr), name);
@@ -933,11 +934,17 @@ exit:
 			mono_gc_free_fixed (params);
 	}
 
-	if (result_array)
-		MONO_HANDLE_ARRAY_SETREF (*result_array, result_index, attr);
-	if (result)
-		MONO_HANDLE_ASSIGN (*result, attr);
+	HANDLE_FUNCTION_RETURN_REF (MonoObject, attr);
+}
 
+static void
+create_custom_attr_into_array (MonoImage *image, MonoMethod *method, const guchar *data,
+	guint32 len, MonoArrayHandle array, int index, MonoError *error)
+{
+	// This function serves to avoid creating handles in a loop.
+	HANDLE_FUNCTION_ENTER ();
+	MonoObjectHandle attr = create_custom_attr (image, method, data, len, error);
+	MONO_HANDLE_ARRAY_SETREF (array, index, attr);
 	HANDLE_FUNCTION_RETURN ();
 }
 
@@ -1212,7 +1219,7 @@ create_custom_attr_data (MonoArrayHandle result, int index, MonoImage *image, Mo
 	params [2] = &cattr->data;
 	params [3] = &cattr->data_size;
 
-	mono_runtime_invoke_checked (ctor, MONO_HANDLE_RAW (attr), params, error);
+	mono_runtime_invoke_handle (ctor, attr, params, error);
 	MONO_HANDLE_ARRAY_SETREF (result, index, attr);
 fail:
 	HANDLE_FUNCTION_RETURN ();
@@ -1256,7 +1263,8 @@ mono_custom_attrs_construct_by_type (MonoCustomAttrInfo *cinfo, MonoClass *attr_
 	for (i = 0; i < cinfo->num_attrs; ++i) {
 		MonoCustomAttrEntry *centry = &cinfo->attrs [i];
 		if (!attr_klass || mono_class_is_assignable_from (attr_klass, centry->ctor->klass)) {
-			create_custom_attr (NULL, &result, n, cinfo->image, centry->ctor, centry->data, centry->data_size, error);
+			create_custom_attr_into_array (cinfo->image, centry->ctor, centry->data,
+				centry->data_size, result, n, error);
 			goto_if_nok (error, exit);
 			n ++;
 		}
@@ -1744,8 +1752,7 @@ mono_custom_attrs_get_attr_checked (MonoCustomAttrInfo *ainfo, MonoClass *attr_k
 		return NULL;
 
 	HANDLE_FUNCTION_ENTER ();
-	MonoObjectHandle result = mono_new_null ();
-	create_custom_attr (&result, NULL, 0, ainfo->image, centry->ctor, centry->data, centry->data_size, error);
+	MonoObjectHandle result = create_custom_attr (ainfo->image, centry->ctor, centry->data, centry->data_size, error);
 	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
