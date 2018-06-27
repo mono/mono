@@ -1578,6 +1578,7 @@ typedef struct {
 	gdouble jit_handle_global_vregs;
 	gdouble jit_local_deadce;
 	gdouble jit_local_alias_analysis;
+	gdouble jit_scalar_repl;
 	gdouble jit_if_conversion;
 	gdouble jit_bb_ordering;
 	gdouble jit_compile_dominator_info;
@@ -2480,6 +2481,8 @@ extern void
 mono_local_deadce (MonoCompile *cfg);
 void
 mono_local_alias_analysis (MonoCompile *cfg);
+void
+mono_scalar_repl (MonoCompile *cfg);
 
 /* Generic sharing */
 

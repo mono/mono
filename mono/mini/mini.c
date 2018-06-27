@@ -3553,6 +3553,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if (cfg->opt & MONO_OPT_ALIAS_ANALYSIS) {
 		MONO_TIME_TRACK (mono_jit_stats.jit_local_alias_analysis, mono_local_alias_analysis (cfg));
 		mono_cfg_dump_ir (cfg, "local_alias_analysis");
+		// FIXME: Add a separate opt for this
+		MONO_TIME_TRACK (mono_jit_stats.jit_scalar_repl, mono_scalar_repl (cfg));
+		mono_cfg_dump_ir (cfg, "scalar_repl");
 	}
 	/* Disable this for LLVM to make the IR easier to handle */
 	if (!COMPILE_LLVM (cfg)) {

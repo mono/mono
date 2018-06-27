@@ -471,6 +471,293 @@ done:
 		mono_print_code (cfg, "AFTER ALIAS_ANALYSIS");
 }
 
+typedef struct {
+	MonoInst *var;
+	MonoClass *klass;
+	MonoClassField *fields;
+	int fcount;
+	MonoInst **scalars;
+} ScalarReplVarInfo;
+
+static ScalarReplVarInfo*
+get_scalar_repl_var (MonoCompile *cfg, GHashTable *vars, int vreg)
+{
+	MonoInst *var = get_vreg_to_inst (cfg, vreg);
+	if (!var)
+		return NULL;
+	if ((var->flags & MONO_INST_VOLATILE) || (var->flags & MONO_INST_INDIRECT))
+		return NULL;
+	if (var->opcode != OP_LOCAL)
+		return NULL;
+	if (!MONO_TYPE_ISSTRUCT (var->inst_vtype))
+		return NULL;
+	MonoClass *klass = mono_class_from_mono_type (var->inst_vtype);
+	if (!mini_is_scalar_repl_class (klass))
+		return NULL;
+
+	ScalarReplVarInfo *info = g_hash_table_lookup (vars, GINT_TO_POINTER (vreg));
+	if (!info) {
+		info = mono_mempool_alloc0 (cfg->mempool, sizeof (ScalarReplVarInfo));
+		info->var = var;
+		info->klass = klass;
+		info->fields = m_class_get_fields (klass);
+		info->fcount = mono_class_get_field_count (klass);
+		info->scalars = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst*) * info->fcount);
+
+		for (int i = 0; i < info->fcount; ++i) {
+			MonoClassField *field = &info->fields [i];
+			MonoType *t = field->type;
+			info->scalars [i] = mono_compile_create_var (cfg, t, OP_LOCAL);
+			if (cfg->verbose_level > 2) {
+				printf ("Map R%d %s(0x%0x) to: ", var->dreg, field->name, (int)(field->offset - sizeof (MonoObject)));
+				mono_print_ins (info->scalars [i]);
+			}
+		}
+
+		g_hash_table_insert (vars, GINT_TO_POINTER (vreg), info);
+	}
+	return info;
+}
+
+/*
+ * mono_scalar_repl:
+ *
+ *   Scalar replacement of aggregates.
+ */
+void
+mono_scalar_repl (MonoCompile *cfg)
+{
+	MonoBasicBlock *bb, *first_bb;
+	MonoInst *ins;
+	ScalarReplVarInfo *info, *src_info;
+	GHashTable *vars;
+	int i;
+
+	if (!COMPILE_LLVM (cfg))
+		/* Keep this llvm only for now */
+		return;
+
+	vars = g_hash_table_new (NULL, NULL);
+
+	/**
+	 * Create a dummy bblock and emit code into it so we can use the normal 
+	 * code generation macros.
+	 */
+	cfg->cbb = (MonoBasicBlock *)mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
+	first_bb = cfg->cbb;
+
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		MonoInst *prev = NULL, *n = NULL;
+
+		MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
+			switch (ins->opcode) {
+			case OP_EXTRACTI4:
+			case OP_EXTRACTI: {
+				info = get_scalar_repl_var (cfg, vars, ins->sreg1);
+				if (!info)
+					break;
+				if (cfg->verbose_level > 2) {
+					printf ("Processing: ");
+					mono_print_ins (ins);
+				}
+				int findex = ins->inst_imm;
+				g_assert (findex != -1);
+				// FIXME: Check the load size matches
+				ins->opcode = OP_MOVE;
+				ins->sreg1 = info->scalars [findex]->dreg;
+				if (cfg->verbose_level > 2) {
+					printf ("\tTransform to: ");
+					mono_print_ins (ins);
+				}
+				break;
+			}
+			case OP_VZERO: {
+				info = get_scalar_repl_var (cfg, vars, ins->dreg);
+				if (!info)
+					break;
+				for (i = 0; i < info->fcount; ++i)
+					mini_emit_init_rvar (cfg, info->scalars [i]->dreg, info->scalars [i]->inst_vtype);
+				break;
+			}
+			case OP_VMOVE: {
+				ScalarReplVarInfo *dst_info = get_scalar_repl_var (cfg, vars, ins->dreg);
+				src_info = get_scalar_repl_var (cfg, vars, ins->sreg1);
+				if (!dst_info && !src_info)
+					break;
+				if (cfg->verbose_level > 2) {
+					printf ("Processing: ");
+					mono_print_ins (ins);
+				}
+				if (dst_info && !src_info) {
+					info = dst_info;
+					/* Transform into a series of EXTRACT ops */
+					for (i = 0; i < info->fcount; ++i) {
+						MonoInst *extract;
+
+						MONO_INST_NEW (cfg, extract, mono_load_membase_to_extract (mono_type_to_load_membase (cfg, info->scalars [i]->inst_vtype)));
+						extract->sreg1 = ins->sreg1;
+						extract->inst_offset = info->fields [i].offset - sizeof (MonoObject);
+						extract->dreg = info->scalars [i]->dreg;
+						extract->klass = info->var->klass;
+						extract->inst_imm = i;
+						MONO_ADD_INS (cfg->cbb, extract);
+						if (cfg->verbose_level > 2) {
+							printf ("\tAdd: ");
+							mono_print_ins (extract);
+						}
+					}
+				} else if (src_info && !dst_info) {
+					info = src_info;
+					MONO_EMIT_NEW_VZERO (cfg, ins->dreg, info->var->klass);
+					/* Transform into a series of INSERT ops */
+					for (i = 0; i < info->fcount; ++i) {
+						MonoInst *tmp;
+
+						MONO_INST_NEW (cfg, tmp, mono_load_membase_to_insert (mono_type_to_load_membase (cfg, info->scalars [i]->inst_vtype)));
+						tmp->dreg = ins->dreg;
+						tmp->sreg1 = ins->dreg;
+						tmp->sreg2 = info->scalars [i]->dreg;
+						tmp->inst_offset = info->fields [i].offset - sizeof (MonoObject);
+						tmp->klass = info->var->klass;
+						tmp->inst_imm = i;
+						MONO_ADD_INS (cfg->cbb, tmp);
+						if (cfg->verbose_level > 2) {
+							printf ("\tAdd: ");
+							mono_print_ins (tmp);
+						}
+					}
+				} else {
+					g_assert (src_info && dst_info);
+
+					info = src_info;
+					/* Transform into moves */
+					for (i = 0; i < info->fcount; ++i) {
+						MonoInst *tmp;
+
+						MONO_INST_NEW (cfg, tmp, OP_MOVE);
+						tmp->dreg = dst_info->scalars [i]->dreg;
+						tmp->sreg1 = src_info->scalars [i]->dreg;
+						MONO_ADD_INS (cfg->cbb, tmp);
+						if (cfg->verbose_level > 2) {
+							printf ("\tAdd: ");
+							mono_print_ins (tmp);
+						}
+					}
+				}
+				break;
+			}
+			case OP_VCALL: {
+				info = get_scalar_repl_var (cfg, vars, ins->dreg);
+				if (!info)
+					break;
+
+				if (cfg->verbose_level > 2) {
+					printf ("Processing: ");
+					mono_print_ins (ins);
+				}
+
+				/* Make the call use a new temp */
+				MonoInst *tmp_var = mono_compile_create_var (cfg, info->var->inst_vtype, OP_LOCAL);
+				/* Avoid scalar repl on the temp */
+				tmp_var->flags |= MONO_INST_VOLATILE;
+				ins->dreg = tmp_var->dreg;
+
+				if (cfg->verbose_level > 2) {
+					printf ("Changed to: ");
+					mono_print_ins (ins);
+				}
+
+				/*
+				 * Keep the original ins by making a dummy copy, and setting ins to it, so
+				 * the mono_replace_ins () call operates on it below.
+				 */
+				MonoInst *dummy_ins;
+				MONO_INST_NEW (cfg, dummy_ins, OP_NOP);
+				memcpy (dummy_ins, ins, sizeof (MonoInst));
+				MONO_ADD_INS (cfg->cbb, ins);
+				ins = dummy_ins;
+
+				/* Copy from the temp */
+				for (i = 0; i < info->fcount; ++i) {
+					MonoInst *extract;
+
+					MONO_INST_NEW (cfg, extract, mono_load_membase_to_extract (mono_type_to_load_membase (cfg, info->scalars [i]->inst_vtype)));
+					extract->sreg1 = tmp_var->dreg;
+					extract->inst_offset = info->fields [i].offset - sizeof (MonoObject);
+					extract->dreg = info->scalars [i]->dreg;
+					extract->klass = info->var->klass;
+					MONO_ADD_INS (cfg->cbb, extract);
+					if (cfg->verbose_level > 2) {
+						printf ("\tAdd: ");
+						mono_print_ins (extract);
+					}
+				}
+				break;
+			}
+			case OP_OUTARG_VT:
+				info = get_scalar_repl_var (cfg, vars, ins->sreg1);
+				if (!info)
+					break;
+
+				if (cfg->verbose_level > 2) {
+					printf ("Processing: ");
+					mono_print_ins (ins);
+				}
+
+				/*
+				 * Make a temp, store the scalars into it, and pass the temp to the call.
+				 */
+				MonoInst *tmp_var = mono_compile_create_var (cfg, info->var->inst_vtype, OP_LOCAL);
+				/* Avoid scalar repl on the temp */
+				tmp_var->flags |= MONO_INST_VOLATILE;
+
+				MONO_EMIT_NEW_VZERO (cfg, tmp_var->dreg, info->var->klass);
+				/* Transform into a series of INSERT ops */
+				for (i = 0; i < info->fcount; ++i) {
+					MonoInst *tmp;
+
+					MONO_INST_NEW (cfg, tmp, mono_load_membase_to_insert (mono_type_to_load_membase (cfg, info->scalars [i]->inst_vtype)));
+					tmp->dreg = tmp_var->dreg;
+					tmp->sreg1 = tmp_var->dreg;
+					tmp->sreg2 = info->scalars [i]->dreg;
+					tmp->inst_offset = info->fields [i].offset - sizeof (MonoObject);
+					tmp->klass = info->var->klass;
+					MONO_ADD_INS (cfg->cbb, tmp);
+					if (cfg->verbose_level > 2) {
+						printf ("\tAdd: ");
+						mono_print_ins (tmp);
+					}
+				}
+
+				MonoInst *tmp_ins;
+				MONO_INST_NEW (cfg, tmp_ins, OP_OUTARG_VT);
+				memcpy (tmp_ins, ins, sizeof (MonoInst));
+				tmp_ins->sreg1 = tmp_var->dreg;
+				MONO_ADD_INS (cfg->cbb, tmp_ins);
+
+				break;
+			default:
+				break;
+			}
+
+			g_assert (cfg->cbb == first_bb);
+
+			if (cfg->cbb->code || (cfg->cbb != first_bb)) {
+				/* Replace the original instruction with the new code sequence */
+
+				mono_replace_ins (cfg, bb, ins, &prev, first_bb, cfg->cbb);
+				first_bb->code = first_bb->last_ins = NULL;
+				first_bb->in_count = first_bb->out_count = 0;
+				cfg->cbb = first_bb;
+			} else {
+				prev = ins;
+			}
+		}
+	}
+
+	g_free (vars);
+}
+
 #else /* !DISABLE_JIT */
 
 MONO_EMPTY_SOURCE_FILE (alias_analysis);
