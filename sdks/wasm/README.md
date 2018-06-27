@@ -64,7 +64,7 @@ Go to `http://localhost:8000/sample.html`
 To experiment with the debugger, do the following steps:
 
 - When calling `packager.exe` pass the `-debug` argument to it.
-- Start Chrome with remove debugging enabled (IE `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222`)
+- Start Chrome with remote debugging enabled (IE `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222`)
 - Download and run the debugger proxy: https://github.com/kumpera/ws-proxy
 - Connect to the remote debugged Chrome and pick the page which is running the wasm code
 - Rewrite the request URL (just the `ws` argument) to use the proxy port instead of the browser port
