@@ -1289,6 +1289,7 @@
     <Compile Include="System.Reflection\StrongNameKeyPair.cs" />
     <Compile Include="System.Resources\Win32Resources.cs" />
     <Compile Include="System.Runtime.CompilerServices\ConditionalWeakTable.cs" />
+    <Compile Include="System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
     <Compile Include="System.Runtime.CompilerServices\RuntimeHelpers.cs" />
     <Compile Include="System.Runtime.CompilerServices\Unsafe.cs" />
     <Compile Include="System.Runtime.Hosting\ActivationArguments.cs" />
