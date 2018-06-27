@@ -932,7 +932,8 @@ ReferenceSources/Type.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/DateTimeKind.cs
 ../referencesource/mscorlib/system/datetimeoffset.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/DayOfWeek.cs
-corert/Decimal.test.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Decimal.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Decimal.DecCalc.cs
 ../referencesource/mscorlib/system/defaultbinder.cs
 ../referencesource/mscorlib/system/dbnull.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/DivideByZeroException.cs
