@@ -148,8 +148,8 @@ System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameEleme
 System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElementCollection.cs
 
 System.Security.Cryptography/AsnEncodedData.cs
-System.Security.Cryptography/AsnEncodedDataCollection.cs
-System.Security.Cryptography/AsnEncodedDataEnumerator.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/src/System/Security/Cryptography/AsnEncodedDataCollection.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/src/System/Security/Cryptography/AsnEncodedDataEnumerator.cs
 
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/OpenFlags.cs
 System.Security.Cryptography.X509Certificates/OSX509Certificates.cs
