@@ -494,9 +494,12 @@ MonoDomain *
 mono_domain_create_appdomain (char *friendly_name, char *configuration_file)
 {
 	HANDLE_FUNCTION_ENTER ();
+	MonoDomain *domain;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-	MonoDomain *domain = mono_domain_create_appdomain_checked (friendly_name, configuration_file, error);
+	domain = mono_domain_create_appdomain_checked (friendly_name, configuration_file, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	HANDLE_FUNCTION_RETURN_VAL (domain);
 }
 
