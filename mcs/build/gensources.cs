@@ -463,8 +463,6 @@ public class SourcesParser {
 
     private bool TryParseTargetInto (State state, string prefix) {
         var result = ParseTarget (state, prefix, null);
-        if (result != null)
-            state.Result.TargetDictionary.Add (result.Key, result);
         return (result != null);
     }
 
