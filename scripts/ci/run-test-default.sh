@@ -76,6 +76,7 @@ ${TESTCMD} --label=System.Data.DSE --timeout=5m make -w -C mcs/class/System.Data
 ${TESTCMD} --label=System.Web.Abstractions --timeout=5m make -w -C mcs/class/System.Web.Abstractions run-test
 ${TESTCMD} --label=System.Web.Routing --timeout=5m make -w -C mcs/class/System.Web.Routing run-test
 ${TESTCMD} --label=System.Runtime.Serialization --timeout=5m make -w -C mcs/class/System.Runtime.Serialization run-test
+${TESTCMD} --label=System.Runtime.Serialization-xunit --timeout=5m make -w -C mcs/class/System.Runtime.Serialization run-xunit-test
 ${TESTCMD} --label=System.IdentityModel --timeout=5m make -w -C mcs/class/System.IdentityModel run-test
 ${TESTCMD} --label=System.ServiceModel --timeout=15m make -w -C mcs/class/System.ServiceModel run-test
 ${TESTCMD} --label=System.ServiceModel.Web --timeout=5m make -w -C mcs/class/System.ServiceModel.Web run-test
