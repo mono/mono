@@ -236,7 +236,9 @@ public class ParseResult {
         }
     }
 
-    public IEnumerable<MatchEntry> GetMatchesFromFile (SourcesFile sourcesFile, HashSet<string> excludedFiles = null) {
+    public IEnumerable<MatchEntry> GetMatchesFromFile (
+        SourcesFile sourcesFile, HashSet<string> excludedFiles = null
+    ) {
         if (sourcesFile == null)
             yield break;
 
@@ -261,8 +263,6 @@ public class ParseResult {
 
             yield return entry;
         }
-
-        // FIXME: Why am I not walking includes here
     }
 
     public IEnumerable<MatchEntry> GetMatches () {

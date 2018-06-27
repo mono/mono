@@ -825,36 +825,6 @@ class MsbuildGenerator {
 		return src;
 	}
 
-	private string GetPropertyKeyForSourcesFile (SourcesFile file) {
-		return Path.GetFileName (file.FileName)
-			.Replace (".exclude.sources", ".exclusions")
-			.Replace (".", "_");
-	}
-
-	private void GeneratePropertyForSourcesFile (
-		StringBuilder result, 
-		HashSet<string> filesAlreadyGenerated,
-		ParseResult parseResult, 
-		SourcesFile file
-	) {
-		var key = GetPropertyKeyForSourcesFile (file);
-		if (filesAlreadyGenerated.Contains (key))
-			return;
-
-		filesAlreadyGenerated.Add (key);
-
-		result.Append ($"    <{key}>");
-		foreach (var m in parseResult.EnumerateMatches (file, file.IsExclusion ? file.Exclusions : file.Sources))
-			result.Append ($"{m.RelativePath}; ");
-
-		foreach (var i in file.Includes) {
-			var iKey = GetPropertyKeyForSourcesFile (i);
-			result.Append ($"$({iKey}); ");
-		}
-
-		result.AppendLine ($"</{key}>");
-	}
-
 	private StringBuilder GenerateSourceItemGroups (
 		string profile,
 		string sources_file_name,
@@ -872,62 +842,50 @@ class MsbuildGenerator {
 
 		var hostPlatformNames = GetSourcesParser ().AllHostPlatformNames;
 
-		result.AppendLine ("  <PropertyGroup>");
+		var nullExclusions = new SourcesFile ("null", true);
 
-		var filesAlreadyGenerated = new HashSet<string> ();
+		var targetFileSets = (from target in parseResult.Targets
+			where (target.Key.profile == null) || SlnGenerator.profiles.Contains (target.Key.profile)
+			let excludedFiles = new HashSet<string> (StringComparer.Ordinal)
+			// This populates excludedFiles
+			let exclusionMatches = parseResult.GetMatchesFromFile (target.Exclusions ?? nullExclusions, excludedFiles)
+			// This does too
+			let matches = parseResult.GetMatchesFromFile (target.Sources, excludedFiles)
+			let fileNames = new HashSet<string> (from m in matches select FixupSourceName (m.RelativePath))
+			orderby target.Key.profile, target.Key.hostPlatform
+			select (key: target.Key, fileNames: fileNames)).ToList ();
 
-		foreach (var ef in parseResult.ExclusionFiles.Values)
-			GeneratePropertyForSourcesFile (result, filesAlreadyGenerated, parseResult, ef);
-
-		result.AppendLine ("  </PropertyGroup>");
-
-		result.AppendLine ("  <PropertyGroup>");
-
-		foreach (var sf in parseResult.SourcesFiles.Values) {
-			GeneratePropertyForSourcesFile (result, filesAlreadyGenerated, parseResult, sf);
-
-			if ((sf.Exclusions.Count > 0) || (sf.Includes.Count > 0)) {
-				var exclusionsKey = GetPropertyKeyForSourcesFile (sf).Replace ("_sources", "_inline_exclusions");
-
-				result.Append ($"    <{exclusionsKey}>");
-
-				foreach (var m in parseResult.EnumerateMatches (sf, sf.Exclusions))
-					result.Append ($"{m.RelativePath}; ");
-
-				foreach (var i in sf.Includes) {
-					var includeExclusionsKey = GetPropertyKeyForSourcesFile (i).Replace ("_sources", "_inline_exclusions");
-					result.Append ($"$({includeExclusionsKey}); ");
-				}
-
-				result.AppendLine ($"</{exclusionsKey}>");
+		var commonFiles = targetFileSets.Aggregate (
+			(HashSet<string>)null,
+			(files, targetSet) => {
+				if (files == null)
+					files = new HashSet<string> (targetSet.fileNames, StringComparer.Ordinal);
+				else
+					files.IntersectWith (targetSet.fileNames);
+				return files;
 			}
-		}
+		).ToList ();
 
-		result.AppendLine ("  </PropertyGroup>");
+		result.Append ($"  <ItemGroup>{NewLine}");
+		foreach (var file in commonFiles.OrderBy (f => f, StringComparer.Ordinal))
+			result.Append ($"    <Compile Include=\"{file}\" />{NewLine}");
+		result.Append ($"  </ItemGroup>{NewLine}");
 
-		foreach (var target in parseResult.Targets) {
-			Console.Error.WriteLine (target);
-
-			if ((target.Key.hostPlatform == null) && (target.Key.profile == null)) {
+		foreach (var set in targetFileSets) {
+			if ((set.key.hostPlatform == null) && (set.key.profile == null)) {
 				result.Append ($"  <ItemGroup>{NewLine}");
-			} else if (target.Key.hostPlatform == null) {
-				result.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{target.Key.profile}' \">{NewLine}");
-			} else if (target.Key.profile == null) {
-				result.Append ($"  <ItemGroup Condition=\" '$(HostPlatform)' == '{target.Key.hostPlatform}' \">{NewLine}");
+			} else if (set.key.hostPlatform == null) {
+				result.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{set.key.profile}' \">{NewLine}");
+			} else if (set.key.profile == null) {
+				result.Append ($"  <ItemGroup Condition=\" '$(HostPlatform)' == '{set.key.hostPlatform}' \">{NewLine}");
 			} else {
-				result.Append ($"  <ItemGroup Condition=\" '$(Platform)|$(HostPlatform)' == '{target.Key.profile}|{target.Key.hostPlatform}' \">{NewLine}");
+				result.Append ($"  <ItemGroup Condition=\" '$(Platform)|$(HostPlatform)' == '{set.key.profile}|{set.key.hostPlatform}' \">{NewLine}");
 			}
 
-			var sourcesKey = GetPropertyKeyForSourcesFile (target.Sources);
-			var inlineExclusionsKey = sourcesKey.Replace ("_sources", "_inline_exclusions");
-			var includeKey = $"$({sourcesKey})";
-			var excludeKey = $"";
-			if ((target.Sources.Exclusions.Count > 0) || (target.Sources.Includes.Count > 0))
-				excludeKey = $"$({inlineExclusionsKey});";
-			if (target.Exclusions != null)
-				excludeKey += $"$({GetPropertyKeyForSourcesFile (target.Exclusions)})";
+			set.fileNames.ExceptWith (commonFiles);
 
-			result.Append ($"    <Compile Include=\"{includeKey}\" Exclude=\"{excludeKey}\" />{NewLine}");
+			foreach (var file in set.fileNames.OrderBy (f => f, StringComparer.Ordinal))
+				result.Append ($"    <Compile Include=\"{file}\" />{NewLine}");
 
 			result.Append ($"  </ItemGroup>{NewLine}");
 		}
