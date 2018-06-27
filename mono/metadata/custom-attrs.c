@@ -1186,8 +1186,8 @@ ves_icall_System_Reflection_CustomAttributeData_ResolveArgumentsInternal (MonoRe
 	mono_error_set_pending_exception (error);
 }
 
-static void
-create_custom_attr_data (MonoArrayHandle result, int index, MonoImage *image, MonoCustomAttrEntry *cattr, MonoError *error)
+static MonoObjectHandle
+create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 
@@ -1220,8 +1220,19 @@ create_custom_attr_data (MonoArrayHandle result, int index, MonoImage *image, Mo
 	params [3] = &cattr->data_size;
 
 	mono_runtime_invoke_handle (ctor, attr, params, error);
-	MONO_HANDLE_ARRAY_SETREF (result, index, attr);
 fail:
+	HANDLE_FUNCTION_RETURN_REF (MonoObject, attr);
+}
+
+static void
+create_custom_attr_data_into_array (MonoImage *image, MonoCustomAttrEntry *cattr, MonoArrayHandle result, int index, MonoError *error)
+{
+	// This function serves to avoid creating handles in a loop.
+	HANDLE_FUNCTION_ENTER ();
+	MonoObjectHandle attr = create_custom_attr_data (image, cattr, error);
+	goto_if_nok (error, exit);
+	MONO_HANDLE_ARRAY_SETREF (result, index, attr);
+exit:
 	HANDLE_FUNCTION_RETURN ();
 }
 
@@ -1298,7 +1309,7 @@ mono_custom_attrs_data_construct (MonoCustomAttrInfo *cinfo, MonoError *error)
 	MonoArrayHandle result = mono_array_new_handle (mono_domain_get (), mono_defaults.customattribute_data_class, cinfo->num_attrs, error);
 	goto_if_nok (error, return_null);
 	for (int i = 0; i < cinfo->num_attrs; ++i) {
-		create_custom_attr_data (result, i, cinfo->image, &cinfo->attrs [i], error);
+		create_custom_attr_data_into_array (cinfo->image, &cinfo->attrs [i], result, i, error);
 		goto_if_nok (error, return_null);
 	}
 	goto exit;
