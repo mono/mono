@@ -375,6 +375,20 @@ public class SourcesParser {
         return state.Result;
     }
 
+    private void StripFallbackTargetsOrDefaultTarget (
+        State state, TargetParseResult defaultTarget, List<TargetParseResult> fallbackTargets, int maximumCount
+    ) {
+        if (fallbackTargets.Count == maximumCount) {
+            // If we didn't find any platform specific targets, remove them and just leave one single
+            //  platform-specific target entry
+            foreach (var target in fallbackTargets)
+                state.Result.TargetDictionary.Remove (target.Key);
+        } else if (defaultTarget != null) {
+            // Otherwise, strip the non-platform-specific target
+            state.Result.TargetDictionary.Remove (defaultTarget.Key);
+        }
+    }
+
     public ParseResult Parse (string libraryDirectory, string libraryName) {
         var state = new State {
             Result = new ParseResult (libraryDirectory, libraryName)
@@ -382,13 +396,16 @@ public class SourcesParser {
 
         string testPath = Path.Combine (libraryDirectory, libraryName);
         var defaultTarget = ParseTarget (state, testPath, null);
+        var profileFallbackTargets = new List<TargetParseResult> ();
 
         foreach (var profile in AllProfileNames) {
             state.ProfileName = profile;
             state.HostPlatform = null;
 
             testPath = Path.Combine (libraryDirectory, $"{profile}_{libraryName}");
-            var profileTarget = ParseTarget (state, testPath, null);
+            var profileTarget = ParseTarget (state, testPath, defaultTarget);
+            if ((profileTarget != null) && profileTarget.IsFallback)
+                profileFallbackTargets.Add (profileTarget);
 
             var fallbackTargets = new List<TargetParseResult> ();
 
@@ -401,16 +418,10 @@ public class SourcesParser {
                     fallbackTargets.Add (target);
             }
 
-            if (fallbackTargets.Count == AllHostPlatformNames.Length) {
-                // If we didn't find any platform specific targets, remove them and just leave one single
-                //  platform-specific target entry
-                foreach (var target in fallbackTargets)
-                    state.Result.TargetDictionary.Remove (target.Key);
-            } else if (profileTarget != null) {
-                // Otherwise, strip the non-platform-specific target
-                state.Result.TargetDictionary.Remove (profileTarget.Key);
-            }
+            StripFallbackTargetsOrDefaultTarget (state, profileTarget, fallbackTargets, AllHostPlatformNames.Length);
         }
+
+        StripFallbackTargetsOrDefaultTarget (state, defaultTarget, profileFallbackTargets, AllProfileNames.Length);
 
         var platformFallbackTargets = new List<TargetParseResult> ();
 
@@ -424,12 +435,7 @@ public class SourcesParser {
                 platformFallbackTargets.Add (target);
         }
 
-        if (platformFallbackTargets.Count == AllHostPlatformNames.Length) {
-            foreach (var target in platformFallbackTargets)
-                state.Result.TargetDictionary.Remove (target.Key);
-        } else { 
-            state.Result.TargetDictionary.Remove (defaultTarget.Key);
-        }
+        StripFallbackTargetsOrDefaultTarget (state, defaultTarget, platformFallbackTargets, AllHostPlatformNames.Length);
 
         PrintSummary (state, testPath);
 
