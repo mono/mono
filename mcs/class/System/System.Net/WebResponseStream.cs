@@ -149,7 +149,7 @@ namespace System.Net
 					ReadTimeout, () => {
 						Operation.Abort ();
 						InnerStream.Dispose ();
-					}).ConfigureAwait (false);
+					}, () => Operation.Aborted, cancellationToken).ConfigureAwait (false);
 			} catch (Exception e) {
 				throwMe = GetReadException (WebExceptionStatus.ReceiveFailure, e, "ReadAsync");
 			}
