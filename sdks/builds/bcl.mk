@@ -1,4 +1,25 @@
 
+
+# $(BCL_PROFILES) controls, essentially, which profiles get nunitlite built (maybe more later)
+# $(BCL_TEST_PROFILES) controls which profiles get test suites built. Right now it's only nunit-based corlib, System and System.Core. To be expanded.
+
+ifndef DISABLE_ANDROID
+BCL_PROFILES += monodroid
+endif
+
+ifndef DISABLE_IOS
+BCL_PROFILES += monotouch
+endif
+
+ifndef DISABLE_DESKTOP
+BCL_PROFILES += net_4_x
+endif
+
+ifndef DISABLE_WASM
+BCL_PROFILES += wasm
+BCL_TEST_PROFILES += wasm
+endif
+
 .stamp-bcl-toolchain:
 	touch $@
 
@@ -26,6 +47,15 @@ bcl_CONFIGURE_FLAGS = \
 
 $(TOP)/sdks/out/bcl/monodroid $(TOP)/sdks/out/bcl/monotouch $(TOP)/sdks/out/bcl/wasm $(TOP)/sdks/out/bcl/net_4_x:
 	mkdir -p $@
+
+build-custom-bcl:
+	@for the_profile in $(BCL_PROFILES); do $(MAKE) -C $(TOP)/mcs/tools/nunit-lite PROFILE=$$the_profile; done
+	@for the_profile in $(BCL_TEST_PROFILES); do \
+		$(MAKE) -C $(TOP)/mcs/class/corlib test-local PROFILE=$$the_profile; \
+		$(MAKE) -C $(TOP)/mcs/class/System test-local PROFILE=$$the_profile; \
+		$(MAKE) -C $(TOP)/mcs/class/System.Core test-local PROFILE=$$the_profile; \
+	done
+	$(MAKE) -C bcl
 
 .PHONY: package-bcl
 package-bcl: | $(TOP)/sdks/out/bcl/net_4_x $(TOP)/sdks/out/bcl/monodroid $(TOP)/sdks/out/bcl/monotouch $(TOP)/sdks/out/bcl/wasm
