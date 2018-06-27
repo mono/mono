@@ -118,18 +118,19 @@ sample.dll:  $(TEST_DEPS) sample.cs
 Mono.Cecil.dll: $(TOP)/sdks/out/bcl/net_4_x/Mono.Cecil.dll
 	cp $< $@
 
+# We use system csc as this is a desktop program
 packager.exe: packager.cs Mono.Cecil.dll
-	csc -r:Mono.Cecil.dll packager.cs
+	csc /debug:portable -r:Mono.Cecil.dll packager.cs
 
 .stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll sample.dll debug.html
-	mono packager.exe -debug -binding -out=debug_sample sample.dll
+	mono packager.exe -debug -out=debug_sample sample.dll
 	cp debug.html debug_sample
 	touch $@
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
 .stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll binding_tests.dll mini_tests.dll main.exe
-	mono packager.exe -binding -out=test-suite binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
+	mono packager.exe -out=test-suite binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
 	cp test.js test-suite/
 	touch $@
 
@@ -172,17 +173,29 @@ package: build
 	mkdir tmp
 	mkdir tmp/bcl
 	cp -r $(TOP)/sdks/out/bcl/wasm/* tmp/bcl/
+	rm -rf tmp/bcl/bare
+	rm -rf tmp/bcl/secxml
+	rm -rf tmp/bcl/tests
+	rm -rf tmp/bcl/corlib.unsafe.dll.tmp
 	cp driver.c tmp/
 	cp $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a tmp/
 	cp library_mono.js tmp/
 	cp binding_support.js tmp/
-	cp mono.js tmp/
 	cp -r debug tmp/
 	cp -r release tmp/
+	rm tmp/debug/.stamp-build
+	rm tmp/release/.stamp-build
 	cp sample.html tmp/
+	mkdir tmp/framework
+	cp bindings.cs tmp
+	cp bindings.dll tmp/framework
+	cp bindings.pdb tmp/framework
 	cp sample.cs tmp/
 	cp README.md tmp/
 	cp server.py tmp/
+	cp Mono.Cecil.dll tmp/
+	cp packager.exe tmp/
+	cp runtime.g.js tmp/
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 

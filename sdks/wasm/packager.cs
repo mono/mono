@@ -24,7 +24,7 @@ class Driver {
 		Console.WriteLine ("\t-help         Show this help message");
 		Console.WriteLine ("\t-debug        Enable Debugging (default false)");
 		Console.WriteLine ("\t-debugrt      Use the debug runtime (default release) - this has nothing to do with C# debugging");
-		Console.WriteLine ("\t-binding      Include binding engine (default false)");
+		Console.WriteLine ("\t-nobinding    Disable binding engine (default include engine)");
 		Console.WriteLine ("\t-prefix=x     Set the input assembly prefix to 'x' (default to the current directory)");
 		Console.WriteLine ("\t-out=x        Set the output directory to 'x' (default to the current directory)");
 		Console.WriteLine ("\t-deploy=x     Set the deploy prefix to 'x' (default to 'managed')");
@@ -124,7 +124,7 @@ class Driver {
 		var root_assemblies = new List<string> ();
 		enable_debug = false;
 		var add_binding = true;
-		out_prefix = "";
+		out_prefix = Environment.CurrentDirectory;
 		app_prefix = Environment.CurrentDirectory;
 		var deploy_prefix = "managed";
 		var vfs_prefix = "managed";
@@ -153,8 +153,8 @@ class Driver {
 			case "debug":
 				enable_debug = true;
 				break;
-			case "binding":
-				add_binding = true;
+			case "nobinding":
+				add_binding = false;
 				break;
 			case "out":
 				out_prefix = value;
@@ -177,7 +177,8 @@ class Driver {
 			default:
 				Console.WriteLine ($"Invalid parameter {key}");
 				Usage ();
-				return;
+				Environment.Exit (-1);
+				break;
 			}
 		}
 		
