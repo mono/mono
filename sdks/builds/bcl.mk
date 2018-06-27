@@ -49,13 +49,13 @@ $(TOP)/sdks/out/bcl/monodroid $(TOP)/sdks/out/bcl/monotouch $(TOP)/sdks/out/bcl/
 	mkdir -p $@
 
 build-custom-bcl:
+	$(MAKE) -C bcl
 	@for the_profile in $(BCL_PROFILES); do $(MAKE) -C $(TOP)/mcs/tools/nunit-lite PROFILE=$$the_profile; done
 	@for the_profile in $(BCL_TEST_PROFILES); do \
 		$(MAKE) -C $(TOP)/mcs/class/corlib test-local PROFILE=$$the_profile; \
 		$(MAKE) -C $(TOP)/mcs/class/System test-local PROFILE=$$the_profile; \
 		$(MAKE) -C $(TOP)/mcs/class/System.Core test-local PROFILE=$$the_profile; \
 	done
-	$(MAKE) -C bcl
 
 .PHONY: package-bcl
 package-bcl: | $(TOP)/sdks/out/bcl/net_4_x $(TOP)/sdks/out/bcl/monodroid $(TOP)/sdks/out/bcl/monotouch $(TOP)/sdks/out/bcl/wasm
