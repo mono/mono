@@ -833,53 +833,22 @@ class MsbuildGenerator {
 		var result = new StringBuilder ();
 		var parseResult = ReadSources (sources_file_name);
 
-		var readSources = parseResult.GetMatches (null, null).OrderBy (m => m.RelativePath, StringComparer.Ordinal).ToList ();
+		var readSources = parseResult.GetMatches ().OrderBy (m => m.RelativePath, StringComparer.Ordinal).ToList ();
 
 		if (readSources.Count == 0) {
 			Console.Error.WriteLine ($"// No sources built or loaded for {sources_file_name}");
 			return result;
 		}
 
-		var observedHostPlatforms = new HashSet<string> ();
-		var profileSets = new Dictionary<string, Dictionary<string, HashSet<string>>> ();
-
-		foreach (var rs in readSources) {
-			if (rs.HostPlatform != null)
-				observedHostPlatforms.Add (rs.HostPlatform);
-
-			var profileName = rs.ProfileName ?? "default";
-			var platformName = rs.HostPlatform ?? "default";
-
-			Dictionary<string, HashSet<string>> profileSet;
-			if (!profileSets.TryGetValue (profileName, out profileSet))
-				profileSets[profileName] = profileSet = new Dictionary<string, HashSet<string>> ();
-
-			HashSet<string> platformSet;
-			if (!profileSet.TryGetValue (platformName, out platformSet))
-				profileSet[platformName] = platformSet = new HashSet<string> ();
-
-			platformSet.Add (FixupSourceName (rs.RelativePath));
-		}
-
 		var hostPlatformNames = GetSourcesParser ().AllHostPlatformNames;
 
-		var allValidSets = (
-			from profileName in SlnGenerator.profiles
-			let actualProfileName = profileSets.ContainsKey (profileName)
-				? profileName
-				: "default"
-			let platformSets = profileSets[actualProfileName]
-			from platformName in hostPlatformNames
-			let actualPlatformName = platformSets.ContainsKey (platformName)
-				? platformName
-				: "default"
-			let platformSet = platformSets[actualPlatformName]
-			select (profileName: profileName, platformName: platformName, set: platformSet)
-		).ToList ();
+		Console.Error.WriteLine ("// -- all targets --");
+		foreach (var target in parseResult.Targets)
+			Console.Error.WriteLine (target.Key);
+
+		/*
 
 		HashSet<string> commonFileNames = null;
-
-		Console.Error.WriteLine ("// -- allvalidsets --");
 
 		foreach (var tup in allValidSets) {
 			var countBefore = (commonFileNames == null) ? 0 : commonFileNames.Count;
@@ -951,6 +920,7 @@ class MsbuildGenerator {
 				result.Append ($"  </ItemGroup>{NewLine}");
 			}
 		}
+		*/
 
 		return result;
 	}
