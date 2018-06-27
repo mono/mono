@@ -22,7 +22,7 @@ var Module = {
 				return response['arrayBuffer']();
 			}).then (function (blob) {
 				var asm = new Uint8Array (blob);
-				Module.FS_createDataFile ("@DEPLOY_PREFIX@" + file_name, null, asm, true, true, true);
+				Module.FS_createDataFile ("@VFS_PREFIX@/" + file_name, null, asm, true, true, true);
 				console.log ("Loaded: " + file_name);
 				--pending;
 				if (pending == 0)

@@ -23,6 +23,7 @@ class Driver {
 		Console.WriteLine ("Valid arguments:");
 		Console.WriteLine ("\t-help         Show this help message");
 		Console.WriteLine ("\t-debug        Enable Debugging (default false)");
+		Console.WriteLine ("\t-debugrt      Use the debug runtime (default release) - this has nothing to do with C# debugging");
 		Console.WriteLine ("\t-binding      Include binding engine (default false)");
 		Console.WriteLine ("\t-prefix=x     Set the input assembly prefix to 'x' (default to the current directory)");
 		Console.WriteLine ("\t-out=x        Set the output directory to 'x' (default to the current directory)");
@@ -127,10 +128,18 @@ class Driver {
 		app_prefix = Environment.CurrentDirectory;
 		var deploy_prefix = "managed";
 		var vfs_prefix = "managed";
+		var use_release_runtime = true;
 
 		var tool_prefix = Path.GetDirectoryName (typeof (Driver).Assembly.Location);
-		framework_prefix = Path.Combine (tool_prefix, "framework");
-		bcl_prefix = Path.Combine (tool_prefix, "bcl");
+
+		//are we working from the tree?
+		if (Directory.Exists (Path.Combine (tool_prefix, "../out/bcl/wasm"))) {
+			framework_prefix = tool_prefix; //all framework assemblies are currently side built to packaker.exe
+			bcl_prefix = Path.Combine (tool_prefix, "../out/bcl/wasm");
+		} else {
+			framework_prefix = Path.Combine (tool_prefix, "framework");
+			bcl_prefix = Path.Combine (tool_prefix, "bcl");
+		}
 
 		foreach (var a in args) {
 			if (a [0] != '-') {
@@ -159,6 +168,9 @@ class Driver {
 			case "vfs":
 				vfs_prefix = value;
 				break;
+			case "debugrt":
+				use_release_runtime = false;
+				break;
 			case "help":
 				Usage ();
 				return;
@@ -170,13 +182,19 @@ class Driver {
 		}
 		
 		foreach (var ra in root_assemblies) {
-			Import (ResolveUser (ra), AssemblyKind.User);
+			AssemblyKind kind;
+			var resolved = Resolve (ra, out kind);
+			Import (resolved, kind);
 		}
 		if (add_binding)
 			Import (ResolveFramework (BINDINGS_ASM_NAME + ".dll"), AssemblyKind.Framework);
 
+		if (!Directory.Exists (out_prefix))
+			Directory.CreateDirectory (out_prefix);
+
 		var bcl_dir = Path.Combine (out_prefix, deploy_prefix);
-		Directory.Delete (bcl_dir, true);
+		if (Directory.Exists (bcl_dir))
+			Directory.Delete (bcl_dir, true);
 		Directory.CreateDirectory (bcl_dir);
 		foreach (var f in file_list) {
 			Console.WriteLine ($"cp {f} -> {Path.Combine (bcl_dir, Path.GetFileName (f))}");
@@ -185,6 +203,8 @@ class Driver {
 
 		if (!deploy_prefix.EndsWith ("/"))
 			deploy_prefix += "/";
+		if (vfs_prefix.EndsWith ("/"))
+			vfs_prefix = vfs_prefix.Substring (0, vfs_prefix.Length - 1);
 
 		var template = File.ReadAllText (Path.Combine (tool_prefix, "runtime.g.js"));
 		
@@ -202,6 +222,17 @@ class Driver {
 		Debug ($"create {runtime_js}");
 		File.Delete (runtime_js);
 		File.WriteAllText (runtime_js, template);
+
+		string runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "release" : "debug");
+		File.Delete (Path.Combine (out_prefix, "mono.js"));
+		File.Delete (Path.Combine (out_prefix, "mono.wasm"));
+
+		File.Copy (
+			Path.Combine (runtime_dir, "mono.js"),
+			Path.Combine (out_prefix, "mono.js"));
+		File.Copy (
+			Path.Combine (runtime_dir, "mono.wasm"),
+			Path.Combine (out_prefix, "mono.wasm"));
 	}
 
 }
