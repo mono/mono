@@ -886,12 +886,19 @@ class MsbuildGenerator {
 		foreach (var sf in parseResult.SourcesFiles.Values) {
 			GeneratePropertyForSourcesFile (result, filesAlreadyGenerated, parseResult, sf);
 
-			if (sf.Exclusions.Count > 0) {
+			if ((sf.Exclusions.Count > 0) || (sf.Includes.Count > 0)) {
 				var exclusionsKey = GetPropertyKeyForSourcesFile (sf).Replace ("_sources", "_inline_exclusions");
 
 				result.Append ($"    <{exclusionsKey}>");
+
 				foreach (var m in parseResult.EnumerateMatches (sf, sf.Exclusions))
 					result.Append ($"{m.RelativePath}; ");
+
+				foreach (var i in sf.Includes) {
+					var includeExclusionsKey = GetPropertyKeyForSourcesFile (i).Replace ("_sources", "_inline_exclusions");
+					result.Append ($"$({includeExclusionsKey}); ");
+				}
+
 				result.AppendLine ($"</{exclusionsKey}>");
 			}
 		}
@@ -901,8 +908,12 @@ class MsbuildGenerator {
 		foreach (var target in parseResult.Targets) {
 			Console.Error.WriteLine (target);
 
-			if (target.Key.hostPlatform == null) {
+			if ((target.Key.hostPlatform == null) && (target.Key.profile == null)) {
+				result.Append ($"  <ItemGroup>{NewLine}");
+			} else if (target.Key.hostPlatform == null) {
 				result.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{target.Key.profile}' \">{NewLine}");
+			} else if (target.Key.profile == null) {
+				result.Append ($"  <ItemGroup Condition=\" '$(HostPlatform)' == '{target.Key.hostPlatform}' \">{NewLine}");
 			} else {
 				result.Append ($"  <ItemGroup Condition=\" '$(Platform)|$(HostPlatform)' == '{target.Key.profile}|{target.Key.hostPlatform}' \">{NewLine}");
 			}
@@ -911,7 +922,7 @@ class MsbuildGenerator {
 			var inlineExclusionsKey = sourcesKey.Replace ("_sources", "_inline_exclusions");
 			var includeKey = $"$({sourcesKey})";
 			var excludeKey = $"";
-			if (target.Sources.Exclusions.Count > 0)
+			if ((target.Sources.Exclusions.Count > 0) || (target.Sources.Includes.Count > 0))
 				excludeKey = $"$({inlineExclusionsKey});";
 			if (target.Exclusions != null)
 				excludeKey += $"$({GetPropertyKeyForSourcesFile (target.Exclusions)})";
