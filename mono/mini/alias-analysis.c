@@ -150,19 +150,17 @@ lower_store_imm (MonoCompile *cfg, MonoInst *store, MonoInst *ldaddr)
 	return TRUE;
 }
 
-static gboolean
-lower_memory_access (MonoCompile *cfg)
+/*
+ * compute_defs:
+ *
+ * Find all vregs whose only definition is an ldaddr opcode.
+ */
+static G_GNUC_UNUSED void
+compute_defs (MonoCompile *cfg, MonoInst **defs)
 {
 	MonoBasicBlock *bb;
-	MonoInst *ins, *tmp;
-	gboolean needs_dce = FALSE;
-	GHashTable *addr_loads = g_hash_table_new (NULL, NULL);
-	MonoInst **defs;
+	MonoInst *ins;
 
-	/*
-	 * Find all vregs whose only definition is an ldaddr opcode.
-	 */
-	defs = g_malloc0 (sizeof (MonoInst*) * cfg->next_vreg);
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		for (ins = bb->code; ins; ins = ins->next) {
 			if (ins->dreg != -1) {
@@ -194,6 +192,20 @@ lower_memory_access (MonoCompile *cfg)
 			}
 		}
 	}
+}
+
+static gboolean
+lower_memory_access (MonoCompile *cfg)
+{
+	MonoBasicBlock *bb;
+	MonoInst *ins, *tmp;
+	gboolean needs_dce = FALSE;
+	GHashTable *addr_loads = g_hash_table_new (NULL, NULL);
+	MonoInst **defs;
+
+	defs = g_malloc0 (sizeof (MonoInst*) * cfg->next_vreg);
+	if (COMPILE_LLVM (cfg))
+		compute_defs (cfg, defs);
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		g_hash_table_remove_all (addr_loads);
@@ -349,6 +361,8 @@ mini_is_scalar_repl_class (MonoClass *klass)
 		return FALSE;
 	if (mono_class_get_field_count (klass) != 3)
 		/* Fast span */
+		return FALSE;
+	if (mini_is_gsharedvt_klass (klass))
 		return FALSE;
 	return TRUE;
 }
