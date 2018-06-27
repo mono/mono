@@ -844,7 +844,7 @@ class MsbuildGenerator {
 
 		Console.Error.WriteLine ("// -- all targets --");
 		foreach (var target in parseResult.Targets)
-			Console.Error.WriteLine (target.Key);
+			Console.Error.WriteLine (target);
 
 		/*
 

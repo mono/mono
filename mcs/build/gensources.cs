@@ -133,6 +133,10 @@ public struct MatchEntry {
 public class TargetParseResult {
     public (string hostPlatform, string profile) Key;
     public SourcesFile Sources, Exclusions;
+
+    public override string ToString () {
+        return $"{Key} -> [{Sources?.FileName}, {Exclusions?.FileName}]";
+    }
 }
 
 public class ParseResult {
@@ -231,6 +235,9 @@ public class ParseResult {
     }
 
     public IEnumerable<MatchEntry> GetMatchesFromFile (SourcesFile sourcesFile, HashSet<string> excludedFiles = null) {
+        if (sourcesFile == null)
+            yield break;
+
         if (excludedFiles == null)
             excludedFiles = new HashSet<string> (StringComparer.Ordinal);
 
@@ -418,6 +425,12 @@ public class SourcesParser {
     }
 
     private bool TryParseTarget (State state, string prefix) {
+        // FIXME: We determine the prefix for the pair of sources and exclusions,
+        //  which may not match intended behavior:
+        // if linux_net_4_x_foo.sources is present, but linux_net_4_x_foo.exclude.sources is not present,
+        //  should net_4_x_foo.exclude.sources be used as a fallback? Maybe it should.
+        // This won't do that though.
+
         var tpr = new TargetParseResult {
             Key = (hostPlatform: state.HostPlatform, profile: state.ProfileName)
         };
@@ -444,12 +457,18 @@ public class SourcesParser {
     private SourcesFile ParseSingleFile (State state, string fileName, bool asExclusionsList) {
         var fileTable = asExclusionsList ? state.Result.ExclusionFiles : state.Result.SourcesFiles;
 
-        if (fileTable.ContainsKey (fileName))
-            return fileTable[fileName];
-
         var nullStr = "<none>";
-        if (TraceLevel >= 1)
-            Console.Error.WriteLine ($"// {new String (' ', ParseDepth * 2)}{fileName}  [{state.HostPlatform ?? nullStr}] [{state.ProfileName ?? nullStr}]");
+
+        if (fileTable.ContainsKey (fileName)) {
+            if (TraceLevel >= 1)
+                Console.Error.WriteLine ($"// {new String (' ', ParseDepth * 2)}{fileName}  (already parsed)");
+
+            return fileTable[fileName];
+        } else {
+            if (TraceLevel >= 1)
+                Console.Error.WriteLine ($"// {new String (' ', ParseDepth * 2)}{fileName}  [{state.HostPlatform ?? nullStr}] [{state.ProfileName ?? nullStr}]");
+        }
+
         ParseDepth += 1;
 
         var directory = Path.GetDirectoryName (fileName);
