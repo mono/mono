@@ -803,7 +803,7 @@ class MsbuildGenerator {
 		var platformsFolder = Path.GetFullPath ("../../mcs/build/platforms");
 		var profilesFolder = Path.GetFullPath ("../../mcs/build/profiles");
 
-		SourcesParser.TraceLevel = 2;
+		SourcesParser.TraceLevel = 1;
 		return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
 	}
 
@@ -833,25 +833,20 @@ class MsbuildGenerator {
 		var result = new StringBuilder ();
 		var parseResult = ReadSources (sources_file_name);
 
-		var readSources = parseResult.GetMatches ().OrderBy (m => m.RelativePath, StringComparer.Ordinal).ToList ();
-
-		if (readSources.Count == 0) {
-			Console.Error.WriteLine ($"// No sources built or loaded for {sources_file_name}");
-			return result;
-		}
-
 		var hostPlatformNames = GetSourcesParser ().AllHostPlatformNames;
 
 		var nullExclusions = new SourcesFile ("null", true);
 
+		if (parseResult.TargetDictionary.Count == 0)
+			return result;
+
 		var targetFileSets = (from target in parseResult.Targets
 			where (target.Key.profile == null) || SlnGenerator.profiles.Contains (target.Key.profile)
-			let excludedFiles = new HashSet<string> (StringComparer.Ordinal)
-			// This populates excludedFiles
-			let exclusionMatches = parseResult.GetMatchesFromFile (target.Exclusions ?? nullExclusions, excludedFiles)
-			// This does too
-			let matches = parseResult.GetMatchesFromFile (target.Sources, excludedFiles)
-			let fileNames = new HashSet<string> (from m in matches select FixupSourceName (m.RelativePath))
+			let matches = parseResult.GetMatches (target)
+				.Select (m => FixupSourceName (m.RelativePath))
+				.OrderBy (s => s, StringComparer.Ordinal)
+				.Distinct ()
+			let fileNames = new HashSet<string> (matches)
 			orderby target.Key.profile, target.Key.hostPlatform
 			select (key: target.Key, fileNames: fileNames)).ToList ();
 
@@ -898,12 +893,8 @@ class MsbuildGenerator {
 		var generatedProjFile = GetProjectFilename();
 		var updatingExistingProject = File.Exists(generatedProjFile);
 
-		Console.WriteLine (
-			"{0}: {1}", updatingExistingProject 
-				? "Updating" 
-				: "Generating", 
-			generatedProjFile
-		);
+		if (!updatingExistingProject)
+			Console.WriteLine ($"Generating {generatedProjFile}");
 
 		string boot, flags, output_name, built_sources, response, reskey, sources_file_name;
 
@@ -1446,9 +1437,11 @@ public static class Driver {
 			}
 		}
 
+		Console.WriteLine ("Deduplicating project references");
+
 		foreach (var csprojFile in projects.Values.Select (x => x.GetProjectFilename ()).Distinct ())
 		{
-			Console.WriteLine ("Deduplicating: " + csprojFile);
+			// Console.WriteLine ("Deduplicating: " + csprojFile);
 			DeduplicateProjectReferences (csprojFile);
 		}
 

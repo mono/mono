@@ -95,7 +95,12 @@ public static class Program {
             output = new StreamWriter (outFile);
 
         using (output) {
-            foreach (var fileName in result.GetFileNames ().OrderBy (s => s, StringComparer.Ordinal))
+            var fileNames = result.GetMatches ()
+                .OrderBy (e => e.RelativePath, StringComparer.Ordinal)
+                .Select (e => e.RelativePath)
+                .Distinct();
+
+            foreach (var fileName in fileNames)
                 output.WriteLine (fileName);
         }
 
@@ -236,7 +241,7 @@ public class ParseResult {
         }
     }
 
-    public IEnumerable<MatchEntry> GetMatchesFromFile (
+    private IEnumerable<MatchEntry> GetMatchesFromFile (
         SourcesFile sourcesFile, HashSet<string> excludedFiles = null
     ) {
         if (sourcesFile == null)
@@ -265,13 +270,18 @@ public class ParseResult {
         }
     }
 
-    public IEnumerable<MatchEntry> GetMatches () {
+    public IEnumerable<MatchEntry> GetMatches (TargetParseResult target = null) {
         var excludedFiles = new HashSet<string> (StringComparer.Ordinal);
 
-        if (TargetDictionary.Count == 0)
-            yield break;
+        if (target == null) {
+            if (TargetDictionary.Count == 0)
+                yield break;
 
-        var target = Targets.First ();
+            target = Targets.First ();
+        }
+
+        if (target == null)
+            throw new ArgumentNullException ("target");
 
         if (SourcesParser.TraceLevel >= 3)
             Console.Error.WriteLine ($"// Scanning sources file tree for {target.Key}");
@@ -287,20 +297,6 @@ public class ParseResult {
 
         if (SourcesParser.TraceLevel >= 3)
             Console.Error.WriteLine ($"// Scan complete. Generated {count} successful matches.");
-    }
-
-    public IEnumerable<string> GetFileNames () {
-        var encounteredFileNames = new HashSet<string> (StringComparer.Ordinal);
-
-        foreach (var entry in GetMatches ()) {
-            // Skip duplicates. We can't do this in GetMatches because we might want to have
-            //  duplicate entries with different platform/profile info
-            if (encounteredFileNames.Contains (entry.RelativePath))
-                continue;
-
-            encounteredFileNames.Add (entry.RelativePath);
-            yield return entry.RelativePath;
-        }
     }
 }
 
@@ -511,12 +507,12 @@ public class SourcesParser {
         var nullStr = "<none>";
 
         if (fileTable.ContainsKey (fileName)) {
-            if (TraceLevel >= 1)
+            if (TraceLevel >= 2)
                 Console.Error.WriteLine ($"// {new String (' ', ParseDepth * 2)}{fileName}  (already parsed)");
 
             return fileTable[fileName];
         } else {
-            if (TraceLevel >= 1)
+            if (TraceLevel >= 2)
                 Console.Error.WriteLine ($"// {new String (' ', ParseDepth * 2)}{fileName}  [{state.HostPlatform ?? nullStr}] [{state.ProfileName ?? nullStr}]");
         }
 
