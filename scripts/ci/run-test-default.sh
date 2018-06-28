@@ -19,6 +19,7 @@ ${TESTCMD} --label=System-xunit --timeout=5m make -w -C mcs/class/System run-xun
 ${TESTCMD} --label=System --timeout=10m bash -c "export MONO_TLS_PROVIDER=legacy && make -w -C mcs/class/System run-test"
 if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=System-btls --timeout=10m bash -c "export MONO_TLS_PROVIDER=btls && make -w -C mcs/class/System run-test"; fi
 ${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test
+${TESTCMD} --label=System.XML-xunit --timeout=5m make -w -C mcs/class/System.XML run-xunit-test
 ${TESTCMD} --label=Mono.Security --timeout=5m make -w -C mcs/class/Mono.Security run-test
 ${TESTCMD} --label=System.Security --timeout=5m make -w -C mcs/class/System.Security run-test
 ${TESTCMD} --label=System.Security-xunit --timeout=5m make -w -C mcs/class/System.Security run-xunit-test
