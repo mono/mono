@@ -127,7 +127,7 @@ class SlnGenerator {
 				continue;
 
 			var platformToBuild = profile;
-			var isBuildEnabled = true;
+			var isBuildEnabled = true;			
 
 			HashSet<string> projectProfiles;
 			if (
@@ -136,7 +136,8 @@ class SlnGenerator {
 			) {
 				fallbackProfileNames.Add (platformToBuild);
 				platformToBuild = defaultPlatform;
-				isBuildEnabled = false;
+				// HACK: Force build for C++ executables like jay ('Win32') but not for managed assemblies
+				isBuildEnabled = (defaultPlatform == "Win32");
 			}
 
 			sln.WriteLine ("\t\t{0}.Debug|{1}.ActiveCfg = Debug|{2}", guid, profile, platformToBuild);
