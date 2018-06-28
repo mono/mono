@@ -360,20 +360,10 @@ method_encode_code (MonoDynamicImage *assembly, ReflectionMethodBuilder *mb, Mon
 		if (code == NULL) {
 			ERROR_DECL (inner_error);
 			char *name = mono_string_to_utf8_checked (mb->name, inner_error);
-#if 1
-			// FIXME name and str are not used.
-			// Can the error message compatibly change?
-			if (!is_ok (inner_error))
-				name = g_strdup ("");
-			char *str = g_strdup_printf ("Method %s does not have any IL associated", name);
-			mono_error_set_argument (error, NULL, "a method does not have any IL associated");
-			g_free (str);
-#else
 			if (!is_ok (inner_error))
 				mono_error_set_argument (error, NULL, "a method does not have any IL associated");
 			else
 				mono_error_set_argument_format (error, NULL, "Method %s does not have any IL associated", name);
-#endif
 			mono_error_cleanup (inner_error);
 			g_free (name);
 			return 0;
