@@ -803,18 +803,23 @@ class MsbuildGenerator {
 		var platformsFolder = Path.GetFullPath ("../../mcs/build/platforms");
 		var profilesFolder = Path.GetFullPath ("../../mcs/build/profiles");
 
-		SourcesParser.TraceLevel = 2;
+		SourcesParser.TraceLevel = 1;
 		return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
 	}
 
 	private ParseResult ReadSources (string sourcesFileName) {
 		var libraryDirectory = Path.GetDirectoryName (GetProjectFilename ());
+
+		// HACK: Sometimes the sources path contains a relative path like ../../x
 		if (sourcesFileName.Contains ("/") || sourcesFileName.Contains ("\\")) {
 			libraryDirectory = Path.Combine (libraryDirectory, Path.GetDirectoryName (sourcesFileName));
 			sourcesFileName = Path.GetFileName (sourcesFileName);
 		}
+
 		libraryDirectory = Path.GetFullPath (libraryDirectory);
-		var libraryName = sourcesFileName;
+
+		// HACK: executable.make generates sources paths containing .sources already
+		var libraryName = sourcesFileName.Replace (".sources", "");
 
 		var parser = GetSourcesParser ();
 		var result = parser.Parse (libraryDirectory, libraryName);
