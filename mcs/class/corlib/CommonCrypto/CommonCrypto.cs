@@ -102,10 +102,19 @@ namespace Crimson.CommonCrypto {
 		// size_t was changed to IntPtr for 32/64 bits size difference - even if mono is (moslty) used in 32bits only on OSX today
 		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
 		extern internal static /* int */ int SecRandomCopyBytes (/* SecRandomRef */ IntPtr rnd, /* size_t */ IntPtr count, /* uint8_t* */ byte[] bytes);
-		
+
+		[DllImport ("/System/Library/Frameworks/Security.framework/Security")]
+		extern unsafe internal static /* int */ int SecRandomCopyBytes (/* SecRandomRef */ IntPtr rnd, /* size_t */ IntPtr count, /* uint8_t* */ byte* buffer);
+
 		static internal void GetRandom (byte[] buffer)
 		{
 			if (SecRandomCopyBytes (IntPtr.Zero, (IntPtr) buffer.Length, buffer) != 0)
+				throw new CryptographicException (Marshal.GetLastWin32Error ()); // errno
+		}
+
+		static unsafe internal void GetRandom (byte* buffer, int length)
+		{
+			if (SecRandomCopyBytes (IntPtr.Zero, (IntPtr)length, buffer) != 0)
 				throw new CryptographicException (Marshal.GetLastWin32Error ()); // errno
 		}
 	}

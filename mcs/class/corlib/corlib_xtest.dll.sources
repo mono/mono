@@ -146,6 +146,7 @@
 
 # System.Runtime
 # TODO: Many more to be included
+../../../external/corefx/src/System.Runtime/tests/System/HashCodeTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/String.SplitTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/NullableTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Reflection/BindingFlagsDoNotWrap.netcoreapp.cs

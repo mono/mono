@@ -1,3 +1,3 @@
+#include win32_net_4_x_corlib.dll.exclude.sources
+
 corert/Interop.MemAllocFree.cs
-corert/PreAllocatedOverlapped.platformnotsupported.cs
-corert/ThreadPoolBoundHandle.platformnotsupported.cs
