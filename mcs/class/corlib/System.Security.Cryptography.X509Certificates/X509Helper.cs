@@ -33,6 +33,7 @@ using System.Text;
 using System.Threading;
 using System.Runtime.InteropServices;
 #if !MOBILE
+using System.Reflection;
 using System.Security.Permissions;
 #endif
 using MX = Mono.Security.X509;
@@ -104,7 +105,8 @@ namespace System.Security.Cryptography.X509Certificates
 		// } CERT_CONTEXT, *PCERT_CONTEXT;
 		// typedef const CERT_CONTEXT *PCCERT_CONTEXT;
 		[StructLayout (LayoutKind.Sequential)]
-		internal struct CertificateContext {
+		internal struct CertificateContext
+		{
 			public UInt32 dwCertEncodingType;
 			public IntPtr pbCertEncoded;
 			public UInt32 cbCertEncoded;
@@ -118,16 +120,46 @@ namespace System.Security.Cryptography.X509Certificates
 		public static X509CertificateImpl InitFromHandleCore (IntPtr handle)
 		{
 			// both Marshal.PtrToStructure and Marshal.Copy use LinkDemand (so they will always success from here)
-			CertificateContext cc = (CertificateContext) Marshal.PtrToStructure (handle, typeof (CertificateContext));
-			byte[] data = new byte [cc.cbCertEncoded];
+			CertificateContext cc = (CertificateContext)Marshal.PtrToStructure (handle, typeof (CertificateContext));
+			byte[] data = new byte[cc.cbCertEncoded];
 			Marshal.Copy (cc.pbCertEncoded, data, 0, (int)cc.cbCertEncoded);
 			var x509 = new MX.X509Certificate (data);
 			return new X509CertificateImplMono (x509);
 		}
 #endif
 
+		static void EnsureNativeHelper ()
+		{
+#if MOBILE
+			// On Mobile, we call `MonoTlsProviderFactory.Initialize()` (which calls `X509Helper2.Initialize()`)
+			// on system startup, so the `nativeHelper` is always initialized.
+			return;
+#else
+			// On Desktop, using `SslStream` or `X509Certificate2` will initialize - so we only need to take
+			// the reflection-based code path when attempting to use `X509Certificate` prior to calling either
+			// the `SslStream` constructor or `X509Certificate2`.
+			if (nativeHelper != null)
+				return;
+
+			var assembly = Assembly.Load ("System");
+			if (assembly == null)
+				return;
+
+			var type = assembly.GetType ("System.Security.Cryptography.X509Certificates.X509Helper2", false);
+			if (type == null)
+				return;
+
+			var method = type.GetMethod ("Initialize", BindingFlags.Static | BindingFlags.NonPublic);
+			if (method == null)
+				return;
+
+			method.Invoke (null, null);
+#endif
+		}
+
 		public static X509CertificateImpl InitFromCertificate (X509Certificate cert)
 		{
+			EnsureNativeHelper ();
 			if (nativeHelper != null)
 				return nativeHelper.Import (cert);
 
@@ -147,8 +179,7 @@ namespace System.Security.Cryptography.X509Certificates
 			if (data == null)
 				return null;
 
-			var x509 = new MX.X509Certificate (data);
-			return new X509CertificateImplMono (x509);
+			return ImportCore (data);
 		}
 
 		public static bool IsValid (X509CertificateImpl impl)
@@ -219,6 +250,10 @@ namespace System.Security.Cryptography.X509Certificates
 
 		static X509CertificateImpl ImportCore (byte[] rawData)
 		{
+			EnsureNativeHelper ();
+			if (nativeHelper != null)
+				return nativeHelper.Import (rawData);
+
 			MX.X509Certificate x509;
 			try {
 				x509 = new MX.X509Certificate (rawData);
@@ -237,6 +272,10 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public static X509CertificateImpl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			EnsureNativeHelper ();
+			if (nativeHelper != null)
+				return nativeHelper.Import (rawData, password, keyStorageFlags);
+
 			if (password == null) {
 				rawData = ConvertData (rawData);
 				return Import (rawData);
