@@ -258,7 +258,6 @@ MonoTouch/Dummy.cs
 
 ReferenceSources/AutoWebProxyScriptEngine.cs
 ReferenceSources/AssertWrapper.cs
-ReferenceSources/CAPI.cs
 ReferenceSources/EnvironmentHelpers.cs
 ReferenceSources/HttpApi.cs
 ReferenceSources/LocalAppContextSwitches.cs
@@ -768,9 +767,11 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/security/system/security/Authentication/ExtendedProtection/TokenBinding.cs
 ../referencesource/System/security/system/security/Authentication/ExtendedProtection/ServiceNameCollection.cs
 
-../referencesource/System/security/system/security/cryptography/oid.cs
-
-../referencesource/System/security/system/security/cryptography/x509/x509utils.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/src/System/Security/Cryptography/OidGroup.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/src/System/Security/Cryptography/Oid.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/src/System/Security/Cryptography/OidCollection.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/src/System/Security/Cryptography/OidEnumerator.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/src/Internal/Cryptography/OidLookup.cs
 
 ../referencesource/System/security/system/security/permissions/typedescriptorpermission.cs
 

@@ -29,7 +29,8 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Net.Http/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Text.RegularExpressions/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.IO.FileSystem.Watcher/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.ComponentModel.TypeConverter/src/Resources/Strings.resx
+	../../../external/corefx/src/System.ComponentModel.TypeConverter/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.Encoding/src/Resources/Strings.resx
 
 TEST_RESOURCES = \
 	Test/System/test-uri-props.txt \
@@ -110,7 +111,7 @@ endif
 TXT_RESOURCE_STRINGS = ../referencesource/System/System.txt
 
 
-API_BIN_REFS := System.Net.Http System.Xml
+API_BIN_REFS := System.Net.Http System.Xml System.Core
 
 ifndef MOBILE_PROFILE
 API_BIN_REFS += System.Configuration
