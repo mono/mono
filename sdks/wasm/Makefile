@@ -122,14 +122,14 @@ Mono.Cecil.dll: $(TOP)/sdks/out/bcl/net_4_x/Mono.Cecil.dll
 packager.exe: packager.cs Mono.Cecil.dll
 	csc /debug:portable -r:Mono.Cecil.dll packager.cs
 
-.stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll sample.dll debug.html
+.stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll sample.dll debug.html runtime.g.js
 	mono packager.exe -debug -out=debug_sample sample.dll
 	cp debug.html debug_sample
 	touch $@
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
-.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll binding_tests.dll mini_tests.dll main.exe
+.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll binding_tests.dll mini_tests.dll main.exe runtime.g.js
 	mono packager.exe -out=test-suite binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
 	cp test.js test-suite/
 	touch $@
