@@ -14,11 +14,13 @@ var Module = {
 		Module.FS_createPath ("/", "@VFS_PREFIX@", true, true);
 
 		var pending = 0;
+		var loaded_files = [];
 		assemblies.forEach (function(file_name) {
 			++pending;
 			fetch ("@DEPLOY_PREFIX@" + file_name, { credentials: 'same-origin' }).then (function (response) {
 				if (!response.ok)
 					throw "failed to load '" + file_name + "'";
+				loaded_files.push (response.url);
 				return response['arrayBuffer']();
 			}).then (function (blob) {
 				var asm = new Uint8Array (blob);
@@ -26,23 +28,24 @@ var Module = {
 				console.log ("Loaded: " + file_name);
 				--pending;
 				if (pending == 0)
-					Module.bclLoadingDone ();
+					Module.bclLoadingDone (loaded_files);
 			});
 		});
 	},
 	
-	bclLoadingDone: function () {
-		MonoRuntime.init ();
+	bclLoadingDone: function (loaded_files) {
+		MonoRuntime.init (loaded_files);
 	}
 };
 
 var MonoRuntime = {
-	init: function () {
+	init: function (loaded_files) {
 		this.load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);
 
 		//FIXME move this two to library_mono.js (better yet - library_mono_debugger.js)
 		this.mono_wasm_set_breakpoint = Module.cwrap ('mono_wasm_set_breakpoint', 'number', ['string', 'number', 'number']);
 		this.mono_wasm_clear_all_breakpoints = Module.cwrap ('mono_wasm_clear_all_breakpoints', 'void', [ ]);
+		this.get_loaded_files = function() { return loaded_files; };
 
 		this.load_runtime ("@VFS_PREFIX@", @ENABLE_DEBUGGING@);
 		mono_wasm_runtime_ready ();
