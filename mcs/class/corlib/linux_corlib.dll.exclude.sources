@@ -1,2 +1,1 @@
-corefx/Interop.GetRandomBytes.cs
-corefx/RandomNumberGeneratorImplementation.Mono.cs
+#include unix_corlib.dll.exclude.sources
