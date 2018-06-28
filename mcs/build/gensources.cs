@@ -390,15 +390,15 @@ public class SourcesParser {
             Result = new ParseResult (libraryDirectory, libraryName)
         };
 
-        string testPath = Path.Combine (libraryDirectory, libraryName);
-        var defaultTarget = ParseTarget (state, testPath, null);
+        string originalTestPath = Path.Combine (libraryDirectory, libraryName);
+        var defaultTarget = ParseTarget (state, originalTestPath, null);
         var profileFallbackTargets = new List<TargetParseResult> ();
 
         foreach (var profile in AllProfileNames) {
             state.ProfileName = profile;
             state.HostPlatform = null;
 
-            testPath = Path.Combine (libraryDirectory, $"{profile}_{libraryName}");
+            var testPath = Path.Combine (libraryDirectory, $"{profile}_{libraryName}");
             var profileTarget = ParseTarget (state, testPath, defaultTarget);
             if ((profileTarget != null) && profileTarget.IsFallback)
                 profileFallbackTargets.Add (profileTarget);
@@ -425,7 +425,7 @@ public class SourcesParser {
             state.ProfileName = null;
             state.HostPlatform = hostPlatform;
 
-            testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{libraryName}");
+            var testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{libraryName}");
             var target = ParseTarget (state, testPath, defaultTarget);
             if ((target != null) && target.IsFallback)
                 platformFallbackTargets.Add (target);
@@ -433,7 +433,7 @@ public class SourcesParser {
 
         StripFallbackTargetsOrDefaultTarget (state, defaultTarget, platformFallbackTargets, AllHostPlatformNames.Length);
 
-        PrintSummary (state, testPath);
+        PrintSummary (state, originalTestPath);
 
         return state.Result;
     }
@@ -478,7 +478,7 @@ public class SourcesParser {
 
         if (!File.Exists (sourcesFileName)) {
             if (fallbackTarget != null) {
-                if (TraceLevel >= 3)
+                if (TraceLevel >= 2)
                     Console.Error.WriteLine($"// Not found: {sourcesFileName}, falling back to {fallbackTarget}");
                 tpr.Sources = fallbackTarget.Sources;
                 tpr.Exclusions = fallbackTarget.Exclusions;
@@ -486,7 +486,7 @@ public class SourcesParser {
                 state.Result.TargetDictionary.Add (tpr.Key, tpr);
                 return tpr;
             } else {
-                if (TraceLevel >= 3)
+                if (TraceLevel >= 2)
                     Console.Error.WriteLine($"// Not found: {sourcesFileName}");
                 return null;
             }

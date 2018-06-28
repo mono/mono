@@ -803,16 +803,24 @@ class MsbuildGenerator {
 		var platformsFolder = Path.GetFullPath ("../../mcs/build/platforms");
 		var profilesFolder = Path.GetFullPath ("../../mcs/build/profiles");
 
-		SourcesParser.TraceLevel = 1;
+		SourcesParser.TraceLevel = 2;
 		return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
 	}
 
-	private ParseResult ReadSources (string outputName) {
-		var libraryDirectory = Path.GetFullPath (Path.GetDirectoryName (GetProjectFilename ()));
-		var libraryName = outputName;
+	private ParseResult ReadSources (string sourcesFileName) {
+		var libraryDirectory = Path.GetDirectoryName (GetProjectFilename ());
+		if (sourcesFileName.Contains ("/") || sourcesFileName.Contains ("\\")) {
+			libraryDirectory = Path.Combine (libraryDirectory, Path.GetDirectoryName (sourcesFileName));
+			sourcesFileName = Path.GetFileName (sourcesFileName);
+		}
+		libraryDirectory = Path.GetFullPath (libraryDirectory);
+		var libraryName = sourcesFileName;
 
 		var parser = GetSourcesParser ();
 		var result = parser.Parse (libraryDirectory, libraryName);
+
+		if (result.SourcesFiles.Count == 0)
+			Console.Error.WriteLine ($"// No sources files found for '{sourcesFileName}', looked in '{libraryDirectory}' for {libraryName}");
 
 		return result;
 	}
