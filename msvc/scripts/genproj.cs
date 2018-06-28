@@ -778,6 +778,7 @@ class MsbuildGenerator {
 
 	void AppendResource (StringBuilder resources, string source, string logical)
 	{
+		source = NativeName (source);
 		resources.AppendFormat ("    <EmbeddedResource Include=\"{0}\">" + NewLine, source);
 		resources.AppendFormat ("      <LogicalName>{0}</LogicalName>" + NewLine, logical);
 		resources.AppendFormat ("    </EmbeddedResource>" + NewLine);
