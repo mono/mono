@@ -165,4 +165,6 @@ partial class SR
 	public const string Cryptography_Invalid_IA5String = "The string contains a character not in the 7 bit ASCII character set.";
 	public const string Cryptography_UnknownHashAlgorithm = "'{0}' is not a known hash algorithm.";
 	public const string Cryptography_WriteEncodedValue_OneValueAtATime = "The input to WriteEncodedValue must represent a single encoded value with no trailing data.";
+	public const string Cryptography_DpApi_ProfileMayNotBeLoaded = "The data protection operation was unsuccessful. This may have been caused by not having the user profile loaded for the current thread's user context, which may be the case when the thread is impersonating.";
+	public const string PlatformNotSupported_CryptographyProtectedData = "Windows Data Protection API (DPAPI) is not supported on this platform.";
 }

@@ -146,12 +146,6 @@ namespace System.Security.Cryptography {
 
 		private static void Check (DataProtectionScope scope)
 		{
-			if ((scope < DataProtectionScope.CurrentUser) || (scope > DataProtectionScope.LocalMachine)) {
-				string msg = Locale.GetText ("Invalid enum value '{0}' for '{1}'.", 
-					scope, "DataProtectionScope");
-				throw new ArgumentException (msg, "scope");
-			}
-
 			switch (impl) {
 			case DataProtectionImplementation.Unknown:
 				Detect ();
