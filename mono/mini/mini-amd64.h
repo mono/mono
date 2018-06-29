@@ -584,10 +584,8 @@ mono_arch_unwindinfo_free_unwind_info (PUNWIND_INFO unwind_info);
 guint
 mono_arch_unwindinfo_init_method_unwind_info (gpointer cfg);
 
-#ifdef MONO_ARCH_HAVE_UNWIND_TABLE
 void
 mono_arch_unwindinfo_install_method_unwind_info (PUNWIND_INFO *monoui, gpointer code, guint code_size);
-#endif
 
 void
 mono_arch_unwindinfo_install_tramp_unwind_info (GSList *unwind_ops, gpointer code, guint code_size);
