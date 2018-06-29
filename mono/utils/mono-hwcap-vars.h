@@ -57,5 +57,7 @@ MONO_HWCAP_VAR(x86_has_ssse3)
 MONO_HWCAP_VAR(x86_has_sse41)
 MONO_HWCAP_VAR(x86_has_sse42)
 MONO_HWCAP_VAR(x86_has_sse4a)
+MONO_HWCAP_VAR(x86_has_lzcnt)
+MONO_HWCAP_VAR(x86_has_popcnt)
 
 #endif

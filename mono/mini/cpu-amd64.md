@@ -826,3 +826,8 @@ generic_class_init: src1:A len:32 clob:c
 get_last_error: dest:i len:32
 
 fill_prof_call_ctx: src1:i len:128
+
+x86_lzcnt32: dest:i src1:i len:16
+x86_lzcnt64: dest:i src1:i len:16
+x86_popcnt32: dest:i src1:i len:16
+x86_popcnt64: dest:i src1:i len:16

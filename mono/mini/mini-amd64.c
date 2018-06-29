@@ -1472,6 +1472,12 @@ mono_arch_cpu_enumerate_simd_versions (void)
 	if (mono_hwcap_x86_has_sse4a)
 		sse_opts |= SIMD_VERSION_SSE4a;
 
+	if (mono_hwcap_x86_has_lzcnt)
+		sse_opts |= SIMD_VERSION_X86_LZCNT;
+
+	if (mono_hwcap_x86_has_popcnt)
+		sse_opts |= SIMD_VERSION_X86_POPCNT;
+
 	return sse_opts;
 }
 
@@ -6780,6 +6786,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			for (int i = 0; i < AMD64_NREG; i++)
 				if (AMD64_IS_CALLEE_SAVED_REG (i) || i == AMD64_RSP)
 					amd64_mov_membase_reg (code, ins->sreg1, MONO_STRUCT_OFFSET (MonoContext, gregs) + i * sizeof (mgreg_t), i, sizeof (mgreg_t));
+			break;
+		case OP_X86_LZCNT32:
+			amd64_sse_lzcnt_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
+			break;
+		case OP_X86_LZCNT64:
+			amd64_sse_lzcnt_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
+			break;
+		case OP_X86_POPCNT32:
+			amd64_sse_popcnt_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
+			break;
+		case OP_X86_POPCNT64:
+			amd64_sse_popcnt_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
 			break;
 		default:
 			g_warning ("unknown opcode %s in %s()\n", mono_inst_name (ins->opcode), __FUNCTION__);

@@ -2717,6 +2717,10 @@ enum {
 			  SIMD_VERSION_SSE3 | SIMD_VERSION_SSSE3 |
 			  SIMD_VERSION_SSE41 | SIMD_VERSION_SSE42 |
 			  SIMD_VERSION_SSE4a,
+	/* These are not supported by Mono.Simd */
+	/* Intrinsics sets under the System.Runtime.Intrinsics namespace */
+	SIMD_VERSION_X86_LZCNT = 1 << 7,
+	SIMD_VERSION_X86_POPCNT = 1 << 8,
 
 	/* this value marks the end of the bit indexes used in 
 	 * this emum.
