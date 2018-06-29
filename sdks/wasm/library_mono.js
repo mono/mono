@@ -93,7 +93,7 @@ var MonoSupportLib = {
 						MONO.loaded_files = loaded_files;
 						var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);
 
-						console.log ("initing runting");
+						console.log ("initializing mono runtime");
 						load_runtime (vfs_prefix, enable_debugging);
 						MONO.mono_wasm_runtime_ready ();
 						loaded_cb ();
