@@ -3721,31 +3721,27 @@ mono_cominterop_get_com_interface_internal (gboolean icall, MonoObject *object, 
 			return NULL;
 		klass = mono_object_class (object);
 		if (!mono_class_is_transparent_proxy (klass)) {
-			if (icall)
-				g_assert_not_reached ();
+			g_assertf (!icall, "Class is not transparent");
 			mono_error_set_invalid_operation (error, "Class is not transparent");
 			return NULL;
 		}
 
 		real_proxy = ((MonoTransparentProxy*)object)->rp;
 		if (!real_proxy) {
-			if (icall)
-				g_assert_not_reached ();
+			g_assertf (!icall, "RealProxy is null");
 			mono_error_set_invalid_operation (error, "RealProxy is null");
 			return NULL;
 		}
 
 		klass = mono_object_class (real_proxy);
 		if (klass != mono_class_get_interop_proxy_class ()) {
-			if (icall)
-				g_assert_not_reached ();
+			g_assertf (!icall, "Object is not a proxy");
 			mono_error_set_invalid_operation (error, "Object is not a proxy");
 			return NULL;
 		}
 
 		if (!((MonoComInteropProxy*)real_proxy)->com_object) {
-			if (icall)
-				g_assert_not_reached ();
+			g_assertf (!icall, "Proxy points to null COM object");
 			mono_error_set_invalid_operation (error, "Proxy points to null COM object");
 			return NULL;
 		}
