@@ -69,6 +69,9 @@ mono_string_to_bstr(MonoString* ptr)
 	return mono_ptr_to_bstr(mono_string_chars(ptr), mono_string_length(ptr));
 }
 
+static void*
+mono_cominterop_get_com_interface_internal (gboolean icall, MonoObject *object, MonoClass *ic, MonoError *error);
+
 #ifndef DISABLE_COM
 
 #define OPDEF(a,b,c,d,e,f,g,h,i,j) \
@@ -1622,9 +1625,6 @@ cominterop_get_idispatch_for_object (MonoObject* object, MonoError *error)
 		return cominterop_get_ccw_checked (object, mono_class_get_idispatch_class (), error);
 	}
 }
-
-static void*
-mono_cominterop_get_com_interface_internal (gboolean icall, MonoObject *object, MonoClass *ic, MonoError *error);
 
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_GetIUnknownForObjectInternal (MonoObject* object)
