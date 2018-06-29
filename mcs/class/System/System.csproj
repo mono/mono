@@ -760,12 +760,6 @@
     <Compile Include="..\referencesource\System\sys\system\threading\semaphore.cs" />
     <Compile Include="..\referencesource\System\sys\system\windows\markup\ValueSerializerAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="corefx\NameValueCollection.cs" />
-    <Compile Include="corefx\SR.cs" />
-    <Compile Include="corefx\SR.missing.cs" />
-    <Compile Include="corefx\StringDictionary.cs" />
-    <Compile Include="corefx\ZLibNative.cs" />
-    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="Microsoft.Win32.SafeHandles\SafeX509ChainHandle.cs" />
     <Compile Include="Mono.AppleTls\AppleCertificateHelper.cs" />
     <Compile Include="Mono.AppleTls\AppleTlsContext.cs" />
@@ -1032,6 +1026,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="Mono.Btls\MonoBtlsX509LookupAndroid.cs" />
     <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
@@ -1109,6 +1104,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
     <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
@@ -1184,6 +1180,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
     <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
@@ -1242,6 +1239,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\AuthorityKeyIdentifierExtension.cs" />
+    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="System.Net.Mail\SmtpClient.platformnotsupported.cs" />
     <Compile Include="System.Net.Security\SslStream.platformnotsupported.cs" />
     <Compile Include="System.Net.Sockets\TcpClient.platformnotsupported.cs" />
@@ -1432,6 +1430,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeGenerator.cs" />
     <Compile Include="Microsoft.VisualBasic\VBCodeGenerator.cs" />
     <Compile Include="Microsoft.Win32\IntranetZoneCredentialPolicy.cs" />
@@ -1884,6 +1883,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeGenerator.cs" />
     <Compile Include="Microsoft.VisualBasic\VBCodeGenerator.cs" />
     <Compile Include="Microsoft.Win32\IntranetZoneCredentialPolicy.cs" />
@@ -2340,6 +2340,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeGenerator.cs" />
     <Compile Include="Microsoft.VisualBasic\VBCodeGenerator.cs" />
     <Compile Include="Microsoft.Win32\IntranetZoneCredentialPolicy.cs" />
@@ -2630,6 +2631,7 @@
     <Compile Include="System\MonoToolsLocator.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)|$(HostPlatform)' == 'net_4_x|win32' ">
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Crypt32\Interop.FindOidInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.BOOL.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.CloseHandle.cs" />
@@ -2772,6 +2774,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\Internal\Cryptography\OidLookup.Windows.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
@@ -3099,6 +3102,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
     <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
@@ -3176,6 +3180,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
     <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
@@ -3251,6 +3256,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
     <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
@@ -3326,6 +3332,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
     <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
@@ -3405,6 +3412,7 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+    <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
     <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
     <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
