@@ -1240,6 +1240,16 @@ interp_delegate_ctor (MonoObjectHandle this_obj, MonoObjectHandle target, gpoint
 	 */
 	InterpMethod *imethod = (InterpMethod*)addr;
 
+	if (!(imethod->method->flags & METHOD_ATTRIBUTE_STATIC)) {
+		MonoMethod *invoke = mono_get_delegate_invoke (mono_handle_class (this_obj));
+		/* virtual invoke delegates must not have null check */
+		if (mono_method_signature (imethod->method)->param_count == mono_method_signature (invoke)->param_count
+				&& MONO_HANDLE_IS_NULL (target)) {
+			mono_error_set_argument (error, "this", "Delegate to an instance method cannot have null 'this'");
+			return;
+		}
+	}
+
 	g_assert (imethod->method);
 	gpointer entry = mini_get_interp_callbacks ()->create_method_pointer (imethod->method, error);
 	return_if_nok (error);
