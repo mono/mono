@@ -2601,9 +2601,11 @@ mono_jit_init_version (const char *domain_name, const char *runtime_version)
 void        
 mono_jit_cleanup (MonoDomain *domain)
 {
+	MONO_ENTER_GC_UNSAFE;
 	mono_thread_manage ();
 
 	mini_cleanup (domain);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 void
