@@ -1216,6 +1216,8 @@ ves_pinvoke_method (InterpFrame *frame, MonoMethodSignature *sig, MonoFuncV addr
 static void
 interp_init_delegate (MonoDelegate *del)
 {
+	MonoMethod *method;
+
 	if (del->interp_method) {
 		/* Delegate created by a call to ves_icall_mono_delegate_ctor_interp () */
 		del->method = ((InterpMethod *)del->interp_method)->method;
@@ -1230,6 +1232,14 @@ interp_init_delegate (MonoDelegate *del)
 		del->interp_method = lookup_method_pointer (del->method_ptr);
 		g_assert (del->interp_method);
 	}
+
+	method = ((InterpMethod*)del->interp_method)->method;
+	if (del->target &&
+			method &&
+			method->flags & METHOD_ATTRIBUTE_VIRTUAL &&
+			method->flags & METHOD_ATTRIBUTE_ABSTRACT &&
+			mono_class_is_abstract (method->klass))
+		del->interp_method = get_virtual_method ((InterpMethod*)del->interp_method, del->target);
 }
 
 static void
