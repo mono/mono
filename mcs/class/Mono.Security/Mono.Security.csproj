@@ -109,6 +109,32 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
+    <Compile Include="..\corlib\CommonCrypto\SHA224Managed.g.cs" />
+    <Compile Include="..\corlib\CommonCrypto\MD2Managed.g.cs" />
+    <Compile Include="..\corlib\CommonCrypto\MD4Managed.g.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
+    <Compile Include="..\corlib\CommonCrypto\SHA224Managed.g.cs" />
+    <Compile Include="..\corlib\CommonCrypto\MD2Managed.g.cs" />
+    <Compile Include="..\corlib\CommonCrypto\MD4Managed.g.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <Compile Include="..\corlib\CommonCrypto\SHA224Managed.g.cs" />
+    <Compile Include="..\corlib\CommonCrypto\MD2Managed.g.cs" />
+    <Compile Include="..\corlib\CommonCrypto\MD4Managed.g.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
+    <Compile Include="..\corlib\CommonCrypto\SHA224Managed.g.cs" />
+    <Compile Include="..\corlib\CommonCrypto\MD2Managed.g.cs" />
+    <Compile Include="..\corlib\CommonCrypto\MD4Managed.g.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
+    <Compile Include="..\corlib\CommonCrypto\SHA224Managed.g.cs" />
+    <Compile Include="..\corlib\CommonCrypto\MD2Managed.g.cs" />
+    <Compile Include="..\corlib\CommonCrypto\MD4Managed.g.cs" />
+  </ItemGroup>
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\AssemblyRef.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
@@ -210,9 +236,9 @@
     <Compile Include="Mono.Security.Protocol.Tls\HandshakeState.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\HashAlgorithmType.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\HttpsClientStream.cs" />
-    <Compile Include="Mono.Security.Protocol.Tls\RecordProtocol.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\RSASslSignatureDeformatter.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\RSASslSignatureFormatter.cs" />
+    <Compile Include="Mono.Security.Protocol.Tls\RecordProtocol.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\SecurityCompressionType.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\SecurityParameters.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\SecurityProtocolType.cs" />
@@ -230,8 +256,8 @@
     <Compile Include="Mono.Security.Protocol.Tls\TlsStream.cs" />
     <Compile Include="Mono.Security.X509.Extensions\AuthorityKeyIdentifierExtension.cs" />
     <Compile Include="Mono.Security.X509.Extensions\BasicConstraintsExtension.cs" />
-    <Compile Include="Mono.Security.X509.Extensions\CertificatePoliciesExtension.cs" />
     <Compile Include="Mono.Security.X509.Extensions\CRLDistributionPointsExtension.cs" />
+    <Compile Include="Mono.Security.X509.Extensions\CertificatePoliciesExtension.cs" />
     <Compile Include="Mono.Security.X509.Extensions\ExtendedKeyUsageExtension.cs" />
     <Compile Include="Mono.Security.X509.Extensions\GeneralNames.cs" />
     <Compile Include="Mono.Security.X509.Extensions\KeyAttributesExtension.cs" />
@@ -243,12 +269,12 @@
     <Compile Include="Mono.Security.X509\PKCS12.cs" />
     <Compile Include="Mono.Security.X509\X501Name.cs" />
     <Compile Include="Mono.Security.X509\X509Builder.cs" />
+    <Compile Include="Mono.Security.X509\X509CRL.cs" />
     <Compile Include="Mono.Security.X509\X509Certificate.cs" />
     <Compile Include="Mono.Security.X509\X509CertificateBuilder.cs" />
     <Compile Include="Mono.Security.X509\X509CertificateCollection.cs" />
     <Compile Include="Mono.Security.X509\X509Chain.cs" />
     <Compile Include="Mono.Security.X509\X509ChainStatusFlags.cs" />
-    <Compile Include="Mono.Security.X509\X509CRL.cs" />
     <Compile Include="Mono.Security.X509\X509Extension.cs" />
     <Compile Include="Mono.Security.X509\X509Extensions.cs" />
     <Compile Include="Mono.Security.X509\X509Store.cs" />
@@ -263,40 +289,24 @@
     <Compile Include="Mono.Xml\MiniParser.cs" />
     <Compile Include="Mono.Xml\SecurityParser.cs" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monodroid' "></ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
     <Compile Include="..\corlib\CommonCrypto\CommonCrypto.cs" />
     <Compile Include="..\corlib\CommonCrypto\RC4CommonCrypto.cs" />
-    <Compile Include="..\corlib\CommonCrypto\MD2Managed.g.cs" />
-    <Compile Include="..\corlib\CommonCrypto\MD4Managed.g.cs" />
-    <Compile Include="..\corlib\CommonCrypto\SHA224Managed.g.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
-    <Compile Include="..\corlib\CommonCrypto\CommonCrypto.cs" />
-    <Compile Include="..\corlib\CommonCrypto\RC4CommonCrypto.cs" />
-    <Compile Include="..\corlib\CommonCrypto\MD2Managed.g.cs" />
-    <Compile Include="..\corlib\CommonCrypto\MD4Managed.g.cs" />
-    <Compile Include="..\corlib\CommonCrypto\SHA224Managed.g.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
     <Compile Include="..\corlib\CommonCrypto\CommonCrypto.cs" />
     <Compile Include="..\corlib\CommonCrypto\RC4CommonCrypto.cs" />
-    <Compile Include="..\corlib\CommonCrypto\MD2Managed.g.cs" />
-    <Compile Include="..\corlib\CommonCrypto\MD4Managed.g.cs" />
-    <Compile Include="..\corlib\CommonCrypto\SHA224Managed.g.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
-    <Compile Include="..\corlib\CommonCrypto\CommonCrypto.cs" />
-    <Compile Include="..\corlib\CommonCrypto\RC4CommonCrypto.cs" />
-    <Compile Include="..\corlib\CommonCrypto\MD2Managed.g.cs" />
-    <Compile Include="..\corlib\CommonCrypto\MD4Managed.g.cs" />
-    <Compile Include="..\corlib\CommonCrypto\SHA224Managed.g.cs" />
-  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'orbis' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'unreal' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'wasm' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'winaot' "></ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
     <Compile Include="..\corlib\CommonCrypto\CommonCrypto.cs" />
     <Compile Include="..\corlib\CommonCrypto\RC4CommonCrypto.cs" />
-    <Compile Include="..\corlib\CommonCrypto\MD2Managed.g.cs" />
-    <Compile Include="..\corlib\CommonCrypto\MD4Managed.g.cs" />
-    <Compile Include="..\corlib\CommonCrypto\SHA224Managed.g.cs" />
   </ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>

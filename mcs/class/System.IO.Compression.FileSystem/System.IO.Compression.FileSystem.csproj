@@ -104,6 +104,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\PathInternal.CaseSensitivity.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.ZipFile\src\System\IO\Compression\ZipFile.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="corefx\SR.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />

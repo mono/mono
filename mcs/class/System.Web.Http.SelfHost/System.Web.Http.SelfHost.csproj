@@ -44,15 +44,15 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
+    <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\CommonWebApiResources.Designer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\DictionaryExtensions.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\Error.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\HttpMethodHelper.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\TaskHelpers.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\TaskHelpersExtensions.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.SelfHost\Channels\HttpBinding.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.SelfHost\Channels\HttpBindingSecurity.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.SelfHost\Channels\HttpBindingSecurityMode.cs" />
@@ -70,8 +70,8 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.SelfHost\Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.SelfHost\Properties\SRResources.Designer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.SelfHost\ServiceModel\Channels\AsyncResult.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.SelfHost\ServiceModel\Channels\BufferedOutputStream.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.SelfHost\ServiceModel\Channels\BufferManagerOutputStream.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.SelfHost\ServiceModel\Channels\BufferedOutputStream.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.SelfHost\ServiceModel\Channels\ChannelAcceptor.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.SelfHost\ServiceModel\Channels\ChannelBindingUtility.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.SelfHost\ServiceModel\Channels\CompletedAsyncResult.cs" />
@@ -88,6 +88,7 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.SelfHost\ServiceModel\TransferModeHelper.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\TransparentCommonAssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

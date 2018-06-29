@@ -43,8 +43,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.ComponentModel.Design.Data\DataSourceDescriptor.cs" />
     <Compile Include="System.ComponentModel.Design.Data\DataSourceDescriptorCollection.cs" />
@@ -97,6 +97,14 @@
     <Compile Include="System.ComponentModel.Design\ComponentActionsType.cs" />
     <Compile Include="System.ComponentModel.Design\ComponentDesigner.cs" />
     <Compile Include="System.ComponentModel.Design\DateTimeEditor.cs" />
+    <Compile Include="System.ComponentModel.Design\DesignModeNestedContainer.cs" />
+    <Compile Include="System.ComponentModel.Design\DesignModeSite.cs" />
+    <Compile Include="System.ComponentModel.Design\DesignSurface.cs" />
+    <Compile Include="System.ComponentModel.Design\DesignSurfaceCollection.cs" />
+    <Compile Include="System.ComponentModel.Design\DesignSurfaceEventArgs.cs" />
+    <Compile Include="System.ComponentModel.Design\DesignSurfaceEventHandler.cs" />
+    <Compile Include="System.ComponentModel.Design\DesignSurfaceManager.cs" />
+    <Compile Include="System.ComponentModel.Design\DesignSurfaceServiceContainer.cs" />
     <Compile Include="System.ComponentModel.Design\DesignerActionHeaderItem.cs" />
     <Compile Include="System.ComponentModel.Design\DesignerActionItem.cs" />
     <Compile Include="System.ComponentModel.Design\DesignerActionItemCollection.cs" />
@@ -116,14 +124,6 @@
     <Compile Include="System.ComponentModel.Design\DesignerCommandSet.cs" />
     <Compile Include="System.ComponentModel.Design\DesignerEventService.cs" />
     <Compile Include="System.ComponentModel.Design\DesignerHost.cs" />
-    <Compile Include="System.ComponentModel.Design\DesignModeNestedContainer.cs" />
-    <Compile Include="System.ComponentModel.Design\DesignModeSite.cs" />
-    <Compile Include="System.ComponentModel.Design\DesignSurface.cs" />
-    <Compile Include="System.ComponentModel.Design\DesignSurfaceCollection.cs" />
-    <Compile Include="System.ComponentModel.Design\DesignSurfaceEventArgs.cs" />
-    <Compile Include="System.ComponentModel.Design\DesignSurfaceEventHandler.cs" />
-    <Compile Include="System.ComponentModel.Design\DesignSurfaceManager.cs" />
-    <Compile Include="System.ComponentModel.Design\DesignSurfaceServiceContainer.cs" />
     <Compile Include="System.ComponentModel.Design\DisplayMode.cs" />
     <Compile Include="System.ComponentModel.Design\EventBindingService.cs" />
     <Compile Include="System.ComponentModel.Design\ExceptionCollection.cs" />
@@ -134,10 +134,10 @@
     <Compile Include="System.ComponentModel.Design\LoadedEventArgs.cs" />
     <Compile Include="System.ComponentModel.Design\LoadedEventHandler.cs" />
     <Compile Include="System.ComponentModel.Design\LocalizationExtenderProvider.cs" />
+    <Compile Include="System.ComponentModel.Design\MenuCommandService.cs" />
     <Compile Include="System.ComponentModel.Design\MenuCommandsChangedEventArgs.cs" />
     <Compile Include="System.ComponentModel.Design\MenuCommandsChangedEventHandler.cs" />
     <Compile Include="System.ComponentModel.Design\MenuCommandsChangedType.cs" />
-    <Compile Include="System.ComponentModel.Design\MenuCommandService.cs" />
     <Compile Include="System.ComponentModel.Design\MultilineStringEditor.cs" />
     <Compile Include="System.ComponentModel.Design\ObjectSelectorEditor.cs" />
     <Compile Include="System.ComponentModel.Design\ReferenceService.cs" />
@@ -216,6 +216,8 @@
     <Compile Include="System.Web.UI.Design\DataSourceConverter.cs" />
     <Compile Include="System.Web.UI.Design\DataSourceDesigner.cs" />
     <Compile Include="System.Web.UI.Design\DataSourceViewSchemaConverter.cs" />
+    <Compile Include="System.Web.UI.Design\DesignTimeData.cs" />
+    <Compile Include="System.Web.UI.Design\DesignTimeResourceProviderFactory.cs" />
     <Compile Include="System.Web.UI.Design\DesignerAutoFormat.cs" />
     <Compile Include="System.Web.UI.Design\DesignerAutoFormatCollection.cs" />
     <Compile Include="System.Web.UI.Design\DesignerAutoFormatStyle.cs" />
@@ -225,8 +227,6 @@
     <Compile Include="System.Web.UI.Design\DesignerRegion.cs" />
     <Compile Include="System.Web.UI.Design\DesignerRegionCollection.cs" />
     <Compile Include="System.Web.UI.Design\DesignerRegionMouseEventArgs.cs" />
-    <Compile Include="System.Web.UI.Design\DesignTimeData.cs" />
-    <Compile Include="System.Web.UI.Design\DesignTimeResourceProviderFactory.cs" />
     <Compile Include="System.Web.UI.Design\EditableDesignerRegion.cs" />
     <Compile Include="System.Web.UI.Design\ExpressionEditor.cs" />
     <Compile Include="System.Web.UI.Design\ExpressionEditorSheet.cs" />
@@ -253,7 +253,6 @@
     <Compile Include="System.Web.UI.Design\IFolderProjectItem.cs" />
     <Compile Include="System.Web.UI.Design\IHierarchicalDataSourceDesigner.cs" />
     <Compile Include="System.Web.UI.Design\IHtmlControlDesignerBehavior.cs" />
-    <Compile Include="System.Web.UI.Design\ImageUrlEditor.cs" />
     <Compile Include="System.Web.UI.Design\IProjectItem.cs" />
     <Compile Include="System.Web.UI.Design\ITemplateEditingFrame.cs" />
     <Compile Include="System.Web.UI.Design\ITemplateEditingService.cs" />
@@ -262,6 +261,7 @@
     <Compile Include="System.Web.UI.Design\IWebFormReferenceManager.cs" />
     <Compile Include="System.Web.UI.Design\IWebFormsBuilderUIService.cs" />
     <Compile Include="System.Web.UI.Design\IWebFormsDocumentService.cs" />
+    <Compile Include="System.Web.UI.Design\ImageUrlEditor.cs" />
     <Compile Include="System.Web.UI.Design\MailFileEditor.cs" />
     <Compile Include="System.Web.UI.Design\MdbDataFileEditor.cs" />
     <Compile Include="System.Web.UI.Design\ReadWriteControlDesigner.cs" />
@@ -269,14 +269,14 @@
     <Compile Include="System.Web.UI.Design\ResourceExpressionEditorSheet.cs" />
     <Compile Include="System.Web.UI.Design\SkinIDTypeConverter.cs" />
     <Compile Include="System.Web.UI.Design\SupportsPreviewControlAttribute.cs" />
-    <Compile Include="System.Web.UI.Design\TemplatedControlDesigner.cs" />
-    <Compile Include="System.Web.UI.Design\TemplatedEditableDesignerRegion.cs" />
     <Compile Include="System.Web.UI.Design\TemplateDefinition.cs" />
     <Compile Include="System.Web.UI.Design\TemplateEditingService.cs" />
     <Compile Include="System.Web.UI.Design\TemplateEditingVerb.cs" />
     <Compile Include="System.Web.UI.Design\TemplateGroup.cs" />
     <Compile Include="System.Web.UI.Design\TemplateGroupCollection.cs" />
     <Compile Include="System.Web.UI.Design\TemplateModeChangedEventArgs.cs" />
+    <Compile Include="System.Web.UI.Design\TemplatedControlDesigner.cs" />
+    <Compile Include="System.Web.UI.Design\TemplatedEditableDesignerRegion.cs" />
     <Compile Include="System.Web.UI.Design\TextControlDesigner.cs" />
     <Compile Include="System.Web.UI.Design\TextDataBindingHandler.cs" />
     <Compile Include="System.Web.UI.Design\TransactedChangeCallback.cs" />
@@ -340,17 +340,17 @@
     <Compile Include="System.Windows.Forms.Design\EventHandlerService.cs" />
     <Compile Include="System.Windows.Forms.Design\FileNameEditor.cs" />
     <Compile Include="System.Windows.Forms.Design\FolderNameEditor.cs" />
-    <Compile Include="System.Windows.Forms.Design\FormatStringEditor.cs" />
     <Compile Include="System.Windows.Forms.Design\FormDocumentDesigner.cs" />
-    <Compile Include="System.Windows.Forms.Design\ImageCollectionEditor.cs" />
-    <Compile Include="System.Windows.Forms.Design\ImageIndexEditor.cs" />
-    <Compile Include="System.Windows.Forms.Design\ImageListCodeDomSerializer.cs" />
-    <Compile Include="System.Windows.Forms.Design\ImageListImageEditor.cs" />
+    <Compile Include="System.Windows.Forms.Design\FormatStringEditor.cs" />
     <Compile Include="System.Windows.Forms.Design\IMenuEditorService.cs" />
     <Compile Include="System.Windows.Forms.Design\IMessageReceiver.cs" />
     <Compile Include="System.Windows.Forms.Design\IOleDragClient.cs" />
     <Compile Include="System.Windows.Forms.Design\ISelectionUIHandler.cs" />
     <Compile Include="System.Windows.Forms.Design\IUISelectionService.cs" />
+    <Compile Include="System.Windows.Forms.Design\ImageCollectionEditor.cs" />
+    <Compile Include="System.Windows.Forms.Design\ImageIndexEditor.cs" />
+    <Compile Include="System.Windows.Forms.Design\ImageListCodeDomSerializer.cs" />
+    <Compile Include="System.Windows.Forms.Design\ImageListImageEditor.cs" />
     <Compile Include="System.Windows.Forms.Design\ListControlStringCollectionEditor.cs" />
     <Compile Include="System.Windows.Forms.Design\MaskDescriptor.cs" />
     <Compile Include="System.Windows.Forms.Design\MenuCommands.cs" />
@@ -369,6 +369,7 @@
     <Compile Include="System.Windows.Forms.Design\WindowsFormsDesignerOptionService.cs" />
     <Compile Include="System.Windows.Forms.Design\WndProcRouter.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

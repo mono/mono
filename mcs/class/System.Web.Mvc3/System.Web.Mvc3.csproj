@@ -44,8 +44,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="GlobalAssemblyInfo.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Mvc\AcceptVerbsAttribute.cs" />
@@ -62,18 +62,20 @@
     <Compile Include="Mvc\ActionResult.cs" />
     <Compile Include="Mvc\ActionSelector.cs" />
     <Compile Include="Mvc\AdditionalMetaDataAttribute.cs" />
-    <Compile Include="Mvc\Ajax\AjaxExtensions.cs" />
-    <Compile Include="Mvc\Ajax\AjaxOptions.cs" />
-    <Compile Include="Mvc\Ajax\InsertionMode.cs" />
     <Compile Include="Mvc\AjaxHelper.cs" />
     <Compile Include="Mvc\AjaxHelper`1.cs" />
     <Compile Include="Mvc\AjaxRequestExtensions.cs" />
+    <Compile Include="Mvc\Ajax\AjaxExtensions.cs" />
+    <Compile Include="Mvc\Ajax\AjaxOptions.cs" />
+    <Compile Include="Mvc\Ajax\InsertionMode.cs" />
     <Compile Include="Mvc\AllowHtmlAttribute.cs" />
     <Compile Include="Mvc\AreaHelpers.cs" />
     <Compile Include="Mvc\AreaRegistration.cs" />
     <Compile Include="Mvc\AreaRegistrationContext.cs" />
     <Compile Include="Mvc\AssociatedMetadataProvider.cs" />
     <Compile Include="Mvc\AssociatedValidatorProvider.cs" />
+    <Compile Include="Mvc\AsyncController.cs" />
+    <Compile Include="Mvc\AsyncTimeoutAttribute.cs" />
     <Compile Include="Mvc\Async\ActionDescriptorCreator.cs" />
     <Compile Include="Mvc\Async\AsyncActionDescriptor.cs" />
     <Compile Include="Mvc\Async\AsyncActionMethodSelector.cs" />
@@ -97,8 +99,6 @@
     <Compile Include="Mvc\Async\SynchronousOperationException.cs" />
     <Compile Include="Mvc\Async\Trigger.cs" />
     <Compile Include="Mvc\Async\TriggerListener.cs" />
-    <Compile Include="Mvc\AsyncController.cs" />
-    <Compile Include="Mvc\AsyncTimeoutAttribute.cs" />
     <Compile Include="Mvc\AuthorizationContext.cs" />
     <Compile Include="Mvc\AuthorizeAttribute.cs" />
     <Compile Include="Mvc\BindAttribute.cs" />
@@ -125,8 +125,8 @@
     <Compile Include="Mvc\DataAnnotationsModelMetadata.cs" />
     <Compile Include="Mvc\DataAnnotationsModelMetadataProvider.cs" />
     <Compile Include="Mvc\DataAnnotationsModelValidator.cs" />
-    <Compile Include="Mvc\DataAnnotationsModelValidator`1.cs" />
     <Compile Include="Mvc\DataAnnotationsModelValidatorProvider.cs" />
+    <Compile Include="Mvc\DataAnnotationsModelValidator`1.cs" />
     <Compile Include="Mvc\DataErrorInfoModelValidatorProvider.cs" />
     <Compile Include="Mvc\DataTypeUtil.cs" />
     <Compile Include="Mvc\DefaultControllerFactory.cs" />
@@ -184,6 +184,8 @@
     <Compile Include="Mvc\HandleErrorAttribute.cs" />
     <Compile Include="Mvc\HandleErrorInfo.cs" />
     <Compile Include="Mvc\HiddenInputAttribute.cs" />
+    <Compile Include="Mvc\HtmlHelper.cs" />
+    <Compile Include="Mvc\HtmlHelper`1.cs" />
     <Compile Include="Mvc\Html\ChildActionExtensions.cs" />
     <Compile Include="Mvc\Html\DefaultDisplayTemplates.cs" />
     <Compile Include="Mvc\Html\DefaultEditorTemplates.cs" />
@@ -201,8 +203,6 @@
     <Compile Include="Mvc\Html\TemplateHelpers.cs" />
     <Compile Include="Mvc\Html\TextAreaExtensions.cs" />
     <Compile Include="Mvc\Html\ValidationExtensions.cs" />
-    <Compile Include="Mvc\HtmlHelper.cs" />
-    <Compile Include="Mvc\HtmlHelper`1.cs" />
     <Compile Include="Mvc\HttpDeleteAttribute.cs" />
     <Compile Include="Mvc\HttpFileCollectionValueProvider.cs" />
     <Compile Include="Mvc\HttpFileCollectionValueProviderFactory.cs" />
@@ -232,7 +232,6 @@
     <Compile Include="Mvc\IModelBinderProvider.cs" />
     <Compile Include="Mvc\IMvcControlBuilder.cs" />
     <Compile Include="Mvc\IMvcFilter.cs" />
-    <Compile Include="Mvc\InputType.cs" />
     <Compile Include="Mvc\IResolver.cs" />
     <Compile Include="Mvc\IResultFilter.cs" />
     <Compile Include="Mvc\IRouteWithArea.cs" />
@@ -247,6 +246,7 @@
     <Compile Include="Mvc\IViewLocationCache.cs" />
     <Compile Include="Mvc\IViewPageActivator.cs" />
     <Compile Include="Mvc\IViewStartPageChild.cs" />
+    <Compile Include="Mvc\InputType.cs" />
     <Compile Include="Mvc\JavaScriptResult.cs" />
     <Compile Include="Mvc\JsonRequestBehavior.cs" />
     <Compile Include="Mvc\JsonResult.cs" />
@@ -300,14 +300,14 @@
     <Compile Include="Mvc\QueryStringValueProvider.cs" />
     <Compile Include="Mvc\QueryStringValueProviderFactory.cs" />
     <Compile Include="Mvc\RangeAttributeAdapter.cs" />
+    <Compile Include="Mvc\RazorView.cs" />
+    <Compile Include="Mvc\RazorViewEngine.cs" />
     <Compile Include="Mvc\Razor\MvcCSharpRazorCodeGenerator.cs" />
     <Compile Include="Mvc\Razor\MvcCSharpRazorCodeParser.cs" />
     <Compile Include="Mvc\Razor\MvcVBRazorCodeParser.cs" />
     <Compile Include="Mvc\Razor\MvcWebPageRazorHost.cs" />
     <Compile Include="Mvc\Razor\SetModelTypeCodeGenerator.cs" />
     <Compile Include="Mvc\Razor\StartPageLookupDelegate.cs" />
-    <Compile Include="Mvc\RazorView.cs" />
-    <Compile Include="Mvc\RazorViewEngine.cs" />
     <Compile Include="Mvc\ReaderWriterCache`2.cs" />
     <Compile Include="Mvc\RedirectResult.cs" />
     <Compile Include="Mvc\RedirectToRouteResult.cs" />
@@ -318,8 +318,8 @@
     <Compile Include="Mvc\ReflectedParameterDescriptor.cs" />
     <Compile Include="Mvc\RegularExpressionAttributeAdapter.cs" />
     <Compile Include="Mvc\RemoteAttribute.cs" />
-    <Compile Include="Mvc\RequiredAttributeAdapter.cs" />
     <Compile Include="Mvc\RequireHttpsAttribute.cs" />
+    <Compile Include="Mvc\RequiredAttributeAdapter.cs" />
     <Compile Include="Mvc\Resources\MvcResources.Designer.cs" />
     <Compile Include="Mvc\ResultExecutedContext.cs" />
     <Compile Include="Mvc\ResultExecutingContext.cs" />
@@ -365,11 +365,11 @@
     <Compile Include="Mvc\ViewEngineResult.cs" />
     <Compile Include="Mvc\ViewEngines.cs" />
     <Compile Include="Mvc\ViewMasterPage.cs" />
-    <Compile Include="Mvc\ViewMasterPage`1.cs" />
     <Compile Include="Mvc\ViewMasterPageControlBuilder.cs" />
+    <Compile Include="Mvc\ViewMasterPage`1.cs" />
     <Compile Include="Mvc\ViewPage.cs" />
-    <Compile Include="Mvc\ViewPage`1.cs" />
     <Compile Include="Mvc\ViewPageControlBuilder.cs" />
+    <Compile Include="Mvc\ViewPage`1.cs" />
     <Compile Include="Mvc\ViewResult.cs" />
     <Compile Include="Mvc\ViewResultBase.cs" />
     <Compile Include="Mvc\ViewStartPage.cs" />
@@ -379,8 +379,8 @@
     <Compile Include="Mvc\ViewTypeControlBuilder.cs" />
     <Compile Include="Mvc\ViewTypeParserFilter.cs" />
     <Compile Include="Mvc\ViewUserControl.cs" />
-    <Compile Include="Mvc\ViewUserControl`1.cs" />
     <Compile Include="Mvc\ViewUserControlControlBuilder.cs" />
+    <Compile Include="Mvc\ViewUserControl`1.cs" />
     <Compile Include="Mvc\VirtualPathProviderViewEngine.cs" />
     <Compile Include="Mvc\WebFormView.cs" />
     <Compile Include="Mvc\WebFormViewEngine.cs" />
@@ -388,6 +388,7 @@
     <Compile Include="Mvc\WebViewPage`1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

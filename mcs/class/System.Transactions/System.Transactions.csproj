@@ -103,6 +103,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -123,8 +124,8 @@
     <Compile Include="System.Transactions\IPromotableSinglePhaseNotification.cs" />
     <Compile Include="System.Transactions\ISimpleTransactionSuperior.cs" />
     <Compile Include="System.Transactions\ISinglePhaseNotification.cs" />
-    <Compile Include="System.Transactions\IsolationLevel.cs" />
     <Compile Include="System.Transactions\ITransactionPromoter.cs" />
+    <Compile Include="System.Transactions\IsolationLevel.cs" />
     <Compile Include="System.Transactions\PreparingEnlistment.cs" />
     <Compile Include="System.Transactions\SinglePhaseEnlistment.cs" />
     <Compile Include="System.Transactions\SubordinateTransaction.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="System.Transactions\TransactionScopeOption.cs" />
     <Compile Include="System.Transactions\TransactionStatus.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />

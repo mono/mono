@@ -44,9 +44,10 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\..\external\aspnetwebstack\src\AptcaCommonAssemblyInfo.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\CommonWebApiResources.Designer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\DictionaryExtensions.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\Error.cs" />
@@ -54,7 +55,6 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\PrefixContainer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\TaskHelpers.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\TaskHelpersExtensions.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\RS.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\AcceptVerbsAttribute.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ActionNameAttribute.cs" />
@@ -188,8 +188,8 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ModelBinding\CustomModelBinderAttribute.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ModelBinding\DefaultActionValueBinder.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ModelBinding\ErrorParameterBinding.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ModelBinding\FormatterParameterBinding.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ModelBinding\FormDataCollectionExtensions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ModelBinding\FormatterParameterBinding.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ModelBinding\HttpBindingBehavior.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ModelBinding\HttpBindingBehaviorAttribute.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ModelBinding\HttpRequestParameterBinding.cs" />
@@ -241,8 +241,8 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Routing\PathSubsegment.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Routing\UriPathExtensionMapping.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Routing\UrlHelper.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Services\DefaultServices.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ServicesExtensions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Services\DefaultServices.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Tracing\FormattingUtilities.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Tracing\IFormatterTracer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Tracing\ITraceManager.cs" />
@@ -263,8 +263,8 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Tracing\Tracers\ExceptionFilterAttributeTracer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Tracing\Tracers\ExceptionFilterTracer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Tracing\Tracers\FilterTracer.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Tracing\Tracers\FormatterParameterBindingTracer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Tracing\Tracers\FormUrlEncodedMediaTypeFormatterTracer.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Tracing\Tracers\FormatterParameterBindingTracer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Tracing\Tracers\HttpActionBindingTracer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Tracing\Tracers\HttpActionDescriptorTracer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\Tracing\Tracers\HttpActionInvokerTracer.cs" />
@@ -311,6 +311,7 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ValueProviders\ValueProviderFactory.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ValueProviders\ValueProviderResult.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

@@ -46,12 +46,13 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\Activity.cs" />
-    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\DiagnosticsTraceCode.cs" />
     <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\DiagnosticStrings.cs" />
     <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\DiagnosticTraceSource.cs" />
+    <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\DiagnosticsTraceCode.cs" />
     <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\EncodingFallbackAwareXmlTextWriter.cs" />
     <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\EventLogCategory.cs" />
     <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\EventLogEventId.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="ReferenceSources\TraceSR.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />
