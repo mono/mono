@@ -48,6 +48,7 @@ using Mono.Btls;
 
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace System.Security.Cryptography.X509Certificates
 {
@@ -84,8 +85,12 @@ namespace System.Security.Cryptography.X509Certificates
 		}
 
 #if SECURITY_DEP
+		static int initialized;
+
 		internal static void Initialize ()
 		{
+			if (Interlocked.CompareExchange (ref initialized, 0, 1) != 0)
+				return;
 			X509Helper.InstallNativeHelper (new MyNativeHelper ());
 		}
 
@@ -124,6 +129,11 @@ namespace System.Security.Cryptography.X509Certificates
 		}
 #endif // !MONO_FEATURE_BTLS
 
+		internal static X509Certificate2Impl Import (byte[] rawData, bool disableProvider = false)
+		{
+			return Import (rawData, null, X509KeyStorageFlags.DefaultKeySet, disableProvider);
+		}
+
 		internal static X509Certificate2Impl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags, bool disableProvider = false)
 		{
 			if (rawData == null || rawData.Length == 0)
@@ -138,6 +148,7 @@ namespace System.Security.Cryptography.X509Certificates
 				}
 			}
 #endif // MONO_FEATURE_BTLS
+
 			var impl2 = new X509Certificate2ImplMono ();
 			impl2.Import (rawData, password, keyStorageFlags);
 			return impl2;
@@ -157,6 +168,7 @@ namespace System.Security.Cryptography.X509Certificates
 				}
 			}
 #endif // MONO_FEATURE_BTLS
+
 			var impl2 = cert.Impl as X509Certificate2Impl;
 			if (impl2 != null)
 				return (X509Certificate2Impl)impl2.Clone ();
@@ -207,8 +219,12 @@ namespace System.Security.Cryptography.X509Certificates
 
 		class MyNativeHelper : INativeCertificateHelper
 		{
-			public X509CertificateImpl Import (
-				byte[] data, string password, X509KeyStorageFlags flags)
+			public X509CertificateImpl Import (byte[] data)
+			{
+				return X509Helper2.Import (data);
+			}
+
+			public X509CertificateImpl Import (byte[] data, string password, X509KeyStorageFlags flags)
 			{
 				return X509Helper2.Import (data, password, flags);
 			}
