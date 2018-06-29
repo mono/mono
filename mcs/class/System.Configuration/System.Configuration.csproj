@@ -48,6 +48,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="System.Configuration\CommaDelimitedStringCollectionConverter.cs" />
     <Compile Include="System.Configuration\ConfigHelper.cs" />
     <Compile Include="System.Configuration\ConfigInfo.cs" />
+    <Compile Include="System.Configuration\ConfigXmlTextReader.cs" />
     <Compile Include="System.Configuration\Configuration.cs" />
     <Compile Include="System.Configuration\ConfigurationAllowDefinition.cs" />
     <Compile Include="System.Configuration\ConfigurationAllowExeDefinition.cs" />
@@ -111,7 +113,6 @@
     <Compile Include="System.Configuration\ConfigurationUserLevel.cs" />
     <Compile Include="System.Configuration\ConfigurationValidatorAttribute.cs" />
     <Compile Include="System.Configuration\ConfigurationValidatorBase.cs" />
-    <Compile Include="System.Configuration\ConfigXmlTextReader.cs" />
     <Compile Include="System.Configuration\ConnectionStringSettings.cs" />
     <Compile Include="System.Configuration\ConnectionStringSettingsCollection.cs" />
     <Compile Include="System.Configuration\ConnectionStringsSection.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="System.Configuration\ValidatorCallback.cs" />
     <Compile Include="System.Configuration\WhiteSpaceTrimStringConverter.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System.Security/System.Security.csproj" />

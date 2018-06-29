@@ -103,12 +103,13 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="src\Assembly\AssemblyInfo.cs" />
     <Compile Include="src\ComponentModel\ContractAdditions.cs" />
-    <Compile Include="src\ComponentModel\Microsoft\Internal\Assumes.cs" />
     <Compile Include="src\ComponentModel\Microsoft\Internal\Assumes.InternalErrorException.cs" />
+    <Compile Include="src\ComponentModel\Microsoft\Internal\Assumes.cs" />
     <Compile Include="src\ComponentModel\Microsoft\Internal\AttributeServices.cs" />
     <Compile Include="src\ComponentModel\Microsoft\Internal\Collections\CollectionServices.CollectionOfObject.cs" />
     <Compile Include="src\ComponentModel\Microsoft\Internal\Collections\CollectionServices.cs" />
@@ -117,9 +118,9 @@
     <Compile Include="src\ComponentModel\Microsoft\Internal\ContractServices.cs" />
     <Compile Include="src\ComponentModel\Microsoft\Internal\GenerationServices.cs" />
     <Compile Include="src\ComponentModel\Microsoft\Internal\LazyServices.cs" />
-    <Compile Include="src\ComponentModel\Microsoft\Internal\Lock.cs" />
     <Compile Include="src\ComponentModel\Microsoft\Internal\Lock.Reader.cs" />
     <Compile Include="src\ComponentModel\Microsoft\Internal\Lock.Writer.cs" />
+    <Compile Include="src\ComponentModel\Microsoft\Internal\Lock.cs" />
     <Compile Include="src\ComponentModel\Microsoft\Internal\ReflectionInvoke.cs" />
     <Compile Include="src\ComponentModel\Microsoft\Internal\ReflectionServices.cs" />
     <Compile Include="src\ComponentModel\Microsoft\Internal\Requires.cs" />
@@ -129,10 +130,10 @@
     <Compile Include="src\ComponentModel\Strings.Designer.cs" />
     <Compile Include="src\ComponentModel\SuppressMessages.cs" />
     <Compile Include="src\ComponentModel\SuppressMessagesBaselined.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\AttributedModelServices.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\AttributedModel\AttributedExportDefinition.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\AttributedModel\AttributedModelDiscovery.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\AttributedModel\AttributedPartCreationInfo.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\AttributedModelServices.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\CatalogReflectionContextAttribute.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ChangeRejectedException.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\CompositionContractMismatchException.cs" />
@@ -160,8 +161,8 @@
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ExportFactoryOfTTMetadata.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ExportLifetimeContextOfT.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ExportMetadataAttribute.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ExportServices.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ExportServices.DisposableLazy.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ExportServices.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\AggregateCatalog.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\AggregateExportProvider.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ApplicationCatalog.cs" />
@@ -171,17 +172,17 @@
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\AtomicCompositionExtensions.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CatalogExportProvider.CatalogChangeProxy.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CatalogExportProvider.CatalogExport.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CatalogExportProvider.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CatalogExportProvider.FactoryExport.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CatalogExportProvider.PartCreatorExport.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CatalogExportProvider.ScopeFactoryExport.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CatalogExportProvider.ScopeManager.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CatalogExportProvider.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CatalogExtensions.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ComposablePartCatalogChangeEventArgs.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ComposablePartCatalogCollection.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ComposablePartExportProvider.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CompositionBatch.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CompositionBatch.SingleExportComposablePart.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CompositionBatch.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CompositionConstants.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CompositionContainer.CompositionServiceShim.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CompositionContainer.cs" />
@@ -191,34 +192,34 @@
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CompositionScopeDefinitionDebuggerProxy.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CompositionService.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\CompositionServices.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\DirectoryCatalog.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\DirectoryCatalog.DirectoryCatalogDebuggerProxy.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ExportProvider.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\DirectoryCatalog.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ExportProvider.GetExportOverrides.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ExportProvider.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ExportsChangeEventArgs.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\FilteredCatalog.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\FilteredCatalog.DependenciesTraversal.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\FilteredCatalog.DependentsTraversal.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\FilteredCatalog.IComposablePartCatalogTraversal.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\FilteredCatalog.Traversal.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ImportEngine.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\FilteredCatalog.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\INotifyComposablePartCatalogChanged.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ImportEngine.EngineContext.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ImportEngine.PartManager.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ImportEngine.RecompositionManager.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ImportEngine.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ImportSourceImportDefinitionHelpers.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\INotifyComposablePartCatalogChanged.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\ScopingExtensions.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Hosting\TypeCatalog.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\IAttributedImport.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ICompositionService.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\IPartImportsSatisfiedNotification.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ImportAttribute.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ImportCardinalityMismatchException.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ImportCardinalityMismatchExceptionDebuggerProxy.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ImportingConstructorAttribute.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ImportManyAttribute.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ImportSource.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ImportingConstructorAttribute.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\InheritedExportAttribute.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\IPartImportsSatisfiedNotification.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\MetadataAttributeAttribute.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\MetadataServices.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\MetadataViewGenerator.cs" />
@@ -241,22 +242,22 @@
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Primitives\ExportDefinition.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Primitives\ExportedDelegate.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Primitives\ICompositionElement.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Primitives\IPartCreatorImportDefinition.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Primitives\ImportCardinality.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Primitives\ImportDefinition.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Primitives\IPartCreatorImportDefinition.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Primitives\PrimitivesServices.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\Primitives\SerializableCompositionElement.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\DisposableReflectionComposablePart.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\ExportfactoryCreator.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\ExportfactoryCreator.LifetimeContext.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\ExportfactoryCreator.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\ExportingMember.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\GenericServices.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\GenericSpecializationPartCreationInfo.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\IReflectionPartCreationInfo.cs" />
+    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\ImportType.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\ImportingItem.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\ImportingMember.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\ImportingParameter.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\ImportType.cs" />
-    <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\IReflectionPartCreationInfo.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\LazyMemberInfo.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\PartCreatorExportDefinition.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\PartCreatorMemberImportDefinition.cs" />
@@ -280,6 +281,7 @@
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\ReflectionWritableMember.cs" />
     <Compile Include="src\ComponentModel\System\LazyOfTTMetadata.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />

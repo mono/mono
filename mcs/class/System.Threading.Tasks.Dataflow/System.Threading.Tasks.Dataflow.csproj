@@ -43,8 +43,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Base\DataflowBlock.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Base\DataflowBlockOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Base\DataflowLinkOptions.cs" />
@@ -70,8 +70,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\DataflowEtwProvider.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\EnumerableDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\IDebuggerDisplay.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\ImmutableArray.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\IProducerConsumerCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\ImmutableArray.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\Padding.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\ProducerConsumerQueues.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\QueuedMap.cs" />
@@ -88,6 +88,7 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="corefx\SR.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

@@ -44,8 +44,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
@@ -82,6 +82,8 @@
     <Compile Include="System.IO.Packaging\EncryptedPackageEnvelope.cs" />
     <Compile Include="System.IO.Packaging\EncryptionOption.cs" />
     <Compile Include="System.IO.Packaging\InvalidSignatureEventHandler.cs" />
+    <Compile Include="System.IO.Packaging\PackUriHelper.cs" />
+    <Compile Include="System.IO.Packaging\PackUriParser.cs" />
     <Compile Include="System.IO.Packaging\Package.cs" />
     <Compile Include="System.IO.Packaging\PackageDigitalSignature.cs" />
     <Compile Include="System.IO.Packaging\PackageDigitalSignatureManager.cs" />
@@ -93,8 +95,6 @@
     <Compile Include="System.IO.Packaging\PackageRelationshipCollection.cs" />
     <Compile Include="System.IO.Packaging\PackageRelationshipSelector.cs" />
     <Compile Include="System.IO.Packaging\PackageRelationshipSelectorType.cs" />
-    <Compile Include="System.IO.Packaging\PackUriHelper.cs" />
-    <Compile Include="System.IO.Packaging\PackUriParser.cs" />
     <Compile Include="System.IO.Packaging\RightsManagementInformation.cs" />
     <Compile Include="System.IO.Packaging\SignatureVerificationEventArgs.cs" />
     <Compile Include="System.IO.Packaging\StorageInfo.cs" />
@@ -159,10 +159,10 @@
     <Compile Include="System.Windows.Markup\DictionaryKeyPropertyAttribute.cs" />
     <Compile Include="System.Windows.Markup\IComponentConnector.cs" />
     <Compile Include="System.Windows.Markup\INameScope.cs" />
-    <Compile Include="System.Windows.Markup\InternalTypeHelper.cs" />
     <Compile Include="System.Windows.Markup\IReceiveMarkupExtension.cs" />
     <Compile Include="System.Windows.Markup\IValueSerializerContext.cs" />
     <Compile Include="System.Windows.Markup\IXamlTypeResolver.cs" />
+    <Compile Include="System.Windows.Markup\InternalTypeHelper.cs" />
     <Compile Include="System.Windows.Markup\MarkupExtension.cs" />
     <Compile Include="System.Windows.Markup\MarkupExtensionReturnTypeAttribute.cs" />
     <Compile Include="System.Windows.Markup\NameScopePropertyAttribute.cs" />
@@ -214,9 +214,9 @@
     <Compile Include="System.Windows\Expression.cs" />
     <Compile Include="System.Windows\ExpressionConverter.cs" />
     <Compile Include="System.Windows\Freezable.cs" />
+    <Compile Include="System.Windows\IWeakEventListener.cs" />
     <Compile Include="System.Windows\Int32Rect.cs" />
     <Compile Include="System.Windows\Int32RectConverter.cs" />
-    <Compile Include="System.Windows\IWeakEventListener.cs" />
     <Compile Include="System.Windows\LocalValueEntry.cs" />
     <Compile Include="System.Windows\LocalValueEnumerator.cs" />
     <Compile Include="System.Windows\NumericListTokenizer.cs" />
@@ -248,6 +248,7 @@
     <Compile Include="ZipSharp\ZipTime.cs" />
     <Compile Include="ZipSharp\ZipWriteStream.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

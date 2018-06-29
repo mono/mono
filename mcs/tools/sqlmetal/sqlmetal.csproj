@@ -43,8 +43,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\class\System.Data.Linq\src\DbLinq.ProductInfo.cs" />
     <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\AbstractParameters.cs" />
     <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Configuration\ProvidersSection.cs" />
@@ -58,16 +58,16 @@
     <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\EntityInterface\Implementation\InterfaceImplementation.cs" />
     <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\GenerationContext.cs" />
     <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\ICodeGenerator.cs" />
-    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\CodeTextGenerator\CodeGenerator.Class.cs" />
-    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\CodeTextGenerator\CodeGenerator.Context.Ctor.cs" />
-    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\CodeTextGenerator\CodeGenerator.cs" />
-    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\CodeTextGenerator\CodeGenerator.Procedure.cs" />
-    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\CodeTextGenerator\CSCodeGenerator.cs" />
-    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\CodeTextGenerator\CSCodeWriter.cs" />
-    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\Processor.cs" />
-    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\SchemaLoaderFactory.cs" />
     <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\IProcessor.cs" />
     <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\ISchemaLoaderFactory.cs" />
+    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\CodeTextGenerator\CSCodeGenerator.cs" />
+    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\CodeTextGenerator\CSCodeWriter.cs" />
+    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\CodeTextGenerator\CodeGenerator.Class.cs" />
+    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\CodeTextGenerator\CodeGenerator.Context.Ctor.cs" />
+    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\CodeTextGenerator\CodeGenerator.Procedure.cs" />
+    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\CodeTextGenerator\CodeGenerator.cs" />
+    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\Processor.cs" />
+    <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\Implementation\SchemaLoaderFactory.cs" />
     <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\ParameterDefinition.cs" />
     <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Generator\SpecificationDefinition.cs" />
     <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Language\EnglishWords.cs" />
@@ -86,6 +86,7 @@
     <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Utility\VariablesExtension.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

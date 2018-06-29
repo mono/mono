@@ -102,6 +102,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
@@ -189,8 +190,8 @@
     <Compile Include="System.ServiceModel.Channels\HttpRequestChannel.cs" />
     <Compile Include="System.ServiceModel.Channels\HttpRequestMessageProperty.cs" />
     <Compile Include="System.ServiceModel.Channels\HttpResponseMessageProperty.cs" />
-    <Compile Include="System.ServiceModel.Channels\HttpsTransportBindingElement.cs" />
     <Compile Include="System.ServiceModel.Channels\HttpTransportBindingElement.cs" />
+    <Compile Include="System.ServiceModel.Channels\HttpsTransportBindingElement.cs" />
     <Compile Include="System.ServiceModel.Channels\IBindingDeliveryCapabilities.cs" />
     <Compile Include="System.ServiceModel.Channels\IBindingRuntimePreferences.cs" />
     <Compile Include="System.ServiceModel.Channels\IChannel.cs" />
@@ -270,8 +271,8 @@
     <Compile Include="System.ServiceModel.Description\ServiceEndpoint.cs" />
     <Compile Include="System.ServiceModel.Description\XmlName.cs" />
     <Compile Include="System.ServiceModel.Description\XmlSerializerOperationBehavior.cs" />
-    <Compile Include="System.ServiceModel.Diagnostics\MessageLoggingSettings.cs" />
     <Compile Include="System.ServiceModel.Diagnostics\MessageLogTraceRecord.cs" />
+    <Compile Include="System.ServiceModel.Diagnostics\MessageLoggingSettings.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\BaseMessagesFormatter.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\ClientOperation.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\ClientRuntime.cs" />
@@ -312,8 +313,8 @@
     <Compile Include="System.ServiceModel\AllEnums.cs" />
     <Compile Include="System.ServiceModel\BasicHttpBinding_4_5.cs" />
     <Compile Include="System.ServiceModel\BasicHttpMessageSecurity.cs" />
-    <Compile Include="System.ServiceModel\BasicHttpsBinding.cs" />
     <Compile Include="System.ServiceModel\BasicHttpSecurity.cs" />
+    <Compile Include="System.ServiceModel\BasicHttpsBinding.cs" />
     <Compile Include="System.ServiceModel\BasicHttpsSecurity.cs" />
     <Compile Include="System.ServiceModel\CallbackBehaviorAttribute.cs" />
     <Compile Include="System.ServiceModel\ChannelFactory.cs" />
@@ -360,10 +361,10 @@
     <Compile Include="System.ServiceModel\MessageBodyAttribute.cs" />
     <Compile Include="System.ServiceModel\MessageContractAttribute.cs" />
     <Compile Include="System.ServiceModel\MessageContractMemberAttribute.cs" />
-    <Compile Include="System.ServiceModel\MessageHeader_1.cs" />
     <Compile Include="System.ServiceModel\MessageHeaderArrayAttribute.cs" />
     <Compile Include="System.ServiceModel\MessageHeaderAttribute.cs" />
     <Compile Include="System.ServiceModel\MessageHeaderException.cs" />
+    <Compile Include="System.ServiceModel\MessageHeader_1.cs" />
     <Compile Include="System.ServiceModel\MessageParameterAttribute.cs" />
     <Compile Include="System.ServiceModel\MessagePropertyAttribute.cs" />
     <Compile Include="System.ServiceModel\MessageSecurityOverTcp.cs" />
@@ -393,6 +394,22 @@
     <Compile Include="System.ServiceModel\UpnEndpointIdentity.cs" />
     <Compile Include="System.ServiceModel\UriSchemeKeyedCollection.cs" />
     <Compile Include="System.ServiceModel\XmlSerializerFormatAttribute.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
+    <Compile Include="Dummy_2_1.cs" />
+    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
+    <Compile Include="Dummy_2_1.cs" />
+    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <Compile Include="Dummy_2_1.cs" />
+    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
+    <Compile Include="Dummy_2_1.cs" />
+    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <Compile Include="..\..\..\external\corefx\src\System.ServiceModel.Syndication\src\System\ServiceModel\Channels\UriGenerator.cs" />
@@ -441,13 +458,12 @@
     <Compile Include="..\..\..\external\corefx\src\System.ServiceModel.Syndication\src\System\ServiceModel\Syndication\XmlUriData.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ServiceModel.Syndication\src\System\ServiceModel\XmlBuffer.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\Description\UseRequestHeadersForMetadataAddressBehavior.cs" />
     <Compile Include="..\System.ServiceModel.Web\System\UriTemplate.cs" />
     <Compile Include="..\System.ServiceModel.Web\System\UriTemplateEquivalenceComparer.cs" />
     <Compile Include="..\System.ServiceModel.Web\System\UriTemplateMatch.cs" />
     <Compile Include="..\System.ServiceModel.Web\System\UriTemplateMatchException.cs" />
     <Compile Include="..\System.ServiceModel.Web\System\UriTemplateTable.cs" />
-    <Compile Include="corefx\SR.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\Description\UseRequestHeadersForMetadataAddressBehavior.cs" />
     <Compile Include="Mono.Security.Cryptography\MD5SHA1.cs" />
     <Compile Include="Mono.Security.Cryptography\TlsHMAC.cs" />
     <Compile Include="Mono.Security.Protocol.Ntlm\BitConverterLE.cs" />
@@ -499,9 +515,9 @@
     <Compile Include="Mono.Security.Protocol.Tls\HandshakeState.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\HashAlgorithmType.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\HttpsClientStream.cs" />
-    <Compile Include="Mono.Security.Protocol.Tls\RecordProtocol.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\RSASslSignatureDeformatter.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\RSASslSignatureFormatter.cs" />
+    <Compile Include="Mono.Security.Protocol.Tls\RecordProtocol.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\SecurityCompressionType.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\SecurityParameters.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\SecurityProtocolType.cs" />
@@ -569,12 +585,12 @@
     <Compile Include="System.ServiceModel.Channels\HostedTransportConfiguration.cs" />
     <Compile Include="System.ServiceModel.Channels\IBindingMulticastCapabilities.cs" />
     <Compile Include="System.ServiceModel.Channels\IChannelListener.cs" />
-    <Compile Include="System.ServiceModel.Channels\InputChannelBase.cs" />
-    <Compile Include="System.ServiceModel.Channels\InvalidChannelBindingException.cs" />
     <Compile Include="System.ServiceModel.Channels\IReplyChannel.cs" />
     <Compile Include="System.ServiceModel.Channels\IReplySessionChannel.cs" />
     <Compile Include="System.ServiceModel.Channels\ITransactedBindingElement.cs" />
     <Compile Include="System.ServiceModel.Channels\ITransportTokenAssertionProvider.cs" />
+    <Compile Include="System.ServiceModel.Channels\InputChannelBase.cs" />
+    <Compile Include="System.ServiceModel.Channels\InvalidChannelBindingException.cs" />
     <Compile Include="System.ServiceModel.Channels\LayeredReplyChannel.cs" />
     <Compile Include="System.ServiceModel.Channels\MessageBuffer.cs" />
     <Compile Include="System.ServiceModel.Channels\MessageEncodingBindingElementImporter.cs" />
@@ -644,9 +660,9 @@
     <Compile Include="System.ServiceModel.Configuration\BasicHttpBindingElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\BasicHttpBindingElement_4_5.cs" />
     <Compile Include="System.ServiceModel.Configuration\BasicHttpMessageSecurityElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\BasicHttpSecurityElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\BasicHttpsBindingCollectionElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\BasicHttpsBindingElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\BasicHttpSecurityElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\BasicHttpsSecurityElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\BehaviorExtensionElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\BehaviorsSection.cs" />
@@ -671,14 +687,14 @@
     <Compile Include="System.ServiceModel.Configuration\ComContractsSection.cs" />
     <Compile Include="System.ServiceModel.Configuration\ComMethodElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\ComMethodElementCollection.cs" />
+    <Compile Include="System.ServiceModel.Configuration\ComPersistableTypeElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\ComPersistableTypeElementCollection.cs" />
+    <Compile Include="System.ServiceModel.Configuration\ComUdtElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\ComUdtElementCollection.cs" />
     <Compile Include="System.ServiceModel.Configuration\CommonBehaviorsSection.cs" />
     <Compile Include="System.ServiceModel.Configuration\CommonEndpointBehaviorElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\CommonServiceBehaviorElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\ComPersistableTypeElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\ComPersistableTypeElementCollection.cs" />
     <Compile Include="System.ServiceModel.Configuration\CompositeDuplexElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\ComUdtElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\ComUdtElementCollection.cs" />
     <Compile Include="System.ServiceModel.Configuration\ConfigUtil.cs" />
     <Compile Include="System.ServiceModel.Configuration\ConnectionOrientedTransportElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\CustomBindingCollectionElement.cs" />
@@ -688,11 +704,11 @@
     <Compile Include="System.ServiceModel.Configuration\DiagnosticSection.cs" />
     <Compile Include="System.ServiceModel.Configuration\DnsElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\EncodingConverter.cs" />
+    <Compile Include="System.ServiceModel.Configuration\EndToEndTracingElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\EndpointAddressElementBase.cs" />
     <Compile Include="System.ServiceModel.Configuration\EndpointBehaviorElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\EndpointBehaviorElementCollection.cs" />
     <Compile Include="System.ServiceModel.Configuration\EndpointCollectionElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\EndToEndTracingElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\ExtensionElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\ExtensionElementCollection.cs" />
     <Compile Include="System.ServiceModel.Configuration\ExtensionsSection.cs" />
@@ -701,12 +717,12 @@
     <Compile Include="System.ServiceModel.Configuration\HostTimeoutsElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\HttpBindingBaseElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\HttpDigestClientElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\HttpsTransportElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\HttpTransportElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\HttpTransportSecurityElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\HttpsTransportElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\IBindingConfigurationElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\IdentityElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\IPAddressConverter.cs" />
+    <Compile Include="System.ServiceModel.Configuration\IdentityElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\IssuedTokenClientBehaviorsElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\IssuedTokenClientBehaviorsElementCollection.cs" />
     <Compile Include="System.ServiceModel.Configuration\IssuedTokenClientElement.cs" />
@@ -800,9 +816,9 @@
     <Compile Include="System.ServiceModel.Configuration\ServiceModelSectionGroup.cs" />
     <Compile Include="System.ServiceModel.Configuration\ServicePrincipalNameElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\ServiceSecurityAuditElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\ServicesSection.cs" />
     <Compile Include="System.ServiceModel.Configuration\ServiceThrottlingElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\ServiceTimeoutsElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\ServicesSection.cs" />
     <Compile Include="System.ServiceModel.Configuration\SslStreamSecurityElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\StandardBindingCollectionElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\StandardBindingElement.cs" />
@@ -827,15 +843,10 @@
     <Compile Include="System.ServiceModel.Configuration\UseManagedPresentationElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\UserNameServiceElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\UserPrincipalNameElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\WindowsClientElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\WindowsServiceElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\WindowsStreamSecurityElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\WS2007FederationHttpBindingCollectionElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\WS2007FederationHttpBindingElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\WS2007HttpBindingCollectionElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\WS2007HttpBindingElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\WsdlImporterElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\WsdlImporterElementCollection.cs" />
     <Compile Include="System.ServiceModel.Configuration\WSDualHttpBindingCollectionElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\WSDualHttpBindingElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\WSDualHttpSecurityElement.cs" />
@@ -847,6 +858,11 @@
     <Compile Include="System.ServiceModel.Configuration\WSHttpBindingElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\WSHttpSecurityElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\WSHttpTransportSecurityElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\WindowsClientElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\WindowsServiceElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\WindowsStreamSecurityElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\WsdlImporterElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\WsdlImporterElementCollection.cs" />
     <Compile Include="System.ServiceModel.Configuration\X509CertificateTrustedIssuerElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\X509CertificateTrustedIssuerElementCollection.cs" />
     <Compile Include="System.ServiceModel.Configuration\X509ClientCertificateAuthenticationElement.cs" />
@@ -861,12 +877,12 @@
     <Compile Include="System.ServiceModel.Configuration\X509ScopedServiceCertificateElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\X509ScopedServiceCertificateElementCollection.cs" />
     <Compile Include="System.ServiceModel.Configuration\X509ServiceCertificateAuthenticationElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\XmlDictionaryReaderQuotasElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\XmlElementElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\XmlElementElementCollection.cs" />
     <Compile Include="System.ServiceModel.Configuration\XPathMessageFilterElement.cs" />
     <Compile Include="System.ServiceModel.Configuration\XPathMessageFilterElementCollection.cs" />
     <Compile Include="System.ServiceModel.Configuration\XPathMessageFilterElementComparer.cs" />
+    <Compile Include="System.ServiceModel.Configuration\XmlDictionaryReaderQuotasElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\XmlElementElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\XmlElementElementCollection.cs" />
     <Compile Include="System.ServiceModel.Description\CallbackDebugBehavior.cs" />
     <Compile Include="System.ServiceModel.Description\CallbackTimeoutsBehavior.cs" />
     <Compile Include="System.ServiceModel.Description\ClientViaBehavior.cs" />
@@ -875,12 +891,12 @@
     <Compile Include="System.ServiceModel.Description\IContractBehaviorAttribute.cs" />
     <Compile Include="System.ServiceModel.Description\IMetadataExchange.cs" />
     <Compile Include="System.ServiceModel.Description\IOperationContractGenerationExtension.cs" />
-    <Compile Include="System.ServiceModel.Description\IpolicyExporter.cs" />
     <Compile Include="System.ServiceModel.Description\IPolicyImporter.cs" />
     <Compile Include="System.ServiceModel.Description\IServiceBehavior.cs" />
     <Compile Include="System.ServiceModel.Description\IServiceContractGenerationExtension.cs" />
     <Compile Include="System.ServiceModel.Description\IWsdlExporter.cs" />
     <Compile Include="System.ServiceModel.Description\IWsdlImporter.cs" />
+    <Compile Include="System.ServiceModel.Description\IpolicyExporter.cs" />
     <Compile Include="System.ServiceModel.Description\LocalServiceSecuritySettings.cs" />
     <Compile Include="System.ServiceModel.Description\MetadataConversionError.cs" />
     <Compile Include="System.ServiceModel.Description\MetadataExchangeBindings.cs" />
@@ -914,12 +930,12 @@
     <Compile Include="System.ServiceModel.Description\SynchronousReceiveBehavior.cs" />
     <Compile Include="System.ServiceModel.Description\TransactedBatchingBehavior.cs" />
     <Compile Include="System.ServiceModel.Description\TypedMessageConverter.cs" />
+    <Compile Include="System.ServiceModel.Description\WSTrustMessageConverters.cs" />
+    <Compile Include="System.ServiceModel.Description\WSTrustSTSContract.cs" />
     <Compile Include="System.ServiceModel.Description\WsdlContractConversionContext.cs" />
     <Compile Include="System.ServiceModel.Description\WsdlEndpointConversionContext.cs" />
     <Compile Include="System.ServiceModel.Description\WsdlExporter.cs" />
     <Compile Include="System.ServiceModel.Description\WsdlImporter.cs" />
-    <Compile Include="System.ServiceModel.Description\WSTrustMessageConverters.cs" />
-    <Compile Include="System.ServiceModel.Description\WSTrustSTSContract.cs" />
     <Compile Include="System.ServiceModel.Description\XmlSerializerMessageContractImporter.cs" />
     <Compile Include="System.ServiceModel.Diagnostics\PerformanceCounterScope.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\ActionMessageFilter.cs" />
@@ -950,12 +966,12 @@
     <Compile Include="System.ServiceModel.Dispatcher\IInstanceContextProvider.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\IInstanceProvider.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\IMessageFilterTable.cs" />
+    <Compile Include="System.ServiceModel.Dispatcher\IOperationInvoker.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\InitializingHandler.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\InputOrReplyRequestProcessor.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\InstanceContextIdleCallback.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\InstanceManager.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\InvalidBodyAccessException.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\IOperationInvoker.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\MatchAllMessageFilter.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\MatchNoneMessageFilter.cs" />
     <Compile Include="System.ServiceModel.Dispatcher\MessageFilter.cs" />
@@ -1007,8 +1023,8 @@
     <Compile Include="System.ServiceModel.Security.Tokens\CommunicationSecurityTokenProvider.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\DerivedKeySecurityToken.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\IIssuanceSecurityTokenAuthenticator.cs" />
-    <Compile Include="System.ServiceModel.Security.Tokens\InitiatorServiceModelSecurityTokenRequirement.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\ISecurityContextSecurityTokenCache.cs" />
+    <Compile Include="System.ServiceModel.Security.Tokens\InitiatorServiceModelSecurityTokenRequirement.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\IssuedSecurityTokenHandler.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\IssuedSecurityTokenParameters.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\IssuedSecurityTokenProvider.cs" />
@@ -1026,10 +1042,10 @@
     <Compile Include="System.ServiceModel.Security.Tokens\ServiceModelSecurityTokenTypes.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\SpnegoSecurityTokenAuthenticator.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\SpnegoSecurityTokenProvider.cs" />
-    <Compile Include="System.ServiceModel.Security.Tokens\SslnegoCookieResolver.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\SslSecurityTokenAuthenticator.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\SslSecurityTokenParameters.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\SslSecurityTokenProvider.cs" />
+    <Compile Include="System.ServiceModel.Security.Tokens\SslnegoCookieResolver.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\SspiClientSecurityTokenAuthenticator.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\SspiSecurityToken.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\SspiSecurityTokenParameters.cs" />
@@ -1039,11 +1055,11 @@
     <Compile Include="System.ServiceModel.Security.Tokens\X509SecurityTokenParameters.cs" />
     <Compile Include="System.ServiceModel.Security\DataProtectionSecurityStateEncoder.cs" />
     <Compile Include="System.ServiceModel.Security\ExpiredSecurityTokenException.cs" />
-    <Compile Include="System.ServiceModel.Security\IdentityVerifier.cs" />
     <Compile Include="System.ServiceModel.Security\IEndpointIdentityProvider.cs" />
-    <Compile Include="System.ServiceModel.Security\InfocardInteractiveChannelInitializer.cs" />
     <Compile Include="System.ServiceModel.Security\ISecureConversationSession.cs" />
     <Compile Include="System.ServiceModel.Security\ISecuritySession.cs" />
+    <Compile Include="System.ServiceModel.Security\IdentityVerifier.cs" />
+    <Compile Include="System.ServiceModel.Security\InfocardInteractiveChannelInitializer.cs" />
     <Compile Include="System.ServiceModel.Security\IssuedTokenClientCredential.cs" />
     <Compile Include="System.ServiceModel.Security\IssuedTokenServiceCredential.cs" />
     <Compile Include="System.ServiceModel.Security\KeyEntropyMode.cs" />
@@ -1061,8 +1077,8 @@
     <Compile Include="System.ServiceModel.Security\SupportingTokenSpecification.cs" />
     <Compile Include="System.ServiceModel.Security\UnionSecurityTokenResolver.cs" />
     <Compile Include="System.ServiceModel.Security\UserNamePasswordServiceCredential.cs" />
-    <Compile Include="System.ServiceModel.Security\WindowsServiceCredential.cs" />
     <Compile Include="System.ServiceModel.Security\WSSecurityTokenSerializer.cs" />
+    <Compile Include="System.ServiceModel.Security\WindowsServiceCredential.cs" />
     <Compile Include="System.ServiceModel.Security\X509CertificateInitiatorServiceCredential.cs" />
     <Compile Include="System.ServiceModel.Security\X509CertificateRecipientServiceCredential.cs" />
     <Compile Include="System.ServiceModel.Security\X509ClientCertificateAuthentication.cs" />
@@ -1077,9 +1093,9 @@
     <Compile Include="System.ServiceModel\EndpointAddressAugust2004.cs" />
     <Compile Include="System.ServiceModel\EndpointIdentity.cs" />
     <Compile Include="System.ServiceModel\FederatedMessageSecurityOverHttp.cs" />
-    <Compile Include="System.ServiceModel\InstanceContext.cs" />
     <Compile Include="System.ServiceModel\IOnlineStatus.cs" />
     <Compile Include="System.ServiceModel\IServiceChannel.cs" />
+    <Compile Include="System.ServiceModel\InstanceContext.cs" />
     <Compile Include="System.ServiceModel\MessageSecurityOverHttp.cs" />
     <Compile Include="System.ServiceModel\MessageSecurityOverMsmq.cs" />
     <Compile Include="System.ServiceModel\MsmqBindingBase.cs" />
@@ -1123,95 +1139,7 @@
     <Compile Include="System.ServiceModel\WSHttpBindingBase.cs" />
     <Compile Include="System.ServiceModel\WSHttpSecurity.cs" />
     <Compile Include="System.ServiceModel\X509CertificateEndpointIdentity.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
-    <Compile Include="Dummy_2_1.cs" />
-    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
-    <Compile Include="Dummy_2_1.cs" />
-    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <Compile Include="Dummy_2_1.cs" />
-    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
-    <Compile Include="Dummy_2_1.cs" />
-    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
-    <Compile Include="Dummy_2_1.cs" />
-    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
-    <Compile Include="Dummy_2_1.cs" />
-    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
-    <Compile Include="Dummy_2_1.cs" />
-    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Compile Include="Dummy_2_1.cs" />
-    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <Compile Include="corefx\SR.cs" />
-    <Compile Include="Dummy_2_1.cs" />
-    <Compile Include="Dummy_XM_4_5.cs" />
-    <Compile Include="System.ServiceModel.Channels\IChannelListener.cs" />
-    <Compile Include="System.ServiceModel.Channels\IReplyChannel.cs" />
-    <Compile Include="System.ServiceModel.Channels\IReplySessionChannel.cs" />
-    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
-    <Compile Include="System.ServiceModel.Configuration\CertificateElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\CertificateReferenceElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\ConfigUtil.cs" />
-    <Compile Include="System.ServiceModel.Configuration\DnsElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\IdentityElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\RsaElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\ServicePrincipalNameElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\UserPrincipalNameElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\X509ClientCertificateCredentialsElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\X509DefaultServiceCertificateElement.cs" />
-    <Compile Include="System.ServiceModel.Configuration\X509ScopedServiceCertificateElement.cs" />
-    <Compile Include="System.ServiceModel.Description\MetadataLocation.cs" />
-    <Compile Include="System.ServiceModel.Description\MetadataReference.cs" />
-    <Compile Include="System.ServiceModel.Description\MetadataSection.cs" />
-    <Compile Include="System.ServiceModel.Description\MetadataSectionSerializerBase.cs" />
-    <Compile Include="System.ServiceModel.Description\MetadataSet.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\ActionMessageFilter.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\ActionMessageFilterTable.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\ICallContextInitializer.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\IErrorHandler.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\IMessageFilterTable.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\IOperationInvoker.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\MatchAllMessageFilter.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\MatchNoneMessageFilter.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\MessageFilter.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\MessageFilterTable.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\MultipleMessageFilterMatchesException.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\SeekableXPathNavigator.cs" />
-    <Compile Include="System.ServiceModel.Dispatcher\XPathMessageFilter.cs" />
-    <Compile Include="System.ServiceModel.Security.Tokens\SecurityContextSecurityToken.cs" />
-    <Compile Include="System.ServiceModel.Security.Tokens\SslnegoCookieResolver.cs" />
-    <Compile Include="System.ServiceModel.Security\IdentityVerifier.cs" />
-    <Compile Include="System.ServiceModel.Security\IssuedTokenClientCredential.cs" />
-    <Compile Include="System.ServiceModel.Security\KeyEntropyMode.cs" />
-    <Compile Include="System.ServiceModel.Security\PeerCredential.cs" />
-    <Compile Include="System.ServiceModel.Security\SecurityAlgorithmSuite.cs" />
-    <Compile Include="System.ServiceModel.Security\SecurityMessageProperty.cs" />
-    <Compile Include="System.ServiceModel.Security\SecurityStateEncoder.cs" />
-    <Compile Include="System.ServiceModel.Security\SecurityTokenAttachmentMode.cs" />
-    <Compile Include="System.ServiceModel.Security\SecurityTokenSpecification.cs" />
-    <Compile Include="System.ServiceModel.Security\SupportingTokenSpecification.cs" />
-    <Compile Include="System.ServiceModel.Security\X509PeerCertificateAuthentication.cs" />
-    <Compile Include="System.ServiceModel\EndpointAddressAugust2004.cs" />
-    <Compile Include="System.ServiceModel\EndpointIdentity.cs" />
-    <Compile Include="System.ServiceModel\OperationBehaviorAttribute.cs" />
-    <Compile Include="System.ServiceModel\RsaEndpointIdentity.cs" />
-    <Compile Include="System.ServiceModel\ServiceSecurityContext.cs" />
-    <Compile Include="System.ServiceModel\X509CertificateEndpointIdentity.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
     <Compile Include="Dummy_2_1.cs" />
@@ -1222,6 +1150,14 @@
     <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
+    <Compile Include="Dummy_2_1.cs" />
+    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
+    <Compile Include="Dummy_2_1.cs" />
+    <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
     <Compile Include="Dummy_2_1.cs" />
     <Compile Include="System.ServiceModel.Channels\MessageBuffer_2_1.cs" />
   </ItemGroup>

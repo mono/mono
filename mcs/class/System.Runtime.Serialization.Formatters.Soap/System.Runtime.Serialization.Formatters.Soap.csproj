@@ -48,6 +48,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="System.Runtime.Serialization.Formatters.Soap\SoapTypeMapper.cs" />
     <Compile Include="System.Runtime.Serialization.Formatters.Soap\SoapWriter.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System.XML/System.Xml.csproj" />

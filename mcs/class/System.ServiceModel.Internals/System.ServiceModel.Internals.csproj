@@ -102,6 +102,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\AssemblyRef.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Collections\ValidatingCollection.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\CompletedAsyncResult.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\ComputerNameFormat.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\DiagnosticStrings.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\ActivityControl.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\DiagnosticEventProvider.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\DiagnosticTraceBase.cs" />
@@ -142,7 +144,6 @@
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\PerformanceCounterNameAttribute.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\StringTraceRecord.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Diagnostics\TraceRecord.cs" />
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\DiagnosticStrings.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\DuplicateDetector.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\ExceptionTrace.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\FastAsyncCallback.cs" />
@@ -151,11 +152,11 @@
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\FxCop.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\HashHelper.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\IAsyncEventArgs.cs" />
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\InputQueue.cs" />
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\InternalBufferManager.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\IOThreadCancellationTokenSource.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\IOThreadScheduler.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\IOThreadTimer.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\InputQueue.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\InternalBufferManager.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\MruCache.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\NameGenerator.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\PartialTrustHelpers.cs" />
@@ -173,8 +174,8 @@
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TraceEventOpcode.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TraceLevelHelper.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TracePayload.cs" />
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TypedAsyncResult.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TypeHelper.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\TypedAsyncResult.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\UrlUtility.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\WaitCallbackActionItem.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\TraceCore.Designer.cs" />
@@ -183,10 +184,6 @@
     <Compile Include="InternalSR.cs" />
     <Compile Include="ReferenceSources\LocalAppContextSwitches.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
-  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
@@ -194,26 +191,13 @@
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
     <Compile Include="MobileStubs.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <Compile Include="MobileStubs.cs" />
-  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
     <Compile Include="MobileStubs.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
     <Compile Include="MobileStubs.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
-    <Compile Include="MobileStubs.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Compile Include="MobileStubs.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
+  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
   </ItemGroup>
@@ -225,6 +209,13 @@
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
+    <Compile Include="MobileStubs.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
     <Compile Include="MobileStubs.cs" />
   </ItemGroup>
   <!-- @ALL_SOURCES@ -->

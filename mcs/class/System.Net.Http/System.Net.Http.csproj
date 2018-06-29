@@ -103,6 +103,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
@@ -117,8 +118,8 @@
     <Compile Include="System.Net.Http.Headers\HeaderInfo.cs" />
     <Compile Include="System.Net.Http.Headers\HttpContentHeaders.cs" />
     <Compile Include="System.Net.Http.Headers\HttpHeaderKind.cs" />
-    <Compile Include="System.Net.Http.Headers\HttpHeaders.cs" />
     <Compile Include="System.Net.Http.Headers\HttpHeaderValueCollection.cs" />
+    <Compile Include="System.Net.Http.Headers\HttpHeaders.cs" />
     <Compile Include="System.Net.Http.Headers\HttpRequestHeaders.cs" />
     <Compile Include="System.Net.Http.Headers\HttpResponseHeaders.cs" />
     <Compile Include="System.Net.Http.Headers\Lexer.cs" />
@@ -158,9 +159,6 @@
     <Compile Include="System.Net.Http\StreamContent.cs" />
     <Compile Include="System.Net.Http\StringContent.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
     <Compile Include="System.Net.Http\HttpClient.android.cs" />
     <Compile Include="System.Net.Http\HttpClientHandler.cs" />
@@ -168,27 +166,13 @@
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
     <Compile Include="System.Net.Http\HttpClientHandler.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.platformnotsupported.cs" />
-  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
     <Compile Include="System.Net.Http\HttpClientHandler.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
+    <Compile Include="System.Net.Http\HttpClientHandler.platformnotsupported.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Compile Include="System.Net.Http\HttpClient.mac.cs" />
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
-    <Compile Include="System.Net.Http\HttpClient.mac.cs" />
+  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <Compile Include="System.Net.Http\HttpClientHandler.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
@@ -198,6 +182,13 @@
     <Compile Include="System.Net.Http\HttpClientHandler.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
+    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
+    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
+    <Compile Include="System.Net.Http\HttpClient.mac.cs" />
     <Compile Include="System.Net.Http\HttpClientHandler.cs" />
   </ItemGroup>
   <!-- @ALL_SOURCES@ -->

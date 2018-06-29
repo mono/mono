@@ -101,20 +101,9 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monodroid' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'winaot' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'orbis' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'unreal' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'wasm' "></ItemGroup>
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup></ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../corlib/corlib.csproj" />

@@ -43,8 +43,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
@@ -52,8 +52,8 @@
     <Compile Include="System.Management.Instrumentation\BaseEvent.cs" />
     <Compile Include="System.Management.Instrumentation\DefaultManagementProjectInstaller.cs" />
     <Compile Include="System.Management.Instrumentation\IEvent.cs" />
-    <Compile Include="System.Management.Instrumentation\IgnoreMemberAttribute.cs" />
     <Compile Include="System.Management.Instrumentation\IInstance.cs" />
+    <Compile Include="System.Management.Instrumentation\IgnoreMemberAttribute.cs" />
     <Compile Include="System.Management.Instrumentation\Instance.cs" />
     <Compile Include="System.Management.Instrumentation\Instrumentation.cs" />
     <Compile Include="System.Management.Instrumentation\InstrumentationClassAttribute.cs" />
@@ -117,6 +117,7 @@
     <Compile Include="System.Management\WqlEventQuery.cs" />
     <Compile Include="System.Management\WqlObjectQuery.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
