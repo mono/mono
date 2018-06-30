@@ -61,6 +61,9 @@ MONO_API void* mono_file_map   (size_t length, int flags, int fd, guint64 offset
 // Last two parameters are optional.
 // This is mono_file_map but with optionally returning an error message.
 // See https://github.com/mono/mono/issues/8225.
+#ifdef HOST_WIN32
+MONO_API
+#endif
 void*
 mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **ret_handle, const char *filepath, char **error_message);
 MONO_API int   mono_file_unmap (void *addr, void *handle);
