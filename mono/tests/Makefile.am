@@ -899,6 +899,7 @@ PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall-rgctxb-static.exe
 PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Methodical/tailcall/test_virt.exe # fix pending
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail.exe
 endif
 
 if POWERPC
@@ -963,6 +964,7 @@ endif
 
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail.exe
 endif
 
 if MIPS

@@ -8346,13 +8346,17 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			// tailcall means "the backend can and will handle it".
 			// inst_tailcall means the tail. prefix is present.
 			tailcall_extra_arg = vtable_arg || imt_arg || will_have_imt_arg || mono_class_is_interface (cmethod->klass);
-			tailcall = (inst_tailcall ||
-					((cfg->opt & MONO_OPT_TAILCALL)
-						&& next_ip < end
+			tailcall = (inst_tailcall
+#ifdef HOST_AMD64
+					|| (
+						(cfg->opt & MONO_OPT_TAILCALL)
 						&& cfg->method == cfg->current_method // FIXME inlining vs. tailcall
 						// FIXME only intra-assembly? patching? AOT?
 						&& (il_op != CEE_CALL || (method && cmethod && method->klass && cmethod->klass && m_class_get_image (method->klass) == m_class_get_image (cmethod->klass)))
-						&& is_safe_auto_tailcall (cfg, method, &safe_auto_tailcall_cache)))
+						&& is_safe_auto_tailcall (cfg, method, &safe_auto_tailcall_cache)
+						)
+#endif
+						)
 				 && is_call_followed_by_ret (cfg, method, next_ip, end, &skip)
 				 && is_supported_tailcall (cfg, ip, method, cmethod, fsig, virtual_, tailcall_extra_arg, &tailcall_calli);
 
