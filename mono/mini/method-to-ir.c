@@ -6611,7 +6611,7 @@ typedef union _MonoSkip {
 } MonoSkip;
 
 static gboolean
-is_call_followed_by_ret (MonoCompile *cfg, MonoMethod *method, guchar *ip, MonoSkip *skip)
+is_call_followed_by_ret (MonoCompile *cfg, MonoMethod *method, guchar *ip, guchar *end, MonoSkip *skip)
 /*
 C# compiler outputs things like:
 1	call
@@ -6643,8 +6643,11 @@ Do a simple analysis to see these:
 */
 {
 #if 1
-//	return ip [0] == CEE_RET || (ip [0] == CEE_NOP && ip [1] == CEE_RET);
-	return ip [0] == CEE_RET;
+	return (ip < end && ip [0] == CEE_RET && ip_in_bb (cfg, cfg->cbb, ip))
+		|| (ip < end && ip + 1 < end
+		    && ip [0] == CEE_NOP && ip [1] == CEE_RET
+		    && ip_in_bb (cfg, cfg->cbb, ip)
+		    && ip_in_bb (cfg, cfg->cbb, ip + 1));
 #else
 	int stloc = -1;
 	int ldloc = -1;
@@ -8347,10 +8350,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					((cfg->opt & MONO_OPT_TAILCALL)
 						&& next_ip < end
 						&& cfg->method == cfg->current_method // FIXME inlining vs. tailcall
-						// FIXME only intra-assembly
+						// FIXME only intra-assembly? patching? AOT?
 						&& (il_op != CEE_CALL || (method && cmethod && method->klass && cmethod->klass && m_class_get_image (method->klass) == m_class_get_image (cmethod->klass)))
-						&& is_call_followed_by_ret (cfg, method, next_ip, &skip)
 						&& is_safe_auto_tailcall (cfg, method, &safe_auto_tailcall_cache)))
+				 && is_call_followed_by_ret (cfg, method, next_ip, end, &skip)
 				 && is_supported_tailcall (cfg, ip, method, cmethod, fsig, virtual_, tailcall_extra_arg, &tailcall_calli);
 
 			// Writes to imt_arg, vtable_arg, virtual_, cmethod, must not occur from here (inputs to is_supported_tailcall).
