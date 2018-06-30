@@ -50,7 +50,6 @@ class MonoReleaseProfile(DarwinProfile):
         'gtk-quartz-engine',
 
         # Mono
-        'mono-llvm',
         'mono',
         'msbuild',
         'pcl-reference-assemblies',
