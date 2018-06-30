@@ -1154,7 +1154,7 @@ ldarg.1
 ldc.i4.1
 sub
 ldarg.2
-tail.
+//tail.
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<!T1>::Method1<!!0>(int32, !!0)
 ret
 }
@@ -1388,7 +1388,7 @@ ldarg.0
 ldarg.1
 ldc.i4.1
 sub
-tail.
+//tail.
 callvirt instance !0 class Fsharp/TailCallLoopGenericClass`1<!T1>::Method2(int32)
 ret
 }
@@ -1408,7 +1408,7 @@ ldarg.0
 ldarg.1
 ldc.i4.1
 sub
-tail.
+//tail.
 callvirt instance !0 class Fsharp/TailCallLoopGenericClass`1<!T1>::Method1(int32)
 ret
 }
@@ -1416,7 +1416,7 @@ ret
 {
 ldarg.0
 call int32 Fsharp::get_HugeInt()
-tail.
+//tail.
 callvirt instance !0 class Fsharp/TailCallLoopGenericClass`1<!T1>::Method1(int32)
 ret
 }
@@ -1460,7 +1460,7 @@ ldarg.1
 ldc.i4.1
 sub
 ldarg.2
-tail.
+//tail.
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<!T1>::Method2<!!0>(int32, !!0)
 ret
 }
@@ -1483,7 +1483,7 @@ ldarg.1
 ldc.i4.1
 sub
 ldarg.2
-tail.
+//tail.
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/TailCallLoopGenericClassAndMethod`1<!T1>::Method1<!!0>(int32, !!0)
 ret
 }
@@ -1524,7 +1524,7 @@ ldarg.1
 ldc.i4.1
 sub
 ldarg.2
-tail.
+//tail.
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/AbstractTailCallLoopGenericClassAndMethod`1<!T1>::Method2<!!0>(int32, !!0)
 ret
 }
@@ -1566,7 +1566,7 @@ ldarg.1
 ldc.i4.1
 sub
 ldarg.2
-tail.
+//tail.
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<!T1>::Method2<!!0>(int32, !!0)
 ret
 }
@@ -1590,7 +1590,7 @@ ldarg.1
 ldc.i4.1
 sub
 ldarg.2
-tail.
+//tail.
 callvirt instance class [mscorlib]System.Tuple`2<!0,!!0> class Fsharp/InterfaceTailCallLoopGenericInterface`1<!T1>::Method1<!!0>(int32, !!0)
 ret
 }
@@ -1706,7 +1706,7 @@ stloc.1
 ldarg.0
 ldc.i4.1
 sub
-tail.
+//tail.
 call bool Fsharp::mutualTail1IsEven(int32)
 ret
 }
@@ -1734,7 +1734,7 @@ stloc.1
 ldarg.0
 ldc.i4.1
 sub
-tail.
+//tail.
 call bool Fsharp::mutualTail1IsOdd(int32)
 ret
 }
@@ -1936,7 +1936,7 @@ ret
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<valuetype [mscorlib]System.Decimal>::GetHashCode(!0)
 ldarg.1
-tail.
+//tail.
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericHashIntrinsic<valuetype [mscorlib]System.Decimal>(!!0)
 ret
 }
@@ -2016,7 +2016,7 @@ ret
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<float32>::GetHashCode(!0)
 ldarg.1
-tail.
+//tail.
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericHashIntrinsic<float32>(!!0)
 ret
 }
@@ -2096,7 +2096,7 @@ ret
 {
 .override method instance int32 class [mscorlib]System.Collections.Generic.IEqualityComparer`1<float64>::GetHashCode(!0)
 ldarg.1
-tail.
+//tail.
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericHashIntrinsic<float64>(!!0)
 ret
 }
@@ -2133,7 +2133,7 @@ ldc.i4.1
 ldarg.0
 ldarg.1
 ldarg.2
-tail.
+//tail.
 call bool Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericEqualityObj(bool, class [mscorlib]System.Collections.IEqualityComparer, object, object)
 ret
 }
@@ -2165,7 +2165,7 @@ ldc.i4.0
 ldarg.0
 ldarg.1
 ldarg.2
-tail.
+//tail.
 call bool Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericEqualityObj(bool, class [mscorlib]System.Collections.IEqualityComparer, object, object)
 ret
 }
@@ -2200,7 +2200,7 @@ ret
 ldarg.0
 ldarg.1
 ldarg.2
-tail.
+//tail.
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericCompare(class Microsoft.FSharp.Core.LanguagePrimitives/HashCompare/GenericComparer, object, object)
 ret
 }
@@ -2225,7 +2225,7 @@ ldc.i4.1
 ldarg.0
 ldarg.1
 ldarg.2
-tail.
+//tail.
 call bool Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericEqualityObj(bool, class [mscorlib]System.Collections.IEqualityComparer, object, object)
 ret
 }
@@ -2234,7 +2234,7 @@ ret
 .override [mscorlib]System.Collections.IEqualityComparer::GetHashCode
 ldarg.0
 ldarg.1
-tail.
+//tail.
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericHashParamObj(class [mscorlib]System.Collections.IEqualityComparer, object)
 ret
 }
@@ -2259,7 +2259,7 @@ ldc.i4.0
 ldarg.0
 ldarg.1
 ldarg.2
-tail.
+//tail.
 call bool Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericEqualityObj(bool, class [mscorlib]System.Collections.IEqualityComparer, object, object)
 ret
 }
@@ -2268,7 +2268,7 @@ ret
 .override [mscorlib]System.Collections.IEqualityComparer::GetHashCode
 ldarg.0
 ldarg.1
-tail.
+//tail.
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericHashParamObj(class [mscorlib]System.Collections.IEqualityComparer, object)
 ret
 }
@@ -2306,7 +2306,7 @@ ldarg.0
 box !!T
 ldarg.1
 box !!T
-tail.
+//tail.
 call bool Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericEqualityObj(bool, class [mscorlib]System.Collections.IEqualityComparer, object, object)
 ret
 }
@@ -2324,7 +2324,7 @@ int32) = ( 01 00 66 54 68 69 73 20 66 75 6E 63 74 69 6F 6E
 call class Microsoft.FSharp.Core.LanguagePrimitives/HashCompare/UnlimitedHasherPER Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::get_fsEqualityComparerUnlimitedHashingPER()
 ldarg.0
 box !!T
-tail.
+//tail.
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericHashParamObj(class [mscorlib]System.Collections.IEqualityComparer, object)
 ret
 }
@@ -2923,7 +2923,7 @@ ldarg.2
 ldarg.1
 ldloc.s V_5
 ldnull
-tail.
+//tail.
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericCompare$cont@965(class Microsoft.FSharp.Core.LanguagePrimitives/HashCompare/GenericComparer, object, object, class [mscorlib]System.Array, class Microsoft.FSharp.Core.Unit)
 ret
 IL_004e:
@@ -2938,7 +2938,7 @@ IL_005e:
 ldloc.s V_7
 ldarg.2
 ldarg.0
-tail.
+//tail.
 callvirt instance int32 [mscorlib]System.Collections.IStructuralComparable::CompareTo(object, class [mscorlib]System.Collections.IComparer)
 ret
 IL_006a:
@@ -3034,7 +3034,7 @@ IL_0136:
 IL_0137:
 ldloc.s V_9
 ldarg.2
-tail.
+//tail.
 callvirt instance int32 [mscorlib]System.IComparable::CompareTo(object)
 ret
 IL_0142:
@@ -3727,7 +3727,7 @@ ldarg.1
 box !!T
 ldarg.2
 box !!T
-tail.
+//tail.
 callvirt instance int32 [mscorlib]System.Collections.IComparer::Compare(object, object)
 ret
 }
@@ -4287,7 +4287,7 @@ ret
 IL_0156:
 ldarg.3
 ldarg.2
-tail.
+//tail.
 callvirt instance bool [mscorlib]System.Object::Equals(object)
 ret
 IL_0160:
@@ -7685,7 +7685,7 @@ ldarg.3
 ldarg.2
 ldloc.s V_5
 ldnull
-tail.
+//tail.
 call bool Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericEqualityObj$cont@1498(bool, class [mscorlib]System.Collections.IEqualityComparer, object, object, class [mscorlib]System.Array, class Microsoft.FSharp.Core.Unit)
 ret
 IL_004f:
@@ -7700,7 +7700,7 @@ IL_005f:
 ldloc.s V_7
 ldarg.3
 ldarg.1
-tail.
+//tail.
 callvirt instance bool [mscorlib]System.Collections.IStructuralEquatable::Equals(object, class [mscorlib]System.Collections.IEqualityComparer)
 ret
 IL_006b:
@@ -7713,7 +7713,7 @@ brtrue.s IL_0085
 IL_007b:
 ldarg.2
 ldarg.3
-tail.
+//tail.
 callvirt instance bool [mscorlib]System.Object::Equals(object)
 ret
 IL_0085:
@@ -8247,7 +8247,7 @@ ldarg.0
 box !!T
 ldarg.1
 box !!T
-tail.
+//tail.
 call bool Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericEqualityObj(bool, class [mscorlib]System.Collections.IEqualityComparer, object, object)
 ret
 }
@@ -8269,7 +8269,7 @@ ldarg.1
 box !!T
 ldarg.2
 box !!T
-tail.
+//tail.
 callvirt instance bool [mscorlib]System.Collections.IEqualityComparer::Equals(object, object)
 ret
 }
@@ -8632,12 +8632,12 @@ ldloc.s V_10
 stloc.s V_11
 ldloc.s V_11
 ldarg.0
-tail.
+//tail.
 callvirt instance int32 [mscorlib]System.Collections.IStructuralEquatable::GetHashCode(class [mscorlib]System.Collections.IEqualityComparer)
 ret
 IL_0092:
 ldarg.1
-tail.
+//tail.
 callvirt instance int32 [mscorlib]System.Object::GetHashCode()
 ret
 IL_009b:
@@ -9438,14 +9438,14 @@ stloc.2
 ldloc.2
 ldnull
 call class [mscorlib]System.Globalization.CultureInfo [mscorlib]System.Globalization.CultureInfo::get_InvariantCulture()
-tail.
+//tail.
 callvirt instance string [mscorlib]System.IFormattable::ToString(string, class [mscorlib]System.IFormatProvider)
 ret
 IL_0026:
 ldloc.0
 stloc.3
 ldloc.3
-tail.
+//tail.
 callvirt instance string [mscorlib]System.Object::ToString()
 ret
 IL_0031:
@@ -9544,7 +9544,7 @@ IL_0019:
 IL_001a:
 ldarg.0
 ldfld class [mscorlib]System.Collections.Generic.IEnumerator`1<!0> class Microsoft.FSharp.Collections.Internal/IEnumerator/filter@182<!T>::e
-tail.
+//tail.
 callvirt instance !0 class [mscorlib]System.Collections.Generic.IEnumerator`1<!T>::get_Current()
 ret
 }
@@ -9604,7 +9604,7 @@ throw
 .override [mscorlib]System.IDisposable::Dispose
 ldarg.0
 ldfld class [mscorlib]System.Collections.Generic.IEnumerator`1<!0> class Microsoft.FSharp.Collections.Internal/IEnumerator/filter@182<!T>::e
-tail.
+//tail.
 callvirt instance void [mscorlib]System.IDisposable::Dispose()
 ret
 }
@@ -9718,7 +9718,7 @@ ldfld class Microsoft.FSharp.Core.FSharpFunc`2<class [mscorlib]System.Collection
 ldarg.0
 ldfld class [mscorlib]System.Collections.Generic.IEnumerable`1<!1> class Microsoft.FSharp.Collections.SeqModule/revamp@574<!b,!a>::ie
 callvirt instance class [mscorlib]System.Collections.Generic.IEnumerator`1<!0> class [mscorlib]System.Collections.Generic.IEnumerable`1<!a>::GetEnumerator()
-tail.
+//tail.
 callvirt instance !1 class Microsoft.FSharp.Core.FSharpFunc`2<class [mscorlib]System.Collections.Generic.IEnumerator`1<!a>,class [mscorlib]System.Collections.Generic.IEnumerator`1<!b>>::Invoke(!0)
 ret
 }
@@ -9786,7 +9786,7 @@ brfalse.s IL_0054
 ldloc.s V_4
 stloc.s V_5
 ldloc.s V_5
-tail.
+//tail.
 callvirt instance int32 class [mscorlib]System.Collections.Generic.ICollection`1<!!T>::get_Count()
 ret
 IL_0054:
@@ -10550,7 +10550,7 @@ call string Microsoft.FSharp.Core.LanguagePrimitives::anyToStringShowingNull<!T>
 callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
 ldstr "]"
 callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
-tail.
+//tail.
 callvirt instance string [mscorlib]System.Object::ToString()
 ret
 IL_00b8:
@@ -10581,7 +10581,7 @@ call string Microsoft.FSharp.Core.LanguagePrimitives::anyToStringShowingNull<!T>
 callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
 ldstr "; ... ]"
 callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
-tail.
+//tail.
 callvirt instance string [mscorlib]System.Object::ToString()
 ret
 IL_0127:
@@ -10604,7 +10604,7 @@ call string Microsoft.FSharp.Core.LanguagePrimitives::anyToStringShowingNull<!T>
 callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
 ldstr "]"
 callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
-tail.
+//tail.
 callvirt instance string [mscorlib]System.Object::ToString()
 ret
 IL_0178:
@@ -10619,7 +10619,7 @@ call string Microsoft.FSharp.Core.LanguagePrimitives::anyToStringShowingNull<!T>
 callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
 ldstr "]"
 callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
-tail.
+//tail.
 callvirt instance string [mscorlib]System.Object::ToString()
 ret
 IL_01ab:
@@ -10682,7 +10682,7 @@ ret
 ldarg.0
 ldfld class Microsoft.FSharp.Core.FSharpFunc`2<class Microsoft.FSharp.Core.Unit,class [mscorlib]System.Collections.Generic.IEnumerator`1<!0>> class Microsoft.FSharp.Collections.IEnumerator/mkSeq@133<!TResult>::f
 ldnull
-tail.
+//tail.
 callvirt instance !1 class Microsoft.FSharp.Core.FSharpFunc`2<class Microsoft.FSharp.Core.Unit,class [mscorlib]System.Collections.Generic.IEnumerator`1<!TResult>>::Invoke(!0)
 ret
 }
@@ -11059,7 +11059,7 @@ stloc.2
 ldloc.0
 ldloc.1
 ldloc.2
-tail.
+//tail.
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericComparisonWithComparerIntrinsic<!T>(class [mscorlib]System.Collections.IComparer, !!0, !!0)
 ret
 IL_002c:
@@ -11082,7 +11082,7 @@ ret
 ldarg.0
 ldarg.1
 unbox.any class Microsoft.FSharp.Core.FSharpRef`1<!T>
-tail.
+//tail.
 callvirt instance int32 class Microsoft.FSharp.Core.FSharpRef`1<!T>::CompareTo(class Microsoft.FSharp.Core.FSharpRef`1<!0>)
 ret
 }
@@ -11111,7 +11111,7 @@ stloc.2
 ldarg.2
 ldloc.1
 ldloc.2
-tail.
+//tail.
 call int32 Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericComparisonWithComparerIntrinsic<!T>(class [mscorlib]System.Collections.IComparer, !!0, !!0)
 ret
 IL_0032:
@@ -11193,7 +11193,7 @@ stloc.2
 ldarg.2
 ldloc.1
 ldloc.2
-tail.
+//tail.
 call bool Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericEqualityWithComparerIntrinsic<!T>(class [mscorlib]System.Collections.IEqualityComparer, !!0, !!0)
 ret
 IL_002a:
@@ -11227,7 +11227,7 @@ ldfld !0 class Microsoft.FSharp.Core.FSharpRef`1<!T>::contents@
 stloc.1
 ldloc.0
 ldloc.1
-tail.
+//tail.
 call bool Microsoft.FSharp.Core.LanguagePrimitives/HashCompare::GenericEqualityERIntrinsic<!T>(!!0, !!0)
 ret
 IL_0025:
@@ -11252,7 +11252,7 @@ ldloc.0
 brfalse.s IL_0015
 ldarg.0
 ldloc.0
-tail.
+//tail.
 callvirt instance bool class Microsoft.FSharp.Core.FSharpRef`1<!T>::Equals(class Microsoft.FSharp.Core.FSharpRef`1<!0>)
 ret
 IL_0015:
