@@ -8347,6 +8347,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					((cfg->opt & MONO_OPT_TAILCALL)
 						&& next_ip < end
 						&& cfg->method == cfg->current_method // FIXME inlining vs. tailcall
+						// FIXME only intra-assembly
+						&& (il_op != CEE_CALL || (method && cmethod && method->klass && cmethod->klass && m_class_get_image (method->klass) == m_class_get_image (cmethod->klass)))
 						&& is_call_followed_by_ret (cfg, method, next_ip, &skip)
 						&& is_safe_auto_tailcall (cfg, method, &safe_auto_tailcall_cache)))
 				 && is_supported_tailcall (cfg, ip, method, cmethod, fsig, virtual_, tailcall_extra_arg, &tailcall_calli);
