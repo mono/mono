@@ -8363,7 +8363,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (virtual_generic_imt) {
 					if (tailcall) {
 						/* Prevent inlining of methods with tailcalls (the call stack would be altered) */
-						//INLINE_FAILURE ("tailcall"); // FIXME
+						INLINE_FAILURE ("tailcall"); // FIXME
 					}
 					common_call = TRUE;
 					goto call_end;
@@ -8484,7 +8484,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				int i;
 
 				/* Prevent inlining of methods with tailcalls (the call stack would be altered) */
-				//INLINE_FAILURE ("tailcall"); // FIXME
+				INLINE_FAILURE ("tailcall"); // FIXME
 
 				/* keep it simple */
 				for (i = fsig->param_count - 1; !has_vtargs && i >= 0; i--)
@@ -8721,7 +8721,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			if (tailcall) {
 				/* Prevent inlining of methods with tailcalls (the call stack would be altered) */
-				//INLINE_FAILURE ("tailcall"); // FIXME
+				INLINE_FAILURE ("tailcall"); // FIXME
 			}
 
 			/*
