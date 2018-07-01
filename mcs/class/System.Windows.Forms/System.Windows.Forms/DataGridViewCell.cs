@@ -170,7 +170,7 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public virtual Type FormattedValueType {
-			get { return null; }
+			get { return this.ValueType; }
 		}
 
 		[Browsable (false)]
