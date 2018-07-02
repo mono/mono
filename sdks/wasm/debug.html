@@ -11,26 +11,6 @@
 	  <br>
 	
 	<script type='text/javascript'>
-		function mono_wasm_set_breakpoint (assembly, method_token, iloffset) {
-			console.log (">>mono_wasm_set_breakpoint " + assembly + " method " +  method_token +  " off " + iloffset);
-			try {
-				return MonoRuntime.mono_wasm_set_breakpoint (assembly, method_token, iloffset);
-			} catch (e) {
-				console.log (e);
-				throw e;
-			}
-		}
-
-		function mono_wasm_clear_all_breakpoints () {
-			console.log (">>mono_wasm_clear_all_breakpoints");
-			try {
-				return MonoRuntime.mono_wasm_clear_all_breakpoints ();
-			} catch (e) {
-				console.log (e);
-				throw e;
-			}
-		}
-
 		var App = {
 			onClick: function () {
 				this.output.value = "...";
