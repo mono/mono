@@ -464,7 +464,6 @@
     <Compile Include="..\System.ServiceModel.Web\System\UriTemplateMatchException.cs" />
     <Compile Include="..\System.ServiceModel.Web\System\UriTemplateTable.cs" />
     <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\Description\UseRequestHeadersForMetadataAddressBehavior.cs" />
-    <Compile Include="corefx\SR.cs" />
     <Compile Include="Mono.Security.Cryptography\TlsHMAC.cs" />
     <Compile Include="Mono.Security.Protocol.Ntlm\BitConverterLE.cs" />
     <Compile Include="Mono.Security.Protocol.Ntlm\ChallengeResponse.cs" />
@@ -982,6 +981,8 @@
     <Compile Include="System.ServiceModel.Security.Tokens\SecurityContextSecurityTokenResolver.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\ServiceModelSecurityTokenRequirement.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\ServiceModelSecurityTokenTypes.cs" />
+    <Compile Include="System.ServiceModel.Security.Tokens\SslSecurityTokenParameters.cs" />
+    <Compile Include="System.ServiceModel.Security.Tokens\SslnegoCookieResolver.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\SspiClientSecurityTokenAuthenticator.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\SspiSecurityToken.cs" />
     <Compile Include="System.ServiceModel.Security.Tokens\SspiSecurityTokenParameters.cs" />

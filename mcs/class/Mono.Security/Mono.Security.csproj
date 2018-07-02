@@ -235,6 +235,7 @@
     <Compile Include="Mono.Security.Protocol.Tls\HandshakeState.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\HashAlgorithmType.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\HttpsClientStream.cs" />
+    <Compile Include="Mono.Security.Protocol.Tls\MD5SHA1.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\RSASslSignatureDeformatter.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\RSASslSignatureFormatter.cs" />
     <Compile Include="Mono.Security.Protocol.Tls\RecordProtocol.cs" />
