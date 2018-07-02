@@ -72,14 +72,20 @@ var MonoSupportLib = {
 			return this.mono_wasm_set_bp (assembly, method_token, il_offset)
 		},
 
-		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb) {
+		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
 			Module.FS_createPath ("/", vfs_prefix, true, true);
 
 			var pending = 0;
 			var loaded_files = [];
 			file_list.forEach (function(file_name) {
 				++pending;
-				fetch (deploy_prefix + "/" + file_name, { credentials: 'same-origin' }).then (function (response) {
+				var fetch_promise = null;
+				if (fetch_file_cb)
+					fetch_promise = fetch_file_cb (deploy_prefix + "/" + file_name);
+				else
+					fetch_promise = fetch (deploy_prefix + "/" + file_name, { credentials: 'same-origin' });
+
+				fetch_promise.then (function (response) {
 					if (!response.ok)
 						throw "failed to load '" + file_name + "'";
 					loaded_files.push (response.url);
