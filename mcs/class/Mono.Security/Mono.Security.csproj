@@ -163,7 +163,6 @@
     <Compile Include="Mono.Security.Cryptography\MD2Managed.cs" />
     <Compile Include="Mono.Security.Cryptography\MD4.cs" />
     <Compile Include="Mono.Security.Cryptography\MD4Managed.cs" />
-    <Compile Include="Mono.Security.Cryptography\MD5SHA1.cs" />
     <Compile Include="Mono.Security.Cryptography\PKCS1.cs" />
     <Compile Include="Mono.Security.Cryptography\PKCS8.cs" />
     <Compile Include="Mono.Security.Cryptography\RC4.cs" />
