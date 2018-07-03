@@ -4690,7 +4690,7 @@ mono_interp_transform_init (void)
 }
 
 void
-mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, InterpFrame *frame, MonoError *error)
+mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, MonoError *error)
 {
 	int i, align, size, offset;
 	MonoMethod *method = imethod->method;

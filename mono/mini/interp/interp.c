@@ -2114,7 +2114,7 @@ do_transform_method (InterpFrame *frame, ThreadContext *context)
 	if (push_lmf)
 		interp_push_lmf (&ext, frame->parent);
 
-	mono_interp_transform_method (frame->imethod, context, frame, error);
+	mono_interp_transform_method (frame->imethod, context, error);
 	frame->ex = mono_error_convert_to_exception (error);
 
 	if (push_lmf)
@@ -2763,7 +2763,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				ERROR_DECL (error);
 
 				frame->ip = ip;
-				mono_interp_transform_method (new_method, context, NULL, error);
+				mono_interp_transform_method (new_method, context, error);
 				frame->ex = mono_error_convert_to_exception (error);
 				if (frame->ex)
 					goto exit_frame;
