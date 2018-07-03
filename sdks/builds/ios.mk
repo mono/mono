@@ -366,7 +366,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-.stamp-ios-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PACKAGE_LLVM),download-llvm-$(3),package-llvm-$(3))
+.stamp-ios-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PACKAGE_LLVM),package-llvm-$(3),download-llvm-$(3))
 
 $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
 	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \
