@@ -2518,8 +2518,7 @@ struct _MonoWrapperMethodCacheKey {
 
 struct _MonoWrapperSignatureCacheKey {
 	MonoMethodSignature *signature;
-	gboolean virtual_;
-	gboolean need_direct_wrapper;
+	gboolean valuetype;
 };
 
 typedef struct _MonoWrapperMethodCacheKey MonoWrapperMethodCacheKey;
@@ -2528,13 +2527,13 @@ typedef struct _MonoWrapperSignatureCacheKey MonoWrapperSignatureCacheKey;
 static guint
 wrapper_cache_method_key_hash (MonoWrapperMethodCacheKey *key)
 {
-	return mono_aligned_addr_hash (key->method) ^ ((!!key->virtual_) << 18) ^ ((!!key->need_direct_wrapper) << 19);
+	return mono_aligned_addr_hash (key->method) ^ (((!!key->virtual_) << 17) | ((!!key->need_direct_wrapper) << 19) * 17);
 }
 
 static guint
 wrapper_cache_signature_key_hash (MonoWrapperSignatureCacheKey *key)
 {
-	return mono_signature_hash (key->signature) ^ ((!!key->virtual_) << 18) ^ ((!!key->need_direct_wrapper) << 19);
+	return mono_signature_hash (key->signature) ^ (((!!key->valuetype) << 18) * 17);
 }
 
 static gboolean
@@ -2548,7 +2547,7 @@ wrapper_cache_method_key_equal (MonoWrapperMethodCacheKey *key1, MonoWrapperMeth
 static gboolean
 wrapper_cache_signature_key_equal (MonoWrapperSignatureCacheKey *key1, MonoWrapperSignatureCacheKey *key2)
 {
-	if (key1->virtual_ != key2->virtual_ || key1->need_direct_wrapper != key2->need_direct_wrapper)
+	if (key1->valuetype != key2->valuetype)
 		return FALSE;
 	return runtime_invoke_signature_equal (key1->signature, key2->signature);
 }
@@ -2633,13 +2632,14 @@ mono_marshal_get_runtime_invoke_full (MonoMethod *method, gboolean virtual_, gbo
 		target_klass = mono_defaults.object_class;
 	}
 
-	if (need_direct_wrapper) {
-		/* Already searched at the start */
+	if (need_direct_wrapper || virtual_) {
+		/* Already searched at the start. We cannot cache those wrappers based
+		 * on signatures because they contain a reference to the method */
 	} else {
 		MonoMethodSignature *tmp_sig;
 
 		callsig = mono_marshal_get_runtime_invoke_sig (callsig);
-		MonoWrapperSignatureCacheKey sig_key = { .signature = callsig, .virtual_ = virtual_, .need_direct_wrapper = need_direct_wrapper };
+		MonoWrapperSignatureCacheKey sig_key = { .signature = callsig, .valuetype = m_class_is_valuetype (method->klass)};
 
 		cache_table = &mono_method_get_wrapper_cache (method)->runtime_invoke_signature_cache;
 		sig_cache = get_cache (cache_table, (GHashFunc) wrapper_cache_signature_key_hash, (GCompareFunc) wrapper_cache_signature_key_equal);
@@ -2659,7 +2659,7 @@ mono_marshal_get_runtime_invoke_full (MonoMethod *method, gboolean virtual_, gbo
 		callsig = mono_metadata_signature_dup_full (m_class_get_image (target_klass), callsig);
 		g_free (tmp_sig);
 	}
-	
+
 	csig = mono_metadata_signature_alloc (m_class_get_image (target_klass), 4);
 
 	MonoType *object_type = mono_get_object_type ();
@@ -2691,11 +2691,9 @@ mono_marshal_get_runtime_invoke_full (MonoMethod *method, gboolean virtual_, gbo
 	get_marshal_cb ()->emit_runtime_invoke_body (mb, param_names, m_class_get_image (target_klass), method, sig, callsig, virtual_, need_direct_wrapper);
 
 	method_key = g_new (MonoWrapperMethodCacheKey, 1);
-	method_key->method = method;
-	method_key->virtual_ = virtual_;
-	method_key->need_direct_wrapper = need_direct_wrapper;
+	memcpy (method_key, &method_key_lookup_only, sizeof (MonoWrapperMethodCacheKey));
 
-	if (need_direct_wrapper) {
+	if (need_direct_wrapper || virtual_) {
 		get_marshal_cb ()->mb_skip_visibility (mb);
 		info = mono_wrapper_info_create (mb, virtual_ ? WRAPPER_SUBTYPE_RUNTIME_INVOKE_VIRTUAL : WRAPPER_SUBTYPE_RUNTIME_INVOKE_DIRECT);
 		info->d.runtime_invoke.method = method;
@@ -2703,8 +2701,7 @@ mono_marshal_get_runtime_invoke_full (MonoMethod *method, gboolean virtual_, gbo
 	} else {
 		MonoWrapperSignatureCacheKey *sig_key = g_new0 (MonoWrapperSignatureCacheKey, 1);
 		sig_key->signature = callsig;
-		sig_key->virtual_ = virtual_;
-		sig_key->need_direct_wrapper = need_direct_wrapper;
+		sig_key->valuetype = m_class_is_valuetype (method->klass);
 
 		/* taken from mono_mb_create_and_cache */
 		mono_marshal_lock ();
