@@ -2928,6 +2928,19 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 					ADD_CODE(td, MINT_NEWOBJ_ARRAY);
 					ADD_CODE(td, get_data_item_index (td, mono_interp_get_imethod (domain, m, error)));
 					ADD_CODE(td, csignature->param_count);
+				} else if (!m_class_is_valuetype (klass) &&
+						klass != mono_defaults.string_class &&
+						!mono_class_is_marshalbyref (klass) &&
+						!mono_class_has_finalizer (klass) &&
+						!m_class_has_weak_fields (klass)) {
+					MonoVTable *vtable;
+					vtable = mono_class_vtable_checked (domain, klass, error);
+					goto_if_nok (error, exit);
+
+					ADD_CODE(td, MINT_NEWOBJ_FAST);
+					ADD_CODE(td, get_data_item_index (td, mono_interp_get_imethod (domain, m, error)));
+					ADD_CODE(td, get_data_item_index (td, vtable));
+					ADD_CODE(td, csignature->param_count);
 				} else {
 					ADD_CODE(td, MINT_NEWOBJ);
 					ADD_CODE(td, get_data_item_index (td, mono_interp_get_imethod (domain, m, error)));
