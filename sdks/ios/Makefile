@@ -93,6 +93,10 @@ ifdef LLVM
 APPBUILDER_ARGS += --llvm
 endif
 
+ifdef INTERP_ONLY
+APPBUILDER_ARGS += --interp-only
+endif
+
 ifdef IOS_PROVISIONING_PROFILE
 APPBUILDER_ARGS += --profile $(abspath $(IOS_PROVISIONING_PROFILE))
 endif
@@ -148,6 +152,10 @@ build-ios-dev-all:
 build-ios-dev-llvm-all:
 	rm -rf aot-cache
 	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; make clean-ios-dev-$$suite; make build-ios-dev-$$suite LLVM=1 ENABLE_AOT_CACHE=1 || exit 1; done
+
+build-ios-dev-interp-only-all:
+	rm -rf aot-cache
+	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; make clean-ios-dev-$$suite; make build-ios-dev-$$suite INTERP_ONLY=1 ENABLE_AOT_CACHE=1 || exit 1; done
 
 run-ios-dev-all:
 	for suite in $(TEST_SUITES); do make run-ios-dev-$$suite || exit 1; done
