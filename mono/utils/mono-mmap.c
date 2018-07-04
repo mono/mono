@@ -201,6 +201,9 @@ prot_from_flags (int flags)
 }
 
 #if defined(__APPLE__)
+
+#define DARWIN_VERSION_MOJAVE 18
+
 static guint32
 get_darwin_version (void)
 {
@@ -250,7 +253,7 @@ mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 		mflags |= MAP_32BIT;
 #if defined(__APPLE__) && defined(MAP_JIT)
 	if (flags & MONO_MMAP_JIT) {
-		if (get_darwin_version () >= 18) {
+		if (get_darwin_version () >= DARWIN_VERSION_MOJAVE) {
 			mflags |= MAP_JIT;
 		}
 	}
