@@ -30,7 +30,6 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Security.Protocol.Tls;
 
 namespace Mono.Security.Interface
 {

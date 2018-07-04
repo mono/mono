@@ -129,7 +129,7 @@ public class SslStreamTest {
 		} catch (ObjectDisposedException) { /* this can happen when closing connection it's irrelevant for the test result*/
 		} catch (IOException) {
 			// The authentication or decryption has failed.
-			// ---> Mono.Security.Protocol.Tls.TlsException: Insuficient Security
+			// ---> TlsException: Insuficient Security
 			// that's fine for MismatchedCipherSuites
 			if (!state.ServerIOException)
 				throw;

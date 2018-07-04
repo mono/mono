@@ -46,9 +46,7 @@
 using System;
 using System.Security.Cryptography;
 
-using Mono.Security.Protocol.Tls;
-
-namespace Mono.Security.Cryptography
+namespace Mono.Security.Protocol.Tls
 {
 	internal class MD5SHA1 : HashAlgorithm
 	{
