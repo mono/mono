@@ -761,20 +761,19 @@ fill_in_trace (MonoException *exception, InterpFrame *frame)
 
 
 static MonoObject*
-ves_array_create (InterpFrame *frame, MonoDomain *domain, MonoClass *klass, MonoMethodSignature *sig, stackval *values)
+ves_array_create (MonoDomain *domain, MonoClass *klass, int param_count, stackval *values, MonoError *error)
 {
 	uintptr_t *lengths;
 	intptr_t *lower_bounds;
 	MonoObject *obj;
-	ERROR_DECL (error);
 	int i;
 
 	lengths = alloca (sizeof (uintptr_t) * m_class_get_rank (klass) * 2);
-	for (i = 0; i < sig->param_count; ++i) {
+	for (i = 0; i < param_count; ++i) {
 		lengths [i] = values->data.i;
 		values ++;
 	}
-	if (m_class_get_rank (klass) == sig->param_count) {
+	if (m_class_get_rank (klass) == param_count) {
 		/* Only lengths provided. */
 		lower_bounds = NULL;
 	} else {
@@ -783,11 +782,6 @@ ves_array_create (InterpFrame *frame, MonoDomain *domain, MonoClass *klass, Mono
 		lengths += m_class_get_rank (klass);
 	}
 	obj = (MonoObject*) mono_array_new_full_checked (domain, klass, lengths, lower_bounds, error);
-	if (!mono_error_ok (error)) {
-		frame->ex = mono_error_convert_to_exception (error);
-		FILL_IN_TRACE (frame->ex, frame);
-	}
-	mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	return obj;
 }
 
@@ -3702,6 +3696,24 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			ip += 2;
 			MINT_IN_BREAK;
 		}
+		MINT_IN_CASE(MINT_NEWOBJ_ARRAY) {
+			MonoClass *newobj_class;
+			InterpMethod *imethod;
+			guint32 token = * (guint16 *)(ip + 1);
+			guint16 param_count = * (guint16 *)(ip + 2);
+
+			imethod = (InterpMethod*) rtm->data_items [token];
+			newobj_class = imethod->method->klass;
+
+			sp -= param_count;
+			sp->data.p = ves_array_create (rtm->domain, newobj_class, param_count, sp, error);
+			if (!mono_error_ok (error))
+				THROW_EX (mono_error_convert_to_exception (error), ip);
+
+			++sp;
+			ip += 3;
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_NEWOBJ) {
 			MonoClass *newobj_class;
 			MonoMethodSignature *csig;
@@ -3725,14 +3737,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				count++;
 				g_hash_table_insert (profiling_classes, newobj_class, GUINT_TO_POINTER (count));
 			}*/
-
-			if (m_class_get_parent (newobj_class) == mono_defaults.array_class) {
-				sp -= csig->param_count;
-				child_frame.stack_args = sp;
-				o = ves_array_create (&child_frame, rtm->domain, newobj_class, csig, sp);
-				CHECK_CHILD_EX (child_frame, ip - 2);
-				goto array_constructed;
-			}
 
 			g_assert (csig->hasthis);
 			if (csig->param_count) {
@@ -3791,7 +3795,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			/*
 			 * a constructor returns void, but we need to return the object we created
 			 */
-array_constructed:
 			if (m_class_is_valuetype (newobj_class) && !m_class_is_enumtype (newobj_class)) {
 				*sp = valuetype_this;
 			} else if (newobj_class == mono_defaults.string_class) {
