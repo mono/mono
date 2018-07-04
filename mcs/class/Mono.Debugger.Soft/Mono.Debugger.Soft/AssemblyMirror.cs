@@ -126,12 +126,7 @@ namespace Mono.Debugger.Soft
 			get {
 				if (meta != null)
 					return meta;
-
-				if (IsDynamic)
-					throw new NotSupportedException ();
-				
-				using (var ms = new MemoryStream (GetMetadataBlob ()))
-					return meta = AssemblyDefinition.ReadAssembly (ms);
+				return null;
 			}
 			set {
 				if (value.MainModule.Name != ManifestModule.Name)
@@ -142,6 +137,16 @@ namespace Mono.Debugger.Soft
 			}
 		}
 		
+		// Read assembly metadata from the debuggee
+		// Since protocol version 2.47
+		public AssemblyDefinition GetMetadata () {
+			if (IsDynamic)
+				throw new NotSupportedException ();
+				
+			using (var ms = new MemoryStream (GetMetadataBlob ()))
+				return meta = AssemblyDefinition.ReadAssembly (ms);
+		}
+
 		public byte[] GetMetadataBlob () {
 			if (metadata_blob != null)
 				return metadata_blob;
