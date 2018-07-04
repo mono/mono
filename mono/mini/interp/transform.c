@@ -2924,8 +2924,14 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 
 				PUSH_TYPE (td, stack_type [mint_type (m_class_get_byval_arg (klass))], klass);
 			} else {
-				ADD_CODE(td, MINT_NEWOBJ);
-				ADD_CODE(td, get_data_item_index (td, mono_interp_get_imethod (domain, m, error)));
+				if (m_class_get_parent (klass) == mono_defaults.array_class) {
+					ADD_CODE(td, MINT_NEWOBJ_ARRAY);
+					ADD_CODE(td, get_data_item_index (td, mono_interp_get_imethod (domain, m, error)));
+					ADD_CODE(td, csignature->param_count);
+				} else {
+					ADD_CODE(td, MINT_NEWOBJ);
+					ADD_CODE(td, get_data_item_index (td, mono_interp_get_imethod (domain, m, error)));
+				}
 				goto_if_nok (error, exit);
 
 				if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT) {
