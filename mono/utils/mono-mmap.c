@@ -224,6 +224,10 @@ mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 		mflags |= MAP_FIXED;
 	if (flags & MONO_MMAP_32BIT)
 		mflags |= MAP_32BIT;
+#if defined(__APPLE__) && defined(MAP_JIT)
+	if (flags & MONO_MMAP_JIT)
+		mflags |= MAP_JIT;
+#endif
 
 	mflags |= MAP_ANONYMOUS;
 	mflags |= MAP_PRIVATE;
