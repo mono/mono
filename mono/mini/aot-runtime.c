@@ -4055,7 +4055,8 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 			}
 			return NULL;
 		}
-		code = (guint8 *)amodule->methods [method_index];
+		if (method_index < amodule->info.nmethods)
+			code = (guint8 *)amodule->methods [method_index];
 	}
 
 	info = &amodule->blob [mono_aot_get_offset (amodule->method_info_offsets, method_index)];
@@ -4822,6 +4823,11 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 	} else {
 		/* Common case */
 		method_index = mono_metadata_token_index (method->token) - 1;
+
+		guint32 num_methods = amodule->info.nmethods - amodule->info.nextra_methods;
+		if (method_index >= num_methods)
+			/* method not available in AOT image */
+			return NULL;
 	}
 
 	code = (guint8 *)load_method (domain, amodule, m_class_get_image (klass), method, method->token, method_index, error);

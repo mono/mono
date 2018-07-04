@@ -169,6 +169,8 @@ typedef struct MonoAotFileInfo
 	guint32 plt_size;
 	/* Number of methods */
 	guint32 nmethods;
+	/* Number of extra methods */
+	guint32 nextra_methods;
 	/* A union of MonoAotFileFlags */
 	guint32 flags;
 	/* Optimization flags used to compile the module */
