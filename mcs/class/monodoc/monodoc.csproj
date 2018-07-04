@@ -49,9 +49,10 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\Analyzer.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\ASCIIFoldingFilter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\Analyzer.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\BaseCharFilter.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\CachingTokenFilter.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\CharArraySet.cs" />
@@ -81,6 +82,8 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\StopFilter.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\TeeSinkTokenFilter.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\Token.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\TokenFilter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\TokenStream.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\Tokenattributes\FlagsAttribute.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\Tokenattributes\IFlagsAttribute.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\Tokenattributes\IOffsetAttribute.cs" />
@@ -93,9 +96,7 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\Tokenattributes\PositionIncrementAttribute.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\Tokenattributes\TermAttribute.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\Tokenattributes\TypeAttribute.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\TokenFilter.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\Tokenizer.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\TokenStream.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\WhitespaceAnalyzer.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\WhitespaceTokenizer.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\WordlistLoader.cs" />
@@ -105,9 +106,9 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Document\DateTools.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Document\Document.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Document\Field.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Document\Fieldable.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Document\FieldSelector.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Document\FieldSelectorResult.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Document\Fieldable.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Document\LoadFirstFieldSelector.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Document\MapFieldSelector.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Document\NumberTools.cs" />
@@ -187,8 +188,8 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\MergeScheduler.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\MultiLevelSkipListReader.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\MultiLevelSkipListWriter.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\MultipleTermPositions.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\MultiReader.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\MultipleTermPositions.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\NormsWriter.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\NormsWriterPerField.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\NormsWriterPerThread.cs" />
@@ -207,8 +208,8 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\SegmentReader.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\SegmentTermDocs.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\SegmentTermEnum.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\SegmentTermPositions.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\SegmentTermPositionVector.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\SegmentTermPositions.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\SegmentTermVector.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\SegmentWriteState.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\SerialMergeScheduler.cs" />
@@ -225,14 +226,8 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermInfo.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermInfosReader.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermInfosWriter.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermPositions.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermPositionVector.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermsHash.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermsHashConsumer.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermsHashConsumerPerField.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermsHashConsumerPerThread.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermsHashPerField.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermsHashPerThread.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermPositions.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermVectorEntry.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermVectorEntryFreqSortedComparator.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermVectorMapper.cs" />
@@ -242,8 +237,14 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermVectorsTermsWriterPerField.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermVectorsTermsWriterPerThread.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermVectorsWriter.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\LucenePackage.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermsHash.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermsHashConsumer.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermsHashConsumerPerField.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermsHashConsumerPerThread.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermsHashPerField.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Index\TermsHashPerThread.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\LZOCompressor.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\LucenePackage.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Messages\INLSException.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Messages\Message.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Messages\MessageImpl.cs" />
@@ -285,11 +286,11 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\FieldDocSortedHitQueue.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\FieldValueHitQueue.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\Filter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\FilterManager.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\FilteredDocIdSet.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\FilteredDocIdSetIterator.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\FilteredQuery.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\FilteredTermEnum.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\FilterManager.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\Function\ByteFieldSource.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\Function\CustomScoreProvider.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\Function\CustomScoreQuery.cs" />
@@ -357,10 +358,10 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\Spans\SpanNotQuery.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\Spans\SpanOrQuery.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\Spans\SpanQuery.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\Spans\Spans.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\Spans\SpanScorer.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\Spans\SpanTermQuery.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\Spans\SpanWeight.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\Spans\Spans.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\Spans\TermSpans.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\TermQuery.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Search\TermRangeFilter.cs" />
@@ -382,9 +383,9 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\CheckSumIndexInput.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\CheckSumIndexOutput.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\Directory.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\FileSwitchDirectory.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\FSDirectory.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\FSLockFactory.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\FileSwitchDirectory.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\IndexInput.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\IndexOutput.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\Lock.cs" />
@@ -394,8 +395,8 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\LockStressTest.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\LockVerifyServer.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\MMapDirectory.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\NativeFSLockFactory.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\NIOFSDirectory.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\NativeFSLockFactory.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\NoLockFactory.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\NoSuchDirectoryException.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Store\RAMDirectory.cs" />
@@ -410,6 +411,7 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\AttributeImplItem.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\BitSetSupport.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\BuildType.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\CRC32.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\Character.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\CloseableThreadLocalProfiler.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\CollectionsHelper.cs" />
@@ -421,7 +423,6 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\Compatibility\SortedSet.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\Compatibility\ThreadLocal.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\Compatibility\WrappedHashSet.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\CRC32.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\Cryptography.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\Deflater.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\Double.cs" />
@@ -430,8 +431,8 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\GeneralKeyedCollection.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\HashMap.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\IChecksum.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\Inflater.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\IThreadRunnable.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\Inflater.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\Number.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\OS.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Support\SharpZipLib.cs" />
@@ -477,15 +478,28 @@
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Util\Version.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Mono.Documentation\ManifestResourceResolver.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Mono.Documentation\XmlDocUtils.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Mono.Utilities\colorizer.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Mono.Utilities\LRUCache.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Mono.Utilities\colorizer.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc.Ecma\EcmaDesc.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc.Ecma\EcmaUrlTokenizer.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc.Ecma\prebuilt\EcmaUrlParser.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\HelpSource.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\HelpSource_Legacy.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\Node.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\Node_Legacy.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\Provider.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\RootTree.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\RootTree_Legacy.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\SearchableDocument.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\SearchableIndex.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\Tree.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\TypeUtils.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\cache.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\caches\FileCache.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\caches\NullCache.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\generator.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\generators\HtmlGenerator.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\generators\RawGenerator.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\generators\html\Addin2Html.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\generators\html\Ecma2Html.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\generators\html\Ecmaspec2Html.cs" />
@@ -494,36 +508,24 @@
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\generators\html\Man2Html.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\generators\html\MonoBook2Html.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\generators\html\Toc2Html.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\generators\HtmlGenerator.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\generators\RawGenerator.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\HelpSource.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\HelpSource_Legacy.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\index.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\Node.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\Node_Legacy.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\Provider.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\providers\addins-provider.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\providers\EcmaDoc.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\providers\addins-provider.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\providers\ecma-provider.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\providers\ecmaspec-provider.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\providers\ecmauncompiled-provider.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\providers\error-provider.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\providers\man-provider.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\providers\xhtml-provider.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\RootTree.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\RootTree_Legacy.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\SearchableDocument.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\SearchableIndex.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\settings.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\settings_Legacy.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\storage.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\storage\NullStorage.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\storage\UncompiledDocStorage.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\storage\ZipStorage.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\Tree.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\TypeUtils.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib.csproj" />

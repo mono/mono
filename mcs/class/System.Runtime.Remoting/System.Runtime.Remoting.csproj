@@ -43,8 +43,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
@@ -104,15 +104,25 @@
     <Compile Include="System.Runtime.Remoting.MetadataServices\MetaData.cs" />
     <Compile Include="System.Runtime.Remoting.MetadataServices\MetaDataCodeGenerator.cs" />
     <Compile Include="System.Runtime.Remoting.MetadataServices\MetaDataExporter.cs" />
+    <Compile Include="System.Runtime.Remoting.MetadataServices\SUDSGeneratorException.cs" />
+    <Compile Include="System.Runtime.Remoting.MetadataServices\SUDSParserException.cs" />
     <Compile Include="System.Runtime.Remoting.MetadataServices\SdlChannelSink.cs" />
     <Compile Include="System.Runtime.Remoting.MetadataServices\SdlChannelSinkProvider.cs" />
     <Compile Include="System.Runtime.Remoting.MetadataServices\SdlType.cs" />
     <Compile Include="System.Runtime.Remoting.MetadataServices\ServiceType.cs" />
-    <Compile Include="System.Runtime.Remoting.MetadataServices\SUDSGeneratorException.cs" />
-    <Compile Include="System.Runtime.Remoting.MetadataServices\SUDSParserException.cs" />
     <Compile Include="System.Runtime.Remoting.Services\RemotingClientProxy.cs" />
     <Compile Include="System.Runtime.Remoting.Services\RemotingService.cs" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monodroid' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'orbis' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'unreal' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'wasm' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'winaot' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'xammac' "></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

@@ -10,3 +10,5 @@
 ../../../external/corefx/src/Common/src/System/IO/PathInternal.Windows.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.Win32.cs
 ../../../external/corefx/src/Common/src/System/Net/ContextAwareResult.Windows.cs
+../../../external/corefx/src/Common/src/Interop/Windows/Crypt32/Interop.FindOidInfo.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/src/Internal/Cryptography/OidLookup.Windows.cs

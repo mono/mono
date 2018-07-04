@@ -113,6 +113,52 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+    <Compile Include="net_4_x-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
+    <Compile Include="monodroid-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
+    <Compile Include="monotouch-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
+    <Compile Include="monotouch_runtime-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
+    <Compile Include="monotouch_watch-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
+    <Compile Include="monotouch_watch_runtime-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <Compile Include="monotouch_tv-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
+    <Compile Include="monotouch_tv_runtime-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
+    <Compile Include="testing_aot_hybrid-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
+    <Compile Include="testing_aot_full-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
+    <Compile Include="winaot-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
+    <Compile Include="xammac-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
+    <Compile Include="xammac_net_4_5-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
+    <Compile Include="unreal-parser.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
+    <Compile Include="wasm-parser.cs" />
+  </ItemGroup>
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\mcs\anonymous.cs" />
@@ -171,54 +217,10 @@
     <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
     <Compile Include="..\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\CryptoConvert.cs" />
-    <Compile Include="aot.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="aot.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <Compile Include="net_4_x-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
-    <Compile Include="monodroid-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
-    <Compile Include="monotouch-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
-    <Compile Include="monotouch_runtime-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <Compile Include="monotouch_watch-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
-    <Compile Include="monotouch_watch_runtime-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
-    <Compile Include="monotouch_tv-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
-    <Compile Include="monotouch_tv_runtime-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
-    <Compile Include="testing_aot_hybrid-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
-    <Compile Include="testing_aot_full-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
-    <Compile Include="winaot-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Compile Include="xammac-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
-    <Compile Include="xammac_net_4_5-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
-    <Compile Include="unreal-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
-    <Compile Include="wasm-parser.cs" />
-  </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System.Core/System.Core.csproj" />

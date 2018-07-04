@@ -44,8 +44,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\AssemblyFileVersionAttribute.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\DateTimeOffset.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\GlobalSuppressions.cs" />
@@ -68,10 +68,11 @@
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Linq\IQbservable.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Linq\IQbservableProvider.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Subjects\IConnectableObservable.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Subjects\ISubject.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Subjects\ISubject.Multi.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Subjects\ISubject.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

@@ -46,6 +46,7 @@
 #include "mono/metadata/reflection-internals.h"
 #include "mono/metadata/threadpool.h"
 #include "mono/metadata/handle.h"
+#include "mono/metadata/object-internals.h"
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-memory-model.h"
@@ -75,9 +76,9 @@ enum {
  * The marshal lock is a non-recursive complex lock that sits below the domain lock in the
  * runtime locking latice. Which means it can take simple locks suck as the image lock.
  */
-#define mono_marshal_lock() mono_locks_os_acquire (&marshal_mutex, MarshalLock)
-#define mono_marshal_unlock() mono_locks_os_release (&marshal_mutex, MarshalLock)
-static mono_mutex_t marshal_mutex;
+#define mono_marshal_lock() mono_locks_coop_acquire (&marshal_mutex, MarshalLock)
+#define mono_marshal_unlock() mono_locks_coop_release (&marshal_mutex, MarshalLock)
+static MonoCoopMutex marshal_mutex;
 static gboolean marshal_mutex_initialized;
 
 static MonoNativeTlsKey last_error_tls_id;
@@ -216,7 +217,7 @@ mono_marshal_init (void)
 
 	if (!module_initialized) {
 		module_initialized = TRUE;
-		mono_os_mutex_init_recursive (&marshal_mutex);
+		mono_coop_mutex_init_recursive (&marshal_mutex);
 		marshal_mutex_initialized = TRUE;
 
 		register_icall (ves_icall_System_Threading_Thread_ResetAbort, "ves_icall_System_Threading_Thread_ResetAbort", "void", TRUE);
@@ -291,7 +292,7 @@ mono_marshal_cleanup (void)
 
 	mono_native_tls_free (load_type_info_tls_id);
 	mono_native_tls_free (last_error_tls_id);
-	mono_os_mutex_destroy (&marshal_mutex);
+	mono_coop_mutex_destroy (&marshal_mutex);
 	marshal_mutex_initialized = FALSE;
 }
 
@@ -780,7 +781,7 @@ mono_array_to_byvalarray (gpointer native_arr, MonoArray *arr, MonoClass *elclas
 		as = g_utf16_to_utf8 (mono_array_addr (arr, gunichar2, 0), mono_array_length (arr), NULL, NULL, &gerror);
 		if (gerror) {
 			ERROR_DECL (error);
-			mono_error_set_argument (error, "string", "%s", gerror->message);
+			mono_error_set_argument (error, "string", gerror->message);
 			mono_error_set_pending_exception (error);
 			g_error_free (gerror);
 			return;
@@ -1290,7 +1291,9 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 
 	klass = delegate->object.vtable->klass;
 
-	method = mono_class_get_method_from_name (klass, "BeginInvoke", -1);
+	ERROR_DECL (begin_invoke_error);
+	method = mono_get_delegate_begin_invoke_checked (klass, begin_invoke_error);
+	mono_error_cleanup (begin_invoke_error); /* if we can't call BeginInvoke, fall back on Invoke */
 	if (!method)
 		method = mono_get_delegate_invoke (klass);
 	g_assert (method);
@@ -1972,7 +1975,8 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 
 	klass = delegate->object.vtable->klass;
 
-	method = mono_class_get_method_from_name (klass, "EndInvoke", -1);
+	method = mono_get_delegate_end_invoke_checked (klass, error);
+	mono_error_assert_ok (error);
 	g_assert (method != NULL);
 
 	sig = mono_signature_no_pinvoke (method);
@@ -4050,8 +4054,11 @@ mono_marshal_get_struct_to_ptr (MonoClass *klass)
 	if (marshal_info->str_to_ptr)
 		return marshal_info->str_to_ptr;
 
-	if (!stoptr) 
-		stoptr = mono_class_get_method_from_name (mono_defaults.marshal_class, "StructureToPtr", 3);
+	if (!stoptr) {
+		ERROR_DECL (error);
+		stoptr = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "StructureToPtr", 3, 0, error);
+		mono_error_assert_ok (error);
+	}
 	g_assert (stoptr);
 
 	mb = mono_mb_new (klass, stoptr->name, MONO_WRAPPER_UNKNOWN);
@@ -5062,7 +5069,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionTypeHandl
 	if (type->type == MONO_TYPE_PTR || type->type == MONO_TYPE_FNPTR) {
 		return sizeof (gpointer);
 	} else if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT) {
-		mono_error_set_argument (error, "t", "Type %s cannot be marshaled as an unmanaged structure.", m_class_get_name (klass));
+		mono_error_set_argument_format (error, "t", "Type %s cannot be marshaled as an unmanaged structure.", m_class_get_name (klass));
 		return 0;
 	}
 
@@ -5211,7 +5218,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHan
 		/* Get back original class instance */
 		klass = mono_class_from_mono_type (type);
 
-		mono_error_set_argument (error, "fieldName", "Field passed in is not a marshaled member of the type %s", m_class_get_name (klass));
+		mono_error_set_argument_format (error, "fieldName", "Field passed in is not a marshaled member of the type %s", m_class_get_name (klass));
 		return 0;
 	}
 

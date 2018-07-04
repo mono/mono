@@ -104,15 +104,16 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\..\build\common\Consts.cs" />
     <Compile Include="..\Assembly\AssemblyInfo.cs" />
-    <Compile Include="CodeTable.cs" />
     <Compile Include="CP51932.cs" />
     <Compile Include="CP932.cs" />
     <Compile Include="CP936.cs" />
     <Compile Include="CP949.cs" />
     <Compile Include="CP950.cs" />
+    <Compile Include="CodeTable.cs" />
     <Compile Include="DbcsConvert.cs" />
     <Compile Include="DbcsEncoding.cs" />
     <Compile Include="GB18030Encoding.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="ISO2022JP.cs" />
     <Compile Include="JISConvert.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../Common/I18N.csproj" />

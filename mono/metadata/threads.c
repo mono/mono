@@ -574,7 +574,7 @@ get_current_thread_ptr_for_domain (MonoDomain *domain, MonoInternalThread *threa
 	guint32 offset;
 
 	if (!current_thread_field) {
-		current_thread_field = mono_class_get_field_from_name (mono_defaults.thread_class, "current_thread");
+		current_thread_field = mono_class_get_field_from_name_full (mono_defaults.thread_class, "current_thread", NULL);
 		g_assert (current_thread_field);
 	}
 
@@ -2144,13 +2144,13 @@ ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (gpointer toSignal,
 
 	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 	
-	MONO_ENTER_GC_SAFE;
 #ifdef HOST_WIN32
+	MONO_ENTER_GC_SAFE;
 	ret = mono_w32handle_convert_wait_ret (mono_win32_signal_object_and_wait (toSignal, toWait, ms, TRUE), 1);
+	MONO_EXIT_GC_SAFE;
 #else
 	ret = mono_w32handle_signal_and_wait (toSignal, toWait, ms, TRUE);
 #endif
-	MONO_EXIT_GC_SAFE;
 	
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
@@ -3871,7 +3871,8 @@ mono_local_time (const struct timeval *tv, struct tm *tm) {
 #ifdef HAVE_LOCALTIME_R
 	localtime_r(&tv->tv_sec, tm);
 #else
-	*tm = *localtime(&tv->tv_sec);
+	time_t const tv_sec = tv->tv_sec; // Copy due to Win32/Posix contradiction.
+	*tm = *localtime (&tv_sec);
 #endif
 }
 

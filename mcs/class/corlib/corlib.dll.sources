@@ -328,6 +328,7 @@ System.Runtime/GCLatencyMode.cs
 System.Runtime/GCSettings.cs
 System.Runtime/MemoryFailPoint.cs
 System.Runtime.CompilerServices/ConditionalWeakTable.cs
+System.Runtime.CompilerServices/PreserveDependencyAttribute.cs
 System.Runtime.CompilerServices/RuntimeHelpers.cs
 System.Runtime.CompilerServices/Unsafe.cs
 System.Runtime.Hosting/ActivationArguments.cs

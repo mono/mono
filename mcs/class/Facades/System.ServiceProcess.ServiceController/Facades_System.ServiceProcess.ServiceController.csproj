@@ -99,16 +99,18 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="ServiceController_mobile.cs" />
     <Compile Include="ServiceControllerStatus_mobile.cs" />
+    <Compile Include="ServiceController_mobile.cs" />
     <Compile Include="ServiceStartMode_mobile.cs" />
     <Compile Include="ServiceType_mobile.cs" />
     <Compile Include="TimeoutException_mobile.cs" />
     <Compile Include="TypeForwarders.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../System/System.csproj" />

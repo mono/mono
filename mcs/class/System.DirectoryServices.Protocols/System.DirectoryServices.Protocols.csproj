@@ -43,8 +43,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
@@ -63,6 +63,8 @@
     <Compile Include="System.DirectoryServices.Protocols\DeleteResponse.cs" />
     <Compile Include="System.DirectoryServices.Protocols\DereferenceAlias.cs" />
     <Compile Include="System.DirectoryServices.Protocols\DereferenceConnectionCallback.cs" />
+    <Compile Include="System.DirectoryServices.Protocols\DirSyncRequestControl.cs" />
+    <Compile Include="System.DirectoryServices.Protocols\DirSyncResponseControl.cs" />
     <Compile Include="System.DirectoryServices.Protocols\DirectoryAttribute.cs" />
     <Compile Include="System.DirectoryServices.Protocols\DirectoryAttributeCollection.cs" />
     <Compile Include="System.DirectoryServices.Protocols\DirectoryAttributeModification.cs" />
@@ -79,8 +81,6 @@
     <Compile Include="System.DirectoryServices.Protocols\DirectoryRequest.cs" />
     <Compile Include="System.DirectoryServices.Protocols\DirectoryResponse.cs" />
     <Compile Include="System.DirectoryServices.Protocols\DirectorySynchronizationOptions.cs" />
-    <Compile Include="System.DirectoryServices.Protocols\DirSyncRequestControl.cs" />
-    <Compile Include="System.DirectoryServices.Protocols\DirSyncResponseControl.cs" />
     <Compile Include="System.DirectoryServices.Protocols\DomainScopeControl.cs" />
     <Compile Include="System.DirectoryServices.Protocols\DsmlAuthRequest.cs" />
     <Compile Include="System.DirectoryServices.Protocols\DsmlAuthResponse.cs" />
@@ -148,6 +148,7 @@
     <Compile Include="System.DirectoryServices.Protocols\VlvRequestControl.cs" />
     <Compile Include="System.DirectoryServices.Protocols\VlvResponseControl.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

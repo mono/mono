@@ -41,8 +41,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs" />
     <Compile Include="AbstractTestCaseDecoration.cs" />
     <Compile Include="AssemblyInfo.cs" />
@@ -76,15 +76,15 @@
     <Compile Include="LegacySuite.cs" />
     <Compile Include="Log4NetCapture.cs" />
     <Compile Include="LogCapture.cs" />
-    <Compile Include="NamespaceTreeBuilder.cs" />
-    <Compile Include="NoTestFixturesException.cs" />
-    <Compile Include="NotRunnableTestCase.cs" />
     <Compile Include="NTrace.cs" />
-    <Compile Include="NullListener.cs" />
     <Compile Include="NUnitException.cs" />
     <Compile Include="NUnitFramework.cs" />
     <Compile Include="NUnitTestFixture.cs" />
     <Compile Include="NUnitTestMethod.cs" />
+    <Compile Include="NamespaceTreeBuilder.cs" />
+    <Compile Include="NoTestFixturesException.cs" />
+    <Compile Include="NotRunnableTestCase.cs" />
+    <Compile Include="NullListener.cs" />
     <Compile Include="PlatformHelper.cs" />
     <Compile Include="ProxyTestRunner.cs" />
     <Compile Include="QueuingEventListener.cs" />
@@ -107,9 +107,10 @@
     <Compile Include="TestSuite.cs" />
     <Compile Include="TestSuiteBuilder.cs" />
     <Compile Include="TextCapture.cs" />
-    <Compile Include="ThreadedTestRunner.cs" />
     <Compile Include="ThreadUtility.cs" />
+    <Compile Include="ThreadedTestRunner.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

@@ -41,8 +41,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
@@ -82,13 +82,13 @@
     <Compile Include="System.Windows.Markup\UsableDuringInitializationAttribute.cs" />
     <Compile Include="System.Windows.Markup\ValueSerializer.cs" />
     <Compile Include="System.Windows.Markup\WhitespaceSignificantCollectionAttribute.cs" />
+    <Compile Include="System.Windows.Markup\XData.cs" />
     <Compile Include="System.Windows.Markup\XamlDeferLoadAttribute.cs" />
     <Compile Include="System.Windows.Markup\XamlSetMarkupExtensionAttribute.cs" />
     <Compile Include="System.Windows.Markup\XamlSetMarkupExtensionEventArgs.cs" />
     <Compile Include="System.Windows.Markup\XamlSetTypeConverterAttribute.cs" />
     <Compile Include="System.Windows.Markup\XamlSetTypeConverterEventArgs.cs" />
     <Compile Include="System.Windows.Markup\XamlSetValueEventArgs.cs" />
-    <Compile Include="System.Windows.Markup\XData.cs" />
     <Compile Include="System.Windows.Markup\XmlLangPropertyAttribute.cs" />
     <Compile Include="System.Windows.Markup\XmlnsCompatibleWithAttribute.cs" />
     <Compile Include="System.Windows.Markup\XmlnsDefinitionAttribute.cs" />
@@ -167,6 +167,7 @@
     <Compile Include="System.Xaml\XamlXmlWriterException.cs" />
     <Compile Include="System.Xaml\XamlXmlWriterSettings.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

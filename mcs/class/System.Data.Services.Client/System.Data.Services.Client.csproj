@@ -103,6 +103,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
@@ -206,9 +207,9 @@
     <Compile Include="Client\System\Data\Services\Client\SendingRequestEventArgs.cs" />
     <Compile Include="Client\System\Data\Services\Client\Util.cs" />
     <Compile Include="Client\System\Data\Services\Client\WebUtil.cs" />
+    <Compile Include="Client\System\Data\Services\Client\XmlUtil.cs" />
     <Compile Include="Client\System\Data\Services\Client\Xml\XmlAtomErrorReader.cs" />
     <Compile Include="Client\System\Data\Services\Client\Xml\XmlWrappingReader.cs" />
-    <Compile Include="Client\System\Data\Services\Client\XmlUtil.cs" />
     <Compile Include="Server\System\Data\Services\Epm\EpmContentSerializerBase.cs" />
     <Compile Include="Server\System\Data\Services\Epm\EpmCustomContentSerializer.cs" />
     <Compile Include="Server\System\Data\Services\Epm\EpmCustomContentWriterNodeData.cs" />
@@ -221,6 +222,7 @@
     <Compile Include="Server\System\Data\Services\Providers\EntityPropertyMappingInfo.cs" />
     <Compile Include="Server\System\Data\Services\XmlConstants.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />
