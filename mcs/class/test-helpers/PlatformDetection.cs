@@ -31,6 +31,6 @@ namespace System
 			}
 		}
 		public static bool IsInAppContainer => false;
-        public static Version ICUVersion => new Version(0, 0, 0, 0);
+		public static Version ICUVersion => new Version (0, 0, 0, 0);
 	}
 }

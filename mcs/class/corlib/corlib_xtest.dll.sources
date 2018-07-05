@@ -244,10 +244,6 @@
 
 #../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathTests.netcoreapp.cs
 
-# System.Private.Uri
-../../../external/corefx/src/Common/tests/System/ThreadCultureChange.cs
-../../../external/corefx/src/System.Private.Uri/tests/FunctionalTests/*.cs
-
 # System.Globalization
 ../../../external/corefx/src/System.Globalization/tests/Invariant/InvariantMode.cs
 ../../../external/corefx/src/System.Globalization/tests/CompareInfo/*.cs
