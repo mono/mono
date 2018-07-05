@@ -3719,15 +3719,17 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			ip += 3;
 			MINT_IN_BREAK;
 		}
-		MINT_IN_CASE(MINT_NEWOBJ_FAST) {
-			MonoVTable *vtable;
+		MINT_IN_CASE(MINT_NEWOBJ_FAST)
+		MINT_IN_CASE(MINT_NEWOBJ_VT_FAST)
+		MINT_IN_CASE(MINT_NEWOBJ_VTST_FAST) {
 			guint16 param_count;
+			gboolean vt = *ip != MINT_NEWOBJ_FAST;
+			stackval valuetype_this;
 
 			frame->ip = ip;
 
 			child_frame.imethod = (InterpMethod*) rtm->data_items [*(guint16*)(ip + 1)];
-			vtable = (MonoVTable*) rtm->data_items [*(guint16*)(ip + 2)];
-			param_count = *(guint16*)(ip + 3);
+			param_count = *(guint16*)(ip + 2);
 
 			if (param_count) {
 				sp -= param_count;
@@ -3735,17 +3737,29 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			}
 			child_frame.stack_args = sp;
 
-			if (G_UNLIKELY (!vtable->initialized)) {
-				mono_runtime_class_init_full (vtable, error);
-				if (!mono_error_ok (error))
+			if (vt) {
+				gboolean vtst = *ip == MINT_NEWOBJ_VTST_FAST;
+				memset (&valuetype_this, 0, sizeof (stackval));
+				if (vtst) {
+					sp->data.p = vt_sp;
+					valuetype_this.data.p = vt_sp;
+				} else {
+					sp->data.p = &valuetype_this;
+				}
+			} else {
+				MonoVTable *vtable = (MonoVTable*) rtm->data_items [*(guint16*)(ip + 3)];
+				if (G_UNLIKELY (!vtable->initialized)) {
+					mono_runtime_class_init_full (vtable, error);
+					if (!mono_error_ok (error))
+						THROW_EX (mono_error_convert_to_exception (error), ip);
+				}
+				o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+				if (G_UNLIKELY (!o)) {
+					mono_error_set_out_of_memory (error, "Could not allocate %i bytes", m_class_get_instance_size (vtable->klass));
 					THROW_EX (mono_error_convert_to_exception (error), ip);
+				}
+				sp->data.p = o;
 			}
-			o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
-			if (G_UNLIKELY (!o)) {
-				mono_error_set_out_of_memory (error, "Could not allocate %i bytes", m_class_get_instance_size (vtable->klass));
-				THROW_EX (mono_error_convert_to_exception (error), ip);
-			}
-			sp->data.p = o;
 
 			interp_exec_method (&child_frame, context);
 
@@ -3757,10 +3771,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				else
 					goto exit_frame;
 			}
-
 			CHECK_CHILD_EX (child_frame, ip);
-			sp->data.p = o;
-			ip += 4;
+			if (vt)
+				*sp = valuetype_this;
+			else
+				sp->data.p = o;
+			ip += 4 - vt;
 			++sp;
 			MINT_IN_BREAK;
 		}
