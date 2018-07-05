@@ -208,17 +208,16 @@ static guint32
 get_darwin_version (void)
 {
 	static guint32 version;
-	static gboolean res_set;
 
-	if (!res_set) {
+	/* This doesn't need locking */
+	if (!version) {
       char str[256] = {0};
       size_t size = sizeof(str);
       int err = sysctlbyname("kern.osrelease", str, &size, NULL, 0);
 	  g_assert (err == 0);
 	  err = sscanf (str, "%d", &version);
 	  g_assert (err == 1);
-	  mono_memory_barrier ();
-	  res_set = TRUE;
+	  g_assert (version > 0);
 	}
 	return version;
 }
