@@ -1900,7 +1900,7 @@ cominterop_get_ccw_object (MonoCCWInterface* ccw_entry, gboolean verify)
 
 	MonoCCW * const ccw = verify ? (MonoCCW *)g_hash_table_lookup (ccw_interface_hash, ccw_entry) : ccw_entry->ccw;
 	g_assert (verify || ccw);
-	return ccw ? mono_gchandle_get_targe (ccw->gc_handle) : NULL;
+	return ccw ? mono_gchandle_get_target (ccw->gc_handle) : NULL;
 }
 
 static void
