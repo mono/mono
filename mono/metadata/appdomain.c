@@ -2036,8 +2036,11 @@ MonoDomain *
 mono_domain_from_appdomain (MonoAppDomain *appdomain_raw)
 {
 	HANDLE_FUNCTION_ENTER ();
+	MonoDomain *result;
+	MONO_ENTER_GC_UNSAFE;
 	MONO_HANDLE_DCL (MonoAppDomain, appdomain);
-	MonoDomain *result = mono_domain_from_appdomain_handle (appdomain);
+	result = mono_domain_from_appdomain_handle (appdomain);
+	MONO_EXIT_GC_UNSAFE;
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
