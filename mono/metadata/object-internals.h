@@ -25,7 +25,7 @@
 #define MONO_CHECK_ARG(arg, expr, retval) do {				\
 	if (G_UNLIKELY (!(expr)))					\
 	{								\
-		if (arg) {} /* check if the name exists */		\
+		if (0) { (void)(arg); } /* check if the name exists */	\
 		ERROR_DECL (error);					\
 		mono_error_set_argument_format (error, #arg, "assertion `%s' failed", #expr); \
 		mono_error_set_pending_exception (error);		\
@@ -34,13 +34,21 @@
 } while (0)
 
 /* Use this as MONO_CHECK_ARG_NULL (arg,) in functions returning void */
-#define MONO_CHECK_ARG_NULL(arg, retval) do { 			\
-	if (G_UNLIKELY (arg == NULL))				\
+#define MONO_CHECK_ARG_NULL(arg, retval) do {			\
+	if (G_UNLIKELY ((arg) == NULL))				\
 	{							\
-		if (arg) {} /* check if the name exists */	\
 		ERROR_DECL (error);				\
 		mono_error_set_argument_null (error, #arg, "");	\
 		mono_error_set_pending_exception (error);	\
+		return retval;					\
+	}							\
+} while (0)
+
+/* Use this as MONO_CHECK_ARG_NULL_HANDLE (arg,) in functions returning void */
+#define MONO_CHECK_ARG_NULL_HANDLE(arg, retval) do {		\
+	if (G_UNLIKELY (MONO_HANDLE_IS_NULL (arg)))		\
+	{							\
+		mono_error_set_argument_null (error, #arg, "");	\
 		return retval;					\
 	}							\
 } while (0)
@@ -185,10 +193,8 @@ mono_handle_array_has_bounds (MonoArrayHandle arr)
 static inline void
 mono_handle_array_get_bounds_dim (MonoArrayHandle arr, gint32 dim, MonoArrayBounds *bounds)
 {
-	MonoArrayBounds *src = MONO_HANDLE_GETVAL (arr, bounds);
-	memcpy (bounds, &src[dim], sizeof (MonoArrayBounds));
+	*bounds = MONO_HANDLE_GETVAL (arr, bounds [dim]);
 }
-
 
 typedef struct {
 	MonoObject obj;
