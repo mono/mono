@@ -63,7 +63,7 @@ class MonoReleaseProfile(DarwinProfile):
     ]
 
     def attach (self, bockbuild):
-        self.min_version = 7
+        self.min_version = 8
         DarwinProfile.attach (self, bockbuild)
 
         # quick disk space check (http://stackoverflow.com/questions/787776/)
