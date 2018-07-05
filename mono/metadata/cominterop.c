@@ -1894,7 +1894,13 @@ cominterop_get_ccw_object_handle (MonoCCWInterface* ccw_entry, gboolean verify)
 static MonoObject*
 cominterop_get_ccw_object (MonoCCWInterface* ccw_entry, gboolean verify)
 {
-	return MONO_HANDLE_RAW (cominterop_get_ccw_object_handle (ccw_entry, verify));
+	/* no CCW's exist yet */
+	if (!ccw_interface_hash)
+		return NULL;
+
+	MonoCCW * const ccw = verify ? (MonoCCW *)g_hash_table_lookup (ccw_interface_hash, ccw_entry) : ccw_entry->ccw;
+	g_assert (verify || ccw);
+	return ccw ? mono_gchandle_get_targe (ccw->gc_handle) : NULL;
 }
 
 static void
