@@ -84,6 +84,7 @@ ${TESTCMD} --label=System.ComponentModel.DataAnnotations --timeout=5m make -w -C
 ${TESTCMD} --label=System.ComponentModel.Composition-xunit --timeout=5m make -w -C mcs/class/System.ComponentModel.Composition.4.5 run-xunit-test
 ${TESTCMD} --label=Mono.CodeContracts --timeout=5m make -w -C mcs/class/Mono.CodeContracts run-test
 ${TESTCMD} --label=System.Runtime.Caching --timeout=5m make -w -C mcs/class/System.Runtime.Caching run-test
+${TESTCMD} --label=System.Runtime.Caching-xunit --timeout=5m make -w -C mcs/class/System.Runtime.Caching run-xunit-test
 ${TESTCMD} --label=System.Data.Services --timeout=5m make -w -C mcs/class/System.Data.Services run-test
 ${TESTCMD} --label=System.Web.DynamicData --timeout=5m make -w -C mcs/class/System.Web.DynamicData run-test
 ${TESTCMD} --label=Mono.CSharp --timeout=5m make -w -C mcs/class/Mono.CSharp run-test

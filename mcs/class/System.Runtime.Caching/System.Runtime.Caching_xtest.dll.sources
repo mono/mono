@@ -1,0 +1,3 @@
+../../../external/corefx/src/System.Runtime.Caching/tests/AdditionalCacheTests/*.cs
+../../../external/corefx/src/System.Runtime.Caching/tests/Common/*.cs
+../../../external/corefx/src/System.Runtime.Caching/tests/System.Runtime.Caching/*.cs

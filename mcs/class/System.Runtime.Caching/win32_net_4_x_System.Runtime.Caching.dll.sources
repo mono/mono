@@ -1,0 +1,6 @@
+#include System.Runtime.Caching.dll.sources
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.GlobalMemoryStatusEx.cs
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.MEMORY_BASIC_INFO.cs
+../../../external/corefx/src/Common/src/Interop/Windows/Interop.Libraries.cs
+../../../external/corefx/src/System.Runtime.Caching/src/System/Runtime/Caching/MemoryMonitor.Windows.cs
+../../../external/corefx/src/System.Runtime.Caching/src/System/Runtime/Caching/PhysicalMemoryMonitor.Windows.cs
