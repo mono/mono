@@ -1270,13 +1270,14 @@ mono_domain_get_by_id (gint32 domainid)
 {
 	MonoDomain * domain;
 
+	MONO_ENTER_GC_UNSAFE;
 	mono_appdomains_lock ();
 	if (domainid < appdomain_list_size)
 		domain = appdomains_list [domainid];
 	else
 		domain = NULL;
 	mono_appdomains_unlock ();
-
+	MONO_EXIT_GC_UNSAFE;
 	return domain;
 }
 
