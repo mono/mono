@@ -532,7 +532,7 @@ mono_type_get_name_full (MonoType *type, MonoTypeNameFormat format)
 char *
 mono_type_get_full_name (MonoClass *klass)
 {
-	return mono_type_get_name_full (mono_class_get_type (klass), MONO_TYPE_NAME_FORMAT_REFLECTION);
+	return mono_type_get_name_full (m_class_get_byval_arg (klass), MONO_TYPE_NAME_FORMAT_REFLECTION);
 }
 
 /**
@@ -2632,7 +2632,7 @@ mono_type_get_checked (MonoImage *image, guint32 type_token, MonoGenericContext 
 	if (image_is_dynamic (image)) {
 		MonoClass *klass = (MonoClass *)mono_lookup_dynamic_token (image, type_token, context, error);
 		return_val_if_nok (error, NULL);
-		return mono_class_get_type (klass);
+		return m_class_get_byval_arg (klass);
 	}
 
 	if ((type_token & 0xff000000) != MONO_TOKEN_TYPE_SPEC) {
@@ -2644,7 +2644,7 @@ mono_type_get_checked (MonoImage *image, guint32 type_token, MonoGenericContext 
 			mono_error_set_for_class_failure (error, klass);
 			return NULL;
 		}
-		return mono_class_get_type (klass);
+		return m_class_get_byval_arg (klass);
 	}
 
 	type = mono_type_retrieve_from_typespec (image, type_token, context, &inflated, error);
@@ -2655,7 +2655,7 @@ mono_type_get_checked (MonoImage *image, guint32 type_token, MonoGenericContext 
 
 	if (inflated) {
 		MonoType *tmp = type;
-		type = mono_class_get_type (mono_class_from_mono_type (type));
+		type = m_class_get_byval_arg (mono_class_from_mono_type (type));
 		/* FIXME: This is a workaround fo the fact that a typespec token sometimes reference to the generic type definition.
 		 * A MonoClass::_byval_arg of a generic type definion has type CLASS.
 		 * Some parts of mono create a GENERICINST to reference a generic type definition and this generates confict with _byval_arg.
@@ -4317,7 +4317,11 @@ mono_class_get_namespace (MonoClass *klass)
 MonoType*
 mono_class_get_type (MonoClass *klass)
 {
-	return m_class_get_byval_arg (klass);
+	MonoType *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_get_byval_arg (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -5899,7 +5903,7 @@ retry:
 			   NULL;
 			*/
 			MonoGenericContext *parent_inst = NULL;
-			if (mono_class_is_open_constructed_type (mono_class_get_type (parent))) {
+			if (mono_class_is_open_constructed_type (m_class_get_byval_arg (parent))) {
 				parent = mono_class_inflate_generic_class_checked (parent, generic_inst, error);
 				return_val_if_nok  (error, NULL);
 			}
@@ -5918,7 +5922,7 @@ retry:
 		klass = m_class_get_parent (klass);
 		if (!klass)
 			return method;
-		if (mono_class_is_open_constructed_type (mono_class_get_type (klass))) {
+		if (mono_class_is_open_constructed_type (m_class_get_byval_arg (klass))) {
 			klass = mono_class_inflate_generic_class_checked (klass, generic_inst, error);
 			return_val_if_nok (error, NULL);
 
