@@ -2834,8 +2834,10 @@ failure:
 void
 mono_domain_unload (MonoDomain *domain)
 {
+	MONO_ENTER_GC_UNSAFE;
 	MonoObject *exc = NULL;
 	mono_domain_try_unload (domain, &exc);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 static MonoThreadInfoWaitRet
