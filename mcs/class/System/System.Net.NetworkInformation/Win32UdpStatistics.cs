@@ -26,42 +26,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System.Collections.Specialized;
-using System.Globalization;
-
-namespace System.Net.NetworkInformation {
-	class MibUdpStatistics : UdpStatistics
-	{
-		StringDictionary dic;
-
-		public MibUdpStatistics (StringDictionary dic)
-		{
-			this.dic = dic;
-		}
-
-		long Get (string name)
-		{
-			return dic [name] != null ? long.Parse (dic [name], NumberFormatInfo.InvariantInfo) : 0;
-		}
-
-		public override long DatagramsReceived {
-			get { return Get ("InDatagrams"); }
-		}
-		public override long DatagramsSent {
-			get { return Get ("OutDatagrams"); }
-		}
-		public override long IncomingDatagramsDiscarded {
-			get { return Get ("NoPorts"); }
-		}
-		public override long IncomingDatagramsWithErrors {
-			get { return Get ("InErrors"); }
-		}
-		public override int UdpListeners {
-			get { return (int) Get ("NumAddrs"); }
-		}
-	}
-
 #if WIN_PLATFORM
+namespace System.Net.NetworkInformation {
 	class Win32UdpStatistics : UdpStatistics
 	{
 		Win32_MIB_UDPSTATS info;
@@ -100,6 +66,5 @@ namespace System.Net.NetworkInformation {
 		public uint OutDatagrams;
 		public int NumAddrs;
 	}
-#endif
 }
-
+#endif

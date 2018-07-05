@@ -1,5 +1,7 @@
 #include net_4_x_System.dll.sources
 
+System.Net.NetworkInformation/Win32UnixFactoryPal.cs
+
 ../../../external/corefx/src/Common/src/Interop/Windows/Interop.Libraries.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.CreateFile.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.FileOperations.cs

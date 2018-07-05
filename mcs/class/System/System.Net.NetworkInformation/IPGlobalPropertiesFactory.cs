@@ -1,5 +1,5 @@
 //
-// System.Net.NetworkInformation.NetworkInterface
+// System.Net.NetworkInformation.IPGlobalProperties
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
@@ -30,63 +30,21 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Net;
-using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.IO;
-using System.Globalization;
-
 namespace System.Net.NetworkInformation {
-	static class SystemNetworkInterface {
-
-		static readonly NetworkInterfaceFactory nif = NetworkInterfaceFactory.Create ();
-
-		public static NetworkInterface [] GetNetworkInterfaces ()
+	internal static class IPGlobalPropertiesFactoryPal {
+		public static IPGlobalProperties Create ()
 		{
-			try {
-				return nif.GetAllNetworkInterfaces ();
-			} catch {
-				return new NetworkInterface [0];
-			}
-		}
+			var instance = UnixIPGlobalPropertiesFactoryPal.Create ();
 
-		public static bool InternalGetIsNetworkAvailable ()
-		{
-			// TODO:
-			return true;
-		}
+#if WIN_PLATFORM
+			if (instance == null)
+				instance = Win32IPGlobalPropertiesFactoryPal.Create ();
+#endif
 
-		public static int InternalLoopbackInterfaceIndex {
-			get {
-				return nif.GetLoopbackInterfaceIndex ();
-			}
-		}
-
-		public static int InternalIPv6LoopbackInterfaceIndex {
-			get {
+			if (instance == null)
 				throw new NotImplementedException ();
-			}
-		}
 
-		public static IPAddress GetNetMask (IPAddress address)
-		{
-			return nif.GetNetMask (address);
-		}
-	}
-
-	abstract class NetworkInterfaceFactory
-	{
-		public abstract NetworkInterface [] GetAllNetworkInterfaces ();
-		public abstract int GetLoopbackInterfaceIndex ();
-		public abstract IPAddress GetNetMask (IPAddress address);
-
-		public static NetworkInterfaceFactory Create ()
-		{
-			return NetworkInterfaceFactoryPal.Create ();
+			return instance;
 		}
 	}
 }

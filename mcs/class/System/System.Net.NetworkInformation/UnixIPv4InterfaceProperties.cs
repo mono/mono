@@ -1,9 +1,10 @@
 //
-// System.Net.NetworkInformation.IPv6InterfaceProperties
+// System.Net.NetworkInformation.IPv4InterfaceProperties
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
+//      Marek Habersack (mhabersack@novell.com)
 //
 // Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
@@ -27,24 +28,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 namespace System.Net.NetworkInformation {
-#if WIN_PLATFORM
-	class Win32IPv6InterfaceProperties : IPv6InterfaceProperties
+	abstract class UnixIPv4InterfaceProperties : IPv4InterfaceProperties
 	{
-		Win32_MIB_IFROW mib;
+		protected UnixNetworkInterface iface;
 
-		public Win32IPv6InterfaceProperties (Win32_MIB_IFROW mib)
+		public UnixIPv4InterfaceProperties (UnixNetworkInterface iface)
 		{
-			this.mib = mib;
+			this.iface = iface;
 		}
 
 		public override int Index {
-			get { return mib.Index; }
+			get { return iface.NameIndex; }
 		}
 
-		public override int Mtu {
-			get { return mib.Mtu; }
+		// TODO: how to discover that?
+		public override bool IsAutomaticPrivateAddressingActive {
+			get { return false; }
+		}
+
+		// TODO: how to discover that?
+		public override bool IsAutomaticPrivateAddressingEnabled {
+			get { return false; }
+		}
+
+		// TODO: how to discover that? The only way is distribution-specific...
+		public override bool IsDhcpEnabled {
+			get { return false; }
+		}
+
+		public override bool UsesWins {
+			get { return false; }
 		}
 	}
-#endif
 }
-
