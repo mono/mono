@@ -236,7 +236,7 @@ namespace System.Windows.Forms {
 
 				this.is_visible = visible;
 			} else {
-				Select (ActiveControl);
+				SendControlFocus (ActiveControl);
 			}
 		}
 		
@@ -1886,6 +1886,7 @@ namespace System.Windows.Forms {
 				SuspendLayout();
 				this.Size += (clientsize_set - ClientSize);
 				ResumeLayout(false); // This is to avoid affecting children with anchors other than Top Left
+				PerformLayout(this, "Size");
 			}
 
 			if ((XplatUI.SupportsTransparency() & TransparencySupport.Set) != 0) {
