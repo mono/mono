@@ -3395,6 +3395,11 @@ namespace System.Windows.Forms {
 
 			ResumeRecalc (false);
 			PositionCaret (selection_start.line, selection_start.pos);
+
+			if (begin_update_line.line_no > selection_start.line.line_no) {
+				begin_update_line = selection_start.line;
+				begin_update_pos = selection_start.pos;
+			}
 			UpdateView (begin_update_line, selection_end.line.line_no - begin_update_line.line_no, begin_update_pos);
 		}
 
@@ -3908,7 +3913,7 @@ namespace System.Windows.Forms {
 		}
 
 		private void owner_VisibleChanged(object sender, EventArgs e) {
-			if (owner.Visible) {
+			if (owner.Visible && owner.IsHandleCreated) {
 				using (var graphics = owner.CreateGraphics())
 					RecalculateDocument(graphics);
 			}
