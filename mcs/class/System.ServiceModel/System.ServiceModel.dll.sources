@@ -52,8 +52,6 @@ Mono.CodeGeneration/CodeWhen.cs
 Mono.CodeGeneration/CodeWhile.cs
 Mono.CodeGeneration/CodeWriter.cs
 Mono.CodeGeneration/Exp.cs
-Mono.Security.Cryptography/MD5SHA1.cs
-Mono.Security.Cryptography/TlsHMAC.cs
 Mono.Security.Protocol.Ntlm/BitConverterLE.cs
 Mono.Security.Protocol.Ntlm/ChallengeResponse.cs
 Mono.Security.Protocol.Ntlm/MessageBase.cs
