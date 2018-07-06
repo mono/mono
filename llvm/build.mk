@@ -54,13 +54,16 @@ $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(LLVM_PATH)/CMakeLists.txt |
 .PHONY: configure-llvm
 configure-llvm: $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile)
 
+# The DESTDIR fix is to prevent the build from trying to install this out-of-build-tree
+# as the DESTDIR hasn't been created when we're building mono
+
 .PHONY: build-llvm
 build-llvm: configure-llvm
-	$(if $(NINJA),$(NINJA),$(MAKE)) -C $(LLVM_BUILD)
+	DESTDIR="" $(if $(NINJA),$(NINJA),$(MAKE)) -C $(LLVM_BUILD)
 
 .PHONY: install-llvm
 install-llvm: build-llvm | $(LLVM_PREFIX)
-	$(if $(NINJA),$(NINJA),$(MAKE)) -C $(LLVM_BUILD) install
+	DESTDIR="" $(if $(NINJA),$(NINJA),$(MAKE)) -C $(LLVM_BUILD) install
 
 # FIXME: URL should be http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(NEEDED_LLVM_BRANCH)/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz
 .PHONY: download-llvm

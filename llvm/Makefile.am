@@ -31,5 +31,7 @@ all-local:
 clean-local: 
 endif
 
+# Override this so we don't try to re-copy llvm when we install mono
+install:
 
 include build.mk
