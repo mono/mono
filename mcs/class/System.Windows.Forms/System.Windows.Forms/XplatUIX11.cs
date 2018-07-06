@@ -5990,7 +5990,6 @@ namespace System.Windows.Forms {
 			hwnd.y = y;
 			hwnd.width = width;
 			hwnd.height = height;
-			SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 
 			if (!hwnd.zero_sized) {
 				if (hwnd.fixed_size) {
@@ -6005,15 +6004,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			// Update our position/size immediately, so
-			// that future calls to SetWindowPos aren't
-			// kept from calling XMoveResizeWindow (by the
-			// "Save a server roundtrip" block above).
-			hwnd.x = x;
-			hwnd.y = y;
-			hwnd.width = width;
-			hwnd.height = height;
-			hwnd.ClientRect = Rectangle.Empty;
+			SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 		}
 
 		internal override void SetWindowState(IntPtr handle, FormWindowState state)
