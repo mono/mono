@@ -738,14 +738,16 @@ namespace System.Windows.Forms
 							// Make sure to set the last width of the line before wrapping
 							widths[pos + 1] = newWidth;
 
-							if (wrap_pos > pos && Char.IsWhiteSpace(c)) {
-								while (wrap_pos < text.Length && Char.IsWhiteSpace(text[wrap_pos]) && text[wrap_pos] != '\t') {
-									wrap_pos++;
-								}
-								pos++;
-								wrapped = true; // don't try pulling more into this line, but keep looping to deal with the rest of the widths and tags
-							} else {
+							if (Char.IsWhiteSpace(c)) {
 								if (wrap_pos > pos) {
+									while (wrap_pos < text.Length && Char.IsWhiteSpace(text[wrap_pos]) && text[wrap_pos] != '\t') {
+										wrap_pos++;
+									}
+									pos++;
+									wrapped = true; // don't try pulling more into this line, but keep looping to deal with the rest of the widths and tags
+								}
+							} else  {
+								if (wrap_pos > pos && pos > 0) {
 									// We're at a dash (otherwise we'd be above), but don't have room to fit it in.
 									// Wrap at the previous wrap point if possible.
 									wrap_pos = prev_wrap_pos > 0 ? prev_wrap_pos : pos;
@@ -857,6 +859,10 @@ namespace System.Windows.Forms
 				}
 			}
 
+			if (pos != currentFontStart) {
+				CheckKerning(g, currentFont, currentFontStart, pos - currentFontStart);
+			}
+
 			if (lastTab != null) {
 				ProcessLastTab(lastTab, lastTabPos, pos);
 				lastTab = null;
@@ -895,7 +901,7 @@ namespace System.Windows.Forms
 		
 		private void CheckKerning(Graphics g, Font font, int start, int length) {
 			if (length > 1) {
-				if (!kerning_fonts.ContainsKey (tags.Font.GetHashCode ())) {
+				if (!kerning_fonts.ContainsKey (font.GetHashCode ())) {
 					// Check whether kerning takes place for this string and font.
 					var partText = text.ToString(start, length);
 					var realSize = TextBoxTextRenderer.MeasureText(g, partText, font);
@@ -905,7 +911,7 @@ namespace System.Windows.Forms
 					float sumWidth = widths[textLength + start + 1];
 					if (realWidth != sumWidth)
 					{
-						kerning_fonts.Add(tags.Font.GetHashCode (), true);
+						kerning_fonts.Add(font.GetHashCode (), true);
 						// Using a slightly incorrect width this time around isn't that bad. All that happens
 						// is that the cursor is a pixel or two off until the next character is typed.  It's
 						// the accumulation of pixel after pixel that causes display problems.
