@@ -5,6 +5,10 @@
 #ifndef __MONO_DEBUGGER_ENGINE_H__
 #define __MONO_DEBUGGER_ENGINE_H__
 
+#include "mini.h"
+#include <mono/metadata/seq-points-data.h>
+#include <mono/mini/debugger-state-machine.h>
+
 /*
 FIXME:
 - Move EventKind back to debugger-agent.c as it contains sdb wire protocol constants.
@@ -154,11 +158,109 @@ typedef struct {
 	guint32 native_offset;
 } DbgEngineStackFrame;
 
-void mono_de_init (void);
+typedef struct {
+	/*
+	 * Method where to start single stepping
+	 */
+	MonoMethod *method;
+
+	/*
+	* If ctx is set, tls must belong to the same thread.
+	*/
+	MonoContext *ctx;
+	void *tls;
+
+	/*
+	 * Stopped at a throw site
+	*/
+	gboolean step_to_catch;
+
+	/*
+	 * Sequence point to start from.
+	*/
+	SeqPoint sp;
+	MonoSeqPointInfo *info;
+
+	/*
+	 * Frame data, will be freed at the end of ss_start if provided
+	 */
+	DbgEngineStackFrame **frames;
+	int nframes;
+} SingleStepArgs;
+
+typedef int DbgEngineErrorCode;
+#define DE_ERR_NONE 0
+// WARNING WARNING WARNING
+// Error codes MUST match those of sdb for now
+#define DE_ERR_NOT_IMPLEMENTED 100
+
+MonoGHashTable *
+mono_debugger_get_thread_states (void);
+
+gboolean
+mono_debugger_is_disconnected (void);
+
+gsize
+mono_debugger_tls_thread_id (DebuggerTlsData *debuggerTlsData);
+
+void
+mono_debugger_set_thread_state (DebuggerTlsData *ref, MonoDebuggerThreadState expected, MonoDebuggerThreadState set);
+
+MonoDebuggerThreadState
+mono_debugger_get_thread_state (DebuggerTlsData *ref);
+
+typedef struct {
+	MonoContext *(*tls_get_restore_state) (void *tls);
+	gboolean (*try_process_suspend) (void *tls, MonoContext *ctx);
+	gboolean (*begin_breakpoint_processing) (void *tls, MonoContext *ctx, MonoJitInfo *ji, gboolean from_signal);
+	void (*begin_single_step_processing) (MonoContext *ctx, gboolean from_signal);
+
+	void (*ss_discard_frame_context) (void *tls);
+	void (*ss_calculate_framecount) (void *tls, MonoContext *ctx, gboolean force_use_ctx, DbgEngineStackFrame ***frames, int *nframes);
+	gboolean (*ensure_jit) (DbgEngineStackFrame *frame);
+	int (*ensure_runtime_is_suspended) (void);
+
+	int (*get_this_async_id) (DbgEngineStackFrame *frame);
+
+	void* (*create_breakpoint_events) (GPtrArray *ss_reqs, GPtrArray *bp_reqs, MonoJitInfo *ji, EventKind kind);
+	void (*process_breakpoint_events) (void *_evts, MonoMethod *method, MonoContext *ctx, int il_offset);
+
+	gboolean (*set_set_notification_for_wait_completion_flag) (DbgEngineStackFrame *f);
+	MonoMethod* (*get_notify_debugger_of_wait_completion_method)(void);
+
+	int (*ss_create_init_args) (SingleStepReq *ss_req, SingleStepArgs *args);
+	void (*ss_args_destroy) (SingleStepArgs *ss_args);
+} DebuggerEngineCallbacks;
+
+
+void mono_de_init (DebuggerEngineCallbacks *cbs);
 void mono_de_cleanup (void);
+void mono_de_set_log_level (int level, FILE *file);
 
 //locking - we expose the lock object from the debugging engine to ensure we keep the same locking semantics of sdb.
 void mono_de_lock (void);
 void mono_de_unlock (void);
+
+// domain handling
+void mono_de_foreach_domain (GHFunc func, gpointer user_data);
+void mono_de_domain_add (MonoDomain *domain);
+void mono_de_domain_remove (MonoDomain *domain);
+
+//breakpoints
+void mono_de_clear_breakpoint (MonoBreakpoint *bp);
+MonoBreakpoint* mono_de_set_breakpoint (MonoMethod *method, long il_offset, EventRequest *req, MonoError *error);
+void mono_de_collect_breakpoints_by_sp (SeqPoint *sp, MonoJitInfo *ji, GPtrArray *ss_reqs, GPtrArray *bp_reqs);
+void mono_de_clear_breakpoints_for_domain (MonoDomain *domain);
+void mono_de_add_pending_breakpoints (MonoMethod *method, MonoJitInfo *ji);
+void mono_de_clear_all_breakpoints (void);
+
+//single stepping
+void mono_de_start_single_stepping (void);
+void mono_de_stop_single_stepping (void);
+
+void mono_de_process_breakpoint (void *tls, gboolean from_signal);
+void mono_de_process_single_step (void *tls, gboolean from_signal);
+DbgEngineErrorCode mono_de_ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilter filter, EventRequest *req);
+void mono_de_cancel_ss (void);
 
 #endif

@@ -1552,6 +1552,9 @@ register_image (MonoImage *image)
 		g_hash_table_insert (loaded_images_by_name, (char *) image->assembly_name, image);
 	mono_images_unlock ();
 
+	if (mono_is_problematic_image (image)) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Registering %s, problematic image '%s'", image->ref_only ? "REFONLY" : "default", image->name);
+	}
 	return image;
 }
 
@@ -1602,7 +1605,11 @@ mono_image_open_from_data_internal (char *data, guint32 data_len, gboolean need_
 MonoImage *
 mono_image_open_from_data_with_name (char *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status, gboolean refonly, const char *name)
 {
-	return mono_image_open_from_data_internal (data, data_len, need_copy, status, refonly, FALSE, name);
+	MonoImage *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_image_open_from_data_internal (data, data_len, need_copy, status, refonly, FALSE, name);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -1611,7 +1618,11 @@ mono_image_open_from_data_with_name (char *data, guint32 data_len, gboolean need
 MonoImage *
 mono_image_open_from_data_full (char *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status, gboolean refonly)
 {
-  return mono_image_open_from_data_with_name (data, data_len, need_copy, status, refonly, NULL);
+	MonoImage *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_image_open_from_data_internal (data, data_len, need_copy, status, refonly, FALSE, NULL);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -1620,7 +1631,11 @@ mono_image_open_from_data_full (char *data, guint32 data_len, gboolean need_copy
 MonoImage *
 mono_image_open_from_data (char *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status)
 {
-	return mono_image_open_from_data_full (data, data_len, need_copy, status, FALSE);
+	MonoImage *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_image_open_from_data_internal (data, data_len, need_copy, status, FALSE, FALSE, NULL);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 #ifdef HOST_WIN32
@@ -1763,7 +1778,7 @@ mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean 
 	g_free (absfname);
 
 	if (image) { // Image already loaded
-		if (!load_from_context && mono_is_problematic_image (image)) {
+		if (!refonly && !load_from_context && mono_is_problematic_image (image)) {
 			// If we previously loaded a problematic image, don't
 			// return it if we're not in LoadFrom context.
 			//
@@ -1773,6 +1788,7 @@ mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean 
 			//  to see it again when we go searching for an image
 			//  to load.
 			mono_images_unlock ();
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Not returning problematic image '%s' refcount=%d", image->name, image->ref_count);
 			return NULL;
 		}
 		mono_image_addref (image);
@@ -1958,12 +1974,11 @@ mono_wrapper_caches_free (MonoWrapperCaches *cache)
 	free_hash (cache->delegate_invoke_cache);
 	free_hash (cache->delegate_begin_invoke_cache);
 	free_hash (cache->delegate_end_invoke_cache);
-	free_hash (cache->runtime_invoke_cache);
-	free_hash (cache->runtime_invoke_vtype_cache);
+	free_hash (cache->runtime_invoke_signature_cache);
 	
 	free_hash (cache->delegate_abstract_invoke_cache);
 
-	free_hash (cache->runtime_invoke_direct_cache);
+	free_hash (cache->runtime_invoke_method_cache);
 	free_hash (cache->managed_wrapper_cache);
 
 	free_hash (cache->native_wrapper_cache);
@@ -2133,7 +2148,6 @@ mono_image_close_except_pools (MonoImage *image)
 	}
 
 	free_hash (image->delegate_bound_static_invoke_cache);
-	free_hash (image->runtime_invoke_vcall_cache);
 	free_hash (image->ldfld_wrapper_cache);
 	free_hash (image->ldflda_wrapper_cache);
 	free_hash (image->stfld_wrapper_cache);

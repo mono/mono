@@ -12,6 +12,7 @@
 
 #include <config.h>
 #include <mono/metadata/assembly.h>
+#include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/tokentype.h>
 #include <mono/metadata/appdomain.h>
@@ -248,6 +249,12 @@ mono_debug_close_image (MonoImage *image)
 	mono_debugger_unlock ();
 }
 
+MonoDebugHandle *
+mono_debug_get_handle (MonoImage *image)
+{
+    return mono_debug_open_image (image, NULL, 0);
+}
+
 static MonoDebugHandle *
 mono_debug_open_image (MonoImage *image, const guint8 *raw_contents, int size)
 {
@@ -289,7 +296,7 @@ mono_debug_add_assembly (MonoAssembly *assembly, gpointer user_data)
 	MonoImage *image;
 
 	mono_debugger_lock ();
-	image = mono_assembly_get_image (assembly);
+	image = mono_assembly_get_image_internal (assembly);
 	handle = open_symfile_from_bundle (image);
 	if (!handle)
 		mono_debug_open_image (image, NULL, 0);

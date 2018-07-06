@@ -28,9 +28,9 @@ mono_w32process_get_pid (gpointer handle)
 }
 
 static gboolean
-mono_w32process_try_get_modules (gpointer process, gpointer *modules, guint32 size, guint32 *needed)
+mono_w32process_try_get_modules (gpointer process, HMODULE *modules, guint32 size, PDWORD needed)
 {
-	return EnumProcessModules (process, (HMODULE *) modules, size, (LPDWORD) needed);
+	return EnumProcessModules (process, modules, size, needed);
 }
 
 static guint32
@@ -54,7 +54,7 @@ mono_w32process_module_get_information (gpointer process, gpointer module, MODUL
 static gboolean
 mono_w32process_get_fileversion_info (gunichar2 *filename, gpointer *data)
 {
-	guint32 handle;
+	DWORD handle;
 	gsize datasize;
 
 	g_assert (data);
@@ -142,7 +142,7 @@ process_set_field_object (MonoObject *obj, const gchar *fieldname, MonoObject *d
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	mono_gc_wbarrier_generic_store (((char *)obj) + field->offset, data);
@@ -166,7 +166,7 @@ process_set_field_string (MonoObject *obj, const gchar *fieldname, const gunicha
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	string = mono_string_new_utf16_checked (domain, val, len, error);
@@ -192,7 +192,7 @@ process_set_field_string_char (MonoObject *obj, const gchar *fieldname, const gc
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	string = mono_string_new_checked (domain, val, error);
@@ -212,7 +212,7 @@ process_set_field_int (MonoObject *obj, const gchar *fieldname, guint32 val)
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	*(guint32 *)(((char *)obj) + field->offset)=val;
@@ -229,7 +229,7 @@ process_set_field_intptr (MonoObject *obj, const gchar *fieldname, gpointer val)
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	*(gpointer *)(((char *)obj) + field->offset) = val;
@@ -246,7 +246,7 @@ process_set_field_bool (MonoObject *obj, const gchar *fieldname, gboolean val)
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	*(guint8 *)(((char *)obj) + field->offset) = val;

@@ -4344,6 +4344,19 @@ leave_no_init_pending:
 	return !mono_class_has_failure (klass);
 }
 
+gboolean
+mono_class_init_checked (MonoClass *klass, MonoError *error)
+{
+	error_init (error);
+
+	gboolean const success = mono_class_init (klass);
+
+	if (!success)
+		mono_error_set_for_class_failure (error, klass);
+
+	return success;
+}
+
 #ifndef DISABLE_COM
 /*
  * COM initialization is delayed until needed.
@@ -5387,10 +5400,10 @@ mono_class_create_array_fill_type (void)
 	static gboolean inited = FALSE;
 
 	if (!inited) {
-		klass.element_class = mono_defaults.byte_class;
+		klass.element_class = mono_defaults.int64_class;
 		klass.rank = 1;
 		klass.instance_size = MONO_SIZEOF_MONO_ARRAY;
-		klass.sizes.element_size = 1;
+		klass.sizes.element_size = 8;
 		klass.size_inited = 1;
 		klass.name = "array_filler_type";
 
@@ -5450,4 +5463,3 @@ mono_classes_cleanup (void)
 	global_interface_bitset = NULL;
 	mono_os_mutex_destroy (&classes_mutex);
 }
-

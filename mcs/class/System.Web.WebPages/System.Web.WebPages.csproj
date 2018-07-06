@@ -44,8 +44,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\CommonResources.Designer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\ExceptionHelper.cs" />
@@ -104,7 +104,6 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\UnvalidatedRequestValues.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\Validation.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Checkbox.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Input.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Internal.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Label.cs" />
@@ -112,11 +111,15 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Select.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.TextArea.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Validation.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\ModelState.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\ModelStateDictionary.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\SelectListItem.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\HttpContextExtensions.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IDisplayMode.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ITemplateFile.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IVirtualPathFactory.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IWebPageRequestExecutor.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\HttpContextAdapter.Availability.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\HttpContextAdapter.generated.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\InstrumentationService.cs" />
@@ -124,9 +127,6 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PageExecutionListenerAdapter.generated.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PageInstrumentationServiceAdapter.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PositionTagged.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ITemplateFile.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IVirtualPathFactory.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IWebPageRequestExecutor.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\HttpAntiForgeryException.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationEqualToRule.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationRangeRule.cs" />
@@ -192,6 +192,7 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

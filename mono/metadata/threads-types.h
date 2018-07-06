@@ -157,7 +157,8 @@ ves_icall_System_Threading_Thread_Abort (MonoInternalThreadHandle thread_handle,
 void
 ves_icall_System_Threading_Thread_ResetAbort (MonoThreadObjectHandle this_obj, MonoError *error);
 
-MonoObject* ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThread *thread);
+MonoObjectHandle
+ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThreadObjectHandle thread, MonoError *error);
 
 void
 ves_icall_System_Threading_Thread_Suspend (MonoThreadObjectHandle this_obj, MonoError *error);
@@ -338,6 +339,9 @@ mono_threads_exit_gc_safe_region_unbalanced_internal (gpointer cookie, MonoStack
 void
 mono_set_thread_dump_dir(gchar* dir);
 
+MONO_COLD void
+mono_set_pending_exception_handle (MonoExceptionHandle exc);
+
 #ifdef TARGET_OSX
 #define MONO_MAX_SUMMARY_NAME_LEN 140
 #define MONO_MAX_SUMMARY_THREADS 32
@@ -350,6 +354,7 @@ typedef struct {
 		int token;
 		int il_offset;
 		int native_offset;
+		const char *guid;
 	} managed_data;
 	struct {
 		intptr_t ip;

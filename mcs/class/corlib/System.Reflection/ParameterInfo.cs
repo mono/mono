@@ -1,4 +1,4 @@
-// System.Reflection.ParameterInfo
+﻿// System.Reflection.ParameterInfo
 //
 // Authors:
 //   Sean MacIsaac (macisaac@ximian.com)
@@ -174,6 +174,41 @@ namespace System.Reflection
 
 			return attrs;
 		}			
+
+		internal CustomAttributeData[] GetPseudoCustomAttributesData ()
+		{
+			int count = 0;
+
+			if (IsIn)
+				count++;
+			if (IsOut)
+				count++;
+			if (IsOptional)
+				count++;
+			if (marshalAs != null)
+				count++;
+
+			if (count == 0)
+				return null;
+			CustomAttributeData[] attrsData = new CustomAttributeData [count];
+			count = 0;
+
+			if (IsIn)
+				attrsData [count++] = new CustomAttributeData ((typeof (InAttribute)).GetConstructor (Type.EmptyTypes));
+			if (IsOptional)
+				attrsData [count++] = new CustomAttributeData ((typeof (OptionalAttribute)).GetConstructor (Type.EmptyTypes));
+			if (IsOut)
+				attrsData [count++] = new CustomAttributeData ((typeof (OutAttribute)).GetConstructor (Type.EmptyTypes));
+			if (marshalAs != null) {
+				var ctorArgs = new CustomAttributeTypedArgument[] { new CustomAttributeTypedArgument (typeof (UnmanagedType), marshalAs.Value) };
+				attrsData [count++] = new CustomAttributeData (
+					(typeof (MarshalAsAttribute)).GetConstructor (new[] { typeof( UnmanagedType) }),
+					ctorArgs,
+					EmptyArray<CustomAttributeNamedArgument>.Value);//FIXME Get named params
+			}
+
+			return attrsData;
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern Type[] GetTypeModifiers (bool optional);

@@ -515,7 +515,7 @@ ves_icall_System_IO_MonoIO_Read (HANDLE handle, MonoArrayHandle dest,
 
 	*io_error=ERROR_SUCCESS;
 
-	MONO_CHECK_ARG_NULL (dest, 0);
+	MONO_CHECK_ARG_NULL (MONO_HANDLE_RAW (dest), 0);
 
 	if (dest_offset > mono_array_handle_length (dest) - count) {
 		mono_error_set_argument (error, "array", "array too small. numBytes/offset wrong.");
@@ -547,7 +547,7 @@ ves_icall_System_IO_MonoIO_Write (HANDLE handle, MonoArrayHandle src,
 
 	*io_error=ERROR_SUCCESS;
 
-	MONO_CHECK_ARG_NULL (src, 0);
+	MONO_CHECK_ARG_NULL (MONO_HANDLE_RAW (src), 0);
 	
 	if (src_offset > mono_array_handle_length (src) - count) {
 		mono_error_set_argument (error, "array", "array too small. numBytes/offset wrong.");
@@ -820,7 +820,7 @@ ves_icall_System_IO_MonoIO_get_InvalidPathChars (MonoError *error)
 	domain = mono_domain_get ();
 	n = sizeof (invalid_path_chars) / sizeof (gunichar2);
 	MONO_HANDLE_ASSIGN (chars, mono_array_new_handle (domain, mono_defaults.char_class, n, error));
-	return_val_if_nok (error, NULL);
+	return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, mono_new_null ()));
 
 	for (i = 0; i < n; ++ i)
 		MONO_HANDLE_ARRAY_SETVAL (chars, gunichar2, i, invalid_path_chars [i]);

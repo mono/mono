@@ -7,6 +7,7 @@ def isWindowsPrBuild = (isPr && env.ghprbCommentBody.contains("@monojenkins buil
 def packageFileName = null
 def commitHash = null
 def utils = null
+properties([compressBuildLog()])
 
 node ("osx-amd64") {
     ws ("workspace/${jobName}/${monoBranch}") {

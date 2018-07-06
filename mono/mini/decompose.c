@@ -1537,11 +1537,11 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 					break;
 				case OP_LDLEN:
 					NEW_LOAD_MEMBASE_FLAGS (cfg, dest, OP_LOADI4_MEMBASE, ins->dreg, ins->sreg1,
-											MONO_STRUCT_OFFSET (MonoArray, max_length), ins->flags | MONO_INST_INVARIANT_LOAD);
+											ins->inst_imm, ins->flags);
 					MONO_ADD_INS (cfg->cbb, dest);
 					break;
 				case OP_BOUNDS_CHECK:
-					MONO_EMIT_NULL_CHECK (cfg, ins->sreg1);
+					MONO_EMIT_NULL_CHECK (cfg, ins->sreg1, FALSE);
 					if (COMPILE_LLVM (cfg)) {
 						int index2_reg = alloc_preg (cfg);
 						MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, index2_reg, ins->sreg2);

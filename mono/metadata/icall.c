@@ -101,6 +101,7 @@
 #include <mono/metadata/w32error.h>
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-merp.h>
+#include <mono/utils/mono-logger-internals.h>
 
 #include "decimal-ms.h"
 #include "number-ms.h"
@@ -136,15 +137,6 @@ static inline MonoBoolean
 is_generic_parameter (MonoType *type)
 {
 	return !type->byref && (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR);
-}
-
-static void
-mono_class_init_checked (MonoClass *klass, MonoError *error)
-{
-	error_init (error);
-
-	if (!mono_class_init (klass))
-		mono_error_set_for_class_failure (error, klass);
 }
 
 #ifndef HOST_WIN32
@@ -921,7 +913,7 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_InitializeArray (MonoAr
 		return;
 
 	if (!(field_type->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA)) {
-		mono_error_set_argument (error, "field_handle", "Field '%s' doesn't have an RVA", mono_field_get_name (field_handle));
+		mono_error_set_argument_format (error, "field_handle", "Field '%s' doesn't have an RVA", mono_field_get_name (field_handle));
 		return;
 	}
 
@@ -1552,7 +1544,7 @@ ves_icall_System_Type_internal_from_name (MonoStringHandle name,
 			if (info.assembly.name)
 				aname = mono_stringify_assembly_name (&info.assembly);
 			else if (caller_assembly)
-				aname = mono_stringify_assembly_name (mono_assembly_get_name (caller_assembly));
+				aname = mono_stringify_assembly_name (mono_assembly_get_name_internal (caller_assembly));
 			else
 				aname = g_strdup ("");
 			mono_error_set_type_load_name (error, tname, aname, "");
@@ -3481,7 +3473,7 @@ internal_execute_field_getter (MonoDomain *domain, MonoObject *this_arg, MonoArr
 	return_if_nok (error);
 		
 	do {
-		MonoClassField* field = mono_class_get_field_from_name (k, str);
+		MonoClassField* field = mono_class_get_field_from_name_full (k, str, NULL);
 		if (field) {
 			g_free (str);
 			MonoClass *field_klass =  mono_class_from_mono_type (field->type);
@@ -3529,7 +3521,7 @@ internal_execute_field_setter (MonoDomain *domain, MonoObject *this_arg, MonoArr
 	return_if_nok (error);
 		
 	do {
-		MonoClassField* field = mono_class_get_field_from_name (k, str);
+		MonoClassField* field = mono_class_get_field_from_name_full (k, str, NULL);
 		if (field) {
 			g_free (str);
 			MonoClass *field_klass =  mono_class_from_mono_type (field->type);
@@ -4757,7 +4749,7 @@ ves_icall_System_Reflection_Assembly_load_with_partial_name (MonoStringHandle mn
 	
 	name = mono_string_handle_to_utf8 (mname, error);
 	goto_if_nok (error, leave);
-	MonoAssembly *res = mono_assembly_load_with_partial_name (name, &status);
+	MonoAssembly *res = mono_assembly_load_with_partial_name_internal (name, &status);
 
 	g_free (name);
 
@@ -4861,7 +4853,7 @@ ves_icall_System_Reflection_Assembly_GetAotId (MonoError *error)
 {
 	char *guid = mono_runtime_get_aotid ();
 	if (guid == NULL)
-		return NULL;
+		return MONO_HANDLE_CAST (MonoString, mono_new_null ());
 	MonoStringHandle res = mono_string_new_handle (mono_domain_get (), guid, error);
 	g_free (guid);
 	return res;
@@ -5456,6 +5448,8 @@ ves_icall_System_Reflection_Assembly_InternalGetAssemblyName (MonoStringHandle f
 	dirname = g_path_get_dirname (filename);
 	replace_shadow_path (mono_domain_get (), dirname, &filename);
 	g_free (dirname);
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "InternalGetAssemblyName (\"%s\")", filename);
 
 	image = mono_image_open_full (filename, &status, TRUE);
 
@@ -6234,13 +6228,13 @@ ves_icall_System_Reflection_Module_ResolveSignature (MonoImage *image, guint32 t
 
 	/* FIXME: Support other tables ? */
 	if (table != MONO_TABLE_STANDALONESIG)
-		return MONO_HANDLE_CAST (MonoArray, NULL);
+		return NULL_HANDLE_ARRAY;
 
 	if (image_is_dynamic (image))
-		return MONO_HANDLE_CAST (MonoArray, NULL);
+		return NULL_HANDLE_ARRAY;
 
 	if ((idx == 0) || (idx > tables [MONO_TABLE_STANDALONESIG].rows))
-		return MONO_HANDLE_CAST (MonoArray, NULL);
+		return NULL_HANDLE_ARRAY;
 
 	sig = mono_metadata_decode_row_col (&tables [MONO_TABLE_STANDALONESIG], idx - 1, 0);
 
@@ -6249,7 +6243,7 @@ ves_icall_System_Reflection_Module_ResolveSignature (MonoImage *image, guint32 t
 
 	MonoArrayHandle res = mono_array_new_handle (mono_domain_get (), mono_defaults.byte_class, len, error);
 	if (!is_ok (error))
-		return MONO_HANDLE_CAST (MonoArray, NULL);
+		return NULL_HANDLE_ARRAY;
 	uint32_t h;
 	gpointer array_base = MONO_ARRAY_HANDLE_PIN (res, guint8, 0, &h);
 	memcpy (array_base, ptr, len);
@@ -6416,7 +6410,7 @@ ves_icall_System_Delegate_AllocDelegateLike_internal (MonoDelegateHandle delegat
 	MonoClass *klass = mono_handle_class (delegate);
 	g_assert (mono_class_has_parent (klass, mono_defaults.multicastdelegate_class));
 
-	MonoMulticastDelegateHandle ret = (MonoMulticastDelegateHandle)mono_object_new_handle (MONO_HANDLE_DOMAIN (delegate), klass, error);
+	MonoMulticastDelegateHandle ret = MONO_HANDLE_CAST (MonoMulticastDelegate, mono_object_new_handle (MONO_HANDLE_DOMAIN (delegate), klass, error));
 	return_val_if_nok (error, MONO_HANDLE_CAST (MonoMulticastDelegate, NULL_HANDLE));
 
 	MONO_HANDLE_SETVAL (MONO_HANDLE_CAST (MonoDelegate, ret), invoke_impl, gpointer, mono_runtime_create_delegate_trampoline (klass));
@@ -7228,7 +7222,7 @@ ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (MonoString *path_name, guint64 *
 	return result;
 }
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) || G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
 static inline guint32
 mono_icall_drive_info_get_drive_type (MonoString *root_path_name)
 {
@@ -7282,7 +7276,7 @@ ves_icall_System_Configuration_InternalConfigurationHost_get_bundled_app_config 
 	domain = mono_domain_get ();
 	MonoStringHandle file = MONO_HANDLE_NEW (MonoString, domain->setup->configuration_file);
 	if (MONO_HANDLE_IS_NULL (file) || MONO_HANDLE_GETVAL (file, length) == 0)
-		return NULL;
+		return MONO_HANDLE_CAST (MonoString, mono_new_null ());
 
 	// Retrieve config file and remove the extension
 	config_file_name = mono_string_handle_to_utf8 (file, error);
@@ -7373,7 +7367,7 @@ ves_icall_get_resources_ptr (MonoReflectionAssemblyHandle assembly, gpointer *re
 	MonoPEResourceDataEntry *entry;
 	MonoImage *image;
 
-	if (!assembly || !result || !size)
+	if (MONO_HANDLE_IS_NULL (assembly) || !result || !size)
 		return FALSE;
 
 	*result = NULL;
@@ -7605,7 +7599,6 @@ mono_TypedReference_MakeTypedReferenceInternal (MonoObject *target, MonoArray *f
 	MonoType *ftype = NULL;
 	guint8 *p = NULL;
 	int i;
-	ERROR_DECL (error);
 
 	memset (&res, 0, sizeof (res));
 
@@ -8384,7 +8377,7 @@ mono_create_icall_signature (const char *sigstr)
 	res = mono_metadata_signature_alloc (corlib, len - 1);
 	res->pinvoke = 1;
 
-#ifdef TARGET_WIN32
+#if defined(TARGET_WIN32) && defined(TARGET_X86)
 	/* 
 	 * Under windows, the default pinvoke calling convention is STDCALL but
 	 * we need CDECL.

@@ -62,6 +62,7 @@ namespace System
 		private IntPtr delegate_trampoline;
 		private IntPtr extra_arg;
 		private IntPtr method_code;
+		private IntPtr interp_method;
 		private MethodInfo method_info;
 
 		// Keep a ref of the MethodInfo passed to CreateDelegate.

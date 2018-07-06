@@ -124,6 +124,9 @@ get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image, const MonoRu
 static const MonoRuntimeInfo*
 get_runtime_by_version (const char *version);
 
+MonoAssembly *
+mono_domain_assembly_open_internal (MonoDomain *domain, const char *name);
+
 static LockFreeMempool*
 lock_free_mempool_new (void)
 {
@@ -474,6 +477,7 @@ mono_domain_create (void)
 static MonoDomain *
 mono_init_internal (const char *filename, const char *exe_filename, const char *runtime_version)
 {
+	ERROR_DECL (error);
 	static MonoDomain *domain = NULL;
 	MonoAssembly *ass = NULL;
 	MonoImageOpenStatus status = MONO_IMAGE_OK;
@@ -594,7 +598,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 		
 		exit (1);
 	}
-	mono_defaults.corlib = mono_assembly_get_image (ass);
+	mono_defaults.corlib = mono_assembly_get_image_internal (ass);
 
 	mono_defaults.object_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System", "Object");
@@ -773,8 +777,9 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.threadpool_wait_callback_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading", "_ThreadPoolWaitCallback");
 
-	mono_defaults.threadpool_perform_wait_callback_method = mono_class_get_method_from_name (
-		mono_defaults.threadpool_wait_callback_class, "PerformWaitCallback", 0);
+	mono_defaults.threadpool_perform_wait_callback_method = mono_class_get_method_from_name_checked (
+		mono_defaults.threadpool_wait_callback_class, "PerformWaitCallback", 0, 0, error);
+	mono_error_assert_ok (error);
 
 	mono_defaults.console_class = mono_class_try_load_from_name (
 		mono_defaults.corlib, "System", "Console");
@@ -992,9 +997,21 @@ mono_domain_foreach (MonoDomainFunc func, gpointer user_data)
 MonoAssembly *
 mono_domain_assembly_open (MonoDomain *domain, const char *name)
 {
+	MonoAssembly *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_domain_assembly_open_internal (domain, name);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+MonoAssembly *
+mono_domain_assembly_open_internal (MonoDomain *domain, const char *name)
+{
 	MonoDomain *current;
 	MonoAssembly *ass;
 	GSList *tmp;
+
+	MONO_REQ_GC_UNSAFE_MODE;
 
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {

@@ -43,8 +43,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\..\tools\xbuild\SolutionParser.cs" />
@@ -91,12 +91,12 @@
     <Compile Include="Microsoft.Build.BuildEngine\FileLogger.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\GroupingCollection.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\IBuildTask.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\IReference.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Import.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ImportCollection.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ImportedProject.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\InternalLoggerException.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\InvalidProjectFileException.cs" />
-    <Compile Include="Microsoft.Build.BuildEngine\IReference.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ItemReference.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\LogExtensions.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\MemberInvocationReference.cs" />
@@ -123,6 +123,7 @@
     <Compile Include="Microsoft.Build.BuildEngine\Utilities.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\WriteHandler.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

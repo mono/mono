@@ -44,8 +44,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\GlobalSuppressions.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\InternalsVisibleTo.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\NamespaceDocs.cs" />
@@ -57,30 +57,30 @@
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\AnonymousSafeObserver.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\AsyncLock.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\CatchScheduler.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\ConcurrencyAbstractionLayer.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\ConcurrencyAbstractionLayer.Default.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\ConcurrencyAbstractionLayer.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\CurrentThreadScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\DefaultScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\DisableOptimizationsScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\ImmediateScheduler.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\LocalScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\LocalScheduler.TimerQueue.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\LocalScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\ScheduledItem.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Scheduler.Async.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Scheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Scheduler.Recursive.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Scheduler.Services.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Scheduler.Services.Emulation.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Scheduler.Services.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Scheduler.Simple.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Scheduler.Wrappers.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Scheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\SchedulerDefaults.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\SchedulerOperation.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\SchedulerQueue.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\SchedulerWrapper.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Stopwatch.Default.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Synchronization.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Synchronization.ObserveOn.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Synchronization.Synchronize.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\Synchronization.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Concurrency\SynchronizationContextScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Disposables\AnonymousDisposable.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Disposables\BooleanDisposable.cs" />
@@ -100,8 +100,8 @@
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\ConcurrentDictionary.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\ConcurrentQueue.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\Constants.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\ExceptionServices.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\ExceptionServices.Default.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\ExceptionServices.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\HostLifecycleService.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\ImmutableList.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\Lazy.cs" />
@@ -117,8 +117,8 @@
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\Stubs.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\SynchronizationContextExtensions.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\SynchronizedObserver.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\SystemClock.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\SystemClock.Default.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Internal\SystemClock.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\Notification.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\ObservableBase.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Reactive\ObserverBase.cs" />
@@ -126,6 +126,7 @@
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Strings_Core.Generated.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

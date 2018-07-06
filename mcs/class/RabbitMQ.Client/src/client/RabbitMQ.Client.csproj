@@ -43,8 +43,13 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+    <Compile Include="..\..\docs\specs\net_4_x-api-0-9.cs" />
+    <Compile Include="..\..\docs\specs\net_4_x-api-0-8.cs" />
+    <Compile Include="..\..\docs\specs\net_4_x-api-qpid-0-8.cs" />
+  </ItemGroup>
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\..\..\build\common\Consts.cs" />
     <Compile Include="..\util\BlockingCell.cs" />
     <Compile Include="..\util\DebugUtil.cs" />
@@ -55,6 +60,7 @@
     <Compile Include="..\util\Semaphore.cs" />
     <Compile Include="..\util\SharedQueue.cs" />
     <Compile Include="..\util\XmlUtil.cs" />
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="api\AmqpTcpEndpoint.cs" />
     <Compile Include="api\AmqpTimestamp.cs" />
     <Compile Include="api\AmqpVersion.cs" />
@@ -79,7 +85,6 @@
     <Compile Include="api\ShutdownReportEntry.cs" />
     <Compile Include="api\SslHelper.cs" />
     <Compile Include="api\SslOption.cs" />
-    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="content\BasicMessageBuilder.cs" />
     <Compile Include="content\BasicMessageReader.cs" />
     <Compile Include="content\BytesMessageBuilder.cs" />
@@ -160,20 +165,18 @@
     <Compile Include="impl\SyntaxError.cs" />
     <Compile Include="impl\UnexpectedFrameException.cs" />
     <Compile Include="impl\UnknownClassOrMethodException.cs" />
+    <Compile Include="impl\WireFormatting.cs" />
     <Compile Include="impl\v0_8\Connection.cs" />
     <Compile Include="impl\v0_8\ProtocolBase.cs" />
     <Compile Include="impl\v0_8qpid\Connection.cs" />
     <Compile Include="impl\v0_8qpid\ProtocolBase.cs" />
     <Compile Include="impl\v0_9\Connection.cs" />
     <Compile Include="impl\v0_9\ProtocolBase.cs" />
-    <Compile Include="impl\WireFormatting.cs" />
     <Compile Include="messagepatterns\SimpleRpcClient.cs" />
     <Compile Include="messagepatterns\SimpleRpcServer.cs" />
     <Compile Include="messagepatterns\Subscription.cs" />
-    <Compile Include="..\..\docs\specs\net_4_x-api-0-8.cs" />
-    <Compile Include="..\..\docs\specs\net_4_x-api-0-9.cs" />
-    <Compile Include="..\..\docs\specs\net_4_x-api-qpid-0-8.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

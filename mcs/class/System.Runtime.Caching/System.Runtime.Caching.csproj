@@ -43,11 +43,12 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\System.Web\System.Web.Configuration_2.0\NullableStringValidator.cs" />
     <Compile Include="..\referencesource\System.Runtime.Caching\Resources\RH.cs" />
     <Compile Include="..\referencesource\System.Runtime.Caching\System\Caching\CacheEntryChangeMonitor.cs" />
     <Compile Include="..\referencesource\System.Runtime.Caching\System\Caching\CacheEntryRemovedArguments.cs" />
@@ -87,17 +88,17 @@
     <Compile Include="..\referencesource\System.Runtime.Caching\System\Caching\PerfCounterName.cs" />
     <Compile Include="..\referencesource\System.Runtime.Caching\System\Caching\PerfCounters.cs" />
     <Compile Include="..\referencesource\System.Runtime.Caching\System\Caching\PhysicalMemoryMonitor.cs" />
+    <Compile Include="..\referencesource\System.Runtime.Caching\System\Caching\SRef.cs" />
     <Compile Include="..\referencesource\System.Runtime.Caching\System\Caching\SafeBitVector32.cs" />
     <Compile Include="..\referencesource\System.Runtime.Caching\System\Caching\SafeRegistryHandle.cs" />
     <Compile Include="..\referencesource\System.Runtime.Caching\System\Caching\SqlChangeMonitor.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Caching\System\Caching\SRef.cs" />
-    <Compile Include="..\System.Web\System.Web.Configuration_2.0\NullableStringValidator.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="ReferenceSources\CacheEntryCollection.cs" />
     <Compile Include="ReferenceSources\CacheExpires.cs" />
     <Compile Include="ReferenceSources\CacheUsage.cs" />
     <Compile Include="ReferenceSources\R.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

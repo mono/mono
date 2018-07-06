@@ -1435,13 +1435,6 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		}
 
 		[Test]
-		[ExpectedException (typeof (CryptographicException))]
-		public void GetCertContentType_byte_BadData ()
-		{
-			X509Certificate2.GetCertContentType (new byte[1]);
-		}
-
-		[Test]
 		public void GetCertContentType_byte ()
 		{
 			// empty ASN.1 sequence

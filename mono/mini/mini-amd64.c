@@ -82,6 +82,9 @@ static gpointer bp_trampoline;
 #define ARGS_OFFSET 16
 #define GP_SCRATCH_REG AMD64_R11
 
+/* Max number of bblocks before we bail from using more advanced branch placement code */
+#define MAX_BBLOCKS_FOR_BRANCH_OPTS 800
+
 /*
  * AMD64 register usage:
  * - callee saved registers are used for global register allocation
@@ -424,7 +427,7 @@ collect_field_info_nested (MonoClass *klass, GArray *fields_array, int offset, g
 #define MONO_WIN64_VALUE_TYPE_FITS_REG(arg_size) (arg_size <= SIZEOF_REGISTER && (arg_size == 1 || arg_size == 2 || arg_size == 4 || arg_size == 8))
 
 static gboolean
-allocate_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_class, guint32 arg_size, AMD64_Reg_No int_regs [], int int_reg_count, AMD64_XMM_Reg_No float_regs [], int float_reg_count, guint32 *current_int_reg, guint32 *current_float_reg)
+allocate_register_for_valuetype_win64 (ArgInfo *arg_info, ArgumentClass arg_class, guint32 arg_size, const AMD64_Reg_No int_regs [], int int_reg_count, const AMD64_XMM_Reg_No float_regs [], int float_reg_count, guint32 *current_int_reg, guint32 *current_float_reg)
 {
 	gboolean result = FALSE;
 
@@ -2460,7 +2463,7 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 	        x86_branch (code, cond, cfg->native_code + ins->inst_true_bb->native_offset, sign); \
         } else { \
 	        mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_BB, ins->inst_true_bb); \
-	        if ((cfg->opt & MONO_OPT_BRANCH) && \
+	        if (optimize_branch_pred && \
             x86_is_imm8 (ins->inst_true_bb->max_offset - offset)) \
 		        x86_branch8 (code, cond, 0, sign); \
                 else \
@@ -2497,6 +2500,8 @@ dyn_call_supported (MonoMethodSignature *sig, CallInfo *cinfo)
 		case ArgInFloatSSEReg:
 		case ArgInDoubleSSEReg:
 		case ArgValuetypeInReg:
+		case ArgValuetypeAddrInIReg:
+		case ArgValuetypeAddrOnStack:
 		case ArgOnStack:
 			break;
 		default:
@@ -2539,7 +2544,8 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 		ArgInfo *ainfo = &cinfo->args [i];
 		switch (ainfo->storage) {
 		case ArgOnStack:
-			info->nstack_args = MAX (info->nstack_args, ainfo->offset + (ainfo->arg_size / 8));
+		case ArgValuetypeAddrOnStack:
+			info->nstack_args = MAX (info->nstack_args, (ainfo->offset / sizeof (mgreg_t)) + (ainfo->arg_size / sizeof (mgreg_t)));
 			break;
 		default:
 			break;
@@ -2597,17 +2603,23 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 {
 	ArchDynCallInfo *dinfo = (ArchDynCallInfo*)info;
 	DynCallArgs *p = (DynCallArgs*)buf;
-	int arg_index, greg, freg, i, pindex;
+	int arg_index, greg, i, pindex;
 	MonoMethodSignature *sig = dinfo->sig;
 	int buffer_offset = 0;
-	static int param_reg_to_index [16];
+	static int general_param_reg_to_index[MONO_MAX_IREGS];
+	static int float_param_reg_to_index[MONO_MAX_FREGS];
+
 	static gboolean param_reg_to_index_inited;
 
 	if (!param_reg_to_index_inited) {
 		for (i = 0; i < PARAM_REGS; ++i)
-			param_reg_to_index [param_regs [i]] = i;
+			general_param_reg_to_index [param_regs[i]] = i;
+		for (i = 0; i < FLOAT_PARAM_REGS; ++i)
+			float_param_reg_to_index [float_param_regs[i]] = i;
 		mono_memory_barrier ();
 		param_reg_to_index_inited = 1;
+	} else {
+		mono_memory_barrier ();
 	}
 
 	p->res = 0;
@@ -2616,7 +2628,6 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 
 	arg_index = 0;
 	greg = 0;
-	freg = 0;
 	pindex = 0;
 
 	if (sig->hasthis || dinfo->cinfo->vret_arg_index == 1) {
@@ -2634,15 +2645,19 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		ArgInfo *ainfo = &dinfo->cinfo->args [pindex + sig->hasthis];
 		int slot;
 
-		if (ainfo->storage == ArgOnStack) {
+		if (ainfo->storage == ArgOnStack || ainfo->storage == ArgValuetypeAddrOnStack) {
 			slot = PARAM_REGS + (ainfo->offset / sizeof (mgreg_t));
+		} else if (ainfo->storage == ArgValuetypeAddrInIReg) {
+			g_assert (ainfo->pair_storage [0] == ArgInIReg && ainfo->pair_storage [1] == ArgNone);
+			slot = general_param_reg_to_index [ainfo->pair_regs [0]];
+		} else if (ainfo->storage == ArgInFloatSSEReg || ainfo->storage == ArgInDoubleSSEReg) {
+			slot = float_param_reg_to_index [ainfo->reg];
 		} else {
-			slot = param_reg_to_index [ainfo->reg];
+			slot = general_param_reg_to_index [ainfo->reg];
 		}
 
 		if (t->byref) {
 			p->regs [slot] = PTR_TO_GREG(*(arg));
-			greg ++;
 			continue;
 		}
 
@@ -2683,15 +2698,23 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 			break;
 		case MONO_TYPE_R4: {
 			double d;
-
 			*(float*)&d = *(float*)(arg);
-			p->has_fp = 1;
-			p->fregs [freg ++] = d;
+
+			if (ainfo->storage == ArgOnStack) {
+				*(double *)(p->regs + slot) = d;
+			} else {
+				p->has_fp = 1;
+				p->fregs [slot] = d;
+			}
 			break;
 		}
 		case MONO_TYPE_R8:
-			p->has_fp = 1;
-			p->fregs [freg ++] = *(double*)(arg);
+			if (ainfo->storage == ArgOnStack) {
+				*(double *)(p->regs + slot) = *(double*)(arg);
+			} else {
+				p->has_fp = 1;
+				p->fregs [slot] = *(double*)(arg);
+			}
 			break;
 		case MONO_TYPE_GENERICINST:
 		    if (MONO_TYPE_IS_REFERENCE (t)) {
@@ -2724,18 +2747,33 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 					case ArgNone:
 						break;
 					case ArgInIReg:
-						slot = param_reg_to_index [ainfo->pair_regs [i]];
+						slot = general_param_reg_to_index [ainfo->pair_regs [i]];
 						p->regs [slot] = ((mgreg_t*)(arg))[i];
 						break;
+					case ArgInFloatSSEReg: {
+						double d;
+						p->has_fp = 1;
+						slot = float_param_reg_to_index [ainfo->pair_regs [i]];
+						*(float*)&d = ((float*)(arg))[i];
+						p->fregs [slot] = d;
+						break;
+					}
 					case ArgInDoubleSSEReg:
 						p->has_fp = 1;
-						p->fregs [ainfo->pair_regs [i]] = ((double*)(arg))[i];
+						slot = float_param_reg_to_index [ainfo->pair_regs [i]];
+						p->fregs [slot] = ((double*)(arg))[i];
 						break;
 					default:
 						g_assert_not_reached ();
 						break;
 					}
 				}
+				break;
+			case ArgValuetypeAddrInIReg:
+			case ArgValuetypeAddrOnStack:
+				// In DYNCALL use case value types are already copied when included in parameter array.
+				// Currently no need to make an extra temporary value type on stack for this use case.
+				p->regs [slot] = (mgreg_t)arg;
 				break;
 			case ArgOnStack:
 				for (i = 0; i < ainfo->arg_size / 8; ++i)
@@ -3776,7 +3814,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	guint8 *code = cfg->native_code + cfg->code_len;
 
 	/* Fix max_offset estimate for each successor bb */
-	if (cfg->opt & MONO_OPT_BRANCH) {
+	gboolean optimize_branch_pred = (cfg->opt & MONO_OPT_BRANCH) && (cfg->max_block_num < MAX_BBLOCKS_FOR_BRANCH_OPTS);
+
+	if (optimize_branch_pred) {
 		int current_offset = cfg->code_len;
 		MonoBasicBlock *current_bb;
 		for (current_bb = bb; current_bb != NULL; current_bb = current_bb->next_bb) {
@@ -5049,7 +5089,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 					amd64_jump_code (code, cfg->native_code + ins->inst_target_bb->native_offset); 
 				} else {
 					mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_BB, ins->inst_target_bb);
-					if ((cfg->opt & MONO_OPT_BRANCH) &&
+					if (optimize_branch_pred &&
 					    x86_is_imm8 (ins->inst_target_bb->max_offset - offset))
 						x86_jump8 (code, 0);
 					else 
@@ -7022,7 +7062,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	/* compute max_length in order to use short forward jumps */
 	max_epilog_size = get_max_epilog_size (cfg);
-	if (cfg->opt & MONO_OPT_BRANCH) {
+	if (cfg->opt & MONO_OPT_BRANCH && cfg->max_block_num < MAX_BBLOCKS_FOR_BRANCH_OPTS) {
 		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 			MonoInst *ins;
 			int max_length = 0;

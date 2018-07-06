@@ -30,6 +30,7 @@ The Mono project is part of the [.NET Foundation](http://www.dotnetfoundation.or
 | Windows      | i386               | [![windows-i386][17]][18]    |
 | CentOS       | s390x (cs)         | [![centos-s390x][19]][20]    |
 | Debian 9     | ppc64el (cs)       | [![debian-9-ppc64el][21]][22]|
+| AIX          | ppc64 (cs)         | [![aix-ppc64][23]][24]       |
 
 _(cs) = community supported architecture_
 
@@ -55,6 +56,8 @@ _(cs) = community supported architecture_
 [20]: https://jenkins.mono-project.com/job/test-mono-mainline-community/label=centos-s390x
 [21]: https://jenkins.mono-project.com/job/test-mono-mainline-community-chroot/label=debian-9-ppc64el/badge/icon
 [22]: https://jenkins.mono-project.com/job/test-mono-mainline-community-chroot/label=debian-9-ppc64el
+[23]: https://jenkins.mono-project.com/job/test-mono-mainline-community/label=aix-ppc64/badge/icon
+[24]: https://jenkins.mono-project.com/job/test-mono-mainline-community/label=aix-ppc64
 
 Compilation and Installation
 ============================

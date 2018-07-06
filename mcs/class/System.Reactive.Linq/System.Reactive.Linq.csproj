@@ -44,15 +44,15 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\GlobalSuppressions.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\InternalsVisibleTo.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\NamespaceDocs.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Concurrency\HistoricalScheduler.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Concurrency\VirtualTimeScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Concurrency\VirtualTimeScheduler.Extensions.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Concurrency\VirtualTimeScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\EventPattern.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\EventPatternSource.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\EventPatternSourceBase.cs" />
@@ -93,7 +93,6 @@
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\Observable.Single.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\Observable.StandardSequenceOperators.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\Observable.Time.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\Observable\_.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\Observable\AddRef.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\Observable\Aggregate.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\Observable\All.cs" />
@@ -189,6 +188,7 @@
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\Observable\While.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\Observable\Window.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\Observable\Zip.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\Observable\_.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\Observable_.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\QueryLanguage.Aggregates.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Linq\QueryLanguage.Async.cs" />
@@ -210,8 +210,8 @@
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Subjects\BehaviorSubject.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Subjects\ConnectableObservable.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Subjects\ReplaySubject.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Subjects\Subject.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Subjects\Subject.Extensions.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Subjects\Subject.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Threading\Tasks\NamespaceDoc.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\Threading\Tasks\TaskObservableExtensions.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Reactive\TimeInterval.cs" />
@@ -219,6 +219,7 @@
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Linq\Strings_Linq.Generated.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

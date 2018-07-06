@@ -30,6 +30,7 @@
 #include <mono/utils/memcheck.h>
 
 #include <mono/metadata/assembly.h>
+#include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/loader.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/class.h>
@@ -205,7 +206,7 @@ get_method_from_ip (void *ip)
 	}
 
 	method = jinfo_get_method (ji);
-	method_name = mono_method_full_name (method, TRUE);
+	method_name = mono_method_get_name_full (method, TRUE, FALSE, MONO_TYPE_NAME_FORMAT_IL);
 	/* FIXME: unused ? */
 	location = mono_debug_lookup_source_location (method, (guint32)((guint8*)ip - (guint8*)ji->code_start), domain);
 
@@ -2376,7 +2377,9 @@ lookup_start:
 
 	if (!code) {
 		if (mono_class_is_open_constructed_type (m_class_get_byval_arg (method->klass))) {
-			mono_error_set_invalid_operation (error, "Could not execute the method because the containing type is not fully instantiated.");
+			char *full_name = mono_type_get_full_name (method->klass);
+			mono_error_set_invalid_operation (error, "Could not execute the method because the containing type '%s', is not fully instantiated.", full_name);
+			g_free (full_name);
 			return NULL;
 		}
 
@@ -2473,7 +2476,7 @@ static void
 mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 {
 	MonoJitDynamicMethodInfo *ji;
-	gboolean destroy = TRUE;
+	gboolean destroy = TRUE, removed;
 	GHashTableIter iter;
 	MonoJumpList *jlist;
 	MonoJitDomainInfo *info = domain_jit_info (domain);
@@ -2482,7 +2485,8 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 
 	if (mono_use_interpreter) {
 		mono_domain_jit_code_hash_lock (domain);
-		/* InterpMethod is allocated in the domain mempool */
+		/* InterpMethod is allocated in the domain mempool. We might haven't
+		 * allocated an InterpMethod for this instance yet */
 		mono_internal_hash_table_remove (&info->interp_code_hash, method);
 		mono_domain_jit_code_hash_unlock (domain);
 	}
@@ -2500,7 +2504,8 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 	mono_domain_lock (domain);
 	g_hash_table_remove (info->dynamic_code_hash, method);
 	mono_domain_jit_code_hash_lock (domain);
-	mono_internal_hash_table_remove (&domain->jit_code_hash, method);
+	removed = mono_internal_hash_table_remove (&domain->jit_code_hash, method);
+	g_assert (removed);
 	mono_domain_jit_code_hash_unlock (domain);
 	g_hash_table_remove (info->jump_trampoline_hash, method);
 	g_hash_table_remove (info->seq_points, method);
@@ -3321,6 +3326,14 @@ MONO_SIG_HANDLER_FUNC (, mono_sigill_signal_handler)
 #define HAVE_SIG_INFO
 #endif
 
+static gboolean
+is_addr_implicit_null_check (void *addr)
+{
+	/* implicit null checks are only expected to work on the first page. larger
+	 * offsets are expected to have an explicit null check */
+	return addr <= GUINT_TO_POINTER (mono_target_pagesize ());
+}
+
 MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 {
 	MonoJitInfo *ji;
@@ -3395,7 +3408,11 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		if (!ji && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 
-		mono_arch_handle_altstack_exception (ctx, info, info->si_addr, FALSE);
+		if (is_addr_implicit_null_check (info->si_addr)) {
+			mono_arch_handle_altstack_exception (ctx, info, info->si_addr, FALSE);
+		} else {
+			mono_handle_native_crash ("SIGSEGV", ctx, info);
+		}
 	}
 #else
 
@@ -3411,7 +3428,11 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		}
 	}
 
-	mono_arch_handle_exception (ctx, NULL);
+	if (is_addr_implicit_null_check (fault_addr)) {
+		mono_arch_handle_exception (ctx, NULL);
+	} else {
+		mono_handle_native_crash ("SIGSEGV", ctx, info);
+	}
 #endif
 }
 
@@ -3740,7 +3761,10 @@ mini_parse_debug_option (const char *option)
 		mini_debug_options.verbose_gdb = TRUE;
 	else if (!strncmp (option, "thread-dump-dir=", 16))
 		mono_set_thread_dump_dir(g_strdup(option + 16));
-	else
+	else if (!strncmp (option, "aot-skip=", 9)) {
+		mini_debug_options.aot_skip_set = TRUE;
+		mini_debug_options.aot_skip = atoi (option + 9);
+	} else
 		return FALSE;
 
 	return TRUE;
@@ -3978,6 +4002,7 @@ mini_free_jit_domain_info (MonoDomain *domain)
 	g_hash_table_destroy (info->static_rgctx_trampoline_hash);
 	g_hash_table_destroy (info->mrgctx_hash);
 	g_hash_table_destroy (info->method_rgctx_hash);
+	g_hash_table_destroy (info->interp_method_pointer_hash);
 	g_hash_table_destroy (info->llvm_vcall_trampoline_hash);
 	mono_conc_hashtable_destroy (info->runtime_invoke_hash);
 	g_hash_table_destroy (info->seq_points);
@@ -4439,7 +4464,7 @@ register_icalls (void)
 	register_icall (mono_llvm_clear_exception, "mono_llvm_clear_exception", NULL, TRUE);
 	register_icall (mono_llvm_load_exception, "mono_llvm_load_exception", "object", TRUE);
 	register_icall (mono_llvm_throw_corlib_exception, "mono_llvm_throw_corlib_exception", "void int", TRUE);
-#if defined(ENABLE_LLVM) && !defined(MONO_LLVM_LOADED)
+#if defined(ENABLE_LLVM) && !defined(MONO_LLVM_LOADED) && defined(HAVE_UNWIND_H)
 	register_icall (mono_llvm_set_unhandled_exception_handler, "mono_llvm_set_unhandled_exception_handler", NULL, TRUE);
 
 	// FIXME: This is broken
@@ -4582,6 +4607,7 @@ register_icalls (void)
 
 	/* other jit icalls */
 	register_icall (ves_icall_mono_delegate_ctor, "ves_icall_mono_delegate_ctor", "void object object ptr", FALSE);
+	register_icall (ves_icall_mono_delegate_ctor_interp, "ves_icall_mono_delegate_ctor_interp", "void object object ptr", FALSE);
 	register_icall (mono_class_static_field_address , "mono_class_static_field_address",
 				 "ptr ptr ptr", FALSE);
 	register_icall (mono_ldtoken_wrapper, "mono_ldtoken_wrapper", "ptr ptr ptr ptr", FALSE);
@@ -4867,7 +4893,7 @@ static void
 mono_precompile_assembly (MonoAssembly *ass, void *user_data)
 {
 	GHashTable *assemblies = (GHashTable*)user_data;
-	MonoImage *image = mono_assembly_get_image (ass);
+	MonoImage *image = mono_assembly_get_image_internal (ass);
 	MonoMethod *method, *invoke;
 	int i, count = 0;
 

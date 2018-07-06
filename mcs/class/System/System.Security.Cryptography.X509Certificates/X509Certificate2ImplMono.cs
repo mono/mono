@@ -485,33 +485,21 @@ namespace System.Security.Cryptography.X509Certificates
 		public override void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
 			Reset ();
-			MX.X509Certificate cert = null;
-			if (password == null) {
-				try {
-					cert = new MX.X509Certificate (rawData);
-				}
-				catch (Exception e) {
-					try {
-						cert = ImportPkcs12 (rawData, null);
-					}
-					catch {
-						string msg = Locale.GetText ("Unable to decode certificate.");
-						// inner exception is the original (not second) exception
-						throw new CryptographicException (msg, e);
-					}
-				}
-			} else {
-				// try PKCS#12
-				try {
-					cert = ImportPkcs12 (rawData, password);
-				}
-				catch {
-					// it's possible to supply a (unrequired/unusued) password
-					// fix bug #79028
-					cert = new MX.X509Certificate (rawData);
-				}
+
+			switch (X509Certificate2.GetCertContentType (rawData)) {
+				case X509ContentType.Pkcs12:
+					_cert = ImportPkcs12 (rawData, password);
+					break;
+
+				case X509ContentType.Cert:
+				case X509ContentType.Pkcs7:
+					_cert = new MX.X509Certificate (rawData);
+					break;
+
+				default:
+					string msg = Locale.GetText ("Unable to decode certificate.");
+					throw new CryptographicException (msg);
 			}
-			_cert = cert;
 		}
 
 		[MonoTODO ("X509ContentType.SerializedCert is not supported")]

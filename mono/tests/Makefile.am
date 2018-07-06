@@ -646,6 +646,7 @@ TESTS_CS_SRC=		\
 	generic-unloading.2.cs	\
 	namedmutex-destroy-race.cs	\
 	thread6.cs	\
+	thread7.cs	\
 	appdomain-threadpool-unload.cs	\
 	process-unref-race.cs	\
 	bug-46661.cs	\
@@ -666,7 +667,8 @@ TESTS_CS_SRC=		\
 	tailcall-generic-cast-cs.cs \
 	tailcall-interface.cs \
 	bug-60843.cs	\
-	nested_type_visibility.cs
+	nested_type_visibility.cs	\
+	dynamic-method-churn.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
@@ -1120,7 +1122,8 @@ PROFILE_DISABLED_TESTS += \
 	constant-division.exe	\
 	dynamic-method-resurrection.exe	\
 	assembly_append_ordering.exe \
-	assemblyresolve_event5.exe
+	assemblyresolve_event5.exe	\
+	dynamic-method-churn.exe
 
 # Test which needs System.Web support
 PROFILE_DISABLED_TESTS += \
@@ -1208,8 +1211,7 @@ CI_DISABLED_TESTS = \
 # failing tests which we temporarily disable for PRs
 # so they don't interfere with other people's work
 CI_PR_DISABLED_TESTS = \
-	appdomain-threadpool-unload.exe \
-	process-stress-3.exe
+	appdomain-threadpool-unload.exe
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
@@ -1220,7 +1222,7 @@ LLVM_DISABLED_TESTS = \
 LLVM_DISABLED_TESTS += \
 	weak-fields.exe
 
-LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
+LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS) $(AOT_BUILD_FLAGS))
 
 # The two finalizer tests only work under sgen
 # gc-altstack.exe fails under boehm because it has no support for altstack

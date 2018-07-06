@@ -41,8 +41,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="BitAccess.cs" />
     <Compile Include="BitSet.cs" />
     <Compile Include="CvInfo.cs" />
@@ -52,8 +52,8 @@
     <Compile Include="DbiModuleInfo.cs" />
     <Compile Include="DbiSecCon.cs" />
     <Compile Include="Driver.cs" />
-    <Compile Include="Interfaces.cs" />
     <Compile Include="IntHashTable.cs" />
+    <Compile Include="Interfaces.cs" />
     <Compile Include="MsfDirectory.cs" />
     <Compile Include="PdbConstant.cs" />
     <Compile Include="PdbDebugException.cs" />
@@ -70,6 +70,7 @@
     <Compile Include="PdbWriter.cs" />
     <Compile Include="SourceLocationProvider.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

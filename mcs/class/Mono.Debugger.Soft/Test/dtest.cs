@@ -431,6 +431,87 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void MetadataAndPdbTest () {
+		run_until ("bp1");
+		var assemblyMirrors = entry_point.DeclaringType.Assembly.Domain.GetAssemblies ();
+		Assert.IsTrue (assemblyMirrors.Length > 0);
+
+		foreach (var assemblyMirror in assemblyMirrors) {
+			assemblyMirror.GetMetadata ();
+			var metadata = assemblyMirror.Metadata;
+			Assert.AreEqual (metadata.MainModule.Mvid, assemblyMirror.ManifestModule.ModuleVersionId);
+
+			var location = assemblyMirror.Location;
+			if (!File.Exists (location))
+				continue;
+
+			Assert.IsFalse (assemblyMirror.IsDynamic);
+
+			var rawDataFromMemory = assemblyMirror.GetMetadataBlob ();
+			var rawDataFromDisk = File.ReadAllBytes (location);
+			Assert.IsTrue (rawDataFromMemory.SequenceEqual (rawDataFromDisk));
+
+			string pdbPath = Path.ChangeExtension (location, "pdb");
+			Assert.IsFalse (assemblyMirror.HasPdb);
+			Assert.IsFalse (assemblyMirror.HasFetchedPdb);
+			
+			var pdbFromMemory = assemblyMirror.GetPdbBlob ();
+			if (!File.Exists (pdbPath)) {
+				Assert.IsFalse (assemblyMirror.HasPdb);
+				Assert.IsTrue (assemblyMirror.HasFetchedPdb);
+				continue;
+			}
+
+			Assert.IsTrue (pdbFromMemory != null && pdbFromMemory.Length > 0);
+			var pdbFromDisk = File.ReadAllBytes (pdbPath);
+			Assert.IsTrue (pdbFromMemory.SequenceEqual (pdbFromDisk));
+			
+			Assert.IsTrue (assemblyMirror.HasPdb);
+			Assert.IsTrue (assemblyMirror.HasFetchedPdb);
+
+			foreach (var type in metadata.Modules.SelectMany (x => x.GetTypes ())) {
+				var typeMirror = assemblyMirror.GetType (type.MetadataToken.ToUInt32 ());
+				Assert.AreEqual (type.Name, typeMirror.Name);
+				Assert.AreEqual (type.MetadataToken.ToInt32 (), typeMirror.MetadataToken);
+
+				int methodCount = 0;
+				foreach (var method in type.Methods) {
+					var methodMirror = assemblyMirror.GetMethod (method.MetadataToken.ToUInt32 ());
+					Assert.AreEqual (method.Name, methodMirror.Name);
+					Assert.AreEqual (method.MetadataToken.ToInt32 (), methodMirror.MetadataToken);
+					
+					if (methodCount++ > 10)
+						break;
+				}
+
+				if (type.IsNested)
+					break;
+			}
+		}
+	}
+	
+	[Test]
+	public void IsDynamicAssembly () {
+		vm.Detach ();
+
+		Start (new string[] {"dtest-app.exe", "ref-emit-test"});
+
+		run_until ("ref_emit_call");
+		var assemblyMirrors = entry_point.DeclaringType.Assembly.Domain.GetAssemblies ();
+		bool dynamicAssemblyFound = false;
+		foreach (var assemblyMirror in assemblyMirrors) {
+			if (assemblyMirror.GetName ().Name == "foo") {
+				dynamicAssemblyFound = true;
+				Assert.IsTrue (assemblyMirror.IsDynamic);
+			}
+			else
+				Assert.IsFalse (assemblyMirror.IsDynamic);
+		}
+
+		Assert.IsTrue (dynamicAssemblyFound);
+	}
+
+	[Test]
 	public void BreakpointAlreadyJITted () {
 		Event e = run_until ("bp1");
 
@@ -1522,16 +1603,16 @@ public class DebuggerTests
 		// nullables
 		field = o.Type.GetField ("field_nullable");
 		f = o.GetValue (field);
-		AssertValue (0, (f as StructMirror).Fields [0]);
-		AssertValue (false, (f as StructMirror).Fields [1]);
+		AssertValue (0, (f as StructMirror)["value"]);
+		AssertValue (false, (f as StructMirror)["hasValue"]);
 		o.SetValue (field, vm.CreateValue (6));
 		f = o.GetValue (field);
-		AssertValue (6, (f as StructMirror).Fields [0]);
-		AssertValue (true, (f as StructMirror).Fields [1]);
+		AssertValue (6, (f as StructMirror)["value"]);
+		AssertValue (true, (f as StructMirror)["hasValue"]);
 		o.SetValue (field, vm.CreateValue (null));
 		f = o.GetValue (field);
-		AssertValue (0, (f as StructMirror).Fields [0]);
-		AssertValue (false, (f as StructMirror).Fields [1]);
+		AssertValue (0, (f as StructMirror)["value"]);
+		AssertValue (false, (f as StructMirror)["hasValue"]);
 
 		// Argument checking
 		AssertThrows<ArgumentNullException> (delegate () {
@@ -2633,8 +2714,8 @@ public class DebuggerTests
 		v = this_obj.InvokeMethod (e.Thread, m, null);
 		Assert.IsInstanceOfType (typeof (StructMirror), v);
 		var s = v as StructMirror;
-		AssertValue (42, s.Fields [0]);
-		AssertValue (true, s.Fields [1]);
+		AssertValue (42, s["value"]);
+		AssertValue (true, s["hasValue"]);
 
 		// pass nullable as this
 		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
@@ -2651,8 +2732,8 @@ public class DebuggerTests
 		v = this_obj.InvokeMethod (e.Thread, m, null);
 		Assert.IsInstanceOfType (typeof (StructMirror), v);
 		s = v as StructMirror;
-		AssertValue (0, s.Fields [0]);
-		AssertValue (false, s.Fields [1]);
+		AssertValue (0, s["value"]);
+		AssertValue (false, s["hasValue"]);
 
 		// pass nullable as this
 		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");

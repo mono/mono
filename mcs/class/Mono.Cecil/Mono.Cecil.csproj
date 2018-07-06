@@ -48,6 +48,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\..\external\cecil\Mono.Cecil.Cil\Code.cs" />
     <Compile Include="..\..\..\external\cecil\Mono.Cecil.Cil\CodeReader.cs" />
@@ -146,13 +147,13 @@
     <Compile Include="..\..\..\external\cecil\Mono.Cecil\ModuleKind.cs" />
     <Compile Include="..\..\..\external\cecil\Mono.Cecil\ModuleReference.cs" />
     <Compile Include="..\..\..\external\cecil\Mono.Cecil\NativeType.cs" />
+    <Compile Include="..\..\..\external\cecil\Mono.Cecil\PInvokeAttributes.cs" />
+    <Compile Include="..\..\..\external\cecil\Mono.Cecil\PInvokeInfo.cs" />
     <Compile Include="..\..\..\external\cecil\Mono.Cecil\ParameterAttributes.cs" />
     <Compile Include="..\..\..\external\cecil\Mono.Cecil\ParameterDefinition.cs" />
     <Compile Include="..\..\..\external\cecil\Mono.Cecil\ParameterDefinitionCollection.cs" />
     <Compile Include="..\..\..\external\cecil\Mono.Cecil\ParameterReference.cs" />
     <Compile Include="..\..\..\external\cecil\Mono.Cecil\PinnedType.cs" />
-    <Compile Include="..\..\..\external\cecil\Mono.Cecil\PInvokeAttributes.cs" />
-    <Compile Include="..\..\..\external\cecil\Mono.Cecil\PInvokeInfo.cs" />
     <Compile Include="..\..\..\external\cecil\Mono.Cecil\PointerType.cs" />
     <Compile Include="..\..\..\external\cecil\Mono.Cecil\PropertyAttributes.cs" />
     <Compile Include="..\..\..\external\cecil\Mono.Cecil\PropertyDefinition.cs" />
@@ -182,6 +183,7 @@
     <Compile Include="..\..\..\external\cecil\ProjectInfo.cs" />
     <Compile Include="Consts.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

@@ -12,6 +12,7 @@
 #include <glib.h>
 #include <mono/utils/json.h>
 #include <mono/utils/mono-state.h>
+#include <mono/utils/mono-threads-coop.h>
 #include <mono/metadata/object-internals.h>
 
 #ifdef TARGET_OSX
@@ -87,8 +88,8 @@ mono_native_state_add_frame (JsonWriter *writer, MonoFrameSummary *frame)
 
 	if (frame->is_managed) {
 		mono_json_writer_indent (writer);
-		mono_json_writer_object_key(writer, "assembly");
-		mono_json_writer_printf (writer, "\"%s\",\n", frame->str_descr);
+		mono_json_writer_object_key(writer, "guid");
+		mono_json_writer_printf (writer, "\"%s\",\n", frame->managed_data.guid);
 
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key(writer, "token");
@@ -342,11 +343,17 @@ mono_native_state_add_version (JsonWriter *writer)
 	mono_json_writer_object_key(writer, "llvm_support");
 #ifdef MONO_ARCH_LLVM_SUPPORTED
 #ifdef ENABLE_LLVM
-	mono_json_writer_printf (writer, "\"%s\"\n", LLVM_VERSION);
+	mono_json_writer_printf (writer, "\"%d\",\n", LLVM_API_VERSION);
 #else
-	mono_json_writer_printf (writer, "\"disabled\"\n");
+	mono_json_writer_printf (writer, "\"disabled\",\n");
 #endif
 #endif
+
+	const char *susp_policy = mono_threads_suspend_policy_name ();
+	mono_json_writer_indent (writer);
+	mono_json_writer_object_key (writer, "suspend");
+	mono_json_writer_printf (writer, "\"%s\"\n", susp_policy);
+
 
 	mono_json_writer_indent_pop (writer);
 	mono_json_writer_indent (writer);
@@ -453,7 +460,6 @@ mono_native_state_add_epilogue (JsonWriter *writer)
 	mono_json_writer_indent_pop (writer);
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_end (writer);
-	mono_json_writer_printf (writer, "\n");
 }
 
 void
