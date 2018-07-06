@@ -17,7 +17,7 @@
 #ifdef HAVE_COPYFILE_H
 #include <copyfile.h>
 #  if !defined(COPYFILE_CLONE)
-#    #define COPYFILE_CLONE 0
+#    #define COPYFILE_CLONE (1 << 24)
 #  endif
 #endif
 #if defined(HAVE_SYS_STATFS_H)
@@ -2367,7 +2367,7 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 	}
 
 #if HAVE_COPYFILE_H
-	ret = copyfile (utf8_src, utf8_dest, NULL, COPYFILE_ALL | COPYFILE_CLONE | (fail_if_exists ? COPYFILE_EXCL : COPYFILE_UNLINK));
+	ret = copyfile (utf8_src, utf8_dest, NULL, COPYFILE_ALL | COPYFILE_CLONE | (fail_if_exists ? COPYFILE_EXCL : 0));
 	g_free (utf8_src);
 	g_free (utf8_dest);
 	if (ret != 0){
