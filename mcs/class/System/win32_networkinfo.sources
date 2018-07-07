@@ -1,0 +1,15 @@
+System.Net.NetworkInformation/Win32IcmpV4Statistics.cs
+System.Net.NetworkInformation/Win32IcmpV6Statistics.cs
+System.Net.NetworkInformation/Win32IPGlobalProperties.cs
+System.Net.NetworkInformation/Win32IPGlobalStatistics.cs
+System.Net.NetworkInformation/Win32IPAddressCollection.cs
+System.Net.NetworkInformation/Win32IPInterfaceProperties.cs
+System.Net.NetworkInformation/Win32IPv4InterfaceProperties.cs
+System.Net.NetworkInformation/Win32IPv4InterfaceStatistics.cs
+System.Net.NetworkInformation/Win32IPv6InterfaceProperties.cs
+System.Net.NetworkInformation/Win32NetworkInterfaceMarshal.cs
+System.Net.NetworkInformation/Win32NetworkInterface.cs
+System.Net.NetworkInformation/Win32NetworkInterfaceFactory.cs
+System.Net.NetworkInformation/Win32TcpStatistics.cs
+System.Net.NetworkInformation/Win32UdpStatistics.cs
+System.Net.NetworkInformation/Win32UnicastIPAddressInformation.cs

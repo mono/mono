@@ -27,12 +27,17 @@ xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttri
 ifeq ($(USE_XTEST_REMOTE_EXECUTOR), YES)
 XTEST_REMOTE_EXECUTOR = $(topdir)/class/lib/$(PROFILE)/RemoteExecutorConsoleApp.exe
 xunit_src += $(topdir)/../mcs/class/test-helpers/AdminHelper.cs \
-$(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs \
 $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/IO/FileCleanupTestBase.cs \
-$(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs \
 $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.cs \
 $(topdir)/../external/corefx/src/Common/src/System/PasteArguments.cs \
 $(topdir)/../external/corefx/src/Common/src/System/PasteArguments.Unix.cs
+
+ifeq ($(PROFILE),monodroid)
+xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mobile.cs
+else
+xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs \
+$(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs
+endif
 endif
 
 xunit_class_deps := 

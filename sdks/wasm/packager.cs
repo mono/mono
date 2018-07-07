@@ -202,8 +202,8 @@ class Driver {
 			File.Copy (f, Path.Combine (bcl_dir, Path.GetFileName (f)));
 		}
 
-		if (!deploy_prefix.EndsWith ("/"))
-			deploy_prefix += "/";
+		if (deploy_prefix.EndsWith ("/"))
+			deploy_prefix = deploy_prefix.Substring (0, deploy_prefix.Length - 1);
 		if (vfs_prefix.EndsWith ("/"))
 			vfs_prefix = vfs_prefix.Substring (0, vfs_prefix.Length - 1);
 

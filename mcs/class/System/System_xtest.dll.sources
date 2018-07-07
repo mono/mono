@@ -108,3 +108,5 @@ System/RemoteExecutorTests.cs
 # System.Security.Cryptography
 #../../../external/corefx/src/System.Security.Cryptography.Encoding/tests/AsnEncodedData.cs
 ../../../external/corefx/src/System.Security.Cryptography.Encoding/tests/AsnEncodedDataCollectionTests.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/tests/Oid.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/tests/OidCollectionTests.cs

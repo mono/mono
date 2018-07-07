@@ -437,6 +437,7 @@ public class DebuggerTests
 		Assert.IsTrue (assemblyMirrors.Length > 0);
 
 		foreach (var assemblyMirror in assemblyMirrors) {
+			assemblyMirror.GetMetadata ();
 			var metadata = assemblyMirror.Metadata;
 			Assert.AreEqual (metadata.MainModule.Mvid, assemblyMirror.ManifestModule.ModuleVersionId);
 

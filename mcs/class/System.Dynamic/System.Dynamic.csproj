@@ -44,8 +44,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
@@ -80,9 +80,9 @@
     <Compile Include="..\dlr\Runtime\Microsoft.Dynamic\ConvertibleArgBuilder.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Dynamic\CurrencyArgBuilder.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Dynamic\DateTimeArgBuilder.cs" />
-    <Compile Include="..\dlr\Runtime\Microsoft.Dynamic\DispatchArgBuilder.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Dynamic\DispCallable.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Dynamic\DispCallableMetaObject.cs" />
+    <Compile Include="..\dlr\Runtime\Microsoft.Dynamic\DispatchArgBuilder.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Dynamic\ErrorArgBuilder.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Dynamic\Errors.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Dynamic\ExcepInfo.cs" />
@@ -102,6 +102,7 @@
     <Compile Include="..\dlr\Runtime\Microsoft.Dynamic\VariantBuilder.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

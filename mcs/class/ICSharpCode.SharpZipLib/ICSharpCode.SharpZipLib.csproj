@@ -48,6 +48,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="ICSharpCode.SharpZipLib\AssemblyInfo.cs" />
     <Compile Include="ICSharpCode.SharpZipLib\BZip2\BZip2.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="ICSharpCode.SharpZipLib\Zip\ZipNameTransform.cs" />
     <Compile Include="ICSharpCode.SharpZipLib\Zip\ZipOutputStream.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

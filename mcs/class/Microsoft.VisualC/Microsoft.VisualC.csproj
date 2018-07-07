@@ -43,15 +43,15 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Microsoft.VisualC\DebugInfoInPDBAttribute.cs" />
     <Compile Include="Microsoft.VisualC\DecoratedNameAttribute.cs" />
-    <Compile Include="Microsoft.VisualC\IsConstModifier.cs" />
     <Compile Include="Microsoft.VisualC\IsCXXReferenceModifier.cs" />
+    <Compile Include="Microsoft.VisualC\IsConstModifier.cs" />
     <Compile Include="Microsoft.VisualC\IsLongModifier.cs" />
     <Compile Include="Microsoft.VisualC\IsSignedModifier.cs" />
     <Compile Include="Microsoft.VisualC\IsVolatileModifier.cs" />
@@ -59,6 +59,7 @@
     <Compile Include="Microsoft.VisualC\NeedsCopyConstructorModifier.cs" />
     <Compile Include="Microsoft.VisualC\NoSignSpecifiedModifier.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

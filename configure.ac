@@ -40,7 +40,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This can be reset to 0 when Mono's version number is bumped
 # since it's part of the corlib version (the prefix '1' in the full
 # version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=14
+MONO_CORLIB_COUNTER=15
 MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
@@ -146,7 +146,7 @@ case "$host" in
 		HOST_CC="gcc"
 		# Windows Vista or later is required
 		CPPFLAGS="$CPPFLAGS -DWINVER=0x0600 -D_WIN32_WINNT=0x0600 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
-		LDFLAGS="$LDFLAGS -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32 -liphlpapi"
+		LDFLAGS="$LDFLAGS -lbcrypt -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32 -liphlpapi"
 		libmono_cflags="-mms-bitfields -mwindows"
 		libmono_ldflags="-mms-bitfields -mwindows"
 		libdl=
@@ -342,8 +342,8 @@ case "$host" in
 		case "$host" in
 			dnl Snow Leopard and newer config.guess reports as this
 			i*86-*-darwin*)
-				BROKEN_DARWIN_FLAGS="-arch i386 -D_XOPEN_SOURCE"
-				BROKEN_DARWIN_CPPFLAGS="-D_XOPEN_SOURCE"
+				BROKEN_DARWIN_FLAGS="-arch i386"
+				BROKEN_DARWIN_CPPFLAGS=""
 				CPPFLAGS="$CPPFLAGS $BROKEN_DARWIN_CPPFLAGS"
 				CFLAGS="$CFLAGS $BROKEN_DARWIN_FLAGS"
 				CXXFLAGS="$CXXFLAGS $BROKEN_DARWIN_FLAGS"
@@ -1104,6 +1104,7 @@ with_wasm_default=no
 
 with_bitcode_default=no
 enable_cooperative_suspend_default=no
+enable_hybrid_suspend_default=no
 
 INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000
 
@@ -3728,6 +3729,7 @@ AC_ARG_ENABLE(llvm,[  --enable-llvm	Enable the LLVM back-end], enable_llvm=$enab
 AC_ARG_ENABLE(loadedllvm,[  --enable-loadedllvm	Load the LLVM back-end dynamically], enable_llvm=$enableval && enable_loadedllvm=$enableval, enable_loadedllvm=no)
 AC_ARG_ENABLE(llvm-version-check,[  --enable-llvm-version-check Check that the LLVM matches the version expected by mono], enable_llvm_version_check=$enableval, enable_llvm_version_check=no)
 AC_ARG_ENABLE(llvm-runtime,[  --enable-llvm-runtime	Enable runtime support for llvmonly code], enable_llvm_runtime=$enableval, enable_llvm_runtime=no)
+AC_ARG_ENABLE(llvm-asserts,[  --enable-llvm-asserts Enable llvm asserts (option to LLVM in CMake)], enable_llvm_asserts=$enableval, enable_llvm_asserts=no)
 
 AC_ARG_WITH(llvm, [  --with-llvm=<llvm prefix>    Enable the LLVM back-end], enable_llvm=yes,)
 
@@ -3735,117 +3737,62 @@ if test "x$enable_llvm" = "xdefault"; then
    enable_llvm=$enable_llvm_default
 fi
 
+internal_llvm="no"
 if test "x$enable_llvm" = "xyes"; then
-   if test x$host_win32 = xyes; then
-         AC_MSG_ERROR([LLVM for Windows only supported using Visual Studio build mono runtime, see http://www.mono-project.com/docs/advanced/mono-llvm/ for more details.])
-   fi
-   if test "x$with_llvm" != "x"; then
-   	  LLVM_CONFIG=$with_llvm/bin/llvm-config
-	  if test ! -x $LLVM_CONFIG; then
-	  	 AC_MSG_ERROR([LLVM executable $LLVM_CONFIG not found.])
-      fi
-   else
-      AC_PATH_PROG(LLVM_CONFIG, llvm-config, no)
-      if test "x$LLVM_CONFIG" = "xno"; then
-   	     AC_MSG_ERROR([llvm-config not found.])
-      fi
-      if test "x$with_llvm" = "x"; then
-         with_llvm=`$LLVM_CONFIG --prefix`
-      fi
-   fi
+	if test "x$with_llvm" != "x"; then
+		EXTERNAL_LLVM_CONFIG=$with_llvm/bin/llvm-config
+		if test ! -x $EXTERNAL_LLVM_CONFIG; then
+			AC_MSG_ERROR([LLVM executable $EXTERNAL_LLVM_CONFIG not found.])
+		fi
+	else
+		AC_PATH_PROG(EXTERNAL_LLVM_CONFIG, llvm-config, no)
+		if test "x$EXTERNAL_LLVM_CONFIG" = "xno"; then
+			internal_llvm=yes
+		else
+			with_llvm=`$EXTERNAL_LLVM_CONFIG --prefix`
+		fi
+	fi
+          
+	if test "x$host_win32" != "xyes"; then
+		LLVM_CODEGEN_LIBS="x86codegen"
+		case "$target" in
+		arm*)
+			LLVM_CODEGEN_LIBS="armcodegen"
+			;;
+		aarch64*)
+			LLVM_CODEGEN_LIBS="aarch64codegen"
+			;;
+		powerpc*)
+			LLVM_CODEGEN_LIBS="powerpccodegen"
+			;;
+		esac
+		if test "x$host" != "x$target"; then
+			# No need for jit libs
+			LLVM_CODEGEN_LIBS=
+		fi
 
-   llvm_codegen="x86codegen"
-   LLVM_ARCH_LIBS="-lLLVMX86Disassembler -lLLVMX86CodeGen -lLLVMX86AsmParser -lLLVMX86Desc -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils"
-   case "$target" in
-   arm*)
-		llvm_codegen="armcodegen"
-		LLVM_ARCH_LIBS="-lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter"
-		;;
-   aarch64*)
-		llvm_codegen="aarch64codegen"
-		LLVM_ARCH_LIBS="-lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter"
-		;;
-   powerpc*)
-		llvm_codegen="powerpccodegen"
-		LLVM_ARCH_LIBS="-lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter"
-		;;
-   esac
+		AC_SUBST(LLVM_CODEGEN_LIBS)
+		AC_SUBST(EXTERNAL_LLVM_CONFIG)
+	else # is win32
+		AC_MSG_ERROR([LLVM for Windows only supported using Visual Studio build mono runtime, see http://www.mono-project.com/docs/advanced/mono-llvm/ for more details.])
+	fi # win32
+	
+	AC_DEFINE(ENABLE_LLVM, 1, [Enable the LLVM back end])
+fi # ENABLE_LLVM
 
-   if test "x$host_win32" = "xno"; then
+# AC_DEFINE necessary for correct restore behavior on Linux
+AM_CONDITIONAL(INTERNAL_LLVM, [test "x$internal_llvm" != "xno"])
+if test "x$internal_llvm" != "xno"; then
+   AC_DEFINE(INTERNAL_LLVM, 1, [LLVM used is being build during mono build])
+fi
 
-   # Should be something like '2.6' or '2.7svn'
-   llvm_version=`$LLVM_CONFIG --version`
-   llvm_api_version=`$LLVM_CONFIG --mono-api-version 2>/dev/null`
-   AC_MSG_CHECKING(LLVM version)
-   AC_MSG_RESULT($llvm_version $llvm_api_version)
-   if echo $llvm_version | grep -q 'mono'; then
-	  if test "x$enable_llvm_version_check" = "xyes"; then
-	  	 if test "$llvm_version" != "$expected_llvm_version"; then
-		 	AC_MSG_ERROR([Expected llvm version $expected_llvm_version, but llvm-config --version returned $llvm_version"])
-	  	 fi
-	  fi
-   else
-	  AC_MSG_ERROR([Compiling with stock LLVM is not supported, please use the Mono LLVM repo at https://github.com/mono/llvm, with the GIT branch which matches this version of mono, i.e. 'mono-2-10' for Mono 2.10.])
-   fi
-
-   # The output of --cflags seems to include optimizations flags too
-   if test $llvm_api_version -gt 100; then
-   	  # The --cflags argument includes all kinds of warnings -pendantic etc.
-	  LLVM_CFLAGS="-I$with_llvm/include -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS"
-	  LLVM_CXXFLAGS="-I$with_llvm/include -std=c++11 -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS"
-   else
-	  LLVM_CFLAGS=`$LLVM_CONFIG --cflags | sed -e 's/-O2//g' | sed -e 's/-O0//g' | sed -e 's/-fomit-frame-pointer//g' | sed -e 's/-fPIC//g'`
-      LLVM_CXXFLAGS=`$LLVM_CONFIG --cxxflags | sed -e 's/-O2//g' | sed -e 's/-O0//g' | sed -e 's/-fomit-frame-pointer//g' | sed -e 's/-fPIC//g'`
-   fi
-   # LLVM is compiled with -fno-rtti, so we need this too, since our classes inherit
-   # from LLVM classes.
-   LLVM_CXXFLAGS="$LLVM_CXXFLAGS -fno-rtti -fexceptions"
-   LLVM_LDFLAGS=`$LLVM_CONFIG --ldflags`
-   # This might include empty lines
-   LLVM_SYSTEM_LIBS=`$LLVM_CONFIG --system-libs 2>/dev/null | grep -- -`
-   llvm_jit_supported=yes
-   llvm_jit_libs="jit mcjit $llvm_codegen"
-   if test "x$host" != "x$target"; then
-      # No need for jit libs
-	  llvm_jit_supported=no
-      llvm_jit_libs=""
-   elif test $llvm_api_version -gt 100; then
-      llvm_jit_libs="orcjit $llvm_codegen"
-   fi
-   LLVM_LIBS=`$LLVM_CONFIG --libs analysis core bitwriter $llvm_jit_libs`
-   if test "x$LLVM_LIBS" = "x"; then
-   	  echo "$LLVM_CONFIG --libs failed."
-	  exit 1
-   fi
-   LLVM_LIBS="$LLVM_LIBS $LLVM_LDFLAGS $LLVM_SYSTEM_LIBS"
-   # The c++ standard library used by llvm doesn't show up in $LLVM_SYSTEM_LIBS so add it manually
-   if echo $LLVM_CXXFLAGS | grep -q -- '-stdlib=libc++'; then
-      LLVM_LIBS="$LLVM_LIBS -lc++"
-   else
-      LLVM_LIBS="$LLVM_LIBS -lstdc++"
-   fi
-
-   expected_llvm_version="3.4svn-mono-mono/e656cac"
-   fi  
-
-   if test "x$llvm_api_version" = "x"; then
-	  LLVM_CFLAGS="$LLVM_CFLAGS -DLLVM_API_VERSION=0"
-	  LLVM_CXXFLAGS="$LLVM_CXXFLAGS -DLLVM_API_VERSION=0"
-   else
-	  LLVM_CFLAGS="$LLVM_CFLAGS -DLLVM_API_VERSION=$llvm_api_version"
-	  LLVM_CXXFLAGS="$LLVM_CXXFLAGS -DLLVM_API_VERSION=$llvm_api_version"
-   fi   
-
-   AC_DEFINE_UNQUOTED(LLVM_VERSION, "$llvm_version", [Full version of LLVM libraries])
-
-   AC_SUBST(LLVM_CFLAGS)
-   AC_SUBST(LLVM_CXXFLAGS)
-   AC_SUBST(LLVM_LIBS)
-   AC_SUBST(LLVM_LDFLAGS)
-   AC_DEFINE(ENABLE_LLVM, 1, [Enable the LLVM back end])
+AM_CONDITIONAL(INTERNAL_LLVM_ASSERTS, [test "x$enable_llvm_asserts" != "xno"])
+if test "x$internal_llvm_asserts" != "xno"; then
+   AC_DEFINE(INTERNAL_LLVM_ASSERTS, 1, [Build LLVM with assertions])
 fi
 
 AM_CONDITIONAL(ENABLE_LLVM, [test x$enable_llvm = xyes])
+
 if test "x$enable_loadedllvm" = "xyes"; then
    AC_DEFINE(MONO_LLVM_LOADED, 1, [The LLVM back end is dynamically loaded])
 fi
@@ -5046,7 +4993,7 @@ AC_ARG_WITH(lazy_gc_thread_creation, [  --with-lazy-gc-thread-creation=yes|no   
 AC_ARG_WITH(cooperative_gc,        [  --with-cooperative-gc=yes|no        Enable cooperative stop-the-world garbage collection (sgen only) (defaults to no)], [AC_MSG_WARN([--with-cooperative-gc is deprecated, use --enable-cooperative-suspend instead])], [with_cooperative_gc=default])
 AC_ARG_ENABLE(cooperative_suspend, [  --enable-cooperative-suspend      Enable cooperative stop-the-world garbage collection (sgen only) (defaults to no)], [], [enable_cooperative_suspend=default])
 
-if test x$enable_cooperative_suspend = xdefault -a test x$with_cooperative_gc != xdefault; then
+if test x$enable_cooperative_suspend = xdefault -a x$with_cooperative_gc != xdefault; then
 	enable_cooperative_suspend=$with_cooperative_gc
 fi
 
@@ -5060,7 +5007,11 @@ fi
 
 AM_CONDITIONAL([ENABLE_COOP_SUSPEND], [test x$enable_cooperative_suspend != xno])
 
-AC_ARG_ENABLE(hybrid_suspend, [ --enable-hybrid-suspend     Enable hybrid stop-the-world garbage collection (sgen only) - cooperative suspend for threads running managed and runtime code, and preemptive suspend for threads running native and P/Invoke code (defaults to no)], [], [enable_hybrid_suspend=no])
+AC_ARG_ENABLE(hybrid_suspend, [ --enable-hybrid-suspend     Enable hybrid stop-the-world garbage collection (sgen only) - cooperative suspend for threads running managed and runtime code, and preemptive suspend for threads running native and P/Invoke code (defaults to no)], [], [enable_hybrid_suspend=default])
+
+if test x$enable_hybrid_suspend = xdefault; then
+   enable_hybrid_suspend=$enable_hybrid_suspend_default
+fi
 
 if test x$enable_hybrid_suspend != xno -a x$enable_cooperative_suspend != xno ; then
 	AC_MSG_ERROR([Hybrid suspend and Cooperative suspend cannot be both enabled.])
@@ -5488,8 +5439,7 @@ AC_CONFIG_COMMANDS([quiet-libtool], [sed -e 's/echo "copying selected/# "copying
 AC_CONFIG_COMMANDS([nolock-libtool], [sed -e 's/lock_old_archive_extraction=yes/lock_old_archive_extraction=no/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
 
 # Anything involving -Werror must be done late because autoconf depends on compiling with warnings to be success.
-# FIXME Windows builds have unrelated preexisting problems here.
-if test x"$GCC" = xyes -a x$host_win32 = xno; then
+if test x"$GCC" = xyes; then
 
 	# incompatible-pointer-types requires gcc circa 5.x
 
@@ -5728,6 +5678,17 @@ if test x$enable_btls = xyes; then
 	fi
 fi
 
+thread_suspend_msg=
+if test x$buildsgen = xyes; then
+	if test x$enable_cooperative_suspend = xyes; then
+		thread_suspend_msg="Suspend:       Cooperative"
+	elif test x$enable_hybrid_suspend = xyes; then
+		thread_suspend_msg="Suspend:       Hybrid"
+	else
+		thread_suspend_msg="Suspend:       Preemptive"
+	fi
+fi
+	
 echo "
         mcs source:    $mcsdir
 	C# Compiler:   $csc_compiler
@@ -5736,12 +5697,13 @@ echo "
 	Host:	       $host
 	Target:	       $target
 	GC:	       $gc_msg 
+	$thread_suspend_msg
 	TLS:           $with_tls
 	SIGALTSTACK:   $with_sigaltstack
 	Engine:        $jit_status
 	BigArrays:     $enable_big_arrays
 	DTrace:        $enable_dtrace
-	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm)
+	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm, built in-tree: $internal_llvm, assertions: $enable_llvm_asserts)
 	Spectre:       $spectre_mitigation_status
 
    Libraries:

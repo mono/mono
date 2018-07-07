@@ -4,6 +4,7 @@ var MonoSupportLib = {
 	$MONO: {
 		pump_count: 0,
 		timeout_queue: [],
+		mono_wasm_runtime_is_ready : false,
 		pump_message: function () {
 			if (!this.mono_background_exec)
 				this.mono_background_exec = Module.cwrap ("mono_background_exec", 'void', [ ]);
@@ -50,12 +51,66 @@ var MonoSupportLib = {
 			return res;
 		},
 
-		mono_wasm_start_single_stepping: function(kind) {
+		mono_wasm_start_single_stepping: function (kind) {
 			console.log (">> mono_wasm_start_single_stepping " + kind);
 			if (!this.mono_wasm_setup_single_step)
 				this.mono_wasm_setup_single_step = Module.cwrap ("mono_wasm_setup_single_step", 'void', [ 'number']);
 
 			this.mono_wasm_setup_single_step (kind);
+		},
+
+		mono_wasm_runtime_ready: function () {
+			console.log (">>mono_wasm_runtime_ready");
+			this.mono_wasm_runtime_is_ready = true;
+			debugger;
+		},
+
+		mono_wasm_set_breakpoint: function (assembly, method_token, il_offset) {
+			if (!this.mono_wasm_set_bp)
+				this.mono_wasm_set_bp = Module.cwrap ('mono_wasm_set_breakpoint', 'number', ['string', 'number', 'number']);
+
+			return this.mono_wasm_set_bp (assembly, method_token, il_offset)
+		},
+
+		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb) {
+			Module.FS_createPath ("/", vfs_prefix, true, true);
+
+			var pending = 0;
+			var loaded_files = [];
+			file_list.forEach (function(file_name) {
+				++pending;
+				fetch (deploy_prefix + "/" + file_name, { credentials: 'same-origin' }).then (function (response) {
+					if (!response.ok)
+						throw "failed to load '" + file_name + "'";
+					loaded_files.push (response.url);
+					return response ['arrayBuffer'] ();
+				}).then (function (blob) {
+					var asm = new Uint8Array (blob);
+					Module.FS_createDataFile (vfs_prefix + "/" + file_name, null, asm, true, true, true);
+					console.log ("Loaded: " + file_name);
+					--pending;
+					if (pending == 0) {
+						MONO.loaded_files = loaded_files;
+						var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);
+
+						console.log ("initializing mono runtime");
+						load_runtime (vfs_prefix, enable_debugging);
+						MONO.mono_wasm_runtime_ready ();
+						loaded_cb ();
+					}
+				});
+			});
+		},
+
+		mono_wasm_get_loaded_files: function() {
+			console.log(">>>mono_wasm_get_loaded_files");
+			return this.loaded_files;
+		},
+		
+		mono_wasm_clear_all_breakpoints: function() {
+			if (this.mono_clear_bps)
+				this.mono_clear_bps = Module.cwrap ('mono_wasm_clear_all_breakpoints', 'void', [ ]);
+			this.mono_clear_bps ();
 		},
 		
 	},

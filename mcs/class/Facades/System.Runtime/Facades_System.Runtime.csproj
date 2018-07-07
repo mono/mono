@@ -99,13 +99,23 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="TypeForwarders.cs" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monodroid' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' "></ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <Compile Include="TypeForwarders.netcore.cs" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'orbis' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'unreal' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'wasm' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'winaot' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'xammac' "></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../System/System.csproj" />

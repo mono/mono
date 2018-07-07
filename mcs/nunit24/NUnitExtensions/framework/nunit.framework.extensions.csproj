@@ -41,18 +41,19 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="RepeatAttribute.cs" />
     <Compile Include="RowAttribute.cs" />
+    <Compile Include="RowTestAttribute.cs" />
     <Compile Include="RowTest\RowAttribute.cs" />
     <Compile Include="RowTest\RowTestAttribute.cs" />
     <Compile Include="RowTest\SpecialValue.cs" />
-    <Compile Include="RowTestAttribute.cs" />
     <Compile Include="SpecialValue.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

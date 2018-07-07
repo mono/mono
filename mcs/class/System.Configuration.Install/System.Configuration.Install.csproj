@@ -48,6 +48,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -57,17 +58,18 @@
     <Compile Include="System.Configuration.Install\ComponentInstaller.cs" />
     <Compile Include="System.Configuration.Install\IManagedInstaller.cs" />
     <Compile Include="System.Configuration.Install\InstallContext.cs" />
-    <Compile Include="System.Configuration.Install\Installer.cs" />
-    <Compile Include="System.Configuration.Install\InstallerCollection.cs" />
     <Compile Include="System.Configuration.Install\InstallEventArgs.cs" />
     <Compile Include="System.Configuration.Install\InstallEventHandler.cs" />
     <Compile Include="System.Configuration.Install\InstallException.cs" />
+    <Compile Include="System.Configuration.Install\Installer.cs" />
+    <Compile Include="System.Configuration.Install\InstallerCollection.cs" />
     <Compile Include="System.Configuration.Install\ManagedInstallerClass.cs" />
     <Compile Include="System.Configuration.Install\TransactedInstaller.cs" />
     <Compile Include="System.Configuration.Install\UninstallAction.cs" />
     <Compile Include="System.Diagnostics\EventLogInstaller.cs" />
     <Compile Include="System.Diagnostics\PerformanceCounterInstaller.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />

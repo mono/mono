@@ -99,13 +99,15 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\..\..\external\corefx\src\System.Reflection.TypeExtensions\src\System\Reflection\Requires.cs" />
     <Compile Include="..\..\..\..\external\corefx\src\System.Reflection.TypeExtensions\src\System\Reflection\TypeExtensions.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="corefx\SR.cs" />
     <Compile Include="TypeForwarders.cs" />
+    <Compile Include="corefx\SR.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../System/System.csproj" />
