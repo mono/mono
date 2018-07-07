@@ -27,103 +27,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System.IO;
+#if WIN_PLATFORM
 using System.Runtime.InteropServices;
 
 namespace System.Net.NetworkInformation {
-	abstract class UnixIPv4InterfaceProperties : IPv4InterfaceProperties
-	{
-		protected UnixNetworkInterface iface;
-		
-		public UnixIPv4InterfaceProperties (UnixNetworkInterface iface)
-		{
-			this.iface = iface;
-		}
-		
-		public override int Index {
-			get { return iface.NameIndex; }
-		}
-
-		// TODO: how to discover that?
-		public override bool IsAutomaticPrivateAddressingActive {
-			get { return false; }
-		}
-
-		// TODO: how to discover that?
-		public override bool IsAutomaticPrivateAddressingEnabled {
-			get { return false; }
-		}
-
-		// TODO: how to discover that? The only way is distribution-specific...
-		public override bool IsDhcpEnabled {
-			get { return false; }
-		}
-	
-		public override bool UsesWins {
-			get { return false; }
-		}
-	}
-	
-	sealed class LinuxIPv4InterfaceProperties : UnixIPv4InterfaceProperties
-	{
-		public LinuxIPv4InterfaceProperties (LinuxNetworkInterface iface)
-			: base (iface)
-		{
-		}
-		
-		public override bool IsForwardingEnabled {
-			get {
-				string iface_path = "/proc/sys/net/ipv4/conf/" + iface.Name + "/forwarding";
-
-				if (File.Exists (iface_path)) {
-					string val = LinuxNetworkInterface.ReadLine (iface_path);
-
-					return val != "0";
-				}
-
-				return false;
-			}
-		}
-
-		public override int Mtu {
-			get {
-				string iface_path = (iface as LinuxNetworkInterface).IfacePath + "mtu";
-				int ret = 0;
-
-				if (File.Exists (iface_path)) {
-					string val = LinuxNetworkInterface.ReadLine (iface_path);
-					
-					try {
-						ret = Int32.Parse (val);
-					} catch {
-					}
-				}
-
-				return ret;
-						
-			}
-		}
-	}
-
-	sealed class MacOsIPv4InterfaceProperties : UnixIPv4InterfaceProperties
-	{
-		public MacOsIPv4InterfaceProperties (MacOsNetworkInterface iface)
-			: base (iface)
-		{
-		}
-
-		// dummy
-		public override bool IsForwardingEnabled {
-			get { return false; }
-		}
-
-		// dummy
-		public override int Mtu {
-			get { return 0; }
-		}
-	}
-	
-#if WIN_PLATFORM
 	sealed class Win32IPv4InterfaceProperties : IPv4InterfaceProperties
 	{
 		[DllImport ("iphlpapi.dll")]
@@ -185,6 +92,5 @@ namespace System.Net.NetworkInformation {
 		public IntPtr CurrentDnsServer; // to Win32_IP_ADDR_STRING
 		public Win32_IP_ADDR_STRING DnsServerList;
 	}
-#endif
 }
-
+#endif

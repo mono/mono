@@ -79,26 +79,19 @@ System.Net.Mail/SmtpFailedRecipientException.cs
 System.Net.Mail/SmtpFailedRecipientsException.cs
 System.Net.Mail/SmtpStatusCode.cs
 
-System.Net.NetworkInformation/IcmpV4Statistics.cs
-System.Net.NetworkInformation/IcmpV6Statistics.cs
-System.Net.NetworkInformation/IPAddressCollection.cs
-System.Net.NetworkInformation/IPGlobalProperties.cs
-System.Net.NetworkInformation/IPGlobalStatistics.cs
-System.Net.NetworkInformation/IPInterfaceProperties.cs
-System.Net.NetworkInformation/IPv4InterfaceProperties.cs
-System.Net.NetworkInformation/IPv4InterfaceStatistics.cs
-System.Net.NetworkInformation/IPv6InterfaceProperties.cs
-System.Net.NetworkInformation/LinuxNetworkInterfaceMarshal.cs
-System.Net.NetworkInformation/MacOsNetworkInterfaceMarshal.cs
+System.Net.NetworkInformation/IPGlobalPropertiesFactory.cs
 System.Net.NetworkInformation/NetworkChange.cs
 System.Net.NetworkInformation/NetworkInterface.cs
+System.Net.NetworkInformation/NetworkInterfaceFactory.cs
 System.Net.NetworkInformation/Ping.cs
 System.Net.NetworkInformation/PingCompletedEventArgs.cs
 System.Net.NetworkInformation/PingCompletedEventHandler.cs
-System.Net.NetworkInformation/TcpStatistics.cs
-System.Net.NetworkInformation/UdpStatistics.cs
-System.Net.NetworkInformation/UnicastIPAddressInformation.cs
-System.Net.NetworkInformation/Win32NetworkInterfaceMarshal.cs
+
+#include unix_networkinfo.sources
+#include linux_networkinfo.sources
+#include macos_networkinfo.sources
+#include win32_networkinfo.sources
+
 System.Net.Security/EncryptionPolicy.cs
 System.Net.Security/LocalCertificateSelectionCallback.cs
 System.Net.Security/NegotiateStream.cs

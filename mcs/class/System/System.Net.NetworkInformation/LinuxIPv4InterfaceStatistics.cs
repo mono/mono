@@ -28,71 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 namespace System.Net.NetworkInformation {
-#if WIN_PLATFORM
-	class Win32IPv4InterfaceStatistics : IPv4InterfaceStatistics
-	{
-		Win32_MIB_IFROW info;
-
-		public Win32IPv4InterfaceStatistics (Win32_MIB_IFROW info)
-		{
-			this.info = info;
-		}
-
-		public override long BytesReceived {
-			get { return info.InOctets; }
-		}
-
-		public override long BytesSent {
-			get { return info.OutOctets; }
-		}
-
-		public override long IncomingPacketsDiscarded {
-			get { return info.InDiscards; }
-		}
-
-		public override long IncomingPacketsWithErrors {
-			get { return info.InErrors; }
-		}
-
-		public override long IncomingUnknownProtocolPackets {
-			get { return info.InUnknownProtos; }
-		}
-
-		public override long NonUnicastPacketsReceived {
-			get { return info.InNUcastPkts; }
-		}
-
-		public override long NonUnicastPacketsSent {
-			get { return info.OutNUcastPkts; }
-		}
-
-		public override long OutgoingPacketsDiscarded {
-			get { return info.OutDiscards; }
-		}
-
-		public override long OutgoingPacketsWithErrors {
-			get { return info.OutErrors; }
-		}
-
-		public override long OutputQueueLength {
-			get { return info.OutQLen; }
-		}
-
-		public override long UnicastPacketsReceived {
-			get { return info.InUcastPkts; }
-		}
-
-		public override long UnicastPacketsSent {
-			get { return info.OutUcastPkts; }
-		}
-	
-	}
-#endif
-
 	class LinuxIPv4InterfaceStatistics : IPv4InterfaceStatistics
 	{
 		LinuxNetworkInterface linux;
-		
+
 		public LinuxIPv4InterfaceStatistics (LinuxNetworkInterface parent)
 		{
 			linux = parent;
@@ -106,7 +45,7 @@ namespace System.Net.NetworkInformation {
 				return 0;
 			}
 		}
-		
+
 		public override long BytesReceived {
 			get {
 				return Read ("statistics/rx_bytes");
@@ -182,65 +121,4 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 	}
-
-	// dummy class
-	class MacOsIPv4InterfaceStatistics : IPv4InterfaceStatistics
-	{
-		//MacOsNetworkInterface macos;
-		
-		public MacOsIPv4InterfaceStatistics (MacOsNetworkInterface parent)
-		{
-			//macos = parent;
-		}
-
-		public override long BytesReceived {
-			get { return 0; }
-		}
-
-		public override long BytesSent {
-			get { return 0; }
-		}
-
-		public override long IncomingPacketsDiscarded {
-			get { return 0; }
-		}
-
-		public override long IncomingPacketsWithErrors {
-			get { return 0; }
-		}
-
-		public override long IncomingUnknownProtocolPackets {
-			get { return 0; }
-		}
-
-		public override long NonUnicastPacketsReceived {
-			get { return 0; }
-		}
-
-		public override long NonUnicastPacketsSent {
-			get { return 0; }
-		}
-
-		public override long OutgoingPacketsDiscarded {
-			get { return 0; }
-		}
-
-		public override long OutgoingPacketsWithErrors {
-			get { return 0; }
-		}
-
-		public override long OutputQueueLength {
-			get { return 0; }
-		}
-
-		public override long UnicastPacketsReceived {
-			get { return 0; }
-		}
-
-		public override long UnicastPacketsSent {
-			get { return 0; }
-		}
-	}
-	
 }
-
