@@ -651,12 +651,6 @@ ves_icall_System_Array_CreateInstanceImpl (MonoReflectionType *type, MonoArray *
 	return array;
 }
 
-ICALL_EXPORT MonoArray *
-ves_icall_System_Array_CreateInstanceImpl64 (MonoReflectionType *type, MonoArray *lengths, MonoArray *bounds)
-{
-	g_assert_not_reached ();
-}
-
 ICALL_EXPORT gint32 
 ves_icall_System_Array_GetRank (MonoObject *arr)
 {
