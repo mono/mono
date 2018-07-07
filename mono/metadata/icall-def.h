@@ -719,7 +719,7 @@ HANDLES(ICALL(MARSHAL_10, "GetFunctionPointerForDelegateInternal", ves_icall_Sys
 #ifndef DISABLE_COM
 ICALL(MARSHAL_52, "GetHRForException_WinRT", ves_icall_System_Runtime_InteropServices_Marshal_GetHRForException_WinRT)
 HANDLES(ICALL(MARSHAL_45, "GetIDispatchForObjectInternal", ves_icall_System_Runtime_InteropServices_Marshal_GetIDispatchForObjectInternal))
-ICALL(MARSHAL_46, "GetIUnknownForObjectInternal", ves_icall_System_Runtime_InteropServices_Marshal_GetIUnknownForObjectInternal)
+HANDLES(ICALL(MARSHAL_46, "GetIUnknownForObjectInternal", ves_icall_System_Runtime_InteropServices_Marshal_GetIUnknownForObjectInternal))
 #endif
 ICALL(MARSHAL_11, "GetLastWin32Error", ves_icall_System_Runtime_InteropServices_Marshal_GetLastWin32Error)
 #ifndef DISABLE_COM
