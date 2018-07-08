@@ -236,6 +236,8 @@ namespace Mono.Security.X509 {
 					return new X520.GivenName ();
 				case "I":
 					return new X520.Initial ();
+				case "SERIALNUMBER":
+					return new X520.SerialNumber ();
 				default:
 					if (s.StartsWith ("OID.")) {
 						// MUST support it but it OID may be without it
