@@ -185,6 +185,16 @@ namespace System
 			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
 				throw new ArgumentException ("type is not a subclass of Multicastdelegate");
 
+			RuntimeType rtType = type as RuntimeType;
+
+			if (rtType == null)
+				throw new ArgumentException ("Type must be a RuntimeType");
+
+			RuntimeMethodInfo rmi = method as RuntimeMethodInfo;
+
+			if (rmi == null)
+				throw new ArgumentException ("MethodInfo must be a RuntimeMethodInfo");
+
 			MethodInfo invoke = type.GetMethod ("Invoke");
 
 			if (!return_type_match (invoke.ReturnType, method.ReturnType)) {
