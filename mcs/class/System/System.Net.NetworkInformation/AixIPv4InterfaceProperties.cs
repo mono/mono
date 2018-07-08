@@ -31,9 +31,12 @@
 namespace System.Net.NetworkInformation {
 	sealed class AixIPv4InterfaceProperties : UnixIPv4InterfaceProperties
 	{
-		public AixIPv4InterfaceProperties (AixNetworkInterface iface)
+		private int _mtu;
+
+		public AixIPv4InterfaceProperties (AixNetworkInterface iface, int mtu)
 			: base (iface)
 		{
+			_mtu = mtu;
 		}
 
 		// dummy
@@ -41,9 +44,8 @@ namespace System.Net.NetworkInformation {
 			get { return false; }
 		}
 
-		// dummy
 		public override int Mtu {
-			get { return 0; }
+			get { return _mtu; }
 		}
 	}
 }

@@ -32,15 +32,23 @@ using System.Runtime.CompilerServices;
 namespace System.Net.NetworkInformation {
 	class AixIPInterfaceProperties : UnixIPInterfaceProperties
 	{
+		private int _mtu;
+
 		public AixIPInterfaceProperties (AixNetworkInterface iface, List <IPAddress> addresses)
+			: this (iface, addresses, 0)
+		{
+		}
+
+		public AixIPInterfaceProperties (AixNetworkInterface iface, List <IPAddress> addresses, int mtu)
 			: base (iface, addresses)
 		{
+			_mtu = mtu;
 		}
 
 		public override IPv4InterfaceProperties GetIPv4Properties ()
 		{
 			if (ipv4iface_properties == null)
-				ipv4iface_properties = new AixIPv4InterfaceProperties (iface as AixNetworkInterface);
+				ipv4iface_properties = new AixIPv4InterfaceProperties (iface as AixNetworkInterface, _mtu);
 
 			return ipv4iface_properties;
 		}

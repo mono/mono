@@ -51,7 +51,7 @@ namespace System.Net.NetworkInformation {
 			[FieldOffset (0)]
 			public fixed byte ifr_name [16];
 			[FieldOffset (16)]
-			public uint ifru_mtu;
+			public int ifru_mtu;
 		}
 
 		// the rest copied from Mac OS defs

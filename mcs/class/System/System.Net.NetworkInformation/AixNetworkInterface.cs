@@ -64,6 +64,8 @@ namespace System.Net.NetworkInformation {
 		[DllImport("libc", SetLastError = true)]
 		public static extern int ioctl (int fd, uint request, ref AixStructs.ifreq_flags arg);
 		[DllImport("libc", SetLastError = true)]
+		public static extern int ioctl (int fd, uint request, ref AixStructs.ifreq_mtu arg);
+		[DllImport("libc", SetLastError = true)]
 		public static extern int ioctl (int fd, uint request, ref AixStructs.ifreq_addrin arg);
 
 		static unsafe void ByteArrayCopy (byte* dst, byte* src, int elements)
@@ -170,22 +172,29 @@ namespace System.Net.NetworkInformation {
 
 					// get flags
 					uint flags = 0;
+					int mtu = 0;
 					unsafe {
 						AixStructs.ifreq_flags ifrFlags = new AixStructs.ifreq_flags ();
 						ByteArrayCopy (ifrFlags.ifr_name, ifr.ifr_name, 16);
-						if (ioctl (sockfd, SIOCGIFFLAGS, ref ifrFlags) < 0) {
+						if (ioctl (sockfd, SIOCGIFFLAGS, ref ifrFlags) < 0)
 							throw new SystemException("ioctl for SIOCGIFFLAGS failed");
-						}
 						else
 							flags = ifrFlags.ifru_flags;
-						// TODO: grab the MTU while we're here, since we can
+
+						AixStructs.ifreq_mtu ifrMtu = new AixStructs.ifreq_mtu ();
+						ByteArrayCopy (ifrMtu.ifr_name, ifr.ifr_name, 16);
+						if (ioctl (sockfd, SIOCGIFMTU, ref ifrMtu) < 0) {
+							// it's not the end of the world if we don't get it
+						}
+						else
+							mtu = ifrMtu.ifru_mtu;
 					}
 
 					AixNetworkInterface iface = null;
 
 					// create interface if not already present
 					if (!interfaces.TryGetValue (name, out iface)) {
-						iface = new AixNetworkInterface (name, flags);
+						iface = new AixNetworkInterface (name, flags, mtu);
 						interfaces.Add (name, iface);
 					}
 
@@ -279,17 +288,19 @@ namespace System.Net.NetworkInformation {
 	sealed class AixNetworkInterface : UnixNetworkInterface
 	{
 		private uint _ifa_flags;
+		private int _ifru_mtu;
 
-		internal AixNetworkInterface (string name, uint ifa_flags)
+		internal AixNetworkInterface (string name, uint ifa_flags, int ifru_mtu)
 			: base (name)
 		{
 			_ifa_flags = ifa_flags;
+			_ifru_mtu = ifru_mtu;
 		}
 
 		public override IPInterfaceProperties GetIPProperties ()
 		{
 			if (ipproperties == null)
-				ipproperties = new AixIPInterfaceProperties (this, addresses);
+				ipproperties = new AixIPInterfaceProperties (this, addresses, _ifru_mtu);
 			return ipproperties;
 		}
 
