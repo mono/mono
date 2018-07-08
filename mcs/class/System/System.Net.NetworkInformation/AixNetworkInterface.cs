@@ -7,9 +7,12 @@
 //      Miguel de Icaza (miguel@novell.com)
 //      Eric Butler (eric@extremeboredom.net)
 //      Marek Habersack (mhabersack@novell.com)
-//  Marek Safar (marek.safar@gmail.com)
+//      Marek Safar (marek.safar@gmail.com)
+//      Calvin Buckley (calvin@cmpct.info)
 //
 // Copyright (c) 2006-2008 Novell, Inc. (http://www.novell.com)
+//
+// Copyright (c) 2018 Calvin Buckley
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
