@@ -37,36 +37,27 @@ using System.Text;
 namespace System.Net.NetworkInformation {
 	internal class AixNetworkInterfaceAPI : UnixNetworkInterfaceAPI
 	{
-		// Address families that matter to us
-		const int AF_INET  = 2;
-		const int AF_INET6 = 30;
-		const int AF_LINK  = 18;
-
 		const int SOCK_DGRAM = 2;
-
-		// ioctl commands that matter to us
-		const uint SIOCGIFCONF    = 0xc0106945; /* list network interfaces */
-		const uint SIOCGIFFLAGS   = 0xc0286911; /* get interface flags */
-		const uint SIOCGIFNETMASK = 0xc0286925; /* get netmask for iface */
-		const uint SIOCGIFMTU     = 0xc0286956; /* get mtu for iface */
 
 		// AIX doesn't have getifaddrs, (i does though) so we instead query the painful way via ioctl. For IBM's docs on this, see:
 		// https://www.ibm.com/support/knowledgecenter/en/ssw_aix_71/com.ibm.aix.commtrf2/ioctl_socket_control_operations.htm
 		[DllImport("libc", SetLastError = true)]
-		public static extern int socket (int family, int type, int protocol);
+		public static extern int socket (AixAddressFamily family, int type, int protocol);
 		[DllImport("libc")]
 		public static extern int close (int fd);
 		// overloads to make usage less painful
 		[DllImport("libc", SetLastError = true)]
-		public static extern int ioctl (int fd, uint request, IntPtr arg);
+		public static extern int ioctl (int fd, AixIoctlRequest request, IntPtr arg);
 		[DllImport("libc", SetLastError = true)]
-		public static extern int ioctl (int fd, uint request, ref AixStructs.ifconf arg);
+		public static extern int ioctl (int fd, AixIoctlRequest request, ref int arg);
 		[DllImport("libc", SetLastError = true)]
-		public static extern int ioctl (int fd, uint request, ref AixStructs.ifreq_flags arg);
+		public static extern int ioctl (int fd, AixIoctlRequest request, ref AixStructs.ifconf arg);
 		[DllImport("libc", SetLastError = true)]
-		public static extern int ioctl (int fd, uint request, ref AixStructs.ifreq_mtu arg);
+		public static extern int ioctl (int fd, AixIoctlRequest request, ref AixStructs.ifreq_flags arg);
 		[DllImport("libc", SetLastError = true)]
-		public static extern int ioctl (int fd, uint request, ref AixStructs.ifreq_addrin arg);
+		public static extern int ioctl (int fd, AixIoctlRequest request, ref AixStructs.ifreq_mtu arg);
+		[DllImport("libc", SetLastError = true)]
+		public static extern int ioctl (int fd, AixIoctlRequest request, ref AixStructs.ifreq_addrin arg);
 
 		static unsafe void ByteArrayCopy (byte* dst, byte* src, int elements)
 		{
@@ -78,17 +69,21 @@ namespace System.Net.NetworkInformation {
 		{
 			var interfaces = new Dictionary <string, AixNetworkInterface> ();
 			AixStructs.ifconf ifc;
-			// XXX: use SIOCGSIZIFCONF ioctl instead?
-			ifc.ifc_len = 1024;
-			ifc.ifc_buf = Marshal.AllocHGlobal(1024);
+			ifc.ifc_len = 0;
+			ifc.ifc_buf = IntPtr.Zero;
 			int sockfd = -1;
 
 			try {
-				sockfd = socket (AF_INET, SOCK_DGRAM, 0);
+				sockfd = socket (AixAddressFamily.AF_INET, SOCK_DGRAM, 0);
 				if (sockfd == -1)
 					throw new SystemException ("socket for SIOCGIFCONF failed");
 
-				if (ioctl (sockfd, SIOCGIFCONF, ref ifc) < 0)
+				if (ioctl (sockfd, AixIoctlRequest.SIOCGSIZIFCONF, ref ifc.ifc_len) < 0 || ifc.ifc_len < 1) {
+					throw new SystemException ("ioctl for SIOCGSIZIFCONF failed");
+				}
+				ifc.ifc_buf = Marshal.AllocHGlobal(ifc.ifc_len);
+
+				if (ioctl (sockfd, AixIoctlRequest.SIOCGIFCONF, ref ifc) < 0)
 					throw new SystemException ("ioctl for SIOCGIFCONF failed");
 
 				// this is required because the buffer is an array of VARIABLE LENGTH structures, so sane marshalling is impossible
@@ -114,19 +109,20 @@ namespace System.Net.NetworkInformation {
 						name = Marshal.PtrToStringAnsi(new IntPtr(ifr.ifr_name));
 					}
 
-					switch (ifr.ifru_addr.sa_family) {
-						case AF_INET:
+					if (Enum.IsDefined (typeof (AixAddressFamily), (int)ifr.ifru_addr.sa_family)) {
+						switch ((AixAddressFamily)ifr.ifru_addr.sa_family) {
+						case AixAddressFamily.AF_INET:
 							AixStructs.sockaddr_in sockaddrin =
 								(AixStructs.sockaddr_in)Marshal.PtrToStructure(curPos + 16, typeof (AixStructs.sockaddr_in));
 							address = new IPAddress (sockaddrin.sin_addr);
 							break;
-						case AF_INET6:
+						case AixAddressFamily.AF_INET6:
 							AixStructs.sockaddr_in6 sockaddr6 =
 								(AixStructs.sockaddr_in6) Marshal.PtrToStructure(curPos + 16, typeof (AixStructs.sockaddr_in6));
 							address = new IPAddress (sockaddr6.sin6_addr.u6_addr8, sockaddr6.sin6_scope_id);
 							break;
 						// XXX: i never returns AF_LINK and SIOCGIFCONF under i doesn't return nameindex values; adapt MacOsNetworkInterface for Qp2getifaddrs instead
-						case AF_LINK:
+						case AixAddressFamily.AF_LINK:
 							AixStructs.sockaddr_dl sockaddrdl = new AixStructs.sockaddr_dl();
 							sockaddrdl.Read (curPos + 16);
 
@@ -167,7 +163,8 @@ namespace System.Net.NetworkInformation {
 								}
 							}
 							break;
-						default: break;
+							default: break;
+						}
 					}
 
 					// get flags
@@ -176,14 +173,14 @@ namespace System.Net.NetworkInformation {
 					unsafe {
 						AixStructs.ifreq_flags ifrFlags = new AixStructs.ifreq_flags ();
 						ByteArrayCopy (ifrFlags.ifr_name, ifr.ifr_name, 16);
-						if (ioctl (sockfd, SIOCGIFFLAGS, ref ifrFlags) < 0)
+						if (ioctl (sockfd, AixIoctlRequest.SIOCGIFFLAGS, ref ifrFlags) < 0)
 							throw new SystemException("ioctl for SIOCGIFFLAGS failed");
 						else
 							flags = ifrFlags.ifru_flags;
 
 						AixStructs.ifreq_mtu ifrMtu = new AixStructs.ifreq_mtu ();
 						ByteArrayCopy (ifrMtu.ifr_name, ifr.ifr_name, 16);
-						if (ioctl (sockfd, SIOCGIFMTU, ref ifrMtu) < 0) {
+						if (ioctl (sockfd, AixIoctlRequest.SIOCGIFMTU, ref ifrMtu) < 0) {
 							// it's not the end of the world if we don't get it
 						}
 						else
@@ -207,7 +204,8 @@ namespace System.Net.NetworkInformation {
 						iface.SetLinkLayerInfo (index, macAddress, type);
 				}
 			} finally {
-				Marshal.FreeHGlobal(ifc.ifc_buf);
+				if (ifc.ifc_buf != IntPtr.Zero)
+					Marshal.FreeHGlobal(ifc.ifc_buf);
 				if (sockfd != -1)
 					close (sockfd);
 			}
@@ -230,17 +228,20 @@ namespace System.Net.NetworkInformation {
 		public override IPAddress GetNetMask (IPAddress address)
 		{
 			AixStructs.ifconf ifc;
-			// XXX: use SIOCGSIZIFCONF ioctl instead?
-			ifc.ifc_len = 1024;
-			ifc.ifc_buf = Marshal.AllocHGlobal(1024);
+			ifc.ifc_len = 0;
+			ifc.ifc_buf = IntPtr.Zero;
 			int sockfd = -1;
 
 			try {
-				sockfd = socket (AF_INET, SOCK_DGRAM, 0);
+				sockfd = socket (AixAddressFamily.AF_INET, SOCK_DGRAM, 0);
 				if (sockfd == -1)
 					throw new SystemException ("socket for SIOCGIFCONF failed");
 
-				if (ioctl (sockfd, SIOCGIFCONF, ref ifc) < 0)
+				if (ioctl (sockfd, AixIoctlRequest.SIOCGSIZIFCONF, ref ifc.ifc_len) < 0 || ifc.ifc_len < 1)
+					throw new SystemException ("ioctl for SIOCGSIZIFCONF failed");
+				ifc.ifc_buf = Marshal.AllocHGlobal(ifc.ifc_len);
+
+				if (ioctl (sockfd, AixIoctlRequest.SIOCGIFCONF, ref ifc) < 0)
 					throw new SystemException ("ioctl for SIOCGIFCONF failed");
 
 				// this is required because the buffer is an array of VARIABLE LENGTH structures, so sane marshalling is impossible
@@ -255,8 +256,9 @@ namespace System.Net.NetworkInformation {
 					// update the structure for next increment
 					ifr = (AixStructs.ifreq)Marshal.PtrToStructure (curPos, typeof (AixStructs.ifreq));
 
-					switch (ifr.ifru_addr.sa_family) {
-						case AF_INET:
+					if (Enum.IsDefined (typeof (AixAddressFamily), (int)ifr.ifru_addr.sa_family)) {
+						switch ((AixAddressFamily)ifr.ifru_addr.sa_family) {
+						case AixAddressFamily.AF_INET:
 							AixStructs.sockaddr_in sockaddrin =
 								(AixStructs.sockaddr_in)Marshal.PtrToStructure(curPos + 16, typeof (AixStructs.sockaddr_in));
 							var saddress = new IPAddress (sockaddrin.sin_addr);
@@ -266,17 +268,19 @@ namespace System.Net.NetworkInformation {
 									ByteArrayCopy (ifrMask.ifr_name, ifr.ifr_name, 16);
 								}
 								// there's an IPv6 version of it too, but Mac OS doesn't try this, so
-								if (ioctl (sockfd, SIOCGIFNETMASK, ref ifrMask) < 0)
+								if (ioctl (sockfd, AixIoctlRequest.SIOCGIFNETMASK, ref ifrMask) < 0)
 									return new IPAddress(ifrMask.ifru_addr.sin_addr);
 								else
 									throw new SystemException("ioctl for SIOCGIFNETMASK failed");
 							}
 							break;
 						default: break;
+						}
 					}
 				}
 			} finally {
-				Marshal.FreeHGlobal(ifc.ifc_buf);
+				if (ifc.ifc_buf != IntPtr.Zero)
+					Marshal.FreeHGlobal(ifc.ifc_buf);
 				if (sockfd != -1)
 					close (sockfd);
 			}

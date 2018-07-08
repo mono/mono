@@ -146,5 +146,21 @@ namespace System.Net.NetworkInformation {
 		IFF_LINK2 = 0x400000,			/* per link layer defined bit */
 		IFF_MULTICAST = 0x8000000		/* supports multicast */
 	}
+
+	// Address families that matter to us
+	internal enum AixAddressFamily {
+		AF_INET  = 2,
+		AF_INET6 = 30,
+		AF_LINK  = 18,
+	}
+
+	// ioctl commands that matter to us
+	internal enum AixIoctlRequest : uint {
+		SIOCGSIZIFCONF = 0x4004696a, /* get the buffer size for SIOCGIFCONF */
+                SIOCGIFCONF    = 0xc0106945, /* list network interfaces */
+                SIOCGIFFLAGS   = 0xc0286911, /* get interface flags */
+                SIOCGIFNETMASK = 0xc0286925, /* get netmask for iface */
+                SIOCGIFMTU     = 0xc0286956, /* get mtu for iface */
+	}
 }
 
