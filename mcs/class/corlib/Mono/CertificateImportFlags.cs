@@ -1,5 +1,5 @@
 //
-// INativeCertificateHelper.cs
+// CertificateImportFlags.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -23,13 +23,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+using System;
 
-namespace System.Security.Cryptography.X509Certificates
+namespace Mono
 {
-	internal interface INativeCertificateHelper
+	[Flags]
+	enum CertificateImportFlags
 	{
-		X509CertificateImpl Import (byte[] data, string password, X509KeyStorageFlags flags);
-
-		X509CertificateImpl Import (X509Certificate cert);
+		None = 0,
+		DisableNativeBackend = 1,
+		DisableAutomaticFallback = 2
 	}
 }

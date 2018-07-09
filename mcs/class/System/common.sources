@@ -192,6 +192,12 @@ System.Timers/ElapsedEventArgs.cs
 
 System.Windows.Input/ICommand.cs
 
+Mono/SystemCertificateProvider.cs
+Mono/SystemDependencyProvider.cs
+Mono/X509Pal.cs
+Mono/X509PalImpl.cs
+Mono/X509PalImpl.Mono.cs
+
 Mono.Btls/MonoBtlsBio.cs
 Mono.Btls/MonoBtlsContext.cs
 Mono.Btls/MonoBtlsError.cs
@@ -230,6 +236,7 @@ Mono.Btls/MonoBtlsX509VerifyFlags.cs
 Mono.Btls/MonoBtlsX509VerifyParam.cs
 Mono.Btls/X509CertificateImplBtls.cs
 Mono.Btls/X509ChainImplBtls.cs
+Mono.Btls/X509PalImpl.Btls.cs
 
 Mono.AppleTls/AppleCertificateHelper.cs
 Mono.AppleTls/AppleTlsContext.cs
@@ -244,6 +251,8 @@ Mono.AppleTls/Policy.cs
 Mono.AppleTls/Trust.cs
 Mono.AppleTls/SslConnection.cs
 Mono.AppleTls/Items.cs
+Mono.AppleTls/X509CertificateImplApple.cs
+Mono.AppleTls/X509PalImpl.Apple.cs
 
 Mono.Util/MonoPInvokeCallbackAttribute.cs
 

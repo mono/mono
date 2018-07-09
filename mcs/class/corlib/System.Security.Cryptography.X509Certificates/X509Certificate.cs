@@ -33,7 +33,6 @@ using System.Security.Permissions;
 using System.Text;
 
 using Mono.Security;
-using Mono.Security.X509;
 
 using System.Runtime.Serialization;
 using Mono.Security.Authenticode;
