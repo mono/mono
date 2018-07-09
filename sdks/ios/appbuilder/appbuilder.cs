@@ -152,7 +152,7 @@ public class AppBuilder
 		}
 
 		if (!isrelease)
-			aot_args += "soft-debug";
+			aot_args += ",soft-debug";
 		if (isllvm) {
 			cross_runtime_args = "--llvm";
 			aot_args += ",llvm-path=$mono_sdkdir/ios-llvm64/bin,llvm-outfile=$llvm_outfile";
