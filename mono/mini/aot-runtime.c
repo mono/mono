@@ -2267,6 +2267,7 @@ if (container_assm_name && !container_amodule) {
 	amodule->trampolines [MONO_AOT_TRAMP_STATIC_RGCTX] = (guint8 *)info->static_rgctx_trampolines;
 	amodule->trampolines [MONO_AOT_TRAMP_IMT] = (guint8 *)info->imt_trampolines;
 	amodule->trampolines [MONO_AOT_TRAMP_GSHAREDVT_ARG] = (guint8 *)info->gsharedvt_arg_trampolines;
+	amodule->trampolines [MONO_AOT_TRAMP_FTNPTR_ARG] = (guint8 *)info->ftnptr_arg_trampolines;
 
 	if (!strcmp (assembly->aname.name, "mscorlib"))
 		mscorlib_aot_module = amodule;
@@ -5909,7 +5910,30 @@ mono_aot_get_gsharedvt_arg_trampoline (gpointer arg, gpointer addr)
 	/* The caller expects an ftnptr */
 	return mono_create_ftnptr (mono_domain_get (), code);
 }
- 
+
+#ifdef MONO_ARCH_HAVE_FTNPTR_ARG_TRAMPOLINE
+gpointer
+mono_aot_get_ftnptr_arg_trampoline (gpointer arg, gpointer addr)
+{
+	MonoAotModule *amodule;
+	guint8 *code;
+	guint32 got_offset;
+
+	if (USE_PAGE_TRAMPOLINES) {
+		g_error ("FIXME: ftnptr_arg page trampolines");
+	} else {
+		code = (guint8 *)get_numerous_trampoline (MONO_AOT_TRAMP_FTNPTR_ARG, 2, &amodule, &got_offset, NULL);
+
+		amodule->got [got_offset] = arg;
+		amodule->got [got_offset + 1] = addr;
+	}
+
+	/* The caller expects an ftnptr */
+	return mono_create_ftnptr (mono_domain_get (), code);
+}
+#endif
+
+
 /*
  * mono_aot_set_make_unreadable:
  *
