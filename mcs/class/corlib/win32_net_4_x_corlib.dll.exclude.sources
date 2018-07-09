@@ -1,2 +1,4 @@
 corert/PreAllocatedOverlapped.platformnotsupported.cs
 corert/ThreadPoolBoundHandle.platformnotsupported.cs
+
+corefx/Interop.GetRandomBytes.Mono.cs
