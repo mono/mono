@@ -4079,6 +4079,7 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 			} else {
 				g_print ("NON AOT METHOD: %p %d\n", code, method_index);
 			}
+			mini_debug_options.aot_skip_set = FALSE;
 			return NULL;
 		}
 	}
