@@ -193,7 +193,7 @@ public class AppBuilder
 		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
 		// ninja remakes files it hadn't seen before even if the timestamp is newer, so have to add a test ourselves
 		ninja.WriteLine ("rule aot-cached");
-		ninja.WriteLine ($"  command = if ! test -f $outfile; then MONO_PATH=$mono_path $cross -O=gsharedvt,float32 --debug {cross_runtime_args} --aot=mtriple=arm64-ios,full,static,asmonly,direct-icalls,no-direct-calls,dwarfdebug,{aot_args},outfile=$outfile,data-outfile=$data_outfile $src_file; fi");
+		ninja.WriteLine ($"  command = if ! test -f $outfile; then MONO_PATH=$mono_path $cross -O=gsharedvt,float32 --debug {cross_runtime_args} --aot=mtriple=arm64-ios,static,asmonly,direct-icalls,no-direct-calls,dwarfdebug,{aot_args},outfile=$outfile,data-outfile=$data_outfile $src_file; fi");
 		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
 		ninja.WriteLine ("rule assemble");
 		ninja.WriteLine ("  command = clang -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -c -o $out $in");
