@@ -573,21 +573,16 @@ cominterop_get_interface_checked (MonoComObject* obj, MonoClass* ic, MonoError *
  * Returns: the COM interface requested
  */
 static gpointer
-cominterop_get_interface (MonoComObject *obj, MonoClass *ic, gboolean throw_exception)
+cominterop_get_interface (MonoComObject *obj, MonoClass *ic)
 {
 	ERROR_DECL (error);
 	gpointer itf = cominterop_get_interface_checked (obj, ic, error);
 	if (!is_ok (error)) {
-		if (throw_exception) {
-			mono_error_set_pending_exception (error);
-			return NULL;
-		} else {
-			mono_error_cleanup (error);
-		}
+		mono_error_set_pending_exception (error);
+		return NULL;
 	}
 
-	if (throw_exception)
-		g_assert (itf);
+	g_assert (itf);
 
 	return itf;
 }
@@ -633,7 +628,7 @@ mono_cominterop_init (void)
 	register_icall (cominterop_get_ccw, "cominterop_get_ccw", "ptr object ptr", FALSE);
 	register_icall (cominterop_get_ccw_object, "cominterop_get_ccw_object", "object ptr int32", FALSE);
 	register_icall (cominterop_get_hresult_for_exception, "cominterop_get_hresult_for_exception", "int32 object", FALSE);
-	register_icall (cominterop_get_interface, "cominterop_get_interface", "ptr object ptr int32", FALSE);
+	register_icall (cominterop_get_interface, "cominterop_get_interface", "ptr object ptr", FALSE);
 
 	register_icall (mono_string_to_bstr, "mono_string_to_bstr", "ptr obj", FALSE);
 	register_icall (mono_string_from_bstr_icall, "mono_string_from_bstr_icall", "obj ptr", FALSE);
@@ -824,7 +819,6 @@ mono_cominterop_emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, 
 
 		if (conv == MONO_MARSHAL_CONV_OBJECT_INTERFACE) {
 			mono_mb_emit_ptr (mb, mono_type_get_class (type));
-			mono_mb_emit_icon (mb, TRUE);
 			mono_mb_emit_icall (mb, cominterop_get_interface);
 
 		}
@@ -1060,7 +1054,6 @@ mono_cominterop_get_native_wrapper (MonoMethod *method)
 			mono_mb_emit_ldarg (mb, 0);
 			mono_mb_emit_ptr (mb, method);
 			mono_mb_emit_icall (mb, cominterop_get_method_interface);
-			mono_mb_emit_icon (mb, TRUE);
 			mono_mb_emit_icall (mb, cominterop_get_interface);
 			mono_mb_emit_stloc (mb, ptr_this);
 
