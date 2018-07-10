@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-#if !MOBILE
+#if !(MONOTOUCH || MONODROID)
 using System.Reflection;
 #endif
 
@@ -42,7 +42,8 @@ namespace Mono
 					if (systemDependency != null)
 						return systemDependency;
 
-#if !MOBILE
+					// Not using `MOBILE` as a conditional here because we want to use this on full-aot.
+#if !(MONOTOUCH || MONODROID)
 					// On Mobile, we initializes this during system startup.
 					systemDependency = ReflectionLoad ();
 #endif
@@ -63,10 +64,12 @@ namespace Mono
 			}
 		}
 
-#if !MOBILE
+#if !(MONOTOUCH || MONODROID)
+		const string TypeName = "Mono.SystemDependencyProvider, " + Consts.AssemblySystem;
+
 		static ISystemDependencyProvider ReflectionLoad ()
 		{
-			var type = Type.GetType ("Mono.SystemDependencyProvider, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+			var type = Type.GetType (TypeName);
 			if (type == null)
 				return null;
 
