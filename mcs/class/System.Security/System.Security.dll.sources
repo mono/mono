@@ -3,7 +3,6 @@
 Mono.Security.Cryptography/ManagedProtection.cs
 System.Security.Cryptography/MemoryProtectionScope.cs
 System.Security.Cryptography/ProtectedMemory.cs
-System.Security.Cryptography.Pkcs/KeyAgreeKeyChoice.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2UI.cs
 System.Security.Cryptography.X509Certificates/X509SelectionFlag.cs
 
