@@ -94,6 +94,7 @@ System/Delegate.cs
 System/DelegateSerializationHolder.cs
 System/DomainManagerInitializationFlags.cs
 System/EmptyArray.cs
+System/EnumSharing.cs
 System/Environment.cs
 System/EnvironmentVariableTarget.cs
 System/Guid.cs
