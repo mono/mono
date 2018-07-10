@@ -43,8 +43,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\referencesource\System.Runtime.DurableInstancing\AssemblyInfo.cs" />
     <Compile Include="..\referencesource\System.Runtime.DurableInstancing\System\Runtime\DurableInstancing\DisassociateInstanceKeysExtension.cs" />
@@ -60,9 +60,9 @@
     <Compile Include="..\referencesource\System.Runtime.DurableInstancing\System\Runtime\DurableInstancing\InstanceKeyNotReadyException.cs" />
     <Compile Include="..\referencesource\System.Runtime.DurableInstancing\System\Runtime\DurableInstancing\InstanceKeyState.cs" />
     <Compile Include="..\referencesource\System.Runtime.DurableInstancing\System\Runtime\DurableInstancing\InstanceKeyView.cs" />
-    <Compile Include="..\referencesource\System.Runtime.DurableInstancing\System\Runtime\DurableInstancing\InstanceLockedException.cs" />
     <Compile Include="..\referencesource\System.Runtime.DurableInstancing\System\Runtime\DurableInstancing\InstanceLockLostException.cs" />
     <Compile Include="..\referencesource\System.Runtime.DurableInstancing\System\Runtime\DurableInstancing\InstanceLockQueryResult.cs" />
+    <Compile Include="..\referencesource\System.Runtime.DurableInstancing\System\Runtime\DurableInstancing\InstanceLockedException.cs" />
     <Compile Include="..\referencesource\System.Runtime.DurableInstancing\System\Runtime\DurableInstancing\InstanceNormalEvent.cs" />
     <Compile Include="..\referencesource\System.Runtime.DurableInstancing\System\Runtime\DurableInstancing\InstanceNotReadyException.cs" />
     <Compile Include="..\referencesource\System.Runtime.DurableInstancing\System\Runtime\DurableInstancing\InstanceOwner.cs" />
@@ -93,6 +93,7 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="SRCore.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

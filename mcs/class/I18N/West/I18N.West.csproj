@@ -104,6 +104,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\..\build\common\Consts.cs" />
     <Compile Include="..\Assembly\AssemblyInfo.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="CP863.cs" />
     <Compile Include="CP865.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../Common/I18N.csproj" />

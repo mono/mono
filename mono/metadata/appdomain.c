@@ -178,9 +178,11 @@ mono_runtime_get_no_exec (void)
 static void
 create_domain_objects (MonoDomain *domain)
 {
+	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
+
 	MonoDomain *old_domain = mono_domain_get ();
-	MonoString *arg;
+	MonoStringHandle arg;
 	MonoVTable *string_vt;
 	MonoClassField *string_empty_fld;
 
@@ -195,7 +197,7 @@ create_domain_objects (MonoDomain *domain)
 	 */
 	string_vt = mono_class_vtable_checked (domain, mono_defaults.string_class, error);
 	mono_error_assert_ok (error);
-	string_empty_fld = mono_class_get_field_from_name (mono_defaults.string_class, "Empty");
+	string_empty_fld = mono_class_get_field_from_name_full (mono_defaults.string_class, "Empty", NULL);
 	g_assert (string_empty_fld);
 	MonoString *empty_str = mono_string_new_checked (domain, "", error);
 	mono_error_assert_ok (error);
@@ -207,26 +209,26 @@ create_domain_objects (MonoDomain *domain)
 	/*
 	 * Create an instance early since we can't do it when there is no memory.
 	 */
-	arg = mono_string_new_checked (domain, "Out of memory", error);
+	arg = mono_string_new_handle (domain, "Out of memory", error);
 	mono_error_assert_ok (error);
-	domain->out_of_memory_ex = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "OutOfMemoryException", arg, NULL, error);
+	domain->out_of_memory_ex = MONO_HANDLE_RAW (mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "OutOfMemoryException", arg, NULL_HANDLE_STRING, error));
 	mono_error_assert_ok (error);
 
 	/* 
 	 * These two are needed because the signal handlers might be executing on
 	 * an alternate stack, and Boehm GC can't handle that.
 	 */
-	arg = mono_string_new_checked (domain, "A null value was found where an object instance was required", error);
+	arg = mono_string_new_handle (domain, "A null value was found where an object instance was required", error);
 	mono_error_assert_ok (error);
-	domain->null_reference_ex = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "NullReferenceException", arg, NULL, error);
+	domain->null_reference_ex = MONO_HANDLE_RAW (mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "NullReferenceException", arg, NULL_HANDLE_STRING, error));
 	mono_error_assert_ok (error);
-	arg = mono_string_new_checked (domain, "The requested operation caused a stack overflow.", error);
+	arg = mono_string_new_handle (domain, "The requested operation caused a stack overflow.", error);
 	mono_error_assert_ok (error);
-	domain->stack_overflow_ex = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "StackOverflowException", arg, NULL, error);
+	domain->stack_overflow_ex = MONO_HANDLE_RAW (mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "StackOverflowException", arg, NULL_HANDLE_STRING, error));
 	mono_error_assert_ok (error);
 
 	/*The ephemeron tombstone i*/
-	domain->ephemeron_tombstone = mono_object_new_checked (domain, mono_defaults.object_class, error);
+	domain->ephemeron_tombstone = MONO_HANDLE_RAW (mono_object_new_handle (domain, mono_defaults.object_class, error));
 	mono_error_assert_ok (error);
 
 	if (domain != old_domain) {
@@ -239,6 +241,7 @@ create_domain_objects (MonoDomain *domain)
 	 * stack overflows while handling stack overflows.
 	 */
 	mono_class_init (mono_class_create_array (mono_defaults.int_class, 1));
+	HANDLE_FUNCTION_RETURN ();
 }
 
 /**
@@ -264,8 +267,10 @@ mono_runtime_init (MonoDomain *domain, MonoThreadStartCB start_cb, MonoThreadAtt
 void
 mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoThreadAttachCB attach_cb, MonoError *error)
 {
-	MonoAppDomainSetup *setup;
-	MonoAppDomain *ad;
+	HANDLE_FUNCTION_ENTER ();
+
+	MonoAppDomainSetupHandle setup;
+	MonoAppDomainHandle ad;
 	MonoClass *klass;
 
 	error_init (error);
@@ -287,17 +292,17 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 	mono_thread_init (start_cb, attach_cb);
 
 	klass = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
-	setup = (MonoAppDomainSetup *) mono_object_new_pinned (domain, klass, error);
-	return_if_nok (error);
+	setup = MONO_HANDLE_CAST (MonoAppDomainSetup, mono_object_new_pinned_handle (domain, klass, error));
+	goto_if_nok (error, exit);
 
 	klass = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomain");
 
-	ad = (MonoAppDomain *) mono_object_new_pinned (domain, klass, error);
-	return_if_nok (error);
+	ad = MONO_HANDLE_CAST (MonoAppDomain, mono_object_new_pinned_handle (domain, klass, error));
+	goto_if_nok (error, exit);
 
-	ad->data = domain;
-	domain->domain = ad;
-	domain->setup = setup;
+	MONO_HANDLE_SETVAL (ad, data, MonoDomain*, domain);
+	domain->domain = MONO_HANDLE_RAW (ad);
+	domain->setup = MONO_HANDLE_RAW (setup);
 
 	mono_thread_attach (domain);
 
@@ -311,7 +316,7 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 
 	/* contexts use GC handles, so they must be initialized after the GC */
 	mono_context_init_checked (domain, error);
-	return_if_nok (error);
+	goto_if_nok (error, exit);
 	mono_context_set_default_context (domain);
 
 #ifndef DISABLE_SOCKETS
@@ -326,7 +331,8 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 	/* mscorlib is loaded before we install the load hook */
 	mono_domain_fire_assembly_load (mono_defaults.corlib->assembly, NULL);
 
-	return;
+exit:
+	HANDLE_FUNCTION_RETURN ();
 }
 
 static void
@@ -337,25 +343,31 @@ mono_context_set_default_context (MonoDomain *domain)
 	HANDLE_FUNCTION_RETURN ();
 }
 
-
 static int
 mono_get_corlib_version (void)
 {
+	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
+
 	MonoClass *klass;
 	MonoClassField *field;
-	MonoObject *value;
+	MonoObjectHandle value;
+	int result = - 1;
 
 	klass = mono_class_load_from_name (mono_defaults.corlib, "System", "Environment");
 	mono_class_init (klass);
-	field = mono_class_get_field_from_name (klass, "mono_corlib_version");
+	field = mono_class_get_field_from_name_full (klass, "mono_corlib_version", NULL);
 	if (!field)
-		return -1;
+		goto exit;
+
 	if (! (field->type->attrs & FIELD_ATTRIBUTE_STATIC))
-		return -1;
-	value = mono_field_get_value_object_checked (mono_domain_get (), field, NULL, error);
+		goto exit;
+
+	value = mono_static_field_get_value_handle (mono_domain_get (), field, error);
 	mono_error_assert_ok (error);
-	return *(gint32*)((gchar*)value + sizeof (MonoObject));
+	result = *(gint32*)mono_handle_unbox_unsafe (value);
+exit:
+	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
 /**
@@ -383,7 +395,7 @@ mono_check_corlib_version_internal (void)
 
 	/* Check that the managed and unmanaged layout of MonoInternalThread matches */
 	guint32 native_offset = (guint32) MONO_STRUCT_OFFSET (MonoInternalThread, last);
-	guint32 managed_offset = mono_field_get_offset (mono_class_get_field_from_name (mono_defaults.internal_thread_class, "last"));
+	guint32 managed_offset = mono_field_get_offset (mono_class_get_field_from_name_full (mono_defaults.internal_thread_class, "last", NULL));
 	if (native_offset != managed_offset)
 		return g_strdup_printf ("expected InternalThread.last field offset %u, found %u. See InternalThread.last comment", native_offset, managed_offset);
 
@@ -707,7 +719,7 @@ mono_domain_has_type_resolve (MonoDomain *domain)
 	MonoObject *o;
 
 	if (field == NULL) {
-		field = mono_class_get_field_from_name (mono_defaults.appdomain_class, "TypeResolve");
+		field = mono_class_get_field_from_name_full (mono_defaults.appdomain_class, "TypeResolve", NULL);
 		g_assert (field);
 	}
 
@@ -1345,7 +1357,7 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 	mono_domain_assemblies_unlock (domain);
 
 	if (assembly_load_field == NULL) {
-		assembly_load_field = mono_class_get_field_from_name (klass, "AssemblyLoad");
+		assembly_load_field = mono_class_get_field_from_name_full (klass, "AssemblyLoad", NULL);
 		g_assert (assembly_load_field);
 	}
 
@@ -1787,7 +1799,7 @@ shadow_copy_create_ini (const char *shadow, const char *filename)
 	guint16 *u16_ini;
 	gboolean result;
 	guint32 n;
-	HANDLE *handle;
+	HANDLE handle;
 	gchar *full_path;
 
 	dir_name = g_path_get_dirname (shadow);
@@ -1803,14 +1815,15 @@ shadow_copy_create_ini (const char *shadow, const char *filename)
 	if (!u16_ini) {
 		return FALSE;
 	}
-	handle = (void **)mono_w32file_create (u16_ini, GENERIC_WRITE, FILE_SHARE_READ|FILE_SHARE_WRITE, CREATE_NEW, FileAttributes_Normal);
+	handle = mono_w32file_create (u16_ini, GENERIC_WRITE, FILE_SHARE_READ|FILE_SHARE_WRITE, CREATE_NEW, FileAttributes_Normal);
 	g_free (u16_ini);
 	if (handle == INVALID_HANDLE_VALUE) {
 		return FALSE;
 	}
 
 	full_path = mono_path_resolve_symlinks (filename);
-	result = mono_w32file_write (handle, full_path, strlen (full_path), &n);
+	gint32 win32error = 0;
+	result = mono_w32file_write (handle, full_path, strlen (full_path), &n, &win32error);
 	g_free (full_path);
 	mono_w32file_close (handle);
 	return result;

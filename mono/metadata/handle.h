@@ -46,10 +46,10 @@
 // NOTE: Running this code depends on the ABI to pass a struct
 // with a pointer the same as a pointer. This is tied in with
 // marshaling. If this is not the case, turn off type-safety, perhaps per-OS per-CPU.
-#if !defined (HOST_WASM) && (!defined (TARGET_X86) || defined (HOST_WIN32) || defined (HOST_DARWIN))
+#if defined (HOST_DARWIN) || defined (HOST_WIN32) || defined (HOST_ARM64) || defined (HOST_ARM) || defined (HOST_AMD64)
 #define MONO_TYPE_SAFE_HANDLES 1
 #else
-#define MONO_TYPE_SAFE_HANDLES 0
+#define MONO_TYPE_SAFE_HANDLES 0 // PowerPC, S390X, SPARC, MIPS, Linux/x86, BSD/x86, etc.
 #endif
 
 G_BEGIN_DECLS
@@ -422,7 +422,7 @@ MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
 // Otherwise we are forced to evaluate twice, or use C++.
 #ifdef _MSC_VER
 typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type unrelated to anything else
-#define MONO_TYPEOF_CAST(typeexpr, expr) (0 ? (typeexpr) : (MonoTypeofCastHelper)(expr))
+#define MONO_TYPEOF_CAST(typeexpr, expr) __pragma(warning(suppress:4133))(0 ? (typeexpr) : (MonoTypeofCastHelper)(expr))
 #else
 #define MONO_TYPEOF_CAST(typeexpr, expr) ((typeof (typeexpr))(expr))
 #endif
@@ -638,8 +638,8 @@ be reviewed and probably changed FIXME.
 */
 extern const MonoObjectHandle mono_null_value_handle;
 #define NULL_HANDLE mono_null_value_handle
-#define NULL_HANDLE_STRING MONO_HANDLE_CAST(MonoString, NULL_HANDLE)
-#define NULL_HANDLE_ARRAY (MONO_HANDLE_CAST (MonoArray, NULL_HANDLE))
+#define NULL_HANDLE_STRING (MONO_HANDLE_CAST (MonoString, NULL_HANDLE))
+#define NULL_HANDLE_ARRAY  (MONO_HANDLE_CAST (MonoArray,  NULL_HANDLE))
 
 #if MONO_TYPE_SAFE_HANDLES
 

@@ -44,14 +44,15 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Runtime.Remoting\GlobalSuppressions.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Runtime.Remoting\Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Runtime.Remoting\Reactive\Linq\Observable.Remoting.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Runtime.Remoting\Reactive\Linq\QueryLanguage.Remoting.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

@@ -355,8 +355,6 @@
 		
 		<!-- domain.c: mono_defaults.string_class -->
 		<type fullname="System.String" preserve="fields">
-			<!-- marshal.c mono_marshal_get_native_wrapper -->
-			<method name="CreateString" />
 			<!-- method-to-ir.c: mini_redirect_call -->
 			<method name="InternalAllocateStr" />
 			<!-- method-to-it.c: mini_emit_initobj -->

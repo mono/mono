@@ -43,8 +43,11 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+    <Compile Include="Commons.Xml.Relaxng.Rnc\RncParser.cs" />
+  </ItemGroup>
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
@@ -84,8 +87,8 @@
     <Compile Include="Commons.Xml.Relaxng\RelaxngValidatingReader.cs" />
     <Compile Include="Commons.Xml.Relaxng\XsdDatatypeProvider.cs" />
     <Compile Include="Commons.Xml\XmlDefaultReader.cs" />
-    <Compile Include="Commons.Xml.Relaxng.Rnc\RncParser.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

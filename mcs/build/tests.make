@@ -27,12 +27,17 @@ xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttri
 ifeq ($(USE_XTEST_REMOTE_EXECUTOR), YES)
 XTEST_REMOTE_EXECUTOR = $(topdir)/class/lib/$(PROFILE)/RemoteExecutorConsoleApp.exe
 xunit_src += $(topdir)/../mcs/class/test-helpers/AdminHelper.cs \
-$(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs \
 $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/IO/FileCleanupTestBase.cs \
-$(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs \
 $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.cs \
 $(topdir)/../external/corefx/src/Common/src/System/PasteArguments.cs \
 $(topdir)/../external/corefx/src/Common/src/System/PasteArguments.Unix.cs
+
+ifeq ($(PROFILE),monodroid)
+xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mobile.cs
+else
+xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs \
+$(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs
+endif
 endif
 
 xunit_class_deps := 
@@ -267,7 +272,8 @@ ifdef HAVE_CS_XTESTS
 
 XTEST_HARNESS_PATH := $(topdir)/../external/xunit-binaries
 XTEST_HARNESS = $(XTEST_HARNESS_PATH)/xunit.console.exe
-XTEST_HARNESS_FLAGS := -noappdomain -noshadow -parallel none -nunit TestResult-$(PROFILE)-xunit.xml
+XTEST_RESULT_FILE := TestResult-$(PROFILE)-xunit.xml
+XTEST_HARNESS_FLAGS := -noappdomain -noshadow -parallel none -nunit $(XTEST_RESULT_FILE)
 XTEST_TRAIT := -notrait category=failing -notrait category=nonmonotests -notrait Benchmark=true -notrait category=outerloop
 # The logic is double inverted so this actually excludes tests not intented for current platform
 # best to search for `property name="category"` in the xml output to see what's going on
@@ -297,6 +303,7 @@ run-xunit-test-lib: xunit-test-local $(XTEST_REMOTE_EXECUTOR)
 	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll xunit.execution.desktop.dll
 	ok=:; \
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" REMOTE_EXECUTOR=$(XTEST_REMOTE_EXECUTOR) $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) $(XTEST_TRAIT_PLATFORM) || ok=false; \
+	if [ -n "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE" ]; then echo "$(abspath $(XTEST_RESULT_FILE))" >> "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE"; fi; \
 	$$ok
 	@rm -f xunit.execution.desktop.dll
 

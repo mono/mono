@@ -103,6 +103,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\TaskToApm.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\DeflateManaged\BlockType.cs" />
@@ -133,11 +134,12 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="TypeForwarders.cs" />
     <Compile Include="corefx\Crc32Helper.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\ZipArchiveEntry.Mono.cs" />
-    <Compile Include="TypeForwarders.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />

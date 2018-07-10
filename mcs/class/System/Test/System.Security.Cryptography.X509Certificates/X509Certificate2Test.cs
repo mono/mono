@@ -1679,7 +1679,7 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			// http://bugzilla.ximian.com/show_bug.cgi?id=77295
 			byte[] raw = Encoding.ASCII.GetBytes (t61string_cert);
 			X509Certificate2 cert = new X509Certificate2 (raw);
-			string subject = "OID.2.5.4.5=CVR:13471967-UID:121212121212, E=vhm@use.test.dk, CN=Hedeby's Møbelhandel - Salgsafdelingen, O=Hedeby's Møbelhandel // CVR:13471967, C=DK";
+			string subject = "SERIALNUMBER=CVR:13471967-UID:121212121212, E=vhm@use.test.dk, CN=Hedeby's Møbelhandel - Salgsafdelingen, O=Hedeby's Møbelhandel // CVR:13471967, C=DK";
 			Assert.AreEqual (subject, cert.Subject, "Subject");
 			Assert.AreEqual (subject, cert.SubjectName.Name, "SubjectName");
 			string issuer = "CN=KMD Intern Test - KUN TIL TEST/NO LIABILITY GIVEN, OU=KMD, O=KMD, C=DK";

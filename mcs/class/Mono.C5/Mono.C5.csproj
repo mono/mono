@@ -43,12 +43,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <Compile Include="C5\arrays\ArrayList.cs" />
-    <Compile Include="C5\arrays\CircularQueue.cs" />
-    <Compile Include="C5\arrays\HashedArrayList.cs" />
-    <Compile Include="C5\arrays\SortedArray.cs" />
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="C5\AssemblyInfo.cs" />
     <Compile Include="C5\Attributes.cs" />
     <Compile Include="C5\Builtin.cs" />
@@ -61,24 +57,29 @@
     <Compile Include="C5\Exceptions.cs" />
     <Compile Include="C5\Formatting.cs" />
     <Compile Include="C5\Hashers.cs" />
-    <Compile Include="C5\hashing\HashBag.cs" />
-    <Compile Include="C5\hashing\HashDictionary.cs" />
-    <Compile Include="C5\hashing\HashTable.cs" />
-    <Compile Include="C5\heaps\IntervalHeap.cs" />
     <Compile Include="C5\Interfaces.cs" />
-    <Compile Include="C5\linkedlists\HashedLinkedList.cs" />
-    <Compile Include="C5\linkedlists\LinkedList.cs" />
     <Compile Include="C5\MappedEnumerators.cs" />
     <Compile Include="C5\Random.cs" />
     <Compile Include="C5\Records.cs" />
     <Compile Include="C5\Sorting.cs" />
-    <Compile Include="C5\trees\RedBlackTreeBag.cs" />
-    <Compile Include="C5\trees\RedBlackTreeDictionary.cs" />
-    <Compile Include="C5\trees\RedBlackTreeSet.cs" />
     <Compile Include="C5\ViewSupport.cs" />
     <Compile Include="C5\WrappedArray.cs" />
     <Compile Include="C5\Wrappers.cs" />
+    <Compile Include="C5\arrays\ArrayList.cs" />
+    <Compile Include="C5\arrays\CircularQueue.cs" />
+    <Compile Include="C5\arrays\HashedArrayList.cs" />
+    <Compile Include="C5\arrays\SortedArray.cs" />
+    <Compile Include="C5\hashing\HashBag.cs" />
+    <Compile Include="C5\hashing\HashDictionary.cs" />
+    <Compile Include="C5\hashing\HashTable.cs" />
+    <Compile Include="C5\heaps\IntervalHeap.cs" />
+    <Compile Include="C5\linkedlists\HashedLinkedList.cs" />
+    <Compile Include="C5\linkedlists\LinkedList.cs" />
+    <Compile Include="C5\trees\RedBlackTreeBag.cs" />
+    <Compile Include="C5\trees\RedBlackTreeDictionary.cs" />
+    <Compile Include="C5\trees\RedBlackTreeSet.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
