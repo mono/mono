@@ -260,6 +260,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\GlobalizationExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HResults.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HashCode.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ISpanFormattable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Marvin.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MathF.cs" />
@@ -1992,6 +1993,7 @@
     <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+    <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2007,6 +2009,7 @@
     <Compile Include="System\Environment.iOS.cs" />
     <Compile Include="System\Guid.MonoTouch.cs" />
     <Compile Include="System\NotSupportedException.iOS.cs" />
+    <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2022,6 +2025,7 @@
     <Compile Include="System\Environment.iOS.cs" />
     <Compile Include="System\Guid.MonoTouch.cs" />
     <Compile Include="System\NotSupportedException.iOS.cs" />
+    <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2037,13 +2041,13 @@
     <Compile Include="System\Environment.iOS.cs" />
     <Compile Include="System\Guid.MonoTouch.cs" />
     <Compile Include="System\NotSupportedException.iOS.cs" />
+    <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)|$(HostPlatform)' == 'net_4_x|linux' ">
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HashCode.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
@@ -2064,7 +2068,6 @@
   <ItemGroup Condition=" '$(Platform)|$(HostPlatform)' == 'net_4_x|macos' ">
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HashCode.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
@@ -2085,7 +2088,6 @@
   <ItemGroup Condition=" '$(Platform)|$(HostPlatform)' == 'net_4_x|unix' ">
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HashCode.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
@@ -2106,7 +2108,6 @@
   <ItemGroup Condition=" '$(Platform)|$(HostPlatform)' == 'net_4_x|win32' ">
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Interop.Libraries.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HashCode.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.MemAllocFree.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.ThreadPoolIO.cs" />
@@ -2152,6 +2153,7 @@
     <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+    <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2170,6 +2172,7 @@
     <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+    <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2188,13 +2191,13 @@
     <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+    <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Interop.Libraries.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\HashCode.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.MemAllocFree.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.ThreadPoolIO.cs" />
@@ -2233,6 +2236,7 @@
     <Compile Include="CommonCrypto\RC4CommonCrypto.cs" />
     <Compile Include="CommonCrypto\RNGCryptoServiceProvider.cryptor.cs" />
     <Compile Include="CommonCrypto\RijndaelManaged.cs" />
+    <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
