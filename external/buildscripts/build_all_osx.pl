@@ -90,11 +90,10 @@ if ($artifact)
 		die("Expected source directory not found : $embedDirSource64\n");
 	}
 
-	# Create universal binaries
 	for my $file ('libmonobdwgc-2.0.dylib','libmonosgen-2.0.dylib','libMonoPosixHelper.dylib')
 	{
-		print(">>> lipo $embedDirSource32/$file $embedDirSource64/$file -create -output $embedDirDestination/$file\n\n");
-		system ('lipo', "$embedDirSource32/$file", "$embedDirSource64/$file", '-create', '-output', "$embedDirDestination/$file");
+		print(">>> cp $embedDirSource64/$file $embedDirDestination/$file\n\n");
+		system ('cp', "$embedDirSource64/$file", "$embedDirDestination/$file");
 	}
 
 	if (not $buildMachine)
@@ -146,11 +145,10 @@ if ($artifact)
 		system ('lipo', "$distDirSourceBin32/$file", "$distDirSourceBin64/$file", '-create', '-output', "$distDirDestinationBin/$file");
 	}
 
-	#Create universal binaries for stuff is in the embed dir but will end up in the dist dir
 	for my $file ('libMonoPosixHelper.dylib')
 	{
-		print(">>> lipo $embedDirSource32/$file $embedDirSource64/$file -create -output $distDirDestinationLib/$file\n\n");
-		system ('lipo', "$embedDirSource32/$file", "$embedDirSource64/$file", '-create', '-output', "$distDirDestinationLib/$file");
+		print(">>> cp $embedDirSource64/$file $distDirDestinationLib/$file\n\n");
+		system ('cp', "$embedDirSource64/$file", "$distDirDestinationLib/$file");
 	}
 
 	if ($buildMachine)
