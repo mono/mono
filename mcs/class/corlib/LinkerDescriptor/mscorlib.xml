@@ -842,5 +842,16 @@
 		<type fullname="Mono.RuntimeStructs/HandleStackMark" />
 		<!-- marshal.c (mono_marshal_get_native_wrapper) -->
 		<type fullname="Mono.RuntimeStructs/MonoError" />
+
+		<!-- IL2CPP enum sharing -->
+		<type fullname="System.SByteEnum" />
+		<type fullname="System.Int16Enum" />
+		<type fullname="System.Int32Enum" />
+		<type fullname="System.Int64Enum" />
+		
+		<type fullname="System.ByteEnum" />
+		<type fullname="System.UInt16Enum" />
+		<type fullname="System.UInt32Enum" />
+		<type fullname="System.UInt64Enum" />
 	</assembly>
 </linker>
