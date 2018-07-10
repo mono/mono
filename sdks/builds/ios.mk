@@ -135,8 +135,8 @@ tvos_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVOS.platform/Developer/SDK
 watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCH_VERSION).sdk -mwatchos-version-min=$(WATCHOS_VERSION_MIN)
 
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
-ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no $(BITCODE_CONFIGURE_FLAGS)
-ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend $(BITCODE_CONFIGURE_FLAGS)
+ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no $(BITCODE_CONFIGURE_FLAGS) --with-monotouch-tv
+ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend $(BITCODE_CONFIGURE_FLAGS) --with-monotouch-watch
 
 ios-target32_SYSROOT = $(ios_sysroot)
 ios-target32s_SYSROOT = $(ios_sysroot)
