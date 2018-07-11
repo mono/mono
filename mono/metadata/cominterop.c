@@ -898,8 +898,7 @@ cominterop_get_native_wrapper_adjusted (MonoMethod *method)
 	mb_native = mono_mb_new (method->klass, method->name, MONO_WRAPPER_MANAGED_TO_NATIVE);
 	sig_native = cominterop_method_signature (method);
 
-	mspecs = g_new (MonoMarshalSpec*, sig_native->param_count+1);
-	memset (mspecs, 0, sizeof(MonoMarshalSpec*)*(sig_native->param_count+1));
+	mspecs = g_new0 (MonoMarshalSpec*, sig_native->param_count + 1);
 
 	mono_method_get_marshal_info (method, mspecs);
 
