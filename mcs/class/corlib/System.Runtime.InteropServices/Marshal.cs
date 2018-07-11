@@ -117,6 +117,8 @@ namespace System.Runtime.InteropServices
 		unsafe internal static void copy_to_unmanaged (byte[] source, int startIndex,
 		       IntPtr destination, int length)
 		{
+			if (length == 0) // else startIndex might == source.Length and Arg_IndexOutOfRangeException
+				return;
 			fixed (void* fixed_source = &source [startIndex])
 				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
 		}
@@ -124,6 +126,72 @@ namespace System.Runtime.InteropServices
 		unsafe internal static void copy_to_unmanaged (char[] source, int startIndex,
 		       IntPtr destination, int length)
 		{
+			if (length == 0) // else startIndex might == source.Length and Arg_IndexOutOfRangeException
+				return;
+			fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (byte[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (length == 0) // else startIndex might == source.Length and Arg_IndexOutOfRangeException
+				return;
+			fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (char[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (length == 0) // else startIndex might == source.Length and Arg_IndexOutOfRangeException
+				return;
+			fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (short[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (length == 0) // else startIndex might == source.Length and Arg_IndexOutOfRangeException
+				return;
+			fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (int[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (length == 0) // else startIndex might == source.Length and Arg_IndexOutOfRangeException
+				return;
+			fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (long[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (length == 0) // else startIndex might == source.Length and Arg_IndexOutOfRangeException
+				return;
+			fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (float[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (length == 0) // else startIndex might == source.Length and Arg_IndexOutOfRangeException
+				return;
+			fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (double[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (length == 0) // else startIndex might == source.Length and Arg_IndexOutOfRangeException
+				return;
+			fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (IntPtr[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (length == 0) // else startIndex might == source.Length and Arg_IndexOutOfRangeException
+				return;
 			fixed (void* fixed_source = &source [startIndex])
 				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
 		}
@@ -132,98 +200,66 @@ namespace System.Runtime.InteropServices
 		unsafe internal extern static void copy_from_unmanaged (IntPtr source, int startIndex,
 			Array destination, int length, void* fixed_destination_element);
 
-		public unsafe static void Copy (byte[] source, int startIndex, IntPtr destination, int length)
-		{
-			fixed (void* fixed_source = &source [startIndex])
-				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
-		}
-
-		public unsafe static void Copy (char[] source, int startIndex, IntPtr destination, int length)
-		{
-			fixed (void* fixed_source = &source [startIndex])
-				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
-		}
-
-		public unsafe static void Copy (short[] source, int startIndex, IntPtr destination, int length)
-		{
-			fixed (void* fixed_source = &source [startIndex])
-				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
-		}
-
-		public unsafe static void Copy (int[] source, int startIndex, IntPtr destination, int length)
-		{
-			fixed (void* fixed_source = &source [startIndex])
-				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
-		}
-
-		public unsafe static void Copy (long[] source, int startIndex, IntPtr destination, int length)
-		{
-			fixed (void* fixed_source = &source [startIndex])
-				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
-		}
-
-		public unsafe static void Copy (float[] source, int startIndex, IntPtr destination, int length)
-		{
-			fixed (void* fixed_source = &source [startIndex])
-				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
-		}
-
-		public unsafe static void Copy (double[] source, int startIndex, IntPtr destination, int length)
-		{
-			fixed (void* fixed_source = &source [startIndex])
-				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
-		}
-
-		public unsafe static void Copy (IntPtr[] source, int startIndex, IntPtr destination, int length)
-		{
-			fixed (void* fixed_source = &source [startIndex])
-				copy_to_unmanaged (source, startIndex, destination, length, fixed_source);
-		}
-
 		public unsafe static void Copy (IntPtr source, byte[] destination, int startIndex, int length)
 		{
+			if (length == 0) // else startIndex might == destination.Length and Arg_IndexOutOfRangeException
+				return;
 			fixed (void* fixed_destination = &destination [startIndex])
 				copy_from_unmanaged (source, startIndex, destination, length, fixed_destination);
 		}
 
 		public unsafe static void Copy (IntPtr source, char[] destination, int startIndex, int length)
 		{
+			if (length == 0) // else startIndex might == destination.Length and Arg_IndexOutOfRangeException
+				return;
 			fixed (void* fixed_destination = &destination [startIndex])
 				copy_from_unmanaged (source, startIndex, destination, length, fixed_destination);
 		}
 
 		public unsafe static void Copy (IntPtr source, short[] destination, int startIndex, int length)
 		{
+			if (length == 0) // else startIndex might == destination.Length and Arg_IndexOutOfRangeException
+				return;
 			fixed (void* fixed_destination = &destination [startIndex])
 				copy_from_unmanaged (source, startIndex, destination, length, fixed_destination);
 		}
 
 		public unsafe static void Copy (IntPtr source, int[] destination, int startIndex, int length)
 		{
+			if (length == 0) // else startIndex might == destination.Length and Arg_IndexOutOfRangeException
+				return;
 			fixed (void* fixed_destination = &destination [startIndex])
 				copy_from_unmanaged (source, startIndex, destination, length, fixed_destination);
 		}
 
 		public unsafe static void Copy (IntPtr source, long[] destination, int startIndex, int length)
 		{
+			if (length == 0) // else startIndex might == destination.Length and Arg_IndexOutOfRangeException
+				return;
 			fixed (void* fixed_destination = &destination [startIndex])
 				copy_from_unmanaged (source, startIndex, destination, length, fixed_destination);
 		}
 
 		public unsafe static void Copy (IntPtr source, float[] destination, int startIndex, int length)
 		{
+			if (length == 0) // else startIndex might == destination.Length and Arg_IndexOutOfRangeException
+				return;
 			fixed (void* fixed_destination = &destination [startIndex])
 				copy_from_unmanaged (source, startIndex, destination, length, fixed_destination);
 		}
 
 		public unsafe static void Copy (IntPtr source, double[] destination, int startIndex, int length)
 		{
+			if (length == 0) // else startIndex might == destination.Length and Arg_IndexOutOfRangeException
+				return;
 			fixed (void* fixed_destination = &destination [startIndex])
 				copy_from_unmanaged (source, startIndex, destination, length, fixed_destination);
 		}
 
 		public unsafe static void Copy (IntPtr source, IntPtr[] destination, int startIndex, int length)
 		{
+			if (length == 0) // else startIndex might == destination.Length and Arg_IndexOutOfRangeException
+				return;
 			fixed (void* fixed_destination = &destination [startIndex])
 				copy_from_unmanaged (source, startIndex, destination, length, fixed_destination);
 		}
