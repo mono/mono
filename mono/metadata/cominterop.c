@@ -578,14 +578,9 @@ static gpointer
 cominterop_get_interface (MonoComObject *obj, MonoClass *ic)
 {
 	ERROR_DECL (error);
-	gpointer itf = cominterop_get_interface_checked (obj, ic, error);
-	if (!is_ok (error)) {
-		mono_error_set_pending_exception (error);
-		return NULL;
-	}
-
-	g_assert (itf);
-
+	gpointer const itf = cominterop_get_interface_checked (obj, ic, error);
+	g_assert (!!itf == is_ok (error)); // two equal success indicators
+	mono_error_set_pending_exception (error);
 	return itf;
 }
 
