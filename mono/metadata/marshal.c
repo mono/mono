@@ -5115,7 +5115,7 @@ ptr_to_structure (gconstpointer src, MonoObjectHandle dst, MonoError *error)
 
 	gpointer pa [ ] = { &src, MONO_HANDLE_RAW (dst) };
 
-	mono_runtime_invoke_checked (method, NULL, pa, error);
+	mono_runtime_invoke_handle (method, NULL_HANDLE, pa, error);
 }
 
 void
