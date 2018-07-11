@@ -5130,13 +5130,10 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure (gconstpointer s
 
 	if (t->type == MONO_TYPE_VALUETYPE) {
 		mono_error_set_argument (error, "dst", "Destination is a boxed value type.");
-		mono_error_set_pending_exception (error);
 		return;
 	}
 
 	ptr_to_structure (src, dst, error);
-	if (!mono_error_ok (error))
-		mono_error_set_pending_exception (error);
 }
 
 MonoObjectHandle
