@@ -31,7 +31,6 @@ void
 mono_marshal_free_hglobal (gpointer ptr)
 {
 	GlobalFree (ptr);
-	return;
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
@@ -45,7 +44,6 @@ void
 mono_marshal_free_co_task_mem (void *ptr)
 {
 	CoTaskMemFree (ptr);
-	return;
 }
 
 gpointer
@@ -54,66 +52,63 @@ mono_marshal_realloc_co_task_mem (gpointer ptr, size_t size)
 	return CoTaskMemRealloc (ptr, size);
 }
 
-gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (MonoString *string)
+char*
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, gsize length, MonoError *error)
 {
-	ERROR_DECL (error);
-	char* tres, *ret;
-	size_t len;
-	tres = mono_string_to_utf8_checked (string, error);
-	if (mono_error_set_pending_exception (error))
-		return NULL;
+	char* tres = mono_utf16_to_utf8 (s, length, error);
+	return_val_if_nok (error, NULL);
 	if (!tres)
 		return tres;
 
 	/*
-	 * mono_string_to_utf8_checked() returns a memory area at least as large as the size of the
-	 * MonoString, even if it contains NULL characters. The copy we allocate here has to be equally
+	 * mono_utf16_to_utf8() returns a memory area at least as large as length,
+	 * even if it contains NULL characters. The copy we allocate here has to be equally
 	 * large.
 	 */
-	len = MAX (strlen (tres) + 1, string->length);
-	ret = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal ((gpointer)len);
+	size_t len = MAX (strlen (tres) + 1, length);
+	char* ret = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len);
+	// FIXME This overreads tres.
 	memcpy (ret, tres, len);
 	g_free (tres);
 	return ret;
 }
 
 gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (MonoString *string)
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunichar2 *s, gsize length, MonoError *error)
 {
 	if (string == NULL)
 		return NULL;
-	else {
-		size_t len = ((mono_string_length (string) + 1) * 2);
-		gunichar2 *res = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal ((gpointer)len);
 
-		memcpy (res, mono_string_chars (string), mono_string_length (string) * 2);
-		res [mono_string_length (string)] = 0;
-		return res;
-	}
+	size_t len = (length + 1) * 2);
+	gunichar2 *res = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len);
+
+	memcpy (res, s, length * 2);
+	res [length] = 0;
+	return res;
 }
 
 gpointer
-mono_string_to_utf8str (MonoString *s)
+mono_string_to_utf8str_handle (MonoStringHandle s)
 {
 	char *as, *tmp;
 	glong len;
 	GError *gerror = NULL;
 
-	if (s == NULL)
+	if (MONO_HANDLE_IS_NULL (s))
 		return NULL;
 
-	if (!s->length) {
+	if (!mono_string_handle_length (s)) {
 		as = CoTaskMemAlloc (1);
 		as [0] = '\0';
 		return as;
 	}
 
-	tmp = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &len, &gerror);
+	uint32_t gchandle = 0;
+	tmp = g_utf16_to_utf8 (mono_string_handle_pin_chars (s, &gchandle), mono_string_handle_length (s), NULL, &len, &gerror);
+	mono_gchandle_free (gchandle);
 	if (gerror) {
 		MonoException *exc = mono_get_exception_argument ("string", gerror->message);
 		g_error_free (gerror);
-		mono_set_pending_exception (exc);
 		return NULL;
 	} else {
 		as = CoTaskMemAlloc (len + 1);
@@ -121,6 +116,18 @@ mono_string_to_utf8str (MonoString *s)
 		g_free (tmp);
 		return as;
 	}
+}
+
+/* This is a JIT icall, it sets the pending exception and returns NULL on error. */
+gpointer
+mono_string_to_utf8str (MonoString *s_raw)
+{
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
+	MONO_HANDLE_DCL (MonoObject, s);
+	gpointer result = mono_string_to_utf8str_handle (s, error);
+	mono_error_set_pending_exception (error);
+	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
 #endif /* HOST_WIN32 */
