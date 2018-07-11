@@ -3488,35 +3488,26 @@ mono_marshal_win_safearray_set_value (gpointer safearray, gpointer indices, gpoi
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
 
+#endif /* HOST_WIN32 */
+
 static void
 mono_marshal_safearray_set_value (gpointer safearray, gpointer indices, gpointer value)
 {
 	ERROR_DECL (error);
+#ifdef HOST_WIN32
 	int const hr = mono_marshal_win_safearray_set_value (safearray, indices, value);
+#else
+	int hr = 0;
+	if (com_provider == MONO_COM_MS && init_com_provider_ms ())
+		hr = safe_array_put_element_ms (safearray, (glong *)indices, (void **)value);
+	else
+		g_assert_not_reached ();
+#endif
 	if (hr < 0) {
 		cominterop_set_hr_error (error, hr);
 		mono_error_set_pending_exception (error);
-		return;
 	}
 }
-
-#else /* HOST_WIN32 */
-
-static void
-mono_marshal_safearray_set_value (gpointer safearray, gpointer indices, gpointer value)
-{
-	ERROR_DECL (error);
-	if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
-		int const hr = safe_array_put_element_ms (safearray, (glong *)indices, (void **)value);
-		if (hr < 0) {
-			cominterop_set_hr_error (error, hr);
-			mono_error_set_pending_exception (error);
-			return;
-		}
-	} else
-		g_assert_not_reached ();
-}
-#endif /* HOST_WIN32 */
 
 static 
 void mono_marshal_safearray_free_indices (gpointer indices)
