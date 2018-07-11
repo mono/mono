@@ -331,7 +331,7 @@ cominterop_get_com_slot_begin (MonoClass* klass)
 	mono_error_assert_ok (error);
 	if (cinfo) {
 		itf_attr = (MonoInterfaceTypeAttribute*)mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_interface_type_attribute_class (), error);
-		g_assert (mono_error_ok (error)); /*FIXME proper error handling*/
+		mono_error_assert_ok (error); /*FIXME proper error handling*/
 		if (!cinfo->cached)
 			mono_custom_attrs_free (cinfo);
 	}
@@ -358,7 +358,7 @@ cominterop_get_method_interface (MonoMethod* method)
 	/* if method is on a class, we need to look up interface method exists on */
 	if (!MONO_CLASS_IS_INTERFACE(method->klass)) {
 		GPtrArray *ifaces = mono_class_get_implemented_interfaces (method->klass, error);
-		g_assert (mono_error_ok (error));
+		mono_error_assert_ok (error);
 		if (ifaces) {
 			int i;
 			mono_class_setup_vtable (method->klass);
@@ -450,7 +450,7 @@ cominterop_class_guid (MonoClass* klass, guint8* guid)
 	mono_error_assert_ok (error);
 	if (cinfo) {
 		MonoReflectionGuidAttribute *attr = (MonoReflectionGuidAttribute*)mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_guid_attribute_class (), error);
-		g_assert (mono_error_ok (error)); /*FIXME proper error handling*/
+		mono_error_assert_ok (error); /*FIXME proper error handling*/
 
 		if (!attr)
 			return FALSE;
@@ -475,7 +475,7 @@ cominterop_com_visible (MonoClass* klass)
 	mono_error_assert_ok (error);
 	if (cinfo) {
 		MonoReflectionComVisibleAttribute *attr = (MonoReflectionComVisibleAttribute*)mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_guid_attribute_class (), error);
-		g_assert (mono_error_ok (error)); /*FIXME proper error handling*/
+		mono_error_assert_ok (error); /*FIXME proper error handling*/
 
 		if (attr)
 			visible = attr->visible;
@@ -486,7 +486,7 @@ cominterop_com_visible (MonoClass* klass)
 	}
 
 	ifaces = mono_class_get_implemented_interfaces (klass, error);
-	g_assert (mono_error_ok (error));
+	mono_error_assert_ok (error);
 	if (ifaces) {
 		int i;
 		for (i = 0; i < ifaces->len; ++i) {
@@ -2512,7 +2512,7 @@ cominterop_ccw_queryinterface (MonoCCWInterface* ccwe, const guint8* riid, gpoin
 	klass_iter = klass;
 	while (klass_iter && klass_iter != mono_defaults.object_class) {
 		ifaces = mono_class_get_implemented_interfaces (klass_iter, error);
-		g_assert (mono_error_ok (error));
+		mono_error_assert_ok (error);
 		if (ifaces) {
 			for (i = 0; i < ifaces->len; ++i) {
 				MonoClass *ic = NULL;
@@ -2595,7 +2595,7 @@ cominterop_ccw_get_ids_of_names (MonoCCWInterface* ccwe, gpointer riid,
 			mono_error_assert_ok (error); /* FIXME what's reasonable to do here */
 			if (cinfo) {
 				MonoObject *result = mono_custom_attrs_get_attr_checked (cinfo, ComDispIdAttribute, error);
-				g_assert (mono_error_ok (error)); /*FIXME proper error handling*/;
+				mono_error_assert_ok (error); /*FIXME proper error handling*/;
 
 				if (result)
 					rgDispId[i] = *(gint32*)mono_object_unbox (result);
