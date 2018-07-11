@@ -516,6 +516,7 @@ cominterop_set_hr_error (MonoError *oerror, int hr)
 	}
 
 	ex = (MonoException*)mono_runtime_invoke_checked (throw_exception_for_hr, NULL, params, error);
+	g_assert (ex);
 	mono_error_assert_ok (error);
 
 	mono_error_set_exception_instance (oerror, ex);
