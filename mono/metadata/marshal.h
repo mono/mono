@@ -740,7 +740,7 @@ int
 ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (gpointer pUnk);
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (gpointer pUnk, gpointer riid, gpointer* ppv);
+ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (gpointer pUnk, gconstpointer riid, gpointer* ppv);
 
 int
 ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (gpointer pUnk);

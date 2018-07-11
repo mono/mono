@@ -146,7 +146,7 @@ static int STDCALL cominterop_ccw_addref (MonoCCWInterface* ccwe);
 
 static int STDCALL cominterop_ccw_release (MonoCCWInterface* ccwe);
 
-static int STDCALL cominterop_ccw_queryinterface (MonoCCWInterface* ccwe, guint8* riid, gpointer* ppv);
+static int STDCALL cominterop_ccw_queryinterface (MonoCCWInterface* ccwe, const guint8* riid, gpointer* ppv);
 
 /* IDispatch */
 static int STDCALL cominterop_ccw_get_type_info_count (MonoCCWInterface* ccwe, guint32 *pctinfo);
@@ -1547,7 +1547,7 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 
 typedef struct
 {
-	int (STDCALL *QueryInterface)(gpointer pUnk, gpointer riid, gpointer* ppv);
+	int (STDCALL *QueryInterface)(gpointer pUnk, gconstpointer riid, gpointer* ppv);
 	int (STDCALL *AddRef)(gpointer pUnk);
 	int (STDCALL *Release)(gpointer pUnk);
 } MonoIUnknown;
@@ -1567,7 +1567,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (gpointer pUnk)
 }
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (gpointer pUnk, gpointer riid, gpointer* ppv)
+ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (gpointer pUnk, gconstpointer riid, gpointer* ppv)
 {
 	g_assert (pUnk);
 	return (*(MonoIUnknown**)pUnk)->QueryInterface(pUnk, riid, ppv);
@@ -2389,7 +2389,7 @@ cominterop_mono_string_to_guid (MonoString* string, guint8 *guid) {
 }
 
 static gboolean
-cominterop_class_guid_equal (guint8* guid, MonoClass* klass)
+cominterop_class_guid_equal (const guint8* guid, MonoClass* klass)
 {
 	guint8 klass_guid [16];
 	if (cominterop_class_guid (klass, klass_guid))
@@ -2455,15 +2455,12 @@ cominterop_ccw_getfreethreadedmarshaler (MonoCCW* ccw, MonoObject* object, gpoin
 	if (!ccw->free_marshaler)
 		return MONO_E_NOINTERFACE;
 
-	return ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (ccw->free_marshaler, (IID*)&MONO_IID_IMarshal, ppv);
-#else
-	return MONO_E_NOINTERFACE;
-#endif
+	return ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (ccw->free_marshaler, &MONO_IID_IMarshal, ppv);
 }
 #endif
 
 static int STDCALL 
-cominterop_ccw_queryinterface (MonoCCWInterface* ccwe, guint8* riid, gpointer* ppv)
+cominterop_ccw_queryinterface (MonoCCWInterface* ccwe, const guint8* riid, gpointer* ppv)
 {
 	ERROR_DECL (error);
 	GPtrArray *ifaces;
@@ -3646,7 +3643,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (gpointer pUnk)
 }
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (gpointer pUnk, gpointer riid, gpointer* ppv)
+ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (gpointer pUnk, gconstpointer riid, gpointer* ppv)
 {
 	g_assert_not_reached ();
 	return 0;
