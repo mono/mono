@@ -1601,26 +1601,6 @@ static gboolean cominterop_can_support_dispatch (MonoClass* klass)
 	return TRUE;
 }
 
-static void*
-cominterop_get_idispatch_for_object (MonoObject* object, MonoError *error)
-{
-	if (!object)
-		return NULL;
-
-	if (cominterop_object_is_rcw (object)) {
-		return cominterop_get_interface_checked (((MonoComInteropProxy*)((MonoTransparentProxy*)object)->rp)->com_object,
-							 mono_class_get_idispatch_class (), error);
-	}
-	else {
-		MonoClass* klass = mono_object_class (object);
-		if (!cominterop_can_support_dispatch (klass) ) {
-			cominterop_set_hr_error (error, MONO_E_NOINTERFACE);
-			return NULL;
-		}
-		return cominterop_get_ccw_checked (object, mono_class_get_idispatch_class (), error);
-	}
-}
-
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_GetIUnknownForObjectInternal (MonoObject* object)
 {
@@ -1647,10 +1627,23 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetObjectForCCW (void* pUnk)
 }
 
 void*
-ves_icall_System_Runtime_InteropServices_Marshal_GetIDispatchForObjectInternal (MonoObjectHandle object, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_GetIDispatchForObjectInternal (MonoObjectHandle object_handle, MonoError *error)
 {
 #ifndef DISABLE_COM
-	return cominterop_get_idispatch_for_object (MONO_HANDLE_RAW (object), error);
+	if (MONO_HANDLE_IS_NULL (object_handle))
+		return NULL;
+
+	MonoObject* object = MONO_HANDLE_RAW (object_handle);
+
+	if (cominterop_object_is_rcw (object)) {
+		return cominterop_get_interface_checked (((MonoComInteropProxy*)((MonoTransparentProxy*)object)->rp)->com_object,
+							 mono_class_get_idispatch_class (), error);
+	}
+	else if (!cominterop_can_support_dispatch (mono_handle_class (object_handle))) {
+		cominterop_set_hr_error (error, MONO_E_NOINTERFACE);
+		return NULL;
+	}
+	return cominterop_get_ccw_checked (object, mono_class_get_idispatch_class (), error);
 #else
 	g_assert_not_reached ();
 #endif
