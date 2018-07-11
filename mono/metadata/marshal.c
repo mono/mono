@@ -1039,6 +1039,11 @@ mono_string_to_utf8str (MonoString *s_raw)
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
+
+#else
+
+// Win32 version uses CoTaskMemAlloc.
+
 #endif
 
 gpointer

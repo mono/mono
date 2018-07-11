@@ -67,7 +67,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const guni
 	 */
 	size_t len = MAX (strlen (tres) + 1, length);
 	char* ret = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len);
-	// FIXME This overreads tres.
 	memcpy (ret, tres, len);
 	g_free (tres);
 	return ret;
@@ -88,7 +87,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunic
 }
 
 gpointer
-mono_string_to_utf8str_handle (MonoStringHandle s)
+mono_string_to_utf8str_handle (MonoStringHandle s, MonoError *error)
 {
 	char *as, *tmp;
 	glong len;
@@ -99,6 +98,7 @@ mono_string_to_utf8str_handle (MonoStringHandle s)
 
 	if (!mono_string_handle_length (s)) {
 		as = CoTaskMemAlloc (1);
+		g_assert (as);
 		as [0] = '\0';
 		return as;
 	}
@@ -107,11 +107,12 @@ mono_string_to_utf8str_handle (MonoStringHandle s)
 	tmp = g_utf16_to_utf8 (mono_string_handle_pin_chars (s, &gchandle), mono_string_handle_length (s), NULL, &len, &gerror);
 	mono_gchandle_free (gchandle);
 	if (gerror) {
-		MonoException *exc = mono_get_exception_argument ("string", gerror->message);
+		mono_error_set_argument (error, "string", gerror->message);
 		g_error_free (gerror);
 		return NULL;
 	} else {
 		as = CoTaskMemAlloc (len + 1);
+		g_assert (as);
 		memcpy (as, tmp, len + 1);
 		g_free (tmp);
 		return as;
