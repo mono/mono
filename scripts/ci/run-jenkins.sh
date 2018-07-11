@@ -90,9 +90,9 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   echo "DISABLE_WASM=1" >> sdks/Make.config
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
 
-	   ${TESTCMD} --label=build-sim-runtimes --timeout=20m --fatal make -j4 -C sdks/builds package-ios-{sim64,sim32,simtv,simwatch}
-	   ${TESTCMD} --label=build-dev-runtimes --timeout=20m --fatal make -j4 -C sdks/builds package-ios-{target64,target32,targettv,targetwatch}
-	   ${TESTCMD} --label=build-cross-compilers --timeout=20m --fatal make -j4 -C sdks/builds package-ios-{cross64,cross32,crosswatch}
+	   ${TESTCMD} --label=build-sim-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{sim64,sim32,simtv,simwatch}
+	   ${TESTCMD} --label=build-dev-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{target64,target32,targettv,targetwatch}
+	   ${TESTCMD} --label=build-cross-compilers --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{cross64,cross32,crosswatch}
 
 	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
 	   ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
