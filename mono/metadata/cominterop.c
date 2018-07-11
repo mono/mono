@@ -554,11 +554,13 @@ cominterop_get_interface_checked (MonoComObject* obj, MonoClass* ic, MonoError *
 	int const hr = ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (obj->iunknown, iid, &itf);
 	g_assert (!!itf == (hr >= 0)); // two equal success indicators
 	if (hr < 0) {
+		g_assert (!itf);
 		cominterop_set_hr_error (error, hr);
 		g_assert (!mono_error_ok (error));
 		return NULL;
 	}
 
+	g_assert (itf);
 	mono_cominterop_lock ();
 	if (!obj->itf_hash)
 		obj->itf_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
