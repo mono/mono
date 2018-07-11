@@ -545,25 +545,26 @@ cominterop_get_interface_checked (MonoComObject* obj, MonoClass* ic, MonoError *
 		itf = g_hash_table_lookup (obj->itf_hash, GUINT_TO_POINTER ((guint)m_class_get_interface_id (ic)));
 	mono_cominterop_unlock ();
 
-	if (!itf) {
-		guint8 iid [16];
-		int found = cominterop_class_guid (ic, iid);
-		int hr;
-		g_assert(found);
-		hr = ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (obj->iunknown, iid, &itf);
-		if (hr < 0) {
-			cominterop_set_hr_error (error, hr);
-		}
+	if (itf)
+		return itf;
 
-		if (hr >= 0 && itf) {
-			mono_cominterop_lock ();
-			if (!obj->itf_hash)
-				obj->itf_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
-			g_hash_table_insert (obj->itf_hash, GUINT_TO_POINTER ((guint)m_class_get_interface_id (ic)), itf);
-			mono_cominterop_unlock ();
-		}
-
+	guint8 iid [16];
+	gboolean const found = cominterop_class_guid (ic, iid);
+	g_assert (found);
+	int const hr = ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (obj->iunknown, iid, &itf);
+	g_assert (!!itf == (hr >= 0)); // two equal success indicators
+	if (hr < 0) {
+		cominterop_set_hr_error (error, hr);
+		g_assert (!mono_error_ok (error));
+		return NULL;
 	}
+
+	mono_cominterop_lock ();
+	if (!obj->itf_hash)
+		obj->itf_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	g_hash_table_insert (obj->itf_hash, GUINT_TO_POINTER ((guint)m_class_get_interface_id (ic)), itf);
+	mono_cominterop_unlock ();
+
 	return itf;
 }
 
