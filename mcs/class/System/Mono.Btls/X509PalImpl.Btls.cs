@@ -68,11 +68,6 @@ namespace Mono.Btls
 		{
 			return Provider.GetNativeCertificate (cert);
 		}
-
-		public override X509CertificateImpl ImportFromHandle (IntPtr handle)
-		{
-			return null;
-		}
 	}
 }
 #endif

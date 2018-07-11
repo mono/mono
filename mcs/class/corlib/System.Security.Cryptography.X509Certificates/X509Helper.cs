@@ -43,11 +43,6 @@ namespace System.Security.Cryptography.X509Certificates
 	{
 		static ISystemCertificateProvider CertificateProvider => DependencyInjector.SystemProvider.CertificateProvider;
 
-		public static X509CertificateImpl InitFromHandle (IntPtr handle)
-		{
-			return CertificateProvider.ImportFromHandle (handle);
-		}
-
 		public static X509CertificateImpl InitFromCertificate (X509Certificate cert)
 		{
 			return CertificateProvider.Import (cert, CertificateImportFlags.None);

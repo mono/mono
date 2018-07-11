@@ -54,11 +54,6 @@ namespace Mono.AppleTls
 		{
 			return null;
 		}
-
-		public override X509CertificateImpl ImportFromHandle (IntPtr handle)
-		{
-			return new X509CertificateImplApple (handle, false);
-		}
 	}
 }
 #endif

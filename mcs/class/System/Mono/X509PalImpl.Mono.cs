@@ -45,10 +45,5 @@ namespace Mono
 		{
 			return null;
 		}
-
-		public override X509CertificateImpl ImportFromHandle (IntPtr handle)
-		{
-			return null;
-		}
 	}
 }

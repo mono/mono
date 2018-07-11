@@ -171,12 +171,5 @@ namespace Mono
 
 			return X509Pal.ImportFallback (cert.GetRawCertData ());
 		}
-
-		public X509CertificateImpl ImportFromHandle (IntPtr handle)
-		{
-			if (handle == IntPtr.Zero)
-				return null;
-			return X509Pal.ImportFromHandle (handle);
-		}
 	}
 }

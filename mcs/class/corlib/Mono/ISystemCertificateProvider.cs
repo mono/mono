@@ -38,7 +38,5 @@ namespace Mono
 
 		X509CertificateImpl Import (X509Certificate cert,
 		                            CertificateImportFlags importFlags = CertificateImportFlags.None);
-
-		X509CertificateImpl ImportFromHandle (IntPtr handle);
 	}
 }

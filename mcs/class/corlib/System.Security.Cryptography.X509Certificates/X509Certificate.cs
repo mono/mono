@@ -105,7 +105,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (handle == IntPtr.Zero)
 				throw new ArgumentException ("Invalid handle.");
 
-			impl = X509Helper.InitFromHandle (handle);
+			throw new PlatformNotSupportedException ("Initializing `X509Certificate` from native handle is not supported.");
 		}
 
 		internal X509Certificate (X509CertificateImpl impl)

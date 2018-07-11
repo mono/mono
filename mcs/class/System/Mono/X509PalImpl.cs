@@ -40,8 +40,6 @@ namespace Mono
 
 		public abstract X509Certificate2Impl Import (X509Certificate cert);
 
-		public abstract X509CertificateImpl ImportFromHandle (IntPtr handle);
-
 		static byte[] PEM (string type, byte[] data)
 		{
 			string pem = Encoding.ASCII.GetString (data);
