@@ -2438,15 +2438,12 @@ cominterop_ccw_release (MonoCCWInterface* ccwe)
 
 #ifdef HOST_WIN32
 static const IID MONO_IID_IMarshal = {0x3, 0x0, 0x0, {0xC0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x46}};
-#endif
 
-#ifdef HOST_WIN32
 /* All ccw objects are free threaded */
 static int
 cominterop_ccw_getfreethreadedmarshaler (MonoCCW* ccw, MonoObject* object, gpointer* ppv, MonoError *error)
 {
 	error_init (error);
-#ifdef HOST_WIN32
 	if (!ccw->free_marshaler) {
 		int ret = 0;
 		gpointer tunk;
@@ -2631,23 +2628,21 @@ cominterop_ccw_invoke (MonoCCWInterface* ccwe, guint32 dispIdMember,
 	return MONO_E_NOTIMPL;
 }
 
-typedef gpointer (STDCALL *SysAllocStringLenFunc)(gunichar* str, guint32 len);
-typedef guint32 (STDCALL *SysStringLenFunc)(gpointer bstr);
+#ifndef HOST_WIN32
+
+typedef gpointer (STDCALL *SysAllocStringLenFunc)(const gunichar* str, guint32 len);
+typedef guint32 (STDCALL *SysStringLenFunc)(gconstpointer bstr);
 typedef void (STDCALL *SysFreeStringFunc)(gunichar* str);
 
 static SysAllocStringLenFunc sys_alloc_string_len_ms = NULL;
 static SysStringLenFunc sys_string_len_ms = NULL;
 static SysFreeStringFunc sys_free_string_ms = NULL;
 
-#ifndef HOST_WIN32
-
 typedef struct tagSAFEARRAYBOUND {
 	ULONG cElements;
 	LONG lLbound;
 }SAFEARRAYBOUND,*LPSAFEARRAYBOUND;
 #define VT_VARIANT 12
-
-#endif 
 
 typedef guint32 (STDCALL *SafeArrayGetDimFunc)(gpointer psa);
 typedef int (STDCALL *SafeArrayGetLBoundFunc)(gpointer psa, guint32 nDim, glong* plLbound);
@@ -2756,6 +2751,9 @@ init_com_provider_ms (void)
 	return TRUE;
 }
 
+#endif // WIN32
+#endif // DISABLE_COM
+
 gpointer
 mono_ptr_to_bstr (gconstpointer ptr, int slen)
 {
@@ -2764,31 +2762,31 @@ mono_ptr_to_bstr (gconstpointer ptr, int slen)
 #ifdef HOST_WIN32
 	return SysAllocStringLen (ptr, slen);
 #else
+#ifndef DISABLE_COM
 	if (com_provider == MONO_COM_DEFAULT) {
+#endif
 		/* allocate len + 1 utf16 characters plus 4 byte integer for length*/
-		char *ret = (char *)g_malloc((slen + 1) * sizeof(gunichar2) + sizeof(guint32));
+		guint32 * const ret = (guint32 *)g_malloc ((slen + 1) * sizeof (gunichar2) + sizeof (guint32));
 		if (ret == NULL)
 			return NULL;
-		memcpy(ret + sizeof(guint32), ptr, slen * sizeof(gunichar2));
-		*((guint32 *)ret) = slen * sizeof(gunichar2);
-		ret[4 + slen * sizeof(gunichar2)] = 0;
-		ret[5 + slen * sizeof(gunichar2)] = 0;
-
-		return ret + 4;
+		*ret = slen * sizeof (gunichar2);
+		gunichar2 * const str = (gunichar2*)(ret + 1);
+		memcpy (str, ptr, slen * sizeof (gunichar2));
+		str [slen] = 0;
+		return str;
+#ifndef DISABLE_COM
 	}
-	else if (com_provider == MONO_COM_MS && init_com_provider_ms()) {
-		gpointer ret = NULL;
-		gunichar* str = NULL;
-		guint32 len = slen;
-		str = g_utf16_to_ucs4(ptr, len,
-			NULL, NULL, NULL);
-		ret = sys_alloc_string_len_ms(str, len);
-		g_free(str);
+	else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
+		guint32 const len = slen;
+		gunichar* const str = g_utf16_to_ucs4 (ptr, len, NULL, NULL, NULL);
+		gpointer const ret = sys_alloc_string_len_ms (str, len);
+		g_free (str);
 		return ret;
 	}
 	else {
 		g_assert_not_reached();
 	}
+#endif
 #endif
 }
 
@@ -2811,19 +2809,20 @@ mono_string_from_bstr_icall (gpointer bstr)
 }
 
 MonoString *
-mono_string_from_bstr_checked (gpointer bstr, MonoError *error)
+mono_string_from_bstr_checked (const gunichar2* bstr, MonoError *error)
 {
-	MonoString * res = NULL;
-	
 	error_init (error);
-
 	if (!bstr)
 		return NULL;
 #ifdef HOST_WIN32
-	res = mono_string_new_utf16_checked (mono_domain_get (), bstr, SysStringLen (bstr), error);
+	return mono_string_new_utf16_checked (mono_domain_get (), bstr, SysStringLen (bstr), error);
 #else
+	MonoString * res = NULL;
+#ifndef DISABLE_COM
 	if (com_provider == MONO_COM_DEFAULT) {
-		res = mono_string_new_utf16_checked (mono_domain_get (), (const mono_unichar2 *)bstr, *((guint32 *)bstr - 1) / sizeof(gunichar2), error);
+#endif
+		res = mono_string_new_utf16_checked (mono_domain_get (), bstr, *((guint32 *)bstr - 1) / sizeof(gunichar2), error);
+#ifndef DISABLE_COM
 	} else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
 		MonoString* str = NULL;
 		glong written = 0;
@@ -2836,9 +2835,9 @@ mono_string_from_bstr_checked (gpointer bstr, MonoError *error)
 	} else {
 		g_assert_not_reached ();
 	}
-
 #endif
 	return res;
+#endif
 }
 
 void
@@ -2849,17 +2848,21 @@ mono_free_bstr (gpointer bstr)
 #ifdef HOST_WIN32
 	SysFreeString ((BSTR)bstr);
 #else
+#ifndef DISABLE_COM
 	if (com_provider == MONO_COM_DEFAULT) {
+#endif
 		g_free (((char *)bstr) - 4);
+#ifndef DISABLE_COM
 	} else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
 		sys_free_string_ms ((gunichar *)bstr);
 	} else {
 		g_assert_not_reached ();
 	}
-
+#endif
 #endif
 }
 
+#ifndef DISABLE_COM
 
 /* SAFEARRAY marshalling */
 int
@@ -3443,31 +3446,26 @@ mono_marshal_safearray_create_internal (UINT cDims, SAFEARRAYBOUND *rgsabound, g
 static gboolean
 mono_marshal_safearray_create (MonoArray *input, gpointer *newsafearray, gpointer *indices, gpointer empty)
 {
-	int dim;
-	SAFEARRAYBOUND *bounds;
-	int i;
-	int max_array_length;
-
 #ifndef HOST_WIN32
 	// If not on windows, check that the MS provider is used as it is 
 	// required for SAFEARRAY support.
 	// If SAFEARRAYs are not supported, returning FALSE from this
 	// function will prevent the other mono_marshal_safearray_xxx functions
 	// from being called.
-	if ((com_provider != MONO_COM_MS) || !init_com_provider_ms ()) {
+	if (com_provider != MONO_COM_MS || !init_com_provider_ms ()) {
 		return FALSE;
 	}
 #endif
 
-	max_array_length = mono_array_length (input);
-	dim = m_class_get_rank (mono_object_class (input));
+	int const max_array_length = mono_array_length (input);
+	int const dim = m_class_get_rank (mono_object_class (input));
 
 	*indices = g_malloc (dim * sizeof (int));
-	bounds = (SAFEARRAYBOUND *)alloca (dim * sizeof (SAFEARRAYBOUND));
+	SAFEARRAYBOUND * const bounds = (SAFEARRAYBOUND *)alloca (dim * sizeof (SAFEARRAYBOUND));
 	(*(int*)empty) = (max_array_length == 0);
 
 	if (dim > 1) {
-		for (i=0; i<dim; ++i) {
+		for (int i = 0; i < dim; ++i) {
 			((int*)*indices) [i] = bounds [i].lLbound = input->bounds [i].lower_bound;
 			bounds [i].cElements = input->bounds [i].length;
 		}
@@ -3536,75 +3534,6 @@ mono_cominterop_cleanup (void)
 void
 mono_cominterop_release_all_rcws (void)
 {
-}
-
-gpointer
-mono_ptr_to_bstr (gpointer ptr, int slen)
-{
-	if (!ptr)
-		return NULL;
-#ifdef HOST_WIN32
-	return SysAllocStringLen (ptr, slen);
-#else
-	{
-		/* allocate len + 1 utf16 characters plus 4 byte integer for length*/
-		char *ret = g_malloc ((slen + 1) * sizeof(gunichar2) + sizeof(guint32));
-		if (ret == NULL)
-			return NULL;
-		memcpy (ret + sizeof(guint32), ptr, slen * sizeof(gunichar2));
-		* ((guint32 *) ret) = slen * sizeof(gunichar2);
-		ret [4 + slen * sizeof(gunichar2)] = 0;
-		ret [5 + slen * sizeof(gunichar2)] = 0;
-
-		return ret + 4;
-	}
-#endif
-}
-
-
-MonoString *
-mono_string_from_bstr (gpointer bstr)
-{
-	ERROR_DECL (error);
-	MonoString *result = mono_string_from_bstr_checked (bstr, error);
-	mono_error_cleanup (error);
-	return result;
-}
-
-MonoString *
-mono_string_from_bstr_icall (gpointer bstr)
-{
-	ERROR_DECL (error);
-	MonoString *result = mono_string_from_bstr_checked (bstr, error);
-	mono_error_set_pending_exception (error);
-	return result;
-}
-
-MonoString *
-mono_string_from_bstr_checked (gpointer bstr, MonoError *error)
-{
-	MonoString *res = NULL;
-	error_init (error);
-	if (!bstr)
-		return NULL;
-#ifdef HOST_WIN32
-	res = mono_string_new_utf16_checked (mono_domain_get (), bstr, SysStringLen (bstr), error);
-#else
-	res = mono_string_new_utf16_checked (mono_domain_get (), bstr, *((guint32 *)bstr - 1) / sizeof(gunichar2), error);
-#endif
-	return res;
-}
-
-void
-mono_free_bstr (gpointer bstr)
-{
-	if (!bstr)
-		return;
-#ifdef HOST_WIN32
-	SysFreeString ((BSTR)bstr);
-#else
-	g_free (((char *)bstr) - 4);
-#endif
 }
 
 gboolean
