@@ -2445,11 +2445,9 @@ cominterop_ccw_getfreethreadedmarshaler (MonoCCW* ccw, MonoObject* object, gpoin
 {
 	error_init (error);
 	if (!ccw->free_marshaler) {
-		int ret = 0;
-		gpointer tunk;
-		tunk = cominterop_get_ccw_checked (object, mono_class_get_iunknown_class (), error);
+		gpointer const tunk = cominterop_get_ccw_checked (object, mono_class_get_iunknown_class (), error);
 		return_val_if_nok (error, MONO_E_NOINTERFACE);
-		ret = CoCreateFreeThreadedMarshaler (tunk, (LPUNKNOWN*)&ccw->free_marshaler);
+		int const ret = CoCreateFreeThreadedMarshaler (tunk, (LPUNKNOWN*)&ccw->free_marshaler);
 	}
 		
 	if (!ccw->free_marshaler)
@@ -2504,7 +2502,7 @@ cominterop_ccw_queryinterface (MonoCCWInterface* ccwe, const guint8* riid, gpoin
 #ifdef HOST_WIN32
 	/* handle IMarshal special */
 	if (0 == memcmp (riid, &MONO_IID_IMarshal, sizeof (IID))) {
-		int res = cominterop_ccw_getfreethreadedmarshaler (ccw, object, ppv, error);
+		int const res = cominterop_ccw_getfreethreadedmarshaler (ccw, object, ppv, error);
 		mono_error_assert_ok (error);
 		return res;
 	}
@@ -3492,7 +3490,7 @@ static void
 mono_marshal_safearray_set_value (gpointer safearray, gpointer indices, gpointer value)
 {
 	ERROR_DECL (error);
-	int hr = mono_marshal_win_safearray_set_value (safearray, indices, value);
+	int const hr = mono_marshal_win_safearray_set_value (safearray, indices, value);
 	if (hr < 0) {
 		cominterop_set_hr_error (error, hr);
 		mono_error_set_pending_exception (error);
@@ -3507,7 +3505,7 @@ mono_marshal_safearray_set_value (gpointer safearray, gpointer indices, gpointer
 {
 	ERROR_DECL (error);
 	if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
-		int hr = safe_array_put_element_ms (safearray, (glong *)indices, (void **)value);
+		int const hr = safe_array_put_element_ms (safearray, (glong *)indices, (void **)value);
 		if (hr < 0) {
 			cominterop_set_hr_error (error, hr);
 			mono_error_set_pending_exception (error);
