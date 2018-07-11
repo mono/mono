@@ -587,13 +587,6 @@ cominterop_get_interface (MonoComObject *obj, MonoClass *ic)
 	return itf;
 }
 
-static int
-cominterop_get_hresult_for_exception (MonoException* exc)
-{
-	int hr = 0;
-	return hr;
-}
-
 static MonoReflectionType *
 cominterop_type_from_handle (MonoType *handle)
 {
@@ -627,7 +620,6 @@ mono_cominterop_init (void)
 	register_icall (cominterop_object_is_rcw, "cominterop_object_is_rcw", "int32 object", FALSE);
 	register_icall (cominterop_get_ccw, "cominterop_get_ccw", "ptr object ptr", FALSE);
 	register_icall (cominterop_get_ccw_object, "cominterop_get_ccw_object", "object ptr int32", FALSE);
-	register_icall (cominterop_get_hresult_for_exception, "cominterop_get_hresult_for_exception", "int32 object", FALSE);
 	register_icall (cominterop_get_interface, "cominterop_get_interface", "ptr object ptr", FALSE);
 
 	register_icall (mono_string_to_bstr, "mono_string_to_bstr", "ptr obj", FALSE);
