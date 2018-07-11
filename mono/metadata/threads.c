@@ -2553,6 +2553,9 @@ mono_thread_internal_abort (MonoInternalThread *thread, gboolean appdomain_unloa
 void
 ves_icall_System_Threading_Thread_ResetAbort (MonoThreadObjectHandle this_obj, MonoError *error)
 {
+	// FIXME Why are ves_icall_System_Threading_Thread_ResetAbort and mono_thread_internal_reset_abort so different?
+	// FIXME? this_obj is unused but passed by reference source.
+
 	MonoInternalThread *thread = mono_thread_internal_current ();
 	gboolean was_aborting, is_domain_abort;
 
@@ -2562,12 +2565,13 @@ ves_icall_System_Threading_Thread_ResetAbort (MonoThreadObjectHandle this_obj, M
 
 	if (was_aborting && !is_domain_abort)
 		thread->state &= ~ThreadState_AbortRequested;
-	UNLOCK_THREAD (thread);
 
 	if (!was_aborting) {
+		UNLOCK_THREAD (thread);
 		mono_error_set_exception_thread_state (error, "Unable to reset abort because no abort was requested");
 		return;
 	} else if (is_domain_abort) {
+		UNLOCK_THREAD (thread);
 		/* Silently ignore abort resets in unloading appdomains */
 		return;
 	}
@@ -2578,11 +2582,14 @@ ves_icall_System_Threading_Thread_ResetAbort (MonoThreadObjectHandle this_obj, M
 	/* This is actually not necessary - the handle
 	   only counts if the exception is set */
 	thread->abort_state_handle = 0;
+	UNLOCK_THREAD (thread);
 }
 
 void
 mono_thread_internal_reset_abort (MonoInternalThread *thread)
 {
+	// FIXME Why are ves_icall_System_Threading_Thread_ResetAbort and mono_thread_internal_reset_abort so different?
+
 	LOCK_THREAD (thread);
 
 	thread->state &= ~ThreadState_AbortRequested;
