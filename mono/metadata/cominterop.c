@@ -1034,7 +1034,6 @@ mono_cominterop_get_native_wrapper (MonoMethod *method)
 			 * Thus, calling it should invariably lead to an exception.
 			 */
 			ERROR_DECL (error);
-			error_init (error);
 			mono_cominterop_get_interface_missing_error (error, method);
 			mono_mb_emit_exception_for_error (mb, error);
 			mono_error_cleanup (error);
