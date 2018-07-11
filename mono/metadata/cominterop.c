@@ -502,7 +502,8 @@ cominterop_com_visible (MonoClass* klass)
 
 }
 
-static void cominterop_set_hr_error (MonoError *oerror, int hr)
+static void
+cominterop_set_hr_error (MonoError *oerror, int hr)
 {
 	static MonoMethod* throw_exception_for_hr = NULL;
 	ERROR_DECL (error);
