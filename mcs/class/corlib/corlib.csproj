@@ -358,6 +358,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Tuple.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TupleExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ValueTuple.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeHandleCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\CompatibleComparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Concurrent\ConcurrentQueue_Segment.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LowLevelDictionary.cs" />
@@ -473,6 +474,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\IHashCodeProvider.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\Architecture.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\OSPlatform.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ContentType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509KeyStorageFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\Box.cs" />
@@ -1979,6 +1981,7 @@
     <Compile Include="corert\ThreadPool.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
@@ -1998,6 +2001,7 @@
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -2014,6 +2018,7 @@
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -2030,6 +2035,7 @@
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -2048,6 +2054,7 @@
   <ItemGroup Condition=" '$(Platform)|$(HostPlatform)' == 'net_4_x|linux' ">
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
@@ -2068,6 +2075,7 @@
   <ItemGroup Condition=" '$(Platform)|$(HostPlatform)' == 'net_4_x|macos' ">
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
@@ -2088,6 +2096,7 @@
   <ItemGroup Condition=" '$(Platform)|$(HostPlatform)' == 'net_4_x|unix' ">
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
@@ -2110,6 +2119,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.NTSTATUS.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Interop.Libraries.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Windows.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.MemAllocFree.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.ThreadPoolIO.cs" />
@@ -2141,6 +2151,7 @@
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
@@ -2160,6 +2171,7 @@
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
@@ -2179,6 +2191,7 @@
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
@@ -2202,6 +2215,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.NTSTATUS.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Interop.Libraries.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Windows.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.MemAllocFree.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.ThreadPoolIO.cs" />
@@ -2233,6 +2247,7 @@
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
     <Compile Include="CommonCrypto\CommonCrypto.cs" />
     <Compile Include="CommonCrypto\CorlibExtras.cs" />
     <Compile Include="CommonCrypto\CryptorTransform.cs" />
