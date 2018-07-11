@@ -344,7 +344,7 @@ gpointer
 mono_string_to_ansibstr (MonoString *string_obj);
 
 gpointer
-mono_ptr_to_bstr (gpointer ptr, int slen);
+mono_ptr_to_bstr (gconstpointer ptr, int slen);
 
 gpointer
 mono_string_to_bstr(MonoString* str);

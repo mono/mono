@@ -2385,7 +2385,7 @@ static void
 cominterop_mono_string_to_guid (MonoString* string, guint8 *guid) {
 	gunichar2 * chars = mono_string_chars (string);
 	int i = 0;
-	static guint8 indexes[16] = {7, 5, 3, 1, 12, 10, 17, 15, 20, 22, 25, 27, 29, 31, 33, 35};
+	static const guint8 indexes[16] = {7, 5, 3, 1, 12, 10, 17, 15, 20, 22, 25, 27, 29, 31, 33, 35};
 
 	for (i = 0; i < sizeof(indexes); i++)
 		guid [i] = g_unichar_xdigit_value (chars [indexes [i]]) + (g_unichar_xdigit_value (chars [indexes [i] - 1]) << 4);
@@ -2757,7 +2757,7 @@ init_com_provider_ms (void)
 }
 
 gpointer
-mono_ptr_to_bstr(gpointer ptr, int slen)
+mono_ptr_to_bstr (gconstpointer ptr, int slen)
 {
 	if (!ptr)
 		return NULL;
