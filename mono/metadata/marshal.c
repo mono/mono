@@ -5336,14 +5336,12 @@ mono_marshal_realloc_hglobal (gpointer ptr, size_t size)
 gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal (gpointer ptr, gsize size, MonoError *error)
 {
-	gpointer res;
-
 	if (ptr == NULL) {
 		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
 		return NULL;
 	}
 
-	res = mono_marshal_realloc_hglobal (ptr, size);
+	gpointer const res = mono_marshal_realloc_hglobal (ptr, size);
 
 	if (!res)
 		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
@@ -5356,7 +5354,6 @@ static inline void
 mono_marshal_free_hglobal (gpointer ptr)
 {
 	g_free (ptr);
-	return;
 }
 #endif
 
@@ -5423,12 +5420,9 @@ ves_icall_System_Runtime_InteropServices_Marshal_UnsafeAddrOfPinnedArrayElement 
 MonoDelegateHandle
 ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerInternal (void *ftn, MonoReflectionTypeHandle type, MonoError *error)
 {
-	error_init (error);
 	MonoClass *klass = mono_type_get_class (MONO_HANDLE_GETVAL (type, type));
-	if (!mono_class_init (klass)) {
-		mono_error_set_for_class_failure (error, klass);
+	if (!mono_class_init_checked (klass, error))
 		return MONO_HANDLE_CAST (MonoDelegate, NULL_HANDLE);
-	}
 
 	return mono_ftnptr_to_delegate_handle (klass, ftn, error);
 }
@@ -5436,7 +5430,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerIn
 gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_GetFunctionPointerForDelegateInternal (MonoDelegateHandle delegate, MonoError *error)
 {
-	error_init (error);
 	return mono_delegate_handle_to_ftnptr (delegate, error);
 }
 
