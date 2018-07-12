@@ -5001,7 +5001,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged (MonoArrayHan
 	guint32 gchandle = 0;
 	gsize const bytes = copy_managed_common (src, dest, start_index, length, (gpointer*)&managed_source_addr, &gchandle, error);
 	if (bytes)
-		memcpy (dest, managed_source_addr, bytes); // no references should be involved
+		memmove (dest, managed_source_addr, bytes); // no references should be involved
 	mono_gchandle_free (gchandle);
 }
 
@@ -5012,7 +5012,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gconstpoin
 	guint32 gchandle = 0;
 	gsize const bytes = copy_managed_common (dest, src, start_index, length, &managed_dest_addr, &gchandle, error);
 	if (bytes)
-		memcpy (managed_dest_addr, src, bytes); // no references should be involved
+		memmove (managed_dest_addr, src, bytes); // no references should be involved
 	mono_gchandle_free (gchandle);
 }
 
