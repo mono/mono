@@ -4985,7 +4985,7 @@ copy_managed_common (MonoArrayHandle managed, gconstpointer native, gint32 start
 		return 0;
 	}
 
-	gsize element_size = mono_array_element_size (klass);
+	gsize const element_size = mono_array_element_size (klass);
 
 	// Handle generic arrays.
 	// FIXME Given this is required for generic arrays, is the support for non-generic arrays worthwhile?

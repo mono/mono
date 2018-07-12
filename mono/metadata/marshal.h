@@ -24,7 +24,7 @@
 #ifndef HOST_WIN32
 typedef gunichar2 *BSTR;
 #else
-// Similar but slightly varying BSTR is provided by windows.h.
+// Provided by windows.h.
 #endif
 
 #define mono_marshal_find_bitfield_offset(type, elem, byte_offset, bitmask) \

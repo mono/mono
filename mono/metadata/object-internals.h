@@ -44,8 +44,8 @@
 	}							\
 } while (0)
 
-/* Use this as MONO_CHECK_ARG_NULL (arg,) in functions returning void */
-#define MONO_CHECK_ARG_NULL_HANDLE(arg, retval) do { 			\
+/* Use this as MONO_CHECK_ARG_NULL_HANDLE (arg,) in functions returning void */
+#define MONO_CHECK_ARG_NULL_HANDLE(arg, retval) do { 		\
 	if (MONO_HANDLE_IS_NULL (arg))				\
 	{							\
 		mono_error_set_argument_null (error, #arg, "");	\
