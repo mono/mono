@@ -10648,4 +10648,10 @@ mono_debugger_agent_init (void)
 	mini_install_dbg_callbacks (&cbs);
 }
 
+void
+mono_debugger_agent_parse_options (char *options)
+{
+	sdb_options = options;
+}
+
 #endif /* DISABLE_SDB */
