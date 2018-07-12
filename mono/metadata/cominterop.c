@@ -2853,7 +2853,6 @@ mono_string_from_bstr_checked (BSTR bstr, MonoError *error)
 		gunichar2* utf16 = g_ucs4_to_utf16 ((const gunichar *)bstr, sys_string_len_ms (bstr), NULL, &written, NULL);
 		MonoStringHandle res = mono_string_new_utf16_handle (mono_domain_get (), utf16, written, error);
 		g_free (utf16);
-		return res;
 	} else {
 		g_assert_not_reached ();
 	}
@@ -3609,18 +3608,9 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (BSTR ptr, Mono
 }
 
 BSTR
-ves_icall_System_Runtime_InteropServices_Marshal_StringToBSTR (MonoStringHandle ptr, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (const gunichar2* ptr, int len, MonoError *error)
 {
-	return mono_string_to_bstr_handle (ptr);
-}
-
-BSTR
-ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (MonoArrayHandle ptr, int len, MonoError *error)
-{
-	guint gchandle;
-	BSTR result = mono_ptr_to_bstr (mono_array_handle_pin_with_size (ptr, 0, 0, &gchandle), len);
-	mono_gchandle_free (gchandle);
-	return result;
+	return mono_ptr_to_bstr (ptr, len);
 }
 
 void

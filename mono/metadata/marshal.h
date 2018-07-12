@@ -652,11 +652,11 @@ ves_icall_marshal_alloc (gsize size);
 
 void
 ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged (MonoArrayHandle src, gint32 start_index,
-		gpointer dest, gint32 length, MonoError *error);
+		gpointer dest, gint32 length, gconstpointer managed_source_addr, MonoError *error);
 
 void
 ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gconstpointer src, gint32 start_index,
-	MonoArrayHandle dest, gint32 length, MonoError *error);
+	MonoArrayHandle dest, gint32 length, gpointer managed_dest_addr, MonoError *error);
 
 MonoStringHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi (const char *ptr, MonoError *error);
@@ -695,16 +695,13 @@ int
 ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHandle type, MonoStringHandle field_name, MonoError *error);
 
 BSTR
-ves_icall_System_Runtime_InteropServices_Marshal_StringToBSTR (MonoStringHandle string, MonoError *error);
-
-BSTR
-ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (MonoArrayHandle ptr, int len, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (const gunichar2 *ptr, int len, MonoError *error);
 
 char*
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (MonoStringHandle s, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, int length, MonoError *error);
 
 gunichar2*
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (MonoStringHandle s, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunichar2 *s, int length, MonoError *error);
 
 void
 ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure (gpointer src, MonoReflectionTypeHandle type, MonoError *error);

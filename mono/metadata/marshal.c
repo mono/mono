@@ -4987,31 +4987,32 @@ copy_managed_common (MonoArrayHandle managed, gconstpointer native, gint32 start
 
 	gsize const element_size = mono_array_element_size (klass);
 
-	*managed_addr = mono_array_handle_pin_with_size (managed, element_size, start_index, gchandle);
+	// Handle generic arrays.
+	// FIXME Given this is required for generic arrays, is the support for non-generic arrays worthwhile?
+	if (!*managed_addr)
+		*managed_addr = mono_array_handle_pin_with_size (managed, element_size, start_index, gchandle);
 
 	return element_size * length;
 }
 
 void
 ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged (MonoArrayHandle src, gint32 start_index,
-		gpointer dest, gint32 length, MonoError *error)
+		gpointer dest, gint32 length, gconstpointer managed_source_addr, MonoError *error)
 {
 	guint32 gchandle = 0;
-	gpointer managed_source_addr = NULL;
-	gsize const bytes = copy_managed_common (src, dest, start_index, length, &managed_source_addr, &gchandle, error);
-	if (bytes)
+	gsize const bytes = copy_managed_common (src, dest, start_index, length, (gpointer*)&managed_source_addr, &gchandle, error);
+	if (bytes && managed_source_addr && dest && length > 0 && start_index >= 0 && is_ok (error))
 		memcpy (dest, managed_source_addr, bytes); // no references should be involved
 	mono_gchandle_free (gchandle);
 }
 
 void
 ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gconstpointer src, gint32 start_index,
-		MonoArrayHandle dest, gint32 length, MonoError *error)
+		MonoArrayHandle dest, gint32 length, gpointer managed_dest_addr, MonoError *error)
 {
 	guint32 gchandle = 0;
-	gpointer managed_dest_addr = NULL;
 	gsize const bytes = copy_managed_common (dest, src, start_index, length, &managed_dest_addr, &gchandle, error);
-	if (bytes)
+	if (bytes && managed_dest_addr && src && length > 0 && start_index >= 0 && is_ok (error))
 		memcpy (managed_dest_addr, src, bytes); // no references should be involved
 	mono_gchandle_free (gchandle);
 }
@@ -5213,26 +5214,21 @@ ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHan
 
 #ifndef HOST_WIN32
 char*
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (MonoStringHandle s, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, int length, MonoError *error)
 {
-	if (MONO_HANDLE_IS_NULL (s))
-		return NULL;
-	return mono_string_handle_to_utf8 (s, error);
+	return mono_utf16_to_utf8 (s, length, error);
 }
 
 gunichar2*
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (MonoStringHandle s, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunichar2 *s, int length, MonoError *error)
 {
-	if (MONO_HANDLE_IS_NULL (s))
+	if (!s)
 		return NULL;
 
-	gsize length = mono_string_handle_length (s);
-	gunichar2 *res = g_malloc ((length + 1) * 2);
-	guint gchandle = 0;
-	memcpy (res, mono_string_handle_pin_chars (s, &gchandle), length * 2);
-	mono_gchandle_free (gchandle);
+	gunichar2 *res = g_new (gunichar2, length + 1);
+	memcpy (res, s, length * sizeof (*res));
 	res [length] = 0;
-	return  res;
+	return res;
 }
 #endif /* !HOST_WIN32 */
 
