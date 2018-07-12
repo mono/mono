@@ -547,7 +547,7 @@ process_is_alive (pid_t pid)
 {
 #if defined(HOST_WATCHOS)
 	return TRUE; // TODO: Rewrite using sysctl
-#elif defined(HOST_DARWIN) || defined(__OpenBSD__) || defined(__FreeBSD__)
+#elif defined(HOST_DARWIN) || defined(__OpenBSD__) || defined(__FreeBSD__) || defined(_AIX)
 	if (pid == 0)
 		return FALSE;
 	if (kill (pid, 0) == 0)
@@ -754,7 +754,7 @@ processes_cleanup (void)
 }
 
 static void
-process_close (gpointer handle, gpointer data)
+process_close (gpointer data)
 {
 	MonoW32HandleProcess *process_handle;
 
@@ -768,7 +768,7 @@ process_close (gpointer handle, gpointer data)
 	processes_cleanup ();
 }
 
-static MonoW32HandleOps process_ops = {
+static const MonoW32HandleOps process_ops = {
 	process_close,		/* close_shared */
 	NULL,				/* signal */
 	NULL,				/* own */

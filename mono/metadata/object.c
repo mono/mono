@@ -115,7 +115,8 @@ mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error)
 	error_init (error);
 
 	MonoClass * const klass = MONO_HANDLE_GETVAL (this_obj, vtable)->klass;
-	MonoMethod * const method = mono_class_get_method_from_name (klass, ".ctor", 0);
+	MonoMethod * const method = mono_class_get_method_from_name_checked (klass, ".ctor", 0, 0, error);
+	mono_error_assert_msg_ok (error, "Could not lookup zero argument constructor");
 	g_assertf (method, "Could not lookup zero argument constructor for class %s", mono_type_get_full_name (klass));
 
 	guint gchandle = 0;
@@ -152,9 +153,9 @@ mono_runtime_object_init_checked (MonoObject *this_obj, MonoError *error)
 	MonoClass *klass = this_obj->vtable->klass;
 
 	error_init (error);
-	method = mono_class_get_method_from_name (klass, ".ctor", 0);
-	if (!method)
-		g_error ("Could not lookup zero argument constructor for class %s", mono_type_get_full_name (klass));
+	method = mono_class_get_method_from_name_checked (klass, ".ctor", 0, 0, error);
+	mono_error_assert_msg_ok (error, "Could not lookup zero argument constructor");
+	g_assertf (method, "Could not lookup zero argument constructor for class %s", mono_type_get_full_name (klass));
 
 	if (m_class_is_valuetype (method->klass))
 		this_obj = (MonoObject *)mono_object_unbox (this_obj);
@@ -299,6 +300,14 @@ mono_type_initialization_cleanup (void)
 	blocked_thread_hash = NULL;
 
 	free_main_args ();
+}
+
+static MonoException*
+mono_get_exception_type_initialization_checked (const gchar *type_name, MonoException* inner_raw, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+	MONO_HANDLE_DCL (MonoException, inner);
+	HANDLE_FUNCTION_RETURN_OBJ (mono_get_exception_type_initialization_handle (type_name, inner, error));
 }
 
 /**
@@ -1836,9 +1845,12 @@ static MonoVTable *mono_class_create_runtime_vtable (MonoDomain *domain, MonoCla
 MonoVTable *
 mono_class_vtable (MonoDomain *domain, MonoClass *klass)
 {
+	MonoVTable* vtable;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-	MonoVTable* vtable = mono_class_vtable_checked (domain, klass, error);
+	vtable = mono_class_vtable_checked (domain, klass, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	return vtable;
 }
 
@@ -3050,7 +3062,7 @@ mono_runtime_try_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	return do_runtime_invoke (method, obj, params, exc, error);
 }
 
-static MonoObjectHandle
+MonoObjectHandle
 mono_runtime_try_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error)
 {
 	// FIXME? typing of params
@@ -3109,7 +3121,7 @@ mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoE
 	return do_runtime_invoke (method, obj, params, NULL, error);
 }
 
-static MonoObjectHandle
+MonoObjectHandle
 mono_runtime_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error)
 {
 	return MONO_HANDLE_NEW (MonoObject, mono_runtime_invoke_checked (method, MONO_HANDLE_RAW (obj), params, error));
@@ -3300,14 +3312,17 @@ handle_enum:
 void
 mono_field_set_value (MonoObject *obj, MonoClassField *field, void *value)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MONO_ENTER_GC_UNSAFE;
 
 	void *dest;
 
-	g_return_if_fail (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC));
+	if ((field->type->attrs & FIELD_ATTRIBUTE_STATIC))
+		goto leave;
 
 	dest = (char*)obj + field->offset;
 	mono_copy_value (field->type, dest, value, FALSE);
+leave:
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /**
@@ -3321,13 +3336,15 @@ mono_field_set_value (MonoObject *obj, MonoClassField *field, void *value)
 void
 mono_field_static_set_value (MonoVTable *vt, MonoClassField *field, void *value)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MONO_ENTER_GC_UNSAFE;
 
 	void *dest;
 
-	g_return_if_fail (field->type->attrs & FIELD_ATTRIBUTE_STATIC);
+	if ((field->type->attrs & FIELD_ATTRIBUTE_STATIC) == 0)
+		goto leave;
 	/* you cant set a constant! */
-	g_return_if_fail (!(field->type->attrs & FIELD_ATTRIBUTE_LITERAL));
+	if ((field->type->attrs & FIELD_ATTRIBUTE_LITERAL))
+		goto leave;
 
 	if (field->offset == -1) {
 		/* Special static */
@@ -3341,6 +3358,8 @@ mono_field_static_set_value (MonoVTable *vt, MonoClassField *field, void *value)
 		dest = (char*)mono_vtable_get_static_field_data (vt) + field->offset;
 	}
 	mono_copy_value (field->type, dest, value, FALSE);
+leave:
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /**
@@ -3409,6 +3428,14 @@ mono_field_get_addr (MonoObject *obj, MonoVTable *vt, MonoClassField *field)
 void
 mono_field_get_value (MonoObject *obj, MonoClassField *field, void *value)
 {
+	MONO_ENTER_GC_UNSAFE;
+	mono_field_get_value_internal (obj, field, value);
+	MONO_EXIT_GC_UNSAFE;
+}
+
+void
+mono_field_get_value_internal (MonoObject *obj, MonoClassField *field, void *value)
+{
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	void *src;
@@ -3439,6 +3466,14 @@ mono_field_get_value_object (MonoDomain *domain, MonoClassField *field, MonoObje
 	mono_error_assert_ok (error);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
+}
+
+MonoObjectHandle
+mono_static_field_get_value_handle (MonoDomain *domain, MonoClassField *field, MonoError *error)
+// FIXMEcoop invert
+{
+	HANDLE_FUNCTION_ENTER ();
+	HANDLE_FUNCTION_RETURN_REF (MonoObject, MONO_HANDLE_NEW (MonoObject, mono_field_get_value_object_checked (domain, field, NULL, error)));
 }
 
 /**
@@ -3546,7 +3581,8 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 
 		if (!m) {
 			MonoClass *ptr_klass = mono_class_get_pointer_class ();
-			m = mono_class_get_method_from_name_flags (ptr_klass, "Box", 2, METHOD_ATTRIBUTE_STATIC);
+			m = mono_class_get_method_from_name_checked (ptr_klass, "Box", 2, METHOD_ATTRIBUTE_STATIC, error);
+			return_val_if_nok (error, NULL);
 			g_assert (m);
 		}
 
@@ -3756,7 +3792,7 @@ mono_field_static_get_value_checked (MonoVTable *vt, MonoClassField *field, void
 void
 mono_property_set_value (MonoProperty *prop, void *obj, void **params, MonoObject **exc)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MONO_ENTER_GC_UNSAFE;
 
 	ERROR_DECL (error);
 	do_runtime_invoke (prop->set, obj, params, exc, error);
@@ -3765,10 +3801,11 @@ mono_property_set_value (MonoProperty *prop, void *obj, void **params, MonoObjec
 	} else {
 		mono_error_cleanup (error);
 	}
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /**
- * mono_property_set_value_checked:
+ * mono_property_set_value_handle:
  * \param prop \c MonoProperty to set
  * \param obj instance object on which to act
  * \param params parameters to pass to the propery
@@ -3779,14 +3816,14 @@ mono_property_set_value (MonoProperty *prop, void *obj, void **params, MonoObjec
  * If an exception is thrown, it will be caught and returned via \p error.
  */
 gboolean
-mono_property_set_value_checked (MonoProperty *prop, void *obj, void **params, MonoError *error)
+mono_property_set_value_handle (MonoProperty *prop, MonoObjectHandle obj, void **params, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoObject *exc;
 
 	error_init (error);
-	do_runtime_invoke (prop->set, obj, params, &exc, error);
+	do_runtime_invoke (prop->set, MONO_HANDLE_RAW (obj), params, &exc, error);
 	if (exc != NULL && is_ok (error))
 		mono_error_set_exception_instance (error, (MonoException*)exc);
 	return is_ok (error);
@@ -3997,6 +4034,25 @@ mono_nullable_box_handle (gpointer buf, MonoClass *klass, MonoError *error)
 MonoMethod *
 mono_get_delegate_invoke (MonoClass *klass)
 {
+	MonoMethod *result;
+	ERROR_DECL (error);
+	result = mono_get_delegate_invoke_checked (klass, error);
+	/* FIXME: better external API that doesn't swallow the error */
+	mono_error_cleanup (error);
+	return result;
+}
+
+/**
+ * mono_get_delegate_invoke_checked:
+ * \param klass The delegate class
+ * \param error set on error
+ * \returns the \c MonoMethod for the \c Invoke method in the delegate class or NULL if \p klass is a broken delegate type or not a delegate class.
+ *
+ * Sets \p error on error
+ */
+MonoMethod *
+mono_get_delegate_invoke_checked (MonoClass *klass, MonoError *error)
+{
 	MONO_REQ_GC_NEUTRAL_MODE;
 
 	MonoMethod *im;
@@ -4005,7 +4061,7 @@ mono_get_delegate_invoke (MonoClass *klass)
 	mono_class_setup_methods (klass);
 	if (mono_class_has_failure (klass))
 		return NULL;
-	im = mono_class_get_method_from_name (klass, "Invoke", -1);
+	im = mono_class_get_method_from_name_checked (klass, "Invoke", -1, 0, error);
 	return im;
 }
 
@@ -4017,6 +4073,25 @@ mono_get_delegate_invoke (MonoClass *klass)
 MonoMethod *
 mono_get_delegate_begin_invoke (MonoClass *klass)
 {
+	MonoMethod *result;
+	ERROR_DECL (error);
+	result = mono_get_delegate_begin_invoke_checked (klass, error);
+	/* FIXME: better external API that doesn't swallow the error */
+	mono_error_cleanup (error);
+	return result;
+}
+
+/**
+ * mono_get_delegate_begin_invoke_checked:
+ * \param klass The delegate class
+ * \param error set on error
+ * \returns the \c MonoMethod for the \c BeginInvoke method in the delegate class or NULL if \p klass is a broken delegate type or not a delegate class.
+ *
+ * Sets \p error on error
+ */
+MonoMethod *
+mono_get_delegate_begin_invoke_checked (MonoClass *klass, MonoError *error)
+{
 	MONO_REQ_GC_NEUTRAL_MODE;
 
 	MonoMethod *im;
@@ -4025,7 +4100,7 @@ mono_get_delegate_begin_invoke (MonoClass *klass)
 	mono_class_setup_methods (klass);
 	if (mono_class_has_failure (klass))
 		return NULL;
-	im = mono_class_get_method_from_name (klass, "BeginInvoke", -1);
+	im = mono_class_get_method_from_name_checked (klass, "BeginInvoke", -1, 0, error);
 	return im;
 }
 
@@ -4037,6 +4112,25 @@ mono_get_delegate_begin_invoke (MonoClass *klass)
 MonoMethod *
 mono_get_delegate_end_invoke (MonoClass *klass)
 {
+	MonoMethod *result;
+	ERROR_DECL (error);
+	result = mono_get_delegate_end_invoke_checked (klass, error);
+	/* FIXME: better external API that doesn't swallow the error */
+	mono_error_cleanup (error);
+	return result;
+}
+
+/**
+ * mono_get_delegate_end_invoke_checked:
+ * \param klass The delegate class
+ * \param error set on error
+ * \returns the \c MonoMethod for the \c EndInvoke method in the delegate class or NULL if \p klass is a broken delegate type or not a delegate class.
+ *
+ * Sets \p error on error
+ */
+MonoMethod *
+mono_get_delegate_end_invoke_checked (MonoClass *klass, MonoError *error)
+{
 	MONO_REQ_GC_NEUTRAL_MODE;
 
 	MonoMethod *im;
@@ -4045,7 +4139,7 @@ mono_get_delegate_end_invoke (MonoClass *klass)
 	mono_class_setup_methods (klass);
 	if (mono_class_has_failure (klass))
 		return NULL;
-	im = mono_class_get_method_from_name (klass, "EndInvoke", -1);
+	im = mono_class_get_method_from_name_checked (klass, "EndInvoke", -1, 0, error);
 	return im;
 }
 
@@ -4443,7 +4537,8 @@ serialize_or_deserialize_object (MonoObjectHandle obj, const gchar *method_name,
 {
 	if (!*method) {
 		MonoClass *klass = mono_class_get_remoting_services_class ();
-		*method = mono_class_get_method_from_name (klass, method_name, -1);
+		*method = mono_class_get_method_from_name_checked (klass, method_name, -1, 0, error);
+		return_val_if_nok (error, mono_new_null ());
 	}
 
 	if (!*method) {
@@ -4481,9 +4576,11 @@ make_transparent_proxy (MonoObjectHandle obj, MonoError *error)
 
 	static MonoMethod *get_proxy_method;
 
-	if (!get_proxy_method)
-		get_proxy_method = mono_class_get_method_from_name (mono_defaults.real_proxy_class, "GetTransparentProxy", 0);
-
+	if (!get_proxy_method) {
+		get_proxy_method = mono_class_get_method_from_name_checked (mono_defaults.real_proxy_class, "GetTransparentProxy", 0, 0, error);
+		mono_error_assert_ok (error);
+	}
+		
 	g_assert (mono_class_is_marshalbyref (MONO_HANDLE_GETVAL (obj, vtable)->klass));
 
 	MonoDomain *domain = mono_domain_get ();
@@ -4556,7 +4653,8 @@ create_unhandled_exception_eventargs (MonoObjectHandle exc, MonoError *error)
 	mono_class_init (klass);
 
 	/* UnhandledExceptionEventArgs only has 1 public ctor with 2 args */
-	MonoMethod * const method = mono_class_get_method_from_name_flags (klass, ".ctor", 2, METHOD_ATTRIBUTE_PUBLIC);
+	MonoMethod * const method = mono_class_get_method_from_name_checked (klass, ".ctor", 2, METHOD_ATTRIBUTE_PUBLIC, error);
+	goto_if_nok (error, return_null);
 	g_assert (method);
 
 	MonoBoolean is_terminating = TRUE;
@@ -4703,7 +4801,7 @@ mono_unhandled_exception_checked (MonoObjectHandle exc, MonoError *error)
 			mono_thread_info_current ()->runtime_thread))
 		return;
 
-	field = mono_class_get_field_from_name (mono_defaults.appdomain_class, "UnhandledException");
+	field = mono_class_get_field_from_name_full (mono_defaults.appdomain_class, "UnhandledException", NULL);
 	g_assert (field);
 
 	current_domain = mono_domain_get ();
@@ -5289,8 +5387,10 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 			 * convert it to a Pointer object.
 			 */
 			pointer_class = mono_class_get_pointer_class ();
-			if (!box_method)
-				box_method = mono_class_get_method_from_name (pointer_class, "Box", -1);
+			if (!box_method) {
+				box_method = mono_class_get_method_from_name_checked (pointer_class, "Box", -1, 0, error);
+				mono_error_assert_ok (error);
+			}
 
 			g_assert (res->vtable->klass == mono_defaults.int_class);
 			box_args [0] = ((MonoIntPtr*)res)->m_value;
@@ -5388,13 +5488,12 @@ object_new_handle_common_tail (MonoObjectHandle o, MonoClass *klass, MonoError *
 MonoObject *
 mono_object_new (MonoDomain *domain, MonoClass *klass)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
+	MonoObject * result;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-
-	MonoObject * result = mono_object_new_checked (domain, klass, error);
-
+	result = mono_object_new_checked (domain, klass, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
@@ -5466,7 +5565,7 @@ mono_object_new_handle (MonoDomain *domain, MonoClass *klass, MonoError *error)
  *   Same as mono_object_new, but the returned object will be pinned.
  * For SGEN, these objects will only be freed at appdomain unload.
  */
-static MonoObjectHandle
+MonoObjectHandle
 mono_object_new_pinned_handle (MonoDomain *domain, MonoClass *klass, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
@@ -5535,7 +5634,8 @@ mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error)
 			if (!m_class_is_inited (klass))
 				mono_class_init (klass);
 
-			im = mono_class_get_method_from_name (klass, "CreateProxyForType", 1);
+			im = mono_class_get_method_from_name_checked (klass, "CreateProxyForType", 1, 0, error);
+			return_val_if_nok (error, NULL);
 			if (!im) {
 				mono_error_set_not_supported (error, "Linked away.");
 				return NULL;
@@ -5581,7 +5681,8 @@ mono_object_new_by_vtable (MonoVTable *vtable, MonoError *error)
 			if (!m_class_is_inited (klass))
 				mono_class_init (klass);
 
-			im = mono_class_get_method_from_name (klass, "CreateProxyForType", 1);
+			im = mono_class_get_method_from_name_checked (klass, "CreateProxyForType", 1, 0, error);
+			return_val_if_nok (error, mono_new_null ());
 			if (!im) {
 				mono_error_set_not_supported (error, "Linked away.");
 				return MONO_HANDLE_NEW (MonoObject, NULL);
@@ -6210,6 +6311,14 @@ mono_array_new_specific_checked (MonoVTable *vtable, uintptr_t n, MonoError *err
 	return (MonoArray*)o;
 }
 
+
+MonoArrayHandle
+mono_array_new_specific_handle (MonoVTable *vtable, uintptr_t n, MonoError *error)
+{
+	// FIXMEcoop invert relationship with mono_array_new_specific_checked
+	return MONO_HANDLE_NEW (MonoArray, mono_array_new_specific_checked (vtable, n, error));
+}
+
 MonoArray*
 ves_icall_array_new_specific (MonoVTable *vtable, uintptr_t n)
 {
@@ -6243,6 +6352,12 @@ mono_string_empty (MonoDomain *domain)
 	g_assert (domain);
 	g_assert (domain->empty_string);
 	return domain->empty_string;
+}
+
+MonoStringHandle
+mono_string_empty_handle (MonoDomain *domain)
+{
+	return MONO_HANDLE_NEW (MonoString, mono_string_empty (domain));
 }
 
 /**
@@ -6600,9 +6715,12 @@ mono_string_new_wrapper (const char *text)
 MonoObject *
 mono_value_box (MonoDomain *domain, MonoClass *klass, gpointer value)
 {
+	MonoObject *result;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-	MonoObject *result = mono_value_box_checked (domain, klass, value, error);
+	result = mono_value_box_checked (domain, klass, value, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
@@ -6999,7 +7117,8 @@ mono_object_handle_isinst_mbyref (MonoObjectHandle obj, MonoClass *klass, MonoEr
 		MonoMethod *im = NULL;
 		gpointer pa [2];
 
-		im = mono_class_get_method_from_name (rpklass, "CanCastTo", -1);
+		im = mono_class_get_method_from_name_checked (rpklass, "CanCastTo", -1, 0, error);
+		goto_if_nok (error, leave);
 		if (!im) {
 			mono_error_set_not_supported (error, "Linked away.");
 			goto leave;
@@ -7283,7 +7402,7 @@ mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error)
 
 	as = g_utf16_to_utf8 ((guint16*)str, len2, NULL, &written, &gerror);
 	if (gerror) {
-		mono_error_set_argument (error, "string", "%s", gerror->message);
+		mono_error_set_argument (error, "string", gerror->message);
 		g_error_free (gerror);
 		return NULL;
 	}
@@ -7309,15 +7428,16 @@ mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error)
 char *
 mono_string_to_utf8 (MonoString *s)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
+	char *result;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-	char *result = mono_string_to_utf8_checked (s, error);
+	result = mono_string_to_utf8_checked (s, error);
 	
 	if (!is_ok (error)) {
 		mono_error_cleanup (error);
-		return NULL;
+		result = NULL;
 	}
+	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
@@ -7343,7 +7463,7 @@ mono_utf16_to_utf8 (const gunichar2 *s, gsize slength, MonoError *error)
 
 	as = g_utf16_to_utf8 (s, slength, NULL, &written, &gerror);
 	if (gerror) {
-		mono_error_set_argument (error, "string", "%s", gerror->message);
+		mono_error_set_argument (error, "string", gerror->message);
 		g_error_free (gerror);
 		return NULL;
 	}
@@ -7635,7 +7755,9 @@ mono_get_eh_callbacks (void)
 void
 mono_raise_exception (MonoException *ex) 
 {
+	MONO_ENTER_GC_UNSAFE;
 	mono_raise_exception_deprecated (ex);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /*
@@ -7723,7 +7845,7 @@ mono_wait_handle_get_handle (MonoWaitHandle *handle)
 	MonoSafeHandle *sh;
 
 	if (!f_safe_handle) {
-		f_safe_handle = mono_class_get_field_from_name (mono_defaults.manualresetevent_class, "safeWaitHandle");
+		f_safe_handle = mono_class_get_field_from_name_full (mono_defaults.manualresetevent_class, "safeWaitHandle", NULL);
 		g_assert (f_safe_handle);
 	}
 
@@ -7872,7 +7994,8 @@ mono_message_init (MonoDomain *domain,
 	static MonoMethod *init_message_method = NULL;
 
 	if (!init_message_method) {
-		init_message_method = mono_class_get_method_from_name (mono_defaults.mono_method_message_class, "InitMessage", 2);
+		init_message_method = mono_class_get_method_from_name_checked (mono_defaults.mono_method_message_class, "InitMessage", 2, 0, error);
+		mono_error_assert_ok (error);
 		g_assert (init_message_method != NULL);
 	}
 
@@ -7918,7 +8041,8 @@ mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject
 	/*static MonoObject *(*invoke) (gpointer, gpointer, MonoObject **, MonoArray **) = NULL;*/
 
 	if (!im) {
-		im = mono_class_get_method_from_name (mono_defaults.real_proxy_class, "PrivateInvoke", 4);
+		im = mono_class_get_method_from_name_checked (mono_defaults.real_proxy_class, "PrivateInvoke", 4, 0, error);
+		return_val_if_nok (error, NULL);
 		if (!im) {
 			mono_error_set_not_supported (error, "Linked away.");
 			return NULL;
@@ -8025,8 +8149,11 @@ prepare_to_string_method (MonoObject *obj, void **target)
 
 	*target = obj;
 
-	if (!to_string)
-		to_string = mono_class_get_method_from_name_flags (mono_get_object_class (), "ToString", 0, METHOD_ATTRIBUTE_VIRTUAL | METHOD_ATTRIBUTE_PUBLIC);
+	if (!to_string) {
+		ERROR_DECL (error);
+		to_string = mono_class_get_method_from_name_checked (mono_get_object_class (), "ToString", 0, METHOD_ATTRIBUTE_VIRTUAL | METHOD_ATTRIBUTE_PUBLIC, error);
+		mono_error_assert_ok (error);
+	}
 
 	method = mono_object_get_virtual_method (obj, to_string);
 
@@ -8456,7 +8583,8 @@ mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClas
 	}
 	
 	if (!getter) {
-		getter = mono_class_get_method_from_name (mono_defaults.object_class, "FieldGetter", -1);
+		getter = mono_class_get_method_from_name_checked (mono_defaults.object_class, "FieldGetter", -1, 0, error);
+		return_val_if_nok (error, NULL);
 		if (!getter) {
 			mono_error_set_not_supported (error, "Linked away.");
 			return NULL;
@@ -8542,7 +8670,8 @@ mono_load_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mono
 	g_assert (mono_object_is_transparent_proxy (this_obj));
 
 	if (!tp_load) {
-		tp_load = mono_class_get_method_from_name (mono_defaults.transparent_proxy_class, "LoadRemoteFieldNew", -1);
+		tp_load = mono_class_get_method_from_name_checked (mono_defaults.transparent_proxy_class, "LoadRemoteFieldNew", -1, 0, error);
+		return_val_if_nok (error, NULL);
 		if (!tp_load) {
 			mono_error_set_not_supported (error, "Linked away.");
 			return NULL;
@@ -8651,7 +8780,8 @@ mono_store_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mon
 	g_assert (mono_object_is_transparent_proxy (this_obj));
 
 	if (!tp_store) {
-		tp_store = mono_class_get_method_from_name (mono_defaults.transparent_proxy_class, "StoreRemoteField", -1);
+		tp_store = mono_class_get_method_from_name_checked (mono_defaults.transparent_proxy_class, "StoreRemoteField", -1, 0, error);
+		return_val_if_nok (error, FALSE);
 		if (!tp_store) {
 			mono_error_set_not_supported (error, "Linked away.");
 			return FALSE;
@@ -8741,9 +8871,11 @@ mono_string_handle_length (MonoStringHandle s)
 uintptr_t
 mono_array_length (MonoArray *array)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	return array->max_length;
+	uintptr_t res;
+	MONO_ENTER_GC_UNSAFE;
+	res = array->max_length;
+	MONO_EXIT_GC_UNSAFE;
+	return res;
 }
 
 /**
@@ -8763,7 +8895,7 @@ mono_array_addr_with_size (MonoArray *array, int size, uintptr_t idx)
 	char *res;
 	MONO_ENTER_GC_UNSAFE;
 
-	res = ((char*)(array)->vector) + size * idx;
+	res = mono_array_addr_with_size_fast (array, size, idx);
 	MONO_EXIT_GC_UNSAFE;
 	return res;
 }

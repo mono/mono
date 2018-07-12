@@ -69314,6 +69314,21 @@
       </method>
     </type>
   </test>
+  <test name="test-fixed-01.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>39</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+Fixable">
+      <method name="Int32&amp; GetPinnableReference()" attrs="134">
+        <size>32</size>
+      </method>
+    </type>
+  </test>
   <test name="test-interpolation-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -73418,6 +73433,22 @@
     <type name="Program">
       <method name="Int32 Main()" attrs="150">
         <size>34</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-ref-12.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>16</size>
+      </method>
+      <method name="Int32&amp; Foo(Byte ByRef)" attrs="145">
+        <size>14</size>
+      </method>
+      <method name="Void Bar(Int32 ByRef)" attrs="145">
+        <size>2</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

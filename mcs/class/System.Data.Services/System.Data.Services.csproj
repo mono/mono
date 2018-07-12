@@ -43,8 +43,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
@@ -101,19 +101,19 @@
     <Compile Include="System.Data.Services\DataServiceOperationContext.cs" />
     <Compile Include="System.Data.Services\DataServiceProcessingPipeline.cs" />
     <Compile Include="System.Data.Services\DataServiceProcessingPipelineEventArgs.cs" />
-    <Compile Include="System.Data.Services\EntitySetRights.cs" />
     <Compile Include="System.Data.Services\ETagAttribute.cs" />
+    <Compile Include="System.Data.Services\EntitySetRights.cs" />
     <Compile Include="System.Data.Services\ExpandSegment.cs" />
     <Compile Include="System.Data.Services\ExpandSegmentCollection.cs" />
     <Compile Include="System.Data.Services\HandleExceptionArgs.cs" />
     <Compile Include="System.Data.Services\IDataServiceConfiguration.cs" />
     <Compile Include="System.Data.Services\IDataServiceHost.cs" />
     <Compile Include="System.Data.Services\IDataServiceHost2.cs" />
-    <Compile Include="System.Data.Services\IExpandedResult.cs" />
     <Compile Include="System.Data.Services\IExpandProvider.cs" />
-    <Compile Include="System.Data.Services\IgnorePropertiesAttribute.cs" />
+    <Compile Include="System.Data.Services\IExpandedResult.cs" />
     <Compile Include="System.Data.Services\IRequestHandler.cs" />
     <Compile Include="System.Data.Services\IUpdatable.cs" />
+    <Compile Include="System.Data.Services\IgnorePropertiesAttribute.cs" />
     <Compile Include="System.Data.Services\MimeTypeAttribute.cs" />
     <Compile Include="System.Data.Services\ProcessRequestArgs.cs" />
     <Compile Include="System.Data.Services\QueryInterceptorAttribute.cs" />
@@ -121,6 +121,7 @@
     <Compile Include="System.Data.Services\SingleResultAttribute.cs" />
     <Compile Include="System.Data.Services\UpdateOperations.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

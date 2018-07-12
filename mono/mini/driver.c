@@ -554,7 +554,7 @@ mini_regression_list (int verbose, int count, char *images [])
 			g_warning ("failed to load assembly: %s", images [i]);
 			continue;
 		}
-		total += mini_regression (mono_assembly_get_image (ass), verbose, &run);
+		total += mini_regression (mono_assembly_get_image_internal (ass), verbose, &run);
 		total_run += run;
 	}
 	if (total > 0){
@@ -627,11 +627,16 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 					/* FIXME: there is an ordering problem if there're multiple attributes, do this instead:
 					 * MonoObject *obj = create_custom_attr (ainfo->image, centry->ctor, centry->data, centry->data_size, error); */
 					mono_error_cleanup (error);
-					MonoMethod *getter = mono_class_get_method_from_name (klass, "get_Category", -1);
+					error_init (error);
+					MonoMethod *getter = mono_class_get_method_from_name_checked (klass, "get_Category", -1, 0, error);
+					mono_error_cleanup (error);
+					error_init (error);
 					MonoObject *str = mini_get_interp_callbacks ()->runtime_invoke (getter, obj, NULL, &exc, error);
 					mono_error_cleanup (error);
+					error_init (error);
 					char *utf8_str = mono_string_to_utf8_checked ((MonoString *) str, error);
 					mono_error_cleanup (error);
+					error_init (error);
 					if (!strcmp (utf8_str, "!INTERPRETER")) {
 						g_print ("skip %s...\n", method->name);
 						filter = FALSE;
@@ -720,7 +725,7 @@ mono_interp_regression_list (int verbose, int count, char *images [])
 			g_warning ("failed to load assembly: %s", images [i]);
 			continue;
 		}
-		total += interp_regression (mono_assembly_get_image (ass), verbose, &run);
+		total += interp_regression (mono_assembly_get_image_internal (ass), verbose, &run);
 		total_run += run;
 	}
 	if (total > 0) {
@@ -1076,7 +1081,7 @@ compile_all_methods_thread_main_inner (CompileAllThreadArgs *args)
 {
 	MonoAssembly *ass = args->ass;
 	int verbose = args->verbose;
-	MonoImage *image = mono_assembly_get_image (ass);
+	MonoImage *image = mono_assembly_get_image_internal (ass);
 	MonoMethod *method;
 	MonoCompile *cfg;
 	int i, count = 0, fail_count = 0;
@@ -1175,7 +1180,7 @@ int
 mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[])
 {
 	ERROR_DECL (error);
-	MonoImage *image = mono_assembly_get_image (assembly);
+	MonoImage *image = mono_assembly_get_image_internal (assembly);
 	MonoMethod *method;
 	guint32 entry = mono_image_get_entry_point (image);
 
@@ -1321,7 +1326,7 @@ load_agent (MonoDomain *domain, char *desc)
 	 * Can't use mono_jit_exec (), as it sets things which might confuse the
 	 * real Main method.
 	 */
-	image = mono_assembly_get_image (agent_assembly);
+	image = mono_assembly_get_image_internal (agent_assembly);
 	entry = mono_image_get_entry_point (image);
 	if (!entry) {
 		g_print ("Assembly '%s' doesn't have an entry point.\n", mono_image_get_filename (image));
@@ -1503,50 +1508,67 @@ mini_debug_usage (void)
 #define MONO_ARCHITECTURE MONO_ARCH_ARCHITECTURE
 #endif
 
-static const char info[] =
+static char *
+mono_get_version_info (void) 
+{
+	GString *output;
+	output = g_string_new ("");
+
 #ifdef HAVE_KW_THREAD
-	"\tTLS:           __thread\n"
+	g_string_append_printf (output, "\tTLS:           __thread\n");
 #else
-	"\tTLS:           normal\n"
+	g_string_append_printf (output, "\tTLS:           \n");
 #endif /* HAVE_KW_THREAD */
+
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
-    "\tSIGSEGV:       altstack\n"
+	g_string_append_printf (output, "\tSIGSEGV:       altstack\n");
 #else
-    "\tSIGSEGV:       normal\n"
+	g_string_append_printf (output, "\tSIGSEGV:       normal\n");
 #endif
+
 #ifdef HAVE_EPOLL
-    "\tNotifications: epoll\n"
+	g_string_append_printf (output, "\tNotifications: epoll\n");
 #elif defined(HAVE_KQUEUE)
-    "\tNotification:  kqueue\n"
+	g_string_append_printf (output, "\tNotification:  kqueue\n");
 #else
-    "\tNotification:  Thread + polling\n"
+	g_string_append_printf (output, "\tNotification:  Thread + polling\n");
 #endif
-        "\tArchitecture:  " MONO_ARCHITECTURE "\n"
-	"\tDisabled:      " DISABLED_FEATURES "\n"
-	"\tMisc:          "
+
+	g_string_append_printf (output, "\tArchitecture:  %s\n", MONO_ARCHITECTURE);
+	g_string_append_printf (output, "\tDisabled:      %s\n", DISABLED_FEATURES);
+
+	g_string_append_printf (output, "\tMisc:          ");
 #ifdef MONO_SMALL_CONFIG
-	"smallconfig "
+	g_string_append_printf (output, "smallconfig ");
 #endif
+
 #ifdef MONO_BIG_ARRAYS
-	"bigarrays "
+	g_string_append_printf (output, "bigarrays ");
 #endif
+
 #if !defined(DISABLE_SDB)
-	"softdebug "
+	g_string_append_printf (output, "softdebug ");
 #endif
-		"\n"
+	g_string_append_printf (output, "\n");
+
 #ifndef DISABLE_INTERPRETER
-	"\tInterpreter:   yes\n"
+	g_string_append_printf (output, "\tInterpreter:   yes\n");
 #else
-	"\tInterpreter:   no\n"
+	g_string_append_printf (output, "\tInterpreter:   no\n");
 #endif
+
 #ifdef MONO_ARCH_LLVM_SUPPORTED
 #ifdef ENABLE_LLVM
-	"\tLLVM:          yes(" LLVM_VERSION ")\n"
+	g_string_append_printf (output, "\tLLVM:          yes(%d)\n", LLVM_API_VERSION);
 #else
-	"\tLLVM:          supported, not enabled.\n"
+	g_string_append_printf (output, "\tLLVM:          supported, not enabled.\n");
 #endif
 #endif
-	"";
+
+	g_string_append_printf (output, "\tSuspend:       %s\n", mono_threads_suspend_policy_name ());
+
+	return g_string_free (output, FALSE);
+}
 
 #ifndef MONO_ARCH_AOT_SUPPORTED
 #define error_if_aot_unsupported() do {fprintf (stderr, "AOT compilation is not supported on this platform.\n"); exit (1);} while (0)
@@ -1867,7 +1889,10 @@ mono_main (int argc, char* argv[])
 
 			g_print ("Mono JIT compiler version %s\nCopyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com\n", build);
 			g_free (build);
+			char *info = mono_get_version_info ();
 			g_print (info);
+			g_free (info);
+
 			gc_descr = mono_gc_get_description ();
 			g_print ("\tGC:            %s\n", gc_descr);
 			g_free (gc_descr);
@@ -2383,7 +2408,7 @@ mono_main (int argc, char* argv[])
 
 #if defined(HOST_WIN32) && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 		/* Detach console when executing IMAGE_SUBSYSTEM_WINDOWS_GUI on win32 */
-		if (!enable_debugging && !mono_compile_aot && ((MonoCLIImageInfo*)(mono_assembly_get_image (assembly)->image_info))->cli_header.nt.pe_subsys_required == IMAGE_SUBSYSTEM_WINDOWS_GUI)
+		if (!enable_debugging && !mono_compile_aot && ((MonoCLIImageInfo*)(mono_assembly_get_image_internal (assembly)->image_info))->cli_header.nt.pe_subsys_required == IMAGE_SUBSYSTEM_WINDOWS_GUI)
 			FreeConsole ();
 #endif
 
@@ -2418,7 +2443,7 @@ mono_main (int argc, char* argv[])
 		mini_cleanup (domain);
 		return 3;
 	}
-	method = mono_method_desc_search_in_image (desc, mono_assembly_get_image (assembly));
+	method = mono_method_desc_search_in_image (desc, mono_assembly_get_image_internal (assembly));
 	if (!method) {
 		g_print ("Cannot find method %s\n", mname);
 		mini_cleanup (domain);

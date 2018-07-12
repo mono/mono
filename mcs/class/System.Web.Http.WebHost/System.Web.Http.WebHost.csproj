@@ -44,15 +44,15 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
+    <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\CommonWebApiResources.Designer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\DictionaryExtensions.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\Error.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\HttpMethodHelper.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\TaskHelpers.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\TaskHelpersExtensions.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\GlobalConfiguration.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\GlobalSuppressions.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\HttpControllerHandler.cs" />
@@ -76,6 +76,7 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\WebHostHttpControllerTypeResolver.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\TransparentCommonAssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

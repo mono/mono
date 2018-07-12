@@ -44,18 +44,18 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\GlobalSuppressions.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Reactive\Concurrency\ConcurrencyAbstractionLayerImpl.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Reactive\Concurrency\ConcurrencyAbstractionLayerImpl.Windows.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Reactive\Concurrency\ConcurrencyAbstractionLayerImpl.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Reactive\Concurrency\EventLoopScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Reactive\Concurrency\NewThreadScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Reactive\Concurrency\TaskPoolScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Reactive\Concurrency\Thread.Stub.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Reactive\Concurrency\ThreadPoolScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Reactive\Concurrency\ThreadPoolScheduler.Windows.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Reactive\Concurrency\ThreadPoolScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Reactive\EnlightenmentProvider.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Reactive\Internal\ExceptionServicesImpl.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Reactive\Internal\HostLifecycleNotifications.Windows.cs" />
@@ -67,6 +67,7 @@
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.PlatformServices\Strings_PlatformServices.Generated.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

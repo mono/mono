@@ -25,6 +25,9 @@ typedef enum {
 	MONO_ANAME_EQ_MASK = 0x7
 } MonoAssemblyNameEqFlags;
 
+void
+mono_assembly_name_free_internal (MonoAssemblyName *aname);
+
 gboolean
 mono_assembly_names_equal_flags (MonoAssemblyName *l, MonoAssemblyName *r, MonoAssemblyNameEqFlags flags);
 
@@ -39,6 +42,8 @@ MonoAssembly* mono_assembly_load_full_nosearch (MonoAssemblyName *aname,
 						const char       *basedir,
 						MonoAssemblyContextKind asmctx,
 						MonoImageOpenStatus *status);
+
+MonoAssembly* mono_assembly_load_with_partial_name_internal (const char *name, MonoImageOpenStatus *status);
 
 
 /* If predicate returns true assembly should be loaded, if false ignore it. */
@@ -70,5 +75,11 @@ mono_assembly_binding_applies_to_image (MonoImage* image, MonoImageOpenStatus *s
 
 MonoAssembly*
 mono_assembly_load_from_assemblies_path (gchar **assemblies_path, MonoAssemblyName *aname, MonoAssemblyContextKind asmctx);
+
+MONO_PROFILER_API MonoAssemblyName*
+mono_assembly_get_name_internal (MonoAssembly *assembly);
+
+MONO_PROFILER_API MonoImage*
+mono_assembly_get_image_internal (MonoAssembly *assembly);
 
 #endif /* __MONO_METADATA_ASSEMBLY_INTERNALS_H__ */

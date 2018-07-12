@@ -59,6 +59,7 @@
 #include <stdio.h>
 
 #include <mono/metadata/assembly.h>
+#include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/profiler.h>
@@ -412,7 +413,7 @@ static void
 dump_assembly (gpointer key, gpointer value, gpointer userdata)
 {
 	MonoAssembly *assembly = (MonoAssembly *)value;
-	MonoImage *image = mono_assembly_get_image (assembly);
+	MonoImage *image = mono_assembly_get_image_internal (assembly);
 	const char *image_name, *image_guid, *image_filename;
 	char *escaped_image_name, *escaped_image_filename;
 	int number_of_methods = 0, partially_covered = 0;
@@ -646,7 +647,7 @@ assembly_loaded (MonoProfiler *prof, MonoAssembly *assembly)
 		return;
 	}
 
-	MonoImage *image = mono_assembly_get_image (assembly);
+	MonoImage *image = mono_assembly_get_image_internal (assembly);
 
 	if (!consider_image (image))
 		return;
@@ -946,7 +947,7 @@ parse_args (const char *desc)
 	const char *p;
 	gboolean in_quotes = FALSE;
 	char quote_char = '\0';
-	char *buffer = malloc (strlen (desc));
+	char *buffer = g_malloc (strlen (desc) + 1);
 	int buffer_pos = 0;
 
 	for (p = desc; *p; p++){

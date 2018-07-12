@@ -44,8 +44,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\System.Web\System.Web.Configuration_2.0\MachineKeyRegistryStorage.cs" />
     <Compile Include="..\System.Web\System.Web.Handlers\AssemblyResourceLoader.cs" />
     <Compile Include="..\System.Web\System.Web.Util\MachineKeySectionUtils.cs" />
@@ -79,12 +79,12 @@
     <Compile Include="System.Web.Handlers\ScriptResourceHandler.cs" />
     <Compile Include="System.Web.Query.Dynamic\DynamicClass.cs" />
     <Compile Include="System.Web.Query.Dynamic\ParseException.cs" />
+    <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptUtils.cs" />
+    <Compile Include="System.Web.Script.Serialization\JSON\ReflectionUtils.cs" />
     <Compile Include="System.Web.Script.Serialization\JavaScriptConverter.cs" />
     <Compile Include="System.Web.Script.Serialization\JavaScriptSerializer.cs" />
     <Compile Include="System.Web.Script.Serialization\JavaScriptTypeResolver.cs" />
     <Compile Include="System.Web.Script.Serialization\Json.cs" />
-    <Compile Include="System.Web.Script.Serialization\JSON\JavaScriptUtils.cs" />
-    <Compile Include="System.Web.Script.Serialization\JSON\ReflectionUtils.cs" />
     <Compile Include="System.Web.Script.Serialization\JsonDeserializer.cs" />
     <Compile Include="System.Web.Script.Serialization\JsonSerializer.cs" />
     <Compile Include="System.Web.Script.Serialization\ScriptIgnoreAttribute.cs" />
@@ -108,8 +108,8 @@
     <Compile Include="System.Web.UI.WebControls\DataPagerFieldCommandEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\DataPagerFieldItem.cs" />
     <Compile Include="System.Web.UI.WebControls\HelperExtensions.cs" />
-    <Compile Include="System.Web.UI.WebControls\InsertItemPosition.cs" />
     <Compile Include="System.Web.UI.WebControls\IPageableItemContainer.cs" />
+    <Compile Include="System.Web.UI.WebControls\InsertItemPosition.cs" />
     <Compile Include="System.Web.UI.WebControls\LinqDataSource.cs" />
     <Compile Include="System.Web.UI.WebControls\LinqDataSourceContextEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\LinqDataSourceDeleteEventArgs.cs" />
@@ -126,11 +126,11 @@
     <Compile Include="System.Web.UI.WebControls\ListViewCommandEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewContainer.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewDataItem.cs" />
-    <Compile Include="System.Web.UI.WebControls\ListViewDeletedEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewDeleteEventArgs.cs" />
+    <Compile Include="System.Web.UI.WebControls\ListViewDeletedEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewEditEventArgs.cs" />
-    <Compile Include="System.Web.UI.WebControls\ListViewInsertedEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewInsertEventArgs.cs" />
+    <Compile Include="System.Web.UI.WebControls\ListViewInsertedEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewItem.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewItemEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewItemType.cs" />
@@ -139,8 +139,8 @@
     <Compile Include="System.Web.UI.WebControls\ListViewSortEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewTableCell.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewTableRow.cs" />
-    <Compile Include="System.Web.UI.WebControls\ListViewUpdatedEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\ListViewUpdateEventArgs.cs" />
+    <Compile Include="System.Web.UI.WebControls\ListViewUpdatedEventArgs.cs" />
     <Compile Include="System.Web.UI.WebControls\NextPreviousPagerField.cs" />
     <Compile Include="System.Web.UI.WebControls\NumericPagerField.cs" />
     <Compile Include="System.Web.UI.WebControls\PageEventArgs.cs" />
@@ -188,6 +188,7 @@
     <Compile Include="System.Web.UI\UpdatePanelUpdateMode.cs" />
     <Compile Include="System.Web.UI\UpdateProgress.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

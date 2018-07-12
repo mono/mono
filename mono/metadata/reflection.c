@@ -219,9 +219,12 @@ MonoReflectionAssembly*
 mono_assembly_get_object (MonoDomain *domain, MonoAssembly *assembly)
 {
 	HANDLE_FUNCTION_ENTER ();
+	MonoReflectionAssemblyHandle result;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-	MonoReflectionAssemblyHandle result = mono_assembly_get_object_handle (domain, assembly, error);
+	result = mono_assembly_get_object_handle (domain, assembly, error);
 	mono_error_cleanup (error); /* FIXME new API that doesn't swallow the error */
+	MONO_EXIT_GC_UNSAFE;
 	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
@@ -572,9 +575,12 @@ MonoReflectionMethod*
 mono_method_get_object (MonoDomain *domain, MonoMethod *method, MonoClass *refclass)
 {
 	HANDLE_FUNCTION_ENTER ();
+	MonoReflectionMethodHandle ret;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-	MonoReflectionMethodHandle ret = mono_method_get_object_handle (domain, method, refclass, error);
+	ret = mono_method_get_object_handle (domain, method, refclass, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
 
@@ -887,7 +893,7 @@ mono_get_reflection_missing_object (MonoDomain *domain)
 		MonoClass *missing_klass;
 		missing_klass = mono_class_get_missing_class ();
 		mono_class_init (missing_klass);
-		missing_value_field = mono_class_get_field_from_name (missing_klass, "Value");
+		missing_value_field = mono_class_get_field_from_name_full (missing_klass, "Value", NULL);
 		g_assert (missing_value_field);
 	}
 	/* FIXME change mono_field_get_value_object_checked to return a handle */
@@ -906,7 +912,7 @@ get_dbnull_object (MonoDomain *domain, MonoError *error)
 	if (!dbnull_value_field) {
 		MonoClass *dbnull_klass;
 		dbnull_klass = mono_class_get_dbnull_class ();
-		dbnull_value_field = mono_class_get_field_from_name (dbnull_klass, "Value");
+		dbnull_value_field = mono_class_get_field_from_name_full (dbnull_klass, "Value", NULL);
 		g_assert (dbnull_value_field);
 	}
 	/* FIXME change mono_field_get_value_object_checked to return a handle */
@@ -1822,7 +1828,7 @@ mono_reflection_parse_type_checked (char *name, MonoTypeNameParse *info, MonoErr
 	if (ok) {
 		mono_identifier_unescape_info (info);
 	} else {
-		mono_error_set_argument (error, "typeName", "failed parse: %s", name);
+		mono_error_set_argument_format (error, "typeName", "failed parse: %s", name);
 	}
 	return (ok != 0);
 }
@@ -1837,7 +1843,7 @@ _mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, 
 	error_init (error);
 
 	if (info->assembly.name) {
-		MonoAssembly *assembly = mono_assembly_loaded (&info->assembly);
+		MonoAssembly *assembly = mono_assembly_loaded_full (&info->assembly, FALSE);
 		if (!assembly && image && image->assembly && mono_assembly_names_equal (&info->assembly, &image->assembly->aname))
 			/* 
 			 * This could happen in the AOT compiler case when the search hook is not
@@ -2406,7 +2412,7 @@ mono_reflection_bind_generic_parameters (MonoReflectionTypeHandle reftype, int t
 	guint gtd_type_argc = mono_class_get_generic_container (klass)->type_argc;
 	if (gtd_type_argc != type_argc) {
 		mono_loader_unlock ();
-		mono_error_set_argument (error, "types", "The generic type definition needs %d type arguments, but was instantiated with %d ", gtd_type_argc, type_argc);
+		mono_error_set_argument_format (error, "types", "The generic type definition needs %d type arguments, but was instantiated with %d ", gtd_type_argc, type_argc);
 		return NULL;
 	}
 
@@ -2958,7 +2964,8 @@ mono_reflection_call_is_assignable_to (MonoClass *klass, MonoClass *oklass, Mono
 	error_init (error);
 
 	if (method == NULL) {
-		method = mono_class_get_method_from_name (mono_class_get_type_builder_class (), "IsAssignableTo", 1);
+		method = mono_class_get_method_from_name_checked (mono_class_get_type_builder_class (), "IsAssignableTo", 1, 0, error);
+		mono_error_assert_ok (error);
 		g_assert (method);
 	}
 
@@ -2990,11 +2997,14 @@ mono_reflection_call_is_assignable_to (MonoClass *klass, MonoClass *oklass, Mono
 MonoType*
 mono_reflection_type_get_type (MonoReflectionType *reftype)
 {
+	MonoType *result;
+	MONO_ENTER_GC_UNSAFE;
 	g_assert (reftype);
 
 	ERROR_DECL (error);
-	MonoType *result = mono_reflection_type_get_handle (reftype, error);
+	result = mono_reflection_type_get_handle (reftype, error);
 	mono_error_assert_ok (error);
+	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 

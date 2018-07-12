@@ -774,9 +774,12 @@ jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
 	if (method->string_ctor)
 		return FALSE;
 
-	if (mono_aot_only && m_class_get_image (method->klass)->aot_module)
-		/* The AOTed version of the called method is assumed to be available in full-aot mode */
-		return TRUE;
+	if (mono_aot_only && m_class_get_image (method->klass)->aot_module) {
+		ERROR_DECL (error);
+		gpointer addr = mono_jit_compile_method_jit_only (method, error);
+		if (addr && mono_error_ok (error))
+			return TRUE;
+	}
 
 	for (l = mono_interp_jit_classes; l; l = l->next) {
 		char *class_name = l->data;
@@ -1093,7 +1096,8 @@ no_intrinsic:
 			MonoType *base_type = mono_class_enum_basetype (constrained_class);
 			g_assert (base_type);
 			constrained_class = mono_class_from_mono_type (base_type);
-			target_method = mono_class_get_method_from_name (constrained_class, target_method->name, 0);
+			target_method = mono_class_get_method_from_name_checked (constrained_class, target_method->name, 0, 0, error);
+			mono_error_assert_ok (error);
 			g_assert (target_method);
 		}
 	}
@@ -1755,7 +1759,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 	static char* verbose_method_name;
 
 	if (!verbose_method_inited) {
-		verbose_method_name = getenv ("MONO_VERBOSE_METHOD");
+		verbose_method_name = g_getenv ("MONO_VERBOSE_METHOD");
 		verbose_method_inited = TRUE;
 	}
 
@@ -1995,7 +1999,8 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			int index = td->clause_indexes [in_offset];
 			if (index != -1) {
 				MonoExceptionClause *clause = &header->clauses [index];
-				if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY &&
+				if ((clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY ||
+					clause->flags == MONO_EXCEPTION_CLAUSE_FAULT) &&
 						in_offset == clause->handler_offset)
 					ADD_CODE (td, MINT_START_ABORT_PROT);
 			}
@@ -2210,12 +2215,11 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				if (mint_type (ult) == MINT_TYPE_VT) {
 					MonoClass *klass = mono_class_from_mono_type (ult);
 					vt_size = mono_class_value_size (klass, NULL);
-					vt_size = ALIGN_TO (vt_size, MINT_VT_ALIGNMENT);
 				}
 			}
 			if (td->sp > td->stack)
 				g_warning ("%s: CEE_RET: more values on stack: %d", mono_method_full_name (td->method, TRUE), td->sp - td->stack);
-			if (td->vt_sp != vt_size)
+			if (td->vt_sp != ALIGN_TO (vt_size, MINT_VT_ALIGNMENT))
 				g_error ("%s: CEE_RET: value type stack: %d vs. %d", mono_method_full_name (td->method, TRUE), td->vt_sp, vt_size);
 
 			if (sym_seq_points) {
@@ -2922,8 +2926,33 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 
 				PUSH_TYPE (td, stack_type [mint_type (m_class_get_byval_arg (klass))], klass);
 			} else {
-				ADD_CODE(td, MINT_NEWOBJ);
-				ADD_CODE(td, get_data_item_index (td, mono_interp_get_imethod (domain, m, error)));
+				if (m_class_get_parent (klass) == mono_defaults.array_class) {
+					ADD_CODE(td, MINT_NEWOBJ_ARRAY);
+					ADD_CODE(td, get_data_item_index (td, mono_interp_get_imethod (domain, m, error)));
+					ADD_CODE(td, csignature->param_count);
+				} else if (klass != mono_defaults.string_class &&
+						!mono_class_is_marshalbyref (klass) &&
+						!mono_class_has_finalizer (klass) &&
+						!m_class_has_weak_fields (klass)) {
+					if (!m_class_is_valuetype (klass))
+						ADD_CODE(td, MINT_NEWOBJ_FAST);
+					else if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT)
+						ADD_CODE(td, MINT_NEWOBJ_VTST_FAST);
+					else
+						ADD_CODE(td, MINT_NEWOBJ_VT_FAST);
+
+					ADD_CODE(td, get_data_item_index (td, mono_interp_get_imethod (domain, m, error)));
+					ADD_CODE(td, csignature->param_count);
+
+					if (!m_class_is_valuetype (klass)) {
+						MonoVTable *vtable = mono_class_vtable_checked (domain, klass, error);
+						goto_if_nok (error, exit);
+						ADD_CODE(td, get_data_item_index (td, vtable));
+					}
+				} else {
+					ADD_CODE(td, MINT_NEWOBJ);
+					ADD_CODE(td, get_data_item_index (td, mono_interp_get_imethod (domain, m, error)));
+				}
 				goto_if_nok (error, exit);
 
 				if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT) {
@@ -2998,9 +3027,10 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			if (mono_class_is_nullable (klass)) {
 				MonoMethod *target_method;
 				if (m_class_is_enumtype (mono_class_get_nullable_param (klass)))
-					target_method = mono_class_get_method_from_name (klass, "UnboxExact", 1);
+					target_method = mono_class_get_method_from_name_checked (klass, "UnboxExact", 1, 0, error);
 				else
-					target_method = mono_class_get_method_from_name (klass, "Unbox", 1);
+					target_method = mono_class_get_method_from_name_checked (klass, "Unbox", 1, 0, error);
+				goto_if_nok (error, exit);
 				/* td->ip is incremented by interp_transform_call */
 				interp_transform_call (td, method, target_method, domain, generic_context, is_bb_start, body_start_offset, NULL, FALSE, error, FALSE);
 				goto_if_nok (error, exit);
@@ -3036,9 +3066,10 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			} else if (mono_class_is_nullable (klass)) {
 				MonoMethod *target_method;
 				if (m_class_is_enumtype (mono_class_get_nullable_param (klass)))
-					target_method = mono_class_get_method_from_name (klass, "UnboxExact", 1);
+					target_method = mono_class_get_method_from_name_checked (klass, "UnboxExact", 1, 0, error);
 				else
-					target_method = mono_class_get_method_from_name (klass, "Unbox", 1);
+					target_method = mono_class_get_method_from_name_checked (klass, "Unbox", 1, 0, error);
+				goto_if_nok (error, exit);
 				/* td->ip is incremented by interp_transform_call */
 				interp_transform_call (td, method, target_method, domain, generic_context, is_bb_start, body_start_offset, NULL, FALSE, error, FALSE);
 
@@ -3251,11 +3282,10 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			ADD_CODE(td, get_data_item_index (td, field));
 			klass = NULL;
 			if (mt == MINT_TYPE_VT) {
-				MonoClass *klass = mono_class_from_mono_type (ftype);
+				klass = mono_class_from_mono_type (ftype);
 				int size = mono_class_value_size (klass, NULL);
 				PUSH_VT(td, size);
 				WRITE32(td, &size);
-				klass = ftype->data.klass;
 			} else {
 				if (mt == MINT_TYPE_O) 
 					klass = mono_class_from_mono_type (ftype);
@@ -3371,7 +3401,8 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			CHECK_TYPELOAD (klass);
 
 			if (mono_class_is_nullable (klass)) {
-				MonoMethod *target_method = mono_class_get_method_from_name (klass, "Box", 1);
+				MonoMethod *target_method = mono_class_get_method_from_name_checked (klass, "Box", 1, 0, error);
+				goto_if_nok (error, exit);
 				/* td->ip is incremented by interp_transform_call */
 				interp_transform_call (td, method, target_method, domain, generic_context, is_bb_start, body_start_offset, NULL, FALSE, error, FALSE);
 				goto_if_nok (error, exit);
@@ -3983,9 +4014,6 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			break;
 		case CEE_ENDFINALLY: {
 			g_assert (td->clause_indexes [in_offset] != -1);
-			MonoExceptionClause *clause = &header->clauses [td->clause_indexes [in_offset]];
-			if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY)
-				ADD_CODE (td, MINT_END_ABORT_PROT);
 			td->sp = td->stack;
 			SIMPLE_OP (td, MINT_ENDFINALLY);
 			ADD_CODE (td, td->clause_indexes [in_offset]);

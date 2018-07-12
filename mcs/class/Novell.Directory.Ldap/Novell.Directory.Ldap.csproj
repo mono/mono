@@ -43,8 +43,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Novell.Directory.Ldap.Asn1\Asn1Boolean.cs" />
     <Compile Include="Novell.Directory.Ldap.Asn1\Asn1Choice.cs" />
@@ -77,9 +77,9 @@
     <Compile Include="Novell.Directory.Ldap.Events.Edir.EventData\BinderyObjectEventData.cs" />
     <Compile Include="Novell.Directory.Ldap.Events.Edir.EventData\ChangeAddressEventData.cs" />
     <Compile Include="Novell.Directory.Ldap.Events.Edir.EventData\ConnectionStateEventData.cs" />
+    <Compile Include="Novell.Directory.Ldap.Events.Edir.EventData\DSETimeStamp.cs" />
     <Compile Include="Novell.Directory.Ldap.Events.Edir.EventData\DebugEventData.cs" />
     <Compile Include="Novell.Directory.Ldap.Events.Edir.EventData\DebugParameter.cs" />
-    <Compile Include="Novell.Directory.Ldap.Events.Edir.EventData\DSETimeStamp.cs" />
     <Compile Include="Novell.Directory.Ldap.Events.Edir.EventData\EntryEventData.cs" />
     <Compile Include="Novell.Directory.Ldap.Events.Edir.EventData\GeneralDSEventData.cs" />
     <Compile Include="Novell.Directory.Ldap.Events.Edir.EventData\ModuleStateEventData.cs" />
@@ -220,11 +220,11 @@
     <Compile Include="Novell.Directory.Ldap\LdapConnection.cs" />
     <Compile Include="Novell.Directory.Ldap\LdapConstraints.cs" />
     <Compile Include="Novell.Directory.Ldap\LdapControl.cs" />
-    <Compile Include="Novell.Directory.Ldap\LdapDeleteRequest.cs" />
     <Compile Include="Novell.Directory.Ldap\LdapDITContentRuleSchema.cs" />
     <Compile Include="Novell.Directory.Ldap\LdapDITStructureRuleSchema.cs" />
     <Compile Include="Novell.Directory.Ldap\LdapDN.cs" />
     <Compile Include="Novell.Directory.Ldap\LdapDSConstants.cs" />
+    <Compile Include="Novell.Directory.Ldap\LdapDeleteRequest.cs" />
     <Compile Include="Novell.Directory.Ldap\LdapEntry.cs" />
     <Compile Include="Novell.Directory.Ldap\LdapException.cs" />
     <Compile Include="Novell.Directory.Ldap\LdapExtendedOperation.cs" />
@@ -262,6 +262,7 @@
     <Compile Include="Novell.Directory.Ldap\MessageVector.cs" />
     <Compile Include="Novell.Directory.Ldap\SupportClass.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

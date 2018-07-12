@@ -7,6 +7,7 @@ def packageFileNameX86 = null
 def packageFileNameX64 = null
 def commitHash = null
 def utils = null
+properties([compressBuildLog()])
 
 node ("w64") {
     ws ("workspace/${jobName}/${monoBranch}") {

@@ -29,6 +29,7 @@ typedef enum {
 	MONO_TRACE_IO_LAYER_MUTEX     = 1 << 14,
 	MONO_TRACE_IO_LAYER_HANDLE    = 1 << 15,
 	MONO_TRACE_TAILCALL           = 1 << 16,
+	MONO_TRACE_PROFILER           = 1 << 17,
 } MonoTraceMask;
 
 MONO_API extern GLogLevelFlags mono_internal_current_level;
@@ -153,8 +154,12 @@ void mono_log_close_logcat (void);
 void mono_log_open_asl (const char *path, void *userData);
 void mono_log_write_asl (const char *log_domain, GLogLevelFlags level, mono_bool hdr, const char *message);
 void mono_log_close_asl (void);
-
 #endif
+
+void mono_log_open_recorder (const char *path, void *userData);
+void mono_log_write_recorder (const char *log_domain, GLogLevelFlags level, mono_bool hdr, const char *message);
+void mono_log_close_recorder (void);
+void mono_log_dump_recorder (void);
 
 G_END_DECLS
 

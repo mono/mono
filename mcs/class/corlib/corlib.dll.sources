@@ -328,6 +328,7 @@ System.Runtime/GCLatencyMode.cs
 System.Runtime/GCSettings.cs
 System.Runtime/MemoryFailPoint.cs
 System.Runtime.CompilerServices/ConditionalWeakTable.cs
+System.Runtime.CompilerServices/PreserveDependencyAttribute.cs
 System.Runtime.CompilerServices/RuntimeHelpers.cs
 System.Runtime.CompilerServices/Unsafe.cs
 System.Runtime.Hosting/ActivationArguments.cs
@@ -1541,6 +1542,7 @@ corefx/AwaitTaskContinuation.cs
 corefx/SynchronizationContext.cs
 corefx/SR.cs
 corefx/CompareInfo.cs
+corefx/Interop.GetRandomBytes.Mono.cs
 corefx/MemoryExtensions.cs
 corefx/GlobalizationMode.cs
 corefx/MemoryMarshal.cs
@@ -1611,6 +1613,7 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/ReadOnlyDictionary.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Gen2GcCallback.cs
+../../../external/corefx/src/Common/src/CoreLib/System/HashCode.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/HResults.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MathF.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Marvin.cs

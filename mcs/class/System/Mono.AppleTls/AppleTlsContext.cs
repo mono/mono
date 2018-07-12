@@ -341,8 +341,17 @@ namespace Mono.AppleTls
 				PeerDomainName = ServerName;
 			}
 
-			if (Options.AllowRenegotiation)
+			if (Options.AllowRenegotiation && IsRenegotiationSupported ())
 				SetSessionOption (SslSessionOption.AllowRenegotiation, true);
+		}
+
+		static bool IsRenegotiationSupported ()
+		{
+#if MONOTOUCH
+			return false;
+#else
+			return Environment.OSVersion.Version >= new Version (16, 6);
+#endif
 		}
 
 		void InitializeSession ()
@@ -949,19 +958,7 @@ namespace Mono.AppleTls
 		extern static /* OSStatus */ SslStatus SSLReHandshake (/* SSLContextRef */ IntPtr context);
 #endif
 
-		public override bool CanRenegotiate {
-			get {
-#if MONOTOUCH
-				return false;
-#else
-				if (!IsServer)
-					return false;
-				if (Environment.OSVersion.Version < new Version (16, 6))
-					return false;
-				return true;
-#endif
-			}
-		}
+		public override bool CanRenegotiate => IsServer && IsRenegotiationSupported ();
 
 		public override void Renegotiate ()
 		{

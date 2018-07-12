@@ -35,13 +35,14 @@ if [[ $CI_TAGS == *'retry-flaky-tests'* ]]; then
     export MONO_FLAKY_TEST_RETRIES=5
 fi
 
-if [[ ${CI_TAGS} == *'osx-i386'* ]]; then CFLAGS="$CFLAGS -m32 -arch i386"; LDFLAGS="$LDFLAGS -m32 -arch i386"; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --host=i386-apple-darwin11.2.0 --build=i386-apple-darwin11.2.0"; fi
-if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then CFLAGS="$CFLAGS -m64 -arch x86_64"; LDFLAGS="$LDFLAGS -m64 -arch x86_64" EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib"; fi
+if [[ ${CI_TAGS} == *'osx-i386'* ]]; then CFLAGS="$CFLAGS -m32 -arch i386 -mmacosx-version-min=10.8"; LDFLAGS="$LDFLAGS -m32 -arch i386"; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --host=i386-apple-darwin11.2.0 --build=i386-apple-darwin11.2.0"; fi
+if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then CFLAGS="$CFLAGS -m64 -arch x86_64 -mmacosx-version-min=10.8"; LDFLAGS="$LDFLAGS -m64 -arch x86_64" EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib"; fi
 if [[ ${CI_TAGS} == *'win-i386'* ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/Win32/bin/Release/mono-sgen.exe"; fi
 if [[ ${CI_TAGS} == *'win-amd64'* ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=x86_64-w64-mingw32 --disable-boehm"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen.exe"; fi
 
-if   [[ ${CI_TAGS} == *'coop-suspend'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-cooperative-suspend";
+if   [[ ${CI_TAGS} == *'coop-suspend'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --disable-hybrid-suspend --enable-cooperative-suspend";
 elif [[ ${CI_TAGS} == *'hybrid-suspend'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-hybrid-suspend";
+elif [[ ${CI_TAGS} == *'preemptive-suspend'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --disable-hybrid-suspend";
 fi
 
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-checked-build=gc,thread"; fi
@@ -88,8 +89,11 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_WASM=1" >> sdks/Make.config
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
-	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-sim64 package-ios-target64
-	   ${TESTCMD} --label=cross --timeout=60m --fatal make -j4 -C sdks/builds package-ios-cross64 package-ios-cross32
+
+	   ${TESTCMD} --label=build-sim-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{sim64,sim32,simtv,simwatch}
+	   ${TESTCMD} --label=build-dev-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{target64,target32,targettv,targetwatch}
+	   ${TESTCMD} --label=build-cross-compilers --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{cross64,cross32,crosswatch}
+
 	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
 	   ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
 	   ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
@@ -101,16 +105,17 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
 		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-llvm-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
 	   fi
+	   ${TESTCMD} --label=build-ios-dev-interp-only --timeout=60m make -C sdks/ios build-ios-dev-interp-only-all
+	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-only-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+	   fi
 	   ${TESTCMD} --label=package --timeout=60m tar cvzf mono-product-sdk-$GIT_COMMIT.tar.gz -C sdks/out/ bcl ios-llvm64 ios-llvm32 ios-cross32-release ios-cross64-release
 	   exit 0
 fi
 
 if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
    then
-        echo "ANDROID_TOOLCHAIN_DIR=$HOME/android-toolchain" > sdks/Make.config
-        echo "ANDROID_TOOLCHAIN_CACHE_DIR=$HOME/android-archives" >> sdks/Make.config
-        echo "MXE_PREFIX_DIR=$HOME/android-toolchain" >> sdks/Make.config
-        echo "IGNORE_PROVISION_ANDROID=1" >> sdks/Make.config
+        echo "IGNORE_PROVISION_ANDROID=1" > sdks/Make.config
         echo "IGNORE_PROVISION_MXE=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
         ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j4 -C sdks/builds provision-android
@@ -131,13 +136,15 @@ if [[ ${CI_TAGS} == *'webassembly'* ]];
 	   ${TESTCMD} --label=ch-mini-test --timeout=60m make -C sdks/wasm run-ch-mini
 	   ${TESTCMD} --label=v8-mini-test --timeout=60m make -C sdks/wasm run-v8-mini
 	   ${TESTCMD} --label=sm-mini-test --timeout=60m make -C sdks/wasm run-sm-mini
+	   ${TESTCMD} --label=jsc-mini-test --timeout=60m make -C sdks/wasm run-jsc-mini
 	   #The following tests are not passing yet, so enabling them would make us perma-red
 	   #${TESTCMD} --label=mini-corlib --timeout=60m make -C sdks/wasm run-all-corlib
 	   #${TESTCMD} --label=mini-system --timeout=60m make -C sdks/wasm run-all-system
 	   # Chakra crashes with System.Core. See https://github.com/mono/mono/issues/8345
-	   # ${TESTCMD} --label=ch-system-core --timeout=60m make -C sdks/wasm run-ch-system-core
+	   ${TESTCMD} --label=ch-system-core --timeout=60m make -C sdks/wasm run-ch-system-core
 	   ${TESTCMD} --label=v8-system-core --timeout=60m make -C sdks/wasm run-v8-system-core
 	   ${TESTCMD} --label=sm-system-core --timeout=60m make -C sdks/wasm run-sm-system-core
+	   ${TESTCMD} --label=jsc-system-core --timeout=60m make -C sdks/wasm run-jsc-system-core
 	   ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
 	   exit 0
 fi

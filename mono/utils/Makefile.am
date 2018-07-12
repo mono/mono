@@ -2,7 +2,31 @@ include $(top_srcdir)/mk/common.mk
 
 noinst_LTLIBRARIES = libmonoutils.la
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)
+if ENABLE_LLVM
+	if INTERNAL_LLVM 
+		llvm_config=$(monodir)/llvm/usr/bin/llvm-config
+	else
+		llvm_config=$(EXTERNAL_LLVM_CONFIG)
+	endif
+
+	llvm_api_version_from_config=$(shell $(llvm_config) --mono-api-version 2>/dev/null)
+	llvm_api_version=$(shell if [  -z "$(llvm_api_version_from_config)" ]; then echo "0"; else echo "$(llvm_api_version_from_config)"; fi)
+	LLVM_CFLAGS=-DLLVM_API_VERSION=$(llvm_api_version)
+endif
+
+if ENABLE_LLVM
+if INTERNAL_LLVM
+llvm_config=$(monodir)/llvm/usr/bin/llvm-config
+else
+llvm_config=$(EXTERNAL_LLVM_CONFIG)
+endif
+
+llvm_api_version_from_config=$(shell $(llvm_config) --mono-api-version 2>/dev/null)
+llvm_api_version=$(shell if [  -z "$(llvm_api_version_from_config)" ]; then echo "0"; else echo "$(llvm_api_version_from_config)"; fi)
+LLVM_CFLAGS=-DLLVM_API_VERSION=$(llvm_api_version)
+endif
+
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS) $(LLVM_CFLAGS)
 
 if ENABLE_DTRACE
 
@@ -50,6 +74,7 @@ monoutils_sources = \
 	mono-log-posix.c	\
 	mono-log-android.c \
 	mono-log-darwin.c \
+	mono-log-flight-recorder.c \
 	mono-merp.c	\
 	mono-merp.h	\
 	mono-state.h	\
@@ -68,6 +93,8 @@ monoutils_sources = \
 	mono-mmap-windows-internals.h	\
 	mono-os-mutex.h		\
 	mono-os-mutex.c		\
+	mono-flight-recorder.h		\
+	mono-flight-recorder.c		\
 	mono-os-wait.h \
 	mono-coop-mutex.h		\
 	mono-once.h		\
@@ -152,6 +179,8 @@ monoutils_sources = \
 	mono-threads-api.h	\
 	mono-threads-coop.c	\
 	mono-threads-coop.h	\
+	mono-utility-thread.c	\
+	mono-utility-thread.h	\
 	mono-tls.h	\
 	mono-tls.c	\
 	mono-utils-debug.c \
@@ -179,7 +208,6 @@ monoutils_sources = \
 	mono-rand.c	\
 	mono-rand-windows.c	\
 	mono-rand.h \
-	mono-rand-windows-internals.h \
 	memfuncs.c \
 	memfuncs.h \
 	parse.c \

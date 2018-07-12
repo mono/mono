@@ -69,12 +69,13 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="Mono.Simd\AccelerationAttribute.cs" />
     <Compile Include="Mono.Simd\AccelMode.cs" />
+    <Compile Include="Mono.Simd\AccelerationAttribute.cs" />
     <Compile Include="Mono.Simd\ArrayExtensions.cs" />
     <Compile Include="Mono.Simd\SimdRuntime.cs" />
     <Compile Include="Mono.Simd\Vector16b.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Mono.Simd\Vector8us.cs" />
     <Compile Include="Mono.Simd\VectorOperations.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System.Core/System.Core.csproj" />

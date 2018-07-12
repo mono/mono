@@ -99,11 +99,13 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\..\..\external\corefx\src\System.IO.FileSystem.AccessControl\src\System\IO\FileSystemAclExtensions.net46.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="TypeForwarders.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../System/System.csproj" />

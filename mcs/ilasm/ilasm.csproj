@@ -41,10 +41,15 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+    <Compile Include="ILParser.cs" />
+  </ItemGroup>
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\build\common\Consts.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Driver.cs" />
+    <Compile Include="Report.cs" />
     <Compile Include="codegen\Assembly.cs" />
     <Compile Include="codegen\BaseClassRef.cs" />
     <Compile Include="codegen\BaseGenericTypeRef.cs" />
@@ -75,17 +80,17 @@
     <Compile Include="codegen\GenericArguments.cs" />
     <Compile Include="codegen\GenericMethodRef.cs" />
     <Compile Include="codegen\GenericMethodSig.cs" />
-    <Compile Include="codegen\GenericParameters.cs" />
     <Compile Include="codegen\GenericParamRef.cs" />
+    <Compile Include="codegen\GenericParameters.cs" />
     <Compile Include="codegen\GenericTypeInst.cs" />
     <Compile Include="codegen\GlobalFieldRef.cs" />
     <Compile Include="codegen\GlobalMethodRef.cs" />
     <Compile Include="codegen\HandlerBlock.cs" />
     <Compile Include="codegen\IFieldRef.cs" />
     <Compile Include="codegen\IInstr.cs" />
+    <Compile Include="codegen\ISehClause.cs" />
     <Compile Include="codegen\InstrTable.cs" />
     <Compile Include="codegen\IntInstr.cs" />
-    <Compile Include="codegen\ISehClause.cs" />
     <Compile Include="codegen\LabelInfo.cs" />
     <Compile Include="codegen\LdcInstr.cs" />
     <Compile Include="codegen\LdstrInstr.cs" />
@@ -115,22 +120,20 @@
     <Compile Include="codegen\TypeRef.cs" />
     <Compile Include="codegen\TypeSpecFieldRef.cs" />
     <Compile Include="codegen\TypeSpecMethodRef.cs" />
-    <Compile Include="Driver.cs" />
     <Compile Include="parser\ScannerAdapter.cs" />
-    <Compile Include="Report.cs" />
     <Compile Include="scanner\ILReader.cs" />
     <Compile Include="scanner\ILTables.cs" />
     <Compile Include="scanner\ILToken.cs" />
     <Compile Include="scanner\ILTokenizer.cs" />
     <Compile Include="scanner\ILTokenizingException.cs" />
-    <Compile Include="scanner\InstrToken.cs" />
     <Compile Include="scanner\ITokenStream.cs" />
+    <Compile Include="scanner\InstrToken.cs" />
     <Compile Include="scanner\Location.cs" />
     <Compile Include="scanner\NumberHelper.cs" />
     <Compile Include="scanner\StringHelper.cs" />
     <Compile Include="scanner\StringHelperBase.cs" />
-    <Compile Include="ILParser.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

@@ -16,52 +16,63 @@ emcc -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_
 
 ## Sample
 
+For this we'll use the included sample web page in the sdk.
+
 ### Step 1
-To setup the sample, first you need to compile & setup a directory to serve binaries:
 
-**Linux / Mac**
-```
-mkdir managed
-cp bcl/mscorlib.dll managed/
-csc /nostdlib /target:library /r:managed/mscorlib.dll /out:managed/sample.dll sample.cs 
-```
-**Windows**
+Create a new directory for your application:
 
-The **csc** executable is a build tool that is installed with Visual Studio. For the commands below, using a command window opened using a [*Developer Command Prompt for Visual Studio*][2] is convenient.
 ```
-md managed
-copy bcl\mscorlib.dll managed
-csc /nostdlib /target:library /r:managed/mscorlib.dll /out:managed/sample.dll sample.cs 
+mkdir my-app
+cd my-app
 ```
 
 ### Step 2
-Pick a pre-built runtime from one of the directories and copy all files to the root SDK directory. Allow file overwrites if necessary:
 
-**Linux / Mac**
+Copy the sample code from the SDK. We'll assume that the $WASM_SDK variable points to it.
+
 ```
-cp debug/* .
-```
-**Windows**
-```
-copy debug\* .
+cp $WASM_SDK/sample.html .
+cp $WASM_SDK/sample.cs .
 ```
 
 ### Step 3
-Start a web server from the SDK directory (where sample.html is):
+
+Compile and package your application.
 
 ```
-python -m SimpleHTTPServer
+csc /target:library sample.cs
+mono $WASM_SDK/packager.exe sample.dll
 ```
 
-Unfortunately, the above http server does not give wasm binaries the right mime type, which disables WebAssembly stream compilation.
-The included server.py script solves this and can be used instead:
-```
-python server.py
-```
+The package command will generate a `runtime.js` file that will properly load the runtime and call `App.Init` after that.
+It will copy the required files such as the runtime and class libraries.
 
 ### Step 4
-From within a browser, go to `locahost:8000/sample.html` to see the sample app, which will show a text box (allowing C# code to be entered) and **Run** button when successfully built.
 
+Launch the provided webserver:
+
+```
+python $WASM_SDK/server.py
+```
+
+Go to `http://localhost:8000/sample.html`
+
+
+# Debugging
+
+To experiment with the debugger, do the following steps:
+
+- When calling `packager.exe` pass the `-debug` argument to it.
+- Start Chrome with remote debugging enabled (IE `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222`)
+- Download and run the debugger proxy: https://github.com/kumpera/ws-proxy
+- Connect to the remote debugged Chrome and pick the page which is running the wasm code
+- Rewrite the request URL (just the `ws` argument) to use the proxy port instead of the browser port
+- Refresh the debugged page and you should be set
+
+Beware that the debugger is in active development so bugs and missing features will be present.
+
+# Notes
 
 [1]: https://github.com/kripken/emscripten
 

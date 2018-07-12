@@ -44,16 +44,16 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Mono.Profiler.Log\LogBufferHeader.cs" />
     <Compile Include="Mono.Profiler.Log\LogEnums.cs" />
     <Compile Include="Mono.Profiler.Log\LogEvent.cs" />
-    <Compile Include="Mono.Profiler.Log\LogEvents.cs" />
     <Compile Include="Mono.Profiler.Log\LogEventVisitor.cs" />
+    <Compile Include="Mono.Profiler.Log\LogEvents.cs" />
     <Compile Include="Mono.Profiler.Log\LogException.cs" />
     <Compile Include="Mono.Profiler.Log\LogProcessor.cs" />
     <Compile Include="Mono.Profiler.Log\LogProfiler.cs" />
@@ -61,6 +61,7 @@
     <Compile Include="Mono.Profiler.Log\LogStream.cs" />
     <Compile Include="Mono.Profiler.Log\LogStreamHeader.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

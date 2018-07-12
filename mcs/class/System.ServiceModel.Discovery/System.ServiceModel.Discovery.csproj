@@ -43,8 +43,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.ServiceModel.Channels\DiscoveryChannelBase.cs" />
     <Compile Include="System.ServiceModel.Channels\RequestChannelBase.cs" />
@@ -144,6 +144,7 @@
     <Compile Include="System.ServiceModel.Discovery\UdpDiscoveryEndpoint.cs" />
     <Compile Include="System.ServiceModel.Discovery\UdpTransportSettings.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

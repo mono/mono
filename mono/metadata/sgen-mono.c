@@ -348,7 +348,7 @@ get_array_fill_vtable (void)
 
 		vtable->klass = klass;
 		bmap = 0;
-		vtable->gc_descr = mono_gc_make_descr_for_array (TRUE, &bmap, 0, 1);
+		vtable->gc_descr = mono_gc_make_descr_for_array (TRUE, &bmap, 0, 8);
 		vtable->rank = 1;
 
 		array_fill_vtable = vtable;
@@ -371,7 +371,9 @@ sgen_client_array_fill_range (char *start, size_t size)
 	/* Mark this as not a real object */
 	o->obj.synchronisation = (MonoThreadsSync *)GINT_TO_POINTER (-1);
 	o->bounds = NULL;
-	o->max_length = (mono_array_size_t)(size - MONO_SIZEOF_MONO_ARRAY);
+	/* We use array of int64 */
+	g_assert ((size - MONO_SIZEOF_MONO_ARRAY) % 8 == 0);
+	o->max_length = (mono_array_size_t)((size - MONO_SIZEOF_MONO_ARRAY) / 8);
 
 	return TRUE;
 }
@@ -2420,7 +2422,9 @@ mono_gc_precise_stack_mark_enabled (void)
 void
 mono_gc_collect (int generation)
 {
+	MONO_ENTER_GC_UNSAFE;
 	sgen_gc_collect (generation);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 int

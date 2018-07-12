@@ -627,13 +627,15 @@ void mono_invoke_protected_memory_method (MonoArray *data, MonoObject *scope, gb
 			MonoAssembly *sa = mono_assembly_open_predicate ("System.Security.dll", MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
 			if (!sa)
 				g_assert_not_reached ();
-			system_security_assembly = mono_assembly_get_image (sa);
+			system_security_assembly = mono_assembly_get_image_internal (sa);
 		}
 	}
 
 	klass = mono_class_load_from_name (system_security_assembly,
 								  "System.Security.Cryptography", "ProtectedMemory");
-	method = mono_class_get_method_from_name (klass, encrypt ? "Protect" : "Unprotect", 2);
+	method = mono_class_get_method_from_name_checked (klass, encrypt ? "Protect" : "Unprotect", 2, 0, error);
+	mono_error_assert_ok (error);
+	g_assert (method);
 	params [0] = data;
 	params [1] = scope; /* MemoryProtectionScope.SameProcess */
 

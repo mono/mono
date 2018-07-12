@@ -1350,19 +1350,24 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 		method_type = decode_value (p, &p);
 		switch (method_type) {
 		case 0:
-			ref->method = mono_class_get_method_from_name (klass, ".ctor", m_class_get_rank (klass));
+			ref->method = mono_class_get_method_from_name_checked (klass, ".ctor", m_class_get_rank (klass), 0, error);
+			return_val_if_nok (error, FALSE);
 			break;
 		case 1:
-			ref->method = mono_class_get_method_from_name (klass, ".ctor", m_class_get_rank (klass) * 2);
+			ref->method = mono_class_get_method_from_name_checked (klass, ".ctor", m_class_get_rank (klass) * 2, 0, error);
+			return_val_if_nok (error, FALSE);
 			break;
 		case 2:
-			ref->method = mono_class_get_method_from_name (klass, "Get", -1);
+			ref->method = mono_class_get_method_from_name_checked (klass, "Get", -1, 0, error);
+			return_val_if_nok (error, FALSE);
 			break;
 		case 3:
-			ref->method = mono_class_get_method_from_name (klass, "Address", -1);
+			ref->method = mono_class_get_method_from_name_checked (klass, "Address", -1, 0, error);
+			return_val_if_nok (error, FALSE);
 			break;
 		case 4:
-			ref->method = mono_class_get_method_from_name (klass, "Set", -1);
+			ref->method = mono_class_get_method_from_name_checked (klass, "Set", -1, 0, error);
+			return_val_if_nok (error, FALSE);
 			break;
 		default:
 			mono_error_set_bad_image_by_name (error, module->aot_name, "Invalid METHODREF_ARRAY method type %d", method_type);
@@ -1816,7 +1821,7 @@ check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, guint8 *blob, char 
 	char *build_info;
 	char *msg = NULL;
 	gboolean usable = TRUE;
-	gboolean full_aot, safepoints;
+	gboolean full_aot, interp, safepoints;
 	guint32 excluded_cpu_optimizations;
 
 	if (strcmp (assembly->image->guid, info->assembly_guid)) {
@@ -1832,13 +1837,20 @@ check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, guint8 *blob, char 
 	g_free (build_info);
 
 	full_aot = info->flags & MONO_AOT_FILE_FLAG_FULL_AOT;
+	interp = info->flags & MONO_AOT_FILE_FLAG_INTERP;
 
 	if (mono_aot_only && !full_aot) {
-		msg = g_strdup_printf ("not compiled with --aot=full");
-		usable = FALSE;
+		if (!interp) {
+			msg = g_strdup_printf ("not compiled with --aot=full");
+			usable = FALSE;
+		}
 	}
 	if (!mono_aot_only && full_aot) {
 		msg = g_strdup_printf ("compiled with --aot=full");
+		usable = FALSE;
+	}
+	if (mono_use_interpreter && !interp) {
+		msg = g_strdup_printf ("not compiled with --aot=interp");
 		usable = FALSE;
 	}
 	if (mono_llvm_only && !(info->flags & MONO_AOT_FILE_FLAG_LLVM_ONLY)) {
@@ -2144,7 +2156,7 @@ if (container_assm_name && !container_amodule) {
 	}
 
 	if (!usable) {
-		if (mono_aot_only && !mono_use_interpreter) {
+		if (mono_aot_only) {
 			g_error ("Failed to load AOT module '%s' while running in aot-only mode: %s.\n", found_aot_name, msg);
 		} else {
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: module %s is unusable: %s.", found_aot_name, msg);
@@ -2267,6 +2279,7 @@ if (container_assm_name && !container_amodule) {
 	amodule->trampolines [MONO_AOT_TRAMP_STATIC_RGCTX] = (guint8 *)info->static_rgctx_trampolines;
 	amodule->trampolines [MONO_AOT_TRAMP_IMT] = (guint8 *)info->imt_trampolines;
 	amodule->trampolines [MONO_AOT_TRAMP_GSHAREDVT_ARG] = (guint8 *)info->gsharedvt_arg_trampolines;
+	amodule->trampolines [MONO_AOT_TRAMP_FTNPTR_ARG] = (guint8 *)info->ftnptr_arg_trampolines;
 
 	if (!strcmp (assembly->aname.name, "mscorlib"))
 		mscorlib_aot_module = amodule;
@@ -4043,7 +4056,8 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 			}
 			return NULL;
 		}
-		code = (guint8 *)amodule->methods [method_index];
+		if (method_index < amodule->info.nmethods)
+			code = (guint8 *)amodule->methods [method_index];
 	}
 
 	info = &amodule->blob [mono_aot_get_offset (amodule->method_info_offsets, method_index)];
@@ -4078,6 +4092,7 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 			} else {
 				g_print ("NON AOT METHOD: %p %d\n", code, method_index);
 			}
+			mini_debug_options.aot_skip_set = FALSE;
 			return NULL;
 		}
 	}
@@ -4667,7 +4682,8 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 				/* Avoid recursion */
 				return NULL;
 
-			m = mono_class_get_method_from_name (mono_defaults.array_class, "GetGenericValueImpl", 2);
+			m = mono_class_get_method_from_name_checked (mono_defaults.array_class, "GetGenericValueImpl", 2, 0, error);
+			mono_error_assert_ok (error);
 			g_assert (m);
 
 			memset (&ctx, 0, sizeof (ctx));
@@ -4745,7 +4761,8 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 					else
 						g_assert_not_reached ();
 					MonoClass *obj_array_class = mono_class_create_array (mono_defaults.object_class, rank);
-					MonoMethod *m = mono_class_get_method_from_name (obj_array_class, array_method->name, mono_method_signature (array_method)->param_count);
+					MonoMethod *m = mono_class_get_method_from_name_checked (obj_array_class, array_method->name, mono_method_signature (array_method)->param_count, 0, error);
+					mono_error_assert_ok (error);
 					g_assert (m);
 
 					m = mono_marshal_get_array_accessor_wrapper (m);
@@ -4808,6 +4825,11 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 	} else {
 		/* Common case */
 		method_index = mono_metadata_token_index (method->token) - 1;
+
+		guint32 num_methods = amodule->info.nmethods - amodule->info.nextra_methods;
+		if (method_index >= num_methods)
+			/* method not available in AOT image */
+			return NULL;
 	}
 
 	code = (guint8 *)load_method (domain, amodule, m_class_get_image (klass), method, method->token, method_index, error);
@@ -5909,7 +5931,30 @@ mono_aot_get_gsharedvt_arg_trampoline (gpointer arg, gpointer addr)
 	/* The caller expects an ftnptr */
 	return mono_create_ftnptr (mono_domain_get (), code);
 }
- 
+
+#ifdef MONO_ARCH_HAVE_FTNPTR_ARG_TRAMPOLINE
+gpointer
+mono_aot_get_ftnptr_arg_trampoline (gpointer arg, gpointer addr)
+{
+	MonoAotModule *amodule;
+	guint8 *code;
+	guint32 got_offset;
+
+	if (USE_PAGE_TRAMPOLINES) {
+		g_error ("FIXME: ftnptr_arg page trampolines");
+	} else {
+		code = (guint8 *)get_numerous_trampoline (MONO_AOT_TRAMP_FTNPTR_ARG, 2, &amodule, &got_offset, NULL);
+
+		amodule->got [got_offset] = arg;
+		amodule->got [got_offset + 1] = addr;
+	}
+
+	/* The caller expects an ftnptr */
+	return mono_create_ftnptr (mono_domain_get (), code);
+}
+#endif
+
+
 /*
  * mono_aot_set_make_unreadable:
  *

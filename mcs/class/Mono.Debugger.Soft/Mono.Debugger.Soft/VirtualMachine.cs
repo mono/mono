@@ -522,6 +522,18 @@ namespace Mono.Debugger.Soft
 		Dictionary <long, ObjectMirror> objects;
 		object objects_lock = new object ();
 
+		// Return a mirror if it exists
+		// Does not call into the debuggee
+		internal T TryGetObject<T> (long id) where T : ObjectMirror {
+			lock (objects_lock) {
+				if (objects == null)
+					objects = new Dictionary <long, ObjectMirror> ();
+				ObjectMirror obj;
+				objects.TryGetValue (id, out obj);
+				return (T)obj;
+			}
+		}
+
 		internal T GetObject<T> (long id, long domain_id, long type_id) where T : ObjectMirror {
 			lock (objects_lock) {
 				if (objects == null)
@@ -571,6 +583,10 @@ namespace Mono.Debugger.Soft
 
 		internal ThreadMirror GetThread (long id) {
 			return GetObject <ThreadMirror> (id);
+		}
+
+		internal ThreadMirror TryGetThread (long id) {
+			return TryGetObject <ThreadMirror> (id);
 		}
 
 		Dictionary <long, FieldInfoMirror> fields;
@@ -736,7 +752,11 @@ namespace Mono.Debugger.Soft
 					l.Add (new ThreadStartEvent (vm, req_id, id));
 					break;
 				case EventType.ThreadDeath:
-					vm.GetThread (id).InvalidateFrames ();
+					// Avoid calling GetThread () since it might call into the debuggee
+					// and we can't do that in the event handler
+					var thread = vm.TryGetThread (id);
+					if (thread != null)
+						thread.InvalidateFrames ();
 					vm.InvalidateThreadCache ();
 					l.Add (new ThreadDeathEvent (vm, req_id, id));
 					break;
