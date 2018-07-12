@@ -1,3 +1,5 @@
+#emcc has lots of bash'isms
+SHELL:=/bin/bash
 
 WASM_INTERP_CONFIGURE_FLAGS = \
 	--cache-file=$(TOP)/sdks/builds/wasm-interp.config.cache \
