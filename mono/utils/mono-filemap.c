@@ -14,6 +14,7 @@
 #if HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
+#include <errno.h>
 #include <fcntl.h>
 #include <string.h>
 #ifdef HAVE_UNISTD_H
@@ -40,6 +41,8 @@ mono_file_map_open (const char* name)
 	int fd = open (name, O_RDONLY);
 	if (fd < 0)
 		return NULL;
+	if (flock (fd, LOCK_EX) < 0)
+		g_error ("Could not get exclusive lock on %s (%s)", name, strerror (errno));
 	return (MonoFileMap *)(size_t)fd;
 #endif
 }
@@ -69,6 +72,7 @@ mono_file_map_close (MonoFileMap *fmap)
 #ifdef WIN32
 	return fclose ((FILE*)fmap);
 #else
+	flock (fd, LOCK_UN);
 	return close (mono_file_map_fd (fmap));
 #endif
 }
