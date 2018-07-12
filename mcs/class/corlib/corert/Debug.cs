@@ -1,4 +1,4 @@
-namespace System.Diagnostics.Private
+namespace System.Diagnostics
 {
 	static partial class Debug
 	{
