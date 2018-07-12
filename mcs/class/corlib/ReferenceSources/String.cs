@@ -34,11 +34,19 @@
 //
 //
 
+#if BIT64
+using nuint = System.UInt64;
+#else
+using nuint = System.UInt32;
+#endif
+
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Diagnostics.Private;
 
 namespace System
 {
@@ -50,15 +58,6 @@ namespace System
 		char _firstChar;
 
 		public static readonly String Empty;
-
-		public unsafe static implicit operator ReadOnlySpan<char> (String value)
-		{
-			if (value == null)
-				return default;
-
-			fixed (void* start = &value._firstChar)
-				return new ReadOnlySpan<char> (start, value.Length);
-		}
 
 		internal unsafe int IndexOfUnchecked (string value, int startIndex, int count)
 		{
@@ -202,7 +201,12 @@ namespace System
 			if (this.Length < value.Length || _firstChar != value._firstChar)
 				return false;
 
-			return value.Length == 1 ? true : StartsWithOrdinalHelper (this, value);
+			return value.Length == 1 ?
+				true :
+				SpanHelpers.SequenceEqual (
+					ref Unsafe.As<char, byte> (ref this.GetRawStringData ()),
+					ref Unsafe.As<char, byte> (ref value.GetRawStringData ()),
+					((nuint)value.Length) * 2);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

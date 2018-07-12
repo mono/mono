@@ -90,22 +90,44 @@ namespace System.Globalization
 
 		unsafe int IndexOfCore (ReadOnlySpan<char> source, ReadOnlySpan<char> target, CompareOptions options, int* matchLengthPtr)
 		{
-			throw new NotImplementedException ();
+			// TODO: optimize
+
+			var s = new string (source);
+			var t = new string (target);
+
+			return IndexOfCore (s, t, 0, s.Length, options, matchLengthPtr);
 		}
 
 		int IndexOfOrdinalCore (ReadOnlySpan<char> source, ReadOnlySpan<char> value, bool ignoreCase)
 		{
-			throw new NotImplementedException ();
+			// TODO: optimize
+
+			var s = new string (source);
+			var v = new string (value);
+
+			if (!ignoreCase)
+				return s.IndexOfUnchecked (v, 0, s.Length);
+
+			return s.IndexOfUncheckedIgnoreCase (v, 0, s.Length);
 		}
 
 		int CompareString (ReadOnlySpan<char> string1, string string2, CompareOptions options)
 		{
-			throw new NotImplementedException ();
+			// TODO: optimize
+			
+			var s1 = new string (string1);
+
+			return internal_compare_switch (s1, 0, s1.Length, string2, 0, string2.Length, options);
 		}
 
 		int CompareString (ReadOnlySpan<char> string1, ReadOnlySpan<char> string2, CompareOptions options)
 		{
-			throw new NotImplementedException ();
+			// TODO: optimize
+
+			var s1 = new string (string1);
+			var s2 = new string (string2);
+
+			return internal_compare_switch (s1, 0, s1.Length, new string (s2), 0, s2.Length, options);
 		}
 
 		unsafe static bool IsSortable (char *text, int length)
@@ -137,7 +159,8 @@ namespace System.Globalization
 
 		bool StartsWith (ReadOnlySpan<char> source, ReadOnlySpan<char> prefix, CompareOptions options)
 		{
-			throw new NotImplementedException ();
+			// TODO: optimize
+			return StartsWith (new string (source), new string (prefix), options);
 		}
 
 		bool EndsWith (string source, string suffix, CompareOptions options)
@@ -153,7 +176,8 @@ namespace System.Globalization
 
 		bool EndsWith (ReadOnlySpan<char> source, ReadOnlySpan<char> suffix, CompareOptions options)
 		{
-			throw new NotImplementedException ();
+			// TODO: optimize
+			return EndsWith (new string (source), new string (suffix), options);
 		}
 
 		internal int GetHashCodeOfStringCore (string source, CompareOptions options)
