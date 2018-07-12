@@ -1169,7 +1169,13 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static IntPtr StringToHGlobalAnsi (string s);
+		unsafe extern static IntPtr StringToHGlobalAnsi (char* s, int length);
+
+		public unsafe static IntPtr StringToHGlobalAnsi (string s)
+		{
+			fixed (char* fixed_s = s)
+				return StringToHGlobalAnsi (fixed_s, (s != null) ? s.Length : 0);
+		}
 
 		unsafe public static IntPtr StringToAllocatedMemoryUTF8(String s)
 		{
@@ -1205,7 +1211,13 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static IntPtr StringToHGlobalUni (string s);
+		unsafe extern static IntPtr StringToHGlobalUni (char* s, IntPtr length);
+
+		public unsafe static IntPtr StringToHGlobalUni (string s)
+		{
+			fixed (char* fixed_s = s)
+				return StringToHGlobalUni (fixed_s, (s != null) ? s.Length : 0);
+		}
 
 		public unsafe static IntPtr SecureStringToBSTR (SecureString s)
 		{
