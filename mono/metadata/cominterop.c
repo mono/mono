@@ -568,13 +568,11 @@ cominterop_get_interface_checked (MonoComObjectHandle obj, MonoClass* ic, MonoEr
 
 	if (itf)
 		return itf;
-<<<<<<< HEAD
 
 	guint8 iid [16];
 	gboolean const found = cominterop_class_guid (ic, iid);
 	g_assert (found);
-	int const hr = ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (obj->iunknown, iid, &itf);
-	g_assert (!!itf == (hr >= 0)); // two equal success indicators
+	int const hr = ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MONO_HANDLE_GETVAL (obj, iunknown), iid, &itf);
 	if (hr < 0) {
 		g_assert (!itf);
 		cominterop_set_hr_error (error, hr);
@@ -584,30 +582,11 @@ cominterop_get_interface_checked (MonoComObjectHandle obj, MonoClass* ic, MonoEr
 
 	g_assert (itf);
 	mono_cominterop_lock ();
-	if (!obj->itf_hash)
-		obj->itf_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
-	g_hash_table_insert (obj->itf_hash, GUINT_TO_POINTER ((guint)m_class_get_interface_id (ic)), itf);
+	if (!MONO_HANDLE_GETVAL (obj, itf_hash))
+		MONO_HANDLE_SETVAL (obj, itf_hash, GHashTable*, g_hash_table_new (mono_aligned_addr_hash, NULL));
+	g_hash_table_insert (MONO_HANDLE_GETVAL (obj, itf_hash), GUINT_TO_POINTER ((guint)m_class_get_interface_id (ic)), itf);
 	mono_cominterop_unlock ();
 
-=======
-
-	guint8 iid [16];
-	gboolean const found = cominterop_class_guid (ic, iid);
-	g_assert (found);
-	int const hr = ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MONO_HANDLE_GETVAL (obj, iunknown), iid, &itf);
-	if (hr < 0) {
-		cominterop_set_hr_error (error, hr);
-	}
-
-	if (hr >= 0 && itf) {
-		mono_cominterop_lock ();
-		if (!MONO_HANDLE_GETVAL (obj, itf_hash))
-			MONO_HANDLE_SETVAL (obj, itf_hash, GHashTable*, g_hash_table_new (mono_aligned_addr_hash, NULL));
-		g_hash_table_insert (MONO_HANDLE_GETVAL (obj, itf_hash), GUINT_TO_POINTER ((guint)m_class_get_interface_id (ic)), itf);
-		mono_cominterop_unlock ();
-	}
-
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
 	return itf;
 }
 
@@ -619,33 +598,16 @@ cominterop_get_interface_checked (MonoComObjectHandle obj, MonoClass* ic, MonoEr
  * Returns: the COM interface requested
  */
 static gpointer
-<<<<<<< HEAD
-cominterop_get_interface (MonoComObject *obj, MonoClass *ic)
-=======
 cominterop_get_interface (MonoComObject *obj_raw, MonoClass *ic)
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
 {
 	HANDLE_FUNCTION_ENTER ();
-	MONO_HANDLE_DCL (MonoComObject, obj);
-
 	ERROR_DECL (error);
-<<<<<<< HEAD
+	MONO_HANDLE_DCL (MonoComObject, obj);
 	gpointer const itf = cominterop_get_interface_checked (obj, ic, error);
 	g_assert (!!itf == is_ok (error)); // two equal success indicators
 	mono_error_set_pending_exception (error);
 	return itf;
-=======
-	gpointer itf = cominterop_get_interface_checked (obj, ic, error);
-	if (!is_ok (error)) {
-		mono_error_set_pending_exception (error);
-		itf = NULL;
-		goto exit;
-	}
-
-	g_assert (itf);
-exit:
 	HANDLE_FUNCTION_RETURN_VAL (itf);
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
 }
 
 static MonoReflectionType *
@@ -694,11 +656,7 @@ mono_cominterop_init (void)
 	register_icall (mono_marshal_safearray_create, "mono_marshal_safearray_create", "int32 object ptr ptr ptr", FALSE);
 	register_icall (mono_marshal_safearray_set_value, "mono_marshal_safearray_set_value", "void ptr ptr ptr", FALSE);
 	register_icall (mono_marshal_safearray_free_indices, "mono_marshal_safearray_free_indices", "void ptr", FALSE);
-<<<<<<< HEAD
-=======
-
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
-#endif
+#endif // DISABLE_COM
 	/*FIXME
 
 	This icalls are used by the marshal code when doing PtrToStructure and StructureToPtr and pinvoke.
@@ -1669,10 +1627,6 @@ cominterop_can_support_dispatch (MonoClass* klass)
 	return TRUE;
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_GetIUnknownForObjectInternal (MonoObjectHandle object, MonoError *error)
 {
@@ -1691,21 +1645,9 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetObjectForCCW (void* pUnk, Mo
 }
 
 void*
-ves_icall_System_Runtime_InteropServices_Marshal_GetIDispatchForObjectInternal (MonoObjectHandle object_handle, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_GetIDispatchForObjectInternal (MonoObjectHandle object, MonoError *error)
 {
 #ifndef DISABLE_COM
-<<<<<<< HEAD
-	if (MONO_HANDLE_IS_NULL (object_handle))
-		return NULL;
-
-	MonoObject* object = MONO_HANDLE_RAW (object_handle);
-
-	if (cominterop_object_is_rcw (object)) {
-		return cominterop_get_interface_checked (((MonoComInteropProxy*)((MonoTransparentProxy*)object)->rp)->com_object,
-							 mono_class_get_idispatch_class (), error);
-	}
-	else if (!cominterop_can_support_dispatch (mono_handle_class (object_handle))) {
-=======
 	if (MONO_HANDLE_IS_NULL (object))
 		return NULL;
 
@@ -1717,7 +1659,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetIDispatchForObjectInternal (
 		return cominterop_get_interface_checked (com_object, mono_class_get_idispatch_class (), error);
 	}
 	else if (!cominterop_can_support_dispatch (mono_handle_class (object)) ) {
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
 		cominterop_set_hr_error (error, MONO_E_NOINTERFACE);
 		return NULL;
 	}
@@ -2546,10 +2487,6 @@ static const IID MONO_IID_IMarshal = {0x3, 0x0, 0x0, {0xC0, 0x0, 0x0, 0x0, 0x0, 
 static int
 cominterop_ccw_getfreethreadedmarshaler (MonoCCW* ccw, MonoObjectHandle object, gpointer* ppv, MonoError *error)
 {
-<<<<<<< HEAD
-	error_init (error);
-=======
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
 	if (!ccw->free_marshaler) {
 		gpointer const tunk = cominterop_get_ccw_checked (object, mono_class_get_iunknown_class (), error);
 		return_val_if_nok (error, MONO_E_NOINTERFACE);
@@ -2862,13 +2799,8 @@ init_com_provider_ms (void)
 #endif // WIN32
 #endif // DISABLE_COM
 
-<<<<<<< HEAD
-gpointer
-mono_ptr_to_bstr (gconstpointer ptr, int slen)
-=======
 BSTR
 mono_ptr_to_bstr (const gunichar2* ptr, int slen)
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
 {
 	if (!ptr)
 		return NULL;
@@ -2882,29 +2814,17 @@ mono_ptr_to_bstr (const gunichar2* ptr, int slen)
 		guint32 * const ret = (guint32 *)g_malloc ((slen + 1) * sizeof (gunichar2) + sizeof (guint32));
 		if (ret == NULL)
 			return NULL;
-<<<<<<< HEAD
-		*ret = slen * sizeof (gunichar2);
-		gunichar2 * const str = (gunichar2*)(ret + 1);
-		memcpy (str, ptr, slen * sizeof (gunichar2));
-		str [slen] = 0;
-		return str;
-=======
 		BSTR const s = (BSTR)(ret + 1);
 		*ret = slen * sizeof (gunichar2);
 		memcpy (s, ptr, slen * sizeof (gunichar2));
 		s [slen] = 0;
 		return s;
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
 #ifndef DISABLE_COM
 	}
 	else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
 		guint32 const len = slen;
 		gunichar* const str = g_utf16_to_ucs4 (ptr, len, NULL, NULL, NULL);
-<<<<<<< HEAD
-		gpointer const ret = sys_alloc_string_len_ms (str, len);
-=======
-		BSTR ret = sys_alloc_string_len_ms (str, len);
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
+		BSTR const ret = sys_alloc_string_len_ms (str, len);
 		g_free (str);
 		return ret;
 	}
@@ -2915,50 +2835,13 @@ mono_ptr_to_bstr (const gunichar2* ptr, int slen)
 #endif
 }
 
-<<<<<<< HEAD
-MonoString *
-mono_string_from_bstr (gpointer bstr)
-{
-	ERROR_DECL (error);
-	MonoString *result = mono_string_from_bstr_checked (bstr, error);
-	mono_error_cleanup (error);
-	return result;
-}
-
-MonoString *
-mono_string_from_bstr_icall (gpointer bstr)
-{
-	ERROR_DECL (error);
-	MonoString *result = mono_string_from_bstr_checked (bstr, error);
-	mono_error_set_pending_exception (error);
-	return result;
-}
-
-MonoString *
-mono_string_from_bstr_checked (const gunichar2* bstr, MonoError *error)
-{
-	error_init (error);
-=======
 static MonoStringHandle
 mono_string_from_bstr_checked (BSTR bstr, MonoError *error)
 {
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
 	if (!bstr)
 		return NULL_HANDLE_STRING;
 #ifdef HOST_WIN32
-<<<<<<< HEAD
 	return mono_string_new_utf16_checked (mono_domain_get (), bstr, SysStringLen (bstr), error);
-#else
-	MonoString * res = NULL;
-#ifndef DISABLE_COM
-	if (com_provider == MONO_COM_DEFAULT) {
-#endif
-		res = mono_string_new_utf16_checked (mono_domain_get (), bstr, *((guint32 *)bstr - 1) / sizeof(gunichar2), error);
-#ifndef DISABLE_COM
-	} else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
-		MonoString* str = NULL;
-=======
-	return mono_string_new_utf16_handle (mono_domain_get (), bstr, SysStringLen (bstr), error);
 #else
 #ifndef DISABLE_COM
 	if (com_provider == MONO_COM_DEFAULT)
@@ -2966,7 +2849,6 @@ mono_string_from_bstr_checked (BSTR bstr, MonoError *error)
 		return mono_string_new_utf16_handle (mono_domain_get (), bstr, *((guint32 *)bstr - 1) / sizeof (gunichar2), error);
 #ifndef DISABLE_COM
 	else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
 		glong written = 0;
 		gunichar2* utf16 = g_ucs4_to_utf16 ((const gunichar *)bstr, sys_string_len_ms (bstr), NULL, &written, NULL);
 		MonoStringHandle res = mono_string_new_utf16_handle (mono_domain_get (), utf16, written, error);
@@ -2975,11 +2857,6 @@ mono_string_from_bstr_checked (BSTR bstr, MonoError *error)
 	} else {
 		g_assert_not_reached ();
 	}
-<<<<<<< HEAD
-#endif
-	return res;
-#endif
-=======
 #endif // DISABLE_COM
 #endif // HOST_WIN32
 }
@@ -3007,11 +2884,10 @@ MonoString *
 mono_string_from_bstr_icall (BSTR bstr)
 {
 	return mono_string_from_bstr_common (TRUE, bstr);
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
 }
 
-void
-mono_free_bstr (gpointer bstr)
+MONO_API void 
+mono_free_bstr (/*BSTR*/gpointer bstr)
 {
 	if (!bstr)
 		return;
@@ -3028,13 +2904,8 @@ mono_free_bstr (gpointer bstr)
 	} else {
 		g_assert_not_reached ();
 	}
-<<<<<<< HEAD
-#endif
-#endif
-=======
 #endif // DISABLE_COM
 #endif // HOST_WIN32
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
 }
 
 #ifndef DISABLE_COM
@@ -3697,14 +3568,11 @@ mono_cominterop_cleanup (void)
 {
 }
 
-<<<<<<< HEAD
 void
 mono_cominterop_release_all_rcws (void)
 {
 }
 
-=======
->>>>>>> [Coop] cominterop and marshalling partial conversion and cleanup.
 gboolean
 mono_marshal_free_ccw (MonoObject* object)
 {
