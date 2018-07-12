@@ -33,6 +33,9 @@ struct _MonoDebuggerCallbacks {
 MONO_API void
 mono_debugger_agent_init (void);
 
+MONO_API void
+mono_debugger_agent_parse_options (char *options);
+
 void
 mono_debugger_agent_stub_init (void);
 
