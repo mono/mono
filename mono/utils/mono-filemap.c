@@ -20,6 +20,7 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#include <sys/file.h>
 #include <stdlib.h>
 #include <stdio.h>
 
