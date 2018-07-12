@@ -3,3 +3,8 @@
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CompiledRegexRunner.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CompiledRegexRunnerFactory.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexLWCGCompiler.cs
+
+Mono.AppleTls/MonoCertificatePal.cs
+Mono.AppleTls/MonoCertificatePal.Mobile.cs
+Mono.AppleTls/SafeHandles.cs
+Mono.AppleTls/SafeHandles.Mono.cs

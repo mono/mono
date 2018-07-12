@@ -48,8 +48,8 @@ namespace Mono.AppleTls
 		SslReadFunc readFunc;
 		SslWriteFunc writeFunc;
 
-		SecIdentity serverIdentity;
-		SecIdentity clientIdentity;
+		SafeSecIdentityHandle serverIdentity;
+		SafeSecIdentityHandle clientIdentity;
 
 		X509Certificate remoteCertificate;
 		X509Certificate localClientCertificate;
@@ -168,9 +168,9 @@ namespace Mono.AppleTls
 			SetSessionOption (SslSessionOption.BreakOnServerAuth, true);
 
 			if (IsServer) {
-				SecCertificate[] intermediateCerts;
+				SafeSecCertificateHandle[] intermediateCerts;
 				serverIdentity = AppleCertificateHelper.GetIdentity (LocalServerCertificate, out intermediateCerts);
-				if (serverIdentity == null)
+				if (serverIdentity.IsInvalid)
 					throw new SSA.AuthenticationException ("Unable to get server certificate from keychain.");
 
 				SetCertificate (serverIdentity, intermediateCerts);
@@ -225,9 +225,9 @@ namespace Mono.AppleTls
 			if (localClientCertificate == null)
 				return;
 			clientIdentity = AppleCertificateHelper.GetIdentity (localClientCertificate);
-			if (clientIdentity == null)
+			if (clientIdentity.IsInvalid)
 				throw new TlsException (AlertDescription.CertificateUnknown);
-			SetCertificate (clientIdentity, new SecCertificate [0]);
+			SetCertificate (clientIdentity, new SafeSecCertificateHandle [0]);
 		}
 
 		void EvaluateTrust ()
@@ -662,26 +662,21 @@ namespace Mono.AppleTls
 		[DllImport (SecurityLibrary)]
 		extern unsafe static /* OSStatus */ SslStatus SSLSetCertificate (/* SSLContextRef */ IntPtr context, /* CFArrayRef */ IntPtr certRefs);
 
-		CFArray Bundle (SecIdentity identity, IEnumerable<SecCertificate> certificates)
+		CFArray Bundle (SafeSecIdentityHandle identity, IList<SafeSecCertificateHandle> certificates)
 		{
-			if (identity == null)
-				throw new ArgumentNullException ("identity");
-			int i = 0;
+			if (identity == null || identity.IsInvalid)
+				throw new ArgumentNullException (nameof (identity));
+			if (certificates == null)
+				throw new ArgumentNullException (nameof (certificates));
 
-			int n = 0;
-			if (certificates != null) {
-				foreach (var obj in certificates)
-					n++;
-			}
-
-			var ptrs = new IntPtr [n + 1];
-			ptrs [0] = identity.Handle;
-			foreach (var certificate in certificates)
-				ptrs [++i] = certificate.Handle;
+			var ptrs = new IntPtr [certificates.Count + 1];
+			ptrs [0] = identity.DangerousGetHandle ();
+			for (int i = 0; i < certificates.Count; i++)
+				ptrs [i + 1] = certificates [i].DangerousGetHandle ();
 			return CFArray.CreateArray (ptrs);
 		}
 
-		public void SetCertificate (SecIdentity identify, IEnumerable<SecCertificate> certificates)
+		void SetCertificate (SafeSecIdentityHandle identify, IList<SafeSecCertificateHandle> certificates)
 		{
 			using (var array = Bundle (identify, certificates)) {
 				var result = SSLSetCertificate (Handle, array.Handle);

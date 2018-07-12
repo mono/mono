@@ -1,2 +1,6 @@
 #include mobile_System.dll.sources
 
+Mono.AppleTls/MonoCertificatePal.cs
+Mono.AppleTls/MonoCertificatePal.Mobile.cs
+Mono.AppleTls/SafeHandles.cs
+Mono.AppleTls/SafeHandles.Mono.cs

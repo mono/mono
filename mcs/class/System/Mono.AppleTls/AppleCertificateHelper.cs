@@ -28,7 +28,7 @@ namespace Mono.AppleTls
 {
 	static class AppleCertificateHelper
 	{
-		public static SecIdentity GetIdentity (X509Certificate certificate)
+		public static SafeSecIdentityHandle GetIdentity (X509Certificate certificate)
 		{
 			/*
 			 * If we got an 'X509Certificate2', then we require it to have a private key
@@ -36,11 +36,7 @@ namespace Mono.AppleTls
 			 */
 			var certificate2 = certificate as X509Certificate2;
 			if (certificate2 != null)
-#if MONOTOUCH
-				return SecIdentity.Import (certificate2);
-#else
-				return SecImportExport.ItemImport (certificate2);
-#endif
+				return MonoCertificatePal.ImportIdentity (certificate2);
 
 			/*
 			 * Reading Certificates from the Mac Keychain
@@ -87,32 +83,35 @@ namespace Mono.AppleTls
 			 */
 
 #if MOBILE
-			using (var secCert = new SecCertificate (certificate)) {
-				return SecKeyChain.FindIdentity (secCert, true);
-			}
+			using (var secCert = MonoCertificatePal.FromOtherCertificate (certificate))
+				return MonoCertificatePal.FindIdentity (secCert, true);
 #else
-			return null;
+			return new SafeSecIdentityHandle ();
 #endif
 		}
 
-		public static SecIdentity GetIdentity (X509Certificate certificate, out SecCertificate[] intermediateCerts)
+		public static SafeSecIdentityHandle GetIdentity (X509Certificate certificate, out SafeSecCertificateHandle[] intermediateCerts)
 		{
 			var identity = GetIdentity (certificate);
 
 			var impl2 = certificate.Impl as X509Certificate2Impl;
 			if (impl2 == null || impl2.IntermediateCertificates == null) {
-				intermediateCerts = new SecCertificate [0];
+				intermediateCerts = new SafeSecCertificateHandle [0];
 				return identity;
 			}
 
+			intermediateCerts = new SafeSecCertificateHandle [impl2.IntermediateCertificates.Count];
+
 			try {
-				intermediateCerts = new SecCertificate [impl2.IntermediateCertificates.Count];
 				for (int i = 0; i < intermediateCerts.Length; i++)
-					intermediateCerts [i] = new SecCertificate (impl2.IntermediateCertificates [i]);
+					intermediateCerts [i] = MonoCertificatePal.FromOtherCertificate (impl2.IntermediateCertificates[i]);
 
 				return identity;
 			} catch {
-				identity.Dispose ();
+				for (int i = 0; i < intermediateCerts.Length; i++) {
+					intermediateCerts [i]?.Dispose ();
+				}
+				identity?.Dispose ();
 				throw;
 			}
 		}
