@@ -837,6 +837,27 @@ ves_icall_System_Array_SetGenericValueImpl (MonoArray *arr, guint32 pos, gpointe
 }
 
 ICALL_EXPORT void
+ves_icall_System_Runtime_RuntimeImports_Memmove (guint8 *destination, guint8 *source, guint byte_count)
+{
+	mono_gc_memmove_atomic (destination, source, byte_count);
+}
+
+ICALL_EXPORT void
+ves_icall_System_Runtime_RuntimeImports_Memmove_wbarrier (guint8 *destination, guint8 *source, guint len, MonoType *type)
+{
+	if (MONO_TYPE_IS_REFERENCE (type))
+		mono_gc_wbarrier_arrayref_copy (destination, source, len);
+	else
+		mono_gc_wbarrier_value_copy (destination, source, len, mono_class_from_mono_type (type));
+}
+
+ICALL_EXPORT void
+ves_icall_System_Runtime_RuntimeImports_ZeroMemory (guint8 *p, guint byte_length)
+{
+	memset (p, 0, byte_length);
+}
+
+ICALL_EXPORT void
 ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_InitializeArray (MonoArrayHandle array, MonoClassField *field_handle, MonoError *error)
 {
 	error_init (error);
@@ -5657,10 +5678,10 @@ ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (MonoError *error)
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath, char *eventType, MonoError *error)
+ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath, char *eventType, char *appPath, MonoError *error)
 {
 #ifdef TARGET_OSX
-	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, eventType);
+	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, eventType, appPath);
 
 	mono_get_runtime_callbacks ()->install_state_summarizer ();
 #else

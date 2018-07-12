@@ -98,6 +98,7 @@ public class AppBuilder
 		bool isrelease = false;
 		bool isllvm = false;
 		bool isinterponly = false;
+		bool isinterpmixed = false;
 		var assemblies = new List<string> ();
 		var p = new OptionSet () {
 				{ "target=", s => target = s },
@@ -114,6 +115,7 @@ public class AppBuilder
 				{ "profile=", s => profile = s },
 				{ "llvm", s => isllvm = true },
 				{ "interp-only", s => isinterponly = true },
+				{ "interp-mixed", s => isinterpmixed = true },
 				{ "exe=", s => exe = s },
 				{ "r=", s => assemblies.Add (s) },
 			};
@@ -142,11 +144,15 @@ public class AppBuilder
 		if (isllvm)
 			isrelease = true;
 
+		bool isinterpany = isinterponly || isinterpmixed;
+
 		string aot_args = "";
 		string cross_runtime_args = "";
 
 		if (isinterponly) {
 			aot_args = "interp";
+		} else if (isinterpmixed) {
+			aot_args = "interp,full";
 		} else {
 			aot_args = "full";
 		}
@@ -237,7 +243,7 @@ public class AppBuilder
 
 			ninja.WriteLine ($"build $appdir/{filename}: cpifdiff $builddir/{filename}");
 
-			if (isinterponly && filename_noext != "mscorlib")
+			if (isinterpany && filename_noext != "mscorlib")
 				continue;
 
 			if (isdev) {
@@ -283,7 +289,7 @@ public class AppBuilder
 
 		if (isdev) {
 			string libs = "$mono_sdkdir/ios-target64-release/lib/libmonosgen-2.0.a";
-			if (isinterponly) {
+			if (isinterpany) {
 				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-ee-interp.a";
 				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-icall-table.a";
 				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-ilgen.a";
@@ -310,6 +316,6 @@ public class AppBuilder
 
 		ninja.Close ();
 
-		GenMain (builddir, assembly_names, isinterponly /* || ismixedmode */);
+		GenMain (builddir, assembly_names, isinterpany);
 	}
 }
