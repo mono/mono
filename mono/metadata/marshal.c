@@ -4987,8 +4987,7 @@ copy_managed_common (MonoArrayHandle managed, gconstpointer native, gint32 start
 
 	gsize const element_size = mono_array_element_size (klass);
 
-	// Handle generic arrays.
-	// FIXME Given this is required for generic arrays, is the support for non-generic arrays worthwhile?
+	// Handle generic arrays, which do not allow fixed.
 	if (!*managed_addr)
 		*managed_addr = mono_array_handle_pin_with_size (managed, element_size, start_index, gchandle);
 
@@ -5001,7 +5000,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged (MonoArrayHan
 {
 	guint32 gchandle = 0;
 	gsize const bytes = copy_managed_common (src, dest, start_index, length, (gpointer*)&managed_source_addr, &gchandle, error);
-	if (bytes && managed_source_addr && dest && length > 0 && start_index >= 0 && is_ok (error))
+	if (bytes)
 		memcpy (dest, managed_source_addr, bytes); // no references should be involved
 	mono_gchandle_free (gchandle);
 }
@@ -5012,7 +5011,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gconstpoin
 {
 	guint32 gchandle = 0;
 	gsize const bytes = copy_managed_common (dest, src, start_index, length, &managed_dest_addr, &gchandle, error);
-	if (bytes && managed_dest_addr && src && length > 0 && start_index >= 0 && is_ok (error))
+	if (bytes)
 		memcpy (managed_dest_addr, src, bytes); // no references should be involved
 	mono_gchandle_free (gchandle);
 }

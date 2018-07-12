@@ -751,10 +751,8 @@ HANDLES(ICALL(MARSHAL_32, "StringToHGlobalAnsi", ves_icall_System_Runtime_Intero
 HANDLES(ICALL(MARSHAL_33, "StringToHGlobalUni", ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni))
 HANDLES(ICALL(MARSHAL_34, "StructureToPtr", ves_icall_System_Runtime_InteropServices_Marshal_StructureToPtr))
 ICALL(MARSHAL_35, "UnsafeAddrOfPinnedArrayElement", ves_icall_System_Runtime_InteropServices_Marshal_UnsafeAddrOfPinnedArrayElement)
-
-HANDLES(ICALL(MARSHAL_41, "copy_from_unmanaged", ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged))
-HANDLES(ICALL(MARSHAL_42, "copy_to_unmanaged", ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged))
-
+HANDLES(ICALL(MARSHAL_41, "copy_from_unmanaged_fixed", ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged))
+HANDLES(ICALL(MARSHAL_42, "copy_to_unmanaged_fixed", ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged))
 #ifndef DISABLE_COM
 ICALL_TYPE(WINDOWSRUNTIME_UNM, "System.Runtime.InteropServices.WindowsRuntime.UnsafeNativeMethods", WINDOWSRUNTIME_UNM_0)
 HANDLES(ICALL(WINDOWSRUNTIME_UNM_0, "GetRestrictedErrorInfo", ves_icall_System_Runtime_InteropServices_WindowsRuntime_UnsafeNativeMethods_GetRestrictedErrorInfo))

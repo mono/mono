@@ -124,7 +124,7 @@ namespace System.Runtime.InteropServices
 				if (source >= last_byte || source + size > last_byte)
 					throw new ArgumentException ("byteOffset");
 				
-				Marshal.copy_from_unmanaged ((IntPtr) source, index, array, count, null);
+				Marshal.copy_from_unmanaged ((IntPtr) source, index, array, count);
 			}
 		}
 
@@ -156,7 +156,7 @@ namespace System.Runtime.InteropServices
 				if (target >= last_byte || target + size > last_byte)
 					throw new ArgumentException ("would overrite");
 
-				Marshal.copy_to_unmanaged (array, index, (IntPtr) target, count, null);
+				Marshal.copy_to_unmanaged (array, index, (IntPtr) target, count);
 			}
 		}
 	}
