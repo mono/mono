@@ -124,7 +124,7 @@ namespace System.Runtime.InteropServices
 				if (source >= last_byte || source + size > last_byte)
 					throw new ArgumentException ("byteOffset");
 				
-				Marshal.copy_from_unmanaged ((IntPtr) source, index, array, count, null);
+				Marshal.copy_from_unmanaged ((IntPtr) source, index, array, count);
 			}
 		}
 
@@ -145,7 +145,7 @@ namespace System.Runtime.InteropServices
 
 		[CLSCompliant (false)]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-		public unsafe void WriteArray<T> (ulong byteOffset, T[] array, int index, int count) where T : struct
+		public void WriteArray<T> (ulong byteOffset, T[] array, int index, int count) where T : struct
 		{
 			if (!inited)
 				throw new InvalidOperationException ();
@@ -155,9 +155,10 @@ namespace System.Runtime.InteropServices
 				int size = Marshal.SizeOf (typeof (T)) * count;
 				if (target >= last_byte || target + size > last_byte)
 					throw new ArgumentException ("would overrite");
-
-				Marshal.copy_to_unmanaged (array, index, (IntPtr) target, count, null);
+				
+				Marshal.copy_to_unmanaged (array, index, (IntPtr) target, count);
 			}
 		}
 	}
 }
+

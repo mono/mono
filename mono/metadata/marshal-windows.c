@@ -53,9 +53,14 @@ mono_marshal_realloc_co_task_mem (gpointer ptr, size_t size)
 }
 
 char*
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, gsize length, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (MonoStringHndle s, MonoError *error)
 {
-	char* tres = mono_utf16_to_utf8 (s, length, error);
+	if (MONO_HANDLE_IS_NULL (s))
+		return NULL;
+
+	// FIXME give mono_string_handle_to_utf8 an allocator to avoid the extra alloc/copy.
+
+	char* tres = mono_string_handle_to_utf8 (s, error);
 	return_val_if_nok (error, NULL);
 	if (!tres)
 		return tres;
@@ -65,24 +70,26 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const guni
 	 * even if it contains NULL characters. The copy we allocate here has to be equally
 	 * large.
 	 */
-	size_t len = MAX (strlen (tres) + 1, length);
+	size_t const len = MAX (strlen (tres) + 1, mono_string_handle_length (s));
 	char* ret = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len);
 	memcpy (ret, tres, len);
 	g_free (tres);
 	return ret;
 }
 
-gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunichar2 *s, gsize length, MonoError *error)
+gunichar2*
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (MonoStringHndle s, MonoError *error)
 {
-	if (string == NULL)
+	if (MONO_HANDLE_IS_NULL (s))
 		return NULL;
 
-	size_t len = (length + 1) * 2);
-	gunichar2 *res = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len);
-
-	memcpy (res, s, length * 2);
+	gsize length = mono_string_handle_length (s);
+	gunichar2 *res = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal ((length + 1) * 2);
+	guint gchandle = 0;
+	memcpy (res, mono_string_handle_pin_chars (s, &gchandle), length * 2);
+	mono_gchandle_free (gchandle);
 	res [length] = 0;
+	gchandle
 	return res;
 }
 
