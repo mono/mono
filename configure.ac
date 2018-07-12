@@ -144,9 +144,12 @@ case "$host" in
 			fi
 		fi
 		HOST_CC="gcc"
+
 		# Windows 7 or later is required
-		CPPFLAGS="$CPPFLAGS -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
-		LDFLAGS="$LDFLAGS -lbcrypt -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32 -liphlpapi"
+		WIN32_CPPFLAGS="-DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
+		CPPFLAGS="$CPPFLAGS $WIN32_CPPFLAGS"
+		WIN32_LDFLAGS="-lbcrypt -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32 -liphlpapi"
+		LDFLAGS="$LDFLAGS $WIN32_LDFLAGS"
 		libmono_cflags="-mms-bitfields -mwindows"
 		libmono_ldflags="-mms-bitfields -mwindows"
 		libdl=
@@ -3901,7 +3904,9 @@ case "$host" in
 			have_visibility_hidden=no
 			;;
 		  mingw*|cygwin*)
-			have_visibility_hidden=no		  
+			have_visibility_hidden=no
+			BTLS_SUPPORTED=yes
+			BTLS_PLATFORM=i386
 			;;
 		  haiku*)
 			LIBC=libroot.so
@@ -3952,7 +3957,7 @@ case "$host" in
 		  mingw*|cygwin*)
 			BTLS_SUPPORTED=yes
 			BTLS_PLATFORM=x86_64
-		    ;;
+			;;
 		esac
 		;;
 	sparc*-*-*)
@@ -5146,7 +5151,7 @@ if test "x$enable_btls" = "xyes"; then
 				btls_cflags="$btls_cflags -arch i386"
 				;;
 			mingw*|cygwin*)
-				btls_cflags="$btls_cflags -DNOCRYPT"
+				btls_cflags="$btls_cflags -DNOCRYPT $WIN32_CPPFLAGS"
 				BTLS_CMAKE_ARGS="-D OPENSSL_NO_ASM=1"
 				;;
 		esac
@@ -5155,7 +5160,7 @@ if test "x$enable_btls" = "xyes"; then
 		btls_arch=x86_64
 		case $host_os in
 			mingw*|cygwin*)
-				btls_cflags="$btls_cflags -DNOCRYPT"
+				btls_cflags="$btls_cflags -DNOCRYPT $WIN32_CPPFLAGS"
 				BTLS_CMAKE_ARGS="-D OPENSSL_NO_ASM=1"
 				;;
 		esac
