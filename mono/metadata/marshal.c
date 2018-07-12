@@ -5114,7 +5114,8 @@ ptr_to_structure (gconstpointer src, MonoObjectHandle dst, MonoError *error)
 
 	gpointer pa [ ] = { &src, MONO_HANDLE_RAW (dst) };
 
-	mono_runtime_invoke_handle (method, NULL_HANDLE, pa, error);
+	// FIXMEcoop? mono_runtime_invoke_handle causes a GC assertion failure in marshal2 with interpreter
+	mono_runtime_invoke_checked (method, NULL, pa, error);
 }
 
 void
