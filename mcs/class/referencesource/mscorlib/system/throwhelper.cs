@@ -208,21 +208,31 @@ namespace System {
             return new InvalidOperationException(str);
         }
 
-        static Exception GetArraySegmentCtorValidationFailedException(Array array, int offset, int count)
-        {
-            if (array == null)
-                return new ArgumentNullException(nameof(array));
-            if (offset < 0)
-                return new ArgumentOutOfRangeException(nameof(offset), SR.ArgumentOutOfRange_NeedNonNegNum);
-            if (count < 0)
-                return new ArgumentOutOfRangeException(nameof(count), SR.ArgumentOutOfRange_NeedNonNegNum);
-
-            return new ArgumentException(SR.Argument_InvalidOffLen);
-        }
-
         internal static void ThrowArraySegmentCtorValidationFailedExceptions(Array array, int offset, int count)
         {
             throw GetArraySegmentCtorValidationFailedException(array, offset, count);
+        }
+
+        private static Exception GetArraySegmentCtorValidationFailedException(Array array, int offset, int count)
+        {
+            if (array == null)
+                return GetArgumentNullException(ExceptionArgument.array);
+            if (offset < 0)
+                return GetArgumentOutOfRangeException(ExceptionArgument.offset, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
+            if (count < 0)
+                return GetArgumentOutOfRangeException(ExceptionArgument.count, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
+
+            return GetArgumentException(ExceptionResource.Argument_InvalidOffLen);
+        }
+
+        private static ArgumentException GetArgumentException(ExceptionResource resource)
+        {
+            return new ArgumentException(resource.ToString());
+        }
+
+        private static ArgumentNullException GetArgumentNullException(ExceptionArgument argument)
+        {
+            return new ArgumentNullException(GetArgumentName(argument));
         }
 #endif
 
@@ -616,6 +626,7 @@ namespace System {
         minimumBufferSize,
         offset,
         values,
+        comparisonType,
         s
 #endif
     }
@@ -675,9 +686,8 @@ namespace System {
         TaskT_TransitionToFinal_AlreadyCompleted,
         TaskCompletionSourceT_TrySetException_NullException,
         TaskCompletionSourceT_TrySetException_NoExceptions,
-#if MONO
-        InvalidOperation_NullArray
-#endif
+        NotSupported_StringComparison,
+        InvalidOperation_NullArray,
     }
 }
 

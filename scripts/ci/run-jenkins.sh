@@ -89,8 +89,11 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_WASM=1" >> sdks/Make.config
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
-	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-sim64 package-ios-target64
-	   ${TESTCMD} --label=cross --timeout=60m --fatal make -j4 -C sdks/builds package-ios-cross64 package-ios-cross32
+
+	   ${TESTCMD} --label=build-sim-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{sim64,sim32,simtv,simwatch}
+	   ${TESTCMD} --label=build-dev-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{target64,target32,targettv,targetwatch}
+	   ${TESTCMD} --label=build-cross-compilers --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{cross64,cross32,crosswatch}
+
 	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
 	   ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
 	   ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
@@ -101,6 +104,14 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   ${TESTCMD} --label=build-ios-dev-llvm --timeout=60m make -C sdks/ios build-ios-dev-llvm-all
 	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
 		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-llvm-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+	   fi
+	   ${TESTCMD} --label=build-ios-dev-interp-only --timeout=60m make -C sdks/ios build-ios-dev-interp-only-all
+	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-only-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+	   fi
+	   ${TESTCMD} --label=build-ios-dev-interp-mixed --timeout=60m make -C sdks/ios build-ios-dev-interp-mixed-all
+	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-mixed-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
 	   fi
 	   ${TESTCMD} --label=package --timeout=60m tar cvzf mono-product-sdk-$GIT_COMMIT.tar.gz -C sdks/out/ bcl ios-llvm64 ios-llvm32 ios-cross32-release ios-cross64-release
 	   exit 0

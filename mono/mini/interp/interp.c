@@ -761,20 +761,19 @@ fill_in_trace (MonoException *exception, InterpFrame *frame)
 
 
 static MonoObject*
-ves_array_create (InterpFrame *frame, MonoDomain *domain, MonoClass *klass, MonoMethodSignature *sig, stackval *values)
+ves_array_create (MonoDomain *domain, MonoClass *klass, int param_count, stackval *values, MonoError *error)
 {
 	uintptr_t *lengths;
 	intptr_t *lower_bounds;
 	MonoObject *obj;
-	ERROR_DECL (error);
 	int i;
 
 	lengths = alloca (sizeof (uintptr_t) * m_class_get_rank (klass) * 2);
-	for (i = 0; i < sig->param_count; ++i) {
+	for (i = 0; i < param_count; ++i) {
 		lengths [i] = values->data.i;
 		values ++;
 	}
-	if (m_class_get_rank (klass) == sig->param_count) {
+	if (m_class_get_rank (klass) == param_count) {
 		/* Only lengths provided. */
 		lower_bounds = NULL;
 	} else {
@@ -783,11 +782,6 @@ ves_array_create (InterpFrame *frame, MonoDomain *domain, MonoClass *klass, Mono
 		lengths += m_class_get_rank (klass);
 	}
 	obj = (MonoObject*) mono_array_new_full_checked (domain, klass, lengths, lower_bounds, error);
-	if (!mono_error_ok (error)) {
-		frame->ex = mono_error_convert_to_exception (error);
-		FILL_IN_TRACE (frame->ex, frame);
-	}
-	mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	return obj;
 }
 
@@ -848,7 +842,7 @@ ves_array_set (InterpFrame *frame)
 	}
 
 	gint32 esize = mono_array_element_size (ac);
-	gpointer ea = mono_array_addr_with_size (ao, esize, pos);
+	gpointer ea = mono_array_addr_with_size_fast (ao, esize, pos);
 
 	MonoType *mt = mono_method_signature (frame->imethod->method)->params [m_class_get_rank (ac)];
 	stackval_to_data (mt, &sp [m_class_get_rank (ac)], ea, FALSE);
@@ -870,7 +864,7 @@ ves_array_get (InterpFrame *frame, gboolean safe)
 		return;
 
 	gint32 esize = mono_array_element_size (ac);
-	gpointer ea = mono_array_addr_with_size (ao, esize, pos);
+	gpointer ea = mono_array_addr_with_size_fast (ao, esize, pos);
 
 	MonoType *mt = mono_method_signature (frame->imethod->method)->ret;
 	stackval_from_data (mt, frame->retval, ea, FALSE);
@@ -893,7 +887,7 @@ ves_array_element_address (InterpFrame *frame, MonoClass *required_type, MonoArr
 		return NULL;
 	}
 	gint32 esize = mono_array_element_size (ac);
-	return mono_array_addr_with_size (ao, esize, pos);
+	return mono_array_addr_with_size_fast (ao, esize, pos);
 }
 
 static MonoPIFunc mono_interp_to_native_trampoline = NULL;
@@ -1472,11 +1466,11 @@ get_trace_ips (MonoDomain *domain, InterpFrame *top)
 
 	for (i = 0, inv = top; inv; inv = inv->parent)
 		if (inv->imethod != NULL) {
-			mono_array_set (res, gpointer, i, inv->imethod);
+			mono_array_set_fast (res, gpointer, i, inv->imethod);
 			++i;
-			mono_array_set (res, gpointer, i, (gpointer)inv->ip);
+			mono_array_set_fast (res, gpointer, i, (gpointer)inv->ip);
 			++i;
-			mono_array_set (res, gpointer, i, NULL);
+			mono_array_set_fast (res, gpointer, i, NULL);
 			++i;
 		}
 
@@ -3707,6 +3701,85 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			ip += 2;
 			MINT_IN_BREAK;
 		}
+		MINT_IN_CASE(MINT_NEWOBJ_ARRAY) {
+			MonoClass *newobj_class;
+			InterpMethod *imethod;
+			guint32 token = * (guint16 *)(ip + 1);
+			guint16 param_count = * (guint16 *)(ip + 2);
+
+			imethod = (InterpMethod*) rtm->data_items [token];
+			newobj_class = imethod->method->klass;
+
+			sp -= param_count;
+			sp->data.p = ves_array_create (rtm->domain, newobj_class, param_count, sp, error);
+			if (!mono_error_ok (error))
+				THROW_EX (mono_error_convert_to_exception (error), ip);
+
+			++sp;
+			ip += 3;
+			MINT_IN_BREAK;
+		}
+		MINT_IN_CASE(MINT_NEWOBJ_FAST)
+		MINT_IN_CASE(MINT_NEWOBJ_VT_FAST)
+		MINT_IN_CASE(MINT_NEWOBJ_VTST_FAST) {
+			guint16 param_count;
+			gboolean vt = *ip != MINT_NEWOBJ_FAST;
+			stackval valuetype_this;
+
+			frame->ip = ip;
+
+			child_frame.imethod = (InterpMethod*) rtm->data_items [*(guint16*)(ip + 1)];
+			param_count = *(guint16*)(ip + 2);
+
+			if (param_count) {
+				sp -= param_count;
+				memmove (sp + 1, sp, param_count * sizeof (stackval));
+			}
+			child_frame.stack_args = sp;
+
+			if (vt) {
+				gboolean vtst = *ip == MINT_NEWOBJ_VTST_FAST;
+				memset (&valuetype_this, 0, sizeof (stackval));
+				if (vtst) {
+					sp->data.p = vt_sp;
+					valuetype_this.data.p = vt_sp;
+				} else {
+					sp->data.p = &valuetype_this;
+				}
+			} else {
+				MonoVTable *vtable = (MonoVTable*) rtm->data_items [*(guint16*)(ip + 3)];
+				if (G_UNLIKELY (!vtable->initialized)) {
+					mono_runtime_class_init_full (vtable, error);
+					if (!mono_error_ok (error))
+						THROW_EX (mono_error_convert_to_exception (error), ip);
+				}
+				o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+				if (G_UNLIKELY (!o)) {
+					mono_error_set_out_of_memory (error, "Could not allocate %i bytes", m_class_get_instance_size (vtable->klass));
+					THROW_EX (mono_error_convert_to_exception (error), ip);
+				}
+				sp->data.p = o;
+			}
+
+			interp_exec_method (&child_frame, context);
+
+			context->current_frame = frame;
+
+			if (context->has_resume_state) {
+				if (frame == context->handler_frame)
+					SET_RESUME_STATE (context);
+				else
+					goto exit_frame;
+			}
+			CHECK_CHILD_EX (child_frame, ip);
+			if (vt)
+				*sp = valuetype_this;
+			else
+				sp->data.p = o;
+			ip += 4 - vt;
+			++sp;
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_NEWOBJ) {
 			MonoClass *newobj_class;
 			MonoMethodSignature *csig;
@@ -3730,14 +3803,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				count++;
 				g_hash_table_insert (profiling_classes, newobj_class, GUINT_TO_POINTER (count));
 			}*/
-
-			if (m_class_get_parent (newobj_class) == mono_defaults.array_class) {
-				sp -= csig->param_count;
-				child_frame.stack_args = sp;
-				o = ves_array_create (&child_frame, rtm->domain, newobj_class, csig, sp);
-				CHECK_CHILD_EX (child_frame, ip - 2);
-				goto array_constructed;
-			}
 
 			g_assert (csig->hasthis);
 			if (csig->param_count) {
@@ -3796,7 +3861,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			/*
 			 * a constructor returns void, but we need to return the object we created
 			 */
-array_constructed:
 			if (m_class_is_valuetype (newobj_class) && !m_class_is_enumtype (newobj_class)) {
 				*sp = valuetype_this;
 			} else if (newobj_class == mono_defaults.string_class) {
@@ -3815,6 +3879,41 @@ array_constructed:
 			ip += 2;
 
 			MINT_IN_BREAK;
+		}
+		MINT_IN_CASE(MINT_INTRINS_BYREFERENCE_CTOR) {
+			MonoClass *newobj_class;
+			MonoMethodSignature *csig;
+			stackval valuetype_this;
+			guint32 token;
+			stackval retval;
+
+			frame->ip = ip;
+			token = * (guint16 *)(ip + 1);
+			ip += 2;
+
+			InterpMethod *cmethod = rtm->data_items [token];
+			csig = mono_method_signature (cmethod->method);
+			newobj_class = cmethod->method->klass;
+
+			g_assert (csig->hasthis);
+			sp -= csig->param_count;
+
+			gpointer arg0 = sp [0].data.p;
+
+			gpointer *byreference_this = (gpointer*)vt_sp;
+			*byreference_this = arg0;
+
+			/* Followed by a VTRESULT opcode which will push the result on the stack */
+			++sp;
+			MINT_IN_BREAK;
+			break;
+		}
+		MINT_IN_CASE(MINT_INTRINS_BYREFERENCE_GET_VALUE) {
+			gpointer *byreference_this = (gpointer*)sp [-1].data.p;
+			sp [-1].data.p = *byreference_this;
+			++ip;
+			MINT_IN_BREAK;
+			break;
 		}
 		MINT_IN_CASE(MINT_CASTCLASS)
 			c = rtm->data_items [*(guint16 *)(ip + 1)];
@@ -4230,7 +4329,7 @@ array_constructed:
 			o = sp [-1].data.p;
 			if (!o)
 				THROW_EX (mono_get_exception_null_reference (), ip);
-			sp [-1].data.nati = mono_array_length ((MonoArray *)o);
+			sp [-1].data.nati = mono_array_length_fast ((MonoArray *)o);
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_GETCHR) {
@@ -4299,7 +4398,7 @@ array_constructed:
 				THROW_EX (mono_get_exception_null_reference (), ip);
 
 			aindex = sp [1].data.i;
-			if (aindex >= mono_array_length (o))
+			if (aindex >= mono_array_length_fast (o))
 				THROW_EX (mono_get_exception_index_out_of_range (), ip);
 
 			/*
@@ -4307,42 +4406,42 @@ array_constructed:
 			 */
 			switch (*ip) {
 			case MINT_LDELEM_I1:
-				sp [0].data.i = mono_array_get (o, gint8, aindex);
+				sp [0].data.i = mono_array_get_fast (o, gint8, aindex);
 				break;
 			case MINT_LDELEM_U1:
-				sp [0].data.i = mono_array_get (o, guint8, aindex);
+				sp [0].data.i = mono_array_get_fast (o, guint8, aindex);
 				break;
 			case MINT_LDELEM_I2:
-				sp [0].data.i = mono_array_get (o, gint16, aindex);
+				sp [0].data.i = mono_array_get_fast (o, gint16, aindex);
 				break;
 			case MINT_LDELEM_U2:
-				sp [0].data.i = mono_array_get (o, guint16, aindex);
+				sp [0].data.i = mono_array_get_fast (o, guint16, aindex);
 				break;
 			case MINT_LDELEM_I:
-				sp [0].data.nati = mono_array_get (o, mono_i, aindex);
+				sp [0].data.nati = mono_array_get_fast (o, mono_i, aindex);
 				break;
 			case MINT_LDELEM_I4:
-				sp [0].data.i = mono_array_get (o, gint32, aindex);
+				sp [0].data.i = mono_array_get_fast (o, gint32, aindex);
 				break;
 			case MINT_LDELEM_U4:
-				sp [0].data.i = mono_array_get (o, guint32, aindex);
+				sp [0].data.i = mono_array_get_fast (o, guint32, aindex);
 				break;
 			case MINT_LDELEM_I8:
-				sp [0].data.l = mono_array_get (o, guint64, aindex);
+				sp [0].data.l = mono_array_get_fast (o, guint64, aindex);
 				break;
 			case MINT_LDELEM_R4:
-				sp [0].data.f = mono_array_get (o, float, aindex);
+				sp [0].data.f = mono_array_get_fast (o, float, aindex);
 				break;
 			case MINT_LDELEM_R8:
-				sp [0].data.f = mono_array_get (o, double, aindex);
+				sp [0].data.f = mono_array_get_fast (o, double, aindex);
 				break;
 			case MINT_LDELEM_REF:
-				sp [0].data.p = mono_array_get (o, gpointer, aindex);
+				sp [0].data.p = mono_array_get_fast (o, gpointer, aindex);
 				break;
 			case MINT_LDELEM_VT: {
 				MonoClass *klass_vt = rtm->data_items [*(guint16 *) (ip + 1)];
 				i32 = READ32 (ip + 2);
-				char *src_addr = mono_array_addr_with_size ((MonoArray *) o, i32, aindex);
+				char *src_addr = mono_array_addr_with_size_fast ((MonoArray *) o, i32, aindex);
 				sp [0].data.vt = vt_sp;
 				stackval_from_data (m_class_get_byval_arg (klass_vt), sp, src_addr, FALSE);
 				vt_sp += ALIGN_TO (i32, MINT_VT_ALIGNMENT);
@@ -4377,49 +4476,49 @@ array_constructed:
 				THROW_EX (mono_get_exception_null_reference (), ip);
 
 			aindex = sp [1].data.i;
-			if (aindex >= mono_array_length ((MonoArray *)o))
+			if (aindex >= mono_array_length_fast ((MonoArray *)o))
 				THROW_EX (mono_get_exception_index_out_of_range (), ip);
 
 			switch (*ip) {
 			case MINT_STELEM_I:
-				mono_array_set ((MonoArray *)o, mono_i, aindex, sp [2].data.nati);
+				mono_array_set_fast ((MonoArray *)o, mono_i, aindex, sp [2].data.nati);
 				break;
 			case MINT_STELEM_I1:
-				mono_array_set ((MonoArray *)o, gint8, aindex, sp [2].data.i);
+				mono_array_set_fast ((MonoArray *)o, gint8, aindex, sp [2].data.i);
 				break;
 			case MINT_STELEM_U1:
-				mono_array_set ((MonoArray *) o, guint8, aindex, sp [2].data.i);
+				mono_array_set_fast ((MonoArray *) o, guint8, aindex, sp [2].data.i);
 				break;
 			case MINT_STELEM_I2:
-				mono_array_set ((MonoArray *)o, gint16, aindex, sp [2].data.i);
+				mono_array_set_fast ((MonoArray *)o, gint16, aindex, sp [2].data.i);
 				break;
 			case MINT_STELEM_U2:
-				mono_array_set ((MonoArray *)o, guint16, aindex, sp [2].data.i);
+				mono_array_set_fast ((MonoArray *)o, guint16, aindex, sp [2].data.i);
 				break;
 			case MINT_STELEM_I4:
-				mono_array_set ((MonoArray *)o, gint32, aindex, sp [2].data.i);
+				mono_array_set_fast ((MonoArray *)o, gint32, aindex, sp [2].data.i);
 				break;
 			case MINT_STELEM_I8:
-				mono_array_set ((MonoArray *)o, gint64, aindex, sp [2].data.l);
+				mono_array_set_fast ((MonoArray *)o, gint64, aindex, sp [2].data.l);
 				break;
 			case MINT_STELEM_R4:
-				mono_array_set ((MonoArray *)o, float, aindex, sp [2].data.f);
+				mono_array_set_fast ((MonoArray *)o, float, aindex, sp [2].data.f);
 				break;
 			case MINT_STELEM_R8:
-				mono_array_set ((MonoArray *)o, double, aindex, sp [2].data.f);
+				mono_array_set_fast ((MonoArray *)o, double, aindex, sp [2].data.f);
 				break;
 			case MINT_STELEM_REF: {
 				MonoObject *isinst_obj = mono_object_isinst_checked (sp [2].data.p, m_class_get_element_class (mono_object_class (o)), error);
 				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 				if (sp [2].data.p && !isinst_obj)
 					THROW_EX (mono_get_exception_array_type_mismatch (), ip);
-				mono_array_setref ((MonoArray *) o, aindex, sp [2].data.p);
+				mono_array_setref_fast ((MonoArray *) o, aindex, sp [2].data.p);
 				break;
 			}
 			case MINT_STELEM_VT: {
 				MonoClass *klass_vt = rtm->data_items [*(guint16 *) (ip + 1)];
 				i32 = READ32 (ip + 2);
-				char *dst_addr = mono_array_addr_with_size ((MonoArray *) o, i32, aindex);
+				char *dst_addr = mono_array_addr_with_size_fast ((MonoArray *) o, i32, aindex);
 
 				stackval_to_data (m_class_get_byval_arg (klass_vt), &sp [2], dst_addr, FALSE);
 				vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
