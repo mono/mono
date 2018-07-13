@@ -698,69 +698,6 @@ ves_icall_System_Array_SetValue (MonoArrayHandle arr, MonoObjectHandle value,
 	array_set_value_impl (arr, value, pos, error);
 }
 
-#if defined (HOST_ARM) || defined (HOST_ARM64)
-
-ICALL_EXPORT MonoArray *
-ves_icall_System_Array_CreateInstanceImpl (MonoReflectionType *type, MonoArray *lengths, MonoArray *bounds)
-{
-	ERROR_DECL (error);
-	MonoClass *aklass, *klass;
-	MonoArray *array;
-	uintptr_t *sizes, i;
-	gboolean bounded = FALSE;
-
-	MONO_CHECK_ARG_NULL (type, NULL);
-	MONO_CHECK_ARG_NULL (lengths, NULL);
-
-	MONO_CHECK_ARG (lengths, mono_array_length (lengths) > 0, NULL);
-	if (bounds)
-		MONO_CHECK_ARG (bounds, mono_array_length (lengths) == mono_array_length (bounds), NULL);
-
-	for (i = 0; i < mono_array_length (lengths); i++) {
-		if (mono_array_get (lengths, gint32, i) < 0) {
-			mono_error_set_argument_out_of_range (error, NULL);
-			mono_error_set_pending_exception (error);
-			return NULL;
-		}
-	}
-
-	klass = mono_class_from_mono_type (type->type);
-	mono_class_init_checked (klass, error);
-	if (mono_error_set_pending_exception (error))
-		return NULL;
-
-	if (m_class_get_byval_arg (m_class_get_element_class (klass))->type == MONO_TYPE_VOID) {
-		mono_error_set_not_supported (error, "Arrays of System.Void are not supported.");
-		mono_error_set_pending_exception (error);
-		return NULL;
-	}
-
-	if (bounds && (mono_array_length (bounds) == 1) && (mono_array_get (bounds, gint32, 0) != 0))
-		/* vectors are not the same as one dimensional arrays with no-zero bounds */
-		bounded = TRUE;
-	else
-		bounded = FALSE;
-
-	aklass = mono_class_create_bounded_array (klass, mono_array_length (lengths), bounded);
-
-	uintptr_t aklass_rank = m_class_get_rank (aklass);
-	sizes = (uintptr_t *)alloca (aklass_rank * sizeof(intptr_t) * 2);
-	for (i = 0; i < aklass_rank; ++i) {
-		sizes [i] = mono_array_get (lengths, guint32, i);
-		if (bounds)
-			sizes [i + aklass_rank] = mono_array_get (bounds, gint32, i);
-		else
-			sizes [i + aklass_rank] = 0;
-	}
-
-	array = mono_array_new_full_checked (mono_object_domain (type), aklass, sizes, (intptr_t*)sizes + aklass_rank, error);
-	mono_error_set_pending_exception (error);
-
-	return array;
-}
-
-#else
-
 ICALL_EXPORT MonoArrayHandle
 ves_icall_System_Array_CreateInstanceImpl (MonoReflectionTypeHandle type, MonoArrayHandle lengths, MonoArrayHandle bounds, MonoError *error)
 {
@@ -819,8 +756,6 @@ ves_icall_System_Array_CreateInstanceImpl (MonoReflectionTypeHandle type, MonoAr
 	return mono_array_new_full_handle (MONO_HANDLE_DOMAIN (type), aklass, sizes, lower_bounds, error);
 }
 
-#endif
-
 #if defined (HOST_ARM) || defined (HOST_ARM64)
 
 ICALL_EXPORT gint32 
@@ -842,57 +777,6 @@ ves_icall_System_Array_GetRank (MonoObjectHandle arr, MonoError *error)
 }
 
 #endif
-
-#if defined (HOST_ARM) || defined (HOST_ARM64)
-
-ICALL_EXPORT gint32
-ves_icall_System_Array_GetLength (MonoArray *arr, gint32 dimension)
-{
-	gint32 rank = m_class_get_rank (mono_object_class (&arr->obj));
-	uintptr_t length;
-	ERROR_DECL (error);
-
-	if ((dimension < 0) || (dimension >= rank)) {
-		mono_error_set_index_out_of_range (error);
-		mono_error_set_pending_exception (error);
-		return 0;
-	}
-	
-	if (arr->bounds == NULL)
-		length = arr->max_length;
-	else
-		length = arr->bounds [dimension].length;
-
-#ifdef MONO_BIG_ARRAYS
-	if (length > G_MAXINT32) {
-		ERROR_DECL (error);
-		mono_error_set_overflow (error);
-		mono_error_set_pending_exception (error);
-		return 0;
-	}
-#endif
-	return length;
-}
-
-ICALL_EXPORT gint64
-ves_icall_System_Array_GetLongLength (MonoArray *arr, gint32 dimension)
-{
-	gint32 rank = m_class_get_rank (mono_object_class (&arr->obj));
-
-	if ((dimension < 0) || (dimension >= rank)) {
-		ERROR_DECL (error);
-		mono_error_set_index_out_of_range (error);
-		mono_error_set_pending_exception (error);
-		return 0;
-	}
-	
-	if (arr->bounds == NULL)
- 		return arr->max_length;
- 	
- 	return arr->bounds [dimension].length;
-}
-
-#else
 
 static mono_array_size_t
 mono_array_get_length (MonoArrayHandle arr, gint32 dimension, MonoError *error)
@@ -926,8 +810,6 @@ ves_icall_System_Array_GetLongLength (MonoArrayHandle arr, gint32 dimension, Mon
 
 	return (gint64)mono_array_get_length (arr, dimension, error);
 }
-
-#endif
 
 #if defined (HOST_ARM) || defined (HOST_ARM64)
 
@@ -967,17 +849,6 @@ ves_icall_System_Array_GetLowerBound (MonoArrayHandle arr, gint32 dimension, Mon
 
 #endif
 
-#if defined (HOST_ARM) || defined (HOST_ARM64)
-
-ICALL_EXPORT void
-ves_icall_System_Array_ClearInternal (MonoArray *arr, int idx, int length)
-{
-	int sz = mono_array_element_size (mono_object_class (arr));
-	mono_gc_bzero_atomic (mono_array_addr_with_size_fast (arr, sz, idx), length * sz);
-}
-
-#else
-
 ICALL_EXPORT void
 ves_icall_System_Array_ClearInternal (MonoArrayHandle arr, int idx, int length, MonoError *error)
 {
@@ -986,8 +857,6 @@ ves_icall_System_Array_ClearInternal (MonoArrayHandle arr, int idx, int length, 
 	int sz = mono_array_element_size (mono_handle_class (arr));
 	mono_gc_bzero_atomic (mono_array_addr_with_size_fast (MONO_HANDLE_RAW (arr), sz, idx), length * sz);
 }
-
-#endif
 
 ICALL_EXPORT gboolean
 ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* dest, int dest_idx, int length)
