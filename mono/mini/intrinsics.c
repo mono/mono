@@ -1560,6 +1560,8 @@ emit_sys_runtime_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMeth
 			return ins;
 		}
 		return mono_emit_sys_runtime_sse_intrinsics (cfg, cmethod, fsig, args, error);
+	} else {
+		mono_error_set_not_supported (error, NULL);
 	}
 
 	return NULL;
