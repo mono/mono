@@ -23,6 +23,24 @@ check-local:
 	$(MAKE) runtest-gac-loading || ok=false; \
 	$$ok
 
+BUILT_SOURCES =
+
+ARRAY_COOP_CS=\
+	array-coop-bigvt.cs     \
+	array-coop-int.cs       \
+	array-coop-smallvt.cs
+
+BUILT_SOURCES += $(ARRAY_COOP_CS)
+
+array-coop-bigvt.cs: array-coop-bigvt.sh array-coop-1.cs array-coop-2.cs
+	 . $(srcdir)/array-coop-bigvt.sh $(srcdir) > $@
+
+array-coop-smallvt.cs: array-coop-smallvt.sh array-coop-1.cs array-coop-2.cs
+	 . $(srcdir)/array-coop-smallvt.sh $(srcdir) > $@
+
+array-coop-int.cs: array-coop-int.sh array-coop-1.cs array-coop-2.cs
+	 . $(srcdir)/array-coop-int.sh $(srcdir) > $@
+
 # These are not actually tests, but they are source files part of another test.
 TAILCALL_DISABLED_TESTS_COMPILE = \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyTransparentLibraryWithPrefix.exe \
@@ -240,6 +258,7 @@ TESTS_CS_SRC=		\
 	generic-unloading-sub.2.cs	\
 	create-instance.cs	\
 	bug-2907.cs		\
+	$(ARRAY_COOP_CS)	\
 	array-init.cs		\
 	arraylist.cs		\
 	assembly-load-remap.cs	\
@@ -2619,3 +2638,4 @@ weak-fields.exe: weak-fields.cs Mono.Runtime.Testing.dll
 
 CLEANFILES = $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) *.dll *.stdout *.aotlog *.exe stest.dat LeafAssembly.dll MidAssembly.dll appdomain-marshalbyref-assemblyload2/*.dll 
 CLEANFILES += $(TESTS_TAILCALL_COMPILE) $(TESTSAOT_TAILCALL)
+CLEANFILES += $(BUILT_SOURCES)
