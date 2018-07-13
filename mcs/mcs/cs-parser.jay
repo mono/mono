@@ -2207,6 +2207,11 @@ set_accessor_declaration
 accessor_body
 	: block
 	| expression_block
+	  {
+		if (lang_version < LanguageVersion.V_7) {
+			FeatureIsNotAvailable (GetLocation ($1), "expression body property accessor");
+		}
+	  }
 	| SEMICOLON
 	  {
 		// TODO: lbag
@@ -2876,6 +2881,11 @@ event_accessor_block
 	  }
 	| block
 	| expression_block
+	  {
+		if (lang_version < LanguageVersion.V_7) {
+			FeatureIsNotAvailable (GetLocation ($1), "expression body event accessor");
+		}
+	  }
 	;
 
 attributes_without_members
