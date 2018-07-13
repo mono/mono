@@ -1624,10 +1624,7 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Span.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Span.Fast.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/SpanDebugView.cs
-../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.cs
-../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.BinarySearch.cs
-../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.Byte.cs
-../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.T.cs
+../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers*.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/String.Comparison.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/String.Manipulation.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/String.Searching.cs
