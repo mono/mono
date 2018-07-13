@@ -2174,6 +2174,7 @@ void              mini_emit_memcpy (MonoCompile *cfg, int destreg, int doffset, 
 void              mini_emit_memset (MonoCompile *cfg, int destreg, int offset, int size, int val, int align);
 void              mini_emit_stobj (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *klass, gboolean native);
 void              mini_emit_initobj (MonoCompile *cfg, MonoInst *dest, const guchar *ip, MonoClass *klass);
+MonoInst *        mini_emit_init_rvar (MonoCompile *cfg, int dreg, MonoType *rtype);
 int               mini_emit_sext_index_reg (MonoCompile *cfg, MonoInst *index);
 MonoInst*         mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, MonoInst *index, gboolean bcheck);
 MonoInst*         mini_emit_get_gsharedvt_info_klass (MonoCompile *cfg, MonoClass *klass, MonoRgctxInfoType rgctx_type);
@@ -2705,7 +2706,7 @@ MonoMethod* mini_get_interp_lmf_wrapper (void);
 /*
 This enum MUST be kept in sync with its managed mirror Mono.Simd.AccelMode.
  */
-enum {
+typedef enum {
 	SIMD_VERSION_SSE1	= 1 << 0,
 	SIMD_VERSION_SSE2	= 1 << 1,
 	SIMD_VERSION_SSE3	= 1 << 2,
@@ -2726,7 +2727,7 @@ enum {
 	 * this emum.
 	 */
 	SIMD_VERSION_INDEX_END = 6 
-};
+} SimdVersion;
 
 enum {
 	SIMD_COMP_EQ,
