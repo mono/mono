@@ -8937,6 +8937,11 @@ calli_end:
 		case MONO_CEE_STIND_I: {
 			sp -= 2;
 
+			// Workaround weak ARM memory model.
+#if defined (HOST_ARM) || defined (HOST_ARM64)
+			if (il_op == CEE_STIND_REF)
+				ins_flag |= MONO_INST_VOLATILE;
+#endif
 			if (ins_flag & MONO_INST_VOLATILE) {
 				/* Volatile stores have release semantics, see 12.6.7 in Ecma 335 */
 				mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
@@ -9732,6 +9737,12 @@ calli_end:
 				}
 			}
 
+			// Workaround weak ARM memory model.
+#if defined (HOST_ARM) || defined (HOST_ARM64)
+			if (store_val && store_val->type == STACK_OBJ)
+				ins_flag |= MONO_INST_VOLATILE;
+#endif
+
 			if (method->wrapper_type != MONO_WRAPPER_NONE) {
 				field = (MonoClassField *)mono_method_get_wrapper_data (method, token);
 				klass = field->parent;
@@ -10138,7 +10149,7 @@ calli_end:
 
 			/* Generate IR to do the actual load/store operation */
 
-			if ((il_op == MONO_CEE_STFLD || il_op == MONO_CEE_STSFLD) && (ins_flag & MONO_INST_VOLATILE)) {
+			if (store_val && (ins_flag & MONO_INST_VOLATILE)) {
 				/* Volatile stores have release semantics, see 12.6.7 in Ecma 335 */
 				mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 			}
@@ -10248,7 +10259,7 @@ calli_end:
 			}
 
 field_access_end:
-			if ((il_op == MONO_CEE_LDFLD || il_op == MONO_CEE_LDSFLD) && (ins_flag & MONO_INST_VOLATILE)) {
+			if (!store_val && (ins_flag & MONO_INST_VOLATILE)) {
 				/* Volatile loads have acquire semantics, see 12.6.7 in Ecma 335 */
 				mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_ACQ);
 			}
