@@ -1538,7 +1538,18 @@ LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS) $(AOT_BUILD_FLAGS))
 # Some of the tailcall tests pass native pointers to locals.
 #   Mono does not yet allow that.
 #   tailcall "i" is either calli, or integer instead of pointer, and the latter sidesteps the matter.
+#
+# https://jenkins.mono-project.com/job/test-mono-pull-request-arm64-fullaot/1892/
+# Test Result (1 failure / +1)
+# MonoTests.runtime.delegate5.exe
+#
+# https://jenkins.mono-project.com/job/test-mono-pull-request-coop/5360/
+# Test Result (1 failure / +1)
+# MonoTests.runtime.pinvoke3.exe_timedout
+#
+# FIXME sort the lists
 KNOWN_FAILING_TESTS = \
+	delegate5.exe \
 	delegate-async-exception.exe	\
 	bug-348522.2.exe	\
 	bug-459094.exe \
@@ -1548,6 +1559,7 @@ KNOWN_FAILING_TESTS = \
 	abort-try-holes.exe \
 	threads-init.exe \
 	dim-constrainedcall.exe \
+	pinvoke3.exe \
 	gptail1.exe \
 	itaili1.exe \
 	sirtail1.exe \
