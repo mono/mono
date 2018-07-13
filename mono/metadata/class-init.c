@@ -657,6 +657,8 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 		//if (!strcmp (name, "Vector2") || !strcmp (name, "Vector3") || !strcmp (name, "Vector4"))
 		if (!strcmp (name, "Vector4"))
 			klass->simd_type = 1;
+	} else if (klass->image == mono_defaults.corlib && !strcmp (nspace, "System.Runtime.Intrinsics") && !strcmp (name, "Vector128`1")) {
+		klass->simd_type = 1;
 	}
 
 	// compute is_byreflike
@@ -793,13 +795,15 @@ mono_class_create_generic_inst (MonoGenericClass *gclass)
 	klass->enumtype = gklass->enumtype;
 	klass->valuetype = gklass->valuetype;
 
-
 	if (gklass->image->assembly_name && !strcmp (gklass->image->assembly_name, "System.Numerics.Vectors") && !strcmp (gklass->name_space, "System.Numerics") && !strcmp (gklass->name, "Vector`1")) {
 		g_assert (gclass->context.class_inst);
 		g_assert (gclass->context.class_inst->type_argc > 0);
 		if (mono_type_is_primitive (gclass->context.class_inst->type_argv [0]))
 			klass->simd_type = 1;
+	} else if (gklass->image == mono_defaults.corlib && !strcmp (gklass->name_space, "System.Runtime.Intrinsics") && !strcmp (gklass->name, "Vector128`1")) {
+		klass->simd_type = 1;
 	}
+
 	klass->is_array_special_interface = gklass->is_array_special_interface;
 
 	klass->cast_class = klass->element_class = klass;
