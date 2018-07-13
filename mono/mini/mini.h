@@ -1364,7 +1364,9 @@ typedef struct {
 	guint            r4fp : 1;
 	guint            llvm_only : 1;
 	guint            domainvar_inited : 1;
+#ifdef MONO_ARCH_SIMD_INTRINSICS
 	guint8           uses_simd_intrinsics;
+#endif
 	int              r4_stack_type;
 	gpointer         debug_info;
 	guint32          lmf_offset;
@@ -1538,11 +1540,13 @@ typedef enum {
 	MONO_CFG_HAS_TYPE_CHECK = 1 << 9
 } MonoCompileFlags;
 
+#ifdef MONO_ARCH_SIMD_INTRINSICS
 typedef enum {
 	MONO_CFG_USES_SIMD_INTRINSICS = 1 << 0,
 	MONO_CFG_USES_SIMD_INTRINSICS_SIMPLIFY_INDIRECTION = 1 << 1,
 	MONO_CFG_USES_SIMD_INTRINSICS_DECOMPOSE_VTYPE = 1 << 2
 } MonoSimdIntrinsicsFlags;
+#endif
 
 typedef struct {
 	gint32 methods_compiled;

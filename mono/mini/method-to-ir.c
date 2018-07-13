@@ -6421,12 +6421,17 @@ emit_setret (MonoCompile *cfg, MonoInst *val)
 		} else {
 			EMIT_NEW_RETLOADA (cfg, ret_addr);
 
+#ifdef MONO_ARCH_SIMD_INTRINSICS
 			MonoClass *ret_class = mono_class_from_mono_type (ret_type);
 			if (MONO_CLASS_IS_SIMD (cfg, ret_class))
 				EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STOREX_MEMBASE, ret_addr->dreg, 0, val->dreg);
 			else
 				EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STOREV_MEMBASE, ret_addr->dreg, 0, val->dreg);
 			ins->klass = ret_class;
+#else
+			EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STOREV_MEMBASE, ret_addr->dreg, 0, val->dreg);
+			ins->klass = mono_class_from_mono_type (ret_type);
+#endif
 		}
 	} else {
 #ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
