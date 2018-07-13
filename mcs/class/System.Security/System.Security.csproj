@@ -131,6 +131,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObject.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObjectCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObjectEnumerator.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\AlgorithmIdentifier.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\AlgorithmIdentifierAsn.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\AttributeAsn.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\CertificateChoiceAsn.cs" />
@@ -201,7 +202,6 @@
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\AlgorithmIdentifier.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\EnvelopedCms.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\Pkcs9SigningTime.cs" />
     <Compile Include="corefx\SR.cs" />
