@@ -81,7 +81,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunic
 	if (!s)
 		return NULL;
 
-	size_t len = (length + 1) * 2);
+	gsize const len = ((gsize)length + 1) * 2;
 	gunichar2 *res = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len, error);
 	if (res) {
 		memcpy (res, s, length * 2);
