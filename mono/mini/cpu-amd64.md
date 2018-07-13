@@ -603,12 +603,30 @@ loadu2_mem: dest:i len:16
 #SIMD
 
 addps: dest:x src1:x src2:x len:4 clob:1
+addss: dest:x src1:x src2:x len:4 clob:1
+addsd: dest:x src1:x src2:x len:4 clob:1
 divps: dest:x src1:x src2:x len:4 clob:1
+divss: dest:x src1:x src2:x len:4 clob:1
+divsd: dest:x src1:x src2:x len:4 clob:1
 mulps: dest:x src1:x src2:x len:4 clob:1
+mulss: dest:x src1:x src2:x len:4 clob:1
+mulsd: dest:x src1:x src2:x len:4 clob:1
 subps: dest:x src1:x src2:x len:4 clob:1
+subss: dest:x src1:x src2:x len:4 clob:1
+subsd: dest:x src1:x src2:x len:4 clob:1
 maxps: dest:x src1:x src2:x len:4 clob:1
+maxss: dest:x src1:x src2:x len:4 clob:1
+maxsd: dest:x src1:x src2:x len:4 clob:1
 minps: dest:x src1:x src2:x len:4 clob:1
+minss: dest:x src1:x src2:x len:4 clob:1
+minsd: dest:x src1:x src2:x len:4 clob:1
 compps: dest:x src1:x src2:x len:5 clob:1
+cmpss: dest:x src1:x src2:x len:5 clob:1
+cmpsd: dest:x src1:x src2:x len:5 clob:1
+comiss: dest:i src1:x src2:x len:16
+ucomiss: dest:i src1:x src2:x len:16
+comisd: dest:i src1:x src2:x len:16
+ucomisd: dest:i src1:x src2:x len:16
 andps: dest:x src1:x src2:x len:4 clob:1
 andnps: dest:x src1:x src2:x len:4 clob:1
 orps: dest:x src1:x src2:x len:4 clob:1
@@ -631,6 +649,28 @@ andpd: dest:x src1:x src2:x len:5 clob:1
 andnpd: dest:x src1:x src2:x len:5 clob:1
 orpd: dest:x src1:x src2:x len:5 clob:1
 xorpd: dest:x src1:x src2:x len:5 clob:1
+movhlps: dest:x src1:x src2:x len:5 clob:1
+movlhps: dest:x src1:x src2:x len:5 clob:1
+movss: dest:x src1:x src2:x len:5 clob:1
+movsd: dest:x src1:x src2:x len:5 clob:1
+movmskps: dest:i src1:x len:5
+movmskpd: dest:i src1:x len:5
+movhps: dest:x src1:x src2:i len:5 clob:1
+movlps: dest:x src1:x src2:i len:5 clob:1
+movhpd: dest:x src1:x src2:i len:5 clob:1
+movlpd: dest:x src1:x src2:i len:5 clob:1
+movq: dest:x src1:x len:5
+
+movss_reg_membase: dest:x src1:b len:10
+movss_membase_reg: dest:b src1:x len:10
+movsd_reg_membase: dest:x src1:b len:10
+movsd_membase_reg: dest:b src1:x len:10
+movhpd_membase_reg: dest:b src1:x len:10
+movlpd_membase_reg: dest:b src1:x len:10
+movq_membase_reg: dest:b src1:x len:10
+movnti_i4_membase_reg: dest:b src1:i len:10
+movnti_i8_membase_reg: dest:b src1:i len:10
+
 sqrtpd: dest:x src1:x len:5 clob:1
 
 haddpd: dest:x src1:x src2:x len:6 clob:1
@@ -639,20 +679,30 @@ addsubpd: dest:x src1:x src2:x len:6 clob:1
 duppd: dest:x src1:x len:6
 
 pand: dest:x src1:x src2:x len:5 clob:1
+pandn: dest:x src1:x src2:x len:5 clob:1
 por: dest:x src1:x src2:x len:5 clob:1
 pxor: dest:x src1:x src2:x len:5 clob:1
 
 sqrtps: dest:x src1:x len:5
 rsqrtps: dest:x src1:x len:5
 rcpps: dest:x src1:x len:5
+sqrtss: dest:x src1:x src2:x len:5 clob:1
+sqrtsd: dest:x src1:x src2:x len:5 clob:1
+rsqrtss: dest:x src1:x src2:x len:5 clob:1
+rcpss: dest:x src1:x src2:x len:5 clob:1
 
 pshufflew_high: dest:x src1:x len:6
 pshufflew_low: dest:x src1:x len:6
+pshufhw: dest:x src1:x len:6
+pshuflw: dest:x src1:x len:6
 pshuffled: dest:x src1:x len:6
+pshufd: dest:x src1:x len:6
 shufps: dest:x src1:x src2:x len:5 clob:1
 shufpd: dest:x src1:x src2:x len:6 clob:1
 
 extract_mask: dest:i src1:x len:6
+# FIXME: Avoid clob:c
+maskmovdqu: src1:x src2:x src3:i len:16 clob:c
 
 paddb: dest:x src1:x src2:x len:5 clob:1
 paddw: dest:x src1:x src2:x len:5 clob:1
@@ -694,6 +744,7 @@ pcmpgtd: dest:x src1:x src2:x len:5 clob:1
 pcmpgtq: dest:x src1:x src2:x len:6 clob:1
 
 psumabsdiff: dest:x src1:x src2:x len:5 clob:1
+pmovmskb: dest:i src1:x len:5
 
 unpack_lowb: dest:x src1:x src2:x len:5 clob:1
 unpack_loww: dest:x src1:x src2:x len:5 clob:1
@@ -715,6 +766,10 @@ packd: dest:x src1:x src2:x len:5 clob:1
 packw_un: dest:x src1:x src2:x len:5 clob:1 
 packd_un: dest:x src1:x src2:x len:6 clob:1 
 
+packsswb: dest:x src1:x src2:x len:6 clob:1
+packuswb: dest:x src1:x src2:x len:6 clob:1
+packssdw: dest:x src1:x src2:x len:6 clob:1
+
 paddb_sat: dest:x src1:x src2:x len:5 clob:1
 paddb_sat_un: dest:x src1:x src2:x len:5 clob:1
 
@@ -730,6 +785,11 @@ psubw_sat_un: dest:x src1:x src2:x len:5 clob:1
 pmulw: dest:x src1:x src2:x len:5 clob:1
 pmuld: dest:x src1:x src2:x len:6 clob:1
 pmulq: dest:x src1:x src2:x len:5 clob:1
+pmuludq: dest:x src1:x src2:x len:5 clob:1
+pmulhw: dest:x src1:x src2:x len:5 clob:1
+pmulhuw: dest:x src1:x src2:x len:5 clob:1
+pmullw: dest:x src1:x src2:x len:5 clob:1
+pmaddwd: dest:x src1:x src2:x len:5 clob:1
 
 pmul_high_un: dest:x src1:x src2:x len:5 clob:1
 pmul_high: dest:x src1:x src2:x len:5 clob:1
@@ -757,6 +817,12 @@ pshrq_reg: dest:x src1:x src2:x len:5 clob:1
 
 pshlq: dest:x src1:x len:6 clob:1
 pshlq_reg: dest:x src1:x src2:x len:5 clob:1
+psrldq: dest:x src1:x len:5 clob:1
+pslldq: dest:x src1:x len:5 clob:1
+pslldq_reg: dest:x src1:x src2:i len:64 clob:1
+psrldq_reg: dest:x src1:x src2:i len:64 clob:1
+
+psadbw: dest:x src1:x src2:x len:5 clob:1
 
 cvtdq2pd: dest:x src1:x len:5 clob:1
 cvtdq2ps: dest:x src1:x len:4 clob:1
@@ -766,12 +832,27 @@ cvtps2dq: dest:x src1:x len:5 clob:1
 cvtps2pd: dest:x src1:x len:4 clob:1
 cvttpd2dq: dest:x src1:x len:5 clob:1
 cvttps2dq: dest:x src1:x len:5 clob:1
+cvtss2si_32: dest:i src1:x len:5
+cvtss2si_64: dest:i src1:x len:5
+cvtsd2si_32: dest:i src1:x len:5
+cvtsd2si_64: dest:i src1:x len:5
+cvttss2si_32: dest:i src1:x len:5
+cvttss2si_64: dest:i src1:x len:5
+cvttsd2si_32: dest:i src1:x len:5
+cvttsd2si_64: dest:i src1:x len:5
+cvtsi32_ss: dest:x src1:x src2:i len:10 clob:1
+cvtsi64_ss: dest:x src1:x src2:i len:10 clob:1
+cvtsi32_sd: dest:x src1:x src2:i len:10 clob:1
+cvtsi64_sd: dest:x src1:x src2:i len:10 clob:1
+cvtss2sd: dest:x src1:x src2:x len:10 clob:1
+cvtsd2ss: dest:x src1:x src2:x len:10 clob:1
 
 xmove: dest:x src1:x len:5
 xzero: dest:x len:5
 xones: dest:x len:5
 
 iconv_to_x: dest:x src1:i len:5
+lconv_to_x: dest:x src1:i len:5
 extract_i4: dest:i src1:x len:5
 
 extract_i8: dest:i src1:x len:9
@@ -782,9 +863,13 @@ extract_i1: dest:i src1:x len:13
 extract_u1: dest:i src1:x len:13
 extract_r8: dest:f src1:x len:5 
 
+extract_i2_reg: dest:i src1:x src2:i len:32
+extract_u2_reg: dest:i src1:x src2:i len:32
+
 iconv_to_r4_raw: dest:f src1:i len:10
 
 insert_i2: dest:x src1:x src2:i len:6 clob:1
+insert_i2_reg: dest:x src1:x src2:i src3:i len:32 clob:1
 
 extractx_u2: dest:i src1:x len:6
 insertx_u1_slow: dest:x src1:i src2:i len:18 clob:x
@@ -795,15 +880,19 @@ insertx_r4_slow: dest:x src1:x src2:f len:24
 insertx_r8_slow: dest:x src1:x src2:f len:24
 
 loadx_membase: dest:x src1:b len:9
+loadx_aligned_membase: dest:x src1:b len:7
+movd_reg_membase: dest:x src1:b len:9
+movq_reg_membase: dest:x src1:b len:9
 storex_membase: dest:b src1:x len:9
 storex_membase_reg: dest:b src1:x len:9
-
-loadx_aligned_membase: dest:x src1:b len:7
+storex_high_membase_reg: dest:b src1:x len:9
+storex_low_membase_reg: dest:b src1:x len:9
 storex_aligned_membase_reg: dest:b src1:x len:7
 storex_nta_membase_reg: dest:b src1:x len:7
 
 fconv_to_r8_x: dest:x src1:f len:4 
 xconv_r8_to_i4: dest:y src1:x len:7
+xconv_to_r4: dest:f src1:x len:7
 
 prefetch_membase: src1:b len:4
 

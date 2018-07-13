@@ -117,9 +117,19 @@ MINI_OP(OP_STORER4_MEMBASE_REG, "storer4_membase_reg", IREG, FREG, NONE)
 MINI_OP(OP_STORER8_MEMBASE_REG, "storer8_membase_reg", IREG, FREG, NONE)
 
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
+/* All the store opcodes have to be here MONO_IS_STORE_MEMBASE () depends on this */
 MINI_OP(OP_STOREX_MEMBASE_REG, "storex_membase_reg", IREG, XREG, NONE)
 MINI_OP(OP_STOREX_ALIGNED_MEMBASE_REG,     "storex_aligned_membase_reg", IREG, XREG, NONE)
 MINI_OP(OP_STOREX_NTA_MEMBASE_REG,     "storex_nta_membase_reg", IREG, XREG, NONE)
+MINI_OP(OP_STOREX_HIGH_MEMBASE_REG, "storex_high_membase_reg", IREG, XREG, NONE)
+MINI_OP(OP_STOREX_LOW_MEMBASE_REG, "storex_low_membase_reg", IREG, XREG, NONE)
+MINI_OP(OP_MOVSS_MEMBASE_REG, "movss_membase_reg", IREG, XREG, NONE)
+MINI_OP(OP_MOVSD_MEMBASE_REG, "movsd_membase_reg", IREG, XREG, NONE)
+MINI_OP(OP_MOVHPD_MEMBASE_REG, "movhpd_membase_reg", IREG, XREG, NONE)
+MINI_OP(OP_MOVLPD_MEMBASE_REG, "movlpd_membase_reg", IREG, XREG, NONE)
+MINI_OP(OP_MOVQ_MEMBASE_REG, "movq_membase_reg", IREG, XREG, NONE)
+MINI_OP(OP_MOVNTI_I4_MEMBASE_REG, "movnti_i4_membase_reg", IREG, IREG, NONE)
+MINI_OP(OP_MOVNTI_I8_MEMBASE_REG, "movnti_i8_membase_reg", IREG, IREG, NONE)
 #endif
 
 MINI_OP(OP_STORE_MEMBASE_IMM,"store_membase_imm", IREG, NONE, NONE)
@@ -146,6 +156,8 @@ MINI_OP(OP_LOADX_MEMBASE, 			"loadx_membase", XREG, IREG, NONE)
 
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
 MINI_OP(OP_LOADX_ALIGNED_MEMBASE,  "loadx_aligned_membase", XREG, IREG, NONE)
+MINI_OP(OP_MOVD_REG_MEMBASE,  "movd_reg_membase", XREG, IREG, NONE)
+MINI_OP(OP_MOVQ_REG_MEMBASE,  "movq_reg_membase", XREG, IREG, NONE)
 #endif
 
 MINI_OP(OP_LOADV_MEMBASE,   "loadv_membase", VREG, IREG, NONE)
@@ -753,12 +765,33 @@ MINI_OP(OP_NOT_NULL, "not_null", NONE, IREG, NONE)
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
 
 MINI_OP(OP_ADDPS, "addps", XREG, XREG, XREG)
+MINI_OP(OP_ADDSS, "addss", XREG, XREG, XREG)
+MINI_OP(OP_ADDSD, "addsd", XREG, XREG, XREG)
 MINI_OP(OP_DIVPS, "divps", XREG, XREG, XREG)
+MINI_OP(OP_DIVSS, "divss", XREG, XREG, XREG)
+MINI_OP(OP_DIVSD, "divsd", XREG, XREG, XREG)
 MINI_OP(OP_MULPS, "mulps", XREG, XREG, XREG)
+MINI_OP(OP_MULSS, "mulss", XREG, XREG, XREG)
+MINI_OP(OP_MULSD, "mulsd", XREG, XREG, XREG)
 MINI_OP(OP_SUBPS, "subps", XREG, XREG, XREG)
+MINI_OP(OP_SUBSS, "subss", XREG, XREG, XREG)
+MINI_OP(OP_SUBSD, "subsd", XREG, XREG, XREG)
 MINI_OP(OP_MAXPS, "maxps", XREG, XREG, XREG)
+MINI_OP(OP_MAXSS, "maxss", XREG, XREG, XREG)
+MINI_OP(OP_MAXSD, "maxsd", XREG, XREG, XREG)
 MINI_OP(OP_MINPS, "minps", XREG, XREG, XREG)
+MINI_OP(OP_MINSS, "minss", XREG, XREG, XREG)
+MINI_OP(OP_MINSD, "minsd", XREG, XREG, XREG)
+/* inst_c0 is the 3rd argument */
 MINI_OP(OP_COMPPS, "compps", XREG, XREG, XREG)
+/* inst_c0 is the 3rd argument */
+MINI_OP(OP_CMPSS, "cmpss", XREG, XREG, XREG)
+/* inst_c0 is the 3rd argument */
+MINI_OP(OP_CMPSD, "cmpsd", XREG, XREG, XREG)
+MINI_OP(OP_COMISS, "comiss", IREG, XREG, XREG)
+MINI_OP(OP_UCOMISS, "ucomiss", IREG, XREG, XREG)
+MINI_OP(OP_COMISD, "comisd", IREG, XREG, XREG)
+MINI_OP(OP_UCOMISD, "ucomisd", IREG, XREG, XREG)
 MINI_OP(OP_ANDPS, "andps", XREG, XREG, XREG)
 MINI_OP(OP_ANDNPS, "andnps", XREG, XREG, XREG)
 MINI_OP(OP_ORPS, "orps", XREG, XREG, XREG)
@@ -766,18 +799,39 @@ MINI_OP(OP_XORPS, "xorps", XREG, XREG, XREG)
 MINI_OP(OP_HADDPS, "haddps", XREG, XREG, XREG)
 MINI_OP(OP_HSUBPS, "hsubps", XREG, XREG, XREG)
 MINI_OP(OP_ADDSUBPS, "addsubps", XREG, XREG, XREG)
+MINI_OP(OP_MOVLHPS, "movlhps", XREG, XREG, XREG)
+MINI_OP(OP_MOVHLPS, "movhlps", XREG, XREG, XREG)
 MINI_OP(OP_DUPPS_LOW, "dupps_low", XREG, XREG, NONE)
 MINI_OP(OP_DUPPS_HIGH, "dupps_high", XREG, XREG, NONE)
+MINI_OP(OP_MOVHPS, "movhps", XREG, XREG, IREG)
+MINI_OP(OP_MOVLPS, "movlps", XREG, XREG, IREG)
+MINI_OP(OP_MOVHPD, "movhpd", XREG, XREG, IREG)
+MINI_OP(OP_MOVLPD, "movlpd", XREG, XREG, IREG)
+MINI_OP(OP_MOVQ, "movq", XREG, XREG, NONE)
 
 MINI_OP(OP_RSQRTPS, "rsqrtps", XREG, XREG, NONE)
+MINI_OP(OP_RSQRTSS, "rsqrtss", XREG, XREG, XREG)
+MINI_OP(OP_RSQRTS, "rsqrts", XREG, XREG, XREG)
 MINI_OP(OP_SQRTPS, "sqrtps", XREG, XREG, NONE)
+MINI_OP(OP_SQRTSS, "sqrtss", XREG, XREG, XREG)
+MINI_OP(OP_SQRTSD, "sqrtsd", XREG, XREG, XREG)
 MINI_OP(OP_RCPPS, "rcpps", XREG, XREG, NONE)
+MINI_OP(OP_RCPSS, "rcpss", XREG, XREG, XREG)
 
 MINI_OP(OP_PSHUFLEW_HIGH, "pshufflew_high", XREG, XREG, NONE)
 MINI_OP(OP_PSHUFLEW_LOW, "pshufflew_low", XREG, XREG, NONE)
+MINI_OP(OP_PSHUFHW, "pshufhw", XREG, XREG, NONE)
+MINI_OP(OP_PSHUFLW, "pshuflw", XREG, XREG, NONE)
 MINI_OP(OP_PSHUFLED, "pshuffled", XREG, XREG, NONE)
+MINI_OP(OP_PSHUFD, "pshufd", XREG, XREG, NONE)
+/* inst_c0 is the 3rd argument */
 MINI_OP(OP_SHUFPS, "shufps", XREG, XREG, XREG)
 MINI_OP(OP_SHUFPD, "shufpd", XREG, XREG, XREG)
+MINI_OP(OP_MOVSS, "movss", XREG, XREG, XREG)
+MINI_OP(OP_MOVSD, "movsd", XREG, XREG, XREG)
+/* Load the lowest r4 from sreg1, zero out the rest */
+MINI_OP(OP_MOVSS_REG_MEMBASE, "movss_reg_membase", XREG, IREG, NONE)
+MINI_OP(OP_MOVSD_REG_MEMBASE, "movsd_reg_membase", XREG, IREG, NONE)
 
 MINI_OP(OP_ADDPD, "addpd", XREG, XREG, XREG)
 MINI_OP(OP_DIVPD, "divpd", XREG, XREG, XREG)
@@ -798,8 +852,13 @@ MINI_OP(OP_DUPPD, "duppd", XREG, XREG, NONE)
 MINI_OP(OP_SQRTPD, "sqrtpd", XREG, XREG, NONE)
 
 MINI_OP(OP_EXTRACT_MASK, "extract_mask", IREG, XREG, NONE)
+MINI_OP(OP_MOVMSKPS, "movmskps", IREG, XREG, NONE)
+MINI_OP(OP_MOVMSKPD, "movmskpd", IREG, XREG, NONE)
+MINI_OP(OP_PMOVMSKB, "pmovmskb", IREG, XREG, NONE)
+MINI_OP3(OP_MASKMOVDQU, "maskmovdqu", NONE, XREG, XREG, IREG)
 
 MINI_OP(OP_PAND, "pand", XREG, XREG, XREG)
+MINI_OP(OP_PANDN, "pandn", XREG, XREG, XREG)
 MINI_OP(OP_POR, "por", XREG, XREG, XREG)
 MINI_OP(OP_PXOR, "pxor", XREG, XREG, XREG)
 
@@ -821,7 +880,9 @@ MINI_OP(OP_PMAXB, "pmaxb", XREG, XREG, XREG)
 MINI_OP(OP_PMAXW, "pmaxw", XREG, XREG, XREG)
 MINI_OP(OP_PMAXD, "pmaxd", XREG, XREG, XREG)
 
+/* pavgb */
 MINI_OP(OP_PAVGB_UN, "pavgb_un", XREG, XREG, XREG)
+/* pavgw */
 MINI_OP(OP_PAVGW_UN, "pavgw_un", XREG, XREG, XREG)
 
 MINI_OP(OP_PMINB_UN, "pminb_un", XREG, XREG, XREG)
@@ -848,7 +909,9 @@ MINI_OP(OP_UNPACK_LOWB, "unpack_lowb", XREG, XREG, XREG)
 MINI_OP(OP_UNPACK_LOWW, "unpack_loww", XREG, XREG, XREG)
 MINI_OP(OP_UNPACK_LOWD, "unpack_lowd", XREG, XREG, XREG)
 MINI_OP(OP_UNPACK_LOWQ, "unpack_lowq", XREG, XREG, XREG)
+/* UNPCKLPS */
 MINI_OP(OP_UNPACK_LOWPS, "unpack_lowps", XREG, XREG, XREG)
+/* UNPCKLPD */
 MINI_OP(OP_UNPACK_LOWPD, "unpack_lowpd", XREG, XREG, XREG)
 
 MINI_OP(OP_UNPACK_HIGHB, "unpack_highb", XREG, XREG, XREG)
@@ -864,13 +927,23 @@ MINI_OP(OP_PACKD, "packd", XREG, XREG, XREG)
 MINI_OP(OP_PACKW_UN, "packw_un", XREG, XREG, XREG)
 MINI_OP(OP_PACKD_UN, "packd_un", XREG, XREG, XREG)
 
+MINI_OP(OP_PACKSSWB, "packsswb", XREG, XREG, XREG)
+MINI_OP(OP_PACKUSWB, "packuswb", XREG, XREG, XREG)
+MINI_OP(OP_PACKSSDW, "packssdw", XREG, XREG, XREG)
+
+/* PADDSB */
 MINI_OP(OP_PADDB_SAT, "paddb_sat", XREG, XREG, XREG)
+/* PADDUSB */
 MINI_OP(OP_PADDB_SAT_UN, "paddb_sat_un", XREG, XREG, XREG)
 
+/* PADDSW */
 MINI_OP(OP_PADDW_SAT, "paddw_sat", XREG, XREG, XREG)
+/* PADDUSW */
 MINI_OP(OP_PADDW_SAT_UN, "paddw_sat_un", XREG, XREG, XREG)
 
+/* PSUBSB */
 MINI_OP(OP_PSUBB_SAT, "psubb_sat", XREG, XREG, XREG)
+/* PSUBUSB */
 MINI_OP(OP_PSUBB_SAT_UN, "psubb_sat_un", XREG, XREG, XREG)
 
 MINI_OP(OP_PSUBW_SAT, "psubw_sat", XREG, XREG, XREG)
@@ -880,11 +953,17 @@ MINI_OP(OP_PMULW, "pmulw", XREG, XREG, XREG)
 MINI_OP(OP_PMULD, "pmuld", XREG, XREG, XREG)
 /* Multiplies two 32 bit numbers into a 64 bit one */
 MINI_OP(OP_PMULQ, "pmulq", XREG, XREG, XREG)
+MINI_OP(OP_PMULHW, "pmulhw", XREG, XREG, XREG)
+MINI_OP(OP_PMULHUW, "pmulhuw", XREG, XREG, XREG)
+MINI_OP(OP_PMULLW, "pmullw", XREG, XREG, XREG)
+MINI_OP(OP_PMADDWD, "pmaddwd", XREG, XREG, XREG)
+MINI_OP(OP_PMULUDQ, "pmuludq", XREG, XREG, XREG)
 
 MINI_OP(OP_PMULW_HIGH_UN, "pmul_high_un", XREG, XREG, XREG)
 MINI_OP(OP_PMULW_HIGH, "pmul_high", XREG, XREG, XREG)
 
 /*SSE2 Shift ops must have the _reg version right after as code depends on this ordering.*/ 
+/* psrlw */
 MINI_OP(OP_PSHRW, "pshrw", XREG, XREG, NONE)
 MINI_OP(OP_PSHRW_REG, "pshrw_reg", XREG, XREG, XREG)
 
@@ -909,6 +988,14 @@ MINI_OP(OP_PSHLD_REG, "pshld_reg", XREG, XREG, XREG)
 MINI_OP(OP_PSHLQ, "pshlq", XREG, XREG, NONE)
 MINI_OP(OP_PSHLQ_REG, "pshlq_reg", XREG, XREG, XREG)
 
+/* inst_imm is the immediate */
+MINI_OP(OP_PSRLDQ, "psrldq", XREG, XREG, NONE)
+MINI_OP(OP_PSLLDQ, "pslldq", XREG, XREG, NONE)
+MINI_OP(OP_PSRLDQ_REG, "psrldq_reg", XREG, XREG, IREG)
+MINI_OP(OP_PSLLDQ_REG, "pslldq_reg", XREG, XREG, IREG)
+
+MINI_OP(OP_PSADBW, "psadbw", XREG, XREG, XREG)
+
 MINI_OP(OP_EXTRACT_I4, "extract_i4", IREG, XREG, NONE)
 MINI_OP(OP_ICONV_TO_R4_RAW, "iconv_to_r4_raw", FREG, IREG, NONE)
 
@@ -919,6 +1006,9 @@ MINI_OP(OP_EXTRACT_U1, "extract_u1", IREG, XREG, NONE)
 MINI_OP(OP_EXTRACT_R8, "extract_r8", FREG, XREG, NONE)
 MINI_OP(OP_EXTRACT_I8, "extract_i8", LREG, XREG, NONE)
 
+MINI_OP(OP_EXTRACT_I2_REG, "extract_i2_reg", IREG, XREG, IREG)
+MINI_OP(OP_EXTRACT_U2_REG, "extract_u2_reg", IREG, XREG, IREG)
+
 /* Used by LLVM */
 MINI_OP(OP_INSERT_I1, "insert_i1", XREG, XREG, IREG)
 MINI_OP(OP_INSERT_I4, "insert_i4", XREG, XREG, IREG)
@@ -927,9 +1017,11 @@ MINI_OP(OP_INSERT_R4, "insert_r4", XREG, XREG, FREG)
 MINI_OP(OP_INSERT_R8, "insert_r8", XREG, XREG, FREG)
 
 MINI_OP(OP_INSERT_I2, "insert_i2", XREG, XREG, IREG)
+MINI_OP3(OP_INSERT_I2_REG, "insert_i2_reg", XREG, XREG, IREG, IREG)
 
 MINI_OP(OP_EXTRACTX_U2, "extractx_u2", IREG, XREG, NONE)
 
+/* Insert sreg2 into sreg1 at position inst_c0 */
 /*these slow ops are modeled around the availability of a fast 2 bytes insert op*/
 /*insertx_u1_slow takes old value and new value as source regs */
 MINI_OP(OP_INSERTX_U1_SLOW, "insertx_u1_slow", XREG, IREG, IREG)
@@ -943,6 +1035,8 @@ MINI_OP(OP_INSERTX_I8_SLOW, "insertx_i8_slow", XREG, XREG, LREG)
 MINI_OP(OP_FCONV_TO_R8_X, "fconv_to_r8_x", XREG, FREG, NONE)
 MINI_OP(OP_XCONV_R8_TO_I4, "xconv_r8_to_i4", IREG, XREG, NONE)
 MINI_OP(OP_ICONV_TO_X, "iconv_to_x", XREG, IREG, NONE)
+MINI_OP(OP_XCONV_TO_R4, "xconv_to_r4", XREG, IREG, NONE)
+MINI_OP(OP_LCONV_TO_X, "lconv_to_x", XREG, LREG, NONE)
 
 MINI_OP(OP_EXPAND_I1, "expand_i1", XREG, IREG, NONE)
 MINI_OP(OP_EXPAND_I2, "expand_i2", XREG, IREG, NONE)
@@ -951,6 +1045,8 @@ MINI_OP(OP_EXPAND_R4, "expand_r4", XREG, FREG, NONE)
 MINI_OP(OP_EXPAND_I8, "expand_i8", XREG, IREG, NONE)
 MINI_OP(OP_EXPAND_R8, "expand_r8", XREG, FREG, NONE)
 
+/* This is not actually a membase, i.e. there is no offset */
+/* backend.arg_info contains the prefetch mode i.e. SIMD_PREFETCH_MODE_... */
 MINI_OP(OP_PREFETCH_MEMBASE, "prefetch_membase", NONE, IREG, NONE)
 
 MINI_OP(OP_CVTDQ2PD, "cvtdq2pd", XREG, XREG, NONE)
@@ -961,6 +1057,21 @@ MINI_OP(OP_CVTPS2DQ, "cvtps2dq", XREG, XREG, NONE)
 MINI_OP(OP_CVTPS2PD, "cvtps2pd", XREG, XREG, NONE)
 MINI_OP(OP_CVTTPD2DQ, "cvttpd2dq", XREG, XREG, NONE)
 MINI_OP(OP_CVTTPS2DQ, "cvttps2dq", XREG, XREG, NONE)
+MINI_OP(OP_CVTSS2SI_32, "cvtss2si_32", IREG, XREG, NONE)
+MINI_OP(OP_CVTSS2SI_64, "cvtss2si_64", LREG, XREG, NONE)
+MINI_OP(OP_CVTTSS2SI_32, "cvttss2si_32", IREG, XREG, NONE)
+MINI_OP(OP_CVTTSS2SI_64, "cvttss2si_64", LREG, XREG, NONE)
+MINI_OP(OP_CVTSD2SI_32, "cvtsd2si_32", IREG, XREG, NONE)
+MINI_OP(OP_CVTSD2SI_64, "cvtsd2si_64", LREG, XREG, NONE)
+MINI_OP(OP_CVTTSD2SI_32, "cvttsd2si_32", IREG, XREG, NONE)
+MINI_OP(OP_CVTTSD2SI_64, "cvttsd2si_64", LREG, XREG, NONE)
+
+MINI_OP(OP_CVTSI32_SS, "cvtsi32_ss", XREG, XREG, IREG)
+MINI_OP(OP_CVTSI64_SS, "cvtsi64_ss", XREG, XREG, LREG)
+MINI_OP(OP_CVTSI32_SD, "cvtsi32_sd", XREG, XREG, IREG)
+MINI_OP(OP_CVTSI64_SD, "cvtsi64_sd", XREG, XREG, LREG)
+MINI_OP(OP_CVTSS2SD, "cvtss2sd", XREG, XREG, XREG)
+MINI_OP(OP_CVTSD2SS, "cvtsd2ss", XREG, XREG, XREG)
 
 /* r4 dot product */
 /* multiply all 4 single precision float elements, add them together, and store the result to the lowest element */

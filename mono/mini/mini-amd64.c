@@ -6123,25 +6123,136 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_ADDPS:
 			amd64_sse_addps_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
+		case OP_ADDSS:
+			amd64_sse_addss_reg_reg (code, ins->dreg, ins->sreg2);
+			break;
+		case OP_ADDSD:
+			amd64_sse_addsd_reg_reg (code, ins->dreg, ins->sreg2);
+			break;
 		case OP_DIVPS:
 			amd64_sse_divps_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_DIVSS:
+			amd64_sse_divss_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_DIVSD:
+			amd64_sse_divsd_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
 		case OP_MULPS:
 			amd64_sse_mulps_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
+		case OP_MULSS:
+			amd64_sse_mulss_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_MULSD:
+			amd64_sse_mulsd_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
 		case OP_SUBPS:
 			amd64_sse_subps_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_SUBSS:
+			amd64_sse_subss_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_SUBSD:
+			amd64_sse_subsd_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
 		case OP_MAXPS:
 			amd64_sse_maxps_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
+		case OP_MAXSS:
+			amd64_sse_maxss_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_MAXSD:
+			amd64_sse_maxsd_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
 		case OP_MINPS:
 			amd64_sse_minps_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_MINSS:
+			amd64_sse_minss_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_MINSD:
+			amd64_sse_minsd_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
 		case OP_COMPPS:
 			g_assert (ins->inst_c0 >= 0 && ins->inst_c0 <= 7);
 			amd64_sse_cmpps_reg_reg_imm (code, ins->sreg1, ins->sreg2, ins->inst_c0);
 			break;
+		case OP_CMPSS:
+			g_assert (ins->inst_c0 >= 0 && ins->inst_c0 <= 7);
+			amd64_sse_cmpss_reg_reg_imm (code, ins->sreg1, ins->sreg2, ins->inst_c0);
+			break;
+		case OP_CMPSD:
+			g_assert (ins->inst_c0 >= 0 && ins->inst_c0 <= 7);
+			amd64_sse_cmpsd_reg_reg_imm (code, ins->sreg1, ins->sreg2, ins->inst_c0);
+			break;
+		case OP_COMISS:
+		case OP_UCOMISS:
+		case OP_COMISD:
+		case OP_UCOMISD: {
+			guchar *unordered_check;
+
+			g_assert (ins->inst_c0 >= 0 && ins->inst_c0 <= 7);
+			amd64_alu_reg_reg (code, X86_XOR, ins->dreg, ins->dreg);
+			switch (ins->opcode) {
+			case OP_COMISS:
+				amd64_sse_comiss_reg_reg (code, ins->sreg1, ins->sreg2);
+				break;
+			case OP_UCOMISS:
+				amd64_sse_ucomiss_reg_reg (code, ins->sreg1, ins->sreg2);
+				break;
+			case OP_COMISD:
+				amd64_sse_comisd_reg_reg (code, ins->sreg1, ins->sreg2);
+				break;
+			case OP_UCOMISD:
+				amd64_sse_ucomisd_reg_reg (code, ins->sreg1, ins->sreg2);
+				break;
+			default:
+				g_assert_not_reached ();
+			}
+			switch (ins->inst_c0) {
+			case SIMD_COMP_EQ:
+				unordered_check = code;
+				x86_branch8 (code, X86_CC_P, 0, FALSE);
+				amd64_set_reg (code, X86_CC_EQ, ins->dreg, FALSE);
+				amd64_patch (unordered_check, code);
+				break;
+			case SIMD_COMP_NLE:
+				unordered_check = code;
+				x86_branch8 (code, X86_CC_P, 0, FALSE);
+				amd64_set_reg (code, X86_CC_NBE, ins->dreg, FALSE);
+				amd64_patch (unordered_check, code);
+				break;
+			case SIMD_COMP_NLT:
+				unordered_check = code;
+				x86_branch8 (code, X86_CC_P, 0, FALSE);
+				amd64_set_reg (code, X86_CC_GE, ins->dreg, FALSE);
+				amd64_patch (unordered_check, code);
+				break;
+			case SIMD_COMP_LT:
+				unordered_check = code;
+				x86_branch8 (code, X86_CC_P, 0, FALSE);
+				amd64_set_reg (code, X86_CC_LT, ins->dreg, FALSE);
+				amd64_patch (unordered_check, code);
+				break;
+			case SIMD_COMP_LE:
+				unordered_check = code;
+				x86_branch8 (code, X86_CC_P, 0, FALSE);
+				amd64_set_reg (code, X86_CC_LE, ins->dreg, FALSE);
+				amd64_patch (unordered_check, code);
+				break;
+			case SIMD_COMP_NEQ:
+				unordered_check = code;
+				x86_branch8 (code, X86_CC_P, 0, FALSE);
+				amd64_set_reg (code, X86_CC_NE, ins->dreg, FALSE);
+				amd64_patch (unordered_check, code);
+				break;
+			default:
+				g_assert_not_reached ();
+				break;
+			}
+			break;
+		}
 		case OP_ANDPS:
 			amd64_sse_andps_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
@@ -6157,11 +6268,23 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_SQRTPS:
 			amd64_sse_sqrtps_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
+		case OP_SQRTSS:
+			amd64_sse_sqrtss_reg_reg (code, ins->dreg, ins->sreg2);
+			break;
+		case OP_SQRTSD:
+			amd64_sse_sqrtsd_reg_reg (code, ins->dreg, ins->sreg2);
+			break;
 		case OP_RSQRTPS:
 			amd64_sse_rsqrtps_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
+		case OP_RSQRTSS:
+			amd64_sse_rsqrtss_reg_reg (code, ins->dreg, ins->sreg2);
+			break;
 		case OP_RCPPS:
 			amd64_sse_rcpps_reg_reg (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_RCPSS:
+			amd64_sse_rcpss_reg_reg (code, ins->dreg, ins->sreg2);
 			break;
 		case OP_ADDSUBPS:
 			amd64_sse_addsubps_reg_reg (code, ins->sreg1, ins->sreg2);
@@ -6178,16 +6301,72 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_DUPPS_LOW:
 			amd64_sse_movsldup_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
-
+		case OP_MOVHLPS:
+			amd64_movhlps_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_MOVLHPS:
+			amd64_movlhps_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_MOVSS:
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_sse_movss_reg_reg (code, ins->dreg, ins->sreg2);
+			break;
+		case OP_MOVSS_REG_MEMBASE:
+			amd64_sse_movss_reg_membase (code, ins->dreg, ins->sreg1, 0);
+			break;
+		case OP_MOVSS_MEMBASE_REG:
+			amd64_sse_movss_membase_reg (code, ins->inst_destbasereg, 0, ins->sreg1);
+			break;
+		case OP_MOVSD:
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_sse_movsd_reg_reg (code, ins->dreg, ins->sreg2);
+			break;
+		case OP_MOVSD_REG_MEMBASE:
+			amd64_sse_movsd_reg_membase (code, ins->dreg, ins->sreg1, 0);
+			break;
+		case OP_MOVSD_MEMBASE_REG:
+			amd64_sse_movsd_membase_reg (code, ins->inst_destbasereg, 0, ins->sreg1);
+			break;
+		case OP_MOVHPS:
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_sse_movhps_reg_membase (code, ins->dreg, ins->sreg2, 0);
+			break;
+		case OP_MOVLPS:
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_sse_movlps_reg_membase (code, ins->dreg, ins->sreg2, 0);
+			break;
+		case OP_MOVHPD:
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_sse_movhpd_reg_membase (code, ins->dreg, ins->sreg2, 0);
+			break;
+		case OP_MOVLPD:
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_sse_movlpd_reg_membase (code, ins->dreg, ins->sreg2, 0);
+			break;
+		case OP_MOVQ:
+			amd64_sse_movq_reg_reg (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_MOVHPD_MEMBASE_REG:
+			amd64_sse_movhpd_membase_reg (code, ins->inst_destbasereg, ins->sreg1, 0);
+			break;
+		case OP_MOVLPD_MEMBASE_REG:
+			amd64_sse_movlpd_membase_reg (code, ins->inst_destbasereg, ins->sreg1, 0);
+			break;
+		case OP_MOVQ_MEMBASE_REG:
+			amd64_sse_movq_membase_reg (code, ins->inst_destbasereg, ins->sreg1, 0);
+			break;
+		case OP_PSHUFHW:
 		case OP_PSHUFLEW_HIGH:
 			g_assert (ins->inst_c0 >= 0 && ins->inst_c0 <= 0xFF);
 			amd64_sse_pshufhw_reg_reg_imm (code, ins->dreg, ins->sreg1, ins->inst_c0);
 			break;
+		case OP_PSHUFLW:
 		case OP_PSHUFLEW_LOW:
 			g_assert (ins->inst_c0 >= 0 && ins->inst_c0 <= 0xFF);
 			amd64_sse_pshuflw_reg_reg_imm (code, ins->dreg, ins->sreg1, ins->inst_c0);
 			break;
 		case OP_PSHUFLED:
+		case OP_PSHUFD:
 			g_assert (ins->inst_c0 >= 0 && ins->inst_c0 <= 0xFF);
 			amd64_sse_pshufd_reg_reg_imm (code, ins->dreg, ins->sreg1, ins->inst_c0);
 			break;
@@ -6253,9 +6432,27 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_EXTRACT_MASK:
 			amd64_sse_pmovmskb_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
-
+		case OP_MOVMSKPS:
+			amd64_sse_movmskps_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
+			break;
+		case OP_MOVMSKPD:
+			amd64_sse_movmskpd_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
+			break;
+		case OP_PMOVMSKB:
+			amd64_sse_pmovmskb_reg_reg (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_MASKMOVDQU:
+			/* The address needs to be in RDI */
+			/* This is marked clob:c */
+			if (ins->sreg3 != AMD64_RDI)
+				amd64_mov_reg_reg (code, AMD64_RDI, ins->sreg3, 8);
+			amd64_sse_maskmovdqu_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
 		case OP_PAND:
 			amd64_sse_pand_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PANDN:
+			amd64_sse_pandn_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
 		case OP_POR:
 			amd64_sse_por_reg_reg (code, ins->sreg1, ins->sreg2);
@@ -6404,13 +6601,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_UNPACK_HIGHPD:
 			amd64_sse_unpckhpd_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
-
+		case OP_PACKSSWB:
 		case OP_PACKW:
 			amd64_sse_packsswb_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
+		case OP_PACKSSDW:
 		case OP_PACKD:
 			amd64_sse_packssdw_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
+		case OP_PACKUSWB:
 		case OP_PACKW_UN:
 			amd64_sse_packuswb_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
@@ -6450,16 +6649,24 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_PMULD:
 			amd64_sse_pmulld_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
+		case OP_PMULUDQ:
 		case OP_PMULQ:
 			amd64_sse_pmuludq_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
-		case OP_PMULW_HIGH_UN:
-			amd64_sse_pmulhuw_reg_reg (code, ins->sreg1, ins->sreg2);
-			break;
+		case OP_PMULHW:
 		case OP_PMULW_HIGH:
 			amd64_sse_pmulhw_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
-
+		case OP_PMULHUW:
+		case OP_PMULW_HIGH_UN:
+			amd64_sse_pmulhuw_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PMULLW:
+			amd64_sse_pmullw_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PMADDWD:
+			amd64_sse_pmaddwd_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
 		case OP_PSHRW:
 			amd64_sse_psrlw_reg_imm (code, ins->dreg, ins->inst_imm);
 			break;
@@ -6523,7 +6730,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_PSHLQ_REG:
 			amd64_sse_psllq_reg_reg (code, ins->dreg, ins->sreg2);
-			break;	
+			break;
+		case OP_PSRLDQ:
+			amd64_sse_psrldq_reg_imm (code, ins->dreg, ins->inst_imm);
+			break;
+		case OP_PSLLDQ:
+			amd64_sse_pslldq_reg_imm (code, ins->dreg, ins->inst_imm);
+			break;
+
+		case OP_PSADBW:
+			amd64_sse_psadbw_reg_reg (code, ins->dreg, ins->sreg2);
+			break;
+
 		case OP_CVTDQ2PD:
 			amd64_sse_cvtdq2pd_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
@@ -6548,9 +6766,35 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_CVTTPS2DQ:
 			amd64_sse_cvttps2dq_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
-
+		case OP_CVTSS2SI_32:
+			amd64_sse_cvtss2si_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
+			break;
+		case OP_CVTSS2SI_64:
+			amd64_sse_cvtss2si_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
+			break;
+		case OP_CVTTSS2SI_32:
+			amd64_sse_cvttss2si_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
+			break;
+		case OP_CVTTSS2SI_64:
+			amd64_sse_cvttss2si_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
+			break;
+		case OP_CVTSD2SI_32:
+			amd64_sse_cvtsd2si_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
+			break;
+		case OP_CVTSD2SI_64:
+			amd64_sse_cvtsd2si_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
+			break;
+		case OP_CVTTSD2SI_32:
+			amd64_sse_cvttsd2si_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
+			break;
+		case OP_CVTTSD2SI_64:
+			amd64_sse_cvttsd2si_reg_reg_size (code, ins->dreg, ins->sreg1, 8);
+			break;
 		case OP_ICONV_TO_X:
 			amd64_movd_xreg_reg_size (code, ins->dreg, ins->sreg1, 4);
+			break;
+		case OP_LCONV_TO_X:
+			amd64_movd_xreg_reg_size (code, ins->dreg, ins->sreg1, 8);
 			break;
 		case OP_EXTRACT_I4:
 			amd64_movd_reg_xreg_size (code, ins->dreg, ins->sreg1, 4);
@@ -6578,6 +6822,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_sse_pextrw_reg_reg_imm (code, ins->dreg, ins->sreg1, ins->inst_c0);
 			amd64_widen_reg_size (code, ins->dreg, ins->dreg, ins->opcode == OP_EXTRACT_I2, TRUE, 4);
 			break;
+		case OP_EXTRACT_I2_REG:
+		case OP_EXTRACT_U2_REG:
+			/* Save the value to the stack and read it from there */
+			x86_mov_reg_reg (code, ins->dreg, ins->sreg2);
+			amd64_alu_reg_imm (code, X86_AND, ins->dreg, 0x7);
+			amd64_sse_movups_membase_reg (code, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset, ins->sreg1);
+			amd64_mov_reg_memindex (code, ins->dreg, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset, ins->dreg, 1, 2);
+			amd64_widen_reg_size (code, ins->dreg, ins->dreg, ins->opcode == OP_EXTRACT_I2, TRUE, 4);
+			break;
 		case OP_EXTRACT_R8:
 			if (ins->inst_c0)
 				amd64_movhlps_reg_reg (code, ins->dreg, ins->sreg1);
@@ -6589,6 +6842,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_EXTRACTX_U2:
 			amd64_sse_pextrw_reg_reg_imm (code, ins->dreg, ins->sreg1, ins->inst_c0);
+			break;
+		case OP_INSERT_I2_REG:
+			amd64_mov_reg_reg (code, AMD64_R11, ins->sreg3, 8);
+			amd64_alu_reg_imm (code, X86_AND, AMD64_R11, 0x7);
+			amd64_shift_reg_imm (code, X86_SHL, AMD64_R11, 1);
+			amd64_alu_reg_reg (code, X86_ADD, AMD64_R11, ins->backend.spill_var->inst_basereg);
+			amd64_sse_movups_membase_reg (code, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset, ins->sreg1);
+			amd64_mov_membase_reg (code, AMD64_R11, ins->backend.spill_var->inst_offset, ins->sreg2, 2);
+			amd64_sse_movups_reg_membase (code, ins->dreg, ins->backend.spill_var->inst_basereg, ins->backend.spill_var->inst_offset);
 			break;
 		case OP_INSERTX_U1_SLOW:
 			/*sreg1 is the extracted ireg (scratch)
@@ -6657,6 +6919,36 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 				amd64_sse_movsd_reg_reg (code, ins->dreg, ins->sreg2);
 			break;
+		case OP_PSLLDQ_REG:
+		case OP_PSRLDQ_REG: {
+			guint8 *label;
+
+			amd64_mov_reg_reg (code, AMD64_R11, ins->sreg2, 8);
+			amd64_alu_reg_imm (code, X86_AND, AMD64_R11, 256 - 1);
+
+			amd64_alu_reg_imm (code, X86_CMP, AMD64_R11, 8);
+			label = code;
+			x86_branch8 (code, X86_CC_LT, 0, FALSE);
+			if (ins->opcode == OP_PSLLDQ_REG)
+				amd64_sse_pslldq_reg_imm (code, ins->dreg, 8);
+			else
+				amd64_sse_psrldq_reg_imm (code, ins->dreg, 8);
+			amd64_alu_reg_imm (code, X86_SUB, AMD64_R11, 8);
+			amd64_jump_code (code, label);
+			x86_patch (label, code);
+
+			amd64_alu_reg_imm (code, X86_CMP, AMD64_R11, 0);
+			label = code;
+			x86_branch8 (code, X86_CC_EQ, 0, FALSE);
+			if (ins->opcode == OP_PSLLDQ_REG)
+				amd64_sse_pslldq_reg_imm (code, ins->dreg, 1);
+			else
+				amd64_sse_psrldq_reg_imm (code, ins->dreg, 1);
+			amd64_alu_reg_imm (code, X86_SUB, AMD64_R11, 1);
+			amd64_jump_code (code, label);
+			x86_patch (label, code);
+			break;
+		}
 		case OP_STOREX_MEMBASE_REG:
 		case OP_STOREX_MEMBASE:
 			amd64_sse_movups_membase_reg (code, ins->dreg, ins->inst_offset, ins->sreg1);
@@ -6667,14 +6959,32 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LOADX_ALIGNED_MEMBASE:
 			amd64_sse_movaps_reg_membase (code, ins->dreg, ins->sreg1, ins->inst_offset);
 			break;
+		case OP_MOVD_REG_MEMBASE:
+			amd64_sse_movd_xreg_membase_size (code, ins->dreg, ins->sreg1, ins->inst_offset, 4);
+			break;
+		case OP_MOVQ_REG_MEMBASE:
+			amd64_sse_movd_xreg_membase_size (code, ins->dreg, ins->sreg1, ins->inst_offset, 8);
+			break;
 		case OP_STOREX_ALIGNED_MEMBASE_REG:
 			amd64_sse_movaps_membase_reg (code, ins->dreg, ins->inst_offset, ins->sreg1);
 			break;
 		case OP_STOREX_NTA_MEMBASE_REG:
-			amd64_sse_movntps_reg_membase (code, ins->dreg, ins->sreg1, ins->inst_offset);
+			amd64_sse_movntps_membase_reg (code, ins->dreg, ins->sreg1, ins->inst_offset);
+			break;
+		case OP_STOREX_HIGH_MEMBASE_REG:
+			amd64_sse_movhps_membase_reg (code, ins->inst_destbasereg, ins->inst_offset, ins->sreg1);
+			break;
+		case OP_STOREX_LOW_MEMBASE_REG:
+			amd64_sse_movlps_membase_reg (code, ins->inst_destbasereg, ins->inst_offset, ins->sreg1);
 			break;
 		case OP_PREFETCH_MEMBASE:
 			amd64_sse_prefetch_reg_membase (code, ins->backend.arg_info, ins->sreg1, ins->inst_offset);
+			break;
+		case OP_MOVNTI_I4_MEMBASE_REG:
+			amd64_sse_movnti_membase_reg_size (code, ins->inst_destbasereg, ins->inst_offset, ins->sreg1, 4);
+			break;
+		case OP_MOVNTI_I8_MEMBASE_REG:
+			amd64_sse_movnti_membase_reg_size (code, ins->inst_destbasereg, ins->inst_offset, ins->sreg1, 8);
 			break;
 
 		case OP_XMOVE:
@@ -6715,7 +7025,35 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				break;
 			}			
 			break;
-
+		case OP_XCONV_TO_R4:
+			g_assert (cfg->r4fp);
+			if (ins->dreg != ins->sreg1)
+				amd64_sse_movss_reg_reg (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_CVTSI32_SS:
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_sse_cvtsi2ss_reg_reg_size (code, ins->dreg, ins->sreg2, 4);
+			break;
+		case OP_CVTSI64_SS:
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_sse_cvtsi2ss_reg_reg_size (code, ins->dreg, ins->sreg2, 8);
+			break;
+		case OP_CVTSI32_SD:
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_sse_cvtsi2sd_reg_reg_size (code, ins->dreg, ins->sreg2, 4);
+			break;
+		case OP_CVTSI64_SD:
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_sse_cvtsi2sd_reg_reg_size (code, ins->dreg, ins->sreg2, 8);
+			break;
+		case OP_CVTSS2SD:
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_sse_cvtss2sd_reg_reg (code, ins->dreg, ins->sreg2);
+			break;
+		case OP_CVTSD2SS:
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_sse_cvtsd2ss_reg_reg (code, ins->dreg, ins->sreg2);
+			break;
 		case OP_EXPAND_I2:
 			amd64_sse_pinsrw_reg_reg_imm (code, ins->dreg, ins->sreg1, 0);
 			amd64_sse_pinsrw_reg_reg_imm (code, ins->dreg, ins->sreg1, 1);
