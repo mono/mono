@@ -896,8 +896,9 @@ mono_domain_set (MonoDomain *domain, gboolean force)
 	if (!force && domain->state == MONO_APPDOMAIN_UNLOADED)
 		return FALSE;
 
+	MONO_ENTER_GC_UNSAFE;
 	mono_domain_set_internal (domain);
-
+	MONO_EXIT_GC_UNSAFE;
 	return TRUE;
 }
 
