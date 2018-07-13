@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace System.Globalization
 {
@@ -199,7 +198,7 @@ namespace System.Globalization
 			return c;
 		}
 
-		internal static unsafe int InternalCompareStringOrdinalIgnoreCase (String strA, int indexA, String strB, int indexB, int lenA, int lenB)
+		static unsafe int InternalCompareStringOrdinalIgnoreCase (String strA, int indexA, String strB, int indexB, int lenA, int lenB)
 		{
 			if (strA == null) {
 				return strB == null ? 0 : -1;
@@ -228,47 +227,6 @@ namespace System.Globalization
 					bp++;
 				}
 				return lengthA - lengthB;
-			}
-		}
-
-		internal void ToLowerAsciiInvariant (ReadOnlySpan<char> source, Span<char> destination)
-		{
-			for (int i = 0; i < source.Length; i++)
-			{
-				destination [i] = ToLowerAsciiInvariant (source [i]);
-			}
-		}
-
-		internal void ToUpperAsciiInvariant (ReadOnlySpan<char> source, Span<char> destination)
-		{
-			for (int i = 0; i < source.Length; i++)
-			{
-				destination [i] = ToUpperAsciiInvariant (source[i]);
-			}
-		}
-
-		internal unsafe void ChangeCase (ReadOnlySpan<char> source, Span<char> destination, bool toUpper)
-		{
-			if (source.IsEmpty)
-				return;
-
-			var ti = CultureInfo.CurrentCulture.TextInfo;
-
-			fixed (char* pSource = &MemoryMarshal.GetReference (source))
-			fixed (char* pResult = &MemoryMarshal.GetReference (destination)) {
-				int length = 0;
-				char* a = pSource, b = pResult;
-				if (toUpper) {
-					while (length < source.Length) {
-						*b++ = ti.ToUpper (*a++);
-						length++;
-					}
-				} else {
-					while (length < source.Length) {
-						*b++ = ti.ToLower (*a++);
-						length++;
-					}
-				}
 			}
 		}
 	}

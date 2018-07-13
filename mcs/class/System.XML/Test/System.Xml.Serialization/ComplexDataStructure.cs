@@ -15,7 +15,6 @@ using System.Xml.Serialization;
 using System.Collections;
 using System.ComponentModel; 
 using NUnit.Framework;
-using System.Linq;
 
 namespace MonoTests.System.XmlSerialization
 {
@@ -722,7 +721,7 @@ namespace MonoTests.System.XmlSerialization
 		public void WriteXml (XmlWriter writer)
 		{
 			writer.WriteStartElement ("data");
-			foreach (DictionaryEntry entry in data.Cast<DictionaryEntry> ().OrderBy (l => l.Key)) 
+			foreach (DictionaryEntry entry in data) 
 			{
 				writer.WriteElementString ((string)entry.Key, (string)entry.Value);
 			}
