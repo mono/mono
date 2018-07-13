@@ -889,6 +889,11 @@ storex_high_membase_reg: dest:b src1:x len:9
 storex_low_membase_reg: dest:b src1:x len:9
 storex_aligned_membase_reg: dest:b src1:x len:7
 storex_nta_membase_reg: dest:b src1:x len:7
+movddup: dest:x src1:x len:7
+movddup_reg_membase: dest:x src1:i len:9
+lddqu_reg_membase: dest:x src1:i len:9
+movshdup: dest:x src1:x len:7
+movsldup: dest:x src1:x len:7
 
 fconv_to_r8_x: dest:x src1:f len:4 
 xconv_r8_to_i4: dest:y src1:x len:7

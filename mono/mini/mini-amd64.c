@@ -6295,9 +6295,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_HSUBPS:
 			amd64_sse_hsubps_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
+		case OP_MOVSHDUP:
 		case OP_DUPPS_HIGH:
 			amd64_sse_movshdup_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
+		case OP_MOVSLDUP:
 		case OP_DUPPS_LOW:
 			amd64_sse_movsldup_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
@@ -6985,6 +6987,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_MOVNTI_I8_MEMBASE_REG:
 			amd64_sse_movnti_membase_reg_size (code, ins->inst_destbasereg, ins->inst_offset, ins->sreg1, 8);
+			break;
+		case OP_MOVDDUP:
+			amd64_movddup_reg_reg (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_MOVDDUP_REG_MEMBASE:
+			amd64_sse_movddup_reg_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			break;
+		case OP_LDDQU_REG_MEMBASE:
+			amd64_sse_lddqu_reg_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
 			break;
 
 		case OP_XMOVE:

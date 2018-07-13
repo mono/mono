@@ -224,6 +224,15 @@ SIMD_METHOD("SumAbsoluteDifferences", SN_SumAbsoluteDifferences)
 SIMD_METHOD("Extract", SN_Extract)
 SIMD_METHOD("LoadFence", SN_LoadFence)
 
+// System.Runtime.Intrinsics.X86.Sse3
+SIMD_METHOD("AddSubtract", SN_AddSubtract)
+SIMD_METHOD("HorizontalSubtract", SN_HorizontalSubtract)
+SIMD_METHOD("LoadAndDuplicateToVector128", SN_LoadAndDuplicateToVector128)
+SIMD_METHOD("LoadDquVector128", SN_LoadDquVector128)
+SIMD_METHOD("MoveAndDuplicate", SN_MoveAndDuplicate)
+SIMD_METHOD("MoveHighAndDuplicate", SN_MoveHighAndDuplicate)
+SIMD_METHOD("MoveLowAndDuplicate", SN_MoveLowAndDuplicate)
+
 // Used internally to distinguish between overloads
 SIMD_METHOD("ShiftRightLogical_Imm", SN_ShiftRightLogical_Imm)
 SIMD_METHOD("ShiftRightArithmetic_Imm", SN_ShiftRightArithmetic_Imm)

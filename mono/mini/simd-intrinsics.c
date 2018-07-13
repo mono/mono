@@ -1253,6 +1253,7 @@ static const SimdOpMap v128_u8_opcodes[] = {
 static const SimdOpMap v128_r4_opcodes[] = {
 	{ SN_Add, OP_ADDPS },
 	{ SN_AddScalar, OP_ADDSS },
+	{ SN_AddSubtract, OP_ADDSUBPS },
 	{ SN_And, OP_ANDPS },
 	{ SN_AndNot, OP_ANDNPS },
 	{ SN_CompareEqual, OP_COMPPS },
@@ -1279,6 +1280,8 @@ static const SimdOpMap v128_r4_opcodes[] = {
 	{ SN_ConvertToVector128Int32WithTruncation, OP_CVTTPS2DQ },
 	{ SN_Divide, OP_DIVPS },
 	{ SN_DivideScalar, OP_DIVSS },
+	{ SN_HorizontalAdd, OP_HADDPS },
+	{ SN_HorizontalSubtract, OP_HSUBPS },
 	{ SN_LoadHigh, OP_MOVHPS },
 	{ SN_LoadLow, OP_MOVLPS },
 	{ SN_LoadScalarVector128, OP_MOVSS_REG_MEMBASE },
@@ -1314,6 +1317,7 @@ static const SimdOpMap v128_r4_opcodes[] = {
 static const SimdOpMap v128_r8_opcodes[] = {
 	{ SN_Add, OP_ADDPD },
 	{ SN_AddScalar, OP_ADDSD },
+	{ SN_AddSubtract, OP_ADDSUBPD },
 	{ SN_And, OP_ANDPD },
 	{ SN_AndNot, OP_ANDNPD },
 	{ SN_CompareEqual, OP_COMPPD },
@@ -1340,6 +1344,8 @@ static const SimdOpMap v128_r8_opcodes[] = {
 	{ SN_ConvertToVector128Single, OP_CVTPD2PS },
 	{ SN_Divide, OP_DIVPD },
 	{ SN_DivideScalar, OP_DIVSD },
+	{ SN_HorizontalAdd, OP_HADDPD },
+	{ SN_HorizontalSubtract, OP_HSUBPD },
 	{ SN_LoadHigh, OP_MOVHPD },
 	{ SN_LoadLow, OP_MOVLPD },
 	{ SN_LoadScalarVector128, OP_MOVSD_REG_MEMBASE },
@@ -2895,6 +2901,7 @@ static const SimdIntrinsic x86_sse_intrinsics[] = {
 	{ SN_Add, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_AddSaturate, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_AddScalar, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_AddSubtract, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_And, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_AndNot, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_Average, 0, 0, SIMD_EMIT_BINARY },
@@ -2955,8 +2962,12 @@ static const SimdIntrinsic x86_sse_intrinsics[] = {
 	{ SN_Divide, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_DivideScalar, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_Extract },
+	{ SN_HorizontalAdd, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_HorizontalSubtract, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_Insert },
 	{ SN_LoadAlignedVector128, OP_LOADX_ALIGNED_MEMBASE },
+	{ SN_LoadAndDuplicateToVector128, OP_MOVDDUP_REG_MEMBASE },
+	{ SN_LoadDquVector128, OP_LDDQU_REG_MEMBASE },
 	{ SN_LoadFence, OP_MEMORY_BARRIER },
 	{ SN_LoadHigh },
 	{ SN_LoadLow },
@@ -2968,7 +2979,10 @@ static const SimdIntrinsic x86_sse_intrinsics[] = {
 	{ SN_MemoryFence, OP_MEMORY_BARRIER },
 	{ SN_Min, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_MinScalar, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_MoveAndDuplicate, OP_MOVDDUP, 0, SIMD_EMIT_UNARY },
+	{ SN_MoveHighAndDuplicate, OP_MOVSHDUP, 0, SIMD_EMIT_UNARY },
 	{ SN_MoveHighToLow, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_MoveLowAndDuplicate, OP_MOVSLDUP, 0, SIMD_EMIT_UNARY },
 	{ SN_MoveLowToHigh, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_MoveMask },
 	{ SN_MoveScalar },
@@ -3244,6 +3258,8 @@ mono_emit_sys_runtime_sse_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, Mon
 	case SN_LoadVector128:
 	case SN_LoadAlignedVector128:
 	case SN_LoadScalarVector128:
+	case SN_LoadAndDuplicateToVector128:
+	case SN_LoadDquVector128:
 		etype = mono_class_get_context (mono_class_from_mono_type (fsig->ret))->class_inst->type_argv [0];
 		opcode = get_opcode (intrins, etype);
 		if (!opcode)

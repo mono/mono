@@ -1553,7 +1553,8 @@ emit_sys_runtime_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMeth
 	}
 
 	if ((!strcmp (class_name, "Sse") && intrins_set_supported (cfg, SIMD_VERSION_SSE1)) ||
-		(!strcmp (class_name, "Sse2") && intrins_set_supported (cfg, SIMD_VERSION_SSE2))) {
+		(!strcmp (class_name, "Sse2") && intrins_set_supported (cfg, SIMD_VERSION_SSE2)) ||
+		(!strcmp (class_name, "Sse3") && intrins_set_supported (cfg, SIMD_VERSION_SSE3))) {
 		if (!strcmp (cmethod->name, "get_IsSupported")) {
 			EMIT_NEW_ICONST (cfg, ins, 1);
 			return ins;
