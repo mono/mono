@@ -158,10 +158,6 @@ ICALL(ARRAY_4, "FastCopy",         ves_icall_System_Array_FastCopy)
 ICALL(ARRAY_5, "GetGenericValueImpl", ves_icall_System_Array_GetGenericValueImpl)
 ICALL(ARRAY_6, "GetLength",        ves_icall_System_Array_GetLength)
 ICALL(ARRAY_15, "GetLongLength",        ves_icall_System_Array_GetLongLength)
-ICALL(ARRAY_7, "GetLowerBound",    ves_icall_System_Array_GetLowerBound)
-ICALL(ARRAY_8, "GetRank",          ves_icall_System_Array_GetRank)
-ICALL(ARRAY_9, "GetValue",         ves_icall_System_Array_GetValue)
-ICALL(ARRAY_10, "GetValueImpl",     ves_icall_System_Array_GetValueImpl)
 #else
 HANDLES(ICALL(ARRAY_1, "ClearInternal",    ves_icall_System_Array_ClearInternal))
 HANDLES(ICALL(ARRAY_3, "CreateInstanceImpl",   ves_icall_System_Array_CreateInstanceImpl))
@@ -170,11 +166,11 @@ ICALL(ARRAY_4, "FastCopy",         ves_icall_System_Array_FastCopy)
 NOHANDLES(ICALL(ARRAY_5, "GetGenericValueImpl", ves_icall_System_Array_GetGenericValueImpl))
 HANDLES(ICALL(ARRAY_6, "GetLength",        ves_icall_System_Array_GetLength))
 HANDLES(ICALL(ARRAY_15, "GetLongLength",   ves_icall_System_Array_GetLongLength))
+#endif
 HANDLES(ICALL(ARRAY_7, "GetLowerBound",    ves_icall_System_Array_GetLowerBound))
 HANDLES(ICALL(ARRAY_8, "GetRank",          ves_icall_System_Array_GetRank))
 HANDLES(ICALL(ARRAY_9, "GetValue",         ves_icall_System_Array_GetValue))
 HANDLES(ICALL(ARRAY_10, "GetValueImpl",    ves_icall_System_Array_GetValueImpl))
-#endif
 // Generic ref/out parameters are not supported by HANDLES(), so NOHANDLES().
 NOHANDLES(ICALL(ARRAY_11, "SetGenericValueImpl", ves_icall_System_Array_SetGenericValueImpl))
 HANDLES(ICALL(ARRAY_12, "SetValue",         ves_icall_System_Array_SetValue))

@@ -183,7 +183,7 @@ mono_icall_get_file_path_prefix (const gchar *path)
 }
 #endif /* HOST_WIN32 */
 
-#if defined (HOST_ARM) || defined (HOST_ARM64)
+#if 0
 
 ICALL_EXPORT MonoObject *
 ves_icall_System_Array_GetValueImpl (MonoArray *arr, guint32 pos)
@@ -228,7 +228,7 @@ ves_icall_System_Array_GetValueImpl (MonoArrayHandle array, guint32 pos, MonoErr
 
 #endif
 
-#if defined (HOST_ARM) || defined (HOST_ARM64)
+#if 0
 
 ICALL_EXPORT MonoObject *
 ves_icall_System_Array_GetValue (MonoArray *arr, MonoArray *idxs)
@@ -821,7 +821,7 @@ ves_icall_System_Array_CreateInstanceImpl (MonoReflectionTypeHandle type, MonoAr
 
 #endif
 
-#if defined (HOST_ARM) || defined (HOST_ARM64)
+#if 0
 
 ICALL_EXPORT gint32 
 ves_icall_System_Array_GetRank (MonoObject *arr)
@@ -929,7 +929,7 @@ ves_icall_System_Array_GetLongLength (MonoArrayHandle arr, gint32 dimension, Mon
 
 #endif
 
-#if defined (HOST_ARM) || defined (HOST_ARM64)
+#if 0
 
 ICALL_EXPORT gint32
 ves_icall_System_Array_GetLowerBound (MonoArray *arr, gint32 dimension)
