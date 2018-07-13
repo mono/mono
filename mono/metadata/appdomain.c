@@ -575,9 +575,11 @@ void
 mono_domain_set_config (MonoDomain *domain, const char *base_dir, const char *config_file_name)
 {
 	HANDLE_FUNCTION_ENTER ();
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
 	mono_domain_set_config_checked (domain, base_dir, config_file_name, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	HANDLE_FUNCTION_RETURN ();
 }
 
