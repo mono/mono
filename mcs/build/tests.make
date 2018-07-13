@@ -242,8 +242,14 @@ ifdef HAVE_CS_TESTS
 $(test_lib_dir):
 	mkdir -p $@
 
+# If csc fails, try again not parallel.
 $(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(test_lib_dir)
+ifndef CSC_RETRY_SERIAL
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
+else
+	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response) \
+	|| $(TEST_COMPILE) $(CSC_RETRY_SERIAL) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
+endif
 
 test_response_preprocessed = $(test_response)_preprocessed
 

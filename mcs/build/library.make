@@ -348,8 +348,14 @@ endif
 
 ifndef NO_BUILD
 
+# If csc fails, try again not parallel.
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir)/.stamp $(GEN_RESOURCE_DEPS) $(MODULE_DEPS)
+ifndef CSC_RETRY_SERIAL
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(KEYFILE_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
+else
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(KEYFILE_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response) \
+	|| $(LIBRARY_COMPILE) $(CSC_RETRY_SERIAL) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(KEYFILE_MCS_FLAGS) $(GEN_RESOURCE_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
+endif
 ifdef RESOURCE_STRINGS_FILES
 	$(Q) $(STRING_REPLACER) $(RESOURCE_STRINGS_FILES) $(IL_REPLACE_FILES) $@
 endif

@@ -138,8 +138,14 @@ $(topdir)/class/lib/$(PROFILE)/.stamp: | $(topdir)/class/lib/$(PROFILE)-$(HOST_P
 	$(if $(filter $(HOST_PLATFORM),$(BUILD_PLATFORM)),$(if $(filter $(BUILD_PLATFORM),win32),CYGWIN=winsymlinks:nativestrict) ln -s $(abspath $(topdir)/class/lib/$(PROFILE)-$(BUILD_PLATFORM)) $(abspath $(topdir)/class/lib/$(PROFILE)))
 endif
 
+# If csc fails, try again not parallel.
 $(build_lib): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response) $(build_libdir:=/.stamp)
+ifndef CSC_RETRY_SERIAL
 	$(PROGRAM_COMPILE) $(MCS_REFERENCES) -target:exe -out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
+else
+	$(PROGRAM_COMPILE) $(MCS_REFERENCES) -target:exe -out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response) \
+	|| $(PROGRAM_COMPILE) $(CSC_RETRY_SERIAL) $(MCS_REFERENCES) -target:exe -out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
+endif
 ifdef PROGRAM_SNK
 	$(Q) $(SN) -R $@ $(PROGRAM_SNK)
 endif

@@ -327,3 +327,10 @@ MDOC   =$(Q_MDOC) MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PA
 
 Q_MDOC_UP=$(if $(V),,@echo "MDOC-UP [$(PROFILE_DIRECTORY)] $(notdir $(@))";)
 MDOC_UP  =$(Q_MDOC_UP) MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe update --delete -o Documentation/en
+
+# Support serialized retry due to high failure rate on ARM.
+ifdef MCS_MODE
+CSC_RETRY_SERIAL=
+else
+CSC_RETRY_SERIAL=-parallel-
+endif
