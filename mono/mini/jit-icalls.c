@@ -1961,3 +1961,21 @@ void
 mono_dummy_jit_icall (void)
 {
 }
+
+void
+mono_throw_not_implemented (void)
+{
+	ERROR_DECL (error);
+
+	mono_error_set_not_implemented (error, "");
+	mono_error_set_pending_exception (error);
+}
+
+void
+mono_throw_not_supported (void)
+{
+	ERROR_DECL (error);
+
+	mono_error_set_not_supported (error, "");
+	mono_error_set_pending_exception (error);
+}

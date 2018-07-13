@@ -21,6 +21,8 @@
 static GENERATE_GET_CLASS_WITH_CACHE (runtime_helpers, "System.Runtime.CompilerServices", "RuntimeHelpers")
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (math, "System", "Math")
 
+static MonoInst* emit_sys_runtime_intrinsics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
+
 /* optimize the simple GetGenericValueImpl/SetGenericValueImpl generic icalls */
 static MonoInst*
 emit_array_generic_access (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **args, int is_set)
@@ -1232,6 +1234,8 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			   !strcmp (cmethod_klass_name_space, "System") &&
 			   (!strcmp (cmethod_klass_name, "Span`1") || !strcmp (cmethod_klass_name, "ReadOnlySpan`1"))) {
 		return emit_span_intrinsics (cfg, cmethod, fsig, args);
+	} else if (in_corlib && strstr (cmethod_klass_name_space, "System.Runtime.Intrinsics") == cmethod_klass_name_space) {
+		return emit_sys_runtime_intrinsics_intrinsics (cfg, cmethod, fsig, args);
 	}
 
 #ifdef MONO_ARCH_SIMD_INTRINSICS
@@ -1418,5 +1422,148 @@ mini_emit_inst_for_field_load (MonoCompile *cfg, MonoClassField *field)
 	}
 	return NULL;
 }
+
+static gboolean
+intrins_set_supported (MonoCompile *cfg, SimdVersion version)
+{
+	if (cfg->compile_aot)
+		// FIXME:
+		return FALSE;
+	return (mono_arch_cpu_enumerate_simd_versions () & version) != 0;
+}
+
+static MonoInst*
+emit_sys_runtime_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args, MonoError *error);
+
+static MonoInst*
+emit_sys_runtime_intrinsics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	MonoInst *ins;
+	const char *ns = m_class_get_name_space (cmethod->klass) + strlen ("System.Runtime.Intrinsics.");
+	ERROR_DECL (error);
+	gboolean not_supported = FALSE;
+
+#ifdef TARGET_AMD64
+	if (!strcmp (ns, "X86")) {
+		ins = emit_sys_runtime_x86_intrinsics (cfg, cmethod, fsig, args, error);
+		if (ins)
+			return ins;
+		if (!is_ok (error)) {
+			/* Not implemented/supported */
+			const char*ex_name = mono_error_get_exception_name (error);
+			if (!strcmp (ex_name, "NotSupportedException"))
+				not_supported = TRUE;
+			mono_error_cleanup (error);
+		} else {
+			//printf ("%s\n", mono_method_full_name (cmethod, 1));
+			/* No such intrinsic */
+			return NULL;
+		}
+	}
+#endif
+
+	/* Not supported variants */
+
+	if (!strcmp (cmethod->name, "get_IsSupported")) {
+		EMIT_NEW_ICONST (cfg, ins, 0);
+		return ins;
+	}
+
+	//printf ("%s\n", mono_method_full_name (cmethod, TRUE));
+
+	/*
+	 * The intrinsic method are defined to call themselves, so if we don't treat them as intrinsic, it will lead to a stack
+	 * overflow.
+	 */
+	if (not_supported)
+		ins = mono_emit_jit_icall (cfg, mono_throw_not_supported, NULL);
+	else
+		ins = mono_emit_jit_icall (cfg, mono_throw_not_implemented, NULL);
+	if (fsig->ret->type != MONO_TYPE_VOID) {
+		MonoInst *var = mono_compile_create_var (cfg, fsig->ret, OP_LOCAL);
+		return mini_emit_init_rvar (cfg, var->dreg, fsig->ret);
+	}
+	return ins;
+}
+
+#ifdef TARGET_AMD64
+
+static MonoInst*
+emit_sys_runtime_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args, MonoError *error)
+{
+	MonoInst *ins;
+	const char *class_name = m_class_get_name (cmethod->klass);
+
+	if (!strcmp (class_name, "Lzcnt") && intrins_set_supported (cfg, SIMD_VERSION_X86_LZCNT)) {
+		if (!strcmp (cmethod->name, "get_IsSupported")) {
+			EMIT_NEW_ICONST (cfg, ins, 1);
+			return ins;
+		}
+		if (!strcmp (cmethod->name, "LeadingZeroCount")) {
+			int opcode = 0;
+			int dreg = -1;
+			int type;
+			if (fsig->params [0]->type == MONO_TYPE_U4) {
+				opcode = OP_X86_LZCNT32;
+				dreg = alloc_ireg (cfg);
+				type = STACK_I4;
+			} else if (fsig->params [0]->type == MONO_TYPE_U8) {
+				opcode = OP_X86_LZCNT64;
+				dreg = alloc_lreg (cfg);
+				type = STACK_I8;
+			}
+			if (opcode != 0) {
+				MONO_INST_NEW (cfg, ins, opcode);
+				ins->dreg = dreg;
+				ins->sreg1 = args [0]->dreg;
+				ins->type = type;
+				MONO_ADD_INS (cfg->cbb, ins);
+				return ins;
+			}
+		}
+	}
+
+	if (!strcmp (class_name, "Popcnt") && intrins_set_supported (cfg, SIMD_VERSION_X86_POPCNT)) {
+		if (!strcmp (cmethod->name, "get_IsSupported")) {
+			EMIT_NEW_ICONST (cfg, ins, 1);
+			return ins;
+		}
+		if (!strcmp (cmethod->name, "PopCount")) {
+			int opcode = 0;
+			int dreg = -1;
+			int type;
+			if (fsig->params [0]->type == MONO_TYPE_U4) {
+				opcode = OP_X86_POPCNT32;
+				dreg = alloc_ireg (cfg);
+				type = STACK_I4;
+			} else if (fsig->params [0]->type == MONO_TYPE_U8) {
+				opcode = OP_X86_POPCNT64;
+				dreg = alloc_lreg (cfg);
+				type = STACK_I8;
+			}
+			if (opcode != 0) {
+				MONO_INST_NEW (cfg, ins, opcode);
+				ins->dreg = dreg;
+				ins->sreg1 = args [0]->dreg;
+				ins->type = type;
+				MONO_ADD_INS (cfg->cbb, ins);
+				return ins;
+			}
+		}
+	}
+
+	if ((!strcmp (class_name, "Sse") && intrins_set_supported (cfg, SIMD_VERSION_SSE1)) ||
+		(!strcmp (class_name, "Sse2") && intrins_set_supported (cfg, SIMD_VERSION_SSE2))) {
+		if (!strcmp (cmethod->name, "get_IsSupported")) {
+			EMIT_NEW_ICONST (cfg, ins, 1);
+			return ins;
+		}
+		return mono_emit_sys_runtime_sse_intrinsics (cfg, cmethod, fsig, args, error);
+	}
+
+	return NULL;
+}
+
+#endif /* TARGET_AMD64 */
 
 #endif

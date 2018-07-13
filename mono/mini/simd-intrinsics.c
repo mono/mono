@@ -79,6 +79,7 @@ mono_simd_intrinsics_init (void)
 #define IS_DEBUG_ON(cfg) ((cfg)->verbose_level >= 3)
 #define DEBUG(a) do { if (IS_DEBUG_ON(cfg)) { a; } } while (0)
 enum {
+	SIMD_EMIT_OTHER,
 	SIMD_EMIT_BINARY,
 	SIMD_EMIT_UNARY,
 	SIMD_EMIT_SETTER,
@@ -92,7 +93,8 @@ enum {
 	SIMD_EMIT_LOAD_ALIGNED,
 	SIMD_EMIT_STORE,
 	SIMD_EMIT_EXTRACT_MASK,
-	SIMD_EMIT_PREFETCH
+	SIMD_EMIT_PREFETCH,
+	SIMD_NOT_IMPLEMENTED
 };
 
 // This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
@@ -963,13 +965,16 @@ get_double_spill_area (MonoCompile *cfg)
 	}	
 	return cfg->fconv_to_r8_x_var;
 }
+
 static MonoInst*
 get_simd_ctor_spill_area (MonoCompile *cfg, MonoClass *avector_klass)
 {
 	if (!cfg->simd_ctor_var) {
 		cfg->simd_ctor_var = mono_compile_create_var (cfg, m_class_get_byval_arg (avector_klass), OP_LOCAL);
 		cfg->simd_ctor_var->flags |= MONO_INST_VOLATILE; /*FIXME, use the don't regalloc flag*/
-	}	
+	} else {
+		g_assert (cfg->simd_ctor_var->klass == avector_klass);
+	}
 	return cfg->simd_ctor_var;
 }
 
@@ -1041,188 +1046,449 @@ type_to_gt_op (MonoType *t)
 	}
 }
 
+/*
+ * SIMD operations have the following properties:
+ * - the operation itself (i.e. Add)
+ * - the vector size (i.e. 128 bit)
+ * - the simd version (i.e. Sse2)
+ * - the element type (i.e. sbyte)
+ *
+ * The tables below map the c# method name to the JIT opcode value.
+ * There is one table per vector size+element type.
+ * They need to be sorted by method name.
+ */
+typedef struct {
+	int name;
+	int op;
+} SimdOpMap;
+
+/* sbyte */
+static const SimdOpMap v128_i1_opcodes[] = {
+	{ SN_Add, OP_PADDB },
+	{ SN_AddSaturate, OP_PADDB_SAT },
+	{ SN_And, OP_PAND },
+	{ SN_AndNot, OP_PANDN },
+	{ SN_CompareEqual, OP_PCMPEQB },
+	{ SN_CompareGreaterThan, OP_PCMPGTB },
+	{ SN_Max, OP_PMAXB },
+	{ SN_Min, OP_PMINB },
+	{ SN_MoveMask, OP_PMOVMSKB },
+	{ SN_Or, OP_POR },
+	{ SN_Subtract, OP_PSUBB },
+	{ SN_SubtractSaturate, OP_PSUBB_SAT },
+	{ SN_UnpackHigh, OP_UNPACK_HIGHB },
+	{ SN_UnpackLow, OP_UNPACK_LOWB },
+	{ SN_Xor, OP_PXOR },
+};
+
+/* byte */
+static const SimdOpMap v128_u1_opcodes[] = {
+	{ SN_Add, OP_PADDB },
+	{ SN_AddSaturate, OP_PADDB_SAT_UN },
+	{ SN_And, OP_PAND },
+	{ SN_AndNot, OP_PANDN },
+	{ SN_Average, OP_PAVGB_UN },
+	{ SN_CompareEqual, OP_PCMPEQB },
+	{ SN_Max, OP_PMAXB_UN },
+	{ SN_Min, OP_PMINB_UN },
+	{ SN_MoveMask, OP_PMOVMSKB },
+	{ SN_Or, OP_POR },
+	{ SN_Subtract, OP_PSUBB },
+	{ SN_SubtractSaturate, OP_PSUBB_SAT_UN },
+	{ SN_SumAbsoluteDifferences, OP_PSADBW },
+	{ SN_UnpackHigh, OP_UNPACK_HIGHB },
+	{ SN_UnpackLow, OP_UNPACK_LOWB },
+	{ SN_Xor, OP_PXOR },
+};
+
+/* short */
+static const SimdOpMap v128_i2_opcodes[] = {
+	{ SN_Add, OP_PADDW },
+	{ SN_AddSaturate, OP_PADDW_SAT },
+	{ SN_And, OP_PAND },
+	{ SN_AndNot, OP_PANDN },
+	{ SN_CompareEqual, OP_PCMPEQW },
+	{ SN_CompareGreaterThan, OP_PCMPGTW },
+	{ SN_Max, OP_PMAXW },
+	{ SN_Min, OP_PMINW },
+	{ SN_Multiply, OP_PMULW },
+	{ SN_MultiplyHigh, OP_PMULHW },
+	{ SN_Or, OP_POR },
+	{ SN_PackSignedSaturate, OP_PACKSSWB },
+	{ SN_PackUnsignedSaturate, OP_PACKUSWB },
+	{ SN_ShiftLeftLogical, OP_PSHLW_REG },
+	{ SN_ShiftLeftLogical_Imm, OP_PSHLW },
+	{ SN_ShiftRightArithmetic, OP_PSARW_REG },
+	{ SN_ShiftRightArithmetic_Imm, OP_PSARW },
+	{ SN_ShiftRightLogical, OP_PSHRW_REG },
+	{ SN_ShiftRightLogical_Imm, OP_PSHRW },
+	{ SN_ShuffleHigh, OP_PSHUFHW },
+	{ SN_ShuffleLow, OP_PSHUFLW },
+	{ SN_Subtract, OP_PSUBW },
+	{ SN_SubtractSaturate, OP_PSUBW_SAT },
+	{ SN_UnpackHigh, OP_UNPACK_HIGHW },
+	{ SN_UnpackLow, OP_UNPACK_LOWW },
+	{ SN_Xor, OP_PXOR },
+};
+
+/* ushort */
+static const SimdOpMap v128_u2_opcodes[] = {
+	{ SN_Add, OP_PADDW },
+	{ SN_AddSaturate, OP_PADDW_SAT_UN },
+	{ SN_And, OP_PAND },
+	{ SN_AndNot, OP_PANDN },
+	{ SN_Average, OP_PAVGW_UN },
+	{ SN_CompareEqual, OP_PCMPEQW },
+	{ SN_Max, OP_PMAXW_UN },
+	{ SN_Min, OP_PMINW_UN },
+	{ SN_Multiply, OP_PMULW },
+	{ SN_MultiplyHigh, OP_PMULHUW },
+	{ SN_Or, OP_POR },
+	{ SN_ShiftLeftLogical, OP_PSHLW_REG },
+	{ SN_ShiftLeftLogical_Imm, OP_PSHLW },
+	{ SN_ShiftRightLogical, OP_PSHRW_REG },
+	{ SN_ShiftRightLogical_Imm, OP_PSHRW },
+	{ SN_ShuffleHigh, OP_PSHUFHW },
+	{ SN_ShuffleLow, OP_PSHUFLW },
+	{ SN_Subtract, OP_PSUBW },
+	{ SN_SubtractSaturate, OP_PSUBW_SAT_UN },
+	{ SN_UnpackHigh, OP_UNPACK_HIGHW },
+	{ SN_UnpackLow, OP_UNPACK_LOWW },
+	{ SN_Xor, OP_PXOR },
+};
+
+/* int */
+static const SimdOpMap v128_i4_opcodes[] = {
+	{ SN_Add, OP_PADDD },
+	{ SN_And, OP_PAND },
+	{ SN_AndNot, OP_PANDN },
+	{ SN_CompareEqual, OP_PCMPEQD },
+	{ SN_CompareGreaterThan, OP_PCMPGTD },
+	{ SN_ConvertToInt32, OP_EXTRACT_I4 },
+	{ SN_ConvertToVector128Double, OP_CVTDQ2PD },
+	{ SN_ConvertToVector128Single, OP_CVTDQ2PS },
+	{ SN_LoadScalarVector128, OP_MOVD_REG_MEMBASE },
+	{ SN_Max, OP_PMAXD },
+	{ SN_Min, OP_PMIND },
+	{ SN_Multiply, OP_PMULD },
+	{ SN_Or, OP_POR },
+	{ SN_PackSignedSaturate, OP_PACKSSDW },
+	{ SN_ShiftLeftLogical, OP_PSHLD_REG },
+	{ SN_ShiftLeftLogical_Imm, OP_PSHLD },
+	{ SN_ShiftRightArithmetic, OP_PSARD_REG },
+	{ SN_ShiftRightArithmetic_Imm, OP_PSARD },
+	{ SN_ShiftRightLogical, OP_PSHRD_REG },
+	{ SN_ShiftRightLogical_Imm, OP_PSHRD },
+	{ SN_Shuffle, OP_PSHUFD },
+	{ SN_Subtract, OP_PSUBD },
+	{ SN_UnpackHigh, OP_UNPACK_HIGHD },
+	{ SN_UnpackLow, OP_UNPACK_LOWD },
+	{ SN_Xor, OP_PXOR },
+};
+
+/* uint */
+static const SimdOpMap v128_u4_opcodes[] = {
+	{ SN_Add, OP_PADDD },
+	{ SN_And, OP_PAND },
+	{ SN_AndNot, OP_PANDN },
+	{ SN_CompareEqual, OP_PCMPEQD },
+	{ SN_ConvertToUInt32, OP_EXTRACT_I4 },
+	{ SN_LoadScalarVector128, OP_MOVD_REG_MEMBASE },
+	{ SN_Max, OP_PMAXD_UN },
+	{ SN_Min, OP_PMIND_UN },
+	{ SN_Multiply, OP_PMULUDQ },
+	{ SN_Or, OP_POR },
+	{ SN_ShiftLeftLogical, OP_PSHLD_REG },
+	{ SN_ShiftLeftLogical_Imm, OP_PSHLD },
+	{ SN_ShiftRightLogical, OP_PSHRD_REG },
+	{ SN_ShiftRightLogical_Imm, OP_PSHRD },
+	{ SN_Shuffle, OP_PSHUFD },
+	{ SN_Subtract, OP_PSUBD },
+	{ SN_UnpackHigh, OP_UNPACK_HIGHD },
+	{ SN_UnpackLow, OP_UNPACK_LOWD },
+	{ SN_Xor, OP_PXOR },
+};
+
+/* long */
+static const SimdOpMap v128_i8_opcodes[] = {
+	{ SN_Add, OP_PADDQ },
+	{ SN_And, OP_PAND },
+	{ SN_AndNot, OP_PANDN },
+	{ SN_CompareEqual, OP_PCMPEQQ },
+	{ SN_ConvertToInt64, OP_EXTRACT_I8 },
+	{ SN_LoadScalarVector128, OP_MOVQ_REG_MEMBASE },
+	{ SN_Or, OP_POR },
+	{ SN_ShiftLeftLogical, OP_PSHLQ_REG },
+	{ SN_ShiftLeftLogical_Imm, OP_PSHLQ },
+	{ SN_ShiftRightLogical, OP_PSHRQ_REG },
+	{ SN_ShiftRightLogical_Imm, OP_PSHRQ },
+	{ SN_StoreLow, OP_MOVQ_MEMBASE_REG },
+	{ SN_Subtract, OP_PSUBQ },
+	{ SN_UnpackHigh, OP_UNPACK_HIGHQ },
+	{ SN_UnpackLow, OP_UNPACK_LOWQ },
+	{ SN_Xor, OP_PXOR },
+};
+
+/* ulong */
+static const SimdOpMap v128_u8_opcodes[] = {
+	{ SN_Add, OP_PADDQ },
+	{ SN_And, OP_PAND },
+	{ SN_AndNot, OP_PANDN },
+	{ SN_CompareEqual, OP_PCMPEQQ },
+	{ SN_ConvertToUInt64, OP_EXTRACT_I8 },
+	{ SN_LoadScalarVector128, OP_MOVQ_REG_MEMBASE },
+	{ SN_Or, OP_POR },
+	{ SN_ShiftLeftLogical, OP_PSHLQ_REG },
+	{ SN_ShiftLeftLogical_Imm, OP_PSHLQ },
+	{ SN_ShiftRightLogical, OP_PSHRQ_REG },
+	{ SN_ShiftRightLogical_Imm, OP_PSHRQ },
+	{ SN_StoreLow, OP_MOVQ_MEMBASE_REG },
+	{ SN_Subtract, OP_PSUBQ },
+	{ SN_UnpackHigh, OP_UNPACK_HIGHQ },
+	{ SN_UnpackLow, OP_UNPACK_LOWQ },
+	{ SN_Xor, OP_PXOR },
+};
+
+/* float */
+static const SimdOpMap v128_r4_opcodes[] = {
+	{ SN_Add, OP_ADDPS },
+	{ SN_AddScalar, OP_ADDSS },
+	{ SN_And, OP_ANDPS },
+	{ SN_AndNot, OP_ANDNPS },
+	{ SN_CompareEqual, OP_COMPPS },
+	{ SN_CompareEqualOrderedScalar, OP_COMISS },
+	{ SN_CompareEqualScalar, OP_CMPSS },
+	{ SN_CompareEqualUnorderedScalar, OP_UCOMISS },
+	{ SN_CompareGreaterThan, OP_COMPPS },
+	{ SN_CompareGreaterThanOrEqual, OP_COMPPS },
+	{ SN_CompareLessThan, OP_COMPPS },
+	{ SN_CompareLessThanOrEqual, OP_COMPPS },
+	{ SN_CompareNotEqual, OP_COMPPS },
+	{ SN_CompareNotGreaterThan, OP_COMPPS },
+	{ SN_CompareNotGreaterThanOrEqual, OP_COMPPS },
+	{ SN_CompareNotLessThan, OP_COMPPS },
+	{ SN_CompareNotLessThanOrEqual, OP_COMPPS },
+	{ SN_CompareOrdered, OP_COMPPS },
+	{ SN_CompareUnordered, OP_COMPPS },
+	{ SN_ConvertToInt32, OP_CVTSS2SI_32 },
+	{ SN_ConvertToInt32WithTruncation, OP_CVTTSS2SI_32 },
+	{ SN_ConvertToInt64, OP_CVTSS2SI_64 },
+	{ SN_ConvertToInt64WithTruncation, OP_CVTTSS2SI_64 },
+	{ SN_ConvertToVector128Double, OP_CVTPS2PD },
+	{ SN_ConvertToVector128Int32, OP_CVTPS2DQ },
+	{ SN_ConvertToVector128Int32WithTruncation, OP_CVTTPS2DQ },
+	{ SN_Divide, OP_DIVPS },
+	{ SN_DivideScalar, OP_DIVSS },
+	{ SN_LoadHigh, OP_MOVHPS },
+	{ SN_LoadLow, OP_MOVLPS },
+	{ SN_LoadScalarVector128, OP_MOVSS_REG_MEMBASE },
+	{ SN_Max, OP_MAXPS },
+	{ SN_MaxScalar, OP_MAXSS },
+	{ SN_Min, OP_MINPS },
+	{ SN_MinScalar, OP_MINSS },
+	{ SN_MoveHighToLow, OP_MOVHLPS },
+	{ SN_MoveLowToHigh, OP_MOVLHPS },
+	{ SN_MoveMask, OP_MOVMSKPS },
+	{ SN_MoveScalar, OP_MOVSS },
+	{ SN_Multiply, OP_MULPS },
+	{ SN_MultiplyScalar, OP_MULSS },
+	{ SN_Or, OP_ORPS },
+	{ SN_Reciprocal, OP_RCPPS },
+	{ SN_ReciprocalScalar, OP_RCPSS },
+	{ SN_ReciprocalSqrt, OP_RSQRTPS },
+	{ SN_ReciprocalSqrtScalar, OP_RSQRTSS },
+	{ SN_Shuffle, OP_SHUFPS },
+	{ SN_Sqrt, OP_SQRTPS },
+	{ SN_SqrtScalar, OP_SQRTSS },
+	{ SN_StoreHigh, OP_STOREX_HIGH_MEMBASE_REG },
+	{ SN_StoreLow, OP_STOREX_LOW_MEMBASE_REG },
+	{ SN_StoreScalar, OP_MOVSS_MEMBASE_REG },
+	{ SN_Subtract, OP_SUBPS },
+	{ SN_SubtractScalar, OP_SUBSS },
+	{ SN_UnpackHigh, OP_UNPACK_HIGHPS },
+	{ SN_UnpackLow, OP_UNPACK_LOWPS },
+	{ SN_Xor, OP_XORPS },
+};
+
+/* double */
+static const SimdOpMap v128_r8_opcodes[] = {
+	{ SN_Add, OP_ADDPD },
+	{ SN_AddScalar, OP_ADDSD },
+	{ SN_And, OP_ANDPD },
+	{ SN_AndNot, OP_ANDNPD },
+	{ SN_CompareEqual, OP_COMPPD },
+	{ SN_CompareEqualOrderedScalar, OP_COMISD },
+	{ SN_CompareEqualScalar, OP_CMPSD },
+	{ SN_CompareEqualUnorderedScalar, OP_UCOMISD },
+	{ SN_CompareGreaterThan, OP_COMPPD },
+	{ SN_CompareGreaterThanOrEqual, OP_COMPPD },
+	{ SN_CompareLessThan, OP_COMPPD },
+	{ SN_CompareLessThanOrEqual, OP_COMPPD },
+	{ SN_CompareNotEqual, OP_COMPPD },
+	{ SN_CompareNotGreaterThan, OP_COMPPD },
+	{ SN_CompareNotGreaterThanOrEqual, OP_COMPPD },
+	{ SN_CompareNotLessThan, OP_COMPPD },
+	{ SN_CompareNotLessThanOrEqual, OP_COMPPD },
+	{ SN_CompareOrdered, OP_COMPPD },
+	{ SN_CompareUnordered, OP_COMPPD },
+	{ SN_ConvertToInt32, OP_CVTSD2SI_32 },
+	{ SN_ConvertToInt32WithTruncation, OP_CVTTSD2SI_32 },
+	{ SN_ConvertToInt64, OP_CVTSD2SI_64 },
+	{ SN_ConvertToInt64WithTruncation, OP_CVTTSD2SI_64 },
+	{ SN_ConvertToVector128Int32, OP_CVTPD2DQ },
+	{ SN_ConvertToVector128Int32WithTruncation, OP_CVTTPD2DQ },
+	{ SN_ConvertToVector128Single, OP_CVTPD2PS },
+	{ SN_Divide, OP_DIVPD },
+	{ SN_DivideScalar, OP_DIVSD },
+	{ SN_LoadHigh, OP_MOVHPD },
+	{ SN_LoadLow, OP_MOVLPD },
+	{ SN_LoadScalarVector128, OP_MOVSD_REG_MEMBASE },
+	{ SN_Max, OP_MAXPD },
+	{ SN_MaxScalar, OP_MAXSD },
+	{ SN_Min, OP_MINPD },
+	{ SN_MinScalar, OP_MINSD },
+	{ SN_MoveMask, OP_MOVMSKPD },
+	{ SN_MoveScalar, OP_MOVSD },
+	{ SN_Multiply, OP_MULPD },
+	{ SN_MultiplyScalar, OP_MULSD },
+	{ SN_Or, OP_ORPD },
+	{ SN_Shuffle, OP_SHUFPD },
+	{ SN_Sqrt, OP_SQRTPD },
+	{ SN_SqrtScalar, OP_SQRTSD },
+	{ SN_StoreHigh, OP_MOVHPD_MEMBASE_REG },
+	{ SN_StoreLow, OP_MOVLPD_MEMBASE_REG },
+	{ SN_StoreScalar, OP_MOVSD_MEMBASE_REG },
+	{ SN_Subtract, OP_SUBPD },
+	{ SN_SubtractScalar, OP_SUBSD },
+	{ SN_UnpackHigh, OP_UNPACK_HIGHPD },
+	{ SN_UnpackLow, OP_UNPACK_LOWPD },
+	{ SN_Xor, OP_XORPD },
+};
+
 static int
-type_to_padd_op (MonoType *t)
+simd_op_map_compare (const void *key, const void *value)
 {
-	switch (t->type) {
-	case MONO_TYPE_U1:
+	return strcmp (method_name (GPOINTER_TO_INT (key)), method_name (((SimdOpMap *)value)->name));
+}
+
+static int
+lookup_op_map (const SimdOpMap *map, int size, int name)
+{
+	const SimdOpMap *result = (const SimdOpMap *)mono_binary_search (GINT_TO_POINTER (name), map, size, sizeof (SimdOpMap), &simd_op_map_compare);
+
+	for (int i = 0; i < size - 1; ++i) {
+		if (simd_op_map_compare (GINT_TO_POINTER (map [i].name), &map [i + 1]) >= 0) {
+			printf ("%s %s\n", method_name (map [i].name), method_name (map [i + 1].name));
+			g_assert_not_reached ();
+		}
+	}
+
+	if (result)
+		return result->op;
+	else
+		return -1;
+}
+
+/* Return the SIMD opcode for the intrinsic name+type combination */
+/* Return -1 if the combination is not supported/implemented */
+static int
+intrins_and_type_to_op (int name, MonoType *etype)
+{
+	int op = -1;
+
+	/* Unify names */
+	switch (name) {
+	case SN_op_Addition:
+		name = SN_Add;
+		break;
+	case SN_op_Subtraction:
+		name = SN_Subtract;
+		break;
+	case SN_op_Multiply:
+		name = SN_Multiply;
+		break;
+	case SN_op_BitwiseAnd:
+		name = SN_And;
+		break;
+	case SN_op_BitwiseOr:
+		name = SN_Or;
+		break;
+	case SN_op_Division:
+		name = SN_Divide;
+		break;
+	case SN_op_ExclusiveOr:
+		name = SN_Xor;
+		break;
+	case SN_CompareGreaterThanOrderedScalar:
+	case SN_CompareGreaterThanOrEqualOrderedScalar:
+	case SN_CompareLessThanOrderedScalar:
+	case SN_CompareLessThanOrEqualOrderedScalar:
+	case SN_CompareNotEqualOrderedScalar:
+		/* These use the same opcode */
+		name = SN_CompareEqualOrderedScalar;
+		break;
+	case SN_CompareGreaterThanScalar:
+	case SN_CompareGreaterThanOrEqualScalar:
+	case SN_CompareLessThanScalar:
+	case SN_CompareLessThanOrEqualScalar:
+	case SN_CompareNotEqualScalar:
+	case SN_CompareNotGreaterThanOrEqualScalar:
+	case SN_CompareNotGreaterThanScalar:
+	case SN_CompareNotLessThanOrEqualScalar:
+	case SN_CompareNotLessThanScalar:
+	case SN_CompareOrderedScalar:
+	case SN_CompareUnorderedScalar:
+		name = SN_CompareEqualScalar;
+		break;
+	case SN_CompareGreaterThanUnorderedScalar:
+	case SN_CompareGreaterThanOrEqualUnorderedScalar:
+	case SN_CompareLessThanUnorderedScalar:
+	case SN_CompareLessThanOrEqualUnorderedScalar:
+	case SN_CompareNotEqualUnorderedScalar:
+		name = SN_CompareEqualUnorderedScalar;
+		break;
+	default:
+		break;
+	}
+
+	switch (etype->type) {
 	case MONO_TYPE_I1:
-		return OP_PADDB;
-	case MONO_TYPE_U2:
+		op = lookup_op_map (v128_i1_opcodes, G_N_ELEMENTS (v128_i1_opcodes), name);
+		break;
+	case MONO_TYPE_U1:
+		op = lookup_op_map (v128_u1_opcodes, G_N_ELEMENTS (v128_u1_opcodes), name);
+		break;
 	case MONO_TYPE_I2:
-		return OP_PADDW;
-	case MONO_TYPE_U4:
+		op = lookup_op_map (v128_i2_opcodes, G_N_ELEMENTS (v128_i2_opcodes), name);
+		break;
+	case MONO_TYPE_U2:
+		op = lookup_op_map (v128_u2_opcodes, G_N_ELEMENTS (v128_u2_opcodes), name);
+		break;
 	case MONO_TYPE_I4:
-		return OP_PADDD;
-	case MONO_TYPE_U8:
+		op = lookup_op_map (v128_i4_opcodes, G_N_ELEMENTS (v128_i4_opcodes), name);
+		break;
+	case MONO_TYPE_U4:
+		op = lookup_op_map (v128_u4_opcodes, G_N_ELEMENTS (v128_u4_opcodes), name);
+		break;
 	case MONO_TYPE_I8:
-		return OP_PADDQ;
-	case MONO_TYPE_R4:
-		return OP_ADDPS;
-	case MONO_TYPE_R8:
-		return OP_ADDPD;
-	default:
+		op = lookup_op_map (v128_i8_opcodes, G_N_ELEMENTS (v128_i8_opcodes), name);
 		break;
-	}
-	return -1;
-}
-
-static int
-type_to_psub_op (MonoType *t)
-{
-	switch (t->type) {
-	case MONO_TYPE_U1:
-	case MONO_TYPE_I1:
-		return OP_PSUBB;
-	case MONO_TYPE_U2:
-	case MONO_TYPE_I2:
-		return OP_PSUBW;
-	case MONO_TYPE_U4:
-	case MONO_TYPE_I4:
-		return OP_PSUBD;
 	case MONO_TYPE_U8:
-	case MONO_TYPE_I8:
-		return OP_PSUBQ;
+		op = lookup_op_map (v128_u8_opcodes, G_N_ELEMENTS (v128_u8_opcodes), name);
+		break;
 	case MONO_TYPE_R4:
-		return OP_SUBPS;
+		op = lookup_op_map (v128_r4_opcodes, G_N_ELEMENTS (v128_r4_opcodes), name);
+		break;
 	case MONO_TYPE_R8:
-		return OP_SUBPD;
+		op = lookup_op_map (v128_r8_opcodes, G_N_ELEMENTS (v128_r8_opcodes), name);
+		break;
 	default:
 		break;
 	}
-	return -1;
-}
-
-static int
-type_to_pmul_op (MonoType *t)
-{
-	switch (t->type) {
-	case MONO_TYPE_U2:
-	case MONO_TYPE_I2:
-		return OP_PMULW;
-	case MONO_TYPE_U4:
-	case MONO_TYPE_I4:
-		return OP_PMULD;
-	case MONO_TYPE_R4:
-		return OP_MULPS;
-	case MONO_TYPE_R8:
-		return OP_MULPD;
-	case MONO_TYPE_U8:
-		/* PMULQ multiplies two 32 bit numbers into a 64 bit one */
-		return -1;
-	case MONO_TYPE_I8:
-		return -1;
-	default:
-		break;
-	}
-	return -1;
-}
-
-static int
-type_to_pdiv_op (MonoType *t)
-{
-	switch (t->type) {
-	case MONO_TYPE_R4:
-		return OP_DIVPS;
-	case MONO_TYPE_R8:
-		return OP_DIVPD;
-	default:
-		break;
-	}
-	return -1;
-}
-
-static int
-type_to_pxor_op (MonoType *t)
-{
-	/*
-	 * These opcodes have the same semantics, but using the
-	 * correctly typed version is better for performance.
-	 */
-	switch (t->type) {
-	case MONO_TYPE_R4:
-		return OP_XORPS;
-	case MONO_TYPE_R8:
-		return OP_XORPD;
-	default:
-		return OP_PXOR;
-	}
-}
-
-static int
-type_to_pand_op (MonoType *t)
-{
-	switch (t->type) {
-	case MONO_TYPE_R4:
-		return OP_ANDPS;
-	case MONO_TYPE_R8:
-		return OP_ANDPD;
-	default:
-		return OP_PAND;
-	}
-}
-
-static int
-type_to_por_op (MonoType *t)
-{
-	switch (t->type) {
-	case MONO_TYPE_R4:
-		return OP_ORPS;
-	case MONO_TYPE_R8:
-		return OP_ORPD;
-	default:
-		return OP_POR;
-	}
-}
-
-static int
-type_to_pmin_op (MonoType *t)
-{
-	switch (t->type) {
-	case MONO_TYPE_R4:
-		return OP_MINPS;
-	case MONO_TYPE_R8:
-		return OP_MINPD;
-	case MONO_TYPE_I1:
-		return OP_PMINB;
-	case MONO_TYPE_U1:
-		return OP_PMINB_UN;
-	case MONO_TYPE_I2:
-		return OP_PMINW;
-	case MONO_TYPE_U2:
-		return OP_PMINW_UN;
-	case MONO_TYPE_I4:
-		return OP_PMIND;
-	case MONO_TYPE_U4:
-		return OP_PMIND_UN;
-	default:
-		return -1;
-	}
-}
-
-static int
-type_to_pmax_op (MonoType *t)
-{
-	switch (t->type) {
-	case MONO_TYPE_R4:
-		return OP_MAXPS;
-	case MONO_TYPE_R8:
-		return OP_MAXPD;
-	case MONO_TYPE_I1:
-		return OP_PMAXB;
-	case MONO_TYPE_U1:
-		return OP_PMAXB_UN;
-	case MONO_TYPE_I2:
-		return OP_PMAXW;
-	case MONO_TYPE_U2:
-		return OP_PMAXW_UN;
-	case MONO_TYPE_I4:
-		return OP_PMAXD;
-	case MONO_TYPE_U4:
-		return OP_PMAXD_UN;
-	default:
-		return -1;
-	}
+	if (op == -1)
+		return 0;
+	//if (op != -1) printf ("%s\n", mono_inst_name (op));
+	return op;
 }
 
 static int
@@ -1771,9 +2037,6 @@ simd_intrinsic_emit_shuffle (const SimdIntrinsic *intrinsic, MonoCompile *cfg, M
 	vreg = get_simd_vreg (cfg, cmethod, args [0]);
 	if (param_count == 3)
 		vreg2 = get_simd_vreg (cfg, cmethod, args [1]);
-
-	NULLIFY_INS (args [param_count - 1]);
-
 
 	MONO_INST_NEW (cfg, ins, intrinsic->opcode);
 	ins->klass = cmethod->klass;
@@ -2478,38 +2741,7 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 	case SN_Min: {
 		if (!(fsig->param_count == 2 && mono_metadata_type_equal (fsig->ret, fsig->params [0]) && mono_metadata_type_equal (fsig->params [0], fsig->params [1])))
 			break;
-		int op = 0;
-		switch (intrins->name) {
-		case SN_op_Addition:
-			op = type_to_padd_op (etype);
-			break;
-		case SN_op_Subtraction:
-			op = type_to_psub_op (etype);
-			break;
-		case SN_op_Multiply:
-			op = type_to_pmul_op (etype);
-			break;
-		case SN_op_Division:
-			op = type_to_pdiv_op (etype);
-			break;
-		case SN_op_ExclusiveOr:
-			op = type_to_pxor_op (etype);
-			break;
-		case SN_op_BitwiseAnd:
-			op = type_to_pand_op (etype);
-			break;
-		case SN_op_BitwiseOr:
-			op = type_to_por_op (etype);
-			break;
-		case SN_Min:
-			op = type_to_pmin_op (etype);
-			break;
-		case SN_Max:
-			op = type_to_pmax_op (etype);
-			break;
-		default:
-			g_assert_not_reached ();
-		}
+		int op = intrins_and_type_to_op (intrins->name, etype);
 		if (op != -1)
 			return simd_intrinsic_emit_binary_op (cfg, op, 0, cmethod->klass, fsig->params [0], fsig->params [0], args [0], args [1]);
 		break;
@@ -2636,6 +2868,685 @@ on_exit:
 
 	return simd_inst;
 }
+
+#ifdef TARGET_AMD64
+
+/* Intrinsics in System.Runtime.Intrinsics.X86.Sse */
+
+static G_GNUC_UNUSED void
+check_ordering (const SimdIntrinsic *intrinsics, int len)
+{
+	for (int i = 0; i < len - 1; ++i) {
+		if (strcmp (method_name (intrinsics [i].name), method_name (intrinsics [i + 1].name)) >= 0) {
+			printf ("%s %s\n", method_name (intrinsics [i].name), method_name (intrinsics [i + 1].name));
+			g_assert_not_reached ();
+		}
+	}
+}
+
+/*
+ * SSE/SSE2 intrinsics.
+ * The managed definitions take care of the type/version checks.
+ * The version field is 0.
+ * If the opcode field is 0, its looked up using get_opcode ().
+ * These should be ordered by name.
+ */
+static const SimdIntrinsic x86_sse_intrinsics[] = {
+	{ SN_Add, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_AddSaturate, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_AddScalar, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_And, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_AndNot, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_Average, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_CompareEqual, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_EQ },
+	{ SN_CompareEqualOrderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_EQ },
+	{ SN_CompareEqualScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_EQ },
+	{ SN_CompareEqualUnorderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_EQ },
+	{ SN_CompareGreaterThan, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NLE },
+	{ SN_CompareGreaterThanOrEqual, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NLT },
+	{ SN_CompareGreaterThanOrEqualOrderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NLT },
+	{ SN_CompareGreaterThanOrEqualScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NLT },
+	{ SN_CompareGreaterThanOrEqualUnorderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NLT },
+	{ SN_CompareGreaterThanOrderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NLE },
+	{ SN_CompareGreaterThanScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NLE },
+	{ SN_CompareGreaterThanUnorderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NLE },
+	{ SN_CompareLessThan, 0, 0, 0, SIMD_COMP_LT },
+	{ SN_CompareLessThanOrEqual, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_LE },
+	{ SN_CompareLessThanOrEqualOrderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_LE },
+	{ SN_CompareLessThanOrEqualScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_LE },
+	{ SN_CompareLessThanOrEqualUnorderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_LE },
+	{ SN_CompareLessThanOrderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_LT },
+	{ SN_CompareLessThanScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_LT },
+	{ SN_CompareLessThanUnorderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_LT },
+	{ SN_CompareNotEqual, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NEQ },
+	{ SN_CompareNotEqualOrderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NEQ },
+	{ SN_CompareNotEqualScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NEQ },
+	{ SN_CompareNotEqualUnorderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NEQ },
+	{ SN_CompareNotGreaterThan, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_LE },
+	{ SN_CompareNotGreaterThanOrEqual, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_LT },
+	{ SN_CompareNotGreaterThanOrEqualScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_LT },
+	{ SN_CompareNotGreaterThanScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_LE },
+	{ SN_CompareNotLessThan, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NLT },
+	{ SN_CompareNotLessThanOrEqual, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NLE },
+	{ SN_CompareNotLessThanOrEqualScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NLE },
+	{ SN_CompareNotLessThanScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_NLT },
+	{ SN_CompareOrdered, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_ORD },
+	{ SN_CompareOrderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_ORD },
+	{ SN_CompareUnordered, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_UNORD },
+	{ SN_CompareUnorderedScalar, 0, 0, SIMD_EMIT_BINARY, SIMD_COMP_UNORD },
+	{ SN_ConvertScalarToVector128Double },
+	{ SN_ConvertScalarToVector128Int32 },
+	{ SN_ConvertScalarToVector128Int64 },
+	{ SN_ConvertScalarToVector128Single },
+	{ SN_ConvertScalarToVector128UInt32 },
+	{ SN_ConvertScalarToVector128UInt64 },
+	{ SN_ConvertToDouble },
+	{ SN_ConvertToInt32 },
+	{ SN_ConvertToInt32WithTruncation },
+	{ SN_ConvertToInt64 },
+	{ SN_ConvertToInt64WithTruncation },
+	{ SN_ConvertToSingle, OP_XCONV_TO_R4 },
+	{ SN_ConvertToUInt32 },
+	{ SN_ConvertToUInt64 },
+	{ SN_ConvertToVector128Double, 0, 0, SIMD_EMIT_UNARY },
+	{ SN_ConvertToVector128Int32, 0, 0, SIMD_EMIT_UNARY },
+	{ SN_ConvertToVector128Int32WithTruncation, 0, 0, SIMD_EMIT_UNARY },
+	{ SN_ConvertToVector128Single, 0, 0, SIMD_EMIT_UNARY },
+	{ SN_Divide, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_DivideScalar, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_Extract },
+	{ SN_Insert },
+	{ SN_LoadAlignedVector128, OP_LOADX_ALIGNED_MEMBASE },
+	{ SN_LoadFence, OP_MEMORY_BARRIER },
+	{ SN_LoadHigh },
+	{ SN_LoadLow },
+	{ SN_LoadScalarVector128 },
+	{ SN_LoadVector128, OP_LOADX_MEMBASE },
+	{ SN_MaskMove },
+	{ SN_Max, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_MaxScalar, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_MemoryFence, OP_MEMORY_BARRIER },
+	{ SN_Min, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_MinScalar, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_MoveHighToLow, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_MoveLowToHigh, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_MoveMask },
+	{ SN_MoveScalar },
+	{ SN_Multiply, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_MultiplyHigh, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_MultiplyHorizontalAdd, OP_PMADDWD, 0, SIMD_EMIT_BINARY },
+	{ SN_MultiplyLow, OP_PMULLW, 0, SIMD_EMIT_BINARY },
+	{ SN_MultiplyScalar, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_Or, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_PackSignedSaturate, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_PackUnsignedSaturate, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_Prefetch0, 0, 0, SIMD_EMIT_PREFETCH, SIMD_PREFETCH_MODE_0 },
+	{ SN_Prefetch1, 0, 0, SIMD_EMIT_PREFETCH, SIMD_PREFETCH_MODE_1 },
+	{ SN_Prefetch2, 0, 0, SIMD_EMIT_PREFETCH, SIMD_PREFETCH_MODE_2 },
+	{ SN_PrefetchNonTemporal, 0, 0, SIMD_EMIT_PREFETCH, SIMD_PREFETCH_MODE_NTA },
+	{ SN_Reciprocal, 0, 0, SIMD_EMIT_UNARY },
+	{ SN_ReciprocalScalar },
+	{ SN_ReciprocalSqrt, 0, 0, SIMD_EMIT_UNARY },
+	{ SN_ReciprocalSqrtScalar },
+	{ SN_SetScalarVector128 },
+	{ SN_SetZeroVector128 },
+	{ SN_ShiftLeftLogical },
+	{ SN_ShiftLeftLogical128BitLane, OP_PSLLDQ },
+	{ SN_ShiftRightArithmetic },
+	{ SN_ShiftRightLogical },
+	{ SN_ShiftRightLogical128BitLane, OP_PSRLDQ },
+	{ SN_Shuffle },
+	{ SN_ShuffleHigh },
+	{ SN_ShuffleLow },
+	{ SN_Sqrt, 0, 0, SIMD_EMIT_UNARY },
+	{ SN_SqrtScalar },
+	{ SN_StaticCast, OP_XMOVE },
+	{ SN_Store, OP_STOREX_MEMBASE_REG },
+	{ SN_StoreAligned, OP_STOREX_ALIGNED_MEMBASE_REG },
+	{ SN_StoreAlignedNonTemporal, OP_STOREX_NTA_MEMBASE_REG },
+	{ SN_StoreFence, OP_MEMORY_BARRIER },
+	{ SN_StoreHigh },
+	{ SN_StoreLow },
+	{ SN_StoreNonTemporal },
+	{ SN_StoreScalar },
+	{ SN_Subtract, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_SubtractSaturate, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_SubtractScalar, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_SumAbsoluteDifferences, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_UnpackHigh, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_UnpackLow, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_Xor, 0, 0, SIMD_EMIT_BINARY }
+};
+
+static int
+get_opcode (const SimdIntrinsic *intrins, MonoType *etype)
+{
+	int opcode = intrins->opcode;
+	if (!opcode) {
+		/* Depends on the intrinsic+type combination */
+		opcode = intrins_and_type_to_op (intrins->name, etype);
+	}
+	return opcode;
+}
+
+/* Return NULL if the intrinsic is not supported/implemented */
+MonoInst*
+mono_emit_sys_runtime_sse_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args, MonoError *error)
+{
+	const SimdIntrinsic *intrins;
+	MonoInst *ins = NULL;
+	int dreg, opcode;
+	MonoClass *rklass = NULL;
+	MonoType *etype = NULL;
+
+	check_ordering (x86_sse_intrinsics, sizeof (x86_sse_intrinsics) / sizeof (SimdIntrinsic));
+	intrins = (const SimdIntrinsic*)mono_binary_search (cmethod->name, x86_sse_intrinsics, sizeof (x86_sse_intrinsics) / sizeof (SimdIntrinsic), sizeof (SimdIntrinsic), &simd_intrinsic_compare_by_name);
+	if (!intrins) {
+		assert_handled (cfg, cmethod);
+		return NULL;
+	}
+
+	if (fsig->ret->type != MONO_TYPE_VOID)
+		rklass = mono_class_from_mono_type (fsig->ret);
+
+	if (fsig->param_count && fsig->params [0]->type == MONO_TYPE_GENERICINST)
+		etype = mono_class_get_context (mono_class_from_mono_type (fsig->params [0]))->class_inst->type_argv [0];
+	else if (fsig->param_count > 1 && fsig->params [1]->type == MONO_TYPE_GENERICINST)
+		etype = mono_class_get_context (mono_class_from_mono_type (fsig->params [1]))->class_inst->type_argv [0];
+
+	/* General cases */
+	switch (intrins->simd_emit_mode) {
+	case SIMD_EMIT_BINARY:
+		g_assert (fsig->param_count == 2);
+		g_assert (fsig->params [0]->type == MONO_TYPE_GENERICINST);
+		g_assert (fsig->params [1]->type == MONO_TYPE_GENERICINST);
+
+		opcode = get_opcode (intrins, etype);
+		if (!opcode)
+			return NULL;
+		MONO_INST_NEW (cfg, ins, opcode);
+		if (fsig->ret->type == MONO_TYPE_BOOLEAN)
+			ins->dreg = alloc_ireg (cfg);
+		else
+			ins->dreg = alloc_xreg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		ins->sreg2 = args [1]->dreg;
+		ins->inst_c0 = intrins->flags;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SIMD_EMIT_UNARY:
+		if (fsig->param_count != 1)
+			break;
+		opcode = get_opcode (intrins, etype);
+		if (!opcode)
+			return NULL;
+		MONO_INST_NEW (cfg, ins, opcode);
+		ins->dreg = alloc_xreg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		ins->inst_c0 = intrins->flags;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SIMD_EMIT_PREFETCH:
+		MONO_INST_NEW (cfg, ins, OP_PREFETCH_MEMBASE);
+		ins->sreg1 = args [0]->dreg;
+		ins->backend.arg_info = intrins->flags;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SIMD_NOT_IMPLEMENTED:
+		mono_error_set_not_implemented (error, NULL);
+		return NULL;
+	default:
+		break;
+	}
+
+	if (ins) {
+		ins->type = STACK_VTYPE;
+		ins->klass = rklass;
+	}
+
+	if (ins || !is_ok (error))
+		return ins;
+
+	/* Specific cases */
+	switch (intrins->name) {
+	case SN_ConvertToInt32:
+	case SN_ConvertToInt64:
+	case SN_ConvertToInt32WithTruncation:
+	case SN_ConvertToInt64WithTruncation:
+	case SN_ConvertToUInt32:
+	case SN_ConvertToUInt64:
+		opcode = get_opcode (intrins, etype);
+		if (!opcode)
+			return NULL;
+		MONO_INST_NEW (cfg, ins, opcode);
+		ins->dreg = alloc_ireg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SN_ConvertToSingle:
+		MONO_INST_NEW (cfg, ins, intrins->opcode);
+		ins->dreg = alloc_freg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SN_ConvertToDouble:
+		MONO_INST_NEW (cfg, ins, OP_EXTRACT_R8);
+		ins->dreg = alloc_freg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		ins->inst_c0 = 0;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SN_ConvertScalarToVector128Single:
+		if (fsig->params [1]->type == MONO_TYPE_I4)
+			MONO_INST_NEW (cfg, ins, OP_CVTSI32_SS);
+		else if (fsig->params [1]->type == MONO_TYPE_I8)
+			MONO_INST_NEW (cfg, ins, OP_CVTSI64_SS);
+		else if (fsig->params [1]->type == MONO_TYPE_GENERICINST)
+			MONO_INST_NEW (cfg, ins, OP_CVTSD2SS);
+		else
+			g_assert_not_reached ();
+		ins->dreg = alloc_xreg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		ins->sreg2 = args [1]->dreg;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SN_ConvertScalarToVector128Double:
+		if (fsig->params [1]->type == MONO_TYPE_I4)
+			MONO_INST_NEW (cfg, ins, OP_CVTSI32_SD);
+		else if (fsig->params [1]->type == MONO_TYPE_I8)
+			MONO_INST_NEW (cfg, ins, OP_CVTSI64_SD);
+		else if (fsig->params [1]->type == MONO_TYPE_GENERICINST)
+			MONO_INST_NEW (cfg, ins, OP_CVTSS2SD);
+		else
+			g_assert_not_reached ();
+		ins->dreg = alloc_xreg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		ins->sreg2 = args [1]->dreg;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SN_ConvertScalarToVector128Int32:
+	case SN_ConvertScalarToVector128UInt32:
+		MONO_INST_NEW (cfg, ins, OP_ICONV_TO_X);
+		ins->dreg = alloc_xreg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SN_ConvertScalarToVector128Int64:
+	case SN_ConvertScalarToVector128UInt64:
+		MONO_INST_NEW (cfg, ins, OP_LCONV_TO_X);
+		ins->dreg = alloc_xreg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SN_Shuffle:
+	case SN_ShuffleHigh:
+	case SN_ShuffleLow:
+		opcode = get_opcode (intrins, etype);
+		g_assert (opcode != -1);
+
+		if (fsig->param_count == 3) {
+			if (args [2]->opcode != OP_ICONST) {
+				mono_error_set_not_implemented (error, NULL);
+				break;
+			}
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			ins->inst_c0 = args [2]->inst_c0;
+			MONO_ADD_INS (cfg->cbb, ins);
+		} else {
+			if (args [1]->opcode != OP_ICONST) {
+				mono_error_set_not_implemented (error, NULL);
+				break;
+			}
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->inst_c0 = args [1]->inst_c0;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+		break;
+	case SN_SetZeroVector128:
+		MONO_INST_NEW (cfg, ins, OP_XZERO);
+		ins->dreg = alloc_xreg (cfg);
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SN_SetScalarVector128: {
+		dreg = alloc_xreg (cfg);
+
+		MONO_INST_NEW (cfg, ins, OP_XZERO);
+		ins->dreg = dreg;
+		ins->klass = rklass;
+		MONO_ADD_INS (cfg->cbb, ins);
+
+		int opcode = -1;
+		switch (fsig->params [0]->type) {
+		case MONO_TYPE_R4:
+			opcode = OP_INSERTX_R4_SLOW;
+			break;
+		case MONO_TYPE_R8:
+			opcode = OP_INSERTX_R8_SLOW;
+			break;
+		default:
+			g_assert_not_reached ();
+			break;
+		}
+		MONO_INST_NEW (cfg, ins, opcode);
+		ins->dreg = dreg;
+		ins->sreg1 = dreg;
+		ins->sreg2 = args [0]->dreg;
+		ins->inst_c0 = 0;
+		ins->klass = rklass;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	}
+	case SN_LoadVector128:
+	case SN_LoadAlignedVector128:
+	case SN_LoadScalarVector128:
+		etype = mono_class_get_context (mono_class_from_mono_type (fsig->ret))->class_inst->type_argv [0];
+		opcode = get_opcode (intrins, etype);
+		if (!opcode)
+			return NULL;
+		MONO_INST_NEW (cfg, ins, opcode);
+		ins->dreg = alloc_xreg (cfg);
+		ins->inst_basereg = args [0]->dreg;
+		ins->inst_offset = 0;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SN_LoadHigh:
+	case SN_LoadLow:
+		opcode = get_opcode (intrins, etype);
+		if (!opcode)
+			return NULL;
+		MONO_INST_NEW (cfg, ins, opcode);
+		ins->dreg = alloc_xreg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		ins->sreg2 = args [1]->dreg;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SN_Store:
+	case SN_StoreAligned:
+	case SN_StoreAlignedNonTemporal:
+	case SN_StoreHigh:
+	case SN_StoreLow:
+	case SN_StoreScalar:
+		opcode = get_opcode (intrins, etype);
+		if (!opcode)
+			return NULL;
+		EMIT_NEW_STORE_MEMBASE (cfg, ins, opcode, args [0]->dreg, 0, args [1]->dreg);
+		break;
+	case SN_StoreNonTemporal:
+		if (fsig->params [1]->type == MONO_TYPE_I4 || fsig->params [1]->type == MONO_TYPE_U4)
+			opcode = OP_MOVNTI_I4_MEMBASE_REG;
+		else
+			opcode = OP_MOVNTI_I8_MEMBASE_REG;
+		EMIT_NEW_STORE_MEMBASE (cfg, ins, opcode, args [0]->dreg, 0, args [1]->dreg);
+		break;
+	case SN_MoveMask:
+		opcode = get_opcode (intrins, etype);
+		if (!opcode)
+			return NULL;
+		MONO_INST_NEW (cfg, ins, opcode);
+		ins->dreg = alloc_ireg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		ins->inst_c0 = intrins->flags;
+		ins->type = STACK_I4;
+		MONO_ADD_INS (cfg->cbb, ins);
+		return ins;
+	case SN_StoreFence:
+	case SN_MemoryFence:
+	case SN_LoadFence:
+		// FIXME: Use sfence/mfence/lfence
+		MONO_INST_NEW (cfg, ins, intrins->opcode);
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SN_MoveScalar:
+		if (fsig->param_count == 1) {
+			MONO_INST_NEW (cfg, ins, OP_MOVQ);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		} else {
+			/* Same as EMIT_BINARY */
+			opcode = get_opcode (intrins, etype);
+			if (!opcode)
+				return NULL;
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+		break;
+	case SN_StaticCast: {
+		// Type checks
+		g_assert (fsig->param_count == 1);
+		g_assert (fsig->params [0]->type == MONO_TYPE_GENERICINST);
+		if (!MONO_TYPE_IS_PRIMITIVE (etype)) {
+			mono_error_set_not_supported (error, NULL);
+			return NULL;
+		}
+		g_assert (fsig->ret->type == MONO_TYPE_GENERICINST);
+		etype = mono_class_get_context (mono_class_from_mono_type (fsig->ret))->class_inst->type_argv [0];
+		if (!MONO_TYPE_IS_PRIMITIVE (etype)) {
+			mono_error_set_not_supported (error, NULL);
+			return NULL;
+		}
+		MONO_INST_NEW (cfg, ins, intrins->opcode);
+		ins->dreg = alloc_xreg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	}
+	case SN_SqrtScalar:
+	case SN_ReciprocalScalar:
+	case SN_ReciprocalSqrtScalar:
+		opcode = get_opcode (intrins, etype);
+		if (!opcode)
+			return NULL;
+		/* This has 2 variants */
+		if (fsig->param_count == 2) {
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		} else {
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+		break;
+	case SN_ShiftRightLogical:
+	case SN_ShiftRightArithmetic:
+	case SN_ShiftLeftLogical: {
+		/* Two variants, one with a vector 2nd argument the other with a scalar */
+		int arg1_reg = -1;
+		int imm_name = 0;
+
+		switch (intrins->name) {
+		case SN_ShiftRightLogical:
+			imm_name = SN_ShiftRightLogical_Imm;
+			break;
+		case SN_ShiftRightArithmetic:
+			imm_name = SN_ShiftRightArithmetic_Imm;
+			break;
+		case SN_ShiftLeftLogical:
+			imm_name = SN_ShiftLeftLogical_Imm;
+			break;
+		default:
+			g_assert_not_reached ();
+			break;
+		}
+
+		if (fsig->params [1]->type == MONO_TYPE_U1) {
+			if (args [1]->opcode != OP_ICONST) {
+				MonoInst *tmp;
+
+				arg1_reg = alloc_xreg (cfg);
+				MONO_INST_NEW (cfg, tmp, OP_ICONV_TO_X);
+				tmp->dreg = arg1_reg;
+				tmp->sreg1 = args [1]->dreg;
+				MONO_ADD_INS (cfg->cbb, tmp);
+
+				opcode = get_opcode (intrins, etype);
+			} else {
+				opcode = intrins_and_type_to_op (imm_name, etype);
+			}
+		} else {
+			opcode = get_opcode (intrins, etype);
+		}
+		g_assert (opcode != -1);
+
+		MONO_INST_NEW (cfg, ins, opcode);
+		ins->dreg = alloc_xreg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		if (arg1_reg != -1)
+			ins->sreg2 = arg1_reg;
+		else if (fsig->params [1]->type == MONO_TYPE_U1)
+			ins->inst_imm = args [1]->inst_c0;
+		else
+			ins->sreg2 = args [1]->dreg;
+		ins->inst_c0 = intrins->flags;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	}
+	case SN_ShiftRightLogical128BitLane:
+	case SN_ShiftLeftLogical128BitLane: {
+		if (args [1]->opcode != OP_ICONST) {
+			int opcode = intrins->name == SN_ShiftLeftLogical128BitLane ? OP_PSLLDQ_REG : OP_PSRLDQ_REG;
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		} else {
+			opcode = intrins_and_type_to_op (intrins->name, etype);
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->inst_imm = args [1]->inst_c0;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+		break;
+	}
+	case SN_Extract: {
+		if (args [1]->opcode != OP_ICONST) {
+			switch (etype->type) {
+			case MONO_TYPE_I2:
+				opcode = OP_EXTRACT_I2_REG;
+				break;
+			case MONO_TYPE_U2:
+				opcode = OP_EXTRACT_U2_REG;
+				break;
+			default:
+				g_assert_not_reached ();
+				break;
+			}
+
+			MonoInst *spill = get_simd_ctor_spill_area (cfg, mono_class_from_mono_type (fsig->params [0]));
+
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = alloc_ireg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			ins->type = STACK_I4;
+			ins->backend.spill_var = spill;
+			MONO_ADD_INS (cfg->cbb, ins);
+		} else {
+			switch (etype->type) {
+			case MONO_TYPE_I2:
+				opcode = OP_EXTRACT_I2;
+				break;
+			case MONO_TYPE_U2:
+				opcode = OP_EXTRACT_U2;
+				break;
+			default:
+				g_assert_not_reached ();
+				break;
+			}
+
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = alloc_ireg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->inst_c0 = args [1]->inst_c0;
+			ins->type = STACK_I4;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+		break;
+	}
+	case SN_Insert: {
+		int imm;
+
+		if (args [2]->opcode != OP_ICONST) {
+			MonoInst *spill = get_simd_ctor_spill_area (cfg, mono_class_from_mono_type (fsig->params [0]));
+
+			MONO_INST_NEW (cfg, ins, OP_INSERT_I2_REG);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			ins->sreg3 = args [2]->dreg;
+			ins->backend.spill_var = spill;
+			MONO_ADD_INS (cfg->cbb, ins);
+		} else {
+			imm = args [2]->inst_c0;
+
+			MONO_INST_NEW (cfg, ins, OP_INSERT_I2);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			ins->inst_c0 = imm;
+			ins->type = STACK_I4;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+		break;
+	}
+	case SN_CompareLessThan:
+		if (etype->type == MONO_TYPE_R4 || etype->type == MONO_TYPE_R8) {
+			opcode = intrins_and_type_to_op (intrins->name, etype);
+			g_assert (opcode != -1);
+			/* Normal binary op */
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			ins->inst_c0 = intrins->flags;
+			MONO_ADD_INS (cfg->cbb, ins);
+		} else {
+			/* Inverted */
+			opcode = intrins_and_type_to_op (SN_CompareGreaterThan, etype);
+			g_assert (opcode != -1);
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [1]->dreg;
+			ins->sreg2 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+		break;
+	case SN_MaskMove:
+		MONO_INST_NEW (cfg, ins, OP_MASKMOVDQU);
+		ins->sreg1 = args [0]->dreg;
+		ins->sreg2 = args [1]->dreg;
+		ins->sreg3 = args [2]->dreg;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	default:
+		mono_error_set_not_implemented (error, NULL);
+		return NULL;
+	}
+
+	if (ins) {
+		ins->type = STACK_VTYPE;
+		ins->klass = rklass;
+	}
+
+	return ins;
+}
+
+#endif /* TARGET_AMD64 */
 
 #endif /* DISABLE_JIT */
 #endif /* MONO_ARCH_SIMD_INTRINSICS */

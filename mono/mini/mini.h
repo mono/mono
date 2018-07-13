@@ -2757,6 +2757,7 @@ void        mono_simd_decompose_intrinsics (MonoCompile *cfg);
 MonoInst*   mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 MonoInst*   mono_emit_simd_field_load (MonoCompile *cfg, MonoClassField *field, MonoInst *addr);
 void        mono_simd_intrinsics_init (void);
+MonoInst*   mono_emit_sys_runtime_sse_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args, MonoError *error);
 #endif
 
 gboolean    mono_class_is_magic_int (MonoClass *klass);

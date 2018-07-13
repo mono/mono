@@ -230,4 +230,8 @@ G_EXTERN_C void mono_throw_method_access (MonoMethod *caller, MonoMethod *callee
 
 G_EXTERN_C void mono_dummy_jit_icall (void);
 
+void mono_throw_not_implemented (void);
+
+void mono_throw_not_supported (void);
+
 #endif /* __MONO_JIT_ICALLS_H__ */
