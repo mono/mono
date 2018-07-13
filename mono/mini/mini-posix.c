@@ -1003,11 +1003,13 @@ dump_native_stacktrace (const char *signal, void *ctx)
 	}
 	g_free (names);
 
+#if 0
 	/* Try to get more meaningful information using gdb */
 	char *debugger_log = mono_debugger_state_str ();
 	if (debugger_log) {
 		fprintf (stderr, "\n\tDebugger session state:\n%s\n", debugger_log);
 	}
+#endif
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_SYSCALL_H) && (defined(SYS_fork) || HAVE_FORK)
 	if (!mini_get_debug_options ()->no_gdb_backtrace) {
