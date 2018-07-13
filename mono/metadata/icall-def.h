@@ -151,6 +151,18 @@ ICALL(ARGI_3, "IntGetNextArgType",                mono_ArgIterator_IntGetNextArg
 ICALL(ARGI_4, "Setup",                            mono_ArgIterator_Setup)
 
 ICALL_TYPE(ARRAY, "System.Array", ARRAY_1)
+#if defined (HOST_ARM) || defined (HOST_ARM64)
+ICALL(ARRAY_1, "ClearInternal",    ves_icall_System_Array_ClearInternal)
+ICALL(ARRAY_3, "CreateInstanceImpl",   ves_icall_System_Array_CreateInstanceImpl)
+ICALL(ARRAY_4, "FastCopy",         ves_icall_System_Array_FastCopy)
+ICALL(ARRAY_5, "GetGenericValueImpl", ves_icall_System_Array_GetGenericValueImpl)
+ICALL(ARRAY_6, "GetLength",        ves_icall_System_Array_GetLength)
+ICALL(ARRAY_15, "GetLongLength",        ves_icall_System_Array_GetLongLength)
+ICALL(ARRAY_7, "GetLowerBound",    ves_icall_System_Array_GetLowerBound)
+ICALL(ARRAY_8, "GetRank",          ves_icall_System_Array_GetRank)
+ICALL(ARRAY_9, "GetValue",         ves_icall_System_Array_GetValue)
+ICALL(ARRAY_10, "GetValueImpl",     ves_icall_System_Array_GetValueImpl)
+#else
 HANDLES(ICALL(ARRAY_1, "ClearInternal",    ves_icall_System_Array_ClearInternal))
 HANDLES(ICALL(ARRAY_3, "CreateInstanceImpl",   ves_icall_System_Array_CreateInstanceImpl))
 ICALL(ARRAY_4, "FastCopy",         ves_icall_System_Array_FastCopy)
@@ -162,6 +174,7 @@ HANDLES(ICALL(ARRAY_7, "GetLowerBound",    ves_icall_System_Array_GetLowerBound)
 HANDLES(ICALL(ARRAY_8, "GetRank",          ves_icall_System_Array_GetRank))
 HANDLES(ICALL(ARRAY_9, "GetValue",         ves_icall_System_Array_GetValue))
 HANDLES(ICALL(ARRAY_10, "GetValueImpl",    ves_icall_System_Array_GetValueImpl))
+#endif
 // Generic ref/out parameters are not supported by HANDLES(), so NOHANDLES().
 NOHANDLES(ICALL(ARRAY_11, "SetGenericValueImpl", ves_icall_System_Array_SetGenericValueImpl))
 HANDLES(ICALL(ARRAY_12, "SetValue",         ves_icall_System_Array_SetValue))
