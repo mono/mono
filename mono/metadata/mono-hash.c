@@ -434,6 +434,7 @@ mono_g_hash_table_destroy (MonoGHashTable *hash)
 static void
 mono_g_hash_table_insert_replace (MonoGHashTable *hash, gpointer key, gpointer value, gboolean replace)
 {
+	MONO_REQ_GC_UNSAFE_MODE;
 	int slot;
 	g_return_if_fail (hash != NULL);
 
@@ -464,7 +465,9 @@ mono_g_hash_table_insert_replace (MonoGHashTable *hash, gpointer key, gpointer v
 void
 mono_g_hash_table_insert (MonoGHashTable *h, gpointer k, gpointer v)
 {
+	MONO_ENTER_GC_UNSAFE;
 	mono_g_hash_table_insert_replace (h, k, v, FALSE);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /**
