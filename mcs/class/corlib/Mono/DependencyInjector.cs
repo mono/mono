@@ -38,6 +38,9 @@ namespace Mono
 		 */
 		internal static ISystemDependencyProvider SystemProvider {
 			get {
+				if (systemDependency != null)
+					return systemDependency;
+
 				lock (locker) {
 					if (systemDependency != null)
 						return systemDependency;
