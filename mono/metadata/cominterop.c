@@ -60,14 +60,14 @@ register_icall (gpointer func, const char *name, const char *sigstr, gboolean sa
 	mono_register_jit_icall (func, name, sig, save);
 }
 
-static BSTR
+static mono_bstr
 mono_string_to_bstr_handle (MonoStringHandle s)
 {
 	if (MONO_HANDLE_IS_NULL (s))
 		return NULL;
 
 	uint32_t gchandle = 0;
-	BSTR res = mono_ptr_to_bstr (mono_string_handle_pin_chars (s, &gchandle), mono_string_handle_length (s));
+	mono_bstr const res = mono_ptr_to_bstr (mono_string_handle_pin_chars (s, &gchandle), mono_string_handle_length (s));
 	mono_gchandle_free (gchandle);
 	return res;
 }
@@ -2670,9 +2670,9 @@ cominterop_ccw_invoke (MonoCCWInterface* ccwe, guint32 dispIdMember,
 
 #ifndef HOST_WIN32
 
-typedef gpointer (STDCALL *SysAllocStringLenFunc)(const gunichar* str, guint32 len);
-typedef guint32 (STDCALL *SysStringLenFunc)(gconstpointer bstr);
-typedef void (STDCALL *SysFreeStringFunc)(gunichar* str);
+typedef mono_bstr (STDCALL *SysAllocStringLenFunc)(const gunichar* str, guint32 len);
+typedef guint32 (STDCALL *SysStringLenFunc)(mono_bstr_const bstr);
+typedef void (STDCALL *SysFreeStringFunc)(mono_bstr_const str);
 
 static SysAllocStringLenFunc sys_alloc_string_len_ms = NULL;
 static SysStringLenFunc sys_string_len_ms = NULL;
@@ -2799,7 +2799,7 @@ init_com_provider_ms (void)
 #endif // WIN32
 #endif // DISABLE_COM
 
-BSTR
+mono_bstr
 mono_ptr_to_bstr (const gunichar2* ptr, int slen)
 {
 	if (!ptr)
@@ -2814,7 +2814,7 @@ mono_ptr_to_bstr (const gunichar2* ptr, int slen)
 		guint32 * const ret = (guint32 *)g_malloc ((slen + 1) * sizeof (gunichar2) + sizeof (guint32));
 		if (ret == NULL)
 			return NULL;
-		BSTR const s = (BSTR)(ret + 1);
+		mono_bstr const s = (mono_bstr)(ret + 1);
 		*ret = slen * sizeof (gunichar2);
 		memcpy (s, ptr, slen * sizeof (gunichar2));
 		s [slen] = 0;
@@ -2824,7 +2824,7 @@ mono_ptr_to_bstr (const gunichar2* ptr, int slen)
 	else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
 		guint32 const len = slen;
 		gunichar* const str = g_utf16_to_ucs4 (ptr, len, NULL, NULL, NULL);
-		BSTR const ret = sys_alloc_string_len_ms (str, len);
+		mono_bstr const ret = sys_alloc_string_len_ms (str, len);
 		g_free (str);
 		return ret;
 	}
@@ -2836,7 +2836,7 @@ mono_ptr_to_bstr (const gunichar2* ptr, int slen)
 }
 
 static MonoStringHandle
-mono_string_from_bstr_checked (BSTR bstr, MonoError *error)
+mono_string_from_bstr_checked (mono_bstr_const bstr, MonoError *error)
 {
 	if (!bstr)
 		return NULL_HANDLE_STRING;
@@ -2850,6 +2850,7 @@ mono_string_from_bstr_checked (BSTR bstr, MonoError *error)
 #ifndef DISABLE_COM
 	else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
 		glong written = 0;
+		// FIXME mono_string_new_utf32_handle to combine g_ucs4_to_utf16 and mono_string_new_utf16_handle.
 		gunichar2* utf16 = g_ucs4_to_utf16 ((const gunichar *)bstr, sys_string_len_ms (bstr), NULL, &written, NULL);
 		MonoStringHandle res = mono_string_new_utf16_handle (mono_domain_get (), utf16, written, error);
 		g_free (utf16);
@@ -2861,7 +2862,7 @@ mono_string_from_bstr_checked (BSTR bstr, MonoError *error)
 }
 
 static MonoString *
-mono_string_from_bstr_common (gboolean icall, BSTR bstr)
+mono_string_from_bstr_common (gboolean icall, mono_bstr_const bstr)
 {
 	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
@@ -2874,19 +2875,19 @@ mono_string_from_bstr_common (gboolean icall, BSTR bstr)
 }
 
 MonoString *
-mono_string_from_bstr (/*BSTR*/gpointer bstr)
+mono_string_from_bstr (/*mono_bstr_const*/gpointer bstr)
 {
-	return mono_string_from_bstr_common (FALSE, (BSTR)bstr);
+	return mono_string_from_bstr_common (FALSE, (mono_bstr_const)bstr);
 }
 
 MonoString *
-mono_string_from_bstr_icall (BSTR bstr)
+mono_string_from_bstr_icall (mono_bstr_const bstr)
 {
 	return mono_string_from_bstr_common (TRUE, bstr);
 }
 
 MONO_API void 
-mono_free_bstr (/*BSTR*/gpointer bstr)
+mono_free_bstr (/*mono_bstr_const*/gpointer bstr)
 {
 	if (!bstr)
 		return;
@@ -2899,7 +2900,7 @@ mono_free_bstr (/*BSTR*/gpointer bstr)
 		g_free (((char *)bstr) - 4);
 #ifndef DISABLE_COM
 	} else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
-		sys_free_string_ms ((gunichar *)bstr);
+		sys_free_string_ms (bstr);
 	} else {
 		g_assert_not_reached ();
 	}
@@ -3602,21 +3603,21 @@ ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (gpointe
 #endif /* DISABLE_COM */
 
 MonoStringHandle
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (BSTR ptr, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (mono_bstr_const ptr, MonoError *error)
 {
 	return mono_string_from_bstr_checked (ptr, error);
 }
 
-BSTR
+mono_bstr
 ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (const gunichar2* ptr, int len, MonoError *error)
 {
 	return mono_ptr_to_bstr (ptr, len);
 }
 
 void
-ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (BSTR ptr, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (mono_bstr_const ptr, MonoError *error)
 {
-	mono_free_bstr (ptr);
+	mono_free_bstr ((gpointer)ptr);
 }
 
 void*

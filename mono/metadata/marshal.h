@@ -21,11 +21,8 @@
 #include <mono/metadata/remoting.h>
 #include <mono/utils/mono-error.h>
 
-#ifndef HOST_WIN32
-typedef gunichar2 *BSTR;
-#else
-// Provided by windows.h.
-#endif
+typedef gunichar2 *mono_bstr;
+typedef const gunichar2 *mono_bstr_const;
 
 #define mono_marshal_find_bitfield_offset(type, elem, byte_offset, bitmask) \
 	do { \
@@ -349,7 +346,7 @@ mono_type_native_stack_size (MonoType *type, guint32 *alignment);
 gpointer
 mono_string_to_ansibstr (MonoString *string_obj);
 
-BSTR
+mono_bstr
 mono_ptr_to_bstr (const gunichar2* ptr, int slen);
 
 gpointer
@@ -671,7 +668,7 @@ MonoStringHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (const guint16 *ptr, gint32 len, MonoError *error);
 
 MonoStringHandle
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (BSTR ptr, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (mono_bstr_const ptr, MonoError *error);
 
 guint32
 ves_icall_System_Runtime_InteropServices_Marshal_GetComSlotForMethodInfoInternal (MonoReflectionMethodHandle m, MonoError *error);
@@ -694,7 +691,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type (gconstpoin
 int
 ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHandle type, MonoStringHandle field_name, MonoError *error);
 
-BSTR
+mono_bstr
 ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (const gunichar2 *ptr, int len, MonoError *error);
 
 char*
@@ -728,7 +725,7 @@ void
 ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr, MonoError *error);
 
 void
-ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (BSTR ptr, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (mono_bstr_const ptr, MonoError *error);
 
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_UnsafeAddrOfPinnedArrayElement (MonoArray *arrayobj, int index);
