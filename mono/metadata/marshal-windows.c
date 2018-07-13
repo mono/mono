@@ -53,8 +53,10 @@ mono_marshal_realloc_co_task_mem (gpointer ptr, size_t size)
 }
 
 char*
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, gsize length, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, int length, MonoError *error)
 {
+	// FIXME pass mono_utf16_to_utf8 an allocator to avoid double alloc/copy.
+
 	char* tres = mono_utf16_to_utf8 (s, length, error);
 	return_val_if_nok (error, NULL);
 	if (!tres)
@@ -66,23 +68,25 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const guni
 	 * large.
 	 */
 	size_t len = MAX (strlen (tres) + 1, length);
-	char* ret = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len);
-	memcpy (ret, tres, len);
+	char* ret = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len, error);
+	if (ret)
+		memcpy (ret, tres, len);
 	g_free (tres);
 	return ret;
 }
 
-gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunichar2 *s, gsize length, MonoError *error)
+gunichar2*
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunichar2 *s, int length, MonoError *error)
 {
-	if (string == NULL)
+	if (!s)
 		return NULL;
 
 	size_t len = (length + 1) * 2);
-	gunichar2 *res = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len);
-
-	memcpy (res, s, length * 2);
-	res [length] = 0;
+	gunichar2 *res = ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len, error);
+	if (res) {
+		memcpy (res, s, length * 2);
+		res [length] = 0;
+	}
 	return res;
 }
 
@@ -102,6 +106,8 @@ mono_string_to_utf8str_handle (MonoStringHandle s, MonoError *error)
 		as [0] = '\0';
 		return as;
 	}
+
+	// FIXME pass g_utf16_to_utf8 an allocator to avoid double alloc/copy.
 
 	uint32_t gchandle = 0;
 	tmp = g_utf16_to_utf8 (mono_string_handle_pin_chars (s, &gchandle), mono_string_handle_length (s), NULL, &len, &gerror);
@@ -125,7 +131,7 @@ mono_string_to_utf8str (MonoString *s_raw)
 {
 	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
-	MONO_HANDLE_DCL (MonoObject, s);
+	MONO_HANDLE_DCL (MonoString, s);
 	gpointer result = mono_string_to_utf8str_handle (s, error);
 	mono_error_set_pending_exception (error);
 	HANDLE_FUNCTION_RETURN_VAL (result);

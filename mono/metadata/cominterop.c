@@ -2841,7 +2841,7 @@ mono_string_from_bstr_checked (mono_bstr_const bstr, MonoError *error)
 	if (!bstr)
 		return NULL_HANDLE_STRING;
 #ifdef HOST_WIN32
-	return mono_string_new_utf16_checked (mono_domain_get (), bstr, SysStringLen (bstr), error);
+	return mono_string_new_utf16_handle (mono_domain_get (), bstr, SysStringLen (bstr), error);
 #else
 #ifndef DISABLE_COM
 	if (com_provider == MONO_COM_DEFAULT)
