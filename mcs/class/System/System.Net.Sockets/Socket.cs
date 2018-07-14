@@ -392,6 +392,11 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static SocketAddress RemoteEndPoint_internal (IntPtr socket, int family, out int error);
 
+		internal SafeHandle SafeHandle
+		{
+			get { return m_Handle; }
+		}
+
 #endregion
 
 #region Select
