@@ -108,6 +108,10 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
 		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-only-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
 	   fi
+	   ${TESTCMD} --label=build-ios-dev-interp-mixed --timeout=60m make -C sdks/ios build-ios-dev-interp-mixed-all
+	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-mixed-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+	   fi
 	   ${TESTCMD} --label=package --timeout=60m tar cvzf mono-product-sdk-$GIT_COMMIT.tar.gz -C sdks/out/ bcl ios-llvm64 ios-llvm32 ios-cross32-release ios-cross64-release
 	   exit 0
 fi
