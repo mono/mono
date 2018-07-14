@@ -5289,7 +5289,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 #define CHECK_STACK_OVF() if (((sp - stack_start) + 1) > header->max_stack) UNVERIFIED
 #define CHECK_ARG(num) if ((unsigned)(num) >= (unsigned)num_args) UNVERIFIED
 #define CHECK_LOCAL(num) if ((unsigned)(num) >= (unsigned)header->num_locals) UNVERIFIED
-#define CHECK_OPSIZE(size) if ((size) < 1 || ip + (size) > end) UNVERIFIED
+#define CHECK_OPSIZE(size, unverified) do { if ((size) < 1 || ip + (size) > end) { unverified ; } } while (0)
 #define CHECK_UNVERIFIABLE(cfg) if (cfg->unverifiable) UNVERIFIED
 #define CHECK_TYPELOAD(klass) if (!(klass) || mono_class_has_failure (klass)) TYPE_LOAD_ERROR ((klass))
 
@@ -6168,6 +6168,58 @@ is_jit_optimizer_disabled (MonoMethod *m)
 }
 
 static gboolean
+is_safe_auto_tailcall (MonoCompile *cfg, MonoMethod *method, int *cache)
+// Return TRUE if by exceedingly simple methods, this method can take auto tailcalls.
+//
+// Inhibitors of tailcall include:
+//  Escape of locals.
+//  call within try
+//
+// The gross approximation this function performs:
+//   Does function take address of anything.
+//   Does function contain any try/catch.
+{
+	if (*cache)
+		return *cache == 1;
+
+	MonoMethodHeader * const header = mono_method_get_header_checked (method, &cfg->error);
+	g_assert (header);
+	guchar const *ip = header->code;
+	guchar const *const end = ip + header->code_size;
+	MonoOpcodeEnum il_op = MonoOpcodeEnum_Invalid;
+	for (guchar const *next_ip = ip; ip < end; ip = next_ip) {
+		guchar const *tmp_ip = ip;
+		int const op_size = mono_opcode_value_and_size (&tmp_ip, end, &il_op);
+		CHECK_OPSIZE (op_size, goto fail);
+		next_ip += op_size;
+		switch (il_op) {
+		// FIXME Sometimes the non-static opcode refers to static field.
+		// We don't notice that and that is ok.
+		case MONO_CEE_LDFLDA: // of a local valuetype?
+		case MONO_CEE_LDARGA:
+		case MONO_CEE_LDARGA_S:
+		case MONO_CEE_LDLOCA:
+		case MONO_CEE_LDLOCA_S:
+		case MONO_CEE_LDELEMA: // of a fixed local array?
+		// FIXME check if call is within clause, vs. entire function
+		case MONO_CEE_ENDFINALLY:
+		case MONO_CEE_ENDFILTER:
+		case MONO_CEE_LEAVE:
+		case MONO_CEE_LEAVE_S:
+		case MONO_CEE_RETHROW:
+		case MONO_CEE_THROW:
+fail:
+			if (tailcall_print_enabled ())
+				tailcall_print ("%s %s contains address taken or EH %s\n", __func__, method->name, mono_opcode_name (il_op));
+			*cache = 2;
+			return FALSE;
+		}
+	}
+	*cache = 1;
+	return TRUE;
+}
+
+static gboolean
 is_not_supported_tailcall_helper (gboolean value, const char *svalue, MonoMethod *method, MonoMethod *cmethod)
 {
 	// Return value, printing if it inhibits tailcall.
@@ -6552,6 +6604,142 @@ branch_target:
 	return info;
 }
 
+typedef union _MonoSkip {
+	int i;
+	struct {
+		gboolean ldloc : 1;
+		gboolean stloc : 1;
+		gboolean br : 1;
+		gboolean ret : 1;
+	};
+} MonoSkip;
+
+static gboolean
+is_call_followed_by_ret (MonoCompile *cfg, MonoMethod *method, guchar *ip, guchar *end, MonoSkip *skip)
+/*
+C# compiler outputs things like:
+1	call
+	nop
+	ret
+
+2	call
+	br label
+label:
+	ret
+
+3	call
+	stloc n
+	br label
+label:
+	ldloc n
+	ret
+
+4?	call
+	stloc n
+	ldloc n
+	ret
+
+Do a simple analysis to see these:
+	One br is followed.
+	arbitrary nop are skipped
+	otherwise there can either be one stloc and one matching ldloc, or neither
+	stloc and br, or ret, must be in same basic block as call
+*/
+{
+#if 1
+	return (ip < end && ip [0] == CEE_RET && ip_in_bb (cfg, cfg->cbb, ip))
+		|| (ip < end && ip + 1 < end
+		    && ip [0] == CEE_NOP && ip [1] == CEE_RET
+		    && ip_in_bb (cfg, cfg->cbb, ip)
+		    && ip_in_bb (cfg, cfg->cbb, ip + 1));
+#else
+	int stloc = -1;
+	int ldloc = -1;
+	gboolean br = FALSE;
+
+	MonoMethodHeader * const header = mono_method_get_header_checked (method, &cfg->error);
+	g_assert (header);
+	guchar * const start = (guchar*)header->code;
+	guchar * const end = start + header->code_size;
+	MonoOpcodeEnum il_op = MonoOpcodeEnum_Invalid;
+
+	for (guchar *next_ip = ip; ip >= start && ip < end; ip = next_ip) {
+		guchar const *tmp_ip = ip;
+		int const op_size = mono_opcode_value_and_size (&tmp_ip, end, &il_op);
+		CHECK_OPSIZE (op_size, goto fail);
+		next_ip += op_size;
+
+		MonoOpcodeParameter parameter;
+		const MonoOpcodeInfo* info = mono_opcode_decode (ip, op_size, il_op, &parameter);
+		g_assert (info);
+		int const n = parameter.i32;
+
+		switch (il_op) {
+
+		case MONO_CEE_NOP:
+			break;
+
+		case MONO_CEE_RET:
+			if (!ip_in_bb (cfg, cfg->cbb, ip))
+				goto fail;
+			if (ldloc != stloc)
+				goto fail;
+			skip->ret = TRUE;
+			return TRUE;
+
+		case MONO_CEE_BR:
+		case MONO_CEE_BR_S:
+			if (!ip_in_bb (cfg, cfg->cbb, ip))
+				goto fail;
+			// Only one br allowed, and it must not follow ldloc.
+			if (br || ldloc != -1)
+				goto fail;
+			br = TRUE;
+			next_ip = parameter.branch_target;
+			skip->br = TRUE;
+			break;
+
+		case MONO_CEE_STLOC_0:
+		case MONO_CEE_STLOC_1:
+		case MONO_CEE_STLOC_2:
+		case MONO_CEE_STLOC_3:
+		case MONO_CEE_STLOC_S:
+		case MONO_CEE_STLOC:
+			if (!ip_in_bb (cfg, cfg->cbb, ip))
+				goto fail;
+			// Only one stloc allowed, before any ldloc.
+			if (stloc != -1 || ldloc != -1)
+				goto fail;
+			stloc = n;
+			skip->stloc = TRUE;
+			break;
+
+		case MONO_CEE_LDLOC_0:
+		case MONO_CEE_LDLOC_1:
+		case MONO_CEE_LDLOC_2:
+		case MONO_CEE_LDLOC_3:
+		case MONO_CEE_LDLOC_S:
+		case MONO_CEE_LDLOC:
+			// Only one ldloc allowed, after stloc.
+			if (ldloc != -1 || stloc == -1 || n != stloc)
+				goto fail;
+			ldloc = n;
+			skip->ldloc = ip_in_bb (cfg, cfg->cbb, ip);
+			break;
+
+		// Overwhelming case.
+		default:
+			goto fail;
+		}
+	}
+fail:
+	if (tailcall_print_enabled ())
+		tailcall_print ("%s %s call not followed by ret %s\n", __func__, method->name, mono_opcode_name (il_op));
+	skip->i = 0;
+	return FALSE;
+#endif
+}
+
 /*
  * mono_method_to_ir:
  *
@@ -6578,6 +6766,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		   guint inline_offset, gboolean is_virtual_call)
 {
 	ERROR_DECL (error);
+	int safe_auto_tailcall_cache = 0;
 	MonoInst *ins, **sp, **stack_start;
 	MonoBasicBlock *tblock = NULL;
 	MonoBasicBlock *init_localsbb = NULL, *init_localsbb2 = NULL;
@@ -7043,11 +7232,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	start_new_bblock = 0;
 	MonoOpcodeEnum il_op = MonoOpcodeEnum_Invalid;
 
+	MonoSkip skip = { 0 };
+
 	for (guchar *next_ip = ip; ip < end; ip = next_ip) {
 		MonoOpcodeEnum previous_il_op = il_op;
 		const guchar *tmp_ip = ip;
 		const int op_size = mono_opcode_value_and_size (&tmp_ip, end, &il_op);
-		CHECK_OPSIZE (op_size);
+		CHECK_OPSIZE (op_size, UNVERIFIED);
 		next_ip += op_size;
 
 		if (cfg->method == method)
@@ -7255,6 +7446,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case MONO_CEE_LDLOC_3:
 		case MONO_CEE_LDLOC_S:
 		case MONO_CEE_LDLOC:
+			if (skip.ldloc) {
+				skip.ldloc = FALSE;
+				break;
+			}
 			CHECK_LOCAL (n);
 			if (next_ip < end && is_addressable_valuetype_load (cfg, next_ip, header->locals[n])) {
 				EMIT_NEW_LOCLOADA (cfg, ins, n);
@@ -7270,6 +7465,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case MONO_CEE_STLOC_3:
 		case MONO_CEE_STLOC_S:
 		case MONO_CEE_STLOC:
+			if (skip.stloc) {
+				skip.stloc = FALSE;
+				break;
+			}
 			CHECK_LOCAL (n);
 			--sp;
 			*sp = convert_value (cfg, header->locals [n], *sp);
@@ -8151,8 +8350,20 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			// tailcall means "the backend can and will handle it".
 			// inst_tailcall means the tail. prefix is present.
 			tailcall_extra_arg = vtable_arg || imt_arg || will_have_imt_arg || mono_class_is_interface (cmethod->klass);
-			tailcall = inst_tailcall && is_supported_tailcall (cfg, ip, method, cmethod, fsig,
-						virtual_, tailcall_extra_arg, &tailcall_calli);
+			tailcall = (inst_tailcall
+#ifdef HOST_AMD64
+					|| (
+						(cfg->opt & MONO_OPT_TAILCALL)
+						&& cfg->method == cfg->current_method // FIXME inlining vs. tailcall
+						// FIXME only intra-assembly? patching? AOT?
+						&& (il_op != CEE_CALL || (method && cmethod && method->klass && cmethod->klass && m_class_get_image (method->klass) == m_class_get_image (cmethod->klass)))
+						&& is_safe_auto_tailcall (cfg, method, &safe_auto_tailcall_cache)
+						)
+#endif
+						)
+				 && is_call_followed_by_ret (cfg, method, next_ip, end, &skip)
+				 && is_supported_tailcall (cfg, ip, method, cmethod, fsig, virtual_, tailcall_extra_arg, &tailcall_calli);
+
 			// Writes to imt_arg, vtable_arg, virtual_, cmethod, must not occur from here (inputs to is_supported_tailcall).
 			// Capture values to later assert they don't change.
 			called_is_supported_tailcall = TRUE;
@@ -8165,7 +8376,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (virtual_generic_imt) {
 					if (tailcall) {
 						/* Prevent inlining of methods with tailcalls (the call stack would be altered) */
-						INLINE_FAILURE ("tailcall");
+						INLINE_FAILURE ("tailcall"); // FIXME
 					}
 					common_call = TRUE;
 					goto call_end;
@@ -8280,18 +8491,23 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			/* Tail recursion elimination */
+			// FIXME This block is now mostly redundant. Make it fully redundant and remove it.
 			if ((cfg->opt & MONO_OPT_TAILCALL) && il_op == MONO_CEE_CALL && cmethod == method && next_ip < end && next_ip [0] == CEE_RET && !vtable_arg) {
 				gboolean has_vtargs = FALSE;
 				int i;
 
 				/* Prevent inlining of methods with tailcalls (the call stack would be altered) */
-				INLINE_FAILURE ("tailcall");
+				INLINE_FAILURE ("tailcall"); // FIXME
 
 				/* keep it simple */
 				for (i = fsig->param_count - 1; !has_vtargs && i >= 0; i--)
 					has_vtargs = MONO_TYPE_ISSTRUCT (mono_method_signature (cmethod)->params [i]);
 
 				if (!has_vtargs) {
+
+					// FIXME
+					//g_assertf (tailcall, "%s %s old logic in use\n", __func__, method->name);
+
 					if (need_seq_point) {
 						emit_seq_point (cfg, method, ip, FALSE, TRUE);
 						need_seq_point = FALSE;
@@ -8311,6 +8527,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					/* skip the CEE_RET, too */
 					if (ip_in_bb (cfg, cfg->cbb, next_ip))
 						skip_ret = TRUE;
+					skip.ret = FALSE;
 					push_res = FALSE;
 					need_seq_point = FALSE;
 					goto call_end;
@@ -8517,7 +8734,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			if (tailcall) {
 				/* Prevent inlining of methods with tailcalls (the call stack would be altered) */
-				INLINE_FAILURE ("tailcall");
+				INLINE_FAILURE ("tailcall"); // FIXME
 			}
 
 			/*
@@ -8607,6 +8824,8 @@ calli_end:
 
 			if (skip_ret) {
 				// FIXME When not followed by CEE_RET, correct behavior is to raise an exception.
+				while (next_ip [0] == CEE_NOP)
+					++next_ip;
 				g_assert (next_ip [0] == CEE_RET);
 				next_ip += 1;
 				il_op = MonoOpcodeEnum_Invalid; // Call or ret? Unclear.
@@ -8618,6 +8837,10 @@ calli_end:
 			break;
 		}
 		case MONO_CEE_RET:
+			if (skip.ret) {
+				skip.ret = FALSE;
+				break;
+			}
 			mini_profiler_emit_leave (cfg, sig->ret->type != MONO_TYPE_VOID ? sp [-1] : NULL);
 
 			if (cfg->method != method) {
@@ -8682,6 +8905,10 @@ calli_end:
 			start_new_bblock = 1;
 			break;
 		case MONO_CEE_BR_S:
+			if (skip.br) {
+				skip.br = FALSE;
+				break;
+			}
 			MONO_INST_NEW (cfg, ins, OP_BR);
 			GET_BBLOCK (cfg, tblock, target);
 			link_bblock (cfg, cfg->cbb, tblock);
@@ -8713,6 +8940,10 @@ calli_end:
 			inline_costs += BRANCH_COST;
 			break;
 		case MONO_CEE_BR:
+			if (skip.br) {
+				skip.br = FALSE;
+				break;
+			}
 			MONO_INST_NEW (cfg, ins, OP_BR);
 
 			GET_BBLOCK (cfg, tblock, target);
@@ -9141,7 +9372,7 @@ calli_end:
 			if (next_ip < end) {
 				switch (next_ip [0]) {
 				case MONO_CEE_STLOC_S:
-					CHECK_OPSIZE (7);
+					CHECK_OPSIZE (7, UNVERIFIED);
 					loc_index = next_ip [1];
 					stloc_len = 2;
 					break;

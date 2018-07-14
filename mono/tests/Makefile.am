@@ -701,6 +701,7 @@ TESTS_IL_SRC=			\
 	tailcall/3.il	     \
 	tailcall/4.il	     \
 	tailcall/fsharp-deeptail.il	     \
+	tailcall/fsharp-deepnotail.il	     \
 	tailcall/fsharp-shallowtail.il	 \
 	tailcall/fsharp-shallownotail.il \
 	gptail1.il		\
@@ -898,6 +899,7 @@ PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall-rgctxb-static.exe
 PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Methodical/tailcall/test_virt.exe # fix pending
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail.exe
 endif
 
 if POWERPC
@@ -912,6 +914,7 @@ PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail.exe # FIXME test PowerPC
 PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
@@ -932,6 +935,7 @@ PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail.exe # FIXME test PowerPC
 PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Directed/tailcall/tailcall.exe
 PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Methodical/tailcall/test_virt.exe
 PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.exe
@@ -952,6 +956,7 @@ PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail.exe # FIXME granularity
 PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += ivtail1.exe
 PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Directed/tailcall/tailcall.exe  # interface
@@ -959,6 +964,7 @@ endif
 
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail.exe
 endif
 
 if MIPS
@@ -973,6 +979,7 @@ PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail.exe
 PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
@@ -995,6 +1002,7 @@ PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
 PLATFORM_DISABLED_TESTS += tailcall/8273.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail.exe # FIXME test S390x
 PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
@@ -1182,6 +1190,7 @@ PROFILE_DISABLED_TESTS += \
 	weak-fields.exe
 
 PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail.exe # FIXME granularity/gsharedvt
 PROFILE_DISABLED_TESTS += tailcall-interface-conservestack.exe
 
 endif
@@ -1190,15 +1199,10 @@ if HYBRID_AOT_TESTS
 PROFILE_DISABLED_TESTS += \
 	bug-80307.exe \
 	namedmutex-destroy-race.exe
-
-PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 endif
 
 AOT_DISABLED_TESTS= \
 	constraints-load.exe
-
-# tailcall/fsharp FullAOT stack overflow in CI but not locally.
-AOT_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 
 CI_DISABLED_TESTS = \
 	main-returns-background-resetabort.exe \
@@ -1316,6 +1320,7 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	tailcall-virt.exe \
 	tailcall-return-valuetype.exe \
 	tailcall/fsharp-deeptail.exe \
+	tailcall/fsharp-deepnotail.exe \
 	tailcall/2.exe \
 	tailcall/3.exe \
 	tailcall/4.exe \
