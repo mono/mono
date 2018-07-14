@@ -326,6 +326,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanHelpers.BinarySearch.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanHelpers.Byte.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanHelpers.Char.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanHelpers.T.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\SpanHelpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\String.Comparison.cs" />
