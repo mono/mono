@@ -82,9 +82,11 @@ corefx/SR.missing.cs
 
 System.Runtime.InteropServices/ComAwareEventInfo.cs
 
-System.Security.Cryptography/ECCurve.cs
-System.Security.Cryptography/ECPoint.cs
-System.Security.Cryptography/ECParameters.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/ECCurve.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/ECCurve.ECCurveType.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/ECCurve.NamedCurves.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/ECPoint.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/ECParameters.cs
 System.Security.Cryptography/SHA256CryptoServiceProvider.cs
 System.Security.Cryptography/SHA384CryptoServiceProvider.cs
 System.Security.Cryptography/SHA512CryptoServiceProvider.cs
