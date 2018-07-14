@@ -25,8 +25,8 @@ namespace Mono.AssemblyCompare
 	{
 		static int Main (string [] args)
 		{
-			if (args.Length != 2) {
-				Console.WriteLine ("Usage: mono mono-api-diff.exe <assembly 1 xml> <assembly 2 xml>");
+			if (args.Length != 2 && args.Length != 3) {
+				Console.WriteLine ("Usage: mono mono-api-diff.exe <assembly 1 xml> <assembly 2 xml> [<output xml>]");
 				return 1;
 			}
 
@@ -34,7 +34,14 @@ namespace Mono.AssemblyCompare
 			XMLAssembly mono = CreateXMLAssembly (args [1]);
 			XmlDocument doc = ms.CompareAndGetDocument (mono);
 
-			XmlTextWriter writer = new XmlTextWriter (Console.Out);
+			string output = null;
+			if (args.Length == 3)
+				output = args [2];
+			StreamWriter outputStream = null;
+			if (!string.IsNullOrEmpty (output))
+				outputStream = new StreamWriter (output);
+
+			XmlTextWriter writer = new XmlTextWriter (outputStream ?? Console.Out);
 			writer.Formatting = Formatting.Indented;
 			doc.WriteTo (writer);
 
