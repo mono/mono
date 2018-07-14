@@ -140,10 +140,9 @@ namespace System.IO {
 			}
 		}
 
-		[MonoTODO("It always returns true")]
 		public bool IsReady {
 			get {
-				return true;
+				return Directory.Exists (Name);
 			}
 		}
 		
