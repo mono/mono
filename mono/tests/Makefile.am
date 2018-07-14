@@ -955,6 +955,7 @@ PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += ivtail1.exe
 PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Directed/tailcall/tailcall.exe  # interface
+PLATFORM_DISABLED_TESTS += tailcall-rgctxb-static.exe
 endif
 
 if ARM64
