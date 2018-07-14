@@ -1795,6 +1795,8 @@ mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 	g_free (cinfo);
 }
 
+#ifndef DISABLE_JIT
+
 gboolean
 mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
@@ -1821,8 +1823,6 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 
 	return res;
 }
-
-#ifndef DISABLE_JIT
 
 static gboolean
 debug_omit_fp (void)

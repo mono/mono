@@ -1344,6 +1344,8 @@ get_call_info (MonoMethodSignature *sig)
 	return cinfo;
 }
 
+#ifndef DISABLE_JIT
+
 gboolean
 mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
@@ -1365,6 +1367,8 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 
 	return res;
 }
+
+#endif
 
 /*
  * Set var information according to the calling convention. ppc version.

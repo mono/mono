@@ -7546,6 +7546,8 @@ mono_arch_opcode_supported (int opcode)
 /*                                                                  */
 /*------------------------------------------------------------------*/
 
+#ifndef DISABLE_JIT
+
 gboolean
 mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
@@ -7573,5 +7575,7 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 
 	return res;
 }
+
+#endif
 
 /*========================= End of Function ========================*/

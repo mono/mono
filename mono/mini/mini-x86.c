@@ -672,6 +672,8 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 	return args_size;
 }
 
+#ifndef DISABLE_JIT
+
 gboolean
 mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
@@ -700,6 +702,8 @@ exit:
 
 	return res;
 }
+
+#endif
 
 /*
  * Initialize the cpu to execute managed code.
