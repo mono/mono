@@ -651,61 +651,6 @@ ves_icall_System_Array_CreateInstanceImpl (MonoReflectionType *type, MonoArray *
 	return array;
 }
 
-ICALL_EXPORT MonoArray *
-ves_icall_System_Array_CreateInstanceImpl64 (MonoReflectionType *type, MonoArray *lengths, MonoArray *bounds)
-{
-	ERROR_DECL (error);
-	MonoClass *aklass, *klass;
-	MonoArray *array;
-	uintptr_t *sizes, i;
-	gboolean bounded = FALSE;
-
-	MONO_CHECK_ARG_NULL (type, NULL);
-	MONO_CHECK_ARG_NULL (lengths, NULL);
-
-	MONO_CHECK_ARG (lengths, mono_array_length (lengths) > 0, NULL);
-	if (bounds)
-		MONO_CHECK_ARG (bounds, mono_array_length (lengths) == mono_array_length (bounds), NULL);
-
-	for (i = 0; i < mono_array_length (lengths); i++) {
-		if ((mono_array_get (lengths, gint64, i) < 0) ||
-		    (mono_array_get (lengths, gint64, i) > MONO_ARRAY_MAX_INDEX)) {
-			mono_error_set_argument_out_of_range (error, NULL);
-			mono_error_set_pending_exception (error);
-			return NULL;
-		}
-	}
-
-	klass = mono_class_from_mono_type (type->type);
-	mono_class_init_checked (klass, error);
-	if (mono_error_set_pending_exception (error))
-		return NULL;
-
-	if (bounds && (mono_array_length (bounds) == 1) && (mono_array_get (bounds, gint64, 0) != 0))
-		/* vectors are not the same as one dimensional arrays with no-zero bounds */
-		bounded = TRUE;
-	else
-		bounded = FALSE;
-
-	aklass = mono_class_create_bounded_array (klass, mono_array_length (lengths), bounded);
-
-	uintptr_t aklass_rank = m_class_get_rank (aklass);
-
-	sizes = (uintptr_t *)alloca (aklass_rank * sizeof(intptr_t) * 2);
-	for (i = 0; i < aklass_rank; ++i) {
-		sizes [i] = mono_array_get (lengths, guint64, i);
-		if (bounds)
-			sizes [i + aklass_rank] = (mono_array_size_t) mono_array_get (bounds, guint64, i);
-		else
-			sizes [i + aklass_rank] = 0;
-	}
-
-	array = mono_array_new_full_checked (mono_object_domain (type), aklass, sizes, (intptr_t*)sizes + aklass_rank, error);
-	mono_error_set_pending_exception (error);
-
-	return array;
-}
-
 ICALL_EXPORT gint32 
 ves_icall_System_Array_GetRank (MonoObject *arr)
 {
@@ -889,6 +834,27 @@ ves_icall_System_Array_SetGenericValueImpl (MonoArray *arr, guint32 pos, gpointe
 		else
 			mono_gc_memmove_atomic (ea, value, esize);
 	}
+}
+
+ICALL_EXPORT void
+ves_icall_System_Runtime_RuntimeImports_Memmove (guint8 *destination, guint8 *source, guint byte_count)
+{
+	mono_gc_memmove_atomic (destination, source, byte_count);
+}
+
+ICALL_EXPORT void
+ves_icall_System_Runtime_RuntimeImports_Memmove_wbarrier (guint8 *destination, guint8 *source, guint len, MonoType *type)
+{
+	if (MONO_TYPE_IS_REFERENCE (type))
+		mono_gc_wbarrier_arrayref_copy (destination, source, len);
+	else
+		mono_gc_wbarrier_value_copy (destination, source, len, mono_class_from_mono_type (type));
+}
+
+ICALL_EXPORT void
+ves_icall_System_Runtime_RuntimeImports_ZeroMemory (guint8 *p, guint byte_length)
+{
+	memset (p, 0, byte_length);
 }
 
 ICALL_EXPORT void
@@ -5712,10 +5678,10 @@ ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (MonoError *error)
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath, MonoError *error)
+ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath, char *eventType, char *appPath, MonoError *error)
 {
 #ifdef TARGET_OSX
-	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath);
+	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, eventType, appPath);
 
 	mono_get_runtime_callbacks ()->install_state_summarizer ();
 #else

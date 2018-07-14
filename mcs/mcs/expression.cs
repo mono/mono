@@ -920,7 +920,7 @@ namespace Mono.CSharp
 
 		public override bool ContainsEmitWithAwait ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)

@@ -153,7 +153,6 @@ ICALL(ARGI_4, "Setup",                            mono_ArgIterator_Setup)
 ICALL_TYPE(ARRAY, "System.Array", ARRAY_1)
 ICALL(ARRAY_1, "ClearInternal",    ves_icall_System_Array_ClearInternal)
 ICALL(ARRAY_3, "CreateInstanceImpl",   ves_icall_System_Array_CreateInstanceImpl)
-ICALL(ARRAY_14, "CreateInstanceImpl64",   ves_icall_System_Array_CreateInstanceImpl64)
 ICALL(ARRAY_4, "FastCopy",         ves_icall_System_Array_FastCopy)
 ICALL(ARRAY_5, "GetGenericValueImpl", ves_icall_System_Array_GetGenericValueImpl)
 ICALL(ARRAY_6, "GetLength",        ves_icall_System_Array_GetLength)
@@ -788,6 +787,11 @@ HANDLES(ICALL(REMSER_0, "GetVirtualMethod", ves_icall_Remoting_RemotingServices_
 ICALL(REMSER_1, "InternalExecute", ves_icall_InternalExecute)
 HANDLES(ICALL(REMSER_2, "IsTransparentProxy", ves_icall_IsTransparentProxy))
 #endif
+
+ICALL_TYPE(RUNIMPORT, "System.Runtime.RuntimeImports", RUNIMPORT_1)
+NOHANDLES(ICALL(RUNIMPORT_1, "Memmove", ves_icall_System_Runtime_RuntimeImports_Memmove))
+NOHANDLES(ICALL(RUNIMPORT_2, "Memmove_wbarrier", ves_icall_System_Runtime_RuntimeImports_Memmove_wbarrier))
+NOHANDLES(ICALL(RUNIMPORT_3, "ZeroMemory", ves_icall_System_Runtime_RuntimeImports_ZeroMemory))
 
 ICALL_TYPE(RVH, "System.Runtime.Versioning.VersioningHelper", RVH_1)
 HANDLES(ICALL(RVH_1, "GetRuntimeId", ves_icall_System_Runtime_Versioning_VersioningHelper_GetRuntimeId))

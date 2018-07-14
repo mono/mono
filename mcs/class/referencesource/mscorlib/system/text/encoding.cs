@@ -1379,7 +1379,7 @@ namespace System.Text
 
         public unsafe string GetString(ReadOnlySpan<byte> bytes)
         {
-            fixed (byte* bytesPtr = &bytes.DangerousGetPinnableReference())
+            fixed (byte* bytesPtr = &bytes.GetPinnableReference())
             {
                 return GetString(bytesPtr, bytes.Length);
             }

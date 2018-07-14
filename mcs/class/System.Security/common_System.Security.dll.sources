@@ -37,7 +37,7 @@ System.Security.Cryptography/ProtectedData.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/Asn1/SignerInfoAsn.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/Asn1/SigningCertificateAsn.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/Asn1/X509ExtensionAsn.cs
-System.Security.Cryptography.Pkcs/AlgorithmIdentifier.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/AlgorithmIdentifier.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/CmsRecipient.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/CmsRecipientCollection.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/CmsRecipientEnumerator.cs
