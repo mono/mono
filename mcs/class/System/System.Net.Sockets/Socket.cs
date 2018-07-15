@@ -1383,6 +1383,14 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
+        public int Receive (Span<byte> buffer, SocketFlags socketFlags)
+		{
+            byte[] tempBuffer = new byte[buffer.Length];
+            int ret = Receive (tempBuffer, SocketFlags.None);
+            tempBuffer.CopyTo (buffer);
+            return ret;
+		}
+
 		public bool ReceiveAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
@@ -1867,6 +1875,11 @@ namespace System.Net.Sockets
 			errorCode = (SocketError)nativeError;
 
 			return ret;
+		}
+
+        public int Send (ReadOnlySpan<byte> buffer, SocketFlags socketFlags)
+		{
+			return Send (buffer.ToArray(), socketFlags);
 		}
 
 		public bool SendAsync (SocketAsyncEventArgs e)
