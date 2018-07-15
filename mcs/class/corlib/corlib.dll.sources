@@ -330,6 +330,7 @@ System.Runtime/MemoryFailPoint.cs
 System.Runtime.CompilerServices/ConditionalWeakTable.cs
 System.Runtime.CompilerServices/RuntimeHelpers.cs
 System.Runtime.CompilerServices/Unsafe.cs
+System.Runtime.CompilerServices/PreserveDependencyAttribute.cs
 System.Runtime.Hosting/ActivationArguments.cs
 System.Runtime.Hosting/ApplicationActivator.cs
 System.Runtime.InteropServices/_Activator.cs
