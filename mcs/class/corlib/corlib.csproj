@@ -211,6 +211,7 @@
   </ItemGroup>
   <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Action.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ArraySegment.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\ArrayPool.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Buffers\ArrayPoolEventSource.cs" />
@@ -332,6 +333,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\String.Comparison.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\String.Manipulation.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\String.Searching.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\String.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\StringSplitOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\ASCIIEncoding.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\Decoder.cs" />
@@ -500,7 +502,6 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Globalization\GlobalizationMode.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\ReflectionBlockedAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\TaskAwaiter.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\String.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\CancellationTokenRegistration.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\LockHolder.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\ConcurrentExclusiveSchedulerPair.cs" />
@@ -576,7 +577,6 @@
     <Compile Include="..\referencesource\mscorlib\system\_localdatastore.cs" />
     <Compile Include="..\referencesource\mscorlib\system\_localdatastoremgr.cs" />
     <Compile Include="..\referencesource\mscorlib\system\accessviolationexception.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\action.cs" />
     <Compile Include="..\referencesource\mscorlib\system\activator.cs" />
     <Compile Include="..\referencesource\mscorlib\system\appdomainattributes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\appdomainunloadedexception.cs" />
@@ -1969,6 +1969,7 @@
     <Compile Include="corefx\GlobalizationMode.cs" />
     <Compile Include="corefx\RuntimeImports.cs" />
     <Compile Include="corefx\SR.cs" />
+    <Compile Include="corefx\SR.missing.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />
     <Compile Include="corert\Debug.cs" />
