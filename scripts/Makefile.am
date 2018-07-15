@@ -89,7 +89,6 @@ scripts_4_0 = \
 	mod$(SCRIPT_SUFFIX)			\
 	monolinker$(SCRIPT_SUFFIX)		\
 	mono-api-info$(SCRIPT_SUFFIX) 		\
-	mono-api-diff$(SCRIPT_SUFFIX) 		\
 	mono-api-html$(SCRIPT_SUFFIX) 		\
 	mono-shlib-cop$(SCRIPT_SUFFIX) 		\
 	mozroots$(SCRIPT_SUFFIX)		\
