@@ -1,3 +1,4 @@
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/AlgorithmIdentifierTest.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/CryptographicAttributeObjectCollectionTests.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/CmsRecipientCollectionTests.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/EnvelopedCms/CertificateTests.cs

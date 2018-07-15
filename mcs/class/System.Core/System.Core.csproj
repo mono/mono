@@ -449,6 +449,11 @@
     <Compile Include="..\..\..\external\corefx\src\System.Linq\src\System\Linq\Utilities.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq\src\System\Linq\Where.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq\src\System\Linq\Zip.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\System\Security\Cryptography\ECCurve.ECCurveType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\System\Security\Cryptography\ECCurve.NamedCurves.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\System\Security\Cryptography\ECCurve.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\System\Security\Cryptography\ECParameters.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\System\Security\Cryptography\ECPoint.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\System\Security\Cryptography\IncrementalHash.net46.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
@@ -516,9 +521,6 @@
     <Compile Include="System.Security.Cryptography.X509Certificates\ECDsaCertificateExtensions.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\RSACertificateExtensions.cs" />
     <Compile Include="System.Security.Cryptography\AesCng.cs" />
-    <Compile Include="System.Security.Cryptography\ECCurve.cs" />
-    <Compile Include="System.Security.Cryptography\ECParameters.cs" />
-    <Compile Include="System.Security.Cryptography\ECPoint.cs" />
     <Compile Include="System.Security.Cryptography\SHA256CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA384CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA512CryptoServiceProvider.cs" />
