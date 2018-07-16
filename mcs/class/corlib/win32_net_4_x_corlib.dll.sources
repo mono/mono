@@ -29,7 +29,8 @@
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolPreAllocatedOverlapped.cs
 
 corert/RuntimeImports.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Number.Windows.cs
+#../../../external/corert/src/System.Private.CoreLib/src/System/Number.Windows.cs
+corert/Number.Windows.cs
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
 
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Windows.cs

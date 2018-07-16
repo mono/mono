@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime
 {
-    public static class RuntimeImports
+    public static partial class RuntimeImports
     {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern unsafe void _ecvt_s(byte* buffer, int sizeInBytes, double value, int count, int* dec, int* sign);
