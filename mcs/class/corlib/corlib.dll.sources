@@ -891,7 +891,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/_localdatastore.cs
 ../referencesource/mscorlib/system/_localdatastoremgr.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/AccessViolationException.cs
-../referencesource/mscorlib/system/action.cs
 ../referencesource/mscorlib/system/activator.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/AggregateException.cs
 ../referencesource/mscorlib/system/appdomainattributes.cs
@@ -1586,8 +1585,6 @@ corert/RuntimeAugments.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Array.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/ByReference.cs
 # TODO: Should all come from shared
-../../../external/corert/src/System.Private.CoreLib/src/System/String.cs
-
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/GlobalizationMode.cs
@@ -1624,6 +1621,7 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/KeyedCollection.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/ReadOnlyDictionary.cs
 
+../../../external/corefx/src/Common/src/CoreLib/System/Action.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ArraySegment.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Gen2GcCallback.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/HashCode.cs
@@ -1640,10 +1638,8 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Span.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Span.Fast.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/SpanDebugView.cs
-../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.cs
-../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.BinarySearch.cs
-../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.Byte.cs
-../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.T.cs
+../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers*.cs
+../../../external/corefx/src/Common/src/CoreLib/System/String.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/String.Comparison.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/String.Manipulation.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/String.Searching.cs
@@ -1795,5 +1791,9 @@ corert/RuntimeAugments.cs
 
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509ContentType.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509KeyStorageFlags.cs
+
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Unix.cs
+../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeHandleCache.cs
 
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs
