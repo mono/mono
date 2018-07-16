@@ -46,7 +46,7 @@ using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Diagnostics.Private;
+using System.Diagnostics;
 
 namespace System
 {

@@ -1562,8 +1562,6 @@ corert/RuntimeAugments.cs
 
 ../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
 
-../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
-
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/AsyncCausalityTracer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/TaskTraceCallbacks.cs
 
@@ -1667,6 +1665,7 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/IDictionaryDebugView.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/KeyValuePair.cs
 
+../../../external/corefx/src/Common/src/CoreLib/System/Diagnostics/Debug.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Diagnostics/StackTraceHiddenAttribute.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CompareInfo.cs
