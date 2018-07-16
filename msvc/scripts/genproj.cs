@@ -187,9 +187,9 @@ public class SlnGenerator {
 
 			sln.WriteLine ("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution");
 
-			// Manually insert jay's configurations because they are different
+			// Manually insert configurations for jay and genconsts
 			WriteProjectConfigurationPlatforms (sln, jay_vcxproj_guid, "Win32", true);
-			WriteProjectConfigurationPlatforms (sln, genconsts_csproj_guid, "net_4_x", true);
+			WriteProjectConfigurationPlatforms (sln, genconsts_csproj_guid, "x86", true);
 
 			foreach (var proj in libraries) {
 				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, "net_4_x", false);
