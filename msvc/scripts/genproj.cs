@@ -122,7 +122,7 @@ public class SlnGenerator {
 		WriteProjectReference(sln, csproj_type_guid, proj.library, relativePath, proj.projectGuid, dependencyGuids);
 	}
 
-	private void WriteProjectConfigurationPlatforms (StreamWriter sln, string guid, string defaultPlatform)
+	private void WriteProjectConfigurationPlatforms (StreamWriter sln, string guid, string defaultPlatform, bool forceBuild)
 	{
 		var fallbackProfileNames = new List<string> ();
 
@@ -140,8 +140,7 @@ public class SlnGenerator {
 			) {
 				fallbackProfileNames.Add (platformToBuild);
 				platformToBuild = defaultPlatform;
-				// HACK: Force build for C++ executables like jay ('Win32') but not for managed assemblies
-				isBuildEnabled = (defaultPlatform == "Win32");
+				isBuildEnabled = forceBuild;
 			}
 
 			sln.WriteLine ("\t\t{0}.Debug|{1}.ActiveCfg = Debug|{2}", guid, profile, platformToBuild);
@@ -189,10 +188,11 @@ public class SlnGenerator {
 			sln.WriteLine ("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution");
 
 			// Manually insert jay's configurations because they are different
-			WriteProjectConfigurationPlatforms (sln, jay_vcxproj_guid, "Win32");
+			WriteProjectConfigurationPlatforms (sln, jay_vcxproj_guid, "Win32", true);
+			WriteProjectConfigurationPlatforms (sln, genconsts_csproj_guid, "net_4_x", true);
 
 			foreach (var proj in libraries) {
-				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, "net_4_x");
+				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, "net_4_x", false);
 			}
 
 			sln.WriteLine ("\tEndGlobalSection");
