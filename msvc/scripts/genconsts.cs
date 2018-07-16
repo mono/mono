@@ -83,7 +83,15 @@ public static class Program {
         var resultText = templateText.Replace ("@MONO_VERSION@", monoVersion)
             .Replace ("@MONO_CORLIB_VERSION@", monoCorlibVersion);
 
-        File.WriteAllText(resultPath, resultText);
+        if (File.Exists (resultPath)) {
+            var existingText = File.ReadAllText (resultPath);
+            if (existingText.Trim () == resultText.Trim ()) {
+                Console.WriteLine ($"{resultPath} not changed");
+                return 0;
+            }
+        }
+
+        File.WriteAllText (resultPath, resultText);
         Console.WriteLine ($"Generated {resultPath} successfully");
 
         return 0;
