@@ -212,8 +212,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		[Obsolete ("Use the Issuer property.")]
 		public virtual string GetIssuerName () 
 		{
-			X509Helper.ThrowIfContextInvalid (impl);
-			return impl.GetIssuerName (true);
+			return Issuer;
 		}
 	
 		public virtual string GetKeyAlgorithm () 
@@ -241,8 +240,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		[Obsolete ("Use the Subject property.")]
 		public virtual string GetName ()
 		{
-			X509Helper.ThrowIfContextInvalid (impl);
-			return impl.GetSubjectName (true);
+			return Subject;
 		}
 	
 		public virtual byte[] GetPublicKey () 

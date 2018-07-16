@@ -104,15 +104,9 @@ namespace System.Security.Cryptography.X509Certificates
 			}
 		}
 
-		public override string GetSubjectName (bool legacyV1Mode)
-		{
-			return FallbackImpl.GetSubjectName (legacyV1Mode);
-		}
+		public override string Subject => FallbackImpl.Subject;
 
-		public override string GetIssuerName (bool legacyV1Mode)
-		{
-			return FallbackImpl.GetIssuerName (legacyV1Mode);
-		}
+		public override string Issuer => FallbackImpl.Issuer;
 
 		public override DateTime GetValidFrom ()
 		{
@@ -174,9 +168,9 @@ namespace System.Security.Cryptography.X509Certificates
 
 			string nl = Environment.NewLine;
 			StringBuilder sb = new StringBuilder ();
-			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, GetSubjectName (false));
+			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, Subject);
 
-			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, GetIssuerName (false));
+			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, Issuer);
 			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetValidFrom ().ToLocalTime ());
 			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetValidUntil ().ToLocalTime ());
 			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, X509Helper.ToHexString (GetCertHash ()));

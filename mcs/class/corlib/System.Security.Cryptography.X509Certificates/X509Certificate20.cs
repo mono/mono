@@ -113,7 +113,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				X509Helper.ThrowIfContextInvalid (impl);
 
 				if (issuer_name == null)
-					issuer_name = impl.GetIssuerName (false);
+					issuer_name = impl.Issuer;
 				return issuer_name;
 			}
 		}
@@ -123,7 +123,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				X509Helper.ThrowIfContextInvalid (impl);
 
 				if (subject_name == null)
-					subject_name = impl.GetSubjectName (false);
+					subject_name = impl.Subject;
 				return subject_name;
 			}
 		}
