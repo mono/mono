@@ -1164,7 +1164,11 @@
     <Compile Include="Mono.Security\Uri.cs" />
     <Compile Include="Mono.Xml\SecurityParser.cs" />
     <Compile Include="Mono.Xml\SmallXmlParser.cs" />
+    <Compile Include="Mono\CertificateImportFlags.cs" />
     <Compile Include="Mono\DataConverter.cs" />
+    <Compile Include="Mono\DependencyInjector.cs" />
+    <Compile Include="Mono\ISystemCertificateProvider.cs" />
+    <Compile Include="Mono\ISystemDependencyProvider.cs" />
     <Compile Include="Mono\Runtime.cs" />
     <Compile Include="Mono\RuntimeHandles.cs" />
     <Compile Include="Mono\RuntimeMarshal.cs" />
@@ -1702,13 +1706,9 @@
     <Compile Include="System.Security.AccessControl\SddlAccessRight.cs" />
     <Compile Include="System.Security.AccessControl\SecurityInfos.cs" />
     <Compile Include="System.Security.AccessControl\SystemAcl.cs" />
-    <Compile Include="System.Security.Cryptography.X509Certificates\INativeCertificateHelper.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate20.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509CertificateImpl.cs" />
-    <Compile Include="System.Security.Cryptography.X509Certificates\X509CertificateImplApple.cs" />
-    <Compile Include="System.Security.Cryptography.X509Certificates\X509CertificateImplMono.cs" />
-    <Compile Include="System.Security.Cryptography.X509Certificates\X509Helper.Apple.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Helper.cs" />
     <Compile Include="System.Security.Cryptography\CryptoAPITransform.cs" />
     <Compile Include="System.Security.Cryptography\CryptoConfig.Mobile.cs" />

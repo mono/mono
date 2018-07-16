@@ -774,6 +774,8 @@
     <Compile Include="Mono.AppleTls\SecureTransport.cs" />
     <Compile Include="Mono.AppleTls\SslConnection.cs" />
     <Compile Include="Mono.AppleTls\Trust.cs" />
+    <Compile Include="Mono.AppleTls\X509CertificateImplApple.cs" />
+    <Compile Include="Mono.AppleTls\X509PalImpl.Apple.cs" />
     <Compile Include="Mono.Btls\MonoBtlsBio.cs" />
     <Compile Include="Mono.Btls\MonoBtlsContext.cs" />
     <Compile Include="Mono.Btls\MonoBtlsError.cs" />
@@ -812,8 +814,14 @@
     <Compile Include="Mono.Btls\MonoBtlsX509VerifyParam.cs" />
     <Compile Include="Mono.Btls\X509CertificateImplBtls.cs" />
     <Compile Include="Mono.Btls\X509ChainImplBtls.cs" />
+    <Compile Include="Mono.Btls\X509PalImpl.Btls.cs" />
     <Compile Include="Mono.Util\MonoPInvokeCallbackAttribute.cs" />
     <Compile Include="MonoTouch\Dummy.cs" />
+    <Compile Include="Mono\SystemCertificateProvider.cs" />
+    <Compile Include="Mono\SystemDependencyProvider.cs" />
+    <Compile Include="Mono\X509Pal.cs" />
+    <Compile Include="Mono\X509PalImpl.Mono.cs" />
+    <Compile Include="Mono\X509PalImpl.cs" />
     <Compile Include="ReferenceSources\AssertWrapper.cs" />
     <Compile Include="ReferenceSources\AutoWebProxyScriptEngine.cs" />
     <Compile Include="ReferenceSources\EnvironmentHelpers.cs" />
