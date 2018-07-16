@@ -891,7 +891,6 @@ ReferenceSources/Type.cs
 ../referencesource/mscorlib/system/_localdatastore.cs
 ../referencesource/mscorlib/system/_localdatastoremgr.cs
 ../referencesource/mscorlib/system/accessviolationexception.cs
-../referencesource/mscorlib/system/action.cs
 ../referencesource/mscorlib/system/activator.cs
 ../referencesource/mscorlib/system/AggregateException.cs
 ../referencesource/mscorlib/system/appdomainattributes.cs
@@ -1540,6 +1539,7 @@ coreclr/SorterArray.cs
 corefx/AwaitTaskContinuation.cs
 corefx/SynchronizationContext.cs
 corefx/SR.cs
+corefx/SR.missing.cs
 corefx/CompareInfo.cs
 corefx/GlobalizationMode.cs
 corefx/Interop.GetRandomBytes.Mono.cs
@@ -1570,8 +1570,6 @@ corert/RuntimeAugments.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Array.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/ByReference.cs
 # TODO: Should all come from shared
-../../../external/corert/src/System.Private.CoreLib/src/System/String.cs
-
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/GlobalizationMode.cs
@@ -1608,6 +1606,7 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/KeyedCollection.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/ReadOnlyDictionary.cs
 
+../../../external/corefx/src/Common/src/CoreLib/System/Action.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ArraySegment.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Gen2GcCallback.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/HashCode.cs
@@ -1624,10 +1623,8 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Span.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Span.Fast.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/SpanDebugView.cs
-../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.cs
-../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.BinarySearch.cs
-../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.Byte.cs
-../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers.T.cs
+../../../external/corefx/src/Common/src/CoreLib/System/SpanHelpers*.cs
+../../../external/corefx/src/Common/src/CoreLib/System/String.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/String.Comparison.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/String.Manipulation.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/String.Searching.cs

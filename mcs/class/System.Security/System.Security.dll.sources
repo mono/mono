@@ -68,7 +68,7 @@ System.Security.Cryptography.X509Certificates/X509SelectionFlag.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/RSAPKCS1SignatureDescription.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/Signature.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/SignedInfo.cs
-System.Security.Cryptography.Xml/SignedXml.cs
+../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/SignedXml.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/SignedXmlDebugLog.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/SymmetricKeyWrap.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/Transform.cs

@@ -131,6 +131,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObject.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObjectCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\CryptographicAttributeObjectEnumerator.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\AlgorithmIdentifier.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\AlgorithmIdentifierAsn.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\AttributeAsn.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Asn1\CertificateChoiceAsn.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Pkcs9DocumentDescription.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Pkcs9DocumentName.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Pkcs9MessageDigest.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Pkcs9SigningTime.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\PublicKeyInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\RecipientInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\RecipientInfoCollection.cs" />
@@ -201,9 +203,7 @@
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\AlgorithmIdentifier.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\EnvelopedCms.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\Pkcs9SigningTime.cs" />
     <Compile Include="corefx\SR.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(HostPlatform)' == 'linux' ">
@@ -267,6 +267,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\ReferenceTargetType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Signature.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXml.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXmlDebugLog.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SymmetricKeyWrap.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Transform.cs" />
@@ -286,7 +287,6 @@
     <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />
     <Compile Include="System.Security.Cryptography\MemoryProtectionScope.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedData.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedMemory.cs" />
@@ -356,6 +356,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\ReferenceTargetType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Signature.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXml.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXmlDebugLog.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SymmetricKeyWrap.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Transform.cs" />
@@ -375,7 +376,6 @@
     <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />
     <Compile Include="System.Security.Cryptography\MemoryProtectionScope.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedData.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedMemory.cs" />
@@ -445,6 +445,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\ReferenceTargetType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Signature.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXml.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXmlDebugLog.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SymmetricKeyWrap.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Transform.cs" />
@@ -464,7 +465,6 @@
     <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />
     <Compile Include="System.Security.Cryptography\MemoryProtectionScope.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedData.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedMemory.cs" />
@@ -543,6 +543,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\ReferenceTargetType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Signature.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXml.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXmlDebugLog.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SymmetricKeyWrap.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Transform.cs" />
@@ -561,7 +562,6 @@
     <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />
     <Compile Include="System.Security.Cryptography\MemoryProtectionScope.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedMemory.cs" />
     <Compile Include="System.Security.Permissions\DataProtectionPermission.cs" />
@@ -642,6 +642,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\ReferenceTargetType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Signature.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXml.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXmlDebugLog.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SymmetricKeyWrap.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Transform.cs" />
@@ -661,7 +662,6 @@
     <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />
     <Compile Include="System.Security.Cryptography\MemoryProtectionScope.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedData.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedMemory.cs" />
@@ -734,6 +734,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\ReferenceTargetType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Signature.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXml.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXmlDebugLog.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SymmetricKeyWrap.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Transform.cs" />
@@ -753,7 +754,6 @@
     <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />
     <Compile Include="System.Security.Cryptography\MemoryProtectionScope.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedData.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedMemory.cs" />
@@ -835,6 +835,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\ReferenceTargetType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Signature.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXml.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SignedXmlDebugLog.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\SymmetricKeyWrap.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\Transform.cs" />
@@ -853,7 +854,6 @@
     <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
-    <Compile Include="System.Security.Cryptography.Xml\SignedXml.cs" />
     <Compile Include="System.Security.Cryptography\MemoryProtectionScope.cs" />
     <Compile Include="System.Security.Cryptography\ProtectedMemory.cs" />
     <Compile Include="System.Security.Permissions\DataProtectionPermission.cs" />
