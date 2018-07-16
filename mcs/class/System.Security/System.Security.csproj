@@ -181,6 +181,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Pkcs9DocumentDescription.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Pkcs9DocumentName.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Pkcs9MessageDigest.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\Pkcs9SigningTime.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\PublicKeyInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\RecipientInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\RecipientInfoCollection.cs" />
@@ -203,7 +204,6 @@
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\EnvelopedCms.cs" />
-    <Compile Include="System.Security.Cryptography.Pkcs\Pkcs9SigningTime.cs" />
     <Compile Include="corefx\SR.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(HostPlatform)' == 'linux' ">
