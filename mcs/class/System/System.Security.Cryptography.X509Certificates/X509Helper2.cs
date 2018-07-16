@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -36,6 +35,9 @@ using MX = MonoSecurity::Mono.Security.X509;
 #else
 using MX = Mono.Security.X509;
 #endif
+
+#if MONO_FEATURE_BTLS
+using Mono.Btls;
 #endif
 
 using System.IO;
@@ -46,7 +48,6 @@ namespace System.Security.Cryptography.X509Certificates
 {
 	internal static class X509Helper2
 	{
-#if SECURITY_DEP
 		/*
 		 * This is used by X509ChainImplMono
 		 * 
@@ -63,7 +64,7 @@ namespace System.Security.Cryptography.X509Certificates
 				return monoImpl.MonoCertificate;
 			if (certificate.Impl is X509Certificate2Impl impl2 && impl2.FallbackImpl is X509Certificate2ImplMono fallbackImpl)
 				return fallbackImpl.MonoCertificate;
-			
+
 			var impl = SystemDependencyProvider.Instance.CertificateProvider.Import (certificate, CertificateImportFlags.DisableNativeBackend);
 			if (impl is X509Certificate2ImplMono fallbackImpl2)
 				return fallbackImpl2.MonoCertificate;
@@ -89,6 +90,43 @@ namespace System.Security.Cryptography.X509Certificates
 		internal static Exception GetInvalidChainContextException ()
 		{
 			return new CryptographicException (Locale.GetText ("Chain instance is empty."));
+		}
+
+		[Obsolete ("This is only used by Mono.Security's X509Store and will be replaced shortly.")]
+		internal static long GetSubjectNameHash (X509Certificate certificate)
+		{
+#if MONO_FEATURE_BTLS
+			X509Helper.ThrowIfContextInvalid (certificate.Impl);
+			using (var x509 = GetNativeInstance (certificate.Impl))
+			using (var subject = x509.GetSubjectName ())
+				return subject.GetHash ();
+#else
+			throw new PlatformNotSupportedException ();
+#endif
+		}
+
+		[Obsolete ("This is only used by Mono.Security's X509Store and will be replaced shortly.")]
+		internal static void ExportAsPEM (X509Certificate certificate, Stream stream, bool includeHumanReadableForm)
+		{
+#if MONO_FEATURE_BTLS
+			X509Helper.ThrowIfContextInvalid (certificate.Impl);
+			using (var x509 = GetNativeInstance (certificate.Impl))
+			using (var bio = MonoBtlsBio.CreateMonoStream (stream))
+				x509.ExportAsPEM (bio, includeHumanReadableForm);
+#else
+			throw new PlatformNotSupportedException ();
+#endif
+		}
+
+#if MONO_FEATURE_BTLS
+		static MonoBtlsX509 GetNativeInstance (X509CertificateImpl impl)
+		{
+			X509Helper.ThrowIfContextInvalid (impl);
+			var btlsImpl = impl as X509CertificateImplBtls;
+			if (btlsImpl != null)
+				return btlsImpl.X509.Copy ();
+			else
+				return MonoBtlsX509.LoadFromData (impl.GetRawCertData (), MonoBtlsX509Format.DER);
 		}
 #endif
 	}
