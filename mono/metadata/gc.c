@@ -94,6 +94,8 @@ static void mono_reference_queue_cleanup (void);
 static void reference_queue_clear_for_domain (MonoDomain *domain);
 static void mono_runtime_do_background_work (void);
 
+static MonoReferenceQueue* mono_gc_reference_queue_new_internal (mono_reference_queue_callback callback);
+
 
 static MonoThreadInfoWaitRet
 guarded_wait (MonoThreadHandle *thread_handle, guint32 timeout, gboolean alertable)
@@ -1220,6 +1222,16 @@ reference_queue_clear_for_domain (MonoDomain *domain)
  */
 MonoReferenceQueue*
 mono_gc_reference_queue_new (mono_reference_queue_callback callback)
+{
+	MonoReferenceQueue *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_gc_reference_queue_new_internal (callback);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+MonoReferenceQueue*
+mono_gc_reference_queue_new_internal (mono_reference_queue_callback callback)
 {
 	MonoReferenceQueue *res = g_new0 (MonoReferenceQueue, 1);
 	res->callback = callback;
