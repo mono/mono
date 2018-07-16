@@ -62,7 +62,7 @@ MonoCallSpec *mono_trace_set_options (const char *options)
 
 static
 #ifdef HAVE_KW_THREAD
-__thread 
+HAVE_KW_THREAD
 #endif
 int indent_level = 0;
 static guint64 start_time = 0;

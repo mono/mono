@@ -289,7 +289,11 @@
 /* #undef HAVE_KQUEUE */
 
 /* Have __thread keyword */
-/* #undef HAVE_KW_THREAD */
+#ifdef _MSC_VER
+#define HAVE_KW_THREAD __declspec (thread)
+#else
+#define HAVE_KW_THREAD __thread
+#endif
 
 /* Have large file support */
 /* #undef HAVE_LARGE_FILE_SUPPORT */
