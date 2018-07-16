@@ -61,9 +61,10 @@ namespace Mono.AssemblyCompare
 			if (!string.IsNullOrEmpty (output))
 				outputStream = new StreamWriter (output);
 
-			XmlTextWriter writer = new XmlTextWriter (outputStream ?? Console.Out);
-			writer.Formatting = Formatting.Indented;
-			doc.WriteTo (writer);
+			using (XmlTextWriter writer = new XmlTextWriter (outputStream ?? Console.Out)) {
+				writer.Formatting = Formatting.Indented;
+				doc.WriteTo (writer);
+			}
 
 			return 0;
 		}
