@@ -545,6 +545,9 @@ namespace System.IO {
 			if (path == null || path.Length == 0)
 				return false;
 
+			if (path.IndexOfAny (InvalidPathChars) != -1)
+				throw new ArgumentException ("Illegal characters in path.");
+
 			char c = path [0];
 			return (c == DirectorySeparatorChar 	||
 				c == AltDirectorySeparatorChar 	||
