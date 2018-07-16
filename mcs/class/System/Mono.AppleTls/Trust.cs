@@ -1,4 +1,3 @@
-#if SECURITY_DEP && MONO_FEATURE_APPLETLS
 // 
 // Trust.cs: Implements the managed SecTrust wrapper.
 //
@@ -201,4 +200,3 @@ namespace Mono.AppleTls {
 		}
 	}
 }
-#endif

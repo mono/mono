@@ -1,5 +1,4 @@
 #include common_networking.sources
-Mono.AppleTls/MonoCertificatePal.cs
+#include appletls.sources
 Mono.AppleTls/MonoCertificatePal.Mobile.cs
 Mono.AppleTls/SafeHandles.cs
-Mono.AppleTls/SafeHandles.Mono.cs

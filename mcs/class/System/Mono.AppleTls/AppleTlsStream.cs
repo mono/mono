@@ -1,4 +1,3 @@
-#if SECURITY_DEP && MONO_FEATURE_APPLETLS
 //
 // AppleTlsStream.cs
 //
@@ -43,4 +42,3 @@ namespace Mono.AppleTls
 		}
 	}
 }
-#endif

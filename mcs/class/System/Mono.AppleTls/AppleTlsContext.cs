@@ -1,4 +1,3 @@
-#if SECURITY_DEP && MONO_FEATURE_APPLETLS
 //
 // AppleTlsContext.cs
 //
@@ -1015,4 +1014,3 @@ namespace Mono.AppleTls
 		}
 	}
 }
-#endif
