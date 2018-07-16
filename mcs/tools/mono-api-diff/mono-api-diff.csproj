@@ -43,6 +43,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
+    <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />
     <Compile Include="mono-api-diff.cs" />
   </ItemGroup>
   <ItemGroup></ItemGroup>

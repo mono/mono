@@ -14,10 +14,13 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+
+using Mono.Options;
 
 namespace Mono.AssemblyCompare
 {
@@ -25,18 +28,35 @@ namespace Mono.AssemblyCompare
 	{
 		static int Main (string [] args)
 		{
-			if (args.Length != 2 && args.Length != 3) {
-				Console.WriteLine ("Usage: mono mono-api-diff.exe <assembly 1 xml> <assembly 2 xml> [<output xml>]");
+			bool showHelp = false;
+			string output = null;
+			List<string> extra = null;
+
+			var options = new OptionSet {
+				{ "h|help", "Show this help", v => showHelp = true },
+				{ "o|output=", "XML diff file output (omit for stdout)", v => output = v },
+			};
+
+			try {
+				extra = options.Parse (args);
+			} catch (OptionException e) {
+				Console.WriteLine ("Option error: {0}", e.Message);
+				showHelp = true;
+			}
+
+			if (showHelp || extra == null || extra.Count != 2) {
+				Console.WriteLine (@"Usage: mono-api-diff.exe [options] <assembly 1 xml> <assembly 2 xml>");
+				Console.WriteLine ();
+				Console.WriteLine ("Available options:");
+				options.WriteOptionDescriptions (Console.Out);
+				Console.WriteLine ();
 				return 1;
 			}
 
-			XMLAssembly ms = CreateXMLAssembly (args [0]);
-			XMLAssembly mono = CreateXMLAssembly (args [1]);
+			XMLAssembly ms = CreateXMLAssembly (extra [0]);
+			XMLAssembly mono = CreateXMLAssembly (extra [1]);
 			XmlDocument doc = ms.CompareAndGetDocument (mono);
 
-			string output = null;
-			if (args.Length == 3)
-				output = args [2];
 			StreamWriter outputStream = null;
 			if (!string.IsNullOrEmpty (output))
 				outputStream = new StreamWriter (output);
