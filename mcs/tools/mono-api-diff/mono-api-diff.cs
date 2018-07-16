@@ -34,7 +34,7 @@ namespace Mono.AssemblyCompare
 
 			var options = new OptionSet {
 				{ "h|help", "Show this help", v => showHelp = true },
-				{ "o|output=", "XML diff file output (omit for stdout)", v => output = v },
+				{ "o|out|output=", "XML diff file output (omit for stdout)", v => output = v },
 			};
 
 			try {
