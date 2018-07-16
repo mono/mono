@@ -19,7 +19,6 @@ public static class Program {
             WorkingDirectory = winsetupDirectory,
             UseShellExecute = false,
             ErrorDialog = false,
-            // CreateNoWindow = true,
             RedirectStandardOutput = true
         };
 
@@ -28,7 +27,7 @@ public static class Program {
         Process winsetupProcess;
 
         try {
-            winsetupProcess = Process.Start(psi);
+            winsetupProcess = Process.Start (psi);
         } catch (Exception exc) {
             Console.Error.WriteLine ("Failed starting winsetup.bat");
             Console.Error.WriteLine (exc);
@@ -41,7 +40,7 @@ public static class Program {
             winsetupProcess.OutputDataReceived += (s, e) => {
                 outputBuffer.AppendLine (e.Data);
             };
-            winsetupProcess.BeginOutputReadLine();
+            winsetupProcess.BeginOutputReadLine ();
             winsetupProcess.WaitForExit ();
 
             var output = outputBuffer.ToString ().Trim ();
@@ -61,12 +60,12 @@ public static class Program {
                 while (monoVersion.Split ('.').Length < 4)
                     monoVersion += ".0";
 
-                Console.WriteLine($"MONO_VERSION={monoVersion}");
+                Console.WriteLine ($"MONO_VERSION={monoVersion}");
                 m = Regex.Match (output, "MONO_CORLIB_VERSION=([0-9]+)");
                 if (!m.Success)
                     return 1;
                 monoCorlibVersion = m.Groups[1].Value;
-                Console.WriteLine($"MONO_CORLIB_VERSION={monoCorlibVersion}");
+                Console.WriteLine ($"MONO_CORLIB_VERSION={monoCorlibVersion}");
             }
         }
 
