@@ -49,6 +49,34 @@
 #include "mono/metadata/cominterop-win32-internals.h"
 #endif
 
+#ifndef DISABLE_COM
+
+static int
+mono_IUnknown_QueryInterface (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv)
+{
+	g_assert (pUnk);
+	return pUnk->vtable->QueryInterface (pUnk, riid, ppv);
+}
+
+static int
+mono_IUnknown_AddRef (MonoIUnknown *pUnk)
+{
+	// The return value is a reference count, generally transient, generally not to be used, except for debugging,
+	// or to assert that it is > 0.
+	g_assert (pUnk);
+	return pUnk->vtable->AddRef (pUnk);
+}
+
+static int
+mono_IUnknown_Release (MonoIUnknown *pUnk)
+{
+	// Release is like free -- null is silently ignored.
+	// Also, the return value is a reference count, generally transient, generally not to be used, except for debugging.
+	return pUnk ? pUnk->vtable->Release (pUnk) : 0;
+}
+
+#endif
+
 /*
 Code shared between the DISABLE_COM and !DISABLE_COM
 */
@@ -565,7 +593,8 @@ cominterop_get_interface_checked (MonoComObjectHandle obj, MonoClass* ic, MonoEr
 	guint8 iid [16];
 	gboolean const found = cominterop_class_guid (ic, iid);
 	g_assert (found);
-	int const hr = ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MONO_HANDLE_GETVAL (obj, iunknown), iid, &itf, error);
+	g_assert (MONO_HANDLE_GETVAL (obj, iunknown));
+	int const hr = mono_IUnknown_QueryInterface (MONO_HANDLE_GETVAL (obj, iunknown), iid, &itf);
 	if (hr < 0) {
 		g_assert (!itf);
 		cominterop_set_hr_error (error, hr);
@@ -1583,21 +1612,13 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 int
 ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk, MonoError *error)
 {
-	g_assert (pUnk);
-	return pUnk->vtable->AddRef(pUnk);
+	return mono_IUnknown_AddRef (pUnk);
 }
 
 int
 ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv, MonoError *error)
 {
-	g_assert (pUnk);
-	return pUnk->vtable->QueryInterface(pUnk, riid, ppv);
-}
-
-static int
-mono_IUnknown_Release (MonoIUnknown *pUnk)
-{
-	return pUnk ? pUnk->vtable->Release (pUnk) : 0;
+	return mono_IUnknown_QueryInterface (pUnk, riid, ppv);
 }
 
 int
@@ -2478,11 +2499,9 @@ cominterop_ccw_getfreethreadedmarshaler (MonoCCW* ccw, MonoObjectHandle object, 
 		return_val_if_nok (error, MONO_E_NOINTERFACE);
 		int const ret = CoCreateFreeThreadedMarshaler (tunk, (LPUNKNOWN*)&ccw->free_marshaler);
 	}
-		
-	if (!ccw->free_marshaler)
-		return MONO_E_NOINTERFACE;
 
-	return ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (ccw->free_marshaler, &MONO_IID_IMarshal, ppv, error);
+	return ccw->free_marshaler ? mono_IUnknown_QueryInterface (ccw->free_marshaler, &MONO_IID_IMarshal, ppv)
+				   : MONO_E_NOINTERFACE;
 }
 #endif
 
