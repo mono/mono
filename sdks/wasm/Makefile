@@ -112,8 +112,11 @@ binding_tests.dll: $(BINDING_TEST_SOURCES)
 bindings.dll: bindings.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll bindings.cs
 
-sample.dll:  $(TEST_DEPS) sample.cs
-	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll sample.cs
+Simple.Dependency.dll: dependency.cs
+	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll dependency.cs
+
+sample.dll: Simple.Dependency.dll sample.cs
+	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:Simple.Dependency.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll sample.cs
 
 Mono.Cecil.dll: $(TOP)/sdks/out/bcl/net_4_x/Mono.Cecil.dll
 	cp $< $@
