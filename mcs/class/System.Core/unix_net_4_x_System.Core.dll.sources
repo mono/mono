@@ -1,6 +1,5 @@
 #include net_4_x_System.Core.dll.sources
 
-System.IO.Pipes/PipeStream.Unix.cs
 System.IO.Pipes/NamedPipeClientStream.Unix.cs
 System.IO.Pipes/NamedPipeServerStream.Unix.cs
 System.IO.Pipes/AnonymousPipeServerStream.Unix.cs

@@ -1,6 +1,5 @@
 #include net_4_x_System.Core.dll.sources
 
-System.IO.Pipes/PipeStream.Windows.cs
 System.IO.Pipes/NamedPipeClientStream.Windows.cs
 System.IO.Pipes/NamedPipeServerStream.Windows.cs
 System.IO.Pipes/AnonymousPipeServerStream.Windows.cs
@@ -37,7 +36,6 @@ System.IO.Pipes/AnonymousPipeServerStream.Windows.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.MaxLengths.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RevertToSelf.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.ImpersonateNamedPipeClient.cs
-../../../external/corefx/src/Common/src/System/IO/Win32Marshal.cs
 
 ../../../external/corefx/src/System.IO.Pipes/src/Microsoft/Win32/SafeHandles/SafePipeHandle.Windows.cs
 ../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/AnonymousPipeServerStream.Windows.cs
