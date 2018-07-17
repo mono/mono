@@ -300,16 +300,6 @@ endif
 # TODO: depend on all *.sources for now and figure out how to list only needed files later
 PROFILE_sources = $(wildcard *.sources)
 
-gensources = $(topdir)/build/gensources.exe
-$(gensources): $(topdir)/build/gensources.cs
-	$(BOOTSTRAP_MCS) -noconfig -debug:portable -r:mscorlib.dll -r:System.dll -r:System.Core.dll -out:$(gensources) $(topdir)/build/gensources.cs
-
-ifdef PROFILE_RUNTIME
-GENSOURCES_RUNTIME = $(PROFILE_RUNTIME)
-else
-GENSOURCES_RUNTIME = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"  $(RUNTIME)
-endif
-
 sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
 $(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp $(gensources)
 	$(GENSOURCES_RUNTIME) --debug $(gensources) --strict "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
