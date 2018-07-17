@@ -132,7 +132,8 @@ namespace Mono.AppleTls {
 				throw new ArgumentOutOfRangeException ("index");
 
 			var ptr = SecTrustGetCertificateAtIndex (handle, (IntPtr)index);
-			return new X509Certificate (ptr);
+			var impl = new X509CertificateImplApple (ptr, false);
+			return new X509Certificate (impl);
 		}
 
 		[DllImport (AppleTlsContext.SecurityLibrary)]
