@@ -41,19 +41,20 @@ public static class Program {
                     strictMode = true;
                     break;
                 default:
-                    Console.Error.WriteLine ("Unrecognized switch " + arg);
-                    break;
+                    Console.Error.WriteLine ($"// Unrecognized switch {arg}. Aborting.");
+                    return 1;
             }
 
             args.RemoveAt (i);
             i--;            
         }
 
-        if (args.Count != 4)
+        if ((args.Count < 3) || (args.Count > 4))
             showHelp = true;
 
         if (showHelp) {
             Console.Error.WriteLine ("Usage: mcs/build/gensources.exe [options] (outputFileName|--stdout) libraryDirectoryAndName platformName profileName");
+            Console.Error.WriteLine ("or     mcs/build/gensources.exe [options] (outputFileName|--stdout) sourcesFile exclusionsFile");
             Console.Error.WriteLine ("You can specify * for platformName and profileName to read all sources files");
             Console.Error.WriteLine ("Available options:");
             Console.Error.WriteLine ("--help -h -?");
@@ -73,20 +74,36 @@ public static class Program {
         var executableDirectory = Path.GetDirectoryName (executablePath);
 
         var outFile = Path.GetFullPath (args[0]);
-        var libraryFullName = Path.GetFullPath (args[1]);
-        var platformName = args[2].Trim ();
-        var profileName = args[3].Trim ();
+
         var platformsFolder = Path.Combine (executableDirectory, "platforms");
         var profilesFolder = Path.Combine (executableDirectory, "profiles");
-
-        var libraryDirectory = Path.GetDirectoryName (libraryFullName);
-        var libraryName = Path.GetFileName (libraryFullName);
-
         var parser = new SourcesParser (platformsFolder, profilesFolder);
-        var result = parser.Parse (libraryDirectory, libraryName, platformName, profileName);
 
-        if (SourcesParser.TraceLevel > 0)
-            Console.Error.WriteLine ($"// Writing sources for platform {platformName} and profile {profileName}, relative to {libraryDirectory}, to {outFile}.");
+        ParseResult result;
+
+        if (args.Count == 3) {
+            var sourcesFile = Path.GetFullPath (args[1]);
+            var excludesFile = Path.GetFullPath (args[2]);
+            var directory = Path.GetDirectoryName (sourcesFile);
+            if (Path.GetDirectoryName (excludesFile) != directory) {
+                Console.Error.WriteLine ("// Sources and exclusions files are in different directories. Aborting.");
+                return 1;
+            }
+            result = parser.Parse (directory, sourcesFile, excludesFile);
+
+            if (SourcesParser.TraceLevel > 0)
+                Console.Error.WriteLine ($"// Writing sources from {sourcesFile} minus {excludesFile}, to {outFile}.");
+        } else if (args.Count == 4) {
+            var libraryFullName = Path.GetFullPath (args[1]);
+            var platformName = args[2].Trim ();
+            var profileName = args[3].Trim ();
+            var libraryDirectory = Path.GetDirectoryName (libraryFullName);
+            var libraryName = Path.GetFileName (libraryFullName);
+            result = parser.Parse (libraryDirectory, libraryName, platformName, profileName);
+
+            if (SourcesParser.TraceLevel > 0)
+                Console.Error.WriteLine ($"// Writing sources for platform {platformName} and profile {profileName}, relative to {libraryDirectory}, to {outFile}.");
+        }
 
         TextWriter output;
         if (useStdout)
@@ -104,9 +121,10 @@ public static class Program {
                 output.WriteLine (fileName);
         }
 
-        if (strictMode)
+        if (strictMode) {
+            Console.Error.WriteLine ($"// gensources failed with {result.ErrorCount} error(s)");
             return result.ErrorCount;
-        else
+        } else
             return 0;
     }
 }
@@ -147,7 +165,7 @@ public class TargetParseResult {
 }
 
 public class ParseResult {
-    public readonly string LibraryDirectory, LibraryName;
+    public readonly string LibraryDirectory;
 
     public readonly Dictionary<(string hostPlatform, string profile), TargetParseResult> TargetDictionary = new Dictionary<(string hostPlatform, string profile), TargetParseResult> ();
 
@@ -157,9 +175,8 @@ public class ParseResult {
     // FIXME: This is a bad spot for this value but enumerators don't have outparam support
     public int ErrorCount = 0;
 
-    public ParseResult (string libraryDirectory, string libraryName) {
+    public ParseResult (string libraryDirectory) {
         LibraryDirectory = libraryDirectory;
-        LibraryName = libraryName;
     }
 
     public IEnumerable<TargetParseResult> Targets {
@@ -328,9 +345,25 @@ public class SourcesParser {
             .ToArray ();
     }
 
+    public ParseResult Parse (string libraryDirectory, string sourcesFile, string excludesFile) {
+        var state = new State {
+            Result = new ParseResult (libraryDirectory),
+            ProfileName = profile,
+            HostPlatform = hostPlatform
+        };
+
+        var tpr = new TargetParseResult {
+            Key = (hostPlatform: null, profile: null)
+        };
+
+        ParseIntoTarget (state, tpr, sourcesFileName, exclusionsFileName, null);
+        PrintSummary (state, sourcesFile);
+        return state.Result;
+    }
+
     public ParseResult Parse (string libraryDirectory, string libraryName, string hostPlatform, string profile) {
         var state = new State {
-            Result = new ParseResult (libraryDirectory, libraryName),
+            Result = new ParseResult (libraryDirectory),
             ProfileName = profile,
             HostPlatform = hostPlatform
         };
@@ -387,7 +420,7 @@ public class SourcesParser {
 
     public ParseResult Parse (string libraryDirectory, string libraryName) {
         var state = new State {
-            Result = new ParseResult (libraryDirectory, libraryName)
+            Result = new ParseResult (libraryDirectory)
         };
 
         string originalTestPath = Path.Combine (libraryDirectory, libraryName);
@@ -476,6 +509,14 @@ public class SourcesParser {
         var sourcesFileName = prefix + ".sources";
         var exclusionsFileName = prefix + ".exclude.sources";
 
+        return ParseIntoTarget (state, tpr, sourcesFileName, exclusionsFileName, fallbackTarget);
+    }
+
+    private TargetParseResult ParseIntoTarget (
+        State state, TargetParseResult tpr, 
+        string sourcesFileName, string exclusionsFileName,
+        TargetParseResult fallbackTarget
+    ) {
         if (!File.Exists (sourcesFileName)) {
             if (fallbackTarget != null) {
                 if (TraceLevel >= 2)
