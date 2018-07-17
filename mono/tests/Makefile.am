@@ -1539,10 +1539,14 @@ LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS) $(AOT_BUILD_FLAGS))
 #   Mono does not yet allow that.
 #   tailcall "i" is either calli, or integer instead of pointer, and the latter sidesteps the matter.
 #
+# https://github.com/mono/mono/issues/9617
+# flaky test delegate5 self_interrupt_thread: we can't resume from an async call
 # https://jenkins.mono-project.com/job/test-mono-pull-request-arm64-fullaot/1892/
 # Test Result (1 failure / +1)
 # MonoTests.runtime.delegate5.exe
 #
+# https://github.com/mono/mono/issues/9035
+# pinvoke3.exe flaky test
 # https://jenkins.mono-project.com/job/test-mono-pull-request-coop/5360/
 # Test Result (1 failure / +1)
 # MonoTests.runtime.pinvoke3.exe_timedout
