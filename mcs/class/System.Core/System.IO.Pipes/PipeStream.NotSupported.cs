@@ -19,7 +19,6 @@ namespace System.IO.Pipes
 		public virtual PipeTransmissionMode TransmissionMode
 		{
 			get { throw new PlatformNotSupportedException(); }
-			set { throw new PlatformNotSupportedException(); }
 		}
 
 		// Gets the buffer size in the inbound direction for the pipe. This checks if pipe has read
