@@ -19,9 +19,6 @@ Microsoft.Win32.SafeHandles/SafeNCryptProviderHandle.cs
 Microsoft.Win32.SafeHandles/SafeNCryptSecretHandle.cs
 
 System.IO.Pipes/PipeStream.cs
-System.IO.Pipes/NamedPipeClientStream.cs
-System.IO.Pipes/NamedPipeServerStream.cs
-System.IO.Pipes/AnonymousPipeServerStream.cs
 ../../../external/corefx/src/System.IO.Pipes/src/Microsoft/Win32/SafeHandles/SafePipeHandle.cs
 ../../../external/corefx/src/System.IO.Pipes/src/System/IO/Error.cs
 ../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/AnonymousPipeClientStream.cs
@@ -37,7 +34,6 @@ System.IO.Pipes/AnonymousPipeServerStream.cs
 ../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeAccessRule.cs
 ../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeAuditRule.cs
 ../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeSecurity.cs
-../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipesAclExtensions.cs
 
 corefx/LambdaExpression.cs
 corefx/SR.cs

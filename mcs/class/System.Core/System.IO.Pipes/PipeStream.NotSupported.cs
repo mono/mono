@@ -56,13 +56,13 @@ namespace System.IO.Pipes
 			throw new PlatformNotSupportedException();
 		}
 
-        private unsafe int ReadCore(Span<byte> buffer)
-        {
+		private unsafe int ReadCore(Span<byte> buffer)
+		{
 			throw new PlatformNotSupportedException();
 		}
 
 		private unsafe void WriteCore(ReadOnlySpan<byte> buffer)
-        {
+		{
 			throw new PlatformNotSupportedException();
 		}
 
@@ -71,20 +71,20 @@ namespace System.IO.Pipes
 			throw new PlatformNotSupportedException();
 		}
 
-        private Task WriteAsyncCore(ReadOnlyMemory<byte> source, CancellationToken cancellationToken)
-        {
+		private Task WriteAsyncCore(ReadOnlyMemory<byte> source, CancellationToken cancellationToken)
+		{
 			throw new PlatformNotSupportedException();
 		}
 
-        /// <summary>Throws an exception if the supplied handle does not represent a valid pipe.</summary>
-        /// <param name="safePipeHandle">The handle to validate.</param>
-        internal void ValidateHandleIsPipe(SafePipeHandle safePipeHandle)
-        {
+		/// <summary>Throws an exception if the supplied handle does not represent a valid pipe.</summary>
+		/// <param name="safePipeHandle">The handle to validate.</param>
+		internal void ValidateHandleIsPipe(SafePipeHandle safePipeHandle)
+		{
 			throw new PlatformNotSupportedException();
 		}
 
-        internal static string GetPipePath(string serverName, string pipeName)
-        {
+		internal static string GetPipePath(string serverName, string pipeName)
+		{
 			throw new PlatformNotSupportedException();
 		}		
 	}

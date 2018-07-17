@@ -1,5 +1,9 @@
 #include net_4_x_System.Core.dll.sources
 
+System.IO.Pipes/PipeStream.Windows.cs
+System.IO.Pipes/NamedPipeClientStream.Windows.cs
+System.IO.Pipes/NamedPipeServerStream.Windows.cs
+System.IO.Pipes/AnonymousPipeServerStream.Windows.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/Interop.Libraries.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.CloseHandle.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/Interop.Errors.cs
