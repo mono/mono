@@ -546,6 +546,7 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/compmod/system/diagnostics/AssertSection.cs
 ../referencesource/System/compmod/system/diagnostics/BooleanSwitch.cs
 ../referencesource/System/compmod/system/diagnostics/CorrelationManager.cs
+../referencesource/System/compmod/system/diagnostics/Debug.cs
 ../referencesource/System/compmod/system/diagnostics/DelimitedListTraceListener.cs
 ../referencesource/System/compmod/system/diagnostics/DiagnosticsConfiguration.cs
 ../referencesource/System/compmod/system/diagnostics/ListenerElementsCollection.cs

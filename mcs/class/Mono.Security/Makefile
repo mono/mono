@@ -4,8 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = Mono.Security.dll
 LOCAL_MCS_FLAGS =
-DEFAULT_REFERENCES =
-API_BIN_REFS = System mscorlib
+API_BIN_REFS = System
 KEYFILE = ../mono.pub
 LIB_MCS_FLAGS = -unsafe -nowarn:1030,3009
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:169,219,618,672
