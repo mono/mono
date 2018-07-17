@@ -7,6 +7,7 @@ namespace System.IO.Pipes
 	public sealed partial class AnonymousPipeServerStream
 	{
 		public AnonymousPipeServerStream (PipeDirection direction, HandleInheritability inheritability, int bufferSize, PipeSecurity pipeSecurity)
+			: base (direction, bufferSize)
 		{
 			if (direction == PipeDirection.InOut) {
 				throw new NotSupportedException(SR.NotSupported_AnonymousPipeUnidirectional);
