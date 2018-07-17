@@ -3963,7 +3963,15 @@ non_simple_argument
 	  {
 		$$ = new Argument (new Arglist (GetLocation ($1)));
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($3));
-	  }	  
+	  }
+	| IN variable_reference
+	  {
+		if (lang_version < LanguageVersion.V_7_2)
+			FeatureIsNotAvailable (GetLocation ($1), "readonly references");
+
+		$$ = new Argument ((Expression) $2, Argument.AType.Readonly);
+		lbag.AddLocation ($$, GetLocation ($1));
+	  }
 	;
 
 out_variable_declaration
