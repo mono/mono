@@ -136,7 +136,8 @@ namespace Mono.AppleTls {
 			if (handle == IntPtr.Zero)
 				throw new ObjectDisposedException ("SecCertificate");
 
-			return new X509Certificate (handle);
+			var impl = new X509CertificateImplApple (handle, false);
+			return new X509Certificate (impl);
 		}
 
 		internal static bool Equals (SecCertificate first, SecCertificate second)

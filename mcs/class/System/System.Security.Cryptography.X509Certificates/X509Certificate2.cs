@@ -42,6 +42,7 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Runtime.Serialization;
+using Mono;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -51,7 +52,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		new internal X509Certificate2Impl Impl {
 			get {
 				var impl2 = base.Impl as X509Certificate2Impl;
-				X509Helper2.ThrowIfContextInvalid (impl2);
+				X509Helper.ThrowIfContextInvalid (impl2);
 				return impl2;
 			}
 		}
@@ -120,7 +121,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		public X509Certificate2 (X509Certificate certificate) 
-			: base (X509Helper2.Import (certificate))
+			: base (SystemDependencyProvider.Instance.CertificateProvider.Import (certificate))
 		{
 		}
 
@@ -220,7 +221,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
-			var impl = X509Helper2.Import (rawData, password, keyStorageFlags);
+			var impl = SystemDependencyProvider.Instance.CertificateProvider.Import (rawData, password, keyStorageFlags);
 			ImportHandle (impl);
 		}
 
