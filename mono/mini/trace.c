@@ -60,6 +60,7 @@ MonoCallSpec *mono_trace_set_options (const char *options)
 	return &trace_spec;
 }
 
+// comment only
 static
 #ifdef HAVE_KW_THREAD
 __thread 
