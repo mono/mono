@@ -437,7 +437,7 @@ typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type un
 #else
 
 #define MONO_HANDLE_NEW(type, object) \
-	(MONO_HANDLE_CAST_FOR (type) (mono_handle_new (MONO_HANDLE_TYPECHECK_FOR (type) (object, HANDLE_OWNER))))
+	(MONO_HANDLE_CAST_FOR (type) (mono_handle_new (MONO_HANDLE_TYPECHECK_FOR (type) (object), HANDLE_OWNER)))
 
 #endif
 
@@ -674,8 +674,8 @@ MonoArrayHandle mono_array_new_handle (MonoDomain *domain, MonoClass *eclass, ui
 MonoArrayHandle
 mono_array_new_full_handle (MonoDomain *domain, MonoClass *array_class, uintptr_t *lengths, intptr_t *lower_bounds, MonoError *error);
 
-
-uintptr_t mono_array_handle_length (MonoArrayHandle arr);
+uintptr_t
+mono_array_handle_length (MonoArrayHandle arr);
 
 static inline void
 mono_handle_array_getref (MonoObjectHandleOut dest, MonoArrayHandle array, uintptr_t index)
@@ -697,6 +697,25 @@ mono_gchandle_from_handle (MonoObjectHandle handle, mono_bool pinned);
 
 MonoObjectHandle
 mono_gchandle_get_target_handle (uint32_t gchandle);
+
+static inline gboolean
+mono_gchandle_target_equal (uint32_t gchandle, MonoObjectHandle equal)
+{
+	// This function serves to reduce coop handle creation.
+	MONO_HANDLE_SUPPRESS_SCOPE (1);
+	return mono_gchandle_get_target (gchandle) == MONO_HANDLE_RAW (equal);
+}
+
+static inline void
+mono_gchandle_target_is_null_or_equal (uint32_t gchandle, MonoObjectHandle equal, gboolean *is_null,
+	gboolean *is_equal)
+{
+	// This function serves to reduce coop handle creation.
+	MONO_HANDLE_SUPPRESS_SCOPE (1);
+	MonoObject *target = mono_gchandle_get_target (gchandle);
+	*is_null = target == NULL;
+	*is_equal = target == MONO_HANDLE_RAW (equal);
+}
 
 void
 mono_array_handle_memcpy_refs (MonoArrayHandle dest, uintptr_t dest_idx, MonoArrayHandle src, uintptr_t src_idx, uintptr_t len);
@@ -736,6 +755,12 @@ static inline guint32
 mono_gchandle_new_weakref_from_handle (MonoObjectHandle handle)
 {
 	return mono_gchandle_new_weakref (MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle)), FALSE);
+}
+
+static inline int
+mono_handle_hash (MonoObjectHandle object)
+{
+	return mono_object_hash (MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (object)));
 }
 
 G_END_DECLS

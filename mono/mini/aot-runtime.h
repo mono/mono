@@ -11,7 +11,7 @@
 #include "mini.h"
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 145
+#define MONO_AOT_FILE_VERSION 146
 
 #define MONO_AOT_TRAMP_PAGE_SIZE 16384
 
@@ -57,7 +57,8 @@ typedef enum {
 	MONO_AOT_TRAMP_STATIC_RGCTX = 1,
 	MONO_AOT_TRAMP_IMT = 2,
 	MONO_AOT_TRAMP_GSHAREDVT_ARG = 3,
-	MONO_AOT_TRAMP_NUM = 4
+	MONO_AOT_TRAMP_FTNPTR_ARG = 4,
+	MONO_AOT_TRAMP_NUM = 5
 } MonoAotTrampoline;
 
 typedef enum {
@@ -69,6 +70,7 @@ typedef enum {
 	MONO_AOT_FILE_FLAG_SAFEPOINTS = 32,
 	MONO_AOT_FILE_FLAG_SEPARATE_DATA = 64,
 	MONO_AOT_FILE_FLAG_EAGER_LOAD = 128,
+	MONO_AOT_FILE_FLAG_INTERP = 256,
 } MonoAotFileFlags;
 
 typedef enum {
@@ -142,6 +144,7 @@ typedef struct MonoAotFileInfo
 	gpointer static_rgctx_trampolines;
 	gpointer imt_trampolines;
 	gpointer gsharedvt_arg_trampolines;
+	gpointer ftnptr_arg_trampolines;
 	/* In static mode, points to a table of global symbols for trampolines etc */
 	gpointer globals;
 	/* Points to a string containing the assembly name*/
@@ -168,6 +171,8 @@ typedef struct MonoAotFileInfo
 	guint32 plt_size;
 	/* Number of methods */
 	guint32 nmethods;
+	/* Number of extra methods */
+	guint32 nextra_methods;
 	/* A union of MonoAotFileFlags */
 	guint32 flags;
 	/* Optimization flags used to compile the module */
@@ -230,6 +235,7 @@ gpointer mono_aot_get_lazy_fetch_trampoline (guint32 slot);
 gpointer mono_aot_get_static_rgctx_trampoline (gpointer ctx, gpointer addr);
 gpointer mono_aot_get_imt_trampoline        (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count, gpointer fail_tramp);
 gpointer mono_aot_get_gsharedvt_arg_trampoline(gpointer arg, gpointer addr);
+gpointer mono_aot_get_ftnptr_arg_trampoline (gpointer arg, gpointer addr);
 guint8*  mono_aot_get_unwind_info           (MonoJitInfo *ji, guint32 *unwind_info_len);
 guint32  mono_aot_method_hash               (MonoMethod *method);
 gboolean mono_aot_can_dedup                 (MonoMethod *method);

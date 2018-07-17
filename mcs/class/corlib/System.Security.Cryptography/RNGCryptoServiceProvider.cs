@@ -123,7 +123,20 @@ namespace System.Security.Cryptography {
 			}
 			Check ();
 		}
-		
+
+		unsafe internal void GetBytes (byte* data, IntPtr data_length)
+		{
+			if (_lock == null) {
+				_handle = RngGetBytes (_handle, data, data_length);
+			} else {
+				// using a global handle for randomness
+				lock (_lock) {
+					_handle = RngGetBytes (_handle, data, data_length);
+				}
+			}
+			Check ();
+		}
+
 		unsafe public override void GetNonZeroBytes (byte[] data)
 		{
 			if (data == null)

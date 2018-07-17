@@ -213,6 +213,7 @@ typedef struct MonoAotOptions {
 	int nrgctx_trampolines;
 	int nimt_trampolines;
 	int ngsharedvt_arg_trampolines;
+	int nftnptr_arg_trampolines;
 	int nrgctx_fetch_trampolines;
 	gboolean print_skipped_methods;
 	gboolean stats;
@@ -307,6 +308,7 @@ typedef struct MonoAotCompile {
 
 	MonoAotOptions aot_opts;
 	guint32 nmethods;
+	guint32 nextra_methods;
 	guint32 opts;
 	guint32 simd_opts;
 	MonoMemPool *mempool;
@@ -2675,6 +2677,37 @@ arch_emit_gsharedvt_arg_trampoline (MonoAotCompile *acfg, int offset, int *tramp
 #endif
 }	
 
+static void
+arch_emit_ftnptr_arg_trampoline (MonoAotCompile *acfg, int offset, int *tramp_size)
+{
+#if defined(TARGET_ARM)
+	guint8 buf [128];
+	guint8 *code;
+
+	*tramp_size = 32;
+	code = buf;
+
+	/* Load target address and push it on stack */
+	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 16);
+	ARM_LDR_REG_REG (code, ARMREG_IP, ARMREG_PC, ARMREG_IP);
+	ARM_PUSH (code, 1 << ARMREG_IP);
+	/* Load argument in ARMREG_IP */
+	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 8);
+	ARM_LDR_REG_REG (code, ARMREG_IP, ARMREG_PC, ARMREG_IP);
+	/* Branch */
+	ARM_POP (code, 1 << ARMREG_PC);
+
+	g_assert (code - buf == 24);
+
+	/* Emit it */
+	emit_bytes (acfg, buf, code - buf);
+	emit_symbol_diff (acfg, acfg->got_symbol, ".", ((offset + 1) * sizeof (gpointer)) + 12); // offset from ldr pc to addr
+	emit_symbol_diff (acfg, acfg->got_symbol, ".", (offset * sizeof (gpointer)) + 4); // offset from ldr pc to arg
+#else
+	g_assert_not_reached ();
+#endif
+}
+
 /* END OF ARCH SPECIFIC CODE */
 
 static guint32
@@ -3716,8 +3749,12 @@ add_method_with_index (MonoAotCompile *acfg, MonoMethod *method, int index, gboo
 		acfg->nmethods = acfg->methods->len + 1;
 	}
 
-	if (method->wrapper_type || extra)
+	if (method->wrapper_type || extra) {
+		int token = mono_metadata_token_index (method->token) - 1;
+		if (token < 0)
+			acfg->nextra_methods++;
 		g_ptr_array_add (acfg->extra_methods, method);
+	}
 }
 
 static gboolean
@@ -6969,7 +7006,7 @@ emit_trampolines (MonoAotCompile *acfg)
 	int tramp_type;
 #endif
 
-	if ((!mono_aot_mode_is_full (&acfg->aot_opts) || acfg->aot_opts.llvm_only) && !acfg->aot_opts.interp)
+	if ((!mono_aot_mode_is_full (&acfg->aot_opts) || acfg->aot_opts.llvm_only) && !mono_aot_mode_is_interp (&acfg->aot_opts))
 		return;
 	
 	g_assert (acfg->image->assembly);
@@ -7145,6 +7182,9 @@ emit_trampolines (MonoAotCompile *acfg)
 			case MONO_AOT_TRAMP_GSHAREDVT_ARG:
 				sprintf (symbol, "gsharedvt_arg_trampolines");
 				break;
+			case MONO_AOT_TRAMP_FTNPTR_ARG:
+				sprintf (symbol, "ftnptr_arg_trampolines");
+				break;
 			default:
 				g_assert_not_reached ();
 			}
@@ -7177,6 +7217,10 @@ emit_trampolines (MonoAotCompile *acfg)
 					break;
 				case MONO_AOT_TRAMP_GSHAREDVT_ARG:
 					arch_emit_gsharedvt_arg_trampoline (acfg, tramp_got_offset, &tramp_size);				
+					tramp_got_offset += 2;
+					break;
+				case MONO_AOT_TRAMP_FTNPTR_ARG:
+					arch_emit_ftnptr_arg_trampoline (acfg, tramp_got_offset, &tramp_size);
 					tramp_got_offset += 2;
 					break;
 				default:
@@ -7465,6 +7509,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->nimt_trampolines = atoi (arg + strlen ("nimt-trampolines="));
 		} else if (str_begins_with (arg, "ngsharedvt-trampolines=")) {
 			opts->ngsharedvt_arg_trampolines = atoi (arg + strlen ("ngsharedvt-trampolines="));
+		} else if (str_begins_with (arg, "nftnptr-arg-trampolines=")) {
+			opts->nftnptr_arg_trampolines = atoi (arg + strlen ("nftnptr-arg-trampolines="));
 		} else if (str_begins_with (arg, "tool-prefix=")) {
 			opts->tool_prefix = g_strdup (arg + strlen ("tool-prefix="));
 		} else if (str_begins_with (arg, "ld-flags=")) {
@@ -7600,6 +7646,7 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 		opts->nrgctx_trampolines = 0;
 		opts->nimt_trampolines = 0;
 		opts->ngsharedvt_arg_trampolines = 0;
+		opts->nftnptr_arg_trampolines = 0;
 	}
 
 	g_ptr_array_free (args, /*free_seg=*/TRUE);
@@ -10328,6 +10375,7 @@ init_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 	info->got_size = acfg->got_offset * sizeof (gpointer);
 	info->plt_size = acfg->plt_offset;
 	info->nmethods = acfg->nmethods;
+	info->nextra_methods = acfg->nextra_methods;
 	info->flags = acfg->flags;
 	info->opts = acfg->opts;
 	info->simd_opts = acfg->simd_opts;
@@ -10413,7 +10461,9 @@ emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 		symbols [sindex ++] = "static_rgctx_trampolines";
 		symbols [sindex ++] = "imt_trampolines";
 		symbols [sindex ++] = "gsharedvt_arg_trampolines";
+		symbols [sindex ++] = "ftnptr_arg_trampolines";
 	} else {
+		symbols [sindex ++] = NULL;
 		symbols [sindex ++] = NULL;
 		symbols [sindex ++] = NULL;
 		symbols [sindex ++] = NULL;
@@ -10464,6 +10514,7 @@ emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 	emit_int32 (acfg, info->got_size);
 	emit_int32 (acfg, info->plt_size);
 	emit_int32 (acfg, info->nmethods);
+	emit_int32 (acfg, info->nextra_methods);
 	emit_int32 (acfg, info->flags);
 	emit_int32 (acfg, info->opts);
 	emit_int32 (acfg, info->simd_opts);
@@ -12534,6 +12585,9 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	acfg->aot_opts.nimt_trampolines = 512;
 	acfg->aot_opts.nrgctx_fetch_trampolines = 128;
 	acfg->aot_opts.ngsharedvt_arg_trampolines = 512;
+#ifdef MONO_ARCH_HAVE_FTNPTR_ARG_TRAMPOLINE
+	acfg->aot_opts.nftnptr_arg_trampolines = 128;
+#endif
 	acfg->aot_opts.llvm_path = g_strdup ("");
 	acfg->aot_opts.temp_path = g_strdup ("");
 #ifdef MONOTOUCH
@@ -12654,6 +12708,11 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		acfg->is_full_aot = TRUE;
 	}
 
+	if (mono_aot_mode_is_interp (&acfg->aot_opts)) {
+		acfg->flags = (MonoAotFileFlags)(acfg->flags | MONO_AOT_FILE_FLAG_INTERP);
+		acfg->is_full_aot = TRUE;
+	}
+
 	if (mono_threads_are_safepoints_enabled ())
 		acfg->flags = (MonoAotFileFlags)(acfg->flags | MONO_AOT_FILE_FLAG_SAFEPOINTS);
 
@@ -12679,7 +12738,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		}
 	}
 
-	if (!(acfg->aot_opts.interp && !mono_aot_mode_is_full (&acfg->aot_opts))) {
+	if (!(mono_aot_mode_is_interp (&acfg->aot_opts) && !mono_aot_mode_is_full (&acfg->aot_opts))) {
 		for (int method_index = 0; method_index < acfg->image->tables [MONO_TABLE_METHOD].rows; ++method_index)
 			g_ptr_array_add (acfg->method_order,GUINT_TO_POINTER (method_index));
 	}
@@ -12692,6 +12751,9 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
 	if (acfg->opts & MONO_OPT_GSHAREDVT)
 		acfg->num_trampolines [MONO_AOT_TRAMP_GSHAREDVT_ARG] = mono_aot_mode_is_full (&acfg->aot_opts) ? acfg->aot_opts.ngsharedvt_arg_trampolines : 0;
+#endif
+#ifdef MONO_ARCH_HAVE_FTNPTR_ARG_TRAMPOLINE
+	acfg->num_trampolines [MONO_AOT_TRAMP_FTNPTR_ARG] = mono_aot_mode_is_interp (&acfg->aot_opts) ? acfg->aot_opts.nftnptr_arg_trampolines : 0;
 #endif
 
 	acfg->temp_prefix = mono_img_writer_get_temp_label_prefix (NULL);
@@ -12738,7 +12800,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	if (mono_aot_mode_is_full (&acfg->aot_opts) || mono_aot_mode_is_hybrid (&acfg->aot_opts))
 		mono_set_partial_sharing_supported (TRUE);
 
-	if (!(acfg->aot_opts.interp && !mono_aot_mode_is_full (&acfg->aot_opts))) {
+	if (!(mono_aot_mode_is_interp (&acfg->aot_opts) && !mono_aot_mode_is_full (&acfg->aot_opts))) {
 		res = collect_methods (acfg);
 		if (!res)
 			return 1;

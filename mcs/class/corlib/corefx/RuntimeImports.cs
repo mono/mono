@@ -1,11 +1,10 @@
 //
-// AlgorithmIdentifier.cs - System.Security.Cryptography.Pkcs.AlgorithmIdentifier
+// RuntimeImports.cs
 //
-// Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+// Authors:
+//	Marek Safar  <marek.safar@gmail.com>
 //
-// (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2018  Microsoft Corporation
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -14,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -27,54 +26,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
+using System.Runtime.CompilerServices;
 
-namespace System.Security.Cryptography.Pkcs {
+#if BIT64
+using nuint = System.UInt64;
+#else
+using nuint = System.UInt32;
+#endif
 
-	public sealed class AlgorithmIdentifier {
-
-		private Oid _oid;
-		private int _length;
-		private byte[] _params;
-
-		// constructors
-
-		public AlgorithmIdentifier ()
+namespace System.Runtime
+{
+	static class RuntimeImports
+	{
+		internal static unsafe void RhZeroMemory (ref byte b, nuint byteLength)
 		{
-			_oid = new Oid ("1.2.840.113549.3.7", "3des");
-			_params = new byte [0];
+			fixed (byte* bytePointer = &b) {
+				ZeroMemory (bytePointer, (uint)byteLength);
+			}
 		}
 
-		public AlgorithmIdentifier (Oid oid)
+		internal static unsafe void RhZeroMemory (IntPtr p, UIntPtr byteLength)
 		{
-			_oid = oid;
-			_params = new byte [0];
+			ZeroMemory ((void*)p, (uint) byteLength);
 		}
 
-		public AlgorithmIdentifier (Oid oid, int keyLength)
-		{
-			_oid = oid;
-			_length = keyLength;
-			_params = new byte [0];
-		}
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		static extern unsafe void ZeroMemory (void* p, uint byteLength);
 
-		// properties
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		internal static extern unsafe void Memmove (byte* dest, byte* src, uint len);
 
-		public int KeyLength { 
-			get { return _length; }
-			set { _length = value; }
-		}
-
-		public Oid Oid {
-			get { return _oid; }
-			set { _oid = value; }
-		} 
-
-		public byte[] Parameters { 
-			get { return _params; }
-			set { _params = value; }
-		} 
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		internal static extern unsafe void Memmove_wbarrier (byte* dest, byte* src, uint len, IntPtr type_handle);
 	}
 }
-
-#endif

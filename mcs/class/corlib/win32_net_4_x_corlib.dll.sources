@@ -2,6 +2,8 @@
 
 ../../../external/corert/src/Common/src/Interop/Windows/Interop.Libraries.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.BCryptGenRandom.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.BCryptGenRandom.GetRandomBytes.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.NTSTATUS.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Interop.Libraries.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Kernel32/Interop.FormatMessage.cs
@@ -27,3 +29,5 @@
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolPreAllocatedOverlapped.cs
 
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
+
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Windows.cs

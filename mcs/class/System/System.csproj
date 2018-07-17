@@ -774,6 +774,8 @@
     <Compile Include="Mono.AppleTls\SecureTransport.cs" />
     <Compile Include="Mono.AppleTls\SslConnection.cs" />
     <Compile Include="Mono.AppleTls\Trust.cs" />
+    <Compile Include="Mono.AppleTls\X509CertificateImplApple.cs" />
+    <Compile Include="Mono.AppleTls\X509PalImpl.Apple.cs" />
     <Compile Include="Mono.Btls\MonoBtlsBio.cs" />
     <Compile Include="Mono.Btls\MonoBtlsContext.cs" />
     <Compile Include="Mono.Btls\MonoBtlsError.cs" />
@@ -812,8 +814,14 @@
     <Compile Include="Mono.Btls\MonoBtlsX509VerifyParam.cs" />
     <Compile Include="Mono.Btls\X509CertificateImplBtls.cs" />
     <Compile Include="Mono.Btls\X509ChainImplBtls.cs" />
+    <Compile Include="Mono.Btls\X509PalImpl.Btls.cs" />
     <Compile Include="Mono.Util\MonoPInvokeCallbackAttribute.cs" />
     <Compile Include="MonoTouch\Dummy.cs" />
+    <Compile Include="Mono\SystemCertificateProvider.cs" />
+    <Compile Include="Mono\SystemDependencyProvider.cs" />
+    <Compile Include="Mono\X509Pal.cs" />
+    <Compile Include="Mono\X509PalImpl.Mono.cs" />
+    <Compile Include="Mono\X509PalImpl.cs" />
     <Compile Include="ReferenceSources\AssertWrapper.cs" />
     <Compile Include="ReferenceSources\AutoWebProxyScriptEngine.cs" />
     <Compile Include="ReferenceSources\EnvironmentHelpers.cs" />
@@ -1360,7 +1368,6 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Read.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ReadDir.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
@@ -1826,6 +1833,8 @@
     <Compile Include="System.Web\AspNetHostingPermissionAttribute.cs" />
     <Compile Include="System.Web\AspNetHostingPermissionLevel.cs" />
     <Compile Include="System\MonoToolsLocator.cs" />
+    <Compile Include="corefx\Unix\Interop.Read.cs" />
+    <Compile Include="corefx\Unix\Interop.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)|$(HostPlatform)' == 'net_4_x|macos' ">
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.CoreFoundation.cs" />
@@ -2300,6 +2309,8 @@
     <Compile Include="System.Web\AspNetHostingPermissionAttribute.cs" />
     <Compile Include="System.Web\AspNetHostingPermissionLevel.cs" />
     <Compile Include="System\MonoToolsLocator.cs" />
+    <Compile Include="corefx\Unix\Interop.Read.cs" />
+    <Compile Include="corefx\Unix\Interop.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)|$(HostPlatform)' == 'net_4_x|unix' ">
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
@@ -2312,7 +2323,6 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Read.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ReadDir.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
@@ -2778,6 +2788,8 @@
     <Compile Include="System.Web\AspNetHostingPermissionAttribute.cs" />
     <Compile Include="System.Web\AspNetHostingPermissionLevel.cs" />
     <Compile Include="System\MonoToolsLocator.cs" />
+    <Compile Include="corefx\Unix\Interop.Read.cs" />
+    <Compile Include="corefx\Unix\Interop.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)|$(HostPlatform)' == 'net_4_x|win32' ">
     <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Crypt32\Interop.FindOidInfo.cs" />

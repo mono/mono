@@ -1254,18 +1254,6 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 	return args_size;
 }
 
-static const gboolean debug_tailcall = FALSE;
-
-static gboolean
-is_supported_tailcall_helper (gboolean value, const char *svalue)
-{
-	if (!value && debug_tailcall)
-		g_print ("%s %s\n", __func__, svalue);
-	return value;
-}
-
-#define IS_SUPPORTED_TAILCALL(x) (is_supported_tailcall_helper((x), #x))
-
 gboolean
 mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
@@ -1363,15 +1351,6 @@ mono_arch_cpu_optimizations (guint32 *exclude_mask)
 	} else {
 		*exclude_mask |= MONO_OPT_CMOV;
 	}
-
-#ifdef TARGET_WIN32
-	/* The current SIMD doesn't support the argument used by a LD_ADDR to be of type OP_VTARG_ADDR. */
-	/* This will now be used for value types > 8 or of size 3,5,6,7 as dictated by windows x64 value type ABI. */
-	/* Since OP_VTARG_ADDR needs to be resolved in mono_spill_global_vars and the SIMD implementation optimize */
-	/* away the LD_ADDR in load_simd_vreg, that will cause an error in mono_spill_global_vars since incorrect opcode */
-	/* will now have a reference to an argument that won't be fully decomposed. */
-	*exclude_mask |= MONO_OPT_SIMD;
-#endif
 
 	return opts;
 }
