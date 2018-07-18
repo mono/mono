@@ -264,7 +264,7 @@ endif
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
 $(test_response_preprocessed): $(test_sourcefile) $(wildcard $(test_sourcefile_excludes)) $(gensources)
-	$(GENSOURCES_RUNTIME) --debug $(gensources) --strict "$@" "$(test_sourcefile)" "$(test_sourcefile_excludes)"
+	$(GENSOURCES_RUNTIME) --debug $(gensources) --baseDir:./Test --strict "$@" "$(test_sourcefile)" "$(test_sourcefile_excludes)"
 
 $(test_response): $(test_response_preprocessed)
 #	@echo Creating $@ ...
@@ -333,7 +333,7 @@ xtest_response_preprocessed = $(xtest_response)_preprocessed
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
 $(xtest_response): $(xtest_sourcefile) $(wildcard $(xtest_sourcefile_excludes))
-	$(GENSOURCES_RUNTIME) --debug $(gensources) --strict "$@" "$(xtest_sourcefile)" "$(xtest_sourcefile_excludes)"
+	$(GENSOURCES_RUNTIME) --debug $(gensources) --baseDir:./Test --strict "$@" "$(xtest_sourcefile)" "$(xtest_sourcefile_excludes)"
 
 $(xtest_makefrag): $(xtest_response)
 	@echo Creating $@ ...
