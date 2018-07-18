@@ -1542,7 +1542,6 @@ corefx/SynchronizationContext.cs
 corefx/SR.cs
 corefx/CompareInfo.cs
 corefx/GlobalizationMode.cs
-corefx/Interop.GetRandomBytes.Mono.cs
 corefx/RuntimeImports.cs
 
 corert/DependencyReductionRootAttribute.cs
