@@ -242,6 +242,7 @@ DISTFILES = $(wildcard *$(LIBRARY)*.sources) $(EXTRA_DISTFILES) $(DIST_LISTED_RE
 ASSEMBLY      = $(LIBRARY)
 ASSEMBLY_EXT  = .dll
 the_assembly  = $(the_lib)
+
 include $(topdir)/build/tests.make
 
 ifdef HAVE_CS_TESTS
@@ -303,6 +304,8 @@ PROFILE_sources = $(wildcard *.sources)
 GENSOURCES_LIBDIR = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)
 
 gensources = $(topdir)/build/gensources.exe
+
+include $(topdir)/build/gensources.make
 
 ifneq "x" "x$(PROFILE_RUNTIME)"
 GENSOURCES_RUNTIME=$(PROFILE_RUNTIME)
