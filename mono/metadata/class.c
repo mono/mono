@@ -4690,7 +4690,11 @@ mono_class_get_nested_types (MonoClass* klass, gpointer *iter)
 mono_bool
 mono_class_is_delegate (MonoClass *klass)
 {
-	return m_class_is_delegate (klass);
+	mono_bool result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_is_delegate (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**

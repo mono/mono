@@ -214,6 +214,7 @@ mono_class_get_interfaces    (MonoClass* klass, void **iter);
 MONO_API MonoClass*
 mono_class_get_nested_types  (MonoClass* klass, void **iter);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API mono_bool
 mono_class_is_delegate       (MonoClass* klass);
 
