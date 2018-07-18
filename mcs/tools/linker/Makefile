@@ -73,7 +73,7 @@ bcl-size-current: compile-tests
 		sizes=""; \
 		for asm in $(BCL_ASSEMBLIES); do \
 			if [ -f "$(LINKER_OUTPUT)/$$asm" ]; then size=$$(wc -c < "$(LINKER_OUTPUT)/$$asm" | tr -d "[:space:]"); else size="0"; fi; \
-			sizes+=",$$size"; \
+			sizes="$$sizes,$$size"; \
 		done; \
 		echo "$$app$$sizes" >> $(REPORT_FILE); \
 		rm -rf $(LINKER_OUTPUT); \
