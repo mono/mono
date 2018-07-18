@@ -7,8 +7,6 @@ PROGRAM = monolinker.exe
 LIB_REFS = System System.Core System.Xml Mono.Cecil
 
 TEST_CASES := \
-	link-all/link-all.cs \
-	link-sdk/link-sdk.cs \
 	mscorlib/test-array.cs \
 	mscorlib/test-remoting.cs \
 	mscorlib/test-string-01.cs \
@@ -21,12 +19,16 @@ TEST_CASES += \
 	mscorlib/test-reflection.cs
 endif
 
+SIZE_TEST_CASES := \
+	link-all/link-all.cs \
+	link-sdk/link-sdk.cs
+
 TESTS_COMPILER = $(MCS) -nologo -noconfig -unsafe -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
 
 check: compile-tests
 	$(MAKE) run-tests
 
-compile-tests: $(TEST_CASES)
+compile-tests: $(TEST_CASES) $(SIZE_TEST_CASES)
 
 mscorlib/test-%.cs:
 	$(TESTS_COMPILER) Tests/$@ /out:Tests/$(@:.cs=.exe)
@@ -65,7 +67,7 @@ REPORT_FILE=$(PROFILE)-linked-size.csv
 
 bcl-size-current: compile-tests
 	@echo "App,$$(echo '$(BCL_ASSEMBLIES)' | tr ' ' ',')" > $(REPORT_FILE)
-	@for app in $(sort $(TEST_CASES:.cs=.exe)); do \
+	@for app in $(sort $(SIZE_TEST_CASES:.cs=.exe) $(TEST_CASES:.cs=.exe)); do \
 		rm -rf $(LINKER_OUTPUT); \
 		mkdir $(LINKER_OUTPUT); \
 		echo Checking linked BCL size for $$app; \
