@@ -1792,22 +1792,10 @@ do_icall (ThreadContext *context, int op, stackval *sp, gpointer ptr)
 		func (sp [0].data.p, sp [1].data.p);
 		break;
 	}
-	case MINT_ICALL_PI_V: {
-		void (*func)(gpointer,int) = ptr;
-		sp -= 2;
-		func (sp [0].data.p, sp [1].data.i);
-		break;
-	}
 	case MINT_ICALL_PP_P: {
 		gpointer (*func)(gpointer,gpointer) = ptr;
 		--sp;
 		sp [-1].data.p = func (sp [-1].data.p, sp [0].data.p);
-		break;
-	}
-	case MINT_ICALL_PI_P: {
-		gpointer (*func)(gpointer,int) = ptr;
-		--sp;
-		sp [-1].data.p = func (sp [-1].data.p, sp [0].data.i);
 		break;
 	}
 	case MINT_ICALL_PPP_V: {
@@ -1816,22 +1804,22 @@ do_icall (ThreadContext *context, int op, stackval *sp, gpointer ptr)
 		func (sp [0].data.p, sp [1].data.p, sp [2].data.p);
 		break;
 	}
-	case MINT_ICALL_PPI_V: {
-		void (*func)(gpointer,gpointer,int) = ptr;
-		sp -= 3;
-		func (sp [0].data.p, sp [1].data.p, sp [2].data.i);
-		break;
-	}
-	case MINT_ICALL_PII_P: {
-		gpointer (*func)(gpointer,int,int) = ptr;
+	case MINT_ICALL_PPP_P: {
+		gpointer (*func)(gpointer,gpointer,gpointer) = ptr;
 		sp -= 2;
-		sp [-1].data.p = func (sp [-1].data.p, sp [0].data.i, sp [1].data.i);
+		sp [-1].data.p = func (sp [-1].data.p, sp [0].data.p, sp [1].data.p);
 		break;
 	}
-	case MINT_ICALL_PPII_V: {
-		gpointer (*func)(gpointer,gpointer,int,int) = ptr;
+	case MINT_ICALL_PPPP_V: {
+		void (*func)(gpointer,gpointer,gpointer,gpointer) = ptr;
 		sp -= 4;
-		func (sp [0].data.p, sp [1].data.p, sp [2].data.i, sp [3].data.i);
+		func (sp [0].data.p, sp [1].data.p, sp [2].data.p, sp [3].data.p);
+		break;
+	}
+	case MINT_ICALL_PPPP_P: {
+		gpointer (*func)(gpointer,gpointer,gpointer,gpointer) = ptr;
+		sp -= 3;
+		sp [-1].data.p = func (sp [-1].data.p, sp [0].data.p, sp [1].data.p, sp [2].data.p);
 		break;
 	}
 	default:
@@ -4880,13 +4868,11 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_ICALL_P_V) 
 		MINT_IN_CASE(MINT_ICALL_P_P)
 		MINT_IN_CASE(MINT_ICALL_PP_V)
-		MINT_IN_CASE(MINT_ICALL_PI_V)
 		MINT_IN_CASE(MINT_ICALL_PP_P)
-		MINT_IN_CASE(MINT_ICALL_PI_P)
 		MINT_IN_CASE(MINT_ICALL_PPP_V)
-		MINT_IN_CASE(MINT_ICALL_PPI_V)
-		MINT_IN_CASE(MINT_ICALL_PII_P)
-		MINT_IN_CASE(MINT_ICALL_PPII_V)
+		MINT_IN_CASE(MINT_ICALL_PPP_P)
+		MINT_IN_CASE(MINT_ICALL_PPPP_V)
+		MINT_IN_CASE(MINT_ICALL_PPPP_P)
 			frame->ip = ip;
 			sp = do_icall (context, *ip, sp, rtm->data_items [*(guint16 *)(ip + 1)]);
 			EXCEPTION_CHECKPOINT;
