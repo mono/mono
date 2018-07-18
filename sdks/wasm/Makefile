@@ -140,6 +140,9 @@ build-test-suite: .stamp-build-test-suite
 
 build-managed: build-debug-sample build-test-suite
 
+build-dbg-proxy:
+	dotnet build ProxyDriver
+
 build: build-native build-managed
 
 CHAKRA=~/.jsvu/ch
