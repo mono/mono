@@ -14,6 +14,7 @@
 #include "mini.h"
 #include "ir-emit.h"
 #include "mono/utils/bsearch.h"
+#include "mono/utils/mono-memory-model.h"
 #include <mono/metadata/abi-details.h>
 #include <mono/metadata/reflection-internals.h>
 
@@ -1872,6 +1873,7 @@ simd_intrinsic_emit_ctor (const SimdIntrinsic *intrinsic, MonoCompile *cfg, Mono
 			MONO_INST_NEW (cfg, ins, OP_STOREX_MEMBASE);
 			ins->dreg = args [0]->dreg;
 			ins->sreg1 = dreg;
+			ins->klass = cmethod->klass;
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
 		return ins;
@@ -3291,6 +3293,7 @@ mono_emit_sys_runtime_sse_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, Mon
 		if (!opcode)
 			return NULL;
 		EMIT_NEW_STORE_MEMBASE (cfg, ins, opcode, args [0]->dreg, 0, args [1]->dreg);
+		ins->klass = mono_class_from_mono_type (fsig->params [1]);
 		break;
 	case SN_StoreNonTemporal:
 		if (fsig->params [1]->type == MONO_TYPE_I4 || fsig->params [1]->type == MONO_TYPE_U4)
@@ -3315,6 +3318,8 @@ mono_emit_sys_runtime_sse_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, Mon
 	case SN_LoadFence:
 		// FIXME: Use sfence/mfence/lfence
 		MONO_INST_NEW (cfg, ins, intrins->opcode);
+		//FIXME:
+		ins->backend.memory_barrier_kind = MONO_MEMORY_BARRIER_SEQ;
 		MONO_ADD_INS (cfg->cbb, ins);
 		break;
 	case SN_MoveScalar:
@@ -3554,7 +3559,7 @@ mono_emit_sys_runtime_sse_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, Mon
 		return NULL;
 	}
 
-	if (ins) {
+	if (ins && fsig->ret->type != MONO_TYPE_VOID) {
 		ins->type = STACK_VTYPE;
 		ins->klass = rklass;
 	}
