@@ -4291,7 +4291,11 @@ mono_class_get_rank (MonoClass *klass)
 const char*
 mono_class_get_name (MonoClass *klass)
 {
-	return m_class_get_name (klass);
+	const char *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_get_name (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -4303,7 +4307,10 @@ mono_class_get_name (MonoClass *klass)
 const char*
 mono_class_get_namespace (MonoClass *klass)
 {
-	return m_class_get_name_space (klass);
+	const char *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_get_name_space (klass);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /**

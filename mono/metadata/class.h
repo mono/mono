@@ -165,9 +165,11 @@ mono_class_get_rank          (MonoClass *klass);
 MONO_API uint32_t
 mono_class_get_flags         (MonoClass *klass);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API const char*
 mono_class_get_name          (MonoClass *klass);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API const char*
 mono_class_get_namespace     (MonoClass *klass);
 

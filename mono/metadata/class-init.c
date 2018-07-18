@@ -2078,8 +2078,8 @@ foreach_override (gpointer key, gpointer value, gpointer user_data) {
 	MonoClass *override_class = mono_method_get_class (override);
 	
 	printf ("  Method '%s.%s:%s' has override '%s.%s:%s'\n",
-			mono_class_get_namespace (method_class), mono_class_get_name (method_class), mono_method_get_name (method),
-			mono_class_get_namespace (override_class), mono_class_get_name (override_class), mono_method_get_name (override));
+			m_class_get_name_space (method_class), m_class_get_name (method_class), mono_method_get_name (method),
+			m_class_get_name_space (override_class), m_class_get_name (override_class), mono_method_get_name (override));
 }
 static void
 print_overrides (GHashTable *override_map, const char *message) {
