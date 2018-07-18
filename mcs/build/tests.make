@@ -333,7 +333,7 @@ xtest_response_preprocessed = $(xtest_response)_preprocessed
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
 $(xtest_response): $(xtest_sourcefile) $(wildcard $(xtest_sourcefile_excludes))
-	$(GENSOURCES_RUNTIME) --debug $(gensources) --basedir:./Test --strict "$@" "$(xtest_sourcefile)" "$(xtest_sourcefile_excludes)"
+	$(GENSOURCES_RUNTIME) --debug $(gensources) --strict "$@" "$(xtest_sourcefile)" "$(xtest_sourcefile_excludes)"
 
 $(xtest_makefrag): $(xtest_response)
 	@echo Creating $@ ...
