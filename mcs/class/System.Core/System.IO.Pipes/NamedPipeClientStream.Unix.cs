@@ -10,6 +10,9 @@ namespace System.IO.Pipes
 			if ((desiredAccessRights & ~(PipeAccessRights.FullControl | PipeAccessRights.AccessSystemSecurity)) != 0) {
 				throw new ArgumentOutOfRangeException(nameof(desiredAccessRights), SR.ArgumentOutOfRange_InvalidPipeAccessRights);
 			}
+			if ((desiredAccessRights & ~(PipeAccessRights.ReadData | PipeAccessRights.WriteData)) != 0) {
+				throw new PlatformNotSupportedException();
+			}
 
 			// TODO: desiredAccessRights are not implemented
 		}
