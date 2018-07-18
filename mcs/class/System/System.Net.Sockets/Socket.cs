@@ -1383,12 +1383,12 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-        public int Receive (Span<byte> buffer, SocketFlags socketFlags)
+		public int Receive (Span<byte> buffer, SocketFlags socketFlags)
 		{
-            byte[] tempBuffer = new byte[buffer.Length];
-            int ret = Receive (tempBuffer, SocketFlags.None);
-            tempBuffer.CopyTo (buffer);
-            return ret;
+			byte[] tempBuffer = new byte[buffer.Length];
+			int ret = Receive (tempBuffer, SocketFlags.None);
+			tempBuffer.CopyTo (buffer);
+			return ret;
 		}
 
 		public bool ReceiveAsync (SocketAsyncEventArgs e)
@@ -1877,7 +1877,7 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-        public int Send (ReadOnlySpan<byte> buffer, SocketFlags socketFlags)
+		public int Send (ReadOnlySpan<byte> buffer, SocketFlags socketFlags)
 		{
 			return Send (buffer.ToArray(), socketFlags);
 		}
