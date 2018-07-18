@@ -103,6 +103,20 @@ public static class Program {
 
             if (SourcesParser.TraceLevel > 0)
                 Console.Error.WriteLine ($"// Writing sources for platform {platformName} and profile {profileName}, relative to {libraryDirectory}, to {outFile}.");
+        } else {
+            throw new Exception ();
+        }
+
+        if (result.ErrorCount > 0) {
+            Console.Error.WriteLine ($"// gensources failed with {result.ErrorCount} error(s)");
+
+            if (strictMode) {
+                // HACK: Make ignores non-zero exit codes so we need to delete the sources file ???
+                if (!useStdout && File.Exists (outFile))
+                    File.Delete (outFile);
+
+                return result.ErrorCount;
+            }
         }
 
         TextWriter output;
@@ -121,11 +135,7 @@ public static class Program {
                 output.WriteLine (fileName);
         }
 
-        if (strictMode) {
-            Console.Error.WriteLine ($"// gensources failed with {result.ErrorCount} error(s)");
-            return result.ErrorCount;
-        } else
-            return 0;
+        return 0;
     }
 }
 
@@ -345,11 +355,9 @@ public class SourcesParser {
             .ToArray ();
     }
 
-    public ParseResult Parse (string libraryDirectory, string sourcesFile, string excludesFile) {
+    public ParseResult Parse (string libraryDirectory, string sourcesFileName, string exclusionsFileName) {
         var state = new State {
-            Result = new ParseResult (libraryDirectory),
-            ProfileName = profile,
-            HostPlatform = hostPlatform
+            Result = new ParseResult (libraryDirectory)
         };
 
         var tpr = new TargetParseResult {
@@ -357,7 +365,7 @@ public class SourcesParser {
         };
 
         ParseIntoTarget (state, tpr, sourcesFileName, exclusionsFileName, null);
-        PrintSummary (state, sourcesFile);
+        PrintSummary (state, sourcesFileName);
         return state.Result;
     }
 
