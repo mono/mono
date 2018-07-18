@@ -139,6 +139,9 @@ mono_hwcap_arch_init (void)
 
 		if (ecx & (1 << 23))
 			mono_hwcap_x86_has_popcnt = TRUE;
+
+		if (ecx & (1 << 28))
+			mono_hwcap_x86_has_avx = TRUE;
 	}
 
 	if (cpuid (0x80000000, &eax, &ebx, &ecx, &edx)) {
