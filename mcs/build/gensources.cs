@@ -89,6 +89,10 @@ public static class Program {
                 Console.Error.WriteLine ("// Sources and exclusions files are in different directories. Aborting.");
                 return 1;
             }
+
+            if (SourcesParser.TraceLevel == 0)
+                SourcesParser.TraceLevel = 1;
+
             result = parser.Parse (directory, sourcesFile, excludesFile);
 
             if (SourcesParser.TraceLevel > 0)
@@ -107,15 +111,22 @@ public static class Program {
             throw new Exception ();
         }
 
-        if (result.ErrorCount > 0) {
-            Console.Error.WriteLine ($"// gensources failed with {result.ErrorCount} error(s)");
+        var fileNames = result.GetMatches ()
+            .OrderBy (e => e.RelativePath, StringComparer.Ordinal)
+            .Select (e => e.RelativePath)
+            .Distinct ()
+            .ToList ();
+
+        if ((result.ErrorCount > 0) || (fileNames.Count == 0)) {
+            Console.Error.WriteLine ($"// gensources produced {result.ErrorCount} error(s) and a set of {fileNames.Count} filename(s)");
+            Console.Error.WriteLine ($"// Invoked with '{Environment.CommandLine}'");
 
             if (strictMode) {
                 // HACK: Make ignores non-zero exit codes so we need to delete the sources file ???
                 if (!useStdout && File.Exists (outFile))
                     File.Delete (outFile);
 
-                return result.ErrorCount;
+                return result.ErrorCount + 1;
             }
         }
 
@@ -126,11 +137,6 @@ public static class Program {
             output = new StreamWriter (outFile);
 
         using (output) {
-            var fileNames = result.GetMatches ()
-                .OrderBy (e => e.RelativePath, StringComparer.Ordinal)
-                .Select (e => e.RelativePath)
-                .Distinct();
-
             foreach (var fileName in fileNames)
                 output.WriteLine (fileName);
         }
@@ -364,7 +370,8 @@ public class SourcesParser {
             Key = (hostPlatform: null, profile: null)
         };
 
-        ParseIntoTarget (state, tpr, sourcesFileName, exclusionsFileName, null);
+        var parsedTarget = ParseIntoTarget (state, tpr, sourcesFileName, exclusionsFileName, null);
+
         PrintSummary (state, sourcesFileName);
         return state.Result;
     }
@@ -535,7 +542,7 @@ public class SourcesParser {
                 state.Result.TargetDictionary.Add (tpr.Key, tpr);
                 return tpr;
             } else {
-                if (TraceLevel >= 2)
+                if (TraceLevel >= 1)
                     Console.Error.WriteLine($"// Not found: {sourcesFileName}");
                 return null;
             }
