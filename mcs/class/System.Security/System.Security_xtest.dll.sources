@@ -17,7 +17,7 @@
 # ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/SignedCms/SignedCmsWholeDocumentTests.cs
 # ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/SignedCms/SignerInfoTests.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/tests/Pkcs9AttributeTests.cs
-#../../../external/corefx/src/System.Security.Cryptography.ProtectedData/tests/ProtectedDataTests.cs
+../../../external/corefx/src/System.Security.Cryptography.ProtectedData/tests/ProtectedDataTests.cs
 
 # Dependencies
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
