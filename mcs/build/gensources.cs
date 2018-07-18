@@ -9,11 +9,19 @@ public static class Program {
     public static int Main (string[] _args) {
         var args = new List<string> (_args);
         bool useStdout = false, showHelp = false, strictMode = false;
+        string baseDir = null;
 
         for (int i = 0; i < args.Count; i++) {
             var arg = args[i];
             if (!arg.StartsWith ("-"))
                 continue;
+
+            string argValue = null;
+            var offset = arg.IndexOf(':');
+            if (offset >= 0) {
+                argValue = arg.Substring (offset + 1);
+                arg = arg.Substring (0, offset);
+            }
 
             switch (arg) {
                 case "-?":
@@ -22,23 +30,19 @@ public static class Program {
                     showHelp = true;
                     break;
                 case "--trace":
-                case "--trace1":
-                    SourcesParser.TraceLevel = 1;
-                    break;
-                case "--trace2":
-                    SourcesParser.TraceLevel = 2;
-                    break;
-                case "--trace3":
-                    SourcesParser.TraceLevel = 3;
-                    break;
-                case "--trace4":
-                    SourcesParser.TraceLevel = 4;
+                    if (argValue != null)
+                        SourcesParser.TraceLevel = int.Parse(argValue);
+                    else
+                        SourcesParser.TraceLevel = 1;
                     break;
                 case "--stdout":
                     useStdout = true;
                     break;
                 case "--strict":
                     strictMode = true;
+                    break;
+                case "--basedir":
+                    baseDir = argValue;
                     break;
                 default:
                     Console.Error.WriteLine ($"// Unrecognized switch {arg}. Aborting.");
@@ -54,17 +58,19 @@ public static class Program {
 
         if (showHelp) {
             Console.Error.WriteLine ("Usage: mcs/build/gensources.exe [options] (outputFileName|--stdout) libraryDirectoryAndName platformName profileName");
-            Console.Error.WriteLine ("or     mcs/build/gensources.exe [options] (outputFileName|--stdout) sourcesFile exclusionsFile");
+            Console.Error.WriteLine ("or     mcs/build/gensources.exe [options] (outputFileName|--stdout) (--baseDir:<dir>) sourcesFile exclusionsFile");
             Console.Error.WriteLine ("You can specify * for platformName and profileName to read all sources files");
             Console.Error.WriteLine ("Available options:");
             Console.Error.WriteLine ("--help -h -?");
             Console.Error.WriteLine ("  Show command line info");
-            Console.Error.WriteLine ("--trace1 --trace2 --trace3 --trace4");
-            Console.Error.WriteLine ("  Enable diagnostic output");
+            Console.Error.WriteLine ("--trace:n");
+            Console.Error.WriteLine ("  Enable diagnostic output, at tracing level n (1-4)");
             Console.Error.WriteLine ("--stdout");
             Console.Error.WriteLine ("  Writes results to standard output (omit outputFileName if you use this)");
             Console.Error.WriteLine ("--strict");
             Console.Error.WriteLine ("  Produces an error exit code if files or directories are invalid/missing");
+            Console.Error.WriteLine ("--basedir:<dir>");
+            Console.Error.WriteLine ("  Sets the base directory when reading a single sources/exclusions pair (default is the directory containing the sources file)");
             return 1;
         }
 
@@ -85,7 +91,7 @@ public static class Program {
             var sourcesFile = Path.GetFullPath (args[1]);
             var excludesFile = Path.GetFullPath (args[2]);
             var directory = Path.GetDirectoryName (sourcesFile);
-            if (Path.GetDirectoryName (excludesFile) != directory) {
+            if ((Path.GetDirectoryName (excludesFile) != directory) && (baseDir == null)) {
                 Console.Error.WriteLine ("// Sources and exclusions files are in different directories. Aborting.");
                 return 1;
             }
@@ -93,11 +99,14 @@ public static class Program {
             if (SourcesParser.TraceLevel == 0)
                 SourcesParser.TraceLevel = 1;
 
-            result = parser.Parse (directory, sourcesFile, excludesFile);
+            result = parser.Parse (baseDir ?? directory, sourcesFile, excludesFile);
 
             if (SourcesParser.TraceLevel > 0)
                 Console.Error.WriteLine ($"// Writing sources from {sourcesFile} minus {excludesFile}, to {outFile}.");
         } else if (args.Count == 4) {
+            if (baseDir != null)
+                Console.Error.WriteLine ($"// WARNING: baseDir has no effect in this mode");
+
             var libraryFullName = Path.GetFullPath (args[1]);
             var platformName = args[2].Trim ();
             var profileName = args[3].Trim ();
@@ -120,6 +129,7 @@ public static class Program {
         if ((result.ErrorCount > 0) || (fileNames.Count == 0)) {
             Console.Error.WriteLine ($"// gensources produced {result.ErrorCount} error(s) and a set of {fileNames.Count} filename(s)");
             Console.Error.WriteLine ($"// Invoked with '{Environment.CommandLine}'");
+            Console.Error.WriteLine ($"// Working directory was '{Environment.CurrentDirectory}'");
 
             if (strictMode) {
                 // HACK: Make ignores non-zero exit codes so we need to delete the sources file ???
@@ -207,20 +217,26 @@ public class ParseResult {
 
         if (!relativeToDirectory.EndsWith ("/"))
             relativeToDirectory += "/";
-        var dirUri = new Uri (relativeToDirectory);
-        var pathUri = new Uri (fullPath);
 
-        var relativePath = Uri.UnescapeDataString (
-            dirUri.MakeRelativeUri (pathUri).OriginalString
-        ).Replace ("/", SourcesParser.DirectorySeparator)
-         .Replace (SourcesParser.DirectorySeparator + SourcesParser.DirectorySeparator, SourcesParser.DirectorySeparator);
+        try {
+            var dirUri = new Uri (relativeToDirectory);
+            var pathUri = new Uri (fullPath);
+
+            var relativePath = Uri.UnescapeDataString (
+                dirUri.MakeRelativeUri (pathUri).OriginalString
+            ).Replace ("/", SourcesParser.DirectorySeparator)
+             .Replace (SourcesParser.DirectorySeparator + SourcesParser.DirectorySeparator, SourcesParser.DirectorySeparator);
+
+            return relativePath;
+        } catch (Exception) {
+            Console.Error.WriteLine ($"// Parse error when treating '{fullPath}' as a URI relative to directory '{relativeToDirectory}'");
+            return fullPath;
+        }
 
         /*
         if (SourcesParser.TraceLevel >= 4)
             Console.Error.WriteLine ($"// {fullPath} -> {relativePath}");
         */
-
-        return relativePath;
     }
 
     public IEnumerable<MatchEntry> EnumerateMatches (
@@ -228,6 +244,8 @@ public class ParseResult {
         IEnumerable<ParseEntry> entries
     ) {
         var patternChars = new [] { '*', '?' };
+
+        var isFirstError = true;
 
         foreach (var entry in entries) {
             var absolutePath = Path.Combine (entry.Directory, entry.Pattern);
@@ -240,6 +258,11 @@ public class ParseResult {
             }            
 
             if (!Directory.Exists (absoluteDirectory)) {
+                if (isFirstError) {
+                    isFirstError = false;
+                    Console.Error.WriteLine ($"// Error(s) in file {sourcesFile.FileName}:");
+                }
+
                 Console.Error.WriteLine ($"Directory does not exist: '{Path.GetFullPath (absoluteDirectory)}'");
                 ErrorCount += 1;
                 continue;
@@ -261,6 +284,10 @@ public class ParseResult {
                 }
             } else {
                 if (!File.Exists (absolutePath)) {
+                    if (isFirstError) {
+                        isFirstError = false;
+                        Console.Error.WriteLine ($"// Error(s) in file {sourcesFile.FileName}:");
+                    }
                     Console.Error.WriteLine ($"File does not exist: '{absolutePath}'");
                     ErrorCount += 1;
                 } else {
@@ -370,7 +397,7 @@ public class SourcesParser {
             Key = (hostPlatform: null, profile: null)
         };
 
-        var parsedTarget = ParseIntoTarget (state, tpr, sourcesFileName, exclusionsFileName, null);
+        var parsedTarget = ParseIntoTarget (state, tpr, sourcesFileName, exclusionsFileName, null, overrideDirectory: libraryDirectory);
 
         PrintSummary (state, sourcesFileName);
         return state.Result;
@@ -530,7 +557,7 @@ public class SourcesParser {
     private TargetParseResult ParseIntoTarget (
         State state, TargetParseResult tpr, 
         string sourcesFileName, string exclusionsFileName,
-        TargetParseResult fallbackTarget
+        TargetParseResult fallbackTarget, string overrideDirectory = null
     ) {
         if (!File.Exists (sourcesFileName)) {
             if (fallbackTarget != null) {
@@ -548,16 +575,16 @@ public class SourcesParser {
             }
         }
 
-        tpr.Sources = ParseSingleFile (state, sourcesFileName, false);
+        tpr.Sources = ParseSingleFile (state, sourcesFileName, false, overrideDirectory: overrideDirectory);
 
         if (File.Exists (exclusionsFileName))
-            tpr.Exclusions = ParseSingleFile (state, exclusionsFileName, true);
+            tpr.Exclusions = ParseSingleFile (state, exclusionsFileName, true, overrideDirectory: overrideDirectory);
 
         state.Result.TargetDictionary.Add (tpr.Key, tpr);
         return tpr;
     }
 
-    private SourcesFile ParseSingleFile (State state, string fileName, bool asExclusionsList) {
+    private SourcesFile ParseSingleFile (State state, string fileName, bool asExclusionsList, string overrideDirectory = null) {
         var fileTable = asExclusionsList ? state.Result.ExclusionFiles : state.Result.SourcesFiles;
 
         var nullStr = "<none>";
@@ -574,7 +601,7 @@ public class SourcesParser {
 
         ParseDepth += 1;
 
-        var directory = Path.GetDirectoryName (fileName);
+        var directory = overrideDirectory ?? Path.GetDirectoryName (fileName);
         var result = new SourcesFile (fileName, asExclusionsList);
         fileTable.Add (fileName, result);
 
