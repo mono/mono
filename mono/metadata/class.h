@@ -148,6 +148,7 @@ MONO_RT_EXTERNAL_ONLY
 MONO_API mono_bool
 mono_class_is_valuetype      (MonoClass *klass);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API mono_bool
 mono_class_is_enum          (MonoClass *klass);
 

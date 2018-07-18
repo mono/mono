@@ -4221,7 +4221,11 @@ mono_class_is_valuetype (MonoClass *klass)
 gboolean
 mono_class_is_enum (MonoClass *klass)
 {
-	return m_class_is_enumtype (klass);
+	gboolean result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_is_enumtype (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**

@@ -4931,7 +4931,7 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 		MonoGenericContext ctx;
 		MonoType *args [16];
 
-		if (mono_class_is_enum (tclass)) {
+		if (m_class_is_enumtype (tclass)) {
 			MonoClass *enum_comparer_inst;
 			ERROR_DECL (error);
 
@@ -4953,7 +4953,7 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 		MonoGenericContext ctx;
 		MonoType *args [16];
 
-		if (mono_class_is_enum (tclass)) {
+		if (m_class_is_enumtype (tclass)) {
 			MonoClass *comparer_inst;
 			ERROR_DECL (error);
 
