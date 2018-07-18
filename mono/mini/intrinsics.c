@@ -1427,8 +1427,7 @@ static gboolean
 intrins_set_supported (MonoCompile *cfg, SimdVersion version)
 {
 	if (cfg->compile_aot)
-		// FIXME:
-		return FALSE;
+		return TRUE;
 	return (mono_arch_cpu_enumerate_simd_versions () & version) != 0;
 }
 
@@ -1489,16 +1488,55 @@ emit_sys_runtime_intrinsics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, M
 #ifdef TARGET_AMD64
 
 static MonoInst*
+emit_is_supported (MonoCompile *cfg, SimdVersion version)
+{
+	MonoInst *ins, *masked, *versions;
+
+	if (cfg->compile_aot) {
+		/* Need to do a runtime check */
+		EMIT_NEW_AOTCONST (cfg,versions, MONO_PATCH_INFO_SIMD_VERSIONS, NULL);
+		int dreg = alloc_ireg (cfg);
+		EMIT_NEW_BIALU_IMM (cfg, masked, OP_OR_IMM, dreg, versions->dreg, version);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, dreg, 0);
+		MONO_INST_NEW (cfg, ins, OP_CGT_UN);
+		ins->dreg = alloc_ireg (cfg);
+		MONO_ADD_INS (cfg->cbb, ins);
+	} else {
+		EMIT_NEW_ICONST (cfg, ins, 1);
+	}
+	return ins;
+}
+
+static MonoInst*
 emit_sys_runtime_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args, MonoError *error)
 {
 	MonoInst *ins;
 	const char *class_name = m_class_get_name (cmethod->klass);
+	SimdVersion version = 0;
 
-	if (!strcmp (class_name, "Lzcnt") && intrins_set_supported (cfg, SIMD_VERSION_X86_LZCNT)) {
-		if (!strcmp (cmethod->name, "get_IsSupported")) {
-			EMIT_NEW_ICONST (cfg, ins, 1);
-			return ins;
-		}
+	if (!strcmp (class_name, "Lzcnt"))
+		version = SIMD_VERSION_X86_LZCNT;
+	else if (!strcmp (class_name, "Popcnt"))
+		version = SIMD_VERSION_X86_POPCNT;
+	else if (!strcmp (class_name, "Sse"))
+		version = SIMD_VERSION_SSE1;
+	else if (!strcmp (class_name, "Sse2"))
+		version = SIMD_VERSION_SSE2;
+	else if (!strcmp (class_name, "Sse3"))
+		version = SIMD_VERSION_SSE3;
+	else
+		return NULL;
+
+	if (!intrins_set_supported (cfg, version)) {
+		mono_error_set_not_supported (error, NULL);
+		return NULL;
+	}
+
+	if (!strcmp (cmethod->name, "get_IsSupported"))
+		return emit_is_supported (cfg, version);
+
+	switch (version) {
+	case  SIMD_VERSION_X86_LZCNT:
 		if (!strcmp (cmethod->name, "LeadingZeroCount")) {
 			int opcode = 0;
 			int dreg = -1;
@@ -1521,13 +1559,8 @@ emit_sys_runtime_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMeth
 				return ins;
 			}
 		}
-	}
-
-	if (!strcmp (class_name, "Popcnt") && intrins_set_supported (cfg, SIMD_VERSION_X86_POPCNT)) {
-		if (!strcmp (cmethod->name, "get_IsSupported")) {
-			EMIT_NEW_ICONST (cfg, ins, 1);
-			return ins;
-		}
+		break;
+	case  SIMD_VERSION_X86_POPCNT:
 		if (!strcmp (cmethod->name, "PopCount")) {
 			int opcode = 0;
 			int dreg = -1;
@@ -1550,20 +1583,16 @@ emit_sys_runtime_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMeth
 				return ins;
 			}
 		}
-	}
-
-	if ((!strcmp (class_name, "Sse") && intrins_set_supported (cfg, SIMD_VERSION_SSE1)) ||
-		(!strcmp (class_name, "Sse2") && intrins_set_supported (cfg, SIMD_VERSION_SSE2)) ||
-		(!strcmp (class_name, "Sse3") && intrins_set_supported (cfg, SIMD_VERSION_SSE3))) {
-		if (!strcmp (cmethod->name, "get_IsSupported")) {
-			EMIT_NEW_ICONST (cfg, ins, 1);
-			return ins;
-		}
+		break;
+	case SIMD_VERSION_SSE1:
+	case SIMD_VERSION_SSE2:
+	case SIMD_VERSION_SSE3:
 		return mono_emit_sys_runtime_sse_intrinsics (cfg, cmethod, fsig, args, error);
-	} else {
-		mono_error_set_not_supported (error, NULL);
+		break;
+	default:
+		g_assert_not_reached ();
+		break;
 	}
-
 	return NULL;
 }
 

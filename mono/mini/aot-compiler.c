@@ -6306,6 +6306,7 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 		encode_method_ref (acfg, patch_info->data.virt_method->method, p, &p);
 		break;
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
+	case MONO_PATCH_INFO_SIMD_VERSIONS:
 		break;
 	default:
 		g_warning ("unable to handle jump info %d", patch_info->type);

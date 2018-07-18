@@ -1261,6 +1261,7 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_AOT_MODULE:
 	case MONO_PATCH_INFO_PROFILER_ALLOCATION_COUNT:
 	case MONO_PATCH_INFO_PROFILER_CLAUSE_COUNT:
+	case MONO_PATCH_INFO_SIMD_VERSIONS:
 		return (ji->type << 8);
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
 		return (ji->type << 8) | (ji->data.index);
@@ -1685,6 +1686,11 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	}
 	case MONO_PATCH_INFO_PROFILER_CLAUSE_COUNT: {
 		target = (gpointer) &mono_profiler_state.exception_clause_count;
+		break;
+	}
+	case MONO_PATCH_INFO_SIMD_VERSIONS: {
+		guint32 versions = mono_arch_cpu_enumerate_simd_versions ();
+		target = GUINT_TO_POINTER (versions);
 		break;
 	}
 	default:
