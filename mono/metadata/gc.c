@@ -95,6 +95,7 @@ static void reference_queue_clear_for_domain (MonoDomain *domain);
 static void mono_runtime_do_background_work (void);
 
 static MonoReferenceQueue* mono_gc_reference_queue_new_internal (mono_reference_queue_callback callback);
+static gboolean mono_gc_reference_queue_add_internal (MonoReferenceQueue *queue, MonoObject *obj, void *user_data);
 
 
 static MonoThreadInfoWaitRet
@@ -1258,6 +1259,16 @@ mono_gc_reference_queue_new_internal (mono_reference_queue_callback callback)
  */
 gboolean
 mono_gc_reference_queue_add (MonoReferenceQueue *queue, MonoObject *obj, void *user_data)
+{
+	gboolean result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_gc_reference_queue_add_internal (queue, obj, user_data);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+gboolean
+mono_gc_reference_queue_add_internal (MonoReferenceQueue *queue, MonoObject *obj, void *user_data)
 {
 	RefQueueEntry *entry;
 	if (queue->should_be_deleted)
