@@ -481,6 +481,11 @@ ves_icall_System_IO_MonoIO_SetFileAttributes (const gunichar2 *path, gint32 attr
 					      gint32 *error)
 {
 	gboolean ret;
+	const gunichar2 *path_remapped;
+
+	if (path_remapped = mono_unity_remap_path_utf16 (path))
+		path = path_remapped;
+
 	*error=ERROR_SUCCESS;
 	
 	ret=mono_w32file_set_attributes (path,
@@ -488,6 +493,9 @@ ves_icall_System_IO_MonoIO_SetFileAttributes (const gunichar2 *path, gint32 attr
 	if(ret==FALSE) {
 		*error=mono_w32error_get_last ();
 	}
+
+	g_free (path_remapped);
+
 	return(ret);
 }
 
