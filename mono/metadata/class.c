@@ -4203,7 +4203,11 @@ mono_class_get_element_class (MonoClass *klass)
 gboolean
 mono_class_is_valuetype (MonoClass *klass)
 {
-	return m_class_is_valuetype (klass);
+	gboolean result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_is_valuetype (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**

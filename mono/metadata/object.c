@@ -8173,7 +8173,7 @@ prepare_to_string_method (MonoObject *obj, void **target)
 	method = mono_object_get_virtual_method (obj, to_string);
 
 	// Unbox value type if needed
-	if (mono_class_is_valuetype (mono_method_get_class (method))) {
+	if (m_class_is_valuetype (mono_method_get_class (method))) {
 		*target = mono_object_unbox (obj);
 	}
 	return method;
