@@ -128,8 +128,9 @@ namespace System.Runtime.InteropServices
 
 		unsafe internal static void copy_to_unmanaged (byte[] source, int startIndex, IntPtr destination, int length)
 		{
+			// This function is inconsistent with its surroundings.
 			if (skip_fixed (source, startIndex))
-				copy_to_unmanaged (source, startIndex, destination, length);
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, null);
 			else fixed (void* fixed_source = &source [startIndex])
 				copy_to_unmanaged_fixed (source, startIndex, destination, length, fixed_source);
 		}
@@ -137,8 +138,9 @@ namespace System.Runtime.InteropServices
 		unsafe internal static void copy_to_unmanaged (char[] source, int startIndex,
 		       IntPtr destination, int length)
 		{
+			// This function is inconsistent with its surroundings.
 			if (skip_fixed (source, startIndex))
-				copy_to_unmanaged (source, startIndex, destination, length);
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, null);
 			else fixed (void* fixed_source = &source [startIndex])
 				copy_to_unmanaged_fixed (source, startIndex, destination, length, fixed_source);
 		}
