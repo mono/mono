@@ -192,6 +192,7 @@ mono_class_num_properties    (MonoClass *klass);
 MONO_API int
 mono_class_num_events        (MonoClass *klass);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoClassField*
 mono_class_get_fields        (MonoClass* klass, void **iter);
 

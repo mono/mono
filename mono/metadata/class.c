@@ -4417,6 +4417,16 @@ mono_class_num_events (MonoClass *klass)
 MonoClassField*
 mono_class_get_fields (MonoClass* klass, gpointer *iter)
 {
+	MonoClassField *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_class_get_fields_internal (klass, iter);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+MonoClassField*
+mono_class_get_fields_internal (MonoClass *klass, gpointer *iter)
+{
 	MonoClassField* field;
 	if (!iter)
 		return NULL;
@@ -5671,7 +5681,7 @@ mono_class_is_valid_enum (MonoClass *klass)
 	if (!mono_class_is_auto_layout (klass))
 		return FALSE;
 
-	while ((field = mono_class_get_fields (klass, &iter))) {
+	while ((field = mono_class_get_fields_internal (klass, &iter))) {
 		if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
 			if (found_base_field)
 				return FALSE;

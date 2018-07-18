@@ -3810,7 +3810,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 			gpointer iter = NULL;
 			guint32 first_field_idx = mono_class_get_first_field_idx (p);
 
-			while ((field = mono_class_get_fields (p, &iter))) {
+			while ((field = mono_class_get_fields_internal (p, &iter))) {
 				guint32 field_idx = first_field_idx + (field - p->fields);
 				if (MONO_TYPE_IS_REFERENCE (field->type) && mono_assembly_is_weak_field (p->image, field_idx + 1)) {
 					has_weak_fields = TRUE;

@@ -3925,7 +3925,7 @@ can_marshal_struct (MonoClass *klass)
 	info = mono_marshal_load_type_info (klass);
 
 	/* Only allow a few field types to avoid asserts in the marshalling code */
-	while ((field = mono_class_get_fields (klass, &iter))) {
+	while ((field = mono_class_get_fields_internal (klass, &iter))) {
 		if ((field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 			continue;
 
@@ -4800,7 +4800,7 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 	}
 
 	iter = NULL;
-	while ((field = mono_class_get_fields (klass, &iter))) {
+	while ((field = mono_class_get_fields_internal (klass, &iter))) {
 		if (field->type->type == MONO_TYPE_GENERICINST)
 			add_generic_class_with_depth (acfg, mono_class_from_mono_type (field->type), depth + 1, "field");
 	}
