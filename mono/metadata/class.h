@@ -141,6 +141,7 @@ mono_type_get_underlying_type (MonoType *type);
 MONO_API MonoImage*
 mono_class_get_image         (MonoClass *klass);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoClass*
 mono_class_get_element_class (MonoClass *klass);
 

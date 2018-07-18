@@ -4629,7 +4629,7 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 		static const int fast_log2 [] = { 1, 0, 1, -1, 2, -1, -1, -1, 3 };
 
 		EMIT_NEW_X86_LEA (cfg, ins, array_reg, index2_reg, fast_log2 [size], MONO_STRUCT_OFFSET (MonoArray, vector));
-		ins->klass = mono_class_get_element_class (klass);
+		ins->klass = m_class_get_element_class (klass);
 		ins->type = STACK_MP;
 
 		return ins;
@@ -4652,7 +4652,7 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	}
 	MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
 	NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, add_reg, add_reg, MONO_STRUCT_OFFSET (MonoArray, vector));
-	ins->klass = mono_class_get_element_class (klass);
+	ins->klass = m_class_get_element_class (klass);
 	ins->type = STACK_MP;
 	MONO_ADD_INS (cfg->cbb, ins);
 

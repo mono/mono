@@ -4188,7 +4188,11 @@ mono_class_get_image (MonoClass *klass)
 MonoClass*
 mono_class_get_element_class (MonoClass *klass)
 {
-	return m_class_get_element_class (klass);
+	MonoClass *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_get_element_class (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
