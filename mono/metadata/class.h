@@ -153,6 +153,7 @@ mono_class_is_enum          (MonoClass *klass);
 MONO_API MonoType*
 mono_class_enum_basetype    (MonoClass *klass);
 
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoClass*
 mono_class_get_parent        (MonoClass *klass);
 

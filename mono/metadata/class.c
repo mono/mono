@@ -4251,7 +4251,11 @@ mono_class_enum_basetype (MonoClass *klass)
 MonoClass*
 mono_class_get_parent (MonoClass *klass)
 {
-	return m_class_get_parent (klass);
+	MonoClass *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_get_parent (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
