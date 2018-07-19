@@ -210,7 +210,7 @@ public class ParseResult {
     public int ErrorCount = 0;
 
     public ParseResult (string libraryDirectory) {
-        LibraryDirectory = libraryDirectory;
+        LibraryDirectory = Path.GetFullPath (libraryDirectory);
     }
 
     public IEnumerable<TargetParseResult> Targets {
@@ -219,7 +219,7 @@ public class ParseResult {
         }
     }
 
-    private static string GetRelativePath (string fullPath, string relativeToDirectory) {
+    private string GetRelativePath (string fullPath, string relativeToDirectory) {
         fullPath = fullPath.Replace ("\\", "/");
         relativeToDirectory = relativeToDirectory.Replace ("\\", "/");
 
@@ -238,6 +238,7 @@ public class ParseResult {
             return relativePath;
         } catch (Exception) {
             Console.Error.WriteLine ($"// Parse error when treating '{fullPath}' as a URI relative to directory '{relativeToDirectory}'");
+            ErrorCount += 1;
             return fullPath;
         }
 
@@ -256,7 +257,7 @@ public class ParseResult {
         var isFirstError = true;
 
         foreach (var entry in entries) {
-            var absolutePath = Path.Combine (entry.Directory, entry.Pattern);
+            var absolutePath = Path.GetFullPath (Path.Combine (entry.Directory, entry.Pattern));
             var absoluteDirectory = Path.GetDirectoryName (absolutePath);
             var absolutePattern = Path.GetFileName (absolutePath);
 
