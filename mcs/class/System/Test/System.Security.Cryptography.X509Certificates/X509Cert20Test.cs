@@ -451,44 +451,6 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 			new X509Certificate ().GetSerialNumberString ();
 		}
 
-#if !MOBILE
-		[Test]
-		[ExpectedException (typeof (PlatformNotSupportedException))]
-		public void GetObjectData_Null ()
-		{
-			X509Certificate x = new X509Certificate ();
-			ISerializable s = (x as ISerializable);
-			s.GetObjectData (null, new StreamingContext (StreamingContextStates.All));
-		}
-
-		[Test]
-		[ExpectedException (typeof (PlatformNotSupportedException))]
-		public void GetObjectData ()
-		{
-			X509Certificate x = new X509Certificate (cert1);
-			ISerializable s = (x as ISerializable);
-			Assert.IsNotNull (s, "ISerializable");
-			SerializationInfo info = new SerializationInfo (typeof (X509Certificate), new FormatterConverter ());
-			s.GetObjectData (info, new StreamingContext (StreamingContextStates.All));
-		}
-#endif
-
-		[Test]
-		[ExpectedException (typeof (PlatformNotSupportedException))]
-		public void Ctor_Serialization_Null ()
-		{
-			new X509Certificate (null, new StreamingContext (StreamingContextStates.All));
-		}
-
-		[Test]
-		[ExpectedException (typeof (PlatformNotSupportedException))]
-		public void Ctor_Serialization ()
-		{
-			SerializationInfo info = new SerializationInfo (typeof (X509Certificate), new FormatterConverter ());
-			new X509Certificate (info, new StreamingContext (StreamingContextStates.All));
-		}
-
-
 		[Test]
 		public void Properties ()
 		{

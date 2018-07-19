@@ -62,13 +62,7 @@ namespace System.Security.Cryptography.X509Certificates
 		{
 			if (certificate.Impl is X509Certificate2ImplMono monoImpl)
 				return monoImpl.MonoCertificate;
-			if (certificate.Impl is X509Certificate2Impl impl2 && impl2.FallbackImpl is X509Certificate2ImplMono fallbackImpl)
-				return fallbackImpl.MonoCertificate;
-
-			var impl = SystemDependencyProvider.Instance.CertificateProvider.Import (certificate, CertificateImportFlags.DisableNativeBackend);
-			if (impl is X509Certificate2ImplMono fallbackImpl2)
-				return fallbackImpl2.MonoCertificate;
-			throw new NotSupportedException ();
+			return new MX.X509Certificate (certificate.RawData);
 		}
 
 		internal static X509ChainImpl CreateChainImpl (bool useMachineContext)
