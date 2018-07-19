@@ -1642,6 +1642,8 @@ if ($artifact)
 				print ">>> Copying $file\n";
 				system("cp", "$monoroot/mono/mini/.libs/$file","$embedDirArchDestination/$file") eq 0 or die ("failed copying $file\n");
 			}
+			print ">>> Copying libMonoPosixHelper.so\n";
+			system("cp", "$monoroot/support/.libs/libMonoPosixHelper.so","$embedDirArchDestination/libMonoPosixHelper.so") eq 0 or die ("failed copying libMonoPosixHelper.so\n");
 		}
 		elsif ($tizen || $tizenEmulator)
 		{
