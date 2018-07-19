@@ -23,7 +23,7 @@ using System.Security.Cryptography.X509Certificates;
             this.port = port;
             this.client = new TcpClient(hostName, port);
             this.stream = client.GetStream();
-            this.writer = new StreamWriter(stream);
+	    this.writer = new StreamWriter(stream);
         }
 
         public override void Write(char value)
@@ -64,7 +64,7 @@ public class TestRunner
         // This would normally happen on system startup in
         // `xamarin-macios/src/ObjcRuntime/Runtime.cs`.
         // MonoTlsProviderFactory.Initialize ();
-        new X509Certificate2 (cert_2);
+        new X509Certificate2 (cert_1);
     }
 
 	public static int Main(string[] args) {
