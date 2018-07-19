@@ -493,7 +493,8 @@ public void Certificate6 ()
 // Certificate: basic\BADCERT.cer
 // - Bad certificate (will throw an exception)
 [Test]
-[Category ("NotWorking")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
+[Category ("NotWorking")] // this test needs to be reworked
+[Category ("MacNotWorking")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
 public void Certificate7 ()
 {
 	// cannot be loaded - will throw an exception
