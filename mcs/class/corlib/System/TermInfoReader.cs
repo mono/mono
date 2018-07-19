@@ -173,7 +173,7 @@ namespace System {
 				offset++;
 
 			offset += ((int) number) * intOffset;
-			return GetInteger (buffer, offset);
+			return GetInt16 (buffer, offset);
 		}
 
 		public string Get (TermInfoStrings tstr)
@@ -220,27 +220,6 @@ namespace System {
 				return -1;
 
 			return (short) (uno + dos * 256);
-		}
-
-		int GetInt32 (byte [] buffer, int offset)
-		{
-			int b1 = (int) buffer [offset];
-			int b2 = (int) buffer [offset + 1];
-			int b3 = (int) buffer [offset + 2];
-			int b4 = (int) buffer [offset + 3];
-			if (b1 == 255 && b2 == 255 && b3 == 255 && b4 == 255)
-				return -1;
-
-			return b1 + b2 << 8 + b3 << 16 + b4 << 24;
-		}
-
-		int GetInteger (byte [] buffer, int offset)
-		{
-			if (intOffset == 2)
-				return GetInt16 (buffer, offset);
-			else
-				// intOffset == 4
-				return GetInt32 (buffer, offset);
 		}
 
 		string GetString (byte [] buffer, int offset)
