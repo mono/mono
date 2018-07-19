@@ -527,17 +527,21 @@ public class SourcesParser {
             Console.Error.WriteLine ($"// Parsed {state.SourcesFilesParsed} sources file(s) and {state.ExclusionsFilesParsed} exclusions file(s) from path '{testPath}'.");
     }
 
-    private void HandleMetaDirective (State state, SourcesFile file, string directory, bool asExclusionsList, string directive) {
+    private void HandleMetaDirective (
+        State state, SourcesFile file, 
+        string pathDirectory, string includeDirectory,
+        bool asExclusionsList, string directive
+    ) {
         var include = "#include ";
         if (directive.StartsWith (include)) {
-            var fileName = Path.Combine (directory, directive.Substring (include.Length));
+            var fileName = Path.Combine (includeDirectory, directive.Substring (include.Length));
             if (!File.Exists (fileName)) {
                 Console.Error.WriteLine ($"// Include does not exist: {fileName}");
                 state.Result.ErrorCount++;
                 return;
             }
 
-            var newFile = ParseSingleFile (state, fileName, asExclusionsList);
+            var newFile = ParseSingleFile (state, fileName, asExclusionsList, overrideDirectory: pathDirectory);
             if (newFile == null) {
                 Console.Error.WriteLine ($"// Failed to parse included file: {fileName}");
                 state.Result.ErrorCount++;
@@ -631,7 +635,7 @@ public class SourcesParser {
             string line;
             while ((line = sr.ReadLine ()) != null) {
                 if (line.StartsWith ("#")) {
-                    HandleMetaDirective (state, result, includeDirectory, asExclusionsList, line);
+                    HandleMetaDirective (state, result, pathDirectory, includeDirectory, asExclusionsList, line);
                     continue;
                 }
 
