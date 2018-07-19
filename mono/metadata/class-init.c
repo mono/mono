@@ -1057,6 +1057,8 @@ mono_class_create_bounded_array (MonoClass *eclass, guint32 rank, gboolean bound
 
 	klass->element_class = eclass;
 
+	mono_class_init (klass->cast_class);
+
 	if ((rank > 1) || bounded) {
 		MonoArrayType *at = image_set ? (MonoArrayType *)mono_image_set_alloc0 (image_set, sizeof (MonoArrayType)) : (MonoArrayType *)mono_image_alloc0 (image, sizeof (MonoArrayType));
 		klass->_byval_arg.type = MONO_TYPE_ARRAY;

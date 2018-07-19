@@ -734,6 +734,13 @@ typedef union {
    amd64_codegen_post(inst); \
 } while (0)
 
+#define emit_sse_reg_reg_op4_imm(inst,dreg,reg,op1,op2,op3,op4,imm) do { \
+   amd64_codegen_pre(inst); \
+   emit_sse_reg_reg_op4 ((inst), (dreg), (reg), (op1), (op2), (op3), (op4)); \
+   x86_imm_emit8 ((inst), (imm)); \
+   amd64_codegen_post(inst); \
+} while (0)
+
 #define emit_sse_membase_reg(inst,basereg,disp,reg,op1,op2,op3) do { \
     amd64_codegen_pre(inst); \
     x86_prefix((inst), (unsigned char)(op1)); \
@@ -912,6 +919,21 @@ typedef union {
 
 #define amd64_sse_roundpd_reg_reg_imm(inst, dreg, reg, imm) emit_sse_reg_reg_op4_imm((inst), (dreg), (reg), 0x66, 0x0f, 0x3a, 0x09, (imm))
 
+#define amd64_sse_pshufb_reg_reg(inst,dreg,reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x0)
+#define amd64_sse_phaddw_reg_reg(inst,dreg,reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x01)
+#define amd64_sse_phaddd_reg_reg(inst,dreg,reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x02)
+#define amd64_sse_phaddsw_reg_reg(inst,dreg,reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x03)
+#define amd64_sse_pmaddubsw_reg_reg(inst,dreg,reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x04)
+#define amd64_sse_phsubw_reg_reg(inst,dreg,reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x05)
+#define amd64_sse_phsubd_reg_reg(inst,dreg,reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x06)
+#define amd64_sse_phsubsw_reg_reg(inst,dreg,reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x07)
+#define amd64_sse_psignb_reg_reg(inst,dreg,reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x08)
+#define amd64_sse_psignw_reg_reg(inst,dreg,reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x09)
+#define amd64_sse_psignd_reg_reg(inst,dreg,reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x0a)
+#define amd64_sse_pmulhrsw_reg_reg(inst,dreg,reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x0b)
+
+#define amd64_sse_palignr_reg_reg_imm(inst,dreg,reg,imm) emit_sse_reg_reg_op4_imm((inst), (dreg), (reg), 0x66, 0x0f, 0x3a, 0x0f, (imm))
+
 #define amd64_sse_addpd_reg_reg(inst,dreg,reg) emit_sse_reg_reg((inst), (dreg), (reg), 0x66, 0x0f, 0x58)
 
 #define amd64_sse_divpd_reg_reg(inst,dreg,reg) emit_sse_reg_reg((inst), (dreg), (reg), 0x66, 0x0f, 0x5e)
@@ -1012,6 +1034,9 @@ typedef union {
 
 #define amd64_sse_pminsd_reg_reg(inst, dreg, reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x39)
 
+#define amd64_sse_pabsb_reg_reg(inst, dreg, reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x1c)
+#define amd64_sse_pabsw_reg_reg(inst, dreg, reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x1d)
+#define amd64_sse_pabsd_reg_reg(inst, dreg, reg) emit_sse_reg_reg_op4((inst), (dreg), (reg), 0x66, 0x0f, 0x38, 0x1e)
 
 #define amd64_sse_pcmpeqb_reg_reg(inst, dreg, reg) emit_sse_reg_reg((inst), (dreg), (reg), 0x66, 0x0f, 0x74)
 
