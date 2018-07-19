@@ -1683,6 +1683,80 @@ mini_emit_runtime_constant (MonoCompile *cfg, MonoJumpInfoType patch_type, gpoin
 	return ins;
 }
 
+void
+mini_emit_switch (MonoCompile *cfg, int sreg, MonoBasicBlock **targets, MonoBasicBlock *default_bblock, int n)
+{
+	int i;
+	MonoJumpInfoBBTable *table;
+	MonoInst *ins;
+	int offset_reg = alloc_preg (cfg);
+	int target_reg = alloc_preg (cfg);
+	int table_reg = alloc_preg (cfg);
+	int sum_reg = alloc_preg (cfg);
+	gboolean use_op_switch;
+
+	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, sreg, n);
+	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, default_bblock);
+
+	default_bblock->flags |= BB_INDIRECT_JUMP_TARGET;
+	for (i = 0; i < n; ++i)
+		targets [i]->flags |= BB_INDIRECT_JUMP_TARGET;
+
+	for (i = 0; i < n; ++i)
+		link_bblock (cfg, cfg->cbb, targets [i]);
+
+	table = (MonoJumpInfoBBTable *)mono_mempool_alloc (cfg->mempool, sizeof (MonoJumpInfoBBTable));
+	table->table = targets;
+	table->table_size = n;
+
+	use_op_switch = FALSE;
+#ifdef TARGET_ARM
+	/* ARM implements SWITCH statements differently */
+	/* FIXME: Make it use the generic implementation */
+	if (!cfg->compile_aot)
+		use_op_switch = TRUE;
+#endif
+
+	if (COMPILE_LLVM (cfg))
+		use_op_switch = TRUE;
+
+	cfg->cbb->has_jump_table = 1;
+
+	if (use_op_switch) {
+		MONO_INST_NEW (cfg, ins, OP_SWITCH);
+		ins->sreg1 = sreg;
+		ins->inst_p0 = table;
+		ins->inst_many_bb = targets;
+		ins->klass = (MonoClass *)GUINT_TO_POINTER (n);
+		MONO_ADD_INS (cfg->cbb, ins);
+	} else {
+		if (TARGET_SIZEOF_VOID_P == 8)
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, offset_reg, sreg, 3);
+		else
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, offset_reg, sreg, 2);
+
+#if SIZEOF_REGISTER == 8
+		/* The upper word might not be zero, and we add it to a 64 bit address later */
+		MONO_EMIT_NEW_UNALU (cfg, OP_ZEXT_I4, offset_reg, offset_reg);
+#endif
+
+		if (cfg->compile_aot) {
+			MONO_EMIT_NEW_AOTCONST (cfg, table_reg, table, MONO_PATCH_INFO_SWITCH);
+		} else {
+			MONO_INST_NEW (cfg, ins, OP_JUMP_TABLE);
+			ins->inst_c1 = MONO_PATCH_INFO_SWITCH;
+			ins->inst_p0 = table;
+			ins->dreg = table_reg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+
+		/* FIXME: Use load_memindex */
+		MONO_EMIT_NEW_BIALU (cfg, OP_PADD, sum_reg, table_reg, offset_reg);
+		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, target_reg, sum_reg, 0);
+		MONO_EMIT_NEW_UNALU (cfg, OP_BR_REG, -1, target_reg);
+	}
+}
+
 static MonoInst*
 mono_create_fast_tls_getter (MonoCompile *cfg, MonoTlsKey key)
 {
@@ -8826,12 +8900,6 @@ calli_end:
 			MonoInst *src1;
 			MonoBasicBlock **targets;
 			MonoBasicBlock *default_bblock;
-			MonoJumpInfoBBTable *table;
-			int offset_reg = alloc_preg (cfg);
-			int target_reg = alloc_preg (cfg);
-			int table_reg = alloc_preg (cfg);
-			int sum_reg = alloc_preg (cfg);
-			gboolean use_op_switch;
 
 			n = read32 (ip + 1);
 			--sp;
@@ -8871,29 +8939,9 @@ calli_end:
 					mono_unlink_bblock (cfg, cfg->cbb, targets [i]);
 			}
 
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, src1->dreg, n);
-			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, default_bblock);
+			mini_emit_switch (cfg, src1->dreg, targets, default_bblock, n);
 
-			for (i = 0; i < n; ++i)
-				link_bblock (cfg, cfg->cbb, targets [i]);
-
-			table = (MonoJumpInfoBBTable *)mono_mempool_alloc (cfg->mempool, sizeof (MonoJumpInfoBBTable));
-			table->table = targets;
-			table->table_size = n;
-
-			use_op_switch = FALSE;
-#ifdef TARGET_ARM
-			/* ARM implements SWITCH statements differently */
-			/* FIXME: Make it use the generic implementation */
-			if (!cfg->compile_aot)
-				use_op_switch = TRUE;
-#endif
-
-			if (COMPILE_LLVM (cfg))
-				use_op_switch = TRUE;
-
-			cfg->cbb->has_jump_table = 1;
-
+<<<<<<< HEAD
 			if (use_op_switch) {
 				MONO_INST_NEW (cfg, ins, OP_SWITCH);
 				ins->sreg1 = src1->dreg;
@@ -8927,6 +8975,8 @@ calli_end:
 				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, target_reg, sum_reg, 0);
 				MONO_EMIT_NEW_UNALU (cfg, OP_BR_REG, -1, target_reg);
 			}
+=======
+>>>>>>> [jit] Factor out the emission of switch statements into a separate function.
 			start_new_bblock = 1;
 			inline_costs += BRANCH_COST * 2;
 			break;
