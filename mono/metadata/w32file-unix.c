@@ -2367,19 +2367,29 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 	}
 
 #if HAVE_COPYFILE_H
-	/* Before trying to open/create the dest, we need to report a 'file busy'
-	 * error if src and dest are actually the same file. We do the check here to take
-	 * advantage of the IOMAP capability */
-	if (!_wapi_stat (utf8_src, &st) && !_wapi_stat (utf8_dest, &dest_st) &&
-		st.st_dev == dest_st.st_dev && st.st_ino == dest_st.st_ino) {
+	if (!_wapi_stat (utf8_dest, &dest_st)) {
+		/* Before trying to open/create the dest, we need to report a 'file busy'
+		 * error if src and dest are actually the same file. We do the check here to take
+		 * advantage of the IOMAP capability */
+		if (!_wapi_stat (utf8_src, &st) && st.st_dev == dest_st.st_dev && st.st_ino == dest_st.st_ino) {
+			g_free (utf8_src);
+			g_free (utf8_dest);
 
-		g_free (utf8_src);
-		g_free (utf8_dest);
+			mono_w32error_set_last (ERROR_SHARING_VIOLATION);
+			return (FALSE);
+		}
 
-		mono_w32error_set_last (ERROR_SHARING_VIOLATION);
-		return (FALSE);
+		/* Also bail out if the destination is read-only (FIXME: path is not translated by mono_portability_find_file!) */
+		if (!is_file_writable (&dest_st, utf8_dest)) {
+			g_free (utf8_src);
+			g_free (utf8_dest);
+
+			mono_w32error_set_last (ERROR_ACCESS_DENIED);
+			return (FALSE);
+		}
 	}
 	
+	/* FIXME: path is not translated (mono_portability_find_file) */
 	ret = copyfile (utf8_src, utf8_dest, NULL, COPYFILE_ALL | COPYFILE_CLONE | (fail_if_exists ? COPYFILE_EXCL : COPYFILE_UNLINK));
 	g_free (utf8_src);
 	g_free (utf8_dest);
