@@ -1457,15 +1457,21 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		ADD_CODE(td, get_data_item_index (td, (void *)mono_interp_get_imethod (domain, target_method, error)));
 		mono_error_assert_ok (error);
 	} else {
+		/* Try using fast icall path for simple signatures */
+		if (native && !method->dynamic)
+			op = interp_icall_op_for_sig (csignature);
 		if (calli)
-			ADD_CODE(td, native ? MINT_CALLI_NAT : MINT_CALLI);
+			ADD_CODE(td, native ? ((op != -1) ? MINT_CALLI_NAT_FAST : MINT_CALLI_NAT) : MINT_CALLI);
 		else if (is_virtual)
 			ADD_CODE(td, is_void ? MINT_VCALLVIRT : MINT_CALLVIRT);
 		else
 			ADD_CODE(td, is_void ? MINT_VCALL : MINT_CALL);
 
 		if (calli) {
-			ADD_CODE(td, get_data_item_index (td, (void *)csignature));
+			if (op != -1)
+				ADD_CODE (td, op);
+			else
+				ADD_CODE(td, get_data_item_index (td, (void *)csignature));
 		} else {
 			ADD_CODE(td, get_data_item_index (td, (void *)mono_interp_get_imethod (domain, target_method, error)));
 			return_if_nok (error);

@@ -2821,6 +2821,24 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			}
 			MINT_IN_BREAK;
 		}
+		MINT_IN_CASE(MINT_CALLI_NAT_FAST) {
+			gpointer target_ip = sp [-1].data.p;
+			int opcode = *(guint16 *)(ip + 1);
+
+			sp--;
+			frame->ip = ip;
+
+			sp = do_icall (context, opcode, sp, target_ip);
+			EXCEPTION_CHECKPOINT;
+			if (context->has_resume_state) {
+				if (frame == context->handler_frame)
+					SET_RESUME_STATE (context);
+				else
+					goto exit_frame;
+			}
+			ip += 2;
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_CALLI_NAT) {
 			MonoMethodSignature *csignature;
 			stackval *endsp = sp;
