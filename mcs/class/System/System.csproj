@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;COREFX;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;CODEDOM;MONO_FEATURE_APPLETLS;FEATURE_COMPILED;MONO_FEATURE_BTLS;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;COREFX;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;CODEDOM;FEATURE_COMPILED;MONO_FEATURE_BTLS;CONFIGURATION_DEP</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
     <OutputPath>./../../class/lib/monodroid</OutputPath>
@@ -761,21 +761,7 @@
     <Compile Include="..\referencesource\System\sys\system\windows\markup\ValueSerializerAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Microsoft.Win32.SafeHandles\SafeX509ChainHandle.cs" />
-    <Compile Include="Mono.AppleTls\AppleCertificateHelper.cs" />
-    <Compile Include="Mono.AppleTls\AppleTlsContext.cs" />
-    <Compile Include="Mono.AppleTls\AppleTlsProvider.cs" />
-    <Compile Include="Mono.AppleTls\AppleTlsStream.cs" />
-    <Compile Include="Mono.AppleTls\Certificate.cs" />
-    <Compile Include="Mono.AppleTls\Enums.cs" />
     <Compile Include="Mono.AppleTls\INativeObject.cs" />
-    <Compile Include="Mono.AppleTls\ImportExport.cs" />
-    <Compile Include="Mono.AppleTls\Items.cs" />
-    <Compile Include="Mono.AppleTls\Policy.cs" />
-    <Compile Include="Mono.AppleTls\SecureTransport.cs" />
-    <Compile Include="Mono.AppleTls\SslConnection.cs" />
-    <Compile Include="Mono.AppleTls\Trust.cs" />
-    <Compile Include="Mono.AppleTls\X509CertificateImplApple.cs" />
-    <Compile Include="Mono.AppleTls\X509PalImpl.Apple.cs" />
     <Compile Include="Mono.Btls\MonoBtlsBio.cs" />
     <Compile Include="Mono.Btls\MonoBtlsContext.cs" />
     <Compile Include="Mono.Btls\MonoBtlsError.cs" />
@@ -1136,6 +1122,21 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
     <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
+    <Compile Include="Mono.AppleTls\AppleCertificateHelper.cs" />
+    <Compile Include="Mono.AppleTls\AppleTlsContext.cs" />
+    <Compile Include="Mono.AppleTls\AppleTlsProvider.cs" />
+    <Compile Include="Mono.AppleTls\AppleTlsStream.cs" />
+    <Compile Include="Mono.AppleTls\Enums.cs" />
+    <Compile Include="Mono.AppleTls\MonoCertificatePal.Mobile.cs" />
+    <Compile Include="Mono.AppleTls\MonoCertificatePal.cs" />
+    <Compile Include="Mono.AppleTls\Policy.cs" />
+    <Compile Include="Mono.AppleTls\SafeHandles.Mono.cs" />
+    <Compile Include="Mono.AppleTls\SafeHandles.cs" />
+    <Compile Include="Mono.AppleTls\SecureTransport.cs" />
+    <Compile Include="Mono.AppleTls\SslConnection.cs" />
+    <Compile Include="Mono.AppleTls\Trust.cs" />
+    <Compile Include="Mono.AppleTls\X509CertificateImplApple.cs" />
+    <Compile Include="Mono.AppleTls\X509PalImpl.Apple.cs" />
     <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
     <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
@@ -1233,6 +1234,21 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
     <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
+    <Compile Include="Mono.AppleTls\AppleCertificateHelper.cs" />
+    <Compile Include="Mono.AppleTls\AppleTlsContext.cs" />
+    <Compile Include="Mono.AppleTls\AppleTlsProvider.cs" />
+    <Compile Include="Mono.AppleTls\AppleTlsStream.cs" />
+    <Compile Include="Mono.AppleTls\Enums.cs" />
+    <Compile Include="Mono.AppleTls\MonoCertificatePal.Mobile.cs" />
+    <Compile Include="Mono.AppleTls\MonoCertificatePal.cs" />
+    <Compile Include="Mono.AppleTls\Policy.cs" />
+    <Compile Include="Mono.AppleTls\SafeHandles.Mono.cs" />
+    <Compile Include="Mono.AppleTls\SafeHandles.cs" />
+    <Compile Include="Mono.AppleTls\SecureTransport.cs" />
+    <Compile Include="Mono.AppleTls\SslConnection.cs" />
+    <Compile Include="Mono.AppleTls\Trust.cs" />
+    <Compile Include="Mono.AppleTls\X509CertificateImplApple.cs" />
+    <Compile Include="Mono.AppleTls\X509PalImpl.Apple.cs" />
     <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
     <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
@@ -2022,6 +2038,21 @@
     <Compile Include="Microsoft.Win32\UserPreferenceChangedEventHandler.cs" />
     <Compile Include="Microsoft.Win32\UserPreferenceChangingEventArgs.cs" />
     <Compile Include="Microsoft.Win32\UserPreferenceChangingEventHandler.cs" />
+    <Compile Include="Mono.AppleTls\AppleCertificateHelper.cs" />
+    <Compile Include="Mono.AppleTls\AppleTlsContext.cs" />
+    <Compile Include="Mono.AppleTls\AppleTlsProvider.cs" />
+    <Compile Include="Mono.AppleTls\AppleTlsStream.cs" />
+    <Compile Include="Mono.AppleTls\Enums.cs" />
+    <Compile Include="Mono.AppleTls\MonoCertificatePal.OSX.cs" />
+    <Compile Include="Mono.AppleTls\MonoCertificatePal.cs" />
+    <Compile Include="Mono.AppleTls\Policy.cs" />
+    <Compile Include="Mono.AppleTls\SafeHandles.Mono.cs" />
+    <Compile Include="Mono.AppleTls\SafeHandles.cs" />
+    <Compile Include="Mono.AppleTls\SecureTransport.cs" />
+    <Compile Include="Mono.AppleTls\SslConnection.cs" />
+    <Compile Include="Mono.AppleTls\Trust.cs" />
+    <Compile Include="Mono.AppleTls\X509CertificateImplApple.cs" />
+    <Compile Include="Mono.AppleTls\X509PalImpl.Apple.cs" />
     <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="Mono.Net.Dns\DnsClass.cs" />
     <Compile Include="Mono.Net.Dns\DnsHeader.cs" />
@@ -3639,6 +3670,21 @@
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
     <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
+    <Compile Include="Mono.AppleTls\AppleCertificateHelper.cs" />
+    <Compile Include="Mono.AppleTls\AppleTlsContext.cs" />
+    <Compile Include="Mono.AppleTls\AppleTlsProvider.cs" />
+    <Compile Include="Mono.AppleTls\AppleTlsStream.cs" />
+    <Compile Include="Mono.AppleTls\Enums.cs" />
+    <Compile Include="Mono.AppleTls\MonoCertificatePal.Mobile.cs" />
+    <Compile Include="Mono.AppleTls\MonoCertificatePal.cs" />
+    <Compile Include="Mono.AppleTls\Policy.cs" />
+    <Compile Include="Mono.AppleTls\SafeHandles.Mono.cs" />
+    <Compile Include="Mono.AppleTls\SafeHandles.cs" />
+    <Compile Include="Mono.AppleTls\SecureTransport.cs" />
+    <Compile Include="Mono.AppleTls\SslConnection.cs" />
+    <Compile Include="Mono.AppleTls\Trust.cs" />
+    <Compile Include="Mono.AppleTls\X509CertificateImplApple.cs" />
+    <Compile Include="Mono.AppleTls\X509PalImpl.Apple.cs" />
     <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
     <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
