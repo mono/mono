@@ -9,7 +9,8 @@ System.IO.Pipes/AnonymousPipeServerStream.Unix.cs
 ../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/NamedPipeServerStream.Unix.cs
 ../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeStream.Unix.cs
 
-System.IO.Pipes/UnixDomainSocketEndPoint.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/UnixDomainSocketEndPoint.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/UnixDomainSocketEndPoint.Unix.cs
 
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeFileHandleHelper.Unix.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/Interop.Libraries.cs
