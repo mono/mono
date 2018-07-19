@@ -171,7 +171,7 @@ run-all-%:
 
 clean:
 	
-package: build
+package: build build-dbg-proxy
 	rm -rf tmp
 	mkdir tmp
 	mkdir tmp/bcl
@@ -199,6 +199,10 @@ package: build
 	cp Mono.Cecil.dll tmp/
 	cp packager.exe tmp/
 	cp runtime.g.js tmp/
+	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.dll tmp/
+	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.pdb tmp/
+	mkdir tmp/dbg-proxy
+	cp ProxyDriver/bin/Debug/netcoreapp2.1/* tmp/dbg-proxy/
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 
