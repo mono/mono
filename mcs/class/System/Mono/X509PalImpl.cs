@@ -28,6 +28,7 @@ using System.IO;
 using System.Text;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Win32.SafeHandles;
 
 namespace Mono
 {
@@ -36,7 +37,7 @@ namespace Mono
 		public abstract X509CertificateImpl Import (byte[] data);
 
 		public abstract X509Certificate2Impl Import (
-			byte[] data, string password, X509KeyStorageFlags keyStorageFlags);
+			byte[] data, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags);
 
 		public abstract X509Certificate2Impl Import (X509Certificate cert);
 
@@ -72,11 +73,12 @@ namespace Mono
 			data = ConvertData (data);
 
 			var impl = new X509Certificate2ImplMono ();
-			impl.Import (data, null, X509KeyStorageFlags.DefaultKeySet);
+			using (var handle = new SafePasswordHandle ((string)null))
+				impl.Import (data, handle, X509KeyStorageFlags.DefaultKeySet);
 			return impl;
 		}
 
-		internal X509Certificate2Impl ImportFallback (byte[] data, string password, X509KeyStorageFlags keyStorageFlags)
+		internal X509Certificate2Impl ImportFallback (byte[] data, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags)
 		{
 			var impl = new X509Certificate2ImplMono ();
 			impl.Import (data, password, keyStorageFlags);

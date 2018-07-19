@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP && MONO_FEATURE_BTLS
+#if MONO_FEATURE_BTLS
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -40,7 +40,9 @@ using System.Collections;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Runtime.InteropServices;
 using Mono.Security.Cryptography;
+using Microsoft.Win32.SafeHandles;
 
 namespace Mono.Btls
 {
@@ -185,25 +187,6 @@ namespace Mono.Btls
 		public override byte[] GetKeyAlgorithmParameters ()
 		{
 			return PublicKey.EncodedParameters.RawData;
-		}
-
-		public override byte[] Export (X509ContentType contentType, byte[] password)
-		{
-			ThrowIfContextInvalid ();
-
-			switch (contentType) {
-			case X509ContentType.Cert:
-				return GetRawCertData ();
-			case X509ContentType.Pfx: // this includes Pkcs12
-				// TODO
-				throw new NotSupportedException ();
-			case X509ContentType.SerializedCert:
-				// TODO
-				throw new NotSupportedException ();
-			default:
-				string msg = Locale.GetText ("This certificate format '{0}' cannot be exported.", contentType);
-				throw new CryptographicException (msg);
-			}
 		}
 
 		internal override X509CertificateImplCollection IntermediateCertificates {
@@ -355,10 +338,10 @@ namespace Mono.Btls
 			return FallbackImpl.GetNameInfo (nameType, forIssuer);
 		}
 
-		public override void Import (byte[] data, string password, X509KeyStorageFlags keyStorageFlags)
+		public override void Import (byte[] data, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags)
 		{
 			Reset ();
-			if (password == null) {
+			if (password == null || password.IsInvalid) {
 				try {
 					Import (data);
 				} catch (Exception e) {
@@ -399,16 +382,17 @@ namespace Mono.Btls
 			}
 		}
 
-		void ImportPkcs12 (byte[] data, string password)
+		void ImportPkcs12 (byte[] data, SafePasswordHandle password)
 		{
 			using (var pkcs12 = new MonoBtlsPkcs12 ()) {
-				if (string.IsNullOrEmpty (password)) {
+				if (password == null || password.IsInvalid) {
 					try {
 						// Support both unencrypted PKCS#12..
 						pkcs12.Import (data, null);
 					} catch {
 						// ..and PKCS#12 encrypted with an empty password
-						pkcs12.Import (data, string.Empty);
+						using (var empty = new SafePasswordHandle (string.Empty))
+							pkcs12.Import (data, empty);
 					}
 				} else {
 					pkcs12.Import (data, password);
@@ -431,7 +415,7 @@ namespace Mono.Btls
 			}
 		}
 
-		public override byte[] Export (X509ContentType contentType, string password)
+		public override byte[] Export (X509ContentType contentType, SafePasswordHandle password)
 		{
 			ThrowIfContextInvalid ();
 
@@ -447,6 +431,18 @@ namespace Mono.Btls
 				string msg = Locale.GetText ("This certificate format '{0}' cannot be exported.", contentType);
 				throw new CryptographicException (msg);
 			}
+		}
+
+		byte[] ExportPkcs12 (SafePasswordHandle password)
+		{
+			if (password == null || password.IsInvalid)
+				return ExportPkcs12 ((string)null);
+#if PLATFORM_WINDOWS
+			var passwordString = Marshal.PtrToStringUni (password.DangerousGetHandle ());
+#else
+			var passwordString = Marshal.PtrToStringAnsi (password.DangerousGetHandle ());
+#endif
+			return ExportPkcs12 (passwordString);
 		}
 
 		byte[] ExportPkcs12 (string password)

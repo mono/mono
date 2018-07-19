@@ -29,9 +29,10 @@
 //
 
 using System.IO;
+using System.Text;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
-using System.Text;
+using Microsoft.Win32.SafeHandles;
 
 using Mono.Security;
 
@@ -150,34 +151,26 @@ namespace System.Security.Cryptography.X509Certificates {
 		[ComVisible (false)]
 		public virtual byte[] Export (X509ContentType contentType)
 		{
-			return Export (contentType, (byte[])null);
+			X509Helper.ThrowIfContextInvalid (impl);
+			using (var handle = new SafePasswordHandle ((string)null))
+				return impl.Export (contentType, handle);
 		}
 
 		[MonoTODO ("X509ContentType.Pfx/Pkcs12 and SerializedCert are not supported")]
 		[ComVisible (false)]
 		public virtual byte[] Export (X509ContentType contentType, string password)
 		{
-			byte[] pwd = (password == null) ? null : Encoding.UTF8.GetBytes (password);
-			return Export (contentType, pwd);
+			X509Helper.ThrowIfContextInvalid (impl);
+			using (var handle = new SafePasswordHandle (password))
+				return impl.Export (contentType, handle);
 		}
 
 		[MonoTODO ("X509ContentType.Pfx/Pkcs12 and SerializedCert are not supported. SecureString support is incomplete.")]
 		public virtual byte[] Export (X509ContentType contentType, SecureString password)
 		{
-			byte[] pwd = (password == null) ? null : password.GetBuffer ();
-			return Export (contentType, pwd);
-		}
-
-		internal byte[] Export (X509ContentType contentType, byte[] password)
-		{
-			try {
-				X509Helper.ThrowIfContextInvalid (impl);
-				return impl.Export (contentType, password);
-			} finally {
-				// protect password
-				if (password != null)
-					Array.Clear (password, 0, password.Length);
-			}
+			X509Helper.ThrowIfContextInvalid (impl);
+			using (var handle = new SafePasswordHandle (password))
+				return impl.Export (contentType, handle);
 		}
 
 		[ComVisible (false)]
@@ -191,13 +184,16 @@ namespace System.Security.Cryptography.X509Certificates {
 		public virtual void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
 			Reset ();
-			impl = X509Helper.Import (rawData, password, keyStorageFlags);
+			using (var handle = new SafePasswordHandle (password))
+				impl = X509Helper.Import (rawData, handle, keyStorageFlags);
 		}
 
 		[MonoTODO ("SecureString support is incomplete")]
 		public virtual void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
-			Import (rawData, (string)null, keyStorageFlags);
+			Reset ();
+			using (var handle = new SafePasswordHandle (password))
+				impl = X509Helper.Import (rawData, handle, keyStorageFlags);
 		}
 
 		[ComVisible (false)]
@@ -219,7 +215,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public virtual void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
 			byte[] rawData = File.ReadAllBytes (fileName);
-			Import (rawData, (string)null, keyStorageFlags);
+			Import (rawData, password, keyStorageFlags);
 		}
 
 		void IDeserializationCallback.OnDeserialization (object sender)

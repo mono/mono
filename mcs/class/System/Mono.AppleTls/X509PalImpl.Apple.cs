@@ -27,6 +27,7 @@
 using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Win32.SafeHandles;
 using XamMac.CoreFoundation;
 
 namespace Mono.AppleTls
@@ -45,7 +46,7 @@ namespace Mono.AppleTls
 		}
 
 		public override X509Certificate2Impl Import (
-			byte[] data, string password, X509KeyStorageFlags keyStorageFlags)
+			byte[] data, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags)
 		{
 			return null;
 		}

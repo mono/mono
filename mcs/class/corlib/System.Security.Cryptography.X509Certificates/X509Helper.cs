@@ -32,6 +32,7 @@ using System;
 using System.Text;
 using System.Threading;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 #if !MOBILE
 using System.Security.Permissions;
 #endif
@@ -69,12 +70,12 @@ namespace System.Security.Cryptography.X509Certificates
 			return new CryptographicException (Locale.GetText ("Certificate instance is empty."));
 		}
 
-		public static X509CertificateImpl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
+		public static X509CertificateImpl Import (byte[] rawData, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags)
 		{
 			return CertificateProvider.Import (rawData, password, keyStorageFlags);
 		}
 
-		public static byte[] Export (X509CertificateImpl impl, X509ContentType contentType, byte[] password)
+		public static byte[] Export (X509CertificateImpl impl, X509ContentType contentType, SafePasswordHandle password)
 		{
 			ThrowIfContextInvalid (impl);
 			return impl.Export (contentType, password);
