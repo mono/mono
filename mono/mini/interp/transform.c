@@ -1320,6 +1320,16 @@ no_intrinsic:
 	} else
 		is_void = TRUE;
 
+	/* We need to convert delegate invoke to a indirect call on the interp_invoke_impl field */
+	if (target_method && m_class_get_parent (target_method->klass) == mono_defaults.multicastdelegate_class) {
+		const char *name = target_method->name;
+		if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
+			calli = TRUE;
+			ADD_CODE (td, MINT_LD_DELEGATE_INVOKE_IMPL);
+			ADD_CODE (td, csignature->param_count + 1);
+		}
+	}
+
 	if (op >= 0) {
 		ADD_CODE (td, op);
 #if SIZEOF_VOID_P == 8
@@ -4677,10 +4687,9 @@ mono_interp_transform_init (void)
 	mono_os_mutex_init_recursive(&calc_section);
 }
 
-MonoException *
-mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, InterpFrame *frame)
+void
+mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, MonoError *error)
 {
-	ERROR_DECL (error);
 	int i, align, size, offset;
 	MonoMethod *method = imethod->method;
 	MonoImage *image = m_class_get_image (method->klass);
@@ -4703,19 +4712,16 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 
 	if (mono_class_is_open_constructed_type (m_class_get_byval_arg (method->klass))) {
 		mono_error_set_invalid_operation (error, "%s", "Could not execute the method because the containing type is not fully instantiated.");
-		return mono_error_convert_to_exception (error);
+		return;
 	}
 
 	// g_printerr ("TRANSFORM(0x%016lx): begin %s::%s\n", mono_thread_current (), method->klass->name, method->name);
 	method_class_vt = mono_class_vtable_checked (domain, imethod->method->klass, error);
-	if (!is_ok (error))
-		return mono_error_convert_to_exception (error);
+	return_if_nok (error);
 
 	if (!method_class_vt->initialized) {
 		mono_runtime_class_init_full (method_class_vt, error);
-		if (!mono_error_ok (error)) {
-			return mono_error_convert_to_exception (error);
-		}
+		return_if_nok (error);
 	}
 
 	MONO_PROFILER_RAISE (jit_begin, (method));
@@ -4730,11 +4736,11 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 
 	if (method->iflags & (METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL | METHOD_IMPL_ATTRIBUTE_RUNTIME)) {
 		MonoMethod *nm = NULL;
-		mono_os_mutex_lock(&calc_section);
+		mono_os_mutex_lock (&calc_section);
 		if (imethod->transformed) {
-			mono_os_mutex_unlock(&calc_section);
+			mono_os_mutex_unlock (&calc_section);
 			MONO_PROFILER_RAISE (jit_done, (method, imethod->jinfo));
-			return NULL;
+			return;
 		}
 
 		/* assumes all internal calls with an array this are built in... */
@@ -4751,11 +4757,13 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 					nm = mono_marshal_get_icall_wrapper (mi->sig, wrapper_name, mi->func, TRUE);
 					g_free (wrapper_name);
 				} else if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
-					MonoDelegate *del = frame->stack_args [0].data.p;
-					if (del && del->method && del->method->flags & METHOD_ATTRIBUTE_STATIC)
-						nm = mono_marshal_get_delegate_invoke (method, del);
-					else
-						nm = mono_marshal_get_delegate_invoke (method, NULL);
+					/*
+					 * Handled when transforming caller.
+					 *
+					 * FIXME Resolve other calls in interp_transform_call instead of here
+					 * since changing the called method on the spot might trigger issues
+					 */
+					g_assert_not_reached ();
 				} else if (*name == 'B' && (strcmp (name, "BeginInvoke") == 0)) {
 					nm = mono_marshal_get_delegate_begin_invoke (method);
 				} else if (*name == 'E' && (strcmp (name, "EndInvoke") == 0)) {
@@ -4773,14 +4781,12 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 			imethod->transformed = TRUE;
 			mono_os_mutex_unlock(&calc_section);
 			MONO_PROFILER_RAISE (jit_done, (method, NULL));
-			return NULL;
+			return;
 		}
 		method = nm;
 		header = interp_method_get_header (nm, error);
-		mono_os_mutex_unlock(&calc_section);
-		if (!is_ok (error)) {
-			return mono_error_convert_to_exception (error);
-		}
+		mono_os_mutex_unlock (&calc_section);
+		return_if_nok (error);
 	} else if (method->klass == mono_defaults.array_class) {
 		if (!strcmp (method->name, "UnsafeMov") || !strcmp (method->name, "UnsafeLoad")) {
 			mono_os_mutex_lock (&calc_section);
@@ -4791,9 +4797,9 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 				imethod->alloca_size = imethod->stack_size;
 				imethod->transformed = TRUE;
 			}
-			mono_os_mutex_unlock(&calc_section);
+			mono_os_mutex_unlock (&calc_section);
 			MONO_PROFILER_RAISE (jit_done, (method, NULL));
-			return NULL;
+			return;
 		} else if (!strcmp (method->name, "UnsafeStore")) {
 			g_error ("TODO ArrayClass::UnsafeStore");
 		}
@@ -4801,8 +4807,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 
 	if (!header) {
 		header = mono_method_get_header_checked (method, error);
-		if (!is_ok (error))
-			return mono_error_convert_to_exception (error);
+		return_if_nok (error);
 	}
 
 	g_assert ((signature->param_count + signature->hasthis) < 1000);
@@ -4834,7 +4839,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 				if (!is_ok (error)) {
 					g_free (is_bb_start);
 					mono_metadata_free_mh (header);
-					return mono_error_convert_to_exception (error);
+					return;
 				}
 			}
 			ip += 5;
@@ -4858,7 +4863,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 				if (!is_ok (error)) {
 					g_free (is_bb_start);
 					mono_metadata_free_mh (header);
-					return mono_error_convert_to_exception (error);
+					return;
 				}
 				mono_class_init (m->klass);
 				if (!mono_class_is_interface (m->klass)) {
@@ -4866,7 +4871,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 					if (!is_ok (error)) {
 						g_free (is_bb_start);
 						mono_metadata_free_mh (header);
-						return mono_error_convert_to_exception (error);
+						return;
 					}
 				}
 			}
@@ -4983,14 +4988,12 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 	imethod->args_size = offset;
 	g_assert (imethod->args_size < 10000);
 
-	error_init (error);
 	generate (method, header, imethod, is_bb_start, generic_context, error);
 
 	mono_metadata_free_mh (header);
 	g_free (is_bb_start);
 
-	if (!mono_error_ok (error))
-		return mono_error_convert_to_exception (error);
+	return_if_nok (error);
 
 	// FIXME: Add a different callback ?
 	MONO_PROFILER_RAISE (jit_done, (method, imethod->jinfo));
@@ -5007,7 +5010,5 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Int
 		mono_atomic_fetch_add_i32 (&mono_jit_stats.methods_with_interp, 1);
 	}
 	mono_os_mutex_unlock (&calc_section);
-
-	return NULL;
 }
 
