@@ -13,8 +13,6 @@ namespace System.IO.Pipes
 			if ((desiredAccessRights & ~(PipeAccessRights.ReadData | PipeAccessRights.WriteData)) != 0) {
 				throw new PlatformNotSupportedException();
 			}
-
-			// TODO: desiredAccessRights are not implemented
 		}
 	}
 }
