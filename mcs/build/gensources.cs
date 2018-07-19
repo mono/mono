@@ -531,13 +531,20 @@ public class SourcesParser {
         var include = "#include ";
         if (directive.StartsWith (include)) {
             var fileName = Path.Combine (directory, directive.Substring (include.Length));
+            if (!File.Exists (fileName)) {
+                Console.Error.WriteLine ($"// Include does not exist: {fileName}");
+                state.Result.ErrorCount++;
+                return;
+            }
+
             var newFile = ParseSingleFile (state, fileName, asExclusionsList);
             if (newFile == null) {
-                Console.Error.WriteLine($"// Include not found: {fileName}");
+                Console.Error.WriteLine ($"// Failed to parse included file: {fileName}");
                 state.Result.ErrorCount++;
-            } else {
-                file.Includes.Add (newFile);
+                return;
             }
+
+            file.Includes.Add (newFile);
         }
     }
 
@@ -610,7 +617,8 @@ public class SourcesParser {
 
         ParseDepth += 1;
 
-        var directory = overrideDirectory ?? Path.GetDirectoryName (fileName);
+        var includeDirectory = Path.GetDirectoryName (fileName);
+        var pathDirectory = overrideDirectory ?? includeDirectory;
         var result = new SourcesFile (fileName, asExclusionsList);
         fileTable.Add (fileName, result);
 
@@ -623,7 +631,7 @@ public class SourcesParser {
             string line;
             while ((line = sr.ReadLine ()) != null) {
                 if (line.StartsWith ("#")) {
-                    HandleMetaDirective (state, result, directory, asExclusionsList, line);
+                    HandleMetaDirective (state, result, includeDirectory, asExclusionsList, line);
                     continue;
                 }
 
@@ -646,7 +654,7 @@ public class SourcesParser {
 
                     foreach (var pattern in explicitExclusions) {
                         result.Exclusions.Add (new ParseEntry {
-                            Directory = directory,
+                            Directory = pathDirectory,
                             Pattern = Path.Combine (mainPatternDirectory, pattern)
                         });
                     }
@@ -654,7 +662,7 @@ public class SourcesParser {
 
                 (asExclusionsList ? result.Exclusions : result.Sources)
                     .Add (new ParseEntry {
-                        Directory = directory,
+                        Directory = pathDirectory,
                         Pattern = parts[0]
                     });
             }
