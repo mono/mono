@@ -7117,6 +7117,22 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			  case OP_X86_LZCNT64:
 			  case OP_X86_POPCNT32:
 			  case OP_X86_POPCNT64:
+			  case OP_PABSB:
+			  case OP_PABSW:
+			  case OP_PABSD:
+			  case OP_PSHUFB:
+			  case OP_PSIGNB:
+			  case OP_PSIGNW:
+			  case OP_PSIGND:
+			  case OP_PHADDW:
+			  case OP_PHADDD:
+			  case OP_PHADDSW:
+			  case OP_PHSUBW:
+			  case OP_PHSUBD:
+			  case OP_PHSUBSW:
+			  case OP_PALIGNR:
+			  case OP_PMADDUBSW:
+			  case OP_PMULHRSW:
 			  // FIXME: Implement
 			  */
 >>>>>>> [jit] Add beginnings of LLVM support to System.Runtime.Intrinsics.X86.

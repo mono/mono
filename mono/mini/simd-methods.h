@@ -233,6 +233,14 @@ SIMD_METHOD("MoveAndDuplicate", SN_MoveAndDuplicate)
 SIMD_METHOD("MoveHighAndDuplicate", SN_MoveHighAndDuplicate)
 SIMD_METHOD("MoveLowAndDuplicate", SN_MoveLowAndDuplicate)
 
+// System.Runtime.Intrinsics.X86.Ssse3
+SIMD_METHOD("AlignRight", SN_AlignRight)
+SIMD_METHOD("HorizontalAddSaturate", SN_HorizontalAddSaturate)
+SIMD_METHOD("HorizontalSubtractSaturate", SN_HorizontalSubtractSaturate)
+SIMD_METHOD("MultiplyAddAdjacent", SN_MultiplyAddAdjacent)
+SIMD_METHOD("MultiplyHighRoundScale", SN_MultiplyHighRoundScale)
+SIMD_METHOD("Sign", SN_Sign)
+
 // Used internally to distinguish between overloads
 SIMD_METHOD("ShiftRightLogical_Imm", SN_ShiftRightLogical_Imm)
 SIMD_METHOD("ShiftRightArithmetic_Imm", SN_ShiftRightArithmetic_Imm)

@@ -1527,6 +1527,8 @@ emit_sys_runtime_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMeth
 		version = SIMD_VERSION_SSE2;
 	else if (!strcmp (class_name, "Sse3"))
 		version = SIMD_VERSION_SSE3;
+	else if (!strcmp (class_name, "Ssse3"))
+		version = SIMD_VERSION_SSSE3;
 	else
 		return NULL;
 
@@ -1590,6 +1592,7 @@ emit_sys_runtime_x86_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMeth
 	case SIMD_VERSION_SSE1:
 	case SIMD_VERSION_SSE2:
 	case SIMD_VERSION_SSE3:
+	case SIMD_VERSION_SSSE3:
 		return mono_emit_sys_runtime_sse_intrinsics (cfg, cmethod, fsig, args, error);
 		break;
 	default:

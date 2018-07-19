@@ -699,6 +699,21 @@ pshuffled: dest:x src1:x len:6
 pshufd: dest:x src1:x len:6
 shufps: dest:x src1:x src2:x len:5 clob:1
 shufpd: dest:x src1:x src2:x len:6 clob:1
+pshufb: dest:x src1:x src2:x len:6  clob:1
+
+psignb: dest:x src1:x src2:x len:5 clob:1
+psignw: dest:x src1:x src2:x len:5 clob:1
+psignd: dest:x src1:x src2:x len:5 clob:1
+phaddw: dest:x src1:x src2:x len:5 clob:1
+phaddd: dest:x src1:x src2:x len:5 clob:1
+phaddsw: dest:x src1:x src2:x len:5 clob:1
+phsubw: dest:x src1:x src2:x len:5 clob:1
+phsubd: dest:x src1:x src2:x len:5 clob:1
+phsubsw: dest:x src1:x src2:x len:5 clob:1
+pmaddubsw: dest:x src1:x src2:x len:5 clob:1
+pmulhrsw: dest:x src1:x src2:x len:5 clob:1
+
+palignr: dest:x src1:x src2:x len:6 clob:1
 
 extract_mask: dest:i src1:x len:6
 # FIXME: Avoid clob:c
@@ -732,6 +747,10 @@ pmind_un: dest:x src1:x src2:x len:6 clob:1
 pminb: dest:x src1:x src2:x len:6 clob:1
 pminw: dest:x src1:x src2:x len:5 clob:1
 pmind: dest:x src1:x src2:x len:6 clob:1
+
+pabsb: dest:x src1:x len:5
+pabsw: dest:x src1:x len:5
+pabsd: dest:x src1:x len:5
 
 pcmpeqb: dest:x src1:x src2:x len:5 clob:1
 pcmpeqw: dest:x src1:x src2:x len:5 clob:1

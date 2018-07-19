@@ -6372,6 +6372,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (ins->inst_c0 >= 0 && ins->inst_c0 <= 0xFF);
 			amd64_sse_pshufd_reg_reg_imm (code, ins->dreg, ins->sreg1, ins->inst_c0);
 			break;
+		case OP_PSHUFB:
+			amd64_sse_pshufb_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
 		case OP_SHUFPS:
 			g_assert (ins->inst_c0 >= 0 && ins->inst_c0 <= 0xFF);
 			amd64_sse_shufps_reg_reg_imm (code, ins->sreg1, ins->sreg2, ins->inst_c0);
@@ -6379,6 +6382,42 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_SHUFPD:
 			g_assert (ins->inst_c0 >= 0 && ins->inst_c0 <= 0x3);
 			amd64_sse_shufpd_reg_reg_imm (code, ins->sreg1, ins->sreg2, ins->inst_c0);
+			break;
+		case OP_PSIGNB:
+			amd64_sse_psignb_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PSIGNW:
+			amd64_sse_psignw_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PSIGND:
+			amd64_sse_psignd_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PHADDW:
+			amd64_sse_phaddw_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PHADDD:
+			amd64_sse_phaddd_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PHADDSW:
+			amd64_sse_phaddsw_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PHSUBW:
+			amd64_sse_phsubw_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PHSUBD:
+			amd64_sse_phsubd_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PHSUBSW:
+			amd64_sse_phsubsw_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PMADDUBSW:
+			amd64_sse_pmaddubsw_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PMULHRSW:
+			amd64_sse_pmulhrsw_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PALIGNR:
+			amd64_sse_palignr_reg_reg_imm (code, ins->sreg1, ins->sreg2, ins->inst_c0);
 			break;
 
 		case OP_ADDPD:
@@ -6534,6 +6573,16 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_PMIND:
 			amd64_sse_pminsd_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+
+		case OP_PABSB:
+			amd64_sse_pabsb_reg_reg (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_PABSW:
+			amd64_sse_pabsw_reg_reg (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_PABSD:
+			amd64_sse_pabsd_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
 
 		case OP_PCMPEQB:

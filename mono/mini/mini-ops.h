@@ -827,6 +827,15 @@ MINI_OP(OP_PSHUFD, "pshufd", XREG, XREG, NONE)
 /* inst_c0 is the 3rd argument */
 MINI_OP(OP_SHUFPS, "shufps", XREG, XREG, XREG)
 MINI_OP(OP_SHUFPD, "shufpd", XREG, XREG, XREG)
+/* inst_c0 is the 3rd argument */
+MINI_OP(OP_PALIGNR, "palignr", XREG, XREG, XREG)
+
+MINI_OP(OP_PSHUFB, "pshufb", XREG, XREG, XREG)
+
+MINI_OP(OP_PSIGNB, "psignb", XREG, XREG, XREG)
+MINI_OP(OP_PSIGNW, "psignw", XREG, XREG, XREG)
+MINI_OP(OP_PSIGND, "psignd", XREG, XREG, XREG)
+
 MINI_OP(OP_MOVSS, "movss", XREG, XREG, XREG)
 MINI_OP(OP_MOVSD, "movsd", XREG, XREG, XREG)
 /* Load the lowest r4 from sreg1, zero out the rest */
@@ -884,6 +893,19 @@ MINI_OP(OP_PMAXD_UN, "pmaxd_un", XREG, XREG, XREG)
 MINI_OP(OP_PMAXB, "pmaxb", XREG, XREG, XREG)
 MINI_OP(OP_PMAXW, "pmaxw", XREG, XREG, XREG)
 MINI_OP(OP_PMAXD, "pmaxd", XREG, XREG, XREG)
+
+MINI_OP(OP_PABSB, "pabsb", XREG, XREG, NONE)
+MINI_OP(OP_PABSW, "pabsw", XREG, XREG, NONE)
+MINI_OP(OP_PABSD, "pabsd", XREG, XREG, NONE)
+
+MINI_OP(OP_PHADDW, "phaddw", XREG, XREG, XREG)
+MINI_OP(OP_PHADDD, "phaddd", XREG, XREG, XREG)
+MINI_OP(OP_PHADDSW, "phaddsw", XREG, XREG, XREG)
+MINI_OP(OP_PHSUBW, "phsubw", XREG, XREG, XREG)
+MINI_OP(OP_PHSUBD, "phsubd", XREG, XREG, XREG)
+MINI_OP(OP_PHSUBSW, "phsubsw", XREG, XREG, XREG)
+MINI_OP(OP_PMADDUBSW, "pmaddubsw", XREG, XREG, XREG)
+MINI_OP(OP_PMULHRSW, "pmulhrsw", XREG, XREG, XREG)
 
 /* pavgb */
 MINI_OP(OP_PAVGB_UN, "pavgb_un", XREG, XREG, XREG)

@@ -1065,6 +1065,7 @@ typedef struct {
 
 /* sbyte */
 static const SimdOpMap v128_i1_opcodes[] = {
+	{ SN_Abs, OP_PABSB },
 	{ SN_Add, OP_PADDB },
 	{ SN_AddSaturate, OP_PADDB_SAT },
 	{ SN_And, OP_PAND },
@@ -1075,6 +1076,8 @@ static const SimdOpMap v128_i1_opcodes[] = {
 	{ SN_Min, OP_PMINB },
 	{ SN_MoveMask, OP_PMOVMSKB },
 	{ SN_Or, OP_POR },
+	{ SN_Shuffle, OP_PSHUFB },
+	{ SN_Sign, OP_PSIGNB },
 	{ SN_Subtract, OP_PSUBB },
 	{ SN_SubtractSaturate, OP_PSUBB_SAT },
 	{ SN_UnpackHigh, OP_UNPACK_HIGHB },
@@ -1093,6 +1096,7 @@ static const SimdOpMap v128_u1_opcodes[] = {
 	{ SN_Max, OP_PMAXB_UN },
 	{ SN_Min, OP_PMINB_UN },
 	{ SN_MoveMask, OP_PMOVMSKB },
+	{ SN_MultiplyAddAdjacent, OP_PMADDUBSW },
 	{ SN_Or, OP_POR },
 	{ SN_Subtract, OP_PSUBB },
 	{ SN_SubtractSaturate, OP_PSUBB_SAT_UN },
@@ -1104,16 +1108,22 @@ static const SimdOpMap v128_u1_opcodes[] = {
 
 /* short */
 static const SimdOpMap v128_i2_opcodes[] = {
+	{ SN_Abs, OP_PABSW },
 	{ SN_Add, OP_PADDW },
 	{ SN_AddSaturate, OP_PADDW_SAT },
 	{ SN_And, OP_PAND },
 	{ SN_AndNot, OP_PANDN },
 	{ SN_CompareEqual, OP_PCMPEQW },
 	{ SN_CompareGreaterThan, OP_PCMPGTW },
+	{ SN_HorizontalAdd, OP_PHADDW },
+	{ SN_HorizontalAddSaturate, OP_PHADDSW },
+	{ SN_HorizontalSubtract, OP_PHSUBW },
+	{ SN_HorizontalSubtractSaturate, OP_PHSUBSW },
 	{ SN_Max, OP_PMAXW },
 	{ SN_Min, OP_PMINW },
 	{ SN_Multiply, OP_PMULW },
 	{ SN_MultiplyHigh, OP_PMULHW },
+	{ SN_MultiplyHighRoundScale, OP_PMULHRSW },
 	{ SN_Or, OP_POR },
 	{ SN_PackSignedSaturate, OP_PACKSSWB },
 	{ SN_PackUnsignedSaturate, OP_PACKUSWB },
@@ -1125,6 +1135,7 @@ static const SimdOpMap v128_i2_opcodes[] = {
 	{ SN_ShiftRightLogical_Imm, OP_PSHRW },
 	{ SN_ShuffleHigh, OP_PSHUFHW },
 	{ SN_ShuffleLow, OP_PSHUFLW },
+	{ SN_Sign, OP_PSIGNW },
 	{ SN_Subtract, OP_PSUBW },
 	{ SN_SubtractSaturate, OP_PSUBW_SAT },
 	{ SN_UnpackHigh, OP_UNPACK_HIGHW },
@@ -1160,6 +1171,7 @@ static const SimdOpMap v128_u2_opcodes[] = {
 
 /* int */
 static const SimdOpMap v128_i4_opcodes[] = {
+	{ SN_Abs, OP_PABSD },
 	{ SN_Add, OP_PADDD },
 	{ SN_And, OP_PAND },
 	{ SN_AndNot, OP_PANDN },
@@ -1168,6 +1180,8 @@ static const SimdOpMap v128_i4_opcodes[] = {
 	{ SN_ConvertToInt32, OP_EXTRACT_I4 },
 	{ SN_ConvertToVector128Double, OP_CVTDQ2PD },
 	{ SN_ConvertToVector128Single, OP_CVTDQ2PS },
+	{ SN_HorizontalAdd, OP_PHADDD },
+	{ SN_HorizontalSubtract, OP_PHSUBD },
 	{ SN_LoadScalarVector128, OP_MOVD_REG_MEMBASE },
 	{ SN_Max, OP_PMAXD },
 	{ SN_Min, OP_PMIND },
@@ -1181,6 +1195,7 @@ static const SimdOpMap v128_i4_opcodes[] = {
 	{ SN_ShiftRightLogical, OP_PSHRD_REG },
 	{ SN_ShiftRightLogical_Imm, OP_PSHRD },
 	{ SN_Shuffle, OP_PSHUFD },
+	{ SN_Sign, OP_PSIGND },
 	{ SN_Subtract, OP_PSUBD },
 	{ SN_UnpackHigh, OP_UNPACK_HIGHD },
 	{ SN_UnpackLow, OP_UNPACK_LOWD },
@@ -2900,10 +2915,12 @@ check_ordering (const SimdIntrinsic *intrinsics, int len)
  * These should be ordered by name.
  */
 static const SimdIntrinsic x86_sse_intrinsics[] = {
+	{ SN_Abs, 0, 0, SIMD_EMIT_UNARY },
 	{ SN_Add, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_AddSaturate, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_AddScalar, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_AddSubtract, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_AlignRight, OP_PALIGNR },
 	{ SN_And, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_AndNot, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_Average, 0, 0, SIMD_EMIT_BINARY },
@@ -2965,7 +2982,9 @@ static const SimdIntrinsic x86_sse_intrinsics[] = {
 	{ SN_DivideScalar, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_Extract },
 	{ SN_HorizontalAdd, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_HorizontalAddSaturate, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_HorizontalSubtract, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_HorizontalSubtractSaturate, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_Insert },
 	{ SN_LoadAlignedVector128, OP_LOADX_ALIGNED_MEMBASE },
 	{ SN_LoadAndDuplicateToVector128, OP_MOVDDUP_REG_MEMBASE },
@@ -2989,7 +3008,9 @@ static const SimdIntrinsic x86_sse_intrinsics[] = {
 	{ SN_MoveMask },
 	{ SN_MoveScalar },
 	{ SN_Multiply, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_MultiplyAddAdjacent, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_MultiplyHigh, 0, 0, SIMD_EMIT_BINARY },
+	{ SN_MultiplyHighRoundScale, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_MultiplyHorizontalAdd, OP_PMADDWD, 0, SIMD_EMIT_BINARY },
 	{ SN_MultiplyLow, OP_PMULLW, 0, SIMD_EMIT_BINARY },
 	{ SN_MultiplyScalar, 0, 0, SIMD_EMIT_BINARY },
@@ -3014,6 +3035,7 @@ static const SimdIntrinsic x86_sse_intrinsics[] = {
 	{ SN_Shuffle },
 	{ SN_ShuffleHigh },
 	{ SN_ShuffleLow },
+	{ SN_Sign, 0, 0, SIMD_EMIT_BINARY },
 	{ SN_Sqrt, 0, 0, SIMD_EMIT_UNARY },
 	{ SN_SqrtScalar },
 	{ SN_StaticCast, OP_XMOVE },
@@ -3056,18 +3078,22 @@ emit_intrins_general (MonoCompile *cfg, const SimdIntrinsic *intrins, MonoMethod
 	MonoBasicBlock **targets;
 	MonoBasicBlock *tblock, *end_bb;
 	MonoInst *ins;
-	int opcode;
+	int opcode, n;
 
 	switch (intrins->name) {
 	case SN_Shuffle:
 	case SN_ShuffleHigh:
 	case SN_ShuffleLow:
+	case SN_AlignRight:
 		opcode = get_opcode (intrins, etype);
 		g_assert (opcode != -1);
 
 		/* Emit a switch for all possible values */
 
-		int n = 256;
+		if (intrins->name == SN_AlignRight)
+			n = 32;
+		else
+			n = 256;
 		targets = (MonoBasicBlock **)mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * n);
 		for (int i = 0; i < n; ++i) {
 			NEW_BBLOCK (cfg, tblock);
@@ -3083,15 +3109,23 @@ emit_intrins_general (MonoCompile *cfg, const SimdIntrinsic *intrins, MonoMethod
 			MONO_START_BB (cfg, targets [i]);
 
 			MONO_INST_NEW (cfg, ins, opcode);
-			if (fsig->param_count == 3) {
+			if (intrins->name == SN_AlignRight) {
 				ins->dreg = dreg;
 				ins->sreg1 = args [0]->dreg;
 				ins->sreg2 = args [1]->dreg;
+				ins->inst_c0 = i;
 			} else {
-				ins->dreg = dreg;
-				ins->sreg1 = args [0]->dreg;
+				/* Shuffle */
+				if (fsig->param_count == 3) {
+					ins->dreg = dreg;
+					ins->sreg1 = args [0]->dreg;
+					ins->sreg2 = args [1]->dreg;
+				} else {
+					ins->dreg = dreg;
+					ins->sreg1 = args [0]->dreg;
+				}
+				ins->inst_c0 = i;
 			}
-			ins->inst_c0 = i;
 			ins->klass = mono_class_from_mono_type (fsig->params [0]);
 			MONO_ADD_INS (cfg->cbb, ins);
 
@@ -3275,7 +3309,16 @@ mono_emit_sys_runtime_sse_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, Mon
 	case SN_ShuffleHigh:
 	case SN_ShuffleLow: {
 		opcode = get_opcode (intrins, etype);
-		g_assert (opcode != -1);
+		g_assert (opcode);
+
+		if (fsig->param_count == 2 && fsig->params [1]->type == MONO_TYPE_GENERICINST) {
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->dreg = alloc_xreg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+			break;
+		}
 
 		MonoInst *imm;
 		if (fsig->param_count == 3)
@@ -3630,6 +3673,21 @@ mono_emit_sys_runtime_sse_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, Mon
 		ins->sreg1 = args [0]->dreg;
 		ins->sreg2 = args [1]->dreg;
 		ins->sreg3 = args [2]->dreg;
+		MONO_ADD_INS (cfg->cbb, ins);
+		break;
+	case SN_AlignRight:
+		if (args [2]->opcode != OP_ICONST) {
+			if (cfg->method != cmethod)
+				/* Handle it when the IL method is JITted */
+				return NULL;
+			ins = emit_intrins_general (cfg, intrins, fsig, etype, args);
+			break;
+		}
+		MONO_INST_NEW (cfg, ins, OP_PALIGNR);
+		ins->dreg = alloc_xreg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		ins->sreg2 = args [1]->dreg;
+		ins->inst_c0 = args [2]->inst_c0;
 		MONO_ADD_INS (cfg->cbb, ins);
 		break;
 	default:
